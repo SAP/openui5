@@ -28,7 +28,7 @@ sap.ui.define([
 		assert.strictEqual(oTreeState.sNodeProperty, "~sNodeProperty~");
 		assert.strictEqual(oTreeState.fnGetKeyFilter, "~fnGetKeyFilter~");
 		assert.deepEqual(oTreeState.mPredicate2ExpandLevels, {});
-		assert.deepEqual(oTreeState.getOutOfPlaceGroupedByParent(), []);
+		assert.deepEqual(oTreeState.mPredicate2OutOfPlace, {});
 		assert.deepEqual(oTreeState.getOutOfPlaceCount(), 0);
 	});
 
@@ -146,72 +146,88 @@ sap.ui.define([
 		// code under test
 		assert.deepEqual(oTreeState.getOutOfPlaceGroupedByParent(), []);
 
-		const oHelperMock = this.mock(_Helper);
-		oHelperMock.expects("getPrivateAnnotation").withExactArgs("~oParent1~", "predicate")
-			.returns("~parent1Predicate~");
 		const oTreeStateMock = this.mock(oTreeState);
-		oTreeStateMock.expects("fnGetKeyFilter").withExactArgs("~oParent1~")
-			.returns("~parent1Filter~");
 		oTreeStateMock.expects("fnGetKeyFilter").withExactArgs("~oNode1~").returns("~node1Filter~");
+		const oHelperMock = this.mock(_Helper);
 		oHelperMock.expects("getPrivateAnnotation").withExactArgs("~oNode1~", "predicate")
 			.returns("~node1Predicate~");
+		oTreeStateMock.expects("fnGetKeyFilter").withExactArgs("~oParent1~")
+			.returns("~parent1Filter~");
+		oHelperMock.expects("getPrivateAnnotation").withExactArgs("~oParent1~", "predicate")
+			.returns("~parent1Predicate~");
 
 		// code under test
 		oTreeState.setOutOfPlace("~oNode1~", "~oParent1~");
 
-		assert.deepEqual(oTreeState.getOutOfPlaceGroupedByParent(), [{
-			nodeFilters : ["~node1Filter~"],
-			nodePredicates : ["~node1Predicate~"],
-			parentFilter : "~parent1Filter~",
-			parentPredicate : "~parent1Predicate~"
-		}]);
+		assert.deepEqual(oTreeState.mPredicate2OutOfPlace, {
+			"~node1Predicate~" : {
+				nodeFilter : "~node1Filter~",
+				nodePredicate : "~node1Predicate~",
+				parentFilter : "~parent1Filter~",
+				parentPredicate : "~parent1Predicate~"
+			}
+		});
 		assert.strictEqual(oTreeState.getOutOfPlaceCount(), 1);
 
-		oHelperMock.expects("getPrivateAnnotation").withExactArgs("~oParent2~", "predicate")
-			.returns("~parent2Predicate~");
-		oTreeStateMock.expects("fnGetKeyFilter").withExactArgs("~oParent2~")
-			.returns("~parent2Filter~");
 		oTreeStateMock.expects("fnGetKeyFilter").withExactArgs("~oNode3~").returns("~node3Filter~");
 		oHelperMock.expects("getPrivateAnnotation").withExactArgs("~oNode3~", "predicate")
 			.returns("~node3Predicate~");
+		oTreeStateMock.expects("fnGetKeyFilter").withExactArgs("~oParent2~")
+			.returns("~parent2Filter~");
+		oHelperMock.expects("getPrivateAnnotation").withExactArgs("~oParent2~", "predicate")
+			.returns("~parent2Predicate~");
 
 		// code under test
 		oTreeState.setOutOfPlace("~oNode3~", "~oParent2~");
 
-		assert.deepEqual(oTreeState.getOutOfPlaceGroupedByParent(), [{
-			nodeFilters : ["~node1Filter~"],
-			nodePredicates : ["~node1Predicate~"],
-			parentFilter : "~parent1Filter~",
-			parentPredicate : "~parent1Predicate~"
-		}, {
-			nodeFilters : ["~node3Filter~"],
-			nodePredicates : ["~node3Predicate~"],
-			parentFilter : "~parent2Filter~",
-			parentPredicate : "~parent2Predicate~"
-		}]);
+		assert.deepEqual(oTreeState.mPredicate2OutOfPlace, {
+			"~node1Predicate~" : {
+				nodeFilter : "~node1Filter~",
+				nodePredicate : "~node1Predicate~",
+				parentFilter : "~parent1Filter~",
+				parentPredicate : "~parent1Predicate~"
+			},
+			"~node3Predicate~" : {
+				nodeFilter : "~node3Filter~",
+				nodePredicate : "~node3Predicate~",
+				parentFilter : "~parent2Filter~",
+				parentPredicate : "~parent2Predicate~"
+			}
+		});
 		assert.strictEqual(oTreeState.getOutOfPlaceCount(), 2);
 
-		oHelperMock.expects("getPrivateAnnotation").withExactArgs("~oParent1~", "predicate")
-			.returns("~parent1Predicate~");
 		oTreeStateMock.expects("fnGetKeyFilter").withExactArgs("~oNode2~").returns("~node2Filter~");
 		oHelperMock.expects("getPrivateAnnotation").withExactArgs("~oNode2~", "predicate")
 			.returns("~node2Predicate~");
+		oTreeStateMock.expects("fnGetKeyFilter").withExactArgs("~oParent1~")
+			.returns("~parent1Filter~");
+		oHelperMock.expects("getPrivateAnnotation").withExactArgs("~oParent1~", "predicate")
+			.returns("~parent1Predicate~");
 
 		// code under test
 		oTreeState.setOutOfPlace("~oNode2~", "~oParent1~");
 
 		// code under test
-		assert.deepEqual(oTreeState.getOutOfPlaceGroupedByParent(), [{
-			nodeFilters : ["~node1Filter~", "~node2Filter~"],
-			nodePredicates : ["~node1Predicate~", "~node2Predicate~"],
-			parentFilter : "~parent1Filter~",
-			parentPredicate : "~parent1Predicate~"
-		}, {
-			nodeFilters : ["~node3Filter~"],
-			nodePredicates : ["~node3Predicate~"],
-			parentFilter : "~parent2Filter~",
-			parentPredicate : "~parent2Predicate~"
-		}]);
+		assert.deepEqual(oTreeState.mPredicate2OutOfPlace, {
+			"~node1Predicate~" : {
+				nodeFilter : "~node1Filter~",
+				nodePredicate : "~node1Predicate~",
+				parentFilter : "~parent1Filter~",
+				parentPredicate : "~parent1Predicate~"
+			},
+			"~node3Predicate~" : {
+				nodeFilter : "~node3Filter~",
+				nodePredicate : "~node3Predicate~",
+				parentFilter : "~parent2Filter~",
+				parentPredicate : "~parent2Predicate~"
+			},
+			"~node2Predicate~" : {
+				nodeFilter : "~node2Filter~",
+				nodePredicate : "~node2Predicate~",
+				parentFilter : "~parent1Filter~",
+				parentPredicate : "~parent1Predicate~"
+			}
+		});
 		assert.strictEqual(oTreeState.getOutOfPlaceCount(), 3);
 
 		oTreeStateMock.expects("fnGetKeyFilter").withExactArgs("~oNode4~").returns("~node4Filter~");
@@ -222,6 +238,30 @@ sap.ui.define([
 		oTreeState.setOutOfPlace("~oNode4~");
 
 		// code under test
+		assert.deepEqual(oTreeState.mPredicate2OutOfPlace, {
+			"~node1Predicate~" : {
+				nodeFilter : "~node1Filter~",
+				nodePredicate : "~node1Predicate~",
+				parentFilter : "~parent1Filter~",
+				parentPredicate : "~parent1Predicate~"
+			},
+			"~node3Predicate~" : {
+				nodeFilter : "~node3Filter~",
+				nodePredicate : "~node3Predicate~",
+				parentFilter : "~parent2Filter~",
+				parentPredicate : "~parent2Predicate~"
+			},
+			"~node2Predicate~" : {
+				nodeFilter : "~node2Filter~",
+				nodePredicate : "~node2Predicate~",
+				parentFilter : "~parent1Filter~",
+				parentPredicate : "~parent1Predicate~"
+			},
+			"~node4Predicate~" : {
+				nodeFilter : "~node4Filter~",
+				nodePredicate : "~node4Predicate~"
+			}
+		});
 		assert.deepEqual(oTreeState.getOutOfPlaceGroupedByParent(), [{
 			nodeFilters : ["~node1Filter~", "~node2Filter~"],
 			nodePredicates : ["~node1Predicate~", "~node2Predicate~"],
@@ -234,14 +274,49 @@ sap.ui.define([
 			parentPredicate : "~parent2Predicate~"
 		}, {
 			nodeFilters : ["~node4Filter~"],
-			nodePredicates : ["~node4Predicate~"]
+			nodePredicates : ["~node4Predicate~"],
+			parentFilter : undefined,
+			parentPredicate : undefined
 		}]);
 
 		// code under test
 		oTreeState.reset();
 
 		// code under test
-		assert.deepEqual(oTreeState.getOutOfPlaceGroupedByParent(), []);
+		assert.deepEqual(oTreeState.mPredicate2OutOfPlace, {});
 		assert.strictEqual(oTreeState.getOutOfPlaceCount(), 0);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("deleteOutOfPlace", function (assert) {
+		const oTreeState = new _TreeState("~sNodeProperty~");
+
+		// we ignore the filters as they are not relevant
+		oTreeState.mPredicate2OutOfPlace = {
+			"~node1Predicate~" : {
+				nodePredicate : "~node1Predicate~",
+				parentPredicate : "~parent1Predicate~"
+			},
+			"~node2Predicate~" : {
+				nodePredicate : "~node2Predicate~"
+			},
+			"~node3Predicate~" : {
+				nodePredicate : "~node3Predicate~",
+				parentPredicate : "~node1Predicate~"
+			},
+			"~node4Predicate~" : {
+				nodePredicate : "~node4Predicate~",
+				parentPredicate : "~node3Predicate~"
+			}
+		};
+
+		// code under test
+		oTreeState.deleteOutOfPlace("~node1Predicate~");
+
+		assert.deepEqual(oTreeState.mPredicate2OutOfPlace, {
+			"~node2Predicate~" : {
+				nodePredicate : "~node2Predicate~"
+			}
+		});
 	});
 });
