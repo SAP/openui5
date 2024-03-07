@@ -157,7 +157,7 @@ sap.ui.define(["./PluginBase", "sap/base/Log", "sap/base/strings/formatMessage",
 	}});
 
 	function isHtmlMimeTypeAllowed() {
-		return Boolean(Device.system.desktop && ClipboardItem && navigator.clipboard?.write);
+		return Boolean(Device.system.desktop && window.ClipboardItem && navigator.clipboard?.write);
 	}
 
 	function isCellDataCopyable(vCellData) {
