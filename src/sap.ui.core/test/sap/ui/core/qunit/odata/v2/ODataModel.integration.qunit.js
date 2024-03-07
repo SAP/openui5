@@ -11097,6 +11097,131 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 });
 
 	//*********************************************************************************************
+	// Scenario: Do not show more decimal places than available for the amount/quantity part.
+	// Observe different formats if the scale of the amount part type changes
+	// JIRA: CPOUI5MODELS-1619
+	QUnit.test("CPOUI5MODELS-1619: CurrencyType with currency decimals places > measure scale", function (assert) {
+		const sURLParameter = "CPOUI5MODELS-1619=true"; // unqiue URL for each test needed
+		const oModel = createModel(`/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/?${sURLParameter}`,
+			{defaultBindingMode : "TwoWay", tokenHandling : false});
+		const sView = `\
+<FlexBox binding="{/ProductSet('P1')}">
+	<Input id="price" value="{
+		parts : [{
+			constraints : {precision : 5, scale : 3},
+			path : 'Price',
+			type : 'sap.ui.model.odata.type.Decimal'
+		}, {
+			path : 'CurrencyCode',
+			type : 'sap.ui.model.odata.type.String'
+		}, {
+			mode : 'OneTime',
+			path : '/##@@requestCurrencyCodes',
+			targetType : 'any'
+		}],
+		mode : 'TwoWay',
+		type : 'sap.ui.model.odata.type.Currency',
+		formatOptions : {preserveDecimals : false}
+	}"/>
+</FlexBox>`;
+		let oBindingPart;
+		this.expectRequest(`ProductSet('P1')?${sURLParameter}`, {
+				ProductID : "P1",
+				Price : "12.341",
+				CurrencyCode : "FOO"
+			})
+			.expectRequest(`SAP__Currencies?${sURLParameter}&$skip=0&$top=5000`, {
+				results : [{
+					CurrencyCode : "FOO",
+					DecimalPlaces : 7 // more decimals than Price's scale
+				}]
+			})
+			.expectValue("price", "12.341\u00a0FOO");
+
+		return this.createView(assert, sView, oModel).then(() => {
+			oBindingPart = this.oView.byId("price").getBinding("value").getBindings()[0];
+			this.expectValue("price", "12.3410000\u00a0FOO");
+
+			// code under test
+			oBindingPart.setType(new Decimal(undefined, {precision : 13, scale : "variable"}));
+
+			return this.waitForChanges(assert, "change scale to variable -> currency's decimals wins");
+		}).then(() => {
+			this.expectValue("price", "12.34\u00a0FOO");
+
+			// code under test
+			oBindingPart.setType(new Decimal(undefined, {precision : 13, scale : 2}));
+
+			return this.waitForChanges(assert, "change scale to 2 -> amount type's scale wins");
+		}).then(() => {
+			this.expectValue("price", "12.3410000\u00a0FOO");
+
+			// code under test
+			oBindingPart.setType(new Decimal(undefined, {precision : 13}));
+
+			return this.waitForChanges(assert, "change scale to undefined -> currency's decimals wins");
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Do not show more decimal places than available for the amount/quantity part.
+	// Show that the currency amount is formatted properly regarding the decimal places depending on:
+	// a) the maxFractionDigits formatOption for the unit type
+	// b) the amount part data type's scale and
+	// with a fix currency decimal places of 7 for the used currency
+	// JIRA: CPOUI5MODELS-1600
+[
+	{iMaxFractionDigits: 1, iScale: 3, sExpected: "12.3\u00a0FOO"},  // maxFractionDigits wins
+	{iMaxFractionDigits: 9, iScale: 3, sExpected: "12.3410000\u00a0FOO"}, // currency's decimal places wins
+	{iMaxFractionDigits: undefined, iScale: 3, sExpected: "12.341\u00a0FOO"}, // scale wins
+	{iMaxFractionDigits: undefined, iScale: "'variable'", sExpected: "12.3410000\u00a0FOO"}, // currency's decimal places wins
+	{iMaxFractionDigits: undefined, iScale: undefined, sExpected: "12.3410000\u00a0FOO"} // currency's decimal places wins
+].forEach(({iMaxFractionDigits, iScale, sExpected}, i) => {
+	QUnit.test(`CPOUI5MODELS-1619: CurrencyType with unit maxFractionDigits: ${i}`, function (assert) {
+		const sURLParameter = "CPOUI5MODELS-1619=" + i; // unqiue URL for each test needed
+		const oModel = createModel(`/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/?${sURLParameter}`,
+			{defaultBindingMode : "TwoWay", tokenHandling : false});
+		const sScaleConstraint = iScale ? `, scale : ${iScale}` : "";
+		const sMaxFractionDigitsOption = iMaxFractionDigits ? `, maxFractionDigits : ${iMaxFractionDigits}` : "";
+		const sView = `\
+<FlexBox binding="{/ProductSet('P1')}">
+	<Input id="price" value="{
+		parts : [{
+			constraints : {precision : 13${sScaleConstraint}},
+			path : 'Price',
+			type : 'sap.ui.model.odata.type.Decimal'
+		}, {
+			path : 'CurrencyCode',
+			type : 'sap.ui.model.odata.type.String'
+		}, {
+			mode : 'OneTime',
+			path : '/##@@requestCurrencyCodes',
+			targetType : 'any'
+		}],
+		mode : 'TwoWay',
+		type : 'sap.ui.model.odata.type.Currency',
+		formatOptions : {preserveDecimals : false${sMaxFractionDigitsOption}}
+	}" />
+</FlexBox>`;
+
+		this.expectRequest(`ProductSet('P1')?${sURLParameter}`, {
+				ProductID : "P1",
+				Price : "12.341",
+				CurrencyCode : "FOO"
+			})
+			.expectRequest(`SAP__Currencies?${sURLParameter}&$skip=0&$top=5000`, {
+				results : [{
+					CurrencyCode : "FOO",
+					DecimalPlaces : 7 // more decimals than Price's scale
+				}]
+			})
+			.expectValue("price", sExpected);
+
+		return this.createView(assert, sView, oModel);
+	});
+});
+
+	//*********************************************************************************************
 	// Scenario: If the OData service has no customizing for currencies, the OData Currency type
 	// uses the UI5 built-in CLDR information for formatting and parsing.
 	// JIRA: CPOUI5MODELS-423

@@ -49,6 +49,25 @@ sap.ui.define([
 		});
 	});
 
+	//*********************************************************************************************
+[
+	// either maxFractionDigits or decimals is undefined -> take decimals
+	{oFormatOptions: {maxFractionDigits: undefined, decimals: "~decimals"}, iResult: "~decimals"},
+	{oFormatOptions: {maxFractionDigits: 1, decimals: undefined}, iResult: undefined},
+	// one of the the numeric values < 0 -> take decimals
+	{oFormatOptions: {maxFractionDigits: -1, decimals: 5}, iResult: 5},
+	{oFormatOptions: {maxFractionDigits: 2, decimals: -5}, iResult: -5},
+	// the minimum of the 2 numeric values
+	{oFormatOptions: {maxFractionDigits: 0, decimals: 1}, iResult: 0},
+	{oFormatOptions: {maxFractionDigits: Infinity, decimals: 24}, iResult: 24},
+	{oFormatOptions: {maxFractionDigits: 42, decimals: Infinity}, iResult: 42}
+].forEach(({oFormatOptions, iResult}) => {
+	QUnit.test(`getMaximalDecimals, formatOptions: ${JSON.stringify(oFormatOptions)}`, function (assert) {
+		// code under test
+		assert.strictEqual(NumberFormat.getMaximalDecimals(oFormatOptions), iResult);
+	});
+});
+
 	QUnit.test("Constructor call leads to error", function(assert) {
 		assert.throws(function() {
 			new NumberFormat();
@@ -1668,29 +1687,28 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("Unit formatOptions: take min of maxFractionDigits and decimals", function (assert) {
+[// integrative tests for NumberFormat#getMaximalDecimals
+	{iDecimals: 3, iMaxFractionDigits: 4, iValue: 1234.5678, sExpected: "1,234.568 Cats"},
+	{iDecimals: 3, iMaxFractionDigits: 2, iValue: 1234.567, sExpected: "1,234.57 Cats"},
+	{iDecimals: undefined, iMaxFractionDigits: 1, iValue: 1234.56789, sExpected: "1,234.6 Cats"},
+	{iDecimals: 1, iMaxFractionDigits: undefined, iValue: 1234.56789, sExpected: "1,234.6 Cats"}
+].forEach(({iDecimals, iMaxFractionDigits, iValue, sExpected}, i) => {
+	QUnit.test("Unit formatOptions: take min of maxFractionDigits and decimals: " + i, function (assert) {
 		const oFormatOptions = {
-			customUnits : {cats : {"unitPattern-count-other" : "{0} Cats", decimals : 3}},
-			maxFractionDigits : 4
+			customUnits: {cats: {"unitPattern-count-other": "{0} Cats", decimals: iDecimals}},
+			maxFractionDigits: iMaxFractionDigits
 		};
+		this.mock(NumberFormat).expects("getMaximalDecimals")
+			.withExactArgs(sinon.match((oFormatOptions0) =>
+				( oFormatOptions0.maxFractionDigits === (iMaxFractionDigits || 99) // undefined defaulted to 99
+					&& oFormatOptions0.customUnits.cats.decimals === iDecimals )
+			))
+			.callThrough();
 
-		// code under test: decimals < maxFractionDigits
-		assert.strictEqual(NumberFormat.getUnitInstance(oFormatOptions).format(1234.5678, "cats"), "1,234.568 Cats");
-
-		// code under test: maxFractionDigits < decimals
-		oFormatOptions.maxFractionDigits = 2;
-		assert.strictEqual(NumberFormat.getUnitInstance(oFormatOptions).format(1234.567, "cats"), "1,234.57 Cats");
-
-		// code under test: decimals undefined
-		oFormatOptions.maxFractionDigits = 1;
-		oFormatOptions.customUnits.cats.decimals = undefined;
-		assert.strictEqual(NumberFormat.getUnitInstance(oFormatOptions).format(1234.56789, "cats"), "1,234.6 Cats");
-
-		// code under test: maxFractionDigits undefined
-		oFormatOptions.maxFractionDigits = undefined;
-		oFormatOptions.customUnits.cats.decimals = 1;
-		assert.strictEqual(NumberFormat.getUnitInstance(oFormatOptions).format(1234.56789, "cats"), "1,234.6 Cats");
+		// code under test
+		assert.strictEqual(NumberFormat.getUnitInstance(oFormatOptions).format(iValue, "cats"), sExpected);
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("Unit parse custom pattern", function (assert) {
