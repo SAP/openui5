@@ -767,6 +767,18 @@ sap.ui.define([
 					only: ["sap/ui/fl/write/_internal/delegates/ODataV4ReadDelegate"]
 				}
 			},
+			"write/_internal/delegates/ODataV2ReadDelegate": {
+				group: "Write Internal",
+				coverage: {
+					only: ["sap/ui/fl/write/_internal/delegates/ODataV2ReadDelegate"]
+				},
+				ui5: {
+					resourceroots: {
+						"sap.ui.fl.test.delegate": "test-resources/sap/ui/fl/qunit/write/_internal/delegates/testdata"
+					},
+					language: "en"
+				}
+			},
 			"write/_internal/extensionPoint/Processor": {
 				group: "Write Internal",
 				coverage: {

@@ -1,0 +1,21 @@
+{
+    "d" : {
+      "results": [
+        {
+          "__metadata": {
+            "type": "AdditionalElementsTest.EntityType01"
+          },
+          "Property01": "propValue01",
+          "Property10-Controlled-by-Field-Control": "PropValue10",
+          "FieldControlForProperty10": 0,
+          "EntityType01_Complex": {
+            "__metadata": {
+              "type": "AdditionalElementsTest.ComplexType03"
+            },
+            "ComplexProperty031" : "ComplexProperty031Value"
+          }
+        }
+      ]
+    }
+  }
+  
