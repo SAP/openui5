@@ -378,10 +378,8 @@
 	background-color: @sapUiListSelectionHoverBackground;
 }
 
-.sapTntNavLI:not(.sapTntNavLIPopup) {
-	li:not(:last-of-type) .sapTntNavLIItem {
-		margin-bottom: @_sap_tnt_NavigationList_ItemBottomMargin;
-	}
+.sapTntNavLI:not(.sapTntNavLIPopup) li .sapTntNavLIItem {
+	margin-bottom: @_sap_tnt_NavigationList_ItemBottomMargin;
 }
 
 .sapTntNavLICollapsed .sapTntNavLIItemSelected:not(.sapTntNavLIItemDisabled):not(.sapTntNavLIActive) {
@@ -587,10 +585,8 @@
 		}
 	}
 
-	.sapTntNavLI:not(.sapTntNavLIPopup) {
-		li:not(:last-of-type) .sapTntNavLIItem {
-			margin-bottom: @_sap_tnt_NavigationList_ItemBottomMarginCompact;
-		}
+	.sapTntNavLI:not(.sapTntNavLIPopup) li .sapTntNavLIItem {
+		margin-bottom: @_sap_tnt_NavigationList_ItemBottomMarginCompact;
 	}
 
 	.sapTntNavLICollapsed {
