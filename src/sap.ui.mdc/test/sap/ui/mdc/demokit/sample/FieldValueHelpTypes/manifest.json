@@ -1,0 +1,66 @@
+{
+	"_version": "1.60.0",
+	"sap.app": {
+		"id": "sap.ui.mdc.demokit.sample.FieldValueHelpTypes",
+		"type": "application",
+		"title": "Fields for different types",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"dataSources": {
+			"DataSource": {
+			  "type": "JSON",
+			  "uri": "./model/data.json"
+			}
+		}
+  	},
+	  "sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
+	},
+	"sap.ui5": {
+        "config": {
+            "sample": {
+                "files": [
+                    "View.view.xml",
+                    "Controller.controller.js",
+					"ValueHelpDelegate.js",
+					"model/data.json"
+                ]
+            }
+        },
+		"resourceRoots": {
+            "mdc.sample": "./"
+        },
+		"rootView": {
+			"viewName": "sap.ui.mdc.demokit.sample.FieldValueHelpTypes.View",
+			"type": "XML",
+			"async": true,
+			"id": "sample"
+		},
+		"dependencies": {
+			"minUI5Version": "1.121.0",
+			"libs": {
+				"sap.ui.core": {},
+				"sap.ui.layout": {},
+				"sap.ui.mdc": {},
+				"sap.m": {}
+			}
+		},
+		"handleValidation": true,
+		"contentDensities": {
+			"compact": true,
+			"cozy": true
+		},
+		"models": {
+			"data": {
+				"type": "sap.ui.model.json.JSONModel",
+				"dataSource": "DataSource"
+			  }
+		}
+	}
+}

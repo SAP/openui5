@@ -67,6 +67,7 @@
 				"samples": [
 					"sap.ui.mdc.demokit.sample.TableFilterBarJson",
 					"sap.ui.mdc.demokit.sample.FieldValueHelpJson",
+					"sap.ui.mdc.demokit.sample.FieldValueHelpTypes",
 					"sap.ui.mdc.demokit.sample.FieldCustomContent",
 					"sap.ui.mdc.demokit.sample.FieldTypes",
 					"sap.ui.mdc.demokit.sample.MultiValueField",
@@ -173,6 +174,11 @@
 				"id": "sap.ui.mdc.demokit.sample.FieldValueHelpJson",
 				"name": "Field with ValueHelp and JSON model",
 				"description": "A field and value help setup including a sophisticated value help dialog with filter and search capabilities."
+			},
+			{
+				"id": "sap.ui.mdc.demokit.sample.FieldValueHelpTypes",
+				"name": "Field with different types of ValueHelp and JSON model",
+				"description": "Shows different types of ValueHelps."
 			},
 			{
 				"id": "sap.ui.mdc.demokit.sample.FieldCustomContent",
