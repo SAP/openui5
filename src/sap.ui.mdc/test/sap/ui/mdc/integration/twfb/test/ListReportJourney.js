@@ -31,11 +31,11 @@ sap.ui.define([
 	});
 
 	const oModuleSettings = {
-		beforeEach: function() {},
-		afterEach: function() {
+		beforeEach: function() {
 			// in case the flex/variant changes are stored in the local browser storage
 			localStorage.clear();
-		}
+		},
+		afterEach: function() {}
 	};
 
 	QUnit.module("ListReport - Books Page Table", oModuleSettings);

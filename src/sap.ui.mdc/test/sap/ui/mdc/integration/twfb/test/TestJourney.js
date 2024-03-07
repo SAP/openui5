@@ -31,10 +31,6 @@ sap.ui.define([
 		// not have any effect on the success rate of the tests.
 		timeout: 45,
 
-
-		appParams: {
-			"sap-ui-xx-complexP13n": true
-		},
 		actions: new Opa5({
 			iToggleTheValueHelpListItem: function (sText, sValueHelpId) {
 				return ValueHelpActions.iToggleTheValueHelpListItem.call(this, sText, sValueHelpId);
