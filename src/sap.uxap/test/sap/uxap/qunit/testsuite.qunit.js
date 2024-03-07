@@ -181,7 +181,7 @@ sap.ui.define(function () {
 				}
 			},
 			/**
-			 * @deprecated since 1.122
+			 * @deprecated since 1.120
 			 */
 			"ObjectPageWithLazyLoadingTabs": {
 				coverage: {
