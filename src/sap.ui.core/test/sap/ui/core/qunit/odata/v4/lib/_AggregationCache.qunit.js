@@ -1751,33 +1751,34 @@ sap.ui.define([
 	iFirstLevelLength : 3,
 	iExpectedStart : 0,
 	iExpectedLength : 33
-}, {
+}, { // prefetch wins; less than iStart
 	iFirstLevelIndex : 25,
 	iFirstLevelLength : 1,
 	iOutOfPlaceCount : 5,
 	iPrefetchLength : 10,
-	iExpectedStart : 10,
-	iExpectedLength : 26
-}, {
-	iFirstLevelIndex : 21,
-	iFirstLevelLength : 1,
-	iOutOfPlaceCount : 5,
-	iExpectedStart : 0,
-	iExpectedLength : 42
-}, {
-	iFirstLevelIndex : 20,
-	iFirstLevelLength : 1,
-	iOutOfPlaceCount : 5,
-	iPrefetchLength : 0,
 	iExpectedStart : 15,
-	iExpectedLength : 6
-}, {
+	iExpectedLength : 21
+}, { // out of place count wins; less than iStart
+	iFirstLevelIndex : 25,
+	iFirstLevelLength : 1,
+	iOutOfPlaceCount : 10,
+	iPrefetchLength : 5,
+	iExpectedStart : 15,
+	iExpectedLength : 16
+}, { // prefetch wins; more than iStart
+	iFirstLevelIndex : 2,
+	iFirstLevelLength : 1,
+	iOutOfPlaceCount : 3,
+	iPrefetchLength : 5,
+	iExpectedStart : 0,
+	iExpectedLength : 8
+}, { // out of place count wins; more than iStart
 	iFirstLevelIndex : 2,
 	iFirstLevelLength : 1,
 	iOutOfPlaceCount : 5,
-	iPrefetchLength : 0,
+	iPrefetchLength : 1,
 	iExpectedStart : 0,
-	iExpectedLength : 3
+	iExpectedLength : 4
 }].forEach(function (oFixture, i) {
 	QUnit.test("readFirst: #" + i, function (assert) {
 		var oAggregation = { // filled before by buildApply
