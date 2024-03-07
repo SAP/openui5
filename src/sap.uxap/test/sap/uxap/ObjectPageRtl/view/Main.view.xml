@@ -1,0 +1,37 @@
+<mvc:View
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.uxap"
+	xmlns:m="sap.m"
+	xmlns:layout="sap.ui.layout"
+	xmlns:html="http://www.w3.org/1999/xhtml"
+	displayBlock="true"
+	height="100%">
+	<m:App>
+		<ObjectPageLayout
+			showTitleInHeaderContent="true"
+			alwaysShowContentHeader="false"
+			showHeaderContent="true"
+			useIconTabBar="true"
+			isChildPage="true">
+			<headerTitle>
+				<ObjectPageDynamicHeaderTitle>
+					<heading>
+						<m:Title text="ObjectPage with scrollbar in RTL"/>
+					</heading>
+					</ObjectPageDynamicHeaderTitle>
+				</headerTitle>
+				<sections>
+					<ObjectPageSection id="goalsSection" title="">
+						<subSections>
+							<ObjectPageSubSection id="goalsSubSection">
+								<blocks>
+									<html:div style="height: 3000px">
+									</html:div>
+								</blocks>
+							</ObjectPageSubSection>
+						</subSections>
+					</ObjectPageSection>
+				</sections>
+			</ObjectPageLayout>
+	</m:App>
+</mvc:View>

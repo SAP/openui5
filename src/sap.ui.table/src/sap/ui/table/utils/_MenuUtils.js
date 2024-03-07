@@ -92,10 +92,10 @@ sap.ui.define([
 				return;
 			}
 
-			if (oTable.getContextMenu()) {
-				MenuUtils._openCustomContentCellContextMenu(oTable, oCellInfo, oEvent);
-			} else {
+			if (oRow.isGroupHeader() || oRow.isSummary() || !oTable.getContextMenu()) {
 				MenuUtils._openDefaultContentCellContextMenu(oTable, oCellInfo, oEvent);
+			} else {
+				MenuUtils._openCustomContentCellContextMenu(oTable, oCellInfo, oEvent);
 			}
 		},
 
@@ -113,10 +113,6 @@ sap.ui.define([
 		_openCustomContentCellContextMenu: function(oTable, oCellInfo, oEvent) {
 			var oRow = oTable.getRows()[oCellInfo.rowIndex];
 			var oContextMenu = oTable.getContextMenu();
-
-			if (oRow.isGroupHeader() || oRow.isSummary()) {
-				return;
-			}
 
 			oContextMenu.setBindingContext(oRow.getRowBindingContext(), oTable.getBindingInfo("rows").model);
 

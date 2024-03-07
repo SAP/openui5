@@ -1113,11 +1113,16 @@ sap.ui.define([
 				}
 			}
 
+			let sGroupId = oOperator.exclude ? "2" : "1";
+			if (oOperator.group.text && oOperator.group.id) {
+				// only use the group.id when a text exist. This might be not the case for DynamicDatRange custom operators inside existing groups
+				sGroupId = oOperator.group.id;
+			}
 			aOperatorsData.push({
 				key: oOperator.name,
 				text: sText,
 				additionalText: sAdditionalText,
-				groupId: oOperator.group.id,
+				groupId: sGroupId,
 				groupText: oOperator.group.text
 			});
 		}

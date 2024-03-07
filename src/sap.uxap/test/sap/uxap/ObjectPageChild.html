@@ -1,123 +1,27 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html>
-<head>
-	<title>sap.uxap.ObjectPage</title>
-	<script src="shared-config.js"></script>
-	<script src="../../../resources/sap-ui-core.js"
-			id="sap-ui-bootstrap" data-sap-ui-libs="sap.m,sap.uxap,sap.ui.layout">
-	</script>
-	<script id="view1" type="sapui5/xmlview">
-		<core:View
-				xmlns="sap.uxap"
-				xmlns:core="sap.ui.core"
-				xmlns:layout="sap.ui.layout"
-				xmlns:m="sap.m"
-				height="100%">
-			<ObjectPageLayout id="ObjectPageLayout" isChildPage="true">
-				<headerTitle>
-					<ObjectPageHeader id="headerForTest"
-									  objectTitle="Long title that wraps and goes over more lines"
-									  showTitleSelector="true"
-									  titleSelectorPress="handleTitleSelectorPress"
-									  showMarkers="true"
-									  markFavorite="true"
-									  markLocked="true"
-									  markFlagged="true"
-									  markLockedPress="handleMarkLockedPress"
-									  objectSubtitle="Long subtitle that wraps and goes over more lines"
-									  objectImageShape="Circle"
-									  objectImageURI="./images/imageID_275314.png">
-						<actions>
-							<ObjectPageHeaderActionButton icon="sap-icon://action" text="action" importance="Low"/>
-							<ObjectPageHeaderActionButton icon="sap-icon://action-settings" text="settings" importance="Low"/>
-							<ObjectPageHeaderActionButton icon="sap-icon://edit" text="edit" importance="Medium"/>
-							<ObjectPageHeaderActionButton icon="sap-icon://save" text="save" visible="false"/>
-							<ObjectPageHeaderActionButton icon="sap-icon://refresh" text="refresh"/>
-							<ObjectPageHeaderActionButton icon="sap-icon://attachment" text="attach"/>
-						</actions>
-						<breadcrumbs>
-							<m:Breadcrumbs>
-								<m:Link text="Page 1 a very long link" press="handleLink1Press"/>
-								<m:Link text="Page 2 long link" press="handleLink2Press"/>
-							</m:Breadcrumbs>
-					   </breadcrumbs>
-					</ObjectPageHeader>
-				</headerTitle>
-				<headerContent>
-					<layout:VerticalLayout>
-						<m:ObjectStatus title="User ID" text="12345678"/>
-						<m:ObjectStatus title="Functional Area" text="Developement"/>
-						<m:ObjectStatus title="Cost Center" text="PI DFA GD Programs and Product"/>
-						<m:ObjectStatus title="Email" text="email@address.com"/>
-					</layout:VerticalLayout>
-					<m:Text width="200px"
-							text="Hi, I'm Denise. I am passionate about what I do and I'll go the extra mile to make the customer win."/>
-					<m:ObjectStatus text="In Stock" state="Error"/>
-					<m:ObjectStatus title="Label" text="In Stock" state="Warning"/>
-					<m:ObjectNumber number="1000" numberUnit="SOOK" emphasized="false" state="Success"/>
-					<m:ProgressIndicator
-							percentValue="30"
-							displayValue="30%"
-							showValue="true"
-							state="None"/>
-					<layout:VerticalLayout>
-						<layout:layoutData>
-							<ObjectPageHeaderLayoutData
-									showSeparatorAfter="false"/>
-						</layout:layoutData>
-						<m:Label text="PC, Unrestricted-Use Stock"/>
-						<m:ObjectNumber class="sapMObjectNumberLarge" number="219" numberUnit="K"></m:ObjectNumber>
-					</layout:VerticalLayout>
-					<layout:VerticalLayout>
-						<layout:layoutData>
-							<ObjectPageHeaderLayoutData
-									visibleS="false"
-									showSeparatorAfter="false"/>
-						</layout:layoutData>
-						<m:Label text="PC, Not in Small Size"/>
-						<m:ObjectNumber class="sapMObjectNumberLarge" number="220" numberUnit="K"></m:ObjectNumber>
-					</layout:VerticalLayout>
-					<layout:VerticalLayout>
-						<layout:layoutData>
-							<ObjectPageHeaderLayoutData
-									visibleM="false"
-									showSeparatorAfter="false"/>
-						</layout:layoutData>
-						<m:Label text="PC, Not in Medium Size"/>
-						<m:ObjectNumber class="sapMObjectNumberLarge" number="221" numberUnit="K"></m:ObjectNumber>
-					</layout:VerticalLayout>
-					<layout:VerticalLayout>
-						<layout:layoutData>
-							<ObjectPageHeaderLayoutData
-									visibleL="false"
-									showSeparatorAfter="true"/>
-						</layout:layoutData>
-						<m:Label text="PC, Not in Large Size"/>
-						<m:ObjectNumber class="sapMObjectNumberLarge" number="219" numberUnit="K"></m:ObjectNumber>
-					</layout:VerticalLayout>
-					<m:ObjectAttribute title="Label" text="In Stock"/>
-					<m:Button icon="sap-icon://nurse"/>
-					<m:Tokenizer>
-						<m:Token text="Wayne Enterprises"/>
-						<m:Token text="Big's Caramels"/>
-					</m:Tokenizer>
-					<m:RatingIndicator maxValue="8" class="sapUiSmallMarginBottom" value="4" tooltip="Rating Tooltip"/>
-				</headerContent>
-			</ObjectPageLayout>
-		</core:View>
-	</script>
-</head>
-<body id="body" class="sapUiBody">
-<script>
-	(function (jQuery, App, Page) {
-		var oApp = new App(),
-		 	myView = sap.ui.xmlview({viewContent:jQuery('#view1').html()});
-		oApp.addPage(new Page({
-			title: "ObjectPage",
-			content: [myView]
-		})).placeAt("content");
-	}(jQuery, sap.m.App, sap.m.Page))
-</script>
-<div id="content"></div>
-</body>
+    <head>
+        <title>sap.uxap.ObjectPage</title>
+        <script src="shared-config.js"></script>
+        <script
+            id="sap-ui-bootstrap"
+            type="text/javascript"
+            src="../../../resources/sap-ui-core.js"
+            data-sap-ui-theme="sap_horizon"
+            data-sap-ui-libs="sap.m,sap.uxap,sap.ui.layout"
+            data-sap-ui-async="true"
+            data-sap-ui-compatVersion="edge"
+            data-sap-ui-xx-bindingSyntax="complex"
+            data-sap-ui-oninit="module:sap/ui/core/ComponentSupport"
+            data-sap-ui-resourceroots='{
+			"sap.uxap.ObjectPageChild": "./ObjectPageChild"
+		}'
+        ></script>
+    </head>
+    <body class="sapUiBody" id="content">
+        <div
+            data-sap-ui-component
+            data-name="sap.uxap.ObjectPageChild"
+        ></div>
+    </body>
 </html>

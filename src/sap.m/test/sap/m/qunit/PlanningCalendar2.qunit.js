@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/unified/calendar/CalendarDate",
+	"sap/ui/unified/calendar/IndexPicker",
 	"sap/ui/unified/DateRange",
 	"sap/ui/unified/DateTypeRange",
 	"sap/ui/unified/CalendarLegendRenderer",
@@ -47,6 +48,7 @@ sap.ui.define([
 	nextUIUpdate,
 	JSONModel,
 	CalendarDate,
+	IndexPicker,
 	DateRange,
 	DateTypeRange,
 	CalendarLegendRenderer,
@@ -1826,6 +1828,44 @@ sap.ui.define([
 
 		// cleanup
 		oPC.destroy();
+	});
+
+	QUnit.test("custom view index picker opens correctly", async function (assert) {
+		// Arrange
+		const oView = new PlanningCalendarView({
+				key: "customView",
+				intervalType: "Day",
+				relative: true,
+				description: "Project in Weeks",
+				intervalSize: 7,
+				intervalLabelFormatter: function(iIntervalIndex) {
+					return "Week " + (iIntervalIndex + 1);
+				},
+				intervalsS: 4,
+				intervalsM: 8,
+				intervalsL: 13
+			});
+
+		this.oPC.addView(oView);
+		this.oPC.setViewKey("customView");
+		this.oPC.placeAt("bigUiArea");
+		await nextUIUpdate();
+
+		const oHeader = this.oPC._getHeader();
+		const oOpenPickerSpy = this.spy(oHeader._oPickerBtn, 'firePress');
+
+		// Act
+		oHeader._oPickerBtn.firePress();
+		await nextUIUpdate();
+
+		// Assert
+		assert.strictEqual(oOpenPickerSpy.callCount, 1, "Open picker fired once");
+
+		// Act
+		const oPicker = oHeader._oPopup.getContent()[0];
+
+		// Assert
+		assert.ok(oPicker instanceof IndexPicker, "Index picker is open in popup");
 	});
 
 	QUnit.test("Error should be thrown if view with key equal to 'viewKey' value doesn't exist", function(assert) {

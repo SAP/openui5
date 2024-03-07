@@ -851,7 +851,7 @@
 		"ISOCode" : "KWH",
 		"ExternalCode" : "KWH",
 		"Text" : "Kilowatt hours",
-		"DecimalPlaces" : 0
+		"DecimalPlaces" : 99
 	}, {
 		"UnitCode" : "KWK",
 		"ISOCode" : "",

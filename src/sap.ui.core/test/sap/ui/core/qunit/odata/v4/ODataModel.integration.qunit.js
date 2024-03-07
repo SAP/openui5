@@ -26,6 +26,7 @@ sap.ui.define([
 	"sap/ui/model/FilterType",
 	"sap/ui/model/Sorter",
 	"sap/ui/model/odata/OperationMode",
+	"sap/ui/model/odata/type/Decimal",
 	"sap/ui/model/odata/v4/AnnotationHelper",
 	"sap/ui/model/odata/v4/ODataListBinding",
 	"sap/ui/model/odata/v4/ODataMetaModel",
@@ -41,8 +42,8 @@ sap.ui.define([
 ], function (Log, Localization, uid, ColumnListItem, CustomListItem, FlexBox, _MessageStrip,
 		Text, Device, EventProvider, SyncPromise, Messaging, Rendering, Supportability, Message,
 		Controller, View, ChangeReason, Filter, FilterOperator, FilterType, Sorter, OperationMode,
-		AnnotationHelper, ODataListBinding, ODataMetaModel, ODataModel, ODataPropertyBinding,
-		ValueListType, _Helper, Security, TestUtils, XMLHelper) {
+		Decimal, AnnotationHelper, ODataListBinding, ODataMetaModel, ODataModel,
+		ODataPropertyBinding, ValueListType, _Helper, Security, TestUtils, XMLHelper) {
 	/*eslint no-sparse-arrays: 0, "max-len": ["error", {"code": 100,
 		"ignorePattern": "/sap/opu/odata4/|\" :$|\" : \\{$|\\{meta>"}], */
 	"use strict";
@@ -43375,6 +43376,9 @@ sap.ui.define([
 	// No own test as unit value list is cached in a private cache
 	// JIRA: CPOUI5MODELS-302
 	// Transport sap-language (BCP: 2270119565)
+	// Show that the amount scale is used instead of the unit decimal places. Change the type of the
+	// binding part for the amount to see that this is also considered in the output format.
+	// JIRA: CPOUI5MODELS-1606
 	QUnit.test("OData Unit type considering unit customizing", function (assert) {
 		var oControl,
 			oModel = this.createModel(sSalesOrderService + "?sap-client=123", {
@@ -43431,9 +43435,9 @@ sap.ui.define([
 				}]
 			})
 			.expectChange("weightMeasure", "12.340") // Scale=3 in property metadata => 3 decimals
-			.expectChange("weight", "12.34000 KG")
-			.expectChange("weight0", "12.34000")
-			.expectChange("weight1", "12.34000");
+			.expectChange("weight", "12.340 KG")
+			.expectChange("weight0", "12.340")
+			.expectChange("weight1", "12.340");
 
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectMessages([{
@@ -43468,9 +43472,11 @@ sap.ui.define([
 			// remove model messages again
 			oModel.reportStateMessages("ProductList", {});
 		}).then(function () {
-			that.expectChange("weight", "23.40000 KG")
-				.expectChange("weight0", "23.40000")
-				.expectChange("weight1", "23.40000")
+			oControl = that.oView.byId("weight");
+
+			that.expectChange("weight", "23.400 KG")
+				.expectChange("weight0", "23.400")
+				.expectChange("weight1", "23.400")
 				.expectChange("weightMeasure", "23.400")
 				.expectRequest({
 					method : "PATCH",
@@ -43479,13 +43485,42 @@ sap.ui.define([
 					payload : {WeightMeasure : "23.4", WeightUnit : "KG"}
 				});
 
-			that.oView.byId("weight").getBinding("value").setRawValue(["23.4", "KG"]);
+			oControl.getBinding("value").setRawValue(["23.4", "KG"]);
 
 			return that.waitForChanges(assert);
 		}).then(function () {
+			// this change happens twice because PropertyBinding#setType fires change via
+			// fnTypeChangedCallback and v4.ODataPropertyBinding#setType itself fires changes also.
+			// This is ok because the usecase for changing a binding part's type of a composite
+			// binding is very rare.
+			that.expectChange("weight", "23.40 KG")
+				.expectChange("weight", "23.40 KG");
+
+			// code under test: change scale of amount part from 3 to 2
+			oControl.getBinding("value").getBindings()[0].setType(
+				new Decimal(undefined, {precision : 13, scale : 2}));
+
+			return that.waitForChanges(assert, "JIRA: CPOUI5MODELS-1606");
+		}).then(function () {
+			that.expectChange("weight", "34.51 KG")
+				.expectChange("weightMeasure", "34.510")
+				.expectChange("weight0", "34.510")
+				.expectChange("weight1", "34.510")
+				.expectRequest({
+					method : "PATCH",
+					url : "ProductList('HT-1000')?sap-client=123",
+					headers : {"If-Match" : "ETag"},
+					payload : {WeightMeasure : "34.51", WeightUnit : "KG"}
+				});
+
+			// code under test: for amount change the event for "weight" happens only once
+			oControl.getBinding("value").setRawValue(["34.51", "KG"]);
+
+			return that.waitForChanges(assert, "JIRA: CPOUI5MODELS-1606");
+		}).then(function () {
 			that.expectChange("weightMeasure", "0.000")
-				.expectChange("weight0", "0.00000")
-				.expectChange("weight1", "0.00000")
+				.expectChange("weight0", "0.000")
+				.expectChange("weight1", "0.000")
 				.expectRequest({
 					method : "PATCH",
 					url : "ProductList('HT-1000')?sap-client=123",
@@ -43493,7 +43528,6 @@ sap.ui.define([
 					payload : {WeightMeasure : "0", WeightUnit : "KG"}
 				});
 
-			oControl = that.oView.byId("weight");
 			// remove the formatter so that we can call setValue at the control
 			oControl.getBinding("value").setFormatter(null);
 
@@ -43503,7 +43537,7 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			// Check that the previous setValue led to the correct result
-			assert.strictEqual(oControl.getValue(), "0.00000 KG");
+			assert.strictEqual(oControl.getValue(), "0.00 KG");
 
 			that.expectMessages([{
 					message : "EnterNumberFraction 5",

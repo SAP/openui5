@@ -391,6 +391,73 @@ sap.ui.define([
 		CompositeBinding.prototype.setType.call(oCompositeBinding, oType, "~internalType");
 	});
 
+	QUnit.test("CompositeBinding: setType, register binding parts for type changes", function(assert) {
+		const oPart0 = {getType() {}, registerTypeChanged() {}};
+		const oPart1 = {getType() {}, registerTypeChanged() {}};
+		const oPart2 = {getType() {}, registerTypeChanged() {}};
+		const oCompositeBinding = {aBindings : [oPart0, oPart1, oPart2]};
+		const oCompositeType = new CompositeType();
+		const oCompositeTypeMock = this.mock(oCompositeType);
+		const oPart0Mock = this.mock(oPart0);
+		const oPart1Mock = this.mock(oPart1);
+		const oPart2Mock = this.mock(oPart2);
+		const oPropertyBindingMock = this.mock(PropertyBinding.prototype);
+
+		oPropertyBindingMock.expects("setType").withExactArgs(oCompositeType, "~internalType").callThrough();
+		oCompositeTypeMock.expects("getPartsIgnoringMessages").withExactArgs().returns([]);
+		oCompositeTypeMock.expects("getUseRawValues").withExactArgs();
+		oCompositeTypeMock.expects("getUseInternalValues").withExactArgs();
+		oPart0Mock.expects("getType").withExactArgs().returns("~type0");
+		oPart1Mock.expects("getType").withExactArgs().returns("~type1");
+		oPart2Mock.expects("getType").withExactArgs().returns("~type2");
+		oCompositeTypeMock.expects("processPartTypes").withExactArgs(["~type0", "~type1", "~type2"]);
+		oPart0Mock.expects("registerTypeChanged").never();
+		oPart1Mock.expects("registerTypeChanged").never();
+		oPart2Mock.expects("registerTypeChanged").never();
+		oCompositeTypeMock.expects("getPartsListeningToTypeChanges").withExactArgs().returns([]);
+
+		// code under test (no relevant type)
+		CompositeBinding.prototype.setType.call(oCompositeBinding, oCompositeType, "~internalType");
+
+		oPropertyBindingMock.expects("setType").withExactArgs(oCompositeType, "~internalType").callThrough();
+		oCompositeTypeMock.expects("getPartsIgnoringMessages").withExactArgs().returns([]);
+		oCompositeTypeMock.expects("getUseRawValues").withExactArgs();
+		oCompositeTypeMock.expects("getUseInternalValues").withExactArgs();
+		oPart0Mock.expects("getType").withExactArgs().returns("~type0");
+		oPart1Mock.expects("getType").withExactArgs().returns("~type1");
+		oPart2Mock.expects("getType").withExactArgs().returns("~type2");
+		oCompositeTypeMock.expects("processPartTypes").withExactArgs(["~type0", "~type1", "~type2"]);
+		oCompositeTypeMock.expects("getPartsListeningToTypeChanges").withExactArgs().returns([0,2]);
+		const oExpectation0 = oPart0Mock.expects("registerTypeChanged").withExactArgs(sinon.match.func);
+		oPart1Mock.expects("registerTypeChanged").never();
+		const oExpectation2 = oPart2Mock.expects("registerTypeChanged").withExactArgs(sinon.match.func);
+
+		// code under test (relevant types for binding part 0 and 2)
+		CompositeBinding.prototype.setType.call(oCompositeBinding, oCompositeType, "~internalType");
+
+		oPart0Mock.expects("getType").withExactArgs().returns("~type0");
+		oPart1Mock.expects("getType").withExactArgs().returns("~type1");
+		oPart2Mock.expects("getType").withExactArgs().returns("~type2");
+		oCompositeTypeMock.expects("processPartTypes").withExactArgs(["~type0", "~type1", "~type2"]);
+
+		// code under test (callback triggered via binding part0 type change)
+		oExpectation0.firstCall.args[0]();
+
+		oPart0Mock.expects("getType").withExactArgs().returns("~type0");
+		oPart1Mock.expects("getType").withExactArgs().returns("~type1");
+		oPart2Mock.expects("getType").withExactArgs().returns("~type2");
+		oCompositeTypeMock.expects("processPartTypes").withExactArgs(["~type0", "~type1", "~type2"]);
+
+		// code under test (callback triggered via binding part2 type change)
+		oExpectation2.firstCall.args[0]();
+
+		oPropertyBindingMock.expects("setType").withExactArgs(null, "~internalType").callThrough();
+		CompositeBinding.prototype.setType.call(oCompositeBinding, null, "~internalType");
+
+		// code under test (change part2 inner type after composite type was reset)
+		oExpectation2.firstCall.args[0]();
+	});
+
 	QUnit.module("sap.ui.model.CompositeBinding: With inner types/formatters", {
 		before() {
 			this.__ignoreIsolatedCoverage__ = true;

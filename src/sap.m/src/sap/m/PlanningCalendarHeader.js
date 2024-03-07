@@ -371,9 +371,11 @@ function(
 						sCurrentPickerId = this.getAssociation("currentPicker"),
 						oMinDate;
 					oPicker = Element.getElementById(sCurrentPickerId);
-					oMinDate = oPicker.getMinDate();
-					if (oMinDate && oMinDate.getTime() > oDate.getTime()) {
-						oDate = oMinDate;
+					if (oPicker instanceof Calendar) {
+						oMinDate = oPicker.getMinDate();
+						if (oMinDate && oMinDate.getTime() > oDate.getTime()) {
+							oDate = oMinDate;
+						}
 					}
 					if (oPicker.displayDate) {
 						oPicker.displayDate(oDate);

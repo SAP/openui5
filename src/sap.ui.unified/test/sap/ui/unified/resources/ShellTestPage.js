@@ -196,8 +196,6 @@ sap.ui.define([
 
 		renderer: function(rm, ctrl){
 			rm.write("<div");
-			rm.writeAttribute("class", "SearchFieldPlaceHolder");
-			rm.writeAttribute("tabindex", "0");
 			rm.write(">Placeholder for a SearchField Control</div>");
 		},
 
@@ -220,12 +218,9 @@ sap.ui.define([
 		renderer: function(rm, ctrl){
 			rm.write("<div");
 			rm.addClass("CurtainContent");
-			rm.writeClasses();
 			rm.write("><header");
 			rm.addClass("_sapUiUfdShellSubHdr");
-			rm.writeClasses();
 			rm.write(">");
-			rm.writeEscaped(ctrl.getText());
 			rm.write("</header><div>");
 			var aContent = ctrl.getContent();
 			for (var i = 0; i < aContent.length; i++){

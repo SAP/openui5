@@ -83,6 +83,7 @@ sap.ui.define([
 	let bIsTypeahead = true;
 	let iMaxConditions = -1;
 	let oScrollContainer = null;
+	let sLocalFilterValue;
 
 	const oContainer = { //to fake Container
 		getScrollDelegate: function() {
@@ -122,8 +123,11 @@ sap.ui.define([
 		getControl: function () {
 			return "Control"; // just to test forwarding
 		},
-		getLocalFilterValue: function () {
-			return undefined;
+		setLocalFilterValue: function(sFilterValue) {
+			sLocalFilterValue = sFilterValue;
+		},
+		getLocalFilterValue: function() {
+			return sLocalFilterValue;
 		},
 		getFilterValue: function () {
 			return undefined;
@@ -190,6 +194,7 @@ sap.ui.define([
 		bIsOpen = true;
 		bIsTypeahead = true;
 		iMaxConditions = -1;
+		sLocalFilterValue = undefined;
 		if (oScrollContainer) {
 			oScrollContainer.getContent.restore();
 			oScrollContainer.destroy();
@@ -1597,46 +1602,46 @@ sap.ui.define([
 		afterEach: _teardown
 	});
 
-	/* QUnit.test("getContent for dialog", function(assert) {
-		var iSelect = 0;
-		var aConditions;
-		var sType;
+	QUnit.test("getContent for dialog", function(assert) {
+		let iSelect = 0;
+		let aConditions;
+		let sType;
 		oMTable.attachEvent("select", function(oEvent) {
 			iSelect++;
 			aConditions = oEvent.getParameter("conditions");
 			sType = oEvent.getParameter("type");
 		});
-		var iConfirm = 0;
+		let iConfirm = 0;
 		oMTable.attachEvent("confirm", function(oEvent) {
 			iConfirm++;
 		});
 
 		oMTable.setFilterValue("X");
-		var oContent = oMTable.getContent();
+		const oContent = oMTable.getContent();
 
 		if (oContent) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			oContent.then(function(oContent) {
 				oMTable.onShow(); // to update selection and scroll
 				assert.ok(oContent, "Content returned");
 				assert.ok(oContent.isA("sap.ui.layout.FixFlex"), "Content is sap.m.FixFlex");
 				assert.equal(oContent.getFixContent().length, 1, "FixFlex number of Fix items");
-				var oFixContent = oContent.getFixContent()[0];
+				const oFixContent = oContent.getFixContent()[0];
 				assert.ok(oFixContent.isA("sap.m.VBox"), "FixContent is sap.m.VBox");
 				assert.ok(oFixContent.hasStyleClass("sapMdcValueHelpPanelFilterbar"), "VBox has style class sapMdcValueHelpPanelFilterbar");
 				assert.equal(oFixContent.getItems().length, 1, "VBox number of items");
-				var oFilterBar = oFixContent.getItems()[0];
+				const oFilterBar = oFixContent.getItems()[0];
 				assert.ok(oFilterBar.isA("sap.ui.mdc.filterbar.vh.FilterBar"), "VBox item is FilterBar");
-				var oConditions = oFilterBar.getInternalConditions();
-				assert.equal(oConditions["*text,additionalText*"][0].values[0], "X", "Search condition in FilterBar");
-				var oFlexContent = oContent.getFlexContent();
+				// const oConditions = oFilterBar.getInternalConditions();
+				// assert.equal(oConditions["*text,additionalText*"][0].values[0], "X", "Search condition in FilterBar");
+				const oFlexContent = oContent.getFlexContent();
 				assert.ok(oFlexContent.isA("sap.m.Panel"), "FlexContent is sap.m.Panel");
 				assert.ok(oFlexContent.getExpanded(), "Panel is expanded");
 				assert.equal(oFlexContent.getHeight(), "100%", "Panel height");
 				assert.equal(oFlexContent.getHeaderText(), oResourceBundle.getText("valuehelp.TABLETITLENONUMBER"), "Panel headerText");
 				assert.ok(oFlexContent.hasStyleClass("sapMdcTablePanel"), "Panel has style class sapMdcTablePanel");
 				assert.equal(oFlexContent.getContent().length, 1, "Panel number of items");
-				var oScrollContainer = oFlexContent.getContent()[0];
+				const oScrollContainer = oFlexContent.getContent()[0];
 				assert.ok(oScrollContainer.isA("sap.m.ScrollContainer"), "Panel item is ScrollContainer");
 				assert.equal(oScrollContainer.getContent().length, 1, "ScrollContainer number of items");
 				assert.equal(oScrollContainer.getContent()[0], oTable, "Table inside ScrollContainer");
@@ -1645,15 +1650,15 @@ sap.ui.define([
 				// assert.equal(oMTable.getDisplayContent(), oTable, "Table stored in displayContent"); // TODO: overwrite getDisplayContent here?
 				assert.ok(oTable.hasStyleClass("sapMComboBoxList"), "List has style class sapMComboBoxList");
 
-				var aItems = oTable.getItems();
-				var oItem = aItems[0];
+				const aItems = oTable.getItems();
+				let oItem = aItems[0];
 				assert.notOk(oItem.getSelected(), "Item0 not selected");
 				oItem = aItems[1];
 				assert.ok(oItem.getSelected(), "Item1 is selected");
 				oItem = aItems[2];
 				assert.notOk(oItem.getSelected(), "Item2 not selected");
 
-				var aNewConditions = [
+				let aNewConditions = [
 					Condition.createItemCondition("I3", "X-Item 3")
 				];
 				oTable.fireItemPress({listItem: oItem});
@@ -1692,7 +1697,7 @@ sap.ui.define([
 			});
 		}
 
-	}); */
+	});
 
 	QUnit.test("isQuickSelectSupported", function(assert) {
 
@@ -1700,14 +1705,15 @@ sap.ui.define([
 
 	});
 
-	/* QUnit.test("Filter with FilterBar", function(assert) {
+	QUnit.test("Filter with FilterBar", function(assert) {
 
-		var oListBinding = oTable.getBinding("items");
+		const oListBinding = oTable.getBinding("items");
 		sinon.spy(oListBinding, "filter");
+		sinon.stub(ValueHelpDelegate, "isSearchSupported").returns(true);
 
-		var oFilterBar = new FilterBar("FB1");
-		oFilterBar.setInternalConditions({
-			additionalText: [Condition.createCondition(OperatorName.Contains", "2")]
+		const oFilterBar = new FilterBar("FB1");
+		sinon.stub(oFilterBar, "getConditions").returns({
+			additionalText: [Condition.createCondition(OperatorName.Contains, "2")]
 		});
 
 		oMTable.setFilterBar(oFilterBar);
@@ -1719,22 +1725,19 @@ sap.ui.define([
 		assert.equal(oListBinding.filter.args.length, 1, "ListBinding filter called once");
 		assert.equal(oListBinding.filter.args[0].length, 2, "ListBinding filter number of arguments");
 		assert.equal(oListBinding.filter.args[0][0].length, 1, "ListBinding filter is array with one filter");
-		assert.equal(oListBinding.filter.args[0][0][0].aFilters.length, 2, "ListBinding filter contains 2 filters");
-		assert.ok(oListBinding.filter.args[0][0][0].bAnd, "ListBinding filters are AND combined");
-		assert.equal(oListBinding.filter.args[0][0][0].aFilters[0].sPath, "additionalText", "ListBinding filter1 path");
-		assert.equal(oListBinding.filter.args[0][0][0].aFilters[0].sOperator, FilterOperator.Contains, "ListBinding filter1 operator");
-		assert.equal(oListBinding.filter.args[0][0][0].aFilters[0].oValue1, "2", "ListBinding filter1 value1");
-		assert.equal(oListBinding.filter.args[0][0][0].aFilters[1].aFilters.length, 2, "ListBinding filter2 contains 2 filters (search)"); // details tested above
+		assert.equal(oListBinding.filter.args[0][0][0].sPath, "additionalText", "ListBinding filter1 path");
+		assert.equal(oListBinding.filter.args[0][0][0].sOperator, FilterOperator.Contains, "ListBinding filter1 operator");
+		assert.equal(oListBinding.filter.args[0][0][0].oValue1, "2", "ListBinding filter1 value1");
 		assert.equal(oListBinding.filter.args[0][1], FilterType.Application, "ListBinding filter type");
-		var aItems = oTable.getItems();
+		let aItems = oTable.getItems();
 		assert.equal(aItems.length, 1, "number of items");
 		assert.equal(aItems[0].getCells()[0].getText(), "I2", "Key of item");
 
 		// removed FilterBar should not trigger filtering
 		oListBinding.filter.reset();
 		oMTable.setFilterBar();
-		oFilterBar.setInternalConditions({
-			additionalText: [Condition.createCondition(OperatorName.Contains", "3")]
+		oFilterBar.getConditions.returns({
+			additionalText: [Condition.createCondition(OperatorName.Contains, "3")]
 		});
 		assert.notOk(oFilterBar.getBasicSearchField(), "SearchField removed from FilterBar");
 
@@ -1743,33 +1746,49 @@ sap.ui.define([
 		oFilterBar.destroy();
 
 		// Default filterbar used now
-		var oDefaultFilterBar = oMTable.getAggregation("_defaultFilterBar");
+		const oDefaultFilterBar = oMTable.getAggregation("_defaultFilterBar");
+		sinon.stub(oDefaultFilterBar, "getConditions").returns({
+			additionalText: [Condition.createCondition(OperatorName.Contains, "1")]
+		});
+		oListBinding.filter.reset();
 		oDefaultFilterBar.fireSearch();
-		assert.ok(oListBinding.filter.called, "filtering called");
+		assert.equal(oListBinding.filter.args.length, 1, "ListBinding filter called once");
+		assert.equal(oListBinding.filter.args[0].length, 2, "ListBinding filter number of arguments");
+		assert.equal(oListBinding.filter.args[0][0].length, 1, "ListBinding filter is array with one filter");
+		assert.equal(oListBinding.filter.args[0][0][0].sPath, "additionalText", "ListBinding filter1 path");
+		assert.equal(oListBinding.filter.args[0][0][0].sOperator, FilterOperator.Contains, "ListBinding filter1 operator");
+		assert.equal(oListBinding.filter.args[0][0][0].oValue1, "1", "ListBinding filter1 value1");
+		assert.equal(oListBinding.filter.args[0][1], FilterType.Application, "ListBinding filter type");
 		aItems = oTable.getItems();
-		assert.equal(aItems.length, 3, "number of items");
+		assert.equal(aItems.length, 1, "number of items");
+		assert.equal(aItems[0].getCells()[0].getText(), "I1", "Key of item");
 
-	}); */
+	});
 
-	/* QUnit.test("Filtering with FilterBar and $search", function(assert) {
+	QUnit.test("Filtering with FilterBar and $search", function(assert) {
+		let iTypeaheadSuggested = 0;
+		oMTable.attachEvent("typeaheadSuggested", function(oEvent) {
+			iTypeaheadSuggested++;
+		});
 
 		sinon.stub(oContainer, "getValueHelpDelegate").returns(ValueHelpDelegateV4);
 		sinon.spy(ValueHelpDelegateV4, "isSearchSupported"); // returns false for non V4-ListBinding
-		sinon.spy(ValueHelpDelegateV4, "executeSearch"); //test V4 logic
-		sinon.stub(ValueHelpDelegateV4, "adjustSearch").withArgs({x: "X"}, false, "i").returns("I"); //test V4 logic
+		sinon.stub(ValueHelpDelegateV4, "adjustSearch").withArgs(undefined, false, "i").returns("I"); //test V4 logic
 		ValueHelpDelegateV4.adjustSearch.callThrough();
 
-		var oListBinding = oTable.getBinding("items");
+		const oListBinding = oTable.getBinding("items");
+		const oListBindingInfo = oTable.getBindingInfo("items");
 		oListBinding.changeParameters = function(oParameters) {}; // just fake V4 logic
+		oListBinding.getRootBinding = function() {}; // just fake V4 logic
+		oListBinding.requestContexts = function(iStartIndex, iRequestedItems) {return Promise.resolve(oListBinding.getContexts(iStartIndex, iRequestedItems));}; // just fake V4 logic
 
-		var oFilterBar = new FilterBar("FB1");
-		oFilterBar.setInternalConditions({
-			additionalText: [Condition.createCondition(OperatorName.Contains", "2")],
-			$search: [Condition.createCondition(OperatorName.StartsWith", "i")]
+		const oFilterBar = new FilterBar("FB1");
+		sinon.stub(oFilterBar, "getConditions").returns({
+			additionalText: [Condition.createCondition(OperatorName.Contains, "2")]
 		});
+		sinon.stub(oFilterBar, "getSearch").returns("i");
 
 		oMTable.setFilterValue("i");
-		oMTable.setFilterFields("$search");
 		oMTable.setFilterBar(oFilterBar);
 		assert.ok(oFilterBar.getBasicSearchField(), "SearchField added to FilterBar");
 
@@ -1779,31 +1798,32 @@ sap.ui.define([
 
 		oFilterBar.fireSearch();
 
-		assert.ok(ValueHelpDelegateV4.isSearchSupported.called, "ValueHelpDelegateV4.isSearchSupported called");
-		assert.ok(ValueHelpDelegateV4.adjustSearch.called, "ValueHelpDelegateV4.adjustSearch called");
-		assert.ok(ValueHelpDelegateV4.adjustSearch.calledWith({x: "X"}, false, "i"), "ValueHelpDelegateV4.adjustSearch called parameters");
-		assert.ok(ValueHelpDelegateV4.executeSearch.called, "ValueHelpDelegateV4.executeSearch called");
-		assert.ok(ValueHelpDelegateV4.executeSearch.calledWith({x: "X"}, oListBinding, "I"), "ValueHelpDelegateV4.executeSearch called parameters");
-		assert.ok(oListBinding.changeParameters.calledWith({$search: "I"}), "ListBinding.changeParameters called with search string");
-		assert.ok(oListBinding.suspend.calledOnce, "ListBinding was suspended meanwhile");
-		assert.notOk(oListBinding.isSuspended(), "ListBinding is resumed");
-		assert.equal(oListBinding.filter.args.length, 1, "ListBinding filter called once");
-		assert.equal(oListBinding.filter.args[0].length, 2, "ListBinding filter number of arguments");
-		assert.equal(oListBinding.filter.args[0][0].length, 1, "ListBinding filter is array with one filter");
-		assert.equal(oListBinding.filter.args[0][0][0].sPath, "additionalText", "ListBinding filter path");
-		assert.equal(oListBinding.filter.args[0][0][0].sOperator, FilterOperator.Contains, "ListBinding filter operator");
-		assert.equal(oListBinding.filter.args[0][0][0].oValue1, "2", "ListBinding filter value1");
-		assert.equal(oListBinding.filter.args[0][1], FilterType.Application, "ListBinding filter type");
+		const fnDone = assert.async();
+		setTimeout( function(){
+			// as waiting for Promise
+			assert.ok(ValueHelpDelegateV4.isSearchSupported.called, "ValueHelpDelegateV4.isSearchSupported called");
+			assert.ok(ValueHelpDelegateV4.adjustSearch.called, "ValueHelpDelegateV4.adjustSearch called");
+			assert.ok(ValueHelpDelegateV4.adjustSearch.calledWith(undefined, false, "i"), "ValueHelpDelegateV4.adjustSearch called parameters");
+			assert.equal(oListBindingInfo.parameters.$search, "I", "ListBindingInfo: search string set to $search");
+			assert.ok(oListBinding.suspend.calledOnce, "ListBinding was suspended meanwhile");
+			assert.notOk(oListBinding.isSuspended(), "ListBinding is resumed");
+			assert.equal(oListBinding.filter.args.length, 1, "ListBinding filter called once");
+			assert.equal(oListBinding.filter.args[0].length, 2, "ListBinding filter number of arguments");
+			assert.equal(oListBinding.filter.args[0][0].length, 1, "ListBinding filter is array with one filter");
+			assert.equal(oListBinding.filter.args[0][0][0].sPath, "additionalText", "ListBinding filter path");
+			assert.equal(oListBinding.filter.args[0][0][0].sOperator, FilterOperator.Contains, "ListBinding filter operator");
+			assert.equal(oListBinding.filter.args[0][0][0].oValue1, "2", "ListBinding filter value1");
+			assert.equal(oListBinding.filter.args[0][1], FilterType.Application, "ListBinding filter type");
+			assert.equal(iTypeaheadSuggested, 0, "typeaheadSuggested event not fired");
 
-		oMTable.setFilterFields("");
-		assert.notOk(oFilterBar.getBasicSearchField(), "SearchField removed from FilterBar");
+			assert.notOk(oFilterBar.getBasicSearchField(), "SearchField removed from FilterBar");
 
-		oContainer.getValueHelpDelegate.restore();
-		ValueHelpDelegateV4.isSearchSupported.restore();
-		ValueHelpDelegateV4.executeSearch.restore();
-		ValueHelpDelegateV4.adjustSearch.restore();
-
-	}); */
+			oContainer.getValueHelpDelegate.restore();
+			ValueHelpDelegateV4.isSearchSupported.restore();
+			ValueHelpDelegateV4.adjustSearch.restore();
+			fnDone();
+		}, 0);
+	});
 
 	QUnit.test("isSingleSelect", function(assert) {
 
