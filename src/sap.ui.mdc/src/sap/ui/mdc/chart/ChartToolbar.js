@@ -131,8 +131,6 @@ sap.ui.define([
 
 			if (aP13nMode.indexOf("Item") > -1 && (!oChart.getIgnoreToolbarActions().length || oChart.getIgnoreToolbarActions().indexOf(ChartToolbarActionType.DrillDownUp) < 0)) {
 				this._oDrillDownBtn = new SelectionButton(this.getId() + "-drillDown", {
-					icon: "sap-icon://drill-down",
-					tooltip: MDCRb.getText("chart.CHART_DRILLDOWN_TITLE"),
 					text: MDCRb.getText("chart.CHART_DRILLDOWN_TITLE"),
 					title: MDCRb.getText("chart.CHART_DRILLDOWN_TITLE"),
 
@@ -199,6 +197,9 @@ sap.ui.define([
 						});
 					}
 				});
+				// Workaround to display a text on the OverFlowToolbar button when not inside the overflow.
+				this._oDrillDownBtn._bInOverflow = true;
+				this._oDrillDownBtn._onAfterExitOverflow = function () {this._bInOverflow = true;};
 
 				this.addEnd(this._oDrillDownBtn);
 				this._chartInternalButtonsToEnable.push(this._oDrillDownBtn);
