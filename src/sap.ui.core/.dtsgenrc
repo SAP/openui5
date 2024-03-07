@@ -27,7 +27,13 @@
 		"module:sap/ui/dom/jquery/Selection",
 		"module:sap/ui/dom/jquery/Selectors",
 		"module:sap/ui/dom/jquery/selectText",
-		"module:sap/ui/dom/jquery/zIndex"
+		"module:sap/ui/dom/jquery/zIndex",
+
+		/**
+		 * Suppress the generation of jQuery from the api.json as it's already contained in the preamble
+		 */
+		"jQuery",
+		"jQuery.Event"
 	],
 
 	"typeTyposMap": {
