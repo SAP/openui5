@@ -83,6 +83,7 @@ sap.ui.define([
 			});
             this.oToDo = new ActionTile("todo", {
 				header: "Comparative Annual Totals",
+				url: "https://www.sap.com/",
 				tileContent: new ActionTileContent("tileCont1", {
 				priority: Priority.VeryHigh,
 				linkPress: Function.prototype,
@@ -108,6 +109,7 @@ sap.ui.define([
 
             this.oSituation = new ActionTile("situation", {
 				header: "Comparative Annual Totals",
+				url: "https://www.sap.com/",
                 headerImage: "sap-icon://alert",
                 valueColor:"Critical",
 				tileContent: new TileContent("tileCont2", {
@@ -135,11 +137,13 @@ sap.ui.define([
         assert.equal(this.oToDo.getTileContent()[0].getPriority(), Priority.VeryHigh, "Priority has been set at Very High");
         assert.ok(document.getElementById("tileCont1-priority-value"),"Text has been rendered successfully");
         assert.equal(document.querySelector(".sapMContainer").children.length, 5, "All 5 custom attributes has been rendered successfully");
+		assert.equal(this.oSituation.getDomRef().tagName,'A',"Tile has been rendered as anchor tag  as expected");
 	});
 
     QUnit.test("Situation card tests", function(assert) {
         assert.ok(document.getElementById("situation-icon-image"), "Icon has been rendered successfully");
         assert.equal(this.oSituation.getTileContent()[0].getContent().getDomRef().children.length, 4, "All 4 P tags has been rendered successfully");
+		assert.equal(this.oToDo.getDomRef().tagName,'A',"Tile has been rendered as anchor tag  as expected");
 	});
 
 	QUnit.test("Aria-Label Properties for ToDo Tiles", function(assert) {
@@ -212,7 +216,7 @@ sap.ui.define([
 		assert.ok(this.oToDo.getDomRef().classList.contains("sapMPointer"),"Hand icon would be visible");
 		this.oToDo.setPressEnabled(false);
 		oCore.applyChanges();
-		assert.ok(this.oToDo.getDomRef().classList.contains("sapMATAutoPointer"),"Hand icon won't be visible");
+		assert.ok(this.oToDo.getDomRef().classList.contains("sapMAutoPointer"),"Hand icon won't be visible");
 	});
 
 	QUnit.test("Setting enableNavigationButton property", function(assert) {

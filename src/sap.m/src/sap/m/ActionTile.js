@@ -44,7 +44,7 @@ sap.ui.define([
 		renderer: {
 			apiVersion: 2,
 			render: function (oRm, oControl) {
-				if (!oControl.getHeaderImage() || oControl.getState() === LoadState.Loading) {
+				if (oControl.getState() === LoadState.Loading) {
 					ToDoCardRenderer.render(oRm, oControl);
 				} else {
 					GenericTileRenderer.render(oRm, oControl);
@@ -65,6 +65,8 @@ sap.ui.define([
 	ActionTile.prototype.onBeforeRendering = function() {
 		if (this.getHeaderImage()) {
 			this.addStyleClass("sapMATSituationCard");
+		} else {
+			this.addStyleClass("sapMToDoCard");
 		}
 		if (this.getEnableNavigationButton()) {
 			this.removeStyleClass("sapMATHideActionButton");
@@ -75,7 +77,7 @@ sap.ui.define([
 	};
 
 	ActionTile.prototype.onAfterRendering = function() {
-		if (this.getHeaderImage() && this.getDomRef()) {
+		if (this.getDomRef()) {
 			this._removeStyleClasses();
 		}
 		GenericTile.prototype.onAfterRendering.apply(this, arguments);

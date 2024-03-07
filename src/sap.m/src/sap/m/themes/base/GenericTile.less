@@ -732,12 +732,14 @@ border-radius: 0.25rem;
 	display: inline-block;
 }
 
-.sapMGTContent {
-	height: 6.375rem;
-	display: inline-block;
-	white-space: nowrap;
-	width: 100%;
-	overflow: hidden;
+.sapMGT {
+	.sapMGTContent {
+		height: 6.375rem;
+		display: inline-block;
+		white-space: nowrap;
+		width: 100%;
+		overflow: hidden;
+	}
 }
 
 .sapMGTHdrTxt {
@@ -1851,11 +1853,6 @@ html[data-sap-ui-browser*='ff'] {
 					font-size: 0.875rem;
 					margin-top: 1rem;
 				}
-				.sapMGTActionModeContainer {
-					margin: 0 1rem 1rem 0.5rem;
-					display: inline-flex;
-					column-gap: 0.5rem;
-				}
 			}
 			.sapMTileCntFtrTxt {
 				margin: 0 1rem 1rem 1rem;
@@ -1882,6 +1879,11 @@ html[data-sap-ui-browser*='ff'] {
 		}
 
 	}
+	.sapMGTActionModeContainer {
+		position: absolute;
+		bottom: 0.9em;
+		right: 1rem;
+    }
 }
 
 .TwoByOne.sapMTileSmallPhone.sapMGTActionMode {
