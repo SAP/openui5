@@ -317,7 +317,7 @@ sap.ui.define([
 		When.iSelectVariant("Standard");
 
 		//no filters on standard
-		Then.iShouldSeeConditons("sap.ui.mdc.Table",{filter: {}});
+		Then.iShouldSeeConditons("sap.ui.mdc.Table", {foundingYear: [], name: []});
 
 		//check empty filter values from standard variant
 		Then.onTheMDCTable.iCheckFilterPersonalization(sTableID, []);
