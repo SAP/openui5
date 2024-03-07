@@ -1,5 +1,4 @@
 /* global QUnit */
-
 sap.ui.define([
 	"sap/m/Bar",
 	"sap/m/Button",
@@ -177,7 +176,6 @@ sap.ui.define([
 		});
 
 		QUnit.test("when getting the available elements after all available elements were displayed and then one is hidden again", async function(assert) {
-			const done = assert.async();
 			sandbox.stub(this.oDialog, "open").returns(Promise.reject());
 			this.oDialogSetElementsSpy = sandbox.spy(this.oDialog, "setElements");
 
@@ -186,27 +184,38 @@ sap.ui.define([
 				fnCallback();
 			});
 
-			await nextUIUpdate();
-			this.oDesignTime.attachEventOnce("synced", function() {
-				this.oPlugin.showAvailableElements(true, "contentLeft", [this.oVisibleLeftButtonOverlay])
-				.then(function() {
-					assert.equal(this.oDialogSetElementsSpy.args[0][0].length, 1, "then the element made visible is not returned");
-					this.oDesignTime.attachEventOnce("synced", function() {
-						this.oPlugin.showAvailableElements(true, "contentLeft", [this.oVisibleLeftButtonOverlay])
-						.then(function() {
-							assert.equal(
-								this.oDialogSetElementsSpy.args[1][0].length,
-								2,
-								"then the element is available again after made invisible"
-							);
-							done();
-						}.bind(this));
-					}.bind(this));
-					this.oInvisibleLeftButton.setVisible(false);
-				}.bind(this));
-			}.bind(this));
+			const oEvaluateEditableStub = sandbox.stub(this.oPlugin, "evaluateEditable");
 
-			this.oInvisibleLeftButton.setVisible(true);
+			// The evaluation of the available elements only happens after the next DesignTime sync
+			// However, the editable check which updates the available elements is done asynchronously
+			// Therefore, we need to wait for the next DesignTime sync AND the editable check to be finished
+			async function checkAvailableElements(bVisibility, iCallNumber, iExpectedElements) {
+				let fnDTSynced;
+				let fnEditableEvaluated;
+
+				const oDTSyncedPromise = new Promise((resolve) => {
+					fnDTSynced = resolve;
+				});
+				const oEvaluateEditablePromise = new Promise((resolve) => {
+					fnEditableEvaluated = resolve;
+				});
+				this.oDesignTime.attachEventOnce("synced", fnDTSynced);
+				oEvaluateEditableStub.callsFake(async (...aArgs) => {
+					await oEvaluateEditableStub.wrappedMethod.call(this.oPlugin, ...aArgs);
+					fnEditableEvaluated();
+				});
+				this.oInvisibleLeftButton.setVisible(bVisibility);
+				await Promise.all([oDTSyncedPromise, oEvaluateEditablePromise]);
+				await this.oPlugin.showAvailableElements(true, "contentLeft", [this.oVisibleLeftButtonOverlay]);
+				assert.equal(
+					this.oDialogSetElementsSpy.args[iCallNumber][0].length,
+					iExpectedElements,
+					"then the correct number of elements is returned"
+				);
+			}
+
+			await checkAvailableElements.call(this, true, 0, 1);
+			await checkAvailableElements.call(this, false, 1, 2);
 		});
 
 		QUnit.test("when adding the InvisibleRightButton to the contentLeft aggregation clicking on the Bar", function(assert) {
