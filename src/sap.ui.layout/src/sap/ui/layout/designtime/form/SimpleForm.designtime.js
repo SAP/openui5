@@ -7,11 +7,13 @@ sap.ui.define([
 	"sap/m/Title",
 	"sap/ui/core/Element",
 	"sap/ui/core/Title",
+	"sap/ui/core/Lib",
 	"sap/ui/fl/Utils"
 ], function(
 	MTitle,
 	Element,
 	CoreTitle,
+	Library,
 	FlexUtils
 ) {
 	"use strict";
@@ -210,7 +212,7 @@ sap.ui.define([
 							}
 						}
 						if (bContent) {
-							var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.layout.designtime");
+							var oTextResources = Library.getResourceBundleFor("sap.ui.layout.designtime");
 							return oTextResources.getText("MSG_REMOVING_TOOLBAR");
 						}
 					}
