@@ -821,7 +821,7 @@ sap.ui.define([
 				}
 			},
 			/**
-			 * @deprecated Since version 1.121
+			 * @deprecated Since version 1.120
 			 */
 			MultiEditField: {
 				title: "MultiEditField - sap.m - QUnit test",
