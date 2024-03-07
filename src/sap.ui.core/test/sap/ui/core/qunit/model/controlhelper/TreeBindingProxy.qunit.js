@@ -256,6 +256,12 @@ sap.ui.define([
 			"Binding#setAggregation called with the correct parameters if expandTo changes");
 		assert.ok(oRefreshSpy.notCalled, "Binding#refresh not called if expandTo changes");
 
+		oSetAggregationSpy.resetHistory();
+		oRefreshSpy.resetHistory();
+		this.oProxy.collapseAll();
+		assert.ok(oSetAggregationSpy.notCalled, "Binding#setAggregation not called if expandTo doesn't change");
+		assert.ok(oRefreshSpy.calledOnceWithExactly(), "Binding#refresh called if expandTo doesn't change");
+
 		oSetAggregationSpy.restore();
 		oRefreshSpy.restore();
 	});
@@ -268,6 +274,12 @@ sap.ui.define([
 		assert.ok(oSetAggregationSpy.calledOnceWithExactly({hierarchyQualifier: "ExampleQualifier", expandTo: 2}),
 			"Binding#setAggregation called with the correct parameters if expandTo changes");
 		assert.ok(oRefreshSpy.notCalled, "Binding#refresh not called if expandTo changes");
+
+		oSetAggregationSpy.resetHistory();
+		oRefreshSpy.resetHistory();
+		this.oProxy.expandToLevel(2);
+		assert.ok(oSetAggregationSpy.notCalled, "Binding#setAggregation not called if expandTo doesn't change");
+		assert.ok(oRefreshSpy.calledOnceWithExactly(), "Binding#refresh called if expandTo doesn't change");
 
 		oSetAggregationSpy.restore();
 		oRefreshSpy.restore();

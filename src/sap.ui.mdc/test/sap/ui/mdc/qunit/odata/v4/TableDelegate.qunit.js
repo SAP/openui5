@@ -1658,6 +1658,12 @@ sap.ui.define([
 				oTable.getControlDelegate().expandAllRows(oTable);
 				assert.ok(oBinding.setAggregation.calledOnce, sTableType + ": Binding#setAggregation called once if expandTo changes");
 				assert.ok(oBinding.refresh.notCalled, sTableType + ": Binding#refresh not called if expandTo changes");
+
+				oBinding.setAggregation.resetHistory();
+				oBinding.refresh.resetHistory();
+				oTable.getControlDelegate().expandAllRows(oTable);
+				assert.ok(oBinding.setAggregation.notCalled, sTableType + ": Binding#setAggregation not called if expandTo doesn't change");
+				assert.ok(oBinding.refresh.calledOnceWithExactly(), sTableType + ": Binding#refresh called once if expandTo doesn't change");
 			} else {
 				assert.throws(() => {
 					oTable.getControlDelegate().expandAllRows(oTable);
@@ -1698,6 +1704,12 @@ sap.ui.define([
 				oTable.getControlDelegate().collapseAllRows(oTable);
 				assert.ok(oBinding.setAggregation.calledOnce, sTableType + ": Binding#setAggregation called once if expandTo changes");
 				assert.ok(oBinding.refresh.notCalled, sTableType + ": Binding#refresh not called if expandTo changes");
+
+				oBinding.setAggregation.resetHistory();
+				oBinding.refresh.resetHistory();
+				oTable.getControlDelegate().collapseAllRows(oTable);
+				assert.ok(oBinding.setAggregation.notCalled, sTableType + ": Binding#setAggregation not called if expandTo doesn't change");
+				assert.ok(oBinding.refresh.calledOnceWithExactly(), sTableType + ": Binding#refresh called once if expandTo doesn't change");
 			} else {
 				assert.throws(() => {
 					oTable.getControlDelegate().collapseAllRows(oTable);
