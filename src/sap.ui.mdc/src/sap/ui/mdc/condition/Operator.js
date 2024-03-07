@@ -104,6 +104,25 @@ sap.ui.define([
 	 * @param {boolean} [oConfiguration.exclude] If set, the operator is handled as exclude filter when creating the filters of all conditions
 	 * @param {boolean} [oConfiguration.validateInput] If set, the user input for this operator needs to be validated using a field help
 	 * @param {string} [oConfiguration.additionalInfo] additionalInfo text for the operator. Will be shown in the operator suggest as second column. If not used (undefined) the Include or Exclude information of the operator is used.
+	 * @param {object} [oConfiguration.group] Additional group settings for the operator. Will be used by the <code>DynamicDateRange</code>. If not used (undefined), the operators will be added to the include and exclude groups.
+	 * @param {string} oConfiguration.group.id Group ID for the operator.
+	 * The following groups are available for the <code>DynamicDateRange</code> control:<br>
+	 * <ul>
+	 * <li>1 - Single Dates</li>
+	 * <li>2 - Date Ranges</li>
+	 * <li>3 - Weeks</li>
+	 * <li>4 - Months</li>
+	 * <li>5 - Quarters</li>
+	 * <li>6 - Years</li>
+	 * </ul>
+	 * See {@link sap.m.DynamicDateRangeGroups DynamicDateRangeGroups}.<br>
+	 * This only works for <code>FilterFields</code> with custom operators if <code>maxConditions=1</code> and no <code>valueHelp</code> is assigned to the <code>FilterField</code>.
+	 * Example:<br>
+	 * group: undefined - if group is not specified; default behavior include/exclude group with id 1 and 2 will be created<br>
+	 * group: {id : 1} - adds the operator to existing group 1 'Single Dates'<br>
+	 * group: {id : 2, text: "new group"} - inserts a new group with id 2. Existing group 2 will be shifted to 3, 4....<br>
+	 * group: {id : 10, text: "new group at the end"} - adds a new group with id 10 and text "new group as the end" to the end of all groups<br>
+	 * @param {string} [oConfiguration.group.text] Group title for the operator. When used a new group with this title will be added.
 	 * @constructor
 	 * @author SAP SE
 	 * @version ${version}
