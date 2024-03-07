@@ -71,7 +71,7 @@
 							path : 'Price',
 							type : 'sap.ui.model.odata.type.Decimal',
 							constraints : {
-								'precision' : 15, 'scale' : 'variable', 'nullable' : false
+								'precision' : 15, 'scale' : 3, 'nullable' : false
 							}
 						}, {
 							path : 'CurrencyCode',
