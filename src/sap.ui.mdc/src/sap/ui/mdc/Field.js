@@ -371,7 +371,7 @@ sap.ui.define([
 	function _updateCondition(vValue, vAdditionalValue) {
 
 		const aConditions = this.getConditions();
-		if (this.checkValueInitial(vValue) && !vAdditionalValue) {
+		if (_isEmpty.call(this, vValue, vAdditionalValue)) {
 			// if empty -> no condition
 			if (aConditions.length > 0) {
 				this.setConditions([]);
@@ -556,7 +556,7 @@ sap.ui.define([
 		const vOldValue = this.getValue();
 		const vOldAdditionalValue = this.getAdditionalValue();
 
-		if (aConditions.length === 0 && _isValueNull(vOldValue) && _isValueNull(vOldAdditionalValue)) {
+		if (aConditions.length === 0 && _isEmpty.call(this, vOldValue, vOldAdditionalValue)) {
 			// Field initialized from setter -> cannot have a condition -> no update needed
 			return;
 		}
@@ -651,23 +651,9 @@ sap.ui.define([
 
 	};
 
-	function _isValueNull(vValue) {
+	function _isEmpty(vValue, vAdditionalValue) {
 
-		let bNull = false;
-
-		if (vValue === null) {
-			bNull = true;
-		} else if (Array.isArray(vValue)) {
-			bNull = true;
-			for (let i = 0; i < vValue.length; i++) {
-				if (vValue[i] !== null) {
-					bNull = false;
-					break;
-				}
-			}
-		}
-
-		return bNull;
+		return this.checkValueInitial(vValue) && !vAdditionalValue;
 
 	}
 
