@@ -2,7 +2,23 @@
  * ${copyright}
  */
 
-@import "../base/library.source.less";
+/***********************************************************************************
+/* Due to deprecation of sap_bluecrystal with SAPUI5 version 1.44 the
+/* library.source.less file of base is resolved: Imports to base.less and global.less
+/* of base are added to this library.source.less file (sap_bluecrystal) and the
+/* repsective control css files of base are added to the sap_bluecrystal theme folder.
+/* This decoupling of the base theme is introduced with SAPUI5 version 1.123.
+***********************************************************************************/
+
+@import "../../../ui/core/themes/base/base.less";
+@import "../../../ui/core/themes/base/global.less";
+
+@import "base_ToolHeader.less";
+@import "base_SideNavigation.less";
+@import "base_NavigationList.less";
+@import "base_ToolPage.less";
+@import "base_InfoLabel.less";
+
 @import "../../../../sap/ui/core/themes/sap_bluecrystal/base.less";
 @import "../../../../sap/ui/core/themes/sap_bluecrystal/global.less";
 
