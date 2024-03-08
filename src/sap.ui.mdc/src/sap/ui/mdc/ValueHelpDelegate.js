@@ -170,7 +170,7 @@ sap.ui.define([
 	 * @since 1.97.0
 	 * @private
 	 * @ui5-restricted sap.fe
-	 * @deprecated (since 1.110.0) - replaced by {@link module:sap/ui/mdc/ValueHelpDelegate.updateBinding updateBinding}
+	 * @deprecated (since 1.110.0) - replaced by {@link module:sap/ui/mdc/ValueHelpDelegate.updateBindingInfo updateBindingInfo}
 	 */
 	ValueHelpDelegate.adjustSearch = function(oValueHelp, bTypeahead, sSearch) {
 		return sSearch;
