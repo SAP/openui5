@@ -1386,10 +1386,7 @@ sap.ui.define([
 				title: "QUnit Page for sap.m.ScrollBar"
 			},
 			ScrollContainer: {
-				title: "QUnit Page for sap.m.ScrollContainer",
-				sinon: {
-					version: 1 // custom handling of fakeTimer fails with sinon-4
-				}
+				title: "QUnit Page for sap.m.ScrollContainer"
 			},
 			ScrollPosition: {
 				title: "QUnit Page for Scroll Positions"
