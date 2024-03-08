@@ -8,8 +8,9 @@ sap.ui.define([
 	"sap/ui/test/matchers/PropertyStrictEquals",
 	"sap/ui/test/matchers/Ancestor",
 	"sap/ui/test/matchers/Descendant",
-	"./waitForPersonalizationDialog"
-], function(Opa5, coreLibrary, TestUtil, PropertyStrictEquals, Ancestor, Descendant, waitForPersonalizationDialog) {
+	"./waitForPersonalizationDialog",
+	"test-resources/sap/ui/mdc/testutils/opa/link/waitForLink"
+], function(Opa5, coreLibrary, TestUtil, PropertyStrictEquals, Ancestor, Descendant, waitForPersonalizationDialog, waitForLink) {
 	"use strict";
 	const Assertion = Opa5.extend("sap.ui.mdc.qunit.link.opa.test.Assertion", {
 		thePersonalizationDialogOpens: function() {
@@ -193,6 +194,25 @@ sap.ui.define([
 						return oColumn.getHeader().getText() === sColumnName;
 					});
 					Opa5.assert.equal(aColumn.length, 1, "Column '" + sColumnName + "' is visible");
+				}
+			});
+		},
+		iShouldSeeALink: function(oLinkIdentifier) {
+			return waitForLink.call(this, oLinkIdentifier, {
+				success: function(oLink) {
+					Opa5.assert.equal(true, true);
+                }
+            });
+		},
+		iShouldSeeADisabledLink: function(oLinkIdentifier) {
+			return this.waitFor({
+				controlType: "sap.m.Text",
+				matchers: new PropertyStrictEquals({
+					name: "text",
+					value: oLinkIdentifier.text
+				}),
+				success: function(oLink) {
+					Opa5.assert.equal(true, true);
 				}
 			});
 		},
