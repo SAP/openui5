@@ -57,14 +57,14 @@ sap.ui.define([
 	 * @returns {object}
 	 *   the data
 	 */
-	function createData(iLength, iStart, bDrillDown, iCount, bKeyPredicates) {
+	// eslint-disable-next-line default-param-last
+	function createData(iLength, iStart = 0, bDrillDown, iCount, bKeyPredicates) {
 		var oData = {value : []},
 			i;
 
 		if (iCount !== undefined) {
 			oData.value.$count = iCount;
 		}
-		iStart = iStart || 0;
 		for (i = 0; i < iLength; i += 1) {
 			oData.value[i] = {
 				Name : "Name " + (iStart + i),
@@ -4097,7 +4097,7 @@ sap.ui.define([
 
 			function result(iLength, iCount) {
 				// only active created contexts add to $count
-				iCount = iCount && iCount + (bCreated ? 1 : 0);
+				iCount &&= iCount + (bCreated ? 1 : 0);
 				return createData(iLength, 0, true, iCount);
 			}
 

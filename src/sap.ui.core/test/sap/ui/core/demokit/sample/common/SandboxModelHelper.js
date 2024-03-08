@@ -75,7 +75,7 @@ sap.ui.define([
 					oSandbox;
 
 				if (!TestUtils.isRealOData()) {
-					oMockData.aRegExps = oMockData.aRegExps || [{
+					oMockData.aRegExps ??= [{
 						regExp : /^GET [\w\/.]+\$metadata([\w?&\-=]+sap-language=..|)$/,
 						response : {source : "metadata.xml"}
 					}];

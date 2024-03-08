@@ -587,7 +587,7 @@ sap.ui.define([
 			} else {
 				aRequests[i] = aChangeSet;
 			}
-			bHasChanges = bHasChanges || aChangeSet.length > 0;
+			bHasChanges ||= aChangeSet.length > 0;
 		}
 
 		return bHasChanges;
@@ -1830,7 +1830,7 @@ sap.ui.define([
 			iRequestSerialNumber = oGroupLock.getSerialNumber();
 		}
 		sResourcePath = this.convertResourcePath(sResourcePath);
-		sOriginalResourcePath = sOriginalResourcePath || sResourcePath;
+		sOriginalResourcePath ??= sResourcePath;
 		if (this.getGroupSubmitMode(sGroupId) !== "Direct") {
 			if (sGroupId === "$single" && this.mBatchQueue[sGroupId]) {
 				throw new Error("Cannot add new request to already existing $single queue");
@@ -2021,11 +2021,9 @@ sap.ui.define([
 
 					// Note: string response appears only for $batch and thus cannot be empty;
 					// for 204 "No Content", vResponse === undefined
-					if (!vResponse) {
-						// With GET it must be visible that there is no content, with the other
-						// methods it must be possible to insert the ETag from the header
-						vResponse = sMethod === "GET" ? null : {};
-					}
+					// With GET it must be visible that there is no content, with the other
+					// methods it must be possible to insert the ETag from the header
+					vResponse ||= sMethod === "GET" ? null : {};
 					if (sETag && typeof vResponse === "object") {
 						vResponse["@odata.etag"] = sETag;
 					}

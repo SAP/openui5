@@ -129,7 +129,7 @@ sap.ui.define([
 			throw new Error("Completed more PATCH requests than sent");
 		}
 		this.iPatchCounter -= 1;
-		this.bPatchSuccess = this.bPatchSuccess && bSuccess;
+		this.bPatchSuccess &&= bSuccess;
 		if (this.iPatchCounter === 0) {
 			this.fireEvent("patchCompleted", {success : this.bPatchSuccess});
 			this.bPatchSuccess = true;
@@ -294,10 +294,10 @@ sap.ui.define([
 							}
 							return true;
 						case "$expand":
-							mAggregatedQueryOptions.$expand = mAggregatedQueryOptions.$expand || {};
+							mAggregatedQueryOptions.$expand ??= {};
 							return Object.keys(mQueryOptions0.$expand).every(mergeExpandPath);
 						case "$select":
-							mAggregatedQueryOptions.$select = mAggregatedQueryOptions.$select || [];
+							mAggregatedQueryOptions.$select ??= [];
 							return mQueryOptions0.$select.every(mergeSelectPath);
 						default:
 							if (bAdd) {
@@ -396,8 +396,8 @@ sap.ui.define([
 				sChangeReason = ChangeReason.Filter;
 			} else if (sName === "$orderby" && sChangeReason !== ChangeReason.Filter) {
 				sChangeReason = ChangeReason.Sort;
-			} else if (!sChangeReason) {
-				sChangeReason = ChangeReason.Change;
+			} else {
+				sChangeReason ??= ChangeReason.Change;
 			}
 		}
 
@@ -1067,7 +1067,7 @@ sap.ui.define([
 			return _Helper.getQueryOptionsForPath(this.getQueryOptionsFromParameters(), sPath);
 		}
 
-		oContext = oContext || this.oContext;
+		oContext ??= this.oContext;
 		// oContext is always set; as getQueryOptionsForPath is called only from ODLB#doCreateCache
 		// binding has no parameters -> no own query options
 		if (!this.bRelative || !oContext.getQueryOptionsForPath) {

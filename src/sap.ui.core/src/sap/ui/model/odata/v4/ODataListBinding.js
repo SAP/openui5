@@ -1376,10 +1376,9 @@ sap.ui.define([
 			oCache.setActive(false);
 			oCache = undefined; // create _AggregationCache instead of _CollectionCache
 		}
-		oCache = oCache
-			|| _AggregationCache.create(this.oModel.oRequestor, sResourcePath, sDeepResourcePath,
-				mQueryOptions, this.mParameters.$$aggregation, this.oModel.bAutoExpandSelect,
-				this.bSharedRequest, this.isGrouped());
+		oCache ??= _AggregationCache.create(this.oModel.oRequestor, sResourcePath,
+			sDeepResourcePath, mQueryOptions, this.mParameters.$$aggregation,
+			this.oModel.bAutoExpandSelect, this.bSharedRequest, this.isGrouped());
 		if (mKeptElementsByPredicate) {
 			aKeepAlivePredicates.forEach(function (sPredicate) {
 				oCache.addKeptElement(mKeptElementsByPredicate[sPredicate]);
@@ -1653,7 +1652,7 @@ sap.ui.define([
 				var iCount;
 
 				// aResult may be undefined e.g. in case of a missing $expand in parent binding
-				aResult = aResult || [];
+				aResult ??= [];
 				iCount = aResult.$count;
 				aResult = aResult.slice(iIndex, iIndex + iLength);
 				aResult.$count = iCount;
@@ -2293,7 +2292,8 @@ sap.ui.define([
 	 * @since 1.37.0
 	 */
 	// @override @see sap.ui.model.ListBinding#getContexts
-	ODataListBinding.prototype.getContexts = function (iStart, iLength, iMaximumPrefetchSize,
+	// eslint-disable-next-line default-param-last
+	ODataListBinding.prototype.getContexts = function (iStart = 0, iLength, iMaximumPrefetchSize,
 			bKeepCurrent) {
 		var sChangeReason,
 			aContexts,
@@ -2312,7 +2312,6 @@ sap.ui.define([
 
 		this.checkSuspended();
 
-		iStart = iStart || 0;
 		if (iStart !== 0 && this.bUseExtendedChangeDetection) {
 			throw new Error("Unsupported operation: v4.ODataListBinding#getContexts,"
 				+ " iStart must be 0 if extended change detection is enabled, but is " + iStart);
@@ -2380,7 +2379,7 @@ sap.ui.define([
 			return [];
 		}
 
-		iLength = iLength || this.oModel.iSizeLimit;
+		iLength ||= this.oModel.iSizeLimit;
 		if (!iMaximumPrefetchSize || iMaximumPrefetchSize < 0) {
 			iMaximumPrefetchSize = 0;
 		}
@@ -3795,7 +3794,8 @@ sap.ui.define([
 	 * @public
 	 * @since 1.70.0
 	 */
-	ODataListBinding.prototype.requestContexts = function (iStart, iLength, sGroupId) {
+	// eslint-disable-next-line default-param-last
+	ODataListBinding.prototype.requestContexts = function (iStart = 0, iLength, sGroupId) {
 		var that = this;
 
 		if (!this.isResolved()) {
@@ -3804,8 +3804,7 @@ sap.ui.define([
 		this.checkSuspended();
 		_Helper.checkGroupId(sGroupId);
 
-		iStart = iStart || 0;
-		iLength = iLength || this.oModel.iSizeLimit;
+		iLength ||= this.oModel.iSizeLimit;
 		const oGroupLock = sGroupId && this.lockGroup(sGroupId, true);
 		return Promise.resolve(
 				this.fetchContexts(iStart, iLength, 0, oGroupLock)
@@ -4393,9 +4392,7 @@ sap.ui.define([
 							= this.oHeaderContext;
 						this.oHeaderContext = null;
 					}
-					if (!this.oHeaderContext) {
-						this.oHeaderContext = Context.create(this.oModel, this, sResolvedPath);
-					}
+					this.oHeaderContext ??= Context.create(this.oModel, this, sResolvedPath);
 					if (this.mParameters.$$aggregation) {
 						_AggregationHelper.setPath(this.mParameters.$$aggregation, sResolvedPath);
 					} else if (this.bHasPathReductionToParent && this.oModel.bAutoExpandSelect) {

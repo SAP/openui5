@@ -2920,7 +2920,7 @@ sap.ui.define([
 			delete oProperty.__constraints;
 			if (!bNullable) {
 				oProperty.$Nullable = false;
-				oConstraints = oConstraints || {};
+				oConstraints ??= {};
 				oConstraints.nullable = false;
 			}
 
