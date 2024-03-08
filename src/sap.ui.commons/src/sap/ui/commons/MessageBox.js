@@ -44,7 +44,7 @@ sap.ui.define(["sap/ui/thirdparty/jquery", 'sap/ui/core/library', 'sap/ui/core/E
 		 * specifying the set of allowed actions as well as reporting back the user choice.
 		 * @enum
 		 * @public
-		 * @deprecated as of version 1.38
+		 * @deprecated as of version 1.38 Instead, use the <code>sap.m.MessageBox.Action</code>.
 		 */
 		MessageBox.Action = {
 
@@ -101,7 +101,7 @@ sap.ui.define(["sap/ui/thirdparty/jquery", 'sap/ui/core/library', 'sap/ui/core/E
 		 * Enumeration of the pre-defined icons that can be used in a MessageBox.
 		 * @enum
 		 * @public
-		 * @deprecated as of version 1.38
+		 * @deprecated as of version 1.38 Instead, use the <code>sap.m.MessageBox.Icon</code>.
 		 */
 		MessageBox.Icon = {
 
