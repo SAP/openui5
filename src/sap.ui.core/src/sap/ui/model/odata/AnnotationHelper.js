@@ -123,7 +123,7 @@ sap.ui.define([
 			 *   found
 			 * @public
 			 * @since 1.31.0
-			 * @deprecated As of version 1.121.0
+			 * @deprecated As of version 1.121, the concept has been discarded.
 			 */
 			createPropertySetting : function (aParts, fnRootFormatter, oScope) {
 				var bMergeNeeded = false,
