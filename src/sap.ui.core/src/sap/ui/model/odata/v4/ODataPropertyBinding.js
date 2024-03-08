@@ -339,8 +339,7 @@ sap.ui.define([
 			});
 			if (bForceUpdate && vValue.isFulfilled()) {
 				if (vType && vType.isFulfilled && vType.isFulfilled()) {
-					PropertyBinding.prototype.setType
-						.call(this, vType.getResult(), this.sInternalType);
+					this.doSetType(vType.getResult());
 				}
 				this.vValue = vValue.getResult();
 			}
@@ -354,7 +353,7 @@ sap.ui.define([
 
 			if (oCallToken === that.oCheckUpdateCallToken) { // latest call to checkUpdateInternal
 				that.oCheckUpdateCallToken = undefined;
-				PropertyBinding.prototype.setType.call(that, oType, that.sInternalType);
+				that.doSetType(oType);
 				if (oCallToken.forceUpdate || that.vValue !== vValue) {
 					that.bInitial = false;
 					that.vValue = vValue;
@@ -419,6 +418,19 @@ sap.ui.define([
 	 */
 	ODataPropertyBinding.prototype.doFetchOrGetQueryOptions = function () {
 		return this.isRoot() ? this.mQueryOptions : undefined;
+	};
+
+	/**
+	 * Sets the given type for this binding while keeping its internal type.
+	 *
+	 * @param {sap.ui.model.Type} oType
+	 *   The type for this binding
+	 *
+	 * @private
+	 * @see sap.ui.model.PropertyBinding#setType
+	 */
+	ODataPropertyBinding.prototype.doSetType = function (oType) {
+		PropertyBinding.prototype.setType.call(this, oType, this.sInternalType);
 	};
 
 	/**
@@ -693,7 +705,7 @@ sap.ui.define([
 						// Note: this.oType => this.sReducedPath
 						&& _Helper.getMetaPath(this.oModel.resolve(this.sPath, oContext))
 							!== _Helper.getMetaPath(this.sReducedPath)) {
-						PropertyBinding.prototype.setType.call(this, undefined, this.sInternalType);
+						this.doSetType(undefined);
 					}
 					this.sReducedPath = undefined;
 				}
