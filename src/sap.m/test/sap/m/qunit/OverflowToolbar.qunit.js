@@ -4007,4 +4007,35 @@ sap.ui.define([
 		//Clean up
 		oOverflowToolbarToggleButton.destroy();
 	});
+
+	QUnit.test("Check Button's 'type' property change when inside Overflow Popover", function(assert) {
+		var oButton = new Button({
+			text: "Test button",
+			type: "Default",
+			layoutData:  new OverflowToolbarLayoutData({priority: OverflowToolbarPriority.AlwaysOverflow})
+		});
+
+		var oOTB = new OverflowToolbar({
+			content: [oButton]
+		}).placeAt("qunit-fixture");
+
+		oCore.applyChanges();
+
+		// Open the overflow button and obtain the reference to the popover button
+		oOTB._getOverflowButton().firePress();
+		var oPopoverButton = oOTB._getPopover()._getAllContent()[0];
+
+		// Assert initial state
+		assert.strictEqual(oPopoverButton.getType(), oButton.getType(), "Initial button type is correctly rendered in the Popover");
+
+		// Update the type of the button while it's inside the Popover
+		var sNewType = "Emphasized";
+		oPopoverButton.setType(sNewType);
+		oCore.applyChanges();
+
+		// Assert updated state
+		assert.strictEqual(oPopoverButton.getType(), sNewType, "Changed button type is correctly applied in the Popover");
+
+		oOTB.destroy();
+	});
 });
