@@ -13,15 +13,15 @@
 		}'>
 	</script>
 	<style>
-		.sapUiBody {
+		#body.sapUiBody {
 			height: 100vh;
 			overflow: hidden;
 		}
 	</style>
 
 	<script>
-		sap.ui.getCore().attachInit(function () {
 			sap.ui.require([
+				"sap/ui/core/Core",
 				"sap/ui/webc/main/MultiComboBox",
 				"sap/ui/webc/main/Label",
 				"sap/ui/webc/main/Icon",
@@ -35,7 +35,8 @@
 				"sap/ui/webc/fiori/Page",
 				"sap/ui/layout/VerticalLayout",
 				"sap/ui/layout/HorizontalLayout"
-			], function (
+			], async function (
+				Core,
 				MultiComboBox,
 				Label,
 				Icon,
@@ -50,6 +51,7 @@
 				VerticalLayout,
 				HorizontalLayout
 			) {
+				await Core.ready();
 				var oVerticalLayout = new VerticalLayout({
 					content: [
 						new Label("label3", {
@@ -200,7 +202,7 @@
 										})
 									],
 									selectionChange: function (oEvent) {
-										var oMCB = sap.ui.getCore().byId("multiComboBox2");
+										var oMCB = sap.ui.core.Element.getElementById("multiComboBox2");
 										var sSelectedItem = oEvent.getParameter("selectedItem").getText();
 										if (sSelectedItem === "Disabled") {
 											oMCB.setEnabled(false);
@@ -371,9 +373,9 @@
 					dataType: "json",
 					success: function (data) {
 						var aMCB = [
-							sap.ui.getCore().byId("multiComboBox12"),
-							sap.ui.getCore().byId("multiComboBox13"),
-							sap.ui.getCore().byId("multiComboBox14")
+							sap.ui.core.Element.getElementById("multiComboBox12"),
+							sap.ui.core.Element.getElementById("multiComboBox13"),
+							sap.ui.core.Element.getElementById("multiComboBox14")
 						];
 
 						aMCB.forEach(function (oMCB) {
@@ -442,7 +444,6 @@
 
 				oPage.placeAt("body");
 			});
-		});
 	</script>
 </head>
 
