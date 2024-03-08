@@ -29968,6 +29968,7 @@ sap.ui.define([
 	// Create a new root via "@$ui5.node.parent" : null (JIRA: CPOUI5ODATAV4-2355)
 	// Move "Beta" to make it a root node (JIRA: CPOUI5ODATAV4-2399)
 	// Display NodeID on UI, request NodeID after creation (JIRA: CPOUI5ODATAV4-2381)
+	// NodeID must ignore list's filters (SNOW: DINC0087713)
 	//
 	// "Refresh single" for stale elements; keep same context instance for created nodes throughout
 	// collapse and side effects.
@@ -29980,15 +29981,17 @@ sap.ui.define([
 
 		const oModel = this.createSpecialCasesModel({autoExpandSelect : true});
 		const sFriend = "/Artists(ArtistID='99',IsActiveEntity=false)/_Friend";
-		const sBaseUrl = sFriend.slice(1) + "?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
-			+ "HierarchyNodes=$root" + sFriend
+		const sBaseUrl = sFriend.slice(1) + "?$apply=ancestors($root" + sFriend
+			+ ",OrgChart,_/NodeID,filter(sendsAutographs),keep start)"
+			+ "/com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root" + sFriend
 			+ ",HierarchyQualifier='OrgChart',NodeProperty='_/NodeID',Levels=1)";
 		const sView = `
 <t:Table id="table" rows="{path : '/Artists(ArtistID=\\'99\\',IsActiveEntity=false)/_Friend',
 		parameters : {
 			$$aggregation : {
 				hierarchyQualifier : 'OrgChart'
-			}
+			},
+			$filter : 'sendsAutographs'
 		}}" threshold="0" visibleRowCount="3">
 	<Text text="{= %{@$ui5.context.isTransient} }"/>
 	<Text text="{= %{@$ui5.node.isExpanded} }"/>
@@ -30088,6 +30091,7 @@ sap.ui.define([
 
 			that.expectChange("etag", [, "etag1.0"])
 				.expectChange("name", [, "Beta: β"])
+				// no "filter(sendsAutographs)" (SNOW: DINC0087713)
 				.expectRequest(sFriend.slice(1) + "?$apply=descendants($root" + sFriend
 					+ ",OrgChart,_/NodeID,filter(ArtistID eq '0' and IsActiveEntity eq false),1)"
 					+ "&$filter=ArtistID eq '1' and IsActiveEntity eq false&$select=_/NodeID", {
@@ -30152,6 +30156,7 @@ sap.ui.define([
 				})
 				.expectChange("etag", [, "etag2.0"])
 				.expectChange("name", [, "Gamma: γ"])
+				// no "filter(sendsAutographs)" (SNOW: DINC0087713)
 				.expectRequest(sFriend.slice(1) + "?$apply=descendants($root" + sFriend
 					+ ",OrgChart,_/NodeID,filter(ArtistID eq '0' and IsActiveEntity eq false),1)"
 					+ "&$filter=ArtistID eq '2' and IsActiveEntity eq false&$select=_/NodeID", {
@@ -30330,8 +30335,9 @@ sap.ui.define([
 			assert.strictEqual(oBeta.getModel(), oModel, "not destroyed by collapse");
 			assert.strictEqual(oGamma.getModel(), oModel, "not destroyed by collapse");
 
-			that.expectRequest(sFriend.slice(1) + "?$select=ArtistID,IsActiveEntity,Name,_/NodeID"
-					+ "&$filter=ArtistID eq '0' and IsActiveEntity eq false", {
+			that.expectRequest(sFriend.slice(1)
+					+ "?$filter=ArtistID eq '0' and IsActiveEntity eq false"
+					+ "&$select=ArtistID,IsActiveEntity,Name,_/NodeID", {
 					value : [{
 						"@odata.etag" : "etag0.1",
 						ArtistID : "0",
@@ -30508,7 +30514,10 @@ sap.ui.define([
 				})
 				.expectChange("etag", ["etag9.0"])
 				.expectChange("name", ["Aleph: ℵ"])
-				.expectRequest(sBaseUrl
+				// no "filter(sendsAutographs)" (SNOW: DINC0087713)
+				.expectRequest(sFriend.slice(1) + "?$apply="
+					+ "com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root" + sFriend
+					+ ",HierarchyQualifier='OrgChart',NodeProperty='_/NodeID',Levels=1)"
 					+ "&$filter=ArtistID eq '9' and IsActiveEntity eq false&$select=_/NodeID", {
 					value : [{
 						"@odata.etag" : "etag9.0",
@@ -30543,11 +30552,12 @@ sap.ui.define([
 			]);
 			checkCreatedPersisted(assert, oNewRoot);
 
-			that.expectRequest(sFriend.slice(1) + "?$select=ArtistID,IsActiveEntity,Name,_/NodeID"
-					+ "&$filter=ArtistID eq '9' and IsActiveEntity eq false"
+			that.expectRequest(sFriend.slice(1)
+					+ "?$filter=ArtistID eq '9' and IsActiveEntity eq false"
 					+ " or ArtistID eq '0' and IsActiveEntity eq false"
 					+ " or ArtistID eq '2' and IsActiveEntity eq false"
 					+ " or ArtistID eq '1' and IsActiveEntity eq false"
+					+ "&$select=ArtistID,IsActiveEntity,Name,_/NodeID"
 					+ "&$top=4", {
 					value : [{
 						"@odata.etag" : "etag9.1",
@@ -30663,6 +30673,7 @@ sap.ui.define([
 	// Before deletion, the new node is maybe moved to make it a root (JIRA: CPOUI5ODATAV4-2400)
 	// Old vs. new format of RecursiveHierarchy annotation (JIRA: CPOUI5ODATAV4-2401)
 	// Display NodeID on UI, request NodeID after creation (JIRA: CPOUI5ODATAV4-2381)
+	// NodeID must ignore list's filters (SNOW: DINC0087713)
 	//
 	// At first, create a new root node with a LimitedRank beyond all currently loaded nodes.
 	// Finally, it is also deleted.
@@ -30777,11 +30788,27 @@ make root = ${bMakeRoot}`;
 				Name : "Aleph",
 				_ : null // not available w/ RAP for a non-hierarchical request
 			})
-			.expectRequest(sBaseUrl + "&$filter=ArtistID eq '8' and IsActiveEntity eq false"
-				+ "&$select=_/" + sLimitedRank + ",_/NodeID", {
+			.expectRequest({
+				batchNo : 3,
+				url : sBaseUrl + "&$filter=ArtistID eq '8' and IsActiveEntity eq false"
+					+ "&$select=_/" + sLimitedRank
+			}, {
 				value : [{
 					_ : {
-						[sLimitedRank] : "10", // Edm.Int64
+						[sLimitedRank] : "10" // Edm.Int64
+					}
+				}]
+			})
+			.expectRequest({
+				batchNo : 3,
+				// no "filter(...)/search(...)" (SNOW: DINC0087713)
+				url : sFriend.slice(1) + "?$apply="
+					+ "com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root" + sFriend
+					+ ",HierarchyQualifier='" + sHierarchyQualifier + "',NodeProperty='_/NodeID')"
+					+ "&$filter=ArtistID eq '8' and IsActiveEntity eq false&$select=_/NodeID"
+			}, {
+				value : [{
+					_ : {
 						NodeID : "8,false"
 					}
 				}]
@@ -30922,11 +30949,27 @@ make root = ${bMakeRoot}`;
 				Name : "New",
 				_ : null // not available w/ RAP for a non-hierarchical request
 			})
-			.expectRequest(sBaseUrl + "&$filter=ArtistID eq '9' and IsActiveEntity eq false"
-				+ "&$select=_/" + sLimitedRank + ",_/NodeID", {
+			.expectRequest({
+				batchNo : 7,
+				url : sBaseUrl + "&$filter=ArtistID eq '9' and IsActiveEntity eq false"
+					+ "&$select=_/" + sLimitedRank
+			}, {
 				value : [{
 					_ : {
-						[sLimitedRank] : "4", // Edm.Int64
+						[sLimitedRank] : "4" // Edm.Int64
+					}
+				}]
+			})
+			.expectRequest({
+				batchNo : 7,
+				// no "filter(...)/search(...)" (SNOW: DINC0087713)
+				url : sFriend.slice(1) + "?$apply="
+					+ "com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root" + sFriend
+					+ ",HierarchyQualifier='" + sHierarchyQualifier + "',NodeProperty='_/NodeID')"
+					+ "&$filter=ArtistID eq '9' and IsActiveEntity eq false&$select=_/NodeID"
+			}, {
+				value : [{
+					_ : {
 						NodeID : "9,false"
 					}
 				}]
@@ -32497,11 +32540,10 @@ make root = ${bMakeRoot}`;
 					Name : sName,
 					_ : null // not available w/ RAP for a non-hierarchical request
 				})
-				.expectRequest(sFriend + "?$apply=" + sFilterSearchPrefix
-					+ "descendants($root/" + sFriend
+				// no sFilterSearchPrefix (SNOW: DINC0087713)
+				.expectRequest(sFriend + "?custom=foo&$apply=descendants($root/" + sFriend
 					+ ",OrgChart,_/NodeID,filter(ArtistID eq '" + sParentId
 					+ "' and IsActiveEntity eq false),1)"
-					+ "/orderby(defaultChannel)"
 					+ "&$filter=ArtistID eq '" + sId
 					+ "' and IsActiveEntity eq false&$select=_/NodeID", {
 					value : [{
@@ -34036,11 +34078,27 @@ make root = ${bMakeRoot}`;
 				Name : "Beth",
 				_ : null // not available w/ RAP for a non-hierarchical request
 			})
-			.expectRequest(sBaseUrl + "&$filter=ArtistID eq '10' and IsActiveEntity eq false"
-				+ "&$select=_/" + sLimitedRank + ",_/NodeID", {
+			.expectRequest({
+				batchNo : 7,
+				url : sBaseUrl + "&$filter=ArtistID eq '10' and IsActiveEntity eq false"
+					+ "&$select=_/" + sLimitedRank
+			}, {
 				value : [{
 					_ : {
-						[sLimitedRank] : "12", // Edm.Int64
+						[sLimitedRank] : "12" // Edm.Int64
+					}
+				}]
+			})
+			.expectRequest({
+				batchNo : 7,
+				// no "orderby(...)" due to SNOW: DINC0087713
+				url : sFriend.slice(1) + "?$apply="
+					+ "com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root" + sFriend
+					+ ",HierarchyQualifier='" + sHierarchyQualifier + "',NodeProperty='_/NodeID')"
+					+ "&$filter=ArtistID eq '10' and IsActiveEntity eq false&$select=_/NodeID"
+			}, {
+				value : [{
+					_ : {
 						NodeID : "10,false"
 					}
 				}]
@@ -34084,11 +34142,27 @@ make root = ${bMakeRoot}`;
 				Name : "Gimel",
 				_ : null // not available w/ RAP for a non-hierarchical request
 			})
-			.expectRequest(sBaseUrl + "&$filter=ArtistID eq '10.1' and IsActiveEntity eq false"
-				+ "&$select=_/" + sLimitedRank + ",_/NodeID", {
+			.expectRequest({
+				batchNo : 9,
+				url : sBaseUrl + "&$filter=ArtistID eq '10.1' and IsActiveEntity eq false"
+					+ "&$select=_/" + sLimitedRank
+			}, {
 				value : [{
 					_ : {
-						[sLimitedRank] : "13", // Edm.Int64
+						[sLimitedRank] : "13" // Edm.Int64
+					}
+				}]
+			})
+			.expectRequest({
+				batchNo : 9,
+				// no "orderby(...)" due to SNOW: DINC0087713
+				url : sFriend.slice(1) + "?$apply="
+					+ "com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root" + sFriend
+					+ ",HierarchyQualifier='" + sHierarchyQualifier + "',NodeProperty='_/NodeID')"
+					+ "&$filter=ArtistID eq '10.1' and IsActiveEntity eq false&$select=_/NodeID"
+			}, {
+				value : [{
+					_ : {
 						NodeID : "10.1,false"
 					}
 				}]
