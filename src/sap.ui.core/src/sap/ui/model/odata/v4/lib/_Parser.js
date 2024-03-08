@@ -171,7 +171,7 @@ sap.ui.define([], function () {
 	 * @param {number} iLbp The "left binding power"
 	 */
 	function addInfixOperator(sId, iLbp) {
-		// Note: this function is executed at load time only!
+		// Note: this function is run at load time only!
 		mFilterParserSymbols[sId] = {
 			lbp : iLbp,
 			led : function (oToken, oLeft) {
@@ -190,7 +190,7 @@ sap.ui.define([], function () {
 	 * @param {string} sId The token ID
 	 */
 	function addLeafSymbol(sId) {
-		// Note: this function is executed at load time only!
+		// Note: this function is run at load time only!
 		mFilterParserSymbols[sId] = {
 			lbp : 0,
 			nud : function (oToken) {

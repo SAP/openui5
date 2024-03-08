@@ -1601,7 +1601,7 @@ sap.ui.define([
 
 	/**
 	 * Finds the request identified by the given group and body, removes it from that group and
-	 * triggers a new request with the new group ID, based on the found request.
+	 * initiates a new request with the new group ID, based on the found request.
 	 * The result of the new request is delegated to the found request.
 	 *
 	 * @param {string} sCurrentGroupId
@@ -1634,9 +1634,9 @@ sap.ui.define([
 
 	/**
 	 * Finds all requests identified by the given group and entity, removes them from that group
-	 * and triggers new requests with the new group ID, based on each found request.
+	 * and initiates new requests with the new group ID, based on each found request.
 	 * The result of each new request is delegated to the corresponding found request. If no entity
-	 * is given, all requests for that group are triggered again.
+	 * is given, all requests for that group are initiated again.
 	 *
 	 * @param {string} sCurrentGroupId
 	 *   The ID of the group in which to search
@@ -1861,7 +1861,7 @@ sap.ui.define([
 					aRequests.push(oRequest);
 				} else if (bAtFront) { // add at front of first change set
 					aRequests[0].unshift(oRequest);
-				} else { // push into change set which was current when the request was triggered
+				} else { // push into change set which was current when the request was initiated
 					iChangeSetNo = aRequests.iChangeSet;
 					while (aRequests[iChangeSetNo].iSerialNumber > iRequestSerialNumber) {
 						iChangeSetNo -= 1;
@@ -2126,7 +2126,7 @@ sap.ui.define([
 	 * Waits until all group locks for the given group ID have been unlocked and submits the
 	 * requests associated with this group ID in one batch request. If only PATCH requests are
 	 * enqueued (see {@link #hasOnlyPatchesWithoutSideEffects}), this will delay the execution to
-	 * wait for potential side effect requests triggered by a
+	 * wait for potential side effect requests initiated by a
 	 * {@link sap.ui.core.Control#event:validateFieldGroup 'validateFieldGroup'} event.
 	 *
 	 * @param {string} sGroupId
