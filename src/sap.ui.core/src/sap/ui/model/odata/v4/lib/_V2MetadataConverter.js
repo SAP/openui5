@@ -343,7 +343,7 @@ sap.ui.define([
 	 * @returns {object} The target for the annotations
 	 */
 	Annotatable.prototype.getTarget = function () {
-		if (!this.mAnnotationsForTarget) {
+		if (!this.mAnnotationsForTarget) { // eslint-disable-line logical-assignment-operators
 			this.mAnnotationsForTarget = this.oConverter.convertedV2Annotations[this.sPath] = {};
 		}
 		return this.mAnnotationsForTarget;
@@ -1463,8 +1463,7 @@ sap.ui.define([
 					oToRole = oAssociation.roles[oAssociationSetTo.roleName];
 
 				if (oToRole.propertyName) {
-					oEntitySet.$NavigationPropertyBinding
-						= oEntitySet.$NavigationPropertyBinding || {};
+					oEntitySet.$NavigationPropertyBinding ??= {};
 					oEntitySet.$NavigationPropertyBinding[oToRole.propertyName]
 						= oAssociationSetTo.entitySetName;
 				}
@@ -1524,7 +1523,7 @@ sap.ui.define([
 	 * @param {object} $$ The prototype for V4MetadataConverter
 	 */
 	(function ($$) {
-		// Note: this function is executed at load time only!
+		// Note: this function is run at load time only!
 		var oStructuredTypeConfig;
 
 		$$.sRootNamespace = sEdmxNamespace;

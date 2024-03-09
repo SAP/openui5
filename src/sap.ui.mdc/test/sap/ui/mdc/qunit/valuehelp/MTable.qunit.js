@@ -1773,8 +1773,13 @@ sap.ui.define([
 
 		sinon.stub(oContainer, "getValueHelpDelegate").returns(ValueHelpDelegateV4);
 		sinon.spy(ValueHelpDelegateV4, "isSearchSupported"); // returns false for non V4-ListBinding
-		sinon.stub(ValueHelpDelegateV4, "adjustSearch").withArgs(undefined, false, "i").returns("I"); //test V4 logic
-		ValueHelpDelegateV4.adjustSearch.callThrough();
+		sinon.stub(ValueHelpDelegateV4, "updateBindingInfo").callsFake(function(oValueHelp, oContent, oBindingInfo) { //test V4 logic
+			ValueHelpDelegateV4.updateBindingInfo.wrappedMethod.apply(this, arguments);
+
+			if (oContent.getSearch() === "i" && oBindingInfo.parameters.$search === "i") { // check if standard search is already set
+				oBindingInfo.parameters.$search = "I";
+			}
+		});
 
 		const oListBinding = oTable.getBinding("items");
 		const oListBindingInfo = oTable.getBindingInfo("items");
@@ -1802,8 +1807,7 @@ sap.ui.define([
 		setTimeout( function(){
 			// as waiting for Promise
 			assert.ok(ValueHelpDelegateV4.isSearchSupported.called, "ValueHelpDelegateV4.isSearchSupported called");
-			assert.ok(ValueHelpDelegateV4.adjustSearch.called, "ValueHelpDelegateV4.adjustSearch called");
-			assert.ok(ValueHelpDelegateV4.adjustSearch.calledWith(undefined, false, "i"), "ValueHelpDelegateV4.adjustSearch called parameters");
+			assert.ok(ValueHelpDelegateV4.updateBindingInfo.called, "ValueHelpDelegateV4.updateBindingInfo called");
 			assert.equal(oListBindingInfo.parameters.$search, "I", "ListBindingInfo: search string set to $search");
 			assert.ok(oListBinding.suspend.calledOnce, "ListBinding was suspended meanwhile");
 			assert.notOk(oListBinding.isSuspended(), "ListBinding is resumed");
@@ -1820,7 +1824,7 @@ sap.ui.define([
 
 			oContainer.getValueHelpDelegate.restore();
 			ValueHelpDelegateV4.isSearchSupported.restore();
-			ValueHelpDelegateV4.adjustSearch.restore();
+			ValueHelpDelegateV4.updateBindingInfo.restore();
 			fnDone();
 		}, 0);
 	});

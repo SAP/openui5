@@ -50,11 +50,9 @@ sap.ui.define([
 			// object page. Make the action bindings for "Edit" and "Save" dependents of this
 			// binding. The view gets a binding with empty path and its parent context will always
 			// be the element context of the latest binding in this hidden chain.
-			if (!this.oHiddenBinding) {
-				// Note: This cannot be done in onInit because the model is not yet available then
-				this.oHiddenBinding = this.oView.getModel().bindContext("", null,
-					{$$patchWithoutSideEffects : true});
-			}
+			// Note: This cannot be done in onInit because the model is not yet available then
+			this.oHiddenBinding ??= this.oView.getModel().bindContext("", null,
+				{$$patchWithoutSideEffects : true});
 			if (History.getInstance().getDirection() !== "Backwards") {
 				if (this.oArtistContext) { // used for return value contexts or in Discard
 					oArtistContext = this.oArtistContext;

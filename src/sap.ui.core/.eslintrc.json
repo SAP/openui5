@@ -51,6 +51,9 @@
 				"jsx-quotes": "error", // let's see...
 				"key-spacing": ["error", {"beforeColon": true}],
 				"lines-between-class-members": "error",
+				"logical-assignment-operators" : ["error", "always", {
+					"enforceForIfStatements" : true
+				}],
 				"max-classes-per-file": "error",
 				"new-cap": "error", // override "warn"
 				"no-await-in-loop": "error",

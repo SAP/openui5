@@ -43,7 +43,7 @@ sap.ui.define([
 					mMeasureRange = {};
 
 				function getMeasureRange(sMeasure) {
-					mMeasureRange[sMeasure] = mMeasureRange[sMeasure] || {};
+					mMeasureRange[sMeasure] ??= {};
 					return mMeasureRange[sMeasure];
 				}
 

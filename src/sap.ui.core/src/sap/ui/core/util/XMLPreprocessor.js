@@ -400,7 +400,7 @@ sap.ui.define([
 				oInfo.formatter.textFragments = fnFormatter.textFragments;
 			}
 			oInfo.mode = BindingMode.OneTime;
-			oInfo.parameters = oInfo.parameters || {};
+			oInfo.parameters ??= {};
 			oInfo.parameters.scope = oScope;
 			if (bAsync && oModel && oModel.$$valueAsPromise) { // opt-in to async behavior
 				bValueAsPromise = oInfo.parameters.$$valueAsPromise = true;
@@ -683,12 +683,11 @@ sap.ui.define([
 						 *   path cannot be resolved (typically because a relative path was given for a
 						 *   model without a binding context)
 						 */
-						getContext : function (sPath) {
+						getContext : function (sPath = "") {
 							var oBindingInfo,
 								oModel,
 								sResolvedPath;
 
-							sPath = sPath || "";
 							if (sPath[0] === "{") {
 								throw new Error("Must be a simple path, not a binding: " + sPath);
 							}
@@ -1205,7 +1204,7 @@ sap.ui.define([
 					// Note: It is perfectly valid to include the very same fragment again, as long as
 					// the context is changed. So we check for cycles at the current "with" control.
 					// A context change will create a new one.
-					oWithControl.$mFragmentContexts = oWithControl.$mFragmentContexts || {};
+					oWithControl.$mFragmentContexts ??= {};
 					if (oWithControl.$mFragmentContexts[sFragmentName]) {
 						error("Cyclic reference to fragment '" + sFragmentName + "' ", oElement);
 					}
@@ -1254,11 +1253,10 @@ sap.ui.define([
 				 *   A sync promise which resolves with <code>undefined</code> as soon as visiting and
 				 *   lifting is done, or is rejected with a corresponding error if visiting fails.
 				 */
-				function liftChildNodes(oParent, oWithControl, oTarget) {
+				function liftChildNodes(oParent, oWithControl, oTarget = oParent) {
 					return visitChildNodes(oParent, oWithControl).then(function () {
 						var oChild;
 
-						oTarget = oTarget || oParent;
 						while ((oChild = oParent.firstChild)) {
 							oTarget.parentNode.insertBefore(oChild, oTarget);
 						}
@@ -1637,7 +1635,7 @@ sap.ui.define([
 					}
 
 					// set up the model for the loop variable
-					sVar = sVar || sModelName; // default loop variable is to keep the same model
+					sVar ??= sModelName; // default loop variable is to keep the same model
 					oNewWithControl.setModel(oListBinding.getModel(), sVar);
 
 					// the actual loop
@@ -1699,7 +1697,7 @@ sap.ui.define([
 					oWithControl.setChild(oNewWithControl);
 
 					oBindingInfo = BindingParser.simpleParser("{" + sPath + "}");
-					sVar = sVar || oBindingInfo.model; // default variable is same model name
+					sVar ??= oBindingInfo.model; // default variable is same model name
 
 					if (sHelper || sVar) { // create a "named context"
 						oModel = oWithControl.getModel(oBindingInfo.model);
@@ -1963,7 +1961,7 @@ sap.ui.define([
 				}
 
 				Measurement.average(sPerformanceProcess, "", aPerformanceCategories);
-				mSettings = mSettings || {};
+				mSettings ??= {}; // Note: might be null!
 
 				if (bDebug) {
 					debug(undefined, "Start processing", sCaller);

@@ -668,7 +668,7 @@ sap.ui.define([
 	 *   If <code>true</code>, the value is returned in external format using a UI5 type for the
 	 *   given property path that formats corresponding to the property's EDM type and constraints.
 	 * @param {boolean} [bCached]
-	 *   Whether to return cached values only and not trigger a request
+	 *   Whether to return cached values only and not initiate a request
 	 * @returns {sap.ui.base.SyncPromise} a promise on the formatted value
 	 *
 	 * @private
@@ -705,7 +705,7 @@ sap.ui.define([
 	 * @param {sap.ui.model.odata.v4.ODataPropertyBinding} [oListener]
 	 *   A property binding which registers itself as listener at the cache
 	 * @param {boolean} [bCached]
-	 *   Whether to return cached values only and not trigger a request
+	 *   Whether to return cached values only and not initiate a request
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise on the outcome of the binding's <code>fetchValue</code> call; it is rejected
 	 *   in case cached values are asked for, but not found
@@ -912,7 +912,7 @@ sap.ui.define([
 	 * Note that the function clones the result. Modify values via
 	 * {@link sap.ui.model.odata.v4.ODataPropertyBinding#setValue}.
 	 *
-	 * Returns <code>undefined</code> if the data is not (yet) available; no request is triggered.
+	 * Returns <code>undefined</code> if the data is not (yet) available; no request is initiated.
 	 * Use {@link #requestObject} for asynchronous access.
 	 *
 	 * The header context of a list binding only delivers <code>$count</code> and
@@ -963,7 +963,7 @@ sap.ui.define([
 	/**
 	 * Returns the property value for the given path relative to this context. The path is expected
 	 * to point to a structural property with primitive type. Returns <code>undefined</code>
-	 * if the data is not (yet) available; no request is triggered. Use {@link #requestProperty}
+	 * if the data is not (yet) available; no request is initiated. Use {@link #requestProperty}
 	 * for asynchronous access.
 	 *
 	 * @param {string} sPath
@@ -1045,7 +1045,7 @@ sap.ui.define([
 	 * Note that the function returns the cache instance. Do not modify the result, use
 	 * {@link sap.ui.model.odata.v4.ODataPropertyBinding#setValue} instead.
 	 *
-	 * Returns <code>undefined</code> if the data is not (yet) available; no request is triggered.
+	 * Returns <code>undefined</code> if the data is not (yet) available; no request is initiated.
 	 *
 	 * @param {string} [sPath=""]
 	 *   A path, absolute or relative to this context
@@ -1605,7 +1605,7 @@ sap.ui.define([
 	 *     this case.
 	 * </ul>
 	 * Key predicates must be available in this context's path. Avoid
-	 * navigation properties as part of a binding's $select system query option as they may trigger
+	 * navigation properties as part of a binding's $select system query option as they may initiate
 	 * pointless requests. There must be only context bindings between this context and its first
 	 * ancestor binding which uses own data service requests.
 	 *
@@ -1783,7 +1783,7 @@ sap.ui.define([
 		}, []);
 		aPathsForBinding = _Helper.filterPaths(aPathsForModel, aPathsForBinding);
 
-		sGroupId = sGroupId || this.getUpdateGroupId();
+		sGroupId ??= this.getUpdateGroupId();
 
 		return Promise.resolve(
 			SyncPromise.resolve(
@@ -2002,7 +2002,7 @@ sap.ui.define([
 	 * @param {boolean} bKeepAlive
 	 *   Whether to keep the context alive
 	 * @param {function((sap.ui.model.odata.v4.Context|undefined))} [fnOnBeforeDestroy]
-	 *   Callback function that is executed once for a kept-alive context without any argument just
+	 *   Callback function that is called once for a kept-alive context without any argument just
 	 *   before the context is destroyed; see {@link #destroy}. If a context has been replaced in a
 	 *   list binding (see {@link #replaceWith} and
 	 *   {@link sap.ui.odata.v4.ODataContextBinding#execute}), the callback will later also be
@@ -2086,7 +2086,7 @@ sap.ui.define([
 	 * context and is expected to point to a structural property with primitive type or, since
 	 * 1.85.0, to an instance annotation. Since 1.122.0 the client-side annotation
 	 * "@$ui5.context.isSelected" can be given as a path. Note: Writing to a client-side
-	 * annotation never triggers a PATCH request, even if <code>sGroupId</code> is given.
+	 * annotation never initiates a PATCH request, even if <code>sGroupId</code> is given.
 	 * Thus, reverting the value of this annotation cannot be done via {@link #resetChanges}.
 	 *
 	 * @param {string} sPath

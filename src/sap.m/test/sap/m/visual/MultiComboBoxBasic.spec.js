@@ -44,12 +44,12 @@ describe('sap.m.MultiComboBoxBasic', function() {
 
 	//MultiComboBox - Read only
 	it("should visualize a MultiComboBox - Read only", function(){
-		browser.executeScript('sap.ui.getCore().byId("MultiComboBoxReadOnly")._oTokenizer.getTokens()[4].setSelected(true);')
+		browser.executeScript('sap.ui.core.Element.getElementById("MultiComboBoxReadOnly")._oTokenizer.getTokens()[4].setSelected(true);')
 		.then(function() {
 			var readOnlyMultiComboBox = element(by.id("MultiComboBoxReadOnly"));
 			expect(takeScreenshot(readOnlyMultiComboBox)).toLookAs("read_only");
 		});
-		browser.executeScript('sap.ui.getCore().byId("MultiComboBoxReadOnly")._oTokenizer.getTokens()[4].setSelected(false);');
+		browser.executeScript('sap.ui.core.Element.getElementById("MultiComboBoxReadOnly")._oTokenizer.getTokens()[4].setSelected(false);');
 	});
 
 	//MultiComboBox - Disabled

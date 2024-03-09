@@ -224,7 +224,7 @@ sap.ui.define([
 	 * type information.
 	 * If the binding's path cannot be resolved or if reading the binding's value fails or if the
 	 * value read is invalid (e.g. not a primitive value), the binding's value is reset to
-	 * <code>undefined</code>. As described above, this may trigger a change event depending on the
+	 * <code>undefined</code>. As described above, this may initiate a change event depending on the
 	 * previous value and the <code>bForceUpdate</code> parameter. In the end the data state is
 	 * checked (see {@link sap.ui.model.PropertyBinding#checkDataState}) even if there is no change
 	 * event. If there are multiple synchronous <code>checkUpdateInternal</code> calls the data
@@ -339,8 +339,7 @@ sap.ui.define([
 			});
 			if (bForceUpdate && vValue.isFulfilled()) {
 				if (vType && vType.isFulfilled && vType.isFulfilled()) {
-					PropertyBinding.prototype.setType
-						.call(this, vType.getResult(), this.sInternalType);
+					this.doSetType(vType.getResult());
 				}
 				this.vValue = vValue.getResult();
 			}
@@ -354,7 +353,7 @@ sap.ui.define([
 
 			if (oCallToken === that.oCheckUpdateCallToken) { // latest call to checkUpdateInternal
 				that.oCheckUpdateCallToken = undefined;
-				PropertyBinding.prototype.setType.call(that, oType, that.sInternalType);
+				that.doSetType(oType);
 				if (oCallToken.forceUpdate || that.vValue !== vValue) {
 					that.bInitial = false;
 					that.vValue = vValue;
@@ -419,6 +418,19 @@ sap.ui.define([
 	 */
 	ODataPropertyBinding.prototype.doFetchOrGetQueryOptions = function () {
 		return this.isRoot() ? this.mQueryOptions : undefined;
+	};
+
+	/**
+	 * Sets the given type for this binding while keeping its internal type.
+	 *
+	 * @param {sap.ui.model.Type} oType
+	 *   The type for this binding
+	 *
+	 * @private
+	 * @see sap.ui.model.PropertyBinding#setType
+	 */
+	ODataPropertyBinding.prototype.doSetType = function (oType) {
+		PropertyBinding.prototype.setType.call(this, oType, this.sInternalType);
 	};
 
 	/**
@@ -693,7 +705,7 @@ sap.ui.define([
 						// Note: this.oType => this.sReducedPath
 						&& _Helper.getMetaPath(this.oModel.resolve(this.sPath, oContext))
 							!== _Helper.getMetaPath(this.sReducedPath)) {
-						PropertyBinding.prototype.setType.call(this, undefined, this.sInternalType);
+						this.doSetType(undefined);
 					}
 					this.sReducedPath = undefined;
 				}
@@ -744,7 +756,7 @@ sap.ui.define([
 	 * {@link sap.ui.model.odata.v4.ODataModel#event:propertyChange 'propertyChange'} event is
 	 * fired and provides a promise on the outcome of the asynchronous operation. Since 1.122.0
 	 * this method allows updates to the client-side annotation "@$ui5.context.isSelected". Note:
-	 * Changing the value of a client-side annotation never triggers a PATCH request, no matter
+	 * Changing the value of a client-side annotation never initiates a PATCH request, no matter
 	 * which <code>sGroupId</code> is given. Thus, it cannot be reverted via {@link #resetChanges}.
 	 *
 	 * @param {any} vValue

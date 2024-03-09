@@ -124,7 +124,7 @@ sap.ui.define([
 			if (oContext.getProperty("ID") === null) {
 				// do not activate context if no ID is given
 				oEvent.preventDefault();
-				if (!oMessage) {
+				if (!oMessage) { // eslint-disable-line logical-assignment-operators
 					oMessage = this.mCreateActivateMessages[oContext.getPath()] = new Message({
 						message : "ID must not be empty",
 						type : MessageType.Warning,

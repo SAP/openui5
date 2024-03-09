@@ -1042,7 +1042,7 @@ sap.ui.define([
 	 * @param {sap.ui.model.odata.v4.ODataPropertyBinding} [oListener]
 	 *   A property binding which registers itself as listener at the cache
 	 * @param {boolean} [bCached]
-	 *   Whether to return cached values only and not trigger a request
+	 *   Whether to return cached values only and not initiate a request
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise on the outcome of the cache's <code>fetchValue</code> call; it is rejected in
 	 *   case cached values are asked for, but not found, or if the cache is no longer the active
@@ -1213,7 +1213,7 @@ sap.ui.define([
 			// keep $select before $expand
 			if ("$select" in mInheritableQueryOptions) {
 				// avoid that this.mQueryOptions.$select is modified
-				mQueryOptions.$select = mQueryOptions.$select && mQueryOptions.$select.slice();
+				mQueryOptions.$select &&= mQueryOptions.$select.slice();
 				_Helper.addToSelect(mQueryOptions, mInheritableQueryOptions.$select);
 			}
 			if ("$expand" in mInheritableQueryOptions) {

@@ -136,8 +136,8 @@ sap.ui.define("sap/ui/core/sample/common/Helper", [
 		 * @param {boolean} bSearchOpenDialogs
 		 *  If set to true, Opa5 will only search in open dialogs
 		 */
-		changeStepInputValue : function (oOpa5, sViewName, sId, sValue, sExpectedValue,
-				bSearchOpenDialogs) {
+		changeStepInputValue : function (oOpa5, sViewName, sId, sValue, sExpectedValue = sValue,
+				bSearchOpenDialogs = false) {
 			// The StepInput control behaves different than e.g. Input: Changing and checking of the
 			// new value have to be done via separate waitFor(...) promises, e.g. the check for the
 			// value would fail if it is done in the success function of the first waitFor.
@@ -153,7 +153,6 @@ sap.ui.define("sap/ui/core/sample/common/Helper", [
 				id : sId,
 				searchOpenDialogs : bSearchOpenDialogs,
 				success : function (oControl) {
-					sExpectedValue = sExpectedValue || sValue;
 					Opa5.assert.strictEqual(oControl.getValue().toString(), sExpectedValue,
 						"Control: " + sId + " Value is: " + sExpectedValue);
 				},

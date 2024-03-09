@@ -1,17 +1,16 @@
-/*global QUnit */
+/*global QUnit, sinon */
 sap.ui.define([
 	"sap/ui/core/ControlBehavior",
-	"sap/ui/core/Element",
-	"sap/ui/core/Lib",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/MultiComboBox",
 	"sap/ui/core/Item",
+	"sap/ui/core/Element",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/ComboBoxBaseRenderer",
 	"sap/ui/Device",
-	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/core/library",
 	"sap/m/InputBase",
 	"sap/m/Input",
@@ -32,20 +31,20 @@ sap.ui.define([
 	"sap/m/inputUtils/getTokenByItem",
 	"sap/ui/core/SeparatorItem",
 	"sap/ui/core/InvisibleText",
-	"sap/m/library"
-], function(
+	"sap/m/library",
+	"sap/ui/core/Lib"
+], async function(
 	ControlBehavior,
-	Element,
-	Library,
 	qutils,
 	createAndAppendDiv,
 	MultiComboBox,
 	Item,
+	Element,
 	JSONModel,
 	ComboBoxBaseRenderer,
 	Device,
-	nextUIUpdate,
 	jQuery,
+	nextUIUpdate,
 	coreLibrary,
 	InputBase,
 	Input,
@@ -66,7 +65,8 @@ sap.ui.define([
 	getTokenByItem,
 	SeparatorItem,
 	InvisibleText,
-	mLibrary
+	mLibrary,
+	Library
 ) {
 	"use strict";
 
@@ -85,12 +85,21 @@ sap.ui.define([
 
 	createAndAppendDiv("MultiComboBoxContent").setAttribute("class", "select-content");
 
+	function runAllTimersAndRestore(oClock) {
+		if (!oClock) {
+			return;
+		}
+
+		oClock.runAll();
+		oClock.restore();
+	}
+
 	// make jQuery.now work with Sinon fake timers (since jQuery 2.x, jQuery.now caches the native Date.now)
 	jQuery.now = function () {
 		return Date.now();
 	};
 
-
+	await Library.load({ name: "sap.m" });
 	var oResourceBundle = Library.getResourceBundleFor("sap.m");
 
 	// =========================================================== //
@@ -101,7 +110,11 @@ sap.ui.define([
 	// API module                                                  //
 	// =========================================================== //
 
-	QUnit.module("API");
+	QUnit.module("API", {
+		afterEach: function () {
+			runAllTimersAndRestore(this.clock);
+		}
+	});
 
 	// ------------------------------ //
 	// tests for default values       //
@@ -115,7 +128,7 @@ sap.ui.define([
 
 		// arrange
 		//oMultiComboBox.placeAt("MultiComboBoxContent");
-		//Core.applyChanges();
+		//await nextUIUpdate();
 
 		// assertions
 		assert.strictEqual(oMultiComboBox.getName(), "", 'Default name is ""');
@@ -133,7 +146,7 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("constructor - items : [aItems]", function(assert) {
+	QUnit.test("constructor - items : [aItems]", async function(assert) {
 
 		// system under test
 		var oMultiComboBox = new MultiComboBox({
@@ -159,8 +172,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// assertions
 		assert.strictEqual(oMultiComboBox.getName(), "", 'Default name is ""');
@@ -293,6 +305,8 @@ sap.ui.define([
 				assert.deepEqual(oMultiComboBox.getSelectedItems(), [oItem]);
 
 				// cleanup
+				fnFireSelectionChangeSpy.restore();
+				fnFireSelectionFinishSpy.restore();
 				oMultiComboBox.destroy();
 			});
 
@@ -322,11 +336,13 @@ sap.ui.define([
 				assert.deepEqual(oMultiComboBox.getSelectedItems(), []);
 
 				// cleanup
+				fnFireSelectionChangeSpy.restore();
+				fnFireSelectionFinishSpy.restore();
 				oMultiComboBox.destroy();
 	});
 
 	QUnit.test("constructor - selectedItems : [Item], items : [Item], removeSelectedKey via UI - check fired events",
-		function(assert) {
+		async function(assert) {
 
 			// system under test
 			var oModel = new JSONModel({
@@ -355,7 +371,7 @@ sap.ui.define([
 			// arrange
 			oMultiComboBox.syncPickerContent();
 			oMultiComboBox.placeAt("MultiComboBoxContent");
-			nextUIUpdate.runSync()/*fake timer is used in module*/;
+			await nextUIUpdate();
 
 			var fnFireSelectionChangeSpy = this.spy(oMultiComboBox, "fireSelectionChange");
 
@@ -369,10 +385,11 @@ sap.ui.define([
 					"The selection change event parameter was passed");
 
 			// cleanup
+			fnFireSelectionChangeSpy.restore();
 			oMultiComboBox.destroy();
 	});
 
-	QUnit.test("constructor, check selectedKeys - items:[Items]", function(assert) {
+	QUnit.test("constructor, check selectedKeys - items:[Items]", async function(assert) {
 
 		// system under test
 		var oItem0, oItem1, oItem2, oItem3;
@@ -399,7 +416,7 @@ sap.ui.define([
 				})
 			]
 		}).placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// assertions
 		assert.deepEqual(oMultiComboBox.getSelectedKeys(), []);
@@ -524,7 +541,7 @@ sap.ui.define([
 	// xxxMaxWidth()                  //
 	// ------------------------------ //
 
-	QUnit.test("method: xxxMaxWidth() - maxWidth", function(assert) {
+	QUnit.test("method: xxxMaxWidth() - maxWidth", async function(assert) {
 
 		// system under test
 		var oMultiComboBox = new MultiComboBox({
@@ -537,7 +554,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// assertions
 		assert.strictEqual(oMultiComboBox.getMaxWidth(), "300px");
@@ -547,18 +564,18 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("method: xxxMaxWidth() - maxWidth", function(assert) {
+	QUnit.test("method: xxxMaxWidth() - maxWidth", async function(assert) {
 
 		// system under test
 		var oMultiComboBox = new MultiComboBox();
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// act
 		oMultiComboBox.setMaxWidth("30%");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// assertions
 		assert.strictEqual(oMultiComboBox.getMaxWidth(), "30%");
@@ -704,7 +721,7 @@ sap.ui.define([
 
 		// arrange
 		//oMultiComboBox.placeAt("MultiComboBoxContent");
-		//Core.applyChanges();
+		//await nextUIUpdate();
 
 		// assertions
 		assert.deepEqual(oMultiComboBox.getSelectedItems(), [oItem]);
@@ -790,7 +807,7 @@ sap.ui.define([
 
 		// arrange
 		//oMultiComboBox.placeAt("MultiComboBoxContent");
-		//Core.applyChanges();
+		//await nextUIUpdate();
 
 		// assertions
 		assert.deepEqual(oMultiComboBox.getSelectedKeys(), []);
@@ -835,7 +852,7 @@ sap.ui.define([
 	// addItem                        //
 	// ------------------------------ //
 
-	QUnit.test("method: addItem() - with key and text", function(assert) {
+	QUnit.test("method: addItem() - with key and text", async function(assert) {
 
 		// system under test
 		var oMultiComboBox = new MultiComboBox();
@@ -851,15 +868,15 @@ sap.ui.define([
 		});
 
 		oMultiComboBox.syncPickerContent();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 		var fnListAddAggregationSpy = this.spy(oMultiComboBox._getList(), "addAggregation");
 
 		// act
 		oMultiComboBox.addItem(oItem);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		oMultiComboBox.open();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// assertions
 		assert.ok(fnAddAggregationSpy.calledWith("items", oItem),
@@ -878,7 +895,7 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("method: addItem() - with text", function(assert) {
+	QUnit.test("method: addItem() - with text", async function(assert) {
 
 		// system under test
 		var oMultiComboBox = new MultiComboBox();
@@ -893,11 +910,11 @@ sap.ui.define([
 		});
 
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// act
 		oMultiComboBox.addItem(oItem);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// assertions
 		assert.ok(fnAddAggregationSpy.calledWith("items", oItem),
@@ -916,7 +933,7 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("method: addItem()", function(assert) {
+	QUnit.test("method: addItem()", async function(assert) {
 
 		// system under test
 		var oMultiComboBox = new MultiComboBox();
@@ -929,11 +946,11 @@ sap.ui.define([
 		var oItem = new Item();
 
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// act
 		oMultiComboBox.addItem(oItem);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// assertions
 		assert.ok(fnAddAggregationSpy.calledWith("items", oItem),
@@ -952,7 +969,7 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("method: addItem() - twice", function(assert) {
+	QUnit.test("method: addItem() - twice", async function(assert) {
 
 		// system under test
 		var oMultiComboBox = new MultiComboBox();
@@ -969,12 +986,12 @@ sap.ui.define([
 		});
 
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// act
 		oMultiComboBox.addItem(oItem);
 		oMultiComboBox.addItem(oItem);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// assertions
 		assert.ok(fnAddAggregationSpy.calledWith("items", oItem),
@@ -991,7 +1008,7 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("method: addItem(null)", function(assert) {
+	QUnit.test("method: addItem(null)", async function(assert) {
 
 		// system under test
 		var oMultiComboBox = new MultiComboBox();
@@ -1003,7 +1020,7 @@ sap.ui.define([
 
 		// act
 		oMultiComboBox.addItem(null);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// assertions
 		assert.ok(fnAddAggregationSpy.calledWith("items", null),
@@ -1021,7 +1038,7 @@ sap.ui.define([
 	// ------------------------------ //
 	// removeXXX                      //
 	// ------------------------------ //
-	QUnit.test("method: removeItem(oItem)", function(assert) {
+	QUnit.test("method: removeItem(oItem)", async function(assert) {
 
 		// system under test
 		var oItem, oItemRemoved;
@@ -1034,7 +1051,7 @@ sap.ui.define([
 
 		// act
 		oItemRemoved = oMultiComboBox.removeItem(oItem);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// assertions
 		assert.strictEqual(oItemRemoved, oItem);
@@ -1097,7 +1114,7 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("method: removeAllItems()", function(assert) {
+	QUnit.test("method: removeAllItems()", async function(assert) {
 
 		// system under test
 		var oItem, aItems;
@@ -1110,7 +1127,7 @@ sap.ui.define([
 
 		// act
 		aItems = oMultiComboBox.removeAllItems();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// assertions
 		assert.deepEqual(aItems, [oItem]);
@@ -1275,7 +1292,7 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("method: destroyItems()", function(assert) {
+	QUnit.test("method: destroyItems()", async function(assert) {
 
 		// system under test
 		var oItem;
@@ -1286,11 +1303,11 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// act
 		oMultiComboBox.destroyItems();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// assertions
 		assert.deepEqual(oMultiComboBox.getItems(), []);
@@ -1307,17 +1324,17 @@ sap.ui.define([
 	// insertItem                     //
 	// ------------------------------ //
 
-	QUnit.test("method: insertItem()", function(assert) {
+	QUnit.test("method: insertItem()", async function(assert) {
 
 		// system under test
 		var oMultiComboBox = new MultiComboBox();
 
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// arrange
 		oMultiComboBox.syncPickerContent();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		var fnInsertAggregation = this.spy(oMultiComboBox, "insertAggregation");
 		var fnInsertItem = this.spy(oMultiComboBox, "insertItem");
@@ -1328,10 +1345,10 @@ sap.ui.define([
 
 		// act
 		oMultiComboBox.insertItem(oItem, 0);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		oMultiComboBox.syncPickerContent(true);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// assertions
 		assert.ok(fnInsertAggregation.calledWith("items", oItem, 0),
@@ -1347,7 +1364,8 @@ sap.ui.define([
 	// _isListInSuggestMode          //
 	// ------------------------------ //
 
-	QUnit.test("method: _isListInSuggestMode - complete list", function(assert) {
+	QUnit.test("method: _isListInSuggestMode - complete list", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 
 		// system under test
 		var oMultiComboBox = new MultiComboBox({
@@ -1362,7 +1380,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// act
 		oMultiComboBox.open();
@@ -1375,8 +1393,8 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("method: _isListInSuggestMode complete list with disabled item", function(assert) {
-
+	QUnit.test("method: _isListInSuggestMode complete list with disabled item", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		// system under test
 		var oMultiComboBox = new MultiComboBox({
 			items : [new Item({
@@ -1391,7 +1409,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// act
 		oMultiComboBox.open();
@@ -1404,8 +1422,8 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("method: _isListInSuggestMode suggest list", function(assert) {
-
+	QUnit.test("method: _isListInSuggestMode suggest list", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		// system under test
 		var oMultiComboBox = new MultiComboBox({
 			items : [new Item({
@@ -1420,7 +1438,7 @@ sap.ui.define([
 		// arrange
 		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// act
 		ListHelpers.getListItem(oMultiComboBox.getFirstItem()).setVisible(false);
@@ -1434,8 +1452,8 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("method: _isListInSuggestMode suggest list with disabled item", function(assert) {
-
+	QUnit.test("method: _isListInSuggestMode suggest list with disabled item", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		// system under test
 		var oMultiComboBox = new MultiComboBox({
 			items : [new Item({
@@ -1451,7 +1469,7 @@ sap.ui.define([
 		// arrange
 		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// act
 		ListHelpers.getListItem(oMultiComboBox.getFirstItem()).setVisible(false);
@@ -1499,7 +1517,7 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("method: setSelectedItems() - [two items with same text] : should take over", function(assert) {
+	QUnit.test("method: setSelectedItems() - [two items with same text] : should take over", async function(assert) {
 
 		// system under test
 		var oItem1, oItem2;
@@ -1523,7 +1541,7 @@ sap.ui.define([
 		oMultiComboBox.setSelectedItems([oItem1, oItem2]);
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// assertions
 		assert.deepEqual(oMultiComboBox.getSelectedItems(), [oItem1, oItem2], "Should have both items");
@@ -1646,14 +1664,14 @@ sap.ui.define([
 		assert.deepEqual(oMultiComboBox.getSelectedItems(), [oItem]);
 		assert.strictEqual(fnFireChangeSpy.callCount, 0, "The change event was not fired");
 
-		//Core.applyChanges();
+		//await nextUIUpdate();
 		//assert.strictEqual(oMultiComboBox.getValue(), "item 1");
 
 		// cleanup
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("Firing event: setSelectedItems() set the selected item when the MultiComboBox popup menu is open", function(assert) {
+	QUnit.test("Firing event: setSelectedItems() set the selected item when the MultiComboBox popup menu is open", async function(assert) {
 
 		// system under test
 		var oItem;
@@ -1677,7 +1695,7 @@ sap.ui.define([
 		// arrange
 		oMultiComboBox.setSelectedKeys(["1"]);
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		oMultiComboBox.open();
 
@@ -1841,7 +1859,7 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("constructor - items:[] selectedKeys[sKey] - addItem(oItem)", function(assert) {
+	QUnit.test("constructor - items:[] selectedKeys[sKey] - addItem(oItem)", async function(assert) {
 
 		// system under test
 		var oItem;
@@ -1852,7 +1870,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 		oMultiComboBox.addItem(oItem = new Item({
 			key : "01",
 			text : "selected item"
@@ -1862,7 +1880,7 @@ sap.ui.define([
 			text : "item"
 		}));
 		oMultiComboBox.syncPickerContent();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// assertions
 		assert.deepEqual(oMultiComboBox.getSelectedKeys(), ["01"]);
@@ -1872,7 +1890,7 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("constructor - items:[] selectedItems[oItem] selectedKeys[sKey] - addItem(oItem)", function(assert) {
+	QUnit.test("constructor - items:[] selectedItems[oItem] selectedKeys[sKey] - addItem(oItem)", async function(assert) {
 
 		// system under test
 		var oItem1, oItem2;
@@ -1887,14 +1905,14 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 		oMultiComboBox.addItem(oItem1);
 		oMultiComboBox.addItem(oItem2 = new Item({
 			key : "02",
 			text : "selected item"
 		}));
 		oMultiComboBox.syncPickerContent();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// assertions
 		assert.deepEqual(oMultiComboBox.getSelectedKeys(), ["01", "02"]);
@@ -1904,7 +1922,7 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("it should not purge selected keys from the items", function (assert) {
+	QUnit.test("it should not purge selected keys from the items", async function (assert) {
 		// system under test
 		var oMultiComboBox = new MultiComboBox({
 			items: [
@@ -1913,11 +1931,11 @@ sap.ui.define([
 			]
 		}).placeAt("MultiComboBoxContent");
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Act
 		oMultiComboBox.addSelectedKeys(["", "", "1", "2", ""]);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.strictEqual(oMultiComboBox.getSelectedKeys().length, 5, "To have 5 items as selected keys");
 		assert.strictEqual(oMultiComboBox.getSelectedItems().length, 2, "There are 2 real selected items");
@@ -1942,7 +1960,7 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("constructor - binding", function(assert) {
+	QUnit.test("constructor - binding", async function(assert) {
 
 		// system under test
 		var oModel = new JSONModel({
@@ -1975,7 +1993,7 @@ sap.ui.define([
 		// arrange
 		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// act
 		qutils.triggerCharacterInput(oMultiComboBox.getFocusDomRef(), "Algeria");
@@ -1989,7 +2007,7 @@ sap.ui.define([
 		oModel.destroy();
 	});
 
-	QUnit.test("constructor - binding - destroyItems", function(assert) {
+	QUnit.test("constructor - binding - destroyItems", async function(assert) {
 
 		// system under test
 		var oModel = new JSONModel({
@@ -2021,7 +2039,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// act
 		oMultiComboBox.destroyItems();
@@ -2035,7 +2053,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("constructor - selectedItems : [Item], items : [Item], removeSelectedKey via UI - check fired events",
-		function(assert) {
+		async function(assert) {
 
 			// system under test
 			var oModel = new JSONModel({
@@ -2064,7 +2082,7 @@ sap.ui.define([
 			// arrange
 			oMultiComboBox.syncPickerContent();
 			oMultiComboBox.placeAt("MultiComboBoxContent");
-			nextUIUpdate.runSync()/*fake timer is used in module*/;
+			await nextUIUpdate();
 
 			var fnFireSelectionChangeSpy = this.spy(oMultiComboBox, "fireSelectionChange");
 			var fnFireSelectionFinishSpy = this.spy(oMultiComboBox, "fireSelectionFinish");
@@ -2083,13 +2101,15 @@ sap.ui.define([
 			assert.deepEqual(fnFireSelectionFinishSpy.args[0][0].selectedItems, oMultiComboBox.getSelectedItems());
 
 			// cleanup
+			fnFireSelectionChangeSpy.restore();
+			fnFireSelectionFinishSpy.restore();
 			oMultiComboBox.destroy();
 	});
 
 	//------------------------------ //
 	// _getXXXVisibleItemOf          //
 	// ----------------------------- //
-	QUnit.test("_getNextVisibleItemOf", function(assert) {
+	QUnit.test("_getNextVisibleItemOf", async function(assert) {
 
 		// system under test
 		var oItem1, oItem2, oItem3;
@@ -2109,7 +2129,7 @@ sap.ui.define([
 		// arrange
 		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// assertions
 		assert.deepEqual(oMultiComboBox._getNextVisibleItemOf(oItem1), oItem2);
@@ -2125,7 +2145,7 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("_getPreviousVisibleItemOf", function(assert) {
+	QUnit.test("_getPreviousVisibleItemOf", async function(assert) {
 
 		// system under test
 		var oItem1, oItem2, oItem3;
@@ -2145,7 +2165,7 @@ sap.ui.define([
 		// arrange
 		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// assertions
 		assert.deepEqual(oMultiComboBox._getPreviousVisibleItemOf(oItem1), null);
@@ -2165,8 +2185,8 @@ sap.ui.define([
 	// DisabledListItem              //
 	// ----------------------------- //
 	QUnit.test("DisabledListItem 'LIST_ITEM_VISUALISATION' - constructor",
-			function(assert) {
-
+			async function(assert) {
+				this.clock = sinon.useFakeTimers();
 				// system under test
 				var oItem1, oItem2, oItem3;
 				var oMultiComboBox = new MultiComboBox({
@@ -2182,7 +2202,7 @@ sap.ui.define([
 
 				// arrange
 				oMultiComboBox.placeAt("MultiComboBoxContent");
-				nextUIUpdate.runSync()/*fake timer is used in module*/;
+				await nextUIUpdate(this.clock);
 				oMultiComboBox.open();
 				this.clock.tick(500);
 
@@ -2199,10 +2219,10 @@ sap.ui.define([
 
 				// cleanup
 				oMultiComboBox.destroy();
-					});
+	});
 
-	QUnit.test("DisabledListItem 'LIST_ITEM_VISUALISATION' - should not be shown in suggest list", function(assert) {
-
+	QUnit.test("DisabledListItem 'LIST_ITEM_VISUALISATION' - should not be shown in suggest list", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		// system under test
 		var oItem1, oItem2, oItem3;
 		var oMultiComboBox = new MultiComboBox({
@@ -2222,7 +2242,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// act
 		qutils.triggerEvent("input", oMultiComboBox.getFocusDomRef());
@@ -2241,8 +2261,8 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("DisabledListItem 'LIST_ITEM_VISUALISATION' - set disabled via API", function(assert) {
-
+	QUnit.test("DisabledListItem 'LIST_ITEM_VISUALISATION' - set disabled via API", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		var oSystem = {
 			desktop : true,
 			phone : false,
@@ -2264,7 +2284,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// act
 		oItem1.setEnabled(false); //leads to invalidate of control
@@ -2287,8 +2307,8 @@ sap.ui.define([
 	//------------------------------ //
 	// Selectable Item             //
 	// ----------------------------- //
-	QUnit.test("setSelectable Item 'LIST_ITEM_VISUALISATION'", function(assert) {
-
+	QUnit.test("setSelectable Item 'LIST_ITEM_VISUALISATION'", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		// system under test
 		var oItem1, oItem2, oItem3;
 		var oMultiComboBox = new MultiComboBox({
@@ -2304,7 +2324,7 @@ sap.ui.define([
 		// arrange
 		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// act
 		oMultiComboBox.setSelectable(oItem3, false);
@@ -2323,8 +2343,8 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("setSelectable Dummy Item 'LIST_ITEM_VISUALISATION'", function(assert) {
-
+	QUnit.test("setSelectable Dummy Item 'LIST_ITEM_VISUALISATION'", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		// system under test
 		var oItem1, oItem2, oItem3;
 		var oMultiComboBox = new MultiComboBox({
@@ -2339,7 +2359,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// act
 		oMultiComboBox.setSelectable(new Item({
@@ -2360,8 +2380,8 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("setSelectable Item 'LIST_ITEM_VISUALISATION'", function(assert) {
-
+	QUnit.test("setSelectable Item 'LIST_ITEM_VISUALISATION'", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		// system under test
 		var oItem1, oItem2, oItem3;
 		var oMultiComboBox = new MultiComboBox({
@@ -2376,7 +2396,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// act
 		oMultiComboBox.setSelectable(oItem3, false);
@@ -2396,8 +2416,8 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("setSelectable Item 'LIST_ITEM_VISUALISATION' - selection is stored", function(assert) {
-
+	QUnit.test("setSelectable Item 'LIST_ITEM_VISUALISATION' - selection is stored", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		// system under test
 		var oItem1, oItem2, oItem3;
 		var oMultiComboBox = new MultiComboBox({
@@ -2413,7 +2433,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// act
 		oMultiComboBox.setSelectable(oItem1, false);
@@ -2436,8 +2456,8 @@ sap.ui.define([
 	//------------------------------ //
 	// clearFilter                   //
 	// ----------------------------- //
-	QUnit.test("clearFilter", function(assert) {
-
+	QUnit.test("clearFilter", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		// system under test
 		var oItem1, oItem2, oItem3;
 		var oMultiComboBox = new MultiComboBox({
@@ -2452,7 +2472,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// act
 		oMultiComboBox.clearFilter();
@@ -2471,8 +2491,8 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("clearFilter - after invisible", function(assert) {
-
+	QUnit.test("clearFilter - after invisible", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		// system under test
 		var oItem1, oItem2, oItem3;
 		var oMultiComboBox = new MultiComboBox({
@@ -2488,7 +2508,7 @@ sap.ui.define([
 		// arrange
 		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// act
 		ListHelpers.getListItem(oMultiComboBox.getFirstItem()).setVisible(false);
@@ -2508,8 +2528,8 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("clearFilter - disabled item", function(assert) {
-
+	QUnit.test("clearFilter - disabled item", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		// system under test
 		var oItem1, oItem2, oItem3;
 		var oMultiComboBox = new MultiComboBox({
@@ -2525,7 +2545,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// act
 		oMultiComboBox.clearFilter();
@@ -2544,8 +2564,8 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("clearFilter - disabled item after invisible", function(assert) {
-
+	QUnit.test("clearFilter - disabled item after invisible", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		// system under test
 		var oItem1, oItem2, oItem3;
 		var oMultiComboBox = new MultiComboBox({
@@ -2562,7 +2582,7 @@ sap.ui.define([
 		// arrange
 		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// act
 		ListHelpers.getListItem(oMultiComboBox.getFirstItem()).setVisible(false);
@@ -2582,7 +2602,8 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("clearFilter - disabled item after invisible", function(assert) {
+	QUnit.test("clearFilter - disabled item after invisible", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		// system under test
 		var oItem1, oItem2, oItem3;
 		var oMultiComboBox = new MultiComboBox({
@@ -2598,7 +2619,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// act
 		oItem1.setEnabled(true);
@@ -2625,7 +2646,8 @@ sap.ui.define([
 	// Scenarios - specification      //
 	// ------------------------------ //
 	//
-	QUnit.test("Enter completely new value should refilter the picker", function(assert) {
+	QUnit.test("Enter completely new value should refilter the picker", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		var oMultiComboBox = new MultiComboBox({
 			items: [
 				new Item({ text: "lest" }),
@@ -2643,19 +2665,19 @@ sap.ui.define([
 
 		oMultiComboBox.placeAt("MultiComboBoxContent");
 		oMultiComboBox.setValue("l");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 		oMultiComboBox.open();
 		this.clock.tick(nPopoverAnimationTick);
 
 		oMultiComboBox.fireChange({ value: "l" });
 		oMultiComboBox.oninput(oFakeEvent);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		oFakeEvent.target.value = "t";
 		oMultiComboBox.fireChange({ value: "t" });
 		oMultiComboBox.oninput(oFakeEvent);
 		oMultiComboBox.setValue("t");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		assert.strictEqual(ListHelpers.getSelectableItems(oMultiComboBox.getItems()).length, 1, "1 item should be available");
 		assert.strictEqual(ListHelpers.getSelectableItems(oMultiComboBox.getItems())[0].getText(), "test", "selectable item should be test");
@@ -2663,8 +2685,8 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("Scenario 'FIXED_CHAR': add invalid character.", function(assert) {
-
+	QUnit.test("Scenario 'FIXED_CHAR': add invalid character.", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		// system under test
 		var sInitValue = "Algeri";
 		var oMultiComboBox = new MultiComboBox({
@@ -2677,7 +2699,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		var oTarget = oMultiComboBox.getFocusDomRef();
 		var fnOninputSpy = this.spy(oMultiComboBox, "oninput");
@@ -2688,7 +2710,7 @@ sap.ui.define([
 		oTarget.value = "Algeriz";
 		qutils.triggerEvent("input", oTarget);
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// assertions
 		assert.strictEqual(fnOninputSpy.callCount, 1, "The oninput was called");
@@ -2707,8 +2729,8 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("Scenario 'FIXED_CHAR': overwrite selected character with invalid one.", function(assert) {
-
+	QUnit.test("Scenario 'FIXED_CHAR': overwrite selected character with invalid one.", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		// system under test
 		var sInitValue = "Algeri";
 		var oMultiComboBox = new MultiComboBox({
@@ -2721,7 +2743,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 		oMultiComboBox.selectText(1, 2);
 		var oTarget = oMultiComboBox.getFocusDomRef();
 		var fnOninputSpy = this.spy(oMultiComboBox, "oninput");
@@ -2731,7 +2753,7 @@ sap.ui.define([
 		qutils.triggerKeyup(oTarget, ''); // store old value
 		oTarget.value = "Azgeri";
 		qutils.triggerEvent("input", oTarget);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// assertions
 		assert.strictEqual(fnOninputSpy.callCount, 1, "The oninput was called");
@@ -2750,7 +2772,7 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("Scenario 'TOKEN_ORDER': Order of tokens is the order how the items were selected", function(assert) {
+	QUnit.test("Scenario 'TOKEN_ORDER': Order of tokens is the order how the items were selected", async function(assert) {
 
 		// system under test
 		var oItem1, oItem2, oItem3;
@@ -2770,7 +2792,7 @@ sap.ui.define([
 		// arrange
 		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// act
 		qutils.triggerCharacterInput(oMultiComboBox.getFocusDomRef(), oItem1.getText());
@@ -2790,7 +2812,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.removeAllSelectedItems();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// act
 		qutils.triggerCharacterInput(oMultiComboBox.getFocusDomRef(), oItem3.getText());
@@ -2816,7 +2838,7 @@ sap.ui.define([
 	// Scenarios - event handling     //
 	// ------------------------------ //
 
-	QUnit.test("Scenario 'EVENT_VALUE_ENTER': 'Algeria' + ENTER", function(assert) {
+	QUnit.test("Scenario 'EVENT_VALUE_ENTER': 'Algeria' + ENTER", async function(assert) {
 
 		// system under test
 		var oItem;
@@ -2830,7 +2852,7 @@ sap.ui.define([
 		// arrange
 		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		var fnFireChangeSpy = this.spy(oMultiComboBox, "fireChange");
 		var fnFireSelectionChangeSpy = this.spy(oMultiComboBox, "fireSelectionChange");
@@ -2847,10 +2869,12 @@ sap.ui.define([
 		assert.strictEqual(fnFireSelectionFinishSpy.callCount, 1, "The selection finish event was fired");
 
 		// cleanup
+		fnFireSelectionChangeSpy.restore();
+		fnFireSelectionFinishSpy.restore();
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("Scenario 'EVENT_VALUE_DUMMY_ENTER': 'dummy' + ENTER", function(assert) {
+	QUnit.test("Scenario 'EVENT_VALUE_DUMMY_ENTER': 'dummy' + ENTER", async function(assert) {
 
 		// system under test
 		var oMultiComboBox = new MultiComboBox({
@@ -2862,7 +2886,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		var fnFireChangeSpy = this.spy(oMultiComboBox, "fireChange");
 		var fnFireSelectionChangeSpy = this.spy(oMultiComboBox, "fireSelectionChange");
@@ -2879,10 +2903,12 @@ sap.ui.define([
 		assert.strictEqual(fnFireSelectionFinishSpy.callCount, 0, "The selection finish event was not fired");
 
 		// cleanup
+		fnFireSelectionChangeSpy.restore();
+		fnFireSelectionFinishSpy.restore();
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("Scenario 'EVENT_VALUE_SELECT_ENTER': 'Algeria' + select 'lgeria' + 'ustralia' + ENTER", function(assert) {
+	QUnit.test("Scenario 'EVENT_VALUE_SELECT_ENTER': 'Algeria' + select 'lgeria' + 'ustralia' + ENTER", async function(assert) {
 
 		// system under test
 		var oItem1;
@@ -2898,7 +2924,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		var fnFireChangeSpy = this.spy(oMultiComboBox, "fireChange");
 		var fnFireSelectionChangeSpy = this.spy(oMultiComboBox, "fireSelectionChange");
@@ -2922,10 +2948,12 @@ sap.ui.define([
 		assert.strictEqual(fnFireSelectionFinishSpy.callCount, 0, "The selection finish event was not fired");
 
 		// cleanup
+		fnFireSelectionChangeSpy.restore();
+		fnFireSelectionFinishSpy.restore();
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("Scenario 'EVENT_VALUE_PASTE': CTRL+V 'Algeria' ", function(assert) {
+	QUnit.test("Scenario 'EVENT_VALUE_PASTE': CTRL+V 'Algeria' ", async function(assert) {
 		// system under test
 		var oMultiComboBox = new MultiComboBox({
 			items: [
@@ -2936,7 +2964,7 @@ sap.ui.define([
 		// arrange
 		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		var fnFireSelectionChangeSpy = this.spy(oMultiComboBox, "fireSelectionChange");
 		var fnFireSelectionFinishSpy = this.spy(oMultiComboBox, "fireSelectionFinish");
@@ -2958,11 +2986,13 @@ sap.ui.define([
 		assert.deepEqual(oMultiComboBox.getSelectedItems().length, 0, "A token should not be created");
 
 		// cleanup
+		fnFireSelectionChangeSpy.restore();
+		fnFireSelectionFinishSpy.restore();
 		oMultiComboBox.destroy();
 	});
 
 
-	QUnit.test("Paste clipboard data from excel from several rows and columns info multiple tokens", function(assert) {
+	QUnit.test("Paste clipboard data from excel from several rows and columns info multiple tokens", async function(assert) {
 		var oMultiComboBox = new MultiComboBox({
 			items: [
 				new Item({key : "1",text : "1"}),
@@ -2973,7 +3003,7 @@ sap.ui.define([
 		});
 		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		var sPastedString = '1\t\t2\r\n\t\t\r\n3\t\t4\r\n';
 		var fnFireSelectionChangeSpy = this.spy(oMultiComboBox, "fireSelectionChange");
@@ -2996,10 +3026,13 @@ sap.ui.define([
 		assert.equal(oMultiComboBox.getSelectedItems().length, 4, "4 tokens should be added to MultiComboBox");
 
 		// cleanup
+		fnFireSelectionChangeSpy.restore();
+		fnFireSelectionFinishSpy.restore();
 		oMultiComboBox.destroy();
 	});
 
 	QUnit.test("Paste value behaviour", function (assert) {
+		this.clock = sinon.useFakeTimers();
 		var oMultiComboBox = new MultiComboBox({
 			items : [new Item({
 				key : "DZ",
@@ -3031,19 +3064,20 @@ sap.ui.define([
 		assert.ok(oHandleInputEventSpy.called, "handleInputValidation should be called on input");
 		assert.ok(oUpdateDomValueSpy.called, "Update DOM value should be called while pasting value");
 		assert.ok(oHandleTypeAheadSpy.called, "Type ahead should be called while pasting value");
+		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("Paste and select behaviour", function (assert) {
+	QUnit.test("Paste and select behaviour", async function (assert) {
 		var oMultiComboBox = new MultiComboBox({
 			items: [new Item({
 				key: "DZ",
 				text: "Algeria"
 			})]
 		}).placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		oMultiComboBox.syncPickerContent();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		var oEventStub = this.stub({
 			stopPropagation: function () {
@@ -3062,7 +3096,7 @@ sap.ui.define([
 		// Act
 		window.clipboardData = null;
 		oMultiComboBox.onpaste(oEventStub);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oMultiComboBox.getSelectedItems().length, 1, "Should have one selected item");
@@ -3075,6 +3109,7 @@ sap.ui.define([
 
 
 	QUnit.test("Focus out cleanup", function (assert) {
+		this.clock = sinon.useFakeTimers();
 		// Arrange
 		var oMultiComboBox = new MultiComboBox();
 		oMultiComboBox._bIsPasteEvent = true;
@@ -3089,9 +3124,10 @@ sap.ui.define([
 		assert.notOk(oMultiComboBox._bIsPasteEvent, "Should reset _bIsPasteEvent variable");
 		assert.ok(oUpdateDomValueSpy.called, "DOM value should be called");
 		assert.ok(oUpdateDomValueSpy.calledWith(""), "DOM value should be updated");
+		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("Scenario 'EVENT_VALUE_LINE_BREAK_PASTE': CTRL+V 'item1 item2' ", function(assert) {
+	QUnit.test("Scenario 'EVENT_VALUE_LINE_BREAK_PASTE': CTRL+V 'item1 item2' ", async function(assert) {
 		// system under test
 		var oItem1, oItem2;
 		var oMultiComboBox = new MultiComboBox({
@@ -3108,7 +3144,7 @@ sap.ui.define([
 		// arrange
 		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		var fnFireSelectionChangeSpy = this.spy(oMultiComboBox, "fireSelectionChange");
 		var fnFireSelectionFinishSpy = this.spy(oMultiComboBox, "fireSelectionFinish");
@@ -3136,11 +3172,13 @@ sap.ui.define([
 		assert.strictEqual(selectedItems[1].getText(), oItem2.getText(), "The second item text should be 'item2'");
 
 		// cleanup
+		fnFireSelectionChangeSpy.restore();
+		fnFireSelectionFinishSpy.restore();
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("Scenario 'EVENT_VALUE_FOCUSOUT': 'Algeria' + FOCUSOUT", function(assert) {
-
+	QUnit.test("Scenario 'EVENT_VALUE_FOCUSOUT': 'Algeria' + FOCUSOUT", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		// system under test
 		var oItem;
 		var oMultiComboBox = new MultiComboBox({
@@ -3152,7 +3190,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		var fnFireChangeSpy = this.spy(oMultiComboBox, "fireChange");
 		var fnFireSelectionChangeSpy = this.spy(oMultiComboBox, "fireSelectionChange");
@@ -3162,7 +3200,7 @@ sap.ui.define([
 		oMultiComboBox.getFocusDomRef().focus();
 		this.clock.tick(500);
 		qutils.triggerCharacterInput(oMultiComboBox.getFocusDomRef(), oItem.getText());
-		this.clock.tick(500);
+		this.clock.tick(1000);
 		oMultiComboBox.getFocusDomRef().blur();
 		this.clock.tick(500);
 
@@ -3174,10 +3212,12 @@ sap.ui.define([
 		assert.strictEqual(fnFireSelectionFinishSpy.callCount, 0, "The selection finish event was not fired");
 
 		// cleanup
+		fnFireSelectionChangeSpy.restore();
+		fnFireSelectionFinishSpy.restore();
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("Scenario 'EVENT_TOKEN_BACKSPACE': Token 'Algeria' + BACKSPACE + BACKSPACE", function(assert) {
+	QUnit.test("Scenario 'EVENT_TOKEN_BACKSPACE': Token 'Algeria' + BACKSPACE + BACKSPACE", async function(assert) {
 
 		// system under test
 		var oItem;
@@ -3191,7 +3231,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		var fnFireChangeSpy = this.spy(oMultiComboBox, "fireChange");
 		var fnFireSelectionChangeSpy = this.spy(oMultiComboBox, "fireSelectionChange");
@@ -3200,7 +3240,7 @@ sap.ui.define([
 		// act
 		oMultiComboBox.focus();
 		qutils.triggerKeydown(oMultiComboBox.getFocusDomRef(), KeyCodes.BACKSPACE); // select last token
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(document.activeElement, oMultiComboBox.getAggregation("tokenizer").getTokens()[0].getDomRef(),
@@ -3208,7 +3248,7 @@ sap.ui.define([
 
 		// act
 		qutils.triggerKeydown(document.activeElement, KeyCodes.BACKSPACE); // delete selected token
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// assertions
 		assert.deepEqual(oMultiComboBox.getSelectedItems(), []);
@@ -3217,10 +3257,12 @@ sap.ui.define([
 		assert.strictEqual(fnFireSelectionFinishSpy.callCount, 1, "The selection finish event was fired");
 
 		// cleanup
+		fnFireSelectionChangeSpy.restore();
+		fnFireSelectionFinishSpy.restore();
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("Scenario 'EVENT_TOKEN_DELETE': Token 'Algeria' + BACKSPACE + DELETE", function(assert) {
+	QUnit.test("Scenario 'EVENT_TOKEN_DELETE': Token 'Algeria' + BACKSPACE + DELETE", async function(assert) {
 
 		// system under test
 		var oItem;
@@ -3234,7 +3276,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		var fnFireChangeSpy = this.spy(oMultiComboBox, "fireChange");
 		var fnFireSelectionChangeSpy = this.spy(oMultiComboBox, "fireSelectionChange");
@@ -3249,7 +3291,7 @@ sap.ui.define([
 
 		// act
 		qutils.triggerKeydown(document.activeElement, KeyCodes.DELETE); // delete selected token
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// assertions
 		assert.deepEqual(oMultiComboBox.getSelectedItems(), []);
@@ -3258,10 +3300,12 @@ sap.ui.define([
 		assert.strictEqual(fnFireSelectionFinishSpy.callCount, 1, "The selection finish event was fired");
 
 		// cleanup
+		fnFireSelectionChangeSpy.restore();
+		fnFireSelectionFinishSpy.restore();
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("Scenario 'EVENT_TOKENS_DELETE': 3 Tokens + CTRL+A + DELETE", function(assert) {
+	QUnit.test("Scenario 'EVENT_TOKENS_DELETE': 3 Tokens + CTRL+A + DELETE", async function(assert) {
 
 		// system under test
 		var oItem1, oItem2, oItem3;
@@ -3282,7 +3326,7 @@ sap.ui.define([
 		// arrange
 		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		var fnFireChangeSpy = this.spy(oMultiComboBox, "fireChange");
 		var fnFireSelectionChangeSpy = this.spy(oMultiComboBox, "fireSelectionChange");
@@ -3291,9 +3335,9 @@ sap.ui.define([
 		// act
 		oMultiComboBox.focus();
 		qutils.triggerKeydown(oMultiComboBox.getDomRef(), KeyCodes.A, false, false, true); // select all tokens
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 		qutils.triggerKeydown(oMultiComboBox.getDomRef(), KeyCodes.DELETE); // delete selected tokens
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// assertions
 		assert.deepEqual(oMultiComboBox.getSelectedItems(), []);
@@ -3302,10 +3346,12 @@ sap.ui.define([
 		assert.strictEqual(fnFireSelectionFinishSpy.callCount, 3, "The selection finish event was fired");
 
 		// cleanup
+		fnFireSelectionChangeSpy.restore();
+		fnFireSelectionFinishSpy.restore();
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("Scenario 'EVENT_TOKEN_DELETE_BUTTON': Token 'Algeria' + delete button on token", function(assert) {
+	QUnit.test("Scenario 'EVENT_TOKEN_DELETE_BUTTON': Token 'Algeria' + delete button on token", async function(assert) {
 
 		// system under test
 		var oItem;
@@ -3319,7 +3365,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		var fnFireChangeSpy = this.spy(oMultiComboBox, "fireChange");
 		var fnFireSelectionChangeSpy = this.spy(oMultiComboBox, "fireSelectionChange");
@@ -3336,10 +3382,12 @@ sap.ui.define([
 		assert.strictEqual(fnFireSelectionFinishSpy.callCount, 1, "The selection finish event was fired");
 
 		// cleanup
+		fnFireSelectionChangeSpy.restore();
+		fnFireSelectionFinishSpy.restore();
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("Scenario 'EVENT_VALUE_ESCAPE': 'Algeria' change to 'Dummy' + ESCAPE", function(assert) {
+	QUnit.test("Scenario 'EVENT_VALUE_ESCAPE': 'Algeria' change to 'Dummy' + ESCAPE", async function(assert) {
 
 		// system under test
 		var sInitValue = "Algeria";
@@ -3353,7 +3401,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		var fnFireChangeSpy = this.spy(oMultiComboBox, "fireChange");
 		var fnFireSelectionChangeSpy = this.spy(oMultiComboBox, "fireSelectionChange");
@@ -3380,10 +3428,13 @@ sap.ui.define([
 		assert.strictEqual(fnFireSelectionFinishSpy.callCount, 0, "The selection finish event was fired");
 
 		// cleanup
+		fnFireSelectionChangeSpy.restore();
+		fnFireSelectionFinishSpy.restore();
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("Scenario 'EVENT_VALUE_ENTER_OPENLIST': 'alg' + ENTER", function(assert) {
+	QUnit.test("Scenario 'EVENT_VALUE_ENTER_OPENLIST': 'alg' + ENTER", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		var oSystem = {
 			desktop : true,
 			phone : false,
@@ -3401,7 +3452,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 		oMultiComboBox.focus();
 
 		var fnFireSelectionChangeSpy = this.spy(oMultiComboBox, "fireSelectionChange");
@@ -3416,10 +3467,12 @@ sap.ui.define([
 		assert.strictEqual(fnFireSelectionChangeSpy.callCount, 0, "The selection change event was not fired");
 
 		// cleanup
+		fnFireSelectionChangeSpy.restore();
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("Read-only popover should be opened on ENTER keypress", function (assert) {
+	QUnit.test("Read-only popover should be opened on ENTER keypress", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		// arrange
 		var aItems = [
 				new Item("it1", {text: "this is a long text"}),
@@ -3434,7 +3487,7 @@ sap.ui.define([
 
 		// act
 		oMCB.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 		var oHandleIndicatorPressSpy = this.spy(oTokenizer, "_togglePopup");
 
 		// assert
@@ -3453,7 +3506,7 @@ sap.ui.define([
 		oMCB.destroy();
 	});
 
-	QUnit.test("Scenario 'EVENT_VALUE_ENTER_OPENLIST': 'alg' + ALT+DOWNKEY + ENTER + ALT+UPKEY Case insensitive", function(assert) {
+	QUnit.test("Scenario 'EVENT_VALUE_ENTER_OPENLIST': 'alg' + ALT+DOWNKEY + ENTER + ALT+UPKEY Case insensitive", async function(assert) {
 		var oSystem = {
 			desktop : true,
 			phone : false,
@@ -3476,7 +3529,7 @@ sap.ui.define([
 		// arrange
 		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 		oMultiComboBox.focus();
 
 		// act - 'alg' + OpenList + Enter
@@ -3484,7 +3537,7 @@ sap.ui.define([
 		qutils.triggerKeydown(document.activeElement, KeyCodes.ENTER);
 		qutils.triggerKeydown(document.activeElement, KeyCodes.ARROW_DOWN, false, true);
 		qutils.triggerKeydown(document.activeElement, KeyCodes.ARROW_UP, false, true);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// assertions
 		assert.deepEqual(oMultiComboBox.getSelectedItems(), [oItem2]);
@@ -3493,7 +3546,8 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("Scenario 'EVENT_VALUE_ENTER_OPENLIST': 'al' + ALT+DOWNKEY + ENTER + ALT+UPKEY", function(assert) {
+	QUnit.test("Scenario 'EVENT_VALUE_ENTER_OPENLIST': 'al' + ALT+DOWNKEY + ENTER + ALT+UPKEY", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		var oSystem = {
 			desktop : true,
 			phone : false,
@@ -3514,7 +3568,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 		oMultiComboBox.focus();
 
 		// act - 'al' + OpenList + Enter
@@ -3534,7 +3588,8 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("Scenario 'EVENT_SELECTION_SPACE': ALT+DOWNKEY + SelectItem + ALT+UPKEY", function(assert) {
+	QUnit.test("Scenario 'EVENT_SELECTION_SPACE': ALT+DOWNKEY + SelectItem + ALT+UPKEY", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		var oSystem = {
 			desktop : true,
 			phone : false,
@@ -3553,7 +3608,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 		oMultiComboBox.focus();
 
 		var fnFireChangeSpy = this.spy(oMultiComboBox, "fireChange");
@@ -3583,11 +3638,13 @@ sap.ui.define([
 		assert.strictEqual(fnFireSelectionFinishSpy.callCount, 1, "The selection finish event was fired");
 
 		// cleanup
+		fnFireSelectionChangeSpy.restore();
+		fnFireSelectionFinishSpy.restore();
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("Scenario 'EVENT_DESELECTION_SPACE': SelectedItem + ALT+DOWNKEY + DeselectItem + ALT+UPKEY", function(assert) {
-
+	QUnit.test("Scenario 'EVENT_DESELECTION_SPACE': SelectedItem + ALT+DOWNKEY + DeselectItem + ALT+UPKEY", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		var oSystem = {
 			desktop : true,
 			phone : false,
@@ -3607,7 +3664,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 		oMultiComboBox.focus();
 
 		var fnFireChangeSpy = this.spy(oMultiComboBox, "fireChange");
@@ -3637,11 +3694,13 @@ sap.ui.define([
 		assert.strictEqual(fnFireSelectionFinishSpy.callCount, 1, "The selection finish event was fired");
 
 		// cleanup
+		fnFireSelectionChangeSpy.restore();
+		fnFireSelectionFinishSpy.restore();
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("Scenario CLICK_INPUT: tap into control", function(assert) {
-
+	QUnit.test("Scenario CLICK_INPUT: tap into control", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		// system under test
 		var oMultiComboBox = new MultiComboBox({
 			items : [new Item({
@@ -3653,7 +3712,7 @@ sap.ui.define([
 		// arrange
 		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 		var fnTapSpy = this.spy(oMultiComboBox, "ontap");
 		var fnOpenSpy = this.spy(oMultiComboBox.getPicker(), "open");
 
@@ -3676,8 +3735,8 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("setSelection should trigger Tokenizer's scrollToEnd", function (assert) {
-
+	QUnit.test("setSelection should trigger Tokenizer's scrollToEnd", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		var oFakeEvent = new Event();
 
 		// system under test
@@ -3696,7 +3755,7 @@ sap.ui.define([
 		var oSpy = this.spy(oMultiComboBox.getAggregation("tokenizer"), "scrollToEnd");
 		var oStubSetSelection = this.stub(Event.prototype, "getParameters");
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		oStubSetSelection.withArgs("id").returns(oItem.getId());
 		oStubSetSelection.withArgs("item").returns(oItem);
@@ -3708,12 +3767,13 @@ sap.ui.define([
 		assert.ok(oSpy.called, "Tokenizer's scrollToEnd should be called when a new token is added");
 
 		// cleanup
+		oSpy.restore();
 		oFakeEvent.destroy();
 		oMultiComboBox.destroy();
-
 	});
 
-	QUnit.test("Clicking on token should not throw an exception", function(assert) {
+	QUnit.test("Clicking on token should not throw an exception", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		// system under test
 		var oItem = new Item({
 				key : "DZ",
@@ -3726,7 +3786,7 @@ sap.ui.define([
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
 		oMultiComboBox.setSelectedItems([oItem]);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// act - clicking on control
 		oToken = oMultiComboBox.getAggregation("tokenizer").getTokens()[0];
@@ -3746,8 +3806,8 @@ sap.ui.define([
 	// Scenarios - opening dropdown list //
 	// --------------------------------- //
 
-	QUnit.test("Scenario OPEN_ALTDOWN", function(assert) {
-
+	QUnit.test("Scenario OPEN_ALTDOWN", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		var oSystem = {
 			desktop : true,
 			phone : false,
@@ -3766,7 +3826,7 @@ sap.ui.define([
 		// arrange
 		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		var fnShowSpy = this.spy(oMultiComboBox, "onsapshow");
 		var fnOpenSpy = this.spy(oMultiComboBox.getPicker(), "open");
@@ -3789,8 +3849,8 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("Scenario OPEN_ALTUP", function(assert) {
-
+	QUnit.test("Scenario OPEN_ALTUP", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		var oSystem = {
 			desktop : true,
 			phone : false,
@@ -3809,7 +3869,7 @@ sap.ui.define([
 		// arrange
 		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		var fnHideSpy = this.spy(oMultiComboBox, "onsaphide");
 		var fnOpenSpy = this.spy(oMultiComboBox.getPicker(), "open");
@@ -3832,8 +3892,8 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("Scenario OPEN_F4", function(assert) {
-
+	QUnit.test("Scenario OPEN_F4", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		var oSystem = {
 			desktop : true,
 			phone : false,
@@ -3852,7 +3912,7 @@ sap.ui.define([
 		// arrange
 		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		var fnShowSpy = this.spy(oMultiComboBox, "onsapshow");
 		var fnOpenSpy = this.spy(oMultiComboBox.getPicker(), "open");
@@ -3875,7 +3935,8 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("Scenario onsapshow with no items", function(assert) {
+	QUnit.test("Scenario onsapshow with no items", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		var oSystem = {
 			desktop : true,
 			phone : false,
@@ -3891,7 +3952,7 @@ sap.ui.define([
 		// arrange
 		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// act
 		qutils.triggerKeydown(oMultiComboBox.getFocusDomRef(), KeyCodes.F4);
@@ -3904,8 +3965,8 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("Scenario OPEN_ARROW: tap on arrow", function(assert) {
-
+	QUnit.test("Scenario OPEN_ARROW: tap on arrow", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		var oSystem = {
 			desktop : true,
 			phone : false,
@@ -3924,7 +3985,7 @@ sap.ui.define([
 		// arrange
 		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 		var fnOpenSpy = this.spy(oMultiComboBox.getPicker(), "open");
 
 		// act - clicking on arrow
@@ -3947,8 +4008,8 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("Scenario OPEN_VALUE: Typing valid letters into InputField", function(assert) {
-
+	QUnit.test("Scenario OPEN_VALUE: Typing valid letters into InputField", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		var oSystem = {
 			desktop : true,
 			phone : false,
@@ -3971,7 +4032,7 @@ sap.ui.define([
 		// arrange
 		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 		var fnOpenSpy = this.spy(oMultiComboBox.getPicker(), "open");
 
 		// act
@@ -3991,8 +4052,8 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("Scenario OPEN_VALUE: Type valid letter into InputField and delete it", function(assert) {
-
+	QUnit.test("Scenario OPEN_VALUE: Type valid letter into InputField and delete it", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		var oSystem = {
 			desktop : true,
 			phone : false,
@@ -4015,7 +4076,7 @@ sap.ui.define([
 		// arrange
 		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 		qutils.triggerEvent("input", oMultiComboBox.getFocusDomRef());
 		this.clock.tick(500);
 
@@ -4034,7 +4095,8 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("Scenario OPEN_VALUE: Open MCB by Arrow + Down / F4 or by clicking arrow then type valid letter and delete it", function (assert) {
+	QUnit.test("Scenario OPEN_VALUE: Open MCB by Arrow + Down / F4 or by clicking arrow then type valid letter and delete it", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		var oSystem = {
 			desktop : true,
 			phone : false,
@@ -4056,7 +4118,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 		oMultiComboBox.focus();
 
 		qutils.triggerKeydown(oMultiComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN, false, true);
@@ -4073,8 +4135,8 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("Scenario OPEN_SUGGEST_SPACE: Pushing SPACE on item in suggest list - suggest list is closing first and complete list is opening then", function(assert) {
-
+	QUnit.test("Scenario OPEN_SUGGEST_SPACE: Pushing SPACE on item in suggest list - suggest list is closing first and complete list is opening then", async function(assert) {
+				this.clock = sinon.useFakeTimers();
 				var oSystem = {
 					desktop : true,
 					phone : false,
@@ -4097,7 +4159,7 @@ sap.ui.define([
 				// arrange
 				oMultiComboBox.syncPickerContent();
 				oMultiComboBox.placeAt("MultiComboBoxContent");
-				nextUIUpdate.runSync()/*fake timer is used in module*/;
+				await nextUIUpdate(this.clock);
 				var fnOpenSpy = this.spy(oMultiComboBox.getPicker(), "open");
 
 				// act
@@ -4124,8 +4186,8 @@ sap.ui.define([
 					});
 
 	QUnit.test("Scenario OPEN_SUGGEST_ARROW: Pushing twice ALT+DOWN etc. in suggest list - suggest list is closing first and complete list is opening then",
-			function(assert) {
-
+			async function(assert) {
+				this.clock = sinon.useFakeTimers();
 				var oSystem = {
 					desktop : true,
 					phone : false,
@@ -4148,7 +4210,7 @@ sap.ui.define([
 				// arrange
 				oMultiComboBox.syncPickerContent();
 				oMultiComboBox.placeAt("MultiComboBoxContent");
-				nextUIUpdate.runSync()/*fake timer is used in module*/;
+				await nextUIUpdate(this.clock);
 				oMultiComboBox.focus();
 				var fnOpenSpy = this.spy(oMultiComboBox.getPicker(), "open");
 
@@ -4179,8 +4241,8 @@ sap.ui.define([
 				oMultiComboBox.destroy();
 					});
 
-	QUnit.test("Scenario 'CLOSE_TAP': closing list via tapping on list item", function(assert) {
-
+	QUnit.test("Scenario 'CLOSE_TAP': closing list via tapping on list item", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		var oSystem = {
 			desktop : true,
 			phone : false,
@@ -4199,7 +4261,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 		oMultiComboBox.getFocusDomRef().focus();
 		oMultiComboBox.open();
 		this.clock.tick(500);
@@ -4237,7 +4299,7 @@ sap.ui.define([
 
 		  // arrange
 		  oMultiComboBox.placeAt("MultiComboBoxContent");
-		  Core.applyChanges();
+		  await nextUIUpdate();
 		  oMultiComboBox.focus();
 
 		  var fnOpenSpy = this.spy(oMultiComboBox.getPicker(), "open");
@@ -4263,7 +4325,7 @@ sap.ui.define([
 	// --------------------------------- //
 	// Arrow - pressed state             //
 	// --------------------------------- //
-	QUnit.test("Arrow - pressed on arrow", function(assert) {
+	QUnit.test("Arrow - pressed on arrow", async function(assert) {
 
 		// system under test
 		var oMultiComboBox = new MultiComboBox({
@@ -4275,7 +4337,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 		oMultiComboBox.focus();
 
 		// act
@@ -4294,7 +4356,7 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("Arrow - pressed on control", function(assert) {
+	QUnit.test("Arrow - pressed on control", async function(assert) {
 
 		// system under test
 		var oMultiComboBox = new MultiComboBox({
@@ -4306,7 +4368,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 		oMultiComboBox.focus();
 
 		// act
@@ -4325,8 +4387,8 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("Arrow - tap on list item in suggest mode", function(assert) {
-
+	QUnit.test("Arrow - tap on list item in suggest mode", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		var oSystem = {
 			desktop : true,
 			phone : false,
@@ -4348,7 +4410,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 		qutils.triggerEvent("input", oMultiComboBox.getFocusDomRef());
 		this.clock.tick(500);
 
@@ -4373,7 +4435,7 @@ sap.ui.define([
 	// --------------------------------- //
 	// Focus - border                    //
 	// --------------------------------- //
-	QUnit.test("FocusBorder - pressed on control", function(assert) {
+	QUnit.test("FocusBorder - pressed on control", async function(assert) {
 
 		// system under test
 		var oMultiComboBox = new MultiComboBox({
@@ -4385,7 +4447,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 		oMultiComboBox.focus();
 
 		// act
@@ -4401,7 +4463,7 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("FocusBorder - pressed on read-only control", function(assert) {
+	QUnit.test("FocusBorder - pressed on read-only control", async function(assert) {
 
 		// system under test
 		var oMultiComboBox = new MultiComboBox({
@@ -4414,7 +4476,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 		oMultiComboBox.focus();
 
 		// act
@@ -4430,7 +4492,7 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("FocusBorder - pressed on arrow", function(assert) {
+	QUnit.test("FocusBorder - pressed on arrow", async function(assert) {
 
 		// system under test
 		var oMultiComboBox = new MultiComboBox({
@@ -4442,7 +4504,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 		oMultiComboBox.focus();
 
 		// act
@@ -4458,8 +4520,8 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("FocusBorder - focus on list item", function(assert) {
-
+	QUnit.test("FocusBorder - focus on list item", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		// system under test
 		var oMultiComboBox = new MultiComboBox({
 			items : [new Item({
@@ -4470,7 +4532,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 		oMultiComboBox.focus();
 
 		// act
@@ -4490,7 +4552,7 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("FocusBorder - arrow + leave", function(assert) {
+	QUnit.test("FocusBorder - arrow + leave", async function(assert) {
 
 		// system under test
 		var oMultiComboBox = new MultiComboBox({
@@ -4502,7 +4564,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 		oMultiComboBox.focus();
 
 		// act
@@ -4520,7 +4582,7 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("FocusBorder - control + leave", function(assert) {
+	QUnit.test("FocusBorder - control + leave", async function(assert) {
 		// system under test
 		var oMultiComboBox = new MultiComboBox({
 			items : [new Item({
@@ -4531,7 +4593,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 		oMultiComboBox.focus();
 
 		// act
@@ -4549,7 +4611,8 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("Input Value - reset on focus out", function(assert) {
+	QUnit.test("Input Value - reset on focus out", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		// system under test
 		var oMultiComboBox = new MultiComboBox({
 			items : [new Item({
@@ -4569,7 +4632,7 @@ sap.ui.define([
 		oMultiComboBox.placeAt("MultiComboBoxContent");
 		oMultiComboBoxNext.placeAt("MultiComboBoxContent");
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 		oMultiComboBox.setValue("Foo");
 
 		// act
@@ -4587,7 +4650,7 @@ sap.ui.define([
 		oMultiComboBoxNext.destroy();
 	});
 
-	QUnit.test("Input Value - select Item on Tab out", function(assert) {
+	QUnit.test("Input Value - select Item on Tab out", async function(assert) {
 
 		// system under test
 		var oMultiComboBox = new MultiComboBox({
@@ -4609,7 +4672,7 @@ sap.ui.define([
 		oMultiComboBoxNext.placeAt("MultiComboBoxContent");
 
 		oMultiComboBox.syncPickerContent();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// act
 		oMultiComboBox.getFocusDomRef().focus();
@@ -4626,7 +4689,8 @@ sap.ui.define([
 		oMultiComboBoxNext.destroy();
 	});
 
-	QUnit.test("Keep picker open after re-rendering", function(assert) {
+	QUnit.test("Keep picker open after re-rendering", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		// system under test
 		var oMultiComboBox = new MultiComboBox({
 			items : [new Item({
@@ -4638,7 +4702,7 @@ sap.ui.define([
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		oMultiComboBox.focus();
 
@@ -4660,7 +4724,8 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("Cancel selection", function(assert) {
+	QUnit.test("Cancel selection", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		// system under test
 		this.stub(Device, "system").value({
 			desktop: false,
@@ -4678,7 +4743,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 		this.clock.tick(nPopoverAnimationTick);
 
 		oMultiComboBox.open();
@@ -4695,7 +4760,8 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("method: _setContainerSizes() - Calculating correct sizes", function(assert) {
+	QUnit.test("method: _setContainerSizes() - Calculating correct sizes", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		// system under test
 		var oSystem = {
 			desktop : false,
@@ -4713,7 +4779,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 		this.clock.tick(1000);
 
 		// assertions
@@ -4724,7 +4790,8 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("setSelection + Popover close race condition", function (assert) {
+	QUnit.test("setSelection + Popover close race condition", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		// system under test
 		this.stub(Device, "system").value({
 			desktop: true,
@@ -4742,10 +4809,10 @@ sap.ui.define([
 		var oSpySetSelection = this.spy(oMCB, "setSelection");
 		var oList = oMCB._getList();
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		oMCB.open();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 		this.clock.tick(500);
 
 		var oFakeEvent = {
@@ -4783,7 +4850,8 @@ sap.ui.define([
 		oMCB.destroy();
 	});
 
-	QUnit.test("Selecting an item should close the picker and clean the input", function(assert) {
+	QUnit.test("Selecting an item should close the picker and clean the input", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		var oFakeEvent = new Event(),
 			oItem = new Item({
 				text: "test1"
@@ -4807,7 +4875,7 @@ sap.ui.define([
 		var oHandleTokensStub = this.stub(Event.prototype, "getParameter");
 
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		oMultiComboBox.open();
 		this.clock.tick(nPopoverAnimationTick);
@@ -4817,13 +4885,13 @@ sap.ui.define([
 		oMultiComboBox.setValue("t");
 		oMultiComboBox.fireChange({ value: "t" });
 		oMultiComboBox.oninput(oFakeInput);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		oHandleTokensStub.withArgs("listItem").returns(ListHelpers.getListItem(oItem));
 		oHandleTokensStub.withArgs("selected").returns(true);
 
 		oMultiComboBox._handleSelectionLiveChange(oFakeEvent);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 		this.clock.tick(nPopoverAnimationTick);
 
 		assert.strictEqual(oMultiComboBox.isOpen(), false, "Picker should close after selection");
@@ -4833,7 +4901,8 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("Selecting an item checkbox should not close the picker", function(assert) {
+	QUnit.test("Selecting an item checkbox should not close the picker", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		var oFakeEvent = new Event(),
 			oItem = new Item({
 				text: "test1"
@@ -4859,7 +4928,7 @@ sap.ui.define([
 		this.stub(MultiComboBox.prototype, "onfocusin");
 
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		oMultiComboBox.open();
 		this.clock.tick(nPopoverAnimationTick);
@@ -4869,13 +4938,13 @@ sap.ui.define([
 		oMultiComboBox.setValue("t");
 		oMultiComboBox.fireChange({ value: "t" });
 		oMultiComboBox.oninput(oFakeInput);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		oHandleTokensStub.withArgs("listItem").returns(ListHelpers.getListItem(oItem));
 		oHandleTokensStub.withArgs("selected").returns(true);
 
 		oMultiComboBox._handleSelectionLiveChange(oFakeEvent);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 		this.clock.tick(nPopoverAnimationTick);
 
 		assert.strictEqual(oMultiComboBox.isOpen(), true, "Picker should not close after selection");
@@ -4885,7 +4954,8 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("Selecting an item checkbox should not add the old input value in the field", function(assert) {
+	QUnit.test("Selecting an item checkbox should not add the old input value in the field", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		// arrange
 		var oFakeEvent = new Event(),
 			oItem = new Item({
@@ -4908,7 +4978,7 @@ sap.ui.define([
 
 		// act
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 		oMultiComboBox.getFocusDomRef().focus();
 
 		oMultiComboBox.setValue("t");
@@ -4925,7 +4995,7 @@ sap.ui.define([
 		this.clock.tick(nPopoverAnimationTick);
 
 		oMultiComboBox._handleSelectionLiveChange(oFakeEvent);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// assert
 		assert.strictEqual(oMultiComboBox.getValue(), "", "Value should be cleared");
@@ -4935,7 +5005,8 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("onAfterRenderingList should check properly the focused item", function(assert) {
+	QUnit.test("onAfterRenderingList should check properly the focused item", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		// arrange
 		var oMultiComboBox = new MultiComboBox({
 				items: [new Item({text: "test1"})]
@@ -4945,7 +5016,7 @@ sap.ui.define([
 
 		this.stub(oMultiComboBox, "getFocusDomRef");
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 		oMultiComboBox.open();
 		this.clock.tick(nPopoverAnimationTick);
 
@@ -4957,7 +5028,7 @@ sap.ui.define([
 		document.body.focus();
 
 		oMultiComboBox.onAfterRenderingList();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// assert
 		assert.notOk(oFocusSpy.calledOnce, "The item should not be focused");
@@ -4968,7 +5039,7 @@ sap.ui.define([
 
 		// act
 		oMultiComboBox.onAfterRenderingList();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// assert
 		assert.ok(oFocusSpy.calledOnce, "The item should be focused");
@@ -4978,7 +5049,8 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("hasSelection - MultiComboBox with no pre-selected items", function(assert) {
+	QUnit.test("hasSelection - MultiComboBox with no pre-selected items", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		// arrange
 		var oMultiComboBox = new MultiComboBox({
 				items: [
@@ -4987,7 +5059,7 @@ sap.ui.define([
 				]
 			}).placeAt("MultiComboBoxContent");
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 		oMultiComboBox.open();
 		this.clock.tick(nPopoverAnimationTick);
 
@@ -5022,7 +5094,8 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("hasSelection - MultiComboBox with pre-selected items", function(assert) {
+	QUnit.test("hasSelection - MultiComboBox with pre-selected items", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		// arrange
 		var oSpy;
 		var oMultiComboBox = new MultiComboBox({
@@ -5033,7 +5106,7 @@ sap.ui.define([
 				selectedKeys: ["Item1"]
 			}).placeAt("MultiComboBoxContent");
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// assert
 		assert.ok(oMultiComboBox.getProperty("hasSelection"), "The property should be correctly set to true.");
@@ -5053,7 +5126,7 @@ sap.ui.define([
 		oSpy = this.spy(oMultiComboBox._getSuggestionsPopover(), "addContent");
 
 		oMultiComboBox.setProperty("hasSelection", true);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		assert.strictEqual(oSpy.notCalled, true ,"The popover is not re-rendered after unnecessary content aggregation update");
 
@@ -5062,9 +5135,13 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.module("Focus handling");
+	QUnit.module("Focus handling", {
+		afterEach: function () {
+			runAllTimersAndRestore(this.clock);
+		}
+	});
 
-	QUnit.test("Focusing a token inside the MCB should not add css focus indication to the MCB itself", function(assert) {
+	QUnit.test("Focusing a token inside the MCB should not add css focus indication to the MCB itself", async function(assert) {
 		var oItem = new Item({ text: "test" }),
 			oFakeEvent = new Event(),
 			oMultiComboBox = new MultiComboBox({
@@ -5073,7 +5150,7 @@ sap.ui.define([
 
 		var oHandleTokenFocusStub = this.stub(Event.prototype, "getParameter");
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		oMultiComboBox.setSelectedItems([oItem]);
 
@@ -5089,7 +5166,8 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("Invalidating MCB should not set the focus to it when the focus has been outside it", function(assert) {
+	QUnit.test("Invalidating MCB should not set the focus to it when the focus has been outside it", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		// system under test
 		this.stub(Device, "system").value({
 			desktop: true,
@@ -5110,7 +5188,7 @@ sap.ui.define([
 				]
 			}).placeAt("MultiComboBoxContent");
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		oButton.focus();
 		// we need to render the list once
@@ -5129,8 +5207,8 @@ sap.ui.define([
 		oButton.destroy();
 	});
 
-	QUnit.test("Tokenizer should scroll to end when focus is outside MCB", function(assert) {
-
+	QUnit.test("Tokenizer should scroll to end when focus is outside MCB", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		var oFakeEvent = new Event(),
 			oMultiComboBox = new MultiComboBox({
 				items: [
@@ -5143,7 +5221,7 @@ sap.ui.define([
 		var oSpy = this.spy(oMultiComboBox.getAggregation("tokenizer"), "scrollToEnd");
 		var oHandleFocusleaveStub = this.stub(Event.prototype, "getParameter");
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		oHandleFocusleaveStub.withArgs("relatedControlId").returns(null);
 		oMultiComboBox.onsapfocusleave(oFakeEvent);
@@ -5153,17 +5231,18 @@ sap.ui.define([
 		assert.ok(oSpy.called, "Tokenizer's scrollToEnd should be called when focus is outside MCB");
 
 		// cleanup
+		oSpy.restore();
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("Change event should be called on focusleave", function (assert) {
+	QUnit.test("Change event should be called on focusleave", async function (assert) {
 		var oMultiComboBox = new MultiComboBox({ value: "A" }).placeAt("MultiComboBoxContent"),
 			oStub = this.stub(oMultiComboBox, "fireChangeEvent"),
 			oFakeEvent = {};
 
 		// act
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		//act
 		oMultiComboBox.onsapfocusleave(oFakeEvent);
@@ -5176,13 +5255,13 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("Change event should not be called if the old value does not differ from the current one", function (assert) {
+	QUnit.test("Change event should not be called if the old value does not differ from the current one", async function (assert) {
 		var oMultiComboBox = new MultiComboBox().placeAt("MultiComboBoxContent"),
 			oStub = this.stub(oMultiComboBox, "fireChangeEvent"),
 			oFakeEvent = {};
 
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// act
 		oMultiComboBox.onsapfocusleave(oFakeEvent);
@@ -5194,7 +5273,8 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test('Endless focus loop should not be triggered when Dialog is opened on mobile', function(assert) {
+	QUnit.test('Endless focus loop should not be triggered when Dialog is opened on mobile', async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		// system under test
 		this.stub(Device, "system").value({
 			desktop: false,
@@ -5204,7 +5284,7 @@ sap.ui.define([
 		var oMultiComboBox = new MultiComboBox().placeAt("MultiComboBoxContent"),
 			oStub = this.stub(MultiComboBox.prototype, "onfocusin");
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		oMultiComboBox.open();
 		this.clock.tick(500);
@@ -5217,7 +5297,8 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test('Endless focus loop should not be triggered when token is deleted on phone', function(assert) {
+	QUnit.test('Endless focus loop should not be triggered when token is deleted on phone', async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		// system under test
 		this.stub(Device, "system").value({
 			desktop: false,
@@ -5233,7 +5314,7 @@ sap.ui.define([
 			oHandleTokensStub = this.stub(Event.prototype, "getParameter");
 
 		oMultiComboBox.setSelectedItems([oItem]);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		oHandleTokensStub.withArgs("tokens").returns([]);
 		oMultiComboBox._handleTokenDelete(oFakeEvent);
@@ -5242,10 +5323,12 @@ sap.ui.define([
 		assert.ok(!oSpy.called, "onfocusin of the MCB should not be triggered after a token is deleted");
 
 		oFakeEvent.destroy();
+		oSpy.restore();
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("Focus should be set to the first item of the list if no item is selected", function(assert) {
+	QUnit.test("Focus should be set to the first item of the list if no item is selected", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		// arrange
 		var oItem = new Item(),
 			oMultiComboBox = new MultiComboBox({
@@ -5257,7 +5340,7 @@ sap.ui.define([
 				keyCode: 111 // dommy code
 			};
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// act
 		oMultiComboBox.onsapshow(oFakeEvent);
@@ -5270,7 +5353,8 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("Focus should be set to the first selected item if there are any selected", function(assert) {
+	QUnit.test("Focus should be set to the first selected item if there are any selected", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		// arrange
 		var oItem = new Item(),
 			oMultiComboBox = new MultiComboBox({
@@ -5283,7 +5367,7 @@ sap.ui.define([
 				keyCode: 111 // dommy code
 			};
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// act
 		oMultiComboBox.onsapshow(oFakeEvent);
@@ -5296,7 +5380,8 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("Focus should be set to the item for which a token have been focused", function(assert) {
+	QUnit.test("Focus should be set to the item for which a token have been focused", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		var oItem1 = new Item( { text: "1" }),
 			oItem2 = new Item( { text: "2" }),
 			oMultiComboBox = new MultiComboBox({
@@ -5310,14 +5395,14 @@ sap.ui.define([
 			};
 		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		oMultiComboBox.getAggregation("tokenizer").getTokens()[1].focus();
-		this.clock.tick(500);
+		this.clock.tick(1000);
 
 		// act
 		oMultiComboBox.onsapshow(oFakeEvent);
-		this.clock.tick(500);
+		this.clock.tick(1000);
 
 		// assert
 		assert.strictEqual(oMultiComboBox._getList().getItemNavigation().iSelectedIndex, 2, "Initial index should be 2");
@@ -5326,7 +5411,8 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("focusin triggers tokenizer scrolling only once", function(assert) {
+	QUnit.test("focusin triggers tokenizer scrolling only once", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		// arrange
 		var done = assert.async(),
 			oMultiComboBox = new MultiComboBox({
@@ -5340,24 +5426,26 @@ sap.ui.define([
 
 		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		oSpy = this.spy(oTokenizer, "scrollToEnd");
 		oTokenizer.getTokens()[0].focus();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// assert
 		setTimeout(function(){
 			assert.strictEqual(oSpy.callCount, 0, "Tokenizer's scrollToEnd should not be called.");
 			done();
+			oSpy.restore();
 			oMultiComboBox.destroy();
-		}, 0);
+			runAllTimersAndRestore(this.clock);
+		}.bind(this), 0);
 
 		this.clock.tick();
-
 	});
 
-	QUnit.test("After pressing arrow down/up and expanding the dropdown, the focused item should be the selected item in the input", function(assert) {
+	QUnit.test("After pressing arrow down/up and expanding the dropdown, the focused item should be the selected item in the input", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		var aItems = [
 			new Item({key: "Item1", text: "Item1"}),
 			new Item({key: "Item2", text: "Item2"}),
@@ -5367,7 +5455,7 @@ sap.ui.define([
 
 		// Arrange
 		var oMultiComboBox = new MultiComboBox({items: aItems}).placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		qutils.triggerKeydown(oMultiComboBox.getDomRef(), KeyCodes.ARROW_DOWN);
 		qutils.triggerKeydown(oMultiComboBox.getDomRef(), KeyCodes.ARROW_DOWN);
@@ -5385,7 +5473,8 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("Picker icon user interaction tests", function(assert) {
+	QUnit.test("Picker icon user interaction tests", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		var aItems = [
 			new Item({key: "Item1", text: "Item1"}),
 			new Item({key: "Item2", text: "Item2"}),
@@ -5395,7 +5484,7 @@ sap.ui.define([
 
 		// Arrange
 		var oMultiComboBox = new MultiComboBox({items: aItems}).placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		qutils.triggerKeydown(oMultiComboBox.getDomRef(), KeyCodes.ARROW_DOWN);
 		qutils.triggerKeydown(oMultiComboBox.getDomRef(), KeyCodes.ARROW_DOWN);
@@ -5420,7 +5509,8 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("Opening picker via dropdown icon on mobile devices should not throw error", function(assert) {
+	QUnit.test("Opening picker via dropdown icon on mobile devices should not throw error", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		// Arrange
 		this.stub(Device, "system").value({
 			desktop: false,
@@ -5437,7 +5527,7 @@ sap.ui.define([
 			},
 			oMultiComboBox = new MultiComboBox({items: aItems}).placeAt("MultiComboBoxContent");
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 		oMultiComboBox.onsapshow(oEventMock);
 		this.clock.tick(300);
 
@@ -5452,7 +5542,8 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("Focus should be on the selected visible item in the list", function(assert) {
+	QUnit.test("Focus should be on the selected visible item in the list", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		// Arrange
 		var aItems = [
 			new Item({key: "Text1", text: "Text1"}),
@@ -5468,7 +5559,7 @@ sap.ui.define([
 		var oMultiComboBox = new MultiComboBox({items: aItems}).placeAt("MultiComboBoxContent");
 		var oItemToBeFocused, aListItems;
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// Act
 		oMultiComboBox.getFocusDomRef().value = "I";
@@ -5480,6 +5571,7 @@ sap.ui.define([
 
 		oMultiComboBox._iFocusedIndex = 3;
 		oMultiComboBox.onAfterRenderingList();
+		this.clock.tick(1000);
 
 		// Assert
 		assert.strictEqual(document.activeElement, oItemToBeFocused, "The 4th visible item is focused");
@@ -5488,7 +5580,8 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("Focus should be restored to tokenizer after invalidation", function(assert) {
+	QUnit.test("Focus should be restored to tokenizer after invalidation", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		var aTokens;
 		var oMCB = new MultiComboBox({
 			selectionChange: function (oEvent) {
@@ -5501,17 +5594,17 @@ sap.ui.define([
 			selectedKeys: ["1", "2"]
 		}).placeAt("MultiComboBoxContent");
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 		this.clock.tick(10);
 
 		aTokens = oMCB.getAggregation("tokenizer").getTokens();
 
 		aTokens[1].focus();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 		this.clock.tick(10);
 
 		qutils.triggerKeydown(aTokens[1].getDomRef(), KeyCodes.BACKSPACE);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 		this.clock.tick(10);
 
 		// store tokens again as list is recreated
@@ -5522,7 +5615,8 @@ sap.ui.define([
 		oMCB.destroy();
 	});
 
-	QUnit.test("Focus should not go to list after token deletion", function(assert) {
+	QUnit.test("Focus should not go to list after token deletion", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		var oMCB = new MultiComboBox({
 			selectionChange: function (oEvent) {
 				oEvent.getSource().invalidate();
@@ -5535,33 +5629,33 @@ sap.ui.define([
 			selectedKeys: ["1", "2", "3"]
 		}).placeAt("MultiComboBoxContent");
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 		this.clock.tick(10);
 
 		oMCB.open();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 		this.clock.tick(300);
 
-		var triggerBackspaceOnLastToken = function () {
+		var triggerBackspaceOnLastToken = async function () {
 			var aTokens = oMCB.getAggregation("tokenizer").getTokens();
 
 			aTokens[aTokens.length - 1].focus();
-			nextUIUpdate.runSync()/*fake timer is used in module*/;
+			await nextUIUpdate(this.clock);
 			this.clock.tick(10);
 
 			qutils.triggerKeydown(aTokens[aTokens.length - 1].getDomRef(), KeyCodes.BACKSPACE);
-			nextUIUpdate.runSync()/*fake timer is used in module*/;
+			await nextUIUpdate(this.clock);
 			this.clock.tick(10);
 		}.bind(this);
 
-		triggerBackspaceOnLastToken();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await triggerBackspaceOnLastToken();
+		await nextUIUpdate(this.clock);
 
 		// arrange
 		oMCB._iFocusedIndex = 1;
 
-		triggerBackspaceOnLastToken();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await triggerBackspaceOnLastToken();
+		await nextUIUpdate(this.clock);
 
 		// arrange
 		oMCB._iFocusedIndex = 0;
@@ -5571,10 +5665,14 @@ sap.ui.define([
 		oMCB.destroy();
 	});
 
-	QUnit.module("Accessibility");
+	QUnit.module("Accessibility", {
+		afterEach: function () {
+			runAllTimersAndRestore(this.clock);
+		}
+	});
 
-	QUnit.test("getAccessibilityInfo", function(assert) {
-		var oResourceBundle = Library.getResourceBundleFor("sap.m");
+	QUnit.test("getAccessibilityInfo", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		var oMultiComboBox = new MultiComboBox({
 			value: "Value",
 			tooltip: "Tooltip",
@@ -5588,7 +5686,7 @@ sap.ui.define([
 		});
 
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		assert.ok(!!oMultiComboBox.getAccessibilityInfo, "MultiComboBox has a getAccessibilityInfo function");
 		var oInfo = oMultiComboBox.getAccessibilityInfo();
@@ -5603,7 +5701,7 @@ sap.ui.define([
 		oMultiComboBox.setValue("");
 		oMultiComboBox.setEnabled(false);
 		oInfo = oMultiComboBox.getAccessibilityInfo();
-		assert.strictEqual(oInfo.description, Library.getResourceBundleFor("sap.m").getText("INPUTBASE_VALUE_EMPTY"), "Description - Empty as there are no tokens and no value");
+		assert.strictEqual(oInfo.description, oResourceBundle.getText("INPUTBASE_VALUE_EMPTY"), "Description - Empty as there are no tokens and no value");
 		assert.strictEqual(oInfo.focusable, false, "Focusable");
 		assert.strictEqual(oInfo.enabled, false, "Enabled");
 		assert.strictEqual(oInfo.editable, false, "Editable");
@@ -5628,12 +5726,12 @@ sap.ui.define([
 		assert.strictEqual(oList.getItems()[1].$().attr("role"), "option", "role='option' applied to the items");
 
 		oMultiComboBox.close();
-		this.clock.restore();
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("aria-keyshortcuts attribute", function(assert) {
+	QUnit.test("aria-keyshortcuts attribute", async function(assert) {
 		// Arrange
+		this.clock = sinon.useFakeTimers();
 		var oItem0, oItem1, oItem2, oItem3, sKeyShortcut,
 			oMultiComboBox = new MultiComboBox({
 				items: [
@@ -5645,26 +5743,26 @@ sap.ui.define([
 			});
 
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// Act
 		oMultiComboBox.setSelectedItems([oItem0, oItem1, oItem2, oItem3]);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		oMultiComboBox.setEditable(false);
 		oMultiComboBox.setWidth("50px");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 		this.clock.tick(300);
 
 		sKeyShortcut = oMultiComboBox.getFocusDomRef().getAttribute('aria-keyshortcuts');
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// Assert
 		assert.strictEqual(sKeyShortcut, "Enter", "'aria-keyshortcuts' attribute should be presented with the correct value");
 
 		// Act
 		oMultiComboBox.setEnabled(false);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 		sKeyShortcut = oMultiComboBox.getFocusDomRef().getAttribute('aria-keyshortcuts');
 
 		//Assert
@@ -5673,26 +5771,27 @@ sap.ui.define([
 		// Act
 		oMultiComboBox.setEnabled(true);
 		oMultiComboBox.setEditable(true);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 		sKeyShortcut = oMultiComboBox.getFocusDomRef().getAttribute('aria-keyshortcuts');
 
 		//Assert
 		assert.notOk(sKeyShortcut, "'aria-keyshortcuts' attribute should not be presented.");
+		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("aria-controls attribute should be set when the picker is open for the first time", function (assert) {
+	QUnit.test("aria-controls attribute should be set when the picker is open for the first time", async function (assert) {
 		//arrange
 		var oMultiComboBox = new MultiComboBox();
 
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// assert
 		assert.notOk(oMultiComboBox.getFocusDomRef().getAttribute("aria-controls"), 'The "aria-controls" should not be set before picker creation');
 
 		//act
 		oMultiComboBox.open();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(oMultiComboBox.getFocusDomRef().getAttribute("aria-controls"), oMultiComboBox.getPicker().getId(), 'The "aria-controls" should be');
@@ -5701,7 +5800,8 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("Tokens information should be read out", function(assert) {
+	QUnit.test("Tokens information should be read out", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		var oItem1 = new Item({key: "Item1", text: "Item1"}),
 			oItem2 = new Item({key: "Item2", text: "Item2"}),
 			oMultiComboBox = new MultiComboBox({
@@ -5717,7 +5817,7 @@ sap.ui.define([
 
 		// act
 		oMultiComboBox.setSelectedKeys(["Item1"]);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// assert
 		assert.strictEqual(oInvisibleText.getText(), oResourceBundle.getText("TOKENIZER_ARIA_CONTAIN_ONE_TOKEN"), "'MultiComboBox contains 1 token' text is set.");
@@ -5725,7 +5825,7 @@ sap.ui.define([
 		// act
 		oMultiComboBox.setSelectedKeys(["Item1", "Item2"]);
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// assert
 		assert.strictEqual(oInvisibleText.getText(), oResourceBundle.getText("TOKENIZER_ARIA_CONTAIN_SEVERAL_TOKENS", 2), "'MultiComboBox contains N tokens' text is set.");
@@ -5738,7 +5838,7 @@ sap.ui.define([
 		oMultiComboBox.setEditable(false);
 		oMultiComboBox.setWidth("50px");
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 		this.clock.tick(nPopoverAnimationTick);
 
 		//assert
@@ -5751,7 +5851,7 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("MultiComboBox aria-describedby attribute", function(assert) {
+	QUnit.test("MultiComboBox aria-describedby attribute", async function(assert) {
 		var oItem1 = new Item({key: "Item1", text: "Item1"});
 		var oMultiComboBox = new MultiComboBox({
 			valueState: "Warning",
@@ -5760,7 +5860,7 @@ sap.ui.define([
 		});
 
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		var sValueStateAccNodeId = oMultiComboBox.getValueStateMessageId() + "-sr";
 		var sInvisibleTextId = oMultiComboBox.getAggregation("tokenizer").getTokensInfoId();
@@ -5771,25 +5871,25 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("MultiComboBox with accessibility=false", function(assert) {
+	QUnit.test("MultiComboBox with accessibility=false", async function(assert) {
 		var oMultiComboBox = new MultiComboBox();
 		this.stub(ControlBehavior, "isAccessibilityEnabled").returns(false);
 
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.ok(!!oMultiComboBox.getDomRef(), "The MultiComboBox should be rendered, when accessibility is off.");
 
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("aria-hidden attribute of the MultiComboBox dropdown icon must be set to true", function (assert) {
+	QUnit.test("aria-hidden attribute of the MultiComboBox dropdown icon must be set to true", async function (assert) {
 		var oMultiComboBox = new MultiComboBox({
 			id: "simple-mcbox"
 		});
 
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		var bAriaHidden = oMultiComboBox.getDomRef().querySelector(".sapMInputBaseIconContainer").getAttribute("aria-hidden");
 
@@ -5800,7 +5900,7 @@ sap.ui.define([
 
 
 	QUnit.module("Keyboard handling", {
-		beforeEach: function(){
+		beforeEach: async function(){
 			this.oFirstItem = new Item({key: "Item1", text: "Item1"});
 			this.oLastItem = new Item({key: "Item3", text: "Item3"});
 			this.oMultiComboBox = new MultiComboBox({
@@ -5812,13 +5912,14 @@ sap.ui.define([
 			});
 			this.oTokenizer = this.oMultiComboBox.getAggregation("tokenizer");
 			this.oMultiComboBox.placeAt("MultiComboBoxContent");
-			nextUIUpdate.runSync()/*fake timer is used in module*/;
+			await nextUIUpdate();
 		}, afterEach: function() {
 			this.oMultiComboBox.destroy();
+			runAllTimersAndRestore(this.clock);
 		}
 	});
 
-	QUnit.test("_getNextTraversalItem should return the right traversal item", function (assert) {
+	QUnit.test("_getNextTraversalItem should return the right traversal item", async function (assert) {
 		this.oMultiComboBox.syncPickerContent();
 
 		var oNextItem = this.oMultiComboBox._getNextTraversalItem(),
@@ -5831,7 +5932,7 @@ sap.ui.define([
 
 		// Act
 		this.oMultiComboBox.setSelectedItems([aItems[0], aItems[2]]); // The first and last item
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Assert
 		oNextItem = this.oMultiComboBox._getNextTraversalItem();
@@ -5840,14 +5941,14 @@ sap.ui.define([
 		assert.ok(oPreviousItem.getText() !== 'Item3', "Should not return the last item anymore as it's selected already");
 	});
 
-	QUnit.test("_getNextTraversalItem should return the group header item when not opened", function (assert) {
+	QUnit.test("_getNextTraversalItem should return the group header item when not opened", async function (assert) {
 		// Arrange
 		var oGroupHeaderItem = new SeparatorItem({text: "Group Header"}),
 			oNextItem, oPreviousItem, aItems;
 
 		this.oMultiComboBox.insertItem(oGroupHeaderItem, 0);
 		this.oMultiComboBox.syncPickerContent();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		oNextItem = this.oMultiComboBox._getNextTraversalItem();
 		oPreviousItem = this.oMultiComboBox._getPreviousTraversalItem();
@@ -5859,7 +5960,7 @@ sap.ui.define([
 
 		// Act
 		this.oMultiComboBox.setSelectedItems([aItems[1], aItems[3]]); // The first and last item
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Assert
 		oNextItem = this.oMultiComboBox._getNextTraversalItem();
@@ -5868,14 +5969,14 @@ sap.ui.define([
 		assert.ok(oPreviousItem.getText() !== 'Item3', "Should not return the last item anymore as it's selected already");
 	});
 
-	QUnit.test("_getNextTraversalItem should return the first non group item when opened", function (assert) {
+	QUnit.test("_getNextTraversalItem should return the first non group item when opened", async function (assert) {
 		// Arrange
 		var oGroupHeaderItem = new SeparatorItem({text: "Group Header"}),
 			oNextItem, oPreviousItem, aItems;
 
 		this.oMultiComboBox.insertItem(oGroupHeaderItem, 0);
 		this.oMultiComboBox.open();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		oNextItem = this.oMultiComboBox._getNextTraversalItem();
 		oPreviousItem = this.oMultiComboBox._getPreviousTraversalItem();
@@ -5887,7 +5988,7 @@ sap.ui.define([
 
 		// Act
 		this.oMultiComboBox.setSelectedItems([aItems[1], aItems[3]]); // The first and last item
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Assert
 		oNextItem = this.oMultiComboBox._getNextTraversalItem();
@@ -5897,7 +5998,7 @@ sap.ui.define([
 		assert.ok(oPreviousItem.getText() !== 'Item3', "Should not return the last item anymore as it's selected already");
 	});
 
-	QUnit.test("_getNextTraversalItem/_getPreviousTraversalItem should not exclude items with no values", function (assert) {
+	QUnit.test("_getNextTraversalItem/_getPreviousTraversalItem should not exclude items with no values", async function (assert) {
 		// Arrange
 		var oItem = new Item({text: ""}),
 			oNextItem, oPreviousItem;
@@ -5905,7 +6006,7 @@ sap.ui.define([
 		this.oMultiComboBox.insertItem(oItem, 0);
 		this.oMultiComboBox.addItem(oItem);
 		this.oMultiComboBox.syncPickerContent();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		oNextItem = this.oMultiComboBox._getNextTraversalItem();
 		oPreviousItem = this.oMultiComboBox._getPreviousTraversalItem();
@@ -5916,6 +6017,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("onsapend should focus the input if the tokenizer has forwarded the focus", function (assert) {
+		this.clock = sinon.useFakeTimers();
 		var oEvent = {isMarked: function(sKey){ if (sKey === "forwardFocusToParent") { return true;}}};
 
 		this.oMultiComboBox.onsapend(oEvent);
@@ -5924,7 +6026,8 @@ sap.ui.define([
 		assert.strictEqual(this.oMultiComboBox.getFocusDomRef(), document.activeElement, "The input is focused");
 	});
 
-	QUnit.test("onsaphome should trigger Tokenizer's onsaphome", function (assert) {
+	QUnit.test("onsaphome should trigger Tokenizer's onsaphome", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		var oToken,
 			oSapHomeSpy = this.spy(Tokenizer.prototype, "onsaphome"),
 			oItem = new Item({text: "text123", key: "key123"});
@@ -5946,7 +6049,7 @@ sap.ui.define([
 		 */
 		this.oMultiComboBox.getParent().invalidate();
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// act
 		oToken = this.oMultiComboBox.getAggregation("tokenizer").getTokens()[0];
@@ -5963,18 +6066,20 @@ sap.ui.define([
 	});
 
 	QUnit.test("onsapdown should update input's value with first item's text", function (assert) {
+		this.clock = sinon.useFakeTimers();
 		qutils.triggerKeydown(this.oMultiComboBox.getDomRef(), KeyCodes.ARROW_DOWN);
 		this.clock.tick(100);
 
 		assert.strictEqual(this.oFirstItem.getText(), this.oMultiComboBox.getValue(), "Item's text should be the same as input's value");
 	});
 
-	QUnit.test("onsapdown should not skip items with no values", function (assert) {
+	QUnit.test("onsapdown should not skip items with no values", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		var oItem = new Item({text: ""});
 
 		// setup
 		this.oMultiComboBox.insertItem(oItem, 0);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		qutils.triggerKeydown(this.oMultiComboBox.getDomRef(), KeyCodes.ARROW_DOWN);
 		this.clock.tick(100);
@@ -5990,12 +6095,13 @@ sap.ui.define([
 		assert.strictEqual(this.oFirstItem.getText(), this.oMultiComboBox.getValue(), "The second item value should be set as an input value");
 	});
 
-	QUnit.test("onsapup should not skip items with no values", function (assert) {
+	QUnit.test("onsapup should not skip items with no values", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		var oItem = new Item({text: ""});
 
 		// setup
 		this.oMultiComboBox.addItem(oItem);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		qutils.triggerKeydown(this.oMultiComboBox.getDomRef(), KeyCodes.ARROW_UP);
 		this.clock.tick(100);
@@ -6004,7 +6110,6 @@ sap.ui.define([
 		assert.strictEqual(oItem, this.oMultiComboBox._oTraversalItem, "The traversal item should be set correctly");
 		assert.strictEqual(this.oMultiComboBox.getValue(), "", "The item value should be set correctly as an input value");
 
-
 		qutils.triggerKeydown(this.oMultiComboBox.getDomRef(), KeyCodes.ARROW_UP);
 		this.clock.tick(100);
 
@@ -6012,6 +6117,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("onsapup should update input's value with previous selectable item's text", function (assert) {
+		this.clock = sinon.useFakeTimers();
 		qutils.triggerKeydown(this.oMultiComboBox.getDomRef(), KeyCodes.ARROW_DOWN);
 		qutils.triggerKeydown(this.oMultiComboBox.getDomRef(), KeyCodes.ARROW_DOWN);
 		this.clock.tick(100);
@@ -6023,6 +6129,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("onsapup should update input's value with last item in the list, when input is empty", function (assert) {
+		this.clock = sinon.useFakeTimers();
 		qutils.triggerKeydown(this.oMultiComboBox.getDomRef(), KeyCodes.ARROW_UP);
 		this.clock.tick(100);
 
@@ -6042,7 +6149,7 @@ sap.ui.define([
 		assert.notOk(oSelectItemStub.called, "selection should not be called");
 	});
 
-	QUnit.test("onsapenter should deselect already selected item", function(assert) {
+	QUnit.test("onsapenter should deselect already selected item", async function(assert) {
 		var oFirstListItem;
 		var oMultiComboBox = new MultiComboBox({
 			selectedKeys: ["GER"],
@@ -6055,7 +6162,7 @@ sap.ui.define([
 		});
 
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		oMultiComboBox.open();
 		oFirstListItem = oMultiComboBox._getList().getItems()[0].getDomRef();
@@ -6064,9 +6171,10 @@ sap.ui.define([
 		qutils.triggerKeydown(oFirstListItem, KeyCodes.ENTER);
 
 		assert.strictEqual(oMultiComboBox.getSelectedKeys().length, 0, "The item is deselected");
+		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("onsaptabprevious should select the highlighted item", function (assert) {
+	QUnit.test("onsaptabprevious should select the highlighted item", async function (assert) {
 		// Assert
 		assert.strictEqual(this.oMultiComboBox.getSelectedKeys().length, 0, "No items should be selected");
 
@@ -6078,7 +6186,7 @@ sap.ui.define([
 
 		this.oMultiComboBox.onsaptabprevious();
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(this.oMultiComboBox.getSelectedKeys().length, 1, "The first item should be selected");
@@ -6086,6 +6194,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("onsaptabnext on item from the list should close the picker", function (assert) {
+		this.clock = sinon.useFakeTimers();
 		// Arrange
 		this.oMultiComboBox.open();
 		this.clock.tick(300);
@@ -6101,7 +6210,8 @@ sap.ui.define([
 		assert.strictEqual(spy.callCount, 1, "The picker should be closed once");
 	});
 
-	QUnit.test("onsaptabnext - multiple items starting with the user input", function (assert) {
+	QUnit.test("onsaptabnext - multiple items starting with the user input", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		// Arrange
 		var oMultiComboBox = new MultiComboBox({
 			items: [
@@ -6122,7 +6232,7 @@ sap.ui.define([
 		var oSpy = this.spy(oMultiComboBox, "_selectItemByKey");
 
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 		this.clock.tick(300);
 
 		// Act
@@ -6140,7 +6250,7 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("Properly destroy tokens only when allowed", function (assert) {
+	QUnit.test("Properly destroy tokens only when allowed", async function (assert) {
 		// arrange
 		var oToken, oTokenizer,oTokenSpy,
 			oCoreItem = new Item({text: "My Item"}),
@@ -6148,7 +6258,7 @@ sap.ui.define([
 				items: [oCoreItem],
 				selectedItems: [oCoreItem]
 			}).placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		oTokenizer = oMultiComboBox.getAggregation("tokenizer");
 		oToken = oTokenizer.getTokens()[0];
@@ -6157,17 +6267,17 @@ sap.ui.define([
 		// Act
 		oMultiComboBox.setEditable(false);
 		oMultiComboBox._removeSelection([oToken]);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// assert
 		assert.notOk(oTokenSpy.calledOnce, "Token destroyed is omitted");
 		assert.deepEqual(oTokenizer.getTokens(), [oToken], "The tokenizer should remain untouched");
 
-		// // Act
+		// Act
 		oMultiComboBox.setEditable(true);
 		oMultiComboBox.setEnabled(false);
 		oMultiComboBox._removeSelection([oToken]);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 		//
 		// assert
 		assert.notOk(oTokenSpy.calledOnce, "Token destroyed is omitted");
@@ -6177,7 +6287,7 @@ sap.ui.define([
 		oMultiComboBox.setEnabled(true);
 		oCoreItem.setEnabled(false);
 		oMultiComboBox._removeSelection([oToken]);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// assert
 		assert.notOk(oTokenSpy.calledOnce, "Token destroyed is omitted");
@@ -6187,7 +6297,7 @@ sap.ui.define([
 		oCoreItem.setEnabled(true);
 		oToken.setEditable(false);
 		oMultiComboBox._removeSelection([oToken]);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// assert
 		assert.notOk(oTokenSpy.calledOnce, "Token destroyed is omitted");
@@ -6197,7 +6307,7 @@ sap.ui.define([
 		// Act
 		oToken.setEditable(true);
 		oMultiComboBox._removeSelection([oToken]);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(oTokenSpy.calledOnce, "Token should be destroyed this time");
@@ -6207,14 +6317,15 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("Focus handling - ARROW keys", function (assert) {
+	QUnit.test("Focus handling - ARROW keys", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		// Arrange
 		var oGroupHeaderItem = new SeparatorItem({text: "Group Header"});
 		this.oMultiComboBox.setShowSelectAll(true);
 		this.oMultiComboBox.setValueState("Warning");
 		this.oMultiComboBox.insertItem(oGroupHeaderItem, 0);
 		this.oMultiComboBox.syncPickerContent();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		this.oMultiComboBox.open();
 		this.clock.tick();
@@ -6256,7 +6367,7 @@ sap.ui.define([
 		assert.strictEqual(this.oMultiComboBox.getFocusDomRef(), document.activeElement, "The input field should be focused");
 
 		this.oMultiComboBox.setValueState("None");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		this.oMultiComboBox.open();
 		this.clock.tick();
@@ -6286,11 +6397,12 @@ sap.ui.define([
 		assert.strictEqual(this.oMultiComboBox.getFocusDomRef(), document.activeElement, "The input field should be focused");
 	});
 
-	QUnit.test("Focus handling - HOME and END keys", function (assert) {
+	QUnit.test("Focus handling - HOME and END keys", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		// Arrange
 		this.oMultiComboBox.setValueState("Warning");
 		this.oMultiComboBox.setShowSelectAll(true);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		this.oMultiComboBox.open();
 		this.clock.tick();
@@ -6335,7 +6447,7 @@ sap.ui.define([
 
 		// Arrange
 		this.oMultiComboBox.setValueState("None");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// Act
 		qutils.triggerKeydown(document.activeElement, KeyCodes.HOME);
@@ -6344,9 +6456,14 @@ sap.ui.define([
 		assert.strictEqual(this.oMultiComboBox.getSelectAllCheckbox().getFocusDomRef(), document.activeElement, "The select all checkbox should be focused");
 	});
 
-	QUnit.module("Mobile mode (dialog)");
+	QUnit.module("Mobile mode (dialog)", {
+		afterEach: function (){
+			runAllTimersAndRestore(this.clock);
+		}
+	});
 
-	QUnit.test("Prevent endless focus loop on mobile", function(assert) {
+	QUnit.test("Prevent endless focus loop on mobile", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		//arrange
 		this.stub(Device, "system").value({
 			desktop: false,
@@ -6365,7 +6482,7 @@ sap.ui.define([
 
 		oMultiComboBox.syncPickerContent();
 		oFakeEvent.relatedControlId = oMultiComboBox.getPicker().getId();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		//act
 		qutils.triggerTouchEvent("tap", oMultiComboBox.getFocusDomRef(), {
@@ -6382,7 +6499,7 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("Tap on input field on mobile", function(assert) {
+	QUnit.test("Tap on input field on mobile", async function(assert) {
 		//arrange
 		this.stub(Device, "system").value({
 			desktop: false,
@@ -6392,7 +6509,7 @@ sap.ui.define([
 		var oMultiComboBox = new MultiComboBox().placeAt("MultiComboBoxContent"),
 			fnOpenSpy = this.spy(oMultiComboBox, "open");
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		//act
 		var oFakeEvent = {
@@ -6410,7 +6527,8 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("Pressing the OK button should tokenize the value if matching a suggestion", function(assert) {
+	QUnit.test("Pressing the OK button should tokenize the value if matching a suggestion", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		//arrange
 		this.stub(Device, "system").value({
 			desktop: false,
@@ -6437,7 +6555,7 @@ sap.ui.define([
 		aTokens;
 
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		//act
 		oMultiComboBox.open();
@@ -6451,7 +6569,7 @@ sap.ui.define([
 
 		//act
 		oSuggestionPopover._oPopover.getBeginButton().firePress();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		//arrange
 		aTokens = oMultiComboBox.getAggregation("tokenizer").getTokens();
@@ -6487,7 +6605,8 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("_filterSelectedItems()", function(assert) {
+	QUnit.test("_filterSelectedItems()", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		this.stub(Device, "system").value({
 			desktop: false,
 			tablet: false,
@@ -6520,13 +6639,13 @@ sap.ui.define([
 		oMultiComboBox.setSelectedItems([oFirstItem]);
 
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		oMultiComboBox.open();
 		this.clock.tick(nPopoverAnimationTick);
 		oSelectedButton.setPressed(true);
 		oMultiComboBox._filterSelectedItems({"oSource": oSelectedButton});
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 		this.clock.tick(nPopoverAnimationTick);
 
 		assert.strictEqual(ListHelpers.getVisibleItems(oMultiComboBox.getItems()).length, 1, "Only one item should be visible");
@@ -6534,7 +6653,7 @@ sap.ui.define([
 
 		oMultiComboBox.fireChange({ value: "I" });
 		oMultiComboBox.oninput(oFakeEvent);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		assert.strictEqual(ListHelpers.getVisibleItems(oMultiComboBox.getItems()).length, 3, "All three items are visible");
 		assert.strictEqual(oSelectedButton.getPressed(), false, "the SelectedButton is not pressed");
@@ -6546,7 +6665,8 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("_filterSelectedItems() with grouping", function(assert) {
+	QUnit.test("_filterSelectedItems() with grouping", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		this.stub(Device, "system").value({
 			desktop: false,
 			tablet: false,
@@ -6580,13 +6700,13 @@ sap.ui.define([
 		oMultiComboBox.setSelectedItems([oFirstItem]);
 
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		oMultiComboBox.open();
 		this.clock.tick(nPopoverAnimationTick);
 		oSelectedButton.setPressed(true);
 		oMultiComboBox._filterSelectedItems({"oSource": oSelectedButton});
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 		this.clock.tick(nPopoverAnimationTick);
 
 		assert.strictEqual(oMultiComboBox.getSelectedItems().length, 1, "There is one selected item");
@@ -6594,7 +6714,7 @@ sap.ui.define([
 		assert.strictEqual(oSelectedButton.getPressed(),true,"the SelectedButton is pressed");
 
 		oMultiComboBox.oninput(oFakeEvent);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		assert.strictEqual(ListHelpers.getVisibleItems(oMultiComboBox.getItems()).length, 5, "All three items are visible");
 		assert.strictEqual(oSelectedButton.getPressed(), false, "the SelectedButton is not pressed");
@@ -6606,7 +6726,8 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("_selectItemByKey should set items with valid keys only", function(assert) {
+	QUnit.test("_selectItemByKey should set items with valid keys only", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		// Arrange
 		var oMultiComboBox = new MultiComboBox();
 		var oAddAssociationStub = this.stub(oMultiComboBox, "addAssociation");
@@ -6672,8 +6793,6 @@ sap.ui.define([
 			}
 		];
 
-
-
 		var oSetSelectionSpy = this.spy(oMultiComboBox, "setSelection");
 		this.stub(oMultiComboBox, "_getUnselectedItems").returns(aMockItems);
 		this.stub(oMultiComboBox, "getEnabled").returns(true);
@@ -6682,7 +6801,7 @@ sap.ui.define([
 		// Act
 		oMultiComboBox._selectItemByKey(oFakeEvent);
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 		this.clock.tick(nPopoverAnimationTick);
 
 		// Assert
@@ -6705,7 +6824,8 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("_selectItemByKey should set sap.ui.coreItems only", function(assert) {
+	QUnit.test("_selectItemByKey should set sap.ui.coreItems only", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		// Arrange
 		var oMultiComboBox = new MultiComboBox();
 		var oAddAssociationStub = this.stub(oMultiComboBox, "addAssociation");
@@ -6765,7 +6885,7 @@ sap.ui.define([
 		// Act
 		oMultiComboBox._selectItemByKey(oFakeEvent);
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 		this.clock.tick(nPopoverAnimationTick);
 
 		// Assert
@@ -6788,8 +6908,8 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("onsapenter on mobile device", function(assert) {
-
+	QUnit.test("onsapenter on mobile device", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		// system under test
 		this.stub(Device, "system").value({
 			desktop: false,
@@ -6817,7 +6937,7 @@ sap.ui.define([
 		oMultiComboBox.setSelectedItems([oFirstItem]);
 
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		oMultiComboBox.open();
 		this.clock.tick(nPopoverAnimationTick);
@@ -6841,7 +6961,7 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("Popup should have ariaLabelledBy that points to the PopupHiddenLabelId", function(assert) {
+	QUnit.test("Popup should have ariaLabelledBy that points to the PopupHiddenLabelId", async function(assert) {
 		var oItem = new Item({
 			key: "li",
 			text: "lorem ipsum"
@@ -6852,7 +6972,7 @@ sap.ui.define([
 		}), oResourceBundleOptions = oResourceBundle.getText("COMBOBOX_AVAILABLE_OPTIONS");
 
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.equal(Element.getElementById(oMultiComboBox.getPickerInvisibleTextId()).getText(), oResourceBundleOptions, 'popup ariaLabelledBy is set');
 		oMultiComboBox.destroy();
@@ -6936,7 +7056,7 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("Data binding: update model data", function (assert) {
+	QUnit.test("Data binding: update model data", async function (assert) {
 		var oData = {
 				"ProductCollection": [
 					{
@@ -6993,7 +7113,7 @@ sap.ui.define([
 		var oModel = new JSONModel(oData);
 		oMultiCombo.setModel(oModel);
 		oMultiCombo.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.strictEqual(oMultiCombo.getSelectedKeys().length, 1, "Selected keys are set to 1 item.");
 		assert.strictEqual(oMultiCombo.getSelectedItems().length, 1, "Selected items are set to 1 item.");
@@ -7001,7 +7121,7 @@ sap.ui.define([
 		assert.strictEqual(oMultiCombo.getSelectedItems()[0].getKey(), oData.selectedCustomKeys[0], "Selected items are properly propagated.");
 
 		oModel.setProperty("/ProductCollection", oData2);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.strictEqual(oMultiCombo.getSelectedKeys().length, 1, "Selected keys remain to 1.");
 		assert.strictEqual(oMultiCombo.getSelectedItems().length, 1, "Selected keys remain to 1.");
@@ -7012,7 +7132,7 @@ sap.ui.define([
 		oModel.destroy();
 	});
 
-	QUnit.test("Data binding: update model data and selected items", function (assert) {
+	QUnit.test("Data binding: update model data and selected items", async function (assert) {
 		var oData = {
 			"ProductCollection": [
 				{
@@ -7051,7 +7171,7 @@ sap.ui.define([
 		var oModel = new JSONModel(oData);
 		oMultiCombo.setModel(oModel);
 		oMultiCombo.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.strictEqual(oMultiCombo.getSelectedKeys().length, 2, "Selected keys are set to 2 items.");
 		assert.strictEqual(oMultiCombo.getSelectedItems().length, 1, "Selected items are set to 1 item.");
@@ -7061,7 +7181,7 @@ sap.ui.define([
 		var oData2 = Object.assign({}, oData);
 		oData2.ProductCollection.push({ProductId: "Zzz3", Name: "New Item"});
 		oModel.setProperty("/ProductCollection", oData2.ProductCollection);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.strictEqual(oMultiCombo.getSelectedKeys().length, 2, "Selected keys remain to 2.");
 		assert.strictEqual(oMultiCombo.getSelectedItems().length, 2, "Selected keys are updated to 2.");
@@ -7072,7 +7192,7 @@ sap.ui.define([
 		oModel.destroy();
 	});
 
-	QUnit.test("Data binding: update seelctedkeys after model's value is formatted", function (assert) {
+	QUnit.test("Data binding: update seelctedkeys after model's value is formatted", async function (assert) {
 		// arrange
 		var oFlatArrayDatatype = SimpleType.extend("example.FlatArray", {
 			formatValue: function(vValue, sInternalType) {
@@ -7106,7 +7226,7 @@ sap.ui.define([
 		oMultiComboBox.setModel(oModel);
 
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		var oNewSelectedItem = oMultiComboBox.getItems()[0];
 
@@ -7121,7 +7241,7 @@ sap.ui.define([
 		};
 
 		oMultiComboBox.setSelection(oFakeParams);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(oMultiComboBox.getAggregation("tokenizer").getTokens().length, 1, 'Only one token should be shown');
@@ -7131,10 +7251,16 @@ sap.ui.define([
 		oModel.destroy();
 	});
 
-	QUnit.module("highlighting");
+	QUnit.module("highlighting", {
+		beforeEach: function(){
+			this.clock = sinon.useFakeTimers();
+		},
+		afterEach: function(){
+			runAllTimersAndRestore(this.clock);
+		}
+	});
 
-	QUnit.test("highlightList doesn't throw an error when showSecondaryValues=true and sap.ui.core.Item is set", function(assert) {
-
+	QUnit.test("highlightList doesn't throw an error when showSecondaryValues=true and sap.ui.core.Item is set", async function(assert) {
 		// system under test
 		var fnOnAfterOpenSpy = this.spy(MultiComboBox.prototype, "onAfterOpen");
 		var oMultiComboBox = new MultiComboBox({
@@ -7148,7 +7274,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 		oMultiComboBox.focus();
 
 		// act
@@ -7162,7 +7288,7 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("highlightList doesn't throw an error when combobox's value contains special characters", function(assert) {
+	QUnit.test("highlightList doesn't throw an error when combobox's value contains special characters", async function(assert) {
 
 		// system under test
 		var fnOnAfterOpenSpy = this.spy(MultiComboBox.prototype, "onAfterOpen");
@@ -7179,7 +7305,7 @@ sap.ui.define([
 		// arrange
 		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 		oMultiComboBox.highlightList("(T");
 
 		// act
@@ -7193,7 +7319,7 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("Clearing values after highlighting", function(assert) {
+	QUnit.test("Clearing values after highlighting", async function(assert) {
 		var oMultiComboBox = new MultiComboBox({
 			items: [
 				new Item({
@@ -7211,7 +7337,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		oMultiComboBox.oninput(oFakeEvent);
 		this.clock.tick(100);
@@ -7226,7 +7352,7 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("The tokens are rendered after opening the picker", function (assert) {
+	QUnit.test("The tokens are rendered after opening the picker", async function (assert) {
 		//arrange
 		var aTokens,
 			aItems = [
@@ -7239,7 +7365,7 @@ sap.ui.define([
 			});
 
 		oMCB.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		oMCB.open();
 		this.clock.tick();
@@ -7382,7 +7508,7 @@ sap.ui.define([
 
 	QUnit.module("Tablet focus handling");
 
-	QUnit.test("it should not set the focus to the input", function(assert) {
+	QUnit.test("it should not set the focus to the input", async function(assert) {
 		this.stub(Device, "system").value({
 			desktop: false,
 			tablet: true,
@@ -7394,7 +7520,7 @@ sap.ui.define([
 			oFocusinStub = this.stub(oMultiComboBox, "focus");
 
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		oFakeEvent = { target: oMultiComboBox.getDomRef("arrow") };
 
@@ -7406,7 +7532,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Collapsed state (N-more)", {
-		beforeEach : function() {
+		beforeEach : async function() {
 			var aItems = [new Item("firstItem", {text: "XXXX"}),
 				new Item({text: "XXXX"}),
 				new Item({text: "XXXX"}),
@@ -7419,14 +7545,15 @@ sap.ui.define([
 			});
 			this.oMCB1.placeAt("MultiComboBoxContent");
 
-			nextUIUpdate.runSync()/*fake timer is used in module*/;
+			await nextUIUpdate();
 		},
 		afterEach : function() {
 			this.oMCB1.destroy();
+			runAllTimersAndRestore(this.clock);
 		}
 	});
 
-	QUnit.test("onfocusin", function(assert) {
+	QUnit.test("onfocusin", async function(assert) {
 		var oIndicator = this.oMCB1.$().find(".sapMTokenizerIndicator"),
 			oEventMock = {
 				target : this.oMCB1.getFocusDomRef()
@@ -7437,7 +7564,7 @@ sap.ui.define([
 
 		//close and open the picker
 		this.oMCB1.onfocusin(oEventMock);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(oIndicator.hasClass("sapUiHidden"), "The n-more label is hidden on focusin.");
@@ -7455,42 +7582,43 @@ sap.ui.define([
 	});
 
 	QUnit.test("SelectedItems Popover's interaction", function(assert) {
+		this.clock = sinon.useFakeTimers();
 		// act
 		this.oMCB1.$().find(".sapMTokenizerIndicator")[0].click();
 
 		// deselect the first item
 		jQuery(this.oMCB1.getPicker().getContent()[0].getItems()[0]).tap();
-
 		this.clock.tick(200);
+
 		// assert
 		assert.strictEqual(this.oMCB1.getSelectedItems().length, 3, "A selected item was removed after deselecting an item from the popover");
 	});
 
-	QUnit.test("_calculateSpaceForTokenizer", function(assert) {
+	QUnit.test("_calculateSpaceForTokenizer", async function(assert) {
 		var oMultiComboBox = new MultiComboBox({
 				width: "500px"
 			});
 
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		oMultiComboBox.$().find(".sapMMultiComboBoxInputContainer").removeClass("sapMMultiComboBoxInputContainer");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.strictEqual(oMultiComboBox._calculateSpaceForTokenizer(), "406px", "_calculateSpaceForTokenizer returns a correct px value");
 
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("_calculateSpaceForTokenizer with null DOM element reference", function(assert) {
+	QUnit.test("_calculateSpaceForTokenizer with null DOM element reference", async function(assert) {
 		var oMultiComboBox = new MultiComboBox(),
 			output;
 
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		oMultiComboBox.$().find(".sapMMultiComboBoxInputContainer").removeClass("sapMMultiComboBoxInputContainer");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		output = oMultiComboBox._calculateSpaceForTokenizer();
 
@@ -7499,20 +7627,21 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("_calculateSpaceForTokenizer with negative tokenizer space", function(assert) {
+	QUnit.test("_calculateSpaceForTokenizer with negative tokenizer space", async function(assert) {
 		var oMultiComboBox = new MultiComboBox({
 			width: "30px"
 		});
 
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.strictEqual(oMultiComboBox._calculateSpaceForTokenizer(), "0px", "_calculateSpaceForTokenizer returns a non negative value");
 
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("N-more popover transition from read-only to edit mode", function (assert) {
+	QUnit.test("N-more popover transition from read-only to edit mode", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		//arrange
 		var oReadOnlyPopover,
 			aReadOnlyContent,
@@ -7529,7 +7658,7 @@ sap.ui.define([
 			oTokenizer = oMCB.getAggregation("tokenizer");
 
 		oMCB.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		oTokenizer._handleNMoreIndicatorPress();
 		this.clock.tick(200);
@@ -7543,7 +7672,7 @@ sap.ui.define([
 
 		oReadOnlyPopover.close();
 		oMCB.setEditable(true);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		oTokenizer._oIndicator.trigger("click");
 		this.clock.tick(1000);
@@ -7559,7 +7688,8 @@ sap.ui.define([
 		oMCB.destroy();
 	});
 
-	QUnit.test("tokenizer's adjustTokensVisibility is called on initial rendering", function (assert) {
+	QUnit.test("tokenizer's adjustTokensVisibility is called on initial rendering", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		//arrange
 		var oMCB = new MultiComboBox({
 			items: [
@@ -7572,7 +7702,7 @@ sap.ui.define([
 
 		// act
 		oMCB.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 		this.clock.tick(300);
 
 		// assert
@@ -7583,20 +7713,20 @@ sap.ui.define([
 		oMCB.destroy();
 	});
 
-	QUnit.test("Sync Items with Tokens", function (assert) {
+	QUnit.test("Sync Items with Tokens", async function (assert) {
 		// Setup
 		var oIndicator = this.oMCB1.$().find(".sapMTokenizerIndicator");
 
 		// Act
 		this.oMCB1.setWidth("30px");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(oIndicator.text(), oResourceBundle.getText("TOKENIZER_SHOW_ALL_ITEMS", 4));
 
 		// Act
 		this.oMCB1.getItems()[0].setEnabled(false);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// assert
 		oIndicator = this.oMCB1.$().find(".sapMTokenizerIndicator");
@@ -7604,7 +7734,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Expanded state (N-more)", {
-		beforeEach : function() {
+		beforeEach : async function() {
+			this.clock = sinon.useFakeTimers();
 			var aItems = [
 				new SeparatorItem({ text: "First Group" }),
 				new Item('item1', {text: "XXXX"}),
@@ -7621,10 +7752,11 @@ sap.ui.define([
 			});
 			this.oMCB1.placeAt("MultiComboBoxContent");
 
-			nextUIUpdate.runSync()/*fake timer is used in module*/;
+			await nextUIUpdate(this.clock);
 		},
 		afterEach : function() {
 			this.oMCB1.destroy();
+			runAllTimersAndRestore(this.clock);
 		}
 	});
 
@@ -7645,7 +7777,7 @@ sap.ui.define([
 		assert.strictEqual(ListHelpers.getVisibleItems(this.oMCB1.getItems()).length, 4, "The selected items are shown grouped");
 	});
 
-	QUnit.test("Phone: Selected items are grouped when picker is opened", function (assert) {
+	QUnit.test("Phone: Selected items are grouped when picker is opened", async function (assert) {
 		this.stub(Device, "system").value({
 			desktop: false,
 			phone: true,
@@ -7667,7 +7799,7 @@ sap.ui.define([
 
 		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		oMultiComboBox.$().find(".sapMTokenizerIndicator").trigger("click");
 		this.clock.tick(600);
@@ -7676,16 +7808,21 @@ sap.ui.define([
 		assert.strictEqual(oMultiComboBox.getSelectedItems().length, 2, "There are two selected items");
 		assert.strictEqual(ListHelpers.getVisibleItems(oMultiComboBox.getItems()).length, 4, "The selected items are shown grouped");
 
-
-
 		oMultiComboBox.close();
 		this.clock.tick(500);
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.module("Type-ahead");
+	QUnit.module("Type-ahead", {
+		beforeEach: function() {
+			this.clock = sinon.useFakeTimers();
+		},
+		afterEach: function(){
+			runAllTimersAndRestore(this.clock);
+		}
+	});
 
-	QUnit.test("Desktop: Basic interaction", function (assert) {
+	QUnit.test("Desktop: Basic interaction", async function (assert) {
 		var oSystem = {
 			desktop : true,
 			phone : false,
@@ -7715,7 +7852,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// act
 		oInputDomRef = oMultiComboBox.getDomRef("inner");
@@ -7740,7 +7877,7 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("Desktop: Autocomplete + Item selection", function (assert) {
+	QUnit.test("Desktop: Autocomplete + Item selection", async function (assert) {
 		var oSystem = {
 			desktop : true,
 			phone : false,
@@ -7771,7 +7908,7 @@ sap.ui.define([
 		// arrange
 		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// act
 		oInputDomRef = oMultiComboBox.getDomRef("inner");
@@ -7808,7 +7945,7 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("Phone: Autocomplete + Item selection", function (assert) {
+	QUnit.test("Phone: Autocomplete + Item selection", async function (assert) {
 		var oSystem = {
 			desktop : false,
 			phone : true,
@@ -7846,7 +7983,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// act
 		oMultiComboBox.open();
@@ -7888,7 +8025,7 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("Typeahead should be disabled on adroid devices", function (assert) {
+	QUnit.test("Typeahead should be disabled on adroid devices", async function (assert) {
 		this.stub(Device, "system").value({
 			desktop: false,
 			phone: true,
@@ -7909,7 +8046,7 @@ sap.ui.define([
 		});
 
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 		oMultiComboBox.focus();
 		oMultiComboBox.open();
 		this.clock.tick(500);
@@ -7943,7 +8080,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Two Column Layout", {
-		beforeEach: function(){
+		beforeEach: async function(){
+			this.clock = sinon.useFakeTimers();
 			this.oMultiComboBox = new MultiComboBox({
 				showSecondaryValues: true,
 				items: [
@@ -7964,10 +8102,11 @@ sap.ui.define([
 					})
 				]
 			}).placeAt("MultiComboBoxContent");
-			nextUIUpdate.runSync()/*fake timer is used in module*/;
+			await nextUIUpdate(this.clock);
 		},
 		afterEach: function(){
 			this.oMultiComboBox.destroy();
+			runAllTimersAndRestore(this.clock);
 		}
 	});
 
@@ -8007,7 +8146,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Grouping", {
-		beforeEach : function() {
+		beforeEach : async function() {
 			this.oMultiComboBox = new MultiComboBox({
 				items: [
 					new SeparatorItem({ text: "Asia-Countries" }),
@@ -8033,7 +8172,7 @@ sap.ui.define([
 			});
 			this.oMultiComboBox.placeAt("MultiComboBoxContent");
 
-			nextUIUpdate.runSync()/*fake timer is used in module*/;
+			await nextUIUpdate();
 		},
 		afterEach : function() {
 			this.oMultiComboBox.destroy();
@@ -8052,7 +8191,7 @@ sap.ui.define([
 		assert.ok(groupHeader.isA("sap.m.GroupHeaderListItem"), "The control used for the group name is instance of sap.m.GroupHeaderListItem");
 	});
 
-	QUnit.test("_mapItemToListItem() - Data Binding works correct ", function(assert) {
+	QUnit.test("_mapItemToListItem() - Data Binding works correct ", async function(assert) {
 
 		// JSON sample data
 		var aData = [
@@ -8071,7 +8210,7 @@ sap.ui.define([
 			},
 			showSecondaryValues: true
 		}).setModel(oModel).placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		this.multiComboBox.open();
 
@@ -8086,7 +8225,7 @@ sap.ui.define([
 
 
 	QUnit.module("Value State Error", {
-		beforeEach : function() {
+		beforeEach : async function() {
 			var oItem4;
 			this.oMultiComboBox = new MultiComboBox({
 				items: [
@@ -8114,10 +8253,11 @@ sap.ui.define([
 			});
 			this.oMultiComboBox.placeAt("MultiComboBoxContent");
 
-			nextUIUpdate.runSync()/*fake timer is used in module*/;
+			await nextUIUpdate();
 		},
 		afterEach : function() {
 			this.oMultiComboBox.destroy();
+			runAllTimersAndRestore(this.clock);
 		}
 	});
 
@@ -8135,35 +8275,35 @@ sap.ui.define([
 		assert.strictEqual(this.oMultiComboBox.getValue(), "Brussel", "The value is not deleted");
 	});
 
-	QUnit.test("onsapenter should not reset the initially set value to None", function(assert) {
+	QUnit.test("onsapenter should not reset the initially set value to None", async function(assert) {
 		this.oMultiComboBox.setValueState("Information");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 		// arrange
 		var oAlreadySelectedItemSpy = this.spy(this.oMultiComboBox, "_showAlreadySelectedVisualEffect");
 
 		// act
 		qutils.triggerKeydown(this.oMultiComboBox.getFocusDomRef(), KeyCodes.ENTER); //onsapenter
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(oAlreadySelectedItemSpy.callCount, 1, "_showAlreadySelectedVisualEffect() should be called exactly once");
 		assert.strictEqual(this.oMultiComboBox.getValueState(), ValueState.Information, "The value state is the initially set one");
 	});
 
-	QUnit.test("oninput the value state message should not be visible", function(assert) {
+	QUnit.test("oninput the value state message should not be visible", async function(assert) {
 		// act
 		this.oMultiComboBox._$input.trigger("focus").val("Brussel").trigger("input");
 		qutils.triggerKeydown(this.oMultiComboBox.getDomRef(), KeyCodes.ENTER);
 		this.oMultiComboBox._$input.trigger("focus").val("H").trigger("input");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(this.oMultiComboBox.getValueState(), ValueState.None, "The value state is reset to none.");
 	});
 
-	QUnit.test("oninput the value state should be reset to the initial one", function(assert) {
+	QUnit.test("oninput the value state should be reset to the initial one", async function(assert) {
 		this.oMultiComboBox.setValueState("Warning");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		var oFakeEvent = {
 			isMarked: function () {return false;},
@@ -8178,20 +8318,20 @@ sap.ui.define([
 		qutils.triggerCharacterInput(this.oMultiComboBox.getFocusDomRef(), "Brussel");
 		qutils.triggerKeydown(this.oMultiComboBox.getDomRef(), KeyCodes.ENTER);
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		this.oMultiComboBox.oninput(oFakeEvent); // Fake input
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.strictEqual(this.oMultiComboBox.getValueState(), ValueState.Warning, "The value state is reset.");
 	});
 
-	QUnit.test("value state message should be opened if the input field is on focus", function(assert) {
-
+	QUnit.test("value state message should be opened if the input field is on focus", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		// act
 		this.oMultiComboBox.focus();
 		this.oMultiComboBox.open();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 		this.clock.tick(500);
 
 		qutils.triggerCharacterInput(this.oMultiComboBox.getFocusDomRef(), "Brussel");
@@ -8207,11 +8347,12 @@ sap.ui.define([
 		assert.strictEqual(this.oMultiComboBox.getValue(), "Brussel", "The invalid value is corrected");
 	});
 
-	QUnit.test("Value state should reset to None when not set onfocusout", function(assert) {
+	QUnit.test("Value state should reset to None when not set onfocusout", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		// act
 		this.oMultiComboBox.focus();
 		this.oMultiComboBox.open();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 		this.clock.tick(500);
 
 		qutils.triggerCharacterInput(this.oMultiComboBox.getFocusDomRef(), "Brussel");
@@ -8226,14 +8367,15 @@ sap.ui.define([
 		assert.strictEqual(this.oMultiComboBox.getValueState(), "None", "Value state should be reset to None");
 	});
 
-	QUnit.test("Value state should reset to inintial value state set by the application onfocusout", function(assert) {
+	QUnit.test("Value state should reset to inintial value state set by the application onfocusout", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		this.oMultiComboBox.setValueState("Warning");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// act
 		this.oMultiComboBox.focus();
 		this.oMultiComboBox.open();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 		this.clock.tick(500);
 
 		qutils.triggerCharacterInput(this.oMultiComboBox.getFocusDomRef(), "Brussel");
@@ -8248,12 +8390,13 @@ sap.ui.define([
 		assert.strictEqual(this.oMultiComboBox.getValueState(), "Warning", "Value state should be reset to None");
 	});
 
-	QUnit.test("value state message for invalid input should be overwritten by the applications", function(assert) {
-		 var sCustomText = "This is application text. This is application text. This is application text. This is application text. This is application text. This is application text. This is application text.";
+	QUnit.test("value state message for invalid input should be overwritten by the applications", async function(assert) {
+		this.clock = sinon.useFakeTimers();
+		var sCustomText = "This is application text. This is application text. This is application text. This is application text. This is application text. This is application text. This is application text.";
 
 		// act
 		this.oMultiComboBox.setValueStateText(sCustomText);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		var oFakeEvent = {
 			isMarked: function () { },
@@ -8264,7 +8407,6 @@ sap.ui.define([
 			}
 		};
 
-
 		this.oMultiComboBox.focus();
 		this.oMultiComboBox.open();
 		this.clock.tick(500);
@@ -8272,7 +8414,7 @@ sap.ui.define([
 		this.oMultiComboBox.setValue(oFakeEvent.value);
 		this.oMultiComboBox.oninput(oFakeEvent);
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// assert
 		assert.strictEqual(this.oMultiComboBox.getValueStateText(), sCustomText, "Value State message is correct.");
@@ -8281,7 +8423,7 @@ sap.ui.define([
 		oFakeEvent.value = "Brussel";
 		this.oMultiComboBox.setValue(oFakeEvent.value);
 		qutils.triggerKeydown(this.oMultiComboBox.getFocusDomRef(), KeyCodes.ENTER);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// assert
 		assert.strictEqual(this.oMultiComboBox.getValueStateText(),
@@ -8293,19 +8435,20 @@ sap.ui.define([
 
 		this.oMultiComboBox.setValue(oFakeEvent.value);
 		this.oMultiComboBox.oninput(oFakeEvent);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// assert
 		assert.strictEqual(this.oMultiComboBox.getValueStateText(), sCustomText, "Value State message is correct.");
 	});
 
-	QUnit.test("onfocusout value should be deleted", function(assert) {
+	QUnit.test("onfocusout value should be deleted", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		this.oMultiComboBox.setValueState("Success");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// act
 		this.oMultiComboBox.open();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 		this.clock.tick(500);
 
 		qutils.triggerCharacterInput(this.oMultiComboBox.getFocusDomRef(), "Brussel");
@@ -8321,13 +8464,14 @@ sap.ui.define([
 		assert.strictEqual(this.oMultiComboBox.getValue(), "", "The input value is deleted");
 	});
 
-	QUnit.test("onfocusout value should be cleared", function(assert) {
+	QUnit.test("onfocusout value should be cleared", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		//arrange
 		var oFocusedDomRef = this.oMultiComboBox.getFocusDomRef();
 
 		// act
 		this.oMultiComboBox.open();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 		this.clock.tick(500);
 
 		qutils.triggerCharacterInput(oFocusedDomRef, "Brussel");
@@ -8343,7 +8487,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Value State Containing links", {
-		beforeEach : function() {
+		beforeEach : async function() {
 			this.oMultiComboBox = new MultiComboBox({
 				items: [
 					new ListItem({
@@ -8382,14 +8526,16 @@ sap.ui.define([
 			this.oMultiComboBox.setFormattedValueStateText(oFormattedValueStateText);
 			this.oMultiComboBox.placeAt("MultiComboBoxContent");
 
-			nextUIUpdate.runSync()/*fake timer is used in module*/;
+			await nextUIUpdate();
 		},
 		afterEach : function() {
 			this.oMultiComboBox.destroy();
+			runAllTimersAndRestore(this.clock);
 		}
 	});
 
 	QUnit.test("onkeydown should focus the formatted value state header if the current focus is on the input", function(assert) {
+		this.clock = sinon.useFakeTimers();
 		// Act
 		this.oMultiComboBox.open();
 		this.clock.tick();
@@ -8403,6 +8549,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("tab key pressed on the last link in the value state message should close the picker", function(assert) {
+		this.clock = sinon.useFakeTimers();
 		// Act
 		this.oMultiComboBox.open();
 		this.clock.tick();
@@ -8426,19 +8573,20 @@ sap.ui.define([
 	});
 
 	QUnit.test("Value state header containing links should be focusable but not part of the tab chain", function(assert) {
+		this.clock = sinon.useFakeTimers();
 		// Act
 		this.oMultiComboBox.open();
-		this.clock.tick();
+		this.clock.tick(1000);
 
 		qutils.triggerKeydown(this.oMultiComboBox.getDomRef(), KeyCodes.ARROW_DOWN);
-		this.clock.tick();
+		this.clock.tick(1000);
 
 		// Assert
 		assert.strictEqual(this.oMultiComboBox._getSuggestionsPopover()._getValueStateHeader().$().attr("tabindex"), "-1", "Value state message is focusable but not part of the tab chain");
 		assert.ok(this.oMultiComboBox._getSuggestionsPopover()._getValueStateHeader().$().hasClass("sapMFocusable"), "sapMFocusable class is applied to the value state header");
 	});
 
-	QUnit.test("when the suggestions popover is opened CTRL+A should select/deselect all items and create tokens", function(assert) {
+	QUnit.test("when the suggestions popover is opened CTRL+A should select/deselect all items and create tokens", async function(assert) {
 		// Arrange
 		var oEventMock = {
 			isMarked: function () { },
@@ -8448,7 +8596,7 @@ sap.ui.define([
 		var oGroupHeaderItem = new SeparatorItem({text: "Group Header"});
 
 		this.oMultiComboBox.insertItem(oGroupHeaderItem, 0);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Act
 		this.oMultiComboBox.onsapshow(oEventMock);
@@ -8461,7 +8609,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Composition characters handling", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.multiComboBox = new MultiComboBox({
 				items: [
 					new Item({
@@ -8479,11 +8627,11 @@ sap.ui.define([
 				]
 			}).placeAt("MultiComboBoxContent");
 
-			nextUIUpdate.runSync()/*fake timer is used in module*/;
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.multiComboBox.destroy();
-			this.multiComboBox = null;
+			runAllTimersAndRestore(this.clock);
 		}
 	});
 
@@ -8500,6 +8648,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Composititon events", function (assert) {
+		this.clock = sinon.useFakeTimers();
 		var oFakeEvent = {
 			isMarked: function () { },
 			setMarked: function () { },
@@ -8527,7 +8676,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("showItems functionality", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			var aData = [
 					{
 						name: "A Item 1", key: "a-item-1", group: "A"
@@ -8550,12 +8699,10 @@ sap.ui.define([
 				}
 			}).setModel(oModel).placeAt("MultiComboBoxContent");
 
-			nextUIUpdate.runSync()/*fake timer is used in module*/;
-
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oMultiComboBox.destroy();
-			this.oMultiComboBox = null;
 		}
 	});
 
@@ -8584,7 +8731,7 @@ sap.ui.define([
 		assert.strictEqual(this.oMultiComboBox.fnFilter, fnFilter, "Custom filter function has been restored");
 	});
 
-	QUnit.test("Should show all the items", function (assert) {
+	QUnit.test("Should show all the items", async function (assert) {
 		// Setup
 		var fnGetVisisbleItems = function (aItems) {
 			return aItems.filter(function (oItem) {
@@ -8594,14 +8741,14 @@ sap.ui.define([
 
 		// Act
 		this.oMultiComboBox.showItems();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(this.oMultiComboBox._getList().getItems().length, 5, "All the items are available");
 		assert.strictEqual(fnGetVisisbleItems(this.oMultiComboBox._getList().getItems()).length, 5, "Shows all items");
 	});
 
-	QUnit.test("Should filter the items", function (assert) {
+	QUnit.test("Should filter the items", async function (assert) {
 		// Setup
 		var fnGetVisisbleItems = function (aItems) {
 			return aItems.filter(function (oItem) {
@@ -8613,7 +8760,7 @@ sap.ui.define([
 		this.oMultiComboBox.showItems(function (sValue, oItem) {
 			return oItem.getText() === "A Item 1";
 		});
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(this.oMultiComboBox._getList().getItems().length, 5, "All the items are available");
@@ -8650,9 +8797,11 @@ sap.ui.define([
 		// Assert
 		assert.strictEqual(oSpy.callCount, 2, "The toggleStyleClass method was called twice:");
 		assert.strictEqual(oSpy.getCall(1).args[0], sClassName, "...second time with '" + sClassName + "'.");
+
+		oSpy.restore();
 	});
 
-	QUnit.test("Should call toggleStyleClass after showItems is called and oninput is triggered.", function (assert) {
+	QUnit.test("Should call toggleStyleClass after showItems is called and oninput is triggered.", async function (assert) {
 		// Setup
 		var oSpy = this.spy(this.oMultiComboBox, "toggleStyleClass"),
 			oFakeEvent = {
@@ -8679,9 +8828,13 @@ sap.ui.define([
 		// Assert
 		assert.strictEqual(oSpy.callCount, 1, "The toggleStyleClass method was called once:");
 		assert.strictEqual(oSpy.getCall(0).args[0], sClassName, "...first time with '" + sClassName + "'.");
+
+		oSpy.restore();
+		await nextUIUpdate();
 	});
 
-	QUnit.test("Should show all items when drop down arrow is pressed after showing filtered list.", function (assert) {
+
+	QUnit.test("Should show all items when drop down arrow is pressed after showing filtered list.", async function (assert) {
 		// Setup
 		var fnGetVisisbleItems = function (aItems) {
 			return aItems.filter(function (oItem) {
@@ -8693,7 +8846,7 @@ sap.ui.define([
 		this.oMultiComboBox.showItems(function (sValue, oItem) {
 			return oItem.getText() === "A Item 1";
 		});
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(this.oMultiComboBox._getList().getItems().length, 5, "All the items are available");
@@ -8701,18 +8854,18 @@ sap.ui.define([
 
 		// Act
 		this.oMultiComboBox._handlePopupOpenAndItemsLoad(true); // Icon press
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.strictEqual(this.oMultiComboBox._getList().getItems().length, 5, "All the items are available");
 		assert.strictEqual(fnGetVisisbleItems(this.oMultiComboBox._getList().getItems()).length, 5, "All items are visible");
 	});
 
-	QUnit.test("Should not open the Popover in case of 0 items.", function (assert) {
+	QUnit.test("Should not open the Popover in case of 0 items.", async function (assert) {
 		// Act
 		this.oMultiComboBox.showItems(function () {
 			return false;
 		});
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(this.oMultiComboBox.isOpen(), false, "The Popover should not be displayed.");
@@ -8720,7 +8873,7 @@ sap.ui.define([
 
 	QUnit.module("selectedKeys");
 
-	QUnit.test("Should select keys & items", function (assert) {
+	QUnit.test("Should select keys & items", async function (assert) {
 		var oClone,
 			oMultiComboBox = new MultiComboBox({
 				selectedKeys: ["1", "3"],
@@ -8732,7 +8885,7 @@ sap.ui.define([
 				]
 			}).placeAt("MultiComboBoxContent"),
 			oTokenizer = oMultiComboBox.getAggregation("tokenizer");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oMultiComboBox.getSelectedKeys().length, oMultiComboBox.getSelectedItems().length, "Selection should be in sync");
@@ -8750,7 +8903,7 @@ sap.ui.define([
 		oClone.destroy();
 	});
 
-	QUnit.test("Should be able to sync mixed properties", function (assert) {
+	QUnit.test("Should be able to sync mixed properties", async function (assert) {
 		var oItem = new Item({key: "1", text: "1"}),
 			oMultiComboBox = new MultiComboBox({
 				selectedKeys: ["2", "3"],
@@ -8762,7 +8915,7 @@ sap.ui.define([
 					new Item({key: "4", text: "4"})
 				]
 			}).placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oMultiComboBox.getSelectedKeys().length, 3, "Selection should be in sync");
@@ -8771,7 +8924,7 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("Tokenizer's _bShouldRenderTabIndex should be set to false and tabindex should not be rendered", function (assert) {
+	QUnit.test("Tokenizer's _bShouldRenderTabIndex should be set to false and tabindex should not be rendered", async function (assert) {
 		var oItem = new Item({key: "1", text: "1"}),
 			oMultiComboBox = new MultiComboBox({
 				selectedKeys: ["2", "3"],
@@ -8783,7 +8936,7 @@ sap.ui.define([
 				]
 			}).placeAt("MultiComboBoxContent");
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oMultiComboBox.getAggregation("tokenizer")._bShouldRenderTabIndex, false, "_bShouldRenderTabIndex is correctly set to false");
@@ -8792,7 +8945,7 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("Should be able to sync predefined selectedKey", function (assert) {
+	QUnit.test("Should be able to sync predefined selectedKey", async function (assert) {
 		var oItem = new Item({key: "1", text: "1"}),
 			oMultiComboBox = new MultiComboBox({
 				selectedKeys: ["1"],
@@ -8802,7 +8955,7 @@ sap.ui.define([
 					new Item({key: "4", text: "4"})
 				]
 			}).placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Assert
 		assert.deepEqual(oMultiComboBox.getSelectedKeys(), ["1"], "There should be selected key defined");
@@ -8810,7 +8963,7 @@ sap.ui.define([
 
 		// Act
 		oMultiComboBox.addItem(oItem);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Assert
 		assert.deepEqual(oMultiComboBox.getSelectedKeys(), ["1"], "There should be selected key defined");
@@ -8820,7 +8973,7 @@ sap.ui.define([
 
 		// Act
 		oMultiComboBox.removeItem(oItem);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oMultiComboBox.getSelectedKeys().length, 0, "Selected keys should be empty");
@@ -8830,7 +8983,7 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("API use should sync with the token", function (assert) {
+	QUnit.test("API use should sync with the token", async function (assert) {
 		var oMultiComboBox = new MultiComboBox({
 			items: [
 				new Item({key: "2", text: "2"}),
@@ -8839,11 +8992,11 @@ sap.ui.define([
 			]
 		}).placeAt("MultiComboBoxContent"),
 		oTokenizer = oMultiComboBox.getAggregation("tokenizer");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Act
 		oMultiComboBox.addSelectedKeys(["2", "3"]);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.deepEqual(oMultiComboBox.getSelectedKeys(), ["2", "3"], "SelectedKeys should be saved");
 		assert.strictEqual(oMultiComboBox.getSelectedItems().length, 2, "selectedItems should be there");
@@ -8851,7 +9004,7 @@ sap.ui.define([
 
 		// Act
 		oMultiComboBox.setSelectedKeys([]);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.strictEqual(oMultiComboBox.getSelectedKeys().length, 0, "SelectedKeys should be empty");
 		assert.strictEqual(oMultiComboBox.getSelectedItems().length, 0, "selectedItems should be empty");
@@ -8860,7 +9013,7 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("Items without keys", function (assert) {
+	QUnit.test("Items without keys", async function (assert) {
 		var oItem = new Item({key: "1", text: "1"}),
 			aItems = [
 				new Item({key: "2", text: "2"}),
@@ -8872,7 +9025,7 @@ sap.ui.define([
 				selectedKeys: ["1"],
 				items: aItems
 			}).placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oMultiComboBox.getItems().length, 3, "Items should be 3");
@@ -8881,7 +9034,7 @@ sap.ui.define([
 
 		// Act
 		oMultiComboBox.addItem(oItem);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oMultiComboBox.getItems().length, 4, "Items should be 4");
@@ -8890,7 +9043,7 @@ sap.ui.define([
 
 		// Act
 		oMultiComboBox.removeItem(aItems[0]);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oMultiComboBox.getItems().length, 3, "Items should be 3");
@@ -8899,7 +9052,7 @@ sap.ui.define([
 
 		// Act
 		oMultiComboBox.removeSelectedItem(aItems[0]); // This item has already been removed, but let's give it another try
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oMultiComboBox.getItems().length, 3, "Items should be 3");
@@ -8908,7 +9061,7 @@ sap.ui.define([
 
 		// Act
 		oMultiComboBox.removeSelectedItem(aItems[1]);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oMultiComboBox.getItems().length, 3, "Items should be 3");
@@ -8918,7 +9071,7 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("Sync selectedKeys' items before MultiComboBox has been rendered", function (assert) {
+	QUnit.test("Sync selectedKeys' items before MultiComboBox has been rendered", async function (assert) {
 		// Setup
 		var oMultiComboBox = new MultiComboBox(),
 			oTokenizer = oMultiComboBox.getAggregation("tokenizer"),
@@ -8937,7 +9090,7 @@ sap.ui.define([
 
 		// Act
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oOnBeforeRenderingSpy.called, true, "onBeforeRendering has been called and items should be in sync");
@@ -8950,7 +9103,7 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("Sync selectedItems' items before MultiComboBox has been rendered", function (assert) {
+	QUnit.test("Sync selectedItems' items before MultiComboBox has been rendered", async function (assert) {
 		// Setup
 		var oMultiComboBox = new MultiComboBox(),
 			oTokenizer = oMultiComboBox.getAggregation("tokenizer"),
@@ -8974,7 +9127,7 @@ sap.ui.define([
 
 		// Act
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oOnBeforeRenderingSpy.called, true, "onBeforeRendering has been called and items should be in sync");
@@ -8987,7 +9140,8 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("Sync selectedItems & selectedKeys", function (assert) {
+	QUnit.test("Sync selectedItems & selectedKeys", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		// Setup
 		var oMultiComboBox = new MultiComboBox(),
 			oTokenizer = oMultiComboBox.getAggregation("tokenizer"),
@@ -9013,7 +9167,7 @@ sap.ui.define([
 
 		// Act
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 		this.clock.tick(500);
 
 		// Assert
@@ -9025,7 +9179,7 @@ sap.ui.define([
 
 		// Act
 		oMultiComboBox.setSelectedItems([aItems[1]]);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 		this.clock.tick(500);
 
 		assert.strictEqual(oMultiComboBox.getSelectedItems().length, 1, "Selected Items should be adjusted");
@@ -9035,7 +9189,7 @@ sap.ui.define([
 
 		// Act
 		oMultiComboBox.setSelectedKeys(["C", "A"]);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 		this.clock.tick(500);
 
 		assert.deepEqual(oMultiComboBox.getSelectedKeys(), ["C", "A"], "SelectedKeys should be adjusted");
@@ -9045,9 +9199,10 @@ sap.ui.define([
 
 		// Cleanup
 		oMultiComboBox.destroy();
+		runAllTimersAndRestore(this.clock);
 	});
 
-	QUnit.test("When setSelectedKeys is called before the model selected Tokens text should be syncronized", function (assert) {
+	QUnit.test("When setSelectedKeys is called before the model selected Tokens text should be syncronized", async function (assert) {
 		// Arrange
 		var oModel = new JSONModel();
 		oModel.setData({
@@ -9074,7 +9229,7 @@ sap.ui.define([
 		// Act
 		oMultiComboBox.setModel(oModel, "test");
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oTokenizer.getTokens().length, 2, "The MultiComboBox was not invalidated");
@@ -9084,7 +9239,7 @@ sap.ui.define([
 		// Act
 		oMultiComboBox.getModel("test").setProperty("/a", "A Test");
 		oMultiComboBox.getModel("test").setProperty("/b", "B Test");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oTokenizer.getTokens()[0].getText(), "A Test", "Token text should be updated");
@@ -9094,7 +9249,8 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("Only selected keys should be in the readonly popover", function (assert) {
+	QUnit.test("Only selected keys should be in the readonly popover", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		// Arrange
 		var oMultiComboBox = new MultiComboBox({
 			width: "300px",
@@ -9116,7 +9272,7 @@ sap.ui.define([
 		}).placeAt("MultiComboBoxContent"),
 		oTokenizer = oMultiComboBox.getAggregation("tokenizer");
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// Act
 		oMultiComboBox.$().find(".sapMTokenizerIndicator")[0].click();
@@ -9135,10 +9291,12 @@ sap.ui.define([
 
 		// Cleanup
 		oMultiComboBox.destroy();
+		runAllTimersAndRestore(this.clock);
 	});
 
 	QUnit.module("One extra long token handling", {
-		beforeEach: function(){
+		beforeEach: async function(){
+			this.clock = sinon.useFakeTimers();
 			this.oMultiComboBox = new MultiComboBox({
 				width: '200px',
 				items: [new Item({key: "A", text: "Extra long long long long long token"})],
@@ -9146,10 +9304,11 @@ sap.ui.define([
 			});
 
 			this.oMultiComboBox.placeAt("MultiComboBoxContent");
-			nextUIUpdate.runSync()/*fake timer is used in module*/;
+			await nextUIUpdate(this.clock);
 		},
 		afterEach: function() {
 			this.oMultiComboBox.destroy();
+			runAllTimersAndRestore(this.clock);
 		}
 	});
 
@@ -9158,7 +9317,7 @@ sap.ui.define([
 		assert.ok(this.oMultiComboBox.getAggregation("tokenizer").hasOneTruncatedToken(), "Token is truncated initially.");
 	});
 
-	QUnit.test("Should set/remove truncation on focusin/focusout", function (assert) {
+	QUnit.test("Should set/remove truncation on focusin/focusout", async function (assert) {
 		// Arrange
 		var oTokenizer = this.oMultiComboBox.getAggregation("tokenizer"),
 			oSpy = this.spy(oTokenizer, "_useCollapsedMode"),
@@ -9168,9 +9327,9 @@ sap.ui.define([
 
 		// Act
 		this.oMultiComboBox.onfocusin(oMockEvent);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 		this.clock.tick(nPopoverAnimationTick);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// Assert
 		assert.ok(oSpy.calledWith(TokenizerRenderMode.Loose), "_useCollapsedMode should be called with 'Narrow'.");
@@ -9178,12 +9337,13 @@ sap.ui.define([
 
 		// Act
 		this.oMultiComboBox.onsapfocusleave(oMockEvent);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 		this.clock.tick(nPopoverAnimationTick);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		assert.ok(oSpy.calledWith(TokenizerRenderMode.Narrow), "_useCollapsedMode should be called with 'Loose'.");
 		assert.ok(oTokenizer.hasOneTruncatedToken(), "Truncation was set on the token");
+		oSpy.restore();
 	});
 
 	QUnit.test("Should open/close suggestion popover on CTRL + I", function (assert) {
@@ -9203,7 +9363,7 @@ sap.ui.define([
 		qutils.triggerKeydown(this.oMultiComboBox, KeyCodes.I, false, false, true); // trigger Control key + I
 		this.clock.tick(nPopoverAnimationTick);
 
-		// // Assert
+		// Assert
 		assert.notOk(oPicker.isOpen(), "Should close suggestion popover");
 	});
 
@@ -9224,7 +9384,7 @@ sap.ui.define([
 		assert.notOk(oTokenizer.hasOneTruncatedToken(), "The token should not be truncated");
 	});
 
-	QUnit.test("Truncation should stay on token click in read only mode", function (assert) {
+	QUnit.test("Truncation should stay on token click in read only mode", async function (assert) {
 		var oTokenizer = this.oMultiComboBox.getAggregation("tokenizer");
 		// Arrange
 		this.oMultiComboBox.setEditable(false);
@@ -9233,23 +9393,23 @@ sap.ui.define([
 
 		// Act
 		this.oMultiComboBox.$().find(".sapMTokenizerIndicator")[0].click();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 		this.clock.tick(nPopoverAnimationTick);
 
 		// Assert
 		assert.ok(this.oMultiComboBox.getAggregation("tokenizer").hasOneTruncatedToken(), "The token should be truncated");
 	});
 
-	QUnit.test("Should not create suggestion popover on CTRL + I when the input doesn't have tokens", function (assert) {
+	QUnit.test("Should not create suggestion popover on CTRL + I when the input doesn't have tokens", async function (assert) {
 		// Arrange
 		var oMultiComboBox = new MultiComboBox();
 
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// Act
 		qutils.triggerKeydown(oMultiComboBox, KeyCodes.I, false, false, true); // trigger Control key + I
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 		this.clock.tick(nPopoverAnimationTick);
 
 		// Assert
@@ -9259,18 +9419,18 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("Should not open suggestion popover on CTRL + I when the input doesn't have tokens", function (assert) {
+	QUnit.test("Should not open suggestion popover on CTRL + I when the input doesn't have tokens", async function (assert) {
 		// Arrange
 		// First we need to make sure there is picker
 		this.oMultiComboBox.createPicker();
 
 		// Remove all tokens
 		this.oMultiComboBox.setSelectedKeys([]);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// Act
 		qutils.triggerKeydown(this.oMultiComboBox, KeyCodes.I, false, false, true); // trigger Control key + I
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 		this.clock.tick(nPopoverAnimationTick);
 
 		// Assert
@@ -9282,7 +9442,7 @@ sap.ui.define([
 
 	QUnit.module("Rendering");
 
-	QUnit.test("Should not create suggestion popover on CTRL + I when the input doesn't have tokens", function (assert) {
+	QUnit.test("Should not create suggestion popover on CTRL + I when the input doesn't have tokens", async function (assert) {
 		// Arrange
 		var oMultiComboBox = new MultiComboBox({
 				items: [
@@ -9293,18 +9453,18 @@ sap.ui.define([
 		});
 
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Act
 		oMultiComboBox.setSelectedKeys(["token1"]);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oMultiComboBox.getDomRef().classList.contains("sapMMultiComboBoxHasToken"), true, "Should contain 'sapMMultiComboBoxHasToken' class when there are tokens");
 
 		// Act
 		oMultiComboBox.setSelectedKeys([]);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oMultiComboBox.getDomRef().classList.contains("sapMMultiComboBoxHasToken"), false, "Should not contain 'sapMMultiComboBoxHasToken' class when there are no tokens");
@@ -9313,7 +9473,7 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("MultiComboBox should have sapMMultiComboBoxHasToken css class when there are selected tokens", function (assert) {
+	QUnit.test("MultiComboBox should have sapMMultiComboBoxHasToken css class when there are selected tokens", async function (assert) {
 		// Arrange
 		var oModel = new JSONModel({
 			"items" : [{
@@ -9341,7 +9501,7 @@ sap.ui.define([
 
 		// Act
 		oMultiComboBox.setSelectedKeys(["token1"]);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oMultiComboBox.getDomRef().classList.contains("sapMMultiComboBoxHasToken"), true, "Should contain 'sapMMultiComboBoxHasToken' class when there are tokens");
@@ -9352,7 +9512,7 @@ sap.ui.define([
 
 	QUnit.module("RTL Support");
 
-	QUnit.test("If the sap.ui.core.Item's text direction is set explicitly it should be mapped to the StandardListItem", function (assert) {
+	QUnit.test("If the sap.ui.core.Item's text direction is set explicitly it should be mapped to the StandardListItem", async function (assert) {
 		// Arrange
 		var oMultiComboBox = new MultiComboBox({
 			items: [
@@ -9371,7 +9531,7 @@ sap.ui.define([
 				})
 			]
 		}).placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Act
 		oMultiComboBox.open();
@@ -9386,7 +9546,7 @@ sap.ui.define([
 
 
 	QUnit.module("Range Selection", {
-		beforeEach : function() {
+		beforeEach : async function() {
 			var aItems = [
 				new ListItem({
 					key: "GER",
@@ -9416,14 +9576,14 @@ sap.ui.define([
 			this.oMultiComboBox = new MultiComboBox({
 				items: aItems
 			}).placeAt("MultiComboBoxContent");
-			nextUIUpdate.runSync()/*fake timer is used in module*/;
+			await nextUIUpdate();
 		},
 		afterEach : function() {
 			this.oMultiComboBox.destroy();
 		}
 	});
 
-	QUnit.test("It should select multiple items", function (assert) {
+	QUnit.test("It should select multiple items", async function (assert) {
 		var that = this;
 		// Arrange
 		var oEventMock = {
@@ -9446,7 +9606,7 @@ sap.ui.define([
 		this.oMultiComboBox._setIsClick(true);
 		this.oMultiComboBox._handleSelectionLiveChange(oEventMock);
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(this.oMultiComboBox.getAggregation("tokenizer").getTokens().length, 3, "3 Tokens must be added");
@@ -9456,7 +9616,7 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("Should select all items and add the selectAll param to the event", function (assert) {
+	QUnit.test("Should select all items and add the selectAll param to the event", async function (assert) {
 		// Arrange
 		var oList, oItemToFocus, oItemDOM;
 		var fnFireSelectionChangeSpy = this.spy(this.oMultiComboBox, "fireSelectionChange");
@@ -9476,9 +9636,12 @@ sap.ui.define([
 		assert.strictEqual(this.oMultiComboBox.getAggregation("tokenizer").getTokens().length, 6, "All Tokens must be added");
 		assert.strictEqual(fnFireSelectionChangeSpy.args[0][0].selectAll, true, "All Tokens must be added");
 		assert.strictEqual(fnFireSelectionChangeSpy.callCount, 6, "selectionChange must be fired for every selected item");
+
+		fnFireSelectionChangeSpy.restore();
+		await nextUIUpdate();
 	});
 
-	QUnit.test("Should select only the filtered items when 'select all' is used", function (assert) {
+	QUnit.test("Should select only the filtered items when 'select all' is used", async function (assert) {
 		// Arrange
 		var oList, oItemToFocus, oItemDOM;
 		var fnFireSelectionChangeSpy = this.spy(this.oMultiComboBox, "fireSelectionChange");
@@ -9496,10 +9659,14 @@ sap.ui.define([
 		// Assert
 		assert.strictEqual(this.oMultiComboBox._oTokenizer.getTokens().length, 2, "Only the filtered items are selected with select all");
 		assert.strictEqual(fnFireSelectionChangeSpy.callCount, 2, "selectionChange must be fired for every selected item");
+
+		fnFireSelectionChangeSpy.restore();
+		await nextUIUpdate();
 	});
 
 	QUnit.module("selectAll", {
-		beforeEach : function() {
+		beforeEach : async function() {
+			this.clock = sinon.useFakeTimers();
 			this.oMultiComboBox = new MultiComboBox({
 				items: [
 					new ListItem({
@@ -9522,20 +9689,21 @@ sap.ui.define([
 			});
 			this.oMultiComboBox.placeAt("MultiComboBoxContent");
 
-			nextUIUpdate.runSync()/*fake timer is used in module*/;
+			await nextUIUpdate(this.clock);
 		},
 		afterEach : function() {
 			this.oMultiComboBox.destroy();
+			runAllTimersAndRestore(this.clock);
 		}
 	});
 
-	QUnit.test("getSelectAllToolbar & getSelectAllCheckbox", function (assert) {
+	QUnit.test("getSelectAllToolbar & getSelectAllCheckbox", async function (assert) {
 		// Assert
 		assert.notOk(this.oMultiComboBox.getSelectAllToolbar(), "The select all toolbar should not be rendered by default");
 		assert.notOk(this.oMultiComboBox.getSelectAllCheckbox(), "The select all checkbox should not be rendered by default");
 
 		this.oMultiComboBox.setShowSelectAll(true);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// Assert
 		assert.notOk(this.oMultiComboBox.getSelectAllToolbar(), "The select all toolbar should not be rendered, since the list is not rendered");
@@ -9544,7 +9712,7 @@ sap.ui.define([
 		// Act
 		this.oMultiComboBox.open();
 		this.clock.tick(500);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// Assert
 		assert.ok(this.oMultiComboBox.getSelectAllToolbar().hasStyleClass("sapMMultiComboBoxSelectAll"), "The select all checkbox should be rendered");
@@ -9552,26 +9720,26 @@ sap.ui.define([
 		assert.ok(this.oMultiComboBox.getSelectAllCheckbox(), "The select all checkbox should be rendered");
 
 		this.oMultiComboBox.setShowSelectAll(false);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// Assert
 		assert.notOk(this.oMultiComboBox.getSelectAllToolbar().getVisible(), "The select all toolbar should not be visible, when showSelectAll is false");
 
 		this.oMultiComboBox.setShowSelectAll(true);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// Assert
 		assert.ok(this.oMultiComboBox.getSelectAllToolbar().getVisible(), "The select all toolbar should be visible, when showSelectAll is true");
 	});
 
-	QUnit.test("Focus handling", function (assert) {
+	QUnit.test("Focus handling", async function (assert) {
 		// Act
 		this.oMultiComboBox.setShowSelectAll(true);
 		this.oMultiComboBox.open();
 		this.clock.tick(500);
 
 		this.oMultiComboBox.focusSelectAll();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// Assert
 		assert.strictEqual(this.oMultiComboBox.getSelectAllCheckbox().getFocusDomRef(), document.activeElement, "The select all checkbox should be focused.");
@@ -9586,14 +9754,14 @@ sap.ui.define([
 		assert.notOk(this.oMultiComboBox.getSelectAllToolbar().hasStyleClass("sapMMultiComboBoxSelectAllFocused"), "The select all toolbar should not have a focus class.");
 	});
 
-	QUnit.test("Toggle selection", function (assert) {
+	QUnit.test("Toggle selection", async function (assert) {
 		// Act
 		this.oMultiComboBox.setShowSelectAll(true);
 		this.oMultiComboBox.open();
 		this.clock.tick(500);
 
 		this.oMultiComboBox.focusSelectAll();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// Act
 		qutils.triggerKeyup(document.activeElement, KeyCodes.SPACE);
@@ -9610,9 +9778,16 @@ sap.ui.define([
 		assert.notOk(this.oMultiComboBox.getSelectedItems().length, "No list items should be selected");
 	});
 
-	QUnit.module("Clear icon");
+	QUnit.module("Clear icon", {
+		beforeEach: function(){
+			this.clock = sinon.useFakeTimers();
+		},
+		afterEach: function(){
+			runAllTimersAndRestore(this.clock);
+		}
+	});
 
-	QUnit.test("Invalidating the MultiComboBox due to clear icon should not change its state", function (assert) {
+	QUnit.test("Invalidating the MultiComboBox due to clear icon should not change its state", async function (assert) {
 		var aItems = [
 			new ListItem({
 				key: "GER",
@@ -9639,7 +9814,7 @@ sap.ui.define([
 			items: aItems,
 			showClearIcon: true
 		}).placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// Arrange
 		var fnFilterItemsSpy = this.spy(oMultiComboBox, "filterItems");
@@ -9650,8 +9825,8 @@ sap.ui.define([
 		oMultiComboBox._$input.focus().val("b").trigger("input");
 		qutils.triggerKeydown(oMultiComboBox.getFocusDomRef(), KeyCodes.b);
 		oMultiComboBox.onkeyup();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
-		this.clock.tick();
+		await nextUIUpdate(this.clock);
+		this.clock.tick(500);
 
 		// Assert
 		assert.strictEqual(oMultiComboBox.getVisibleItems().length, 2, "Only the filtered items are shown");
@@ -9666,7 +9841,7 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("'handleClearIconPress' should call clear the value and call setProperty", function(assert) {
+	QUnit.test("'handleClearIconPress' should call clear the value and call setProperty", async function(assert) {
 		// Arrange
 		var oMultiComboBox = new MultiComboBox({
 			showClearIcon: true,
@@ -9675,14 +9850,14 @@ sap.ui.define([
 		var oSetValueSpy, oSetPropertySpy;
 
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		oSetValueSpy = this.spy(oMultiComboBox, "setValue");
 		oSetPropertySpy = this.spy(oMultiComboBox, "setProperty");
 
 		// Act
 		oMultiComboBox.handleClearIconPress();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// Assert
 		assert.strictEqual(oSetValueSpy.calledWith(""), true, "setValue was called with the correct parameters");
@@ -9695,7 +9870,7 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("'handleClearIconPress' should not do anything when control is disabled", function(assert) {
+	QUnit.test("'handleClearIconPress' should not do anything when control is disabled", async function(assert) {
 		// Arrange
 		var oMultiComboBox = new MultiComboBox({
 			showClearIcon: true,
@@ -9705,13 +9880,13 @@ sap.ui.define([
 		var oSetPropertySpy;
 
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		oSetPropertySpy = this.spy(oMultiComboBox, "setProperty");
 
 		// Act
 		oMultiComboBox.handleClearIconPress();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// Assert
 		assert.strictEqual(oSetPropertySpy.calledWith('effectiveShowClearIcon', false), false, "setProperty was called with the correct parameters");
@@ -9719,12 +9894,12 @@ sap.ui.define([
 		// Arrange
 		oMultiComboBox.setEnabled(true);
 		oMultiComboBox.setEditable(false);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 		oSetPropertySpy.resetHistory();
 
 		// Act
 		oMultiComboBox.handleClearIconPress();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// Assert
 		assert.strictEqual(oSetPropertySpy.calledWith('effectiveShowClearIcon', false), false, "setProperty was called with the correct parameters");
@@ -9734,7 +9909,7 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("Clear icon should clear the filter and close the suggestion dropdown when open while entering value", function(assert) {
+	QUnit.test("Clear icon should clear the filter and close the suggestion dropdown when open while entering value", async function(assert) {
 		// Arrange
 		var oMultiComboBox = new MultiComboBox({
 			showClearIcon: true,
@@ -9758,7 +9933,7 @@ sap.ui.define([
 		});
 
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// Act
 		oMultiComboBox.focus();
@@ -9772,7 +9947,7 @@ sap.ui.define([
 
 		// Act
 		oMultiComboBox.handleClearIconPress();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// Assert
 		assert.notOk(oMultiComboBox.isOpen(), "MultiComboBox is closed");
@@ -9782,7 +9957,7 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("Clear icon should clear the filter and close the suggestion dropdown when open while entering value", function(assert) {
+	QUnit.test("Clear icon should clear the filter and close the suggestion dropdown when open while entering value", async function(assert) {
 		// Arrange
 		var oMultiComboBox = new MultiComboBox({
 			showClearIcon: true,
@@ -9806,7 +9981,7 @@ sap.ui.define([
 		});
 
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// Act
 		oMultiComboBox.focus();
@@ -9821,7 +9996,7 @@ sap.ui.define([
 
 		// Act
 		oMultiComboBox.handleClearIconPress();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// Assert
 		assert.ok(oMultiComboBox.isOpen(), "MultiComboBox remains open");
@@ -9831,7 +10006,7 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("Clear icon not be displayed initially if 'selectedKey' is declared before the suggestion items and there is a value initially set", function(assert) {
+	QUnit.test("Clear icon not be displayed initially if 'selectedKey' is declared before the suggestion items and there is a value initially set", async function(assert) {
 		// Arrange
 		var oMultiComboBox = new MultiComboBox({
 			showClearIcon: true,
@@ -9858,7 +10033,7 @@ sap.ui.define([
 		});
 
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// Act
 		assert.strictEqual(oMultiComboBox._getClearIcon().getVisible(), false, "The clear icon is hidden");
@@ -9866,7 +10041,8 @@ sap.ui.define([
 		// Clean
 		oMultiComboBox.destroy();
 	});
-	QUnit.test("The tokens are rendered in in the order they have been added in selectedKey after opening the picker", function (assert) {
+
+	QUnit.test("The tokens are rendered in in the order they have been added in selectedKey after opening the picker", async function (assert) {
 		var aTokens,
 			aItems = [
 				new Item({ text: "Item A", key: "A" }),
@@ -9881,7 +10057,7 @@ sap.ui.define([
 			});
 
 		oMCB.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		this.clock.tick();
 
@@ -9896,10 +10072,10 @@ sap.ui.define([
 		// clean up
 		oMCB.destroy();
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 	});
 
-	QUnit.test("The tokens are rendered in the order they have been added in selectectedItems after opening the picker", function (assert) {
+	QUnit.test("The tokens are rendered in the order they have been added in selectectedItems after opening the picker", async function (assert) {
 		var items = [new Item({
 			text : "Algeria"
 		}), new Item({
@@ -9920,7 +10096,7 @@ sap.ui.define([
 			});
 
 		oMCB.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		this.clock.tick();
 
@@ -9934,10 +10110,10 @@ sap.ui.define([
 		// clean up
 		oMCB.destroy();
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 	});
 
-	QUnit.test("The order of selected items (tokens) from the user is preserved after re-opening the picker", function (assert) {
+	QUnit.test("The order of selected items (tokens) from the user is preserved after re-opening the picker", async function (assert) {
 		var selection = [4, 3, 2, 1, 0];
 		var aTokens,
 			aItems = [
@@ -9952,7 +10128,7 @@ sap.ui.define([
 			});
 
 		oMCB.placeAt("MultiComboBoxContent");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		this.clock.tick();
 
@@ -9964,7 +10140,7 @@ sap.ui.define([
 			this.clock.tick(500);
 		}.bind(this));
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 		this.clock.tick();
 
 		aTokens = oMCB.getAggregation("tokenizer").getTokens();
@@ -9974,7 +10150,7 @@ sap.ui.define([
 		});
 
 		oMCB.close();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 		this.clock.tick();
 
 		selection.forEach(function(iPosition, iIndex) {
@@ -9984,8 +10160,6 @@ sap.ui.define([
 		// clean up
 		oMCB.destroy();
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 	});
-
-
 });

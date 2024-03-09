@@ -859,9 +859,6 @@ sap.ui.define([
 
 			MultiComboBox: {
 				title: "QUnit tests: sap.m.MultiComboBox",
-				sinon: {
-					useFakeTimers: true
-				},
 				ui5: {
 					theme: "sap_horizon"
 				}
@@ -1444,10 +1441,7 @@ sap.ui.define([
 			},
 
 			ScrollContainer: {
-				title: "QUnit Page for sap.m.ScrollContainer",
-				sinon: {
-					version: 1 // custom handling of fakeTimer fails with sinon-4
-				}
+				title: "QUnit Page for sap.m.ScrollContainer"
 			},
 
 			ScrollPosition: {

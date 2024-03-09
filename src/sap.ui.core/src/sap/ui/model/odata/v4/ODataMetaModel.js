@@ -1056,7 +1056,7 @@ sap.ui.define([
 			 * @returns {boolean}
 			 *   Whether further steps are needed
 			 */
-			function annotationAtOperationOrParameter(sSegment, sTerm, sSuffix) {
+			function annotationAtOperationOrParameter(sSegment, sTerm, sSuffix = "") {
 				var mAnnotationsXAllOverloads,
 					iIndexOfAtAt,
 					sIndividualOverloadTarget,
@@ -1076,7 +1076,6 @@ sap.ui.define([
 					sTerm = sSegment;
 				}
 
-				sSuffix = sSuffix || "";
 				if (vBindingParameterType) {
 					oSchemaChild = aOverloads = vResult.filter(isRightOverload);
 					if (aOverloads.length !== 1) {
@@ -1282,8 +1281,7 @@ sap.ui.define([
 				 * Sets <code>vLocation</code> and delegates to {@link log}.
 				 */
 				function logWithLocation() {
-					vLocation = vLocation
-						|| sTarget && sPropertyName && sTarget + "/" + sPropertyName;
+					vLocation ??= sTarget && sPropertyName && sTarget + "/" + sPropertyName;
 					return log.apply(this, arguments);
 				}
 
@@ -1404,8 +1402,8 @@ sap.ui.define([
 								// "17.2 SimpleIdentifier" (or placeholder):
 								// lookup inside schema child (which is determined lazily)
 								sTarget = sName = sSchemaChildName
-									= sSchemaChildName || mScope.$EntityContainer;
-								vResult = oSchemaChild = oSchemaChild || mScope[sSchemaChildName];
+									??= mScope.$EntityContainer;
+								vResult = oSchemaChild ??= mScope[sSchemaChildName];
 								if (Array.isArray(vResult)) {
 									if (vBindingParameterType) {
 										vResult = vResult.filter(isRightOverload);
@@ -1610,7 +1608,7 @@ sap.ui.define([
 			that = this;
 
 		if (sPath.endsWith("/$count")) {
-			oCountType = oCountType || new Int64();
+			oCountType ??= new Int64();
 			return SyncPromise.resolve(oCountType);
 		}
 		// Note: undefined is more efficient than "" here
@@ -2176,7 +2174,7 @@ sap.ui.define([
 		 */
 		function setConstraint(sKey, vValue) {
 			if (vValue !== undefined) {
-				mConstraints = mConstraints || {};
+				mConstraints ??= {};
 				mConstraints[sKey] = vValue;
 			}
 		}
@@ -3484,7 +3482,7 @@ sap.ui.define([
 		this.mETags[sUrl] = mScope.$ETag ? mScope.$ETag : oLastModified;
 		// no need to use UI5Date.getInstance as only the timestamp is relevant
 		oDate = mScope.$Date ? new Date(mScope.$Date) : new Date();
-		oLastModified = oLastModified || oDate; // @see #getLastModified
+		oLastModified ??= oDate; // @see #getLastModified
 		if (this.oLastModified < oLastModified) {
 			this.oLastModified = oLastModified;
 		}

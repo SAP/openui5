@@ -1672,13 +1672,11 @@ sap.ui.define([
 
 				that.addElements(oResult.value, iStart + iOffset, that.oFirstLevel, iStart);
 				for (j = 0; j < that.aElements.$count; j += 1) {
-					if (!that.aElements[j]) {
-						that.aElements[j] = _AggregationHelper.createPlaceholder(
-							that.oAggregation.expandTo > 1 || that.bUnifiedCache
-								? /*don't know*/0
-								: 1,
-							j - iOffset, that.oFirstLevel);
-					}
+					that.aElements[j] ??= _AggregationHelper.createPlaceholder(
+						that.oAggregation.expandTo > 1 || that.bUnifiedCache
+							? /*don't know*/0
+							: 1,
+						j - iOffset, that.oFirstLevel);
 				}
 
 				that.handleOutOfPlaceNodes(aOutOfPlaceResults);

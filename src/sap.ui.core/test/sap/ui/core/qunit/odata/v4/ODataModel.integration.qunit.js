@@ -340,12 +340,8 @@ sap.ui.define([
 	 * @returns {Error}
 	 *   The error object for {@link #expectRequest}
 	 */
-	function createError(oErrorResponse, iHttpStatus, dRetryAfter) {
-		var oError;
-
-		iHttpStatus = iHttpStatus || 500;
-
-		oError = new Error("Communication error: " + iHttpStatus + " ");
+	function createError(oErrorResponse, iHttpStatus = 500, dRetryAfter = false) {
+		const oError = new Error("Communication error: " + iHttpStatus + " ");
 		if (oErrorResponse) {
 			oError.error = Object.assign({
 					code : "CODE",
@@ -1989,7 +1985,7 @@ sap.ui.define([
 
 			// Ensures that oObject[vProperty] is an array and returns it
 			function array(oObject, vProperty) {
-				oObject[vProperty] = oObject[vProperty] || [];
+				oObject[vProperty] ??= [];
 
 				return oObject[vProperty];
 			}
@@ -2068,7 +2064,7 @@ sap.ui.define([
 			};
 
 			aExpectedEvents.forEach(function (aExpectedDetails) {
-				aExpectedDetails[0] = aExpectedDetails[0] || "";
+				aExpectedDetails[0] ??= "";
 				if (!aExpectedDetails[0].startsWith(sExpectedEventSourcePrefix)) {
 					aExpectedDetails[0] = sExpectedEventSourcePrefix + aExpectedDetails[0];
 				}
@@ -2204,9 +2200,9 @@ sap.ui.define([
 				}
 			}
 			// ensure that these properties are defined (required for deepEqual)
-			vRequest.headers = vRequest.headers || {};
-			vRequest.method = vRequest.method || "GET";
-			vRequest.payload = vRequest.payload || undefined;
+			vRequest.headers ??= {};
+			vRequest.method ??= "GET";
+			vRequest.payload ??= undefined;
 			vRequest.responseHeaders = mResponseHeaders || {};
 			vRequest.response = vResponse
 					// With GET it must be visible that there is no content, with the other

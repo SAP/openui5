@@ -6,14 +6,14 @@ sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/ScrollContainer",
 	"sap/m/Image",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/core/HTML",
 	"sap/m/App",
 	"sap/m/Page",
 	"sap/ui/Device",
 	"sap/m/Button",
 	"sap/ui/dom/includeStylesheet",
-	"require",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"require"
 ], function(
 	Localization,
 	Element,
@@ -21,14 +21,14 @@ sap.ui.define([
 	createAndAppendDiv,
 	ScrollContainer,
 	Image,
+	nextUIUpdate,
 	HTML,
 	App,
 	Page,
 	Device,
 	Button,
 	includeStylesheet,
-	require,
-	nextUIUpdate
+	require
 ) {
 	"use strict";
 
@@ -59,6 +59,15 @@ sap.ui.define([
 		}
 
 		return oDomRef.scrollHeight - oDomRef.clientHeight;
+	}
+
+	function runAllTimersAndRestore(oClock) {
+		if (!oClock) {
+			return;
+		}
+
+		oClock.runToLast();
+		oClock.restore();
 	}
 
 	var oSC = new ScrollContainer("sc1", {
@@ -202,11 +211,11 @@ sap.ui.define([
 		intEqual(oSC2._oScroller._scrollY, 0, "Internally stored y scrolling position should be 0"); // no y scrolling possible, so 0 should be the position
 	});
 
-	QUnit.test("Rerendering after scrolling", function(assert) {
+	QUnit.test("Rerendering after scrolling", async function(assert) {
 		assert.expect(3);
 
 		oSC2.invalidate();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.equal(getScrollPos(oSC2.getId(), "left"), -110, "ScrollContainer 2 should be scrolled to position 110");
 		intEqual(oSC2._oScroller._scrollX, 110, "Internally stored x scrolling position should be 110");
@@ -251,7 +260,7 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("Vertical Scroll to element", function(assert) {
+	QUnit.test("Vertical Scroll to element", async function(assert) {
 
 		var oScrollContainer = new ScrollContainer("oSC", {
 			height: "200px",
@@ -273,7 +282,7 @@ sap.ui.define([
 		});
 
 		oScrollContainer.placeAt("qunit-fixture");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		oScrollContainer.scrollToElement(this.oTestButton);
 
@@ -287,7 +296,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Horisontal Scroll to element", function(assert) {
+	QUnit.test("Horisontal Scroll to element", async function(assert) {
 
 		var oScrollContainer = new ScrollContainer("oSC-2", {
 			height: "200px",
@@ -303,7 +312,7 @@ sap.ui.define([
 		});
 
 		oScrollContainer.placeAt("qunit-fixture");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		oScrollContainer.scrollToElement(this.oTestButton.getDomRef());
 		assert.equal(getScrollPos(oScrollContainer.getId(), "left"), -800, "ScrollContainer should be scrolled to position 800 from the left");
@@ -312,7 +321,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Scrolling - bSkipElementsInScrollport API", function(assert) {
+	QUnit.test("Scrolling - bSkipElementsInScrollport API", async function(assert) {
 
 		var oScrollContainer = new ScrollContainer("oSC", {
 			height: "200px",
@@ -333,7 +342,7 @@ sap.ui.define([
 
 		// Act
 		oScrollContainer.placeAt("qunit-fixture");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		oScrollContainer.scrollToElement(this.oTestButton, bSkipElementsInScrollport);
 
@@ -355,21 +364,21 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oScrollContainer = new ScrollContainer();
 			this.fnOverflowChangeSpy = sinon.spy();
-			this.clock = sinon.useFakeTimers();
 
 			this.oScrollContainer.getScrollDelegate().onOverflowChange(this.fnOverflowChangeSpy);
 		},
 		afterEach: function () {
-			this.clock.restore();
-			this.oScrollContainer.destroy();
+			this.fnOverflowChangeSpy.resetHistory();
 			this.fnOverflowChangeSpy = null;
+			this.oScrollContainer.destroy();
+			//Restore clock after control destruction
+			runAllTimersAndRestore(this.clock);
 		}
 	});
 
-	QUnit.test("Initial rendering with overflow", function(assert) {
+	QUnit.test("Initial rendering with overflow", async function(assert) {
 		var sContainerHeight = "200px",
-			bExpectedOverflowFlag = true,
-			done = assert.async();
+			bExpectedOverflowFlag = true;
 
 		// Setup
 		this.oScrollContainer.setHeight(sContainerHeight);
@@ -377,19 +386,16 @@ sap.ui.define([
 			content: '<div class="height300"></div>' // content overflows container
 		}));
 
-		fnWaitToRender(this.oScrollContainer).then(function() {
-			assert.strictEqual(this.fnOverflowChangeSpy.callCount, 1, "overflowChange fired");
-			assert.ok(this.fnOverflowChangeSpy.calledWith(bExpectedOverflowFlag), "overflow detected");
-			done();
-		}.bind(this));
-
 		this.oScrollContainer.placeAt("qunit-fixture");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await fnWaitToRender(this.oScrollContainer);
+		await nextUIUpdate();
+
+		assert.strictEqual(this.fnOverflowChangeSpy.callCount, 1, "overflowChange fired");
+		assert.ok(this.fnOverflowChangeSpy.calledWith(bExpectedOverflowFlag), "overflow detected");
 	});
 
-	QUnit.test("Initial rendering without overflow", function(assert) {
-		var sContainerHeight = "200px",
-			done = assert.async();
+	QUnit.test("Initial rendering without overflow", async function(assert) {
+		var sContainerHeight = "200px";
 
 		// Setup
 		this.oScrollContainer.setHeight(sContainerHeight);
@@ -397,16 +403,14 @@ sap.ui.define([
 			content: '<div class="height100"></div>' // does not overflow the container
 		}));
 
-		fnWaitToRender(this.oScrollContainer).then(function() {
-			assert.strictEqual(this.fnOverflowChangeSpy.callCount, 0, "overflowChange not fired");
-			done();
-		}.bind(this));
-
 		this.oScrollContainer.placeAt("qunit-fixture");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await fnWaitToRender(this.oScrollContainer);
+		await nextUIUpdate();
+		assert.strictEqual(this.fnOverflowChangeSpy.callCount, 0, "overflowChange not fired");
 	});
 
-	QUnit.test("Resize to overflow", function(assert) {
+	QUnit.test("Resize to overflow", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		var sContainerHeight = "200px",
 			sContentHeightAfterResize = "300px", // overflows the container
 			bExpectedOverflowAfterResize = true,
@@ -427,10 +431,12 @@ sap.ui.define([
 		}.bind(this));
 
 		this.oScrollContainer.placeAt("qunit-fixture");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
+		this.clock.runToLast();
 	});
 
-	QUnit.test("Resize to underflow", function(assert) {
+	QUnit.test("Resize to underflow", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		var sContainerHeight = "200px",
 			sContentHeightAfterResize = "100px", // does not overflow the container
 			bExpectedOverflowAfterResize = false,
@@ -443,7 +449,7 @@ sap.ui.define([
 		}));
 
 		fnWaitToRender(this.oScrollContainer).then(function() {
-			this.fnOverflowChangeSpy.reset();
+			this.fnOverflowChangeSpy.resetHistory();
 			document.getElementById("innerdiv").style.height = sContentHeightAfterResize;
 			this.clock.tick(200);
 			assert.strictEqual(this.fnOverflowChangeSpy.callCount, 1, "overflowChange fired");
@@ -452,7 +458,8 @@ sap.ui.define([
 		}.bind(this));
 
 		this.oScrollContainer.placeAt("qunit-fixture");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
+		this.clock.runToLast();
 	});
 
 	QUnit.module("scrollTo with scrollEndCallback", {
@@ -461,12 +468,13 @@ sap.ui.define([
 			this.fnScrollEndSpy = sinon.spy();
 		},
 		afterEach: function () {
-			this.oScrollContainer.destroy();
+			this.fnScrollEndSpy.resetHistory();
 			this.fnScrollEndSpy = null;
+			this.oScrollContainer.destroy();
 		}
 	});
 
-	QUnit.test("animated scroll", function(assert) {
+	QUnit.test("animated scroll", async function(assert) {
 		var sContainerHeight = "200px",
 			oDelegate = this.oScrollContainer.getScrollDelegate(),
 			oStub,
@@ -479,7 +487,7 @@ sap.ui.define([
 		}));
 
 		fnWaitToRender(this.oScrollContainer).then(function() {
-			oStub = sinon.stub(oDelegate._$Container, "animate", function(oProperties, oOptions) {
+			oStub = sinon.stub(oDelegate._$Container, "animate").callsFake(function(oProperties, oOptions) {
 				oOptions.always();
 			});
 			oDelegate.scrollTo(10, 0, 60, this.fnScrollEndSpy);
@@ -489,10 +497,10 @@ sap.ui.define([
 		}.bind(this));
 
 		this.oScrollContainer.placeAt("qunit-fixture");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 	});
 
-	QUnit.test("non-animated scroll", function(assert) {
+	QUnit.test("non-animated scroll", async function(assert) {
 		var sContainerHeight = "200px",
 			oDelegate = this.oScrollContainer.getScrollDelegate(),
 			done = assert.async();
@@ -510,7 +518,7 @@ sap.ui.define([
 		}.bind(this));
 
 		this.oScrollContainer.placeAt("qunit-fixture");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 	});
 
 	QUnit.module("Keyboard Handling");
@@ -583,7 +591,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Press [CTRL] + [END] in RTL", function(assert) {
-		var oStub = this.stub(Localization, "getRTL", function() { return true; }),
+		var oStub = this.stub(Localization, "getRTL").returns(true),
 			oSpy = this.spy(oSC5._oScroller, "_scrollTo");
 
 		qutils.triggerKeydown(oSC5.getDomRef(), "END", false, false, true);
@@ -596,7 +604,7 @@ sap.ui.define([
 
 	QUnit.module("Styling");
 
-	QUnit.test("Container Padding Classes", function (assert) {
+	QUnit.test("Container Padding Classes", async function (assert) {
 		// System under Test + Act
 		var oContainer = new ScrollContainer(),
 			sContentSelector = ".sapMScrollContScroll",
@@ -608,7 +616,7 @@ sap.ui.define([
 
 		// Act
 		oContainer.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 		oContainer.addStyleClass("sapUiNoContentPadding");
 		$containerContent = oContainer.$().find(sContentSelector);
 

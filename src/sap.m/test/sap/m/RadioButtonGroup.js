@@ -336,6 +336,53 @@ sap.ui.define([
 
 	var oLabeloRBGroupRBG3 = new Label({ text: "Group with 3 colums and width 100% in container of 350px - test for cutting: ", labelFor: oRBGroupRBG3});
 
+	var oLabeloRBGroupRBG31 = new Label({ text: "Groups with 3 colums and different number of rows: "});
+
+	var flexBoxRBG31 = new VBox("vbRbg31", {
+		items: [
+			oLabeloRBGroupRBG31,
+			new RadioButtonGroup({
+				columns: 3,
+				buttons: [
+					new RadioButton({text: "Text"}),
+					new RadioButton({text: "Text"}),
+					new RadioButton({text: "Text"})
+				]
+			}),
+			new RadioButtonGroup({
+				columns: 3,
+				buttons: [
+					new RadioButton({text: "Text"}),
+					new RadioButton({text: "Text"}),
+					new RadioButton({text: "Text"}),
+					new RadioButton({text: "Text"}),
+					new RadioButton({text: "Text"}),
+					new RadioButton({text: "Text"})
+				]
+			}),
+			new RadioButtonGroup({
+				columns: 3,
+				buttons: [
+					new RadioButton({text: "Text"}),
+					new RadioButton({text: "Text text tex text text"}),
+					new RadioButton({text: "Text"}),
+					new RadioButton({text: "Text"}),
+					new RadioButton({text: "Text"}),
+					new RadioButton({text: "Text"})
+				]
+			}),
+			new RadioButtonGroup({
+				columns: 3,
+				width: "250px",
+				buttons: [
+					new RadioButton({text: "Text"}),
+					new RadioButton({text: "Text text tex text text"}),
+					new RadioButton({text: "Text"})
+				]
+			})
+		]
+	});
+
 	var flexBoxRBG3 = new FlexBox("rbg3", {
 	alignItems: "Start",
 	direction: "Column",
@@ -611,7 +658,8 @@ sap.ui.define([
 							flexBoxRBG1,
 							flexBoxRBG1a,
 							flexBoxRBG2,
-							flexBoxRBG3
+							flexBoxRBG3,
+							flexBoxRBG31
 						]
 					}),
 					new IconTabFilter("sample2", {
