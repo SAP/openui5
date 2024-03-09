@@ -2,11 +2,9 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/base/i18n/Localization",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/integration/util/Utils"
 ], function(
-	Localization,
 	FragmentController,
 	Utils
 ) {
@@ -36,7 +34,7 @@ sap.ui.define([
 		var sLanguage =  Utils._language;
 		var oConfig = this._oField.getConfiguration();
 		if (oConfig.type === "string" && oConfig.translatable) {
-			this._oField.setTranslationValueInTexts(sLanguage, oConfig.manifestpath, sValue);
+			this._oField.setTranslationValueInTexts(sLanguage, sValue);
 		} else {
 			this._oField._settingsModel.setProperty(oConfig.manifestpath, sValue);
 		}

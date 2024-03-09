@@ -182,7 +182,7 @@ sap.ui.define([
 							assert.ok(oCancelButton3.getVisible(), "oTranslationPopover3 footer: cancel button visible");
 							assert.ok(oCancelButton3.getEnabled(), "oTranslationPopover3 footer: cancel button enabled");
 							var oLanguageItems3 = oTranslationPopover3.getContent()[0].getItems();
-							assert.equal(oLanguageItems3.length, 50, "oTranslationPopover3 Content: length");
+							assert.equal(oLanguageItems3.length, 49, "oTranslationPopover3 Content: length");
 							for (var i = 0; i < oLanguageItems3.length; i++) {
 								var oCustomData = oLanguageItems3[i].getCustomData();
 								if (oCustomData && oCustomData.length > 0) {
@@ -204,7 +204,7 @@ sap.ui.define([
 								oSaveButton3.firePress();
 								EditorQunitUtils.wait().then(function () {
 									var oLanguageItems3 = oTranslationPopover3.getContent()[0].getItems();
-									assert.equal(oLanguageItems3.length, 51, "oTranslationPopover3 Content: length");
+									assert.equal(oLanguageItems3.length, 49, "oTranslationPopover3 Content: length");
 									for (var i = 0; i < oLanguageItems3.length; i++) {
 										var oCustomData = oLanguageItems3[i].getCustomData();
 										if (oCustomData && oCustomData.length > 0) {
@@ -295,7 +295,7 @@ sap.ui.define([
 							assert.ok(oCancelButton3.getVisible(), "oTranslationPopover3 footer: cancel button visible");
 							assert.ok(oCancelButton3.getEnabled(), "oTranslationPopover3 footer: cancel button enabled");
 							var oLanguageItems3 = oTranslationPopover3.getContent()[0].getItems();
-							assert.equal(oLanguageItems3.length, 50, "oTranslationPopover3 Content: length");
+							assert.equal(oLanguageItems3.length, 49, "oTranslationPopover3 Content: length");
 							for (var i = 0; i < oLanguageItems3.length; i++) {
 								var oCustomData = oLanguageItems3[i].getCustomData();
 								if (oCustomData && oCustomData.length > 0) {
@@ -319,7 +319,7 @@ sap.ui.define([
 									assert.ok(!oSaveButton3.getEnabled(), "oTranslationPopover3 footer: save button disabled");
 									assert.ok(!oResetButton3.getEnabled(), "oTranslationPopover3 footer: reset button disabled");
 									var oLanguageItems3 = oTranslationPopover3.getContent()[0].getItems();
-									assert.equal(oLanguageItems3.length, 50, "oTranslationPopover3 Content: length");
+									assert.equal(oLanguageItems3.length, 49, "oTranslationPopover3 Content: length");
 									for (var i = 0; i < oLanguageItems3.length; i++) {
 										var oCustomData = oLanguageItems3[i].getCustomData();
 										if (oCustomData && oCustomData.length > 0) {
@@ -399,7 +399,7 @@ sap.ui.define([
 							assert.ok(oCancelButton3.getVisible(), "oTranslationPopover3 footer: cancel button visible");
 							assert.ok(oCancelButton3.getEnabled(), "oTranslationPopover3 footer: cancel button enabled");
 							var oLanguageItems3 = oTranslationPopover3.getContent()[0].getItems();
-							assert.equal(oLanguageItems3.length, 50, "oTranslationPopover3 Content: length");
+							assert.equal(oLanguageItems3.length, 49, "oTranslationPopover3 Content: length");
 							for (var i = 0; i < oLanguageItems3.length; i++) {
 								var oCustomData = oLanguageItems3[i].getCustomData();
 								if (oCustomData && oCustomData.length > 0) {
@@ -421,7 +421,7 @@ sap.ui.define([
 								oSaveButton3.firePress();
 								EditorQunitUtils.wait().then(function () {
 									var oLanguageItems3 = oTranslationPopover3.getContent()[0].getItems();
-									assert.equal(oLanguageItems3.length, 51, "oTranslationPopover3 Content: length");
+									assert.equal(oLanguageItems3.length, 49, "oTranslationPopover3 Content: length");
 									for (var i = 0; i < oLanguageItems3.length; i++) {
 										var oCustomData = oLanguageItems3[i].getCustomData();
 										if (oCustomData && oCustomData.length > 0) {
@@ -453,7 +453,7 @@ sap.ui.define([
 										oValueHelpIcon3.firePress();
 										EditorQunitUtils.wait(1500).then(function () {
 											oLanguageItems3 = oTranslationPopover3.getContent()[0].getItems();
-											assert.equal(oLanguageItems3.length, 51, "oTranslationPopover3 Content: length");
+											assert.equal(oLanguageItems3.length, 49, "oTranslationPopover3 Content: length");
 											for (var i = 0; i < oLanguageItems3.length; i++) {
 												var oCustomData = oLanguageItems3[i].getCustomData();
 												if (oCustomData && oCustomData.length > 0) {
@@ -534,7 +534,7 @@ sap.ui.define([
 							assert.ok(oCancelButton3.getVisible(), "oTranslationPopover3 footer: cancel button visible");
 							assert.ok(oCancelButton3.getEnabled(), "oTranslationPopover3 footer: cancel button enabled");
 							var oLanguageItems3 = oTranslationPopover3.getContent()[0].getItems();
-							assert.equal(oLanguageItems3.length, 50, "oTranslationPopover3 Content: length");
+							assert.equal(oLanguageItems3.length, 49, "oTranslationPopover3 Content: length");
 							for (var i = 0; i < oLanguageItems3.length; i++) {
 								var oCustomData = oLanguageItems3[i].getCustomData();
 								if (oCustomData && oCustomData.length > 0) {
@@ -556,7 +556,7 @@ sap.ui.define([
 								oSaveButton3.firePress();
 								EditorQunitUtils.wait().then(function () {
 									var oLanguageItems3 = oTranslationPopover3.getContent()[0].getItems();
-									assert.equal(oLanguageItems3.length, 51, "oTranslationPopover3 Content: length");
+									assert.equal(oLanguageItems3.length, 49, "oTranslationPopover3 Content: length");
 									for (var i = 0; i < oLanguageItems3.length; i++) {
 										var oCustomData = oLanguageItems3[i].getCustomData();
 										if (oCustomData && oCustomData.length > 0) {
@@ -588,7 +588,7 @@ sap.ui.define([
 										oValueHelpIcon3.firePress();
 										EditorQunitUtils.wait(1500).then(function () {
 											oLanguageItems3 = oTranslationPopover3.getContent()[0].getItems();
-											assert.equal(oLanguageItems3.length, 50, "oTranslationPopover3 Content: length");
+											assert.equal(oLanguageItems3.length, 49, "oTranslationPopover3 Content: length");
 											for (var i = 0; i < oLanguageItems3.length; i++) {
 												var oCustomData = oLanguageItems3[i].getCustomData();
 												if (oCustomData && oCustomData.length > 0) {

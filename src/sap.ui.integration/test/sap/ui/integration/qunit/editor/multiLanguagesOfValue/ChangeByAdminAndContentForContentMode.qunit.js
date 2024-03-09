@@ -211,9 +211,8 @@ sap.ui.define([
 							assert.equal(aHeaderItems1[3].getText(), that.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_OTHERLANGUAGES"), "oTranslationPopover1 Header: Other Languages");
 							assert.ok(oTranslationPopover1.getContent()[0].isA("sap.m.List"), "oTranslationPopover1 Content: List");
 							var oLanguageItems1 = oTranslationPopover1.getContent()[0].getItems();
-							assert.equal(oLanguageItems1.length, 49, "oTranslationPopover1 Content: length");
-							assert.equal(oLanguageItems1[0].getTitle(), that.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_LISTITEM_GROUP_NOTUPDATED"), "oTranslationPopover1 Content: item 0");
-							for (var i = 1; i < oLanguageItems1.length; i++) {
+							assert.equal(oLanguageItems1.length, 48, "oTranslationPopover1 Content: length");
+							for (var i = 0; i < oLanguageItems1.length; i++) {
 								var sLanguage = oLanguageItems1[i].getCustomData()[0].getKey();
 								var sExpectedValue = _oExpectedValues["string1"][sLanguage] || _oExpectedValues["string1"]["default_in_en"];
 								var sCurrentValue = oLanguageItems1[i].getContent()[0].getItems()[1].getValue();
@@ -237,8 +236,7 @@ sap.ui.define([
 								assert.ok(aHeaderItems3[2].getItems()[1].getEditable() === false, "oTranslationPopover3 Header: Editable false");
 								assert.ok(oTranslationPopover3.getContent()[0].isA("sap.m.List"), "oTranslationPopover3 Content: List");
 								var oLanguageItems3 = oTranslationPopover3.getContent()[0].getItems();
-								assert.equal(oLanguageItems3.length, 49, "oTranslationPopover3 Content: length");
-								assert.equal(oLanguageItems3[0].getTitle(), that.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_LISTITEM_GROUP_NOTUPDATED"), "oTranslationPopover3 Content: item 0");
+								assert.equal(oLanguageItems3.length, 48, "oTranslationPopover3 Content: length");
 								for (var i = 1; i < oLanguageItems3.length; i++) {
 									var sLanguage = oLanguageItems3[i].getCustomData()[0].getKey();
 									var sExpectedValue = _oExpectedValues["string3"][sLanguage] || _oExpectedValues["string3"]["default_in_en"];
@@ -260,8 +258,7 @@ sap.ui.define([
 									assert.ok(aHeaderItems4[2].getItems()[1].getEditable() === false, "oTranslationPopover4 Header: Editable false");
 									assert.ok(oTranslationPopover4.getContent()[0].isA("sap.m.List"), "oTranslationPopover4 Content: List");
 									var oLanguageItems4 = oTranslationPopover4.getContent()[0].getItems();
-									assert.equal(oLanguageItems4.length, 49, "oTranslationPopover4 Content: length");
-									assert.equal(oLanguageItems4[0].getTitle(), that.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_LISTITEM_GROUP_NOTUPDATED"), "oTranslationPopover4 Content: item 0");
+									assert.equal(oLanguageItems4.length, 48, "oTranslationPopover4 Content: length");
 									for (var i = 1; i < oLanguageItems4.length; i++) {
 										var sLanguage = oLanguageItems4[i].getCustomData()[0].getKey();
 										var sExpectedValue = _oExpectedValues["string4"][sLanguage] || _oExpectedValues["string4"]["default_in_en"];
@@ -335,9 +332,8 @@ sap.ui.define([
 							assert.equal(aHeaderItems1[3].getText(), that.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_OTHERLANGUAGES"), "oTranslationPopover1 Header: Other Languages");
 							assert.ok(oTranslationPopover1.getContent()[0].isA("sap.m.List"), "oTranslationPopover1 Content: List");
 							var oLanguageItems1 = oTranslationPopover1.getContent()[0].getItems();
-							assert.equal(oLanguageItems1.length, 49, "oTranslationPopover1 Content: length");
-							assert.equal(oLanguageItems1[0].getTitle(), that.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_LISTITEM_GROUP_NOTUPDATED"), "oTranslationPopover1 Content: item 0");
-							for (var i = 1; i < oLanguageItems1.length; i++) {
+							assert.equal(oLanguageItems1.length, 48, "oTranslationPopover1 Content: length");
+							for (var i = 0; i < oLanguageItems1.length; i++) {
 								var sLanguage = oLanguageItems1[i].getCustomData()[0].getKey();
 								var sExpectedValue = _oExpectedValues["string1"][sLanguage] || _oExpectedValues["string1"]["default_in_en"];
 								var sCurrentValue = oLanguageItems1[i].getContent()[0].getItems()[1].getValue();
@@ -361,8 +357,7 @@ sap.ui.define([
 								assert.ok(aHeaderItems3[2].getItems()[1].getEditable() === false, "oTranslationPopover3 Header: Editable false");
 								assert.ok(oTranslationPopover3.getContent()[0].isA("sap.m.List"), "oTranslationPopover3 Content: List");
 								var oLanguageItems3 = oTranslationPopover3.getContent()[0].getItems();
-								assert.equal(oLanguageItems3.length, 49, "oTranslationPopover3 Content: length");
-								assert.equal(oLanguageItems3[0].getTitle(), that.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_LISTITEM_GROUP_NOTUPDATED"), "oTranslationPopover3 Content: item 0");
+								assert.equal(oLanguageItems3.length, 48, "oTranslationPopover3 Content: length");
 								for (var i = 1; i < oLanguageItems3.length; i++) {
 									var sLanguage = oLanguageItems3[i].getCustomData()[0].getKey();
 									var sExpectedValue = _oExpectedValues["string3"][sLanguage] || _oExpectedValues["string3"]["default_in_en"];
@@ -384,8 +379,7 @@ sap.ui.define([
 									assert.ok(aHeaderItems4[2].getItems()[1].getEditable() === false, "oTranslationPopover4 Header: Editable false");
 									assert.ok(oTranslationPopover4.getContent()[0].isA("sap.m.List"), "oTranslationPopover4 Content: List");
 									var oLanguageItems4 = oTranslationPopover4.getContent()[0].getItems();
-									assert.equal(oLanguageItems4.length, 49, "oTranslationPopover4 Content: length");
-									assert.equal(oLanguageItems4[0].getTitle(), that.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_LISTITEM_GROUP_NOTUPDATED"), "oTranslationPopover4 Content: item 0");
+									assert.equal(oLanguageItems4.length, 48, "oTranslationPopover4 Content: length");
 									for (var i = 1; i < oLanguageItems4.length; i++) {
 										var sLanguage = oLanguageItems4[i].getCustomData()[0].getKey();
 										var sExpectedValue = _oExpectedValues["string4"][sLanguage] || _oExpectedValues["string4"]["default_in_en"];
@@ -459,9 +453,8 @@ sap.ui.define([
 							assert.equal(aHeaderItems1[3].getText(), that.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_OTHERLANGUAGES"), "oTranslationPopover1 Header: Other Languages");
 							assert.ok(oTranslationPopover1.getContent()[0].isA("sap.m.List"), "oTranslationPopover1 Content: List");
 							var oLanguageItems1 = oTranslationPopover1.getContent()[0].getItems();
-							assert.equal(oLanguageItems1.length, 49, "oTranslationPopover1 Content: length");
-							assert.equal(oLanguageItems1[0].getTitle(), that.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_LISTITEM_GROUP_NOTUPDATED"), "oTranslationPopover1 Content: item 0");
-							for (var i = 1; i < oLanguageItems1.length; i++) {
+							assert.equal(oLanguageItems1.length, 48, "oTranslationPopover1 Content: length");
+							for (var i = 0; i < oLanguageItems1.length; i++) {
 								var sLanguage = oLanguageItems1[i].getCustomData()[0].getKey();
 								var sExpectedValue = _oExpectedValues["string1"][sLanguage] || _oExpectedValues["string1"]["default_in_en"];
 								var sCurrentValue = oLanguageItems1[i].getContent()[0].getItems()[1].getValue();
@@ -485,8 +478,7 @@ sap.ui.define([
 								assert.ok(aHeaderItems3[2].getItems()[1].getEditable() === false, "oTranslationPopover3 Header: Editable false");
 								assert.ok(oTranslationPopover3.getContent()[0].isA("sap.m.List"), "oTranslationPopover3 Content: List");
 								var oLanguageItems3 = oTranslationPopover3.getContent()[0].getItems();
-								assert.equal(oLanguageItems3.length, 49, "oTranslationPopover3 Content: length");
-								assert.equal(oLanguageItems3[0].getTitle(), that.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_LISTITEM_GROUP_NOTUPDATED"), "oTranslationPopover3 Content: item 0");
+								assert.equal(oLanguageItems3.length, 48, "oTranslationPopover3 Content: length");
 								for (var i = 1; i < oLanguageItems3.length; i++) {
 									var sLanguage = oLanguageItems3[i].getCustomData()[0].getKey();
 									var sExpectedValue = _oExpectedValues["string3"][sLanguage] || _oExpectedValues["string3"]["default_in_en"];
@@ -508,8 +500,7 @@ sap.ui.define([
 									assert.ok(aHeaderItems4[2].getItems()[1].getEditable() === false, "oTranslationPopover4 Header: Editable false");
 									assert.ok(oTranslationPopover4.getContent()[0].isA("sap.m.List"), "oTranslationPopover4 Content: List");
 									var oLanguageItems4 = oTranslationPopover4.getContent()[0].getItems();
-									assert.equal(oLanguageItems4.length, 49, "oTranslationPopover4 Content: length");
-									assert.equal(oLanguageItems4[0].getTitle(), that.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_LISTITEM_GROUP_NOTUPDATED"), "oTranslationPopover4 Content: item 0");
+									assert.equal(oLanguageItems4.length, 48, "oTranslationPopover4 Content: length");
 									for (var i = 1; i < oLanguageItems4.length; i++) {
 										var sLanguage = oLanguageItems4[i].getCustomData()[0].getKey();
 										var sExpectedValue = _oExpectedValues["string4"][sLanguage] || _oExpectedValues["string4"]["default_in_en"];
@@ -583,9 +574,8 @@ sap.ui.define([
 							assert.equal(aHeaderItems1[3].getText(), that.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_OTHERLANGUAGES"), "oTranslationPopover1 Header: Other Languages");
 							assert.ok(oTranslationPopover1.getContent()[0].isA("sap.m.List"), "oTranslationPopover1 Content: List");
 							var oLanguageItems1 = oTranslationPopover1.getContent()[0].getItems();
-							assert.equal(oLanguageItems1.length, 49, "oTranslationPopover1 Content: length");
-							assert.equal(oLanguageItems1[0].getTitle(), that.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_LISTITEM_GROUP_NOTUPDATED"), "oTranslationPopover1 Content: item 0");
-							for (var i = 1; i < oLanguageItems1.length; i++) {
+							assert.equal(oLanguageItems1.length, 48, "oTranslationPopover1 Content: length");
+							for (var i = 0; i < oLanguageItems1.length; i++) {
 								var sLanguage = oLanguageItems1[i].getCustomData()[0].getKey();
 								var sExpectedValue = _oExpectedValues["string1"][sLanguage] || _oExpectedValues["string1"]["default_in_en"];
 								var sCurrentValue = oLanguageItems1[i].getContent()[0].getItems()[1].getValue();
@@ -609,8 +599,7 @@ sap.ui.define([
 								assert.ok(aHeaderItems3[2].getItems()[1].getEditable() === false, "oTranslationPopover3 Header: Editable false");
 								assert.ok(oTranslationPopover3.getContent()[0].isA("sap.m.List"), "oTranslationPopover3 Content: List");
 								var oLanguageItems3 = oTranslationPopover3.getContent()[0].getItems();
-								assert.equal(oLanguageItems3.length, 49, "oTranslationPopover3 Content: length");
-								assert.equal(oLanguageItems3[0].getTitle(), that.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_LISTITEM_GROUP_NOTUPDATED"), "oTranslationPopover3 Content: item 0");
+								assert.equal(oLanguageItems3.length, 48, "oTranslationPopover3 Content: length");
 								for (var i = 1; i < oLanguageItems3.length; i++) {
 									var sLanguage = oLanguageItems3[i].getCustomData()[0].getKey();
 									var sExpectedValue = _oExpectedValues["string3"][sLanguage] || _oExpectedValues["string3"]["default_in_en"];
@@ -632,8 +621,7 @@ sap.ui.define([
 									assert.ok(aHeaderItems4[2].getItems()[1].getEditable() === false, "oTranslationPopover4 Header: Editable false");
 									assert.ok(oTranslationPopover4.getContent()[0].isA("sap.m.List"), "oTranslationPopover4 Content: List");
 									var oLanguageItems4 = oTranslationPopover4.getContent()[0].getItems();
-									assert.equal(oLanguageItems4.length, 49, "oTranslationPopover4 Content: length");
-									assert.equal(oLanguageItems4[0].getTitle(), that.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_LISTITEM_GROUP_NOTUPDATED"), "oTranslationPopover4 Content: item 0");
+									assert.equal(oLanguageItems4.length, 48, "oTranslationPopover4 Content: length");
 									for (var i = 1; i < oLanguageItems4.length; i++) {
 										var sLanguage = oLanguageItems4[i].getCustomData()[0].getKey();
 										var sExpectedValue = _oExpectedValues["string4"][sLanguage] || _oExpectedValues["string4"]["default_in_en"];
@@ -707,9 +695,8 @@ sap.ui.define([
 							assert.equal(aHeaderItems1[3].getText(), that.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_OTHERLANGUAGES"), "oTranslationPopover1 Header: Other Languages");
 							assert.ok(oTranslationPopover1.getContent()[0].isA("sap.m.List"), "oTranslationPopover1 Content: List");
 							var oLanguageItems1 = oTranslationPopover1.getContent()[0].getItems();
-							assert.equal(oLanguageItems1.length, 49, "oTranslationPopover1 Content: length");
-							assert.equal(oLanguageItems1[0].getTitle(), that.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_LISTITEM_GROUP_NOTUPDATED"), "oTranslationPopover1 Content: item 0");
-							for (var i = 1; i < oLanguageItems1.length; i++) {
+							assert.equal(oLanguageItems1.length, 48, "oTranslationPopover1 Content: length");
+							for (var i = 0; i < oLanguageItems1.length; i++) {
 								var sLanguage = oLanguageItems1[i].getCustomData()[0].getKey();
 								var sExpectedValue = _oExpectedValues["string1"][sLanguage] || _oExpectedValues["string1"]["default_in_en"];
 								var sCurrentValue = oLanguageItems1[i].getContent()[0].getItems()[1].getValue();
@@ -733,8 +720,7 @@ sap.ui.define([
 								assert.ok(aHeaderItems3[2].getItems()[1].getEditable() === false, "oTranslationPopover3 Header: Editable false");
 								assert.ok(oTranslationPopover3.getContent()[0].isA("sap.m.List"), "oTranslationPopover3 Content: List");
 								var oLanguageItems3 = oTranslationPopover3.getContent()[0].getItems();
-								assert.equal(oLanguageItems3.length, 49, "oTranslationPopover3 Content: length");
-								assert.equal(oLanguageItems3[0].getTitle(), that.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_LISTITEM_GROUP_NOTUPDATED"), "oTranslationPopover3 Content: item 0");
+								assert.equal(oLanguageItems3.length, 48, "oTranslationPopover3 Content: length");
 								for (var i = 1; i < oLanguageItems3.length; i++) {
 									var sLanguage = oLanguageItems3[i].getCustomData()[0].getKey();
 									var sExpectedValue = _oExpectedValues["string3"][sLanguage] || _oExpectedValues["string3"]["default_in_en"];
@@ -756,8 +742,7 @@ sap.ui.define([
 									assert.ok(aHeaderItems4[2].getItems()[1].getEditable() === false, "oTranslationPopover4 Header: Editable false");
 									assert.ok(oTranslationPopover4.getContent()[0].isA("sap.m.List"), "oTranslationPopover4 Content: List");
 									var oLanguageItems4 = oTranslationPopover4.getContent()[0].getItems();
-									assert.equal(oLanguageItems4.length, 49, "oTranslationPopover4 Content: length");
-									assert.equal(oLanguageItems4[0].getTitle(), that.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_LISTITEM_GROUP_NOTUPDATED"), "oTranslationPopover4 Content: item 0");
+									assert.equal(oLanguageItems4.length, 48, "oTranslationPopover4 Content: length");
 									for (var i = 1; i < oLanguageItems4.length; i++) {
 										var sLanguage = oLanguageItems4[i].getCustomData()[0].getKey();
 										var sExpectedValue = _oExpectedValues["string4"][sLanguage] || _oExpectedValues["string4"]["default_in_en"];
@@ -831,9 +816,8 @@ sap.ui.define([
 							assert.equal(aHeaderItems1[3].getText(), that.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_OTHERLANGUAGES"), "oTranslationPopover1 Header: Other Languages");
 							assert.ok(oTranslationPopover1.getContent()[0].isA("sap.m.List"), "oTranslationPopover1 Content: List");
 							var oLanguageItems1 = oTranslationPopover1.getContent()[0].getItems();
-							assert.equal(oLanguageItems1.length, 49, "oTranslationPopover1 Content: length");
-							assert.equal(oLanguageItems1[0].getTitle(), that.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_LISTITEM_GROUP_NOTUPDATED"), "oTranslationPopover1 Content: item 0");
-							for (var i = 1; i < oLanguageItems1.length; i++) {
+							assert.equal(oLanguageItems1.length, 48, "oTranslationPopover1 Content: length");
+							for (var i = 0; i < oLanguageItems1.length; i++) {
 								var sLanguage = oLanguageItems1[i].getCustomData()[0].getKey();
 								var sExpectedValue = _oExpectedValues["string1"][sLanguage] || _oExpectedValues["string1"]["default_in_en"];
 								var sCurrentValue = oLanguageItems1[i].getContent()[0].getItems()[1].getValue();
@@ -857,8 +841,7 @@ sap.ui.define([
 								assert.ok(aHeaderItems3[2].getItems()[1].getEditable() === false, "oTranslationPopover3 Header: Editable false");
 								assert.ok(oTranslationPopover3.getContent()[0].isA("sap.m.List"), "oTranslationPopover3 Content: List");
 								var oLanguageItems3 = oTranslationPopover3.getContent()[0].getItems();
-								assert.equal(oLanguageItems3.length, 49, "oTranslationPopover3 Content: length");
-								assert.equal(oLanguageItems3[0].getTitle(), that.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_LISTITEM_GROUP_NOTUPDATED"), "oTranslationPopover3 Content: item 0");
+								assert.equal(oLanguageItems3.length, 48, "oTranslationPopover3 Content: length");
 								for (var i = 1; i < oLanguageItems3.length; i++) {
 									var sLanguage = oLanguageItems3[i].getCustomData()[0].getKey();
 									var sExpectedValue = _oExpectedValues["string3"][sLanguage] || _oExpectedValues["string3"]["default_in_en"];
@@ -880,8 +863,7 @@ sap.ui.define([
 									assert.ok(aHeaderItems4[2].getItems()[1].getEditable() === false, "oTranslationPopover4 Header: Editable false");
 									assert.ok(oTranslationPopover4.getContent()[0].isA("sap.m.List"), "oTranslationPopover4 Content: List");
 									var oLanguageItems4 = oTranslationPopover4.getContent()[0].getItems();
-									assert.equal(oLanguageItems4.length, 49, "oTranslationPopover4 Content: length");
-									assert.equal(oLanguageItems4[0].getTitle(), that.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_LISTITEM_GROUP_NOTUPDATED"), "oTranslationPopover4 Content: item 0");
+									assert.equal(oLanguageItems4.length, 48, "oTranslationPopover4 Content: length");
 									for (var i = 1; i < oLanguageItems4.length; i++) {
 										var sLanguage = oLanguageItems4[i].getCustomData()[0].getKey();
 										var sExpectedValue = _oExpectedValues["string4"][sLanguage] || _oExpectedValues["string4"]["default_in_en"];
@@ -955,9 +937,8 @@ sap.ui.define([
 							assert.equal(aHeaderItems1[3].getText(), that.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_OTHERLANGUAGES"), "oTranslationPopover1 Header: Other Languages");
 							assert.ok(oTranslationPopover1.getContent()[0].isA("sap.m.List"), "oTranslationPopover1 Content: List");
 							var oLanguageItems1 = oTranslationPopover1.getContent()[0].getItems();
-							assert.equal(oLanguageItems1.length, 49, "oTranslationPopover1 Content: length");
-							assert.equal(oLanguageItems1[0].getTitle(), that.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_LISTITEM_GROUP_NOTUPDATED"), "oTranslationPopover1 Content: item 0");
-							for (var i = 1; i < oLanguageItems1.length; i++) {
+							assert.equal(oLanguageItems1.length, 48, "oTranslationPopover1 Content: length");
+							for (var i = 0; i < oLanguageItems1.length; i++) {
 								var sLanguage = oLanguageItems1[i].getCustomData()[0].getKey();
 								var sExpectedValue = _oExpectedValues["string1"][sLanguage] || _oExpectedValues["string1"]["default_in_en"];
 								var sCurrentValue = oLanguageItems1[i].getContent()[0].getItems()[1].getValue();
@@ -981,8 +962,7 @@ sap.ui.define([
 								assert.ok(aHeaderItems3[2].getItems()[1].getEditable() === false, "oTranslationPopover3 Header: Editable false");
 								assert.ok(oTranslationPopover3.getContent()[0].isA("sap.m.List"), "oTranslationPopover3 Content: List");
 								var oLanguageItems3 = oTranslationPopover3.getContent()[0].getItems();
-								assert.equal(oLanguageItems3.length, 49, "oTranslationPopover3 Content: length");
-								assert.equal(oLanguageItems3[0].getTitle(), that.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_LISTITEM_GROUP_NOTUPDATED"), "oTranslationPopover3 Content: item 0");
+								assert.equal(oLanguageItems3.length, 48, "oTranslationPopover3 Content: length");
 								for (var i = 1; i < oLanguageItems3.length; i++) {
 									var sLanguage = oLanguageItems3[i].getCustomData()[0].getKey();
 									var sExpectedValue = _oExpectedValues["string3"][sLanguage] || _oExpectedValues["string3"]["default_in_en"];
@@ -1004,8 +984,7 @@ sap.ui.define([
 									assert.ok(aHeaderItems4[2].getItems()[1].getEditable() === false, "oTranslationPopover4 Header: Editable false");
 									assert.ok(oTranslationPopover4.getContent()[0].isA("sap.m.List"), "oTranslationPopover4 Content: List");
 									var oLanguageItems4 = oTranslationPopover4.getContent()[0].getItems();
-									assert.equal(oLanguageItems4.length, 49, "oTranslationPopover4 Content: length");
-									assert.equal(oLanguageItems4[0].getTitle(), that.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_LISTITEM_GROUP_NOTUPDATED"), "oTranslationPopover4 Content: item 0");
+									assert.equal(oLanguageItems4.length, 48, "oTranslationPopover4 Content: length");
 									for (var i = 1; i < oLanguageItems4.length; i++) {
 										var sLanguage = oLanguageItems4[i].getCustomData()[0].getKey();
 										var sExpectedValue = _oExpectedValues["string4"][sLanguage] || _oExpectedValues["string4"]["default_in_en"];

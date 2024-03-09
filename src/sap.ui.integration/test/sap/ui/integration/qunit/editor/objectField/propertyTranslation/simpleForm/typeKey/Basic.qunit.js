@@ -251,7 +251,7 @@ sap.ui.define([
 								assert.ok(oCancelButton1.getVisible(), "oTranslationPopover1 footer: cancel button visible");
 								assert.ok(oCancelButton1.getEnabled(), "oTranslationPopover1 footer: cancel button enabled");
 								var oLanguageItems1 = oTranslationPopover1.getContent()[0].getItems();
-								assert.equal(oLanguageItems1.length, 50, "oTranslationPopover1 Content: length");
+								assert.equal(oLanguageItems1.length, 49, "oTranslationPopover1 Content: length");
 								for (var i = 0; i < oLanguageItems1.length; i++) {
 									var oCustomData = oLanguageItems1[i].getCustomData();
 									if (oCustomData && oCustomData.length > 0) {
@@ -259,6 +259,8 @@ sap.ui.define([
 										var sExpectedValue = _oOriginExpectedValues["string1"][sLanguage] || _oOriginExpectedValues["string1"]["default"];
 										var sCurrentValue = oLanguageItems1[i].getContent()[0].getItems()[1].getValue();
 										assert.equal(sCurrentValue, sExpectedValue, "oTranslationPopover1 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
+										var sValueState = oLanguageItems1[i].getContent()[0].getItems()[1].getValueState();
+										assert.equal(sValueState, "None", "oTranslationPopover1 Content: item " + i + " " + sLanguage + ", value state: " + sValueState + ", expected: None");
 									}
 								}
 								oCancelButton1.firePress();
@@ -277,7 +279,7 @@ sap.ui.define([
 									EditorQunitUtils.wait().then(function () {
 										var oTranslationPopover1 = oField._oTranslationPopover;
 										var oLanguageItems1 = oTranslationPopover1.getContent()[0].getItems();
-										assert.equal(oLanguageItems1.length, 50, "oTranslationPopover1 Content: length");
+										assert.equal(oLanguageItems1.length, 49, "oTranslationPopover1 Content: length");
 										for (var i = 0; i < oLanguageItems1.length; i++) {
 											var oCustomData = oLanguageItems1[i].getCustomData();
 											if (oCustomData && oCustomData.length > 0) {
@@ -285,6 +287,8 @@ sap.ui.define([
 												var sExpectedValue = _oOriginExpectedValues["string2"][sLanguage] || _oOriginExpectedValues["string2"]["default"];
 												var sCurrentValue = oLanguageItems1[i].getContent()[0].getItems()[1].getValue();
 												assert.equal(sCurrentValue, sExpectedValue, "oTranslationPopover1 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
+												var sValueState = oLanguageItems1[i].getContent()[0].getItems()[1].getValueState();
+												assert.equal(sValueState, "None", "oTranslationPopover1 Content: item " + i + " " + sLanguage + ", value state: " + sValueState + ", expected: None");
 											}
 										}
 										resolve();
@@ -344,7 +348,7 @@ sap.ui.define([
 							EditorQunitUtils.wait(1500).then(function () {
 								var oTranslationPopover1 = oField._oTranslationPopover;
 								var oLanguageItems1 = oTranslationPopover1.getContent()[0].getItems();
-								assert.equal(oLanguageItems1.length, 50, "oTranslationPopover1 Content: length");
+								assert.equal(oLanguageItems1.length, 49, "oTranslationPopover1 Content: length");
 								for (var i = 0; i < oLanguageItems1.length; i++) {
 									var oCustomData = oLanguageItems1[i].getCustomData();
 									if (oCustomData && oCustomData.length > 0) {
@@ -352,6 +356,8 @@ sap.ui.define([
 										var sExpectedValue = _oOriginExpectedValues["string1"][sLanguage] || _oOriginExpectedValues["string1"]["default"];
 										var sCurrentValue = oLanguageItems1[i].getContent()[0].getItems()[1].getValue();
 										assert.equal(sCurrentValue, sExpectedValue, "oTranslationPopover1 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
+										var sValueState = oLanguageItems1[i].getContent()[0].getItems()[1].getValueState();
+										assert.equal(sValueState, "None", "oTranslationPopover1 Content: item " + i + " " + sLanguage + ", value state: " + sValueState + ", expected: None");
 									}
 								}
 								resolve();
@@ -428,7 +434,7 @@ sap.ui.define([
 								assert.ok(oCancelButton1.getVisible(), "oTranslationPopover1 footer: cancel button visible");
 								assert.ok(oCancelButton1.getEnabled(), "oTranslationPopover1 footer: cancel button enabled");
 								var oLanguageItems1 = oTranslationPopover1.getContent()[0].getItems();
-								assert.equal(oLanguageItems1.length, 50, "oTranslationPopover1 Content: length");
+								assert.equal(oLanguageItems1.length, 49, "oTranslationPopover1 Content: length");
 								for (var i = 0; i < oLanguageItems1.length; i++) {
 									var oCustomData = oLanguageItems1[i].getCustomData();
 									if (oCustomData && oCustomData.length > 0) {
@@ -436,11 +442,13 @@ sap.ui.define([
 										var sExpectedValue = _oOriginExpectedValues["string1"][sLanguage] || _oOriginExpectedValues["string1"]["default"];
 										var sCurrentValue = oLanguageItems1[i].getContent()[0].getItems()[1].getValue();
 										assert.equal(sCurrentValue, sExpectedValue, "oTranslationPopover1 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
+										var sValueState = oLanguageItems1[i].getContent()[0].getItems()[1].getValueState();
+										assert.equal(sValueState, "None", "oTranslationPopover1 Content: item " + i + " " + sLanguage + ", value state: " + sValueState + ", expected: None");
 										if (sLanguage === "en"){
 											var oInput = oLanguageItems1[i].getContent()[0].getItems()[1];
 											oInput.setValue("string1 en");
 											oInput.fireChange({ value: "string1 en"});
-											break;
+											assert.equal(oInput.getValueState(), "Information", "oTranslationPopover1 Content: item " + i + " " + sLanguage + ", value state: " + oInput.getValueState() + ", expected: " + oInput.getValueState());
 										}
 									}
 								}
@@ -452,7 +460,7 @@ sap.ui.define([
 										assert.ok(!oSaveButton1.getEnabled(), "oTranslationPopover1 footer: save button disabled");
 										assert.ok(!oResetButton1.getEnabled(), "oTranslationPopover1 footer: reset button disabled");
 										var oLanguageItems1 = oTranslationPopover1.getContent()[0].getItems();
-										assert.equal(oLanguageItems1.length, 50, "oTranslationPopover1 Content: length");
+										assert.equal(oLanguageItems1.length, 49, "oTranslationPopover1 Content: length");
 										for (var i = 0; i < oLanguageItems1.length; i++) {
 											var oCustomData = oLanguageItems1[i].getCustomData();
 											if (oCustomData && oCustomData.length > 0) {
@@ -460,6 +468,8 @@ sap.ui.define([
 												var sExpectedValue = _oOriginExpectedValues["string1"][sLanguage] || _oOriginExpectedValues["string1"]["default"];
 												var sCurrentValue = oLanguageItems1[i].getContent()[0].getItems()[1].getValue();
 												assert.equal(sCurrentValue, sExpectedValue, "oTranslationPopover1 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
+												var sValueState = oLanguageItems1[i].getContent()[0].getItems()[1].getValueState();
+												assert.equal(sValueState, "None", "oTranslationPopover1 Content: item " + i + " " + sLanguage + ", value state: " + sValueState + ", expected: None");
 											}
 										}
 										assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), {"key": "{i18n>string1}"}), "Field 1: DT Value");
@@ -542,7 +552,7 @@ sap.ui.define([
 								assert.ok(oCancelButton1.getVisible(), "oTranslationPopover1 footer: cancel button visible");
 								assert.ok(oCancelButton1.getEnabled(), "oTranslationPopover1 footer: cancel button enabled");
 								var oLanguageItems1 = oTranslationPopover1.getContent()[0].getItems();
-								assert.equal(oLanguageItems1.length, 50, "oTranslationPopover1 Content: length");
+								assert.equal(oLanguageItems1.length, 49, "oTranslationPopover1 Content: length");
 								for (var i = 0; i < oLanguageItems1.length; i++) {
 									var oCustomData = oLanguageItems1[i].getCustomData();
 									if (oCustomData && oCustomData.length > 0) {
@@ -564,7 +574,7 @@ sap.ui.define([
 									oSaveButton1.firePress();
 									EditorQunitUtils.wait().then(function () {
 										oLanguageItems1 = oTranslationPopover1.getContent()[0].getItems();
-										assert.equal(oLanguageItems1.length, 51, "oTranslationPopover1 Content: length");
+										assert.equal(oLanguageItems1.length, 49, "oTranslationPopover1 Content: length");
 										for (var i = 0; i < oLanguageItems1.length; i++) {
 											var oCustomData = oLanguageItems1[i].getCustomData();
 											if (oCustomData && oCustomData.length > 0) {
@@ -665,7 +675,7 @@ sap.ui.define([
 								assert.ok(oCancelButton1.getVisible(), "oTranslationPopover1 footer: cancel button visible");
 								assert.ok(oCancelButton1.getEnabled(), "oTranslationPopover1 footer: cancel button enabled");
 								var oLanguageItems1 = oTranslationPopover1.getContent()[0].getItems();
-								assert.equal(oLanguageItems1.length, 50, "oTranslationPopover1 Content: length");
+								assert.equal(oLanguageItems1.length, 49, "oTranslationPopover1 Content: length");
 								for (var i = 0; i < oLanguageItems1.length; i++) {
 									var oCustomData = oLanguageItems1[i].getCustomData();
 									if (oCustomData && oCustomData.length > 0) {
@@ -687,7 +697,7 @@ sap.ui.define([
 									oSaveButton1.firePress();
 									EditorQunitUtils.wait().then(function () {
 										oLanguageItems1 = oTranslationPopover1.getContent()[0].getItems();
-										assert.equal(oLanguageItems1.length, 51, "oTranslationPopover1 Content: length");
+										assert.equal(oLanguageItems1.length, 49, "oTranslationPopover1 Content: length");
 										for (var i = 0; i < oLanguageItems1.length; i++) {
 											var oCustomData = oLanguageItems1[i].getCustomData();
 											if (oCustomData && oCustomData.length > 0) {
@@ -793,7 +803,7 @@ sap.ui.define([
 								assert.ok(oCancelButton1.getVisible(), "oTranslationPopover1 footer: cancel button visible");
 								assert.ok(oCancelButton1.getEnabled(), "oTranslationPopover1 footer: cancel button enabled");
 								var oLanguageItems1 = oTranslationPopover1.getContent()[0].getItems();
-								assert.equal(oLanguageItems1.length, 50, "oTranslationPopover1 Content: length");
+								assert.equal(oLanguageItems1.length, 49, "oTranslationPopover1 Content: length");
 								for (var i = 0; i < oLanguageItems1.length; i++) {
 									var oCustomData = oLanguageItems1[i].getCustomData();
 									if (oCustomData && oCustomData.length > 0) {
@@ -815,7 +825,7 @@ sap.ui.define([
 									oSaveButton1.firePress();
 									EditorQunitUtils.wait().then(function () {
 										oLanguageItems1 = oTranslationPopover1.getContent()[0].getItems();
-										assert.equal(oLanguageItems1.length, 51, "oTranslationPopover1 Content: length");
+										assert.equal(oLanguageItems1.length, 49, "oTranslationPopover1 Content: length");
 										for (var i = 0; i < oLanguageItems1.length; i++) {
 											var oCustomData = oLanguageItems1[i].getCustomData();
 											if (oCustomData && oCustomData.length > 0) {
@@ -848,7 +858,7 @@ sap.ui.define([
 											EditorQunitUtils.wait().then(function () {
 												oTranslationPopover1 = oField._oTranslationPopover;
 												oLanguageItems1 = oTranslationPopover1.getContent()[0].getItems();
-												assert.equal(oLanguageItems1.length, 50, "oTranslationPopover1 Content: length");
+												assert.equal(oLanguageItems1.length, 49, "oTranslationPopover1 Content: length");
 												for (var i = 0; i < oLanguageItems1.length; i++) {
 													var oCustomData = oLanguageItems1[i].getCustomData();
 													if (oCustomData && oCustomData.length > 0) {

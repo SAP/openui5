@@ -287,7 +287,7 @@ sap.ui.define([
 							EditorQunitUtils.wait(1500).then(function () {
 								var oTranslationListPage3 = oField._oTranslationListPage;
 								var oLanguageItems3 = oTranslationListPage3.getContent()[0].getItems();
-								assert.equal(oLanguageItems3.length, 50, "oTranslationPopover3 Content: length");
+								assert.equal(oLanguageItems3.length, 49, "oTranslationPopover3 Content: length");
 								for (var i = 0; i < oLanguageItems3.length; i++) {
 									var oCustomData = oLanguageItems3[i].getCustomData();
 									if (oCustomData && oCustomData.length > 0) {
@@ -295,6 +295,8 @@ sap.ui.define([
 										var sExpectedValue = "text";
 										var sCurrentValue = oLanguageItems3[i].getContent()[0].getItems()[1].getValue();
 										assert.equal(sCurrentValue, sExpectedValue, "oTranslationPopover3 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
+										var sValueState = oLanguageItems3[i].getContent()[0].getItems()[1].getValueState();
+										assert.equal(sValueState, "None", "oTranslationPopover3 Content: item " + i + " " + sLanguage + ", value state: " + sValueState + ", expected: None");
 									}
 								}
 								oTranslationListPage3._navBtn.firePress();
@@ -308,7 +310,7 @@ sap.ui.define([
 										oValueHelpIcon3.firePress();
 										EditorQunitUtils.wait().then(function () {
 											oLanguageItems3 = oTranslationListPage3.getContent()[0].getItems();
-											assert.equal(oLanguageItems3.length, 50, "oTranslationPopover3 Content: length");
+											assert.equal(oLanguageItems3.length, 49, "oTranslationPopover3 Content: length");
 											for (var i = 0; i < oLanguageItems3.length; i++) {
 												var oCustomData = oLanguageItems3[i].getCustomData();
 												if (oCustomData && oCustomData.length > 0) {
@@ -316,6 +318,8 @@ sap.ui.define([
 													var sExpectedValue = _oOriginExpectedValues["string1"][sLanguage] || _oOriginExpectedValues["string1"]["default"];
 													var sCurrentValue = oLanguageItems3[i].getContent()[0].getItems()[1].getValue();
 													assert.equal(sCurrentValue, sExpectedValue, "oTranslationPopover3 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
+													var sValueState = oLanguageItems3[i].getContent()[0].getItems()[1].getValueState();
+													assert.equal(sValueState, "None", "oTranslationPopover3 Content: item " + i + " " + sLanguage + ", value state: " + sValueState + ", expected: None");
 												}
 											}
 											oTranslationListPage3._navBtn.firePress();
@@ -329,7 +333,7 @@ sap.ui.define([
 													oValueHelpIcon3.firePress();
 													EditorQunitUtils.wait().then(function () {
 														oLanguageItems3 = oTranslationListPage3.getContent()[0].getItems();
-														assert.equal(oLanguageItems3.length, 50, "oTranslationPopover3 Content: length");
+														assert.equal(oLanguageItems3.length, 49, "oTranslationPopover3 Content: length");
 														for (var i = 0; i < oLanguageItems3.length; i++) {
 															var oCustomData = oLanguageItems3[i].getCustomData();
 															if (oCustomData && oCustomData.length > 0) {
@@ -337,6 +341,8 @@ sap.ui.define([
 																var sExpectedValue = _oOriginExpectedValues["string2"][sLanguage] || _oOriginExpectedValues["string2"]["default"];
 																var sCurrentValue = oLanguageItems3[i].getContent()[0].getItems()[1].getValue();
 																assert.equal(sCurrentValue, sExpectedValue, "oTranslationPopover3 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
+																var sValueState = oLanguageItems3[i].getContent()[0].getItems()[1].getValueState();
+																assert.equal(sValueState, "None", "oTranslationPopover3 Content: item " + i + " " + sLanguage + ", value state: " + sValueState + ", expected: None");
 															}
 														}
 														destroyEditor(that.oEditor);

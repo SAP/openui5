@@ -893,11 +893,9 @@ sap.ui.define([
 
 	BaseField.prototype.buildTranslationsList = function (sId) {
 		return new List(sId + "", {
-			growing: true, // required to enable Extended Change Detection (ECD)
-			growingThreshold: 60,
 			items: {
 				path: "languages>/translatedLanguages",
-				key: "key", // ECD
+				key: "key",
 				template: new CustomListItem({
 					content: [
 						new VBox({
@@ -907,7 +905,9 @@ sap.ui.define([
 								}),
 								new Input({
 									value: "{languages>value}",
-									editable: "{languages>editable}"
+									editable: "{languages>editable}",
+									valueState: "{= ${languages>updated} === true ? 'Information' : 'None' }",
+									showValueStateMessage: false
 								})
 							]
 						})
@@ -920,36 +920,19 @@ sap.ui.define([
 					]
 				}),
 				sorter: [new Sorter({
-					path: 'status',
-					descending: true,
-					group: true
+					path: 'updated',
+					descending: true
 				})]
 			}
 		});
 	};
 
 	BaseField.prototype.buildTranslationsModel = function (oTranslatedValues) {
-		var that = this;
-		var oResourceBundle = that.getResourceBundle();
 		var oTranslatonsModel = new JSONModel(oTranslatedValues);
 		oTranslatonsModel.attachPropertyChange(function(oEvent) {
 			var oContext = oEvent.getParameter("context");
-			var oLanguageChanged = oTranslatonsModel.getProperty(oContext.getPath());
-			var sStatusStr = oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_LISTITEM_GROUP_NOTUPDATED");
-			if (oLanguageChanged.value !== oLanguageChanged.originValue) {
-				sStatusStr = oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_LISTITEM_GROUP_UPDATED");
-			}
-			var bIsUpdated = false;
-			var oData = oTranslatonsModel.getData();
-			for (var i = 0; i < oData.translatedLanguages.length; i++) {
-				var oLanguage = oData.translatedLanguages[i];
-				if (oLanguage.value !== oLanguage.originValue) {
-					bIsUpdated = true;
-					break;
-				}
-			}
-			oTranslatonsModel.setProperty(oContext.getPath("status"), sStatusStr, null, /*async:*/true);
-			oTranslatonsModel.setProperty("/isUpdated", bIsUpdated, null, /*async:*/true);
+			oTranslatonsModel.setProperty(oContext.getPath("updated"), true);
+			oTranslatonsModel.setProperty("/isUpdated", true);
 		});
 		return oTranslatonsModel;
 	};

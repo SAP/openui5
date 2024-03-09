@@ -293,7 +293,7 @@ sap.ui.define([
 								EditorQunitUtils.wait(1500).then(function () {
 									var oTranslationListPage1 = oField._oTranslationListPage;
 									var oLanguageItems1 = oTranslationListPage1.getContent()[0].getItems();
-									assert.equal(oLanguageItems1.length, 50, "oTranslationPopover1 Content: length");
+									assert.equal(oLanguageItems1.length, 49, "oTranslationPopover1 Content: length");
 									for (var i = 0; i < oLanguageItems1.length; i++) {
 										var oCustomData = oLanguageItems1[i].getCustomData();
 										if (oCustomData && oCustomData.length > 0) {
@@ -301,6 +301,8 @@ sap.ui.define([
 											var sExpectedValue = _oOriginExpectedValues["string1"][sLanguage] || _oOriginExpectedValues["string1"]["default"];
 											var sCurrentValue = oLanguageItems1[i].getContent()[0].getItems()[1].getValue();
 											assert.equal(sCurrentValue, sExpectedValue, "oTranslationPopover1 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
+											var sValueState = oLanguageItems1[i].getContent()[0].getItems()[1].getValueState();
+											assert.equal(sValueState, "None", "oTranslationPopover1 Content: item " + i + " " + sLanguage + ", value state: " + sValueState + ", expected: None");
 										}
 									}
 									destroyEditor(that.oEditor);
@@ -381,7 +383,7 @@ sap.ui.define([
 								EditorQunitUtils.wait(1500).then(function () {
 									var oTranslationListPage1 = oField._oTranslationListPage;
 									var oLanguageItems1 = oTranslationListPage1.getContent()[0].getItems();
-									assert.equal(oLanguageItems1.length, 50, "oTranslationPopover1 Content: length");
+									assert.equal(oLanguageItems1.length, 49, "oTranslationPopover1 Content: length");
 									for (var i = 0; i < oLanguageItems1.length; i++) {
 										var oCustomData = oLanguageItems1[i].getCustomData();
 										if (oCustomData && oCustomData.length > 0) {
@@ -389,6 +391,8 @@ sap.ui.define([
 											var sExpectedValue = _oOriginExpectedValues["string1"][sLanguage] || _oOriginExpectedValues["string1"]["default"];
 											var sCurrentValue = oLanguageItems1[i].getContent()[0].getItems()[1].getValue();
 											assert.equal(sCurrentValue, sExpectedValue, "oTranslationPopover1 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
+											var sValueState = oLanguageItems1[i].getContent()[0].getItems()[1].getValueState();
+											assert.equal(sValueState, "None", "oTranslationPopover1 Content: item " + i + " " + sLanguage + ", value state: " + sValueState + ", expected: None");
 										}
 									}
 									destroyEditor(that.oEditor);

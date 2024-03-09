@@ -1716,15 +1716,17 @@ sap.ui.define([
 		// merge with the current translation texts
 		that._oOriginTranslatedValues[sTranslationKey].forEach(function (originTranslatedValue) {
 			var oTempTranslatedValue = deepClone(originTranslatedValue, 500);
-			oTempTranslatedValue.status = oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_LISTITEM_GROUP_NOTUPDATED");
+			oTempTranslatedValue.updated = false;
 			var sTranslateText = that.getTranslationValueInTexts(oTempTranslatedValue.key, sUUID, sProperty);
 			if (sTranslateText) {
 				oTempTranslatedValue.value = sTranslateText;
-				if (Array.isArray(that._oUpdatedTranslations[sTranslationKey]) && that._oUpdatedTranslations[sTranslationKey].includes(oTempTranslatedValue.key)) {
-					oTempTranslatedValue.value = that.getTranslationValueInTexts(oTempTranslatedValue.key, sUUID, sProperty);
-					oTempTranslatedValue.status = oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_LISTITEM_GROUP_UPDATED");
-				} else {
-					oTempTranslatedValue.originValue = oTempTranslatedValue.value;
+				if (Array.isArray(that._oUpdatedTranslations[sTranslationKey])) {
+					if (that._oUpdatedTranslations[sTranslationKey].includes(oTempTranslatedValue.key)) {
+						oTempTranslatedValue.value = that.getTranslationValueInTexts(oTempTranslatedValue.key, sUUID, sProperty);
+						oTempTranslatedValue.updated = true;
+					} else {
+						oTempTranslatedValue.originValue = oTempTranslatedValue.value;
+					}
 				}
 			}
 			if (oTempTranslatedValue.key === Utils._language) {
@@ -1777,8 +1779,12 @@ sap.ui.define([
 				var sProperty = oData.property;
 				oData.translatedLanguages.forEach(function(oLanguage) {
 					if (oLanguage.value !== oLanguage.originValue) {
-						that.setTranslationValueInTexts(oLanguage.key, sUUID, sProperty, oLanguage.value);
-						aUpdatedLanguages.push(oLanguage.key);
+						if (oLanguage.updated) {
+							that.setTranslationValueInTexts(oLanguage.key, sUUID, sProperty, oLanguage.value);
+							aUpdatedLanguages.push(oLanguage.key);
+						}
+					} else if (oLanguage.updated) {
+						that.deleteTranslationValueInTexts(oLanguage.key, sUUID, sProperty);
 					}
 				});
 				var bUpdateDependentFieldsAndPreview = false;
@@ -1788,6 +1794,8 @@ sap.ui.define([
 					if (aUpdatedLanguages.includes(Utils._language)) {
 						bUpdateDependentFieldsAndPreview = true;
 					}
+				} else if (that._oUpdatedTranslations) {
+					delete that._oUpdatedTranslations[sTranslationKey];
 				}
 				// refresh the translation list
 				oData = that.buildTranslationsData(sKey, sType, sUUID, sProperty);
@@ -1815,7 +1823,7 @@ sap.ui.define([
 				// set value to origin value
 				oData.translatedLanguages.forEach(function (translatedValue) {
 					translatedValue.value = translatedValue.originValue;
-					translatedValue.status = oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_LISTITEM_GROUP_NOTUPDATED");
+					translatedValue.updated = false;
 				});
 				oData.isUpdated = false;
 				oTranslationModel.setData(oData);
