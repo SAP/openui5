@@ -362,7 +362,7 @@ sap.ui.define([
 								assert.ok(oCancelButton1.getVisible(), "oTranslationPopover 1 footer: cancel button visible");
 								assert.ok(oCancelButton1.getEnabled(), "oTranslationPopover 1 footer: cancel button enabled");
 								var oLanguageItems1 = oTranslationPopover1.getContent()[0].getItems();
-								assert.equal(oLanguageItems1.length, 50, "oTranslationPopover 1 Content: length");
+								assert.equal(oLanguageItems1.length, 49, "oTranslationPopover1 Content: length");
 								for (var i = 0; i < oLanguageItems1.length; i++) {
 									var oCustomData = oLanguageItems1[i].getCustomData();
 									if (oCustomData && oCustomData.length > 0) {
@@ -411,7 +411,7 @@ sap.ui.define([
 										assert.ok(oCancelButton2.getVisible(), "oTranslationPopover 2 footer: cancel button visible");
 										assert.ok(oCancelButton2.getEnabled(), "oTranslationPopover 2 footer: cancel button enabled");
 										var oLanguageItems2 = oTranslationPopover2.getContent()[0].getItems();
-										assert.equal(oLanguageItems2.length, 50, "oTranslationPopover 2 Content: length");
+										assert.equal(oLanguageItems2.length, 49, "oTranslationPopover 2 Content: length");
 										for (var i = 0; i < oLanguageItems2.length; i++) {
 											var oCustomData = oLanguageItems2[i].getCustomData();
 											if (oCustomData && oCustomData.length > 0) {
@@ -460,7 +460,7 @@ sap.ui.define([
 												assert.ok(oCancelButton3.getVisible(), "oTranslationPopover 3 footer: cancel button visible");
 												assert.ok(oCancelButton3.getEnabled(), "oTranslationPopover 3 footer: cancel button enabled");
 												var oLanguageItems3 = oTranslationPopover3.getContent()[0].getItems();
-												assert.equal(oLanguageItems3.length, 50, "oTranslationPopover 3 Content: length");
+												assert.equal(oLanguageItems3.length, 49, "oTranslationPopover 3 Content: length");
 												for (var i = 0; i < oLanguageItems3.length; i++) {
 													var oCustomData = oLanguageItems3[i].getCustomData();
 													if (oCustomData && oCustomData.length > 0) {

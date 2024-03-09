@@ -244,7 +244,7 @@ sap.ui.define([
 										var oCancelButton1 = oTranslationListPage1.getFooter().getContent()[3];
 										assert.ok(!oCancelButton1.getVisible(), "oTranslationListPage 1 footer: cancel button not visible");
 										var oLanguageItems1 = oTranslationListPage1.getContent()[0].getItems();
-										assert.equal(oLanguageItems1.length, 50, "oTranslationPopover 1 Content: length");
+										assert.equal(oLanguageItems1.length, 49, "oTranslationPopover1 Content: length");
 										for (var i = 0; i < oLanguageItems1.length; i++) {
 											var oCustomData = oLanguageItems1[i].getCustomData();
 											if (oCustomData && oCustomData.length > 0) {
