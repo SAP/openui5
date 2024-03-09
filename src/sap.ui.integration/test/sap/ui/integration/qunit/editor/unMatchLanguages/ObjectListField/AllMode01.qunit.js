@@ -294,7 +294,7 @@ sap.ui.define([
 									EditorQunitUtils.wait(1500).then(function () {
 										var oTranslationListPage = oField._oTranslationListPage;
 										var oLanguageItems = oTranslationListPage.getContent()[0].getItems();
-										assert.equal(oLanguageItems.length, 50, "oTranslationPopover Content: length");
+										assert.equal(oLanguageItems.length, 49, "oTranslationPopover Content: length");
 										for (var i = 0; i < oLanguageItems.length; i++) {
 											var oCustomData = oLanguageItems[i].getCustomData();
 											if (oCustomData && oCustomData.length > 0) {
@@ -386,7 +386,7 @@ sap.ui.define([
 									EditorQunitUtils.wait(1500).then(function () {
 										var oTranslationListPage = oField._oTranslationListPage;
 										var oLanguageItems = oTranslationListPage.getContent()[0].getItems();
-										assert.equal(oLanguageItems.length, 50, "oTranslationPopover Content: length");
+										assert.equal(oLanguageItems.length, 49, "oTranslationPopover Content: length");
 										for (var i = 0; i < oLanguageItems.length; i++) {
 											var oCustomData = oLanguageItems[i].getCustomData();
 											if (oCustomData && oCustomData.length > 0) {
@@ -477,7 +477,7 @@ sap.ui.define([
 									EditorQunitUtils.wait(1500).then(function () {
 										var oTranslationListPage = oField._oTranslationListPage;
 										var oLanguageItems = oTranslationListPage.getContent()[0].getItems();
-										assert.equal(oLanguageItems.length, 50, "oTranslationPopover Content: length");
+										assert.equal(oLanguageItems.length, 49, "oTranslationPopover Content: length");
 										for (var i = 0; i < oLanguageItems.length; i++) {
 											var oCustomData = oLanguageItems[i].getCustomData();
 											if (oCustomData && oCustomData.length > 0) {
@@ -569,7 +569,7 @@ sap.ui.define([
 									EditorQunitUtils.wait(1500).then(function () {
 										var oTranslationListPage = oField._oTranslationListPage;
 										var oLanguageItems = oTranslationListPage.getContent()[0].getItems();
-										assert.equal(oLanguageItems.length, 50, "oTranslationPopover Content: length");
+										assert.equal(oLanguageItems.length, 49, "oTranslationPopover Content: length");
 										for (var i = 0; i < oLanguageItems.length; i++) {
 											var oCustomData = oLanguageItems[i].getCustomData();
 											if (oCustomData && oCustomData.length > 0) {

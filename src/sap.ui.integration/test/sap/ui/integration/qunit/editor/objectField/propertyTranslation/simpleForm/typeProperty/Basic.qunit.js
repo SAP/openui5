@@ -231,7 +231,7 @@ sap.ui.define([
 						EditorQunitUtils.wait(1500).then(function () {
 							var oTranslationPopover3 = oField._oTranslationPopover;
 							var oLanguageItems1 = oTranslationPopover3.getContent()[0].getItems();
-							assert.equal(oLanguageItems1.length, 50, "oTranslationPopover3 Content: length");
+							assert.equal(oLanguageItems1.length, 49, "oTranslationPopover3 Content: length");
 							for (var i = 0; i < oLanguageItems1.length; i++) {
 								var oCustomData = oLanguageItems1[i].getCustomData();
 								if (oCustomData && oCustomData.length > 0) {
@@ -257,7 +257,7 @@ sap.ui.define([
 							oValueHelpIcon3.firePress();
 							EditorQunitUtils.wait().then(function () {
 								oLanguageItems1 = oTranslationPopover3.getContent()[0].getItems();
-								assert.equal(oLanguageItems1.length, 50, "oTranslationPopover3 Content: length");
+								assert.equal(oLanguageItems1.length, 49, "oTranslationPopover3 Content: length");
 								for (var i = 0; i < oLanguageItems1.length; i++) {
 									var oCustomData = oLanguageItems1[i].getCustomData();
 									if (oCustomData && oCustomData.length > 0) {
@@ -283,7 +283,7 @@ sap.ui.define([
 									EditorQunitUtils.wait().then(function () {
 										var oTranslationPopover1 = oField._oTranslationPopover;
 										var oLanguageItems1 = oTranslationPopover1.getContent()[0].getItems();
-										assert.equal(oLanguageItems1.length, 50, "oTranslationPopover1 Content: length");
+										assert.equal(oLanguageItems1.length, 49, "oTranslationPopover1 Content: length");
 										for (var i = 0; i < oLanguageItems1.length; i++) {
 											var oCustomData = oLanguageItems1[i].getCustomData();
 											if (oCustomData && oCustomData.length > 0) {

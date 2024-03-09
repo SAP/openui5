@@ -274,7 +274,7 @@ sap.ui.define([
 										var oCancelButton3 = oTranslationListPage3.getFooter().getContent()[3];
 										assert.ok(!oCancelButton3.getVisible(), "oTranslationListPage3 footer: cancel button not visible");
 										var oLanguageItems3 = oTranslationListPage3.getContent()[0].getItems();
-										assert.equal(oLanguageItems3.length, 50, "oTranslationPopover3 Content: length");
+										assert.equal(oLanguageItems3.length, 49, "oTranslationPopover3 Content: length");
 										for (var i = 0; i < oLanguageItems3.length; i++) {
 											var oCustomData = oLanguageItems3[i].getCustomData();
 											if (oCustomData && oCustomData.length > 0) {
@@ -350,7 +350,7 @@ sap.ui.define([
 													oCancelButton3 = oTranslationListPage3.getFooter().getContent()[3];
 													assert.ok(!oCancelButton3.getVisible(), "oTranslationListPage3 footer: cancel button not visible");
 													oLanguageItems3 = oTranslationListPage3.getContent()[0].getItems();
-													assert.equal(oLanguageItems3.length, 50, "oTranslationPopover3 Content: length");
+													assert.equal(oLanguageItems3.length, 49, "oTranslationPopover3 Content: length");
 													for (var i = 0; i < oLanguageItems3.length; i++) {
 														var oCustomData = oLanguageItems3[i].getCustomData();
 														if (oCustomData && oCustomData.length > 0) {

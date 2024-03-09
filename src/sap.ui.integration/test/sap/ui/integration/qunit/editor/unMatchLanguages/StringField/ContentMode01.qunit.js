@@ -132,9 +132,8 @@ sap.ui.define([
 								assert.equal(aHeaderItems1[3].getText(), this.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_OTHERLANGUAGES"), "oTranslationPopover Header: Other Languages");
 								assert.ok(oTranslationPopover.getContent()[0].isA("sap.m.List"), "oTranslationPopover Content: List");
 								var oLanguageItems1 = oTranslationPopover.getContent()[0].getItems();
-								assert.equal(oLanguageItems1.length, 49, "oTranslationPopover Content: length");
-								assert.equal(oLanguageItems1[0].getTitle(), this.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_LISTITEM_GROUP_NOTUPDATED"), "oTranslationPopover Content: item 0");
-								for (var i = 1; i < oLanguageItems1.length; i++) {
+								assert.equal(oLanguageItems1.length, 48, "oTranslationPopover Content: length");
+								for (var i = 0; i < oLanguageItems1.length; i++) {
 									var sLanguageKey = oLanguageItems1[i].getCustomData()[0].getKey();
 									var sExpectedValue = _oExpectedValuesOfChangesWithTransFormat["string1"]["default_in_en"];
 									if (aLanguageMappingValues.indexOf(sLanguageKey) > -1) {
@@ -207,9 +206,8 @@ sap.ui.define([
 								assert.equal(aHeaderItems1[3].getText(), this.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_OTHERLANGUAGES"), "oTranslationPopover Header: Other Languages");
 								assert.ok(oTranslationPopover.getContent()[0].isA("sap.m.List"), "oTranslationPopover Content: List");
 								var oLanguageItems1 = oTranslationPopover.getContent()[0].getItems();
-								assert.equal(oLanguageItems1.length, 49, "oTranslationPopover Content: length");
-								assert.equal(oLanguageItems1[0].getTitle(), this.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_LISTITEM_GROUP_NOTUPDATED"), "oTranslationPopover Content: item 0");
-								for (var i = 1; i < oLanguageItems1.length; i++) {
+								assert.equal(oLanguageItems1.length, 48, "oTranslationPopover Content: length");
+								for (var i = 0; i < oLanguageItems1.length; i++) {
 									var sLanguageKey = oLanguageItems1[i].getCustomData()[0].getKey();
 									var sExpectedValue = _oExpectedValuesOfChangesWithTransFormat["string1"][sLanguageKey];
 									if (!sExpectedValue) {

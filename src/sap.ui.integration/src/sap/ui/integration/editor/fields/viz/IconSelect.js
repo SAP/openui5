@@ -2,7 +2,6 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/base/i18n/Localization",
 	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
 	"sap/ui/integration/editor/fields/viz/VizBase",
@@ -25,7 +24,6 @@ sap.ui.define([
 	"sap/m/SegmentedButtonItem",
 	"sap/ui/integration/util/Utils"
 ], function(
-	Localization,
 	Element,
 	Library,
 	VizBase,
