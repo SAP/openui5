@@ -20,46 +20,46 @@ sap.ui.define([
 	 * @public
 	 * @since 1.34.0
 	 * @alias sap.m.P13nDimMeasureItem
-     * @deprecated since 1.120
+	 * @deprecated since 1.120
 	 */
 	var P13nDimMeasureItem = Item.extend("sap.m.P13nDimMeasureItem", /** @lends sap.m.P13nDimMeasureItem.prototype */
-	{
-		metadata: {
+		{
+			metadata: {
 
-			library: "sap.m",
-			properties: {
+				library: "sap.m",
+				properties: {
 
-				/**
-				 * Specifies the unique chart column key. In this context a column refers to dimensions or measures of a chart.
-				 */
-				columnKey: {
-					type: "string"
-				},
+					/**
+					 * Specifies the unique chart column key. In this context a column refers to dimensions or measures of a chart.
+					 */
+					columnKey: {
+						type: "string"
+					},
 
-				/**
-				 * Specifies the order of visible dimensions or measures of a chart.
-				 */
-				index: {
-					type: "int",
-					defaultValue: -1
-				},
+					/**
+					 * Specifies the order of visible dimensions or measures of a chart.
+					 */
+					index: {
+						type: "int",
+						defaultValue: -1
+					},
 
-				/**
-				 * Specifies the visibility of dimensions or measures.
-				 */
-				visible: {
-					type: "boolean"
-				},
+					/**
+					 * Specifies the visibility of dimensions or measures.
+					 */
+					visible: {
+						type: "boolean"
+					},
 
-				/**
-				 * Specifies the role of dimensions or measures. The role determines how dimensions and measures influence the chart.
-				 */
-				role: {
-					type: "string"
+					/**
+					 * Specifies the role of dimensions or measures. The role determines how dimensions and measures influence the chart.
+					 */
+					role: {
+						type: "string"
+					}
 				}
 			}
-		}
-	});
+		});
 
 	return P13nDimMeasureItem;
 

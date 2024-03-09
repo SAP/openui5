@@ -20,35 +20,35 @@ sap.ui.define([
 	 * @public
 	 * @since 1.26.0
 	 * @alias sap.m.P13nSortItem
-     * @deprecated sind 1.120
+	 * @deprecated since 1.120
 	 */
 	var P13nSortItem = Item.extend("sap.m.P13nSortItem", /** @lends sap.m.P13nSortItem.prototype */
-	{
-		metadata: {
+		{
+			metadata: {
 
-			library: "sap.m",
-			properties: {
+				library: "sap.m",
+				properties: {
 
-				/**
-				 * sap.m.P13nConditionOperation
-				 */
-				operation: {
-					type: "string",
-					group: "Misc",
-					defaultValue: null
-				},
+					/**
+					 * sap.m.P13nConditionOperation
+					 */
+					operation: {
+						type: "string",
+						group: "Misc",
+						defaultValue: null
+					},
 
-				/**
-				 * key of the column
-				 */
-				columnKey: {
-					type: "string",
-					group: "Misc",
-					defaultValue: null
+					/**
+					 * key of the column
+					 */
+					columnKey: {
+						type: "string",
+						group: "Misc",
+						defaultValue: null
+					}
 				}
 			}
-		}
-	});
+		});
 
 	P13nSortItem.prototype.setColumnKey = function(v) {
 		return this.setProperty("columnKey", v, true);

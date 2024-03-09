@@ -21,66 +21,66 @@ sap.ui.define([
 	 * @public
 	 * @since 1.26.0
 	 * @alias sap.m.P13nColumnsItem
-     * @deprecated since 1.120
+	 * @deprecated since 1.120
 	 */
 	var P13nColumnsItem = Item.extend("sap.m.P13nColumnsItem", /** @lends sap.m.P13nColumnsItem.prototype */
-	{
-		metadata: {
+		{
+			metadata: {
 
-			library: "sap.m",
-			properties: {
+				library: "sap.m",
+				properties: {
 
-				/**
-				 * This property contains the unique table column key
-				 *
-				 * @since 1.26.0
-				 */
-				columnKey: {
-					type: "string",
-					group: "Misc"
-				}, // don't set a default value
+					/**
+					 * This property contains the unique table column key
+					 *
+					 * @since 1.26.0
+					 */
+					columnKey: {
+						type: "string",
+						group: "Misc"
+					}, // don't set a default value
 
-				/**
-				 * This property contains the index of a table column
-				 *
-				 * @since 1.26.0
-				 */
-				index: {
-					type: "int",
-					group: "Appearance"
-				}, // don't set a default value
+					/**
+					 * This property contains the index of a table column
+					 *
+					 * @since 1.26.0
+					 */
+					index: {
+						type: "int",
+						group: "Appearance"
+					}, // don't set a default value
 
-				/**
-				 * This property decides whether a <code>P13nColumnsItem</code> is visible
-				 *
-				 * @since 1.26.0
-				 */
-				visible: {
-					type: "boolean",
-					group: "Appearance"
-				}, // don't set a default value
+					/**
+					 * This property decides whether a <code>P13nColumnsItem</code> is visible
+					 *
+					 * @since 1.26.0
+					 */
+					visible: {
+						type: "boolean",
+						group: "Appearance"
+					}, // don't set a default value
 
-				/**
-				 * This property contains the with of a table column.
-				 *
-				 * @since 1.26.0
-				 */
-				width: {
-					type: "string",
-					group: "Misc"
-				}, // don't set a default value
+					/**
+					 * This property contains the with of a table column.
+					 *
+					 * @since 1.26.0
+					 */
+					width: {
+						type: "string",
+						group: "Misc"
+					}, // don't set a default value
 
-				/**
-				 * This property contains the total flag of a table column.
-				 *
-				 * @since 1.26.0
-				 */
-				total: {
-					type: "boolean"
+					/**
+					 * This property contains the total flag of a table column.
+					 *
+					 * @since 1.26.0
+					 */
+					total: {
+						type: "boolean"
+					}
 				}
 			}
-		}
-	});
+		});
 
 	return P13nColumnsItem;
 

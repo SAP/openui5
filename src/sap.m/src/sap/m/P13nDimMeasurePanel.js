@@ -98,80 +98,80 @@ sap.ui.define([
 	 * @public
 	 * @since 1.34.0
 	 * @alias sap.m.P13nDimMeasurePanel
-     * @deprecated since 1.120
+	 * @deprecated since 1.120
 	 */
 	var P13nDimMeasurePanel = P13nPanel.extend("sap.m.P13nDimMeasurePanel", /** @lends sap.m.P13nDimMeasurePanel.prototype */
-	{
-		metadata: {
-			library: "sap.m",
-			properties: {
+		{
+			metadata: {
+				library: "sap.m",
+				properties: {
 
-				/**
-				 * Specifies a chart type key.
-				 */
-				chartTypeKey: {
-					type: "string",
-					defaultValue: ""
+					/**
+					 * Specifies a chart type key.
+					 */
+					chartTypeKey: {
+						type: "string",
+						defaultValue: ""
+					}
+				},
+				aggregations: {
+					/**
+					 * List of columns that has been changed.
+					 */
+					dimMeasureItems: {
+						type: "sap.m.P13nDimMeasureItem",
+						multiple: true,
+						singularName: "dimMeasureItem",
+						bindable: "bindable"
+					},
+
+					/**
+					 * Internal aggregation for the toolbar content.
+					 */
+					content: {
+						type: "sap.ui.core.Control",
+						multiple: true,
+						singularName: "content",
+						visibility: "hidden"
+					},
+
+					/**
+					 * Specifies available chart types.
+					 */
+					availableChartTypes: {
+						type: "sap.ui.core.Item",
+						multiple: true,
+						singularName: "availableChartType"
+					}
+				},
+				events: {
+					// TODO
+					/**
+					 * Event raised when one or more <code>DimMeasureItems</code> has been updated.
+					 * Aggregation <code>DimMeasureItems</code> should be updated outside...
+					 * @since 1.50.0
+					 */
+					changeDimMeasureItems: {},
+					/**
+					 * Event raised when a <code>ChartType</code> has been updated.
+					 * @since 1.50.0
+					 */
+					changeChartType: {}
 				}
 			},
-			aggregations: {
-				/**
-				 * List of columns that has been changed.
-				 */
-				dimMeasureItems: {
-					type: "sap.m.P13nDimMeasureItem",
-					multiple: true,
-					singularName: "dimMeasureItem",
-					bindable: "bindable"
-				},
-
-				/**
-				 * Internal aggregation for the toolbar content.
-				 */
-				content: {
-					type: "sap.ui.core.Control",
-					multiple: true,
-					singularName: "content",
-					visibility: "hidden"
-				},
-
-				/**
-				 * Specifies available chart types.
-				 */
-				availableChartTypes: {
-					type: "sap.ui.core.Item",
-					multiple: true,
-					singularName: "availableChartType"
+			renderer: {
+				apiVersion: 2,
+				render: function(oRm, oControl) {
+					oRm.openStart("div", oControl);
+					oRm.class("sapMP13nColumnsPanel");
+					oRm.openEnd();
+					oControl.getAggregation("content").forEach(function(oChildren) {
+						oRm.renderControl(oChildren);
+					});
+					oRm.close("div");
 				}
-			},
-			events: {
-				// TODO
-				/**
-				 * Event raised when one or more <code>DimMeasureItems</code> has been updated.
-				 * Aggregation <code>DimMeasureItems</code> should be updated outside...
-				 * @since 1.50.0
-				 */
-				changeDimMeasureItems: {},
-				/**
-				 * Event raised when a <code>ChartType</code> has been updated.
-				 * @since 1.50.0
-				 */
-				changeChartType: {}
 			}
-		},
-		renderer: {
-			apiVersion: 2,
-			render: function(oRm, oControl){
-				oRm.openStart("div", oControl);
-				oRm.class("sapMP13nColumnsPanel");
-				oRm.openEnd();
-				oControl.getAggregation("content").forEach(function(oChildren){
-					oRm.renderControl(oChildren);
-				});
-				oRm.close("div");
-			}
-		}
-	});
+		});
 
 	P13nDimMeasurePanel.prototype.init = function() {
 		// The panel is using internal JSON model which is bound to internal sap.m.Table.
@@ -884,22 +884,22 @@ sap.ui.define([
 	};
 
 	P13nDimMeasurePanel.prototype._sortModelItemsByPersistentIndex = function(aModelItems) {
-        // BCP 0020751294 0000593415 2018
-        var oCollator;
-        var sLanguage = new Locale(Localization.getLanguageTag()).toString();
-        try {
-            if (typeof window.Intl !== 'undefined') {
-                oCollator = window.Intl.Collator(sLanguage, {
-                    numeric: true
-                });
-            }
-        } catch (oException) {
-            // this exception can happen if the configured language is not convertible to BCP47 -> getLocale will deliver an exception
-        }
-        // BCP 0020751295 0000514259 2018
-        aModelItems.forEach(function(oMItem, iIndex) {
-            oMItem.localIndex = iIndex;
-        });
+		// BCP 0020751294 0000593415 2018
+		var oCollator;
+		var sLanguage = new Locale(Localization.getLanguageTag()).toString();
+		try {
+			if (typeof window.Intl !== 'undefined') {
+				oCollator = window.Intl.Collator(sLanguage, {
+					numeric: true
+				});
+			}
+		} catch (oException) {
+			// this exception can happen if the configured language is not convertible to BCP47 -> getLocale will deliver an exception
+		}
+		// BCP 0020751295 0000514259 2018
+		aModelItems.forEach(function(oMItem, iIndex) {
+			oMItem.localIndex = iIndex;
+		});
 		aModelItems.sort(function(a, b) {
 			if (a.persistentSelected === true && (b.persistentSelected === false || b.persistentSelected === undefined)) {
 				return -1;
@@ -911,17 +911,17 @@ sap.ui.define([
 				} else if (b.persistentIndex > -1 && a.persistentIndex > b.persistentIndex) {
 					return 1;
 				} else {
-                    return a.localIndex - b.localIndex;
+					return a.localIndex - b.localIndex;
 				}
 			} else if ((a.persistentSelected === false || a.persistentSelected === undefined) && (b.persistentSelected === false || b.persistentSelected === undefined)) {
-                return oCollator ? oCollator.compare(a.text, b.text) : a.text.localeCompare(b.text, sLanguage, {
-                    numeric: true
-                });
+				return oCollator ? oCollator.compare(a.text, b.text) : a.text.localeCompare(b.text, sLanguage, {
+					numeric: true
+				});
 			}
 		});
-        aModelItems.forEach(function(oMItem) {
-            delete oMItem.localIndex;
-        });
+		aModelItems.forEach(function(oMItem) {
+			delete oMItem.localIndex;
+		});
 	};
 
 	P13nDimMeasurePanel.prototype._getColumnKeyByTableItem = function(oTableItem) {
