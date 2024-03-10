@@ -3,7 +3,7 @@
  */
 sap.ui.define([
 	"sap/ui/core/Control",
-	"sap/m/Label",
+	"sap/m/Text",
 	"sap/m/Input",
 	"sap/m/MultiInput",
 	"sap/m/Token",
@@ -23,7 +23,7 @@ sap.ui.define([
 	"sap/ui/model/Sorter"
 ], function (
 	Control,
-	Label,
+	Text,
 	Input,
 	MultiInput,
 	Token,
@@ -900,7 +900,7 @@ sap.ui.define([
 					content: [
 						new VBox({
 							items: [
-								new Label({
+								new Text({
 									text: "{languages>description}"
 								}),
 								new Input({
@@ -935,14 +935,14 @@ sap.ui.define([
 			var bUpdated = oLanguageChanged.value !== oLanguageChanged.originValue ? true : false;
 			var bIsUpdated = bUpdated;
 			if (!bIsUpdated) {
-			var oData = oTranslatonsModel.getData();
-			for (var i = 0; i < oData.translatedLanguages.length; i++) {
-				var oLanguage = oData.translatedLanguages[i];
-				if (oLanguage.value !== oLanguage.originValue) {
-					bIsUpdated = true;
-					break;
+				var oData = oTranslatonsModel.getData();
+				for (var i = 0; i < oData.translatedLanguages.length; i++) {
+					var oLanguage = oData.translatedLanguages[i];
+					if (oLanguage.value !== oLanguage.originValue) {
+						bIsUpdated = true;
+						break;
+					}
 				}
-			}
 			}
 			oTranslatonsModel.setProperty(oContext.getPath("updated"), bUpdated);
 			oTranslatonsModel.setProperty("/isUpdated", bIsUpdated);
