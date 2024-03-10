@@ -895,18 +895,19 @@ sap.ui.define([
 		return new List(sId + "", {
 			items: {
 				path: "languages>/translatedLanguages",
-				key: "key", // ECD
+				key: "key",
 				template: new CustomListItem({
 					content: [
 						new VBox({
 							items: [
 								new Label({
-									text: "{languages>description}",
-									required: "{languages>updated}"
+									text: "{languages>description}"
 								}),
 								new Input({
 									value: "{languages>value}",
-									editable: "{languages>editable}"
+									editable: "{languages>editable}",
+									valueState: "{= ${languages>updated} === true ? 'Information' : 'None' }",
+									showValueStateMessage: false
 								})
 							]
 						})
