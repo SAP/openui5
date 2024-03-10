@@ -3,7 +3,6 @@
  */
 
 sap.ui.define([
-	"sap/base/i18n/Localization",
 	"sap/ui/integration/editor/fields/BaseField",
 	"sap/m/Input",
 	"sap/m/Text",
@@ -21,7 +20,6 @@ sap.ui.define([
 	"sap/base/util/deepClone",
 	"sap/ui/integration/util/Utils"
 ], function (
-	Localization,
 	BaseField,
 	Input,
 	Text,
@@ -515,7 +513,6 @@ sap.ui.define([
 			that._aOriginTranslatedValues = oField.getOriginTranslatedValues(oConfig);
 		}
 		var aTempTranslatedLanguages = deepClone(that._aOriginTranslatedValues, 500);
-		var oResourceBundle = oField.getResourceBundle();
 		//merge the value in texts or beforeLayerChange into the value list of i18n files
 		aTempTranslatedLanguages.forEach(function (translatedValue) {
 			var sTranslateText = oField.getTranslationValueInTexts(translatedValue.key, oConfig.manifestpath);
@@ -530,7 +527,7 @@ sap.ui.define([
 					translatedValue.originValue = translatedValue.value;
 				}
 			}
-			translatedValue.status = oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_LISTITEM_GROUP_NOTUPDATED");
+			translatedValue.updated = false;
 			if (translatedValue.key === Utils._language) {
 				translatedValue.editable = false;
 			}
@@ -546,7 +543,7 @@ sap.ui.define([
 			aTempTranslatedLanguages.forEach(function (translatedValue) {
 				if (Array.isArray(that._aUpdatedLanguages) && that._aUpdatedLanguages.includes(translatedValue.key)) {
 					translatedValue.value = oField.getTranslationValueInTexts(translatedValue.key, oConfig.manifestpath);
-					translatedValue.status = oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_LISTITEM_GROUP_UPDATED");
+					translatedValue.updated = true;
 				}
 				if (translatedValue.key === Utils._language) {
 					translatedValue.value = oControl.getValue();

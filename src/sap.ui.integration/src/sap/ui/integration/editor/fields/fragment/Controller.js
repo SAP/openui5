@@ -2,11 +2,9 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/base/i18n/Localization",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/integration/util/Utils"
 ], function(
-	Localization,
 	FragmentController,
 	Utils
 ) {

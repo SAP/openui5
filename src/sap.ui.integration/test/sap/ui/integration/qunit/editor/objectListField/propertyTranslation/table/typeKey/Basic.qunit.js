@@ -293,7 +293,7 @@ sap.ui.define([
 								EditorQunitUtils.wait(1500).then(function () {
 									var oTranslationListPage1 = oField._oTranslationListPage;
 									var oLanguageItems1 = oTranslationListPage1.getContent()[0].getItems();
-									assert.equal(oLanguageItems1.length, 50, "oTranslationPopover1 Content: length");
+									assert.equal(oLanguageItems1.length, 49, "oTranslationPopover1 Content: length");
 									for (var i = 0; i < oLanguageItems1.length; i++) {
 										var oCustomData = oLanguageItems1[i].getCustomData();
 										if (oCustomData && oCustomData.length > 0) {
@@ -381,7 +381,7 @@ sap.ui.define([
 								EditorQunitUtils.wait(1500).then(function () {
 									var oTranslationListPage1 = oField._oTranslationListPage;
 									var oLanguageItems1 = oTranslationListPage1.getContent()[0].getItems();
-									assert.equal(oLanguageItems1.length, 50, "oTranslationPopover1 Content: length");
+									assert.equal(oLanguageItems1.length, 49, "oTranslationPopover1 Content: length");
 									for (var i = 0; i < oLanguageItems1.length; i++) {
 										var oCustomData = oLanguageItems1[i].getCustomData();
 										if (oCustomData && oCustomData.length > 0) {

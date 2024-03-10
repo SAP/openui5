@@ -3,7 +3,7 @@
  */
 sap.ui.define([
 	"sap/ui/core/Control",
-	"sap/m/Text",
+	"sap/m/Label",
 	"sap/m/Input",
 	"sap/m/MultiInput",
 	"sap/m/Token",
@@ -23,7 +23,7 @@ sap.ui.define([
 	"sap/ui/model/Sorter"
 ], function (
 	Control,
-	Text,
+	Label,
 	Input,
 	MultiInput,
 	Token,
@@ -893,8 +893,6 @@ sap.ui.define([
 
 	BaseField.prototype.buildTranslationsList = function (sId) {
 		return new List(sId + "", {
-			growing: true, // required to enable Extended Change Detection (ECD)
-			growingThreshold: 60,
 			items: {
 				path: "languages>/translatedLanguages",
 				key: "key", // ECD
@@ -902,8 +900,9 @@ sap.ui.define([
 					content: [
 						new VBox({
 							items: [
-								new Text({
-									text: "{languages>description}"
+								new Label({
+									text: "{languages>description}",
+									required: "{languages>updated}"
 								}),
 								new Input({
 									value: "{languages>value}",
@@ -920,26 +919,21 @@ sap.ui.define([
 					]
 				}),
 				sorter: [new Sorter({
-					path: 'status',
-					descending: true,
-					group: true
+					path: 'updated',
+					descending: true
 				})]
 			}
 		});
 	};
 
 	BaseField.prototype.buildTranslationsModel = function (oTranslatedValues) {
-		var that = this;
-		var oResourceBundle = that.getResourceBundle();
 		var oTranslatonsModel = new JSONModel(oTranslatedValues);
 		oTranslatonsModel.attachPropertyChange(function(oEvent) {
 			var oContext = oEvent.getParameter("context");
 			var oLanguageChanged = oTranslatonsModel.getProperty(oContext.getPath());
-			var sStatusStr = oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_LISTITEM_GROUP_NOTUPDATED");
-			if (oLanguageChanged.value !== oLanguageChanged.originValue) {
-				sStatusStr = oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_LISTITEM_GROUP_UPDATED");
-			}
-			var bIsUpdated = false;
+			var bUpdated = oLanguageChanged.value !== oLanguageChanged.originValue ? true : false;
+			var bIsUpdated = bUpdated;
+			if (!bIsUpdated) {
 			var oData = oTranslatonsModel.getData();
 			for (var i = 0; i < oData.translatedLanguages.length; i++) {
 				var oLanguage = oData.translatedLanguages[i];
@@ -948,8 +942,9 @@ sap.ui.define([
 					break;
 				}
 			}
-			oTranslatonsModel.setProperty(oContext.getPath("status"), sStatusStr, null, /*async:*/true);
-			oTranslatonsModel.setProperty("/isUpdated", bIsUpdated, null, /*async:*/true);
+			}
+			oTranslatonsModel.setProperty(oContext.getPath("updated"), bUpdated);
+			oTranslatonsModel.setProperty("/isUpdated", bIsUpdated);
 		});
 		return oTranslatonsModel;
 	};
