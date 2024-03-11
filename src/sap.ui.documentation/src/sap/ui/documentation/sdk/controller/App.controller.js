@@ -1567,7 +1567,7 @@ sap.ui.define([
 						aHiddenValues = this._processVersionOverview(oValues[1]),
 						aFilteredVersionsEOCP = this._filterVersionsPastEOCP(oValues[1]);
 
-					if (Array.isArray(aNeoAppVersions)) {
+					if (Array.isArray(aNeoAppVersions) && aNeoAppVersions.length > 0) {
 						aNeoAppVersions = aNeoAppVersions.filter(function (oVersion) {
 							return aHiddenValues.indexOf(oVersion.version) === -1;
 						});
