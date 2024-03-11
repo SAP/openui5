@@ -5287,6 +5287,8 @@ make root = ${bMakeRoot}`;
 				"If-Match" : sinon.match.same(oElement)
 			})
 			.callsFake(() => {
+				this.mock(oCache.oTreeState).expects("delete")
+					.withExactArgs(sinon.match.same(oElement));
 				this.mock(_Cache).expects("getElementIndex")
 					.withExactArgs(sinon.match.same(oCache.aElements), "~predicate~", 2)
 					.returns(4);

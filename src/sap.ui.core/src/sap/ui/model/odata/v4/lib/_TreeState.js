@@ -65,7 +65,7 @@ sap.ui.define([
 		}
 
 		/**
-		 * Delete a node.
+		 * Delete all tree state information for the given node.
 		 *
 		 * @param {object} oNode - The node
 		 *
@@ -78,6 +78,7 @@ sap.ui.define([
 
 			const sPredicate = _Helper.getPrivateAnnotation(oNode, "predicate");
 			delete this.mPredicate2ExpandLevels[sPredicate];
+			this.deleteOutOfPlace(sPredicate);
 		}
 
 		/**
