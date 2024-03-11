@@ -175,6 +175,28 @@ sap.ui.define([
 		escape: function () {
 			return BindingInfo.parse.escape.apply(this, arguments);
 		},
+
+		/**
+		 * Checks whether a BindingInfo is ready to create its Binding.
+		 *
+		 * @param {sap.ui.core.PropertyBindingInfo | sap.ui.core.AggregationBindingInfo | sap.ui.core.ObjectBindingInfo} oBindingInfo The BindingInfo to check
+		 * @param {sap.ui.core.ManagedObject} oObject The bound ManagedObject
+		 * @returns {boolean} if the BindingInfo is ready or not
+		 * @private
+		 * @ui5-restricted sap.ui.base, sap.ui.core, sap.ui.model
+		 */
+		isReady: function(oBindingInfo, oObject) {
+			const aParts = oBindingInfo.parts;
+
+			if (aParts) { // PropertyBinding
+				return oBindingInfo.parts.every((oPart) => {
+					return oPart.value !== undefined || oObject.getModel(oPart.model);
+				});
+			} else { // AggregationBinding or ObjectBinding
+				return !!oObject.getModel(oBindingInfo.model);
+			}
+		},
+
 		UI5ObjectMarker: sUI5ObjectMarker
 	};
 

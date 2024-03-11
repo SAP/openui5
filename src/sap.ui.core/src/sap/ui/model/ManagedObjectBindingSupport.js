@@ -15,6 +15,7 @@ sap.ui.define([
 	"sap/base/future",
 	"sap/base/Log",
 	"sap/base/assert",
+	"sap/ui/base/BindingInfo",
 	"sap/ui/base/Object",
 	"sap/base/util/ObjectPath",
 	"sap/ui/base/SyncPromise",
@@ -30,6 +31,7 @@ sap.ui.define([
 	future,
 	Log,
 	assert,
+	BindingInfo,
 	BaseObject,
 	ObjectPath,
 	SyncPromise,
@@ -159,30 +161,6 @@ sap.ui.define([
 			}
 
 			/*
-			 * Checks whether a binding can be created for the given oBindingInfo.
-			 *
-			 * @param {object} oBindingInfo
-			 * @returns {boolean} Whether a binding can be created
-			 * @private
-			 */
-			function canCreate(oBindingInfo) {
-				var aParts = oBindingInfo.parts,
-					i;
-
-				if (aParts) {
-					for (i = 0; i < aParts.length; i++) {
-						// check if model exists - ignore static bindings
-						if ( !that.getModel(aParts[i].model) && aParts[i].value === undefined) {
-							return false;
-						}
-					}
-					return true;
-				} else { // List or object binding
-					return !!that.getModel(oBindingInfo.model);
-				}
-			}
-
-			/*
 			 * Remove binding, detach all events and destroy binding object
 			 */
 			function removeBinding(oBindingInfo) {
@@ -208,7 +186,7 @@ sap.ui.define([
 			// create object bindings if they don't exist yet
 			for ( sName in this.mObjectBindingInfos ) {
 				oBindingInfo = this.mObjectBindingInfos[sName];
-				bCanCreate = canCreate(oBindingInfo);
+				bCanCreate = BindingInfo.isReady(oBindingInfo, this);
 				// if there is a binding and if it became invalid through the current model change, then remove it
 				if ( oBindingInfo.binding && becameInvalid(oBindingInfo) ) {
 					removeBinding(oBindingInfo);
@@ -240,7 +218,7 @@ sap.ui.define([
 				}
 
 				// if there is no binding and if all required information is available, create a binding object
-				if ( !oBindingInfo.binding && canCreate(oBindingInfo) ) {
+				if ( !oBindingInfo.binding && BindingInfo.isReady(oBindingInfo, this) ) {
 					if (oBindingInfo.factory) {
 						this._bindAggregation(sName, oBindingInfo);
 					} else {
