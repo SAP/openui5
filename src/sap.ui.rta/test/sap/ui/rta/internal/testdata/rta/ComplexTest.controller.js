@@ -111,7 +111,7 @@ sap.ui.define([
 							this.oView.setModel(oStateModel, "state");
 							this.oView.bindElement("/Headers(AccountingDocument='100015012',CompanyCode='0001',FiscalYear='2015')");
 
-							return fetch(`${this._sResourcePath}/countriesExtendedCollection.json`)
+							fetch(`${this._sResourcePath}/countriesExtendedCollection.json`)
 							.then(function(oResponse) {
 								return oResponse.json();
 							}).then(function(oJson) {

@@ -1,7 +1,8 @@
-/*global QUnit */
+/*global QUnit sinon */
 sap.ui.define([
+	"sap/base/Log",
 	"sap/ui/base/EventProvider"
-], function(EventProvider) {
+], function(Log, EventProvider) {
 	"use strict";
 
 	QUnit.test("InitialObject", function(assert) {
@@ -381,4 +382,31 @@ sap.ui.define([
 		assert.equal(iCount, 3, "Handler is called three times");
 	});
 
+	QUnit.test("FireEvent with Async Listener", async (assert) => {
+		const oEventProvider = new EventProvider();
+		const aPromises = [];
+
+		const myPromiseFunction = () => {
+			const oPromise = Promise.reject(new Error("Function failed."));
+			aPromises.push(oPromise);
+			return oPromise;
+		};
+		const myAsyncFunction = async () => {
+			const oPromise = Promise.reject(new Error("Async function failed."));
+			aPromises.push(oPromise);
+			await oPromise;
+		};
+
+		const myLogSpy = sinon.spy(Log, "error");
+		oEventProvider.attachEvent("MyEvent1", myPromiseFunction);
+		oEventProvider.attachEvent("MyEvent2", myAsyncFunction);
+		oEventProvider.fireEvent("MyEvent1");
+		oEventProvider.fireEvent("MyEvent2");
+
+		await Promise.allSettled(aPromises).then(() => {
+			assert.equal(myLogSpy.callCount, 2, "Error log should be displayed");
+			assert.ok(myLogSpy.getCall(0).calledWith("EventProvider.fireEvent: Event Listener for event 'MyEvent1' failed during execution."), "Correct Error Log displayed.");
+			assert.ok(myLogSpy.getCall(1).calledWith("EventProvider.fireEvent: Event Listener for event 'MyEvent2' failed during execution."), "Correct Error Log displayed.");
+		});
+	});
 });

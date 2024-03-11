@@ -73,9 +73,10 @@ sap.ui.define([
 			var oSelectedContexts = this.getOwnerComponent().getSelectedContexts();
 			var bHasContexts = oSelectedContexts.role.length > 0;
 			if (bHasContexts) {
-				return assignDescriptionsToSelectedRoles.call(this, oSelectedContexts);
+				this._pLoadContextDescriptions = assignDescriptionsToSelectedRoles.call(this, oSelectedContexts);
+			} else {
+				this._pLoadContextDescriptions = Promise.resolve();
 			}
-			return Promise.resolve();
 		},
 
 		_onSelectionChange(oEvent) {
