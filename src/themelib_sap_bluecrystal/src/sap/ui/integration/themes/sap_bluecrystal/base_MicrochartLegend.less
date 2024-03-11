@@ -1,0 +1,52 @@
+/* ============================================================ */
+/* CSS for control sap.ui.integration.controls/MicrochartLegend */
+/* Base theme                                                   */
+/* ============================================================ */
+
+.sapUiIntMicrochartLegend {
+	padding-top: 0.5rem;
+	padding-left: 1rem;
+
+	.sapUiIntMicrochartLegendItem {
+		display: inline-flex;
+		margin-right: 3rem;
+		margin-bottom: 0.5rem;
+		max-width: 100%;
+
+		// color segment
+		:first-child {
+			flex-shrink: 0;
+			width: 0.75rem;
+			height: 0.75rem;
+			margin-right: 0.5rem;
+		}
+
+		// title
+		:nth-child(2) {
+			height: 0.75rem;
+			font-size: 0.75rem;
+			overflow: hidden;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+		}
+
+	}
+}
+
+.sapUiIntMicrochartLegendItem {
+	&Neutral {
+		background: @sapUiChartPaletteSemanticNeutral;
+	}
+
+	&Good {
+		background: @sapUiChartPaletteSemanticGood;
+	}
+
+	&Error {
+		background: @sapUiChartPaletteSemanticBad;
+	}
+
+	&Critical {
+		background: @sapUiChartPaletteSemanticCritical;
+	}
+}
