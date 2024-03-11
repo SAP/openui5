@@ -601,7 +601,7 @@ sap.ui.define(["sap/ui/core/ControlBehavior", 'sap/ui/core/Renderer', 'sap/ui/co
 	/**
 	 * This method is reserved for derived classes to add extra styles for the placeholder, if rendered as label.
 	 *
-	 * @deprecated Since version 1.58.0.
+	 * @deprecated Since version 1.58.0 This method should not be used anymore as native placeholder is used on all browsers.
 	 * @protected
 	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
 	 * @param {sap.m.InputBase} oControl An object representation of the control that should be rendered.
@@ -613,7 +613,7 @@ sap.ui.define(["sap/ui/core/ControlBehavior", 'sap/ui/core/Renderer', 'sap/ui/co
 	 * To be overwritten by subclasses.
 	 * Note that this method should not be used anymore as native placeholder is used on all browsers
 	 *
-	 * @deprecated Since version 1.58.0.
+	 * @deprecated Since version 1.58.0 This method should not be used anymore as native placeholder is used on all browsers.
 	 * @protected
 	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
 	 * @param {sap.m.InputBase} oControl An object representation of the control that should be rendered.
