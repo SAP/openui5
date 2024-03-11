@@ -1,0 +1,12 @@
+{
+  "1.123.0": {
+    "date": "March 2024",
+    "notes": [
+      {
+        "id": "3a9d30bf74b770506c9f1213816e1f135d6a1cf5",
+        "type": "FIX",
+        "text": " ColumnListItem: Adjust box-shadow in HCW theme"
+      }
+    ]
+  }
+}

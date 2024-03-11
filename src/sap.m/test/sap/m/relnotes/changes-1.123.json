@@ -1,0 +1,12 @@
+{
+  "1.123.0": {
+    "date": "March 2024",
+    "notes": [
+      {
+        "id": "393fddeab52f7bdd0cf612689e27509e51c1b429",
+        "type": "FIX",
+        "text": " sap.m.RadioButtonGroup: Equalize width of single and multiple rows groups"
+      }
+    ]
+  }
+}

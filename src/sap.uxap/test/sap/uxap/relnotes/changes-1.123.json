@@ -1,0 +1,12 @@
+{
+  "1.123.0": {
+    "date": "March 2024",
+    "notes": [
+      {
+        "id": "9eb5ba2e0befdf346187c29e209c5f11267fa72c",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageSection: fixed title misalignment"
+      }
+    ]
+  }
+}

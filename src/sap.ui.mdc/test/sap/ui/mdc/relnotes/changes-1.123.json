@@ -1,0 +1,12 @@
+{
+  "1.123.0": {
+    "date": "March 2024",
+    "notes": [
+      {
+        "id": "41f03eda761c744acca04a9bf05fa3646808cc74",
+        "type": "FIX",
+        "text": " Field: initializing currency updates value"
+      }
+    ]
+  }
+}
