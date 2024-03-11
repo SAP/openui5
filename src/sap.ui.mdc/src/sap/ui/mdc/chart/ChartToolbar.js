@@ -12,6 +12,7 @@ sap.ui.define([
 		"sap/m/IllustratedMessageType",
 		"sap/ui/mdc/chart/SelectionButton",
 		"sap/ui/mdc/chart/SelectionButtonItem",
+		"sap/ui/mdc/chart/SelectionButtonDisplay",
 		"./ChartSelectionDetails",
 		"sap/ui/core/InvisibleText",
 		"sap/m/OverflowToolbarLayoutData",
@@ -30,6 +31,7 @@ sap.ui.define([
 		IllustratedMessageType,
 		SelectionButton,
 		SelectionButtonItem,
+		SelectionButtonDisplay,
 		ChartSelectionDetails,
 		InvisibleText,
 		OverflowToolbarLayoutData,
@@ -131,8 +133,11 @@ sap.ui.define([
 
 			if (aP13nMode.indexOf("Item") > -1 && (!oChart.getIgnoreToolbarActions().length || oChart.getIgnoreToolbarActions().indexOf(ChartToolbarActionType.DrillDownUp) < 0)) {
 				this._oDrillDownBtn = new SelectionButton(this.getId() + "-drillDown", {
+					display: SelectionButtonDisplay.Text,
+
 					text: MDCRb.getText("chart.CHART_DRILLDOWN_TITLE"),
 					title: MDCRb.getText("chart.CHART_DRILLDOWN_TITLE"),
+					icon: "sap-icon://drill-down",
 
 					noDataTitle: MDCRb.getText("chart.NO_DRILLABLE_DIMENSION"),
 					noDataDescription: MDCRb.getText("chart.NO_DRILLABLE_DIMENSION_DESC"),
@@ -197,9 +202,6 @@ sap.ui.define([
 						});
 					}
 				});
-				// Workaround to display a text on the OverFlowToolbar button when not inside the overflow.
-				this._oDrillDownBtn._bInOverflow = true;
-				this._oDrillDownBtn._onAfterExitOverflow = function () {this._bInOverflow = true;};
 
 				this.addEnd(this._oDrillDownBtn);
 				this._chartInternalButtonsToEnable.push(this._oDrillDownBtn);
@@ -282,7 +284,7 @@ sap.ui.define([
 				const sChartType = oChart.getChartType();
 
 				this._oChartTypeBtn = new SelectionButton(this.getId() + "-btnChartType", {
-					chartType: sChartType,
+					selectedItemKey: sChartType,
 
 					text: MDCRb.getText("chart.CHART_TYPELIST_TEXT"),
 					title: MDCRb.getText("chart.CHART_TYPELIST_TEXT"),
