@@ -174,5 +174,15 @@
         "text": " sap.m.CheckBox: Updated the line height"
       }
     ]
+  },
+  "1.120.10": {
+    "date": "March 2024",
+    "notes": [
+      {
+        "id": "d0a2f552ac3538a07d4c8390df2671b04a2c2763",
+        "type": "FIX",
+        "text": " ColumnListItem: Adjust box-shadow in HCW theme"
+      }
+    ]
   }
 }

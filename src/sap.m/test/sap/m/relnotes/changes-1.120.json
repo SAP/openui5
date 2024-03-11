@@ -675,5 +675,26 @@
         "text": " sap.m.Carousel: Resolve issue preventing text selection with mouse"
       }
     ]
+  },
+  "1.120.10": {
+    "date": "March 2024",
+    "notes": [
+      {
+        "id": "8a11cf935427e03f6f26145ac67bc6be6175719e",
+        "type": "FIX",
+        "text": " sap.m.Input: ResourceBundle getText method properly used"
+      },
+      {
+        "id": "050f7ffac3014df0bd46b78659e91fcb932df1db",
+        "type": "FIX",
+        "text": " m.VariantManagement: correction for deletion indicator",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500001798992024"
+          }
+        ]
+      }
+    ]
   }
 }
