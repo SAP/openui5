@@ -613,7 +613,7 @@ sap.ui.define([
 				/**
 				 * Fires when a row header is clicked.
 				 * @since 1.46.0
-				 * @deprecated Since version 1.119
+				 * @deprecated Since version 1.119, replaced by <code>rowHeaderPress</code> event
 				 */
 				rowHeaderClick: {
 					parameters : {

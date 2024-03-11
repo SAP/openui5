@@ -9,13 +9,14 @@ sap.ui.define([
 	'sap/ui/core/Control',
 	"sap/ui/core/Lib",
 	'sap/ui/core/library',
+	"sap/ui/core/Theming",
 	'sap/m/Image',
 	'sap/m/ShellRenderer',
 	"sap/ui/util/Mobile",
 	"sap/base/Log",
 	"sap/ui/core/theming/Parameters"
 ],
-	function(library, Core, Control, Library, coreLibrary, Image, ShellRenderer, Mobile, Log, ThemeParameters) {
+	function(library, Core, Control, Library, coreLibrary, Theming, Image, ShellRenderer, Mobile, Log, ThemeParameters) {
 		"use strict";
 
 
@@ -158,20 +159,21 @@ sap.ui.define([
 
 		Shell.prototype.init = function() {
 			// theme change might change the logo
-			Core.attachThemeChanged(function(){
-				var $hdr = this.$("hdr"),
-					sImgSrc = this._getImageSrc();
-
-				if ($hdr.length && sImgSrc) {
-					this._getImage().setSrc(sImgSrc);
-				}
-			}, this);
-
+			Theming.attachApplied(this._onThemeChanged.bind(this));
 
 			Mobile.init({
 				statusBar: "default",
 				hideBrowser: true
 			});
+		};
+
+		Shell.prototype._onThemeChanged = function () {
+			var $hdr = this.$("hdr"),
+					sImgSrc = this._getImageSrc();
+
+				if ($hdr.length && sImgSrc) {
+					this._getImage().setSrc(sImgSrc);
+				}
 		};
 
 		Shell.prototype.onBeforeRendering = function() {
