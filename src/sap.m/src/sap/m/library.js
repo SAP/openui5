@@ -2033,7 +2033,7 @@ sap.ui.define([
 	/**
 	 * Specifies <code>IconTabBar</code> tab overflow mode.
 	 * @enum {string}
- 	 * @since 1.90.0
+	  * @since 1.90.0
 	 * @public
 	 */
 	thisLib.TabsOverflowMode = {
@@ -4759,13 +4759,20 @@ sap.ui.define([
 	 */
 	thisLib.TimePickerMaskMode = {
 		/**
-		 * <code>MaskInput</code> is enabled for the <code>sap.m.TimePicker</code>.
+		 * The mask is automatically enabled for all valid fixed-length time patterns, and it is disabled when the time format does not have a fixed length.
 		 * @public
 		 */
 		On: "On",
 
 		/**
-		 * <code>MaskInput</code> is disabled for the <code>sap.m.TimePicker</code>.
+		 * The mask will always be enforced for any time patterns.
+		 * <b>Note:</b> The mask functions correctly only with fixed-length time formats.
+		 * Using the <code>Enforce</code> value with time formats that do not have a fixed length may lead to unpredictable behavior.
+		 */
+		Enforce: "Enforce",
+
+		/**
+		 * The mask is disabled for the <code>sap.m.TimePicker</code>.
 		 * @public
 		 */
 		Off: "Off"
