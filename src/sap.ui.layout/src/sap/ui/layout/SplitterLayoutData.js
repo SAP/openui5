@@ -25,8 +25,6 @@ sap.ui.define(['sap/ui/core/LayoutData', './library'],
 	 * @constructor
 	 * @public
 	 * @since 1.22.0
-	 * @experimental Since version 1.22.0.
-	 * API is not yet finished and might change completely
 	 * @alias sap.ui.layout.SplitterLayoutData
 	 */
 	var SplitterLayoutData = LayoutData.extend("sap.ui.layout.SplitterLayoutData", /** @lends sap.ui.layout.SplitterLayoutData.prototype */ { metadata : {

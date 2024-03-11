@@ -65,7 +65,6 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @version ${version}
 	 *
-	 * @experimental Since 1.65 This class is experimental. The API may change.
 	 * @since 1.65
 	 * @public
 	 * @constructor

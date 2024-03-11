@@ -27,12 +27,12 @@
 			<HBox alignItems="Center">
 				<Label width="8rem" class="sapUiSmallMarginBegin" text="Allow dense fill:" />
 				<Switch change="onAllowDenseFillChange" state="false" />
-				<Text class="sapUiTinyMarginBeginEnd" text="(Experimental. Smaller items will take up all of the available space, ignoring their order.)" />
+				<Text class="sapUiTinyMarginBeginEnd" text="(Smaller items will take up all of the available space, ignoring their order.)" />
 			</HBox>
 			<HBox alignItems="Center">
 				<Label width="8rem" class="sapUiSmallMarginBegin" text="Inline block layout:" />
 				<Switch change="onInlineBlockLayoutChange" state="false" />
-				<Text class="sapUiTinyMarginBeginEnd" text="(Experimental. Makes the grid items act like an inline-block elements.)" />
+				<Text class="sapUiTinyMarginBeginEnd" text="(Makes the grid items act like an inline-block elements.)" />
 			</HBox>
 		</Panel>
 		<Panel>
