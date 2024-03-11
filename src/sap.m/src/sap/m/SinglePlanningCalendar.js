@@ -554,7 +554,38 @@ function(
 				 * The view was changed by user interaction.
 				 * @since 1.71.0
 				 */
-				viewChange : {}
+				viewChange : {},
+
+				/**
+				 * Fired when the week number selection changes. If <code>dateSelectionMode</code> is <code>SinglePlanningCalendarSelectionMode.Multiselect</code>, clicking on the week number will select the corresponding week.
+				 * If the week has already been selected, clicking the week number will deselect it.
+				 *
+				 * @since 1.123
+				 */
+				weekNumberPress : {
+					parameters: {
+						/**
+						 * Тhe number of the pressed calendar week.
+						 */
+						weekNumber: {type: "int"}
+					}
+				},
+				/**
+				 * Fired when the selected dates change.
+				 * The default behavior can be prevented using the <code>preventDefault</code> method.
+				 *
+				 * <b>Note:</b> If the event is prevented, the changes in the aggregation <code>selectedDates</code> will be canceled and it will revert to its previous state.
+				 * @since 1.123
+				 */
+				selectedDatesChange : {
+					allowPreventDefault: true,
+					parameters: {
+						/**
+						 * The array of all selected days.
+						 */
+						selectedDates: {type: "sap.ui.unified.DateRange[]"}
+					}
+				}
 			}
 
 		},
@@ -1321,6 +1352,18 @@ function(
 				date: oEvent.getParameter("date")
 			});
 		};
+		var fnHandleWeekNumberPress = function(oEvent) {
+			this.fireEvent("weekNumberPress", {
+				weekNumber: oEvent.getParameter("weekNumber")
+			});
+		};
+		var fnHandleSelectedDatesChange = function(oEvent) {
+			const bExecuteDefault = this.fireSelectedDatesChange({ selectedDates: oEvent.getParameter("selectedDates")});
+			if (!bExecuteDefault) {
+				oEvent.preventDefault();
+			}
+		};
+
 		var fnHandleBorderReached = function(oEvent) {
 			var oGrid = this.getAggregation("_grid"),
 				oFormat = oGrid._getDateFormatter(),
@@ -1372,6 +1415,8 @@ function(
 		oGrid.attachEvent("cellPress", fnHandleCellPress, this);
 		oGridMV.attachEvent("cellPress", fnHandleCellPress, this);
 		oGridMV.attachEvent("moreLinkPress", fnHandleMoreLinkPress, this);
+		oGridMV.attachEvent("weekNumberPress", fnHandleWeekNumberPress, this);
+		oGridMV.attachEvent("selectedDatesChange", fnHandleSelectedDatesChange, this);
 
 		oGrid.attachEvent("borderReached", fnHandleBorderReached, this);
 		oGridMV.attachEvent("borderReached", fnHandleBorderReachedMonthView, this);

@@ -27,6 +27,8 @@
 			title= "My Calendar"
 			viewChange="handleViewChange"
 			headerDateSelect="handleHeaderDateSelect"
+			selectedDatesChange="handleSelectedDateChange"
+			weekNumberPress="handleWeekSelection"
 			startDateChange="handleStartDateChange"
 			startDate="{path: '/startDate'}"
 			appointments="{path: '/appointments'}">
