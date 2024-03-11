@@ -1008,6 +1008,11 @@ sap.ui.define([
 		 * @protected
 		 * @returns {void|undefined} This lifecycle hook must not have a return value. Return value <code>void</code> is deprecated since 1.120, as it does not force functions to <b>not</b> return something.
 		 * 	This implies that, for instance, no async function returning a Promise should be used.
+		 *
+		 * 	<b>Note:</b> While the return type is currently <code>void|undefined</code>, any
+		 *	implementation of this hook must not return anything but undefined. Any other
+		 * 	return value will cause an error log in this version of UI5 and will fail in future
+		 * 	major versions of UI5.
 		 */
 
 		/**
@@ -1023,6 +1028,11 @@ sap.ui.define([
 		 * @protected
 		 * @returns {void|undefined} This lifecycle hook must not have a return value. Return value <code>void</code> is deprecated since 1.120, as it does not force functions to <b>not</b> return something.
 		 * 	This implies that, for instance, no async function returning a Promise should be used.
+		 *
+		 * 	<b>Note:</b> While the return type is currently <code>void|undefined</code>, any
+		 *	implementation of this hook must not return anything but undefined. Any other
+		 * 	return value will cause an error log in this version of UI5 and will fail in future
+		 * 	major versions of UI5.
 		 */
 
 		/**
@@ -1039,6 +1049,11 @@ sap.ui.define([
 		 * @protected
 		 * @returns {void|undefined} This lifecycle hook must not have a return value. Return value <code>void</code> is deprecated since 1.120, as it does not force functions to <b>not</b> return something.
 		 * 	This implies that, for instance, no async function returning a Promise should be used.
+		 *
+		 * 	<b>Note:</b> While the return type is currently <code>void|undefined</code>, any
+		 *	implementation of this hook must not return anything but undefined. Any other
+		 * 	return value will cause an error log in this version of UI5 and will fail in future
+		 * 	major versions of UI5.
 		 */
 
 		/**
@@ -1053,9 +1068,13 @@ sap.ui.define([
 		 * @name sap.ui.core.mvc.Controller.prototype.onAfterRendering
 		 * @abstract
 		 * @protected
-		 * @returns {void|undefined} This lifecycle hook must not have a return value.
 		 * @returns {void|undefined} This lifecycle hook must not have a return value. Return value <code>void</code> is deprecated since 1.120, as it does not force functions to <b>not</b> return something.
 		 * 	This implies that, for instance, no async function returning a Promise should be used.
+		 *
+		 * 	<b>Note:</b> While the return type is currently <code>void|undefined</code>, any
+		 *	implementation of this hook must not return anything but undefined. Any other
+		 * 	return value will cause an error log in this version of UI5 and will fail in future
+		 * 	major versions of UI5.
 		 */
 	return Controller;
 
