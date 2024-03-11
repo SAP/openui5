@@ -330,7 +330,7 @@ sap.ui.define(['sap/ui/base/DataType', 'sap/base/util/ObjectPath',
 	 *
 	 * @enum {string}
 	 * @public
-	 * @deprecated as of version 1.38
+	 * @deprecated as of version 1.38 Instead, use the <code>sap.ui.core.MessageType</code>.
 	 */
 	thisLib.MessageType = {
 
@@ -402,7 +402,7 @@ sap.ui.define(['sap/ui/base/DataType', 'sap/base/util/ObjectPath',
 	 *
 	 * @enum {string}
 	 * @public
-	 * @deprecated as of version 1.38
+	 * @deprecated as of version 1.38 Instead, use <code>sap.m.RatingIndicator</code> control.
 	 */
 	thisLib.RatingIndicatorVisualMode = {
 
@@ -463,7 +463,7 @@ sap.ui.define(['sap/ui/base/DataType', 'sap/base/util/ObjectPath',
 	 * @final
 	 * @namespace
 	 * @public
-	 * @deprecated as of version 1.38
+	 * @deprecated as of version 1.38 Instead, use <code>sap.ui.layout.Splitter</code> control.
 	 */
 	thisLib.SplitterSize = DataType.createType('sap.ui.commons.SplitterSize', {
 	    isValid : function(vValue) {

@@ -43,7 +43,7 @@ sap.ui.define([
 	 *
 	 * @constructor
 	 * @public
-	 * @deprecated Since version 1.38.
+	 * @deprecated Since version 1.38 If you want to achieve a similar behavior, use the <code>sap.m.Popover</code> control and open it next to your control.
 	 * @alias sap.ui.commons.CalloutBase
 	 */
 	var CalloutBase = TooltipBase.extend("sap.ui.commons.CalloutBase", /** @lends sap.ui.commons.CalloutBase.prototype */ { metadata : {
