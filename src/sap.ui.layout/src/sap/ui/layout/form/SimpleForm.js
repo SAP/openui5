@@ -1155,20 +1155,6 @@ sap.ui.define([
 
 	}
 
-	function _ResponsiveLayoutLoaded(fnResponsiveLayout, fnResponsiveFlowLayoutData, fnResizeHandler) {
-		ResponsiveLayout = fnResponsiveLayout;
-		ResponsiveFlowLayoutData = fnResponsiveFlowLayoutData;
-		ResizeHandler = fnResizeHandler;
-		this._bResponsiveLayoutRequested = false;
-	}
-
-	function _GridLayoutLoaded(fnGridLayout, fnGridContainerData, fnGridElementData) {
-		GridLayout = fnGridLayout;
-		GridContainerData = fnGridContainerData;
-		GridElementData = fnGridElementData;
-		this._bGridLayoutRequested = false;
-	}
-
 	function _ResponsiveGridLayoutLoaded(fnResponsiveGridLayout) {
 
 		ResponsiveGridLayout = fnResponsiveGridLayout;
@@ -1589,62 +1575,6 @@ sap.ui.define([
 	}
 
 	/*
-	 * Applies the weight property for the fields in the responsive layout.
-	 * @param {sap.ui.layout.form.FormElement} oElement The FormElement where the weight is applied.
-	 * @private
-	 */
-	function _applyFieldWeight(oElement){
-
-		var iMaxWeight = this._iMaxWeight;
-		var aFields = oElement.getFields();
-		var oField;
-		var iLength = aFields.length;
-		var oLabel = oElement.getLabel();
-		var oLayoutData;
-		var i = 0;
-
-		this._bLayoutDataChangedByMe = true;
-
-		if (oLabel && _getFieldLayoutData.call(this, oLabel)) {
-			iMaxWeight = iMaxWeight - _getFieldLayoutData.call(this, oLabel).getWeight();
-		}
-
-		// determine weights set from application
-		for (i = 0; i < aFields.length; i++) {
-			oField = aFields[i];
-			oLayoutData = _getFieldLayoutData.call(this, oField);
-			if (oLayoutData && oLayoutData.isA("sap.ui.layout.ResponsiveFlowLayoutData") &&
-					!_isMyLayoutData.call(this, oLayoutData)) {
-				iMaxWeight = iMaxWeight - oLayoutData.getWeight();
-				iLength--;
-			}
-		}
-
-		var iWeight = Math.floor(iMaxWeight / iLength);
-		var iRest = iMaxWeight % iLength;
-
-		for (i = 0; i < aFields.length; i++) {
-			oField = aFields[i];
-			oLayoutData = _getFieldLayoutData.call(this, oField);
-			var iCurrentWeight = iWeight;
-
-			if (!oLayoutData) {
-				_createFieldLayoutData.call(this, oField, iCurrentWeight, false, i == 0);
-			} else if (_isMyLayoutData.call(this, oLayoutData) &&
-					oLayoutData.isA("sap.ui.layout.ResponsiveFlowLayoutData")) {
-				// devide rest to first fields (not only to last one) (fist because to ignore manual set weigths)
-				if (iRest > 0) {
-					iCurrentWeight++;
-					iRest--;
-				}
-				oLayoutData.setWeight(iCurrentWeight);
-			}
-		}
-
-		this._bLayoutDataChangedByMe = false;
-	}
-
-	/*
 	 * Applies the linebreaks of FormContainers according to the minWidth and maxContainerCol settings of the SimpleForm
 	 * @private
 	 */
@@ -1688,28 +1618,6 @@ sap.ui.define([
 		this._bLayoutDataChangedByMe = false;
 
 	};
-
-	/*
-	 * Applies size of the FormContainers in GridLayout: if only one container is in the last line -> make it full size
-	 * adapt all containers because container can be inserted or added later on
-	 * @private
-	 */
-	function _applyContainerSize(){
-
-		this._bLayoutDataChangedByMe = true;
-		var oForm = this.getAggregation("form");
-		var aContainers = oForm.getFormContainers();
-		var iLength = aContainers.length;
-		for (var i = 0; i < iLength; i++) {
-			var oContainer = aContainers[i];
-			if ((this.getMaxContainerCols() <= 1) || ((i == iLength - 1) && (iLength % 2 > 0))) {
-				oContainer.getLayoutData().setHalfGrid(false);
-			} else if (!oContainer.getLayoutData().getHalfGrid()) {
-				oContainer.getLayoutData().setHalfGrid(true);
-			}
-		}
-		this._bLayoutDataChangedByMe = false;
-	}
 
 	/*
 	 * Handles the resize event

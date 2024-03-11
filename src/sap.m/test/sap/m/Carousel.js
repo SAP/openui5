@@ -345,9 +345,7 @@ sap.ui.define([
 				}
 			},
 			// set up the inner controls
-			init: function () {
-				var that = this;
-			},
+			init: function () {},
 			// helper function to update the meta text
 			_open: function () {
 				var fnClose = function () {
