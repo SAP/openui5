@@ -9,8 +9,7 @@ sap.ui.define(["sap/ui/base/DataType"], (DataType) => {
 	 * Defines in which mode the content of a {@link sap.ui.mdc.Field Field}, {@link sap.ui.mdc.FilterField FilterField} or {@link sap.ui.mdc.MultiValueField MultiValueField} is rendered.
 	 *
 	 * @enum {string}
-	 * @private
-	 * @ui5-restricted sap.ui.mdc
+	 * @public
 	 * @since 1.115
 	 * @alias sap.ui.mdc.enums.ContentMode
 	 */

@@ -886,6 +886,28 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("FieldBaseDelegate.createContent", async function(assert) {
+
+		oField.destroy();
+
+		const oDelegate = sap.ui.require("sap/ui/mdc/field/FieldBaseDelegate");
+		const aTestContent = [new Text({text: "test"})];
+		const _createContentStub = sinon.stub(oDelegate, "createContent").returns(Promise.resolve(aTestContent));
+
+		oField = new FieldBase("F1", {
+			conditions: "{cm>/conditions/Name}",
+			models: {cm: oCM}
+		});
+
+
+		oField.placeAt("content");
+		await nextUIUpdate();
+
+		assert.ok(_createContentStub.called, "FieldBaseDelegate.createContent called during internal content creation");
+		assert.ok(oField.getAggregation("_content")[0] === aTestContent[0], "Content created");
+		_createContentStub.restore();
+	});
+
 	QUnit.module("Field APIs", {
 		beforeEach: function() {
 			FieldBaseDelegateODataDefaultTypes.enable();
