@@ -76,8 +76,8 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given a control with multiple aggregations containing compatible hidden elements", {
-		beforeEach(assert) {
-			givenBarWithButtons.call(this);
+		async beforeEach(assert) {
+			await givenBarWithButtons.call(this);
 			const done = assert.async();
 
 			this.oPlugin = new AdditionalElementsPlugin({
@@ -385,8 +385,8 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given an ObjectPage with headerContent and one hidden section", {
-		beforeEach(assert) {
-			givenObjectPageWithHeaderAndSections.call(this);
+		async beforeEach(assert) {
+			await givenObjectPageWithHeaderAndSections.call(this);
 			const done = assert.async();
 			this.oDialog = new AddElementsDialog();
 
