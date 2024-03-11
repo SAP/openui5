@@ -52,5 +52,15 @@
         "text": " sap.tnt.SideNavigation: Enabled support for grouping items"
       }
     ]
+  },
+  "1.121.1": {
+    "date": "March 2024",
+    "notes": [
+      {
+        "id": "2a5d83f044d7993ba686d57f6149370c42849ec9",
+        "type": "FIX",
+        "text": " sap.m.Page: Focus element is scrolled into view"
+      }
+    ]
   }
 }
