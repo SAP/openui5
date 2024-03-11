@@ -391,7 +391,8 @@ sap.ui.define([
 			bIsTextVisible = this._isTextVisible(),
 			bIsIconOnly = bIsIconVisible && !bIsTextVisible,
 			sType = this.getType(),
-			sText;
+			sText,
+			oIconControl;
 
 		// If we have no inner control at this stage we don't need to adjust
 		if (!oInnerControl) {
@@ -405,10 +406,7 @@ sap.ui.define([
 		if (bIsIconVisible) {
 			oInnerControl.setIcon(oType.icon.src, bSuppressInvalidate);
 			oInnerIcon.setDecorative(!bIsIconOnly); // icon should be decorative if we have text
-			if (bIsTextVisible) {
-				oInnerIcon.setAlt(sText);
-			}
-			oInnerIcon.setUseIconTooltip(false);
+			oInnerIcon.setUseIconTooltip(bIsIconOnly);
 			this.addStyleClass("sapMObjectMarkerIcon");
 		} else {
 			oInnerControl.setIcon(null, bSuppressInvalidate);
@@ -430,13 +428,24 @@ sap.ui.define([
 
 		oInnerControl.removeAllAssociation("ariaLabelledBy", bSuppressInvalidate);
 		oInnerControl.removeAllAssociation("ariaDescribedBy", bSuppressInvalidate);
+		if (bIsIconOnly) {
+			oIconControl = oInnerControl._getIconAggregation();
+			oIconControl.removeAllAssociation("ariaLabelledBy", bSuppressInvalidate);
+			oIconControl.removeAllAssociation("ariaDescribedBy", bSuppressInvalidate);
+		}
 
 		this.getAriaLabelledBy().forEach(function(ariaLabelledBy) {
 			oInnerControl.addAssociation("ariaLabelledBy", ariaLabelledBy, bSuppressInvalidate);
+			if (bIsIconOnly) {
+				oInnerControl._getIconAggregation().addAssociation("ariaLabelledBy", ariaLabelledBy, bSuppressInvalidate);
+			}
 		});
 
 		this.getAriaDescribedBy().forEach(function(ariaDescribedBy){
 			oInnerControl.addAssociation("ariaDescribedBy", ariaDescribedBy, bSuppressInvalidate);
+			if (bIsIconOnly) {
+				oInnerControl._getIconAggregation().addAssociation("ariaDescribedBy", ariaDescribedBy, bSuppressInvalidate);
+			}
 		});
 
 		return true;
@@ -583,6 +592,8 @@ sap.ui.define([
 		ObjectMarker.prototype[sFn] = function() {
 			var oInnerControl = this._getInnerControl(),
 				oResult;
+			oInnerControl = (this.hasListeners("press") && oInnerControl.getIconOnly()) ? oInnerControl._getIconAggregation() : oInnerControl;
+
 			if (oInnerControl && oInnerControl[sFn]) {
 				oResult = oInnerControl[sFn].apply(oInnerControl, arguments);
 			}
@@ -598,8 +609,10 @@ sap.ui.define([
 
 	CustomTextRenderer.render = function(oRm, oControl) {
 		if (oControl.getIconOnly()) {
-			var oIconControl = oControl._getIconAggregation();
-			oIconControl.setAlt(oControl.getTooltip_AsString());
+			var oIconControl = oControl._getIconAggregation(),
+				sTooltip = oControl.getTooltip_AsString();
+			oIconControl.setAlt(sTooltip);
+			oIconControl.setTooltip(sTooltip);
 			oRm.renderControl(oIconControl);
 		} else {
 			TextRenderer.render.call(this, oRm, oControl);
