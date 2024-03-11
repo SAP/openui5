@@ -2123,7 +2123,7 @@ sap.ui.define([
 	/**
 	 * Waits until all group locks for the given group ID have been unlocked and submits the
 	 * requests associated with this group ID in one batch request. If only PATCH requests are
-	 * enqueued (see {@link #hasOnlyPatchesWithoutSideEffects}), this will delay the execution to
+	 * enqueued (see {@link #hasOnlyPatchesWithoutSideEffects}), this will delay the invocation to
 	 * wait for potential side effect requests initiated by a
 	 * {@link sap.ui.core.Control#event:validateFieldGroup 'validateFieldGroup'} event.
 	 *

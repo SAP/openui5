@@ -12,7 +12,7 @@ sap.ui.define([
 		onResetEntity : function () {
 			var oView = this.getView();
 
-			oView.byId("resetEntityButton").getObjectBinding().execute()
+			oView.byId("resetEntityButton").getObjectBinding().invoke()
 				.then(function () {
 					// Note: refresh is needed as long as there is no cache synchronization
 					oView.getModel().refresh();

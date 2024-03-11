@@ -165,7 +165,7 @@ sap.ui.define([
 				this._oAggregation4Grid.grandTotalAtBottomOnly = bGrandTotalAtBottomOnly;
 				oTTable.getRowMode().setFixedBottomRowCount(1);
 			}
-			// Note: this triggers a "refresh" event with reason "filter" which resets
+			// Note: this invokes a "refresh" event with reason "filter" which resets
 			// firstVisibleRow to 0
 			oRowsBinding.setAggregation(this._oAggregation4Grid);
 			oTTable.setFirstVisibleRow(1); //TODO does not help?

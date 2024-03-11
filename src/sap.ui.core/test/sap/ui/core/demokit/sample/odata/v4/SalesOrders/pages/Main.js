@@ -331,7 +331,7 @@ sap.ui.define([
 						controlType : "sap.m.Table",
 						id : "SO_2_SOITEM",
 						success : function (oSalesOrderItemsTable) {
-							// Note: filter cannot be triggered via UI; field is disabled
+							// Note: filter cannot be invoked via UI; field is disabled
 							oSalesOrderItemsTable.getBinding("items")
 								.filter(new Filter("ProductID", FilterOperator.EQ, sValue));
 						},
@@ -1123,8 +1123,8 @@ sap.ui.define([
 					Helper.changeStepInputValue(this, sViewName,
 						"SimulateDiscountForm::Discount", sDiscount, sDiscount, true);
 				},
-				executeSimulateDiscount : function () {
-					pressButton(this, "executeSimulateDiscount", true);
+				invokeSimulateDiscount : function () {
+					pressButton(this, "invokeSimulateDiscount", true);
 				}
 			},
 			assertions : {

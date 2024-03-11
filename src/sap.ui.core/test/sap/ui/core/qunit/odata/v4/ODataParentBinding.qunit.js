@@ -3208,7 +3208,7 @@ sap.ui.define([
 		// code under test
 		oBinding.firePatchSent();
 
-		// firePatchCompleted triggers a patchCompleted event only if firePatchCompleted is called
+		// firePatchCompleted invokes a patchCompleted event only if firePatchCompleted is called
 		// as often as firePatchSent
 		// code under test
 		oBinding.firePatchCompleted(true);

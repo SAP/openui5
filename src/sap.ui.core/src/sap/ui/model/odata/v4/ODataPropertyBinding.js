@@ -683,7 +683,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets the (base) context if the binding path is relative. Triggers (@link #fetchCache) to
+	 * Sets the (base) context if the binding path is relative. Invokes (@link #fetchCache) to
 	 * create a cache and {@link #checkUpdate} to check for the current value if the
 	 * context has changed. In case of absolute bindings nothing is done.
 	 *

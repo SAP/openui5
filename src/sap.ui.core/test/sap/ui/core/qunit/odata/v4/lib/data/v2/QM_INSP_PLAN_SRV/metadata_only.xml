@@ -1891,7 +1891,7 @@
 						  sap:quickinfo="Inspection Characteristics for Operation Required"/>
 				<Property Name="OperationIsNotMESRelevant" Type="Edm.Boolean"
 						  sap:display-format="UpperCase" sap:label="Not Relevant for MES"
-						  sap:quickinfo="Not Relevant for External Manufacturing Execution System"/>
+						  sap:quickinfo="Not Relevant for External Manufacturing Invocation System"/>
 			</EntityType>
 			<EntityType Name="I_PlantType" sap:label="Plant" sap:value-list="true"
 						sap:content-version="1">
@@ -2192,7 +2192,7 @@
 						  sap:display-format="UpperCase" sap:label="Standard Value Key"/>
 				<Property Name="LaborTrackingIsRequired" Type="Edm.Boolean"
 						  sap:display-format="UpperCase" sap:label="Labor Tracking"
-						  sap:quickinfo="Indicates Whether Labor Tracking is Required for Execution"/>
+						  sap:quickinfo="Indicates Whether Labor Tracking is Required for Invocation"/>
 				<Property Name="WorkCenterFormulaParam1" Type="Edm.String" MaxLength="6"
 						  sap:display-format="UpperCase" sap:label="Formula Parameter 1"
 						  sap:quickinfo="Work Center Formula Parameter 1"/>

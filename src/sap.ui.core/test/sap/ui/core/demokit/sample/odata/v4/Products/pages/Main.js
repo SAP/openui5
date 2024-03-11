@@ -11,7 +11,7 @@ sap.ui.define([
 	/*
 	 * Changes the value of the input control which matches the given <code>rId</code> and is in the
 	 * given row <code>iRow</code> of a table to the given value; changes the first row if none is
-	 * given. After that, sets the focus to a different field to trigger a PATCH for the update.
+	 * given. After that, sets the focus to a different field to invoke a PATCH for the update.
 	 */
 	function changeValue(oOpa, rId, sValue, iRow) {
 		Helper.changeInputValue(oOpa, sViewName, rId, sValue, iRow || 0);

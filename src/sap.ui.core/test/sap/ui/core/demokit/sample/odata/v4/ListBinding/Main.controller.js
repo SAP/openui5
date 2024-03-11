@@ -24,7 +24,7 @@ sap.ui.define([
 			var oView = this.getView(),
 				oDialog = oView.byId("ChangeTeamBudgetDialog");
 
-			oDialog.getObjectBinding().execute().then(function () {
+			oDialog.getObjectBinding().invoke().then(function () {
 					var oBinding = oView.byId("Budget").getBinding("text");
 
 					oBinding.setContext(null);
@@ -39,7 +39,7 @@ sap.ui.define([
 			var oView = this.getView(),
 				that = this;
 
-			this.oChangeManager.execute().then(function () {
+			this.oChangeManager.invoke().then(function () {
 					var oControl = oView.byId("ManagerID");
 
 					// set text to the operation result
@@ -57,7 +57,7 @@ sap.ui.define([
 
 			oOperation.setParameter("EmployeeID",
 					this.getView().getModel("ui").getProperty("/EmployeeID"))
-				.execute()
+				.invoke()
 				.catch(function (oError) {
 					MessageBox.alert(oError.message, {icon : MessageBox.Icon.ERROR,
 						title : "Error"});
@@ -65,7 +65,7 @@ sap.ui.define([
 		},
 
 		getEmployeeMaxAge : function () {
-			this.byId("GetEmployeeMaxAge").getObjectBinding().execute();
+			this.byId("GetEmployeeMaxAge").getObjectBinding().invoke();
 		},
 
 		onCancel : function () {
