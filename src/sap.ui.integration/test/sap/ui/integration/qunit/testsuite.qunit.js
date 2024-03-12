@@ -2493,6 +2493,76 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+			"editor/multiLanguagesOfValue/ChangeTranslationsForAdminMode": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/editor",
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/multiLanguagesOfValue/ChangeTranslationsForContentMode01": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/editor",
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/multiLanguagesOfValue/ChangeTranslationsForContentMode02": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/editor",
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/multiLanguagesOfValue/ChangeTranslationsForAllMode01": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/editor",
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/multiLanguagesOfValue/ChangeTranslationsForAllMode02": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/editor",
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/multiLanguagesOfValue/ChangeTranslationsForAllMode03": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/editor",
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
+			"editor/multiLanguagesOfValue/ChangeTranslationsForAllMode04": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/editor",
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
 			"editor/i18nAsObject/Basic": {
 				group: "Runtime Editor",
 				coverage: {

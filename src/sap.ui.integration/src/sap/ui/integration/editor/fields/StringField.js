@@ -18,6 +18,7 @@ sap.ui.define([
 	"sap/base/util/each",
 	"sap/base/util/restricted/_debounce",
 	"sap/base/util/deepClone",
+	"sap/base/util/deepEqual",
 	"sap/ui/integration/util/Utils"
 ], function (
 	BaseField,
@@ -35,6 +36,7 @@ sap.ui.define([
 	each,
 	_debounce,
 	deepClone,
+	deepEqual,
 	Utils
 ) {
 	"use strict";
@@ -235,7 +237,7 @@ sap.ui.define([
 							var oControl = oEvent.getSource();
 							var sValue = oControl.getValue();
 							var sLanguage = Utils._language;
-							oControl.getParent().setTranslationValueInTexts(sLanguage, oConfig.manifestpath, sValue);
+							oControl.getParent().setTranslationValueInTexts(sLanguage, sValue);
 						}
 					}
 				};
@@ -392,7 +394,8 @@ sap.ui.define([
 		return oProperty[sManifestPath];
 	};
 
-	StringField.prototype.setTranslationValueInTexts = function (sLanguage, sManifestPath, sValue) {
+	StringField.prototype.setTranslationValueInTexts = function (sLanguage, sValue) {
+		var sManifestPath = this.getConfiguration().manifestpath;
 		var sTranslationPath = "/texts";
 		var oData = this._settingsModel.getData();
 		if (!oData) {
@@ -416,13 +419,27 @@ sap.ui.define([
 		}
 	};
 
+	StringField.prototype.deleteTranslationValueInTexts = function (sLanguage) {
+		var sManifestPath = this.getConfiguration().manifestpath;
+		var oData = this._settingsModel.getData();
+		if (oData && oData.texts && oData.texts[sLanguage]) {
+			delete oData.texts[sLanguage][sManifestPath];
+		}
+		if (deepEqual(oData.texts[sLanguage], {})) {
+			delete oData.texts[sLanguage];
+		}
+		if (deepEqual(oData.texts, {})) {
+			delete oData.texts;
+		}
+		this._settingsModel.setData(oData);
+	};
+
 	//open the translation popup
 	StringField.prototype.openTranslationListPopup = function(oEvent) {
 		var that = this;
 		var oControl = oEvent.getSource();
 		var oField = oControl.getParent();
 		var sParameterId = oField.getParameterId();
-		var oConfig = oField.getConfiguration();
 		var oResourceBundle = oField.getResourceBundle();
 		var oTranslatedValues = that.buildTranslationsData(oField, oControl);
 		var oTranslatonsModel;
@@ -471,16 +488,18 @@ sap.ui.define([
 								var aUpdatedLanguages = [];
 								aLanguages.translatedLanguages.forEach(function(oLanguage) {
 									if (oLanguage.value !== oLanguage.originValue) {
-										oField.setTranslationValueInTexts(oLanguage.key, oConfig.manifestpath, oLanguage.value);
-										aUpdatedLanguages.push(oLanguage.key);
+										if (oLanguage.updated) {
+											oField.setTranslationValueInTexts(oLanguage.key, oLanguage.value);
+											aUpdatedLanguages.push(oLanguage.key);
+										}
+									} else if (oLanguage.updated) {
+										oField.deleteTranslationValueInTexts(oLanguage.key);
 									}
 								});
-								if (aLanguages.currentLanguage.value != aLanguages.currentLanguage.originValue) {
-									oField.setTranslationValueInTexts(aLanguages.currentLanguage.key, oConfig.manifestpath, aLanguages.currentLanguage.value);
-									aUpdatedLanguages.push(aLanguages.currentLanguage.key);
-								}
 								if (aUpdatedLanguages.length > 0) {
 									that._aUpdatedLanguages = aUpdatedLanguages;
+								} else {
+									that._aUpdatedLanguages = undefined;
 								}
 								that._oTranslationPopover.close();
 							}

@@ -931,21 +931,8 @@ sap.ui.define([
 		var oTranslatonsModel = new JSONModel(oTranslatedValues);
 		oTranslatonsModel.attachPropertyChange(function(oEvent) {
 			var oContext = oEvent.getParameter("context");
-			var oLanguageChanged = oTranslatonsModel.getProperty(oContext.getPath());
-			var bUpdated = oLanguageChanged.value !== oLanguageChanged.originValue ? true : false;
-			var bIsUpdated = bUpdated;
-			if (!bIsUpdated) {
-				var oData = oTranslatonsModel.getData();
-				for (var i = 0; i < oData.translatedLanguages.length; i++) {
-					var oLanguage = oData.translatedLanguages[i];
-					if (oLanguage.value !== oLanguage.originValue) {
-						bIsUpdated = true;
-						break;
-					}
-				}
-			}
-			oTranslatonsModel.setProperty(oContext.getPath("updated"), bUpdated);
-			oTranslatonsModel.setProperty("/isUpdated", bIsUpdated);
+			oTranslatonsModel.setProperty(oContext.getPath("updated"), true);
+			oTranslatonsModel.setProperty("/isUpdated", true);
 		});
 		return oTranslatonsModel;
 	};

@@ -239,6 +239,8 @@ sap.ui.define([
 									var sExpectedValue = "";
 									var sCurrentValue = oLanguageItems1[i].getContent()[0].getItems()[1].getValue();
 									assert.equal(sCurrentValue, sExpectedValue, "oTranslationPopover3 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
+									var sValueState = oLanguageItems1[i].getContent()[0].getItems()[1].getValueState();
+									assert.equal(sValueState, "None", "oTranslationPopover1 Content: item " + i + " " + sLanguage + ", value state: " + sValueState + ", expected: None");
 								}
 							}
 							var oSaveButton3 = oTranslationPopover3.getFooter().getContent()[1];
@@ -265,6 +267,8 @@ sap.ui.define([
 										var sExpectedValue = "text value 1";
 										var sCurrentValue = oLanguageItems1[i].getContent()[0].getItems()[1].getValue();
 										assert.equal(sCurrentValue, sExpectedValue, "oTranslationPopover3 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
+										var sValueState = oLanguageItems1[i].getContent()[0].getItems()[1].getValueState();
+										assert.equal(sValueState, "None", "oTranslationPopover1 Content: item " + i + " " + sLanguage + ", value state: " + sValueState + ", expected: None");
 									}
 								}
 								oCancelButton3.firePress();
@@ -291,6 +295,8 @@ sap.ui.define([
 												var sExpectedValue = _oOriginExpectedValues["string1"][sLanguage] || _oOriginExpectedValues["string1"]["default"];
 												var sCurrentValue = oLanguageItems1[i].getContent()[0].getItems()[1].getValue();
 												assert.equal(sCurrentValue, sExpectedValue, "oTranslationPopover1 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
+												var sValueState = oLanguageItems1[i].getContent()[0].getItems()[1].getValueState();
+												assert.equal(sValueState, "None", "oTranslationPopover1 Content: item " + i + " " + sLanguage + ", value state: " + sValueState + ", expected: None");
 											}
 										}
 										resolve();
