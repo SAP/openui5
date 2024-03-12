@@ -2692,31 +2692,35 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [
-	{iScale : undefined},
-	{iScale : -1},
-	{iScale : 0, bUseScale : true},
-	{iScale : 42, bUseScale : true}
-].forEach(({iScale, bUseScale}, i) => {
-	QUnit.test("Unit: _getInstance: consider iScale= " + iScale, function (assert) {
-		const oFormatOptionsByArgs = {foo : "byArgs"};
-		const oFormatOptionsByThis = {bar : "byThis"};
+	// no scale, formatOptions from this.oFormatOptions and aArgs passed to _getInstance
+	{scale: undefined, options: {foo: "byThis"}, args: {bar: "byArgs"}, expected: {foo: "byThis", bar: "byArgs"}},
+	// no scale, same formatOptions in favor of aArgs
+	{scale: -1, options: {foo: "byThis"}, args: {foo: "byArgs"}, expected: {foo: "byArgs"}},
+	// scale egdge case -1
+	{scale: -1, options: {}, args: {}, expected: {}},
+	// scale egdge case 0
+	{scale: 0, options: {}, args: {}, expected: {maxFractionDigits: 0}},
+	// scale -> maxFractionDigits
+	{scale: 42, options: {}, args: {}, expected: {maxFractionDigits: 42}},
+	// this.oFormatOptions.maxFractionDigits not overwritten by scale
+	{scale: 42, options: {maxFractionDigits: 21}, args: {}, expected: {maxFractionDigits: 21}},
+	// aArgs.maxFractionDigits neither overwritten by this.scale, nor by this.oFormatOptions
+	{scale: 42, options: {maxFractionDigits: 21}, args: {maxFractionDigits: 22}, expected: {maxFractionDigits: 22}}
+].forEach(({scale: iScale, options: oOptions, args: oArgs, expected : oExpectedOptions}, i) => {
+	QUnit.test("Unit: _getInstance: consider scale, i=" + i, function (assert) {
 		const oMetadata = {getClass() {}};
 		const oUnitType = {
-			oFormatOptions : oFormatOptionsByThis,
+			oFormatOptions : oOptions,
 			iScale : iScale,
 			createFormatOptions() {},
 			getMetadata : () => oMetadata
 		};
 
-		this.mock(oUnitType).expects("createFormatOptions").withExactArgs("~aArgs").returns(oFormatOptionsByArgs);
+		this.mock(oUnitType).expects("createFormatOptions").withExactArgs("~aArgs").returns(oArgs);
 		this.mock(oMetadata).expects("getClass")
 			.withExactArgs()
 			.returns(i % 2 ? UnitType : "~NotUnitType"); // alternate between UnitType and other class
-		this.mock(NumberFormat).expects("getUnitInstance")
-			.withExactArgs(bUseScale
-				? {foo : "byArgs", bar : "byThis", maxFractionDigits : iScale}
-				: {foo : "byArgs", bar : "byThis"})
-			.returns("~UnitInstance");
+		this.mock(NumberFormat).expects("getUnitInstance").withExactArgs(oExpectedOptions).returns("~UnitInstance");
 
 		// code under test
 		assert.strictEqual(UnitType.prototype._getInstance.call(oUnitType, "~aArgs"), "~UnitInstance");
