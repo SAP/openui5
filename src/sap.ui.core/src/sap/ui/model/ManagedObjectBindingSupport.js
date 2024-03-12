@@ -638,10 +638,14 @@ sap.ui.define([
 						that.refreshDataState(sName, oDataState);
 					}
 				},
-				fnResolveTypeClass = function(sTypeName) {
+				fnResolveTypeClass = function(sTypeName, oInstance) {
 					var sModulePath = sTypeName.replace(/\./g, "/");
 					// 1. require probing
 					var TypeClass = sap.ui.require(sModulePath);
+
+					/**
+					 * @deprecated
+					 */
 					if (!TypeClass) {
 						// 2. Global lookup
 						TypeClass = ObjectPath.get(sTypeName);
@@ -653,6 +657,11 @@ sap.ui.define([
 							TypeClass = sap.ui.requireSync(sModulePath); // legacy-relevant
 						}
 					}
+
+					if (typeof TypeClass !== "function") {
+						throw new Error(`Cannot find type "${sTypeName}" used in control "${oInstance.getId()}"!`);
+					}
+
 					return TypeClass;
 				};
 
@@ -664,10 +673,7 @@ sap.ui.define([
 				// Create type instance if needed
 				oType = oPart.type;
 				if (typeof oType == "string") {
-					clType = fnResolveTypeClass(oType);
-					if (typeof clType !== "function") {
-						throw new Error("Cannot find type \"" + oType + "\" used in control \"" + that.getId() + "\"!");
-					}
+					clType = fnResolveTypeClass(oType, that);
 					oType = new clType(oPart.formatOptions, oPart.constraints);
 				}
 
@@ -698,7 +704,7 @@ sap.ui.define([
 				// Create type instance if needed
 				oType = oBindingInfo.type;
 				if (typeof oType == "string") {
-					clType = fnResolveTypeClass(oType);
+					clType = fnResolveTypeClass(oType, this);
 					oType = new clType(oBindingInfo.formatOptions, oBindingInfo.constraints);
 				}
 				oBinding = new CompositeBinding(aBindings, oBindingInfo.useRawValues, oBindingInfo.useInternalValues);
