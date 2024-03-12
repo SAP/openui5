@@ -520,7 +520,6 @@ sap.ui.define([
 	* Shows the busy state and is called after the renderer is finished.
 	* @override
 	* @protected
-	* @returns {this} this pointer for chaining
 	*/
 	TableSelectDialog.prototype.onAfterRendering = function () {
 		if (this._bInitBusy && this._bFirstRender) {
@@ -528,8 +527,6 @@ sap.ui.define([
 			this._bInitBusy = false;
 			this._bFirstRender = false;
 		}
-
-		return this;
 	};
 
 	/**

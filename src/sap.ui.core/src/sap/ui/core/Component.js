@@ -18,6 +18,7 @@ sap.ui.define([
 	'sap/ui/core/ResizeHandler',
 	'sap/ui/thirdparty/URI',
 	'sap/ui/performance/trace/Interaction',
+	'sap/ui/util/_enforceNoReturnValue',
 	'sap/base/assert',
 	'sap/base/Log',
 	'sap/base/util/Deferred',
@@ -44,6 +45,7 @@ sap.ui.define([
 	ResizeHandler,
 	URI,
 	Interaction,
+	_enforceNoReturnValue,
 	assert,
 	Log,
 	Deferred,
@@ -1308,6 +1310,8 @@ sap.ui.define([
 	 *
 	 * @function
 	 * @name sap.ui.core.Component.prototype.init
+	 * @returns {void|undefined} This hook method must not have a return value. Return value <code>void</code> is deprecated since 1.120, as it does not force functions to <b>not</b> return something.
+	 * 	This implies that, for instance, no async function returning a Promise should be used.
 	 * @protected
 	 */
 	//Component.prototype.init = function() {};
@@ -1323,6 +1327,8 @@ sap.ui.define([
 	 *
 	 * @function
 	 * @name sap.ui.core.Component.prototype.exit
+	 * @returns {void|undefined} This hook method must not have a return value. Return value <code>void</code> is deprecated since 1.120, as it does not force functions to <b>not</b> return something.
+	 * 	This implies that, for instance, no async function returning a Promise should be used.
 	 * @protected
 	 */
 	//Component.prototype.exit = function() {};
@@ -3571,7 +3577,7 @@ sap.ui.define([
 
 		// call lifecyclehook 'onDeactivate'
 		if (typeof this.onDeactivate === "function") {
-			this.onDeactivate();
+			_enforceNoReturnValue(this.onDeactivate(), /*mLogInfo=*/{name: "onDeactivate", component: this.getId()});
 		}
 	};
 
@@ -3634,7 +3640,7 @@ sap.ui.define([
 
 		// call lifecyclehook 'onActivate'
 		if (typeof this.onActivate === "function") {
-			this.onActivate();
+			_enforceNoReturnValue(this.onActivate(), /*mLogInfo=*/{ name: "onActivate", component: this.getId() });
 		}
 	};
 
@@ -3686,6 +3692,7 @@ sap.ui.define([
 	 * @name sap.ui.core.Component.prototype.onActivate
 	 * @abstract
 	 * @since 1.88
+	 * @returns {void|undefined} This lifecycle hook must not have a return value.
 	 * @protected
 	 */
 
@@ -3696,6 +3703,7 @@ sap.ui.define([
 	 * @name sap.ui.core.Component.prototype.onDeactivate
 	 * @abstract
 	 * @since 1.88
+	 * @returns {void|undefined} This lifecycle hook must not have a return value.
 	 * @protected
 	 */
 

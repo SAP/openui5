@@ -12,6 +12,7 @@ sap.ui.define([
 	'sap/ui/core/mvc/ControllerExtension',
 	'sap/ui/core/mvc/ControllerExtensionProvider',
 	'sap/ui/core/mvc/OverrideExecution',
+	'sap/ui/util/_enforceNoReturnValue',
 	"sap/base/future",
 	"sap/base/Log"
 ], function(
@@ -23,6 +24,7 @@ sap.ui.define([
 	ControllerExtension,
 	ControllerExtensionProvider,
 	OverrideExecution,
+	_enforceNoReturnValue,
 	future,
 	Log
 ) {
@@ -663,24 +665,29 @@ sap.ui.define([
 		}
 	};
 
-
 	Controller.prototype.connectToView = function(oView) {
 		this.oView = oView;
+		const sControllerName = this.oView.getControllerName?.() || "sap.ui.core.mvc.Controller";
 
 		if (this.onInit) {
-			oView.attachAfterInit(this.onInit, this);
+			const fnInit = function() { _enforceNoReturnValue(this.onInit.call(this, arguments), /*mLogInfo=*/{ name: "onInit", component: sControllerName }); };
+			oView.attachAfterInit(fnInit, this);
 		}
 		if (this.onExit) {
-			oView.attachBeforeExit(this.onExit, this);
+			const fnExit = function() { _enforceNoReturnValue(this.onExit.call(this, arguments), /*mLogInfo=*/{ name: "onExit", component: sControllerName}); };
+			oView.attachBeforeExit(fnExit, this);
 		}
 		if (oView.bControllerIsViewManaged) {
-			oView.attachBeforeExit(this.destroyFragments, this);
+			const fnBeforeExit = function() { _enforceNoReturnValue(this.destroyFragments.call(this, arguments), /*mLogInfo=*/{name: "destroyFragments", component: sControllerName}); };
+			oView.attachBeforeExit(fnBeforeExit, this);
 		}
 		if (this.onAfterRendering) {
-			oView.attachAfterRendering(this.onAfterRendering, this);
+			const fnAfterRendering = function() { _enforceNoReturnValue(this.onAfterRendering.call(this, arguments), /*mLogInfo=*/{ name: "onAfterRendering", component: sControllerName }); };
+			oView.attachAfterRendering(fnAfterRendering, this);
 		}
 		if (this.onBeforeRendering) {
-			oView.attachBeforeRendering(this.onBeforeRendering, this);
+			const fnBeforeRendering = function() { _enforceNoReturnValue(this.onBeforeRendering.call(this, arguments), /*mLogInfo=*/{name: "onBeforeRendering", component: sControllerName}); };
+			oView.attachBeforeRendering(fnBeforeRendering, this);
 		}
 	};
 
@@ -908,6 +915,8 @@ sap.ui.define([
 	 * @name sap.ui.core.mvc.Controller.prototype.onInit
 	 * @abstract
 	 * @protected
+	 * @returns {void|undefined} This lifecycle hook must not have a return value. Return value <code>void</code> is deprecated since 1.120, as it does not force functions to <b>not</b> return something.
+	 * 	This implies that, for instance, no async function returning a Promise should be used.
 	 */
 
 	/**
@@ -921,6 +930,8 @@ sap.ui.define([
 	 * @name sap.ui.core.mvc.Controller.prototype.onExit
 	 * @abstract
 	 * @protected
+	 * @returns {void|undefined} This lifecycle hook must not have a return value. Return value <code>void</code> is deprecated since 1.120, as it does not force functions to <b>not</b> return something.
+	 * 	This implies that, for instance, no async function returning a Promise should be used.
 	 */
 
 	/**
@@ -935,6 +946,8 @@ sap.ui.define([
 	 * @name sap.ui.core.mvc.Controller.prototype.onBeforeRendering
 	 * @abstract
 	 * @protected
+	 * @returns {void|undefined} This lifecycle hook must not have a return value. Return value <code>void</code> is deprecated since 1.120, as it does not force functions to <b>not</b> return something.
+	 * 	This implies that, for instance, no async function returning a Promise should be used.
 	 */
 
 	/**
@@ -949,6 +962,9 @@ sap.ui.define([
 	 * @name sap.ui.core.mvc.Controller.prototype.onAfterRendering
 	 * @abstract
 	 * @protected
+	 * @returns {void|undefined} This lifecycle hook must not have a return value.
+	 * @returns {void|undefined} This lifecycle hook must not have a return value. Return value <code>void</code> is deprecated since 1.120, as it does not force functions to <b>not</b> return something.
+	 * 	This implies that, for instance, no async function returning a Promise should be used.
 	 */
 	return Controller;
 });

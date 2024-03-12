@@ -108,7 +108,7 @@ sap.ui.define([
 		this.setModel(this._oResourceModel, "i18n");
 		this._fnOnScrollBound = this._onScroll.bind(this);
 		window.addEventListener("scroll", this._fnOnScrollBound, true);
-		return this.buildContent();
+		this._pFragmentLoaded = this.buildContent();
 	};
 
 	Base.prototype.exit = function(...aArgs) {
@@ -187,6 +187,10 @@ sap.ui.define([
 		return this.buildControls().then(function(aControls) {
 			aControls.forEach(this.addItem, this);
 		}.bind(this));
+	};
+
+	Base.prototype.onFragmentLoaded = function() {
+		return this._pFragmentLoaded;
 	};
 
 	/**
