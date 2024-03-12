@@ -215,7 +215,11 @@ sap.ui.define([
 
 		// map the items to list items and add them to the list
 		aItems.forEach(function (oItem) {
-			oItemsContainer.addItem(fnMapItem(oItem));
+			if (oItem.isA("sap.ui.core.SeparatorItem")) {
+				oItemsContainer.addItemGroup(null, fnMapItem(oItem));
+			} else {
+				oItemsContainer.addItem(fnMapItem(oItem));
+			}
 		});
 	};
 
