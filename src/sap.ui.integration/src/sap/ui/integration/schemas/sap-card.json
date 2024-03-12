@@ -647,6 +647,9 @@
         "visible": {
           "description": "[Experimental] Visibility of the header",
           "$ref": "#/definitions/visibility"
+        },
+        "chart": {
+          "$ref": "#/definitions/MicroChart"
         }
       }
     },
@@ -863,7 +866,7 @@
           }
         },
         "chart": {
-          "$ref": "#/definitions/Microchart"
+          "$ref": "#/definitions/MicroChart"
         },
         "actionsStrip": {
           "description": "Describes actions strip",
@@ -3711,18 +3714,40 @@
         }
       }
     },
-    "Microchart": {
-      "description": "[Experimental] Describes Microchart attributes",
+    "MicroChart": {
+      "description": "[Experimental] Describes MicroChart attributes",
       "oneOf": [
         {
-          "$ref": "#/definitions/Microchart.Bullet"
+          "$ref": "#/definitions/MicroChart.Generic"
         },
         {
-          "$ref": "#/definitions/Microchart.StackedBar"
+          "$ref": "#/definitions/MicroChart.Bullet"
+        },
+        {
+          "$ref": "#/definitions/MicroChart.StackedBar"
         }
       ]
     },
-    "Microchart.Bullet": {
+    "MicroChart.Generic": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "type": {
+          "description": "Represents the type of the MicroChart",
+          "type": "string",
+          "enum": [
+            "Line",
+            "Column",
+            "HarveyBall",
+            "Radial"
+          ]
+        }
+      }
+    },
+    "MicroChart.Bullet": {
       "type": "object",
       "additionalProperties": false,
       "required": [
@@ -3730,7 +3755,7 @@
       ],
       "properties": {
         "type": {
-          "description": "Represents the type of the Microchart",
+          "description": "Represents the type of the MicroChart",
           "type": "string",
           "const": "Bullet"
         },
@@ -3802,7 +3827,7 @@
           "description": "The thresholds indicators of the bar",
           "type": "array",
           "items": {
-            "$ref": "#/definitions/Microchart.Bullet.Threshold"
+            "$ref": "#/definitions/MicroChart.Bullet.Threshold"
           }
         },
         "visible": {
@@ -3811,7 +3836,7 @@
         }
       }
     },
-    "Microchart.Bullet.Threshold": {
+    "MicroChart.Bullet.Threshold": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -3840,7 +3865,7 @@
         }
       }
     },
-    "Microchart.StackedBar": {
+    "MicroChart.StackedBar": {
       "type": "object",
       "additionalProperties": false,
       "required": [
@@ -3848,7 +3873,7 @@
       ],
       "properties": {
         "type": {
-          "description": "Represents the type of the Microchart",
+          "description": "Represents the type of the MicroChart",
           "type": "string",
           "const": "StackedBar"
         },
@@ -3871,7 +3896,7 @@
           "description": "The bars of the chart",
           "type": "array",
           "items": {
-            "$ref": "#/definitions/Microchart.StackedBar.Bar"
+            "$ref": "#/definitions/MicroChart.StackedBar.Bar"
           }
         },
         "visible": {
@@ -3880,7 +3905,7 @@
         }
       }
     },
-    "Microchart.StackedBar.Bar": {
+    "MicroChart.StackedBar.Bar": {
       "type": "object",
       "additionalProperties": false,
       "properties": {

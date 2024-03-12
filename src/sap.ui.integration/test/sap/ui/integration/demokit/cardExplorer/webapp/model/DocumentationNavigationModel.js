@@ -213,7 +213,7 @@ sap.ui.define([
 						experimental: true
 					},
 					{
-						title: 'Microcharts',
+						title: 'Micro Charts',
 						target: 'learnDetail',
 						key: 'microcharts',
 						experimental: true

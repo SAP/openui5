@@ -333,6 +333,11 @@
 					"pattern": "focusFullCard",
 					"name": "focusFullCard",
 					"target": "focusFullCard"
+				},
+				{
+					"pattern": "microCharts",
+					"name": "microCharts",
+					"target": "microCharts"
 				}
 			],
 			"targets": {
@@ -588,6 +593,11 @@
 				"focusFullCard": {
 					"id": "focusFullCard",
 					"name": "FocusFullCard",
+					"level": 1
+				},
+				"microCharts": {
+					"id": "microCharts",
+					"name": "MicroCharts",
 					"level": 1
 				}
 			}

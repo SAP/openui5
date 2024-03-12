@@ -1,19 +1,120 @@
-/* global QUnit */
-
 sap.ui.define([
-	"sap/ui/integration/controls/Microchart",
-	"sap/ui/qunit/utils/nextUIUpdate",
-	"sap/base/Log"
-], function(
-	Microchart,
-	nextUIUpdate,
-	Log
-) {
+	"sap/ui/core/mvc/Controller",
+	"sap/ui/integration/widgets/Card",
+	"sap/base/util/deepClone"
+], function (Controller, Card, deepClone) {
 	"use strict";
 
-	const DOM_RENDER_LOCATION = "qunit-fixture";
+	const oManifest = {
+		"sap.app": {
+			"id": "card.explorer.bulletChart.list.card",
+			"type": "card"
+		},
+		"sap.card": {
+			"type": "Object",
+			"header": {
+				"type": "Numeric",
+				"title": "Income from products",
+				"subTitle": "Revenue",
+				"status": {
+					"text": "5 of 20"
+				},
+				"unitOfMeasurement": "EUR",
+				"mainIndicator": {
+					"number": 225,
+					"unit": "K",
+					"trend": "Down",
+					"state": "Critical"
+				},
+				"sideIndicators": [
+					{
+						"title": "Target",
+						"number": 250,
+						"unit": "K"
+					},
+					{
+						"title": "Deviation",
+						"number": 25,
+						"unit": "K"
+					}
+				],
+				"details": "{details}",
+				"chart": { }
+			},
+			"content": {
+			}
+		}
+	};
 
-	const aSamples = [
+	const oData = {
+		"color": "Critical",
+		"columns": [
+			{
+				"color": "Error",
+				"value": 100
+			},
+			{
+				"color": "Critical",
+				"value": 250
+			},
+			{
+				"color": "Good",
+				"value": 400
+			},
+			{
+				"color": "Error",
+				"value": 100
+			}
+		],
+		"lines": [
+			{
+				"color": "Good",
+				"lineType": "Dashed",
+				"points": [
+					{
+						"X": 0,
+						"Y": 100
+					},
+					{
+						"X": 10,
+						"Y": 110
+					},
+					{
+						"X": 20,
+						"Y": 80
+					},
+					{
+						"X": 30,
+						"Y": 120
+					}
+				]
+			},
+			{
+				"color": "#1c74d1",
+				"lineType": "Dotted",
+				"points": [
+					{
+						"X": 0,
+						"Y": 250
+					},
+					{
+						"X": 10,
+						"Y": 380
+					},
+					{
+						"X": 20,
+						"Y": 180
+					},
+					{
+						"X": 30,
+						"Y": 190
+					}
+				]
+			}
+		]
+	};
+
+	const aChartSamples = [
 		{
 			"type": "Bullet",
 			"minValue": 0,
@@ -22,7 +123,7 @@ sap.ui.define([
 			"value": 120,
 			"scale": "€",
 			"displayValue": "120 EUR",
-			"color": "Critical"
+			"color": "{color}"
 		},
 		{
 			"type": "Column",
@@ -31,10 +132,10 @@ sap.ui.define([
 			"leftBottomLabel": "June 1",
 			"rightBottomLabel": "June 30",
 			"columns": {
-				"path": "chart/columns",
+				"path": "columns",
 				"template": {
-					"color": "Critical",
-					"value": 44
+					"color": "{color}",
+					"value": "{value}"
 				}
 			}
 		},
@@ -53,7 +154,7 @@ sap.ui.define([
 					"label": "2022"
 				},
 				{
-					"color": "Critical",
+					"color": "{color}",
 					"value": 20,
 					"displayValue": "20M",
 					"label": "2023"
@@ -68,7 +169,7 @@ sap.ui.define([
 		},
 		{
 			"type": "HarveyBall",
-			"color": "Critical",
+			"color": "{color}",
 			"total": 100,
 			"totalScale": "K",
 			"showTotal": true,
@@ -87,13 +188,13 @@ sap.ui.define([
 			"leftBottomLabel": "June 1",
 			"rightBottomLabel": "June 30",
 			"lines": {
-				"path": "Lines",
+				"path": "lines",
 				"template": {
-					"color": "Critical",
+					"color": "{color}",
 					"lineType": "Dotted",
 					"showPoints": true,
 					"points": {
-						"path": "Points",
+						"path": "points",
 						"template": {
 							"x": "{X}",
 							"y": "{Y}"
@@ -114,7 +215,7 @@ sap.ui.define([
 			"rightBottomLabel": "June 30",
 			"lines": [
 				{
-					"color": "Critical",
+					"color": "{color}",
 					"lineType": "Dotted",
 					"showPoints": true,
 					"points": [
@@ -189,7 +290,7 @@ sap.ui.define([
 			"leftBottomLabel": "June 1",
 			"rightBottomLabel": "June 30",
 			"points": {
-				"path": "Lines/0/Points",
+				"path": "lines/0/points",
 				"template": {
 					"x": "{X}",
 					"y": "{Y}"
@@ -198,7 +299,7 @@ sap.ui.define([
 		},
 		{
 			"type": "Radial",
-			"color": "Critical",
+			"color": "{color}",
 			"total": 100,
 			"showPercentageSymbol": true,
 			"percentage": 25,
@@ -223,65 +324,24 @@ sap.ui.define([
 		}
 	];
 
-	const pIfMicroChartsAvailable = Microchart.loadDependencies();
+	return Controller.extend("sap.f.cardsdemo.controller.MicroChart", {
+		onInit: function () {
+			const oSamplesPanel = this.byId("samples");
 
-	function testWithMicrochart(assert, fnTest) {
-		const done = assert.async();
+			aChartSamples.forEach((oSample, iInd) => {
+				const oSampleManifest = deepClone(oManifest);
+				oSampleManifest["sap.card"].header.chart = oSample;
+				oSampleManifest["sap.card"].header.data = {json: oData};
 
-		return pIfMicroChartsAvailable
-			.then(async () => {
-				await fnTest();
-				done();
-			}, () => {
-				assert.ok(true, "Usage of Microcharts is not available with this distribution.");
-				done();
+				const oCard = new Card("card" + iInd, {
+					width: "500px",
+					manifest: oSampleManifest
+				});
+
+				oCard.addStyleClass("sapUiTinyMargin");
+
+				oSamplesPanel.addContent(oCard);
 			});
-	}
-
-	QUnit.module("Rendering");
-
-	QUnit.test("Value of the chart has same color as the chart", async function (assert) {
-		// arrange
-		const oMicrochart = new Microchart({
-			valueColor: "Good",
-			displayValue: "123"
-		});
-
-		oMicrochart.placeAt(DOM_RENDER_LOCATION);
-		await nextUIUpdate();
-
-		// assert
-		assert.ok(oMicrochart.$().find(".sapUiIntMicrochartValue" + oMicrochart.getValueColor()).length, "The value div should have 'Good' class.");
-
-		// clean up
-		oMicrochart.destroy();
-	});
-
-	QUnit.module("Creating");
-
-	QUnit.test("Create different types", async function (assert) {
-		await testWithMicrochart(assert, async () => {
-			for (const oSettings of aSamples) {
-				// Arrange
-				const fnLogErrorSpy = this.spy(Log, "error");
-				const oChartWrapper = Microchart.create(oSettings);
-				const oChart = oChartWrapper.getChart();
-				const sClassName = oChart.getMetadata().getName();
-				const sExpectedClassName = `sap.suite.ui.microchart.${oSettings.type}MicroChart`;
-
-				oChartWrapper.placeAt(DOM_RENDER_LOCATION);
-				await nextUIUpdate();
-
-				// Assert
-				assert.strictEqual(sClassName, sExpectedClassName, `${oSettings.type} was created with correct class.`);
-				assert.ok(fnLogErrorSpy.notCalled, `${oSettings.type} was created without errors.`);
-				assert.ok(oChartWrapper.$(), `${oSettings.type} was rendered.`);
-
-				// Clean up
-				oChartWrapper.destroy();
-				fnLogErrorSpy.restore();
-			}
-		});
-
+		}
 	});
 });

@@ -1,0 +1,69 @@
+{
+	"header": {
+		"number": "65.34",
+		"unit": "K",
+		"trend": "Down",
+		"state": "Critical",
+		"details": "Q1, 2018",
+		"target": {
+			"number": 100,
+			"unit": "K"
+		},
+		"deviation": {
+			"number": 34.7,
+			"state": "Critical"
+		},
+		"chart": {
+			"total": 200,
+			"percentage": 65,
+			"fraction": 65
+		}
+	},
+	"items": [
+		{
+			"Name": "Comfort Easy",
+			"Description": "32 GB Digital Assistant",
+			"Highlight": "Success",
+			"color": "Good",
+			"total": 400,
+			"percentage": 70,
+			"fraction": 20
+		},
+		{
+			"Name": "ITelO Vault",
+			"Description": "Digital Organizer",
+			"Highlight": "Warning",
+			"color": "Critical",
+			"total": 300,
+			"percentage": 20,
+			"fraction": 10
+		},
+		{
+			"Name": "Notebook Professional 15",
+			"Description": "Multitouch LCD",
+			"Highlight": "Success",
+			"color": "Good",
+			"total": 500,
+			"percentage": 75,
+			"fraction": 64
+		},
+		{
+			"Name": "Ergo Screen E-I",
+			"Description": "Optimum Hi-Resolution max.",
+			"Highlight": "Warning",
+			"color": "Critical",
+			"total": 100,
+			"percentage": 15,
+			"fraction": 15
+		},
+		{
+			"Name": "Laser Professional Eco",
+			"Description": "Powerful 500 MHz processor",
+			"Highlight": "Error",
+			"color": "Error",
+			"total": 10,
+			"percentage": 10,
+			"fraction": 10
+		}
+	]
+}
