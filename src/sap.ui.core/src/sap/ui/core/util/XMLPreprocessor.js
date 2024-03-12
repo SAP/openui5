@@ -1139,10 +1139,7 @@ sap.ui.define([
 						return null; // treat incomplete bindings as unrelated
 					}
 
-					const bReady = vBindingInfo.parts.every((oPart) => {
-						return oPart.value !== undefined || oWithControl.getModel(oPart.model);
-					});
-					if (!bReady) {
+					if (!BindingInfo.isReady(vBindingInfo, oWithControl)) {
 						if (bMandatory) {
 							warn(oElement, "Binding not ready");
 						}
