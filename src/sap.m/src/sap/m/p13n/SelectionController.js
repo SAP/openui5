@@ -43,7 +43,7 @@ sap.ui.define([
 	 *
 	 * @param {object} mSettings Initial settings for the new controller
 	 * @param {sap.ui.core.Control} mSettings.control The control instance that is personalized by this controller
-	 * @param {function} [mSettings.getKeyForItem] By default the SelectionController tries to identify the existing item through the
+	 * @param {function(sap.ui.core.Element):string} [mSettings.getKeyForItem] By default the SelectionController tries to identify the existing item through the
 	 * key by checking if there is an existing item with this id. This behaviour can be overruled by implementing this method which will
 	 * provide the according item of the <code>targetAggregation</code> to return the according key associated to this item.
 	 * @param {string} mSettings.targetAggregation The name of the aggregation that is now managed by this controller
