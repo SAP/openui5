@@ -472,6 +472,10 @@ sap.ui.define(function() {
 				beforeBootstrap: "./PreloadCfg.beforeBootstrap.qunit",
 				module: "./PreloadCfg.qunit"
 			},
+
+			/**
+			 * @deprecated
+			 */
 			"PreloadCfg-optimized-ui5loader-sync": {
 				group: "Configuration",
 				page: "test-resources/sap/ui/core/qunit/bootstrap/PreloadCfg-optimized-sync.qunit.html"
@@ -486,6 +490,9 @@ sap.ui.define(function() {
 				},
 				module: "./PreloadCfg.qunit"
 			},
+			/**
+			 * @deprecated
+			 */
 			"PreloadCfg-debug-ui5loader-sync": {
 				group: "Configuration",
 				page: "test-resources/sap/ui/core/qunit/bootstrap/PreloadCfg-debug-sync.qunit.html"
