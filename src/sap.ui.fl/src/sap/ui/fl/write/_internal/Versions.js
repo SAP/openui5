@@ -27,12 +27,20 @@ sap.ui.define([
 	// ensure sufficient data is present even if a draft was returned and later discarded
 	var BACKEND_REQUEST_LIMIT = MODEL_SIZE_LIMIT + 1;
 
+	function _isPublishVersionEnabled(aVersions, sDisplayedVersion) {
+		if (sDisplayedVersion !== Version.Number.Original && sDisplayedVersion !== Version.Number.Draft) {
+			return aVersions.some(function(oVersion) {
+				return oVersion.version === sDisplayedVersion && oVersion.isPublished === false;
+			});
+		}
+		return false;
+	}
+
 	function createModel(bVersioningEnabled, aVersions) {
 		var bBackendDraft = _doesDraftExistInVersions(aVersions);
 		var aDraftFilenames = [];
 
 		var sActiveVersion = Version.Number.Original;
-		var bPublishVersionEnabled = false;
 
 		return Utils.getUShellService("URLParsing")
 			.then(function (oURLParsingService) {
@@ -61,16 +69,11 @@ sap.ui.define([
 						} else {
 							oVersion.type = Version.Type.Inactive;
 						}
-						//If the current selected version is not yet published, enable the publish button
-						//Original versions are not part of back end response, so publish button is not enabled by default value
-						if ((oVersion.version === sPersistedBasisForDisplayedVersion) && (oVersion.isPublished === false)) {
-							bPublishVersionEnabled = true;
-						}
 					}
 				});
 
 				var oModel = new JSONModel({
-					publishVersionEnabled: bPublishVersionEnabled,
+					publishVersionEnabled: _isPublishVersionEnabled(aVersions, sPersistedBasisForDisplayedVersion),
 					versioningEnabled: bVersioningEnabled,
 					versions: aVersions,
 					activeVersion: sActiveVersion,

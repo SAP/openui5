@@ -242,7 +242,7 @@ sap.ui.define([
 				activatedBy: "qunit",
 				activatedAt: "a long while ago",
 				version: "1",
-				isPublished: false
+				isPublished: true
 			};
 
 			var oSecondVersion = {
