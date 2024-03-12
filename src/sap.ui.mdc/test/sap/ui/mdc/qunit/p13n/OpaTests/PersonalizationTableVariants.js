@@ -397,7 +397,7 @@ sap.ui.define([
 
 	});
 
-	opaTest("'Implicit' filter changes are only applied on table level (not on the inner ", function (Given, When, Then) {
+	opaTest("'Implicit' filter changes are only applied on table level (not on the inner)", function (Given, When, Then) {
 		Given.enableAndDeleteLrepLocalStorage();
 
 		Given.iStartMyAppInAFrame({
@@ -414,7 +414,7 @@ sap.ui.define([
 			controlType: "sap.ui.mdc.Table",
 			success: function(aControls) {
 				const aLocalStorage = Object.entries(window.localStorage);
-				const aEntries = aLocalStorage.filter((key) => (key.indexOf("addCondition") || key.indexOf("removeCondition")));
+				const aEntries = aLocalStorage.filter(([key, value]) => (key.indexOf("addCondition") > -1 || key.indexOf("removeCondition") > -1));
 
 				Opa5.assert.equal(aEntries.length, 3, "the correct amount of changes has been created");
 				aEntries.forEach(([sPersistenceKey, sChange]) => {
