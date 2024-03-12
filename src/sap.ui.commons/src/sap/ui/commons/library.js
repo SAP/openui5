@@ -360,7 +360,7 @@ sap.ui.define(['sap/ui/base/DataType', 'sap/base/util/ObjectPath',
 	 *
 	 * @enum {string}
 	 * @public
-	 * @deprecated as of version 1.38
+	 * @deprecated as of version 1.38, the concept has been discarded.
 	 */
 	thisLib.PaginatorEvent = {
 

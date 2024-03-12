@@ -34,7 +34,7 @@ sap.ui.define([
 	 *
 	 * @constructor
 	 * @public
-	 * @deprecated Since version 1.38.
+	 * @deprecated as of version 1.38, the concept has been discarded.
 	 * @alias sap.ui.commons.Paginator
 	 */
 	var Paginator = Control.extend("sap.ui.commons.Paginator", /** @lends sap.ui.commons.Paginator.prototype */ { metadata : {
