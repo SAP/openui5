@@ -81,7 +81,7 @@ sap.ui.define(['sap/base/Log', './OverflowToolbar', './OverflowToolbarRenderer',
 
 		AssociativeOverflowToolbar.prototype.exit = function () {
 			OverflowToolbar.prototype.exit.apply(this, arguments);
-			return this._callToolbarMethod('destroyContent', [true]);
+			this._callToolbarMethod('destroyContent', [true]);
 		};
 
 		AssociativeOverflowToolbar.prototype.indexOfContent = function(oControl) {

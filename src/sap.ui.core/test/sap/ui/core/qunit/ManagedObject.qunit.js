@@ -16,8 +16,9 @@ sap.ui.define([
 	"sap/ui/base/ManagedObjectMetadata",
 	"sap/base/strings/escapeRegExp",
 	"sap/base/util/isEmptyObject",
-	"sap/base/util/ObjectPath"
-], function(BindingInfo, BindingParser, DataType, ManagedObject, Element, JSONModel, Context, ManagedObjectModel, StringType, Control, Component, UIComponent, Sorter, ManagedObjectMetadata, escapeRegExp, isEmptyObject, ObjectPath) {
+	"sap/base/util/ObjectPath",
+	"sap/base/Log"
+], function(BindingInfo, BindingParser, DataType, ManagedObject, Element, JSONModel, Context, ManagedObjectModel, StringType, Control, Component, UIComponent, Sorter, ManagedObjectMetadata, escapeRegExp, isEmptyObject, ObjectPath, Log) {
 	"use strict";
 	var mObjects = {};
 
@@ -3258,6 +3259,45 @@ sap.ui.define([
 			assert.ok(oElement.isDestroyStarted(), "Must be marked as destroy started");
 			assert.ok(oElement.isDestroyed(), "Must be marked as destroy started");
 			done();
+		});
+	});
+
+	QUnit.module("init/exit");
+
+	QUnit.test("Ensure that hooks do not return a value", async function (assert) {
+		const oErrorLogSpy = sinon.spy(Log, "error");
+		const aPromises = [];
+
+		const MySampleManagedObject = ManagedObject.extend("sap.ui.core.MySampleManagedObject", {
+			metadata: {
+				properties: {
+					name: { type: "string", defaultValue: "hello" }
+				}
+			},
+			init: function () {
+				return "init() shouldn't return a value.";
+			},
+			exit: async function () {
+				const oPromise = Promise.reject(new Error("exit() failed."));
+				aPromises.push(oPromise);
+				await oPromise;
+			}
+		});
+
+		// init
+		const oMySample = new MySampleManagedObject();
+		assert.ok(oErrorLogSpy.getCall(0).calledWith("[FUTURE FATAL] The registered Event Listener 'init' must not have a return value."), "init() should be logged correctly.");
+
+		// exit
+
+		oMySample.destroy();
+
+		await Promise.allSettled(aPromises);
+		assert.ok(oErrorLogSpy.getCall(1).calledWith("[FUTURE FATAL] The registered Event Listener 'exit' must not have a return value."), "exit() should be logged correctly.");
+
+		await Promise.resolve(() => {
+			assert.ok(oErrorLogSpy.getCall(2).calledWith("The registered Event Listener 'exit' of '__object0' failed."), "Promise rejection caught successfully.");
+			oErrorLogSpy.restore();
 		});
 	});
 });

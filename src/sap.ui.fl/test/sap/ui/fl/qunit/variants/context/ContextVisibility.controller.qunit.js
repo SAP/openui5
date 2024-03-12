@@ -107,7 +107,8 @@ sap.ui.define([
 				noDataText: undefined
 			});
 
-			return oController.onBeforeRendering().then(function() {
+			oController.onBeforeRendering();
+			return oController._pLoadContextDescriptions.then(function() {
 				assert.strictEqual(oConnectorCall.callCount, 1, "then the back end request was sent once");
 				assert.strictEqual(oController.oSelectedContextsModel.getProperty("/noDataText"), sText, "then oSelectedContextsModel has a text");
 			});
@@ -134,7 +135,8 @@ sap.ui.define([
 				noDataText: undefined
 			});
 
-			return oController.onBeforeRendering().then(function() {
+			oController.onBeforeRendering();
+			return oController._pLoadContextDescriptions.then(function() {
 				assert.strictEqual(oConnectorCall.callCount, 0, "then the back end request was not sent");
 				assert.strictEqual(oRadioButtonGroup.getSelectedIndex(), 0, "then public radio button is selected");
 				assert.strictEqual(oController.oSelectedContextsModel.getProperty("/noDataText"), sText, "then oSelectedContextsModel has a text");
