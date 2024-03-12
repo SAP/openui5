@@ -136,7 +136,7 @@ sap.ui.define([
 
 		if (this.iScale >= 0) {
 			// ensures that amount scale wins over the decimals for the unit
-			oFormatOptionsMerged = extend({}, oFormatOptionsMerged, {maxFractionDigits: this.iScale});
+			oFormatOptionsMerged = extend({}, {maxFractionDigits: this.iScale}, oFormatOptionsMerged);
 		}
 		// Only subclasses of the Unit type use a NumberFormat instance cache.
 		// By default a new NumberFormat instance is created everytime.
