@@ -36,16 +36,16 @@ sap.ui.define([
 		dependencies: ["sap.ui.core", "sap.ui.unified"],
 		designtime: "sap/ui/table/designtime/library.designtime",
 		types: [
-			/** @deprecated As of version 1.38 */
+			/** @deprecated As of version 1.38, the concept has been discarded. */
 			"sap.ui.table.NavigationMode",
 			"sap.ui.table.RowActionType",
 			"sap.ui.table.SelectionBehavior",
 			"sap.ui.table.SelectionMode",
-			/** @deprecated As of version 1.120 */
+			/** @deprecated As of version 1.120, replaced by <code>sap.ui.core.SortOrder</code> */
 			"sap.ui.table.SortOrder",
-			/** @deprecated As of version 1.119 */
+			/** @deprecated As of version 1.119, see the <code>rowMode</code> aggregation of <code>sap.ui.table.Table</code> for more details. */
 			"sap.ui.table.VisibleRowCountMode",
-			/** @deprecated As of version 1.120 */
+			/** @deprecated As of version 1.120, replaced by <code>sap.ui.model.TreeAutoExpandMode</code> */
 			"sap.ui.table.TreeAutoExpandMode", /*Note: Only added here to ensure that a corresponding module is created automatically. Cannot be used as type for properties!*/
 			"sap.ui.table.plugins.SelectionMode"
 		],
@@ -96,7 +96,7 @@ sap.ui.define([
 	 *
 	 * @version ${version}
 	 * @enum {string}
-	 * @deprecated As of version 1.38
+	 * @deprecated As of version 1.38, the concept has been discarded.
 	 * @public
 	 */
 	thisLib.NavigationMode = {
@@ -254,7 +254,7 @@ sap.ui.define([
 	 *
 	 * @version ${version}
 	 * @enum {string}
-	 * @deprecated As of version 1.119
+	 * @deprecated As of version 1.119, see the <code>rowMode</code> aggregation of <code>sap.ui.table.Table</code> for more details.
 	 * @public
 	 */
 	thisLib.VisibleRowCountMode = {
@@ -364,7 +364,7 @@ sap.ui.define([
 	 * Enumeration of the <code>ResetAllMode</code> that can be used in a <code>TablePersoController</code>.
 	 * @enum {string}
 	 * @public
-	 * @deprecated As of version 1.115
+	 * @deprecated As of version 1.115, replaced by {@link sap.m.p13n.Engine}
 	 */
 	thisLib.ResetAllMode = {
 
@@ -401,7 +401,7 @@ sap.ui.define([
 	 * @version ${version}
 	 * @typedef {sap.ui.model.TreeAutoExpandMode}
 	 * @public
-	 * @deprecated As of version 1.120
+	 * @deprecated As of version 1.120, replaced by <code>sap.ui.model.TreeAutoExpandMode</code>
 	 */
 	thisLib.TreeAutoExpandMode = TreeAutoExpandMode;
 

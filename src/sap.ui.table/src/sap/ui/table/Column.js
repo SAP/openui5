@@ -216,7 +216,7 @@ sap.ui.define([
 
 			/**
 			 * Indicates if the column is grouped.
-			 * @deprecated As of version 1.118.
+			 * @deprecated As of version 1.118, see the <code>enableGrouping</code> property of <code>sap.ui.table.Table</code> for details.
 			 */
 			grouped: {type: "boolean", group: "Appearance", defaultValue: false, deprecated: true},
 
@@ -342,7 +342,7 @@ sap.ui.define([
 			 * Fires before the column menu is opened.
 			 * @since 1.33.0
 			 *
-			 * @deprecated As of version 1.117.
+			 * @deprecated As of version 1.117, see the <code>headerMenu</code> aggregation for details.
 			 */
 			columnMenuOpen: {
 				allowPreventDefault: true,

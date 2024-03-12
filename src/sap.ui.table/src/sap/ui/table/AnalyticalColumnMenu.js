@@ -25,7 +25,7 @@ sap.ui.define(['./ColumnMenu', "sap/ui/unified/MenuRenderer", './utils/TableUtil
 	 * @experimental Since version 1.21.
 	 * @alias sap.ui.table.AnalyticalColumnMenu
 	 *
-	 * @deprecated As of version 1.117
+	 * @deprecated As of version 1.117, replaced by the <code>headerMenu</code> association of <code>sap.ui.table.Column</code>.
 	 */
 	var AnalyticalColumnMenu = ColumnMenu.extend("sap.ui.table.AnalyticalColumnMenu", /** @lends sap.ui.table.AnalyticalColumnMenu.prototype */ {
 		metadata: {
