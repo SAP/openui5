@@ -731,23 +731,23 @@ sap.ui.define([
 			const sControllerName = this.oView.getControllerName?.() || "sap.ui.core.mvc.Controller";
 
 			if (this.onInit) {
-				const fnInit = function() { _enforceNoReturnValue(this.onInit.call(this, arguments), /*mLogInfo=*/{ name: "onInit", component: sControllerName }); };
+				const fnInit = function() { _enforceNoReturnValue(this.onInit.apply(this, arguments), /*mLogInfo=*/{ name: "onInit", component: sControllerName }); };
 				oView.attachAfterInit(fnInit, this);
 			}
 			if (this.onExit) {
-				const fnExit = function() { _enforceNoReturnValue(this.onExit.call(this, arguments), /*mLogInfo=*/{ name: "onExit", component: sControllerName}); };
+				const fnExit = function() { _enforceNoReturnValue(this.onExit.apply(this, arguments), /*mLogInfo=*/{ name: "onExit", component: sControllerName}); };
 				oView.attachBeforeExit(fnExit, this);
 			}
 			if (oView.bControllerIsViewManaged) {
-				const fnBeforeExit = function() { _enforceNoReturnValue(this.destroyFragments.call(this, arguments), /*mLogInfo=*/{name: "destroyFragments", component: sControllerName}); };
+				const fnBeforeExit = function() { _enforceNoReturnValue(this.destroyFragments.apply(this, arguments), /*mLogInfo=*/{name: "destroyFragments", component: sControllerName}); };
 				oView.attachBeforeExit(fnBeforeExit, this);
 			}
 			if (this.onAfterRendering) {
-				const fnAfterRendering = function() { _enforceNoReturnValue(this.onAfterRendering.call(this, arguments), /*mLogInfo=*/{ name: "onAfterRendering", component: sControllerName }); };
+				const fnAfterRendering = function() { _enforceNoReturnValue(this.onAfterRendering.apply(this, arguments), /*mLogInfo=*/{ name: "onAfterRendering", component: sControllerName }); };
 				oView.attachAfterRendering(fnAfterRendering, this);
 			}
 			if (this.onBeforeRendering) {
-				const fnBeforeRendering = function() { _enforceNoReturnValue(this.onBeforeRendering.call(this, arguments), /*mLogInfo=*/{name: "onBeforeRendering", component: sControllerName}); };
+				const fnBeforeRendering = function() { _enforceNoReturnValue(this.onBeforeRendering.apply(this, arguments), /*mLogInfo=*/{name: "onBeforeRendering", component: sControllerName}); };
 				oView.attachBeforeRendering(fnBeforeRendering, this);
 			}
 		};
