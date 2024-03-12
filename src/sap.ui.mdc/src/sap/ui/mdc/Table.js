@@ -295,7 +295,7 @@ sap.ui.define([
 				},
 				/**
 				 * This property has no effect and will be removed soon.
-				 * @deprecated As of version 1.115
+				 * @deprecated As of version 1.115, the concept has been discarded.
 				 */
 				height: {
 					type: "sap.ui.core.CSSSize",

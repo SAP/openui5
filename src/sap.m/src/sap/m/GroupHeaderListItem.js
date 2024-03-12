@@ -59,7 +59,7 @@ sap.ui.define(["sap/ui/core/library", "./library", "./ListItemBase", "./GroupHea
 				/**
 				 * Allows to uppercase the group title.
 				 * @since 1.13.2
-				 * @deprecated Since version 1.40.10
+				 * @deprecated As of version 1.40.10, the concept has been discarded.
 				 */
 				upperCase : {type : "boolean", group : "Appearance", defaultValue : false, deprecated: true},
 

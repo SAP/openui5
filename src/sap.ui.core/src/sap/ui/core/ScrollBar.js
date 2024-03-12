@@ -45,7 +45,7 @@ sap.ui.define([
 	 * @version ${version}
 	 *
 	 * @public
-	 * @deprecated as of version 1.56
+	 * @deprecated As of version 1.56, the concept has been discarded.
 	 * @alias sap.ui.core.ScrollBar
 	 */
 	var ScrollBar = Control.extend("sap.ui.core.ScrollBar", /** @lends sap.ui.core.ScrollBar.prototype */ {

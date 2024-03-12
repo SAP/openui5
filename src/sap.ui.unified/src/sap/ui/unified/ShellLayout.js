@@ -60,7 +60,7 @@ sap.ui.define([
 	 * @public
 	 * @since 1.25.0
 	 * @alias sap.ui.unified.ShellLayout
-	 * @deprecated Since version 1.44.0.
+	 * @deprecated As of version 1.44.0, the concept has been discarded.
 	 */
 	var ShellLayout = Control.extend("sap.ui.unified.ShellLayout", /** @lends sap.ui.unified.ShellLayout.prototype */ { metadata : {
 
