@@ -457,12 +457,14 @@ sap.ui.define([
 		oView.destroy();
 		assert.ok(oErrorLogSpy.getCall(3).calledWith("[FUTURE FATAL] The registered Event Listener 'onExit' must not have a return value."), "Correct Fatal Log displayed");
 
-		// @deprecated
+		/**
+		 * @deprecated
+		 */
 		await (async () => {
 			await Promise.allSettled(aPromises);
 			assert.ok(oErrorLogSpy.getCall(4).calledWith("The registered Event Listener 'onAfterRendering' of 'my.Controller09' failed."), "Rejected Promise of 'onAfterRendering' hook should be handled and the correct error logged.");
 			assert.ok(oErrorLogSpy.getCall(5).calledWith("The registered Event Listener 'onExit' of 'my.Controller09' failed."), "Rejected Promise of 'onExit' hook should be handled and the correct error logged.");
-			oErrorLogSpy.restore();
 		})();
+		oErrorLogSpy.restore();
 	});
 });

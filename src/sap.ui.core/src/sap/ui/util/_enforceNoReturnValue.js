@@ -9,7 +9,9 @@ sap.ui.define([
 	function _enforceNoReturnValue(vResult, mLogInfo) {
 		if (vResult !== undefined) {
 			const sFunctionName = mLogInfo.name ? `'${mLogInfo.name}' ` : '';
-			// @deprecated
+			/**
+			 * @deprecated
+			 */
 			if (typeof vResult.then === "function") {
 				vResult.catch((err) => {
 					Log.error(`The registered Event Listener ${sFunctionName}of '${mLogInfo.component}' failed.`, err);

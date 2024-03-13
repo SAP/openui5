@@ -3289,15 +3289,17 @@ sap.ui.define([
 		assert.ok(oErrorLogSpy.getCall(0).calledWith("[FUTURE FATAL] The registered Event Listener 'init' must not have a return value."), "init() should be logged correctly.");
 
 		// exit
-
 		oMySample.destroy();
 
 		await Promise.allSettled(aPromises);
 		assert.ok(oErrorLogSpy.getCall(1).calledWith("[FUTURE FATAL] The registered Event Listener 'exit' must not have a return value."), "exit() should be logged correctly.");
 
+		/**
+		 * @deprecated
+		 */
 		await Promise.resolve(() => {
 			assert.ok(oErrorLogSpy.getCall(2).calledWith("The registered Event Listener 'exit' of '__object0' failed."), "Promise rejection caught successfully.");
-			oErrorLogSpy.restore();
 		});
+		oErrorLogSpy.restore();
 	});
 });

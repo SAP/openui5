@@ -623,9 +623,12 @@ sap.ui.define([
 		assert.ok(oComponent.isActive(), "Component: The component is active after activate()");
 		assert.ok(oErrorLogSpy.getCall(2).calledWith("[FUTURE FATAL] The registered Event Listener 'onActivate' must not have a return value."), "The 'onActivate' should not return a value.");
 
+		/**
+		 * @deprecated
+		 */
 		await Promise.resolve(() => {
 			assert.ok(oErrorLogSpy.getCall(3).calledWith("The registered Event Listener 'onDeactivate' of 'component' failed."), "The rejected Promise is caught successfully");
-			oErrorLogSpy.restore();
 		});
+		oErrorLogSpy.restore();
 	});
 });
