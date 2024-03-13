@@ -4,15 +4,17 @@
 
 // Provides the Design Time Metadata for the sap.m.IconTabBar control
 sap.ui.define([
+	"sap/base/i18n/ResourceBundle",
 	"sap/ui/core/Element",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/Core",
 	"sap/ui/core/Fragment"
 ],
-	function(Element, JSONModel, Core, Fragment) {
+	function(ResourceBundle, Element, JSONModel, Fragment) {
 		"use strict";
 
-		var oTextResources = Core.getLibraryResourceBundle("sap.m.designtime");
+		var oTextResources = ResourceBundle.create({
+			bundleName: "sap.m.designtime.messagebundle"
+		});
 
 		var oSelectIconTabBarFilter = function (oControl, mPropertyBag) {
 			return new Promise(function (fnResolve) {

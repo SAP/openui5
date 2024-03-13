@@ -104,13 +104,6 @@ sap.ui.define(["sap/ui/base/DataType", "sap/ui/model/ChangeReason"], function(Da
 	 *   For example for internal types like sap.ui.table.Row.State. It is also possible to use sap.ui.base.DataType#createType to create
 	 *   a type that can be used here. But this is not done to avoid polluting the type registry just for this util.
 	 *
-	 * - "returnValue" (optional) - Type of the return value.
-	 *   Examples: "boolean", "Promise"
-	 *
-	 *   If a type for the return value is defined, an array of valid return values is returned to the caller. Invalid values that do not match
-	 *   the type are discarded.
-	 *   Any type that can be used in "arguments" can also be used here, plus "Promise".
-	 *
 	 * Forbidden types: "function"
 	 */
 
@@ -163,7 +156,7 @@ sap.ui.define(["sap/ui/base/DataType", "sap/ui/model/ChangeReason"], function(Da
 				]
 			},
 
-			OpenMenu: {
+			OpenContextMenu: {
 				arguments: [
 					{type: validateCellInfo},
 					{type: "class:sap.ui.unified.Menu"}
@@ -218,16 +211,7 @@ sap.ui.define(["sap/ui/base/DataType", "sap/ui/model/ChangeReason"], function(Da
 				]
 			}
 		},
-		Column: {
-			// Called when the table needs to know whether menu items will be added on the Table.OpenMenu hook. Returning "true" indicates that
-			// the consumer will add menu items on Table.OpenMenu.
-			MenuItemNotification: {
-				arguments: [
-					{type: "class:sap.ui.table.Column"}
-				],
-				returnValue: "boolean"
-			}
-		},
+		Column: {},
 		// Can be used to send any signal.
 		Signal: {
 			arguments: [
@@ -253,22 +237,18 @@ sap.ui.define(["sap/ui/base/DataType", "sap/ui/model/ChangeReason"], function(Da
 	 *
 	 * @param {sap.ui.table.Table} oScope The table whose hook is called.
 	 * @param {string} sKey The hook to call.
-	 * @returns {any[] | undefined} The return values, or <code>undefined</code> if the hook does not allow return values.
 	 */
 	HookUtils.call = function(oScope, sKey) {
 		var aHooks = Hooks.get(oScope);
 
 		if (!isValidScope(oScope) || !isValidKey(sKey)) {
-			return undefined;
+			return;
 		}
 
 		var mHookMetadata = getHookMetadataByKey(sKey);
 
 		if (aHooks == null) {
-			if (mHookMetadata.returnValue) {
-				return [];
-			}
-			return undefined;
+			return;
 		}
 
 		var aArguments = sanitizeArguments(Array.prototype.slice.call(arguments, 2));
@@ -278,22 +258,17 @@ sap.ui.define(["sap/ui/base/DataType", "sap/ui/model/ChangeReason"], function(Da
 			throw new Error("Hook with key " + sKey + " was not called. Invalid arguments passed\n" + oScope);
 		}
 
-		var aReturnValues = aHooks.map(function(oHook) {
+		aHooks.map((oHook) => {
 			if (oHook.key === MASTER_HOOK_KEY) {
 				var oCall = {};
 				var oHandlerContext = oHook.handlerContext == null ? oHook.target : oHook.handlerContext;
 
 				oCall[sKey] = aArguments;
-				return HookUtils.TableUtils.dynamicCall(oHook.target, oCall, oHandlerContext);
-
+				HookUtils.TableUtils.dynamicCall(oHook.target, oCall, oHandlerContext);
 			} else if (oHook.key === sKey) {
-				return oHook.handler.apply(oHook.handlerContext, aArguments);
+				oHook.handler.apply(oHook.handlerContext, aArguments);
 			}
 		});
-
-		aReturnValues = getValidReturnValues(mHookMetadata, aReturnValues);
-
-		return aReturnValues;
 	};
 
 	/**
@@ -433,7 +408,7 @@ sap.ui.define(["sap/ui/base/DataType", "sap/ui/model/ChangeReason"], function(Da
 
 			if ("arguments" in mCurrent[sProperty]) {
 				aForbiddenTypes.forEach(function(sForbiddenType) {
-					if (mCurrent[sProperty].arguments.indexOf(sForbiddenType) > -1 || mCurrent[sProperty].returnValue === sForbiddenType) {
+					if (mCurrent[sProperty].arguments.includes(sForbiddenType)) {
 						throw new Error("Forbidden type found in metadata of hook " + sCurrentKey + ": " + sForbiddenType);
 					}
 				});
@@ -471,14 +446,6 @@ sap.ui.define(["sap/ui/base/DataType", "sap/ui/model/ChangeReason"], function(Da
 			}
 		}
 
-		aArguments.map(function(vArgument) {
-			if (vArgument === null) {
-				return undefined;
-			} else {
-				return vArgument;
-			}
-		});
-
 		return aArguments;
 	}
 
@@ -492,28 +459,6 @@ sap.ui.define(["sap/ui/base/DataType", "sap/ui/model/ChangeReason"], function(Da
 				return HookUtils.TableUtils.isA(vValue, mArgument.type.substring(6));
 			}
 			return mArgument.optional === true && vValue == null || DataType.getType(mArgument.type).isValid(vValue);
-		});
-	}
-
-	function getValidReturnValues(mHookMetadata, aValues) {
-		if (!mHookMetadata.returnValue) {
-			return undefined;
-		}
-
-		var vType = mHookMetadata.returnValue;
-
-		return aValues.filter(function(vValue) {
-			if (vValue == null) {
-				return false;
-			} else if (typeof vType === "function") {
-				return vType(vValue);
-			} else if (vType === "Promise") {
-				return vValue instanceof Promise;
-			} else if (vType.startsWith("class:")) {
-				return HookUtils.TableUtils.isA(vValue, vType.substring(6));
-			} else {
-				return DataType.getType(vType).isValid(vValue);
-			}
 		});
 	}
 

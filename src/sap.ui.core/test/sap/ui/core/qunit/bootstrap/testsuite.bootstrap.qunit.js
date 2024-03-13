@@ -224,11 +224,6 @@ sap.ui.define(function() {
 				module: "./PreloadCfg.qunit"
 			},
 
-			"PreloadCfg-optimized-ui5loader-sync": {
-				group: "Configuration",
-				page: "test-resources/sap/ui/core/qunit/bootstrap/PreloadCfg-optimized-sync.qunit.html"
-			},
-
 			"PreloadCfg-debug-ui5loader-async": {
 				group: "Configuration",
 				loader: {
@@ -238,11 +233,6 @@ sap.ui.define(function() {
 					debug: true
 				},
 				module: "./PreloadCfg.qunit"
-			},
-
-			"PreloadCfg-debug-ui5loader-sync": {
-				group: "Configuration",
-				page: "test-resources/sap/ui/core/qunit/bootstrap/PreloadCfg-debug-sync.qunit.html"
 			},
 
 			"ResourceRoot_ResourcesURL_ResOnly": {

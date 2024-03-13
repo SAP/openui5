@@ -586,17 +586,6 @@ sap.ui.define([
 							sap.ui.require(["sap/ui/core/support/Support", "sap/ui/support/Bootstrap"], fnCallbackSupportBootstrapInfo, function (oError) {
 								Log.error("Could not load support mode modules:", oError);
 							});
-						} else {
-							Log.warning("Synchronous loading of Support mode. Set preload configuration to 'async' or switch to asynchronous bootstrap to prevent these synchronous request.", "SyncXHR", null, function() {
-								return {
-									type: "SyncXHR",
-									name: "support-mode"
-								};
-							});
-							fnCallbackSupportBootstrapInfo(
-								sap.ui.requireSync("sap/ui/core/support/Support"), // legacy-relevant: Synchronous path
-								sap.ui.requireSync("sap/ui/support/Bootstrap") // legacy-relevant: Synchronous path
-							);
 						}
 					}
 
@@ -615,16 +604,6 @@ sap.ui.define([
 							], fnCallbackTestRecorder, function (oError) {
 								Log.error("Could not load test recorder:", oError);
 							});
-						} else {
-							Log.warning("Synchronous loading of Test recorder mode. Set preload configuration to 'async' or switch to asynchronous bootstrap to prevent these synchronous request.", "SyncXHR", null, function() {
-								return {
-									type: "SyncXHR",
-									name: "test-recorder-mode"
-								};
-							});
-							fnCallbackTestRecorder(
-								sap.ui.requireSync("sap/ui/testrecorder/Bootstrap") // legacy-relevant: Synchronous preloading
-							);
 						}
 					}
 
@@ -826,10 +805,6 @@ sap.ui.define([
 				Library._load(lib, {
 					sync: true
 				});
-			});
-			this.aModules.forEach( function(mod) {
-				// data-sap-ui-modules might contain legacy jquery.sap.* modules
-				sap.ui.requireSync( /^jquery\.sap\./.test(mod) ?  mod : mod.replace(/\./g, "/")); // legacy-relevant: Sync loading of modules and libraries
 			});
 
 			fnCallback();

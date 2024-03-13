@@ -297,50 +297,6 @@ sap.ui.define([
 		assert.ok(oInstallationSpy.calledOn(oContext), "After uninstall and install with a context, the hook was called with the correct context");
 	});
 
-	QUnit.test("Return value", function(assert) {
-		var oColumn = new Column();
-		var oHookWithReturnValue = {
-			key: "Column.MenuItemNotification",
-			validCall: function(oScope) {
-				return TableUtils.Hook.call(oScope, this.key, oColumn);
-			},
-			validReturnValue: true,
-			invalidReturnValue: 1
-		};
-		var oTable = this.oFakeTable;
-		var oObjectA = {};
-		var oObjectB = {};
-		var oObjectC = {};
-
-		assert.deepEqual(oHookWithReturnValue.validCall(oTable), [], "Return values for valid call if nothing returned");
-
-		oObjectA[oHookWithReturnValue.key] = function() {
-			return oHookWithReturnValue.validReturnValue;
-		};
-		oObjectB[oHookWithReturnValue.key] = function() {
-			return oHookWithReturnValue.invalidReturnValue;
-		};
-		oObjectC[oHookWithReturnValue.key] = function() {};
-
-		Hook.register(oTable, oHookWithReturnValue.key, function() {
-			return oHookWithReturnValue.validReturnValue;
-		});
-		Hook.register(oTable, oHookWithReturnValue.key, function() {
-			return oHookWithReturnValue.invalidReturnValue;
-		});
-		Hook.register(oTable, oHookWithReturnValue.key, function() {});
-		Hook.install(oTable, oObjectA);
-		Hook.install(oTable, oObjectB);
-		Hook.install(oTable, oObjectC);
-
-		assert.deepEqual(oHookWithReturnValue.validCall(oTable), [
-			oHookWithReturnValue.validReturnValue,
-			oHookWithReturnValue.validReturnValue
-		], "Return values for valid call");
-
-		oColumn.destroy();
-	});
-
 	QUnit.module("Registration", {
 		beforeEach: function() {
 			this.oFakeTable = {fakeTable: true};

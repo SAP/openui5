@@ -3,8 +3,8 @@
  */
 
 // Provides the Design Time Metadata for the sap.uxap.ObjectPageSection control
-sap.ui.define(["sap/ui/core/Lib", "sap/uxap/library", "sap/ui/fl/designtime/util/editIFrame"],
-	function(Library, library, editIFrame) {
+sap.ui.define(["sap/base/i18n/ResourceBundle", "sap/ui/core/Lib", "sap/uxap/library", "sap/ui/fl/designtime/util/editIFrame"],
+	function(ResourceBundle, Library, library, editIFrame) {
 	"use strict";
 
 	function fnGetLabel(oObjectPageSection) {
@@ -65,7 +65,9 @@ sap.ui.define(["sap/ui/core/Lib", "sap/uxap/library", "sap/ui/fl/designtime/util
 					return {
 						icon: "sap-icon://write-new",
 						name: () => {
-							const oLibResourceBundle = Library.getResourceBundleFor("sap.ui.fl.designtime");
+							const oLibResourceBundle = ResourceBundle.create({
+								bundleName: "sap.ui.fl.designtime.messagebundle"
+							});
 							return oLibResourceBundle.getText("CTX_EDIT_IFRAME");
 						},
 						isEnabled: true,

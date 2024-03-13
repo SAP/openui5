@@ -151,7 +151,7 @@ sap.ui.define([
 			var sCellFilterMenuItemId = oTable._oCellContextMenu.getId() + "-cellfilter";
 			var oCellFilterMenuItem = Element.getElementById(sCellFilterMenuItemId);
 
-			if (oTable.getEnableCellFilter() && oColumn && oColumn.isFilterableByMenu() && !oRow.isGroupHeader()) {
+			if (oTable.getEnableCellFilter() && oColumn?.isFilterableByMenu() && !oRow.isGroupHeader() && !oRow.isSummary()) {
 				if (!oCellFilterMenuItem) {
 					oCellFilterMenuItem = new MenuItem({
 						id: sCellFilterMenuItemId,
@@ -172,7 +172,7 @@ sap.ui.define([
 				oTable._oCellContextMenu.removeItem(oCellFilterMenuItem);
 			}
 
-			MenuUtils.TableUtils.Hook.call(oTable, MenuUtils.TableUtils.Hook.Keys.Table.OpenMenu, oCellInfo, oTable._oCellContextMenu);
+			MenuUtils.TableUtils.Hook.call(oTable, MenuUtils.TableUtils.Hook.Keys.Table.OpenContextMenu, oCellInfo, oTable._oCellContextMenu);
 
 			if (oTable._oCellContextMenu.getItems().length === 0) {
 				return;
@@ -187,31 +187,9 @@ sap.ui.define([
 		 *
 		 * @param {sap.ui.table.Table} oTable Instance of the table.
 		 * @private
-		 * @see _closeCustomContentCellContextMenu
-		 * @see _closeDefaultContentCellContextMenu
 		 */
 		closeContentCellContextMenu: function(oTable) {
-			MenuUtils._closeCustomContentCellContextMenu(oTable);
-			MenuUtils._closeDefaultContentCellContextMenu(oTable);
-		},
-
-		/**
-		 * Closes the currently open custom content cell context menu.
-		 *
-		 * @param {sap.ui.table.Table} oTable Instance of the table.
-		 * @private
-		 */
-		_closeCustomContentCellContextMenu: function(oTable) {
 			oTable.getContextMenu()?.close?.(); // sap.ui.core.IContextMenu does not contain "close".
-		},
-
-		/**
-		 * Closes the currently open default content cell context menu.
-		 *
-		 * @param {sap.ui.table.Table} oTable Instance of the table.
-		 * @private
-		 */
-		_closeDefaultContentCellContextMenu: function(oTable) {
 			oTable._oCellContextMenu?.close();
 		},
 

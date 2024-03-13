@@ -10059,10 +10059,13 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("Check list 'role' attribute", function(assert) {
+	QUnit.test("Check list 'role' attributes", function(assert) {
 		// system under test
 		var oComboBox = new ComboBox({
 			items: [
+				new SeparatorItem({
+					text: "Group Header"
+				}),
 				new Item({
 					key: "0",
 					text: "item 0"
@@ -10072,7 +10075,7 @@ sap.ui.define([
 					text: "item 1"
 				})
 			]
-		});
+		}), oList;
 
 		// arrange
 		oComboBox.placeAt("content");
@@ -10082,8 +10085,12 @@ sap.ui.define([
 		oComboBox.open();
 		this.clock.tick(10);
 
+		oList = oComboBox._getList();
+
 		// Assert
-		assert.strictEqual(oComboBox._getList().$('listUl').attr("role"), "listbox", "role='listbox' applied to list control DOM");
+		assert.strictEqual(oList.$('listUl').attr("role"), "listbox", "role='listbox' applied to list control DOM");
+		assert.strictEqual(oList.getItems()[0].$().attr("role"), "group", "role='group' applied to the group header");
+		assert.strictEqual(oList.getItems()[1].$().attr("role"), "option", "role='option' applied to the items");
 
 		// Cleanup
 		this.clock.restore();

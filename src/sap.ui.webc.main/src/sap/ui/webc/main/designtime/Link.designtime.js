@@ -3,15 +3,17 @@
  */
 // Provides the Design Time Metadata for the sap.ui.webc.main.Link
 sap.ui.define([
+	"sap/base/i18n/ResourceBundle",
 	"sap/ui/core/Element",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/Core",
 	"sap/ui/core/Fragment"
 ],
-	function(Element, JSONModel, Core, Fragment) {
+	function(ResourceBundle, Element, JSONModel, Fragment) {
 		"use strict";
 		var oSelectTargetDialog = function(oControl, mPropertyBag) {
-			var oTextResources = Core.getLibraryResourceBundle("sap.ui.webc.main.designtime");
+			var oTextResources = ResourceBundle.create({
+				bundleName: "sap.ui.webc.main.designtime.messagebundle"
+			});
 			return new Promise(function(fnResolve) {
 
 				var data = {

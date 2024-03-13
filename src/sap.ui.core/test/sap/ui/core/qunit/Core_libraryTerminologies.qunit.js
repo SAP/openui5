@@ -30,7 +30,9 @@ sap.ui.define([
 		return Lib.load("testlibs.terminologies.simple").then(function() {
 			assert.equal(this.oRBCreateSpy.callCount, 1, "ResourceBundle.create should be called once");
 
-			var oLibRB = Core.getLibraryResourceBundle("testlibs.terminologies.simple");
+			var oLibRB = ResourceBundle.create({
+				bundleName: "testlibs.terminologies.simple.messagebundle"
+			});
 			assert.equal(oLibRB.getText("TEST_TEXT"), "Oil", "'Oil' text is returned, because terminology 'oil' is correctly applied");
 		}.bind(this));
 	});
@@ -41,7 +43,9 @@ sap.ui.define([
 			assert.equal(this.oRBgetUrlSpy.returnValues[0], "test-resources/sap/ui/core/qunit/testdata/libraries/terminologies/absoluteBundleUrl/i18n/i18n.properties", "Relative base 'bundleUrl' should be resolved");
 			assert.equal(this.oRBgetUrlSpy.returnValues[1], "https://somewhere.else/i18n/terminologies/oil/i18n.properties", "Absolute 'bundleUrl' shouldn't be resolved.");
 
-			var oLibRB = Core.getLibraryResourceBundle("testlibs.terminologies.absoluteBundleUrl");
+			var oLibRB = ResourceBundle.create({
+				bundleName: "testlibs.terminologies.absoluteBundleUrl.messagebundle"
+			});
 			assert.equal(oLibRB.getText("TEST_TEXT"), "Base", "'Base' text is returned, because terminology 'oil' could not be loaded");
 		}.bind(this));
 	});

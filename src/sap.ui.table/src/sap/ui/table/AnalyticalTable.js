@@ -126,7 +126,7 @@ sap.ui.define([
 
 		TableUtils.Grouping.setToDefaultGroupMode(this);
 		TableUtils.Hook.register(this, TableUtils.Hook.Keys.Row.UpdateState, updateRowState, this);
-		TableUtils.Hook.register(this, TableUtils.Hook.Keys.Table.OpenMenu, onOpenTableContextMenu, this);
+		TableUtils.Hook.register(this, TableUtils.Hook.Keys.Table.OpenContextMenu, onOpenTableContextMenu, this);
 		TableUtils.Hook.register(this, TableUtils.Hook.Keys.Row.Expand, expandRow, this);
 		TableUtils.Hook.register(this, TableUtils.Hook.Keys.Row.Collapse, collapseRow, this);
 

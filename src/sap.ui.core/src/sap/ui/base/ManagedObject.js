@@ -3154,7 +3154,7 @@ sap.ui.define([
 		this.mObjectBindingInfos[sModelName] = oBindingInfo;
 
 		// if the models are already available, create the binding
-		if (this.getModel(sModelName)) {
+		if (BindingInfo.isReady(oBindingInfo, this)) {
 			this._bindObject(oBindingInfo);
 		}
 
@@ -3348,8 +3348,7 @@ sap.ui.define([
 	 * @public
 	 */
 	ManagedObject.prototype.bindProperty = function(sName, oBindingInfo, /* undocumented, old API only: */ _vFormat, _sMode) {
-		var bAvailable = true,
-			oProperty = this.getMetadata().getPropertyLikeSetting(sName);
+		var oProperty = this.getMetadata().getPropertyLikeSetting(sName);
 
 		// check whether property or alternative type on aggregation exists
 		if (!oProperty) {
@@ -3382,16 +3381,8 @@ sap.ui.define([
 			this._observer.bindingChange(this, sName, "prepare", oBindingInfo, "property");
 		}
 
-		// Check if all models are available before creating bindings
-		for ( var i = 0; i < oBindingInfo.parts.length; i++ ) {
-			if (oBindingInfo.parts[i].value === undefined && !this.getModel(oBindingInfo.parts[i].model)) {
-				bAvailable = false;
-				break;
-			}
-		}
-
 		// if the models are already available, create the binding
-		if (bAvailable) {
+		if (BindingInfo.isReady(oBindingInfo, this)) {
 			this._bindProperty(sName, oBindingInfo);
 		}
 		return this;
@@ -3686,7 +3677,7 @@ sap.ui.define([
 		}
 
 		// if the model is already available create the binding
-		if (this.getModel(oBindingInfo.model)) {
+		if (BindingInfo.isReady(oBindingInfo, this)) {
 			this._bindAggregation(sName, oBindingInfo);
 		}
 		return this;

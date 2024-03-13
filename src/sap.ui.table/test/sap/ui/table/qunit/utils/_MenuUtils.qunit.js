@@ -267,7 +267,7 @@ sap.ui.define([
 			this.resetSpies();
 		};
 
-		TableUtils.Hook.register(this.oTable, TableUtils.Hook.Keys.Table.OpenMenu, oOpenMenuHook, this);
+		TableUtils.Hook.register(this.oTable, TableUtils.Hook.Keys.Table.OpenContextMenu, oOpenMenuHook, this);
 
 		test(this.oTable.qunit.getSelectAllCell(), "SelectAll cell");
 		test(this.oTable.qunit.getDataCell(3, 0), "Cell in group header row", true);
@@ -362,23 +362,13 @@ sap.ui.define([
 	});
 
 	QUnit.test("Cell filter enabled", function(assert) {
-		let oEvent;
-
 		this.oTable.getColumns()[0].setFilterProperty("name");
 		this.oTable.setEnableCellFilter(true);
 
-		oEvent = createFakeEventObject(this.oTable.qunit.getDataCell(0, 0));
+		const oEvent = createFakeEventObject(this.oTable.qunit.getDataCell(0, 0));
 		TableUtils.Menu.openContextMenu(this.oTable, oEvent);
 		assert.ok(this.oTable.getContextMenu().openAsContextMenu.called, "ContextMenu#openAsContextMenu call");
 		assert.notOk(!!this.oTable._oCellContextMenu, "Default context menu existance");
-		assert.ok(oEvent.preventDefault.called, "preventDefault");
-
-		// TODO: As it is documended, the cell filter should not open (on summary rows) if a context menu is set
-		this.resetSpies();
-		oEvent = createFakeEventObject(this.oTable.qunit.getDataCell(6, 0)); // Summary row - not supported by custom menu, but by cell filter menu
-		TableUtils.Menu.openContextMenu(this.oTable, oEvent);
-		assert.notOk(this.oTable.getContextMenu().openAsContextMenu.called, "ContextMenu#openAsContextMenu call");
-		assert.ok(this.oTable._oCellContextMenu, "Default context menu existance");
 		assert.ok(oEvent.preventDefault.called, "preventDefault");
 	});
 
@@ -457,8 +447,9 @@ sap.ui.define([
 			this.resetSpies();
 		};
 
-		TableUtils.Hook.register(this.oTable, TableUtils.Hook.Keys.Table.OpenMenu, oOpenMenuHook, this);
+		TableUtils.Hook.register(this.oTable, TableUtils.Hook.Keys.Table.OpenContextMenu, oOpenMenuHook, this);
 
+		test(this.oTable.qunit.getDataCell(0, 0), "Cell in standard row");
 		test(this.oTable.qunit.getDataCell(3, 0), "Cell in group header row");
 		test(this.oTable.qunit.getDataCell(6, 0), "Cell in summary row");
 		test(this.oTable.qunit.getRowHeaderCell(0), "Row header cell");
@@ -496,7 +487,7 @@ sap.ui.define([
 		test(this.oTable.qunit.getDataCell(0, 0), "Cell in filterable column", true);
 		test(this.oTable.qunit.getDataCell(0, 2), "Cell in non-filterable column");
 		test(this.oTable.qunit.getDataCell(3, 0), "Cell in group header row");
-		test(this.oTable.qunit.getDataCell(6, 0), "Cell in summary row", true);
+		test(this.oTable.qunit.getDataCell(6, 0), "Cell in summary row");
 		test(this.oTable.qunit.getRowHeaderCell(0), "Row header cell");
 		test(this.oTable.qunit.getRowActionCell(0), "Row action cell");
 	});

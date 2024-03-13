@@ -3,6 +3,7 @@
  */
 
 sap.ui.define([
+	"sap/base/i18n/ResourceBundle",
 	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
 	"sap/ui/mdc/odata/v4/ChartDelegate",
@@ -22,6 +23,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/mdc/enums/ChartItemRoleType"
 ], (
+	ResourceBundle,
 	Element,
 	Library,
 	V4ChartDelegate,
@@ -1164,7 +1166,9 @@ sap.ui.define([
 	ChartDelegate.getChartTypeInfo = function(oChart) {
 		const sType = oChart.getChartType(),
 			oMDCResourceBundle = Library.getResourceBundleFor("sap.ui.mdc"),
-			oChartResourceBundle = Library.getResourceBundleFor("sap.chart.messages");
+			oChartResourceBundle = ResourceBundle.create({
+				bundleName: "sap.chart.messages.messagebundle"
+			});
 
 		const mInfo = {
 			icon: ChartDelegate.mMatchingIcon[sType],
@@ -1191,7 +1195,9 @@ sap.ui.define([
 
 		if (this._getChart(oChart)) {
 			const aAvailableChartTypes = this._getChart(oChart).getAvailableChartTypes().available;
-			const oChartResourceBundle = Library.getResourceBundleFor("sap.chart.messages");
+			const oChartResourceBundle = ResourceBundle.create({
+				bundleName: "sap.chart.messages.messagebundle"
+			});
 
 			for (let i = 0; i < aAvailableChartTypes.length; i++) {
 				const sType = aAvailableChartTypes[i].chart;

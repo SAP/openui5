@@ -16,6 +16,7 @@
 	}
 
 sap.ui.define([
+	"sap/base/i18n/ResourceBundle",
 	'sap/base/util/extend',
 	'sap/base/util/ObjectPath',
 	"sap/ui/core/ElementRegistry",
@@ -28,7 +29,7 @@ sap.ui.define([
 	'sap/ui/test/matchers/MatcherFactory',
 	'sap/ui/test/pipelines/MatcherPipeline',
 	'sap/ui/test/_OpaLogger'
-], function(extend, ObjectPath, ElementRegistry, Rendering, StaticArea, $, UI5Object, View, Ancestor, MatcherFactory, MatcherPipeline, _OpaLogger) {
+], function(ResourceBundle, extend, ObjectPath, ElementRegistry, Rendering, StaticArea, $, UI5Object, View, Ancestor, MatcherFactory, MatcherPipeline, _OpaLogger) {
 
 		/**
 		 * @class A Plugin to search UI5 controls.
@@ -730,7 +731,9 @@ sap.ui.define([
 			}
 			var oCore = sap.ui.require("sap/ui/core/Core");
 			if (typeof oCore?.getLibraryResourceBundle === "function") {
-				return oCore.getLibraryResourceBundle(sLibraryName);
+				return ResourceBundle.create({
+					bundleName: `${sLibraryName}.messagebundle`
+				});
 			}
 		};
 
