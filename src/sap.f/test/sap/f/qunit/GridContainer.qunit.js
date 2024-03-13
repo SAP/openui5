@@ -1751,6 +1751,31 @@ function(
 		oGrid.destroy();
 	});
 
+	QUnit.test("Mouse up for a tile handles focus correctly", function (assert) {
+		// Arrange
+		var oTile = new GenericTile({
+				header: "Tile 1",
+				layoutData: new GridContainerItemLayoutData({ columns: 1, rows: 1 })
+			}),
+			oGrid = new GridContainer({
+				items: [ oTile ]
+			});
+
+		oGrid.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
+
+		// Act
+		qutils.triggerEvent("mousedown", oTile.getDomRef());
+		oTile.getFocusDomRef().focus();
+		oGrid._oItemNavigation._onMouseUp();
+
+		// Assert
+		assert.strictEqual(document.activeElement, oTile.getDomRef().parentElement, "The item wrapper of the tile is focused instead of the tile itself.");
+
+		// Clean up
+		oGrid.destroy();
+	});
+
 	QUnit.test("Item with own focus, when the item has no focusable content", function (assert) {
 		// Arrange
 		var oCard = new Card({height: "100%"}),
