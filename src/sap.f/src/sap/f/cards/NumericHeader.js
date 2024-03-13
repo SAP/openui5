@@ -442,7 +442,7 @@ sap.ui.define([
 			oControl = new Text({
 				id: this.getId() + "-unitOfMeasurement",
 				wrapping: false
-			});
+			}).addStyleClass("sapFCardHeaderUnitOfMeasurement");
 			this.setAggregation("_unitOfMeasurement", oControl);
 		}
 
