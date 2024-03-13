@@ -1576,23 +1576,28 @@ sap.ui.define([
 			}
 
 			this.oSecurityTokenPromise = new Promise(function (fnResolve, fnReject) {
-				jQuery.ajax(that.sServiceUrl + that.sQueryParams, {
+				const oAjaxSettings = {
 					method : "HEAD",
 					headers : Object.assign({}, that.mHeaders, {"X-CSRF-Token" : "Fetch"})
-				}).then(function (_oData, _sTextStatus, jqXHR) {
-					var sCsrfToken = jqXHR.getResponseHeader("X-CSRF-Token");
+				};
+				if (that.bWithCredentials) {
+					oAjaxSettings.xhrFields = {withCredentials : true};
+				}
+				jQuery.ajax(that.sServiceUrl + that.sQueryParams, oAjaxSettings)
+					.then(function (_oData, _sTextStatus, jqXHR) {
+						var sCsrfToken = jqXHR.getResponseHeader("X-CSRF-Token");
 
-					if (sCsrfToken) {
-						that.mHeaders["X-CSRF-Token"] = sCsrfToken;
-					} else {
-						delete that.mHeaders["X-CSRF-Token"];
-					}
-					that.oSecurityTokenPromise = null;
-					fnResolve();
-				}, function (jqXHR) {
-					that.oSecurityTokenPromise = null;
-					fnReject(_Helper.createError(jqXHR, "Could not refresh security token"));
-				});
+						if (sCsrfToken) {
+							that.mHeaders["X-CSRF-Token"] = sCsrfToken;
+						} else {
+							delete that.mHeaders["X-CSRF-Token"];
+						}
+						that.oSecurityTokenPromise = null;
+						fnResolve();
+					}, function (jqXHR) {
+						that.oSecurityTokenPromise = null;
+						fnReject(_Helper.createError(jqXHR, "Could not refresh security token"));
+					});
 			});
 		}
 
@@ -2093,25 +2098,32 @@ sap.ui.define([
 		if (sContextId) {
 			// start a new session and a new timer with the current header values (should be the
 			// same as before)
-			that.mHeaders["SAP-ContextId"] = sContextId;
+			this.mHeaders["SAP-ContextId"] = sContextId;
 			if (iTimeoutSeconds >= 60) {
 				this.iSessionTimer = setInterval(function () {
 					if (Date.now() >= iSessionTimeout) { // 30 min have passed
 						that.clearSessionContext(/*bTimeout*/true); // give up
-					} else {
-						jQuery.ajax(that.sServiceUrl + that.sQueryParams, {
-							method : "HEAD",
-							headers : {
-								"SAP-ContextId" : that.mHeaders["SAP-ContextId"]
-							}
-						}).fail(function (jqXHR) {
+
+						return;
+					}
+
+					const oAjaxSettings = {
+						method : "HEAD",
+						headers : {
+							"SAP-ContextId" : that.mHeaders["SAP-ContextId"]
+						}
+					};
+					if (that.bWithCredentials) {
+						oAjaxSettings.xhrFields = {withCredentials : true};
+					}
+					jQuery.ajax(that.sServiceUrl + that.sQueryParams, oAjaxSettings)
+						.fail(function (jqXHR) {
 							if (jqXHR.getResponseHeader("SAP-Err-Id") === "ICMENOSESSION") {
 								// The server could not find the context ID ("ICM Error NO SESSION")
 								Log.error("Session not found on server", undefined, sClassName);
 								that.clearSessionContext(/*bTimeout*/true);
 							} // else keep the timer running
 						});
-					}
 				}, (iTimeoutSeconds - 5) * 1000);
 			} else if (sSAPHttpSessionTimeout !== null) {
 				Log.warning("Unsupported SAP-Http-Session-Timeout header", sSAPHttpSessionTimeout,
