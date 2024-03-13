@@ -1,0 +1,23 @@
+<mvc:View
+		controllerName="sap.m.sample.BreadcrumbsWithCurrentPageLink.controller.BreadcrumbsWithCurrentPageLink"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns="sap.m"
+		xmlns:l="sap.ui.layout"
+		xmlns:core="sap.ui.core">
+	<l:VerticalLayout
+			class="sapUiContentPadding"
+			width="100%">
+		<Title text="Breadcrumbs with current page aggregation set" />
+		<Breadcrumbs>
+			<Link text="Home" press="onPress"/>
+			<Link text="Page 1" press="onPress" />
+			<Link text="Page 2" press="onPress" />
+			<Link text="Page 3" press="onPress" />
+			<Link text="Page 4" press="onPress" />
+			<Link text="Page 5" press="onPress" />
+			<currentLocation>
+				<Link text="Page 6" press="onPress" />
+			</currentLocation>
+		</Breadcrumbs>
+	</l:VerticalLayout>
+</mvc:View>

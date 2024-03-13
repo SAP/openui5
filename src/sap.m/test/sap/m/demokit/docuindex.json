@@ -220,6 +220,7 @@
 		  "samples": [
 			"sap.m.sample.Breadcrumbs",
 			"sap.m.sample.BreadcrumbsWithoutCurrentPage",
+			"sap.m.sample.BreadcrumbsWithCurrentPageLink",
 			"sap.f.sample.DynamicPageFreeStyle"
 		  ]
 		},
@@ -3800,10 +3801,15 @@
 		  "description": "Breadcrumbs is useful for displaying link hierarchy"
 		},
 		{
-		  "id": "sap.m.sample.BreadcrumbsWithoutCurrentPage",
-		  "name": "Breadcrumbs sample without current page",
-		  "description": "The breadcrumb shows the position of the object page in the application hiearchy, without the current page. Use this breadcrumb for the object page only."
+		  "id": "sap.m.sample.BreadcrumbsWithCurrentPageLink",
+		  "name": "Breadcrumbs sample with current page link",
+		  "description": "Breadcrumbs sample with current page set as aggregation, resulting in a link"
 		},
+		{
+			"id": "sap.m.sample.BreadcrumbsWithoutCurrentPage",
+			"name": "Breadcrumbs sample without current page",
+			"description": "The breadcrumb shows the position of the object page in the application hiearchy, without the current page. Use this breadcrumb for the object page only."
+		  },
 		{
 		  "id": "sap.m.sample.TabContainer",
 		  "name": "Tab Container",
