@@ -35,7 +35,7 @@ sap.ui.define([
 	 * @constructor
 	 * @public
 	 * @since 1.10.0
-	 * @deprecated Since version 1.38 Instead, use <code>sap.m.Input</code> control.
+	 * @deprecated As of version 1.38, replaced by {@link sap.m.Input}.
 	 * @alias sap.ui.commons.AutoComplete
 	 */
 	var AutoComplete = ComboBox.extend("sap.ui.commons.AutoComplete", /** @lends sap.ui.commons.AutoComplete.prototype */ { metadata : {
