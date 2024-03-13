@@ -44,7 +44,8 @@ sap.ui.define([
 				itemSelect: handleMenuItemPress,
 				items: [
 					new MenuItem({
-						text: "View Settings"
+						text: "View Settings",
+						shortcutText: "Alt + F4"
 					}),
 					new MenuItem({
 						text: "Create Settings",

@@ -511,6 +511,7 @@ sap.ui.define([
 				id: sUfMenuItemId,
 				icon: oItem.getIcon(),
 				text: oItem.getText(),
+				shortcutText: oItem.getShortcutText(),
 				startsSection: oItem.getStartsSection(),
 				tooltip: oItem.getTooltip(),
 				visible: oItem.getVisible(),

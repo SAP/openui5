@@ -120,9 +120,6 @@ sap.ui.define([
 
 		rm.openEnd();
 
-		// Left border
-		rm.openStart("div").class("sapUiMnuItmL").openEnd().close("div");
-
 		if (oItem.getIcon()) {
 			// icon/check column
 			rm.openStart("div").class("sapUiMnuItmIco").openEnd();
@@ -159,9 +156,6 @@ sap.ui.define([
 		}
 		rm.voidEnd().close("div").close("div");
 
-		// Right border
-		rm.openStart("div").class("sapUiMnuItmR").openEnd().close("div");
-
 		rm.close("li");
 	};
 
@@ -189,7 +183,6 @@ sap.ui.define([
 	};
 
 	MenuTextFieldItem.prototype.onAfterRendering = function(){
-		this._adaptSizes();
 		this.setValueState(this.getValueState());
 	};
 
@@ -305,7 +298,6 @@ sap.ui.define([
 	MenuTextFieldItem.prototype.setLabel = function(sLabel){
 		this.setProperty("label", sLabel, true);
 		this.$("lbl").text(sLabel);
-		this._adaptSizes();
 		return this;
 	};
 
@@ -339,20 +331,6 @@ sap.ui.define([
 		return $FocusRef.length ? $FocusRef.get(0) : null;
 	};
 
-
-	MenuTextFieldItem.prototype._adaptSizes = function(){
-		var $tf = this.$("tf");
-		var $lbl = this.$("lbl");
-		var offsetLeft = $lbl.length ? $lbl.get(0).offsetLeft : 0;
-
-		if (Localization.getRTL()) {
-			$tf.parent().css({"width": "auto", "right": (this.$().outerWidth(true) - offsetLeft + ($lbl.outerWidth(true) - $lbl.outerWidth())) + "px"});
-		} else {
-			$tf.parent().css({"width": "auto", "left": (offsetLeft + $lbl.outerWidth(true)) + "px"});
-		}
-	};
-
-
 	MenuTextFieldItem.prototype._checkCursorPosForNav = function(bForward) {
 		var bRtl = Localization.getRTL();
 		var bBack = bForward ? bRtl : !bRtl;
@@ -382,7 +360,6 @@ sap.ui.define([
 
 		return this._invisibleDescription;
 	};
-
 
 	return MenuTextFieldItem;
 

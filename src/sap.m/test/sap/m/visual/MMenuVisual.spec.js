@@ -14,4 +14,9 @@ describe("sap.m.MMenuVisual", function() {
 		element(by.id("B2")).click();
 		expect(takeScreenshot(element(by.jq(".sapMMenu")))).toLookAs("long_menu_items_no_submenus");
 	});
+
+	it('Menu with shortcut texts', function () {
+		element(by.id("B3")).click();
+		expect(takeScreenshot(element(by.jq(".sapMMenu")))).toLookAs("menu_items_shortcuts");
+	});
 });

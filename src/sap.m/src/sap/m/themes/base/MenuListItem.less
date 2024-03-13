@@ -7,14 +7,7 @@
 
 .sapMRespMenuDialog .sapMLIB {
 	position: relative;
-}
-
-.sapMRespMenuDialog .sapMSLIIcon {
-	padding-left: 0;
-}
-
-.sapMRespMenuDialog .sapMSLIIcon > .sapMLIBContent {
-	margin-left: 0;
+	padding: 0 0.875rem;
 }
 
 .sapMRespMenuDialog .sapMSLITitleOnly {
@@ -24,29 +17,26 @@
 }
 
 .sapMMenuLIHasChildren .sapMSLITitleDiv {
-	margin-right: 2rem;
 	text-overflow: ellipsis;
+}
+
+.sapMMenuLIImgThumbWrapper {
+	font-size: 1.375rem;
+	min-width: 1rem;
+	max-width: 1rem;
+	padding-inline-end: 0.875rem;
+	text-align: center;
 }
 
 .sapMMenuLIImgThumbIcon {
 	font-size: 1.375rem;
-	width: 3rem;
-	height: 3rem;
-	line-height: 3rem;
-	-webkit-box-flex: 0;
-	flex: none;
 }
 
 .sapMMenuLIArrowRightIcon {
-	position:absolute;
-	right:0;
-	top:0;
 	font-size: .75rem;
-	width: 3rem;
+	width: 1.875remrem;
 	height: 3rem;
 	line-height: 3rem;
-	-webkit-box-flex: 0;
-	flex: none;
 }
 
 .sapMRespMenuDialog .sapUiMnuDiv {
@@ -79,22 +69,7 @@ html.sap-tablet .sapMMLIDisabled .sapMMenuLIImgThumbIcon {
 	margin: 0;
 }
 
-.sapMMenu .sapUiMnuItm .sapUiMnuItmIco {
-	position: absolute;
-}
-
-.sapMMenu .sapUiMnuLst .sapUiMnuItm {
-	.sapUiMnuItmIco + .sapUiMnuItmTxt {
-		margin-left: 2.25rem;
-	}
-}
-
-.sapMMenu.sapUiMnu.sapUiMnuCozySupport.sapUiSizeCozy .sapUiMnuItmTxt {
-	padding-right: 3rem;
-	text-overflow: ellipsis;
-}
-
-//really strong selector in the sapUiMnu demands this
+// really strong selector in the sapUiMnu demands this
 .sapMMenu.sapUiMnu.sapUiMnuCozySupport .sapUiMnuItmTxt {
 	text-overflow: ellipsis;
 	max-width: 100%;
@@ -107,26 +82,12 @@ html.sap-tablet .sapMMLIDisabled .sapMMenuLIImgThumbIcon {
 
 /* compact */
 
-
 .sapUiSizeCompact .sapMMenuLIArrowRightIcon {
 	width: 2rem;
 	height: 2rem;
 	line-height: 2rem;
 }
 
-.sapUiSizeCompact {
-	.sapMMenu .sapUiMnuLst .sapUiMnuItm {
-		.sapUiMnuItmIco + .sapUiMnuItmTxt {
-			margin-left: 2rem;
-		}
-	}
-	.sapMMenu.sapUiMnu.sapUiMnuCozySupport .sapUiMnuItmTxt {
-		padding-right: 2.5rem;
-	}
-	.sapMMenu .sapUiMnuLst.sapUiMnuNoSbMnu .sapUiMnuItm .sapUiMnuItmTxt {
-		padding-right: 0.5rem;
-	}
-}
 /* end compact */
 
 /* end desktop and tablet */
