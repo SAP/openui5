@@ -5733,7 +5733,8 @@ make root = ${bMakeRoot}`;
 			hierarchyQualifier : "X",
 			$LimitedRank : "~LimitedRank~"
 		});
-		oCache.aElements = ["~foo~", "~parent~", "~node2~", "~bar~", "~node1~", "~node3~"];
+		oCache.aElements
+			= ["~foo~", "~parent~", "~node2~", "~bar~", "~node1~", "~node3~", "~node4~"];
 		oCache.aElements.$byPredicate = {
 			"~predicate1~" : "~node1~",
 			"~predicate2~" : "~node2~",
@@ -5745,15 +5746,17 @@ make root = ${bMakeRoot}`;
 			.returns(0);
 		oHelperMock.expects("getPrivateAnnotation").withExactArgs("~parent~", "rank")
 			.returns("~iParentRank~");
+		this.mock(oCache.oTreeState).expects("deleteOutOfPlace").withExactArgs("~predicate4~");
 
 		// code under test
 		oCache.moveOutOfPlaceNodes("~iParentRank~",
 			// the order is important: node2 is not moved, moving node3 shifts the location of
 			// node1 which must be searched again (aElements.indexOf(...))
-			["~predicate2~", "~predicate3~", "~predicate1~"]);
+			// node4 has changed its parent
+			["~predicate2~", "~predicate3~", "~predicate4~", "~predicate1~"]);
 
 		assert.deepEqual(oCache.aElements,
-			["~foo~", "~parent~", "~node1~", "~node3~", "~node2~", "~bar~"]);
+			["~foo~", "~parent~", "~node1~", "~node3~", "~node2~", "~bar~", "~node4~"]);
 	});
 
 	//*********************************************************************************************

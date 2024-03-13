@@ -1401,9 +1401,13 @@ sap.ui.define([
 				(oNode) => _Helper.getPrivateAnnotation(oNode, "rank") === iParentRank);
 		aOutOfPlacePredicates.forEach((sNodePredicate) => {
 			const oNode = this.aElements.$byPredicate[sNodePredicate];
-			const iNodeIndex = this.aElements.indexOf(oNode);
-			this.aElements.splice(iNodeIndex, 1);
-			this.aElements.splice(iParentIndex + 1, 0, oNode);
+			if (oNode) {
+				const iNodeIndex = this.aElements.indexOf(oNode);
+				this.aElements.splice(iNodeIndex, 1);
+				this.aElements.splice(iParentIndex + 1, 0, oNode);
+			} else { // no longer child of its previous parent
+				this.oTreeState.deleteOutOfPlace(sNodePredicate);
+			}
 		});
 	};
 
