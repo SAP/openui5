@@ -1,8 +1,8 @@
-<mvc:View xmlns:core="sap.ui.core"
-		  xmlns="sap.m"
-		  width="100%"
-		  controllerName="test.manifest.component.tileComponent.Main">
-	<VBox class="sapUiSmallMargin">
-		<Text text="Test tile component"/>
-	</VBox>
+<mvc:View xmlns:mvc="sap.ui.core.mvc"
+		xmlns:m="sap.m"
+		width="100%"
+		controllerName="test.manifest.component.tileComponent.Main">
+	<m:VBox class="sapUiSmallMargin">
+		<m:Text text="Test tile component"/>
+	</m:VBox>
 </mvc:View>
