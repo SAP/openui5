@@ -3227,7 +3227,8 @@ sap.ui.define([
 	/**
 	 * Moves the given (child) node to the given parent. An expanded (child) node is silently
 	 * collapsed before and expanded after the move. A collapsed parent is automatically expanded;
-	 * so is a leaf. The (child) node is added as the parent's 1st child (created persisted).
+	 * so is a leaf. The (child) node is added as the parent's 1st child (created persisted) in case
+	 * of expandTo:1, or "in place" (and simply persisted) else.
 	 * Omitting a new parent turns the child into a root.
 	 *
 	 * @param {sap.ui.model.odata.v4.Context} oChildContext - The (child) node to be moved
@@ -3243,12 +3244,16 @@ sap.ui.define([
 	 */
 	ODataListBinding.prototype.move = function (oChildContext, oParentContext) {
 		/*
-		 * Sets the <code>iIndex</code> of every context instance inside the given range.
+		 * Sets the <code>iIndex</code> of every context instance inside the given range. Allows for
+		 * start greater than end and swaps both in that case.
 		 *
 		 * @param {number} iFrom - Start index
 		 * @param {number} iToInclusive - Inclusive end index
 		 */
 		const setIndices = (iFrom, iToInclusive) => {
+			if (iFrom > iToInclusive) {
+				[iFrom, iToInclusive] = [iToInclusive, iFrom];
+			}
 			for (let i = iFrom; i <= iToInclusive; i += 1) {
 				if (this.aContexts[i]) {
 					this.aContexts[i].iIndex = i;
@@ -3273,27 +3278,36 @@ sap.ui.define([
 		const sParentPath = oParentContext?.getCanonicalPath().slice(1); // before #lockGroup!
 		const oGroupLock = this.lockGroup(this.getUpdateGroupId(), true, true);
 
-		return this.oCache.move(oGroupLock, sChildPath, sParentPath).then((iCount) => {
-			if (iCount > 1) {
-				iCount -= 1; // skip oChildContext which is treated below
-				this.insertGap(oParentContext.getModelIndex(), iCount);
+		return this.oCache.move(oGroupLock, sChildPath, sParentPath).then(([iCount, iNewIndex]) => {
+			if (iCount > 1) { // Note: skip oChildContext which is treated below
+				this.insertGap(oParentContext.getModelIndex(), iCount - 1);
 			}
 
-			const iChildIndex = this.aContexts.indexOf(oChildContext);
-			// Note: w/o oParentContext, iParentIndex === -1 and iParentIndex + 1 === 0 :-)
-			const iParentIndex = this.aContexts.indexOf(oParentContext); // Note: !== iChildIndex
-			if (iChildIndex < iParentIndex) {
-				this.aContexts.splice(iParentIndex + 1, 0, oChildContext);
-				this.aContexts.splice(iChildIndex, 1); // parent moves to lower index!
-				setIndices(iChildIndex, iParentIndex);
-			} else if (iChildIndex > iParentIndex + 1) {
-				this.aContexts.splice(iChildIndex, 1); // parent unaffected!
-				this.aContexts.splice(iParentIndex + 1, 0, oChildContext);
-				setIndices(iParentIndex + 1, iChildIndex);
-			} // else: iChildIndex === iParentIndex + 1 => nothing to do
-
-			if (!oChildContext.created() && oAggregation.expandTo === 1) {
-				oChildContext.setCreatedPersisted();
+			const iOldIndex = oChildContext.getModelIndex();
+			if (oAggregation.expandTo > 1) {
+				if (oChildContext.created()) {
+					oChildContext.setPersisted();
+				}
+				this.aContexts.splice(iOldIndex, 1);
+				this.aContexts.splice(iNewIndex, 0, oChildContext);
+				setIndices(iOldIndex, iNewIndex);
+			} else {
+				if (!oChildContext.created()) {
+					oChildContext.setCreatedPersisted();
+				}
+				// Note: w/o oParentContext, iParentIndex === -1 and iParentIndex + 1 === 0 :-)
+				const iParentIndex = oParentContext
+					? oParentContext.getModelIndex() // Note: !== iOldIndex
+					: -1;
+				if (iOldIndex < iParentIndex) {
+					this.aContexts.splice(iParentIndex + 1, 0, oChildContext);
+					this.aContexts.splice(iOldIndex, 1); // parent moves to lower index!
+					setIndices(iOldIndex, iParentIndex);
+				} else if (iOldIndex > iParentIndex + 1) {
+					this.aContexts.splice(iOldIndex, 1); // parent unaffected!
+					this.aContexts.splice(iParentIndex + 1, 0, oChildContext);
+					setIndices(iParentIndex + 1, iOldIndex);
+				} // else: iOldIndex === iParentIndex + 1 => nothing to do
 			}
 
 			if (bExpanded) {
