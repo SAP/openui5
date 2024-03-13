@@ -4777,6 +4777,18 @@ sap.ui.define([
 		oSut.destroy();
 	});
 
+	QUnit.test("InvisibleText is called with correct parameters when setting labelledBy for the role 'region' of the PlanningCalendar", function(assert) {
+		var oSut = createPlanningCalendar("PC", new SearchField(), new Button(), new Date(2015, 0, 1)),
+			oInvisibleTextSpy = this.spy(InvisibleText, 'getStaticId');
+
+		oSut.placeAt("bigUiArea");
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(oInvisibleTextSpy.calledWith("sap.m", "PLANNINGCALENDAR"));
+
+		oSut.destroy();
+	});
+
 	//Aria appointments & special dates for Hours view
 	QUnit.test("Hours view: appointments and special dates", function (assert) {
 		this._testAriaAppointmentsAndSpecialDates(CalendarIntervalType.Hour);
