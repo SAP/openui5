@@ -1,14 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-
 		<title>Link - sap.m</title>
-
-		<style>
-			.sapMLnk {
-				margin: 5px;
-			}
-		</style>
 
 		<script src="shared-config.js"></script>
 		<script src="../../../resources/sap-ui-core.js"
@@ -17,6 +10,35 @@
 		</script>
 
 		<script>
+			var data = {
+				tableData: [
+					{column1: "column 1 value", column2: "column 2 with very long link that should truncate"},
+					{column1: "column 1 value 2", column2: "column 2 with very long link that should truncate2"}
+				]
+			};
+
+			// create a Model with this data
+			var model = new sap.ui.model.json.JSONModel();
+				model.setData(data);
+			var table = new sap.m.Table({
+				columns: [
+					new sap.m.Column({header: new sap.m.Text({text: "sap.m.Text"})}),
+					new sap.m.Column({header: new sap.m.Text({text: "sap.m.Link"})})
+				]
+			}).setWidth("300px");
+
+			// bind the Table items to the data collection
+			table.bindItems({
+				path : "/tableData",
+				template : new sap.m.ColumnListItem({
+					cells: [
+						new sap.m.Text({text: "{column1}"}),
+						new sap.m.Link({text: "{column2}"})
+					]
+				})
+			});
+			table.setModel(model);
+
 			var app = new sap.m.App("myApp", {initialPage:"page1"});
 
 			var page1 = new sap.m.Page("page1", {
@@ -25,13 +47,13 @@
 					new sap.m.Link({
 						id: "link_focusable",
 						text : "To Page 2"
-					}),
+					}).addStyleClass("sapUiSmallMargin"),
 
 					new sap.m.Link({
 						id: "link_disabled",
 						text : "Disabled Link",
 						enabled : false
-					}),
+					}).addStyleClass("sapUiSmallMargin"),
 
 					new sap.m.Link({
 						id: "link_subtle",
@@ -40,7 +62,7 @@
 						press : function() {
 							app.to("page2");
 						}
-					}),
+					}).addStyleClass("sapUiSmallMargin"),
 
 					new sap.m.Link({
 						id: "link_emphasized",
@@ -49,7 +71,7 @@
 						press : function() {
 							app.to("page2");
 						}
-					}),
+					}).addStyleClass("sapUiSmallMargin"),
 
 					new sap.m.Link({
 						id: "link_disabled_subtle",
@@ -59,7 +81,7 @@
 						press : function() {
 							app.to("page2");
 						}
-					}),
+					}).addStyleClass("sapUiSmallMargin"),
 
 					new sap.m.Link({
 						id: "link_disabled_emphasized",
@@ -69,12 +91,15 @@
 						press : function() {
 							app.to("page2");
 						}
-					}),
+					}).addStyleClass("sapUiSmallMargin"),
+
 					new sap.m.Link({
 						id: "link_empty_content",
 						text : "",
 						emptyIndicatorMode: "On"
-					})
+					}).addStyleClass("sapUiSmallMargin"),
+
+					table
 				]
 
 			});
