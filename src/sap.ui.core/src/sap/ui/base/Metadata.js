@@ -40,19 +40,17 @@ sap.ui.define([
 		assert(typeof oClassInfo === "object", "Metadata: oClassInfo must be empty or an object");
 
 		/**
-		 * @deprecated
+		 * Support for old usage of Metadata.
+		 * @deprecated Since 1.3.1
 		 */
-		(() => {
-			// support for old usage of Metadata
-			if ( !oClassInfo || typeof oClassInfo.metadata !== "object" ) {
-				oClassInfo = {
-					metadata : oClassInfo || {},
-					// retrieve class by its name. Using a lookup costs time but avoids the need for redundant arguments to this function
-					constructor : ObjectPath.get(sClassName) // legacy-relevant, code path not used by extend call
-				};
-				oClassInfo.metadata.__version = 1.0;
-			}
-		})();
+		if ( !oClassInfo || typeof oClassInfo.metadata !== "object" ) {
+			oClassInfo = {
+				metadata : oClassInfo || {},
+				// retrieve class by its name. Using a lookup costs time but avoids the need for redundant arguments to this function
+				constructor : ObjectPath.get(sClassName) // legacy-relevant, code path not used by extend call
+			};
+			oClassInfo.metadata.__version = 1.0;
+		}
 
 		oClassInfo.metadata ??= {};
 		oClassInfo.metadata.__version = oClassInfo.metadata.__version || 2.0;
@@ -494,7 +492,10 @@ sap.ui.define([
 		}
 		oClassInfo.constructor = fnClass;
 
-		// make the class visible as JS Object
+		/**
+		 * make the class visible as JS Object
+		 * @deprecated
+		 */
 		ObjectPath.set(sClassName, fnClass);
 
 		// add metadata

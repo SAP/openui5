@@ -79,6 +79,9 @@ sap.ui.define([
 	 */
 	Global = Object.assign(sap.ui, Global);
 
+	/**
+	 * @deprecated As of version 1.120
+	 */
 	var syncCallBehavior = sap.ui.loader._.getSyncCallBehavior();
 
 	/**
