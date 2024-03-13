@@ -499,9 +499,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * The property <code>enableGrouping</code> is not supported by the <code>TreeTable</code> control.
+	 * The <code>enableGrouping</code> property is not supported by the <code>TreeTable</code> control.
 	 *
-	 * @deprecated Since version 1.28.
+	 * @deprecated As of version 1.28, the <code>enableGrouping</code> property is not supported by the <code>TreeTable</code> control.
 	 * @returns {boolean}
 	 * @public
 	 * @name sap.ui.table.TreeTable#getEnableGrouping
@@ -509,9 +509,9 @@ sap.ui.define([
 	 */
 
 	/**
-	 * The property <code>enableGrouping</code> is not supported by the <code>TreeTable</code> control.
+	 * The <code>enableGrouping</code> property is not supported by the <code>TreeTable</code> control.
 	 *
-	 * @deprecated Since version 1.28.
+	 * @deprecated As of version 1.28, the <code>enableGrouping</code> property is not supported by the <code>TreeTable</code> control.
 	 * To get a group-like visualization the <code>useGroupMode</code> property can be used.
 	 * @param {boolean} bValue
 	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
@@ -526,7 +526,7 @@ sap.ui.define([
 	/**
 	 * The <code>groupBy</code> association is not supported by the <code>TreeTable</code> control.
 	 *
-	 * @deprecated Since version 1.28.
+	 * @deprecated As of version 1.28, the <code>groupBy</code> association is not supported by the <code>TreeTable</code> control.
 	 * @returns {sap.ui.core.ID}
 	 * @public
 	 * @name sap.ui.table.TreeTable#getGroupBy
@@ -536,7 +536,7 @@ sap.ui.define([
 	/**
 	 * The <code>groupBy</code> association is not supported by the <code>TreeTable</code> control.
 	 *
-	 * @deprecated Since version 1.28.
+	 * @deprecated As of version 1.28, the <code>groupBy</code> association is not supported by the <code>TreeTable</code> control.
 	 * @param {sap.ui.table.Column|sap.ui.core.ID} oColumn
 	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public

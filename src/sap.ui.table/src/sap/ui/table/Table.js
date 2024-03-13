@@ -202,14 +202,14 @@ sap.ui.define([
 			/**
 			 * Flag whether the controls of the Table are editable or not (currently this only controls the background color in certain themes!)
 			 *
-			 * @deprecated As of version 1.115
+			 * @deprecated As of version 1.115, the concept has been discarded.
 			 */
 			editable: {type: "boolean", group: "Behavior", defaultValue: true, deprecated: true},
 
 			/**
 			 * This property has been deprecated and must not be used anymore, since <code>Scrollbar</code> is the only supported option.
 			 *
-			 * @deprecated As of version 1.38
+			 * @deprecated As of version 1.38, the concept has been discarded.
 			 */
 			navigationMode: {type: "sap.ui.table.NavigationMode", group: "Behavior", defaultValue: "Scrollbar", deprecated: true},
 
@@ -245,7 +245,7 @@ sap.ui.define([
 			 * </ul>
 			 *
 			 * @see sap.ui.table.Table#setGroupBy
-			 * @deprecated As of version 1.110, this feature has a limited functionality and should not be used anymore.
+			 * @deprecated As of version 1.110, the concept has been discarded.
 			 */
 			enableGrouping: {type: "boolean", group: "Behavior", defaultValue: false, deprecated: true},
 
@@ -542,7 +542,7 @@ sap.ui.define([
 			 *
 			 * @experimental Since 1.28. This feature has a limited functionality.
 			 * @see sap.ui.table.Table#setEnableGrouping
-			 * @deprecated As of version 1.110.
+			 * @deprecated As of version 1.110, see the <code>enableGrouping</code> property for details.
 			 */
 			groupBy: {type: "sap.ui.table.Column", multiple: false, deprecated: true},
 
@@ -597,7 +597,7 @@ sap.ui.define([
 
 			/**
 			 * fired when a column of the table has been selected
-			 * @deprecated As of version 1.117
+			 * @deprecated As of version 1.117, see the <code>headerMenu</code> aggregation of <code>sap.ui.table.Column</code> for details.
 			 */
 			columnSelect: {
 				allowPreventDefault: true,
@@ -704,7 +704,7 @@ sap.ui.define([
 
 			/**
 			 * fired when the table is grouped (experimental!).
-			 * @deprecated As of version 1.118.
+			 * @deprecated As of version 1.118, see the <code>enableGrouping</code> property for details.
 			 */
 			group: {
 				allowPreventDefault: true,
@@ -719,7 +719,7 @@ sap.ui.define([
 
 			/**
 			 * fired when the visibility of a table column is changed.
-			 * @deprecated As of Version 1.117
+			 * @deprecated As of Version 1.117, see the <code>showColumnVisibilityMenu</code> property of <code>sap.ui.table.Table</code> for details.
 			 */
 			columnVisibility: {
 				allowPreventDefault: true,

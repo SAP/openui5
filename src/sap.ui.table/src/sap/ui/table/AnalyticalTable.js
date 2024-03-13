@@ -130,7 +130,7 @@ sap.ui.define([
 			/**
 			 * Functions which is used to sort the column visibility menu entries e.g.: function(ColumnA, ColumnB) { return 0 = equals, <0 lower, >0
 			 * greater }; Other values than functions will be ignored.
-			 * @deprecated As of Version 1.117
+			 * @deprecated As of Version 1.117, see the <code>showColumnVisibilityMenu</code> property of <code>sap.ui.table.Table</code> for details.
 			 */
 			columnVisibilityMenuSorter: {type: "any", group: "Appearance", defaultValue: null},
 
@@ -262,9 +262,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * The property <code>enableGrouping</code> is not supported by the <code>AnalyticalTable</code> control.
+	 * The <code>enableGrouping</code> property is not supported by the <code>AnalyticalTable</code> control.
 	 *
-	 * @deprecated Since version 1.28.
+	 * @deprecated As of version 1.28, the <code>enableGrouping</code> property is not supported by the <code>AnalyticalTable</code> control.
 	 * @public
 	 * @returns {boolean}
 	 * @name sap.ui.table.AnalyticalTable#getEnableGrouping
@@ -272,9 +272,9 @@ sap.ui.define([
 	 */
 
 	/**
-	 * The property <code>enableGrouping</code> is not supported by the <code>AnalyticalTable</code> control.
+	 * The <code>enableGrouping</code> property is not supported by the <code>AnalyticalTable</code> control.
 	 *
-	 * @deprecated Since version 1.28.
+	 * @deprecated As of version 1.28, the <code>enableGrouping</code> property is not supported by the <code>AnalyticalTable</code> control.
 	 * @param {boolean} bValue
 	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
@@ -287,7 +287,7 @@ sap.ui.define([
 	/**
 	 * The <code>groupBy</code> association is not supported by the <code>AnalyticalTable</code> control.
 	 *
-	 * @deprecated Since version 1.28.
+	 * @deprecated As of version 1.28, the <code>groupBy</code> association is not supported by the <code>AnalyticalTable</code> control.
 	 * @returns {sap.ui.core.ID}
 	 * @public
 	 * @name sap.ui.table.AnalyticalTable#getGroupBy
@@ -297,7 +297,7 @@ sap.ui.define([
 	/**
 	 * The <code>groupBy</code> association is not supported by the <code>AnalyticalTable</code> control.
 	 *
-	 * @deprecated Since version 1.28.
+	 * @deprecated As of version 1.28, the <code>groupBy</code> association is not supported by the <code>AnalyticalTable</code> control.
 	 * @param {sap.ui.core.ID|sap.ui.table.Column} oGroupBy
 	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
