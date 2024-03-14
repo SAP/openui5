@@ -6,13 +6,13 @@
 sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/Core",
-	"sap/ui/core/Fragment"
+	"sap/ui/core/Fragment",
+	"sap/ui/core/Lib"
 ],
-	function(Element, JSONModel, Core, Fragment) {
+	function(Element, JSONModel, Fragment, Lib) {
 		"use strict";
 
-		var oTextResources = Core.getLibraryResourceBundle("sap.m.designtime");
+		var oTextResources = Lib.getResourceBundleFor("sap.m.designtime");
 
 		var oSelectIconTabBarFilter = function (oControl, mPropertyBag) {
 			return new Promise(function (fnResolve) {
