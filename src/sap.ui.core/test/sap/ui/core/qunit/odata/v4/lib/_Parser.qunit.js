@@ -383,6 +383,11 @@ sap.ui.define([
 			parsed : {$filter : "foo eq %2b1e%2B10"},
 			converted : {$filter : "foo eq %2b1e%2B10"}
 		}, {
+			//       "$filter=foo eq 2016-01-13T14:08:31Z"
+			string : "$filter=foo eq 2016-01-13T14%3a08%3A31Z",
+			parsed : {$filter : "foo eq 2016-01-13T14%3a08%3A31Z"},
+			converted : {$filter : "foo eq 2016-01-13T14%3a08%3A31Z"}
+		}, {
 			//       "$filter=foo eq  ' a '  '  ' "
 			string : "$filter=foo eq %27a%27%27%27",
 			parsed : {$filter : "foo eq %27a%27%27%27"},
@@ -838,8 +843,9 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("parseKeyPredicate", function (assert) {
 		[
-			"false", "true", "3.14", "2016-04-23", "2016-01-13T14:08:31Z", "-1", "'foo'",
-			"'foo''bar'", "'foo/bar'", "F050568D-393C-1ED4-9D97-E65F0F3FCC23"
+			"false", "true", "3.14", "2016-04-23", "2016-01-13T14:08:31Z",
+			"2016-01-13T14%3a08%3A31Z", "-1", "'foo'", "'foo''bar'", "'foo/bar'",
+			"F050568D-393C-1ED4-9D97-E65F0F3FCC23"
 		].forEach(function (sValue) {
 			var sPredicate = "(" + sValue + ")";
 
