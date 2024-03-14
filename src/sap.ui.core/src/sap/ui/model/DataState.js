@@ -90,7 +90,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * @deprecated Likely unused method
+	 * @deprecated As of version 1.74, the concept has been discarded.
 	 * @returns {this} <code>this</code> to allow method chaining
 	 * @private
 	 */
