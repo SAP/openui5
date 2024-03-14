@@ -2,8 +2,10 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/ui/fl/apply/_internal/flexObjects/getVariantAuthor",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObject"
 ], function(
+	getVariantAuthor,
 	FlexObject
 ) {
 	"use strict";
@@ -78,7 +80,9 @@ sap.ui.define([
 			if (!this.getVariantId()) {
 				this.setVariantId(this.getId());
 			}
-			this.setAuthor(this.getSupportInformation().user || "");
+			if (!this.getAuthor()) {
+				this.setAuthor(getVariantAuthor(this.getSupportInformation().user, this.getLayer(), {}));
+			}
 		}
 	});
 

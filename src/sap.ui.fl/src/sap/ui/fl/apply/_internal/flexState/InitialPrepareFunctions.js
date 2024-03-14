@@ -32,7 +32,7 @@ sap.ui.define([
 		// Exchange author  of fl variant from userID to user's name
 		mPropertyBag.flexObjects.forEach((oFlexObject) => {
 			if (oFlexObject.getFileType() === "ctrl_variant") {
-				oFlexObject.setAuthor(getVariantAuthor(oFlexObject, mPropertyBag.storageResponse.authors));
+				oFlexObject.setAuthor(getVariantAuthor(oFlexObject.getSupportInformation().user, oFlexObject.getLayer(), mPropertyBag.storageResponse.authors));
 			}
 		});
 		const aVariantIds = (mPropertyBag.storageResponse.changes.variants || [])
