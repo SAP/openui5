@@ -1012,6 +1012,12 @@ html.sapUiMedia-Std-Tablet {
 			top: -0.125rem;
 		}
 	}
+
+	.sapUiDemoKitHeaderActionsVersionSwitch .sapMBtnInner {
+		&:after {
+			top: 0.75rem;
+		}
+	}
 }
 
 // Media queries
@@ -1073,6 +1079,23 @@ html.sap-desktop {
 html.sap-tablet {
 	&:not(html.sap-combi) .sapUiDemokit.sapTntToolPage {
 		padding: 0;
+
+		// Adjust the style of the version switch button to match the design specifiaction
+		.sapUiDemoKitHeaderActionsVersionSwitch .sapMBtnInner {
+			padding: 0;
+
+			&:after {
+				content: none;
+			}
+
+			.sapMBtnIcon {
+				padding: 0;
+			}
+		}
+
+		.sapUiDemoKitHeaderActionsVersionSwitchTextContent {
+			display: none;
+		}
 	}
 
 	.sapUiDemokit {
@@ -1101,23 +1124,6 @@ html.sap-tablet {
 			// Align the menu button with the side menu button
 			.sapUiDocumentationMasterToggleButton {
 				margin-left: 1rem;
-			}
-
-			// Adjust the style of the version switch button to match the design specifiaction
-			.sapUiDemoKitHeaderActionsVersionSwitch .sapMBtnInner {
-				padding: 0;
-
-				&:after {
-					content: none;
-				}
-
-				.sapMBtnIcon {
-					padding: 0;
-				}
-			}
-
-			.sapUiDemoKitHeaderActionsVersionSwitchTextContent {
-				display: none;
 			}
 		}
 	}
