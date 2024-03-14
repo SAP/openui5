@@ -263,6 +263,7 @@ sap.ui.define([
 
 		// Assert
 		assert.equal(sut.$().attr('role'), 'option', 'option, option; equal success');
+		assert.equal(sut.$().attr('aria-roledescription'), 'Tile', 'Proper custom semantics applied');
 		assert.equal(sut.$().attr('aria-posinset'), "1", 'position in the set must equal to 1');
 		assert.equal(sut.$().attr('aria-setsize'), "2", 'the size of the set must equal to 2');
 
