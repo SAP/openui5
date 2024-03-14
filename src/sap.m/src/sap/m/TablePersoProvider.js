@@ -15,7 +15,7 @@ sap.ui.define(['sap/ui/base/ManagedObject', "sap/base/Log"],
 	 *
 	 * @public
 	 *
-	 * @deprecated since 1.115.
+	 * @deprecated As of version 1.115, replaced by {@link sap.m.p13n.Engine}
 	 *
 	 * @class Table Personalization Provider
 	 * @extends sap.ui.base.ManagedObject

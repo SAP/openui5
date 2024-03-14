@@ -50,7 +50,7 @@ sap.ui.define([
 	 * @public
 	 * @since 1.16.3
 	 * @alias sap.ui.unified.ShellOverlay
-	 * @deprecated Since version 1.44.0.
+	 * @deprecated As of version 1.44.0, the concept has been discarded.
 	 */
 	var ShellOverlay = Control.extend("sap.ui.unified.ShellOverlay", /** @lends sap.ui.unified.ShellOverlay.prototype */ {
 		metadata : {

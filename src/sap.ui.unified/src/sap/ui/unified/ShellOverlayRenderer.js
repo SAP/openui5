@@ -11,7 +11,7 @@ sap.ui.define(["sap/ui/core/Lib", "sap/ui/core/ControlBehavior"],
 	/**
 	 * ShellOverlay renderer.
 	 * @namespace
-	 * @deprecated Since version 1.44.0.
+	 * @deprecated As of version 1.44.0, the concept has been discarded.
 	 */
 	var ShellOverlayRenderer = {};
 

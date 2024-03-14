@@ -15,7 +15,7 @@ sap.ui.define(["sap/ui/core/ControlBehavior", "sap/ui/core/library", "sap/ui/cor
 	/**
 	 * SplitContainer renderer.
 	 * @namespace
-	 * @deprecated Since version 1.44.0.
+	 * @deprecated As of version 1.44.0, the concept has been discarded.
 	 */
 	var SplitContainerRenderer = {};
 

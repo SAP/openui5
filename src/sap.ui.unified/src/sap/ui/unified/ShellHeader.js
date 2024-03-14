@@ -19,7 +19,7 @@ sap.ui.define([
 	/**
 	 * Internal helper control for the <code>sap.ui.unified.Shell</code>.
 	 *
-	 * @deprecated As of 1.44, together with the sap.ui.unified.Shell.
+	 * @deprecated As of version 1.44.0, the concept has been discarded.
 	 * @private
 	 */
 	var ShellHeader = Control.extend("sap.ui.unified.ShellHeader", {
