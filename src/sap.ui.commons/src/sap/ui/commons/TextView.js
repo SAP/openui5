@@ -41,7 +41,7 @@ sap.ui.define([
 	 *
 	 * @constructor
 	 * @public
-	 * @deprecated Since version 1.38.
+	 * @deprecated As of version 1.38, replaced by {@link sap.m.Text}.
 	 * @alias sap.ui.commons.TextView
 	 */
 	var TextView = Control.extend("sap.ui.commons.TextView", /** @lends sap.ui.commons.TextView.prototype */ { metadata : {

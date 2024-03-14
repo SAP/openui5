@@ -37,7 +37,7 @@ sap.ui.define([
 	 *
 	 * @constructor
 	 * @public
-	 * @deprecated Since version 1.38.
+	 * @deprecated As of version 1.38, the concept has been discarded.
 	 * @alias sap.ui.commons.layout.AbsoluteLayout
 	 */
 	var AbsoluteLayout = Control.extend("sap.ui.commons.layout.AbsoluteLayout", /** @lends sap.ui.commons.layout.AbsoluteLayout.prototype */ { metadata : {

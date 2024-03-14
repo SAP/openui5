@@ -299,7 +299,7 @@ function(library, Localization, Control, coreLibrary, Device, HyphenationSupport
 	 * @returns {int} returns calculated line height
 	 * @see sap.m.Text#cacheLineHeight
 	 * @since 1.22
-	 * @deprecated As of version 1.121
+	 * @deprecated As of version 1.121. Native line clamp is now available in all supported browsers.
 	 */
 	Text.prototype.getLineHeight = function (oDomRef) {
 		// return cached value if possible and available

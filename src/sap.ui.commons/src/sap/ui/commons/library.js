@@ -213,7 +213,7 @@ sap.ui.define(['sap/ui/base/DataType', 'sap/base/util/ObjectPath',
 	 * @name sap.ui.commons.FormattedTextViewControl
 	 * @interface
 	 * @public
-	 * @deprecated as of version 1.38
+	 * @deprecated As of version 1.38, the concept has been discarded.
 	 */
 
 
@@ -282,7 +282,7 @@ sap.ui.define(['sap/ui/base/DataType', 'sap/base/util/ObjectPath',
 	 *
 	 * @enum {string}
 	 * @public
-	 * @deprecated as of version 1.38
+	 * @deprecated As of version 1.38, the concept has been discarded.
 	 */
 	thisLib.LabelDesign = {
 
@@ -480,7 +480,7 @@ sap.ui.define(['sap/ui/base/DataType', 'sap/base/util/ObjectPath',
 	 *
 	 * @enum {string}
 	 * @public
-	 * @deprecated as of version 1.38
+	 * @deprecated As of version 1.38, the concept has been discarded.
 	 */
 	thisLib.TextViewColor = {
 
@@ -516,7 +516,7 @@ sap.ui.define(['sap/ui/base/DataType', 'sap/base/util/ObjectPath',
 	 *
 	 * @enum {string}
 	 * @public
-	 * @deprecated as of version 1.38
+	 * @deprecated As of version 1.38, the concept has been discarded.
 	 */
 	thisLib.TextViewDesign = {
 

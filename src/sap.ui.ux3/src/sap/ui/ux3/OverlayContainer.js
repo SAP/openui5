@@ -30,7 +30,7 @@ sap.ui.define([
 	 *
 	 * @constructor
 	 * @public
-	 * @deprecated Since version 1.38.
+	 * @deprecated As of version 1.38, the concept has been discarded.
 	 * @alias sap.ui.ux3.OverlayContainer
 	 */
 	var OverlayContainer = Overlay.extend("sap.ui.ux3.OverlayContainer", /** @lends sap.ui.ux3.OverlayContainer.prototype */ { metadata : {
