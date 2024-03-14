@@ -274,7 +274,7 @@ sap.ui.define([
 		const oSorter = new Sorter("label", false, false, fnSorter);
 
 		const oComboBox = new ComboBox({
-			id: "p13nPanel-templateComboBox-" + sKind,
+			id: this.getId() + "-templateComboBox-" + sKind,
 			width: "100%",
 			placeholder: this._getPlaceholderTextForTemplate(sKind),
 			items: {
