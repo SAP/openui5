@@ -440,7 +440,10 @@ sap.ui.define([
 				}
 			});
 		});
-		// @deprecated
+
+		/**
+		 * @deprecated
+		 */
 		const oErrorLogSpy = sinon.spy(Log, "error");
 		const oFatalLogSpy = sinon.spy(Log, "fatal");
 		const oView = await XMLView.create({
@@ -459,7 +462,9 @@ sap.ui.define([
 		oView.destroy();
 		assert.ok(oFatalLogSpy.getCall(3).calledWith("[FUTURE FATAL] The registered Event Listener 'onExit' must not have a return value."), "Correct Fatal Log displayed");
 
-		// @deprecated
+		/**
+		 * @deprecated
+		 */
 		await (async () => {
 			await Promise.allSettled(aPromises);
 			assert.equal(oErrorLogSpy.callCount, 2, "Two error logs should occur reg. rejected Promises.");
