@@ -72,7 +72,7 @@ sap.ui.define(["sap/ui/integration/Extension", "sap/ui/integration/ActionDefinit
 			var aCities = oXMLDocument.querySelectorAll("City");
 
 			return Array.prototype.map.call(aCities, function (oCity) {
-				return oCity.getAttribute("Name");
+				return {city: oCity.getAttribute("Name")};
 			});
 		});
 	};
@@ -83,6 +83,12 @@ sap.ui.define(["sap/ui/integration/Extension", "sap/ui/integration/ActionDefinit
 			{ key: "mi", value: "Middle" },
 			{ key: "lo", value: "Low" }
 		]);
+	};
+
+	Extension1.prototype.requestFilterData = function () {
+		return this.getCard().request({
+			url: "filter/url"
+		});
 	};
 
 	Extension1.prototype.getDataForHeader = function () {
