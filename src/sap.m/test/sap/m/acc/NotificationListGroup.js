@@ -89,9 +89,6 @@ sap.ui.define([
 	var listGroup = new NotificationListGroup({
 		id: 'notificationGroup',
 		title: 'Notification List Item Group',
-		// datetime: 'More than 5 minutes', // deprecated
-		// authorPicture: 'images/SAPLogo.jpg', // deprecated
-		// authorName: 'Lorem Ipsum', // deprecated
 		buttons: [
 			new Button({
 				text: 'Accept All',
@@ -119,9 +116,6 @@ sap.ui.define([
 	var singleItemGroup = new NotificationListGroup({
 		id: 'notificationGroup2',
 		title: 'Single Notification List Item Group',
-		// datetime: 'More than 15 minutes', // deprecated
-		// authorPicture: 'images/SAPLogo.jpg', // deprecated
-		// authorName: 'Lorem Ipsum', // deprecated
 		visible: true,
 		buttons: [
 			new Button({
@@ -193,9 +187,6 @@ sap.ui.define([
 	var noItemsGroup = new NotificationListGroup({
 		id: 'notificationGroup3',
 		title: 'Notification List With 0 Items',
-		// datetime: 'More than 25 minutes', // deprecated
-		// authorPicture: 'images/SAPLogo.jpg', // deprecated
-		// authorName: 'Lorem Ipsum', // deprecated
 		showEmptyGroup: true,
 		buttons: [
 			new Button({

@@ -103,21 +103,21 @@ function(
 				/**
 				 * Determines the notification group's author name.
 				 *
-				 * @deprecated As of version 1.73
+				 * @deprecated As of version 1.73, the concept has been discarded.
 				 */
 				authorName: {type: 'string', group: 'Appearance', defaultValue: '', deprecated: true},
 
 				/**
 				 * Determines the URL of the notification group's author picture.
 				 *
-				 *  @deprecated As of version 1.73
+				 *  @deprecated As of version 1.73, the concept has been discarded.
 				 */
 				authorPicture: {type: 'sap.ui.core.URI', deprecated: true},
 
 				/**
 				 * Determines the due date of the NotificationListGroup.
 				 *
-				 *  @deprecated As of version 1.73
+				 *  @deprecated As of version 1.73, the concept has been discarded.
 				 */
 				datetime: {type: 'string', group: 'Appearance', defaultValue: '', deprecated: true}
 			},
