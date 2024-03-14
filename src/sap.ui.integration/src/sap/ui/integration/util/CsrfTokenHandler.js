@@ -109,7 +109,7 @@ sap.ui.define([
 
 		if (Array.isArray(vData)) {
 			return vData.map((vValue) => {
-				this.replacePlaceholders(vValue);
+				return this.replacePlaceholders(vValue);
 			});
 		}
 

@@ -37,12 +37,12 @@
 			margin-top: 0.2rem;
 		}
 
-		.sapFCardSubtitle .sapFCardHeaderItemBinded::after {
+		.sapFCardSubtitle.sapFCardHeaderItemBinded::after {
 			margin-top: 0.3rem;
 		}
 
 		.sapFCardHeaderTextSecondLine .sapFCardHeaderItemBinded::after,
-		.sapFCardSubtitle .sapFCardHeaderItemBinded::after,
+		.sapFCardSubtitle.sapFCardHeaderItemBinded::after,
 		.sapFCardHeaderDetailsWrapper .sapFCardHeaderItemBinded::after,
 		.sapFCardNumericIndicatorsSide .sapFCardHeaderItemBinded::after,
 		.sapFCardNumericIndicatorsSide .sapFCardHeaderItemBinded.sapMText::after {
@@ -54,24 +54,11 @@
 			width: 80%;
 		}
 
-		.sapFCardHeaderText .sapMText.sapFCardHeaderItemBinded,
-		.sapFCardHeaderText .sapMText.sapFCardHeaderItemBinded span,
-		.sapFCardHeaderText .sapFCardStatus.sapFCardHeaderItemBinded,
-		.sapFCardSubtitle .sapMText.sapFCardHeaderItemBinded,
-		.sapFCardSubtitle .sapMText.sapFCardHeaderItemBinded + .sapFCardHeaderUnitOfMeasurement,
-		.sapFAvatar.sapFCardHeaderItemBinded span::before,
-		.sapFAvatar.sapFCardHeaderItemBinded .sapFAvatarImageHolder,
-		.sapFCardAvatarAndIndicatorsLine .sapMNC.sapFCardHeaderItemBinded span,
-		.sapFCardAvatarAndIndicatorsLine .sapMNC.sapFCardHeaderItemBinded div.sapMNCScale,
-		.sapFCardHeaderSideIndicator.sapFCardHeaderItemBinded span,
-		.sapFCardHeaderDetailsWrapper .sapMObjStatus.sapFCardHeaderItemBinded span {
+		.sapFCardHeaderItemBinded {
 			visibility: hidden; // hide the loaded elements (texts, icons, etc.) behind the loading indicators
 		}
 
-		.sapFCardHeaderText .sapMText.sapFCardHeaderItemBinded::after,
-		.sapFCardHeaderText .sapFCardStatus.sapFCardHeaderItemBinded::after,
-		.sapFCardSubtitle .sapMText.sapFCardHeaderItemBinded::after,
-		.sapFCardSubtitle .sapFCardHeaderUnitOfMeasurement.sapMText.sapFCardHeaderItemBinded::after {
+		.sapFCardHeaderItemBinded::after {
 			visibility: visible; // ... but show the loading indicator
 		}
 

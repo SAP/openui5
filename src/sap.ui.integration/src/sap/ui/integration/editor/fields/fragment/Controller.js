@@ -34,7 +34,7 @@ sap.ui.define([
 		var sLanguage =  Utils._language;
 		var oConfig = this._oField.getConfiguration();
 		if (oConfig.type === "string" && oConfig.translatable) {
-			this._oField.setTranslationValueInTexts(sLanguage, oConfig.manifestpath, sValue);
+			this._oField.setTranslationValueInTexts(sLanguage, sValue);
 		} else {
 			this._oField._settingsModel.setProperty(oConfig.manifestpath, sValue);
 		}

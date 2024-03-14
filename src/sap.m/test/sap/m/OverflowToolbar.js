@@ -601,7 +601,7 @@ sap.ui.define([
 			placeholder: "DateRangeSelection"
 		}),
 		new CheckBox({
-			text : "Checkbox"
+			text : "Cb"
 		}),
 		new RadioButton({
 			text : "Option a",

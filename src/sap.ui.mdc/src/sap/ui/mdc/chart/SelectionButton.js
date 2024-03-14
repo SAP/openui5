@@ -10,8 +10,9 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/ui/model/Sorter",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/Device"
-], (OverflowToolbarButton, ButtonRenderer, mobileLibrary, IllustratedMessage, Library, Filter, Sorter, JSONModel, Device) => {
+	"sap/ui/Device",
+	"sap/ui/mdc/chart/SelectionButtonDisplay"
+], (OverflowToolbarButton, ButtonRenderer, mobileLibrary, IllustratedMessage, Library, Filter, Sorter, JSONModel, Device, SelectionButtonDisplay) => {
 	"use strict";
 
 	// shortcut for sap.m.PlacementType
@@ -23,6 +24,14 @@ sap.ui.define([
 		metadata: {
 			library: "sap.ui.mdc",
 			properties: {
+				display: {
+					type: "sap.ui.mdc.enums.SelectionButtonDisplay",
+					defaultValue: SelectionButtonDisplay.Icon
+				},
+				canOverflow: {
+					type: "boolean",
+					defaultValue: true
+				},
 				selectedItemKey: {
 					type: "string"
 				},
@@ -399,6 +408,27 @@ sap.ui.define([
 			this._oObserver.destroy();
 			delete this._oObserver;
 		}
+	};
+
+	SelectionButton.prototype._getAppliedIcon = function() {
+		if  (this._bInOverflow || this.getDisplay() === SelectionButtonDisplay.Icon || this.getDisplay() ===  SelectionButtonDisplay.Both) {
+			return this.getIcon() || this._sTypeIconURI;
+		}
+		return undefined;
+	};
+
+	SelectionButton.prototype._getText = function() {
+		if (this._bInOverflow || this.getDisplay() === SelectionButtonDisplay.Text || this.getDisplay() ===  SelectionButtonDisplay.Both) {
+			return sap.m.Button.prototype._getText.call(this);
+		}
+
+		return "";
+	};
+
+	SelectionButton.prototype.getOverflowToolbarConfig = function() {
+		const oOverflowToolbarConfig = OverflowToolbarButton.prototype.getOverflowToolbarConfig.apply(this); // Call base class
+		oOverflowToolbarConfig.canOverflow = this.getCanOverflow();
+		return oOverflowToolbarConfig;
 	};
 
 	return SelectionButton;

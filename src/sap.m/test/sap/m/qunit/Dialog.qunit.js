@@ -225,8 +225,8 @@ sap.ui.define([
 
 		// Assert
 		var oIconDomRef = oDialog.getDomRef().querySelector(".sapMDialogResizeHandler");
-		assert.notOk(oIconDomRef.getAttribute("title"), "title attribute is not set");
-		assert.notOk(oIconDomRef.getAttribute("aria-label"), "aria-label attribute is not set");
+		assert.strictEqual(oIconDomRef.getAttribute("title"), null, "title attribute is not set");
+		assert.strictEqual(oIconDomRef.getAttribute("aria-label"), null, "aria-label attribute is not set");
 
 		// Clean up
 		oDialog.destroy();

@@ -152,7 +152,7 @@ sap.ui.define([
 		if (Device.system.desktop) {
 
 			if (oDialog.getResizable() && !bStretch) {
-				oRM.icon("sap-icon://resize-corner", ["sapMDialogResizeHandler"], {"title": "", "aria-label": ""});
+				oRM.icon("sap-icon://resize-corner", ["sapMDialogResizeHandler"], {"title": null, "aria-label": null});
 			}
 
 			// Invisible element which is used to determine when desktop keyboard navigation

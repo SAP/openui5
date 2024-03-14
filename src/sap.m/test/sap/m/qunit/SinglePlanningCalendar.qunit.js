@@ -22,7 +22,8 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/date/UI5Date",
-	"sap/ui/unified/DateRange"
+	"sap/ui/unified/DateRange",
+    "sap/ui/core/Icon"
 ], function(
 	Localization,
 	Element,
@@ -46,7 +47,8 @@ sap.ui.define([
 	Log,
 	createAndAppendDiv,
 	UI5Date,
-	DateRange
+	DateRange,
+	Icon
 ) {
 	"use strict";
 	createAndAppendDiv("bigUiArea").style.width = "1024px";
@@ -2555,6 +2557,57 @@ sap.ui.define([
 
 		oCore.getConfiguration().setTimezone(sPrevTimezone);
 		*/
+	});
+
+	QUnit.module("Appointments with custom content", {
+		beforeEach: async function () {
+			var oApp = new CalendarAppointment("AppCustCont", {
+					startDate: UI5Date.getInstance(2015, 0, 2, 8, 0),
+					endDate: UI5Date.getInstance(2015, 0, 2, 10, 0),
+					icon: "sap-icon://add-product",
+					title: "Appointment Default Title",
+					text: "Appointment Default Text",
+					customContent: [
+						new Icon({
+							src: "sap-icon://add-employee"
+						})
+					]
+				});
+			this.oSPC = new SinglePlanningCalendar({
+				startDate: UI5Date.getInstance(2015, 0, 2, 8, 0),
+				appointments: [oApp]
+			}).placeAt("qunit-fixture");
+		await nextUIUpdate();
+		},
+		afterEach: function () {
+			this.oSPC.destroy();
+		}
+	});
+
+	QUnit.test('Appointment with custom content has correct output in the DOM', function(assert) {
+		var oApp = this.oSPC.getAppointments()[0],
+			oAppDomRef = oApp.getDomRef(),
+			oAppId = oAppDomRef.getAttribute("id");
+
+		// Assert
+		assert.ok(oAppDomRef.querySelector(".sapUiIcon"), "There is icon rendered in the appointment DOM");
+		assert.strictEqual(oAppDomRef.querySelector(".sapUiIcon").getAttribute("aria-label"), "add-employee",
+							"The icpn that is rendered is the same as one added to the customContent aggregation");
+		assert.notOk(oAppDomRef.querySelector("#" + oAppId + "-Title"), "There is no title rendered in the appointment DOM");
+		assert.notOk(oAppDomRef.querySelector("#" + oAppId + "-Text"), "There is no text rendered in the appointment DOM");
+	});
+
+	QUnit.test('Appointment with custom content has correct ACC output in the DOM', function(assert) {
+		var oApp = this.oSPC.getAppointments()[0],
+			oAppDomRef = oApp.getDomRef(),
+			// With CLDR 42 (latest version) the regular space before AM/PM (Charcode 32) was replaced with the Charcode 8239
+			sCLDRSpace = String.fromCharCode(8239);
+
+		// Assert
+		assert.strictEqual(oAppDomRef.querySelector("#" + oAppDomRef.getAttribute("id") + "-Descr").textContent,
+							"From Friday, January 2, 2015 at 8:00:00" + sCLDRSpace +
+							"AM To Friday, January 2, 2015 at 10:00:00" + sCLDRSpace + "AM, Type01",
+							"Start and end date are included as description");
 	});
 
 });

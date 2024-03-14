@@ -201,8 +201,8 @@ sap.ui.define([
 			return waitForLink.call(this, oLinkIdentifier, {
 				success: function(oLink) {
 					Opa5.assert.equal(true, true);
-                }
-            });
+				}
+			});
 		},
 		iShouldSeeADisabledLink: function(oLinkIdentifier) {
 			return this.waitFor({

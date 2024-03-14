@@ -1268,21 +1268,31 @@ sap.ui.define([
 	 *
 	 * This context's {@link #getIndex index} may change and, in case of
 	 * <code>oAggregation.expandTo : 1</code>, it becomes "created persisted", with
-	 * {@link #isTransient} returning <code>false</code> etc.
+	 * {@link #isTransient} returning <code>false</code> etc. In case of
+	 * <code>oAggregation.expandTo >= Number.MAX_SAFE_INTEGER</code>, a created node becomes simply
+	 * "persisted", with {@link #isTransient} returning <code>undefined</code> etc.
 	 *
 	 * @param {object} [oParameters] - A parameter object
 	 * @param {sap.ui.model.odata.v4.Context} [oParameters.parent=null] - The new parent's context
 	 * @returns {Promise<void>}
 	 *   A promise which is resolved without a defined result when the move is finished, or
 	 *   rejected in case of an error
-	 * @throws {Error}
-	 *   If the parent is (a descendant of) this node, or if <code>oAggregation.expandTo</code> is
-	 *   unsupported.
+	 * @throws {Error} If
+	 *   <ul>
+	 *     <li> the parent is (a descendant of) this node,
+	 *     <li> <code>oAggregation.expandTo</code> is unsupported,
+	 *     <li> this node is {@link #isDeleted deleted},
+	 *     <li> this node is {@link #isTransient transient},
+	 *     <li> this node is not in the collection (has no {@link #getIndex index}).
+	 *   </ul>
 	 *
 	 * @experimental As of version 1.119.0
 	 * @public
 	 */
 	Context.prototype.move = function ({parent : oParent = null} = {}) {
+		if (this.isDeleted() || this.isTransient() || this.iIndex === undefined) {
+			throw new Error("Cannot move " + this);
+		}
 		if (this.isAncestorOf(oParent)) {
 			throw new Error("Unsupported parent context: " + oParent);
 		}
@@ -2079,6 +2089,24 @@ sap.ui.define([
 	Context.prototype.setNewGeneration = function () {
 		iGenerationCounter += 1;
 		this.iGeneration = iGenerationCounter;
+	};
+
+	/**
+	 * Sets this context's state from "created persisted" to "persisted".
+	 *
+	 * Note: this is a private and internal API. Do not call this!
+	 *
+	 * @throws {Error} If this context is not "created" or still transient
+	 *
+	 * @private
+	 */
+	Context.prototype.setPersisted = function () {
+		if (this.isTransient() !== false) {
+			throw new Error("Not 'created persisted'");
+		}
+		this.bInactive = undefined;
+		this.oCreatedPromise = undefined;
+		this.oSyncCreatePromise = undefined;
 	};
 
 	/**

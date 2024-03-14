@@ -301,6 +301,8 @@ sap.ui.define([
 											var sExpectedValue = _oOriginExpectedValues["string1"][sLanguage] || _oOriginExpectedValues["string1"]["default"];
 											var sCurrentValue = oLanguageItems1[i].getContent()[0].getItems()[1].getValue();
 											assert.equal(sCurrentValue, sExpectedValue, "oTranslationPopover1 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
+											var sValueState = oLanguageItems1[i].getContent()[0].getItems()[1].getValueState();
+											assert.equal(sValueState, "None", "oTranslationPopover1 Content: item " + i + " " + sLanguage + ", value state: " + sValueState + ", expected: None");
 										}
 									}
 									destroyEditor(that.oEditor);
@@ -389,6 +391,8 @@ sap.ui.define([
 											var sExpectedValue = _oOriginExpectedValues["string1"][sLanguage] || _oOriginExpectedValues["string1"]["default"];
 											var sCurrentValue = oLanguageItems1[i].getContent()[0].getItems()[1].getValue();
 											assert.equal(sCurrentValue, sExpectedValue, "oTranslationPopover1 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
+											var sValueState = oLanguageItems1[i].getContent()[0].getItems()[1].getValueState();
+											assert.equal(sValueState, "None", "oTranslationPopover1 Content: item " + i + " " + sLanguage + ", value state: " + sValueState + ", expected: None");
 										}
 									}
 									destroyEditor(that.oEditor);
@@ -495,11 +499,13 @@ sap.ui.define([
 											var sExpectedValue = _oOriginExpectedValues["string1"][sLanguage] || _oOriginExpectedValues["string1"]["default"];
 											var sCurrentValue = oLanguageItems1[i].getContent()[0].getItems()[1].getValue();
 											assert.equal(sCurrentValue, sExpectedValue, "oTranslationListPage1 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
+											var sValueState = oLanguageItems1[i].getContent()[0].getItems()[1].getValueState();
+											assert.equal(sValueState, "None", "oTranslationPopover1 Content: item " + i + " " + sLanguage + ", value state: " + sValueState + ", expected: None");
 											if (sLanguage === "en"){
 												var oInput = oLanguageItems1[i].getContent()[0].getItems()[1];
 												oInput.setValue("string1 en");
 												oInput.fireChange({ value: "string1 en"});
-												break;
+												assert.equal(oInput.getValueState(), "Information", "oTranslationPopover1 Content: item " + i + " " + sLanguage + ", value state: " + oInput.getValueState() + ", expected: " + oInput.getValueState());
 											}
 										}
 									}
@@ -519,6 +525,8 @@ sap.ui.define([
 													var sExpectedValue = _oOriginExpectedValues["string1"][sLanguage] || _oOriginExpectedValues["string1"]["default"];
 													var sCurrentValue = oLanguageItems1[i].getContent()[0].getItems()[1].getValue();
 													assert.equal(sCurrentValue, sExpectedValue, "oTranslationListPage1 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
+													var sValueState = oLanguageItems1[i].getContent()[0].getItems()[1].getValueState();
+													assert.equal(sValueState, "None", "oTranslationPopover1 Content: item " + i + " " + sLanguage + ", value state: " + sValueState + ", expected: None");
 												}
 											}
 											oNewObject = JSON.parse(oTextArea.getValue());

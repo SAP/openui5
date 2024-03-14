@@ -63,14 +63,6 @@ MenuRenderer.render = function(oRm, oMenu) {
 		oRm.class("sapUiMnuTop");
 	}
 
-	if (oRootMenu.isCozy()) {
-		oRm.class("sapUiSizeCozy");
-	}
-
-	if (oMenu.bCozySupported) {
-		oRm.class("sapUiMnuCozySupport");
-	}
-
 	oRm.openEnd();
 	MenuRenderer.renderItems(oRm, oMenu);
 	oRm.close("div");

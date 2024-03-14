@@ -1629,11 +1629,11 @@ sap.ui.define([
 						var oHeader = oCard.getCardHeader();
 						assert.strictEqual(oHeader.isLoading(), bLoading, "isLoading should be 'true'");
 						assert.strictEqual(oHeader.getDomRef().classList.contains("sapFCardHeaderLoading"), bLoading, "On header level there is a 'sapFCardHeaderLoading' CSS class");
-						assert.strictEqual(oHeader._getTitle().getDomRef().classList.contains("sapFCardHeaderItemBinded"), bExpectedTitle, "Title has no loading placeholder");
-						assert.strictEqual(oHeader._getSubtitle().getDomRef().classList.contains("sapFCardHeaderItemBinded"), bExpectedSubtitle, "Subtitle has no loading placeholder");
-						assert.strictEqual(oHeader._getDetails().getDomRef().classList.contains("sapFCardHeaderItemBinded"), bExpectedDetails,  "Details has no loading placeholder");
-						assert.strictEqual(oHeader._getNumericIndicators()._getMainIndicator().getDomRef().classList.contains("sapFCardHeaderItemBinded"), bExpectMainIndicator,  "Main indicator has no loading placeholder");
-						assert.strictEqual(oHeader.getSideIndicators()[0].getDomRef().classList.contains("sapFCardHeaderItemBinded"), bExpectSideIndicator,  "Side indicators has no loading placeholder");
+						assert.strictEqual(oHeader._getTitle().getDomRef().classList.contains("sapFCardHeaderItemBinded"), bExpectedTitle, "Placeholder class for 'title' is added");
+						assert.strictEqual(oHeader.getDomRef().querySelector(".sapFCardSubtitleAndUnit").classList.contains("sapFCardHeaderItemBinded"), bExpectedSubtitle, "Placeholder class for 'subtitle' and 'unit' is added");
+						assert.strictEqual(oHeader._getDetails().getDomRef().classList.contains("sapFCardHeaderItemBinded"), bExpectedDetails,  "Placeholder class for 'details' is added");
+						assert.strictEqual(oHeader._getNumericIndicators()._getMainIndicator().getDomRef().classList.contains("sapFCardHeaderItemBinded"), bExpectMainIndicator,  "Placeholder class for 'mainIndicator' is added");
+						assert.strictEqual(oHeader.getSideIndicators()[0].getDomRef().classList.contains("sapFCardHeaderItemBinded"), bExpectSideIndicator, "Placeholder class for 'sideIndicators' is added");
 						done();
 					}
 				};

@@ -1301,4 +1301,76 @@ sap.ui.define([
 		oMenu.destroy();
 	});
 
+	QUnit.module('MenuItem Shortcut', {
+		beforeEach: function () {
+			this.sut = new Menu({
+				items: [
+					new MenuItem({
+						text: "Open",
+						icon: "sap-icon://open-folder",
+						shortcutText: "Ctrl + O"
+					}),
+
+					new MenuItem({
+						text: "Save",
+						shortcutText: "Ctrl + Shift + S",
+						items: [
+							new MenuItem({
+								text: "Save Locally",
+								icon: "sap-icon://save",
+								shortcutText: "Ctrl + S"
+							}),
+							new MenuItem({
+								text: "Save to Cloud",
+								icon: "sap-icon://upload-to-cloud",
+								shortcutText: "Alt + S"
+							}),
+							new MenuItem({
+								text: "Save to Memory"
+							})
+						]
+					}),
+
+					new MenuItem({
+						text: "Delete"
+					})
+				]
+			});
+			this.oLabel = new Label("Opener").placeAt("qunit-fixture");
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
+			this.sut.openBy(this.oLabel);
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
+		},
+		afterEach : function () {
+			this.sut.close();
+			this.sut.destroy();
+			this.oLabel.destroy();
+
+			this.sut = null;
+			this.oLabel = null;
+		}
+	});
+
+	QUnit.test("Rendering", function(assert) {
+		var oMenu = this.sut._getMenu().getPopup().getContent(),
+			aItems = oMenu.getItems();
+
+		//Assert
+		assert.strictEqual(aItems[0].getDomRef().querySelector(".sapUiMnuItmSCut").innerHTML, aItems[0].getShortcutText(), "Shortcut Text of the first MenuItem is rendered");
+		assert.strictEqual(aItems[1].getDomRef().querySelector(".sapUiMnuItmSCut").innerHTML, "", "Shortcut Text of the second MenuItem is not rendered, because it has submenu");
+		assert.strictEqual(aItems[2].getDomRef().querySelector(".sapUiMnuItmSCut").innerHTML, "", "Shortcut Text of the third MenuItem is not rendered because it has no value");
+
+	});
+
+	QUnit.test("Accessibility", function(assert) {
+		var oMenu = this.sut._getMenu().getPopup().getContent(),
+			aItems = oMenu.getItems();
+
+		//Assert
+		assert.strictEqual(aItems[0].getDomRef().getAttribute("aria-keyshortcuts"), aItems[0].getShortcutText(), "Shortcut Text of the first MenuItem is added as aria-keyshortcuts attribute");
+		assert.notOk(aItems[1].getDomRef().getAttribute("aria-keyshortcuts"), "aria-keyshortcuts attribute of the second MenuItem is not rendered, because it has submenu");
+		assert.notOk(aItems[2].getDomRef().getAttribute("aria-keyshortcuts"), "aria-keyshortcuts attribute of the third MenuItem is not rendered because it has no value");
+
+	});
+
 });

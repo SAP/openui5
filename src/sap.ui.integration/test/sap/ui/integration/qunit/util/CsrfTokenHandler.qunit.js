@@ -503,7 +503,7 @@ sap.ui.define([
 		oDataProvider.triggerDataUpdate();
 	});
 
-	QUnit.test("Expired token is NOT re-fetch is not retried more than once", function (assert) {
+	QUnit.test("Expired token re-fetch is not retried more than once", function (assert) {
 		const done = assert.async(4);
 		const oCsrfTokensConfig = {
 			"token1": {
@@ -652,6 +652,60 @@ sap.ui.define([
 		// respond to the actual data request
 		this.oServer.respondWith("POST", "/fakeService/Products", function (oXhr) {
 			assert.strictEqual(oXhr.requestBody.get("X-CSRF-Token"), "FAKETOKEN", "The data request body contains the provided token");
+
+			oXhr.respond(200, {
+				"Content-Type": "application/json"
+			}, JSON.stringify({"results": []}));
+
+			done();
+		});
+
+		// Act - make a request which uses a CSRF placeholder twice
+		this.createDataProvider(oDataProviderConfig, { csrfTokensConfig: oCsrfTokensConfig }).triggerDataUpdate();
+	});
+
+	QUnit.test("[Deprecated Syntax] Parameters structure preservation", function (assert) {
+		const done = assert.async(2);
+		const oCsrfTokensConfig = {
+			"token1": {
+				"data": {
+					"request": {
+						"url": "/fakeService/getToken",
+						"method": "HEAD",
+						"headers": {
+							"X-CSRF-Token": "Fetch"
+						}
+					}
+				}
+			}
+		};
+		const oDataProviderConfig = {
+			"request": {
+				"url": "/fakeService/Products",
+				"method": "POST",
+				"parameters": {
+					"X-CSRF-Token": "{{csrfTokens.token1}}",
+					"arrayParams": ["a", { b: "B" }, ["C"]]
+				},
+				"headers": {
+					"Content-Type": "application/json"
+				}
+			},
+			"path": "/results"
+		};
+
+		// respond upon request for a token
+		this.oServer.respondWith("HEAD", "/fakeService/getToken", function (oXhr) {
+			oXhr.respond(200, {
+				"X-CSRF-Token": "FAKETOKEN"
+			}, "{}");
+
+			done();
+		});
+
+		// respond to the actual data request
+		this.oServer.respondWith("POST", "/fakeService/Products", function (oXhr) {
+			assert.deepEqual(JSON.parse(oXhr.requestBody).arrayParams, ["a", { b: "B" }, ["C"]], "Array should be preserved");
 
 			oXhr.respond(200, {
 				"Content-Type": "application/json"

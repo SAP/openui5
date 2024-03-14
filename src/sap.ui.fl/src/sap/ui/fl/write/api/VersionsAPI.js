@@ -4,20 +4,22 @@
 
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
+	"sap/ui/fl/initial/_internal/FlexInfoSession",
 	"sap/ui/fl/initial/api/Version",
 	"sap/ui/fl/write/_internal/Versions",
-	"sap/ui/fl/Utils",
+	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
 	"sap/ui/fl/write/api/FeaturesAPI",
-	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
-	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI"
+	"sap/ui/fl/Utils"
 ], function(
 	FlexState,
+	ManifestUtils,
+	FlexInfoSession,
 	Version,
 	Versions,
-	Utils,
+	ContextBasedAdaptationsAPI,
 	FeaturesAPI,
-	ManifestUtils,
-	ContextBasedAdaptationsAPI
+	Utils
 ) {
 	"use strict";
 
@@ -185,7 +187,7 @@ sap.ui.define([
 		if (!mPropertyBag.layer) {
 			return Promise.reject("No layer was provided");
 		}
-		var oModel = getVersionsModel(mPropertyBag);
+		const oModel = getVersionsModel(mPropertyBag);
 		if (oModel) {
 			if (mPropertyBag.version === undefined) {
 				mPropertyBag.version = oModel.getProperty("/activeVersion");
@@ -193,9 +195,9 @@ sap.ui.define([
 			oModel.setProperty("/displayedVersion", mPropertyBag.version);
 			oModel.setProperty("/persistedVersion", mPropertyBag.version);
 			if (mPropertyBag.version !== Version.Number.Draft && FeaturesAPI.isPublishAvailable()) {
-				var aVersions = oModel.getProperty("/versions");
+				const aVersions = oModel.getProperty("/versions");
 				if (aVersions.length) {
-					var oVersion = aVersions.find(function(oVersion) {
+					const oVersion = aVersions.find(function(oVersion) {
 						return oVersion.version === mPropertyBag.version;
 					});
 					if (oVersion) {
@@ -207,15 +209,13 @@ sap.ui.define([
 
 		return incorporateAdaptationIdInSwitch(mPropertyBag)
 		.then(function(sDisplayedAdaptationId) {
-			var oAppComponent = Utils.getAppComponentForControl(mPropertyBag.control);
-			var sReference = getFlexReferenceForControl(oAppComponent);
-			return FlexState.clearAndInitialize({
-				componentId: oAppComponent.getId(),
-				reference: sReference,
-				version: mPropertyBag.version,
-				allContexts: mPropertyBag.allContexts,
-				adaptationId: sDisplayedAdaptationId
-			});
+			const oAppComponent = Utils.getAppComponentForControl(mPropertyBag.control);
+			const sReference = getFlexReferenceForControl(oAppComponent);
+			const oFlexInfo = FlexInfoSession.getByReference(sReference);
+			oFlexInfo.version = mPropertyBag.version;
+			oFlexInfo.adaptationId = sDisplayedAdaptationId;
+			FlexInfoSession.setByReference(oFlexInfo, sReference);
+			FlexState.clearState(sReference);
 		});
 	};
 
@@ -246,7 +246,11 @@ sap.ui.define([
 			return Promise.reject("No version title was provided");
 		}
 
-		var sReference = getFlexReferenceForControl(mPropertyBag.control);
+		const sReference = getFlexReferenceForControl(mPropertyBag.control);
+
+		const oFlexInfo = FlexInfoSession.getByReference(sReference);
+		delete oFlexInfo.version;
+		FlexInfoSession.setByReference(oFlexInfo, sReference);
 
 		return Versions.activate({
 			nonNormalizedReference: sReference,
@@ -277,8 +281,8 @@ sap.ui.define([
 			return Promise.reject("No layer was provided");
 		}
 
-		var oAppComponent = Utils.getAppComponentForControl(mPropertyBag.control);
-		var sReference = getFlexReferenceForControl(oAppComponent);
+		const oAppComponent = Utils.getAppComponentForControl(mPropertyBag.control);
+		const sReference = getFlexReferenceForControl(oAppComponent);
 		return Versions.discardDraft({
 			nonNormalizedReference: sReference,
 			reference: sReference,
@@ -286,7 +290,7 @@ sap.ui.define([
 		})
 		.then(function(oDiscardInfo) {
 			if (oDiscardInfo.backendChangesDiscarded) {
-				var bHasAdaptationsModel = ContextBasedAdaptationsAPI.hasAdaptationsModel({
+				const bHasAdaptationsModel = ContextBasedAdaptationsAPI.hasAdaptationsModel({
 					layer: mPropertyBag.layer,
 					reference: sReference
 				});
@@ -294,22 +298,16 @@ sap.ui.define([
 					return ContextBasedAdaptationsAPI.refreshAdaptationModel(mPropertyBag)
 					.then(function(sDisplayedAdaptationId) {
 						// invalidate flexState to trigger getFlexData for the current active version after discard
-						return FlexState.clearAndInitialize({
-							componentId: oAppComponent.getId(),
-							reference: sReference,
-							adaptationId: sDisplayedAdaptationId
-						}).then(function() {
-							return oDiscardInfo;
-						});
+						const oFlexInfo = FlexInfoSession.getByReference(sReference);
+						oFlexInfo.adaptationId = sDisplayedAdaptationId;
+						FlexInfoSession.setByReference(oFlexInfo, sReference);
+						FlexState.clearState(sReference);
+						return oDiscardInfo;
 					});
 				}
 				// invalidate flexState to trigger getFlexData for the current active version after discard
-				return FlexState.clearAndInitialize({
-					componentId: oAppComponent.getId(),
-					reference: sReference
-				}).then(function() {
-					return oDiscardInfo;
-				});
+				FlexState.clearState(sReference);
+				return oDiscardInfo;
 			}
 			return oDiscardInfo;
 		});

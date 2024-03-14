@@ -81,9 +81,14 @@ sap.ui.define(['./ListItemBaseRenderer', 'sap/ui/core/Renderer', 'sap/m/library'
 		var sTextDir = oLI.getTitleTextDirection();
 
 		// image
+		rm.openStart("div");
+		rm.class("sapMMenuLIImgThumbWrapper");
+		rm.openEnd();
+
 		if (oLI.getIcon()) {
 			rm.renderControl(oLI._getImage((oLI.getId() + "-img"), "sapMMenuLIImgThumb", oLI.getIcon(), oLI.getIconDensityAware()));
 		}
+		rm.close("div");
 
 		rm.openStart("div");
 		rm.class("sapMSLIDiv");

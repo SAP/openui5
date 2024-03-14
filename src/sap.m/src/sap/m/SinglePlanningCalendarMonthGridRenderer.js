@@ -273,6 +273,8 @@ sap.ui.define([
 			sId = oAppointment.getId(),
 			oStartDate = oAppointment.getStartDate(),
 			oEndDate = oAppointment.getEndDate(),
+			aCustomContent = oAppointment.getCustomContent(),
+			bHasCustomContent = !!aCustomContent.length,
 			bIsFullDay = !oEndDate || oControl._isAllDayAppointment(oStartDate, oEndDate),
 			oValue = bIsFullDay ? InvisibleText.getStaticId("sap.ui.unified", "CALENDAR_ALL_DAY_PREFIX") : InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT"),
 			bDraggable = oAppointment.getParent().getEnableAppointmentsDragAndDrop(),
@@ -340,14 +342,14 @@ sap.ui.define([
 
 		iRight = iRight < 0 ? 0 : iRight;
 
-		if (sTitle) {
+		if (!bHasCustomContent && sTitle) {
 			mAccProps["labelledby"].value = mAccProps["labelledby"].value + " " + sId + "-" + iColumn + "_" + iRow + "-Title";
 		}
 
 		// Put start/end information after the title
 		mAccProps["labelledby"].value = mAccProps["labelledby"].value + " " + sId + "-" + iColumn + "_" + iRow + "-Descr";
 
-		if (sText) {
+		if (!bHasCustomContent && sText) {
 			mAccProps["labelledby"].value = mAccProps["labelledby"].value + " " + sId + "-" + iColumn + "_" + iRow + "-Text";
 		}
 
@@ -420,7 +422,7 @@ sap.ui.define([
 			oRm.icon("sap-icon://arrow-left", aClasses, { title: null, role: "img" });
 		}
 
-		if (sIcon) {
+		if (!bHasCustomContent && sIcon) {
 			aClasses = ["sapUiCalendarAppIcon"];
 			var mAttributes = {};
 
@@ -430,12 +432,18 @@ sap.ui.define([
 			oRm.icon(sIcon, aClasses, mAttributes);
 		}
 
-		if (sTitle) {
+		if (!bHasCustomContent && sTitle) {
 			oRm.openStart("span", sId + "-" + iColumn + "_" + iRow + "-Title");
 			oRm.class("sapUiCalendarAppTitle");
 			oRm.openEnd(); // span element
 			oRm.text(sTitle, true);
 			oRm.close("span");
+		}
+
+		if (bHasCustomContent) {
+			aCustomContent.forEach(function (oContent) {
+				oRm.renderControl(oContent);
+			});
 		}
 
 		if (app.hasNext < 0) {

@@ -1369,22 +1369,6 @@ sap.ui.define([
 		jQuery.ui.position.flipfit = flipfit;
 	});
 
-	QUnit.test("Cozy Mode", function(assert) {
-		jQuery("#qunit-fixture").toggleClass("sapUiSizeCozy", true);
-
-		var oMenu = new Menu({tooltip: "a tooltip"});
-		for (var i = 0; i < 10; i++) {
-			oMenu.addItem(new MenuItem());
-		}
-		openMenu(oMenu, false, assert);
-
-		assert.ok(oMenu.getRootMenu().isCozy(), "Cozy Mode recognized by Menu");
-		assert.ok(oMenu.$().hasClass("sapUiSizeCozy"), "Cozy CSS class set");
-
-		oMenu.destroy();
-		jQuery("#qunit-fixture").toggleClass("sapUiSizeCozy", false);
-	});
-
 	QUnit.test("openAsContextMenu functionality", function(assert) {
 		var oMenu = new Menu({tooltip: "a tooltip"});
 		var fnEventHandler = function (oEvent) {

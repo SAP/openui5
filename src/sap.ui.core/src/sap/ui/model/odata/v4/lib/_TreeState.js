@@ -24,7 +24,7 @@ sap.ui.define([
 		mPredicate2ExpandLevels = {};
 
 		// @see #getOutOfPlaceGroupedByParent
-		mParentPredicate2OutOfPlace = {};
+		mPredicate2OutOfPlace = {};
 
 		/**
 		 * Constructor for a new _TreeState.
@@ -81,6 +81,22 @@ sap.ui.define([
 		}
 
 		/**
+		 * Deletes a node and all its descendants from the out-of-place list (making them in-place).
+		 *
+		 * @param {string} sPredicate - The node's key predicate
+		 *
+		 * @public
+		 */
+		deleteOutOfPlace(sPredicate) {
+			delete this.mPredicate2OutOfPlace[sPredicate];
+			Object.values(this.mPredicate2OutOfPlace).forEach((oOutOfPlace) => {
+				if (oOutOfPlace.parentPredicate === sPredicate) {
+					this.deleteOutOfPlace(oOutOfPlace.nodePredicate);
+				}
+			});
+		}
+
+		/**
 		 * Expand a node.
 		 *
 		 * @param {object} oNode - The node
@@ -127,7 +143,19 @@ sap.ui.define([
 		 * @public
 		 */
 		getOutOfPlaceGroupedByParent() {
-			return Object.values(this.mParentPredicate2OutOfPlace);
+			const mOutOfPlaceGroupedByParent = {};
+			for (const oOutOfPlace of Object.values(this.mPredicate2OutOfPlace)) {
+				const sParentPredicate = oOutOfPlace.parentPredicate;
+				const oOutOfPlaceByParent = mOutOfPlaceGroupedByParent[sParentPredicate] ??= {
+					nodeFilters : [],
+					nodePredicates : [],
+					parentFilter : oOutOfPlace.parentFilter,
+					parentPredicate : sParentPredicate
+				};
+				oOutOfPlaceByParent.nodeFilters.push(oOutOfPlace.nodeFilter);
+				oOutOfPlaceByParent.nodePredicates.push(oOutOfPlace.nodePredicate);
+			}
+			return Object.values(mOutOfPlaceGroupedByParent);
 		}
 
 		/**
@@ -137,9 +165,7 @@ sap.ui.define([
 		 * @public
 		 */
 		getOutOfPlaceCount() {
-			return Object.values(this.mParentPredicate2OutOfPlace).reduce(
-				(iCount, oOutOfPlace) => iCount + oOutOfPlace.nodeFilters.length,
-			    0);
+			return Object.keys(this.mPredicate2OutOfPlace).length;
 		}
 
 		/**
@@ -149,7 +175,7 @@ sap.ui.define([
 		 */
 		reset() {
 			this.mPredicate2ExpandLevels = {};
-			this.mParentPredicate2OutOfPlace = {};
+			this.mPredicate2OutOfPlace = {};
 		}
 
 		/**
@@ -161,20 +187,15 @@ sap.ui.define([
 		 * @public
 		 */
 		setOutOfPlace(oNode, oParent) {
-			const sParentPredicate = oParent && _Helper.getPrivateAnnotation(oParent, "predicate");
-			let oOutOfPlace = this.mParentPredicate2OutOfPlace[sParentPredicate];
-			if (!oOutOfPlace) {
-				this.mParentPredicate2OutOfPlace[sParentPredicate] = oOutOfPlace = {
-					nodeFilters : [],
-					nodePredicates : []
-				};
-				if (oParent) {
-					oOutOfPlace.parentFilter = this.fnGetKeyFilter(oParent);
-					oOutOfPlace.parentPredicate = sParentPredicate;
-				}
+			const oOutOfPlace = {
+				nodeFilter : this.fnGetKeyFilter(oNode),
+				nodePredicate : _Helper.getPrivateAnnotation(oNode, "predicate")
+			};
+			if (oParent) {
+				oOutOfPlace.parentFilter = this.fnGetKeyFilter(oParent);
+				oOutOfPlace.parentPredicate = _Helper.getPrivateAnnotation(oParent, "predicate");
 			}
-			oOutOfPlace.nodeFilters.push(this.fnGetKeyFilter(oNode));
-			oOutOfPlace.nodePredicates.push(_Helper.getPrivateAnnotation(oNode, "predicate"));
+			this.mPredicate2OutOfPlace[oOutOfPlace.nodePredicate] = oOutOfPlace;
 		}
 	}
 

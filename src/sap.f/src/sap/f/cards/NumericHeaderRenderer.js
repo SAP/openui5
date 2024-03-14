@@ -168,22 +168,20 @@ sap.ui.define([
 				oRm.class("sapFCardSubtitleAndUnit");
 			}
 
+			if (oBindingInfos.subtitle || oBindingInfos.unitOfMeasurement) {
+				oRm.class("sapFCardHeaderItemBinded");
+			}
+
 			oRm.openEnd();
 
 			if (oSubtitle) {
-				if (oBindingInfos.subtitle) {
-					oSubtitle.addStyleClass("sapFCardHeaderItemBinded");
-				}
 				oRm.renderControl(oSubtitle);
 			}
 
 			if (oUnitOfMeasurement) {
-				oUnitOfMeasurement.addStyleClass("sapFCardHeaderUnitOfMeasurement");
-				if (oBindingInfos.unitOfMeasurement) {
-					oUnitOfMeasurement.addStyleClass("sapFCardHeaderItemBinded");
-				}
 				oRm.renderControl(oUnitOfMeasurement);
 			}
+
 			oRm.close("div");
 		}
 	};
