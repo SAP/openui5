@@ -111,6 +111,11 @@ sap.ui.define([], function() {
 				coverage: {
 					only : ["sap/ui/documentation/sdk/controller/SubApiDetail.controller"]
 				}
+			},
+			"DocumentationRouter": {
+				coverage: {
+					only : ["sap/ui/documentation/sdk/util/DocumentationRouter"]
+				}
 			}
 			// "Forwarding": {
 			// 	coverage: {
