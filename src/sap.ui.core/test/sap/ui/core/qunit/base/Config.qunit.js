@@ -2,7 +2,9 @@
  * ${copyright}
  */
 /*global QUnit */
-sap.ui.define([
+QUnit.config.autostart = false;
+
+sap.ui.require([
 	"sap/base/config",
 	"sap/base/Log",
 	"sap/ui/thirdparty/sinon"
@@ -126,4 +128,6 @@ sap.ui.define([
 			external: true
 		}), false, "BaseConfiguration.get for param 'sapUiInitialFalsyValue' returns correct value 'false'");
 	});
+
+	QUnit.start();
 });

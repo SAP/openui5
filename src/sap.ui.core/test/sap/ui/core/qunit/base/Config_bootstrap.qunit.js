@@ -2,7 +2,9 @@
  * ${copyright}
  */
 /*global QUnit */
-sap.ui.define([
+QUnit.config.autostart = false;
+
+sap.ui.require([
 	"sap/base/config",
 	"sap/base/Log",
 	"sap/ui/thirdparty/sinon"
@@ -104,4 +106,6 @@ sap.ui.define([
 			type: BaseConfiguration.Type.String
 		}), "value15", "BaseConfiguration.get for param 'sapUshellFooBar' returns correct value 'value15'");
 	});
+
+	QUnit.start();
 });
