@@ -92,7 +92,7 @@ sap.ui.define([
 
 	aSupportedLanguages.forEach(function(sLanguage) {
 		QUnit.test("getCurrentLanguageName '" + sLanguage + "'", function(assert) {
-			var oLocaleData = new LocaleData(new Locale(sLanguage));
+			var oLocaleData = LocaleData.getInstance(new Locale(sLanguage));
 			var oLanguagesObject = oLocaleData.getLanguages();
 			assert.ok(Object.keys(oLanguagesObject).length > 0, "Languages are present for locale: '" + sLanguage + "'");
 			assert.ok(oLocaleData.getCurrentLanguageName(), "Current language is present for locale: '" + sLanguage + "'");
@@ -124,7 +124,7 @@ sap.ui.define([
 	{sLocale: "yi", sName: "Yiddish"}
 ].forEach((oFixture) => {
 	QUnit.test("getCurrentLanguageName specific " + oFixture.sLocale, function(assert) {
-		const oLocaleData = new LocaleData(new Locale(oFixture.sLocale));
+		const oLocaleData = LocaleData.getInstance(new Locale(oFixture.sLocale));
 		assert.ok(Object.keys(oLocaleData.getLanguages()).length > 0, "languages are present");
 		assert.equal(oLocaleData.getCurrentLanguageName(), oFixture.sName, "current language is present");
 	});
@@ -230,7 +230,7 @@ sap.ui.define([
 		sTitle = sMethod + ": " + sFormatType;
 
 	QUnit.test(sTitle, function (assert) {
-		var oLocaleData = new LocaleData(new Locale("de_DE")),
+		var oLocaleData = LocaleData.getInstance(new Locale("de_DE")),
 			sParseType =  bStandAlone ? "stand-alone" : "format";
 
 		this.mock(oLocaleData).expects("_get")
@@ -255,7 +255,7 @@ sap.ui.define([
 		sTitle = sMethod + ": " + oFixture.sCLDRCalenderType;
 
 	QUnit.test(sTitle, function (assert) {
-		var oLocaleData = new LocaleData(new Locale("de_DE")),
+		var oLocaleData = LocaleData.getInstance(new Locale("de_DE")),
 			sParseType =  bStandAlone ? "stand-alone" : "format";
 
 		this.mock(oLocaleData).expects("_get")
@@ -270,7 +270,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("getFlexibleDayPeriods; integrative test", function (assert) {
-		var oLocaleData = new LocaleData(new Locale("de_DE"));
+		var oLocaleData = LocaleData.getInstance(new Locale("de_DE"));
 
 		assert.deepEqual(oLocaleData.getFlexibleDayPeriods("foo", "Gregorian"), undefined);
 		assert.deepEqual(oLocaleData.getFlexibleDayPeriods("abbreviated", "foo"), undefined);
@@ -288,7 +288,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("getFlexibleDayPeriodsStandAlone; integrative test", function (assert) {
-		var oLocaleData = new LocaleData(new Locale("de_DE"));
+		var oLocaleData = LocaleData.getInstance(new Locale("de_DE"));
 
 		assert.deepEqual(oLocaleData.getFlexibleDayPeriodsStandAlone("foo", "Gregorian"),
 			undefined);
@@ -329,7 +329,7 @@ sap.ui.define([
 		+ oFixture.iMinute;
 
 	QUnit.test(sTitle, function (assert) {
-		var oLocaleData = new LocaleData(new Locale("de_DE"));
+		var oLocaleData = LocaleData.getInstance(new Locale("de_DE"));
 
 		this.mock(oLocaleData).expects("_get")
 			.withExactArgs("dayPeriodRules")
@@ -350,7 +350,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("Unit Display Name L10N", function(assert) {
 		var oLocale = new Locale("de_DE");
-		var oLocaleData = new LocaleData(oLocale);
+		var oLocaleData = LocaleData.getInstance(oLocale);
 
 		assert.equal(oLocaleData.getUnitDisplayName("duration-hour"), "Std.", "display name 'Std.' is correct");
 		assert.equal(oLocaleData.getUnitDisplayName("mass-gram"), "Gramm", "display name 'Gramm' is correct");
@@ -360,7 +360,7 @@ sap.ui.define([
 		assert.equal(oLocaleData.getUnitDisplayName("foobar"), "", "display name 'foobar' is correct");
 
 		oLocale = new Locale("es_ES");
-		oLocaleData = new LocaleData(oLocale);
+		oLocaleData = LocaleData.getInstance(oLocale);
 
 		assert.equal(oLocaleData.getUnitDisplayName("duration-hour"), "horas", "display name 'horas' is correct");
 		assert.equal(oLocaleData.getUnitDisplayName("mass-gram"), "g", "display name 'g' is correct");
@@ -563,7 +563,7 @@ sap.ui.define([
 	QUnit.test("Deprecated locales support", function(assert) {
 		aDeprecatedLocales.forEach(function(sLocale) {
 			var oLocale = new Locale(sLocale),
-				oLocaleData = new LocaleData(oLocale);
+				oLocaleData = LocaleData.getInstance(oLocale);
 			//check retrieval of languages to see if the localeData was successfully loaded
 			assert.ok(Object.keys(oLocaleData.getLanguages()).length > 0, "languages are present for locale: " + sLocale);
 		});
@@ -670,7 +670,7 @@ sap.ui.define([
 
 	aSupportedLanguages.forEach(function (sLocale) {
 		QUnit.test("getTimezoneTranslations for " + sLocale + " and ensure bijective mapping", function(assert) {
-			var oLocaleData = new LocaleData(new Locale(sLocale));
+			var oLocaleData = LocaleData.getInstance(new Locale(sLocale));
 			var mTimezoneTranslations = oLocaleData.getTimezoneTranslations();
 
 			timezones.aABAPTimezoneIDs.forEach(function (sTimezoneId) {
@@ -688,7 +688,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("getTimezoneTranslations generic structure test", function(assert) {
-		var oLocaleData = new LocaleData(new Locale("de"));
+		var oLocaleData = LocaleData.getInstance(new Locale("de"));
 		var oStubIsValidTimezone = this.stub(TimezoneUtil, 'isValidTimezone').returns(true);
 		var oStubGet = this.stub(oLocaleData, '_get');
 		oStubGet.withArgs("timezoneNames").returns({
@@ -764,7 +764,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("getTimezoneTranslations", function(assert) {
-		var oLocaleData = new LocaleData(new Locale("de"));
+		var oLocaleData = LocaleData.getInstance(new Locale("de"));
 
 		this.mock(oLocaleData).expects("_get").withExactArgs("timezoneNames").returns({"~Key": "~ValueDe"});
 
@@ -779,7 +779,7 @@ sap.ui.define([
 		assert.deepEqual(mTranslations1, {"~Key": "~ValueDe"});
 		assert.notStrictEqual(mTranslations !== mTranslations1);
 
-		oLocaleData = new LocaleData(new Locale("en"));
+		oLocaleData = LocaleData.getInstance(new Locale("en"));
 
 		this.mock(oLocaleData).expects("_get").withExactArgs("timezoneNames").returns({"~Key": "~ValueEn"});
 
@@ -788,7 +788,7 @@ sap.ui.define([
 
 		assert.deepEqual(mTranslations, {"~Key": "~ValueEn"});
 
-		oLocaleData = new LocaleData(new Locale("de"));
+		oLocaleData = LocaleData.getInstance(new Locale("de"));
 
 		this.mock(oLocaleData).expects("_get").never();
 
