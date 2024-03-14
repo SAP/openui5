@@ -19,7 +19,7 @@ sap.ui.define([],
 			if (oProductSwith) {
 				oAccessibilityState.setsize = oProductSwith._getItemsCount();
 				oAccessibilityState.posinset = oProductSwith._getItemPosition(oControl);
-				oAccessibilityState.checked = oControl.getId() === oProductSwith.getSelectedItem() ? "true" : undefined;
+				oAccessibilityState.checked = oControl.getId() === oProductSwith.getSelectedItem() ? "true" : "false";
 			}
 
 			oRm.openStart("div", oControl);
