@@ -89,4 +89,292 @@ sap.ui.define([
 
 		assert.strictEqual(oPropertyBinding.fnTypeChangedCallback, "~fnCallback");
 	});
+
+	//*********************************************************************************************
+	QUnit.test("_setBoundValue: no type", function (assert) {
+		const oPropertyBinding = {getDataState() {}, setValue() {}};
+		const oDataState = {setInvalidValue() {}};
+		this.mock(oPropertyBinding).expects("getDataState").withExactArgs().returns(oDataState);
+		this.mock(oDataState).expects("setInvalidValue").withExactArgs(undefined);
+		this.mock(oPropertyBinding).expects("setValue").withExactArgs("~vValue");
+
+		// code under test
+		assert.strictEqual(
+			PropertyBinding.prototype._setBoundValue.call(oPropertyBinding, "~vValue", "~fnParse"), undefined);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_setBoundValue: with type, sync", function (assert) {
+		const oType = {validateValue() {}};
+		const oPropertyBinding = {
+			oType: oType,
+			getDataState() {},
+			setValue() {}
+		};
+		const oDataState = {setInvalidValue() {}};
+		const oPropertyBindingMock = this.mock(oPropertyBinding);
+		oPropertyBindingMock.expects("getDataState").withExactArgs().returns(oDataState);
+		const oHelper = {fnParse() {}};
+		this.mock(oHelper).expects("fnParse").withExactArgs("~vValue").returns("~vParsedValue");
+		this.mock(oType).expects("validateValue").withExactArgs("~vParsedValue").returns();
+		this.mock(oDataState).expects("setInvalidValue").withExactArgs(undefined);
+		oPropertyBindingMock.expects("setValue").withExactArgs("~vParsedValue");
+
+		// code under test
+		assert.strictEqual(
+			PropertyBinding.prototype._setBoundValue.call(oPropertyBinding, "~vValue", oHelper.fnParse), undefined);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_setBoundValue: with type, sync, error in fnParse", function (assert) {
+		const oPropertyBinding = {
+			oType: "~oType",
+			checkDataState() {},
+			getDataState() {}
+		};
+		const oDataState = {setInvalidValue() {}};
+		const oPropertyBindingMock = this.mock(oPropertyBinding);
+		oPropertyBindingMock.expects("getDataState").withExactArgs().returns(oDataState);
+		const oHelper = {fnParse() {}};
+		const oError = new Error("~oParseError");
+		this.mock(oHelper).expects("fnParse").withExactArgs("~vValue").throws(oError);
+		this.mock(oDataState).expects("setInvalidValue").withExactArgs("~vValue");
+		oPropertyBindingMock.expects("checkDataState").withExactArgs();
+
+		assert.throws(() => {
+			// code under test
+			PropertyBinding.prototype._setBoundValue.call(oPropertyBinding, "~vValue", oHelper.fnParse);
+		}, oError);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_setBoundValue: with type, sync, error in validateValue", function (assert) {
+		const oType = {validateValue() {}};
+		const oPropertyBinding = {
+			oType: oType,
+			checkDataState() {},
+			getDataState() {}
+		};
+		const oDataState = {setInvalidValue() {}};
+		const oPropertyBindingMock = this.mock(oPropertyBinding);
+		oPropertyBindingMock.expects("getDataState").withExactArgs().returns(oDataState);
+		const oHelper = {fnParse() {}};
+		this.mock(oHelper).expects("fnParse").withExactArgs("~vValue").returns("~vParsedValue");
+		const oError = new Error("~oValidateError");
+		this.mock(oType).expects("validateValue").withExactArgs("~vParsedValue").throws(oError);
+		this.mock(oDataState).expects("setInvalidValue").withExactArgs("~vValue");
+		oPropertyBindingMock.expects("checkDataState").withExactArgs();
+
+		assert.throws(() => {
+			// code under test
+			PropertyBinding.prototype._setBoundValue.call(oPropertyBinding, "~vValue", oHelper.fnParse);
+		}, oError);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_setBoundValue: with type, sync, error in setValue", function (assert) {
+		const oType = {validateValue() {}};
+		const oPropertyBinding = {
+			oType: oType,
+			checkDataState() {},
+			getDataState() {},
+			setValue() {}
+		};
+		const oDataState = {setInvalidValue() {}};
+		const oPropertyBindingMock = this.mock(oPropertyBinding);
+		oPropertyBindingMock.expects("getDataState").withExactArgs().returns(oDataState);
+		const oHelper = {fnParse() {}};
+		this.mock(oHelper).expects("fnParse").withExactArgs("~vValue").returns("~vParsedValue");
+		this.mock(oType).expects("validateValue").withExactArgs("~vParsedValue").returns();
+		const oDataStateMock = this.mock(oDataState);
+		oDataStateMock.expects("setInvalidValue").withExactArgs(undefined);
+		const oError = new Error("~oError");
+		oPropertyBindingMock.expects("setValue").withExactArgs("~vParsedValue").throws(oError);
+		oDataStateMock.expects("setInvalidValue").withExactArgs("~vValue");
+		oPropertyBindingMock.expects("checkDataState").withExactArgs();
+
+		assert.throws(() => {
+			// code under test
+			PropertyBinding.prototype._setBoundValue.call(oPropertyBinding, "~vValue", oHelper.fnParse);
+		}, oError);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_setBoundValue: with type, async", function (assert) {
+		const oType = {validateValue() {}};
+		const oPropertyBinding = {
+			oType: oType,
+			getDataState() {},
+			setValue() {}
+		};
+		const oDataState = {setInvalidValue() {}};
+		const oPropertyBindingMock = this.mock(oPropertyBinding);
+		oPropertyBindingMock.expects("getDataState").withExactArgs().returns(oDataState);
+		let fnParseResolve;
+		const oParseValuePromise = new Promise(function(resolve, rejected) {
+			fnParseResolve = resolve;
+		});
+		const oHelper = {fnParse() {}};
+		this.mock(oHelper).expects("fnParse").withExactArgs("~vValue").returns(oParseValuePromise);
+		const oTypeMock = this.mock(oType);
+		oTypeMock.expects("validateValue").never();
+		let bResolved = false;
+
+		// code under test
+		const oPromise = PropertyBinding.prototype._setBoundValue.call(oPropertyBinding, "~vValue", oHelper.fnParse);
+		oPromise.then(() => {
+			bResolved = true;
+		});
+
+		assert.notOk(bResolved);
+
+		let fnValidateResolve;
+		const oValidateValuePromise = new Promise((resolve, rejected) => {
+			fnValidateResolve = resolve;
+		});
+		oTypeMock.expects("validateValue").withExactArgs("~vParsedValue").returns(oValidateValuePromise);
+
+		// code under test
+		fnParseResolve("~vParsedValue");
+
+		assert.notOk(bResolved);
+
+		this.mock(oDataState).expects("setInvalidValue").withExactArgs(undefined);
+		oPropertyBindingMock.expects("setValue").withExactArgs("~vParsedValue");
+
+		// code under test
+		fnValidateResolve();
+
+		return oPromise.then((vResult) => {
+			assert.strictEqual(vResult, undefined);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_setBoundValue: with type, async, fnParse rejects", function (assert) {
+		const oPropertyBinding = {
+			oType: "~oType",
+			checkDataState() {},
+			getDataState() {}
+		};
+		const oDataState = {setInvalidValue() {}};
+		const oPropertyBindingMock = this.mock(oPropertyBinding);
+		oPropertyBindingMock.expects("getDataState").withExactArgs().returns(oDataState);
+		let fnParseReject;
+		const oParseValuePromise = new Promise((resolve, rejected) => {
+			fnParseReject = rejected;
+		});
+		const oHelper = {fnParse() {}};
+		this.mock(oHelper).expects("fnParse").withExactArgs("~vValue").returns(oParseValuePromise);
+
+		// code under test
+		const oPromise = PropertyBinding.prototype._setBoundValue.call(oPropertyBinding, "~vValue", oHelper.fnParse);
+
+		this.mock(oDataState).expects("setInvalidValue").withExactArgs("~vValue");
+		oPropertyBindingMock.expects("checkDataState").withExactArgs();
+
+		// code under test
+		fnParseReject("~Error");
+
+		return oPromise.then(() => {
+			assert.ok(false);
+		}, (oException) => {
+			assert.strictEqual(oException, "~Error");
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_setBoundValue: with type, async, validateValue rejects", function (assert) {
+		const oType = {validateValue() {}};
+		const oPropertyBinding = {
+			oType: oType,
+			checkDataState() {},
+			getDataState() {}
+		};
+		const oDataState = {setInvalidValue() {}};
+		const oPropertyBindingMock = this.mock(oPropertyBinding);
+		oPropertyBindingMock.expects("getDataState").withExactArgs().returns(oDataState);
+		let fnParseResolve;
+		const oParseValuePromise = new Promise((resolve, rejected) => {
+			fnParseResolve = resolve;
+		});
+		const oHelper = {fnParse() {}};
+		this.mock(oHelper).expects("fnParse").withExactArgs("~vValue").returns(oParseValuePromise);
+		const oTypeMock = this.mock(oType);
+		oTypeMock.expects("validateValue").never();
+
+		// code under test
+		const oPromise = PropertyBinding.prototype._setBoundValue.call(oPropertyBinding, "~vValue", oHelper.fnParse);
+
+		let fnValidateReject;
+		const oValidateValuePromise = new Promise(function(resolve, rejected) {
+			fnValidateReject = rejected;
+		});
+		oTypeMock.expects("validateValue").withExactArgs("~vParsedValue").returns(oValidateValuePromise);
+
+		// code under test
+		fnParseResolve("~vParsedValue");
+
+		this.mock(oDataState).expects("setInvalidValue").withExactArgs("~vValue");
+		oPropertyBindingMock.expects("checkDataState").withExactArgs();
+
+		// code under test
+		fnValidateReject("~Error");
+
+		return oPromise.then(() => {
+			assert.ok(false);
+		}, (oException) => {
+			assert.strictEqual(oException, "~Error");
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_setBoundValue: with type, async, error in setValue", function (assert) {
+		const oType = {validateValue() {}};
+		const oPropertyBinding = {
+			oType: oType,
+			checkDataState() {},
+			getDataState() {},
+			setValue() {}
+		};
+		const oDataState = {setInvalidValue() {}};
+		const oPropertyBindingMock = this.mock(oPropertyBinding);
+		oPropertyBindingMock.expects("getDataState").withExactArgs().returns(oDataState);
+		let fnParseResolve;
+		const oParseValuePromise = new Promise(function(resolve, rejected) {
+			fnParseResolve = resolve;
+		});
+		const oHelper = {fnParse() {}};
+		this.mock(oHelper).expects("fnParse").withExactArgs("~vValue").returns(oParseValuePromise);
+		const oTypeMock = this.mock(oType);
+		oTypeMock.expects("validateValue").never();
+
+		// code under test
+		const oPromise = PropertyBinding.prototype._setBoundValue.call(oPropertyBinding, "~vValue", oHelper.fnParse);
+
+		let fnValidateResolve;
+		const oValidateValuePromise = new Promise((resolve, rejected) => {
+			fnValidateResolve = resolve;
+		});
+		oTypeMock.expects("validateValue").withExactArgs("~vParsedValue").returns(oValidateValuePromise);
+
+		// code under test
+		fnParseResolve("~vParsedValue");
+
+		const oDataStateMock = this.mock(oDataState);
+		oDataStateMock.expects("setInvalidValue").withExactArgs(undefined);
+		const oError = new Error("~oError");
+		oPropertyBindingMock.expects("setValue").withExactArgs("~vParsedValue").throws(oError);
+		oDataStateMock.expects("setInvalidValue").withExactArgs("~vValue");
+		oPropertyBindingMock.expects("checkDataState").withExactArgs();
+
+		// code under test
+		fnValidateResolve();
+
+		return oPromise.then(() => {
+			assert.ok(false);
+		}, (oException) => {
+			assert.strictEqual(oException, oError);
+		});
+	});
 });
