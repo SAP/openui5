@@ -1851,7 +1851,7 @@ sap.ui.define([
 		});
 
 		sinon.stub(oContainer, "getValueHelpDelegate").returns(ValueHelpDelegateV4);
-		sinon.spy(ValueHelpDelegateV4, "isSearchSupported"); // returns false for non V4-ListBinding
+		sinon.stub(ValueHelpDelegateV4, "isSearchSupported").callThrough(); // returns false for non V4-ListBinding
 		sinon.stub(ValueHelpDelegateV4, "updateBindingInfo").callsFake(function(oValueHelp, oContent, oBindingInfo) { //test V4 logic
 			ValueHelpDelegateV4.updateBindingInfo.wrappedMethod.apply(this, arguments);
 
@@ -1872,8 +1872,14 @@ sap.ui.define([
 		});
 		sinon.stub(oFilterBar, "getSearch").returns("i");
 
+		/**
+		 *  @deprecated since 1.120.2
+		 */
+		if (oMTable.getMetadata().hasProperty("filterFields")) {
+			oMTable.setFilterFields("$search"); // Test fallback logic. (if $search used - delegate needs to be called)
+		}
+
 		oMTable.setFilterValue("i");
-		oMTable.setFilterFields("$search");
 		oMTable.setFilterBar(oFilterBar);
 		assert.ok(oFilterBar.getBasicSearchField(), "SearchField added to FilterBar");
 
@@ -1899,7 +1905,18 @@ sap.ui.define([
 			assert.equal(oListBinding.filter.args[0][1], FilterType.Application, "ListBinding filter type");
 			assert.equal(iTypeaheadSuggested, 0, "typeaheadSuggested event not fired");
 
-			oMTable.setFilterFields("");
+			ValueHelpDelegateV4.isSearchSupported.reset();
+			ValueHelpDelegateV4.isSearchSupported.returns(false); // needed for legacy free UI5
+			ValueHelpDelegateV4.updateBindingInfo.reset();
+
+			/**
+			 *  @deprecated since 1.120.2
+			 */
+			if (oMTable.getMetadata().hasProperty("filterFields")) {
+				oMTable.setFilterFields("");
+				assert.ok(ValueHelpDelegateV4.isSearchSupported.notCalled, "ValueHelpDelegateV4.isSearchSupported not called");
+			}
+
 			assert.notOk(oFilterBar.getBasicSearchField(), "SearchField removed from FilterBar");
 
 			oContainer.getValueHelpDelegate.restore();
