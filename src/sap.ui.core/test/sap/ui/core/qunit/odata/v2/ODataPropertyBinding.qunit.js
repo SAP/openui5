@@ -1,13 +1,11 @@
 /*global QUnit, sinon*/
 sap.ui.define([
 	"test-resources/sap/ui/core/qunit/odata/data/ODataModelFakeService",
-	"sap/ui/model/odata/v2/ODataModel",
-	"sap/m/Text"
-], function(
-		fakeService,
-		ODataModel,
-		Text
-	) {
+	"sap/m/Text",
+	'sap/ui/model/ChangeReason',
+	"sap/ui/model/odata/ODataPropertyBinding",
+	"sap/ui/model/odata/v2/ODataModel"
+], function(fakeService, Text, ChangeReason, ODataPropertyBinding, ODataModel) {
 
 	"use strict";
 	// time to wait for server responses
@@ -119,5 +117,78 @@ sap.ui.define([
 				done();
 			});
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("setValue: bSuspended = true", function(assert) {
+		const oBinding = {bSuspended: true};
+
+		// code under test
+		ODataPropertyBinding.prototype.setValue.call(oBinding, "~vValue");
+
+		assert.strictEqual(oBinding.oValue, undefined);
+	});
+
+	//*********************************************************************************************
+["~sValue", 1, {"ms": 12345}, undefined].forEach(function(vValue, i) {
+	QUnit.test("setValue: new value = old value " + i, function(assert) {
+		const oBinding = {oValue: vValue};
+
+		// code under test
+		ODataPropertyBinding.prototype.setValue.call(oBinding, vValue);
+
+		assert.strictEqual(oBinding.oValue, vValue);
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("setValue: ODataModel#setProperty returns false", function(assert) {
+		const oBinding = {
+			oContext: "~oContext",
+			oModel: {
+				setProperty() {}
+			},
+			sPath: "~sPath",
+			oValue: "~oOldValue"
+		};
+		this.mock(oBinding.oModel).expects("setProperty")
+			.withExactArgs("~sPath", "~oNewValue", "~oContext", true)
+			.returns(false);
+
+		// code under test
+		ODataPropertyBinding.prototype.setValue.call(oBinding, "~oNewValue");
+
+		assert.strictEqual(oBinding.oValue, "~oOldValue");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("setValue", function(assert) {
+		const oBinding = {
+			oContext: "~oContext",
+			oModel: {
+				firePropertyChange() {},
+				setProperty() {}
+			},
+			sPath: "~sPath",
+			oValue: "~oValue",
+			getDataState() {}
+		};
+		const oModelMock = this.mock(oBinding.oModel);
+		oModelMock.expects("setProperty").withExactArgs("~sPath", "~oNewValue", "~oContext", true).returns(true);
+		const oDataState = {setValue() {}};
+		this.mock(oBinding).expects("getDataState").withExactArgs().returns(oDataState);
+		this.mock(oDataState).expects("setValue").withExactArgs("~oNewValue");
+		oModelMock.expects("firePropertyChange")
+			.withExactArgs({
+				reason: ChangeReason.Binding,
+				path: "~sPath",
+				context: "~oContext",
+				value: "~oNewValue"
+			});
+
+		// code under test
+		ODataPropertyBinding.prototype.setValue.call(oBinding, "~oNewValue");
+
+		assert.strictEqual(oBinding.oValue, "~oNewValue");
 	});
 });
