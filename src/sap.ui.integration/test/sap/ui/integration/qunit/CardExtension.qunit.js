@@ -317,6 +317,76 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("Extension making card request for filters", async function (assert) {
+		// arrange
+		var oServer = sinon.createFakeServer({
+				autoRespond: true
+			});
+
+		oServer.respondImmediately = true;
+
+		oServer.respondWith(/.*\/filter\/url/, function (oXhr) {
+			oXhr.respond(
+				200,
+				[{ key: "hi", value: "High" },
+				{ key: "mi", value: "Middle" },
+				{ key: "lo", value: "Low" }]
+			);
+		});
+
+		this.oCard.setManifest({
+			"sap.app": {
+				"id": "sap.ui.integration.test"
+			},
+			"sap.card": {
+				"type": "List",
+				"extension": "./extensions/Extension1",
+				"configuration": {
+					"filters": {
+						"populationDensity": {
+							"value": "hi",
+							"item": {
+								"template": {
+									"key": "{key}",
+									"title": "{title}"
+								}
+							},
+							"data": {
+								"extension": {
+									"method": "requestFilterData"
+								}
+							}
+						}
+					}
+				},
+				"content": {
+					"data": {
+						"extension": {
+							"method": "getDataForContent"
+						}
+					},
+					"item": {
+						"title": "{city}"
+					}
+				}
+			  }
+		});
+
+		// act
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+		await nextCardReadyEvent(this.oCard);
+
+		var aItems = this.oCard.getCardContent().getInnerList().getItems();
+		await nextUIUpdate();
+
+		// assert
+		assert.ok(aItems.length, "The data request is successful.");
+
+		oServer.restore();
+
+	});
+
 	QUnit.module("Custom Formatters", {
 		beforeEach: function () {
 			this.oCard = new Card({

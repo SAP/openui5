@@ -447,6 +447,13 @@ sap.ui.define([
 				}
 			}.bind(this));
 
+			if (!sMemberType && aEntity.includes("methods")) {
+				var iSeparatorIndex = aEntity.indexOf("methods");
+				sMemberType = "methods";
+				aMember = aEntity.slice(iSeparatorIndex + 1);
+				aEntity = aEntity.slice(0, iSeparatorIndex);
+			}
+
 			return {
 				id: aEntity.join("/"),
 				entityId: aMember.length ? aMember.join("/") : undefined,

@@ -347,6 +347,11 @@ sap.ui.define([
 		 *
 		 * @returns {void|undefined} This hook method must not have a return value. Return value <code>void</code> is deprecated since 1.120, as it does not force functions to <b>not</b> return something.
 		 * 	This implies that, for instance, no async function returning a Promise should be used.
+		 *
+		 * 	<b>Note:</b> While the return type is currently <code>void|undefined</code>, any
+		 *	implementation of this hook must not return anything but undefined. Any other
+		 * 	return value will cause an error log in this version of UI5 and will fail in future
+		 * 	major versions of UI5.
 		 * @protected
 		 */
 		Element.prototype.init = function() {
@@ -379,6 +384,11 @@ sap.ui.define([
 		 *
 		 * @returns {void|undefined} This hook method must not have a return value. Return value <code>void</code> is deprecated since 1.120, as it does not force functions to <b>not</b> return something.
 		 * 	This implies that, for instance, no async function returning a Promise should be used.
+		 *
+		 * 	<b>Note:</b> While the return type is currently <code>void|undefined</code>, any
+		 *	implementation of this hook must not return anything but undefined. Any other
+		 * 	return value will cause an error log in this version of UI5 and will fail in future
+		 * 	major versions of UI5.
 		 * @protected
 		 */
 		Element.prototype.exit = function() {

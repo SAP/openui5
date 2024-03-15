@@ -613,15 +613,16 @@ sap.ui.define([
 		assert.ok(oComponent.isActive(), "Component: Initially, the component is active");
 
 		const oFatalLogSpy = sinon.spy(Log, "fatal");
-		const oErrorLogSpy = sinon.spy(Log, "error");
+
 		oComponent.deactivate();
 		await Promise.allSettled(window.aPromises);
 		assert.notOk(oComponent.isActive(), "Component: The component is not active after deactivate()");
 		assert.ok(oFatalLogSpy.getCall(0).calledWith("[FUTURE FATAL] The registered Event Listener 'onDeactivate' must not have a return value."), "The 'onDeactivate' should not return a value.");
-		assert.ok(oErrorLogSpy.getCall(0).calledWith("The registered Event Listener 'onDeactivate' of 'component' failed."), "The rejected Promise is caught successfully");
 
 		oComponent.activate();
 		assert.ok(oComponent.isActive(), "Component: The component is active after activate()");
 		assert.ok(oFatalLogSpy.getCall(1).calledWith("[FUTURE FATAL] The registered Event Listener 'onActivate' must not have a return value."), "The 'onActivate' should not return a value.");
+
+		oFatalLogSpy.restore();
 	});
 });

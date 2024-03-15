@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObject",
 	"sap/ui/fl/apply/_internal/flexObjects/Variant",
+	"sap/ui/fl/apply/_internal/flexObjects/CompVariant",
 	"sap/ui/fl/qunit/apply/_internal/flexObjects/getFlexObjectFileContent",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
@@ -14,6 +15,7 @@ sap.ui.define([
 	FlexObjectFactory,
 	FlexObject,
 	Variant,
+	CompVariant,
 	getFlexObjectFileContent,
 	sinon
 ) {
@@ -66,16 +68,31 @@ sap.ui.define([
 			);
 		});
 
-		QUnit.test("when new variant is initialized", function(assert) {
+		QUnit.test("when new variant is initialized with author provided", function(assert) {
 			this.mFileContent = {
-				layer: "USER",
-				support: {
+				layer: "PUBLIC",
+				supportInformation: {
 					user: "A"
+				},
+				author: "NameA"
+			};
+			const oFlVariant = new Variant(this.mFileContent);
+			const oCompVariant = new CompVariant(this.mFileContent);
+			assert.strictEqual(oFlVariant.getAuthor(), "NameA", "then the variant author name is from author property");
+			assert.strictEqual(oCompVariant.getAuthor(), "NameA", "then the variant author name is from author property");
+		});
+
+		QUnit.test("when new variant is initialized with no author and no maps of users' ids and names provided", function(assert) {
+			this.mFileContent = {
+				layer: "PUBLIC",
+				supportInformation: {
+					user: "C"
 				}
 			};
-			var oBaseVariant = FlexObjectFactory.createFromFileContent(this.mFileContent, Variant);
-			assert.strictEqual(oBaseVariant.getAuthor(), "A", "then the variant author name is from support user"
-			);
+			const oFlVariant = new Variant(this.mFileContent);
+			const oCompVariant = new CompVariant(this.mFileContent);
+			assert.strictEqual(oFlVariant.getAuthor(), "C", "then the variant author name is from support information");
+			assert.strictEqual(oCompVariant.getAuthor(), "C", "then the variant author name is from support information");
 		});
 
 		QUnit.test("after variant author has been set", function(assert) {

@@ -64,31 +64,8 @@ var oFormResponsiveLayoutRule = {
 	check: function (oIssueManager, oCoreFacade, oScope) {
 		oScope.getElementsByClassName("sap.ui.layout.form.Form")
 			.forEach(function (oForm) {
-				var oLayout = oForm.getLayout();
-				if (oLayout && false) {
-					var oParent = oForm.getParent();
-					var sId;
-					var sName = "Form";
-
-					if (isSimpleForm(oParent)) {
-						sId = oParent.getId();
-						sName = "SimpleForm";
-					} else if (isSmartForm(oParent)) {
-						// for SmartForm don't check on Form level
-						return;
-					} else {
-						sId = oForm.getId();
-					}
-
-					oIssueManager.addIssue({
-						severity: Severity.Medium,
-						details: sName + " " + sId + " uses ResponsiveLayout.",
-						context: {
-							id: sId
-						}
-					});
-				}
-			});
+			var oLayout = oForm.getLayout();
+		});
 	}
 };
 

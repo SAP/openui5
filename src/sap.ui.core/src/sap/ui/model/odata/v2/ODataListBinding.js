@@ -322,7 +322,7 @@ sap.ui.define([
 
 		// OperationMode.Auto: handle synchronized count to check what the actual internal operation mode should be
 		// but only when using CountMode.Request or Both.
-		if (!this.bLengthFinal && false && (this.sCountMode == CountMode.Request || false)) {
+		if (!this.bLengthFinal && false && (this.sCountMode == CountMode.Request)) {
 			if (!this.bLengthRequested) {
 				this._getLength();
 				this.bLengthRequested = true;
@@ -818,7 +818,7 @@ sap.ui.define([
 			}
 			if (that.sCountMode == CountMode.InlineRepeat
 					|| !that.bLengthFinal
-						&& (that.sCountMode === CountMode.Inline || false)) {
+						&& (that.sCountMode === CountMode.Inline)) {
 				aParameters.push("$inlinecount=allpages");
 				bInlineCountRequested = true;
 			} else {
@@ -1015,7 +1015,7 @@ sap.ui.define([
 			aParams = [],
 			that = this;
 
-		if (this.sCountMode !== CountMode.Request && true) {
+		if (this.sCountMode !== CountMode.Request) {
 			return;
 		}
 

@@ -440,8 +440,7 @@ sap.ui.define([
 				}
 			});
 		});
-		// @deprecated
-		const oErrorLogSpy = sinon.spy(Log, "error");
+
 		const oFatalLogSpy = sinon.spy(Log, "fatal");
 		const oView = await XMLView.create({
 			viewName: "example.mvc.asyncHooks"
@@ -458,15 +457,6 @@ sap.ui.define([
 
 		oView.destroy();
 		assert.ok(oFatalLogSpy.getCall(3).calledWith("[FUTURE FATAL] The registered Event Listener 'onExit' must not have a return value."), "Correct Fatal Log displayed");
-
-		// @deprecated
-		await (async () => {
-			await Promise.allSettled(aPromises);
-			assert.equal(oErrorLogSpy.callCount, 2, "Two error logs should occur reg. rejected Promises.");
-			assert.ok(oErrorLogSpy.getCall(0).calledWith("The registered Event Listener 'onAfterRendering' of 'my.Controller09' failed."), "Rejected Promise of 'onAfterRendering' hook should be handled and the correct error logged.");
-			assert.ok(oErrorLogSpy.getCall(1).calledWith("The registered Event Listener 'onExit' of 'my.Controller09' failed."), "Rejected Promise of 'onExit' hook should be handled and the correct error logged.");
-			oErrorLogSpy.restore();
-		})();
 
 		oFatalLogSpy.restore();
 	});

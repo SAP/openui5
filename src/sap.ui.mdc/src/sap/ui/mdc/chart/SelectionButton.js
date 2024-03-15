@@ -3,6 +3,7 @@
  */
 sap.ui.define([
 	"sap/m/OverflowToolbarButton",
+	"sap/m/Button",
 	"sap/m/ButtonRenderer",
 	"sap/m/library",
 	"sap/m/IllustratedMessage",
@@ -12,7 +13,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/Device",
 	"sap/ui/mdc/chart/SelectionButtonDisplay"
-], (OverflowToolbarButton, ButtonRenderer, mobileLibrary, IllustratedMessage, Library, Filter, Sorter, JSONModel, Device, SelectionButtonDisplay) => {
+], (OverflowToolbarButton, Button, ButtonRenderer, mobileLibrary, IllustratedMessage, Library, Filter, Sorter, JSONModel, Device, SelectionButtonDisplay) => {
 	"use strict";
 
 	// shortcut for sap.m.PlacementType
@@ -419,7 +420,7 @@ sap.ui.define([
 
 	SelectionButton.prototype._getText = function() {
 		if (this._bInOverflow || this.getDisplay() === SelectionButtonDisplay.Text || this.getDisplay() ===  SelectionButtonDisplay.Both) {
-			return sap.m.Button.prototype._getText.call(this);
+			return Button.prototype._getText.call(this);
 		}
 
 		return "";

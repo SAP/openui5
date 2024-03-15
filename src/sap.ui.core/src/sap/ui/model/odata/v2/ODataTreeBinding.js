@@ -818,7 +818,7 @@ sap.ui.define([
 		// figure out how to request the count
 		var sCountType = "";
 		let oHeaders;
-		if (this.sCountMode == CountMode.Request || false) {
+		if (this.sCountMode == CountMode.Request) {
 			sCountType = "/$count";
 			// this.bTransitionMessagesOnly is not relevant for $count requests -> no sap-messages header
 		} else if (this.sCountMode == CountMode.Inline || this.sCountMode == CountMode.InlineRepeat) {
@@ -1143,7 +1143,7 @@ sap.ui.define([
 		//check if we already have a count
 		if (!this.oFinalLengths[sNodeId] || this.sCountMode == CountMode.InlineRepeat) {
 			// issue $inlinecount
-			if (this.sCountMode == CountMode.Inline || this.sCountMode == CountMode.InlineRepeat || false) {
+			if (this.sCountMode == CountMode.Inline || this.sCountMode == CountMode.InlineRepeat) {
 				aParams.push("$inlinecount=allpages");
 				bInlineCountRequested = true;
 			} else if (this.sCountMode == CountMode.Request) {

@@ -37,9 +37,6 @@ sap.ui.define([
 	var ResponsiveLayout;
 	var ResponsiveFlowLayoutData;
 	var ResponsiveGridLayout;
-	var GridLayout;
-	var GridContainerData;
-	var GridElementData;
 	var ColumnLayout;
 	var ResizeHandler;
 
@@ -1323,25 +1320,6 @@ sap.ui.define([
 	}
 
 	/*
-	 * Creates new sap.ui.layout.ResponsiveFlowLayoutData with the given parameters
-	 * @param {int} iWeight the weight for the layout data
-	 * @param {boolean} bLinebreak Whether the layout data has a linebreak
-	 * @param {boolean} bLinebreakable Whether the layout data is linebreakable
-	 * @returns {sap.ui.layout.ResponsiveFlowLayoutData} The newly created ResponsiveFlowLayoutData
-	 * @private
-	 */
-	function _createRFLayoutData(iWeight, bLinebreak, bLinebreakable, iMinWidth) {
-
-		var oLayout = new ResponsiveFlowLayoutData({weight:iWeight,linebreak:bLinebreak === true,linebreakable: bLinebreakable === true});
-		if (iMinWidth) {
-			oLayout.setMinWidth(iMinWidth);
-		}
-		this._aLayouts.push(oLayout.getId());
-		return oLayout;
-
-	}
-
-	/*
 	 * There may be VariantLayoutData used -> so get the right one for the used Layout
 	 */
 	function _getFieldLayoutData(oField){
@@ -1362,86 +1340,17 @@ sap.ui.define([
 
 	}
 
-	function _checkLayoutDataReady() {
-
-		var sLayout = this.getLayout();
-		if (sLayout === SimpleFormLayout.ResponsiveGridLayout && this._bResponsiveGridLayoutRequested ||
-				(sLayout === SimpleFormLayout.ColumnLayout && this._bColumnLayoutRequested)) {
-			// LayoutData waiting to be loaded -> are set after they are loaded
-			return false;
-		}
-
-		if (!this.getAggregation("form").getLayout()) {
-			// as we want to set LayoutData set the corresponding Layout
-			var bChangedByMe = this._bChangedByMe;
-			var bSet = _setFormLayout.call(this);
-			this._bChangedByMe = bChangedByMe;
-			if (!bSet) {
-				// create LayoutData after Layout is loaded
-				return false;
-			}
-		}
-
-		return true;
-
-	}
-
 	function _createFieldLayoutData(oField, iWeight, bLinebreak, bLinebreakable, iMinWidth) {
 		return;
-
-		if (!_checkLayoutDataReady.call(this)) {
-			// LayoutData waiting to be loaded -> are set after they are loaded
-			return;
-		}
-
-		this._bLayoutDataChangedByMe = true;
-
-		var oLayoutData = _getFieldLayoutData.call(this, oField);
-		if (!oLayoutData || !_isMyLayoutData.call(this, oLayoutData)) {
-			oLayoutData = oField.getLayoutData();
-			if (oLayoutData && oLayoutData.isA("sap.ui.core.VariantLayoutData")) {
-				oLayoutData.addMultipleLayoutData(_createRFLayoutData.call(this, iWeight, bLinebreak, bLinebreakable, iMinWidth));
-			} else if (!oLayoutData) {
-				oField.setLayoutData(_createRFLayoutData.call(this, iWeight, bLinebreak, bLinebreakable, iMinWidth));
-			} else {
-				Log.warning("ResponsiveFlowLayoutData can not be set on Field " + oField.getId(), "_createFieldLayoutData", "SimpleForm");
-			}
-		}
-
-		this._bLayoutDataChangedByMe = false;
 	}
 
 	function _createElementLayoutData(oElement) {
 		return;
-
-		if (!_checkLayoutDataReady.call(this)) {
-			// LayoutData waiting to be loaded -> are set after they are loaded
-			return;
-		}
-
-		this._bLayoutDataChangedByMe = true;
-
-		oElement.setLayoutData(new ResponsiveFlowLayoutData({linebreak:true, margin:false}));
-
-		this._bLayoutDataChangedByMe = false;
 	}
 
 	function _createContainerLayoutData(oContainer) {
 		var sLayout = this.getLayout();
 		return;
-
-		if (!_checkLayoutDataReady.call(this)) {
-			// LayoutData waiting to be loaded -> are set after they are loaded
-			return;
-		}
-
-		this._bLayoutDataChangedByMe = true;
-
-		switch (sLayout) {
-
-		}
-
-		this._bLayoutDataChangedByMe = false;
 	}
 
 	function _removeLayoutData(oElement) {

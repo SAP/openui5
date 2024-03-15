@@ -125,7 +125,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.integration, shell-toolkit
 	 * @returns {sap.ui.integration.util.DataProvider|null} A data provider instance used for data retrieval.
 	 */
-	DataProviderFactory.prototype.create = function (oDataConfiguration, oServiceManager, bIsFilter, bConfigurationAlreadyResolved) {
+	DataProviderFactory.prototype.create = function (oDataConfiguration, oServiceManager, bIsFilter, bConfigurationAlreadyResolved, bApiCardRequest) {
 		var oCard = this._oCard;
 
 		if (!DataProviderFactory.isProvidingConfiguration(oDataConfiguration) || oCard && oCard.getPreviewMode() === CardPreviewMode.Abstract) {
@@ -189,7 +189,7 @@ sap.ui.define([
 
 		if (bIsFilter) {
 			this._aFiltersProviders.push(oDataProvider);
-		} else {
+		} else if (!bApiCardRequest) {
 			// TODO: check if the data provider uses filters before adding them to the dependency list
 			this._aFiltersProviders.forEach((oFilterDataProvider) => {
 				oDataProvider.addDependency(oFilterDataProvider);

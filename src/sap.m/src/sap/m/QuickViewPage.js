@@ -11,7 +11,6 @@ sap.ui.define([
 	"sap/ui/layout/form/SimpleForm",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/layout/HorizontalLayout",
-	"sap/m/Avatar",
 	"sap/m/Page",
 	"sap/m/Button",
 	"sap/m/Bar",
@@ -30,8 +29,9 @@ sap.ui.define([
 	"./QuickViewPageRenderer",
 	"sap/base/Log",
 	"sap/base/security/encodeURL",
-	"sap/ui/dom/jquery/Focusable" // jQuery Plugin "firstFocusableDomRef"
-], function (
+	// jQuery Plugin "firstFocusableDomRef"
+	"sap/ui/dom/jquery/Focusable"
+], function(
 	library,
 	Control,
 	IconPool,
@@ -39,7 +39,6 @@ sap.ui.define([
 	SimpleForm,
 	VerticalLayout,
 	HorizontalLayout,
-	Avatar,
 	Page,
 	Button,
 	Bar,
@@ -645,12 +644,6 @@ sap.ui.define([
 			// as this avatar and the whole NavContainer are not aggregated by the real QuickViewPage
 			oAvatar = this.getAvatar().clone(null, null, { cloneBindings: false, cloneChildren: true });
 			this._checkAvatarProperties(oAvatar);
-		} else if (sIcon && undefined) {
-			oAvatar = new Avatar({
-				displayShape: AvatarShape.Square,
-				fallbackIcon: this.getFallbackIcon(),
-				src: sIcon
-			});
 		}
 
 		if (oAvatar) {

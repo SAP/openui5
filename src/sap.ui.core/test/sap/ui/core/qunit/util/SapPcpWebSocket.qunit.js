@@ -22,7 +22,7 @@ sap.ui.define([
 			foo: 'bar',
 			count: 3,
 			empty: ""
-		}, typeof "", SapPcpWebSocket._MESSAGE);
+		}, "string", SapPcpWebSocket._MESSAGE);
 
 		assert.equal(serializedFields,
 			"pcp-action:MESSAGE\n" +

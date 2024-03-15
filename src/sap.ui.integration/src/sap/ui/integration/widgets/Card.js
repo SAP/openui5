@@ -2455,7 +2455,11 @@ sap.ui.define([
 		return this.processDestinations(oConfiguration).then((oResult) => {
 			return new Promise((resolve, reject) => {
 				this._oDataProviderFactory
-				.create({ request: oResult })
+				.create({ request: oResult },
+					undefined,
+					undefined,
+					undefined,
+					true)
 				.setAllowCustomDataType(true)
 				.attachDataChanged((e) => { resolve(e.getParameter("data")); })
 				.attachError((e) => { reject([e.getParameter("message"), e.getParameter("response"), e.getParameter("responseText"), e.getParameter("settings")]); })

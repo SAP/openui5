@@ -9,9 +9,9 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexObjects/ControllerExtensionChange",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObject",
 	"sap/ui/fl/apply/_internal/flexObjects/FlVariant",
+	"sap/ui/fl/apply/_internal/flexObjects/getVariantAuthor",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/apply/_internal/flexObjects/UIChange",
-	"sap/ui/fl/apply/_internal/flexObjects/getVariantAuthor",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/LayerUtils",
@@ -24,9 +24,9 @@ sap.ui.define([
 	ControllerExtensionChange,
 	FlexObject,
 	FlVariant,
+	getVariantAuthor,
 	States,
 	UIChange,
-	getVariantAuthor,
 	Settings,
 	Layer,
 	LayerUtils,
@@ -206,10 +206,8 @@ sap.ui.define([
 				type: "XFLD"
 			}
 		};
-
-		const oFlVariant = new FlVariant(mProperties);
-		oFlVariant.setAuthor(getVariantAuthor(oFlVariant, mPropertyBag.authors));
-		return oFlVariant;
+		mProperties.author = getVariantAuthor(mProperties.supportInformation.user, mProperties.layer, mPropertyBag.authors);
+		return new FlVariant(mProperties);
 	};
 
 	/**
@@ -266,10 +264,8 @@ sap.ui.define([
 				mCompVariantContent.content.executeOnSelection
 			);
 		}
-
-		const oCompVariant = new CompVariant(mCompVariantContent);
-		oCompVariant.setAuthor(getVariantAuthor(oCompVariant, mAuthors));
-		return oCompVariant;
+		mCompVariantContent.author = getVariantAuthor(mCompVariantContent.supportInformation.user, mCompVariantContent.layer, mAuthors);
+		return new CompVariant(mCompVariantContent);
 	};
 
 	return FlexObjectFactory;

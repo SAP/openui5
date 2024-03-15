@@ -3312,14 +3312,11 @@ sap.ui.define([
 		assert.ok(oFutureFatalSpy.getCall(0).calledWith("[FUTURE FATAL] The registered Event Listener 'init' must not have a return value."), "init() should be logged correctly.");
 
 		// exit
-		const oErrorLogSpy = sinon.spy(Log, "error");
 		oMySample.destroy();
 
 		await Promise.allSettled(aPromises);
 		assert.ok(oFutureFatalSpy.getCall(1).calledWith("[FUTURE FATAL] The registered Event Listener 'exit' must not have a return value."), "exit() should be logged correctly.");
-		assert.ok(oErrorLogSpy.getCall(0).calledWith("The registered Event Listener 'exit' of '__object0' failed."), "Promise rejection caught successfully.");
 
 		oFutureFatalSpy.restore();
-		oErrorLogSpy.restore();
 	});
 });
