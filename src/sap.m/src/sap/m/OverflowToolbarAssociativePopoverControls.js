@@ -66,7 +66,7 @@ sap.ui.define([
 		OverflowToolbarAssociativePopoverControls.prototype._postProcessSapMButton = function(oControl) {
 			var oPrevState = this._mControlsCache[oControl.getId()];
 
-			if (oControl.getType() !== oPrevState.buttonType) {
+			if (oControl.getType() === "Transparent" &&  oControl.getType() !== oPrevState.buttonType && oPrevState.buttonType === ButtonType.Default) {
 				oControl.setProperty("type", oPrevState.buttonType, true);
 			}
 
