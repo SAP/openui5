@@ -730,7 +730,7 @@ sap.ui.define([
 		}
 
 		aItemsToNavigate.forEach(function (oItem, iIndex) {
-			oItemDomRef = oItem.getDomRef();
+			oItemDomRef = oItem.getFocusDomRef();
 			if (oItemDomRef) {
 				oItemDomRef.setAttribute("tabindex", iIndex === 0 ? "0" : "-1");
 			}
