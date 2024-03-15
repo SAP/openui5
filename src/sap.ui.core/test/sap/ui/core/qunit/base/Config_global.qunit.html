@@ -6,12 +6,15 @@
 	<!-- Initialization -->
 	<script src="./config/GlobalConfig.js"></script>
 	<script src="../../../../../../resources/ui5loader.js"></script>
-	<script src="../../../../../../resources/ui5loader-autoconfig.js"></script>
+	<script src="../../../../../../resources/ui5loader-autoconfig.js"
+		data-sap-ui-async="true"
+		data-sap-ui-compat-version="edge"
+	></script>
 
 	<link  href="../../../../../../resources/sap/ui/thirdparty/qunit-2.css" rel="stylesheet" media="screen">
 	<script src="../../../../../../resources/sap/ui/thirdparty/qunit-2.js"></script>
 	<script src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-	<script src="../../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+	<script src="../../../../../../resources/sap/ui/qunit/qunit-coverage-istanbul.js"></script>
 
 	<!-- Test functions -->
 	<script src="Config.qunit.js"></script>

@@ -11,4 +11,11 @@
 	if ( oTitle ) {
 		oTitle.textContent = oTitle.textContent.replace("{{mode}}", sDebugMode || "off");
 	}
+
+	// set QUnit config early so that it becomes active before QUnit starts even when the test code is loaded async
+	globalThis.QUnit = {
+		config: {
+			autostart: false
+		}
+	};
 }());

@@ -69,7 +69,13 @@ sap.ui.define(function() {
 				}
 			},
 			"Formatting": {
-				page: "test-resources/sap/ui/core/qunit/base/i18n/Formatting.qunit.html?sap-ui-ABAP-date-format=2&sap-ui-ABAP-number-format=X&sap-ui-ABAP-time-format=3",
+				module: "./../base/i18n/Formatting.qunit",
+				uriParams: {
+					"sap-ui-ABAP-date-format": "2",
+					"sap-ui-ABAP-number-format": "X",
+					"sap-ui-ABAP-time-format": "3"
+				},
+				bootCore: false,
 				ui5: {
 					language: undefined
 				},
