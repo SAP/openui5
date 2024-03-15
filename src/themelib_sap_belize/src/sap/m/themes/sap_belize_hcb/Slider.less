@@ -2,17 +2,13 @@
 /* CSS for control sap.m/Slider      */
 /* Belize High Contrast Black theme  */
 /* ================================= */
+@_sap_m_Slider_Progress_Border: .0625rem;
 
 /* slider */
 .sapMSliderInner {
-	border: 1px solid @sapUiFieldBorderColor;
+	border: @_sap_m_Slider_Progress_Border solid @sapUiFieldBorderColor;
 	background: @sapUiFieldBackground;
-}
-
-.sapMSliderInner,
-.sapMSliderProgress {
-	height: 0.1875rem;
-	border-radius: 0.125rem;
+	box-sizing: content-box;
 }
 
 .sapMSliderTickmarks {
