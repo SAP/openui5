@@ -3007,6 +3007,7 @@ sap.ui.define([
 		qutils.triggerKeydown(oTokenizer.getFocusDomRef().id, KeyCodes.C, false, false, true);
 		ClipboardUtils.triggerCopy(oTokenizer.getFocusDomRef());
 
+		await new Promise((resolve) => {setTimeout(resolve,0);});
 		const aClipboardContents = await navigator.clipboard.read();
 		let oBlob = await aClipboardContents[0]?.getType("text/plain");
 		let sText = await oBlob.text();
@@ -3332,15 +3333,18 @@ sap.ui.define([
 		assert.equal(aConditions[1].operator, OperatorName.EQ, "condition operator");
 		assert.notOk(oField.hasPendingUserInput(), "no user interaction after ENTER");
 
+		const fnDone = assert.async();
 		// simulate value help request to see if ValueHelp opens
 		oContent.fireValueHelpRequest();
-		assert.ok(oValueHelp.toggleOpen.calledOnce, "ValueHelp toggle open called");
-
-		oContent.fireValueHelpRequest();
-		assert.ok(oValueHelp.toggleOpen.calledTwice, "ValueHelp toggle open called again");
-
-		oDummyIcon.destroy();
-
+		setTimeout(() => {
+			assert.ok(oValueHelp.toggleOpen.calledOnce, "ValueHelp toggle open called");
+			oContent.fireValueHelpRequest();
+			setTimeout(() => {
+				assert.ok(oValueHelp.toggleOpen.calledTwice, "ValueHelp toggle open called again");
+				oDummyIcon.destroy();
+				fnDone();
+			},0);
+		},0);
 	});
 
 	QUnit.test("with single value field", async function(assert) {
@@ -3406,11 +3410,16 @@ sap.ui.define([
 		// simulate value help request to see if ValueHelp opens (use icon click to test own created icon)
 		const oVHIcon = oContent && oContent.getAggregation("_endIcon")[0];
 		oVHIcon.firePress();
-		assert.ok(oValueHelp.toggleOpen.calledOnce, "ValueHelp toggle open called");
 
-		oVHIcon.firePress();
-		assert.ok(oValueHelp.toggleOpen.calledTwice, "ValueHelp toggle open called again");
-
+		const fnDone = assert.async();
+		setTimeout(() => {
+			assert.ok(oValueHelp.toggleOpen.calledOnce, "ValueHelp toggle open called");
+			oVHIcon.firePress();
+			setTimeout(() => {
+				assert.ok(oValueHelp.toggleOpen.calledTwice, "ValueHelp toggle open called again");
+				fnDone();
+			},0);
+		},0);
 	});
 
 	QUnit.test("remove value help", async function(assert) {

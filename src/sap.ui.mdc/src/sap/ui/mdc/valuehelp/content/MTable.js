@@ -568,10 +568,6 @@ sap.ui.define([
 			return null;
 		}
 
-		/*  steps:
-			TODO: 1. wait for table binding
-			2. consider existing inparameters
-		*/
 		const sKeyPath = this.getKeyPath();
 		const sDescriptionPath = this.getDescriptionPath();
 		const bUseFirstMatch = this.getUseFirstMatch();
@@ -583,35 +579,26 @@ sap.ui.define([
 		const oDelegate = this.getValueHelpDelegate();
 		const oValueHelp = this.getValueHelpInstance();
 
-		const sPromiseKey = "loadItemForValue:" + JSON.stringify([sPath,
-			sKeyPath,
-			oConfig.parsedValue || oConfig.value,
-			oConfig.context,
-			oConfig.bindingContext && oConfig.bindingContext.getPath(),
-			oConditions
-		]);
+		const oFilter = _createItemFilters.call(this, oConfig, oConditions);
+		const oFilterListBinding = oListBinding.getModel().bindList(sPath, oListBinding.getContext(), undefined, oFilter);
+		oFilterListBinding.initialize();
 
-		return this._retrievePromise(sPromiseKey, () => {
-			const oFilter = _createItemFilters.call(this, oConfig, oConditions);
-			const oFilterListBinding = oListBinding.getModel().bindList(sPath, oListBinding.getContext(), undefined, oFilter);
-			oFilterListBinding.initialize();
-			return oDelegate.executeFilter(oValueHelp, oFilterListBinding, 2).then((oBinding) => {
-				const aContexts = oBinding.getContexts();
+		return oDelegate.executeFilter(oValueHelp, oFilterListBinding, 2).then((oBinding) => {
+			const aContexts = oBinding.getContexts();
 
-				setTimeout(() => { // as Binding might process other steps after event was fired - destroy it lazy
-					oFilterListBinding.destroy();
-				}, 0);
+			setTimeout(() => { // as Binding might process other steps after event was fired - destroy it lazy
+				oFilterListBinding.destroy();
+			}, 0);
 
-				if (aContexts.length && (aContexts.length < 2 || bUseFirstMatch)) {
-					return this.getItemFromContext(aContexts[0], { keyPath: sKeyPath, descriptionPath: sDescriptionPath, inParameters: undefined });
-				} else if (oConfig.checkKey && oConfig.parsedValue === "" && aContexts.length === 0) {
-					// nothing found for empty key -> this is not an error
-					return null;
-				} else {
-					const oException = _createException.call(this, oConfig.exception, aContexts.length > 1, oConfig.value);
-					throw oException;
-				}
-			});
+			if (aContexts.length && (aContexts.length < 2 || bUseFirstMatch)) {
+				return this.getItemFromContext(aContexts[0], { keyPath: sKeyPath, descriptionPath: sDescriptionPath, inParameters: undefined });
+			} else if (oConfig.checkKey && oConfig.parsedValue === "" && aContexts.length === 0) {
+				// nothing found for empty key -> this is not an error
+				return null;
+			} else {
+				const oException = _createException.call(this, oConfig.exception, aContexts.length > 1, oConfig.value);
+				throw oException;
+			}
 		});
 	};
 

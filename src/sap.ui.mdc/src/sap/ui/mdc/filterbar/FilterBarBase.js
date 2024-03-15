@@ -678,7 +678,7 @@ sap.ui.define([
 				return mOrigConditions;
 			}.bind(this);
 
-			if (!this._bIgnoreChanges) {
+			if (!this._bIgnoreChanges && !oEvent.getParameter("_descriptionOnly")) {
 
 				const sPath = oEvent.getParameter("path");
 				if (sPath.indexOf("/conditions/") === 0) {
@@ -1280,8 +1280,12 @@ sap.ui.define([
 
 		/**
 		 * Gets the conditions of the inner condition model.
-		 * @private
+		 *
+		 * <b>Note:</b> This method returns a map of conditions in an internalized format which is NOT suitable for control state application.
+		 *
 		 * @returns {map} A map containing the conditions
+		 * @private
+		 * @ui5-restricted sap.ui.mdc, sap.fe
 		 */
 		FilterBarBase.prototype.getInternalConditions = function() {
 			return this._getModelConditions(this._getConditionModel(), true);

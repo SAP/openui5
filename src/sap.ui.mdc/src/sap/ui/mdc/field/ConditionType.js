@@ -21,7 +21,8 @@ sap.ui.define([
 		'sap/ui/mdc/enums/ConditionValidated',
 		'sap/base/util/merge',
 		'sap/base/strings/whitespaceReplacer',
-		'sap/ui/base/SyncPromise'
+		'sap/ui/base/SyncPromise',
+		'sap/base/util/Deferred'
 	],
 	(
 		Element,
@@ -41,7 +42,8 @@ sap.ui.define([
 		ConditionValidated,
 		merge,
 		whitespaceReplacer,
-		SyncPromise
+		SyncPromise,
+		Deferred
 	) => {
 		"use strict";
 
@@ -81,6 +83,7 @@ sap.ui.define([
 		 * @param {object} [oFormatOptions.delegate] Field delegate to handle model-specific logic
 		 * @param {object} [oFormatOptions.payload] Payload of the delegate
 		 * @param {boolean} [oFormatOptions.preventGetDescription] If set, description is not read by <code>formatValue</code> as it is known that no description exists or might be set later
+		 * @param {function(sap.ui.mdc.condition.ConditionObject,Promise<sap.ui.mdc.condition.ConditionObject>)} [oFormatOptions.awaitFormatCondition] Provides control access to condition enhancements done by the ConditionType during formatting (e.g. description retrieval for item condition)
 		 * @param {string} [oFormatOptions.defaultOperatorName] Name of the default <code>Operator</code>
 		 * @param {boolean} [oFormatOptions.convertWhitespaces] If set, whitespaces will be replaced by special characters to display whitespaces in HTML
 		 * @param {sap.ui.core.Control} [oFormatOptions.control] Instance of the calling control
@@ -176,36 +179,38 @@ sap.ui.define([
 						const oBindingContext = this.oFormatOptions.bindingContext;
 						const vKey = bIsUnit ? oCondition.values[0][1] : oCondition.values[0];
 
+						// Provides communication of ongoing async formatting incl. description retrieval to the observing control (to allow FilterFields to persist the description in the ConditionModel)
+						const fnAwaitFormatCondition = this.oFormatOptions.awaitFormatCondition;
+						const oFormatConditionDeferred = fnAwaitFormatCondition && new Deferred();
+						fnAwaitFormatCondition?.(oCondition, oFormatConditionDeferred.promise);
+
 						return SyncPromise.resolve().then(() => {
 							return _getDescription.call(this, vKey, oCondition, oType, oAdditionalType, oBindingContext);
 						}).then((vDescription) => { // if description needs to be requested -> return if it is resolved
+							const oFormatCondition = merge({}, oCondition); // do not manipulate original object
 							if (vDescription) {
 								oCondition = merge({}, oCondition); // do not manipulate original object
-								if (bIsUnit) {
-									// in unit case create "standard" condition using String type for text arrangement
+								if (bIsUnit) { // in unit case create "standard" condition using String type for text arrangement
 									oType = this._getDefaultType();
 									oCondition.operator = oEQOperator.name;
 									if (typeof vDescription !== "object") {
 										vDescription = { key: vKey, description: vDescription };
 									}
 								}
-
-								if (typeof vDescription === "object") {
-									oCondition = _mapResultToCondition.call(this, oCondition, vDescription);
-								} else if (oCondition.values.length === 1) {
-									oCondition.values.push(vDescription);
-								} else {
-									oCondition.values[1] = vDescription;
-								}
+								const sDescription = typeof vDescription === "object" ? vDescription.description : vDescription;
+								oFormatCondition.values[1] = sDescription;
+								oFormatConditionDeferred?.resolve(oFormatCondition);
+							} else {
+								oFormatConditionDeferred?.reject(null);
 							}
-							return _returnResult.call(this, oCondition, undefined, iCallCount, true, oType, oAdditionalType);
+							return _returnResult.call(this, oFormatCondition, undefined, iCallCount, true, oType, oAdditionalType);
 						}).catch((oException) => {
 							let oMyException;
 							if (!(oException instanceof FormatException) || !_isInvalidInputAllowed.call(this)) {
 								// if "invalid" input is allowed don't fire an exception
 								oMyException = oException;
 							}
-
+							oFormatConditionDeferred?.reject(oException);
 							return _returnResult.call(this, oCondition, oMyException, iCallCount, true, oType, oAdditionalType);
 						}).unwrap();
 					}
@@ -309,7 +314,7 @@ sap.ui.define([
 		 *
 		 * @protected
 		 */
-		 ConditionType.prototype.getTextForCopy = function(oCondition) {
+		ConditionType.prototype.getTextForCopy = function(oCondition) {
 
 			// TODO: what if description is not known in the moment? Can copy be async?
 			const oOperator = FilterOperatorUtil.getOperator(oCondition.operator);
@@ -323,7 +328,7 @@ sap.ui.define([
 
 			return oOperator.getTextForCopy(oCondition, oType, sDisplay, bHideOperator, aCompositeTypes, oAdditionalType, aAdditionalCompositeTypes);
 
-		 };
+		};
 
 		/**
 		 * Parses an external value of the given source type to a condition that holds the value in model
@@ -938,24 +943,6 @@ sap.ui.define([
 					oType._aCurrentValue = oAdditionalType._aCurrentValue; // to use before entered corresponding number or unit
 				}
 			}
-
-		}
-
-		function _mapResultToCondition(oCondition, oResult) {
-
-			oCondition.values = [oResult.key, oResult.description];
-
-			if (oResult.inParameters) {
-				oCondition.inParameters = oResult.inParameters;
-			}
-			if (oResult.outParameters) {
-				oCondition.outParameters = oResult.outParameters;
-			}
-			if (oResult.payload) {
-				oCondition.payload = oResult.payload;
-			}
-
-			return oCondition;
 
 		}
 

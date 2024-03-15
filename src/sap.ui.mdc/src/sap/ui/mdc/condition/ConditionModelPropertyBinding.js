@@ -8,16 +8,31 @@ sap.ui.define([
 		'sap/ui/model/json/JSONPropertyBinding',
 		'sap/base/util/merge',
 		'sap/base/util/deepEqual',
-		'sap/ui/core/date/UI5Date'
+		'sap/ui/core/date/UI5Date',
+		'sap/ui/mdc/enums/OperatorName',
+		'sap/ui/mdc/enums/ConditionValidated'
 	],
 	(
 		ChangeReason,
 		JSONPropertyBinding,
 		merge,
 		deepEqual,
-		UI5Date
+		UI5Date,
+		OperatorName,
+		ConditionValidated
 	) => {
 		"use strict";
+
+
+		/*
+		* FilterFields want to enhance the ConditionModel with any descriptions resulting from formatting via the ConditionType.
+		* See the FormatOption <code>awaitFormatCondition</code>
+		*/
+		const _isValidatedEQCondition = (oCondition) => oCondition.operator === OperatorName.EQ && oCondition.validated === ConditionValidated.Validated;
+		const _removeDescriptions = (aConditions) => aConditions.map((oCondition) => ({...oCondition, values: (_isValidatedEQCondition(oCondition) ? [oCondition.values[0]] : oCondition.values) }));
+		const _isDescriptionOnlyUpdate = (oNewValue, oOldValue) => {
+			return Array.isArray(oNewValue) && Array.isArray(oOldValue) && oNewValue?.length && oOldValue?.length && deepEqual(_removeDescriptions(oOldValue), _removeDescriptions(oNewValue));
+		};
 
 
 		/**
@@ -57,11 +72,12 @@ sap.ui.define([
 			if (this.bSuspended) {
 				return;
 			}
-			if (!deepEqual(this.oValue, oValue)) {
+			const oCurrentValue = this.oValue;
+			if (!deepEqual(oCurrentValue, oValue)) {
 				if (this.oModel.setProperty(this.sPath, oValue, this.oContext, true)) {
 					this.oValue = _copyValue.call(this, oValue);
 					this.getDataState().setValue(this.oValue);
-					this.oModel.firePropertyChange({ reason: ChangeReason.Binding, path: this._sOriginapPath, context: this.oContext, value: oValue });
+					this.oModel.firePropertyChange({ reason: ChangeReason.Binding, path: this._sOriginapPath, context: this.oContext, value: oValue, _descriptionOnly: _isDescriptionOnlyUpdate(oValue, oCurrentValue) }); //_descriptionOnly: Allows FilterBar to suppress p13n change creation resulting from a property change (as description changes are considered irrelevant).
 				}
 			}
 		};

@@ -826,7 +826,7 @@ sap.ui.define([
 				oPromise = oConditionType.formatValue(oCondition);
 				assert.ok(oPromise instanceof Promise, "Promise returned");
 				oPromise.then(function(sDescription) {
-					assert.equal(sDescription, "i2 (Item 2)", "Result of formatting");
+					assert.equal(sDescription, "I2 (Item 2)", "Result of formatting");
 
 					// preventGetDescription -> no description is read
 					oConditionType.oFormatOptions.preventGetDescription = true; // fake setting directly
@@ -845,6 +845,30 @@ sap.ui.define([
 			assert.notOk(true, "Promise Catch must not be called");
 			fnDone();
 		});
+
+	});
+
+	QUnit.test("Formatting: key -> awaitFormatCondition", async function(assert) {
+
+		oConditionType.oFormatOptions.display = FieldDisplay.ValueDescription;
+		oConditionType.oFormatOptions.awaitFormatCondition = () => {};
+
+		sinon.stub(FieldBaseDelegate, "getDescription").returns("Fake");
+		sinon.spy(oConditionType.oFormatOptions, "awaitFormatCondition");
+
+		const oOriginalCondition = Condition.createCondition(OperatorName.EQ, ["It's"], undefined, undefined, ConditionValidated.Validated);
+		const oFormatCondition = Condition.createCondition(OperatorName.EQ, ["It's", "Fake"], undefined, undefined, ConditionValidated.Validated);
+		await oConditionType.formatValue(oOriginalCondition);
+
+		const aArgs = oConditionType.oFormatOptions.awaitFormatCondition.args[0];
+
+		assert.ok(deepEqual(aArgs[0], oOriginalCondition), "First argument is original condition");
+		assert.ok(aArgs[1] instanceof Promise, "Promise returned");
+		assert.ok(deepEqual(await aArgs[1], oFormatCondition), "Promise resolves with formatCondition");
+
+		oConditionType.oFormatOptions.awaitFormatCondition.restore();
+		oConditionType.oFormatOptions.awaitFormatCondition = null;
+		FieldBaseDelegate.getDescription.restore();
 
 	});
 

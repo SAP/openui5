@@ -29,7 +29,9 @@ sap.ui.define([
 	"sap/ui/model/type/Integer",
 	"sap/ui/model/type/Date",
 	"sap/ui/model/ParseException",
-	"sap/m/SearchField"
+	"sap/m/SearchField",
+	"sap/ui/mdc/condition/Condition",
+	"sap/ui/mdc/enums/ConditionValidated"
 ], function(
 	Element,
 	Messaging,
@@ -51,7 +53,9 @@ sap.ui.define([
 	IntegerType,
 	DateType,
 	ParseException,
-	SearchField
+	SearchField,
+	Condition,
+	ConditionValidated
 ) {
 	"use strict";
 
@@ -474,6 +478,40 @@ sap.ui.define([
 		assert.deepEqual(oType.getFormatOptions(), {style: "short"}, "used FormatOptions");
 		assert.deepEqual(oType.getConstraints(), {minimum: new Date(1900, 0, 1)}, "used Constraints");
 
+	});
+
+	QUnit.test("awaitFormatCondition", async function(assert) {
+		oFilterField.setDisplay("ValueDescription");
+		oFilterField.setConditions([Condition.createCondition(OperatorName.EQ, ["MyKey"], undefined, undefined, ConditionValidated.Validated)]);
+
+		const oFormatOptions = oFilterField.getFormatOptions();
+		assert.ok(oFormatOptions.awaitFormatCondition, "FilterField implements awaitFormatCondition");
+
+		sinon.spy(oFormatOptions, "awaitFormatCondition");
+		sinon.stub(oFilterField, "getFormatOptions").returns(oFormatOptions);
+		sinon.stub(oFilterField.getControlDelegate(), "getDescription").returns({value: "MyKey", description: "MyDescription"});
+
+		oFilterField.placeAt("content");
+		await nextUIUpdate();
+
+		assert.ok(oFormatOptions.awaitFormatCondition.called, "awaitFormatCondition called during formatting");
+		await nextUIUpdate();
+
+		assert.deepEqual(oFilterField.getConditions(), [
+			{
+				"operator": "EQ",
+				"values": [
+					"MyKey",
+					"MyDescription"
+				],
+				"isEmpty": null,
+				"validated": "Validated"
+			}
+		], "Condition was updated with description from formatting.");
+
+		oFormatOptions.awaitFormatCondition.restore();
+		oFilterField.getFormatOptions.restore();
+		oFilterField.getControlDelegate().getDescription.restore();
 	});
 
 });
