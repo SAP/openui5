@@ -13,6 +13,8 @@ sap.ui.define([
 
 	/**
 	 * Constructor for a new TileAttribute.
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
+	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
 	 * Holds detail of an attribute used in the ActionTile.
