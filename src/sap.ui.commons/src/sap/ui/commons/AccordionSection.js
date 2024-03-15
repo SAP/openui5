@@ -24,7 +24,7 @@ sap.ui.define(['./library', 'sap/ui/core/Element', "sap/ui/core/Configuration"],
 	 *
 	 * @constructor
 	 * @public
-	 * @deprecated Since version 1.38.
+	 * @deprecated Since version 1.38, the concept has been discarded.
 	 * @alias sap.ui.commons.AccordionSection
 	 */
 	var AccordionSection = Element.extend("sap.ui.commons.AccordionSection", /** @lends sap.ui.commons.AccordionSection.prototype */ { metadata : {

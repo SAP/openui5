@@ -34,7 +34,7 @@ sap.ui.define([
 	 *
 	 * @constructor
 	 * @public
-	 * @deprecated Since version 1.38.
+	 * @deprecated As of version 1.38, replaced by {@link sap.m.Panel}.
 	 * @alias sap.ui.commons.Accordion
 	 */
 	var Accordion = Control.extend("sap.ui.commons.Accordion", /** @lends sap.ui.commons.Accordion.prototype */ { metadata : {

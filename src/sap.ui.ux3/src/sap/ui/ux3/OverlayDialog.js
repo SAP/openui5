@@ -28,7 +28,7 @@ sap.ui.define([
 	 *
 	 * @constructor
 	 * @public
-	 * @deprecated Since version 1.38.
+	 * @deprecated As of version 1.38, replaced by {@link sap.m.Dialog}
 	 * @alias sap.ui.ux3.OverlayDialog
 	 */
 	var OverlayDialog = Overlay.extend("sap.ui.ux3.OverlayDialog", /** @lends sap.ui.ux3.OverlayDialog.prototype */ {
