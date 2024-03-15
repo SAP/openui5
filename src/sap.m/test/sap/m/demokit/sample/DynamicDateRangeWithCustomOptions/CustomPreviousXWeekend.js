@@ -66,7 +66,7 @@ sap.ui.define([
 		},
 		toDates: function(oValue) {
 			var oLocale = new Locale(Localization.getLanguageTag());
-			var oLocaleData = new LocaleData(oLocale);
+			var oLocaleData = LocaleData.getInstance(oLocale);
 			var iValue = oValue.values[0];
 			var oSaturdayDate = UI5Date.getInstance();
 			var oSundayDate = UI5Date.getInstance();
