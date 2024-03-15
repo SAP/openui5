@@ -361,7 +361,9 @@ sap.ui.define([
 	function loadFlexData(mPropertyBag) {
 		_mInitPromises[mPropertyBag.reference] = Loader.loadFlexData(mPropertyBag)
 		.then(async (mResponse) => {
-			mResponse.authors = await Loader.loadVariantsAuthors(mPropertyBag.reference);
+			if (!mPropertyBag.partialFlexState) {
+				mResponse.authors = await Loader.loadVariantsAuthors(mPropertyBag.reference);
+			}
 			// The following line is used by the Flex Support Tool to set breakpoints - please adjust the tool if you change it!
 			_mInstances[mPropertyBag.reference] = merge({}, {
 				unfilteredStorageResponse: mResponse,
