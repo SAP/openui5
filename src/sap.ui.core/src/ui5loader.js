@@ -120,6 +120,7 @@
 	 *
 	 * To be used by code coverage, only supported in sync mode.
 	 * @private
+	 * @ui5-transform-hint replace-local undefined
 	 */
 	let translate;
 
@@ -144,6 +145,7 @@
 	 * When activated, require will load asynchronously, else synchronously.
 	 * @type {boolean}
 	 * @private
+	 * @ui5-transform-hint replace-local true
 	 */
 	let bGlobalAsyncMode = false;
 
@@ -1524,6 +1526,7 @@
 	 * @throws {Error} When loading failed in sync mode
 	 *
 	 * @private
+	 * @ui5-transform-hint replace-param bAsync true
 	 */
 	function requireModule(oRequestingModule, sModuleName, bAsync, bSkipShimDeps, bSkipBundle) {
 
@@ -1718,7 +1721,11 @@
 		}
 	}
 
-	// sModuleName must be a normalized resource name of type .js
+	/**
+	 * Note: `sModuleName` must be a normalized resource name of type .js
+	 * @private
+	 * @ui5-transform-hint replace-param bAsync true
+	 */
 	function execModule(sModuleName, bAsync) {
 
 		const oModule = mModules[sModuleName];
@@ -1824,6 +1831,10 @@
 		}
 	}
 
+	/**
+	 * @private
+	 * @ui5-transform-hint replace-param bAsync true
+	 */
 	function requireAll(oRequestingModule, aDependencies, fnCallback, fnErrCallback, bAsync) {
 
 		const aModules = [];
@@ -1891,6 +1902,11 @@
 		}
 	}
 
+	/**
+	 * @private
+	 * @ui5-transform-hint replace-param bAsync true
+	 * @ui5-transform-hint replace-param bExport false
+	 */
 	function executeModuleDefinition(sResourceName, aDependencies, vFactory, bExport, bAsync) {
 		const bLoggable = log.isLoggable();
 		sResourceName = normalize(sResourceName);
@@ -2010,6 +2026,10 @@
 
 	}
 
+	/**
+	 * @private
+	 * @ui5-transform-hint replace-param bExport false
+	 */
 	function ui5Define(sModuleName, aDependencies, vFactory, bExport) {
 		let sResourceName;
 
@@ -2200,6 +2220,10 @@
 		return unwrapExport(requireModule(null, sModuleName, /* bAsync = */ false));
 	}
 
+	/**
+	 * @private
+	 * @ui5-transform-hint replace-param bExport false
+	 */
 	function predefine(sModuleName, aDependencies, vFactory, bExport) {
 		if ( typeof sModuleName !== 'string' ) {
 			throw new Error("predefine requires a module name");
@@ -2563,9 +2587,17 @@
 		set measure(v) {
 			measure = v;
 		},
+		/**
+		 * @deprecated As of version 1.120, sync loading is deprecated without replacement due to the deprecation
+		 *   of sync XMLHttpRequests in the web standard.
+		 */
 		get translate() {
 			return translate;
 		},
+		/**
+		 * @deprecated As of version 1.120, sync loading is deprecated without replacement due to the deprecation
+		 *   of sync XMLHttpRequests in the web standard.
+		 */
 		set translate(v) {
 			translate = v;
 		},
@@ -2586,6 +2618,9 @@
 		amdDefine,
 		amdRequire,
 		config: ui5Config,
+		/**
+		 * @deprecated As of version 1.120, all usages of this private API have been deprecated
+		 */
 		declareModule(sResourceName, sDeprecationMessage) {
 			/* void */ declareModule(normalize(sResourceName), sDeprecationMessage);
 		},
@@ -3280,6 +3315,8 @@
 	 * @ui5-restricted sap.ui.core
 	 * @function
 	 * @ui5-global-only
+	 * @deprecated As of version 1.120, sync loading is deprecated without replacement due to the deprecation
+	 *   of sync XMLHttpRequests in the web standard.
 	 */
 	sap.ui.requireSync = requireSync;
 
