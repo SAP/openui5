@@ -1,9 +1,8 @@
 /*global QUnit sinon*/
 sap.ui.define([
 	"sap/base/i18n/ResourceBundle",
-	"sap/ui/core/Core",
 	"sap/ui/core/Lib"
-], function(ResourceBundle, Core, Lib) {
+], function(ResourceBundle, Lib) {
 	"use strict";
 
 	QUnit.module("Core.loadLibrary", {
@@ -59,7 +58,7 @@ sap.ui.define([
 			// If library was already loaded by another test, no ResourceBundle will be loaded again
 			assert.equal(this.oRBCreateSpy.callCount, iLoaded, "ResourceBundle.create should be called " + iLoaded + " times");
 
-			return Core.getLibraryResourceBundle("testlibs.terminologies.simple", "de", true)
+			return null
 				.then(function(oLibRB) {
 					assert.equal(this.oRBCreateSpy.callCount, iLoaded + 1, "ResourceBundle.create be called " + (iLoaded + 1) + " times");
 					assert.equal(oLibRB.getText("TEST_TEXT"), "Öl", "'Öl' text is returned, because terminology 'oil' is correctly applied");
@@ -80,14 +79,14 @@ sap.ui.define([
 	QUnit.test("getLibraryResourceBundle()", function (assert) {
 		var that = this;
 
-		return Core.getLibraryResourceBundle("testlibs.terminologies.notLoadedYet", true).then(function (oLibRB) {
+		return null.then(function (oLibRB) {
 			assert.equal(oLibRB.getText("TEST_TEXT"), "Text from the default bundle", "'Text from the default bundle' text is returned, because the library isn't loaded yet.");
 			assert.equal(oLibRB.getText("TEST_TEXT_CUSTOM"), "Custom text from the default bundle", "'Custom text from the default bundle' text is returned, because the library isn't loaded yet.");
 			assert.equal(that.oRBCreateSpy.callCount, 1, "ResourceBundle.create should be called the first time. Default ResourceBundle returned.");
 			return oLibRB;
 		})
 		.then(function() {
-			return Core.getLibraryResourceBundle("testlibs.terminologies.notLoadedYet", true).then(function (oLibRB) {
+			return null.then(function (oLibRB) {
 				assert.equal(oLibRB.getText("TEST_TEXT"), "Text from the default bundle", "'Text from the default bundle' text is returned, because the library isn't loaded yet.");
 				assert.equal(oLibRB.getText("TEST_TEXT_CUSTOM"), "Custom text from the default bundle", "'Custom text from the default bundle' text is returned, because the library isn't loaded yet.");
 				assert.equal(that.oRBCreateSpy.callCount, 1, "ResourceBundle.create shouldn't be called a second time yet. Default ResourceBundle returned from cache.");
@@ -96,7 +95,7 @@ sap.ui.define([
 		})
 		.then(function () {
 			return Lib.load("testlibs.terminologies.notLoadedYet").then(function () {
-				return Core.getLibraryResourceBundle("testlibs.terminologies.notLoadedYet", true)
+				return null
 					.then(function (oLibRB) {
 						assert.equal(oLibRB.getText("TEST_TEXT"), "Retail", "'Retail' text is returned, because the library is available now and terminology 'retail is correctly applied'.");
 						assert.equal(oLibRB.getText("TEST_TEXT_CUSTOM"), "Being sold at a retail price", "'Being sold at a retail price' text is returned, because the library is available now and terminology 'retail is correctly applied'.");

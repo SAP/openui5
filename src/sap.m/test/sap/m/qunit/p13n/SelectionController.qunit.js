@@ -177,6 +177,7 @@ sap.ui.define([
 		return xConfigAPI.enhanceConfig(oAdaptationControl, {
 			key: "fieldA",
 			property: "visible",
+			operation: "remove",
 			controlMeta: {
 				aggregation: "dependents"
 			},

@@ -3,29 +3,27 @@
 /* Horizon High Contrast Black theme  */
 /* ================================== */
 
+@_sap_m_Slider_Height: 2.75rem;
+@_sap_m_Slider_Progress: .25rem;
+@_sap_m_Slider_Progress_Border: 0.0625rem;
+
 .sapMSliderInner {
 	background: @sapUiSliderBackground;
-	border: 0.0625rem solid @sapUiSliderBorderColor;
+	border: @_sap_m_Slider_Progress_Border solid @sapUiSliderBorderColor;
 	box-sizing: border-box;
-	height: .25rem;
 }
 
 .sapMSliderProgress {
 	background: @sapUiSliderSelectedBackground;
-	border-color: @sapUiSliderSelectedBorderColor;
+	border: @_sap_m_Slider_Progress_Border solid @sapUiSliderSelectedBorderColor;
+	box-sizing: content-box;
+	margin-top: -1px;
+	margin-left: -1px;
+
 	&:before {
 		content: none;
 		transform: none;
 	}
-	height: .25rem;
-	border: 0.0625rem solid @sapSlider_Selected_BorderColor;
-	top: -.125rem;
-	margin: 0 -1px;
-}
-
-.sapMSliderProgressWithTickmarks {
-	box-sizing: border-box;
-	top: -.0625rem;
 }
 
 .sapMSliderInner:not(.sapMSliderInnerDisabled) .sapMSliderProgress:hover ~ .sapMSliderHandle,
@@ -131,7 +129,7 @@
 	width: 0.5rem;
 	height: 0.5rem;
 	left: -0.875rem;
-	top: -0.1875rem;
+	top: calc(50% ~"-" 0.25rem);
 }
 
 .sapMSlider::after {
@@ -144,7 +142,7 @@
 	width: 0.5rem;
 	height: 0.5rem;
 	right: 0.125rem;
-	top: 1.25rem;
+	top: calc(50% ~"-" 0.25rem);
 }
 
 /* pressed */
@@ -161,13 +159,16 @@
 		margin: 0;
 	}
 
+	.sapMSliderTickmarks {
+		top: -0.4375rem;
+	}
+
 	.sapMSlider::after {
-		top: 0.875rem;
-		right: 0.375rem;
+		right: .125rem;
 	}
 
 	.sapMSliderInner::before {
-		left: -0.75rem;
+		left: -0.8125rem;
 	}
 
 	.sapMSliderInner:not(.sapMSliderInnerDisabled) .sapMSliderHandle:focus {

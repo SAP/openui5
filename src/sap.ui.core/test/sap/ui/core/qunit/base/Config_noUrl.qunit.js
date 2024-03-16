@@ -2,7 +2,9 @@
  * ${copyright}
  */
 /*global QUnit */
-sap.ui.define(
+QUnit.config.autostart = false;
+
+sap.ui.require(
 	[
 		"sap/base/config"
 	], function (BaseConfiguration) {
@@ -20,4 +22,6 @@ sap.ui.define(
 			external: true
 		}), "defaultValue", "BaseConfiguration.get for param 'sapUiFooBar' returns default value 'defaultValue'");
 	});
+
+	QUnit.start();
 });

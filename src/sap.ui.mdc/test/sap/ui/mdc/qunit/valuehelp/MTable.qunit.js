@@ -1772,7 +1772,7 @@ sap.ui.define([
 		});
 
 		sinon.stub(oContainer, "getValueHelpDelegate").returns(ValueHelpDelegateV4);
-		sinon.spy(ValueHelpDelegateV4, "isSearchSupported"); // returns false for non V4-ListBinding
+		sinon.stub(ValueHelpDelegateV4, "isSearchSupported").callThrough(); // returns false for non V4-ListBinding
 		sinon.stub(ValueHelpDelegateV4, "updateBindingInfo").callsFake(function(oValueHelp, oContent, oBindingInfo) { //test V4 logic
 			ValueHelpDelegateV4.updateBindingInfo.wrappedMethod.apply(this, arguments);
 
@@ -1819,6 +1819,10 @@ sap.ui.define([
 			assert.equal(oListBinding.filter.args[0][0][0].oValue1, "2", "ListBinding filter value1");
 			assert.equal(oListBinding.filter.args[0][1], FilterType.Application, "ListBinding filter type");
 			assert.equal(iTypeaheadSuggested, 0, "typeaheadSuggested event not fired");
+
+			ValueHelpDelegateV4.isSearchSupported.reset();
+			ValueHelpDelegateV4.isSearchSupported.returns(false); // needed for legacy free UI5
+			ValueHelpDelegateV4.updateBindingInfo.reset();
 
 			assert.notOk(oFilterBar.getBasicSearchField(), "SearchField removed from FilterBar");
 

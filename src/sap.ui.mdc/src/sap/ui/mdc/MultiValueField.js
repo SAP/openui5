@@ -57,12 +57,12 @@ sap.ui.define([
 				 * Object related to the <code>Delegate</code> module that provides the required APIs to execute model-specific logic.<br>
 				 * The object has the following properties:
 				 * <ul>
-				 * 	<li><code>name</code> defines the path to the <code>Delegate</code> module</li>
+				 * 	<li><code>name</code> defines the path to the <code>Delegate</code> module. The used delegate module must inherit from {@link module:sap/ui/mdc/field/MultiValueFieldDelegate MultiValueFieldDelegate}.</li>
 				 * 	<li><code>payload</code> (optional) defines application-specific information that can be used in the given delegate</li>
 				 * </ul>
 				 * <i>Sample delegate object:</i>
 				 * <pre><code>{
-				 * 	name: "sap/ui/mdc/BaseDelegate",
+				 * 	name: "sap/ui/mdc/field/MultiValueFieldDelegate",
 				 * 	payload: {}
 				 * }</code></pre>
 				 * <b>Note:</b> Ensure that the related file can be requested (any required library has to be loaded before that).<br>
@@ -80,6 +80,10 @@ sap.ui.define([
 			aggregations: {
 				/**
 				 * Items of the <code>MultiValueField</code> control.
+				 *
+				 * The items are not updated by user input or value help selection automatically. That's because an aggregation binding can only be updated by the model,
+				 * not by the bound aggregation. Therefore, the {@link module:sap/ui/mdc/field/MultiValueFieldDelegate.updateItems MultiValueFieldDelegate.updateItems} function needs to be implemented
+				 * to update the items after a user interaction.
 				 */
 				items: {
 					type: "sap.ui.mdc.field.MultiValueFieldItem",

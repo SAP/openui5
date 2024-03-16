@@ -6,31 +6,40 @@
 /* ------------------------------ */
 /* Slider commons styles          */
 /* ------------------------------ */
+@_sap_m_Slider_Height: 3rem;
+@_sap_m_Slider_Height_Compact: 2rem;
+@_sap_m_Slider_Progress: .1875rem;
+@_sap_m_Slider_Progress_Border: 0px;
+@_sap_m_Slider_Top_Bottom_Padding: calc(@_sap_m_Slider_Height ~"-" @_sap_m_Slider_Progress ~"-" 2 * @_sap_m_Slider_Progress_Border);
+@_sap_m_Slider_Top_Bottom_Padding_Compact: calc(@_sap_m_Slider_Height_Compact ~"-" @_sap_m_Slider_Progress ~"-" 2 * @_sap_m_Slider_Progress_Border);
 
 .sapMSlider {
 	display: inline-block;
 	vertical-align: top;
 	box-sizing: border-box;
 	position: relative;
-	padding: 1.406rem 1.0625rem;
+	height: @_sap_m_Slider_Height;
+	padding: calc(@_sap_m_Slider_Top_Bottom_Padding ~"/" 2) 1.0625rem;
 	z-index: 0;
 }
 
 .sapMSliderInner {
 	width: 100%;
+	height: @_sap_m_Slider_Progress;
+	min-width: 4rem;
+	border-radius: 0.25rem;
 	position: relative;
 	background-repeat: no-repeat;
 	z-index: 1;
-	min-width: 4rem;
+	box-sizing: border-box;
 }
 
 .sapUiLocalBusy .sapMSliderInner {
 	z-index: 0;
 }
 
-.sapMSliderInner,
 .sapMSliderProgress {
-	height: 0.25rem;
+	height: 100%;
 	border-radius: 0.25rem;
 }
 
@@ -148,9 +157,8 @@
 /* slider */
 .sapUiSizeCompact {
 	.sapMSlider {
-		height: 2rem;
-		padding-top: 1rem;
-		padding-bottom: 1rem;
+		height: @_sap_m_Slider_Height_Compact;
+		padding: calc(@_sap_m_Slider_Top_Bottom_Padding_Compact ~"/" 2) .875rem;
 	}
 
 	/* slider handle */

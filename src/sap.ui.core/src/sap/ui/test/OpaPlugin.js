@@ -730,7 +730,7 @@ sap.ui.define([
 				return oLibrary.getResourceBundleFor(sLibraryName);
 			}
 			var oCore = sap.ui.require("sap/ui/core/Core");
-			if (typeof oCore?.getLibraryResourceBundle === "function") {
+			if (typeof undefined === "function") {
 				return ResourceBundle.create({
 					bundleName: `${sLibraryName}.messagebundle`
 				});

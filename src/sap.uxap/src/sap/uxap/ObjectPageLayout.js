@@ -1574,12 +1574,12 @@ sap.ui.define([
 			return;
 		}
 
-		this.оАnchorbar = this._oABHelper._getAnchorBar();
-		this.оАnchorbarButtons = this.оАnchorbar.getAggregation("content");
+		this.oAnchorbar = this._oABHelper._getAnchorBar();
+		this.oAnchorbarButtons = this.oAnchorbar.getAggregation("content");
 		this.oOPSections = this.getSections();
 
-		if (this.оАnchorbarButtons) {
-			this.оАnchorbarButtons.forEach((btn, index) => {
+		if (this.oAnchorbarButtons) {
+			this.oAnchorbarButtons.forEach((btn, index) => {
 				const sUniqueKey = btn.getCustomData().find((data) => data.getKey() === "sectionId").getValue();
 				if (sUniqueKey === sSectionId) {
 					const sNewStyleClass = "sapUxAPAnchorBarButtonColor" + this.oOPSections[index].getProperty("anchorBarButtonColor");

@@ -4,7 +4,6 @@
 
 // Provides control sap.m.SearchField.
 sap.ui.define([
-	'sap/ui/core/Theming',
 	'./library',
 	'sap/ui/core/Control',
 	'sap/ui/core/EnabledPropagator',
@@ -19,7 +18,6 @@ sap.ui.define([
 	"sap/ui/dom/jquery/cursorPos"
 ],
 	function(
-		Theming,
 		library,
 		Control,
 		EnabledPropagator,

@@ -173,7 +173,7 @@ sap.ui.define(
         });
 
         var oStatusModel = new JSONModel({
-            lastAction: "",
+            lastAction: " ",
             selectedPageId: "master",
             selectedSemanticControl: {
                 className: "AddAction",

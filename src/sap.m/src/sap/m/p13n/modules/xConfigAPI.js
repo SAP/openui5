@@ -166,6 +166,58 @@ sap.ui.define([
 		return oConfig;
 	};
 
+	const updateIndex = function(oControl, oConfig, oModificationPayload) {
+		const key = oModificationPayload.key || oModificationPayload.name;
+		const mControlMeta = oModificationPayload.controlMeta;
+		const vValue = oModificationPayload.value;
+		const oControlMetadata = oModificationPayload.controlMetadata || oControl.getMetadata();
+		const sAffectedAggregation = mControlMeta.aggregation;
+		const sAggregationName = sAffectedAggregation ? sAffectedAggregation : oControlMetadata.getDefaultAggregation().name;
+		const {currentState} = oModificationPayload;
+		const newIndex = vValue.index;
+
+		const {operation} = oModificationPayload;
+		const updatedState = merge([], currentState || []);
+
+		const operationActions = {
+			add: (affectedKey, index) => {
+				updatedState.splice(index, 0, {key: affectedKey});
+			},
+			remove: (affectedKey, index) => {
+				updatedState.splice(index, 1);
+			},
+			move: (affectedKey, index) => {
+				const currentItemState = updatedState?.find((item) => item.key == affectedKey);
+				const currentItemIndex = updatedState?.indexOf(currentItemState);
+				if (currentItemIndex > -1) {
+					const [movedItem] = updatedState.splice(currentItemIndex, 1);
+					updatedState.splice(index, 0, movedItem);
+				}
+			}
+		};
+
+		if (currentState instanceof Array && operation && operationActions[operation] instanceof Function) {
+			operationActions[operation](key, newIndex);
+		}
+
+		updatedState.forEach((item, index) => {
+			//find the xConfig item with the same key as item.key
+			const xConfigItem = oConfig.aggregations[sAggregationName]?.[item.key];
+			if (xConfigItem && xConfigItem.hasOwnProperty("position")) {
+				xConfigItem.position = index;
+			} else if (!xConfigItem) {
+				//find the index of the current item key in currentState
+				const currentItemIndex = currentState?.findIndex((currentItem) => currentItem.key === item.key);
+
+				if (index !== undefined && currentItemIndex !== index && index !== -1) {
+					oConfig.aggregations[sAggregationName][item.key] = {
+						position: index
+					};
+				}
+			}
+		});
+	};
+
 	/**
 	 * Enhances the xConfig object for a given mdc control instance.
 	 *
@@ -210,37 +262,9 @@ sap.ui.define([
 		}
 
 		if (vValue !== null || (vValue && vValue.hasOwnProperty("value") && vValue.value !== null)) {
-
-			const currentState = oModificationPayload.currentState;
-
 			switch (oModificationPayload.operation) {
 				case "move":
-					Object.entries(oConfig.aggregations[sAggregationName]).forEach((aEntry) => {
-						if (
-							aEntry[0] !== sPropertyInfoKey &&
-							aEntry[1].position !== undefined
-						) {
-							const newIndex = vValue.index;
-							const currentState = oModificationPayload.currentState;
-							const currentItemState = currentState?.find((item) => item.key == sPropertyInfoKey);
-							const currentItemIndex = currentState?.indexOf(currentItemState);
-
-							//In case of move changes, we also need to ensure that existing xConfig position changes
-							//are adapted accordingly to avoid index mismatches
-
-							if (newIndex < aEntry[1].position) {
-								aEntry[1].position++;
-							}
-
-							if (newIndex > aEntry[1].position && currentItemIndex < aEntry[1].position) {
-								aEntry[1].position--;
-							}
-
-							if (aEntry[1].position == newIndex) {
-								currentItemIndex > aEntry[1].position ? aEntry[1].position++ : aEntry[1].position--;
-							}
-						}
-					});
+					updateIndex(oControl, oConfig, oModificationPayload);
 					oConfig.aggregations[sAggregationName][sPropertyInfoKey][sAffectedProperty] = vValue.index;
 					if (vValue.persistenceIdentifier) {
 						oConfig.aggregations[sAggregationName][sPropertyInfoKey]["persistenceIdentifier"] = vValue.persistenceIdentifier;
@@ -249,26 +273,19 @@ sap.ui.define([
 				case "remove":
 				case "add":
 				default:
-
-					//Adjust index after a remove happened for instance
-					if (currentState && currentState instanceof Array) {
-						currentState.forEach((state, index) => {
-							if (oConfig.aggregations[sAggregationName].hasOwnProperty(state.key)) {
-								oConfig.aggregations[sAggregationName][state.key]["position"] = index;
-							}
-						});
-					}
-
 					//Note: consider aligning xConfig value handling between sap.m and sap.ui.mdc
 					if (vValue.hasOwnProperty("value")) {
 						oConfig.aggregations[sAggregationName][sPropertyInfoKey][sAffectedProperty] = vValue.value;
-						oConfig.aggregations[sAggregationName][sPropertyInfoKey]["position"] = vValue.index;
+						if (vValue.index !== undefined) {
+							oConfig.aggregations[sAggregationName][sPropertyInfoKey]["position"] = vValue.index;
+						}
 						if (vValue.persistenceIdentifier) {
 							oConfig.aggregations[sAggregationName][sPropertyInfoKey]["persistenceIdentifier"] = vValue.persistenceIdentifier;
 						}
 					} else {
 						oConfig.aggregations[sAggregationName][sPropertyInfoKey][sAffectedProperty] = vValue;
 					}
+					updateIndex(oControl, oConfig, oModificationPayload);
 					break;
 			}
 

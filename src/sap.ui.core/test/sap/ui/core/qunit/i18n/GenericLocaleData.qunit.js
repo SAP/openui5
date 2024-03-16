@@ -718,7 +718,7 @@ sap.ui.define([
 
 		Localization.setLanguage(sLanguage);
 		sLocale = Localization.getLanguage();
-		oLocaleData = new LocaleData(new Locale(sLocale));
+		oLocaleData = LocaleData.getInstance(new Locale(sLocale));
 		fnCustomTests = customTests[sLocale];
 
 		genericTests(assert, oLocaleData, sLocale);

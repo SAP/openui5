@@ -1418,19 +1418,29 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+[false, true].forEach(function (bWithCredentials) {
 	[false, true].forEach(function (bSuccess) {
-		QUnit.test("refreshSecurityToken: success = " + bSuccess, function (assert) {
+		const sTitle = "refreshSecurityToken, success=" + bSuccess + ", withCredentials="
+			+ bWithCredentials;
+		QUnit.test(sTitle, function (assert) {
 			var oError = {},
 				oPromise,
 				mHeaders = {},
-				mRequestHeaders = {},
+				oAjaxSettings = {
+					headers : "~requestHeaders~",
+					method : "HEAD"
+				},
 				oRequestor = _Requestor.create("/Service/", oModelInterface, mHeaders,
-					{"sap-client" : "123"}),
+					{"sap-client" : "123"}, /*sODataVersion*/undefined, bWithCredentials),
 				oTokenRequiredResponse = {};
+
+			if (bWithCredentials) {
+				oAjaxSettings.xhrFields = {withCredentials : true};
+			}
 
 			this.mock(Object).expects("assign").twice()
 				.withExactArgs({}, sinon.match.same(mHeaders), {"X-CSRF-Token" : "Fetch"})
-				.returns(mRequestHeaders);
+				.returns("~requestHeaders~");
 			this.mock(_Helper).expects("createError")
 				.exactly(bSuccess ? 0 : 2)
 				.withExactArgs(sinon.match.same(oTokenRequiredResponse),
@@ -1438,10 +1448,7 @@ sap.ui.define([
 				.returns(oError);
 
 			this.mock(jQuery).expects("ajax").twice()
-				.withExactArgs("/Service/?sap-client=123", sinon.match({
-					headers : sinon.match.same(mRequestHeaders),
-					method : "HEAD"
-				}))
+				.withExactArgs("/Service/?sap-client=123", oAjaxSettings)
 				.callsFake(function () {
 					var jqXHR;
 
@@ -1494,6 +1501,7 @@ sap.ui.define([
 			});
 		});
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("refreshSecurityToken: keep fetching even if none is sent", function (assert) {
@@ -4415,28 +4423,35 @@ sap.ui.define([
 	});
 
 	//*****************************************************************************************
-	QUnit.test("setSessionContext: successful ping", function (assert) {
-		var oExpectation,
-			oRequestor = _Requestor.create(sServiceUrl, oModelInterface, {}, {
-				"sap-client" : "120"
-			});
+[false, true].forEach(function (bWithCredentials) {
+	const sTitle = "setSessionContext: successful ping, bWithCredentials: " + bWithCredentials;
+	QUnit.test(sTitle, function (assert) {
+		var oAjaxSettings = {
+				headers : {
+					"SAP-ContextId" : "context"
+				},
+				method : "HEAD"
+			},
+			oExpectation,
+			oRequestor = _Requestor.create(sServiceUrl, oModelInterface, {}, {"sap-client" : "120"},
+				/*sODataVersion*/undefined, bWithCredentials);
 
+		if (bWithCredentials) {
+			oAjaxSettings.xhrFields = {withCredentials : true};
+		}
 		oExpectation = this.mock(window).expects("setInterval")
 			.withExactArgs(sinon.match.func, 115000);
 
 		oRequestor.setSessionContext("context", "120");
 
-		this.mock(jQuery).expects("ajax").withExactArgs(sServiceUrl + "?sap-client=120", {
-				headers : sinon.match({
-					"SAP-ContextId" : "context"
-				}),
-				method : "HEAD"
-			})
+		this.mock(jQuery).expects("ajax")
+			.withExactArgs(sServiceUrl + "?sap-client=120", oAjaxSettings)
 			.returns(createMock(assert, undefined, "OK", {}));
 
 		// code under test - call setInterval function
 		oExpectation.callArg(0);
 	});
+});
 
 	//*****************************************************************************************
 	[false, true].forEach(function (bErrorId) {

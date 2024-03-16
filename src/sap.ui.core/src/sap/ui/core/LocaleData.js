@@ -51,17 +51,17 @@ sap.ui.define([
 	const aSupportedWidths = ["narrow", "abbreviated", "wide"];
 
 	/**
-	 * Creates an instance of LocaleData for the given locale.
+	 * DO NOT call the constructor for <code>LocaleData</code>; use <code>LocaleData.getInstance</code> instead.
 	 *
-	 * @class Provides access to locale-specific data, such as, date formats, number formats, and currencies.
+	 * @param {sap.ui.core.Locale} oLocale The locale
 	 *
-	 * @param {sap.ui.core.Locale} oLocale the locale
-	 *
-	 * @extends sap.ui.base.Object
-	 * @author SAP SE
-	 * @version ${version}
-	 * @public
 	 * @alias sap.ui.core.LocaleData
+	 * @author SAP SE
+	 * @extends sap.ui.base.Object
+	 * @class Provides access to locale-specific data, such as date formats, number formats, and currencies.
+	 * @hideconstructor
+	 * @public
+	 * @version ${version}
 	 */
 	var LocaleData = BaseObject.extend("sap.ui.core.LocaleData", /** @lends sap.ui.core.LocaleData.prototype */ {
 
@@ -2709,11 +2709,17 @@ sap.ui.define([
 	});
 
 	/**
+	 * Creates an instance of <code>LocaleData</code> for the given locale.
 	 *
+	 * @param {sap.ui.core.Locale|sap.base.i18n.LanguageTag} vLocale The locale or language tag
+	 * @returns {sap.ui.core.LocaleData} An instance of <code>LocaleData</code>
+	 *
+	 * @public
+	 * @since 1.123
 	 */
-	LocaleData.getInstance = function(oLocale) {
-		oLocale = Locale._getCoreLocale(oLocale);
-		return oLocale.hasPrivateUseSubtag("sapufmt") ? new CustomLocaleData(oLocale) : new LocaleData(oLocale);
+	LocaleData.getInstance = function(vLocale) {
+		vLocale = Locale._getCoreLocale(vLocale);
+		return vLocale.hasPrivateUseSubtag("sapufmt") ? new CustomLocaleData(vLocale) : new LocaleData(vLocale);
 	};
 
 	LocaleData._cldrLocales = _cldrLocales;

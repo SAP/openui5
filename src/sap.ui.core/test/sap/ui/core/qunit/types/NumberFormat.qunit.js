@@ -356,7 +356,7 @@ sap.ui.define([
 	["nb-NO", "en_GB", "xx-XX", "zh_CN", "de_DE"].forEach(function(sLocale) {
 		QUnit.test("lenient parsing for " + sLocale, function(assert) {
 			var oLocale = new Locale(sLocale);
-			var oLocaleData = new LocaleData(oLocale);
+			var oLocaleData = LocaleData.getInstance(oLocale);
 			var oFormat = NumberFormat.getIntegerInstance({}, oLocale);
 
 			// parse minusSign
