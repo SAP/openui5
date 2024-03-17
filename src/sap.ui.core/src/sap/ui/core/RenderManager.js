@@ -46,6 +46,9 @@ sap.ui.define([
 
 	var aCommonMethods = ["renderControl", "cleanupControlWithoutRendering", "accessibilityState", "icon"];
 
+	/**
+	 * @deprecated As of version 1.92, the string rendering methods are deprecated
+	 */
 	var aStrInterfaceMethods = ["write", "writeEscaped", "writeAcceleratorKey", "writeControlData", "writeElementData",
 		"writeAttribute", "writeAttributeEscaped", "addClass", "writeClasses", "addStyle", "writeStyles",
 		"writeAccessibilityState", "writeIcon", "translate", "getConfiguration", "getHTML"];
@@ -1577,6 +1580,9 @@ sap.ui.define([
 		aDomInterfaceMethods.forEach(function (sMethod) {
 			oStringInterface[sMethod] = oInterface[sMethod] = this[sMethod];
 		}, this);
+		/**
+		 * @deprecated As of version 1.92, the string rendering methods are deprecated
+		 */
 		aStrInterfaceMethods.forEach(function (sMethod) {
 			oStringInterface[sMethod] = oInterface[sMethod] = this[sMethod];
 		}, this);
