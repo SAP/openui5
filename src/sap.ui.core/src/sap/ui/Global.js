@@ -65,7 +65,5 @@ sap.ui.define([
 			buildinfo : { lastchange : "", buildtime : "${buildtime}" }
 		};
 
-		var syncCallBehavior = sap.ui.loader._.getSyncCallBehavior();
-
 		return Global;
 	});

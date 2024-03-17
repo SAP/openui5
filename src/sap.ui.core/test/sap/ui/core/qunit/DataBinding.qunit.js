@@ -234,6 +234,8 @@ sap.ui.define([
 		assert.equal(this.child.getValue(), "3", "value should be inherited from UIArea model");
 		assert.ok(oCtrlBindingBefore !== this.ctrl.getBinding("value"), "binding should have changed");
 		assert.ok(oChildBindingBefore !== this.child.getBinding("value"), "binding should have changed");
+
+		// after removing the model from the UIArea, Core model should be effective again
 	});
 
 	QUnit.test("Model propagated from parent", function(assert) {

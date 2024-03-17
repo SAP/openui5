@@ -9,11 +9,24 @@ sap.ui.define([
 
 	"use strict";
 
+	const THEMES = {
+		"base": "Base",
+		"sap_horizon": "Morning Horizon",
+		"sap_horizon_dark": "Evening Horizon",
+		"sap_horizon_hcb": "High Contrast Black Horizon",
+		"sap_horizon_hcw": "High Contrast White Horizon",
+		"sap_fiori_3": "Quartz Light",
+		"sap_fiori_3_dark": "Quartz Dark",
+		"sap_fiori_3_hcb": "Quartz High Contrast Black",
+		"sap_fiori_3_hcw": "Quartz High Contrast White"
+	};
 
-	var TestFWK = {
+	const THEME_NAMES_WITHOUT_BASE = Object.keys(THEMES).filter((name) => name != "base");
 
-		sLanguage: (navigator.languages && navigator.languages[0]) || navigator.language || navigator.userLanguage,
-		sTheme: "sap_fiori_3",
+	const TestFWK = {
+
+		sLanguage: (window.navigator.languages && window.navigator.languages[0]) || window.navigator.language || window.navigator.userLanguage,
+		sTheme: "sap_horizon",
 		bContrastMode: false,
 		bRTL: false,
 		bAccessibilityMode: true,
@@ -26,25 +39,13 @@ sap.ui.define([
 			"de": "Deutsch"
 		},
 
-		THEMES : {
-			"base": "Base",
-			"sap_horizon": "Morning Horizon",
-			"sap_horizon_dark": "Evening Horizon",
-			"sap_horizon_hcb": "High Contrast Black Horizon",
-			"sap_horizon_hcw": "High Contrast White Horizon",
-			"sap_fiori_3": "Quartz Light",
-			"sap_fiori_3_dark": "Quartz Dark",
-			"sap_fiori_3_hcb": "Quartz High Contrast Black",
-			"sap_fiori_3_hcw": "Quartz High Contrast White"
-		},
+		THEMES,
 
 		// the themes supported by each library
 		LIBRARY_THEMES: {
 			"all" : {
 				"default" : "sap_horizon",
-				"supports" : [
-					"sap_horizon","sap_horizon_dark","sap_horizon_hcb","sap_horizon_hcw","sap_fiori_3","sap_fiori_3_dark","sap_fiori_3_hcb","sap_fiori_3_hcw"
-				]
+				"supports": THEME_NAMES_WITHOUT_BASE
 			}
 		},
 

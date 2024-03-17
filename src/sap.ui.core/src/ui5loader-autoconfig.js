@@ -673,7 +673,7 @@
 	/** autoconfig */
 	var sBaseUrl, bNojQuery,
 		aScripts, rBootScripts, i,
-		sBootstrapUrl, bExposeAsAMDLoader = false;
+		sBootstrapUrl;
 
 	function findBaseUrl(oScript, rUrlPattern) {
 		var sUrl = oScript && oScript.getAttribute("src"),
@@ -884,20 +884,6 @@
 		freeze: true
 	});
 
-	// xx-future implicitly sets the loader to async
-	const bAsync = BaseConfig.get({
-		name: "sapUiAsync",
-		type: BaseConfig.Type.Boolean,
-		external: true,
-		freeze: true
-	}) || bFuture;
-
-	if (bAsync) {
-		ui5loader.config({
-			async: true
-		});
-	}
-
 	// Note: loader converts any NaN value to a default value
 	ui5loader._.maxTaskDuration = BaseConfig.get({
 		name: "sapUiXxMaxLoaderTaskDuration",
@@ -908,7 +894,7 @@
 	});
 
 	// support legacy switch 'noLoaderConflict', but 'amdLoader' has higher precedence
-	bExposeAsAMDLoader = BaseConfig.get({
+	const bExposeAsAMDLoader = BaseConfig.get({
 		name: "sapUiAmd",
 		type: BaseConfig.Type.Boolean,
 		defaultValue: !BaseConfig.get({
@@ -922,7 +908,7 @@
 		freeze: true
 	});
 
-	//calculate syncCallBehavior
+	// calculate syncCallBehavior
 	let syncCallBehavior = 0; // ignore
 	let sNoSync = BaseConfig.get({ // call must be made to ensure freezing
 		name: "sapUiXxNoSync",
