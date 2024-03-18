@@ -94,14 +94,49 @@ sap.ui.define(function() {
 			"TableSettings": {
 				group: "Utils"
 			},
-			"Table with ODataV4": {
+			"Table - Common (ODataV4)": {
 				group: "OPA",
-				module: "./OpaTests/Table.ODataV4.qunit",
+				module: "./OpaTests/start",
+				uriParams: {
+					app: "appODataV4Flat",
+					journey: "TableJourney"
+				},
 				autostart: false
 			},
-			"TreeTable with ODataV4": {
+			"Table - GridTableType (ODataV4)": {
 				group: "OPA",
-				module: "./OpaTests/TreeTable.ODataV4.qunit",
+				module: "./OpaTests/start",
+				uriParams: {
+					app: "appODataV4Flat",
+					journey: "GridTableJourney"
+				},
+				autostart: false
+			},
+			"Table - ResponsiveTableType (ODataV4)": {
+				group: "OPA",
+				module: "./OpaTests/start",
+				uriParams: {
+					app: "appODataV4Flat",
+					journey: "ResponsiveTableJourney"
+				},
+				autostart: false
+			},
+			"Table - TreeTableType (ODataV4 - Hierarchy)": {
+				group: "OPA",
+				module: "./OpaTests/start",
+				uriParams: {
+					app: "appODataV4Hierarchy",
+					journey: "TableJourney"
+				},
+				autostart: false
+			},
+			"Export (ODataV4)": {
+				group: "OPA",
+				module: "./OpaTests/start",
+				uriParams: {
+					app: "appODataV4Flat",
+					journey: "ExportJourney"
+				},
 				autostart: false
 			},
 			"Flexibility": {

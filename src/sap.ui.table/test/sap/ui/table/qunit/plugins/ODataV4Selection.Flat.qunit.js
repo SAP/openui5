@@ -40,7 +40,7 @@ sap.ui.define([
 	QUnit.test("Lifecycle", function(assert) {
 		var oTable = this.oTable;
 		var oODataV4Selection = oTable.getDependents()[0];
-		var oIcon = oODataV4Selection.oDeselectAllIcon;
+		var oIcon = oODataV4Selection.getAggregation("icon");
 
 		assert.strictEqual(oIcon.getSrc(), IconPool.getIconURI(TableUtils.ThemeParameters.clearSelectionIcon), "DeselectAll icon is correct");
 		assert.ok(!oIcon.getUseIconTooltip(), "DeselectAll icon has no tooltip");
@@ -58,9 +58,6 @@ sap.ui.define([
 		oODataV4Selection.onDeactivate(oTable);
 		assert.strictEqual(oTable.getSelectionMode(), "None", "when plugin is deactivated selectionMode of the table is set to None");
 		assert.ok(oClearSelectionSpy.calledOnce, "when plugin is deactivated selection is cleared");
-
-		oODataV4Selection.exit();
-		assert.ok(!oODataV4Selection.oDeselectAllIcon, "DeselectAll icon is destroyed on exit");
 
 		oODataV4Selection = new ODataV4Selection({selectionMode: "Single", limit: 0});
 		oTable.addDependent(oODataV4Selection);

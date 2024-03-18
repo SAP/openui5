@@ -4,13 +4,14 @@
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:variants="sap.ui.fl.variants"
-	controllerName="sap.ui.mdc.tableOpaTests.appODataV4Flat.Controller">
+	controllerName="sap.ui.mdc.table.OpaTests.appODataV4Flat.Controller"
+    xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1">
     <App>
         <Page showHeader="false">
             <mdc:Table
                 id="mdcTable"
                 header="Products"
-                delegate='\{ "name": "sap/ui/mdc/tableOpaTests/appODataV4Flat/TableDelegate", "payload": \{ "collectionName": "ProductList" \} \}'
+                delegate='\{ "name": "sap/ui/mdc/table/OpaTests/appODataV4Flat/TableDelegate", "payload": \{ "collectionName": "ProductList" \} \}'
                 p13nMode="Column,Sort,Filter,Group"
                 showPasteButton="true"
                 enableExport="true"
@@ -36,12 +37,19 @@
                         "maxLength": 30
                     \}
                 \}]'>
-                <mdc:type>
-                    <mdc:table.ResponsiveTableType detailsButtonSetting="Low,None" showDetailsButton="true" />
-                </mdc:type>
                 <mdc:variant>
                     <variants:VariantManagement id="mdcTable-vm" for="mdcTable" />
                 </mdc:variant>
+                <mdc:type>
+                    <template:if test="{= ${data>/tableType} === 'GridTableType'}">
+                        <template:then>
+                            <mdcTable:GridTableType/>
+                        </template:then>
+                        <template:elseif test="{= ${data>/tableType} === 'ResponsiveTableType'}">
+                            <mdcTable:ResponsiveTableType detailsButtonSetting="Low,None" showDetailsButton="true"/>
+                        </template:elseif>
+                    </template:if>
+                </mdc:type>
                 <mdc:columns>
                     <mdcTable:Column id="mdcTable-CreatedAt" header="Created On" tooltip="Created On" propertyKey="CreatedAt">
                         <Text text="{CreatedAt}" />

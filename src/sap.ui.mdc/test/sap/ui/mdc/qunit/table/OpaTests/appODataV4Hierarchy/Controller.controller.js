@@ -3,7 +3,7 @@ sap.ui.define([
 ], function(Controller) {
 	"use strict";
 
-	return Controller.extend("sap.ui.mdc.tableOpaTests.appODataV4Hierarchy.Controller", {
+	return Controller.extend("sap.ui.mdc.table.OpaTests.appODataV4Hierarchy.Controller", {
 		onInit: function() {
 		}
 	});

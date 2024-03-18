@@ -4,13 +4,13 @@
     xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:variants="sap.ui.fl.variants"
-	controllerName="sap.ui.mdc.tableOpaTests.appODataV4Hierarchy.Controller">
+	controllerName="sap.ui.mdc.table.OpaTests.appODataV4Hierarchy.Controller">
     <App>
         <Page showHeader="false">
             <mdc:Table
                 id="mdcTable"
                 header="Products"
-                delegate='\{ "name": "sap/ui/mdc/tableOpaTests/appODataV4Hierarchy/TableDelegate", "payload": \{ "collectionName": "EMPLOYEES" \} \}'
+                delegate='\{ "name": "sap/ui/mdc/table/OpaTests/appODataV4Hierarchy/TableDelegate", "payload": \{ "collectionName": "EMPLOYEES" \} \}'
                 p13nMode="Column,Sort,Filter"
                 showRowCount="false"
                 selectionMode="Multi"
