@@ -31,7 +31,13 @@ sap.ui.define([
 					selectorControlId: "labelId",
 					sourceControlId: "labelId"
 				},
-				useLegacyNavigation: false
+				useLegacyNavigation: false,
+				// Default advanced settings
+				advancedSettings: {
+					allowForms: true,
+					allowScripts: true,
+					allowSameOrigin: true
+				}
 			});
 			this.oLabel = new Label("labelId", {text: "myInitialTitle"});
 			this.oIFrame.placeAt("qunit-fixture");
@@ -52,13 +58,29 @@ sap.ui.define([
 					frameHeightUnit: "vh",
 					frameUrl: "newUrl",
 					useLegacyNavigation: false,
-					title: "myNewTitle"
+					title: "myNewTitle",
+					advancedSettings: {
+						additionalSandboxParameters: [],
+						allowForms: false,
+						allowPopups: true,
+						allowScripts: true,
+						allowModals: true,
+						allowSameOrigin: true
+					}
 				},
 				updateContent: {
 					url: "newUrl",
 					width: "50px",
 					height: "100vh",
-					useLegacyNavigation: false
+					useLegacyNavigation: false,
+					advancedSettings: {
+						additionalSandboxParameters: [],
+						allowForms: false,
+						allowPopups: true,
+						allowScripts: true,
+						allowModals: true,
+						allowSameOrigin: true
+					}
 				},
 				renameContent: {
 					value: "myNewTitle"
@@ -73,6 +95,11 @@ sap.ui.define([
 					frameHeightUnit: "px",
 					frameUrl: "https://example.com",
 					useLegacyNavigation: false,
+					advancedSettings: {
+						allowForms: true,
+						allowScripts: true,
+						allowSameOrigin: true
+					},
 					title: "myNewTitle"
 				},
 				renameContent: {
@@ -88,13 +115,23 @@ sap.ui.define([
 					frameHeightUnit: "px",
 					frameUrl: "https://example.com",
 					useLegacyNavigation: false,
+					advancedSettings: {
+						allowForms: true,
+						allowScripts: true,
+						allowSameOrigin: true
+					},
 					title: "myInitialTitle"
 				},
 				updateContent: {
 					url: "https://example.com",
 					width: "50px",
 					height: "100px",
-					useLegacyNavigation: false
+					useLegacyNavigation: false,
+					advancedSettings: {
+						allowForms: true,
+						allowScripts: true,
+						allowSameOrigin: true
+					}
 				}
 			},
 			{
@@ -106,13 +143,23 @@ sap.ui.define([
 					frameHeightUnit: "%",
 					frameUrl: "https://example.com",
 					useLegacyNavigation: false,
+					advancedSettings: {
+						allowForms: true,
+						allowScripts: true,
+						allowSameOrigin: true
+					},
 					title: "myInitialTitle"
 				},
 				updateContent: {
 					url: "https://example.com",
 					width: "100px",
 					height: "100%",
-					useLegacyNavigation: false
+					useLegacyNavigation: false,
+					advancedSettings: {
+						allowForms: true,
+						allowScripts: true,
+						allowSameOrigin: true
+					}
 				}
 			},
 			{
@@ -124,13 +171,57 @@ sap.ui.define([
 					frameHeightUnit: "px",
 					frameUrl: "https://example.com",
 					useLegacyNavigation: true,
+					advancedSettings: {
+						allowForms: true,
+						allowScripts: true,
+						allowSameOrigin: true
+					},
 					title: "myInitialTitle"
 				},
 				updateContent: {
 					url: "https://example.com",
 					width: "100px",
 					height: "100px",
-					useLegacyNavigation: true
+					useLegacyNavigation: true,
+					advancedSettings: {
+						allowForms: true,
+						allowScripts: true,
+						allowSameOrigin: true
+					}
+				}
+			},
+			{
+				testTitle: "only advancedSettings changed",
+				dialogReturn: {
+					frameWidth: "100",
+					frameWidthUnit: "px",
+					frameHeight: "100",
+					frameHeightUnit: "px",
+					frameUrl: "https://example.com",
+					useLegacyNavigation: false,
+					title: "myInitialTitle",
+					advancedSettings: {
+						additionalSandboxParameters: ["allow-pointer-lock"],
+						allowForms: false,
+						allowPopups: true,
+						allowScripts: true,
+						allowModals: true,
+						allowSameOrigin: true
+					}
+				},
+				updateContent: {
+					url: "https://example.com",
+					width: "100px",
+					height: "100px",
+					useLegacyNavigation: false,
+					advancedSettings: {
+						additionalSandboxParameters: ["allow-pointer-lock"],
+						allowForms: false,
+						allowPopups: true,
+						allowScripts: true,
+						allowModals: true,
+						allowSameOrigin: true
+					}
 				}
 			},
 			{
@@ -141,8 +232,13 @@ sap.ui.define([
 					frameHeight: "100",
 					frameHeightUnit: "px",
 					frameUrl: "https://example.com",
+					title: "myInitialTitle",
 					useLegacyNavigation: false,
-					title: "myInitialTitle"
+					advancedSettings: {
+						allowForms: true,
+						allowScripts: true,
+						allowSameOrigin: true
+					}
 				}
 			},
 			{

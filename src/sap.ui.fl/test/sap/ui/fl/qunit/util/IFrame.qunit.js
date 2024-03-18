@@ -25,7 +25,7 @@ sap.ui.define([
 
 	const sTitle = "IFrame Title";
 	const sProtocol = "https";
-	const sOpenUI5Url = `${sProtocol}://openui5.com/`;
+	const sOpenUI5Url = `${sProtocol}://openui5.org/`;
 	const sDefaultSize = "500px";
 	const sUserFirstName = "John";
 	const sUserLastName = "Doe";
@@ -140,6 +140,52 @@ sap.ui.define([
 				"then the src attribute is never touched"
 			);
 			oIFrame.destroy();
+		});
+
+		QUnit.test("when iframe is created with default advanced settings", async function(assert) {
+			await nextUIUpdate();
+			assert.strictEqual(
+				this.oIFrame.getDomRef().sandbox.value,
+				"allow-forms allow-popups allow-scripts allow-modals allow-same-origin",
+				"then the default sandbox attributes are set correctly"
+			);
+		});
+
+		QUnit.test("when iframe is updated with advanced settings", async function(assert) {
+			this.oIFrame.setAdvancedSettings({
+				additionalSandboxParameters: ["allow-downloads-without-user-activation"],
+				"allow-forms": true,
+				"allow-popups": false,
+				"allow-scripts": false,
+				"allow-modals": false,
+				"allow-same-origin": false
+			});
+			await nextUIUpdate();
+			assert.strictEqual(
+				this.oIFrame.getDomRef().sandbox.value,
+				"allow-forms allow-downloads-without-user-activation",
+				"then the custom sandbox attributes are set correctly"
+			);
+		});
+
+		QUnit.test("when the iframe parent changes resulting in the re-creation of the contentWindow", async function(assert) {
+			await nextUIUpdate();
+			const oReplaceLocationSpy = sandbox.spy(this.oIFrame, "_replaceIframeLocation");
+			// Move the iframe to a new parent
+			const oNewDiv = document.createElement("div");
+			document.getElementById("qunit-fixture").appendChild(oNewDiv);
+			oNewDiv.appendChild(this.oIFrame.getDomRef());
+			await nextUIUpdate();
+			assert.strictEqual(
+				oReplaceLocationSpy.lastCall.args[0],
+				sOpenUI5Url,
+				"then the iframe retains its url"
+			);
+			assert.strictEqual(
+				oReplaceLocationSpy.callCount,
+				1,
+				"then the iframe location is only set again once"
+			);
 		});
 	});
 
