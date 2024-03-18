@@ -4042,11 +4042,19 @@ sap.ui.define([
 
 			QUnit.test(sTitle, function (assert) {
 				var oBinding = this.bindList("/EMPLOYEES", {/*oContext*/}),
-					aContexts = [{}, {}, {}],
+					aContexts = [
+						{setSelected : mustBeMocked},
+						{setSelected : mustBeMocked},
+						{setSelected : mustBeMocked}
+					],
 					oContextMock = this.mock(Context),
 					i,
 					sPath,
-					aResults = [{}, {}, {}],
+					aResults = [
+						{setSelected : mustBeMocked},
+						{setSelected : mustBeMocked},
+						{setSelected : mustBeMocked}
+					],
 					iServerIndex,
 					iStart = 2;
 
@@ -4070,7 +4078,11 @@ sap.ui.define([
 						.withExactArgs(sinon.match.same(this.oModel), sinon.match.same(oBinding),
 							sPath, iServerIndex)
 						.returns(aContexts[i - iStart]);
+					this.mock(aContexts[i - iStart]).expects("setSelected")
+						.withExactArgs("~selected~");
 				}
+				this.mock(oBinding.oHeaderContext).expects("isSelected").exactly(aContexts.length)
+					.withExactArgs().returns("~selected~");
 
 				// code under test
 				assert.strictEqual(oBinding.createContexts(iStart, aResults), true);
@@ -4226,7 +4238,7 @@ sap.ui.define([
 		var oBinding = this.bindList("/EMPLOYEES", {/*oContext*/}),
 			oContext1 = Context.create(this.oModel, oBinding, "/EMPLOYEES/1", 1),
 			oContext2 = Context.create(this.oModel, oBinding, "/EMPLOYEES/2", 2),
-			oContext3 = {},
+			oContext3 = {setSelected : mustBeMocked},
 			oContextMock = this.mock(Context);
 
 		oBinding.mPreviousContextsByPath = {
@@ -4240,6 +4252,9 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(this.oModel), sinon.match.same(oBinding),
 				"/EMPLOYEES/3", 3)
 			.returns(oContext3);
+		this.mock(oBinding.oHeaderContext).expects("isSelected")
+			.withExactArgs().returns("~selected~");
+		this.mock(oContext3).expects("setSelected").withExactArgs("~selected~");
 		this.mock(this.oModel).expects("addPrerenderingTask")
 			.withExactArgs(sinon.match.func).callsArg(0);
 		this.mock(oBinding).expects("destroyPreviousContexts").withExactArgs(["/EMPLOYEES/0"]);
@@ -4329,7 +4344,7 @@ sap.ui.define([
 		var oBinding = this.bindList("/EMPLOYEES"),
 			oCreatedContext = Context.create(this.oModel, oBinding, "/EMPLOYEES('1')", -1,
 				SyncPromise.resolve()),
-			oNewContext = {};
+			oNewContext = {setSelected : mustBeMocked};
 
 		oBinding.mPreviousContextsByPath = {
 			"/EMPLOYEES('1')" : oCreatedContext
@@ -4339,6 +4354,9 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(this.oModel), sinon.match.same(oBinding),
 				"/EMPLOYEES('1')", 0)
 			.returns(oNewContext);
+		this.mock(oBinding.oHeaderContext).expects("isSelected")
+			.withExactArgs().returns("~selected~");
+		this.mock(oNewContext).expects("setSelected").withExactArgs("~selected~");
 		this.mock(this.oModel).expects("addPrerenderingTask")
 			.withExactArgs(sinon.match.func).callsArg(0);
 		this.mock(oCreatedContext).expects("destroy").withExactArgs();
@@ -5361,12 +5379,14 @@ sap.ui.define([
 					created : function () {},
 					fetchValue : function () {},
 					getPath : function () {},
+					setSelected : mustBeMocked,
 					updateAfterCreate : function () {}
 				},
 				oNewContext1 = {
 					created : function () {},
 					fetchValue : function () {},
 					getPath : function () {},
+					setSelected : mustBeMocked,
 					updateAfterCreate : function () {}
 				},
 				bNotAllowed = aAtEnd[0] && !aAtEnd[1],
@@ -5399,6 +5419,9 @@ sap.ui.define([
 					oNewContext0.oCreatedPromise = Promise.resolve(arguments[4]);
 					return oNewContext0;
 				});
+			this.mock(oBinding.oHeaderContext).expects("isSelected").exactly(bNotAllowed ? 1 : 2)
+				.withExactArgs().returns("~selected~");
+			this.mock(oNewContext0).expects("setSelected").withExactArgs("~selected~");
 			this.mock(oNewContext0).expects("created").exactly(bTransient ? 1 : 0)
 				.withExactArgs()
 				.callsFake(function () {
@@ -5451,6 +5474,7 @@ sap.ui.define([
 						oNewContext1.oCreatedPromise = Promise.resolve(arguments[4]);
 						return oNewContext1;
 					});
+				this.mock(oNewContext1).expects("setSelected").withExactArgs("~selected~");
 				this.mock(oNewContext1).expects("created").exactly(bTransient ? 1 : 0)
 					.withExactArgs()
 					.callsFake(function () {
@@ -5518,6 +5542,7 @@ sap.ui.define([
 				created : function () {},
 				fetchValue : function () {},
 				getPath : function () { return ""; },
+				setSelected : mustBeMocked,
 				refreshDependentBindings : function () {}
 			};
 
@@ -5535,6 +5560,9 @@ sap.ui.define([
 				sinon.match.same(oBinding), sinon.match.string, -oBinding.iCreatedContexts - 1,
 				sinon.match.instanceOf(SyncPromise), undefined)
 			.returns(oNewContext);
+		this.mock(oBinding.oHeaderContext).expects("isSelected")
+			.withExactArgs().returns("~selected~");
+		this.mock(oNewContext).expects("setSelected").withExactArgs("~selected~");
 		this.mock(oNewContext).expects("fetchValue").withExactArgs().resolves(undefined);
 		this.mock(_Helper).expects("setPrivateAnnotation").never();
 
@@ -5704,12 +5732,15 @@ sap.ui.define([
 					.and(sinon.match({"@$ui5.node.parent" : "canonical/path"})),
 				false, sinon.match.func, sinon.match.func)
 			.returns(SyncPromise.resolve(Promise.resolve("~oCreatedEntity~")));
-		const oContext = {fetchValue : mustBeMocked};
+		const oContext = {fetchValue : mustBeMocked, setSelected : mustBeMocked};
 		this.mock(Context).expects("create")
 			.withExactArgs(sinon.match.same(this.oModel), sinon.match.same(oBinding),
 				"~sResolvedPath~($uid=id-1-23)", /*iChildIndex*/3,
 				sinon.match.instanceOf(SyncPromise), undefined)
 			.returns(oContext);
+		this.mock(oBinding.oHeaderContext).expects("isSelected")
+			.withExactArgs().returns("~selected~");
+		this.mock(oContext).expects("setSelected").withExactArgs("~selected~");
 		this.mock(oContext).expects("fetchValue").withExactArgs()
 			.returns(SyncPromise.resolve()); //TODO
 		this.mock(oBinding).expects("_fireChange")
@@ -5758,12 +5789,15 @@ sap.ui.define([
 				sinon.match(rTransientPredicate), "~oEntityData~",
 				false, sinon.match.func, sinon.match.func)
 			.returns(SyncPromise.resolve(Promise.resolve("~oCreatedEntity~")));
-		const oContext = {fetchValue : mustBeMocked};
+		const oContext = {fetchValue : mustBeMocked, setSelected : mustBeMocked};
 		this.mock(Context).expects("create")
 			.withExactArgs(sinon.match.same(this.oModel), sinon.match.same(oBinding),
 				"~sResolvedPath~($uid=id-1-23)", /*iChildIndex*/0,
 				sinon.match.instanceOf(SyncPromise), undefined)
 			.returns(oContext);
+		this.mock(oBinding.oHeaderContext).expects("isSelected")
+			.withExactArgs().returns("~selected~");
+		this.mock(oContext).expects("setSelected").withExactArgs("~selected~");
 		this.mock(oContext).expects("fetchValue").withExactArgs()
 			.returns(SyncPromise.resolve()); //TODO
 		this.mock(oBinding).expects("_fireChange")
@@ -10223,21 +10257,9 @@ sap.ui.define([
 	//*********************************************************************************************
 [false, true].forEach(function (bFireChange) {
 	QUnit.test("getAllCurrentContexts: bFireChange = " + bFireChange, function (assert) {
-		var aAllCurrentContexts,
-			oBinding = this.bindList("/EMPLOYEES"),
-			oCache = {
-				getAllElements : function () {}
-			},
-			oKeptContext0 = {isEffectivelyKeptAlive : function () {}},
-			oKeptContext1 = {isEffectivelyKeptAlive : function () {}},
-			oNotKeptContext = {isEffectivelyKeptAlive : function () {}}; // BCP 2270081950:
-			// there is a point in time when contexts with keepAlive=false are present in
-			// mPreviousContextsByPath which need be filtered out.
-
-		oBinding.mPreviousContextsByPath = {
-			"~sPath1~" : oKeptContext0,
-			"~sPath2~" : oKeptContext1,
-			"~sPath3~" : oNotKeptContext
+		const oBinding = this.bindList("/EMPLOYEES");
+		const oCache = {
+			getAllElements : function () {}
 		};
 
 		this.mock(oBinding).expects("withCache").withExactArgs(sinon.match.func, "", true)
@@ -10245,46 +10267,61 @@ sap.ui.define([
 		this.mock(oCache).expects("getAllElements").withExactArgs("path/to/cache")
 			.returns("~aElements~");
 		this.mock(oBinding).expects("createContexts").withExactArgs(0, "~aElements~")
-			.callsFake(function () {
-				oBinding.aContexts = ["~oContext0~", undefined, "~oContext2~"];
-				return bFireChange;
-			});
+			.returns(bFireChange);
 		this.mock(oBinding).expects("_fireChange").withExactArgs({reason : ChangeReason.Change})
 			.exactly(bFireChange ? 1 : 0);
 
-		this.mock(oKeptContext0).expects("isEffectivelyKeptAlive").withExactArgs().returns(true);
-		this.mock(oKeptContext1).expects("isEffectivelyKeptAlive").withExactArgs().returns(true);
-		this.mock(oNotKeptContext).expects("isEffectivelyKeptAlive").withExactArgs().returns(false);
+		this.mock(oBinding).expects("_getAllExistingContexts").withExactArgs()
+			.returns("~aContexts~");
 
 		// code under test
-		aAllCurrentContexts = oBinding.getAllCurrentContexts();
-
-		assert.deepEqual(aAllCurrentContexts,
-			["~oContext0~", "~oContext2~", oKeptContext0, oKeptContext1]);
-		assert.strictEqual(aAllCurrentContexts[2], oKeptContext0);
-		assert.strictEqual(aAllCurrentContexts[3], oKeptContext1);
+		assert.deepEqual(oBinding.getAllCurrentContexts(), "~aContexts~");
 	});
 });
 
 	//*********************************************************************************************
 	QUnit.test("getAllCurrentContexts: currently no cache", function (assert) {
 		const oBinding = this.bindList("relativePath");
-		oBinding.aContexts = ["~oTransientContext~"];
-
-		const oKeptContext = {isEffectivelyKeptAlive : function () {}};
-		oBinding.mPreviousContextsByPath = {"~sPath~" : oKeptContext};
 
 		this.mock(oBinding).expects("withCache").withExactArgs(sinon.match.func, "", true);
 		this.mock(oBinding).expects("createContexts").never();
 		this.mock(oBinding).expects("_fireChange").never();
-		this.mock(oKeptContext).expects("isEffectivelyKeptAlive").withExactArgs().returns(true);
+		this.mock(oBinding).expects("_getAllExistingContexts").withExactArgs()
+			.returns("~aResults~");
 
 		// code under test
 		const aContexts = oBinding.getAllCurrentContexts();
 
-		assert.strictEqual(aContexts.length, 2);
+		assert.strictEqual(aContexts, "~aResults~");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_getAllExistingContexts", function (assert) {
+		const oBinding = this.bindList("relativePath");
+		oBinding.aContexts = [/*empty*/, undefined, "~oTransientContext~"];
+		const oKeptContext0 = {isEffectivelyKeptAlive : function () {}};
+		const oKeptContext1 = {isEffectivelyKeptAlive : function () {}};
+		const oNotKeptContext = {isEffectivelyKeptAlive : function () {}}; // BCP 2270081950:
+		// there is a point in time when contexts with keepAlive=false are present in
+		// mPreviousContextsByPath which need be filtered out.
+
+		oBinding.mPreviousContextsByPath = {
+			"~sPath1~" : oKeptContext0,
+			"~sPath2~" : oKeptContext1,
+			"~sPath3~" : oNotKeptContext
+		};
+
+		this.mock(oKeptContext0).expects("isEffectivelyKeptAlive").withExactArgs().returns(true);
+		this.mock(oKeptContext1).expects("isEffectivelyKeptAlive").withExactArgs().returns(true);
+		this.mock(oNotKeptContext).expects("isEffectivelyKeptAlive").withExactArgs().returns(false);
+
+		// code under test
+		const aContexts = oBinding._getAllExistingContexts();
+
+		assert.strictEqual(aContexts.length, 3);
 		assert.strictEqual(aContexts[0], "~oTransientContext~");
-		assert.strictEqual(aContexts[1], oKeptContext);
+		assert.strictEqual(aContexts[1], oKeptContext0);
+		assert.strictEqual(aContexts[2], oKeptContext1);
 	});
 
 	//*********************************************************************************************
