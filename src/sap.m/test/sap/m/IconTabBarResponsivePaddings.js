@@ -1,7 +1,6 @@
 sap.ui.define([
 	'sap/m/IconTabFilter',
 	'sap/m/Text',
-	"sap/m/IconTabHeader",
 	"sap/m/App",
 	"sap/m/Page",
 	"sap/m/Panel",
@@ -10,7 +9,6 @@ sap.ui.define([
 ], function (
 	IconTabFilter,
 	Text,
-	IconTabHeader,
 	App,
 	Page,
 	Panel,
@@ -19,7 +17,9 @@ sap.ui.define([
 	) {
 	"use strict";
 
-	const oIconTabHeader = new IconTabHeader("idIconTabHeader0",{}).addStyleClass("sapUiResponsiveContentPadding");
+	const oIconTabBar = new IconTabBar("idIconTabBar0",{
+		expanded: false
+	}).addStyleClass("sapUiResponsiveContentPadding");
 		for (var i = 1; i <= 30; i++) {
 			const oIconTabFilter = new IconTabFilter({
 				text: 'Tab ' + i,
@@ -28,11 +28,12 @@ sap.ui.define([
 				})
 			});
 
-			oIconTabHeader.addItem(oIconTabFilter);
+			oIconTabBar.addItem(oIconTabFilter);
 		}
 
 
-	const oIconTabHeader1 = new IconTabBar({
+	const oIconTabBar1 = new IconTabBar("idIconTabBar3", {
+		expanded: false,
 		items: [
 			new IconTabFilter({
 				text: "Info"
@@ -109,109 +110,9 @@ sap.ui.define([
 		]
 	}).addStyleClass("sapUiResponsiveContentPadding");
 
-	const oIconTabHeader2 = new IconTabBar("idIconTabHeader6", {
-		mode: "Inline",
-		items: [
-			new IconTabFilter({
-				text: "Info",
-				count: "3"
-			}),
-			new IconTabFilter({
-				text: "Attachments",
-				count: "4321"
-			}),
-			new IconTabFilter({
-				text: "Notes",
-				count: "333"
-			}),
-			new IconTabFilter({
-				text: "People",
-				count: "34"
-			}),
-			new IconTabFilter({
-				text: "Info",
-				count: "3"
-			}),
-			new IconTabFilter({
-				text: "Attachments",
-				count: "4321"
-			}),
-			new IconTabFilter({
-				text: "Notes",
-				count: "333"
-			}),
-			new IconTabFilter({
-				text: "People",
-				count: "34"
-			}),
-			new IconTabFilter({
-				text: "Info",
-				count: "3"
-			}),
-			new IconTabFilter({
-				text: "Attachments",
-				count: "4321"
-			}),
-			new IconTabFilter({
-				text: "Notes",
-				count: "333"
-			}),
-			new IconTabFilter({
-				text: "People",
-				count: "34"
-			}),
-			new IconTabFilter({
-				text: "Info",
-				count: "3"
-			}),
-			new IconTabFilter({
-				text: "Attachments",
-				count: "4321"
-			}),
-			new IconTabFilter({
-				text: "Notes",
-				count: "333"
-			}),
-			new IconTabFilter({
-				text: "People",
-				count: "34"
-			}),
-			new IconTabFilter({
-				text: "Info",
-				count: "3"
-			}),
-			new IconTabFilter({
-				text: "Attachments",
-				count: "4321"
-			}),
-			new IconTabFilter({
-				text: "Notes",
-				count: "333"
-			}),
-			new IconTabFilter({
-				text: "People",
-				count: "34"
-			}),
-			new IconTabFilter({
-				text: "Info",
-				count: "3"
-			}),
-			new IconTabFilter({
-				text: "Attachments",
-				count: "4321"
-			}),
-			new IconTabFilter({
-				text: "Notes",
-				count: "333"
-			}),
-			new IconTabFilter({
-				text: "People",
-				count: "34"
-			})
-		]
-	}).addStyleClass("sapUiResponsiveContentPadding");
-
-	const oIconTabHeader3 = new IconTabBar("idIconTabHeader7", {
+	const oIconTabBar2 = new IconTabBar("idIconTabBar6", {
+		expanded: false,
+		headerMode: "Inline",
 		items: [
 			new IconTabFilter({
 				text: "Info",
@@ -312,7 +213,110 @@ sap.ui.define([
 		]
 	}).addStyleClass("sapUiResponsiveContentPadding");
 
-	const oIconTabHeader4 = new IconTabBar("idIconTabHeader4", {
+	const oIconTabBar3 = new IconTabBar("idIconTabBar7", {
+		expanded: false,
+		items: [
+			new IconTabFilter({
+				text: "Info",
+				count: "3"
+			}),
+			new IconTabFilter({
+				text: "Attachments",
+				count: "4321"
+			}),
+			new IconTabFilter({
+				text: "Notes",
+				count: "333"
+			}),
+			new IconTabFilter({
+				text: "People",
+				count: "34"
+			}),
+			new IconTabFilter({
+				text: "Info",
+				count: "3"
+			}),
+			new IconTabFilter({
+				text: "Attachments",
+				count: "4321"
+			}),
+			new IconTabFilter({
+				text: "Notes",
+				count: "333"
+			}),
+			new IconTabFilter({
+				text: "People",
+				count: "34"
+			}),
+			new IconTabFilter({
+				text: "Info",
+				count: "3"
+			}),
+			new IconTabFilter({
+				text: "Attachments",
+				count: "4321"
+			}),
+			new IconTabFilter({
+				text: "Notes",
+				count: "333"
+			}),
+			new IconTabFilter({
+				text: "People",
+				count: "34"
+			}),
+			new IconTabFilter({
+				text: "Info",
+				count: "3"
+			}),
+			new IconTabFilter({
+				text: "Attachments",
+				count: "4321"
+			}),
+			new IconTabFilter({
+				text: "Notes",
+				count: "333"
+			}),
+			new IconTabFilter({
+				text: "People",
+				count: "34"
+			}),
+			new IconTabFilter({
+				text: "Info",
+				count: "3"
+			}),
+			new IconTabFilter({
+				text: "Attachments",
+				count: "4321"
+			}),
+			new IconTabFilter({
+				text: "Notes",
+				count: "333"
+			}),
+			new IconTabFilter({
+				text: "People",
+				count: "34"
+			}),
+			new IconTabFilter({
+				text: "Info",
+				count: "3"
+			}),
+			new IconTabFilter({
+				text: "Attachments",
+				count: "4321"
+			}),
+			new IconTabFilter({
+				text: "Notes",
+				count: "333"
+			}),
+			new IconTabFilter({
+				text: "People",
+				count: "34"
+			})
+		]
+	}).addStyleClass("sapUiResponsiveContentPadding");
+
+	const oIconTabBar4 = new IconTabBar("idIconTabBar4", {
+		expanded: false,
 		items: [
 			new IconTabFilter({
 				icon:"sap-icon://hint"
@@ -332,9 +336,6 @@ sap.ui.define([
 				icon:"sap-icon://hint"
 			}),
 			new IconTabFilter({
-				icon:"sap-icon://hint"
-			}),
-			new IconTabFilter({
 				icon:"sap-icon://attachment",
 				count:"3"
 			}),
@@ -349,9 +350,6 @@ sap.ui.define([
 				icon:"sap-icon://hint"
 			}),
 			new IconTabFilter({
-				icon:"sap-icon://hint"
-			}),
-			new IconTabFilter({
 				icon:"sap-icon://attachment",
 				count:"3"
 			}),
@@ -361,9 +359,6 @@ sap.ui.define([
 			}),
 			new IconTabFilter({
 				icon:"sap-icon://group"
-			}),
-			new IconTabFilter({
-				icon:"sap-icon://hint"
 			}),
 			new IconTabFilter({
 				icon:"sap-icon://hint"
@@ -385,7 +380,8 @@ sap.ui.define([
 			]
 	}).addStyleClass("sapUiResponsiveContentPadding");
 
-	const oIconTabHeader5 = new IconTabBar("idIconTabHeader1", {
+	const oIconTabBar5 = new IconTabBar("idIconTabBar1", {
+		expanded: false,
 		items: [
 			new IconTabFilter({
 				icon:"sap-icon://hint",
@@ -525,13 +521,15 @@ sap.ui.define([
 		]
 	}).addStyleClass("sapUiResponsiveContentPadding");
 
-	const oIconTabHeader6 = new IconTabBar("idIconTabHeader2", {
+	const oIconTabBar6 = new IconTabBar("idIconTabBar2", {
+		expanded: false,
 		items: [
 			new IconTabFilter({
 				icon:"sap-icon://begin",
 				iconColor:"Positive",
-				count:"53",
-				text:"Ok",
+				design:"Horizontal",
+				count:"53 of 123",
+				text:"Confirm Ok",
 				key:"Ok"
 			}),
 			new IconTabSeparator({
@@ -540,8 +538,9 @@ sap.ui.define([
 			new IconTabFilter({
 				icon:"sap-icon://compare",
 				iconColor:"Critical",
-				count:"51",
-				text:"Heavy",
+				design:"Horizontal",
+				count:"51 of 123",
+				text:"Check Heavy",
 				key:"Heavy"
 			}),
 			new IconTabSeparator({
@@ -550,18 +549,17 @@ sap.ui.define([
 			new IconTabFilter({
 				icon:"sap-icon://inventory",
 				iconColor:"Negative",
-				count:"19",
-				text:"Overweight",
+				design:"Horizontal",
+				count:"19 of 123",
+				text:"Claim Overweight",
 				key:"Overweight"
-			}),
-			new IconTabSeparator({
-				icon:"sap-icon://open-command-field"
 			}),
 			new IconTabFilter({
 				icon:"sap-icon://begin",
 				iconColor:"Positive",
-				count:"53",
-				text:"Ok",
+				design:"Horizontal",
+				count:"53 of 123",
+				text:"Confirm Ok",
 				key:"Ok"
 			}),
 			new IconTabSeparator({
@@ -570,8 +568,9 @@ sap.ui.define([
 			new IconTabFilter({
 				icon:"sap-icon://compare",
 				iconColor:"Critical",
-				count:"51",
-				text:"Heavy",
+				design:"Horizontal",
+				count:"51 of 123",
+				text:"Check Heavy",
 				key:"Heavy"
 			}),
 			new IconTabSeparator({
@@ -580,18 +579,17 @@ sap.ui.define([
 			new IconTabFilter({
 				icon:"sap-icon://inventory",
 				iconColor:"Negative",
-				count:"19",
-				text:"Overweight",
+				design:"Horizontal",
+				count:"19 of 123",
+				text:"Claim Overweight",
 				key:"Overweight"
-			}),
-			new IconTabSeparator({
-				icon:"sap-icon://open-command-field"
 			}),
 			new IconTabFilter({
 				icon:"sap-icon://begin",
 				iconColor:"Positive",
-				count:"53",
-				text:"Ok",
+				design:"Horizontal",
+				count:"53 of 123",
+				text:"Confirm Ok",
 				key:"Ok"
 			}),
 			new IconTabSeparator({
@@ -600,8 +598,9 @@ sap.ui.define([
 			new IconTabFilter({
 				icon:"sap-icon://compare",
 				iconColor:"Critical",
-				count:"51",
-				text:"Heavy",
+				design:"Horizontal",
+				count:"51 of 123",
+				text:"Check Heavy",
 				key:"Heavy"
 			}),
 			new IconTabSeparator({
@@ -610,18 +609,17 @@ sap.ui.define([
 			new IconTabFilter({
 				icon:"sap-icon://inventory",
 				iconColor:"Negative",
-				count:"19",
-				text:"Overweight",
+				design:"Horizontal",
+				count:"19 of 123",
+				text:"Claim Overweight",
 				key:"Overweight"
-			}),
-			new IconTabSeparator({
-				icon:"sap-icon://open-command-field"
 			}),
 			new IconTabFilter({
 				icon:"sap-icon://begin",
 				iconColor:"Positive",
-				count:"53",
-				text:"Ok",
+				design:"Horizontal",
+				count:"53 of 123",
+				text:"Confirm Ok",
 				key:"Ok"
 			}),
 			new IconTabSeparator({
@@ -630,8 +628,9 @@ sap.ui.define([
 			new IconTabFilter({
 				icon:"sap-icon://compare",
 				iconColor:"Critical",
-				count:"51",
-				text:"Heavy",
+				design:"Horizontal",
+				count:"51 of 123",
+				text:"Check Heavy",
 				key:"Heavy"
 			}),
 			new IconTabSeparator({
@@ -640,47 +639,16 @@ sap.ui.define([
 			new IconTabFilter({
 				icon:"sap-icon://inventory",
 				iconColor:"Negative",
-				count:"19",
-				text:"Overweight",
+				design:"Horizontal",
+				count:"19 of 123",
+				text:"Claim Overweight",
 				key:"Overweight"
-			}),
-			new IconTabSeparator({
-				icon:"sap-icon://open-command-field"
-			}),
-			new IconTabFilter({
-				icon:"sap-icon://begin",
-				iconColor:"Positive",
-				count:"53",
-				text:"Ok",
-				key:"Ok"
-			}),
-			new IconTabSeparator({
-				icon:"sap-icon://open-command-field"
-			}),
-			new IconTabFilter({
-				icon:"sap-icon://compare",
-				iconColor:"Critical",
-				count:"51",
-				text:"Heavy",
-				key:"Heavy"
-			}),
-			new IconTabSeparator({
-				icon:"sap-icon://open-command-field"
-			}),
-			new IconTabFilter({
-				icon:"sap-icon://inventory",
-				iconColor:"Negative",
-				count:"19",
-				text:"Overweight",
-				key:"Overweight"
-			}),
-			new IconTabSeparator({
-				icon:"sap-icon://open-command-field"
 			})
 		]
 	}).addStyleClass("sapUiResponsiveContentPadding");
 
-	const oIconTabHeader7 = new IconTabBar("idIconTabHeader5", {
+	const oIconTabBar7 = new IconTabBar("idIconTabBar5", {
+		expanded: false,
 		items: [
 			new IconTabFilter({
 				showAll: true,
@@ -799,14 +767,14 @@ sap.ui.define([
 
 	const oApp = new App("myApp",{});
 	const oPanel = new Panel({
-		content: [oIconTabHeader,
-				oIconTabHeader1,
-				oIconTabHeader2,
-				oIconTabHeader3,
-				oIconTabHeader4,
-				oIconTabHeader5,
-				oIconTabHeader6,
-				oIconTabHeader7
+		content: [oIconTabBar,
+				oIconTabBar1,
+				oIconTabBar2,
+				oIconTabBar3,
+				oIconTabBar4,
+				oIconTabBar5,
+				oIconTabBar6,
+				oIconTabBar7
 		]
 	}).addStyleClass("max-width");
 	const oPage = new Page({

@@ -563,12 +563,6 @@ sap.ui.define([
 			}
 		});
 
-		const body = document.querySelector("body");
-		if (body.classList.contains("sapUiSizeCompact")) {
-			body.classList.remove("sapUiSizeCompact");
-		} else {
-			body.classList.add("sapUiSizeCompact");
-		}
 		bindListData(data, oItemTemplate, oList2);
 
 		radioBtnPage.addContent(oToggleBtnCompact);

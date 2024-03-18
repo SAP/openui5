@@ -82,8 +82,7 @@ sap.ui.define([
 			renderMode: "{renderMode}",
 			width: "{width}",
 			displayOnly: "{displayOnly}"
-		})
-		.setModel(oModel);
+		});
 
 		var aColumns = [
 			new Column({
@@ -233,6 +232,7 @@ sap.ui.define([
 		});
 
 		var app = new App("myApp", { initialPage: "infoLabelPage" });
+		app.setModel(oModel);
 		app.placeAt("body");
 		app.addPage(initialPage);
 
