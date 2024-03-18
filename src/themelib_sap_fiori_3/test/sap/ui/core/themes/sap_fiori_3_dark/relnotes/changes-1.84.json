@@ -230,5 +230,15 @@
         ]
       }
     ]
+  },
+  "1.84.44": {
+    "date": "March 2024",
+    "notes": [
+      {
+        "id": "822e39c9e312f418043cad4b514de06cca0259e3",
+        "type": "FIX",
+        "text": " ColumnListItem: Adjust box-shadow in HCW theme"
+      }
+    ]
   }
 }
