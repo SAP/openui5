@@ -1111,14 +1111,27 @@ sap.ui.define([
 		oRankResult.value.forEach((oNode) => {
 			mPredicate2RankResult[getPredicate(oNode)] = oNode;
 		});
+		// all nodes are considered in place until they are found to still have the same parent
+		const oPredicatesNowInPlace = new Set(this.oTreeState.getOutOfPlacePredicates());
 
 		// import data
 		aNodeResults.forEach((oNodeResult) => {
 			oNodeResult.value.forEach((oNode) => {
 				const sPredicate = getPredicate(oNode);
+				oPredicatesNowInPlace.delete(sPredicate); // still the same parent
 				if (this.aElements.$byPredicate[sPredicate]) {
 					return; // already read with the in-place request
 				}
+				const sParentPredicate = this.oTreeState.getOutOfPlace(sPredicate).parentPredicate;
+				const oParent = mPredicate2RankResult[sParentPredicate];
+				if (oParent) { // parent has a rank
+					const sDrillState = _Helper.drillDown(oParent, this.oAggregation.$DrillState);
+					if (sDrillState === "collapsed") {
+						return; // parent is collapsed -> do not insert
+					}
+				} else if (sParentPredicate) { // parent has no rank
+					return; // do not insert
+				} // else: no parent (root) -> insert
 				_Helper.merge(oNode, mPredicate2RankResult[sPredicate]);
 				// Note: overridden by _AggregationCache.calculateKeyPredicateRH
 				this.oFirstLevel.calculateKeyPredicate(oNode, this.getTypes(), this.sMetaPath);
@@ -1126,6 +1139,8 @@ sap.ui.define([
 				this.insertNode(oNode, getRank(oNode));
 			});
 		});
+
+		oPredicatesNowInPlace.forEach((sPredicate) => this.oTreeState.deleteOutOfPlace(sPredicate));
 
 		this.oTreeState.getOutOfPlaceGroupedByParent().forEach((oOutOfPlace) => {
 			// move the out-of-place nodes in creation order
@@ -1419,8 +1434,6 @@ sap.ui.define([
 				if (bExpanded) {
 					this.expand(_GroupLock.$cached, sNodePredicate);
 				}
-			} else { // no longer child of its previous parent
-				this.oTreeState.deleteOutOfPlace(sNodePredicate);
 			}
 		});
 	};
