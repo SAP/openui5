@@ -13,6 +13,12 @@ sap.ui.define([
 		}
 	}
 
+	 function createsSandboxAttributesString(oAdvancedSettings) {
+		return Object.keys(oAdvancedSettings)
+		.filter((sKey) => oAdvancedSettings[sKey])
+		.join(" ");
+	}
+
 	/**
 	 * IFrame renderer.
 	 * @namespace
@@ -37,15 +43,13 @@ sap.ui.define([
 		oRm.style("display", "block");
 		oRm.style("border", "none");
 
-		oRm.attr("sandbox", "allow-forms allow-popups allow-scripts allow-same-origin allow-modals");
-
-		if (oIFrame.getUseLegacyNavigation()) {
-			oRm.attr("src", oIFrame.getUrl());
-		} else {
-			// With the new location.replace approach, the actual
-			// target url will be set onAfterRendering
-			oRm.attr("src", "about:blank");
-		}
+		const oAdvancedSettings = oIFrame.getAdvancedSettings();
+		const { additionalSandboxParameters: aAdditionalSandboxParameters, ...oFilteredAdvancedSettings } = oAdvancedSettings;
+		const sAdditionalSandboxParameters = aAdditionalSandboxParameters?.join(" ");
+		const sSandboxAttributes = createsSandboxAttributesString(oFilteredAdvancedSettings);
+		const sCombinedSandboxAttributes = sAdditionalSandboxParameters ? `${sSandboxAttributes} ${sAdditionalSandboxParameters}` : sSandboxAttributes;
+		oRm.attr("sandbox", sCombinedSandboxAttributes);
+		oRm.attr("src", "about:blank");
 
 		var sTitle = oIFrame.getTitle();
 		if (sTitle) {

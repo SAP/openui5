@@ -52,7 +52,10 @@ sap.ui.define([
 				height: sDefaultSize,
 				url: sOpenUI5Url,
 				_settings: {
-					url: sOpenUI5Url
+					url: sOpenUI5Url,
+					advancedSettings: {
+						additionalSandboxParameters: []
+					}
 				}
 			});
 
@@ -112,22 +115,35 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("when an useLegacyNavigation update is reverted", async function(assert) {
+		QUnit.test("when an advanced settings update is reverted", async function(assert) {
+			const oAdvancedSettings = {
+				additionalSandboxParameters: [],
+				"allow-forms": false,
+				"allow-popups": true,
+				"allow-scripts": true,
+				"allow-modals": true,
+				"allow-same-origin": true
+			};
 			UpdateIFrame.completeChangeContent(
 				this.oChange,
 				{
-					content: { useLegacyNavigation: true }
+					content: { advancedSettings: oAdvancedSettings }
 				},
 				mPropertyBag
 			);
 
 			await UpdateIFrame.applyChange(this.oChange, this.oIFrame, mPropertyBag);
-			await UpdateIFrame.revertChange(this.oChange, this.oIFrame, mPropertyBag);
+			assert.deepEqual(
+				this.oIFrame.getAdvancedSettings(),
+				oAdvancedSettings,
+				"then the advanced settings were set correctly"
+			);
 
-			assert.strictEqual(
-				this.oIFrame.getUseLegacyNavigation(),
-				false,
-				"then the useLegacyNavigation flag is the same as before"
+			await UpdateIFrame.revertChange(this.oChange, this.oIFrame, mPropertyBag);
+			assert.deepEqual(
+				this.oIFrame.getAdvancedSettings(),
+				{ additionalSandboxParameters: [] },
+				"then the advanced settings were reverted correctly"
 			);
 		});
 
@@ -200,48 +216,6 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		// DISABLE since I have a question about this test
-		// QUnit.test("when completeChangeContent & applyChange with XmlTreeModifier are called, and reverted later in XML and JS (on IFrame with binding)", function (assert) {
-		// 	this.myLayoutId = "myLayout";
-		// 	this.oLayout = new VerticalLayout(oComponent.createId(this.myLayoutId), {
-		// 		content : [this.oIFrame]
-		// 	});
-		// 	this.oIFrame.applySettings({
-		// 		url: sBoundUrl
-		// 	});
-		//
-		// 	var oDOMParser = new DOMParser();
-		// 	var oXmlString =
-		// 		"<mvc:View xmlns:mvc='sap.ui.core.mvc' xmlns:layout='sap.ui.layout' xmlns='sap.ui.fl.util'>" +
-		// 			"<layout:VerticalLayout id='" + this.oLayout.getId() + "'>" +
-		// 				"<layout:content>" +
-		// 					"<IFrame id='" + this.oIFrame.getId() + "' url='" + sBoundUrl + "'>" +
-		// 					"</IFrame>" +
-		// 				"</layout:content>" +
-		// 			"</layout:VerticalLayout>" +
-		// 		"</mvc:View>";
-		//
-		// 	var oXmlDocument = oDOMParser.parseFromString(oXmlString, "application/xml");
-		// 	this.oXmlView = oXmlDocument.documentElement;
-		// 	this.oXmlLayout = this.oXmlView.childNodes[0];
-		// 	this.oXmlIFrame = this.oXmlLayout.childNodes[0].childNodes[0];
-		//
-		// 	this.mSapUI5UrlChange.settings.url = sOpenUI5Url;
-		// 	UpdateIFrame.completeChangeContent(this.oChange, this.mSapUI5UrlChange, mPropertyBag);
-		// 	UpdateIFrame.applyChange(this.oChange, this.oXmlIFrame, {modifier: XmlTreeModifier});
-		// 	assert.equal(this.oXmlIFrame.getAttribute("url"), sOpenUI5Url, "then the iframe url changes");
-		// 	// On BaseRename, this throws an error, not here.
-		// 	UpdateIFrame.revertChange(this.oChange, this.oXmlIFrame, {modifier: XmlTreeModifier});
-		// 	assert.equal(this.oXmlIFrame.getAttribute("url"), sBoundUrl, "but it can be reverted");
-		//
-		// 	// the revert data are saved on the change; set button text also on button control
-		// 	this.oIFrame.setUrl(sOpenUI5Url);
-		// 	UpdateIFrame.revertChange(this.oChange, this.oIFrame, {modifier: JsControlTreeModifier});
-		// 	assert.equal(this.oButton.getUrl(), sSapUI5Url, "the url binding got reset and the value is correct");
-		//
-		// 	this.oLayout.destroy();
-		// });
-
 		QUnit.test("when completeChangeContent is called without a setting", function(assert) {
 			assert.throws(
 				UpdateIFrame.completeChangeContent.bind(this, this.oChange, {}, mPropertyBag),
@@ -256,8 +230,6 @@ sap.ui.define([
 				"then an error is thrown");
 		});
 	});
-
-	// TODO: Negative test to check if the error is properly raised when change is incomplete
 
 	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";

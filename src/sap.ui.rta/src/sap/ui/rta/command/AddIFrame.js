@@ -52,9 +52,9 @@ sap.ui.define([
 					type: "string",
 					group: "content"
 				},
-				useLegacyNavigation: {
-					type: "boolean",
-					defaultValue: false,
+				advancedSettings: {
+					type: "object",
+					defaultValue: {},
 					group: "content"
 				},
 				changeType: {

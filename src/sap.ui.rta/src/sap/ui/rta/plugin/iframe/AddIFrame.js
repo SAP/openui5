@@ -50,7 +50,7 @@ sap.ui.define([
 			width: sWidth,
 			height: sHeight,
 			title: mSettings.title,
-			useLegacyNavigation: mSettings.useLegacyNavigation
+			advancedSettings: mSettings.advancedSettings
 		}, oDesignTimeMetadata, sVariantManagementKey);
 	}
 

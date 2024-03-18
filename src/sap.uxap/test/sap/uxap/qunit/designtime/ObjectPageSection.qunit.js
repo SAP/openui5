@@ -276,10 +276,6 @@ sap.ui.define([
 			"someNewUrl",
 			"then the iframe url is updated"
 		);
-		assert.ok(
-			oIFrame.getUseLegacyNavigation(),
-			"then the legacy navigation flag is properly updated"
-		);
 	}
 
 	// Use elementActionTest to check if a new iFrame as Object Page Section is updated properly
@@ -314,8 +310,7 @@ sap.ui.define([
 					content: {
 						height: "100%",
 						url: "someNewUrl",
-						width: "100%",
-						useLegacyNavigation: true
+						width: "100%"
 					}
 				};
 			}

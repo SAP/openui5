@@ -3,9 +3,13 @@
  */
 
 sap.ui.define([
+	"sap/base/util/restricted/_isEqual",
+	"sap/base/util/deepClone",
 	"sap/ui/core/Element",
 	"sap/ui/rta/plugin/iframe/AddIFrameDialog"
 ], function(
+	_isEqual,
+	deepClone,
 	Element,
 	AddIFrameDialog
 ) {
@@ -31,7 +35,7 @@ sap.ui.define([
 			frameHeight: oInitialSettings.height,
 			title: oInitialSettings.title,
 			asContainer: !!oInitialSettings.title,
-			useLegacyNavigation: oInitialSettings.useLegacyNavigation,
+			advancedSettings: deepClone(oInitialSettings.advancedSettings),
 			updateMode: true
 		};
 		const mSettings = await oAddIFrameDialog.open(mDialogSettings, oIFrame);
@@ -44,7 +48,7 @@ sap.ui.define([
 			url: oInitialSettings.url,
 			height: oInitialSettings.height,
 			width: oInitialSettings.width,
-			useLegacyNavigation: oInitialSettings.useLegacyNavigation
+			advancedSettings: oInitialSettings.advancedSettings
 		};
 
 		if (mSettings.frameHeight + mSettings.frameHeightUnit !== oInitialSettings.height) {
@@ -59,9 +63,9 @@ sap.ui.define([
 			bContentChanged = true;
 			oNewContent.url = mSettings.frameUrl;
 		}
-		if (mSettings.useLegacyNavigation !== !!oInitialSettings.useLegacyNavigation) {
+		if (!_isEqual(mSettings.advancedSettings, oInitialSettings.advancedSettings)) {
 			bContentChanged = true;
-			oNewContent.useLegacyNavigation = mSettings.useLegacyNavigation;
+			oNewContent.advancedSettings = mSettings.advancedSettings;
 		}
 
 		if (bContentChanged) {
