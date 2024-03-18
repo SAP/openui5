@@ -65,7 +65,8 @@ sap.ui.define([
 		}
 
 		/**
-		 * Delete all tree state information for the given node.
+		 * Delete all tree state information for the given node and all known descendants. Expects
+		 * that the node is collapsed.
 		 *
 		 * @param {object} oNode - The node
 		 *
@@ -79,6 +80,9 @@ sap.ui.define([
 			const sPredicate = _Helper.getPrivateAnnotation(oNode, "predicate");
 			delete this.mPredicate2ExpandLevels[sPredicate];
 			this.deleteOutOfPlace(sPredicate);
+			_Helper.getPrivateAnnotation(oNode, "spliced", []).forEach((oChild) => {
+				this.delete(oChild);
+			});
 		}
 
 		/**
