@@ -801,7 +801,7 @@ sap.ui.define([
 	 * @since 1.34.1
 	 * @public
 	 */
-	Calendar.prototype.getStartDate = function(){
+	Calendar.prototype.getStartDate = function() {
 
 		var oStartDate;
 
@@ -832,7 +832,7 @@ sap.ui.define([
 		return this;
 	};
 
-	Calendar.prototype.setMonths = function(iMonths){
+	Calendar.prototype.setMonths = function(iMonths) {
 
 		this._bDateRangeChanged = undefined; // to force rerendering
 		this.setProperty("months", iMonths); // rerender
@@ -873,11 +873,14 @@ sap.ui.define([
 			aMonths[0].setProperty("date", null, true);
 		}
 
+		aMonths = this.getAggregation("month");
+		aMonths.forEach((oMonth) => oMonth.setProperty("_renderMonthWeeksOnly", iMonths > 1));
+
 		return this;
 
 	};
 
-	Calendar.prototype.setPrimaryCalendarType = function(sCalendarType){
+	Calendar.prototype.setPrimaryCalendarType = function(sCalendarType) {
 
 		var aMonths = this.getAggregation("month"),
 			oMonth,
