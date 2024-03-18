@@ -188,7 +188,7 @@ describe("sap.m.InputVisualTests", function() {
 			browser.actions().sendKeys(protractor.Key.BACK_SPACE).perform();
 
 			// Disabling tabular suggestion separators
-			browser.executeScript('sap.ui.getCore().byId("inputWithTabularSuggestionSeparators")._setSeparateSuggestions(false)');
+			browser.executeScript('sap.ui.core.Element.getElementById("inputWithTabularSuggestionSeparators")._setSeparateSuggestions(false)');
 
 			// Should not show suggestion separators
 			browser.actions().sendKeys("H").perform();

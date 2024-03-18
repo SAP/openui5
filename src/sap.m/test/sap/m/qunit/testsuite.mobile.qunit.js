@@ -634,17 +634,10 @@ sap.ui.define([
 				}
 			},
 			Input: {
-				title: "QUnit page for sap.m.Input",
-				sinon: {
-					version: 1, // fails with sinon 4
-					useFakeTimers: true
-				}
+				title: "QUnit page for sap.m.Input"
 			},
 			InputBase: {
-				title: "QUnit tests: sap.m.InputBase",
-				sinon: {
-					useFakeTimers: true
-				}
+				title: "QUnit tests: sap.m.InputBase"
 			},
 			"opa/input/InputTypeAheadOPA": {
 				title: "OPA Test Page for sap.m.Input",
