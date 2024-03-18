@@ -1,0 +1,12 @@
+{
+  "1.123.0": {
+    "date": "March 2024",
+    "notes": [
+      {
+        "id": "dce2ca3fd4ba116b9c141333acc045c9c0032cc6",
+        "type": "FIX",
+        "text": " mvc/Controller: Replace function call with apply"
+      }
+    ]
+  }
+}

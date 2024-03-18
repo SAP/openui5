@@ -1,0 +1,22 @@
+{
+  "1.123.0": {
+    "date": "March 2024",
+    "notes": [
+      {
+        "id": "b6b9af2648498e6596e332555e55dc4a6300aca5",
+        "type": "FIX",
+        "text": " sap.ui.integration.widgets.Card: Fixed circular dependency in Card.request"
+      },
+      {
+        "id": "b9b5d4f4c0e4b6593ba0377a5082a487e1c5a884",
+        "type": "FIX",
+        "text": " sap.f.cards.NumericHeader: Loading placeholder of subtitle and unit now covers content underneath"
+      },
+      {
+        "id": "336bea880d718d12f77d57fdfbb0a921e9f0200c",
+        "type": "FIX",
+        "text": " Integration Cards: Array parameter in data request no longer ends with undefined values"
+      }
+    ]
+  }
+}

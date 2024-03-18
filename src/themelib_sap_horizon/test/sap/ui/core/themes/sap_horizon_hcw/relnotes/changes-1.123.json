@@ -3,6 +3,31 @@
     "date": "March 2024",
     "notes": [
       {
+        "id": "ef8e14cd94a7728d087c80e295e9538b4ddf6794",
+        "type": "FIX",
+        "text": " sap.m.ShellBar: Visual fix"
+      },
+      {
+        "id": "a078c11556740aba467fddc39807f91d451cf440",
+        "type": "FIX",
+        "text": " sap.m.Slider: adjust sizings for all themes"
+      },
+      {
+        "id": "94526e3368d3066c82ceeed22f2097a6038ac8c6",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: Displayed correctly in footer when button mode is \"Split\""
+      },
+      {
+        "id": "af9ef4c46f1a4f78a0dd054bbbc4740f8b924630",
+        "type": "FIX",
+        "text": " sap.tnt.SideNavigation: Add proper bottom margin for all navigation list items"
+      },
+      {
+        "id": "3977fae58bf9e96a446b24dc5aedc46aee312fa2",
+        "type": "FEATURE",
+        "text": " sap.m.Menu, sap.ui.unified.Menu: added MenuItem shortcutText property"
+      },
+      {
         "id": "3a9d30bf74b770506c9f1213816e1f135d6a1cf5",
         "type": "FIX",
         "text": " ColumnListItem: Adjust box-shadow in HCW theme"

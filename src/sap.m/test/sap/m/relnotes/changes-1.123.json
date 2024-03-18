@@ -3,9 +3,76 @@
     "date": "March 2024",
     "notes": [
       {
+        "id": "626614ccf4aec0074b093d40630204db8197eb2e",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Button type change fixed"
+      },
+      {
+        "id": "a078c11556740aba467fddc39807f91d451cf440",
+        "type": "FIX",
+        "text": " sap.m.Slider: adjust sizings for all themes"
+      },
+      {
+        "id": "94526e3368d3066c82ceeed22f2097a6038ac8c6",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: Displayed correctly in footer when button mode is \"Split\""
+      },
+      {
+        "id": "072ca4966753ffffa73d1940a9dc18a278a06334",
+        "type": "FIX",
+        "text": " sap.m.Link: Is truncated correctly in sap.m.Table"
+      },
+      {
+        "id": "3977fae58bf9e96a446b24dc5aedc46aee312fa2",
+        "type": "FEATURE",
+        "text": " sap.m.Menu, sap.ui.unified.Menu: added MenuItem shortcutText property"
+      },
+      {
+        "id": "66cf63f3f51de9b070510af75feb7c3420addd52",
+        "type": "FIX",
+        "text": " sap.m.inputUtils.ListHelpers: Group items properly added",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "2579e1b3d724efa300a59691a7e95920683706b3",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Remove empty attributes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370142922"
+          }
+        ]
+      },
+      {
+        "id": "8652859c91e34dbce816c5786a39a203e763c726",
+        "type": "FIX",
+        "text": " sap.m.BreadCrumbs: Add 'tabindex' on the correct element"
+      },
+      {
+        "id": "3d8065549ee7aa843c8ae26d3a6f124c29bcf36d",
+        "type": "FEATURE",
+        "text": " sap.m.SinglePlanningCalendar: implemented Custom Content in Appointments"
+      },
+      {
         "id": "393fddeab52f7bdd0cf612689e27509e51c1b429",
         "type": "FIX",
         "text": " sap.m.RadioButtonGroup: Equalize width of single and multiple rows groups"
+      },
+      {
+        "id": "843746cc5c2db9ed075a71348796e8a04b8a5e1a",
+        "type": "FIX",
+        "text": " sap.m.Avatar: Acc sample improved"
+      },
+      {
+        "id": "8909b24120d97004f177154917a4b5fabe6bd01e",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Acc sample improved"
       }
     ]
   }

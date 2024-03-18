@@ -3,9 +3,9 @@
     "date": "March 2024",
     "notes": [
       {
-        "id": "305cb4b222a752b17e051b915c25930acde0bf88",
+        "id": "a078c11556740aba467fddc39807f91d451cf440",
         "type": "FIX",
-        "text": " sap.ui.unified.Calendar: remove extra week number"
+        "text": " sap.m.Slider: adjust sizings for all themes"
       },
       {
         "id": "3977fae58bf9e96a446b24dc5aedc46aee312fa2",
@@ -13,9 +13,9 @@
         "text": " sap.m.Menu, sap.ui.unified.Menu: added MenuItem shortcutText property"
       },
       {
-        "id": "dd249c855c6f80fb5b49d6606716972e9c85e772",
+        "id": "d2ac021c342dfe1cb54fa169fa31201357d0607b",
         "type": "FIX",
-        "text": " sap.ui.unified.Calendar: Loading calendar types in advance"
+        "text": " sap.m.IconTabBar: Adjust responsive paddings for Belize theme"
       }
     ]
   }

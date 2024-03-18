@@ -1,0 +1,27 @@
+{
+  "1.123.0": {
+    "date": "March 2024",
+    "notes": [
+      {
+        "id": "688a6346c5e4906f91db14ed07a269ddffa749e4",
+        "type": "FIX",
+        "text": " sap.f.Shellbar: FCL sample fixed"
+      },
+      {
+        "id": "e42248f958038165e6ddc6d36946e32a8d67584c",
+        "type": "FIX",
+        "text": " sap.f.ProductSwitchItem: Aria-checked attribute added"
+      },
+      {
+        "id": "86611cb03e4d28cda8543716985419e2bfb0988f",
+        "type": "FIX",
+        "text": " sap.f.GridContainer: Fix in focus handling for tiles"
+      },
+      {
+        "id": "b9b5d4f4c0e4b6593ba0377a5082a487e1c5a884",
+        "type": "FIX",
+        "text": " sap.f.cards.NumericHeader: Loading placeholder of subtitle and unit now covers content underneath"
+      }
+    ]
+  }
+}
