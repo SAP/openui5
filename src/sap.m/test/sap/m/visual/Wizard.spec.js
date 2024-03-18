@@ -121,28 +121,28 @@ describe("sap.m.Wizard", function() {
 
 	it("Should load test page with size S", function () {
 		browser.executeScript(function() {
-			sap.ui.getCore().byId("linear-wiz").setWidth("580px");
+			sap.ui.core.Element.getElementById("linear-wiz").setWidth("580px");
 		});
 		expect(takeScreenshot()).toLookAs("page-size-S");
 	});
 
 	it("Should load test page with size M", function () {
 		browser.executeScript(function() {
-			sap.ui.getCore().byId("linear-wiz").setWidth("1000px");
+			sap.ui.core.Element.getElementById("linear-wiz").setWidth("1000px");
 		});
 		expect(takeScreenshot()).toLookAs("page-size-M");
 	});
 
 	it("Should load test page with size L", function () {
 		browser.executeScript(function() {
-			sap.ui.getCore().byId("linear-wiz").setWidth("1430px");
+			sap.ui.core.Element.getElementById("linear-wiz").setWidth("1430px");
 		});
 		expect(takeScreenshot()).toLookAs("page-size-L");
 	});
 
 	it("Should load test page with size XL", function () {
 		browser.executeScript(function() {
-			sap.ui.getCore().byId("linear-wiz").setWidth("1500px");
+			sap.ui.core.Element.getElementById("linear-wiz").setWidth("1500px");
 		});
 		expect(takeScreenshot()).toLookAs("page-size-XL");
 	});
@@ -162,7 +162,7 @@ describe("sap.m.Wizard", function() {
 	it("changing the StepTitle should be reflected in the ProgressNavigator", function () {
 		element(by.id("fwd-wiz-sel")).click();
 		browser.executeScript(function() {
-			sap.ui.getCore().byId("linear-wiz-step1").setTitle("Test");
+			sap.ui.core.Element.getElementById("linear-wiz-step1").setTitle("Test");
 		});
 		expect(takeScreenshot(element(by.id("linear-wiz-progressNavigator")))).toLookAs("step-title-changed");
 	});
