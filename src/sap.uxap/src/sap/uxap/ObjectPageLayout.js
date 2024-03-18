@@ -1582,7 +1582,9 @@ sap.ui.define([
 
 		this.oAnchorbar = this._oABHelper._getAnchorBar();
 		this.oAnchorbarButtons = this.oAnchorbar.getAggregation("content");
-		this.oOPSections = this.getSections();
+		this.oOPSections = this.getSections().filter((section) =>
+			section.getAggregation("subSections").length !== 0
+		);
 
 		if (this.oAnchorbarButtons) {
 			this.oAnchorbarButtons.forEach((btn, index) => {
