@@ -3,6 +3,28 @@
     "date": "March 2024",
     "notes": [
       {
+        "id": "a48651955a56abf7ec746f7f2f0a8b5cfe788110",
+        "type": "FIX",
+        "text": " mvc/Controller: Replace function call with apply",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "801bfe2e82c374e9204af6a6547213c23747fe1d",
+        "type": "FIX",
+        "text": " sap.ui.core: Allow for async control event handlers",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
         "id": "071b1c5d2a47cd40cb4a718340049c8521606e94",
         "type": "FIX",
         "text": " sap.ui.model.type.Unit: amount scale is used instead of unit's decimal places"

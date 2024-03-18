@@ -3,6 +3,11 @@
     "date": "March 2024",
     "notes": [
       {
+        "id": "687115fe99cb8676234429640edfec49c2bfdbd7",
+        "type": "FIX",
+        "text": " sap.ui.integration.widgets.Card: Fixed circular dependency in Card.request"
+      },
+      {
         "id": "2e966d95c58457df2d4e266d6088e65b24da6747",
         "type": "FEATURE",
         "text": " Integration Cards: Added action button to the Analytical card popover"

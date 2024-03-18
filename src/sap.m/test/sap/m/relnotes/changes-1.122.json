@@ -3,6 +3,17 @@
     "date": "March 2024",
     "notes": [
       {
+        "id": "801bfe2e82c374e9204af6a6547213c23747fe1d",
+        "type": "FIX",
+        "text": " sap.ui.core: Allow for async control event handlers",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
         "id": "af133ee6706383d4dcd42540e8859f18af819793",
         "type": "FIX",
         "text": " sap.m.DynamicDateRange: ValueHelp is shown when interacting with keyboard"

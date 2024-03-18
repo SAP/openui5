@@ -1,0 +1,18 @@
+{
+  "1.122.0": {
+    "date": "March 2024",
+    "notes": [
+      {
+        "id": "801bfe2e82c374e9204af6a6547213c23747fe1d",
+        "type": "FIX",
+        "text": " sap.ui.core: Allow for async control event handlers",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      }
+    ]
+  }
+}
