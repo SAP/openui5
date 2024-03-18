@@ -528,21 +528,11 @@ sap.ui.define([
 
 	Column.prototype._readP13nValues = function() {
 		const oTable = this.getTable();
-		const vXConfig = oTable.getCurrentState().xConfig;
 		const sPropertyKey = this.getPropertyKey();
+		const oXConfig = oTable.getCurrentState().xConfig;
+		const oColumnConfig = oXConfig?.aggregations?.columns?.[sPropertyKey];
 
-		if (vXConfig instanceof Promise) {
-			vXConfig.then(this._readP13nValues.bind(this));
-			return;
-		}
-
-		const sWidth = vXConfig &&
-			vXConfig.aggregations &&
-			vXConfig.aggregations.columns &&
-			vXConfig.aggregations.columns[sPropertyKey] &&
-			vXConfig.aggregations.columns[sPropertyKey].width;
-
-		this._oSettingsModel.setProperty("/p13nWidth", sWidth);
+		this._oSettingsModel.setProperty("/p13nWidth", oColumnConfig?.width);
 	};
 
 	Column.prototype.getTable = function() {

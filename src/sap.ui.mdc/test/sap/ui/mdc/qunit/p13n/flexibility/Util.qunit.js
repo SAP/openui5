@@ -168,18 +168,28 @@ sap.ui.define([
         const oControl = new Control();
         oControl.placeAt("qunit-fixture");
 
-        const suppressSpy = sinon.spy(oControl.getUIArea(), "suppressInvalidationFor");
-        const resumeSpy = sinon.spy(oControl.getUIArea(), "resumeInvalidationFor");
+        const suppressSpy = sinon.stub(oControl.getUIArea(), "suppressInvalidationFor").callsFake(function() {
+            assert.step("suppressInvalidation");
+            return suppressSpy.wrappedMethod.apply(this, arguments);
+        });
+        const resumeSpy = sinon.stub(oControl.getUIArea(), "resumeInvalidationFor").callsFake(function() {
+            assert.step("resumeInvalidation");
+            resumeSpy.wrappedMethod.apply(this, arguments);
+            assert.ok(suppressSpy.calledOnceWithExactly(oControl), "Suspend has been called once with the correct agruments");
+            assert.ok(resumeSpy.calledOnceWithExactly(oControl), "Resume has been called once with the correct agruments");
+            assert.verifySteps(["suppressInvalidation", "onModifications", "resumeInvalidation"], "Execution order");
+            done();
+        });
 
         //Hook will be called once the changes are done processing --> check that each has been called once
         oControl._onModifications = function() {
-            assert.ok(suppressSpy.callCount, 1, "Suspend has been called once");
-            assert.ok(resumeSpy.callCount, 1, "Resume has been called once");
             Engine.getInstance().waitForChanges.restore();
-            done();
+            return Promise.resolve().then(() => {
+                assert.step("onModifications");
+            });
         };
 
-        sinon.stub(Engine.getInstance(), "waitForChanges").returns(Promise.resolve());
+        sinon.stub(Engine.getInstance(), "waitForChanges").resolves();
 
         const oChangeHandler = Util.createChangeHandler({
             apply: function() {
@@ -194,7 +204,6 @@ sap.ui.define([
             getChangeType: function() {},
             getContent: function() {}
         }, oControl);
-
     });
 
     QUnit.test("Check that #fireStateChange is executed after change processing", function(assert){
