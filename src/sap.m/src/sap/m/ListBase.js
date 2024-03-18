@@ -7,7 +7,6 @@ sap.ui.define([
 	"sap/base/i18n/Localization",
 	"sap/ui/core/ControlBehavior",
 	"sap/ui/core/RenderManager",
-	"sap/ui/events/KeyCodes",
 	"sap/ui/Device",
 	"sap/ui/core/Control",
 	"sap/ui/core/Element",
@@ -34,7 +33,6 @@ function(
 	Localization,
 	ControlBehavior,
 	RenderManager,
-	KeyCodes,
 	Device,
 	Control,
 	Element,
@@ -1657,7 +1655,7 @@ function(
 			oEvent.code == "Tab" ||
 			this.getMode() !== ListMode.MultiSelect ||
 			!oItem.isSelectable() ||
-			oEvent.which === KeyCodes.F6) {
+			oEvent.key === "F6") {
 			if (this._mRangeSelection) {
 				this._mRangeSelection = null;
 			}
@@ -1684,7 +1682,7 @@ function(
 
 	ListBase.prototype.onItemKeyUp = function(oItem, oEvent) {
 		// end of range selection when SHIFT key is released
-		if (oEvent.which === KeyCodes.SHIFT) {
+		if (oEvent.key === "Shift") {
 			this._mRangeSelection = null;
 		}
 	};
@@ -2350,7 +2348,7 @@ function(
 	ListBase.prototype.onsapshow = function(oEvent) {
 		// handle events that are only coming from navigation items and ignore F4
 		if (oEvent.isMarked() ||
-			oEvent.which == KeyCodes.F4 ||
+			oEvent.key == "F4" ||
 			oEvent.target.id != this.getId("trigger") &&
 			!jQuery(oEvent.target).hasClass(this.sNavItemClass)) {
 			return;
@@ -2405,10 +2403,12 @@ function(
 			if (oEvent.shiftKey) {
 				if (bClearAll) {
 					this.removeSelections(false, true);
+					oEvent.setMarked("sapMTableClearAll");
 				}
 			} else if (!bClearAll) {
 				if (this.isAllSelectableSelected()) {
 					this.removeSelections(false, true);
+					oEvent.setMarked("sapMTableClearAll");
 				} else {
 					this.selectAll(true);
 				}

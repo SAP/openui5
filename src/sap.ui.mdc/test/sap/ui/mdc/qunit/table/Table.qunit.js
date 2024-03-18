@@ -2388,7 +2388,7 @@ sap.ui.define([
 			assert.equal(this.oTable.getCellSelectorPluginOwner(), this.oTable._oTable, "The inner table is set as plugin owner for the CellSelector");
 			assert.ok(oCellSelector.getEnabled(), "CellSelector Plugin is enabled");
 			assert.ok(oCellSelector.isActive(), "CellSelector is active");
-			assert.ok(oCellSelector.getConfig("isSupported", this.oTable._oTable, oCellSelector), "CellSelector is supported for table");
+			assert.ok(oCellSelector.getConfig("isSupported", this.oTable._oTable, oCellSelector), "CellSelector is supported for grid table");
 
 			this.oTable.removeDependent(oCellSelector);
 			this.oTable.setType(TableType.ResponsiveTable);
@@ -2398,7 +2398,7 @@ sap.ui.define([
 				assert.equal(this.oTable.getCellSelectorPluginOwner(), this.oTable._oTable, "The inner table is set as plugin owner for the CellSelector");
 				assert.ok(oCellSelector.getEnabled(), "CellSelector Plugin is enabled");
 				assert.ok(oCellSelector.isActive(), "CellSelector is active");
-				assert.ok(!oCellSelector.getConfig("isSupported", this.oTable._oTable, oCellSelector), "CellSelector is not supported for table");
+				assert.ok(oCellSelector.getConfig("isSupported", this.oTable._oTable, oCellSelector), "CellSelector is supported for responsive table");
 
 				this.oTable.removeDependent(oCellSelector);
 			});
@@ -2414,7 +2414,7 @@ sap.ui.define([
 			assert.equal(oTable.getCellSelectorPluginOwner(), this.oTable._oTable, "The inner table is set as plugin owner for the CellSelector");
 			assert.ok(oCellSelector.getEnabled(), "CellSelector Plugin is enabled");
 			assert.ok(oCellSelector.isActive(), "CellSelector is active");
-			assert.ok(oCellSelector.getConfig("isSupported", this.oTable._oTable, oCellSelector), "CellSelector is supported for table");
+			assert.ok(oCellSelector.getConfig("isSupported", this.oTable._oTable, oCellSelector), "CellSelector is supported for grid table");
 
 			oTable.removeDependent(oCellSelector);
 			oTable.setType(TableType.ResponsiveTable);
@@ -2424,7 +2424,7 @@ sap.ui.define([
 				assert.equal(oTable.getCellSelectorPluginOwner(), this.oTable._oTable, "The inner table is set as plugin owner for the CellSelector");
 				assert.ok(oCellSelector.getEnabled(), "CellSelector Plugin is enabled");
 				assert.ok(oCellSelector.isActive(), "CellSelector is active");
-				assert.ok(!oCellSelector.getConfig("isSupported", this.oTable._oTable, oCellSelector), "CellSelector is not supported for table");
+				assert.ok(oCellSelector.getConfig("isSupported", this.oTable._oTable, oCellSelector), "CellSelector is supported for responsive table");
 
 				this.oTable.removeDependent(oCellSelector);
 			});
@@ -2433,7 +2433,6 @@ sap.ui.define([
 
 	QUnit.test("CellSelector - rowPress event", async function(assert) {
 		const oCellSelector = new CellSelector();
-		const oRemoveSelectionStub = sinon.spy(oCellSelector, "removeSelection");
 
 		this.oTable.destroy();
 		this.oTable = new Table({
@@ -2470,6 +2469,7 @@ sap.ui.define([
 		oCellSelector._bSelecting = true;
 		const oCell = this.oTable._oTable.getRows()[0].getCells()[0].$().parents("td")[0];
 
+		const oRemoveSelectionStub = sinon.spy(oCellSelector, "removeSelection");
 		QUtils.triggerKeydown(oCell, KeyCodes.A, true, false, true);
 		assert.ok(oRemoveSelectionStub.calledOnce, "Cells are removed.");
 		assert.deepEqual(oCellSelector.getSelectionRange(), null);

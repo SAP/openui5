@@ -12,10 +12,8 @@ sap.ui.define([
 	"use strict";
 
 	const ListMode = library.ListMode;
-	const RESPONSIVETABLE_ENABLED = new URLSearchParams(window.location.search).get("sap-ui-xx-cellSelectionMTable") === "true";
-	const DELAY_SHORT = 250; //TBD Are 2 different delays necessary?
+	const DELAY_SHORT = 250; //TBD: Are 2 different delays necessary?
 	const DELAY_LONG  = DELAY_SHORT * 2;
-
 	const DIRECTION = {
 		ROW: "row",
 		COL: "col"
@@ -27,7 +25,7 @@ sap.ui.define([
 		 */
 		Cell: "Cell",
 		/**
-		 * Cells that are not "normal" and could require special handling or look different.
+		 * Cells that require special handling or look different.
 		 */
 		Other: "Other",
 		/**
@@ -46,14 +44,15 @@ sap.ui.define([
 	 * The <code>CellSelector</code> plugin enables cell selection inside the table when it is added as a dependent to the control.
 	 * It allows the user to individually select a cell block.
 	 *
-	 * The <code>CellSelector</code> plugin currently does not offer touch support.
+	 * Currently, the <code>CellSelector</code> plugin does not offer touch support.
 	 *
-	 * The <code>CellSelector</code> plugin cannot be used if the following applies:
+	 * The <code>CellSelector</code> plugin can be used with the {@link sap.ui.table.Table} and {@link sap.m.Table} unless the following applies:
 	 * <ul>
 	 * 	<li>Drag for rows is active</li>
-	 * 	<li>The target control is not a {@link sap.ui.table.Table}</li>
-	 *	<li>If used in combination with {@link sap.ui.table.Table#cellClick}</li>
-	 *	<li>If used in combination with the following selection behavior: <code>sap.ui.table.SelectionBehavior.RowOnly</code> and <code>sap.ui.table.SelectionBehavior.Row</code>
+	 *	<li>If used in combination with {@link sap.ui.table.Table#cellClick} or {@link sap.m.Table#itemPress}</li>
+	 *	<li>If the <code>sap.ui.table.SelectionBehavior.RowOnly</code> or <code>sap.ui.table.SelectionBehavior.Row</code> selection behavior is used
+	 * in the <code>sap.ui.table.Table</code></li>
+	 * 	<li>If the <code>sap.m.ListType.SingleSelectMaster</code> mode is used in the <code>sap.m.Table</code></li>
 	 * </ul>
 	 *
 	 * When the <code>CellSelector</code> is used in combination with the {@link sap.ui.mdc.Table}, modifying the following settings on the {@link sap.ui.mdc.Table} may lead to problems:
@@ -67,7 +66,6 @@ sap.ui.define([
 	 * @author SAP SE
 	 *
 	 * @public
-	 * @experimental Since 1.119. This class is experimental. The API might be changed in the future.
 	 * @since 1.119
 	 * @alias sap.m.plugins.CellSelector
 	 * @borrows sap.m.plugins.PluginBase.findOn as findOn
@@ -77,7 +75,7 @@ sap.ui.define([
 			library: "sap.m",
 			properties: {
 				/**
-				 * For the {@link sap.ui.table.Table} control, defines the number of row contexts that needs to be retrived from the binding
+				 * Defines the number of row contexts for the {@link sap.ui.table.Table} control that need to be retrieved from the binding
 				 * when the range selection (e.g. enhancing the cell selection block to cover all rows of a column) is triggered by the user.
 				 * This helps to make the contexts already available for the user actions after the cell selection (e.g. copy to clipboard).
 				 * This property accepts positive integer values.
@@ -118,12 +116,12 @@ sap.ui.define([
 	 * Consists of a row index and a column index describing the position of the cell in the table.
 	 * @private
 	 * @typedef {object} sap.m.plugins.CellSelector.CellPosition
-	 * @property {number} rowIndex row index of the cell
-	 * @property {number} colIndex column index of the cell
+	 * @property {number} rowIndex Row index of the cell
+	 * @property {number} colIndex Column index of the cell
 	 */
 
 	/**
-	 * Event Delegate that containts events, that need to be executed after control events.
+	 * Delegate containing events that are fired after control events.
 	 */
 	const EventDelegate = {
 		onkeydown: function(oEvent) {
@@ -145,13 +143,13 @@ sap.ui.define([
 	};
 
 	/**
-	 * Delegate containing events, that need to be processed before control events.
+	 * Delegate containing events that are fired before control events.
 	 */
 	const PriorityDelegate = {
 		onBeforeRendering: function() {
 			this._iBtt = this.getConfig("isBottomToTop", this.getControl()) ? -1 : 1;
 			if (this._oResizer) {
-				// remove resizer, as due to rerendering table element may be gone
+				// Remove resizer, as due to rerendering table element may be gone
 				this._oResizer.remove();
 				this._oResizer = null;
 			}
@@ -173,7 +171,7 @@ sap.ui.define([
 		},
 		onsapspace: function(oEvent) {
 			if (isSelectableCell(oEvent.target, this.getConfig("selectableCells"))) {
-				oEvent.preventDefault(); // prevent event otherwise m.Table will scroll
+				oEvent.preventDefault(); // Prevent default, otherwise m.Table will scroll
 			}
 		},
 		onsapleftmodifiers: function(oEvent) {
@@ -207,7 +205,7 @@ sap.ui.define([
 				this._startSelection(oEvent, false);
 				oEvent.setMarked();
 			} else if (isKeyCombination(oEvent, KeyCodes.SPACE, true, false)) {
-				var oInfo = this.getConfig("getCellInfo", this.getControl(), oEvent.target, this._oPreviousCell);
+				const oInfo = this.getConfig("getCellInfo", this.getControl(), oEvent.target, this._oPreviousCell);
 				if (!this._inSelection(oEvent.target)) {
 					mBounds.from = mBounds.to = {};
 					mBounds.from.rowIndex = mBounds.to.rowIndex = oInfo.rowIndex;
@@ -220,7 +218,7 @@ sap.ui.define([
 			} else if (isKeyCombination(oEvent, KeyCodes.SPACE, false, true) && this._getSelectableCell(oEvent.target)) {
 				if (!this._inSelection(oEvent.target)) {
 					// If focus is on cell outside of selection, select focused column
-					var oInfo = this.getConfig("getCellInfo", this.getControl(), oEvent.target, this._oPreviousCell);
+					const oInfo = this.getConfig("getCellInfo", this.getControl(), oEvent.target, this._oPreviousCell);
 					mBounds.from = Object.assign({}, oInfo);
 					mBounds.to = Object.assign({}, oInfo);
 				}
@@ -238,15 +236,18 @@ sap.ui.define([
 				return;
 			}
 
-			if (oEvent.ctrlKey || oEvent.metaKey) {
-				this._startSelection(oEvent);
-			}
-
 			var oSelectableCell = this._getSelectableCell(oEvent.target);
 			if (oSelectableCell) {
 				this._bMouseDown = true;
 				this._mClickedCell = this.getConfig("getCellInfo", this.getControl(), oSelectableCell, this._oPreviousCell);
 				this._oPreviousCell = this._mClickedCell;
+			}
+
+			if (oEvent.ctrlKey || oEvent.metaKey) {
+				this._startSelection(oEvent);
+				if (this._mClickedCell) {
+					this.getConfig("focusCell", this.getControl(), this._mClickedCell);
+				}
 			}
 		},
 		onmouseup: function(oEvent) {
@@ -258,7 +259,15 @@ sap.ui.define([
 			this._oPreviousCell = undefined;
 			this._mTempCell = undefined;
 			this._oHoveredCell = undefined;
+			this._endSelection(oEvent);
 			this._clearScroller();
+			setTimeout(() => { this._startTarget = null; }, 0);
+		},
+		onclick: function(oEvent) {
+			var oTarget = this._getSelectableCell(oEvent.target);
+			if (oTarget && this._startTarget === oTarget) {
+				oEvent.stopPropagation();
+			}
 		}
 	};
 
@@ -276,6 +285,9 @@ sap.ui.define([
 		this.removeSelection();
 	};
 
+	/**
+	 * @inheritDoc
+	 */
 	CellSelector.prototype.onActivate = function (oControl) {
 		oControl.addDelegate(PriorityDelegate, true, this);
 		oControl.addDelegate(EventDelegate, false, this);
@@ -298,13 +310,17 @@ sap.ui.define([
 		this._fnOnMouseOut = this._onmouseout.bind(this);
 		this._fnOnMouseMove = this._onmousemove.bind(this);
 		this._fnOnMouseUp = PriorityDelegate.onmouseup.bind(this);
+		this._fnOnClick = PriorityDelegate.onclick.bind(this);
 		this._fnRemoveSelection = this.removeSelection.bind(this);
 
-		// Register Events, as adding dependent does not trigger rerendering
+		// Register Events as adding dependent does not trigger rerendering
 		this._registerEvents();
 		this._onSelectableChange();
 	};
 
+	/**
+	 * @inheritDoc
+	 */
 	CellSelector.prototype.onDeactivate = function (oControl) {
 		oControl.removeDelegate(PriorityDelegate, this);
 		oControl.removeDelegate(EventDelegate, this);
@@ -331,10 +347,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Determines whether cells are selectable or not.
+	 * Determines whether cells are selectable.
 	 *
 	 * @private
-	 * @returns {boolean} Whether cells are selectable or not
+	 * @returns {boolean} Whether cells are selectable
 	 * @ui5-restricted sap.m.plugins.CopyProvider
 	 */
 	CellSelector.prototype.isSelectable = function() {
@@ -342,10 +358,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Determines whether there is a cell selection or not.
+	 * Determines whether there is a cell selection.
 	 *
 	 * @private
-	 * @returns {boolean} Whether there is a cell selection or not
+	 * @returns {boolean} Whether there is a cell selection
 	 * @ui5-restricted sap.m.plugins.CopyProvider
 	 */
 	CellSelector.prototype.hasSelection = function() {
@@ -366,11 +382,13 @@ sap.ui.define([
 		if (oControl) {
 			this.getConfig("scrollEvent") && oControl.attachEvent(this.getConfig("scrollEvent"), this._fnControlUpdate);
 			this.getConfig("attachSelectionChange", oControl, this._fnRemoveSelection);
+			this.getConfig("attachBindingUpdate", oControl, this);
 			var oScrollArea = oControl.getDomRef(this.getConfig("scrollArea"));
 			if (oScrollArea) {
 				oScrollArea.addEventListener("mouseleave", this._fnOnMouseOut);
 				oScrollArea.addEventListener("mouseenter", this._fnOnMouseEnter);
 				oScrollArea.addEventListener("mousemove", this._fnOnMouseMove);
+				oScrollArea.addEventListener("click", this._fnOnClick);
 			}
 		}
 		document.addEventListener("mouseup", this._fnOnMouseUp);
@@ -381,11 +399,13 @@ sap.ui.define([
 		if (oControl) {
 			oControl.detachEvent(this.getConfig("scrollEvent"), this._fnControlUpdate);
 			this.getConfig("detachSelectionChange", oControl, this._fnRemoveSelection);
+			this.getConfig("detachBindingUpdate", oControl, this._fnOnBindingUpdate);
 			var oScrollArea = oControl.getDomRef(this.getConfig("scrollArea"));
 			if (oScrollArea) {
 				oScrollArea.removeEventListener("mouseleave", this._fnOnMouseOut);
 				oScrollArea.removeEventListener("mouseenter", this._fnOnMouseEnter);
 				oScrollArea.removeEventListener("mousemove", this._fnOnMouseMove);
+				oScrollArea.removeEventListener("click", this._fnOnClick);
 			}
 		}
 		document.removeEventListener("mouseup", this._fnOnMouseUp);
@@ -395,9 +415,8 @@ sap.ui.define([
 	 * Returns the cell selection range.
 	 * The value <code>Infinity</code> in <code>rowIndex</code> indicates that the limit is reached.
 	 *
-	 * <b>Note</b>: This method is subject to change.
 	 * @param {boolean} bIgnore Ignore group header rows within selection range
-	 * @returns {{from: {rowIndex: int, colIndex: int}, to: {rowIndex: int, colIndex: int}}  The range of the selection
+	 * @returns {object} {{from: {rowIndex: int, colIndex: int}, to: {rowIndex: int, colIndex: int}} The selection range
 	 * @ui5-restricted sap.m.plugins.CopyProvider
 	 * @private
 	 */
@@ -435,7 +454,6 @@ sap.ui.define([
 	/**
 	 * Returns the row binding context of the current selection.
 	 *
-	 * Note: This method is subject to change.
 	 * @returns {sap.ui.model.Context[]} The binding context of selected rows
 	 * @private
 	 * @ui5-restricted sap.m.plugins.CopyProvider
@@ -450,7 +468,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the selected cells separated into the selected rows and columns.
+	 * Returns the selected cells separated into selected rows and columns.
 	 *
 	 * Example:
 	 * If the cells from (0, 0) to (2, 4) are selected, this method will return the following object:
@@ -466,8 +484,8 @@ sap.ui.define([
 	 *
 	 * @param {boolean} bIgnore Ignores group headers from selection
 	 * @returns {sap.m.plugins.CellSelector.Selection} An object containing the selected cells separated into rows and columns
-	 * @private
-	 * @ui5-restricted sap.fe, sap.suite.ui.generic.template
+	 * @public
+	 * @since 1.124
 	 */
 	CellSelector.prototype.getSelection = function(bIgnore) {
 		var mSelectionRange = this.getSelectionRange();
@@ -523,6 +541,10 @@ sap.ui.define([
 
 		var oInfo = this.getConfig("getCellInfo", this.getControl(), oSelectableCell, this._oPreviousCell);
 
+		if (oInfo.rowIndex < 0 || oInfo.colIndex < 0) {
+			return;
+		}
+
 		if (!this._inSelection(oEvent.target) || !this._oSession.mSource || !this._oSession.mTarget) {
 			if (this.getConfig("isRowSelected", this.getControl(), oInfo.rowIndex)) {
 				return;
@@ -562,11 +584,12 @@ sap.ui.define([
 	};
 
 	/**
-	 * Event handler for mouse movement. Handles mouse movement during cell selection. Takes on tasks like:
+	 * Event handler for <code>mousemove</code>. Handles <code>mousemove</code> event during cell selection. Takes on tasks like:
 	 * - updating resizer positions
 	 * - mouse selection via cell click and move
 	 * - selection enhancement via border and edge
-	 * @param {sap.ui.base.Event} oEvent event
+	 * @param {jQuery.Event} oEvent The mouse event
+	 * @private
 	 */
 	CellSelector.prototype._onmousemove = function(oEvent) {
 		function select() {
@@ -590,7 +613,8 @@ sap.ui.define([
 			this._oHoveredCell = oInfo;
 		}
 
-		// Only update the resizer, if we are selecting and the border is not pressed. During border/edge pressing, don't update it
+
+		// Only update the resizer if during selection the border is not pressed
 		if (this._bSelecting && !this._bMouseDown && this._bRenderResizer) {
 			const mBounds = this._getNormalizedBounds(this._oSession.mSource, this._oSession.mTarget);
 			this._updateResizers(mBounds, oEvent.clientX, oEvent.clientY);
@@ -598,20 +622,24 @@ sap.ui.define([
 
 		var oSelectableCell = this._getSelectableCell(oEvent.target);
 		if (!oSelectableCell || !this._bMouseDown) {
-			// if mouse is not down/target is not a cell, we should not execute selection logic
+			// Selection logic should not execute if mouse is not down or target is not a cell
 			return;
 		}
 
 		clearTimeout(this._iTimer);
-		oEvent.stopImmediatePropagation(); // stop propagation to surpress other mechanisms such as column resizing
+		oEvent.stopImmediatePropagation(); // Stop propagation to surpress other actions such as column resizing
 
 		var oInfo = this.getConfig("getCellInfo", this.getControl(), oSelectableCell, this._oPreviousCell);
+		if (oInfo.rowIndex < 0 || oInfo.colIndex < 0) {
+			return;
+		}
+
 		const bClickedHovered = oInfo.rowIndex == this._oPreviousCell?.rowIndex && oInfo.colIndex == this._oPreviousCell?.colIndex;
 		if (bClickedHovered || oInfo.type == CellType.Ignore) {
 			return;
 		}
 
-		// If previously hovered cell is the same as the currently hovered one, do not execute anything. Only do this in case the hovered one is of category Other.
+		// If previously hovered cell is the same as the currently hovered one, do not execute anything (except the hovered cell is of type Other.
 		if (oInfo.type == CellType.Other && this._oHoveredCell?.rowIndex == oInfo.rowIndex && this._oHoveredCell?.colIndex == oInfo.colIndex) {
 			return;
 		}
@@ -647,7 +675,12 @@ sap.ui.define([
 		}
 	};
 
-	/** Event Handler for Mouse Selection (leaving table, etc.) */
+	/**
+	 * Event handler for mouse selection (leaving table, etc.)
+	 *
+	 * @param {jQuery.Event} oEvent The mouse event
+	 * @private
+	 */
 	CellSelector.prototype._onmouseout = function(oEvent) {
 		var oScrollAreaRef = this.getControl().getDomRef(this.getConfig("scrollArea"));
 
@@ -723,13 +756,14 @@ sap.ui.define([
 		this._oSession.border = Object.assign({}, this._oCurrentBorder);
 		this._bBorderDown = true;
 		this._bMouseDown = true;
-		// TODO: when borderdown, make "border" active
+		// TODO: When borderdown, make "border" active
 	};
 
 	/**
-	 * Checks if the given DOM reference is a selectable cell.
-	 * @param {HTMLELement} oDomRef
-	 * @returns {HTMLELement|null}
+	 * For a given DOM reference it returns the closest selectable cell.
+	 * @param {HTMLELement} oDomRef DOM reference
+	 * @returns {HTMLELement|null} Selectable cell DOM reference
+	 * @private
 	 */
 	 CellSelector.prototype._getSelectableCell = function (oDomRef) {
 		if (!oDomRef) {
@@ -764,6 +798,14 @@ sap.ui.define([
 			return;
 		}
 
+		if (!this._bSelectionInProgress) {
+			this.getConfig("onSelectionStart", this.getControl(), oEvent);
+			this._bSelectionInProgress = true;
+			if (this._oPreviousCell) {
+				this._startTarget = this.getConfig("getCellRef", this.getControl(), this._oPreviousCell);
+			}
+		}
+
 		if (this._inSelection(oTarget) && !bMove) {
 			this.removeSelection();
 		} else {
@@ -780,8 +822,26 @@ sap.ui.define([
 		oEvent.setMarked && oEvent.setMarked();
 	};
 
+	CellSelector.prototype._endSelection = function(oEvent) {
+		if (!this._bSelectionInProgress) {
+			return;
+		}
+		this._bSelectionInProgress = false;
+
+		var oTarget = this._getSelectableCell(oEvent.target);
+		if (!oTarget) {
+			return;
+		}
+
+		this.getConfig("onSelectionEnd", this.getControl(), oEvent);
+	};
+
 	/**
 	 * Selects the next cells in a specific direction (ROW, COL).
+	 * @param iRowDiff {int}
+	 * @param iColDiff {int}
+	 * @param mOldFocus {object}
+	 * @returns {object} The updated bounding
 	 * @private
 	 */
 	CellSelector.prototype._getUpdatedBounds = function(iRowDiff, iColDiff, mOldFocus) {
@@ -823,8 +883,8 @@ sap.ui.define([
 	 * a) source cell to target cell or
 	 * b) source cell to current lower right cell.
 	 * The bigger bounding box of the two will be inspected.
-	 * @param {sap.m.plugins.CellSelector.CellPosition} mFrom source cell coordinates
-	 * @param {sap.m.plugins.CellSelector.CellPosition} mTo target cell coordinates
+	 * @param {sap.m.plugins.CellSelector.CellPosition} mFrom Source cell coordinates
+	 * @param {sap.m.plugins.CellSelector.CellPosition} mTo Target cell coordinates
 	 * @private
 	 */
 	CellSelector.prototype._selectCells = function (mFrom, mTo) {
@@ -970,8 +1030,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Retrieves the resizer element. If none is existent, creates an element.
-	 * @returns {HTMLELement} resizer element
+	 * Retrieves the resizer element. If none exists, creates an element.
+	 * @returns {HTMLELement} Resizer element
+	 * @private
 	 */
 	CellSelector.prototype._getResizer = function() {
 		if (!this._oResizer) {
@@ -1000,15 +1061,12 @@ sap.ui.define([
 
 	/**
 	 * Returns an object containing normalized coordinates for the given bounding area.
-	 * <code>from</code> will contain the coordinates for the upper left corner of the bounding area,
-	 * while <code>to</code> contains the coordinates of the lower right corner of the bounding area.
-	 * @param {Object} mFrom
-	 * @param {int} mFrom.rowIndex row index
-	 * @param {int} mFrom.colIndex column index
-	 * @param {Object} mTo
-	 * @param {int} mTo.rowIndex row index
-	 * @param {int} mTo.colIndex column index
-	 * @returns object containing coordinates for from and to
+	 * <code>from</code> contains the coordinates for the upper left corner of the bounding area,
+	 * <code>to</code> contains the coordinates of the lower right corner of the bounding area.
+	 * @param {Object} mFrom Source cell coordinates
+	 * @param {Object} mTo Target cell coordinates
+	 * @param {boolean} bKeepBounds
+	 * @returns {object} Object containing coordinates for the bounding area
 	 */
 	CellSelector.prototype._getNormalizedBounds = function(mFrom, mTo, bKeepBounds) {
 		const iMaxColumns = this.getConfig("numberOfColumns", this.getControl());
@@ -1059,22 +1117,24 @@ sap.ui.define([
 	}
 
 	/**
-	 * Check if the given key combination applies to the event.
-	 * @param {sap.ui.base.Event} oEvent event instance
-	 * @param {string} sKeyCode key code
-	 * @param {boolean} bShift shift key pressed
-	 * @param {boolean} bCtrl control key pressed
-	 * @returns is combination or not
+	 * Checks whether the key press event is a key combination.
+	 *
+	 * @param {sap.ui.base.Event} oEvent The keyboard event
+	 * @param {string} sKeyCode Key code
+	 * @param {boolean} bShift Shift key pressed
+	 * @param {boolean} bCtrl Control key pressed
+	 * @returns {boolean} Whether the key press event is a key combination
+	 * @private
 	 */
 	function isKeyCombination(oEvent, sKeyCode, bShift, bCtrl) {
 		return oEvent.keyCode == sKeyCode && oEvent.shiftKey == bShift && (oEvent.ctrlKey == bCtrl || oEvent.metaKey == bCtrl);
 	}
 
 	/**
-	 * Checks if drag on the rows/items aggregation is activated.
-	 * @param {sap.ui.core.Control} oControl control to be checked
-	 * @param {string} sAffectedAggregation name of the aggregation which is affected by D&D
-	 * @returns {boolean} whether drag on rows is enabled
+	 * Checks whether drag on the rows/items aggregation is activated.
+	 * @param {sap.ui.core.Control} oControl Control to be checked
+	 * @param {string} sAffectedAggregation Name of the aggregation which is affected by D&D
+	 * @returns {boolean} Whether drag on rows is enabled
 	 */
 	function hasDragEnabled(oControl, sAffectedAggregation) {
 		return oControl.getDragDropConfig().some((oConfig) => oConfig.getSourceAggregation?.() == sAffectedAggregation && oConfig.getEnabled());
@@ -1091,8 +1151,8 @@ sap.ui.define([
 				oTable.attachEvent("EventHandlerChange", oPlugin, this._onEventHandlerChange);
 			},
 			onDeactivate: function(oTable, oPlugin) {
-				oTable.detachEvent("_change", oPlugin, this._onPropertyChange);
-				oTable.detachEvent("EventHandlerChange", oPlugin, this._onEventHandlerChange);
+				oTable.detachEvent("_change", this._onPropertyChange);
+				oTable.detachEvent("EventHandlerChange", this._onEventHandlerChange);
 			},
 			_onPropertyChange: function(oEvent, oPlugin) {
 				oEvent.getParameter("name") == "selectionBehavior" && oPlugin._onSelectableChange();
@@ -1101,9 +1161,9 @@ sap.ui.define([
 				oEvent.getParameter("EventId") == "cellClick" && oPlugin._onSelectableChange();
 			},
 			/**
-			 * Checks if the table is compatible with cell selection.
-			 * @param {sap.ui.table.Table} oTable table instance
-			 * @returns {boolean} compatibility with cell selection
+			 * Checks whether the table is compatible with cell selection.
+			 * @param {sap.ui.table.Table} oTable Table instance
+			 * @returns {boolean} Compatibility with cell selection
 			 */
 			isSupported: function(oTable, oPlugin) {
 				return !oTable.hasListeners("cellClick")
@@ -1114,9 +1174,9 @@ sap.ui.define([
 				return false;
 			},
 			/**
-			 * Get visible columns of the table.
-			 * @param {sap.ui.table.Table} oTable table instance
-			 * @returns {sap.ui.table.Column[]} array of visible columns
+			 * Returns the visible columns of the table.
+			 * @param {sap.ui.table.Table} oTable Table instance
+			 * @returns {sap.ui.table.Column[]} Array of visible columns
 			 */
 			getVisibleColumns: function (oTable) {
 				return oTable.getColumns().filter(function (oColumn) {
@@ -1125,9 +1185,9 @@ sap.ui.define([
 			},
 			/**
 			 * Retrieve the number of visible columns in the table.
-			 * @param {sap.ui.table.Table} oTable table instance
-			 * @param {boolean} bIncludeSpecial include special columns, e.g. such as popins as separate columns
-			 * @returns {number} number of columns
+			 * @param {sap.ui.table.Table} oTable Table instance
+			 * @param {boolean} bIncludeSpecial Include special columns as separate columns
+			 * @returns {number} Number of columns
 			 */
 			numberOfColumns: function(oTable, bIncludeSpecial) {
 				return this.getVisibleColumns(oTable).length;
@@ -1139,6 +1199,7 @@ sap.ui.define([
 			 * Retrieve the cell reference for a given position
 			 * @param {sap.ui.table.Table} oTable table instance
 			 * @param {sap.m.plugins.CellSelector.CellPosition} mPosition position of cell
+			 * @param {boolean} bRange
 			 * @returns {HTMLElement|undefined} cell's DOM element or undefined if the row or column index are invalid
 			 */
 			getCellRef: function (oTable, mPosition, bRange) {
@@ -1153,9 +1214,9 @@ sap.ui.define([
 			},
 			/**
 			 * Retrieve cell information for a given DOM element.
-			 * @param {sap.ui.table.Table} oTable table instance
-			 * @param {HTMLElement} oTarget DOM element of cell
-			 * @returns {object} cell information containing rowIndex, colIndex and type of the cell
+			 * @param {sap.ui.table.Table} oTable Table instance
+			 * @param {HTMLElement} oTarget DOM reference of cell
+			 * @returns {object} Cell information containing rowIndex, colIndex and cell type
 			 */
 			getCellInfo: function (oTable, oTarget) {
 				return {
@@ -1166,9 +1227,9 @@ sap.ui.define([
 			},
 			/**
 			 * Returns the cell type of the given target cell.
-			 * @param {sap.ui.table.Table} oTable table instance
-			 * @param {HTMLELement} oTarget cell reference
-			 * @returns {string} cell type
+			 * @param {sap.ui.table.Table} oTable Table instance
+			 * @param {HTMLELement} oTarget Cell reference
+			 * @returns {string} Cell type
 			 */
 			getCellType: function(oTable, oTarget) {
 				const oRow = Element.closestTo(oTarget, true);
@@ -1201,11 +1262,12 @@ sap.ui.define([
 				return aContexts;
 			},
 			/**
-			 * Select rows beginning at iFrom to iTo.
+			 * Selects the rows with indices between iFrom and iTo.
 			 * @param {sap.ui.table.Table} oTable The table instance
-			 * @param {int} iFrom starting row index
-			 * @param {int} iTo ending row index
-			 * @param {int} mFocus focused row index
+			 * @param {int} iFrom Start row index
+			 * @param {int} iTo End row index
+			 * @param {int} iFocus Focused row index
+			 * @returns {boolean} Returns true if the selection was successful
 			 */
 			selectRows: function(oTable, iFrom, iTo, iFocus) {
 				var oSelectionOwner = this._getSelectionOwner(oTable);
@@ -1241,9 +1303,9 @@ sap.ui.define([
 			},
 			/**
 			 * Checks if the given row is selected.
-			 * @param {sap.ui.table.Table} oTable table instance
-			 * @param {number|sap.ui.table.Row} vRow either row index or row instance
-			 * @returns {boolean} selection state
+			 * @param {sap.ui.table.Table} oTable Table instance
+			 * @param {number|sap.ui.table.Row} vRow Either row index or row instance
+			 * @returns {boolean} Selection state
 			 */
 			isRowSelected: function(oTable, vRow) {
 				var oSelectionOwner = this._getSelectionOwner(oTable);
@@ -1300,6 +1362,18 @@ sap.ui.define([
 				}
 				oSelectionOwner.detachRowSelectionChange(fnCallback);
 			},
+			attachBindingUpdate: function(oTable, oPlugin) {
+				oTable.attachEvent("_rowsUpdated", oPlugin, this._fnOnRowsUpdated);
+			},
+			detachBindingUpdate: function(oTable, oPlugin) {
+				oTable.detachEvent("_rowsUpdated", this._fnOnRowsUpdated);
+			},
+			_fnOnRowsUpdated: function(oEvent, oPlugin) {
+				// TreeTable does not rerender after expand/collapse, so we need to remove the selection
+				if (["collapse", "expand"].includes(oEvent.getParameter("reason"))) {
+					oPlugin.removeSelection();
+				}
+			},
 			_getSelectionOwner: function(oTable) {
 				return PluginBase.getPlugin(oTable, "sap.ui.table.plugins.SelectionPlugin") || oTable;
 			},
@@ -1341,13 +1415,14 @@ sap.ui.define([
 		"sap.m.Table": {
 			selectableCells: ".sapMLIBFocusable, .sapMListTblCell, .sapMListTblSubRowCell, .sapMListTblSubCnt",
 			scrollArea: "listUl",
+			eventClearedAll: "sapMTableClearAll",
 			onActivate: function(oTable, oPlugin) {
 				oTable.attachEvent("_change", oPlugin, this._onPropertyChange);
 				oTable.attachEvent("EventHandlerChange", oPlugin, this._onEventHandlerChange);
 			},
 			onDeactivate: function(oTable, oPlugin) {
-				oTable.detachEvent("_change", oPlugin, this._onPropertyChange);
-				oTable.detachEvent("EventHandlerChange", oPlugin, this._onEventHandlerChange);
+				oTable.detachEvent("_change", this._onPropertyChange);
+				oTable.detachEvent("EventHandlerChange", this._onEventHandlerChange);
 			},
 			_onPropertyChange: function(oEvent, oPlugin) {
 				oEvent.getParameter("name") == "mode" && oPlugin._onSelectableChange();
@@ -1359,21 +1434,21 @@ sap.ui.define([
 				return oTable.getVisibleItems();
 			},
 			/**
-			 * Checks if the table is compatible with cell selection.
-			 * @param {sap.m.Table} oTable table instance
-			 * @returns {boolean} compatibility with cell selection
+			 * Checks whether the table is compatible with cell selection.
+			 * @param {sap.m.Table} oTable Table instance
+			 * @returns {boolean} Whether the table is compatible with cell selection
 			 */
 			isSupported: function(oTable, oPlugin) {
-				return (RESPONSIVETABLE_ENABLED /*URL param*/ || oPlugin._bEnableMTable /*programmatic way*/) && oTable.getMode() != ListMode.SingleSelectMaster
-					&& !hasDragEnabled(oTable, "items");
+				return oTable.getMode() != ListMode.SingleSelectMaster && !hasDragEnabled(oTable, "items");
 			},
 			isBottomToTop: function(oTable) {
 				return oTable.getGrowingDirection() == "Upwards";
 			},
 			/**
-			 * Get visible columns of the table.
-			 * @param {sap.m.Table} oTable table instance
-			 * @returns {sap.m.Column[]} array of visible columns
+			 * Returns the visible columns of the table.
+			 * @param {sap.m.Table} oTable Table instance
+			 * @param {boolean} bIncludeSpecial Include special columns such as popins as separate columns
+			 * @returns {sap.m.Column[]} Array of visible columns
 			 */
 			getVisibleColumns: function (oTable, bIncludeSpecial) {
 				return oTable.getColumns(true).filter(function (oColumn) {
@@ -1382,28 +1457,29 @@ sap.ui.define([
 				});
 			},
 			/**
-			 * Retrieve the number of visible columns in the table.
-			 * @param {sap.m.Table} oTable table instance
-			 * @param {boolean} bIncludeSpecial include special columns, e.g. such as popins as separate columns
-			 * @returns {number} number of columns
+			 * Retrieves the number of visible columns in the table.
+			 * @param {sap.m.Table} oTable Table instance
+			 * @param {boolean} bIncludeSpecial Include special columns, such as popins as separate columns
+			 * @returns {number} Number of columns
 			 */
 			numberOfColumns: function(oTable, bIncludeSpecial) {
 				var iColCount = this.getVisibleColumns(oTable, bIncludeSpecial).length;
 				return bIncludeSpecial ? iColCount : iColCount + oTable.hasPopin();
 			},
 			/**
-			 * Retrieve the current row count.
-			 * @param {sap.m.Table} oTable table instance
-			 * @returns {number} row count
+			 * Retrieves the current row count.
+			 * @param {sap.m.Table} oTable Table instance
+			 * @returns {number} Row count
 			 */
 			getRowCount: function(oTable) {
 				return this._getVisibleItems(oTable).length;
 			},
 			/**
-			 * Retrieve the cell reference for a given position
-			 * @param {sap.m.Table} oTable table instance
-			 * @param {sap.m.plugins.CellSelector.CellPosition} mPosition position of cell
-			 * @returns {HTMLElement|undefined} cell's DOM element or undefined if the row or column index are invalid
+			 * Retrieves the cell reference for a given position.
+			 * @param {sap.m.Table} oTable Table instance
+			 * @param {sap.m.plugins.CellSelector.CellPosition} mPosition Position of cell
+			 * @param {boolean} bRange
+			 * @returns {HTMLElement|undefined} DOM reference of the cell, or undefined if the row or column index is invalid
 			 */
 			getCellRef: function (oTable, mPosition, bRange) {
 				const aRows = this._getVisibleItems(oTable);
@@ -1425,10 +1501,11 @@ sap.ui.define([
 				return oColumn && getCellDOM(oRow.getCells(), oColumn.getInitialOrder(), this.selectableCells);
 			},
 			/**
-			 * Retrieve cell information for a given DOM element.
-			 * @param {sap.m.Table} oTable table instance
-			 * @param {HTMLElement} oTarget DOM element of cell
-			 * @returns {object} cell information containing rowIndex, colIndex and type of the cell
+			 * Retrieves cell information for a given DOM element.
+			 * @param {sap.m.Table} oTable Table instance
+			 * @param {HTMLElement} oTarget DOM reference of cell
+			 * @param {object} mPrevious DOM reference of previous cell
+			 * @returns {object} Cell information containing rowIndex, colIndex and cell type
 			 */
 			getCellInfo: function (oTable, oTarget, mPrevious) {
 				const aColumns = this.getVisibleColumns(oTable);
@@ -1453,9 +1530,9 @@ sap.ui.define([
 			},
 			/**
 			 * Returns the cell type of the given target cell.
-			 * @param {sap.m.Table} oTable table instance
-			 * @param {HTMLELement} oTarget cell reference
-			 * @returns {string} cell type
+			 * @param {sap.m.Table} oTable Table instance
+			 * @param {HTMLELement} oTarget Cell reference
+			 * @returns {string|undefined} Cell type
 			 */
 			getCellType: function (oTable, oTarget) {
 				const oColumn = Element.getElementById(oTarget.getAttribute("data-sap-ui-column"));
@@ -1495,11 +1572,12 @@ sap.ui.define([
 					.map((oItem) => oItem?.getBindingContext(oTable.getBindingInfo("items")?.model));
 			},
 			/**
-			 * Select rows beginning at iFrom to iTo.
+			 * Selects rows between indices iFrom and iTo.
 			 * @param {sap.m.Table} oTable The table instance
-			 * @param {int} iFrom starting row index
-			 * @param {int} iTo ending row index
-			 * @param {int} mFocus focused row index
+			 * @param {int} iFrom Start row index
+			 * @param {int} iTo End row index
+			 * @param {int} iFocus Focused row index
+			 * @returns {boolean} Whether the selection was successful
 			 */
 			selectRows: function(oTable, iFrom, iTo, iFocus) {
 				var sSelectionMode = oTable.getMode();
@@ -1519,10 +1597,10 @@ sap.ui.define([
 				return true;
 			},
 			/**
-			 * Checks if the given row is selected
-			 * @param {sap.m.Table} oTable table instance
-			 * @param {number|sap.m.ListBase} vRow either row index or row instance
-			 * @returns {boolean} selection state
+			 * Returns whether the given row is selected
+			 * @param {sap.m.Table} oTable Table instance
+			 * @param {number|sap.m.ListBase} vRow Either row index or row instance
+			 * @returns {boolean} Selection state
 			 */
 			isRowSelected: function(oTable, vRow) {
 				if (typeof vRow === "number") {
@@ -1536,9 +1614,7 @@ sap.ui.define([
 					return;
 				}
 
-				const aRows = this._getVisibleItems(oTable);
-				const oRow = getRow(oTable.getItems(), mFocus.rowIndex, false, (oRow) => aRows.indexOf(oRow));
-				oRow?.focus();
+				this.getCellRef(oTable, mFocus)?.focus();
 			},
 			scroll: function(oTable, bForward, bVertical) {
 				return Promise.resolve();
@@ -1548,6 +1624,18 @@ sap.ui.define([
 			},
 			detachSelectionChange: function(oTable, fnCallback) {
 				oTable.detachSelectionChange(fnCallback);
+			},
+			attachBindingUpdate: function(oTable, oPlugin) {
+				oTable.attachUpdateFinished(oPlugin, this._fnOnUpdateFinished);
+			},
+			detachBindingUpdate: function(oTable, oPlugin) {
+				oTable.detachUpdateFinished(this._fnOnUpdateFinished);
+			},
+			_fnOnUpdateFinished: function(oEvent, oPlugin) {
+				// ResponsiveTable does not rerender after sort/filter, so we need to clear the selection
+				if (["Sort", "Filter"].includes(oEvent.getParameter("reason"))) {
+					oPlugin.removeSelection();
+				}
 			},
 			getBinding: function(oTable) {
 				return oTable.getBinding("items");
@@ -1571,7 +1659,24 @@ sap.ui.define([
 
 				return [oCellRef];
 			},
-			loadContexts: function (oBinding, iStartIndex, iLength) {
+			onSelectionStart: function(oTable, oEvent) {
+				if (oEvent.type.startsWith("mouse")) {
+					// Remove focus and hover
+					oTable.getItems().forEach(function(oItem) {
+						oItem.setActive(false);
+						oItem.getDomRef().classList.remove("sapMLIBHoverable");
+					});
+				}
+			},
+			onSelectionEnd: function(oTable, oEvent) {
+				if (oEvent.type.startsWith("mouse")) {
+					// Add focus and hover
+					oTable.getItems().forEach(function(oItem) {
+						if (oItem.isActionable()) {
+							oItem.getDomRef().classList.add("sapMLIBHoverable");
+						}
+					});
+				}
 			}
 		}
 	}, CellSelector);

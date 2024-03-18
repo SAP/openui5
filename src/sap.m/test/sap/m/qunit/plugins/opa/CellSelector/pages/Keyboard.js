@@ -29,6 +29,7 @@ sap.ui.define([
 		if (bShift) {
 			// Required as Range Selection is started only when SHIFT with onkeydown (see KeyboardDelegate)
 			Opa5.getUtils().triggerKeydown(oDomRef, KeyCodes.SHIFT);
+			Opa5.getUtils().triggerKeydown(oDomRef, "", true, false, false);
 		}
 		pressKey(sKey, oDomRef, bShift, false, false);
 		if (bShift) {
@@ -57,10 +58,24 @@ sap.ui.define([
 					Util.waitForTable.call(this, {
 						success: function(oTable) {
 							var oFocus = Util.getFocusedElement(oTable);
-							if (bOnlyCells) {
-								Opa5.getUtils().triggerKeydown(oFocus, KeyCodes.ESCAPE, false, false, false);
+							if (oTable.isA("sap.ui.table.Table")) {
+								if (bOnlyCells) {
+									Opa5.getUtils().triggerKeydown(oFocus, KeyCodes.ESCAPE, false, false, false);
+								} else {
+									Opa5.getUtils().triggerKeydown(oFocus, KeyCodes.A, true, false, true);
+								}
 							} else {
-								Opa5.getUtils().triggerKeydown(oFocus, KeyCodes.A, true, false, true);
+								Opa5.getUtils().triggerKeydown(oFocus, KeyCodes.ESCAPE, false, false, false);
+								if (!bOnlyCells) {
+									var bCellFocus = oFocus.hasClass("sapMListTblCell");
+									if (bCellFocus) {
+										Opa5.getUtils().triggerEvent("keydown", Util.getFocusedElement(oTable), {code: "F7"});
+									}
+									Opa5.getUtils().triggerEvent("keydown", Util.getFocusedElement(oTable), {code: "KeyA", ctrlKey: true, shiftKey: true});
+									if (bCellFocus) {
+										Opa5.getUtils().triggerEvent("keydown", Util.getFocusedElement(oTable), {code: "F7"});
+									}
+								}
 							}
 						}
 					});
@@ -121,7 +136,19 @@ sap.ui.define([
 					Util.waitForTable.call(this, {
 						success: function(oTable) {
 							var oFocus = Util.getFocusedElement(oTable);
-							Opa5.getUtils().triggerKeydown(oFocus, KeyCodes.A, false, false, true);
+
+							if (oTable.isA("sap.ui.table.Table")) {
+								Opa5.getUtils().triggerKeydown(oFocus, KeyCodes.A, false, false, true);
+							} else {
+								var bCellFocus = oFocus.hasClass("sapMListTblCell");
+								if (bCellFocus) {
+									Opa5.getUtils().triggerEvent("keydown", Util.getFocusedElement(oTable), {code: "F7"});
+								}
+								Opa5.getUtils().triggerEvent("keydown", Util.getFocusedElement(oTable), {code: "KeyA", ctrlKey: true});
+								if (bCellFocus) {
+									Opa5.getUtils().triggerEvent("keydown", Util.getFocusedElement(oTable), {code: "F7"});
+								}
+							}
 						}
 					});
 				}

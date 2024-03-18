@@ -1,0 +1,23 @@
+{
+	"sap.app": {
+		"id": "sap.m.test.plugins.CellSelector.GridTableOPA",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"id": "MyView",
+			"viewName": "sap.m.test.plugins.CellSelector.GridTableOPA.View",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.m": {},
+				"sap.ui.unified": {},
+				"sap.ui.table": {}
+			}
+		}
+	}
+}
