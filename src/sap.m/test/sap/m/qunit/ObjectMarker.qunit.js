@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/m/Column",
 	"sap/m/Label",
 	"sap/m/ColumnListItem",
+	"sap/ui/Device",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery"
@@ -22,6 +23,7 @@ sap.ui.define([
 	Column,
 	Label,
 	ColumnListItem,
+	Device,
 	KeyCodes,
 	nextUIUpdate,
 	jQuery
@@ -350,8 +352,8 @@ sap.ui.define([
 
 		// Assert
 		assert.expect(1);
-		qutils.triggerEvent((jQuery.support.touch ? "tap" : "click"), oMarker.$("link")); //should fire event
-		qutils.triggerEvent((jQuery.support.touch ? "tap" : "click"), oMarker.getId()); //should not fire event
+		qutils.triggerEvent((!Device.system.desktop ? "tap" : "click"), oMarker.$("link")); //should fire event
+		qutils.triggerEvent((!Device.system.desktop ? "tap" : "click"), oMarker.getId()); //should not fire event
 
 		// Cleanup
 		oMarker.destroy();
@@ -676,6 +678,26 @@ sap.ui.define([
 		assert.strictEqual(this.marker._getInnerControl().getAriaLabelledBy().length, 0, "internal control's ariaLabelledBy has no ids");
 	});
 
+	QUnit.test("ariaLabelledBy, ariaDescribedBy for active icon-only instance are propagated to the internal control", async function(assert) {
+		// prepare
+		var oOM = new ObjectMarker({
+				type: "Favorite",
+				ariaLabelledBy: ["test"],
+				press: function() {}
+			}),
+			oIconControl;
+
+		await nextUIUpdate();
+		oIconControl = oOM._getInnerControl()._getIconAggregation();
+
+		// act
+		// assert
+		assert.strictEqual(oIconControl.getAriaLabelledBy()[0], "test", "The aria-labelled by attribute is propagated properly");
+
+		// clean
+		oOM.destroy();
+	});
+
 	QUnit.test("ariaLabelledBy, ariaDescribedBy are not set when the control has no 'type' set", async function(assert) {
 		// arrange
 		this.marker.attachPress(function(e) {});
@@ -829,7 +851,7 @@ sap.ui.define([
 			await nextUIUpdate();
 
 			// Assert
-			assert.strictEqual(oIcon.getDomRef().getAttribute("aria-label"), oMarker._getMarkerText(ObjectMarker.M_PREDEFINED_TYPES[sType], sType, ""), "aria-label is correct for type " + sType);
+			assert.notOk(oIcon.getDomRef().getAttribute("aria-label"), "There is no aria-label attribute set for type: " + sType);
 		}
 
 		// Cleanup
@@ -925,7 +947,7 @@ sap.ui.define([
 		await nextUIUpdate();
 
 		// Assert
-		assert.notOk(oInnerIcon.getTooltip(), "Inner control's icon tooltip of non-interactive ObjectMarker with IconOnly visibility doesn't exist");
+		assert.strictEqual(oInnerIcon.getTooltip(), sCustomTooltip, "Inner control's icon tooltip of non-interactive ObjectMarker with IconOnly visibility is applied");
 
 		// Act; Attaching press converts ObjectMarker to interactive
 		oMarker.setVisibility(ObjectMarkerVisibility.IconAndText);
