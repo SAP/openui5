@@ -37,7 +37,7 @@ sap.ui.define([
 	 * @constructor
 	 * @public
 	 * @since 1.7.2
-	 * @deprecated Since version 1.38.
+	 * @deprecated Since version 1.38. Use {@link sap.m.CheckBox} instead.
 	 * @alias sap.ui.commons.TriStateCheckBox
 	 */
 	var TriStateCheckBox = Control.extend("sap.ui.commons.TriStateCheckBox", /** @lends sap.ui.commons.TriStateCheckBox.prototype */ { metadata : {

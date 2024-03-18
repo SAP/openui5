@@ -34,7 +34,7 @@ sap.ui.define([
 	 *
 	 * @constructor
 	 * @public
-	 * @deprecated Since version 1.38.
+	 * @deprecated Since version 1.38. Use the layout controls instead, e.g {@link sap.ui.layout.Splitter} or {@link sap.ui.layout.BlockLayout} among others.
 	 * @alias sap.ui.commons.HorizontalDivider
 	 */
 	var HorizontalDivider = Control.extend("sap.ui.commons.HorizontalDivider", /** @lends sap.ui.commons.HorizontalDivider.prototype */ { metadata : {

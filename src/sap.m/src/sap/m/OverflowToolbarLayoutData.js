@@ -34,14 +34,14 @@ sap.ui.define(['sap/m/ToolbarLayoutData', 'sap/m/library', "sap/base/Log"],
 			/**
 			 * The OverflowToolbar item can or cannot move to the overflow area
 			 *
-			 * @deprecated Since version 1.32
+			 * @deprecated Since version 1.32.Use {@link sap.m.OverflowToolbarPriority} instead.
 			 */
 			moveToOverflow : {type: "boolean", defaultValue: true, deprecated: true},
 
 			/**
 			 * The OverflowToolbar item can or cannot stay in the overflow area
 			 *
-			 * @deprecated Since version 1.32
+			 * @deprecated Since version 1.32. Use {@link sap.m.OverflowToolbarPriority} instead.
 			 */
 			stayInOverflow : {type: "boolean", defaultValue: false, deprecated: true},
 

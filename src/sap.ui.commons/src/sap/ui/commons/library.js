@@ -222,7 +222,7 @@ sap.ui.define(['sap/ui/base/DataType', 'sap/base/util/ObjectPath',
 	 *
 	 * @enum {string}
 	 * @public
-	 * @deprecated as of version 1.38
+	 * @deprecated as of version 1.38 without replacement.
 	 */
 	thisLib.HorizontalDividerHeight = {
 
@@ -258,7 +258,7 @@ sap.ui.define(['sap/ui/base/DataType', 'sap/base/util/ObjectPath',
 	 *
 	 * @enum {string}
 	 * @public
-	 * @deprecated as of version 1.38
+	 * @deprecated as of version 1.38 without a replacement.
 	 */
 	thisLib.HorizontalDividerType = {
 
@@ -306,7 +306,7 @@ sap.ui.define(['sap/ui/base/DataType', 'sap/base/util/ObjectPath',
 	 *
 	 * @enum {string}
 	 * @public
-	 * @deprecated as of version 1.38
+	 * @deprecated as of version 1.38. Use {@link sap.m.ToolbarDesign} with {@link sap.m.OverflowToolbar} instead.
 	 */
 	thisLib.MenuBarDesign = {
 
@@ -722,7 +722,7 @@ sap.ui.define(['sap/ui/base/DataType', 'sap/base/util/ObjectPath',
 	 * @enum {string}
 	 * @public
 	 * @since 1.7.2
-	 * @deprecated as of version 1.38
+	 * @deprecated as of version 1.38. Use {@link sap.m.CheckBox} and its properties instead.
 	 */
 	thisLib.TriStateCheckBoxState = {
 

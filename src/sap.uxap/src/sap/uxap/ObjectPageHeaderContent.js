@@ -70,7 +70,7 @@ sap.ui.define([
 					 * Determines the design of the header - Light or Dark.
 					 * <b>Note: </b>This property is deprecated. It will continue to work in the Blue Crystal theme,
 					 * but it will not be taken into account for the Belize themes.
-					 * @deprecated As of version 1.40.1
+					 * @deprecated As of version 1.40.1 without replacement.
 					 */
 					contentDesign: {
 						type: "sap.uxap.ObjectPageHeaderDesign",

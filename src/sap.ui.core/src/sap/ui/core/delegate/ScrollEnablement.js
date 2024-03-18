@@ -134,7 +134,7 @@ sap.ui.define([
 			 * @param {boolean} bBounce new value for property <code>bounce</code>.
 			 * @protected
 			 * @since 1.17
-			 * @deprecated since 1.42
+			 * @deprecated since 1.42 without replacement.
 			 */
 			setBounce: function(bBounce) {
 			},
