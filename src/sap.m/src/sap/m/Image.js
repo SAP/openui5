@@ -238,8 +238,8 @@ sap.ui.define([
 			events : {
 
 				/**
-				 * Event is fired when the user clicks on the control. (This event is deprecated, use the press event instead)
-				 * @deprecated As of version 1.107.0
+				 * Event is fired when the user clicks on the control.
+				 * @deprecated As of version 1.107.0. Use the {@link #event:press press} event instead.
 				 */
 				tap : {},
 
