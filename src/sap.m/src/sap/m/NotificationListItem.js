@@ -102,7 +102,22 @@ function(
 				 * <b>Note:</b> By using background colors from the predefined sets,
 				 * your colors can later be customized from the Theme Designer.
 				 */
-				authorAvatarColor: {type: "sap.m.AvatarColor", group: "Appearance", defaultValue: AvatarColor.Accent6}
+				authorAvatarColor: {type: "sap.m.AvatarColor", group: "Appearance", defaultValue: AvatarColor.Accent6},
+
+				/**
+				 * Determines the notification author name.
+				 */
+				authorName: {type: 'string', group: 'Appearance', defaultValue: ''},
+
+				/**
+				 * Determines the URL of the notification author picture.
+				 */
+				authorPicture: {type: 'sap.ui.core.URI'},
+
+				/**
+				 * The time stamp of the notification.
+				 */
+				datetime: {type: 'string', group: 'Appearance', defaultValue: ''}
 			},
 			aggregations: {
 				/**

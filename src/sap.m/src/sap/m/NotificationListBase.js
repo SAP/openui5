@@ -116,6 +116,7 @@ sap.ui.define([
 
 					/**
 					 * The time stamp of the Notification.
+					 * @deprecated As of version 1.123, this property is available directly on {@link sap.m.NotificationListItem}.
 					 */
 					datetime: {type: 'string', group: 'Appearance', defaultValue: ''},
 
@@ -133,11 +134,13 @@ sap.ui.define([
 
 					/**
 					 * Determines the notification author name.
+					 * @deprecated As of version 1.123. This property is available directly on {@link sap.m.NotificationListItem}.
 					 */
 					authorName: {type: 'string', group: 'Appearance', defaultValue: ''},
 
 					/**
 					 * Determines the URL of the notification author picture.
+					 * @deprecated As of version 1.123. This property is available directly on {@link sap.m.NotificationListItem}.
 					 */
 					authorPicture: {type: 'sap.ui.core.URI'}
 
