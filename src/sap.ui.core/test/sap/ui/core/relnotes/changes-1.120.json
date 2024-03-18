@@ -745,5 +745,32 @@
         "text": " core/Lib: Improve Error Message reg. Pseudo Modules"
       }
     ]
+  },
+  "1.120.11": {
+    "date": "March 2024",
+    "notes": [
+      {
+        "id": "8613e5fe17531c33cda0a4f8fe2d28ae02eead41",
+        "type": "FIX",
+        "text": " mvc/Controller: Replace function call with apply",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "001540a9f49c56046a716e21fcc1f2ce120d99ef",
+        "type": "FIX",
+        "text": " sap.ui.core: Allow for async control event handlers",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      }
+    ]
   }
 }

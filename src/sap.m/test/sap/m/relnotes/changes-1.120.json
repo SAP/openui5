@@ -696,5 +696,26 @@
         ]
       }
     ]
+  },
+  "1.120.11": {
+    "date": "March 2024",
+    "notes": [
+      {
+        "id": "a00ffb95b4bc5f714b4d838ff12d82d9c0ad8307",
+        "type": "FIX",
+        "text": " sap.m.Link: Is truncated correctly in sap.m.Table"
+      },
+      {
+        "id": "001540a9f49c56046a716e21fcc1f2ce120d99ef",
+        "type": "FIX",
+        "text": " sap.ui.core: Allow for async control event handlers",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      }
+    ]
   }
 }
