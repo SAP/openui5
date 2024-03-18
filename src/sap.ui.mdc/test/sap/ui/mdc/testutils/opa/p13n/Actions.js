@@ -755,8 +755,10 @@ sap.ui.define([
 
 												this.waitFor({
 													controlType: "sap.m.ComboBox",
-													id: "p13nPanel-templateComboBox-" + sKind,
-													matchers: new Ancestor(oP13nDialog, false),
+													searchOpenDialogs: true,
+													matchers : new sap.ui.test.matchers.Properties({
+														id: new RegExp(".*-templateComboBox-" + sKind)
+													}),
 													actions: function(oComboBox) {
 														iChangeComboBoxSelection.call(this, oComboBox, oCurrentItem.key);
 													}.bind(this),
