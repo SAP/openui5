@@ -119,8 +119,7 @@
   "overrides": {
     "grunt-jsdoc": {
       "jsdoc": "^4.0.2"
-    },
-    "es5-ext": "<=0.10.53"
+    }
   },
   "workspaces": [
     "src/*"
