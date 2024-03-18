@@ -1315,9 +1315,6 @@ sap.ui.define([
 			},
 			RangeSlider: {
 				title: "QUnit Page for sap.m.RangeSlider",
-				sinon: {
-					version: 1 // sinon-qunit-bridge does not supported nested modules
-				},
 				ui5: {
 					language: "en-US"
 				}
