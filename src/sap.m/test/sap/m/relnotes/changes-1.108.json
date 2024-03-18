@@ -1576,5 +1576,20 @@
         ]
       }
     ]
+  },
+  "1.108.27": {
+    "date": "March 2024",
+    "notes": [
+      {
+        "id": "65bef52df9ac474fefeb041be083d5f7f3d2e151",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Focus of IconTabFilter is not changing"
+      },
+      {
+        "id": "409f9ccee2c933b02e8e85f501931e877fff8d69",
+        "type": "FIX",
+        "text": " sap.m.Page: Focus element is scrolled into view"
+      }
+    ]
   }
 }

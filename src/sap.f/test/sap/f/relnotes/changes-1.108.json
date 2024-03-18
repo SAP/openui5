@@ -226,5 +226,15 @@
         ]
       }
     ]
+  },
+  "1.108.27": {
+    "date": "March 2024",
+    "notes": [
+      {
+        "id": "b2d04d6f0880f534c12b0814c05c2ebd82595955",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Scrollbar issue fixed"
+      }
+    ]
   }
 }

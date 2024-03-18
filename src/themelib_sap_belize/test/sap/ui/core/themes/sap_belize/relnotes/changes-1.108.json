@@ -110,5 +110,20 @@
         ]
       }
     ]
+  },
+  "1.108.27": {
+    "date": "March 2024",
+    "notes": [
+      {
+        "id": "7a054b69add4ddcb73c6b3cc30ffc8a1d39d010c",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Adjust responsive paddings for Belize theme"
+      },
+      {
+        "id": "409f9ccee2c933b02e8e85f501931e877fff8d69",
+        "type": "FIX",
+        "text": " sap.m.Page: Focus element is scrolled into view"
+      }
+    ]
   }
 }

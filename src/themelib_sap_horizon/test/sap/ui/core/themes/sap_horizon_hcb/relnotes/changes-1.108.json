@@ -469,5 +469,25 @@
         ]
       }
     ]
+  },
+  "1.108.27": {
+    "date": "March 2024",
+    "notes": [
+      {
+        "id": "2f6ac21afd084d3d0af9405df031f441660a23fb",
+        "type": "FIX",
+        "text": " Form: align checkbox with other fields"
+      },
+      {
+        "id": "fd7c5557a9ef8337077fc385864b81716d349c59",
+        "type": "FIX",
+        "text": " ColumnListItem: Adjust box-shadow in HCW theme"
+      },
+      {
+        "id": "d231d84850632d73c31527ea6859bb2136f89e54",
+        "type": "FIX",
+        "text": " sap.m.CheckBox: Updated the line height"
+      }
+    ]
   }
 }

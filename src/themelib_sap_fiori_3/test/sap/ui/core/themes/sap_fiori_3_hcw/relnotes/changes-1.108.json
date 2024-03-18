@@ -181,5 +181,15 @@
         ]
       }
     ]
+  },
+  "1.108.27": {
+    "date": "March 2024",
+    "notes": [
+      {
+        "id": "fd7c5557a9ef8337077fc385864b81716d349c59",
+        "type": "FIX",
+        "text": " ColumnListItem: Adjust box-shadow in HCW theme"
+      }
+    ]
   }
 }
