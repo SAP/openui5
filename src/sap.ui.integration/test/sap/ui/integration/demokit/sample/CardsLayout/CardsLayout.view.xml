@@ -21,7 +21,7 @@
 			</Menu>
 		</f:menu>
 		<f:profile>
-			<f:Avatar initials="UI" />
+			<Avatar initials="UI" />
 		</f:profile>
 	</f:ShellBar>
 	<IconTabBar

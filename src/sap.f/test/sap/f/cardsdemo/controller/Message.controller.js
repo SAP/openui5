@@ -1,7 +1,7 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
-	"sap/ui/core/library"
-], function (Controller, coreLibrary) {
+	"sap/ui/core/message/MessageType"
+], function (Controller, MessageType) {
 	"use strict";
 
 	return Controller.extend("sap.f.cardsdemo.controller.Message", {
@@ -18,11 +18,11 @@ sap.ui.define([
 		},
 
 		onShowShortMessage: function () {
-			this.byId("card").showMessage("Short message", coreLibrary.MessageType.Success);
+			this.byId("card").showMessage("Short message", MessageType.Success);
 		},
 
 		onShowLongMessage: function () {
-			this.byId("card").showMessage("Very long long long long long long long long long long long long message", coreLibrary.MessageType.Error);
+			this.byId("card").showMessage("Very long long long long long long long long long long long long message", MessageType.Error);
 		}
 	});
 });

@@ -4,15 +4,12 @@ sap.ui.define([
 	'sap/m/MessageToast',
 	"sap/ui/core/Messaging",
 	'sap/ui/core/message/Message',
-	'sap/ui/core/library',
+	'sap/ui/core/message/MessageType',
 	'sap/ui/core/mvc/Controller',
 	'sap/ui/model/json/JSONModel',
 	'sap/ui/core/Element'
-], function(MessagePopover, MessageItem, MessageToast, Messaging, Message, coreLibrary, Controller, JSONModel, Element) {
+], function(MessagePopover, MessageItem, MessageToast, Messaging, Message, MessageType, Controller, JSONModel, Element) {
 	"use strict";
-
-	// shortcut for sap.ui.core.MessageType
-	var MessageType = coreLibrary.MessageType;
 
 	return Controller.extend("sap.m.sample.messageHandlingConcept.Controller", {
 		onInit: function () {

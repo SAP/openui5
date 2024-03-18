@@ -15,6 +15,7 @@ sap.ui.define([
 	'sap/ui/core/ElementMetadata',
 	"sap/ui/core/Lib",
 	'sap/ui/core/library',
+	'sap/ui/core/message/MessageType',
 	'sap/ui/core/Control',
 	'sap/m/library',
 	"sap/ui/thirdparty/jquery"
@@ -30,6 +31,7 @@ sap.ui.define([
 	ElementMetadata,
 	Library,
 	coreLibrary,
+	MessageType,
 	Control,
 	library,
 	jQuery
@@ -56,9 +58,6 @@ sap.ui.define([
 
 	// shortcut for sap.m.LinkAccessibleRole
 	var LinkAccessibleRole = library.LinkAccessibleRole;
-
-	// shortcut for sap.ui.core.MessageType
-	var MessageType = coreLibrary.MessageType;
 
 	// shortcut for sap.ui.core.TextDirection
 	var TextDirection = coreLibrary.TextDirection;

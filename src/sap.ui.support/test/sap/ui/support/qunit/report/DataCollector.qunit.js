@@ -4,10 +4,9 @@ sap.ui.define([
 	"sap/ui/core/Lib",
 	"sap/ui/core/Theming",
 	"sap/ui/support/supportRules/report/DataCollector",
-	"sap/ui/core/Component",
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/theming/ThemeManager"
-], function (Lib, Theming, DataCollector, Component, UIComponent, ThemeManager) {
+], function (Lib, Theming, DataCollector, UIComponent, ThemeManager) {
 		"use strict";
 
 		QUnit.module("Data collector", {
@@ -47,7 +46,6 @@ sap.ui.define([
 
 		QUnit.test("Application Info 'sap.app'", function (assert) {
 			// Arrange
-			var ComponentRegistryInitial = Component.registry;
 			var DataCollectorTestComponent = UIComponent.extend("DataCollectorTestComponent", {
 				metadata: {
 					manifest: {
@@ -60,17 +58,12 @@ sap.ui.define([
 			var oComponent1 = new DataCollectorTestComponent();
 			var oComponent2 = new DataCollectorTestComponent();
 
-			Component.registry = [
-				oComponent1,
-				oComponent2
-			];
-
 			// Assert
 			assert.deepEqual(
 				this.DataCollector.getAppInfo(),
 				[
 					{
-					type: "application"
+						type: "application"
 					},
 					{
 						type: "application"
@@ -80,14 +73,12 @@ sap.ui.define([
 			);
 
 			// Clean up
-			Component.registry = ComponentRegistryInitial;
 			oComponent1.destroy();
 			oComponent2.destroy();
 		});
 
 		QUnit.test("Application Info 'sap.fiori'", function (assert) {
 			// Arrange
-			var ComponentRegistryInitial = Component.registry;
 			var DataCollectorTestComponent1 = UIComponent.extend("DataCollectorTestComponentWithSapFiori", {
 				metadata: {
 					manifest: {
@@ -110,11 +101,6 @@ sap.ui.define([
 			var oComponent1 = new DataCollectorTestComponent1();
 			var oComponent2 = new DataCollectorTestComponent2();
 
-			Component.registry = [
-				oComponent1,
-				oComponent2
-			];
-
 			// Assert
 			assert.deepEqual(
 				this.DataCollector.getAppInfo(),
@@ -131,7 +117,6 @@ sap.ui.define([
 			);
 
 			// Clean up
-			Component.registry = ComponentRegistryInitial;
 			oComponent1.destroy();
 			oComponent2.destroy();
 		});
