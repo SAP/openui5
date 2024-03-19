@@ -10,8 +10,8 @@
 @_sap_m_Slider_Height_Compact: 2rem;
 @_sap_m_Slider_Progress: .1875rem;
 @_sap_m_Slider_Progress_Border: 0px;
-@_sap_m_Slider_Top_Bottom_Padding: calc(@_sap_m_Slider_Height ~"-" @_sap_m_Slider_Progress ~"-" 2 * @_sap_m_Slider_Progress_Border);
-@_sap_m_Slider_Top_Bottom_Padding_Compact: calc(@_sap_m_Slider_Height_Compact ~"-" @_sap_m_Slider_Progress ~"-" 2 * @_sap_m_Slider_Progress_Border);
+@_sap_m_Slider_Top_Bottom_Padding: calc(@_sap_m_Slider_Height - @_sap_m_Slider_Progress - (2 * @_sap_m_Slider_Progress_Border));
+@_sap_m_Slider_Top_Bottom_Padding_Compact: calc(@_sap_m_Slider_Height_Compact - @_sap_m_Slider_Progress - (2 * @_sap_m_Slider_Progress_Border));
 
 .sapMSlider {
 	display: inline-block;
