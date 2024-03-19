@@ -437,10 +437,10 @@ sap.ui.define([
 			this.oButton1.destroy();
 		});
 
-		QUnit.test("when an element is inserted into an already existing aggregation", async function(assert) {
-			var done = assert.async();
+		QUnit.test("when an element is inserted into an already existing aggregation", function(assert) {
+			const done = assert.async();
 			assert.expect(2);
-			var oExpectedResponse1 = {
+			const oExpectedResponse1 = {
 				type: "new",
 				targetIndex: 1,
 				targetId: "layout0",
@@ -454,7 +454,7 @@ sap.ui.define([
 					visible: true
 				}
 			};
-			var oExpectedResponse2 = {
+			const oExpectedResponse2 = {
 				type: "editableChange",
 				element: {
 					id: "newButton",
@@ -464,15 +464,14 @@ sap.ui.define([
 			function onUpdate(aUpdates) {
 				aUpdates.some(function(oUpdate) {
 					switch (oUpdate.type) {
-						case "new":
-							var oNewButton = this.oLayout.getContent().filter(function(oControl) {
-								return oControl.getId() === "newButton";
-							})[0];
-							oExpectedResponse1.element.visible = oNewButton.getVisible();
+						case "new": {
+							const oNewButton = this.oLayout.getContent().find((oControl) => oControl.getId() === "newButton");
+							const oNewButtonOverlay = OverlayRegistry.getOverlay(oNewButton);
+							oExpectedResponse1.element.visible = oNewButtonOverlay.isVisible();
 							assert.deepEqual(oUpdate, oExpectedResponse1, "then expected response for new update was received");
-							var oNewButtonOverlay = OverlayRegistry.getOverlay(oNewButton);
 							oNewButtonOverlay.setEditable(true);
 							break;
+						}
 						case "editableChange":
 							assert.deepEqual(oUpdate, oExpectedResponse2, "then expected response for editableChange update was received");
 							done();
@@ -484,7 +483,6 @@ sap.ui.define([
 			}
 			this.oOutline.attachEvent("update", onUpdate, this);
 			this.oLayout.addContent(new Button("newButton")); // inserts new overlay
-			await nextUIUpdate();
 		});
 
 		QUnit.test("when setEditable is called for an existing overlay", function(assert) {
