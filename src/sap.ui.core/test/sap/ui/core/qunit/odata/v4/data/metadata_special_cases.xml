@@ -26,6 +26,14 @@
 				<NavigationProperty Name="_Publication" Type="Collection(special.cases.PublicationsType)" Partner="_Artist"/>
 				<NavigationProperty Name="BestFriend" Type="special.cases.ArtistsType" />
 				<NavigationProperty Name="_Friend" Type="Collection(special.cases.ArtistsType)" />
+				<NavigationProperty Name="_Event" Type="Collection(special.cases.EventsType)" />
+			</EntityType>
+			<EntityType Name="EventsType">
+				<Key>
+					<PropertyRef Name="TimeStamp"/>
+				</Key>
+				<Property Name="TimeStamp" Type="Edm.DateTimeOffset" Nullable="false"/>
+				<Property Name="Name" Type="Edm.String"/>
 			</EntityType>
 			<EntityType Name="DraftAdministrativeDataType">
 				<Key>
@@ -185,6 +193,7 @@
 					<NavigationPropertyBinding Path="BestFriend" Target="Artists"/>
 					<NavigationPropertyBinding Path="SiblingEntity" Target="Artists" />
 				</EntitySet>
+				<EntitySet Name="Events" EntityType="special.cases.EventsType"/>
 				<EntitySet Name="As" EntityType="special.cases.A">
 					<NavigationPropertyBinding Path="AtoEntityWithComplexKey"
 						Target="EntitiesWithComplexKey"/>
