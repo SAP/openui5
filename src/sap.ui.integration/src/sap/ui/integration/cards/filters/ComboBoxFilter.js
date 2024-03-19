@@ -127,7 +127,7 @@ sap.ui.define([
 	 * @returns {object} Filter configuration with static items
 	 */
 	ComboBoxFilter.prototype.getStaticConfiguration = function () {
-		const oConfiguration = this.getConfig();
+		const oConfiguration = this.getParsedConfiguration();
 		let sPath = "/";
 		let aResolvedItems = [];
 		let oResolvedItemTemplate;

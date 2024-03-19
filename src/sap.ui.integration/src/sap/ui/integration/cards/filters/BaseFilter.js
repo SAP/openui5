@@ -6,23 +6,27 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/core/InvisibleText",
 	"sap/base/Log",
+	"sap/base/util/merge",
 	"sap/ui/core/Icon",
 	"sap/m/HBox",
 	"sap/m/Text",
 	"sap/ui/core/Lib",
 	"sap/ui/integration/model/ObservableModel",
-	"sap/ui/integration/util/LoadingProvider"
+	"sap/ui/integration/util/LoadingProvider",
+	"sap/ui/integration/util/BindingHelper"
 ], function(
 	Control,
 	Element,
 	InvisibleText,
 	Log,
+	merge,
 	Icon,
 	HBox,
 	Text,
 	Library,
 	ObservableModel,
-	LoadingProvider
+	LoadingProvider,
+	BindingHelper
 ) {
 	"use strict";
 
@@ -196,6 +200,21 @@ sap.ui.define([
 	 */
 	BaseFilter.prototype.getCardInstance = function () {
 		return Element.getElementById(this.getCard());
+	};
+
+	BaseFilter.prototype.getParsedConfiguration = function () {
+		var oResult = merge({}, this.getConfig()),
+			oDataSettings = oResult.data;
+
+		// do not create binding info for data
+		delete oResult.data;
+		oResult = BindingHelper.createBindingInfos(oResult, this.getCardInstance().getBindingNamespaces());
+
+		if (oDataSettings) {
+			oResult.data = oDataSettings;
+		}
+
+		return oResult;
 	};
 
 	BaseFilter.prototype._showError = function () {

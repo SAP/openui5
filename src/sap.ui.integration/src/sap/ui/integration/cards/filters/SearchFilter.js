@@ -73,7 +73,7 @@ sap.ui.define([
 	 * @returns {object} Filter configuration with static items
 	 */
 	SearchFilter.prototype.getStaticConfiguration = function () {
-		const oStaticConfiguration = merge({}, this.getConfig());
+		const oStaticConfiguration = merge({}, this.getParsedConfiguration());
 
 		oStaticConfiguration.value = this.getValueForModel().value;
 
