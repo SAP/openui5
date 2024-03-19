@@ -4,6 +4,7 @@
 /* =========================================================== */
 
 @_sap_ui_integration_ListContentItem_BottomBorderHeight: 1px;
+@_sap_ui_integration_ListContentItem_TextShadow: 0 0 @sapUiListTextColor;
 
 .sapUiIntLCI {
 	padding: unset;
@@ -106,7 +107,8 @@
 
 .sapUiIntLCITitle {
 	color: @sapUiListTextColor;
-	font-size: @sapMFontLargeSize;
+	text-shadow: @_sap_ui_integration_ListContentItem_TextShadow;
+	font-size: @sapMFontMediumSize;
 	flex: 1;
 }
 
@@ -158,9 +160,5 @@
 
 	&.sapUiIntLCIOneLine.sapUiIntLCIThumbnail .sapUiIntLCIIconAndLines {
 		height: 5rem;
-	}
-
-	.sapUiIntLCITitle {
-		font-size: @sapMFontMediumSize;
 	}
 }
