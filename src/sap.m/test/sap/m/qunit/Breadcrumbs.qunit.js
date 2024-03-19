@@ -181,8 +181,8 @@ function(Library, DomUnitsRem, Parameters, Breadcrumbs, Link, OverflowToolBar, T
 			sNewCurrentLocationVal = "New current location value";
 
 		assert.ok(oStandardBreadCrumbsControl.getCurrentLocationText(), "has current location text setted");
-		assert.ok(oStandardBreadCrumbsControl._getCurrentLocation(), "has current location text control instantiated");
-		assert.ok(oStandardBreadCrumbsControl._getCurrentLocation().hasStyleClass("sapMBreadcrumbsCurrentLocation"), "current location has a correct class");
+		assert.ok(oStandardBreadCrumbsControl.getCurrentLocation(), "has current location text control instantiated");
+		assert.ok(oStandardBreadCrumbsControl.getCurrentLocation().hasStyleClass("sapMBreadcrumbsCurrentLocation"), "current location has a correct class");
 
 		oStandardBreadCrumbsControl.setCurrentLocationText(sNewCurrentLocationVal);
 		assert.strictEqual(oStandardBreadCrumbsControl.getCurrentLocationText(), sNewCurrentLocationVal, "current location value changed to sNewCurrentLocationVal");
@@ -211,7 +211,7 @@ function(Library, DomUnitsRem, Parameters, Breadcrumbs, Link, OverflowToolBar, T
 		oStandardBreadCrumbsControl.setCurrentLocationText("");
 
 		helpers.renderObject(oStandardBreadCrumbsControl);
-		assert.ok(!oStandardBreadCrumbsControl._getCurrentLocation().getDomRef(), "When empty string is set the text control is not rendered");
+		assert.ok(!oStandardBreadCrumbsControl.getCurrentLocation().getDomRef(), "When empty string is set the text control is not rendered");
 	});
 
 	QUnit.test("Select aggregation", function (assert) {
@@ -297,6 +297,15 @@ function(Library, DomUnitsRem, Parameters, Breadcrumbs, Link, OverflowToolBar, T
 		Object.keys(library.BreadcrumbsSeparatorStyle).forEach( function (sStyle) {
 			testSeparatorStyleSymbols(oControl, sStyle, assert);
 		} );
+	});
+
+	QUnit.test("CurrentLocation is a link", function (assert) {
+		var oStandardBreadCrumbsControl = this.oStandardBreadCrumbsControl.clone(),
+			oLink = new Link({text: "currentLocation"});
+		oStandardBreadCrumbsControl.setCurrentLocation(oLink);
+		helpers.renderObject(oStandardBreadCrumbsControl);
+
+		assert.equal(oStandardBreadCrumbsControl.$().find(".sapMBreadcrumbsCurrentLocation").prop("tagName"), "A", "Current location is a link");
 	});
 
 	/*------------------------------------------------------------------------------------*/
@@ -420,7 +429,7 @@ function(Library, DomUnitsRem, Parameters, Breadcrumbs, Link, OverflowToolBar, T
 	QUnit.test("Only links", function (assert) {
 		this.oStandardBreadCrumbsControl = oFactory.getBreadCrumbControlWithLinks(4);
 		helpers.renderObject(this.oStandardBreadCrumbsControl);
-		assert.ok(!this.oStandardBreadCrumbsControl._getCurrentLocation().getDomRef(), "Current location has no dom ref");
+		assert.ok(!this.oStandardBreadCrumbsControl.getCurrentLocation().getDomRef(), "Current location has no dom ref");
 		var $lastSeparator = this.oStandardBreadCrumbsControl.$().find("li.sapMBreadcrumbsItem:last-child > span.sapMBreadcrumbsSeparator");
 
 		assert.ok($lastSeparator.length, "There is a '/' separator after last link");
@@ -434,7 +443,7 @@ function(Library, DomUnitsRem, Parameters, Breadcrumbs, Link, OverflowToolBar, T
 
 		helpers.setSmallScreenSize();
 		helpers.renderObject(this.oStandardBreadCrumbsControl);
-		assert.ok(this.oStandardBreadCrumbsControl._getCurrentLocation().getDomRef(), "Current location is rendered");
+		assert.ok(this.oStandardBreadCrumbsControl.getCurrentLocation().getDomRef(), "Current location is rendered");
 		assert.ok(!this.oStandardBreadCrumbsControl._getSelect().getDomRef(), "No Select icon");
 		helpers.resetScreenSize();
 	});
@@ -689,7 +698,7 @@ function(Library, DomUnitsRem, Parameters, Breadcrumbs, Link, OverflowToolBar, T
 
 	QUnit.test("Position and size of the items", function (assert) {
 		var oStandardBreadCrumbsControl = this.oStandardBreadCrumbsControl,
-			oCurrentLocation = oStandardBreadCrumbsControl._getCurrentLocation(),
+			oCurrentLocation = oStandardBreadCrumbsControl.getCurrentLocation(),
 			oLinks = oStandardBreadCrumbsControl._getControlsForBreadcrumbTrail(),
 			oFirstLink = oLinks[0],
 			aAriaLabelledByFirstLink,
@@ -712,7 +721,7 @@ function(Library, DomUnitsRem, Parameters, Breadcrumbs, Link, OverflowToolBar, T
 	QUnit.test("Current location aria attributes", function (assert) {
 		// Arrange
 		var oStandardBreadCrumbsControl = this.oStandardBreadCrumbsControl,
-			oCurrentLocation = oStandardBreadCrumbsControl._getCurrentLocation();
+			oCurrentLocation = oStandardBreadCrumbsControl.getCurrentLocation();
 
 		// Act
 		oStandardBreadCrumbsControl.placeAt("qunit-fixture");
@@ -740,7 +749,7 @@ function(Library, DomUnitsRem, Parameters, Breadcrumbs, Link, OverflowToolBar, T
 	QUnit.test("Current location focus restored", function (assert) {
 		// Arrange
 		var oStandardBreadCrumbsControl = this.oStandardBreadCrumbsControl,
-			oCurrentLocation = oStandardBreadCrumbsControl._getCurrentLocation();
+			oCurrentLocation = oStandardBreadCrumbsControl.getCurrentLocation();
 
 		oStandardBreadCrumbsControl.placeAt("qunit-fixture");
 		oCore.applyChanges();

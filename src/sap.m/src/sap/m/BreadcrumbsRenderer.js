@@ -53,7 +53,7 @@ sap.ui.define(["sap/m/Text"], function (Text) {
 		}
 
 		aControls.forEach(function (oChildControl, iIndex) {
-			this._renderControlInListItem(oRm, oChildControl, sSeparator, oChildControl instanceof Text, undefined, iIndex, aControls.length);
+			this._renderControlInListItem(oRm, oChildControl, sSeparator, oChildControl.hasStyleClass("sapMBreadcrumbsCurrentLocation"), undefined, iIndex, aControls.length);
 		}, this);
 
 		oRm.close("ol");
