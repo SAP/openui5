@@ -2884,12 +2884,8 @@ sap.ui.define([
 					cache : oGroupLevelCache,
 					groupLevelCount : 7,
 					spliced : [{
-						"@$ui5._" : {
-							parent : oCache.oFirstLevel, // unrealistic!
-							predicate : "('A')",
-							rank : 23
-						},
-						"@$ui5.node.level" : 10
+						"@$ui5._" : {placeholder : true},
+						"@$ui5.node.level" : 0
 					}, {
 						"@$ui5._" : {placeholder : true, predicate : "n/a", rank : 24},
 						"@$ui5.node.level" : 11
@@ -2909,8 +2905,12 @@ sap.ui.define([
 						},
 						"@$ui5.node.level" : 12
 					}, {
-						"@$ui5._" : {placeholder : true},
-						"@$ui5.node.level" : 0
+						"@$ui5._" : {
+							parent : oCache.oFirstLevel, // unrealistic!
+							predicate : "('A')",
+							rank : 27
+						},
+						"@$ui5.node.level" : 10
 					}],
 					rank : 42
 				},
@@ -2930,6 +2930,7 @@ sap.ui.define([
 		if (bStale) {
 			oGroupNode["@$ui5._"].spliced.$stale = true;
 		}
+		oGroupNode["@$ui5._"].spliced.$level = 9;
 		oGroupNode["@$ui5._"].spliced.$rank = 12;
 		aElements = [{}, oGroupNode, {}, {}];
 		oCache.aElements = aElements.slice();
@@ -2952,11 +2953,11 @@ sap.ui.define([
 			.returns(SyncPromise.resolve(100));
 		if (bStale) {
 			oCacheMock.expects("turnIntoPlaceholder")
-				.withExactArgs(sinon.match.same(aSpliced[0]), "('A')");
-			oCacheMock.expects("turnIntoPlaceholder")
 				.withExactArgs(sinon.match.same(aSpliced[2]), "('C')");
 			oCacheMock.expects("turnIntoPlaceholder")
 				.withExactArgs(sinon.match.same(aSpliced[3]), "('created')");
+			oCacheMock.expects("turnIntoPlaceholder")
+				.withExactArgs(sinon.match.same(aSpliced[4]), "('A')");
 			oCacheMock.expects("turnIntoPlaceholder")
 				.withExactArgs(sinon.match.same(aSpliced[200000]), "('D')");
 		} else {
@@ -2980,8 +2981,7 @@ sap.ui.define([
 				["0", "1", "2", "3", "4", "5", "6", "200002", "200003", "200004", "$byPredicate",
 					"$count"]);
 			assert.strictEqual(oCache.aElements[2], aSpliced[0]);
-			assert.strictEqual(aSpliced[0]["@$ui5.node.level"], 6);
-			assert.strictEqual(aSpliced[0]["@$ui5._"].rank, 53);
+			assert.strictEqual(aSpliced[0]["@$ui5.node.level"], 0, "unchanged");
 			assert.strictEqual(oCache.aElements[3], aSpliced[1]);
 			assert.strictEqual(aSpliced[1]["@$ui5.node.level"], 7);
 			assert.strictEqual(aSpliced[1]["@$ui5._"].rank, 24);
@@ -2991,7 +2991,8 @@ sap.ui.define([
 			assert.strictEqual(_Helper.hasPrivateAnnotation(aSpliced[2], "expanding"), bStale,
 				"deleted only if not stale");
 			assert.notOk("rank" in aSpliced[3]["@$ui5._"]);
-			assert.strictEqual(aSpliced[4]["@$ui5.node.level"], 0, "unchanged");
+			assert.strictEqual(aSpliced[4]["@$ui5.node.level"], 6);
+			assert.strictEqual(aSpliced[4]["@$ui5._"].rank, 57);
 			assert.strictEqual(oCache.aElements[200002], aSpliced[200000]);
 			assert.strictEqual(aSpliced[200000]["@$ui5.node.level"], 6);
 			assert.strictEqual(aSpliced[200000]["@$ui5._"].rank, 200023);
@@ -3001,10 +3002,10 @@ sap.ui.define([
 			assert.strictEqual(oCache.aElements[200004], aElements[3]);
 
 			assert.deepEqual(oCache.aElements.$byPredicate, bStale ? {} : {
-				"('A')" : aSpliced[0],
 				"('C')" : aSpliced[2],
 				"('created')" : aSpliced[3],
 				"($uid=1-23)" : aSpliced[3],
+				"('A')" : aSpliced[4],
 				"('D')" : aSpliced[200000]
 			});
 		});
@@ -3220,7 +3221,8 @@ sap.ui.define([
 					collapsed : oCollapsed,
 					predicate : "('1')",
 					rank : "~rank~"
-				}
+				},
+				"@$ui5.node.level" : "~level~"
 			}, {
 				"@$ui5._" : {predicate : "('2')", transientPredicate : "($uid=1-23)"}
 			}, {
@@ -3239,6 +3241,7 @@ sap.ui.define([
 					rank : "~rank~"
 				},
 				"@$ui5.node.isExpanded" : false,
+				"@$ui5.node.level" : "~level~",
 				A : "10" // placeholder for an aggregate with subtotals
 			}, {
 				"@$ui5._" : {predicate : "('4')"}
@@ -3295,6 +3298,7 @@ sap.ui.define([
 				"('1')" : aElements[1],
 				"('4')" : aElements[4]
 			});
+		assert.strictEqual(aElements[1]["@$ui5._"].spliced.$level, "~level~");
 		assert.strictEqual(aElements[1]["@$ui5._"].spliced.$rank, "~rank~");
 	});
 	});
@@ -5802,12 +5806,13 @@ make root = ${bMakeRoot}`;
 			hierarchyQualifier : "X",
 			$LimitedRank : "~LimitedRank~"
 		});
+		const oNode3 = {"@$ui5.node.isExpanded" : true};
 		oCache.aElements
-			= ["~foo~", "~parent~", "~node2~", "~bar~", "~node1~", "~node3~", "~node4~"];
+			= ["~foo~", "~parent~", "~node2~", "~bar~", "~node1~", oNode3, "~node4~"];
 		oCache.aElements.$byPredicate = {
 			"~predicate1~" : "~node1~",
 			"~predicate2~" : "~node2~",
-			"~predicate3~" : "~node3~"
+			"~predicate3~" : oNode3
 		};
 
 		const oHelperMock = this.mock(_Helper);
@@ -5815,6 +5820,16 @@ make root = ${bMakeRoot}`;
 			.returns(0);
 		oHelperMock.expects("getPrivateAnnotation").withExactArgs("~parent~", "rank")
 			.returns("~iParentRank~");
+		this.mock(oCache).expects("collapse").withExactArgs("~predicate3~")
+			.callsFake(function () {
+				assert.strictEqual(oCache.aElements.indexOf(oNode3), 5, "not yet moved");
+			});
+		this.mock(oCache).expects("expand")
+			.withExactArgs(sinon.match.same(_GroupLock.$cached), "~predicate3~")
+			.callsFake(function () {
+				assert.strictEqual(oCache.aElements.indexOf(oNode3), 2,
+					"moved immediately behind parent (snapshot)");
+			});
 		this.mock(oCache.oTreeState).expects("deleteOutOfPlace").withExactArgs("~predicate4~");
 
 		// code under test
@@ -5825,7 +5840,7 @@ make root = ${bMakeRoot}`;
 			["~predicate2~", "~predicate3~", "~predicate4~", "~predicate1~"]);
 
 		assert.deepEqual(oCache.aElements,
-			["~foo~", "~parent~", "~node1~", "~node3~", "~node2~", "~bar~", "~node4~"]);
+			["~foo~", "~parent~", "~node1~", oNode3, "~node2~", "~bar~", "~node4~"]);
 	});
 
 	//*********************************************************************************************
