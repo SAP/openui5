@@ -35,7 +35,7 @@
             "mdc.sample": "./"
         },
 		"rootView": {
-			"viewName": "sap.ui.mdc.demokit.sample.FieldTypes.View",
+			"viewName": "mdc.sample.View",
 			"type": "XML",
 			"async": true,
 			"id": "sample"

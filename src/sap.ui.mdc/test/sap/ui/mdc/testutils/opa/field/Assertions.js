@@ -60,6 +60,18 @@ sap.ui.define([
 				errorMessage: "The field stores the unexpected value"
 			}));
 		},
+		iShouldSeeTheFieldWithMatchingValue: function(vIdentifier, oRegex) {
+			return waitForField.call(this, Utils.enhanceWaitFor(vIdentifier, {
+				check: function(oField) {
+					const oFormatted = oField.getFormFormattedValue();
+					return oRegex.test(oFormatted);
+				},
+				success: function (oField) {
+					Opa5.assert.ok(true, "Found matching value for the given sap.ui.mdc.Field");
+				},
+				errorMessage: "The field stores the unexpected value"
+			}));
+		},
 		iShouldSeeTheFieldWithInnerControl: function(vIdentifier, oConfig) {
 			return waitForField.call(this, Utils.enhanceWaitFor(vIdentifier, {
 				success: function(oField) {
