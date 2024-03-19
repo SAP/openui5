@@ -24,7 +24,7 @@ sap.ui.define(['./library', 'sap/ui/core/Element'],
 	 *
 	 * @constructor
 	 * @public
-	 * @deprecated as of version 1.38
+	 * @deprecated as of version 1.38 (altogether with sap.ui.commons.ResponsiveContainer). Use a container of your choice from the sap.m library instead.
 	 * @alias sap.ui.commons.ResponsiveContainerRange
 	 */
 	var ResponsiveContainerRange = Element.extend("sap.ui.commons.ResponsiveContainerRange", /** @lends sap.ui.commons.ResponsiveContainerRange.prototype */ { metadata : {
