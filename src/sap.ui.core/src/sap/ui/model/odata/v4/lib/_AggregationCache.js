@@ -552,7 +552,7 @@ sap.ui.define([
 			if (oCache === this.oFirstLevel && this.oAggregation.expandTo > 1) {
 				const [iRank] = await Promise.all([
 					this.requestRank(oEntityData, oGroupLock),
-					this.requestNodeProperty(oEntityData, oGroupLock)
+					this.requestNodeProperty(oEntityData, oGroupLock, /*bDropFilter*/true)
 				]);
 
 				oCache.removeElement(0, sTransientPredicate);
@@ -563,7 +563,7 @@ sap.ui.define([
 				_Helper.setPrivateAnnotation(oEntityData, "rank", iRank);
 				this.shiftRank(iIndex, +1);
 			} else {
-				await this.requestNodeProperty(oEntityData, oGroupLock);
+				await this.requestNodeProperty(oEntityData, oGroupLock, /*bDropFilter*/true);
 			}
 
 			return oEntityData;
@@ -586,7 +586,7 @@ sap.ui.define([
 	_AggregationCache.prototype.createGroupLevelCache = function (oGroupNode, bHasConcatHelper) {
 		var oAggregation = this.oAggregation,
 			iLevel = oGroupNode ? oGroupNode["@$ui5.node.level"] + 1 : 1,
-			aAllProperties, oCache, aGroupBy, bLeaf, mQueryOptions, bTotal;
+			aAllProperties, oCache, aGroupBy, bLeaf, sParentFilter, mQueryOptions, bTotal;
 
 		if (oAggregation.hierarchyQualifier) {
 			mQueryOptions = Object.assign({}, this.mQueryOptions);
@@ -603,7 +603,7 @@ sap.ui.define([
 			});
 		}
 		if (oGroupNode) {
-			const sParentFilter = _Helper.getPrivateAnnotation(oGroupNode, "filter")
+			sParentFilter = _Helper.getPrivateAnnotation(oGroupNode, "filter")
 				|| _Helper.getKeyFilter(oGroupNode, this.sMetaPath, this.getTypes());
 			// Note: parent filter is just eq/and, no need for parentheses, but
 			// $$filterBeforeAggregate is a black box! Put specific filter 1st for performance!
@@ -623,6 +623,9 @@ sap.ui.define([
 			? _AggregationCache.calculateKeyPredicateRH.bind(null, oGroupNode, oAggregation)
 			: _AggregationCache.calculateKeyPredicate.bind(null, oGroupNode, aGroupBy,
 				aAllProperties, bLeaf, bTotal);
+		if (sParentFilter) {
+			oCache.$parentFilter = sParentFilter;
+		}
 
 		return oCache;
 	};
@@ -851,7 +854,7 @@ sap.ui.define([
 				const [iRank] = await Promise.all([
 					this.requestRank(oParent, oGroupLock),
 					this.requestProperties(oParent, aSelect, oGroupLock, true),
-					this.requestNodeProperty(oParent, oGroupLock)
+					this.requestNodeProperty(oParent, oGroupLock, /*bDropFilter*/false)
 				]);
 
 				// Note: overridden by _AggregationCache.calculateKeyPredicateRH
@@ -1801,18 +1804,23 @@ sap.ui.define([
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
 	 *   An original lock for the group ID to be used for the GET request, to be cloned via
 	 *   {@link sap.ui.model.odata.v4.lib._GroupLock#getUnlockedCopy}
+	 * @param {boolean} [bDropFilter]
+	 *   Whether to drop the list's filter from the request in order to support out-of-place nodes
+	 *   outside the list's current collection
 	 * @returns {Promise<void>}
 	 *   A promise which is resolved without a defined result in case of success, or
 	 *   rejected in case of an error
 	 *
 	 * @private
 	 */
-	_AggregationCache.prototype.requestNodeProperty = async function (oElement, oGroupLock) {
+	_AggregationCache.prototype.requestNodeProperty = async function (oElement, oGroupLock,
+			bDropFilter) {
 		if (_Helper.drillDown(oElement, this.oAggregation.$NodeProperty) !== undefined) {
 			return; // already available
 		}
 
-		await this.requestProperties(oElement, [this.oAggregation.$NodeProperty], oGroupLock, true);
+		await this.requestProperties(oElement, [this.oAggregation.$NodeProperty], oGroupLock, true,
+			bDropFilter);
 	};
 
 	/**
@@ -1866,6 +1874,9 @@ sap.ui.define([
 	 *   {@link sap.ui.model.odata.v4.lib._GroupLock#getUnlockedCopy}
 	 * @param {boolean} [bInheritResult]
 	 *   Whether the result is inherited in the given element
+	 * @param {boolean} [bDropFilter]
+	 *   Whether to drop the list's filter from the request in order to support out-of-place nodes
+	 *   outside the list's current collection
 	 * @returns {Promise<object|void>}
 	 *   A promise which is resolved without a defined result in case <code>bInheritResult</code> is
 	 *   set to <code>true</code>, or with the result object, or rejected in case of an error
@@ -1873,11 +1884,13 @@ sap.ui.define([
 	 * @private
 	 */
 	_AggregationCache.prototype.requestProperties = async function (oElement, aSelect, oGroupLock,
-			bInheritResult) {
-		const mQueryOptions = {
-			$apply : _Helper.getPrivateAnnotation(oElement, "parent").getQueryOptions().$apply,
-			$filter : _Helper.getKeyFilter(oElement, this.sMetaPath, this.getTypes())
-		};
+			bInheritResult, bDropFilter) {
+		const oCache = _Helper.getPrivateAnnotation(oElement, "parent");
+		const mQueryOptions = bDropFilter
+			? _AggregationHelper
+				.dropFilter(this.oAggregation, this.mQueryOptions, oCache.$parentFilter)
+			: {$apply : oCache.getQueryOptions().$apply};
+		mQueryOptions.$filter = _Helper.getKeyFilter(oElement, this.sMetaPath, this.getTypes());
 		const sResourcePath = this.sResourcePath
 			+ this.oRequestor.buildQueryString(this.sMetaPath, mQueryOptions, false, true);
 		const oResult = await this.oRequestor.request("GET", sResourcePath,

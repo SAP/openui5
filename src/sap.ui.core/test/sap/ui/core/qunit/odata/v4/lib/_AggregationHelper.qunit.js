@@ -1921,6 +1921,56 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+[undefined, "~filterBeforeAggregate~"].forEach((sFilterBeforeAggregate) => {
+	QUnit.test(`dropFilter: sFilterBeforeAggregate=${sFilterBeforeAggregate}`, function (assert) {
+		const oAggregation = {
+			$fetchMetadata : function () {},
+			$metaPath : "/meta",
+			$path : "/Foo",
+			expandTo : 42,
+			hierarchyQualifier : "X",
+			search : "covfefe"
+		};
+		const sAggregationJSON = JSON.stringify(oAggregation);
+		const mQueryOptions = {
+			$$filterBeforeAggregate : "n/a",
+			$count : "~count~",
+			$expand : "~expand~",
+			$filter : "~filter~",
+			$orderby : "~orderby~",
+			$select : "~select~",
+			custom : "~custom~",
+			foo : "bar"
+		};
+		const sQueryOptionsJSON = JSON.stringify(mQueryOptions);
+		const mExpectedQueryOptions = {
+			custom : "~custom~",
+			foo : "bar"
+		};
+		if (sFilterBeforeAggregate) {
+			mExpectedQueryOptions.$$filterBeforeAggregate = sFilterBeforeAggregate;
+		}
+		this.mock(_AggregationHelper).expects("buildApply4Hierarchy")
+			.withExactArgs({
+				$fetchMetadata : sinon.match.func,
+				$metaPath : "/meta",
+				$path : "/Foo",
+				expandTo : 42,
+				hierarchyQualifier : "X"
+			}, mExpectedQueryOptions)
+			.returns("~result~");
+
+		assert.strictEqual(
+			// code under test
+			_AggregationHelper.dropFilter(oAggregation, mQueryOptions, sFilterBeforeAggregate),
+			"~result~");
+
+		assert.strictEqual(JSON.stringify(oAggregation), sAggregationJSON, "unchanged");
+		assert.strictEqual(JSON.stringify(mQueryOptions), sQueryOptionsJSON, "unchanged");
+	});
+});
+
+	//*********************************************************************************************
 [false, true].forEach(function (bSubtotalsAtBottomOnly) {
 	QUnit.test("extractSubtotals: at bottom only = " + bSubtotalsAtBottomOnly, function (assert) {
 		var oAggregation = {
