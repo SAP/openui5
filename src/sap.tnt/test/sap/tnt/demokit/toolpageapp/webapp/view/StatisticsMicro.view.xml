@@ -271,8 +271,7 @@
 					<mc:HarveyBallMicroChart
 						total="100"
 						totalScale="Hz"
-						showFractions="true"
-						isResponsive="true">
+						showFractions="true">
 						<mc:items>
 							<mc:HarveyBallMicroChartItem
 								fraction="56.5"
@@ -328,8 +327,7 @@
 						title2="{i18n>profitMarginEndLabel}"
 						deltaDisplayValue="27"
 						color="Good"
-						width="16rem"
-						isResponsive="true"/>
+						width="16rem"/>
 				</FlexBox>
 			</l:BlockLayoutCell>
 		</l:BlockLayoutRow>

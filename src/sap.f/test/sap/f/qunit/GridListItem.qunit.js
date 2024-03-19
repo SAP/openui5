@@ -3,7 +3,7 @@
 sap.ui.define([
 	"sap/f/GridListItem",
 	"sap/m/Text",
-	"sap/ui/core/library",
+	"sap/ui/core/message/MessageType",
 	"sap/m/library",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/qunit/utils/nextUIUpdate"
@@ -11,7 +11,7 @@ sap.ui.define([
 function (
 	GridListItem,
 	Text,
-	coreLibrary,
+	MessageType,
 	mobileLibrary,
 	createAndAppendDiv,
 	nextUIUpdate
@@ -20,9 +20,6 @@ function (
 
 	// shortcut for sap.m.ListType
 	var ListType = mobileLibrary.ListType;
-
-	// shortcut for sap.ui.core.MessageType
-	var MessageType = coreLibrary.MessageType;
 
 	var DOM_RENDER_LOCATION = "gridListItem-fixture";
 	createAndAppendDiv(DOM_RENDER_LOCATION);

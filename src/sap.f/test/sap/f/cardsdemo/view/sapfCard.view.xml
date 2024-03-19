@@ -92,7 +92,7 @@
 					<VBox class="sapUiMediumMargin">
 						<Title text="Organizational Details" class="sapUiTinyMarginBottom" />
 						<HBox>
-							<f:Avatar src="{cardsPlayground>/playgroundBaseUrl}/images/Woman_avatar_02.png" />
+							<Avatar src="{cardsPlayground>/playgroundBaseUrl}/images/Woman_avatar_02.png" />
 							<Text text="John Miller" />
 						</HBox>
 					</VBox>
@@ -136,7 +136,7 @@
 					<VBox class="sapUiMediumMargin">
 						<Title text="Organizational Details" class="sapUiTinyMarginBottom" />
 						<HBox>
-							<f:Avatar src="{cardsPlayground>/playgroundBaseUrl}/images/Woman_avatar_02.png" />
+							<Avatar src="{cardsPlayground>/playgroundBaseUrl}/images/Woman_avatar_02.png" />
 							<Text text="John Miller" />
 						</HBox>
 					</VBox>

@@ -190,14 +190,14 @@ sap.ui.define([
 				content : [ new HTML({
 					content : "<p>Do you want to start a new world domination campaign?</p>"
 				}) ],
-				leftButton : new Button({
+				beginButton : new Button({
 					text : "Reject",
 					type : ButtonType.Reject,
 					press : function() {
 						oDialog1.close();
 					}
 				}),
-				rightButton : new Button({
+				endButton : new Button({
 					text : "Accept",
 					type : ButtonType.Accept,
 					press : function() {

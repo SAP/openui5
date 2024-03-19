@@ -7,7 +7,7 @@ sap.ui.define([
 		"sap/ui/integration/util/DataProvider",
 		"sap/ui/integration/cards/actions/CardActions",
 		"sap/ui/integration/thirdparty/adaptivecards",
-		"sap/ui/core/library",
+		"sap/ui/core/message/MessageType",
 		"sap/ui/qunit/utils/nextUIUpdate",
 		"qunit/testResources/nextCardReadyEvent"
 ],
@@ -19,15 +19,13 @@ sap.ui.define([
 		DataProvider,
 		CardActions,
 		AdaptiveCards,
-		coreLibrary,
+		MessageType,
 		nextUIUpdate,
 		nextCardReadyEvent
 	) {
 		"use strict";
 
 		var DOM_RENDER_LOCATION = "qunit-fixture";
-		// shortcut for sap.ui.core.MessageType
-		var MessageType = coreLibrary.MessageType;
 
 		var oManifest = {
 			"sap.card": {
