@@ -15,13 +15,6 @@
 				contentRole="Region"
 				contentLabel="{i18n>Home_contentLabel}"/>
 		</landmarkInfo>
-					<Button
-						class="IconExplorerHomePageInfoButton"
-						text="{i18n>infoTitle}"
-						iconFirst="false"
-						icon="sap-icon://forward"
-						press=".onNavToInfo"/>
-
 					<VBox
 						class="IconExplorerSearchContainer"
 						justifyContent="Center"
@@ -43,14 +36,12 @@
 							</RadioButtonGroup>
 						</HBox>
 						<HBox justifyContent="Center">
-
 							<Input
 								id="search"
 								placeholder="{i18n>searchPlaceholder}"
 								type="Text"
 								showSuggestion="true"
 								showClearIcon="true"
-								showValueHelp="true"
 								submit=".onEnter"
 								showTableSuggestionValueHelp="false"
 								suggestionRows="{
@@ -110,15 +101,20 @@
 												src="sap-icon://{iconPath}{name}"
 												color="Default"/>
 											<Label text="{name}"/>
-											<l:HorizontalLayout
-												content="{
+											<Tokenizer
+												width="100%"
+												renderMode="Narrow"
+												editable="false"
+												tokens="{
 													path: 'tags',
 													templateShareable: true
 												}">
 												<Token
+													selected="{tags>/selected}"
+													press=".onTokenPress"
 													text="{name}"
 													editable="false"/>
-											</l:HorizontalLayout>
+											</Tokenizer>
 											<Label text="{font}"/>
 											<ObjectNumber
 												number="{path: 'delivery'}"
@@ -130,6 +126,17 @@
 									</ColumnListItem>
 								</suggestionRows>
 							</Input>
+						</HBox>
+						<HBox justifyContent="Center">
+							<Button 
+								text="{i18n>iconExplorerBrowseLibrary}"
+								class="sapUiSmallMarginEnd"
+								press=".onNavToLibrary"/>
+							<Button
+								text="{i18n>infoTitle}"
+								iconFirst="false"
+								icon="sap-icon://forward"
+								press=".onNavToInfo"/>
 						</HBox>
 					</VBox>
 	</Page>

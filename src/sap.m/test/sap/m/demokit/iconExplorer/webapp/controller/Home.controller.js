@@ -13,27 +13,32 @@ sap.ui.define([
 
 		onInit: function () {
 			// search in tags and icon string for the global search
-			var oSearchField = this.byId("search");
-			oSearchField.setFilterFunction(function (sValue, oControl) {
+			this._oSearchField = this.byId("search");
+			this._oSearchField.setFilterFunction(function (sValue, oControl) {
 				var oContext = oControl.getBindingContext().getObject();
 
 				return !!(oContext.name.indexOf(sValue) >= 0 || oContext.tagString.indexOf(sValue) >= 0);
 			});
 
-			oSearchField.setValueHelpIconSrc("sap-icon://search");
-			oSearchField.addEventDelegate({
+			this._oSearchField.setValueHelpIconSrc("sap-icon://search");
+			this._oSearchField.addEventDelegate({
 				// re-open suggestions when pressing inside the search field again
 				ontap: function (oEvent) {
 					// open the suggestion popup when search value is valid
 					if (this.getValue().length >= this.getStartSuggestion()) {
 						this._oSuggestionPopup.open();
 					}
-				}.bind(oSearchField),
+				}.bind(this._oSearchField),
 				oninput: function () {
 					this.applyFilters();
 				}.bind(this)
 			});
 
+			this.getRouter().attachBeforeRouteMatched(this.onBeforeRouteMatched, this);
+		},
+
+		onBeforeRouteMatched : function () {
+			this._bNavigatedFromTag = false;
 		},
 
 		/**
@@ -45,6 +50,10 @@ sap.ui.define([
 			var sSearch = oEvent.getSource().getValue(),
 				oBindingContext = oEvent.getParameter("selectedRow").getBindingContext().getObject();
 
+			if (this._bNavigatedFromTag) {
+				return;
+			}
+
 			this.getRouter().navTo("overview",{
 				fontName : oBindingContext.font,
 				query: {
@@ -53,6 +62,25 @@ sap.ui.define([
 				}
 			});
 		},
+
+		onTokenPress: function (oEvent) {
+			var oTarget = oEvent.getSource(),
+				oRow = oTarget.getParent().getParent(),
+				oBindingContext = oRow.getBindingContext().getObject(),
+				sSearch = this._oSearchField.getValue(),
+				sTag = oTarget.getText();
+
+			this.getRouter().navTo("overview",{
+				fontName : oBindingContext.font,
+				query: {
+					search: sSearch,
+					tag: sTag
+				}
+			});
+
+			this._bNavigatedFromTag = true;
+		},
+
 		/**
 		 * Navigate to the selected icon font and preselect the icon when pressing enter
 		 * @param {sap.ui.base.Event} oEvent the enter event

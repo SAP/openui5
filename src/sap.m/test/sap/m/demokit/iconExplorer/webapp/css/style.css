@@ -85,6 +85,10 @@
 	flex-shrink: 0;
 }
 
+.sapUiDemoIconExplorer .sapMRb .sapMRbBLabel .sapMLabelTextWrapper {
+	color: #fff;
+}
+
 /*SMALL*/
 
 .sap-phone .sapUiDemoIconExplorer .sapMText.HomeHeaderText {

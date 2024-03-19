@@ -63,6 +63,79 @@
 						</f:header>
 						<f:content>
 							<VBox class='sapUiSmallMargin sapUiDocumentationInfoLinksHolder'>
+								<!-- OPENUI5 -->
+								<HBox visible="{= ${versionData>/isOpenUI5}}" alignItems='Center' class='sapUiTinyMarginTop'>
+									<core:Icon
+										size='1.5rem'
+										width='3rem'
+										height='3rem'
+										src="sap-icon://sap-logo-shape"
+										backgroundColor="#D1EFFF"
+										color="#0057D2" />
+									<Link text='{i18n>infoFioriWDHorizon}'
+										wrapping="true"
+										emphasized="true"
+										class='sapUiSmallMarginBegin'
+										href='https://experience.sap.com/fiori-design-web/iconography-horizon/' />
+								</HBox>
+								<HBox visible="{= ${versionData>/isOpenUI5}}" alignItems='Center' class='sapUiTinyMarginTop'>
+									<core:Icon
+										size='1.5rem'
+										width='3rem'
+										height='3rem'
+										src="sap-icon://sap-logo-shape"
+										backgroundColor="#DED3FF"
+										color="#552CFF" />
+									<Link text='{i18n>infoFioriWDQuartz}'
+										wrapping="true"
+										emphasized="true"
+										class='sapUiSmallMarginBegin'
+										href='https://experience.sap.com/fiori-design-web/icons/' />
+								</HBox>
+								<HBox visible="{= ${versionData>/isOpenUI5}}" alignItems='Center' class='sapUiTinyMarginTop'>
+									<core:Icon
+										size='1.5rem'
+										width='3rem'
+										height='3rem'
+										src="sap-icon://sap-ui5"
+										backgroundColor="#FFF3B8"
+										color="#A45D00" />
+									<Link text='{i18n>infoIconAndIconPoolOpenUI}'
+										wrapping="true"
+										emphasized="true"
+										class='sapUiSmallMarginBegin'
+										href='https://openui5.hana.ondemand.com/topic/21ea0ea94614480d9a910b2e93431291' />
+								</HBox>
+
+								<!-- SAPUI5 -->
+								<HBox visible="{= !${versionData>/isOpenUI5}}" alignItems='Center' class='sapUiTinyMarginTop'>
+									<core:Icon
+										size='1.5rem'
+										width='3rem'
+										height='3rem'
+										src="sap-icon://sap-logo-shape"
+										backgroundColor="#D1EFFF"
+										color="#0057D2" />
+									<Link text='{i18n>infoFioriWDHorizon}'
+										wrapping="true"
+										emphasized="true"
+										class='sapUiSmallMarginBegin'
+										href='https://experience.sap.com/internal/fiori-design-web/iconography-horizon/' />
+								</HBox>
+								<HBox visible="{= !${versionData>/isOpenUI5}}" alignItems='Center' class='sapUiTinyMarginTop'>
+									<core:Icon
+										size='1.5rem'
+										width='3rem'
+										height='3rem'
+										src="sap-icon://sap-logo-shape"
+										backgroundColor="#DED3FF"
+										color="#552CFF" />
+									<Link text='{i18n>infoFioriWDQuartz}'
+										wrapping="true"
+										emphasized="true"
+										class='sapUiSmallMarginBegin'
+										href='https://experience.sap.com/internal/fiori-design-web/icons/' />
+								</HBox>
 								<HBox visible="{= !${versionData>/isOpenUI5}}" alignItems='Center'>
 									<core:Icon
 										size='1.5rem'
@@ -82,34 +155,6 @@
 										size='1.5rem'
 										width='3rem'
 										height='3rem'
-										src="sap-icon://sap-logo-shape"
-										backgroundColor="#D1EFFF"
-										color="#0057D2" />
-									<Link text='{i18n>infoFioriWDHorizon}'
-										wrapping="true"
-										emphasized="true"
-										class='sapUiSmallMarginBegin'
-										href='https://experience.sap.com/internal/fiori-design-web/iconography-horizon/' />
-								</HBox>
-								<HBox alignItems='Center' class='sapUiTinyMarginTop'>
-									<core:Icon
-										size='1.5rem'
-										width='3rem'
-										height='3rem'
-										src="sap-icon://sap-logo-shape"
-										backgroundColor="#DED3FF"
-										color="#552CFF" />
-									<Link text='{i18n>infoFioriWDQuartz}'
-										wrapping="true"
-										emphasized="true"
-										class='sapUiSmallMarginBegin'
-										href='https://experience.sap.com/internal/fiori-design-web/icons/' />
-								</HBox>
-								<HBox visible="{= !${versionData>/isOpenUI5}}" alignItems='Center' class='sapUiTinyMarginTop'>
-									<core:Icon
-										size='1.5rem'
-										width='3rem'
-										height='3rem'
 										src="sap-icon://sap-ui5"
 										backgroundColor="#FFF3B8"
 										color="#A45D00" />
@@ -119,20 +164,7 @@
 										class='sapUiSmallMarginBegin'
 										href='https://sapui5.hana.ondemand.com/#/topic/21ea0ea94614480d9a910b2e93431291' />
 								</HBox>
-								<HBox visible="{= ${versionData>/isOpenUI5}}" alignItems='Center' class='sapUiTinyMarginTop'>
-									<core:Icon
-										size='1.5rem'
-										width='3rem'
-										height='3rem'
-										src="sap-icon://sap-ui5"
-										backgroundColor="#FFF3B8"
-										color="#A45D00" />
-									<Link text='{i18n>infoIconAndIconPoolOpenUI}'
-										wrapping="true"
-										emphasized="true"
-										class='sapUiSmallMarginBegin'
-										href='https://openui5.hana.ondemand.com/topic/21ea0ea94614480d9a910b2e93431291' />
-								</HBox>
+
 							</VBox>
 						</f:content>
 					</f:Card>
