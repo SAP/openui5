@@ -2509,7 +2509,8 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		var oEvent = new jQuery.Event("input", {
-			target: oComboBox.getFocusDomRef()
+			target: oComboBox.getFocusDomRef(),
+			srcControl: oComboBox
 		});
 
 		oComboBox.oninput(oEvent);
@@ -13901,5 +13902,39 @@ sap.ui.define([
 		// tick the clock ahead some ms millisecond (it should be at least more than the auto respond setting
 		// to make sure that the data from the OData model is available)
 		this.clock.tick(iAutoRespondAfter + 2);
+	});
+
+	QUnit.module("General Interaction", {
+		beforeEach: function () {
+			this.oComboBox = new ComboBox({
+				value: "1000",
+				items: [
+					new Item({text: "1000"}),
+					new Item({text: "100"})
+				]
+			}).placeAt("content");
+			oCore.applyChanges();
+		},
+		afterEach: function () {
+			this.oComboBox.destroy();
+		}
+	});
+
+	QUnit.test("it should select item on backspace when having exact match", function (assert) {
+		// Arrange
+		const oComboBox = this.oComboBox;
+		const oItem = oComboBox.getItems()[0];
+		const oFocusDomRef = oComboBox.getFocusDomRef();
+
+		// Act
+		oComboBox.setSelectedItem(oItem);
+		oCore.applyChanges();
+		oComboBox.focus();
+		qutils.triggerKeydown(oFocusDomRef, KeyCodes.BACKSPACE);
+		oFocusDomRef.value = "100";
+		qutils.triggerEvent("input", oFocusDomRef, { value: "100" });
+		this.clock.tick(0);
+
+		assert.strictEqual(oComboBox.getSelectedItem(), oComboBox.getItems()[1], "The second item should be selected");
 	});
 });
