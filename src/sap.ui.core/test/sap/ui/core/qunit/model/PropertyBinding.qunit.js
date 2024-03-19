@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/model/PropertyBinding",
 	"sap/ui/test/TestUtils"
 ], function (Log, ChangeReason, PropertyBinding, TestUtils) {
-	/*global QUnit*/
+	/*global sinon, QUnit*/
 	"use strict";
 
 	//*********************************************************************************************
@@ -88,6 +88,18 @@ sap.ui.define([
 		PropertyBinding.prototype.registerTypeChanged.call(oPropertyBinding, "~fnCallback");
 
 		assert.strictEqual(oPropertyBinding.fnTypeChangedCallback, "~fnCallback");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_getBoundValue", function (assert) {
+		const oBinding = {getValue() {}};
+		this.mock(oBinding).expects("getValue").withExactArgs().returns("~vValue");
+		const oHelper = {fnFormat() {}};
+		this.mock(oHelper).expects("fnFormat").withExactArgs("~vValue").returns("~vFormattedValue");
+
+		// code under test
+		assert.strictEqual(
+			PropertyBinding.prototype._getBoundValue.call(oBinding, oHelper.fnFormat), "~vFormattedValue");
 	});
 
 	//*********************************************************************************************
@@ -376,5 +388,297 @@ sap.ui.define([
 		}, (oException) => {
 			assert.strictEqual(oException, oError);
 		});
+	});
+
+	//*********************************************************************************************
+[
+	{internalType: "raw", expects: "getRawValue"},
+	{internalType: "internal", expects: "getInternalValue"}
+].forEach((oFixture) => {
+	QUnit.test("getExternalValue calls " + oFixture.expects, function (assert) {
+		const oBinding = {sInternalType: oFixture.internalType};
+		oBinding[oFixture.expects] = () => {};
+		this.mock(oBinding).expects(oFixture.expects).withExactArgs().returns("~vValue");
+
+		// code under test
+		assert.strictEqual(PropertyBinding.prototype.getExternalValue.call(oBinding), "~vValue");
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("getExternalValue calls _getBoundValue", function (assert) {
+		const oBinding = {_rawToExternal() {}, _getBoundValue() {}};
+		const oBindingMock = this.mock(oBinding);
+		oBindingMock.expects("_rawToExternal").withExactArgs("~vValue").on(oBinding).returns("~notRelevant");
+		oBindingMock.expects("_getBoundValue").withExactArgs(sinon.match.func).callsFake((fnFormat) => {
+			// code under test
+			fnFormat("~vValue");
+
+			return "~vValue";
+		});
+
+		// code under test
+		assert.strictEqual(PropertyBinding.prototype.getExternalValue.call(oBinding), "~vValue");
+	});
+
+	//*********************************************************************************************
+[
+	{internalType: "raw", expects: "setRawValue"},
+	{internalType: "internal", expects: "setInternalValue"}
+].forEach((oFixture) => {
+	QUnit.test("setExternalValue calls " + oFixture.expects, function (assert) {
+		const oBinding = {sInternalType: oFixture.internalType};
+		oBinding[oFixture.expects] = () => {};
+		this.mock(oBinding).expects(oFixture.expects).withExactArgs("~vValue").returns("~vResult");
+
+		// code under test
+		assert.strictEqual(PropertyBinding.prototype.setExternalValue.call(oBinding, "~vValue"), "~vResult");
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("setExternalValue calls _setBoundValue", function (assert) {
+		const oBinding = {_externalToRaw() {}, _setBoundValue() {}};
+		const oBindingMock = this.mock(oBinding);
+		oBindingMock.expects("_externalToRaw").withExactArgs("~vValue").on(oBinding).returns("~notRelevant");
+		oBindingMock.expects("_setBoundValue")
+			.withExactArgs("~vValue", sinon.match.func)
+			.callsFake((vValue, fnParse) => {
+				// code under test
+				fnParse(vValue);
+
+				return "~vResult";
+			});
+
+		// code under test
+		assert.strictEqual(PropertyBinding.prototype.setExternalValue.call(oBinding, "~vValue"), "~vResult");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("setExternalValue logs warning", function (assert) {
+		const oBinding = {fnFormatter() {}};
+		this.oLogMock.expects("warning").withExactArgs("Tried to use twoway binding, but a formatter function is used");
+
+		// code under test
+		assert.strictEqual(PropertyBinding.prototype.setExternalValue.call(oBinding, "~vValue"), undefined);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getInternalValue", function (assert) {
+		const oBinding = {_rawToInternal() {}, _getBoundValue() {}};
+		const oBindingMock = this.mock(oBinding);
+		oBindingMock.expects("_rawToInternal").withExactArgs("~vValue").on(oBinding).returns("~notRelevant");
+		oBindingMock.expects("_getBoundValue").withExactArgs(sinon.match.func).callsFake((fnFormat) => {
+			// code under test
+			fnFormat("~vValue");
+
+			return "~vValue";
+		});
+
+		// code under test
+		assert.strictEqual(PropertyBinding.prototype.getInternalValue.call(oBinding), "~vValue");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("setInternalValue", function (assert) {
+		const oBinding = {_internalToRaw() {}, _setBoundValue() {}};
+		const oBindingMock = this.mock(oBinding);
+		oBindingMock.expects("_internalToRaw").withExactArgs("~vValue").on(oBinding).returns("~notRelevant");
+		oBindingMock.expects("_setBoundValue")
+			.withExactArgs("~vValue", sinon.match.func)
+			.callsFake((vValue, fnParse) => {
+				// code under test
+				fnParse(vValue);
+
+				return "~vResult";
+			});
+
+		// code under test
+		assert.strictEqual(PropertyBinding.prototype.setInternalValue.call(oBinding, "~vValue"), "~vResult");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getRawValue", function (assert) {
+		const oBinding = {_getBoundValue() {}};
+		this.mock(oBinding).expects("_getBoundValue").withExactArgs(sinon.match.func).callsFake((fnFormat) => {
+			// code under test
+			assert.strictEqual(fnFormat("~vValue"), "~vValue");
+
+			return "~vValue";
+		});
+
+		// code under test
+		assert.strictEqual(PropertyBinding.prototype.getRawValue.call(oBinding), "~vValue");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("setRawValue", function (assert) {
+		const oBinding = {_setBoundValue() {}};
+		this.mock(oBinding).expects("_setBoundValue")
+			.withExactArgs("~vValue", sinon.match.func)
+			.callsFake((vValue, fnParse) => {
+				// code under test
+				assert.strictEqual(fnParse(vValue), vValue);
+
+				return "~vResult";
+			});
+
+		// code under test
+		assert.strictEqual(PropertyBinding.prototype.setRawValue.call(oBinding, "~vValue"), "~vResult");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_rawToExternal: no type, no formatter", function (assert) {
+		// code under test
+		assert.strictEqual(PropertyBinding.prototype._rawToExternal.call({}, "~vValue"), "~vValue");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_rawToExternal: with type", function (assert) {
+		const oType = {formatValue() {}};
+		const oBinding = {sInternalType: "~sInternalType", oType: oType};
+		this.mock(oType).expects("formatValue").withExactArgs("~vValue", "~sInternalType").returns("~vFormattedValue");
+
+		// code under test
+		assert.strictEqual(PropertyBinding.prototype._rawToExternal.call(oBinding, "~vValue"), "~vFormattedValue");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_rawToExternal: with formatter", function (assert) {
+		const oBinding = {fnFormatter() {}};
+		this.mock(oBinding).expects("fnFormatter").withExactArgs("~vValue").returns("~vFormattedValue");
+
+		// code under test
+		assert.strictEqual(PropertyBinding.prototype._rawToExternal.call(oBinding, "~vValue"), "~vFormattedValue");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_rawToExternal: with type and formatter", function (assert) {
+		const oType = {formatValue() {}};
+		const oBinding = {
+			sInternalType: "~sInternalType",
+			oType: oType,
+			fnFormatter() {}
+		};
+		this.mock(oType).expects("formatValue")
+			.withExactArgs("~vValue", "~sInternalType")
+			.returns("~vValueFormattedByType");
+		this.mock(oBinding).expects("fnFormatter")
+			.withExactArgs("~vValueFormattedByType")
+			.returns("~vValueFormattedByFormatter");
+
+		// code under test
+		assert.strictEqual(PropertyBinding.prototype._rawToExternal.call(oBinding, "~vValue"),
+			"~vValueFormattedByFormatter");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_externalToRaw: no type", function (assert) {
+		// code under test
+		assert.strictEqual(PropertyBinding.prototype._externalToRaw.call({}, "~vValue"), "~vValue");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_externalToRaw: with type", function (assert) {
+		const oType = {parseValue() {}};
+		const oBinding = {sInternalType: "~sInternalType", oType: oType};
+		this.mock(oType).expects("parseValue").withExactArgs("~vValue", "~sInternalType").returns("~vParsedValue");
+
+		// code under test
+		assert.strictEqual(PropertyBinding.prototype._externalToRaw.call(oBinding, "~vValue"), "~vParsedValue");
+	});
+
+	//*********************************************************************************************
+[
+	{type: undefined, value: "foo"},
+	{type: "~oType", value: null},
+	{type: "~oType", value: undefined}
+].forEach((oFixture, i) => {
+	QUnit.test("_rawToInternal: w/o parsing " + oFixture.value, function (assert) {
+		// code under test
+		assert.strictEqual(PropertyBinding.prototype._rawToInternal.call({oType: oFixture.type}, oFixture.value),
+			oFixture.value);
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("_rawToInternal: w/ parsing", function (assert) {
+		const oType = {getModelFormat() {}};
+		const oBinding = {oType: oType};
+		const oFormat = {parse() {}};
+		this.mock(oType).expects("getModelFormat").withExactArgs().returns(oFormat);
+		this.mock(oFormat).expects("parse").withExactArgs("~vValue").returns("~vParsedValue");
+
+		// code under test
+		assert.strictEqual(PropertyBinding.prototype._rawToInternal.call(oBinding, "~vValue"), "~vParsedValue");
+	});
+
+	//*********************************************************************************************
+[null, undefined].forEach((vValue) => {
+	QUnit.test("_internalToRaw: w/o formatting, value=" + vValue, function (assert) {
+		// code under test
+		assert.strictEqual(PropertyBinding.prototype._internalToRaw.call({}, vValue), vValue);
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("_internalToRaw w/ formatting", function (assert) {
+		const oType = {getModelFormat() {}};
+		const oBinding = {oType: oType};
+		const oFormat = {format() {}};
+		this.mock(oType).expects("getModelFormat").withExactArgs().returns(oFormat);
+		this.mock(oFormat).expects("format").withExactArgs("~vValue").returns("~vFormattedValue");
+
+		// code under test
+		assert.strictEqual(PropertyBinding.prototype._internalToRaw.call(oBinding, "~vValue"), "~vFormattedValue");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getType", function (assert) {
+		// code under test
+		assert.strictEqual(PropertyBinding.prototype.getType.call({oType: "~oType"}), "~oType");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("setFormatter", function (assert) {
+		const oBinding = {};
+
+		// code under test
+		PropertyBinding.prototype.setFormatter.call(oBinding, "~fnFormatter");
+
+		assert.strictEqual(oBinding.fnFormatter, "~fnFormatter");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getFormatter", function (assert) {
+		// code under test
+		assert.strictEqual(PropertyBinding.prototype.getFormatter.call({fnFormatter: "~fnFormatter"}), "~fnFormatter");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getBindingMode", function (assert) {
+		// code under test
+		assert.strictEqual(PropertyBinding.prototype.getBindingMode.call({sMode: "~sMode"}), "~sMode");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("setBindingMode", function (assert) {
+		const oBinding = {};
+
+		// code under test
+		PropertyBinding.prototype.setBindingMode.call(oBinding, "~sMode");
+
+		assert.strictEqual(oBinding.sMode, "~sMode");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("resume", function (assert) {
+		const oBinding = {checkUpdate() {}};
+		this.mock(oBinding).expects("checkUpdate").withExactArgs(true);
+
+		// code under test
+		PropertyBinding.prototype.resume.call(oBinding);
+
+		assert.strictEqual(oBinding.bSuspended, false);
 	});
 });
