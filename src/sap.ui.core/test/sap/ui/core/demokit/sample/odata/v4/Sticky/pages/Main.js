@@ -25,7 +25,7 @@ sap.ui.define([
 						success : function (oInput) {
 							Opa5.assert.strictEqual(oInput.getValue(), sValue, "Content set to "
 								+ oInput.getValue());
-							// trigger PATCH by leaving field via simple tab on other control
+							// invoke PATCH by leaving field via simple tab on other control
 							this.waitFor({
 								actions : new Press(),
 								id : "Id::details",

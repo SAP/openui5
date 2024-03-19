@@ -848,14 +848,14 @@ sap.ui.define([
 			sTitle = "doConvertSystemQueryOptions (V2): " + i + ", mQueryOptions" + sJSON;
 
 		/*
-		 * Executes the test for doConvertSystemQueryOptions.
+		 * Invokes the test for doConvertSystemQueryOptions.
 		 *
 		 * @param {string} sCurrentTitle The test title
 		 * @param {object[]} aExpectedResultHandlerCalls An array of expected result handler calls.
 		 *   Each array element is an object with a key and a value property.
 		 * @param {boolean} bSorted Indicates whether to sort the $expand and $select entries
 		 */
-		function executeTest(sCurrentTitle, aExpectedResultHandlerCalls, bSorted) {
+		function invokeTest(sCurrentTitle, aExpectedResultHandlerCalls, bSorted) {
 			QUnit.test(sCurrentTitle, function (assert) {
 				var fnResultHandlerSpy = this.spy(),
 					oRequestor = {};
@@ -879,10 +879,10 @@ sap.ui.define([
 			});
 		}
 
-		executeTest(sTitle, oFixture.expectedResultHandlerCalls);
+		invokeTest(sTitle, oFixture.expectedResultHandlerCalls);
 
 		if (oFixture.expectedResultHandlerCallsSorted) {
-			executeTest("(sorted) " + sTitle, oFixture.expectedResultHandlerCallsSorted, true);
+			invokeTest("(sorted) " + sTitle, oFixture.expectedResultHandlerCallsSorted, true);
 		}
 	});
 

@@ -2939,7 +2939,7 @@ sap.ui.define([
 	 *     type lookup, for example "/TEAMS/acme.NewAction//Team_ID".
 	 *
 	 *     For primitive return types, the special segment "value" can be used to refer to the
-	 *     return type itself (see {@link sap.ui.model.odata.v4.ODataContextBinding#execute}). This
+	 *     return type itself (see {@link sap.ui.model.odata.v4.ODataContextBinding#invoke}). This
 	 *     way, "/GetOldestAge/value" addresses the same object as "/GetOldestAge/$ReturnType"
 	 *     or "/GetOldestAge/$Function/0/$ReturnType" or
 	 *     "/GetOldestAge/@$ui5.overload/0/$ReturnType" (which is needed for automatic type

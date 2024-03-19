@@ -32,7 +32,7 @@ sap.ui.define([
 			oView.getModel()
 				.bindContext("SampleService.draftEdit(...)", oContext,
 					{$$inheritExpandSelect : true})
-				.execute(undefined, false, false, true)
+				.invoke(undefined, false, false, true)
 				.then(function (oRVC) {
 					that.setPartsContext(oRVC);
 				}).finally(function () {

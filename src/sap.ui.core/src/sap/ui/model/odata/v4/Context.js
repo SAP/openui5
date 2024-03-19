@@ -1708,8 +1708,8 @@ sap.ui.define([
 	 *       {@link sap.ui.model.odata.v4.ODataListBinding#setAggregation})
 	 *   </ul>
 	 * @public
-	 * @see sap.ui.model.odata.v4.ODataContextBinding#execute
 	 * @see sap.ui.model.odata.v4.ODataContextBinding#getBoundContext
+	 * @see sap.ui.model.odata.v4.ODataContextBinding#invoke
 	 * @see sap.ui.model.odata.v4.ODataListBinding#getHeaderContext
 	 * @see sap.ui.model.odata.v4.ODataModel#bindContext
 	 * @since 1.61.0
@@ -1895,10 +1895,11 @@ sap.ui.define([
 	/**
 	 * Resets all property changes, created entities, and entity deletions of this context. Resets
 	 * also invalid user input and inactive contexts which had their activation prevented (see
-	 * {@link sap.ui.model.odata.v4.Context#isInactive}). This function does not reset the execution
-	 * of OData operations (see {@link sap.ui.model.odata.v4.ODataContextBinding#execute}). For a
-	 * context which is currently {@link #delete deleted} on the client, but not yet on the server,
-	 * this method cancels the deletion and restores the context.
+	 * {@link sap.ui.model.odata.v4.Context#isInactive}). This function does not reset the
+	 * invocation of OData operations (see
+	 * {@link sap.ui.model.odata.v4.ODataContextBinding#invoke}). For a context which is currently
+	 * {@link #delete deleted} on the client, but not yet on the server, this method cancels the
+	 * deletion and restores the context.
 	 *
 	 * @returns {Promise<void>}
 	 *   A promise which is resolved without a defined result as soon as all changes in the context
@@ -2015,7 +2016,7 @@ sap.ui.define([
 	 *   Callback function that is called once for a kept-alive context without any argument just
 	 *   before the context is destroyed; see {@link #destroy}. If a context has been replaced in a
 	 *   list binding (see {@link #replaceWith} and
-	 *   {@link sap.ui.odata.v4.ODataContextBinding#execute}), the callback will later also be
+	 *   {@link sap.ui.odata.v4.ODataContextBinding#invoke}), the callback will later also be
 	 *   called just before the replacing context is destroyed, but with that context as the only
 	 *   argument. Supported since 1.84.0
 	 * @param {boolean} [bRequestMessages]

@@ -2676,7 +2676,7 @@ sap.ui.define([
 				assert.strictEqual(that.oMetaModel.getObject("/tea_busi_supplier.v0001."),
 					mReferencedScope["tea_busi_supplier.v0001."]);
 
-				// now check that "not.found." does not trigger another read(),
+				// now check that "not.found." does not invoke another read(),
 				// does finish synchronously and logs a warning
 				that.oLogMock.expects("warning").exactly(bWarn ? 1 : 0)
 					.withExactArgs("/a/default/iwbep/tea_busi_product/0001/$metadata"
@@ -2799,7 +2799,7 @@ sap.ui.define([
 					.then(function (vResult) {
 						assert.strictEqual(vResult, mScopeA["A."]);
 
-						// Note: must not trigger read() again!
+						// Note: must not invoke read() again!
 						return that.oMetaModel.fetchObject("/B.B.")
 							.then(function (vResult) {
 								assert.strictEqual(vResult, mScopeB["B.B."]);

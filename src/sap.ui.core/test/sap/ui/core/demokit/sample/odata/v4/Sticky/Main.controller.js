@@ -20,7 +20,7 @@ sap.ui.define([
 			var oOperation = this.getView().getModel().bindContext("/DiscardChanges(...)"),
 				that = this;
 
-			oOperation.execute().then(function () {
+			oOperation.invoke().then(function () {
 				that.discard();
 				MessageToast.show("Sticky session discarded");
 			}, function (oError) {
@@ -53,7 +53,7 @@ sap.ui.define([
 				"com.sap.gateway.srvd.zrc_rap_sticky.v0001.PrepareForEdit(...)",
 				oItem.getBindingContext());
 
-			oOperation.execute().then(function (oStickyContext) {
+			oOperation.invoke().then(function (oStickyContext) {
 				MessageToast.show("Sticky session opened");
 				that.setStickyContext(oStickyContext);
 				that.selectedContext = oItem.getBindingContext();
@@ -70,7 +70,7 @@ sap.ui.define([
 				"com.sap.gateway.srvd.zrc_rap_sticky.v0001.SaveChanges(...)",
 				this.byId("Sticky::details").getBindingContext());
 
-			oOperation.execute().then(function () {
+			oOperation.invoke().then(function () {
 				MessageToast.show("Changes saved, sticky session closed");
 				that.setStickyContext(null);
 				that.selectedContext.refresh();

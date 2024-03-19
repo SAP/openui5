@@ -64,7 +64,7 @@ sap.ui.define([
 					}
 				});
 			} else {
-				this.byId("resetButton").getObjectBinding("v4").execute()
+				this.byId("resetButton").getObjectBinding("v4").invoke()
 					.then(function () {
 						//TODO: refresh needed as long there is no synchronisation
 						oModel.refresh();

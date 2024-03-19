@@ -806,7 +806,7 @@ sap.ui.define([
 			oBinding.attachChange(fnChangeHandler, oBinding);
 
 			// code under test
-			oBinding.setContext(); // reset context triggers checkUpdate
+			oBinding.setContext(); // reset context invokes checkUpdate
 		});
 	});
 
@@ -1139,7 +1139,7 @@ sap.ui.define([
 
 		// This creates and initializes a context binding at the control. The change handler of the
 		// context binding calls setContext at the property's binding which completes the path and
-		// triggers a checkUpdate (resulting in the read). This then fires a change event at the
+		// invokes a checkUpdate (resulting in the read). This then fires a change event at the
 		// property binding.
 		oControl.bindObject("/EntitySet('foo')");
 	});
@@ -1881,7 +1881,7 @@ sap.ui.define([
 		assert.strictEqual(oPropertyBinding.getValue(), "foo");
 
 		// code under test
-		oPropertyBinding.setValue("foo"); // must not trigger a 2nd PATCH
+		oPropertyBinding.setValue("foo"); // must not invoke a 2nd PATCH
 
 		// set a different value via API
 		oPropertyBindingCacheMock.expects("update")

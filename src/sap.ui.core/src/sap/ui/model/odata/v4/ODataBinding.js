@@ -978,8 +978,8 @@ sap.ui.define([
 	/**
 	 * Returns <code>true</code> if this binding or its dependent bindings have property changes,
 	 * created entities, or entity deletions which have not been sent successfully to the server.
-	 * This function does not take the execution of OData operations
-	 * (see {@link sap.ui.model.odata.v4.ODataContextBinding#execute}) into account. Since 1.98.0,
+	 * This function does not take the invocation of OData operations
+	 * (see {@link sap.ui.model.odata.v4.ODataContextBinding#invoke}) into account. Since 1.98.0,
 	 * {@link sap.ui.model.odata.v4.Context#isInactive inactive} contexts are ignored, unless
 	 * (since 1.100.0) their
 	 * {@link sap.ui.model.odata.v4.ODataListBinding#event:createActivate activation} has been

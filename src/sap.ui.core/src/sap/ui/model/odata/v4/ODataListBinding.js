@@ -2006,7 +2006,7 @@ sap.ui.define([
 	 * <h4>Application and Control Filters</h4>
 	 * Each list binding maintains two separate lists of filters, one for filters defined by the
 	 * control that owns the binding, and another list for filters that an application can define in
-	 * addition. When executing the filter operation, both sets of filters are combined.
+	 * addition. When invoking the filter operation, both sets of filters are combined.
 	 *
 	 * By using the <code>sFilterType</code> parameter of the <code>filter</code> method, the
 	 * caller can control which set of filters is modified.
