@@ -12,15 +12,18 @@
 		</script>
 
 		<script>
-			sap.ui.getCore().attachInit(function () {
 				sap.ui.require([
+					"sap/ui/core/Core",
 					"sap/ui/core/HTML",
 					"sap/m/App",
 					"sap/m/Page",
 					"sap/m/RangeSlider",
 					"sap/m/ResponsiveScale",
 					"sap/m/Title"
-				], function (HTML, App, Page, RangeSlider, ResponsiveScale, Title){
+				], async function (Core, HTML, App, Page, RangeSlider, ResponsiveScale, Title){
+
+					await Core.ready();
+
 					var oDefaultTitle = new Title({ text: "Default RangeSlider" }),
 						oRangeSlider1 = new RangeSlider("rangeSlider1", {
 							range: [0, 100],

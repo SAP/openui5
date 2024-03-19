@@ -202,8 +202,6 @@ sap.ui.define([
 				 * Defines the minimum height of the grid.
 				 *
 				 * Allows an empty grid to be available as a drop target.
-				 *
-				 * @experimental As of version 1.81 Disclaimer: this property is in a beta state - incompatible API changes may be done before its official public release.
 				 */
 				minHeight: {type: "sap.ui.core.CSSSize", group: "Appearance", defaultValue: "2rem"},
 
@@ -224,8 +222,6 @@ sap.ui.define([
 				 * Increases the density when arranging the items. Smaller items will take up all of the available space, ignoring their order.
 				 *
 				 * <b>Note:</b> The order of the items is ignored. An item which is normally at the bottom, can appear on top.
-				 *
-				 * @experimental As of version 1.66 Disclaimer: this property is in a beta state - incompatible API changes may be done before its official public release. Use at your own discretion.
 				 */
 				allowDenseFill: {type: "boolean", group: "Appearance", defaultValue: false},
 
@@ -233,7 +229,6 @@ sap.ui.define([
 				 * Makes the grid items act like an inline-block elements. They will be arranged in rows with height equal to the highest item in the row.
 				 *
 				 * <b>Note:</b> If set to <code>true</code> the properties <code>rowSize</code> for grid layout, and <code>minRows</code> and <code>rows</code> per item will be ignored.
-				 * @experimental As of version 1.66 Disclaimer: this property is in a beta state - incompatible API changes may be done before its official public release. Use at your own discretion.
 				 */
 				inlineBlockLayout: {type: "boolean", group: "Appearance", defaultValue: false}
 			},
@@ -255,7 +250,6 @@ sap.ui.define([
 
 				/**
 				 * The sap.f.GridContainerSettings applied for size "XS". Range: up to 374px.
-				 * @experimental As of version 1.71 Disclaimer: this property is in a beta state - incompatible API changes may be done before its official public release. Use at your own discretion.
 				 */
 				layoutXS: { type: "sap.f.GridContainerSettings", defaultClass: GridContainerSettings, multiple: false },
 
@@ -1114,7 +1108,7 @@ sap.ui.define([
 	 * <b>Note:</b>Should not be called before the <code>GridContainer</code> has been rendered.
 	 *
 	 * @public
-	 * @experimental Since 1.81. Behavior might change.
+	 * @since 1.81
 	 * @param {int} iIndex The index of the item, which will be focused.
 	 */
 	GridContainer.prototype.focusItem = function (iIndex) {
@@ -1145,7 +1139,7 @@ sap.ui.define([
 	 * <b>Note:</b>Should be called after the rendering of <code>GridContainer</code> is ready.
 	 *
 	 * @public
-	 * @experimental Since 1.85. Behavior might change.
+	 * @since 1.85
 	 * @param {sap.f.NavigationDirection} sDirection The navigation direction.
 	 * @param {int} iRow The row index of the starting position.
 	 * @param {int} iColumn The column index of the starting position.

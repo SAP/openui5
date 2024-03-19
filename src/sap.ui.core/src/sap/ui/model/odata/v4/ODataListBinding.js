@@ -980,6 +980,7 @@ sap.ui.define([
 
 		oContext = Context.create(this.oModel, this, sTransientPath,
 			iChildIndex ?? -this.iCreatedContexts, oCreatePromise, bInactive);
+		oContext.setSelected(this.oHeaderContext.isSelected());
 		if (this.isTransient()) {
 			oContext.created().catch(this.oModel.getReporter());
 		}
@@ -1086,6 +1087,7 @@ sap.ui.define([
 					// oContext.checkUpdate(); // Note: no changes expected here
 				} else {
 					oContext = Context.create(oModel, this, sContextPath, i$skipIndex);
+					oContext.setSelected(this.oHeaderContext.isSelected());
 				}
 				this.aContexts[iStart + i] = oContext;
 			}
@@ -2195,11 +2197,7 @@ sap.ui.define([
 			this._fireChange({reason : ChangeReason.Change});
 		}
 
-		return this.aContexts.filter(function (oContext) {
-			return oContext;
-		}).concat(Object.values(this.mPreviousContextsByPath).filter(function (oContext) {
-			return oContext.isEffectivelyKeptAlive();
-		}));
+		return this._getAllExistingContexts();
 	};
 
 	/**
@@ -4662,6 +4660,23 @@ sap.ui.define([
 					}))
 			};
 		}
+	};
+
+	/**
+	 * Returns all currently existing contexts of this list binding in no special order.
+	 *
+	 * @returns {sap.ui.model.odata.v4.Context[]}
+	 *   All currently existing contexts of this list binding, in no special order
+	 *
+	 * @private
+	 * @see #getAllCurrentContexts
+	 */
+	ODataListBinding.prototype._getAllExistingContexts = function () {
+		return this.aContexts.filter(function (oContext) {
+			return oContext;
+		}).concat(Object.values(this.mPreviousContextsByPath).filter(function (oContext) {
+			return oContext.isEffectivelyKeptAlive();
+		}));
 	};
 
 	//*********************************************************************************************

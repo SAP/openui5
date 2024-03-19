@@ -689,7 +689,7 @@ sap.ui.define([
 				if (sMode !== BindingMode.TwoWay) {
 					sCompositeMode = BindingMode.OneWay;
 				}
-
+				oBinding.attachEvents(oPart.events);
 				aBindings.push(oBinding);
 			});
 
@@ -765,6 +765,11 @@ sap.ui.define([
 						oBinding.detachAggregatedDataStateChange(oBindingInfo.dataStateChangeHandler);
 					}
 				}
+				// For CompositeBindings the part bindings are kept in aBindings not in the BindingInfos.
+				const aBindings = oBindingInfo.aBindings;
+				aBindings?.forEach(function(oPartBinding, i) {
+					oPartBinding.detachEvents(oBindingInfo.parts[i].events);
+				});
 			}
 		},
 

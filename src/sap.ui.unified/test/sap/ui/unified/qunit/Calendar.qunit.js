@@ -1054,7 +1054,7 @@ sap.ui.define([
 		assert.equal(jQuery(aDays[0]).attr("data-sap-day"), "20141125", "first displayed day");
 
 		aDays = jQuery(aMonths[1]).find(".sapUiCalItem");
-		assert.equal(jQuery(aDays[aDays.length - 1]).attr("data-sap-day"), "20150209", "last displayed day");
+		assert.equal(jQuery(aDays[aDays.length - 1]).attr("data-sap-day"), "20150202", "last displayed day");
 		qutils.triggerEvent("click", "Cal3--Head-next");
 		nextUIUpdate.runSync()/*fake timer is used in module*/;
 		assert.equal(jQuery("#Cal3--Head-B1").text(), "Januar", "january shown again");
@@ -1066,7 +1066,7 @@ sap.ui.define([
 		aDays = jQuery(aMonths[0]).find(".sapUiCalItem");
 		assert.equal(jQuery(aDays[0]).attr("data-sap-day"), "20141230", "first displayed day");
 		aDays = jQuery(aMonths[1]).find(".sapUiCalItem");
-		assert.equal(jQuery(aDays[aDays.length - 1]).attr("data-sap-day"), "20150309", "last displayed day");
+		assert.equal(jQuery(aDays[aDays.length - 1]).attr("data-sap-day"), "20150302", "last displayed day");
 
 		// creat event and spy on it on space press
 		var oEvent = jQuery.Event("sapspace");

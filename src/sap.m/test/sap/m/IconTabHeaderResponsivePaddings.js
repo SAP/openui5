@@ -330,9 +330,6 @@ sap.ui.define([
 				icon:"sap-icon://hint"
 			}),
 			new IconTabFilter({
-				icon:"sap-icon://hint"
-			}),
-			new IconTabFilter({
 				icon:"sap-icon://attachment",
 				count:"3"
 			}),
@@ -347,9 +344,6 @@ sap.ui.define([
 				icon:"sap-icon://hint"
 			}),
 			new IconTabFilter({
-				icon:"sap-icon://hint"
-			}),
-			new IconTabFilter({
 				icon:"sap-icon://attachment",
 				count:"3"
 			}),
@@ -359,9 +353,6 @@ sap.ui.define([
 			}),
 			new IconTabFilter({
 				icon:"sap-icon://group"
-			}),
-			new IconTabFilter({
-				icon:"sap-icon://hint"
 			}),
 			new IconTabFilter({
 				icon:"sap-icon://hint"
@@ -528,8 +519,9 @@ sap.ui.define([
 			new IconTabFilter({
 				icon:"sap-icon://begin",
 				iconColor:"Positive",
-				count:"53",
-				text:"Ok",
+				design:"Horizontal",
+				count:"53 of 123",
+				text:"Confirm Ok",
 				key:"Ok"
 			}),
 			new IconTabSeparator({
@@ -538,8 +530,9 @@ sap.ui.define([
 			new IconTabFilter({
 				icon:"sap-icon://compare",
 				iconColor:"Critical",
-				count:"51",
-				text:"Heavy",
+				design:"Horizontal",
+				count:"51 of 123",
+				text:"Check Heavy",
 				key:"Heavy"
 			}),
 			new IconTabSeparator({
@@ -548,18 +541,17 @@ sap.ui.define([
 			new IconTabFilter({
 				icon:"sap-icon://inventory",
 				iconColor:"Negative",
-				count:"19",
-				text:"Overweight",
+				design:"Horizontal",
+				count:"19 of 123",
+				text:"Claim Overweight",
 				key:"Overweight"
-			}),
-			new IconTabSeparator({
-				icon:"sap-icon://open-command-field"
 			}),
 			new IconTabFilter({
 				icon:"sap-icon://begin",
 				iconColor:"Positive",
-				count:"53",
-				text:"Ok",
+				design:"Horizontal",
+				count:"53 of 123",
+				text:"Confirm Ok",
 				key:"Ok"
 			}),
 			new IconTabSeparator({
@@ -568,8 +560,9 @@ sap.ui.define([
 			new IconTabFilter({
 				icon:"sap-icon://compare",
 				iconColor:"Critical",
-				count:"51",
-				text:"Heavy",
+				design:"Horizontal",
+				count:"51 of 123",
+				text:"Check Heavy",
 				key:"Heavy"
 			}),
 			new IconTabSeparator({
@@ -578,18 +571,17 @@ sap.ui.define([
 			new IconTabFilter({
 				icon:"sap-icon://inventory",
 				iconColor:"Negative",
-				count:"19",
-				text:"Overweight",
+				design:"Horizontal",
+				count:"19 of 123",
+				text:"Claim Overweight",
 				key:"Overweight"
-			}),
-			new IconTabSeparator({
-				icon:"sap-icon://open-command-field"
 			}),
 			new IconTabFilter({
 				icon:"sap-icon://begin",
 				iconColor:"Positive",
-				count:"53",
-				text:"Ok",
+				design:"Horizontal",
+				count:"53 of 123",
+				text:"Confirm Ok",
 				key:"Ok"
 			}),
 			new IconTabSeparator({
@@ -598,8 +590,9 @@ sap.ui.define([
 			new IconTabFilter({
 				icon:"sap-icon://compare",
 				iconColor:"Critical",
-				count:"51",
-				text:"Heavy",
+				design:"Horizontal",
+				count:"51 of 123",
+				text:"Check Heavy",
 				key:"Heavy"
 			}),
 			new IconTabSeparator({
@@ -608,18 +601,17 @@ sap.ui.define([
 			new IconTabFilter({
 				icon:"sap-icon://inventory",
 				iconColor:"Negative",
-				count:"19",
-				text:"Overweight",
+				design:"Horizontal",
+				count:"19 of 123",
+				text:"Claim Overweight",
 				key:"Overweight"
-			}),
-			new IconTabSeparator({
-				icon:"sap-icon://open-command-field"
 			}),
 			new IconTabFilter({
 				icon:"sap-icon://begin",
 				iconColor:"Positive",
-				count:"53",
-				text:"Ok",
+				design:"Horizontal",
+				count:"53 of 123",
+				text:"Confirm Ok",
 				key:"Ok"
 			}),
 			new IconTabSeparator({
@@ -628,8 +620,9 @@ sap.ui.define([
 			new IconTabFilter({
 				icon:"sap-icon://compare",
 				iconColor:"Critical",
-				count:"51",
-				text:"Heavy",
+				design:"Horizontal",
+				count:"51 of 123",
+				text:"Check Heavy",
 				key:"Heavy"
 			}),
 			new IconTabSeparator({
@@ -638,44 +631,11 @@ sap.ui.define([
 			new IconTabFilter({
 				icon:"sap-icon://inventory",
 				iconColor:"Negative",
-				count:"19",
-				text:"Overweight",
+				design:"Horizontal",
+				count:"19 of 123",
+				text:"Claim Overweight",
 				key:"Overweight"
-			}),
-			new IconTabSeparator({
-				icon:"sap-icon://open-command-field"
-			}),
-			new IconTabFilter({
-				icon:"sap-icon://begin",
-				iconColor:"Positive",
-				count:"53",
-				text:"Ok",
-				key:"Ok"
-			}),
-			new IconTabSeparator({
-				icon:"sap-icon://open-command-field"
-			}),
-			new IconTabFilter({
-				icon:"sap-icon://compare",
-				iconColor:"Critical",
-				count:"51",
-				text:"Heavy",
-				key:"Heavy"
-			}),
-			new IconTabSeparator({
-				icon:"sap-icon://open-command-field"
-			}),
-			new IconTabFilter({
-				icon:"sap-icon://inventory",
-				iconColor:"Negative",
-				count:"19",
-				text:"Overweight",
-				key:"Overweight"
-			}),
-			new IconTabSeparator({
-				icon:"sap-icon://open-command-field"
 			})
-
 		]
 	}).addStyleClass("sapUiResponsiveContentPadding");
 

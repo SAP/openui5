@@ -764,4 +764,67 @@ function (
 		// Assert
 		assert.ok(this.oGridList.getNavigationMatrix()[0][0], "First element is not false.");
 	});
+
+	QUnit.module("'focusItemByDirection' method", {
+		beforeEach: function () {
+			this.oGridList = new GridList({
+				customLayout: new GridBoxLayout({
+					boxesPerRowConfig: "XL2 L2 M2 S2"
+				}),
+				items: [
+					new GridListItem({
+						content: [
+							new Text({
+								text: "This is the content"
+							}),
+							new Button({
+								text: "Button"
+							})
+						]
+					}),
+					new GridListItem({
+						content: [
+							new Text({
+								text: "This is the content"
+							})
+						]
+					}),
+					new GridListItem({
+						content: [
+							new Text({
+								text: "This is the content"
+							})
+						]
+					}),
+					new GridListItem({
+						content: [
+							new Text({
+								text: "This is the content"
+							})
+						]
+					})
+				]
+			});
+
+			this.oGridList.placeAt(DOM_RENDER_LOCATION);
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
+		},
+		afterEach: function () {
+			this.oGridList.destroy();
+		}
+	});
+
+	QUnit.test("focusItemByDirection method", function (assert) {
+		this.oGridList.focusItemByDirection(NavigationDirection.Down, 0, 0);
+		assert.strictEqual(document.activeElement, this.oGridList.getItems()[0].getDomRef(), "the item is correctly focused");
+
+		this.oGridList.focusItemByDirection(NavigationDirection.Up, 0, 1);
+		assert.strictEqual(document.activeElement, this.oGridList.getItems()[3].getDomRef(), "the item is correctly focused");
+
+		this.oGridList.focusItemByDirection(NavigationDirection.Right, 1, 0);
+		assert.strictEqual(document.activeElement, this.oGridList.getItems()[2].getDomRef(), "the item is correctly focused");
+
+		this.oGridList.focusItemByDirection(NavigationDirection.Left, 1, 0);
+		assert.strictEqual(document.activeElement, this.oGridList.getItems()[3].getDomRef(), "the item is correctly focused");
+	});
 });

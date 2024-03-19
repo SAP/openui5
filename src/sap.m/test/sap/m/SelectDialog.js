@@ -363,6 +363,18 @@ sap.ui.define([
 			infoState: "Warning"
 		});
 
+
+		function productSelectionFormatter(sText) {
+			if (!sText) {
+				return false;
+			}
+			if (parseInt(sText.substring(sText.length - 1)) < 5) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+
 		var oProductItemTemplateSelection = new StandardListItem({
 			title : "{ProductId}",
 			description : "{Name}",
@@ -371,6 +383,7 @@ sap.ui.define([
 			iconInset : false,
 			type : "Detail",
 			counter: 99,
+			selected: {path: 'ProductId', type: 'sap.ui.model.type.Boolean' , formatter: productSelectionFormatter },
 			info: "{Price/CurrencyCode}",
 			infoState: "Warning"
 		});

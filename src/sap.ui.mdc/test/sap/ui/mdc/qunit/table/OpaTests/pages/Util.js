@@ -26,14 +26,20 @@ sap.ui.define([
 	 */
 	const Util = {};
 
+	/**
+	 * Wait for the column menu.
+	 *
+	 * @param {object} mConfig Config object
+	 * @param {function(sap.m.table.columnmenu.Menu)} mConfig.success Callback that is called with the found column menu instance
+	 * @returns {Promise} OPA waitFor
+	 */
 	Util.waitForColumnMenu = function(mConfig) {
 		return this.waitFor({
+			timeout: 5,
 			searchOpenDialogs: true,
 			controlType: "sap.m.table.columnmenu.Menu",
 			success: function(aColumnMenu) {
-				if (mConfig && mConfig.success) {
-					mConfig.success.call(this, mConfig.findAll ? aColumnMenu : aColumnMenu[0]);
-				}
+				mConfig?.success?.call(this, aColumnMenu[0]);
 			},
 			errorMessage: "No column menu is open"
 		});
@@ -43,7 +49,6 @@ sap.ui.define([
 	 * Wait for the P13n dialog.
 	 *
 	 * @param {object} mConfig config object
-	 * @param {boolean} mConfig.findAll finds all matching controls if true, otherwise will return the first found instance
 	 * @param {function} mConfig.success callback function for waitFor success
 	 * @returns {Promise} OPA waitFor
 	 */
@@ -51,9 +56,7 @@ sap.ui.define([
 		return this.waitFor({
 			controlType: "sap.m.Dialog",
 			success: function (aDialogs) {
-				if (mConfig && mConfig.success) {
-					mConfig.success.call(this, mConfig.findAll ? aDialogs : aDialogs[0]);
-				}
+				mConfig?.success?.call(this, aDialogs[0]);
 			},
 			errorMessage: "No dialog was found"
 		});

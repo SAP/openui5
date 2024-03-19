@@ -84,6 +84,9 @@ sap.ui.define([
 			 */
 			selectionMode: {type: "sap.ui.table.SelectionMode", group: "Behavior", defaultValue: SelectionMode.MultiToggle}
 		},
+		aggregations: {
+			icon: {type: "sap.ui.core.Icon", multiple: false, visibility: "hidden"}
+		},
 		events: {
 			/**
 			 * This event is fired when the selection is changed.
@@ -117,20 +120,11 @@ sap.ui.define([
 
 		var oIcon = new Icon({src: IconPool.getIconURI(TableUtils.ThemeParameters.clearSelectionIcon), useIconTooltip: false});
 		oIcon.addStyleClass("sapUiTableSelectClear");
+		this.setAggregation("icon", oIcon, true);
 
 		this._bLimitReached = false;
 		this._bLimitDisabled = this.getLimit() === 0;
 		this.oInnerSelectionPlugin = null;
-		this.oDeselectAllIcon = oIcon;
-	};
-
-	MultiSelectionPlugin.prototype.exit = function() {
-		SelectionPlugin.prototype.exit.apply(this, arguments);
-
-		if (this.oDeselectAllIcon) {
-			this.oDeselectAllIcon.destroy();
-			this.oDeselectAllIcon = null;
-		}
 	};
 
 	/**
@@ -187,7 +181,7 @@ sap.ui.define([
 		return {
 			headerSelector: {
 				type: this._bLimitDisabled ? "toggle" : "clear",
-				icon: this.oDeselectAllIcon,
+				icon: this.getAggregation("icon"),
 				visible: this.getSelectionMode() === SelectionMode.MultiToggle && this.getShowHeaderSelector(),
 				enabled: this._bLimitDisabled || this.getSelectedCount() > 0,
 				selected: this.getSelectableCount() > 0 && this.getSelectableCount() === this.getSelectedCount()
@@ -614,7 +608,7 @@ sap.ui.define([
 	};
 
 	MultiSelectionPlugin.prototype.onThemeChanged = function() {
-		this.oDeselectAllIcon.setSrc(IconPool.getIconURI(TableUtils.ThemeParameters.clearSelectionIcon));
+		this.getAggregation("icon").setSrc(IconPool.getIconURI(TableUtils.ThemeParameters.clearSelectionIcon));
 	};
 
 	return MultiSelectionPlugin;

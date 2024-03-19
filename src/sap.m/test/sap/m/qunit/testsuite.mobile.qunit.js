@@ -664,18 +664,11 @@ sap.ui.define([
 			},
 
 			Input: {
-				title: "QUnit page for sap.m.Input",
-				sinon: {
-					version: 1, // fails with sinon 4
-					useFakeTimers: true
-				}
+				title: "QUnit page for sap.m.Input"
 			},
 
 			InputBase: {
-				title: "QUnit tests: sap.m.InputBase",
-				sinon: {
-					useFakeTimers: true
-				}
+				title: "QUnit tests: sap.m.InputBase"
 			},
 
 			"opa/input/InputTypeAheadOPA": {
@@ -1366,9 +1359,6 @@ sap.ui.define([
 
 			RangeSlider: {
 				title: "QUnit Page for sap.m.RangeSlider",
-				sinon: {
-					version: 1 // sinon-qunit-bridge does not supported nested modules
-				},
 				ui5: {
 					language: "en-US"
 				}
@@ -2015,10 +2005,7 @@ sap.ui.define([
 			},
 
 			Wizard: {
-				title: "QUnit Page for sap.m.Wizard",
-				sinon: {
-					useFakeTimers: true
-				}
+				title: "QUnit Page for sap.m.Wizard"
 			},
 
 			WizardIntegrationOpa: {
@@ -2041,9 +2028,6 @@ sap.ui.define([
 				title: "QUnit Page for sap.m.WizardStep",
 				qunit: {
 					version: 2
-				},
-				sinon: {
-					version: 4
 				}
 			},
 

@@ -1,25 +1,20 @@
 {
 	"sap.app": {
-		"id": "sap.ui.mdc.tableOpaTests.appODataV4Flat",
+		"id": "sap.ui.mdc.table.OpaTests.appODataV4Flat",
 		"type": "application",
 		"applicationVersion": {
 			"version": "1.0.0"
 		}
 	},
 	"sap.ui5": {
-		"rootView": {
-			"id": "MyView",
-			"viewName": "sap.ui.mdc.tableOpaTests.appODataV4Flat.View",
-			"type": "XML",
-			"async": true
-		},
 		"dependencies": {
 			"libs": {
 				"sap.m": {},
 				"sap.ui.core": {},
 				"sap.ui.mdc": {},
 				"sap.ui.table": {},
-				"sap.ui.fl": {}
+				"sap.ui.fl": {},
+				"sap.ui.export": {}
 			}
 		}
 	}

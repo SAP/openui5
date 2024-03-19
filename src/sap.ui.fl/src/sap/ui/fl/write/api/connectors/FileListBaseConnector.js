@@ -2,11 +2,15 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/base/util/merge",
+	"sap/base/util/LoaderExtensions",
 	"sap/ui/fl/initial/_internal/StorageUtils",
-	"sap/base/util/LoaderExtensions"
+	"sap/ui/fl/write/connectors/BaseConnector"
 ], function(
+	merge,
+	LoaderExtensions,
 	StorageUtils,
-	LoaderExtensions
+	BaseConnector
 ) {
 	"use strict";
 
@@ -21,7 +25,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.fl, SAP Web IDE (Visual Editor), UX Tools
 	 * @abstract
 	 */
-	return {
+	return merge({}, BaseConnector, {
 		/**
 		 * @param {string} sReference - Application ID for which changes should be loaded
 		 * @returns {Promise<string[]>} List of URLs that should be requested and will contain a JSON of a flex object like changes,
@@ -55,5 +59,5 @@ sap.ui.define([
 				});
 			});
 		}
-	};
+	});
 });

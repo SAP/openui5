@@ -390,6 +390,8 @@ sap.ui.define([
 		beforeEach: function() {
 			this.obj = new TestManagedObject();
 			this.obj.setModel(oModel);
+		}, afterEach: function() {
+			this.obj.destroy();
 		}
 	});
 
@@ -840,6 +842,30 @@ sap.ui.define([
 		changed = false;
 	});
 
+	QUnit.test("Bind property with CompositeBinding/pass event handler", function(assert) {
+		assert.expect(4);
+		this.obj.bindProperty("value", {
+			parts: [
+				{
+					path: "/value",
+					events: {
+						change: () => {assert.ok(true, "Part handler attached/change event fired");}
+					}
+				},
+				{
+					path: "/value"
+				}
+			],
+			events: {
+				change: fnChange
+			}
+		});
+		assert.equal(this.obj.isBound("value"), true, "isBound must return true for bound properties");
+		assert.equal(this.obj.getProperty("value"), "testvalue testvalue", "Property must return model value");
+		assert.equal(changed, true, "handler attached/change event fired");
+		changed = false;
+	});
+
 	QUnit.test("Unbind property", function(assert) {
 		this.obj.bindProperty("value", "/value");
 		this.obj.unbindProperty("value");
@@ -849,13 +875,34 @@ sap.ui.define([
 
 	QUnit.test("Unbind property composite binding", function(assert) {
 		var oPartBinding;
-		this.obj.bindProperty("value", {parts: ["/value", "/value"]});
+		this.obj.bindProperty("value", {
+			parts: [
+				{
+					path: "/value",
+					events: {
+						change: () => {assert.ok(true, "Part handler attached/change event fired");}
+					}
+				},
+				{
+					path: "/value"
+				}
+			],
+			events: {
+				change: fnChange
+			}
+		});
+		assert.equal(this.obj.isBound("value"), true, "isBound must return true for bound properties");
+		assert.equal(this.obj.getProperty("value"), "testvalue testvalue", "Property must return model value");
+		assert.equal(changed, true, "handler attached/change event fired");
+		changed = false;
 		oPartBinding = this.obj.getBinding("value").getBindings()[0];
 		var oPartSpy = sinon.spy(oPartBinding, "destroy");
+		assert.ok(oPartBinding.hasListeners("change"), "PartBinding has listeners attached");
 		this.obj.unbindProperty("value");
 		assert.equal(this.obj.isBound("value"), false, "isBound must return false for unbound properties");
 		assert.equal(this.obj.getProperty("value"), "", "Property value must be reset to default");
 		assert.ok(oPartSpy.calledOnce, "Destructor of part binding has been called");
+		assert.notOk(oPartBinding.hasListeners("change"), "PartBinding has listeners detached");
 	});
 
 	QUnit.test("Bind unknown property", function(assert) {

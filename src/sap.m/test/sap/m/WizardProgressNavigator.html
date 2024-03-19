@@ -43,25 +43,25 @@
 						new sap.m.Button({
 							text: "Previous",
 							press: function () {
-								sap.ui.getCore().byId(navigatorId).previousStep();
+								sap.ui.core.Element.getElementById(navigatorId).previousStep();
 							}
 						}),
 						new sap.m.Button({
 							text: "Next",
 							press: function () {
-								sap.ui.getCore().byId(navigatorId).nextStep();
+								sap.ui.core.Element.getElementById(navigatorId).nextStep();
 							}
 						}),
 						new sap.m.Button({
 							text: "Discard After Step",
 							press: function () {
-								var inputVal = parseInt(sap.ui.getCore().byId(inputId).getValue(), 10);
+								var inputVal = parseInt(sap.ui.core.Element.getElementById(inputId).getValue(), 10);
 
 								if (isNaN(inputVal)) {
 									return;
 								}
 
-								sap.ui.getCore().byId(navigatorId).discardProgress(inputVal);
+								sap.ui.core.Element.getElementById(navigatorId).discardProgress(inputVal);
 							}
 						}),
 						new sap.m.Input(inputId, {

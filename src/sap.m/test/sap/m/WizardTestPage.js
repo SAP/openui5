@@ -1,5 +1,14 @@
-sap.ui.require(["sap/m/Wizard", "sap/m/WizardStep", "sap/m/MessageToast", "sap/m/Text", "sap/m/Label", "sap/m/Input", "sap/m/TextArea", "sap/m/CheckBox", "sap/m/Select", "sap/m/StandardListItem", "sap/m/Page", "sap/m/Button", "sap/m/Link", "sap/m/RadioButton", "sap/m/RadioButtonGroup", "sap/m/VBox", "sap/m/Dialog", "sap/m/List", "sap/m/SplitApp", "sap/ui/core/Element", "sap/ui/core/Item", "sap/ui/layout/form/SimpleForm", "sap/ui/Device", "sap/ui/model/json/JSONModel"],
-	function(Wizard, WizardStep, MessageToast, Text, Label, Input, TextArea, CheckBox, Select, StandardListItem, Page, Button, Link, RadioButton, RadioButtonGroup, VBox, Dialog, List, SplitApp, Element, Item, SimpleForm, Device, JSONModel) {
+sap.ui.require(["sap/m/Wizard", "sap/m/WizardStep", "sap/m/MessageToast",
+		"sap/m/Text", "sap/m/Label", "sap/m/Input", "sap/m/TextArea",
+		"sap/m/CheckBox", "sap/m/Select", "sap/m/StandardListItem",
+		"sap/m/Page", "sap/m/Button", "sap/m/Link", "sap/m/RadioButton",
+		"sap/m/RadioButtonGroup", "sap/m/VBox", "sap/m/Dialog", "sap/m/List",
+		"sap/m/SplitApp", "sap/ui/core/Item", "sap/ui/core/Element", "sap/ui/layout/form/SimpleForm",
+		"sap/ui/Device", "sap/ui/model/json/JSONModel"],
+	function(Wizard, WizardStep, MessageToast, Text, Label, Input,
+	         TextArea, CheckBox, Select, StandardListItem, Page, Button , Link,
+	         RadioButton, RadioButtonGroup, VBox, Dialog, List, SplitApp, Item,
+			 Element, SimpleForm, Device, JSONModel) {
 		"use strict";
 
 		var splitAppContainer = new SplitApp(),

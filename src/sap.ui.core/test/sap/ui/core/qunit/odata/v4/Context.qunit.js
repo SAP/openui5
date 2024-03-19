@@ -4531,11 +4531,21 @@ sap.ui.define([
 [false, true].forEach(function (bHasChangeListeners) {
 	QUnit.test("setSelected: with change listeners=" + bHasChangeListeners, function () {
 		const oCache = {setProperty : mustBeMocked};
-		const oBinding = {getHeaderContext : "~function~"};
+		const oBinding = {getHeaderContext : "~function~", _getAllExistingContexts : mustBeMocked};
 		// Note: oBinding is optional, it might already be missing in certain cases!
 		const oContext = Context.create({/*oModel*/}, oBinding, "/some/path", 42);
+		const aRowContexts = [
+			{setSelected : mustBeMocked},
+			{setSelected : mustBeMocked}
+		];
+
 		if (bHasChangeListeners) {
 			oContext.mChangeListeners = "~mChangeListeners~";
+			this.mock(oBinding).expects("_getAllExistingContexts").withExactArgs()
+				.returns(aRowContexts);
+			aRowContexts.forEach((oRowContext) => {
+				this.mock(oRowContext).expects("setSelected").withExactArgs("~selected~");
+			});
 		}
 
 		this.mock(oContext).expects("isDeleted").withExactArgs().returns(false);

@@ -2196,7 +2196,8 @@ sap.ui.define([
 	 * the preconditions of {@link #setKeepAlive} hold, a best effort is made to implicitly keep a
 	 * selected context alive in order to preserve the selection state. Once the selection is no
 	 * longer needed, for example because you perform an operation on this context which logically
-	 * removes it from its list, you need to reset the selection.
+	 * removes it from its list, you need to reset the selection. If this context is a header
+	 * context of a list binding, the new selection state is propagated to all row contexts.
 	 *
 	 * <b>Note:</b> It is unsafe to keep a reference to a context instance which is not
 	 * {@link #isKeepAlive kept alive}.
@@ -2218,8 +2219,11 @@ sap.ui.define([
 			throw new Error("Must not select a deleted entity: " + this);
 		}
 		if (bSelected !== this.bSelected) {
-			if (this.mChangeListeners) {
+			if (this.mChangeListeners) { // header context: "select all"
 				_Helper.fireChange(this.mChangeListeners, "", bSelected);
+				this.oBinding._getAllExistingContexts().forEach(function (oContext) {
+					oContext.setSelected(bSelected);
+				});
 			}
 			this.withCache((oCache, sPath) => {
 				if (this.oBinding) {

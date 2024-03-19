@@ -6,7 +6,6 @@ sap.ui.define([
 	"sap/m/InputBase",
 	"sap/ui/core/library",
 	"sap/m/Label",
-	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"sap/m/Input",
 	"sap/m/Button",
@@ -20,6 +19,7 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/events/KeyCodes",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	// provides jQuery.fn.cursorPos
 	"sap/ui/dom/jquery/cursorPos"
 ], function(
@@ -29,7 +29,6 @@ sap.ui.define([
 	InputBase,
 	coreLibrary,
 	Label,
-	nextUIUpdate,
 	jQuery,
 	Input,
 	Button,
@@ -42,7 +41,8 @@ sap.ui.define([
 	InputBaseRenderer,
 	Device,
 	ManagedObject,
-	KeyCodes
+	KeyCodes,
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -58,6 +58,14 @@ sap.ui.define([
 	createAndAppendDiv("content");
 
 
+	function runAllTimersAndRestore(oClock) {
+		if (!oClock) {
+			return;
+		}
+
+		oClock.runAll();
+		oClock.restore();
+	}
 
 	// make jQuery.now work with Sinon fake timers (since jQuery 2.x, jQuery.now caches the native Date.now)
 	jQuery.now = function() {
@@ -86,14 +94,14 @@ sap.ui.define([
 	/* tests for default values       */
 	/* ------------------------------ */
 
-	QUnit.test("default values", function(assert) {
+	QUnit.test("default values", async function(assert) {
 
 		// system under test
 		var oInput = new InputBase();
 
 		// arrange
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// assertions
 		assert.strictEqual(oInput.getValue(), "", 'The default value is ""');
@@ -361,7 +369,7 @@ sap.ui.define([
 		oLabel2.destroy();
 	});
 
-	QUnit.test("attribute aria-required should be set to the input field, when the associate label is required", function(assert) {
+	QUnit.test("attribute aria-required should be set to the input field, when the associate label is required", async function(assert) {
 		// Arrange
 		var oLabel = new Label({
 			id: "lorem-ipsum-label",
@@ -374,14 +382,14 @@ sap.ui.define([
 				"lorem-ipsum-label"
 			]
 		}).placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Assert
 		assert.ok(oInput.getFocusDomRef().getAttribute("aria-required"), "The attribute is set correctly");
 
 		// Act
 		oLabel.setRequired(false);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Assert
 		assert.notOk(oInput.getFocusDomRef().getAttribute("aria-required"), "The attribute is removed");
@@ -396,14 +404,14 @@ sap.ui.define([
 	/* ------------------------------ */
 
 	var fnSetValueTestCase1 = function(mSettings) {
-		QUnit.test("method: setValue() initial rendering", function(assert) {
+		QUnit.test("method: setValue() initial rendering", async function(assert) {
 
 			// system under test
 			var oInput = mSettings.control;
 
 			// arrange
 			oInput.placeAt("content");
-			nextUIUpdate.runSync()/*fake timer is used in module*/;
+			await nextUIUpdate();
 
 			// assertions
 			assert.strictEqual(jQuery(oInput.getFocusDomRef()).val(), mSettings.output);
@@ -435,7 +443,7 @@ sap.ui.define([
 	});
 
 	var fnSetValueTestCase2 = function(mSettings) {
-		QUnit.test("method: setValue() after the initial rendering", function(assert) {
+		QUnit.test("method: setValue() after the initial rendering", async function(assert) {
 
 			// system under test
 			var oInput = mSettings.control;
@@ -443,7 +451,7 @@ sap.ui.define([
 
 			// arrange
 			oInput.placeAt("content");
-			nextUIUpdate.runSync()/*fake timer is used in module*/;
+			await nextUIUpdate();
 			var fnRerenderSpy = this.spy(oInput.getRenderer(), "render");
 
 			// act
@@ -499,7 +507,7 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("setValue should update the dom when old and new dom value is not same", function(assert) {
+	QUnit.test("setValue should update the dom when old and new dom value is not same", async function(assert) {
 
 		// system under test
 		var sValue = "test";
@@ -509,7 +517,7 @@ sap.ui.define([
 
 		// arrange
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// act - set dom value
 		oInput.getFocusDomRef().value = sValue + sValue;
@@ -532,14 +540,14 @@ sap.ui.define([
 	/* ------------------------------ */
 
 	var fnSetWidthTestCase1 = function(mSettings) {
-		QUnit.test("method: setWidth() initial rendering", function(assert) {
+		QUnit.test("method: setWidth() initial rendering", async function(assert) {
 
 			// system under test
 			var oInput = mSettings.control;
 
 			// arrange
 			oInput.placeAt("content");
-			nextUIUpdate.runSync()/*fake timer is used in module*/;
+			await nextUIUpdate();
 
 			// assertions
 			assert.strictEqual(oInput.getDomRef().style.width, mSettings.output);
@@ -571,18 +579,18 @@ sap.ui.define([
 	});
 
 	var fnSetWidthTestCase2 = function(mSettings) {
-		QUnit.test("method: setWidth() after initial rendering", function(assert) {
+		QUnit.test("method: setWidth() after initial rendering", async function(assert) {
 
 			// system under test
 			var oInput = mSettings.control;
 
 			// arrange
 			oInput.placeAt("content");
-			nextUIUpdate.runSync()/*fake timer is used in module*/;
+			await nextUIUpdate();
 
 			// act
 			oInput.setWidth(mSettings.input);
-			nextUIUpdate.runSync()/*fake timer is used in module*/;
+			await nextUIUpdate();
 
 			// assertions
 			assert.strictEqual(oInput.getDomRef().style.width, mSettings.output);
@@ -614,18 +622,18 @@ sap.ui.define([
 	/* setEnabled()                   */
 	/* ------------------------------ */
 
-	QUnit.test("method: setEnabled() initial rendering test case 1", function(assert) {
+	QUnit.test("method: setEnabled() initial rendering test case 1", async function(assert) {
 
 		// system under test
 		var oInput = new InputBase();
 
 		// arrange
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// act
 		oInput.setEnabled(false);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// assertions
 		assert.ok(oInput.$().hasClass("sapMInputBaseDisabled"), 'If the input is disabled, it should have the CSS class "sapMInputBaseDisabled"');
@@ -635,7 +643,7 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("method: setEnabled() test case 2", function(assert) {
+	QUnit.test("method: setEnabled() test case 2", async function(assert) {
 
 		// system under test
 		var oInput = new InputBase({
@@ -644,7 +652,7 @@ sap.ui.define([
 
 		// arrange
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// assertions
 		assert.ok(oInput.$().hasClass("sapMInputBaseDisabled"), 'If the input is disabled, it should have the CSS class "sapMInputBaseDisabled"');
@@ -654,14 +662,14 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("method: setEnabled() test case 3", function(assert) {
+	QUnit.test("method: setEnabled() test case 3", async function(assert) {
 
 		// system under test
 		var oInput = new InputBase();
 
 		// arrange
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// assertions
 		assert.strictEqual(jQuery(oInput.getFocusDomRef()).attr("disabled"), undefined);
@@ -675,14 +683,14 @@ sap.ui.define([
 	/* ------------------------------ */
 
 	var fnSetValueStateTestCase1 = function(mSettings) {
-		QUnit.test("method: setValueState() initial rendering", function(assert) {
+		QUnit.test("method: setValueState() initial rendering", async function(assert) {
 
 			// system under test
 			var oInput = mSettings.control;
 
 			// arrange
 			oInput.placeAt("content");
-			nextUIUpdate.runSync()/*fake timer is used in module*/;
+			await nextUIUpdate();
 
 			// assertions
 			assert.ok(oInput.$("content").hasClass(mSettings.output));
@@ -728,18 +736,18 @@ sap.ui.define([
 	});
 
 	var fnSetValueStateTestCase2 = function(mSettings) {
-		QUnit.test("method: setValueState() after initial rendering", function(assert) {
+		QUnit.test("method: setValueState() after initial rendering", async function(assert) {
 
 			// system under test
 			var oInput = mSettings.control;
 
 			// arrange
 			oInput.placeAt("content");
-			nextUIUpdate.runSync()/*fake timer is used in module*/;
+			await nextUIUpdate();
 
 			// act
 			oInput.setValueState(mSettings.input);
-			nextUIUpdate.runSync()/*fake timer is used in module*/;
+			await nextUIUpdate();
 
 			// assertions
 			assert.ok(oInput.$("content").hasClass(mSettings.output), "Input should have the class " + mSettings.output);
@@ -767,21 +775,21 @@ sap.ui.define([
 		output: "sapMInputBaseContentWrapperSuccess"
 	});
 
-	QUnit.test("method: setValueState() invalid values", function(assert) {
+	QUnit.test("method: setValueState() invalid values", async function(assert) {
 		var oInput = new InputBase({
 			valueState : null
 		}).placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.strictEqual(oInput.getValueState(), ValueState.None, "Invalid value state before rendering is converted to default value.");
 
 		oInput.setValueState(ValueState.Error);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.ok(oInput.$("content").hasClass("sapMInputBaseContentWrapperError"), "Input has the state class before testing the invalid value.");
 
 		oInput.setValueState(undefined);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.strictEqual(oInput.getValueState(), ValueState.None, "Invalid value state is converted to default value.");
 		assert.ok(!oInput.$().hasClass("sapMInputBaseState"), "Input's state class is removed after setting the invalid value");
@@ -789,7 +797,7 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("valueState with editable and enabled", function(assert) {
+	QUnit.test("valueState with editable and enabled", async function(assert) {
 		// system under test
 		var oInput = new InputBase({
 			valueState: ValueState.Information,
@@ -798,21 +806,21 @@ sap.ui.define([
 
 		// arrange
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// assert
 		assert.notOk(oInput.getDomRef("content").classList.contains("sapMInputBaseContentWrapperInformation"));
 
 		// act
 		oInput.setEditable(true);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(oInput.getDomRef("content").classList.contains("sapMInputBaseContentWrapperInformation"));
 
 		// act
 		oInput.setEnabled(false);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// assert
 		assert.notOk(oInput.getDomRef("content").classList.contains("sapMInputBaseContentWrapperInformation"));
@@ -825,7 +833,7 @@ sap.ui.define([
 	/* setName()                      */
 	/* ------------------------------ */
 
-	QUnit.test("method: setName() initial rendering", function(assert) {
+	QUnit.test("method: setName() initial rendering", async function(assert) {
 
 		// system under test
 		var oInput = new InputBase({
@@ -834,7 +842,7 @@ sap.ui.define([
 
 		// arrange
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// assertions
 		assert.strictEqual(jQuery(oInput.getFocusDomRef()).attr("name"), "myInput", 'The attribute name is "myInput"');
@@ -843,18 +851,18 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("method: setName() after initial rendering", function(assert) {
+	QUnit.test("method: setName() after initial rendering", async function(assert) {
 
 		// system under test
 		var oInput = new InputBase();
 
 		// arrange
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// act
 		oInput.setName("myInput");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// assertions
 		assert.strictEqual(jQuery(oInput.getFocusDomRef()).attr("name"), "myInput", 'The attribute name is "myInput"');
@@ -868,18 +876,18 @@ sap.ui.define([
 	/* ------------------------------ */
 
 	var fnSetPlaceholderTestCase2 = function(mSettings) {
-		QUnit.test("method: setPlaceholder() after initial rendering", function(assert) {
+		QUnit.test("method: setPlaceholder() after initial rendering", async function(assert) {
 
 			// system under test
 			var oInput = mSettings.control;
 
 			// arrange
 			oInput.placeAt("content");
-			nextUIUpdate.runSync()/*fake timer is used in module*/;
+			await nextUIUpdate();
 
 			// act
 			oInput.setPlaceholder(mSettings.input);
-			nextUIUpdate.runSync()/*fake timer is used in module*/;
+			await nextUIUpdate();
 
 			// assertions
 			assert.strictEqual(jQuery(oInput.getFocusDomRef()).attr("placeholder") || "", mSettings.output);
@@ -913,14 +921,14 @@ sap.ui.define([
 	/* ------------------------------ */
 
 	var fnSetEditableTestCase1 = function(mSettings) {
-		QUnit.test("method: setEditable() initial rendering", function(assert) {
+		QUnit.test("method: setEditable() initial rendering", async function(assert) {
 
 			// system under test
 			var oInput = mSettings.control;
 
 			// arrange
 			oInput.placeAt("content");
-			nextUIUpdate.runSync()/*fake timer is used in module*/;
+			await nextUIUpdate();
 
 			// assertions
 			assert.strictEqual(jQuery(oInput.getFocusDomRef()).attr("readonly"), mSettings.output);
@@ -945,18 +953,18 @@ sap.ui.define([
 	});
 
 	var fnSetEditableTestCase2 = function(mSettings) {
-		QUnit.test("method: setEditable() after the initial rendering", function(assert) {
+		QUnit.test("method: setEditable() after the initial rendering", async function(assert) {
 
 			// system under test
 			var oInput = mSettings.control;
 
 			// arrange
 			oInput.placeAt("content");
-			nextUIUpdate.runSync()/*fake timer is used in module*/;
+			await nextUIUpdate();
 
 			// act
 			oInput.setEditable(mSettings.input);
-			nextUIUpdate.runSync()/*fake timer is used in module*/;
+			await nextUIUpdate();
 
 			// assertions
 			assert.strictEqual(jQuery(oInput.getFocusDomRef()).attr("readonly"), mSettings.output);
@@ -982,7 +990,7 @@ sap.ui.define([
 	/* setVisible()                   */
 	/* ------------------------------ */
 
-	QUnit.test("method: setVisible() initial rendering", function(assert) {
+	QUnit.test("method: setVisible() initial rendering", async function(assert) {
 
 		// system under test
 		var oInput = new InputBase({
@@ -991,7 +999,7 @@ sap.ui.define([
 
 		// arrange
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// assertions
 		assert.strictEqual(oInput.$().length, 0);
@@ -1005,14 +1013,14 @@ sap.ui.define([
 	/* ------------------------------ */
 
 	var fnSetTextAlignTestCase1 = function(mSettings) {
-		QUnit.test("method: setTextAlign() initial rendering", function(assert) {
+		QUnit.test("method: setTextAlign() initial rendering", async function(assert) {
 
 			// system under test
 			var oInput = mSettings.control;
 
 			// arrange
 			oInput.placeAt("content");
-			nextUIUpdate.runSync()/*fake timer is used in module*/;
+			await nextUIUpdate();
 
 			// assertions
 			assert.strictEqual(oInput.getFocusDomRef().style.textAlign, mSettings.output);
@@ -1037,18 +1045,18 @@ sap.ui.define([
 	});
 
 	var fnSetTextAlignTestCase2 = function(mSettings) {
-		QUnit.test("method: setTextAlign() after the initial rendering", function(assert) {
+		QUnit.test("method: setTextAlign() after the initial rendering", async function(assert) {
 
 			// system under test
 			var oInput = mSettings.control;
 
 			// arrange
 			oInput.placeAt("content");
-			nextUIUpdate.runSync()/*fake timer is used in module*/;
+			await nextUIUpdate();
 
 			// act
 			oInput.setTextAlign(mSettings.input);
-			nextUIUpdate.runSync()/*fake timer is used in module*/;
+			await nextUIUpdate();
 
 			// assertions
 			assert.strictEqual(oInput.getFocusDomRef().style.textAlign, mSettings.output);
@@ -1074,14 +1082,14 @@ sap.ui.define([
 	/* destroy()                      */
 	/* ------------------------------ */
 
-	QUnit.test("method: destroy()", function(assert) {
+	QUnit.test("method: destroy()", async function(assert) {
 
 		// system under test
 		var oInput = new InputBase();
 
 		// arrange
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// act
 		oInput.destroy();
@@ -1097,7 +1105,8 @@ sap.ui.define([
 	/* valus state and valus state message() */
 	/* ------------------------------------- */
 
-	QUnit.test("it should open or close the value state message popup when the input gets or losses the focus event", function(assert) {
+	QUnit.test("it should open or close the value state message popup when the input gets or losses the focus event", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 
 		// system under test
 		var oErrorInput = new InputBase("errorinput", {
@@ -1117,7 +1126,7 @@ sap.ui.define([
 		// arrange
 		oErrorInput.placeAt("content");
 		oWarningInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 		oErrorInput.focus();
 		this.clock.tick(500);
 
@@ -1143,7 +1152,7 @@ sap.ui.define([
 		assert.ok(!document.getElementById("warninginput-message"), "warning message popup is closed when focus is out");
 
 		oErrorInput.setShowValueStateMessage(false);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 		oErrorInput.focus();
 		this.clock.tick(500);
 		assert.ok(!document.getElementById("errorinput-message"), "no error message popup if showValueStateMessage is set to false");
@@ -1152,52 +1161,51 @@ sap.ui.define([
 		fnSetErrorAnnounceSpy.restore();
 		oErrorInput.destroy();
 		oWarningInput.destroy();
+		runAllTimersAndRestore(this.clock);
 	});
 
-	QUnit.test("it should update the value state message accordingly", function(assert) {
+	QUnit.test("it should update the value state message accordingly", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		var oCoreRB = Library.getResourceBundleFor("sap.ui.core"),
 				oValueStateInput = new Input("vsinput", {
 					placeholder: "value state changes while you are typing",
-					liveChange: function() {
+					liveChange: () => {
 						var i = oValueStateInput.getValue().length;
 
 						switch (i % 5) {
-							case 0:
-								oValueStateInput.setValueState("None");
-								nextUIUpdate.runSync()/*fake timer is used in module*/;
-								break;
-
 							case 1:
 								oValueStateInput.setValueState("Warning");
-								nextUIUpdate.runSync()/*fake timer is used in module*/;
 								break;
 
 							case 2:
 								oValueStateInput.setValueState("Success");
-								nextUIUpdate.runSync()/*fake timer is used in module*/;
 								break;
 
 							case 3:
 								oValueStateInput.setValueState("Error");
-								nextUIUpdate.runSync()/*fake timer is used in module*/;
 								break;
 
 							case 4:
 								oValueStateInput.setValueState("Information");
-								nextUIUpdate.runSync()/*fake timer is used in module*/;
 								break;
+
+							default: // 0
+								oValueStateInput.setValueState("None");
+								break;
+
 						}
 					}
 				});
 
 		var fnSetErrorAnnounceSpy  = this.spy(oValueStateInput, "setErrorMessageAnnouncementState");
 		oValueStateInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// warning state
 		oValueStateInput.updateDomValue("1").focus();
 		qutils.triggerEvent("input", oValueStateInput.getFocusDomRef());
-		this.clock.tick(1000);
+		await nextUIUpdate(this.clock);
+		this.clock.runToLast();
 
 		assert.ok(fnSetErrorAnnounceSpy.calledWith, false,
 			"The error announcement state should not be changed, when the value state is not Error");
@@ -1209,8 +1217,9 @@ sap.ui.define([
 		// success state
 		oValueStateInput.updateDomValue("12");
 		qutils.triggerEvent("input", oValueStateInput.getFocusDomRef());
-		this.clock.tick(1000);
-		oValueStateInput.getValueState();
+		await nextUIUpdate(this.clock);
+		this.clock.runToLast();
+
 		assert.strictEqual(oValueStateInput.getValueState(), "Success");
 		assert.ok(document.getElementById("vsinput-message"), "Success message popup is open");
 		assert.ok(jQuery("#vsinput-message").hasClass("sapUiInvisibleText"), "Success message popup is not visible");
@@ -1218,8 +1227,8 @@ sap.ui.define([
 		// error state
 		oValueStateInput.updateDomValue("123");
 		qutils.triggerEvent("input", oValueStateInput.getFocusDomRef());
-		this.clock.tick(1000);
-		oValueStateInput.getValueState();
+		await nextUIUpdate(this.clock);
+		this.clock.runToLast();
 
 		assert.ok(fnSetErrorAnnounceSpy.calledWith, true,
 			"The error annoucement state should be changed, when the control is on focus and there are dynamic changes");
@@ -1231,8 +1240,9 @@ sap.ui.define([
 		// information state
 		oValueStateInput.updateDomValue("1234");
 		qutils.triggerEvent("input", oValueStateInput.getFocusDomRef());
-		this.clock.tick(1000);
-		oValueStateInput.getValueState();
+		await nextUIUpdate(this.clock);
+		this.clock.runToLast();
+
 		assert.strictEqual(oValueStateInput.getValueState(), "Information");
 		assert.ok(document.getElementById("vsinput-message"), "Information message popup is open");
 		assert.strictEqual(jQuery("#vsinput-message-text").text(), oCoreRB.getText("VALUE_STATE_INFORMATION"));
@@ -1241,7 +1251,8 @@ sap.ui.define([
 		// none state
 		oValueStateInput.updateDomValue("12345");
 		qutils.triggerEvent("input", oValueStateInput.getFocusDomRef());
-		this.clock.tick();
+		await nextUIUpdate(this.clock);
+		this.clock.runToLast();
 
 		assert.strictEqual(oValueStateInput.getValueState(), "None");
 		assert.ok(!document.getElementById("vsinput-message"), "no message popup");
@@ -1249,6 +1260,8 @@ sap.ui.define([
 		// cleanup
 		fnSetErrorAnnounceSpy.restore();
 		oValueStateInput.destroy();
+
+		runAllTimersAndRestore(this.clock);
 	});
 
 	/* =========================================================== */
@@ -1257,7 +1270,7 @@ sap.ui.define([
 
 	QUnit.module("Text direction");
 
-	QUnit.test("textDirection set to RTL", function(assert) {
+	QUnit.test("textDirection set to RTL", async function(assert) {
 
 		var oInput = new InputBase({
 			placeholder: "Text direction set to RTL",
@@ -1265,7 +1278,7 @@ sap.ui.define([
 		});
 
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.strictEqual(jQuery(oInput.getFocusDomRef()).attr("dir"), "rtl");
 
@@ -1273,7 +1286,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("textDirection set to LTR", function(assert) {
+	QUnit.test("textDirection set to LTR", async function(assert) {
 
 		var oInput = new InputBase({
 			placeholder: "Text direction set to LTR",
@@ -1281,7 +1294,7 @@ sap.ui.define([
 		});
 
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.strictEqual(jQuery(oInput.getFocusDomRef()).attr("dir"), "ltr");
 
@@ -1289,7 +1302,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("textDirection set to RTL and textAlign set to BEGIN", function(assert) {
+	QUnit.test("textDirection set to RTL and textAlign set to BEGIN", async function(assert) {
 
 		var oInput = new InputBase({
 			placeholder: "Text direction set to RTL",
@@ -1298,7 +1311,7 @@ sap.ui.define([
 		});
 
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		var $Input = jQuery(oInput.getFocusDomRef());
 
@@ -1309,7 +1322,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("textDirection set to LTR and textAlign set to END", function(assert) {
+	QUnit.test("textDirection set to LTR and textAlign set to END", async function(assert) {
 
 		var oInput = new InputBase({
 			placeholder: "Text direction set to LTR",
@@ -1318,7 +1331,7 @@ sap.ui.define([
 		});
 
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		var $Input = jQuery(oInput.getFocusDomRef());
 
@@ -1335,14 +1348,14 @@ sap.ui.define([
 
 	QUnit.module("Events");
 
-	QUnit.test("method: change() event", function(assert) {
+	QUnit.test("method: change() event", async function(assert) {
 
 		// system under test
 		var oInput = new InputBase();
 
 		// arrange
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 		var fnFireChangeSpy = this.spy(oInput, "fireChange");
 
 		// act
@@ -1356,8 +1369,8 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("it should prevent the change event from being fired", function(assert) {
-
+	QUnit.test("it should prevent the change event from being fired", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		// system under test
 		var InputSubclass = InputBase.extend("InputSubclass", {
 			renderer: {},
@@ -1370,7 +1383,7 @@ sap.ui.define([
 
 		// arrange
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 		oInput.focus();
 		var fnFireChangeSpy = this.spy(oInput, "fireChange");
 		qutils.triggerCharacterInput(oInput.getFocusDomRef(), "a");
@@ -1385,16 +1398,17 @@ sap.ui.define([
 		// cleanup
 		oInput.destroy();
 		delete window.InputSubclass;
+		runAllTimersAndRestore(this.clock);
 	});
 
-	QUnit.test("onChange should pass in additional parameters to the change event handler", function(assert) {
+	QUnit.test("onChange should pass in additional parameters to the change event handler", async function(assert) {
 
 		// system under test
 		var oInput = new InputBase();
 
 		// arrange
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 		oInput.focus();
 		var fnFireChangeSpy = this.spy(oInput, "fireChange");
 		qutils.triggerCharacterInput(oInput.getFocusDomRef(), "bar");
@@ -1413,8 +1427,8 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("onChange should pass in additional parameters to the change event handle", function(assert) {
-
+	QUnit.test("onChange should pass in additional parameters to the change event handle", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		// system under test
 		var InputSubclass = InputBase.extend("InputSubclass", {
 			renderer: {}
@@ -1431,7 +1445,7 @@ sap.ui.define([
 
 		// arrange
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 		oInput.focus();
 		var fnFireChangeSpy = this.spy(oInput, "fireChange");
 		qutils.triggerCharacterInput(oInput.getFocusDomRef(), "a");
@@ -1447,9 +1461,10 @@ sap.ui.define([
 		// cleanup
 		oInput.destroy();
 		delete window.InputSubclass;
+		runAllTimersAndRestore(this.clock);
 	});
 
-	QUnit.test("onChange handler should fire the change event when last known and dom value are not same", function(assert) {
+	QUnit.test("onChange handler should fire the change event when last known and dom value are not same", async function(assert) {
 		// system under test
 		var sInitValue = "Test";
 		var oInput = new InputBase({
@@ -1458,7 +1473,7 @@ sap.ui.define([
 
 		// arrange
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 		var oInputDomRef = oInput.getFocusDomRef();
 		var fnFireChangeSpy = this.spy(oInput, "fireChange");
 
@@ -1490,7 +1505,7 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("onChange it should fire the change event sync", function(assert) {
+	QUnit.test("onChange it should fire the change event sync", async function(assert) {
 
 		// system under test
 		var sExpectedValue = "lorem ipsum";
@@ -1502,7 +1517,7 @@ sap.ui.define([
 		// arrange
 		oInput.placeAt("content");
 		oButton.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 		oInput.focus();
 		oInput.getFocusDomRef().value = sExpectedValue;
 		var fnFireChangeSpy = this.spy(oInput, "fireChange");
@@ -1520,7 +1535,7 @@ sap.ui.define([
 		oButton.destroy();
 	});
 
-	QUnit.test("escape should return the last known value and fire private liveChange event", function(assert) {
+	QUnit.test("escape should return the last known value and fire private liveChange event", async function(assert) {
 
 		// system under test
 		var sInitValue = "Test";
@@ -1532,7 +1547,7 @@ sap.ui.define([
 
 		// arrange
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 		var fnFireEventSpy = this.spy(oInput, "fireEvent");
 		var fnOnEscapeSpy = this.spy(oInput, "onsapescape");
 
@@ -1571,7 +1586,7 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("input event delegate should be fired in IE9 when CUT / DELETE / BACKSPACE is hit", function(assert) {// TODO remove after the end of support for Internet Explorer
+	QUnit.test("input event delegate should be fired in IE9 when CUT / DELETE / BACKSPACE is hit", async function(assert) {// TODO remove after the end of support for Internet Explorer
 
 		// system under test
 		var oInput = new InputBase({
@@ -1580,7 +1595,7 @@ sap.ui.define([
 
 		// arrange
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 		var oInputDomRef = oInput.getFocusDomRef();
 		var fnInputDelegateSpy = this.spy();
 		var oInputDelegate = {
@@ -1603,13 +1618,14 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("opening value state message popup in IE should be canceled on control destruction", function(assert) {// TODO remove after the end of support for Internet Explorer
+	QUnit.test("opening value state message popup in IE should be canceled on control destruction", async function(assert) {// TODO remove after the end of support for Internet Explorer
+		this.clock = sinon.useFakeTimers();
 		// system under test
 		var oInput = new InputBase();
 
 		// arrange
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// act
 		try {
@@ -1624,9 +1640,11 @@ sap.ui.define([
 
 		// assertion
 		assert.ok(true, "opening the message popup is canceled");
+
+		runAllTimersAndRestore(this.clock);
 	});
 
-	QUnit.test("onkeydown preventDefault handling", function(assert) {// TODO remove after the end of support for Internet Explorer
+	QUnit.test("onkeydown preventDefault handling", async function(assert) {// TODO remove after the end of support for Internet Explorer
 		// system under test
 		var oInput = new InputBase().placeAt("content"),
 			oSpy = this.spy(),
@@ -1636,7 +1654,7 @@ sap.ui.define([
 			},
 			oStub = sinon.stub(oInput, "getDomRef").returns(undefined);
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		try {
 			// act
@@ -1658,13 +1676,13 @@ sap.ui.define([
 	/* =========================================================== */
 	QUnit.module("FocusAndCursorPosition");
 
-	QUnit.test("getFocusDomRef should point the input field", function(assert) {
+	QUnit.test("getFocusDomRef should point the input field", async function(assert) {
 		// system under test
 		var oInput = new InputBase();
 
 		// arrange
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// assertion - before escape
 		assert.strictEqual(oInput.getFocusDomRef(), oInput.$().find("input")[0], "getFocusDomRef returns the input field.");
@@ -1673,7 +1691,7 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("onAfterRendering cursor position and dom values should set to the last known values", function(assert) {
+	QUnit.test("onAfterRendering cursor position and dom values should set to the last known values", async function(assert) {
 		// system under test
 		var sTestValue = "Test";
 		var sTestCurPos = sTestValue.length / 2;
@@ -1681,7 +1699,7 @@ sap.ui.define([
 
 		// arrange
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 		var fnFireChangeSpy = this.spy(oInput, "fireChange");
 
 		// act - set dom value and change cursor position
@@ -1691,7 +1709,7 @@ sap.ui.define([
 
 		// invalidate the control after dom value changes
 		oInput.setPlaceholder("placeholder");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// assertions
 		assert.strictEqual(fnFireChangeSpy.callCount, 0, "Change event should not be fired during the rendering");
@@ -1706,7 +1724,7 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("onAfterRendering last dom value should not be reverted when setProperty('value', ..) is called", function(assert) {
+	QUnit.test("onAfterRendering last dom value should not be reverted when setProperty('value', ..) is called", async function(assert) {
 		// system under test
 		var sTestValue = "Test";
 		var sInitValue = "Initial";
@@ -1718,7 +1736,7 @@ sap.ui.define([
 
 		// arrange
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// act - set dom value and set value property and change cursor position
 		oInput.focus();
@@ -1728,7 +1746,7 @@ sap.ui.define([
 
 		// invalidate the control after dom and property value changes
 		oInput.setPlaceholder("placeholder");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// assertion
 		assert.strictEqual(jQuery(oInput.getFocusDomRef()).val(), sTestValue, "InputBase respected setProperty value call and did not revert the dom value.");
@@ -1743,7 +1761,7 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("getFocusInfo and applyFocusInfo", function(assert) {
+	QUnit.test("getFocusInfo and applyFocusInfo", async function(assert) {
 		// system under test
 		var sInitValue = "Test";
 		var oInput = new InputBase({
@@ -1752,7 +1770,7 @@ sap.ui.define([
 
 		// arrange
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 		var $Input = jQuery(oInput.getFocusDomRef());
 
 		// act - get focus info and change cursor position of the dom element
@@ -1771,7 +1789,7 @@ sap.ui.define([
 	});
 
 	// BCP 1570778270
-	QUnit.test("it should correctly restore the value in case of invalidation", function(assert) {
+	QUnit.test("it should correctly restore the value in case of invalidation", async function(assert) {
 
 		// system under test
 		var oInput = new InputBase();
@@ -1779,15 +1797,15 @@ sap.ui.define([
 		// arrange
 		var sValue = "Lorem Ipsum";
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 		oInput.focus();
 
 		// act
 		oInput.updateDomValue(sValue);
 		oInput.setVisible(false);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 		oInput.setVisible(true);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(oInput.getFocusDomRef().value, sValue);
@@ -1796,13 +1814,13 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("getPopupAnchorDomRef should return the control's DOM reference", function(assert) {
+	QUnit.test("getPopupAnchorDomRef should return the control's DOM reference", async function(assert) {
 		// system under test
 		var oInput = new InputBase();
 
 		// arrange
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// assertion - before escape
 		assert.strictEqual(oInput.getPopupAnchorDomRef(), oInput.$()[0], "getFocusDomRef returns the control's DOM reference.");
@@ -1812,7 +1830,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("TwowayBindingAndFormatters");
-	QUnit.test("formatters should be applied for two-way binding formatters", function(assert) {
+	QUnit.test("formatters should be applied for two-way binding formatters", async function(assert) {
 		// custom formatter
 		function smile(sValue) {
 			return sValue + " :)";
@@ -1838,7 +1856,7 @@ sap.ui.define([
 		});
 		oInput.setModel(oModel);
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// assertion
 		assert.strictEqual(oInput.getValue(), smile(sInitValue), "Initial formatter is applied correctly");
@@ -1869,12 +1887,12 @@ sap.ui.define([
 	});
 
 	QUnit.module("Accessibility");
-	QUnit.test("DOM aria properties", function(assert) {
+	QUnit.test("DOM aria properties", async function(assert) {
 
 		var oInput = new InputBase().placeAt("content");
 		var fnSetErrorAnnounceSpy  = this.spy(oInput, "setErrorMessageAnnouncementState");
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		var $Input = jQuery(oInput.getFocusDomRef());
 		assert.strictEqual($Input.attr("role"), "textbox", "Textbox role set correctly");
@@ -1884,24 +1902,24 @@ sap.ui.define([
 		assert.strictEqual($Input.attr("aria-labelledby"), undefined, "No aria-labelledby set by default");
 
 		oInput.setValueState(ValueState.Warning);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.ok(fnSetErrorAnnounceSpy.calledWith, false,
 			"The error announcement state should not be changed, when the value state is not Error");
 		assert.strictEqual($Input.attr("aria-invalid"), undefined, "valueState=Warning does not make control invalid");
 
 		oInput.setValueState(ValueState.Success);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.strictEqual($Input.attr("aria-invalid"), undefined, "valueState=Success does not make control invalid");
 
 		oInput.setValueState(ValueState.Information);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.strictEqual($Input.attr("aria-invalid"), undefined, "valueState=Information does not make control invalid");
 
 		oInput.setValueState(ValueState.Error);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.ok(fnSetErrorAnnounceSpy.calledWith, false,
 			"The error announcement state should not be changed, when the control is not focused");
@@ -1909,30 +1927,30 @@ sap.ui.define([
 
 		oInput.focus();
 		oInput.setValueState(ValueState.Error);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.ok(fnSetErrorAnnounceSpy.calledWith, true,
 			"The error annoucement state should be changed, when the control is on focus and there are dynamic changes");
 		assert.strictEqual($Input.attr("aria-invalid"), "true", "valueState=Error makes control invalid");
 
 		oInput.invalidate();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 		$Input = jQuery(oInput.getFocusDomRef());
 		assert.strictEqual($Input.attr("aria-invalid"), "true", "valueState=Error is at the dom after rendering");
 
 		oInput.setEditable(false);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 		$Input = jQuery(oInput.getFocusDomRef());
 		assert.strictEqual($Input.attr("readonly"), "readonly", "readonly attribute is set for editable=false");
 
 		oInput.setEnabled(false);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 		$Input = jQuery(oInput.getFocusDomRef());
 		assert.strictEqual($Input.attr("disabled"), "disabled", "disabled attribute is set for enabled=false");
 
 		var oText = new Text("text");
 		oInput.addAriaLabelledBy(oText);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 		$Input = jQuery(oInput.getFocusDomRef());
 		assert.strictEqual($Input.attr("aria-labelledby"), "text", "aria-labelledby set for assosiation");
 
@@ -1942,18 +1960,18 @@ sap.ui.define([
 		oText.destroy();
 	});
 
-	QUnit.test("it should not render the tooltip and the invisible element", function(assert) {
+	QUnit.test("it should not render the tooltip and the invisible element", async function(assert) {
 
 		// system under test
 		var oInput = new InputBase();
 
 		// arrange
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// act
 		oInput.setTooltip("");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(oInput.$().attr("title"), undefined);
@@ -1963,7 +1981,7 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("it should not render the tooltip and the invisible element (test case 2)", function(assert) {
+	QUnit.test("it should not render the tooltip and the invisible element (test case 2)", async function(assert) {
 
 		// system under test
 		var oInput = new InputBase({
@@ -1972,11 +1990,11 @@ sap.ui.define([
 
 		// arrange
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// act
 		oInput.setTooltip("");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(oInput.$().attr("title") === undefined);
@@ -1987,7 +2005,7 @@ sap.ui.define([
 	});
 
 	// BCP 1580094855
-	QUnit.test("it should not render the tooltip (test case 3)", function(assert) {
+	QUnit.test("it should not render the tooltip (test case 3)", async function(assert) {
 
 		// arrange
 		var CustomInput = InputBase.extend("CustomInput", {
@@ -2005,11 +2023,11 @@ sap.ui.define([
 
 		// arrange
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// act
 		oInput.setTooltip("");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(oInput.$().attr("title") === undefined);
@@ -2019,7 +2037,7 @@ sap.ui.define([
 		delete window.CustomInput;
 	});
 
-	QUnit.test("it should keep other describedby associations when the tooltip is set to empty string", function(assert) {
+	QUnit.test("it should keep other describedby associations when the tooltip is set to empty string", async function(assert) {
 		var CustomInput = InputBase.extend("CustomInput", {
 			metadata: {
 				associations: {
@@ -2043,7 +2061,7 @@ sap.ui.define([
 		// arrange
 		oInput.placeAt("content");
 		oText.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// act
 		oInput.setTooltip("");
@@ -2057,7 +2075,7 @@ sap.ui.define([
 		delete window.CustomInput;
 	});
 
-	QUnit.test("Renderer Hooks", function(assert) {
+	QUnit.test("Renderer Hooks", async function(assert) {
 		var MyTextField = InputBase.extend("MyTextField", {
 			metadata: {
 				associations: {
@@ -2092,7 +2110,7 @@ sap.ui.define([
 		var oInput = new MyTextField({
 			valueState: ValueState.Error
 		}).placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		var $Input = jQuery(oInput.getFocusDomRef());
 		assert.strictEqual($Input.attr("role"), "combobox", "Control role set correctly");
@@ -2105,14 +2123,14 @@ sap.ui.define([
 		var oText = new Text("text");
 		oInput.addAriaLabelledBy(oText);
 		oInput.addAriaDescribedBy(oText);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 		$Input = jQuery(oInput.getFocusDomRef());
 		assert.strictEqual($Input.attr("aria-labelledby"), "text internal_labelledby_id", "aria-labelledby is set for assosiation and internal together");
 		assert.strictEqual($Input.attr("aria-describedby"), "text internal_describedby_id", "aria-describedby is set for assosiation and internal together");
 
 		oInput.removeAriaLabelledBy(oText);
 		oInput.removeAriaDescribedBy(oText);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 		$Input = jQuery(oInput.getFocusDomRef());
 		assert.strictEqual($Input.attr("aria-labelledby"), "internal_labelledby_id", "aria-labelledby is set only for internal");
 		assert.strictEqual($Input.attr("aria-describedby"), "internal_describedby_id", "aria-describedby is set only for internal");
@@ -2150,7 +2168,7 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("_invisibleFormattedValueStateText", function(assert) {
+	QUnit.test("_invisibleFormattedValueStateText", async function(assert) {
 		var oInput = new InputBase({
 			valueState: "Error",
 			formattedValueStateText: new FormattedText({
@@ -2161,22 +2179,15 @@ sap.ui.define([
 				})
 			})
 		}).placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.strictEqual(oInput.getAggregation("_invisibleFormattedValueStateText").getControls()[0].getDomRef().getAttribute("tabindex"), "-1", "The link shouldn't be tabbable");
 		oInput.destroy();
 	});
 
-	QUnit.module("invalid input event when rendered with non-ASCII symbols", {
-		before: function () {
-			sinon.config.useFakeTimers = false;
-		},
-		after: function () {
-			sinon.config.useFakeTimers = true;
-		}
-	});
+	QUnit.module("invalid input event when rendered with non-ASCII symbols");
 
-	QUnit.test("In IE an Input with a non ASCII symbol should mark 'oninput' event invalid when it is rendered", function (assert) {// TODO remove after the end of support for Internet Explorer
+	QUnit.test("In IE an Input with a non ASCII symbol should mark 'oninput' event invalid when it is rendered", async function (assert) {// TODO remove after the end of support for Internet Explorer
 
 		var done = assert.async();
 		var callCount = 0;
@@ -2193,7 +2204,7 @@ sap.ui.define([
 		}).placeAt("content");
 
 		oInput.oninput = oninputOverride;
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		setTimeout(function () {
 			if (callCount) {
@@ -2216,7 +2227,7 @@ sap.ui.define([
 		}, 100);
 	});
 
-	QUnit.test("In IE an Input with a non ASCII symbol should mark 'oninput' event invalid when it is invalidated", function (assert) {// TODO remove after the end of support for Internet Explorer
+	QUnit.test("In IE an Input with a non ASCII symbol should mark 'oninput' event invalid when it is invalidated", async function (assert) {// TODO remove after the end of support for Internet Explorer
 
 		var done = assert.async();
 		var callCount = 0;
@@ -2232,13 +2243,13 @@ sap.ui.define([
 			value: 'ä'
 		}).placeAt("content");
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
-		setTimeout(function () {
+		setTimeout(async function () {
 			oInput.oninput = oninputOverride;
 
 			oInput.invalidate();
-			nextUIUpdate.runSync()/*fake timer is used in module*/;
+			await nextUIUpdate();
 
 			setTimeout(function () {
 				if (callCount) {
@@ -2262,7 +2273,7 @@ sap.ui.define([
 		}, 100);
 	});
 
-	QUnit.test("In IE an Input with a non ASCII symbol should mark 'oninput' event invalid when its parent is invalidated", function (assert) {// TODO remove after the end of support for Internet Explorer
+	QUnit.test("In IE an Input with a non ASCII symbol should mark 'oninput' event invalid when its parent is invalidated", async function (assert) {// TODO remove after the end of support for Internet Explorer
 
 		var done = assert.async();
 		var callCount = 0;
@@ -2281,13 +2292,13 @@ sap.ui.define([
 		var oPanel = new Panel({
 			content: oInput
 		}).placeAt('content');
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
-		setTimeout(function () {
+		setTimeout(async function () {
 			oInput.oninput = oninputOverride;
 
 			oPanel.invalidate();
-			nextUIUpdate.runSync()/*fake timer is used in module*/;
+			await nextUIUpdate();
 
 			setTimeout(function () {
 				if (callCount) {
@@ -2311,7 +2322,7 @@ sap.ui.define([
 		}, 100);
 	});
 
-	QUnit.test("Safari should not fire change event when value is selected from IME Popover with Enter", function(assert) {
+	QUnit.test("Safari should not fire change event when value is selected from IME Popover with Enter", async function(assert) {
 
 		// arrange
 		var oInput = new InputBase({
@@ -2327,7 +2338,7 @@ sap.ui.define([
 		});
 
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		var oInputDomRef = oInput.getFocusDomRef(),
 			fnFireChangeSpy = this.spy(oInput, "fireChange"),
@@ -2349,24 +2360,24 @@ sap.ui.define([
 
 	QUnit.module("Width calculations");
 
-	QUnit.test("_calculateIconsSpace", function(assert) {
+	QUnit.test("_calculateIconsSpace", async function(assert) {
 		var oInput = new InputBase(),
 			oBeginIcon, oEndIcon;
 
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.strictEqual(0, oInput._calculateIconsSpace(),
 			"The space taken by the icon should be 0, when no icon present");
 
 		oEndIcon = oInput.addEndIcon({src: "sap-icon://slim-arrow-down"});
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.strictEqual(oEndIcon.getDomRef().offsetWidth, oInput._calculateIconsSpace(),
 			"The space taken by the icon should be calculated");
 
 		oBeginIcon = oInput.addBeginIcon({src: "sap-icon://slim-arrow-down"});
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.strictEqual(oBeginIcon.getDomRef().offsetWidth + oEndIcon.getDomRef().offsetWidth,
 			oInput._calculateIconsSpace(), "The space taken by the icons should be calculated" );
@@ -2376,7 +2387,7 @@ sap.ui.define([
 
 	QUnit.module("Renderer hooks");
 
-	QUnit.test("getInnerSuffix() is called", function(assert) {
+	QUnit.test("getInnerSuffix() is called", async function(assert) {
 		var oInputBase = new InputBase({}),
 			oRenderer = oInputBase.getRenderer();
 
@@ -2384,7 +2395,7 @@ sap.ui.define([
 		var fnOnInputBaseSpy = this.spy(oRenderer, "getInnerSuffix");
 
 		oInputBase.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.strictEqual(fnOnInputBaseSpy.callCount, 1, "getInnerSuffix() is called");
 		assert.strictEqual(oInputBase.$(oRenderer.getInnerSuffix()).length, 1, "The inner element has proper Id");
@@ -2394,7 +2405,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Value concurrency scenario", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oInput = new InputBase();
 			this.oModel = new JSONModel();
 
@@ -2403,7 +2414,7 @@ sap.ui.define([
 			this.oModel.setData({"value": 'Initial Value'});
 			this.oInput.setModel(this.oModel);
 			this.oInput.placeAt("content");
-			nextUIUpdate.runSync()/*fake timer is used in module*/;
+			await nextUIUpdate();
 			this.oInputFocusDomRef = this.oInput.getFocusDomRef();
 		},
 		afterEach: function () {

@@ -237,7 +237,7 @@ sap.ui.define([
 	 * <b>Note:</b>Should be called after the rendering of <code>GridList</code> is ready.
 	 *
 	 * @public
-	 * @experimental Since 1.87. Behavior might change.
+	 * @since 1.87
 	 * @param {sap.f.NavigationDirection} sDirection The navigation direction.
 	 * @param {int} iRow The row index of the starting position.
 	 * @param {int} iColumn The column index of the starting position.

@@ -42,28 +42,24 @@ sap.ui.define([
 		 * when using a ResponsiveTable or if {@link sap.ui.table.plugins.MultiSelectionPlugin#limit} is set
 		 * to <code>0</code> when using a GridTable.
 		 *
-		 * @function
-		 * @name iClickOnSelectAllCheckBox
-		 * @param {String|sap.ui.mdc.Table} oControl Id or control instance of the MDCTable
+		 * @param {string | sap.ui.mdc.Table} vTable Id or instance of the table
 		 * @returns {Promise} OPA waitFor
 		 * @private
 		 */
-		iClickOnSelectAllCheckBox: function(oControl) {
-			const sTableId = typeof oControl === "string" ? oControl : oControl.getId();
-
-			return waitForTable.call(this, oControl, {
+		iClickOnSelectAllCheckBox: function(vTable) {
+			return waitForTable.call(this, vTable, {
 				success: function(oTable) {
 					if (oTable._isOfType(TableType.ResponsiveTable)) {
-						return this.waitFor({
-							id: sTableId + "-innerTable-sa",
+						this.waitFor({
+							id: oTable.getId() + "-innerTable-sa",
 							controlType: "sap.m.CheckBox",
 							actions: new Press(),
 							errorMessage: "Did not find the 'Select all' checkbox"
 						});
 					} else {
-						return this.waitFor({
+						this.waitFor({
 							check: function() {
-								return Opa5.getJQuery()("#" + sTableId + "-innerTable-selall").length === 1;
+								return oTable.getDomRef("innerTable-selall");
 							},
 							success: function() {
 								new Press({idSuffix: "innerTable-selall"}).executeOn(oTable);
@@ -447,47 +443,28 @@ sap.ui.define([
 		iFillInExportSettingsDialog: TableActions.iExportToExcel,
 
 		/**
-		 * Changes the {@link sap.ui.mdc.Table#multiSelectMode} property.
-		 *
-		 * @function
-		 * @name iChangeMultiSelectMode
-		 * @param {String|sap.ui.mdc.Table} oControl Id or control instance of the MDCTable
-		 * @param {String} sMode The new value for the multiSelectMode property (Default|ClearAll)
-		 * @returns {Promise} OPA waitFor
-		 * @private
-		 */
-		iChangeMultiSelectMode: function(oControl, sMode) {
-			return waitForTable.call(this, oControl, {
-				success: function(oTable) {
-					oTable.setMultiSelectMode(sMode);
-				},
-				errorMessage: "No table found"
-			});
-		},
-
-		/**
 		 * Changes the {@link sap.ui.mdc.Table#type} aggregation.
 		 *
-		 * @function
-		 * @name iChangeType
-		 * @param {String|sap.ui.mdc.Table} oControl Id or control instance of the MDCTable
-		 * @param {String} sType The new type for the MDCTable (ResponsiveTable|Table)
+		 * @param {string | sap.ui.mdc.Table} vTable Id or instance of the table
+		 * @param {sap.ui.mdc.enums.TableType} sType The new table type
+		 * @param {object} [mTypeSettings] If settings are given, a type instance with these settings is set instead of an enum value
 		 * @returns {Promise} OPA waitFor
 		 * @private
 		 */
-		iChangeType: function(oControl, sType) {
-			return waitForTable.call(this, oControl, {
+		iChangeType: function(vTable, sType, mTypeSettings) {
+			return waitForTable.call(this, vTable, {
 				success: function(oTable) {
-					oTable.setType(sType);
-
-					oTable.initialized().then(function() {
-						return waitForTable.call(this, oControl, {
-							success: function(oTable) {
-								Opa5.assert.ok(oTable.getType() === sType, "Table type changed to " + sType);
-							},
-							errorMessage: "No table found"
-						});
-					}.bind(this));
+					if (mTypeSettings) {
+						this.iWaitForPromise(new Promise((resolve) => {
+							Opa5.getWindow().sap.ui.require([`sap/ui/mdc/table/${sType}Type`], function(Type) {
+								oTable.setType(new Type(mTypeSettings));
+								oTable.initialized().then(resolve);
+							});
+						}));
+					} else {
+						oTable.setType(sType);
+						this.iWaitForPromise(oTable.initialized());
+					}
 				},
 				errorMessage: "No table found"
 			});
@@ -497,14 +474,12 @@ sap.ui.define([
 		 * Changes the selection limit.
 		 * Succeeds only if {@link sap.ui.mdc.Table#type} is set to <code>Table</code>.
 		 *
-		 * @function
-		 * @name iChangeLimit
-		 * @param {String|sap.ui.mdc.Table} oControl Id or control instance of the MDCTable
+		 * @param {string | sap.ui.mdc.Table} vTable Id or instance of the table
 		 * @param {Number} iLimit The new limit
 		 * @returns {Promise} OPA waitFor
 		 * @private
 		 */
-		iChangeLimit: function(oControl, iLimit) {
+		iChangeSelectionLimit: function(oControl, iLimit) {
 			return waitForTable.call(this, oControl, {
 				success: function(oTable) {
 					return this.waitFor({
@@ -880,38 +855,6 @@ sap.ui.define([
 				}),
 				actions: new Press()
 			});
-		},
-
-		/**
-		 * Selects all visible rows available in the MDCTable.
-		 *
-		 * @function
-		 * @name iSelectAllRows
-		 * @param {String|sap.ui.mdc.Table} oControl Id or control instance of the MDCTable
-		 * @returns {Promise} OPA waitFor
-		 */
-		iSelectAllRows: TableActions.iSelectAllRows,
-
-		/**
-		 * Removes all selections from the MDCTable.
-		 *
-		 * @function
-		 * @name iClearSelection
-		 * @param {String|sap.ui.mdc.Table} oControl Id or control instance of the MDCTable
-		 * @returns {Promise} OPA waitFor
-		 */
-		iClearSelection: TableActions.iClearSelection,
-
-		/**
-		 * Selects one or multiple rows.
-		 *
-		 * @function
-		 * @name iSelectRows
-		 * @param {String|sap.ui.mdc.Table} oControl Id or control instance of the MDCTable
-		 * @param {Number} iStartIndex Index from which the selection starts
-		 * @param {Number} iEndIndex Index up to the selection ends
-		 * @returns {Promise} OPA waitFor
-		 */
-		iSelectRows: TableActions.iSelectRows
+		}
 	};
 });

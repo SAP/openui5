@@ -21,8 +21,9 @@
 	</style>
 
 	<script>
-		sap.ui.getCore().attachInit(function () {
 			sap.ui.require([
+				"sap/ui/core/Core",
+				"sap/ui/core/Element",
 				"sap/ui/webc/fiori/Wizard",
 				"sap/ui/webc/fiori/WizardStep",
 				"sap/ui/webc/main/Button",
@@ -38,7 +39,9 @@
 				"sap/ui/webc/main/Label",
 				"sap/ui/layout/VerticalLayout",
 				"sap/ui/core/HTML"
-			], function (
+			], async function (
+				Core,
+				Element,
 				Wizard,
 				WizardStep,
 				Button,
@@ -55,6 +58,8 @@
 				VerticalLayout,
 				HTML
 			) {
+				await Core.ready();
+
 				var oWizard = new Wizard({
 					steps: [
 						new WizardStep("first-step", {
@@ -72,8 +77,8 @@
 									design: "Emphasized",
 									click: function () {
 										navigateToNextStep(
-											sap.ui.getCore().byId("first-step"),
-											sap.ui.getCore().byId("second-step")
+											Element.getElementById("first-step"),
+											Element.getElementById("second-step")
 										);
 									}
 								})
@@ -111,7 +116,7 @@
 										}),
 										new Switch({
 											change: function () {
-												var oBtn = sap.ui.getCore().byId("toStep3");
+												var oBtn = Element.getElementById("toStep3");
 												var bVisible = oBtn.getVisible();
 												oBtn.setVisible(!bVisible);
 											}
@@ -122,8 +127,8 @@
 											design: "Emphasized",
 											click: function () {
 												navigateToNextStep(
-													sap.ui.getCore().byId("second-step"),
-													sap.ui.getCore().byId("third-step")
+													Element.getElementById("second-step"),
+													Element.getElementById("third-step")
 												);
 											}
 										})
@@ -190,7 +195,6 @@
 
 				oPage.placeAt("body");
 			});
-		});
 	</script>
 </head>
 

@@ -168,6 +168,15 @@ sap.ui.define([
 			_focusedDate : {type : "object", group : "Data", visibility: "hidden", defaultValue: null},
 
 			/**
+			 * Determines if the control should display only the weeks that fall within the current month
+			 * or if it should always render a six-week view.
+			 *
+			 * @private
+			 * @since 1.123
+			 */
+			 _renderMonthWeeksOnly : {type : "boolean", group : "Data", visibility: "hidden", defaultValue: false},
+
+			/**
 			 * If set, the calendar week numbering is used for display.
 			 * If not set, the calendar week numbering of the global configuration is used.
 			 * Note: This property should not be used with firstDayOfWeek property.
@@ -1466,6 +1475,9 @@ sap.ui.define([
 	 */
 	Month.prototype._getVisibleDays = function (oStartDate, bIncludeBCDates) {
 		var iDaysInSixWeeks = 42,
+			bRenderMonthWeeksOnly = this.getProperty("_renderMonthWeeksOnly"),
+			bWeekInNextMonth,
+			iNextMonth,
 			oDay,
 			oCalDate,
 			iDaysOldMonth,
@@ -1495,6 +1507,7 @@ sap.ui.define([
 		}
 
 		oDay = new CalendarDate(oFirstDay);
+		iNextMonth = (oStartDate.getMonth() + 1) % 12;
 		for (let i = 0; i < iDaysInSixWeeks; i++) {
 			iYear = oDay.getYear();
 			oCalDate = new CalendarDate(oDay, this._getPrimaryCalendarType());
@@ -1506,6 +1519,11 @@ sap.ui.define([
 				this._aVisibleDays.push(oCalDate);
 			}
 			oDay.setDate(oDay.getDate() + 1);
+
+			bWeekInNextMonth = oDay.getMonth() === iNextMonth && oDay.getDay() === iFirstDayOfWeek;
+			if (bRenderMonthWeeksOnly && bWeekInNextMonth) {
+				break;
+			}
 		}
 
 		return this._aVisibleDays;

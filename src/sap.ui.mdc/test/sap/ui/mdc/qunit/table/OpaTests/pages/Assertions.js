@@ -37,20 +37,16 @@ sap.ui.define([
 		 * when using a ResponsiveTable or if {@link sap.ui.table.plugins.MultiSelectionPlugin#limit} is set
 		 * to '0' when using a GridTable.
 		 *
-		 * @function
-		 * @name iShouldSeeTheSelectAllCheckBox
-		 * @param {String|sap.ui.mdc.Table} oControl Id or control instance of the MDCTable
+		 * @param {string | sap.ui.mdc.Table} vTable Id or instance of the table
 		 * @returns {Promise} OPA waitFor
 		 * @private
 		 */
-		iShouldSeeTheSelectAllCheckBox: function(oControl) {
-			const sTableId = typeof oControl === "string" ? oControl : oControl.getId();
-
-			return waitForTable.call(this, oControl, {
+		iShouldSeeTheSelectAllCheckBox: function(vTable) {
+			return waitForTable.call(this, vTable, {
 				success: function(oTable) {
 					if (oTable._isOfType(TableType.ResponsiveTable)) {
-						return this.waitFor({
-							id: sTableId + "-innerTable-sa",
+						this.waitFor({
+							id: oTable.getId() + "-innerTable-sa",
 							controlType: "sap.m.CheckBox",
 							success: function(oCheckBox) {
 								Opa5.assert.ok(oCheckBox, "Table has 'Select All' check box");
@@ -58,11 +54,10 @@ sap.ui.define([
 							errorMessage: "Did not find the 'Select all' checkbox"
 						});
 					} else {
-						const $checkBox = Opa5.getJQuery()("#" + sTableId + "-innerTable-selall");
-
-						return this.waitFor({
+						this.waitFor({
 							check: function() {
-								return $checkBox.length === 1;
+								return oTable.getDomRef("innerTable-selall")
+									?.querySelector(".sapUiTableSelAllVisible > .sapUiTableSelectAllCheckBox");
 							},
 							success: function() {
 								Opa5.assert.ok(true, "Table has 'Select All' check box");
@@ -80,20 +75,16 @@ sap.ui.define([
 		 * when using a ResponsiveTable or if {@link sap.ui.table.plugins.MultiSelectionPlugin#limit} is set
 		 * to greater '0' when using a GridTable.
 		 *
-		 * @function
-		 * @name iShouldSeeTheDeselectAllIcon
-		 * @param {String|sap.ui.mdc.Table} oControl Id or control instance of the MDCTable
+		 * @param {string | sap.ui.mdc.Table} vTable Id or instance of the table
 		 * @returns {Promise} OPA waitFor
 		 * @private
 		 */
-		iShouldSeeTheDeselectAllIcon: function(oControl) {
-			const sTableId = typeof oControl === "string" ? oControl : oControl.getId();
-
-			return waitForTable.call(this, oControl, {
+		iShouldSeeTheDeselectAllIcon: function(vTable) {
+			return waitForTable.call(this, vTable, {
 				success: function(oTable) {
 					if (oTable._isOfType(TableType.ResponsiveTable)) {
-						return this.waitFor({
-							id: sTableId + "-innerTable-clearSelection",
+						this.waitFor({
+							id: oTable.getId() + "-innerTable-clearSelection",
 							controlType: "sap.ui.core.Icon",
 							success: function(oIcon) {
 								Opa5.assert.ok(oIcon, "Table has 'Deselect all' icon");
@@ -101,11 +92,17 @@ sap.ui.define([
 							errorMessage: "Did not find the 'Deselect all' icon"
 						});
 					} else {
-						const $checkBox = Opa5.getJQuery()("#" + sTableId + "-innerTable-selall");
-
-						return this.waitFor({
-							check: function() {
-								return $checkBox.length === 1;
+						this.waitFor({
+							controlType: "sap.ui.core.Icon",
+							matchers: [{
+								propertyStrictEquals: {
+									name: "src",
+									value: "sap-icon://clear-all"
+								},
+								ancestor: oTable
+							}],
+							check: function(aIcons) {
+								return oTable.getDomRef("innerTable-selall").contains(aIcons[0].getDomRef());
 							},
 							success: function() {
 								Opa5.assert.ok(true, "Table has 'Deselect all' icon");
@@ -258,22 +255,20 @@ sap.ui.define([
 		/**
 		 * Checks if the P13n button is visible/not visible on the MDCTable.
 		 *
-		 * @function
-		 * @name iShouldSeeTheP13nButton
-		 * @param {String|sap.ui.mdc.Table} oControl Id or control instance of the MDCTable
-		 * @param {Boolean} [bShowP13n] Flag if P13n button should be visible
+		 * @param {string | sap.ui.mdc.Table} vTable Id or instance of the table
+		 * @param {boolean} [bVisible=true] Flag if P13n button should be visible
 		 * @returns {Promise} OPA waitFor
 		 * @private
 		 */
-		iShouldSeeTheP13nButton: function(oControl, bShowP13n) {
-			const sTableId = typeof oControl === "string" ? oControl : oControl.getId();
+		iShouldSeeTheP13nButton: function(vTable, bVisible = true) {
+			const sTableId = typeof vTable === "string" ? vTable : vTable.getId();
 
 			this.waitFor({
 				id: sTableId + "-settings",
 				controlType: "sap.m.Button",
 				visible: false,
 				success: function(oButton) {
-					Opa5.assert.strictEqual(oButton.getVisible(), bShowP13n, "The P13n button is " + (bShowP13n ? "visible" : "not visible"));
+					Opa5.assert.strictEqual(oButton.getVisible(), bVisible, "The P13n button is " + (bVisible ? "visible" : "not visible"));
 				},
 				errorMessage: "P13n button was not found."
 			});
@@ -424,22 +419,28 @@ sap.ui.define([
 		},
 
 		/**
-		 * Checks if column is in correct position.
+		 * Checks if column is at a certain index.
 		 *
-		 * @function
-		 * @name iCheckColumnPosition
-		 * @param {String|sap.ui.mdc.Table} vControl Id or control instance of the MDCTable
-		 * @param {String} sColumnId Column Id String
-		 * @param {Number} iColumnNumber Number of expected column position
+		 * @param {string | sap.ui.mdc.Table} vTable Id or instance of the table
+		 * @param {string} sColumnId Column id
+		 * @param {number} iColumnIndex The expected index of the column
 		 * @returns {Promise} OPA waitFor
 		 * @private
 		 */
-		iCheckColumnPosition: function(vControl, sColumnId, iColumnNumber) {
-			return waitForTable.call(this, vControl, {
+		iCheckColumnPosition: function(vTable, sColumnId, iColumnIndex) {
+			return waitForTable.call(this, vTable, {
 				success: function(oTable) {
-					Opa5.assert.equal(oTable.getColumns()[iColumnNumber].getId(), sColumnId, "Column: " + sColumnId + " at expected position: " + iColumnNumber);
-				},
-				errorMessage: "No table found"
+					this.waitFor({
+						id: sColumnId,
+						matchers: [{
+							ancestor: oTable
+						}],
+						success: function(oColumn) {
+							Opa5.assert.equal(oTable.indexOfColumn(oColumn), iColumnIndex, `Column ${oColumn.getId()} is at index ${iColumnIndex}`);
+						},
+						errorMessage: "Column not found"
+					});
+				}
 			});
 		},
 
@@ -454,13 +455,11 @@ sap.ui.define([
 		 */
 		iShouldSeeExportProcessDialog: function() {
 			return this.waitFor({
-				autoWait: false,
 				controlType: "sap.m.Dialog",
 				success: function(aDialogs) {
 					const oDialog = aDialogs[0];
 					const oResourceBundle = Library.getResourceBundleFor("sap.ui.export");
 					return this.waitFor({
-						autoWait: false,
 						controlType: "sap.m.Title",
 						searchOpenDialogs: true,
 						matchers: new PropertyStrictEquals({
@@ -516,47 +515,24 @@ sap.ui.define([
 			});
 		},
 
-		/**
-		 * Checks if the ColumnMenu is visible.
-		 *
-		 * @function
-		 * @name iShouldSeeTheColumnMenu
-		 * @returns {Promise} OPA waitFor
-		 * @private
-		 */
 		iShouldSeeTheColumnMenu: function() {
-			return this.waitFor({
-				autoWait: false,
-				controlType: "sap.m.table.columnmenu.Menu",
-				success: function(aMenu) {
-					Opa5.assert.ok(aMenu[0], "Columnmenu is visible");
-				},
-				errorMessage: "No columnmenu found"
-			});
-		},
-
-		iShouldSeeOneColumnMenu: function() {
 			return Util.waitForColumnMenu.call(this, {
-				findAll: true,
-				success: function(aColumnMenu) {
-					Opa5.getContext().columnMenu = aColumnMenu[0];
-					Opa5.assert.equal(aColumnMenu.length, 1, "One column menu is open");
+				success: function(oColumnMenu) {
+					Opa5.getContext().columnMenu = oColumnMenu;
+					Opa5.assert.ok(true, "The column menu is open");
 				}
 			});
 		},
 
 		iShouldNotSeeTheColumnMenu: function() {
 			return this.waitFor({
+				check: function() {
+					return !Opa5.getContext().columnMenu.isOpen();
+				},
 				success: function() {
-					// We might need to wait for the close animation of the menu to finish.
-					this.iWaitForPromise(new Promise(function(resolve) {
-						setTimeout(resolve, 300);
-					})).then(function() {
-						const oContext = Opa5.getContext();
-						Opa5.assert.notOk(oContext.columnMenu.isOpen(), "The column menu is closed");
-						delete oContext.columnMenu;
-					});
-				}
+					Opa5.assert.ok(true, "The column menu is closed");
+				},
+				errorMessage: "The column menu is open"
 			});
 		},
 

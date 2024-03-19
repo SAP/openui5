@@ -75,6 +75,9 @@ sap.ui.define([
 				 */
 				hideHeaderSelector: {type: "boolean", group: "Appearance", defaultValue: false}
 			},
+			aggregations: {
+				icon: {type: "sap.ui.core.Icon", multiple: false, visibility: "hidden"}
+			},
 			events: {
 				selectionChange: {}
 			}
@@ -88,19 +91,10 @@ sap.ui.define([
 
 		var oIcon = new Icon({src: IconPool.getIconURI(TableUtils.ThemeParameters.clearSelectionIcon), useIconTooltip: false});
 		oIcon.addStyleClass("sapUiTableSelectClear");
+		this.setAggregation("icon", oIcon, true);
 
 		this._bLimitReached = false;
-		this.oDeselectAllIcon = oIcon;
 		this._oRangeSelectionStartContext = null;
-	};
-
-	ODataV4Selection.prototype.exit = function() {
-		SelectionPlugin.prototype.exit.apply(this, arguments);
-
-		if (this.oDeselectAllIcon) {
-			this.oDeselectAllIcon.destroy();
-			this.oDeselectAllIcon = null;
-		}
 	};
 
 	ODataV4Selection.prototype.onActivate = function(oTable) {
@@ -174,7 +168,7 @@ sap.ui.define([
 		return {
 			headerSelector: {
 				type: this._isLimitDisabled() ? "toggle" : "clear",
-				icon: this.oDeselectAllIcon,
+				icon: this.getAggregation("icon"),
 				visible: this.getSelectionMode() === SelectionMode.MultiToggle && !this.getHideHeaderSelector(),
 				enabled: this._isLimitDisabled() || this.getSelectedCount() > 0,
 				selected: areAllRowsSelected(this)
@@ -382,7 +376,7 @@ sap.ui.define([
 	};
 
 	ODataV4Selection.prototype.onThemeChanged = function() {
-		this.oDeselectAllIcon.setSrc(IconPool.getIconURI(TableUtils.ThemeParameters.clearSelectionIcon));
+		this.getAggregation("icon").setSrc(IconPool.getIconURI(TableUtils.ThemeParameters.clearSelectionIcon));
 	};
 
 	return ODataV4Selection;

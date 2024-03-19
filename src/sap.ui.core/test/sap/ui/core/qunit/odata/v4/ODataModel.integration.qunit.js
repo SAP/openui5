@@ -25426,6 +25426,12 @@ sap.ui.define([
 					[true, undefined, 1, "Friend #01"]
 				]);
 
+				// Since CPOUI5ODATAV4-2493 selecting a header context will select all row contexts.
+				// This behavior is undesired for this test scenario. Remove the selection but select
+				// back the root node.
+				oHeaderContext.setSelected(false);
+				oRoot.setSelected(true);
+
 				assert.strictEqual(oListBinding.getCount(), 1, "count of nodes"); // code under test
 
 				that.expectRequest("Artists(ArtistID='0',IsActiveEntity=true)?$select=defaultChannel", {
@@ -63042,31 +63048,35 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-1944
 	//
 	// Select a header context via all three possible ways: setSelected and write to the annotation
-	// via context or property binding. Swap the context of the "selectAll" property binding and
-	// check if change listeners are correctly removed.
+	// via context or property binding. Selecting the header context selects and deselects all row
+	// contexts. A newly created inactive (and transient) row is also selected. Newly loaded rows
+	// inherit the selection from the header context. Swap the context of the "select all" property
+	// binding and check if change listeners are correctly removed.
 	// JIRA: CPOUI5ODATAV4-2493
 	QUnit.test("Selection on header context and row context", async function (assert) {
 		const oModel = this.createSalesOrdersModel({autoExpandSelect : true});
 		const sView = `
 <Input id="selectAll" value="{path: '@$ui5.context.isSelected', targetType: 'any'}"/>
-<Table id="table" items="{/SalesOrderList}">
+<Table id="table" growing="true" growingThreshold="3" items="{/SalesOrderList}">
 	<Text id="id" text="{SalesOrderID}"/>
 	<Input id="selected" value="{path : '@$ui5.context.isSelected', targetType: 'any'}"/>
 </Table>`;
 
-		this.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=100", {
+		this.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=3", {
 				value : [
-					{SalesOrderID : "1"}
-				]
+						{SalesOrderID : "1"},
+						{SalesOrderID : "2"},
+						{SalesOrderID : "3"}
+					]
 			})
 			.expectChange("selectAll")
-			.expectChange("id", ["1"])
-			.expectChange("selected", [undefined]);
+			.expectChange("id", ["1", "2", "3"])
+			.expectChange("selected", [undefined, undefined, undefined]);
 
 		await this.createView(assert, sView, oModel);
 
-		const oPropertyBinding = this.oView.byId("table").getItems()[0].getCells()[1]
-			.getBinding("value");
+		const oTable = this.oView.byId("table");
+		const oPropertyBinding = oTable.getItems()[0].getCells()[1].getBinding("value");
 		const oContext = oPropertyBinding.getContext();
 
 		this.expectChange("selected", [true]);
@@ -63075,7 +63085,7 @@ sap.ui.define([
 		oPropertyBinding.setValue(true);
 
 		checkSelected(assert, oContext, true);
-		await this.waitForChanges(assert);
+		await this.waitForChanges(assert, "rowContext selected");
 
 		this.expectChange("selected", [false]);
 
@@ -63083,67 +63093,104 @@ sap.ui.define([
 		oPropertyBinding.setValue(false);
 
 		checkSelected(assert, oContext, false);
-		await this.waitForChanges(assert);
+		await this.waitForChanges(assert, "rowContext deselected");
 
-		const oHeaderContext = this.oView.byId("table").getBinding("items").getHeaderContext();
+		const oListBinding = oTable.getBinding("items");
+		const oHeaderContext = oListBinding.getHeaderContext();
 		const oSelectAllInput = this.oView.byId("selectAll");
 		oSelectAllInput.setBindingContext(oHeaderContext);
 		const oSelectAllBinding = oSelectAllInput.getBinding("value");
 
-		this.expectChange("selectAll", true);
+		this.expectChange("selectAll", true)
+			.expectChange("selected", [true, true, true]);
 
 		// code under test
 		oSelectAllBinding.setValue(true);
 
 		checkSelected(assert, oHeaderContext, true);
-		await this.waitForChanges(assert);
+		await this.waitForChanges(assert, "headerContext selected via setValue");
 
-		this.expectChange("selectAll", false);
+		this.expectChange("id", [""])
+			.expectChange("selected", [true]);
+
+		// code under test - newly created row context is selected
+		const oInactiveContext = oListBinding.create(undefined, true, false, true);
+
+		assert.ok(oInactiveContext.isTransient());
+		assert.ok(oInactiveContext.isInactive());
+		assert.ok(oInactiveContext.isSelected());
+
+		await this.waitForChanges(assert, "new row is selected");
+
+		this.expectChange("selectAll", false)
+			.expectChange("selected", [false, false, false]);
 
 		// code under test
 		oSelectAllBinding.setValue(false);
 
 		checkSelected(assert, oHeaderContext, false);
-		await this.waitForChanges(assert);
+		await this.waitForChanges(assert, "headerContext deselected via setValue");
 
-		this.expectChange("selectAll", true);
+		this.expectChange("selectAll", true)
+			.expectChange("selected", [true, true, true]);
 
 		// code under test
 		oHeaderContext.setProperty("@$ui5.context.isSelected", true);
 
 		checkSelected(assert, oHeaderContext, true);
-		await this.waitForChanges(assert);
+		await this.waitForChanges(assert, "headerContext selected via setProperty");
 
-		this.expectChange("selectAll", false);
+		this.expectChange("selectAll", false)
+			.expectChange("selected", [false, false, false]);
 
 		// code under test
 		oHeaderContext.setProperty("@$ui5.context.isSelected", false);
 
 		checkSelected(assert, oHeaderContext, false);
-		await this.waitForChanges(assert);
+		await this.waitForChanges(assert, "headerContext deselected via setProperty");
 
-		this.expectChange("selectAll", true);
+		this.expectChange("selectAll", true)
+			.expectChange("selected", [true, true, true]);
 
 		// code under test
 		oHeaderContext.setSelected(true);
 
 		checkSelected(assert, oHeaderContext, true);
-		await this.waitForChanges(assert);
+		await this.waitForChanges(assert, "headerContext selected via setSelected");
 
-		this.expectChange("selectAll", false);
+		this.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=3&$top=2", {
+				value : [
+					{SalesOrderID : "4"},
+					{SalesOrderID : "5"}
+				]
+			})
+			.expectChange("id", [,,, "3", "4", "5"])
+			.expectChange("selected", [,,, true, true, true]);
+
+		// code under test
+		oTable.requestItems();
+
+		await this.waitForChanges(assert, "contexts created by paging are also selected");
+
+		this.expectChange("selectAll", false)
+			.expectChange("selected", [false, false, false, false, false, false]);
 
 		// code under test
 		oHeaderContext.setSelected(false);
 
 		checkSelected(assert, oHeaderContext, false);
-		await this.waitForChanges(assert);
+		await this.waitForChanges(assert, "headerContext deselected via setSelected");
 
-		oSelectAllInput.setBindingContext(oContext);
+		this.expectChange("selectAll", true); // for setBindingContext
 
-		// code under test - change listener is deregistered, no change expected
-		oHeaderContext.setSelected(true);
+		const oNewListBinding = this.oModel.bindList("/SalesOrderList");
+		oNewListBinding.getHeaderContext().setSelected(true);
+		oSelectAllInput.setBindingContext(oNewListBinding.getHeaderContext());
 
-		await this.waitForChanges(assert);
+		// code under test - no further change expected for "select all" binding
+		oHeaderContext.setSelected(false);
+
+		await this.waitForChanges(assert, "swap context of property binding");
 	});
 
 	//*********************************************************************************************

@@ -33,8 +33,8 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/m/FormattedText",
-	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	// provides jQuery.fn.zIndex
 	"sap/ui/dom/jquery/zIndex"
 ], function(
@@ -71,8 +71,8 @@ sap.ui.define([
 	Filter,
 	FilterOperator,
 	FormattedText,
-	nextUIUpdate,
-	jQuery
+	jQuery,
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -96,6 +96,20 @@ sap.ui.define([
 		return getPopupItemsContent(oPopup).getItems().filter(function (oItem) {
 			return oItem.getVisible();
 		});
+	}
+
+	function runAllTimersAndRestore(oClock, bRunToLast = false) {
+		if (!oClock) {
+			return;
+		}
+
+		if (bRunToLast) {
+			oClock.runToLast();
+		} else {
+			oClock.runAll();
+		}
+
+		oClock.restore();
 	}
 
 	var i1;
@@ -159,6 +173,8 @@ sap.ui.define([
 			i4 = null;
 			i5 = null;
 			i8 = null;
+
+			runAllTimersAndRestore(this.clock);
 		}
 	});
 
@@ -207,15 +223,16 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("sTypedInValue - not reset onbefore rendering", function(assert) {
+	QUnit.test("sTypedInValue - not reset onbefore rendering", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		// Arrange
 		var oInput = new Input();
-		var oStub = this.stub(oInput, "_resetTypeAhead", function () {
+		var oStub = this.stub(oInput, "_resetTypeAhead").callsFake(function () {
 			this._sTypedInValue = "was reset";
 		});
 
 		oInput.placeAt('content');
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// Act
 		oInput.invalidate();
@@ -226,7 +243,7 @@ sap.ui.define([
 		assert.equal(oInput._getTypedInValue(), "", "'_sTypedInValue' is still an empty string");
 
 		// Clean
-		oInput. destroy();
+		oInput.destroy();
 	});
 
 	QUnit.test("sTypedInValue should be reset when setValue API is used", function(assert) {
@@ -244,9 +261,9 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("Change", function(assert) {
+	QUnit.test("Change", async function(assert) {
 		i1.setValue("new");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 		i1.attachChange(function() {
 			assert.equal(this.getValue(), "new", "New value in onChange");
 		});
@@ -254,7 +271,8 @@ sap.ui.define([
 		assert.equal(i1.getValue(),"new", "Value after onchange");
 	});
 
-	QUnit.test("Event order", function(assert) {
+	QUnit.test("Event order", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		var oInput = new Input({
 				showSuggestion: true
 			}),
@@ -266,7 +284,7 @@ sap.ui.define([
 			bChangeEventCalled = false;
 
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		oInput.attachSuggest(function(){
 			for (i = 0; i < aNames.length; i++){
@@ -289,12 +307,12 @@ sap.ui.define([
 
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
 		oInput._$input.trigger("focus").val("abc").trigger("input");
-		this.clock.tick(300);
+		this.clock.tick(500);
 		oPopup = oInput._getSuggestionsPopover().getPopover();
 
 		oInput.$().trigger("focusout");
 		qutils.triggerTouchEvent("tap", getPopupItemsContent(oPopup).getItems()[1].getDomRef());
-		this.clock.tick(300);
+		this.clock.tick(500);
 
 		oInput.destroy();
 	});
@@ -340,7 +358,7 @@ sap.ui.define([
 		i8.setValueLiveUpdate(false);
 	});
 
-	QUnit.test("Value States", function(assert) {
+	QUnit.test("Value States", async function(assert) {
 
 		assert.equal(i4.$("content").hasClass('sapMInputBaseContentWrapperError'), true, "Before new value state : Error");
 		assert.equal(i5.$("content").hasClass('sapMInputBaseContentWrapperWarning'), true, "Before new value state : Warning");
@@ -350,7 +368,7 @@ sap.ui.define([
 		i4.setValueState("Warning");
 		i5.setValueState("Error");
 		i8.setValueState("Information");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.equal(i4.$("content").hasClass('sapMInputBaseContentWrapperWarning'), true, "After new value state : Warning");
 		assert.equal(i5.$("content").hasClass('sapMInputBaseContentWrapperError'), true, "After new value state : Error");
@@ -364,7 +382,7 @@ sap.ui.define([
 		assert.equal(i5.$().attr("title"), undefined, "Tooltip is empty for valueState \"None\"");
 	});
 
-	QUnit.test("Value Help Indicator", function(assert) {
+	QUnit.test("Value Help Indicator", async function(assert) {
 		var spy = this.spy(),
 			oInput = new Input( {
 				valueHelpRequest: spy
@@ -379,7 +397,7 @@ sap.ui.define([
 
 		// set value help indicator to true
 		oInput.setShowValueHelp(true);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// screen reader announcement for F4, there should be at least one description
 		var describedById = oInput.getFocusDomRef().getAttribute("aria-describedby");
@@ -395,7 +413,7 @@ sap.ui.define([
 		assert.strictEqual(spy.callCount, 1, "Value Help Request has been fired and received successfully");
 	});
 
-	QUnit.test("Value help icon role should be 'button' and area-label attribute should be set", function(assert) {
+	QUnit.test("Value help icon role should be 'button' and area-label attribute should be set", async function(assert) {
 		// Arrange
 		var oInput = new Input({
 			showSuggestion: true,
@@ -404,7 +422,7 @@ sap.ui.define([
 
 		// Act
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		oValueHelpIcon = document.getElementById(oInput._getValueHelpIcon().sId);
 
@@ -416,7 +434,7 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("Custom value help icon should be set", function(assert) {
+	QUnit.test("Custom value help icon should be set", async function(assert) {
 		// Arrange
 		var oInput = new Input({
 			showSuggestion: true,
@@ -426,7 +444,7 @@ sap.ui.define([
 
 		// Act
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oInput._getValueHelpIcon().getSrc(), "sap-icon://arrow-down", "The value help icon is a custom one");
@@ -475,7 +493,7 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("Value help _userInputValue request parameter without suggestions", function(assert) {
+	QUnit.test("Value help _userInputValue request parameter without suggestions", async function(assert) {
 		// Arrange
 		var oInput = new Input({
 				showValueHelp: true,
@@ -485,7 +503,7 @@ sap.ui.define([
 			oSpy = sinon.spy(oInput, "fireValueHelpRequest");
 
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Act
 		oInput._fireValueHelpRequest();
@@ -498,7 +516,7 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("No error is thrown when showSuggestion is set to false", function (assert) {
+	QUnit.test("No error is thrown when showSuggestion is set to false", async function (assert) {
 		var oInput = new Input({
 				showValueHelp: true
 			}),
@@ -507,7 +525,7 @@ sap.ui.define([
 
 		// Arrange
 		oInput.setShowSuggestion(false);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Act
 		try {
@@ -515,7 +533,7 @@ sap.ui.define([
 		} catch (e) {
 			// continue
 		}
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Assert
 		assert.ok(!oUpdateSpy.threw(), "No error was thrown.");
@@ -524,7 +542,8 @@ sap.ui.define([
 		oUpdateSpy.restore();
 	});
 
-	QUnit.test("Tabular suggestions onsapenter should clear the _sTypedInValue", function (assert) {
+	QUnit.test("Tabular suggestions onsapenter should clear the _sTypedInValue", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		var oInput = new Input({
 			showSuggestion: true,
 			suggestionColumns : [
@@ -548,7 +567,7 @@ sap.ui.define([
 
 		// Arrange
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// Act
 		qutils.triggerCharacterInput(oInput.getFocusDomRef(), "t");
@@ -571,8 +590,8 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("Submit Event", function(assert) {
-
+	QUnit.test("Submit Event", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		var sEvents = "";
 		var sValue = "";
 		var oInput = new Input("hello", {
@@ -588,7 +607,7 @@ sap.ui.define([
 
 		// change event should be fired only when the input is on focus
 		oInput.onfocusin();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		function checkSubmit(sText, bSubmitExpected, bChangeExpected, sExpectedValue) {
 			var e = "";
@@ -601,7 +620,6 @@ sap.ui.define([
 
 			sEvents = "";
 			sValue = "";
-			nextUIUpdate.runSync()/*fake timer is used in module*/;
 			qutils.triggerKeydown(oInput.getDomRef("inner"), KeyCodes.ENTER);
 			assert.equal(sEvents, e, sText + ": Correct number of events fired and order correct: " + e.length + (e.length > 0 ? "/" + e : ""));
 			if (bSubmitExpected) {
@@ -615,31 +633,28 @@ sap.ui.define([
 
 		checkSubmit("Enter pressed without change", true, false, "");
 		oInput.$("inner").val("hello");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		checkSubmit("Enter pressed after change", true, true, "hello");
 		oInput.setEnabled(false);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		checkSubmit("Enter pressed on disabled field", false, false);
 		oInput.setEnabled(true);
 		oInput.setEditable(false);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		checkSubmit("Enter pressed on readonly field", false, false);
 		oInput.setEditable(true);
 		oInput.setShowValueHelp(true);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		checkSubmit("Enter pressed on field with value help", true, false, "hello");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
-
-
 
 		// Enter on Suggestions
 		if (Device.system.desktop) {
 			oInput.setShowSuggestion(true);
-			nextUIUpdate.runSync()/*fake timer is used in module*/;
+			await nextUIUpdate(this.clock);
 
 			var aItemsAdded = [];
 			oInput.attachSuggest(function() {
@@ -651,12 +666,12 @@ sap.ui.define([
 					}
 				}
 			});
-			nextUIUpdate.runSync()/*fake timer is used in module*/;
+			await nextUIUpdate(this.clock);
 
 			oInput.onfocusin();
 			oInput._$input.trigger("focus").val("abc").trigger("input");
-			this.clock.tick(300);
-			nextUIUpdate.runSync()/*fake timer is used in module*/;
+			this.clock.tick(500);
+			await nextUIUpdate(this.clock);
 
 			assert.ok(oInput._getSuggestionsPopover() && oInput._getSuggestionsPopover().getPopover().isOpen && oInput._getSuggestionsPopover().getPopover().isOpen(), "Suggestion Popup is open now");
 			qutils.triggerKeydown(oInput.getDomRef("inner"), KeyCodes.ARROW_DOWN);
@@ -667,8 +682,9 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("Suggestion output", function (assert) {
+	QUnit.test("Suggestion output", async function (assert) {
 
+		this.clock = sinon.useFakeTimers();
 		var sValue = "";
 		var sSuggestion = "<img  src=''></img>";
 		var oInput = new Input("hello", {
@@ -686,14 +702,14 @@ sap.ui.define([
 			oInput.attachSuggest(function () {
 				oInput.addSuggestionItem(new ListItem({text: sSuggestion}));
 			});
-			nextUIUpdate.runSync()/*fake timer is used in module*/;
+			await nextUIUpdate(this.clock);
 
 			oInput.onfocusin();
 			oInput._$input.trigger("focus").val(" ").trigger("input");
-			this.clock.tick(300);
+			this.clock.tick(500);
 
 			qutils.triggerKeydown(oInput.getDomRef("inner"), KeyCodes.ARROW_DOWN);
-			nextUIUpdate.runSync()/*fake timer is used in module*/;
+			await nextUIUpdate(this.clock);
 			qutils.triggerKeydown(oInput.getDomRef("inner"), KeyCodes.ENTER);
 			assert.equal(sValue, sSuggestion, ": Correct parameter 'value' in enter event");
 		}
@@ -706,7 +722,7 @@ sap.ui.define([
 		assert.strictEqual(document.getElementById("i2-inner").getAttribute("step"), "any", "Input of type \"Number\" have step attribute set to \"any\"");
 	});
 
-	QUnit.test("ESC should reset back to old value when valueLiveUpdate is true.", function(assert) {
+	QUnit.test("ESC should reset back to old value when valueLiveUpdate is true.", async function(assert) {
 
 		// Arrange
 		var sInitValue = "Test",
@@ -717,7 +733,7 @@ sap.ui.define([
 			valueLiveUpdate: true
 		});
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Act
 		qutils.triggerCharacterInput(oInput.getFocusDomRef(), "a");
@@ -740,7 +756,8 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("ESC should reset the value to the user's input when suggestions are shown.", function (assert) {
+	QUnit.test("ESC should reset the value to the user's input when suggestions are shown.", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		// Arrange
 		var oInput = new Input({
 			showSuggestion: true,
@@ -754,7 +771,7 @@ sap.ui.define([
 		var oGetSpy = sinon.spy(oInput, "_getTypedInValue");
 
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		oInput._bDoTypeAhead = true;
 		qutils.triggerEvent("focus", oInput.getFocusDomRef());
@@ -779,7 +796,8 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("ESC should reset the _sProposedItemText property to 'null'", function (assert) {
+	QUnit.test("ESC should reset the _sProposedItemText property to 'null'", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		// Arrange
 		var oInput = new Input({
 			showSuggestion: true,
@@ -791,7 +809,7 @@ sap.ui.define([
 		});
 
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		oInput._bDoTypeAhead = true;
 		qutils.triggerEvent("focus", oInput.getFocusDomRef());
@@ -818,16 +836,20 @@ sap.ui.define([
 		assert.strictEqual(Input._DEFAULTRESULT_TABULAR(), "", "Should return empty string");
 	});
 
-	QUnit.module("Destroy");
+	QUnit.module("Destroy", {
+		afterEach: function(){
+			runAllTimersAndRestore(this.clock);
+		}
+	});
 
-	QUnit.test("Destroy DOM", function(assert) {
+	QUnit.test("Destroy DOM", async function(assert) {
 		var oInput = new Input({
 			showSuggestion: false
 		}),
 		$Input;
 
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 		$Input = oInput.$();
 
 		assert.strictEqual($Input.length, 1, "Before destroy input is rendered in DOM");
@@ -837,7 +859,8 @@ sap.ui.define([
 		assert.strictEqual($Input.length, 0, "After destroy input DOM node is removed");
 	});
 
-	QUnit.test("Destroy Suggestion List and Popup", function(assert) {
+	QUnit.test("Destroy Suggestion List and Popup", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		var oInput = new Input({
 				showSuggestion: true
 			});
@@ -872,25 +895,25 @@ sap.ui.define([
 		oInput.bindAggregation("suggestionItems", "/", new Item({text: "{name}"}));
 
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
 		oInput._$input.trigger("focus").val("De").trigger("input");
 		this.clock.tick(300);
 
 		oInput.destroy();
-
 		assert.ok(oInput._oSuggPopover === null || oInput._oSuggPopover === undefined, "The internal popup is destroyed");
 	});
 
 	// BCP - 2070197223
-	QUnit.test("Should handle cases when there is no SuggestionPopover and _openSuggestionPopup is called", function (assert) {
+	QUnit.test("Should handle cases when there is no SuggestionPopover and _openSuggestionPopup is called", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		var oSpy,
 			oInput = new Input({
 				type: "Text",
 				showSuggestion: true
 			});
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		oSpy = sinon.spy(oInput, "_openSuggestionsPopover");
 		// Arrange
@@ -900,7 +923,7 @@ sap.ui.define([
 			tablet: false
 		};
 
-		this.stub(Device, "system", oSystem);
+		this.stub(Device, "system").value(oSystem);
 		// Act
 		oInput._openSuggestionPopup();
 		oInput._oSuggPopover = null;
@@ -914,16 +937,23 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.module("Suggestions");
+	QUnit.module("Suggestions", {
+		beforeEach: function(){
+			this.clock = sinon.useFakeTimers();
+		},
+		afterEach: function() {
+			runAllTimersAndRestore(this.clock);
+		}
+	});
 
-	QUnit.test("Suggestions deactivated and aggregations are not filled - list and popup should not be initialized", function(assert){
+	QUnit.test("Suggestions deactivated and aggregations are not filled - list and popup should not be initialized", async function (assert) {
 		var oInput = new Input({
 				showSuggestion: false
 			}),
 			oSpy = this.spy(oInput, "_openSuggestionPopup");
 
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
 		oInput._$input.trigger("focus").val("abc").trigger("input");
@@ -936,7 +966,7 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("setShowSuggestions switching of the items container", function (assert) {
+	QUnit.test("setShowSuggestions switching of the items container", async function (assert) {
 		var oModel = new JSONModel({
 				items: [
 					{key: "key1 {{}}{}", value: "test1 {{}}", group: "1 {{{}}"},
@@ -958,7 +988,7 @@ sap.ui.define([
 					sorter: [new Sorter('group', false, true)]
 				}
 			}).setModel(oModel).placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// Assert
 		assert.ok(oInput._getSuggestionsPopover().getItemsContainer().isA("sap.m.List"), "The container is a sap.m.List");
@@ -980,7 +1010,7 @@ sap.ui.define([
 				header: new Label({text: "{columnLabel}"})
 			})
 		});
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// Assert
 		assert.ok(oInput._getSuggestionsPopover().getItemsContainer().isA("sap.m.Table"), "The container is a sap.m.Table");
@@ -988,7 +1018,7 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("setShowSuggestions openning the popover", function (assert) {
+	QUnit.test("setShowSuggestions openning the popover", async function (assert) {
 		var oModel = new JSONModel({
 				items: [
 					{key: "key1 {{}}{}", value: "test1 {{}}", group: "1 {{{}}"},
@@ -1011,7 +1041,7 @@ sap.ui.define([
 				}
 			}).setModel(oModel).placeAt("content"),
 			oOpenerSpy = this.spy(oInput, "_openSuggestionsPopover");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// Act
 		oInput._openSuggestionPopup();
@@ -1047,7 +1077,7 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("Suggestion on Desktop", function(assert){
+	QUnit.test("Suggestion on Desktop", async function(assert){
 		var oPopup, // is lazy loaded
 			aNames = ["abcTom", "abcPhilips", "abcAnna"],
 			aItemAdded = [],
@@ -1062,12 +1092,12 @@ sap.ui.define([
 			}
 		});
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		oInput6.onfocusin(); // for some reason this is not triggered when calling focus via API
 		oInput6._$input.trigger("focus").val("abc").trigger("input");
 
-		this.clock.tick(300);
+		this.clock.tick(500);
 
 		oPopup = oInput6._getSuggestionsPopover().getPopover();
 		assert.ok(oPopup.isA("sap.m.Popover"), "Suggestion Popup is created and is a Popover instance");
@@ -1088,14 +1118,14 @@ sap.ui.define([
 		oInput6.destroy();
 	});
 
-	QUnit.test("Suggestion on Desktop - enter key pressed before the first suggest event", function(assert){
+	QUnit.test("Suggestion on Desktop - enter key pressed before the first suggest event", async function(assert){
 		var oInput = new Input({
 				showSuggestion: true
 			}),
 			oSpy = this.spy();
 
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		oInput.attachSuggest(oSpy);
 
@@ -1111,14 +1141,14 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("Suggestion on Desktop - Close with enter key", function(assert){
+	QUnit.test("Suggestion on Desktop - Close with enter key", async function(assert){
 		var oSystem = {
 				desktop: true,
 				phone: false,
 				tablet: false
 			};
 
-		this.stub(Device, "system", oSystem);
+		this.stub(Device, "system").value(oSystem);
 
 		var oPopup, // is lazy loaded
 			aNames = ["abcTom", "abcPhilips", "abcAnna"],
@@ -1138,12 +1168,12 @@ sap.ui.define([
 		});
 
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
 		oInput._$input.trigger("focus").val("abc").trigger("input");
 
-		this.clock.tick(300);
+		this.clock.tick(500);
 
 		oPopup = oInput._getSuggestionsPopover().getPopover();
 		assert.ok(oPopup.isA("sap.m.Popover"), "Suggestion Popup is created and is a Popover instance");
@@ -1155,7 +1185,7 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("Suggestion on Desktop with change event handler", function(assert){
+	QUnit.test("Suggestion on Desktop with change event handler", async function(assert){
 		var fnCallback = this.spy(),
 			aNames = ["abcTom", "abcPhilips", "abcAnna"],
 			aItemAdded = [],
@@ -1168,10 +1198,10 @@ sap.ui.define([
 		});
 
 		// stub the returnObject function from ObjectPool.prototype in order to trace the event parameter
-		this.stub(ObjectPool.prototype, "returnObject", function(){});
+		this.stub(ObjectPool.prototype, "returnObject");
 
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		oInput.attachSuggest(function(){
 			for (i = 0; i < aNames.length; i++) {
@@ -1185,7 +1215,7 @@ sap.ui.define([
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
 		oInput._$input.trigger("focus").val("abc").trigger("input");
 
-		this.clock.tick(300);
+		this.clock.tick(500);
 
 		var oPopup = oInput._getSuggestionsPopover().getPopover();
 		assert.ok(oPopup.isA("sap.m.Popover"), "Suggestion Popup is created and is a Popover instance");
@@ -1205,7 +1235,7 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("Suggestion on Desktop with change event handler (focus on next input)", function(assert){
+	QUnit.test("Suggestion on Desktop with change event handler (focus on next input)", async function(assert){
 		var fnCallback = this.spy(),
 			aNames = ["abcTom", "abcPhilips", "abcAnna"],
 			aItemAdded = [],
@@ -1219,11 +1249,11 @@ sap.ui.define([
 		var oNextInput = new Input();
 
 		// stub the returnObject function from ObjectPool.prototype in order to trace the event parameter
-		this.stub(ObjectPool.prototype, "returnObject", function(){});
+		this.stub(ObjectPool.prototype, "returnObject");
 
 		oInput.placeAt("content");
 		oNextInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		oInput.attachSuggest(function(){
 			for (i = 0; i < aNames.length; i++){
@@ -1237,7 +1267,7 @@ sap.ui.define([
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
 		oInput._$input.trigger("focus").val("abc").trigger("input");
 
-		this.clock.tick(300);
+		this.clock.tick(500);
 
 		var oPopup = oInput._getSuggestionsPopover().getPopover();
 		assert.ok(oPopup.isA("sap.m.Popover"), "Suggestion Popup is created and is a Popover instance");
@@ -1253,7 +1283,7 @@ sap.ui.define([
 		oNextInput.destroy();
 	});
 
-	QUnit.test("Suggestion on Desktop should allow focus to be set into the suggestion item", function(assert){
+	QUnit.test("Suggestion on Desktop should allow focus to be set into the suggestion item", async function(assert){
 		var oPopup;
 
 		var oModel = new JSONModel({
@@ -1283,12 +1313,12 @@ sap.ui.define([
 		oInput.setModel(oModel);
 
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
 		oInput._$input.trigger("focus").val("abc").trigger("input");
 
-		this.clock.tick(300);
+		this.clock.tick(500);
 
 		oPopup = oInput._getSuggestionsPopover().getPopover();
 		assert.ok(oPopup.isA("sap.m.Popover"), "Suggestion Popup is created and is a Popover instance");
@@ -1304,14 +1334,13 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("Two Value Suggestion on Desktop", function(assert){
-
+	QUnit.test("Two Value Suggestion on Desktop", async function(assert){
 		var oInput = new Input({
 			showSuggestion: true
 		});
 
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		var oPopup1,
 			aItems,
@@ -1320,22 +1349,21 @@ sap.ui.define([
 			aItemAdded = [],
 			i;
 
-		oInput.attachSuggest(function(){
+		oInput.attachSuggest( async function(){
 			for (i = 0; i < aNames.length; i++){
 				if (!aItemAdded.includes(aNames[i])){
 					oInput.addSuggestionItem(new ListItem({text: aNames[i], additionalText: aDescription[i]}));
 					aItemAdded.push(aNames[i]);
 				}
 			}
-
-			nextUIUpdate.runSync()/*fake timer is used in module*/;
+			await nextUIUpdate();
 		});
 
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
 		oInput._$input.trigger("focus").val("abc").trigger("input");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
-		this.clock.tick(300);
+		this.clock.tick(500);
 		oPopup1 = oInput._getSuggestionsPopover().getPopover();
 		aItems = oPopup1.getContent()[0].getItems();
 
@@ -1372,7 +1400,7 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("Two Value Suggestions with disabled items on Desktop", function(assert){
+	QUnit.test("Two Value Suggestions with disabled items on Desktop", async function(assert){
 		var oPopup,
 			aNames = ["abcTom", "abcPhilips", "abcAnna", "abcJames"],
 			aDescription = ["Heidelberg", "Mannheim", "Paris", "London"],
@@ -1384,7 +1412,7 @@ sap.ui.define([
 			showSuggestion: true
 		});
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		oInput.attachSuggest(function(){
 			for (i = 0; i < aNames.length; i++){
@@ -1398,7 +1426,7 @@ sap.ui.define([
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
 		oInput._$input.trigger("focus").val("abc").trigger("input");
 
-		this.clock.tick(300);
+		this.clock.tick(500);
 		oPopup = oInput._getSuggestionsPopover().getPopover();
 
 		assert.ok(oPopup.isA("sap.m.Popover"), "Two Value Suggestion Popup is created and is a Popover instance");
@@ -1422,7 +1450,7 @@ sap.ui.define([
 	});
 
 	// this test ensured downward compatibility: ColumnListItem has default type "Inactive" but still does need to be selected
-	QUnit.test("Tabular Suggestions with type=\"Inactive\"", function(assert){
+	QUnit.test("Tabular Suggestions with type=\"Inactive\"", async function(assert){
 		var oInput = new Input({
 			showSuggestion: true,
 			suggestionColumns: [
@@ -1504,7 +1532,7 @@ sap.ui.define([
 		};
 
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		var oPopup, // is lazy loaded
 			i,
@@ -1529,7 +1557,7 @@ sap.ui.define([
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
 		oInput._$input.trigger("focus").val("Prod").trigger("input");
 
-		this.clock.tick(300);
+		this.clock.tick(500);
 		oPopup = oInput._getSuggestionsPopover().getPopover();
 
 		assert.ok(oPopup.isA("sap.m.Popover"), "Suggestion Popup is created and is a Popover instance");
@@ -1558,14 +1586,14 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("Suggestion on Phone", function(assert){
+	QUnit.test("Suggestion on Phone", async function(assert){
 		var oSystem = {
 				desktop: false,
 				phone: true,
 				tablet: false
 			};
 
-		this.stub(Device, "system", oSystem);
+		this.stub(Device, "system").value(oSystem);
 
 		var oInput = new Input({
 				type: mobileLibrary.InputType.Tel,
@@ -1586,7 +1614,7 @@ sap.ui.define([
 		});
 
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
 		oInput.ontap({
@@ -1627,14 +1655,14 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("Suggestion on Phone with changing the input value in SuggestionItemSelected event handler", function(assert){
+	QUnit.test("Suggestion on Phone with changing the input value in SuggestionItemSelected event handler", async function(assert){
 		var oSystem = {
 				desktop: false,
 				phone: true,
 				tablet: false
 			};
 
-		this.stub(Device, "system", oSystem);
+		this.stub(Device, "system").value(oSystem);
 
 		var oInput = new Input({
 				showSuggestion: true,
@@ -1658,7 +1686,7 @@ sap.ui.define([
 		});
 
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
 		oInput.ontap({
@@ -1681,14 +1709,14 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("Two value Suggestion on Phone", function(assert){
+	QUnit.test("Two value Suggestion on Phone", async function(assert){
 		var oSystem = {
 				desktop: false,
 				phone: true,
 				tablet: false
 			};
 
-		this.stub(Device, "system", oSystem);
+		this.stub(Device, "system").value(oSystem);
 
 		var oInput = new Input({
 				showSuggestion: true
@@ -1709,7 +1737,7 @@ sap.ui.define([
 		});
 
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		oInput.ontap({
 			target: {
@@ -1749,7 +1777,7 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("Suggestion with liveChange handler on phone", function(assert){
+	QUnit.test("Suggestion with liveChange handler on phone", async function(assert){
 		var fnLC1 = this.spy();
 
 		var oSystem = {
@@ -1758,7 +1786,7 @@ sap.ui.define([
 				tablet: false
 			};
 
-		this.stub(Device, "system", oSystem);
+		this.stub(Device, "system").value(oSystem);
 
 		var oInput = new Input({
 			showSuggestion: true,
@@ -1766,7 +1794,7 @@ sap.ui.define([
 		});
 
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
 		oInput.ontap({
@@ -1783,7 +1811,7 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("Tabular Suggestions on Desktop", function(assert){
+	QUnit.test("Tabular Suggestions on Desktop", async function (assert) {
 		var oMessageBundle = Library.getResourceBundleFor("sap.m");
 
 		var oInput = new Input({
@@ -1867,11 +1895,11 @@ sap.ui.define([
 		};
 
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// this tests calling the setter of showSuggestion after input is rendered
 		oInput.setShowSuggestion(true);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		var oPopup, // is lazy loaded
 			aAlreadyAddedProducts = [],
@@ -1896,7 +1924,7 @@ sap.ui.define([
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
 		oInput._$input.trigger("focus").val("Prod").trigger("input");
 
-		this.clock.tick(300);
+		this.clock.tick(500);
 		oPopup = oInput._getSuggestionsPopover().getPopover();
 
 		assert.ok(oPopup.isA("sap.m.Popover"), "Suggestion Popup is created and is a Popover instance");
@@ -1910,7 +1938,7 @@ sap.ui.define([
 		assert.strictEqual(oPopup.getDomRef().getBoundingClientRect().width, 640, "Suggestion popup has 640px width since this is the max-width");
 
 		oInput._$input.trigger("focus").val("Product1").trigger("input");
-		this.clock.tick(400);
+		this.clock.tick(500);
 
 		assert.ok(!oInput._getSuggestionsPopover().getItemsContainer().hasStyleClass("sapMInputSuggestionTableHidden"), "Tabular suggestions table does not have the hidden style class on desktop");
 
@@ -1930,7 +1958,7 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("Tabular Suggestions invalidation handling", function(assert){
+	QUnit.test("Tabular Suggestions invalidation handling", async function(assert){
 		var oInput = new Input({
 			suggestionColumns: [
 				new Column({
@@ -2011,11 +2039,11 @@ sap.ui.define([
 		};
 
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// this tests calling the setter of showSuggestion after input is rendered
 		oInput.setShowSuggestion(true);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		var oPopup, // is lazy loaded
 			aAlreadyAddedProducts = [],
@@ -2040,7 +2068,7 @@ sap.ui.define([
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
 		oInput._$input.trigger("focus").val("Prod").trigger("input");
 
-		this.clock.tick(300);
+		this.clock.tick(500);
 		oPopup = oInput._getSuggestionsPopover().getPopover();
 
 		// set up a spy on the dialog's renderer (the dialog should not be rerendered)
@@ -2070,12 +2098,12 @@ sap.ui.define([
 
 		//close the popoup when nothing is typed in input
 		oInput._$input.trigger("focus").val("").trigger("input");
-		this.clock.tick(300);
+		this.clock.tick(500);
 		assert.ok(!oPopup.isOpen(), "Suggestion Popup is closed");
 		oInput.destroy();
 	});
 
-	QUnit.test("Tabular suggestions and setShowTableSuggestionValueHelp", function(assert) {
+	QUnit.test("Tabular suggestions and setShowTableSuggestionValueHelp", async function(assert) {
 		var aData = [
 			{ "a": "Alma1" },
 			{ "a": "AlDDDa1" },
@@ -2118,17 +2146,17 @@ sap.ui.define([
 			})
 		});
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
 		oInput._$input.trigger("focus").val("a").trigger("input");
 
-		this.clock.tick(300);
+		this.clock.tick(500);
 
 		var oRow = oInput.getSuggestionRows()[0];
 
 		oRow.ontap(new jQuery.Event());
-		this.clock.tick(300);
+		this.clock.tick(500);
 
 		var sVisibility = oInput._getSuggestionsPopover().getPopover().getDomRef().style.visibility;
 
@@ -2137,7 +2165,7 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("Tabular Suggestions Show More Button", function(assert) {
+	QUnit.test("Tabular Suggestions Show More Button", async function(assert) {
 		var oSuggestionData = {
 			tabularSuggestionItems: [
 				{
@@ -2285,7 +2313,7 @@ sap.ui.define([
 		oInput.setModel(tableModel);
 
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
 		oInput._$input.trigger("focus").val("Prod").trigger("input");
@@ -2297,7 +2325,7 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("Tabular suggestions Tapping a row should clear the _sTypedInValue", function (assert) {
+	QUnit.test("Tabular suggestions Tapping a row should clear the _sTypedInValue", async function (assert) {
 		var oInput = new Input({
 			showSuggestion: true,
 			suggestionColumns : [
@@ -2322,7 +2350,7 @@ sap.ui.define([
 
 		// Arrange
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 		this.clock.tick();
 
 		// Act
@@ -2347,7 +2375,7 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("Tabular Suggestion on Phone", function(assert){
+	QUnit.test("Tabular Suggestion on Phone", async function(assert){
 		var oMessageBundle = Library.getResourceBundleFor("sap.m");
 
 		var oSystem = {
@@ -2356,7 +2384,7 @@ sap.ui.define([
 				tablet: false
 			};
 
-		this.stub(Device, "system", oSystem);
+		this.stub(Device, "system").value(oSystem);
 
 		var oInput = new Input({
 			showSuggestion: true,
@@ -2440,7 +2468,7 @@ sap.ui.define([
 		};
 
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		var oPopup, // is lazy loaded
 			aAlreadyAddedProducts = [],
@@ -2462,8 +2490,6 @@ sap.ui.define([
 				}
 			}
 		});
-
-
 
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
 		oInput.ontap({
@@ -2532,7 +2558,7 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("Tabular Suggestions with custom filter and result fuction", function(assert){
+	QUnit.test("Tabular Suggestions with custom filter and result fuction", async function(assert){
 		var oInput = new Input({
 			showSuggestion: true,
 			width: "100px",
@@ -2615,7 +2641,7 @@ sap.ui.define([
 		};
 
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// custom filter for limit field
 		oInput.setFilterFunction(function(sValue, oColumnListItem) {
@@ -2652,7 +2678,7 @@ sap.ui.define([
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
 		oInput._$input.trigger("focus").val("25").trigger("input");
 
-		this.clock.tick(300);
+		this.clock.tick(500);
 		oPopup = oInput._getSuggestionsPopover().getPopover();
 
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is open now");
@@ -2666,13 +2692,13 @@ sap.ui.define([
 
 		//close the popoup when nothing is typed in input
 		oInput._$input.trigger("focus").val("").trigger("input");
-		this.clock.tick(300);
+		this.clock.tick(500);
 		assert.ok(!oPopup.isOpen(), "Suggestion Popup is closed");
 
 		oInput.destroy();
 	});
 
-	QUnit.test("Tabular Suggestions - selecting an already selected item", function (assert) {
+	QUnit.test("Tabular Suggestions - selecting an already selected item", async function (assert) {
 
 		// arrange
 		var oInput = new Input({
@@ -2744,14 +2770,14 @@ sap.ui.define([
 		});
 
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		var oFakeKeydown = jQuery.Event("keydown", { which: KeyCodes.G });
 		oInput._getSuggestionsPopover().getPopover().open();
 
 		// act
 		oInput._$input.trigger("focus").trigger(oFakeKeydown).val("p").trigger("input");
-		this.clock.tick(300);
+		this.clock.tick(500);
 
 		// check selected (highlighted in blue) row in the suggestion table
 		var oSelectedRow1 = oInput._getSuggestionsPopover().getItemsContainer().getItems()[0];
@@ -2760,7 +2786,7 @@ sap.ui.define([
 
 		// act
 		oInput._$input.trigger("focus").trigger(oFakeKeydown).val("ph").trigger("input");
-		this.clock.tick(300);
+		this.clock.tick(500);
 
 		// check selected (highlighted in blue) row in the suggestion table
 		var oSelectedRow2 = oInput._getSuggestionsPopover().getItemsContainer().getItems()[2];
@@ -2769,7 +2795,7 @@ sap.ui.define([
 
 		// act
 		oSelectedRow2.ontap(new jQuery.Event());
-		this.clock.tick(300);
+		this.clock.tick(500);
 
 		// assert
 		assert.notOk(oInput._getSuggestionsPopover().isOpen(), "Suggestion Popup should NOT be opened");
@@ -2779,7 +2805,7 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("Tabular Suggestions - remove suggestions", function (assert) {
+	QUnit.test("Tabular Suggestions - remove suggestions", async function (assert) {
 		// Arrange
 		var oInput = new Input({
 			showSuggestion: true,
@@ -2848,7 +2874,7 @@ sap.ui.define([
 		});
 
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// Act
 		var oRemovedRow = oInput.getSuggestionRows()[0];
@@ -2867,7 +2893,7 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("Tabular Suggestions - 'typahead' should consider visibility of suggestion", function (assert) {
+	QUnit.test("Tabular Suggestions - 'typahead' should consider visibility of suggestion", async function (assert) {
 		// Arrange
 		var oInput = new Input({
 			showSuggestion: true,
@@ -2941,7 +2967,7 @@ sap.ui.define([
 		});
 
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// Act
 		oInput._$input.trigger("focus").val("P").trigger("input");
@@ -2958,7 +2984,7 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("The suggestionSeparators property should be correctly set", function (assert) {
+	QUnit.test("The suggestionSeparators property should be correctly set", async function (assert) {
 		var oInput9 = new Input({
 			showSuggestion: true,
 			suggestionItems: [
@@ -2970,7 +2996,7 @@ sap.ui.define([
 
 		// Arrange
 		oInput9.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// Assert
 		assert.equal(oInput9.getProperty("separateSuggestions"), true, "The separateSuggestions property initially set to true");
@@ -2989,14 +3015,14 @@ sap.ui.define([
 		oInput9.destroy();
 	});
 
-	QUnit.test("Property startSuggestion on Desktop (non Zero)",  function(assert) {
+	QUnit.test("Property startSuggestion on Desktop (non Zero)",  async function(assert) {
 		var oSystem = {
 				desktop: true,
 				phone: false,
 				tablet: false
 			};
 
-		this.stub(Device, "system", oSystem);
+		this.stub(Device, "system").value(oSystem);
 
 		var spy = this.spy();
 
@@ -3007,7 +3033,7 @@ sap.ui.define([
 		});
 
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		oInput._$input.trigger("focus").val("25").trigger("input");
 		this.clock.tick(400);
@@ -3024,14 +3050,14 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("Property startSuggestion on Desktop (Zero)",  function(assert) {
+	QUnit.test("Property startSuggestion on Desktop (Zero)",  async function(assert) {
 		var oSystem = {
 				desktop: true,
 				phone: false,
 				tablet: false
 			};
 
-		this.stub(Device, "system", oSystem);
+		this.stub(Device, "system").value(oSystem);
 
 		var spy = this.spy();
 
@@ -3042,7 +3068,7 @@ sap.ui.define([
 		});
 
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		oInput._$input.trigger("focus");
 		this.clock.tick(400);
@@ -3064,7 +3090,8 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("The order of setting properties: showValueHelp, bindAggregation and showSuggestion", function(assert){
+	QUnit.test("The order of setting properties: showValueHelp, bindAggregation and showSuggestion", async function(assert){
+		this.clock.restore(); // No fake timers (set at beforeEach hook) needed in that test, nextUIUpdate is called without clock as parameter
 		var oInput = new Input({
 			width: "100px",
 			maxSuggestionWidth: "500px",
@@ -3155,10 +3182,10 @@ sap.ui.define([
 		});
 
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		oInput.setShowSuggestion(true);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.ok(oInput._getSuggestionsPopover().getPopover(), "Suggestion Popup instance is created");
 		assert.ok(oInput._getSuggestionsPopover().getPopover().getFooter().isA("sap.m.Toolbar"), "Suggestion Popup has Toolbar footer");
@@ -3167,7 +3194,8 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("The order of setting properties: showValueHelp, showSuggestion after bindAggregation", function(assert){
+	QUnit.test("The order of setting properties: showValueHelp, showSuggestion after bindAggregation", async function(assert){
+		this.clock.restore(); // No fake timers needed in this test so reset them, because they are set in beforeEach hook
 		var oInput = new Input({
 			width: "100px",
 			maxSuggestionWidth: "500px",
@@ -3259,7 +3287,7 @@ sap.ui.define([
 		oInput.setShowValueHelp(true);
 
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		oInput.setShowSuggestion(true);
 
@@ -3270,16 +3298,16 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("Highlighting", function(assert) {
+	QUnit.test("Highlighting", async function(assert) {
 		var oInput = createInputWithSuggestions();
 
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
 		oInput._$input.trigger("focus").val("It").trigger("input");
 
-		this.clock.tick(300);
+		this.clock.tick(500);
 
 		var $labels = oInput._getSuggestionsPopover().getPopover().$().find('.sapMDLILabel, .sapMSLITitleOnly, .sapMDLIValue');
 
@@ -3288,18 +3316,19 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("Create Suggestions Popover after suggestion items are added", function(assert) {
+	QUnit.test("Create Suggestions Popover after suggestion items are added", async function(assert) {
+		this.clock.restore();// No fake timers needed in this test so reset them, because they are set in beforeEach hook
 		// arrange
 		var oInput = new Input({
 			suggestionItems: [new Item({text: "test"})]
 		});
 
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// act
 		oInput.setShowSuggestion(true); // set show suggestion after items are added
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(oInput._getSuggestionsPopover().getItemsContainer(), "List should be created when enabling suggestions");
@@ -3335,7 +3364,7 @@ sap.ui.define([
 		oDialog = null;
 	});
 
-	QUnit.test("Set showSuggestions", function (assert) {
+	QUnit.test("Set showSuggestions", async function (assert) {
 
 		// Arrange
 		var oInput = new Input({
@@ -3347,7 +3376,7 @@ sap.ui.define([
 		});
 		var fnTriggerSuggestSpy = sinon.spy(oInput, "_triggerSuggest");
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		oInput.onfocusin();
 		oInput._$input.trigger("focus").val("te").trigger("input");
@@ -3394,7 +3423,8 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("Toggling true / false for showSuggestions should not throw an error", function (assert) {
+	QUnit.test("Toggling true / false for showSuggestions should not throw an error", async function (assert) {
+		this.clock.restore();// No fake timers needed in this test so reset them, because they are set in beforeEach hook
 		var oInput = new Input({
 			showSuggestion: true,
 			suggestionColumns: [
@@ -3408,23 +3438,23 @@ sap.ui.define([
 		});
 
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Trigger false
 		oInput.setShowSuggestion(!oInput.getShowSuggestion());
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.notOk(this._oButtonToolbar, "Toolbar ref should be cleaned up");
 		assert.notOk(this._oShowMoreButton, "Button ref should be cleaned up");
 
 		// Trigger true
 		oInput.setShowSuggestion(!oInput.getShowSuggestion());
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.ok(true, "No exception should be thrown");
 	});
 
-	QUnit.test("Late binding on suggest event", function (assert) {
+	QUnit.test("Late binding on suggest event", async function (assert) {
 		var oModel = new JSONModel({
 				"items": [
 					{key: "text1", value: "Text 1"},
@@ -3445,13 +3475,13 @@ sap.ui.define([
 			}).setModel(oModel);
 
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// Act
 		oInput.focus();
 		oInput._$input.val("Tex");
 		oInput._triggerSuggest("Tex");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 		this.clock.tick(500);
 
 		// Assert
@@ -3462,7 +3492,11 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.module("Key and Value");
+	QUnit.module("Key and Value", {
+		afterEach: function(){
+			runAllTimersAndRestore(this.clock);
+		}
+	});
 
 	function createInputWithSuggestions () {
 
@@ -3502,19 +3536,20 @@ sap.ui.define([
 		return oInput;
 	}
 
-	QUnit.test("Set selection", function(assert) {
+	QUnit.test("Set selection", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		var oInput = createInputWithSuggestions(),
 				fnCallback = this.spy();
 
 		oInput.attachSuggestionItemSelected(fnCallback);
 
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
 		oInput._$input.trigger("focus").val("It").trigger("input");
 
-		this.clock.tick(300);
+		this.clock.tick(500);
 
 		var oItem = oInput._getSuggestionsPopover().getPopover().getContent()[0].getItems()[0];
 		assert.ok(oItem, "Item should be created");
@@ -3530,13 +3565,14 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("Set selection with 'ENTER' key press", function(assert) {
+	QUnit.test("Set selection with 'ENTER' key press", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		// Arrange
 		var oInput = createInputWithSuggestions();
 		var fnOnChangeSpy = this.spy(InputBase.prototype, 'onChange');
 
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// Act
 		oInput._$input.trigger("focus").val("It").trigger("input");
@@ -3553,15 +3589,16 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("Set selection with 'ENTER' key press with suggestions opened and typeahead should set the selectedKey property", function(assert) {
+	QUnit.test("Set selection with 'ENTER' key press with suggestions opened and typeahead should set the selectedKey property", async function(assert) {
 		// Arrange
+		this.clock = sinon.useFakeTimers();
 		var oInput = createInputWithSuggestions();
 		var oSetSelectionItemSpy = this.spy(oInput, "setSelectionItem");
 
 		oInput.placeAt("content");
 		oInput._bDoTypeAhead = true;
 		oInput._createSuggestionPopupContent();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// Act
 		oInput._$input.trigger("focus").val("it").trigger("input");
@@ -3572,7 +3609,7 @@ sap.ui.define([
 		this.clock.tick(300);
 
 		qutils.triggerKeydown(oInput.getFocusDomRef(), KeyCodes.ENTER);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// Assert
 		assert.strictEqual(oSetSelectionItemSpy.firstCall.args[1], true, "Second parameter was 'true' indicating the selection was made by interaction.");
@@ -3582,7 +3619,7 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("Set selection with 'ENTER' key press with tabular suggestions opened and typeahead should call setSelectionRow method", function(assert) {
+	QUnit.test("Set selection with 'ENTER' key press with tabular suggestions opened and typeahead should call setSelectionRow method", async function(assert) {
 		// Arrange
 		var oInput = createInputWithTabularSuggestions();
 		var oSetSelectionRowSpy = this.spy(oInput, "setSelectionRow");
@@ -3590,14 +3627,14 @@ sap.ui.define([
 		oInput.placeAt("content");
 		oInput._bDoTypeAhead = true;
 		oInput._createSuggestionPopupContent(true);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Act
 		oInput._$input.trigger("focus").val("Auch").trigger("input");
 		oInput._getFilteredSuggestionItems("Auch");
 		oInput._openSuggestionsPopover();
 		qutils.triggerKeydown(oInput.getFocusDomRef(), KeyCodes.ENTER);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oSetSelectionRowSpy.callCount, 1, "'setSelectionRow' was called once.");
@@ -3607,8 +3644,7 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("Selected item from value help is set to the input", function(assert) {
-
+	QUnit.test("Selected item from value help is set to the input", async function(assert) {
 		var oInput = createInputWithSuggestions(),
 			oSystem = {
 				desktop: false,
@@ -3621,12 +3657,12 @@ sap.ui.define([
 		oInput.setTextFormatMode("KeyValue");
 
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		oInput.setSelectedKey("2");
 		assert.equal(oInput.getDOMValue(), "(2) Item 2", "Selected input value is " + oInput.getDOMValue());
 
-		this.stub(Device, "system", oSystem);
+		this.stub(Device, "system").value(oSystem);
 
 		oInput.setSelectedKey("3");
 		assert.equal(oInput.getDOMValue(), "(3) Item 3", "Selected input value is " + oInput.getDOMValue());
@@ -3634,7 +3670,7 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("Update selected key after bind data is changed", function(assert) {
+	QUnit.test("Update selected key after bind data is changed", async function(assert) {
 		var oModelData = new JSONModel([{text: "a1"}, {text: "a2"}]),
 			oInput = new Input({
 				showSuggestion: true,
@@ -3649,25 +3685,25 @@ sap.ui.define([
 			});
 
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.equal(oInput.getValue(), "", "Initially when the input has selected key but no suggestion items it's value has to be empty");
 
 		oInput.setModel(oModelData);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.equal(oInput.getValue(), "a1", "After a json model is set and one of the items has key that item has to be selected");
 
 
 		oInput.setSelectedKey("a3");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.equal(oInput.getValue(), "", "After setting new selected key which is not in the list items the value should be empyt");
 
 		oInput.setValue("New value");
 
 		oInput.setSelectedKey("");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.equal(oInput.getValue(), "", "After the selected key to empty string, the value should be cleared");
 
@@ -3675,52 +3711,51 @@ sap.ui.define([
 
 		oInput.setValue('');
 		oInput.addSuggestionItem(new Item({text: "a3", key: "a3"}));
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.equal(oInput.getValue(), "a3", "The value must be set to the selected key");
 
 		oInput.removeAllSuggestionItems();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.equal(oInput.getValue(), "", "The value must be cleared after removing all items");
 
 		oInput.addSuggestionItem(new Item({text: "a3", key: "a3"}));
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.equal(oInput.getValue(), "a3", "The value must be set to the selected key");
 
 		oInput.destroySuggestionItems();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.equal(oInput.getValue(), "", "The value must be cleared after destroying all items");
 
 		var oItem = new Item({text: "a3", key: "a3"});
 		oInput.addSuggestionItem(oItem);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.equal(oInput.getValue(), "a3", "The value must be set to the selected key");
 
 		oInput.removeSuggestionItem(oItem);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.equal(oInput.getValue(), "", "The value must be cleared after removing item");
 
 		oItem.destroy();
 		oInput.destroy();
-
 	});
 
-	QUnit.test("Set selection via API", function(assert) {
+	QUnit.test("Set selection via API", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		var oInput = createInputWithSuggestions(),
 				fnCallback = this.spy();
 
 		oInput.attachSuggestionItemSelected(fnCallback);
 
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		oInput.setSelectedItem(oInput.getSuggestionItems()[1]);
-
 		this.clock.tick(50);
 
 		assert.equal(fnCallback.callCount, 0, "change event is not fired");
@@ -3729,7 +3764,7 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("Item selection updates the model when previously deleted value matches the item text", function(assert) {
+	QUnit.test("Item selection updates the model when previously deleted value matches the item text", async function(assert) {
 		oInput = new Input({
 			value: '{/value}',
 			showSuggestion: true,
@@ -3752,19 +3787,19 @@ sap.ui.define([
 
 		oInput.setModel(new JSONModel(oModelData));
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		oInput.setValue("111");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		oInput.setValue("");
 		oInput.setLastValue("111");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.equal(oInput.getModel().getData().value, "", "The model value is cleared");
 
 		oInput.setSelectedItem(oInput.getSuggestionItems()[0]);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.equal(oInput.getModel().getData().value, "111", "The model value is updated");
 
@@ -3834,8 +3869,8 @@ sap.ui.define([
 		oInput = null;
 	});
 
-	QUnit.test("Set selection before suggestionItems", function(assert) {
-
+	QUnit.test("Set selection before suggestionItems", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		var aSuggestionItems = [
 			new ListItem({
 				key: '1',
@@ -3870,7 +3905,7 @@ sap.ui.define([
 		});
 
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		this.clock.tick(50);
 
@@ -3881,13 +3916,13 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("Display text formatting", function(assert) {
+	QUnit.test("Display text formatting", async function(assert) {
 		var oInput = createInputWithSuggestions();
 
 		oInput.setTextFormatMode(InputTextFormatMode.ValueKey);
 
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		oInput.setSelectedItem(oInput.getSuggestionItems()[1]);
 
@@ -4065,14 +4100,15 @@ sap.ui.define([
 		return oInput;
 	}
 
-	QUnit.test("Tabular Suggestions - Set selection via API", function(assert) {
+	QUnit.test("Tabular Suggestions - Set selection via API", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		var oInput = createInputWithTabularSuggestions(),
 				fnCallback = this.spy();
 
 		oInput.attachSuggestionItemSelected(fnCallback);
 
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		oInput.setSelectedRow(oInput.getSuggestionRows()[1]);
 
@@ -4085,7 +4121,8 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("Tabular Suggestions - Set selection via keyboard", function(assert) {
+	QUnit.test("Tabular Suggestions - Set selection via keyboard", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		var oInput = createInputWithTabularSuggestions(),
 				fnChangeCallback = this.spy(),
 				fnSuggestionItemSelectedCallback = this.spy();
@@ -4094,11 +4131,10 @@ sap.ui.define([
 		oInput.attachSuggestionItemSelected(fnSuggestionItemSelectedCallback);
 
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		oInput._$input.trigger("focus").val("Au").trigger("input");
-		this.clock.tick(300);
-
+		this.clock.tick(500);
 		qutils.triggerKeydown(document.activeElement, "40"); // bottom (arrow)
 		qutils.triggerKeydown(document.activeElement, "ENTER");
 
@@ -4109,7 +4145,8 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("Tabular Suggestions - Set selection on focus out", function(assert) {
+	QUnit.test("Tabular Suggestions - Set selection on focus out", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		var oInput = createInputWithTabularSuggestions(),
 				fnChangeCallback = this.spy(),
 				fnSuggestionItemSelectedCallback = this.spy();
@@ -4118,10 +4155,10 @@ sap.ui.define([
 		oInput.attachSuggestionItemSelected(fnSuggestionItemSelectedCallback);
 
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		oInput._$input.trigger("focus").val("Au").trigger("input");
-		this.clock.tick(300);
+		this.clock.tick(500);
 
 		qutils.triggerKeydown(document.activeElement, "40"); // bottom (arrow)
 
@@ -4149,13 +4186,13 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("Tabular Suggestions - Display text formatting", function(assert) {
+	QUnit.test("Tabular Suggestions - Display text formatting", async function(assert) {
 		var oInput = createInputWithTabularSuggestions();
 
 		oInput.setTextFormatMode(InputTextFormatMode.ValueKey);
 
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		oInput.setSelectedRow(oInput.getSuggestionRows()[1]);
 
@@ -4165,7 +4202,7 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("Tabular Suggestions - Autopopin mode", function(assert) {
+	QUnit.test("Tabular Suggestions - Autopopin mode", async function(assert) {
 
 		// Arrange
 		var oInput = createInputWithTabularSuggestions();
@@ -4173,14 +4210,14 @@ sap.ui.define([
 
 		// Act
 		oInput.setEnableTableAutoPopinMode(true);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Assert
 		assert.ok(oInput._getSuggestionsTable().getAutoPopinMode(), "The table should have autopopin set to true.");
 
 		// Act
 		oInput.setEnableTableAutoPopinMode(false);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Assert
 		assert.notOk(oInput._getSuggestionsTable().getAutoPopinMode(), "The table should have autopopin set to false.");
@@ -4191,18 +4228,18 @@ sap.ui.define([
 
 	QUnit.module("Input Description");
 
-	QUnit.test("Input description", function(assert) {
+	QUnit.test("Input description", async function(assert) {
 		var oInputWithDes = new Input({
 			value: "220"
 		});
 		oInputWithDes.setDescription("EUR");
 		oInputWithDes.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.equal(oInputWithDes.$().find(".sapMInputDescriptionText").text(), "EUR", "Input description is EUR");
 
 		oInputWithDes.setFieldWidth("100px");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.equal(oInputWithDes.$('descr').text(), "EUR", "Description ID is set to the correct span");
 		assert.equal(oInputWithDes.getDomRef('descr').id, oInputWithDes.$('inner').attr('aria-describedby'), "Inner input aria-describedby attribute is correct");
@@ -4210,7 +4247,11 @@ sap.ui.define([
 		oInputWithDes.destroy();
 	});
 
-	QUnit.module("Accessibility");
+	QUnit.module("Accessibility", {
+		afterEach: function() {
+			runAllTimersAndRestore(this.clock);
+		}
+	});
 
 	QUnit.test("General - getAccessibilityInfo method", function(assert) {
 		//Arrange
@@ -4262,17 +4303,18 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("General - Popup accessible name", function(assert) {
+	QUnit.test("General - Popup accessible name", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		//Arrange
 		var oInput = createInputWithSuggestions();
 
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// Act
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
 		oInput._$input.trigger("focus").val("It").trigger("input");
-		this.clock.tick(300);
+		this.clock.tick(500);
 
 		var $popover = oInput._getSuggestionsPopover().getPopover().$();
 
@@ -4283,14 +4325,14 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("General - aria-haspopup should be correctly applied", function(assert) {
+	QUnit.test("General - aria-haspopup should be correctly applied", async function(assert) {
 		//Arrange
 		var oInputWithoutSuggestions = new Input({}),
 			oInputWithSuggestions =  new Input({showSuggestion: true});
 
 		oInputWithoutSuggestions.placeAt("content");
 		oInputWithSuggestions.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		//Assert
 		assert.strictEqual(oInputWithoutSuggestions._$input.attr("aria-haspopup"), undefined, "aria-haspopup should not be  presented.");
@@ -4298,7 +4340,7 @@ sap.ui.define([
 
 		//Act
 		oInputWithoutSuggestions.setShowSuggestion(true);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		//Assert
 		assert.strictEqual(oInputWithoutSuggestions._$input.attr("aria-haspopup"), "listbox", "aria-haspopup should have value 'listbox'.");
@@ -4308,17 +4350,18 @@ sap.ui.define([
 		oInputWithSuggestions.destroy();
 	});
 
-	QUnit.test("General - Suggestions results describedby node should not be added to the Input's aria-describedby attribute to avoid redundant speech output ", function(assert) {
+	QUnit.test("General - Suggestions results describedby node should not be added to the Input's aria-describedby attribute to avoid redundant speech output ", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		//Arrange
 		var oInputWithSuggestions = createInputWithSuggestions();
 
 		oInputWithSuggestions.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// Act
 		oInputWithSuggestions._openSuggestionsPopover();
 		this.clock.tick();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		//Assert
 		assert.strictEqual(oInputWithSuggestions.getFocusDomRef().getAttribute("aria-describedby"), null, "The sugg. results acc node is not referenced in the Input");
@@ -4327,7 +4370,8 @@ sap.ui.define([
 		oInputWithSuggestions.destroy();
 	});
 
-	QUnit.test("General - Input suggestions description", function(assert) {
+	QUnit.test("General - Input suggestions description", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		// Arrange
 		var oMessageBundle = Library.getResourceBundleFor("sap.m"),
 			oInput = new Input({
@@ -4345,7 +4389,7 @@ sap.ui.define([
 			});
 
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// Act
 		oInput.onfocusin();
@@ -4367,9 +4411,9 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("Focus handling - Leaving the input field should trigger suggestions item selection", function(assert) {
+	QUnit.test("Focus handling - Leaving the input field should trigger suggestions item selection", async function(assert) {
 		// Setup
-		this.stub(Device, "system", {desktop: true, phone: false, tablet: false});
+		this.stub(Device, "system").value({desktop: true, phone: false, tablet: false});
 
 		var oSelectionItem = new Item({text: "Bulgaria"}),
 			oInput = new Input({
@@ -4379,7 +4423,7 @@ sap.ui.define([
 					oSelectionItem
 				]
 			}).placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Assert
 		assert.notOk(oInput.getSelectedItem(), "SelectedItems should be empty");
@@ -4387,7 +4431,7 @@ sap.ui.define([
 		// Act
 		oInput._setProposedItemText("Bulgaria");
 		oInput.onsapfocusleave({relatedControlId: null});
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oInput.getSelectedItem(), oSelectionItem.getId(), "Focusleave should have triggered item selection");
@@ -4397,7 +4441,8 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("Focus handling - Leaving the input field (when picker is open) should trigger item selection once", function (assert) {
+	QUnit.test("Focus handling - Leaving the input field (when picker is open) should trigger item selection once", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		var fnSpy = this.spy();
 		var oInput = new Input({
 			showSuggestion: true,
@@ -4410,7 +4455,7 @@ sap.ui.define([
 		}).placeAt("content");
 
 		var oBtn = new Button().placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// Arrange
 		oInput._createSuggestionPopupContent();
@@ -4419,24 +4464,24 @@ sap.ui.define([
 
 		qutils.triggerKeydown(oInput.getFocusDomRef(), KeyCodes.ARROW_DOWN);
 		qutils.triggerKeydown(oInput.getFocusDomRef(), KeyCodes.ARROW_DOWN);
-		this.clock.tick(300);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		this.clock.tick(500);
+		await nextUIUpdate(this.clock);
 
 		oInput._setProposedItemText("Item 1");
 		qutils.triggerKeydown(oInput.getFocusDomRef(), KeyCodes.TAB);
 		this.clock.tick(300);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		oBtn.focus();
-		this.clock.tick(300);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
-
+		this.clock.tick(500);
+		await nextUIUpdate(this.clock);
 
 		assert.strictEqual(fnSpy.callCount, 1, "Suggestion item select should be fired once.");
 		oInput.destroy();
 	});
 
-	QUnit.test("suggestionItemSelected should be fired, when a proposed item is present vie typeahead and the user focuses out of the input", function (assert) {
+	QUnit.test("suggestionItemSelected should be fired, when a proposed item is present vie typeahead and the user focuses out of the input", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		var fnSpy = this.spy();
 		var oInput = new Input({
 			showSuggestion: true,
@@ -4447,7 +4492,7 @@ sap.ui.define([
 				new Item({text: "Item 3"})
 			]
 		}).placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// Act
 		oInput.getFocusDomRef().focus();
@@ -4464,7 +4509,8 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("suggestionItemSelected should be fired, when a proposed item is present vie typeahead and the user focuses out of the input (tabular)", function (assert) {
+	QUnit.test("suggestionItemSelected should be fired, when a proposed item is present vie typeahead and the user focuses out of the input (tabular)", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		var fnSpy = this.spy();
 		var oInput = new Input({
 			showSuggestion: true,
@@ -4480,15 +4526,15 @@ sap.ui.define([
 				})
 			]
 		}).placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// Act
 		oInput.getFocusDomRef().focus();
 		var oFakeKeydown = jQuery.Event("keydown", { which: KeyCodes.I });
 		oInput._$input.trigger("focus").trigger(oFakeKeydown).val("I").trigger("input");
-		this.clock.tick(300);
+		this.clock.tick(1000);
 		oInput.getFocusDomRef().blur();
-		this.clock.tick(300);
+		this.clock.tick(1000);
 
 
 		assert.strictEqual(fnSpy.callCount, 1, "Suggestion item select should be fired");
@@ -4497,7 +4543,8 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("Previous selected row should be cleared, when the new input value does not match an item", function (assert) {
+	QUnit.test("Previous selected row should be cleared, when the new input value does not match an item", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		var oInput = new Input({
 			showSuggestion: true,
 			suggestionColumns: [
@@ -4513,7 +4560,7 @@ sap.ui.define([
 		}).placeAt("content");
 
 		oInput.setSelectedRow(oInput.getSuggestionRows()[0]);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// Act
 		oInput.getFocusDomRef().focus();
@@ -4528,7 +4575,8 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("Focus handling - pseudo focus should return to the input after selection from the list", function(assert) {
+	QUnit.test("Focus handling - pseudo focus should return to the input after selection from the list", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		// Setup
 		var oInput = new Input({
 				showSuggestion: true,
@@ -4538,7 +4586,7 @@ sap.ui.define([
 					new Item({text: "Item 3"})
 				]
 			}).placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// Arrange
 		oInput._createSuggestionPopupContent();
@@ -4562,7 +4610,7 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("Value State - Aria-describedby reference element should have a separate persistent DOM node other than the visible value state popup", function(assert) {
+	QUnit.test("Value State - Aria-describedby reference element should have a separate persistent DOM node other than the visible value state popup", async function(assert) {
 		//Arrange
 		var oInputWithValueState = new Input({
 			valueState: "Warning",
@@ -4571,7 +4619,7 @@ sap.ui.define([
 		var oAccDomRef;
 
 		oInputWithValueState.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 		oAccDomRef = document.getElementById(oInputWithValueState.getValueStateMessageId() + "-sr");
 
 		//Assert
@@ -4581,7 +4629,7 @@ sap.ui.define([
 		oInputWithValueState.destroy();
 	});
 
-	QUnit.test("Value State - Aria-describedby attribute should persists even if the message popup is not opened", function(assert) {
+	QUnit.test("Value State - Aria-describedby attribute should persists even if the message popup is not opened", async function(assert) {
 		//Arrange
 		var oInputWithValueState = new Input({
 			valueState: "Warning",
@@ -4589,7 +4637,7 @@ sap.ui.define([
 		});
 
 		oInputWithValueState.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		//Assert
 		assert.strictEqual(oInputWithValueState.getFocusDomRef().getAttribute("aria-describedby"), oInputWithValueState.getValueStateMessageId() + "-sr", "Input has static aria-describedby reference pointing to the correct ID");
@@ -4598,7 +4646,7 @@ sap.ui.define([
 		oInputWithValueState.destroy();
 	});
 
-	QUnit.test("Value State - A static aria-errormessage attribute should be added to the control when the value state is error", function(assert) {
+	QUnit.test("Value State - A static aria-errormessage attribute should be added to the control when the value state is error", async function(assert) {
 		//Arrange
 		var oInputWithValueState = new Input({
 			valueState: "Error",
@@ -4606,7 +4654,7 @@ sap.ui.define([
 		});
 
 		oInputWithValueState.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		//Assert
 		assert.strictEqual(oInputWithValueState.getFocusDomRef().getAttribute("aria-errormessage"), oInputWithValueState.getValueStateMessageId() + "-sr", "Input has static aria-describedby reference pointing to the correct ID");
@@ -4615,15 +4663,16 @@ sap.ui.define([
 		oInputWithValueState.destroy();
 	});
 
-	QUnit.test("Value State - When value state other than error is updated dynamically by user input the accessibility element should not have aria-live= attribute", function(assert) {
+	QUnit.test("Value State - When value state other than error is updated dynamically by user input the accessibility element should not have aria-live= attribute", async function(assert) {
 		//Arrange
+		this.clock = sinon.useFakeTimers();
 		var oInputWithValueState = new Input({
 			valueState: "Warning"
 		});
 		var oAccDomRef;
 
 		oInputWithValueState.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		oInputWithValueState.openValueStateMessage();
 		this.clock.tick();
@@ -4632,7 +4681,7 @@ sap.ui.define([
 		// Simulate dynamic update of the value state by the user by changing the value state while focused
 		oInputWithValueState.focus();
 		oInputWithValueState.setValueState("Information");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 		oAccDomRef = document.getElementById(oInputWithValueState.getValueStateMessageId() + "-sr");
 
 		//Assert
@@ -4642,7 +4691,8 @@ sap.ui.define([
 		oInputWithValueState.destroy();
 	});
 
-	QUnit.test("Check list control - 'role' attribute", function(assert) {
+	QUnit.test("Check list control - 'role' attribute", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		var aNames = ["abcTom", "abcPhilips", "abcAnna", "abcJames"],
 			aDescription = ["Heidelberg", "Mannheim", "Paris", "London"],
 			aEnabled = [true, false, true, false],
@@ -4653,7 +4703,7 @@ sap.ui.define([
 			showSuggestion: true
 		});
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		oInput.attachSuggest(function(){
 			for (i = 0; i < aNames.length; i++){
@@ -4667,7 +4717,7 @@ sap.ui.define([
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
 		oInput._$input.trigger("focus").val("abc").trigger("input");
 
-		this.clock.tick(300);
+		this.clock.tick(1000);
 		var oList = oInput._getSuggestionsPopover().getItemsContainer();
 		assert.strictEqual(oList.$("listUl").attr("role"), "listbox", "role='listbox' applied to the List control DOM");
 
@@ -4691,6 +4741,8 @@ sap.ui.define([
 		afterEach: function () {
 			this.oTabularInputToClone.destroy();
 			this.oInputToClone.destroy();
+
+			runAllTimersAndRestore(this.clock);
 		}
 	});
 
@@ -4726,7 +4778,8 @@ sap.ui.define([
 		assert.equal(oInputClone.getValue(), "The selected item: Auch ein gutes Ding", "The selectedRow association should be cloned");
 	});
 
-	QUnit.test("Input cloned with correct suggestion rows", function(assert) {
+	QUnit.test("Input cloned with correct suggestion rows", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		var oData = new JSONModel({
 			"result": [{
 				"PricingService": "New York Service",
@@ -4803,7 +4856,7 @@ sap.ui.define([
 			});
 
 		var oPage = new Page("myPage", {content: oInput}).setModel(oData, "local").placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		oInput.onfocusin();
 		oInput._$input.trigger("focus").val("New").trigger("input");
@@ -4811,7 +4864,7 @@ sap.ui.define([
 
 		var oClonedInput = oInput.clone();
 		oPage.addContent(oClonedInput);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// assert
 		assert.strictEqual(oClonedInput.getAggregation("suggestionRows").length, 5, "The suggestions rows should be cloned correctly");
@@ -4821,10 +4874,14 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.module("ValueHelpDialog");
+	QUnit.module("ValueHelpDialog", {
+		afterEach: function() {
+			runAllTimersAndRestore(this.clock);
+		}
+	});
 
-	QUnit.test("Change event", function(assert) {
-
+	QUnit.test("Change event", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		var oDialog,
 			oInput = new Input({
 			showValueHelp: true,
@@ -4844,7 +4901,7 @@ sap.ui.define([
 			}
 		}).placeAt('content');
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		var fnChangeCallback = this.spy();
 		oInput.attachChange(fnChangeCallback);
@@ -4855,7 +4912,7 @@ sap.ui.define([
 
 		oValueHelpIcon.firePress();
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 		this.clock.tick(2000);
 
 		assert.equal(fnChangeCallback.callCount, 0, "change event is not fired");
@@ -4865,7 +4922,7 @@ sap.ui.define([
 
 		oDialog.open();
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 		this.clock.tick(500);
 
 		assert.equal(fnChangeCallback.callCount, 1, "change event is fired once");
@@ -4874,7 +4931,8 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("showTableSuggestionValueHelp", function (assert) {
+	QUnit.test("showTableSuggestionValueHelp", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		// arrange
 		var oInput = new Input({
 			showValueHelp: true,
@@ -4905,7 +4963,7 @@ sap.ui.define([
 		});
 
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		var oFakeKeydown = new jQuery.Event("keydown", { which: KeyCodes.P });
 		oInput._getSuggestionsPopover().getPopover().open();
@@ -4930,6 +4988,8 @@ sap.ui.define([
 		afterEach: function () {
 			this.oInput.destroy();
 			this.oInput = null;
+
+			runAllTimersAndRestore(this.clock);
 		}
 	});
 
@@ -4969,26 +5029,28 @@ sap.ui.define([
 		assert.strictEqual(this.oInput.getMaxSuggestionWidth(), this.oInput._getSuggestionsPopover()._sPopoverContentWidth, "Input and Popover widths should be the same.");
 	});
 
-	QUnit.test("Setting maxSuggestionWidth should not change selected item", function (assert) {
+	QUnit.test("Setting maxSuggestionWidth should not change selected item", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		var oInput = new Input({
 			showSuggestion: true,
 			maxSuggestionWidth: "200px"
 		}).placeAt("content");
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 		oInput._getSuggestionsPopover().getPopover().open();
 
 		this.clock.tick(300);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		assert.ok(oInput._bAfterOpenFinisihed, "After open flag is correct");
 
 		oInput.destroy();
 	});
 
-	QUnit.test("calling _synchronizeSuggestions", function (assert) {
+	QUnit.test("calling _synchronizeSuggestions", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		// arrange
-		var oStub = this.stub(Device, "system", {
+		var oStub = this.stub(Device, "system").value({
 			desktop: false,
 			phone: true,
 			tablet: false
@@ -5005,7 +5067,7 @@ sap.ui.define([
 			oPopover = oInput._getSuggestionsPopover(),
 			oPopupInput = oPopover.getInput();
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// act
 		oPopover.getPopover().open();
@@ -5023,11 +5085,11 @@ sap.ui.define([
 		oStub.restore();
 	});
 
-	QUnit.test('Change event add/remove value', function (assert) {
+	QUnit.test('Change event add/remove value', async function (assert) {
 		// arrange
 		var oInput = new Input().placeAt("content");
 		var oSpy = this.spy();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		oInput.attachChange(oSpy);
 
@@ -5036,7 +5098,7 @@ sap.ui.define([
 		qutils.triggerKeydown(oInput._$input, "G");
 		qutils.triggerKeyup(oInput._$input, "G");
 		oInput.onsapenter();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oSpy.callCount, 1, "change event has been fired");
@@ -5044,7 +5106,7 @@ sap.ui.define([
 		// Act
 		oSpy.reset();
 		oInput.onsapenter();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oSpy.callCount, 0, "change event has NOT been fired for the same value twice.");
@@ -5056,7 +5118,7 @@ sap.ui.define([
 		qutils.triggerKeydown(oInput._$input, KeyCodes.BACKSPACE);
 		qutils.triggerKeyup(oInput._$input, KeyCodes.BACKSPACE);
 		oInput.onsapenter();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oSpy.callCount, 1, "change event has been fired");
@@ -5067,7 +5129,7 @@ sap.ui.define([
 		qutils.triggerKeydown(oInput._$input, KeyCodes.BACKSPACE);
 		qutils.triggerKeyup(oInput._$input, KeyCodes.BACKSPACE);
 		oInput.onsapenter();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oSpy.callCount, 0, "change event has NOT been fired for the same value twice.");
@@ -5076,119 +5138,123 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.module("Clear Icon");
+	QUnit.module("Clear Icon", {
+		afterEach: function () {
+			runAllTimersAndRestore(this.clock);
+		}
+	});
 
-	QUnit.test("Clear icon should not be visible by default", function (assert) {
+	QUnit.test("Clear icon should not be visible by default", async function (assert) {
 		var oInput = new Input().placeAt("content");
 		var oFakeKeydown = jQuery.Event("keydown", { which: KeyCodes.G });
 
 		assert.notOk(oInput._oClearButton, "clear icon should not be created by default");
 
 		oInput.setShowClearIcon(true);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.notOk(oInput._oClearButton.getVisible(), "clear icon should not be visible when value is empty");
 
 		oInput._$input.trigger("focus").trigger(oFakeKeydown).val("G").trigger("input");
 		qutils.triggerKeyup(oInput._$input, "G");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.ok(oInput._oClearButton.getVisible(), "clear icon should be visible when value is not empty");
 
 		oInput._$input.val("").trigger("input");
 		qutils.triggerKeyup(oInput._$input, KeyCodes.BACKSPACE);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.notOk(oInput._oClearButton.getVisible(), "clear icon should not be visible when value is empty");
 
 		oInput.destroy();
 	});
 
-	QUnit.test("Clear icon should hide after setting property to false", function (assert) {
+	QUnit.test("Clear icon should hide after setting property to false", async function (assert) {
 		var oInput = new Input({
 			showClearIcon: true,
 			value: "Dryanovo"
 		}).placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.ok(oInput._oClearButton.getVisible(), "clear icon should be visible when value is not empty");
 
 		oInput.setShowClearIcon(false);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.notOk(oInput._oClearButton.getVisible(), "clear icon should not be visible after property change");
 
 		oInput.destroy();
 	});
 
-	QUnit.test("Clear icon should not be visible by default (default value not empty)", function (assert) {
+	QUnit.test("Clear icon should not be visible by default (default value not empty)", async function (assert) {
 		var oInput = new Input({ value: "test" }).placeAt("content");
 
 		assert.notOk(oInput._oClearButton, "clear icon should not be created by default");
 
 		oInput.setShowClearIcon(true);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.ok(oInput._oClearButton.getVisible(), "clear icon should be visible after presetting API");
 
 		oInput.destroy();
 	});
 
-	QUnit.test("Clear icon should not be visible when input is disabled", function (assert) {
+	QUnit.test("Clear icon should not be visible when input is disabled", async function (assert) {
 		var oInput = new Input({ value: "test", enabled: false }).placeAt("content");
 
 		assert.notOk(oInput._oClearButton, "clear icon should not be created by default");
 
 		oInput.setShowClearIcon(true);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.notOk(oInput._oClearButton.getVisible(), "clear icon is not visible");
 
 		oInput.destroy();
 	});
 
-	QUnit.test("Clear icon should not be visible when input is non editable", function (assert) {
+	QUnit.test("Clear icon should not be visible when input is non editable", async function (assert) {
 		var oInput = new Input({ value: "test", editable: false }).placeAt("content");
 
 		assert.notOk(oInput._oClearButton, "clear icon should not be created by default");
 
 		oInput.setShowClearIcon(true);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.notOk(oInput._oClearButton.getVisible(), "clear icon is not visible");
 
 		oInput.destroy();
 	});
 
-	QUnit.test("Clear icon should be visible when set (default value not empty)", function (assert) {
+	QUnit.test("Clear icon should be visible when set (default value not empty)", async function (assert) {
 		var oInput = new Input({
 			value: "test"
 		 }).placeAt("content");
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.notOk(oInput._oClearButton, "dialog's clear icon should be created");
 
 		oInput.setShowClearIcon(true);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.ok(oInput._oClearButton.getVisible(), "dialog's clear icon should be visible after presetting API");
 
 		oInput.destroy();
 	});
 
-	QUnit.test("Clear icon should be inserted before the value help icon", function (assert) {
+	QUnit.test("Clear icon should be inserted before the value help icon", async function (assert) {
 		var oInput = new Input({
 			value: "test",
 			showValueHelp: true
 		 }).placeAt("content");
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.ok(oInput.getAggregation("_endIcon")[0], oInput._getValueHelpIcon(), "Value help Icon should be inserted first");
 
 		oInput.setShowClearIcon(true);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.ok(oInput.getAggregation("_endIcon")[1], oInput._getValueHelpIcon(), "Value help Icon should be second");
 		assert.strictEqual(oInput.getAggregation("_endIcon")[0], oInput._oClearButton, "Clear Icon should be inserted first");
@@ -5196,7 +5262,7 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("Pressing clear icon should fire change and liveChange events", function (assert) {
+	QUnit.test("Pressing clear icon should fire change and liveChange events", async function (assert) {
 		var changeHandler = this.spy();
 		var liveChangeHandler = this.spy();
 
@@ -5207,7 +5273,7 @@ sap.ui.define([
 			liveChange: liveChangeHandler
 		}).placeAt("content");
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		oInput._oClearButton.firePress();
 		assert.strictEqual(changeHandler.callCount, 1, "Change should be called once");
@@ -5217,7 +5283,7 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("Clear Icon - Value should be updated before firing liveChange and change events", function (assert) {
+	QUnit.test("Clear Icon - Value should be updated before firing liveChange and change events", async function (assert) {
 		var done = assert.async(3);
 		var oInput = new Input({
 			showClearIcon: true,
@@ -5225,11 +5291,11 @@ sap.ui.define([
 		}).placeAt("content");
 
 		// Arrange
-		oInput.attachLiveChange(function(oEvent) {
+		oInput.attachLiveChange(async function(oEvent) {
 			var sValue = oEvent.getParameter("value");
 			var oInputValue = oEvent.getSource().getValue();
 
-			nextUIUpdate.runSync()/*fake timer is used in module*/;
+			await nextUIUpdate();
 
 			// Assert
 			assert.strictEqual(sValue, oInputValue, 'Value should be updated before firing the live change event');
@@ -5237,18 +5303,18 @@ sap.ui.define([
 		});
 
 		// Arrange
-		oInput.attachChange(function(oEvent) {
+		oInput.attachChange(async function(oEvent) {
 			var sValue = oEvent.getParameter("value");
 			var oInputValue = oEvent.getSource().getValue();
 
-			nextUIUpdate.runSync()/*fake timer is used in module*/;
+			await nextUIUpdate();
 
 			// Assert
 			assert.strictEqual(sValue, oInputValue, 'Value should be updated before firing the change event');
 			done();
 		});
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 		oInput._oClearButton.firePress();
 
 		assert.strictEqual(oInput.getValue(), "", "Input's value should be cleared");
@@ -5257,23 +5323,24 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("Setting showValueHelpIcon to false should hide the icon", function (assert) {
+	QUnit.test("Setting showValueHelpIcon to false should hide the icon", async function (assert) {
 		var oInput = new Input({
 			showValueHelp: true
 		}).placeAt("content");
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.ok(oInput._getValueHelpIcon().getVisible(), "Icon should be visible");
 
 		oInput.setShowValueHelp(false);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.notOk(oInput._getValueHelpIcon().getVisible(), "Icon should not be visible");
 	});
 
-	QUnit.test("Check whether property is propagated to dialog's input on mobile", function (assert) {
-		this.stub(Device, "system", {
+	QUnit.test("Check whether property is propagated to dialog's input on mobile", async function (assert) {
+		this.clock = sinon.useFakeTimers();
+		this.stub(Device, "system").value({
 			desktop: false,
 			phone: true,
 			tablet: false
@@ -5284,7 +5351,7 @@ sap.ui.define([
 			showClearIcon: true
 		 }).placeAt("content");
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		oInput._openSuggestionsPopover();
 		this.clock.tick(300);
@@ -5294,16 +5361,23 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.module("Type-ahead");
+	QUnit.module("Type-ahead", {
+		beforeEach: function(){
+			this.clock = sinon.useFakeTimers();
+		},
+		afterEach: function() {
+			runAllTimersAndRestore(this.clock);
+		}
+	});
 
-	QUnit.test("Typeahead should be disabled on adroid devices", function (assert) {
-		this.stub(Device, "system", {
+	QUnit.test("Typeahead should be disabled on adroid devices", async function (assert) {
+		this.stub(Device, "system").value({
 			desktop: false,
 			phone: true,
 			tablet: false
 		});
 
-		this.stub(Device, "os", {
+		this.stub(Device, "os").value({
 			android: true
 		});
 
@@ -5319,7 +5393,7 @@ sap.ui.define([
 			]
 		}).placeAt("content");
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		var oFakeKeydown = jQuery.Event("keydown", { which: KeyCodes.G });
 
@@ -5335,7 +5409,7 @@ sap.ui.define([
 		oInput = null;
 	});
 
-	QUnit.test("Auto complete should not be allowed when it is set to false", function (assert) {
+	QUnit.test("Auto complete should not be allowed when it is set to false", async function (assert) {
 		// arrange
 		var oInput = new Input({
 			showSuggestion: true,
@@ -5349,7 +5423,7 @@ sap.ui.define([
 			]
 		}).placeAt("content");
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		var oFakeKeydown = jQuery.Event("keydown", { which: KeyCodes.G });
 
@@ -5365,7 +5439,7 @@ sap.ui.define([
 		oInput = null;
 	});
 
-	QUnit.test("Typeahead should not autocomplete if there is an exact match", function (assert) {
+	QUnit.test("Typeahead should not autocomplete if there is an exact match", async function (assert) {
 		var oInput = new Input({
 			showSuggestion: true,
 			suggestionItems: [
@@ -5373,8 +5447,7 @@ sap.ui.define([
 				new Item({text: "Brave"})
 			]
 		}).placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
-
+		await nextUIUpdate(this.clock);
 
 		oInput._bDoTypeAhead = true;
 		oInput._$input.trigger("focus").val("Brave").trigger("input");
@@ -5384,7 +5457,7 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("Autocomplete on desktop", function (assert) {
+	QUnit.test("Autocomplete on desktop", async function (assert) {
 		// arrange
 		var oInput = new Input({
 			showSuggestion: true,
@@ -5399,12 +5472,12 @@ sap.ui.define([
 			]
 		}).placeAt("content");
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		var oFakeKeydown = jQuery.Event("keydown", { which: KeyCodes.G });
 		// act
 		oInput._$input.trigger("focus").trigger(oFakeKeydown).val("G").trigger("input");
-		this.clock.tick(300);
+		this.clock.tick(1000);
 
 		// assert
 		assert.ok(oInput._bDoTypeAhead, "Type ahead should be allowed when pressing 'G'.");
@@ -5414,7 +5487,7 @@ sap.ui.define([
 
 		// act
 		oInput._$input.trigger("focus").trigger(oFakeKeydown).val("Gr").trigger("input");
-		this.clock.tick(300);
+		this.clock.tick(1000);
 
 		// assert
 		assert.strictEqual(oInput._oSuggestionPopup.getContent()[0].getItems()[2].getSelected(), true, "Correct item in the Suggestions list is selected.");
@@ -5448,7 +5521,7 @@ sap.ui.define([
 		oInput = null;
 	});
 
-	QUnit.test("Dynamic typeahead and item selection with delayed loading of tabular suggestions", function (assert) {
+	QUnit.test("Dynamic typeahead and item selection with delayed loading of tabular suggestions", async function (assert) {
 		var oTabularPopover;
 
 		var oData = {
@@ -5494,20 +5567,20 @@ sap.ui.define([
 
 		oInputWithTabularSuggestions.setModel(oModel);
 		oInputWithTabularSuggestions.placeAt('content');
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		oTabularPopover = oInputWithTabularSuggestions._getSuggestionsPopover();
 
 		oInputWithTabularSuggestions._$input.trigger("focus").trigger("keydown").val("test6").trigger("input");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
-		this.clock.tick(300);
+		await nextUIUpdate(this.clock);
+		this.clock.tick(1000);
 
 		assert.strictEqual(oTabularPopover.getItemsContainer().getItems()[0].getSelected(), true, "Correct item in the Suggested list is selected");
 
 		oInputWithTabularSuggestions.destroy();
 	});
 
-	QUnit.test("Dynamic typeahead and item selection with delayed loading of list items", function (assert) {
+	QUnit.test("Dynamic typeahead and item selection with delayed loading of list items", async function (assert) {
 		var oPopover;
 
 		var oData = {
@@ -5544,14 +5617,14 @@ sap.ui.define([
 
 		oInput.setModel(oModel);
 		oInput.placeAt('content');
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		oPopover = oInput._getSuggestionsPopover();
 		oPopover.getPopover().open();
 		this.clock.tick(300);
 
 		oInput._$input.trigger("focus").trigger("keydown").val("test6").trigger("input");
-		this.clock.tick(300);
+		this.clock.tick(1000);
 
 		assert.strictEqual(getVisibleItems(oPopover.getPopover())[0].getSelected(), true, "Correct item in the Suggested list is selected");
 
@@ -5559,7 +5632,7 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("Autocomplete with dynamic loading of items on mobile", function (assert) {
+	QUnit.test("Autocomplete with dynamic loading of items on mobile", async function (assert) {
 		var oPopover;
 		var oPopupInput;
 		var oSystem = {
@@ -5568,7 +5641,7 @@ sap.ui.define([
 			tablet : false
 		};
 
-		this.stub(Device, "system", oSystem);
+		this.stub(Device, "system").value(oSystem);
 
 		var oData = {
 			items: [
@@ -5607,7 +5680,7 @@ sap.ui.define([
 
 		oInput.setModel(oModel);
 		oInput.placeAt('content');
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		oPopover = oInput._getSuggestionsPopover();
 		oPopupInput = oPopover.getInput();
@@ -5616,14 +5689,14 @@ sap.ui.define([
 		this.clock.tick(300);
 
 		oPopupInput._$input.trigger("focus").trigger("keydown").val("t").trigger("input");
-		this.clock.tick(300);
+		this.clock.tick(1000);
 
 		assert.strictEqual(oPopupInput.getSelectedText(), "est1", "Type ahead is performed");
 
 		oInput.destroy();
 	});
 
-	QUnit.test("Autocomplete should keep cursor on place when there are no suggestions", function (assert) {
+	QUnit.test("Autocomplete should keep cursor on place when there are no suggestions", async function (assert) {
 		// Arrange
 		var oInput = new Input({
 			showSuggestion: true,
@@ -5635,7 +5708,7 @@ sap.ui.define([
 				new Item({text: "Italy"})
 			]
 		}).placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// Arrange - open the suggestions
 		oInput._$input.trigger("focus").val("Germ").trigger("input");
@@ -5656,7 +5729,7 @@ sap.ui.define([
 		oInput = null;
 	});
 
-	QUnit.test("Autocomplete on phone", function (assert) {
+	QUnit.test("Autocomplete on phone", async function (assert) {
 		// arrange
 		var oSystem = {
 			desktop : false,
@@ -5664,7 +5737,7 @@ sap.ui.define([
 			tablet : false
 		};
 
-		this.stub(Device, "system", oSystem);
+		this.stub(Device, "system").value(oSystem);
 
 		var oInput = new Input({
 			showSuggestion: true,
@@ -5680,14 +5753,14 @@ sap.ui.define([
 		var oPopover = oInput._getSuggestionsPopover(),
 			oPopupInput = oPopover.getInput();
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// act
 		oPopover.getPopover().open();
 		this.clock.tick(300);
 		oPopupInput.onfocusin();
 		oPopupInput._$input.trigger("focus").trigger("keydown").val("uni").trigger("input");
-		this.clock.tick(300);
+		this.clock.tick(1000);
 
 		// assert
 		assert.ok(oPopupInput._bDoTypeAhead, "Type ahead should be allowed when pressing 'B'.");
@@ -5707,8 +5780,8 @@ sap.ui.define([
 		oInput = null;
 	});
 
-	QUnit.test("right arrow press", function (assert) {
-
+	QUnit.test("right arrow press", async function (assert) {
+		this.clock.restore();
 		var fnLiveChange = this.spy();
 
 		// arrange
@@ -5723,10 +5796,10 @@ sap.ui.define([
 			liveChange: fnLiveChange
 		}).placeAt("content");
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		oInput.onsapright();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		assert.equal(fnLiveChange.callCount, 0, "liveChange handler is not fired");
 
@@ -5735,7 +5808,7 @@ sap.ui.define([
 		oInput = null;
 	});
 
-	QUnit.test("autocomplete with 0 matched items", function (assert) {
+	QUnit.test("autocomplete with 0 matched items", async function (assert) {
 
 		// arrange
 		var stub = sinon.stub();
@@ -5809,14 +5882,14 @@ sap.ui.define([
 		});
 
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		var oFakeKeydown = jQuery.Event("keydown", { which: KeyCodes.G });
 		oInput._getSuggestionsPopover().getPopover().open();
 
 		// act
 		oInput._$input.trigger("focus").trigger(oFakeKeydown).val("p").trigger("input");
-		this.clock.tick(300);
+		this.clock.tick(1000);
 
 		// check selected (highlighted in blue) row in the suggestion table
 		var oSelectedRow1 = oInput._getSuggestionsPopover().getItemsContainer().getItems()[0];
@@ -5825,7 +5898,7 @@ sap.ui.define([
 
 		// act
 		oInput._$input.trigger("focus").trigger(oFakeKeydown).val("ph").trigger("input");
-		this.clock.tick(300);
+		this.clock.tick(1000);
 
 		// check selected (highlighted in blue) row in the suggestion table
 		var oSelectedRow2 = oInput._getSuggestionsPopover().getItemsContainer().getItems()[2];
@@ -5842,11 +5915,11 @@ sap.ui.define([
 		assert.strictEqual(stub.callCount, 0, "Should NOT call 'setSelectedRow' when aggregation is destroyed after a proposed item was found.");
 	});
 
-	QUnit.test("Typeahead should select the correct formatter", function (assert) {
+	QUnit.test("Typeahead should select the correct formatter", async function (assert) {
 		var oPopupInput;
 
 		// Arange
-		this.stub(Device, "system", {
+		this.stub(Device, "system").value({
 			desktop: false,
 			phone: true,
 			tablet: false
@@ -5873,18 +5946,18 @@ sap.ui.define([
 				})
 			]
 		}).placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// Act
 		oInput._getSuggestionsPopover().getPopover().open();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 		this.clock.tick(500);
 
 		oPopupInput = oInput._getSuggestionsPopover().getInput();
 		oPopupInput.setValue("My");
 		oPopupInput._bDoTypeAhead = true;
 		oPopupInput.focus();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		oPopupInput._handleTypeAhead();
 
@@ -5893,14 +5966,14 @@ sap.ui.define([
 
 		// clean up
 		oInput._getSuggestionsPopover().getPopover().close();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 		this.clock.tick(500);
 
 		oInput.destroy();
 		oInput = null;
 	});
 
-	QUnit.test("Op", function (assert) {
+	QUnit.test("Op", async function (assert) {
 		var oPopup; // is lazy loaded
 
 		var oInput = new Input({
@@ -5913,11 +5986,11 @@ sap.ui.define([
 		});
 
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		var oFakeKeydown = jQuery.Event("keydown", { which: KeyCodes.t });
 		oInput._$input.trigger("focus").trigger(oFakeKeydown).val("t").trigger("input");
-		this.clock.tick(300);
+		this.clock.tick(1000);
 
 
 		oPopup = oInput._getSuggestionsPopover().getPopover();
@@ -5927,7 +6000,7 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("_handleTypeahead should return map with the selected text and item instance - List suggestions", function (assert) {
+	QUnit.test("_handleTypeahead should return map with the selected text and item instance - List suggestions", async function (assert) {
 		// arrange
 		var oInput = new Input({
 			showSuggestion: true,
@@ -5939,7 +6012,7 @@ sap.ui.define([
 		}).placeAt("content");
 		var mResult;
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		oInput.setValue("B");
 		oInput._$input.trigger("focus");
@@ -5956,7 +6029,7 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("_handleTypeahead should return map with the selected text and item instance - Tabular suggestions", function (assert) {
+	QUnit.test("_handleTypeahead should return map with the selected text and item instance - Tabular suggestions", async function (assert) {
 		// arrange
 		var oInput = new Input({
 			showSuggestion: true,
@@ -6029,7 +6102,7 @@ sap.ui.define([
 
 		oInput.placeAt("content");
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		oInput.setValue("P");
 		oInput._$input.trigger("focus");
@@ -6046,7 +6119,7 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("Dynamic suggestions: List suggestions - Item in the list should be selected if type-ahead was performed", function (assert) {
+	QUnit.test("Dynamic suggestions: List suggestions - Item in the list should be selected if type-ahead was performed", async function (assert) {
 		// arrange
 		var oData = {
 			items: [
@@ -6066,11 +6139,11 @@ sap.ui.define([
 			}
 		}).placeAt("content");
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// act
 		oInput._$input.trigger("focus").trigger(oFakeKeydown).val("t").trigger("input");
-		this.clock.tick(300);
+		this.clock.tick(1000);
 
 		// assert
 		assert.strictEqual(oInput.getSelectedItem(),null, "There is still no selected suggestion item in the Input.");
@@ -6080,7 +6153,7 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("Shoud select item on arrow up/down when autocomplete is off", function (assert) {
+	QUnit.test("Shoud select item on arrow up/down when autocomplete is off", async function (assert) {
 		var oInput = new Input({
 			showSuggestion: true,
 			autocomplete: false,
@@ -6095,10 +6168,10 @@ sap.ui.define([
 				})
 			]
 		}).placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		oInput._$input.trigger("focus").val("o").trigger("input");
-		this.clock.tick(300);
+		this.clock.tick(1000);
 
 		qutils.triggerKeydown(oInput.getFocusDomRef(), KeyCodes.ARROW_DOWN);
 		this.clock.tick(300);
@@ -6123,7 +6196,7 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("Dynamic suggestions: Tabular suggestions - Row in the list should be selected if type-ahead was performed", function (assert) {
+	QUnit.test("Dynamic suggestions: Tabular suggestions - Row in the list should be selected if type-ahead was performed", async function (assert) {
 		// arrange
 		var oData = {
 			items: [
@@ -6152,11 +6225,11 @@ sap.ui.define([
 			}
 		}).placeAt("content");
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// act
 		oInput._$input.trigger("focus").trigger(oFakeKeydown).val("t").trigger("input");
-		this.clock.tick(300);
+		this.clock.tick(1000);
 
 		// assert
 		assert.strictEqual(oInput.getSelectedRow(),null, "There is still no selected suggestion row in the Input.");
@@ -6166,7 +6239,7 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("Dynamic suggestions: List suggestions - Backspace should deselect the matching list item after type-ahead was performed and it was selected", function (assert) {
+	QUnit.test("Dynamic suggestions: List suggestions - Backspace should deselect the matching list item after type-ahead was performed and it was selected", async function (assert) {
 		// arrange
 		var oData = {
 			items: [
@@ -6186,7 +6259,7 @@ sap.ui.define([
 			}
 		}).placeAt("content");
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// act
 		oInput._$input.trigger("focus").trigger(oFakeKeydown).val("t").trigger("input");
@@ -6204,7 +6277,7 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("Dynamic suggestions: Tabular suggestions - Backspace should deselect the matching table row after type-ahead was performed and it was selected", function (assert) {
+	QUnit.test("Dynamic suggestions: Tabular suggestions - Backspace should deselect the matching table row after type-ahead was performed and it was selected", async function (assert) {
 		// arrange
 		var oData = {
 			items: [
@@ -6233,7 +6306,7 @@ sap.ui.define([
 			}
 		}).placeAt("content");
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// act
 		oInput._$input.trigger("focus").trigger(oFakeKeydown).val("t").trigger("input");
@@ -6251,7 +6324,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Input with Suggestions and Value State, but not Value State Message", {
-		beforeEach: function () {
+		beforeEach: async function () {
+			this.clock = sinon.useFakeTimers();
 			this.inputWithSuggestions = new Input({
 				showSuggestion: true,
 				valueStateText: 'Some Error',
@@ -6267,7 +6341,7 @@ sap.ui.define([
 					})
 				]
 			}).placeAt("content");
-			nextUIUpdate.runSync()/*fake timer is used in module*/;
+			await nextUIUpdate(this.clock);
 		},
 		afterEach: function () {
 			if (this.inputWithSuggestions._oValueStateMessage._oPopup) {
@@ -6276,6 +6350,8 @@ sap.ui.define([
 
 			this.inputWithSuggestions.destroy();
 			this.inputWithSuggestions = null;
+
+			runAllTimersAndRestore(this.clock);
 		}
 	});
 
@@ -6320,7 +6396,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Input with Suggestions and Value State and Value State Message - Desktop", {
-		beforeEach: function () {
+		beforeEach: async function () {
+			this.clock = sinon.useFakeTimers();
 
 			this.inputWithSuggestions = new Input({
 				showSuggestion: true,
@@ -6337,7 +6414,7 @@ sap.ui.define([
 					})
 				]
 			}).placeAt("content");
-			nextUIUpdate.runSync()/*fake timer is used in module*/;
+			await nextUIUpdate(this.clock);
 		},
 		afterEach: function () {
 			if (this.inputWithSuggestions._oValueStateMessage._oPopup) {
@@ -6346,6 +6423,8 @@ sap.ui.define([
 
 			this.inputWithSuggestions.destroy();
 			this.inputWithSuggestions = null;
+
+			runAllTimersAndRestore(this.clock);
 		}
 	});
 
@@ -6365,7 +6444,7 @@ sap.ui.define([
 
 		// Act
 		this.inputWithSuggestions._$input.trigger("focus").val("on").trigger("input");
-		this.clock.tick(300);
+		this.clock.tick(1000);
 
 		// Assert
 		assert.strictEqual(this.inputWithSuggestions._getSuggestionsPopover().getPopover().$().find(".sapMValueStateHeaderText").text(), "Some Error", "value state message is displayed in the suggestion popover");
@@ -6390,10 +6469,16 @@ sap.ui.define([
 	});
 
 	QUnit.module("Input with Suggestions and Value State and Value State Message -  Mobile", {
-		beforeEach: function () {
+		beforeEach: async function () {
+			this.clock = sinon.useFakeTimers();
 
-			this.isPhone = Device.system.phone;
-			Device.system.phone = true;
+			const oSystem = {
+				desktop: false,
+				phone: true,
+				tablet: false
+			};
+
+			this.oDeviceStub = this.stub(Device, "system").value(oSystem);
 
 			this.inputWithSuggestions = new Input({
 				showSuggestion: true,
@@ -6410,7 +6495,7 @@ sap.ui.define([
 					})
 				]
 			}).placeAt("content");
-			nextUIUpdate.runSync()/*fake timer is used in module*/;
+			await nextUIUpdate(this.clock);
 		},
 		afterEach: function () {
 			if (this.inputWithSuggestions._oValueStateMessage._oPopup) {
@@ -6420,7 +6505,9 @@ sap.ui.define([
 			this.inputWithSuggestions.destroy();
 			this.inputWithSuggestions = null;
 
-			Device.system.phone = this.isPhone;
+			this.oDeviceStub.restore();
+
+			runAllTimersAndRestore(this.clock);
 		}
 	});
 
@@ -6465,7 +6552,7 @@ sap.ui.define([
 
 	QUnit.module("Input inside a Dialog and Value State Message", {
 		beforeEach: function () {
-
+			this.clock = sinon.useFakeTimers();
 			this.input = new Input({
 				valueStateText: 'Some Error',
 				showValueStateMessage: true
@@ -6478,6 +6565,8 @@ sap.ui.define([
 			this.dialog.destroy();
 			this.dialog = null;
 			this.input = null;
+
+			runAllTimersAndRestore(this.clock);
 		}
 	});
 
@@ -6522,7 +6611,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Value State Handling: Value State Message with links", {
-		beforeEach: function () {
+		beforeEach: async function () {
+			this.clock = sinon.useFakeTimers();
 			this.oInput = new Input({
 				showSuggestion: true,
 				valueStateText: "Normal value state text",
@@ -6538,7 +6628,7 @@ sap.ui.define([
 					})
 				]
 			}).placeAt("content");
-			nextUIUpdate.runSync()/*fake timer is used in module*/;
+			await nextUIUpdate(this.clock);
 		},
 		afterEach: function () {
 			if (this.oInput._oValueStateMessage._oPopup) {
@@ -6547,10 +6637,12 @@ sap.ui.define([
 
 			this.oInput.destroy();
 			this.oInput = null;
+
+			runAllTimersAndRestore(this.clock);
 		}
 	});
 
-	QUnit.test("Value state with formatted text containing a link", function (assert) {
+	QUnit.test("Value state with formatted text containing a link", async function (assert) {
 		// Arrange
 		this.oInput.setValueState("Error");
 		var oFormattedValueStateText = new FormattedText({
@@ -6571,7 +6663,7 @@ sap.ui.define([
 
 		// Act
 		this.oInput._$input.trigger("focus").val("on").trigger("input");
-		this.clock.tick(300);
+		this.clock.tick(1000);
 
 		oSuggestionsPopoverHeader = this.oInput._getSuggestionsPopover().getPopover().getCustomHeader();
 
@@ -6580,7 +6672,7 @@ sap.ui.define([
 
 		// Act
 		this.oInput.setFormattedValueStateText(oFormattedValueStateText);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		/* When value stage message containing a sap.m.FormattedText aggregation is set
 		it should override the standart plain value state text */
@@ -6608,7 +6700,7 @@ sap.ui.define([
 		assert.ok(this.oInput._oValueStateMessage._oPopup.getContent().classList.contains("sapMValueStateMessage"), "Value state message is displayed");
 	});
 
-	QUnit.test("Value state with formatted text containing multiple links", function (assert) {
+	QUnit.test("Value state with formatted text containing multiple links", async function (assert) {
 		// Arrange
 		this.oInput.setValueState("Warning");
 		var oFormattedValueStateText = new FormattedText({
@@ -6626,7 +6718,7 @@ sap.ui.define([
 
 		// Act
 		this.oInput.setFormattedValueStateText(oFormattedValueStateText);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		this.oInput.onfocusin();
 		this.clock.tick();
@@ -6639,7 +6731,7 @@ sap.ui.define([
 		assert.strictEqual(document.querySelectorAll("#" + this.oInput.getId() + "-message a").length, 2, "Value state message links are displayed");
 	});
 
-	QUnit.test("Value state popup should be closed on focusout", function (assert) {
+	QUnit.test("Value state popup should be closed on focusout", async function (assert) {
 		// Arrange
 		this.oInput.setValueState("Warning");
 		var oFormattedValueStateText = new FormattedText({
@@ -6657,7 +6749,7 @@ sap.ui.define([
 
 		// Act
 		this.oInput.setFormattedValueStateText(oFormattedValueStateText);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		this.oInput.focus();
 		this.clock.tick();
@@ -6670,7 +6762,7 @@ sap.ui.define([
 		assert.strictEqual(oPopup.getContent().style.display, "none", "Value state message is not displayed");
 	});
 
-	QUnit.test("Value state message link should be clickable and popup should be closed after a click", function (assert) {
+	QUnit.test("Value state message link should be clickable and popup should be closed after a click", async function (assert) {
 		// Arrange
 		this.oInput.setValueState("Warning");
 		var oFormattedValueStateText = new FormattedText({
@@ -6690,11 +6782,11 @@ sap.ui.define([
 
 		// Act
 		this.oInput.setFormattedValueStateText(oFormattedValueStateText);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		this.oInput.getFocusDomRef().focus();
 		this.clock.tick();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		oFakeEvent = {
 			relatedTarget: this.oInput.getFormattedValueStateText().getControls()[0].getDomRef()
@@ -6712,7 +6804,7 @@ sap.ui.define([
 		assert.ok(!oPopup.isOpen(), "Value state message popup has been closed after press");
 	});
 
-	QUnit.test("Value state popup should be closed on click on the background", function (assert) {
+	QUnit.test("Value state popup should be closed on click on the background", async function (assert) {
 		// Arrange
 		this.oInput.setValueState("Error");
 		var oFormattedValueStateText = new FormattedText({
@@ -6729,7 +6821,7 @@ sap.ui.define([
 
 		// Act
 		this.oInput.setFormattedValueStateText(oFormattedValueStateText);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		this.oInput.focus();
 		this.clock.tick();
@@ -6743,7 +6835,7 @@ sap.ui.define([
 		assert.strictEqual(oPopup.getContent().style.display, "none", "Value state message is not displayed");
 	});
 
-	QUnit.test("Setting new value state formatted text aggregation should be update also the value state header", function (assert) {
+	QUnit.test("Setting new value state formatted text aggregation should be update also the value state header", async function (assert) {
 		// Arrange
 		var	oSuggPopoverHeaderValueState;
 		var oFormattedValueStateText = new FormattedText({
@@ -6757,7 +6849,7 @@ sap.ui.define([
 		// Act
 		this.oInput.setValueState("Error");
 		this.oInput.setFormattedValueStateText(oFormattedValueStateText);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// Open sugg. popover with the initialy set formatted text value state
 		// to switch the FormattedText aggregation to the value state header
@@ -6781,7 +6873,7 @@ sap.ui.define([
 		});
 
 		this.oInput.setFormattedValueStateText(oFormattedValueStateText);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		this.oInput._getSuggestionsPopover().getPopover().attachAfterOpen(function () {
 			oSuggPopoverHeaderValueState = this.oInput._getSuggestionsPopover().getPopover().getCustomHeader().getFormattedText().getDomRef().textContent;
@@ -6794,7 +6886,7 @@ sap.ui.define([
 		this.clock.tick(300);
 	});
 
-	QUnit.test("Change to the formatted text input aggregation should also be change in the value state header", function (assert) {
+	QUnit.test("Change to the formatted text input aggregation should also be change in the value state header", async function (assert) {
 		// Arrange
 		this.oInput.setValueState("Error");
 		var oFormattedValueStateText = new FormattedText({
@@ -6808,10 +6900,10 @@ sap.ui.define([
 
 		// Act
 		this.oInput.setFormattedValueStateText(oFormattedValueStateText);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		this.oInput._getFormattedValueStateText().setHtmlText("New value state message containing a %%0");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		this.oInput._getSuggestionsPopover().getPopover().attachAfterOpen(function () {
 			oSuggPopoverHeaderValueState = this.oInput._getSuggestionsPopover().getPopover().getCustomHeader().getFormattedText().getDomRef().textContent;
@@ -6824,7 +6916,7 @@ sap.ui.define([
 		this.clock.tick(300);
 	});
 
-	QUnit.test("Change to the formatted text input aggregation should also be reflected in the value state header while it is open", function (assert) {
+	QUnit.test("Change to the formatted text input aggregation should also be reflected in the value state header while it is open", async function (assert) {
 		// Arrange
 		this.oInput.setValueState("Error");
 		var oFormattedValueStateText = new FormattedText({
@@ -6841,10 +6933,10 @@ sap.ui.define([
 		this.oInput.setFormattedValueStateText(oFormattedValueStateText);
 
 		this.oInput._$input.trigger("focus").val("on").trigger("input");
-		this.clock.tick(300);
+		this.clock.tick(1000);
 
 		this.oInput._getFormattedValueStateText().setHtmlText("New value state message containing a %%0");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 		oSuggPopoverHeaderValueState = this.oInput._getSuggestionsPopover().getPopover().getCustomHeader().getFormattedText().getDomRef().textContent;
 
 		// Assert
@@ -6863,7 +6955,7 @@ sap.ui.define([
 		assert.strictEqual(oRenderedValueStateMessage, "New value state message containing a link", "The updated FormattedText aggregation is also correctly displayed in the Input's value state popup after the suggestion popover is closed");
 	});
 
-	QUnit.test("Should move the visual focus from value state header to the input when the user starts typing", function (assert) {
+	QUnit.test("Should move the visual focus from value state header to the input when the user starts typing", async function (assert) {
 		// Arrange
 		var oFormattedValueStateText = new FormattedText({
 			htmlText: "Value state message containing a %%0",
@@ -6877,10 +6969,10 @@ sap.ui.define([
 		// Act
 		this.oInput.setValueState("Information");
 		this.oInput.setFormattedValueStateText(oFormattedValueStateText);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		this.oInput._$input.trigger("focus").val("o").trigger("input");
-		this.clock.tick(300);
+		this.clock.tick(1000);
 
 		// Select the value state header
 		qutils.triggerKeydown(this.oInput.getFocusDomRef(), KeyCodes.ARROW_UP);
@@ -6898,7 +6990,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Input with suggestions - change event", {
-		beforeEach: function () {
+		beforeEach: async function () {
+			this.clock = sinon.useFakeTimers();
 			this.oInput = new Input({
 					showSuggestion: true
 				});
@@ -6933,11 +7026,12 @@ sap.ui.define([
 			this.oInput.bindAggregation("suggestionItems", "/", new Item({text: "{userid}"}));
 
 			this.oInput.placeAt("content");
-			nextUIUpdate.runSync()/*fake timer is used in module*/;
+			await nextUIUpdate(this.clock);
 		},
 		afterEach: function () {
 			this.oInput.destroy();
 			this.oInput = null;
+			runAllTimersAndRestore(this.clock);
 		}
 	});
 
@@ -6962,7 +7056,7 @@ sap.ui.define([
 		var fnFireChangeSpy = this.spy(this.oInput, "fireChange");
 		this.oInput.onfocusin();
 		this.oInput._$input.trigger("focus").val("u").trigger("input");
-		this.clock.tick(300);
+		this.clock.tick(1000);
 
 		this.oInput._bDoTypeAhead = true;
 		this.oInput._handleTypeAhead(this.oInput);
@@ -6979,7 +7073,7 @@ sap.ui.define([
 		var fnFireChangeSpy = this.spy(this.oInput, "fireChange");
 		this.oInput.setAutocomplete(false);
 		this.oInput._$input.trigger("focus").val("u").trigger("input");
-		this.clock.tick(300);
+		this.clock.tick(1000);
 
 		this.oInput._bDoTypeAhead = true;
 		this.oInput._handleTypeAhead(this.oInput);
@@ -6990,7 +7084,7 @@ sap.ui.define([
 		assert.equal(fnFireChangeSpy.callCount , 1 , "Change event should be fired only once");
 	});
 
-	QUnit.test("Force closing suggestions popover on 'change' event", function(assert) {
+	QUnit.test("Force closing suggestions popover on 'change' event", async function(assert) {
 
 		var oInput = this.oInput,
 			iSuggestionItemSelectedCount = 0;
@@ -7002,10 +7096,10 @@ sap.ui.define([
 
 		oInput.onfocusin();
 		oInput._$input.trigger("focus").val("u").trigger("input");
-		this.clock.tick(300);
+		this.clock.tick(1000);
 
 		qutils.triggerKeydown(oInput.getDomRef("inner"), KeyCodes.ARROW_DOWN);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 		qutils.triggerKeydown(oInput.getDomRef("inner"), KeyCodes.ENTER);
 
 		assert.ok(true, 'there is no endless loop');
@@ -7014,7 +7108,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Grouping", {
-		beforeEach : function() {
+		beforeEach : async function() {
+			this.clock = sinon.useFakeTimers();
 			var oModel,
 				aData = [
 					{
@@ -7044,21 +7139,22 @@ sap.ui.define([
 				sorter: [new Sorter('group', false, true)],
 				template: new Item({text: "{name}", key: "{key}"})
 			});
-			nextUIUpdate.runSync()/*fake timer is used in module*/;
+			await nextUIUpdate(this.clock);
 
 		},
 		afterEach : function() {
 			this.oInput.destroy();
+			runAllTimersAndRestore(this.clock);
 		}}
 	);
 
 	QUnit.test("suggestionsCount should be aware of empty groups", function (assert) {
 		// Setup
 		var oCloseSpy = this.spy(this.oInput, "_hideSuggestionPopup");
-		this.stub(this.oInput, "_getFilteredSuggestionItems", function () {
+		this.stub(this.oInput, "_getFilteredSuggestionItems").callsFake( function () {
 			return {items: [], groups: [{}, {}]};
 		});
-		this.stub(this.oInput, "_hasTabularSuggestions", function (){
+		this.stub(this.oInput, "_hasTabularSuggestions").callsFake( function (){
 			return true;
 		});
 
@@ -7074,7 +7170,7 @@ sap.ui.define([
 
 		this.oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
 		this.oInput._$input.trigger("focus").val("A").trigger("input");
-		this.clock.tick(300);
+		this.clock.tick(1000);
 
 		aVisibleItems = this.oInput._getSuggestionsPopover().getItemsContainer().getItems().filter(function(oItem){
 			return oItem.getVisible();
@@ -7119,12 +7215,12 @@ sap.ui.define([
 		oSpy.restore();
 	});
 
-	QUnit.test("Keyboard selection of group header", function (assert) {
+	QUnit.test("Keyboard selection of group header", async function (assert) {
 		var aVisibleItems;
 
 		this.oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
 		this.oInput._$input.trigger("focus").val("A").trigger("input");
-		this.clock.tick(300);
+		this.clock.tick(1000);
 
 		aVisibleItems = this.oInput._getSuggestionsPopover().getItemsContainer().getItems().filter(function(oItem){
 			return oItem.getVisible();
@@ -7132,7 +7228,7 @@ sap.ui.define([
 
 		// act
 		qutils.triggerKeydown(this.oInput.getDomRef("inner"), KeyCodes.ARROW_DOWN);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// assert
 		// go to the header group item
@@ -7141,7 +7237,7 @@ sap.ui.define([
 		// act
 		// go to the next list item
 		qutils.triggerKeydown(this.oInput.getDomRef("inner"), KeyCodes.ARROW_DOWN);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// assert
 		assert.strictEqual(this.oInput.getValue(), aVisibleItems[1].getTitle(), "The value is populated again.");
@@ -7153,7 +7249,7 @@ sap.ui.define([
 		// act
 		this.oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
 		this.oInput._$input.trigger("focus").val("A").trigger("input");
-		this.clock.tick(300);
+		this.clock.tick(1000);
 
 		aVisibleItems = this.oInput._getSuggestionsPopover().getItemsContainer().getItems().filter(function(oItem){
 			return oItem.getVisible();
@@ -7170,7 +7266,7 @@ sap.ui.define([
 		assert.strictEqual(document.activeElement, this.oInput.getFocusDomRef(), "The focus is in the input field");
 	});
 
-	QUnit.test("Behaviour for a 'startsWith' item selection", function (assert) {
+	QUnit.test("Behaviour for a 'startsWith' item selection", async function (assert) {
 		// Setup
 		this.oInput.showItems();
 		this.clock.tick(500);
@@ -7187,7 +7283,7 @@ sap.ui.define([
 			previousItem: null,
 			newItem: oItem
 		});
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// Assert
 		assert.strictEqual(this.oInput.getValue(), oItem.getTitle(), "The title is autocompleted in the Input.");
@@ -7199,13 +7295,13 @@ sap.ui.define([
 			previousItem: null,
 			newItem: null
 		});
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// Assert
 		assert.strictEqual(this.oInput.getValue(), oItem.getTitle().substr(0, 3), "User's input is kept.");
 	});
 
-	QUnit.test("Behaviour for a 'contains' item selection", function (assert) {
+	QUnit.test("Behaviour for a 'contains' item selection", async function (assert) {
 		// Setup
 		this.oInput.showItems();
 		this.clock.tick(500);
@@ -7222,7 +7318,7 @@ sap.ui.define([
 			previousItem: null,
 			newItem: oItem
 		});
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// Assert
 		assert.strictEqual(this.oInput.getValue(), oItem.getTitle(), "The title is autocompleted in the Input.");
@@ -7235,13 +7331,13 @@ sap.ui.define([
 			previousItem: null,
 			newItem: null
 		});
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// Assert
 		assert.strictEqual(this.oInput.getValue(), "", "The input is reset");
 	});
 
-	QUnit.test("Behaviour for a GroupItem selection", function (assert) {
+	QUnit.test("Behaviour for a GroupItem selection", async function (assert) {
 		// Setup
 		this.oInput.showItems();
 		this.clock.tick(500);
@@ -7259,7 +7355,7 @@ sap.ui.define([
 			previousItem: null,
 			newItem: oGroupItem
 		});
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// Assert
 		assert.strictEqual(this.oInput.getValue(), "A I", "User's input is not reset.");
@@ -7270,14 +7366,14 @@ sap.ui.define([
 			previousItem: null,
 			newItem: null
 		});
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// Assert
 		assert.strictEqual(this.oInput.getValue(), "A I", "The input value should not be reset");
 	});
 
 	QUnit.module("showItems functionality", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			var aData = [
 					{
 						name: "A Item 1", key: "a-item-1", group: "A"
@@ -7301,7 +7397,7 @@ sap.ui.define([
 				}
 			}).setModel(oModel).placeAt("content");
 
-			nextUIUpdate.runSync()/*fake timer is used in module*/;
+			await nextUIUpdate();
 
 		},
 		afterEach: function () {
@@ -7311,7 +7407,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("showItems functionality: List", {
-			beforeEach: function () {
+			beforeEach: async function () {
 				var aData = [
 						{
 							name: "A Item 1", key: "a-item-1", group: "A"
@@ -7335,7 +7431,7 @@ sap.ui.define([
 					}
 				}).setModel(oModel).placeAt("content");
 
-				nextUIUpdate.runSync()/*fake timer is used in module*/;
+				await nextUIUpdate();
 
 			},
 			afterEach: function () {
@@ -7369,30 +7465,31 @@ sap.ui.define([
 		assert.strictEqual(this.oInput._getFilterFunction(), fnFilter, "Custom filter function has been restored");
 	});
 
-	QUnit.test("Should show all the items", function (assert) {
+	QUnit.test("Should show all the items", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		// Act
 		this.oInput.showItems();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
-
+		await nextUIUpdate(this.clock);
 		this.clock.tick(500);
 
 		// Assert
 		assert.strictEqual(getVisibleItems(this.oInput._getSuggestionsPopover().getPopover()).length, 5, "Shows all items");
+		runAllTimersAndRestore(this.clock, true);
 	});
 
-	QUnit.test("Should filter the items", function (assert) {
+	QUnit.test("Should filter the items", async function (assert) {
 		// Act
 		this.oInput.showItems(function (sValue, oItem) {
 			return oItem.getText() === "A Item 1";
 		});
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(getVisibleItems(this.oInput._getSuggestionsPopover().getPopover()).length, 1, "Show only the matching items");
 	});
 
 	QUnit.module("showItems functionality: Table", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			var aData = [
 					{
 						name: "A Item 1", key: "a-item-1", group: "A"
@@ -7431,16 +7528,18 @@ sap.ui.define([
 				}
 			}).setModel(oModel).placeAt("content");
 
-			nextUIUpdate.runSync()/*fake timer is used in module*/;
+			await nextUIUpdate();
 
 		},
 		afterEach: function () {
 			this.oInput.destroy();
 			this.oInput = null;
+
+			runAllTimersAndRestore(this.clock);
 		}
 	});
 
-	QUnit.test("Should show all the items", function (assert) {
+	QUnit.test("Should show all the items", async function (assert) {
 		// Setup
 		var fnGetVisisbleItems = function (aItems) {
 			return aItems.filter(function (oItem) {
@@ -7450,14 +7549,14 @@ sap.ui.define([
 
 		// Act
 		this.oInput.showItems();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(this.oInput._getSuggestionsTable().getItems().length, 5, "All the items are available");
 		assert.strictEqual(fnGetVisisbleItems(this.oInput._getSuggestionsTable().getItems()).length, 5, "Shows all items");
 	});
 
-	QUnit.test("Should filter the items", function (assert) {
+	QUnit.test("Should filter the items", async function (assert) {
 		// Setup
 		var fnGetVisisbleItems = function (aItems) {
 			return aItems.filter(function (oItem) {
@@ -7469,25 +7568,26 @@ sap.ui.define([
 		this.oInput.showItems(function (sValue, oItem) {
 			return oItem.getCells()[0].getText() === "A Item 1";
 		});
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(this.oInput._getSuggestionsTable().getItems().length, 5, "All the items are available");
 		assert.strictEqual(fnGetVisisbleItems(this.oInput._getSuggestionsTable().getItems()).length, 1, "Only the matching items are visible");
 	});
 
-	QUnit.test("If suggestions hidden text is empty when there are no suggestions", function (assert) {
+	QUnit.test("If suggestions hidden text is empty when there are no suggestions", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		var oInput = new Input({ showSuggestion: true });
 
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		oInput.showItems(function () { return true; });
 		this.clock.tick(400);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		oInput.focus();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		var sDescription = oInput.getDomRef("SuggDescr").innerText;
 
@@ -7496,7 +7596,8 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("If suggestions[tabular] hidden text is empty when there are no suggestions", function (assert) {
+	QUnit.test("If suggestions[tabular] hidden text is empty when there are no suggestions", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		var oInput = new Input({ showSuggestion: true });
 		var oMessageBundle = Library.getResourceBundleFor("sap.m");
 
@@ -7509,14 +7610,14 @@ sap.ui.define([
 		 }));
 
 		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		oInput.showItems(function () { return true; });
 		this.clock.tick(400);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		oInput.focus();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		var sDescription = oInput.getDomRef("SuggDescr").innerText;
 		var sExpectedText = oMessageBundle.getText("INPUT_SUGGESTIONS_ONE_HIT");
@@ -7526,27 +7627,34 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.module("Dialog on mobile");
+	QUnit.module("Dialog on mobile", {
+		beforeEach: function(){
+			this.clock = sinon.useFakeTimers();
+			const oSystem = {
+					desktop: false,
+					phone: true,
+					tablet: false
+				};
 
-	QUnit.test("Dialog elements", function (assert) {
-		var oDialog, oCustomHeader,
-			oSystem = {
-				desktop: false,
-				phone: true,
-				tablet: false
-			};
+			this.oDeviceStub = this.stub(Device, "system").value(oSystem);
+		},
+		afterEach: function(){
+			this.oDeviceStub.restore();
+			this.oInput.destroy();
+			runAllTimersAndRestore(this.clock);
+		}
+	});
 
-		this.stub(Device, "system", oSystem);
-
+	QUnit.test("Dialog elements", async function (assert) {
 		this.oInput = new Input({showSuggestion: true});
 		this.oLabel = new Label({text: "Label text", labelFor: this.oInput.getId()});
 		this.oRb = Library.getResourceBundleFor("sap.m");
 
 		this.oInput._openSuggestionsPopover();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
-		oDialog = this.oInput._getSuggestionsPopover().getPopover();
-		oCustomHeader = oDialog.getCustomHeader();
+		const oDialog = this.oInput._getSuggestionsPopover().getPopover();
+		const oCustomHeader = oDialog.getCustomHeader();
 
 		assert.ok(oCustomHeader.getContentMiddle()[0].isA("sap.m.Title"), "A title is added to the dialog");
 		assert.strictEqual(oCustomHeader.getContentMiddle()[0].getText(), this.oLabel.getText(), "The title has a correct value.");
@@ -7556,76 +7664,39 @@ sap.ui.define([
 
 		assert.strictEqual(oDialog.getBeginButton().getText(), this.oRb.getText("SUGGESTIONSPOPOVER_CLOSE_BUTTON"),
 			"The OK button has a correct text value");
-
-		this.oInput.destroy();
-
 	});
 
-	QUnit.test("Close button press", function (assert) {
-		var oCloseButton,
-			oSuggPopover,
-			oSystem = {
-				desktop: false,
-				phone: true,
-				tablet: false
-			};
-
-		this.stub(Device, "system", oSystem);
-
+	QUnit.test("Close button press", async function (assert) {
 		this.oInput = new Input({showSuggestion: true});
 		this.oInput._openSuggestionsPopover();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
-		oSuggPopover = this.oInput._getSuggestionsPopover();
-		oCloseButton = oSuggPopover.getPopover().getCustomHeader().getContentRight()[0];
+		const oSuggPopover = this.oInput._getSuggestionsPopover();
+		const oCloseButton = oSuggPopover.getPopover().getCustomHeader().getContentRight()[0];
 
 		oCloseButton.firePress();
-		this.clock.tick(400);
+		this.clock.tick(1000);
 
 		assert.notOk(oSuggPopover.isOpen(), "The dialog is closed on X press.");
-
-		this.oInput.destroy();
-
 	});
 
-	QUnit.test("OK button press", function (assert) {
-		var oOKButton,
-			oSuggPopover,
-			oSystem = {
-				desktop: false,
-				phone: true,
-				tablet: false
-			};
-
-		this.stub(Device, "system", oSystem);
-
+	QUnit.test("OK button press", async function (assert) {
 		this.oInput = new Input({showSuggestion: true});
 		this.oInput._openSuggestionsPopover();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
-		oSuggPopover = this.oInput._getSuggestionsPopover();
-		oOKButton = oSuggPopover.getPopover().getBeginButton();
+		const oSuggPopover = this.oInput._getSuggestionsPopover();
+		const oOKButton = oSuggPopover.getPopover().getBeginButton();
 
 		oOKButton.firePress();
-		this.clock.tick(400);
+		this.clock.tick(1000);
 
 		assert.notOk(oSuggPopover.isOpen(), "The dialog is closed on OK press.");
-
-		this.oInput.destroy();
 	});
 
-	QUnit.test("Close button should revert user input on mobile dialog", function (assert) {
+	QUnit.test("Close button should revert user input on mobile dialog", async function (assert) {
 		// arrange
-		var oCloseButton, oSuggPopoverInput, oSuggPopover, oFakeKeydown,
-			oSystem = {
-				desktop: false,
-				phone: true,
-				tablet: false
-			};
-
-		this.stub(Device, "system", oSystem);
-
-		var oInput = new Input({
+		this.oInput = new Input({
 			showSuggestion: true,
 			value: "test",
 			suggestionItems: [
@@ -7636,45 +7707,33 @@ sap.ui.define([
 			]
 		});
 
-		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
-		oInput._openSuggestionsPopover();
+		this.oInput.placeAt("content");
+		await nextUIUpdate(this.clock);
+		this.oInput._openSuggestionsPopover();
 		this.clock.tick(500);
 
-		oSuggPopover = oInput._getSuggestionsPopover();
-		oSuggPopoverInput = oSuggPopover.getInput();
-		oFakeKeydown = jQuery.Event("keydown", { which: KeyCodes.I });
-		oCloseButton = oSuggPopover.getPopover().getCustomHeader().getContentRight()[0];
+		const oSuggPopover = this.oInput._getSuggestionsPopover();
+		const oSuggPopoverInput = oSuggPopover.getInput();
+		const oFakeKeydown = jQuery.Event("keydown", { which: KeyCodes.I });
+		const oCloseButton = oSuggPopover.getPopover().getCustomHeader().getContentRight()[0];
 
 		// act
 		oSuggPopoverInput._$input.trigger("focus").trigger(oFakeKeydown).val("I").trigger("input");
-		this.clock.tick(500);
+		this.clock.tick(1000);
 
 		oCloseButton.firePress();
 		this.clock.tick(500);
 
 		// assert
 		assert.notOk(oSuggPopover.isOpen(), "The dialog is closed on closee button press.");
-		assert.strictEqual(oInput.getValue(), "test", "The value is reverted when close button is pressed");
-		assert.notOk(oInput.getSelectedItem(), "Selected item is not set");
-		assert.notOk(oInput.getSelectedKey(), "Selected key is not set");
-
-		// cleanup
-		oInput.destroy();
+		assert.strictEqual(this.oInput.getValue(), "test", "The value is reverted when close button is pressed");
+		assert.notOk(this.oInput.getSelectedItem(), "Selected item is not set");
+		assert.notOk(this.oInput.getSelectedKey(), "Selected key is not set");
 	});
 
-	QUnit.test("OK button should confirm user input on mobile dialog", function (assert) {
+	QUnit.test("OK button should confirm user input on mobile dialog", async function (assert) {
 		// arrange
-		var oOKButton, oSuggPopoverInput, oSuggPopover, oFakeKeydown,
-			oSystem = {
-				desktop: false,
-				phone: true,
-				tablet: false
-			};
-
-		this.stub(Device, "system", oSystem);
-
-		var oInput = new Input({
+		this.oInput = new Input({
 			showSuggestion: true,
 			value: "test",
 			suggestionItems: [
@@ -7685,15 +7744,15 @@ sap.ui.define([
 			]
 		});
 
-		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
-		oInput._openSuggestionsPopover();
+		this.oInput.placeAt("content");
+		await nextUIUpdate(this.clock);
+		this.oInput._openSuggestionsPopover();
 		this.clock.tick(500);
 
-		oSuggPopover = oInput._getSuggestionsPopover();
-		oSuggPopoverInput = oSuggPopover.getInput();
-		oFakeKeydown = jQuery.Event("keydown", { which: KeyCodes.I });
-		oOKButton = oSuggPopover.getPopover().getBeginButton();
+		const oSuggPopover = this.oInput._getSuggestionsPopover();
+		const oSuggPopoverInput = oSuggPopover.getInput();
+		const oFakeKeydown = jQuery.Event("keydown", { which: KeyCodes.I });
+		const oOKButton = oSuggPopover.getPopover().getBeginButton();
 
 		// act
 		oSuggPopoverInput._$input.trigger("focus").trigger(oFakeKeydown).val("I").trigger("input");
@@ -7703,27 +7762,15 @@ sap.ui.define([
 		this.clock.tick(400);
 
 		// assert
-		assert.strictEqual(oInput.getValue(), "Item 1", "The input value is updated.");
+		assert.strictEqual(this.oInput.getValue(), "Item 1", "The input value is updated.");
 		assert.notOk(oSuggPopover.isOpen(), "The dialog is closed on OK button press.");
-		assert.ok(oInput.getSelectedItem(), "Selected item is set");
-		assert.strictEqual(oInput.getSelectedKey(), "1", "Selected key is set");
-
-		// clean up
-		oInput.destroy();
+		assert.ok(this.oInput.getSelectedItem(), "Selected item is set");
+		assert.strictEqual(this.oInput.getSelectedKey(), "1", "Selected key is set");
 	});
 
-	QUnit.test("Tabular: Close button should revert user input on mobile dialog", function (assert) {
+	QUnit.test("Tabular: Close button should revert user input on mobile dialog", async function (assert) {
 		// arrange
-		var oCloseButton, oSuggPopoverInput, oSuggPopover, oFakeKeydown,
-			oSystem = {
-				desktop: false,
-				phone: true,
-				tablet: false
-			};
-
-		this.stub(Device, "system", oSystem);
-
-		var oInput = new Input({
+		this.oInput = new Input({
 			showSuggestion: true,
 			value: "test",
 			suggestionColumns: [
@@ -7738,15 +7785,15 @@ sap.ui.define([
 			]
 		});
 
-		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
-		oInput._openSuggestionsPopover();
+		this.oInput.placeAt("content");
+		await nextUIUpdate(this.clock);
+		this.oInput._openSuggestionsPopover();
 		this.clock.tick(500);
 
-		oSuggPopover = oInput._getSuggestionsPopover();
-		oSuggPopoverInput = oSuggPopover.getInput();
-		oFakeKeydown = jQuery.Event("keydown", { which: KeyCodes.I });
-		oCloseButton = oSuggPopover.getPopover().getCustomHeader().getContentRight()[0];
+		const oSuggPopover = this.oInput._getSuggestionsPopover();
+		const oSuggPopoverInput = oSuggPopover.getInput();
+		const oFakeKeydown = jQuery.Event("keydown", { which: KeyCodes.I });
+		const oCloseButton = oSuggPopover.getPopover().getCustomHeader().getContentRight()[0];
 
 		// act
 		oSuggPopoverInput._$input.trigger("focus").trigger(oFakeKeydown).val("I").trigger("input");
@@ -7757,25 +7804,13 @@ sap.ui.define([
 
 		// assert
 		assert.notOk(oSuggPopover.isOpen(), "The dialog is closed on closee button press.");
-		assert.strictEqual(oInput.getValue(), "test", "The value is reverted when close button is pressed");
-		assert.notOk(oInput.getSelectedRow(), "Selected row is not set");
-
-		// cleanup
-		oInput.destroy();
+		assert.strictEqual(this.oInput.getValue(), "test", "The value is reverted when close button is pressed");
+		assert.notOk(this.oInput.getSelectedRow(), "Selected row is not set");
 	});
 
-	QUnit.test("Tabular: OK button should confirm user input on mobile dialog", function (assert) {
+	QUnit.test("Tabular: OK button should confirm user input on mobile dialog", async function (assert) {
 		// arrange
-		var oOKButton, oSuggPopoverInput, oSuggPopover, oFakeKeydown,
-			oSystem = {
-				desktop: false,
-				phone: true,
-				tablet: false
-			};
-
-		this.stub(Device, "system", oSystem);
-
-		var oInput = new Input({
+		this.oInput = new Input({
 			showSuggestion: true,
 			value: "test",
 			suggestionColumns: [
@@ -7790,15 +7825,15 @@ sap.ui.define([
 			]
 		});
 
-		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
-		oInput._openSuggestionsPopover();
+		this.oInput.placeAt("content");
+		await nextUIUpdate(this.clock);
+		this.oInput._openSuggestionsPopover();
 		this.clock.tick(500);
 
-		oSuggPopover = oInput._getSuggestionsPopover();
-		oSuggPopoverInput = oSuggPopover.getInput();
-		oFakeKeydown = jQuery.Event("keydown", { which: KeyCodes.I });
-		oOKButton = oSuggPopover.getPopover().getBeginButton();
+		const oSuggPopover = this.oInput._getSuggestionsPopover();
+		const oSuggPopoverInput = oSuggPopover.getInput();
+		const oFakeKeydown = jQuery.Event("keydown", { which: KeyCodes.I });
+		const oOKButton = oSuggPopover.getPopover().getBeginButton();
 
 		// act
 		oSuggPopoverInput._$input.trigger("focus").trigger(oFakeKeydown).val("I").trigger("input");
@@ -7810,48 +7845,34 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		// assert
-		assert.strictEqual(oInput.getValue(), "Item", "The input value is updated.");
+		assert.strictEqual(this.oInput.getValue(), "Item", "The input value is updated.");
 		assert.notOk(oSuggPopover.isOpen(), "The dialog is closed on OK button press.");
-		assert.ok(oInput.getSelectedRow(), "Selected row is set");
-
-		// clean up
-		oInput.destroy();
+		assert.ok(this.oInput.getSelectedRow(), "Selected row is set");
 	});
 
-	QUnit.test("Change event should be fired on focusout", function (assert) {
-		// arrange
-		var oSystem = {
-			desktop: false,
-			phone: true,
-			tablet: false
-		};
-		this.stub(Device, "system", oSystem);
-
+	QUnit.test("Change event should be fired on focusout", async function (assert) {
 		var bChangeFired = false;
-		var oInput = new Input({
+		this.oInput = new Input({
 			value: "t"
 		});
 
-		oInput.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		this.oInput.placeAt("content");
+		await nextUIUpdate(this.clock);
 
-		oInput.attachChange(function() {
+		this.oInput.attachChange(function() {
 			bChangeFired = true;
 		});
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		//act
-		oInput._$input.trigger("focus").trigger(jQuery.Event("keydown", { which: KeyCodes.BACKSPACE })).val("").trigger("input");
+		this.oInput._$input.trigger("focus").trigger(jQuery.Event("keydown", { which: KeyCodes.BACKSPACE })).val("").trigger("input");
 		this.clock.tick(300);
 
-		oInput._$input.trigger("blur");
+		this.oInput._$input.trigger("blur");
 		this.clock.tick(200);
 
 		// assert
 		assert.ok(bChangeFired, "Change event is fired");
-
-		// clean up
-		oInput.destroy();
 	});
 
 	QUnit.module("selectedKey vs. value behavior", {
@@ -7870,10 +7891,11 @@ sap.ui.define([
 		},
 		afterEach: function () {
 			this.oModel.destroy();
+			runAllTimersAndRestore(this.clock);
 		}
 	});
 
-	QUnit.test("Setters: selectedKey + matching item should overwrite the value", function (assert) {
+	QUnit.test("Setters: selectedKey + matching item should overwrite the value", async function (assert) {
 		// Setup
 		var oInput = new Input({
 			value: "Zzzzzz",
@@ -7886,7 +7908,7 @@ sap.ui.define([
 		})
 			.setModel(this.oModel)
 			.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oInput.getSelectedKey(), "2", "selectedKey should remain");
@@ -7896,7 +7918,7 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("Setters: selectedKey + matching item should overwrite the value (changed setters order)", function (assert) {
+	QUnit.test("Setters: selectedKey + matching item should overwrite the value (changed setters order)", async function (assert) {
 		// Setup
 		var oInput = new Input({
 			selectedKey: "2",
@@ -7909,7 +7931,7 @@ sap.ui.define([
 		})
 			.setModel(this.oModel)
 			.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oInput.getSelectedKey(), "2", "selectedKey should remain");
@@ -7919,7 +7941,7 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("Bindings: selectedKey + matching item should overwrite the value", function (assert) {
+	QUnit.test("Bindings: selectedKey + matching item should overwrite the value", async function (assert) {
 		// Setup
 		var oInput = new Input({
 			value: "{/value}",
@@ -7932,7 +7954,7 @@ sap.ui.define([
 		})
 			.setModel(this.oModel)
 			.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oInput.getSelectedKey(), "2", "selectedKey should remain");
@@ -7942,7 +7964,7 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("Bindings: selectedKey + matching item should overwrite the value (changed binding order)", function (assert) {
+	QUnit.test("Bindings: selectedKey + matching item should overwrite the value (changed binding order)", async function (assert) {
 		// Setup
 		var oInput = new Input({
 			selectedKey: "{/selectedKey}",
@@ -7955,7 +7977,7 @@ sap.ui.define([
 		})
 			.setModel(this.oModel)
 			.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oInput.getSelectedKey(), "2", "selectedKey should remain");
@@ -7965,7 +7987,7 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("Bindings: Value + No selectedKey: should leave the value as it is", function (assert) {
+	QUnit.test("Bindings: Value + No selectedKey: should leave the value as it is", async function (assert) {
 		// Setup
 		var oInput = new Input({
 			value: "{/value}",
@@ -7977,7 +7999,7 @@ sap.ui.define([
 		})
 			.setModel(this.oModel)
 			.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oInput.getSelectedKey(), "", "selectedKey should remain");
@@ -7987,7 +8009,7 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("Bindings: selectedKey + No Value: should set the value to the matching item", function (assert) {
+	QUnit.test("Bindings: selectedKey + No Value: should set the value to the matching item", async function (assert) {
 		// Setup
 		var oInput = new Input({
 			selectedKey: "{/selectedKey}",
@@ -7999,7 +8021,7 @@ sap.ui.define([
 		})
 			.setModel(this.oModel)
 			.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		var oReadOnlyInput = new Input({
 			selectedKey: "{/selectedKey}",
@@ -8012,7 +8034,7 @@ sap.ui.define([
 		})
 			.setModel(this.oModel)
 			.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oInput.getSelectedKey(), "2", "selectedKey should remain");
@@ -8024,7 +8046,7 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("Mixed: Binding: selectedKey, Setter: Value: should set the value of the matching item", function (assert) {
+	QUnit.test("Mixed: Binding: selectedKey, Setter: Value: should set the value of the matching item", async function (assert) {
 		// Setup
 		var oInput = new Input({
 			value: "Zzzzzz",
@@ -8037,7 +8059,7 @@ sap.ui.define([
 		})
 			.setModel(this.oModel)
 			.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oInput.getSelectedKey(), "2", "selectedKey should remain");
@@ -8047,7 +8069,7 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("Mixed: Setter: selectedKey, Binding: Value: should set the value of the matching item", function (assert) {
+	QUnit.test("Mixed: Setter: selectedKey, Binding: Value: should set the value of the matching item", async function (assert) {
 		// Setup
 		var oInput = new Input({
 			value: "{/value}",
@@ -8060,7 +8082,7 @@ sap.ui.define([
 		})
 			.setModel(this.oModel)
 			.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oInput.getSelectedKey(), "2", "selectedKey should remain");
@@ -8070,7 +8092,7 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("User Interaction: Sets value over selectedKey", function (assert) {
+	QUnit.test("User Interaction: Sets value over selectedKey", async function (assert) {
 		// Setup
 		var oInput = new Input({
 			selectedKey: "2",
@@ -8082,12 +8104,12 @@ sap.ui.define([
 		})
 			.setModel(this.oModel)
 			.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Act
 		oInput.focus();
 		qutils.triggerCharacterInput(oInput._$input, "T", "This is a user input");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 
 		// Assert
@@ -8098,7 +8120,7 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("User Interaction: Sets value over selectedKey (binding)", function (assert) {
+	QUnit.test("User Interaction: Sets value over selectedKey (binding)", async function (assert) {
 		// Setup
 		var oInput = new Input({
 			selectedKey: "{/selectedKey}",
@@ -8110,12 +8132,12 @@ sap.ui.define([
 		})
 			.setModel(this.oModel)
 			.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Act
 		oInput.focus();
 		qutils.triggerCharacterInput(oInput._$input, "T", "This is a user input");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 
 		// Assert
@@ -8126,7 +8148,7 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("User Interaction: Binding update should overwrite user value (binding: async)", function (assert) {
+	QUnit.test("User Interaction: Binding update should overwrite user value (binding: async)", async function (assert) {
 		// Setup
 		var oModel = new JSONModel(),
 			oInput = new Input({
@@ -8139,16 +8161,16 @@ sap.ui.define([
 			})
 				.setModel(oModel)
 				.placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Act
 		oInput.focus();
 		qutils.triggerCharacterInput(oInput._$input, "T", "This is a user input");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Act
 		oModel.setData(this.oData);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 
 		// Assert
@@ -8159,11 +8181,12 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("setValue should not be called on BACKSPACE when suggestions are not used", function (assert) {
+	QUnit.test("setValue should not be called on BACKSPACE when suggestions are not used", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		// Setup
 		var oInput = new Input({
 		}).placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// Act
 		oInput._$input.trigger("focus").val("t").trigger("input");
@@ -8176,7 +8199,7 @@ sap.ui.define([
 		oInput._$input.trigger("focus").trigger(jQuery.Event("keydown", { which: KeyCodes.BACKSPACE })).val("").trigger("input");
 		qutils.triggerKeydown(oInput._$input, KeyCodes.BACKSPACE);
 		qutils.triggerKeyup(oInput._$input, KeyCodes.BACKSPACE);
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// Assert
 		assert.strictEqual(oInvalidationSpy.callCount, 0, "setValue is not triggered on BACKSPACE");
@@ -8186,7 +8209,7 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("If the sap.ui.core.Item's text direction is set explicitly it should be mapped to the StandardListItem", function (assert) {
+	QUnit.test("If the sap.ui.core.Item's text direction is set explicitly it should be mapped to the StandardListItem", async function (assert) {
 		// Arrange
 		var oInput = new Input({
 			showSuggestion: true,
@@ -8206,7 +8229,7 @@ sap.ui.define([
 				})
 			]
 		}).placeAt("content");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oInput.getSuggestionItems()[0].getTextDirection(), "RTL", 'RTL direction is correctly mapped from sap.ui.core.Item to sap.m.StandardListItem');
@@ -8216,9 +8239,14 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.module("Usage");
+	QUnit.module("Usage", {
+		afterEach: function(){
+			runAllTimersAndRestore(this.clock);
+		}
+	});
 
-	QUnit.test("Input with list suggestion: Braces in binded text and key properties do not cause error", function(assert) {
+	QUnit.test("Input with list suggestion: Braces in binded text and key properties do not cause error", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		// Arrange
 		var oData = {
 				items: [
@@ -8239,12 +8267,12 @@ sap.ui.define([
 
 		oInput.setModel(new JSONModel(oData));
 		oInput.placeAt('content');
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// Act
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
 		oInput._$input.trigger("focus").val("t").trigger("input");
-		this.clock.tick(300);
+		this.clock.tick(1000);
 
 		// Assert
 		assert.strictEqual(oInput._getSuggestionsPopover().getItemsContainer().getItems()[0].getTitle(), "1 {{}}{", "Braces are escaped in inputs item group header");
@@ -8261,7 +8289,8 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("Input with table suggestions: Braces in binded text and key properties do not cause error", function(assert) {
+	QUnit.test("Input with table suggestions: Braces in binded text and key properties do not cause error", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 		// Arrange
 		var oData = {
 				items: [
@@ -8295,7 +8324,7 @@ sap.ui.define([
 
 		oInput.setModel(new JSONModel(oData));
 		oInput.placeAt('content');
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// Act
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
@@ -8317,6 +8346,7 @@ sap.ui.define([
 	});
 
 	QUnit.test('Input inside a dialog: Dialog scrollbar', function (assert) {
+		this.clock = sinon.useFakeTimers();
 		// Arrange
 		var oInput = new Input({
 				showSuggestion: true,
@@ -8348,13 +8378,13 @@ sap.ui.define([
 		oDialog.destroy();
 	});
 
-	QUnit.test("maxLength: setValue() initial rendering should respect getMaxLength", function (assert) {
-		var fnSetValueTestCase1 = function (mSettings) {
+	QUnit.test("maxLength: setValue() initial rendering should respect getMaxLength", async function (assert) {
+		var fnSetValueTestCase1 = async function (mSettings) {
 			// Arrange
 			var oInput = new Input({maxLength: mSettings.maxLength, value: mSettings.value});
 
 			oInput.placeAt("content");
-			nextUIUpdate.runSync()/*fake timer is used in module*/;
+			await nextUIUpdate();
 
 			// Assert
 			assert.strictEqual(jQuery(oInput.getFocusDomRef()).val(), mSettings.output);
@@ -8363,19 +8393,19 @@ sap.ui.define([
 			oInput.destroy();
 		};
 
-		fnSetValueTestCase1({maxLength : 0, value : "Test", output: "Test"});
-		fnSetValueTestCase1({maxLength: 5, value: "Test", output: "Test"});
-		fnSetValueTestCase1({maxLength: 2, value: "Test", output: "Test"});
+		await fnSetValueTestCase1({maxLength : 0, value : "Test", output: "Test"});
+		await fnSetValueTestCase1({maxLength: 5, value: "Test", output: "Test"});
+		await fnSetValueTestCase1({maxLength: 2, value: "Test", output: "Test"});
 	});
 
-	QUnit.test("maxLength: setValue() after the initial rendering should not respect getMaxLength", function(assert) {
-		var fnSetValueTestCase2 = function(mSettings) {
+	QUnit.test("maxLength: setValue() after the initial rendering should not respect getMaxLength", async function(assert) {
+		var fnSetValueTestCase2 = async function(mSettings) {
 			// Arrange
 			var oInput = new Input({maxLength: mSettings.maxLength});
 			var fnSetValueSpy = sinon.spy(oInput, "setValue");
 
 			oInput.placeAt("content");
-			nextUIUpdate.runSync()/*fake timer is used in module*/;
+			await nextUIUpdate();
 			var fnRerenderSpy = sinon.spy(oInput, "onAfterRendering");
 
 			// Act
@@ -8392,14 +8422,15 @@ sap.ui.define([
 			oInput.destroy();
 		};
 
-		fnSetValueTestCase2({maxLength: 0, input : "Test", output: "Test"});
-		fnSetValueTestCase2({maxLength: 5, input: "Test", output: "Test"});
-		fnSetValueTestCase2({maxLength: 2, input: "Test", output: "Test"});
+		await fnSetValueTestCase2({maxLength: 0, input : "Test", output: "Test"});
+		await fnSetValueTestCase2({maxLength: 5, input: "Test", output: "Test"});
+		await fnSetValueTestCase2({maxLength: 2, input: "Test", output: "Test"});
 	});
 
-	QUnit.test("Mobile: Dialog's input should propagate the correct typed value for the valueHelpRequest event", function (assert) {
+	QUnit.test("Mobile: Dialog's input should propagate the correct typed value for the valueHelpRequest event", async function (assert) {
+		this.clock = sinon.useFakeTimers();
 		// Arrange
-		this.stub(Device, "system", {
+		this.stub(Device, "system").value({
 			desktop: false,
 			phone: true,
 			tablet: false
@@ -8444,7 +8475,7 @@ sap.ui.define([
 				]
 			})).placeAt("content");
 
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 
 		// Act
 		var oSuggPopover = oInput._getSuggestionsPopover();
@@ -8455,7 +8486,7 @@ sap.ui.define([
 		oPopupInput.setValue("te");
 		oPopupInput.fireLiveChange({value: "", newValue: "te"});
 		oInput._fireValueHelpRequest();
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		await nextUIUpdate(this.clock);
 		this.clock.tick(500);
 
 		// Cleanup
