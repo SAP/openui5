@@ -21,7 +21,7 @@ describe("sap.m.Title", function() {
 		element(by.id("setting2_width-inner")).sendKeys("310px");
 		element(by.id("setting6_wrapping")).click();
 
-		// delete "Normal" and type "Hyphenated"
+		// delete "Normal" to type "Hyphenated"
 		for (var index = 0; index < 6; index++) {
 			element(by.id("setting7_wrappingType-inner")).sendKeys(protractor.Key.BACK_SPACE);
 		}
@@ -94,6 +94,19 @@ describe("sap.m.Title", function() {
 		expect(takeScreenshot(element(by.id("title1")))).toLookAs("10_no_wrapping");
 	});
 
+	it("text direction: default (auto)", function () {
+		var oContent = element(by.id("content-mixed-texts"));
+		// delete "310px"
+		for (var index = 0; index < 6; index++) {
+			element(by.id("setting2_width-inner")).sendKeys(protractor.Key.BACK_SPACE);
+		}
+		element(by.id("setting2_width-inner")).sendKeys("800px");
+		element(by.id("setting2_width-inner")).sendKeys(protractor.Key.ENTER);
+		setSelectedKey("setting_dir", "Inherit");
+
+		expect(takeScreenshot(oContent)).toLookAs("11_dir_auto");
+	});
+
 	// different text directions
 	it("text direction: ltr", function () {
 		var	oContent = element(by.id("content-mixed-texts"));
@@ -109,21 +122,13 @@ describe("sap.m.Title", function() {
 		expect(takeScreenshot(oContent)).toLookAs("13_dir_rtl");
 	});
 
-	it("text direction: default (auto)", function () {
-		var oContent = element(by.id("content-mixed-texts"));
-		setSelectedKey("setting_dir", "Inherit");
-
-		expect(takeScreenshot(oContent)).toLookAs("11_dir_auto");
-	});
-
 	it("text direction and text align: default", function () {
 		var oContent = element(by.id("content-mixed-texts"));
-		setSelectedKey("setting2_width", "800px");
 
 		expect(takeScreenshot(oContent)).toLookAs("14_dir_and_align_default");
 	});
 
-	it("text direction and text align: default", function () {
+	it("text direction 'RTL' and text align 'begin'", function () {
 		var oContent = element(by.id("content-mixed-texts"));
 		setSelectedKey("setting_dir", "RTL");
 		setSelectedKey("setting4_align", "Begin");
@@ -131,7 +136,7 @@ describe("sap.m.Title", function() {
 		expect(takeScreenshot(oContent)).toLookAs("15_dir_and_align_rtl_begin");
 	});
 
-	it("text direction and text align: default", function () {
+	it("text direction 'RTL' and text align 'End'", function () {
 		var oContent = element(by.id("content-mixed-texts"));
 		setSelectedKey("setting_dir", "RTL");
 		setSelectedKey("setting4_align", "End");
