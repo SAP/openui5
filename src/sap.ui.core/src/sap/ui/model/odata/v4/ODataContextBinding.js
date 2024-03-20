@@ -1448,6 +1448,7 @@ sap.ui.define([
 	 * @throws {Error} If {@link #invoke} fails
 	 *
 	 * @deprecated As of version 1.123.0, use {@link #invoke} instead
+	 * @function
 	 * @public
 	 * @since 1.37.0
 	 */
