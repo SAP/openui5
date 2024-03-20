@@ -206,6 +206,7 @@
                                             "box-sizing": "content-box"
                                         });
                                         oRta.destroy();
+                                        objRta = null;
                                     });
                                 });
                             });
