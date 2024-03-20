@@ -164,6 +164,7 @@ sap.ui.define([
 		const oFlexInfoSession = FlexInfoSession.getByReference(mPropertyBag.reference);
 		mPropertyBag.version ||= oFlexInfoSession.version;
 		mPropertyBag.adaptationId ||= oFlexInfoSession.adaptationId;
+		mPropertyBag.allContextsProvided ||= oFlexInfoSession.allContextsProvided;
 	}
 
 	function createFlexObjects(oStorageResponse) {
@@ -370,7 +371,9 @@ sap.ui.define([
 				preparedMaps: {},
 				componentId: mPropertyBag.componentId,
 				componentData: mPropertyBag.componentData,
-				partialFlexState: mPropertyBag.partialFlexState
+				partialFlexState: mPropertyBag.partialFlexState,
+				version: mPropertyBag.version,
+				allContextsProvided: mPropertyBag.allContextsProvided
 			});
 
 			storeInfoInSession(mPropertyBag.reference, mResponse);
@@ -406,6 +409,18 @@ sap.ui.define([
 		var sFlexInstanceComponentId = _mInstances[mInitProperties.reference].componentId;
 		// if the component with the same reference was rendered with a new ID - clear existing state
 		if (!mInitProperties.reInitialize && sFlexInstanceComponentId !== mInitProperties.componentId) {
+			mInitProperties.reInitialize = true;
+		}
+	}
+
+	function checkVersionAndAllContexts(mInitProperties) {
+		var sFlexInstanceVersion = _mInstances[mInitProperties.reference].version;
+		if (!mInitProperties.reInitialize && sFlexInstanceVersion !== mInitProperties.version) {
+			mInitProperties.reInitialize = true;
+		}
+
+		const bFlexInstanceAllContexts = _mInstances[mInitProperties.reference].allContextsProvided;
+		if (!mInitProperties.reInitialize && bFlexInstanceAllContexts !== mInitProperties.allContextsProvided) {
 			mInitProperties.reInitialize = true;
 		}
 	}
@@ -474,6 +489,7 @@ sap.ui.define([
 			await _mInitPromises[sFlexReference];
 			checkPartialFlexState(mProperties);
 			checkComponentId(mProperties);
+			checkVersionAndAllContexts(mProperties);
 			if (mProperties.reInitialize) {
 				await loadFlexData(mProperties);
 			} else {

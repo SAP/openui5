@@ -725,6 +725,52 @@ sap.ui.define([
 			});
 			assert.strictEqual(oDataSelector.get({reference: sReference}).length, 2, "removing max layer, all changes are available again");
 		});
+
+		QUnit.test("when initialize is called with different versions", async function(assert) {
+			await FlexState.initialize({
+				reference: sReference,
+				componentId: sComponentId,
+				version: "0"
+			});
+			assert.strictEqual(this.oLoadFlexDataStub.callCount, 1, "the data is only requested once");
+
+			await FlexState.initialize({
+				reference: sReference,
+				componentId: sComponentId,
+				version: "0"
+			});
+			assert.strictEqual(this.oLoadFlexDataStub.callCount, 1, "the data is not requested again");
+
+			await FlexState.initialize({
+				reference: sReference,
+				componentId: sComponentId,
+				version: "1"
+			});
+			assert.strictEqual(this.oLoadFlexDataStub.callCount, 2, "the data is requested again");
+		});
+
+		QUnit.test("when initialize is called with different allContextsProvided values", async function(assert) {
+			await FlexState.initialize({
+				reference: sReference,
+				componentId: sComponentId,
+				allContextsProvided: true
+			});
+			assert.strictEqual(this.oLoadFlexDataStub.callCount, 1, "the data is only requested once");
+
+			await FlexState.initialize({
+				reference: sReference,
+				componentId: sComponentId,
+				allContextsProvided: undefined
+			});
+			assert.strictEqual(this.oLoadFlexDataStub.callCount, 2, "the data is requested again");
+
+			await FlexState.initialize({
+				reference: sReference,
+				componentId: sComponentId,
+				allContextsProvided: true
+			});
+			assert.strictEqual(this.oLoadFlexDataStub.callCount, 3, "the data is requested again");
+		});
 	});
 
 	QUnit.module("FlexState without stubs and a ushell container", {
