@@ -1270,7 +1270,7 @@ function(
 
 		// allow the context menu to open on the SingleSelect or MultiSelect control
 		if (oEvent.srcControl == this.getModeControl() ||
-			document.activeElement.matches(".sapMLIB,.sapMListTblCell,.sapMListTblSubRow")) {
+			document.activeElement.matches(".sapMLIB,.sapMListTblCell,.sapMListTblSubRow,.sapMListTblSubCnt")) {
 			this.informList("ContextMenu", oEvent);
 		}
 	};
