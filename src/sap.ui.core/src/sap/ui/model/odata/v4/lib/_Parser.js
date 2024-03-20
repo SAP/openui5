@@ -35,9 +35,10 @@ sap.ui.define([], function () {
 		// a path (ABNF rules expandPath, selectPath, ...)
 		sPath = sNamedPath + "|" + sStarPath,
 		// The pattern for a token with ID "VALUE"
-		// All other characters in expressions (constants of type double/date/time/GUID), '/' as
-		// part of rootExpr or implicitVariableExpr, '+' may be %-encoded
-		sValue = '(?:[-+:./\\w"]|%2[bB])+',
+		// All other characters in expressions
+		// (constants of type double/date/time/dateTimeOffset/GUID), '/' as part of rootExpr or
+		// implicitVariableExpr, '+' and ':' may be %-encoded
+		sValue = '(?:[-+:./\\w"]|%2[bB]|%3[aA])+',
 		// A Token: either an operator, a delimiter, a GUID (in aMatches[4]), a path (in
 		// aMatches[5]), a value (in aMatches[6]) or a system query option (in aMatches[7])
 		rToken = new RegExp("^(?:" + sOperators + "|" + sDelimiters + "|(" + sGuid + ")|("
