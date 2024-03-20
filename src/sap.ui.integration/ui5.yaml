@@ -55,6 +55,7 @@ builder:
               - sap/f/manifest.json
               - sap/ui/unified/manifest.json
               - sap/ui/layout/manifest.json
+              - sap/ui/table/manifest.json
             resolve: true
             renderer: true
           - mode: require
@@ -74,6 +75,7 @@ builder:
                - sap/f/
                - sap/ui/layout/
                - sap/ui/unified/
+               - sap/ui/table/
                - "!**/designtime/"
                - "!**/library-preload-lazy.js"
                - "!**/*.support.js"
@@ -120,6 +122,7 @@ builder:
               - sap/f/manifest.json
               - sap/ui/unified/manifest.json
               - sap/ui/layout/manifest.json
+              - sap/ui/table/manifest.json
             resolve: true
             renderer: true
           - mode: preload
@@ -136,6 +139,7 @@ builder:
               - sap/f/
               - sap/ui/layout/
               - sap/ui/unified/
+              - sap/ui/table/
               - "!**/designtime/"
               - "!**/library-preload-lazy.js"
               - "!**/*.support.js"

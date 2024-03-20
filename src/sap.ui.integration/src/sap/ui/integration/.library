@@ -24,6 +24,9 @@
     <dependency>
       <libraryName>sap.ui.layout</libraryName>
     </dependency>
+    <dependency>
+      <libraryName>sap.ui.table</libraryName>
+    </dependency>
   </dependencies>
 
   <appData>
