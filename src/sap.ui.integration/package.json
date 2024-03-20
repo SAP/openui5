@@ -18,6 +18,7 @@
     "@openui5/sap.f": "1.123.0-SNAPSHOT",
     "@openui5/sap.m": "1.123.0-SNAPSHOT",
     "@openui5/sap.ui.unified": "1.123.0-SNAPSHOT",
-    "@openui5/sap.ui.layout": "1.123.0-SNAPSHOT"
+    "@openui5/sap.ui.layout": "1.123.0-SNAPSHOT",
+    "@openui5/sap.ui.table": "1.123.0-SNAPSHOT"
   }
 }
