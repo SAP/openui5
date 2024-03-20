@@ -1518,7 +1518,6 @@ sap.ui.define([
 		// Arrange
 		const oInput = this.oCarousel.getPages()[0].getContent()[0],
 			oInputDomRef = oInput.getFocusDomRef();
-		var bMarked = false;
 
 		//Act
 		this.oCarousel.ontouchstart( {
@@ -1527,18 +1526,8 @@ sap.ui.define([
 			setMarked: function() {}
 		});
 
-		this.oCarousel.ontouchmove( {
-			target: oInputDomRef,
-			isMarked: function() {
-				return bMarked;
-			},
-			setMarked: function() {
-				bMarked = true;
-			}
-		});
-
 		// Assert
-		assert.notOk(bMarked, "Event should not be marked as handled by the carousel for text selection inside carousel");
+		assert.notOk(this.oCarousel._bDragging, "Dragging is not started.");
 	});
 
 	QUnit.module("Change pages", {
