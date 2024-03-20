@@ -6,6 +6,7 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/base/util/each",
+	"sap/base/util/extend",
 	"sap/base/util/isEmptyObject",
 	"sap/ui/core/Lib",
 	"sap/ui/core/format/NumberFormat",
@@ -13,7 +14,8 @@ sap.ui.define([
 	"sap/ui/model/FormatException",
 	"sap/ui/model/ParseException",
 	"sap/ui/model/ValidateException"
-], function(Log, each, isEmptyObject, Library, NumberFormat, CompositeType, FormatException, ParseException, ValidateException) {
+], function(Log, each, extend, isEmptyObject, Library, NumberFormat, CompositeType, FormatException, ParseException,
+		ValidateException) {
 	"use strict";
 
 	/**
@@ -207,11 +209,15 @@ sap.ui.define([
 
 	/**
 	 * Create formatters used by this type
+	 *
 	 * @private
 	 */
-	Currency.prototype._createFormats = function() {
+	Currency.prototype._createFormats = function () {
 		var oSourceOptions = this.oFormatOptions.source;
-		this.oOutputFormat = NumberFormat.getCurrencyInstance(this.oFormatOptions);
+		this.oOutputFormat = NumberFormat.getCurrencyInstance(this.iScale >= 0
+			// ensures that amount scale wins over the decimals for the unit
+			? extend({}, {maxFractionDigits : this.iScale}, this.oFormatOptions)
+			: this.oFormatOptions);
 		if (oSourceOptions) {
 			if (isEmptyObject(oSourceOptions)) {
 				oSourceOptions = {
@@ -272,6 +278,44 @@ sap.ui.define([
 			return [0];
 		}
 		return [];
+	};
+
+	/**
+	 * Gets the indices of the binding parts of this composite type in order to determine those parts
+	 * whose types are required for formatting.
+	 * If for example the type of the amount part is a {@link sap.ui.model.odata.type.Decimal} with a
+	 * <code>scale</code> constraint less than the currency part's decimal places, then the amount's
+	 * scale is used.
+	 *
+	 * @returns {int[]}
+	 *   The indices of the parts with a relevant type for this composite type, or an empty array if
+	 *   the format option <code>showNumber</code> is <code>false</code>
+	 *
+	 * @override sap.ui.model.CompositeType#getPartsListeningToTypeChanges
+	 * @see #processPartTypes
+	 */
+	Currency.prototype.getPartsListeningToTypeChanges = function () {
+		// Only the first part is of interest because it may have a type with another scale than the
+		// decimal places for the currency part
+		return this.bShowNumber ? [0] : [];
+	};
+
+	/**
+	 * Processes the types of this composite type's parts. Remembers the <code>scale</code>
+	 * constraint of the amount part's type to consider it while formatting.
+	 *
+	 * @param {sap.ui.model.SimpleType[]} aPartTypes The types of the composite binding parts
+	 *
+	 * @override sap.ui.model.CompositeType#processPartTypes
+	 * @protected
+	 * @since 1.123.0
+	 */
+	Currency.prototype.processPartTypes = function (aPartTypes) {
+		const iOldScale = this.iScale;
+		this.iScale = aPartTypes[0]?.oConstraints?.scale;
+		if (iOldScale !== this.iScale) {
+			this._createFormats();
+		}
 	};
 
 	return Currency;
