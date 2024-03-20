@@ -120,6 +120,12 @@
 	right: 0;
 }
 
+/* Right to left */
+.sapMRbG[dir=rtl] .sapMRbHasLabel.sapMRb:focus:before  {
+	left: 0;
+	right: .6875rem;
+}
+
 .sapMRbDis:focus:before {
 	display: none;
 }
@@ -212,6 +218,12 @@
 
 	.sapMRbHasLabel.sapMRb:focus:before {
 		right: 0;
+	}
+
+	/* Right to left */
+	.sapMRbG[dir=rtl] .sapMRbHasLabel.sapMRb:focus:before  {
+		left: 0;
+		right: .3875rem;
 	}
 
 	.sapUiForm.sapUiFormEdit-CTX{
