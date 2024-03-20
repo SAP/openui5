@@ -399,6 +399,7 @@ sap.ui.define([
 	QUnit.module("FlexState with loadFlexData, callPrepareFunction and filtering stubbed", {
 		beforeEach() {
 			this.oLoadFlexDataStub = sandbox.stub(Loader, "loadFlexData").resolves(mEmptyResponse);
+			this.oLoadAuthorStub = sandbox.stub(Loader, "loadVariantsAuthors").resolves({});
 			this.oCallPrepareFunctionStub = sandbox.stub(FlexState, "callPrepareFunction").callsFake(mockPrepareFunctions);
 			this.oAppComponent = new UIComponent(sComponentId);
 			this.oIsLayerFilteringRequiredStub = sandbox.stub(LayerUtils, "isLayerFilteringRequired").returns(false);
@@ -428,6 +429,7 @@ sap.ui.define([
 				assert.ok(FlexState.isInitialized({ reference: sReference }), "FlexState has been initialized");
 				assert.notOk(FlexState.isInitialized({ control: this.oAppComponent }), "FlexState is not initialized at beginning");
 				assert.strictEqual(this.oLoadFlexDataStub.callCount, 1, "the FlexState made a call to load the flex data");
+				assert.strictEqual(this.oLoadAuthorStub.callCount, 1, "the FlexState made a call to load the variant authors");
 				assert.strictEqual(this.oCallPrepareFunctionStub.callCount, 0, "no prepare function was called");
 				return FlexState.getStorageResponse(sReference);
 			}.bind(this))
@@ -467,6 +469,7 @@ sap.ui.define([
 			})
 			.then(function() {
 				assert.equal(this.oLoadFlexDataStub.callCount, 1, "the data is only requested once");
+				assert.equal(this.oLoadAuthorStub.callCount, 1, "the variant author is only requested once");
 			}.bind(this));
 		});
 
@@ -481,6 +484,7 @@ sap.ui.define([
 			}))
 			.then(function() {
 				assert.equal(this.oLoadFlexDataStub.callCount, 1, "the data is only requested once");
+				assert.equal(this.oLoadAuthorStub.callCount, 1, "the variant authors is only requested once");
 			}.bind(this));
 		});
 
@@ -727,6 +731,7 @@ sap.ui.define([
 		beforeEach() {
 			this.oAppComponent = new UIComponent(sComponentId);
 			this.oLoaderSpy = sandbox.spy(Loader, "loadFlexData");
+			this.oLoadAuthorSpy = sandbox.spy(Loader, "loadVariantsAuthors");
 			this.oApplyStorageLoadFlexDataSpy = sandbox.spy(Storage, "loadFlexData");
 			this.oApplyStorageCompleteFlexDataSpy = sandbox.spy(Storage, "completeFlexData");
 		},
@@ -744,6 +749,7 @@ sap.ui.define([
 			})
 			.then(function() {
 				assert.equal(this.oLoaderSpy.callCount, 1, "loader is called once");
+				assert.notOk(this.oLoadAuthorSpy.calledOnce, "loadAuthors is not called");
 				assert.equal(this.oApplyStorageLoadFlexDataSpy.callCount, 1, "storage loadFlexData is called once");
 				assert.equal(this.oApplyStorageCompleteFlexDataSpy.callCount, 0, "storage completeFlexData is not called");
 			}.bind(this))
@@ -753,6 +759,7 @@ sap.ui.define([
 			}))
 			.then(function() {
 				assert.equal(this.oLoaderSpy.callCount, 2, "loader is called twice");
+				assert.equal(this.oLoadAuthorSpy.callCount, 1, "loadAuthors is called once");
 				assert.equal(this.oApplyStorageLoadFlexDataSpy.callCount, 1, "storage loadFlexData is called once");
 				assert.equal(this.oApplyStorageCompleteFlexDataSpy.callCount, 1, "storage completeFlexData is called for the first time");
 			}.bind(this))
@@ -762,6 +769,7 @@ sap.ui.define([
 			}))
 			.then(function() {
 				assert.equal(this.oLoaderSpy.callCount, 2, "loader is not called again");
+				assert.equal(this.oLoadAuthorSpy.callCount, 1, "loadAuthors is not called again");
 				assert.equal(this.oApplyStorageLoadFlexDataSpy.callCount, 1, "storage loadFlexData is not called again");
 				assert.equal(this.oApplyStorageCompleteFlexDataSpy.callCount, 1, "storage completeFlexData is not called again");
 			}.bind(this));
@@ -775,6 +783,7 @@ sap.ui.define([
 			})
 			.then(function() {
 				assert.equal(this.oLoaderSpy.callCount, 1, "loader is called once");
+				assert.notOk(this.oLoadAuthorSpy.calledOnce, "loadAuthors is not called");
 				assert.equal(this.oApplyStorageLoadFlexDataSpy.callCount, 1, "storage loadFlexData is called once");
 				assert.equal(this.oApplyStorageCompleteFlexDataSpy.callCount, 0, "storage completeFlexData is not called");
 			}.bind(this))
@@ -785,6 +794,7 @@ sap.ui.define([
 			}))
 			.then(function() {
 				assert.equal(this.oLoaderSpy.callCount, 1, "loader is called not called again");
+				assert.notOk(this.oLoadAuthorSpy.calledOnce, "loadAuthors is not called");
 				assert.equal(this.oApplyStorageLoadFlexDataSpy.callCount, 1, "storage loadFlexData is not called again");
 				assert.equal(this.oApplyStorageCompleteFlexDataSpy.callCount, 0, "storage completeFlexData is not called");
 			}.bind(this))
@@ -793,7 +803,8 @@ sap.ui.define([
 				componentId: sComponentId
 			}))
 			.then(function() {
-				assert.equal(this.oLoaderSpy.callCount, 2, "loader is not called again");
+				assert.equal(this.oLoaderSpy.callCount, 2, "loader is called again");
+				assert.equal(this.oLoadAuthorSpy.callCount, 1, "loadAuthors is called once");
 				assert.equal(this.oApplyStorageLoadFlexDataSpy.callCount, 1, "storage loadFlexData is not called again");
 				assert.equal(this.oApplyStorageCompleteFlexDataSpy.callCount, 1, "storage completeFlexData is called for the first time");
 			}.bind(this));

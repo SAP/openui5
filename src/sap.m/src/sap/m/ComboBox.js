@@ -751,7 +751,9 @@ sap.ui.define([
 				this.setSelection(null);
 			}
 
-			if (!bEmptyValue && oControl && oControl._bDoTypeAhead) {
+			const bExactMatch = aCommonStartsWithItems.some((item) => item.getText() === sValue);
+
+			if (!bEmptyValue && oControl && (oControl._bDoTypeAhead || bExactMatch)) {
 				this.handleTypeAhead(oControl, aVisibleItems, sValue);
 			} else if (!bEmptyValue && aCommonStartsWithItems[0] && sValue === aCommonStartsWithItems[0].getText()) {
 				this.setSelection(aCommonStartsWithItems[0]);

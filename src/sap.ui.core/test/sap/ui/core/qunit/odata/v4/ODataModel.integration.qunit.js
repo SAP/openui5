@@ -500,7 +500,7 @@ sap.ui.define([
 	}
 
 	/**
-	 * Creates a test with the given title and executes viewStart with the given parameters.
+	 * Creates a test with the given title and invokes viewStart with the given parameters.
 	 *
 	 * @param {string} sTitle The title of the test case
 	 * @param {string} sView The XML snippet of the view
@@ -1169,7 +1169,7 @@ sap.ui.define([
 		 * @param {boolean} bDropFromCollection If <code>true</code> the context is no longer in
 		 *   the collection
 		 * @param {function} [fnOnBeforeDestroy]
-		 *  Call back function that is executed once the kept-alive context gets destroyed.
+		 *  Call back function that is invoked once the kept-alive context gets destroyed.
 		 * @returns {Promise} A promise that is resolved with the kept-alive context when the
 		 * view is created and ready
 		 */
@@ -2715,6 +2715,59 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: PATCH an entity with a key predicate consisting of a single key property of type
+	// Edm.DateTimeOffset. The PATCH failed and a UI5 message is created.
+	// SNOW: CS20240007200281
+	QUnit.test("CS20240007200281: key property is Edm.DateTimeOffset", async function (assert) {
+		const oModel = this.createSpecialCasesModel({autoExpandSelect : true});
+		const sView = `
+<Table id="table" items="{/Artists(ArtistID='42',IsActiveEntity=true)/_Event}">
+	<Input id="name" value="{Name}"/>
+</Table>`;
+
+		this.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/_Event"
+				+ "?$select=Name,TimeStamp&$skip=0&$top=100", {
+				value : [
+					{Name : "Taubertal Festival", TimeStamp : "08-08-2024T01:02:03Z"}
+				]
+			})
+			.expectChange("name", ["Taubertal Festival"]);
+
+		await this.createView(assert, sView, oModel);
+		const aTableRows = this.oView.byId("table").getItems();
+
+		this.expectChange("name", ["Woodstock"])
+			.expectRequest({
+				method : "PATCH",
+				url : "Artists(ArtistID='42',IsActiveEntity=true)"
+					+ "/_Event(08-08-2024T01%3A02%3A03Z)",
+				payload : {Name : "Woodstock"}
+			}, createErrorInsideBatch({target : "Name"}))
+			.expectMessages([{
+				code : "CODE",
+				message : "Request intentionally failed",
+				persistent : true,
+				target : "/Artists(ArtistID='42',IsActiveEntity=true)"
+					+ "/_Event(08-08-2024T01%3A02%3A03Z)/Name",
+				technical : true,
+				type : "Error"
+			}]);
+
+		this.oLogMock.expects("error")
+			.withArgs("Failed to update path /Artists(ArtistID='42',IsActiveEntity=true)"
+				+ "/_Event(08-08-2024T01%3A02%3A03Z)/Name");
+
+		const oInput = aTableRows[0].getCells()[0];
+		// code under test
+		oInput.getBinding("value").setValue("Woodstock");
+
+		await this.waitForChanges(assert);
+
+		await this.checkValueState(assert, oInput, "Error",
+			"Request intentionally failed");
+	});
+
+	//*********************************************************************************************
 	// Scenario: Minimal test for an absolute ODataPropertyBinding. This scenario is comparable with
 	// "FavoriteProduct" in the SalesOrders application.
 	testViewStart("Absolute ODPB",
@@ -3139,7 +3192,7 @@ sap.ui.define([
 	// Scenario: Function import.
 	// This scenario is similar to the "Favorite product ID" in the SalesOrders application. In the
 	// SalesOrders application the binding context is set programmatically. This example directly
-	// triggers the function import.
+	// invokes the function import.
 	testViewStart("FunctionImport", '\
 <FlexBox binding="{/GetEmployeeByID(EmployeeID=\'2\')}">\
 	<Text id="text" text="{Name}"/>\
@@ -3696,7 +3749,7 @@ sap.ui.define([
 			});
 
 			return Promise.all([
-				that.oView.byId("action").getObjectBinding().execute(),
+				that.oView.byId("action").getObjectBinding().invoke(),
 				that.waitForChanges(assert)
 			]);
 		}).then(function (aResults) {
@@ -3725,7 +3778,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: Immediately after execute the parameter is changed again. See that the request uses
+	// Scenario: Immediately after invoke the parameter is changed again. See that the request uses
 	// the old value. Even refresh must still use it.
 	// BCP: 2070180785
 	// TODO What about changing the context for the binding parameter?
@@ -3740,7 +3793,7 @@ sap.ui.define([
 
 			oBinding = that.oModel.bindContext("/GetEmployeeByID(...)");
 			oBinding.setParameter("EmployeeID", "1");
-			oPromise = oBinding.execute();
+			oPromise = oBinding.invoke();
 			oBinding.setParameter("EmployeeID", "2");
 
 			return Promise.all([oPromise, that.waitForChanges(assert)]);
@@ -3754,7 +3807,7 @@ sap.ui.define([
 			that.expectRequest("GetEmployeeByID(EmployeeID='2')", {ID : "2"});
 
 			return Promise.all([
-				oBinding.execute(),
+				oBinding.invoke(),
 				that.waitForChanges(assert)
 			]);
 		});
@@ -3931,7 +3984,7 @@ sap.ui.define([
 				});
 
 			return Promise.all([
-				that.oView.byId("action").getObjectBinding().execute(),
+				that.oView.byId("action").getObjectBinding().invoke(),
 				that.waitForChanges(assert)
 			]);
 		}).then(function (aResults) {
@@ -5711,7 +5764,7 @@ sap.ui.define([
 			});
 
 			return Promise.all([
-				that.oView.byId("action").getObjectBinding().execute(),
+				that.oView.byId("action").getObjectBinding().invoke(),
 				that.waitForChanges(assert)
 			]);
 		}).then(function (aResults) {
@@ -6320,7 +6373,7 @@ sap.ui.define([
 				that.oView.byId("form").getObjectBinding()
 					.setParameter("TeamID", "TEAM_01")
 					.setParameter("Budget", "1234.1234")
-					.execute(),
+					.invoke(),
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
@@ -6436,7 +6489,7 @@ sap.ui.define([
 					}
 				}); // response does not matter here
 
-			oOperationBinding.execute();
+			oOperationBinding.invoke();
 
 			return that.waitForChanges(assert);
 		}).then(function () {
@@ -6542,7 +6595,7 @@ sap.ui.define([
 			}, {/* response does not matter here */});
 
 			// code under test
-			oOperation.execute();
+			oOperation.invoke();
 
 			return that.waitForChanges(assert);
 		}).then(function () {
@@ -6554,7 +6607,7 @@ sap.ui.define([
 				});
 
 			that.oLogMock.expects("error")
-				.withExactArgs("Failed to execute /ChangeTeamBudgetByID(...)",
+				.withExactArgs("Failed to invoke /ChangeTeamBudgetByID(...)",
 					sinon.match(oError.message), sODCB);
 			that.expectRequest({
 					method : "POST",
@@ -6578,7 +6631,7 @@ sap.ui.define([
 				.expectChange("budget", "-42");
 
 			return Promise.all([
-				oOperation.setParameter("Budget", "-42").execute()
+				oOperation.setParameter("Budget", "-42").invoke()
 					.then(mustFail(assert), function (oError0) {
 						assert.strictEqual(oError0, oError);
 					}),
@@ -6796,7 +6849,7 @@ sap.ui.define([
 			}, {/* response does not matter here */});
 
 			// code under test
-			return Promise.all([oOperation.execute(), that.waitForChanges(assert)]);
+			return Promise.all([oOperation.invoke(), that.waitForChanges(assert)]);
 		});
 	});
 
@@ -6840,7 +6893,7 @@ sap.ui.define([
 
 			return Promise.all([
 				// code under test
-				oOperation.execute(),
+				oOperation.invoke(),
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
@@ -7110,7 +7163,7 @@ sap.ui.define([
 	// * See that the count decreases
 	// The delete is used to change the count (to see that it is still updated)
 	//
-	// Call ODLB#sort with the same Sorter as before. This should not trigger a request.
+	// Call ODLB#sort with the same Sorter as before. This should not invoke a request.
 	// JIRA: CPOUI5ODATAV4-942
 	QUnit.test("ODLB: $count and sort()", function (assert) {
 		var oTable,
@@ -7393,7 +7446,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: A relative list binding's context is changed. Additionally a refresh (via
-	// requestSideEffects) is triggered after the binding has recreated its cache, but before the
+	// requestSideEffects) is invoked after the binding has recreated its cache, but before the
 	// dependent property bindings have been destroyed. In the incident, the list table contains
 	// the items and the detail table the schedules (with 1:n, which we don't have here).
 	// BCP: 2080123400
@@ -7733,7 +7786,7 @@ sap.ui.define([
 			oBinding.suspend();
 			oBinding.refresh();
 
-			// Do not immediately resume to see that no requests are triggered by refresh
+			// Do not immediately resume to see that no requests are invoked by refresh
 			return resolveLater();
 		}).then(function () {
 			that.expectEvents(assert, "sap.ui.model.odata.v4.OData", [
@@ -12350,16 +12403,16 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: Execute a bound action while an update request for the entity is not yet
+	// Scenario: Invoke a bound action while an update request for the entity is not yet
 	// resolved. Determine the ETag as late as possible.
 	// JIRA: CPOUI5UISERVICESV3-1450
 	//
 	// Do not update binding parameter when both key predicates are missing.
 	// JIRA: CPOUI5ODATAV4-1683
-	QUnit.test("Lazy determination of ETag while ODataContextBinding#execute", function (assert) {
+	QUnit.test("Lazy determination of ETag while ODataContextBinding#invoke", function (assert) {
 		var sAction = "com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamOfEmployee",
 			oBinding,
-			oExecutePromise,
+			oInvokePromise,
 			oModel = this.createTeaBusiModel({updateGroupId : "update"}),
 			fnRespond,
 			oSubmitBatchPromise,
@@ -12396,7 +12449,7 @@ sap.ui.define([
 						Name : "Jonathan Müller"
 					});
 				}))
-				.expectChange("name", "Jonathan Mueller"); // triggered by setValue
+				.expectChange("name", "Jonathan Mueller"); // invoked by setValue
 
 			oBinding.setValue("Jonathan Mueller");
 
@@ -12404,10 +12457,10 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			oExecutePromise = that.oView.byId("action").getObjectBinding()
-				.setParameter("TeamID", "42").execute("update");
+			oInvokePromise = that.oView.byId("action").getObjectBinding()
+				.setParameter("TeamID", "42").invoke("update");
 
-			that.expectChange("name", "Jonathan Müller"); // triggered by PATCH response
+			that.expectChange("name", "Jonathan Müller"); // invoked by PATCH response
 			fnRespond();
 
 			return Promise.all([
@@ -12429,7 +12482,7 @@ sap.ui.define([
 
 			return Promise.all([
 				that.oModel.submitBatch("update"),
-				oExecutePromise.then(function (oReturnValueContext) {
+				oInvokePromise.then(function (oReturnValueContext) {
 					assert.strictEqual(oReturnValueContext, undefined,
 						"no R.V.C. w/o key predicate");
 				}),
@@ -12439,13 +12492,13 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: Execute a bound action a 2nd time while the 1st POST is still "in flight"
+	// Scenario: Invoke a bound action a 2nd time while the 1st POST is still "in flight"
 	// BCP: 2380023421
-	QUnit.test("Lazy determination of ETag by ODataContextBinding#execute", function (assert) {
+	QUnit.test("Lazy determination of ETag by ODataContextBinding#invoke", function (assert) {
 		var sAction = "com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamOfEmployee",
 			oContext,
-			oExecutePromise1,
-			oExecutePromise2,
+			oInvokePromise1,
+			oInvokePromise2,
 			oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			fnRespond,
 			sView = '\
@@ -12481,19 +12534,19 @@ sap.ui.define([
 					});
 				}));
 
-			oExecutePromise1 = oModel.bindContext(sAction + "(...)", oContext)
+			oInvokePromise1 = oModel.bindContext(sAction + "(...)", oContext)
 				.setParameter("TeamID", "42")
-				.execute();
+				.invoke();
 
-			return that.waitForChanges(assert, "1st #execute");
+			return that.waitForChanges(assert, "1st #invoke");
 		}).then(function () {
 			// expect no 2nd POST yet!
 
-			oExecutePromise2 = oModel.bindContext(sAction + "(...)", oContext)
+			oInvokePromise2 = oModel.bindContext(sAction + "(...)", oContext)
 				.setParameter("TeamID", "23")
-				.execute();
+				.invoke();
 
-			return that.waitForChanges(assert, "2nd #execute");
+			return that.waitForChanges(assert, "2nd #invoke");
 		}).then(function () {
 			that.expectChange("name", "Jonathan Smith junior")
 				.expectChange("teamId", "42")
@@ -12514,11 +12567,11 @@ sap.ui.define([
 			fnRespond();
 
 			return Promise.all([
-				oExecutePromise1,
-				oExecutePromise2.then(function () {
+				oInvokePromise1,
+				oInvokePromise2.then(function () {
 					assert.strictEqual(oContext.getProperty("@odata.etag"), "ETag2");
 				}),
-				that.waitForChanges(assert, "1st response triggers 2nd request")
+				that.waitForChanges(assert, "1st response invokes 2nd request")
 			]);
 		});
 	});
@@ -13518,7 +13571,7 @@ sap.ui.define([
 				.expectChange("teamId", "42");
 
 			return Promise.all([
-				that.oView.byId("action").getObjectBinding().execute()
+				that.oView.byId("action").getObjectBinding().invoke()
 					.then(function (oReturnValueContext) {
 						assert.strictEqual(oReturnValueContext, undefined,
 							"no R.V.C. w/o key predicate");
@@ -13543,7 +13596,7 @@ sap.ui.define([
 					}]
 				});
 
-			that.oLogMock.expects("error").withExactArgs("Failed to execute /" + sUrl + "(...)",
+			that.oLogMock.expects("error").withExactArgs("Failed to invoke /" + sUrl + "(...)",
 				sinon.match(oError.message), sODCB);
 			that.oLogMock.expects("error").withExactArgs(//TODO: prevent log -> CPOUI5ODATAV4-127
 				"Failed to read path /" + sUrl + "(...)/TEAM_ID", sinon.match(oError.message),
@@ -13583,7 +13636,7 @@ sap.ui.define([
 				.expectChange("teamId", null); // reset to initial state
 
 			return Promise.all([
-				that.oView.byId("action").getObjectBinding().setParameter("TeamID", "").execute()
+				that.oView.byId("action").getObjectBinding().setParameter("TeamID", "").invoke()
 					.then(mustFail(assert), function (oError0) {
 						assert.strictEqual(oError0, oError);
 					}),
@@ -13637,7 +13690,7 @@ sap.ui.define([
 
 			return Promise.all([
 				// code under test
-				that.oModel.bindContext("special.cases.GetDefaults(...)", oHeaderContext).execute(),
+				that.oModel.bindContext("special.cases.GetDefaults(...)", oHeaderContext).invoke(),
 				that.waitForChanges(assert)
 			]);
 		}).then(function (aResults) {
@@ -13680,7 +13733,7 @@ sap.ui.define([
 				.setParameter("Name", oDefaults.getObject("Name"));
 
 			return Promise.all([
-				oAction.execute(),
+				oAction.invoke(),
 				that.waitForChanges(assert)
 			]);
 		}).then(function (aPromiseResults) {
@@ -13841,7 +13894,7 @@ sap.ui.define([
 
 				return Promise.all([
 					// code under test
-					oAction.execute().then(function (oResult) {
+					oAction.invoke().then(function (oResult) {
 						assert.strictEqual(oResult, undefined,
 							"no R.V.C. because EMPLOYEE_2_TEAM is missing");
 					}),
@@ -13852,14 +13905,14 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: Execute a bound action for an entity in a list binding and afterwards call refresh
+	// Scenario: Invoke a bound action for an entity in a list binding and afterwards call refresh
 	// with bAllowRemoval=true for the context the entity is pointing to. If the entity is gone from
 	// the list binding no error should happen because of the just deleted context.
 	// TODO Test with a created binding parameter, too. This failed in an OPA test previously.
 	QUnit.test("Bound action with context refresh which removes the context", function (assert) {
 		var oAction,
 			oContext,
-			oExecutionPromise,
+			oInvocationPromise,
 			oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table"\
@@ -13901,11 +13954,11 @@ sap.ui.define([
 				+ ".AcChangeTeamOfEmployee(...)", oContext);
 
 			// code under test
-			oExecutionPromise = oAction.setParameter("TeamID", "42").execute();
+			oInvocationPromise = oAction.setParameter("TeamID", "42").invoke();
 
 			return Promise.all([
 				oContext.requestRefresh(undefined, true),
-				oExecutionPromise.then(function (oReturnValueContext) {
+				oInvocationPromise.then(function (oReturnValueContext) {
 					assert.strictEqual(oReturnValueContext, undefined,
 						"no R.V.C. w/o key predicate");
 				}),
@@ -13957,7 +14010,7 @@ sap.ui.define([
 					// code under test
 					that.oView.byId("action").getObjectBinding()
 						.setParameter("Message", "The quick brown fox jumps over the lazy dog")
-						.execute(undefined, true), // CPOUI5ODATAV4-869
+						.invoke(undefined, true), // CPOUI5ODATAV4-869
 					that.waitForChanges(assert)
 				]);
 			});
@@ -13988,7 +14041,7 @@ sap.ui.define([
 				// code under test
 				that.oView.byId("function").getObjectBinding()
 					.setParameter("EmployeeID", "1")
-					.execute(),
+					.invoke(),
 				that.waitForChanges(assert)
 			]);
 		});
@@ -14079,7 +14132,7 @@ sap.ui.define([
 	// i.e. it changes the initially aggregated query options. Note: It is also possible to remove
 	// a filter which must lead to removal of the $filter option.
 	//
-	// Call ODLB#filter with the same Filter as before. this should not trigger a request.
+	// Call ODLB#filter with the same Filter as before. this should not invoke a request.
 	// CPOUI5ODATAV4-942
 	QUnit.test("Absolute ODLB with auto-$expand/$select: filter via API", function (assert) {
 		var oModel = this.createTeaBusiModel({autoExpandSelect : true}),
@@ -15956,16 +16009,16 @@ sap.ui.define([
 
 			return Promise.all([
 				// code under test
-				that.oView.byId("function").getObjectBinding().execute(),
+				that.oView.byId("function").getObjectBinding().invoke(),
 				that.waitForChanges(assert)
 			]);
 		});
 	});
 
 	//*********************************************************************************************
-	// Scenario: Operation binding for a function, first it is deferred, later is has been executed.
-	//   Show interaction of setParameter(), execute() and refresh().
-	QUnit.test("Function binding: setParameter, execute and refresh", function (assert) {
+	// Scenario: Operation binding for a function, first it is deferred, later is has been invoked.
+	//   Show interaction of setParameter(), invoke() and refresh().
+	QUnit.test("Function binding: setParameter, invoke and refresh", function (assert) {
 		var oFunctionBinding,
 			sView = '\
 <FlexBox id="function" binding="{/GetEmployeeByID(...)}">\
@@ -15978,7 +16031,7 @@ sap.ui.define([
 		return this.createView(assert, sView).then(function () {
 			oFunctionBinding = that.oView.byId("function").getObjectBinding();
 
-			oFunctionBinding.refresh(); // MUST NOT trigger a request!
+			oFunctionBinding.refresh(); // MUST NOT invoke a request!
 
 			that.expectRequest("GetEmployeeByID(EmployeeID='1')", {
 					ID : "1",
@@ -15987,7 +16040,7 @@ sap.ui.define([
 				.expectChange("name", "Jonathan Smith");
 
 			return Promise.all([
-				oFunctionBinding.setParameter("EmployeeID", "1").execute(),
+				oFunctionBinding.setParameter("EmployeeID", "1").invoke(),
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
@@ -16002,7 +16055,7 @@ sap.ui.define([
 		}).then(function () {
 			oFunctionBinding.setParameter("EmployeeID", "2");
 
-			oFunctionBinding.refresh(); // MUST NOT trigger a request!
+			oFunctionBinding.refresh(); // MUST NOT invoke a request!
 
 			that.expectRequest("GetEmployeeByID(EmployeeID='2')", {
 					ID : "2",
@@ -16011,7 +16064,7 @@ sap.ui.define([
 				.expectChange("name", "Peter Burke");
 
 			return Promise.all([
-				oFunctionBinding.execute(),
+				oFunctionBinding.invoke(),
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
@@ -16027,9 +16080,9 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: Operation binding for a function, first it is deferred, later is has been executed.
-	//   Show interaction of setParameter(), execute() and changeParameters().
-	QUnit.test("Function binding: setParameter, execute and changeParameters", function (assert) {
+	// Scenario: Operation binding for a function, first it is deferred, later is has been invoked.
+	//   Show interaction of setParameter(), invoke() and changeParameters().
+	QUnit.test("Function binding: setParameter, invoke and changeParameters", function (assert) {
 		var oFunctionBinding,
 			sView = '\
 <FlexBox id="function" binding="{/GetEmployeeByID(...)}">\
@@ -16042,7 +16095,7 @@ sap.ui.define([
 		return this.createView(assert, sView).then(function () {
 			oFunctionBinding = that.oView.byId("function").getObjectBinding();
 
-			oFunctionBinding.changeParameters({$select : "Name"}); // MUST NOT trigger a request!
+			oFunctionBinding.changeParameters({$select : "Name"}); // MUST NOT invoke a request!
 
 			that.expectRequest("GetEmployeeByID(EmployeeID='1')?$select=Name", {
 					Name : "Jonathan Smith"
@@ -16050,7 +16103,7 @@ sap.ui.define([
 				.expectChange("name", "Jonathan Smith");
 
 			return Promise.all([
-				oFunctionBinding.setParameter("EmployeeID", "1").execute(),
+				oFunctionBinding.setParameter("EmployeeID", "1").invoke(),
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
@@ -16065,7 +16118,7 @@ sap.ui.define([
 		}).then(function () {
 			oFunctionBinding.setParameter("EmployeeID", "2");
 
-			// MUST NOT trigger a request!
+			// MUST NOT invoke a request!
 			oFunctionBinding.changeParameters({$select : "Name"});
 
 			that.expectRequest("GetEmployeeByID(EmployeeID='2')?$select=Name", {
@@ -16074,7 +16127,7 @@ sap.ui.define([
 				.expectChange("name", "Peter Burke");
 
 			return Promise.all([
-				oFunctionBinding.execute(),
+				oFunctionBinding.invoke(),
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
@@ -16631,7 +16684,7 @@ sap.ui.define([
 
 			return Promise.all([
 				// code under test
-				oActionBinding.setParameter("TeamID", "TEAM_02").execute()
+				oActionBinding.setParameter("TeamID", "TEAM_02").invoke()
 					.then(function (oReturnValueContext) {
 						assert.strictEqual(oReturnValueContext.getPath(), "/EMPLOYEES('2')");
 					}),
@@ -16712,7 +16765,7 @@ sap.ui.define([
 
 			return Promise.all([
 				// code under test
-				oActionBinding.setParameter("TeamID", "TEAM_02").execute()
+				oActionBinding.setParameter("TeamID", "TEAM_02").invoke()
 					.then(function (oReturnValueContext) {
 						assert.strictEqual(oReturnValueContext.getPath(), "/EMPLOYEES('2')");
 					}),
@@ -16762,7 +16815,7 @@ sap.ui.define([
 
 			return Promise.all([
 				// code under test
-				oActionBinding.execute(),
+				oActionBinding.invoke(),
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
@@ -16781,7 +16834,7 @@ sap.ui.define([
 
 			return Promise.all([
 				// code under test
-				oActionBinding.execute().then(function (oReturnValueContext) {
+				oActionBinding.invoke().then(function (oReturnValueContext) {
 						assert.strictEqual(oReturnValueContext.getPath(), "/EMPLOYEES('2')");
 					}),
 				that.waitForChanges(assert)
@@ -16882,7 +16935,7 @@ sap.ui.define([
 					.setParameter("todate", "2017-08-10T23:59:59Z")
 					.setParameter("cityfrom", "new york")
 					.setParameter("cityto", "SAN FRANCISCO")
-					.execute(),
+					.invoke(),
 				that.waitForChanges(assert)
 			]).then(function () {
 				var oListBinding = oModel.bindList("value", oContextBinding.getBoundContext()),
@@ -16932,7 +16985,7 @@ sap.ui.define([
 				.expectChange("value", "2017-08-10T00:00:00Z");
 
 			return Promise.all([
-				that.oView.byId("function").getObjectBinding().execute(),
+				that.oView.byId("function").getObjectBinding().invoke(),
 				that.waitForChanges(assert)
 			]);
 		});
@@ -16962,7 +17015,7 @@ sap.ui.define([
 				});
 
 			return Promise.all([
-				oContextBinding.execute(),
+				oContextBinding.invoke(),
 				that.waitForChanges(assert)
 			]).then(function () {
 				var oListBinding = oModel.bindList("value", oContextBinding.getBoundContext()),
@@ -17012,7 +17065,7 @@ sap.ui.define([
 				});
 
 			return Promise.all([
-				oContextBinding.setParameter("carrid", "AA").execute(),
+				oContextBinding.setParameter("carrid", "AA").invoke(),
 				that.waitForChanges(assert)
 			]).then(function () {
 				var oListBinding = oModel.bindList("value", oContextBinding.getBoundContext()),
@@ -17085,7 +17138,7 @@ sap.ui.define([
 				.expectChange("distance", "2,572.0000");
 
 			return Promise.all([
-				that.oView.byId("function").getObjectBinding().execute(),
+				that.oView.byId("function").getObjectBinding().invoke(),
 				that.waitForChanges(assert)
 			]);
 		});
@@ -17124,7 +17177,7 @@ sap.ui.define([
 					.setParameter("guid", "0050568D-393C-1ED4-9D97-E65F0F3FCC23")
 					.setParameter("fldate", "2017-08-10T00:00:00Z")
 					.setParameter("flightTime", 42)
-					.execute(),
+					.invoke(),
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
@@ -17183,7 +17236,7 @@ sap.ui.define([
 				.expectChange("id1", "08/15");
 
 			return Promise.all([
-				oContextBinding.execute(),
+				oContextBinding.invoke(),
 				that.waitForChanges(assert)
 			]).then(function () {
 				assert.strictEqual(
@@ -17205,7 +17258,7 @@ sap.ui.define([
 
 		return this.createView(assert, "", oModel).then(function () {
 			//TODO In the V2 adapter case a function import is used instead of a bound action. So we
-			// need the key predicates which sometimes cannot be parsed from the URL. Trigger this
+			// need the key predicates which sometimes cannot be parsed from the URL. Invoke this
 			// request and wait for the result before calling the function import.
 			//TODO What about the ETag which might be got from this fresh request? Really use it?
 			that.expectRequest("SalesOrderLineItemSet(\'0815\',\'10\')/ToHeader", {
@@ -17227,7 +17280,7 @@ sap.ui.define([
 			return Promise.all([
 				// code under test
 				oModel.bindContext("GWSAMPLE_BASIC.SalesOrder_Confirm(...)", oParentContext)
-					.execute(),
+					.invoke(),
 				that.waitForChanges(assert)
 			]);
 		});
@@ -17280,7 +17333,7 @@ sap.ui.define([
 				.expectChange("newPhone", "+49 (0)2102 69555");
 
 			return Promise.all([
-				oContextBinding.setParameter("telephone", "+49 (0)2102 69555").execute(),
+				oContextBinding.setParameter("telephone", "+49 (0)2102 69555").invoke(),
 				that.waitForChanges(assert)
 			]);
 		});
@@ -18261,10 +18314,10 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: Operation binding for a function, first it is deferred, later is has been executed.
-	//   Show interaction of execute() and suspend()/resume(); setParameter() has been tested
-	//   for refresh() already, see test "Function binding: setParameter, execute and refresh".
-	QUnit.test("Function binding: execute and suspend/resume", function (assert) {
+	// Scenario: Operation binding for a function, first it is deferred, later is has been invoked.
+	//   Show interaction of invoke() and suspend()/resume(); setParameter() has been tested
+	//   for refresh() already, see test "Function binding: setParameter, invoke and refresh".
+	QUnit.test("Function binding: invoke and suspend/resume", function (assert) {
 		var oEmployeeBinding,
 			sFunctionName = "com.sap.gateway.default.iwbep.tea_busi.v0001"
 				+ ".FuGetEmployeeSalaryForecast",
@@ -18299,7 +18352,7 @@ sap.ui.define([
 				.expectChange("forecastSalary", "142");
 
 			return Promise.all([
-				that.oView.byId("function").getObjectBinding().execute(),
+				that.oView.byId("function").getObjectBinding().invoke(),
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
@@ -18730,7 +18783,7 @@ sap.ui.define([
 				// code under test
 				that.oView.byId("function").getObjectBinding()
 					.setParameter("SalesOrderID", "0500000001")
-					.execute(),
+					.invoke(),
 				that.waitForChanges(assert)
 			]);
 		});
@@ -20094,7 +20147,7 @@ sap.ui.define([
 				.expectChange("active", [, "Yes"]);
 
 			return Promise.all([
-				oAction.execute(undefined, false, null, /*bReplaceWithRVC*/true),
+				oAction.invoke(undefined, false, null, /*bReplaceWithRVC*/true),
 				that.waitForChanges(assert, "replace with active")
 			]);
 		}).then(function (aResult) {
@@ -21092,7 +21145,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("delayed execute", function (assert) {
+	QUnit.test("delayed invoke", function (assert) {
 		var sAction = "SalesOrderList('0500000000')/"
 				+ "com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder_Cancel",
 			oModel = this.createSalesOrdersModel(),
@@ -21107,7 +21160,7 @@ sap.ui.define([
 				}, {SalesOrderID : "0500000000"});
 
 			return Promise.all([
-				that.oView.byId("form").getElementBinding().execute("update"),
+				that.oView.byId("form").getElementBinding().invoke("update"),
 				that.oModel.submitBatch("update"),
 				that.waitForChanges(assert)
 			]);
@@ -21116,7 +21169,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: Refresh using a group with submit mode 'API'. The view contains one context binding
-	// without children. Hence the binding doesn't trigger a request, but its lock must be released.
+	// without children. Hence the binding doesn't invoke a request, but its lock must be released.
 	QUnit.test("ODCB: delayed refresh", function (assert) {
 		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = `
@@ -21152,7 +21205,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: Refresh using a group with submit mode 'API'. The model contains one list binding
-	// without a control. Hence getContexts() is not called and no request is triggered. But the
+	// without a control. Hence getContexts() is not called and no request is invoked. But the
 	// lock must be released.
 	QUnit.test("ODLB: delayed refresh", function (assert) {
 		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
@@ -26108,7 +26161,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Show a recursive hierarchy with a single root node, expand to show a single child.
 	// Edit non-hierarchy property with associated currency, also w/o sending a PATCH, for both root
-	// and child. Execute a bound action for both root and child to see that it updates the node.
+	// and child. Invoke a bound action for both root and child to see that it updates the node.
 	// JIRA: CPOUI5ODATAV4-1851
 	//
 	// Use relative ODLB with an initially suspended parent (JIRA: CPOUI5ODATAV4-1985 etc.)
@@ -26307,7 +26360,7 @@ sap.ui.define([
 			return Promise.all([
 				oModel.bindContext(sAction + "(...)", oRoot)
 					.setParameter("TeamID", "TEAM_23")
-					.execute()
+					.invoke()
 					.then(function (oReturnValueContext) {
 						assert.strictEqual(oRoot.getPath(),
 							"/TEAMS('42')/TEAM_2_EMPLOYEES('0')");
@@ -26316,7 +26369,7 @@ sap.ui.define([
 					}),
 				oModel.bindContext(sAction + "(...)", oChild)
 					.setParameter("TeamID", "TEAM_42")
-					.execute()
+					.invoke()
 					.then(function (oReturnValueContext) {
 						// Note: RVC has iGeneration === 2 instead of 0
 						assert.notStrictEqual(oReturnValueContext, oChild);
@@ -29900,6 +29953,7 @@ sap.ui.define([
 	// Create a new root via "@$ui5.node.parent" : null (JIRA: CPOUI5ODATAV4-2355)
 	// Move "Beta" to make it a root node (JIRA: CPOUI5ODATAV4-2399)
 	// Display NodeID on UI, request NodeID after creation (JIRA: CPOUI5ODATAV4-2381)
+	// NodeID must ignore list's filters (SNOW: DINC0087713)
 	//
 	// "Refresh single" for stale elements; keep same context instance for created nodes throughout
 	// collapse and side effects.
@@ -29912,15 +29966,17 @@ sap.ui.define([
 
 		const oModel = this.createSpecialCasesModel({autoExpandSelect : true});
 		const sFriend = "/Artists(ArtistID='99',IsActiveEntity=false)/_Friend";
-		const sBaseUrl = sFriend.slice(1) + "?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
-			+ "HierarchyNodes=$root" + sFriend
+		const sBaseUrl = sFriend.slice(1) + "?$apply=ancestors($root" + sFriend
+			+ ",OrgChart,_/NodeID,filter(sendsAutographs),keep start)"
+			+ "/com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root" + sFriend
 			+ ",HierarchyQualifier='OrgChart',NodeProperty='_/NodeID',Levels=1)";
 		const sView = `
 <t:Table id="table" rows="{path : '/Artists(ArtistID=\\'99\\',IsActiveEntity=false)/_Friend',
 		parameters : {
 			$$aggregation : {
 				hierarchyQualifier : 'OrgChart'
-			}
+			},
+			$filter : 'sendsAutographs'
 		}}" threshold="0" visibleRowCount="3">
 	<Text text="{= %{@$ui5.context.isTransient} }"/>
 	<Text text="{= %{@$ui5.node.isExpanded} }"/>
@@ -30020,6 +30076,7 @@ sap.ui.define([
 
 			that.expectChange("etag", [, "etag1.0"])
 				.expectChange("name", [, "Beta: β"])
+				// no "filter(sendsAutographs)" (SNOW: DINC0087713)
 				.expectRequest(sFriend.slice(1) + "?$apply=descendants($root" + sFriend
 					+ ",OrgChart,_/NodeID,filter(ArtistID eq '0' and IsActiveEntity eq false),1)"
 					+ "&$filter=ArtistID eq '1' and IsActiveEntity eq false&$select=_/NodeID", {
@@ -30084,6 +30141,7 @@ sap.ui.define([
 				})
 				.expectChange("etag", [, "etag2.0"])
 				.expectChange("name", [, "Gamma: γ"])
+				// no "filter(sendsAutographs)" (SNOW: DINC0087713)
 				.expectRequest(sFriend.slice(1) + "?$apply=descendants($root" + sFriend
 					+ ",OrgChart,_/NodeID,filter(ArtistID eq '0' and IsActiveEntity eq false),1)"
 					+ "&$filter=ArtistID eq '2' and IsActiveEntity eq false&$select=_/NodeID", {
@@ -30262,8 +30320,9 @@ sap.ui.define([
 			assert.strictEqual(oBeta.getModel(), oModel, "not destroyed by collapse");
 			assert.strictEqual(oGamma.getModel(), oModel, "not destroyed by collapse");
 
-			that.expectRequest(sFriend.slice(1) + "?$select=ArtistID,IsActiveEntity,Name,_/NodeID"
-					+ "&$filter=ArtistID eq '0' and IsActiveEntity eq false", {
+			that.expectRequest(sFriend.slice(1)
+					+ "?$filter=ArtistID eq '0' and IsActiveEntity eq false"
+					+ "&$select=ArtistID,IsActiveEntity,Name,_/NodeID", {
 					value : [{
 						"@odata.etag" : "etag0.1",
 						ArtistID : "0",
@@ -30440,7 +30499,10 @@ sap.ui.define([
 				})
 				.expectChange("etag", ["etag9.0"])
 				.expectChange("name", ["Aleph: ℵ"])
-				.expectRequest(sBaseUrl
+				// no "filter(sendsAutographs)" (SNOW: DINC0087713)
+				.expectRequest(sFriend.slice(1) + "?$apply="
+					+ "com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root" + sFriend
+					+ ",HierarchyQualifier='OrgChart',NodeProperty='_/NodeID',Levels=1)"
 					+ "&$filter=ArtistID eq '9' and IsActiveEntity eq false&$select=_/NodeID", {
 					value : [{
 						"@odata.etag" : "etag9.0",
@@ -30475,11 +30537,12 @@ sap.ui.define([
 			]);
 			checkCreatedPersisted(assert, oNewRoot);
 
-			that.expectRequest(sFriend.slice(1) + "?$select=ArtistID,IsActiveEntity,Name,_/NodeID"
-					+ "&$filter=ArtistID eq '9' and IsActiveEntity eq false"
+			that.expectRequest(sFriend.slice(1)
+					+ "?$filter=ArtistID eq '9' and IsActiveEntity eq false"
 					+ " or ArtistID eq '0' and IsActiveEntity eq false"
 					+ " or ArtistID eq '2' and IsActiveEntity eq false"
 					+ " or ArtistID eq '1' and IsActiveEntity eq false"
+					+ "&$select=ArtistID,IsActiveEntity,Name,_/NodeID"
 					+ "&$top=4", {
 					value : [{
 						"@odata.etag" : "etag9.1",
@@ -30595,6 +30658,7 @@ sap.ui.define([
 	// Before deletion, the new node is maybe moved to make it a root (JIRA: CPOUI5ODATAV4-2400)
 	// Old vs. new format of RecursiveHierarchy annotation (JIRA: CPOUI5ODATAV4-2401)
 	// Display NodeID on UI, request NodeID after creation (JIRA: CPOUI5ODATAV4-2381)
+	// NodeID must ignore list's filters (SNOW: DINC0087713)
 	//
 	// At first, create a new root node with a LimitedRank beyond all currently loaded nodes.
 	// Finally, it is also deleted.
@@ -30709,11 +30773,27 @@ sap.ui.define([
 					Name : "Aleph",
 					_ : null // not available w/ RAP for a non-hierarchical request
 				})
-				.expectRequest(sBaseUrl + "&$filter=ArtistID eq '8' and IsActiveEntity eq false"
-					+ "&$select=_/" + sLimitedRank + ",_/NodeID", {
+				.expectRequest({
+					batchNo : 3,
+					url : sBaseUrl + "&$filter=ArtistID eq '8' and IsActiveEntity eq false"
+						+ "&$select=_/" + sLimitedRank
+				}, {
 					value : [{
 						_ : {
-							[sLimitedRank] : "10", // Edm.Int64
+							[sLimitedRank] : "10" // Edm.Int64
+						}
+					}]
+				})
+				.expectRequest({
+					batchNo : 3,
+					// no "filter(...)/search(...)" (SNOW: DINC0087713)
+					url : sFriend.slice(1) + "?$apply="
+						+ "com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root" + sFriend
+						+ ",HierarchyQualifier='" + sHierarchyQualifier + "',NodeProperty='_/NodeID')"
+						+ "&$filter=ArtistID eq '8' and IsActiveEntity eq false&$select=_/NodeID"
+				}, {
+					value : [{
+						_ : {
 							NodeID : "8,false"
 						}
 					}]
@@ -30854,11 +30934,27 @@ sap.ui.define([
 					Name : "New",
 					_ : null // not available w/ RAP for a non-hierarchical request
 				})
-				.expectRequest(sBaseUrl + "&$filter=ArtistID eq '9' and IsActiveEntity eq false"
-					+ "&$select=_/" + sLimitedRank + ",_/NodeID", {
+				.expectRequest({
+					batchNo : 7,
+					url : sBaseUrl + "&$filter=ArtistID eq '9' and IsActiveEntity eq false"
+						+ "&$select=_/" + sLimitedRank
+				}, {
 					value : [{
 						_ : {
-							[sLimitedRank] : "4", // Edm.Int64
+							[sLimitedRank] : "4" // Edm.Int64
+						}
+					}]
+				})
+				.expectRequest({
+					batchNo : 7,
+					// no "filter(...)/search(...)" (SNOW: DINC0087713)
+					url : sFriend.slice(1) + "?$apply="
+						+ "com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root" + sFriend
+						+ ",HierarchyQualifier='" + sHierarchyQualifier + "',NodeProperty='_/NodeID')"
+						+ "&$filter=ArtistID eq '9' and IsActiveEntity eq false&$select=_/NodeID"
+				}, {
+					value : [{
+						_ : {
 							NodeID : "9,false"
 						}
 					}]
@@ -32429,11 +32525,10 @@ sap.ui.define([
 					Name : sName,
 					_ : null // not available w/ RAP for a non-hierarchical request
 				})
-				.expectRequest(sFriend + "?$apply=" + sFilterSearchPrefix
-					+ "descendants($root/" + sFriend
+				// no sFilterSearchPrefix (SNOW: DINC0087713)
+				.expectRequest(sFriend + "?custom=foo&$apply=descendants($root/" + sFriend
 					+ ",OrgChart,_/NodeID,filter(ArtistID eq '" + sParentId
 					+ "' and IsActiveEntity eq false),1)"
-					+ "/orderby(defaultChannel)"
 					+ "&$filter=ArtistID eq '" + sId
 					+ "' and IsActiveEntity eq false&$select=_/NodeID", {
 					value : [{
@@ -33968,11 +34063,27 @@ sap.ui.define([
 					Name : "Beth",
 					_ : null // not available w/ RAP for a non-hierarchical request
 				})
-				.expectRequest(sBaseUrl + "&$filter=ArtistID eq '10' and IsActiveEntity eq false"
-					+ "&$select=_/" + sLimitedRank + ",_/NodeID", {
+				.expectRequest({
+					batchNo : 7,
+					url : sBaseUrl + "&$filter=ArtistID eq '10' and IsActiveEntity eq false"
+						+ "&$select=_/" + sLimitedRank
+				}, {
 					value : [{
 						_ : {
-							[sLimitedRank] : "12", // Edm.Int64
+							[sLimitedRank] : "12" // Edm.Int64
+						}
+					}]
+				})
+				.expectRequest({
+					batchNo : 7,
+					// no "orderby(...)" due to SNOW: DINC0087713
+					url : sFriend.slice(1) + "?$apply="
+						+ "com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root" + sFriend
+						+ ",HierarchyQualifier='" + sHierarchyQualifier + "',NodeProperty='_/NodeID')"
+						+ "&$filter=ArtistID eq '10' and IsActiveEntity eq false&$select=_/NodeID"
+				}, {
+					value : [{
+						_ : {
 							NodeID : "10,false"
 						}
 					}]
@@ -34016,11 +34127,27 @@ sap.ui.define([
 					Name : "Gimel",
 					_ : null // not available w/ RAP for a non-hierarchical request
 				})
-				.expectRequest(sBaseUrl + "&$filter=ArtistID eq '10.1' and IsActiveEntity eq false"
-					+ "&$select=_/" + sLimitedRank + ",_/NodeID", {
+				.expectRequest({
+					batchNo : 9,
+					url : sBaseUrl + "&$filter=ArtistID eq '10.1' and IsActiveEntity eq false"
+						+ "&$select=_/" + sLimitedRank
+				}, {
 					value : [{
 						_ : {
-							[sLimitedRank] : "13", // Edm.Int64
+							[sLimitedRank] : "13" // Edm.Int64
+						}
+					}]
+				})
+				.expectRequest({
+					batchNo : 9,
+					// no "orderby(...)" due to SNOW: DINC0087713
+					url : sFriend.slice(1) + "?$apply="
+						+ "com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root" + sFriend
+						+ ",HierarchyQualifier='" + sHierarchyQualifier + "',NodeProperty='_/NodeID')"
+						+ "&$filter=ArtistID eq '10.1' and IsActiveEntity eq false&$select=_/NodeID"
+				}, {
+					value : [{
+						_ : {
 							NodeID : "10.1,false"
 						}
 					}]
@@ -36739,7 +36866,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: Object page bound to active entity: Call the "Edit" bound action on an active
-	// entity which responds with the inactive entity. The execute for the "Edit" operation binding
+	// entity which responds with the inactive entity. The invoke for the "Edit" operation binding
 	// resolves with the context for the inactive entity. Data for the inactive entity is displayed
 	// when setting this context on the object page. It can be edited and side effects can be
 	// requested. The controls on the object page bound to the return value context are cleared when
@@ -36754,7 +36881,7 @@ sap.ui.define([
 		operation : "GetDraft",
 		method : "GET"
 	}].forEach(function (oFixture, i) {
-		QUnit.test("bound operation: execute resolves with V4 context, " + i, function (assert) {
+		QUnit.test("bound operation: invoke resolves with V4 context, " + i, function (assert) {
 			var oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
 				oOperation,
 				sRequestPath = "Artists(ArtistID='42',IsActiveEntity=true)/special.cases."
@@ -36825,7 +36952,7 @@ sap.ui.define([
 
 				// code under test
 				return Promise.all([
-					oOperation.execute(),
+					oOperation.invoke(),
 					that.waitForChanges(assert)
 				]);
 			}).then(function (aPromiseResults) {
@@ -36882,7 +37009,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: Object page bound to active entity: Call the "Edit" bound action on an active
-	// entity which responds with the inactive entity. The execute for the "Edit" operation binding
+	// entity which responds with the inactive entity. The invoke for the "Edit" operation binding
 	// resolves with the context for the inactive entity. Data for the inactive entity is displayed
 	// when setting this context on the object page. Then call the "Activate" bound action to switch
 	// back to the active entity. The actions are part of the form.
@@ -37005,7 +37132,7 @@ sap.ui.define([
 
 				// code under test
 				return Promise.all([
-					oAction.execute(undefined, undefined, undefined, bReplaceWithRVC),
+					oAction.invoke(undefined, undefined, undefined, bReplaceWithRVC),
 					that.waitForChanges(assert)
 				]).then(function (aPromiseResults) {
 					var oContext = aPromiseResults[0]; // the return value context
@@ -37228,7 +37355,7 @@ sap.ui.define([
 				that = this;
 
 			/*
-			 * Executes the given action (ActivationAction or EditAction) on Artist ID 42.
+			 * Invokes the given action (ActivationAction or EditAction) on Artist ID 42.
 			 * Sets the object page to its return value context and waits for the expected changes.
 			 *
 			 * @param {string} sAction - The name of the action
@@ -37260,7 +37387,7 @@ sap.ui.define([
 
 				return Promise.all([
 					// code under test
-					oAction.execute(),
+					oAction.invoke(),
 					that.waitForChanges(assert)
 				]).then(function (aPromiseResults) {
 					oReturnValueContext = aPromiseResults[0];
@@ -37481,7 +37608,7 @@ sap.ui.define([
 					Messages : []
 				});
 
-			return oOperationBinding.execute();
+			return oOperationBinding.invoke();
 		}).then(function (oReturnValueContext0) {
 			// 2. Bind object page to the return value context of the create action
 			oReturnValueContext = oReturnValueContext0;
@@ -37585,7 +37712,7 @@ sap.ui.define([
 
 			return Promise.all([
 				// code under test
-				oAction.execute(),
+				oAction.invoke(),
 				that.waitForChanges(assert)
 			]);
 		}).then(function (aPromiseResults) {
@@ -37743,7 +37870,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: Object page bound to an active entity and its navigation property is $expand'ed via
-	// an own request. Trigger "Edit" bound action to start editing using a return value context and
+	// an own request. Invoke "Edit" bound action to start editing using a return value context and
 	// modify a property in the entity referenced by the navigation property. Activate the inactive
 	// entity via a bound action using another return value context.
 	// The elements referenced via the navigation property must not be taken from the cache.
@@ -37819,7 +37946,7 @@ sap.ui.define([
 
 				return Promise.all([
 					// code under test
-					oOperation.execute(),
+					oOperation.invoke(),
 					that.waitForChanges(assert)
 				]);
 			}).then(function (aPromiseResults) {
@@ -37886,7 +38013,7 @@ sap.ui.define([
 
 				return Promise.all([
 					// code under test
-					oOperation.execute(),
+					oOperation.invoke(),
 					that.waitForChanges(assert)
 				]);
 			}).then(function (aPromiseResults) {
@@ -38026,7 +38153,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Object page bound to active entity with a navigation property $expand'ed via
 	// auto-$expand/$select. The "Edit" bound action on the active entity has the binding parameter
-	// $$inheritExpandSelect set so that it triggers the POST request with the same $expand and
+	// $$inheritExpandSelect set so that it invokes the POST request with the same $expand and
 	// $select parameters used for loading the active entity. This way, all fields in the object
 	// page can be populated from the bound action response.
 	// Read side effects which include navigation properties while there are pending changes.
@@ -38110,7 +38237,7 @@ sap.ui.define([
 
 			return Promise.all([
 				// code under test
-				oOperation.execute(),
+				oOperation.invoke(),
 				that.waitForChanges(assert)
 			]);
 		}).then(function (aPromiseResults) {
@@ -38205,7 +38332,7 @@ sap.ui.define([
 				// no change in messages
 
 			return Promise.all([
-				oOperation.execute(),
+				oOperation.invoke(),
 				that.waitForChanges(assert)
 			]);
 		});
@@ -38272,7 +38399,7 @@ sap.ui.define([
 
 			return Promise.all([
 				// code under test
-				oOperation.execute(undefined, false, null, /*bReplaceWithRVC*/true),
+				oOperation.invoke(undefined, false, null, /*bReplaceWithRVC*/true),
 				that.waitForChanges(assert)
 			]);
 		}).then(function (aResults) {
@@ -38347,14 +38474,14 @@ sap.ui.define([
 
 			return Promise.all([
 				// code under test
-				oOperation.execute(),
+				oOperation.invoke(),
 				that.waitForChanges(assert)
 			]);
 		});
 	});
 
 	//*********************************************************************************************
-	// Scenario: Delete return value context obtained from bound action execute.
+	// Scenario: Delete return value context obtained from bound action invoke.
 	// JIRA: CPOUI5UISERVICESV3-1193
 	QUnit.test("bound operation: delete return value context", function (assert) {
 		var oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
@@ -38400,7 +38527,7 @@ sap.ui.define([
 			return Promise.all([
 				that.oModel
 					.bindContext("special.cases.EditAction(...)", that.oView.getBindingContext())
-					.execute(),
+					.invoke(),
 				that.waitForChanges(assert)
 			]);
 		}).then(function (aPromiseResults) {
@@ -38426,9 +38553,9 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: Execute bound action with context for which no data has been read yet.
+	// Scenario: Invoke bound action with context for which no data has been read yet.
 	// CPOUI5ODATAV4-1580: show usage of ODataModel#request+getKeyPredicate
-	QUnit.test("bound operation: execute bound action on context w/o read", function (assert) {
+	QUnit.test("bound operation: invoke bound action on context w/o read", function (assert) {
 		var oEntity = {IsActiveEntity : true, ArtistID : "4/2"}, // reverse key odering
 			oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
 			oParentContext,
@@ -38451,7 +38578,7 @@ sap.ui.define([
 
 			return Promise.all([
 				// code under test
-				oModel.bindContext("special.cases.EditAction(...)", oParentContext).execute(),
+				oModel.bindContext("special.cases.EditAction(...)", oParentContext).invoke(),
 				that.waitForChanges(assert)
 			]);
 		}).then(function (aPromiseResults) {
@@ -38485,7 +38612,7 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-1271
 	//
 	// - An invalid value is entered. Editing is canceled, but the active version is unknown and
-	// first needs to be retrieved via execution of "SiblingEntity(...)" navigation propery. The
+	// first needs to be retrieved via invocation of "SiblingEntity(...)" navigation propery. The
 	// draft is DELETEd afterwards.
 	// JIRA: CPOUI5ODATAV4-1272
 	["EditAction", "GetDraft"].forEach(function (sDraftOperation) {
@@ -38613,7 +38740,7 @@ sap.ui.define([
 
 				return Promise.all([
 					// code under test
-					oDraftOperation.execute(/*sGroupId*/undefined, /*bIgnoreETag*/false,
+					oDraftOperation.invoke(/*sGroupId*/undefined, /*bIgnoreETag*/false,
 						/*fnOnStrictHandlingFailed*/null, /*bReplaceWithRVC*/true),
 					that.waitForChanges(assert, sDraftOperation)
 				]);
@@ -38695,7 +38822,7 @@ sap.ui.define([
 						// code under test
 						oInactiveArtistContext.setProperty("Name", "Mrs Eliot"),
 						// code under test
-						oActivationAction.execute(/*sGroupId*/undefined, /*bIgnoreETag*/false,
+						oActivationAction.invoke(/*sGroupId*/undefined, /*bIgnoreETag*/false,
 							/*fnOnStrictHandlingFailed*/null, /*bReplaceWithRVC*/true),
 						that.waitForChanges(assert, "PATCH Name & POST ActivationAction")
 					]).then(function (aResults) {
@@ -38846,7 +38973,7 @@ sap.ui.define([
 
 					return Promise.all([
 						// code under test
-						oSiblingEntity.execute("$auto", /*bIgnoreETag*/false,
+						oSiblingEntity.invoke("$auto", /*bIgnoreETag*/false,
 							/*fnOnStrictHandlingFailed*/null, /*bReplaceWithRVC*/true),
 						that.waitForChanges(assert, "SiblingEntity")
 					]);
@@ -38901,7 +39028,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: Execute bound action; the parent binding has an empty path, but does not have a
+	// Scenario: Invoke bound action; the parent binding has an empty path, but does not have a
 	// cache, so that $$inheritExpandSelect must search the query options in the parent's parent.
 	// JIRA: CPOUI5ODATAV4-189
 	QUnit.test("bound operation: $$inheritExpandSelect and parent w/o cache #1", function (assert) {
@@ -38941,7 +39068,7 @@ sap.ui.define([
 				});
 
 			return Promise.all([
-				that.oView.byId("action").getObjectBinding().execute(),
+				that.oView.byId("action").getObjectBinding().invoke(),
 				that.waitForChanges(assert)
 			]);
 		}).then(function (aResults) {
@@ -38950,7 +39077,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: Execute bound action; the parent binding has a non-empty path, but does not have a
+	// Scenario: Invoke bound action; the parent binding has a non-empty path, but does not have a
 	// cache, so that $$inheritExpandSelect must search the query options in the parent's parent.
 	// JIRA: CPOUI5ODATAV4-189
 	QUnit.test("bound operation: $$inheritExpandSelect and parent w/o cache #2", function (assert) {
@@ -39019,7 +39146,7 @@ sap.ui.define([
 				}]);
 
 			return Promise.all([
-				that.oView.byId("action").getObjectBinding().execute(),
+				that.oView.byId("action").getObjectBinding().invoke(),
 				that.waitForChanges(assert)
 			]);
 		}).then(function ([oReturnValueContext]) {
@@ -39079,7 +39206,7 @@ sap.ui.define([
 
 			return Promise.all([
 				// code under test
-				oAction.execute(),
+				oAction.invoke(),
 				that.waitForChanges(assert)
 			]);
 		});
@@ -39148,7 +39275,7 @@ sap.ui.define([
 
 			return Promise.all([
 				// code under test
-				oAction.execute().then(function (oReturnValueContext) {
+				oAction.invoke().then(function (oReturnValueContext) {
 					assert.strictEqual(
 						oReturnValueContext.getPath(),
 						"/TEAMS('02')/TEAM_2_EMPLOYEES('7')");
@@ -39251,7 +39378,7 @@ sap.ui.define([
 
 			return Promise.all([
 				// code under test
-				oAction.execute(),
+				oAction.invoke(),
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
@@ -39266,7 +39393,7 @@ sap.ui.define([
 
 			return Promise.all([
 				// code under test
-				oFunction.execute(),
+				oFunction.invoke(),
 				that.waitForChanges(assert)
 			]);
 		});
@@ -39450,7 +39577,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario:
 	// Two List/Detail binding hierarchies for sales orders and sales order line items. When
-	// refreshing a single sales order, line items requests are triggered and messages are updated
+	// refreshing a single sales order, line items requests are invoked and messages are updated
 	// only for this single sales order and its dependent sales order line items. For other sales
 	// orders and their dependent sales order line items cached data is not discarded and messages
 	// are kept untouched. If there are unresolved bindings, their cached data which depends on the
@@ -39674,7 +39801,7 @@ sap.ui.define([
 				"None", "");
 		}).then(function () {
 			// select the first sales order to get its items and messages, request is
-			// triggered because the cache for the sales order line items is discarded
+			// invoked because the cache for the sales order line items is discarded
 			that.expectRequest("SalesOrderList('0500000347')/SO_2_SOITEM"
 					+ "?$select=ItemPosition,Messages,Note,SalesOrderID&$skip=0&$top=100", {
 					value : [{
@@ -40370,7 +40497,7 @@ sap.ui.define([
 						}]
 					}
 				})
-				.expectChange("name", "") // triggered by setValue
+				.expectChange("name", "") // invoked by setValue
 				.expectMessages([{
 					code : "1",
 					message : "Enter a name",
@@ -40397,7 +40524,7 @@ sap.ui.define([
 					Name : "Hugo",
 					__CT__FAKE__Message : {__FAKE__Messages : []}
 				})
-				.expectChange("name", "Hugo") // triggered by setValue
+				.expectChange("name", "Hugo") // invoked by setValue
 				.expectMessages([]);
 
 			// code under test
@@ -40474,7 +40601,7 @@ sap.ui.define([
 						}]
 					}
 				})
-				.expectChange("name", [""]) // triggered by setValue
+				.expectChange("name", [""]) // invoked by setValue
 				.expectMessages([{
 					code : "1",
 					message : "Enter a name",
@@ -40554,7 +40681,7 @@ sap.ui.define([
 						}]
 					}
 				})
-				.expectChange("name", [""]) // triggered by setValue
+				.expectChange("name", [""]) // invoked by setValue
 				.expectMessages([{
 					code : "1",
 					message : "Enter a name",
@@ -41161,7 +41288,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: Modifying a property of a kept-alive element in a list with
-	// $$patchWithoutSideEffects, triggers a side-effects refresh. The PATCH request does change the
+	// $$patchWithoutSideEffects, invokes a side-effects refresh. The PATCH request does change the
 	// ETag of the kept-alive element. The list refresh request does only add unknown properties
 	// to the kept-alive element, but does not take over changed properties. The refresh for the
 	// kept-alive element must do this.
@@ -42544,8 +42671,8 @@ sap.ui.define([
 				}]);
 
 			return Promise.all([
-				oOperationBinding.execute(),
-				that.waitForChanges(assert, "execute")
+				oOperationBinding.invoke(),
+				that.waitForChanges(assert, "invoke")
 			]);
 		}).then(function (aResults) {
 			oReturnValueContext = aResults[0];
@@ -42719,7 +42846,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: A requestSideEffects and a bound action are triggered concurrently and end up in
+	// Scenario: A requestSideEffects and a bound action are invoked concurrently and end up in
 	// the same $batch. The requestSideEffects is already running when the action starts.
 	// Nevertheless it must be possible to get the action's binding parameter from the cache being
 	// updated.
@@ -42768,8 +42895,8 @@ sap.ui.define([
 			return Promise.all([
 				that.oView.byId("form").getBindingContext().requestSideEffects(["SO_2_SOITEM"]),
 				Promise.resolve().then(function () {
-					// code under test - execute while requestSideEffects is already being processed
-					return that.oView.byId("action").getObjectBinding().execute()
+					// code under test - invoke while requestSideEffects is already being processed
+					return that.oView.byId("action").getObjectBinding().invoke()
 						.then(function (oReturnValueContext) {
 							assert.strictEqual(oReturnValueContext, undefined,
 								"no R.V.C. w/o key predicate");
@@ -42813,7 +42940,7 @@ sap.ui.define([
 			}, {/* don't care */});
 
 		oRoomIdBinding.setValue("32");
-	}, function (assert) { // ODCB#execute restarts only PATCHes for the same entity
+	}, function (assert) { // ODCB#invoke restarts only PATCHes for the same entity
 		var sAction = "com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamOfEmployee",
 			oRoomIdBinding = this.oView.byId("roomId0").getBinding("value");
 
@@ -42832,10 +42959,10 @@ sap.ui.define([
 				payload : {TeamID : "23"}
 			}, {/* don't care */});
 
-		// bound action also triggers retry
+		// bound action also invokes retry
 		return this.oModel.bindContext(sAction + "(...)", oRoomIdBinding.getContext())
 			.setParameter("TeamID", "23")
-			.execute("$auto")
+			.invoke("$auto")
 			.then(function (oReturnValueContext) {
 				assert.strictEqual(oReturnValueContext, undefined,
 					"no R.V.C. w/o key predicate");
@@ -42904,7 +43031,7 @@ sap.ui.define([
 			this.oModel.bindContext("/ChangeTeamBudgetByID(...)")
 				.setParameter("Budget", "1234.1234")
 				.setParameter("TeamID", "TEAM_01")
-				.execute("$auto")
+				.invoke("$auto")
 		]).then(function () {
 			return /*bAll*/true;
 		});
@@ -43189,9 +43316,9 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: ODCB#execute waits until PATCHes are back and happens inside same $batch as retry
+	// Scenario: ODCB#invoke waits until PATCHes are back and happens inside same $batch as retry
 	// (CPOUI5UISERVICESV3-1451)
-	QUnit.test("CPOUI5UISERVICESV3-1451: ODCB#execute after all PATCHes", function (assert) {
+	QUnit.test("CPOUI5UISERVICESV3-1451: ODCB#invoke after all PATCHes", function (assert) {
 		var oModel = this.createTeaBusiModel({groupId : "$direct", updateGroupId : "$auto"}),
 			fnReject,
 			oRoomIdBinding,
@@ -43270,10 +43397,10 @@ sap.ui.define([
 					payload : {TeamID : "23"}
 				}, {/* don't care */});
 
-			// bound action waits for PATCHes and triggers retry
+			// bound action waits for PATCHes and invokes retry
 			oPromise = that.oModel.bindContext(sAction + "(...)", oRoomIdBinding.getContext())
 				.setParameter("TeamID", "23")
-				.execute("$auto");
+				.invoke("$auto");
 
 			return Promise.all([
 				oPromise.then(function (oReturnValueContext) {
@@ -44282,11 +44409,11 @@ sap.ui.define([
 		});
 	});
 	//TODO With updateGroupId $direct, changing *both* parts of a composite binding (amount and
-	//  currency) in one step triggers *two* PATCH requests:
+	//  currency) in one step invokes *two* PATCH requests:
 	//  The first request contains the new amount and also the old currency as PATCHes for amounts
 	//  are always sent with currency.
 	//  The second request only contains the new currency.
-	//  Solution idea: Only execute $direct requests in prerendering task
+	//  Solution idea: Only invoke $direct requests in prerendering task
 	//  Is this critical? - Productive scenario runs with $batch. However: What if amount and
 	//  currency are in two different fields in draft scenario (no save button)?
 
@@ -44401,7 +44528,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: Execute a bound action on the target of a navigation property. That action returns
+	// Scenario: Invoke a bound action on the target of a navigation property. That action returns
 	// its binding parameter which is thus updated ("cache synchronization") and is the target of
 	// messages.
 	// CPOUI5UISERVICESV3-1587
@@ -44458,7 +44585,7 @@ sap.ui.define([
 
 			// code under test
 			return Promise.all([
-				oOperation.execute(),
+				oOperation.invoke(),
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
@@ -44500,7 +44627,7 @@ sap.ui.define([
 				IsActiveEntity : false
 			});
 
-			return oOperationBinding.execute();
+			return oOperationBinding.invoke();
 		}).then(function (oReturnValueContext0) {
 			oReturnValueContext = oReturnValueContext0;
 
@@ -44523,7 +44650,7 @@ sap.ui.define([
 				.expectChange("name", "Hour Frustrated");
 
 			return Promise.all([
-				// Note: do not use oReturnValueContext, it would trigger duplicate requests
+				// Note: do not use oReturnValueContext, it would invoke duplicate requests
 				that.oView.byId("objectPage").getObjectBinding().getBoundContext()
 					// code under test
 					.requestSideEffects([{$PropertyPath : "Name"}]),
@@ -44665,7 +44792,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: GET request is triggered before POST, but ends up inside same $batch and thus
+	// Scenario: GET request is invoked before POST, but ends up inside same $batch and thus
 	// could return the newly created entity.
 	// JIRA: CPOUI5UISERVICESV3-1825
 	//
@@ -44717,7 +44844,7 @@ sap.ui.define([
 					"@odata.count" : "3",
 					value : [{BusinessPartnerID : "4713"}]
 				});
-			// show more items before POST is even triggered
+			// show more items before POST is even invoked
 			that.oView.byId("table").requestItems();
 
 			that.expectChange("count", "4")
@@ -45618,7 +45745,7 @@ sap.ui.define([
 				}]);
 
 			return Promise.all([
-				oOperationBinding.execute(),
+				oOperationBinding.invoke(),
 				that.waitForChanges(assert)
 			]);
 		}).then(function (aResult) {
@@ -45646,7 +45773,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: Execute a bound action, this returns a return value context although the path
+	// Scenario: Invoke a bound action, this returns a return value context although the path
 	// contains navigation properties.
 	// JIRA: CPOUI5ODATAV4-2096
 	[false, true].forEach(function (bInheritExpandSelect) {
@@ -45731,7 +45858,7 @@ sap.ui.define([
 			const [oReturnValueContext] = await Promise.all([
 				oActionBinding
 					.setParameter("TeamID", sTeamId)
-					.execute(),
+					.invoke(),
 				this.waitForChanges(assert)
 			]);
 
@@ -46242,7 +46369,7 @@ sap.ui.define([
 
 			oForm.setBindingContext(
 				that.oView.byId("table").getItems()[0].getBindingContext());
-			oForm.getElementBinding().execute();
+			oForm.getElementBinding().invoke();
 
 			return that.waitForChanges(assert);
 		});
@@ -46777,7 +46904,7 @@ sap.ui.define([
 					type : "Error"
 				}]);
 
-			// trigger error to see that hasPendingChanges finds also parked changes
+			// invoke error to see that hasPendingChanges finds also parked changes
 			that.oView.byId("soCurrencyCode").getBinding("value").setValue("invalid");
 
 			assert.ok(oModel.hasPendingChanges());
@@ -46980,7 +47107,7 @@ sap.ui.define([
 				.expectChange("id", ["44", "43"])
 				// Context#getIndex returns a negative number because the ODLB has been reset and thus
 				// this.iCreatedContexts = 0;
-				// #create triggers Context#refreshDependentBindings before #rsE triggers
+				// #create invokes Context#refreshDependentBindings before #rsE invokes
 				// ODPaB#refreshDependentListBindingsWithoutCache, which seems natural (1st response is
 				// processed 1st). Not sure how JIRA: CPOUI5ODATAV4-288 could help here.
 				.expectChange("note", "Side", -1)
@@ -47245,7 +47372,7 @@ sap.ui.define([
 				that.waitForChanges(assert, "repeat POST but fail again")
 			]);
 		}).then(function () {
-			oNewContext.setProperty("Note", "Updated", null); // do not trigger POST again
+			oNewContext.setProperty("Note", "Updated", null); // do not invoke POST again
 			assert.strictEqual(oNewContext.getProperty("Note"), "Updated");
 
 			that.expectChange("id", ["", "0500000001"])
@@ -47354,7 +47481,7 @@ sap.ui.define([
 				})
 				.expectChange("id", ["43"]);
 
-			// invocation here shall trigger all requests
+			// invocation here shall invoke all requests
 			fnRespond();
 
 			return Promise.all([
@@ -47440,7 +47567,7 @@ sap.ui.define([
 					CompanyName : "SAP SE"
 				});
 
-			// invocation here shall trigger all requests
+			// invocation here shall invoke all requests
 			fnRespond();
 
 			return Promise.all([
@@ -47462,7 +47589,7 @@ sap.ui.define([
 	// For a context of a list binding, both a refresh of the whole collection and changes to
 	// structural properties only ({"$PropertyPath":"*"}) are requested at the same time. Also, both
 	// a refresh of the whole collection and of a single item ({$NavigationPropertyPath : ""}) are
-	// requested at the same time. No duplicate requests are triggered, no errors happen.
+	// requested at the same time. No duplicate requests are invoked, no errors happen.
 	// BCP: 2070206648
 	QUnit.test("requestSideEffects: path reduction", function (assert) {
 		var oContext,
@@ -47562,7 +47689,7 @@ sap.ui.define([
 			return Promise.all([
 				// code under test
 				oContext.requestSideEffects([
-					{$NavigationPropertyPath : ""}, // should not trigger a duplicate request
+					{$NavigationPropertyPath : ""}, // should not invoke a duplicate request
 					{$NavigationPropertyPath : "SOITEM_2_SO/SO_2_SOITEM"}
 				]),
 				that.waitForChanges(assert)
@@ -47709,7 +47836,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: Refresh a context binding w/o property bindings triggering a request. Ensure that
+	// Scenario: Refresh a context binding w/o property bindings invoking a request. Ensure that
 	// dependent bindings refresh and that the promise resolves.
 	// JIRA: CPOUI5ODATAV4-293
 	QUnit.test("ODCB: requestRefresh w/o own request", function (assert) {
@@ -48282,7 +48409,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: Server-driven paging with sap.m.Table
-	// We expect a "growing" table to only load data when triggered by the end-user via the "More"
+	// We expect a "growing" table to only load data when invoked by the end-user via the "More"
 	// button: There are no repeated requests in case the server-side page size is 2 and thus
 	// smaller than the table's growing threshold and just the first page is displayed with less
 	// data. The next request is only sent when the end user wants to see "More".
@@ -48788,7 +48915,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: A PATCH (not shown here) triggers a side effect for the whole object page, while
+	// Scenario: A PATCH (not shown here) invokes a side effect for the whole object page, while
 	// a paginator switches to another item. The side effect's GET is thus ignored because the
 	// cache for the old item is already inactive; thus the promise fails. Due to this failure, the
 	// old cache was restored, which was wrong. Timing is essential!
@@ -48843,7 +48970,7 @@ sap.ui.define([
 				.expectChange("name", "Team #2");
 
 			setTimeout(function () {
-				// pagination triggered by separate event --> new task
+				// pagination invoked by separate event --> new task
 				that.oView.setBindingContext(
 					oModel.bindContext("/TEAMS('TEAM_02')").getBoundContext());
 				setTimeout(fnRespond, 0);
@@ -48868,7 +48995,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: A PATCH (not shown here) triggers a side effect for the whole list, while a
+	// Scenario: A PATCH (not shown here) invokes a side effect for the whole list, while a
 	// paginator switches to another item. The side effect's GET is thus ignored because the cache
 	// for the old item is already inactive; thus an internal promise fails. Due to this failure,
 	// the old cache was restored, which was wrong. Timing is essential!
@@ -48932,7 +49059,7 @@ sap.ui.define([
 				.expectChange("name", ["Frederic Fall"]);
 
 			setTimeout(function () {
-				// pagination triggered by separate event --> new task
+				// pagination invoked by separate event --> new task
 				oTable.setBindingContext(oModel.bindContext("/TEAMS('TEAM_02')").getBoundContext());
 				setTimeout(fnRespond, 0);
 			}, 0);
@@ -49540,7 +49667,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: A bound action is executed, accompanied by a side effect. The action returns a
+	// Scenario: A bound action is invoked, accompanied by a side effect. The action returns a
 	// wrong response, but the side effect must win anyway!
 	// BCP: 2070200175
 	// JIRA: CPOUI5ODATAV4-288
@@ -49578,7 +49705,7 @@ sap.ui.define([
 				.expectChange("status", "C");
 
 			return Promise.all([
-				that.oView.byId("action").getObjectBinding().execute(),
+				that.oView.byId("action").getObjectBinding().invoke(),
 				that.oView.byId("form").getBindingContext().requestSideEffects(["LifecycleStatus"]),
 				that.waitForChanges(assert)
 			]);
@@ -49587,13 +49714,13 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: "Prefer:handling=strict"
-	// Execute an action with an fnOnStrictHandlingFailed callback given in order to have the
+	// Invoke an action with an fnOnStrictHandlingFailed callback given in order to have the
 	// "Prefer:handling=strict" HTTP header set. bConfirm controls how the callback is resolved.
 	//
 	// JIRA: CPOUI5ODATAV4-943
 	// BCP: 2280172148 more than one action in change set + check that the right callback is called
 	//
-	// Execute three actions in a changeset, each with a fnOnStrictHandlingFailed handler. The batch
+	// Invoke three actions in a changeset, each with a fnOnStrictHandlingFailed handler. The batch
 	// fails due to strict-handling and the response contains error messages for the first and
 	// second request or only for the first. No error message for the third request. See that each
 	// handler is called with the correct (or none) errors.
@@ -49747,11 +49874,11 @@ sap.ui.define([
 
 				// code under test
 				oAction0Promise = that.oModel.bindContext(sAction + "(...)", aContexts[0])
-					.execute("$auto", false, onStrictHandlingFailed0);
+					.invoke("$auto", false, onStrictHandlingFailed0);
 				oAction1Promise = that.oModel.bindContext(sAction + "(...)", aContexts[1])
-					.execute("$auto", false, onStrictHandlingFailed1);
+					.invoke("$auto", false, onStrictHandlingFailed1);
 				oAction2Promise = that.oModel.bindContext(sAction + "(...)", aContexts[2])
-					.execute("$auto", false, onStrictHandlingFailed2);
+					.invoke("$auto", false, onStrictHandlingFailed2);
 
 				return that.waitForChanges(assert);
 			}).then(function () {
@@ -49788,11 +49915,11 @@ sap.ui.define([
 						})
 						.expectChange("status", ["C0", "C1", "C2"]);
 				} else {
-					that.expectCanceledError("Failed to execute /SalesOrderList('0')/" + sAction
+					that.expectCanceledError("Failed to invoke /SalesOrderList('0')/" + sAction
 							+ "(...)", "Action canceled due to strict handling");
-					that.expectCanceledError("Failed to execute /SalesOrderList('1')/" + sAction
+					that.expectCanceledError("Failed to invoke /SalesOrderList('1')/" + sAction
 							+ "(...)", "Action canceled due to strict handling");
-					that.expectCanceledError("Failed to execute /SalesOrderList('2')/" + sAction
+					that.expectCanceledError("Failed to invoke /SalesOrderList('2')/" + sAction
 							+ "(...)", "Action canceled due to strict handling");
 				}
 
@@ -49832,14 +49959,14 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: "Prefer:handling=strict"
-	// 1. Successful execution of a) a bound and b) an unbound action with "handling=strict" in the
+	// 1. Successful invocation of a) a bound and b) an unbound action with "handling=strict" in the
 	//    same change set
-	// 2. Another execution of a bound action with "handling=strict" in a different change set (of
+	// 2. Another invocation of a bound action with "handling=strict" in a different change set (of
 	//    the same $batch) that will result in a rejection of this action
 	// 3. Test whether "handling=strict" is allowed only for an action
 	//
 	// JIRA: CPOUI5ODATAV4-943
-	QUnit.test("CPOUI5ODATAV4-943: handling=strict, multiple strict executions", function (assert) {
+	QUnit.test("CPOUI5ODATAV4-943: handling=strict, many strict invocations", function (assert) {
 		var sAction = "com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder_Confirm",
 			oContext,
 			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
@@ -49859,13 +49986,13 @@ sap.ui.define([
 			oContext = that.oView.byId("form").getBindingContext();
 
 			that.oLogMock.expects("error")
-				.withExactArgs("Failed to execute /SalesOrderList('0')/"
+				.withExactArgs("Failed to invoke /SalesOrderList('0')/"
 					+ "com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder_Confirm(...)",
 					sinon.match(
 						"All requests with strict handling must belong to the same change set"),
 					sODCB);
 			that.oLogMock.expects("error")
-				.withExactArgs("Failed to execute /GetProductStock(...)",
+				.withExactArgs("Failed to invoke /GetProductStock(...)",
 					sinon.match("Not an action: /GetProductStock(...)"), sODCB);
 			that.expectRequest({
 					headers : {
@@ -49904,24 +50031,24 @@ sap.ui.define([
 			return Promise.all([
 				// only to issue a GET request (non change set) at the beginning
 				oModel.bindContext("/GetProductStock(...)")
-					.execute("confirm"),
+					.invoke("confirm"),
 				// code under test (1a)
 				oModel.bindContext(sAction + "(...)", oContext)
-					.execute("confirm", false, function () {}),
+					.invoke("confirm", false, function () {}),
 				// code under test (1b)
 				oModel.bindContext("/RegenerateEPMData(...)")
-					.execute("confirm", false, function () {}),
+					.invoke("confirm", false, function () {}),
 				oModel.submitBatch("confirm"), //create 2nd change set in $batch
 				// code under test (2)
 				oModel.bindContext(sAction + "(...)", oContext)
-					.execute("confirm", false, function () {})
+					.invoke("confirm", false, function () {})
 					.then(mustFail(assert), function (oError) {
 						assert.strictEqual(oError.message,
 							"All requests with strict handling must belong to the same change set");
 					}),
 				// code under test (3)
 				oModel.bindContext("/GetProductStock(...)")
-					.execute("confirm", false, function () {})
+					.invoke("confirm", false, function () {})
 					.then(mustFail(assert), function (oError) {
 						assert.strictEqual(oError.message,
 							"Not an action: /GetProductStock(...)");
@@ -50006,7 +50133,7 @@ sap.ui.define([
 				}, oError, {
 					"Preference-Applied" : "handling=strict"
 				})
-				.expectCanceledError("Failed to execute /SalesOrderList('42')/" + sGoodsAction
+				.expectCanceledError("Failed to invoke /SalesOrderList('42')/" + sGoodsAction
 					+ "(...)", "Action canceled due to strict handling")
 				.expectMessages([{
 					code : "CODE",
@@ -50019,10 +50146,10 @@ sap.ui.define([
 
 			// code under test
 			return Promise.all([
-				oConfirmBinding.execute("confirm"),
+				oConfirmBinding.invoke("confirm"),
 				oModel.submitBatch("confirm"),
 				checkCanceled(assert,
-					oGoodsBinding.execute("confirm", false, fnStrictHandlingFailed)),
+					oGoodsBinding.invoke("confirm", false, fnStrictHandlingFailed)),
 				oModel.submitBatch("confirm"),
 				that.waitForChanges(assert)
 			]);
@@ -50876,9 +51003,9 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: Executing an action is forbidden for models with shared requests.
+	// Scenario: Invoking an action is forbidden for models with shared requests.
 	// JIRA: CPOUI5ODATAV4-344
-	QUnit.test("sharedRequests forbids action execute", function (assert) {
+	QUnit.test("sharedRequests forbids action invoke", function (assert) {
 		var oModel = this.createTeaBusiModel({sharedRequests : true}),
 			that = this;
 
@@ -50887,10 +51014,10 @@ sap.ui.define([
 				sMessage = sTeaBusi + "ChangeTeamBudgetByID is read-only";
 
 			that.oLogMock.expects("error")
-				.withExactArgs("Failed to execute /ChangeTeamBudgetByID(...)",
+				.withExactArgs("Failed to invoke /ChangeTeamBudgetByID(...)",
 					sinon.match(sMessage), sODCB);
 
-			return oAction.execute().then(mustFail(assert), function (oError) {
+			return oAction.invoke().then(mustFail(assert), function (oError) {
 				assert.strictEqual(oError.message, sMessage);
 			});
 		});
@@ -50972,7 +51099,7 @@ sap.ui.define([
 		this.expectChange("name", []);
 
 		return this.createView(assert, sView, oModel).then(function () {
-			// Note: GET triggered by 1st #create - one transient taken into account for prefetch
+			// Note: GET invoked by 1st #create - one transient taken into account for prefetch
 			that.expectRequest("EMPLOYEES?$count=true&$select=ID,Name&$skip=0&$top=3", {
 					"@odata.count" : "1",
 					value : [{ID : "1", Name : "Frederic Fall"}]
@@ -51225,7 +51352,7 @@ sap.ui.define([
 					// code under test
 					oModel.submitBatch(sGroupId),
 					// code under test (JIRA: CPOUI5ODATAV4-2134)
-					oModel.bindContext("/RegenerateEPMData(...)").execute(sGroupId),
+					oModel.bindContext("/RegenerateEPMData(...)").invoke(sGroupId),
 					oContext1.created(),
 					that.waitForChanges(assert, "(3)")
 				]);
@@ -51480,7 +51607,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Apply the filter for messages on a table with persisted and inactive rows, but only
 	// messages for inactive rows. See that the persisted rows disappear w/o a request, and see that
-	// selected APIs do not trigger requests afterwards.
+	// selected APIs do not invoke requests afterwards.
 	// Run each test with a grid table, a responsive table, and a responsive table with growing
 	// enablement. Check that #setAggregation does not work with Filter.NONE, download URL is null,
 	// and #requestContexts (with Filter.NONE) returns transient rows only without a GET request.
@@ -54361,7 +54488,7 @@ sap.ui.define([
 					}]);
 
 				return Promise.all([
-					oActionBinding.execute(undefined, undefined, undefined, /*bReplaceWithRVC*/true),
+					oActionBinding.invoke(undefined, undefined, undefined, /*bReplaceWithRVC*/true),
 					that.waitForChanges(assert, "(3) edit action")
 				]);
 			}).then(function (aResults) {
@@ -55990,11 +56117,11 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: New change requests for the same group ID (e.g. $auto) are submitted before the
 	// previous response arrives, leading to the error "Unexpected second $batch". Here,
-	// ODataContextBinding#execute is used.
+	// ODataContextBinding#invoke is used.
 	// BCP: 2170018878
-	QUnit.test("BCP: 2170018878 via ODCB#execute", function (assert) {
-		var oExecutePromise0,
-			oExecutePromise1,
+	QUnit.test("BCP: 2170018878 via ODCB#invoke", function (assert) {
+		var oInvokePromise0,
+			oInvokePromise1,
 			fnResolveOperation0,
 			fnResolveOperation1,
 			that = this;
@@ -56013,7 +56140,7 @@ sap.ui.define([
 				}));
 
 			// code under test
-			oExecutePromise0 = oOperationBinding.execute();
+			oInvokePromise0 = oOperationBinding.invoke();
 
 			return that.waitForChanges(assert);
 		}).then(function () {
@@ -56030,17 +56157,17 @@ sap.ui.define([
 				}));
 
 			// code under test
-			oExecutePromise1 = oOperationBinding.execute();
+			oInvokePromise1 = oOperationBinding.invoke();
 
 			return that.waitForChanges(assert);
 		}).then(function () {
 			fnResolveOperation1();
 
-			return oExecutePromise1;
+			return oInvokePromise1;
 		}).then(function () {
 			fnResolveOperation0();
 
-			return oExecutePromise0;
+			return oInvokePromise0;
 		});
 	});
 
@@ -56649,8 +56776,8 @@ sap.ui.define([
 
 			return Promise.all([
 				// code under test
-				oAction.execute(),
-				that.waitForChanges(assert, "(1) execute")
+				oAction.invoke(),
+				that.waitForChanges(assert, "(1) invoke")
 			]);
 		}).then(function (aResults) {
 			that.expectChange("note", "some note");
@@ -57746,7 +57873,7 @@ sap.ui.define([
 					that.waitForChanges(assert, "removeCreated")
 				]);
 			}).then(function () {
-				// Note: this triggers ODLB#destroyPreviousContextsLater, thus we need to wait below
+				// Note: this invokes ODLB#destroyPreviousContextsLater, thus we need to wait below
 				var aAllContexts = oBinding.getAllCurrentContexts();
 
 				assert.strictEqual(aAllContexts.length, 1);
@@ -60703,7 +60830,7 @@ sap.ui.define([
 	// Scenario:
 	// (1) Binding for a part of a structural instance annotation works without binding the
 	//     property itself
-	// (2) Late request for another annotation of the same property does not trigger a GET request
+	// (2) Late request for another annotation of the same property does not invoke a GET request
 	// (3) Late request for an instance annotation which was not requested before
 	// (4), (5) Edm.Stream simulation: initial response is empty, no further requests
 	// (6) Request side effects for property of (4), empty response
@@ -61466,7 +61593,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: Create a new draft entity and execute the ActivationAction to replace the draft
+	// Scenario: Create a new draft entity and invoke the ActivationAction to replace the draft
 	// context with the active context. Request a side-effects refresh for the active context.
 	// BCP: 2180347338
 	// BCP: 2280113990
@@ -61536,9 +61663,9 @@ sap.ui.define([
 
 			return Promise.all([
 				// code under test
-				oActionBinding.execute(/*sGroupId*/undefined, /*bIgnoreETag*/false,
+				oActionBinding.invoke(/*sGroupId*/undefined, /*bIgnoreETag*/false,
 					/*fnOnStrictHandlingFailed*/null, /*bReplaceWithRVC*/true),
-				that.waitForChanges(assert, "execute ActivationAction")
+				that.waitForChanges(assert, "invoke ActivationAction")
 			]);
 		}).then(function (aResults) {
 			oActiveContext = aResults[0];
@@ -61578,7 +61705,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: In an ODLB w/ filter, but w/o UI, create a new draft entity and execute the
+	// Scenario: In an ODLB w/ filter, but w/o UI, create a new draft entity and invoke the
 	// ActivationAction to replace the draft context with the active context. Refresh the active
 	// context in order to make it drop out of the collection, alternatively delete it. See that
 	// internal bookkeeping is OK by creating an inactive row at the other end.
@@ -61640,8 +61767,8 @@ sap.ui.define([
 
 				return Promise.all([
 					// code under test
-					oActionBinding.execute(undefined, false, null, /*bReplaceWithRVC*/true),
-					that.waitForChanges(assert, "execute ActivationAction")
+					oActionBinding.invoke(undefined, false, null, /*bReplaceWithRVC*/true),
+					that.waitForChanges(assert, "invoke ActivationAction")
 				]);
 			}).then(function (aResults) {
 				oActiveContext = aResults[0];
@@ -61682,12 +61809,12 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: In an ODLB w/ filter, but w/o UI, create a new draft entity and execute the
+	// Scenario: In an ODLB w/ filter, but w/o UI, create a new draft entity and invoke the
 	// ActivationAction to replace the draft context with the active context. Keep the active
 	// context alive and refresh it in order to make it drop out of the collection. See that it is
 	// still alive.
 	//
-	// Execute the EditAction with empty response to check that bReplaceWithRVC requires a key
+	// Invoke the EditAction with empty response to check that bReplaceWithRVC requires a key
 	// predicate.
 	// JIRA: CPOUI5ODATAV4-1683
 	QUnit.test("JIRA: CPOUI5ODATAV4-1683", function (assert) {
@@ -61733,8 +61860,8 @@ sap.ui.define([
 
 			return Promise.all([
 				// code under test
-				oActionBinding.execute(undefined, false, null, /*bReplaceWithRVC*/true),
-				that.waitForChanges(assert, "execute ActivationAction")
+				oActionBinding.invoke(undefined, false, null, /*bReplaceWithRVC*/true),
+				that.waitForChanges(assert, "invoke ActivationAction")
 			]);
 		}).then(function (aResults) {
 			oActiveContext = aResults[0];
@@ -61776,18 +61903,18 @@ sap.ui.define([
 					type : "Error"
 				}]);
 			that.oLogMock.expects("error")
-				.withExactArgs("Failed to execute /Artists(ArtistID='23',IsActiveEntity=true)"
+				.withExactArgs("Failed to invoke /Artists(ArtistID='23',IsActiveEntity=true)"
 					+ "/special.cases.EditAction(...)",
 					sinon.match("Cannot replace w/o return value context"), sODCB);
 
 			return Promise.all([
 				// code under test
-				oActionBinding.execute(undefined, false, null, /*bReplaceWithRVC*/true)
+				oActionBinding.invoke(undefined, false, null, /*bReplaceWithRVC*/true)
 					.then(mustFail(assert), function (oError) {
 						assert.strictEqual(oError.message,
 							"Cannot replace w/o return value context");
 					}),
-				that.waitForChanges(assert, "execute EditAction")
+				that.waitForChanges(assert, "invoke EditAction")
 			]);
 		});
 	});
@@ -61855,7 +61982,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: A return value context is destroyed as soon as a new cache is created during
-	// #execute, no matter what happens after that.
+	// #invoke, no matter what happens after that.
 	//
 	// JIRA: CPOUI5ODATAV4-1687
 	QUnit.test("JIRA: CPOUI5ODATAV4-1687", function (assert) {
@@ -61896,7 +62023,7 @@ sap.ui.define([
 				.expectChange("team", "TEAM_02");
 
 			return Promise.all([
-				oActionBinding.execute(),
+				oActionBinding.invoke(),
 				that.waitForChanges(assert)
 			]);
 		}).then(function (aResults) {
@@ -61917,7 +62044,7 @@ sap.ui.define([
 
 			return Promise.all([
 				// code under test
-				oActionBinding.setParameter("TeamID", "TEAM_0815").execute(),
+				oActionBinding.setParameter("TeamID", "TEAM_0815").invoke(),
 				that.waitForChanges(assert)
 			]);
 		}).then(function (aResults) {
@@ -61967,7 +62094,7 @@ sap.ui.define([
 			});
 
 			return Promise.all([
-				oAction.execute(),
+				oAction.invoke(),
 				that.waitForChanges(assert, "edit")
 			]);
 		}).then(function (aResults) {
@@ -62786,7 +62913,7 @@ sap.ui.define([
 
 			return Promise.all([
 				// code under test
-				oSiblingEntity.execute("$auto", /*bIgnoreETag*/false,
+				oSiblingEntity.invoke("$auto", /*bIgnoreETag*/false,
 					/*fnOnStrictHandlingFailed*/null, /*bReplaceWithRVC*/true),
 				that.waitForChanges(assert, "SiblingEntity")
 			]);
@@ -62917,11 +63044,11 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: Execute actions and delete rows using group id "$single" and "$direct". Observe
-	// that each execute and delete request using "$single" is in its own batch request and does not
+	// Scenario: Invoke actions and delete rows using group id "$single" and "$direct". Observe
+	// that each invoke and delete request using "$single" is in its own batch request and does not
 	// get overtaken by the "$direct" request.
 	// JIRA: CPOUI5ODATAV4-2413
-	QUnit.test("Execute and delete immediately using groupId='$single'", async function (assert) {
+	QUnit.test("Invoke and delete immediately using groupId='$single'", async function (assert) {
 		const oModel = this.createSalesOrdersModel({autoExpandSelect : true});
 		const sView = `
 <Table id="orders" items="{/SalesOrderList}">
@@ -62973,9 +63100,9 @@ sap.ui.define([
 		const oContextBinding1 = oModel.bindContext(sAction + "(...)", oContext1);
 		const oContextBinding2 = oModel.bindContext(sAction + "(...)", oContext2);
 
-		const oRVCPromise0 = oContextBinding0.execute("$single");
-		const oRVCPromise1 = oContextBinding1.execute("$single");
-		const oRVCPromise2 = oContextBinding2.execute("$direct");
+		const oRVCPromise0 = oContextBinding0.invoke("$single");
+		const oRVCPromise1 = oContextBinding1.invoke("$single");
+		const oRVCPromise2 = oContextBinding2.invoke("$direct");
 
 		await Promise.all([
 			// code under test

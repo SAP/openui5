@@ -151,7 +151,7 @@
 			<Input value="{AGE}"/>
 			<Text text="{LOCATION/City/CITYNAME}"/>
 			<Input value="{ENTRYDATE}"/>
-			<!-- Note: automatic type determination cannot work here and triggers a warning -->
+			<!-- Note: automatic type determination cannot work here and invokes a warning -->
 			<Text text="{path : '@odata.etag', type : 'sap.ui.model.odata.type.String'}"/>
 			<Button icon="sap-icon://delete" text="Delete" press="onDeleteEmployee"/>
 		</ColumnListItem>
@@ -197,7 +197,7 @@
 				<Title id="maxEmployeeAge" text="Max. Employee Age" level="H4"/>
 				<ToolbarSpacer width="1em"/>
 				<Text text="{value}"/>
-				<Button press="getEmployeeMaxAge" text="Execute"/>
+				<Button press="getEmployeeMaxAge" text="Invoke"/>
 			</Toolbar>
 		</form:toolbar>
 	</form:SimpleForm>

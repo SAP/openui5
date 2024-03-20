@@ -22,11 +22,7 @@
 /* arrow styles */
 
 .sapMSlt > .sapMSltArrow {
-	line-height: 2.25rem;
-}
-
-.sapUiSizeCompact .sapMSlt > .sapMSltArrow {
-	line-height: 1.625rem;
+	line-height: 2.125rem;
 }
 
 .sapMSltArrow {
@@ -97,6 +93,15 @@ html[data-sap-ui-browser^="ff"] .sapMBar .sapMSlt.sapMSltFocused {
 
 .sapMSltInformation {
 	border-color: @sapUiFieldWarningColor;
+}
+
+.sapMSltLabelState, .sapMSltArrowState {
+    line-height: initial;
+}
+
+.sapUiSizeCompact .sapMSltLabelState,
+.sapUiSizeCompact .sapMSltArrowState {
+	line-height: initial;
 }
 
 /* disabled */

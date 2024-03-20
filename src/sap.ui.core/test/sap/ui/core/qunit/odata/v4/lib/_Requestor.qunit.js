@@ -4501,7 +4501,7 @@ sap.ui.define([
 
 	//*****************************************************************************************
 	// Tests the case that the setInterval timer is active for more than 30 minutes without having
-	// been restarted by an application-triggered request. During this time the setInterval function
+	// been restarted by an application-invoked request. During this time the setInterval function
 	// may have been called several times sending pings. Here we test the first call after the 30
 	// minutes which is expected to terminate the session.
 	QUnit.test("setSessionContext: session termination", function () {

@@ -431,6 +431,9 @@ sap.ui.define([
 		 *   into the search expression parameter of an "ancestors()" transformation
 		 * @param {object} [mQueryOptions={}]
 		 *   A map of key-value pairs representing the query string; it is not modified
+		 * @param {string} [mQueryOptions.$$filterBeforeAggregate]
+		 *   The value for a filter which identifies a parent node; it is removed from the returned
+		 *   map and turned into a "filter()" transformation
 		 * @param {string} [mQueryOptions.$filter]
 		 *   The value for a "$filter" system query option; it is removed from the returned map and
 		 *   turned into the filter expression parameter of an "ancestors()" transformation
@@ -658,6 +661,50 @@ sap.ui.define([
 			_Helper.setPrivateAnnotation(oPlaceholder, "rank", iRank);
 
 			return oPlaceholder;
+		},
+
+		/**
+		 * Drops filter, search, and other stuff from the given query options and recursive
+		 * hierarchy information, then adds the corresponding "$apply" system query option.
+		 *
+		 * @param {object} oAggregation
+		 *   An object holding the information needed for a recursive hierarchy; see
+		 *   {@link sap.ui.model.odata.v4.ODataListBinding#setAggregation}.
+		 * @param {string} [oAggregation.search] - Ignored
+		 * @param {object} mQueryOptions
+		 *   A map of key-value pairs representing the query string; it is not modified
+		 * @param {string} [mQueryOptions.$$filterBeforeAggregate] - Removed from the returned map
+		 * @param {string} [mQueryOptions.$apply] - Replaced in the returned map
+		 * @param {string} [mQueryOptions.$count] - Removed from the returned map
+		 * @param {string} [mQueryOptions.$expand] - Removed from the returned map
+		 * @param {string} [mQueryOptions.$filter] - Removed from the returned map
+		 * @param {string} [mQueryOptions.$orderby] - Removed from the returned map
+		 * @param {string} [mQueryOptions.$select] - Removed from the returned map
+		 * @param {string} [sFilterBeforeAggregate]
+		 *   The value for a filter which identifies a parent node; see
+		 *   {@link #buildApply4Hierarchy}
+		 * @returns {object}
+		 *   A map of key-value pairs representing the query string, including a value for the
+		 *   "$apply" system query option; it is a modified copy of <code>mQueryOptions</code>, with
+		 *   values changed as described above
+		 */
+		dropFilter : function (oAggregation, mQueryOptions, sFilterBeforeAggregate) {
+			oAggregation = {...oAggregation};
+			delete oAggregation.search;
+
+			mQueryOptions = {...mQueryOptions};
+			delete mQueryOptions.$count;
+			delete mQueryOptions.$expand;
+			delete mQueryOptions.$filter;
+			delete mQueryOptions.$orderby;
+			delete mQueryOptions.$select;
+			if (sFilterBeforeAggregate) {
+				mQueryOptions.$$filterBeforeAggregate = sFilterBeforeAggregate;
+			} else {
+				delete mQueryOptions.$$filterBeforeAggregate;
+			}
+
+			return _AggregationHelper.buildApply4Hierarchy(oAggregation, mQueryOptions);
 		},
 
 		/**

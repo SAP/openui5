@@ -72,7 +72,7 @@ sap.ui.define([
 					+ " cannot be confirmed due to pending changes");
 			} else {
 				oView.setBusy(true);
-				oAction.execute("confirm", false, onStrictHandlingFailed).then(function () {
+				oAction.invoke("confirm", false, onStrictHandlingFailed).then(function () {
 					oView.setBusy(false);
 					MessageToast.show("Sales order " + sSalesOrderID + " confirmed");
 					oView.getModel("ui").setProperty("/bSalesOrderSelected", false);
@@ -129,7 +129,7 @@ sap.ui.define([
 				this.byId("SalesOrderList").getItems()[oContext.getIndex()]);
 			this.setSalesOrderBindingContext(oContext);
 
-			// resume binding to BusinessPartnerList to trigger request when dialog is opened
+			// resume binding to BusinessPartnerList to invoke request when dialog is opened
 			if (oBPListBinding.isSuspended()) {
 				oBPListBinding.filter(new Filter("BusinessPartnerRole", FilterOperator.EQ, "01"));
 				oBPListBinding.sort(new Sorter("CompanyName"));
@@ -209,7 +209,7 @@ sap.ui.define([
 			}
 
 			oView.setBusy(true);
-			oAction.execute().then(function () {
+			oAction.invoke().then(function () {
 				MessageToast.show("All items' quantities increased by 1, "
 					+ "sales order gross amount is now: "
 					+ oAction.getBoundContext().getProperty("GrossAmount"));
@@ -325,12 +325,12 @@ sap.ui.define([
 			}, function () { /* error already reported */ });
 		},
 
-		onExecuteSimulateDiscount : function () {
+		onInvokeSimulateDiscount : function () {
 			var oView = this.getView(),
 				that = this;
 
 			oView.setBusy(true);
-			this.oSimulateDiscount.execute().then(function () {
+			this.oSimulateDiscount.invoke().then(function () {
 				MessageToast.show("Simulation Result: "
 					+ that.oSimulateDiscount.getBoundContext().getProperty("value"));
 			}, function (oError) {

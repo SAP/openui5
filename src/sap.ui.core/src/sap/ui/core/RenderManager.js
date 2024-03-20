@@ -45,10 +45,6 @@ sap.ui.define([
 
 	var aCommonMethods = ["renderControl", "cleanupControlWithoutRendering", "accessibilityState", "icon"];
 
-	var aStrInterfaceMethods = ["write", "writeEscaped", "writeAcceleratorKey", "writeControlData", "writeElementData",
-		"writeAttribute", "writeAttributeEscaped", "addClass", "writeClasses", "addStyle", "writeStyles",
-		"writeAccessibilityState", "writeIcon", "translate", "getConfiguration", "getHTML"];
-
 	var aDomInterfaceMethods = ["openStart", "voidStart", "attr", "class", "style", "openEnd", "voidEnd", "text", "unsafeHtml", "close"];
 
 	var aNonRendererMethods = ["render", "flush", "destroy"];
@@ -1387,9 +1383,6 @@ sap.ui.define([
 			oStringInterface[sMethod] = oDomInterface[sMethod] = oInterface[sMethod] = this[sMethod];
 		}, this);
 		aDomInterfaceMethods.forEach(function (sMethod) {
-			oStringInterface[sMethod] = oInterface[sMethod] = this[sMethod];
-		}, this);
-		aStrInterfaceMethods.forEach(function (sMethod) {
 			oStringInterface[sMethod] = oInterface[sMethod] = this[sMethod];
 		}, this);
 		aNonRendererMethods.forEach(function (sMethod) {

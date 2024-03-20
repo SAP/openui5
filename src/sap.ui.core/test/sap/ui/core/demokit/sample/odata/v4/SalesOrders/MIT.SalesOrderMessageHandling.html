@@ -193,7 +193,7 @@
 				<code>Sales Order Details</code> section.</li>
 			<li>Confirm the success popup.</li>
 			<li><b>Check:</b> No error is shown (and the items gets again it's initial values,
-				because of the refreshSingle() triggered by the <code>Save sales order</code> in the
+				because of the refreshSingle() invoked by the <code>Save sales order</code> in the
 				<code>Sales Order Details</code> section).</li>
 		</ol>
 		<h4>Function scenario</h4>
@@ -209,12 +209,12 @@
 			<li><b>Check:</b> The <code>Calculated Gross Amount:</code> text field is empty.</li>
 			<li>Enter a discount of "25" into the <code>Reduction in %:</code> step input control.
 				</li>
-			<li>Press the <code>Execute discount simulation</code> button in the dialog.</li>
+			<li>Press the <code>Invoke discount simulation</code> button in the dialog.</li>
 			<li><b>Check:</b> The <code>Calculated Gross Amount:</code> text field is "188.05".
 				</li>
 			<li>Enter a discount of "75" into the <code>Reduction in %:</code> step input control.
 				</li>
-			<li>Press the <code>Execute discount simulation</code> button in the dialog.</li>
+			<li>Press the <code>Invoke discount simulation</code> button in the dialog.</li>
 			<li><b>Check:</b> The error messages popover has opened and you got an error
 				"User John Doe is not authorized to approve more than 50% discount w/o approver".
 			</li>

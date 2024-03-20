@@ -613,10 +613,6 @@ function(
 				// Mixin fragmentContent into Fragment instance
 				merge(this, mSettings.fragmentContent);
 			} else {
-				/*** require fragment definition if not yet done... ***/
-				if (!mRegistry[mSettings.fragmentName]) {
-					sap.ui.requireSync(mSettings.fragmentName.replace(/\./g, "/") + ".fragment"); // legacy-relevant: Sync path
-				}
 				/*** Step 2: merge() ***/
 				merge(this, mRegistry[mSettings.fragmentName]);
 			}

@@ -257,12 +257,12 @@ sap.ui.define("sap/ui/core/sample/common/Helper", [
 		/**
 		 * Checks the text of the 'More' button for a sap.m.Table.
 		 *
-		 * @param {sap.m.Button} oTrigger - The 'More' trigger button
+		 * @param {sap.m.Button} oMore - The 'More' button
 		 * @param {string} sExpectedCount - The expected count as text w/o "More" without spaces,
 		 *    e.g. "[5/10]"
 		 */
-		checkMoreButtonCount : function (oTrigger, sExpectedCount) {
-			Opa5.assert.strictEqual(oTrigger.getDomRef().innerText.replace(/\s/g, ""),
+		checkMoreButtonCount : function (oMore, sExpectedCount) {
+			Opa5.assert.strictEqual(oMore.getDomRef().innerText.replace(/\s/g, ""),
 				"More" + sExpectedCount, "'More' button has text " + sExpectedCount);
 		},
 
@@ -354,7 +354,7 @@ sap.ui.define("sap/ui/core/sample/common/Helper", [
 		},
 
 		/**
-		 * Executes the Press() action on a "sap.m.Button" and adds a useful success message
+		 * Invokes the Press() action on a "sap.m.Button" and adds a useful success message
 		 *
 		 * @param {sap.ui.test.Opa5} oOpa5
 		 *  An instance of Opa5 to access the current page object
@@ -381,7 +381,7 @@ sap.ui.define("sap/ui/core/sample/common/Helper", [
 		},
 
 		/**
-		 * Executes the Press() action on the (one and only) sap.m.CustomListItem in the view
+		 * Invokes the Press() action on the (one and only) sap.m.CustomListItem in the view
 		 *
 		 * @param {sap.ui.test.Opa5} oOpa5
 		 *  An instance of Opa5 to access the current page object
@@ -451,7 +451,7 @@ sap.ui.define("sap/ui/core/sample/common/Helper", [
 		},
 
 		/**
-		 * Executes QUnit.module() with the given <code>sName</code>.
+		 * Invokes QUnit.module() with the given <code>sName</code>.
 		 * Sets the language fix to "en-US" and restores back to the language before.
 		 * For a given <code>iTestTimeout</code) and TestUtils.isRealOData() === true
 		 * the QUnit.config.testTimeout for a single QUnit.test within this module is set to

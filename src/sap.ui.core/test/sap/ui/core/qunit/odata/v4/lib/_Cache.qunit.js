@@ -530,7 +530,7 @@ sap.ui.define([
 });
 
 	//TODO adjust paths in mChangeRequests?
-	//TODO trigger update in case of isConcurrentModification?!
+	//TODO invoke update in case of isConcurrentModification?!
 	//TODO do it anyway? what and when to return, result of remove vs. re-read?
 
 	//*********************************************************************************************
@@ -6072,7 +6072,7 @@ sap.ui.define([
 				}
 				that.mock(oReadGroupLock1).expects("unlock").withExactArgs();
 
-				// ensure that the same read does not trigger another request, but unlocks
+				// ensure that the same read does not invoke another request, but unlocks
 				oPromise2 = oCache.read(oFixture.index, oFixture.length, 0, oReadGroupLock1);
 
 				return oPromise2.then(function (oResult) {
@@ -10159,7 +10159,7 @@ sap.ui.define([
 						});
 					oCacheMock.expects("keepOnlyGivenElements").exactly(bSingle ? 0 : 1)
 						.withExactArgs(aPredicates).callThrough(); // too hard to refactor :-(
-					// Note: fetchTypes() would have been triggered by read() already
+					// Note: fetchTypes() would have been invoked by read() already
 					oCacheMock.expects("getTypes").withExactArgs().returns(mTypeForMetaPath);
 					oCache.beforeUpdateSelected = function () {};
 					for (i = 0; i < iReceivedLength; i += 1) { // prepare request/response

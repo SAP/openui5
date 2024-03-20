@@ -159,7 +159,7 @@ sap.ui.define([
 			}
 
 			oView.setBusy(true);
-			oAction.execute().then(function () {
+			oAction.invoke().then(function () {
 				MessageToast.show("All items' quantities increased by 1, "
 					+ "sales order gross amount is now: "
 					+ oAction.getBoundContext().getProperty("GrossAmount"));

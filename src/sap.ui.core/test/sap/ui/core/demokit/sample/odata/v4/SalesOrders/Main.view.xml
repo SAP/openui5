@@ -181,9 +181,9 @@
 							<Dialog id="SimulateDiscountDialog" title="Simulate Discount">
 								<buttons>
 									<Button icon="sap-icon://simulate" text="Simulate"
-										id="executeSimulateDiscount"
-										press="onExecuteSimulateDiscount" type="Accept"
-										tooltip="Execute discount simulation"/>
+										id="invokeSimulateDiscount"
+										press="onInvokeSimulateDiscount" type="Accept"
+										tooltip="Invoke discount simulation"/>
 									<Button id="closeSimulateDiscountDialog"
 										icon="sap-icon://sys-cancel-2" text="Close"
 										press="onCloseSimulateDiscountDialog"/>

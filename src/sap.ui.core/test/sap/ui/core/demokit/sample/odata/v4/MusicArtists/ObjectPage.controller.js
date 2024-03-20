@@ -144,7 +144,7 @@ sap.ui.define([
 			oView.getModel().bindContext(sNamespace + "Edit(...)", this.oActiveArtistContext,
 					{$$inheritExpandSelect : true, $$patchWithoutSideEffects : true})
 				.setParameter("PreserveChanges", false)
-				.execute()
+				.invoke()
 				.then(function (oInactiveArtistContext) {
 					oView.setBusy(false);
 					that.oArtistContext = oInactiveArtistContext;
@@ -183,7 +183,7 @@ sap.ui.define([
 			this.byId("draftIndicator").clearDraftState();
 			oView.getModel().bindContext(sNamespace + "Activation(...)", oOldBindingContext,
 					{$$inheritExpandSelect : true, $$patchWithoutSideEffects : true})
-				.execute()
+				.invoke()
 				.then(function (oActiveArtistContext) {
 					oView.setBusy(false);
 					that._detachPatchEventHandlers(oOldBindingContext.getBinding());

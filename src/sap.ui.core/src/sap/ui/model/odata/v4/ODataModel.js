@@ -750,9 +750,9 @@ sap.ui.define([
 	 *   IDs as specified in {@link sap.ui.model.odata.v4.ODataModel}.
 	 * @param {boolean} [mParameters.$$inheritExpandSelect]
 	 *   For operation bindings only: Whether $expand and $select from the parent binding are used
-	 *   in the request sent on {@link #execute}. If set to <code>true</code>, the binding must not
-	 *   set the $expand itself, the operation must be bound, and the return value and the binding
-	 *   parameter must belong to the same entity set.
+	 *   in the request sent on {@link sap.ui.model.odata.v4.ODataContextBinding#invoke}. If set to
+	 *   <code>true</code>, the binding must not set the $expand itself, the operation must be
+	 *   bound, and the return value and the binding parameter must belong to the same entity set.
 	 * @param {boolean} [mParameters.$$ownRequest]
 	 *   Whether the binding always uses an own service request to read its data; only the value
 	 *   <code>true</code> is allowed.
@@ -944,8 +944,8 @@ sap.ui.define([
 	 *         <li> {@link sap.ui.model.odata.v4.Context#requestSideEffects}
 	 *         <li> {@link sap.ui.model.odata.v4.Context#setKeepAlive}
 	 *         <li> {@link sap.ui.model.odata.v4.Context#setProperty}
-	 *         <li> executing a bound operation using <code>bReplaceWithRVC</code>, see
-	 *           {@link sap.ui.model.odata.v4.ODataContextBinding#execute}
+	 *         <li> invoking a bound operation using <code>bReplaceWithRVC</code>, see
+	 *           {@link sap.ui.model.odata.v4.ODataContextBinding#invoke}
 	 *       </ul>
 	 *     <li> for a dependent property binding of the list binding:
 	 *       <ul>
@@ -2589,8 +2589,8 @@ sap.ui.define([
 	 * group ID which have not been successfully submitted via {@link #submitBatch}. Resets also
 	 * invalid user input for the same group ID and (since 1.111.0) inactive contexts which had
 	 * their activation prevented (see {@link sap.ui.model.odata.v4.Context#isInactive}). This
-	 * function does not reset the execution of OData operations
-	 * (see {@link sap.ui.model.odata.v4.ODataContextBinding#execute}).
+	 * function does not reset the invocation of OData operations
+	 * (see {@link sap.ui.model.odata.v4.ODataContextBinding#invoke}).
 	 *
 	 * @param {string} [sGroupId]
 	 *   A valid group ID as specified in {@link sap.ui.model.odata.v4.ODataModel}. If it is

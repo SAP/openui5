@@ -729,6 +729,12 @@ sap.ui.define([
 		assert.strictEqual(
 			oCache.calculateKeyPredicate("~oElement~", "~mTypeForMetaPath~", "~metapath~"),
 			"~sPredicate~");
+
+		if (oPICT.oParentGroupNode) {
+			assert.strictEqual(oCache.$parentFilter, "~filter~");
+		} else {
+			assert.notOk("$parentFilter" in oCache);
+		}
 	});
 });
 
@@ -791,6 +797,12 @@ sap.ui.define([
 		assert.strictEqual(
 			oCache.calculateKeyPredicate("~oElement~", "~mTypeForMetaPath~", "~metapath~"),
 			"~sPredicate~");
+
+		if (oParentGroupNode) {
+			assert.strictEqual(oCache.$parentFilter, "~filter~");
+		} else {
+			assert.notOk("$parentFilter" in oCache);
+		}
 	});
 });
 
@@ -1135,7 +1147,7 @@ sap.ui.define([
 						"LtdDescendant_Count"], "~GroupLock~", true)
 					.resolves();
 				oNodePropertyExpectation = oCacheMock.expects("requestNodeProperty")
-					.withExactArgs("~Parent~", "~GroupLock~")
+					.withExactArgs("~Parent~", "~GroupLock~", false)
 					.resolves();
 
 				return {value : ["~Parent~"]};
@@ -4866,7 +4878,7 @@ make root = ${bMakeRoot}`;
 								return Promise.resolve("~iRank~");
 							});
 						oNodeExpectation = that.mock(oCache).expects("requestNodeProperty")
-							.withExactArgs(sinon.match.same(oEntityData), "~oGroupLock~")
+							.withExactArgs(sinon.match.same(oEntityData), "~oGroupLock~", true)
 							.returns(new Promise(function (resolve0) {
 								setTimeout(function () {
 									bNodePropertyCompleted = true;
@@ -5175,17 +5187,25 @@ make root = ${bMakeRoot}`;
 
 	//*********************************************************************************************
 [true, false].forEach((bInheritResult) => {
-	QUnit.test("requestProperties: bInheritResult = " + bInheritResult, async function (assert) {
+	[true, false].forEach((bDropFilter) => {
+		const sTitle = "requestProperties: bInheritResult = " + bInheritResult
+			+ ", bDropFilter = " + bDropFilter;
+
+	QUnit.test(sTitle, async function (assert) {
 		const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, {
 			hierarchyQualifier : "X",
 			$LimitedRank : "~LimitedRank~"
 		});
-		const oParentCache = {getQueryOptions : mustBeMocked};
+		const oParentCache = {
+			$parentFilter : "~parentFilter~",
+			getQueryOptions : mustBeMocked
+		};
 		const aSelect = ["path/to/property0", "path/to/property1"];
 		const oHelperMock = this.mock(_Helper);
 		oHelperMock.expects("getPrivateAnnotation").withExactArgs("~oElement~", "parent")
 			.returns(oParentCache);
-		this.mock(oParentCache).expects("getQueryOptions").withExactArgs()
+		this.mock(oParentCache).expects("getQueryOptions").exactly(bDropFilter ? 0 : 1)
+			.withExactArgs()
 			.returns({
 				$$filterBeforeAggregate : "n/a",
 				$apply : "A.P.P.L.E.",
@@ -5199,6 +5219,10 @@ make root = ${bMakeRoot}`;
 				"sap-client" : "123"
 			});
 		this.mock(oCache).expects("getTypes").withExactArgs().returns("~getTypes~");
+		this.mock(_AggregationHelper).expects("dropFilter").exactly(bDropFilter ? 1 : 0)
+			.withExactArgs(sinon.match.same(oCache.oAggregation),
+				sinon.match.same(oCache.mQueryOptions), "~parentFilter~")
+			.returns({$apply : "A.P.P.L.E."});
 		oHelperMock.expects("getKeyFilter")
 			.withExactArgs("~oElement~", "/Foo", "~getTypes~").returns("~filter~");
 		this.mock(oCache.oRequestor).expects("buildQueryString")
@@ -5229,8 +5253,10 @@ make root = ${bMakeRoot}`;
 
 		assert.strictEqual(
 			// code under test
-			await oCache.requestProperties("~oElement~", aSelect, oGroupLock, bInheritResult),
-				bInheritResult ? undefined : "~oResult~");
+			await oCache
+				.requestProperties("~oElement~", aSelect, oGroupLock, bInheritResult, bDropFilter),
+			bInheritResult ? undefined : "~oResult~");
+	});
 	});
 });
 
@@ -5261,12 +5287,12 @@ make root = ${bMakeRoot}`;
 		this.mock(_Helper).expects("drillDown").withExactArgs("~oElement~", "path/to/NodeID")
 			.returns(undefined);
 		this.mock(oCache).expects("requestProperties")
-			.withExactArgs("~oElement~", ["path/to/NodeID"], "~oGroupLock~", true)
+			.withExactArgs("~oElement~", ["path/to/NodeID"], "~oGroupLock~", true, "~bDropFilter~")
 			.resolves(undefined);
 
 		assert.strictEqual(
 			// code under test
-			await oCache.requestNodeProperty("~oElement~", "~oGroupLock~"),
+			await oCache.requestNodeProperty("~oElement~", "~oGroupLock~", "~bDropFilter~"),
 			undefined, "without a defined result");
 	});
 
@@ -5283,7 +5309,7 @@ make root = ${bMakeRoot}`;
 
 		assert.strictEqual(
 			// code under test
-			await oCache.requestNodeProperty("~oElement~", "~oGroupLock~"),
+			await oCache.requestNodeProperty("~oElement~", "~oGroupLock~", "n/a"),
 			undefined, "without a defined result");
 	});
 

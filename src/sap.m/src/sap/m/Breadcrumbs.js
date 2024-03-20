@@ -93,6 +93,8 @@ sap.ui.define([
 				/**
 				 * Determines the text of current/last element in the Breadcrumbs path.
 				 * @since 1.34
+				 * @deprecated as of version 1.123. Use the <strong>currentLocation</strong> aggregation instead.
+
 				 */
 				currentLocationText: {type: "string", group: "Behavior", defaultValue: null},
 				/**
@@ -108,6 +110,12 @@ sap.ui.define([
 			aggregations: {
 
 				/**
+				 * Link determing the current/last element in the Breadcrumbs path.
+				 * @since 1.123
+				 */
+				currentLocation: {type: "sap.m.Link", multiple: false},
+
+				/**
 				 * A list of all the active link elements in the Breadcrumbs control.
 				 * <b>Note:</b> Enabling the property <code>wrapping</code> of the link will not work
 				 * since it's incompatible with the concept of the control.
@@ -119,7 +127,8 @@ sap.ui.define([
 				/**
 				 * Private aggregations
 				 */
-				_currentLocation: {type: "sap.m.Text", multiple: false, visibility: "hidden"},
+				/* @deprecated as of version 1.123 */
+				_currentLocation: {type: "sap.m.Link", multiple: false, visibility: "hidden"},
 				_select: {type: "sap.m.Select", multiple: false, visibility: "hidden"}
 			},
 			defaultAggregation: "links",
@@ -208,7 +217,7 @@ sap.ui.define([
 	};
 
 	Breadcrumbs.prototype._setMinWidth = function () {
-		var oCurrentLocation = this._getCurrentLocation(),
+		var oCurrentLocation = this.getCurrentLocation(),
 			iWidth,
 			iDefaultMinWidthOFT;
 		// When in OFT, set min-width=width of the currentLocationText, so that it won't be truncated too much, before going into the overflow menu
@@ -291,12 +300,13 @@ sap.ui.define([
 		return this.getAggregation("_select");
 	};
 
+	/* @deprecated as of version 1.123 */
 	Breadcrumbs.prototype._getCurrentLocation = function () {
 		if (!this.getAggregation("_currentLocation")) {
-			var oCurrentLocation = new Text({
+			var oCurrentLocation = new Link({
 				id: this._getAugmentedId("currentText"),
 				text: this.getCurrentLocationText(),
-				wrapping: false
+				href: ""
 			}).addStyleClass("sapMBreadcrumbsCurrentLocation");
 
 			oCurrentLocation.addEventDelegate({
@@ -310,6 +320,25 @@ sap.ui.define([
 		return this.getAggregation("_currentLocation");
 	};
 
+	Breadcrumbs.prototype.setCurrentLocation = function (oLink) {
+		if (oLink) {
+			oLink.addStyleClass("sapMBreadcrumbsCurrentLocation");
+		}
+
+		return this.setAggregation("currentLocation", oLink);
+	};
+
+	Breadcrumbs.prototype.getCurrentLocation = function () {
+		var oLinkAggregation = this.getAggregation("currentLocation");
+
+		/* @deprecated as of version 1.123 */
+		if (!oLinkAggregation) {
+			return this._getCurrentLocation();
+		}
+
+		return oLinkAggregation;
+	};
+
 	Breadcrumbs.prototype._setCurrentLocationAccInfo = function (oCurrentLocation) {
 		var aVisibleItems = this._getControlsForBreadcrumbTrail(),
 			positionText = Breadcrumbs._getResourceBundleText("BREADCRUMB_ITEM_POS", [aVisibleItems.length, aVisibleItems.length]);
@@ -317,7 +346,7 @@ sap.ui.define([
 		oCurrentLocation.$().attr("aria-current", "page");
 		oCurrentLocation.$().attr("tabindex", 0);
 		oCurrentLocation.$().attr("role", "link");
-		oCurrentLocation.$().attr("aria-label", this.getCurrentLocationText() + " " + positionText);
+		oCurrentLocation.$().attr("aria-label", this.getCurrentLocation().getText() + " " + positionText);
 	};
 
 	function fnConvertArguments(sAggregationName, aArguments) {
@@ -400,7 +429,7 @@ sap.ui.define([
 	Breadcrumbs.prototype._onSelectBeforeOpenDialog = function () {
 		var oSelect = this._getSelect();
 
-		if (this.getCurrentLocationText() && Device.system.phone) {
+		if (this.getCurrentLocation().getText() && Device.system.phone) {
 			oSelect.setSelectedIndex(0);
 		} else {
 			oSelect.setSelectedItem(null);
@@ -485,8 +514,8 @@ sap.ui.define([
 	Breadcrumbs.prototype._getItemsForMobile = function () {
 		var oItems = this.getLinks().filter(function (oLink) { return oLink.getVisible(); });
 
-		if (this.getCurrentLocationText()) {
-			oItems.push(this._getCurrentLocation());
+		if (this.getCurrentLocation().getText()) {
+			oItems.push(this.getCurrentLocation());
 		}
 
 		return oItems;
@@ -527,8 +556,8 @@ sap.ui.define([
 
 		aVisibleControls = this.getLinks().filter(function (oLink) { return oLink.getVisible(); });
 
-		if (this.getCurrentLocationText()) {
-			return aVisibleControls.concat([this._getCurrentLocation()]);
+		if (this.getCurrentLocation().getText()) {
+			return aVisibleControls.concat([this.getCurrentLocation()]);
 		}
 		return aVisibleControls;
 	};
@@ -774,8 +803,9 @@ sap.ui.define([
 		}
 	};
 
+	/* @deprecated as of version 1.123 */
 	Breadcrumbs.prototype.setCurrentLocationText = function (sText) {
-		var oCurrentLocation = this._getCurrentLocation(),
+		var oCurrentLocation = this.getCurrentLocation(),
 			vResult = this.setProperty("currentLocationText", sText, true);
 
 		if (oCurrentLocation.getText() !== sText) {

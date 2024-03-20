@@ -1,12 +1,11 @@
 sap.ui.define([
 	"sap/ui/integration/Extension",
 	"sap/ui/integration/library",
-	"sap/ui/core/library"
-], function (Extension, integrationLibrary, coreLibrary) {
+	"sap/ui/core/message/MessageType"
+], function (Extension, integrationLibrary, MessageType) {
 	"use strict";
 
 	var CardActionType = integrationLibrary.CardActionType;
-	var MessageType = coreLibrary.MessageType;
 
 	var ShowMessageExtension = Extension.extend("card.explorer.extension.showMessage.ShowMessageExtension");
 

@@ -11237,71 +11237,129 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 	//*********************************************************************************************
 	// Scenario: Do not show more decimal places than available for the amount/quantity part
+	// Observe different formats if the scale of the amount part type's changes
 	// JIRA: CPOUI5MODELS-1600
-	QUnit.test("OData UnitType with unit decimals places > measure scale", function (assert) {
-		const oModel = createModel("/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/?CPOUI5MODELS-1600=true",
+	QUnit.test("CPOUI5MODELS-1600: UnitType with unit decimals places > measure scale", function (assert) {
+		const URLParameter = "CPOUI5MODELS-1600=true"; // unqiue URL for each test needed
+		const oModel = createModel(`/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/?${URLParameter}`,
 				{defaultBindingMode : "TwoWay", tokenHandling : false});
-		const sView = '\
-<FlexBox binding="{/ProductSet(\'P1\')}">\
-	<Input id="weight" value="{\
-		parts : [{\
-			constraints : {precision : 13, scale : 3},\
-			path : \'WeightMeasure\',\
-			type : \'sap.ui.model.odata.type.Decimal\'\
-		}, {\
-			path : \'WeightUnit\',\
-			type : \'sap.ui.model.odata.type.String\'\
-		}, {\
-			mode : \'OneTime\',\
-			path : \'/##@@requestUnitsOfMeasure\',\
-			targetType : \'any\'\
-		}],\
-		mode : \'TwoWay\',\
-		type : \'sap.ui.model.odata.type.Unit\'\
-	}" />\
-</FlexBox>';
-		let oControl;
-
-		this.expectRequest("ProductSet('P1')?CPOUI5MODELS-1600=true", {
+		const sView = `\
+<FlexBox binding="{/ProductSet('P1')}">
+	<Input id="weight" value="{
+		parts : [{
+			constraints : {precision : 13, scale : 3},
+			path : 'WeightMeasure',
+			type : 'sap.ui.model.odata.type.Decimal'
+		}, {
+			path : 'WeightUnit',
+			type : 'sap.ui.model.odata.type.String'
+		}, {
+			mode : 'OneTime',
+			path : '/##@@requestUnitsOfMeasure',
+			targetType : 'any'
+		}],
+		mode : 'TwoWay',
+		type : 'sap.ui.model.odata.type.Unit',
+		formatOptions : {preserveDecimals : false}
+	}"/>
+</FlexBox>`;
+		let oBindingPart;
+		this.expectRequest(`ProductSet('P1')?${URLParameter}`, {
 				ProductID : "P1",
-				WeightMeasure : "12.34",
+				WeightMeasure : "12.341",
 				WeightUnit : "KWH"
 			})
-			.expectRequest("SAP__UnitsOfMeasure?CPOUI5MODELS-1600=true&$skip=0&$top=5000", {
+			.expectRequest(`SAP__UnitsOfMeasure?${URLParameter}&$skip=0&$top=5000`, {
 				results : [{
-					DecimalPlaces : 99, // more decimals than WeightMeasure's scale
-					ExternalCode : "KWH",
-					ISOCode : "KWH",
-					Text : "Kilowatt hour",
-					UnitCode : "KWH"
+					DecimalPlaces : 7, // more decimals than WeightMeasure's scale
+					ExternalCode : "KWH"
 				}]
 			})
-			.expectValue("weight", "12.340 KWH");
+			.expectValue("weight", "12.341 KWH"); // amount type's scale wins
 
 		return this.createView(assert, sView, oModel).then(() => {
-			oControl = this.oView.byId("weight");
-
-			this.expectValue("weight", "23.456 KWH");
-
-			// code under test
-			oControl.setValue("23.456 KWH");
-
-			return this.waitForChanges(assert);
-		}).then(() => {
-			this.expectValue("weight", "0.000 KWH")
-				.expectValue("weight", "0.000 KWH"); // twice because 2 parts changed
+			oBindingPart = this.oView.byId("weight").getBinding("value").getBindings()[0];
+			this.expectValue("weight", "12.3410000 KWH");
 
 			// code under test
-			oControl.setValue("");
+			oBindingPart.setType(new Decimal(undefined, {precision : 13, scale : "variable"}));
 
-			return this.waitForChanges(assert);
+			return this.waitForChanges(assert, "change scale to variable -> unit's decimals wins");
 		}).then(() => {
-			this.expectValue("weight", "0.00 KWH");
+			this.expectValue("weight", "12.34 KWH");
 
-			// code under test (change WeightMeasure's type, scale is now 2)
-			oControl.getBinding("value").getBindings()[0].setType(new Decimal(undefined, {precision : 13, scale : 2}));
+			// code under test
+			oBindingPart.setType(new Decimal(undefined, {precision : 13, scale : 2}));
 
-			return this.waitForChanges(assert);
+			return this.waitForChanges(assert, "change scale to 2 -> amount type's scale wins");
+		}).then(() => {
+			this.expectValue("weight", "12.3410000 KWH");
+
+			// code under test
+			oBindingPart.setType(new Decimal(undefined, {precision : 13}));
+
+			return this.waitForChanges(assert, "change scale to undefined -> unit's decimals wins");
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Do not show more decimal places than available for the amount/quantity part
+	// Show that the Unit amount is formatted properly regarding the decimal places depending on:
+	// a) the maxFractionDigits formatOption for the unit type
+	// b) the amount part data type's scale and
+	// with a fix unit decimal places of 7 for the used unit code
+	// JIRA: CPOUI5MODELS-1600
+	[
+		{iMaxFractionDigits: 1, iScale: 3, sExpected: "12.3 KWH"},  // maxFractionDigits wins
+		{iMaxFractionDigits: 9, iScale: 3, sExpected: "12.3410000 KWH"}, // unit's decimal places wins
+		{iMaxFractionDigits: undefined, iScale: 3, sExpected: "12.341 KWH"}, // scale wins
+		{iMaxFractionDigits: undefined, iScale: "'variable'", sExpected: "12.3410000 KWH"}, // unit's decimal places wins
+		{iMaxFractionDigits: undefined, iScale: undefined, sExpected: "12.3410000 KWH"} // unit's decimal places wins
+	].forEach(({iMaxFractionDigits, iScale, sExpected}, i) => {
+		QUnit.test(`CPOUI5MODELS-1600: UnitType with unit maxFractionDigits, ${i}`, function (assert) {
+			const sURLParameter = "CPOUI5MODELS-1600=true" + i; // unqiue URL for each test needed
+			const oModel = createModel(`/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/?${sURLParameter}`,
+				{defaultBindingMode : "TwoWay", tokenHandling : false});
+			const sScaleConstraint = iScale ? `, scale : ${iScale}` : "";
+			const sMaxFractionDigitsOption = iMaxFractionDigits ? `, maxFractionDigits : ${iMaxFractionDigits}` : "";
+			const sView = `\
+	<FlexBox binding="{/ProductSet('P1')}">
+		<Input id="weight" value="{
+			parts : [{
+				constraints : {precision : 13${sScaleConstraint}},
+				path : 'WeightMeasure',
+				type : 'sap.ui.model.odata.type.Decimal'
+			}, {
+				path : 'WeightUnit',
+				type : 'sap.ui.model.odata.type.String'
+			}, {
+				mode : 'OneTime',
+				path : '/##@@requestUnitsOfMeasure',
+				targetType : 'any'
+			}],
+			mode : 'TwoWay',
+			type : 'sap.ui.model.odata.type.Unit',
+			formatOptions : {preserveDecimals : false${sMaxFractionDigitsOption}}
+		}"/>\
+	</FlexBox>`;
+
+			this.expectRequest(`ProductSet('P1')?${sURLParameter}`, {
+					ProductID : "P1",
+					WeightMeasure : "12.341",
+					WeightUnit : "KWH"
+				})
+				.expectRequest(`SAP__UnitsOfMeasure?${sURLParameter}&$skip=0&$top=5000`, {
+					results : [{
+						DecimalPlaces : 7, // more decimals than WeightMeasure's scale
+						ExternalCode : "KWH",
+						ISOCode : "KWH",
+						Text : "Kilowatt hour",
+						UnitCode : "KWH"
+					}]
+				})
+				.expectValue("weight", sExpected);
+
+			return this.createView(assert, sView, oModel);
 		});
 	});
 

@@ -31,9 +31,7 @@ sap.ui.define([
 	"sap/ui/core/Title",
 	"sap/ui/core/HTML",
 	"sap/base/Log",
-	"sap/ui/Device",
 	"sap/m/library",
-	"sap/m/ImageRenderer",
 	"sap/m/Table",
 	"sap/m/Column",
 	"sap/m/Toolbar",
@@ -43,7 +41,7 @@ sap.ui.define([
 ], function (Element, Text, List, MessageToast, StandardListItem, JSONModel, Dialog, Button,
 	ScrollContainer, Bar, HBox, VBox, SearchField, Popover, Label, Switch, RadioButton, RadioButtonGroup,
 	Page, SegmentedButton, Image, Carousel, CarouselLayout, Input, FlexBox, Panel, App, Slider, SimpleForm,
-	Title, HTML, Log, Device, mLibrary, ImageRenderer, Table, Column, Toolbar, ToolbarSpacer, ColumnListItem, SegmentedButtonItem) {
+	Title, HTML, Log, mLibrary, Table, Column, Toolbar, ToolbarSpacer, ColumnListItem, SegmentedButtonItem) {
 	"use strict";
 
 		//shortcuts
@@ -192,14 +190,14 @@ sap.ui.define([
 				content : [ new HTML({
 					content : "<p>Do you want to start a new world domination campaign?</p>"
 				}) ],
-				leftButton : new Button({
+				beginButton : new Button({
 					text : "Reject",
 					type : ButtonType.Reject,
 					press : function() {
 						oDialog1.close();
 					}
 				}),
-				rightButton : new Button({
+				endButton : new Button({
 					text : "Accept",
 					type : ButtonType.Accept,
 					press : function() {
@@ -336,49 +334,6 @@ sap.ui.define([
 					}
 				} */
 			}
-		});
-		/* poll control start */
-		Image.extend("Lightbox", {
-			metadata: {
-				properties: {
-					large: "sap.ui.core.URI"
-				}
-			},
-			// set up the inner controls
-			init: function () {},
-			// helper function to update the meta text
-			_open: function () {
-				var fnClose = function () {
-					oDialog.destroy();
-					oDialog = null;
-				};
-
-				var oDialog = new Dialog({
-					stretch: Device.system.phone,
-					customHeader: new Bar({
-						contentLeft: new Label({
-							text: this.getAlt()
-						}),
-						contentRight: new Button({
-							icon: "sap-icon://decline",
-							press: function () {
-								oDialog.close();
-							}
-						})
-					}),
-					verticalScrolling: false,
-					horizontalScrolling: false,
-					afterClose: fnClose,
-					content: [
-						new Image({
-							src: this.getLarge()
-						}).attachPress(fnClose)
-					]
-				}).addStyleClass("lightboxDialog");
-				oDialog.open();
-			},
-			// render control with the image renderer
-			renderer: ImageRenderer.render
 		});
 
 		// Create Images

@@ -10,7 +10,7 @@ sap.ui.define([
 	"sap/ui/integration/util/DataProvider",
 	"sap/ui/integration/util/Manifest",
 	"sap/ui/integration/library",
-	"sap/ui/core/library",
+	"sap/ui/core/message/MessageType",
 	"sap/ui/core/Manifest",
 	"sap/base/Log",
 	"sap/ui/core/ComponentContainer",
@@ -42,7 +42,7 @@ sap.ui.define([
 		DataProvider,
 		CardManifest,
 		library,
-		coreLibrary,
+		MessageType,
 		CoreManifest,
 		Log,
 		ComponentContainer,
@@ -68,7 +68,6 @@ sap.ui.define([
 
 		var DOM_RENDER_LOCATION = "qunit-fixture";
 
-		var MessageType = coreLibrary.MessageType;
 		var CardDataMode = library.CardDataMode;
 		var CardBlockingMessageType = library.CardBlockingMessageType;
 

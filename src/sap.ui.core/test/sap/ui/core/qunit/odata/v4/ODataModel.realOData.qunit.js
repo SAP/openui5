@@ -383,7 +383,7 @@ sap.ui.define([
 		// ensure object of bound action is loaded
 		return oParentBinding.getBoundContext().requestObject().then(function () {
 			oBinding.setContext(oParentBinding.getBoundContext());
-			return oBinding.setParameter("ManagerID", "3").execute();
+			return oBinding.setParameter("ManagerID", "3").invoke();
 		});
 	});
 

@@ -1175,11 +1175,7 @@ sap.ui.define([
 	function createView(sViewClass, oViewSettings) {
 		var ViewClass = sap.ui.require(sViewClass);
 		if (!ViewClass) {
-			ViewClass = sap.ui.requireSync(sViewClass);// legacy-relevant: sync fallback for missing dependency
-			if (oViewSettings.async) {
-				//not supported
-				Log.warning("sap.ui.view was called without requiring the according view class.");
-			}
+			future.warningThrows(`The view class '${sViewClass}' needs to be required before an instance of the view can be created.`);
 		}
 		return new ViewClass(oViewSettings);
 	}
@@ -1226,7 +1222,6 @@ sap.ui.define([
 	 * where it is the executed only for this instance, or by the registerPreprocessor method of the view type. Currently this is
 	 * available only for XMLViews (as of version 1.30).
 	 *
-	 * @see sap.ui.view
 	 * @see sap.ui.core.mvc.View.registerPreprocessor (the method is available specialized for view types, so use the following)
 	 * @see sap.ui.core.mvc.XMLView.registerPreprocessor
 	 *

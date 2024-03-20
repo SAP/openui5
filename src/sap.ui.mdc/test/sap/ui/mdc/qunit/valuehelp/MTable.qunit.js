@@ -1795,6 +1795,7 @@ sap.ui.define([
 
 		oMTable.setFilterValue("i");
 		oMTable.setFilterBar(oFilterBar);
+		oMTable.onBeforeShow(true); // filtering should happen only if open
 		assert.ok(oFilterBar.getBasicSearchField(), "SearchField added to FilterBar");
 
 		sinon.spy(oListBinding, "filter");
@@ -1824,6 +1825,7 @@ sap.ui.define([
 			ValueHelpDelegateV4.isSearchSupported.returns(false); // needed for legacy free UI5
 			ValueHelpDelegateV4.updateBindingInfo.reset();
 
+			oMTable.onBeforeShow(true); // fake new opening (as just changing Delegate functionality triggers nothing)
 			assert.notOk(oFilterBar.getBasicSearchField(), "SearchField removed from FilterBar");
 
 			oContainer.getValueHelpDelegate.restore();

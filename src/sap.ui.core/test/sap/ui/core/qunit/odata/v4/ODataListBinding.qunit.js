@@ -93,7 +93,7 @@ sap.ui.define([
 			// create ODataModel
 			this.oModel = new ODataModel({serviceUrl : "/service/?sap-client=111"});
 			this.oModel.setSizeLimit(3);
-			// ensure that the requestor does not trigger requests
+			// ensure that the requestor does not invoke requests
 			this.mock(this.oModel.oRequestor).expects("request").never();
 			// avoid that the cache requests actual metadata for faked responses
 			this.mock(this.oModel.oRequestor.oModelInterface).expects("fetchMetadata").atLeast(0)
