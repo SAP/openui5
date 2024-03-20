@@ -342,7 +342,7 @@ sap.ui.define([
 		oRBGroup.destroy();
 	});
 
-	QUnit.test("Invisible buttons - chaning focus", function(assert) {
+	QUnit.test("Invisible buttons - changing focus", function (assert) {
 		var oRBGroup = new RadioButtonGroup({
 			buttons: [
 				new RadioButton({
@@ -813,5 +813,50 @@ sap.ui.define([
 		});
 		// act 1
 		qutils.triggerEvent("tap", "RB4" );
+	});
+
+	QUnit.module("Destroying and adding radio buttons on Select");
+
+	QUnit.test("The focus should be on the correct radio button.", function (assert) {
+
+		this.clock.restore();
+		// arrange
+		var oRBGroup = new RadioButtonGroup("RBG1"),
+			oRadioButton1 = new RadioButton("RB1"),
+			oRadioButton2 = new RadioButton("RB2"),
+			oRadioButton3 = new RadioButton("RB3");
+
+		var done = assert.async();
+
+		oRBGroup.addButton(oRadioButton1);
+		oRBGroup.addButton(oRadioButton2);
+		oRBGroup.addButton(oRadioButton3);
+
+		oRadioButton1.setSelected(true);
+
+		oRBGroup.attachSelect(function(evt) {
+			oRBGroup.destroyButtons();
+			oRBGroup.setSelectedIndex(-1);
+			if (evt.getParameters().selectedIndex === 2) {
+				var oRadioButton4 = new RadioButton("RB4");
+				oRBGroup.addButton(oRadioButton4);
+				oRBGroup.setSelectedButton(oRadioButton4);
+			}
+		});
+
+		oRBGroup.placeAt("qunit-fixture");
+
+		Core.applyChanges();
+			oRBGroup.attachEventOnce("select", function() {
+				// assert
+				Core.applyChanges();
+				assert.strictEqual(jQuery("#RB4").attr("tabIndex"), "0", "TabIndex of currently selected element is '0'");
+
+				// cleanup
+				oRBGroup.destroy();
+				done();
+			});
+		// act 1
+		qutils.triggerEvent("tap", "RB3" );
 	});
 });
