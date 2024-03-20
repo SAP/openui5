@@ -905,6 +905,12 @@ sap.ui.define([
 			return;
 		}
 
+		const sTargetTag = oEvent.target.tagName.toLowerCase();
+
+		if (["input", "textarea", "select"].indexOf(sTargetTag) > -1 || oEvent.target.isContentEditable) {
+			return;
+		}
+
 		if (this._isPageIndicatorArrow(oEvent.target)) {
 			// prevent upcoming focusin event on the arrow and focusout on the active page
 			oEvent.preventDefault();

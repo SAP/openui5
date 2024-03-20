@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/Text",
 	"sap/m/Dialog",
+	"sap/m/Input",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/Device",
 	"sap/m/ResponsivePopover",
@@ -30,6 +31,7 @@ sap.ui.define([
 	Button,
 	Text,
 	Dialog,
+	Input,
 	KeyCodes,
 	Device,
 	ResponsivePopover,
@@ -1491,6 +1493,46 @@ sap.ui.define([
 
 		// Assert
 		assert.strictEqual(oImageElement.draggable, false, "Image shouldn't be draggable");
+	});
+
+	QUnit.module("Text selection inside carousel", {
+		beforeEach: function() {
+			sinon.config.useFakeTimers = false;
+			const oInput = new Input({
+				value: "sample text"
+			});
+
+			const oPage = new Page({
+				content: [oInput]
+			});
+
+			this.oCarousel = new Carousel("crslWithInput", {
+				pages: [oPage]
+			});
+
+			this.oCarousel.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+		},
+		afterEach: function () {
+			this.oCarousel.destroy();
+			sinon.config.useFakeTimers = true;
+		}
+	});
+
+	QUnit.test("Testing if drag event is triggered on text/input selection", function(assert) {
+		// Arrange
+		const oInput = this.oCarousel.getPages()[0].getContent()[0],
+			oInputDomRef = oInput.getFocusDomRef();
+
+		//Act
+		this.oCarousel.ontouchstart( {
+			target: oInputDomRef,
+			isMarked: function() {},
+			setMarked: function() {}
+		});
+
+		// Assert
+		assert.notOk(this.oCarousel._bDragging, "Dragging is not started.");
 	});
 
 	QUnit.module("Change pages", {
