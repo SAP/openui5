@@ -441,7 +441,7 @@ sap.ui.define([
 				.withExactArgs(undefined, oFixture.iStatus < 0
 					? [oMessage1, oMessage2] : [oMessage1]);
 			oRestoreExpectation = that.mock(oCache).expects("restoreElement").exactly(iOnFailure)
-				.withExactArgs("~insert~", sinon.match.same(aCacheData[1]), 2, undefined,
+				.withExactArgs("~insert~", sinon.match.same(aCacheData[1]), 2,
 					sinon.match.same(aCacheData), sPath)
 				.callsFake(() => {
 					assert.deepEqual(aCacheData.$deleted.length, 4);
@@ -1080,7 +1080,7 @@ sap.ui.define([
 		this.mock(oCache).expects("adjustIndexes")
 			.withExactArgs(sPath0, sinon.match.same(aElements), 42, 1, "~iDeletedIndex~");
 		const oHelperMock = this.mock(_Helper);
-		oHelperMock.expects("getPrivateAnnotation").exactly(bDefault && bTransient ? 0 : 1)
+		oHelperMock.expects("getPrivateAnnotation")
 			.withExactArgs("~oElement~", "transientPredicate")
 			.returns(bTransient ? "($uid=id-1-23)" : undefined);
 		oHelperMock.expects("addToCount")
@@ -1092,8 +1092,7 @@ sap.ui.define([
 			.returns("~predicate~");
 
 		// code under test
-		oCache.restoreElement(42, "~oElement~", "~iDeletedIndex~",
-			bDefault && bTransient ? "($uid=id-1-23)" : undefined, bDefault ? undefined : aElements,
+		oCache.restoreElement(42, "~oElement~", "~iDeletedIndex~", bDefault ? undefined : aElements,
 			sPath);
 
 		assert.strictEqual(oCache.iLimit, bTransient || sPath ? 234 : 235);
