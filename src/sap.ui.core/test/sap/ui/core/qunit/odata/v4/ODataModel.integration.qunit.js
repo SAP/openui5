@@ -1753,7 +1753,7 @@ sap.ui.define([
 						oActualRequest.$ContentID = sContentID;
 					}
 					assert.deepEqual(oActualRequest, oExpectedRequest,
-						sMethod + " " + readableUrl(sUrl));
+						sMethod + " " + readableUrl(sUrl) + " (batchNo: " + iBatchNo + ")");
 				} else {
 					assert.ok(false, sMethod + " " + readableUrl(sUrl) + " (unexpected)");
 					oResponse = {value : []}; // dummy response to avoid further errors
@@ -32397,8 +32397,11 @@ make root = ${bMakeRoot}`;
 	// (6) Side-effects refresh (moves New3 below Gamma)
 	// (7) Check all contexts
 	// (8) Side-effects refresh (New3 and New6 are no longer requested as out-of-place nodes)
-	// (9) Refresh the binding (out-of-place information is no longer kept, tree is collapsed again
-	//     to 1 level)
+	// (9) Delete Alpha
+	// (10) Side-effects refresh (expand state and out-of-place information are dropped for Alpha's
+	//      descendants)
+	// (11) Refresh the binding (out-of-place information is no longer kept, tree is collapsed again
+	//      to 1 level)
 	// JIRA: CPOUI5ODATAV4-2454
 	QUnit.test("Recursive Hierarchy: out of place", async function (assert) {
 		const oModel = this.createSpecialCasesModel({autoExpandSelect : true});
@@ -32416,6 +32419,10 @@ make root = ${bMakeRoot}`;
 		const sExpandLevels = JSON.stringify([
 			{NodeID : "1,false", Levels : 1},
 			{NodeID : "2,false", Levels : 1},
+			{NodeID : "3,false", Levels : 1},
+			{NodeID : "13,false", Levels : 1}
+		]);
+		const sExpandLevelsAfterDelete = JSON.stringify([
 			{NodeID : "3,false", Levels : 1},
 			{NodeID : "13,false", Levels : 1}
 		]);
@@ -33325,20 +33332,159 @@ make root = ${bMakeRoot}`;
 			this.waitForChanges(assert, "(8) side-effects refresh")
 		]);
 
-		this.expectRequest(sCountUrl, 10)
+		this.expectRequest("DELETE Artists(ArtistID='1',IsActiveEntity=false)")
+			.expectRequest(baseUrl(sExpandLevels)
+				+ "&$select=ArtistID,IsActiveEntity,Name,_/DescendantCount,_/DistanceFromRoot"
+				+ ",_/DrillState,_/NodeID"
+				+ "&$skip=0&$top=1", {
+				value : [{
+					ArtistID : "3",
+					IsActiveEntity : false,
+					Name : "Gamma**",
+					_ : {
+						DescendantCount : "3",
+						DistanceFromRoot : "0",
+						DrillState : "expanded",
+						NodeID : "3,false"
+					}
+				}]
+			})
+			.expectRequest(baseUrl(sExpandLevels)
+				+ "&$select=ArtistID,IsActiveEntity,Name,_/DescendantCount,_/DistanceFromRoot"
+				+ ",_/DrillState,_/NodeID"
+				+ "&$skip=1&$top=1", {
+				value : [{
+					ArtistID : "13",
+					IsActiveEntity : false,
+					Name : "New3**",
+					_ : {
+						DescendantCount : "1",
+						DistanceFromRoot : "1",
+						DrillState : "expanded",
+						NodeID : "13,false"
+					}
+				}]
+			});
+
+		await Promise.all([
+			// code under test
+			oAlpha.delete(),
+			this.waitForChanges(assert, "(9) delete Alpha")
+		]);
+
+		checkTable("after (9)", assert, oTable, [
+			`/${sFriend}(ArtistID='3',IsActiveEntity=false)`,
+			`/${sFriend}(ArtistID='15',IsActiveEntity=false)`,
+			`/${sFriend}(ArtistID='13',IsActiveEntity=false)`
+		], [
+			[true, 1, "3", "Gamma**"],
+			[undefined, 2, "15", "New5**"],
+			[true, 2, "13", "New3**"]
+		], 5);
+
+		this.expectRequest(sCountUrl, 5)
+			.expectRequest(baseUrl(sExpandLevelsAfterDelete)
+				+ "&$select=ArtistID,IsActiveEntity,Name,_/DescendantCount,_/DistanceFromRoot"
+				+ ",_/DrillState,_/NodeID"
+				+ "&$count=true&$skip=0&$top=3", {
+				"@odata.count" : "5",
+				value : [{
+					ArtistID : "3",
+					IsActiveEntity : false,
+					Name : "Gamma**",
+					_ : {
+						DescendantCount : "3",
+						DistanceFromRoot : "0",
+						DrillState : "expanded",
+						NodeID : "3,false"
+					}
+				}, {
+					ArtistID : "13",
+					IsActiveEntity : false,
+					Name : "New3**",
+					_ : {
+						DescendantCount : "1",
+						DistanceFromRoot : "1",
+						DrillState : "expanded",
+						NodeID : "13,false"
+					}
+				}, {
+					ArtistID : "16",
+					IsActiveEntity : false,
+					Name : "New6**",
+					_ : {
+						DescendantCount : "0",
+						DistanceFromRoot : "2",
+						DrillState : "leaf",
+						NodeID : "16,false"
+					}
+				}]
+			})
+			.expectRequest(baseUrl(sExpandLevelsAfterDelete)
+				+ "&$select=ArtistID,IsActiveEntity,_/DescendantCount,_/DistanceFromRoot"
+				+ ",_/DrillState,_/Limited_Rank"
+				+ "&$filter=ArtistID eq '15' and IsActiveEntity eq false"
+				+ " or ArtistID eq '3' and IsActiveEntity eq false"
+				+ "&$top=2", {
+				value : [{
+					ArtistID : "3",
+					IsActiveEntity : false,
+					_ : {
+						DescendantCount : "3",
+						DistanceFromRoot : "n/a", // parent's DistanceFromRoot is not yet relevant
+						DrillState : "expanded",
+						Limited_Rank : "0"
+					}
+				}, {
+					ArtistID : "15",
+					IsActiveEntity : false,
+					_ : {
+						DescendantCount : "0",
+						DistanceFromRoot : "1",
+						DrillState : "leaf",
+						Limited_Rank : "3"
+					}
+				}]
+			})
+			.expectRequest(sFriend
+				+ "?custom=foo&$apply=descendants($root/" + sFriend
+				+ ",OrgChart,_/NodeID,filter(ArtistID eq '3' and IsActiveEntity eq false),1)"
+				+ "&$select=ArtistID,IsActiveEntity,Name,_/NodeID"
+				+ "&$filter=ArtistID eq '15' and IsActiveEntity eq false"
+				+ "&$top=1", {
+				value : [{
+					ArtistID : "15",
+					IsActiveEntity : false,
+					Name : "New5**",
+					_ : {
+						NodeID : "15,false"
+					}
+				}]
+			});
+
+		await Promise.all([
+			// code under test
+			oBinding.getHeaderContext().requestSideEffects([""]),
+			this.waitForChanges(assert, "(10) side-effects refresh")
+		]);
+
+		checkTable("after (10)", assert, oTable, [
+			`/${sFriend}(ArtistID='3',IsActiveEntity=false)`,
+			`/${sFriend}(ArtistID='15',IsActiveEntity=false)`,
+			`/${sFriend}(ArtistID='13',IsActiveEntity=false)`,
+			`/${sFriend}(ArtistID='16',IsActiveEntity=false)`
+		], [
+			[true, 1, "3", "Gamma**"],
+			[undefined, 2, "15", "New5**"],
+			[true, 2, "13", "New3**"]
+		], 5);
+
+		this.expectRequest(sCountUrl, 5)
 			.expectRequest(baseUrl()
 				+ "&$select=ArtistID,IsActiveEntity,Name,_/DrillState,_/NodeID"
 				+ "&$count=true&$skip=0&$top=3", {
-				"@odata.count" : "3",
+				"@odata.count" : "2",
 				value : [{
-					ArtistID : "1",
-					IsActiveEntity : false,
-					Name : "Alpha***",
-					_ : {
-						DrillState : "collapsed",
-						NodeID : "1,false"
-					}
-				}, {
 					ArtistID : "3",
 					IsActiveEntity : false,
 					Name : "Gamma***",
@@ -33359,15 +33505,13 @@ make root = ${bMakeRoot}`;
 
 		await Promise.all([
 			oBinding.requestRefresh(),
-			this.waitForChanges(assert, "(9) refresh the binding")
+			this.waitForChanges(assert, "(11) refresh the binding")
 		]);
 
-		checkTable("after (9)", assert, oTable, [
-			`/${sFriend}(ArtistID='1',IsActiveEntity=false)`,
+		checkTable("after (11)", assert, oTable, [
 			`/${sFriend}(ArtistID='3',IsActiveEntity=false)`,
 			`/${sFriend}(ArtistID='4',IsActiveEntity=false)`
 		], [
-			[false, 1, "1", "Alpha***"],
 			[false, 1, "3", "Gamma***"],
 			[undefined, 1, "4", "Delta***"]
 		]);
