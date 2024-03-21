@@ -7,7 +7,8 @@ sap.ui.define([
 		"sap/ui/mdc/Control",
 		"./ChartRenderer",
 		"sap/base/Log",
-		"./chart/ChartToolbar",
+		"./chart/ToolbarControlFactory",
+		"sap/ui/mdc/ActionToolbar",
 		"./chart/PropertyHelper",
 		"sap/ui/mdc/mixin/FilterIntegrationMixin",
 		"sap/ui/model/base/ManagedObjectModel",
@@ -16,21 +17,22 @@ sap.ui.define([
 		"sap/ui/mdc/p13n/subcontroller/SortController",
 		"sap/ui/mdc/p13n/subcontroller/ChartTypeController",
 		"sap/ui/base/ManagedObjectObserver",
-		"sap/ui/mdc/chart/DrillBreadcrumbs",
 		"sap/ui/mdc/actiontoolbar/ActionToolbarAction",
 		"sap/ui/core/library",
 		"sap/ui/events/KeyCodes",
 		"sap/ui/mdc/util/InfoBar",
 		"sap/ui/core/format/ListFormat",
 		"sap/ui/mdc/enums/ProcessingStrategy",
-		"sap/ui/mdc/enums/ChartP13nMode"
+		"sap/ui/mdc/enums/ChartP13nMode",
+		"sap/ui/mdc/enums/ChartToolbarActionType"
 	],
 	(
 		Library,
 		Control,
 		ChartRenderer,
 		Log,
-		ChartToolbar,
+		ToolbarControlFactory,
+		ActionToolbar,
 		PropertyHelper,
 		FilterIntegrationMixin,
 		ManagedObjectModel,
@@ -39,14 +41,14 @@ sap.ui.define([
 		SortController,
 		ChartTypeController,
 		ManagedObjectObserver,
-		DrillBreadcrumbs,
 		ActionToolbarAction,
 		coreLibrary,
 		KeyCodes,
 		InfoBar,
 		ListFormat,
 		ProcessingStrategy,
-		ChartP13nMode
+		ChartP13nMode,
+		ChartToolbarActionType
 	) => {
 		"use strict";
 
@@ -349,7 +351,7 @@ sap.ui.define([
 						multiple: false
 					},
 					_toolbar: {
-						type: "sap.ui.mdc.chart.ChartToolbar",
+						type: "sap.ui.mdc.ActionToolbar",
 						multiple: false,
 						visibility: "hidden"
 					},
@@ -659,7 +661,198 @@ sap.ui.define([
 			});
 
 			//independent from fetchProperties
-			this._getToolbar().createToolbarContent(this);
+
+			this._createToolbarContent();
+		};
+
+		Chart.prototype._createToolbarContent = function() {
+			const aP13nMode = this.getP13nMode() || [];
+			const aIgnoreToolbarActions = this.getIgnoreToolbarActions();
+
+			const bShowSelectionDetails = this.getShowSelectionDetails();
+			const bShowDrillDown = (aP13nMode.includes("Item") && !(aIgnoreToolbarActions.length || aIgnoreToolbarActions.includes(ChartToolbarActionType.DrillDownUp)));
+			const bShowLegend = !(aIgnoreToolbarActions.length || aIgnoreToolbarActions.includes(ChartToolbarActionType.Legend));
+			const bShowZoom = !(aIgnoreToolbarActions.length || aIgnoreToolbarActions.includes(ChartToolbarActionType.ZoomInOut));
+			const bShowSettings = aP13nMode.includes("Sort") || aP13nMode.includes("Item") || aP13nMode.includes("Filter");
+			const bShowChartType = this._getTypeBtnActive();
+
+			const header = this.getHeader();
+			const headerStyle = this.getHeaderStyle();
+			const headerLevel = this.getHeaderLevel();
+			const headerVisible = this.getHeaderVisible();
+
+			const beforeOpenDrillDown = function(oEvent) {
+				const oViewByBtn = oEvent.getSource();
+				oViewByBtn.removeAllItems();
+				oViewByBtn.setSelectedItemKey("");
+
+				const fnGetDrillStackDimensions = function(oChart) {
+					const aDrillStack = oChart.getControlDelegate().getDrillStack(oChart);
+					const aStackDimensions = [];
+
+					aDrillStack.forEach((oStackEntry) => {
+						// loop over nested dimension arrays
+						oStackEntry.dimension.forEach((sDimension) => {
+							if (sDimension != null && sDimension != "" && aStackDimensions.indexOf(sDimension) == -1) {
+								aStackDimensions.push(sDimension);
+							}
+						});
+					});
+
+					return aStackDimensions;
+				};
+
+				const pSortedDimensionsPromise = this.getControlDelegate().getSortedDimensions(this);
+				return pSortedDimensionsPromise.then((aSortedDimensions) => {
+					// Ignore currently applied dimensions from drill-stack for selection
+					const aIgnoreDimensions = fnGetDrillStackDimensions(this);
+					aSortedDimensions = aSortedDimensions.filter((oDimension) => { return aIgnoreDimensions.indexOf(oDimension.name) < 0; });
+
+					aSortedDimensions.forEach((oDimension) => {
+						// oData.items.push({ text: oDimension.label, id: oDimension.name });
+						oViewByBtn.addItem(new sap.ui.mdc.chart.SelectionButtonItem({key: oDimension.name, text: oDimension.label}));
+					});
+					oViewByBtn.setSearchEnabled(aSortedDimensions.length >= 7);
+					oViewByBtn._openPopover(); // in this case the beforeOpen is not able to provide all item syncron
+				});
+			}.bind(this);
+
+			const itemSelectedDrillDown = function(oEvent) {
+				const sDimensionName = oEvent.getParameter("item").key;
+
+				//Call flex to capture current state before adding an item to the chart aggregation
+				this.getEngine().createChanges({
+					control: this,
+					key: "Item",
+					state: [{
+						name: sDimensionName,
+						position: this.getItems().length
+					}]
+				});
+			}.bind(this);
+
+			const pressSettings = function() {
+				const aP13nMode = this.getP13nMode();
+				const iIdx = aP13nMode.indexOf("Type");
+				if (iIdx > -1) {
+					aP13nMode.splice(iIdx, 1);
+				}
+
+				//TODO: Move this to p13n functionality?
+				if (this.isPropertyHelperFinal()) {
+					this.getEngine().show(this, aP13nMode);
+				} else {
+					this.finalizePropertyHelper().then(() => {
+						this.getEngine().show(this, aP13nMode);
+					});
+				}
+			}.bind(this);
+
+			const chartType = this.getChartType();
+
+			const beforeOpenChartType = function(oEvent) {
+				const oChartTypeBtn = oEvent.getSource();
+				// use this to update the available ChartTypes
+				const aAvailableChartTypes = this.getAvailableChartTypes();
+				oChartTypeBtn.removeAllItems();
+				aAvailableChartTypes.forEach((oChartType) => {
+					oChartTypeBtn.addItem(
+						new sap.ui.mdc.chart.SelectionButtonItem({key: oChartType.key, text: oChartType.text, icon: oChartType.icon})
+					);
+				});
+				oChartTypeBtn.setSearchEnabled(aAvailableChartTypes.length >= 7);
+			}.bind(this);
+
+			const itemSelectedChartType = function(oEvent) {
+				const oChartTypeBtn = oEvent.getSource();
+				const sChartType = oEvent.getParameter("item").key;
+
+				const oChartTypeInfo = this.getChartTypeInfo();
+				const aAvailableChartTypes = this.getAvailableChartTypes();
+				const [oChartType] = aAvailableChartTypes.filter((o) => {return o.key === sChartType; });
+
+				oChartTypeBtn.setText(oChartType.text);
+				oChartTypeBtn.setTooltip(oChartTypeInfo.text);
+				oChartTypeBtn.setIcon(oChartType.icon);
+
+				//TODO should be done in the chart, the control should only raise an event
+				sap.ui.require([
+					"sap/ui/mdc/flexibility/Chart.flexibility"
+				], (ChartFlex) => {
+
+					this.getEngine().createChanges({
+						control: this,
+						key: "Type",
+						state: {
+							properties: {
+								chartType: sChartType
+							}
+						}
+					}).then((vResult) => {
+						this.getControlDelegate().requestToolbarUpdate(this);
+					});
+
+				});
+
+			}.bind(this);
+
+
+			const sId = this.getId();
+			const oToolbar = this._getToolbar();
+
+			/** add beginning **/
+			this._oTitle = ToolbarControlFactory.createTitle(sId, {header: header, headerStyle: headerStyle, headerLevel: headerLevel, headerVisible: headerVisible}, oToolbar);
+			oToolbar.addBegin(this._oTitle);
+
+			/** variant management **/
+			const oVariantManagement = this.getAggregation("variant");
+			if (oVariantManagement && oToolbar) {
+				const [oOldVariantManagement] = oToolbar.getBetween().filter((element) => element instanceof sap.ui.fl.variants.VariantManagement);
+				if (oOldVariantManagement) {
+					oToolbar.removeBetween(oOldVariantManagement);
+				}
+				oToolbar.addBetween(oVariantManagement);
+				this._updateVariantManagementStyle();
+			}
+
+			if (bShowSelectionDetails) {
+				// const getSelectionDetailsActions = function() { return this.getSelectionDetailsActions(); }.bind(this);
+				this._oSelectionDetailsBtn = ToolbarControlFactory.createSelectionDetailsBtn(sId, this.getSelectionDetailsActions.bind(this));
+				oToolbar.addEnd(this._oSelectionDetailsBtn);
+			}
+
+			if (bShowDrillDown) {
+				this._oDrillDownBtn = ToolbarControlFactory.createDrillDownBtn(sId, {beforeOpen: beforeOpenDrillDown, itemSelected: itemSelectedDrillDown});
+				// this._oDrillDownBtn.attachBeforeOpen(beforeOpenDrillDown);
+				// this._oDrillDownBtn.attachItemSelected(itemSelectedDrillDown);
+				oToolbar.addEnd(this._oDrillDownBtn);
+			}
+
+			if (bShowLegend) {
+				this._oLegendBtn = ToolbarControlFactory.createLegendBtn(sId, {pressed: "{$mdcChart>/legendVisible}"});
+				// this._oLegendBtn.bindProperty("pressed", {path: "$mdcChart>/legendVisible"});
+				oToolbar.addEnd(this._oLegendBtn);
+			}
+
+			if (bShowZoom) {
+				this._oZoomInBtn = ToolbarControlFactory.createZoomInBtn(sId, {press: this.zoomIn.bind(this)});
+				oToolbar.addEnd(this._oZoomInBtn);
+
+				this._oZoomOutBtn = ToolbarControlFactory.createZoomOutBtn(sId, {press: this.zoomOut.bind(this)});
+				oToolbar.addEnd(this._oZoomOutBtn);
+			}
+
+			if (bShowSettings) {
+				this._oSettingsBtn = ToolbarControlFactory.createSettingsBtn(sId, {press: pressSettings});
+				oToolbar.addEnd(this._oSettingsBtn);
+			}
+
+			if (bShowChartType) {
+				this._oChartTypeBtn = ToolbarControlFactory.createChartTypeBtn(sId, { selectedItemKey: chartType, beforeOpen: beforeOpenChartType, itemSelected: itemSelectedChartType});
+				oToolbar.addEnd(this._oChartTypeBtn);
+			}
+
+			this._updateVariantManagementStyle();
 		};
 
 		Chart.prototype._initInfoToolbar = function() {
@@ -678,7 +871,7 @@ sap.ui.define([
 							});
 
 							if (bNoConditions && this.getAggregation("_toolbar")) {
-								this.getAggregation("_toolbar").getSettingsButton().focus();
+								//TODO this.getAggregation("_toolbar").getSettingsButton().focus();
 							}
 
 						});
@@ -692,8 +885,8 @@ sap.ui.define([
 						state: {},
 						applyAbsolute: ProcessingStrategy.FullReplace
 					});
-					//Focus handling, setting the focus back tothe settoing button
-					this._getToolbar().getSettingsButton().focus();
+					//Focus handling, setting the focus back to the setting button
+					//TODO this._getToolbar().getSettingsButton().focus();
 				}.bind(this)
 			}));
 
@@ -765,7 +958,7 @@ sap.ui.define([
 		Chart.prototype._createBreadcrumbs = function() {
 			let _oBreadcrumbs = this.getAggregation("_breadcrumbs");
 			if (!_oBreadcrumbs && !this._bIsDestroyed) {
-				_oBreadcrumbs = new DrillBreadcrumbs(this.getId() + "--breadcrumbs", {
+				_oBreadcrumbs = ToolbarControlFactory.createDrillBreadcrumbs(this.getId(), {
 					linkPressed: function(oEvent) {
 						const index = oEvent.getParameter("index");
 
@@ -787,6 +980,7 @@ sap.ui.define([
 
 					}.bind(this)
 				});
+
 				const aItems = this.getControlDelegate().getDrillableItems(this).map(function(oItem) { return { key: oItem.getPropertyKey(), text: oItem.getLabel() }; });
 				_oBreadcrumbs.update(aItems);
 				this.setAggregation("_breadcrumbs", _oBreadcrumbs);
@@ -921,8 +1115,9 @@ sap.ui.define([
 			if (this.getAggregation("_toolbar")) {
 				return this.getAggregation("_toolbar");
 			} else if (!this._bIsDestroyed) {
-				const oToolbar = new ChartToolbar(this.getId() + "--toolbar", {
-					design: "Transparent"
+				const oToolbar = new ActionToolbar(this.getId() + "--toolbar", {
+					design: "Transparent",
+					enabled: false
 				});
 
 				this.setAggregation("_toolbar", oToolbar);
@@ -936,10 +1131,66 @@ sap.ui.define([
 		 * @private
 		 */
 		Chart.prototype._updateToolbar = function() {
-			if (this.getAggregation("_toolbar")) {
-				this.getAggregation("_toolbar").updateToolbar(this);
+			const oToolbar = this.getAggregation("_toolbar");
+			if (oToolbar) {
+				if (!oToolbar.getEnabled()) {
+					oToolbar.setEnabled(true);
+				}
+				this._updateZoomButtons();
+
+				// this must be called only once from the delegate
+				this._initSelectionDetails();
 			} else {
-				Log.warning("Trying to uipdate Chart Toolbar, but toolbar is not yet initialized. This will not work!");
+				Log.warning("Trying to update Chart Toolbar, but toolbar is not yet initialized. This will not work!");
+			}
+		};
+
+		/**
+		 * This checks the enablement of the zoom button in the toolbar.
+		 *
+		 * @experimental
+		 * @private
+		 */
+		Chart.prototype._updateZoomButtons = function() {
+			const oZoomInBtn = this._oZoomInBtn;
+			const oZoomOutBtn = this._oZoomOutBtn;
+
+			if (!oZoomInBtn || !oZoomOutBtn) {
+				return;
+			}
+
+			const oZoomState = this.getControlDelegate().getZoomState(this);
+
+			if (oZoomState?.enabled) {
+				const bInFocused = document.activeElement === oZoomInBtn.getDomRef();
+				const bOutFocused = document.activeElement === oZoomOutBtn.getDomRef();
+
+				oZoomInBtn.setEnabled(oZoomState.enabledZoomIn);
+				oZoomOutBtn.setEnabled(oZoomState.enabledZoomOut);
+
+				// toggle the focus between zoom buttons when the currecnt is disabled
+				if (!oZoomState.enabledZoomIn && bInFocused) {
+					oZoomOutBtn.focus();
+				}
+				if (!oZoomState.enabledZoomOut && bOutFocused) {
+					oZoomInBtn.focus();
+				}
+			} else {
+				oZoomInBtn.setEnabled(false);
+				oZoomOutBtn.setEnabled(false);
+			}
+
+		};
+
+
+		Chart.prototype._initSelectionDetails = function() {
+			const oSelectionDetailsBtn = this._oSelectionDetailsBtn;
+			if (oSelectionDetailsBtn && !oSelectionDetailsBtn._oChangeHandler) {
+				const oSelectionHandler = this.getSelectionHandler();
+				if (oSelectionHandler) {
+					//This can be called multiple times, but only the first will be used
+					oSelectionDetailsBtn.attachSelectionHandler(oSelectionHandler.eventId, oSelectionHandler.listener);
+				}
 			}
 		};
 
@@ -989,6 +1240,7 @@ sap.ui.define([
 		 */
 		Chart.prototype.zoomIn = function() {
 			this.getControlDelegate().zoomIn(this);
+			this._updateZoomButtons();
 		};
 
 		/**
@@ -999,23 +1251,9 @@ sap.ui.define([
 		 */
 		Chart.prototype.zoomOut = function() {
 			this.getControlDelegate().zoomOut(this);
+			this._updateZoomButtons();
 		};
 
-		/**
-		 * Returns the current zoom information as an object
-		 * {
-		 *   "enabled":true,
-		 *   "currentZoomLevel":0.16
-		 * }
-		 *
-		 * @returns {Object} current Zoom Information
-		 *
-		 * @private
-		 * @ui5-restricted sap.ui.mdc
-		 */
-		Chart.prototype.getZoomState = function() {
-			return this.getControlDelegate().getZoomState(this);
-		};
 
 		/**
 		 * Retrieves the selection handler of the inner chart.
@@ -1134,12 +1372,12 @@ sap.ui.define([
 		Chart.prototype.setChartType = function(sChartType) {
 			this.setProperty("chartType", sChartType);
 
-			const oToolbar = this.getAggregation("_toolbar");
-			if (oToolbar?._oChartTypeBtn) {
-				oToolbar._oChartTypeBtn.setSelectedItemKey(sChartType);
+			const oChartTypeButton = this._oChartTypeBtn;
+			if (oChartTypeButton) {
+				oChartTypeButton.setSelectedItemKey(sChartType);
 				const oChartTypeInfo = this.getChartTypeInfo();
-				oToolbar._oChartTypeBtn.setTooltip(oChartTypeInfo.text);
-				oToolbar._oChartTypeBtn.setIcon(oChartTypeInfo.icon);
+				oChartTypeButton.setTooltip(oChartTypeInfo.text);
+				oChartTypeButton.setIcon(oChartTypeInfo.icon);
 			}
 
 			try {
@@ -1324,12 +1562,18 @@ sap.ui.define([
 			}
 		};
 
-		Chart.prototype.setVariant = function(oControl) {
-			this.setAggregation("variant", oControl);
+		Chart.prototype.setVariant = function(oVariantManagement) {
+			this.setAggregation("variant", oVariantManagement);
 
 			//Only add VM directly when Toolbar already exists; otherwise VM will be added during init of toolbar
-			if (this.getAggregation("_toolbar")) {
-				this.getAggregation("_toolbar").addVariantManagement(oControl);
+			const oToolbar = this.getAggregation("_toolbar");
+			if (oVariantManagement && oToolbar) {
+				const [oOldVariantManagement] = oToolbar.getBetween().filter((element) => element instanceof sap.ui.fl.variants.VariantManagement);
+				if (oOldVariantManagement) {
+					oToolbar.removeBetween(oOldVariantManagement);
+				}
+				oToolbar.addBetween(oVariantManagement);
+				this._updateVariantManagementStyle();
 			}
 
 			return this;
@@ -1365,9 +1609,10 @@ sap.ui.define([
 		Chart.prototype.setHeader = function(sHeader) {
 			this.setProperty("header", sHeader);
 
-			if (this.getAggregation("_toolbar")) {
-				this.getAggregation("_toolbar")._setHeader(sHeader);
-			}
+			const oToolbar = this.getAggregation("_toolbar");
+
+			this._oTitle?.setText(sHeader);
+			oToolbar?._oInvTitle?.setText(sHeader);
 
 			return this;
 		};
@@ -1375,9 +1620,8 @@ sap.ui.define([
 		Chart.prototype.setHeaderLevel = function(sHeaderLevel) {
 			this.setProperty("headerLevel", sHeaderLevel);
 
-			if (this.getAggregation("_toolbar")) {
-				this.getAggregation("_toolbar")._setHeaderLevel(sHeaderLevel);
-			}
+			this._oTitle?.setLevel(sHeaderLevel);
+			this._updateVariantManagementStyle();
 
 			return this;
 		};
@@ -1385,9 +1629,8 @@ sap.ui.define([
 		Chart.prototype.setHeaderStyle = function(sHeaderStyle) {
 			this.setProperty("headerStyle", sHeaderStyle);
 
-			if (this.getAggregation("_toolbar")) {
-				this.getAggregation("_toolbar")._setHeaderStyle(sHeaderStyle);
-			}
+			this._oTitle?.setTitleStyle(sHeaderStyle);
+			this._updateVariantManagementStyle();
 
 			return this;
 		};
@@ -1395,16 +1638,33 @@ sap.ui.define([
 		Chart.prototype.setHeaderVisible = function(bVisible) {
 			this.setProperty("headerVisible", bVisible, true);
 
-			if (this.getAggregation("_toolbar")) {
-				this.getAggregation("_toolbar")._setHeaderVisible(bVisible);
-			}
+			this._oTitle?.setVisible(bVisible);
+			this._updateVariantManagementStyle();
 
 			return this;
 		};
 
+
+		Chart.prototype._updateVariantManagementStyle = function() {
+			const oVariantManagement = this.getVariant();
+
+			if (oVariantManagement) {
+				oVariantManagement.setShowAsText(this.getHeaderVisible());
+				oVariantManagement.setTitleStyle(this.getHeaderStyle());
+				oVariantManagement.setHeaderLevel(this.getHeaderLevel());
+			}
+		};
+
+
 		Chart.prototype.getVariant = function() {
+			let oVariantManagement;
 			const oToolbar = this.getAggregation("_toolbar");
-			return oToolbar ? oToolbar._getVariantReference() : this.getAggregation("variant");
+			if (oToolbar) {
+				[oVariantManagement] = oToolbar.getBetween().filter((element) => element instanceof sap.ui.fl.variants.VariantManagement);
+			} else {
+				oVariantManagement = this.getAggregation("variant");
+			}
+			return oVariantManagement;
 		};
 
 		Chart.prototype.onkeydown = function(oEvent) {
@@ -1414,7 +1674,7 @@ sap.ui.define([
 
 			if ((oEvent.metaKey || oEvent.ctrlKey) && oEvent.which === KeyCodes.COMMA) {
 				// CTRL (or Cmd) + COMMA key combination to open the table personalisation dialog
-				const oSettingsBtn = this._getToolbar()._oSettingsBtn;
+				const oSettingsBtn = this._oSettingsBtn;
 				if (oSettingsBtn && oSettingsBtn.getVisible() && oSettingsBtn.getEnabled()) {
 					oSettingsBtn.firePress();
 
@@ -1428,6 +1688,18 @@ sap.ui.define([
 		};
 
 		Chart.prototype.exit = function() {
+			delete this._oTitle;
+			delete this._oSelectionDetailsBtn;
+			delete this._oDrillDownBtn;
+			delete this._oLegendBtn;
+			delete this._oZoomInBtn;
+			delete this._oZoomOutBtn;
+			delete this._oSettingsBtn;
+			delete this._oChartTypeBtn;
+
+			const oToolbar = this.getAggregation("_toolbar");
+			oToolbar?._oInvTitle?.destroy();
+
 			Control.prototype.exit.apply(this, arguments);
 
 			this._oObserver?.destroy();
