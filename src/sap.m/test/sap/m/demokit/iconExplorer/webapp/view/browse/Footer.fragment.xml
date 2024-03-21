@@ -9,7 +9,8 @@
 				width="100%">
 			<items>
 				<Image
-						src="../webapp/images/logo_sap.png"
+						src="../webapp/images/logo_sap.svg"
+						alt="SAP Company Logo"
 						densityAware="false"
 						width="3rem"
 						height="1.5rem">
