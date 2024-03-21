@@ -83,17 +83,14 @@ sap.ui.define([
 		});
 	}
 
-	function createVariantManagement(aFlexObjects, sReference, sVMReference) {
+	function createVariantManagement(aCtrlVariantManagementChanges, sReference, sVMReference) {
 		var sCurrentVariantReference = (mCurrentVariantReferences[sReference] || {})[sVMReference];
 		return {
 			defaultVariant: sVMReference,
 			currentVariant: sCurrentVariantReference,
 			variants: [],
-			variantManagementChanges: aFlexObjects.filter(function(oFlexObject) {
-				return (
-					oFlexObject.getFileType() === "ctrl_variant_management_change"
-					&& oFlexObject.getSelector().id === sVMReference
-				);
+			variantManagementChanges: aCtrlVariantManagementChanges.filter(function(oFlexObject) {
+				return (oFlexObject.getSelector().id === sVMReference);
 			})
 		};
 	}
@@ -104,31 +101,28 @@ sap.ui.define([
 		});
 	}
 
-	function getAllReferencedVariantIds(aFlexObjects, oVariant) {
-		const aVariants = [];
+	function getAllReferencedVariantIds(aVariants, oVariant) {
+		const aFoundVariants = [];
 		let oCurrentVariant = oVariant;
 		let oFoundVariant;
 		do {
-			oFoundVariant = findVariantInFlexObjects(aFlexObjects, oCurrentVariant.getVariantReference());
+			oFoundVariant = findVariantInFlexObjects(aVariants, oCurrentVariant.getVariantReference());
 			if (oFoundVariant) {
-				aVariants.push(oCurrentVariant);
+				aFoundVariants.push(oCurrentVariant);
 				oCurrentVariant = oFoundVariant;
 			}
 		} while (oFoundVariant);
-		return aVariants.map((oVariant) => oVariant.getId());
+		return aFoundVariants.map((oVariant) => oVariant.getId());
 	}
 
-	function createVariantEntry(aFlexObjects, oVariantInstance) {
-		var aReferencedVariantIds = getAllReferencedVariantIds(aFlexObjects, oVariantInstance);
+	function createVariantEntry(oGroupedFlexObjects, oVariantInstance) {
+		const aReferencedVariantIds = getAllReferencedVariantIds(oGroupedFlexObjects.variants, oVariantInstance);
 		return {
 			instance: oVariantInstance,
-			variantChanges: aFlexObjects.filter(function(oFlexObject) {
-				return (
-					oFlexObject.getFileType() === "ctrl_variant_change"
-					&& oFlexObject.getSelector().id === oVariantInstance.getId()
-				);
+			variantChanges: oGroupedFlexObjects.variantChanges.filter(function(oFlexObject) {
+				return oFlexObject.getSelector().id === oVariantInstance.getId();
 			}),
-			controlChanges: aFlexObjects.filter(function(oFlexObject) {
+			controlChanges: oGroupedFlexObjects.changes.filter(function(oFlexObject) {
 				var bCorrectFlexObjectType = oFlexObject.isA("sap.ui.fl.apply._internal.flexObjects.UIChange");
 				if (!bCorrectFlexObjectType) {
 					return false;
@@ -186,38 +180,57 @@ sap.ui.define([
 		});
 	}
 
-	function createVariantsMap(aFlexObjects) {
-		const sReference = aFlexObjects[0]?.getFlexObjectMetadata().reference;
-		const aVariants = aFlexObjects.filter((oFlexObject) => {
-			return oFlexObject.getFileType() === "ctrl_variant";
+	function groupFlexObjects(aFlexObjects) {
+		const oGroupedFlexObjects = {
+			variants: [],
+			variantManagementChanges: [],
+			changes: [],
+			variantChanges: []
+		};
+		aFlexObjects.forEach((oFlexObject) => {
+			switch (oFlexObject.getFileType()) {
+				case "ctrl_variant":
+					oGroupedFlexObjects.variants.push(oFlexObject);
+					break;
+				case "ctrl_variant_management_change":
+					oGroupedFlexObjects.variantManagementChanges.push(oFlexObject);
+					break;
+				case "change":
+					oGroupedFlexObjects.changes.push(oFlexObject);
+					break;
+				case "ctrl_variant_change":
+					oGroupedFlexObjects.variantChanges.push(oFlexObject);
+					break;
+				default:
+					break;
+			}
 		});
+		return oGroupedFlexObjects;
+	}
+
+	function createVariantsMap(aFlexObjects) {
+		const oGroupedFlexObjects = groupFlexObjects(aFlexObjects);
+		const sReference = aFlexObjects[0]?.getFlexObjectMetadata().reference;
 
 		const oVariantManagementsMap = {};
-		aVariants.forEach((oVariantInstance) => {
+		oGroupedFlexObjects.variants.forEach((oVariantInstance) => {
 			var sVMReference = oVariantInstance.getVariantManagementReference();
-			oVariantManagementsMap[sVMReference] ||= createVariantManagement(aFlexObjects, sReference, sVMReference);
+			oVariantManagementsMap[sVMReference] ||= createVariantManagement(
+				oGroupedFlexObjects.variantManagementChanges, sReference, sVMReference
+			);
 			oVariantManagementsMap[sVMReference].variants.push(
-				createVariantEntry(aFlexObjects, oVariantInstance)
+				createVariantEntry(oGroupedFlexObjects, oVariantInstance)
 			);
 		});
 
-		aFlexObjects
-		.filter((oFlexObject) => {
-			return oFlexObject.getFileType() === "ctrl_variant_change";
-		})
-		.forEach((oVariantChange) => {
+		oGroupedFlexObjects.variantChanges.forEach((oVariantChange) => {
 			const oVariantEntry = findVariant(oVariantManagementsMap, oVariantChange);
 			if (oVariantEntry) {
 				applyVariantChange(oVariantEntry, oVariantChange, sReference, oVariantManagementsMap);
 			}
 		});
 
-		const aCtrlVariantManagementChanges = aFlexObjects
-		.filter((oFlexObject) => {
-			return oFlexObject.getFileType() === "ctrl_variant_management_change";
-		});
-
-		aCtrlVariantManagementChanges.forEach((oVariantManagementChange) => {
+		oGroupedFlexObjects.variantManagementChanges.forEach((oVariantManagementChange) => {
 			const oVariantManagementEntry = oVariantManagementsMap[oVariantManagementChange.getSelector().id];
 			if (oVariantManagementEntry) {
 				applyVariantManagementChange(oVariantManagementEntry, oVariantManagementChange);
@@ -229,7 +242,7 @@ sap.ui.define([
 
 			// If current variant is not already set, set initial current variant
 			// Current variant might be unavailable due to layer filtering
-			// or because a component with a different id but the same flex reference was initalized
+			// or because a component with a different id but the same flex reference was initialized
 			if (
 				!oVariantManagement.currentVariant || !oVariantManagement.variants.some((oVariant) => {
 					return oVariant.key === oVariantManagement.currentVariant;
@@ -237,7 +250,7 @@ sap.ui.define([
 			) {
 				const sCurrentVariant = getInitialCurrentVariant(
 					sReference,
-					aCtrlVariantManagementChanges,
+					oGroupedFlexObjects.variantManagementChanges,
 					oVariantManagement.variants
 				) || sVMReference;
 				oVariantManagement.currentVariant = sCurrentVariant;
