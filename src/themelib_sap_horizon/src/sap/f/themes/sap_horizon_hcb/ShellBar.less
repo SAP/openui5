@@ -11,6 +11,12 @@
 		background-color: transparent;
 	}
 }
+
+.sapFShellBar.sapFShellBarFCLFPHeader,
+.sapMPageHeader .sapFShellBar {
+	box-shadow: @sapUiShellShadow;
+}
+
 .sapFButtonNotifications[data-notifications],
 .sapFShellBarOverflowButton[data-notifications] {
 	&:after {
@@ -241,7 +247,7 @@ html.sap-desktop .sapMTB-Transparent-CTX .sapMBtnInner.sapMToggleBtnPressed{
 
 			.sapMSFB:hover {
 				box-shadow: none;
-				border: 0.0625rem solid @sapUiShellInteractiveBorderColor;
+				border: 0.0625rem solid @sapUiButtonLiteHoverBorderColor;
 				border-radius: 0;
 				height: 2.125rem;
 				color: @sapUiShellInteractiveTextColor;
@@ -269,6 +275,7 @@ html.sap-desktop .sapMTB-Transparent-CTX .sapMBtnInner.sapMToggleBtnPressed{
 		.sapMSF:not(.sapMSFDisabled):hover .sapMSFF {
 			background-color: @sapUiShellHoverBackground;
 			box-shadow: @sapUiContentInteractionShadow;
+			border-bottom: 1px solid @sapUiFieldHoverBorderColor;
 		}
 
 		.sapMBtn .sapMBtnInner {
