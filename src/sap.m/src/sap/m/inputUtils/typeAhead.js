@@ -29,6 +29,14 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 		}
 
 		aSelectedItems = _sortItems(sValue, aSelectedItems, vTextGetter); // It's important to sort the items with the best match
+		// check for exact match
+		const oExactMatch = aSelectedItems.find((oItem) => _exactMatchIgnoreCase(_extractTextsFromItem(oItem, vTextGetter)[0], sValue));
+
+		if (oExactMatch) {
+			// if there is an exact match, return it and skip the rest
+			return [oExactMatch];
+		}
+
 		sSelectedItemText = _findBestTextMatch(_extractTextsFromItem(aSelectedItems[0], vTextGetter), sValue);
 
 		if (!oInput.isComposingCharacter() && sSelectedItemText) {
@@ -128,15 +136,6 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 					bLeft = _startsWithIgnoreCase(aLeftTexts[i], sTextToFilter);
 					bRight = _startsWithIgnoreCase(aRightTexts[i], sTextToFilter);
 
-					// In case of exact match always return with highest priority
-					if (aLeftTexts[i].toLowerCase() === sTextToFilter.toLowerCase()) {
-						return -1;
-					}
-
-					if (aRightTexts[i].toLowerCase() === sTextToFilter.toLowerCase()) {
-						return 1;
-					}
-
 					if (bLeft && bRight) {
 						return 0;
 					} else if (_startsWithIgnoreCase(aLeftTexts[i], sTextToFilter)) {
@@ -194,6 +193,17 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 		}
 
 		return sTextToTest.toLowerCase().indexOf(sSearchTerm.toLowerCase()) === 0;
+	}
+
+	/**
+	 *
+	 * @param {string} sTextToTest
+	 * @param {string} sSearchTerm
+	 * @returns {boolean}
+	 * @private
+	 */
+	function _exactMatchIgnoreCase(sTextToTest, sSearchTerm) {
+		return sTextToTest?.toLowerCase() === sSearchTerm?.toLowerCase();
 	}
 
 	/**

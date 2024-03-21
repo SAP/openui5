@@ -6855,6 +6855,69 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
+	QUnit.test("it should select suggestion item on backspace when having exact match", async function (assert) {
+		// Arrange
+		const oInput = new Input({
+			value: "1000",
+			showSuggestion: true,
+			suggestionItems: [
+				new SuggestionItem({text: "1000"}),
+				new SuggestionItem({text: "100"})
+			]
+		}).placeAt("content");
+		await nextUIUpdate(this.clock);
+
+		const oFocusDomRef = oInput.getFocusDomRef();
+
+		oInput.focus();
+		qutils.triggerKeydown(oFocusDomRef, KeyCodes.BACKSPACE);
+		oFocusDomRef.value = "100";
+		qutils.triggerEvent("input", oFocusDomRef, { value: "100" });
+		this.clock.tick(500);
+		await nextUIUpdate(this.clock);
+
+		assert.ok(oInput._getSuggestionsPopover().getItemsContainer().getItems()[1].getSelected(), "The second item should be selected");
+
+		oInput.destroy();
+	});
+
+	QUnit.test("it should select tablular suggestion item on backspace when having exact match", async function (assert) {
+		// Arrange
+		const oInput = new Input({
+			value: "1000",
+			showSuggestion: true,
+			suggestionColumns: [
+				new Column({})
+			],
+			suggestionRows: [
+				new ColumnListItem({
+					cells: [
+						new Label({text: "1000"})
+					]
+				}),
+				new ColumnListItem({
+					cells: [
+						new Label({text: "100"})
+					]
+				})
+			]
+		}).placeAt("content");
+		await nextUIUpdate(this.clock);
+
+		const oFocusDomRef = oInput.getFocusDomRef();
+
+		oInput.focus();
+		qutils.triggerKeydown(oFocusDomRef, KeyCodes.BACKSPACE);
+		oFocusDomRef.value = "100";
+		qutils.triggerEvent("input", oFocusDomRef, { value: "100" });
+		this.clock.tick(500);
+		await nextUIUpdate(this.clock);
+
+		assert.ok(oInput._getSuggestionsPopover().getItemsContainer().getItems()[1].getSelected(), "The second item should be selected");
+
+		oInput.destroy();
+	});
+
 	QUnit.module("Input with Suggestions and Value State, but not Value State Message", {
 		beforeEach: async function () {
 			this.clock = sinon.useFakeTimers();
