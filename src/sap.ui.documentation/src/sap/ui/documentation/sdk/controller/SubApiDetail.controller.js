@@ -160,7 +160,7 @@ sap.ui.define([
 							if ($aNotApplied.length > 0 && window.hljs) {
 								$aNotApplied.addClass('hljs');
 								document.querySelectorAll('pre').forEach(function(block) {
-									window.hljs.highlightBlock(block);
+									window.hljs.highlightElement(block);
 								});
 							}
 						}.bind(this), 200);
@@ -299,7 +299,7 @@ sap.ui.define([
 			_hljs: function () {
 				if (window.hljs) {
 					document.querySelectorAll('pre').forEach(function(block) {
-						window.hljs.highlightBlock(block);
+						window.hljs.highlightElement(block);
 					});
 				}
 			},

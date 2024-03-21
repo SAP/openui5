@@ -11,7 +11,7 @@ function iLiner() {
 			oPre,
 			sCaption;
 
-		document.querySelectorAll('pre').forEach(window.hljs.highlightBlock);
+		document.querySelectorAll('pre').forEach(window.hljs.highlightElement);
 
 		for (i = 0; i < aPreElements.length; i++) {
 			oPre = aPreElements[i];
