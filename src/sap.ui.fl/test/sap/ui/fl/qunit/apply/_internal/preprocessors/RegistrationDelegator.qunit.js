@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerRegistration",
 	"sap/ui/fl/apply/api/DelegateMediatorAPI",
 	"sap/ui/fl/apply/_internal/DelegateMediator",
+	"sap/ui/fl/apply/_internal/DelegateMediatorNew",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/base/DesignTime"
 ], function(
@@ -22,6 +23,7 @@ sap.ui.define([
 	ChangeHandlerRegistration,
 	DelegateMediatorAPI,
 	DelegateMediator,
+	DelegateMediatorNew,
 	sinon,
 	DesignTime
 ) {
@@ -32,12 +34,17 @@ sap.ui.define([
 	QUnit.module("sap.ui.fl.apply._internal.preprocessors.RegistrationDelegator", {
 		afterEach() {
 			sandbox.restore();
+			DelegateMediator.clear();
+			DelegateMediatorNew.clear();
 		}
 	}, function() {
 		QUnit.test("Check if all the registration functions were called", function(assert) {
 			var oRegisterAllSpy = sandbox.spy(RegistrationDelegator, "registerAll");
 
-			var oRegisterChangeHandlersForLibraryStub = sandbox.stub(ChangeHandlerRegistration, "getChangeHandlersOfLoadedLibsAndRegisterOnNewLoadedLibs");
+			var oRegisterChangeHandlersForLibraryStub = sandbox.stub(
+				ChangeHandlerRegistration,
+				"getChangeHandlersOfLoadedLibsAndRegisterOnNewLoadedLibs"
+			);
 			var oRegisterPredefinedChangeHandlersStub = sandbox.stub(ChangeHandlerRegistration, "registerPredefinedChangeHandlers");
 			var oRegisterExtensionProviderStub = sandbox.stub(MvcController, "registerExtensionProvider");
 			var oRegisterXMLPreprocessorStub = sandbox.stub(XMLView, "registerPreprocessor");
@@ -74,6 +81,8 @@ sap.ui.define([
 		},
 		afterEach() {
 			sandbox.restore();
+			DelegateMediator.clear();
+			DelegateMediatorNew.clear();
 		}
 	}, function() {
 		QUnit.test("When extension point handling is disabled", function(assert) {

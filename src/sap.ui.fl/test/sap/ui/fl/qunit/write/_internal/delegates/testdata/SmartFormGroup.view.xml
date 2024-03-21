@@ -1,0 +1,25 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	xmlns:smartForm="sap.ui.comp.smartform"
+	xmlns:sap.ui.layout="sap.ui.layout"
+	controllerName="sap.ui.fl.test.delegate.SmartFormGroup">
+
+	<Page title="App">
+		<content>
+			<sap.ui.layout:VerticalLayout width="100%">
+				<List
+					id="someList"
+					items="{
+						path: '/EntityTypes'
+					}" >
+					<StandardListItem title="{Property01}" />
+				</List>
+				<smartForm:SmartForm id="someForm" title="Information">
+					<smartForm:Group id="someGroup" label="Group" >
+
+					</smartForm:Group>
+				</smartForm:SmartForm>
+			</sap.ui.layout:VerticalLayout>
+		</content>
+	</Page>
+</mvc:View>
