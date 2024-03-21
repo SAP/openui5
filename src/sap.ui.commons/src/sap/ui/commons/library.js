@@ -164,7 +164,7 @@ sap.ui.define(['sap/ui/base/DataType', 'sap/base/util/ObjectPath',
 	 *
 	 * @enum {string}
 	 * @public
-	 * @deprecated as of version 1.38
+	 * @deprecated as of version 1.38 (altogether with sap.ui.commons.Button). Use sap.m.Button with its sap.m.ButtonType instead.
 	 */
 	thisLib.ButtonStyle = {
 
@@ -306,7 +306,7 @@ sap.ui.define(['sap/ui/base/DataType', 'sap/base/util/ObjectPath',
 	 *
 	 * @enum {string}
 	 * @public
-	 * @deprecated as of version 1.38. Use {@link sap.m.ToolbarDesign} with {@link sap.m.OverflowToolbar} instead.
+	 * @deprecated as of version 1.38 (altogether with sap.ui.commons.Toolbar). Use sap.m.Toolbar and its sap.m.ToolbarDesign instead.
 	 */
 	thisLib.MenuBarDesign = {
 
@@ -652,7 +652,7 @@ sap.ui.define(['sap/ui/base/DataType', 'sap/base/util/ObjectPath',
 	 * @name sap.ui.commons.ToolbarItem
 	 * @interface
 	 * @public
-	 * @deprecated as of version 1.38
+	 * @deprecated as of version 1.38 (altogether with sap.ui.commons.Toolbar). Use sap.m.Toolbar instead.
 	 */
 
 
@@ -661,7 +661,7 @@ sap.ui.define(['sap/ui/base/DataType', 'sap/base/util/ObjectPath',
 	 *
 	 * @enum {string}
 	 * @public
-	 * @deprecated as of version 1.38
+	 * @deprecated as of version 1.38 (altogether wuith sap.ui.commons.Toolbar). Use sap.m.Toolbar and its sap.m.ToolbarSeparator instead.
 	 */
 	thisLib.ToolbarSeparatorDesign = {
 
@@ -685,7 +685,7 @@ sap.ui.define(['sap/ui/base/DataType', 'sap/base/util/ObjectPath',
 	 *
 	 * @enum {string}
 	 * @public
-	 * @deprecated as of version 1.38
+	 * @deprecated as of version 1.38 (altogether with sap.ui.commons.Tree). Use sap.m.Tree with its items instead.
 	 */
 	thisLib.TreeSelectionMode = {
 
@@ -939,7 +939,7 @@ sap.ui.define(['sap/ui/base/DataType', 'sap/base/util/ObjectPath',
 	 *
 	 * @enum {string}
 	 * @public
-	 * @deprecated as of version 1.38
+	 * @deprecated as of version 1.38 (altogether with sap.ui.commons.layout.BorderLayout). Use sap.m.Page instead with its aggregations.
 	 */
 	thisLib.layout.BorderLayoutAreaTypes = {
 
