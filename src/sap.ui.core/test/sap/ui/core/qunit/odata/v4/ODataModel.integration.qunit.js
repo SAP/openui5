@@ -2093,8 +2093,11 @@ sap.ui.define([
 
 		/**
 		 * The following code (either {@link #createView} or anything before
-		 * {@link #waitForChanges}) is expected to report at least the given message. All expected
-		 * messages should have a different message text.
+		 * {@link #waitForChanges}) is expected to report the given message. It is added to the list
+		 * of messages that the MessageModel should contain in the end (see
+		 * {@link #expectMessages}).
+		 *
+		 * Note : All expected messages should have a different message text.
 		 *
 		 * @param {object} oExpectedMessage The expected message with properties corresponding
 		 *   to the getters of sap.ui.core.message.Message: message and type are required; code,
@@ -2102,8 +2105,6 @@ sap.ui.define([
 		 *   false) are optional; technicalDetails is only compared if given
 		 * @param {boolean} [bHasMatcher] Whether the expected message has a Sinon.JS matcher
 		 * @returns {object} The test instance for chaining
-		 *
-		 * @see #expectMessages
 		 */
 		expectMessage : function (oExpectedMessage, bHasMatcher) {
 			const aTargets = oExpectedMessage.targets || [oExpectedMessage.target || ""];
@@ -2127,9 +2128,12 @@ sap.ui.define([
 		},
 
 		/**
-		 * The following code (either {@link #createView} or anything before
-		 * {@link #waitForChanges}) is expected to report *exactly* the given messages. All expected
-		 * messages should have a different message text.
+		 * The MessageModel is expected to contain <b>exactly</b> the given messages when either
+		 * {@link #createView} or {@link #waitForChanges}) have finished. This expectation remains
+		 * valid for each subsequent {@link #waitForChanges}), until a new expectation is given.
+		 *
+		 * Note: The order does not matter, but all expected messages should have a different
+		 * message text.
 		 *
 		 * @param {object[]} aExpectedMessages The expected messages with properties corresponding
 		 *   to the getters of sap.ui.core.message.Message: message and type are required; code,
