@@ -331,7 +331,7 @@ sap.ui.require([
 			}),
 			new FormContainer("C3",{
 				toolbar: new Toolbar("C3-TB", {
-					content: [new mTitle("C3-Title", {text: "Container 2", level: CoreLib.TitleLevel.H5, titleStyle: CoreLib.TitleLevel.H5, tooltip: "Title tooltip"}),
+					content: [new mTitle("C3-Title", {text: "Container 2", level: CoreLib.TitleLevel.H5, titleStyle: CoreLib.TitleLevel.H6, tooltip: "Title tooltip"}),
 					          new ToolbarSpacer(),
 					          new ToggleButton({text: "LayoutData", press: toggleLayoutData2})
 					          ]
@@ -425,7 +425,7 @@ sap.ui.require([
 			}),
 			new FormContainer("C5",{
 				toolbar: new Toolbar("C5-TB", {
-					content: [new mTitle("C5-Title", {text: "Container 2", level: CoreLib.TitleLevel.H5, titleStyle: CoreLib.TitleLevel.H5, tooltip: "Title tooltip"}),
+					content: [new mTitle("C5-Title", {text: "Container 2", level: CoreLib.TitleLevel.H5, titleStyle: CoreLib.TitleLevel.H6, tooltip: "Title tooltip"}),
 					          new ToolbarSpacer(),
 					          new ToggleButton({icon: "sap-icon://sap-ui5", tooltip: "SAPUI5"})
 					          ]
@@ -531,7 +531,7 @@ sap.ui.require([
 			}),
 			new FormContainer("C9",{
 				toolbar: new Toolbar("C9-TB", {
-					content: [new mTitle("C9-Title", {text: "Container 3", level: CoreLib.TitleLevel.H5, titleStyle: CoreLib.TitleLevel.H5, tooltip: "Title tooltip"}),
+					content: [new mTitle("C9-Title", {text: "Container 3", level: CoreLib.TitleLevel.H5, titleStyle: CoreLib.TitleLevel.H6, tooltip: "Title tooltip"}),
 					          new ToolbarSpacer(),
 					          new ToggleButton({icon: "sap-icon://sap-ui5", tooltip: "SAPUI5"})
 					          ]
@@ -741,7 +741,7 @@ sap.ui.require([
 	var oForm6 = new Form("F6",{
 		toolbar: new Toolbar("F6-TB", {
 			content: [
-				new mTitle("F6-Title", {text: "column test", level: CoreLib.TitleLevel.H5, titleStyle: CoreLib.TitleLevel.H5, tooltip: "Title tooltip"}),
+				new mTitle("F6-Title", {text: "column test", level: CoreLib.TitleLevel.H5, titleStyle: CoreLib.TitleLevel.H6, tooltip: "Title tooltip"}),
 				new ToolbarSpacer(),
 				new SegmentedButton({
 					width: "auto",

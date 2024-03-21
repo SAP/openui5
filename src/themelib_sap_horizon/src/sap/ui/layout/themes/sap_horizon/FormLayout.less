@@ -37,17 +37,17 @@
 }
 
 /* Title levels should be all rendered in same style. Levels can be changed by application to meet page structure without visual effect */
-/* Form Titles are rendered using H4 size*/
+/* Form Titles are rendered using H4 level, but H5 size*/
 .sapUiFormTitleH1,
 .sapUiFormTitleH2,
 .sapUiFormTitleH3,
 .sapUiFormTitleH4,
 .sapUiFormTitleH5,
 .sapUiFormTitleH6 {
-	font-size: @sapMFontHeader4Size;
+	font-size: @sapMFontHeader5Size;
 }
 
-/* FormContainer Titles are rendered using H4 size*/
+/* FormContainer Titles are rendered using H5 level, but H6 size*/
 .sapUiFormContainerTitle > .sapUiFormTitleH1,
 .sapUiFormContainerTitle > .sapUiFormTitleH2,
 .sapUiFormContainerTitle > .sapUiFormTitleH3,
@@ -61,6 +61,10 @@
 /* Toolbar */
 .sapUiFormContainerToolbar > div:first-child > .sapMTitle{
 	font-weight: bold;
+}
+
+.sapUiFormToolbar > div:first-child >.sapMTitle.sapMTitleStyleAuto{
+	font-size: @sapMFontHeader5Size;
 }
 
 .sapUiFormContainerToolbar > div:first-child >.sapMTitle.sapMTitleStyleAuto{

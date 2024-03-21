@@ -352,8 +352,8 @@ sap.ui.require([
 
 	var oForm2 = new Form("F2",{
 		toolbar: new Toolbar("TB1", {
-								content: [new Icon({src: "sap-icon://car-rental", size: "2rem"}),
-								          new mTitle("F2-Title", {text: "Car", level: CoreLib.TitleLevel.H4, titleStyle: CoreLib.TitleLevel.H4, tooltip: "Title tooltip"}),
+								content: [new Icon({src: "sap-icon://car-rental", size: "1rem"}),
+								          new mTitle("F2-Title", {text: "Car", level: CoreLib.TitleLevel.H4, titleStyle: CoreLib.TitleLevel.H5, tooltip: "Title tooltip"}),
 								          new ToolbarSpacer(),
 								          new Link({text: "Link", href: "http://www.sap.com"}),
 								          new Button({text: "Text"}),
@@ -367,7 +367,7 @@ sap.ui.require([
 		formContainers: [
 			new FormContainer("F2C1",{
 				toolbar: new Toolbar("TB2", {
-						content: [new mTitle("F2C1-Title", {text: "technical data", level: CoreLib.TitleLevel.H5, titleStyle: CoreLib.TitleLevel.H5, tooltip: "Title tooltip"}),
+						content: [new mTitle("F2C1-Title", {text: "technical data", level: CoreLib.TitleLevel.H5, titleStyle: CoreLib.TitleLevel.H6, tooltip: "Title tooltip"}),
 						          new ToolbarSpacer(),
 						          new Link({text: "Link", href: "http://www.sap.com"}),
 						          new Button({text: "Text"}),
@@ -415,7 +415,7 @@ sap.ui.require([
 									oEvent.oSource.setIcon("sap-icon://slim-arrow-down");
 								}
 							}}),
-						new mTitle("F2C2-Title", {text: "other data", level: CoreLib.TitleLevel.H5, titleStyle: CoreLib.TitleLevel.H5, tooltip: "Title tooltip"}),
+						new mTitle("F2C2-Title", {text: "other data", level: CoreLib.TitleLevel.H5, titleStyle: CoreLib.TitleLevel.H6, tooltip: "Title tooltip"}),
 						new ToolbarSpacer(),
 						new Link({text: "Link", href: "http://www.sap.com"}),
 						new Button({text: "Text"})

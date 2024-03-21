@@ -225,7 +225,7 @@ sap.ui.require([
 		editable: false,
 		backgroundDesign: LayoutLib.BackgroundDesign.Transparent,
 		toolbar: new Toolbar("TB1", {
-			content: [new mTitle("SF2-Title", {text: "Non-Editable SimpleForm with transparent background and Toolbars", level: CoreLib.TitleLevel.H4, titleStyle: CoreLib.TitleLevel.H4, tooltip: "Title tooltip"}),
+			content: [new mTitle("SF2-Title", {text: "Non-Editable SimpleForm with transparent background and Toolbars", level: CoreLib.TitleLevel.H4, titleStyle: CoreLib.TitleLevel.H5, tooltip: "Title tooltip"}),
 			          new ToolbarSpacer(),
 			          new Button({icon: "sap-icon://sap-ui5", tooltip: "SAPUI5"})
 			          ]
@@ -234,7 +234,7 @@ sap.ui.require([
 		content:[
 			new Toolbar("TB2", {
 				content: [
-					new mTitle("SF2C1-Title", {text: "Title 1", level: CoreLib.TitleLevel.H5, titleStyle: CoreLib.TitleLevel.H5, tooltip: "Title tooltip"}),
+					new mTitle("SF2C1-Title", {text: "Title 1", level: CoreLib.TitleLevel.H5, titleStyle: CoreLib.TitleLevel.H6, tooltip: "Title tooltip"}),
 					new ToolbarSpacer(),
 					new Button({icon: "sap-icon://sap-ui5", tooltip: "SAPUI5"})
 					]
@@ -250,7 +250,7 @@ sap.ui.require([
 					new ColumnElementData({cellsSmall: 2, cellsLarge: 2})]})}),
 			new OverflowToolbar("TB3", {
 				content: [
-					new mTitle("SF2C2-Title", {text: "Title 2", level: CoreLib.TitleLevel.H5, titleStyle: CoreLib.TitleLevel.H5, tooltip: "Title tooltip"}),
+					new mTitle("SF2C2-Title", {text: "Title 2", level: CoreLib.TitleLevel.H5, titleStyle: CoreLib.TitleLevel.H6, tooltip: "Title tooltip"}),
 					new ToolbarSpacer(),
 					new Button({icon: "sap-icon://sap-ui5", tooltip: "SAPUI5"})
 					]
