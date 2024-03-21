@@ -57,9 +57,6 @@ sap.ui.define([
 			control: oComponent,
 			layer: Layer.CUSTOMER
 		});
-		await FlexState.initialize({
-			componentId: oComponent.getId()
-		});
 		const aCustomerChanges = await PersistenceWriteAPI.save({
 			selector: oComponent,
 			layer: Layer.CUSTOMER,
