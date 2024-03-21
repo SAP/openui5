@@ -17,7 +17,6 @@ sap.ui.define(['sap/ui/core/LayoutData', './library'],
 	 *
 	 * @class
 	 * Holds layout data for the splitter contents.
-	 * Allowed size values are numeric values ending in "px", "rem", "%" and "auto".
 
 	 * @extends sap.ui.core.LayoutData
 	 * @version ${version}
@@ -40,6 +39,7 @@ sap.ui.define(['sap/ui/core/LayoutData', './library'],
 			/**
 			 * The size of the splitter content.
 			 * This property is updated when the area is resized by the user.
+			 * Allowed size values are numeric values ending in "px", "rem", "%" and "auto".
 			 */
 			size : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : 'auto'},
 
