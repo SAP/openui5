@@ -71,8 +71,8 @@ sap.ui.define([
 
     };
 
-    ChartDelegate.getZoomState = function () {
-
+    ChartDelegate.getZoomState = function (oChart) {
+        return { enabled: false };
     };
 
     ChartDelegate.getAvailableChartTypes = function(){
@@ -83,8 +83,8 @@ sap.ui.define([
 
     };
 
-    ChartDelegate.requestToolbarUpdate = function() {
-
+    ChartDelegate.requestToolbarUpdate = function(oChart) {
+        oChart._updateToolbar();
     };
 
     /**

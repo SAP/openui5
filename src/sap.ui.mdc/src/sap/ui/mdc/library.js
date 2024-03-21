@@ -76,7 +76,6 @@ sap.ui.define([
 			"sap.ui.mdc.table.RowSettings",
 			"sap.ui.mdc.chart.Item",
 			"sap.ui.mdc.chart.ChartSelectionDetails",
-			"sap.ui.mdc.chart.ChartToolbar",
 			"sap.ui.mdc.chart.SelectionButton",
 			"sap.ui.mdc.chart.SelectionButtonItem",
 			"sap.ui.mdc.chart.DrillBreadcrumbs",
@@ -115,8 +114,7 @@ sap.ui.define([
 				"sap.ui.mdc.link.PanelItem": "sap/ui/mdc/flexibility/PanelItem",
 				"sap.ui.mdc.link.Panel": "sap/ui/mdc/flexibility/Panel",
 				"sap.ui.mdc.ActionToolbar": "sap/ui/mdc/flexibility/ActionToolbar",
-				"sap.ui.mdc.actiontoolbar.ActionToolbarAction": "sap/ui/mdc/flexibility/ActionToolbarAction",
-				"sap.ui.mdc.chart.ChartToolbar": "sap/ui/mdc/flexibility/ActionToolbar"
+				"sap.ui.mdc.actiontoolbar.ActionToolbarAction": "sap/ui/mdc/flexibility/ActionToolbarAction"
 			},
 			"sap.ui.support": {
 				publicRules: true

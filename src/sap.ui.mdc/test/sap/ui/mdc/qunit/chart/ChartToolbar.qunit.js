@@ -3,22 +3,16 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/mdc/Chart",
-	"sap/ui/mdc/chart/Item",
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/ComponentContainer",
-    "sap/ui/core/library",
-    "sap/chart/Chart",
     "sap/m/Button",
 	"sap/ui/fl/variants/VariantManagement"
 ],
 function(
 	nextUIUpdate,
 	Chart,
-	Item,
 	UIComponent,
 	ComponentContainer,
-    CoreLibrary,
-    InnerChart,
     Button,
 	VariantManagement
 ) {
@@ -107,7 +101,7 @@ function(
 
 		this.oMDCChart.initialized().then(function(){
             const oToolbar = this.oMDCChart._getToolbar();
-            assert.ok(oToolbar._oChartSelectionDetails, "Details button was created");
+            assert.ok(this.oMDCChart._oSelectionDetailsBtn, "Details button was created");
 			assert.equal(oToolbar.getEnd()[0].getMetadata().getName(), "sap.ui.mdc.chart.ChartSelectionDetails", "Selection Details button was added to toolbar");
             done();
 		}.bind(this));
@@ -121,13 +115,11 @@ function(
             const oToolbar = this.oMDCChart._getToolbar();
             assert.ok(oToolbar.getEnabled(), "Toolbar is enabled intially");
 			assert.ok(oToolbar.getContent().length === 9, "Correct amount of toolbar items were added");
-			const zoomSpy = sinon.spy(oToolbar, "toggleZoomButtons");
-			const updateDetailsSpy = sinon.spy(oToolbar._oChartSelectionDetails, "attachSelectionHandler");
+			const zoomSpy = sinon.spy(this.oMDCChart, "_updateToolbar");
 
-            oToolbar.updateToolbar(this.oMDCChart);
-			assert.ok(zoomSpy.calledOnce, "toggleZoomButtons was called");
+            this.oMDCChart._updateToolbar();
+			assert.ok(zoomSpy.calledOnce, "_updateToolbar was called");
             assert.ok(oToolbar.getEnabled(), "Toolbar is enabled");
-			assert.ok(updateDetailsSpy.called, "attachSelectionHandler was called");
             done();
 		}.bind(this));
 	});
@@ -136,33 +128,28 @@ function(
 		const done = assert.async();
 
 		this.oMDCChart.initialized().then(function(){
-            const oToolbar = this.oMDCChart._getToolbar();
-            const stub = sinon.stub(this.oMDCChart, "getZoomState");
-            stub.onCall(0).returns({currentZoomLevel: 0, enabled: true});
+            // const oToolbar = this.oMDCChart._getToolbar();
+            const stub = sinon.stub(this.oMDCChart.getControlDelegate(), "getZoomState");
+            stub.onCall(0).returns({enabledZoomIn: true, enabledZoomOut: false, enabled: true});
 
-            let oZoomObj = oToolbar._getZoomEnablement(this.oMDCChart);
+            this.oMDCChart._updateZoomButtons();
+            assert.notOk(this.oMDCChart._oZoomOutBtn.getEnabled(), "Zoom Out is disabled");
+            assert.ok(this.oMDCChart._oZoomInBtn.getEnabled(), "Zoom In is enabled");
 
-            assert.ok(oZoomObj.enabled, "Zoom is set to enabled");
-            assert.ok(!oZoomObj.enabledZoomOut, "Zoom Out is disabled");
-            assert.ok(oZoomObj.enabledZoomIn, "Zoom In is enabled");
+            stub.onCall(1).returns({enabledZoomIn: false, enabledZoomOut: true, enabled: true});
+            this.oMDCChart._updateZoomButtons();
+            assert.ok(this.oMDCChart._oZoomOutBtn.getEnabled(), "Zoom Out is enabled");
+            assert.notOk(this.oMDCChart._oZoomInBtn.getEnabled(), "Zoom In is disabled");
 
-            stub.onCall(1).returns({currentZoomLevel: 1, enabled: true});
-            oZoomObj = oToolbar._getZoomEnablement(this.oMDCChart);
-            assert.ok(oZoomObj.enabled, "Zoom is set to enabled");
-            assert.ok(!oZoomObj.enabledZoomIn, "Zoom In is enabled");
-            assert.ok(oZoomObj.enabledZoomOut, "Zoom Out is disabled");
+            stub.onCall(2).returns({enabledZoomIn: true, enabledZoomOut: true, enabled: true});
+            this.oMDCChart._updateZoomButtons();
+            assert.ok(this.oMDCChart._oZoomOutBtn.getEnabled(), "Zoom Out is enabled");
+            assert.ok(this.oMDCChart._oZoomInBtn.getEnabled(), "Zoom In is enabled");
 
-            stub.onCall(2).returns({currentZoomLevel: 0.5, enabled: true});
-            oZoomObj = oToolbar._getZoomEnablement(this.oMDCChart);
-            assert.ok(oZoomObj.enabled, "Zoom is set to enabled");
-            assert.ok(oZoomObj.enabledZoomIn, "Zoom In is enabled");
-            assert.ok(oZoomObj.enabledZoomOut, "Zoom Out is enabled");
-
-            stub.onCall(3).returns({});
-            oZoomObj = oToolbar._getZoomEnablement(this.oMDCChart);
-            assert.ok(!oZoomObj.enabled, "Zoom is set to disabled");
-            assert.ok(!oZoomObj.enabledZoomIn, "Zoom In is disabled");
-            assert.ok(!oZoomObj.enabledZoomOut, "Zoom Out is disabled");
+            stub.onCall(3).returns({enabled: false});
+            this.oMDCChart._updateZoomButtons();
+            assert.notOk(this.oMDCChart._oZoomOutBtn.getEnabled(), "Zoom Out is disabled");
+            assert.notOk(this.oMDCChart._oZoomInBtn.getEnabled(), "Zoom In is disabled");
 
             done();
 		}.bind(this));
@@ -178,33 +165,16 @@ function(
 			assert.equal(oToolbar.getBetween().length, 0, "No between actions on the ActionToolbar");
 
 			let oVM = new VariantManagement("mgmnt", {"for": "IDChart"});
-			oToolbar.addVariantManagement(oVM);
-			assert.ok(oToolbar._oVariantManagement, "Variant management exist in toolbar");
+			this.oMDCChart.setVariant(oVM);
 			assert.equal(oToolbar.getBetween().length, 1, "Between Actions of Toolbar have 1 entry");
 			assert.equal(oToolbar.getBetween()[0], oVM, "Action in between is variant management");
-			assert.equal(oToolbar._getVariantReference(), oVM, "Variant reference was set correctly");
+			assert.equal(this.oMDCChart.getVariant(), oVM, "Variant reference was set correctly");
 
 			oVM = new VariantManagement("mgmnt-2", {"for": "IDChart"});
-			oToolbar.addVariantManagement(oVM);
-			assert.ok(oToolbar._oVariantManagement, "Variant management exist in toolbar");
+			this.oMDCChart.setVariant(oVM);
 			assert.equal(oToolbar.getBetween().length, 1, "Between Actions of Toolbar have 1 entry");
 			assert.equal(oToolbar.getBetween()[0], oVM, "Action in between is the new variant management");
-			assert.equal(oToolbar._getVariantReference(), oVM, "Variant reference was set correctly");
-
-            done();
-		}.bind(this));
-	});
-
-	QUnit.test("_updateSelectionDetailsActions when details button is active", function(assert){
-		const done = assert.async();
-
-		this.oMDCChart.initialized().then(function(){
-            const oToolbar = this.oMDCChart._getToolbar();
-            assert.ok(oToolbar.__oChartSelectionDetails === undefined, "Details button was not created");
-			const oDetailsActionsSpy = sinon.spy(this.oMDCChart, "getSelectionDetailsActions");
-
-			oToolbar._updateSelectionDetailsActions(this.oMDCChart);
-			assert.ok(oDetailsActionsSpy.calledOnce, "Details actions spy should not be called");
+			assert.equal(this.oMDCChart.getVariant(), oVM, "Variant reference was set correctly");
 
             done();
 		}.bind(this));
@@ -214,16 +184,15 @@ function(
 		const done = assert.async();
 
 		this.oMDCChart.initialized().then(function(){
-			const oToolbar = this.oMDCChart._getToolbar();
 
 			//Check initial title visibility
-			assert.ok(oToolbar._oTitle.getVisible(), "Title is visible");
+			assert.ok(this.oMDCChart._oTitle.getVisible(), "Title is visible");
 
-			oToolbar._setHeaderVisible(false);
-			assert.notOk(oToolbar._oTitle.getVisible(), "Title is not visible");
+			this.oMDCChart.setHeaderVisible(false);
+			assert.notOk(this.oMDCChart._oTitle.getVisible(), "Title is not visible");
 
-			oToolbar._setHeaderVisible(true);
-			assert.ok(oToolbar._oTitle.getVisible(), "Title is visible");
+			this.oMDCChart.setHeaderVisible(true);
+			assert.ok(this.oMDCChart._oTitle.getVisible(), "Title is visible");
 
 			done();
 		}.bind(this));
@@ -272,12 +241,11 @@ function(
 		const done = assert.async();
 
 		this.oMDCChart.initialized().then(function(){
-			const oToolbar = this.oMDCChart._getToolbar();
 
-			assert.equal(oToolbar._oDrillDownBtn, null, "oDrillDownBtn is not created");
-			assert.equal(oToolbar._oLegendBtn, null, "oLegendBtn is not created");
-			assert.equal(oToolbar.oZoomInButton, null, "oZoomInButton is not created");
-			assert.equal(oToolbar.oZoomOutButton, null, "oZoomOutButton is not created");
+			assert.equal(this.oMDCChart._oDrillDownBtn, null, "oDrillDownBtn is not created");
+			assert.equal(this.oMDCChart._oLegendBtn, null, "oLegendBtn is not created");
+			assert.equal(this.oMDCChart._oZoomInBtn, null, "oZoomInButton is not created");
+			assert.equal(this.oMDCChart._oZoomOutBtn, null, "oZoomOutButton is not created");
 
 			done();
 		}.bind(this));
@@ -326,8 +294,7 @@ function(
 		const done = assert.async();
 
 		this.oMDCChart.initialized().then(function(){
-            const oToolbar = this.oMDCChart._getToolbar();
-            assert.ok(oToolbar.__oChartSelectionDetails === undefined, "Details button was not created");
+            assert.ok(this.oMDCChart._oSelectionDetailsBtn === undefined, "Details button was not created");
             done();
 		}.bind(this));
 	});
@@ -339,30 +306,17 @@ function(
             const oToolbar = this.oMDCChart._getToolbar();
             assert.ok(oToolbar.getEnabled(), "Toolbar is enabled intially");
 			assert.ok(oToolbar.getContent().length === 8, "Correct amount of toolbar items were added");
-			const zoomSpy = sinon.spy(oToolbar, "toggleZoomButtons");
 
-            oToolbar.updateToolbar(this.oMDCChart);
-			assert.ok(zoomSpy.calledOnce, "toggleZoomButtons was called");
+			const zoomSpy = sinon.spy(this.oMDCChart, "_updateZoomButtons");
+
+            this.oMDCChart._updateToolbar();
+			assert.ok(zoomSpy.calledOnce, "_updateZoomButtons was called");
             assert.ok(oToolbar.getEnabled(), "Toolbar is enabled");
-			assert.ok(oToolbar._oChartSelectionDetails === undefined, "No _oChartSelectionDetails exists");
+			assert.ok(this.oMDCChart._oSelectionDetailsBtn === undefined, "No _oSelectionDetailsBtn exists");
             done();
 		}.bind(this));
 	});
 
-	QUnit.test("_updateSelectionDetailsActions when no details button is active", function(assert){
-		const done = assert.async();
-
-		this.oMDCChart.initialized().then(function(){
-            const oToolbar = this.oMDCChart._getToolbar();
-            assert.ok(oToolbar.__oChartSelectionDetails === undefined, "Details button was not created");
-			const oDetailsActionsSpy = sinon.spy(this.oMDCChart, "getSelectionDetailsActions");
-
-			oToolbar._updateSelectionDetailsActions(this.oMDCChart);
-			assert.ok(!oDetailsActionsSpy.called, "Details actions spy should not be called");
-
-            done();
-		}.bind(this));
-	});
 
 
 

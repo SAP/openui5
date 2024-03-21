@@ -152,10 +152,9 @@ sap.ui.define([
 
 				this.oMDCChart._getToolbar();
 				assert.ok(this.oMDCChart.getAggregation("_toolbar"), "Toolbar was created");
-				assert.ok(this.oMDCChart.getAggregation("_toolbar").isA("sap.ui.mdc.chart.ChartToolbar"), "Toolbar is instance of sap.ui.mdc.chart.ChartToolbar");
+				assert.ok(this.oMDCChart.getAggregation("_toolbar").isA("sap.ui.mdc.ActionToolbar"), "Toolbar is instance of sap.ui.mdc.ActionToolbar");
 
 				done();
-
 			}.bind(this));
 		});
 
@@ -163,13 +162,14 @@ sap.ui.define([
 			const done = assert.async();
 
 			this.oMDCChart.initialized().then(function () {
-				const toolbarSpy = sinon.spy(this.oMDCChart.getAggregation("_toolbar"), "updateToolbar");
+				const updateZoomButtonsSpy = sinon.spy(this.oMDCChart, "_updateZoomButtons");
+				const initSelectionDetailsSpy = sinon.spy(this.oMDCChart, "_initSelectionDetails");
 
 				this.oMDCChart._updateToolbar();
-				assert.ok(toolbarSpy.calledOnce, "_updateToolbar was called on toolbar");
+				assert.ok(updateZoomButtonsSpy.calledOnce, "_updateZoomButtons was called");
+				assert.ok(initSelectionDetailsSpy.calledOnce, "_initSelectionDetails was called");
 
 				done();
-
 			}.bind(this));
 		});
 
@@ -183,7 +183,6 @@ sap.ui.define([
 				assert.ok(delegateSpy.calledOnce, "getInnerChart was called on innerChart");
 
 				done();
-
 			}.bind(this));
 		});
 
@@ -217,7 +216,7 @@ sap.ui.define([
 			this.oMDCChart.initialized().then(function () {
 				const zoomSpy = sinon.spy(this.oMDCChart.getControlDelegate(), "getZoomState");
 
-				this.oMDCChart.getZoomState();
+				this.oMDCChart._updateZoomButtons();
 				assert.ok(zoomSpy.calledOnce, "Zoom status was called on delegate");
 				done();
 			}.bind(this));
@@ -953,17 +952,33 @@ sap.ui.define([
 			}.bind(this));
 		});
 
+		QUnit.test("setHeaderStyle", function (assert) {
+			const done = assert.async();
+
+			this.oMDCChart.initialized().then(function () {
+
+				const spy = sinon.spy(this.oMDCChart, "_updateVariantManagementStyle");
+
+				assert.ok(this.oMDCChart.setHeaderStyle(TitleLevel.H3));
+
+				assert.ok(spy.calledOnce, "_updateVariantManagementStyle called on toolbar");
+				assert.equal(this.oMDCChart._oTitle.getTitleStyle(), TitleLevel.H3, "Style set on title");
+
+				done();
+			}.bind(this));
+		});
+
 		QUnit.test("setHeaderLevel", function (assert) {
 			const done = assert.async();
 
 			this.oMDCChart.initialized().then(function () {
 
-				const toolbarSpy = sinon.spy(this.oMDCChart.getAggregation("_toolbar"), "_setHeaderLevel");
+				const spy = sinon.spy(this.oMDCChart, "_updateVariantManagementStyle");
 
 				assert.ok(this.oMDCChart.setHeaderLevel(TitleLevel.H3));
 
-				assert.ok(toolbarSpy.calledOnce, "setHeaderLevel called on toolbar");
-				assert.equal(this.oMDCChart.getAggregation("_toolbar")._oTitle.getLevel(), TitleLevel.H3, "Level set on title");
+				assert.ok(spy.calledOnce, "_updateVariantManagementStyle called on toolbar");
+				assert.equal(this.oMDCChart._oTitle.getLevel(), TitleLevel.H3, "Level set on title");
 
 				done();
 			}.bind(this));
@@ -974,14 +989,17 @@ sap.ui.define([
 
 			this.oMDCChart.initialized().then(function () {
 
-				const oToolbarSpy = sinon.spy(this.oMDCChart.getAggregation("_toolbar"), "_setHeaderVisible");
+				const spy = sinon.spy(this.oMDCChart, "_updateVariantManagementStyle");
 				assert.ok(this.oMDCChart.getHeaderVisible(), "Header is set to visible initially");
+				assert.ok(this.oMDCChart._oTitle.getVisible(), "Title is set to visible initially");
 
 				this.oMDCChart.setHeaderVisible(false);
-				assert.ok(oToolbarSpy.calledOnceWith(false), "Function on toolbar was called");
+				assert.ok(spy.calledOnce, "Function _updateVariantManagementStyle was called");
+				assert.notOk(this.oMDCChart._oTitle.getVisible(), "Title is set to not visible");
 
 				this.oMDCChart.setHeaderVisible(true);
-				assert.ok(oToolbarSpy.calledWith(true), "Function on toolbar was called");
+				assert.ok(spy.calledTwice, "Function _updateVariantManagementStyle was called");
+				assert.ok(this.oMDCChart._oTitle.getVisible(), "Title is set to visible");
 
 				done();
 
@@ -992,7 +1010,7 @@ sap.ui.define([
 			const done = assert.async();
 
 			this.oMDCChart.initialized().then(function () {
-				const oToolbarSpy = sinon.spy(this.oMDCChart.getAggregation("_toolbar"), "addVariantManagement");
+				const oToolbarSpy = sinon.spy(this.oMDCChart.getAggregation("_toolbar"), "addBetween");
 
 				this.oMDCChart.setVariant(new VM());
 
