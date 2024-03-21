@@ -2965,13 +2965,14 @@ sap.ui.define([
 				});
 			}
 		},
-		test: function(assert, sTestTitle, oHTMLElement, bShouldFireOnce) {
+		test: function(assert, sTestTitle, oHTMLElement, bShouldFireOnce, oEventSource) {
 			var sData = "data";
 			sTestTitle = sTestTitle == null ? "" : sTestTitle + ": ";
+			oEventSource = oEventSource || oHTMLElement;
 
 			oHTMLElement.focus();
 			if (oHTMLElement === document.activeElement) {
-				oHTMLElement.dispatchEvent(this.createPasteEvent(sData));
+				oEventSource.dispatchEvent(this.createPasteEvent(sData));
 			}
 
 			assert.strictEqual(this.oPasteSpy.callCount, bShouldFireOnce ? 1 : 0,
@@ -3004,6 +3005,7 @@ sap.ui.define([
 		this.test(assert, "Content cell in fixed column", getCell(0, 0, null, null, oTable)[0], true);
 		this.test(assert, "Content cell in scrollable column", getCell(0, 1, null, null, oTable)[0], true);
 		this.test(assert, "Row action cell", getRowAction(0, null, null, oTable)[0], true);
+		this.test(assert, "Content cell when paste event target is inner input", getCell(0, 2, null, null, oTable)[0], true, oTable.getRows()[0].getCells()[2].getDomRef());
 	});
 
 	QUnit.test("Cell content", function(assert) {

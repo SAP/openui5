@@ -408,7 +408,7 @@ sap.ui.define([
 	ResponsiveTableType.prototype.getContextMenuParameters = function(oEvent) {
 		const oListItem = oEvent.getParameter("listItem");
 		const oInnerColumn = oEvent.getParameter("column");
-		const oMDCColumn = Element.getElementById(oInnerColumn.getId().replace(/\-innerColumn$/, ""));
+		const oMDCColumn = oInnerColumn ? Element.getElementById(oInnerColumn.getId().replace(/\-innerColumn$/, "")) : undefined;
 
 		return {
 			bindingContext: oListItem.getBindingContext(this.getInnerTable().getBindingInfo("items").model),

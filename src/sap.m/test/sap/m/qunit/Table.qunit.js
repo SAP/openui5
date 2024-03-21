@@ -2101,7 +2101,9 @@ sap.ui.define([
 			assert.deepEqual(e.getParameter("data"), aTestResult);
 		});
 
+		table.focus();
 		table.$().trigger(jQuery.Event("paste", {originalEvent:{clipboardData: {getData : function () { return sTest;}}}}));
+		table.getItems()[0].getCells()[1].focus();
 		table.getItems()[0].getCells()[1].$("inner").trigger(jQuery.Event("paste", {originalEvent:{clipboardData: {getData : function () { return sTest;}}}}));
 
 		table.destroy();

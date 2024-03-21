@@ -4320,6 +4320,8 @@ sap.ui.define([
 	QUnit.test("Context Menu For ResponsiveTable type", function(assert) {
 		const done = assert.async();
 
+		assert.expect(16);
+
 		const oModel = new JSONModel();
 		oModel.setData({
 			testPath: [
@@ -4343,6 +4345,11 @@ sap.ui.define([
 			header: "test",
 			template: new Text()
 		}));
+		this.oTable.addColumn(new Column({
+			header: "test",
+			width: "10000px", // Force Popin
+			template: new Text()
+		}));
 
 		this.oTable.placeAt("qunit-fixture");
 		nextUIUpdate.runSync()/*fake timer is used in module*/;
@@ -4354,9 +4361,11 @@ sap.ui.define([
 		assert.equal(this.oTable.getContextMenu(), null, "Context menu is undefiend on mdc table");
 
 		TableQUnitUtils.waitForBinding(this.oTable).then(function() {
+			let oColParam = this.oTable.getColumns()[0];
+
 			this.oTable.attachBeforeOpenContextMenu(function(oEvent) {
 				assert.equal(oEvent.getParameter("bindingContext"), this.oTable._oTable.getItems()[0].getBindingContext(), "BeforeOpenContextMenu event fired with correct bindingContext parameters");
-				assert.equal(oEvent.getParameter("column"), this.oTable.getColumns()[0], "BeforeOpenContextMenu event fired with correct column parameters");
+				assert.equal(oEvent.getParameter("column"), oColParam, "BeforeOpenContextMenu event fired with correct column parameters");
 			}.bind(this));
 
 			let oMenu = new Menu({
@@ -4373,8 +4382,14 @@ sap.ui.define([
 			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			oMenu = this.oTable._oTable.getContextMenu();
-			const oCell = this.oTable._oTable.getItems()[0].getDomRef().querySelector(".sapMListTblCell");
+			let oCell = this.oTable._oTable.getItems()[0].getDomRef().querySelector(".sapMListTblCell");
 			oCell.focus();
+			jQuery(oCell).trigger("contextmenu");
+			oMenu.close();
+
+			oCell = this.oTable._oTable.getItems()[0].getDomRef("subcont"); // Popin Cell
+			oCell.focus();
+			oColParam = undefined;
 			jQuery(oCell).trigger("contextmenu");
 			oMenu.close();
 

@@ -417,29 +417,46 @@ sap.ui.define([
 						mNodeById[oChild.MANAGER_ID].DrillState = "leaf";
 					}
 					adjustDescendantCount(oChild.MANAGER_ID, -(oChild.DescendantCount + 1));
-				} // else: cannot really happen w/ a single root and no cycles!
+				}
 
+				const aSpliced
+					= aAllNodes.splice(aAllNodes.indexOf(oChild), oChild.DescendantCount + 1);
+				let iNewIndex; // Note: "AGE determines sibling order (ascending)"
 				if (sParentId) {
 					if (!(sParentId in mChildrenByParentId)) {
 						// new parent not a leaf anymore
 						mNodeById[sParentId].DrillState = "collapsed"; // @see #reset
+						mChildrenByParentId[sParentId] = [];
 					}
-					//TODO Note: "AGE determines sibling order (ascending)"
-					(mChildrenByParentId[sParentId] ??= []).push(oChild);
 					adjustDescendantCount(sParentId, oChild.DescendantCount + 1);
+					const iLastYounger = mChildrenByParentId[sParentId]
+						.findLastIndex((oSibling) => {
+							return oSibling.AGE < oChild.AGE;
+						}); // Note: might be -1
+					mChildrenByParentId[sParentId].splice(iLastYounger + 1, 0, oChild);
+					if (iLastYounger < 0) { // right after parent
+						iNewIndex = aAllNodes.indexOf(mNodeById[sParentId]) + 1;
+					} else { // just after last younger sibling's descendants!
+						const oLastYounger = mChildrenByParentId[sParentId][iLastYounger];
+						iNewIndex
+							= aAllNodes.indexOf(oLastYounger) + oLastYounger.DescendantCount + 1;
+					}
+				} else { // find last younger root
+					const iLastYounger = aAllNodes.findLastIndex((oNode) => {
+						return !oNode.MANAGER_ID && oNode.AGE < oChild.AGE;
+					}); // Note: might be -1
+					iNewIndex = iLastYounger < 0
+						? 0
+						: iLastYounger + aAllNodes[iLastYounger].DescendantCount + 1;
 				}
+				aAllNodes.splice(iNewIndex, 0, ...aSpliced);
+
 				oChild.MANAGER_ID = sParentId;
 				const iParentDistanceFromRoot = sParentId
 					? mNodeById[sParentId].DistanceFromRoot
 					: 0;
 				adjustDistanceFromRoot(oChild,
 					iParentDistanceFromRoot + 1 - oChild.DistanceFromRoot);
-				const aSpliced
-					= aAllNodes.splice(aAllNodes.indexOf(oChild), oChild.DescendantCount + 1);
-				const iNewIndex = sParentId
-					? aAllNodes.indexOf(mNodeById[sParentId]) + 1
-					: 0;
-				aAllNodes.splice(iNewIndex, 0, ...aSpliced);
 				break;
 			}
 

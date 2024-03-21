@@ -27,9 +27,11 @@ sap.ui.define([
 		Log[sLevel](sMessage, ...args);
 	}
 	/**
-	 * Logs '[FUTUR FATAL]' marker in messages and throws error if
+	 * Logs '[FUTURE FATAL]' marker in messages and throws error if
 	 * 'sap-ui-xx-future' config option is set to true.
 	 *
+	 * @alias module:sap/base/future
+	 * @namespace
 	 * @private
 	 * @ui5-restricted sap.base, sap.ui.core
 	 */

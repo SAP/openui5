@@ -1155,7 +1155,7 @@ sap.ui.define([
 	Table.prototype.onpaste = function(oEvent) {
 
 		// Check whether the paste event is already handled by input enabled control and avoid pasting into this input-enabled control when focus is in there.
-		if (oEvent.isMarked() || (/^(input|textarea)$/i.test(oEvent.target.tagName))) {
+		if (oEvent.isMarked() || (/^(input|textarea)$/i.test(document.activeElement.tagName)) /*see DINC0096526*/) {
 			return;
 		}
 

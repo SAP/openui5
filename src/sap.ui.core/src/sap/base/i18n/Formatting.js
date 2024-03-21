@@ -356,52 +356,65 @@ sap.ui.define([
 		},
 
 		/**
-		 * Retrieves the custom units.
-		 * These custom units are set by {@link #setCustomUnits} and {@link #addCustomUnits}
-		 * @returns {object} custom units object
-		 * @see {@link module:sap/base/i18n/Formatting.setCustomUnits}
-		 * @see {@link module:sap/base/i18n/Formatting.addCustomUnits}
-		 * @private
-		 * @since 1.116.0
+		 * Definition of a custom unit.
+		 *
+		 * @typedef {object} module:sap/base/i18n/Formatting.CustomUnit
+		 * @property {string} displayName
+		 *   The unit's display name
+		 * @property {string} ["unitPattern-count-zero"]
+		 *   The unit pattern for the plural form "zero"; <code>{0}</code> in the pattern is replaced by the number
+		 * @property {string} ["unitPattern-count-one"]
+		 *   The unit pattern for the plural form "one"; <code>{0}</code> in the pattern is replaced by the number
+		 * @property {string} ["unitPattern-count-two"]
+		 *   The unit pattern for the plural form "two"; <code>{0}</code> in the pattern is replaced by the number
+		 * @property {string} ["unitPattern-count-few"]
+		 *   The unit pattern for the plural form "few"; <code>{0}</code> in the pattern is replaced by the number
+		 * @property {string} ["unitPattern-count-many"]
+		 *   The unit pattern for the plural form "many"; <code>{0}</code> in the pattern is replaced by the number
+		 * @property {string} "unitPattern-count-other"
+		 *   The unit pattern for all other numbers which do not match the plural forms of the other given patterns;
+		 *   <code>{0}</code> in the pattern is replaced by the number
+		 * @public
+		 * @see {@link sap.ui.core.LocaleData#getPluralCategories}
+		 */
+
+		/**
+		 * Gets the custom units that have been set via {@link #.addCustomUnits Formatting.addCustomUnits} or
+		 * {@link #.setCustomUnits Formatting.setCustomUnits}.
+		 *
+		 * @returns {Object<string,module:sap/base/i18n/Formatting.CustomUnit>|undefined}
+		 *   A map with the unit code as key and a custom unit definition containing a display name and different unit
+		 *   patterns as value; or <code>undefined</code> if there are no custom units
+		 *
+		 * @public
+		 * @example <caption>A simple custom type "BAG" for which the value <code>1</code> is formatted as "1 bag", for
+		 *   example in locale 'en', while <code>2</code> is formatted as "2 bags"</caption>
+		 * {
+		 *   "BAG": {
+		 *     "displayName": "Bag",
+		 *     "unitPattern-count-one": "{0} bag",
+		 *     "unitPattern-count-other": "{0} bags"
+		 *   }
+		 * }
+		 * @since 1.123
 		 */
 		getCustomUnits() {
 			return mSettings["units"]?.["short"];
 		},
 
 		/**
-		 * Sets custom units which can be used to do Unit Formatting.
+		 * Replaces existing custom units by the given custom units.
 		 *
-		 * The custom unit object consists of:
-		 * * a custom unit key which can then be referenced to use this unit.
-		 * * <code>displayName</code> which represents the name of the unit.
-		 * * <code>unitPattern-count-&lt;pluralName&gt;</code> which represents the plural category of the locale for the given value.
-		 * The plural category is defined within the locale, e.g. in the 'en' locale:
-		 * <code>unitPattern-count-one</code> for <code>1</code>,
-		 * <code>unitPattern-count-zero</code> for <code>0</code>,
-		 * <code>unitPattern-count-other</code> for all the res
-		 * To retrieve all plural categories defined for a locale use <code>sap.ui.core.LocaleData.prototype.getPluralCategories</code>.
+		 * <b>Note:</b> Setting custom units affects all applications running with the current UI5 core instance.
 		 *
-		 * A Sample custom unit definition could look like this:
-		 * <code>
-		 * {
-		 *  "BAG": {
-		 *      "displayName": "Bag",
-		 *		"unitPattern-count-one": "{0} bag",
-		 *		"unitPattern-count-other": "{0} bags"
-		 *  }
-		 * }
-		 * </code>
-		 * In the above snippet:
-		 * * <code>"BAG"</code> represent the unit key which is used to reference it.
-		 * * <code>"unitPattern-count-one"</code> represent the unit pattern for the form "one", e.g. the number <code>1</code> in the 'en' locale.
-		 * * <code>"unitPattern-count-other"</code> represent the unit pattern for all other numbers which do not
-		 *   match the plural forms of the previous patterns.
-		 * * In the patterns <code>{0}</code> is replaced by the number
+		 * @param {Object<string,module:sap/base/i18n/Formatting.CustomUnit>} [mUnits]
+		 *   A map with the unit code as key and a custom unit definition as value; <code>mUnits</code> replaces the
+		 *   current custom units; if not given, all custom units are deleted; see
+		 *   {@link #.getCustomUnits Formatting.getCustomUnits} for an example
 		 *
-		 * E.g. In locale 'en' value <code>1</code> would result in <code>1 Bag</code>, while <code>2</code> would result in <code>2 Bags</code>
-		 * @param {object} mUnits custom unit object which replaces the current custom unit definition. Call with <code>null</code> to delete custom units.
-		 * @private
-		 * @since 1.116.0
+		 * @public
+		 * @see {@link module:sap/base/i18n/Formatting.addCustomUnits Formatting.addCustomUnits}
+		 * @since 1.123
 		 */
 		setCustomUnits(mUnits) {
 			// add custom units, or remove the existing ones if none are given
@@ -416,14 +429,17 @@ sap.ui.define([
 
 		/**
 		 * Adds custom units.
-		 * Similar to {@link #setCustomUnits} but instead of setting the custom units, it will add additional ones.
-		 * @param {object} mUnits custom unit object which replaces the current custom unit definition. Call with <code>null</code> to delete custom units.
-		 * @see {@link module:sap/base/i18n/Formatting.setCustomUnits}
-		 * @private
-		 * @since 1.116.0
+		 *
+		 * <b>Note:</b> Adding custom units affects all applications running with the current UI5 core instance.
+		 *
+		 * @param {Object<string,module:sap/base/i18n/Formatting.CustomUnit>} mUnits
+		 *   A map with the unit code as key and a custom unit definition as value; already existing custom units are
+		 *   replaced, new ones are added; see {@link #.getCustomUnits Formatting.getCustomUnits} for an example
+		 *
+		 * @public
+		 * @since 1.123
 		 */
 		addCustomUnits(mUnits) {
-			// add custom units, or remove the existing ones if none are given
 			const mExistingUnits = Formatting.getCustomUnits();
 			if (mExistingUnits){
 				mUnits = extend({}, mExistingUnits, mUnits);
@@ -456,7 +472,7 @@ sap.ui.define([
 
 		/**
 		 * Adds unit mappings.
-		 * Similar to {@link #setUnitMappings} but instead of setting the unit mappings, it will add additional ones.
+		 * Similar to {@link .setUnitMappings} but instead of setting the unit mappings, it will add additional ones.
 		 * @param {object} mUnitMappings unit mappings
 		 * @see {@link module:sap/base/i18n/Formatting.setUnitMappings}
 		 * @private
@@ -473,7 +489,7 @@ sap.ui.define([
 
 		/**
 		 * Retrieves the unit mappings.
-		 * These unit mappings are set by {@link #setUnitMappings} and {@link #addUnitMappings}
+		 * These unit mappings are set by {@link .setUnitMappings} and {@link .addUnitMappings}
 		 * @private
 		 * @returns {object} unit mapping object
 		 * @see {@link module:sap/base/i18n/Formatting.setUnitMappings}
@@ -601,58 +617,67 @@ sap.ui.define([
 		},
 
 		/**
-		 * Retrieves the custom currencies.
-		 * E.g.
-		 * <code>
-		 * {
-		 *  "KWD": {"digits": 3},
-		 *  "TND" : {"digits": 3}
-		 * }
-		 * </code>
-		 * @returns {object} the mapping between custom currencies and its digits
+		 * Definition of a custom currency.
+		 *
+		 * @typedef {object} module:sap/base/i18n/Formatting.CustomCurrency
+		 * @property {int} digits
+		 *   The number of decimal digits to be used for the currency
 		 * @public
+		 */
+
+		/**
+		 * Gets the custom currencies that have been set via
+		 * {@link #.addCustomCurrencies Formatting.addCustomCurrencies} or
+		 * {@link #.setCustomCurrencies Formatting.setCustomCurrencies}.
+		 * There is a special currency code named "DEFAULT" that is optional. If it is set it is used for all
+		 * currencies not contained in the list, otherwise currency digits as defined by the CLDR are used as a
+		 * fallback.
+		 *
+		 * @returns {Object<string,module:sap/base/i18n/Formatting.CustomCurrency>|undefined}
+		 *   A map with the currency code as key and a custom currency definition containing the number of decimals as
+		 *   value; or <code>undefined</code> if there are no custom currencies
+		 *
+		 * @public
+	 	 * @example <caption>A simple example for custom currencies that uses CLDR data but overrides single
+		 *   currencies</caption>
+		 * {
+		 *   "EUR3": {"digits": 3}
+		 *   "MYD": {"digits": 4}
+		 * }
+		 *
+	 	 * @example <caption>A simple example for custom currencies that overrides all currency information from the
+		 *   CLDR</caption>
+		 * {
+		 *   "DEFAULT": {"digits": 2},
+		 *   "ADP": {"digits": 0},
+		 *   ...
+		 *   "EUR3": {"digits": 3}
+		 *   "MYD": {"digits": 4},
+		 *   ...
+		 *   "ZWD": {"digits": 0}
+		 * }
 		 * @since 1.120
-		 * @see {@link module:sap/base/i18n/Formatting.setCustomCurrencies Formatting.setCustomCurrencies}
-		 * @see {@link module:sap/base/i18n/Formatting.addCustomCurrencies Formatting.addCustomCurrencies}
 		 */
 		getCustomCurrencies() {
 			return mSettings["currency"];
 		},
 
 		/**
-		 * Sets custom currencies and replaces existing entries.
+		 * Replaces existing custom currencies by the given custom currencies. There is a special currency code named
+		 * "DEFAULT" that is optional. In case it is set, it is used for all currencies not contained in the list,
+		 * otherwise currency digits as defined by the CLDR are used as a fallback.
 		 *
-		 * There is a special currency code named "DEFAULT" that is optional.
-		 * In case it is set it will be used for all currencies not contained
-		 * in the list, otherwise currency digits as defined by the CLDR will
-		 * be used as a fallback.
+		 * <b>Note:</b> Setting custom units affects all applications running with the current UI5 core instance.
 		 *
-		 * Example:
-		 * To use CLDR, but override single currencies
-		 * <code>
-		 * {
-		 *  "KWD": {"digits": 3},
-		 *  "TND" : {"digits": 3}
-		 * }
-		 * </code>
+		 * @param {Object<string,module:sap/base/i18n/Formatting.CustomCurrency>} [mCurrencies]
+		 *   A map with the currency code as key and a custom currency definition as value;  the custom currency code
+		 *   must contain at least one non-digit character, so that the currency part can be distinguished from the
+		 *   amount part; <code>mCurrencies</code> replaces the current custom currencies; if not given, all custom
+		 *   currencies are deleted; see {@link #.getCustomCurrencies Formatting.getCustomCurrencies} for an example
 		 *
-		 * To replace the CLDR currency digits completely
-		 * <code>
-		 * {
-		 *   "DEFAULT": {"digits": 2},
-		 *   "ADP": {"digits": 0},
-		 *   ...
-		 *   "XPF": {"digits": 0}
-		 * }
-		 * </code>
-		 *
-		 * Note: To unset the custom currencies: call with <code>undefined</code>
-		 * Custom currencies must not only consist of digits but contain at least one non-digit character, e.g. "a",
-		 * so that the measure part can be distinguished from the number part.
 		 * @public
-		 * @since 1.120
-		 * @param {object} mCurrencies currency map which is set
 		 * @see {@link module:sap/base/i18n/Formatting.addCustomCurrencies Formatting.addCustomCurrencies}
+		 * @since 1.120
 		 */
 		setCustomCurrencies(mCurrencies) {
 			check(typeof mCurrencies === "object" || mCurrencies == null, "mCurrencyDigits must be an object");
@@ -664,22 +689,22 @@ sap.ui.define([
 		},
 
 		/**
-		 * Adds custom currencies to the existing entries.
-		 * E.g.
-		 * <code>
-		 * {
-		 *  "KWD": {"digits": 3},
-		 *  "TND" : {"digits": 3}
-		 * }
-		 * </code>
+		 * Adds custom currencies. There is a special currency code named "DEFAULT" that is optional. In case it is set
+		 * it is used for all currencies not contained in the list, otherwise currency digits as defined by the CLDR are
+		 * used as a fallback.
+		 *
+		 * <b>Note:</b> Adding custom currencies affects all applications running with the current UI5 core instance.
+
+		 * @param {Object<string,module:sap/base/i18n/Formatting.CustomCurrency>} [mCurrencies]
+		 *   A map with the currency code as key and a custom currency definition as value; already existing custom
+		 *   currencies are replaced, new ones are added; the custom currency code must contain at least one non-digit
+		 *   character, so that the currency part can be distinguished from the amount part; see
+		 *   {@link #.getCustomCurrencies Formatting.getCustomCurrencies} for an example
 		 *
 		 * @public
 		 * @since 1.120
-		 * @param {object} mCurrencies adds to the currency map
-		 * @see {@link module:sap/base/i18n/Formatting.setCustomCurrencies Formatting.setCustomCurrencies}
 		 */
 		addCustomCurrencies(mCurrencies) {
-			// add custom units, or remove the existing ones if none are given
 			const mExistingCurrencies = Formatting.getCustomCurrencies();
 			if (mExistingCurrencies){
 				mCurrencies = extend({}, mExistingCurrencies, mCurrencies);

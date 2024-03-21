@@ -12,7 +12,8 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/f/library",
 	"sap/ui/unified/library",
-	"sap/ui/layout/library"
+	"sap/ui/layout/library",
+	"sap/ui/table/library"
 ], function (DataType, Library) {
 	"use strict";
 
@@ -35,7 +36,8 @@ sap.ui.define([
 			"sap.f",
 			"sap.m",
 			"sap.ui.unified",
-			"sap.ui.layout"
+			"sap.ui.layout",
+			"sap.ui.table"
 		],
 		types: [
 			"sap.ui.integration.CardActionType",

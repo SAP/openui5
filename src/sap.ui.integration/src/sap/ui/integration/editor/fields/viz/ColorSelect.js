@@ -105,7 +105,6 @@ sap.ui.define([
 		}
 	}
 	setEnumColors();
-	Core.attachThemeChanged(setEnumColors);
 
 	var oCurrentInstance,
 		oColorPalette = new ColorPalettePopover("oColorPalettePopoverFull", {
@@ -128,6 +127,13 @@ sap.ui.define([
 			}.bind(this)
 		});
 		this._colorValue = "transparent";
+	};
+
+	/**
+	 * attach theme changes
+	 */
+	ColorSelect.prototype.onThemeChanged = function () {
+		setEnumColors();
 	};
 
 	// add style class to the render manager

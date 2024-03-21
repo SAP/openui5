@@ -7616,12 +7616,12 @@ sap.ui.define([
 
 	/**
 	 * Setting request groups as deferred. <b>Note:</b> This will overwrite existing deferred
-	 * groups, including the default group "changes".
+	 * groups, including the default deferred group "changes".
 	 *
 	 * Requests that belong to a deferred group will be sent by explicitly calling
 	 * {@link #submitChanges}.
 	 *
-	 * @param {array} aGroupIds Array of group IDs that should be set as deferred
+	 * @param {array} aGroupIds The array of deferred group IDs; the default is: <code>["changes"]</code>
 	 * @public
 	 */
 	ODataModel.prototype.setDeferredGroups = function(aGroupIds) {
@@ -7643,25 +7643,12 @@ sap.ui.define([
 	};
 
 	/**
-	 * Definition of groups per entity type for two-way binding changes.
+	 * Definition of groups per entity type for two-way binding changes. <b>Note:</b> This will overwrite the existing
+	 * change group definition, including the default <code>{"*":{groupId: "changes"}}</code>.
 	 *
 	 * @param {Object<string,sap.ui.model.odata.v2.ODataModel.ChangeGroupDefinition>} mGroups
-	 *   A map containing the definition of batch groups for two-way binding changes, keyed by entity names.
-	 *   The map has the following format:
-	 * <pre>
-	 * {
-	 *   "EntityTypeName": {
-	 *     groupId: "ID",
-	 *     [changeSetId: "ID",]
-	 *     [single: true/false,]
-	 *   }
-	 * }
-	 * </pre>
-	 * <ul>
-	 * <li><code>groupId</code>: Defines the group for changes of the defined <i>EntityTypeName</i></li>
-	 * <li><code>changeSetId</code>: ID of a <code>ChangeSet</code> which bundles the changes for the entity type.</li>
-	 * <li><code>single</code>: Defines if every change will get an own change set (defaults to <code>true</code>)</li>
-	 * </ul>
+	 *   Maps an entity name to the definition of the batch group for two-way binding changes; use "*" as entity name to
+	 *   define a default for all entities not contained in the map
 	 * @public
 	 */
 	ODataModel.prototype.setChangeGroups = function(mGroups) {
