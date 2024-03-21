@@ -1894,7 +1894,8 @@ sap.ui.define([
 			fnSubmit();
 		}
 		return this.sendRequest(sMethod, sResourcePath,
-			Object.assign({}, mHeaders, this.mFinalHeaders),
+			Object.assign({}, mHeaders, this.mFinalHeaders,
+				sMethod === "GET" ? {"sap-cancel-on-close" : "true"} : undefined),
 			JSON.stringify(oPayload), sOriginalResourcePath
 		).then(function (oResponse) {
 			that.reportHeaderMessages(oResponse.resourcePath, oResponse.messages);

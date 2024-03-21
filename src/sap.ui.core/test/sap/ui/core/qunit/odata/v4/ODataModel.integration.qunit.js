@@ -1732,6 +1732,10 @@ sap.ui.define([
 				delete oActualRequest.headers["Accept-Language"];
 				delete oActualRequest.headers["Content-Type"];
 				if (oExpectedRequest) {
+					if (!oExpectedRequest.headers) {
+						oExpectedRequest.headers = {};
+						delete oActualRequest.headers["sap-cancel-on-close"];
+					}
 					oResponse = oExpectedRequest.response;
 					if (typeof oResponse === "function") { // invoke "just in time"
 						oResponse = oResponse();
@@ -2214,7 +2218,6 @@ sap.ui.define([
 				}
 			}
 			// ensure that these properties are defined (required for deepEqual)
-			vRequest.headers ??= {};
 			vRequest.method ??= "GET";
 			vRequest.payload ??= undefined;
 			vRequest.responseHeaders = mResponseHeaders || {};
@@ -5215,6 +5218,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Failure to read from an ODataContextBinding returning a bound message
 	// BCP: 2070436327: the data state is updated if unbindProperty is called
+	// "sap-cancel-on-close" header for $direct GET request (JIRA: CPOUI5ODATAV4-2506)
 	QUnit.test("ODCB: read failure & message", function (assert) {
 		var oError = createError({
 				message : "Could not read",
@@ -5233,7 +5237,10 @@ sap.ui.define([
 		this.oLogMock.expects("error")
 			.withExactArgs("Failed to read path /EMPLOYEES('42')/Name", sinon.match(oError.message),
 				sODPrB);
-		this.expectRequest("EMPLOYEES('42')", oError)
+		this.expectRequest({
+				headers : {"sap-cancel-on-close" : "true"},
+				url : "EMPLOYEES('42')"
+			}, oError)
 			.expectMessages([{
 				code : "CODE",
 				message : "Could not read",
@@ -8174,6 +8181,8 @@ sap.ui.define([
 	//
 	// Tell the model to ignore the ETag, but no If-Match:* must be sent unless an ETag was present
 	// JIRA: CPOUI5ODATAV4-1894
+	//
+	// No "sap-cancel-on-close" header in PATCH request (JIRA: CPOUI5ODATAV4-2506)
 ["$auto", "$direct"].forEach(function (sGroupId) {
 	[false, true].forEach(function (bETag) {
 	var sTitle = "Modify a property, server responds with 204 (No Content), group = " + sGroupId
@@ -11797,6 +11806,8 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: Failure when creating a sales order line item. Observe the message.
+	//
+	// No "sap-cancel-on-close" header in POST request (JIRA: CPOUI5ODATAV4-2506)
 	QUnit.test("Create error", function (assert) {
 		var oModel = this.createSalesOrdersModel({autoExpandSelect : true, groupId : "$direct"}),
 			oTable,
@@ -11827,6 +11838,7 @@ sap.ui.define([
 					+ "will be repeated automatically", sinon.match(oError.message), sODLB);
 			that.expectRequest({
 					method : "POST",
+					headers : {/*NO "sap-cancel-on-close"*/},
 					url : "SalesOrderList('42')/SO_2_SOITEM",
 					payload : {}
 				}, oError)
@@ -13525,6 +13537,7 @@ sap.ui.define([
 	// Scenario: bound action (success and failure)
 	// JIRA: CPOUI5ODATAV4-29 (bound action parameter and error with message target)
 	// JIRA: CPOUI5ODATAV4-132 (bind property of binding parameter relative to $Parameter)
+	// No "sap-cancel-on-close" header in POST request (JIRA: CPOUI5ODATAV4-2506)
 	QUnit.test("Bound action", function (assert) {
 		var oModel = this.createTeaBusiModel({autoExpandSelect : true, groupId : "$direct"}),
 			sView = '\
@@ -13579,7 +13592,7 @@ sap.ui.define([
 		}).then(function () {
 			that.expectRequest({
 					method : "POST",
-					headers : {"If-Match" : "ETag"},
+					headers : {"If-Match" : "ETag"/*, NO "sap-cancel-on-close"*/},
 					url : sUrl,
 					payload : {TeamID : "42"}
 				}, {TEAM_ID : "42"})
@@ -13618,7 +13631,7 @@ sap.ui.define([
 				sODPrB);
 			that.expectRequest({
 					method : "POST",
-					headers : {"If-Match" : "ETag"},
+					headers : {"If-Match" : "ETag"/*, NO "sap-cancel-on-close"*/},
 					url : sUrl,
 					payload : {TeamID : ""}
 				}, oError) // simulates failure
@@ -15739,7 +15752,9 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: Minimal test for two absolute ODataPropertyBindings using different direct groups.
-	QUnit.test("Absolute ODPBs using different $direct groups", function (assert) {
+	//
+	// "sap-cancel-on-close" header for SubmitMode.Direct GET request (JIRA: CPOUI5ODATAV4-2506)
+	QUnit.test("Absolute ODPBs using different direct groups", function (assert) {
 		var sView = '\
 <Text id="text1" text="{\
 	path : \'/EMPLOYEES(\\\'2\\\')/Name\',\
@@ -15749,8 +15764,14 @@ sap.ui.define([
 	parameters : {$$groupId : \'group2\'}}"\
 />';
 
-		this.expectRequest("EMPLOYEES('2')/Name", {value : "Frederic Fall"})
-			.expectRequest("EMPLOYEES('3')/Name", {value : "Jonathan Smith"})
+		this.expectRequest({
+				headers : {"sap-cancel-on-close" : "true"},
+				url : "EMPLOYEES('2')/Name"
+			}, {value : "Frederic Fall"})
+			.expectRequest({
+				headers : {"sap-cancel-on-close" : "true"},
+				url : "EMPLOYEES('3')/Name"
+			}, {value : "Jonathan Smith"})
 			.expectChange("text1", "Frederic Fall")
 			.expectChange("text2", "Jonathan Smith");
 
@@ -43537,6 +43558,7 @@ make root = ${bMakeRoot}`;
 	// Delete and Patch still use the canonical path. Messages have to be reported with the deep
 	// path.
 	// CPOUI5UISERVICESV3-1813
+	// No "sap-cancel-on-close" header in DELETE request (JIRA: CPOUI5ODATAV4-2506)
 	[false, true].forEach(function (bUseCanonicalPath) {
 		QUnit.test("read with deep path, $$canonicalPath: " + bUseCanonicalPath, function (assert) {
 			var sEntityPath = bUseCanonicalPath
@@ -43649,7 +43671,7 @@ make root = ${bMakeRoot}`;
 				that.expectRequest({
 						method : "DELETE",
 						url : "ProductList('1')",
-						headers : {"If-Match" : "ETag"}
+						headers : {"If-Match" : "ETag"/*, NO "sap-cancel-on-close" */}
 					}, oError)
 					.expectMessages([{
 						code : "top_delete",
@@ -63025,6 +63047,7 @@ make root = ${bMakeRoot}`;
 	// ODM#submitBatch. Expect that the latter's promise does not resolve before the create request
 	// is completed.
 	// BCP: 2370151708
+	// No "sap-cancel-on-close" header in POST request (JIRA: CPOUI5ODATAV4-2506)
 	QUnit.test("BCP: 2370151708 - submitBatch includes create ($auto)", async function (assert) {
 		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
 		await this.createView(assert, "", oModel);
@@ -63032,6 +63055,7 @@ make root = ${bMakeRoot}`;
 		let fnResolveCreate;
 		this.expectRequest({
 				method : "POST",
+				headers : {/*NO "sap-cancel-on-close"*/},
 				payload : {},
 				url : "EMPLOYEES"
 			}, new Promise(function (resolve) {
