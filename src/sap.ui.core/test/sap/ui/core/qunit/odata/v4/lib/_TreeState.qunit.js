@@ -96,6 +96,7 @@ sap.ui.define([
 		oTreeState.mPredicate2ExpandLevels["~predicate~"] = "~";
 		this.mock(_Helper).expects("getPrivateAnnotation")
 			.withExactArgs("~oNode~", "predicate").returns("~predicate~");
+		this.mock(oTreeState).expects("deleteOutOfPlace").withExactArgs("~predicate~");
 
 		// code under test
 		oTreeState.delete("~oNode~");

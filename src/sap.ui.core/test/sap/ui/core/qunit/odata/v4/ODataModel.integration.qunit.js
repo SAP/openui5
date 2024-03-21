@@ -32389,10 +32389,12 @@ make root = ${bMakeRoot}`;
 	//     moving New1 to its out-of-place position; Beta is already read in-place, but shifted
 	//     when moving New1 and New3; Gamma is only placeholder when moving New5)
 	// (4) Check all contexts
-	// (5) Side-effects refresh: moves New3 below Gamma
-	// (6) Check all contexts
-	// (7) Side-effects refresh: New3 and New6 are no longer requested as out of place
-	// (8) Refresh the binding (out of place is no longer kept, tree is collapsed again to 1 level)
+	// (5) Delete New1 (no longer requested as out-of-place node afterward)
+	// (6) Side-effects refresh (moves New3 below Gamma)
+	// (7) Check all contexts
+	// (8) Side-effects refresh (New3 and New6 are no longer requested as out-of-place nodes)
+	// (9) Refresh the binding (out-of-place information is no longer kept, tree is collapsed again
+	//     to 1 level)
 	// JIRA: CPOUI5ODATAV4-2454
 	QUnit.test("Recursive Hierarchy: out of place", async function (assert) {
 		const oModel = this.createSpecialCasesModel({autoExpandSelect : true});
@@ -32431,17 +32433,17 @@ make root = ${bMakeRoot}`;
 	<Text text="{Name}"/>
 </t:Table>`;
 
-		// Server:                          UI:
-		// 1 Alpha                          1 Alpha
-		//   12 New2 (created)                13 New3 (created)
-		//    2 Beta                             16 New6 (created)
-		//      14 New4 (created)             12 New2 (created)
-		//   11 New1 (created)                11 New1 (created)
-		//   13 New3 (created)                 2 Beta
-		//      16 New6 (created)                14 New4 (created)
-		// 3 Gamma                          3 Gamma
-		//   15 New5 (created)                15 New5 (created)
-		// 4 Delta                          4 Delta
+		// Server:               UI:
+		// 1 Alpha               1 Alpha
+		//   12 New2               13 New3
+		//    2 Beta                  16 New6
+		//      14 New4            12 New2
+		//   11 New1               11 New1
+		//   13 New3                2 Beta
+		//      16 New6               14 New4
+		// 3 Gamma               3 Gamma
+		//   15 New5               15 New5
+		// 4 Delta               4 Delta
 		this.expectRequest(sCountUrl, 4)
 			.expectRequest(baseUrl()
 				+ "&$select=ArtistID,IsActiveEntity,Name,_/DrillState,_/NodeID"
@@ -32886,31 +32888,41 @@ make root = ${bMakeRoot}`;
 				[undefined, 1, "4", "Delta*"]
 			]);
 
-		// After side-effects refresh
+		// this context has been destroyed by the refresh because it was not visible
+		const [oNew1] = await oBinding.requestContexts(4, 1);
+
+		this.expectRequest("DELETE Artists(ArtistID='11',IsActiveEntity=false)");
+
+		await Promise.all([
+			// code under test
+			oNew1.delete(),
+			this.waitForChanges(assert, "(5) delete New1")
+		]);
+
+		// After deleting New1 & side-effects refresh
 		// Server:                          UI:
 		// 1 Alpha                          1 Alpha
 		//   12 New2                          12 New2 (out of place)
-		//    2 Beta                          11 New1 (out of place)
-		//      14 New4                        2 Beta
-		//   11 New1                             14 New4 (out of place)
+		//    2 Beta                           2 Beta
+		//      14 New4                          14 New4 (out of place)
 		// 3 Gamma                          3 Gamma
 		//   13 New3 (moved)                  15 New5 (out of place)
 		//      16 New6                       13 New3 (moved)
 		//   15 New5                             16 New6
 		// 4 Delta                          4 Delta
 
-		this.expectRequest(sCountUrl, 10)
+		this.expectRequest(sCountUrl, 9)
 			.expectRequest(baseUrl(sExpandLevels)
 				+ "&$select=ArtistID,IsActiveEntity,Name,_/DescendantCount,_/DistanceFromRoot"
 				+ ",_/DrillState,_/NodeID"
 				+ "&$count=true&$skip=0&$top=3", {
-				"@odata.count" : "10",
+				"@odata.count" : "9",
 				value : [{
 					ArtistID : "1",
 					IsActiveEntity : false,
 					Name : "Alpha**",
 					_ : {
-						DescendantCount : "4",
+						DescendantCount : "3",
 						DistanceFromRoot : "0",
 						DrillState : "expanded",
 						NodeID : "1,false"
@@ -32941,7 +32953,6 @@ make root = ${bMakeRoot}`;
 				+ "&$select=ArtistID,IsActiveEntity,_/DescendantCount,_/DistanceFromRoot"
 				+ ",_/DrillState,_/Limited_Rank"
 				+ "&$filter=ArtistID eq '1' and IsActiveEntity eq false"
-				+ " or ArtistID eq '11' and IsActiveEntity eq false"
 				+ " or ArtistID eq '12' and IsActiveEntity eq false"
 				+ " or ArtistID eq '13' and IsActiveEntity eq false"
 				+ " or ArtistID eq '14' and IsActiveEntity eq false"
@@ -32949,12 +32960,12 @@ make root = ${bMakeRoot}`;
 				+ " or ArtistID eq '16' and IsActiveEntity eq false"
 				+ " or ArtistID eq '2' and IsActiveEntity eq false"
 				+ " or ArtistID eq '3' and IsActiveEntity eq false"
-				+ "&$top=9", {
+				+ "&$top=8", {
 				value : [{
 					ArtistID : "1",
 					IsActiveEntity : false,
 					_ : {
-						DescendantCount : "4",
+						DescendantCount : "3",
 						DistanceFromRoot : "n/a", // parent's DistanceFromRoot is not yet relevant
 						DrillState : "expanded",
 						Limited_Rank : "0"
@@ -32987,22 +32998,13 @@ make root = ${bMakeRoot}`;
 						Limited_Rank : "3"
 					}
 				}, {
-					ArtistID : "11",
-					IsActiveEntity : false,
-					_ : {
-						DescendantCount : "0",
-						DistanceFromRoot : "1",
-						DrillState : "leaf",
-						Limited_Rank : "4"
-					}
-				}, {
 					ArtistID : "3",
 					IsActiveEntity : false,
 					_ : {
 						DescendantCount : "3",
 						DistanceFromRoot : "n/a", // parent's DistanceFromRoot is not yet relevant
 						DrillState : "expanded",
-						Limited_Rank : "5"
+						Limited_Rank : "4"
 					}
 				}, {
 					ArtistID : "13",
@@ -33011,7 +33013,7 @@ make root = ${bMakeRoot}`;
 						DescendantCount : "1",
 						DistanceFromRoot : "1",
 						DrillState : "expanded",
-						Limited_Rank : "6"
+						Limited_Rank : "5"
 					}
 				}, {
 					ArtistID : "16",
@@ -33020,7 +33022,7 @@ make root = ${bMakeRoot}`;
 						DescendantCount : "0",
 						DistanceFromRoot : "2",
 						DrillState : "leaf",
-						Limited_Rank : "7"
+						Limited_Rank : "6"
 					}
 				}, {
 					ArtistID : "15",
@@ -33029,7 +33031,7 @@ make root = ${bMakeRoot}`;
 						DescendantCount : "0",
 						DistanceFromRoot : "1",
 						DrillState : "leaf",
-						Limited_Rank : "8"
+						Limited_Rank : "7"
 					}
 				}]
 			})
@@ -33037,18 +33039,10 @@ make root = ${bMakeRoot}`;
 				+ "?custom=foo&$apply=descendants($root/" + sFriend
 				+ ",OrgChart,_/NodeID,filter(ArtistID eq '1' and IsActiveEntity eq false),1)"
 				+ "&$select=ArtistID,IsActiveEntity,Name,_/NodeID"
-				+ "&$filter=ArtistID eq '11' and IsActiveEntity eq false"
-				+ " or ArtistID eq '12' and IsActiveEntity eq false"
+				+ "&$filter=ArtistID eq '12' and IsActiveEntity eq false"
 				+ " or ArtistID eq '13' and IsActiveEntity eq false"
-				+ "&$top=3", {
+				+ "&$top=2", {
 				value : [{
-					ArtistID : "11",
-					IsActiveEntity : false,
-					Name : "New1**",
-					_ : {
-						NodeID : "11,false"
-					}
-				}, {
 					ArtistID : "12",
 					IsActiveEntity : false,
 					Name : "New2**",
@@ -33106,13 +33100,13 @@ make root = ${bMakeRoot}`;
 		await Promise.all([
 			// code under test
 			oBinding.getHeaderContext().requestSideEffects([""]),
-			this.waitForChanges(assert, "(5) side-effects refresh")
+			this.waitForChanges(assert, "(6) side-effects refresh")
 		]);
 
 		this.expectRequest(baseUrl(sExpandLevels)
 				+ "&$select=ArtistID,IsActiveEntity,Name,_/DescendantCount,_/DistanceFromRoot"
 				+ ",_/DrillState,_/NodeID"
-				+ "&$skip=5&$top=1", {
+				+ "&$skip=4&$top=1", {
 				value : [{
 					ArtistID : "3",
 					IsActiveEntity : false,
@@ -33128,7 +33122,7 @@ make root = ${bMakeRoot}`;
 			.expectRequest(baseUrl(sExpandLevels)
 				+ "&$select=ArtistID,IsActiveEntity,Name,_/DescendantCount,_/DistanceFromRoot"
 				+ ",_/DrillState,_/NodeID"
-				+ "&$skip=6&$top=1", {
+				+ "&$skip=5&$top=1", {
 				value : [{
 					ArtistID : "13",
 					IsActiveEntity : false,
@@ -33144,7 +33138,7 @@ make root = ${bMakeRoot}`;
 			.expectRequest(baseUrl(sExpandLevels)
 				+ "&$select=ArtistID,IsActiveEntity,Name,_/DescendantCount,_/DistanceFromRoot"
 				+ ",_/DrillState,_/NodeID"
-				+ "&$skip=9&$top=1", {
+				+ "&$skip=8&$top=1", {
 				value : [{
 					ArtistID : "4",
 					IsActiveEntity : false,
@@ -33158,11 +33152,10 @@ make root = ${bMakeRoot}`;
 				}]
 			});
 
-		await this.checkAllContexts("(6) check all contexts", assert, oBinding,
+		await this.checkAllContexts("(7) check all contexts", assert, oBinding,
 			["@$ui5.node.isExpanded", "@$ui5.node.level", "ArtistID", "Name"], [
 				[true, 1, "1", "Alpha**"],
 				[undefined, 2, "12", "New2**"],
-				[undefined, 2, "11", "New1**"],
 				[true, 2, "2", "Beta**"],
 				[undefined, 3, "14", "New4**"],
 				[true, 1, "3", "Gamma**"],
@@ -33172,18 +33165,18 @@ make root = ${bMakeRoot}`;
 				[undefined, 1, "4", "Delta**"]
 			]);
 
-		this.expectRequest(sCountUrl, 10)
+		this.expectRequest(sCountUrl, 9)
 			.expectRequest(baseUrl(sExpandLevels)
 				+ "&$select=ArtistID,IsActiveEntity,Name,_/DescendantCount,_/DistanceFromRoot"
 				+ ",_/DrillState,_/NodeID"
 				+ "&$count=true&$skip=0&$top=3", {
-				"@odata.count" : "10",
+				"@odata.count" : "9",
 				value : [{
 					ArtistID : "1",
 					IsActiveEntity : false,
 					Name : "Alpha**",
 					_ : {
-						DescendantCount : "4",
+						DescendantCount : "3",
 						DistanceFromRoot : "0",
 						DrillState : "expanded",
 						NodeID : "1,false"
@@ -33214,18 +33207,17 @@ make root = ${bMakeRoot}`;
 				+ "&$select=ArtistID,IsActiveEntity,_/DescendantCount,_/DistanceFromRoot"
 				+ ",_/DrillState,_/Limited_Rank"
 				+ "&$filter=ArtistID eq '1' and IsActiveEntity eq false"
-				+ " or ArtistID eq '11' and IsActiveEntity eq false"
 				+ " or ArtistID eq '12' and IsActiveEntity eq false"
 				+ " or ArtistID eq '14' and IsActiveEntity eq false"
 				+ " or ArtistID eq '15' and IsActiveEntity eq false"
 				+ " or ArtistID eq '2' and IsActiveEntity eq false"
 				+ " or ArtistID eq '3' and IsActiveEntity eq false"
-				+ "&$top=7", {
+				+ "&$top=6", {
 				value : [{
 					ArtistID : "1",
 					IsActiveEntity : false,
 					_ : {
-						DescendantCount : "4",
+						DescendantCount : "3",
 						DistanceFromRoot : "n/a", // parent's DistanceFromRoot is not yet relevant
 						DrillState : "expanded",
 						Limited_Rank : "0"
@@ -33258,22 +33250,13 @@ make root = ${bMakeRoot}`;
 						Limited_Rank : "3"
 					}
 				}, {
-					ArtistID : "11",
-					IsActiveEntity : false,
-					_ : {
-						DescendantCount : "0",
-						DistanceFromRoot : "1",
-						DrillState : "leaf",
-						Limited_Rank : "4"
-					}
-				}, {
 					ArtistID : "3",
 					IsActiveEntity : false,
 					_ : {
 						DescendantCount : "3",
 						DistanceFromRoot : "n/a", // parent's DistanceFromRoot is not yet relevant
 						DrillState : "expanded",
-						Limited_Rank : "5"
+						Limited_Rank : "4"
 					}
 				}, {
 					ArtistID : "15",
@@ -33282,7 +33265,7 @@ make root = ${bMakeRoot}`;
 						DescendantCount : "0",
 						DistanceFromRoot : "1",
 						DrillState : "leaf",
-						Limited_Rank : "8"
+						Limited_Rank : "7"
 					}
 				}]
 			})
@@ -33290,17 +33273,9 @@ make root = ${bMakeRoot}`;
 				+ "?custom=foo&$apply=descendants($root/" + sFriend
 				+ ",OrgChart,_/NodeID,filter(ArtistID eq '1' and IsActiveEntity eq false),1)"
 				+ "&$select=ArtistID,IsActiveEntity,Name,_/NodeID"
-				+ "&$filter=ArtistID eq '11' and IsActiveEntity eq false"
-				+ " or ArtistID eq '12' and IsActiveEntity eq false"
-				+ "&$top=2", {
+				+ "&$filter=ArtistID eq '12' and IsActiveEntity eq false"
+				+ "&$top=1", {
 				value : [{
-					ArtistID : "11",
-					IsActiveEntity : false,
-					Name : "New1**",
-					_ : {
-						NodeID : "11,false"
-					}
-				}, {
 					ArtistID : "12",
 					IsActiveEntity : false,
 					Name : "New2**",
@@ -33343,7 +33318,7 @@ make root = ${bMakeRoot}`;
 		await Promise.all([
 			// code under test
 			oBinding.getHeaderContext().requestSideEffects([""]),
-			this.waitForChanges(assert, "(7) side-effects refresh")
+			this.waitForChanges(assert, "(8) side-effects refresh")
 		]);
 
 		this.expectRequest(sCountUrl, 10)
@@ -33380,10 +33355,10 @@ make root = ${bMakeRoot}`;
 
 		await Promise.all([
 			oBinding.requestRefresh(),
-			this.waitForChanges(assert, "(8) refresh the binding")
+			this.waitForChanges(assert, "(9) refresh the binding")
 		]);
 
-		checkTable("after (8)", assert, oTable, [
+		checkTable("after (9)", assert, oTable, [
 			`/${sFriend}(ArtistID='1',IsActiveEntity=false)`,
 			`/${sFriend}(ArtistID='3',IsActiveEntity=false)`,
 			`/${sFriend}(ArtistID='4',IsActiveEntity=false)`
