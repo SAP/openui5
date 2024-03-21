@@ -496,9 +496,12 @@ sap.ui.define([
 			bExecuteDefault = this.fireWeekNumberSelect({
 				weekNumber: oEvent.getParameter("weekNumber"),
 				weekDays: oWeekDays
-			});
+			}),
+			iSelectedWeekMonth = oWeekDays.getStartDate() && oWeekDays.getStartDate().getMonth(),
+			iCurrentMonth = oEvent.getSource().getDate() && oEvent.getSource().getDate().getMonth();
+		var bOtherMonth = iSelectedWeekMonth !== iCurrentMonth;
 
-		this._focusDate(CalendarDate.fromLocalJSDate(oWeekDays.getStartDate(), this.getPrimaryCalendarType()), true, false, false);
+		this._focusDate(CalendarDate.fromLocalJSDate(oWeekDays.getStartDate(), this.getPrimaryCalendarType()), bOtherMonth, false, false);
 
 		if (!bExecuteDefault) {
 			oEvent.preventDefault();
