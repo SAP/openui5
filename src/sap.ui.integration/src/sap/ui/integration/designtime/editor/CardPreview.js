@@ -153,18 +153,21 @@ sap.ui.define([
 	CardPreview.prototype.init = function () {
 		//load translations
 		this._oResourceBundle = Library.getResourceBundleFor("sap.ui.integration");
-		//if the theme changes we should toggle the class
-		Core.attachThemeChanged(function () {
-			if (this.getDomRef()) {
-				if (isDark()) {
-					this.getDomRef().classList.add("sapUiIntegrationDTPreviewDark");
-				} else {
-					this.getDomRef().classList.remove("sapUiIntegrationDTPreviewDark");
-				}
+	};
+
+	/**
+	 * if the theme changes we should toggle the class
+	 */
+	CardPreview.prototype.onThemeChanged = function () {
+		if (this.getDomRef()) {
+			if (isDark()) {
+				this.getDomRef().classList.add("sapUiIntegrationDTPreviewDark");
 			} else {
-				this.update();
+				this.getDomRef().classList.remove("sapUiIntegrationDTPreviewDark");
 			}
-		}.bind(this));
+		} else {
+			this.update();
+		}
 	};
 
 	/**

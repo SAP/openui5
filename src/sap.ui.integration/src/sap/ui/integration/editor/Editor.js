@@ -3537,6 +3537,7 @@ sap.ui.define([
 	//theming from parameters to css valiables if css variables are not turned on
 	//find out if css vars are turned on
 	Editor._appendThemeVars = function () {
+		//if (!window.getComputedStyle(document.documentElement).getPropertyValue('--sapBackgroundColor')) {
 		var aVars = [
 			"sapUiButtonHoverBackground",
 			"sapUiBaseBG",
@@ -3560,6 +3561,7 @@ sap.ui.define([
 				document.body.style.setProperty("--" + n, mParams[n]);
 			}
 		}
+		//}
 	};
 
 	//initializes global settings
@@ -3567,12 +3569,7 @@ sap.ui.define([
 		this.init = function () { }; //replace self
 
 		//add theming variables if css vars are not turned on
-		//if (!window.getComputedStyle(document.documentElement).getPropertyValue('--sapBackgroundColor')) {
 		Editor._appendThemeVars();
-		Core.attachThemeChanged(function () {
-			Editor._appendThemeVars();
-		});
-		//}
 
 		var sCssURL = sap.ui.require.toUrl("sap.ui.integration.editor.css.Editor".replace(/\./g, "/") + ".css");
 		includeStylesheet(sCssURL);
@@ -3581,6 +3578,13 @@ sap.ui.define([
 			failOnError: false,
 			async: false
 		});
+	};
+
+	/**
+	 * attach theme changes
+	 */
+	Editor.prototype.onThemeChanged = function () {
+		Editor._appendThemeVars();
 	};
 
 	Editor.init();
