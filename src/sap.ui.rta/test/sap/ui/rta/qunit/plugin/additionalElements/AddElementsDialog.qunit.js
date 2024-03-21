@@ -71,10 +71,6 @@ sap.ui.define([
 
 	QUnit.module("Given that a AddElementsDialog is available...", {
 		beforeEach() {
-			sandbox.stub(FieldExtensibility, "getTexts").resolves({
-				headerText: "extensibilityHeaderText",
-				tooltip: "extensibilityTooltip"
-			});
 			this.oAddElementsDialog = createDialog();
 		},
 		afterEach() {
@@ -95,6 +91,12 @@ sap.ui.define([
 				var oList = Element.getElementById(`${this.oAddElementsDialog.getId()}--` + `rta_addElementsDialogList`);
 				var sBindingPath = oList.getItems()[0].getBindingContext().getPath();
 
+				function checkList() {
+					var oTargetItem = getItemByPath(oList.getItems(), sBindingPath);
+					assert.strictEqual(document.activeElement, oTargetItem.getDomRef());
+					done();
+				}
+
 				this.oAddElementsDialog.attachOpened(function() {
 					var oTargetItem = getItemByPath(oList.getItems(), sBindingPath);
 					oTargetItem.getDomRef().focus();
@@ -102,11 +104,7 @@ sap.ui.define([
 					oTargetItem.getDomRef().dispatchEvent(new Event("touchstart"));
 
 					// Wait until list is re-rendered
-					setTimeout(function() {
-						var oTargetItem = getItemByPath(oList.getItems(), sBindingPath);
-						assert.strictEqual(document.activeElement, oTargetItem.getDomRef());
-						done();
-					});
+					setTimeout(checkList);
 				});
 				this.oAddElementsDialog.open();
 			}.bind(this));
@@ -121,71 +119,90 @@ sap.ui.define([
 				assert.equal(this._oList.getItems().length, 5, "then 5 elements internally known");
 				assert.equal(this.getElements().length, 5, "then 5 elements externally known");
 				assert.equal(this.getSelectedElements().length, 2, "then 2 selected elements");
-				assert.equal(this.getCustomFieldEnabled(), false, "then the customField-button is disabled");
-				assert.equal(this._oList.getItems()[0].getContent()[0].getItems()[1].getText(), "was original", "then the originalLabel is set");
+				assert.equal(this.getCustomFieldButtonVisible(), false, "then the customField-button is hidden");
+				assert.equal(
+					this._oList.getItems()[0].getContent()[0].getItems()[1].getText(),
+					"was original",
+					"then the originalLabel is set"
+				);
 				done();
 			});
 			this.oAddElementsDialog.open();
 		});
 
-		QUnit.test("when AddElementsDialog gets initialized with customFieldsEnabled set and open is called", function(assert) {
+		QUnit.test("when AddElementsDialog gets initialized with customFieldButtonVisible set and no Business Contexts are available", function(assert) {
 			var done = assert.async();
 
-			this.oAddElementsDialog.setCustomFieldEnabled(true);
-			this.oAddElementsDialog.attachOpenCustomField(function() {
-				assert.ok(true, "then the openCustomField event is fired");
-				done();
-			});
-			this.oAddElementsDialog.attachOpened(function() {
-				assert.equal(this.getCustomFieldEnabled(), true, "then the button is enabled");
-				var oCustomFieldButton = Element.getElementById(`${this.getId()}--` + `rta_customFieldButton`);
-				oCustomFieldButton.firePress();
-			});
-			this.oAddElementsDialog.open();
-		});
-
-		QUnit.test("when AddElementsDialog gets initialized with customFieldsEnabled set and no Business Contexts are available", function(assert) {
-			var done = assert.async();
-
-			this.oAddElementsDialog.setCustomFieldEnabled(true);
+			this.oAddElementsDialog.setCustomFieldButtonVisible(true);
 			this.oAddElementsDialog.attachOpened(function() {
 				var oBCContainer = Element.getElementById(`${this.getId()}--` + `rta_businessContextContainer`);
 				assert.ok(oBCContainer.getVisible(), "then the Business Context Container is visible");
 				assert.equal(oBCContainer.getContent().length, 2, "and the Business Context Container has two entries");
 				assert.equal(oBCContainer.getContent()[0].getText(), "extensibilityHeaderText", "and the first entry is the Title");
-				assert.equal(oBCContainer.getContent()[1].getText(), oTextResources.getText("MSG_NO_BUSINESS_CONTEXTS"), "and the second entry is the No-Context Message");
+				assert.equal(
+					oBCContainer.getContent()[1].getText(),
+					oTextResources.getText("MSG_NO_BUSINESS_CONTEXTS"),
+					"and the second entry is the No-Context Message"
+				);
 				done();
 			});
-			this.oAddElementsDialog.addExtensionData().then(function() {
+			this.oAddElementsDialog._oDialogPromise
+			.then(function() {
+				this.oAddElementsDialog.addExtensibilityInfo({
+					UITexts: {
+						headerText: "extensibilityHeaderText",
+						tooltip: "extensibilityTooltip"
+					}
+				});
 				this.oAddElementsDialog.open();
 			}.bind(this));
 		});
 
-		QUnit.test("when AddElementsDialog gets initialized with customFieldsEnabled set and three Business Contexts are available", function(assert) {
+		QUnit.test("when AddElementsDialog gets initialized with customFieldButtonVisible set and three Business Contexts are available", function(assert) {
 			var done = assert.async();
 
-			this.oAddElementsDialog.setCustomFieldEnabled(true);
+			this.oAddElementsDialog.setCustomFieldButtonVisible(true);
 			this.oAddElementsDialog.attachOpened(function() {
 				var oBCContainer = Element.getElementById(`${this.getId()}--` + `rta_businessContextContainer`);
 				assert.ok(oBCContainer.getVisible(), "then the Business Context Container is visible");
 				assert.equal(oBCContainer.getContent().length, 4, "and the Business Context Container has four entries");
 				assert.equal(oBCContainer.getContent()[0].getText(), "extensibilityHeaderText", "and the first entry is the Title");
-				assert.equal(oBCContainer.getContent()[1].getText(), "Business Context 1", "and the second entry is the First Business Context");
-				assert.equal(oBCContainer.getContent()[2].getText(), "Business Context 2", "and the third entry is the Second Business Context");
-				assert.equal(oBCContainer.getContent()[3].getText(), "Business Context 3", "and the fourth entry is the Third Business Context");
+				assert.equal(
+					oBCContainer.getContent()[1].getText(),
+					"Business Context 1",
+					"and the second entry is the First Business Context"
+				);
+				assert.equal(
+					oBCContainer.getContent()[2].getText(),
+					"Business Context 2",
+					"and the third entry is the Second Business Context"
+				);
+				assert.equal(
+					oBCContainer.getContent()[3].getText(),
+					"Business Context 3",
+					"and the fourth entry is the Third Business Context"
+				);
 				done();
 			});
-			var aBusinessContexts = [
-				{description: "Business Context 1"},
-				{description: "Business Context 2"},
-				{description: "Business Context 3"}
-			];
-			this.oAddElementsDialog.addExtensionData(aBusinessContexts).then(function() {
+			var oExtensibilityInfo = {
+				extensionData: [
+					{description: "Business Context 1"},
+					{description: "Business Context 2"},
+					{description: "Business Context 3"}
+				],
+				UITexts: {
+					headerText: "extensibilityHeaderText",
+					tooltip: "extensibilityTooltip"
+				}
+			};
+			this.oAddElementsDialog._oDialogPromise
+			.then(function() {
+				this.oAddElementsDialog.addExtensibilityInfo(oExtensibilityInfo);
 				this.oAddElementsDialog.open();
 			}.bind(this));
 		});
 
-		QUnit.test("when AddElementsDialog gets closed and opened again with customFieldsEnabled set and available Business Contexts", function(assert) {
+		QUnit.test("when AddElementsDialog gets closed and opened again with customFieldButtonVisible set and available Business Contexts", function(assert) {
 			var done = assert.async();
 
 			function fnOnClose() {
@@ -196,19 +213,37 @@ sap.ui.define([
 				assert.ok(oBCContainer.getVisible(), "then the Business Context Container is visible");
 				assert.equal(oBCContainer.getContent().length, 4, "and the Business Context Container has four entries");
 				assert.equal(oBCContainer.getContent()[0].getText(), "extensibilityHeaderText", "and the first entry is the Title");
-				assert.equal(oBCContainer.getContent()[1].getText(), "Business Context 1", "and the second entry is the First Business Context");
-				assert.equal(oBCContainer.getContent()[2].getText(), "Business Context 2", "and the third entry is the Second Business Context");
-				assert.equal(oBCContainer.getContent()[3].getText(), "Business Context 3", "and the fourth entry is the Third Business Context");
+				assert.equal(
+					oBCContainer.getContent()[1].getText(),
+					"Business Context 1",
+					"and the second entry is the First Business Context"
+				);
+				assert.equal(
+					oBCContainer.getContent()[2].getText(),
+					"Business Context 2",
+					"and the third entry is the Second Business Context"
+				);
+				assert.equal(
+					oBCContainer.getContent()[3].getText(),
+					"Business Context 3",
+					"and the fourth entry is the Third Business Context"
+				);
 				done();
 			}
 
-			this.oAddElementsDialog.setCustomFieldEnabled(true);
-			var aBusinessContexts = [
-				{description: "Business Context 1"},
-				{description: "Business Context 2"},
-				{description: "Business Context 3"}
-			];
-			this.oAddElementsDialog.addExtensionData(aBusinessContexts);
+			this.oAddElementsDialog.setCustomFieldButtonVisible(true);
+			var oExtensibilityInfo = {
+				extensionData: [
+					{description: "Business Context 1"},
+					{description: "Business Context 2"},
+					{description: "Business Context 3"}
+				],
+				UITexts: {
+					headerText: "extensibilityHeaderText",
+					tooltip: "extensibilityTooltip"
+				}
+			};
+			this.oAddElementsDialog.addExtensibilityInfo(oExtensibilityInfo);
 			this.oAddElementsDialog._oDialogPromise.then(function(oDialog) {
 				oDialog.attachEventOnce("afterClose", fnOnClose, this);
 			}.bind(this));
@@ -218,9 +253,214 @@ sap.ui.define([
 			this.oAddElementsDialog._submitDialog();
 
 			// Add Business Context again
-			this.oAddElementsDialog.addExtensionData(aBusinessContexts);
+			this.oAddElementsDialog.addExtensibilityInfo(oExtensibilityInfo);
 			// Open the second time
 			this.oAddElementsDialog.open();
+		});
+
+		QUnit.test("when AddElementsDialog gets initialized with legacy extensibility", function(assert) {
+			const done = assert.async();
+			const oButtonText = oTextResources.getText("BTN_ADDITIONAL_ELEMENTS_CREATE_CUSTOM_FIELDS");
+			const oExtensibilityInfo = {
+				extensionData: [
+					{description: "Business Context 1"}
+				],
+				UITexts: {
+					headerText: "extensibilityHeaderText",
+					tooltip: "extensibilityTooltip",
+					options: [
+						{
+							tooltip: "extensibilityTooltip",
+							text: oButtonText
+						}]
+				}
+			};
+			this.oAddElementsDialog.attachOpened(function() {
+				const oButton = Element.getElementById(`${this.getId()}--` + `rta_customFieldButton`);
+				const oRedirectToCustomFieldCreationStub = sandbox.stub(AddElementsDialog.prototype, "_redirectToExtensibilityAction");
+				assert.strictEqual(oButton.getVisible(), true, "then Button is visible");
+				assert.strictEqual(
+					oButton.getText(),
+					oButtonText,
+					"then the button text is set correctly"
+				);
+				assert.strictEqual(
+					oButton.getTooltip(),
+					oExtensibilityInfo.UITexts.tooltip,
+					"then the tooltip text is set correctly"
+				);
+				oButton.attachPress(() => {
+					assert.strictEqual(
+						oRedirectToCustomFieldCreationStub.calledOnce,
+						true,
+						"then the _redirectToExtensibilityAction method is called once"
+					);
+					assert.strictEqual(
+						oRedirectToCustomFieldCreationStub.calledWith(undefined),
+						true,
+						"then the _redirectToExtensibilityAction method is called with the correct parameters"
+					);
+					done();
+				});
+				oButton.firePress();
+			});
+			this.oAddElementsDialog._oDialogPromise
+			.then(function() {
+				this.oAddElementsDialog.setExtensibilityOptions(oExtensibilityInfo);
+				this.oAddElementsDialog.open();
+			}.bind(this));
+		});
+
+		QUnit.test("when AddElementsDialog gets initialized with one extensibility option", function(assert) {
+			var done = assert.async();
+			var oExtensibilityInfo = {
+				extensionData: [
+					{description: "Business Context 1"}
+				],
+				UITexts: {
+					headerText: "extensibilityHeaderText",
+					tooltip: "extensibilityTooltip",
+					buttonText: "Add Custom",
+					options: [
+						{
+							actionKey: "key1",
+							text: "Add Custom Field",
+							tooltip: "tooltip1"
+						}
+					]
+				}
+			};
+			this.oAddElementsDialog.attachOpened(function() {
+				const oButton = Element.getElementById(`${this.getId()}--` + `rta_customFieldButton`);
+				const oRedirectToCustomFieldCreationStub = sandbox.stub(AddElementsDialog.prototype, "_redirectToExtensibilityAction");
+				assert.strictEqual(oButton.getVisible(), true, "then Button is visible");
+				assert.strictEqual(
+					oButton.getText(),
+					oExtensibilityInfo.UITexts.options[0].text,
+					"then the button text is set correctly"
+				);
+				assert.strictEqual(
+					oButton.getTooltip(),
+					oExtensibilityInfo.UITexts.options[0].tooltip,
+					"then the tooltip text is set correctly"
+				);
+				oButton.attachPress(() => {
+					assert.strictEqual(
+						oRedirectToCustomFieldCreationStub.calledOnce,
+						true,
+						"then the _redirectToExtensibilityAction method is called once"
+					);
+					assert.strictEqual(
+						oRedirectToCustomFieldCreationStub.calledWith(oExtensibilityInfo.UITexts.options[0].actionKey),
+						true,
+						"then the _redirectToExtensibilityAction method is called with the correct parameters"
+					);
+					done();
+				});
+				oButton.firePress();
+			});
+
+			this.oAddElementsDialog._oDialogPromise
+			.then(function() {
+				this.oAddElementsDialog.setExtensibilityOptions(oExtensibilityInfo);
+				this.oAddElementsDialog.open();
+			}.bind(this));
+		});
+
+		QUnit.test("when AddElementsDialog gets initialized with multiple extensibility options", function(assert) {
+			var done = assert.async(2);
+			var oExtensibilityInfo = {
+				extensionData: [
+					{description: "Business Context 1"}
+				],
+				UITexts: {
+					headerText: "extensibilityHeaderText",
+					tooltip: "extensibilityTooltip",
+					buttonText: "Add Custom",
+					options: [
+						{
+							actionKey: "key1",
+							text: "Add Custom Field",
+							tooltip: "tooltip1"
+						},
+						{
+							actionKey: "key2",
+							text: "Add Custom Logic",
+							tooltip: "tooltip2"
+						}
+					]
+				}
+			};
+			this.oAddElementsDialog.attachOpened(function() {
+				const oMenuButton = Element.getElementById(`${this.getId()}--` + `rta_customFieldMenuButton`);
+				const aMenuItems = oMenuButton.getMenu().getItems();
+				const oRedirectToCustomFieldCreationStub = sandbox.stub(AddElementsDialog.prototype, "_redirectToExtensibilityAction");
+				assert.strictEqual(oMenuButton.getVisible(), true, "then MenuButton is visible");
+				assert.strictEqual(
+					oMenuButton.getText(),
+					oExtensibilityInfo.UITexts.buttonText,
+					"then the button text is set correctly"
+				);
+				assert.strictEqual(
+					oMenuButton.getTooltip(),
+					oExtensibilityInfo.UITexts.tooltip,
+					"then the tooltip text is set correctly"
+				);
+				assert.strictEqual(
+					aMenuItems[0].getText(),
+					oExtensibilityInfo.UITexts.options[0].text,
+					"then the first menu item text is set correctly"
+				);
+				assert.strictEqual(
+					aMenuItems[0].getTooltip(),
+					oExtensibilityInfo.UITexts.options[0].tooltip,
+					"then the first menu item tooltip text is set correctly"
+				);
+				assert.strictEqual(
+					aMenuItems[1].getText(),
+					oExtensibilityInfo.UITexts.options[1].text,
+					"then the second menu item text is set correctly"
+				);
+				assert.strictEqual(
+					aMenuItems[1].getTooltip(),
+					oExtensibilityInfo.UITexts.options[1].tooltip,
+					"then the second menu item tooltip text is set correctly"
+				);
+				aMenuItems[0].attachPress(() => {
+					assert.strictEqual(
+						oRedirectToCustomFieldCreationStub.calledOnce,
+						true,
+						"then the _redirectToExtensibilityAction method is called once"
+					);
+					assert.strictEqual(
+						oRedirectToCustomFieldCreationStub.calledWith(oExtensibilityInfo.UITexts.options[0].actionKey),
+						true,
+						"then the _redirectToExtensibilityAction method is called with the correct parameters"
+					);
+					done();
+				});
+				aMenuItems[1].attachPress(() => {
+					assert.strictEqual(
+						oRedirectToCustomFieldCreationStub.calledTwice,
+						true,
+						"then the _redirectToExtensibilityAction method is called twice"
+					);
+					assert.strictEqual(
+						oRedirectToCustomFieldCreationStub.calledWith(oExtensibilityInfo.UITexts.options[1].actionKey),
+						true,
+						"then the _redirectToExtensibilityAction method is called with the correct parameters"
+					);
+					done();
+				});
+				aMenuItems[0].firePress();
+				aMenuItems[1].firePress();
+			});
+
+			this.oAddElementsDialog._oDialogPromise
+			.then(function() {
+				this.oAddElementsDialog.setExtensibilityOptions(oExtensibilityInfo);
+				this.oAddElementsDialog.open();
+			}.bind(this));
 		});
 
 		QUnit.test("when on opened AddElementsDialog OK is pressed,", function(assert) {
@@ -256,11 +496,19 @@ sap.ui.define([
 				assert.equal(this._oList.getItems().length, 5, "then after clearing 5 entries are there");
 				this._updateModelFilter({getParameter() {return "complex";}});
 				assert.equal(this._oList.getItems().length, 1, "when filtering for 'complex' then 1 entry is shown");
-				assert.equal(this._oList.getItems()[0].getContent()[0].getItems()[0].getText(), "label4 (duplicateComplexPropName)", "then only label4 where complex is part of the label (duplicateName)");
+				assert.equal(
+					this._oList.getItems()[0].getContent()[0].getItems()[0].getText(),
+					"label4 (duplicateComplexPropName)",
+					"then only label4 where complex is part of the label (duplicateName)"
+				);
 				this._updateModelFilter({getParameter() {return null;}});
 				this._updateModelFilter({getParameter() {return "orig";}});
 				assert.equal(this._oList.getItems().length, 1, "when filtering for 'orig' then 1 entry is shown");
-				assert.equal(this._oList.getItems()[0].getContent()[0].getItems()[0].getText(), "label1", "then only label1 with original name");
+				assert.equal(
+					this._oList.getItems()[0].getContent()[0].getItems()[0].getText(),
+					"label1",
+					"then only label1 with original name"
+				);
 				done();
 			});
 			this.oAddElementsDialog.open();

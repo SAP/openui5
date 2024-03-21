@@ -233,7 +233,7 @@ sap.ui.define([
 			});
 			// Fake Custom Fields Creation available
 			sandbox.stub(FieldExtensibility, "isExtensibilityEnabled").resolves(true);
-			sandbox.stub(FieldExtensibility, "getExtensionData").resolves("foo");
+			sandbox.stub(FieldExtensibility, "getExtensionData").resolves({});
 			// fake no Elements available
 			var oAdditionalElementsPlugin = this.oRta.getPlugins().additionalElements;
 			sandbox.stub(oAdditionalElementsPlugin, "_combineAnalyzerResults").resolves([]);

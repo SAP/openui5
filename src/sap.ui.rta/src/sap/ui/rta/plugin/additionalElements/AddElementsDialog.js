@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/Element",
 	"sap/ui/core/Fragment",
-	"sap/ui/fl/write/api/FieldExtensibility",
+	"sap/ui/core/Lib",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
@@ -16,7 +16,7 @@ sap.ui.define([
 	ManagedObject,
 	Element,
 	Fragment,
-	FieldExtensibility,
+	Lib,
 	JSONModel,
 	Filter,
 	FilterOperator,
@@ -42,10 +42,6 @@ sap.ui.define([
 		metadata: {
 			library: "sap.ui.rta",
 			properties: {
-				customFieldEnabled: {
-					type: "boolean",
-					defaultValue: false
-				},
 				businessContextVisible: {
 					type: "boolean",
 					defaultValue: false
@@ -56,7 +52,7 @@ sap.ui.define([
 			},
 			events: {
 				opened: {},
-				openCustomField: {}
+				triggerExtensibilityAction: {}
 			}
 		}
 	});
@@ -77,11 +73,15 @@ sap.ui.define([
 
 		this._oDialogModel = new JSONModel({
 			elements: [],
-			customFieldEnabled: false,
-			customFieldVisible: false,
+			customFieldButtonText: "",
+			customFieldButtonVisible: false,
 			businessContextVisible: false,
 			customFieldButtonTooltip: "",
-			businessContextTexts: [{text: ""}] // empty element in first place, to be replaced by the headerText (see: addExtensionData)
+			businessContextTexts: [{text: ""}], // empty element in first place to be replaced by the headerText (see: addExtensibilityInfo)
+			extensibilityMenuButtonActive: false,
+			extensibilityMenuButtonText: "",
+			extensibilityMenuButtonTooltip: "",
+			extensibilityOptions: []
 		});
 
 		this._oDialogPromise.then(function(oDialog) {
@@ -111,7 +111,11 @@ sap.ui.define([
 	};
 
 	AddElementsDialog.prototype.setCustomFieldButtonVisible = function(bVisible) {
-		this._oDialogModel.setProperty("/customFieldVisible", bVisible);
+		this._oDialogModel.setProperty("/customFieldButtonVisible", bVisible);
+	};
+
+	AddElementsDialog.prototype.getCustomFieldButtonVisible = function() {
+		return this._oDialogModel.getProperty("/customFieldButtonVisible");
 	};
 
 	/**
@@ -211,12 +215,12 @@ sap.ui.define([
 	};
 
 	/**
-	 * Fire an event to redirect to custom field creation
-	 *
+	 * Fire an event to redirect to the extensibility action
+	 * @param {string} sActionKey - Key for the mapping of specific actions (e.g. which URI to open for given extension data)
 	 * @private
 	 */
-	AddElementsDialog.prototype._redirectToCustomFieldCreation = function() {
-		this.fireOpenCustomField();
+	AddElementsDialog.prototype._redirectToExtensibilityAction = function(sActionKey) {
+		this.fireTriggerExtensibilityAction({actionKey: sActionKey});
 		this._oDialogPromise.then(function(oDialog) {
 			oDialog.close();
 		});
@@ -230,14 +234,33 @@ sap.ui.define([
 	};
 
 	/**
-	 * Enables the Custom Field Creation button
+	 * Sets the information for the extensibility menu button items
 	 *
-	 * @param {boolean} bCustomFieldEnabled field extensibility button is enabled if true, else disabled
+	 * @param {string} sButtonText - Text for the extensibility MenuButton
+	 * @param {string} sButtonTooltip - Tooltip for the extensibility MenuButton
+	 * @param {object[]} aExtensibilityOptions - Options available on the extensibility MenuButton
 	 * @public
 	 */
-	AddElementsDialog.prototype.setCustomFieldEnabled = function(bCustomFieldEnabled) {
-		this.setProperty("customFieldEnabled", bCustomFieldEnabled, true);
-		this._oDialogModel.setProperty("/customFieldEnabled", this.getProperty("customFieldEnabled"));
+	AddElementsDialog.prototype.setExtensibilityOptions = function(oExtensibilityInfo) {
+		const aExtensibilityOptions = oExtensibilityInfo.UITexts.options;
+
+		this._oDialogModel.setProperty("/extensibilityOptions", aExtensibilityOptions);
+		if (aExtensibilityOptions.length === 1) {
+			// if there is only one option, we can directly set the button text
+			this._oDialogModel.setProperty("/customFieldButtonText", aExtensibilityOptions[0].text);
+			if (aExtensibilityOptions[0]?.tooltip) {
+				this._oDialogModel.setProperty("/customFieldButtonTooltip", aExtensibilityOptions[0].tooltip);
+			}
+			this.setCustomFieldButtonVisible(true);
+		} else {
+			this._oDialogModel.setProperty("/extensibilityMenuButtonActive", true);
+			this._oDialogModel.setProperty("/extensibilityMenuButtonText", oExtensibilityInfo.UITexts.buttonText);
+			this._oDialogModel.setProperty("/extensibilityMenuButtonTooltip", oExtensibilityInfo.UITexts.tooltip);
+		}
+	};
+
+	AddElementsDialog.prototype.getExtensibilityOptions = function() {
+		return this._oDialogModel.getProperty("/extensibilityOptions");
 	};
 
 	/**
@@ -252,18 +275,18 @@ sap.ui.define([
 	};
 
 	/**
-	 * Adds extension data, e.g. business contexts
-	 * @param {object[]} aExtensionData - Array containing extension data
-	 * @returns {Promise<undefined>} A promise resolving to undefined
+	 * Adds extensibility info - business contexts, UI Texts, etc...
+	 * @param {object} oExtensibilityInfo - Extensibility Info
 	 * @public
 	 */
-	AddElementsDialog.prototype.addExtensionData = function(aExtensionData) {
+	AddElementsDialog.prototype.addExtensibilityInfo = function(oExtensibilityInfo) {
+		const aContexts = oExtensibilityInfo?.extensionData;
 		// clear old values from last run
 		this._removeExtensionDataTexts();
 
 		var aBusinessContextTexts = this._oDialogModel.getObject("/businessContextTexts");
-		if (aExtensionData && aExtensionData.length > 0) {
-			aExtensionData.forEach(function(oContext) {
+		if (aContexts && aContexts.length > 0) {
+			aContexts.forEach(function(oContext) {
 				aBusinessContextTexts.push({
 					text: oContext.description
 				});
@@ -277,14 +300,9 @@ sap.ui.define([
 		// set the container visible
 		this._setBusinessContextVisible(true);
 
-		return FieldExtensibility.getTexts().then(function(oFieldExtensibilityTexts) {
-			if (oFieldExtensibilityTexts) {
-				this._oDialogModel.setProperty("/customFieldButtonTooltip", oFieldExtensibilityTexts.tooltip);
-				// the first entry is always the "header" to be set by the implementation of FieldExtensibility
-				// it is set during the instantiation of the model, in the 'init' function
-				this._oDialogModel.setProperty("/businessContextTexts/0/text", oFieldExtensibilityTexts.headerText);
-			}
-		}.bind(this));
+		// the first entry is always the "header" to be set by the implementation of FieldExtensibility
+		// it is set during the instantiation of the model, in the 'init' function
+		this._oDialogModel.setProperty("/businessContextTexts/0/text", oExtensibilityInfo?.UITexts?.headerText);
 	};
 
 	/**

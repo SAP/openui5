@@ -1,5 +1,5 @@
 <core:FragmentDefinition
-  xmlns="sap.m"
+	xmlns="sap.m"
 	xmlns:core="sap.ui.core"
 	xmlns:layout="sap.ui.layout">
 
@@ -28,12 +28,26 @@
 					press="._resortList"/>
 				<Button
 					id="rta_customFieldButton"
-					text=""
-					icon="sap-icon://add"
+					text="{/customFieldButtonText}"
 					tooltip="{/customFieldButtonTooltip}"
-					enabled="{/customFieldEnabled}"
-					visible="{/customFieldVisible}"
-					press="._redirectToCustomFieldCreation"/>
+					visible="{/customFieldButtonVisible}"
+					press="._redirectToExtensibilityAction(${/extensibilityOptions/0/actionKey})"/>
+				<MenuButton
+					id="rta_customFieldMenuButton"
+					text="{/extensibilityMenuButtonText}"
+					tooltip="{/extensibilityMenuButtonTooltip}"
+					visible="{/extensibilityMenuButtonActive}">
+					<Menu
+						itemSelected="onMenuItemPress"
+						items="{/extensibilityOptions}">
+						<items>
+							<MenuItem
+								text="{text}"
+								tooltip="{tooltip}"
+								press="_redirectToExtensibilityAction(${actionKey})"/>
+						</items>
+					</Menu>
+				</MenuButton>
 			</Toolbar>
 			<layout:VerticalLayout
 				id="rta_businessContextContainer"
