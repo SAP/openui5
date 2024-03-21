@@ -41,7 +41,7 @@ sap.ui.define([
 
 	var FlexPerformanceTestUtil = {};
 
-	function _areAllChangesApplied() {
+	function areAllChangesApplied() {
 		// TODO: to be changed, flexReference should be known and not fetched from the ChangePersistenceFactory
 		var oInstanceCache = ChangePersistenceFactory._instanceCache;
 		var sComponent = Object.keys(oInstanceCache)[0];
@@ -51,35 +51,39 @@ sap.ui.define([
 		});
 	}
 
-	function _writeData(sControlId) {
+	function writeData(sControlId) {
 		sControlId ||= sIdForStatus;
 		var oLayout = Element.getElementById("idMain1--Layout");
 		var sDurationText = `${sMassiveLabel} = ${window.wpp.customMetrics[sMassiveLabel]} ms`;
 		Log.info(sDurationText);
-		_addLabel(oLayout, sControlId, sDurationText);
+		if (!Element.getElementById(sControlId)) {
+			addLabel(oLayout, sControlId, sDurationText);
+		} else {
+			Element.getElementById(sControlId).setText(sDurationText);
+		}
 		performance.clearMarks();
 		performance.clearMeasures();
 	}
 
-	function _addLabel(oLayout, sControlId, sText) {
+	function addLabel(oLayout, sControlId, sText) {
 		var oControl = new Label(sControlId, {
 			text: sText
 		});
 		oLayout.addContent(oControl);
 	}
 
-	function _startApplyScenario(sControlId, fnAddControls) {
+	function startApplyScenario(sControlId, fnAddControls) {
 		FlexPerformanceTestUtil.startMeasurement(sMassiveLabel);
 		var aControlsToBeChanged = [].concat(fnAddControls(sControlId));
 		return FlexRuntimeInfoAPI.waitForChanges({ selectors: aControlsToBeChanged })
 		.then(async function() {
 			FlexPerformanceTestUtil.stopMeasurement(sMassiveLabel);
-			if (!_areAllChangesApplied()) {
+			if (!areAllChangesApplied()) {
 				var oLayout = Element.getElementById("idMain1--Layout");
-				_addLabel(oLayout, "_error", "Error: not all changes were applied");
+				addLabel(oLayout, "_error", "Error: not all changes were applied");
 				throw new Error("Not all changes were applied");
 			}
-			_writeData();
+			writeData();
 			await nextUIUpdate();
 		})
 		.catch(function(vError) {
@@ -93,7 +97,7 @@ sap.ui.define([
 	 *		Layout (verticalLayout)
 	 *			initialLabel (label) -- will be added as selector to apply rename changes
 	 */
-	function _createControlForRename(sControlId) {
+	function createControlForRename(sControlId) {
 		var oLayout = Element.getElementById("idMain1--Layout");
 		var oControl = new Label(sControlId, {text: sControlId});
 		oLayout.addContent(oControl);
@@ -113,7 +117,7 @@ sap.ui.define([
 	 *					.ratingIndicator (ratingIndicator) -- will be added as selector to apply changes
 	 *					.button (button) -- will be added as selector to apply changes
 	 */
-	function _createControlsForDiverse(sControlId) {
+	function createControlsForDiverse(sControlId) {
 		var oLayout = Element.getElementById("idMain1--Layout");
 		var oTitleLabel = new Label(`${sControlId}.title`, {text: `${sControlId}.title`});
 		var oInnerLabel = new Label(`${sControlId}.label`, {text: `${sControlId}.label`});
@@ -150,16 +154,16 @@ sap.ui.define([
 		];
 	}
 
-	function _startRenameScenario() {
-		return _startApplyScenario("idMain1--initialLabel", _createControlForRename);
+	function startRenameScenario() {
+		return startApplyScenario("idMain1--initialLabel", createControlForRename);
 	}
 
-	function _startDiverseScenario() {
-		return _startApplyScenario("idMain1--dependencyScenarioControl", _createControlsForDiverse);
+	function startDiverseScenario() {
+		return startApplyScenario("idMain1--dependencyScenarioControl", createControlsForDiverse);
 	}
 
-	function _startVariantsScenario() {
-		_createControlsForDiverse("idMain1--dependencyScenarioControl");
+	function startVariantsScenario() {
+		createControlsForDiverse("idMain1--dependencyScenarioControl");
 		var oComponent = FlUtils.getAppComponentForControl(Element.getElementById("idMain1--Layout"));
 		var oControlToBeChanged = Element.getElementById("idMain1--dependencyScenarioControl.vbox");
 
@@ -172,8 +176,8 @@ sap.ui.define([
 		.then(FlexPerformanceTestUtil.showMeasurementData);
 	}
 
-	function _startSaveAsScenario() {
-		_createControlsForDiverse("idMain1--dependencyScenarioControl");
+	function startSaveAsScenario() {
+		createControlsForDiverse("idMain1--dependencyScenarioControl");
 		var oVMControl = Element.getElementById("idMain1--variantManagementOrdersTable");
 		var oControlToBeChanged = Element.getElementById("idMain1--dependencyScenarioControl.vbox");
 
@@ -190,7 +194,7 @@ sap.ui.define([
 		})
 		.then(function() {
 			FlexPerformanceTestUtil.stopMeasurement(sMassiveLabel);
-			_writeData();
+			writeData();
 			return PersistenceWriteAPI.reset({
 				selector: oControlToBeChanged,
 				layer: Layer.CUSTOMER,
@@ -202,6 +206,22 @@ sap.ui.define([
 			layer: Layer.USER,
 			generator: "Change.createInitialFileContent"
 		}));
+	}
+
+	let iCounter = 0;
+	async function startSwitchVariant() {
+		if (iCounter === 0) {
+			createControlsForDiverse("idMain1--dependencyScenarioControl");
+		}
+		performance.clearMeasures();
+		FlexPerformanceTestUtil.startMeasurement();
+		await ControlVariantApplyAPI.activateVariant({
+			element: "idMain1--variantManagementOrdersTable",
+			variantReference: iCounter % 2 === 0 ? "id_1710319473139_86_flVariant1" : "id_1710319473139_86_flVariant10"
+		});
+		FlexPerformanceTestUtil.stopMeasurement();
+		FlexPerformanceTestUtil.showMeasurementData();
+		iCounter++;
 	}
 
 	FlexPerformanceTestUtil.stopMeasurement = function(sMeasure) {
@@ -230,25 +250,27 @@ sap.ui.define([
 
 	FlexPerformanceTestUtil.waitForChangesAndWriteData = function(oControlToBeChanged) {
 		return FlexRuntimeInfoAPI.waitForChanges({element: oControlToBeChanged}).then(function() {
-			_writeData();
+			writeData();
 		});
 	};
 
 	FlexPerformanceTestUtil.showMeasurementData = function() {
-		_writeData();
+		writeData();
 	};
 
 	FlexPerformanceTestUtil.runPerformanceTests = function() {
 		switch (FlUtils.getUrlParameter("sap-ui-fl-test-case")) {
 			case "diverse":
-				return _startDiverseScenario();
+				return startDiverseScenario();
 			case "variants":
-				return _startVariantsScenario();
+				return startVariantsScenario();
 			case "saveas":
-				return _startSaveAsScenario();
+				return startSaveAsScenario();
+			case "variantSwitch":
+				return startSwitchVariant();
 			case "rename":
 			default:
-				return _startRenameScenario();
+				return startRenameScenario();
 		}
 	};
 

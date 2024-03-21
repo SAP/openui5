@@ -1,7 +1,7 @@
 /* eslint-disable */
-var fs = require('fs');
-var path = require("path");
-var lodash = require("lodash");
+const fs = require('fs');
+const path = require("path");
+const lodash = require("lodash");
 
 /*
  * usage: script.js <scenario> [<nuber-of-changes>]
@@ -11,29 +11,26 @@ var lodash = require("lodash");
  * the following 500 changes initialLabel1 etc.
  */
 
-var aChangeAmounts = [];
-var sSelectorId = "initialLabel";
-var sTestScenario = process.argv[2] || "rename";
+const aChangeAmounts = [];
+const sTestScenario = process.argv[2] || "rename";
 
-for (var i = 3, n = process.argv.length; i < n; i++) {
+for (let i = 3, n = process.argv.length; i < n; i++) {
 	aChangeAmounts.push(process.argv[i]);
 }
 if (!aChangeAmounts.length) {
 	aChangeAmounts.push(10);
 }
 
-// var sInitialChangeFileName = "../flexData/template.diverseChanges.json";
-var sInitialChangeFileName = "../flexData/template." + sTestScenario + ".scenario.json";
+const sInitialChangeFileName = "../flexData/template." + sTestScenario + ".scenario.json";
 
-// var sOutputChangesFileName = "../flexData/FakeLrepMassiveChanges.json";
-var sOutputChangesFileName = "../flexData/FakeLrep." + sTestScenario + "." + aChangeAmounts[0] + ".json";
+const sOutputChangesFileName = "../flexData/FakeLrep." + sTestScenario + "." + aChangeAmounts[0] + ".json";
 
 function addNumberToSelector(sId, sSelectorIndex) {
 	if (sId === "Layout") {
 		return sId;
 	}
-	var aNameParts = sId.split('.');
-	var iRelIndex = aNameParts.length > 1 ? aNameParts.length - 2 : 0;
+	const aNameParts = sId.split('.');
+	const iRelIndex = aNameParts.length > 1 ? aNameParts.length - 2 : 0;
 	aNameParts[iRelIndex] = aNameParts[iRelIndex] + sSelectorIndex;
 	return aNameParts.join('.');
 }
@@ -42,14 +39,14 @@ function copyChangeForSelector(sSelectorIndex, aSourceChanges, iChangeAmount, iL
 	if (aSourceChanges.length === 0) {
 		return [];
 	}
-	var aInitialChanges = lodash.cloneDeep(aSourceChanges);
-	var aNewChanges = [];
-	var aCtrlVariantChangesId = [];
-	for (var i = iLastChangeIndexIdentifier, n = (iLastChangeIndexIdentifier + iChangeAmount); i < n; i++) {
-		var iPlainIndex = i - iLastChangeIndexIdentifier;
-		var sNewChange = aInitialChanges[iPlainIndex % aInitialChanges.length];
+	const aInitialChanges = lodash.cloneDeep(aSourceChanges);
+	const aNewChanges = [];
+	const aCtrlVariantChangesId = [];
+	for (let i = iLastChangeIndexIdentifier, n = (iLastChangeIndexIdentifier + iChangeAmount); i < n; i++) {
+		const iPlainIndex = i - iLastChangeIndexIdentifier;
+		const oNewChangeJson = aInitialChanges[iPlainIndex % aInitialChanges.length];
 
-		var oNewChange = JSON.parse(JSON.stringify(sNewChange));
+		const oNewChange = JSON.parse(JSON.stringify(oNewChangeJson));
 
 		if (oNewChange.fileType === "ctrl_variant") {
 			if (aCtrlVariantChangesId.indexOf(oNewChange.fileName) === -1) {
@@ -59,7 +56,7 @@ function copyChangeForSelector(sSelectorIndex, aSourceChanges, iChangeAmount, iL
 			continue;
 		}
 
-		var aNameParts = oNewChange.fileName.split('_');
+		const aNameParts = oNewChange.fileName.split('_');
 		aNameParts[1] = parseInt(aNameParts[1]) + i + 1;
 		oNewChange.fileName = aNameParts.join('_');
 
@@ -91,24 +88,57 @@ fs.readFile(path.resolve(__dirname, sInitialChangeFileName), 'utf8', function (e
 	if (err) {
 		throw err;
 	}
-	var oInput = JSON.parse(data);
-	var iLastChangeIndexIdentifier = 0;
+	const oInput = JSON.parse(data);
+	let oOutput;
 
-	aChangeAmounts.forEach(function (iChangeAmount, iIndex) {
-		iChangeAmount = parseInt(iChangeAmount);
-		var sSelectorIndex = iIndex === 0 ? "" : iIndex;
-		if (oInput.changes) {
-			var aCopiedChanges = copyChangeForSelector(sSelectorIndex, oInput.changes, iChangeAmount, iLastChangeIndexIdentifier);
-			oInput.changes = oInput.changes.concat(aCopiedChanges);
+	if (sTestScenario === "variantSwitch") {
+		oOutput = {
+			variants: [],
+			variantDependentControlChanges: []
 		}
-		if (oInput.variantDependentControlChanges) {
-			var aCopiedVariantDependentControlChanges = copyChangeForSelector(sSelectorIndex, oInput.variantDependentControlChanges || [], iChangeAmount, iLastChangeIndexIdentifier);
-			oInput.variantDependentControlChanges = oInput.variantDependentControlChanges.concat(aCopiedVariantDependentControlChanges);
+		const iChangeAmount = parseInt(aChangeAmounts[0]);
+		for (let iIndex = 0; iIndex < iChangeAmount; iIndex++) {
+			const sSelectorIndex = iIndex === 0 ? "" : iIndex;
+			const oCopiedVariant = lodash.cloneDeep(oInput.variants[0]);
+			oCopiedVariant.fileName = oCopiedVariant.fileName + sSelectorIndex;
+			oCopiedVariant.texts.variantName.value = oCopiedVariant.texts.variantName.value + sSelectorIndex;
+			oOutput.variants.push(oCopiedVariant);
+			oInput.variantDependentControlChanges.forEach((oChange) => {
+				const oCopiedChange = lodash.cloneDeep(oChange);
+				oCopiedChange.fileName = oCopiedChange.fileName + sSelectorIndex;
+				oCopiedChange.variantReference = oCopiedVariant.fileName;
+				if (oCopiedChange.texts.newText) {
+					oCopiedChange.texts.newText.value = oCopiedChange.texts.newText.value + oCopiedVariant.texts.variantName.value;
+				}
+				oOutput.variantDependentControlChanges.push(oCopiedChange);
+			});
+			oInput.variantChanges.forEach((oChange) => {
+				const oCopiedChange = lodash.cloneDeep(oChange);
+				oCopiedChange.fileName = oCopiedChange.fileName + sSelectorIndex;
+				oCopiedChange.selector.id = oCopiedChange.selector.id + sSelectorIndex;
+				oOutput.variantDependentControlChanges.push(oCopiedChange);
+			});
 		}
-		iLastChangeIndexIdentifier += iChangeAmount;
-	});
+	} else {
+		oOutput = Object.assign({}, oInput);
+		const iLastChangeIndexIdentifier = 0;
+		aChangeAmounts.forEach(function (iChangeAmount, iIndex) {
+			iChangeAmount = parseInt(iChangeAmount);
+			const sSelectorIndex = iIndex === 0 ? "" : iIndex;
+			if (oOutput.changes) {
+				const aCopiedChanges = copyChangeForSelector(sSelectorIndex, oOutput.changes, iChangeAmount, iLastChangeIndexIdentifier);
+				oOutput.changes = oOutput.changes.concat(aCopiedChanges);
+			}
+			if (oOutput.variantDependentControlChanges) {
+				const aCopiedVariantDependentControlChanges = copyChangeForSelector(sSelectorIndex, oOutput.variantDependentControlChanges || [], iChangeAmount, iLastChangeIndexIdentifier);
+				oOutput.variantDependentControlChanges = oOutput.variantDependentControlChanges.concat(aCopiedVariantDependentControlChanges);
+			}
+			iLastChangeIndexIdentifier += iChangeAmount;
+		});
+	}
 
-	fs.writeFile(path.resolve(__dirname, sOutputChangesFileName), JSON.stringify(oInput), function(err, data) {
+
+	fs.writeFile(path.resolve(__dirname, sOutputChangesFileName), JSON.stringify(oOutput), function(err, data) {
 		if (err) {
 			throw new Error(err);
 		}
