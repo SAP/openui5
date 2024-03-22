@@ -1,4 +1,5 @@
 <mvc:View
+	height="100%"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.uxap"
 	xmlns:core="sap.ui.core"
@@ -6,6 +7,7 @@
 	xmlns:m="sap.m"
 	xmlns:f="sap.ui.layout.form">
 	<m:App>
+	<m:Page title="ObjectPage">
 		<ObjectPageLayout id="ObjectPageLayout" showTitleInHeaderContent="true" useIconTabBar="true">
 			<headerTitle>
 				<ObjectPageHeader id="headerForTest"
@@ -156,5 +158,6 @@
 				</ObjectPageSection>
 			</sections>
 		</ObjectPageLayout>
+	</m:Page>
 	</m:App>
 </mvc:View>
