@@ -17,12 +17,12 @@ sap.ui.require.preload({
 			"library": {
 				"i18n": {
 					"bundleUrl": "i18n/i18n.properties",
-					"supportedLocales": ["en", "de"],
+					"supportedLocales": ["en", "de", "fr"],
 					"fallbackLocale": "en",
 					"terminologies": {
 						"oil": {
 							"bundleUrl": "i18n/terminologies/oil/i18n.properties",
-							"supportedLocales": ["en", "de"],
+							"supportedLocales": ["en", "de", "fr"],
 							"fallbackLocale": "en"
 						}
 					}
