@@ -32,6 +32,20 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 					}
 				}
 			},
+			CustomThemeFallback_unavoidablySync: {
+				title: "sap.ui.core: Custom Theme Fallback",
+				ui5: {
+					theme: "customcss",
+					themeRoots: {
+						"customcss": {
+							"sap.ui.core": "test-resources/sap/ui/core/qunit/testdata/customcss/"
+						},
+						"legacy": {
+							"sap.ui.core": "test-resources/sap/ui/core/qunit/testdata/customcss/"
+						}
+					}
+				}
+			},
 			ThemeManager: {
 				title: "sap.ui.core.theming.ThemeManager",
 				ui5: {
