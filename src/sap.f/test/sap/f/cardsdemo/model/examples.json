@@ -282,5 +282,11 @@
 		"description": "Render cards as tiles.",
 		"route": "tilesVariants",
 		"group": "Card Variants"
+	},
+	{
+		"title": "Focus Full Card",
+		"description": "The focus goes on the full card, instead of the header.",
+		"route": "focusFullCard",
+		"group": "Card Variants"
 	}
 ]
