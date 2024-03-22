@@ -10,6 +10,9 @@ sap.ui.define(['../base/ManagedObject', "sap/base/assert"],
 	// Mapping between controls and labels
 	var CONTROL_TO_LABELS_MAPPING = {};
 
+	// Mapping between the outer control and the inner control when outer control overwrites 'getIdForLabel'
+	const CONTROL_TO_INNERCONTROL_MAPPING = {};
+
 	// The controls which should not be referenced by a "for" attribute (Specified in the HTML standard).
 	// Extend when needed.
 	var NON_LABELABLE_CONTROLS = [
@@ -30,7 +33,7 @@ sap.ui.define(['../base/ManagedObject', "sap/base/assert"],
 			return null;
 		}
 
-		Element = Element ? Element : sap.ui.require("sap/ui/core/Element");
+		Element ??= sap.ui.require("sap/ui/core/Element");
 		var oControl = Element.getElementById(sId);
 		// a control must only be invalidated if there is already a DOM Ref. If there is no DOM Ref yet, it will get
 		// rendered later in any case. Elements must always be invalidated because they have no own renderer.
@@ -41,19 +44,58 @@ sap.ui.define(['../base/ManagedObject', "sap/base/assert"],
 		return oControl;
 	}
 
-	function findLabelForControl(label) {
-		var sId = label.getLabelFor() || label._sAlternativeId || '';
+	function findLabelForControl(oLabel, fnOnAfterRendering) {
+		const sId = oLabel.getLabelFor() || oLabel._sAlternativeId || '';
+		const oRes = { controlId: sId };
 
-		return sId;
+		Element ??= sap.ui.require("sap/ui/core/Element");
+
+		const oControl = Element.getElementById(sId);
+
+		if (oControl) {
+			const sDomIdForLabel = oControl.getIdForLabel();
+
+			if (sDomIdForLabel !== oControl.getId()) {
+				const oDomForLabel = document.getElementById(sDomIdForLabel);
+
+				if (!oDomForLabel) {
+					// The inner control based on 'getIdForLabel' isn't rendered yet
+					// Wait for the next rendering and call the given callback
+					const oDelegate = {
+						onAfterRendering: function(oLabel) {
+							this.removeEventDelegate(oDelegate);
+							if (typeof fnOnAfterRendering === "function") {
+								fnOnAfterRendering(oLabel);
+							}
+						}.bind(oControl, oLabel)
+					};
+					oControl.addEventDelegate(oDelegate);
+				} else {
+					const oControlForLabel = Element.closestTo(oDomForLabel);
+					const sInnerControlId = oControlForLabel.getId();
+					if (sInnerControlId !== sId) {
+						oRes.innerControlId = sInnerControlId;
+					}
+				}
+			}
+		}
+
+		return oRes;
 	}
 
 	// Updates the mapping tables for the given label, in destroy case only a cleanup is done
-	function refreshMapping(oLabel, bDestroy){
+	function refreshMapping(oLabel, bDestroy, bAfterRendering){
 		var sLabelId = oLabel.getId();
 		var sOldId = oLabel.__sLabeledControl;
-		var sNewId = bDestroy ? null : findLabelForControl(oLabel);
+		var oNewIdInfo = bDestroy ? null : findLabelForControl(oLabel, (oLabel) => {
+			if (!bAfterRendering) {
+				refreshMapping(oLabel, false /* bDestroy */, true /* bAfterRendering */);
+			}
+		});
 
-		if (sOldId == sNewId) {
+		if (oNewIdInfo &&
+			sOldId === oNewIdInfo.controlId &&
+			oNewIdInfo.innerControlId === CONTROL_TO_INNERCONTROL_MAPPING[oNewIdInfo.controlId]) {
 			return;
 		}
 
@@ -63,8 +105,8 @@ sap.ui.define(['../base/ManagedObject', "sap/base/assert"],
 		}
 
 		//Update the label to control mapping (1-1 mapping)
-		if (sNewId) {
-			oLabel.__sLabeledControl = sNewId;
+		if (oNewIdInfo?.controlId) {
+			oLabel.__sLabeledControl = oNewIdInfo.controlId;
 		} else {
 			delete oLabel.__sLabeledControl;
 		}
@@ -74,25 +116,44 @@ sap.ui.define(['../base/ManagedObject', "sap/base/assert"],
 		if (sOldId) {
 			aLabelsOfControl = CONTROL_TO_LABELS_MAPPING[sOldId];
 			if (aLabelsOfControl) {
+				const sInnerControlId = CONTROL_TO_INNERCONTROL_MAPPING[sOldId];
 				aLabelsOfControl = aLabelsOfControl.filter(function(sCurrentLabelId) {
 					  return sCurrentLabelId != sLabelId;
 				});
 				if (aLabelsOfControl.length) {
 					CONTROL_TO_LABELS_MAPPING[sOldId] = aLabelsOfControl;
+					if (sInnerControlId) {
+						CONTROL_TO_LABELS_MAPPING[sInnerControlId] = aLabelsOfControl;
+					}
 				} else {
 					delete CONTROL_TO_LABELS_MAPPING[sOldId];
+					if (sInnerControlId) {
+						delete CONTROL_TO_LABELS_MAPPING[sInnerControlId];
+						delete CONTROL_TO_INNERCONTROL_MAPPING[sOldId];
+					}
 				}
 			}
 		}
-		if (sNewId) {
-			aLabelsOfControl = CONTROL_TO_LABELS_MAPPING[sNewId] || [];
+		if (oNewIdInfo?.controlId) {
+			aLabelsOfControl = CONTROL_TO_LABELS_MAPPING[oNewIdInfo.controlId] || [];
 			aLabelsOfControl.push(sLabelId);
-			CONTROL_TO_LABELS_MAPPING[sNewId] = aLabelsOfControl;
+			CONTROL_TO_LABELS_MAPPING[oNewIdInfo.controlId] = aLabelsOfControl;
+
+			if (oNewIdInfo.innerControlId) {
+				CONTROL_TO_LABELS_MAPPING[oNewIdInfo.innerControlId] = aLabelsOfControl;
+				CONTROL_TO_INNERCONTROL_MAPPING[oNewIdInfo.controlId] = oNewIdInfo.innerControlId;
+			} else {
+				const sExistingInnerControl = CONTROL_TO_INNERCONTROL_MAPPING[oNewIdInfo.controlId];
+				if (sExistingInnerControl) {
+					delete CONTROL_TO_LABELS_MAPPING[sExistingInnerControl];
+					delete CONTROL_TO_INNERCONTROL_MAPPING[oNewIdInfo.controlId];
+				}
+			}
 		}
 
 		//Invalidate related controls
 		var oOldControl = toControl(sOldId, true);
-		var oNewControl = toControl(sNewId, true);
+		var oNewControl = toControl(oNewIdInfo?.controlId, true);
 
 		if (oOldControl) {
 			oLabel.detachRequiredChange(oOldControl);
@@ -168,24 +229,23 @@ sap.ui.define(['../base/ManagedObject', "sap/base/assert"],
 	 * @protected
 	 */
 	LabelEnablement.writeLabelForAttribute = function(oRenderManager, oLabel) {
-		if (!oLabel || !oLabel.getLabelForRendering) {
+		if (!oLabel) {
 			return;
 		}
 
-		var sControlId = oLabel.getLabelForRendering();
-		if (!sControlId) {
+		const oControlInfo = findLabelForControl(oLabel, (oLabel) => {
+			oLabel.invalidate();
+		});
+
+		if (!oControlInfo.controlId) {
 			return;
 		}
 
-		var oControl = toControl(sControlId);
-		if (oControl && oControl.getIdForLabel) {
-			// for some controls the label must point to a special HTML element, not the outer one.
-			sControlId = oControl.getIdForLabel();
-		}
-
+		Element ??= sap.ui.require("sap/ui/core/Element");
+		const oControl = Element.getElementById(oControlInfo.innerControlId || oControlInfo.controlId);
 		// The "for" attribute should only reference labelable HTML elements.
-		if (sControlId && isLabelableControl(oControl)) {
-			oRenderManager.attr("for", sControlId);
+		if (oControl && isLabelableControl(oControl)) {
+			oRenderManager.attr("for", oControl.getIdForLabel());
 		}
 	};
 
@@ -221,7 +281,7 @@ sap.ui.define(['../base/ManagedObject', "sap/base/assert"],
 		var aLabelIds = LabelEnablement.getReferencingLabels(oElement),
 			oLabel;
 
-		Element = Element ? Element : sap.ui.require("sap/ui/core/Element");
+		Element ??= sap.ui.require("sap/ui/core/Element");
 
 		for (var i = 0; i < aLabelIds.length; i++) {
 			oLabel = Element.getElementById(aLabelIds[i]);
@@ -310,7 +370,7 @@ sap.ui.define(['../base/ManagedObject', "sap/base/assert"],
 			var oControl = toControl(sId);
 			var oLabelForControl;
 
-			Element = Element ? Element : sap.ui.require("sap/ui/core/Element");
+			Element ??= sap.ui.require("sap/ui/core/Element");
 
 			if (oControl &&
 				!oControl.isA("sap.ui.core.ILabelable") &&

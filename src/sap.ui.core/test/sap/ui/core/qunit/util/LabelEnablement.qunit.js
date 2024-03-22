@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/Link",
 	"sap/m/Input",
+	"sap/m/Text",
 	"sap/ui/layout/form/Form",
 	"sap/ui/layout/form/ColumnLayout",
 	"sap/ui/layout/form/FormContainer",
@@ -22,6 +23,7 @@ sap.ui.define([
 	Button,
 	Link,
 	Input,
+	Text,
 	Form,
 	ColumnLayout,
 	FormContainer,
@@ -389,8 +391,9 @@ sap.ui.define([
 			pResult.then(function (aControls) {
 				var oControl = aControls[0];
 				if (oControl && oControl.isA("sap.ui.mdc.field.FieldInput")) {
-					oControl.addEventDelegate({
-						onAfterRendering: function () {
+					const oDelegate = {
+						onAfterRendering() {
+							this.removeEventDelegate(oDelegate, this);
 							setTimeout(function () {
 								var oLabel1DomRef = oForm.getDomRef().querySelector("#lbl1");
 								var oLabel2DomRef = oForm.getDomRef().querySelector("#lbl2");
@@ -405,7 +408,8 @@ sap.ui.define([
 								done();
 							}, 300);
 						}
-					});
+					};
+					oControl.addEventDelegate(oDelegate, oControl);
 				}
 			});
 
@@ -473,5 +477,120 @@ sap.ui.define([
 
 		assert.strictEqual(this.oLabel.getDomRef().tagName, "SPAN", "Label is rendered with 'span' tag.");
 		assert.notOk(this.oLabel.getDomRef().getAttribute("for"), "'for' attribute is not set");
+	});
+
+	var TestCompositeControl = Control.extend("TestCompositeControl", {
+		metadata : {
+			interfaces : [
+				"sap.ui.core.ILabelable"
+			],
+			aggregations : {
+				"_input" : {type : "sap.m.Input", multiple : false, visibility : "hidden"},
+				"_text" : {type: "sap.m.Text", multiple : false, visibility : "hidden"}
+			}
+		},
+
+		init() {
+			const oInput = new Input();
+			this.setAggregation("_input", oInput);
+
+			const oText = new Text();
+			this.setAggregation("_text", oText);
+		},
+
+		getIdForLabel() {
+			return this.getAggregation("_input").getIdForLabel();
+		},
+
+		hasLabelableHTMLElement() {
+			return true;
+		},
+
+		renderer: {
+			apiVersion: 2,
+			render: function(oRm, oCtrl) {
+				oRm.openStart("div", oCtrl)
+					.openEnd();
+					oRm.renderControl(oCtrl.getAggregation("_input"));
+					oRm.renderControl(oCtrl.getAggregation("_text"));
+				oRm.close("div");
+			}
+		}
+	});
+
+	QUnit.module("labelFor with composite control");
+
+	QUnit.test("Composite Control that set the labelled control to its internally aggregated control", async function(assert) {
+		const oCompositeControl = new TestCompositeControl().placeAt("content");
+		const oInnerInput = oCompositeControl.getAggregation("_input");
+
+		const oLabel = new Label({
+			text: "Label",
+			labelFor: oCompositeControl
+		}).placeAt("content");
+
+		const oLabel1 = new Label({
+			text: "Label1",
+			labelFor: oCompositeControl
+		}).placeAt("content");
+
+		assert.deepEqual(LabelEnablement.getReferencingLabels(oCompositeControl), [oLabel.getId(), oLabel1.getId()], "There are labels for the outer control");
+		assert.equal(LabelEnablement.getReferencingLabels(oInnerInput).length, 0, "There are also labels for the inner control");
+
+		await nextUIUpdate();
+
+		assert.deepEqual(LabelEnablement.getReferencingLabels(oCompositeControl), [oLabel1.getId(), oLabel.getId()], "There are labels for the outer control");
+		assert.deepEqual(LabelEnablement.getReferencingLabels(oInnerInput), [oLabel1.getId(), oLabel.getId()], "There are also labels for the inner control");
+		assert.equal(oLabel.getDomRef().getAttribute("for"), oInnerInput.getIdForLabel(), "The 'for' attribute is set correctly for the label");
+
+		oLabel.setLabelFor(null);
+		assert.deepEqual(LabelEnablement.getReferencingLabels(oCompositeControl), [oLabel1.getId()], "There's label for the outer control");
+		assert.deepEqual(LabelEnablement.getReferencingLabels(oInnerInput), [oLabel1.getId()], "There's label for the inner control");
+
+		oLabel1.setLabelFor(null);
+		assert.equal(LabelEnablement.getReferencingLabels(oCompositeControl).length, 0, "There's no label for the outer control");
+		assert.equal(LabelEnablement.getReferencingLabels(oInnerInput).length, 0, "There's no label for the inner control");
+
+		await nextUIUpdate();
+		assert.equal(oLabel.getDomRef().getAttribute("for"), undefined, "The 'for' attribute is not set");
+
+		oLabel.destroy();
+		oLabel1.destroy();
+		oCompositeControl.destroy();
+	});
+
+	QUnit.test("Composite Control that overwrites 'getIdForLabel' and swap to another internal control during the runtime", async function(assert) {
+		const oCompositeControl = new TestCompositeControl().placeAt("content");
+		const oInnerInput = oCompositeControl.getAggregation("_input");
+		const oText = oCompositeControl.getAggregation("_text");
+
+		const oLabel = new Label({
+			text: "Label",
+			labelFor: oCompositeControl
+		}).placeAt("content");
+
+		await nextUIUpdate();
+
+		assert.deepEqual(LabelEnablement.getReferencingLabels(oCompositeControl), [oLabel.getId()], "There's label for the outer control");
+		assert.deepEqual(LabelEnablement.getReferencingLabels(oInnerInput), [oLabel.getId()], "There's label for the inner input control");
+		assert.equal(LabelEnablement.getReferencingLabels(oText).length, 0, "There's no label for the inner text control");
+		assert.equal(oLabel.getDomRef().getAttribute("for"), oInnerInput.getIdForLabel(), "The 'for' attribute is set correctly for the label");
+
+		// overwrite 'getIdForLabel' to remove the label for the inner control
+		oCompositeControl.getIdForLabel = function() {
+			return this.getAggregation("_text").getIdForLabel();
+		};
+
+		oLabel.setLabelFor(oCompositeControl);
+
+		assert.deepEqual(LabelEnablement.getReferencingLabels(oCompositeControl), [oLabel.getId()], "There's no label for the outer control");
+		assert.equal(LabelEnablement.getReferencingLabels(oInnerInput).length, 0, "There's no label for the inner input control");
+		assert.equal(LabelEnablement.getReferencingLabels(oText).length, 1, "There's label for the inner text control");
+
+		await nextUIUpdate();
+		assert.equal(oLabel.getDomRef().getAttribute("for"), undefined, "The 'for' attribute is not set because the control is not labellable");
+
+		oLabel.destroy();
+		oCompositeControl.destroy();
 	});
 });
