@@ -195,6 +195,11 @@ sap.ui.define([
 
 			oRm.openStart("div");
 			oRm.class("specialDateIndicator");
+
+			if (aDayTypes[0]?.color) {
+				oRm.style("background-color", aDayTypes[0].color);
+			}
+
 			oRm.openEnd();
 			oRm.close("div");
 
