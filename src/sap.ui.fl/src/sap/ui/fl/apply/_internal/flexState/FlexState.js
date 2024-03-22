@@ -163,7 +163,7 @@ sap.ui.define([
 		mPropertyBag.reference ||= ManifestUtils.getFlexReference(mPropertyBag);
 		const oFlexInfoSession = FlexInfoSession.getByReference(mPropertyBag.reference);
 		mPropertyBag.version ||= oFlexInfoSession.version;
-		mPropertyBag.adaptationId ||= oFlexInfoSession.adaptationId;
+		mPropertyBag.adaptationId ||= oFlexInfoSession.displayedAdaptationId;
 		mPropertyBag.allContextsProvided ||= oFlexInfoSession.allContextsProvided;
 	}
 

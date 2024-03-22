@@ -213,7 +213,7 @@ sap.ui.define([
 			const sReference = getFlexReferenceForControl(oAppComponent);
 			const oFlexInfo = FlexInfoSession.getByReference(sReference);
 			oFlexInfo.version = mPropertyBag.version;
-			oFlexInfo.adaptationId = sDisplayedAdaptationId;
+			oFlexInfo.displayedAdaptationId = sDisplayedAdaptationId;
 			FlexInfoSession.setByReference(oFlexInfo, sReference);
 			FlexState.clearState(sReference);
 		});
@@ -299,7 +299,7 @@ sap.ui.define([
 					.then(function(sDisplayedAdaptationId) {
 						// invalidate flexState to trigger getFlexData for the current active version after discard
 						const oFlexInfo = FlexInfoSession.getByReference(sReference);
-						oFlexInfo.adaptationId = sDisplayedAdaptationId;
+						oFlexInfo.displayedAdaptationId = sDisplayedAdaptationId;
 						FlexInfoSession.setByReference(oFlexInfo, sReference);
 						FlexState.clearState(sReference);
 						return oDiscardInfo;
