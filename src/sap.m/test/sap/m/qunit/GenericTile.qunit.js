@@ -208,7 +208,7 @@ sap.ui.define([
 	QUnit.module("Rendering tests", {
 		beforeEach: function() {
 			this.fnSpyBeforeRendering = this.spy(GenericTile.prototype, "onBeforeRendering");
-
+			this.fnSpysetUpResizeHandler = this.spy(GenericTile.prototype, "_setupResizeClassHandler");
 			this.oGenericTile = new GenericTile("generic-tile", {
 				subheader: "Expenses By Region",
 				frameType: FrameType.OneByOne,
@@ -291,6 +291,9 @@ sap.ui.define([
 
 	QUnit.test("OnBeforeRendering is called once", function(assert) {
 		assert.ok(this.fnSpyBeforeRendering.calledOnce, "Generic tile was rendered only once");
+	});
+	QUnit.test("Resize Event handler is attached only once", function(assert) {
+		assert.ok(this.fnSpysetUpResizeHandler.called, "Generic Tile resize event handler attached");
 	});
 
 	QUnit.test("GenericTile rendered", function(assert) {
