@@ -1753,7 +1753,7 @@ sap.ui.define([
 						oActualRequest.$ContentID = sContentID;
 					}
 					assert.deepEqual(oActualRequest, oExpectedRequest,
-						sMethod + " " + readableUrl(sUrl));
+						sMethod + " " + readableUrl(sUrl) + " (batchNo: " + iBatchNo + ")");
 				} else {
 					assert.ok(false, sMethod + " " + readableUrl(sUrl) + " (unexpected)");
 					oResponse = {value : []}; // dummy response to avoid further errors
@@ -2093,8 +2093,11 @@ sap.ui.define([
 
 		/**
 		 * The following code (either {@link #createView} or anything before
-		 * {@link #waitForChanges}) is expected to report at least the given message. All expected
-		 * messages should have a different message text.
+		 * {@link #waitForChanges}) is expected to report the given message. It is added to the list
+		 * of messages that the MessageModel should contain in the end (see
+		 * {@link #expectMessages}).
+		 *
+		 * Note : All expected messages should have a different message text.
 		 *
 		 * @param {object} oExpectedMessage The expected message with properties corresponding
 		 *   to the getters of sap.ui.core.message.Message: message and type are required; code,
@@ -2102,8 +2105,6 @@ sap.ui.define([
 		 *   false) are optional; technicalDetails is only compared if given
 		 * @param {boolean} [bHasMatcher] Whether the expected message has a Sinon.JS matcher
 		 * @returns {object} The test instance for chaining
-		 *
-		 * @see #expectMessages
 		 */
 		expectMessage : function (oExpectedMessage, bHasMatcher) {
 			const aTargets = oExpectedMessage.targets || [oExpectedMessage.target || ""];
@@ -2127,9 +2128,12 @@ sap.ui.define([
 		},
 
 		/**
-		 * The following code (either {@link #createView} or anything before
-		 * {@link #waitForChanges}) is expected to report *exactly* the given messages. All expected
-		 * messages should have a different message text.
+		 * The MessageModel is expected to contain <b>exactly</b> the given messages when either
+		 * {@link #createView} or {@link #waitForChanges}) have finished. This expectation remains
+		 * valid for each subsequent {@link #waitForChanges}), until a new expectation is given.
+		 *
+		 * Note: The order does not matter, but all expected messages should have a different
+		 * message text.
 		 *
 		 * @param {object[]} aExpectedMessages The expected messages with properties corresponding
 		 *   to the getters of sap.ui.core.message.Message: message and type are required; code,
@@ -32374,10 +32378,15 @@ sap.ui.define([
 	//     moving New1 to its out-of-place position; Beta is already read in-place, but shifted
 	//     when moving New1 and New3; Gamma is only placeholder when moving New5)
 	// (4) Check all contexts
-	// (5) Side-effects refresh: moves New3 below Gamma
-	// (6) Check all contexts
-	// (7) Side-effects refresh: New3 and New6 are no longer requested as out of place
-	// (8) Refresh the binding (out of place is no longer kept, tree is collapsed again to 1 level)
+	// (5) Delete New1 (no longer requested as out-of-place node afterward)
+	// (6) Side-effects refresh (moves New3 below Gamma)
+	// (7) Check all contexts
+	// (8) Side-effects refresh (New3 and New6 are no longer requested as out-of-place nodes)
+	// (9) Delete Alpha
+	// (10) Side-effects refresh (expand state and out-of-place information are dropped for Alpha's
+	//      descendants)
+	// (11) Refresh the binding (out-of-place information is no longer kept, tree is collapsed again
+	//      to 1 level)
 	// JIRA: CPOUI5ODATAV4-2454
 	QUnit.test("Recursive Hierarchy: out of place", async function (assert) {
 		const oModel = this.createSpecialCasesModel({autoExpandSelect : true});
@@ -32395,6 +32404,10 @@ sap.ui.define([
 		const sExpandLevels = JSON.stringify([
 			{NodeID : "1,false", Levels : 1},
 			{NodeID : "2,false", Levels : 1},
+			{NodeID : "3,false", Levels : 1},
+			{NodeID : "13,false", Levels : 1}
+		]);
+		const sExpandLevelsAfterDelete = JSON.stringify([
 			{NodeID : "3,false", Levels : 1},
 			{NodeID : "13,false", Levels : 1}
 		]);
@@ -32416,17 +32429,17 @@ sap.ui.define([
 	<Text text="{Name}"/>
 </t:Table>`;
 
-		// Server:                          UI:
-		// 1 Alpha                          1 Alpha
-		//   12 New2 (created)                13 New3 (created)
-		//    2 Beta                             16 New6 (created)
-		//      14 New4 (created)             12 New2 (created)
-		//   11 New1 (created)                11 New1 (created)
-		//   13 New3 (created)                 2 Beta
-		//      16 New6 (created)                14 New4 (created)
-		// 3 Gamma                          3 Gamma
-		//   15 New5 (created)                15 New5 (created)
-		// 4 Delta                          4 Delta
+		// Server:               UI:
+		// 1 Alpha               1 Alpha
+		//   12 New2               13 New3
+		//    2 Beta                  16 New6
+		//      14 New4            12 New2
+		//   11 New1               11 New1
+		//   13 New3                2 Beta
+		//      16 New6               14 New4
+		// 3 Gamma               3 Gamma
+		//   15 New5               15 New5
+		// 4 Delta               4 Delta
 		this.expectRequest(sCountUrl, 4)
 			.expectRequest(baseUrl()
 				+ "&$select=ArtistID,IsActiveEntity,Name,_/DrillState,_/NodeID"
@@ -32871,31 +32884,41 @@ sap.ui.define([
 				[undefined, 1, "4", "Delta*"]
 			]);
 
-		// After side-effects refresh
+		// this context has been destroyed by the refresh because it was not visible
+		const [oNew1] = await oBinding.requestContexts(4, 1);
+
+		this.expectRequest("DELETE Artists(ArtistID='11',IsActiveEntity=false)");
+
+		await Promise.all([
+			// code under test
+			oNew1.delete(),
+			this.waitForChanges(assert, "(5) delete New1")
+		]);
+
+		// After deleting New1 & side-effects refresh
 		// Server:                          UI:
 		// 1 Alpha                          1 Alpha
 		//   12 New2                          12 New2 (out of place)
-		//    2 Beta                          11 New1 (out of place)
-		//      14 New4                        2 Beta
-		//   11 New1                             14 New4 (out of place)
+		//    2 Beta                           2 Beta
+		//      14 New4                          14 New4 (out of place)
 		// 3 Gamma                          3 Gamma
 		//   13 New3 (moved)                  15 New5 (out of place)
 		//      16 New6                       13 New3 (moved)
 		//   15 New5                             16 New6
 		// 4 Delta                          4 Delta
 
-		this.expectRequest(sCountUrl, 10)
+		this.expectRequest(sCountUrl, 9)
 			.expectRequest(baseUrl(sExpandLevels)
 				+ "&$select=ArtistID,IsActiveEntity,Name,_/DescendantCount,_/DistanceFromRoot"
 				+ ",_/DrillState,_/NodeID"
 				+ "&$count=true&$skip=0&$top=3", {
-				"@odata.count" : "10",
+				"@odata.count" : "9",
 				value : [{
 					ArtistID : "1",
 					IsActiveEntity : false,
 					Name : "Alpha**",
 					_ : {
-						DescendantCount : "4",
+						DescendantCount : "3",
 						DistanceFromRoot : "0",
 						DrillState : "expanded",
 						NodeID : "1,false"
@@ -32926,7 +32949,6 @@ sap.ui.define([
 				+ "&$select=ArtistID,IsActiveEntity,_/DescendantCount,_/DistanceFromRoot"
 				+ ",_/DrillState,_/Limited_Rank"
 				+ "&$filter=ArtistID eq '1' and IsActiveEntity eq false"
-				+ " or ArtistID eq '11' and IsActiveEntity eq false"
 				+ " or ArtistID eq '12' and IsActiveEntity eq false"
 				+ " or ArtistID eq '13' and IsActiveEntity eq false"
 				+ " or ArtistID eq '14' and IsActiveEntity eq false"
@@ -32934,12 +32956,12 @@ sap.ui.define([
 				+ " or ArtistID eq '16' and IsActiveEntity eq false"
 				+ " or ArtistID eq '2' and IsActiveEntity eq false"
 				+ " or ArtistID eq '3' and IsActiveEntity eq false"
-				+ "&$top=9", {
+				+ "&$top=8", {
 				value : [{
 					ArtistID : "1",
 					IsActiveEntity : false,
 					_ : {
-						DescendantCount : "4",
+						DescendantCount : "3",
 						DistanceFromRoot : "n/a", // parent's DistanceFromRoot is not yet relevant
 						DrillState : "expanded",
 						Limited_Rank : "0"
@@ -32972,22 +32994,13 @@ sap.ui.define([
 						Limited_Rank : "3"
 					}
 				}, {
-					ArtistID : "11",
-					IsActiveEntity : false,
-					_ : {
-						DescendantCount : "0",
-						DistanceFromRoot : "1",
-						DrillState : "leaf",
-						Limited_Rank : "4"
-					}
-				}, {
 					ArtistID : "3",
 					IsActiveEntity : false,
 					_ : {
 						DescendantCount : "3",
 						DistanceFromRoot : "n/a", // parent's DistanceFromRoot is not yet relevant
 						DrillState : "expanded",
-						Limited_Rank : "5"
+						Limited_Rank : "4"
 					}
 				}, {
 					ArtistID : "13",
@@ -32996,7 +33009,7 @@ sap.ui.define([
 						DescendantCount : "1",
 						DistanceFromRoot : "1",
 						DrillState : "expanded",
-						Limited_Rank : "6"
+						Limited_Rank : "5"
 					}
 				}, {
 					ArtistID : "16",
@@ -33005,7 +33018,7 @@ sap.ui.define([
 						DescendantCount : "0",
 						DistanceFromRoot : "2",
 						DrillState : "leaf",
-						Limited_Rank : "7"
+						Limited_Rank : "6"
 					}
 				}, {
 					ArtistID : "15",
@@ -33014,7 +33027,7 @@ sap.ui.define([
 						DescendantCount : "0",
 						DistanceFromRoot : "1",
 						DrillState : "leaf",
-						Limited_Rank : "8"
+						Limited_Rank : "7"
 					}
 				}]
 			})
@@ -33022,18 +33035,10 @@ sap.ui.define([
 				+ "?custom=foo&$apply=descendants($root/" + sFriend
 				+ ",OrgChart,_/NodeID,filter(ArtistID eq '1' and IsActiveEntity eq false),1)"
 				+ "&$select=ArtistID,IsActiveEntity,Name,_/NodeID"
-				+ "&$filter=ArtistID eq '11' and IsActiveEntity eq false"
-				+ " or ArtistID eq '12' and IsActiveEntity eq false"
+				+ "&$filter=ArtistID eq '12' and IsActiveEntity eq false"
 				+ " or ArtistID eq '13' and IsActiveEntity eq false"
-				+ "&$top=3", {
+				+ "&$top=2", {
 				value : [{
-					ArtistID : "11",
-					IsActiveEntity : false,
-					Name : "New1**",
-					_ : {
-						NodeID : "11,false"
-					}
-				}, {
 					ArtistID : "12",
 					IsActiveEntity : false,
 					Name : "New2**",
@@ -33091,13 +33096,13 @@ sap.ui.define([
 		await Promise.all([
 			// code under test
 			oBinding.getHeaderContext().requestSideEffects([""]),
-			this.waitForChanges(assert, "(5) side-effects refresh")
+			this.waitForChanges(assert, "(6) side-effects refresh")
 		]);
 
 		this.expectRequest(baseUrl(sExpandLevels)
 				+ "&$select=ArtistID,IsActiveEntity,Name,_/DescendantCount,_/DistanceFromRoot"
 				+ ",_/DrillState,_/NodeID"
-				+ "&$skip=5&$top=1", {
+				+ "&$skip=4&$top=1", {
 				value : [{
 					ArtistID : "3",
 					IsActiveEntity : false,
@@ -33113,7 +33118,7 @@ sap.ui.define([
 			.expectRequest(baseUrl(sExpandLevels)
 				+ "&$select=ArtistID,IsActiveEntity,Name,_/DescendantCount,_/DistanceFromRoot"
 				+ ",_/DrillState,_/NodeID"
-				+ "&$skip=6&$top=1", {
+				+ "&$skip=5&$top=1", {
 				value : [{
 					ArtistID : "13",
 					IsActiveEntity : false,
@@ -33129,7 +33134,7 @@ sap.ui.define([
 			.expectRequest(baseUrl(sExpandLevels)
 				+ "&$select=ArtistID,IsActiveEntity,Name,_/DescendantCount,_/DistanceFromRoot"
 				+ ",_/DrillState,_/NodeID"
-				+ "&$skip=9&$top=1", {
+				+ "&$skip=8&$top=1", {
 				value : [{
 					ArtistID : "4",
 					IsActiveEntity : false,
@@ -33143,11 +33148,10 @@ sap.ui.define([
 				}]
 			});
 
-		await this.checkAllContexts("(6) check all contexts", assert, oBinding,
+		await this.checkAllContexts("(7) check all contexts", assert, oBinding,
 			["@$ui5.node.isExpanded", "@$ui5.node.level", "ArtistID", "Name"], [
 				[true, 1, "1", "Alpha**"],
 				[undefined, 2, "12", "New2**"],
-				[undefined, 2, "11", "New1**"],
 				[true, 2, "2", "Beta**"],
 				[undefined, 3, "14", "New4**"],
 				[true, 1, "3", "Gamma**"],
@@ -33157,18 +33161,18 @@ sap.ui.define([
 				[undefined, 1, "4", "Delta**"]
 			]);
 
-		this.expectRequest(sCountUrl, 10)
+		this.expectRequest(sCountUrl, 9)
 			.expectRequest(baseUrl(sExpandLevels)
 				+ "&$select=ArtistID,IsActiveEntity,Name,_/DescendantCount,_/DistanceFromRoot"
 				+ ",_/DrillState,_/NodeID"
 				+ "&$count=true&$skip=0&$top=3", {
-				"@odata.count" : "10",
+				"@odata.count" : "9",
 				value : [{
 					ArtistID : "1",
 					IsActiveEntity : false,
 					Name : "Alpha**",
 					_ : {
-						DescendantCount : "4",
+						DescendantCount : "3",
 						DistanceFromRoot : "0",
 						DrillState : "expanded",
 						NodeID : "1,false"
@@ -33199,18 +33203,17 @@ sap.ui.define([
 				+ "&$select=ArtistID,IsActiveEntity,_/DescendantCount,_/DistanceFromRoot"
 				+ ",_/DrillState,_/Limited_Rank"
 				+ "&$filter=ArtistID eq '1' and IsActiveEntity eq false"
-				+ " or ArtistID eq '11' and IsActiveEntity eq false"
 				+ " or ArtistID eq '12' and IsActiveEntity eq false"
 				+ " or ArtistID eq '14' and IsActiveEntity eq false"
 				+ " or ArtistID eq '15' and IsActiveEntity eq false"
 				+ " or ArtistID eq '2' and IsActiveEntity eq false"
 				+ " or ArtistID eq '3' and IsActiveEntity eq false"
-				+ "&$top=7", {
+				+ "&$top=6", {
 				value : [{
 					ArtistID : "1",
 					IsActiveEntity : false,
 					_ : {
-						DescendantCount : "4",
+						DescendantCount : "3",
 						DistanceFromRoot : "n/a", // parent's DistanceFromRoot is not yet relevant
 						DrillState : "expanded",
 						Limited_Rank : "0"
@@ -33243,22 +33246,13 @@ sap.ui.define([
 						Limited_Rank : "3"
 					}
 				}, {
-					ArtistID : "11",
-					IsActiveEntity : false,
-					_ : {
-						DescendantCount : "0",
-						DistanceFromRoot : "1",
-						DrillState : "leaf",
-						Limited_Rank : "4"
-					}
-				}, {
 					ArtistID : "3",
 					IsActiveEntity : false,
 					_ : {
 						DescendantCount : "3",
 						DistanceFromRoot : "n/a", // parent's DistanceFromRoot is not yet relevant
 						DrillState : "expanded",
-						Limited_Rank : "5"
+						Limited_Rank : "4"
 					}
 				}, {
 					ArtistID : "15",
@@ -33267,7 +33261,7 @@ sap.ui.define([
 						DescendantCount : "0",
 						DistanceFromRoot : "1",
 						DrillState : "leaf",
-						Limited_Rank : "8"
+						Limited_Rank : "7"
 					}
 				}]
 			})
@@ -33275,17 +33269,9 @@ sap.ui.define([
 				+ "?custom=foo&$apply=descendants($root/" + sFriend
 				+ ",OrgChart,_/NodeID,filter(ArtistID eq '1' and IsActiveEntity eq false),1)"
 				+ "&$select=ArtistID,IsActiveEntity,Name,_/NodeID"
-				+ "&$filter=ArtistID eq '11' and IsActiveEntity eq false"
-				+ " or ArtistID eq '12' and IsActiveEntity eq false"
-				+ "&$top=2", {
+				+ "&$filter=ArtistID eq '12' and IsActiveEntity eq false"
+				+ "&$top=1", {
 				value : [{
-					ArtistID : "11",
-					IsActiveEntity : false,
-					Name : "New1**",
-					_ : {
-						NodeID : "11,false"
-					}
-				}, {
 					ArtistID : "12",
 					IsActiveEntity : false,
 					Name : "New2**",
@@ -33328,23 +33314,162 @@ sap.ui.define([
 		await Promise.all([
 			// code under test
 			oBinding.getHeaderContext().requestSideEffects([""]),
-			this.waitForChanges(assert, "(7) side-effects refresh")
+			this.waitForChanges(assert, "(8) side-effects refresh")
 		]);
 
-		this.expectRequest(sCountUrl, 10)
+		this.expectRequest("DELETE Artists(ArtistID='1',IsActiveEntity=false)")
+			.expectRequest(baseUrl(sExpandLevels)
+				+ "&$select=ArtistID,IsActiveEntity,Name,_/DescendantCount,_/DistanceFromRoot"
+				+ ",_/DrillState,_/NodeID"
+				+ "&$skip=0&$top=1", {
+				value : [{
+					ArtistID : "3",
+					IsActiveEntity : false,
+					Name : "Gamma**",
+					_ : {
+						DescendantCount : "3",
+						DistanceFromRoot : "0",
+						DrillState : "expanded",
+						NodeID : "3,false"
+					}
+				}]
+			})
+			.expectRequest(baseUrl(sExpandLevels)
+				+ "&$select=ArtistID,IsActiveEntity,Name,_/DescendantCount,_/DistanceFromRoot"
+				+ ",_/DrillState,_/NodeID"
+				+ "&$skip=1&$top=1", {
+				value : [{
+					ArtistID : "13",
+					IsActiveEntity : false,
+					Name : "New3**",
+					_ : {
+						DescendantCount : "1",
+						DistanceFromRoot : "1",
+						DrillState : "expanded",
+						NodeID : "13,false"
+					}
+				}]
+			});
+
+		await Promise.all([
+			// code under test
+			oAlpha.delete(),
+			this.waitForChanges(assert, "(9) delete Alpha")
+		]);
+
+		checkTable("after (9)", assert, oTable, [
+			`/${sFriend}(ArtistID='3',IsActiveEntity=false)`,
+			`/${sFriend}(ArtistID='15',IsActiveEntity=false)`,
+			`/${sFriend}(ArtistID='13',IsActiveEntity=false)`
+		], [
+			[true, 1, "3", "Gamma**"],
+			[undefined, 2, "15", "New5**"],
+			[true, 2, "13", "New3**"]
+		], 5);
+
+		this.expectRequest(sCountUrl, 5)
+			.expectRequest(baseUrl(sExpandLevelsAfterDelete)
+				+ "&$select=ArtistID,IsActiveEntity,Name,_/DescendantCount,_/DistanceFromRoot"
+				+ ",_/DrillState,_/NodeID"
+				+ "&$count=true&$skip=0&$top=3", {
+				"@odata.count" : "5",
+				value : [{
+					ArtistID : "3",
+					IsActiveEntity : false,
+					Name : "Gamma**",
+					_ : {
+						DescendantCount : "3",
+						DistanceFromRoot : "0",
+						DrillState : "expanded",
+						NodeID : "3,false"
+					}
+				}, {
+					ArtistID : "13",
+					IsActiveEntity : false,
+					Name : "New3**",
+					_ : {
+						DescendantCount : "1",
+						DistanceFromRoot : "1",
+						DrillState : "expanded",
+						NodeID : "13,false"
+					}
+				}, {
+					ArtistID : "16",
+					IsActiveEntity : false,
+					Name : "New6**",
+					_ : {
+						DescendantCount : "0",
+						DistanceFromRoot : "2",
+						DrillState : "leaf",
+						NodeID : "16,false"
+					}
+				}]
+			})
+			.expectRequest(baseUrl(sExpandLevelsAfterDelete)
+				+ "&$select=ArtistID,IsActiveEntity,_/DescendantCount,_/DistanceFromRoot"
+				+ ",_/DrillState,_/Limited_Rank"
+				+ "&$filter=ArtistID eq '15' and IsActiveEntity eq false"
+				+ " or ArtistID eq '3' and IsActiveEntity eq false"
+				+ "&$top=2", {
+				value : [{
+					ArtistID : "3",
+					IsActiveEntity : false,
+					_ : {
+						DescendantCount : "3",
+						DistanceFromRoot : "n/a", // parent's DistanceFromRoot is not yet relevant
+						DrillState : "expanded",
+						Limited_Rank : "0"
+					}
+				}, {
+					ArtistID : "15",
+					IsActiveEntity : false,
+					_ : {
+						DescendantCount : "0",
+						DistanceFromRoot : "1",
+						DrillState : "leaf",
+						Limited_Rank : "3"
+					}
+				}]
+			})
+			.expectRequest(sFriend
+				+ "?custom=foo&$apply=descendants($root/" + sFriend
+				+ ",OrgChart,_/NodeID,filter(ArtistID eq '3' and IsActiveEntity eq false),1)"
+				+ "&$select=ArtistID,IsActiveEntity,Name,_/NodeID"
+				+ "&$filter=ArtistID eq '15' and IsActiveEntity eq false"
+				+ "&$top=1", {
+				value : [{
+					ArtistID : "15",
+					IsActiveEntity : false,
+					Name : "New5**",
+					_ : {
+						NodeID : "15,false"
+					}
+				}]
+			});
+
+		await Promise.all([
+			// code under test
+			oBinding.getHeaderContext().requestSideEffects([""]),
+			this.waitForChanges(assert, "(10) side-effects refresh")
+		]);
+
+		checkTable("after (10)", assert, oTable, [
+			`/${sFriend}(ArtistID='3',IsActiveEntity=false)`,
+			`/${sFriend}(ArtistID='15',IsActiveEntity=false)`,
+			`/${sFriend}(ArtistID='13',IsActiveEntity=false)`,
+			`/${sFriend}(ArtistID='16',IsActiveEntity=false)`
+		], [
+			[true, 1, "3", "Gamma**"],
+			[undefined, 2, "15", "New5**"],
+			[true, 2, "13", "New3**"]
+		], 5);
+
+		this.expectRequest(sCountUrl, 5)
 			.expectRequest(baseUrl()
 				+ "&$select=ArtistID,IsActiveEntity,Name,_/DrillState,_/NodeID"
 				+ "&$count=true&$skip=0&$top=3", {
-				"@odata.count" : "3",
+				"@odata.count" : "2",
 				value : [{
-					ArtistID : "1",
-					IsActiveEntity : false,
-					Name : "Alpha***",
-					_ : {
-						DrillState : "collapsed",
-						NodeID : "1,false"
-					}
-				}, {
 					ArtistID : "3",
 					IsActiveEntity : false,
 					Name : "Gamma***",
@@ -33365,15 +33490,13 @@ sap.ui.define([
 
 		await Promise.all([
 			oBinding.requestRefresh(),
-			this.waitForChanges(assert, "(8) refresh the binding")
+			this.waitForChanges(assert, "(11) refresh the binding")
 		]);
 
-		checkTable("after (8)", assert, oTable, [
-			`/${sFriend}(ArtistID='1',IsActiveEntity=false)`,
+		checkTable("after (11)", assert, oTable, [
 			`/${sFriend}(ArtistID='3',IsActiveEntity=false)`,
 			`/${sFriend}(ArtistID='4',IsActiveEntity=false)`
 		], [
-			[false, 1, "1", "Alpha***"],
 			[false, 1, "3", "Gamma***"],
 			[undefined, 1, "4", "Delta***"]
 		]);

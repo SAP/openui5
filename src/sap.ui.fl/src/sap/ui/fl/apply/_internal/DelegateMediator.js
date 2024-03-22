@@ -1,6 +1,7 @@
 /*!
  * ${copyright}
  */
+
 sap.ui.define([
 	"sap/base/Log",
 	"sap/base/util/merge",
@@ -26,9 +27,10 @@ sap.ui.define([
 	 * @version ${version}
 	 *
 	 */
-	var DelegateMediator = {};
+	const DelegateMediator = {};
 
 	DelegateMediator._mDefaultDelegateItems = {};
+	DelegateMediator._mControlSpecificDelegateItems = {};
 	DelegateMediator.types = {
 		READONLY: "readonly",
 		WRITEONLY: "writeonly",
@@ -41,7 +43,7 @@ sap.ui.define([
 		}
 		if (oControl.getModel) {
 			// get the default model
-			var oModel = oControl.getModel();
+			const oModel = oControl.getModel();
 			if (!oModel) {
 				return undefined;
 			}
@@ -52,33 +54,43 @@ sap.ui.define([
 
 	function getDefaultDelegateInfo(oControl, sModelType) {
 		sModelType = getModelTypeForControl(oControl, sModelType);
-		var aDelegateInfo = DelegateMediator._mDefaultDelegateItems[sModelType];
+		const aDelegateInfo = DelegateMediator._mDefaultDelegateItems[sModelType];
 		return (aDelegateInfo || []).map(function(mDelegateInfo) {
 			mDelegateInfo.payload = {};
 			return mDelegateInfo;
 		});
 	}
 
+	async function getControlSpecificDelegateInfo(oModifier, oControl) {
+		const oControlMetadata = await oModifier.getControlMetadata(oControl);
+		const mDelegateInfo = DelegateMediator._mControlSpecificDelegateItems[oControlMetadata.getName()];
+		if (mDelegateInfo) {
+			mDelegateInfo.payload ||= {};
+		}
+		return mDelegateInfo;
+	}
+
+	async function requireDelegatesAsync(oModifier, oControl, mDelegateInfo, aLoadedDelegates) {
+		try {
+			const oDelegate = await requireAsync(mDelegateInfo.name);
+			mDelegateInfo.instance = oDelegate || {};
+			aLoadedDelegates.push(mDelegateInfo);
+			return aLoadedDelegates;
+		} catch (oError) {
+			Log.error(`Failed to load the delegate for the control ${oModifier.getId(oControl)}
+			${oError.message}`);
+			return aLoadedDelegates;
+		}
+	}
+
 	function loadDelegates(oModifier, oControl, aDelegates) {
 		if (!aDelegates.length) {
-			// it is a valid case to ask for a delegate and there is none
-			// a broken delegate is logged below
 			return Promise.resolve([]);
 		}
-		var aPromises = [];
+		const aPromises = [];
 		aDelegates.forEach(function(mDelegateInfo) {
 			aPromises.push(function(aLoadedDelegates) {
-				return requireAsync(mDelegateInfo.name)
-				.then(function(oDelegate) {
-					mDelegateInfo.instance = oDelegate || {};
-					aLoadedDelegates.push(mDelegateInfo);
-					return aLoadedDelegates;
-				})
-				.catch(function(oError) {
-					Log.error(`Failed to load the delegate for the control ${oModifier.getId(oControl)}
-					${oError.message}`);
-					return aLoadedDelegates;
-				});
+				return requireDelegatesAsync(oModifier, oControl, mDelegateInfo, aLoadedDelegates);
 			});
 		});
 		return aPromises.reduce(function(oPreviousPromise, oCurrentPromise) {
@@ -148,15 +160,15 @@ sap.ui.define([
 	function mergeDelegates(aDelegates) {
 		// check from in reverted order whether the read and or the write part is available
 		// build a new object that consists of the read and the write part probably of more than one delegate
-		var mResultDelegateInfo = {
+		 let mResultDelegateInfo = {
 			names: [],
 			instance: {},
 			modelType: aDelegates.length && aDelegates[0].modelType
 		};
-		var bReadPartMissing = true;
-		var bWritePartMissing = true;
-		for (var i = (aDelegates.length - 1); i >= 0; i--) {
-			var mDelegateInfo = aDelegates[i];
+		let bReadPartMissing = true;
+		let bWritePartMissing = true;
+		for (let i = (aDelegates.length - 1); i >= 0; i--) {
+			const mDelegateInfo = aDelegates[i];
 			if (isCompleteDelegate(mDelegateInfo)) {
 				if (bReadPartMissing && bWritePartMissing) {
 					mResultDelegateInfo = assignCompleteDelegate(mResultDelegateInfo, mDelegateInfo);
@@ -205,8 +217,8 @@ sap.ui.define([
 	}
 
 	function isCompetingDelegateAlreadyRegistered(mPropertyBag) {
-		var aDefaultDelegates = DelegateMediator._mDefaultDelegateItems[mPropertyBag.modelType] || [];
-		var aDefaultDelegateTypes = aDefaultDelegates.map(function(mDefaultDelegateInfo) {
+		const aDefaultDelegates = DelegateMediator._mDefaultDelegateItems[mPropertyBag.modelType] || [];
+		const aDefaultDelegateTypes = aDefaultDelegates.map(function(mDefaultDelegateInfo) {
 			return mDefaultDelegateInfo.delegateType;
 		});
 		return aDefaultDelegateTypes.indexOf(DelegateMediator.types.COMPLETE) > -1
@@ -229,21 +241,23 @@ sap.ui.define([
 	 */
 	DelegateMediator.getRequiredLibrariesForDefaultDelegate = function(aDelegateNames, oControl, sModelType) {
 		sModelType = getModelTypeForControl(oControl, sModelType);
-		var aDelegateInfo = DelegateMediator._mDefaultDelegateItems[sModelType] || [];
+		const aDelegateInfo = DelegateMediator._mDefaultDelegateItems[sModelType] || [];
 		return aDelegateInfo.reduce(function(aRequiredLibNames, mDelegateInfo) {
-			var bIsDefaultDelegate = aDelegateNames.indexOf(mDelegateInfo.name) > -1;
+			const bIsDefaultDelegate = aDelegateNames.indexOf(mDelegateInfo.name) > -1;
 			return aRequiredLibNames.concat(Object.keys((bIsDefaultDelegate && mDelegateInfo.requiredLibraries) || {}));
 		}, []);
 	};
 
 	/**
-	 * Checks if there is already a registered delegate available for the given model type.
+	 * Checks if there is already a registered delegate available for the given model type
+	 * or control type in case of control specific delegates.
 	 *
-	 * @param {string} sModelType - Delegate model type
-	 * @returns {boolean} <code>true</code> if a delegate is already registered for the model type
+	 * @param {string} sKeyType - Delegate model or control type
+	 * @returns {boolean} <code>true</code> if a delegate is already registered for the model or control type
 	 */
-	DelegateMediator.isDelegateRegistered = function(sModelType) {
-		return !!DelegateMediator._mDefaultDelegateItems[sModelType];
+	DelegateMediator.isDelegateRegistered = function(sKeyType) {
+		return !!DelegateMediator._mDefaultDelegateItems[sKeyType]
+			|| !!DelegateMediator._mControlSpecificDelegateItems[sKeyType];
 	};
 
 	/**
@@ -277,6 +291,34 @@ sap.ui.define([
 	};
 
 	/**
+	 * Registers a control specific delegate by control type.
+	 *
+	 * @param {object} mPropertyBag - Property bag for control specific delegate
+	 * @param {object} mPropertyBag.controlType - control type
+	 * @param {object} mPropertyBag.delegate - path to control specific delegate
+	 * @param {object} mPropertyBag.delegateType - Defines the type of the control specific delegate.
+	 * Please look at <code>DelegageMediator.types</code> for possible entries
+	 * @param {object} [mPropertyBag.requiredLibraries] - map of required libraries
+	 * @param {object} [mPropertyBag.payload] - payload for the delegate
+	 */
+	DelegateMediator.registerControlSpecificDelegate = function(mPropertyBag) {
+		if (!(mPropertyBag.controlType && mPropertyBag.delegate)) {
+			throw new Error("'controlType' and 'delegate' properties are required for registration!");
+		}
+		mPropertyBag.delegateType ||= DelegateMediator.types.WRITEONLY;
+		if (mPropertyBag.delegateType && !isValidType(mPropertyBag)) {
+			throw new Error(`Control '${mPropertyBag.controlType}' specific delegateType: ${mPropertyBag.delegateType} is invalid!`);
+		}
+		DelegateMediator._mControlSpecificDelegateItems[mPropertyBag.controlType] = {
+			name: mPropertyBag.delegate,
+			requiredLibraries: mPropertyBag.requiredLibraries,
+			delegateType: mPropertyBag.delegateType,
+			controlType: mPropertyBag.controlType,
+			payload: mPropertyBag.payload
+		};
+	};
+
+	/**
 	 * Returns the delegate object for the requested control.
 	 *
 	 * @param {sap.ui.core.Element} oControl - Control for which the corresponding delegate should be returned
@@ -285,24 +327,26 @@ sap.ui.define([
 	 * @param {boolean} [bSupportsDefault] - Include default delegate if no instance specific delegate is available
 	 * @returns {Promise.<sap.ui.core.util.reflection.FlexDelegateInfo>} Delegate information including the lazy loaded instance of the delegate
 	 */
-	DelegateMediator.getDelegateForControl = function(oControl, oModifier, sModelType, bSupportsDefault) {
-		return validateInputParameters(oControl, oModifier)
-		.then(function() {
-			return oModifier.getFlexDelegate(oControl);
-		})
-		.then(function(mInstanceSpecificDelegate) {
-			var aDelegateInfo = (bSupportsDefault && getDefaultDelegateInfo(oControl, sModelType)) || [];
-			if (mInstanceSpecificDelegate) {
-				// instance specific delegate always takes over
-				aDelegateInfo.push(mInstanceSpecificDelegate);
-			}
-			return loadDelegates(oModifier, oControl, aDelegateInfo);
-		})
-		.then(mergeDelegates.bind(this));
+	DelegateMediator.getDelegateForControl = async function(oControl, oModifier, sModelType, bSupportsDefault) {
+		await validateInputParameters(oControl, oModifier);
+
+		const aDelegateInfo = (bSupportsDefault && getDefaultDelegateInfo(oControl, sModelType)) || [];
+		const mControlSpecificDelegate = await getControlSpecificDelegateInfo(oModifier, oControl);
+		if (mControlSpecificDelegate) {
+			aDelegateInfo.push(mControlSpecificDelegate);
+		}
+		const mInstanceSpecificDelegate = await oModifier.getFlexDelegate(oControl);
+		if (mInstanceSpecificDelegate) {
+			// instance specific delegate always takes over
+			aDelegateInfo.push(mInstanceSpecificDelegate);
+		}
+		const aDelegates = await loadDelegates(oModifier, oControl, aDelegateInfo);
+		return mergeDelegates(aDelegates);
 	};
 
 	DelegateMediator.clear = function() {
 		DelegateMediator._mDefaultDelegateItems = {};
+		DelegateMediator._mControlSpecificDelegateItems = {};
 	};
 
 	return DelegateMediator;

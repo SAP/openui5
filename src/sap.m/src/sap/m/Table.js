@@ -742,6 +742,7 @@ sap.ui.define([
 		var aItemDomRefs = oNavigationRoot.querySelectorAll(".sapMListTblRow,.sapMGHLI,.sapMTblCellFocusable,.sapMTblItemNav");
 		oItemNavigation.setItemDomRefs(Array.from(aItemDomRefs));
 
+		var iItemNavigationColumns = oItemNavigation.iColumns;
 		var iColumns = this._colHeaderAriaOwns.length + 1;
 		var iPageSize = Math.min(this.getVisibleItems().length, this.getGrowingThreshold());
 		oItemNavigation.setTableMode(true, false);
@@ -761,6 +762,8 @@ sap.ui.define([
 			} else {
 				oItemNavigation.setFocusedIndex(this._headerHidden ? 0 : iColumns);
 			}
+		} else if (oItemNavigation.getFocusedIndex() >= iItemNavigationColumns) {
+			oItemNavigation.setFocusedIndex(oItemNavigation.getFocusedIndex() + iColumns - iItemNavigationColumns);
 		}
 	};
 

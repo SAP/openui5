@@ -82,14 +82,20 @@ sap.ui.define(['sap/ui/Device', "sap/base/Log", "sap/base/security/URLListValida
 		}
 
 		/**
-		 * if displayType is not link and pdfPlugin is not enabled .. render error content.
-		 * case: if "Always download pdf's" option is enabled in browser setting.. in that
-		 * case display error content (to retain control behaviour)
+		 * Case1: If display is in Embedded Mode, PDF Plugin is disabled and is Desktop Device, We render Error Content.
+		 * Case2: If display is in Embedded Mode and PDF Plugin is enabled, We render PDF Content.
+		 * Case3: If display is in Embedded Mode, PDF Plugin is enabled and isTrustedSource = false, We render NonTrustedSource Content.
 		 */
-		if (!oControl._isDisplayTypeLink() && !this._isPdfPluginEnabled() && Device.system.desktop) {
-			this.renderErrorContent(oRm, oControl);
-		} else if (oControl._isEmbeddedModeAllowed() && this._isPdfPluginEnabled()) {
-			this.renderPdfContent(oRm, oControl);
+		var bRenderEmbededMode = (oControl._isDisplayTypeEmbedded() || oControl._isDisplayTypeAuto()) && Device.system.desktop;
+
+		if (bRenderEmbededMode) {
+			if (!this._isPdfPluginEnabled()) {
+				this.renderErrorContent(oRm, oControl);
+			} else if (!oControl.getIsTrustedSource()) {
+				this.renderNonTrustedSourceContent(oRm, oControl);
+			} else  {
+				this.renderPdfContent(oRm, oControl);
+			}
 		}
 
 		oRm.close("div");
@@ -138,7 +144,7 @@ sap.ui.define(['sap/ui/Device', "sap/base/Log", "sap/base/security/URLListValida
 
 	PDFViewerRenderer.renderErrorContent = function (oRm, oControl) {
 		var oErrorContent = oControl.getErrorPlaceholder() ? oControl.getErrorPlaceholder() :
-				oControl._objectsRegister.getPlaceholderIllustratedMessageControl();
+			oControl._objectsRegister.getErrorPlaceholderIllustratedMessageControl();
 
 		oRm.openStart("div");
 		oRm.class("sapMPDFViewerError");
@@ -153,6 +159,14 @@ sap.ui.define(['sap/ui/Device', "sap/base/Log", "sap/base/security/URLListValida
 			Log.warning("Either Inline viewing of pdf is disabled or pdf plug-in is unavailable on this device.");
 			oControl.fireEvent("error", {}, true);
 		}
+	};
+
+	PDFViewerRenderer.renderNonTrustedSourceContent = function (oRm, oControl) {
+		oRm.openStart("div");
+		oRm.class("sapMPDFViewerNonTrustedIllustratedMessage");
+		oRm.openEnd();
+		oRm.renderControl(oControl._getNonTrustedSourceIllustratedMessage());
+		oRm.close("div");
 	};
 
 	return PDFViewerRenderer;

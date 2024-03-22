@@ -9,8 +9,9 @@
 				width="100%">
 			<items>
 				<Image
-						src="./resources/sap/ui/documentation/sdk/images/logo_sap.png"
+						src="./resources/sap/ui/documentation/sdk/images/logo_sap.svg"
 						densityAware="false"
+						alt="SAP Company Logo"
 						width="3rem"
 						height="1.5rem">
 				</Image>

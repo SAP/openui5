@@ -142,6 +142,7 @@ sap.ui.define([
 			]
 		}),
 		oSearchFieldDialog = new Dialog({
+			ariaLabelledBy: "txt",
 			title: "Dialog with Search Field",
 			subHeader: new Bar({
 				contentMiddle: [
@@ -161,11 +162,10 @@ sap.ui.define([
 					})
 				]
 			}),
-			content: new HTML({
-				content: '<div class="searchDialogContent">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci animi assumenda autem corporis cupiditate dicta dolores enim est eveniet laborum magnam magni maxime mollitia nostrum odit quasi, sunt! Nemo, sapiente.Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci animi assumenda autem corporis cupiditate dicta dolores enim est eveniet laborum magnam magni maxime mollitia nostrum odit quasi, sunt! Nemo, sapiente.Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci animi assumenda autem corporis cupiditate dicta dolores enim est eveniet laborum magnam magni maxime mollitia nostrum odit quasi, sunt! Nemo, sapiente.</div>'
+			content: new HTML("txt", {
+				content: '<div>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci animi assumenda autem corporis cupiditate.</div>'
 			}),
 			contentWidth: "40rem",
-			contentHeight: "250px",
 			beginButton: new Button({
 				text: "Close",
 				press: function () {

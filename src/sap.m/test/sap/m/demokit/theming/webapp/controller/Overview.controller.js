@@ -11,8 +11,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/theming/Parameters",
 	"sap/ui/core/library",
-	"sap/ui/core/Fragment",
-	"sap/ui/core/Core"
+	"sap/ui/core/Fragment"
 ], function(
 	Theming,
 	BaseController,
@@ -26,8 +25,7 @@ sap.ui.define([
 	jQuery,
 	Parameters,
 	coreLibrary,
-	Fragment,
-	oCore
+	Fragment
 ) {
 	"use strict";
 
@@ -135,15 +133,6 @@ sap.ui.define([
 				var oData = this.createDataStructure(oParameterMetadata);
 				oModel.setData(oData);
 			}.bind(this));
-
-			//Called when the user chooses a new theme in the ComboBox
-			//Creates a new Data Structure for the table including the updated theme data
-			oCore.attachThemeChanged(function () {
-				this.getParameterMetadata(function (oParameterMetadata) {
-					var oData = this.createDataStructure(oParameterMetadata);
-					oModel.setData(oData);
-				}.bind(this));
-			}, this);
 		},
 		getParameterMetadata: function (fnCallback) {
 			jQuery.ajax("../../../../../../resources/sap/ui/core/themes/base/base.less", {

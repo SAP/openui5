@@ -1563,6 +1563,33 @@ sap.ui.define([
 		sut.destroy();
 	});
 
+	QUnit.test("Initial focus position calculation", function(assert) {
+		var oButtonBefore = new Button({text: "Before"});
+		var sut = createSUT(true);
+		var fnSetNavigationItems = sinon.spy(sut, "setNavigationItems");
+
+		oButtonBefore.placeAt("qunit-fixture");
+		sut.placeAt("qunit-fixture");
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
+
+		oButtonBefore.focus();
+		sut.focus();
+		assert.ok(fnSetNavigationItems.calledOnce);
+		assert.equal(sut._oItemNavigation.getFocusedIndex(), sut.getColumns().length + 1);
+		fnSetNavigationItems.reset();
+
+		oButtonBefore.focus();
+		sut.getItems().forEach(function(oItem) {
+			oItem.setProperty("type", "Navigation");
+		});
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
+
+		sut.focus();
+		assert.ok(fnSetNavigationItems.calledOnce);
+		assert.equal(sut._oItemNavigation.getFocusedIndex(), sut.getColumns().length + 2);
+		sut.destroy();
+	});
+
 	QUnit.test("Focus and scroll handling with sticky column headers", function(assert) {
 		this.stub(Device.system, "desktop", false);
 		this.clock = sinon.useFakeTimers();

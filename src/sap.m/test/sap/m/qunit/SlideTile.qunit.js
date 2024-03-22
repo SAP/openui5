@@ -15,7 +15,6 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/core/Core",
 	"sap/f/GridContainerItemLayoutData",
 	"sap/f/GridContainerSettings",
 	"sap/f/GridContainer",
@@ -23,7 +22,7 @@ sap.ui.define([
 	"sap/ui/dom/jquery/Selectors",
 	// only used indirectly?
 	"sap/ui/events/jquery/EventExtension"
-], function(Localization, Library, Theming, nextUIUpdate, jQuery, SlideTile, GenericTile, JSONModel, TileContent, NewsContent, Device, NumericContent, library, KeyCodes, qutils, oCore, GridContainerItemLayoutData, GridContainerSettings, GridContainer) {
+], function(Localization, Library, Theming, nextUIUpdate, jQuery, SlideTile, GenericTile, JSONModel, TileContent, NewsContent, Device, NumericContent, library, KeyCodes, qutils, GridContainerItemLayoutData, GridContainerSettings, GridContainer) {
 	"use strict";
 
 
@@ -931,26 +930,13 @@ var FrameType = library.FrameType;
 
 			this.applyTheme = function(sTheme, fnCallback) {
 				this.sRequiredTheme = sTheme;
-				if (Theming.getTheme() === this.sRequiredTheme && oCore.isThemeApplied()) {
+				if (Theming.getTheme() === this.sRequiredTheme && false) {
 					if (typeof fnCallback === "function") {
 						fnCallback.bind(this)();
 						fnCallback = undefined;
 					}
 				} else {
-					oCore.attachThemeChanged(fnThemeApplied.bind(this));
 					Theming.setTheme(sTheme);
-				}
-
-				function fnThemeApplied(oEvent) {
-					oCore.detachThemeChanged(fnThemeApplied);
-					if (Theming.getTheme() === this.sRequiredTheme && oCore.isThemeApplied()) {
-						if (typeof fnCallback === "function") {
-							fnCallback.bind(this)();
-							fnCallback = undefined;
-						}
-					} else {
-						setTimeout(fnThemeApplied.bind(this, oEvent), 1500);
-					}
 				}
 			};
 		},

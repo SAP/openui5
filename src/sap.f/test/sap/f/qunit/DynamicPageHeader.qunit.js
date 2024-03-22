@@ -1,13 +1,11 @@
 /*global QUnit*/
 sap.ui.define([
 	"./DynamicPageUtil",
-	"sap/ui/core/Core",
 	"sap/ui/core/Theming",
 	"sap/ui/qunit/utils/nextUIUpdate"
 ],
 function(
 	DynamicPageUtil,
-	Core,
 	Theming,
 	nextUIUpdate
 ) {
@@ -280,26 +278,13 @@ function(
 
 		this.applyTheme = function(sTheme, fnCallback) {
 			this.sRequiredTheme = sTheme;
-			if (Theming.getTheme() === this.sRequiredTheme && Core.isThemeApplied()) {
+			if (Theming.getTheme() === this.sRequiredTheme && false) {
 				if (typeof fnCallback === "function") {
 					fnCallback.bind(this)();
 					fnCallback = undefined;
 				}
 			} else {
-				Core.attachThemeChanged(fnThemeApplied.bind(this));
 				Theming.setTheme(sTheme);
-			}
-
-			function fnThemeApplied(oEvent) {
-				Core.detachThemeChanged(fnThemeApplied);
-				if (Theming.getTheme() === this.sRequiredTheme && Core.isThemeApplied()) {
-					if (typeof fnCallback === "function") {
-						fnCallback.bind(this)();
-						fnCallback = undefined;
-					}
-				} else {
-					setTimeout(fnThemeApplied.bind(this, oEvent), 1500);
-				}
 			}
 		};
 

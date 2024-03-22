@@ -942,7 +942,7 @@ sap.ui.define([
 			var sWaitForTheme = getWaitForTheme();
 
 			// If there is no waitForTheme or ThemeManager is already available and theme is loaded render directly sync
-			if (this.isThemeApplied() || !sWaitForTheme) {
+			if (!sWaitForTheme) {
 				this._executeInitialization();
 			} else {
 				Rendering.suspend();
@@ -986,82 +986,12 @@ sap.ui.define([
 		};
 
 		/**
-		 * Returns true if the Core has already been initialized. This means that instances
-		 * of RenderManager etc. do already exist and the init event has already been fired
-		 * (and will not be fired again).
-		 *
-		 * @return {boolean} whether the Core has already been initialized
-		 * @public
-		 * @deprecated since 1.118. Please use {@link sap.ui.core.Core.ready Core.ready} instead.
-		 */
-		Core.prototype.isInitialized = function () {
-			return this.bInitialized;
-		};
-
-		/**
-		 * Returns true, if the styles of the current theme are already applied, false otherwise.
-		 *
-		 * This function must not be used before the init event of the Core.
-		 * If the styles are not yet applied a theme changed event will follow when the styles will be applied.
-		 *
-		 * @return {boolean} whether the styles of the current theme are already applied
-		 * @deprecated since 1.119: Please use {@link module:sap/ui/core/Theming.attachApplied Theming.attachApplied} instead.
-		 * @public
-		 */
-		Core.prototype.isThemeApplied = function() {
-			var bApplied = false;
-			function fnCheckApplied() {
-				bApplied = true;
-			}
-			// if theme is applied fnCheckApplied is called sync
-			Theming.attachAppliedOnce(fnCheckApplied);
-			return bApplied;
-		};
-
-		/**
 		 * Attach to 'applied' event of theming in order to keep existing core event 'ThemeChanged' stable
 		 */
 		Theming.attachApplied(function(oEvent) {
 			// notify the listeners via a control event
 			_oEventProvider && _oEventProvider.fireEvent(Core.M_EVENTS.ThemeChanged, BaseEvent.getParameters(oEvent));
 		});
-
-		/**
-		* Attaches event handler <code>fnFunction</code> to the {@link #event:ThemeChanged ThemeChanged} event
-		* of this <code>sap.ui.core.Core</code>.
-		*
-		* When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener</code>
-		* if specified, otherwise it will be bound to a dummy event provider object.
-		*
-		* @param {function}
-		*            fnFunction The function to be called, when the event occurs
-		* @param {object}
-		*            [oListener] Context object to call the event handler with. Defaults to a dummy event
-		*            provider object
-		* @public
-		* @deprecated since 1.118. See {@link module:sap/ui/core/Theming.attachApplied Theming.attachApplied} instead.
-		*/
-		Core.prototype.attachThemeChanged = function(fnFunction, oListener) {
-			// preparation for letting the "themeChanged" event be forwarded from the ThemeManager to the Core
-			_oEventProvider.attachEvent(Core.M_EVENTS.ThemeChanged, fnFunction, oListener);
-		};
-
-		/**
-		 * Detaches event handler <code>fnFunction</code> from the {@link #event:ThemeChanged ThemeChanged} event
-		 * of this <code>sap.ui.core.Core</code>.
-		 *
-		 * The passed function and listener object must match the ones used for event registration.
-		 *
-		 * @param {function}
-		 *            fnFunction The function to be called, when the event occurs
-		 * @param {object}
-		 *            [oListener] Object on which the given function had to be called.
-		 * @public
-		 * @deprecated since 1.118. See {@link module:sap/ui/core/Theming.detachApplied Theming#detachApplied} instead.
-		 */
-		Core.prototype.detachThemeChanged = function(fnFunction, oListener) {
-			_oEventProvider.detachEvent(Core.M_EVENTS.ThemeChanged, fnFunction, oListener);
-		};
 
 		Core.prototype.attachThemeScopingChanged = function(fnFunction, oListener) {
 			_oEventProvider.attachEvent(Core.M_EVENTS.ThemeScopingChanged, fnFunction, oListener);

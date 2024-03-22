@@ -283,6 +283,16 @@ sap.ui.define([
 	 * Gets the current zooming information for the inner chart.
 	 * @param {sap.ui.mdc.Chart} oChart Reference to the MDC chart
 	 * @returns {object} Current <code>ZoomState</code> of the inner chart
+	 *
+	 * Object has the following structure:
+	 * Example:
+	 * <pre>
+	 * {
+	 *     "enabled":true,
+	 *     "enabledZoomIn"?: true
+	 *     "enabledZoomOut"?: false
+	 * }
+	 * </pre>
 	 * @experimental
 	 * @private
 	 * @ui5-restricted sap.fe, sap.ui.mdc
@@ -290,9 +300,18 @@ sap.ui.define([
 	ChartDelegate.getZoomState = function(oChart) {
 
 		if (this._getChart(oChart)) {
-			return this._getChart(oChart).getZoomInfo(this);
+			const oZoomInfo = this._getChart(oChart).getZoomInfo();
+
+			if (oZoomInfo && oZoomInfo.hasOwnProperty("currentZoomLevel") && oZoomInfo.currentZoomLevel != null && oZoomInfo.enabled) {
+				return {
+					enabled: oZoomInfo.enabled,
+					enabledZoomIn: oZoomInfo.currentZoomLevel < 1,
+					enabledZoomOut: oZoomInfo.currentZoomLevel > 0
+				};
+			}
 		}
 
+		return { enabled : false };
 	};
 
 	/**

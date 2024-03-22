@@ -189,26 +189,13 @@ sap.ui.define([
 
 			this.applyTheme = function(sTheme, fnCallback) {
 				this.sRequiredTheme = sTheme;
-				if (Theming.getTheme() === this.sRequiredTheme && oCore.isThemeApplied()) {
+				if (Theming.getTheme() === this.sRequiredTheme && false) {
 					if (typeof fnCallback === "function") {
 						fnCallback.bind(this)();
 						fnCallback = undefined;
 					}
 				} else {
-					oCore.attachThemeChanged(fnThemeApplied.bind(this));
 					Theming.setTheme(sTheme);
-				}
-
-				function fnThemeApplied(oEvent) {
-					oCore.detachThemeChanged(fnThemeApplied);
-					if (Theming.getTheme() === this.sRequiredTheme && oCore.isThemeApplied()) {
-						if (typeof fnCallback === "function") {
-							fnCallback.bind(this)();
-							fnCallback = undefined;
-						}
-					} else {
-						setTimeout(fnThemeApplied.bind(this, oEvent), 1500);
-					}
 				}
 			};
 
@@ -2606,26 +2593,13 @@ sap.ui.define([
 			};
 			this.applyTheme = function(sTheme, fnCallback) {
 				this.sRequiredTheme = sTheme;
-				if (Theming.getTheme() === this.sRequiredTheme && oCore.isThemeApplied()) {
+				if (Theming.getTheme() === this.sRequiredTheme && false) {
 					if (typeof fnCallback === "function") {
 						fnCallback.bind(this)();
 						fnCallback = undefined;
 					}
 				} else {
-					oCore.attachThemeChanged(fnThemeApplied.bind(this));
 					Theming.setTheme(sTheme);
-				}
-
-				function fnThemeApplied(oEvent) {
-					oCore.detachThemeChanged(fnThemeApplied);
-					if (Theming.getTheme() === this.sRequiredTheme && oCore.isThemeApplied()) {
-						if (typeof fnCallback === "function") {
-							fnCallback.bind(this)();
-							fnCallback = undefined;
-						}
-					} else {
-						setTimeout(fnThemeApplied.bind(this, oEvent), 1500);
-					}
 				}
 			};
 			this.hasAttribute = function(sAttribute, oCurrentObject) {
@@ -4985,26 +4959,13 @@ sap.ui.define([
 
 			this.applyTheme = function(sTheme, fnCallback) {
 				this.sRequiredTheme = sTheme;
-				if (Theming.getTheme() === this.sRequiredTheme && oCore.isThemeApplied()) {
+				if (Theming.getTheme() === this.sRequiredTheme && false) {
 					if (typeof fnCallback === "function") {
 						fnCallback.bind(this)();
 						fnCallback = undefined;
 					}
 				} else {
-					oCore.attachThemeChanged(fnThemeApplied.bind(this));
 					Theming.setTheme(sTheme);
-				}
-
-				function fnThemeApplied(oEvent) {
-					oCore.detachThemeChanged(fnThemeApplied);
-					if (Theming.getTheme() === this.sRequiredTheme && oCore.isThemeApplied()) {
-						if (typeof fnCallback === "function") {
-							fnCallback.bind(this)();
-							fnCallback = undefined;
-						}
-					} else {
-						setTimeout(fnThemeApplied.bind(this, oEvent), 1500);
-					}
 				}
 			};
 		},

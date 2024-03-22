@@ -93,6 +93,16 @@ sap.ui.define([
 			delegate: "sap/ui/fl/write/_internal/delegates/ODataV4ReadDelegate",
 			delegateType: DelegateMediator.types.READONLY
 		});
+		DelegateMediatorAPI.registerReadDelegate({
+			modelType: "sap.ui.model.odata.v2.ODataModel",
+			delegate: "sap/ui/fl/write/_internal/delegates/ODataV2ReadDelegate",
+			delegateType: DelegateMediator.types.READONLY
+		});
+		DelegateMediatorAPI.registerReadDelegate({
+			modelType: "sap.ui.model.odata.ODataModel",
+			delegate: "sap/ui/fl/write/_internal/delegates/ODataV2ReadDelegate",
+			delegateType: DelegateMediator.types.READONLY
+		});
 	}
 
 	/**

@@ -16,11 +16,10 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/base/Log",
 	"sap/m/Text",
-	"sap/ui/core/Core",
 	"sap/m/Panel",
 	"sap/m/GenericTile",
 	"sap/ui/qunit/utils/nextUIUpdate"
-], function(Localization, Element, jQuery, HeaderContainer, FlexBox, Label, VerticalLayout, Button, Device, Icon, coreLibrary, PseudoEvents, Mobile, mobileLibrary, Log, Text, oCore, Panel, GenericTile, nextUIUpdate) {
+], function(Localization, Element, jQuery, HeaderContainer, FlexBox, Label, VerticalLayout, Button, Device, Icon, coreLibrary, PseudoEvents, Mobile, mobileLibrary, Log, Text, Panel, GenericTile, nextUIUpdate) {
 	"use strict";
 
 	// shortcut for sap.m.BackgroundDesign
@@ -242,15 +241,7 @@ sap.ui.define([
 			this.oHeaderContainer.placeAt("qunit-fixture");
 			await nextUIUpdate();
 
-			if (!oCore.isThemeApplied()) {
-				return new Promise(function (resolve) {
-					function themeChanged() {
-						resolve();
-						oCore.detachThemeChanged(themeChanged);
-					}
-					oCore.attachThemeChanged(themeChanged);
-				});
-			}
+			return new Promise(function (resolve) {});
 		},
 		afterEach: function () {
 			this.oHeaderContainer.destroy();

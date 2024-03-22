@@ -827,9 +827,9 @@
 							</mdcat:ActionToolbarAction> -->
 						</mdc:actions>
 
-						<!-- <mdc:variant>
+						<mdc:variant>
 							<variants:VariantManagement id="IDVariantManagementOfChart" for="bookChart"/>
-						</mdc:variant> -->
+						</mdc:variant>
 
 						<mdc:items>
 							<mdcc:Item id="dim1" type="groupable" propertyKey="language_code" role="category" label="Languages"/>

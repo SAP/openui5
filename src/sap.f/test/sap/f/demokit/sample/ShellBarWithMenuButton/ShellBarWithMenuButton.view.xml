@@ -15,6 +15,7 @@
 				showMenuButton="true"
 				showNavButton="true"
 				showNotifications="true"
+				class="sapFShellBarFCLFPHeader"
 				notificationsNumber="2">
 				<profile>
 					<m:Avatar initials="UI"/>

@@ -91,11 +91,20 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("delete", function (assert) {
 		const oTreeState = new _TreeState("~sNodeProperty~");
-
 		oTreeState.mPredicate2ExpandLevels["foo"] = "bar";
 		oTreeState.mPredicate2ExpandLevels["~predicate~"] = "~";
-		this.mock(_Helper).expects("getPrivateAnnotation")
+
+		const oTreeStateMock = this.mock(oTreeState);
+		// initial call
+		oTreeStateMock.expects("delete").withExactArgs("~oNode~").callThrough();
+		const oHelperMock = this.mock(_Helper);
+		oHelperMock.expects("getPrivateAnnotation")
 			.withExactArgs("~oNode~", "predicate").returns("~predicate~");
+		oTreeStateMock.expects("deleteOutOfPlace").withExactArgs("~predicate~");
+		oHelperMock.expects("getPrivateAnnotation").withExactArgs("~oNode~", "spliced", [])
+			.returns(["~oChild0~", "~oChild1~"]);
+		oTreeStateMock.expects("delete").withExactArgs("~oChild0~");
+		oTreeStateMock.expects("delete").withExactArgs("~oChild1~");
 
 		// code under test
 		oTreeState.delete("~oNode~");

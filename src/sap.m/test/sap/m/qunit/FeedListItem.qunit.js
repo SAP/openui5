@@ -21,9 +21,8 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/base/Log",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/core/Core",
 	"sap/ui/core/Element"
-], function(Theming, qutils, nextUIUpdate, jQuery, FeedListItem, FeedListItemAction, List, StandardListItem, JSONModel, Button, Popover, Bar, ActionSheet, App, Page, Device, FormattedText, IconPool, library, Log, KeyCodes, oCore, Element) {
+], function(Theming, qutils, nextUIUpdate, jQuery, FeedListItem, FeedListItemAction, List, StandardListItem, JSONModel, Button, Popover, Bar, ActionSheet, App, Page, Device, FormattedText, IconPool, library, Log, KeyCodes, Element) {
 	"use strict";
 
 	// shortcut for sap.m.PlacementType
@@ -347,28 +346,13 @@ sap.ui.define([
 		assert.equal(this.oNonActiveItem.oAvatar.$().css("color"), "rgb(255, 255, 255)", "The inactive icon color is white in Default theme");
 		this.applyTheme = function(sTheme, fnCallback) {
 			this.sRequiredTheme = sTheme;
-			if (Theming.getTheme() === this.sRequiredTheme && oCore.isThemeApplied()) {
+			if (Theming.getTheme() === this.sRequiredTheme && false) {
 				if (typeof fnCallback === "function") {
 					fnCallback.bind(this)();
 					fnCallback = undefined;
 				}
 			} else {
-				oCore.attachThemeChanged(fnThemeApplied.bind(this));
 				Theming.setTheme(sTheme);
-			}
-
-			function fnThemeApplied(oEvent) {
-				oCore.detachThemeChanged(fnThemeApplied);
-				if (Theming.getTheme() === this.sRequiredTheme && oCore.isThemeApplied()) {
-					if (typeof fnCallback === "function") {
-						fnCallback.bind(this)();
-						fnCallback = undefined;
-					}
-				} else {
-					setTimeout(function() {
-						fnThemeApplied(oEvent);
-					}, 1500);
-				}
 			}
 		};
 		var done = assert.async();
