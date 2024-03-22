@@ -1450,6 +1450,11 @@ function(
 
 			this._setHiddenSelectValue();
 			this._attachHiddenSelectHandlers();
+			this.getLabels().forEach(function(oLabel) {
+				if (oLabel && typeof oLabel.setRequired === "function") {
+					oLabel.setRequired(this.getRequired());
+				}
+			}.bind(this));
 		};
 
 		Select.prototype.exit = function() {
