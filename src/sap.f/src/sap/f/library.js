@@ -379,6 +379,44 @@ sap.ui.define(["sap/ui/base/DataType",
 	 */
 
 	/**
+	 * Returns the content (control) used in the subheader.
+	 *
+	 * @function
+	 * @name sap.f.IDynamicPageStickyContent._getStickyContent
+	 * @returns {sap.ui.core.Control} the content (control) used in the subheader
+	 * @private
+	 */
+
+	/**
+	 * Ensures that the content (control) returned by <code>_getStickyContent</code>,
+	 * is placed back in its place in the provider
+	 *
+	 * @function
+	 * @name sap.f.IDynamicPageStickyContent._returnStickyContent
+	 * @private
+	 */
+
+	/**
+	 * Returns boolean value that shows where the sticky content is placed
+	 * (in its provider or in the code>DynamicPage</code>)
+	 *
+	 * @function
+	 * @name sap.f.IDynamicPageStickyContent._getStickySubHeaderSticked
+	 * @returns {boolean} true if content is in <code>DynamicPage</code> (sticked), false if in provider
+	 * @private
+	 */
+
+	/**
+	 * Accepts a boolean argument to notify the provider where its sticky
+	 * content is placed
+	 *
+	 * @function
+	 * @name sap.f.IDynamicPageStickyContent._setStickySubHeaderSticked
+	 * @param {boolean} bIsInStickyContainer
+	 * @private
+	 */
+
+	/**
 	 * Types of {@link sap.f.Avatar} based on the displayed content.
 	 *
 	 * This is an alias for {@link sap.m.AvatarType} and only kept for compatibility reasons.
