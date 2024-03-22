@@ -516,7 +516,10 @@ sap.ui.define([
 			"sap.m.table.columnmenu.Item",
 			"sap.m.table.columnmenu.ItemBase",
 			"sap.m.table.columnmenu.QuickAction",
-			"sap.m.table.columnmenu.QuickActionBase"
+			"sap.m.table.columnmenu.QuickActionBase",
+			"sap.m.plugins.UploadSetwithTable",
+			"sap.m.upload.UploadItemConfiguration",
+			"sap.m.upload.UploadItem"
 		],
 		extensions: {
 			flChangeHandlers: {
