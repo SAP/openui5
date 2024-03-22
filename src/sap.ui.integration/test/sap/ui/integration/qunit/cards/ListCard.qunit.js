@@ -734,6 +734,77 @@ sap.ui.define([
 		}
 	};
 
+	var oManifest_ListCard_Microchart_Pagination = {
+		"sap.app": {
+			"id": "oManifest_ListCard_Microchart_Pagination"
+		},
+		"sap.card": {
+			"type": "List",
+			"data": {
+				"json": {
+					"items": [
+						{
+							"title": "Item 1",
+							"group": "Group A",
+							"agreed": 10,
+							"consumed": 3
+						},
+						{
+							"title": "Item 2",
+							"group": "Group A",
+							"agreed": 10,
+							"consumed": 5
+						},
+						{
+							"title": "Item 3",
+							"group": "Group B",
+							"agreed": 20,
+							"consumed": 15
+						},
+						{
+							"title": "Item 4",
+							"group": "Group B",
+							"agreed": 10,
+							"consumed": 0
+						}
+					]
+				}
+			},
+			"header": {
+				"type": "Default",
+				"title": "Sales Report"
+			},
+			"content": {
+				"data": {
+					"path": "/items"
+				},
+				"item": {
+					"title": "{title}",
+					"chart": {
+						"type": "Bullet",
+						"minValue": 0,
+						"maxValue": "{agreed}",
+						"value": "{consumed}",
+						"scale": "%",
+						"displayValue": "{consumed} of {agreed} Tickets"
+					}
+				},
+				"group": {
+					"title": "{group}",
+					"order": {
+						"path": "group",
+						"dir": "ASC"
+					}
+				}
+			},
+			"footer": {
+				"paginator": {
+					"pageSize": 3
+				}
+			}
+		}
+	};
+
 	QUnit.module("List Card", {
 		beforeEach: function () {
 			this.oCard = new Card({
@@ -1866,6 +1937,42 @@ sap.ui.define([
 
 			done();
 		}.bind(this));
+	});
+
+	QUnit.test("Creation of Microcharts and Pagination", function (assert) {
+		const done = assert.async();
+
+		const fnLoadDependencies = sinon.stub(ListContent.prototype, "loadDependencies").callsFake(function(){
+			return new Promise(function (resolve) {
+				pIfMicrochartsAvailable
+					.then(function () {
+						setTimeout(function () {
+							resolve();
+						}, 100);
+					})
+					.catch(function () {
+						assert.ok(true, "Usage of Microcharts is not available with this distribution.");
+						fnLoadDependencies.restore();
+						done();
+					});
+			});
+		});
+
+		const oCard = this.oCard;
+
+		oCard.attachEventOnce("_ready", function () {
+			pIfMicrochartsAvailable
+				.then(function () {
+					const oPaginator = oCard.getAggregation("_footer").getPaginator();
+
+					assert.ok(oPaginator, "paginator is created");
+					assert.strictEqual(oPaginator.getPageCount(), 2, "page count is correct");
+
+					fnLoadDependencies.restore();
+					done();
+				});
+		});
+		oCard.setManifest(oManifest_ListCard_Microchart_Pagination);
 	});
 
 	QUnit.module("Legend", {
