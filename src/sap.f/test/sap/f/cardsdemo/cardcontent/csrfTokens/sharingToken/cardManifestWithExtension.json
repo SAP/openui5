@@ -1,7 +1,7 @@
 {
-	"_version": "1.15.0",
+	"_version": "1.60.0",
 	"sap.app": {
-		"id": "sap.ui.CardCSRFToken.Card6",
+		"id": "sap.ui.CardCSRFToken.sameToken.withExtension",
 		"type": "card",
 		"title": "Cards with CSRF tokens used",
 		"subTitle": "",
@@ -28,34 +28,30 @@
 	},
 	"sap.card": {
 		"type": "List",
+		"extension": "./Extension2",
 		"configuration" : {
-			"destinations": {
-				"ActivitiesMockServer": {
-					"name": "ActivitiesMockServer",
-					"label": "Activities Mock",
-					"defaultUrl": "/getData/"
-				}
-			},
 			"csrfTokens": {
 				"token1": {
 					"data": {
 						"request": {
-							"url": "/csrfTokens/tokenInBody",
-							"method": "POST"
-						},
-						"path": "/data/0/Token"
+							"url": "/csrfTokens/generateToken",
+							"method": "HEAD",
+							"headers": {
+								"X-CSRF-Token": "Fetch"
+							}
+						}
 					}
 				}
 			}
 		},
 		"header": {
-			"title": "Token with Path",
-			"subTitle": "(token /csrfTokens/tokenInBody)"
+			"title": "Title",
+			"subTitle": "(token /csrfTokens/generateToken)"
 		},
 		"content": {
 			"data": {
 				"request": {
-					"url": "{{destinations.ActivitiesMockServer}}/Activities",
+					"url": "/getData/Activities",
 					"method": "GET",
 					"headers": {
 						"X-CSRF-Token": "{csrfTokens>/token1/value}"

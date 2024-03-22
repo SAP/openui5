@@ -1,9 +1,11 @@
 sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/f/cardsdemo/localService/mockserver",
+	"sap/f/cardsdemo/localService/csrfTokens/mockServer",
 	"sap/f/cardsdemo/model/CardPlaygroundModel"
 ], function (UIComponent,
 			 mockserver,
+			 csrfTokensMockServer,
 			 CardsPlayground) {
 	"use strict";
 
@@ -21,6 +23,7 @@ sap.ui.define([
 			this.getRouter().initialize();
 
 			mockserver.init();
+			csrfTokensMockServer.init();
 			this.setModel(CardsPlayground, "cardsPlayground");
 		}
 	});
