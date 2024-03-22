@@ -11,6 +11,7 @@
 					"value": "{parameters>/selectedShipperID/value}",
 					"type": "Select",
 					"label": "Shipper",
+					"visible": "{= !!${parameters>/selectedShipperID/value}}",
 					"item": {
 						"path": "/value",
 						"template": {
