@@ -15212,46 +15212,47 @@ sap.ui.define([
 	//
 	// JIRA: CPOUI5ODATAV4-1628
 	QUnit.test("CPOUI5ODATAV4-1628: re-read Edm.Stream URL & readLink", function (assert) {
-		var oContext,
+		var sArtist = "Artists(ArtistID='42',IsActiveEntity=true)",
+			oContext,
 			oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
-			sView = '\
-<FlexBox id="form" binding="{/Artists(ArtistID=\'42\')}">\
-	<Text id="picture" text="{Picture}"/>\
-	<Text id="link" text="{= %{Picture@odata.mediaReadLink} }"/>\
-</FlexBox>',
+			sView = `
+<FlexBox id="form" binding="{/${sArtist}}">
+	<Text id="picture" text="{Picture}"/>
+	<Text id="link" text="{= %{Picture@odata.mediaReadLink} }"/>
+</FlexBox>`,
 			sPrefix = "/special/cases/",
 			that = this;
 
-		this.expectRequest("Artists(ArtistID='42')"
-				+ "?$select=ArtistID,IsActiveEntity,Picture", {
-				ID : "42",
+		this.expectRequest(sArtist + "?$select=ArtistID,IsActiveEntity,Picture", {
+				ArtistID : "42",
+				IsActiveEntity : true,
 				// Picture (Edm.Stream) missing here
-				"Picture@odata.mediaReadLink" : "Artists(ArtistID='42')/Picture"
+				"Picture@odata.mediaReadLink" : sArtist + "/Picture"
 			})
-			.expectChange("picture", sPrefix + "Artists(ArtistID='42')/Picture")
-			.expectChange("link", sPrefix + "Artists(ArtistID='42')/Picture")
+			.expectChange("picture", sPrefix + sArtist + "/Picture")
+			.expectChange("link", sPrefix + sArtist + "/Picture")
 			.expectEvents(assert, "sap.ui.model.odata.v4.OData", [
-				["ContextBinding: /Artists(ArtistID='42')", "change", {reason : "change"}],
-				["ContextBinding: /Artists(ArtistID='42')", "dataRequested", undefined],
-				["ContextBinding: /Artists(ArtistID='42')", "dataReceived", {data : {}}],
-				["PropertyBinding: /Artists(ArtistID='42')|Picture", "change", {reason : "change"}],
-				["PropertyBinding: /Artists(ArtistID='42')"
-					+ "|Picture@odata.mediaReadLink", "change", {reason : "change"}]
+				["ContextBinding: /" + sArtist, "change", {reason : "change"}],
+				["ContextBinding: /" + sArtist, "dataRequested", undefined],
+				["ContextBinding: /" + sArtist, "dataReceived", {data : {}}],
+				["PropertyBinding: /" + sArtist + "|Picture", "change", {reason : "change"}],
+				["PropertyBinding: /" + sArtist + "|Picture@odata.mediaReadLink", "change",
+					{reason : "change"}]
 			]);
 
 		return this.createView(assert, sView, oModel).then(function () {
 			oContext = that.oView.byId("form").getBindingContext();
 
-			that.expectRequest("Artists(ArtistID='42')?$select=Picture", {
-					ID : "42",
+			that.expectRequest(sArtist + "?$select=Picture", {
+					ArtistID : "42",
+					IsActiveEntity : true,
 					// Picture (Edm.Stream) missing here
-					"Picture@odata.mediaReadLink" : "Artists(ArtistID='42')/Picture"
+					"Picture@odata.mediaReadLink" : sArtist + "/Picture"
 				})
-				.expectChange("picture", sPrefix + "Artists(ArtistID='42')/Picture")
+				.expectChange("picture", sPrefix + sArtist + "/Picture")
 				.expectEvents(assert, "sap.ui.model.odata.v4.OData", [
-				["PropertyBinding: /Artists(ArtistID='42')|Picture",
-					"change", {reason : "change"}]
-			]);
+					["PropertyBinding: /" + sArtist + "|Picture", "change", {reason : "change"}]
+				]);
 
 			return Promise.all([
 				// code under test
@@ -15259,17 +15260,17 @@ sap.ui.define([
 				that.waitForChanges(assert, "(1) unchanged URL via @odata.mediaReadLink annotation")
 			]);
 		}).then(function () {
-			that.expectRequest("Artists(ArtistID='42')?$select=Picture", {
-					ID : "42"
+			that.expectRequest(sArtist + "?$select=Picture", {
+					ArtistID : "42",
+					IsActiveEntity : true
 					// Picture (Edm.Stream) missing here
 				})
-				.expectChange("picture", sPrefix + "Artists(ArtistID='42')/Picture")
+				.expectChange("picture", sPrefix + sArtist + "/Picture")
 				.expectChange("link", undefined) // no more Picture@odata.mediaReadlink
 				.expectEvents(assert, "sap.ui.model.odata.v4.OData", [
-					["PropertyBinding: /Artists(ArtistID='42')|Picture@odata.mediaReadLink",
-						"change", {reason : "change"}],
-					["PropertyBinding: /Artists(ArtistID='42')|Picture",
-						"change", {reason : "change"}]
+					["PropertyBinding: /" + sArtist + "|Picture@odata.mediaReadLink", "change",
+						{reason : "change"}],
+					["PropertyBinding: /" + sArtist + "|Picture", "change", {reason : "change"}]
 				]);
 
 			return Promise.all([
@@ -15278,14 +15279,14 @@ sap.ui.define([
 				that.waitForChanges(assert, "(2) no URL in response (calculated by model)")
 			]);
 		}).then(function () {
-			that.expectRequest("Artists(ArtistID='42')?$select=Picture", {
-					ID : "42"
+			that.expectRequest(sArtist + "?$select=Picture", {
+					ArtistID : "42",
+					IsActiveEntity : true
 					// Picture (Edm.Stream) missing here
 				})
-				.expectChange("picture", sPrefix + "Artists(ArtistID='42')/Picture")
+				.expectChange("picture", sPrefix + sArtist + "/Picture")
 				.expectEvents(assert, "sap.ui.model.odata.v4.OData", [
-					["PropertyBinding: /Artists(ArtistID='42')|Picture",
-						"change", {reason : "change"}]
+					["PropertyBinding: /" + sArtist + "|Picture", "change", {reason : "change"}]
 				]);
 
 			return Promise.all([
@@ -15294,18 +15295,18 @@ sap.ui.define([
 				that.waitForChanges(assert, "(3) again, no URL in response (calculated by model)")
 			]);
 		}).then(function () {
-			that.expectRequest("Artists(ArtistID='42')?$select=Picture", {
-					ID : "42",
+			that.expectRequest(sArtist + "?$select=Picture", {
+					ArtistID : "42",
+					IsActiveEntity : true,
 					// Picture (Edm.Stream) missing here
-					"Picture@odata.mediaReadLink" : "Artists(ArtistID='42')/Picture"
+					"Picture@odata.mediaReadLink" : sArtist + "/Picture"
 				})
-				.expectChange("picture", sPrefix + "Artists(ArtistID='42')/Picture")
-				.expectChange("link", sPrefix + "Artists(ArtistID='42')/Picture")
+				.expectChange("picture", sPrefix + sArtist + "/Picture")
+				.expectChange("link", sPrefix + sArtist + "/Picture")
 				.expectEvents(assert, "sap.ui.model.odata.v4.OData", [
-					["PropertyBinding: /Artists(ArtistID='42')|Picture@odata.mediaReadLink",
-						"change", {reason : "change"}],
-					["PropertyBinding: /Artists(ArtistID='42')|Picture",
-						"change", {reason : "change"}]
+					["PropertyBinding: /" + sArtist + "|Picture@odata.mediaReadLink", "change",
+						{reason : "change"}],
+					["PropertyBinding: /" + sArtist + "|Picture", "change", {reason : "change"}]
 				]);
 
 			return Promise.all([
@@ -15314,18 +15315,17 @@ sap.ui.define([
 				that.waitForChanges(assert, "(4) back to URL via @odata.mediaReadLink")
 			]);
 		}).then(function () {
-			that.expectRequest("Artists(ArtistID='42')?$select=Picture", {
+			that.expectRequest(sArtist + "?$select=Picture", {
 					ID : "42",
 					// Picture (Edm.Stream) missing here
-					"Picture@odata.mediaReadLink" : "Artists(ArtistID='42')/PictureHighRes"
+					"Picture@odata.mediaReadLink" : sArtist + "/PictureHighRes"
 				})
-				.expectChange("picture", sPrefix + "Artists(ArtistID='42')/PictureHighRes")
-				.expectChange("link", sPrefix + "Artists(ArtistID='42')/PictureHighRes")
+				.expectChange("picture", sPrefix + sArtist + "/PictureHighRes")
+				.expectChange("link", sPrefix + sArtist + "/PictureHighRes")
 				.expectEvents(assert, "sap.ui.model.odata.v4.OData", [
-					["PropertyBinding: /Artists(ArtistID='42')|Picture@odata.mediaReadLink",
-						"change", {reason : "change"}],
-					["PropertyBinding: /Artists(ArtistID='42')|Picture",
-						"change", {reason : "change"}]
+					["PropertyBinding: /" + sArtist + "|Picture@odata.mediaReadLink", "change",
+						{reason : "change"}],
+					["PropertyBinding: /" + sArtist + "|Picture", "change", {reason : "change"}]
 				]);
 
 			return Promise.all([
