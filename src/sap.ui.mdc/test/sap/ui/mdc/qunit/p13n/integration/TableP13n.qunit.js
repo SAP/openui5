@@ -58,6 +58,11 @@ sap.ui.define([
 					}
 				};
 			});
+
+			return Promise.all([
+				this.oTable.initialized(),
+				this.oTable.finalizePropertyHelper()
+			]);
 		},
 		destroyTestObjects: function() {
 			this.oTable.destroy();
