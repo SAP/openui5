@@ -2988,7 +2988,7 @@ sap.ui.define([
 
 				// Create annotations for a property which was selected but no data was received
 				Object.keys(vSelect).forEach(function (sProperty) {
-					if (!(sProperty in oTarget) && sProperty !== "*") {
+					if (oTarget[sProperty] === undefined && sProperty !== "*") {
 						oTarget[sProperty + "@$ui5.noData"] = true;
 						// Fire change event (useful for Edm.Stream in case of the URL stays the
 						// same, but the content was changed)

@@ -1468,12 +1468,16 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("updateSelected: private annotations", function (assert) {
+[false, true].forEach((bUndefined) => {
+	QUnit.test("updateSelected: private annotations, undefined: " + bUndefined, function (assert) {
 		var oBinding = {},
 			oContext = {oBinding : oBinding},
 			// oContext is recursive and must not be descended into
 			oOldValue = {"@$ui5._" : {context : oContext}};
 
+		if (bUndefined) {
+			oOldValue.foo = undefined; // MUST NOT make a difference
+		}
 		oBinding.oContext = oContext;
 		this.mock(_Helper).expects("fireChange").withExactArgs("~mChangeListener~", "foo",
 			undefined, true);
@@ -1483,18 +1487,30 @@ sap.ui.define([
 			{"@$ui5._" : {predicate : "(1)"}, bar : {}},
 			["foo", "bar/*"]);
 
-		assert.deepEqual(oOldValue,
-			{"@$ui5._" : {context : oContext, predicate : "(1)"}, bar : {},
-				"foo@$ui5.noData" : true});
+		assert.deepEqual(oOldValue, bUndefined ? {
+			"@$ui5._" : {context : oContext, predicate : "(1)"},
+			bar : {},
+			foo : undefined,
+			"foo@$ui5.noData" : true
+		} : {
+			"@$ui5._" : {context : oContext, predicate : "(1)"},
+			bar : {},
+			"foo@$ui5.noData" : true
+		});
 	});
+});
 
 	//*********************************************************************************************
-	QUnit.test("updateSelected: create annotation", function (assert) {
+[false, true].forEach((bUndefined) => {
+	QUnit.test("updateSelected: create annotation, undefined: " + bUndefined, function (assert) {
 		var oBinding = {},
 			oHelperMock = this.mock(_Helper),
 			oOldValue0 = {},
 			oOldValue1 = {};
 
+		if (bUndefined) {
+			oOldValue0.foo = undefined; // MUST NOT make a difference
+		}
 		oBinding.oContext = {oBinding : oBinding};
 		oHelperMock.expects("fireChange").withExactArgs("~mChangeListener~", "foo", undefined,
 			true);
@@ -1510,20 +1526,24 @@ sap.ui.define([
 		_Helper.updateSelected("~mChangeListener~", "", oOldValue0,
 			{baz : {bar : {}}}, ["foo", "bar", "baz/bar"]);
 
-		assert.deepEqual(oOldValue0, {
-			"foo@$ui5.noData" : true,
+		assert.deepEqual(oOldValue0, bUndefined ? {
 			"bar@$ui5.noData" : true,
-			baz : {bar : {}}
+			baz : {bar : {}},
+			foo : undefined,
+			"foo@$ui5.noData" : true
+		} : {
+			"bar@$ui5.noData" : true,
+			baz : {bar : {}},
+			"foo@$ui5.noData" : true
 		});
 
 		// code under test (do not create annotation)
 		_Helper.updateSelected("~mChangeListener~", "", oOldValue1,
 			{baz : {bar : {}}}, ["foo", "bar", "baz/bar"], undefined, /*bOkIfMissing*/ true);
 
-		assert.deepEqual(oOldValue1, {
-			baz : {bar : {}}
-		});
+		assert.deepEqual(oOldValue1, {baz : {bar : {}}});
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("updateSelected: $postBodyCollection", function (assert) {
