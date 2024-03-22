@@ -97,6 +97,103 @@ sap.ui.define([
 			oCard.destroy();
 		});
 
+		QUnit.test("Header is rendered as link", async function (assert) {
+			// Act
+			const oCard = new Card({
+				displayVariant: CardDisplayVariant.TileStandard,
+				baseUrl: "test-resources/sap/ui/integration/qunit/testResources",
+				manifest: {
+					"sap.app": {
+						"id": "test.card.tile.links"
+					},
+					"sap.card": {
+						"type": "Object",
+						"data":	{
+							"json": {
+								"url": "http://www.sap.com",
+								"target": "_blank"
+							}
+						},
+						"header": {
+							"title": "Test",
+							"actions": [
+								{
+									"type": "Navigation",
+									"parameters": {
+										"url": "{url}",
+										"target": "{target}"
+									}
+								}
+							]
+						},
+						"content": { }
+					}
+				}
+			});
+
+			oCard.placeAt(DOM_RENDER_LOCATION);
+			await nextCardReadyEvent(oCard);
+			await nextUIUpdate();
+
+			// Assert
+			const oLink = oCard.getFocusDomRef();
+			assert.strictEqual(oLink.tagName.toLowerCase(), "a", "Focusable element in header is an link");
+			assert.strictEqual(oLink.href, "http://www.sap.com/", "Link has correct href");
+			assert.strictEqual(oLink.target, "_blank", "Link has correct target");
+			assert.strictEqual(oLink.rel, "noopener noreferrer", "Link has correct rel");
+
+			oCard.destroy();
+		});
+
+		QUnit.test("Numeric header is rendered as link", async function (assert) {
+			// Act
+			const oCard = new Card({
+				displayVariant: CardDisplayVariant.TileStandard,
+				baseUrl: "test-resources/sap/ui/integration/qunit/testResources",
+				manifest: {
+					"sap.app": {
+						"id": "test.card.tile.links"
+					},
+					"sap.card": {
+						"type": "Object",
+						"data":	{
+							"json": {
+								"url": "http://www.sap.com/",
+								"target": "_blank"
+							}
+						},
+						"header": {
+							"type": "Numeric",
+							"title": "Test",
+							"actions": [
+								{
+									"type": "Navigation",
+									"parameters": {
+										"url": "{url}",
+										"target": "{target}"
+									}
+								}
+							]
+						},
+						"content": { }
+					}
+				}
+			});
+
+			oCard.placeAt(DOM_RENDER_LOCATION);
+			await nextCardReadyEvent(oCard);
+			await nextUIUpdate();
+
+			// Assert
+			const oLink = oCard.getFocusDomRef();
+			assert.strictEqual(oLink.tagName.toLowerCase(), "a", "Focusable element in header is an link");
+			assert.strictEqual(oLink.href, "http://www.sap.com/", "Link has correct href");
+			assert.strictEqual(oLink.target, "_blank", "Link has correct target");
+			assert.strictEqual(oLink.rel, "noopener noreferrer", "Link has correct rel");
+
+			oCard.destroy();
+		});
+
 	}
 );
 

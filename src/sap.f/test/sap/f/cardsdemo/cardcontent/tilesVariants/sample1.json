@@ -18,7 +18,8 @@
 				{
 					"type": "Navigation",
 					"parameters": {
-						"url": "http://sap.com"
+						"url": "#/listContent",
+						"target": "_self"
 					}
 				}
 			],

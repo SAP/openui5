@@ -12,15 +12,7 @@
 		},
 		"header": {
 			"type": "Numeric",
-			"title": "Error in header",
-			"actions": [
-				{
-					"type": "Navigation",
-					"parameters": {
-						"url": "http://sap.com"
-					}
-				}
-			]
+			"title": "Error in header"
 		},
 		"content": {
 			"item": {

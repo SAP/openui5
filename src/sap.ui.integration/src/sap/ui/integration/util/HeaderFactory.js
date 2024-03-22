@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/base/util/isEmptyObject",
 	"sap/ui/core/Lib",
 	"sap/ui/integration/cards/actions/CardActions",
+	"sap/ui/integration/cards/actions/NavigationAction",
 	"sap/ui/integration/library",
 	"sap/m/library",
 	"sap/ui/integration/cards/NumericHeader",
@@ -19,6 +20,7 @@ sap.ui.define([
 	isEmptyObject,
 	Library,
 	CardActions,
+	NavigationAction,
 	library,
 	mLibrary,
 	NumericHeader,
@@ -29,6 +31,8 @@ sap.ui.define([
 	"use strict";
 
 	var ActionArea = library.CardActionArea;
+
+	var ActionType = library.CardActionType;
 
 	var ButtonType = mLibrary.ButtonType;
 
@@ -166,6 +170,18 @@ sap.ui.define([
 		if (oHeader.isA("sap.f.cards.NumericHeader")) {
 			oHeader.getSideIndicators().forEach((oSideIndicator) => {
 				oSideIndicator.setProperty("useTooltips", true);
+			});
+		}
+
+		const vAction = mConfiguration.actions && mConfiguration.actions[0];
+		const vHref = vAction?.parameters?.url;
+		const vTarget = vAction?.parameters?.target;
+
+		if (vAction?.type === ActionType.Navigation && vHref) {
+			oHeader.applySettings({
+				href: vHref,
+				target: vTarget || NavigationAction.DEFAULT_TARGET,
+				interactive: true
 			});
 		}
 	};
