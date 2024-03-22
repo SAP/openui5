@@ -31,7 +31,7 @@ describe("sap.ui.integration.CardVariantsVisualTests", function () {
 		var aCardIds = [
 			"card1", "card2", "card3", "card4", "card5", "card6", "card7", "card8", "card9", "card10",
 			"card11", "card12", "card13", "card14", "card15", "card16", "card17", "card18", "card19", "card20",
-			"card21", "card22", "card23", "card24", "card31", "card32", "card33", "card34", "card41"
+			"card21", "card22", "card23", "card24", "card31", "card32", "card33", "card34", "card35", "card36", "card37", "card38", "card41"
 		];
 
 		aCardIds.forEach(function (sId) {
