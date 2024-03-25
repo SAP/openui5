@@ -1,0 +1,105 @@
+{
+	"_version": "1.21.0",
+	"sap.app": {
+		"id": "sap.ui.core.sample.Messaging.ODataBackendMessagesComp",
+		"type": "application",
+		"i18n": {
+			"bundleUrl": "i18n/i18n.properties",
+			"supportedLocales": [
+				""
+			],
+			"fallbackLocale": ""
+		},
+		"title": "{{appTitle}}",
+		"description": "{{appDescription}}",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"ach": "CA-UI5-DOC",
+		"dataSources": {
+			"employeeRemote": {
+				"uri": "/here/goes/your/serviceUrl/",
+				"type": "OData",
+				"settings": {
+					"odataVersion": "2.0",
+					"localUri" : "localService/metadata.xml"
+				}
+			}
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		},
+		"supportedThemes": ["sap_belize"]
+  	},
+	"sap.ui5": {
+		"rootView": {
+			"async": true,
+			"viewName": "sap.ui.core.sample.Messaging.ODataBackendMessagesComp.view.App"
+		},
+		"handleValidation"  : true,
+		"dependencies": {
+			"minUI5Version": "1.98.0",
+			"libs": {
+				"sap.m": { },
+				"sap.ui.layout": { },
+				"sap.ui.unified": { }
+			}
+		},
+		"models": {
+			"i18n": {
+				"type": "sap.ui.model.resource.ResourceModel",
+				"settings": {
+					"bundleName": "sap.ui.core.sample.Messaging.ODataBackendMessagesComp.i18n.i18n",
+					"supportedLocales": [
+						""
+					],
+					"fallbackLocale": ""
+				}
+			},
+			"": {
+				"dataSource": "employeeRemote",
+				"settings" : {
+					"refreshAfterChange": false,
+					"defaultBindingMode": "TwoWay",
+					"defaultUpdateMethod" : "Put",
+					"skipMetadataAnnotationParsing" : true,
+					"disableHeadRequestForToken" : true
+				}
+			}
+		},
+		"routing": {
+			"config": {
+				"routerClass": "sap.m.routing.Router",
+				"type": "View",
+				"viewType": "XML",
+				"path": "sap.ui.core.sample.Messaging.ODataBackendMessagesComp.view",
+				"controlId": "app",
+				"controlAggregation": "pages",
+				"transition": "slide",
+				"bypassed": {
+					"target": "notFound"
+				}
+			},
+			"routes": [{
+				"pattern": "",
+				"name": "employee",
+				"target": "employee"
+			}],
+			"targets": {
+				"employee": {
+					"name": "Employee",
+					"level" : 1
+				},
+				"notFound": {
+					"name": "NotFound",
+					"transition": "show"
+				}
+			}
+		}
+	}
+}

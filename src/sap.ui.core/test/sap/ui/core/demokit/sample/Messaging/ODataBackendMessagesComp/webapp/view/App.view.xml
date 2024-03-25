@@ -1,0 +1,9 @@
+<mvc:View
+	controllerName="sap.ui.core.sample.Messaging.ODataBackendMessagesComp.controller.App"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	displayBlock="true">
+	<App id="app">
+		<pages /> <!-- filled via routing -->
+	</App>
+</mvc:View>
