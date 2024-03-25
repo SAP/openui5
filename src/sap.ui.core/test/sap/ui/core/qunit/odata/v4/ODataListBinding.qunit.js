@@ -211,6 +211,7 @@ sap.ui.define([
 		assert.ok(oBinding.hasOwnProperty("mPreviousContextsByPath"));
 		assert.ok(oBinding.hasOwnProperty("aPreviousData"));
 		assert.ok(oBinding.hasOwnProperty("bRefreshKeptElements"));
+		assert.ok(oBinding.hasOwnProperty("bResetViaSideEffects"));
 		assert.ok(oBinding.hasOwnProperty("sResumeAction"));
 		assert.ok(oBinding.hasOwnProperty("aSorters"));
 		assert.ok(oBinding.hasOwnProperty("sUpdateGroupId"));
@@ -761,10 +762,16 @@ sap.ui.define([
 	var iCallCount = bSuspended ? 0 : 1;
 
 	//*********************************************************************************************
-[false, true].forEach(function (bAggregation) {
-	var sTitle = "applyParameters: call from changeParameters, " + bSuspended
-			+ ", w/ $$aggregation: " + bAggregation;
-
+[
+	["foo"],
+	["$filter"],
+	["$orderby"],
+	["$filter", "$orderby"],
+	["$filter", "$orderby", "foo"]
+].forEach(function (aChangedParameters) {
+	[false, true].forEach(function (bAggregation) {
+	const sTitle = "applyParameters: call from changeParameters, "
+		+ JSON.stringify(aChangedParameters) + ", w/ $$aggregation: " + bAggregation;
 	QUnit.test(sTitle, function (assert) {
 		var oAggregation = {},
 			sApply = "A.P.P.L.E.",
@@ -774,18 +781,19 @@ sap.ui.define([
 			mParameters = {
 				$$operationMode : OperationMode.Server,
 				$filter : "bar"
-			};
+			},
+			bSideEffectsRefresh = !aChangedParameters.includes("foo");
 
 		if (bAggregation) {
 			mParameters.$$aggregation = oAggregation;
 		}
-
 		this.mock(_AggregationHelper).expects("validateAggregationAndSetPath").never();
 		this.mock(_AggregationHelper).expects("buildApply").exactly(bAggregation ? 1 : 0)
 			.withExactArgs(sinon.match.same(oAggregation)).returns({$apply : sApply});
 		oModelMock.expects("buildQueryOptions")
 			.withExactArgs(sinon.match.same(mParameters), true).returns({$filter : "bar"});
 		this.mock(oBinding).expects("isRootBindingSuspended").withExactArgs().returns(bSuspended);
+		this.mock(oBinding).expects("setResetViaSideEffects").withExactArgs(bSideEffectsRefresh);
 		this.mock(oBinding).expects("setResumeChangeReason").exactly(bSuspended ? 1 : 0)
 			.withExactArgs(ChangeReason.Change);
 		this.mock(oBinding).expects("removeCachesAndMessages").exactly(iCallCount)
@@ -799,7 +807,7 @@ sap.ui.define([
 			.withExactArgs();
 
 		// code under test
-		oBinding.applyParameters(mParameters, ChangeReason.Change);
+		oBinding.applyParameters(mParameters, ChangeReason.Change, aChangedParameters);
 
 		assert.deepEqual(oBinding.mQueryOptions, bAggregation
 			? {$apply : sApply, $filter : "bar"}
@@ -807,6 +815,7 @@ sap.ui.define([
 		assert.deepEqual(oBinding.mParameters, mParameters);
 		assert.strictEqual(oBinding.mParameters.$$aggregation,
 			bAggregation ? oAggregation : undefined, "$$aggregation");
+	});
 	});
 });
 
@@ -3368,16 +3377,15 @@ sap.ui.define([
 					.withExactArgs(sinon.match.same(aSorters), sinon.match.same(oBinding.aSorters))
 					.returns(false);
 				this.mock(oBinding).expects("isRootBindingSuspended").returns(bSuspended);
+				this.mock(oBinding).expects("setResetViaSideEffects").withExactArgs(true);
 				this.mock(oBinding).expects("setResumeChangeReason").exactly(bSuspended ? 1 : 0)
 					.withExactArgs(ChangeReason.Sort);
-				this.mock(oBinding).expects("reset").exactly(bSuspended ? 0 : 1)
-					.withExactArgs(ChangeReason.Sort);
-				this.mock(oBinding).expects("removeCachesAndMessages").exactly(bSuspended ? 0 : 1)
-					.withExactArgs("");
 				this.mock(oBinding).expects("getGroupId").exactly(bSuspended ? 0 : 1)
 					.withExactArgs().returns("group");
 				this.mock(oBinding).expects("createReadGroupLock").exactly(bSuspended ? 0 : 1)
 					.withExactArgs("group", true);
+				this.mock(oBinding).expects("removeCachesAndMessages").exactly(bSuspended ? 0 : 1)
+					.withExactArgs("");
 				this.mock(oBinding).expects("fetchCache").exactly(bSuspended ? 0 : 1)
 					.withExactArgs(sinon.match.same(oContext))
 					.callsFake(function () {
@@ -3385,6 +3393,8 @@ sap.ui.define([
 						this.oCache = {};
 						this.oCachePromise = SyncPromise.resolve(this.oCache);
 					});
+				this.mock(oBinding).expects("reset").exactly(bSuspended ? 0 : 1)
+					.withExactArgs(ChangeReason.Sort);
 				this.mock(oBinding.oHeaderContext).expects("checkUpdate")
 					.exactly(bSuspended ? 0 : 1).withExactArgs();
 
@@ -3521,7 +3531,10 @@ sap.ui.define([
 						sinon.match.same(oBinding.aApplicationFilters))
 					.returns(false);
 				oBindingMock.expects("hasPendingChanges").withExactArgs(true).returns(false);
+				oBindingMock.expects("setResetViaSideEffects").withExactArgs(true);
 				oBindingMock.expects("isRootBindingSuspended").withExactArgs().returns(bSuspended);
+				oBindingMock.expects("setResumeChangeReason").exactly(bSuspended ? 1 : 0)
+					.withExactArgs(ChangeReason.Filter);
 				oBindingMock.expects("getGroupId").exactly(bSuspended ? 0 : 1)
 					.withExactArgs().returns("groupId");
 				oBindingMock.expects("createReadGroupLock").exactly(bSuspended ? 0 : 1)
@@ -3534,8 +3547,6 @@ sap.ui.define([
 						assert.strictEqual(oBinding.oQueryOptionsPromise, undefined);
 					});
 				oBindingMock.expects("reset").exactly(bSuspended ? 0 : 1)
-					.withExactArgs(ChangeReason.Filter);
-				oBindingMock.expects("setResumeChangeReason").exactly(bSuspended ? 1 : 0)
 					.withExactArgs(ChangeReason.Filter);
 				this.mock(oBinding.oHeaderContext).expects("setSelected")
 					.exactly(bSuspended ? 0 : 1).withExactArgs(false);
@@ -6776,6 +6787,7 @@ sap.ui.define([
 				$deepResourcePath : "deep/resource/path",
 				getResourcePath : function () {},
 				reset : function () {},
+				// no resetOutOfPlace
 				setQueryOptions : function () {}
 			},
 			aPredicates = ["('0')", "('2')"];
@@ -6785,6 +6797,7 @@ sap.ui.define([
 		this.mock(oBinding).expects("getKeepAlivePredicates").withExactArgs()
 			.returns(aPredicates);
 		this.mock(oBinding).expects("isGrouped").withExactArgs().returns("~isGrouped~");
+		this.mock(oBinding).expects("getGroupId").never();
 		this.mock(oOldCache).expects("reset")
 			.withExactArgs(sinon.match.same(aPredicates), "myGroup", "~queryOptions~",
 				"~$$aggregation~", "~isGrouped~");
@@ -6805,10 +6818,12 @@ sap.ui.define([
 				$deepResourcePath : "deep/resource/path",
 				getResourcePath : function () {},
 				reset : function () {},
+				// no resetOutOfPlace
 				setQueryOptions : function () {}
 			};
 
 		oBinding[sProperty] = 1;
+		oBinding.bResetViaSideEffects = true;
 		this.mock(oOldCache).expects("getResourcePath").withExactArgs().returns("resource/path");
 		this.mock(oBinding).expects("isGrouped").withExactArgs().returns("~isGrouped~");
 		this.mock(oOldCache).expects("reset")
@@ -6820,21 +6835,26 @@ sap.ui.define([
 			oBinding.doCreateCache("resource/path", "~queryOptions~", "~context~",
 				"deep/resource/path", "myGroup", oOldCache),
 			oOldCache);
+		assert.strictEqual(oBinding.bResetViaSideEffects, undefined);
 	});
 });
 
 	//*********************************************************************************************
-[false, true].forEach(function (bAggregationCache) {
+[false, true].forEach(function (bResetViaSideEffects) {
+	[false, true].forEach(function (bAggregationCache) {
 	const sTitle = "doCreateCache w/ old cache, recursive hierarchy, aggregation cache: "
-		+ bAggregationCache;
+		+ bAggregationCache + ", reset via side effects: " + bResetViaSideEffects;
 	QUnit.test(sTitle, function (assert) {
 		const oBinding = this.bindList("/EMPLOYEES");
 		oBinding.mParameters.$$aggregation = {hierarchyQualifier : "foo"};
 		const oOldCache = {
 			$deepResourcePath : "deep/resource/path",
 			getResourcePath : mustBeMocked,
-			reset : mustBeMocked
+			reset : mustBeMocked,
+			resetOutOfPlace : mustBeMocked
 		};
+
+		oBinding.bResetViaSideEffects = bResetViaSideEffects;
 
 		if (bAggregationCache) {
 			Object.setPrototypeOf(oOldCache, _AggregationCache.prototype);
@@ -6842,24 +6862,32 @@ sap.ui.define([
 		this.mock(oOldCache).expects("getResourcePath").withExactArgs().returns("resource/path");
 		this.mock(oBinding).expects("getKeepAlivePredicates").withExactArgs().returns([]);
 		this.mock(oBinding).expects("isGrouped").withExactArgs().returns("~isGrouped~");
+		this.mock(oBinding).expects("getGroupId")
+			.exactly((bAggregationCache && bResetViaSideEffects) ? 1 : 0)
+			.returns("resetGroup");
+		this.mock(oOldCache).expects("resetOutOfPlace")
+			.exactly((bAggregationCache && bResetViaSideEffects) ? 1 : 0);
 		this.mock(oOldCache).expects("reset").exactly(bAggregationCache ? 1 : 0)
-			.withExactArgs([], "myGroup", "~queryOptions~",
-				sinon.match.same(oBinding.mParameters.$$aggregation), "~isGrouped~");
+			.withExactArgs([], bAggregationCache && bResetViaSideEffects ? "resetGroup" : undefined,
+				"~queryOptions~", sinon.match.same(oBinding.mParameters.$$aggregation),
+				"~isGrouped~");
 		this.mock(oBinding).expects("inheritQueryOptions").exactly(bAggregationCache ? 0 : 1)
 			.withExactArgs("~queryOptions~", "~context~")
 			.returns("~mInheritedQueryOptions~");
 		this.mock(_AggregationCache).expects("create").exactly(bAggregationCache ? 0 : 1)
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "resource/path",
 				"deep/resource/path", "~mInheritedQueryOptions~",
-				sinon.match.same(oBinding.mParameters.$$aggregation), this.oModel.bAutoExpandSelect,
-				false, "~isGrouped~")
+				sinon.match.same(oBinding.mParameters.$$aggregation),
+				this.oModel.bAutoExpandSelect, false, "~isGrouped~")
 			.returns("~oNewCache~");
 
 		assert.strictEqual(
 			// code under test
 			oBinding.doCreateCache("resource/path", "~queryOptions~", "~context~",
-				"deep/resource/path", "myGroup", oOldCache),
+				"deep/resource/path", undefined, oOldCache),
 			bAggregationCache ? oOldCache : "~oNewCache~");
+		assert.strictEqual(oBinding.bResetViaSideEffects, undefined);
+	});
 	});
 });
 
@@ -11682,6 +11710,25 @@ child nodes added=${iCount}, expandTo=${iExpandTo}, make root=${bMakeRoot}`;
 
 		oListBindingMock.expects("getAggregation").withExactArgs().returns({});
 		assert.strictEqual(ODataListBinding.isBelowAggregation(oContext), true);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("setResetViaSideEffects ", function (assert) {
+		const oBinding = this.bindList("/SalesOrderList");
+
+		assert.strictEqual(oBinding.bResetViaSideEffects, undefined);
+
+		// code under test
+		oBinding.setResetViaSideEffects(true);
+		assert.strictEqual(oBinding.bResetViaSideEffects, true);
+
+		// code under test
+		oBinding.setResetViaSideEffects(false);
+		assert.strictEqual(oBinding.bResetViaSideEffects, false);
+
+		// code under test
+		oBinding.setResetViaSideEffects(true);
+		assert.strictEqual(oBinding.bResetViaSideEffects, false, "true must not win over false");
 	});
 });
 

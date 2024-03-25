@@ -176,6 +176,7 @@ sap.ui.define([
 		mParameters : {
 			$search : "Foo NOT Bar"
 		},
+		aChangedParameters : ["$search"],
 		mExpectedParameters : {
 			$apply : "filter(OLD gt 0)",
 			$expand : "foo",
@@ -189,6 +190,7 @@ sap.ui.define([
 		mParameters : {
 			$orderby : "Category"
 		},
+		aChangedParameters : ["$orderby"],
 		mExpectedParameters : {
 			$apply : "filter(OLD gt 0)",
 			$expand : "foo",
@@ -201,6 +203,7 @@ sap.ui.define([
 		mParameters : {
 			$expand : undefined
 		},
+		aChangedParameters : ["$expand"],
 		mExpectedParameters : {
 			$apply : "filter(OLD gt 0)",
 			$filter : "OLD gt 1",
@@ -212,6 +215,7 @@ sap.ui.define([
 		mParameters : {
 			$filter : undefined
 		},
+		aChangedParameters : ["$filter"],
 		mExpectedParameters : {
 			$apply : "filter(OLD gt 0)",
 			$expand : "foo",
@@ -224,6 +228,7 @@ sap.ui.define([
 			$filter : "NEW gt 1",
 			$orderby : "Category"
 		},
+		aChangedParameters : ["$filter", "$orderby"],
 		mExpectedParameters : {
 			$apply : "filter(OLD gt 0)",
 			$expand : "foo",
@@ -239,6 +244,7 @@ sap.ui.define([
 			$count : true,
 			$select : undefined
 		},
+		aChangedParameters : ["$apply", "$expand", "$count", "$select"],
 		mExpectedParameters : {
 			$apply : "filter(NEW gt 0)",
 			$count : true,
@@ -263,7 +269,8 @@ sap.ui.define([
 			this.mock(oBinding).expects("isUnchangedParameter").never();
 			this.mock(oBinding).expects("hasPendingChanges").withExactArgs(true).returns(false);
 			this.mock(oBinding).expects("applyParameters").withExactArgs(
-				oFixture.mExpectedParameters, oFixture.sChangeReason || ChangeReason.Change);
+				oFixture.mExpectedParameters, oFixture.sChangeReason || ChangeReason.Change,
+				oFixture.aChangedParameters);
 
 			// code under test
 			oBinding.changeParameters(oFixture.mParameters);
@@ -326,7 +333,7 @@ sap.ui.define([
 			.returns(true);
 		oBindingMock.expects("hasPendingChanges").withExactArgs(true).returns(false);
 		oBindingMock.expects("applyParameters")
-			.withExactArgs({$$ownRequest : true, $count : true}, ChangeReason.Change);
+			.withExactArgs({$$ownRequest : true, $count : true}, ChangeReason.Change, ["$count"]);
 
 		// code under test
 		oBinding.changeParameters({
@@ -426,7 +433,7 @@ sap.ui.define([
 		this.mock(oBinding).expects("hasPendingChanges").withExactArgs(true).returns(false);
 		this.mock(oBinding).expects("applyParameters")
 			.withExactArgs({$expand : {SO_2_SOITEM : {$orderby : "ItemPosition"}}},
-				ChangeReason.Change)
+				ChangeReason.Change, ["$expand"])
 			.callThrough();
 
 		// code under test
@@ -510,7 +517,7 @@ sap.ui.define([
 				$count : true,
 				$expand : "oldExpand",
 				$select : "oldSelect"
-			}, ChangeReason.Change);
+			}, ChangeReason.Change, ["$count"]);
 
 		// code under test
 		oBinding.changeParameters({

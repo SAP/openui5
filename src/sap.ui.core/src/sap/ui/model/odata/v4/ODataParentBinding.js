@@ -368,6 +368,7 @@ sap.ui.define([
 	ODataParentBinding.prototype.changeParameters = function (mParameters) {
 		var mBindingParameters = Object.assign({}, this.mParameters),
 			sChangeReason, // @see sap.ui.model.ChangeReason
+			aChangedParameters = [],
 			sKey,
 			that = this;
 
@@ -399,6 +400,7 @@ sap.ui.define([
 			} else {
 				sChangeReason ??= ChangeReason.Change;
 			}
+			aChangedParameters.push(sKey);
 		}
 
 		this.checkTransient();
@@ -430,7 +432,7 @@ sap.ui.define([
 			if (this.hasPendingChanges(true)) {
 				throw new Error("Cannot change parameters due to pending changes");
 			}
-			this.applyParameters(mBindingParameters, sChangeReason);
+			this.applyParameters(mBindingParameters, sChangeReason, aChangedParameters);
 		}
 	};
 

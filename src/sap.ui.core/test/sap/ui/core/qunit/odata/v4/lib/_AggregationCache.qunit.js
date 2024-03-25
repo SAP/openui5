@@ -5911,4 +5911,16 @@ make root = ${bMakeRoot}`;
 
 		assert.deepEqual(oCache.aElements, ["~node2~", "~node1~", "~foo~", "~bar~", "~baz~"]);
 	});
+
+	//*********************************************************************************************
+	QUnit.test("resetOutOfPlace", function () {
+		const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, {
+			hierarchyQualifier : "X"
+		});
+
+		this.mock(oCache.oTreeState).expects("resetOutOfPlace").withExactArgs();
+
+		// code under test
+		oCache.resetOutOfPlace();
+	});
 });

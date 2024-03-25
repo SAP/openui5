@@ -142,6 +142,8 @@ sap.ui.define([
 		// code under test
 		assert.strictEqual(oTreeState.getExpandLevels(), '[{"bar":42},{"qux":23}]');
 
+		this.mock(oTreeState).expects("resetOutOfPlace").withExactArgs();
+
 		// code under test
 		oTreeState.reset();
 
@@ -303,7 +305,7 @@ sap.ui.define([
 		});
 
 		// code under test
-		oTreeState.reset();
+		oTreeState.resetOutOfPlace();
 
 		assert.deepEqual(oTreeState.mPredicate2OutOfPlace, {});
 		// code under test

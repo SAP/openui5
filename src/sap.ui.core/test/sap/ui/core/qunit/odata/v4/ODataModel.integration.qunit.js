@@ -36448,6 +36448,263 @@ make root = ${bMakeRoot}`;
 });
 
 	//*********************************************************************************************
+	// Scenario: Sorting or filtering a recursive hierarchy keeps the expand state, but not the
+	// out-of-place nodes. "methods" ending with "#1" cause a full refresh and lose the expand
+	// state, in all other cases it will be a side-effects refresh keeping it.
+	// (1) Expand Alpha
+	// (2) Create Gamma (out of place)
+	// (3) Call the method (hierarchy unchanged, Alpha still expanded, Gamma no longer out of place)
+	// (4) Check all contexts
+	// JIRA: CPOUI5ODATAV4-2025
+[
+	"changeParameters#0", "changeParameters#1", "filter", "resume#0", "resume#1", "sort"
+].forEach(function (sMethod) {
+	QUnit.test(`Recursive Hierarchy: ${sMethod} & ExpandLevels`, async function (assert) {
+		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
+		let sOptions = "";
+		const sUrl = "EMPLOYEES?foo=bar"
+			+ "&$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root/EMPLOYEES"
+			+ ",HierarchyQualifier='OrgChart',NodeProperty='ID',Levels=1)";
+		const sUrlWithExpandLevels = sUrl.slice(0, -1)
+			+ ",ExpandLevels=" + JSON.stringify([{NodeID : "1", Levels : 1}]) + ")";
+		const sView = `
+<t:Table id="table" rows="{path : '/EMPLOYEES',
+		parameters : {
+			foo : 'bar',
+			$$aggregation : {
+				hierarchyQualifier : 'OrgChart'
+			}
+		}}" threshold="0" visibleRowCount="2">
+	<Text text="{= %{@$ui5.node.isExpanded} }"/>
+	<Text text="{= %{@$ui5.node.level} }"/>
+	<Text text="{Name}"/>
+</t:Table>`;
+
+		// 1 Alpha
+		//   2 Beta
+		//   3 Gamma (created)
+		// 4 Delta
+		const expectInitial = (sRequestUrl) => {
+			this.expectRequest(sRequestUrl
+					+ "&$select=DrillState,ID,Name&$count=true&$skip=0&$top=2", {
+					"@odata.count" : "2",
+					value : [
+						{DrillState : "collapsed", ID : "1", Name : "Alpha"},
+						{DrillState : "leaf", ID : "4", Name : "Delta"}
+					]
+				});
+		};
+		expectInitial(sUrl);
+
+		await this.createView(assert, sView, oModel);
+
+		const oTable = this.oView.byId("table");
+		const oBinding = oTable.getBinding("rows");
+		const oAlpha = oBinding.getCurrentContexts()[0];
+
+		this.expectRequest("EMPLOYEES?foo=bar"
+				+ "&$apply=descendants($root/EMPLOYEES,OrgChart,ID,filter(ID eq '1'),1)"
+				+ "&$select=DrillState,ID,Name&$count=true&$skip=0&$top=2", {
+				"@odata.count" : "1",
+				value : [
+					{DrillState : "leaf", ID : "2", Name : "Beta"}
+				]
+			});
+
+		oAlpha.expand();
+
+		await this.waitForChanges(assert, "(1) expand Alpha");
+
+		checkTable("after (1)", assert, oTable, [
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('2')",
+			"/EMPLOYEES('4')"
+		], [
+			[true, 1, "Alpha"],
+			[undefined, 2, "Beta"]
+		]);
+
+		this.expectRequest({
+				method : "POST",
+				url : "EMPLOYEES?foo=bar",
+				payload : {
+					"EMPLOYEE_2_MANAGER@odata.bind" : "EMPLOYEES('1')",
+					Name : "Gamma"
+				}
+			}, {
+				ID : "3",
+				Name : "Gamma"
+			});
+
+		const oGamma = oBinding.create({
+			"@$ui5.node.parent" : oAlpha,
+			Name : "Gamma"
+		}, /*bSkipRefresh*/true);
+
+		await Promise.all([
+			oGamma.created(),
+			this.waitForChanges(assert, "(2) create Gamma")
+		]);
+
+		checkTable("after (2)", assert, oTable, [
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('3')",
+			"/EMPLOYEES('2')",
+			"/EMPLOYEES('4')"
+		], [
+			[true, 1, "Alpha"],
+			[undefined, 2, "Gamma"]
+		]);
+
+		const expectSideEffectsRefresh = () => {
+			this.expectRequest(sUrlWithExpandLevels.replace("$apply=", `$apply=${sOptions}/`)
+					+ "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name"
+					+ "&$count=true&$skip=0&$top=2", {
+					"@odata.count" : "4",
+					value : [{
+						DescendantCount : "2",
+						DistanceFromRoot : "0",
+						DrillState : "expanded",
+						ID : "1",
+						Name : "Alpha"
+					}, {
+						DescendantCount : "0",
+						DistanceFromRoot : "1",
+						DrillState : "leaf",
+						ID : "2",
+						Name : "Beta"
+					}]
+				});
+		};
+
+		switch (sMethod) {
+			case "changeParameters#0":
+				sOptions = "ancestors($root/EMPLOYEES,OrgChart,ID,filter(AGE gt 0),keep start)"
+					+ "/orderby(AGE)";
+				expectSideEffectsRefresh();
+
+				// code under test
+				oBinding.changeParameters({
+					$filter : "AGE gt 0",
+					$orderby : "AGE"
+				});
+				break;
+
+			case "changeParameters#1":
+				expectInitial(
+					sUrl.replace("bar", "baz").replace("$apply=", "$apply=orderby(AGE)/"));
+
+				// code under test
+				oBinding.changeParameters({
+					foo : "baz",
+					$orderby : "AGE"
+				});
+				break;
+
+			case "filter":
+				sOptions = "ancestors($root/EMPLOYEES,OrgChart,ID,filter(AGE gt 0),keep start)";
+				expectSideEffectsRefresh();
+
+				// code under test
+				oBinding.filter(new Filter("AGE", FilterOperator.GT, 0));
+				break;
+
+			case "resume#0":
+				sOptions = "ancestors($root/EMPLOYEES,OrgChart,ID,filter(AGE gt 0),keep start)"
+					+ "/orderby(AGE,Name)";
+				expectSideEffectsRefresh();
+
+				// code under test
+				oBinding.suspend();
+				oBinding.sort(new Sorter("AGE"));
+				oBinding.filter(new Filter("AGE", FilterOperator.GT, 0));
+				oBinding.changeParameters({$orderby : "Name"});
+				oBinding.resume();
+				break;
+
+			case "resume#1":
+				expectInitial(
+					sUrl.replace("bar", "baz").replace("$apply=", "$apply=orderby(AGE)/"));
+
+				// code under test
+				oBinding.suspend();
+				oBinding.changeParameters({foo : "baz"}); // no side-effects refresh possible
+				oBinding.sort(new Sorter("AGE")); // must not activate it anymore!
+				oBinding.resume();
+				break;
+
+			case "sort":
+				sOptions = "orderby(AGE)";
+				expectSideEffectsRefresh();
+
+				// code under test
+				oBinding.sort(new Sorter("AGE"));
+				break;
+
+			// no default
+		}
+
+		await this.waitForChanges(assert, `(3) ${sMethod}`);
+
+		if (sMethod.endsWith("#1")) {
+			return await this.checkAllContexts("(4) check all contexts", assert, oBinding,
+				["@$ui5.node.isExpanded", "@$ui5.node.level", "Name"], [
+					[false, 1, "Alpha"],
+					[undefined, 1, "Delta"]
+				]);
+		}
+
+		this.expectRequest(sUrlWithExpandLevels.replace("$apply=", `$apply=${sOptions}/`)
+				+ "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name&$skip=2&$top=2", {
+				value : [{
+					DescendantCount : "0",
+					DistanceFromRoot : "1",
+					DrillState : "leaf",
+					ID : "3",
+					Name : "Gamma"
+				}, {
+					DescendantCount : "0",
+					DistanceFromRoot : "0",
+					DrillState : "leaf",
+					ID : "4",
+					Name : "Delta"
+				}]
+			});
+
+		await this.checkAllContexts("(4) check all contexts", assert, oBinding,
+			["@$ui5.node.isExpanded", "@$ui5.node.level", "Name"], [
+				[true, 1, "Alpha"],
+				[undefined, 2, "Beta"],
+				[undefined, 2, "Gamma"],
+				[undefined, 1, "Delta"]
+			]);
+
+		if (sMethod !== "changeParameters#0") {
+			return;
+		}
+
+		// eslint-disable-next-line require-atomic-updates
+		sOptions = "ancestors($root/EMPLOYEES,OrgChart,ID,filter(AGE gt 0),keep start)";
+		expectSideEffectsRefresh();
+
+		// code under test
+		oBinding.changeParameters({
+			$orderby : undefined
+		});
+
+		await this.waitForChanges(assert, "(5) changeParameters removing $orderby");
+
+		checkTable("after (5)", assert, oTable, [
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('2')"
+		], [
+			[true, 1, "Alpha"],
+			[undefined, 2, "Beta"]
+		], 4);
+	});
+});
+
+	//*********************************************************************************************
 	// Scenario: Create a node in a hierarchical list. Bind a sublist to the created node. See that
 	// a deep create is not possible. When the node has been persisted, see that the data for the
 	// sublist is fetched and creating an entity is possible.

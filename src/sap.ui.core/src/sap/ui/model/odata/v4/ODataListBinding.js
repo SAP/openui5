@@ -150,6 +150,8 @@ sap.ui.define([
 		this.aPreviousData = null; // no previous data for E.C.D. known yet
 		this.bRefreshKeptElements = false; // refresh kept elements when resuming?
 		this.sResumeAction = undefined; // a special resume action for $$sharedRequest
+		// whether a reset must perform a side-effects refresh (see #setResetViaSideEffects)
+		this.bResetViaSideEffects = undefined;
 		this.bSharedRequest = "$$sharedRequest" in mParameters
 			? mParameters.$$sharedRequest
 			: oModel.bSharedRequests;
@@ -315,12 +317,16 @@ sap.ui.define([
 	 *   Map of binding parameters, {@link sap.ui.model.odata.v4.ODataModel#constructor}
 	 * @param {sap.ui.model.ChangeReason} [sChangeReason]
 	 *   A change reason for {@link #reset}
+	 * @param {string[]} [aChangedParameters]
+	 *   The list of changed parameters, only given from
+	 *   {@link sap.ui.model.odata.v4.ODataParentBinding#changeParameters}
 	 * @throws {Error}
 	 *   If disallowed binding parameters are provided
 	 *
 	 * @private
 	 */
-	ODataListBinding.prototype.applyParameters = function (mParameters, sChangeReason) {
+	ODataListBinding.prototype.applyParameters = function (mParameters, sChangeReason,
+			aChangedParameters) {
 		var sApply,
 			oOldAggregation = this.mParameters && this.mParameters.$$aggregation,
 			sOldApply = this.mQueryOptions && this.mQueryOptions.$apply;
@@ -356,6 +362,12 @@ sap.ui.define([
 			// resets completely incl. first visible row
 			sChangeReason = this.bHasAnalyticalInfo ? ChangeReason.Change : ChangeReason.Filter;
 		}
+
+		if (aChangedParameters) {
+			this.setResetViaSideEffects(aChangedParameters.every(
+				(sParameter) => sParameter === "$orderby" || sParameter === "$filter"));
+		}
+
 		if (this.isRootBindingSuspended()) {
 			this.setResumeChangeReason(sChangeReason);
 			return;
@@ -1345,7 +1357,10 @@ sap.ui.define([
 			sDeepResourcePath, sGroupId, oOldCache) {
 		var oCache,
 			aKeepAlivePredicates,
-			mKeptElementsByPredicate;
+			mKeptElementsByPredicate,
+			bResetViaSideEffects = this.bResetViaSideEffects;
+
+		this.bResetViaSideEffects = undefined;
 
 		if (oOldCache && oOldCache.getResourcePath() === sResourcePath
 				&& oOldCache.$deepResourcePath === sDeepResourcePath) {
@@ -1355,6 +1370,10 @@ sap.ui.define([
 					// but immediately after #setAggregation it might still be a _CollectionCache
 					|| this.mParameters.$$aggregation?.hierarchyQualifier
 					&& oOldCache instanceof _AggregationCache) {
+				if (bResetViaSideEffects && this.mParameters.$$aggregation?.hierarchyQualifier) {
+					sGroupId = this.getGroupId(); // reset via a side-effects refresh
+					oOldCache.resetOutOfPlace();
+				}
 				// Note: #inheritQueryOptions as called below should not matter in case of own
 				// requests, which are a precondition for kept-alive elements
 				oOldCache.reset(aKeepAlivePredicates, sGroupId, mQueryOptions,
@@ -2087,6 +2106,7 @@ sap.ui.define([
 			this.aApplicationFilters = aFilters;
 		}
 		this.oQueryOptionsPromise = undefined;
+		this.setResetViaSideEffects(true);
 
 		if (this.isRootBindingSuspended()) {
 			this.setResumeChangeReason(ChangeReason.Filter);
@@ -4134,8 +4154,7 @@ sap.ui.define([
 	ODataListBinding.prototype.resumeInternal = function (_bCheckUpdate, bParentHasChanges) {
 		var sResumeAction = this.sResumeAction,
 			sResumeChangeReason = this.sResumeChangeReason,
-			bRefresh = bParentHasChanges || sResumeAction || sResumeChangeReason,
-			that = this;
+			bRefresh = bParentHasChanges || sResumeAction || sResumeChangeReason;
 
 		this.sResumeAction = undefined;
 		this.sResumeChangeReason = undefined;
@@ -4157,7 +4176,7 @@ sap.ui.define([
 
 			if (this.bRefreshKeptElements) {
 				this.bRefreshKeptElements = false;
-				that.refreshKeptElements(that.getGroupId());
+				this.refreshKeptElements(this.getGroupId());
 			}
 		}
 		this.getDependentBindings().forEach(function (oDependentBinding) {
@@ -4427,6 +4446,30 @@ sap.ui.define([
 	};
 
 	/**
+	 * Defines whether the following reset must perform a side-effects refresh instead of a full
+	 * refresh.
+	 *
+	 * <code>this.bResetViaSideEffects</code> may have the following values:
+	 * <ul>
+	 *  <li> <code>true</code>: Reset performs a side-effects refresh (possible if only filter or
+	 *    sorter have changed and nothing else).
+	 *  <li> <code>false</code>: It is not possible anymore to perform a side-effects refresh.
+	 *  <li> <code>undefined</code>: The default value, side-effects refresh not yet needed.
+	 *
+	 * @param {boolean} bResetViaSideEffects
+	 *   Whether a side-effects refresh is required
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype.setResetViaSideEffects = function (bResetViaSideEffects) {
+		if (!bResetViaSideEffects) {
+			this.bResetViaSideEffects = false;
+		} else if (this.bResetViaSideEffects === undefined) {
+			this.bResetViaSideEffects = true;
+		}
+	};
+
+	/**
 	 * Sort the entries represented by this list binding according to the given sorters.
 	 * The sorters are stored at this list binding and they are used for each following data
 	 * request. Since 1.97.0, if sorters are unchanged, no request is sent, regardless of pending
@@ -4450,7 +4493,6 @@ sap.ui.define([
 	 *   '$orderby' binding parameter, are always applied after the dynamic sorters.
 	 * @returns {this}
 	 *   <code>this</code> to facilitate method chaining
-	 * @throws {Error}
 	 * @throws {Error} If
 	 *   <ul>
 	 *     <li> there are pending changes that cannot be ignored,
@@ -4491,6 +4533,7 @@ sap.ui.define([
 
 		this.aSorters = aSorters;
 		this.oQueryOptionsPromise = undefined;
+		this.setResetViaSideEffects(true);
 
 		if (this.isRootBindingSuspended()) {
 			this.setResumeChangeReason(ChangeReason.Sort);

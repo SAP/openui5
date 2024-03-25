@@ -205,6 +205,15 @@ sap.ui.define([
 		 */
 		reset() {
 			this.mPredicate2ExpandLevels = {};
+			this.resetOutOfPlace();
+		}
+
+		/**
+		 * Resets all out-of-place information.
+		 *
+		 * @public
+		 */
+		resetOutOfPlace() {
 			this.mPredicate2OutOfPlace = {};
 		}
 

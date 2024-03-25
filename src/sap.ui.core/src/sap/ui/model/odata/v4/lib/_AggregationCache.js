@@ -2017,6 +2017,15 @@ sap.ui.define([
 	};
 
 	/**
+	 * Resets all out-of-place information.
+	 *
+	 * @public
+	 */
+	_AggregationCache.prototype.resetOutOfPlace = function () {
+		this.oTreeState.resetOutOfPlace();
+	};
+
+	/**
 	 * @override
 	 * @see sap.ui.model.odata.v4.lib._CollectionCache#restore
 	 */
