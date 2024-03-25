@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title>Empty Display Control Readings</title>
+	<title>Indicating Empty Values</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<script src="../../../scripts/boot.js"></script>
@@ -9,11 +9,11 @@
 <body class="sapUiBody topicBody">
 	<div class="topic">
 		<div class="content">
-			<h1 id="overview">Improve screen reader announcements</h1>
-			<h2>sap.m.Text empty indicator</h3>
+			<h1 id="overview">Improve Screen Reader Announcements</h1>
+			<h2>sap.m.Text Empty Value Indicator</h3>
 				<p>
-					sap.m.Text allows developers to show to users when text is empty with a “–” character.
-					Depending on the language the symbol (“–”) may change.
+					An indicator should be displayed when the text value is empty. The sap.m.Text control allows developers to indicate an empty text using a dash “–” character.
+					Note, that specific symbol used may vary depending on the language.
 				</p>
 			</h2>
 
@@ -24,12 +24,12 @@ new sap.m.Text({
 })
 </pre>
 
-			<h2>sap.m.Table cell with empty indicator display</h3>
+			<h2>sap.m.Table Cell with Empty Value Indicator</h3>
 				<p>
-					You have to set <code>visible</code> property to <code>false</code> for all <code>sap.m.Link</code> and <code>sap.m.Text</code> control’s instances
-					that are used inside a <code>sap.m.Table</code> cell and have empty <code>text</code> property.
-					Same should be done for <code>sap.m.ObjectIdentifier</code>’s instances that have empty <code>title</code> property.
-					This will improve the screen reader announcements of <code>sap.m.Table</code> rows or <code>sap.m.List</code> items as
+					You have to set <code>visible</code> property to <code>false</code> for all <code>sap.m.Link</code> and <code>sap.m.Text</code> controls’ instances
+					that are used inside a <code>sap.m.Table</code> cell and have empty <code>text</code> properties.
+					Same should be done for <code>sap.m.ObjectIdentifier</code>’s instances that have empty <code>title</code> properties.
+					This will improve the screen reader announcements of <code>sap.m.Table</code> rows or <code>sap.m.List</code> items because
 					all visually empty cells or items will be announced as "empty".
 				</p>
 			</h2>

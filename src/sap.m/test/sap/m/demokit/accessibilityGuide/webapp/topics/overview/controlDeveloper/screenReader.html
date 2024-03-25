@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title>Event Handling</title>
+	<title>Screen Readers</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<script src="../../../scripts/boot.js"></script>
@@ -19,29 +19,30 @@
 
 			<p>
 				Screen readers convert digital text into synthesized speech. They empower users to hear content and navigate with the keyboard.
-				This technology helps people who visually impaired to use information technology with the same level of independence and privacy as anyone else.
+				It helps people who are visually impaired to use information technology with the same level of independence and privacy as anyone else.
 				Screen readers are also used by people with certain cognitive or learning disabilities, or users who simply prefer audio content over text.
-				Beyond the web, screen readers also work with documents, spreadsheets, and the user’s operating system.
+				Beyond the web, screen readers also interact with documents, spreadsheets, and the user’s operating system.
 			</p>
 			<br>
 
 			<h2 id="reading">Reading the Web Page</h2>
 			<p>
-				Screen readers use the technique text-to-speech by going through the HTML of the page and interpreting the HTML tags and attributes.
+				Screen readers provide text-to-speech technique by going through the HTML of the page and interpreting the HTML tags and attributes.
 				<br>
-				Well structured web pages should include headings, lists, paragraphs and quotations where appropriate.
+				Well-structured web pages should include headings, lists, paragraphs and quotations where appropriate.
 				They can also have tables that include relevant information about their content,
 				images that carry an alternative text description and links that have clear link text.
 				<br>
-				When accessibility issues cannot be managed with native HTML, ARIA can help bridge those gaps.
+				When accessibility issues cannot be managed with native HTML, ARIA can help bridge those gaps. 
+				Accessible Rich Internet Applications (ARIA) is a set of roles and attributes that define ways to make the web content and applications more accessible for the users who rely on assistive technologies (AT).
 
 			</p>
 			<br>
 
-			<h2 id="control">Accessible Control</h2>
+			<h2 id="control">Accessible Controls</h2>
 			<p>
-				Accessible controls are created by using the HTML and ARIA attributes when needed..
-				When creating a control you have to think of what functionality you have and how to represent it so screen readers will announce it.
+				Accessible controls are created by using the HTML and ARIA attributes when needed.
+				When creating a control you have to think about the functionality it provides and how you can represent it, so that the screen readers would announce it correctly.
 			</p>
 			<p>
 				Creating a button that a screen reader will understand can look like this:
@@ -58,7 +59,7 @@
 			<pre class="lang-html">
 &lt;div role="combobox" aria-disabled="true" ...&gt; ... &lt;/div&gt;</pre>
 			<p>
-				For more information about ARIA attributes, the available roles and respective states they support: <a href="https://www.w3.org/TR/wai-aria-1.2/" target="_blank" rel="noopener">WAI-ARIA 1.2</a>.
+				For more information about ARIA attributes, the available roles and respective states they support see: <a href="https://www.w3.org/TR/wai-aria-1.2/" target="_blank" rel="noopener">WAI-ARIA 1.2</a>.
 				As an example, on <a href="https://www.w3.org/TR/wai-aria-1.2/#button" target="_blank" rel="noopener">WAI-ARIA 1.2 Button</a>, you can read more about the ARIA attributes for the button role and the supported states.
 			</p>
 		</div>
@@ -66,7 +67,7 @@
 			<h4>Table of Contents</h4>
 			<div><a href="#overview">Overview</a></div>
 			<div><a href="#reading">Reading the web page</a></div>
-			<div><a href="#control">Accessible control</a></div>
+			<div><a href="#control">Accessible controls</a></div>
 		</div>
 	</div>
 </body>

@@ -10,15 +10,15 @@
 	<div class="topic">
 		<div class="content">
 			<h1 id="overview">Message Handling</h1>
-			<p>The system generates messages in response to what users are doing. A message presents information, an instruction, or a warning to users in a given situation.</p>
+			<p>The system generates messages in response to user actions. Each message serves to provide information, give instructions, or issue warnings based on the specific situation.</p>
 
 			<h2 id="message-handling">Message Handling Concept</h2>
-			<p>Our framework provides a central place for storing and managing info, warning, and error messages.</p>
-			<p>Messages can be used to notify the user about specific states of the application and can help the user to correct their incorrect inputs. The central <code>MessageManager</code> for storing messages is available globally by calling <code>sap.ui.getCore().getMessageManager()</code> and the central <code>MessageModel</code> for managing messages is available by calling <code>sap.ui.getCore().getMessageManager().getMessageModel()</code>.</p>
+			<p>The SAPUI5 framework provides a central place for storing and managing information, warnings, and error messages.</p>
+			<p>Messages can be used to notify the users about specific states of the application and guide them how to provide their input. The central <code>MessageManager</code> for storing messages is available globally by calling <code>sap.ui.getCore().getMessageManager()</code> and the central <code>MessageModel</code> for managing messages is available by calling <code>sap.ui.getCore().getMessageManager().getMessageModel()</code>.</p>
 			<a class="try-button" href="../../../index.html#/explore/messageHandlingConcept" target="_parent">See Example</a>
 
 			<h2 id="message-toast">MessageToast</h2>
-			<p>The MessageToast provides a way for the application to show non disruptive message on screen.</p>
+			<p>The MessageToast provides a way for the application to show non-disruptive message on screen.</p>
 			<pre class="lang-js">
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",

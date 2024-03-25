@@ -10,10 +10,10 @@
 	<div class="topic">
 		<div class="content">
 			<h1 id="overview">Labeling and Description</h1>
-			<p>For best accessibility, the ui elements should have a calculated accessible name. This can be achieved in variety of ways for the different types of controls.</p>
-			<p>Proper labeling, describing, titling of all UI elements is needed in order to ensure that the screen reader announces everything correctly.</p>
+			<p>For better accessibility, the UI elements should have a calculated accessible names. This can be achieved in variety of ways for the different types of controls.</p>
+			<p>Proper labeling, describing, and titling of all UI elements is needed in order to ensure that the screen reader announces everything correctly.</p>
 
-			<h2 id="label-inputs">Providing labels for Input controls.</h2>
+			<h2 id="label-inputs">Providing Labels for Input Controls.</h2>
 			<pre class="lang-xml">
 <mark>&lt;Label text="First Name" labelFor="name" /></mark>
 &lt;Input id="name" /></pre>
@@ -30,8 +30,8 @@
 			</pre>
 			<a class="try-button" href="../../../index.html#/explore/inputs" target="_parent">See Example</a>
 
-			<h2 id="description-inputs">Providing description for Input controls.</h2>
-			<p>Other possibility to further enhance the accessibility of the element via the <code>ariaDescribedBy</code> association.</p>
+			<h2 id="description-inputs">Providing Descriptions for Input Controls.</h2>
+			<p>Other possibility to further enhance the accessibility of the element is via the <code>ariaDescribedBy</code> association.</p>
 			<pre class="lang-xml">
 &lt;Input
 	value="Notebook 17"
@@ -42,7 +42,9 @@
 &lt;core:InvisibleText <mark>id="descriptionNodeId"</mark> text="Additional input description referenced by aria-describedby." /&gt;
 			</pre>
 
-			<p>You can also use the description property to add additional information. For the input, the description is usually used for showing the unit of measurement (for example. "EUR").</p>
+			<p>You can also use the <code>description</code> property to add additional information. For the input, the description is often used for showing the unit of measurement (for example. "EUR"). 
+				In the example below, we provide the product category (IT Laptops).
+			</p>
 			<pre class="lang-xml">
 &lt;Input
 	value="Notebook 17"
@@ -53,7 +55,7 @@
 			</pre>
 			<a class="try-button" href="../../../index.html#/explore/inputsDescription" target="_parent">See Example</a>
 
-			<h2 id="title-tables">Providing titles for Tables</h2>
+			<h2 id="title-tables">Providing Titles for Tables</h2>
 			<pre class="lang-xml">
 <mark>&lt;Title id="title" text="Products" /&gt;
 &lt;Table ariaLabelledBy="title"&gt;</mark>
@@ -76,20 +78,23 @@
 &lt;/Table&gt;
 			</pre>
 
-			<h2 id="alt-images">Providing alt property for Images and Icons</h2>
-			<p>Non-decorative sap.m.Image/sap.ui.core.Icon should provide a meaningful alternative description in the <code>alt</code> property.</p>
+			<h2 id="alt-images">Providing Text Alternative for Images and Icons</h2>
+			<p>All semantic non-text content like icons, images, videos has to have a text alternative and you can provide such text using the <code>alt</code> property.
+				Only purely decorative elements don’t require such text alternative, 
+				but if a decorative image covers a considerable amount of space, specifically on touch devices, we recommend to give a crisp description.
+			</p>
 			<pre class="lang-xml">
 &lt;Image src="IMAGE_PATH" <mark>alt="This is an image showing an elephant"</mark> decorative=false /&gt;
 			</pre>
 
-			<h2 id="tooltip-buttons">Providing tooltip for icon-only Buttons</h2>
+			<h2 id="tooltip-buttons">Providing Tooltips for Icon-Only Buttons</h2>
 			<p>Icon-only sap.m.Button should have a tooltip.</p>
 			<pre class="lang-xml">
 &lt;Button icon="sap-icon://action" press=".onPress" <mark>tooltip="Action Name"</mark> /&gt;
 			</pre>
 
-			<h2 id="label-popups">Providing labels for Popups</h2>
-			<p>Label for Dialogs and Popovers with static content can be provided via the <code>ariaLabelledBy</code> association.</p>
+			<h2 id="label-popups">Providing Labels for Popups</h2>
+			<p>Labels for dialogs and popovers with static content can be provided via the <code>ariaLabelledBy</code> association.</p>
 
 			<h3>sap.m.Dialog</h3>
 			<pre class="lang-xml">
@@ -103,7 +108,7 @@
 			<h3>sap.m.Popover</h3>
 			<pre class="lang-js">
 new Popover({
-	title: "Title text",
+	title: "Title Text",
 	content: [
 		new VBox({
 			items: [
@@ -123,8 +128,8 @@ new Popover({
 			</pre>
 			<a class="try-button" href="../../../index.html#/explore/popover" target="_parent">See Example</a>
 
-			<h2 id="description-popups">Providing description for Popups</h2>
-			<p>Description for Dialogs and Popovers with static content can be provided via the <code>ariaDescribedBy</code> association.</p>
+			<h2 id="description-popups">Providing Descriptions for Popups</h2>
+			<p>Descriptions for dialogs and popovers with static content can be provided via the <code>ariaDescribedBy</code> association.</p>
 
 			<h3>sap.m.Popover</h3>
 			<pre class="lang-xml">
@@ -141,7 +146,7 @@ new Popover({
 &lt;/Dialog&gt;
 			</pre>
 
-			<h3>Providing accessible name for sap.m.SegmentedButton</h3>
+			<h3>Providing Accessible Name for sap.m.SegmentedButton</h3>
 <pre class="lang-js">
 new sap.ui.core.InvisibleText("geographicLocation", {
 	text: "Geographic location"
@@ -162,11 +167,11 @@ new sap.m.SegmentedButton({
 			<h4>Table of Contents</h4>
 			<div><a href="#overview">Overview</a></div>
 			<div><a href="#label-inputs">Labels for Inputs</a></div>
-			<div><a href="#description-inputs">Description for Inputs</a></div>
-			<div><a href="#title-tables">Title for Tables</a></div>
-			<div><a href="#tooltip-buttons">Tooltip for icon-only Buttons</a></div>
-			<div><a href="#label-popups">Label for Popups</a></div>
-			<div><a href="#description-popups">Description for Popups</a></div>
+			<div><a href="#description-inputs">Descriptions for Inputs</a></div>
+			<div><a href="#title-tables">Titles for Tables</a></div>
+			<div><a href="#tooltip-buttons">Tooltips for Icon-Only Buttons</a></div>
+			<div><a href="#label-popups">Labels for Popups</a></div>
+			<div><a href="#description-popups">Descriptions for Popups</a></div>
 		</div>
 	</div>
 </body>
