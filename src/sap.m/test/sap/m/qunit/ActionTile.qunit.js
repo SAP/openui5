@@ -13,8 +13,25 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/ContentConfig",
-	"sap/ui/core/theming/Parameters"
-], function(ActionTile,ActionTileContent,TileAttribute,TileContent,library,FormattedText,Button,oCore,Library,KeyCodes,jQuery,JSONModel,ContentConfig,Parameters) {
+	"sap/ui/core/theming/Parameters",
+	"sap/m/Link"
+], function(
+	ActionTile,
+	ActionTileContent,
+	TileAttribute,
+	TileContent,
+	library,
+	FormattedText,
+	Button,
+	oCore,
+	Library,
+	KeyCodes,
+	jQuery,
+	JSONModel,
+	ContentConfig,
+	Parameters,
+	Link
+) {
 	"use strict";
 
 	// shortcut for sap.m.FrameType
@@ -269,5 +286,35 @@ sap.ui.define([
 		var oLink = this.oToDo.getTileContent()[0].getAttributes()[1].getContentConfig().getInnerControl();
 		assert.equal(oLink.mEventRegistry.press.length,1,"Only one event has been attached to the press event of the link");
 
+	});
+
+	QUnit.test("ActionTileContent: Header Link Tests", function (assert) {
+		//setup action tile content
+		var oActionTileContent = new ActionTileContent("action-tile-content", {
+			headerLink: new Link()
+		});
+
+		//render action tile
+		new ActionTile("action-tile", {
+			header: "My Action Tile",
+			valueColor:"Critical",
+			tileContent: oActionTileContent
+		}).placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		//should only render header link if present
+		assert.ok(document.getElementById("action-tile-content-header-link"), "header link rendered");
+
+		//should only render priority if present
+		oActionTileContent.setHeaderLink();
+		oActionTileContent.setPriority("Medium");
+		oActionTileContent.setPriorityText("Medium Priority");
+		oCore.applyChanges();
+		assert.ok(document.getElementById("action-tile-content-priority-value"), "priority rendered");
+
+		//should render header link even if priority is present
+		oActionTileContent.setHeaderLink(new Link());
+		oCore.applyChanges();
+		assert.ok(document.getElementById("action-tile-content-header-link"), "header link rendered");
 	});
 });
