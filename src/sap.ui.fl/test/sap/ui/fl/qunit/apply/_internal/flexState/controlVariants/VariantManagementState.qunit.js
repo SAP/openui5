@@ -1442,7 +1442,7 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("when getting the initial changes with a vm reference", function(assert) {
 			assert.strictEqual(
-				VariantManagementState.getInitialChanges({
+				VariantManagementState.getInitialUIChanges({
 					reference: sReference,
 					vmReference: sVariantManagementReference
 				}).length,
@@ -1453,7 +1453,7 @@ sap.ui.define([
 
 		QUnit.test("when getting the initial changes without a vm reference", function(assert) {
 			assert.strictEqual(
-				VariantManagementState.getInitialChanges({
+				VariantManagementState.getInitialUIChanges({
 					reference: sReference
 				}).length,
 				3,
@@ -1463,7 +1463,7 @@ sap.ui.define([
 
 		QUnit.test("when getting the initial changes with an invalid vm reference", function(assert) {
 			assert.strictEqual(
-				VariantManagementState.getInitialChanges({
+				VariantManagementState.getInitialUIChanges({
 					reference: sReference,
 					vmReference: "someInvalidVMReference"
 				}).length,

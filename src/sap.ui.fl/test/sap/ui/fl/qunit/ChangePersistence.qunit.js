@@ -52,7 +52,7 @@ sap.ui.define([
 
 	QUnit.module("sap.ui.fl.ChangePersistence", {
 		async beforeEach() {
-			sandbox.stub(VariantManagementState, "getInitialChanges").returns([]);
+			sandbox.stub(VariantManagementState, "getInitialUIChanges").returns([]);
 			this._mComponentProperties = {
 				name: sComponentName
 			};
@@ -811,7 +811,7 @@ sap.ui.define([
 			]);
 			this.oFlexStateUpdateStub = sandbox.stub(FlexState, "update");
 			this.oFlexStateGetResponseStub = sandbox.stub(FlexState, "getStorageResponse");
-			this.oGetOnlyInitialVMChangesStub = sandbox.stub(VariantManagementState, "getInitialChanges").returns([
+			this.oGetOnlyInitialVMChangesStub = sandbox.stub(VariantManagementState, "getInitialUIChanges").returns([
 				createChange("customerVariant", Layer.CUSTOMER, "ctrl_variant"),
 				createChange("userVariant", Layer.USER, "ctrl_variant")
 			]);
@@ -877,7 +877,7 @@ sap.ui.define([
 	QUnit.module("sap.ui.fl.ChangePersistence addChange", {
 		beforeEach() {
 			sandbox.stub(FlexState, "getAppDescriptorChanges").returns([]);
-			sandbox.stub(VariantManagementState, "getInitialChanges").returns([]);
+			sandbox.stub(VariantManagementState, "getInitialUIChanges").returns([]);
 			this._mComponentProperties = {
 				name: "saveChangeScenario"
 			};

@@ -113,7 +113,6 @@ sap.ui.define([
 					oComponent: mOptions.rootControl,
 					selector: mOptions.rootControl,
 					invalidateCache: false,
-					includeVariants: true,
 					includeCtrlVariants: true,
 					currentLayer: Layer.CUSTOMER
 				};

@@ -10,21 +10,22 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
+	"sap/ui/fl/initial/_internal/FlexConfiguration",
+	"sap/ui/fl/initial/_internal/FlexInfoSession",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/_internal/condenser/Condenser",
+	"sap/ui/fl/write/_internal/connectors/KeyUserConnector",
 	"sap/ui/fl/write/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
-	"sap/ui/fl/initial/_internal/FlexInfoSession",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/ChangePersistence",
 	"sap/ui/fl/FlexControllerFactory",
-	"sap/ui/fl/initial/_internal/FlexConfiguration",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/fl/write/_internal/connectors/KeyUserConnector"
+	"test-resources/sap/ui/fl/qunit/FlQUnitUtils"
 ], function(
 	_omit,
 	Log,
@@ -35,21 +36,22 @@ sap.ui.define([
 	FlexState,
 	ManifestUtils,
 	FlexObjectFactory,
+	FlexConfiguration,
+	FlexInfoSession,
 	Settings,
 	Condenser,
+	KeyUserConnector,
 	FlexObjectState,
 	Storage,
 	FeaturesAPI,
 	PersistenceWriteAPI,
-	FlexInfoSession,
 	ChangePersistenceFactory,
 	ChangePersistence,
 	FlexControllerFactory,
-	FlexConfiguration,
 	Layer,
 	Utils,
 	sinon,
-	KeyUserConnector
+	FlQUnitUtils
 ) {
 	"use strict";
 
@@ -62,11 +64,6 @@ sap.ui.define([
 		.throws("invalid parameters for flex persistence function")
 		.withArgs(oControl)
 		.returns(oReturn);
-	}
-
-	function mockChangePersistence(oReturn) {
-		var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent("appComponent");
-		sandbox.stub(oChangePersistence, "getChangesForComponent").resolves(oReturn);
 	}
 
 	function getMethodStub(aArguments, vReturnValue) {
@@ -120,6 +117,7 @@ sap.ui.define([
 			window.sessionStorage.removeItem(`sap.ui.fl.info.${this.oAppComponent.getId()}`);
 		},
 		afterEach() {
+			FlexState.clearState();
 			sandbox.restore();
 			delete this.vSelector;
 		}
@@ -176,18 +174,14 @@ sap.ui.define([
 		}, {
 			testName: "when hasHigherLayerChanges is called and the ChangePersistency has changes present in a higher layer",
 			persistencyChanges: [{
-				getLayer() {
-					return Layer.USER;
-				}
+				layer: Layer.USER
 			}],
 			compEntities: {},
 			expectedResult: true
 		}, {
 			testName: "when the ChangePersistency has changes present in a higher layer, and VMS filters them",
 			persistencyChanges: [{
-				getLayer() {
-					return Layer.USER;
-				}
+				layer: Layer.USER
 			}],
 			compEntities: {},
 			expectedResult: false,
@@ -211,9 +205,7 @@ sap.ui.define([
 			testName: "when hasHigherLayerChanges is called and the ChangePersistence "
 				+ "AND CompVariantState have changes present, one in higher layer",
 			persistencyChanges: [{
-				getLayer() {
-					return Layer.CUSTOMER;
-				}
+				layer: Layer.CUSTOMER
 			}],
 			compEntities: {
 				persistencyKey: {
@@ -231,9 +223,7 @@ sap.ui.define([
 			testName: "when hasHigherLayerChanges is called and the ChangePersistence "
 				+ "AND CompVariantState have changes present, all in higher layer",
 			persistencyChanges: [{
-				getLayer() {
-					return Layer.USER;
-				}
+				layer: Layer.USER
 			}],
 			compEntities: {
 				persistencyKey: {
@@ -248,31 +238,28 @@ sap.ui.define([
 			},
 			expectedResult: true
 		}].forEach(function(testSetup) {
-			QUnit.test(testSetup.testName, function(assert) {
+			QUnit.test(testSetup.testName, async function(assert) {
 				var mPropertyBag = {
-					layer: Layer.CUSTOMER,
 					selector: this.oAppComponent,
 					mockParam: "mockParam"
 				};
 
 				sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
 
-				mockChangePersistence(testSetup.persistencyChanges);
+				await FlQUnitUtils.initializeFlexStateWithData(sandbox, "appComponent", {changes: testSetup.persistencyChanges});
 				sandbox.stub(FlexState, "getCompVariantsMap").returns(testSetup.compEntities);
 				sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(this.oAppComponent.getId());
 				const oVMSFilterStub = sandbox.stub(FlexObjectState, "filterHiddenFlexObjects").callsFake((aFlexObjects) => {
 					return testSetup.filterVariants ? [] : aFlexObjects;
 				});
 
-				return PersistenceWriteAPI.hasHigherLayerChanges(mPropertyBag)
-				.then(function(bHasHigherLayerChanges) {
-					assert.strictEqual(
-						oVMSFilterStub.callCount,
-						(testSetup.expectedResult || testSetup.filterVariants) ? 1 : 0,
-						"the VMS is only called if necessary"
-					);
-					assert.strictEqual(bHasHigherLayerChanges, testSetup.expectedResult, `it resolves with ${testSetup.expectedResult}`);
-				});
+				const bHasHigherLayerChanges = await PersistenceWriteAPI.hasHigherLayerChanges(mPropertyBag);
+				assert.strictEqual(
+					oVMSFilterStub.callCount,
+					(testSetup.expectedResult || testSetup.filterVariants) ? 1 : 0,
+					"the VMS is only called if necessary"
+				);
+				assert.strictEqual(bHasHigherLayerChanges, testSetup.expectedResult, `it resolves with ${testSetup.expectedResult}`);
 			});
 		});
 

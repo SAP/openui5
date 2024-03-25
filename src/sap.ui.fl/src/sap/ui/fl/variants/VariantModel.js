@@ -331,7 +331,7 @@ sap.ui.define([
 			this.updateData();
 
 			const oLiveDependencyMap = UIChangesState.getLiveDependencyMap(this.sFlexReference);
-			VariantManagementState.getInitialChanges(
+			VariantManagementState.getInitialUIChanges(
 				{reference: this.sFlexReference},
 				this.oAppComponent.getId(),
 				this.sFlexReference

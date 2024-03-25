@@ -6,7 +6,6 @@ sap.ui.define([
 	"sap/ui/core/mvc/View",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/Component",
-	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/_internal/preprocessors/ControllerExtension",
 	"sap/ui/fl/Layer",
@@ -19,7 +18,6 @@ sap.ui.define([
 	View,
 	ComponentContainer,
 	Component,
-	VariantManagementState,
 	ManifestUtils,
 	ControllerExtension,
 	Layer,
@@ -29,9 +27,10 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var sandbox = sinon.createSandbox();
+	const sandbox = sinon.createSandbox();
+	const sReference = "<sap-app-id> or <component name>";
 
-	var sControllerName = "ui.s2p.mm.purchorder.approve.view.S2";
+	const sControllerName = "ui.s2p.mm.purchorder.approve.view.S2";
 
 	function createCodeExtChangeContent(oInput) {
 		return Object.assign({
@@ -41,7 +40,7 @@ sap.ui.define([
 			layer: Layer.CUSTOMER,
 			creation: "20150720131919",
 			changeType: "codeExt",
-			reference: "<sap-app-id> or <component name>",
+			reference: sReference,
 			selector: {
 				controllerName: sControllerName
 			},
@@ -55,7 +54,6 @@ sap.ui.define([
 
 	QUnit.module("sap.ui.fl.ControllerExtension", {
 		beforeEach() {
-			sandbox.stub(VariantManagementState, "getInitialChanges").returns([]);
 			this.oExtensionProvider = new ControllerExtension();
 		},
 		afterEach() {
@@ -63,7 +61,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("When an sync view is processed", function(assert) {
-			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("<sap-app-id> or <component name>");
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
 
 			// check sync case
 			var aEmptyCodeExtensionSync = this.oExtensionProvider.getControllerExtensions(sControllerName, "<component ID>", false);
@@ -141,7 +139,7 @@ sap.ui.define([
 			var done1 = assert.async();
 			var done2 = assert.async();
 
-			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("<sap-app-id> or <component name>");
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
 			sandbox.stub(Utils, "isApplication").returns(true);
 			ManagedObject._sOwnerId = "<component name>";
 
@@ -203,7 +201,7 @@ sap.ui.define([
 			var oFileContent = {
 				changes: [oOtherChange1, oCodingChange1, oOtherChange2, oCodingChange2]
 			};
-			await FlQUnitUtils.initializeFlexStateWithData(sandbox, "<sap-app-id> or <component name>", oFileContent);
+			await FlQUnitUtils.initializeFlexStateWithData(sandbox, sReference, oFileContent);
 
 			// view, controller and component definition
 

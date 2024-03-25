@@ -578,7 +578,7 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted
 	 */
-	VariantManagementState.getInitialChanges = function(mPropertyBag) {
+	VariantManagementState.getInitialUIChanges = function(mPropertyBag) {
 		var oVariantsMap = oVariantManagementMapDataSelector.get({
 			reference: mPropertyBag.reference
 		});
@@ -595,6 +595,40 @@ sap.ui.define([
 
 				// Concatenate with the previous flex changes
 				return aInitialChanges.concat(VariantManagementState.getControlChangesForVariant(mArguments));
+			}
+			return aInitialChanges;
+		}, []);
+	};
+
+	/**
+	 * Returns the following FlexObjects: All Variants and VariantManagementChanges, and all ControlChanges for the current variants.
+	 *
+	 * @param {object} mPropertyBag - Object with the necessary properties
+	 * @param {string} mPropertyBag.reference - Component reference
+	 *
+	 * @returns {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} All changes of current or default variants
+	 * @private
+	 * @ui5-restricted
+	 */
+	VariantManagementState.getAllCurrentFlexObjects = function(mPropertyBag) {
+		const oVariantsMap = oVariantManagementMapDataSelector.get({
+			reference: mPropertyBag.reference
+		});
+		return Object.keys(oVariantsMap).reduce(function(aInitialChanges, sVMReference) {
+			if (
+				(mPropertyBag.vmReference && mPropertyBag.vmReference === sVMReference)
+				|| !mPropertyBag.vmReference
+			) {
+				const mArguments = Object.assign({}, mPropertyBag, {
+					vmReference: sVMReference,
+					vReference: oVariantsMap[sVMReference].currentVariant
+				});
+				const oVariant = VariantManagementState.getVariant(mArguments);
+				return aInitialChanges
+				.concat(oVariant.variantChanges)
+				.concat(oVariant.controlChanges)
+				.concat(oVariantsMap[sVMReference].variantManagementChanges)
+				.concat(oVariantsMap[sVMReference].variants.map((oVariant) => oVariant.instance));
 			}
 			return aInitialChanges;
 		}, []);
@@ -663,7 +697,7 @@ sap.ui.define([
 	 * @returns {Promise} Promise that resolves when all changes for the initial variant are applied
 	 */
 	VariantManagementState.waitForInitialVariantChanges = function(mPropertyBag) {
-		var aCurrentVariantChanges = VariantManagementState.getInitialChanges({
+		var aCurrentVariantChanges = VariantManagementState.getInitialUIChanges({
 			vmReference: mPropertyBag.vmReference,
 			reference: mPropertyBag.reference
 		});

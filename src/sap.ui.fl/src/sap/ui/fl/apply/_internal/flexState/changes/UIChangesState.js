@@ -86,7 +86,10 @@ sap.ui.define([
 		parentDataSelector: oAllUIChangesDataSelector,
 		executeFunction(aFlexObjects) {
 			return aFlexObjects.filter((oFlexObject) => {
-				return !oFlexObject.getVariantReference() && !oFlexObject.getSelector().persistencyKey;
+				return !oFlexObject.getVariantReference()
+				&& !oFlexObject.getSelector().persistencyKey
+				&& oFlexObject.getFileType() !== "ctrl_variant_management_change"
+				&& oFlexObject.getFileType() !== "ctrl_variant_change";
 			});
 		},
 		checkInvalidation(mParameters, oUpdateInfo) {
@@ -94,7 +97,9 @@ sap.ui.define([
 			return bRelevantType
 				&& oUpdateInfo.updatedObject?.isA(sUIChangeNameSpace)
 				&& !oUpdateInfo.updatedObject.getVariantReference()
-				&& !oUpdateInfo.updatedObject.getSelector().persistencyKey;
+				&& !oUpdateInfo.updatedObject.getSelector().persistencyKey
+				&& oUpdateInfo.updatedObject.getFileType() !== "ctrl_variant_management_change"
+				&& oUpdateInfo.updatedObject.getFileType() !== "ctrl_variant_change";
 		}
 	});
 
@@ -148,9 +153,13 @@ sap.ui.define([
 	 */
 	UIChangesState.getAllApplicableUIChanges = function(sReference) {
 		const aVMIndependentUIChanges = oVMIndependentUIChangesDataSelector.get({reference: sReference});
-		return aVMIndependentUIChanges.concat(VariantManagementState.getInitialChanges({
+		return aVMIndependentUIChanges.concat(VariantManagementState.getInitialUIChanges({
 			reference: sReference
 		}));
+	};
+
+	UIChangesState.getVariantIndependentUIChanges = function(sReference) {
+		return oVMIndependentUIChangesDataSelector.get({reference: sReference});
 	};
 
 	/**

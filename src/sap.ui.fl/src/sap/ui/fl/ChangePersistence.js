@@ -126,7 +126,7 @@ sap.ui.define([
 
 		if (!mPropertyBag.includeCtrlVariants) {
 			aRelevantUIChanges = aRelevantUIChanges.concat(
-				VariantManagementState.getInitialChanges({reference: this._mComponent.name})
+				VariantManagementState.getInitialUIChanges({reference: this._mComponent.name})
 			);
 		} else {
 			aRelevantUIChanges = aRelevantUIChanges.concat(

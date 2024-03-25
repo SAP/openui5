@@ -381,14 +381,11 @@ sap.ui.define([
 	 *
 	 * @param {object} mPropertyBag - Object with parameters as properties
 	 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Retrieves the associated flex persistence
-	 * @param {string} [mPropertyBag.layer] - Layer for which changes are to be deleted
-	 * @param {string} [mPropertyBag.generator] - Generator of changes
-	 * @param {string[]} [mPropertyBag.selectorIds] - Selector IDs in local format
-	 * @param {string[]} [mPropertyBag.changeTypes] - Types of changes
+	 * @param {string} [mPropertyBag.layer] - Layer for which changes should be checked
 	 * @returns {Promise} Resolves with object that decides if warning should be shown
 	 *
 	 */
-	 PersistenceWriteAPI.getChangesWarning = function(mPropertyBag) {
+	PersistenceWriteAPI.getChangesWarning = function(mPropertyBag) {
 		return this._getUIChanges(mPropertyBag).then(function(aChanges) {
 			var bHasChangesFromOtherSystem = aChanges.some(function(oChange) {
 				return oChange.isChangeFromOtherSystem();
