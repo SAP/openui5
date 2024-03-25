@@ -1894,11 +1894,20 @@ sap.ui.define([
 	 */
 	_AggregationCache.prototype.requestProperties = async function (oElement, aSelect, oGroupLock,
 			bInheritResult, bDropFilter) {
+		function getApply(mQueryOptions) { // keep $apply and custom query options
+			mQueryOptions = {...mQueryOptions};
+			// Note: $filter is overwritten below, $orderby is part of $apply already
+			delete mQueryOptions.$count;
+			delete mQueryOptions.$expand;
+			delete mQueryOptions.$select;
+			return mQueryOptions;
+		}
+
 		const oCache = _Helper.getPrivateAnnotation(oElement, "parent");
 		const mQueryOptions = bDropFilter
 			? _AggregationHelper
 				.dropFilter(this.oAggregation, this.mQueryOptions, oCache.$parentFilter)
-			: {$apply : oCache.getQueryOptions().$apply};
+			: getApply(oCache.getQueryOptions());
 		mQueryOptions.$filter = _Helper.getKeyFilter(oElement, this.sMetaPath, this.getTypes());
 		const sResourcePath = this.sResourcePath
 			+ this.oRequestor.buildQueryString(this.sMetaPath, mQueryOptions, false, true);

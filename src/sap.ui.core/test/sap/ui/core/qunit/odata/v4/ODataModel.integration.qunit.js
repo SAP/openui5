@@ -33731,8 +33731,7 @@ make root = ${bMakeRoot}`;
 					Name : "Beta"
 				}]
 			})
-			.expectRequest(sUrl.replace("custom=foo&", "") //TODO: add custom params to rank request
-				+ "&$filter=ID eq '6'&$select=LimitedRank",
+			.expectRequest(sUrl + "&$filter=ID eq '6'&$select=LimitedRank",
 				{value : [{LimitedRank : "5"}]});
 
 		const oZeta = oBinding.create({Name : "Zeta"}, /*bSkipRefresh*/true);
@@ -33745,8 +33744,7 @@ make root = ${bMakeRoot}`;
 		this.expectRequest(
 				{method : "POST", url : "EMPLOYEES?custom=foo", payload : {Name : "Eta"}},
 				{ID : "7", Name : "Eta"})
-			.expectRequest(sUrl.replace("custom=foo&", "") //TODO: add custom params to rank request
-				+ "&$filter=ID eq '7'&$select=LimitedRank",
+			.expectRequest(sUrl + "&$filter=ID eq '7'&$select=LimitedRank",
 				{value : [{LimitedRank : "6"}]});
 
 		const oEta = oBinding.create({Name : "Eta"}, /*bSkipRefresh*/true);
@@ -33764,8 +33762,7 @@ make root = ${bMakeRoot}`;
 					Name : "Theta"
 				}
 			}, {ID : "8", Name : "Theta"})
-			.expectRequest(sUrl.replace("custom=foo&", "") //TODO: add custom params to rank request
-				+ "&$filter=ID eq '8'&$select=LimitedRank",
+			.expectRequest(sUrl + "&$filter=ID eq '8'&$select=LimitedRank",
 				{value : [{LimitedRank : "1"}]});
 
 		const oAlpha = oTable.getRows()[0].getBindingContext();
@@ -35103,13 +35100,14 @@ make root = ${bMakeRoot}`;
 	QUnit.test("Recursive Hierarchy: #requestParent for non-adjacent children",
 			async function (assert) {
 		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
-		const sUrl = "EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
+		const sUrl = "EMPLOYEES?custom=foo&$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
 			+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart'"
 			+ ",NodeProperty='ID',Levels=2)";
 		const sView = `
 <t:Table id="table" rows="{path : '/EMPLOYEES',
 		parameters : {
-			$$aggregation : {expandTo : 2, hierarchyQualifier : 'OrgChart'}
+			$$aggregation : {expandTo : 2, hierarchyQualifier : 'OrgChart'},
+			custom : 'foo'
 		}}" firstVisibleRow="2" threshold="0" visibleRowCount="2">
 	<Text text="{= %{@$ui5.node.isExpanded} }"/>
 	<Text text="{= %{@$ui5.node.level} }"/>
@@ -35191,7 +35189,8 @@ make root = ${bMakeRoot}`;
 
 		this.expectRequest({
 				batchNo : 3,
-				url : "EMPLOYEES?$apply=ancestors($root/EMPLOYEES,OrgChart,ID,filter(ID eq '2'),1)"
+				url : "EMPLOYEES?custom=foo"
+					+ "&$apply=ancestors($root/EMPLOYEES,OrgChart,ID,filter(ID eq '2'),1)"
 					+ "&$select=ID,Name"
 			}, {
 				value : [{
@@ -35201,7 +35200,8 @@ make root = ${bMakeRoot}`;
 			})
 			.expectRequest({
 				batchNo : 3,
-				url : "EMPLOYEES?$apply=ancestors($root/EMPLOYEES,OrgChart,ID,filter(ID eq '5'),1)"
+				url : "EMPLOYEES?custom=foo"
+					+ "&$apply=ancestors($root/EMPLOYEES,OrgChart,ID,filter(ID eq '5'),1)"
 					+ "&$select=ID,Name"
 			}, {
 				value : [{
@@ -35243,7 +35243,8 @@ make root = ${bMakeRoot}`;
 		assert.strictEqual(oEta.getParent(), oAlpha);
 		assert.strictEqual(oDelta.getParent(), oAlpha);
 
-		this.expectRequest("EMPLOYEES?$select=ID,Name&$filter=ID eq '5' or ID eq '6'&$top=2", {
+		this.expectRequest("EMPLOYEES?custom=foo&$select=ID,Name&$filter=ID eq '5' or ID eq '6'"
+				+ "&$top=2", {
 				value : [{
 					DrillState : "leaf",
 					ID : "5",
@@ -35316,7 +35317,8 @@ make root = ${bMakeRoot}`;
 		]);
 
 		this.expectRequest({
-				url : "EMPLOYEES?$apply=ancestors($root/EMPLOYEES,OrgChart,ID,filter(ID eq '5'),1)"
+				url : "EMPLOYEES?custom=foo"
+					+ "&$apply=ancestors($root/EMPLOYEES,OrgChart,ID,filter(ID eq '5'),1)"
 					+ "&$select=ID,Name"
 			}, {
 				value : [{
