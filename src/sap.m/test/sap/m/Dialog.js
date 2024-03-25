@@ -932,7 +932,7 @@ sap.ui.define([
 		}),
 		endButton: new Button({
 			text: "Cancel", press: function () {
-				oDialogResizeAndDrag.close();
+				oDialogResizeAndDragSubheader.close();
 			}
 		})
 	});
