@@ -49,7 +49,7 @@ sap.ui.define([
 	"use strict";
 
 		// system query options for collection responses, but not inside $expand
-	var rCollection = /[?&]\$(?:count|filter|orderby|search)/,
+	var rCollection = /[?&]\$(?:count|filter|orderby|search|skip|top)/,
 		sContext = "sap.ui.model.odata.v4.Context",
 		rCountTrue = /[?&]\$count=true/, // $count=true, but not inside $expand
 		rCountUrl = /\/\$count(?:\?|$)/, // URL for ".../$count?..."
@@ -15335,6 +15335,79 @@ sap.ui.define([
 			]);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: We simulate parts of a file upload here. Initially, the Edm.Stream property is
+	// missing from the response (of course) and a late property request is sent leading to
+	// "Picture@$ui5.noData : true" being set. File upload happens outside the model and only a file
+	// name would be PATCHed, this is omitted here. Removal of the file requires the model to PATCH
+	// a null value, which ruins the URL. Thus the property is reset to undefined on the client side
+	// only. This must not prevent a side effect from setting "Picture@$ui5.noData : true" again!
+	// Thus upload and removal can be repeated (endlessly) while a URL is implicitly available for
+	// up- and download at all times.
+	// SNOW: DINC0088146
+	QUnit.test("DINC0088146", async function (assert) {
+		const oModel = this.createSpecialCasesModel({autoExpandSelect : true});
+		const sView = `
+<Table id="list" items="{/Artists}">
+	<Text id="id" text="{ArtistID}"/>
+</Table>
+<FlexBox id="detail">
+	<Text id="link" text="{Picture}"/>
+</FlexBox>`;
+		const sLink = "/special/cases/Artists(ArtistID='42',IsActiveEntity=true)/Picture";
+
+		this.expectRequest("Artists?$select=ArtistID,IsActiveEntity&$skip=0&$top=100", {
+				value : [{
+					ArtistID : "42",
+					IsActiveEntity : true
+				}]
+			})
+			.expectChange("link");
+
+		await this.createView(assert, sView, oModel);
+
+		this.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)?$select=Picture", {
+				ArtistID : "42",
+				// Picture (Edm.Stream) missing here
+				"Picture@odata.mediaContentType" : null
+			})
+			.expectChange("link", sLink);
+
+		const oContext = this.oView.byId("list").getItems()[0].getBindingContext();
+		this.oView.byId("detail").setBindingContext(oContext);
+
+		await this.waitForChanges(assert, "detail");
+
+		for (let i = 0; i < 3; i += 1) {
+			this.expectChange("link", null)
+				.expectChange("link", sLink)
+				.expectRequest({
+					method : "PATCH",
+					url : "Artists(ArtistID='42',IsActiveEntity=true)",
+					payload : {Picture : null}
+				})
+				.expectRequest("Artists?$select=ArtistID,IsActiveEntity,Picture"
+					+ "&$filter=ArtistID eq '42' and IsActiveEntity eq true", {
+					value : [{
+						ArtistID : "42",
+						IsActiveEntity : true,
+						// Picture (Edm.Stream) missing here
+						"Picture@odata.mediaContentType" : null
+					}]
+				})
+				.expectChange("link", sLink); // due to "Picture@$ui5.noData : true" being set
+
+			// eslint-disable-next-line no-await-in-loop
+			await Promise.all([
+				oContext.setProperty("Picture", null),
+				oContext.requestSideEffects(["Picture"]),
+				oContext.setProperty("Picture", undefined, /*sGroupId*/null),
+				this.waitForChanges(assert, "remove #" + i)
+			]);
+		}
+	});
+
 	//*********************************************************************************************
 	// Scenario: Writing instance annotations via create and update.
 	// 1. POST: Initial payload containing instance annotations
