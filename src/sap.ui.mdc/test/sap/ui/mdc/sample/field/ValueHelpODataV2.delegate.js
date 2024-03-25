@@ -46,11 +46,21 @@ sap.ui.define([
 	ValueHelpDelegate.shouldOpenOnFocus = function (oValueHelp, oContainer) {
 		var oPayload = oValueHelp.getPayload();
 
-		if (oPayload && oPayload.hasOwnProperty("shouldOpenOnFocus") && oContainer.isA("sap.ui.mdc.valuehelp.Popover")) {
+		if (oPayload?.hasOwnProperty("shouldOpenOnFocus") && oContainer.isA("sap.ui.mdc.valuehelp.Popover")) {
 			return oPayload.shouldOpenOnFocus;
 		} else {
 			return TestValueHelpDelegate.shouldOpenOnFocus.apply(this, arguments);
 		}
+	};
+
+	ValueHelpDelegate.showTypeahead = function(oValueHelp, oContent) {
+		var oPayload = oValueHelp.getPayload();
+
+		if (oPayload?.hasOwnProperty("showWithoutFilter") && oPayload?.showWithoutFilter && !oContent.getFilterValue()) {
+			return true; // open if user don't enter any value
+		}
+
+		return TestValueHelpDelegate.showTypeahead.apply(this, arguments);
 	};
 
 	return ValueHelpDelegate;

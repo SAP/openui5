@@ -1668,6 +1668,8 @@ sap.ui.define([
 			});
 	});
 
+	QUnit.module("Filters");
+
 	QUnit.test("Filters - static items", function (assert) {
 		var oManifest = {
 			"sap.app": {
@@ -1857,6 +1859,91 @@ sap.ui.define([
 
 		oCard.startManifestProcessing();
 	});
+
+	QUnit.test("Bound filter properties", async function (assert) {
+		const oManifest = {
+			"sap.app": {
+				"id": "manifestResolver.test.card.filterPropertiesBound",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "List",
+				"configuration": {
+					"parameters": {
+						"someParameter": {
+							"value": "SomeValue"
+						}
+					},
+					"filters": {
+						"filter1": {
+							"type": "Select",
+							"label": "{parameters>/someParameter/value}",
+							"visible": "{= !!${parameters>/someParameter/value}}",
+							"value": "{parameters>/someParameter/value}",
+							"items": []
+						},
+						"filter2": {
+							"type": "Search",
+							"label": "{parameters>/someParameter/value}",
+							"visible": "{= !!${parameters>/someParameter/value}}",
+							"value": "{parameters>/someParameter/value}"
+						},
+						"filter3": {
+							"type": "ComboBox",
+							"label": "{parameters>/someParameter/value}",
+							"visible": "{= !!${parameters>/someParameter/value}}",
+							"value": "{parameters>/someParameter/value}",
+							"items": []
+						}
+					}
+				}
+			}
+		};
+
+		const oCard = new SkeletonCard({
+			manifest: oManifest,
+			baseUrl: "test-resources/sap/ui/integration/qunit/testResources/manifestResolver/"
+		});
+
+		const oRes = await ManifestResolver.resolveCard(oCard);
+		assert.deepEqual(
+			oRes["sap.card"].configuration.filters.filter1,
+			{
+				"type": "Select",
+				"label": "SomeValue",
+				"visible": true,
+				"value": "SomeValue",
+				"items": []
+			},
+			"Values are resolved."
+		);
+
+		assert.deepEqual(
+			oRes["sap.card"].configuration.filters.filter2,
+			{
+				"type": "Search",
+				"label": "SomeValue",
+				"value": "SomeValue",
+				"visible": true
+			},
+			"Values are resolved."
+		);
+
+		assert.deepEqual(
+			oRes["sap.card"].configuration.filters.filter3,
+			{
+				"type": "ComboBox",
+				"label": "SomeValue",
+				"value": "SomeValue",
+				"visible": true,
+				"items": []
+			},
+			"Values are resolved."
+		);
+
+		oCard.destroy();
+	});
+
 
 	QUnit.module("Resolving formatters");
 

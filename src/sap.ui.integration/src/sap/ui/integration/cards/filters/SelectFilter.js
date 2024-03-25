@@ -109,7 +109,7 @@ sap.ui.define([
 	 * @returns {object} Filter configuration with static items
 	 */
 	SelectFilter.prototype.getStaticConfiguration = function () {
-		var oConfiguration =  this.getConfig();
+		var oConfiguration = this.getParsedConfiguration();
 		var sPath = "/";
 		var aItems;
 		var aResolvedItems = [];

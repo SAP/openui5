@@ -22,6 +22,7 @@
 			<w:Card displayVariant="TileStandard" width="176px" height="176px" id="card9" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/tilesVariants/sample5.json" class="sapUiSmallMargin"/>
 			<w:Card displayVariant="TileStandard" width="176px" height="176px" id="card21" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/tilesVariants/sample6.json" class="sapUiSmallMargin"/>
 			<w:Card displayVariant="TileStandard" width="176px" height="176px" id="card31" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/tilesVariants/sample7.json" class="sapUiSmallMargin"/>
+			<w:Card displayVariant="TileStandard" width="176px" height="176px" id="card35" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/tilesVariants/sample8.json" class="sapUiSmallMargin"/>
 			<w:Card design="Transparent" displayVariant="TileStandard" width="176px" height="176px" id="card41" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/tilesVariants/contractStatusTile/manifest.json" class="sapUiSmallMargin"/>
 		</Panel>
 		<Panel headerText="Tiles Standard Wide 4x2" class="sapUiSmallMargin">
@@ -32,6 +33,7 @@
 			<w:Card displayVariant="TileStandardWide" width="360px" height="176px" id="card10" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/tilesVariants/sample5.json" class="sapUiSmallMargin"/>
 			<w:Card displayVariant="TileStandardWide" width="360px" height="176px" id="card22" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/tilesVariants/sample6.json" class="sapUiSmallMargin"/>
 			<w:Card displayVariant="TileStandardWide" width="360px" height="176px" id="card32" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/tilesVariants/sample7.json" class="sapUiSmallMargin"/>
+			<w:Card displayVariant="TileStandardWide" width="360px" height="176px" id="card36" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/tilesVariants/sample8.json" class="sapUiSmallMargin"/>
 		</Panel>
 		<Panel headerText="Tiles Flat 2x1" class="sapUiSmallMargin">
 			<w:Card displayVariant="TileFlat" width="176px" height="84px" id="card11" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/tilesVariants/sample1.json" class="sapUiSmallMargin"/>
@@ -41,6 +43,7 @@
 			<w:Card displayVariant="TileFlat" width="176px" height="84px" id="card19" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/tilesVariants/sample5.json" class="sapUiSmallMargin"/>
 			<w:Card displayVariant="TileFlat" width="176px" height="84px" id="card23" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/tilesVariants/sample6.json" class="sapUiSmallMargin"/>
 			<w:Card displayVariant="TileFlat" width="176px" height="84px" id="card33" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/tilesVariants/sample7.json" class="sapUiSmallMargin"/>
+			<w:Card displayVariant="TileFlat" width="176px" height="84px" id="card37" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/tilesVariants/sample8.json" class="sapUiSmallMargin"/>
 		</Panel>
 		<Panel headerText="Tiles Flat Wide 4x1" class="sapUiSmallMargin">
 			<w:Card displayVariant="TileFlatWide" width="360px" height="84px" id="card14" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/tilesVariants/sample1.json" class="sapUiSmallMargin"/>
@@ -50,6 +53,7 @@
 			<w:Card displayVariant="TileFlatWide" width="360px" height="84px" id="card20" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/tilesVariants/sample5.json" class="sapUiSmallMargin"/>
 			<w:Card displayVariant="TileFlatWide" width="360px" height="84px" id="card24" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/tilesVariants/sample6.json" class="sapUiSmallMargin"/>
 			<w:Card displayVariant="TileFlatWide" width="360px" height="84px" id="card34" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/tilesVariants/sample7.json" class="sapUiSmallMargin"/>
+			<w:Card displayVariant="TileFlatWide" width="360px" height="84px" id="card38" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/tilesVariants/sample8.json" class="sapUiSmallMargin"/>
 		</Panel>
 	</Page>
 </mvc:View>

@@ -307,23 +307,23 @@
 			]
 		});
 
-        var oLabel3 = new sap.m.Label({
-            text: "This one has a type Accept and no default action"
-        });
-        var oMenuButton3 = new sap.m.MenuButton('mb3', {
-            text: "Accept",
-            buttonMode: sap.m.MenuButtonMode.Split,
-            type: sap.m.ButtonType.Accept,
-            useDefaultActionOnly: true,
+		var oLabel3 = new sap.m.Label({
+			text: "This one has a type Accept and no default action"
+		});
+		var oMenuButton3 = new sap.m.MenuButton('mb3', {
+			text: "Accept",
+			buttonMode: sap.m.MenuButtonMode.Split,
+			type: sap.m.ButtonType.Accept,
+			useDefaultActionOnly: true,
 			menu: oMenu3,
-			defaultAction: function() {
+			defaultAction: function () {
 				sap.m.MessageToast.show("Accepted");
 			}
-        });
+		});
 
-        var oMenuButton3Disabled = new sap.m.MenuButton('mb3-disabled', {
-            text: "Disabled menu button",
-            enabled: false
+		var oMenuButton3Disabled = new sap.m.MenuButton('mb3-disabled', {
+			text: "Disabled menu button",
+			enabled: false
 		});
 
 		var oMenuButton4 = new sap.m.MenuButton('mb4', {
@@ -427,13 +427,13 @@
 		});
 		var oMenuButton7 = new sap.m.MenuButton({
 			width: "15rem",
-			text: "Accept",
+			text: "Emphasized",
 			buttonMode: sap.m.MenuButtonMode.Split,
 			type: sap.m.ButtonType.Emphasized,
 			useDefaultActionOnly: true,
 			menu: oMenu7,
 			defaultAction: function () {
-				sap.m.MessageToast.show("Accepted");
+				sap.m.MessageToast.show("Emphasized");
 			}
 		});
 
@@ -658,30 +658,62 @@
 
 				oLabel3,
 				oMenuButton3,
-			oMenuButton4,
-			oMenuButtonLong1,
-			oMenuButtonLong2,
+				oMenuButton4,
+				oMenuButtonLong1,
+				oMenuButtonLong2,
 
-			oLabel6,
-			oMenuButton6,
+				oLabel6,
+				oMenuButton6,
+	
+				oLabel7,
+				oMenuButton7,
 
-			oLabel7,
-			oMenuButton7,
+				oTestButton1,
+				oTestButton11,
+				oTestButton111,
+				oTestButton2,
+				oTestButton22,
+				oTestButton222,
 
-			oTestButton1,
-			oTestButton11,
-			oTestButton111,
-			oTestButton2,
-			oTestButton22,
-			oTestButton222,
+				oMenuButton15,
 
-			oMenuButton15,
+				oButton,
+				oButtonShowTruncation,
+				oDensitySelect
+			]
+		});
 
-			oButton,
-			oButtonShowTruncation,
-			oDensitySelect
-		]
-	});
+		var oHBox = new sap.m.HBox({
+			items: [
+				new sap.m.MenuButton('mbneg', {
+					text: "Negative",
+					buttonMode: sap.m.MenuButtonMode.Split,
+					type: sap.m.ButtonType.Negative,
+					useDefaultActionOnly: true,
+					defaultAction: function () {
+						sap.m.MessageToast.show("Negative");
+					}
+				}).addStyleClass("sapUiSmallMargin"),
+				new sap.m.MenuButton('mbattention', {
+					text: "Attention",
+					buttonMode: sap.m.MenuButtonMode.Split,
+					type: sap.m.ButtonType.Attention,
+					useDefaultActionOnly: true,
+					defaultAction: function () {
+						sap.m.MessageToast.show("Attention");
+					}
+				}).addStyleClass("sapUiSmallMargin"),
+				new sap.m.MenuButton('mbtrans', {
+					text: "Transparent",
+					buttonMode: sap.m.MenuButtonMode.Split,
+					type: sap.m.ButtonType.Transparent,
+					useDefaultActionOnly: true,
+					defaultAction: function () {
+						sap.m.MessageToast.show("Transparent");
+					}
+				}).addStyleClass("sapUiSmallMargin")
+			]
+		});
 
 		var oList = new sap.m.List({
 			headerText: "Dynamic Button",
@@ -862,6 +894,7 @@
 			}),
 			content: [
 				oVBox,
+				oHBox,
 				oList,
 				new sap.m.Button({
 					text: "test",

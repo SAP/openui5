@@ -2174,7 +2174,6 @@ sap.ui.define([
 					bPrevent = oValueHelp.isNavigationEnabled(10);
 					break;
 				case "sapbackspace":
-					bPrevent = oValueHelp.isOpen();
 					this._bPreventAutocomplete = true;
 					break;
 				case "keydown":
@@ -2749,8 +2748,21 @@ sap.ui.define([
 				aConditions = [Condition.createItemCondition([undefined, sUnit], undefined, undefined, undefined, oPayload)];
 			}
 
-			this.setProperty("conditions", aConditions, true); // do not invalidate whole field
-			_executeChange.call(this, aConditions, true); // removing Token don't need to wait for processing both fields in unit case
+			const oValueHelp = _getValueHelp.call(this);
+			let oPromise;
+
+			if (oValueHelp?.isOpen()) {
+				oPromise = new Promise((fResolve, fReject) => {
+					// can it happen that user deleted next Token or enters value while this Promise is running?
+					setTimeout(() => { // to prevent rerendering of ValueHelpPopover during token update (leads to focus loss)
+						this.setProperty("conditions", aConditions, true); // do not invalidate whole field
+						fResolve(this.getResultForChangePromise(aConditions));
+					}, 0);
+				});
+			} else {
+				this.setProperty("conditions", aConditions, true); // do not invalidate whole field
+			}
+			_executeChange.call(this, aConditions, true, undefined, oPromise); // removing Token don't need to wait for processing both fields in unit case
 			oEvent.preventDefault(true);
 		}
 

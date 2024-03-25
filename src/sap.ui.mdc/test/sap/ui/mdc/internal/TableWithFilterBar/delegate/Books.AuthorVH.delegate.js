@@ -153,5 +153,13 @@ sap.ui.define([
 		return sValue + (sTextValue ? " (" + sTextValue + ")" : "");
 	}
 
+	// Delegate.shouldOpenOnFocus = function (oValueHelp, oContainer) {
+	// 	return true;
+	// };
+
+	// Delegate.showTypeahead = function(oValueHelp, oContent) {
+	// 	return true;
+	// };
+
 	return Delegate;
 });

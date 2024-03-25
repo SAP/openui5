@@ -4142,7 +4142,7 @@ sap.ui.define([
 		assert.ok(oContent.onsappagedown.notCalled, "onsappagedown not called on content control");
 
 		qutils.triggerKeydown(oField.getFocusDomRef().id, KeyCodes.BACKSPACE, false, false, false);
-		assert.ok(oContent.onsapbackspace.notCalled, "onsapbackspace not called on content control");
+		assert.ok(oContent.onsapbackspace.called, "onsapbackspace called on content control");
 
 	});
 

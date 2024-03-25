@@ -925,24 +925,25 @@ sap.ui.define([
 		result : {
 			Accept : "application/json;odata.metadata=full;IEEE754Compatible=true",
 			"OData-MaxVersion" : "5.0",
-			"OData-Version" : "4.1"
+			"OData-Version" : "4.1",
+			"sap-cancel-on-close" : "true"
 		}
 	}, {
 		defaultHeaders : undefined,
 		requestHeaders : undefined,
-		result : {}
+		result : {"sap-cancel-on-close" : "true"}
 	}, {
 		defaultHeaders : {"Accept-Language" : "ab-CD"},
 		requestHeaders : undefined,
-		result : {"Accept-Language" : "ab-CD"}
+		result : {"Accept-Language" : "ab-CD", "sap-cancel-on-close" : "true"}
 	}, {
 		defaultHeaders : undefined,
 		requestHeaders : {"Accept-Language" : "ab-CD"},
-		result : {"Accept-Language" : "ab-CD"}
+		result : {"Accept-Language" : "ab-CD", "sap-cancel-on-close" : "true"}
 	}, {
 		defaultHeaders : {"Accept-Language" : "ab-CD"},
 		requestHeaders : {foo : "bar"},
-		result : {"Accept-Language" : "ab-CD", foo : "bar"}
+		result : {"Accept-Language" : "ab-CD", foo : "bar", "sap-cancel-on-close" : "true"}
 	}].forEach(function (mHeaders) {
 		QUnit.test("request, headers: " + JSON.stringify(mHeaders), function (assert) {
 			var mDefaultHeaders = clone(mHeaders.defaultHeaders),
@@ -1150,9 +1151,10 @@ sap.ui.define([
 		this.mock(oRequestor).expects("convertResourcePath").withExactArgs("Employees")
 			.returns("~sResourcePath~");
 		this.mock(oRequestor).expects("sendRequest")
-			.withExactArgs("GET", "~sResourcePath~",
-				{"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true"},
-				undefined, "~sResourcePath~")
+			.withExactArgs("GET", "~sResourcePath~", {
+					"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true",
+					"sap-cancel-on-close" : "true"
+				}, undefined, "~sResourcePath~")
 			.resolves(oResponse);
 		this.mock(oRequestor).expects("reportHeaderMessages")
 			.withExactArgs("~resourcePath~", "~messages~");

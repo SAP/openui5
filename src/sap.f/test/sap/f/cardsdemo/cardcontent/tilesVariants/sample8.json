@@ -1,0 +1,16 @@
+{
+	"sap.app": {
+		"id": "cardsdemo.tilesVariants.sample8",
+		"type": "card"
+	},
+	"sap.card": {
+		"type": "List",
+		"header": {
+			"type": "Numeric",
+			"title": "Products",
+			"icon": {
+				"src": "sap-icon://product"
+			}
+		}
+	}
+}

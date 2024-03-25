@@ -1732,6 +1732,10 @@ sap.ui.define([
 				delete oActualRequest.headers["Accept-Language"];
 				delete oActualRequest.headers["Content-Type"];
 				if (oExpectedRequest) {
+					if (!oExpectedRequest.headers) {
+						oExpectedRequest.headers = {};
+						delete oActualRequest.headers["sap-cancel-on-close"];
+					}
 					oResponse = oExpectedRequest.response;
 					if (typeof oResponse === "function") { // invoke "just in time"
 						oResponse = oResponse();
@@ -2218,7 +2222,6 @@ sap.ui.define([
 				}
 			}
 			// ensure that these properties are defined (required for deepEqual)
-			vRequest.headers ??= {};
 			vRequest.method ??= "GET";
 			vRequest.payload ??= undefined;
 			vRequest.responseHeaders = mResponseHeaders || {};
@@ -5219,6 +5222,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Failure to read from an ODataContextBinding returning a bound message
 	// BCP: 2070436327: the data state is updated if unbindProperty is called
+	// "sap-cancel-on-close" header for $direct GET request (JIRA: CPOUI5ODATAV4-2506)
 	QUnit.test("ODCB: read failure & message", function (assert) {
 		var oError = createError({
 				message : "Could not read",
@@ -5237,7 +5241,10 @@ sap.ui.define([
 		this.oLogMock.expects("error")
 			.withExactArgs("Failed to read path /EMPLOYEES('42')/Name", sinon.match(oError.message),
 				sODPrB);
-		this.expectRequest("EMPLOYEES('42')", oError)
+		this.expectRequest({
+				headers : {"sap-cancel-on-close" : "true"},
+				url : "EMPLOYEES('42')"
+			}, oError)
 			.expectMessages([{
 				code : "CODE",
 				message : "Could not read",
@@ -8178,6 +8185,8 @@ sap.ui.define([
 	//
 	// Tell the model to ignore the ETag, but no If-Match:* must be sent unless an ETag was present
 	// JIRA: CPOUI5ODATAV4-1894
+	//
+	// No "sap-cancel-on-close" header in PATCH request (JIRA: CPOUI5ODATAV4-2506)
 	["$auto", "$direct"].forEach(function (sGroupId) {
 		[false, true].forEach(function (bETag) {
 		var sTitle = "Modify a property, server responds with 204 (No Content), group = " + sGroupId
@@ -11801,6 +11810,8 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: Failure when creating a sales order line item. Observe the message.
+	//
+	// No "sap-cancel-on-close" header in POST request (JIRA: CPOUI5ODATAV4-2506)
 	QUnit.test("Create error", function (assert) {
 		var oModel = this.createSalesOrdersModel({autoExpandSelect : true, groupId : "$direct"}),
 			oTable,
@@ -11831,6 +11842,7 @@ sap.ui.define([
 					+ "will be repeated automatically", sinon.match(oError.message), sODLB);
 			that.expectRequest({
 					method : "POST",
+					headers : {/*NO "sap-cancel-on-close"*/},
 					url : "SalesOrderList('42')/SO_2_SOITEM",
 					payload : {}
 				}, oError)
@@ -13514,6 +13526,7 @@ sap.ui.define([
 	// Scenario: bound action (success and failure)
 	// JIRA: CPOUI5ODATAV4-29 (bound action parameter and error with message target)
 	// JIRA: CPOUI5ODATAV4-132 (bind property of binding parameter relative to $Parameter)
+	// No "sap-cancel-on-close" header in POST request (JIRA: CPOUI5ODATAV4-2506)
 	QUnit.test("Bound action", function (assert) {
 		var oModel = this.createTeaBusiModel({autoExpandSelect : true, groupId : "$direct"}),
 			sView = '\
@@ -13568,7 +13581,7 @@ sap.ui.define([
 		}).then(function () {
 			that.expectRequest({
 					method : "POST",
-					headers : {"If-Match" : "ETag"},
+					headers : {"If-Match" : "ETag"/*, NO "sap-cancel-on-close"*/},
 					url : sUrl,
 					payload : {TeamID : "42"}
 				}, {TEAM_ID : "42"})
@@ -13607,7 +13620,7 @@ sap.ui.define([
 				sODPrB);
 			that.expectRequest({
 					method : "POST",
-					headers : {"If-Match" : "ETag"},
+					headers : {"If-Match" : "ETag"/*, NO "sap-cancel-on-close"*/},
 					url : sUrl,
 					payload : {TeamID : ""}
 				}, oError) // simulates failure
@@ -15728,7 +15741,9 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: Minimal test for two absolute ODataPropertyBindings using different direct groups.
-	QUnit.test("Absolute ODPBs using different $direct groups", function (assert) {
+	//
+	// "sap-cancel-on-close" header for SubmitMode.Direct GET request (JIRA: CPOUI5ODATAV4-2506)
+	QUnit.test("Absolute ODPBs using different direct groups", function (assert) {
 		var sView = '\
 <Text id="text1" text="{\
 	path : \'/EMPLOYEES(\\\'2\\\')/Name\',\
@@ -15738,8 +15753,14 @@ sap.ui.define([
 	parameters : {$$groupId : \'group2\'}}"\
 />';
 
-		this.expectRequest("EMPLOYEES('2')/Name", {value : "Frederic Fall"})
-			.expectRequest("EMPLOYEES('3')/Name", {value : "Jonathan Smith"})
+		this.expectRequest({
+				headers : {"sap-cancel-on-close" : "true"},
+				url : "EMPLOYEES('2')/Name"
+			}, {value : "Frederic Fall"})
+			.expectRequest({
+				headers : {"sap-cancel-on-close" : "true"},
+				url : "EMPLOYEES('3')/Name"
+			}, {value : "Jonathan Smith"})
 			.expectChange("text1", "Frederic Fall")
 			.expectChange("text2", "Jonathan Smith");
 
@@ -33817,6 +33838,237 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: A hierarchy has two visible rows and is completely expanded.
+	// (1) Create New1 below Alpha; create New2 below New1
+	// (2) Side-effects refresh (delivers new nested "bonus items" below New1)
+	// (3) Check all contexts
+	// JIRA: CPOUI5ODATAV4-2510
+	QUnit.test("Recursive Hierarchy: out of place, bonus item", async function (assert) {
+		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
+		const sUrl = "EMPLOYEES"
+			+ "?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root/EMPLOYEES"
+			+ ",HierarchyQualifier='OrgChart',NodeProperty='ID')";
+		const sUrlWithExpandLevels = sUrl.slice(0, -1)
+			+ ",ExpandLevels=" + JSON.stringify([{NodeID : "11", Levels : 1}]) + ")";
+		const sView = `
+<t:Table id="table" rows="{path : '/EMPLOYEES',
+		parameters : {
+			$$aggregation : {
+				expandTo : 1E16,
+				hierarchyQualifier : 'OrgChart'
+			}
+		}}" threshold="0" visibleRowCount="2">
+	<Text text="{= %{@$ui5.node.isExpanded} }"/>
+	<Text text="{= %{@$ui5.node.level} }"/>
+	<Text text="{Name}"/>
+</t:Table>`;
+
+		// 1 Alpha
+		//    2 Beta
+		//   11 New1 (created)
+		//      21 NewFromServer1 ("bonus item")
+		//         22 NewFromServer2 ("bonus item")
+		//      12 New2 (created)
+		// 3 Gamma
+		this.expectRequest(sUrl
+				+ "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name"
+				+ "&$count=true&$skip=0&$top=2", {
+				"@odata.count" : "3",
+				value : [{
+					DescendantCount : "1",
+					DistanceFromRoot : "0",
+					DrillState : "expanded",
+					ID : "1",
+					Name : "Alpha"
+				}, {
+					DescendantCount : "0",
+					DistanceFromRoot : "1",
+					DrillState : "leaf",
+					ID : "2",
+					Name : "Beta"
+				}]
+			});
+
+		await this.createView(assert, sView, oModel);
+
+		const oTable = this.oView.byId("table");
+		const oBinding = oTable.getBinding("rows");
+		checkTable("initial page", assert, oTable, [
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('2')"
+		], [
+			[true, 1, "Alpha"],
+			[undefined, 2, "Beta"]
+		], 3);
+		const oAlpha = oBinding.getCurrentContexts()[0];
+
+		this.expectRequest({
+				method : "POST",
+				url : "EMPLOYEES",
+				payload : {
+					"EMPLOYEE_2_MANAGER@odata.bind" : "EMPLOYEES('1')",
+					Name : "New1"
+				}
+			}, {
+				ID : "11",
+				Name : "New1"
+			})
+			.expectRequest(sUrl + "&$filter=ID eq '11'&$select=LimitedRank", {
+				value : [{
+					LimitedRank : "2"
+				}]
+			});
+
+		const oNew1 = oBinding.create({
+			"@$ui5.node.parent" : oAlpha,
+			Name : "New1"
+		}, /*bSkipRefresh*/true);
+
+		await Promise.all([
+			oNew1.created(),
+			this.waitForChanges(assert, "(1) create New1")
+		]);
+
+		this.expectRequest({
+				method : "POST",
+				url : "EMPLOYEES",
+				payload : {
+					"EMPLOYEE_2_MANAGER@odata.bind" : "EMPLOYEES('11')",
+					Name : "New2"
+				}
+			}, {
+				ID : "12",
+				Name : "New2"
+			})
+			.expectRequest(sUrl + "&$filter=ID eq '12'&$select=LimitedRank", {
+				value : [{
+					LimitedRank : "3"
+				}]
+			});
+
+		const oNew2 = oBinding.create({
+			"@$ui5.node.parent" : oNew1,
+			Name : "New2"
+		}, /*bSkipRefresh*/true);
+
+		await Promise.all([
+			oNew2.created(),
+			this.waitForChanges(assert, "(1) create New2")
+		]);
+
+		checkTable("after (1)", assert, oTable, [
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('11')",
+			"/EMPLOYEES('12')",
+			"/EMPLOYEES('2')"
+		], [
+			[true, 1, "Alpha"],
+			[true, 2, "New1"]
+		], 5);
+
+		this.expectRequest(sUrlWithExpandLevels
+				+ "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name"
+				+ "&$count=true&$skip=0&$top=2", {
+				"@odata.count" : "7",
+				value : [{
+					DescendantCount : "5",
+					DistanceFromRoot : "0",
+					DrillState : "expanded",
+					ID : "1",
+					Name : "Alpha*"
+				}, {
+					DescendantCount : "0",
+					DistanceFromRoot : "1",
+					DrillState : "leaf",
+					ID : "2",
+					Name : "Beta*"
+				}]
+			})
+			.expectRequest(sUrlWithExpandLevels
+				+ "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,LimitedRank"
+				+ "&$filter=ID eq '1' or ID eq '11' or ID eq '12'&$top=3", {
+				value : [{
+					DescendantCount : "5",
+					DistanceFromRoot : "0",
+					DrillState : "expanded",
+					ID : "1",
+					LimitedRank : "0"
+				}, {
+					DescendantCount : "3",
+					DistanceFromRoot : "1",
+					DrillState : "expanded",
+					ID : "11",
+					LimitedRank : "2"
+				}, {
+					DescendantCount : "0",
+					DistanceFromRoot : "2",
+					DrillState : "leaf",
+					ID : "12",
+					LimitedRank : "5"
+				}]
+			})
+			.expectRequest("EMPLOYEES"
+				+ "?$apply=descendants($root/EMPLOYEES,OrgChart,ID,filter(ID eq '1'),1)"
+				+ "&$select=ID,Name&$filter=ID eq '11'&$top=1", {
+				value : [
+					{ID : "11", Name : "New1*"}
+				]
+			})
+			.expectRequest("EMPLOYEES"
+				+ "?$apply=descendants($root/EMPLOYEES,OrgChart,ID,filter(ID eq '11'),1)"
+				+ "&$select=ID,Name&$filter=ID eq '12'&$top=1", {
+				value : [
+					{ID : "12", Name : "New2*"}
+				]
+			});
+
+		await Promise.all([
+			oBinding.getHeaderContext().requestSideEffects([""]),
+			this.waitForChanges(assert, "(2) side-effects refresh")
+		]);
+
+		this.expectRequest(sUrlWithExpandLevels
+				+ "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name"
+				+ "&$skip=3&$top=2", {
+				value : [{
+					DescendantCount : "1",
+					DistanceFromRoot : "2",
+					DrillState : "expanded",
+					ID : "21",
+					Name : "NewFromServer1*"
+				}, {
+					DescendantCount : "0",
+					DistanceFromRoot : "3",
+					DrillState : "leaf",
+					ID : "22",
+					Name : "NewFromServer2*"
+				}]
+			})
+			.expectRequest(sUrlWithExpandLevels
+				+ "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name"
+				+ "&$skip=6&$top=1", {
+				value : [{
+					DescendantCount : "0",
+					DistanceFromRoot : "0",
+					DrillState : "leaf",
+					ID : "3",
+					Name : "Gamma*"
+				}]
+			});
+
+		await this.checkAllContexts("(3) check all contexts", assert, oBinding,
+			["@$ui5.node.isExpanded", "@$ui5.node.level", "Name"], [
+				[true, 1, "Alpha*"],
+				[true, 2, "New1*"],
+				[undefined, 3, "New2*"],
+				[true, 3, "NewFromServer1*"],
+				[undefined, 4, "NewFromServer2*"],
+				[undefined, 2, "Beta*"],
+				[undefined, 1, "Gamma*"]
+			]);
+	});
+
+	//*********************************************************************************************
 	// Scenario: Expand all levels of a recursive hierarchy and move a node with descendants (not
 	// yet fully loaded) to another parent. It is inserted between older siblings on the server and
 	// is shown on the client "in place" (JIRA: CPOUI5ODATAV4-2466). Still, paging works!
@@ -43645,6 +43897,7 @@ sap.ui.define([
 	// Delete and Patch still use the canonical path. Messages have to be reported with the deep
 	// path.
 	// CPOUI5UISERVICESV3-1813
+	// No "sap-cancel-on-close" header in DELETE request (JIRA: CPOUI5ODATAV4-2506)
 	[false, true].forEach(function (bUseCanonicalPath) {
 		QUnit.test("read with deep path, $$canonicalPath: " + bUseCanonicalPath, function (assert) {
 			var sEntityPath = bUseCanonicalPath
@@ -43757,7 +44010,7 @@ sap.ui.define([
 				that.expectRequest({
 						method : "DELETE",
 						url : "ProductList('1')",
-						headers : {"If-Match" : "ETag"}
+						headers : {"If-Match" : "ETag"/*, NO "sap-cancel-on-close" */}
 					}, oError)
 					.expectMessages([{
 						code : "top_delete",
@@ -63133,6 +63386,7 @@ sap.ui.define([
 	// ODM#submitBatch. Expect that the latter's promise does not resolve before the create request
 	// is completed.
 	// BCP: 2370151708
+	// No "sap-cancel-on-close" header in POST request (JIRA: CPOUI5ODATAV4-2506)
 	QUnit.test("BCP: 2370151708 - submitBatch includes create ($auto)", async function (assert) {
 		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
 		await this.createView(assert, "", oModel);
@@ -63140,6 +63394,7 @@ sap.ui.define([
 		let fnResolveCreate;
 		this.expectRequest({
 				method : "POST",
+				headers : {/*NO "sap-cancel-on-close"*/},
 				payload : {},
 				url : "EMPLOYEES"
 			}, new Promise(function (resolve) {

@@ -1,6 +1,6 @@
 /*!
- * ${copyright}
- */
+* ${copyright}
+*/
 
 sap.ui.define([
 		"sap/ui/core/Lib",
@@ -24,7 +24,8 @@ sap.ui.define([
 		"sap/ui/core/format/ListFormat",
 		"sap/ui/mdc/enums/ProcessingStrategy",
 		"sap/ui/mdc/enums/ChartP13nMode",
-		"sap/ui/mdc/enums/ChartToolbarActionType"
+		"sap/ui/mdc/enums/ChartToolbarActionType",
+		"sap/ui/mdc/chart/SelectionButtonItem"
 	],
 	(
 		Library,
@@ -48,7 +49,8 @@ sap.ui.define([
 		ListFormat,
 		ProcessingStrategy,
 		ChartP13nMode,
-		ChartToolbarActionType
+		ChartToolbarActionType,
+		SelectionButtonItem
 	) => {
 		"use strict";
 
@@ -710,7 +712,7 @@ sap.ui.define([
 
 					aSortedDimensions.forEach((oDimension) => {
 						// oData.items.push({ text: oDimension.label, id: oDimension.name });
-						oViewByBtn.addItem(new sap.ui.mdc.chart.SelectionButtonItem({key: oDimension.name, text: oDimension.label}));
+						oViewByBtn.addItem(new SelectionButtonItem({key: oDimension.name, text: oDimension.label}));
 					});
 					oViewByBtn.setSearchEnabled(aSortedDimensions.length >= 7);
 					oViewByBtn._openPopover(); // in this case the beforeOpen is not able to provide all item syncron
@@ -757,7 +759,7 @@ sap.ui.define([
 				oChartTypeBtn.removeAllItems();
 				aAvailableChartTypes.forEach((oChartType) => {
 					oChartTypeBtn.addItem(
-						new sap.ui.mdc.chart.SelectionButtonItem({key: oChartType.key, text: oChartType.text, icon: oChartType.icon})
+						new SelectionButtonItem({key: oChartType.key, text: oChartType.text, icon: oChartType.icon})
 					);
 				});
 				oChartTypeBtn.setSearchEnabled(aAvailableChartTypes.length >= 7);
@@ -807,9 +809,9 @@ sap.ui.define([
 			/** variant management **/
 			const oVariantManagement = this.getAggregation("variant");
 			if (oVariantManagement && oToolbar) {
-				const [oOldVariantManagement] = oToolbar.getBetween().filter((element) => element instanceof sap.ui.fl.variants.VariantManagement);
-				if (oOldVariantManagement) {
-					oToolbar.removeBetween(oOldVariantManagement);
+				const oCurrentVariantManagement = this.getVariant();
+				if (oCurrentVariantManagement) {
+					oToolbar.removeBetween(oCurrentVariantManagement);
 				}
 				oToolbar.addBetween(oVariantManagement);
 				this._updateVariantManagementStyle();
@@ -1420,7 +1422,7 @@ sap.ui.define([
 		 *
 		 * @private
 		 */
-		Chart.prototype._innerChartDataLoadComplete = function(mArguments) {
+		Chart.prototype._innerChartDataLoadComplete = function() {
 			this._checkStyleClassesForDimensions();
 			this.setBusy(false);
 			this._renderOverlay(false);
@@ -1568,9 +1570,9 @@ sap.ui.define([
 			//Only add VM directly when Toolbar already exists; otherwise VM will be added during init of toolbar
 			const oToolbar = this.getAggregation("_toolbar");
 			if (oVariantManagement && oToolbar) {
-				const [oOldVariantManagement] = oToolbar.getBetween().filter((element) => element instanceof sap.ui.fl.variants.VariantManagement);
-				if (oOldVariantManagement) {
-					oToolbar.removeBetween(oOldVariantManagement);
+				const oCurrentVariantManagement = this.getVariant();
+				if (oCurrentVariantManagement) {
+					oToolbar.removeBetween(oCurrentVariantManagement);
 				}
 				oToolbar.addBetween(oVariantManagement);
 				this._updateVariantManagementStyle();
@@ -1578,6 +1580,18 @@ sap.ui.define([
 
 			return this;
 		};
+
+		Chart.prototype.getVariant = function() {
+			let oVariantManagement;
+			const oToolbar = this.getAggregation("_toolbar");
+			if (oToolbar) {
+				[oVariantManagement] = oToolbar.getBetween().filter((oControl) => oControl.isA("sap.ui.fl.variants.VariantManagement"));
+			} else {
+				oVariantManagement = this.getAggregation("variant");
+			}
+			return oVariantManagement;
+		};
+
 
 		/**
 		 * Adds/Removes the overlay shown above the inner chart.
@@ -1655,17 +1669,6 @@ sap.ui.define([
 			}
 		};
 
-
-		Chart.prototype.getVariant = function() {
-			let oVariantManagement;
-			const oToolbar = this.getAggregation("_toolbar");
-			if (oToolbar) {
-				[oVariantManagement] = oToolbar.getBetween().filter((element) => element instanceof sap.ui.fl.variants.VariantManagement);
-			} else {
-				oVariantManagement = this.getAggregation("variant");
-			}
-			return oVariantManagement;
-		};
 
 		Chart.prototype.onkeydown = function(oEvent) {
 			if (oEvent.isMarked()) {

@@ -359,7 +359,9 @@ sap.ui.define([
 
 	QUnit.test("Static method 'getResourceBundleFor' called on library where manifest.json exists", function(assert) {
 		var sLibraryName = "testlibs.resourcebundle.lib1";
-		var oResourceBundle = Library.getResourceBundleFor(sLibraryName);
+		var oResourceBundle = ResourceBundle.create({
+			bundleName: `${sLibraryName}.messagebundle`
+		});
 
 		assert.ok(oResourceBundle, "Resource bundle can be created successfully");
 		assert.equal(oResourceBundle.getText("TITLE1"), "i18n.properties", "The configured resource bundle file in manifest.json is loaded (i18n.properties)");
@@ -370,7 +372,9 @@ sap.ui.define([
 
 		return Library.load({name: sLibraryName}).then(function(oLibrary) {
 			var oErrorLogSpy = this.spy(Log, "error");
-			var oResourceBundle = Library.getResourceBundleFor(sLibraryName);
+			var oResourceBundle = ResourceBundle.create({
+				bundleName: `${sLibraryName}.messagebundle`
+			});
 
 			assert.ok(oResourceBundle, "Resource bundle can be created successfully");
 			assert.equal(oResourceBundle.getText("TITLE1"), "messagebundle.properties", "The fallback file 'messagebundle.properties' is loaded because no manifest.json is available for the library");
@@ -379,7 +383,9 @@ sap.ui.define([
 			var oLoadResourceSpy = this.spy(LoaderExtensions, "loadResource");
 
 			// try to get the resource bundle again
-			oResourceBundle = Library.getResourceBundleFor(sLibraryName);
+			oResourceBundle = ResourceBundle.create({
+				bundleName: `${sLibraryName}.messagebundle`
+			});
 			assert.equal(oLoadResourceSpy.callCount, 0, "no further call is done for loading the manifest.json after the previous request failed");
 			assert.equal(oErrorLogSpy.callCount, 0, "No new error is logged");
 		}.bind(this));
@@ -390,7 +396,9 @@ sap.ui.define([
 		var sLibraryName = "testlibs.resourcebundle.unknownLib";
 
 		var oErrorLogSpy = this.spy(Log, "error");
-		var oResourceBundle = Library.getResourceBundleFor(sLibraryName);
+		var oResourceBundle = ResourceBundle.create({
+			bundleName: `${sLibraryName}.messagebundle`
+		});
 
 		assert.ok(oResourceBundle, "Resource bundle can be created successfully");
 
@@ -403,7 +411,9 @@ sap.ui.define([
 		var oLoadResourceSpy = this.spy(LoaderExtensions, "loadResource");
 
 		// try to get the resource bundle again
-		oResourceBundle = Library.getResourceBundleFor(sLibraryName);
+		oResourceBundle = ResourceBundle.create({
+			bundleName: `${sLibraryName}.messagebundle`
+		});
 		assert.equal(oLoadResourceSpy.callCount, 0, "no further call is done for loading the manifest.json after the previous request failed");
 		assert.equal(oErrorLogSpy.callCount, 0, "No new error is logged");
 	});

@@ -401,6 +401,7 @@ sap.ui.define([
 				_Helper.getPrivateAnnotation(aElements[i], "transientPredicate")];
 		}
 		const aSpliced = aElements.splice(iIndex + 1, iCount);
+		aSpliced.$level = oGroupNode["@$ui5.node.level"];
 		aSpliced.$rank = _Helper.getPrivateAnnotation(oGroupNode, "rank");
 		_Helper.setPrivateAnnotation(oGroupNode, "spliced", aSpliced);
 		aElements.$count -= iCount;
@@ -674,7 +675,7 @@ sap.ui.define([
 			this.aElements.$byPredicate = aOldElements.$byPredicate;
 			iCount = aSpliced.length;
 			this.aElements.$count = aOldElements.$count + iCount;
-			const iLevelDiff = oGroupNode["@$ui5.node.level"] + 1 - aSpliced[0]["@$ui5.node.level"];
+			const iLevelDiff = oGroupNode["@$ui5.node.level"] - aSpliced.$level;
 			const iRankDiff = _Helper.getPrivateAnnotation(oGroupNode, "rank") - aSpliced.$rank;
 			aSpliced.forEach(function (oElement) {
 				var sPredicate = _Helper.getPrivateAnnotation(oElement, "predicate");
@@ -1408,9 +1409,16 @@ sap.ui.define([
 		aOutOfPlacePredicates.forEach((sNodePredicate) => {
 			const oNode = this.aElements.$byPredicate[sNodePredicate];
 			if (oNode) {
+				const bExpanded = oNode["@$ui5.node.isExpanded"];
+				if (bExpanded) {
+					this.collapse(sNodePredicate);
+				}
 				const iNodeIndex = this.aElements.indexOf(oNode);
 				this.aElements.splice(iNodeIndex, 1);
 				this.aElements.splice(iParentIndex + 1, 0, oNode);
+				if (bExpanded) {
+					this.expand(_GroupLock.$cached, sNodePredicate);
+				}
 			} else { // no longer child of its previous parent
 				this.oTreeState.deleteOutOfPlace(sNodePredicate);
 			}
