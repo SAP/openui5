@@ -1,13 +1,11 @@
 /*global QUnit*/
 sap.ui.define([
 	"./DynamicPageUtil",
-	"sap/ui/core/Core",
 	"sap/ui/core/Theming",
 	"sap/ui/qunit/utils/nextUIUpdate"
 ],
 function(
 	DynamicPageUtil,
-	Core,
 	Theming,
 	nextUIUpdate
 ) {
@@ -278,21 +276,31 @@ function(
 		var oHeader = this.oDynamicPage.getHeader(),
 			pinButton = oHeader._getPinButton();
 
+		var isThemeApplied = function () {
+			var bIsApplied = false;
+			var fnOnThemeApplied = function () {
+				bIsApplied = true;
+			};
+			Theming.attachApplied(fnOnThemeApplied); // Will be called immediately when theme is applied
+			Theming.detachApplied(fnOnThemeApplied);
+			return bIsApplied;
+		};
+
 		this.applyTheme = function(sTheme, fnCallback) {
 			this.sRequiredTheme = sTheme;
-			if (Theming.getTheme() === this.sRequiredTheme && Core.isThemeApplied()) {
+			if (Theming.getTheme() === this.sRequiredTheme && isThemeApplied()) {
 				if (typeof fnCallback === "function") {
 					fnCallback.bind(this)();
 					fnCallback = undefined;
 				}
 			} else {
-				Core.attachThemeChanged(fnThemeApplied.bind(this));
-				Core.applyTheme(sTheme);
+				Theming.attachApplied(fnThemeApplied.bind(this));
+				Theming.setTheme(sTheme);
 			}
 
 			function fnThemeApplied(oEvent) {
-				Core.detachThemeChanged(fnThemeApplied);
-				if (Theming.getTheme() === this.sRequiredTheme && Core.isThemeApplied()) {
+				Theming.detachApplied(fnThemeApplied);
+				if (Theming.getTheme() === this.sRequiredTheme && isThemeApplied()) {
 					if (typeof fnCallback === "function") {
 						fnCallback.bind(this)();
 						fnCallback = undefined;
