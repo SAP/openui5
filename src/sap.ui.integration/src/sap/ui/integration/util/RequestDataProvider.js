@@ -145,13 +145,22 @@ sap.ui.define([
 		return pRequestChain;
 	};
 
+	/**
+	 * @override
+	 */
+	RequestDataProvider.prototype.triggerDataUpdate = function () {
+		this._retryDueExpiredToken = false;
+
+		return DataProvider.prototype.triggerDataUpdate.apply(this, arguments);
+	};
+
 	RequestDataProvider.prototype._handleExpiredToken = function (oError) {
 		if (!this._oCsrfTokenHandler.isExpiredToken(this.getLastResponse())) {
 			throw oError;
 		}
 
 		// csrf token has expired, reset the token and retry this whole request
-		this._oCsrfTokenHandler.setExpiredTokenByRequest(this.getConfiguration().request);
+		this._oCsrfTokenHandler.markExpiredTokenByRequest(this.getConfiguration().request);
 
 		if (this._retryDueExpiredToken) {
 			this._retryDueExpiredToken = false;
