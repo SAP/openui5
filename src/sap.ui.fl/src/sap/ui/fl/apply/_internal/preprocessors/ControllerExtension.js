@@ -5,13 +5,13 @@
 sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
-	"sap/ui/fl/ChangePersistenceFactory",
+	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/Utils",
 	"sap/base/Log"
 ], function(
 	Component,
 	ManifestUtils,
-	ChangePersistenceFactory,
+	FlexState,
 	Utils,
 	Log
 ) {
@@ -41,10 +41,6 @@ sap.ui.define([
 	}
 
 	function getExtensionModules(aCodeExtModuleNames) {
-		if (aCodeExtModuleNames.length === 0) {
-			return Promise.resolve([]);
-		}
-
 		return new Promise(function(resolve) {
 			sap.ui.require(
 				aCodeExtModuleNames,
@@ -72,7 +68,6 @@ sap.ui.define([
 	ControllerExtension.prototype.getControllerExtensions = function(sControllerName, sComponentId, bAsync) {
 		if (bAsync) {
 			if (!sComponentId) {
-				Log.warning("No component ID for determining the anchor of the code extensions was passed.");
 				// always return a promise if async
 				return Promise.resolve([]);
 			}
@@ -81,28 +76,24 @@ sap.ui.define([
 			var oAppComponent = Utils.getAppComponentForControl(oComponent);
 			// In case an application of a component can not be identified, ex: FLP plugins components, return a promise of no extension
 			if (!oAppComponent) {
-				Log.warning("No application component for determining the anchor of the code extensions was identified.");
 				return Promise.resolve([]);
 			}
 			if (!Utils.isApplication(oAppComponent.getManifestObject())) {
-				// we only consider components whose type is application. Otherwise, we might send request for components that can never have changes.
+				// we only consider components whose type is application
 				return Promise.resolve([]);
 			}
 			var sFlexReference = ManifestUtils.getFlexReferenceForControl(oAppComponent);
 
-			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sFlexReference);
-			return oChangePersistence.getChangesForComponent().then(function(aChanges) {
-				var aExtensionModules = aChanges.filter(function(oChange) {
-					return isCodeExt(oChange) && isForController(sControllerName, oChange);
-				}).map(function(oChange) {
-					return oChange.getModuleName();
-				});
-
-				return getExtensionModules(aExtensionModules);
+			const aFlexObjects = FlexState.getFlexObjectsDataSelector().get({reference: sFlexReference});
+			var aExtensionModules = aFlexObjects.filter(function(oChange) {
+				return isCodeExt(oChange) && isForController(sControllerName, oChange);
+			}).map(function(oChange) {
+				return oChange.getModuleName();
 			});
+
+			return getExtensionModules(aExtensionModules);
 		}
 
-		Log.warning("Synchronous extensions are not supported via UI5 Flexibility");
 		return [];
 	};
 
