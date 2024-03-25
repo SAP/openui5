@@ -112,18 +112,16 @@ sap.ui.define([
 			return;
 		}
 
-		var oResolvedValue = BindingResolver.resolveValue(oValue, oCard);
-
 		if (oControl.isA("sap.m.DatePicker")) {
-			var sDatePickerValue;
-
-			if (oResolvedValue.values) {
-				sDatePickerValue = oResolvedValue.values[0];
+			if (oValue.values) {
+				oValue = oValue.values;
 			}
 
-			oControl.setValue(sDatePickerValue);
+			oControl.applySettings({
+				value: oValue
+			});
 		} else {
-
+			var oResolvedValue = BindingResolver.resolveValue(oValue, oCard);
 			var sOption = oResolvedValue.option.toUpperCase();
 			var aTypes = oControl.getOption(sOption).getValueTypes();
 			oControl.setValue({
