@@ -34,7 +34,7 @@ sap.ui.define([
 	 * The following methods need to be added or overridden in your delegate. Please also see the documentation of the methods to learn about their
 	 * default implementation and what you need to implement.
 	 * <ul>
-	 *   <li><code>Basic prerequisites</code></li>
+	 *   <li><b>Basic prerequisites</b></li>
 	 *   <ul>
 	 *     <li>{@link module:sap/ui/mdc/TableDelegate.fetchProperties fetchProperties}</li>
 	 *     <li>{@link module:sap/ui/mdc/TableDelegate.updateBindingInfo updateBindingInfo}</li>

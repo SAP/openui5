@@ -29,7 +29,7 @@ sap.ui.define(["sap/ui/base/DataType"], (DataType) => {
 		/**
 		 * Only one row can be selected at a time. The selection column is not shown. Instead, the user can press the row to select it.
 		 *
-		 * <b>Note:</b> If this selection mode is used, the table does not fire the <code>rowPress</code> event
+		 * <b>Note:</b> If this selection mode is used, the table does not fire the <code>rowPress</code> event.
 		 *
 		 * @public
 		 */
