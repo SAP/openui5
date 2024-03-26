@@ -186,9 +186,20 @@
 				"category": "Display",
 				"since": "1.30",
 				"samples": [
-					"sap.ui.core.sample.MessageManager.BasicMessages",
-					"sap.ui.core.sample.MessageManager.BasicODataMessages",
-					"sap.ui.core.sample.MessageManager.ODataBackendMessagesComp"
+					"sap.ui.core.sample.Messaging.BasicMessages",
+					"sap.ui.core.sample.Messaging.BasicODataMessages",
+					"sap.ui.core.sample.Messaging.ODataBackendMessagesComp"
+				]
+			},
+			{
+				"id": "sap.ui.core.Messaging",
+				"name": "Messaging",
+				"category": "Display",
+				"since": "1.118",
+				"samples": [
+					"sap.ui.core.sample.Messaging.BasicMessages",
+					"sap.ui.core.sample.Messaging.BasicODataMessages",
+					"sap.ui.core.sample.Messaging.ODataBackendMessagesComp"
 				]
 			},
 			{
@@ -788,17 +799,17 @@
 				"description": "The descendant matcher checks if a control has a given descendant."
 			},
 			{
-				"id": "sap.ui.core.sample.MessageManager.BasicMessages",
+				"id": "sap.ui.core.sample.Messaging.BasicMessages",
 				"name": "Basic Messages",
 				"description": "Shows how to create messages on the frontend and display them afterwards. This can be used for form validation on the frontend."
 			},
 			{
-				"id": "sap.ui.core.sample.MessageManager.BasicODataMessages",
+				"id": "sap.ui.core.sample.Messaging.BasicODataMessages",
 				"name": "Basic OData Messages",
 				"description": "Uses the OData V2 mock server to simulate an OData response containing different types of server side messages (error, warning, info, success)."
 			},
 			{
-				"id": "sap.ui.core.sample.MessageManager.ODataBackendMessagesComp",
+				"id": "sap.ui.core.sample.Messaging.ODataBackendMessagesComp",
 				"name": "OData Messages Component",
 				"description": "Shows how to handle OData responses containing server side messages in component based apps. Also illustrates how the sap-message header works."
 			},
