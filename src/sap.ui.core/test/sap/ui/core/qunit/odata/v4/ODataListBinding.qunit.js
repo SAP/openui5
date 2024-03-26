@@ -31,8 +31,8 @@ sap.ui.define([
 	"use strict";
 
 	var aAllowedBindingParameters = ["$$aggregation", "$$canonicalPath", "$$getKeepAliveContext",
-			"$$groupId", "$$operationMode", "$$ownRequest", "$$patchWithoutSideEffects",
-			"$$sharedRequest", "$$updateGroupId"],
+			"$$groupId", "$$keepSelectOnFilter", "$$operationMode", "$$ownRequest",
+			"$$patchWithoutSideEffects", "$$sharedRequest", "$$updateGroupId"],
 		sClassName = "sap.ui.model.odata.v4.ODataListBinding",
 		oContextPrototype = Object.getPrototypeOf(Context.create(null, null, "/foo")),
 		oParentBinding = {
@@ -191,7 +191,6 @@ sap.ui.define([
 
 		assert.strictEqual(oBinding.iActiveContexts, 0);
 		assert.ok(oBinding.hasOwnProperty("aApplicationFilters"));
-		assert.ok(oBinding.hasOwnProperty("bFirstCreateAtEnd"));
 		assert.ok(oBinding.hasOwnProperty("sChangeReason"));
 		assert.ok(oBinding.hasOwnProperty("aContexts"));
 		assert.strictEqual(oBinding.iCreatedContexts, 0);
@@ -200,6 +199,7 @@ sap.ui.define([
 		assert.strictEqual(oBinding.iDeletedContexts, 0);
 		assert.ok(oBinding.hasOwnProperty("oDiff"));
 		assert.ok(oBinding.hasOwnProperty("aFilters"));
+		assert.ok(oBinding.hasOwnProperty("bFirstCreateAtEnd"));
 		assert.ok(oBinding.hasOwnProperty("sGroupId"));
 		assert.ok(oBinding.hasOwnProperty("bHasAnalyticalInfo"));
 		assert.ok(oBinding.hasOwnProperty("oHeaderContext"));
@@ -303,6 +303,7 @@ sap.ui.define([
 			mParameters = {/*see clone below for actual content*/},
 			mParametersClone = {
 				$$groupId : "group",
+				$$keepSelectOnFilter : "keep select",
 				$$operationMode : OperationMode.Server,
 				$$sharedRequest : "sharedRequest",
 				$$updateGroupId : "update group"
@@ -801,8 +802,8 @@ sap.ui.define([
 		this.mock(oBinding).expects("fetchCache").exactly(iCallCount)
 			.withExactArgs(sinon.match.same(oBinding.oContext));
 		this.mock(oBinding).expects("reset").exactly(iCallCount).withExactArgs(ChangeReason.Change);
-		this.mock(oBinding.oHeaderContext).expects("setSelected").exactly(iCallCount)
-			.withExactArgs(false);
+		this.mock(oBinding.oHeaderContext).expects("setSelected")
+			.exactly(!bSuspended && aChangedParameters.includes("$filter") ? 1 : 0);
 		this.mock(oBinding.oHeaderContext).expects("checkUpdate").exactly(iCallCount)
 			.withExactArgs();
 
@@ -1030,6 +1031,56 @@ sap.ui.define([
 		assert.strictEqual(oBinding.mParameters.$$aggregation, oFixture.oNewAggregation);
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("applyParameters: reset selection", function (assert) {
+		const oBinding = this.bindList("/EMPLOYEES");
+		const oBindingMock = this.mock(oBinding);
+		const oContextMock = this.mock(oBinding.oHeaderContext);
+
+		oContextMock.expects("setSelected").never();
+
+		delete oBinding.mParameters; // call from constructor
+
+		// code under test
+		oBinding.applyParameters({});
+
+		oBinding.mParameters = {};
+
+		// code under test
+		oBinding.applyParameters({});
+
+		oBinding.mParameters = {$$keepSelectOnFilter : true};
+
+		// code under test
+		oBinding.applyParameters({});
+
+		const oSetSelectedExpectation = oContextMock.expects("setSelected").withExactArgs(false);
+		const oRemoveCacheExpectation = oBindingMock.expects("removeCachesAndMessages")
+			.withExactArgs("");
+
+		// code under test
+		oBinding.applyParameters({}, undefined, ["$filter"]);
+
+		assert.ok(oSetSelectedExpectation.calledBefore(oRemoveCacheExpectation));
+
+		oContextMock.expects("setSelected").exactly(2).withExactArgs(false);
+		oBindingMock.expects("removeCachesAndMessages").exactly(3).withExactArgs("");
+
+		// code under test
+		oBinding.applyParameters({}, undefined, ["$search"]);
+
+		oBinding.mParameters = {$$aggregation : {search : "foo"}};
+
+		// code under test
+		oBinding.applyParameters({$$aggregation : {search : "bar"}});
+
+		oBinding.oHeaderContext = undefined;
+		oContextMock.expects("setSelected").never();
+
+		// code under test - no header context
+		oBinding.applyParameters({$$aggregation : {search : "foo"}});
+	});
 
 	//*********************************************************************************************
 [undefined, false, true].forEach(function (bDrop) {
@@ -3537,10 +3588,12 @@ sap.ui.define([
 					.withExactArgs(ChangeReason.Filter);
 				oBindingMock.expects("getGroupId").exactly(bSuspended ? 0 : 1)
 					.withExactArgs().returns("groupId");
+				const oSetSelectedExpectation = this.mock(oBinding.oHeaderContext)
+					.expects("setSelected").exactly(bSuspended ? 0 : 1).withExactArgs(false);
 				oBindingMock.expects("createReadGroupLock").exactly(bSuspended ? 0 : 1)
 					.withExactArgs("groupId", true);
-				oBindingMock.expects("removeCachesAndMessages").exactly(bSuspended ? 0 : 1)
-					.withExactArgs("");
+				const oRemoveCacheExpectation = oBindingMock.expects("removeCachesAndMessages")
+					.exactly(bSuspended ? 0 : 1).withExactArgs("");
 				oBindingMock.expects("fetchCache").exactly(bSuspended ? 0 : 1)
 					.withExactArgs(sinon.match.same(oBinding.oContext))
 					.callsFake(function () {
@@ -3548,13 +3601,15 @@ sap.ui.define([
 					});
 				oBindingMock.expects("reset").exactly(bSuspended ? 0 : 1)
 					.withExactArgs(ChangeReason.Filter);
-				this.mock(oBinding.oHeaderContext).expects("setSelected")
-					.exactly(bSuspended ? 0 : 1).withExactArgs(false);
 				this.mock(oBinding.oHeaderContext).expects("checkUpdate")
 					.exactly(bSuspended ? 0 : 1).withExactArgs();
 
 				// code under test
 				assert.strictEqual(oBinding.filter(oFilter, sFilterType), oBinding, "chaining");
+
+				if (!bSuspended) {
+					assert.ok(oSetSelectedExpectation.calledBefore(oRemoveCacheExpectation));
+				}
 
 				if (sFilterType === FilterType.Control) {
 					assert.strictEqual(oBinding.aFilters, aFilters);
@@ -3681,6 +3736,22 @@ sap.ui.define([
 		assert.throws(function () {
 			oBinding.filter();
 		}, new Error("Cannot filter due to pending changes"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("filter: $$keepSelectOnFilter", function () {
+		const oBinding = this.bindList("/EMPLOYEES", undefined, undefined, undefined, {
+			$$operationMode : OperationMode.Server
+		});
+		const oContextMock = this.mock(oBinding.oHeaderContext);
+
+		oBinding.mParameters = {$$keepSelectOnFilter : true};
+		this.mock(_Helper).expects("deepEqual").withExactArgs([], oBinding.aFilters)
+			.returns(false);
+		oContextMock.expects("setSelected").never();
+
+		// code under test
+		oBinding.filter();
 	});
 
 	//*********************************************************************************************
@@ -8031,6 +8102,28 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("resumeInternal: deselect header context", function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES");
+
+		oBinding.sResumeChangeReason = ChangeReason.Filter;
+
+		const oSetSelectedExpectation = this.mock(oBinding.oHeaderContext).expects("setSelected")
+			.withExactArgs(false);
+		const oRemoveCacheExpectation = this.mock(oBinding).expects("removeCachesAndMessages")
+			.withExactArgs("");
+
+		// code under test
+		oBinding.resumeInternal();
+
+		assert.ok(oSetSelectedExpectation.calledBefore(oRemoveCacheExpectation));
+
+		oBinding.mParameters = {$$keepSelectOnFilter : true};
+
+		// code under test
+		oBinding.resumeInternal();
+	});
+
+	//*********************************************************************************************
 	QUnit.test("getDependentBindings", function (assert) {
 		var oActiveBinding = {
 				oContext : {
@@ -10307,6 +10400,12 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("_getAllExistingContexts", function (assert) {
 		const oBinding = this.bindList("relativePath");
+
+		delete oBinding.aContexts; // call from constructor
+
+		// code under test
+		assert.deepEqual(oBinding._getAllExistingContexts(), []);
+
 		oBinding.aContexts = [/*empty*/, undefined, "~oTransientContext~"];
 		const oKeptContext0 = {isEffectivelyKeptAlive : function () {}};
 		const oKeptContext1 = {isEffectivelyKeptAlive : function () {}};

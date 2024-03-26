@@ -151,12 +151,13 @@ sap.ui.define([
 	 *     validation here)
 	 *   <li> '$$canonicalPath' with value <code>true</code>
 	 *   <li> '$$groupId' with allowed values as specified in {@link #checkGroupId}
-	 *   <li> '$$updateGroupId' with allowed values as specified in {@link #checkGroupId}
+	 *   <li> '$$keepSelectOnFilter' with value <code>true</code>
 	 *   <li> '$$inheritExpandSelect' with allowed values <code>false</code> and <code>true</code>
-	 *   <li> "$$noPatch" with value <code>true</code>
+	 *   <li> '$$noPatch' with value <code>true</code>
 	 *   <li> '$$operationMode' with value {@link sap.ui.model.odata.OperationMode.Server}
 	 *   <li> '$$ownRequest' with value <code>true</code>
 	 *   <li> '$$patchWithoutSideEffects' with value <code>true</code>
+	 *   <li> '$$updateGroupId' with allowed values as specified in {@link #checkGroupId}
 	 * </ul>
 	 *
 	 * @param {object} mParameters
@@ -231,6 +232,7 @@ sap.ui.define([
 						});
 					// falls through
 				case "$$canonicalPath":
+				case "$$keepSelectOnFilter":
 				case "$$noPatch":
 				case "$$ownRequest":
 				case "$$patchWithoutSideEffects":

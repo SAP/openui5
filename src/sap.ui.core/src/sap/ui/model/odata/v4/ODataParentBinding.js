@@ -325,7 +325,8 @@ sap.ui.define([
 
 	/**
 	 * Changes this binding's parameters and refreshes the binding. Since 1.111.0, a list binding's
-	 * header context is deselected.
+	 * header context is deselected, but (since 1.123.0) only if the '$filter' or '$search'
+	 * parameter is changed and '$$keepSelectOnFilter' is not set.
 	 *
 	 * If there are pending changes that cannot be ignored, an error is thrown. Use
 	 * {@link #hasPendingChanges} to check if there are such pending changes. If there are, call
