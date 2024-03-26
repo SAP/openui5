@@ -84,6 +84,9 @@
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 
+		<!-- define build timestamp format -->
+		<maven.build.timestamp.format>yyyyMMdd-HHmm</maven.build.timestamp.format>
+
 		<!-- filtering properties -->
 		<version>${project.version}</version>
 		<copyright><![CDATA[OpenUI5
