@@ -456,6 +456,7 @@ sap.ui.define([
 		this._oNavigateAction = new Button(this.getId() + "-navigateAction");
 		this._oNavigateAction._bExcludeFromTabChain = true;
 		this.addDependent(this._oNavigateAction);
+		jQuery(window).on("resize", this._setupResizeClassHandler.bind(this));
 	};
 
 	GenericTile.prototype.setWrappingType = function (sWrappingType) {
@@ -636,6 +637,7 @@ sap.ui.define([
 		if (this._oNavigateAction) {
 			this._oNavigateAction.destroy();
 		}
+		jQuery(window).off("resize", this._setupResizeClassHandler);
 	};
 
 	GenericTile.prototype.onBeforeRendering = function () {
@@ -971,7 +973,6 @@ sap.ui.define([
 	 * @private
 	 */
 	GenericTile.prototype._setupResizeClassHandler = function () {
-		var fnCheckMedia = function () {
 			var oParent = this.getParent();
 			if (oParent && oParent.isA("sap.f.GridContainer")) {
 				this._applyNewDim();
@@ -988,10 +989,6 @@ sap.ui.define([
 			if (this.__isLinkTileContentPresent) {
 				this._applyExtraHeight();
 			}
-		}.bind(this);
-
-		jQuery(window).on("resize", fnCheckMedia);
-		fnCheckMedia();
 	};
 
 	/**
