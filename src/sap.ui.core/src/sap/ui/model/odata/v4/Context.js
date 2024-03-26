@@ -319,6 +319,17 @@ sap.ui.define([
 				throw new Error("Cannot delete " + this);
 			}
 		}
+		if (this.oBinding.mParameters.$$aggregation) {
+			if (this.iIndex === undefined) {
+				throw new Error("Unsupported kept-alive context: " + this);
+			}
+			if (sGroupId !== null) {
+				const sEffectiveGroupId = sGroupId ?? this.oBinding.getUpdateGroupId();
+				if (this.oModel.isApiGroup(sEffectiveGroupId)) {
+					throw new Error("Unsupported group ID: " + sEffectiveGroupId);
+				}
+			}
+		}
 		if (sGroupId === null) {
 			oEditUrlPromise = SyncPromise.resolve();
 			bDoNotRequestCount = true;

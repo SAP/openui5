@@ -28805,10 +28805,16 @@ sap.ui.define([
 		await this.createView(assert, sView, oModel);
 
 		const oTable = this.oView.byId("table");
+		const oAlpha = oTable.getItems()[0].getBindingContext();
+
+		assert.throws(function () {
+			oAlpha.delete("deferred"); // code under test
+		}, new Error("Unsupported group ID: deferred"));
+
 		this.expectRequest("DELETE EMPLOYEES('0')");
 
 		await Promise.all([
-			oTable.getItems()[0].getBindingContext().delete(), // code under test
+			oAlpha.delete(), // code under test
 			this.waitForChanges(assert, "delete")
 		]);
 

@@ -1236,7 +1236,8 @@ sap.ui.define([
 [
 	{transient : false, groupId : "myGroup"},
 	{transient : true, groupId : "myGroup"},
-	{transient : true, groupId : null}
+	{transient : true, groupId : null},
+	{transient : true, groupId : null, hierarchy : true}
 ].forEach(function (oFixture) {
 	QUnit.test("delete: success " + JSON.stringify(oFixture), function (assert) {
 		var oBinding = {
@@ -1245,7 +1246,7 @@ sap.ui.define([
 				getHeaderContext : function () {},
 				lockGroup : function () {},
 				onKeepAliveChanged : function () {},
-				mParameters : "~mParameters~"
+				mParameters : {}
 			},
 			oContext = Context.create("~oModel~", oBinding, "/Foo/Bar('42')", 42,
 				oFixture.transient ? new SyncPromise(function () {}) : /*oCreatePromise*/undefined),
@@ -1253,9 +1254,12 @@ sap.ui.define([
 			oExpectation,
 			bSelected = !!oFixture.groupId;
 
+		if (oFixture.hierarchy) {
+			oBinding.mParameters.$$aggregation = {hierarchyQualifier : "X"};
+		}
 		oContext.bSelected = bSelected;
 		this.mock(_Helper).expects("isDataAggregation")
-			.withExactArgs("~mParameters~").returns(false);
+			.withExactArgs(sinon.match.same(oBinding.mParameters)).returns(false);
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(_Helper).expects("checkGroupId").exactly(oFixture.transient ? 0 : 1)
 			.withExactArgs("myGroup", false, true);
@@ -1341,16 +1345,20 @@ sap.ui.define([
 				checkSuspended : function () {},
 				delete : function () {},
 				lockGroup : function () {},
-				mParameters : "~mParameters~"
+				mParameters : {$$aggregation : {hierarchyQualifier : "X"}}
 			},
-			oContext = Context.create("~oModel~", oBinding, "/Foo/Bar('42')", 42),
+			oModel = {
+				isApiGroup : mustBeMocked
+			},
+			oContext = Context.create(oModel, oBinding, "/Foo/Bar('42')", 42),
 			oGroupLock = {
 				unlock : function () {}
 			};
 
 		this.mock(_Helper).expects("isDataAggregation")
-			.withExactArgs("~mParameters~").returns(false);
+			.withExactArgs(sinon.match.same(oBinding.mParameters)).returns(false);
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		this.mock(oModel).expects("isApiGroup").withExactArgs("myGroup").returns(false);
 		this.mock(_Helper).expects("checkGroupId").withExactArgs("myGroup", false, true);
 		this.mock(oContext).expects("fetchCanonicalPath").withExactArgs()
 			.returns(SyncPromise.reject("~oError~"));
@@ -1381,6 +1389,40 @@ sap.ui.define([
 			// code under test
 			oContext.delete();
 		}, new Error("Cannot delete " + oContext + " when using data aggregation"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("delete: recursive hierarchy, restrictions not met", function (assert) {
+		const oBinding = {
+			checkSuspended : function () {},
+			getUpdateGroupId : mustBeMocked,
+			mParameters : {$$aggregation : {hierarchyQualifier : "X"}}
+		};
+		const oModel = {
+			isApiGroup : mustBeMocked
+		};
+
+		const oContext = Context.create(oModel, oBinding, "/EMPLOYEES/42");
+		assert.throws(function () {
+			// code under test
+			oContext.delete();
+		}, new Error("Unsupported kept-alive context: " + oContext));
+
+		oContext.iIndex = 42;
+		this.mock(oBinding).expects("getUpdateGroupId").withExactArgs().returns("~groupId~");
+		this.mock(oModel).expects("isApiGroup").twice().withExactArgs("~groupId~").returns(true);
+
+		assert.throws(function () {
+			// code under test
+			oContext.delete();
+		}, new Error("Unsupported group ID: ~groupId~"));
+
+		oContext.iIndex = 0;
+
+		assert.throws(function () {
+			// code under test
+			oContext.delete("~groupId~");
+		}, new Error("Unsupported group ID: ~groupId~"));
 	});
 
 	//*********************************************************************************************

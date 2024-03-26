@@ -1129,9 +1129,6 @@ sap.ui.define([
 		var bReset = false,
 			that = this;
 
-		if (this.mParameters.$$aggregation && oContext.iIndex === undefined) {
-			throw new Error("Unsupported kept-alive context: " + oContext);
-		}
 		if (oContext.isDeleted()) {
 			return oContext.oDeletePromise; // do not delete twice
 		}
