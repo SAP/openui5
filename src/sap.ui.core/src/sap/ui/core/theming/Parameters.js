@@ -767,7 +767,11 @@ sap.ui.define([
 		 * the next time they are queried via the method <code>get</code>.
 		 *
 		 * @public
-		 * @deprecated since 1.92
+		 * @deprecated As of version 1.92 without a replacement. Application code should
+		 *   not be able to interfere with the automated determination of theme parameters.
+		 *   Resetting the parameters unnecessarily could impact performance. Please use
+		 *   the (potentially async) API to get parameter values and rely on the framework
+		 *   to update parameter values when the theme changes.
 		 */
 		Parameters.reset = function() {
 			this._reset.apply(this, arguments);

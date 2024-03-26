@@ -341,7 +341,8 @@ sap.ui.define([
 	 * @function
 	 * @static
 	 * @public
-	 * @deprecated since 1.119.0.
+	 * @deprecated As of version 1.119, without replacement. In future major versions, the Core no longer has
+	 *    a class nature and therefore can't be extended.
 	 */
 
 	/**
@@ -352,7 +353,8 @@ sap.ui.define([
 	 * @static
 	 * @name sap.ui.core.Core.getMetadata
 	 * @function
-	 * @deprecated since 1.119.0.
+	 * @deprecated As of version 1.119, without replacement. In future major versions, the Core no longer has
+	 *    a class nature and no longer inherits from sap.ui.base.Object and therefore no longer has metadata.
 	 */
 
 	/**
@@ -1192,7 +1194,8 @@ sap.ui.define([
 	 * @param {boolean} [bForceUpdate=false] Force updating URLs of currently loaded theme
 	 * @return {this} the Core, to allow method chaining
 	 * @since 1.10
-	 * @deprecated since 1.119
+	 * @deprecated As of version 1.119, without replacement. The need to define the location for a theme
+	 *   should be fully covered with the capabiltites of the {@link sap/base/config base configuration}.
 	 * @public
 	 */
 	Core.prototype.setThemeRoot = function(sThemeName, aLibraryNames, sThemeBaseUrl, bForceUpdate) {
@@ -1445,7 +1448,9 @@ sap.ui.define([
 	 * Lock should be called before and after the DOM is modified for rendering, roundtrips...
 	 * Exceptions might be the case for asynchronous UI behavior
 	 * @public
-	 * @deprecated since 1.118
+	 * @deprecated As of version 1.118, without a replacement. The ability to prevent
+	 *   the re-rendering of all <code>UIArea</code>s wasn't really used in the past and
+	 *   did not provide a meaningful feature. It therefore has been abandoned.
 	 */
 	Core.prototype.lock = function () {
 		this.bLocked = true;
@@ -1459,7 +1464,9 @@ sap.ui.define([
 	 *
 	 * Browser events are dispatched to the controls again after this method is called.
 	 * @public
-	 * @deprecated since 1.118
+	 * @deprecated As of version 1.118, without a replacement. The ability to prevent
+	 *   the re-rendering of all <code>UIArea</code>s wasn't really used in the past and
+	 *   did not provide a meaningful feature. It therefore has been abandoned.
 	 */
 	Core.prototype.unlock = function () {
 		this.bLocked = false;
@@ -1469,10 +1476,13 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the locked state of the <code>sap.ui.core.Core</code>
+	 * Returns the locked state of the <code>sap.ui.core.Core</code>.
+	 *
 	 * @return {boolean} locked state
 	 * @public
-	 * @deprecated since 1.118
+	 * @deprecated As of version 1.118, without a replacement. The ability to prevent
+	 *   the re-rendering of all <code>UIArea</code>s wasn't really used in the past and
+	 *   did not provide a meaningful feature. It therefore has been abandoned.
 	 */
 	Core.prototype.isLocked = function () {
 		return this.bLocked;
@@ -1507,8 +1517,10 @@ sap.ui.define([
 	 * Calling this method before the Core has been {@link #isInitialized initialized},
 	 * is not recommended.
 	 *
-	 * @return {sap.ui.core.RenderManager} New instance of the RenderManager
-	 * @deprecated Since 1.119
+	 * @returns {sap.ui.core.RenderManager} New instance of the RenderManager
+	 * @deprecated As of version 1.119, without replacement. In the next major version,
+	 *    synchronously rendering UI updates is no longer supported as it can lead to unnecessary
+	 *    intermediate DOM updates or layout shifting etc. Controls should rather use invalidation.
 	 * @public
 	 */
 	Core.prototype.createRenderManager = function() {
@@ -1518,10 +1530,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the Id of the control/element currently in focus.
-	 * @return {string} the Id of the control/element currently in focus.
+	 * Returns the ID of the control/element currently in focus.
+	 * @returns {string} the ID of the control/element currently in focus.
 	 * @public
-	 * @deprecated since 1.119.
+	 * @deprecated As of version 1.119.
 	 * Please use {@link sap.ui.core.Element.getActiveElement Element.getActiveElement} to get
 	 * the currently focused element. You can then retrieve the ID of that element with
 	 * {@link sap.ui.core.Element#getId Element#getId}. Please be aware,
@@ -1876,7 +1888,8 @@ sap.ui.define([
 	 * @param {string} [sVariant] the variant to include (optional)
 	 * @param {string} [sQuery] to be used only by the Core
 	 * @public
-	 * @deprecated since 1.119
+	 * @deprecated As of version 1.119, without replacement. There's no known use case that
+	 *   would require a public API.
 	 */
 	Core.prototype.includeLibraryTheme = function(sLibName, sVariant, sQuery) {
 		var oLib = Library._get(sLibName, true /* bCreate */);
@@ -1899,7 +1912,8 @@ sap.ui.define([
 	 *
 	 * @return {Object<string,Object>} Map of library info objects keyed by the library names.
 	 * @public
-	 * @deprecated since 1.119
+	 * @deprecated As of version 1.119, without a 1:1 replacement. Callers that used <code>getLoadedLibraries</code>
+	 *   to check whether a certain library is loaded, should rather use {@link sap.ui.core.Lib#isLoaded Library#isLoaded}.
 	 */
 	Core.prototype.getLoadedLibraries = function() {
 		return Library.all();
@@ -2040,7 +2054,9 @@ sap.ui.define([
 	 *
 	 * @return {boolean} true if there are pending (or executing) rendering tasks.
 	 * @public
-	 * @deprecated since 1.118
+	 * @deprecated As of version 1.118, without replacement. The known use cases in
+	 *   testing environments are covered by other APIs or features, e.g. OPA's waitFor
+	 *   mechanism.
 	 */
 	Core.prototype.getUIDirty = function() {
 		return Rendering.isPending();
@@ -2286,7 +2302,12 @@ sap.ui.define([
 	 * In general, applications and Controls should avoid calling this method and
 	 * instead let the framework manage any necessary rendering.
 	 * @public
-	 * @deprecated since 1.118
+	 * @deprecated As of version 1.118, without replacement. In the next major version,
+	 *    synchronously rendering UI updates is no longer supported as it can lead to unnecessary
+	 *    intermediate DOM updates or layout shifting etc. Controls should rather use invalidation
+	 *    and apps should not trigger rendering at all but rather rely on the framework's automatic
+	 *    update mechanisms. Test code can use the test module <code>sap/ui/qunit/utils/nextUIUpdate</code>
+	 *    as a convenient way to wait for the next asynchronous rendering.
 	 */
 	Core.prototype.applyChanges = function() {
 		Rendering.renderPendingUIUpdates("forced by applyChanges");
@@ -2499,7 +2520,8 @@ sap.ui.define([
 	 * @param {function} fnFunction Callback to be called for each control event
 	 * @param {object} [oListener] Optional context object to call the callback on
 	 * @public
-	 * @deprecated Since 1.119
+	 * @deprecated As of version 1.119 without a replacement. Applications should not have the need
+	 *   to intercept all control events.
 	 */
 	Core.prototype.attachControlEvent = function(fnFunction, oListener) {
 		_oEventProvider.attachEvent(Core.M_EVENTS.ControlEvent, fnFunction, oListener);
@@ -2513,7 +2535,8 @@ sap.ui.define([
 	 * @param {function} fnFunction Function to unregister
 	 * @param {object} [oListener] Context object on which the given function had to be called
 	 * @public
-	 * @deprecated Since 1.119
+	 * @deprecated As of version 1.119 without a replacement. Applications should not have the need
+	 *   to intercept all control events.
 	 */
 	Core.prototype.detachControlEvent = function(fnFunction, oListener) {
 		_oEventProvider.detachEvent(Core.M_EVENTS.ControlEvent, fnFunction, oListener);

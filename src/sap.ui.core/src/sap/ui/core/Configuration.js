@@ -101,7 +101,16 @@ sap.ui.define([
 	 * @extends sap.ui.base.Object
 	 * @public
 	 * @alias sap.ui.core.Configuration
-	 * @deprecated As of Version 1.120
+	 * @deprecated As of version 1.120. There's no single replacement for this class. Instead,
+	 *   several facades have been created for different topics, e.g. {@link module:sap/base/i18n/Localization
+	 *   Localization} for settings related to localization, {@link module:sap/base/i18n/Formatting Formatting}
+	 *   for settings related to data formatting, {@link module:sap/ui/core/Theming Theming} for theming related
+	 *   settings, {@link module:sap/ui/core/ControlBehavior ControlBehavior} for settings that are typically
+	 *   required when implementing the behavior of a control, {@link module:sap/ui/security/Security Security}
+	 *   for settings around security.
+	 *
+	 *   Please check the individual methods of this class for their replacements, if any.
+	 *
 	 * @borrows module:sap/base/i18n/Localization.getLanguagesDeliveredWithCore as getLanguagesDeliveredWithCore
 	 * @borrows module:sap/base/i18n/Localization.getSupportedLanguages as getSupportedLanguages
 	 * @borrows module:sap/ui/core/getCompatibilityVersion as getCompatibilityVersion
@@ -510,7 +519,8 @@ sap.ui.define([
 		 * @return {boolean} Wether the ARIA role 'application' should be added to the HTML body or not
 		 * @since 1.27.0
 		 * @public
-		 * @deprecated As of Version 1.120
+		 * @deprecated As of version 1.120, without a replacement. Was only used in the implementation
+		 *   of the framework itself.
 		 */
 		getAutoAriaBodyRole : function () {
 			return BaseConfig.get({ name: "sapUiAutoAriaBodyRole", type: BaseConfig.Type.Boolean });
@@ -562,7 +572,8 @@ sap.ui.define([
 		 * @return {boolean|string} false - no adaptation, true - full adaptation, comma-separated list - partial adaptation
 		 * Possible values: style, collapse, title, back, hierarchy
 		 * @public
-		 * @deprecated As of Version 1.120
+		 * @deprecated As of version 1.120, without a replacement. All the Fiori 2.0 adaptation logic
+		 *   is handled by the framework, there should be no need for apps to know about it.
 		 */
 		getFiori2Adaptation : function () {
 			var aAdaptations = BaseConfig.get({
@@ -586,34 +597,48 @@ sap.ui.define([
 		 * @returns {boolean} Whether the page runs in full debug mode
 		 * @public
 		 * @function
-		 * @deprecated As of version 1.120
+		 * @deprecated As of version 1.120, without a replacement. All debug mode
+		 *   functionality is implemented within the framework and should be transparent
+		 *   for application code. There's no need for a public accessor method.
 		 */
 		getDebug : Supportability.isDebugModeEnabled,
 
 		/**
 		 * Returns whether the UI5 control inspector is displayed.
-		 * Has only an effect when the sap-ui-debug module has been loaded
+		 *
+		 * Has only an effect when the sap-ui-debug module has been loaded.
+		 *
 		 * @return {boolean} whether the UI5 control inspector is displayed
 		 * @public
 		 * @function
-		 * @deprecated As of Version 1.120
+		 * @deprecated As of version 1.120, without a replacement. The inspect option
+		 *   is related to the very old sap-ui-debug module. As there are now much better
+		 *   development tools (e.g. the UI5 Inpsector browser extension), this option
+		 *   has been deprecated and the sap-ui-debug feature might be removed in future
+		 *   major versions of UI5.
 		 */
 		getInspect : Supportability.isControlInspectorEnabled,
 
 		/**
 		 * Returns whether the text origin information is collected.
+		 *
 		 * @return {boolean} whether the text info is collected
 		 * @public
 		 * @function
-		 * @deprecated As of Version 1.120
+		 * @deprecated As of version 1.120. The origin info was intended as a mean to track
+		 *   down translation issues to the origin of a translated text. Meanwhile, with the
+		 *   pseudo logon language 3Q, a similar, more lightweight feature exists for use with
+		 *   OpenUI5 or SAPUI5 libraries.
 		 */
 		getOriginInfo : Supportability.collectOriginInfo,
 
 		/**
 		 * Returns whether there should be an exception on any duplicate element IDs.
+		 *
 		 * @return {boolean} whether there should be an exception on any duplicate element IDs
 		 * @public
-		 * @deprecated As of Version 1.120
+		 * @deprecated As of version 1.120, without a replacement. Future major versions of UI5 will
+		 *   always report duplicate IDs as an error as the framework heavily relies on their uniqueness.
 		 */
 		getNoDuplicateIds : function () {
 			return BaseConfig.get({ name: "sapUiNoDuplicateIds", type: BaseConfig.Type.Boolean, defaultValue: true, external: true });
@@ -692,7 +717,8 @@ sap.ui.define([
 		 *
 		 * @returns {string[]} array of base URLs
 		 * @public
-		 * @deprecated As of Version 1.120
+		 * @deprecated As of version 1.120, without a replacement. Was only used within the implementation
+		 *   of the <code>AppCacheBuster</code>.
 		 */
 		getAppCacheBuster : function() {
 			return BaseConfig.get({name: "sapUiAppCacheBuster", type: BaseConfig.Type.StringArray, external: true, freeze: true});
@@ -703,7 +729,8 @@ sap.ui.define([
 		 *
 		 * @returns {string} "sync" | "async" | "batch"
 		 * @public
-		 * @deprecated As of Version 1.120
+		 * @deprecated As of version 1.120, without a replacement. Was only used within the implementation
+		 *   of the <code>AppCacheBuster</code>.
 		 */
 		getAppCacheBusterMode : function() {
 			return BaseConfig.get({name: "sapUiXxAppCacheBusterMode", type: BaseConfig.Type.String, defaultValue: "sync", external: true, freeze: true});
@@ -715,7 +742,7 @@ sap.ui.define([
 		 * @returns {boolean} true if customizing is disabled
 		 * @private
 		 * @ui5-restricted
-		 * @deprecated As of Version 1.120
+		 * @deprecated As of version 1.120, without a replacement.
 		 */
 		getDisableCustomizing : function() {
 			return BaseConfig.get({name: "sapUiXxDisableCustomizing", type: BaseConfig.Type.Boolean});
@@ -740,7 +767,8 @@ sap.ui.define([
 		 * @returns {object[]} Flexibility services configuration
 		 * @public
 		 * @since 1.60.0
-		 * @deprecated As of Version 1.120
+		 * @deprecated As of version 1.120, without a replacement. Was only used by the Flexibility
+		 *   feature which now resolves this on its own.
 		 */
 		getFlexibilityServices : function() {
 			var FlexConfig = sap.ui.require("sap/ui/fl/initial/_internal/FlexConfiguration");
@@ -825,7 +853,8 @@ sap.ui.define([
 		 * @returns {string|undefined} Module name (ID) of a file share support module
 		 * @public
 		 * @since 1.102
-		 * @deprecated As of version 1.120
+		 * @deprecated As of version 1.120, without a replacement. The configuration is only
+		 *    relevant for the <code>sap.ui.export</code> library.
 		 */
 		getFileShareSupport : function() {
 			return BaseConfig.get({
@@ -853,13 +882,14 @@ sap.ui.define([
 		 * Flag if statistics are requested.
 		 *
 		 * Flag set by TechnicalInfo Popup will also be checked.
-		 * So its active if set by URL parameter or manually via TechnicalInfo.
+		 * So it's active if set by URL parameter or manually via TechnicalInfo.
 		 *
 		 * @returns {boolean} Whether statistics are enabled
 		 * @public
 		 * @since 1.106.0
 		 * @function
-		 * @deprecated As of Version 1.120
+		 * @deprecated As of version 1.120, without a replacment. The configuration is only relevant
+		 *    within the framework.
 		 */
 		getStatisticsEnabled : Supportability.isStatisticsEnabled,
 
@@ -941,7 +971,12 @@ sap.ui.define([
 		 * @returns {this} Returns <code>this</code> to allow method chaining
 		 * @public
 		 * @since 1.38.6
-		 * @deprecated As of Version 1.120
+		 * @deprecated As of version 1.120, without a replacement. As the different settings have been
+		 *   spread across multiple new APIs (see {@link sap.ui.core.Configuration the deprecation hint
+		 *   for this class}), a common API for changing multiple settings no longer made sense.
+		 *
+		 *   Please check the individual methods of this class for their replacements and call those
+		 *   replacement methods one by one.
 		 */
 		applySettings: function(mSettings) {
 
@@ -975,7 +1010,7 @@ sap.ui.define([
 		 *
 		 * @private
 	 	 * @ui5-restricted sap.ui.core.Core
-		 * @deprecated As of Version 1.120
+		 * @deprecated As of version 1.120, without a replacement.
 		 */
 		setCore: function (oCore) {
 			// Setting the core needs to happen before init
