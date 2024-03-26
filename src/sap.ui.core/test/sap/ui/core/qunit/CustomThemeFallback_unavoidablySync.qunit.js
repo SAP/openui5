@@ -69,7 +69,7 @@ sap.ui.define([
 		assert.equal(oCustomCssLink.previousSibling, aLinks[2], "custom.css should be inserted last");
 
 		assert.equal(
-			Parameters.get({ name : "sapUiTestLibTextColor" }),
+			Parameters.get("sapUiTestLibTextColor"),
 			"#000000",
 			"Parameter from fallback theme should be available."
 		);
@@ -107,7 +107,7 @@ sap.ui.define([
 			assert.equal(oCustomCssLink.previousSibling, aLinks[2], "custom.css should be inserted last");
 
 			assert.equal(
-				Parameters.get({ name: "sapUiTestLibTextColor" }),
+				Parameters.get("sapUiTestLibTextColor"),
 				"#000000",
 				"Parameter from fallback theme should be available."
 			);

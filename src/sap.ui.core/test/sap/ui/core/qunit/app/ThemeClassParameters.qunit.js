@@ -63,6 +63,8 @@ sap.ui.define([
 	 * @param {string} sExpectedLessParameter
 	 */
 	function cssClassTestCase(assert, sClassName, sCSSProperty, sExpectedLessParameter) {
+		const done = assert.async();
+
 		// Arrange
 		var $domElement = jQuery("#qunit-fixture div");
 		sExpectedLessParameter = (sExpectedLessParameter[0] === "@" ? sExpectedLessParameter.substring(1) : sExpectedLessParameter);
@@ -71,20 +73,30 @@ sap.ui.define([
 		$domElement.addClass(sClassName);
 
 		// Assert
-		var sThemeParameterValue = Parameters.get(sExpectedLessParameter);
-		if (sCSSProperty === "font-size") {
-			sThemeParameterValue = fontSizeToPx(sThemeParameterValue);
-		} else {
-			if (sCSSProperty === "border-color") {
-				// fix: firefox does not support reading shorthand CSS properties, so use one of the border properties instead
-				sCSSProperty = "borderTopColor";
-			}
-			sThemeParameterValue = hexToRgb(sThemeParameterValue);
+		const sThemeParameterValue = Parameters.get({
+			name: sExpectedLessParameter,
+			callback: check
+		});
+		if ( sThemeParameterValue !== undefined ) {
+			check(sThemeParameterValue);
 		}
 
-		assert.ok(!!$domElement.css(sCSSProperty), "The class \"" + sClassName + "\" has a non-empty value for CSS property \"" + sCSSProperty + "\" ");
-		assert.strictEqual(normalizeValue($domElement.css(sCSSProperty)), normalizeValue(sThemeParameterValue), "The class \"" + sClassName + "\" set CSS property \"" + sCSSProperty + "\" to \"@" + sExpectedLessParameter
-			+ "\" (" + Parameters.get(sExpectedLessParameter) + ") - normalized results: " + normalizeValue($domElement.css(sCSSProperty)) + " vs " + normalizeValue(sThemeParameterValue));
+		function check(sThemeParameterValue) {
+			if (sCSSProperty === "font-size") {
+				sThemeParameterValue = fontSizeToPx(sThemeParameterValue);
+			} else {
+				if (sCSSProperty === "border-color") {
+					// fix: firefox does not support reading shorthand CSS properties, so use one of the border properties instead
+					sCSSProperty = "borderTopColor";
+				}
+				sThemeParameterValue = hexToRgb(sThemeParameterValue);
+			}
+
+			assert.ok(!!$domElement.css(sCSSProperty), "The class \"" + sClassName + "\" has a non-empty value for CSS property \"" + sCSSProperty + "\" ");
+			assert.strictEqual(normalizeValue($domElement.css(sCSSProperty)), normalizeValue(sThemeParameterValue), "The class \"" + sClassName + "\" set CSS property \"" + sCSSProperty + "\" to \"@" + sExpectedLessParameter
+				+ "\" (" + Parameters.get(sExpectedLessParameter) + ") - normalized results: " + normalizeValue($domElement.css(sCSSProperty)) + " vs " + normalizeValue(sThemeParameterValue));
+			done();
+		}
 	}
 
 	QUnit.module("Theme-Dependent CSS Classes for: " + Theming.getTheme(), {
