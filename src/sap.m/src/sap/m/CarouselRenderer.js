@@ -257,14 +257,15 @@ sap.ui.define([
 			}
 
 		} else {
-
-			oRM.class("sapMCrslNumeric").openEnd();
+			oRM.class("sapMCrslNumeric")
+				.openEnd();
 
 			var sTextBetweenNumbers = oResourceBundle.getText("CAROUSEL_PAGE_INDICATOR_TEXT", [mSettings.iIndex + 1, iPageCount - iNumberOfItemsToShow + 1]);
-			oRM.openStart("span", sId + "-" + "slide-number").openEnd()
+			oRM.openStart("span", sId + "-" + "slide-number")
+				.attr("dir", "auto")
+				.openEnd()
 				.text(sTextBetweenNumbers)
 				.close("span");
-
 		}
 
 		oRM.close("div");

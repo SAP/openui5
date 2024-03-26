@@ -142,6 +142,33 @@ sap.ui.define([
 		assert.strictEqual(this.oCarousel.getBackgroundDesign(), BackgroundDesign.Translucent, "Default value for Background Design is 'Translucent'");
 	});
 
+	QUnit.module("Rendering", {
+		beforeEach: function () {
+			this.oCarousel = new Carousel("myCrsl", {
+				pages: [
+					new Page("keyTestPage_1"),
+					new Page("keyTestPage_2"),
+					new Page("keyTestPage_3"),
+					new Page("keyTestPage_4"),
+					new Page("keyTestPage_5"),
+					new Page("keyTestPage_6"),
+					new Page("keyTestPage_7"),
+					new Page("keyTestPage_8"),
+					new Page("keyTestPage_9")
+				]
+			});
+			this.oCarousel.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+		},
+		afterEach: function () {
+			this.oCarousel.destroy();
+		}
+	});
+
+	QUnit.test("Navigation numbers", function (assert) {
+		assert.strictEqual(document.getElementById("myCrsl-slide-number").getAttribute("dir"), "auto", "navigation text direction is auto");
+	});
+
 	//================================================================================
 	// Carousel Methods
 	//================================================================================
