@@ -234,14 +234,14 @@ sap.ui.define([
 			 *
 			 * The following restrictions apply:
 			 * <ul>
-			 *  <li>Only client models are supported (e.g. {@link sap.ui.model.json.JSONModel}). Grouping does not work with OData models.</li>
-			 *  <li>The table can only be grouped by <b>one</b> column at a time. Grouping by another column will remove the current grouping.</li>
-			 *  <li>For the grouping to work correctly, {@link sap.ui.table.Column#getSortProperty sortProperty} must be set for the grouped
-			 *      column.</li>
-			 *  <li>If grouping has been done, sorting and filtering is not possible. Any existing sorting and filtering rules do no longer apply.
-			 *      The UI is not updated accordingly (e.g. menu items, sort and filter icons).</li>
-			 *  <li>The column, by which the table is grouped, is not visible. It will become visible again only if the table is grouped by another
-			 *      column or grouping is disabled.</li>
+			 *   <li>Only client models are supported (e.g. {@link sap.ui.model.json.JSONModel}). Grouping does not work with OData models.</li>
+			 *   <li>The table can only be grouped by <b>one</b> column at a time. Grouping by another column will remove the current grouping.</li>
+			 *   <li>For the grouping to work correctly, {@link sap.ui.table.Column#getSortProperty sortProperty} must be set for the grouped
+			 *       column.</li>
+			 *   <li>If grouping has been done, sorting and filtering is not possible. Any existing sorting and filtering rules do no longer apply.
+			 *       The UI is not updated accordingly (e.g. menu items, sort and filter icons).</li>
+			 *   <li>The column, by which the table is grouped, is not visible. It will become visible again only if the table is grouped by another
+			 *       column or grouping is disabled.</li>
 			 * </ul>
 			 *
 			 * @see sap.ui.table.Table#setGroupBy
@@ -299,9 +299,9 @@ sap.ui.define([
 			 *
 			 * <b>Note</b>
 			 * <ul>
-			 *  <li>Fixed columns need a defined width for the feature to work.</li>
-			 *  <li>The aggregated width of all fixed columns must not exceed the table width. Otherwise the table ignores the value of the
-			 *  property and adapts the behavior in an appropriate way to ensure that the user is still able to scroll horizontally.</li>
+			 *   <li>Fixed columns need a defined width for the feature to work.</li>
+			 *   <li>The aggregated width of all fixed columns must not exceed the table width. Otherwise the table ignores the value of the
+			 *       property and adapts the behavior in an appropriate way to ensure that the user is still able to scroll horizontally.</li>
 			 * </ul>
 			 */
 			fixedColumnCount: {type: "int", group: "Appearance", defaultValue: 0},

@@ -270,11 +270,11 @@ sap.ui.define([
 		 *
 		 * The following restrictions apply:
 		 * <ul>
-		 *  <li>The functionality targets only the mouse interaction (drag and drop). There is no keyboard alternative available.
-		 *      An accessible alternative must be provided by applications, for example, by giving the user the possibility to enter
-		 *      the number of required rows in an input field.</li>
-		 *  <li>The resize interaction is not optimized for touch devices from a design and interaction perspective.
-		 *      We do not recommend to use this mode in such scenarios.</li>
+		 *   <li>The functionality targets only the mouse interaction (drag and drop). There is no keyboard alternative available.
+		 *       An accessible alternative must be provided by applications, for example, by giving the user the possibility to enter
+		 *       the number of required rows in an input field.</li>
+		 *   <li>The resize interaction is not optimized for touch devices from a design and interaction perspective.
+		 *       We do not recommend to use this mode in such scenarios.</li>
 		 * </ul>
 		 *
 		 * @public
