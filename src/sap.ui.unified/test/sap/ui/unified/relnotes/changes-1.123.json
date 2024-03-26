@@ -3,6 +3,11 @@
     "date": "March 2024",
     "notes": [
       {
+        "id": "eca418f0f3fb956a522a434a8d01893dac4550fb",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: adjust header buttons width"
+      },
+      {
         "id": "305cb4b222a752b17e051b915c25930acde0bf88",
         "type": "FIX",
         "text": " sap.ui.unified.Calendar: remove extra week number"

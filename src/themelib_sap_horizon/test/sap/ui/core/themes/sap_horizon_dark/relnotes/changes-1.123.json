@@ -3,6 +3,16 @@
     "date": "March 2024",
     "notes": [
       {
+        "id": "013bce45862474febf4a95002c53047b65390375",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: Button in Split mode has correct border and focus in horizon theme"
+      },
+      {
+        "id": "86217ecfa2c73a13261a5137de9b74802867ed79",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: hover and focus visual fixes"
+      },
+      {
         "id": "ef8e14cd94a7728d087c80e295e9538b4ddf6794",
         "type": "FIX",
         "text": " sap.m.ShellBar: Visual fix"

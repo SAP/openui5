@@ -3,6 +3,56 @@
     "date": "March 2024",
     "notes": [
       {
+        "id": "6cf887fbdf8e9f11f38645ebc9a49e4b607b24c6",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Test page adjustment"
+      },
+      {
+        "id": "013bce45862474febf4a95002c53047b65390375",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: Button in Split mode has correct border and focus in horizon theme"
+      },
+      {
+        "id": "86217ecfa2c73a13261a5137de9b74802867ed79",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: hover and focus visual fixes"
+      },
+      {
+        "id": "b6d3ad817b56ca6d88fef4bdd4b2dc80d6fad8a0",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: the colors from the color property are already reflected in the monthly view"
+      },
+      {
+        "id": "0cc08f3de296edfce7a5b4792211f5b207cc5ecd",
+        "type": "FIX",
+        "text": " sap.m.Dialog: fixed test accessibility page"
+      },
+      {
+        "id": "1f18405ab7920f04c90bf0b5ea87f0aae5c9e1b8",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Resolve issue preventing text selection with mouse"
+      },
+      {
+        "id": "85c6c2d5da93d44f873b725b1031985279d00f04",
+        "type": "FIX",
+        "text": " sap.m.RangeSlider: Test page fixed"
+      },
+      {
+        "id": "a4f56872057a63c773845a2d2c8905206be6f8d3",
+        "type": "FIX",
+        "text": " sap.m.Slider: fix horizon scale alignment"
+      },
+      {
+        "id": "a50451d0bff332d9fd5ad38342d30baa94746085",
+        "type": "FEATURE",
+        "text": " sap.m.Breadcrumbs: currentLocation is link"
+      },
+      {
+        "id": "5068829194c2e1e1a4c7b072f798e8dc646eaa20",
+        "type": "FIX",
+        "text": " sap.m,sap.ui.commons,sap.ui.core,sap.uxap: Deprecated API descriptions enhanced"
+      },
+      {
         "id": "626614ccf4aec0074b093d40630204db8197eb2e",
         "type": "FIX",
         "text": " sap.m.OverflowToolbar: Button type change fixed"

@@ -3,6 +3,11 @@
     "date": "March 2024",
     "notes": [
       {
+        "id": "a50451d0bff332d9fd5ad38342d30baa94746085",
+        "type": "FEATURE",
+        "text": " sap.m.Breadcrumbs: currentLocation is link"
+      },
+      {
         "id": "a078c11556740aba467fddc39807f91d451cf440",
         "type": "FIX",
         "text": " sap.m.Slider: adjust sizings for all themes"
