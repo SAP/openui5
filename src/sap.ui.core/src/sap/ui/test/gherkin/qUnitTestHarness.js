@@ -10,7 +10,6 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/test/gherkin/GherkinTestGenerator",
 	"sap/ui/test/gherkin/StepDefinitions",
-	"sap/ui/qunit/qunit-css",
 	"sap/ui/qunit/qunit-junit",
 	"sap/ui/qunit/qunit-coverage"
 ], function(Log, GherkinTestGenerator) {
