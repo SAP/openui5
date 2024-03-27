@@ -5664,18 +5664,16 @@ make root = ${bMakeRoot}`;
 	});
 
 	//*********************************************************************************************
-	QUnit.test("handleOutOfPlaceNodes", function () {
+	QUnit.test("handleOutOfPlaceNodes", function (assert) {
 		const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, {
 			hierarchyQualifier : "X",
+			$DrillState : "~DrillState~",
 			$LimitedRank : "~LimitedRank~"
 		});
-		oCache.aElements.$byPredicate = {
-			"~predicate2~" : "~node2~",
-			"~predicate4~" : "~node4~"
-		};
+		oCache.aElements.$byPredicate = {"~predicate2~" : "~node2~"};
 		const oRankResult = {
 			value : ["~parent1RankResult~", "~node2RankResult~", "~node3RankResult~",
-				"~node1RankResult~", "~parent2RankResult~", "~node4RankResult~"]
+				"~node1RankResult~", "~parent2RankResult~"]
 		};
 		const oOutOfPlaceNodeResult1 = {
 			value : ["~node1Data~", "~node2Data~"]
@@ -5686,9 +5684,13 @@ make root = ${bMakeRoot}`;
 		const oOutOfPlaceNodeResult3 = {
 			value : ["~node4Data~"]
 		};
+		const oOutOfPlaceNodeResult4 = {
+			value : ["~node5Data~"]
+		};
 		const oCacheMock = this.mock(oCache);
 		const oFirstLevelMock = this.mock(oCache.oFirstLevel);
 		const oHelperMock = this.mock(_Helper);
+		const oTreeStateMock = this.mock(oCache.oTreeState);
 
 		oCacheMock.expects("getTypes").atLeast(1).withExactArgs().returns("~types~");
 		// oRankResult
@@ -5707,12 +5709,26 @@ make root = ${bMakeRoot}`;
 		oHelperMock.expects("getKeyPredicate")
 			.withExactArgs("~parent2RankResult~", "/Foo", "~types~")
 			.returns("~parent2Predicate~");
-		oHelperMock.expects("getKeyPredicate")
-			.withExactArgs("~node4RankResult~", "/Foo", "~types~")
-			.returns("~predicate4~");
+
+		oTreeStateMock.expects("getOutOfPlacePredicates").withExactArgs()
+			.returns(["~predicate1~", "~predicate2~", "~predicate3~", "~predicate4~",
+				"~predicate5~", "~predicate6NowInPlace~", "~predicate7NowInPlace~"]);
+
+		// parent1
+		//   node1
+		//   node2
+		// node3
+		// parent2 (collapsed)
+		//   node4 (no rank)
+		//     node5 (no rank)
+
 		// "~node1Data~"
 		oHelperMock.expects("getKeyPredicate").withExactArgs("~node1Data~", "/Foo", "~types~")
 			.returns("~predicate1~");
+		oTreeStateMock.expects("getOutOfPlace").withExactArgs("~predicate1~")
+			.returns({parentPredicate : "~parent1Predicate~"});
+		oHelperMock.expects("drillDown").withExactArgs("~parent1RankResult~", "~DrillState~")
+			.returns("expanded");
 		oHelperMock.expects("merge").withExactArgs("~node1Data~", "~node1RankResult~");
 		oHelperMock.expects("drillDown").withExactArgs("~node1Data~", "~LimitedRank~").returns("4");
 		oFirstLevelMock.expects("calculateKeyPredicate")
@@ -5721,12 +5737,14 @@ make root = ${bMakeRoot}`;
 			.callsFake(function () {
 				oCache.aElements.$byPredicate["~predicate1~"] = "~node1Data~";
 			});
-		// "~node2Data~"
+		// "~node2Data~": already in $byPredicate
 		oHelperMock.expects("getKeyPredicate").withExactArgs("~node2Data~", "/Foo", "~types~")
 			.returns("~predicate2~");
 		// "~node3Data~"
 		oHelperMock.expects("getKeyPredicate").withExactArgs("~node3Data~", "/Foo", "~types~")
 			.returns("~predicate3~");
+		oTreeStateMock.expects("getOutOfPlace").withExactArgs("~predicate3~")
+			.returns({/*no parentPredicate*/});
 		oHelperMock.expects("merge").withExactArgs("~node3Data~", "~node3RankResult~");
 		oHelperMock.expects("drillDown").withExactArgs("~node3Data~", "~LimitedRank~").returns("5");
 		oFirstLevelMock.expects("calculateKeyPredicate")
@@ -5735,11 +5753,27 @@ make root = ${bMakeRoot}`;
 			.callsFake(function () {
 				oCache.aElements.$byPredicate["~predicate3~"] = "~node3Data~";
 			});
-		// "~node4Data~"
+		// "~node4Data~": parent is collapsed
 		oHelperMock.expects("getKeyPredicate").withExactArgs("~node4Data~", "/Foo", "~types~")
 			.returns("~predicate4~");
+		oTreeStateMock.expects("getOutOfPlace").withExactArgs("~predicate4~")
+			.returns({parentPredicate : "~parent2Predicate~"});
+		oHelperMock.expects("drillDown").withExactArgs("~parent2RankResult~", "~DrillState~")
+			.returns("collapsed");
+		// "~node5Data~": below node4 (no rank)
+		oHelperMock.expects("getKeyPredicate").withExactArgs("~node5Data~", "/Foo", "~types~")
+			.returns("~predicate5~");
+		oTreeStateMock.expects("getOutOfPlace").withExactArgs("~predicate5~")
+			.returns({parentPredicate : "~predicate4~"});
+
+		const oDeleteOutOfPlace6Expectation = oTreeStateMock.expects("deleteOutOfPlace")
+			.withExactArgs("~predicate6NowInPlace~");
+		const oDeleteOutOfPlace7Expectation = oTreeStateMock.expects("deleteOutOfPlace")
+			.withExactArgs("~predicate7NowInPlace~");
+
 		// move nodes
-		this.mock(oCache.oTreeState).expects("getOutOfPlaceGroupedByParent").withExactArgs()
+		const oOutOfPlaceGroupedByParentExpectation = oTreeStateMock
+			.expects("getOutOfPlaceGroupedByParent").withExactArgs()
 			.returns([{
 				nodePredicates : "~parent1NodePredicates~",
 				parentPredicate : "~parent1Predicate~"
@@ -5758,8 +5792,13 @@ make root = ${bMakeRoot}`;
 		oCacheMock.expects("moveOutOfPlaceNodes").withExactArgs(undefined, "~rootNodePredicates~");
 
 		// code under test
-		oCache.handleOutOfPlaceNodes(
-			[oRankResult, oOutOfPlaceNodeResult1, oOutOfPlaceNodeResult2, oOutOfPlaceNodeResult3]);
+		oCache.handleOutOfPlaceNodes([oRankResult, oOutOfPlaceNodeResult1, oOutOfPlaceNodeResult2,
+			oOutOfPlaceNodeResult3, oOutOfPlaceNodeResult4]);
+
+		assert.ok(oDeleteOutOfPlace6Expectation
+			.calledBefore(oOutOfPlaceGroupedByParentExpectation));
+		assert.ok(oDeleteOutOfPlace7Expectation
+			.calledBefore(oOutOfPlaceGroupedByParentExpectation));
 	});
 
 	//*********************************************************************************************
@@ -5834,7 +5873,6 @@ make root = ${bMakeRoot}`;
 				assert.strictEqual(oCache.aElements.indexOf(oNode3), 2,
 					"moved immediately behind parent (snapshot)");
 			});
-		this.mock(oCache.oTreeState).expects("deleteOutOfPlace").withExactArgs("~predicate4~");
 
 		// code under test
 		oCache.moveOutOfPlaceNodes("~iParentRank~",

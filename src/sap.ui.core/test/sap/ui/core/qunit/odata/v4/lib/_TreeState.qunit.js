@@ -29,7 +29,8 @@ sap.ui.define([
 		assert.strictEqual(oTreeState.fnGetKeyFilter, "~fnGetKeyFilter~");
 		assert.deepEqual(oTreeState.mPredicate2ExpandLevels, {});
 		assert.deepEqual(oTreeState.mPredicate2OutOfPlace, {});
-		assert.deepEqual(oTreeState.getOutOfPlaceCount(), 0);
+		assert.strictEqual(oTreeState.getOutOfPlaceCount(), 0);
+		assert.deepEqual(oTreeState.getOutOfPlacePredicates(), []);
 	});
 
 	//*********************************************************************************************
@@ -177,6 +178,7 @@ sap.ui.define([
 			}
 		});
 		assert.strictEqual(oTreeState.getOutOfPlaceCount(), 1);
+		assert.deepEqual(oTreeState.getOutOfPlacePredicates(), ["~node1Predicate~"]);
 
 		oTreeStateMock.expects("fnGetKeyFilter").withExactArgs("~oNode3~").returns("~node3Filter~");
 		oHelperMock.expects("getPrivateAnnotation").withExactArgs("~oNode3~", "predicate")
@@ -204,6 +206,8 @@ sap.ui.define([
 			}
 		});
 		assert.strictEqual(oTreeState.getOutOfPlaceCount(), 2);
+		assert.deepEqual(oTreeState.getOutOfPlacePredicates(),
+			["~node1Predicate~", "~node3Predicate~"]);
 
 		oTreeStateMock.expects("fnGetKeyFilter").withExactArgs("~oNode2~").returns("~node2Filter~");
 		oHelperMock.expects("getPrivateAnnotation").withExactArgs("~oNode2~", "predicate")
@@ -238,6 +242,8 @@ sap.ui.define([
 			}
 		});
 		assert.strictEqual(oTreeState.getOutOfPlaceCount(), 3);
+		assert.deepEqual(oTreeState.getOutOfPlacePredicates(),
+			["~node1Predicate~", "~node3Predicate~", "~node2Predicate~"]);
 
 		oTreeStateMock.expects("fnGetKeyFilter").withExactArgs("~oNode4~").returns("~node4Filter~");
 		oHelperMock.expects("getPrivateAnnotation").withExactArgs("~oNode4~", "predicate")
@@ -289,11 +295,20 @@ sap.ui.define([
 		}]);
 
 		// code under test
-		oTreeState.reset();
+		assert.deepEqual(oTreeState.getOutOfPlace("~node3Predicate~"), {
+			nodeFilter : "~node3Filter~",
+			nodePredicate : "~node3Predicate~",
+			parentFilter : "~parent2Filter~",
+			parentPredicate : "~parent2Predicate~"
+		});
 
 		// code under test
+		oTreeState.reset();
+
 		assert.deepEqual(oTreeState.mPredicate2OutOfPlace, {});
+		// code under test
 		assert.strictEqual(oTreeState.getOutOfPlaceCount(), 0);
+		assert.deepEqual(oTreeState.getOutOfPlacePredicates(), []);
 	});
 
 	//*********************************************************************************************

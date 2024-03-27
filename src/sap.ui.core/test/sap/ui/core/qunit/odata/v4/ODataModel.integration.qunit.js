@@ -32080,7 +32080,7 @@ make root = ${bMakeRoot}`;
 	});
 
 	//*********************************************************************************************
-	// Scenario: A hierarchy has an initial expandTo=1 and three visible rows. Expand and collapse
+	// Scenario: A hierarchy has an initial expand all and three visible rows. Expand and collapse
 	// various nodes and request side effects.
 	// (1) Collapse Beta -> Alpha, Beta, Delta
 	// (2) Request side effects -> Delta is removed -> Alpha, Beta, Epsilon
@@ -33927,14 +33927,20 @@ make root = ${bMakeRoot}`;
 	// (1) Create New1 below Alpha; create New2 below New1
 	// (2) Side-effects refresh (delivers new nested "bonus items" below New1)
 	// (3) Check all contexts
+	// (4) Collapse Alpha
+	// (5) Side-effects refresh
+	// (6) Expand Alpha (restores out-of-place positions)
+	// (7) Check all contexts
 	// JIRA: CPOUI5ODATAV4-2510
-	QUnit.test("Recursive Hierarchy: out of place, bonus item", async function (assert) {
+	QUnit.test("Recursive Hierarchy: out of place, bonus item, collapse", async function (assert) {
 		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
 		const sUrl = "EMPLOYEES"
 			+ "?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root/EMPLOYEES"
 			+ ",HierarchyQualifier='OrgChart',NodeProperty='ID')";
 		const sUrlWithExpandLevels = sUrl.slice(0, -1)
 			+ ",ExpandLevels=" + JSON.stringify([{NodeID : "11", Levels : 1}]) + ")";
+		const sUrlWithExpandLevelsCollapsed = sUrl.slice(0, -1) + ",ExpandLevels="
+			+ JSON.stringify([{NodeID : "11", Levels : 1}, {NodeID : "1", Levels : 0}]) + ")";
 		const sView = `
 <t:Table id="table" rows="{path : '/EMPLOYEES',
 		parameters : {
@@ -34051,45 +34057,155 @@ make root = ${bMakeRoot}`;
 			[true, 2, "New1"]
 		], 5);
 
-		this.expectRequest(sUrlWithExpandLevels
+		const expectSideEffectsRequests = () => {
+			this.expectRequest(sUrlWithExpandLevels
+					+ "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name"
+					+ "&$count=true&$skip=0&$top=2", {
+					"@odata.count" : "7",
+					value : [{
+						DescendantCount : "5",
+						DistanceFromRoot : "0",
+						DrillState : "expanded",
+						ID : "1",
+						Name : "Alpha*"
+					}, {
+						DescendantCount : "0",
+						DistanceFromRoot : "1",
+						DrillState : "leaf",
+						ID : "2",
+						Name : "Beta*"
+					}]
+				})
+				.expectRequest(sUrlWithExpandLevels
+					+ "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,LimitedRank"
+					+ "&$filter=ID eq '1' or ID eq '11' or ID eq '12'&$top=3", {
+					value : [{
+						DescendantCount : "5",
+						DistanceFromRoot : "0",
+						DrillState : "expanded",
+						ID : "1",
+						LimitedRank : "0"
+					}, {
+						DescendantCount : "3",
+						DistanceFromRoot : "1",
+						DrillState : "expanded",
+						ID : "11",
+						LimitedRank : "2"
+					}, {
+						DescendantCount : "0",
+						DistanceFromRoot : "2",
+						DrillState : "leaf",
+						ID : "12",
+						LimitedRank : "5"
+					}]
+				})
+				.expectRequest("EMPLOYEES"
+					+ "?$apply=descendants($root/EMPLOYEES,OrgChart,ID,filter(ID eq '1'),1)"
+					+ "&$select=ID,Name&$filter=ID eq '11'&$top=1", {
+					value : [
+						{ID : "11", Name : "New1*"}
+					]
+				})
+				.expectRequest("EMPLOYEES"
+					+ "?$apply=descendants($root/EMPLOYEES,OrgChart,ID,filter(ID eq '11'),1)"
+					+ "&$select=ID,Name&$filter=ID eq '12'&$top=1", {
+					value : [
+						{ID : "12", Name : "New2*"}
+					]
+				});
+		};
+
+		expectSideEffectsRequests();
+
+		await Promise.all([
+			// code under test
+			oBinding.getHeaderContext().requestSideEffects([""]),
+			this.waitForChanges(assert, "(2) side-effects refresh")
+		]);
+
+		const checkAllContexts = async (iStep) => {
+			this.expectRequest(sUrlWithExpandLevels
+					+ "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name"
+					+ "&$skip=3&$top=2", {
+					value : [{
+						DescendantCount : "1",
+						DistanceFromRoot : "2",
+						DrillState : "expanded",
+						ID : "21",
+						Name : "NewFromServer1*"
+					}, {
+						DescendantCount : "0",
+						DistanceFromRoot : "3",
+						DrillState : "leaf",
+						ID : "22",
+						Name : "NewFromServer2*"
+					}]
+				})
+				.expectRequest(sUrlWithExpandLevels
+					+ "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name"
+					+ "&$skip=6&$top=1", {
+					value : [{
+						DescendantCount : "0",
+						DistanceFromRoot : "0",
+						DrillState : "leaf",
+						ID : "3",
+						Name : "Gamma*"
+					}]
+				});
+
+			await this.checkAllContexts(`(${iStep}) check all contexts`, assert, oBinding,
+				["@$ui5.node.isExpanded", "@$ui5.node.level", "Name"], [
+					[true, 1, "Alpha*"],
+					[true, 2, "New1*"],
+					[undefined, 3, "New2*"],
+					[true, 3, "NewFromServer1*"],
+					[undefined, 4, "NewFromServer2*"],
+					[undefined, 2, "Beta*"],
+					[undefined, 1, "Gamma*"]
+				]);
+		};
+
+		await checkAllContexts(3);
+
+		oAlpha.collapse();
+
+		await this.waitForChanges(assert, "(4) collapse Alpha");
+
+		checkTable("after (4)", assert, oTable, [
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('3')"
+		], [
+			[false, 1, "Alpha*"],
+			[undefined, 1, "Gamma*"]
+		]);
+
+		this.expectRequest(sUrlWithExpandLevelsCollapsed
 				+ "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name"
 				+ "&$count=true&$skip=0&$top=2", {
-				"@odata.count" : "7",
+				"@odata.count" : "2",
 				value : [{
-					DescendantCount : "5",
+					DescendantCount : "0",
 					DistanceFromRoot : "0",
-					DrillState : "expanded",
+					DrillState : "collapsed",
 					ID : "1",
 					Name : "Alpha*"
 				}, {
 					DescendantCount : "0",
-					DistanceFromRoot : "1",
+					DistanceFromRoot : "0",
 					DrillState : "leaf",
-					ID : "2",
-					Name : "Beta*"
+					ID : "3",
+					Name : "Gamma*"
 				}]
 			})
-			.expectRequest(sUrlWithExpandLevels
+			.expectRequest(sUrlWithExpandLevelsCollapsed
 				+ "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,LimitedRank"
 				+ "&$filter=ID eq '1' or ID eq '11' or ID eq '12'&$top=3", {
 				value : [{
-					DescendantCount : "5",
+					DescendantCount : "0",
 					DistanceFromRoot : "0",
-					DrillState : "expanded",
+					DrillState : "collapsed",
 					ID : "1",
 					LimitedRank : "0"
-				}, {
-					DescendantCount : "3",
-					DistanceFromRoot : "1",
-					DrillState : "expanded",
-					ID : "11",
-					LimitedRank : "2"
-				}, {
-					DescendantCount : "0",
-					DistanceFromRoot : "2",
-					DrillState : "leaf",
-					ID : "12",
-					LimitedRank : "5"
 				}]
 			})
 			.expectRequest("EMPLOYEES"
@@ -34108,49 +34224,27 @@ make root = ${bMakeRoot}`;
 			});
 
 		await Promise.all([
+			// code under test
 			oBinding.getHeaderContext().requestSideEffects([""]),
-			this.waitForChanges(assert, "(2) side-effects refresh")
+			this.waitForChanges(assert, "(5) side-effects refresh")
 		]);
 
-		this.expectRequest(sUrlWithExpandLevels
-				+ "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name"
-				+ "&$skip=3&$top=2", {
-				value : [{
-					DescendantCount : "1",
-					DistanceFromRoot : "2",
-					DrillState : "expanded",
-					ID : "21",
-					Name : "NewFromServer1*"
-				}, {
-					DescendantCount : "0",
-					DistanceFromRoot : "3",
-					DrillState : "leaf",
-					ID : "22",
-					Name : "NewFromServer2*"
-				}]
-			})
-			.expectRequest(sUrlWithExpandLevels
-				+ "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name"
-				+ "&$skip=6&$top=1", {
-				value : [{
-					DescendantCount : "0",
-					DistanceFromRoot : "0",
-					DrillState : "leaf",
-					ID : "3",
-					Name : "Gamma*"
-				}]
-			});
+		checkTable("after (5)", assert, oTable, [
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('3')"
+		], [
+			[false, 1, "Alpha*"],
+			[undefined, 1, "Gamma*"]
+		]);
 
-		await this.checkAllContexts("(3) check all contexts", assert, oBinding,
-			["@$ui5.node.isExpanded", "@$ui5.node.level", "Name"], [
-				[true, 1, "Alpha*"],
-				[true, 2, "New1*"],
-				[undefined, 3, "New2*"],
-				[true, 3, "NewFromServer1*"],
-				[undefined, 4, "NewFromServer2*"],
-				[undefined, 2, "Beta*"],
-				[undefined, 1, "Gamma*"]
-			]);
+		expectSideEffectsRequests();
+
+		// code under test
+		oAlpha.expand();
+
+		await this.waitForChanges(assert, "(6) expand Alpha");
+
+		await checkAllContexts(7);
 	});
 
 	//*********************************************************************************************

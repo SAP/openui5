@@ -23,7 +23,7 @@ sap.ui.define([
 		// maps predicate to node id and number of levels to expand
 		mPredicate2ExpandLevels = {};
 
-		// @see #getOutOfPlaceGroupedByParent
+		// @see #getOutOfPlace
 		mPredicate2OutOfPlace = {};
 
 		/**
@@ -138,6 +138,30 @@ sap.ui.define([
 		}
 
 		/**
+		 * Returns the out-of-place information for the node with the given key predicate.
+		 *
+		 * @param {string} sPredicate - The node's key predicate
+		 * @returns {{nodeFilter : string, nodePredicate : string, parentFilter : string?, parentPredicate : string?}|undefined}
+		 *   The out-of-place information or undefined if the node is in place
+		 *
+		 * @public
+		 */
+		getOutOfPlace(sPredicate) {
+			return this.mPredicate2OutOfPlace[sPredicate];
+		}
+
+		/**
+		 * Returns the number of out-of-place nodes.
+		 *
+		 * @returns {number} The number of out-of-place nodes
+		 *
+		 * @public
+		 */
+		getOutOfPlaceCount() {
+			return this.getOutOfPlacePredicates().length;
+		}
+
+		/**
 		 * Returns information about the out-of-place nodes grouped by parent.
 		 *
 		 * @returns {Array<{nodeFilters : string[], nodePredicates : string[], parentFilter : string?, parentPredicate : string?}>}
@@ -164,13 +188,14 @@ sap.ui.define([
 		}
 
 		/**
-		 * Returns the number of out-of-place nodes.
-		 * @returns {number} The number of out-of-place nodes
+		 * Returns the key predicates of all out-of-place nodes.
+		 *
+		 * @returns {string[]} The key predicates of all out-of-place nodes
 		 *
 		 * @public
 		 */
-		getOutOfPlaceCount() {
-			return Object.keys(this.mPredicate2OutOfPlace).length;
+		getOutOfPlacePredicates() {
+			return Object.keys(this.mPredicate2OutOfPlace);
 		}
 
 		/**
