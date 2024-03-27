@@ -84,12 +84,7 @@ sap.ui.define(function() {
 			},
 			"Personalization": {
 				group: "Utils",
-				module: "./utils/{name}.qunit",
-				ui5: {
-					libs: [
-						"sap.ui.fl", "sap.ui.mdc"
-					]
-				}
+				module: "./utils/{name}.qunit"
 			},
 			"TableSettings": {
 				group: "Utils"

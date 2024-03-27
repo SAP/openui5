@@ -62,7 +62,6 @@ sap.ui.define([
 	"sap/ui/mdc/enums/OperatorName",
 	"sap/m/Menu",
 	"sap/m/MenuItem",
-	"sap/m/plugins/ContextMenuSetting",
 	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	TableQUnitUtils,
@@ -124,7 +123,6 @@ sap.ui.define([
 	OperatorName,
 	Menu,
 	MenuItem,
-	ContextMenuSetting,
 	nextUIUpdate
 ) {
 	"use strict";
@@ -5122,17 +5120,12 @@ sap.ui.define([
 			oFilterInfoBar.focus();
 			oFilterInfoBar.firePress(); // Opens the filter dialog
 
-			return TableQUnitUtils.waitForSettingsDialog(that.oTable);
-		}).then(function(oP13nDialog) {
-			return new Promise(function(resolve) {
-				oP13nDialog.attachEventOnce("afterClose", function() {
-					that.oTable.setFilterConditions({name: []}); // Hides the filter info bar
-					Core.applyChanges();
-					resolve();
-				});
-				oP13nDialog.getButtons()[0].firePress(); // Trigger press on the OK button in the sap.m.Dialog
-			});
+			return TableQUnitUtils.waitForP13nPopup(that.oTable);
 		}).then(function() {
+			return TableQUnitUtils.closeP13nPopup(that.oTable);
+		}).then(function() {
+			that.oTable.setFilterConditions({name: []}); // Hides the filter info bar
+			Core.applyChanges();
 			assert.ok(that.oTable.getDomRef().contains(document.activeElement),
 				"After removing all filters in the dialog and closing it, the focus is in the table");
 		});
