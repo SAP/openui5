@@ -907,7 +907,8 @@ sap.ui.define([
 		 * @param {boolean} [bForceUpdate=false] Force updating URLs of currently loaded theme
 		 * @return {this} the Core, to allow method chaining
 		 * @since 1.10
-		 * @deprecated since 1.119
+		 * @deprecated As of version 1.119, without replacement. The need to define the location for a theme
+		 *   should be fully covered with the capabiltites of the {@link sap/base/config base configuration}.
 		 * @public
 		 */
 		Core.prototype.setThemeRoot = function(sThemeName, aLibraryNames, sThemeBaseUrl, bForceUpdate) {

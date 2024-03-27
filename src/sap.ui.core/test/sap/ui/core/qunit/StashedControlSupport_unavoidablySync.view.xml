@@ -1,0 +1,27 @@
+<m:View xmlns="sap.uxap" xmlns:m="sap.m" xmlns:layout="sap.ui.layout" displayBlock="true" height="100%">
+	<ObjectPageLayout id="ObjectPageLayout"
+		enableLazyLoading="true"
+		useIconTabBar="true">
+		<headerTitle>
+			<ObjectPageDynamicHeaderTitle>
+				<actions>
+					<m:ToggleButton id="btn" text="Toggle texts visibility"/>
+				</actions>
+			</ObjectPageDynamicHeaderTitle>
+		</headerTitle>
+		<sections>
+			<ObjectPageSection id="lazyLoadedSection" title="LazyLoaded">
+				<subSections>
+					<ObjectPageSubSection id="LazyLoadedSubSection" title=" " class="sapUxAPObjectPageSubSectionFitContainer">
+						<blocks>
+							<ObjectPageLazyLoader stashed="true" id="LazyLoadedSubSectionStashed">
+								<m:Text id="text1" text="primary text"/>
+								<m:Text id="text2" text="alternative text" visible="false"/>
+							</ObjectPageLazyLoader>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+		</sections>
+	</ObjectPageLayout>
+</m:View>

@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/base/util/restricted/_pick",
 	"sap/base/util/deepClone"
 ],
-function(
+function (
 	FormLayout,
 	_pick,
 	deepClone
@@ -551,9 +551,7 @@ function(
 
 		QUnit.test("groups creation with mix of visible and invisible fields", function (assert) {
 			var aPropertyEditorsConfig = this.aPropertyEditorsConfig.map(function (mConfig) {
-				if (undefined/*includes*/(mConfig.tags, "foo", "bar")) {
-					return mConfig;
-				} else if (mConfig.tags.includes("foo")) {
+				if (mConfig.tags.includes("foo") && !mConfig.tags.includes("bar")) {
 					return Object.assign({}, mConfig, {
 						visible: false
 					});

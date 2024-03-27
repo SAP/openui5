@@ -183,9 +183,9 @@ sap.ui.define([
 			 *
 			 * <b>Note</b>
 			 * <ul>
-			 *  <li>Fixed columns need a defined width for the feature to work.</li>
-			 *  <li>The aggregated width of all fixed columns must not exceed the table width. Otherwise the table ignores the value of the
-			 *  property and adapts the behavior in an appropriate way to ensure that the user is still able to scroll horizontally.</li>
+			 *   <li>Fixed columns need a defined width for the feature to work.</li>
+			 *   <li>The aggregated width of all fixed columns must not exceed the table width. Otherwise the table ignores the value of the
+			 *       property and adapts the behavior in an appropriate way to ensure that the user is still able to scroll horizontally.</li>
 			 * </ul>
 			 */
 			fixedColumnCount: {type: "int", group: "Appearance", defaultValue: 0},

@@ -1,0 +1,35 @@
+{
+	"sap.app": {
+		"id": "sap.ui.core.sample.Messaging.BasicODataMessages",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"async": true,
+			"viewName": "sap.ui.core.sample.Messaging.BasicODataMessages.View"
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.core": {},
+				"sap.ui.layout": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"localService/mockdata/Employees.json",
+					"localService/response/ODataErrorResponse.json",
+					"localService/metadata.xml",
+					"localService/mockserver.js",
+					"Controller.controller.js",
+					"MessagePopover.fragment.xml",
+					"View.view.xml",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

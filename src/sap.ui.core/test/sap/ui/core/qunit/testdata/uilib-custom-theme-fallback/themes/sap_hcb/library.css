@@ -24,3 +24,6 @@
 	background-color: grey;
 }
 
+#sap-ui-theme-sap\.ui\.customthemefallback\.testlib {
+	background-image: url('data:text/plain;utf-8,%7B%22default%22%3A%7B%22sapUiTestLibTextColor%22%3A%22%23000000%22%7D,%22scopes%22%3A%7B%22sapTestScope%22%3A%7B%22sapUiText%22%3A %22%23ffffff%22%7D,%22sapTestScopePlus%22%3A%7B%22sapUiText%22%3A%22%23444444%22%7D%7D%7D')
+}

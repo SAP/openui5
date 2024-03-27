@@ -14,7 +14,7 @@ sap.ui.define([
 
 	// trigger parameter loading to enable event
 	// this should normally happen in the control which listens to the event
-	Parameters.get();
+	Parameters.get({name : "sapUiBrand"});
 
 	// define control
 	var MyControlClass = Control.extend("my.lib.MyControl", {

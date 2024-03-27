@@ -523,13 +523,16 @@ sap.ui.define([
 	};
 
 	Calendar.prototype._handleWeekNumberSelect = function (oEvent) {
-		var oWeekDays = oEvent.getParameter("weekDays"),
+		const oWeekDays = oEvent.getParameter("weekDays"),
 			bExecuteDefault = this.fireWeekNumberSelect({
 				weekNumber: oEvent.getParameter("weekNumber"),
 				weekDays: oWeekDays
-			});
+			}),
+			iSelectedWeekMonth = oWeekDays.getStartDate() && oWeekDays.getStartDate().getMonth(),
+			iCurrentMonth = oEvent.getSource().getDate() && oEvent.getSource().getDate().getMonth();
+		const bOtherMonth = iSelectedWeekMonth !== iCurrentMonth;
 
-		this._focusDate(CalendarDate.fromLocalJSDate(oWeekDays.getStartDate(), this._getPrimaryCalendarType()), true, false, false);
+		this._focusDate(CalendarDate.fromLocalJSDate(oWeekDays.getStartDate(), this._getPrimaryCalendarType()), bOtherMonth, false, false);
 
 		if (!bExecuteDefault) {
 			oEvent.preventDefault();

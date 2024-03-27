@@ -1,0 +1,15 @@
+[
+	{
+		"EmployeeID": 3,
+		"LastName": "Leverling",
+		"FirstName": "Janet",
+		"Address": "722 Moss Bay Blvd.",
+		"BirthDate": "/Date(-200102400000)/",
+		"HireDate": "/Date(702086400000)/",
+		"City": "Kirkland",
+		"Region": "WA",
+		"PostalCode": "98033",
+		"Country": "USA",
+		"HomePhone": "(206) 555-3412"
+	}
+]

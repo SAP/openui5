@@ -39,20 +39,6 @@ sap.ui.define(function() {
 				}
 			},
 
-			Core_libraryTerminologies: {
-				title: "sap.ui.core: library preload with Terminologies=",
-				loader: {
-					paths: {
-						testlibs: "test-resources/sap/ui/core/qunit/testdata/libraries/"
-					}
-				},
-				ui5: {
-					preload: "async",
-					language: "en",
-					activeterminologies: "oil,retail"
-				}
-			},
-
 			Core_libraryTerminologies_integration: {
 				title: "sap.ui.core: Integration Test with Library Terminologies=",
 				loader: {
@@ -80,11 +66,25 @@ sap.ui.define(function() {
 				}
 			},
 
+			Lib_terminologies: {
+				title: "sap.ui.core: library preload with Terminologies",
+				loader: {
+					paths: {
+						testlibs: "test-resources/sap/ui/core/qunit/testdata/libraries/"
+					}
+				},
+				ui5: {
+					preload: "async", // required to enforce preloads in local dev scenario
+					language: "en",
+					activeterminologies: "oil,retail"
+				}
+			},
+
 			/**
- * The tests for the preload files all share the same test configuration.
- * There is only one HTML test page, which is opened with different URL parameters.
- * The HTML test page then points to this general configuration.
- */
+			 * The tests for the preload files all share the same test configuration.
+			 * There is only one HTML test page, which is opened with different URL parameters.
+			 * The HTML test page then points to this general configuration.
+			 */
 			Lib_preloadFiles: {
 				title: "sap.ui.core: library preload with libraryPreloadFiles=",
 				page: "test-resources/sap/ui/core/qunit/Lib_preloadFiles.qunit.html?sap-ui-xx-libraryPreloadFiles=none",

@@ -89,12 +89,14 @@ sap.ui.define([
 			},
 
 			/**
-			 * Handler for the SearchField
-			 * @param oEvent
+			 * Handler for the SearchField event.
+			 *
+			 * @param {sap.ui.base.Event} oEvent - The event object.
 			 */
 			onTreeFilter: function (oEvent) {
 				// Update filter value
-				this._sFilter = oEvent.getParameter("newValue").trim();
+				var newValue = oEvent.getParameter("newValue").trim();
+				this._sFilter = newValue.replace(/\//g, '.');
 
 				if (this._filterTimeout) {
 					clearTimeout(this._filterTimeout);

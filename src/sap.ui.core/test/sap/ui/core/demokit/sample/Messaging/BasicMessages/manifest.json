@@ -1,0 +1,30 @@
+{
+	"sap.app": {
+		"id": "sap.ui.core.sample.Messaging.BasicMessages",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"async": true,
+			"viewName": "sap.ui.core.sample.Messaging.BasicMessages.View"
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.unified": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"Controller.controller.js",
+					"MessagePopover.fragment.xml",
+					"View.view.xml",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

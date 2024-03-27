@@ -13,7 +13,7 @@ sap.ui.define(["sap/ui/base/DataType"], (DataType) => {
 	 */
 
 	/**
-	 * Enumeration of the preferred persistence mode for personalization changes.
+	 * Enumeration of the preferred persistence mode for personalization changes using the {@link sap.m.p13n.PersistenceProvider PersistenceProvider}
 	 *
 	 * @enum {string}
 	 * @since 1.104
@@ -23,7 +23,7 @@ sap.ui.define(["sap/ui/base/DataType"], (DataType) => {
 	 */
 	const PersistenceMode = {
 		/**
-		 * Personalization changes are created in the flexibility layer using <code>ignoreVariantManagement: true</code>
+		 * Personalization changes are created in the SAPUI5 flexibility layer using <code>ignoreVariantManagement: true</code>
 		 *
 		 * @private
 		 * @ui5-restricted sap.ui.mdc
@@ -31,8 +31,8 @@ sap.ui.define(["sap/ui/base/DataType"], (DataType) => {
 		Global: "Global",
 
 		/**
-		 * Personalization changes are created and implicitly persisted only in case no additional <code>VariantManagement</code>
-		 * control reference could be found. If a <code>sap.ui.fl.variants.VariantManagement</code> has been found,
+		 * Personalization changes are created and implicitly persisted only if no additional <code>sap.ui.fl.variants.VariantManagement</code>
+		 * control reference could be found. If a <code>sap.ui.fl.variants.VariantManagement</code> control has been found,
 		 * it will be used instead.
 		 *
 		 * @private
@@ -41,10 +41,11 @@ sap.ui.define(["sap/ui/base/DataType"], (DataType) => {
 		Auto: "Auto",
 
 		/**
-		 * Personalization changes are not persisted
+		 * Personalization changes are never persisted. Using this mode will ensure that personalization changes are never persisted in a <code>sap.ui.fl.variants.VariantManagement</code>.
+		 * This mode should be used whenever it is certain that a control mustn't persist its personalization state.
 		 *
 		 * @private
-		 * @ui5-restricted sap.ui.mdc
+		 * @ui5-restricted sap.ui.mdc, sap.fe
 		 */
 		Transient: "Transient"
 	};

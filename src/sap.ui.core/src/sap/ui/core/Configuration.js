@@ -67,7 +67,16 @@ sap.ui.define([
 	 * @extends sap.ui.base.Object
 	 * @public
 	 * @alias sap.ui.core.Configuration
-	 * @deprecated As of Version 1.120
+	 * @deprecated As of version 1.120. There's no single replacement for this class. Instead,
+	 *   several facades have been created for different topics, e.g. {@link module:sap/base/i18n/Localization
+	 *   Localization} for settings related to localization, {@link module:sap/base/i18n/Formatting Formatting}
+	 *   for settings related to data formatting, {@link module:sap/ui/core/Theming Theming} for theming related
+	 *   settings, {@link module:sap/ui/core/ControlBehavior ControlBehavior} for settings that are typically
+	 *   required when implementing the behavior of a control, {@link module:sap/ui/security/Security Security}
+	 *   for settings around security.
+	 *
+	 *   Please check the individual methods of this class for their replacements, if any.
+	 *
 	 * @borrows module:sap/base/i18n/Localization.getLanguagesDeliveredWithCore as getLanguagesDeliveredWithCore
 	 * @borrows module:sap/base/i18n/Localization.getSupportedLanguages as getSupportedLanguages
 	 * @borrows module:sap/ui/core/getCompatibilityVersion as getCompatibilityVersion

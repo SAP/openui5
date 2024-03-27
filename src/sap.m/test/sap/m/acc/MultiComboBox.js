@@ -160,7 +160,6 @@ sap.ui.define([
 		oMultiComboBoxWithTokens = new MultiComboBox({
 			id : "multiComboBoxWithTokens",
 			width : "300px",
-			placeholder : "Select an item",
 			items : {
 				path : "/items",
 				template : oItemTemplate

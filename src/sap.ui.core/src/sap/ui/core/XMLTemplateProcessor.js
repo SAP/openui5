@@ -1458,6 +1458,9 @@ sap.ui.define([
 									wrapperId: sControlId,
 									fnCreate: function(bSync) {
 										var bPrevAsync = bAsync;
+
+										// temporarily switch the stashed subtree to async=false in case the unstash() operation is triggered sync.
+										// the scoped var bAsync applies to everything contained in this view, the original value is restored after the unstash operation
 										bAsync = !bSync;
 
 										try {
