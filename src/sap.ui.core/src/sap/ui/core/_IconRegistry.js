@@ -736,6 +736,7 @@ sap.ui.define([
 				'da': 0x1e2a3,
 				'da-2': 0x1e2a4,
 				'ai': 0x1e2a5,
+				'in-progress-2': 0x1e2a6,
 				'gender-male-and-female': 0x1e300,
 				'rotate': 0xe301,
 				'locate-me-2': 0xe302,

@@ -5226,7 +5226,8 @@
 			"close",
 			"remove",
 			"cancel",
-			"x"
+			"x",
+			"decline"
 		]
 	},
 	"quality-issue": {
@@ -6959,6 +6960,20 @@
 			"artificial",
 			"robot",
 			"machine"
+		]
+	},
+	"in-progress-2": {
+		"tags": [
+			"in process",
+			"status",
+			"working",
+			"current",
+			"on-going",
+			"clock",
+			"Time",
+			"Square",
+			"filled",
+			"full"
 		]
 	}
 }

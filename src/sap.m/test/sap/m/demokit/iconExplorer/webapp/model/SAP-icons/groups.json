@@ -879,7 +879,8 @@
 				{ "name" : "validate" },
 				{ "name" : "information" },
 				{ "name" : "in-progress" },
-				{ "name" : "high-priority" }
+				{ "name" : "high-priority" },
+				{ "name" : "in-progress-2" }
 			]
 		},
 		{
