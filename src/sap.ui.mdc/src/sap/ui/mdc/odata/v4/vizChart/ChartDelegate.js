@@ -1923,8 +1923,10 @@ sap.ui.define([
 			}
 		}
 
-
 		this._innerChartDataLoadComplete(mEventParams);
+
+		const oInnerChart = this.getControlDelegate()._getChart(this);
+		this._announceUpdate(this.getChartType(), this.getHeader(), oInnerChart.getVisibleDimensions().length, oInnerChart.getVisibleMeasures().length);
 	};
 
 	return ChartDelegate;

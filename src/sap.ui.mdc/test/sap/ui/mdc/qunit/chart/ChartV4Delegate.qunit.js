@@ -1340,15 +1340,27 @@ function(
 
     QUnit.test("_onDataLoadComplete", function(assert){
         const oMockImplContainer = new ChartImplementationContainer();
-        const oMockChart = { getNoData : function(){ return {};}, _innerChartDataLoadComplete : function(){}, getControlDelegate : function(){return { _getInnerStructure : function(){ return oMockImplContainer; } };}};
-        let oMockEvent = { getSource : function(){ return { getCurrentContexts : function() { return []; } }; } };
-
+        const oMockChart = {
+            getNoData : function(){ return {}; },
+            _innerChartDataLoadComplete : function(){},
+            getControlDelegate : function() {
+                return {
+                    _getInnerStructure : function(){ return oMockImplContainer; },
+                    _getChart : function() { return { getVisibleDimensions : function() { return ["1"]; }, getVisibleMeasures : function() { return ["1", "2"]; }};}
+                };
+            },
+            _announceUpdate : function() {},
+            getChartType : function() { return "column"; },
+            getHeader: function() { return "chart header"; }
+        };
         const oSetVisibleSpy = sinon.spy(oMockImplContainer, "setShowNoDataStruct");
+        const oAnnounceSpy = sinon.spy(oMockChart, "_announceUpdate");
 
-
+        let oMockEvent = { getSource : function(){ return { getCurrentContexts : function() { return []; } }; } };
         ChartDelegate._onDataLoadComplete.apply(oMockChart, [oMockEvent]);
 
         assert.ok(oSetVisibleSpy.calledWithExactly(true), "No Data text was set visible after empty data load");
+        assert.ok(oAnnounceSpy.calledWith("column", "chart header", 1, 2), "annouceUpdate called with the expected params");
 
         oMockEvent = { getSource : function(){ return { getCurrentContexts : function() { return ["abc"]; } }; } };
         ChartDelegate._onDataLoadComplete.apply(oMockChart, [oMockEvent]);
