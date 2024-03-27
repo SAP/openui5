@@ -276,7 +276,7 @@ sap.ui.define([
 							.filter(':contains("(WIP) Scenario: Don\'t fail a test with no assertions, if it\'s @wip")');
 						Opa5.assert.strictEqual(oWip.length, 1, 'Verified that @wip stops a test with no assertions from failing');
 
-						var oActualError = oCoffee.parent().parent().find('.test-message').last();
+						var oActualError = oCoffee.parent().parent().find('span.test-message').last();
 						Opa5.assert.strictEqual(
 							oActualError.text(),
 							'Expected at least one assertion, but none were run - call expect(0) to accept zero assertions.',
