@@ -30,13 +30,13 @@ sap.ui.define([
 	sinon
 ) {
 	"use strict";
-	var sandbox = sinon.createSandbox();
+	const sandbox = sinon.createSandbox();
 
-	var sReference = "flexReference";
-	var sComponentId = "componentId";
-	var sVariantManagementReference = "vmReference";
-	var sStandardVariantReference = "vmReference";
-	var oComponent = RtaQunitUtils.createAndStubAppComponent(sandbox, sComponentId);
+	const sReference = "flexReference";
+	const sComponentId = "componentId";
+	const sVariantManagementReference = "vmReference";
+	const sStandardVariantReference = "vmReference";
+	const oComponent = RtaQunitUtils.createAndStubAppComponent(sandbox, sComponentId);
 
 	function createVariant(mVariantProperties) {
 		return FlexObjectFactory.createFlVariant({
@@ -59,7 +59,7 @@ sap.ui.define([
 			componentId: sComponentId,
 			reference: sReference
 		}).then(function() {
-			var oStandardVariant = createVariant({
+			const oStandardVariant = createVariant({
 				fileName: sStandardVariantReference
 			});
 			VariantManagementState.addRuntimeSteadyObject(
@@ -72,8 +72,8 @@ sap.ui.define([
 	}
 
 	function stubFlexObjectsSelector(aFlexObjects) {
-		var oFlexObjectsSelector = FlexState.getFlexObjectsDataSelector();
-		var oGetFlexObjectsStub = sandbox.stub(oFlexObjectsSelector, "get");
+		const oFlexObjectsSelector = FlexState.getFlexObjectsDataSelector();
+		const oGetFlexObjectsStub = sandbox.stub(oFlexObjectsSelector, "get");
 		oGetFlexObjectsStub.callsFake(function(...aArgs) {
 			return aFlexObjects.concat(oGetFlexObjectsStub.wrappedMethod.apply(this, aArgs));
 		});
@@ -100,12 +100,12 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when there are existing flex objects (including a CompVariant)", function(assert) {
-			var oUIChange = FlexObjectFactory.createUIChange({
+			const oUIChange = FlexObjectFactory.createUIChange({
 				id: "someUIChange",
 				layer: Layer.CUSTOMER,
 				variantReference: sStandardVariantReference
 			});
-			var oCompVariant = FlexObjectFactory.createCompVariant({
+			const oCompVariant = FlexObjectFactory.createCompVariant({
 				id: "someCompVariant",
 				layer: Layer.CUSTOMER
 			});
@@ -142,7 +142,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when there are variant changes", function(assert) {
-			var aVariantChanges = [
+			const aVariantChanges = [
 				FlexObjectFactory.createUIChange({
 					id: "setTitleChange",
 					layer: Layer.CUSTOMER,
@@ -279,7 +279,7 @@ sap.ui.define([
 				})
 			]);
 
-			var oVMData = VariantManagementState.getVariantManagementMap().get({ reference: sReference });
+			const oVMData = VariantManagementState.getVariantManagementMap().get({ reference: sReference });
 			assert.strictEqual(
 				oVMData[sVariantManagementReference].currentVariant,
 				sVariantManagementReference,
@@ -314,6 +314,9 @@ sap.ui.define([
 				VariantManagementState.getVariantDependentFlexObjects({reference: sReference}).length, 7,
 				"all changes are returned"
 			);
+			const aCurrentVariantIds = VariantManagementState.getAllCurrentVariants(sReference).map((oVariant) => oVariant.getId());
+			assert.ok(aCurrentVariantIds.indexOf(sVariantManagementReference) > -1, "the current variant is part of the list");
+			assert.ok(aCurrentVariantIds.indexOf("fooCustomVariant2") > -1, "the current variant is part of the list");
 		});
 
 		QUnit.test("when there is an invalid variant change", function(assert) {
@@ -337,7 +340,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when there are no flex objects", function(assert) {
-			var oFlexObjectsSelector = FlexState.getFlexObjectsDataSelector();
+			const oFlexObjectsSelector = FlexState.getFlexObjectsDataSelector();
 			sandbox.stub(oFlexObjectsSelector, "get").returns([]);
 			oFlexObjectsSelector.checkUpdate();
 			assert.ok(
@@ -398,7 +401,7 @@ sap.ui.define([
 				})
 			]);
 
-			var aVariants = VariantManagementState.getVariantManagementMap()
+			const aVariants = VariantManagementState.getVariantManagementMap()
 			.get({ reference: sReference })[sVariantManagementReference].variants;
 			assert.strictEqual(
 				aVariants[0].key,
@@ -415,14 +418,14 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the variant management only contains changes that are persisted or saved to the variant", function(assert) {
-			var oPersistedUIChange = FlexObjectFactory.createUIChange({
+			const oPersistedUIChange = FlexObjectFactory.createUIChange({
 				id: "someUIChange",
 				layer: Layer.CUSTOMER,
 				variantReference: sStandardVariantReference
 			});
 			oPersistedUIChange.setState(States.LifecycleState.PERSISTED);
 
-			var oChangeSavedToVariant = FlexObjectFactory.createUIChange({
+			const oChangeSavedToVariant = FlexObjectFactory.createUIChange({
 				id: "someOtherUIChange",
 				layer: Layer.CUSTOMER,
 				variantReference: sStandardVariantReference
@@ -430,7 +433,7 @@ sap.ui.define([
 			oChangeSavedToVariant.setSavedToVariant(true);
 
 			stubFlexObjectsSelector([oPersistedUIChange, oChangeSavedToVariant]);
-			var oVariantsMap = VariantManagementState.getVariantManagementMap().get({ reference: sReference });
+			const oVariantsMap = VariantManagementState.getVariantManagementMap().get({ reference: sReference });
 			assert.notOk(
 				oVariantsMap[sVariantManagementReference].modified,
 				"then it is not marked as modified"
@@ -438,37 +441,37 @@ sap.ui.define([
 		});
 
 		QUnit.test("when there are multiple variants with lower layer changes in the referenced variant", function(assert) {
-			var oUIChange = FlexObjectFactory.createUIChange({
+			const oUIChange = FlexObjectFactory.createUIChange({
 				id: "someUIChange",
 				layer: Layer.VENDOR,
 				variantReference: "vendorVariant"
 			});
-			var oIndependentUIChange = FlexObjectFactory.createUIChange({
+			const oIndependentUIChange = FlexObjectFactory.createUIChange({
 				id: "someOtherUIChange",
 				layer: Layer.CUSTOMER
 			});
-			var oUIChange2 = FlexObjectFactory.createUIChange({
+			const oUIChange2 = FlexObjectFactory.createUIChange({
 				id: "someOtherOtherUIChange",
 				layer: Layer.USER,
 				variantReference: sStandardVariantReference
 			});
-			var oVendorVariant = createVariant({
+			const oVendorVariant = createVariant({
 				variantReference: sVariantManagementReference,
 				fileName: "vendorVariant",
 				layer: Layer.VENDOR
 			});
-			var oCustomerVariant = createVariant({
+			const oCustomerVariant = createVariant({
 				variantReference: "vendorVariant",
 				fileName: "customerVariant",
 				layer: Layer.CUSTOMER
 			});
-			var oUserVariant = createVariant({
+			const oUserVariant = createVariant({
 				variantReference: "customerVariant",
 				fileName: "userVariant",
 				layer: Layer.USER
 			});
 			stubFlexObjectsSelector([oIndependentUIChange, oUIChange, oUIChange2, oVendorVariant, oCustomerVariant, oUserVariant]);
-			var aVariants = VariantManagementState.getVariantManagementMap()
+			const aVariants = VariantManagementState.getVariantManagementMap()
 			.get({ reference: sReference })[sVariantManagementReference].variants;
 			assert.strictEqual(aVariants[0].controlChanges.length, 1, "there is one control change on standard");
 			assert.strictEqual(aVariants[1].controlChanges.length, 1, "the vendor variant has one change");
@@ -477,7 +480,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when variants are set to favorite = false (default and non-default)", function(assert) {
-			var oVariantManagementChange = FlexObjectFactory.createUIChange({
+			const oVariantManagementChange = FlexObjectFactory.createUIChange({
 				id: "setDefaultVariantChange",
 				layer: Layer.USER,
 				changeType: "setDefault",
@@ -489,7 +492,7 @@ sap.ui.define([
 					defaultVariant: "variant2"
 				}
 			});
-			var oVariantSetFavoriteDefaultVariant = FlexObjectFactory.createUIChange({
+			const oVariantSetFavoriteDefaultVariant = FlexObjectFactory.createUIChange({
 				id: "setFavoriteChangeOnDefaultVariant",
 				layer: Layer.CUSTOMER,
 				changeType: "setFavorite",
@@ -501,7 +504,7 @@ sap.ui.define([
 					favorite: false
 				}
 			});
-			var oVariantSetFavoriteNonDefaultVariant = FlexObjectFactory.createUIChange({
+			const oVariantSetFavoriteNonDefaultVariant = FlexObjectFactory.createUIChange({
 				id: "setFavoriteChangeOnNonDefaultVariant",
 				layer: Layer.CUSTOMER,
 				changeType: "setFavorite",
@@ -527,7 +530,7 @@ sap.ui.define([
 				oVariantSetFavoriteNonDefaultVariant
 			]);
 
-			var oVMData = VariantManagementState.getVariantManagementMap().get({ reference: sReference })[sVariantManagementReference];
+			const oVMData = VariantManagementState.getVariantManagementMap().get({ reference: sReference })[sVariantManagementReference];
 			assert.notOk(
 				oVMData.variants[1].favorite,
 				"then the non-default variant is no longer a favorite"
@@ -585,7 +588,7 @@ sap.ui.define([
 			expectedVariantsCount: 2,
 			customAssertions: [
 				function(assert) {
-					var oVariantsMap = VariantManagementState.getVariantManagementMap().get({ reference: sReference });
+					const oVariantsMap = VariantManagementState.getVariantManagementMap().get({ reference: sReference });
 					assert.strictEqual(
 						oVariantsMap[sVariantManagementReference].variants[1].instance.getVariantReference(),
 						sVariantManagementReference,
@@ -686,16 +689,16 @@ sap.ui.define([
 			expectedVMReferences: [],
 			expectedVariantsCount: 0
 		}].forEach(function(oTestInput) {
-			var sName = `when the storageResponse contains ${oTestInput.testName}`;
-			QUnit.test(sName, function(assert) {
-				var oInitialPrepareSpy = sandbox.spy(InitialPrepareFunctions, "variants");
+			const sName = `when the storageResponse contains ${oTestInput.testName}`;
+			QUnit.test(sName, async function(assert) {
+				const oInitialPrepareSpy = sandbox.spy(InitialPrepareFunctions, "variants");
 
-				var oLoaderStub = sandbox.stub(Loader, "loadFlexData");
+				const oLoaderStub = sandbox.stub(Loader, "loadFlexData");
 				function fakeLoadFlexData(...aArgs) {
 					return oLoaderStub.wrappedMethod.apply(this, aArgs)
 					// eslint-disable-next-line max-nested-callbacks
 					.then(function(oOriginalResponse) {
-						var oResponseAddition = { changes: {} };
+						const oResponseAddition = { changes: {} };
 						// eslint-disable-next-line max-nested-callbacks
 						Object.keys(oTestInput.flexObjects).forEach(function(sResponseKey) {
 							oResponseAddition.changes[sResponseKey] = toFileContent(oTestInput.flexObjects[sResponseKey]);
@@ -708,37 +711,32 @@ sap.ui.define([
 				}
 				oLoaderStub.callsFake(fakeLoadFlexData);
 
-				return FlexState.initialize({
+				await FlexState.initialize({
 					componentId: sComponentId,
 					reference: sReference
-				})
-				// eslint-disable-next-line max-nested-callbacks
-				.then(function() {
-					var oVariantsMap = VariantManagementState.getVariantManagementMap().get({ reference: sReference });
-					assert.ok(oInitialPrepareSpy.calledOnce, "then the initial prepare function is called");
-					var aVMRs = oTestInput.expectedVMReferences || [sVariantManagementReference];
+				});
+				const oVariantsMap = VariantManagementState.getVariantManagementMap().get({ reference: sReference });
+				assert.ok(oInitialPrepareSpy.calledOnce, "then the initial prepare function is called");
+				const aVMRs = oTestInput.expectedVMReferences || [sVariantManagementReference];
+				assert.strictEqual(
+					Object.keys(oVariantsMap).length,
+					aVMRs.length,
+					"then the right number of variant management instances is created"
+				);
+				aVMRs.forEach(function(sVMR) {
 					assert.strictEqual(
-						Object.keys(oVariantsMap).length,
-						aVMRs.length,
-						"then the proper amount of variant management instances is created"
+						oVariantsMap[sVMR].variants[0].key,
+						sVMR,
+						"then the standard variant is automatically added based on the existing variant"
 					);
-					// eslint-disable-next-line max-nested-callbacks
-					aVMRs.forEach(function(sVMR) {
-						assert.strictEqual(
-							oVariantsMap[sVMR].variants[0].key,
-							sVMR,
-							"then the standard variant is automatically added based on the existing variant"
-						);
-						assert.strictEqual(
-							oVariantsMap[sVMR].variants.length,
-							oTestInput.expectedVariantsCount,
-							"then the correct amount of variants is created"
-						);
-					});
-					// eslint-disable-next-line max-nested-callbacks
-					(oTestInput.customAssertions || []).forEach(function(fnAssertion) {
-						fnAssertion(assert);
-					});
+					assert.strictEqual(
+						oVariantsMap[sVMR].variants.length,
+						oTestInput.expectedVariantsCount,
+						"then the right number of variants is created"
+					);
+				});
+				(oTestInput.customAssertions || []).forEach(function(fnAssertion) {
+					fnAssertion(assert);
 				});
 			});
 		});
@@ -749,12 +747,12 @@ sap.ui.define([
 				reference: sReference
 			})
 			.then(function() {
-				var oVariant = createVariant({
+				const oVariant = createVariant({
 					fileName: sVariantManagementReference
 				});
 				VariantManagementState.addRuntimeSteadyObject(sReference, sComponentId, oVariant);
 
-				var oVariantManagementState = VariantManagementState.getVariantManagementMap().get({ reference: sReference });
+				const oVariantManagementState = VariantManagementState.getVariantManagementMap().get({ reference: sReference });
 
 				assert.strictEqual(
 					oVariantManagementState[sVariantManagementReference].variants.length,
@@ -775,12 +773,12 @@ sap.ui.define([
 				reference: sReference
 			})
 			.then(function() {
-				var oVariant = createVariant({
+				const oVariant = createVariant({
 					fileName: sVariantManagementReference
 				});
 				VariantManagementState.addRuntimeSteadyObject(sReference, sComponentId, oVariant);
 
-				var oVariantManagementState = VariantManagementState.getVariantManagementMap().get({ reference: sReference });
+				const oVariantManagementState = VariantManagementState.getVariantManagementMap().get({ reference: sReference });
 
 				assert.strictEqual(
 					oVariantManagementState[sVariantManagementReference].variants.length,
@@ -798,20 +796,20 @@ sap.ui.define([
 		});
 
 		QUnit.test("when there are changes referencing a deleted variant", function(assert) {
-			var sDeletedVariant = "deletedVariantRef";
-			var oUIChange = FlexObjectFactory.createUIChange({
+			const sDeletedVariant = "deletedVariantRef";
+			const oUIChange = FlexObjectFactory.createUIChange({
 				id: "someUIChange",
 				layer: Layer.CUSTOMER,
 				variantReference: sDeletedVariant
 			});
-			var oSetTitleChange = FlexObjectFactory.createUIChange({
+			const oSetTitleChange = FlexObjectFactory.createUIChange({
 				variantReference: sVariantManagementReference,
 				id: "someVariantChange",
 				fileType: "ctrl_variant_change",
 				changeType: "setTitle",
 				selector: { id: sDeletedVariant}
 			});
-			var oSetDefaultChange = FlexObjectFactory.createUIChange({
+			const oSetDefaultChange = FlexObjectFactory.createUIChange({
 				id: "setDefaultVariantChange",
 				layer: Layer.CUSTOMER,
 				changeType: "setDefault",
@@ -829,7 +827,7 @@ sap.ui.define([
 				reference: sReference
 			})
 			.then(function() {
-				var oVariantMap = VariantManagementState.getVariantManagementMap().get({ reference: sReference });
+				const oVariantMap = VariantManagementState.getVariantManagementMap().get({ reference: sReference });
 				assert.deepEqual(oVariantMap, {}, "no variant entry was created");
 			});
 		});
@@ -846,7 +844,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when retrieving the initial current variant", function(assert) {
-			var oVariantManagementState = VariantManagementState.getVariantManagementMap().get({ reference: sReference });
+			const oVariantManagementState = VariantManagementState.getVariantManagementMap().get({ reference: sReference });
 			assert.strictEqual(
 				oVariantManagementState[sVariantManagementReference].currentVariant,
 				sVariantManagementReference,
@@ -855,7 +853,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the initial current variant was set via technical parameters", function(assert) {
-			var oComponentData = {technicalParameters: {}};
+			const oComponentData = {technicalParameters: {}};
 			oComponentData.technicalParameters[VariantUtil.VARIANT_TECHNICAL_PARAMETER] = ["customVariant"];
 			sandbox.stub(FlexState, "getComponentData").returns(oComponentData);
 			stubFlexObjectsSelector([
@@ -873,7 +871,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the technical parameters contain entries for multiple references", function(assert) {
-			var oComponentData = {technicalParameters: {}};
+			const oComponentData = {technicalParameters: {}};
 			oComponentData.technicalParameters[VariantUtil.VARIANT_TECHNICAL_PARAMETER] = ["customVariant", "customVariantForSecondVM"];
 			sandbox.stub(FlexState, "getComponentData").returns(oComponentData);
 			stubFlexObjectsSelector([
@@ -896,7 +894,7 @@ sap.ui.define([
 				})
 			);
 
-			var oVMMap = VariantManagementState.getVariantManagementMap().get({ reference: sReference });
+			const oVMMap = VariantManagementState.getVariantManagementMap().get({ reference: sReference });
 			assert.strictEqual(
 				oVMMap[sVariantManagementReference].currentVariant,
 				"customVariant",
@@ -910,7 +908,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the initial current variant was set via technical parameters but is invalid", function(assert) {
-			var oComponentData = {technicalParameters: {}};
+			const oComponentData = {technicalParameters: {}};
 			oComponentData.technicalParameters[VariantUtil.VARIANT_TECHNICAL_PARAMETER] = ["someInvalidVariant"];
 			sandbox.stub(FlexState, "getComponentData").returns(oComponentData);
 
@@ -922,7 +920,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the initial current variant was set via technical parameters but is hidden", function(assert) {
-			var oComponentData = {technicalParameters: {}};
+			const oComponentData = {technicalParameters: {}};
 			oComponentData.technicalParameters[VariantUtil.VARIANT_TECHNICAL_PARAMETER] = ["customVariant"];
 			sandbox.stub(FlexState, "getComponentData").returns(oComponentData);
 
@@ -953,7 +951,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the initial current variant was set via technical parameters and setDefault changes exist", function(assert) {
-			var oComponentData = {technicalParameters: {}};
+			const oComponentData = {technicalParameters: {}};
 			oComponentData.technicalParameters[VariantUtil.VARIANT_TECHNICAL_PARAMETER] = ["customVariant"];
 			sandbox.stub(FlexState, "getComponentData").returns(oComponentData);
 
@@ -1091,15 +1089,15 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when accessing a variant", function(assert) {
-			var sCustomVariantKey = "customVariant";
-			var oVariant = createVariant({
+			const sCustomVariantKey = "customVariant";
+			const oVariant = createVariant({
 				variantReference: sVariantManagementReference,
 				fileName: sCustomVariantKey
 			});
 			stubFlexObjectsSelector([
 				oVariant
 			]);
-			var oVariantData = VariantManagementState.getVariant({
+			const oVariantData = VariantManagementState.getVariant({
 				reference: sReference,
 				vmReference: sVariantManagementReference,
 				vReference: sCustomVariantKey
@@ -1123,7 +1121,7 @@ sap.ui.define([
 					fileName: "customVariant"
 				})
 			]);
-			var oVariantData = VariantManagementState.getVariant({
+			const oVariantData = VariantManagementState.getVariant({
 				reference: sReference,
 				vmReference: sVariantManagementReference
 			});
@@ -1135,13 +1133,13 @@ sap.ui.define([
 		});
 
 		QUnit.test("when retrieving the control changes for a variant", function(assert) {
-			var oPersistedUIChange = FlexObjectFactory.createUIChange({
+			const oPersistedUIChange = FlexObjectFactory.createUIChange({
 				id: "somePersistedUIChange",
 				layer: Layer.CUSTOMER,
 				variantReference: "customVariant"
 			});
 			oPersistedUIChange.setState(States.LifecycleState.PERSISTED);
-			var oDirtyUIChange = FlexObjectFactory.createUIChange({
+			const oDirtyUIChange = FlexObjectFactory.createUIChange({
 				id: "someDirtyUIChange",
 				layer: Layer.CUSTOMER,
 				variantReference: "customVariant"
@@ -1175,7 +1173,7 @@ sap.ui.define([
 				2,
 				"then all changes are returned"
 			);
-			var aControlChanges = VariantManagementState.getControlChangesForVariant({
+			const aControlChanges = VariantManagementState.getControlChangesForVariant({
 				reference: sReference,
 				vmReference: sVariantManagementReference,
 				vReference: "customVariant",
@@ -1198,7 +1196,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when retrieving the variant changes for a variant", function(assert) {
-			var oCtrlVariantChange = FlexObjectFactory.createUIChange({
+			const oCtrlVariantChange = FlexObjectFactory.createUIChange({
 				id: "someCtrlVariantChange",
 				layer: Layer.CUSTOMER,
 				changeType: "setTitle",
@@ -1314,7 +1312,7 @@ sap.ui.define([
 						variantManagementReference: "someOtherVM"
 					})
 				);
-				var aUIChanges = [
+				const aUIChanges = [
 					FlexObjectFactory.createUIChange({
 						id: "change1",
 						layer: Layer.CUSTOMER,
@@ -1383,7 +1381,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling waitForInitialVariantChanges", function(assert) {
-			var oFlexControllerStub = {
+			const oFlexControllerStub = {
 				waitForChangesToBeApplied: sandbox.stub().resolves("foo")
 			};
 			sandbox.stub(JsControlTreeModifier, "bySelector").callsFake(function(oSelector) {
@@ -1406,7 +1404,7 @@ sap.ui.define([
 					oFlexControllerStub.waitForChangesToBeApplied.calledOnce,
 					"waitForChanges was called"
 				);
-				var aArguments = oFlexControllerStub.waitForChangesToBeApplied.lastCall.args[0];
+				const aArguments = oFlexControllerStub.waitForChangesToBeApplied.lastCall.args[0];
 				assert.ok(
 					aArguments.some(
 						function(oArgument) {
@@ -1425,7 +1423,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling waitForInitialVariantChanges with unavailable controls", function(assert) {
-			var oFlexControllerStub = {
+			const oFlexControllerStub = {
 				waitForChangesToBeApplied: sandbox.stub().resolves("foo")
 			};
 			sandbox.stub(JsControlTreeModifier, "bySelector").returns();

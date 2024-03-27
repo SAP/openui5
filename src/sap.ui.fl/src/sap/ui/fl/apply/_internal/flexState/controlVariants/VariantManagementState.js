@@ -468,6 +468,26 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the instances of all current variants
+	 *
+	 * @param {string} sReference - Component reference
+	 * @returns {sap.ui.fl.apply._internal.flexObjects.FlVariant[]} Array of current variant instances
+	 */
+	VariantManagementState.getAllCurrentVariants = function(sReference) {
+		const oVariantsMap = oVariantManagementMapDataSelector.get({
+			reference: sReference
+		});
+		return Object.entries(oVariantsMap).map((aEntry) => {
+			const oCurrentVariant = VariantManagementState.getVariant({
+				vmReference: aEntry[0],
+				vReference: aEntry[1].currentVariant,
+				reference: sReference
+			}).instance;
+			return oCurrentVariant;
+		});
+	};
+
+	/**
 	 * Returns the variant management references saved in the FlexState.
 	 *
 	 * @param {string} sReference - Flex reference of the current app
