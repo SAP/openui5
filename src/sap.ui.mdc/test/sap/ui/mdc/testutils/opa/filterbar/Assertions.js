@@ -91,7 +91,7 @@ sap.ui.define([
 			return waitForFilterBar.call(this);
 		},
 
-		iShouldSeeTheFilterFieldsWithLabels: function(aLabelNames) {
+		iShouldSeeTheFilterFieldsWithLabels: function(aLabelNames, oPropertiesMatcher) {
 
 			function onFilterFieldsFound(aFilterFields) {
 				Opa5.assert.strictEqual(aFilterFields.length, aLabelNames.length, "The exact number of filter fields were found");
@@ -107,13 +107,15 @@ sap.ui.define([
 				}
 			}
 
-			return this.waitFor({
+            const oDefaultPropertiesMatcher = {
+                showAdaptFiltersButton: true
+            };
+
+            return this.waitFor({
 				searchOpenDialogs: false,
 				controlType: "sap.ui.mdc.FilterBar",
 				matchers: {
-					properties: {
-						showAdaptFiltersButton: true
-					}
+					properties: oPropertiesMatcher ?? oDefaultPropertiesMatcher
 				},
 				success: function(aFilterBar){
 					Opa5.assert.strictEqual(aFilterBar.length, 1, "Only one FilterBar is present");

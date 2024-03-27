@@ -215,8 +215,8 @@ sap.ui.define([
 					return FilterBarAssertions.iShouldSeeTheFilterBar.call(this);
 				},
 
-				iShouldSeeTheFilterFieldsWithLabels: function(aLabelNames) {
-					return FilterBarAssertions.iShouldSeeTheFilterFieldsWithLabels.call(this, aLabelNames);
+				iShouldSeeTheFilterFieldsWithLabels: function(aLabelNames, oPropertiesMatcher) {
+					return FilterBarAssertions.iShouldSeeTheFilterFieldsWithLabels.call(this, aLabelNames, oPropertiesMatcher);
 				},
 
 				iShouldSeeTheAdaptFiltersButton: function() {

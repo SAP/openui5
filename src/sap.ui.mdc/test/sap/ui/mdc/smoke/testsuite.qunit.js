@@ -32,6 +32,18 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 			"LinkPayloadJson": {
 				group: "Demokit samples",
 				sinon: false
+			},
+			"FilterbarTypes": {
+				group: "Demokit samples",
+				sinon: false
+			},
+			"FilterbarCustomOperators": {
+				group: "Demokit samples",
+				sinon: false
+			},
+			"FilterbarCustomContent": {
+				group: "Demokit samples",
+				sinon: false
 			}
 		}
 	};

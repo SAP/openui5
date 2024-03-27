@@ -657,11 +657,12 @@ sap.ui.define([
 		iShouldSeeConditons: function(sControlType, oFilterConditions) {
 			return this.waitFor({
 				controlType: sControlType,
-				success: function(aTables) {
-					Opa5.assert.ok(aTables.length == 1);
-					const oTable = aTables[0];
-					oTable.initialized().then(function(oTable){
-						Opa5.assert.equal(JSON.stringify(oTable.getFilterConditions()), JSON.stringify(oFilterConditions), "Table holds correct filterConditions");
+				success: function(aControls) {
+					Opa5.assert.ok(aControls.length == 1);
+					const oControl = aControls[0];
+					oControl.initialized().then(function(oInitializedControl){
+						const oFilterControl = sControlType === "sap.ui.mdc.FilterBar" ? oControl : oInitializedControl;
+						Opa5.assert.equal(JSON.stringify(oFilterControl.getFilterConditions()), JSON.stringify(oFilterConditions), "Control holds correct filterConditions");
 					});
 				}
 			});

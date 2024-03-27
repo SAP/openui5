@@ -153,6 +153,15 @@ sap.ui.define([
 				 */
 				iCloseTheAdaptFiltersDialogWithCancel: function() {
 					return filterBarActions.iCloseTheAdaptFiltersDialogWithCancel.apply(this, arguments);
+				},
+
+				/**
+				 * OPA5 test action
+				 * Searches for an open "Adapt Filters" dialog and presses the "Show Values" button on it
+				 * @returns {Promise} OPA waitFor
+				*/
+				iPressTheAdaptFiltersShowValuesButton: function () {
+					return filterBarActions.iPressTheAdaptFiltersShowValuesButton.apply(this, arguments);
 				}
 			},
 			assertions: {
@@ -198,9 +207,10 @@ sap.ui.define([
 				 * @memberof onTheMDCFilterBar
 				 * @method iShouldSeeTheFilterFieldsWithLabels
 				 * @param {string[]} aLabelNames Array containing the labels of the expected <code>FilterFields</code>
+				 * @param {object[]} oPropertiesMatcher Object indicating which properties should be matched on the FilterBar
 				 * @returns {Promise} OPA waitFor
 				 */
-				iShouldSeeTheFilterFieldsWithLabels: function(aLabelNames) {
+				iShouldSeeTheFilterFieldsWithLabels: function(aLabelNames, oPropertiesMatcher) {
 					return filterBarAssertions.iShouldSeeTheFilterFieldsWithLabels.apply(this, arguments);
 				},
 				/**

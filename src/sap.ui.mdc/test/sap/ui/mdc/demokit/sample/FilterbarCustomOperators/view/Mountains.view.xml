@@ -21,6 +21,7 @@
 					<mdc:filterItems>
 						<!-- Rank - Custom operator -->
 						<mdc:FilterField
+							id="field-rank"
 							label="Rank (Custom operator)"
 							propertyKey="rank"
 							dataType="sap.ui.model.type.Integer"
@@ -29,6 +30,7 @@
 							operators="SRANGE,NOTSRANGE,EQ">
 						</mdc:FilterField>
 						<mdc:FilterField
+							id="field-first-ascent"
 							label="First ascent (Custom operator)"
 							propertyKey="first_ascent"
 							dataType="sap.ui.model.type.Date"
