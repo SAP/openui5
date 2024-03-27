@@ -41,17 +41,31 @@ sap.ui.define([
 	 */
 	var ErrorHandler = {};
 
+	/**
+	 * @param {object} mErrorInfo Information about the ocurred request error
+	 * @param {object} mErrorInfo.requestErrorParams Error parameters
+	 * @param {string} mErrorInfo.requestErrorParams.message Error message
+	 * @param {module:sap/base/util/SimpleResponse} [mErrorInfo.requestErrorParams.response] Response object
+	 * @param {string} [mErrorInfo.requestErrorParams.responseText] Response text
+	 * @param {object} [mErrorInfo.requestErrorParams.settings] Request settings
+	 * @param {object} mErrorInfo.requestSettings Data provider settings
+	 * @param {sap.ui.integration.widgets.Card} oCard the card
+	 * @returns {sap.ui.integration.BlockingMessageSettings} Blocking message settings
+	 */
 	ErrorHandler.configureDataRequestErrorInfo = function (mErrorInfo, oCard) {
 		var oResponse = mErrorInfo.requestErrorParams.response,
 			sResponseText = mErrorInfo.requestErrorParams.responseText,
 			sIllustrationType = IllustratedMessageType.ErrorScreen,
-			sTitle = oResponse ? oResponse.status + " " + oResponse.statusText : oCard.getTranslatedText("CARD_ERROR_OCCURED"),
-			sDescription = oResponse ? oCard.getTranslatedText("CARD_ERROR_REQUEST_DESCRIPTION") : mErrorInfo.requestErrorParams.message.toString(),
+			sTitle = oCard.getTranslatedText("CARD_ERROR_CONFIGURATION_TITLE"),
+			sDescription = oCard.getTranslatedText("CARD_ERROR_CONFIGURATION_DESCRIPTION"),
 			requestSettings = mErrorInfo.requestSettings,
 			sUrl = requestSettings.request ? requestSettings.request.url : "",
 			sDetails = oCard.getTranslatedText("CARD_ERROR_REQUEST_DETAILS", [sUrl]);
 
 		if (oResponse) {
+			sTitle = oResponse.status + " " + oResponse.statusText;
+			sDescription = oCard.getTranslatedText("CARD_ERROR_REQUEST_DESCRIPTION");
+
 			switch (oResponse.status) {
 				case 0:
 					switch (oResponse.statusText) {
@@ -81,16 +95,17 @@ sap.ui.define([
 				case 511: // Network Authentication Required
 					sDescription = oCard.getTranslatedText("CARD_ERROR_REQUEST_ACCESS_DENIED_DESCRIPTION");
 					break;
+				default:
+					break;
 			}
 		}
 
 		sDetails = sTitle + "\n" +
-			sDescription + "\n\n";
+			sDescription + "\n" +
+			sDetails + "\n\n";
 
-		if (oResponse) {
-			sDetails += oCard.getTranslatedText("CARD_LOG_MSG") + "\n" +
-				oResponse.statusText + "\n\n";
-		}
+		sDetails += oCard.getTranslatedText("CARD_LOG_MSG") + "\n" +
+			(oResponse ? oResponse.statusText : mErrorInfo.requestErrorParams.message) + "\n\n";
 
 		sDetails += oCard.getTranslatedText("CARD_REQUEST_SETTINGS") + "\n" +
 			formatJson(requestSettings) + "\n\n";
