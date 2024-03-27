@@ -132,11 +132,11 @@ sap.ui.define([
 		When.iPressKeyOnTheFilterField(sFieldID, KeyCodes.ENTER);
 		Then.onTheMDCFilterField.iShouldSeeTheFilterFieldWithValues(sFieldID, "Pride and Prejudice");
 
-        When.iEnterTextOnTheFilterField(sFieldID, "Yellow", {
+		When.iEnterTextOnTheFilterField(sFieldID, "The Yellow", {
 			keepFocus: true
 		});
 		Then.onTheMDCValueHelp.iShouldSeeValueHelpPopover("container-v4demo---books--FH4");
-		When.iEnterTextOnTheFilterField(sFieldID, "Yellow");
+		When.iPressKeyOnTheFilterField(sFieldID, KeyCodes.ENTER);
 		Then.onTheMDCFilterField.iShouldSeeTheFilterFieldWithValues(sFieldID, "The Yellow Wallpaper");
 
 		Then.iTeardownMyAppFrame();

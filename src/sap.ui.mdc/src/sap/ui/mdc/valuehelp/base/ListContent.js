@@ -102,23 +102,34 @@ sap.ui.define([
 	};
 
 	/**
-	 * Gets the <code>ListBinding</code> of the content.
-	 * @returns {sap.ui.model.ListBinding} <code>ListBinding</code>
-	 * @protected
+	 * Gets current keyPath of the content.
+ 	 * <b>Note:</b> Every listcontent must implement this method.
+	 * @name sap.ui.mdc.valuehelp.base.ListContent#getKeyPath
+	 * @method
+	 * @abstract
+	 * @returns {string} Content key path
+	 * @public
 	 */
-	ListContent.prototype.getListBinding = function() {
-		throw new Error("ListContent: Every listcontent must implement this method.");
-	};
 
 	/**
-	 * Gets the relevant <code>BindingContexts</code> of the content.
-	 * @param {sap.ui.mdc.valuehelp.base.ItemForValueConfiguration} oConfig Configuration
-	 * @returns {sap.ui.model.Context[]} <code>BindingContexts</code>
-	 * @protected
+	 * Gets current descriptionPath of the content.
+ 	 * <b>Note:</b> Every listcontent must implement this method.
+	 * @name sap.ui.mdc.valuehelp.base.ListContent#getDescriptionPath
+	 * @method
+	 * @abstract
+	 * @returns {string} Content description path
+ 	 * @public
 	 */
-	ListContent.prototype.getRelevantContexts = function(oConfig) {
-		throw new Error("ListContent: Every listcontent must implement this method.");
-	};
+
+	/**
+	 * Gets the <code>ListBinding</code> of the content.
+  	 * <b>Note:</b> Every listcontent must implement this method.
+	 * @name sap.ui.mdc.valuehelp.base.ListContent#getListBinding
+	 * @method
+	 * @abstract
+	 * @returns {sap.ui.model.ListBinding} <code>ListBinding</code>
+	 * @public
+	 */
 
 	return ListContent;
 

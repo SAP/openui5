@@ -274,7 +274,7 @@
 							</mdc:ValueHelp>
 
 							<mdc:ValueHelp id="FHLanguage"
-								delegate='\{"name": "sap/ui/v4demo/delegate/ValueHelp.delegate", "payload": \{"firstMatch": "CheckKeyDescription"\}\}'>
+								delegate='\{"name": "sap/ui/v4demo/delegate/ValueHelp.delegate", "payload": \{"firstMatch": "CaseInsensitiveStartsWith"\}\}'>
 								<mdc:typeahead>
 									<mdcv:Popover title="Langugages">
 										<mdcvc:MTable keyPath="code" descriptionPath="name"  useAsValueHelp="false">
@@ -715,7 +715,7 @@
 								propertyKey="language_code"
 								maxConditions="1" valueHelp="FHLanguage"/>
 
-							<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
+							<mdc:FilterField delegate='\{"name": "sap/ui/v4demo/delegate/FieldBase.delegate", "payload": \{"acceptAnySuggestions": "true"\}\}'
 								id="ff7" label="Genre"
 								conditions="{$filters>/conditions/genre_code}"
 								propertyKey="genre_code"
@@ -1007,6 +1007,7 @@
 
 				<mdc:ValueHelp id="FHGenre"
 					delegate='\{"name": "sap/ui/v4demo/delegate/FilterbarInOutValueHelp.delegate", "payload": \{
+							"firstMatch": "CaseInsensitiveContains",
 							"inParameters": [\{"contentId":"container-v4demo---books--genre", "source":"classification_code", "target":"classification_code"\},
 											\{"contentId":"container-v4demo---books--genreTypeAhead", "source":"classification_code", "target":"classification_code"\}],
 							"outParameters": [\{"source": "classification_code", "target": "classification_code", "mode":"Always"\}],

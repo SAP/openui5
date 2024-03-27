@@ -848,6 +848,18 @@ sap.ui.define([
 	 */
 	Content.prototype.onConnectionChange = function() {};
 
+	/**
+	 * Temporarily highlights a typeahead item identified by it's id.
+	 * Navigation events or other updates may lead to the item no longer being highlighted.
+	 *
+	 * @param {string} sHighlightId control id of the item to be highlighted
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.valuehelp.base.Container
+	 */
+	Content.prototype.setHighlightId = function(sHighlightId) {
+
+	};
+
 	PromiseMixin.call(Content.prototype);
 
 

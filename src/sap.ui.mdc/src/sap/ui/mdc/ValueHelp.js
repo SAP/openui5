@@ -11,7 +11,8 @@ sap.ui.define([
 	'sap/ui/model/base/ManagedObjectModel',
 	'sap/ui/base/ManagedObjectObserver',
 	'sap/ui/mdc/enums/ValueHelpPropagationReason',
-	'sap/ui/Device'
+	'sap/ui/Device',
+	"sap/ui/mdc/enums/FieldDisplay"
 ], (
 	Element,
 	PromiseMixin,
@@ -21,7 +22,8 @@ sap.ui.define([
 	ManagedObjectModel,
 	ManagedObjectObserver,
 	ValueHelpPropagationReason,
-	Device
+	Device,
+	FieldDisplay
 ) => {
 	"use strict";
 
@@ -920,7 +922,7 @@ sap.ui.define([
 	};
 
 	ValueHelp.prototype.getDisplay = function() { // ? currently necessary to determine how to render the tokens in valuehelp
-
+		return this.getProperty("_config")?.display || FieldDisplay.Value;
 	};
 
 	ValueHelp.prototype.getDataType = function() { // should only be of interest for content in the future, maybe provide such infos in an abstract way? (interface?)
@@ -1098,6 +1100,20 @@ sap.ui.define([
 			return Element.prototype._getFieldGroupIds.apply(this, arguments);
 		}
 
+	};
+
+	/**
+	 * Temporarily highlights a typeahead item identified by it's id.
+	 * Navigation events or other updates may lead to the item no longer being highlighted.
+	 *
+	 * @param {string} sHighlightId control id of the item to be highlighted
+	 *
+	 * @private
+ 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
+	 * @since 1.123.0
+	 */
+	ValueHelp.prototype.setHighlightId = function(sHighlightId) {
+		this.getTypeahead()?.setHighlightId(sHighlightId);
 	};
 
 	PromiseMixin.call(ValueHelp.prototype);

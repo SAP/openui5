@@ -2573,9 +2573,6 @@ sap.ui.define([
 		let bEscPressed = false;
 		const oSource = oEvent.getSource();
 
-		this._oNavigateCondition = undefined; // navigation item is not longer valid
-		this.getContentFactory().updateConditionType();
-
 		if ("value" in oEvent.getParameters()) {
 			vValue = oEvent.getParameter("value");
 		} else if ("newValue" in oEvent.getParameters()) {
@@ -2587,6 +2584,16 @@ sap.ui.define([
 			bEscPressed = oEvent.getParameter("escPressed");
 		}
 
+		const oValueHelp = _getValueHelp.call(this);
+
+		if (this._oNavigateCondition) {
+			oValueHelp.setHighlightId();
+		}
+
+
+		this._oNavigateCondition = undefined; // navigation item is not longer valid
+		this.getContentFactory().updateConditionType();
+
 		if ("previousValue" in oEvent.getParameters()) {
 			vPreviousValue = oEvent.getParameter("previousValue");
 		} else {
@@ -2594,7 +2601,6 @@ sap.ui.define([
 			vPreviousValue = aConditions[0] && aConditions[0].values[0];
 		}
 
-		const oValueHelp = _getValueHelp.call(this);
 
 		if (oValueHelp && (!this.getContentFactory().isMeasure() || oSource.getShowValueHelp())) {
 			if (bEscPressed) {
@@ -3172,6 +3178,7 @@ sap.ui.define([
 		const oOperator = FilterOperatorUtil.getEQOperator(this.getSupportedOperators()); /// use EQ operator of Field (might be different one)
 		const sCurrentValue = this._vLiveChangeValue || this._sFilterValue; // as FilterValue is updated delayed
 
+
 		if (_isFocused.call(this) && !this._bPreventAutocomplete && sCurrentValue === sFilterValue && // skip if user changes text after result was determined
 			oContent && oContent.setDOMValue && oContent.selectText && (!oContent.isComposingCharacter || !oContent.isComposingCharacter())) { // Autocomplete only possible if content supports it
 			const oContentFactory = this.getContentFactory();
@@ -3214,6 +3221,12 @@ sap.ui.define([
 			let sOutput = oDelegate.getAutocompleteOutput(this, oCondition, sKey, sDescription, bKeyMatch, bDescriptionMatch);
 
 			if (sOutput) { // only if something returned
+
+				const oValueHelp = _getValueHelp.call(this);
+				if (oValueHelp?.isOpen()) {
+					oValueHelp.setHighlightId(!this._bPreventAutocomplete && sItemId);
+				}
+
 				this._oNavigateCondition = merge({}, oCondition); // to keep Payload
 				this._oNavigateCondition.operator = oOperator.name;
 
@@ -3236,7 +3249,7 @@ sap.ui.define([
 				}
 
 				// while typing the types user input should not be changed. As the output might have a diffrent upper/lower case, replace the beginning with the user input.
-				sOutput = sFilterValue + sOutput.substr(sFilterValue.length);
+				sOutput = typeof sOutput === 'string' ? sFilterValue + sOutput.substr(sFilterValue.length) : sFilterValue;
 				this._oNavigateCondition.output = sOutput; // store for parsing as in ConditionType normally the user input is compared with formatted value. But here the output could be different because of delegate implementation.
 
 				oContent.setDOMValue(sOutput);

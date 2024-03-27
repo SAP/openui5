@@ -5,29 +5,11 @@
 /*eslint max-nested-callbacks: [2, 5]*/
 
 sap.ui.define([
-	"sap/ui/mdc/ValueHelpDelegate",
 	"sap/ui/mdc/valuehelp/base/ListContent",
-	"sap/ui/mdc/condition/Condition",
-	"sap/ui/mdc/condition/FilterOperatorUtil",
-	"sap/ui/mdc/condition/Operator",
-	"sap/ui/mdc/enums/ValueHelpSelectionType",
-	"sap/ui/mdc/enums/ConditionValidated",
-	"sap/ui/core/Icon",
-	"sap/ui/model/json/JSONModel",
-	"sap/m/library",
-	"sap/m/Popover"
+	"sap/ui/mdc/condition/Condition"
 ], function (
-		ValueHelpDelegate,
 		ListContent,
-		Condition,
-		FilterOperatorUtil,
-		Operator,
-		ValueHelpSelectionType,
-		ConditionValidated,
-		Icon,
-		JSONModel,
-		mLibrary,
-		Popover
+		Condition
 	) {
 	"use strict";
 

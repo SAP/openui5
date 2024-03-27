@@ -85,6 +85,13 @@ sap.ui.define([
 	let oScrollContainer = null;
 	let sLocalFilterValue;
 
+	const oValueHelp = {
+		getPayload: function () {},
+		getDisplay: function () {
+			return "DescriptionValue";
+		}
+	};
+
 	const oContainer = { //to fake Container
 		getScrollDelegate: function() {
 			return oScrollContainer;
@@ -137,6 +144,9 @@ sap.ui.define([
 		},
 		getDomRef: function() {
 			return oTable?.getDomRef();
+		},
+		getValueHelp: function () {
+			return oValueHelp;
 		}
 	};
 
@@ -407,7 +417,7 @@ sap.ui.define([
 
 		const fnDone = assert.async();
 		oMTable.onBeforeShow(true).then(function() {
-			assert.ok(ValueHelpDelegate.getFilterConditions.calledWith(undefined/*no parent provided*/, oMTable), "ValueHelpDelegate.getFilterConditions called");
+			assert.ok(ValueHelpDelegate.getFilterConditions.calledWith(oValueHelp, oMTable), "ValueHelpDelegate.getFilterConditions called");
 			oMTable.onShow(true); // to trigger filtering
 			// compare arguments of filter as Filter object is changed during filtering
 			assert.equal(oListBinding.filter.args.length, 1, "ListBinding filter called once");
@@ -455,7 +465,7 @@ sap.ui.define([
 		oMTable._bContentBound = true;
 		oMTable.setFilterValue("X");
 		assert.ok(ValueHelpDelegateV4.updateBinding.called, "ValueHelpDelegateV4.updateBinding called");
-		assert.ok(ValueHelpDelegateV4.updateBinding.calledWith(undefined/*no parent provided*/, oListBinding), "ValueHelpDelegateV4.updateBinding called parameters");
+		assert.ok(ValueHelpDelegateV4.updateBinding.calledWith(oValueHelp, oListBinding), "ValueHelpDelegateV4.updateBinding called parameters");
 		assert.ok(oListBinding.changeParameters.calledWith({$search: "X"}), "ListBinding.changeParameters called with search string");
 		assert.notOk(oListBinding.isSuspended(), "ListBinding is resumed");
 
@@ -464,15 +474,11 @@ sap.ui.define([
 			// as JSOM-Model does not support $search all items are returned, but test for first of result
 			const oTable = oMTable.getTable();
 			const aItems = oTable.getItems();
-			const sShownItemId = oMTable.onShow(); // to update selection and scroll
 			assert.equal(iTypeaheadSuggested, 1, "typeaheadSuggested event fired");
-			assert.deepEqual(oCondition, Condition.createItemCondition("I1", "Item 1"), "typeaheadSuggested event condition");
+			assert.deepEqual(oCondition, Condition.createItemCondition("I3", "X-Item 3"), "typeaheadSuggested event condition");
 			assert.equal(sFilterValue, "X", "typeaheadSuggested event filterValue");
-			assert.equal(sItemId, aItems[0].getId(), "typeaheadSuggested event itemId");
+			assert.equal(sItemId, aItems[2].getId(), "typeaheadSuggested event itemId");
 			assert.equal(bTypeaheadCaseSensitive, false, "typeaheadSuggested event caseSensitive");
-			assert.ok(aItems[0].hasStyleClass("sapMLIBSelected"), "Item shown as selected");
-			assert.notOk(aItems[0].getSelected(), "Item not really selected");
-			assert.equal(sShownItemId, aItems[0].getId(), "onShow returns first-match itemId");
 
 			oContainer.getValueHelpDelegate.restore();
 			ValueHelpDelegateV4.updateBinding.restore();
@@ -591,7 +597,7 @@ sap.ui.define([
 			const fnDone = assert.async();
 			oPromise.then(function(oItem) {
 				assert.ok(true, "Promise Then must be called");
-				assert.ok(ValueHelpDelegate.getFilterConditions.calledWith(undefined/*no parent provided*/, oMTable, oConfig), "ValueHelpDelegate.getFilterConditions called");
+				assert.ok(ValueHelpDelegate.getFilterConditions.calledWith(oValueHelp, oMTable, oConfig), "ValueHelpDelegate.getFilterConditions called");
 				assert.deepEqual(oItem, {key: "I3", description: "X-Item 3", payload: {inParameters: {inValue: "3"}, outParameters: null}}, "Item returned");
 				ValueHelpDelegate.getFilterConditions.restore();
 				ValueHelpDelegate.createConditionPayload.restore();
@@ -648,7 +654,7 @@ sap.ui.define([
 			const fnDone = assert.async();
 			oPromise.then(function(oItem) {
 				assert.ok(true, "Promise Then must be called");
-				assert.ok(ValueHelpDelegate.getFilterConditions.calledWith(undefined/*no parent provided*/, oMTable, oConfig), "ValueHelpDelegate.getFilterConditions called");
+				assert.ok(ValueHelpDelegate.getFilterConditions.calledWith(oValueHelp, oMTable, oConfig), "ValueHelpDelegate.getFilterConditions called");
 				assert.deepEqual(oItem, {key: "I3", description: "X-Item 3", payload: {inParameters: {inValue: "3"}, outParameters: null}}, "Item returned");
 				ValueHelpDelegate.getFilterConditions.restore();
 				ValueHelpDelegate.createConditionPayload.restore();
@@ -833,7 +839,7 @@ sap.ui.define([
 			const fnDone = assert.async();
 			oPromise.then(function(oItem) {
 				assert.ok(true, "Promise Then must be called");
-				assert.ok(ValueHelpDelegate.getFilterConditions.calledWith(undefined/*no parent provided*/, oMTable, oConfig), "ValueHelpDelegate.getFilterConditions called");
+				assert.ok(ValueHelpDelegate.getFilterConditions.calledWith(oValueHelp, oMTable, oConfig), "ValueHelpDelegate.getFilterConditions called");
 				assert.deepEqual(oItem, {key: "I3", description: "X-Item 3", payload: {inParameters: {inValue: "3"}}}, "Item returned");
 			}).catch(function(oError) {
 				assert.notOk(true, "Promise Catch called: " + oError.message || oError);
@@ -1148,44 +1154,6 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("getItemForValue: _oFirstItemResult", (assert) => {
-		const fnDone = assert.async();
-		const sFilterValue = "IR";
-		const oExpectedResultItem = {
-			text: "FirstItemResult", key: "IR", additionalText: "Not in the Model"
-		};
-		oMTable._oFirstItemResult = {
-			filterValue: sFilterValue,
-			result: oExpectedResultItem
-		};
-
-		const oConfig = {
-			parsedValue: sFilterValue,
-			parsedDescription: undefined,
-			value: sFilterValue,
-			context: {payload: {inValue: "b"}},
-			bindingContext: undefined,
-			checkKey: true,
-			checkDescription: false,
-			caseSensitive: false,
-			exception: ParseException,
-			control: "MyControl"
-		};
-
-		const oPromise = oMTable.getItemForValue(oConfig);
-		assert.ok(oPromise instanceof Promise, "getItemForValue returns promise");
-		if (oPromise) {
-			oPromise.then(function(oItem) {
-				assert.ok(true, "Promise Then must be called");
-				assert.deepEqual(oItem, oExpectedResultItem, "Correct value returned");
-			}).catch(function(oError) {
-				assert.notOk(true, "Promise Catch called: " + oError.message || oError);
-			}).finally(function() {
-				fnDone();
-			});
-		}
-	});
-
 	QUnit.test("isValidationSupported", function(assert) {
 
 		assert.ok(oMTable.isValidationSupported(), "validation is supported");
@@ -1287,11 +1255,7 @@ sap.ui.define([
 		oTable.getItems()[2].setSelected(false); // initialize
 		oMTable.onConnectionChange(); // simulate new assignment
 		oMTable.setConditions([]);
-		oMTable._oFirstItemResult = {
-			result: oTable.getItems()[0],
-			filterValue: "",
-			index: 0
-		};
+		oMTable.setHighlightId(oTable.getItems()[0].getId());
 		oMTable.navigate(1);
 		_checkNavigatedItem(assert, oTable, 1, 1, Condition.createItemCondition("I2", "Item 2"), false);
 
@@ -1943,7 +1907,22 @@ sap.ui.define([
 		assert.notOk(oMTable.isNavigationEnabled(-9999), "Navigation is disabled for -9999");
 		assert.notOk(oMTable.isNavigationEnabled(10), "Navigation is disabled for 10");
 		assert.notOk(oMTable.isNavigationEnabled(-10), "Navigation is disabled for -10");
+	});
 
+	QUnit.test("setHighlightId", function(assert) {
+		const aItems = oTable.getItems();
+
+		oMTable.setHighlightId(aItems[0].getId());
+		assert.ok(aItems[0].hasStyleClass("sapMLIBFocused"), "setHighlightId added class sapMLIBFocused");
+
+		oMTable.setHighlightId(aItems[1].getId());
+		assert.notOk(aItems[0].hasStyleClass("sapMLIBFocused"), "setHighlightId removed class sapMLIBFocused");
+		assert.ok(aItems[1].hasStyleClass("sapMLIBFocused"), "setHighlightId added class sapMLIBFocused");
+
+		oMTable.navigate(1);
+		assert.notOk(aItems[1].hasStyleClass("sapMLIBFocused"), "navigation removed class sapMLIBFocused");
+
+		oMTable.setHighlightId();
 	});
 
 });

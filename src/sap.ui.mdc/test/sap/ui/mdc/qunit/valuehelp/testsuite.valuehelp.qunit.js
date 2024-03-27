@@ -157,6 +157,15 @@ sap.ui.define(['../util/EnvHelper', "sap/base/util/merge"], function(EnvHelper, 
 				sinon: {
 					qunitBridge: true
 				}
+			},
+			"ValueHelpDelegate": {
+				module: "./ValueHelpDelegate.qunit",
+				ui5: {
+					animationMode: "none"
+				},
+				sinon: {
+					qunitBridge: true
+				}
 			}
 		}
 	};

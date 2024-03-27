@@ -159,11 +159,38 @@ sap.ui.define([
 				oList.setModel(this._oManagedObjectModel, "$help");
 				//					oList.bindElement({ path: "/", model: "$help" });
 				this.setAggregation("displayContent", oList, true); // to have in control tree
-				_updateSelection.call(this, true);
+				_updateSelection.call(this);
 
 				return oList;
 			});
 		});
+	};
+
+	FixedList.prototype._handleFirstMatchSuggest = function () {
+		const bTypeahead = this.isTypeahead();
+		const aItems = _getList.call(this)?.getItems();
+		const sFilterValue = this.getFilterValue();
+		const bUseFirstMatch = this.getUseFirstMatch();
+
+
+
+		if (bTypeahead && bUseFirstMatch && aItems?.length && sFilterValue) {
+			const oValueHelpDelegate = this.getValueHelpDelegate();
+			const bCaseSensitive = oValueHelpDelegate.isFilteringCaseSensitive(this.getValueHelpInstance(), this);
+			const oFirstMatchContext = oValueHelpDelegate.getFirstMatch(this.getValueHelpInstance(), this, {
+				value: this.getFilterValue(),
+				checkDescription: !!this.getDescriptionPath(),
+				control: this.getControl(),
+				caseSensitive: bCaseSensitive
+			});
+
+			if (oFirstMatchContext) {
+				const oListItem = aItems.find((oItem) => oItem.getBindingContext("$help") === oFirstMatchContext);
+				const oOriginalItem = _getOriginalItem.call(this, oListItem);
+				const oCondition = this.createCondition(_getKey.call(this, oOriginalItem), _getText.call(this, oOriginalItem));
+				this.fireTypeaheadSuggested({ condition: oCondition, filterValue: sFilterValue, itemId: oListItem?.getId(), caseSensitive: bCaseSensitive });
+			}
+		}
 	};
 
 	function _getList() {
@@ -226,7 +253,10 @@ sap.ui.define([
 			oListBinding.update();
 			oList.updateItems();
 			oList.invalidate();
-			_updateSelection.call(this, true); // to update selection
+
+			this._handleFirstMatchSuggest();
+
+			_updateSelection.call(this); // to update selection
 		}
 
 	}
@@ -239,32 +269,16 @@ sap.ui.define([
 
 	}
 
-	function _updateSelection(bFireTypeaheadSuggested) {
+	function _updateSelection() {
 
 		const oList = _getList.call(this);
 		if (oList) {
 			const aConditions = this.getConditions();
-			let vSelectedKey, oFirstMatchItem;
-			const sFilterValue = this.getFilterValue();
-			const bUseFirstMatch = this.getUseFirstMatch();
+			let vSelectedKey;
 			let bFirstFilterItemSelected = false;
-			let sFirstMatchItemId;
-			let bCaseSensitive;
-			//			var oOperator = this._getOperator();
 
 			if (aConditions.length > 0 && (aConditions[0].validated === ConditionValidated.Validated || aConditions[0].operator === OperatorName.EQ /*oOperator.name*/ )) {
 				vSelectedKey = aConditions[0].values[0];
-			}
-
-			if (bUseFirstMatch && sFilterValue) {
-				const oContext = this.getValueHelpDelegate().getFirstMatch(this.getValueHelpInstance(), this, {
-					checkDescription: true,
-					value: sFilterValue
-				});
-				bCaseSensitive = this.getValueHelpDelegate().isFilteringCaseSensitive(this.getValueHelpInstance(), this);
-				if (oContext) {
-					oFirstMatchItem = _getItemFromContext.call(this, oContext);
-				}
 			}
 
 			const aListItems = oList.getItems();
@@ -282,35 +296,16 @@ sap.ui.define([
 						// conditions given -> use them to show selected items
 						oListItem.setSelected(true);
 						oListItem.addStyleClass("sapMLIBFocused"); // show item as focused if open
-					} else if (aConditions.length === 0 && this._iNavigateIndex < 0 && !bFirstFilterItemSelected && oFirstMatchItem && oFirstMatchItem === oOriginalItem) {
+					} else if (aConditions.length === 0 && this._iNavigateIndex < 0 && !bFirstFilterItemSelected && this._sHighlightId === oListItem.getId()) {
 						oListItem.setSelected(true);
 						oListItem.addStyleClass("sapMLIBFocused"); // show item as focused if open
-						sFirstMatchItemId = oListItem.getId();
 						bFirstFilterItemSelected = true;
 					} else {
 						oListItem.setSelected(false);
 					}
 				}
 			});
-
-			if (bFireTypeaheadSuggested && bFirstFilterItemSelected) {
-				_fireTypeaheadSuggested.call(this, oFirstMatchItem, sFirstMatchItemId, bCaseSensitive);
-			}
 		}
-	}
-
-	function _fireTypeaheadSuggested(oItem, sItemId, bCaseSensitive) {
-
-		// use selected item as typeahead suggestion
-		const sFilterValue = this.getFilterValue();
-		const bUseFirstMatch = this.getUseFirstMatch();
-		if (bUseFirstMatch && sFilterValue && oItem) {
-			const vKey = _getKey.call(this, oItem);
-			const vDescription = _getText.call(this, oItem);
-			const oCondition = this.createCondition(vKey, vDescription);
-			this.fireTypeaheadSuggested({ condition: oCondition, filterValue: sFilterValue, itemId: sItemId, caseSensitive: bCaseSensitive });
-		}
-
 	}
 
 	// returns FixedList item for inner list item
@@ -406,7 +401,7 @@ sap.ui.define([
 	};
 
 	FixedList.prototype.handleConditionsUpdate = function(oChanges) {
-		_updateSelection.call(this, false);
+		_updateSelection.call(this);
 	};
 
 	FixedList.prototype.handleFilterValueUpdate = function(oChanges) {
@@ -637,12 +632,19 @@ sap.ui.define([
 		return oList && oList.getBinding("items");
 	};
 
-	FixedList.prototype.getRelevantContexts = function(oConfig) {
-		return this.getListBinding().getCurrentContexts().filter((oListBindingContext) => {
-			const sText = oConfig.checkDescription ? oListBindingContext.getProperty("text") : oListBindingContext.getProperty("key"); // don't use oConfig.parsedValue as entered value doesn't need to be a valid (complete) key
-			return _filterText.call(this, sText, oConfig.value);
-		});
+	FixedList.prototype.getKeyPath = function () {
+		return "key";
 	};
+
+	FixedList.prototype.getDescriptionPath = function () {
+		return "text";
+	};
+
+	FixedList.prototype.setHighlightId = function (sItemId) {
+		this._sHighlightId = sItemId;
+		_updateSelection.call(this);
+	};
+
 
 	return FixedList;
 });

@@ -53,6 +53,16 @@ sap.ui.define([
 		invalidate: function () {},
 		getValueHelpDelegate: function () {
 			return ValueHelpDelegate;
+		},
+		getControl: function () {
+			return undefined;
+		},
+		getValueHelp: function () {
+			return {
+				getDisplay: function () {
+					return "DescriptionValue";
+				}
+			};
 		}
 	};
 
@@ -241,12 +251,13 @@ sap.ui.define([
 				assert.equal(oItem.getValue(), "My Item 3", "Item1 value");
 
 				oFixedList.setCaseSensitive(true);
+
 				assert.equal(oContent.getItems().length, 1, "Number of items");
 				oItem = oContent.getItems()[0];
 				assert.equal(oItem.getLabel(), "item 3", "Item0 label");
 				assert.equal(oItem.getValue(), "My Item 3", "Item0 value");
 
-				assert.equal(iTypeaheadSuggested, 0, "typeaheadSuggested event not fired");
+				assert.equal(iTypeaheadSuggested, 1, "typeaheadSuggested event fired");
 
 				fnDone();
 			}).catch(function(oError) {
@@ -281,34 +292,24 @@ sap.ui.define([
 		if (oContent) {
 			const fnDone = assert.async();
 			oContent.then(function(oContent) {
-				oFixedList.onShow(); // to update selection and scroll
 				assert.equal(oContent.getItems().length, 3, "Number of items");
 				let oItem = oContent.getItems()[0];
 				assert.equal(oItem.getLabel(), "Item 1", "Item0 label");
 				assert.equal(oItem.getValue(), "My Item 1", "Item0 value");
-				assert.ok(oItem.getSelected(), "Item0 selected");
 				oItem = oContent.getItems()[1];
 				assert.equal(oItem.getLabel(), whitespaceReplacer("My Item   2"), "Item1 label");
 				assert.equal(oItem.getValue(), whitespaceReplacer("Item   2"), "Item1 value");
-				assert.notOk(oItem.getSelected(), "Item1 not selected");
 				oItem = oContent.getItems()[2];
 				assert.equal(oItem.getLabel(), "item 3", "Item2 label");
 				assert.equal(oItem.getValue(), "My Item 3", "Item2 value");
-				assert.notOk(oItem.getSelected(), "Item2 not selected");
 
 				oItem = oContent.getItems()[0];
-				assert.equal(iTypeaheadSuggested, 1, "typeaheadSuggested event fired");
-				assert.deepEqual(oCondition, Condition.createItemCondition("I1", "Item 1"), "typeaheadSuggested event condition");
-				assert.equal(sFilterValue, "i", "typeaheadSuggested event filterValue");
-				assert.equal(sItemId, oItem.getId(), "typeaheadSuggested event itemId");
-				assert.equal(bTypeaheadCaseSensitive, false, "typeaheadSuggested event caseSensitive");
 
 				oFixedList.setCaseSensitive(true);
 				iTypeaheadSuggested = 0;
 				oFixedList.setFilterValue("M");
 				assert.notOk(oItem.getSelected(), "Item0 not selected");
 				oItem = oContent.getItems()[1];
-				assert.ok(oItem.getSelected(), "Item1 selected");
 				assert.equal(iTypeaheadSuggested, 1, "typeaheadSuggested event fired");
 				assert.deepEqual(oCondition, Condition.createItemCondition("I2", "My Item   2"), "typeaheadSuggested event condition");
 				assert.equal(sFilterValue, "M", "typeaheadSuggested event filterValue");
@@ -865,6 +866,24 @@ sap.ui.define([
 		const bSupported = oFixedList.isSearchSupported();
 		assert.ok(bSupported, "Search is supported");
 
+	});
+
+	QUnit.test("setHighlightId", async function(assert) {
+		oFixedList.setConditions([]);
+		const oContent = await oFixedList.getContent();
+		const aItems = oContent.getItems();
+
+		oFixedList.setHighlightId(aItems[0].getId());
+		assert.ok(aItems[0].hasStyleClass("sapMLIBFocused"), "setHighlightId added class sapMLIBFocused");
+
+		oFixedList.setHighlightId(aItems[1].getId());
+		assert.notOk(aItems[0].hasStyleClass("sapMLIBFocused"), "setHighlightId removed class sapMLIBFocused");
+		assert.ok(aItems[1].hasStyleClass("sapMLIBFocused"), "setHighlightId added class sapMLIBFocused");
+
+		oFixedList.navigate(1);
+		assert.notOk(aItems[1].hasStyleClass("sapMLIBFocused"), "navigation removed class sapMLIBFocused");
+
+		oFixedList.setHighlightId();
 	});
 
 });
