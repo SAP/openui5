@@ -997,7 +997,7 @@ sap.ui.define([
 			delete mQueryOptions.$filter;
 			delete mQueryOptions.$orderby;
 			mQueryOptions = _AggregationHelper.buildApply(oAggregation, mQueryOptions, 1);
-			const aNodeFilters = oOutOfPlace.nodeFilters.toSorted();
+			const aNodeFilters = oOutOfPlace.nodeFilters.slice().sort();
 			mQueryOptions.$filter = aNodeFilters.join(" or ");
 			mQueryOptions.$top = aNodeFilters.length;
 			const iDrillStateIndex = mQueryOptions.$select.indexOf(oAggregation.$DrillState);
