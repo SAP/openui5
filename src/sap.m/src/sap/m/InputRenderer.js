@@ -173,6 +173,12 @@ sap.ui.define(['sap/ui/core/InvisibleText', 'sap/ui/core/Renderer', './InputBase
 		return "";
 	};
 
+	InputRenderer.writeInnerValue = function(oRm, oControl) {
+		if (oControl.getType() !== InputType.Password) {
+			oRm.attr("value", oControl.getValue());
+		}
+	};
+
 	InputRenderer.getAccessibilityState = function (oControl) {
 		var bShowSuggestions = oControl.getShowSuggestion();
 
