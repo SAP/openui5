@@ -47,6 +47,22 @@ sap.ui.define(["sap/ui/core/mvc/Controller", "sap/ui/core/UIComponent"], functio
 			 */
 			onNavToInfo: function () {
 				this.getRouter().navTo("info");
+			},
+
+			/**
+			 * Navigates to the library sub-page
+			 * @public
+			 */
+			onNavToLibrary: function () {
+				this.getRouter().navTo("overview");
+			},
+
+			/**
+			 * Navigates to home page
+			 * @public
+			 */
+			onBackButtonPress : function () {
+				this.getRouter().navTo("home");
 			}
 
 		});

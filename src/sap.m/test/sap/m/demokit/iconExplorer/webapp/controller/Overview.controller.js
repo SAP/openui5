@@ -274,6 +274,14 @@ sap.ui.define([
 			}
 		},
 
+		formatToolbarTitleText : function (iconFilterCount) {
+			if (this._oCurrentQueryContext?.tab === "favorites") {
+				return this.getResourceBundle().getText("previewFavoritesResults") + " (" + iconFilterCount + ")";
+			} else {
+				return this.getResourceBundle().getText("previewSearchResults") + " (" + iconFilterCount + ")";
+			}
+		},
+
 		/**
 		 * Searches the icons and filters the bindings accordingly
 		 * @param {sap.ui.base.Event} oEvent the liveChange event of the SearchField

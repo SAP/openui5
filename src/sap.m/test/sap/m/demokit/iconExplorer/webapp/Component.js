@@ -45,7 +45,7 @@ sap.ui.define([
 			// set up a helper model to manage OpenUI5/SAPUI5
 			VersionInfo.load().then(function (oVersionInfo) {
 				var oVersionModel = new JSONModel({
-					isOpenUI5: oVersionInfo && oVersionInfo.gav && /openui5/i.test(oVersionInfo.gav)
+					isOpenUI5: !!(oVersionInfo && oVersionInfo.gav && /openui5/i.test(oVersionInfo.gav))
 				});
 				this.setModel(oVersionModel, "versionData");
 

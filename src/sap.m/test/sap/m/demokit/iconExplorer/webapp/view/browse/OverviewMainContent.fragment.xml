@@ -11,7 +11,12 @@
 			visible="{= ${view>/empty}}"
 			accessibleRole="Region">
 			<Toolbar>
-				<Title visible="{= ${device>/system/phone} ? false : true}" text='{i18n>previewSearchResults} ({view>/iconFilterCount})' />
+				<Title visible="{= ${device>/system/phone} ? false : true}" 
+					text="{
+							path : 'view>/iconFilterCount',
+							formatter : '.formatToolbarTitleText'
+						}" />
+				
 				<ToolbarSpacer visible="{= ${device>/system/phone} ? false : true}" />
 				<Label text='{i18n>previewCopyMode} ' />
 				<Select
