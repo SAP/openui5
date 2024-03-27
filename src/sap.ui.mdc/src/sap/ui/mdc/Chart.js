@@ -25,7 +25,8 @@ sap.ui.define([
 		"sap/ui/mdc/enums/ProcessingStrategy",
 		"sap/ui/mdc/enums/ChartP13nMode",
 		"sap/ui/mdc/enums/ChartToolbarActionType",
-		"sap/ui/mdc/chart/SelectionButtonItem"
+		"sap/ui/mdc/chart/SelectionButtonItem",
+		"sap/ui/core/InvisibleMessage"
 	],
 	(
 		Library,
@@ -50,7 +51,8 @@ sap.ui.define([
 		ProcessingStrategy,
 		ChartP13nMode,
 		ChartToolbarActionType,
-		SelectionButtonItem
+		SelectionButtonItem,
+		InvisibleMessage
 	) => {
 		"use strict";
 
@@ -1107,6 +1109,55 @@ sap.ui.define([
 			oChartDelegate.updateBindingInfo(this, oBindingInfo); //Applies filters
 			oChartDelegate.rebind(this, oBindingInfo);
 		};
+
+		Chart.prototype._onFilterSearch = function(oEvent) {
+			this._bAnnounceUpdate = true;
+		};
+
+		/**
+		 * Provides an additional announcement for the screen reader to inform the user that the chart
+		 * has been updated.
+		 *
+		 * @param {string} sChartType The current chart type to be announced
+		 * @param {string} sHeader The header text to be announced
+		 * @param {int} [iDimensions] The dimension count
+		 * @param {int} [iMeasures] The measure count
+		 * @private
+		 * @since 1.123
+		 */
+		Chart.prototype._announceUpdate = function(sChartType, sHeader, iDimensions, iMeasures) {
+			if (!this._bAnnounceUpdate) {
+				return;
+			}
+			this._bAnnounceUpdate = false;
+			const oInvisibleMessage = InvisibleMessage.getInstance();
+
+			if (oInvisibleMessage) {
+				const oResourceBundle =  MDCRb;
+				const aAvailableChartTypes = this.getAvailableChartTypes();
+				const [oChartType] = aAvailableChartTypes.filter((o) => {return o.key === sChartType; });
+				sChartType = oChartType?.text || sChartType;
+
+				let sMsg = oResourceBundle.getText("chart.ANNOUNCEMENT_UPDATED", [sHeader, sChartType]);
+				let sResourceKey;
+
+				if (iDimensions && iMeasures) {
+					if (iDimensions === 1 && iMeasures === 1) {
+						sResourceKey = "chart.ANNOUNCEMENT_DIMMEA_11_UPDATED";
+					} else if (iDimensions > 1 && iMeasures === 1) {
+						sResourceKey = "chart.ANNOUNCEMENT_DIMMEA_N1_UPDATED";
+					} else if (iDimensions === 1 && iMeasures > 1) {
+						sResourceKey = "chart.ANNOUNCEMENT_DIMMEA_1N_UPDATED";
+					} else {
+						sResourceKey = "chart.ANNOUNCEMENT_DIMMEA_NN_UPDATED";
+					}
+
+					sMsg += " " + oResourceBundle.getText(sResourceKey, [iDimensions, iMeasures]);
+				}
+				oInvisibleMessage.announce(sMsg);
+			}
+		};
+
 
 		/**
 		 * Creates a new instance of ChartToolbar
