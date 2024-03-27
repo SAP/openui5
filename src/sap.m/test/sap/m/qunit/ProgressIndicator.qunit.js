@@ -93,6 +93,9 @@ sap.ui.define([
 		var sDomRefPIText2Right = document.getElementById("pi2-textRight").firstChild;
 		assert.equal(sDomRefPIText2Left, null, "textValue should not be shown");
 		assert.equal(sDomRefPIText2Right, null, "textValue should not be shown");
+
+		assert.strictEqual(oProgInd.$().hasClass("sapMPINoValue"), false, "ProgressIndicator with showValue=true does not have class sapMPINoValue");
+		assert.strictEqual(oProgInd2.$().hasClass("sapMPINoValue"), true, "ProgressIndicator with showValue=false has class sapMPINoValue");
 	});
 
 	//test of overwritten method setPercentValue()

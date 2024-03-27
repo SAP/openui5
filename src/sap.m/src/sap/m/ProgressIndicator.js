@@ -246,6 +246,12 @@ sap.ui.define([
 		}
 	};
 
+	ProgressIndicator.prototype.setShowValue = function (bShowValue) {
+		this.toggleStyleClass("sapMPINoValue", !bShowValue);
+
+		return this.setProperty("showValue", bShowValue);
+	};
+
 	/**
 	 * Updates the hoverable scenario.
 	 * If we have a hoverable scenario we toggle on the "sapMPIHoverable" CSS class and vice-versa.
