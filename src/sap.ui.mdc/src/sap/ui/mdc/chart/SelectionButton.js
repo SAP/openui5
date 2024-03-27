@@ -45,8 +45,9 @@ sap.ui.define([
 				searchEnabled: {
 					type: "boolean"
 				},
-				sortEnabled: { //TODO sortVisible - sort  button doe snot show the current sorted state
-					type: "boolean"
+				sortEnabled: { //TODO sorted - sort button does not show the current sorted state
+					type: "boolean",
+					defaultValue: false
 				},
 				sorted: {
 					type: "string",  //TODO should be enum none, ascending, descending
