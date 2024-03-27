@@ -179,6 +179,8 @@ sap.ui.define([
             assert.ok(resumeSpy.calledOnceWithExactly(oControl), "Resume has been called once with the correct agruments");
             assert.verifySteps(["suppressInvalidation", "onModifications", "resumeInvalidation"], "Execution order");
             done();
+            oControl.getUIArea().suppressInvalidationFor.restore();
+            oControl.getUIArea().resumeInvalidationFor.restore();
         });
 
         //Hook will be called once the changes are done processing --> check that each has been called once
