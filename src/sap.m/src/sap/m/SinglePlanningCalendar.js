@@ -185,6 +185,25 @@ function(
 				 * The drag and drop interaction is visualized by a placeholder highlighting the area where the
 				 * appointment can be dropped by the user.
 				 *
+				 * <b>Note:</b> Additional application-level code will be needed to provide a keyboard alternative to drag and drop mouse interactions.
+				 * One possible option is by handling {@link sap.m.SinglePlanningCalendar#event:appointmentSelect appointmentSelect} event of the
+				 * <code>sap.m.SinglePlanningCalendar</code>, as shown in the following simplified example:
+				 *
+				 * <pre>
+				 * 	new sap.m.SinglePlanningCalendar({
+				 * 		...
+		 		 *		enableAppointmentsDragAndDrop: true,
+		 		 * 		...
+				 *		appointmentSelect: function(event) {
+				 *			// Open edit {@link sap.m.Dialog Dialog} to modify the appointment properties
+				 *			new sap.m.Dialog({ ... }).openBy(event.getParameter("appointment"));
+				 *		}
+				 *	});
+				 * </pre>
+				 *
+				 * For a complete example, you can check out the following Demokit sample:
+				 * {@link https://ui5.sap.com/#/entity/sap.m.SinglePlanningCalendar/sample/sap.m.sample.SinglePlanningCalendarCreateApp Single Planning Calendar - Create and Modify Appointments}
+				 *
 				 * @since 1.64
 				 */
 				enableAppointmentsDragAndDrop: { type: "boolean", group: "Misc", defaultValue: false },
@@ -198,6 +217,9 @@ function(
 				 * of 30 minutes. After the resize is finished, the {@link #event:appointmentResize appointmentResize} event is fired, containing
 				 * the new start and end UI5Date or JavaScript Date objects.
 				 *
+				 * <b>Note:</b> Additional application-level code will be needed to provide a keyboard alternative to appointments resizing interactions with mouse.
+				 * It can be done in a similar way as described in the <code>enableAppointmentsDragAndDrop</code> property documentation.
+				 *
 				 * @since 1.65
 				 */
 				enableAppointmentsResize: { type: "boolean", group: "Misc", defaultValue: false },
@@ -205,7 +227,7 @@ function(
 				/**
 				 * Determines whether the appointments can be created by dragging on empty cells.
 				 *
-				 * See {@link #property:enableAppointmentsResize enableAppointmentsResize} for the specific points for events snapping
+				 * See <code>enableAppointmentsResize</code> property documentation for the specific points for events snapping.
 				 *
 				 * @since 1.65
 				 */
