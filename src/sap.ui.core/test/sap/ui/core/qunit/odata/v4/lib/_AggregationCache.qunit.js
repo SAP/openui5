@@ -5210,14 +5210,12 @@ make root = ${bMakeRoot}`;
 			.returns(oParentCache);
 		this.mock(oParentCache).expects("getQueryOptions").exactly(bDropFilter ? 0 : 1)
 			.withExactArgs()
+			// Note: buildApply4Hierarchy has already removed $$filterBeforeAggregate, $filter,
+			// and $orderby and integrated these into $apply!
 			.returns({
-				$$filterBeforeAggregate : "n/a",
 				$apply : "A.P.P.L.E.",
 				$count : "n/a",
 				$expand : "n/a",
-				$filter : "n/a",
-				$orderby : "n/a",
-				$search : "n/a",
 				$select : ["n/a"],
 				foo : "bar",
 				"sap-client" : "123"
@@ -5226,13 +5224,19 @@ make root = ${bMakeRoot}`;
 		this.mock(_AggregationHelper).expects("dropFilter").exactly(bDropFilter ? 1 : 0)
 			.withExactArgs(sinon.match.same(oCache.oAggregation),
 				sinon.match.same(oCache.mQueryOptions), "~parentFilter~")
-			.returns({$apply : "A.P.P.L.E."});
+			.returns({
+				$apply : "A.P.P.L.E.",
+				foo : "bar",
+				"sap-client" : "123"
+			});
 		oHelperMock.expects("getKeyFilter")
 			.withExactArgs("~oElement~", "/Foo", "~getTypes~").returns("~filter~");
 		this.mock(oCache.oRequestor).expects("buildQueryString")
 			.withExactArgs("/Foo", {
 				$apply : "A.P.P.L.E.",
-				$filter : "~filter~"
+				$filter : "~filter~",
+				foo : "bar",
+				"sap-client" : "123"
 			}, false, true)
 			.returns("~queryString~");
 		const oGroupLock = {getUnlockedCopy : mustBeMocked};
