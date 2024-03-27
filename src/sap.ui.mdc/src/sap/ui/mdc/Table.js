@@ -2313,7 +2313,11 @@ sap.ui.define([
 		if (bNeedCollapseAllButton && !this._oCollapseAllButton) {
 			this._oCollapseAllButton = TableSettings.createExpandCollapseAllButton(this.getId(), [
 				function() {
-					this.getControlDelegate().collapseAllRows(this);
+					try {
+						this.getControlDelegate().collapseAllRows(this);
+					} catch (oError) {
+						Log.error("CollapseAll could not be performed", oError, this);
+					}
 				}, this
 			], false);
 		}
@@ -2346,7 +2350,11 @@ sap.ui.define([
 		if (bNeedExpandAllButton && !this._oExpandAllButton) {
 			this._oExpandAllButton = TableSettings.createExpandCollapseAllButton(this.getId(), [
 				function() {
-					this.getControlDelegate().expandAllRows(this);
+					try {
+						this.getControlDelegate().expandAllRows(this);
+					} catch (oError) {
+						Log.error("ExpandAll could not be performed", oError, this);
+					}
 				}, this
 			], true);
 		}

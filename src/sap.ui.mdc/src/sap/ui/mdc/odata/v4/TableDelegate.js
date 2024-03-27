@@ -198,7 +198,17 @@ sap.ui.define([
 	};
 
 	/**
-	 * @inheritDoc
+	 * Expands all rows.
+	 *
+	 * @param {sap.ui.mdc.Table} oTable Instance of the table
+	 * @throws {Error} If
+	 *     <ul>
+	 *       <li>the table type is not {@link sap.ui.mdc.table.TreeTableType TreeTable}</li>
+	 *       <li>{@link sap.ui.model.odata.v4.ODataListBinding#setAggregation} throws an error</li>
+	 *       <li>{@link sap.ui.model.odata.v4.ODataListBinding#refresh} throws an error</li>
+	 *     </ul>
+	 * @protected
+	 * @override
 	 */
 	Delegate.expandAllRows = function(oTable) {
 		if (!this.getSupportedFeatures(oTable).expandAllRows) {
@@ -209,7 +219,17 @@ sap.ui.define([
 	};
 
 	/**
-	 * @inheritDoc
+	 * Collapses all rows.
+	 *
+	 * @param {sap.ui.mdc.Table} oTable Instance of the table
+	 * @throws {Error} If
+	 *     <ul>
+	 *       <li>the table type is not {@link sap.ui.mdc.table.TreeTableType TreeTable}</li>
+	 *       <li>{@link sap.ui.model.odata.v4.ODataListBinding#setAggregation} throws an error</li>
+	 *       <li>{@link sap.ui.model.odata.v4.ODataListBinding#refresh} throws an error</li>
+	 *     </ul>
+	 * @protected
+	 * @override
 	 */
 	Delegate.collapseAllRows = function(oTable) {
 		if (!this.getSupportedFeatures(oTable).collapseAllRows) {
@@ -226,7 +246,13 @@ sap.ui.define([
 			return;
 		}
 
-		oBinding.setAggregation({...oBinding.getAggregation(), ...{expandTo: iLevel}});
+		const bIsSameLevel = oBinding.getAggregation()?.expandTo === iLevel;
+
+		if (bIsSameLevel) {
+			oBinding.refresh();
+		} else {
+			oBinding.setAggregation({...oBinding.getAggregation(), ...{expandTo: iLevel}});
+		}
 	}
 
 	/**

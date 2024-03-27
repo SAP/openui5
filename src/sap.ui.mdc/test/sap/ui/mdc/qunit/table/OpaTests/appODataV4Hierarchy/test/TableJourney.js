@@ -39,22 +39,22 @@ sap.ui.define([
 		Then.onTheAppMDCTable.iCheckBindingLength(sTableId, 1);
 		Then.onTheAppMDCTable.iCheckRowData(sTableId, {index: 0, path: "ID", value: "0"});
 		Then.onTheAppMDCTable.iCheckRowData(sTableId, {index: 1, check: (oRow, oBindingContext) => !oBindingContext});
-		// When.onTheAppMDCTable.iPressExpandRowButton(sTableId, {index: 0, path: "ID", value: "0"});
-		// Then.onTheAppMDCTable.iCheckBindingLength(sTableId, 6);
-		// Then.onTheAppMDCTable.iCheckRowData(sTableId, {index: 1, path: "ID", value: "1"});
-		// When.onTheAppMDCTable.iClickOnCollapseAllRowsButton(sTableId);
-		// Then.onTheAppMDCTable.iCheckBindingLength(sTableId, 1);
-		// Then.onTheAppMDCTable.iCheckRowData(sTableId, {index: 1, check: (oRow, oBindingContext) => !oBindingContext});
+		When.onTheAppMDCTable.iPressExpandRowButton(sTableId, {index: 0, path: "ID", value: "0"});
+		Then.onTheAppMDCTable.iCheckBindingLength(sTableId, 6);
+		Then.onTheAppMDCTable.iCheckRowData(sTableId, {index: 1, path: "ID", value: "1"});
+		When.onTheAppMDCTable.iClickOnCollapseAllRowsButton(sTableId);
+		Then.onTheAppMDCTable.iCheckBindingLength(sTableId, 1);
+		Then.onTheAppMDCTable.iCheckRowData(sTableId, {index: 1, check: (oRow, oBindingContext) => !oBindingContext});
 	});
 
 	opaTest("Expand all", function(Given, When, Then) {
 		When.onTheAppMDCTable.iClickOnExpandAllRowsButton(sTableId);
 		Then.onTheAppMDCTable.iCheckBindingLength(sTableId, 24);
 		Then.onTheAppMDCTable.iCheckRowData(sTableId, {index: 8, path: "ID", value: "1.2.3"});
-		// When.onTheAppMDCTable.iPressCollapseRowButton(sTableId, {index: 1, path: "ID", value: "1"});
-		// Then.onTheAppMDCTable.iCheckBindingLength(sTableId, 17);
-		// Then.onTheAppMDCTable.iCheckRowData(sTableId, {index: 8, path: "ID", value: "5.1.1"});
-		// When.onTheAppMDCTable.iClickOnExpandAllRowsButton(sTableId);
-		// Then.onTheAppMDCTable.iCheckBindingLength(sTableId, 24);
+		When.onTheAppMDCTable.iPressCollapseRowButton(sTableId, {index: 1, path: "ID", value: "1"});
+		Then.onTheAppMDCTable.iCheckBindingLength(sTableId, 17);
+		Then.onTheAppMDCTable.iCheckRowData(sTableId, {index: 8, path: "ID", value: "5.1.1"});
+		When.onTheAppMDCTable.iClickOnExpandAllRowsButton(sTableId);
+		Then.onTheAppMDCTable.iCheckBindingLength(sTableId, 24);
 	});
 });
