@@ -3850,12 +3850,6 @@ sap.ui.define([
 		);
 	}
 
-	if ( Math.sqrt(2) < 1 ) {
-		// the following code will never be executed, but it helps the build tooling to
-		// detect the (now hidden) dependency to the Core.
-		sap.ui.require(["sap/ui/core/Core"], function() {});
-	}
-
 	/**
 	 * Registry of all <code>Component</code>s that currently exist.
 	 *
