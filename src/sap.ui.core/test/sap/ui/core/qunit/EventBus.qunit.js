@@ -149,6 +149,12 @@ sap.ui.define([
 			this.fnHandler14 = function(sChannelId, sEventId, oData){
 				checkHandler(assert, false, sChannelId, sEventId, oData, this, null, "Test14", null, null);
 			};
+			this.fnHandler15WithError = function(){
+				throw new Error();
+			};
+			this.fnHandler15 = function(sChannelId, sEventId, oData){
+				checkHandler(assert, false, sChannelId, sEventId, oData, this, null, "Test15", null, null);
+			};
 
 			this.oObj21 = {id: "Obj21"};
 			this.oObj23 = {id: "Obj23"};
@@ -170,6 +176,8 @@ sap.ui.define([
 			oBus.subscribe("Test12", this.fnHandler12);
 			oBus.subscribe("Test13", this.fnHandler13, this.oObj13);
 			oBus.subscribe("Test14", this.fnHandler14);
+			oBus.subscribe("Test15", this.fnHandler15WithError);
+			oBus.subscribe("Test15", this.fnHandler15);
 			oBus.subscribe("CustomChannel", "Test21", this.fnHandler21, this.oObj21);
 			oBus.subscribe("CustomChannel", "Test22", this.fnHandler22);
 			oBus.subscribe("CustomChannel", "Test23", this.fnHandler23, this.oObj23);
@@ -180,6 +188,8 @@ sap.ui.define([
 			oBus.unsubscribe("Test12", this.fnHandler12);
 			oBus.unsubscribe("Test13", this.fnHandler13, this.oObj13);
 			oBus.unsubscribe("Test14", this.fnHandler14);
+			oBus.unsubscribe("Test15", this.fnHandler15WithError);
+			oBus.unsubscribe("Test15", this.fnHandler15);
 			oBus.unsubscribe("CustomChannel", "Test21", this.fnHandler21, this.oObj21);
 			oBus.unsubscribe("CustomChannel", "Test22", this.fnHandler22);
 			oBus.unsubscribe("CustomChannel", "Test23", this.fnHandler23, this.oObj23);
@@ -205,6 +215,11 @@ sap.ui.define([
 	QUnit.test("Default Channel, no Listener, no Data", function(assert) {
 		assert.expect(4);
 		oBus.publish("Test14");
+	});
+
+	QUnit.test("Default Channel, no Listener, no Data, with error thrown in the first listener", function(assert) {
+		assert.expect(4);
+		oBus.publish("Test15");
 	});
 
 	QUnit.test("Custom Channel, with Listener, with Data", function(assert) {
