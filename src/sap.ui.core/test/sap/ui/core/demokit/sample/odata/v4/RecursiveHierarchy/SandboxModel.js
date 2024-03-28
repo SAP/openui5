@@ -171,6 +171,10 @@ sap.ui.define([
 	let iRevision;
 	let mRevisionOfAgeById;
 
+	function findLastIndex(aArray, fnPredicate) {
+		return aArray.reduce((iLast, oItem, i) => (fnPredicate(oItem) ? i : iLast), -1);
+	}
+
 	function reset() {
 		aAllNodes = aOriginalData.map((oNode) => ({...oNode}));
 		mChildrenByParentId = {};
@@ -429,10 +433,8 @@ sap.ui.define([
 						mChildrenByParentId[sParentId] = [];
 					}
 					adjustDescendantCount(sParentId, oChild.DescendantCount + 1);
-					const iLastYounger = mChildrenByParentId[sParentId]
-						.findLastIndex((oSibling) => {
-							return oSibling.AGE < oChild.AGE;
-						}); // Note: might be -1
+					const iLastYounger = findLastIndex(mChildrenByParentId[sParentId],
+						(oSibling) => oSibling.AGE < oChild.AGE); // Note: might be -1
 					mChildrenByParentId[sParentId].splice(iLastYounger + 1, 0, oChild);
 					if (iLastYounger < 0) { // right after parent
 						iNewIndex = aAllNodes.indexOf(mNodeById[sParentId]) + 1;
@@ -442,9 +444,8 @@ sap.ui.define([
 							= aAllNodes.indexOf(oLastYounger) + oLastYounger.DescendantCount + 1;
 					}
 				} else { // find last younger root
-					const iLastYounger = aAllNodes.findLastIndex((oNode) => {
-						return !oNode.MANAGER_ID && oNode.AGE < oChild.AGE;
-					}); // Note: might be -1
+					const iLastYounger = findLastIndex(aAllNodes,
+						(oNode) => !oNode.MANAGER_ID && oNode.AGE < oChild.AGE); // might be -1
 					iNewIndex = iLastYounger < 0
 						? 0
 						: iLastYounger + aAllNodes[iLastYounger].DescendantCount + 1;
