@@ -518,9 +518,11 @@ sap.ui.define([
 			_Helper.setPrivateAnnotation(oParentNode, "cache", oCache);
 		}
 
+		_Helper.addByPath(this.mPostRequests, sTransientPredicate, oEntityData);
 		const iIndex = aElements.indexOf(oParentNode) + 1; // 0 w/o oParentNode :-)
 		const oPromise = oCache.create(oGroupLock, oPostPathPromise, sPath, sTransientPredicate,
 			oEntityData, bAtEndOfCreated, fnErrorCallback, fnSubmitCallback, /*onCancel*/() => {
+				_Helper.removeByPath(this.mPostRequests, sTransientPredicate, oEntityData);
 				if (oCache === this.oFirstLevel) {
 					this.adjustDescendantCount(oEntityData, iIndex, -1);
 				}
@@ -544,6 +546,7 @@ sap.ui.define([
 		}
 
 		return oPromise.then(async () => {
+			_Helper.removeByPath(this.mPostRequests, sTransientPredicate, oEntityData);
 			aElements.$byPredicate[_Helper.getPrivateAnnotation(oEntityData, "predicate")]
 				= oEntityData;
 			// Note: #calculateKeyPredicateRH doesn't know better :-(
@@ -2011,14 +2014,6 @@ sap.ui.define([
 			this.oCountPromise.$resolve = fnResolve;
 		}
 		this.oFirstLevel = this.createGroupLevelCache();
-	};
-
-	/**
-	 * @override
-	 * @see sap.ui.model.odata.v4.lib._CollectionCache#resetChangesForPath
-	 */
-	_AggregationCache.prototype.resetChangesForPath = function (sPath) {
-		_Helper.getPrivateAnnotation(this.getValue(sPath), "parent").resetChangesForPath(sPath);
 	};
 
 	/**

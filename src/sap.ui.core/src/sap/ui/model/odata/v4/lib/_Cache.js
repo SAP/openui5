@@ -1859,7 +1859,7 @@ sap.ui.define([
 	/**
 	 * Resets all pending changes below the given path.
 	 *
-	 * @param {string} [sPath]
+	 * @param {string} sPath
 	 *   The relative path within the cache
 	 * @throws {Error}
 	 *   If there is a change which has been sent to the server and for which there is no response

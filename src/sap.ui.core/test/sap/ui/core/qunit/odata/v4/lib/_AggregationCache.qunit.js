@@ -4846,7 +4846,8 @@ make root = ${bMakeRoot}`;
 		this.mock(oGroupLevelCache).expects("setEmpty")
 			.exactly(bHasGroupLevelCache || bInFirstLevel ? 0 : 1)
 			.withExactArgs();
-		this.mock(_Helper).expects("updateAll")
+		const oHelperMock = this.mock(_Helper);
+		oHelperMock.expects("updateAll")
 			.exactly(bParentExpanded || bCreateRoot ? 0 : 1)
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "('42')",
 				sinon.match.same(oParentNode), {"@$ui5.node.isExpanded" : true});
@@ -4858,6 +4859,9 @@ make root = ${bMakeRoot}`;
 				bar : "~bar~",
 				foo : "~foo~"
 			};
+		oHelperMock.expects("addByPath")
+			.withExactArgs(sinon.match.same(oCache.mPostRequests), "~sTransientPredicate~",
+				sinon.match.same(oEntityData));
 		const oPostBody = {};
 		const oCollectionCache = bInFirstLevel ? oCache.oFirstLevel : oGroupLevelCache;
 		let bNodePropertyCompleted = false;
@@ -4881,6 +4885,9 @@ make root = ${bMakeRoot}`;
 							// Note: #calculateKeyPredicateRH doesn't know better :-(
 							oEntityData["@$ui5.node.level"] = 1;
 						}
+						oHelperMock.expects("removeByPath")
+							.withExactArgs(sinon.match.same(oCache.mPostRequests),
+								"~sTransientPredicate~", sinon.match.same(oEntityData));
 						that.mock(oCache.oTreeState).expects("setOutOfPlace")
 							.withExactArgs(sinon.match.same(oEntityData),
 								bCreateRoot ? undefined : sinon.match.same(oParentNode));
@@ -4911,11 +4918,11 @@ make root = ${bMakeRoot}`;
 							oCache.aElements.$byPredicate["~sTransientPredicate~"] = "n/a";
 						}
 						const oDeleteTransientPredicateExpectation
-							= that.mock(_Helper).expects("deletePrivateAnnotation")
+							= oHelperMock.expects("deletePrivateAnnotation")
 							.exactly(iCallCount)
 							.withExactArgs(sinon.match.same(oEntityData), "transientPredicate");
 						const oSetIndexExpectation
-							= that.mock(_Helper).expects("setPrivateAnnotation").exactly(iCallCount)
+							= oHelperMock.expects("setPrivateAnnotation").exactly(iCallCount)
 							.withExactArgs(sinon.match.same(oEntityData), "rank", "~iRank~");
 						that.mock(oCache.oFirstLevel).expects("restoreElement").exactly(iCallCount)
 							.withExactArgs("~iRank~", sinon.match.same(oEntityData))
@@ -4931,7 +4938,7 @@ make root = ${bMakeRoot}`;
 					});
 				});
 			});
-		this.mock(_Helper).expects("makeRelativeUrl").exactly(bCreateRoot ? 0 : 1)
+		oHelperMock.expects("makeRelativeUrl").exactly(bCreateRoot ? 0 : 1)
 			.withExactArgs("/Foo('42')", "/Foo").returns("~relativeUrl~");
 		oCacheMock.expects("addElements")
 			.withExactArgs(sinon.match.same(oEntityData), bCreateRoot ? 0 : 3,
@@ -4978,6 +4985,9 @@ make root = ${bMakeRoot}`;
 
 			oCache.aElements[bCreateRoot ? 0 : 3] = oEntityData;
 			oCache.aElements.$byPredicate["~sTransientPredicate~"] = "n/a";
+			oHelperMock.expects("removeByPath")
+				.withExactArgs(sinon.match.same(oCache.mPostRequests),
+					"~sTransientPredicate~", sinon.match.same(oEntityData));
 			oCacheMock.expects("adjustDescendantCount").exactly(bInFirstLevel ? 1 : 0)
 				.withExactArgs(sinon.match.same(oEntityData), bCreateRoot ? 0 : 3, -1);
 
@@ -5514,24 +5524,6 @@ make root = ${bMakeRoot}`;
 		assert.throws(function () {
 			oCache._delete("~oGroupLock~", "~sEditUrl~", "('1')");
 		}, new Error("Unsupported kept-alive entity: Foo('1')"));
-	});
-
-	//*********************************************************************************************
-	QUnit.test("resetChangesForPath", function () {
-		const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, {
-			hierarchyQualifier : "X"
-		});
-		const oElementCache = {
-			resetChangesForPath : mustBeMocked
-		};
-
-		this.mock(oCache).expects("getValue").withExactArgs("~sPath~").returns("~oElement~");
-		this.mock(_Helper).expects("getPrivateAnnotation").withExactArgs("~oElement~", "parent")
-			.returns(oElementCache);
-		this.mock(oElementCache).expects("resetChangesForPath").withExactArgs("~sPath~");
-
-		// code under test
-		oCache.resetChangesForPath("~sPath~");
 	});
 
 	//*********************************************************************************************
