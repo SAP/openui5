@@ -9,6 +9,7 @@
 	xmlns:f="sap.ui.layout.form"
 >
 	<m:App>
+	<m:Page title="ObjectPage">
 		<ObjectPageLayout id="ObjectPageLayout" showTitleInHeaderContent="true">
 			<headerTitle>
 				<ObjectPageHeader id="headerForTest"
@@ -159,5 +160,6 @@
 				</ObjectPageSection>
 			</sections>
 		</ObjectPageLayout>
+	</m:Page>
 	</m:App>
 </mvc:View>
