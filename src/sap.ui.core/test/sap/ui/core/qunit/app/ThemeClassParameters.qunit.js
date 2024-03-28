@@ -1,9 +1,8 @@
 /*global QUnit */
 sap.ui.define([
 	"sap/ui/core/Theming",
-	"sap/ui/core/theming/Parameters",
-	"sap/ui/thirdparty/jquery"
-], function (Theming, Parameters, jQuery) {
+	"sap/ui/core/theming/Parameters"
+], function (Theming, Parameters) {
 	"use strict";
 
 	/**
@@ -28,8 +27,8 @@ sap.ui.define([
 	 */
 	function unifyHexNotation(input) {
 		if (input.length === 4) {
-			var colorShortNotationRegexp = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
-			var sResult = colorShortNotationRegexp.exec(input);
+			const colorShortNotationRegexp = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+			const sResult = colorShortNotationRegexp.exec(input);
 			if (sResult) {
 				return "#" + sResult[1] + sResult[1] + sResult[2] + sResult[2] + sResult[3] + sResult[3];
 			}
@@ -46,9 +45,16 @@ sap.ui.define([
 
 		sHex = unifyHexNotation(sHex);
 
-		var sResult = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(sHex);
+		const sResult = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(sHex);
 
 		return (sResult ? "rgb(" + parseInt(sResult[1], 16) + ", " + parseInt(sResult[2], 16) + ", " + parseInt(sResult[3], 16) + ")" : sHex);
+	}
+
+	function canonicalize(value, cssProperty) {
+		if (cssProperty === "font-size") {
+			return fontSizeToPx(value);
+		}
+		return hexToRgb(value);
 	}
 
 	function normalizeValue(sCssPropertyValue) {
@@ -56,169 +62,116 @@ sap.ui.define([
 	}
 
 	/**
-	 * test case function that compares the CSS on the DOM node to the according less parameter
-	 * @param {object} assert the QUnit assert object
-	 * @param {string} sClassName
-	 * @param {string} sCSSProperty
-	 * @param {string} sExpectedLessParameter
+	 * Get a theme parameter by its name.
+	 *
+	 * @param {string} name Name of the parameter (without the leading "@" of the less parameter name)
+	 * @returns {Promise<string|undefined>} Value of the theme parameter
 	 */
-	function cssClassTestCase(assert, sClassName, sCSSProperty, sExpectedLessParameter) {
-		const done = assert.async();
-
-		// Arrange
-		var $domElement = jQuery("#qunit-fixture div");
-		sExpectedLessParameter = (sExpectedLessParameter[0] === "@" ? sExpectedLessParameter.substring(1) : sExpectedLessParameter);
-
-		// Act
-		$domElement.addClass(sClassName);
-
-		// Assert
-		const sThemeParameterValue = Parameters.get({
-			name: sExpectedLessParameter,
-			callback: check
-		});
-		if ( sThemeParameterValue !== undefined ) {
-			check(sThemeParameterValue);
-		}
-
-		function check(sThemeParameterValue) {
-			if (sCSSProperty === "font-size") {
-				sThemeParameterValue = fontSizeToPx(sThemeParameterValue);
-			} else {
-				if (sCSSProperty === "border-color") {
-					// fix: firefox does not support reading shorthand CSS properties, so use one of the border properties instead
-					sCSSProperty = "borderTopColor";
-				}
-				sThemeParameterValue = hexToRgb(sThemeParameterValue);
+	function getThemeParameter(name) {
+		return new Promise((resolve) => {
+			const value = Parameters.get({
+				name: name,
+				callback: resolve
+			});
+			if ( value !== undefined ) {
+				resolve(value);
 			}
-
-			assert.ok(!!$domElement.css(sCSSProperty), "The class \"" + sClassName + "\" has a non-empty value for CSS property \"" + sCSSProperty + "\" ");
-			assert.strictEqual(normalizeValue($domElement.css(sCSSProperty)), normalizeValue(sThemeParameterValue), "The class \"" + sClassName + "\" set CSS property \"" + sCSSProperty + "\" to \"@" + sExpectedLessParameter
-				+ "\" (" + Parameters.get(sExpectedLessParameter) + ") - normalized results: " + normalizeValue($domElement.css(sCSSProperty)) + " vs " + normalizeValue(sThemeParameterValue));
-			done();
-		}
+		});
 	}
 
-	QUnit.module("Theme-Dependent CSS Classes for: " + Theming.getTheme(), {
-		beforeEach: function () {
-			jQuery("#qunit-fixture").append(jQuery("<div>I love theming!</div>"));
-		},
-		afterEach: function () {
-			jQuery("#qunit-fixture").empty();
-		}
-	});
+	/**
+	 * Creates a QUnit.module with one QUnit.test for each given scenario.
+	 * Each test applies the given CSS class and compares the CSS property value with the value of the theme parameter.
+	 * @param {string} caption Common topic of the scenarios
+	 * @param {Array<Array<string>>} scenarios Scenarios to test
+	 * @param {string} scenarios[].0 CSS class to apply
+	 * @param {string} scenarios[].1 Style property to check
+	 * @param {string} scenarios[].2 Theme parameter defining the expected value
+	 */
+	function makeModule(caption, scenarios) {
+
+		QUnit.module(`Theme-Dependent CSS Classes for "${Theming.getTheme()}" (${caption})`);
+
+		scenarios.forEach(([sClassName, sCSSProperty, sThemeParameter]) => {
+			QUnit.test(`Should set the theme base class "${sClassName}" correctly"`, async function(assert) {
+				const expectedValue = await getThemeParameter(sThemeParameter);
+				const normalizedExpectedValue = normalizeValue(canonicalize(expectedValue, sCSSProperty));
+
+				// Arrange
+				const domElement = document.createElement("div");
+				document.getElementById("qunit-fixture").appendChild(domElement);
+
+				// Act
+				domElement.className = sClassName;
+
+				// Assert
+				const actualValue = window.getComputedStyle(domElement)[sCSSProperty];
+				const normalizedActualValue = normalizeValue(actualValue);
+				assert.ok(actualValue,
+					`The class "${sClassName}" should result in a non-empty value for CSS property "${sCSSProperty}"`);
+				assert.strictEqual(normalizedActualValue, normalizedExpectedValue,
+					`The class "${sClassName}" should set the CSS property "${sCSSProperty}" to "@${sThemeParameter}"`
+					+ ` (= ${expectedValue}) - normalized results: ${normalizedActualValue} vs ${normalizedExpectedValue}`);
+
+				// cleanup
+				domElement.remove();
+			});
+		});
+	}
 
 	/* font */
-	QUnit.test("Should set the theme base class \"sapThemeFont\" correctly", function (assert) {
-		cssClassTestCase.call(this, assert, "sapThemeFont", "font-family", "sapUiFontFamily");
-		cssClassTestCase.call(this, assert, "sapThemeFont", "font-size", "sapUiFontSize");
-		cssClassTestCase.call(this, assert, "sapThemeFont", "font-size", "sapUiFontSize");
-	});
-
-	QUnit.test("Should set the theme base class \"sapThemeFontFamily\" correctly", function (assert) {
-		cssClassTestCase.call(this, assert, "sapThemeFontFamily", "font-family", "sapUiFontFamily");
-	});
-
-	QUnit.test("Should set the theme base class \"sapThemeFontSize\" correctly", function (assert) {
-		cssClassTestCase.call(this, assert, "sapThemeFontSize", "font-size", "sapUiFontSize");
-	});
+	makeModule("font", [
+		["sapThemeFont", "font-family", "sapUiFontFamily"],
+		["sapThemeFont", "font-size", "sapUiFontSize"],
+		["sapThemeFontFamily", "font-family", "sapUiFontFamily"],
+		["sapThemeFontSize", "font-size", "sapUiFontSize"]
+	]);
 
 	/* text color */
-	QUnit.test("Should set the theme base class \"sapThemeText\" correctly", function (assert) {
-		cssClassTestCase.call(this, assert, "sapThemeText", "color", "sapUiBaseText");
-	});
-
-	QUnit.test("Should set the theme base class \"sapThemeText-asColor\" correctly", function (assert) {
-		cssClassTestCase.call(this, assert, "sapThemeText-asColor", "color", "sapUiBaseText");
-	});
-
-	QUnit.test("Should set the theme base class \"sapThemeText-asBackgroundColor\" correctly", function (assert) {
-		cssClassTestCase.call(this, assert, "sapThemeText-asBackgroundColor", "background-color", "sapUiBaseText");
-	});
-
-	QUnit.test("Should set the theme base class \"sapThemeText-asBorderColor\" correctly", function (assert) {
-		cssClassTestCase.call(this, assert, "sapThemeText-asBorderColor", "border-color", "sapUiBaseText");
-	});
-
-	QUnit.test("Should set the theme base class \"sapThemeText-asOutlineColor\" correctly", function (assert) {
-		cssClassTestCase.call(this, assert, "sapThemeText-asOutlineColor", "outline-color", "sapUiBaseText");
-	});
+	makeModule("text color", [
+		["sapThemeText", "color", "sapUiBaseText"],
+		["sapThemeText-asColor", "color", "sapUiBaseText"],
+		["sapThemeText-asBackgroundColor", "background-color", "sapUiBaseText"],
+		["sapThemeText-asBorderColor", "border-color", "sapUiBaseText"],
+		["sapThemeText-asOutlineColor", "outline-color", "sapUiBaseText"]
+	]);
 
 	/* text color inverted */
-	QUnit.test("Should set the theme base class \"sapThemeTextInverted\" correctly", function (assert) {
-		cssClassTestCase.call(this, assert, "sapThemeTextInverted", "color", "sapUiContentContrastTextColor");
-	});
-
-	QUnit.test("Should set the theme base class \"sapThemeTextInverted-asColor\" correctly", function (assert) {
-		cssClassTestCase.call(this, assert, "sapThemeTextInverted-asColor", "color", "sapUiContentContrastTextColor");
-	});
+	makeModule("ext color inverted", [
+		["sapThemeTextInverted", "color", "sapUiContentContrastTextColor"],
+		["sapThemeTextInverted-asColor", "color", "sapUiContentContrastTextColor"]
+	]);
 
 	/* background color */
-	QUnit.test("Should set the theme base class \"sapThemeBaseBG\" correctly", function (assert) {
-		cssClassTestCase.call(this, assert, "sapThemeBaseBG", "background-color", "sapUiBaseBG");
-	});
-
-	QUnit.test("Should set the theme base class \"sapThemeBaseBG-asColor\" correctly", function (assert) {
-		cssClassTestCase.call(this, assert, "sapThemeBaseBG-asColor", "color", "sapUiBaseBG");
-	});
-
-	QUnit.test("Should set the theme base class \"sapThemeBaseBG-asBackgroundColor\" correctly", function (assert) {
-		cssClassTestCase.call(this, assert, "sapThemeBaseBG-asBackgroundColor", "background-color", "sapUiBaseBG");
-	});
-
-	QUnit.test("Should set the theme base class \"sapThemeBaseBG-asBorderColor\" correctly", function (assert) {
-		cssClassTestCase.call(this, assert, "sapThemeBaseBG-asBorderColor", "border-color", "sapUiBaseBG");
-	});
+	makeModule("background color", [
+		["sapThemeBaseBG", "background-color", "sapUiBaseBG"],
+		["sapThemeBaseBG-asColor", "color", "sapUiBaseBG"],
+		["sapThemeBaseBG-asBackgroundColor", "background-color", "sapUiBaseBG"],
+		["sapThemeBaseBG-asBorderColor", "border-color", "sapUiBaseBG"]
+	]);
 
 	/* brand color */
-	QUnit.test("Should set the theme base class \"sapThemeBrand\" correctly", function (assert) {
-		cssClassTestCase.call(this, assert, "sapThemeBrand", "color", "sapUiBrand");
-	});
-
-	QUnit.test("Should set the theme base class \"sapThemeBrand-asColor\" correctly", function (assert) {
-		cssClassTestCase.call(this, assert, "sapThemeBrand-asColor", "color", "sapUiBrand");
-	});
-
-	QUnit.test("Should set the theme base class \"sapThemeBrand-asBackgroundColor\" correctly", function (assert) {
-		cssClassTestCase.call(this, assert, "sapThemeBrand-asBackgroundColor", "background-color", "sapUiBrand");
-	});
-
-	QUnit.test("Should set the theme base class \"sapThemeBrand-asBorderColor\" correctly", function (assert) {
-		cssClassTestCase.call(this, assert, "sapThemeBrand-asBorderColor", "border-color", "sapUiBrand");
-	});
-
-	QUnit.test("Should set the theme base class \"sapThemeBrand-asOutlineColor\" correctly", function (assert) {
-		cssClassTestCase.call(this, assert, "sapThemeBrand-asOutlineColor", "outline-color", "sapUiBrand");
-	});
+	makeModule("brand color", [
+		["sapThemeBrand", "color", "sapUiBrand"],
+		["sapThemeBrand-asColor", "color", "sapUiBrand"],
+		["sapThemeBrand-asBackgroundColor", "background-color", "sapUiBrand"],
+		["sapThemeBrand-asBorderColor", "border-color", "sapUiBrand"],
+		["sapThemeBrand-asOutlineColor", "outline-color", "sapUiBrand"]
+	]);
 
 	/* highlight color */
-	QUnit.test("Should set the theme base class \"sapThemeHighlight\" correctly", function (assert) {
-		cssClassTestCase.call(this, assert, "sapThemeHighlight", "color", "sapUiHighlight");
-	});
-
-	QUnit.test("Should set the theme base class \"sapThemeHighlight-asColor\" correctly", function (assert) {
-		cssClassTestCase.call(this, assert, "sapThemeHighlight-asColor", "color", "sapUiHighlight");
-	});
-
-	QUnit.test("Should set the theme base class \"sapThemeHighlight-asBackgroundColor\" correctly", function (assert) {
-		cssClassTestCase.call(this, assert, "sapThemeHighlight-asBackgroundColor", "background-color", "sapUiHighlight");
-	});
-
-	QUnit.test("Should set the theme base class \"sapThemeHighlight-asBorderColor\" correctly", function (assert) {
-		cssClassTestCase.call(this, assert, "sapThemeHighlight-asBorderColor", "border-color", "sapUiHighlight");
-	});
-
-	QUnit.test("Should set the theme base class \"sapThemeHighlight-asOutlineColor\" correctly", function (assert) {
-		cssClassTestCase.call(this, assert, "sapThemeHighlight-asOutlineColor", "outline-color", "sapUiHighlight");
-	});
+	makeModule("highlight color", [
+		["sapThemeHighlight", "color", "sapUiHighlight"],
+		["sapThemeHighlight-asColor", "color", "sapUiHighlight"],
+		["sapThemeHighlight-asBackgroundColor", "background-color", "sapUiHighlight"],
+		["sapThemeHighlight-asBorderColor", "border-color", "sapUiHighlight"],
+		["sapThemeHighlight-asOutlineColor", "outline-color", "sapUiHighlight"]
+	]);
 
 	/* border color */
-	QUnit.test("Should set the theme base class \"sapThemeForegroundBorderColor\" correctly", function (assert) {
-		cssClassTestCase.call(this, assert, "sapThemeForegroundBorderColor", "border-color", "sapUiContentForegroundBorderColor");
-	});
-
-	QUnit.test("Should set the theme base class \"sapThemeForegroundBorderColor-asBorderColor\" correctly", function (assert) {
-		cssClassTestCase.call(this, assert, "sapThemeForegroundBorderColor-asBorderColor", "border-color", "sapUiContentForegroundBorderColor");
-	});
+	makeModule("border color", [
+		["sapThemeForegroundBorderColor", "border-color", "sapUiContentForegroundBorderColor"],
+		["sapThemeForegroundBorderColor-asBorderColor", "border-color", "sapUiContentForegroundBorderColor"]
+	]);
 
 });
