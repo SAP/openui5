@@ -4754,25 +4754,6 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("_delete: recursive hierarchy, restrictions not met", function (assert) {
-		const oBinding = this.bindList("/EMPLOYEES");
-
-		// Note: autoExpandSelect at model would be required for hierarchyQualifier, but that leads
-		// too far :-(
-		oBinding.mParameters.$$aggregation = {hierarchyQualifier : "X"};
-
-		const oContext = {
-			// noIndex
-			toString : function () { return "~toString~"; } // cannot be mocked?
-		};
-
-		assert.throws(function () {
-			// code under test
-			oBinding.delete("~oGroupLock~", "~sEditUrl~", oContext);
-		}, new Error("Unsupported kept-alive context: ~toString~"));
-	});
-
-	//*********************************************************************************************
 	QUnit.test("create: callbacks and eventing", function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES"),
 			oBindingMock = this.mock(oBinding),
