@@ -32491,7 +32491,9 @@ make root = ${bMakeRoot}`;
 	//     create New6 below New3
 	// (3) Side-effects refresh (-> unified cache; New2 is already read in-place, it is shifted when
 	//     moving New1 to its out-of-place position; Beta is already read in-place, but shifted
-	//     when moving New1 and New3; Gamma is only placeholder when moving New5)
+	//     when moving New1 and New3; Gamma is only placeholder when moving New5).
+	//     Additionally request the first row in parallel just like the tree table occasionally
+	//     does, this must not cause further requests.
 	// (4) Check all contexts
 	// (5) Delete New1 (no longer requested as out-of-place node afterward)
 	// (6) Side-effects refresh (moves New3 below Gamma)
@@ -32931,6 +32933,8 @@ make root = ${bMakeRoot}`;
 		await Promise.all([
 			// code under test
 			oBinding.getHeaderContext().requestSideEffects([""]),
+			// code under test: requesting one row already covered by side-effects refresh
+			oBinding.getContexts(0, 1),
 			this.waitForChanges(assert, "(3) side-effects refresh")
 		]);
 

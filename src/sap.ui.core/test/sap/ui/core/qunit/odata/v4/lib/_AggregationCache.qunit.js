@@ -1791,6 +1791,13 @@ sap.ui.define([
 	iPrefetchLength : 1,
 	iExpectedStart : 0,
 	iExpectedLength : 4
+}, { // oFirstLevel already requested data
+	bHasGrandTotal : false,
+	bHasRequestedData : true,
+	iFirstLevelIndex : 0,
+	iFirstLevelLength : 3,
+	iExpectedStart : 0,
+	iExpectedLength : 23
 }].forEach(function (oFixture, i) {
 	QUnit.test("readFirst: #" + i, function (assert) {
 		var oAggregation = { // filled before by buildApply
@@ -1827,6 +1834,7 @@ sap.ui.define([
 			oCache.oGrandTotalPromise = SyncPromise.resolve(oGrandTotal);
 			_Helper.setPrivateAnnotation(oGrandTotal, "copy", oGrandTotalCopy);
 		}
+		oCache.oFirstLevel.bSentRequest = oFixture.bHasRequestedData;
 		for (i = 0; i < Math.min(iExpectedLength, 42); i += 1) {
 			oReadResult.value.push({});
 		}
@@ -1835,8 +1843,12 @@ sap.ui.define([
 			.returns(oFixture.iOutOfPlaceCount ?? 0);
 		this.mock(oCache.oFirstLevel).expects("read")
 			.withExactArgs(iExpectedStart, iExpectedLength, 0, "~oGroupLock~", "~fnDataRequested~")
-			.returns(SyncPromise.resolve(Promise.resolve(oReadResult)));
-		this.mock(oCache).expects("requestOutOfPlaceNodes").withExactArgs("~oGroupLock~")
+			.callsFake(function () {
+				oCache.oFirstLevel.bSentRequest = true;
+				return SyncPromise.resolve(Promise.resolve(oReadResult));
+			});
+		this.mock(oCache).expects("requestOutOfPlaceNodes")
+			.exactly(oFixture.bHasRequestedData ? 0 : 1).withExactArgs("~oGroupLock~")
 			.returns([Promise.resolve("~outOfPlaceResult0~"),
 				Promise.resolve("~outOfPlaceResult1~"), Promise.resolve("~outOfPlaceResult2~")]);
 		if (oFixture.bHasGrandTotal) {
@@ -1878,7 +1890,10 @@ sap.ui.define([
 				.returns("~placeholder~" + i);
 		}
 		const oHandleOutOfPlaceNodesExpectation = this.mock(oCache).expects("handleOutOfPlaceNodes")
-			.withExactArgs(["~outOfPlaceResult0~", "~outOfPlaceResult1~", "~outOfPlaceResult2~"]);
+			.withExactArgs(oFixture.bHasRequestedData
+				? []
+				: ["~outOfPlaceResult0~", "~outOfPlaceResult1~", "~outOfPlaceResult2~"]
+			);
 
 		// code under test
 		return oCache.readFirst(oFixture.iFirstLevelIndex, oFixture.iFirstLevelLength,

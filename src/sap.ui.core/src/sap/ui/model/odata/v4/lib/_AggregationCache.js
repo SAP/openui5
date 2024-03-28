@@ -1663,9 +1663,13 @@ sap.ui.define([
 			iStart = 0;
 		}
 
+		// Note: this.oFirstLevel.read changes this value
+		const bSentRequest = this.oFirstLevel.bSentRequest;
+
 		return SyncPromise.all([
 				this.oFirstLevel.read(iStart, iLength, 0, oGroupLock, fnDataRequested),
-				...this.requestOutOfPlaceNodes(oGroupLock)
+				// request out-of-place nodes only once
+				...(bSentRequest ? [] : this.requestOutOfPlaceNodes(oGroupLock))
 			]).then(function ([oResult, ...aOutOfPlaceResults]) {
 				// Note: this code must be idempotent, it might well run twice!
 				var oGrandTotal,
