@@ -504,6 +504,24 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("initialization of MetadataHelper", async function(assert) {
+		this.oPanel = new Panel();
+		const oLinkRetrieveAllMetadataSpy = sinon.spy(Link, "retrieveAllMetadata");
+
+		// assert before act
+		assert.equal(this.oPanel._oMetadataHelper, null);
+		assert.ok(oLinkRetrieveAllMetadataSpy.notCalled, "Link 'retrieveAllMetadata' function not called after initPropertyHelper");
+
+		// act
+		const oPropertyHelper = await this.oPanel.initPropertyHelper();
+
+		// assert
+		assert.ok(oLinkRetrieveAllMetadataSpy.calledOnce, "Link 'retrieveAllMetadata' function called after initPropertyHelper");
+		assert.ok(this.oPanel._oMetadataHelper instanceof Function, "exists");
+		assert.ok(oPropertyHelper.getProperties instanceof Function, "'getProperties' function exists for PropertyHelper");
+	});
+
+
 	QUnit.module("basic methods");
 
 	QUnit.test("navigate without FLP", function(assert) {

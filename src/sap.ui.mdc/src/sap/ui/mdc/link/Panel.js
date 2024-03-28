@@ -117,12 +117,6 @@ sap.ui.define([
 
 		this._registerP13n();
 
-		sap.ui.require([
-			this.getMetadataHelperPath() || "sap/ui/mdc/Link"
-		], (MetadataHelper) => {
-			this._oMetadataHelper = MetadataHelper;
-		});
-
 		const oModel = new JSONModel({
 			// disjunct sets
 			countAdditionalContent: 0,
@@ -538,13 +532,23 @@ sap.ui.define([
 		};
 	};
 
-	Panel.prototype.initPropertyHelper = function() {
+	Panel.prototype.initPropertyHelper = async function() {
+
+		await new Promise((resolve) => {
+			sap.ui.require([
+				this.getMetadataHelperPath() || "sap/ui/mdc/Link"
+			], (MetadataHelper) => {
+				if (!this._oMetadataHelper) {
+					this._oMetadataHelper = MetadataHelper;
+				}
+				resolve();
+			});
+		});
 
 		const aAllLinkItems = this._oMetadataHelper.retrieveAllMetadata(this);
 
-		return Promise.resolve({
+		return {
 			getProperties: function() {
-
 				const aItems = [];
 				aAllLinkItems.forEach((oItem) => {
 					aItems.push({
@@ -566,7 +570,7 @@ sap.ui.define([
 
 				return aItems;
 			}
-		});
+		};
 	};
 
 	Panel.prototype._getAdditionalContentArea = function() {
