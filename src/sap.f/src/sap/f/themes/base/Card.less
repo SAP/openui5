@@ -476,6 +476,29 @@ html[data-sap-ui-browser^="cr"] .sapFCard {
 	pointer-events: none;
 }
 
+/* ui5-restricted work zone */
+.sapFCard.sapFCardFocusFullCard {
+	&:has(.sapFCardHeader:not(.sapFCardHeaderToolbarFocused):focus-within)::before {
+		content: '';
+		display: block;
+		position: absolute;
+		left: @_sap_f_Card_HeaderFocusBorderLeftOffset;
+		bottom: @_sap_f_Card_HeaderFocusBorderBottomOffset;
+		right: @_sap_f_Card_HeaderFocusBorderRightOffset;
+		top: @_sap_f_Card_HeaderFocusBorderTopOffset;
+		border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+		border-radius: @_sap_f_Card_HeaderFocusBorderRadius;
+		pointer-events: none;
+		z-index: 1;
+	}
+
+	.sapFCardHeader:not(.sapFCardHeaderToolbarFocused):focus-within::before {
+		display: none;
+	}
+}
+
+.sapFCardHeader:not(.sapFCardHeaderToolbarFocused):focus-within::before,
+
 .sapFGridContainer .sapFGridContainerItemWrapperNoVisualFocus:focus > .sapFCard.sapFCardNoHeader::before { // focus inside GridContainer on a card without header
 	bottom: 1px;
 	z-index: 1;
