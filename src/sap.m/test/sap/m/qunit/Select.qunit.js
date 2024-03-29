@@ -10100,7 +10100,6 @@ sap.ui.define([
 			oSelect.setRequired(true);
 			oInfo = oSelect.getAccessibilityInfo();
 			assert.strictEqual(oInfo.description.indexOf("Required") > -1, true, "Required");
-
 			oSelect.destroy();
 		});
 
@@ -10122,7 +10121,8 @@ sap.ui.define([
 		});
 
 		QUnit.test("Required state", function (assert) {
-			var oSelect = new Select({ required: true }),
+			var oSelect = new Select({ required: true, id: "test_select"}),
+				oLabel = new Label({labelFor: "test_select", text: "Test Label"}),
 				oHiddenSelect;
 
 			oSelect.placeAt("content");
@@ -10132,6 +10132,8 @@ sap.ui.define([
 
 			// Assertion
 			assert.strictEqual(oHiddenSelect.attr("aria-required"), "true", "Required Select required attribute is set");
+			assert.strictEqual(oLabel.isRequired(), true, "Referenced Label required attribute is also set");
+
 
 			// Act
 			oSelect.setRequired(false);
