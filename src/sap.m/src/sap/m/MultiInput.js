@@ -841,6 +841,24 @@ function(
 	};
 
 	/**
+	 * Called when the user presses the right arrow key
+	 *
+	 * @param {jQuery.Event} oEvent The event object
+	 * @private
+	 */
+	MultiInput.prototype.onsapright = function (oEvent) {
+		const aTokens = this.getAggregation("tokenizer").getTokens();
+
+		if (!aTokens.length) {
+			return;
+		}
+
+		if (oEvent.isMarked("forwardFocusToParent")) {
+			oEvent.preventDefault();
+		}
+	};
+
+	/**
 	 * Handles the key down event.
 	 *
 	 * @param {jQuery.Event} oEvent The event object

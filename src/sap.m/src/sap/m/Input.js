@@ -2360,6 +2360,10 @@ function(
 			return;
 		}
 
+		if (!this._getTypedInValue().length) {
+			return;
+		}
+
 		if (this._getTypedInValue() !== sValue) {
 			this._setTypedInValue(oDomRef.value.substring(0, oDomRef.selectionStart));
 
