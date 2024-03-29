@@ -477,6 +477,7 @@ sap.ui.define([
 
 	QUnit.test("Resolve with syntax error in data provider", function (assert) {
 		// Arrange
+		const oResourceBundle = Library.getResourceBundleFor("sap.ui.integration");
 		var oManifest = {
 				"sap.app": {
 					"id": "manifestResolver.test.card.errorDataSyntax",
@@ -519,10 +520,10 @@ sap.ui.define([
 				var oExpectedResult = {
 						"message": {
 							"type": "error",
-							"title": "An error occurred",
+							"title": oResourceBundle.getText("CARD_ERROR_CONFIGURATION_TITLE"),
 							"illustrationType": "sapIllus-ErrorScreen",
 							"illustrationSize": "Auto",
-							"description": "Error: Simulated fetch error"
+							"description": oResourceBundle.getText("CARD_ERROR_CONFIGURATION_DESCRIPTION")
 						}
 					},
 					oResult = oRes["sap.card"].content;
