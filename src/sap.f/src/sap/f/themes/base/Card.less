@@ -477,7 +477,8 @@ html[data-sap-ui-browser^="cr"] .sapFCard {
 }
 
 /* ui5-restricted work zone */
-.sapFCard.sapFCardFocusFullCard {
+.sapFCard.sapFCardFocusFullCard,
+ui-integration-card.sapFCardFocusFullCard > [data-sap-ui-area] > .sapFCard {
 	&:has(.sapFCardHeader:not(.sapFCardHeaderToolbarFocused):focus-within)::before {
 		content: '';
 		display: block;
