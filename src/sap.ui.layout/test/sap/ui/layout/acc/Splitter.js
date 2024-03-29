@@ -2,12 +2,14 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/FlexBox",
 	"sap/m/Text",
+	"sap/m/library",
 	"sap/ui/core/library",
 	"sap/ui/layout/Splitter"
-], function(Button, FlexBox, Text, coreLibrary, Splitter) {
+], function(Button, FlexBox, Text, mLibrary, coreLibrary, Splitter) {
 	"use strict";
 
 	var Orientation = coreLibrary.Orientation;
+	const FlexWrap = mLibrary.FlexWrap;
 
 	document.getElementById("content").style.height = "500px";
 
@@ -16,6 +18,7 @@ sap.ui.define([
 			contentAreas: [
 				new FlexBox({
 					width: 'auto',
+					wrap: FlexWrap.Wrap,
 					items: [
 						new Text({text: sLorem}),
 						new Button({text: "Press me"})
@@ -23,6 +26,7 @@ sap.ui.define([
 				}),
 				new FlexBox({
 					width: 'auto',
+					wrap: FlexWrap.Wrap,
 					items: [
 						new Text({text: sLorem}),
 						new Button({text: "Press me 2"})
@@ -30,6 +34,7 @@ sap.ui.define([
 				}),
 				new FlexBox({
 					width: 'auto',
+					wrap: FlexWrap.Wrap,
 					items: [
 						new Text({text: sLorem}),
 						new Button({text: "Press me 3"})
