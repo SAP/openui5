@@ -2483,6 +2483,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("constructor: unsupported model", function (assert) {
+		/** @deprecated As of version 1.120, because sap.ui.model.odata.Filter is deprecated since 1.22 */
 		this.mock(AnalyticalBinding.prototype).expects("_convertDeprecatedFilterObjects").withExactArgs(undefined);
 		const oModel = {createCustomParams() {}};
 		this.mock(oModel).expects("createCustomParams").withExactArgs({custom: undefined});
