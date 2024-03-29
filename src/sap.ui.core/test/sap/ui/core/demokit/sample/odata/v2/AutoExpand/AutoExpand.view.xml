@@ -1,6 +1,7 @@
 <mvc:View
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.ui.table"
+	xmlns:m="sap.m"
 	xmlns:rm="sap.ui.table.rowmodes">
 
 	<AnalyticalTable rows="{
