@@ -36,7 +36,12 @@ sap.ui.define([
     var ActionTileContent = TileContent.extend("sap.m.ActionTileContent", /** @lends sap.m.ActionTileContent.prototype */{
         metadata: {
             library: "sap.m",
+            defaultAggregation: "attributes",
             aggregations : {
+                /**
+                 * Adds header link for the tile content.
+                 */
+                headerLink: { type: "sap.m.Link", multiple: false, singularName: "headerLink" },
                 /**
                  * Holds detail of an attribute used in the ActionTile.
                  */
@@ -133,7 +138,7 @@ sap.ui.define([
     ActionTileContent.prototype.getAltText = function() {
         var sAltText = "";
         var sPriorityText = this.getPriorityText();
-        var aTileAttributes = this.getAggregation("attributes");
+        var aTileAttributes = this.getAggregation("attributes") || [];
         if (this.getPriority() !== Priority.None && sPriorityText) {
             sAltText += (sPriorityText) + "\n";
         }

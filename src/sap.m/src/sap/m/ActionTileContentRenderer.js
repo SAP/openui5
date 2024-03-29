@@ -22,14 +22,37 @@ sap.ui.define(["./library"],
 	 */
 	ActionTileContentRenderer.render = function(oRm, oControl) {
 		var Priority = library.Priority;
+		var oHeaderLink = oControl.getHeaderLink();
 
 		oRm.openStart("div",oControl );
 		oRm.class("sapMATC");
 		oRm.openEnd();
-		if (oControl.getPriority() !== Priority.None && oControl.getPriorityText()) {
+
+		//render header link if present
+		if (oHeaderLink) {
+			this._renderHeaderLink(oRm, oControl);
+		}
+
+		//render priority text if header link is not present
+		if (oControl.getPriority() !== Priority.None && oControl.getPriorityText() && !oHeaderLink) {
 			this._renderPriority(oRm,oControl);
 		}
 		this._renderContent(oRm,oControl);
+		oRm.close("div");
+	};
+
+	/**
+	 * Renders the header link for the ActionTileContent
+	 *
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.m.ActionTileContent} oControl The control that is rendered
+	 * @private
+	 */
+	ActionTileContentRenderer._renderHeaderLink = function(oRm, oControl) {
+		oRm.openStart("div", oControl.getId() + "-header-link");
+		oRm.class("sapMTilePriorityValue");
+		oRm.openEnd();
+		oRm.renderControl(oControl.getHeaderLink());
 		oRm.close("div");
 	};
 
