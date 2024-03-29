@@ -542,6 +542,10 @@ function(
 	 * @private
 	 */
 	InputBase.prototype.ontap = function(oEvent) {
+		if (!this.isMobileDevice()) {
+			this.openValueStateMessage();
+		}
+
 		// in order to stay backward compatible - we need to implement the tap
 		return;
 	};
@@ -634,6 +638,16 @@ function(
 			// backwards compatibility
 			newValue: sValue
 		});
+	};
+
+	/**
+	 * Indicates whether the control should use <code>sap.m.Dialog</code> or not.
+	 *
+	 * @returns {boolean} Boolean.
+	 * @protected
+	 */
+	InputBase.prototype.isMobileDevice = function () {
+		return Device.system.phone;
 	};
 
 	/* ----------------------------------------------------------- */

@@ -1307,6 +1307,10 @@ sap.ui.define([
 				return;
 			}
 
+			if (!this.isMobileDevice()) {
+				this.openValueStateMessage();
+			}
+
 			this.updateFocusOnClose();
 		};
 
