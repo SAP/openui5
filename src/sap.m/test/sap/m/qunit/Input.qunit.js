@@ -4437,6 +4437,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Tabular Suggestions - Autopopin mode", async function(assert) {
+		this.clock = sinon.useFakeTimers();
 
 		// Arrange
 		var oInput = createInputWithTabularSuggestions();
@@ -4444,13 +4445,15 @@ sap.ui.define([
 
 		// Act
 		oInput.setEnableTableAutoPopinMode(true);
-		await nextUIUpdate();
+		this.clock.tick(300);
+		await nextUIUpdate(this.clock);
 
 		// Assert
 		assert.ok(oInput._getSuggestionsTable().getAutoPopinMode(), "The table should have autopopin set to true.");
 
 		// Act
 		oInput.setEnableTableAutoPopinMode(false);
+		this.clock.tick(300);
 		await nextUIUpdate();
 
 		// Assert
