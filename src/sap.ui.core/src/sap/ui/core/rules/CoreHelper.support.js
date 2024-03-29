@@ -4,8 +4,8 @@
 /**
  * Helper for core functionality in Support Tool infrastructure.
  */
-sap.ui.define(["sap/ui/core/Element", "sap/ui/core/Theming", "sap/ui/thirdparty/jquery"],
-	function(Element, Theming, jQuery) {
+sap.ui.define(["sap/ui/core/Element", "sap/ui/core/Theming"],
+	function(Element, Theming) {
 		"use strict";
 
 		var CoreHelper = {
@@ -20,7 +20,6 @@ sap.ui.define(["sap/ui/core/Element", "sap/ui/core/Theming", "sap/ui/thirdparty/
 				/**
 				 * Here we list all controls that can contain DOM elements with style different than the framework style
 				 */
-				// jQuery Plugin "control"
 				var skipParents = ["sap.ui.core.HTML"],
 					parentNode = Element.closestTo(node);
 
