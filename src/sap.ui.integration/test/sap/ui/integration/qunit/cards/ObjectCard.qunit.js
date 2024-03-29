@@ -660,6 +660,94 @@ sap.ui.define([
 		}
 	};
 
+	var oManifest_ObjectCardFormControlsContentData = {
+		"sap.app": {
+			"id": "test.cards.object.card5",
+			"type": "card"
+		},
+		"sap.card": {
+			"type": "Object",
+			"header": {
+				"title": "PR255 - MacBook Purchase"
+			},
+			"content": {
+				"data": {
+					"json": {
+						"initialSelection": "reason1",
+						"initialComment": "Free text comment",
+						"initialValue": "Initial value",
+						"durationValue": "PT11H12M",
+						"reasons": [
+							{
+								"id": "reason1",
+								"title": "Reason 1"
+							},
+							{
+								"id": "reason2",
+								"title": "Reason 2"
+							}
+						],
+						"dateRangeValue": {
+							"option": "date",
+							"optionValues": ["2000-01-01T00:00:00.000Z"]
+						}
+					}
+				},
+				"groups": [
+					{
+						"alignment": "Stretch",
+						"items": [
+							{
+								"id": "reason",
+								"label": "Reason",
+								"type": "ComboBox",
+								"placeholder": "Select",
+								"selectedKey": "{/initialSelection}",
+								"item": {
+									"path": "/reasons",
+									"template": {
+										"key": "{id}",
+										"title": "{title}"
+									}
+								}
+							},
+							{
+								"id": "comment",
+								"label": "Comment",
+								"type": "TextArea",
+								"value": "{/initialComment}",
+								"rows": 4,
+								"placeholder": "Comment"
+							},
+							{
+								"id": "userValue",
+								"label": "User Value",
+								"type": "Input",
+								"value": "{/initialValue}",
+								"placeholder": "Enter user value"
+							},
+							{
+								"id": "durationValue",
+								"label": "Duration",
+								"type": "Duration",
+								"value": "{/durationValue}"
+							},
+							{
+								"id": "dateRangeValue",
+								"label": "Date Range",
+								"type": "DateRange",
+								"value": {
+									"option": "{/dateRangeValue/option}",
+									"values": "{/dateRangeValue/optionValues}"
+								}
+							}
+						]
+					}
+				]
+			}
+		}
+	};
+
 	var oManifest_ObjectCardFormControlsWithValidation = {
 		"sap.app": {
 			"id": "test.cards.object.card5",
@@ -2330,12 +2418,8 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Form controls are properly created", async function (assert) {
-		this.oCard.setManifest(oManifest_ObjectCardFormControls);
-
-		await nextCardReadyEvent(this.oCard);
-
-		var oLayout = this.oCard.getCardContent().getAggregation("_content").getItems()[0],
+	function ckeckFormControls(assert, oCard) {
+		var oLayout = oCard.getCardContent().getAggregation("_content").getItems()[0],
 			aItems = oLayout.getItems(),
 			oComboBox = aItems[1],
 			oTextArea = aItems[3],
@@ -2372,6 +2456,22 @@ sap.ui.define([
 		assert.ok(oDateRange.isA("sap.m.DatePicker"), "DateRange is created.");
 		assert.strictEqual(oDateRange.getValue(), "2000-01-01T00:00:00.000Z", "DateRange has correct value.");
 		assert.strictEqual(oDateRange.getLabels()[0].getText(), "Date Range", "DateRange is referenced to the correct label.");
+	}
+
+	QUnit.test("Form controls are properly created", async function (assert) {
+		this.oCard.setManifest(oManifest_ObjectCardFormControls);
+
+		await nextCardReadyEvent(this.oCard);
+
+		ckeckFormControls(assert, this.oCard);
+	});
+
+	QUnit.test("Form controls are properly created with content data", async function (assert) {
+		this.oCard.setManifest(oManifest_ObjectCardFormControlsContentData);
+
+		await nextCardReadyEvent(this.oCard);
+
+		ckeckFormControls(assert, this.oCard);
 	});
 
 	QUnit.test("Form control values are properly passed on submit action", async function (assert) {
