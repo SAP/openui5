@@ -98,81 +98,65 @@ sap.ui.define([
 		});
 	}
 
-	function runAllTimersAndRestore(oClock, bRunToLast = false) {
+	function runAllTimersAndRestore(oClock) {
 		if (!oClock) {
 			return;
 		}
 
-		if (bRunToLast) {
-			oClock.runToLast();
-		} else {
-			oClock.runAll();
-		}
-
+		oClock.runAll();
 		oClock.restore();
 	}
 
-	var i1;
-	var i2;
-	var i3;
-	var i4;
-	var i5;
-	var i8;
-	var value = "value";
-
-	var oInput = new Input("i1");
-	//oInput.setMaxLength(12);
-	//@TODO Write qunit for maxlength
-	oInput.placeAt("content");
-	oInput.setValue("ABCD");
-
-	var oInput2 = new Input("i2");
-	oInput2.setType("Number");
-	oInput2.placeAt("content");
-
-	var oInput3 = new Input("i3");
-	oInput3.setVisible(false);
-	oInput3.placeAt("content");
-
-	var oInput4 = new Input("i4");
-	oInput4.setValueState("Error");
-	oInput4.placeAt("content");
-
-	var oInput5 = new Input("i5");
-	oInput5.setValueState("Warning");
-	oInput5.placeAt("content");
-
-	var oInput6 = new Input("i6", {
-		showSuggestion: true
-	});
-	oInput6.placeAt("content");
-
-	var oInput7 = new Input("i7", {
-		showSuggestion: true
-	});
-
-	oInput7.placeAt("content");
-
-	var oInput8 = new Input("i8");
-	oInput8.placeAt("content");
-
+	const value = "value";
 
 	QUnit.module("Basic", {
-		beforeEach : function() {
-			i1 = Element.getElementById("i1");
-			i2 = Element.getElementById("i2");
-			i3 = Element.getElementById("i3");
-			i4 = Element.getElementById("i4");
-			i5 = Element.getElementById("i5");
-			i8 = Element.getElementById("i8");
+		beforeEach : async function() {
+			this.oInput1 = new Input("i1");
+			this.oInput1.placeAt("content");
+			this.oInput1.setValue("ABCD");
+
+			this.oInput2 = new Input("i2");
+			this.oInput2.setType("Number");
+			this.oInput2.placeAt("content");
+
+			this.oInput3 = new Input("i3");
+			this.oInput3.setVisible(false);
+			this.oInput3.placeAt("content");
+
+			this.oInput4 = new Input("i4");
+			this.oInput4.setValueState("Error");
+			this.oInput4.placeAt("content");
+
+			this.oInput5 = new Input("i5");
+			this.oInput5.setValueState("Warning");
+			this.oInput5.placeAt("content");
+
+			this.oInput8 = new Input("i8");
+			this.oInput8.placeAt("content");
+
+			await nextUIUpdate();
+
+			this.i1 = Element.getElementById("i1");
+			this.i2 = Element.getElementById("i2");
+			this.i3 = Element.getElementById("i3");
+			this.i4 = Element.getElementById("i4");
+			this.i5 = Element.getElementById("i5");
+			this.i8 = Element.getElementById("i8");
 		},
 		afterEach : function() {
-			i1 = null;
-			i2 = null;
-			i3 = null;
-			i4 = null;
-			i5 = null;
-			i8 = null;
+			this.oInput1.destroy();
+			this.oInput2.destroy();
+			this.oInput3.destroy();
+			this.oInput4.destroy();
+			this.oInput5.destroy();
+			this.oInput8.destroy();
+
+			this.i1 = null;
+			this.i2 = null;
+			this.i3 = null;
+			this.i4 = null;
+			this.i5 = null;
+			this.i8 = null;
 
 			runAllTimersAndRestore(this.clock);
 		}
@@ -180,46 +164,46 @@ sap.ui.define([
 
 	// test property accessor methods
 	QUnit.test("Value", function(assert) {
-		i1.setValue(value);
-		assert.equal(i1.getValue(), value, "Input value is " + value);
+		this.i1.setValue(value);
+		assert.equal(this.i1.getValue(), value, "Input value is " + value);
 	});
 
 	QUnit.test("InputType", function(assert) {
 		var typeDefault = "Text";
-		assert.equal(i1.getType(), typeDefault, "Input Type: Default");
+		assert.equal(this.i1.getType(), typeDefault, "Input Type: Default");
 	});
 
 	QUnit.test("InputEnabled", function(assert) {
 		var enabled = false;
-		i1.setEnabled(enabled);
-		assert.equal(i1.getEnabled(), enabled, "Input is disabled");
+		this.i1.setEnabled(enabled);
+		assert.equal(this.i1.getEnabled(), enabled, "Input is disabled");
 		enabled = true;
-		i1.setEnabled(enabled);
-		assert.equal(i1.getEnabled(), enabled, "Input is enabled");
+		this.i1.setEnabled(enabled);
+		assert.equal(this.i1.getEnabled(), enabled, "Input is enabled");
 	});
 	/**
 	* @deprecated Since 1.119.
 	* @private
 	*/
 	QUnit.test("ValueHelpOnly", function(assert) {
-		assert.equal(i1.getValueHelpOnly(), false, "ValueHelpOnly Default: false");
+		assert.equal(this.i1.getValueHelpOnly(), false, "ValueHelpOnly Default: false");
 		var helponly = true;
-		i1.setValueHelpOnly(helponly);
-		assert.equal(i1.getValueHelpOnly(), helponly, "ValueHelpOnly is true");
+		this.i1.setValueHelpOnly(helponly);
+		assert.equal(this.i1.getValueHelpOnly(), helponly, "ValueHelpOnly is true");
 	});
 
 	QUnit.test("Placeholder", function(assert) {
 		var placeholder = "Placeholder";
-		i1.setPlaceholder(placeholder);
-		assert.equal(i1.getPlaceholder(), placeholder, "Placeholder for text");
+		this.i1.setPlaceholder(placeholder);
+		assert.equal(this.i1.getPlaceholder(), placeholder, "Placeholder for text");
 
-		i2.setPlaceholder(placeholder);
-		assert.equal(i2.getPlaceholder(), placeholder, "Placeholder for number field");
+		this.i2.setPlaceholder(placeholder);
+		assert.equal(this.i2.getPlaceholder(), placeholder, "Placeholder for number field");
 	});
 
 	QUnit.test("Visible", function(assert) {
-		assert.equal(i1.$().length, 1, "Visible input found");
-		assert.equal(i3.$().length, 0, "Invisible input not found");
+		assert.equal(this.i1.$().length, 1, "Visible input found");
+		assert.equal(this.i3.$().length, 0, "Invisible input not found");
 	});
 
 	QUnit.test("sTypedInValue", function(assert) {
@@ -272,13 +256,13 @@ sap.ui.define([
 	});
 
 	QUnit.test("Change", async function(assert) {
-		i1.setValue("new");
+		this.i1.setValue("new");
 		await nextUIUpdate();
-		i1.attachChange(function() {
+		this.i1.attachChange(function() {
 			assert.equal(this.getValue(), "new", "New value in onChange");
 		});
-		i1.onChange(jQuery.Event("change"));
-		assert.equal(i1.getValue(),"new", "Value after onchange");
+		this.i1.onChange(jQuery.Event("change"));
+		assert.equal(this.i1.getValue(),"new", "Value after onchange");
 	});
 
 	QUnit.test("Event order", async function(assert) {
@@ -330,66 +314,68 @@ sap.ui.define([
 	QUnit.test("valueLiveUpdate", function(assert) {
 
 		var oModel = new JSONModel({testValue: ""});
-		oInput8.setModel(oModel);
-		oInput8.bindValue("/testValue");
+		this.oInput8.setModel(oModel);
+		this.oInput8.bindValue("/testValue");
 
-		var fnFireChangeSpy = this.spy(i8, "fireChange");
-		i8.setValueLiveUpdate(false);
-		i8.setValue("");
-		i8.focus();
-		qutils.triggerCharacterInput(i8.getFocusDomRef(), "a");
-		qutils.triggerEvent("input", i8.getFocusDomRef());
+		var fnFireChangeSpy = this.spy(this.i8, "fireChange");
+		this.i8.setValueLiveUpdate(false);
+		this.i8.setValue("");
+		this.i8.focus();
+		qutils.triggerCharacterInput(this.i8.getFocusDomRef(), "a");
+		qutils.triggerEvent("input", this.i8.getFocusDomRef());
 
 		assert.equal(oModel.getProperty("/testValue"),"" , "no valueLiveUpdate, no model value update");
-		assert.equal(i8.getValue()                   ,"a", "no valueLiveUpdate, new value");
+		assert.equal(this.i8.getValue()                   ,"a", "no valueLiveUpdate, new value");
 		assert.equal(fnFireChangeSpy.callCount       , 0 , "no valueLiveUpdate, no change event");
 
-		qutils.triggerKeydown(i8.getFocusDomRef(), "ENTER");
+		qutils.triggerKeydown(this.i8.getFocusDomRef(), "ENTER");
 
-		assert.equal(i8.getValue()                   ,"a", "no valueLiveUpdate, Enter, same new value");
+		assert.equal(this.i8.getValue()                   ,"a", "no valueLiveUpdate, Enter, same new value");
 		assert.equal(oModel.getProperty("/testValue"),"a", "no valueLiveUpdate, Enter, model value update");
 		assert.equal(fnFireChangeSpy.callCount       , 1 , "no valueLiveUpdate, Enter, change event");
 
-		i8.setValueLiveUpdate(true);
-		i8.setValue("");
+		this.i8.setValueLiveUpdate(true);
+		this.i8.setValue("");
 		fnFireChangeSpy.reset();
-		qutils.triggerCharacterInput(i8.getFocusDomRef(), "a");
-		qutils.triggerEvent("input", i8.getFocusDomRef());
+		qutils.triggerCharacterInput(this.i8.getFocusDomRef(), "a");
+		qutils.triggerEvent("input", this.i8.getFocusDomRef());
 		assert.equal(oModel.getProperty("/testValue"),"a", "valueLiveUpdate, no model value update");
-		assert.equal(i8.getValue()                   ,"a", "valueLiveUpdate, new value");
+		assert.equal(this.i8.getValue()                   ,"a", "valueLiveUpdate, new value");
 		assert.equal(fnFireChangeSpy.callCount       , 0,  "valueLiveUpdate, stil no change event");
 
-		qutils.triggerKeydown(i8.getFocusDomRef(), "ENTER");
+		qutils.triggerKeydown(this.i8.getFocusDomRef(), "ENTER");
 
 		assert.equal(oModel.getProperty("/testValue"),"a", "valueLiveUpdate, no model value update");
-		assert.equal(i8.getValue()                   ,"a", "no valueLiveUpdate, Enter, change");
+		assert.equal(this.i8.getValue()                   ,"a", "no valueLiveUpdate, Enter, change");
 		assert.equal(fnFireChangeSpy.callCount       , 1,  "no valueLiveUpdate, Enter, changeevent");
 
-		i8.setValueLiveUpdate(false);
+		this.i8.setValueLiveUpdate(false);
+		fnFireChangeSpy.reset();
+		oModel.destroy();
 	});
 
 	QUnit.test("Value States", async function(assert) {
 
-		assert.equal(i4.$("content").hasClass('sapMInputBaseContentWrapperError'), true, "Before new value state : Error");
-		assert.equal(i5.$("content").hasClass('sapMInputBaseContentWrapperWarning'), true, "Before new value state : Warning");
-		assert.equal(i4.$().attr("title"), undefined, "No tooltip for error state");
-		assert.equal(i5.$().attr("title"), undefined, "No tooltip for warning state");
+		assert.equal(this.i4.$("content").hasClass('sapMInputBaseContentWrapperError'), true, "Before new value state : Error");
+		assert.equal(this.i5.$("content").hasClass('sapMInputBaseContentWrapperWarning'), true, "Before new value state : Warning");
+		assert.equal(this.i4.$().attr("title"), undefined, "No tooltip for error state");
+		assert.equal(this.i5.$().attr("title"), undefined, "No tooltip for warning state");
 
-		i4.setValueState("Warning");
-		i5.setValueState("Error");
-		i8.setValueState("Information");
+		this.i4.setValueState("Warning");
+		this.i5.setValueState("Error");
+		this.i8.setValueState("Information");
 		await nextUIUpdate();
 
-		assert.equal(i4.$("content").hasClass('sapMInputBaseContentWrapperWarning'), true, "After new value state : Warning");
-		assert.equal(i5.$("content").hasClass('sapMInputBaseContentWrapperError'), true, "After new value state : Error");
-		assert.equal(i8.$("content").hasClass('sapMInputBaseContentWrapperInformation'), true, "After new value state : Information");
+		assert.equal(this.i4.$("content").hasClass('sapMInputBaseContentWrapperWarning'), true, "After new value state : Warning");
+		assert.equal(this.i5.$("content").hasClass('sapMInputBaseContentWrapperError'), true, "After new value state : Error");
+		assert.equal(this.i8.$("content").hasClass('sapMInputBaseContentWrapperInformation'), true, "After new value state : Information");
 
-		i4.setValueState();
-		i5.setValueState("None");
+		this.i4.setValueState();
+		this.i5.setValueState("None");
 
-		assert.equal(i4.getValueState(), "None", "Last value state : None");
-		assert.equal(i5.getValueState(), "None", "Last value state : None");
-		assert.equal(i5.$().attr("title"), undefined, "Tooltip is empty for valueState \"None\"");
+		assert.equal(this.i4.getValueState(), "None", "Last value state : None");
+		assert.equal(this.i5.getValueState(), "None", "Last value state : None");
+		assert.equal(this.i5.$().attr("title"), undefined, "Tooltip is empty for valueState \"None\"");
 	});
 
 	QUnit.test("Value Help Indicator", async function(assert) {
@@ -421,6 +407,7 @@ sap.ui.define([
 		// event check
 		oInput.getAggregation("_endIcon")[0].firePress();
 		assert.strictEqual(spy.callCount, 1, "Value Help Request has been fired and received successfully");
+		oInput.destroy();
 	});
 
 	QUnit.test("Value help icon role should be 'button' and area-label attribute should be set", async function(assert) {
@@ -480,6 +467,7 @@ sap.ui.define([
 
 		oInput.onsapshow(evt);
 		assert.strictEqual(spy.callCount, 1, "The value help was requested by pressing F4");
+		oInput.destroy();
 	});
 
 	QUnit.test("Value help _userInputValue request parameter with suggestions", function(assert) {
@@ -550,6 +538,7 @@ sap.ui.define([
 
 		// Clean
 		oUpdateSpy.restore();
+		oInput.destroy();
 	});
 
 	QUnit.test("Tabular suggestions onsapenter should clear the _sTypedInValue", async function (assert) {
@@ -804,6 +793,7 @@ sap.ui.define([
 		oInputVHO._$input.trigger("focus").trigger("tap");
 		this.clock.tick(500);
 		assert.strictEqual(spy.callCount, 1, "Value Help Request has been fired and received successfully");
+		oInputVHO.destroy();
 	});
 
 	/**
@@ -899,6 +889,11 @@ sap.ui.define([
 		oInputVHO3._$input.trigger("focus").trigger("tap");
 		this.clock.tick(500);
 		assert.strictEqual(spy3.callCount, 0, "enabled = false: Tap has been fired and no Value Help Request is submitted");
+
+		oInputVHO.destroy();
+		oInputVHO1.destroy();
+		oInputVHO2.destroy();
+		oInputVHO3.destroy();
 	});
 
 	/**
@@ -916,6 +911,8 @@ sap.ui.define([
 		});
 		oInput.onsapselect(evt);
 		assert.strictEqual(spy.callCount, 1, "The value help was requested by pressing Enter or Space");
+
+		oInput.destroy();
 	});
 
 	QUnit.test("Check step attribute", function(assert) {
@@ -1058,6 +1055,7 @@ sap.ui.define([
 		$Input = oInput.$();
 
 		assert.strictEqual($Input.length, 0, "After destroy input DOM node is removed");
+		oInput.destroy();
 	});
 
 	QUnit.test("Destroy Suggestion List and Popup", async function(assert) {
@@ -1279,15 +1277,21 @@ sap.ui.define([
 	});
 
 	QUnit.test("Suggestion on Desktop", async function(assert){
+		var oInput = new Input("i6", {
+			showSuggestion: true
+		});
+		oInput.placeAt("content");
+		await nextUIUpdate(this.clock);
+
 		var oPopup, // is lazy loaded
 			aNames = ["abcTom", "abcPhilips", "abcAnna"],
 			aItemAdded = [],
 			i;
 
-		oInput6.attachSuggest(function(){
+		oInput.attachSuggest(function(){
 			for (i = 0; i < aNames.length; i++){
 				if (!aItemAdded.includes(aNames[i])){
-					oInput6.addSuggestionItem(new Item({text: aNames[i]}));
+					oInput.addSuggestionItem(new Item({text: aNames[i]}));
 					aItemAdded.push(aNames[i]);
 				}
 			}
@@ -1295,28 +1299,28 @@ sap.ui.define([
 
 		await nextUIUpdate(this.clock);
 
-		oInput6.onfocusin(); // for some reason this is not triggered when calling focus via API
-		oInput6._$input.trigger("focus").val("abc").trigger("input");
+		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
+		oInput._$input.trigger("focus").val("abc").trigger("input");
 
 		this.clock.tick(500);
 
-		oPopup = oInput6._getSuggestionsPopover().getPopover();
+		oPopup = oInput._getSuggestionsPopover().getPopover();
 		assert.ok(oPopup.isA("sap.m.Popover"), "Suggestion Popup is created and is a Popover instance");
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is open now");
 		assert.equal(getPopupItemsContent(oPopup).getItems().length, aNames.length, "Suggestions are inserted");
 		assert.ok(getPopupItemsContent(oPopup).isA("sap.m.List"), "Suggestions are list-based)");
 
-		oInput6._$input.trigger("focus").val("abcT").trigger("input");
+		oInput._$input.trigger("focus").val("abcT").trigger("input");
 		this.clock.tick(400);
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is still open now");
 		assert.equal(getVisibleItems(oPopup).length, 1, "Suggestions are filtered");
 
 		//close the popoup when nothing is typed in input
-		oInput6._$input.trigger("focus").val("").trigger("input");
+		oInput._$input.trigger("focus").val("").trigger("input");
 		this.clock.tick(300);
 		assert.ok(!oPopup.isOpen(), "Suggestion Popup is closed");
 
-		oInput6.destroy();
+		oInput.destroy();
 	});
 
 	QUnit.test("Suggestion on Desktop - enter key pressed before the first suggest event", async function(assert){
@@ -1609,7 +1613,7 @@ sap.ui.define([
 			aItemAdded = [],
 			i;
 
-		oInput = new Input("input", {
+		var oInput = new Input("input", {
 			showSuggestion: true
 		});
 		oInput.placeAt("content");
@@ -3595,6 +3599,7 @@ sap.ui.define([
 
 		// clean up
 		oDialog.destroy();
+		oInput.destroy();
 		oDialog = null;
 	});
 
@@ -3686,6 +3691,8 @@ sap.ui.define([
 		await nextUIUpdate();
 
 		assert.ok(true, "No exception should be thrown");
+
+		oInput.destroy();
 	});
 
 	QUnit.test("Late binding on suggest event", async function (assert) {
@@ -3796,6 +3803,7 @@ sap.ui.define([
 		assert.equal(fnCallback.callCount, 1, "change event handler only called once");
 		assert.equal(oInput.getSelectedKey(), "1", "selected key is correct");
 
+		fnCallback.resetHistory();
 		oInput.destroy();
 	});
 
@@ -3850,6 +3858,7 @@ sap.ui.define([
 		assert.strictEqual(oInput.getSelectedKey(), "2", "The 'selectedKey' property was set properly");
 
 		// Clean
+		oSetSelectionItemSpy.restore();
 		oInput.destroy();
 	});
 
@@ -3995,11 +4004,12 @@ sap.ui.define([
 		assert.equal(fnCallback.callCount, 0, "change event is not fired");
 		assert.equal(oInput.getSelectedKey(), "2", "selected key is correct");
 
+		fnCallback.resetHistory();
 		oInput.destroy();
 	});
 
 	QUnit.test("Item selection updates the model when previously deleted value matches the item text", async function(assert) {
-		oInput = new Input({
+		var oInput = new Input({
 			value: '{/value}',
 			showSuggestion: true,
 			suggestionItems: {
@@ -4058,6 +4068,8 @@ sap.ui.define([
 		assert.strictEqual(oInput._oSuggPopover, null, "Suggestions popover is destroyed");
 
 		// Clean up
+		oSpy.reset();
+		oInput.destroy();
 		oInput = null;
 	});
 
@@ -4100,6 +4112,8 @@ sap.ui.define([
 		assert.strictEqual(oInput._oSuggPopover, null, "Suggestions popover is destroyed");
 
 		// Clean up
+		oSpy.reset();
+		oInput.destroy();
 		oInput = null;
 	});
 
@@ -4403,6 +4417,8 @@ sap.ui.define([
 		assert.equal(fnSuggestionItemSelectedCallback.callCount, 1, "suggestionItemSelected event is fired once");
 		assert.equal(fnChangeCallback.calledAfter(fnSuggestionItemSelectedCallback), true, "change event is called after suggestionItemSelected event");
 
+		fnChangeCallback.resetHistory();
+		fnSuggestionItemSelectedCallback.resetHistory();
 		oInput.destroy();
 	});
 
@@ -4554,6 +4570,7 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		var $popover = oInput._getSuggestionsPopover().getPopover().$();
+		this.clock.tick(500);
 
 		// Assert
 		assert.ok($popover.attr('aria-labelledby'), 'popup ariaLabelledBy is set');
@@ -4752,6 +4769,8 @@ sap.ui.define([
 		await nextUIUpdate(this.clock);
 
 		assert.strictEqual(fnSpy.callCount, 1, "Suggestion item select should be fired once.");
+		fnSpy.resetHistory();
+		oBtn.destroy();
 		oInput.destroy();
 	});
 
@@ -4974,7 +4993,7 @@ sap.ui.define([
 			aItemAdded = [],
 			i;
 
-		oInput = new Input("input", {
+		var oInput = new Input("input", {
 			showSuggestion: true
 		});
 		oInput.placeAt("content");
@@ -5024,6 +5043,8 @@ sap.ui.define([
 	QUnit.test("List Suggestions - cloning", function (assert) {
 		var oInputClone  = this.oInputToClone.clone();
 		assert.equal(oInputClone.getSuggestionItems().length, 3, "Should have 3 suggestion items");
+
+		oInputClone.destroy();
 	});
 
 	QUnit.test("Tabular Suggestions - cloning", function (assert) {
@@ -5031,6 +5052,8 @@ sap.ui.define([
 
 		assert.equal(oInputClone.getSuggestionRows().length, 10, "Should have 3 suggestion rows");
 		assert.equal(oInputClone.getSuggestionColumns().length, 5, "Should have 4 suggestion columns");
+
+		oInputClone.destroy();
 	});
 
 	QUnit.test("Tabular Suggestions - fnRowResultFilter cloning", function (assert) {
@@ -5039,6 +5062,8 @@ sap.ui.define([
 		var oInputClone  = this.oTabularInputToClone.clone();
 
 		assert.equal(fnCallback, oInputClone._fnRowResultFilter, "_fnRowResultFilter should be cloned");
+
+		oInputClone.destroy();
 	});
 
 	QUnit.test("Tabular Suggestions - selectedRow cloning", function (assert) {
@@ -5051,6 +5076,8 @@ sap.ui.define([
 		var oInputClone  = this.oTabularInputToClone.clone();
 
 		assert.equal(oInputClone.getValue(), "The selected item: Auch ein gutes Ding", "The selectedRow association should be cloned");
+
+		oInputClone.destroy();
 	});
 
 	QUnit.test("Input cloned with correct suggestion rows", async function(assert) {
@@ -5611,6 +5638,8 @@ sap.ui.define([
 		await nextUIUpdate();
 
 		assert.notOk(oInput._getValueHelpIcon().getVisible(), "Icon should not be visible");
+
+		oInput.destroy();
 	});
 
 	QUnit.test("Check whether property is propagated to dialog's input on mobile", async function (assert) {
@@ -6188,6 +6217,7 @@ sap.ui.define([
 
 		// assert
 		assert.strictEqual(stub.callCount, 0, "Should NOT call 'setSelectedRow' when aggregation is destroyed after a proposed item was found.");
+		oInput.destroy();
 	});
 
 	QUnit.test("Typeahead should select the correct formatter", async function (assert) {
@@ -7066,6 +7096,7 @@ sap.ui.define([
 
 			this.dialog.destroy();
 			this.dialog = null;
+			this.input.destroy();
 			this.input = null;
 
 			runAllTimersAndRestore(this.clock);
@@ -7552,9 +7583,16 @@ sap.ui.define([
 		qutils.triggerKeydown(this.oInput.getFocusDomRef(), "ENTER");
 		this.clock.tick(300);
 		assert.equal(fnFireChangeSpy.callCount , 1 , "Change event should be fired");
+
+		fnFireChangeSpy.reset();
 	});
 
-	QUnit.test("Change event should be fired only once when there is a proposed item", function(assert) {
+	QUnit.test("Change event should be fired only once when there is a proposed item", async function(assert) {
+
+		var oInputTemp = new Input("i2");
+		oInputTemp.placeAt("content");
+		await nextUIUpdate(this.clock);
+
 		var fnFireChangeSpy = this.spy(this.oInput, "fireChange");
 		this.oInput.onfocusin();
 		this.oInput._$input.trigger("focus").val("u").trigger("input");
@@ -7568,22 +7606,34 @@ sap.ui.define([
 
 		this.clock.tick(300);
 		assert.equal(fnFireChangeSpy.callCount , 1 , "Change event should be fired only once");
+
+		fnFireChangeSpy.reset();
+		oInputTemp.destroy();
 	});
 
-	QUnit.test("Change event should be fired when autocomplete is false and input is focused out", function(assert) {
+	QUnit.test("Change event should be fired when autocomplete is false and input is focused out", async function(assert) {
+		var oInputTemp = new Input("i2");
+		oInputTemp.placeAt("content");
+		await nextUIUpdate(this.clock);
 
 		var fnFireChangeSpy = this.spy(this.oInput, "fireChange");
 		this.oInput.setAutocomplete(false);
+		await nextUIUpdate(this.clock);
+
 		this.oInput._$input.trigger("focus").val("u").trigger("input");
 		this.clock.tick(1000);
 
 		this.oInput._bDoTypeAhead = true;
 		this.oInput._handleTypeAhead(this.oInput);
+		await nextUIUpdate(this.clock);
 
 		document.getElementById('i2-inner').focus();
 
 		this.clock.tick(300);
 		assert.equal(fnFireChangeSpy.callCount , 1 , "Change event should be fired only once");
+
+		fnFireChangeSpy.reset();
+		oInputTemp.destroy();
 	});
 
 	QUnit.test("Force closing suggestions popover on 'change' event", async function(assert) {
@@ -7969,6 +8019,8 @@ sap.ui.define([
 			afterEach: function () {
 				this.oInput.destroy();
 				this.oInput = null;
+
+				runAllTimersAndRestore(this.clock);
 			}
 		});
 
@@ -8006,7 +8058,6 @@ sap.ui.define([
 
 		// Assert
 		assert.strictEqual(getVisibleItems(this.oInput._getSuggestionsPopover().getPopover()).length, 5, "Shows all items");
-		runAllTimersAndRestore(this.clock, true);
 	});
 
 	QUnit.test("Should filter the items", async function (assert) {
@@ -8908,6 +8959,7 @@ sap.ui.define([
 
 		// Cleanup
 		oDialog.destroy();
+		oInput.destroy();
 	});
 
 	QUnit.test("maxLength: setValue() initial rendering should respect getMaxLength", async function (assert) {
@@ -8962,7 +9014,7 @@ sap.ui.define([
 	QUnit.test("Mobile: Dialog's input should propagate the correct typed value for the valueHelpRequest event", async function (assert) {
 		this.clock = sinon.useFakeTimers();
 		// Arrange
-		this.stub(Device, "system").value({
+		const oDeviceStub = this.stub(Device, "system").value({
 			desktop: false,
 			phone: true,
 			tablet: false
@@ -9024,6 +9076,7 @@ sap.ui.define([
 		// Cleanup
 		oSuggPopover.getPopover().close();
 		this.clock.tick(500);
+		oDeviceStub.restore();
 		oInput.destroy();
 	});
 });
