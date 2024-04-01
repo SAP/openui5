@@ -65,7 +65,7 @@
 				</table>
 			</div>
 
-			<div id="tableRowProperties" class="boldBlock">TableRow properties</div>
+			<div id="tableRowProperties" class="boldBlock">TableRow Properties</div>
 			<div class="tableWrapper">
 				<table>
 					<tr>
@@ -111,9 +111,9 @@
 				</table>
 			</div>
 
-			<div id="tableColumnProperties" class="boldBlock">TableColumn properties</div>
+			<div id="tableColumnProperties" class="boldBlock">TableColumn Properties</div>
 			<p>
-				Every column can display different thing based on the set properties.
+				Every column has the following common properties:
 			</p>
 			<div class="tableWrapper">
 				<table>
@@ -150,70 +150,6 @@
 						<td>1.75</td>
 					</tr>
 					<tr>
-						<td>value</td>
-						<td>string</td>
-						<td>No</td>
-						<td>Represents the text value of the column.</td>
-						<td>1.15.0</td>
-						<td>1.65</td>
-					</tr>
-					<tr>
-						<td>additionalText</td>
-						<td>string</td>
-						<td>No</td>
-						<td>Represents the additional text for the identifier column.</td>
-						<td>1.53.0</td>
-						<td>1.113</td>
-					</tr>
-					<tr>
-						<td>icon</td>
-						<td><a href="#iconApi">Icon</a></td>
-						<td>No</td>
-						<td>Represents column with icon.</td>
-						<td>1.15.0</td>
-						<td>1.65</td>
-					</tr>
-					<tr>
-						<td>state</td>
-						<td><a data-demokit-href="#/api/sap.ui.core.ValueState">sap.ui.core.ValueState</a></td>
-						<td>No</td>
-						<td>Defines the state of the column. Can be used only together with <code>value</code> property.</td>
-						<td>1.15.0</td>
-						<td>1.65</td>
-					</tr>
-					<tr>
-						<td>showStateIcon</td>
-						<td>boolean</a></td>
-						<td>No</td>
-						<td>Defines if a state icon is shown.</td>
-						<td>1.53.0</td>
-						<td>1.113</td>
-					</tr>
-					<tr>
-						<td>customStateIcon</td>
-						<td>string</td>
-						<td>No</td>
-						<td>The custom state icon. If it is set, then "showStateIcon" property should be set to true.</td>
-						<td>1.53.0</td>
-						<td>1.113</td>
-					</tr>
-					<tr>
-						<td>identifier</td>
-						<td>boolean</td>
-						<td>No</td>
-						<td>Defines whether the column is an identifier.</td>
-						<td>1.15.0</td>
-						<td>1.65</td>
-					</tr>
-					<tr>
-						<td>progressIndicator</td>
-						<td><a href="#progressIndicatorProperties">ProgressIndicator</a></td>
-						<td>No</td>
-						<td>Defines the progress indicator attributes.</td>
-						<td>1.15.0</td>
-						<td>1.65</td>
-					</tr>
-					<tr>
 						<td>visible</td>
 						<td>boolean</td>
 						<td>No</td>
@@ -221,16 +157,119 @@
 						<td>1.25.0</td>
 						<td>1.81</td>
 					</tr>
-					<tr>
-						<td>actions</td>
-						<td><a href="../../../index.html#/learn/actions" target="_parent">Actions[]</a></td>
-						<td>No</td>
-						<td>Defines actions that can be applied on the column. Actions can be applied only on columns that are identifiers or text.</td>
-						<td>1.31.0</td>
-						<td>1.87</td>
-					</tr>
 				</table>
 			</div>
+
+			<p>
+				In addition to the common properties, the card developer must also set properties for one of the following: text value, icon, or progress indicator.
+			</p>
+			<div id="textColumnProperties" class="boldBlock">Properties for TableColumn with Text Value</div>
+			<table>
+				<tr>
+					<th>Property</th>
+					<th>Type</th>
+					<th>Required</th>
+					<th>Description</th>
+					<th>Schema Version</th>
+					<th>Since</th>
+				</tr>
+				<tr>
+					<td>value</td>
+					<td>string</td>
+					<td>No</td>
+					<td>Text value of the column.</td>
+					<td>1.15.0</td>
+					<td>1.65</td>
+				</tr>
+				<tr>
+					<td>identifier</td>
+					<td>boolean</td>
+					<td>No</td>
+					<td>Defines whether the column is an identifier.</td>
+					<td>1.15.0</td>
+					<td>1.65</td>
+				</tr>
+				<tr>
+					<td>additionalText</td>
+					<td>string</td>
+					<td>No</td>
+					<td>Additional text for the identifier column.</td>
+					<td>1.53.0</td>
+					<td>1.113</td>
+				</tr>
+				<tr>
+					<td>actions</td>
+					<td><a href="../../../index.html#/learn/actions" target="_parent">Actions[]</a></td>
+					<td>No</td>
+					<td>Defines actions that can be applied on the column.</td>
+					<td>1.31.0</td>
+					<td>1.87</td>
+				</tr>
+				<tr>
+					<td>state</td>
+					<td><a data-demokit-href="#/api/sap.ui.core.ValueState">sap.ui.core.ValueState</a></td>
+					<td>No</td>
+					<td>Defines the state of the column. Can be used only together with <code>value</code> property.</td>
+					<td>1.15.0</td>
+					<td>1.65</td>
+				</tr>
+				<tr>
+					<td>showStateIcon</td>
+					<td>boolean</a></td>
+					<td>No</td>
+					<td>Defines if a state icon is shown.</td>
+					<td>1.53.0</td>
+					<td>1.113</td>
+				</tr>
+				<tr>
+					<td>customStateIcon</td>
+					<td>string</td>
+					<td>No</td>
+					<td>The custom state icon. If set, then the <code>showStateIcon</code> property should be set to <code>true</code>.</td>
+					<td>1.53.0</td>
+					<td>1.113</td>
+				</tr>
+			</table>
+
+			<div id="iconColumnProperties" class="boldBlock">Properties for TableColumn with Icon</div>
+			<table>
+				<tr>
+					<th>Property</th>
+					<th>Type</th>
+					<th>Required</th>
+					<th>Description</th>
+					<th>Schema Version</th>
+					<th>Since</th>
+				</tr>
+				<tr>
+					<td>icon</td>
+					<td><a href="#iconApi">Icon</a></td>
+					<td>No</td>
+					<td>Represents column with icon.</td>
+					<td>1.15.0</td>
+					<td>1.65</td>
+				</tr>
+			</table>
+
+			<div id="progressIndicatorColumnProperties" class="boldBlock">Properties for TableColumn with Progress Indicator</div>
+			<table>
+				<tr>
+					<th>Property</th>
+					<th>Type</th>
+					<th>Required</th>
+					<th>Description</th>
+					<th>Schema Version</th>
+					<th>Since</th>
+				</tr>
+				<tr>
+					<td>progressIndicator</td>
+					<td><a href="#progressIndicatorProperties">ProgressIndicator</a></td>
+					<td>No</td>
+					<td>Defines the progress indicator attributes.</td>
+					<td>1.15.0</td>
+					<td>1.65</td>
+				</tr>
+			</table>
 
 			<div id="iconApi" class="boldBlock">Icon Properties</div>
 			<div class="tableWrapper">
