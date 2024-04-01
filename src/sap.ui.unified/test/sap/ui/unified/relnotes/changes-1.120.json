@@ -93,5 +93,15 @@
         "text": " sap.ui.unified.Calendar: adding padding when two calendars are next to each other"
       }
     ]
+  },
+  "1.120.12": {
+    "date": "April 2024",
+    "notes": [
+      {
+        "id": "07e90a8dae75a963e165c66819ce3b17489ad62d",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: adjust header buttons width"
+      }
+    ]
   }
 }

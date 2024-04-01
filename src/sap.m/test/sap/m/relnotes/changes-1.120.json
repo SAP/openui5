@@ -717,5 +717,42 @@
         ]
       }
     ]
+  },
+  "1.120.12": {
+    "date": "April 2024",
+    "notes": [
+      {
+        "id": "0448700b4335a80cd742420fa709a83fd6b094d0",
+        "type": "FIX",
+        "text": " sap.m.SearchField: Suggestions are correctly visualized",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370120906"
+          }
+        ]
+      },
+      {
+        "id": "f4e32683d50f45ac6ae0dfbaba11c0e2bc6a9f87",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Resolve issue preventing text selection with mouse"
+      },
+      {
+        "id": "76e58f21dfc155f9578e9f56c3401bce83c8512b",
+        "type": "FIX",
+        "text": " sap.m.Button: adjust resource bundle API calls",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370127868"
+          }
+        ]
+      },
+      {
+        "id": "71a15af230b8b09f8ffc8b94b29a29f12bf028f7",
+        "type": "FIX",
+        "text": " sap.m.RadioButtonGroup: There is no error when destroying and adding radio buttons on select"
+      }
+    ]
   }
 }
