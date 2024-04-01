@@ -427,7 +427,7 @@ sap.ui.define([
 		}
 
 		if (aMethods.indexOf(oRequest.options.method) === -1) {
-			Log.error("Request is not valid. Method is not among " + aModes.toString());
+			Log.error("Request is not valid. Method is not among " + aMethods.toString());
 			return false;
 		}
 
