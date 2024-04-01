@@ -1,7 +1,17 @@
 {
   "1.123.0": {
-    "date": "March 2024",
+    "date": "April 2024",
     "notes": [
+      {
+        "id": "f866420cc64e1fb51aab57d2e9aeadb61f2ff566",
+        "type": "FEATURE",
+        "text": " sap.ui.core.IconPool: Update icon font v5.8 and v4.20"
+      },
+      {
+        "id": "f807f228c175d5a3302a232be0fd887330ecad56",
+        "type": "FIX",
+        "text": " sap/ui/core/EventBus: add try/catch around calling the listeners"
+      },
       {
         "id": "49417009768027f6cc41df864834798d27e16c2a",
         "type": "FIX",

@@ -1,7 +1,17 @@
 {
   "1.123.0": {
-    "date": "March 2024",
+    "date": "April 2024",
     "notes": [
+      {
+        "id": "1f6d92827ff67a34704e5c540114116e266df04d",
+        "type": "FIX",
+        "text": " Integration Cards: Error message for invalid request configuration is now translated"
+      },
+      {
+        "id": "b318d1b4321b6fa43c82836ef5da78b602f04fc8",
+        "type": "FIX",
+        "text": " Integration cards: Fixed object card date range binding"
+      },
       {
         "id": "b6b9af2648498e6596e332555e55dc4a6300aca5",
         "type": "FIX",

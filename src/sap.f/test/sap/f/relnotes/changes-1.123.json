@@ -1,7 +1,17 @@
 {
   "1.123.0": {
-    "date": "March 2024",
+    "date": "April 2024",
     "notes": [
+      {
+        "id": "1f6d92827ff67a34704e5c540114116e266df04d",
+        "type": "FIX",
+        "text": " Integration Cards: Error message for invalid request configuration is now translated"
+      },
+      {
+        "id": "8d421c94d14f56f867e39f2385b9df6e5196e692",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageTitle: Fix overlaping of snappedContent"
+      },
       {
         "id": "688a6346c5e4906f91db14ed07a269ddffa749e4",
         "type": "FIX",

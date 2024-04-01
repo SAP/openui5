@@ -1,7 +1,12 @@
 {
   "1.123.0": {
-    "date": "March 2024",
+    "date": "April 2024",
     "notes": [
+      {
+        "id": "d03eb20c9858517bea2030cae882a69d604fd923",
+        "type": "FIX",
+        "text": " sap.m.IllustratedMessage: Fixed TNT chart illustrations"
+      },
       {
         "id": "af9ef4c46f1a4f78a0dd054bbbc4740f8b924630",
         "type": "FIX",

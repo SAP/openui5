@@ -1,7 +1,12 @@
 {
   "1.123.0": {
-    "date": "March 2024",
+    "date": "April 2024",
     "notes": [
+      {
+        "id": "f866420cc64e1fb51aab57d2e9aeadb61f2ff566",
+        "type": "FEATURE",
+        "text": " sap.ui.core.IconPool: Update icon font v5.8 and v4.20"
+      },
       {
         "id": "013bce45862474febf4a95002c53047b65390375",
         "type": "FIX",
@@ -11,6 +16,11 @@
         "id": "86217ecfa2c73a13261a5137de9b74802867ed79",
         "type": "FIX",
         "text": " sap.m.RadioButton: hover and focus visual fixes"
+      },
+      {
+        "id": "6aeb5c914212ce06e394c01117e333a0cb701fc2",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageSection: Visual focus fixed"
       },
       {
         "id": "ef8e14cd94a7728d087c80e295e9538b4ddf6794",

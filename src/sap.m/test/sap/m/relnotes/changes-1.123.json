@@ -1,7 +1,32 @@
 {
   "1.123.0": {
-    "date": "March 2024",
+    "date": "April 2024",
     "notes": [
+      {
+        "id": "8e3abf6e3d89c33ea83695ba4adf2856c683076f",
+        "type": "FIX",
+        "text": " sap.m.ScrollPosition: Fix unstable test"
+      },
+      {
+        "id": "6d90eb3d5baee96fe96919f5af881928dcb4cf2d",
+        "type": "FIX",
+        "text": " sap.m.MessageToast: Fix permanent display"
+      },
+      {
+        "id": "f866420cc64e1fb51aab57d2e9aeadb61f2ff566",
+        "type": "FEATURE",
+        "text": " sap.ui.core.IconPool: Update icon font v5.8 and v4.20"
+      },
+      {
+        "id": "8abd60f4bc44efe89277aea331bd62d7ac801e96",
+        "type": "FIX",
+        "text": " sap.m.Input: prevent user value override"
+      },
+      {
+        "id": "692bdc15ace761da6d46b295548b3c68fa6a31af",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Fixed paging indicator numbers in right-to-left (RTL) mode"
+      },
       {
         "id": "6cf887fbdf8e9f11f38645ebc9a49e4b607b24c6",
         "type": "FIX",
