@@ -4,9 +4,10 @@ sap.ui.define([
 	'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/utility/Assertion',
 	"test-resources/sap/ui/mdc/testutils/opa/filterfield/Actions",
 	"sap/ui/events/KeyCodes",
+	'sap/ui/core/date/UniversalDateUtils',
 	"test-resources/sap/ui/mdc/smoke/samples/pages/App",
 	"test-resources/sap/ui/mdc/testutils/opa/TestLibrary"
-], function (Opa5, opaTest, P13nAssertion, FilterFieldActions, KeyCodes, App, TestLibrary) {
+], function (Opa5, opaTest, P13nAssertion, FilterFieldActions, KeyCodes, UniversalDateUtils, App, TestLibrary) {
 	"use strict";
 
 	Opa5.extendConfig({
@@ -27,8 +28,9 @@ sap.ui.define([
 	const iValueMyNextDays = 100;
 	const iSRange1 = 70;
 	const iSRange2 = 2;
-	const oDate1 = new Date();
-	const oDate2 = new Date(new Date().setDate(oDate1.getDate() + iValueMyNextDays));
+	const aUniversalDates = UniversalDateUtils.ranges.nextDays(iValueMyNextDays);
+	const sDate1 = aUniversalDates[0].oDate.toISOString();
+	const sDate2 = aUniversalDates[1].oDate.toISOString();
 
 	const oCondition1 = {
 		"rank": [
@@ -79,8 +81,8 @@ sap.ui.define([
 			{
 				"sPath": "first_ascent",
 				"sOperator": "BT",
-				"oValue1": `${oDate1.toISOString().split("T")[0]}T23:00:00.000Z`,
-				"oValue2": `${oDate2.toISOString().split("T")[0]}T21:59:59.999Z`
+				"oValue1": sDate1,
+				"oValue2": sDate2
 			}
 		],
 		"bAnd": true
