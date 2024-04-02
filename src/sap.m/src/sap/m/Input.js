@@ -3270,16 +3270,6 @@ function(
 	};
 
 	/**
-	 * Indicates whether the control should use <code>sap.m.Dialog</code> or not.
-	 *
-	 * @returns {boolean} Boolean.
-	 * @protected
-	 */
-	Input.prototype.isMobileDevice = function () {
-		return Device.system.phone;
-	};
-
-	/**
 	 * Opens the suggestions popover
 	 *
 	 * @private

@@ -3536,6 +3536,22 @@ sap.ui.define([
 		oErrorComboBox.destroy();
 	});
 
+	QUnit.test("valueState Message popup should be opened on tap", function(assert) {
+		var oComboBox = new ComboBox("vsm-combo", {
+			valueState: ValueState.Information
+		});
+
+		oComboBox.placeAt("content");
+		oCore.applyChanges();
+
+		oComboBox.ontap();
+		this.clock.tick(300);
+
+		assert.ok(document.getElementById(oComboBox.getValueStateMessageId()), "ValueState Message is shown on tap");
+
+		oComboBox.destroy();
+	});
+
 	QUnit.test("valueStateText forwarding", function (assert) {
 		this.stub(Device, "system", {
 			desktop: false,

@@ -829,6 +829,25 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
+	QUnit.test("valueState Message popup should be opened on tap", async function(assert) {
+		this.clock = sinon.useFakeTimers();
+
+		// system under test
+		var oInput = new InputBase({
+			valueState: ValueState.Information
+		});
+
+		oInput.placeAt("content");
+		await nextUIUpdate(this.clock);
+		oInput.ontap();
+
+		this.clock.tick(300);
+		assert.ok(document.getElementById(oInput.getValueStateMessageId()), "ValueState Message is shown on tap");
+
+		oInput.destroy();
+		runAllTimersAndRestore(this.clock);
+	});
+
 	/* ------------------------------ */
 	/* setName()                      */
 	/* ------------------------------ */
