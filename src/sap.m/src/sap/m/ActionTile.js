@@ -64,9 +64,7 @@ sap.ui.define([
 
 	ActionTile.prototype.onBeforeRendering = function() {
 		if (this.getHeaderImage()) {
-			this.addStyleClass("sapMATSituationCard");
-		} else {
-			this.addStyleClass("sapMToDoCard");
+			this.addStyleClass("sapMATHeaderImage");
 		}
 		if (this.getEnableNavigationButton()) {
 			this.removeStyleClass("sapMATHideActionButton");

@@ -20,6 +20,7 @@
         padding: 0;
         height: 3rem;
         overflow: hidden;
+        margin-bottom: 0.75rem;
         .sapMText{
             font-size: 1rem;
             font-weight: 700;
@@ -32,156 +33,6 @@
         position: absolute;
         bottom: 0.9em;
         right: 1rem;
-    }
-}
-
-.sapMAT.sapMATHideActionButton {
-    height: 19.625rem;
- }
-
-.sapMAT:hover {
-    background-color: @sapTile_Hover_Background;
-    box-shadow:  @sapContent_Shadow2;
-}
-
-.sapMAT:active {
-    background-color: @sapTile_Active_Background;
-    box-shadow: none;
-    outline: 0.0625rem solid @sapTile_Interactive_BorderColor;
-}
-
-.sapMAT:focus-visible {
-    outline: none;
-}
-
-.sapMAT.sapMATAutoPointer {
-    .sapMText {
-        cursor: auto !important;
-    }
-}
-// ToDo card Styles
-
-.sapMAT.sapMToDoCard {
-    .sapMGTHdrContent {
-        margin-bottom: 0.75rem;
-    }
-    .sapMATC {
-    height: 14.375rem;
-     overflow: hidden;
-     .sapMTilePriorityValue {
-         font-size: 0.875rem;
-         font-weight: 400;
-         margin-bottom: 0.75rem;
-         &.High {
-             color: @sapNegativeTextColor;
-             }
-         &.Medium {
-                 color: @sapCriticalTextColor;
-             }
-         &.Low {
-             color: @sapPositiveTextColor;
-             }
-         &.VeryHigh {
-                 color: @sapIndicationColor_1_BorderColor;
-             }
-     }
-     .sapMContainer {
-             display: flex;
-             flex-direction: column;
-             gap: 1rem;
-         .sapMElementWrapper {
-             display: flex;
-             flex-direction: column;
-             gap: 0.25rem;
-             font-weight: 400;
-             font-size: 0.875rem;
-             white-space: nowrap;
-             overflow: hidden;
-             text-overflow: ellipsis;
-             .sapMATCLabel {
-                 color: @sapContent_LabelColor;
-                 white-space: nowrap;
-                 overflow: hidden;
-                 text-overflow: ellipsis;
-                 font-size: 14px;
-                    font-weight: 400;
-                    line-height: 1rem;
-             }
-             .sapMATCValue {
-                 color: @sapTextColor;
-                 white-space: nowrap;
-                 overflow: hidden;
-                 text-overflow: ellipsis;
-                 font-size: 14px;
-                font-weight: 400;
-                line-height: 1rem;
-                height: 1rem;
-                .sapMText {
-                    cursor: pointer;
-                }
-             }
-         }
-     }
-    }
-    .sapMATActionModeContainer {
-     position: absolute;
-     bottom: 0.9rem;
-     right: 1rem;
-    }
-    &.sapMATHideActionButton {
-        .sapMGTActionModeContainer {
-            display: none;
-        }
-    }
- }
-
- .sapMAT:focus {
-    .sapMATFocusDiv{
-        position: absolute;
-        border: 2px solid @sapContent_FocusColor;
-        border-radius:  1rem;
-        inset: 0px;
-        pointer-events: none;
-    }
- }
-
-// Situation Card Styles
-
-.sapMAT.sapMATSituationCard{
-    overflow: hidden;
-    .sapMGTHdrContent {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        gap: 0.5rem;
-        margin-bottom: 0.75rem;
-        height: 2.75rem;
-        .sapMGTHdrIconImage.Neutral {
-            color:  @sapUiNeutralText;
-        }
-        .sapMGTHdrIconImage.Good {
-            color: @sapUiPositiveText;
-        }
-        .sapMGTHdrIconImage.Critical {
-            color: @sapUiCriticalElement;
-        }
-        .sapMGTHdrIconImage.Error {
-            color: @sapUiNegativeText;
-        }
-        .sapMGTHdrIconImage.None {
-            color: @sapUiTileIconColor
-        }
-        .sapMGTHdrIconImage.sapUiIcon{
-            &::before {
-                height: 2.75rem;
-                font-weight: 400;
-                font-size: 2.25rem;
-                line-height: 2.4375rem;
-                display: flex;
-                align-items: end;
-                text-align: center;
-            }
-        }
     }
     .sapMGTContent {
         height: 17.4rem;
@@ -256,6 +107,80 @@
         }
         .sapMGTActionModeContainer {
             display: none;
+        }
+    }
+}
+
+.sapMAT.sapMATHideActionButton {
+    height: 19.625rem;
+ }
+
+.sapMAT:hover {
+    background-color: @sapTile_Hover_Background;
+    box-shadow:  @sapContent_Shadow2;
+}
+
+.sapMAT:active {
+    background-color: @sapTile_Active_Background;
+    box-shadow: none;
+    outline: 0.0625rem solid @sapTile_Interactive_BorderColor;
+}
+
+.sapMAT:focus-visible {
+    outline: none;
+}
+
+.sapMAT.sapMATAutoPointer {
+    .sapMText {
+        cursor: auto !important;
+    }
+}
+
+ .sapMAT:focus {
+    .sapMATFocusDiv{
+        position: absolute;
+        border: 2px solid @sapContent_FocusColor;
+        border-radius:  1rem;
+        inset: 0px;
+        pointer-events: none;
+    }
+ }
+
+// Styles when Icon(headerImage) is present
+
+.sapMAT.sapMATHeaderImage{
+    overflow: hidden;
+    .sapMGTHdrContent {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 0.5rem;
+        height: 2.75rem;
+        .sapMGTHdrIconImage.Neutral {
+            color:  @sapUiNeutralText;
+        }
+        .sapMGTHdrIconImage.Good {
+            color: @sapUiPositiveText;
+        }
+        .sapMGTHdrIconImage.Critical {
+            color: @sapUiCriticalElement;
+        }
+        .sapMGTHdrIconImage.Error {
+            color: @sapUiNegativeText;
+        }
+        .sapMGTHdrIconImage.None {
+            color: @sapUiTileIconColor
+        }
+        .sapMGTHdrIconImage.sapUiIcon{
+            &::before {
+                height: 2.75rem;
+                font-weight: 400;
+                font-size: 2.25rem;
+                line-height: 2.4375rem;
+                display: flex;
+                align-items: end;
+                text-align: center;
+            }
         }
     }
 }
