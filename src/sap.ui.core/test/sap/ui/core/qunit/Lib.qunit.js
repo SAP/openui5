@@ -1,13 +1,14 @@
 /*global QUnit sinon*/
 sap.ui.define([
-	"sap/ui/core/Lib",
-	"sap/base/util/ObjectPath",
-	"sap/ui/core/theming/ThemeManager",
+	"sap/base/Log",
 	"sap/base/i18n/ResourceBundle",
-	"sap/ui/dom/includeScript",
 	"sap/base/util/LoaderExtensions",
-	"sap/base/Log"
-], function(Library, ObjectPath, ThemeManager, ResourceBundle, includeScript, LoaderExtensions, Log) {
+	"sap/base/util/ObjectPath",
+	"sap/ui/base/DataType",
+	"sap/ui/core/Lib",
+	"sap/ui/core/theming/ThemeManager",
+	"sap/ui/dom/includeScript"
+], function(Log, ResourceBundle, LoaderExtensions, ObjectPath, DataType, Library, ThemeManager, includeScript) {
 	"use strict";
 
 	QUnit.module("Instance methods");
@@ -586,61 +587,168 @@ sap.ui.define([
 	/**
 	 * @deprecated since 1.120
 	 */
-	QUnit.module("Pseudo Module Deprecation", {});
+	QUnit.module("Pseudo Module Deprecation", {
+		async before() {
+			sap.ui.define("testing/pseudo/modules/deprecation/library", [
+				"sap/ui/base/DataType",
+				"sap/ui/core/Lib"
+			], function(DataType, Library) {
+				const oThisLib = Library.init({
+					name: 'testing.pseudo.modules.deprecation',
+					noLibraryCSS: true,
+					types: [
+						"testing.pseudo.modules.deprecation.SomeEnum",
+						"testing.pseudo.modules.deprecation.HexNumber",
+						"testing.pseudo.modules.deprecation.SomethingElse"
+					]
+				});
 
-	QUnit.test("", async function(assert) {
-		let oErrorLogSpy;
+				oThisLib.SomeEnum = {
+					"A": "A",
+					"B": "B"
+				};
 
-		assert.expect(6);
+				oThisLib.HexNumber = DataType.createType('testing.pseudo.modules.deprecation.HexNumber', {
+						isValid : function(vValue) {
+							return /^[0-9A-F]+$/.test(vValue);
+						}
+					},
+					DataType.getType('string')
+				);
 
-		sap.ui.predefine('testing/pseudo/modules/deprecation/library', ["sap/ui/core/Lib"], function(Library) {
-			const oThisLib = Library.init({
-				name: 'testing.pseudo.modules.deprecation',
-				noLibraryCSS: true,
-				types: ["testing.pseudo.modules.deprecation.Type1"]
+				oThisLib.SomethingElse = new Date(); // something that is neither a DataType nor a plain object;
+
+				return oThisLib;
 			});
 
-			oThisLib.Type1 = {
-				"A": "A",
-				"B": "B"
-			};
-		});
+			await Library.load({
+				name: "testing.pseudo.modules.deprecation"
+			});
+		},
+		beforeEach() {
+			this.oLib = sap.ui.require("testing/pseudo/modules/deprecation/library");
+			this.spy(Log, "error");
+			this.sExpectedEnumErrorMessage =
+				"Importing the pseudo module 'testing/pseudo/modules/deprecation/SomeEnum' is deprecated."
+				+ " To access the type 'testing.pseudo.modules.deprecation.SomeEnum',"
+				+ " please import 'testing/pseudo/modules/deprecation/library'."
+				+ " You can then reference this type via the library's module export."
+				+ " For more information, see documentation under 'Best Practices for Loading Modules'.";
+			this.sExpectedDataTypeErrorMessage =
+				"Importing the pseudo module 'testing/pseudo/modules/deprecation/HexNumber' is deprecated."
+				+ " To access the type 'testing.pseudo.modules.deprecation.HexNumber',"
+				+ " please import 'testing/pseudo/modules/deprecation/library' to ensure that the type is defined."
+				+ " You can then access it by calling 'DataType.getType(\"testing.pseudo.modules.deprecation.HexNumber\")'."
+				+ " For more information, see documentation under 'Best Practices for Loading Modules'.";
+			this.sExpectedOtherErrorMessage =
+				"Importing the pseudo module 'testing/pseudo/modules/deprecation/SomethingElse' is deprecated."
+				+ " To access the type 'testing.pseudo.modules.deprecation.SomethingElse',"
+				+ " please import 'testing/pseudo/modules/deprecation/library'."
+				+ " For more information, see documentation under 'Best Practices for Loading Modules'.";
+		}
+	});
 
-		await Library.load({
-			name: "testing.pseudo.modules.deprecation"
-		});
-
-		const sExpectedErrorMessage = "Deprecation: Importing the type 'testing.pseudo.modules.deprecation.Type1' as a pseudo module is deprecated. Please import the type from the module 'testing/pseudo/modules/deprecation/library'. You can then reference this type via the library's module export. For more information, see documentation under 'Best Practices for Loading Modules'.";
-
+	QUnit.test("Enum with sap.ui.require", function(assert) {
 		// Anonymous require: Log does not contain the requesting module
-		await new Promise((resolve, reject) => {
-			oErrorLogSpy = this.spy(Log, "error");
-
-			sap.ui.require(["testing/pseudo/modules/deprecation/Type1"], (Type1) => {
-				assert.ok(oErrorLogSpy.calledWith(sExpectedErrorMessage), "Error Message for pseudo module deprecation logged.");
-				assert.ok(Type1.A, "A", "pseudo type module export is correct (A).");
-				assert.ok(Type1.B, "B", "pseudo type module export is correct (B).");
+		return new Promise((resolve, reject) => {
+			sap.ui.require(["testing/pseudo/modules/deprecation/SomeEnum"], (SomeEnum) => {
+				assert.ok(Log.error.calledWith(this.sExpectedEnumErrorMessage), "Error Message for pseudo module deprecation logged.");
+				assert.deepEqual(SomeEnum, this.oLib.SomeEnum, "pseudo type module export is correct (A).");
 				resolve();
 			}, reject);
-		}).finally(() => {
-			oErrorLogSpy.restore();
-		});
-
-		// Anonymous require: Log does not contain the requesting module
-		await new Promise((resolve, reject) => {
-			oErrorLogSpy = this.spy(Log, "error");
-			const sModuleSpecificErrorMessage = `(dependency of 'my/old/Module.js') ${sExpectedErrorMessage}`;
-
-			sap.ui.define("my/old/Module", ["testing/pseudo/modules/deprecation/Type1"], (Type1) => {
-				assert.ok(oErrorLogSpy.calledWith(sModuleSpecificErrorMessage), "Error Message for pseudo module deprecation logged.");
-				assert.ok(Type1.A, "A", "pseudo type module export is correct (A).");
-				assert.ok(Type1.B, "B", "pseudo type module export is correct (B).");
-				resolve();
-			}, reject);
-		}).finally(() => {
-			oErrorLogSpy.restore();
 		});
 	});
+
+	QUnit.test("DataType with sap.ui.require", function(assert) {
+		// Anonymous require: Log does not contain the requesting module
+		return new Promise((resolve, reject) => {
+			sap.ui.require(["testing/pseudo/modules/deprecation/HexNumber"], (HexNumber) => {
+				assert.ok(Log.error.calledWith(this.sExpectedDataTypeErrorMessage), "Error Message for pseudo module deprecation logged.");
+				assert.strictEqual(HexNumber, DataType.getType("testing.pseudo.modules.deprecation.HexNumber"), "pseudo type module export is correct.");
+				resolve();
+			}, reject);
+		});
+	});
+
+	QUnit.test("Something else with sap.ui.require", function(assert) {
+		// Anonymous require: Log does not contain the requesting module
+		return new Promise((resolve, reject) => {
+			sap.ui.require(["testing/pseudo/modules/deprecation/SomethingElse"], (SomethingElse) => {
+				assert.ok(Log.error.calledWith(this.sExpectedOtherErrorMessage), "Error Message for pseudo module deprecation logged.");
+				assert.strictEqual(SomethingElse, this.oLib.SomethingElse, "pseudo type module export is correct.");
+				resolve();
+			}, reject);
+		});
+	});
+
+	QUnit.test("Enum with sap.ui.define", function(assert) {
+		// sap.ui.define: Log contains the requesting module
+		return new Promise((resolve, reject) => {
+			const sModuleSpecificErrorMessage = `(dependency of 'my/old/Module1.js') ${this.sExpectedEnumErrorMessage}`;
+
+			sap.ui.define("my/old/Module1", ["testing/pseudo/modules/deprecation/SomeEnum"], (SomeEnum) => {
+				assert.ok(Log.error.calledWith(sModuleSpecificErrorMessage), "Error Message for pseudo module deprecation logged.");
+				assert.deepEqual(SomeEnum, this.oLib.SomeEnum, "pseudo type module export is correct.");
+			});
+
+			sap.ui.require(["my/old/Module1"], function() {
+				resolve();
+			}, reject);
+		});
+	});
+
+	QUnit.test("DataType with sap.ui.define", function(assert) {
+		// sap.ui.define: Log contains the requesting module
+		return new Promise((resolve, reject) => {
+			const sModuleSpecificErrorMessage = `(dependency of 'my/old/Module2.js') ${this.sExpectedDataTypeErrorMessage}`;
+
+			sap.ui.define("my/old/Module2", ["testing/pseudo/modules/deprecation/HexNumber"], (HexNumber) => {
+				assert.ok(Log.error.calledWith(sModuleSpecificErrorMessage), "Error Message for pseudo module deprecation logged.");
+				assert.strictEqual(HexNumber, DataType.getType("testing.pseudo.modules.deprecation.HexNumber"), "pseudo type module export is correct.");
+			});
+
+			sap.ui.require(["my/old/Module1"], function() {
+				resolve();
+			}, reject);
+		});
+	});
+
+	QUnit.test("Something else with sap.ui.define", function(assert) {
+		// sap.ui.define: Log contains the requesting module
+		return new Promise((resolve, reject) => {
+			const sModuleSpecificErrorMessage = `(dependency of 'my/old/Module3.js') ${this.sExpectedOtherErrorMessage}`;
+
+			sap.ui.define("my/old/Module3", ["testing/pseudo/modules/deprecation/SomethingElse"], (SomethingElse) => {
+				assert.ok(Log.error.calledWith(sModuleSpecificErrorMessage), "Error Message for pseudo module deprecation logged.");
+				assert.strictEqual(SomethingElse, this.oLib.SomethingElse, "pseudo type module export is correct.");
+				resolve();
+			});
+
+			sap.ui.require(["my/old/Module1"], function() {
+				resolve();
+			}, reject);
+		});
+	});
+
+	QUnit.test("Enum with probing require", function(assert) {
+		const SomeEnum = sap.ui.require("testing/pseudo/modules/deprecation/SomeEnum");
+		assert.deepEqual(SomeEnum, this.oLib.SomeEnum);
+		assert.ok(Log.error.calledWith(this.sExpectedEnumErrorMessage), "Error Message for pseudo module deprecation logged.");
+	});
+
+	QUnit.test("DataType with probing require", function(assert) {
+		const HexNumber = sap.ui.require("testing/pseudo/modules/deprecation/HexNumber");
+		assert.deepEqual(HexNumber, DataType.getType("testing.pseudo.modules.deprecation.HexNumber"));
+		assert.ok(Log.error.calledWith(this.sExpectedDataTypeErrorMessage), "Error Message for pseudo module deprecation logged.");
+	});
+
+	QUnit.test("Enum with probing require", function(assert) {
+		const SomethingElse = sap.ui.require("testing/pseudo/modules/deprecation/SomethingElse");
+		assert.deepEqual(SomethingElse, this.oLib.SomethingElse);
+		assert.ok(Log.error.calledWith(this.sExpectedOtherErrorMessage), "Error Message for pseudo module deprecation logged.");
+	});
+
+
 
 	QUnit.module("Handling of 'apiVersion: 2'");
 

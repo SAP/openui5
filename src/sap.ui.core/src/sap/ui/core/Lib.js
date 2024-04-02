@@ -1433,6 +1433,17 @@ sap.ui.define([
 		// register interface types
 		DataType.registerInterfaceTypes(oLib.interfaces);
 
+		function createHintForType(sTypeName) {
+			const typeObj = ObjectPath.get(sTypeName);
+			if ( typeObj instanceof DataType ) {
+				return ` to ensure that the type is defined. You can then access it by calling 'DataType.getType("${sTypeName}")'.`;
+			} else if ( isPlainObject(typeObj) ) {
+				return `. You can then reference this type via the library's module export.`;
+			} else {
+				return `.`; // no further hint
+			}
+		}
+
 		/**
 		 * Declare a module for each (non-builtin) simple type.
 		 * Only needed for backward compatibility: some code 'requires' such types although they never have been modules on their own.
@@ -1440,12 +1451,17 @@ sap.ui.define([
 		 */
 		for (i = 0; i < oLib.types.length; i++) {
 			if ( !/^(any|boolean|float|int|string|object|void)$/.test(oLib.types[i]) ) {
-				// register a wrapper module that logs a deprecation warning
+				// register a pseudo module that logs a deprecation warning
 				const sTypeName = oLib.types[i];
-				const sLibraryJsPath = oLib.name.replace(/\./g, "/") + "/library";
-				sap.ui.loader._.declareModule(sTypeName.replace(/\./g, "/") + ".js",
-					`Deprecation: Importing the type '${sTypeName}' as a pseudo module is deprecated. Please import the type from the module '${sLibraryJsPath}'. You can then reference this type via the library's module export. ` +
-					`For more information, see documentation under 'Best Practices for Loading Modules'.`);
+				sap.ui.loader._.declareModule(
+					sTypeName.replace(/\./g, "/") + ".js",
+					() => (
+						`Importing the pseudo module '${sTypeName.replace(/\./g, "/")}' is deprecated.`
+						+ ` To access the type '${sTypeName}', please import '${oLib.name.replace(/\./g, "/")}/library'`
+						+ createHintForType(sTypeName)
+						+ ` For more information, see documentation under 'Best Practices for Loading Modules'.`
+					)
+				);
 
 				// ensure parent namespace of the type
 				var sNamespacePrefix = sTypeName.substring(0, sTypeName.lastIndexOf("."));
