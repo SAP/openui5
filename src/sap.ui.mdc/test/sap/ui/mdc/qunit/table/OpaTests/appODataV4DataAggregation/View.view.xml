@@ -1,0 +1,80 @@
+<mvc:View
+	xmlns:mdc="sap.ui.mdc"
+    xmlns:mdcTable="sap.ui.mdc.table"
+    xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:variants="sap.ui.fl.variants"
+	controllerName="sap.ui.mdc.table.OpaTests.appODataV4DataAggregation.Controller">
+    <App>
+        <Page showHeader="false">
+            <mdc:FilterBar
+                id="mdcFilterBar"
+                delegate="{
+                    name: 'delegates/odata/v4/FilterBarDelegate',
+                    payload: {collectionName: 'BusinessPartners'}
+                }">
+                <mdc:basicSearchField>
+                    <mdc:FilterField id="searchField" placeholder="Search" conditions="{$filters>/conditions/$search}"/>
+                </mdc:basicSearchField>
+            </mdc:FilterBar>
+            <mdc:Table
+                id="mdcTable"
+                header="Products"
+                delegate="{
+                    name: 'sap/ui/mdc/table/OpaTests/appODataV4DataAggregation/TableDelegate',
+                    payload: {collectionName: 'BusinessPartners'}
+                }"
+                filter="mdcFilterBar"
+                p13nMode="Column,Sort,Filter,Group,Aggregate"
+                selectionMode="Multi"
+                threshold="0"
+                showRowCount="false"
+                groupConditions="{
+                    groupLevels: [
+                        {name: 'Country_Code'},
+                        {name: 'Region'},
+                        {name: 'Segment'}
+                    ]
+                }"
+                aggregateConditions="{
+                    SalesAmountLocalCurrency: {}
+                }">
+                <mdc:type>
+                    <mdcTable:GridTableType rowCountMode="Fixed" rowCount="5" />
+                </mdc:type>
+                <mdc:variant>
+                    <variants:VariantManagement id="mdcTable-vm" for="mdcTable"/>
+                </mdc:variant>
+                <mdc:columns>
+                    <mdcTable:Column id="mdcTable-Country" header="Country Name" propertyKey="Country">
+                        <Text text="{Country}"/>
+                    </mdcTable:Column>
+                    <mdcTable:Column id="mdcTable-Region" header="Region" propertyKey="Region">
+                        <Text text="{Region}"/>
+                    </mdcTable:Column>
+                    <mdcTable:Column id="mdcTable-Segment" header="Segment" propertyKey="Segment">
+                        <Text text="{Segment}"/>
+                    </mdcTable:Column>
+                    <mdcTable:Column id="mdcTable-SalesAmountLocalCurrency"
+                        header="Sales Amount (local currency)"
+                        propertyKey="SalesAmountLocalCurrency">
+                        <Text text="{
+                            parts: [
+                                'SalesAmountLocalCurrency',
+                                'LocalCurrency',
+                                {path: '/##@@requestCurrencyCodes', mode: 'OneTime', targetType: 'any'}
+                            ],
+                            type: 'sap.ui.model.odata.type.Currency'
+                        }"/>
+                    </mdcTable:Column>
+                    <mdcTable:Column id="mdcTable-SalesNumber" header="Sales Number" propertyKey="SalesNumber">
+                        <Text text="{SalesNumber}"/>
+                    </mdcTable:Column>
+                    <mdcTable:Column id="mdcTable-AccountResponsible" header="Account Responsible" propertyKey="AccountResponsible">
+                        <Text text="{AccountResponsible}"/>
+                    </mdcTable:Column>
+                </mdc:columns>
+            </mdc:Table>
+        </Page>
+    </App>
+</mvc:View>

@@ -121,11 +121,20 @@ sap.ui.define(function() {
 				},
 				autostart: false
 			},
-			"Table - TreeTableType (ODataV4 - Hierarchy)": {
+			"Table - TreeTableType (ODataV4, Hierarchy)": {
 				group: "OPA",
 				module: "./OpaTests/start",
 				uriParams: {
 					app: "appODataV4Hierarchy",
+					journey: "TableJourney"
+				},
+				autostart: false
+			},
+			"Table - GridTableType (ODataV4, DataAggregation)": {
+				group: "OPA",
+				module: "./OpaTests/start",
+				uriParams: {
+					app: "appODataV4DataAggregation",
 					journey: "TableJourney"
 				},
 				autostart: false

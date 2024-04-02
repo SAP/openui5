@@ -63,23 +63,26 @@ sap.ui.define([
 	};
 
 	/**
-	 * Finds a table row.
+	 * Finds the first table row matching the search criteria.
 	 *
 	 * @param {string | sap.ui.mdc.Table} vTable Id or instance of the table
-	 * @param {object} mConfig Used to find the row to expand
-	 * @param {int} mConfig.index Index of the row in the aggregation of the inner table
-	 * @param {string} mConfig.path Path of the property relative to the binding context of the row
-	 * @param {string} mConfig.value Value of the property
+	 * @param {object} mConfig Config
+	 * @param {int} [mConfig.index] Index of the row in the aggregation of the inner table
+	 * @param {object} [mConfig.data] Information about the data, where the key is the path in the rows binding context
 	 * @param {function(sap.ui.table.Row | sap.m.ColumnListItem, sap.ui.model.Context)} [mConfig.check]
-	 *     If a custom check function is provided, <code>path</code> and <code>value</code> are obsolete
+	 *     If a custom check function is provided, <code>data</code> is obsolete
 	 * @param {function(sap.ui.mdc.Table, sap.ui.table.Row | sap.m.ColumnListItem)} mConfig.success Called when the row is found
+	 * @param {function(object)} [mConfig.error] Called when no row was found
+	 * @param {string} [mConfig.errorMessage] Message to be displayed if no row is found
 	 * @returns {Promise} OPA waitFor
 	 * @private
 	 */
 	Util.waitForRow = function(vTable, mConfig) {
 		return waitForTable.call(this, vTable, {
 			success: (oTable) => {
+				const bMatchAtIndex = mConfig.index != null;
 				let oRow;
+				let mModelValues;
 
 				return this.waitFor({
 					check: function() {
@@ -89,12 +92,23 @@ sap.ui.define([
 							const sModelName = oTable._oTable.getBindingInfo(sAggregationName).model;
 							const oBindingContext = oRow.getBindingContext(sModelName);
 
-							if (iIndex !== mConfig.index) {
+							if (bMatchAtIndex && iIndex !== mConfig.index) {
 								return false;
+							} else if (bMatchAtIndex && !mConfig.check && !mConfig.data) {
+								return iIndex === mConfig.index;
 							} else if (mConfig.check) {
 								return mConfig.check(oRow, oBindingContext);
 							} else {
-								return oBindingContext.getProperty(mConfig.path) === mConfig.value;
+								const aPaths = Object.keys(mConfig.data);
+
+								mModelValues = aPaths.reduce((mModelValues, sPath) => {
+									mModelValues[sPath] = oBindingContext.getProperty(sPath);
+									return mModelValues;
+								}, {});
+
+								return aPaths.length > 0 && aPaths.every((sPath) => {
+									return mModelValues[sPath] == mConfig.data[sPath];
+								});
 							}
 						});
 
@@ -103,7 +117,20 @@ sap.ui.define([
 					success: function() {
 						mConfig.success(oTable, oRow);
 					},
-					errorMessage: "No row found for " + JSON.stringify(mConfig)
+					error: function(mError) {
+						if (mConfig.errorMessage == null) {
+							let sAdditionalInfo = "";
+
+							if (bMatchAtIndex && mModelValues) {
+								sAdditionalInfo = `\nData of row at index ${mConfig.index}: ${JSON.stringify(mModelValues, null, 2)}`;
+							}
+
+							mError.errorMessage = mError.errorMessage.replace("$additionalInfo", sAdditionalInfo);
+						}
+
+						mConfig.error?.(mError);
+					},
+					errorMessage: mConfig.errorMessage ?? `No row found for ${JSON.stringify(mConfig, null, 2)}$additionalInfo`
 				});
 			}
 		});

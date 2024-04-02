@@ -988,27 +988,70 @@ sap.ui.define([
 		},
 
 		/**
+		 * Checks if a row has no binding context.
+		 *
+		 * @param {string | sap.ui.mdc.Table} vTable Id or instance of the table
+		 * @param {object} mConfig Config
+		 * @param {int} mConfig.index Index of the row in the aggregation of the inner table
+		 * @returns {Promise} OPA waitFor
+		 */
+		iCheckRowIsEmpty: function(vTable, mConfig) {
+			return Util.waitForRow.call(this, vTable, {
+				index: mConfig.index,
+				check: function(oRow, oBindingContext) {
+					return !oBindingContext;
+				},
+				success: function(oTable, oRow) {
+					Opa5.assert.ok(true, `The row at index ${mConfig.index} is empty`);
+				},
+				errorMessage: `No empty row at index ${mConfig.index} found`
+			});
+		},
+
+		/**
 		 * Checks the content of a row.
 		 *
 		 * @param {string | sap.ui.mdc.Table} vTable Id or instance of the table
-		 * @param {object} mConfig Used to find the row to expand
+		 * @param {object} mConfig Config
 		 * @param {int} mConfig.index Index of the row in the aggregation of the inner table
-		 * @param {string} mConfig.path Path of the property
-		 * @param {string} mConfig.value Value of the property
-		 * @param {function(sap.ui.table.Row | sap.m.ColumnListItem, sap.ui.model.Context)} [mConfig.check]
-	 	 *     If a custom check function is provided, <code>path</code>, and <code>value</code> are obsolete
+		 * @param {object} mConfig.data Information about the data, where the key is the path in the rows binding context
 		 * @returns {Promise} OPA waitFor
-		 * @private
 		 */
 		iCheckRowData: function(vTable, mConfig) {
 			return Util.waitForRow.call(this, vTable, {
 				index: mConfig.index,
-				path: mConfig.path,
-				value: mConfig.value,
-				check: mConfig.check,
+				data: mConfig.data || {},
 				success: function(oTable, oRow) {
-					Opa5.assert.ok(true, `The row content at index ${mConfig.index} is as expected`);
+					Opa5.assert.ok(true, `The row at index ${mConfig.index} has the expected data`);
 				}
+			});
+		},
+
+		/**
+		 * Checks the title of a group header row.
+		 *
+		 * @param {string | sap.ui.mdc.Table} vTable Id or instance of the table
+		 * @param {object} mConfig Config
+		 * @param {int} mConfig.index Index of the row in the aggregation of the inner table
+		 * @param {int} mConfig.title Group header title
+		 * @returns {Promise} OPA waitFor
+		 */
+		iCheckGroupHeaderRowTitle: function(vTable, mConfig) {
+			let oFoundRow;
+
+			return Util.waitForRow.call(this, vTable, {
+				index: mConfig.index,
+				check: function(oRow, oBindingContext) {
+					oFoundRow = oRow;
+					return typeof oRow.getTitle === "function" && oRow.getTitle() === mConfig.title;
+				},
+				success: function(oTable, oRow) {
+					Opa5.assert.ok(true, `The group header row at index ${mConfig.index} has the expected title`);
+				},
+				error: function(mError) {
+					mError.errorMessage = mError.errorMessage.replace("$title", oFoundRow?.getTitle?.());
+				},
+				errorMessage: `The group header row at index ${mConfig.index} has title "$title", expected "${mConfig.title}"`
 			});
 		}
 	};
