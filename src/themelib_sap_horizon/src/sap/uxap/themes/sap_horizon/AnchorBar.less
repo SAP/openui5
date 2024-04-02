@@ -133,9 +133,14 @@ html.sap-desktop .sapUxAPAnchorBar .sapUxAPHierarchicalSelect.sapMSltPressed:not
 	}
 }
 
-.sapUxAPAnchorBarButton .sapMSB .sapMSBArrow {
-	top: 50%;
-    transform: translateY(-50%);
+.sapUxAPAnchorBarButton .sapMSB {
+	.sapMSBText {
+		border-color: transparent;
+	}
+	.sapMSBArrow {
+		top: 50%;
+		transform: translateY(-50%);
+	}
 }
 
 .sapUiSizeCompact .sapUxAPAnchorBar .sapUxAPAnchorBarButton.sapMBarChild .sapMSBArrow .sapMBtnInner .sapMBtnIcon,
