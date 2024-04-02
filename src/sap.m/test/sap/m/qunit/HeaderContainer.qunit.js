@@ -35,10 +35,10 @@ sap.ui.define([
 	Mobile.init();
 
 	QUnit.module("Default Property Values", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oHeaderContainer = new HeaderContainer("headerContainer");
 			this.oHeaderContainer.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oHeaderContainer.destroy();
@@ -78,11 +78,11 @@ sap.ui.define([
 		assert.ok(this.oHeaderContainer.getShowDividers());
 	});
 
-	QUnit.test("Content changes should not break out container timer", function (assert) {
+	QUnit.test("Content changes should not break out container timer", async function (assert) {
 		this.oHeaderContainer.addContent(new Label({
 			text: "test"
 		}));
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		this.oHeaderContainer.removeAllContent();
 		this.oHeaderContainer.addContent(new Label({
@@ -104,10 +104,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("Basic Rendering", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oHeaderContainer = new HeaderContainer("headerContainer");
 			this.oHeaderContainer.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oHeaderContainer.destroy();
@@ -120,9 +120,9 @@ sap.ui.define([
 		assert.ok(document.getElementById("headerContainer-scroll-area"), "HeaderContainer scroll area was rendered successfully");
 	});
 
-	QUnit.test("DOM Structure should exist for vertical header container", function (assert) {
+	QUnit.test("DOM Structure should exist for vertical header container", async function (assert) {
 		this.oHeaderContainer.setOrientation("Vertical");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.ok(document.getElementById("headerContainer"), "HeaderContainer was rendered successfully");
 		assert.ok(document.getElementById("headerContainer-scroll-area"), "HeaderContainer scroll area was rendered successfully");
 	});
@@ -132,50 +132,50 @@ sap.ui.define([
 		assert.equal(document.getElementById("headerContainer").style.height, "auto");
 	});
 
-	QUnit.test("Default inline style for width and height in DOM structure (vertical mode)", function (assert) {
+	QUnit.test("Default inline style for width and height in DOM structure (vertical mode)", async function (assert) {
 		//Arrange
 		this.oHeaderContainer.setOrientation(Orientation.Vertical);
 		//Act
-		oCore.applyChanges();
+		await nextUIUpdate();
 		//Assert
 		assert.equal(document.getElementById("headerContainer").style.width, "auto");
 		assert.equal(document.getElementById("headerContainer").style.height, "100%");
 	});
 
-	QUnit.test("Inline style for width and height in DOM structure", function (assert) {
+	QUnit.test("Inline style for width and height in DOM structure", async function (assert) {
 		//Arrange
 		this.oHeaderContainer.setWidth("31%");
 		this.oHeaderContainer.setHeight("32%");
 		//Act
-		oCore.applyChanges();
+		await nextUIUpdate();
 		//Assert
 		assert.equal(document.getElementById("headerContainer").style.width, "31%");
 		assert.equal(document.getElementById("headerContainer").style.height, "32%");
 	});
 
-	QUnit.skip("Acc - role assigned is of type list", function (assert) {
+	QUnit.skip("Acc - role assigned is of type list", async function (assert) {
 		//Arrange
 		var sRole = this.oHeaderContainer.$().attr( "role" );
 		//Act
-		oCore.applyChanges();
+		await nextUIUpdate();
 		//Assert
 		assert.equal(sRole, "list", "HeaderContainer role is of type list");
 	});
 
-	QUnit.test("Acc - role assigned is of type list to scroll container(immediate parent of listitems)", function (assert) {
+	QUnit.test("Acc - role assigned is of type list to scroll container(immediate parent of listitems)", async function (assert) {
 		//Arrange
 		var sRole = this.oHeaderContainer.aDelegates[0].oDelegate.oDomRef.getAttribute("role");
 		//Act
-		oCore.applyChanges();
+		await nextUIUpdate();
 		//Assert
 		assert.equal(sRole, "list", "scrollContainer role is of type list");
 	});
 
 	QUnit.module("Background design", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oHeaderContainer = new HeaderContainer("headerContainer");
 			this.oHeaderContainer.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oHeaderContainer.destroy();
@@ -183,13 +183,13 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("onAfterRendering is triggered only once after initial rendering", function (assert) {
+	QUnit.test("onAfterRendering is triggered only once after initial rendering", async function (assert) {
 		//Arrange
 		var oHeaderContainer = new HeaderContainer();
 		var oSpy = sinon.spy(oHeaderContainer, "onAfterRendering");
 		//Act
 		oHeaderContainer.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		//Assert
 		assert.strictEqual(oSpy.callCount, 1, "HeaderContainer was rendered only once");
 		//Cleanup
@@ -212,7 +212,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Scrolling", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.OFFSET = 10;
 			this.oItem1 = new FlexBox({
 				height: "120px",
@@ -240,17 +240,8 @@ sap.ui.define([
 				width: '400px'
 			});
 			this.oHeaderContainer.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
-			if (!oCore.isThemeApplied()) {
-				return new Promise(function (resolve) {
-					function themeChanged() {
-						resolve();
-						oCore.detachThemeChanged(themeChanged);
-					}
-					oCore.attachThemeChanged(themeChanged);
-				});
-			}
 		},
 		afterEach: function () {
 			this.oHeaderContainer.destroy();
@@ -259,12 +250,12 @@ sap.ui.define([
 		SMALL: 1,
 		LARGE: 2,
 		NUMBER_OF_TRIES: 10,
-		prepareContent: function (itemsConfiguration) {
+		prepareContent: async function (itemsConfiguration) {
 			this.oHeaderContainer.removeAllContent();
 			itemsConfiguration.forEach(function (i) {
 				this.oHeaderContainer.addContent(i === this.SMALL ? this.oItemSmall.clone() : this.oItemLarge.clone());
 			}.bind(this));
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		testOverflowVisibility: function (assert, itemsConfiguration, invisibleBeforeScroll, invisibleAfterScroll) {
 			var done = assert.async();
@@ -305,11 +296,11 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Scroll event is being triggered", function (assert) {
+	QUnit.test("Scroll event is being triggered", async function (assert) {
 		this.oHeaderContainer.attachScroll(function (oEvent) {
 			assert.ok(oEvent, "Scroll event is fired");
 		});
-		oCore.applyChanges();
+		await nextUIUpdate();
 		this.oHeaderContainer._scroll();
 	});
 
@@ -395,7 +386,7 @@ sap.ui.define([
 	if (Device.system.desktop) {
 
 		QUnit.module("Keyboard navigation focus issues", {
-			beforeEach: function () {
+			beforeEach: async function () {
 				this.oHeaderContainer = new HeaderContainer("headerContainer", {
 					content: [
 						new VerticalLayout(),
@@ -404,7 +395,7 @@ sap.ui.define([
 					]
 				});
 				this.oHeaderContainer.placeAt("qunit-fixture");
-				oCore.applyChanges();
+				await nextUIUpdate();
 			},
 			afterEach: function () {
 				this.oHeaderContainer.destroy();
@@ -537,7 +528,7 @@ sap.ui.define([
 		});
 
 		QUnit.module("General focus issues", {
-			beforeEach: function () {
+			beforeEach: async function () {
 				this.oHeaderContainer = new HeaderContainer("headerContainer", {
 					content: [
 						new Button({
@@ -555,7 +546,7 @@ sap.ui.define([
 					]
 				});
 				this.oHeaderContainer.placeAt("qunit-fixture");
-				oCore.applyChanges();
+				await nextUIUpdate();
 			},
 			afterEach: function () {
 				this.oHeaderContainer.destroy();
@@ -625,7 +616,7 @@ sap.ui.define([
 	} //End of Device.system.desktop
 
 	QUnit.module("Padding removed when scrolling to begin and end", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oHeaderContainer = new HeaderContainer("headerContainer", {
 				width: "400px",
 				height: "400px",
@@ -649,7 +640,7 @@ sap.ui.define([
 				]
 			});
 			this.oHeaderContainer.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oHeaderContainer.destroy();
@@ -708,7 +699,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Aggregation Handling", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oHeaderContainer = new HeaderContainer("headerContainer", {
 				content: [
 					new FlexBox({
@@ -730,7 +721,7 @@ sap.ui.define([
 				]
 			});
 			this.oHeaderContainer.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oHeaderContainer.destroy();
@@ -760,7 +751,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Wrapping and unwrapping HeaderContainerItemContainer", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oBox0 = new FlexBox("box0");
 			this.oBox1 = new FlexBox("box1");
 			this.oBox2 = new FlexBox("box2");
@@ -771,7 +762,7 @@ sap.ui.define([
 				]
 			});
 			this.oHeaderContainer.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oBox0.destroy();
@@ -820,11 +811,11 @@ sap.ui.define([
 		assert.strictEqual(this.oHeaderContainer.indexOfContent(this.oBox1), -1, "Content has been deleted from aggregation ");
 	});
 
-	QUnit.test("HeaderContainer removeAllContent is properly overwritten", function (assert) {
+	QUnit.test("HeaderContainer removeAllContent is properly overwritten", async function (assert) {
 		//Arrange
 		this.oHeaderContainer.addContent(this.oBox1);
 		this.oHeaderContainer.addContent(this.oBox2);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		//Act
 		var aRemovedContent = this.oHeaderContainer.removeAllContent();
 		//Assert
@@ -858,12 +849,12 @@ sap.ui.define([
 	});
 
 	QUnit.module("Rendering of Left and Right Arrow Indicators for Mobile Devices", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			Device.system.phone = true;
 			Device.system.desktop = false;
 			this.oHeaderContainer = new HeaderContainer("headerContainer");
 			this.oHeaderContainer.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			Device.system.phone = false;
@@ -933,10 +924,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("Rendering of Left and Right Arrow Indicators for Desktop Devices", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oHeaderContainer = new HeaderContainer("headerContainer");
 			this.oHeaderContainer.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oHeaderContainer.destroy();
@@ -1004,10 +995,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("Aria handling", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oHeaderContainer = new HeaderContainer("headerContainer");
 			this.oHeaderContainer.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oHeaderContainer.destroy();
@@ -1015,7 +1006,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("aria-setsize & aria-posinset", function (assert) {
+	QUnit.test("aria-setsize & aria-posinset", async function (assert) {
 		var iCount = 5,
 			i;
 
@@ -1023,7 +1014,7 @@ sap.ui.define([
 			this.oHeaderContainer.addContent(new Text());
 		}
 
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var $items = this.oHeaderContainer.$().find(".sapMHrdrCntrInner");
 
@@ -1033,7 +1024,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("aria-ariaLabelledBy", function (assert) {
+	QUnit.test("aria-ariaLabelledBy", async function (assert) {
 		var aTexts = [],
 			iCount = 5,
 			i;
@@ -1044,7 +1035,7 @@ sap.ui.define([
 			this.oHeaderContainer.addContent(new Text());
 		}
 
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var $items = this.oHeaderContainer.$().find(".sapMHrdrCntrInner");
 
@@ -1053,7 +1044,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("aria-setsize & aria-posinset for hidden elements", function (assert) {
+	QUnit.test("aria-setsize & aria-posinset for hidden elements", async function (assert) {
 		var iCount = 10, i, bVisible;
 
 		for (i = 0; i < iCount; i++) {
@@ -1067,7 +1058,7 @@ sap.ui.define([
 			}));
 		}
 
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var $items = this.oHeaderContainer.$().find(".sapMHrdrCntrInner");
 
@@ -1081,10 +1072,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("Handle deleted HeaderContainer Contents", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oHeaderContainer = new HeaderContainer("headerContainer");
 			this.oHeaderContainer.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oHeaderContainer.destroy();
@@ -1100,7 +1091,7 @@ sap.ui.define([
 			this.oHeaderContainer.addContent(new Text("testID" + i));
 		}
 
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var $items = this.oHeaderContainer.$().find(".sapMHrdrCntrInner");
 		assert.equal($items.length, this.oHeaderContainer.getContent().length, "Length of the Header Container Contents is 5");
@@ -1159,7 +1150,7 @@ sap.ui.define([
 			this.oHeaderContainer.addContent(new Text("testID" + i));
 		}
 
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var $items = this.oHeaderContainer.$().find(".sapMHrdrCntrInner");
 		assert.equal($items.length, this.oHeaderContainer.getContent().length, "Length of the Header Container Contents is 5");
@@ -1218,7 +1209,7 @@ sap.ui.define([
 			this.oHeaderContainer.addContent(new Text("testID" + i));
 		}
 
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var $items = this.oHeaderContainer.$().find(".sapMHrdrCntrInner");
 		assert.equal($items.length, this.oHeaderContainer.getContent().length, "Length of the Header Container Contents is 5");
@@ -1299,7 +1290,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("HeaderContainer in Normal View initialization.", function (assert) {
+	QUnit.test("HeaderContainer in Normal View initialization.", async function (assert) {
 
 		var fnDone = assert.async(),
 			iCount = 5,
@@ -1336,10 +1327,10 @@ sap.ui.define([
 			}));
 		}
 		this.oHeaderContainer.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 	});
 
-	QUnit.test("HeaderContainer in Mobile View initialization.", function (assert) {
+	QUnit.test("HeaderContainer in Mobile View initialization.", async function (assert) {
 		var fnDone = assert.async(),
 			iCount = 5,
 			i;
@@ -1394,11 +1385,11 @@ sap.ui.define([
 			}));
 		}
 		this.oHeaderContainer.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 	});
 
-	QUnit.test("HeaderContainer in Mobile View initialization-ScreenSize 420.", function (assert) {
+	QUnit.test("HeaderContainer in Mobile View initialization-ScreenSize 420.", async function (assert) {
 		var fnDone = assert.async(),
 			iCount = 5,
 			i;
@@ -1467,13 +1458,13 @@ sap.ui.define([
 			}));
 		}
 		this.oHeaderContainer.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 	});
 	QUnit.module("HeaderContainer with RTL", {
-		beforeEach: function () {
+		beforeEach: async function () {
 		Localization.setRTL(true);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		this.initializeMobileView(320);
 		this.oHeaderContainer = new HeaderContainer({
 			gridLayout: true,
@@ -1482,7 +1473,7 @@ sap.ui.define([
 			scrollTime: 1000
 		});
 		},
-		afterEach: function () {
+		afterEach: async function () {
 			if (this.oHeaderContainer) {
 				this.oHeaderContainer.destroy();
 				this.oHeaderContainer = null;
@@ -1491,7 +1482,7 @@ sap.ui.define([
 				this.resetMobileView();
 			}
 			Localization.setRTL(false);
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		initializeMobileView: function(iScreenWidth) {
 			this.initialScreenWidth = Device.resize.width;
@@ -1512,7 +1503,7 @@ sap.ui.define([
 			document.querySelector("html").classList.add("sap-desktop");
 		}
 	});
-	QUnit.test("HeaderContainer in Mobile View initialization in RTL Mode.", function (assert) {
+	QUnit.test("HeaderContainer in Mobile View initialization in RTL Mode.", async function (assert) {
 		var fnDone = assert.async(),
 			iCount = 5,
 			i;
@@ -1559,7 +1550,7 @@ sap.ui.define([
 			}));
 		}
 		this.oHeaderContainer.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 	});
 
