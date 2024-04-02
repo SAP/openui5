@@ -15,7 +15,7 @@ sap.ui.define([
 	'sap/ui/Device',
 	'sap/ui/core/library',
 	"sap/ui/thirdparty/jquery",
-    'sap/ui/core/date/UI5Date'
+	'sap/ui/core/date/UI5Date'
 ],
 	function(
 		TimePickerInternals,
@@ -30,7 +30,7 @@ sap.ui.define([
 		Device,
 		coreLibrary,
 		jQuery,
-        UI5Date
+		UI5Date
 	) {
 		"use strict";
 
@@ -714,7 +714,9 @@ sap.ui.define([
 				oFormatButton = this._getFormatButton(),
 				sValueFormat = this.getValueFormat(),
 				iHours,
-				sAmPm = null;
+				sAmPm = null,
+				bTwelveHourFormatDueToB = !this._isFormatSupport24() && sValueFormat.indexOf("B") !== -1,
+				bTwelveHourFormatDueToA = sValueFormat.indexOf("a") !== -1 || sValueFormat === "";
 
 			oDate = oDate || UI5Date.getInstance();
 
@@ -735,7 +737,7 @@ sap.ui.define([
 				iHours = 24;
 			}
 
-			if ((sValueFormat.indexOf("a") !== -1 || sValueFormat === "") && oFormatButton) {
+			if ((bTwelveHourFormatDueToA || bTwelveHourFormatDueToB) && oFormatButton) {
 				sAmPm = iHours >= 12 ? "pm" : "am";
 				iHours = (iHours > 12) ? iHours - 12 : iHours;
 				iHours = (iHours === 0 ? 12 : iHours);
@@ -976,7 +978,7 @@ sap.ui.define([
 				this._clockIndexes.S = iIndex++;
 			}
 
-			if (sFormat.indexOf("a") !== -1) {
+			if (sFormat.indexOf("a") !== -1 || (sFormat.indexOf("B") !== -1 && !this._isFormatSupport24())) {
 				// add AM/PM segmented button
 				this.setAggregation("_buttonAmPm", new SegmentedButton(sId + "-format", {
 					items: [

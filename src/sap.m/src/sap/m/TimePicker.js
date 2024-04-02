@@ -249,6 +249,7 @@ function(
 					 * <code>Enforce</code> - The mask will always be enforced, regardless of the length of the time format.
 					 *
 					 * <b>Note:</b> The mask functions correctly only with fixed-length time formats.
+					 * The mask is always disabled when using a mobile device
 					 * Using the <code>Enforce</code> value with time formats that do not have a fixed length may lead to unpredictable behavior.
 					 * Changing the mask mode does not reset any pre-set validation rules. These rules will be applied according to the selected mask mode.
 					 * @since 1.54
@@ -2217,7 +2218,7 @@ function(
 		 * @returns {*} the stripped value
 		 */
 		TimeSemanticMaskHelper.prototype.stripValueOfLeadingSpaces = function(value) {
-			if (value[this.iHourNumber1Index] === " ") {
+			if (value[this.iHourNumber1Index] === " " && this._oTimePicker.getDisplayFormat().indexOf("B") === -1) {
 				value = [value.slice(0, this.iHourNumber1Index), value.slice(this.iHourNumber1Index + 1)].join('');
 			}
 			return value;
