@@ -197,6 +197,24 @@ function(coreLibrary, Fragment, Controller, DateFormat, JSONModel, unifiedLibrar
 			this.updateButtonEnabledState(oDatePickerStart, oDatePickerEnd, this.byId("modifyDialog").getBeginButton());
 		},
 
+		handleWeekSelection: function (oEvent) {
+			const iWeekNumber = oEvent.getParameter("weekNumber");
+
+			MessageToast.show("'weekNumberPress' event fired.\n\nweek number is "  + iWeekNumber);
+		},
+
+		handleSelectedDateChange: function (oEvent) {
+			const aCurrentSelectedDates = oEvent.getParameter("selectedDates");
+			let sOutput = "";
+
+			aCurrentSelectedDates?.forEach((oRange, iIndex) => {
+				sOutput += `${iIndex + 1}: ${oRange.getStartDate().toDateString()}\n`;
+			});
+
+			sOutput.trim();
+			MessageToast.show(`'selectedDatesChange' event fired.\n\nNew selected dates: \n${sOutput}`);
+		},
+
 		_setDateValueState: function(oPicker, oErrorState) {
 			if (oErrorState.errorState) {
 				oPicker.setValueState(ValueState.Error);

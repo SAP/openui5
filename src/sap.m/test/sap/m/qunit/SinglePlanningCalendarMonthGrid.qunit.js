@@ -424,6 +424,40 @@ sap.ui.define([
 			assert.ok(oCellPressSpy.calledWithMatch("cellPress", { startDate: o2Aug2018_00_00, endDate: o3Aug2018_00_00 }), "cellPress is fired + parameters");
 		});
 
+		QUnit.test("weekNumberPress event", function(assert) {
+			// arrange
+			const oWeekNumberPressSpy = this.spy(this.oSPCMG, "fireWeekNumberPress");
+			const $oWeekRow = this.oSPCMG.$().find('.sapMSPCMonthWeek')[1].children;
+			const oFakeEvent = {
+					target: $oWeekRow[0],
+					srcControl: this.oSPCMG,
+					metaKey: false,
+					originalEvent: {
+							type: "click",
+							target: {
+									nextSibling: $oWeekRow[1]
+								}
+							}
+						};
+
+			//act
+			this.oSPCMG.onmouseup(oFakeEvent);
+
+			// assert
+			assert.ok(oWeekNumberPressSpy.calledOnce, "one event is fired");
+		});
+
+		QUnit.test("selectedDatesChange event", function(assert) {
+			// arrange
+			const oSelectedDatesChange = this.spy(this.oSPCMG, "fireSelectedDatesChange");
+
+			// act
+			this.oSPCMG.onmouseup({ target: this.oSPCMG.$().find('.sapMSPCMonthDay')[14], srcControl: this.oSPCMG, metaKey: true, originalEvent: {type: "click"}});
+
+			// assert
+			assert.ok(oSelectedDatesChange.calledOnce, "one event is fired");
+			assert.equal(this.oSPCMG.getSelectedDates().length, 1);
+		});
 
 		QUnit.test("selectedDates: select days", async function (assert){
 			// arrange
@@ -984,13 +1018,13 @@ sap.ui.define([
 			//assert
 			assert.strictEqual(oAppointmentHTMElement.getAttribute("data-sap-ui-related"), oAppointment.getId(), "Appoinment have same data-sap-ui-related as the Control Id");
 			assert.notEqual(oAppointmentHTMElement.getAttribute("id"), oAppointment.getId(), "DOM representation of the appointment should have a different id from the object Appointment");
-			assert.strictEqual(oAppointmentHTMElement.getAttribute("draggable"), this.oSPC.getEnableAppointmentsDragAndDrop().toString(), "Тhe appointment must receive the correct 'draggable' attribute from the SPC settings");
+			assert.strictEqual(oAppointmentHTMElement.getAttribute("draggable"), this.oSPC.getEnableAppointmentsDragAndDrop().toString(), "The appointment must receive the correct 'draggable' attribute from the SPC settings");
 
 			//act
 			this.oSPC.setEnableAppointmentsDragAndDrop(true);
 			await nextUIUpdate(this.clock);
 
 			//asert
-			assert.strictEqual(oAppointmentHTMElement.getAttribute("draggable"), this.oSPC.getEnableAppointmentsDragAndDrop().toString(), "Тhe appointment must receive the correct 'draggable' attribute from the SPC settings");
+			assert.strictEqual(oAppointmentHTMElement.getAttribute("draggable"), this.oSPC.getEnableAppointmentsDragAndDrop().toString(), "The appointment must receive the correct 'draggable' attribute from the SPC settings");
 		});
 	});
