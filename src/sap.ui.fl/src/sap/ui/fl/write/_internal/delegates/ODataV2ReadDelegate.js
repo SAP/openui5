@@ -164,8 +164,8 @@ sap.ui.define(["sap/ui/model/ListBinding"], function(ListBinding) {
 	 * @return {string} the binding path
 	 */
 	function getBindingPath(oElement, sAggregationName, mPayload) {
-		if (mPayload.path) {
-			return mPayload.path;
+		if (mPayload?.path) {
+			return mPayload?.path;
 		}
 		return checkForAbsoluteAggregationBinding(oElement, sAggregationName)
 			? getDefaultModelBindingData(oElement, true, sAggregationName).path
@@ -180,7 +180,7 @@ sap.ui.define(["sap/ui/model/ListBinding"], function(ListBinding) {
 	 * @return {Promise} A Promise that resolves with the OData meta model or null if not found
 	 */
 	async function loadODataMetaModel(oElement, mPayload) {
-		const oModel = oElement.getModel(mPayload.modelName);
+		const oModel = oElement.getModel(mPayload?.modelName);
 		if (oModel && ["sap.ui.model.odata.ODataModel", "sap.ui.model.odata.v2.ODataModel"].includes(oModel.getMetadata().getName())) {
 			const oMetaModel = oModel.getMetaModel();
 			await oMetaModel.loaded();

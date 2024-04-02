@@ -36,25 +36,7 @@ sap.ui.define([
 	 * @private
 	 * @since 1.94
 	 */
-	var ActionExtractor = {};
-
-	function loadKnownDefaultDelegateLibraries() {
-		var aLoadLibraryPromises = [];
-		var aRequiredLibraries = DelegateMediatorAPI.getKnownDefaultDelegateLibraries();
-		aRequiredLibraries.forEach(function(sLibrary) {
-			var oLoadLibraryPromise = Lib.load({name: sLibrary})
-			.then(function() {
-				return Promise.resolve(sLibrary);
-			})
-			.catch(function(vError) {
-				Log.warning("Required library not available: ", vError);
-				// Ignore the error here as the default delegate might not be required
-				return Promise.resolve();
-			});
-			aLoadLibraryPromises.push(oLoadLibraryPromise);
-		});
-		return Promise.all(aLoadLibraryPromises);
-	}
+	const ActionExtractor = {};
 
 	function getAddViaDelegateActionData(mAction, oDesignTimeMetadata, oPlugin) {
 		return oPlugin.hasChangeHandler(mAction.changeType, mAction.element)
@@ -80,23 +62,23 @@ sap.ui.define([
 	}
 
 	function getInvisibleElements(oParentOverlay, sAggregationName, oPlugin) {
-		var oParentElement = oParentOverlay.getElement();
+		const oParentElement = oParentOverlay.getElement();
 		if (!oParentElement) {
 			return [];
 		}
 
 		// Returns a list of all invisible elements belonging to an aggregation including the aggregation name
-		var aInvisibleElements = ElementUtil.getAggregation(oParentElement, sAggregationName, oPlugin).filter(function(oControl) {
-			var oOverlay = OverlayRegistry.getOverlay(oControl);
+		const aInvisibleElements = ElementUtil.getAggregation(oParentElement, sAggregationName, oPlugin).filter(function(oControl) {
+			const oOverlay = OverlayRegistry.getOverlay(oControl);
 
 			if (!oPlugin.hasStableId(oOverlay)) {
 				return false;
 			}
 
-			var oRelevantContainer = oParentOverlay.getRelevantContainer(true);
-			var oRelevantContainerOverlay = OverlayRegistry.getOverlay(oRelevantContainer);
-			var oOverlayToCheck = oParentOverlay;
-			var bAnyParentInvisible = false;
+			const oRelevantContainer = oParentOverlay.getRelevantContainer(true);
+			const oRelevantContainerOverlay = OverlayRegistry.getOverlay(oRelevantContainer);
+			let oOverlayToCheck = oParentOverlay;
+			let bAnyParentInvisible = false;
 			// check all the parents until the relevantContainerOverlay for invisibility
 			do {
 				bAnyParentInvisible = !oOverlayToCheck.getElementVisibility();
@@ -130,7 +112,7 @@ sap.ui.define([
 	}
 
 	function isValidAction(oCheckElementOverlay, mParents, mAction, oPlugin) {
-		var bValidAction = mAction.changeType && oPlugin.hasStableId(oCheckElementOverlay);
+		let bValidAction = mAction.changeType && oPlugin.hasStableId(oCheckElementOverlay);
 		if (bValidAction && oCheckElementOverlay !== mParents.relevantContainerOverlay) {
 			// relevant container is needed for some changes, so it must have a stable ID
 			bValidAction = oPlugin.hasStableId(mParents.relevantContainerOverlay);
@@ -138,71 +120,22 @@ sap.ui.define([
 		return bValidAction;
 	}
 
-	function filterValidAddPropertyActions(aActions, mParents, oPlugin, aDefaultDelegateLibraries) {
-		function fnFilterActions(aFilteredActions, mAction) {
-			var oCheckElement = mAction.changeOnRelevantContainer ? mParents.relevantContainer : mParents.parent;
-			var oCheckElementOverlay = OverlayRegistry.getOverlay(oCheckElement);
-			var bValidAction = isValidAction(oCheckElementOverlay, mParents, mAction, oPlugin);
-			if (bValidAction) {
-				mAction.element = oCheckElement;
-				return DelegateMediatorAPI.getDelegateForControl({
-					control: mParents.relevantContainer, // delegate will always be added on the relevant container
-					modifier: JsControlTreeModifier,
-					supportsDefault: mAction.supportsDefaultDelegate
-				})
-				.then(function(mDelegateInfo) {
-					// Only complete delegators can be used for additional elements
-					if (
-						mDelegateInfo &&
-						mDelegateInfo.names &&
-						mDelegateInfo.names.length &&
-						mDelegateInfo.delegateType === DelegateMediatorAPI.types.COMPLETE
-					) {
-						var aRequiredLibraries = DelegateMediatorAPI.getRequiredLibrariesForDefaultDelegate({
-							delegateName: mDelegateInfo.names,
-							control: mParents.relevantContainer
-						});
-
-						// Check if all required libraries were successfully loaded
-						if (
-							difference(
-								aRequiredLibraries,
-								aDefaultDelegateLibraries.filter(Boolean)
-							).length === 0
-						) {
-							mAction.delegateInfo = mDelegateInfo;
-							aFilteredActions.push(mAction);
-						}
-					}
-					return aFilteredActions;
-				});
-			}
-			return aFilteredActions;
-		}
-
-		return aActions.reduce(function(oPreviousActionsPromise, mAction) {
-			return oPreviousActionsPromise
-			.then(function(aFilteredActions) {
-				return fnFilterActions(aFilteredActions, mAction);
-			});
-		}, Promise.resolve([]));
-	}
-
 	// Return all elements that can be made visible in each aggregation (including elements from other aggregations)
 	function getRevealActionFromAggregations(aParents, _mReveal, sAggregationName, aAggregationNames, oPlugin) {
-		var aInvisibleElements = aParents.reduce(function(aInvisibleChildren, oParentOverlay) {
-			var aInvisibleChildrenPerAggregation = [];
+		const aInvisibleElements = aParents.reduce(function(aInvisibleChildren, oParentOverlay) {
+			let aInvisibleChildrenPerAggregation = [];
 			aAggregationNames.forEach(function(sAggregation) {
-				aInvisibleChildrenPerAggregation = aInvisibleChildrenPerAggregation.concat(getInvisibleElements.call(this, oParentOverlay, sAggregation, oPlugin));
+				aInvisibleChildrenPerAggregation = aInvisibleChildrenPerAggregation.concat(
+					getInvisibleElements.call(this, oParentOverlay, sAggregation, oPlugin));
 			}.bind(this), []);
 			return oParentOverlay ? aInvisibleChildren.concat(aInvisibleChildrenPerAggregation) : aInvisibleChildren;
 		}.bind(this), []);
 
-		var oInitialRevealObject = {
+		const oInitialRevealObject = {
 			elements: [],
 			controlTypeNames: []
 		};
-		var mRevealPromise = aInvisibleElements.reduce(function(oPreviousPromise, mInvisibleElement) {
+		const mRevealPromise = aInvisibleElements.reduce(function(oPreviousPromise, mInvisibleElement) {
 			return oPreviousPromise.then(function(mReveal) {
 				return checkAndEnrichReveal(mReveal, mInvisibleElement, oPlugin, sAggregationName);
 			});
@@ -218,29 +151,80 @@ sap.ui.define([
 		});
 	}
 
-	function checkAndEnrichReveal(mReveal, mInvisibleElement, oPlugin, sTargetAggregation) {
-		var oInvisibleElement = mInvisibleElement.element;
-		var oDesignTimeMetadata;
-		var mRevealAction;
-		var bRevealEnabled = false;
-		var oHasChangeHandlerPromise = Promise.resolve(false);
-		var sSourceAggregation = mInvisibleElement.sourceAggregation;
+	function filterValidAddPropertyActions(aActions, mParents, oPlugin) {
+		return aActions.filter((mAction) => {
+			const oCheckElement = mAction.changeOnRelevantContainer ? mParents.relevantContainer : mParents.parent;
+			const oCheckElementOverlay = OverlayRegistry.getOverlay(oCheckElement);
+			return isValidAction(oCheckElementOverlay, mParents, mAction, oPlugin);
+		});
+	}
 
-		var oOverlay = OverlayRegistry.getOverlay(oInvisibleElement);
+	function loadRequiredLibraries(mRequiredLibraries) {
+		const aRequiredLibraries = Object.keys(mRequiredLibraries || {});
+		const aRequireLibrariesPromise = [];
+		aRequiredLibraries.forEach((sLibrary) => {
+			aRequireLibrariesPromise.push(
+				Lib.load({name: sLibrary})
+			);
+		});
+		return Promise.all(aRequireLibrariesPromise)
+		.then(() => true)
+		.catch((vError) => {
+			Log.error("Required library not available: ", vError);
+			// Ignore the error here as the write delegate might not be required
+			return false;
+		});
+	}
+
+	function filterValidDelegateForAction(aActions, mParents) {
+		const oFilterPromise = aActions.reduce(async function(aValidActionPromiseChain, mAction) {
+			const aValidActions = await aValidActionPromiseChain;
+			const oCheckElement = mAction.changeOnRelevantContainer ? mParents.relevantContainer : mParents.parent;
+			const mReadDelegateInfo = await DelegateMediatorAPI.getReadDelegateForControl({
+				control: oCheckElement,
+				modifier: JsControlTreeModifier
+			});
+			const mWriteDelegateInfo = await DelegateMediatorAPI.getWriteDelegateForControl({
+				control: oCheckElement,
+				modifier: JsControlTreeModifier
+			});
+			const bAllRequiredLibrariesLoaded = await loadRequiredLibraries(mWriteDelegateInfo?.requiredLibraries);
+			if (mReadDelegateInfo?.instance && mWriteDelegateInfo?.controlType && bAllRequiredLibrariesLoaded) {
+				mAction.element = oCheckElement;
+				mAction.delegateInfo = mReadDelegateInfo;
+				mAction.delegateInfo.requiredLibraries = mWriteDelegateInfo.requiredLibraries; // required for addLibrary command
+				aValidActions.push(mAction);
+			}
+			return aValidActions;
+		}, Promise.resolve([]));
+
+		return oFilterPromise;
+	}
+
+	function checkAndEnrichReveal(mReveal, mInvisibleElement, oPlugin, sTargetAggregation) {
+		const oInvisibleElement = mInvisibleElement.element;
+		let oDesignTimeMetadata;
+		let mRevealAction;
+		let bRevealEnabled = false;
+		let oHasChangeHandlerPromise = Promise.resolve(false);
+		const sSourceAggregation = mInvisibleElement.sourceAggregation;
+
+		const oOverlay = OverlayRegistry.getOverlay(oInvisibleElement);
 		if (oOverlay) {
 			oDesignTimeMetadata = oOverlay.getDesignTimeMetadata();
 
 			mRevealAction = oDesignTimeMetadata && oDesignTimeMetadata.getAction("reveal", oInvisibleElement);
 			if (mRevealAction && mRevealAction.changeType) {
-				var oRevealSelector = oInvisibleElement;
+				let oRevealSelector = oInvisibleElement;
 				if (mRevealAction.changeOnRelevantContainer) {
 					oRevealSelector = oOverlay.getRelevantContainer();
 				}
 
-				oHasChangeHandlerPromise = oPlugin.hasChangeHandler(mRevealAction.changeType, oRevealSelector).then(function(bHasChangeHandler) {
+				oHasChangeHandlerPromise = oPlugin.hasChangeHandler(mRevealAction.changeType, oRevealSelector)
+				.then(function(bHasChangeHandler) {
 					// Element can be made invalid while the check is running (e.g. destroyed during undo of split)
 					if (ElementUtil.isElementValid(oInvisibleElement)) {
-						var mParents = AdditionalElementsUtils.getParents(true, oOverlay, oPlugin);
+						const mParents = AdditionalElementsUtils.getParents(true, oOverlay, oPlugin);
 						if (bHasChangeHandler) {
 							if (mRevealAction.changeOnRelevantContainer) {
 								// we have the child overlay, so we need the parents
@@ -253,7 +237,7 @@ sap.ui.define([
 
 							// Check if the invisible element can be moved to the target aggregation
 							if (bRevealEnabled && (sSourceAggregation !== sTargetAggregation)) {
-								var oAggregationOverlay = mParents.parentOverlay.getAggregationOverlay(sTargetAggregation);
+								const oAggregationOverlay = mParents.parentOverlay.getAggregationOverlay(sTargetAggregation);
 								return Utils.checkTargetZone(oAggregationOverlay, oOverlay, oPlugin);
 							}
 						}
@@ -272,7 +256,7 @@ sap.ui.define([
 					sourceAggregation: sSourceAggregation,
 					targetAggregation: sTargetAggregation
 				});
-				var mName = oDesignTimeMetadata.getName(oInvisibleElement);
+				const mName = oDesignTimeMetadata.getName(oInvisibleElement);
 				if (mName) {
 					mReveal.controlTypeNames.push(mName);
 				}
@@ -308,24 +292,25 @@ sap.ui.define([
 	 * @param {sap.ui.dt.ElementOverlay} oSourceElementOverlay - Elements will be added in relation (sibling/parent) to this overlay
 	 * @param {sap.ui.rta.plugin.additionalElements.AdditionalElementsPlugin} oPlugin - Instance of the AdditionalElementsPlugin
 	 * @param {boolean} [bInvalidate] - Option to prevent cached actions to be returned
+	 * @param {sap.ui.dt.DesignTime} oDesignTime - DesignTime instance
 	 *
 	 * @return {Promise} Resolving to a structure with all "add/reveal" action relevant data collected
 	 */
 	ActionExtractor.getActions = function(bSibling, oSourceElementOverlay, oPlugin, bInvalidate, oDesignTime) {
-		var sSiblingOrChild = bSibling ? "asSibling" : "asChild";
+		const sSiblingOrChild = bSibling ? "asSibling" : "asChild";
 		if (!bInvalidate && oSourceElementOverlay._mAddActions) {
 			return Promise.resolve(oSourceElementOverlay._mAddActions[sSiblingOrChild]);
 		}
 
-		var oRevealActionsPromise = this._getRevealActions(bSibling, oSourceElementOverlay, oPlugin, oDesignTime);
-		var oAddPropertyActionsPromise = this._getAddViaDelegateActions(bSibling, oSourceElementOverlay, oPlugin);
+		const oRevealActionsPromise = this._getRevealActions(bSibling, oSourceElementOverlay, oPlugin, oDesignTime);
+		const oAddPropertyActionsPromise = this._getAddViaDelegateActions(bSibling, oSourceElementOverlay, oPlugin);
 
 		return Promise.all([
 			oRevealActionsPromise,
 			oAddPropertyActionsPromise
 		]).then(function(aAllActions) {
 			// join and condense all action data
-			var mAllActions = merge(aAllActions[0], aAllActions[1]);
+			const mAllActions = merge(aAllActions[0], aAllActions[1]);
 			oSourceElementOverlay._mAddActions ||= {asSibling: {}, asChild: {}};
 			oSourceElementOverlay._mAddActions[sSiblingOrChild] = mAllActions;
 			return mAllActions;
@@ -339,18 +324,19 @@ sap.ui.define([
 	 * @returns {object/undefined} - Object with all "add/reveal" action relevant data collected or undefined if no actions available
 	 */
 	ActionExtractor.getActionsOrUndef = function(bSibling, oOverlay) {
-		var sSiblingOrChild = bSibling ? "asSibling" : "asChild";
+		const sSiblingOrChild = bSibling ? "asSibling" : "asChild";
 		return oOverlay._mAddActions && oOverlay._mAddActions[sSiblingOrChild];
 	};
 
-	var mRevealCache = {};
-	var bIsSyncRegistered = true;
+	let mRevealCache = {};
+	let bIsSyncRegistered = true;
 
 	/**
 	 * Returns the Reveal actions data (parameters + elements) for an Overlay
 	 * @param {boolean} bSibling - If source element overlay should be sibling or parent to the newly added fields
 	 * @param {sap.ui.dt.ElementOverlay} oSourceElementOverlay - Overlay where the action is triggered
 	 * @param {sap.ui.rta.plugin.additionalElements.AdditionalElementsPlugin} oPlugin - Instance of the AdditionalElements plugin
+	 * @param {sap.ui.dt.DesignTime} oDesignTime - DesignTime instance
 	 *
 	 * @returns {Promise<object>} Reveal action data
 	 */
@@ -363,8 +349,8 @@ sap.ui.define([
 			}, this);
 		}
 
-		var mParents = AdditionalElementsUtils.getParents(bSibling, oSourceElementOverlay, oPlugin);
-		var aParents = [mParents.parentOverlay];
+		const mParents = AdditionalElementsUtils.getParents(bSibling, oSourceElementOverlay, oPlugin);
+		let aParents = [mParents.parentOverlay];
 		if (mParents.relevantContainer !== mParents.parent) {
 			aParents = ElementUtil.findAllSiblingsInContainer(mParents.parent, mParents.relevantContainer).map(function(oParent) {
 				return OverlayRegistry.getOverlay(oParent);
@@ -372,9 +358,9 @@ sap.ui.define([
 				return oOverlay;
 			});
 		}
-		var aAggregationNames = [];
+		let aAggregationNames = [];
 		if (mParents.parentOverlay) {
-			var mCachedResult = mRevealCache[mParents.parentOverlay.getId()];
+			const mCachedResult = mRevealCache[mParents.parentOverlay.getId()];
 			if (mCachedResult && bSibling) {
 				return mCachedResult;
 			}
@@ -406,34 +392,24 @@ sap.ui.define([
 	 *
 	 * @returns {Promise<object>} AddViaDelegate action data
 	 */
-	ActionExtractor._getAddViaDelegateActions = function(bSibling, oSourceElementOverlay, oPlugin) {
-		var mParents = AdditionalElementsUtils.getParents(bSibling, oSourceElementOverlay, oPlugin);
-		var oDesignTimeMetadata = mParents.parentOverlay && mParents.parentOverlay.getDesignTimeMetadata();
-		return Promise.resolve()
-		.then(function() {
-			var aActions = oDesignTimeMetadata ? oDesignTimeMetadata.getActionDataFromAggregations("add", mParents.parent, undefined, "delegate") : [];
-			if (aActions.length) {
-				return loadKnownDefaultDelegateLibraries()
-				.then(filterValidAddPropertyActions.bind(this, aActions, mParents, oPlugin));
+	ActionExtractor._getAddViaDelegateActions = async function(bSibling, oSourceElementOverlay, oPlugin) {
+		const mParents = AdditionalElementsUtils.getParents(bSibling, oSourceElementOverlay, oPlugin);
+		const oDesignTimeMetadata = mParents.parentOverlay && mParents.parentOverlay.getDesignTimeMetadata();
+		let aActions = oDesignTimeMetadata
+			? await oDesignTimeMetadata.getActionDataFromAggregations("add", mParents.parent, undefined, "delegate")
+			: [];
+		aActions = await filterValidAddPropertyActions(aActions, mParents, oPlugin);
+		aActions = await filterValidDelegateForAction(aActions, mParents);
+		return aActions.reduce(async function(oPreviousPromise, oAction) {
+			const oReturn = await oPreviousPromise;
+			const mAction = await getAddViaDelegateActionData.call(this, oAction, oDesignTimeMetadata, oPlugin);
+			if (mAction) {
+				mAction.addPropertyActionData.relevantContainer = mParents.relevantContainer;
+				oReturn[mAction.aggregationName] ||= {};
+				oReturn[mAction.aggregationName].addViaDelegate = mAction.addPropertyActionData;
 			}
-			return [];
-		}.bind(this))
-		.then(function(aActions) {
-			return aActions.reduce(function(oPreviousPromise, oAction) {
-				return oPreviousPromise
-				.then(function(oReturn) {
-					return getAddViaDelegateActionData.call(this, oAction, oDesignTimeMetadata, oPlugin)
-					.then(function(mAction) {
-						if (mAction) {
-							mAction.addPropertyActionData.relevantContainer = mParents.relevantContainer;
-							oReturn[mAction.aggregationName] ||= {};
-							oReturn[mAction.aggregationName].addViaDelegate = mAction.addPropertyActionData;
-						}
-						return oReturn;
-					});
-				}.bind(this));
-			}.bind(this), Promise.resolve({}));
-		}.bind(this));
+			return oReturn;
+		}.bind(this), Promise.resolve({}));
 	};
 
 	return ActionExtractor;

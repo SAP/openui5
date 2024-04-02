@@ -53,7 +53,6 @@ sap.ui.define([
 			return !!(oChangeODataInformation && oChangeODataInformation.entityType);
 		},
 		skipCreateLayout: true,
-		supportsDefault: true,
 
 		/**
 		 * Add a new column

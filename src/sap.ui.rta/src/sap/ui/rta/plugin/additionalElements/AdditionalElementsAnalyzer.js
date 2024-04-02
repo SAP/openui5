@@ -85,10 +85,9 @@ sap.ui.define([
 	}
 
 	function getAllPropertiesFromDelegate(oElement, sAggregationName) {
-		return DelegateMediatorAPI.getDelegateForControl({
+		return DelegateMediatorAPI.getReadDelegateForControl({
 			control: oElement,
-			modifier: JsControlTreeModifier,
-			supportsDefault: true
+			modifier: JsControlTreeModifier
 		}).then(function(mDelegateInfo) {
 			if (mDelegateInfo && mDelegateInfo.instance) {
 				return mDelegateInfo.instance.getPropertyInfo({

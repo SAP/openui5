@@ -3,11 +3,9 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/apply/_internal/DelegateMediator",
-	"sap/ui/fl/apply/_internal/DelegateMediatorNew"
+	"sap/ui/fl/apply/_internal/DelegateMediator"
 ], function(
-	DelegateMediator,
-	DelegateMediatorNew
+	DelegateMediator
 ) {
 	"use strict";
 
@@ -20,13 +18,6 @@ sap.ui.define([
 	 * @ui5-restricted
 	 */
 	const DelegateMediatorAPI = /** @lends sap.ui.fl.apply.api.DelegateMediatorAPI */{
-		// @deprecated
-		types: {
-			READONLY: DelegateMediator.types.READONLY,
-			WRITEONLY: DelegateMediator.types.WRITEONLY,
-			COMPLETE: DelegateMediator.types.COMPLETE
-		},
-
 		/**
 		 * Registers the default delegate by model type.
 		 *
@@ -39,7 +30,9 @@ sap.ui.define([
 		 * @deprecated since 1.123.0
 		 */
 		registerDefaultDelegate(mPropertyBag) {
-			DelegateMediator.registerDefaultDelegate(mPropertyBag);
+			if (mPropertyBag.modelType !== "sap.ui.model.odata.v2.ODataModel" && mPropertyBag.modelType !== "sap.ui.model.odata.ODataModel") {
+				DelegateMediator.registerReadDelegate(mPropertyBag);
+			}
 		},
 
 		/**
@@ -50,7 +43,7 @@ sap.ui.define([
 		 * @param {object} mPropertyBag.delegate - Path to read delegate
 		 */
 		registerReadDelegate(mPropertyBag) {
-			DelegateMediatorNew.registerReadDelegate(mPropertyBag);
+			DelegateMediator.registerReadDelegate(mPropertyBag);
 		},
 
 		/**
@@ -63,7 +56,7 @@ sap.ui.define([
 		 * @param {object} [mPropertyBag.payload] - Payload for the delegate
 		 */
 		registerWriteDelegate(mPropertyBag) {
-			DelegateMediatorNew.registerWriteDelegate(mPropertyBag);
+			DelegateMediator.registerWriteDelegate(mPropertyBag);
 		},
 
 		/**
@@ -78,11 +71,9 @@ sap.ui.define([
 		 * @deprecated since 1.123.0
 		 */
 		getDelegateForControl(mPropertyBag) {
-			return DelegateMediator.getDelegateForControl(
+			return DelegateMediator.getWriteDelegateForControl(
 				mPropertyBag.control,
-				mPropertyBag.modifier,
-				mPropertyBag.modelType,
-				mPropertyBag.supportsDefault
+				mPropertyBag.modifier
 			);
 		},
 
@@ -94,11 +85,10 @@ sap.ui.define([
 		 * @param {sap.ui.core.Element|DomNode} mPropertyBag.control - Control for which the corresponding delegate should be returned
 		 * @param {sap.ui.core.util.reflection.BaseTreeModifier} mPropertyBag.modifier - Control tree modifier
 		 * @param {string} [mPropertyBag.modelType] - Model type; required in case you passed the <code>XmlTreeModifier</code>
-		 * @param {boolean} [mPropertyBag.supportsDefault] - Include default delegate if no instance specific delegate is available
 		 * @returns {Promise.<sap.ui.core.util.reflection.FlexDelegateInfo>} Delegate information including the lazy loaded instance of the delegate
 		 */
 		getReadDelegateForControl(mPropertyBag) {
-			return DelegateMediatorNew.getReadDelegateForControl(
+			return DelegateMediator.getReadDelegateForControl(
 				mPropertyBag.control,
 				mPropertyBag.modifier,
 				mPropertyBag.modelType,
@@ -116,37 +106,9 @@ sap.ui.define([
 		 * @returns {Promise.<sap.ui.core.util.reflection.FlexDelegateInfo>} Delegate information including the lazy loaded instance of the delegate
 		 */
 		getWriteDelegateForControl(mPropertyBag) {
-			return DelegateMediatorNew.getWriteDelegateForControl(
+			return DelegateMediator.getWriteDelegateForControl(
 				mPropertyBag.control,
 				mPropertyBag.modifier
-			);
-		},
-
-		/**
-		 * Returns a list of library names which needs to be required to get default delegates loaded.
-		 * @returns {array} List of library names
-		 * @deprecated since 1.123.0
-		 */
-		getKnownDefaultDelegateLibraries() {
-			return DelegateMediator.getKnownDefaultDelegateLibraries();
-		},
-
-		/**
-		 * Returns a list of required libraries for the given default delegate.
-		 * If it is not a default delegate, an empty list is returned.
-		 *
-		 * @param {object} mPropertyBag - Property bag
-		 * @param {string} mPropertyBag.sDelegateName - Name of the delegate
-		 * @param {sap.ui.core.Element} mPropertyBag.oControl - Control for which the corresponding delegate was returned
-		 * @param {string} [mPropertyBag.sModelType] - Model type, if none is provided the default model of oControl is taken instead
-		 * @returns {string[]} Required libraries
- 		 * @deprecated since 1.123.0
-		 */
-		getRequiredLibrariesForDefaultDelegate(mPropertyBag) {
-			return DelegateMediator.getRequiredLibrariesForDefaultDelegate(
-				mPropertyBag.delegateName,
-				mPropertyBag.control,
-				mPropertyBag.modelType
 			);
 		}
 	};

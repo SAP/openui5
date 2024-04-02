@@ -21,17 +21,6 @@ sap.ui.define([
 		return typeof fn === "function";
 	}
 
-	function getModelType(mChangeContent) {
-		if (mChangeContent.modelType) {
-			return mChangeContent.modelType;
-		} else if (mChangeContent.oDataServiceVersion) {
-			// fallback for changes created with old addODataProperty action
-			// that was replaced by default OData V2 delegate
-			return "sap.ui.model.odata.v2.ODataModel";
-		}
-		return undefined;
-	}
-
 	/**
 	 * Base Change Handler for AddViaDelegate
 	 *
@@ -54,7 +43,6 @@ sap.ui.define([
 		 * @param  {string} mAddViaDelegateSettings.fieldSuffix - Aggregation name to be passed to the delegate
 		 * @param  {boolean|function} [mAddViaDelegateSettings.skipCreateLabel] - Skip delegate method, is a function is passed it has to return a boolean
 		 * @param  {boolean|function} [mAddViaDelegateSettings.skipCreateLayout] - Skip delegate method, is a function is passed it has to return a boolean
-		 * @param  {boolean} [mAddViaDelegateSettings.supportsDefault] - Are default delegates supported?
 		 * @return {any} The addViaDelegate change handler object
 		 * @public
 		 */
@@ -86,14 +74,11 @@ sap.ui.define([
 				// or the handler opts out
 
 				const oControl = mPropertyBag.modifier.bySelector(mChange.getSelector(), mPropertyBag.appComponent);
-				const sModelType = getModelType(mChange.getContent());
 
 				const DelegateMediatorAPI = await requireAsync("sap/ui/fl/apply/api/DelegateMediatorAPI");
-				const oDelegate = await DelegateMediatorAPI.getDelegateForControl({
+				const oDelegate = await DelegateMediatorAPI.getWriteDelegateForControl({
 					control: oControl,
-					modifier: mPropertyBag.modifier,
-					modelType: sModelType,
-					supportsDefault: mAddViaDelegateSettings.supportsDefault
+					modifier: mPropertyBag.modifier
 				});
 				const bCondensingSupported = !isFunction(oDelegate.instance.createLayout);
 				return bCondensingSupported || skipCreateLayout(mChange.getSupportInformation().oDataInformation);
@@ -117,6 +102,9 @@ sap.ui.define([
 			}
 
 			async function getControlsFromDelegate(oChangeContent, mDelegate, mPropertyBag, oChangeODataInformation) {
+				if (!mDelegate) {
+					return undefined;
+				}
 				const mDelegatePropertyBag = merge({
 					aggregationName: mAddViaDelegateSettings.aggregationName,
 					payload: mDelegate.payload || {},
@@ -178,15 +166,17 @@ sap.ui.define([
 					// so that the addProperty-hook can access it and enhance it
 					oChange.setRevertData(oRevertData);
 
-					const sModelType = getModelType(oChangeContent);
-
 					const DelegateMediatorAPI = await requireAsync("sap/ui/fl/apply/api/DelegateMediatorAPI");
-					const mDelegate = await DelegateMediatorAPI.getDelegateForControl({
+					const mDelegate = await DelegateMediatorAPI.getWriteDelegateForControl({
 						control: oControl,
-						modifier: mPropertyBag.modifier,
-						modelType: sModelType,
-						supportsDefault: mAddViaDelegateSettings.supportsDefault
+						modifier: mPropertyBag.modifier
 					});
+					if (!mDelegate) {
+						Base.markAsNotApplicable(
+							`No delegate found for control ${mPropertyBag.modifier.getId(oControl)}`,
+							/* bAsync */false
+						);
+					}
 					const mInnerControls = await getControlsFromDelegate(
 						oChangeContent,
 						mDelegate,
@@ -272,7 +262,6 @@ sap.ui.define([
 				 * @param {string} mSpecificChangeInfo.parentId FormContainer where the new control will be added
 				 * @param {number} mSpecificChangeInfo.index The index where the field will be added
 				 * @param {string} [mSpecificChangeInfo.oDataServiceVersion] The OData service version
-				 * @param {string} [mSpecificChangeInfo.modelType] Then UI5 model type name, only pass it if default delegate should be taken
 				 * @param {Object} mPropertyBag The property bag containing the App Component
 				 * @param {object} mPropertyBag.modifier Modifier for the controls
 				 * @param {object} mPropertyBag.appComponent Application component
@@ -316,10 +305,6 @@ sap.ui.define([
 					if (mSpecificChangeInfo.oDataServiceVersion) {
 						// used to connect to change handler mediator
 						oContent.oDataServiceVersion = mSpecificChangeInfo.oDataServiceVersion;
-					}
-					if (mSpecificChangeInfo.modelType && mAddViaDelegateSettings.supportsDefault) {
-						// used to connect to default delegate
-						oContent.modelType = mSpecificChangeInfo.modelType;
 					}
 					oChange.setContent(oContent);
 				},

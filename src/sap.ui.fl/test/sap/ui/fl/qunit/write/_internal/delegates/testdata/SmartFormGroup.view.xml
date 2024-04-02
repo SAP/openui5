@@ -15,7 +15,7 @@
 					<StandardListItem title="{Property01}" />
 				</List>
 				<smartForm:SmartForm id="someForm" title="Information">
-					<smartForm:Group id="someGroup" label="Group" >
+					<smartForm:Group id="someGroup" title="Group" >
 
 					</smartForm:Group>
 				</smartForm:SmartForm>

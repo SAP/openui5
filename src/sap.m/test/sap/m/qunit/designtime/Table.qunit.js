@@ -417,8 +417,12 @@ sap.ui.define([
 
 		//ensure a default delegate exists for a model not used anywhere else
 		var SomeModel = JSONModel.extend("sap.ui.layout.form.qunit.test.Model");
-		DelegateMediatorAPI.registerDefaultDelegate({
+		DelegateMediatorAPI.registerReadDelegate({
 			modelType: SomeModel.getMetadata().getName(),
+			delegate: TEST_DELEGATE_PATH
+		});
+		DelegateMediatorAPI.registerWriteDelegate({
+			controlType: "sap.m.Table",
 			delegate: TEST_DELEGATE_PATH
 		});
 		elementActionTest("Checking the add action via delegate for a table with default delegate", {
