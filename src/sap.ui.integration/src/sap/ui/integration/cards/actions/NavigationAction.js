@@ -38,7 +38,7 @@ sap.ui.define([
 		}
 
 		sUrl = oResolvedConfig.url || sParametersUrl;
-		sTarget = oResolvedConfig.target || sParametersTarget || "_blank";
+		sTarget = oResolvedConfig.target || sParametersTarget || NavigationAction.DEFAULT_TARGET;
 
 		if (sUrl) {
 			this._openUrl(sUrl, sTarget);
@@ -56,6 +56,15 @@ sap.ui.define([
 	NavigationAction.prototype._openUrl = function (sUrl, sTarget) {
 		openWindow(sUrl, sTarget);
 	};
+
+	/** Static methods */
+
+	/**
+	 * Default target for the navigation action.
+	 * @readonly
+	 * @const {string}
+	 */
+	NavigationAction.DEFAULT_TARGET = "_blank";
 
 	return NavigationAction;
 });

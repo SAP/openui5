@@ -10,7 +10,7 @@
 			"data": {
 				"request": {
 					"url": "./data2.json"
-					}
+				}
 			},
 			"title": "{title}",
 			"titleMaxLines": 1,
@@ -42,7 +42,7 @@
 				{
 					"type": "Navigation",
 					"parameters": {
-						"url": "http://sap.com"
+						"url": "{url}"
 					}
 				}
 			],

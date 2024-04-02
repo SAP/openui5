@@ -19,7 +19,8 @@ sap.ui.define([
 	 */
 	NumericHeaderRenderer.render = function (oRm, oNumericHeader) {
 		var bLoading = oNumericHeader.isLoading(),
-			oError = oNumericHeader.getAggregation("_error");
+			oError = oNumericHeader.getAggregation("_error"),
+			bRenderAsLink = oNumericHeader.isLink();
 
 		oRm.openStart("div", oNumericHeader)
 			.class("sapFCardHeader")
@@ -43,8 +44,14 @@ sap.ui.define([
 
 		oRm.openEnd();
 
-		oRm.openStart("div")
-			.attr("id", oNumericHeader.getId() + "-focusable")
+		if (bRenderAsLink) {
+			oRm.openStart("a");
+			BaseHeaderRenderer.linkAttributes(oRm, oNumericHeader);
+		} else {
+			oRm.openStart("div");
+		}
+
+		oRm.attr("id", oNumericHeader.getId() + "-focusable")
 			.class("sapFCardHeaderContent");
 
 		if (oNumericHeader.getProperty("focusable") && !oNumericHeader._isInsideGridContainer()) {
@@ -70,7 +77,11 @@ sap.ui.define([
 			BaseHeaderRenderer.renderBanner(oRm, oNumericHeader);
 		}
 
-		oRm.close("div");
+		if (bRenderAsLink) {
+			oRm.close("a");
+		} else {
+			oRm.close("div");
+		}
 
 		if (!oError) {
 			NumericHeaderRenderer.renderToolbar(oRm, oNumericHeader);

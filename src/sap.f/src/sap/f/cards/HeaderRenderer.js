@@ -29,7 +29,8 @@ sap.ui.define([
 			bLoading = oHeader.isLoading(),
 			oError = oHeader.getAggregation("_error"),
 			oToolbar = oHeader.getToolbar(),
-			bUseTileLayout = oHeader.getProperty("useTileLayout");
+			bUseTileLayout = oHeader.getProperty("useTileLayout"),
+			bRenderAsLink = oHeader.isLink();
 
 		oRm.openStart("div", oHeader)
 			.class("sapFCardHeader");
@@ -48,8 +49,14 @@ sap.ui.define([
 
 		oRm.openEnd();
 
-		oRm.openStart("div")
-			.attr("id", sId + "-focusable")
+		if (bRenderAsLink) {
+			oRm.openStart("a");
+			BaseHeaderRenderer.linkAttributes(oRm, oHeader);
+		} else {
+			oRm.openStart("div");
+		}
+
+		oRm.attr("id", sId + "-focusable")
 			.class("sapFCardHeaderWrapper");
 
 		if (oHeader.getProperty("focusable") && !oHeader._isInsideGridContainer()) {
@@ -143,7 +150,11 @@ sap.ui.define([
 
 		BaseHeaderRenderer.renderBanner(oRm, oHeader);
 
-		oRm.close("div");
+		if (bRenderAsLink) {
+			oRm.close("a");
+		} else {
+			oRm.close("div");
+		}
 
 		if (oToolbar) {
 			oRm.openStart("div")

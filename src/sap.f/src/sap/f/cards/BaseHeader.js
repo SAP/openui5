@@ -116,7 +116,21 @@ sap.ui.define([
 				 * Defines if tooltips should be shown for truncated texts.
 				 * @private
 				 */
-				useTooltips: { type: "boolean", visibility: "hidden", defaultValue: false}
+				useTooltips: { type: "boolean", visibility: "hidden", defaultValue: false},
+
+				/**
+				 * Defines the href which the header should open. If set - the header will act and render as a link.
+				 *
+				 * @experimental Since 1.122. Do not use this feature outside of sap.ui.integration.widgets.Card.
+				 */
+				href: { type: "string" },
+
+				/**
+				 * Defines the target for the case when <code>href</code> is given.
+				 *
+				 * @experimental Since 1.122. Do not use this feature outside of sap.ui.integration.widgets.Card.
+				 */
+				target: { type: "string" }
 			},
 			aggregations: {
 				/**
@@ -198,16 +212,34 @@ sap.ui.define([
 		return this.getDomRef("focusable");
 	};
 
+	/**
+	 * If the header must be rendered as <code>a</code> element.
+	 * @returns {boolean} True if the header must be rendered as <code>a</code> element.
+	 */
+	BaseHeader.prototype.isLink = function () {
+		return !!this.getHref();
+	};
+
 	BaseHeader.prototype.ontap = function (oEvent) {
-		if (this.isInteractive() && !this._isInsideToolbar(oEvent.target)) {
-			this.firePress();
-		}
+		this._handleTapOrSelect(oEvent);
 	};
 
 	BaseHeader.prototype.onsapselect = function (oEvent) {
-		if (this.isInteractive() && !this._isInsideToolbar(oEvent.target)) {
-			this.firePress();
+		this._handleTapOrSelect(oEvent);
+	};
+
+	BaseHeader.prototype._handleTapOrSelect = function (oEvent) {
+		if (!this.isInteractive() || this._isInsideToolbar(oEvent.target)) {
+			return;
 		}
+
+		if (this.isLink() && oEvent.ctrlKey) {
+			// ctrl + click should open the link in a new tab
+			return;
+		}
+
+		this.firePress();
+		oEvent.preventDefault();
 	};
 
 	/**
@@ -369,6 +401,10 @@ sap.ui.define([
 	 * @ui5-restricted
 	 */
 	BaseHeader.prototype.getFocusableElementAriaRole = function () {
+		if (this.isLink()) {
+			return "link";
+		}
+
 		return this.hasListeners("press") ? "button" : "group";
 	};
 

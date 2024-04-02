@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-// Provides default renderer for control sap.f.cards.NumericHeader
+// Provides renderer helper for sap.f.cards.BaseHeader
 sap.ui.define([], function () {
 	"use strict";
 
@@ -60,6 +60,24 @@ sap.ui.define([], function () {
 		oRm.close("div");
 
 		oRm.close("div");
+	};
+
+	/**
+	 * Renders attributes for the case when header acts as <code>a</code> tag.
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.f.cards.Header} oHeader An object representation of the control that should be rendered
+	 */
+	BaseHeaderRenderer.linkAttributes = function(oRm, oHeader) {
+		oRm.attr("href", oHeader.getHref())
+			.attr("rel", "noopener noreferrer");
+
+		const sTarget = oHeader.getTarget();
+		if (sTarget) {
+			oRm.attr("target", sTarget);
+		}
+
+		// <a> elements are draggable per default, so set it to false
+		oRm.attr("draggable", "false");
 	};
 
 	return BaseHeaderRenderer;
