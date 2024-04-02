@@ -29,7 +29,7 @@
 							dataType="sap.ui.model.type.Integer"
 							maxConditions="1"
 							operators="EQ"
-							delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'>
+							delegate='\{"name": "sap/ui/mdc/field/FieldBaseDelegate", "payload": \{\}\}'>
 							<Slider id="F1-S" value="{path: '$field>/conditions', type: 'sap.ui.mdc.field.ConditionsType'}" min="0" max="100000"/>
 						</mdc:FilterField>
 
@@ -41,7 +41,7 @@
 							dataType="sap.ui.model.type.String"
 							maxConditions="-1"
 							valueHelp="VH-Conditions"
-							delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'>
+							delegate='\{"name": "sap/ui/mdc/field/FieldBaseDelegate", "payload": \{\}\}'>
 							<custom:CustomMultiInput id="F3-CMI" value="{path: '$field>/conditions', type: 'sap.ui.mdc.field.ConditionsType'}" tokens="{path: '$field>/conditions'}">
 								<Token text="{path: '$field>', type: 'sap.ui.mdc.field.ConditionType'}"/>
 							</custom:CustomMultiInput>
@@ -55,7 +55,7 @@
 							dataType="sap.ui.model.type.String"
 							maxConditions="1"
 							operators="EQ"
-							delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'>
+							delegate='\{"name": "sap/ui/mdc/field/FieldBaseDelegate", "payload": \{\}\}'>
 							<custom:CustomSegmentedButton conditions="{path: '$field>/conditions'}">
 								<custom:items>
 									<SegmentedButtonItem text="Planning" key="planning"/>
@@ -68,7 +68,7 @@
 
 					<mdc:dependents>
 						<mdc:ValueHelp id="VH-Conditions"
-							delegate='\{"name": "delegates/odata/v4/ValueHelpDelegate", "payload": \{\}\}'>
+							delegate='\{"name": "sap/ui/mdc/ValueHelpDelegate", "payload": \{\}\}'>
 							<mdc:dialog>
 								<mdcValueHelp:Dialog title="Description">
 									<mdcValueHelpContent:Conditions label="Description"/>
