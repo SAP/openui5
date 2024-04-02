@@ -3,6 +3,11 @@
     "date": "April 2024",
     "notes": [
       {
+        "id": "418b3d9b2eb5b26665f9fe3054afebe51965801a",
+        "type": "FIX",
+        "text": " sap.m.Input: Fix failing qunit tests"
+      },
+      {
         "id": "8e3abf6e3d89c33ea83695ba4adf2856c683076f",
         "type": "FIX",
         "text": " sap.m.ScrollPosition: Fix unstable test"
