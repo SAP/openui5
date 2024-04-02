@@ -3,91 +3,132 @@
 	xmlns:w="sap.ui.integration.widgets"
 	xmlns:f="sap.f"
 	xmlns:mvc="sap.ui.core.mvc">
-	<Page class="sapUiResponsiveContentPadding">
-		<f:GridContainer>
-			<w:Card id="card1" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/csrfTokens/cardManifest.json">
-				<w:layoutData>
-					<f:GridContainerItemLayoutData columns="3" />
-				</w:layoutData>
-			</w:Card>
-			<w:Card id="card2" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/csrfTokens/cardManifestTokenPath.json">
-				<w:layoutData>
-					<f:GridContainerItemLayoutData columns="3" />
-				</w:layoutData>
-			</w:Card>
-			<w:Card id="card3" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/csrfTokens/cardManifestExpiringToken.json">
-				<w:layoutData>
-					<f:GridContainerItemLayoutData columns="3" />
-				</w:layoutData>
-			</w:Card>
-			<w:Card id="card4" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/csrfTokens/cardManifestParams.json">
-				<w:layoutData>
-					<f:GridContainerItemLayoutData columns="3" />
-				</w:layoutData>
-			</w:Card>
-			<w:Card id="card5" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/csrfTokens/cardManifestWrongToken.json">
-				<w:layoutData>
-					<f:GridContainerItemLayoutData columns="3" />
-				</w:layoutData>
-			</w:Card>
-			<w:Card id="card6" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/csrfTokens/cardManifestExpiredToken.json">
-				<w:layoutData>
-					<f:GridContainerItemLayoutData columns="3" />
-				</w:layoutData>
-			</w:Card>
-		</f:GridContainer>
-		<Title text="Deprecated" class="sapUiSmallMarginTopBottom"></Title>
-		<f:GridContainer>
-			<w:Card id="deprecatedHostFeat1" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/csrfTokens/deprecated/cardManifestHost.json">
-				<w:layoutData>
-					<f:GridContainerItemLayoutData columns="3" />
-				</w:layoutData>
-			</w:Card>
-			<w:Card id="deprecatedHostFeat2" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/csrfTokens/deprecated/cardManifestHostInvalidTokenURL.json">
-				<w:layoutData>
-					<f:GridContainerItemLayoutData columns="3" />
-				</w:layoutData>
-			</w:Card>
-			<w:Card id="deprecatedCsrfCard1" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/csrfTokens/deprecated/cardManifest.json">
-				<w:layoutData>
-					<f:GridContainerItemLayoutData columns="3" />
-				</w:layoutData>
-			</w:Card>
-			<w:Card id="deprecatedCsrfCard2" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/csrfTokens/deprecated/cardManifestTokenPath.json">
-				<w:layoutData>
-					<f:GridContainerItemLayoutData columns="3" />
-				</w:layoutData>
-			</w:Card>
-			<w:Card id="deprecatedCsrfCard3" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/csrfTokens/deprecated/cardManifestExpiringToken.json">
-				<w:layoutData>
-					<f:GridContainerItemLayoutData columns="3" />
-				</w:layoutData>
-			</w:Card>
-			<w:Card id="deprecatedCsrfCard4" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/csrfTokens/deprecated/cardManifestHost2.json">
-				<w:layoutData>
-					<f:GridContainerItemLayoutData columns="3" />
-				</w:layoutData>
-			</w:Card>
-			<w:Card id="deprecatedCsrfCard5" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/csrfTokens/deprecated/cardManifestHostInvalidTokenURL2.json">
-				<w:layoutData>
-					<f:GridContainerItemLayoutData columns="3" />
-				</w:layoutData>
-			</w:Card>
-			<w:Card id="deprecatedCsrfCard6" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/csrfTokens/deprecated/cardManifestParams.json">
-				<w:layoutData>
-					<f:GridContainerItemLayoutData columns="3" />
-				</w:layoutData>
-			</w:Card>
-			<w:Card id="deprecatedCsrfCard7" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/csrfTokens/deprecated/cardManifestWrongToken.json">
-				<w:layoutData>
-					<f:GridContainerItemLayoutData columns="3" />
-				</w:layoutData>
-			</w:Card>
-			<w:Card id="deprecatedCsrfCard8" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/csrfTokens/deprecated/cardManifestExpiredToken.json">
-				<w:layoutData>
-					<f:GridContainerItemLayoutData columns="3" />
-				</w:layoutData>
-			</w:Card>
-		</f:GridContainer>
+	<Page title="{i18n>appTitle}">
+		<subHeader>
+			<Toolbar>
+				<ToolbarSpacer />
+				<Title text="CSRF Tokens"/>
+				<ToolbarSpacer />
+			</Toolbar>
+		</subHeader>
+		<IconTabBar >
+			<items>
+				<IconTabFilter text="General" key="general">
+					<f:GridContainer>
+						<w:Card id="card1" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/csrfTokens/cardManifest.json">
+							<w:layoutData>
+								<f:GridContainerItemLayoutData columns="3" />
+							</w:layoutData>
+						</w:Card>
+						<w:Card id="card2" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/csrfTokens/cardManifestTokenPath.json">
+							<w:layoutData>
+								<f:GridContainerItemLayoutData columns="3" />
+							</w:layoutData>
+						</w:Card>
+						<w:Card id="card3" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/csrfTokens/cardManifestExpiringToken.json">
+							<w:layoutData>
+								<f:GridContainerItemLayoutData columns="3" />
+							</w:layoutData>
+						</w:Card>
+						<w:Card id="card4" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/csrfTokens/cardManifestParams.json">
+							<w:layoutData>
+								<f:GridContainerItemLayoutData columns="3" />
+							</w:layoutData>
+						</w:Card>
+						<w:Card id="card5" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/csrfTokens/cardManifestWrongToken.json">
+							<w:layoutData>
+								<f:GridContainerItemLayoutData columns="3" />
+							</w:layoutData>
+						</w:Card>
+						<w:Card id="card6" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/csrfTokens/cardManifestExpiredToken.json">
+							<w:layoutData>
+								<f:GridContainerItemLayoutData columns="3" />
+							</w:layoutData>
+						</w:Card>
+					</f:GridContainer>
+				</IconTabFilter>
+				<IconTabFilter text="Sharing a Token" key="sharingToken">
+					<Button text="Mark shared token as expired" press="markSharedTokenAsExpired"></Button>
+					<Button text="Refresh All Cards" press="refreshAllCards"></Button>
+					<f:GridContainer >
+						<w:Card id="reusedTokenCard1" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/csrfTokens/sharingToken/cardManifest.json">
+							<w:layoutData>
+								<f:GridContainerItemLayoutData columns="3" />
+							</w:layoutData>
+						</w:Card>
+						<w:Card id="reusedTokenCard2" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/csrfTokens/sharingToken/cardManifest.json">
+							<w:layoutData>
+								<f:GridContainerItemLayoutData columns="3" />
+							</w:layoutData>
+						</w:Card>
+						<w:Card id="reusedTokenCard3" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/csrfTokens/sharingToken/cardManifestWithExtension.json">
+							<w:layoutData>
+								<f:GridContainerItemLayoutData columns="3" />
+							</w:layoutData>
+						</w:Card>
+						<w:Card id="reusedTokenCard4" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/csrfTokens/sharingToken/cardManifestWithExtension2.json">
+							<w:layoutData>
+								<f:GridContainerItemLayoutData columns="3" />
+							</w:layoutData>
+						</w:Card>
+					</f:GridContainer>
+				</IconTabFilter>
+				<IconTabFilter text="Deprecated Features" key="deprecatedFeatures">
+					<f:GridContainer>
+						<w:Card id="deprecatedHostFeat1" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/csrfTokens/deprecated/cardManifestHost.json">
+							<w:layoutData>
+								<f:GridContainerItemLayoutData columns="3" />
+							</w:layoutData>
+						</w:Card>
+						<w:Card id="deprecatedHostFeat2" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/csrfTokens/deprecated/cardManifestHostInvalidTokenURL.json">
+							<w:layoutData>
+								<f:GridContainerItemLayoutData columns="3" />
+							</w:layoutData>
+						</w:Card>
+						<w:Card id="deprecatedCsrfCard1" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/csrfTokens/deprecated/cardManifest.json">
+							<w:layoutData>
+								<f:GridContainerItemLayoutData columns="3" />
+							</w:layoutData>
+						</w:Card>
+						<w:Card id="deprecatedCsrfCard2" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/csrfTokens/deprecated/cardManifestTokenPath.json">
+							<w:layoutData>
+								<f:GridContainerItemLayoutData columns="3" />
+							</w:layoutData>
+						</w:Card>
+						<w:Card id="deprecatedCsrfCard3" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/csrfTokens/deprecated/cardManifestExpiringToken.json">
+							<w:layoutData>
+								<f:GridContainerItemLayoutData columns="3" />
+							</w:layoutData>
+						</w:Card>
+						<w:Card id="deprecatedCsrfCard4" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/csrfTokens/deprecated/cardManifestHost2.json">
+							<w:layoutData>
+								<f:GridContainerItemLayoutData columns="3" />
+							</w:layoutData>
+						</w:Card>
+						<w:Card id="deprecatedCsrfCard5" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/csrfTokens/deprecated/cardManifestHostInvalidTokenURL2.json">
+							<w:layoutData>
+								<f:GridContainerItemLayoutData columns="3" />
+							</w:layoutData>
+						</w:Card>
+						<w:Card id="deprecatedCsrfCard6" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/csrfTokens/deprecated/cardManifestParams.json">
+							<w:layoutData>
+								<f:GridContainerItemLayoutData columns="3" />
+							</w:layoutData>
+						</w:Card>
+						<w:Card id="deprecatedCsrfCard7" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/csrfTokens/deprecated/cardManifestWrongToken.json">
+							<w:layoutData>
+								<f:GridContainerItemLayoutData columns="3" />
+							</w:layoutData>
+						</w:Card>
+						<w:Card id="deprecatedCsrfCard8" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/csrfTokens/deprecated/cardManifestExpiredToken.json">
+							<w:layoutData>
+								<f:GridContainerItemLayoutData columns="3" />
+							</w:layoutData>
+						</w:Card>
+					</f:GridContainer>
+				</IconTabFilter>
+			</items>
+		</IconTabBar>
+		
 	</Page>
 </mvc:View>

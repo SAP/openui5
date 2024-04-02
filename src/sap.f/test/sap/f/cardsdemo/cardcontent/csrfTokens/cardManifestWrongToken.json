@@ -51,7 +51,8 @@
 			}
 		},
 		"header": {
-			"title": "Wrong Token Url"
+			"title": "Wrong Token URL",
+			"subTitle": "(token someWrongTokenUrl/Tokens)"
 		},
 		"content": {
 			"data": {

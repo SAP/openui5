@@ -11,7 +11,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	QUnit.module("CSRF Tokens", {
+	QUnit.module("CSRF Tokens - get token", {
 		beforeEach: function () {
 			this.oServer = sinon.createFakeServer({
 				autoRespond: true,
@@ -20,7 +20,7 @@ sap.ui.define([
 		},
 		afterEach: function () {
 			this.oServer.restore();
-			this._oDataProviderFactory._oCsrfTokenHandler._mTokens.forEach((oToken) => oToken.setExpired());
+			this._oDataProviderFactory._oCsrfTokenHandler._mTokens.forEach((oToken) => oToken.markExpired());
 			this._oDataProviderFactory.destroy();
 		},
 		createDataProvider: function (oDataConfig, oFactoryConfig) {
@@ -357,6 +357,25 @@ sap.ui.define([
 		}).triggerDataUpdate();
 	});
 
+	QUnit.module("CSRF Tokens - reusability", {
+		beforeEach: function () {
+			this.oServer = sinon.createFakeServer({
+				autoRespond: true,
+				respondImmediately: true
+			});
+		},
+		afterEach: function () {
+			this.oServer.restore();
+			this._oDataProviderFactory._oCsrfTokenHandler._mTokens.forEach((oToken) => oToken.markExpired());
+			this._oDataProviderFactory.destroy();
+		},
+		createDataProvider: function (oDataConfig, oFactoryConfig) {
+			this._oDataProviderFactory = new DataProviderFactory(oFactoryConfig);
+
+			return this._oDataProviderFactory.create(oDataConfig);
+		}
+	});
+
 	QUnit.test("Token is reused", function (assert) {
 		const done = assert.async(3);
 		const oCsrfTokensConfig = {
@@ -672,7 +691,7 @@ sap.ui.define([
 
 		const oDataProvider = this.createDataProvider(oDataProviderConfig, { csrfTokensConfig: oCsrfTokensConfig });
 
-		// Act - make a request which uses a CSRF placeholder twice
+		// Act
 		oDataProvider.triggerDataUpdate();
 	});
 
@@ -723,7 +742,7 @@ sap.ui.define([
 			done();
 		});
 
-		// Act - make a request which uses a CSRF placeholder twice
+		// Act
 		this.createDataProvider(oDataProviderConfig, { csrfTokensConfig: oCsrfTokensConfig }).triggerDataUpdate();
 	});
 
@@ -774,7 +793,7 @@ sap.ui.define([
 			done();
 		});
 
-		// Act - make a request which uses a CSRF placeholder twice
+		// Act
 		this.createDataProvider(oDataProviderConfig, { csrfTokensConfig: oCsrfTokensConfig }).triggerDataUpdate();
 	});
 
@@ -828,8 +847,84 @@ sap.ui.define([
 			done();
 		});
 
-		// Act - make a request which uses a CSRF placeholder twice
+		// Act
 		this.createDataProvider(oDataProviderConfig, { csrfTokensConfig: oCsrfTokensConfig }).triggerDataUpdate();
+	});
+
+	QUnit.test("When token has expired it should first check for newer version before re-fetch", function (assert) {
+		const done = assert.async();
+		const oCsrfTokensConfig = {
+			"token1": {
+				"data": {
+					"request": {
+						"url": "/fakeService/getToken",
+						"method": "HEAD",
+						"headers": {
+							"X-CSRF-Token": "Fetch"
+						}
+					}
+				}
+			},
+			"token2": {
+				"data": {
+					"request": {
+						"url": "/fakeService/getToken",
+						"method": "HEAD",
+						"headers": {
+							"X-CSRF-Token": "Fetch"
+						}
+					}
+				}
+			}
+		};
+		const oDataProviderConfig = {
+			"request": {
+				"url": "/fakeService/Products",
+				"method": "GET",
+				"headers": {
+					"X-CSRF-Token": "{csrfTokens>/token1/value}"
+				}
+			},
+			"path": "/results"
+		};
+		const oDataProvider = this.createDataProvider(oDataProviderConfig, { csrfTokensConfig: oCsrfTokensConfig });
+
+		let iCurrentActiveToken = 0;
+
+		// respond upon request for a token
+		this.oServer.respondWith("HEAD", "/fakeService/getToken", function (oXhr) {
+			iCurrentActiveToken++;
+			oXhr.respond(200, {
+				"X-CSRF-Token": `FAKETOKEN${iCurrentActiveToken}`
+			}, "{}");
+		});
+
+		// respond to the actual data request
+		this.oServer.respondWith("GET", "/fakeService/Products", function (oXhr) {
+			const token = new Headers(oXhr.requestHeaders).get("X-CSRF-Token");
+
+			if (token === "FAKETOKEN1") {
+				oDataProvider._oCsrfTokenHandler._mTokens.get("token2").markExpired();
+				oDataProvider._oCsrfTokenHandler._mTokens.get("token2").load();
+
+				oXhr.respond(403, {
+					"X-CSRF-Token": "required"
+				});
+
+				return;
+			}
+
+			assert.strictEqual(token, "FAKETOKEN2", "token1 should reuse value that is fetched by token2");
+
+			oXhr.respond(200, {
+				"Content-Type": "application/json"
+			}, JSON.stringify({"results": []}));
+
+			done();
+		});
+
+		// Act
+		oDataProvider.triggerDataUpdate();
 	});
 
 	QUnit.module("CSRF Tokens in Card", {
@@ -850,7 +945,7 @@ sap.ui.define([
 		},
 		afterEach: function () {
 			this.oServer.restore();
-			this.oCard.getDataProviderFactory()._oCsrfTokenHandler._mTokens.forEach((oToken) => oToken.setExpired());
+			this.oCard.getDataProviderFactory()._oCsrfTokenHandler._mTokens.forEach((oToken) => oToken.markExpired());
 			this.oCard.destroy();
 		}
 	});

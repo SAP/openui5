@@ -40,7 +40,7 @@
 				"token1": {
 					"data": {
 						"request": {
-							"url": "{{destinations.ActivitiesMockServer}}/ExpiredToken",
+							"url": "/csrfTokens/expiredToken",
 							"method": "HEAD",
 							"headers": {
 								"X-CSRF-Token": "Fetch"
@@ -51,7 +51,8 @@
 			}
 		},
 		"header": {
-			"title": "Expired Token that Cannot be Renewed"
+			"title": "Expired Token that Cannot be Renewed",
+			"subTitle": "(token /csrfTokens/expiredToken)"
 		},
 		"content": {
 			"data": {

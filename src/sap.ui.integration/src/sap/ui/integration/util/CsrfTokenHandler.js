@@ -68,12 +68,12 @@ sap.ui.define([
 		return this._mTokens.get(sTokenName);
 	};
 
-	CsrfTokenHandler.prototype.fetchValue = function (sTokenName, oTokenConfig) {
+	CsrfTokenHandler.prototype.fetchValue = function (oTokenConfig) {
 		// clone the data configuration,
 		// so we won't change the original settings
 		oTokenConfig = merge({}, oTokenConfig);
 
-		return this._requestToken(sTokenName, oTokenConfig.data);
+		return this._requestToken(oTokenConfig.data);
 	};
 
 	/**
@@ -153,12 +153,11 @@ sap.ui.define([
 	 * Executes a CSRF token request
 	 *
 	 * @private
-	 * @param {string} sTokenName Token name in the current card
 	 * @param {object} oTokenDataConfig Token data configuration
 	 * @returns {Promise} Promise which resolves with the CSRF token
 	 */
-	CsrfTokenHandler.prototype._requestToken = function (sTokenName, oTokenDataConfig) {
-		if (!sTokenName || !oTokenDataConfig) {
+	CsrfTokenHandler.prototype._requestToken = function (oTokenDataConfig) {
+		if (!oTokenDataConfig) {
 			return Promise.reject("CSRF definition is incorrect");
 		}
 
@@ -190,14 +189,14 @@ sap.ui.define([
 		return pTokenValue;
 	};
 
-	CsrfTokenHandler.prototype.setExpiredTokenByRequest = function (oDataConfig) {
+	CsrfTokenHandler.prototype.markExpiredTokenByRequest = function (oDataConfig) {
 		const sTokenName = this._findTokenName(oDataConfig);
 
 		if (!sTokenName) {
 			return;
 		}
 
-		this._mTokens.get(sTokenName).setExpired();
+		this._mTokens.get(sTokenName).markExpired();
 
 		/**
 		 * @deprecated As of version 1.120.0
