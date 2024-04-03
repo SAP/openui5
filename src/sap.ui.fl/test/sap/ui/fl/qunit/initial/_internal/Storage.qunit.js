@@ -804,15 +804,20 @@ sap.ui.define([
 		});
 
 		QUnit.test("Given two connectors provide variants in the variant section", function(assert) {
-			var oResponse1 = {
+			var oResponse1 = [{
 				changes: [],
 				variantSection: {},
 				ui2personalization: {
 					key1: "value1"
 				},
 				cacheKey: "key1"
-			};
-			oResponse1.variantSection = {
+			},
+			{
+				changes: [],
+				variantSection: {},
+				ui2personalization: {}
+			}];
+			oResponse1[0].variantSection = {
 				variantManagement1: {
 					variantManagementChanges: {},
 					variants: [{
@@ -856,7 +861,7 @@ sap.ui.define([
 			sandbox.stub(LrepConnector, "loadFlexData").resolves(oResponse2);
 
 			var oExpectedResponse = Object.assign({}, StorageUtils.getEmptyFlexDataResponse(), {
-				variants: [oResponse1.variantSection.variantManagement1.variants[0].content, oResponse2.variantSection.variantManagement1.variants[0].content]
+				variants: [oResponse1[0].variantSection.variantManagement1.variants[0].content, oResponse2.variantSection.variantManagement1.variants[0].content]
 			});
 			oExpectedResponse.ui2personalization = {
 				key1: "value1",

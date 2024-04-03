@@ -163,7 +163,7 @@ sap.ui.define([
 				assert.equal(oFlexData[0].changes[1], 3, "the compVariant entry is contained");
 				assert.equal(oFlexData[1].changes.length, 1, "one entries are in the public change section");
 				assert.equal(oFlexData[1].changes[0], 2, "the compVariant entry is contained");
-				assert.equal(oFlexData.cacheKey, "abc123", "the cacheKey value is returned");
+				assert.equal(oFlexData[0].cacheKey, "abc123", "the cacheKey value is returned in a sub content");
 			});
 		});
 
