@@ -1392,6 +1392,7 @@ sap.ui.define([
 	 * requests.
 	 * Before 1.53.0, this method was not supported and threw an error.
 	 *
+	 * @returns {this} <code>this</code> to allow method chaining
 	 * @throws {Error}
 	 *   If this binding
 	 *   <ul>
@@ -1410,6 +1411,8 @@ sap.ui.define([
 	// @override sap.ui.model.Binding#resume
 	ODataParentBinding.prototype.resume = function () {
 		this._resume(false);
+
+		return this;
 	};
 
 	/**
@@ -1458,6 +1461,8 @@ sap.ui.define([
 	 * of a {@link #getRootBinding root binding} do not count as pending changes. Since 1.108.0
 	 * {@link sap.ui.model.odata.v4.Context#delete deleted} contexts do not count as pending
 	 * changes.
+  	 *
+  	 * @returns {this} <code>this</code> to allow method chaining
 	 *
 	 * @throws {Error}
 	 *   If this binding
@@ -1501,6 +1506,8 @@ sap.ui.define([
 		this.oResumePromise.$resolve = fnResolve;
 		this.removeReadGroupLock();
 		this.doSuspend();
+
+		return this;
 	};
 
 	/**
