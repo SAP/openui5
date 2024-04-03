@@ -3,6 +3,16 @@
     "date": "April 2024",
     "notes": [
       {
+        "id": "7a567d1c4f64b13bb2f278637eb27fd6dbc86d3b",
+        "type": "FEATURE",
+        "text": " sap.m.SinglePlanningCalendar: Providing weekNumberPress and selectedDatesChange events"
+      },
+      {
+        "id": "3e29b7be44d40fa0a9d89f91490e80c5fb33deab",
+        "type": "FEATURE",
+        "text": " sap.m.TimePicker: Show 12h format if the display format contains the symbol B"
+      },
+      {
         "id": "418b3d9b2eb5b26665f9fe3054afebe51965801a",
         "type": "FIX",
         "text": " sap.m.Input: Fix failing qunit tests"

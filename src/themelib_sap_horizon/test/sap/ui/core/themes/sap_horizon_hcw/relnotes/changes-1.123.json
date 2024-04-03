@@ -3,6 +3,11 @@
     "date": "April 2024",
     "notes": [
       {
+        "id": "8a65fde58d0e4cc5b441bde5ba63c9c524f15a9a",
+        "type": "FIX",
+        "text": " sap.uxap.AnchorBar: Removed unwanted border"
+      },
+      {
         "id": "f866420cc64e1fb51aab57d2e9aeadb61f2ff566",
         "type": "FEATURE",
         "text": " sap.ui.core.IconPool: Update icon font v5.8 and v4.20"
