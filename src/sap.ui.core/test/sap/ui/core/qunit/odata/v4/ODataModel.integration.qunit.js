@@ -30079,7 +30079,9 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-2374
 	//
 	// Selection survives a move (JIRA: CPOUI5ODATAV4-1944)
-	QUnit.test("Recursive Hierarchy: create new children, move 'em", function (assert) {
+[false, true].forEach(function (bResetViaModel) {
+	const sTitle = `Recursive Hierarchy: create new children, move 'em, model=${bResetViaModel}`;
+	QUnit.test(sTitle, function (assert) {
 		var oBeta, oBetaCreated, oGamma, oGammaCreated, oListBinding, oNewRoot, fnRespond, oRoot,
 			oTable;
 
@@ -30090,7 +30092,8 @@ sap.ui.define([
 			+ "/com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root" + sFriend
 			+ ",HierarchyQualifier='OrgChart',NodeProperty='_/NodeID',Levels=1)";
 		const sView = `
-<t:Table id="table" rows="{path : '/Artists(ArtistID=\\'99\\',IsActiveEntity=false)/_Friend',
+<FlexBox id="form" binding="{/Artists(ArtistID='99',IsActiveEntity=false)}">
+<t:Table id="table" rows="{path : '_Friend',
 		parameters : {
 			$$aggregation : {
 				hierarchyQualifier : 'OrgChart'
@@ -30103,7 +30106,8 @@ sap.ui.define([
 	<Text id="etag" text="{= %{@odata.etag} }"/>
 	<Text id="name" text="{Name}"/>
 	<Text id="id" text="{_/NodeID}"/>
-</t:Table>`;
+</t:Table>
+</FlexBox>`;
 		const that = this;
 
 		this.expectRequest(sBaseUrl + "&$select=ArtistID,IsActiveEntity,Name,_/DrillState,_/NodeID"
@@ -30147,7 +30151,19 @@ sap.ui.define([
 				"@$ui5.node.parent" : oRoot,
 				Name : "n/a"
 			}, /*bSkipRefresh*/true);
-			oModel.resetChanges();
+
+			assert.ok(oModel.hasPendingChanges());
+			assert.ok(oListBinding.getContext().hasPendingChanges());
+
+			return Promise.all([
+				// code under test (SNOW: DINC0100326)
+				(bResetViaModel ? oModel : oListBinding.getContext()).resetChanges(),
+				that.waitForChanges(assert, "reset changes"),
+				checkCanceled(assert, oLostChild.created())
+			]);
+		}).then(function () {
+			assert.notOk(oModel.hasPendingChanges());
+			assert.notOk(oListBinding.getContext().hasPendingChanges());
 
 			that.expectChange("etag", [, undefined])
 				.expectChange("name", [, "Beta"])
@@ -30180,7 +30196,6 @@ sap.ui.define([
 			}, new Error("Cannot move " + oBeta), "too early");
 
 			return Promise.all([
-				checkCanceled(assert, oLostChild.created()),
 				that.waitForChanges(assert, "create 1st child")
 			]);
 		}).then(function () {
@@ -30765,6 +30780,7 @@ sap.ui.define([
 				]);
 		});
 	});
+});
 
 	//*********************************************************************************************
 	// Scenario: Create a new node when all levels are expanded, observe a GET for LimitedRank. The
