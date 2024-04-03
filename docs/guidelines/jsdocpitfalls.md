@@ -152,6 +152,15 @@ The only way to avoid such nonsense documentation is to avoid the pairing of mul
 -   or at least avoid the double asterisks at the beginning. A very unnoticeable replacement might be the double quote ` /*"************/ `
 -   as only the last doc comment before a symbol is used, another very good way to avoid misinterpretation of banner comments is to document the following symbol
 
+
+
+Nesting of block tags in Doc comments
+-------------------------
+
+JSDoc does not support the usage of block tags within block tags, but neither does it report this as an error. UI5 uses several tools to analyse written JSDoc. To offer you the best-in-class TypeScript support, we use the `typescript` package, which allows and supports (evaluates) such nested block tags. Please use only [inline tags](https://jsdoc.app/#inline-tags) within a block tag and avoid using [block tags](https://jsdoc.app/#block-tags) within block tags.
+
+
+
 HTML tags in Doc comments
 -------------------------
 
