@@ -1662,7 +1662,9 @@ sap.ui.define([
 			for (var n in oSettings.form.items) {
 				var oItem = oSettings.form.items[n];
 				if (oItem.editable) {
-					if ((oItem.isValid || oItem.required) && !(this.getMode() === "translation" && oItem.translatable)) {
+					if (oItem.validateCheck === "failed") {
+						mChecks[oItem.manifestpath] = false;
+					} else if ((oItem.isValid || oItem.required) && !(this.getMode() === "translation" && oItem.translatable)) {
 						if (oItem.isValid) {
 							mChecks[oItem.manifestpath] = oItem.isValid(oItem);
 						}

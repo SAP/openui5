@@ -296,11 +296,13 @@ sap.ui.define([
 				var oValidate = this._handleValidation(oConfig.validations[i], value);
 				if (typeof oValidate === "boolean" && !oValidate) {
 					this.fireValidateFailed();
+					oConfig.validateCheck = "failed";
 					return false;
 				} else if (typeof oValidate.then === "function") {
 					oValidate.then(function(bResult) {
 						if (!bResult) {
 							this.fireValidateFailed();
+							oConfig.validateCheck = "failed";
 							return false;
 						}
 					}.bind(this));
