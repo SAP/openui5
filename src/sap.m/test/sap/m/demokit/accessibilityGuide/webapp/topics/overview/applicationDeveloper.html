@@ -10,7 +10,7 @@
 	<div class="topic">
 		<div class="content">
 			<h1>Accessibility at Application Level</h1>
-			<p>Many requirements are already covered by the <a href="" id="linkToAccessibilityAppDeveloper" target="_blank">SAPUI5 framework</a>.
+			<p>Many requirements are already covered by the <a href="" id="linkToAccessibilityAppDeveloper" target="_blank">framework</a>.
 				However, design aspects that are related to the individual purpose of the application still need to be implemented by the application design team.
 				Here are some examples:
 			</p>
@@ -18,16 +18,17 @@
 			<ul>
 				<li>
 					<p>
-						<b>Initial focus position:</b> To enable users to work through a task efficiently, always set an initial focus.
-						It should be set to either the first logical interaction element or the first element in the task.
+						<b>Initial focus position:</b> To enable users to efficiently navigate through a task, always set an initial focus.
+						This initial focus should be set to either the first logical interaction element or the first element in the task.
 					</p>
 				</li>
 				<li>
 					<p>
-						<b>Structure and fast navigation:</b> Ensure that the keyboard navigation within your application is logical and follows the task structure for the intended purpose.
+						<b>Structure and fast navigation:</b> It is important to ensure that the keyboard navigation in your application is well-organized and follows 
+						the logical task structure for the intended purpose.
 						When designing apps with a large set of functions or information blocks, always form logical groups to help users navigate efficiently.
 						You can achieve this by using containers, toolbars, or other grouping elements. To enable faster navigation,
-						SAPUI5 allows users to skip groups (with <code>F6</code> or <code>Shift + F6</code>).
+						the framework allows users to skip groups (with <code>F6</code> or <code>Shift + F6</code>).
 						You should also, enable direct keyboard navigation to logical groups, such as working areas or navigation areas.
 					</p>
 				</li>
@@ -35,8 +36,8 @@
 					<p>
 						<b>Keyboard shortcuts (hot keys):</b> While some keyboard shortcuts are supported at the framework level (such as <code>Ctrl + A</code> to select all items),
 						others must be defined at the application level (a common one is <code>Ctrl + S</code> to save the current object).
-						Support for keyboard shortcuts in SAPUI5 differs from the default browser behavior: all keyboard shortcut commands are captured by the application except <code>Ctrl + L</code>,
-						which is used to jump to the browser address bar.
+						It's important to note that support for keyboard shortcuts in SAPUI5 differs from the default browser behavior: all keyboard shortcut commands are captured by the application, 
+						except <code>Ctrl + L</code>, which is used to jump to the browser address bar.
 						From there, all browser keyboard shortcuts are available. Follow industry standards and best practices.
 					</p>
 				</li>
@@ -44,7 +45,7 @@
 			<h2 id="screenReader">Screen Reader Support</h2>
 			<p>
 				Although screen reader support is technically implemented at the framework level,
-				it is still the developer’s task to arrange the individual UI elements in relationships that are needed for the screen readers. This is done by using appropriate floorplans, layouts, and controls for the respective use cases.
+				it is still the developer’s task to arrange the individual UI elements in relationships that are needed for the screen readers. This can be achieved by using appropriate floorplans, layouts, and controls for the respective use cases.
 			</p>
 			<ul>
 				<li>
@@ -71,7 +72,7 @@
 				<li>
 					<p>
 						<b>Status updates, messages, error handling:</b> Although the shape and appearance of system messages is predefined,
-						ensure that the message content is clear and easy to understand.
+						ensure that the message is clear and easy to understand.
 						For error messages, indicate the location of the error and how to fix it.
 					</p>
 				</li>
@@ -79,8 +80,8 @@
 		</div>
 		<div class="navigation">
 			<h4>Table of Contents</h4>
-			<div><a href="#keyboard">Keyboard operations</a></div>
-			<div><a href="#screenReader">Screen Reader support</a></div>
+			<div><a href="#keyboard">Keyboard Operations</a></div>
+			<div><a href="#screenReader">Screen Reader Support</a></div>
 		</div>
 	</div>
 	<script>

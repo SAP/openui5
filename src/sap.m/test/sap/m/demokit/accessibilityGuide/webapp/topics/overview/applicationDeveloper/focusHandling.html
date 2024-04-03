@@ -10,10 +10,12 @@
 	<div class="topic">
 		<div class="content">
 			<h1 id="overview">Focus Handling</h1>
-			<p>It is essential to observe the moving focus in an application page. This information is preserved for refocusing elements after rerendering. The focus triggers event firing. However, due to the high degree of flexibility in control rendering, a functionality tailored to the respective control is required. For this, the framework provides helper functions for the implementation of focus handling.</p>
+			<p>Logically related UI elements have to receive keyboard focus in an order that preserves semantics and usability of the applicatoin. It is essential to observe the moving focus in each application page. 
+				This information is preserved for refocusing elements after rerendering. The focus triggers event firing. Due to the high degree of flexibility in control rendering, a functionality tailored to the respective control is required. 
+				For this reason, the framework provides helper functions for the implementation of focus handling.</p>
 
-			<h2>Initial focus in Popups</h2>
-			<p>Initial focus is used for specifying the first focused element when the application is loaded, popover or dialog is opened, etc.:</p>
+			<h2>Initial Focus in Popups</h2>
+			<p>Initial focus is used for specifying the first focused element when the application is loaded, or popover or dialog is opened, etc.</p>
 
 			<h3 id="popover">sap.m.Popover</h3>
 			<pre class="lang-xml">
