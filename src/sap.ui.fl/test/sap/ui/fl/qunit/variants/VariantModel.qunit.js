@@ -2229,7 +2229,7 @@ sap.ui.define([
 				this.fnApplyChangesStub = sandbox.stub(this.oFlexController, "saveSequenceOfDirtyChanges").resolves();
 				this.oRegisterControlStub = sandbox.stub(URLHandler, "registerControl");
 
-				sandbox.stub(VariantManagementState, "getInitialChanges").returns([]);
+				sandbox.stub(VariantManagementState, "getInitialUIChanges").returns([]);
 
 				this.oModel = new VariantModel({}, {
 					flexController: this.oFlexController,

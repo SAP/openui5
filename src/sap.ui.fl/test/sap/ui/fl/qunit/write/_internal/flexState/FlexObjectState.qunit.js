@@ -4,7 +4,6 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/UIComponent",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
-	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/initial/api/Version",
@@ -18,12 +17,12 @@ sap.ui.define([
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"test-resources/sap/ui/fl/qunit/FlQUnitUtils"
 ], function(
 	Control,
 	UIComponent,
 	FlexObjectFactory,
-	VariantManagementState,
 	FlexState,
 	ManifestUtils,
 	Version,
@@ -37,45 +36,47 @@ sap.ui.define([
 	Layer,
 	Utils,
 	JSONModel,
-	sinon
+	sinon,
+	FlQUnitUtils
 ) {
 	"use strict";
 	const sandbox = sinon.createSandbox();
 	const sReference = "test.selector.id";
 	const sComponentId = "componentId";
 
-	function addChangesToChangePersistence(oChangePersistence) {
-		var oChangeInPersistence1 = FlexObjectFactory.createFromFileContent({
+	function createTwoChangeDefs() {
+		const oChange1 = {
 			fileName: "change1",
 			fileType: "change",
 			selector: {},
 			changeType: "renameField",
 			layer: Layer.USER
-		});
-		var oChangeInPersistence2 = FlexObjectFactory.createFromFileContent({
+		};
+		const oChange2 = {
+			fileName: "change2",
 			fileType: "change",
-			fileName: "change1",
 			selector: {},
 			changeType: "addGroup",
 			layer: Layer.USER
-		});
-		oChangePersistence.addDirtyChanges([oChangeInPersistence1, oChangeInPersistence2]);
-		// Some tests require persisted changes
-		sandbox.stub(oChangePersistence, "getChangesForComponent").resolves([oChangeInPersistence1, oChangeInPersistence2]);
+		};
+		return [oChange1, oChange2];
 	}
 
-	function addDirtyChanges(oChangePersistence) {
-		var oChangeInPersistence1 = FlexObjectFactory.createFromFileContent({
+	function addDirtyChanges() {
+		const oChange1 = FlexObjectFactory.createFromFileContent({
+			fileType: "change",
 			selector: {},
 			changeType: "dirtyRenameField",
 			layer: Layer.USER
 		});
-		var oChangeInPersistence2 = FlexObjectFactory.createFromFileContent({
+		const oChange2 = FlexObjectFactory.createFromFileContent({
+			fileType: "change",
 			selector: {},
 			changeType: "dirtyAddGroup",
 			layer: Layer.USER
 		});
-		sandbox.stub(oChangePersistence, "getDirtyChanges").returns([oChangeInPersistence1, oChangeInPersistence2]);
+		var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sReference);
+		oChangePersistence.addDirtyChanges([oChange1, oChange2]);
 	}
 
 	QUnit.module("getFlexObjects / saveFlexObjects", {
@@ -108,44 +109,50 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("Get - Given no flex objects are present", function(assert) {
+		QUnit.test("Get - Given no flex objects are present", async function(assert) {
+			await FlQUnitUtils.initializeFlexStateWithData(sandbox, sReference);
 			return FlexObjectState.getFlexObjects({
 				selector: this.oAppComponent,
 				currentLayer: Layer.CUSTOMER
 			})
 			.then(function(aFlexObjects) {
-				assert.equal(aFlexObjects.length, 0, "an empty array is returned");
+				assert.strictEqual(aFlexObjects.length, 0, "an empty array is returned");
 			});
 		});
 
-		QUnit.test("when flex objects are requested and no variant management model exists", function(assert) {
-			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sReference);
-			var oVariant = FlexObjectFactory.createFromFileContent({
-				fileType: "ctrl_variant",
-				selector: {},
-				changeType: "FlVariant",
-				layer: Layer.USER,
-				variantReference: "otherVariantReference"
+		QUnit.test("when flex objects are requested and no variant management model exists", async function(assert) {
+			await FlQUnitUtils.initializeFlexStateWithData(sandbox, sReference, {
+				changes: [{
+					fileName: "change1",
+					selector: {},
+					changeType: "renameField",
+					layer: Layer.USER,
+					variantReference: "variant1"
+				}],
+				variants: [{
+					fileName: "variant1",
+					fileType: "ctrl_variant",
+					selector: {},
+					changeType: "FlVariant",
+					layer: Layer.USER,
+					variantManagementReference: "foobar",
+					variantReference: "otherVariantReference"
+				}]
 			});
-			var oChangeOnVariant1 = FlexObjectFactory.createFromFileContent({
-				selector: {},
-				changeType: "renameField",
-				layer: Layer.USER,
-				variantReference: "variant1"
-			});
-			sandbox.stub(oChangePersistence, "getChangesForComponent").resolves([oVariant, oChangeOnVariant1]);
 
-			return FlexObjectState.getFlexObjects({
+			const aFlexObjects = await FlexObjectState.getFlexObjects({
 				selector: this.oAppComponent,
-				invalidateCache: true,
-				onlyCurrentVariants: true
-			})
-			.then(function(aFlexObjects) {
-				assert.deepEqual(aFlexObjects, [oVariant, oChangeOnVariant1], "then all flex objects are returned correctly");
+				includeCtrlVariants: true
 			});
+			assert.strictEqual(aFlexObjects.length, 3, "then three flex objects are returned correctly");
+			const aFilenames = aFlexObjects.map((oFlexObject) => oFlexObject.getId());
+			assert.ok(aFilenames.indexOf("change1") > -1, "then the change is returned");
+			assert.ok(aFilenames.indexOf("variant1") > -1, "then the variant is returned");
+			assert.ok(aFilenames.indexOf("foobar") > -1, "then the standard variant is returned");
 		});
 
-		QUnit.test("Get - Given flex objects are present in the CompVariantState", function(assert) {
+		QUnit.test("Get - Given flex objects are present in the CompVariantState", async function(assert) {
+			await FlQUnitUtils.initializeFlexStateWithData(sandbox, sReference);
 			var sPersistencyKey = "persistency.key";
 			var oControl = new Control();
 			oControl.getPersistencyKey = function() {
@@ -174,62 +181,124 @@ sap.ui.define([
 				selector: this.oAppComponent
 			})
 			.then(function(aFlexObjects) {
-				assert.equal(aFlexObjects.length, 2, "an array with two entries is returned");
-				assert.equal(aFlexObjects[0].getChangeType(), "pageVariant", "the variant from the compVariantState is present");
-				assert.equal(aFlexObjects[1].getChangeType(), "updateVariant", "the change from the compVariantState is present");
+				assert.strictEqual(aFlexObjects.length, 2, "an array with two entries is returned");
+				assert.strictEqual(aFlexObjects[0].getChangeType(), "pageVariant", "the variant from the compVariantState is present");
+				assert.strictEqual(aFlexObjects[1].getChangeType(), "updateVariant", "the change from the compVariantState is present");
 			});
 		});
 
-		QUnit.test("Get - Given no flex objects are present in the CompVariantState + ChangePersistence but only Standard variant and invalidateCache is true", function(assert) {
+		QUnit.test("Get - Given no flex objects are present in the CompVariantState + ChangePersistence but only Standard variant and invalidateCache is true", async function(assert) {
+			await FlQUnitUtils.initializeFlexStateWithData(sandbox, sReference);
 			var sPersistencyKey = "persistency.key";
 			var oControl = new Control();
 			oControl.getPersistencyKey = function() {
 				return sPersistencyKey;
 			};
-			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sReference);
-			sandbox.stub(oChangePersistence, "getChangesForComponent").resolves([]);
 			FlexState.setInitialNonFlCompVariantData(sReference, sPersistencyKey,
 				{
 					executeOnSelection: false,
 					id: "*standard*",
 					name: "Standard"
-				});
+				}
+			);
 			return FlexObjectState.getFlexObjects({
 				selector: this.oAppComponent,
 				invalidateCache: true
 			})
 			.then(function(aFlexObjects) {
-				assert.equal(aFlexObjects.length, 1, "an array with 1 entries is returned");
-				assert.equal(aFlexObjects[0].getVariantId(), "*standard*", "the standard variant is present");
+				assert.strictEqual(aFlexObjects.length, 1, "an array with 1 entries is returned");
+				assert.strictEqual(aFlexObjects[0].getVariantId(), "*standard*", "the standard variant is present");
 			});
 		});
 
-		QUnit.test("Get - Given flex objects are present in the CompVariantState + ChangePersistence + invalidateCache is true", function(assert) {
-			var sPersistencyKey = "persistency.key";
-			var oControl = new Control();
-			oControl.getPersistencyKey = function() {
-				return sPersistencyKey;
-			};
-			CompVariantState.addVariant({
-				changeSpecificData: {
-					type: "pageVariant",
-					isVariant: true,
-					content: {},
-					id: "myId"
+		QUnit.test("Get - Given flex objects are present in the CompVariantState + ChangePersistence + invalidateCache is true", async function(assert) {
+			const sPersistencyKey = "persistency.key";
+			await FlQUnitUtils.initializeFlexStateWithData(sandbox, sReference, {
+				changes: createTwoChangeDefs(),
+				comp: {
+					variants: [{
+						fileName: "variant1",
+						fileType: "variant",
+						content: {},
+						changeType: "pageVariant",
+						reference: sReference,
+						persistencyKey: sPersistencyKey
+					}],
+					changes: [
+						{
+							fileName: "change12",
+							content: {
+								favorite: true
+							},
+							changeType: "updateVariant",
+							selector: {
+								variantId: "variant1",
+								persistencyKey: sPersistencyKey
+							},
+							layer: Layer.USER,
+							reference: sReference
+						}
+					]
+				}
+			});
+			FlexState.setInitialNonFlCompVariantData(sReference, sPersistencyKey,
+				{
+					executeOnSelection: false,
+					id: "*standard*",
+					name: "Standard"
 				},
-				reference: sReference,
-				persistencyKey: sPersistencyKey
+				[{
+					favorite: true,
+					id: "#PS1",
+					name: "EntityType"
+				}]
+			);
+			const aFlexObjects = await FlexObjectState.getFlexObjects({
+				selector: this.oAppComponent,
+				invalidateCache: true
 			});
-			CompVariantState.updateVariant({
-				favorite: true,
-				id: "myId",
-				layer: Layer.USER,
-				control: oControl,
-				reference: sReference,
-				persistencyKey: sPersistencyKey
+			const aNames = aFlexObjects.map((oFlexObject) => {
+				return oFlexObject.getVariantId ? oFlexObject.getVariantId() : oFlexObject.getId();
 			});
-			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sReference);
-			addChangesToChangePersistence(oChangePersistence);
+			assert.strictEqual(aFlexObjects.length, 6, "an array with 6 entries is returned");
+			assert.ok(aNames.indexOf("variant1") > -1, "the variant from the compVariantState is present");
+			assert.ok(aNames.indexOf("change12") > -1, "the change from the compVariantState is present");
+			assert.ok(aNames.indexOf("change1") > -1, "the 1st change in changePersistence is present");
+			assert.ok(aNames.indexOf("change2") > -1, "the 2nd change in changePersistence is present");
+			assert.ok(aNames.indexOf("#PS1") > -1, "the oData variant is present");
+			assert.ok(aNames.indexOf("*standard*") > -1, "the standard variant is present");
+		});
+
+		QUnit.test("Get - Given flex objects are present in the CompVariantState + ChangePersistence + invalidateCache is true and setVisible change", async function(assert) {
+			var sPersistencyKey = "persistency.key";
+			await FlQUnitUtils.initializeFlexStateWithData(sandbox, sReference, {
+				changes: createTwoChangeDefs(),
+				comp: {
+					variants: [{
+						fileName: "variant1",
+						fileType: "variant",
+						content: {},
+						changeType: "pageVariant",
+						reference: sReference,
+						persistencyKey: sPersistencyKey
+					}],
+					changes: [
+						{
+							fileName: "change12",
+							content: {
+								visible: false
+							},
+							changeType: "updateVariant",
+							selector: {
+								variantId: "variant1",
+								persistencyKey: sPersistencyKey
+							},
+							layer: Layer.USER,
+							reference: sReference
+						}
+					]
+				}
+			});
 			FlexState.setInitialNonFlCompVariantData(sReference, sPersistencyKey,
 				{
 					executeOnSelection: false,
@@ -241,72 +310,19 @@ sap.ui.define([
 					id: "#PS1",
 					name: "EntityType"
 				}]);
-			return FlexObjectState.getFlexObjects({
+			const aFlexObjects = await FlexObjectState.getFlexObjects({
 				selector: this.oAppComponent,
 				invalidateCache: true
-			})
-			.then(function(aFlexObjects) {
-				assert.equal(aFlexObjects.length, 6, "an array with 6 entries is returned");
-				assert.equal(aFlexObjects[0].getChangeType(), "pageVariant", "the variant from the compVariantState is present");
-				assert.equal(aFlexObjects[1].getChangeType(), "updateVariant", "the change from the compVariantState is present");
-				assert.equal(aFlexObjects[2].getVariantId(), "#PS1", "the oData variant is present");
-				assert.equal(aFlexObjects[3].getVariantId(), "*standard*", "the standard variant is present");
-				assert.equal(aFlexObjects[4].getChangeType(), "renameField", "the 1st change in changePersistence is present");
-				assert.equal(aFlexObjects[5].getChangeType(), "addGroup", "the 2nd change in changePersistence is present");
 			});
-		});
-
-		QUnit.test("Get - Given flex objects are present in the CompVariantState + ChangePersistence + invalidateCache is true and setVisible change", function(assert) {
-			var sPersistencyKey = "persistency.key";
-			var oControl = new Control();
-			oControl.getPersistencyKey = function() {
-				return sPersistencyKey;
-			};
-			CompVariantState.addVariant({
-				changeSpecificData: {
-					type: "pageVariant",
-					isVariant: true,
-					content: {},
-					id: "myId"
-				},
-				reference: sReference,
-				persistencyKey: sPersistencyKey
+			const aNames = aFlexObjects.map((oFlexObject) => {
+				return oFlexObject.getVariantId ? oFlexObject.getVariantId() : oFlexObject.getId();
 			});
-			CompVariantState.updateVariant({
-				favorite: true,
-				id: "myId",
-				layer: Layer.USER,
-				control: oControl,
-				reference: sReference,
-				persistencyKey: sPersistencyKey,
-				visible: false,
-				forceCreate: true
-			});
-			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sReference);
-			addChangesToChangePersistence(oChangePersistence);
-			FlexState.setInitialNonFlCompVariantData(sReference, sPersistencyKey,
-				{
-					executeOnSelection: false,
-					id: "*standard*",
-					name: "Standard"
-				},
-				[{
-					favorite: true,
-					id: "#PS1",
-					name: "EntityType"
-				}]);
-			return FlexObjectState.getFlexObjects({
-				selector: this.oAppComponent,
-				invalidateCache: true
-			})
-			.then(function(aFlexObjects) {
-				assert.equal(aFlexObjects.length, 5, "an array with 5 entries is returned");
-				assert.equal(aFlexObjects[0].getChangeType(), "updateVariant", "the change from the compVariantState is present");
-				assert.equal(aFlexObjects[1].getVariantId(), "#PS1", "the oData variant is present");
-				assert.equal(aFlexObjects[2].getVariantId(), "*standard*", "the standard variant is present");
-				assert.equal(aFlexObjects[3].getChangeType(), "renameField", "the 1st change in changePersistence is present");
-				assert.equal(aFlexObjects[4].getChangeType(), "addGroup", "the 2nd change in changePersistence is present");
-			});
+			assert.strictEqual(aFlexObjects.length, 5, "an array with 5 entries is returned");
+			assert.ok(aNames.indexOf("change12") > -1, "the change from the compVariantState is present");
+			assert.ok(aNames.indexOf("#PS1") > -1, "the oData variant is present");
+			assert.ok(aNames.indexOf("*standard*") > -1, "the standard variant is present");
+			assert.ok(aNames.indexOf("change1") > -1, "the 1st change in changePersistence is present");
+			assert.ok(aNames.indexOf("change2") > -1, "the 2nd change in changePersistence is present");
 		});
 
 		QUnit.test("Get - Given flex objects of different layers are present in the CompVariantState and currentLayer set", function(assert) {
@@ -348,8 +364,8 @@ sap.ui.define([
 				currentLayer: Layer.CUSTOMER
 			})
 			.then(function(aFlexObjects) {
-				assert.equal(aFlexObjects.length, 1, "an array with one entry is returned");
-				assert.equal(aFlexObjects[0].getChangeType(), "updateVariant", "the change from the compVariantState is present");
+				assert.strictEqual(aFlexObjects.length, 1, "an array with one entry is returned");
+				assert.strictEqual(aFlexObjects[0].getChangeType(), "updateVariant", "the change from the compVariantState is present");
 			});
 		});
 
@@ -388,229 +404,36 @@ sap.ui.define([
 				selector: this.oAppComponent
 			})
 			.then(function(aFlexObjects) {
-				assert.equal(aFlexObjects.length, 3, "an array with three entries is returned");
+				assert.strictEqual(aFlexObjects.length, 3, "an array with three entries is returned");
 			});
 		});
 
-		QUnit.test("when flex objects for the current variant are requested", function(assert) {
-			var sPersistencyKey = "persistency.key";
-			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sReference);
-			var oVariant = FlexObjectFactory.createFromFileContent({
-				fileType: "ctrl_variant",
-				selector: {},
-				changeType: "FlVariant",
-				layer: Layer.USER,
-				variantReference: "otherVariantReference"
+		QUnit.test("Get - Given flex objects and dirty changes are present ", async function(assert) {
+			await FlQUnitUtils.initializeFlexStateWithData(sandbox, sReference, {
+				changes: createTwoChangeDefs()
 			});
-			var oChangeOnVariant1 = FlexObjectFactory.createFromFileContent({
-				selector: {},
-				changeType: "renameField",
-				layer: Layer.USER,
-				variantReference: "variant1"
-			});
-			var oChangeOnVariant2 = FlexObjectFactory.createFromFileContent({
-				selector: {},
-				changeType: "addGroup",
-				layer: Layer.USER,
-				variantReference: "variant2"
-			});
-			var oVariantIndependentChange = FlexObjectFactory.createFromFileContent({
-				selector: {},
-				changeType: "addGroup",
-				layer: Layer.USER,
-				variantReference: ""
-			});
-			var oVariantManagementChange = FlexObjectFactory.createFromFileContent({
-				fileType: "ctrl_variant_management_change",
-				selector: {},
-				changeType: "setDefault",
-				layer: Layer.USER
-			});
-			var oVariantChange = FlexObjectFactory.createFromFileContent({
-				fileType: "ctrl_variant_change",
-				selector: {},
-				changeType: "setFavorite",
-				layer: Layer.USER
-			});
-			sandbox.stub(oChangePersistence, "getChangesForComponent").resolves([oVariant, oChangeOnVariant1, oChangeOnVariant2, oVariantIndependentChange, oVariantManagementChange, oVariantChange]);
-			FlexState.setInitialNonFlCompVariantData(sReference, sPersistencyKey,
-				{
-					executeOnSelection: false,
-					id: "*standard*",
-					name: "Standard"
-				},
-				[{
-					favorite: true,
-					id: "#PS1",
-					name: "EntityType"
-				}]
-			);
-			sandbox.stub(VariantManagementState, "getVariantManagementReferences").returns(["variantReference1"]);
-			sandbox.stub(this.oAppComponent, "getModel").returns({
-				getCurrentVariantReference(sVariantManagementReference) {
-					if (sVariantManagementReference === "variantReference1") {
-						return "variant1";
-					}
-					if (sVariantManagementReference === "variantReference2") {
-						return "variant2";
-					}
-					return undefined;
-				}
-			});
-
-			return FlexObjectState.getFlexObjects({
-				selector: this.oAppComponent,
-				invalidateCache: true,
-				onlyCurrentVariants: true
-			})
-			.then(function(aFlexObjects) {
-				assert.notOk(aFlexObjects.includes(oChangeOnVariant2), "then flex objects with different variant references are filtered");
-				assert.ok(aFlexObjects.includes(oVariantIndependentChange), "then variant independent flex objects are not filtered");
-				assert.strictEqual(aFlexObjects.length, 7, "then the non UI are not filtered");
-			});
-		});
-
-		[true, false].forEach(function(bIncludeDirtyChanges) {
-			var sText = "Get - Given flex objects and dirty changes are present in the ChangePersistence with include dirty changes ";
-			sText += bIncludeDirtyChanges ? "set" : "not set";
-
-			QUnit.test(sText, function(assert) {
-				var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sReference);
-				addChangesToChangePersistence(oChangePersistence);
-
-				return oChangePersistence.saveDirtyChanges(this.oAppComponent)
-				.then(function() {
-					addDirtyChanges(oChangePersistence);
-				})
-				.then(FlexObjectState.getFlexObjects.bind(undefined, {
-					selector: this.oAppComponent,
-					includeDirtyChanges: bIncludeDirtyChanges,
-					currentLayer: Layer.USER
-				}))
-				.then(function(aFlexObjects) {
-					assert.equal(aFlexObjects[0].getChangeType(), "renameField", "the first change from the persistence is present");
-					assert.equal(aFlexObjects[1].getChangeType(), "addGroup", "the second change from the persistence is present");
-					if (bIncludeDirtyChanges) {
-						assert.equal(aFlexObjects.length, 4, "an array with four entries is returned");
-						assert.equal(aFlexObjects[2].getChangeType(), "dirtyRenameField", "the third change from the persistence is present");
-						assert.equal(aFlexObjects[3].getChangeType(), "dirtyAddGroup", "the fourth change from the persistence is present");
-					} else {
-						assert.equal(aFlexObjects.length, 2, "an array with two entries is returned");
-					}
-				});
-			});
-
-			sText = "Get - Given only dirty changes are present in the ChangePersistence with include dirty changes ";
-			sText += bIncludeDirtyChanges ? "set" : "not set";
-			QUnit.test(sText, function(assert) {
-				var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sReference);
-				addDirtyChanges(oChangePersistence);
-
-				return FlexObjectState.getFlexObjects({
-					selector: this.oAppComponent,
-					includeDirtyChanges: bIncludeDirtyChanges,
-					currentLayer: Layer.USER
-				})
-				.then(function(aFlexObjects) {
-					if (bIncludeDirtyChanges) {
-						assert.equal(aFlexObjects.length, 2, "an array with two entries is returned");
-						assert.equal(aFlexObjects[0].getChangeType(), "dirtyRenameField", "the first change from the persistence is present");
-						assert.equal(aFlexObjects[1].getChangeType(), "dirtyAddGroup", "the second change from the persistence is present");
-					} else {
-						assert.equal(aFlexObjects.length, 0, "an empty array is returned");
-					}
-				});
-			});
-
-			sText = "Get - Given only dirty changes from USER Layer are present in the ChangePersistence with include dirty changes ";
-			sText += bIncludeDirtyChanges ? "set" : "not set";
-			QUnit.test(sText, function(assert) {
-				var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sReference);
-				addDirtyChanges(oChangePersistence);
-
-				return FlexObjectState.getFlexObjects({
-					selector: this.oAppComponent,
-					includeDirtyChanges: bIncludeDirtyChanges,
-					currentLayer: Layer.CUSTOMER
-				})
-				.then(function(aFlexObjects) {
-					if (bIncludeDirtyChanges) {
-						assert.equal(aFlexObjects.length, 0, "an empty array is returned");
-					} else {
-						assert.equal(aFlexObjects.length, 0, "an empty array is returned");
-					}
-				});
-			});
-
-			sText = "Get - Given flex objects are present in the ChangePersistence and in the CompVariantState with include dirty changes ";
-			sText += bIncludeDirtyChanges ? "set" : "not set";
-			QUnit.test(sText, function(assert) {
-				var sPersistencyKey = "persistency.key";
-				var sVariantId = "variantId1";
-
-				CompVariantState.addVariant({
-					changeSpecificData: {
-						type: "pageVariant",
-						id: sVariantId,
-						isVariant: true,
-						content: {},
-						packageName: "someId" // mark as non-updatable
-					},
-					reference: sReference,
-					persistencyKey: sPersistencyKey
-				});
-				CompVariantState.updateVariant({
-					favorite: true,
-					id: sVariantId,
-					reference: sReference,
-					persistencyKey: sPersistencyKey
-				});
-
-				var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sReference);
-				addChangesToChangePersistence(oChangePersistence);
-
-				return oChangePersistence.saveDirtyChanges(this.oAppComponent)
-				.then(function() {
-					addDirtyChanges(oChangePersistence);
-				})
-				.then(FlexObjectState.getFlexObjects.bind(undefined, {
-					selector: this.oAppComponent,
-					includeDirtyChanges: bIncludeDirtyChanges
-				}))
-				.then(function(aFlexObjects) {
-					assert.equal(aFlexObjects[0].getChangeType(), "pageVariant", "the variant from the compVariantState is present");
-					assert.equal(aFlexObjects[1].getChangeType(), "updateVariant", "the change from the compVariantState is present");
-					assert.equal(aFlexObjects[2].getChangeType(), "renameField", "the first change from the persistence is present");
-					assert.equal(aFlexObjects[3].getChangeType(), "addGroup", "the second change from the persistence is present");
-					if (bIncludeDirtyChanges) {
-						assert.equal(aFlexObjects.length, 6, "an array with four entries is returned");
-						assert.equal(aFlexObjects[4].getChangeType(), "dirtyRenameField", "the third change from the persistence is present");
-						assert.equal(aFlexObjects[5].getChangeType(), "dirtyAddGroup", "the fourth change from the persistence is present");
-					} else {
-						assert.equal(aFlexObjects.length, 4, "an array with four entries is returned");
-					}
-				});
-			});
-		});
-
-		QUnit.test("GetDirty - Given flex objects and dirty changes are present in the ChangePersistence", function(assert) {
-			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sReference);
-
-			addChangesToChangePersistence(oChangePersistence);
-
-			return oChangePersistence.getChangesForComponent()
-			.then(oChangePersistence.saveDirtyChanges.bind(oChangePersistence, this.oAppComponent, false))
-			.then(function() {
-				addDirtyChanges(oChangePersistence);
-			})
-			.then(FlexObjectState.getDirtyFlexObjects.bind(undefined, {
+			addDirtyChanges();
+			const aFlexObjects = await FlexObjectState.getFlexObjects({
 				selector: this.oAppComponent
-			}))
-			.then(function(aFlexObjects) {
-				assert.equal(aFlexObjects.length, 2, "an array with two entries is returned");
-				assert.equal(aFlexObjects[0].getChangeType(), "dirtyRenameField", "the first change from the persistence is present");
-				assert.equal(aFlexObjects[1].getChangeType(), "dirtyAddGroup", "the second change from the persistence is present");
 			});
+			assert.strictEqual(aFlexObjects.length, 4, "an array with four entries is returned");
+			assert.strictEqual(aFlexObjects[0].getChangeType(), "renameField", "the first change from the persistence is present");
+			assert.strictEqual(aFlexObjects[1].getChangeType(), "addGroup", "the second change from the persistence is present");
+			assert.strictEqual(aFlexObjects[2].getChangeType(), "dirtyRenameField", "the third change from the persistence is present");
+			assert.strictEqual(aFlexObjects[3].getChangeType(), "dirtyAddGroup", "the fourth change from the persistence is present");
+		});
+
+		QUnit.test("GetDirty - Given flex objects and dirty changes are present in the ChangePersistence", async function(assert) {
+			await FlQUnitUtils.initializeFlexStateWithData(sandbox, sReference, {
+				changes: createTwoChangeDefs()
+			});
+			addDirtyChanges();
+			const aFlexObjects = await FlexObjectState.getDirtyFlexObjects({
+				selector: this.oAppComponent
+			});
+			assert.strictEqual(aFlexObjects.length, 2, "an array with two entries is returned");
+			assert.strictEqual(aFlexObjects[0].getChangeType(), "dirtyRenameField", "the first change from the persistence is present");
+			assert.strictEqual(aFlexObjects[1].getChangeType(), "dirtyAddGroup", "the second change from the persistence is present");
 		});
 
 		QUnit.test("hasDirtyObjects - Given flex objects and dirty changes are present in the ChangePersistence", function(assert) {
@@ -620,9 +443,9 @@ sap.ui.define([
 				}
 			});
 			var oStubCompStateHasDirtyChanges = sandbox.stub(CompVariantState, "hasDirtyChanges").returns(true);
-			assert.equal(FlexObjectState.hasDirtyFlexObjects({selector: this.oAppComponent}), true, "hasDirtyFlexObjects return true");
-			assert.equal(oStubGetChangePersistenceForComponent.calledOnce, true, "getChangePersistenceForComponent called one");
-			assert.equal(oStubCompStateHasDirtyChanges.calledOnce, false, "CompVariantState.hasDirtyChanges is not called");
+			assert.strictEqual(FlexObjectState.hasDirtyFlexObjects({selector: this.oAppComponent}), true, "hasDirtyFlexObjects return true");
+			assert.strictEqual(oStubGetChangePersistenceForComponent.calledOnce, true, "getChangePersistenceForComponent called one");
+			assert.strictEqual(oStubCompStateHasDirtyChanges.calledOnce, false, "CompVariantState.hasDirtyChanges is not called");
 		});
 
 		QUnit.test("hasDirtyObjects - Given flex objects and dirty changes are present in the CompVariantState", function(assert) {
@@ -632,9 +455,9 @@ sap.ui.define([
 				}
 			});
 			var oStubCompStateHasDirtyChanges = sandbox.stub(CompVariantState, "hasDirtyChanges").returns(true);
-			assert.equal(FlexObjectState.hasDirtyFlexObjects({selector: this.oAppComponent}), true, "hasDirtyFlexObjects return true");
-			assert.equal(oStubGetChangePersistenceForComponent.calledOnce, true, "getChangePersistenceForComponent called once");
-			assert.equal(oStubCompStateHasDirtyChanges.calledOnce, true, "CompVariantState.hasDirtyChanges is not called");
+			assert.strictEqual(FlexObjectState.hasDirtyFlexObjects({selector: this.oAppComponent}), true, "hasDirtyFlexObjects return true");
+			assert.strictEqual(oStubGetChangePersistenceForComponent.calledOnce, true, "getChangePersistenceForComponent called once");
+			assert.strictEqual(oStubCompStateHasDirtyChanges.calledOnce, true, "CompVariantState.hasDirtyChanges is not called");
 		});
 
 		QUnit.test("Save", function(assert) {
@@ -651,16 +474,16 @@ sap.ui.define([
 				layer: Layer.USER,
 				condenseAnyLayer: true
 			}).then((sReturn) => {
-				assert.equal(sReturn, "foo", "the function returns whatever getFlexObjects returns");
-				assert.equal(oPersistAllStub.callCount, 1, "the CompVariant changes were saved");
+				assert.strictEqual(sReturn, "foo", "the function returns whatever getFlexObjects returns");
+				assert.strictEqual(oPersistAllStub.callCount, 1, "the CompVariant changes were saved");
 
-				assert.equal(oSaveAllStub1.callCount, 1, "the UI Changes were saved");
+				assert.strictEqual(oSaveAllStub1.callCount, 1, "the UI Changes were saved");
 				assert.deepEqual(oSaveAllStub1.firstCall.args[0], this.oAppComponent, "the component was passed");
 				assert.deepEqual(oSaveAllStub1.firstCall.args[1], true, "the skipUpdateCache flag was passed");
 				assert.deepEqual(oSaveAllStub1.firstCall.args[2], true, "the draft flag was passed");
 				assert.deepEqual(oSaveAllStub1.firstCall.args[5], true, "the condense flag was passed");
 
-				assert.equal(oGetFlexObjectsStub.callCount, 1, "the changes were retrieved at the end");
+				assert.strictEqual(oGetFlexObjectsStub.callCount, 1, "the changes were retrieved at the end");
 				var oExpectedParameters = {
 					componentId: sComponentId,
 					selector: this.oAppComponent,
@@ -694,16 +517,16 @@ sap.ui.define([
 				condenseAnyLayer: true,
 				version: 1
 			}).then((sReturn) => {
-				assert.equal(sReturn, "foo", "the function returns whatever getFlexObjects returns");
-				assert.equal(oPersistAllStub.callCount, 1, "the CompVariant changes were saved");
+				assert.strictEqual(sReturn, "foo", "the function returns whatever getFlexObjects returns");
+				assert.strictEqual(oPersistAllStub.callCount, 1, "the CompVariant changes were saved");
 
-				assert.equal(oSaveAllStub1.callCount, 1, "the UI Changes were saved");
+				assert.strictEqual(oSaveAllStub1.callCount, 1, "the UI Changes were saved");
 				assert.deepEqual(oSaveAllStub1.firstCall.args[0], this.oAppComponent, "the component was passed");
 				assert.deepEqual(oSaveAllStub1.firstCall.args[1], true, "the skipUpdateCache flag was passed");
 				assert.deepEqual(oSaveAllStub1.firstCall.args[2], true, "the draft flag was passed");
 				assert.deepEqual(oSaveAllStub1.firstCall.args[5], true, "the condense flag was passed");
 
-				assert.equal(oGetFlexObjectsStub.callCount, 1, "the changes were retrieved at the end");
+				assert.strictEqual(oGetFlexObjectsStub.callCount, 1, "the changes were retrieved at the end");
 				var oExpectedParameters = {
 					componentId: sComponentId,
 					selector: this.oAppComponent,
@@ -735,16 +558,16 @@ sap.ui.define([
 				layer: Layer.USER,
 				condenseAnyLayer: true
 			}).then((sReturn) => {
-				assert.equal(sReturn, "foo", "the function returns whatever getFlexObjects returns");
-				assert.equal(oPersistAllStub.callCount, 1, "the CompVariant changes were saved");
+				assert.strictEqual(sReturn, "foo", "the function returns whatever getFlexObjects returns");
+				assert.strictEqual(oPersistAllStub.callCount, 1, "the CompVariant changes were saved");
 
-				assert.equal(oSaveAllStub1.callCount, 1, "the UI Changes were saved");
+				assert.strictEqual(oSaveAllStub1.callCount, 1, "the UI Changes were saved");
 				assert.deepEqual(oSaveAllStub1.firstCall.args[0], this.oAppComponent, "the component was passed");
 				assert.deepEqual(oSaveAllStub1.firstCall.args[1], true, "the skipUpdateCache flag was passed");
 				assert.deepEqual(oSaveAllStub1.firstCall.args[2], true, "the draft flag was passed");
 				assert.deepEqual(oSaveAllStub1.firstCall.args[5], true, "the condense flag was passed");
 
-				assert.equal(oGetFlexObjectsStub.callCount, 1, "the changes were retrieved at the end");
+				assert.strictEqual(oGetFlexObjectsStub.callCount, 1, "the changes were retrieved at the end");
 				var oExpectedParameters = {
 					componentId: sComponentId,
 					selector: this.oAppComponent,
