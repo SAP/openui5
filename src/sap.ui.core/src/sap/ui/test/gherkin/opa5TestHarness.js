@@ -16,7 +16,6 @@ sap.ui.define([
 	"sap/ui/test/gherkin/StepDefinitions",
 	"sap/ui/test/launchers/componentLauncher",
 	"sap/ui/test/launchers/iFrameLauncher",
-	"sap/ui/qunit/qunit-css",
 	"sap/ui/qunit/qunit-junit",
 	"sap/ui/qunit/qunit-coverage"
 ], function(Log, ObjectPath, opaTest, Opa5, GherkinTestGenerator, dataTableUtils, StepDefinitions, componentLauncher,
