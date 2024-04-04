@@ -289,9 +289,8 @@ function (
 
 	QUnit.test("invalid metadata", function (assert) {
 		// Arrange
-		var fnErrorStub = this.stub(Log, "error"),
-			sInvalidPath = "testInvalidPath/",
-			sErrMsg = "Metadata from: " + (sInvalidPath + "metadata.json") + " file path could not be loaded",
+		var sInvalidPath = "testInvalidPath/",
+			fnMetadataLoadedStub = this.stub(IllustrationPool, "_metadataLoaded"),
 			oLoadMetadataPromise,
 			done = assert.async();
 
@@ -303,8 +302,8 @@ function (
 
 		oLoadMetadataPromise.then(function() {
 			// Assert
-			assert.ok(fnErrorStub.calledOnce, "error is logged once in the error of the oLoadMetadataPromise");
-			assert.ok(fnErrorStub.calledWithExactly(sErrMsg), "error is logged with the correct message");
+			assert.ok(IllustrationPool.getIllustrationSetMetadata("fakeName") === null);
+			assert.notOk(fnMetadataLoadedStub.calledOnce, "_metadataLoadedHandler is not called");
 
 			// End
 			done();
