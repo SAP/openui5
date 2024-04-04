@@ -1227,6 +1227,62 @@ sap.ui.define([
 		oSpy.restore();
 	});
 
+	QUnit.test("Arrow navigation through tokens should not delete them", function(assert) {
+		var oMultiInput =  new MultiInput(),
+			token1 = new Token({text: "Token 1", selected: true}),
+			token2 = new Token({text: "Token 2", selected: true}),
+			token3 = new Token({text: "Token 3", selected: true});
+
+		oMultiInput.placeAt("content");
+		Core.applyChanges();
+
+		oMultiInput.setTokens([token1, token2, token3]);
+		oMultiInput.setValue("AAA");
+		Core.applyChanges();
+
+		oMultiInput._$input.trigger("focus");
+
+		qutils.triggerKeydown(token3.getDomRef(), KeyCodes.ARROW_LEFT);
+		qutils.triggerKeydown(token3.getDomRef(), KeyCodes.ARROW_LEFT);
+		qutils.triggerKeydown(token3.getDomRef(), KeyCodes.ARROW_RIGHT);
+
+		// assert
+		assert.strictEqual(oMultiInput.getTokens().length, 3,
+			"Tokens are not deleted upon arrow right navigation.");
+
+		oMultiInput.destroy();
+	});
+
+	QUnit.test("When all tokens are selected, arrow right navigation does not delete the tokens", function(assert) {
+		const token1 = new Token({ text: "1" });
+		const token2 = new Token({ text: "2" });
+		const token3 = new Token({ text: "3" });
+		var oMultiInput = new MultiInput({
+			value: "AAA",
+			tokens: [
+				token1,
+				token2,
+				token3
+			]
+		}).placeAt('content');
+		Core.applyChanges();
+
+		const oTokenizer = oMultiInput.getAggregation("tokenizer");
+		oTokenizer.focus();
+		oTokenizer.selectAllTokens();
+		token3.focus();
+		qutils.triggerKeydown(token3.getDomRef(), KeyCodes.ARROW_RIGHT);
+		Core.applyChanges();
+
+		// assert
+		assert.strictEqual(oMultiInput.getTokens().length, 3,
+			"Tokens are not deleted upon arrow right navigation.");
+
+		// clean
+		oMultiInput.destroy();
+	});
+
+
 	QUnit.test("onsapprevious when MultiInput has a token and value in the input field", function(assert) {
 		var oPreventSpy = this.spy(),
 			oFakeEvent = {
