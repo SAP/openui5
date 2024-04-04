@@ -55,7 +55,7 @@ sap.ui.define([
 
 			const sPredicate = _Helper.getPrivateAnnotation(oNode, "predicate");
 			const oExpandLevel = this.mPredicate2ExpandLevels[sPredicate];
-			if (oExpandLevel && oExpandLevel.Levels) {
+			if (oExpandLevel && oExpandLevel.Levels !== 0) {
 				delete this.mPredicate2ExpandLevels[sPredicate];
 			} else {
 				// must have NodeId as the node may be missing when calling #getExpandLevels
@@ -115,13 +115,16 @@ sap.ui.define([
 		}
 
 		/**
-		 * Expand a node.
+		 * Expand a node by the given number of levels.
 		 *
 		 * @param {object} oNode - The node
+		 * @param {number} [iLevels=1]
+		 *   The number of levels to expand, <code>iLevels >= Number.MAX_SAFE_INTEGER</code> can be
+		 *   used to expand all levels
 		 *
 		 * @public
 		 */
-		expand(oNode) {
+		expand(oNode, iLevels = 1) {
 			if (!this.sNodeProperty) {
 				return;
 			}
@@ -133,7 +136,10 @@ sap.ui.define([
 			} else {
 				// must have NodeId as the node may be missing when calling #getExpandLevels
 				const sNodeId = _Helper.drillDown(oNode, this.sNodeProperty);
-				this.mPredicate2ExpandLevels[sPredicate] = {NodeID : sNodeId, Levels : 1};
+				if (iLevels >= Number.MAX_SAFE_INTEGER) {
+					iLevels = null;
+				}
+				this.mPredicate2ExpandLevels[sPredicate] = {NodeID : sNodeId, Levels : iLevels};
 			}
 		}
 

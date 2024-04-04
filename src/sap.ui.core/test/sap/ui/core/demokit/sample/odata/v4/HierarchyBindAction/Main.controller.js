@@ -63,6 +63,30 @@ sap.ui.define([
 			} // else: invalid value (has not reached model)
 		},
 
+		onExpandLevels : function (oEvent) {
+			this.byId("expandLevelsDialog")
+				.setBindingContext(oEvent.getSource().getBindingContext())
+				.open();
+		},
+
+		onExpandLevelsCancel : function () {
+			this.byId("expandLevelsDialog").close();
+		},
+
+		onExpandLevelsConfirm : function (oEvent) {
+			const sValue = this.byId("expandLevels").getValue();
+			try {
+				oEvent.getSource().getBindingContext()
+					.expand(sValue === "*"
+						? Number.MAX_SAFE_INTEGER
+						: parseFloat(sValue)); // Note: parseInt("1E16") === 1
+			} catch (oError) {
+				MessageBox.alert(oError.message, {icon : MessageBox.Icon.ERROR, title : "Error"});
+			} finally {
+				this.byId("expandLevelsDialog").close();
+			}
+		},
+
 		onInit : function () {
 			// initialization has to wait for view model/context propagation
 			this.getView().attachEventOnce("modelContextChange", function () {

@@ -683,13 +683,16 @@ sap.ui.define([
 	};
 
 	/**
-	 * Expands the given group node.
+	 * Expands the given group node by the given number of levels.
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
 	 *   An unlocked lock for the group to associate the requests with
 	 * @param {object|string} vGroupNodeOrPath
 	 *   The group node or its path relative to the cache; a group node instance (instead of a path)
 	 *   MUST only be given in case of "expanding" continued
+	 * @param {number} iLevels
+	 *   The number of levels to expand, <code>iLevels >= Number.MAX_SAFE_INTEGER</code> can be
+	 *   used to expand all levels
 	 * @param {function} [fnDataRequested]
 	 *   The function is called just before the back-end request is sent.
 	 *   If no back-end request is needed, the function is not called.
@@ -701,7 +704,8 @@ sap.ui.define([
 	 * @public
 	 * @see #collapse
 	 */
-	_AggregationCache.prototype.expand = function (oGroupLock, vGroupNodeOrPath, fnDataRequested) {
+	_AggregationCache.prototype.expand = function (oGroupLock, vGroupNodeOrPath, iLevels,
+			fnDataRequested) {
 		var iCount,
 			oGroupNode = typeof vGroupNodeOrPath === "string"
 				? this.getValue(vGroupNodeOrPath)
@@ -713,7 +717,7 @@ sap.ui.define([
 			// Note: this also prevents a 2nd expand of the same node
 			_Helper.updateAll(this.mChangeListeners, vGroupNodeOrPath, oGroupNode,
 				_AggregationHelper.getOrCreateExpandedObject(this.oAggregation, oGroupNode));
-			this.oTreeState.expand(oGroupNode);
+			this.oTreeState.expand(oGroupNode, iLevels);
 		} // else: no update needed!
 
 		if (aSpliced) {
@@ -760,7 +764,7 @@ sap.ui.define([
 			});
 			return SyncPromise.resolve(iCount);
 		}
-		if (this.bUnifiedCache) {
+		if (this.bUnifiedCache || iLevels > 1) {
 			return SyncPromise.resolve(-1); // refresh needed
 		}
 

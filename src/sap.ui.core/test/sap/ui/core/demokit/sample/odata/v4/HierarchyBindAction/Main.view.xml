@@ -87,6 +87,9 @@
 					<m:Button icon="sap-icon://pull-down" press=".onMakeRoot($event, null)"
 						tooltip="Make Last Root"/>
 					<m:Button icon="sap-icon://delete" press=".onDelete" tooltip="Delete"/>
+					<m:Button enabled="{= %{@$ui5.node.isExpanded} !== undefined}"
+						icon="sap-icon://expand-group" press=".onExpandLevels"
+						tooltip="Expand By Number Of Levels..."/>
 					<m:CheckBox selected="{= %{@$ui5.context.isSelected}}" tooltip="Selected"/>
 				</m:FlexBox>
 			</template>
@@ -101,6 +104,21 @@
 			<!-- description="{Description}" -->
 			<m:StandardListItem title="{Id}" type="Active" />
 		</m:SelectDialog>
+	</mvc:dependents>
+
+	<mvc:dependents>
+		<m:Dialog draggable="true" id="expandLevelsDialog" title="Expand Node({Id}) By Levels">
+			<m:HBox alignItems="Center" justifyContent="Center">
+				<m:Label labelFor="expandLevels" text="Levels" width="4em"/>
+				<m:Input id="expandLevels" tooltip="* means expand all" value="3" width="4em"/>
+			</m:HBox>
+			<m:beginButton>
+				<m:Button press=".onExpandLevelsConfirm" text="Expand" type="Accept"/>
+			</m:beginButton>
+			<m:endButton>
+				<m:Button press=".onExpandLevelsCancel" text="Cancel" type="Reject"/>
+			</m:endButton>
+		</m:Dialog>
 	</mvc:dependents>
 
 	<m:FormattedText htmlText="&lt;em>Available URL parameters:&lt;/em>

@@ -4650,7 +4650,7 @@ sap.ui.define([
 						.withExactArgs([sContext1Path]);
 					// expectations for catch
 					oBindingMock.expects("expand").exactly(!bSuccess && bExpanded ? 1 : 0)
-						.withExactArgs(sinon.match.same(oContext1), true)
+						.withExactArgs(sinon.match.same(oContext1), 1, true)
 						.returns(bExpandFailure
 							? SyncPromise.reject("~oExpandError~")
 							: SyncPromise.resolve());
@@ -9715,7 +9715,8 @@ sap.ui.define([
 			.withExactArgs("~contextpath~", "~bindingpath~").returns("~cachepath~");
 
 		oExpectation = this.mock(oBinding.oCache).expects("expand")
-			.withExactArgs(sinon.match.same(oGroupLock), "~cachepath~", sinon.match.func)
+			.withExactArgs(sinon.match.same(oGroupLock), "~cachepath~", "~iLevels~",
+				sinon.match.func)
 			.returns(Promise.resolve().then(function () {
 				if (bSuccess) {
 					that.mock(oContext).expects("getModelIndex").exactly(iCount > 0 ? 1 : 0)
@@ -9744,7 +9745,7 @@ sap.ui.define([
 			}));
 
 		// code under test
-		oPromise = oBinding.expand(oContext, bSilent).then(function (vResult) {
+		oPromise = oBinding.expand(oContext, "~iLevels~", bSilent).then(function (vResult) {
 			assert.ok(bSuccess);
 			if (bDataRequested && iCount) {
 				if (bSilent) {
@@ -9764,7 +9765,7 @@ sap.ui.define([
 		that.mock(oBinding).expects("fireDataRequested").exactly(bDataRequested ? 1 : 0)
 			.withExactArgs();
 		if (bDataRequested) {
-			oExpectation.args[0][2]();
+			oExpectation.args[0][3]();
 		}
 
 		return oPromise;
@@ -11307,7 +11308,7 @@ sap.ui.define([
 							sinon.match.same(oChildContext))
 						.callThrough(); // needed for "setIndices"
 					this.mock(oBinding).expects("expand").exactly(bIsExpanded ? 1 : 0)
-						.withExactArgs(sinon.match.same(oChildContext))
+						.withExactArgs(sinon.match.same(oChildContext), 1)
 						.returns(SyncPromise.resolve());
 					this.mock(oBinding).expects("_fireChange").exactly(bIsExpanded ? 0 : 1)
 						.withExactArgs({reason : ChangeReason.Change});
@@ -11490,7 +11491,7 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oBinding.aContexts), 43,
 				sinon.match.same(oChildContext));
 		this.mock(oBinding).expects("expand")
-			.withExactArgs(sinon.match.same(oChildContext))
+			.withExactArgs(sinon.match.same(oChildContext), 1)
 			.returns(SyncPromise.reject("~error~"));
 		this.mock(oBinding).expects("_fireChange").never();
 
