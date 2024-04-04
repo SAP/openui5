@@ -12,19 +12,20 @@ sap.ui.define([
 ) => {
 	"use strict";
 
-	const bFuture = BaseConfig.get({
+	const bConfiguredFuture = BaseConfig.get({
 		name: "sapUiXxFuture",
 		type: BaseConfig.Type.Boolean,
 		external: true
 	});
 
+	let bFuture = bConfiguredFuture;
+
 	function throws(sLevel, sMessage, ...args) {
-		sMessage = "[FUTURE FATAL] " + sMessage;
 		if (bFuture) {
 			Log.fatal(sMessage, ...args);
 			throw new Error(sMessage);
 		}
-		Log[sLevel](sMessage, ...args);
+		Log[sLevel]("[FUTURE FATAL] " + sMessage, ...args);
 	}
 	/**
 	 * Logs '[FUTURE FATAL]' marker in messages and throws error if
@@ -36,6 +37,12 @@ sap.ui.define([
 	 * @ui5-restricted sap.base, sap.ui.core
 	 */
 	const future = {
+		get active() {
+			return bFuture;
+		},
+		set active(bValue) {
+			bFuture = !!(bValue ?? bConfiguredFuture);
+		},
 		fatalThrows(...args) {
 			throws("fatal", ...args);
 		},
