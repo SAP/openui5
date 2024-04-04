@@ -21,8 +21,8 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core",
-	"sap/ui/core/Element"
-], function(Theming, qutils, jQuery, FeedListItem, FeedListItemAction, List, StandardListItem, JSONModel, Button, Popover, Bar, ActionSheet, App, Page, Device, FormattedText, IconPool, library, Log, KeyCodes, oCore, Element) {
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(Theming, qutils, jQuery, FeedListItem, FeedListItemAction, List, StandardListItem, JSONModel, Button, Popover, Bar, ActionSheet, App, Page, Device, FormattedText, IconPool, library, Log, KeyCodes, oCore, nextUIUpdate) {
 	"use strict";
 
 	// shortcut for sap.m.PlacementType
@@ -336,7 +336,7 @@ sap.ui.define([
 		assert.equal(oFeedList.getItems()[4].oAvatar.$().css("font-size"), "32px", "Avatar icon font size is 2 rem");
 	});
 	/**
-	 * @deprecated Since version 1.121
+	 * @deprecated Since version 1.120
 	 */
 	QUnit.test("Default src - icon color", function (assert) {
 		this.oNonActiveItem = oFeedList.getItems().filter(function(oListItem) {
@@ -1166,7 +1166,7 @@ sap.ui.define([
 	});
 
 	/**
-	 * @deprecated Since version 1.121
+	 * @deprecated Since version 1.120
 	 */
 	QUnit.test("When the theme is 'sap_belize' and the device is not a phone, the CSS contrast class 'sapContrast' is set on the ActionSheet's popover .", function (assert) {
 		// Arrange
@@ -1196,7 +1196,7 @@ sap.ui.define([
 	});
 
 	/**
-	 * @deprecated Since version 1.121
+	 * @deprecated Since version 1.120
 	 */
 	QUnit.test("When the theme is 'sap_belize_plus' and the device is not a phone, the CSS contrast class 'sapContrastPlus' is set on the ActionSheet's popover.", function (assert) {
 		// Arrange
