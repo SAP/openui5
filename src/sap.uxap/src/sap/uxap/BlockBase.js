@@ -248,6 +248,7 @@ sap.ui.define([
 			Control.prototype.setParent.call(this, oParent, sAggregationName, bSuppressInvalidate);
 
 			if (oParent?.isA("sap.uxap.ObjectPageSubSection")) {
+				this._bLazyLoading = true;
 				this._oParentObjectPageSubSection = oParent;
 			}
 		};
@@ -361,6 +362,14 @@ sap.ui.define([
 
 			if (this.getMode() !== sMode) {
 				this.setProperty("mode", sMode, false);
+
+				// Update the this._bLazyLoading here: setMode is called by ObjectPageSubSection in onBeforeRendering,
+				// as at this point enableLazyLoading property of OPL is already set.
+				// onBeforeRendering of BlockBase is still not called! That's why this._bLazyLoading may not be in a valid state
+				// (previously set as true in setParent function, as it is placed in ObjectPageSubSection).
+				// If this._bLazyLoading is not updated at this point and enableLazyLoading=false, view will never be selected, binding will never be updated.
+				this._updateLazyLoad();
+
 				//if Lazy loading is enabled, and if the block is not connected
 				//delay the view creation (will be done in connectToModels function)
 				if (!this._shouldLazyLoad()) {
@@ -724,11 +733,12 @@ sap.ui.define([
 
 		/**
 		 * Getter for the parent object page layout.
+		 * @param {sap.ui.core.Control} oParent (optional) - the parent ObjectPageSubSection
 		 * @returns {*} OP layout
 		 * @private
 		 */
-		BlockBase.prototype._getObjectPageLayout = function () {
-			return library.Utilities.getClosestOPL(this);
+		BlockBase.prototype._getObjectPageLayout = function (oParent) {
+			return library.Utilities.getClosestOPL(this, oParent);
 		};
 
 		/*
@@ -837,6 +847,15 @@ sap.ui.define([
 		 */
 		BlockBase.prototype._shouldLazyLoad = function () {
 			return !!this._oParentObjectPageSubSection && this._bLazyLoading && !this._bConnected;
+		};
+
+		/**
+		 * Updates this._bLazyLoading property.
+		 * @private
+		 */
+		BlockBase.prototype._updateLazyLoad = function () {
+			var oParentObjectPageLayout = this._getObjectPageLayout(this._oParentObjectPageSubSection);
+			this._bLazyLoading = oParentObjectPageLayout && (oParentObjectPageLayout.getEnableLazyLoading() || oParentObjectPageLayout.getUseIconTabBar());
 		};
 
 		/**

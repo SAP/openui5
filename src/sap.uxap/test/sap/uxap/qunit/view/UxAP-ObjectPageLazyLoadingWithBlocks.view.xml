@@ -1,0 +1,84 @@
+<mvc:View
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns="sap.uxap"
+		xmlns:opblock="sap.uxap.testblocks.employmentblockjob"
+		height="100%">
+
+	<ObjectPageLayout id="ObjectPageLayout" enableLazyLoading="true">
+		<headerTitle>
+			<ObjectPageHeader objectTitle="TestPage"/>
+		</headerTitle>
+
+		<sections>
+			<ObjectPageSection title="Section1">
+				<ObjectPageSubSection title="Section1SubSection1">
+					<opblock:EmploymentBlockJob/>
+				</ObjectPageSubSection>
+				<ObjectPageSubSection title="Section1SubSection2">
+					<opblock:EmploymentBlockJob/>
+				</ObjectPageSubSection>
+				<ObjectPageSubSection title="Section1SubSection3">
+					<opblock:EmploymentBlockJob/>
+				</ObjectPageSubSection>
+				<ObjectPageSubSection title="Section1SubSection4">
+					<opblock:EmploymentBlockJob/>
+				</ObjectPageSubSection>
+				<ObjectPageSubSection title="Section1SubSection5">
+					<opblock:EmploymentBlockJob/>
+				</ObjectPageSubSection>
+			</ObjectPageSection>
+			<ObjectPageSection title="Section2">
+				<ObjectPageSubSection title="Section1SubSection1">
+					<opblock:EmploymentBlockJob/>
+				</ObjectPageSubSection>
+				<ObjectPageSubSection title="Section1SubSection2">
+					<opblock:EmploymentBlockJob/>
+				</ObjectPageSubSection>
+				<ObjectPageSubSection title="Section1SubSection3">
+					<opblock:EmploymentBlockJob/>
+				</ObjectPageSubSection>
+				<ObjectPageSubSection title="Section1SubSection4">
+					<opblock:EmploymentBlockJob/>
+				</ObjectPageSubSection>
+				<ObjectPageSubSection title="Section1SubSection5">
+					<opblock:EmploymentBlockJob/>
+				</ObjectPageSubSection>
+			</ObjectPageSection>
+						<ObjectPageSection title="Section3">
+				<ObjectPageSubSection title="Section1SubSection1">
+					<opblock:EmploymentBlockJob/>
+				</ObjectPageSubSection>
+				<ObjectPageSubSection title="Section1SubSection2">
+					<opblock:EmploymentBlockJob/>
+				</ObjectPageSubSection>
+				<ObjectPageSubSection title="Section1SubSection3">
+					<opblock:EmploymentBlockJob/>
+				</ObjectPageSubSection>
+				<ObjectPageSubSection title="Section1SubSection4">
+					<opblock:EmploymentBlockJob/>
+				</ObjectPageSubSection>
+				<ObjectPageSubSection title="Section1SubSection5">
+					<opblock:EmploymentBlockJob/>
+				</ObjectPageSubSection>
+			</ObjectPageSection>
+			<ObjectPageSection title="Section4">
+				<ObjectPageSubSection title="Section1SubSection1">
+					<opblock:EmploymentBlockJob/>
+				</ObjectPageSubSection>
+				<ObjectPageSubSection title="Section1SubSection2">
+					<opblock:EmploymentBlockJob/>
+				</ObjectPageSubSection>
+				<ObjectPageSubSection title="Section1SubSection3">
+					<opblock:EmploymentBlockJob/>
+				</ObjectPageSubSection>
+				<ObjectPageSubSection title="Section1SubSection4">
+					<opblock:EmploymentBlockJob/>
+				</ObjectPageSubSection>
+				<ObjectPageSubSection id="last" title="Section1SubSection5">
+					<opblock:EmploymentBlockJob/>
+				</ObjectPageSubSection>
+			</ObjectPageSection>
+		</sections>
+	</ObjectPageLayout>
+
+</mvc:View>
