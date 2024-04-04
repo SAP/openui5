@@ -6474,6 +6474,237 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
+	QUnit.test("Dynamic suggestions[Tabular]: focusout should not change user input when selected items is present", function (assert) {
+		// arrange
+		let oData = {
+			items: [
+				{ text: "100" },
+				{ text: "101" }
+			]
+		};
+
+		const oModel = new JSONModel();
+
+		var oInput = new Input({
+			change: () => {},
+			filterSuggests: false,
+			showSuggestion: true,
+			showValueHelp: true,
+			placeholder: "Type here",
+			startSuggestion: 1,
+			suggest: (oEvent) => {
+				oData = {
+					...oData,
+					items: oData.items.filter((oItem) => oItem.text.includes(oEvent.getParameter("suggestValue").toLowerCase()))
+				};
+				oModel.setData(oData);
+			},
+			suggestionColumns: [
+				new Column({
+					header: new Label({text: "Text"})
+				})
+			],
+			suggestionRows: {
+				path: "/items",
+				template: new ColumnListItem({
+					cells: [
+						new Label({text: "{text}"})
+					]
+				})
+			}
+		});
+
+		oInput.setModel(oModel);
+		oInput.placeAt("content");
+		oCore.applyChanges();
+
+		// simulate suggestion in progress
+		oInput._bDoTypeAhead = true;
+		oInput.cancelPendingSuggest = () => {};
+		oInput.setSelectionUpdatedFromList(true);
+
+		oInput._$input.focus();
+		oInput._$input.trigger("focus").val("10").trigger("input");
+		this.clock.tick(300);
+		oInput._$input.trigger("focus").val("101").trigger("input");
+
+		// force close of the suggestion popover
+		oInput.closeSuggestions();
+
+		assert.strictEqual(oInput.getValue(), "101", "The value should not be changed");
+
+		oInput.destroy();
+	});
+
+	QUnit.test("Dynamic suggestions[Tabular]: pressing enter should not change user input when selected items is present", function (assert) {
+		// arrange
+		let oData = {
+			items: [
+				{ text: "100" },
+				{ text: "101" }
+			]
+		};
+
+		const oModel = new JSONModel();
+
+		var oInput = new Input({
+			change: () => {},
+			filterSuggests: false,
+			showSuggestion: true,
+			showValueHelp: true,
+			placeholder: "Type here",
+			startSuggestion: 1,
+			suggest: (oEvent) => {
+				oData = {
+					...oData,
+					items: oData.items.filter((oItem) => oItem.text.includes(oEvent.getParameter("suggestValue").toLowerCase()))
+				};
+				oModel.setData(oData);
+			},
+			suggestionColumns: [
+				new Column({
+					header: new Label({text: "Text"})
+				})
+			],
+			suggestionRows: {
+				path: "/items",
+				template: new ColumnListItem({
+					cells: [
+						new Label({text: "{text}"})
+					]
+				})
+			}
+		});
+
+		oInput.setModel(oModel);
+		oInput.placeAt("content");
+		oCore.applyChanges();
+
+		// simulate suggestion in progress
+		oInput._bDoTypeAhead = true;
+		oInput.cancelPendingSuggest = () => {};
+		oInput.setSelectionUpdatedFromList(true);
+
+		oInput._$input.focus();
+		oInput._$input.trigger("focus").val("10").trigger("input");
+		this.clock.tick(300);
+		oInput._$input.trigger("focus").val("101").trigger("input");
+
+		// force close of the suggestion popover
+		oInput.onsapenter();
+
+		assert.strictEqual(oInput.getValue(), "101", "The value should not be changed");
+
+		oInput.destroy();
+	});
+
+	QUnit.test("Dynamic suggestions[SuggestionItems]: focusout should not change user input when selected items is present", function (assert) {
+		// arrange
+		let oData = {
+			items: [
+				{ text: "100" },
+				{ text: "101" }
+			]
+		};
+
+		const oModel = new JSONModel();
+
+		var oInput = new Input({
+			change: () => {},
+			filterSuggests: false,
+			showSuggestion: true,
+			showValueHelp: true,
+			placeholder: "Type here",
+			startSuggestion: 1,
+			suggest: (oEvent) => {
+				oData = {
+					...oData,
+					items: oData.items.filter((oItem) => oItem.text.includes(oEvent.getParameter("suggestValue").toLowerCase()))
+				};
+				oModel.setData(oData);
+			},
+			suggestionItems: {
+				path: "/items",
+				template: new SuggestionItem({text: "{text}"})
+			}
+		});
+
+		oInput.setModel(oModel);
+		oInput.placeAt("content");
+		oCore.applyChanges();
+
+		// simulate suggestion in progress
+		oInput._bDoTypeAhead = true;
+		oInput.cancelPendingSuggest = () => {};
+		oInput.setSelectionUpdatedFromList(true);
+
+		oInput._$input.focus();
+		oInput._$input.trigger("focus").val("10").trigger("input");
+		this.clock.tick(300);
+		oInput._$input.trigger("focus").val("101").trigger("input");
+
+		// force close of the suggestion popover
+		oInput.closeSuggestions();
+
+		assert.strictEqual(oInput.getValue(), "101", "The value should not be changed");
+
+		oInput.destroy();
+	});
+
+	QUnit.test("Dynamic suggestions[SuggestionItems]: pressing enter should not change user input when selected items is present", function (assert) {
+		// arrange
+		let oData = {
+			items: [
+				{ text: "100" },
+				{ text: "101" }
+			]
+		};
+
+		const oModel = new JSONModel();
+
+		var oInput = new Input({
+			change: () => {},
+			filterSuggests: false,
+			showSuggestion: true,
+			showValueHelp: true,
+			placeholder: "Type here",
+			startSuggestion: 1,
+			suggest: (oEvent) => {
+				oData = {
+					...oData,
+					items: oData.items.filter((oItem) => oItem.text.includes(oEvent.getParameter("suggestValue").toLowerCase()))
+				};
+				oModel.setData(oData);
+			},
+			suggestionItems: {
+				path: "/items",
+				template: new SuggestionItem({text: "{text}"})
+			}
+		});
+
+		oInput.setModel(oModel);
+		oInput.placeAt("content");
+		oCore.applyChanges();
+
+		// simulate suggestion in progress
+		oInput._bDoTypeAhead = true;
+		oInput.cancelPendingSuggest = () => {};
+		oInput.setSelectionUpdatedFromList(true);
+
+		oInput._$input.focus();
+		oInput._openSuggestionsPopover();
+		oInput._$input.trigger("focus").val("10").trigger("input");
+		this.clock.tick(300);
+		oInput._$input.trigger("focus").val("101").trigger("input");
+
+		// force close of the suggestion popover
+		oInput.onsapenter();
+
+		assert.strictEqual(oInput.getValue(), "101", "The value should not be changed");
+
+		oInput.destroy();
+	});
+
 	QUnit.module("Input with Suggestions and Value State, but not Value State Message", {
 		beforeEach: function () {
 			this.inputWithSuggestions = new Input({
