@@ -1,0 +1,13 @@
+{
+	"name": "sap.ui.core.samples.unittable",
+	"version": "1.0.0",
+	"private": true,
+	"description": "UI5 Application: Unit Table",
+	"author": "SAP SE",
+	"scripts": {
+		"start": "cd ../../../../../../../../.. && npm run sdk"
+	},
+	"devDependencies": {
+		"@ui5/cli": "^3"
+	}
+}

@@ -1,0 +1,206 @@
+<mvc:View
+	xmlns="sap.ui.table"
+	xmlns:trm="sap.ui.table.rowmodes"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:m="sap.m"
+	controllerName="sap.ui.core.samples.unittable.controller.UnitTable"
+	height="100%">
+	<m:Panel>
+		<m:content>
+			<Table rows="{meters>/data}" >
+				<rowMode>
+					<trm:Fixed rowCount="{meters>/size}" />
+				</rowMode>
+				<extension>
+					<m:Toolbar>
+						<m:content>
+							<m:Title id="meter-title" text="Dynamic Format Options for values per line" />
+						</m:content>
+					</m:Toolbar>
+				</extension>
+				<columns>
+					<Column>
+						<m:Label text="Name" />
+						<template>
+							<m:Text text="{meters>name}"/>
+						</template>
+					</Column>
+					<Column>
+						<m:Label text="Precision (number of decimals)" />
+						<template>
+							<m:Text text="{meters>decimals}"/>
+						</template>
+					</Column>
+					<Column>
+						<m:Label text="January" />
+						<template>
+							<m:Label text="{
+								parts:['meters>jan', 'meters>unit', 'meters>decimals'],
+								type: 'sap.ui.core.samples.unittable.MeterType'
+							}"/>
+						</template>
+					</Column>
+					<Column>
+						<m:Label text="February" />
+						<template>
+							<m:Label text="{
+								parts:['meters>feb', 'meters>unit', 'meters>decimals'],
+								type: 'sap.ui.core.samples.unittable.MeterType'
+							}"/>
+						</template>
+					</Column>
+					<Column>
+						<m:Label text="March" />
+						<template>
+							<m:Label text="{
+								parts:['meters>mar', 'meters>unit', 'meters>decimals'],
+								type: 'sap.ui.core.samples.unittable.MeterType'
+							}"/>
+						</template>
+					</Column>
+					<Column>
+						<m:Label text="April" />
+						<template>
+							<m:Label text="{
+								parts:['meters>apr', 'meters>unit', 'meters>decimals'],
+								type: 'sap.ui.core.samples.unittable.MeterType'
+							}"/>
+						</template>
+					</Column>
+					<Column>
+						<m:Label text="May" />
+						<template>
+							<m:Label text="{
+								parts:['meters>may', 'meters>unit', 'meters>decimals'],
+								type: 'sap.ui.core.samples.unittable.MeterType'
+							}"/>
+						</template>
+					</Column>
+					<Column>
+						<m:Label text="June" />
+						<template>
+							<m:Label text="{
+								parts:['meters>jun', 'meters>unit', 'meters>decimals'],
+								type: 'sap.ui.core.samples.unittable.MeterType'
+							}"/>
+						</template>
+					</Column>
+					<Column>
+						<m:Label text="July" />
+						<template>
+							<m:Label text="{
+								parts:['meters>jul', 'meters>unit', 'meters>decimals'],
+								type: 'sap.ui.core.samples.unittable.MeterType'
+							}"/>
+						</template>
+					</Column>
+					<Column>
+						<m:Label text="August" />
+						<template>
+							<m:Label text="{
+								parts:['meters>aug', 'meters>unit', 'meters>decimals'],
+								type: 'sap.ui.core.samples.unittable.MeterType'
+							}"/>
+						</template>
+					</Column>
+					<Column>
+						<m:Label text="September" />
+						<template>
+							<m:Label text="{
+								parts:['meters>sep', 'meters>unit', 'meters>decimals'],
+								type: 'sap.ui.core.samples.unittable.MeterType'
+							}"/>
+						</template>
+					</Column>
+					<Column>
+						<m:Label text="October" />
+						<template>
+							<m:Label text="{
+								parts:['meters>oct', 'meters>unit', 'meters>decimals'],
+								type: 'sap.ui.core.samples.unittable.MeterType'
+							}"/>
+						</template>
+					</Column>
+					<Column>
+						<m:Label text="November" />
+						<template>
+							<m:Label text="{
+								parts:['meters>nov', 'meters>unit', 'meters>decimals'],
+								type: 'sap.ui.core.samples.unittable.MeterType'
+							}"/>
+						</template>
+					</Column>
+					<Column>
+						<m:Label text="December" />
+						<template>
+							<m:Label text="{
+								parts:['meters>dec', 'meters>unit', 'meters>decimals'],
+								type: 'sap.ui.core.samples.unittable.MeterType'
+							}"/>
+						</template>
+					</Column>
+				</columns>
+			</Table>
+		</m:content>
+	</m:Panel>
+	<m:Panel>
+		<m:content>
+			<Table rows="{months>/data}" >
+				<rowMode>
+					<trm:Fixed rowCount="{months>/size}" />
+				</rowMode>
+				<extension>
+					<m:Toolbar>
+						<m:content>
+							<m:Title id="months-title" text="Dynamic Format Options for values per column" />
+						</m:content>
+					</m:Toolbar>
+				</extension>
+				<columns>
+					<Column>
+						<m:Label text="Name" />
+						<template>
+							<m:Text text="{months>name}"/>
+						</template>
+					</Column>
+					<Column>
+						<m:Label text="Meter 1" />
+						<template>
+							<m:Label text="{
+								parts:['months>meter1/value', 'months>meter1/unit', 'months>meter1/decimals'],
+								type: 'sap.ui.core.samples.unittable.MeterType'
+							}"/>
+						</template>
+					</Column>
+					<Column>
+						<m:Label text="Meter 2" />
+						<template>
+							<m:Label text="{
+								parts:['months>meter2/value', 'months>meter2/unit', 'months>meter2/decimals'],
+								type: 'sap.ui.core.samples.unittable.MeterType'
+							}"/>
+						</template>
+					</Column>
+					<Column>
+						<m:Label text="Meter 3" />
+						<template>
+							<m:Label text="{
+								parts:['months>meter3/value', 'months>meter3/unit', 'months>meter3/decimals'],
+								type: 'sap.ui.core.samples.unittable.MeterType'
+							}"/>
+						</template>
+					</Column>
+					<Column>
+						<m:Label text="Meter 4" />
+						<template>
+							<m:Label text="{
+								parts:['months>meter4/value', 'months>meter4/unit', 'months>meter4/decimals'],
+								type: 'sap.ui.core.samples.unittable.MeterType'
+							}"/>
+						</template>
+					</Column>
+				</columns>
+			</Table>
+		</m:content>
+	</m:Panel>
+</mvc:View>
