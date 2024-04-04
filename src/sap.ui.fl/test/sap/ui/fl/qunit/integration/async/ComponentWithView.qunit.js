@@ -3,29 +3,31 @@
 QUnit.config.autostart = false;
 
 sap.ui.define([
-	"sap/ui/util/XMLHelper",
 	"sap/ui/core/util/reflection/XmlTreeModifier",
-	"sap/ui/core/Component",
-	"sap/ui/fl/initial/_internal/Storage",
-	"sap/ui/fl/apply/_internal/preprocessors/XmlPreprocessor",
 	"sap/ui/core/cache/CacheManager",
-	"sap/ui/layout/changeHandler/AddSimpleFormGroup",
-	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/fl/Utils",
+	"sap/ui/core/Component",
+	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
+	"sap/ui/fl/apply/_internal/preprocessors/XmlPreprocessor",
 	"sap/ui/fl/initial/_internal/StorageUtils",
-	"sap/ui/Device"
+	"sap/ui/fl/initial/_internal/Storage",
+	"sap/ui/fl/Utils",
+	"sap/ui/layout/changeHandler/AddSimpleFormGroup",
+	"sap/ui/util/XMLHelper",
+	"sap/ui/Device",
+	"sap/ui/thirdparty/sinon-4"
 ], function(
-	XMLHelper,
 	XmlTreeModifier,
-	Component,
-	Storage,
-	XmlPreprocessor,
 	CacheManager,
-	AddSimpleFormGroup,
-	sinon,
-	Utils,
+	Component,
+	VariantManagementState,
+	XmlPreprocessor,
 	StorageUtils,
-	Device
+	Storage,
+	Utils,
+	AddSimpleFormGroup,
+	XMLHelper,
+	Device,
+	sinon
 ) {
 	"use strict";
 
@@ -96,7 +98,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("applies the change after the recreation of the changed control", function(assert) {
-			var oXmlPrepossessSpy = sandbox.spy(XmlPreprocessor, "process");
+			var oXmlPreprocessSpy = sandbox.spy(XmlPreprocessor, "process");
 			var oAddGroupChangeHandlerSpy = sandbox.spy(AddSimpleFormGroup, "applyChange");
 			sandbox.stub(Utils, "isApplication").returns(true);
 
@@ -113,12 +115,12 @@ sap.ui.define([
 				return oComponent.oViewPromise;
 			}.bind(this)).then(function(oView) {
 				assert.ok(oView);
-				assert.equal(oXmlPrepossessSpy.callCount, 1, "the xml processing was called once for the view");
+				assert.equal(oXmlPreprocessSpy.callCount, 1, "the xml processing was called once for the view");
 
 				assert.equal(oAddGroupChangeHandlerSpy.callCount, 1, "the change handler was called only once");
 				var oPassedModifier = oAddGroupChangeHandlerSpy.getCall(0).args[2].modifier;
 				assert.equal(XmlTreeModifier, oPassedModifier, "the call was done with the xml tree modifier");
-				oXmlPrepossessSpy.restore();
+				oXmlPreprocessSpy.restore();
 				oAddGroupChangeHandlerSpy.restore();
 				this.oComponent.destroy();
 				oView.destroy();
@@ -135,7 +137,7 @@ sap.ui.define([
 
 				CacheManager.reset();
 
-				var oXmlPrepossessSpy = sandbox.spy(XmlPreprocessor, "process");
+				var oXmlPreprocessSpy = sandbox.spy(XmlPreprocessor, "process");
 
 				// first create the application
 				return Component.create({
@@ -150,7 +152,7 @@ sap.ui.define([
 					that.oComponent = oComponent;
 					return oComponent.oViewPromise;
 				}).then(function(oView) {
-					assert.equal(oXmlPrepossessSpy.callCount, 1, "the xml view was processed once");
+					assert.equal(oXmlPreprocessSpy.callCount, 1, "the xml view was processed once");
 					oView.destroy();
 					that.oComponent.destroy();
 				}).then(function() {
@@ -168,8 +170,8 @@ sap.ui.define([
 					that.oComponent = oComponent;
 					return oComponent.oViewPromise;
 				}).then(function(oView) {
-					assert.equal(oXmlPrepossessSpy.callCount, 1, "the view was cached so no further xml processing took place");
-					oXmlPrepossessSpy.restore();
+					assert.equal(oXmlPreprocessSpy.callCount, 1, "the view was cached so no further xml processing took place");
+					oXmlPreprocessSpy.restore();
 					oView.destroy();
 				});
 			});
@@ -179,7 +181,7 @@ sap.ui.define([
 
 				CacheManager.reset();
 
-				var oXmlPrepossessSpy = sandbox.spy(XmlPreprocessor, "process");
+				var oXmlPreprocessSpy = sandbox.spy(XmlPreprocessor, "process");
 
 				// first create the application
 				return Component.create({
@@ -194,7 +196,7 @@ sap.ui.define([
 					that.oComponent = oComponent;
 					return oComponent.oViewPromise;
 				}).then(function(oView) {
-					assert.equal(oXmlPrepossessSpy.callCount, 1, "the xml view was processed once");
+					assert.equal(oXmlPreprocessSpy.callCount, 1, "the xml view was processed once");
 					oView.destroy();
 					that.oComponent.destroy();
 				}).then(function() {
@@ -212,9 +214,9 @@ sap.ui.define([
 					that.oComponent = oComponent;
 					return that.oComponent.oViewPromise;
 				}).then(function(oView) {
-					assert.equal(oXmlPrepossessSpy.callCount, 2, "the view cache key changed and a new xml processing took place");
+					assert.equal(oXmlPreprocessSpy.callCount, 2, "the view cache key changed and a new xml processing took place");
 					oView.destroy();
-					oXmlPrepossessSpy.restore();
+					oXmlPreprocessSpy.restore();
 				});
 			});
 
@@ -269,7 +271,7 @@ sap.ui.define([
 
 			QUnit.test("the cache is still valid in case the default control variant is overruled by a url parameter and stays the same in a further request", function(assert) {
 				CacheManager.reset();
-				var oXmlPrepossessSpy = sandbox.spy(XmlPreprocessor, "process");
+				var oXmlPreprocessSpy = sandbox.spy(XmlPreprocessor, "process");
 
 				var mSettings = {
 					name: "sap.ui.fl.qunit.integration.async.testComponentWithView",
@@ -302,7 +304,7 @@ sap.ui.define([
 					return oComponent.oViewPromise;
 				}.bind(this))
 				.then(function(oView) {
-					assert.equal(oXmlPrepossessSpy.callCount, 1, "the xml view was processed once");
+					assert.equal(oXmlPreprocessSpy.callCount, 1, "the xml view was processed once");
 					oView.destroy();
 					this.oComponent.destroy();
 				}.bind(this))
@@ -312,16 +314,16 @@ sap.ui.define([
 					return this.oComponent.oViewPromise;
 				}.bind(this))
 				.then(function(oView) {
-					assert.equal(oXmlPrepossessSpy.callCount, 1, "the view was not processed again");
+					assert.equal(oXmlPreprocessSpy.callCount, 1, "the view was not processed again");
 					oView.destroy();
 				});
 			});
 
-			QUnit.test("the cache is invalidated in case the default control variant is overruled by a url parameter differing from the last one", function(assert) {
+			QUnit.test("the cache is invalidated in case the default control variant is overruled by a url parameter differing from the last one", async function(assert) {
 				CacheManager.reset();
-				var oXmlPrepossessSpy = sandbox.spy(XmlPreprocessor, "process");
+				const oXmlPreprocessSpy = sandbox.spy(XmlPreprocessor, "process");
 
-				var mSettings = {
+				const mSettings = {
 					name: "sap.ui.fl.qunit.integration.async.testComponentWithView",
 					id: "sap.ui.fl.qunit.integration.async.testComponentWithView",
 					async: true,
@@ -335,50 +337,38 @@ sap.ui.define([
 					}
 				};
 
-				sandbox.stub(Component.prototype, "getModel")
-				.onFirstCall().returns({
-					getCurrentControlVariantIds() {
-						return ["currentVariantReferenceInitial"];
-					},
-					getVariantManagementControlIds() {
-						return [];
+				sandbox.stub(VariantManagementState, "getAllCurrentVariants")
+				.onFirstCall().returns([
+					{
+						getId: () => "currentVariantReferenceInitial",
+						getStandardVariant: () => false
 					}
-				})
-				.returns({
-					getCurrentControlVariantIds() {
-						return ["currentVariantReferenceChanged"];
-					},
-					getVariantManagementControlIds() {
-						return [];
+				])
+				.returns([
+					{
+						getId: () => "currentVariantReferenceChanged",
+						getStandardVariant: () => false
 					}
-				});
+				]);
 
 				// first component instance
-				return Component.create(mSettings)
-				.then(function(oComponent) {
-					this.oComponent = oComponent;
-					return oComponent.oViewPromise;
-				}.bind(this))
-				.then(function(oView) {
-					assert.equal(oXmlPrepossessSpy.callCount, 1, "the xml view was processed once");
-					oView.destroy();
-					this.oComponent.destroy();
-				}.bind(this))
-				.then(Component.create.bind(Component, mSettings)) // second component instance
-				.then(function(oComponent) {
-					this.oComponent = oComponent;
-					return this.oComponent.oViewPromise;
-				}.bind(this)).then(function(oView) {
-					assert.equal(oXmlPrepossessSpy.callCount, 2, "the view was processed once more");
-					oView.destroy();
-				});
+				this.oComponent = await Component.create(mSettings);
+				const oView1 = await this.oComponent.oViewPromise;
+				assert.strictEqual(oXmlPreprocessSpy.callCount, 1, "the xml view was processed once");
+				oView1.destroy();
+				this.oComponent.destroy();
+
+				this.oComponent = await Component.create(mSettings); // second component instance
+				const oView2 = await this.oComponent.oViewPromise;
+				assert.strictEqual(oXmlPreprocessSpy.callCount, 2, "the view was processed once more");
+				oView2.destroy();
 			});
 
-			QUnit.test("the cache is invalidated in case the default control variant is no longer overruled by a url parameter", function(assert) {
+			QUnit.test("the cache is invalidated in case the default control variant is no longer overruled by a url parameter", async function(assert) {
 				CacheManager.reset();
-				var oXmlPrepossessSpy = sandbox.spy(XmlPreprocessor, "process");
+				const oXmlPreprocessSpy = sandbox.spy(XmlPreprocessor, "process");
 
-				var mSettings = {
+				const mSettings = {
 					name: "sap.ui.fl.qunit.integration.async.testComponentWithView",
 					id: "sap.ui.fl.qunit.integration.async.testComponentWithView",
 					async: true,
@@ -392,37 +382,26 @@ sap.ui.define([
 					}
 				};
 
-				sandbox.stub(Component.prototype, "getModel")
-				.returns({
-					getCurrentControlVariantIds() {
-						return ["currentVariantReferenceInitial"];
-					},
-					getVariantManagementControlIds() {
-						return [];
+				sandbox.stub(VariantManagementState, "getAllCurrentVariants")
+				.returns([
+					{
+						getId: () => "currentVariantReferenceInitial",
+						getStandardVariant: () => false
 					}
-				});
+				]);
 
 				// first component instance
-				return Component.create(mSettings)
-				.then(function(oComponent) {
-					this.oComponent = oComponent;
-					return oComponent.oViewPromise;
-				}.bind(this))
-				.then(function(oView) {
-					assert.equal(oXmlPrepossessSpy.callCount, 1, "the xml view was processed once");
-					Component.prototype.getModel.restore();
-					oView.destroy();
-					this.oComponent.destroy();
-				}.bind(this))
-				.then(Component.create.bind(Component, mSettings)) // second component instance
-				.then(function(oComponent) {
-					this.oComponent = oComponent;
-					return this.oComponent.oViewPromise;
-				}.bind(this))
-				.then(function(oView) {
-					assert.equal(oXmlPrepossessSpy.callCount, 2, "the view was processed once more");
-					oView.destroy();
-				});
+				this.oComponent = await Component.create(mSettings);
+				const oView1 = await this.oComponent.oViewPromise;
+				assert.strictEqual(oXmlPreprocessSpy.callCount, 1, "the xml view was processed once");
+				VariantManagementState.getAllCurrentVariants.restore();
+				oView1.destroy();
+				this.oComponent.destroy();
+
+				this.oComponent = await Component.create(mSettings); // second component instance
+				const oView2 = await this.oComponent.oViewPromise;
+				assert.strictEqual(oXmlPreprocessSpy.callCount, 2, "the view was processed once more");
+				oView2.destroy();
 			});
 		}
 	});

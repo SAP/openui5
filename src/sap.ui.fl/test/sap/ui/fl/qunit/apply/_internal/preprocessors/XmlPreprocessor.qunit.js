@@ -4,10 +4,10 @@ sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/ui/fl/apply/_internal/changes/Applier",
 	"sap/ui/fl/apply/_internal/flexState/changes/UIChangesState",
+	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/_internal/preprocessors/XmlPreprocessor",
-	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
 	"sap/ui/fl/Utils",
 	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
@@ -15,10 +15,10 @@ sap.ui.define([
 	Component,
 	Applier,
 	UIChangesState,
+	VariantManagementState,
 	FlexState,
 	ManifestUtils,
 	XmlPreprocessor,
-	ControlVariantApplyAPI,
 	Utils,
 	sinon,
 	RtaQunitUtils
@@ -64,28 +64,27 @@ sap.ui.define([
 
 		QUnit.test("with cacheKey but without variants", async function(assert) {
 			sandbox.stub(FlexState, "getStorageResponse").resolves({cacheKey: 'W/"abc123"'});
-			sandbox.stub(ControlVariantApplyAPI, "getVariantModel").resolves({
-				getVariantManagementControlIds() {
-					return [];
-				},
-				getCurrentControlVariantIds() {
-					return [];
-				}
-			});
+			sandbox.stub(VariantManagementState, "getAllCurrentVariants").returns([]);
 			const vCacheKey = await XmlPreprocessor.getCacheKey({componentId: "validComponent"});
 			assert.strictEqual(vCacheKey, "abc123", "the correct cache key is returned");
 		});
 
 		QUnit.test("with cacheKey and multiple variants", async function(assert) {
 			sandbox.stub(FlexState, "getStorageResponse").resolves({cacheKey: 'W/"abc123"'});
-			sandbox.stub(ControlVariantApplyAPI, "getVariantModel").resolves({
-				getVariantManagementControlIds() {
-					return ["vmControl1", "vmControl2", "vmControl3"];
+			sandbox.stub(VariantManagementState, "getAllCurrentVariants").returns([
+				{
+					getId: () => "otherVariant",
+					getStandardVariant: () => false
 				},
-				getCurrentControlVariantIds() {
-					return ["vmControl1", "otherVariant", "otherVariant1"];
+				{
+					getId: () => "otherVariant1",
+					getStandardVariant: () => false
+				},
+				{
+					getId: () => "standardVariant",
+					getStandardVariant: () => true
 				}
-			});
+			]);
 			const vCacheKey = await XmlPreprocessor.getCacheKey({componentId: "validComponent"});
 			assert.strictEqual(vCacheKey, "abc123-otherVariant-otherVariant1", "the correct cache key is returned");
 		});

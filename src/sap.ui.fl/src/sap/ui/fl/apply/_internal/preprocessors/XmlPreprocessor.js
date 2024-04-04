@@ -6,24 +6,24 @@ sap.ui.define([
 	"sap/base/util/merge",
 	"sap/ui/core/util/reflection/XmlTreeModifier",
 	"sap/ui/core/Component",
+	"sap/ui/fl/apply/_internal/changes/Applier",
 	"sap/ui/fl/apply/_internal/changes/Utils",
 	"sap/ui/fl/apply/_internal/flexState/changes/UIChangesState",
+	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
-	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
-	"sap/ui/fl/apply/_internal/changes/Applier",
 	"sap/ui/fl/Utils",
 	"sap/base/Log"
 ], function(
 	merge,
 	XmlTreeModifier,
 	Component,
+	Applier,
 	ChangesUtils,
 	UIChangesState,
+	VariantManagementState,
 	FlexState,
 	ManifestUtils,
-	ControlVariantApplyAPI,
-	Applier,
 	Utils,
 	Log
 ) {
@@ -143,35 +143,28 @@ sap.ui.define([
 	 * @public
 	 */
 	XmlPreprocessor.getCacheKey = async function(mProperties) {
-		var oComponent = Component.getComponentById(mProperties.componentId);
-		var oAppComponent = Utils.getAppComponentForControl(oComponent);
+		const oComponent = Component.getComponentById(mProperties.componentId);
+		const oAppComponent = Utils.getAppComponentForControl(oComponent);
 
 		// no caching possible with startup parameter based variants
 		if (Utils.isVariantByStartupParameter(oAppComponent)) {
 			return undefined;
 		}
 
-		var sFlexReference = ManifestUtils.getFlexReferenceForControl(oAppComponent);
-
+		const sFlexReference = ManifestUtils.getFlexReferenceForControl(oAppComponent);
 		let sCacheKey = XmlPreprocessor.NOTAG;
 		if (sFlexReference) {
 			const oWrappedChangeFileContent = await FlexState.getStorageResponse(sFlexReference);
 			if (oWrappedChangeFileContent?.cacheKey) {
 				sCacheKey = trimEtag(oWrappedChangeFileContent.cacheKey);
 
-				const oVariantModel = await ControlVariantApplyAPI.getVariantModel(oAppComponent);
 				// If there are no changes, the standard variant is created after the variant management control is instantiated
 				// When the cache key is calculated before this happens, the standard variant id is unknown
 				// To avoid inconsistencies between page load and navigation scenarios, all standard variants are filtered
-				var aVariantManagementControlIds = oVariantModel.getVariantManagementControlIds();
-				var aCurrentControlVariantIds = oVariantModel.getCurrentControlVariantIds()
-				.filter(function(sVariantId) {
-					// FIXME: The standard variant flag should be part of the variant instance
-					// This can be changed once the variant data selector is ready
-					// For now rely on the fact that standard variants have the same name as the vm control
-					return !aVariantManagementControlIds.includes(sVariantId);
-				});
-				sCacheKey = concatControlVariantIdWithCacheKey(sCacheKey, aCurrentControlVariantIds.join("-"));
+				const aFilteredCurrentControlVariantIds = VariantManagementState.getAllCurrentVariants(sFlexReference)
+				.filter((oVariant) => !oVariant.getStandardVariant())
+				.map((oVariant) => oVariant.getId());
+				sCacheKey = concatControlVariantIdWithCacheKey(sCacheKey, aFilteredCurrentControlVariantIds.join("-"));
 			}
 		}
 
