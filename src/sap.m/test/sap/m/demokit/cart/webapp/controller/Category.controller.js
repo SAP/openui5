@@ -4,7 +4,6 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
-	"sap/m/MessageToast",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/Fragment"
 ], function (
@@ -13,7 +12,6 @@ sap.ui.define([
 	Device,
 	Filter,
 	FilterOperator,
-	MessageToast,
 	JSONModel,
 	Fragment) {
 	"use strict";
@@ -153,7 +151,7 @@ sap.ui.define([
 		},
 
 		/** Apply selected filters to the category list and update text and visibility of the info toolbar
-		 * @param oEvent {sap.ui.base.Event} the press event of the sap.m.Button
+		 * @param {sap.ui.base.Event} oEvent the press event of the sap.m.Button
 		 * @private
 		 */
 		_applyFilter : function (oEvent) {
