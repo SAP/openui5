@@ -6,10 +6,10 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/apply/_internal/controlVariants/Utils",
+	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/initial/_internal/FlexConfiguration",
 	"sap/ui/fl/initial/_internal/FlexInfoSession",
-	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
@@ -18,10 +18,10 @@ sap.ui.define([
 	Log,
 	JsControlTreeModifier,
 	VariantUtils,
+	FlexState,
 	ManifestUtils,
 	FlexConfiguration,
 	FlexInfoSession,
-	ChangePersistenceFactory,
 	FlexControllerFactory,
 	Layer,
 	Utils,
@@ -56,6 +56,10 @@ sap.ui.define([
 				return Promise.reject(sMessage);
 			}
 
+			function filterByLayer(oChange) {
+				return oChange.getLayer() === Layer.USER;
+			}
+
 			function filterByValidFileType(oChange) {
 				return oChange.getFileType() === "change";
 			}
@@ -84,15 +88,14 @@ sap.ui.define([
 				return logAndReject("App Component could not be determined");
 			}
 
-			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(oAppComponent);
-			return oChangePersistence.getChangesForComponent({currentLayer: Layer.USER, includeCtrlVariants: true})
-			.then(function(aChanges) {
-				return aChanges
-				.filter(filterByValidFileType)
-				.filter(filterBySelectors.bind(this, oAppComponent, mPropertyBag.selectors))
-				.filter(filterByChangeType.bind(this, mPropertyBag.changeTypes))
-				.length > 0;
-			}.bind(this));
+			const sFlexReference = ManifestUtils.getFlexReferenceForControl(oAppComponent);
+			const aFlexObjects = FlexState.getFlexObjectsDataSelector().get({reference: sFlexReference})
+			.filter(filterByValidFileType)
+			.filter(filterByLayer)
+			.filter(filterBySelectors.bind(this, oAppComponent, mPropertyBag.selectors))
+			.filter(filterByChangeType.bind(this, mPropertyBag.changeTypes));
+
+			return Promise.resolve(aFlexObjects.length > 0);
 		},
 
 		/**

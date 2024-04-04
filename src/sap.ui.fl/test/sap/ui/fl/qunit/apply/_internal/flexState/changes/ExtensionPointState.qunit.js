@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexObjects/UIChange",
 	"sap/ui/fl/apply/_internal/flexState/changes/ExtensionPointState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
+	"sap/ui/fl/apply/_internal/flexState/changes/UIChangesState",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
@@ -16,6 +17,7 @@ sap.ui.define([
 	UIChange,
 	ExtensionPointState,
 	FlexState,
+	UIChangesState,
 	ChangePersistenceFactory,
 	sinon
 ) {
@@ -32,14 +34,12 @@ sap.ui.define([
 		};
 	}
 
-	function mockChangePersistance(aChanges, bChangeMapCreated, fnAddChangeAndUpadateDependencies) {
+	function setupTest(aChanges, bChangeMapCreated, fnAddChangeAndUpdateDependencies) {
 		var oChangePersistence = {
-			getChangesForComponent() {
-				return Promise.resolve(aChanges || []);
-			},
-			addChangeAndUpdateDependencies: fnAddChangeAndUpadateDependencies || function() {}
+			addChangeAndUpdateDependencies: fnAddChangeAndUpdateDependencies || function() {}
 		};
 		sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForControl").returns(oChangePersistence);
+		sandbox.stub(UIChangesState, "getAllApplicableUIChanges").returns(aChanges);
 		sandbox.stub(FlexState, "isInitialized").returns(bChangeMapCreated);
 		return oChangePersistence;
 	}
@@ -71,7 +71,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("without extension point changes exists", function(assert) {
-			mockChangePersistance([]); // no changes exists
+			setupTest([]); // no changes exist
 			return ExtensionPointState.enhanceExtensionPointChanges(this.mPropertyBag, this.mExtensionPointInfo)
 			.then(function(aEnhancedChanges) {
 				assert.strictEqual(aEnhancedChanges.length, 0, "then an empty changes array is returned");
@@ -80,7 +80,7 @@ sap.ui.define([
 
 		QUnit.test("with extension point changes exists but not in initial state", function(assert) {
 			var aChanges = createChangeList(3, false, this.mExtensionPointInfo.name);
-			mockChangePersistance(aChanges);
+			setupTest(aChanges);
 			return ExtensionPointState.enhanceExtensionPointChanges(this.mPropertyBag, this.mExtensionPointInfo)
 			.then(function(aEnhancedChanges) {
 				assert.strictEqual(aEnhancedChanges.length, 3, "then 3 changes are returned");
@@ -105,15 +105,15 @@ sap.ui.define([
 		}
 
 		QUnit.test("with extension point changes exists the component creation is async", function(assert) {
-			var oAddChangeAndUpadateDependenciesStub = sinon.stub();
+			var oAddChangeAndUpdateDependenciesStub = sinon.stub();
 			var aChanges = createChangeList(3, true/* is in initial state */, this.mExtensionPointInfo.name);
-			mockChangePersistance(aChanges, true/* aync component creation */, oAddChangeAndUpadateDependenciesStub);
+			setupTest(aChanges, true/* async component creation */, oAddChangeAndUpdateDependenciesStub);
 			return ExtensionPointState.enhanceExtensionPointChanges(this.mPropertyBag, this.mExtensionPointInfo)
 			.then(function(aEnhancedChanges) {
 				assert.strictEqual(aEnhancedChanges.length, 3, "then 3 changes are returned");
 				checkChangesList.call(this, aEnhancedChanges, assert);
 				assert.strictEqual(
-					oAddChangeAndUpadateDependenciesStub.callCount,
+					oAddChangeAndUpdateDependenciesStub.callCount,
 					3,
 					"then all changes are updated accordingly into the flex"
 				);
@@ -121,14 +121,14 @@ sap.ui.define([
 		});
 
 		QUnit.test("with extension point changes exists the component creation is sync", function(assert) {
-			var oAddChangeAndUpadateDependenciesStub = sinon.stub();
+			var oAddChangeAndUpdateDependenciesStub = sinon.stub();
 			var aChanges = createChangeList(3, true/* is in initial state */, this.mExtensionPointInfo.name);
-			mockChangePersistance(aChanges, false/* sync component creation */, oAddChangeAndUpadateDependenciesStub);
+			setupTest(aChanges, false/* sync component creation */, oAddChangeAndUpdateDependenciesStub);
 			return ExtensionPointState.enhanceExtensionPointChanges(this.mPropertyBag, this.mExtensionPointInfo)
 			.then(function(aEnhancedChanges) {
 				assert.strictEqual(aEnhancedChanges.length, 3, "then 3 changes are returned");
 				checkChangesList.call(this, aEnhancedChanges, assert);
-				assert.strictEqual(oAddChangeAndUpadateDependenciesStub.callCount, 0, "then the changes are not updated into the flex");
+				assert.strictEqual(oAddChangeAndUpdateDependenciesStub.callCount, 0, "then the changes are not updated into the flex");
 			}.bind(this));
 		});
 	});
@@ -148,46 +148,38 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("without valid extension point name", function(assert) {
 			var oErrorLogSpy = sandbox.spy(Log, "error");
-			var oChangePersistence = mockChangePersistance([]); // no changes exists
-			return ExtensionPointState.getChangesForExtensionPoint(oChangePersistence, {})
-			.then(function(aChanges) {
-				assert.strictEqual(oErrorLogSpy.firstCall.args[0], "Missing name from extension point info!",
-					"then an error message is thrown");
-				assert.strictEqual(aChanges.length, 0, "then no changes are returned");
-			});
+			var oChangePersistence = setupTest([]); // no changes exists
+			const aChanges = ExtensionPointState.getChangesForExtensionPoint(oChangePersistence, {});
+			assert.strictEqual(oErrorLogSpy.firstCall.args[0], "Missing name from extension point info!",
+				"then an error message is thrown");
+			assert.strictEqual(aChanges.length, 0, "then no changes are returned");
 		});
 
 		QUnit.test("without ui changes exists", function(assert) {
 			var oErrorLogSpy = sandbox.spy(Log, "error");
-			var oChangePersistence = mockChangePersistance([]); // no changes exists
-			return ExtensionPointState.getChangesForExtensionPoint(oChangePersistence, this.mPropertyBag)
-			.then(function(aChanges) {
-				assert.strictEqual(oErrorLogSpy.callCount, 0, "then an error message is thrown");
-				assert.strictEqual(aChanges.length, 0, "then no changes are returned");
-			});
+			var oChangePersistence = setupTest([]); // no changes exists
+			const aChanges = ExtensionPointState.getChangesForExtensionPoint(oChangePersistence, this.mPropertyBag);
+			assert.strictEqual(oErrorLogSpy.callCount, 0, "then an error message is thrown");
+			assert.strictEqual(aChanges.length, 0, "then no changes are returned");
 		});
 
 		QUnit.test("with ui changes but without extension point reference exists", function(assert) {
-			var aChanges = createChangeList(3); // without extension point name set
-			var oChangePersistence = mockChangePersistance(aChanges);
-			return ExtensionPointState.getChangesForExtensionPoint(oChangePersistence, this.mPropertyBag)
-			.then(function(aChanges) {
-				assert.strictEqual(aChanges.length, 0, "then no changes are returned");
-			});
+			var aInitialChanges = createChangeList(3); // without extension point name set
+			var oChangePersistence = setupTest(aInitialChanges);
+			const aChanges = ExtensionPointState.getChangesForExtensionPoint(oChangePersistence, this.mPropertyBag);
+			assert.strictEqual(aChanges.length, 0, "then no changes are returned");
 		});
 
 		QUnit.test("with extension point changes exists", function(assert) {
 			var oViewFilterStub = sandbox.stub(ChangesUtils, "isChangeInView").returns(true);
-			var aChanges = createChangeList(3, true/* is in initial state */, this.mExtensionPointInfo.name);
-			var oChangePersistence = mockChangePersistance(aChanges);
-			return ExtensionPointState.getChangesForExtensionPoint(oChangePersistence, this.mPropertyBag)
-			.then(function(aChanges) {
-				assert.strictEqual(aChanges.length, 3, "then no changes are returned");
-				assert.ok(aChanges.every(function(oChange) {
-					return oChange.getSelector().name === this.mExtensionPointInfo.name;
-				}.bind(this)), "then the returnd changes are related to the extension point");
-				assert.strictEqual(oViewFilterStub.callCount, 3, "then the changes are checked for having correct view prefix");
-			}.bind(this));
+			var aInitialChanges = createChangeList(3, true/* is in initial state */, this.mExtensionPointInfo.name);
+			var oChangePersistence = setupTest(aInitialChanges);
+			const aChanges = ExtensionPointState.getChangesForExtensionPoint(oChangePersistence, this.mPropertyBag);
+			assert.strictEqual(aChanges.length, 3, "then no changes are returned");
+			assert.ok(aChanges.every(function(oChange) {
+				return oChange.getSelector().name === this.mExtensionPointInfo.name;
+			}.bind(this)), "then the returned changes are related to the extension point");
+			assert.strictEqual(oViewFilterStub.callCount, 3, "then the changes are checked for having correct view prefix");
 		});
 	});
 

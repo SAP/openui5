@@ -149,8 +149,7 @@ sap.ui.define([
 	UIChangesState.getAllApplicableUIChanges = function(sReference) {
 		const aVMIndependentUIChanges = oVMIndependentUIChangesDataSelector.get({reference: sReference});
 		return aVMIndependentUIChanges.concat(VariantManagementState.getInitialChanges({
-			reference: sReference,
-			includeDirtyChanges: true
+			reference: sReference
 		}));
 	};
 

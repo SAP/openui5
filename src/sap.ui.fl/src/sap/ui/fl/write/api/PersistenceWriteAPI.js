@@ -74,7 +74,6 @@ sap.ui.define([
 	 */
 	function hasChanges(mPropertyBag) {
 		mPropertyBag.includeCtrlVariants = true;
-		mPropertyBag.invalidateCache = false;
 		return PersistenceWriteAPI._getUIChanges(mPropertyBag)
 		.then(function(aChanges) {
 			return aChanges.length > 0;
@@ -450,7 +449,6 @@ sap.ui.define([
 	 * @param {boolean} [mPropertyBag.includeCtrlVariants] - Flag if control variant changes should be included
 	 * @param {boolean} [mPropertyBag.includeDirtyChanges] - Flag if dirty UI changes should be included
 	 * @param {string} [mPropertyBag.cacheKey] - Key to validate the cache entry stored on client side
-	 * @param {boolean} [mPropertyBag.invalidateCache] - Indicates whether the cache is to be invalidated
 	 * @param {boolean} [mPropertyBag.onlyCurrentVariants] - Whether only changes for the currently active variants should be considered
 	 *
 	 * @returns {Promise} Promise resolves with an array of all change instances {@see sap.ui.fl.apply._internal.flexObjects.FlexObject}
@@ -462,6 +460,7 @@ sap.ui.define([
 			mPropertyBag.currentLayer = mPropertyBag.layer;
 		}
 
+		mPropertyBag.invalidateCache = false;
 		// TODO: Check the mPropertyBag.selector parameter name - the methods called on FlexObjectState expect a control
 		return FlexObjectState.getFlexObjects(mPropertyBag);
 	};
