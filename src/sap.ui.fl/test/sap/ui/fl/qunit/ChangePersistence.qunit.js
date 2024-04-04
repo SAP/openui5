@@ -113,9 +113,7 @@ sap.ui.define([
 				selector: {id: "id5"}
 			});
 
-			sandbox.stub(this.oChangePersistence, "getDependencyMapForComponent").returns({
-				aChanges: [oChange1, oChange2, oChange3]
-			});
+			sandbox.stub(UIChangesState, "getAllUIChanges").returns([oChange1, oChange2, oChange3]);
 
 			sandbox.stub(this.oChangePersistence, "getDirtyChanges").returns([oChange4, oChange5]);
 
@@ -179,61 +177,6 @@ sap.ui.define([
 				assert.equal(this.oChangePersistence._aDirtyChanges.length, 0, "both dirty changes were removed from the persistence");
 				assert.equal(oDeleteChangeInMapStub.callCount, 4, "all changes got removed from the map");
 			}.bind(this));
-		});
-
-		QUnit.test("_getChangesFromMapByNames returns array of changes with corresponding name", function(assert) {
-			var oChange0 = FlexObjectFactory.createFromFileContent(
-				{
-					fileName: "fileNameChange0",
-					layer: Layer.USER,
-					reference: "appComponentReference",
-					namespace: "namespace",
-					selector: {id: "group1"}
-				}
-			);
-			var oChange1 = FlexObjectFactory.createFromFileContent(
-				{
-					fileName: "fileNameChange1",
-					layer: Layer.USER,
-					reference: "appComponentReference",
-					namespace: "namespace",
-					selector: {id: "field3-2"},
-					dependentSelector: {
-						alias: [{
-							id: "group3"
-						}, {
-							id: "group2"
-						}]
-					}
-				}
-			);
-			var oChange2 = FlexObjectFactory.createFromFileContent(
-				{
-					fileName: "fileNameChange2",
-					layer: Layer.USER,
-					reference: "appComponentReference",
-					namespace: "namespace",
-					selector: {id: "field3-2"},
-					dependentSelector: {
-						alias: [{
-							id: "group2"
-						}, {
-							id: "group1"
-						}],
-						alias2: {
-							id: "field3-2"
-						}
-					}
-				}
-			);
-			var aNames = ["fileNameChange0", "fileNameChange2"];
-			var aExpectedChanges = [oChange0, oChange2];
-
-			sandbox.stub(UIChangesState, "getLiveDependencyMap").returns({
-				aChanges: [oChange0, oChange1, oChange2]
-			});
-
-			assert.deepEqual(this.oChangePersistence._getChangesFromMapByNames(aNames), aExpectedChanges, "2 changes are returned");
 		});
 
 		QUnit.test("when calling transportAllUIChanges successfully", function(assert) {
@@ -695,7 +638,7 @@ sap.ui.define([
 
 			var oResetChangesStub = sandbox.stub(WriteStorage, "reset").resolves(aDeletedChangeContentIds);
 			var oUpdateStorageResponseStub = sandbox.stub(FlexState, "updateStorageResponse");
-			var oGetChangesFromMapByNamesStub = sandbox.stub(this.oChangePersistence, "_getChangesFromMapByNames").returns(aChanges);
+			var oGetAllUIChangesStub = sandbox.stub(UIChangesState, "getAllUIChanges").returns(aChanges);
 			var fnGetCompEntitiesByIdMapStub = sandbox.stub(FlexState, "getCompVariantsMap").returns({
 				somePersistencyKey: {
 					byId: {
@@ -721,7 +664,7 @@ sap.ui.define([
 				assert.equal(oResetArgs.changes[1].getId(), "oCUSTOMERChange2");
 				assert.equal(oResetArgs.changes[2].getId(), "oMockCompVariant3");
 				assert.equal(oUpdateStorageResponseStub.callCount, 0, "the FlexState is not called");
-				assert.equal(oGetChangesFromMapByNamesStub.callCount, 0, "the getChangesFromMapByNames is not called");
+				assert.equal(oGetAllUIChangesStub.callCount, 0, "the getChangesFromMapByNames is not called");
 				assert.deepEqual(aChanges, [], "empty array is returned");
 				done();
 			});
@@ -765,11 +708,11 @@ sap.ui.define([
 
 			const aChanges = [oVENDORChange1, oVENDORChange2];
 			sandbox.stub(this.oChangePersistence, "getChangesForComponent").resolves(aChanges);
-			const aDeletedChangeContentIds = {response: [{fileName: "1"}, {fileName: "2"}]};
+			const aDeletedChangeContentIds = {response: [{fileName: "c1"}, {fileName: "c2"}]};
 
 			const oResetChangesStub = sandbox.stub(WriteStorage, "reset").resolves(aDeletedChangeContentIds);
 			const oUpdateStorageResponseSpy = sandbox.spy(FlexState, "updateStorageResponse");
-			const oGetChangesFromMapByNamesStub = sandbox.stub(this.oChangePersistence, "_getChangesFromMapByNames").returns(aChanges);
+			const oGetAllUIChangesStub = sandbox.stub(UIChangesState, "getAllUIChanges").returns(aChanges);
 
 			await this.oChangePersistence.resetChanges(Layer.VENDOR, "", ["abc123"], ["labelChange"]);
 
@@ -779,7 +722,7 @@ sap.ui.define([
 			assert.strictEqual(oResetArgs.layer, Layer.VENDOR);
 			assert.deepEqual(oResetArgs.selectorIds, ["abc123"]);
 			assert.deepEqual(oResetArgs.changeTypes, ["labelChange"]);
-			assert.strictEqual(oUpdateStorageResponseSpy.callCount, 1, "the FlexState.updateStorageResponse is called once");
+			assert.strictEqual(oUpdateStorageResponseSpy.callCount, 1, "FlexState.updateStorageResponse is called once");
 			assert.deepEqual(oUpdateStorageResponseSpy.args[0][1],
 				aChanges.map((oFlexObject) => {
 					return {flexObject: oFlexObject.convertToFileContent(), type: "delete"};
@@ -791,8 +734,7 @@ sap.ui.define([
 				0,
 				"then the change is also removed from the flex state"
 			);
-			assert.strictEqual(oGetChangesFromMapByNamesStub.callCount, 1, "the getChangesFromMapByNames is called once");
-			assert.deepEqual(oGetChangesFromMapByNamesStub.args[0][0], ["1", "2"], "and with the correct names");
+			assert.strictEqual(oGetAllUIChangesStub.callCount, 1, "getAllUIChanges is called once");
 		});
 	});
 

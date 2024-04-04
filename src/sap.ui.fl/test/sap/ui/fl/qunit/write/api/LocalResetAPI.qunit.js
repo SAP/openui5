@@ -2,6 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/fl/apply/_internal/flexState/changes/UIChangesState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
@@ -16,6 +17,7 @@ sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier"
 ], function(
 	sinon,
+	UIChangesState,
 	FlexState,
 	ManifestUtils,
 	FlexObjectFactory,
@@ -66,9 +68,8 @@ sap.ui.define([
 				createChange("foo2", "fooElement")
 			];
 			aChanges[0].setState(States.LifecycleState.PERSISTED);
-			this.oChangePersistence.addChangeAndUpdateDependencies(this.oComponent, aChanges[0]);
-			this.oChangePersistence.addDirtyChange(aChanges[1]);
 			sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForControl").returns(this.oChangePersistence);
+			sandbox.stub(UIChangesState, "getAllUIChanges").returns(aChanges);
 		},
 		afterEach() {
 			FlexState.clearState();

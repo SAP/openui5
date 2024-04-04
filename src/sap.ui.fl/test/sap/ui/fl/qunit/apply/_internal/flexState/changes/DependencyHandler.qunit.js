@@ -353,6 +353,14 @@ sap.ui.define([
 			assert.deepEqual(mChangesCopy, this.mDependencyMap, "the map was not changed");
 		});
 
+		function removeChangeFromList(oDependencyMap, sChangeKey) {
+			const iIndex = oDependencyMap.aChanges.findIndex((oChange) => oChange.getId() === sChangeKey);
+
+			if (iIndex !== -1) {
+				oDependencyMap.aChanges.splice(iIndex, 1);
+			}
+		}
+
 		QUnit.test("resolveDependenciesForChange", function(assert) {
 			var mChangesCopy = merge({}, this.mDependencyMap);
 			var sControlId = "control";
@@ -361,21 +369,25 @@ sap.ui.define([
 			DependencyHandler.resolveDependenciesForChange(this.mDependencyMap, "fileNameChange1", sControlId);
 			delete mChangesCopy.mDependentChangesOnMe.fileNameChange1;
 			mChangesCopy.mDependencies.fileNameChange2.dependencies = [];
+			removeChangeFromList(mChangesCopy, "fileNameChange1");
 			mChangesCopy.dependencyRemovedInLastBatch[sControlId].push("fileNameChange2");
 			assert.deepEqual(mChangesCopy, this.mDependencyMap, "the map was updated correctly");
 
 			DependencyHandler.resolveDependenciesForChange(this.mDependencyMap, "fileNameChange4", sControlId);
+			removeChangeFromList(mChangesCopy, "fileNameChange4");
 			assert.deepEqual(mChangesCopy, this.mDependencyMap, "the map was not changed");
 
 			DependencyHandler.resolveDependenciesForChange(this.mDependencyMap, "fileNameChange3", sControlId);
 			delete mChangesCopy.mDependentChangesOnMe.fileNameChange3;
 			mChangesCopy.mDependencies.fileNameChange4.dependencies = [];
+			removeChangeFromList(mChangesCopy, "fileNameChange3");
 			mChangesCopy.dependencyRemovedInLastBatch[sControlId].push("fileNameChange4");
 			assert.deepEqual(mChangesCopy, this.mDependencyMap, "the map was updated correctly");
 
 			DependencyHandler.resolveDependenciesForChange(this.mDependencyMap, "fileNameChange2", sControlId);
 			delete mChangesCopy.mDependentChangesOnMe.fileNameChange2;
 			mChangesCopy.mDependencies.fileNameChange3.dependencies = [];
+			removeChangeFromList(mChangesCopy, "fileNameChange2");
 			mChangesCopy.dependencyRemovedInLastBatch[sControlId].push("fileNameChange3");
 			assert.deepEqual(mChangesCopy, this.mDependencyMap, "the map was updated correctly");
 
@@ -392,6 +404,7 @@ sap.ui.define([
 
 			DependencyHandler.resolveDependenciesForChange(this.mDependencyMap, "fileNameChange1");
 			delete mChangesCopy.mDependentChangesOnMe.fileNameChange1;
+			removeChangeFromList(mChangesCopy, "fileNameChange1");
 			assert.deepEqual(mChangesCopy, this.mDependencyMap, "the map was updated correctly");
 		});
 
@@ -418,11 +431,16 @@ sap.ui.define([
 			delete mChangesCopy.mDependentChangesOnMe.fileNameChange1;
 			mChangesCopy.mDependencies.fileNameChange2.dependencies.splice(0, 1);
 			mChangesCopy.dependencyRemovedInLastBatch = {};
+			removeChangeFromList(mChangesCopy, "fileNameChange1");
 
 			var oProcessSpy = sandbox.spy(DependencyHandler, "processDependentQueue");
 			return DependencyHandler.processDependentQueue(this.mDependencyMap, this.oAppComponent, sControlId).then(function() {
 				assert.equal(oProcessSpy.callCount, 2, "the function was only called twice");
-				assert.deepEqual(this.mDependencyMap, mChangesCopy, "the dependencies for fileNameChange1 and fileNameChange2 were removed");
+				assert.deepEqual(
+					this.mDependencyMap,
+					mChangesCopy,
+					"the dependencies for fileNameChange1 and fileNameChange2 were removed"
+				);
 			}.bind(this));
 		});
 
@@ -461,6 +479,8 @@ sap.ui.define([
 				mChangesCopy.mDependencies.fileNameChange3.controlsDependencies.splice(0, 1);
 				mChangesCopy.mDependencies.fileNameChange3.dependencies.splice(0, 1);
 				mChangesCopy.mDependencies.fileNameChange4.controlsDependencies.splice(0, 1);
+				removeChangeFromList(mChangesCopy, "fileNameChange1");
+				removeChangeFromList(mChangesCopy, "fileNameChange2");
 				assert.deepEqual(mChangesCopy, this.mDependencyMap, "two dependencies got removed");
 
 				assert.equal(oChangeCallbackStub1.callCount, 1, "the saved callback was called");
@@ -476,6 +496,8 @@ sap.ui.define([
 				delete mChangesCopy.mDependencies.fileNameChange3;
 				delete mChangesCopy.mDependencies.fileNameChange4;
 				delete mChangesCopy.mDependentChangesOnMe.fileNameChange3;
+				removeChangeFromList(mChangesCopy, "fileNameChange3");
+				removeChangeFromList(mChangesCopy, "fileNameChange4");
 				assert.deepEqual(mChangesCopy, this.mDependencyMap, "the two last dependencies got removed");
 
 				assert.equal(oChangeCallbackStub3.callCount, 1, "the saved callback was called");

@@ -71,11 +71,22 @@ sap.ui.define([
 
 	function isSelectorInArray(aExistingDependentSelectorList, oDependentSelector) {
 		return aExistingDependentSelectorList.some(function(oExistingDependentSelector) {
-			return (oExistingDependentSelector.id === oDependentSelector.id && oExistingDependentSelector.idIsLocal === oDependentSelector.idIsLocal);
+			return (
+				oExistingDependentSelector.id === oDependentSelector.id
+				&& oExistingDependentSelector.idIsLocal === oDependentSelector.idIsLocal
+			);
 		});
 	}
 
-	function addChangesDependencies(oTargetChange, aDependentSelectorsOfTargetChange, oExistingChange, bCheckingOrder, oAppComponent, aChanges, oDependencyMap) {
+	function addChangesDependencies(
+		oTargetChange,
+		aDependentSelectorsOfTargetChange,
+		oExistingChange,
+		bCheckingOrder,
+		oAppComponent,
+		aChanges,
+		oDependencyMap
+	) {
 		var aDependentSelectorsOfExistingChange = oExistingChange.getDependentSelectorList();
 		aDependentSelectorsOfTargetChange.some(function(oDependentSelector) {
 			// If 2 changes have the same dependent selector, they are depend on each other
@@ -90,6 +101,7 @@ sap.ui.define([
 				}
 				return true;
 			}
+			return false;
 		});
 	}
 
@@ -155,7 +167,8 @@ sap.ui.define([
 	}
 
 	function isDependencyNeeded(oDependentChange, oChange, sDependentControlId, oDependencyMap, bIsChangesInRevertOrder) {
-		var bSelectorAlreadyThere = !bIsChangesInRevertOrder && oDependencyMap.mDependencies[oDependentChange.getId()].dependentIds.includes(sDependentControlId);
+		var bSelectorAlreadyThere =
+			!bIsChangesInRevertOrder && oDependencyMap.mDependencies[oDependentChange.getId()].dependentIds.includes(sDependentControlId);
 		var bIndirectDependency = false;
 		if (oDependencyMap.mDependentChangesOnMe[oChange.getId()]) {
 			oDependencyMap.mDependentChangesOnMe[oChange.getId()].some(function(sChangeId) {
@@ -165,6 +178,14 @@ sap.ui.define([
 		}
 
 		return !bSelectorAlreadyThere && !bIndirectDependency;
+	}
+
+	function removeChangeFromList(oDependencyMap, sChangeKey) {
+		const iIndex = oDependencyMap.aChanges.findIndex((oChange) => oChange.getId() === sChangeKey);
+
+		if (iIndex !== -1) {
+			oDependencyMap.aChanges.splice(iIndex, 1);
+		}
 	}
 
 	/**
@@ -293,6 +314,7 @@ sap.ui.define([
 			if (bContinue) {
 				return DependencyHandler.processDependentQueue(oDependencyMap, oAppComponent, sControlId);
 			}
+			return undefined;
 		}.bind(undefined, sControlId));
 	};
 
@@ -342,6 +364,7 @@ sap.ui.define([
 	/**
 	 * Resolves the dependency from the dependent changes;
 	 * Loops over all the dependent changes and removes the dependency to this change
+	 * After the dependency is resolved the change is removed from the list of changes (aChanges)
 	 *
 	 * @param {object} oDependencyMap - Changes Map
 	 * @param {string} sChangeKey - Key of the change which dependencies have to be resolved
@@ -366,6 +389,7 @@ sap.ui.define([
 			});
 			delete oDependencyMap.mDependentChangesOnMe[sChangeKey];
 		}
+		removeChangeFromList(oDependencyMap, sChangeKey);
 	};
 
 	/**
@@ -386,15 +410,10 @@ sap.ui.define([
 				aChanges.splice(iIndexInMapElement, 1);
 				return true;
 			}
+			return false;
 		});
 
-		var iIndex = oDependencyMap.aChanges.map(function(oExistingChange) {
-			return oExistingChange.getId();
-		}).indexOf(sChangeKey);
-
-		if (iIndex !== -1) {
-			oDependencyMap.aChanges.splice(iIndex, 1);
-		}
+		removeChangeFromList(oDependencyMap, sChangeKey);
 	};
 
 	/**

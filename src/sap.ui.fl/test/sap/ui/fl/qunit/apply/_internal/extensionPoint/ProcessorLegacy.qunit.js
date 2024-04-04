@@ -166,7 +166,7 @@ sap.ui.define([
 		};
 
 		var checkChangesContent = function(sReference) {
-			var {aChanges} = UIChangesState.getLiveDependencyMap("sap.ui.fl.qunit.extensionPoint.testAppLegacy");
+			var aChanges = UIChangesState.getAllUIChanges("sap.ui.fl.qunit.extensionPoint.testAppLegacy");
 			const mChanges = aChanges.reduce((oAccumulator, oChange) => Object.assign(oAccumulator, {[oChange.getId()]: oChange}), {});
 			// Changes on async view carries no ep info
 			assert.equal(mChanges[`${sReference}_EP1_async_VENDOR_addXMLAtExtensionPoint`].getExtensionPointInfo(), null, "oChange1 carries no extension point info");
