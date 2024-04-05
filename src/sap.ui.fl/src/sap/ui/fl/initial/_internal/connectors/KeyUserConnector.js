@@ -46,7 +46,7 @@ sap.ui.define([
 				oResult.contents.map(function(oContent, iIndex, oResult) {
 					oResult[iIndex].changes = (oContent.changes || []).concat(oContent.compVariants);
 				});
-				oResult.contents.cacheKey = oResult.cacheKey;
+				oResult.contents[0].cacheKey = oResult.cacheKey;
 				return oResult.contents;
 			});
 		}
