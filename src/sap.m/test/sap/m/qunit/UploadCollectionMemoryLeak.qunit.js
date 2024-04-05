@@ -14,8 +14,8 @@ sap.ui.define([
 	"sap/m/MessageBox",
 	"sap/ui/base/Event",
 	"sap/ui/core/library",
-	"sap/ui/core/Core"
-], function(ManagedObject, UploadCollectionItem, UploadCollection, ObjectAttribute, ObjectStatus, ObjectMarker, Label, Element, JSONModel, mlibrary, Sorter, MessageBox, Event, library, oCore) {
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(ManagedObject, UploadCollectionItem, UploadCollection, ObjectAttribute, ObjectStatus, ObjectMarker, Label, Element, JSONModel, mlibrary, Sorter, MessageBox, Event, library, nextUIUpdate) {
 	"use strict";
 
 	// shortcut for sap.ui.core.ValueState
@@ -135,26 +135,26 @@ sap.ui.define([
 			restoreSpySetup(this);
 		}
 	});
-	QUnit.skip("UCI read only", function (assert) {
+	QUnit.skip("UCI read only", async function (assert) {
 		var oCollection = new UploadCollection({
 			items: [this.oItem]
 		}).placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oCollection.destroy();
 		checkDestroy(this, assert);
 	});
 
-	QUnit.skip("UCI without thumbnail url", function (assert) {
+	QUnit.skip("UCI without thumbnail url", async function (assert) {
 		this.oItem.setThumbnailUrl();
 		var oCollection = new UploadCollection({
 			items: [this.oItem]
 		}).placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oCollection.destroy();
 		checkDestroy(this, assert);
 	});
 
-	QUnit.skip("UCI with edit and delete button", function (assert) {
+	QUnit.skip("UCI with edit and delete button", async function (assert) {
 		this.oItem.setEnableEdit(true);
 		this.oItem.setEnableDelete(true);
 		this.oItem.setVisibleEdit(true);
@@ -162,7 +162,7 @@ sap.ui.define([
 		var oCollection = new UploadCollection({
 			items: [this.oItem]
 		}).placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oCollection.destroy();
 		checkDestroy(this, assert);
 	});
@@ -176,7 +176,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.skip("UCI with grouping", function (assert) {
+	QUnit.skip("UCI with grouping", async function (assert) {
 		var oModel = new JSONModel({
 			"items": [
 				{
@@ -212,7 +212,7 @@ sap.ui.define([
 				sorter: new Sorter("/uploadedDate", true, true)
 			}
 		}).setModel(oModel).placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oCollection.destroy();
 		checkDestroy(this, assert);
 	});
@@ -227,47 +227,47 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.skip("UCI enter edit", function (assert) {
+	QUnit.skip("UCI enter edit", async function (assert) {
 		this.oItem.setEnableEdit(true);
 		this.oItem.setVisibleEdit(true);
 		var oCollection = new UploadCollection({
 			items: [this.oItem]
 		}).placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		Element.getElementById(this.oItem.getId() + "-editButton").firePress();
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oCollection.destroy();
 		checkDestroy(this, assert);
 	});
 
-	QUnit.skip("UCI enter edit - cancel edit", function (assert) {
+	QUnit.skip("UCI enter edit - cancel edit", async function (assert) {
 		this.oItem.setEnableEdit(true);
 		this.oItem.setVisibleEdit(true);
 		var oCollection = new UploadCollection({
 			items: [this.oItem]
 		}).placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		Element.getElementById(this.oItem.getId() + "-editButton").firePress();
-		oCore.applyChanges();
+		await nextUIUpdate();
 		Element.getElementById(this.oItem.getId() + "-cancelButton").firePress();
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oCollection.destroy();
 		checkDestroy(this, assert);
 	});
 
-	QUnit.skip("UCI enter edit - change name - cancel edit", function (assert) {
+	QUnit.skip("UCI enter edit - change name - cancel edit", async function (assert) {
 		this.oItem.setEnableEdit(true);
 		this.oItem.setVisibleEdit(true);
 		var oCollection = new UploadCollection({
 			items: [this.oItem]
 		}).placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		Element.getElementById(this.oItem.getId() + "-editButton").firePress();
-		oCore.applyChanges();
+		await nextUIUpdate();
 		Element.getElementById(this.oItem.getId() + "-ta_editFileName").setValue("NewFileName");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		Element.getElementById(this.oItem.getId() + "-okButton").firePress();
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oCollection.destroy();
 		checkDestroy(this, assert);
 	});
@@ -282,18 +282,18 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.skip("UCI delete item", function (assert) {
+	QUnit.skip("UCI delete item", async function (assert) {
 		this.oItem.setEnableDelete(true);
 		this.oItem.setVisibleDelete(true);
 		var oCollection = new UploadCollection({
 			items: [this.oItem]
 		}).placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		this.stub(MessageBox, "show");
 		Element.getElementById(this.oItem.getId() + "-deleteButton").firePress();
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oCollection._onCloseMessageBoxDeleteItem(MessageBox.Action.OK);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oCollection.destroy();
 		checkDestroy(this, assert);
 	});
@@ -307,9 +307,9 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.skip("Uploading a file - progress case", function (assert) {
+	QUnit.skip("Uploading a file - progress case", async function (assert) {
 		var oCollection = new UploadCollection().placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		var oFileUploader = oCollection._getFileUploader();
 		oFileUploader.fireChange({
 			files: [{
@@ -317,23 +317,23 @@ sap.ui.define([
 			}]
 		});
 		oCollection.invalidate();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oFileUploader.fireUploadProgress({
 			fileName: "file1",
 			loaded: 50,
 			total: 100
 		});
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oCollection.destroy();
 		checkDestroy(this, assert);
 	});
 
-	QUnit.skip("Uploading a file - upload complete", function (assert) {
+	QUnit.skip("Uploading a file - upload complete", async function (assert) {
 		var oCollection = new UploadCollection({
 			items: [this.oItem]
 		}).placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		var oFileUploader = oCollection._getFileUploader();
 		oFileUploader.fireChange({
 			files: [{
@@ -341,7 +341,7 @@ sap.ui.define([
 			}]
 		});
 		oCollection.invalidate();
-		oCore.applyChanges();
+		await nextUIUpdate();
 		var oFileUploaderEventMock = {
 			fileName: "file1",
 			response: {"propertyOne": "ValueOne"},
@@ -354,14 +354,14 @@ sap.ui.define([
 			}
 		};
 		oCollection._onUploadComplete(new Event("uploadComplete", oFileUploader, oFileUploaderEventMock));
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oCollection.destroy();
 		checkDestroy(this, assert);
 	});
 
-	QUnit.skip("Uploading a file - terminate upload", function (assert) {
+	QUnit.skip("Uploading a file - terminate upload", async function (assert) {
 		var oCollection = new UploadCollection().placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		var oFileUploader = oCollection._getFileUploader();
 		oFileUploader.fireChange({
 			files: [{
@@ -369,19 +369,19 @@ sap.ui.define([
 			}]
 		});
 		oCollection.invalidate();
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oCollection._getFileUploader().fireUploadAborted({
 			fileName: "file1",
 			requestHeaders: []
 		});
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oCollection.destroy();
 		checkDestroy(this, assert);
 	});
 
-	QUnit.skip("Uploading a file - terminate upload via popover", function (assert) {
+	QUnit.skip("Uploading a file - terminate upload via popover", async function (assert) {
 		var oCollection = new UploadCollection().placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		var oFileUploader = oCollection._getFileUploader();
 		oFileUploader.fireChange({
 			files: [{
@@ -389,12 +389,12 @@ sap.ui.define([
 			}]
 		});
 		oCollection.invalidate();
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oCollection._handleTerminateRequest({}, oCollection.aItems[0]);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		var oDialog = Element.getElementById(oCollection.getId() + "deleteDialog");
 		oDialog.getButtons()[1].firePress();
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oDialog.fireEvent("afterClose");
 		oCollection.destroy();
 		checkDestroy(this, assert);

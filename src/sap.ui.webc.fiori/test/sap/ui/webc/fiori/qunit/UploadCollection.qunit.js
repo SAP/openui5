@@ -2,17 +2,17 @@
 /*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/webc/fiori/UploadCollection",
 	"sap/ui/webc/main/Button",
 	"sap/ui/webc/fiori/UploadCollectionItem"
-], function(createAndAppendDiv, Core, UploadCollection, Button, UploadCollectionItem) {
+], function(createAndAppendDiv, nextUIUpdate, UploadCollection, Button, UploadCollectionItem) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");
 
 	QUnit.module("Rendering", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oUploadCollection = new UploadCollection({
 				noDataText: "Some text...",
 				header: [
@@ -213,7 +213,7 @@ sap.ui.define([
 				}
 			});
 			this.oUploadCollection.placeAt("uiArea");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oUploadCollection.destroy();

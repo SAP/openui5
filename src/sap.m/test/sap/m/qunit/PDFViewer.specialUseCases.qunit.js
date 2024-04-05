@@ -22,7 +22,7 @@ sap.ui.define( [
 	if (TestUtils.isSourceValidationSupported()) {
 		// does not make as much sense cause firefox does not allow check it if the content is pdf
 		// and also it is not possible to access contentType of document due to cross domain browser policy
-		QUnit.test("Different resource's mimeType passed in", function (assert) {
+		QUnit.test("Different resource's mimeType passed in", async function (assert) {
 			assert.expect(1);
 			var done = assert.async();
 
@@ -51,11 +51,11 @@ sap.ui.define( [
 			};
 
 			oPDFViewer = TestUtils.createPdfViewer(oOptions);
-			TestUtils.renderPdfViewer(oPDFViewer);
+			await TestUtils.renderPdfViewer(oPDFViewer);
 		});
 	}
 
-	QUnit.test('Error state of component is rendered.', function (assert) {
+	QUnit.test('Error state of component is rendered.', async function (assert) {
 		assert.expect(3);
 		var done = assert.async();
 
@@ -71,7 +71,7 @@ sap.ui.define( [
 			}
 		};
 		oPDFViewer = TestUtils.createPdfViewer(oOptions);
-		TestUtils.renderPdfViewer(oPDFViewer);
+		await TestUtils.renderPdfViewer(oPDFViewer);
 
 		TestUtils.wait(4000)()
 			.then(function () {
@@ -80,7 +80,7 @@ sap.ui.define( [
 			});
 	});
 
-	QUnit.test("Render multiple times with valid or invalid source", function (assert) {
+	QUnit.test("Render multiple times with valid or invalid source", async function (assert) {
 		var done = assert.async(),
 			fnLoadedFailListener = function () {
 				assert.ok(false, "'Load' event fired but should not.");
@@ -103,27 +103,27 @@ sap.ui.define( [
 			};
 
 		oPDFViewer = TestUtils.createPdfViewer(oErrorOptions);
-		TestUtils.renderPdfViewer(oPDFViewer);
+		await TestUtils.renderPdfViewer(oPDFViewer);
 
 		TestUtils.wait(4000)()
-			.then(function () {
+			.then(async function () {
 				assert.ok(oPDFViewer.$().find('.sapMPDFViewerError').length === 1, 'The error content is missing');
 				oPDFViewer.detachLoaded(fnLoadedFailListener);
 				oPDFViewer.detachError(fnErrorOkListener);
 				oPDFViewer.attachLoaded(fnLoadedOkListener);
 				oPDFViewer.attachError(fnErrorFailListener);
 				oPDFViewer.setSource("test-resources/sap/m/qunit/pdfviewer/sample-file.pdf");
-				TestUtils.triggerRerender();
+				await TestUtils.triggerRerender();
 			})
 			.then(TestUtils.wait(4000))
-			.then(function () {
+			.then(async function () {
 				assert.ok(oPDFViewer.$().find('.sapMPDFViewerError').length === 0, 'The error content should be hidden');
 				oPDFViewer.detachLoaded(fnLoadedOkListener);
 				oPDFViewer.detachError(fnErrorFailListener);
 				oPDFViewer.attachLoaded(fnLoadedFailListener);
 				oPDFViewer.attachError(fnErrorOkListener);
 				oPDFViewer.setSource("test-resources/sap/m/qunit/pdfviewer/not-existing");
-				TestUtils.triggerRerender();
+				await TestUtils.triggerRerender();
 			})
 			.then(TestUtils.wait(4000))
 			.then(function () {
@@ -132,7 +132,7 @@ sap.ui.define( [
 			});
 	});
 
-	QUnit.test("Changes of height & width propagates directly to DOM", function (assert) {
+	QUnit.test("Changes of height & width propagates directly to DOM", async function (assert) {
 		assert.expect(4);
 		var done = assert.async(),
 			fnInvalidate,
@@ -171,7 +171,7 @@ sap.ui.define( [
 			};
 
 		oPDFViewer = TestUtils.createPdfViewer(oErrorOptions);
-		TestUtils.renderPdfViewer(oPDFViewer);
+		await TestUtils.renderPdfViewer(oPDFViewer);
 
 		TestUtils.wait(2000)()
 			.then(fnSpyPdfViewer)
@@ -185,7 +185,7 @@ sap.ui.define( [
 			});
 	});
 
-	QUnit.test("Loads pdf with non ascii name", function (assert) {
+	QUnit.test("Loads pdf with non ascii name", async function (assert) {
 		var done = assert.async();
 
 		oPDFViewer = TestUtils.createPdfViewer({
@@ -201,10 +201,10 @@ sap.ui.define( [
 			}
 		});
 
-		TestUtils.renderPdfViewer(oPDFViewer);
+		await TestUtils.renderPdfViewer(oPDFViewer);
 	});
 
-	QUnit.test("Height on mobile/tablet devices is always auto", function (assert) {
+	QUnit.test("Height on mobile/tablet devices is always auto", async function (assert) {
 		this.stub(Device, "system").value({desktop: false});
 
 		oPDFViewer = TestUtils.createPdfViewer({
@@ -213,12 +213,12 @@ sap.ui.define( [
 			source: "test-resources/sap/m/qunit/pdfviewer/sample file with spaces.pdf"
 		});
 
-		TestUtils.renderPdfViewer(oPDFViewer);
+		await TestUtils.renderPdfViewer(oPDFViewer);
 
 		assert.equal(oPDFViewer.$()[0].style.height, 'auto');
 	});
 
-	QUnit.test("Desktop View Emulated from Mobile", function (assert) {
+	QUnit.test("Desktop View Emulated from Mobile", async function (assert) {
 		this.stub(Device, "system").value({desktop: true});
 		Device.browser.firefox = false;
 
@@ -229,7 +229,7 @@ sap.ui.define( [
 
 		this.stub(oPDFViewer.getRenderer(), "_isPdfPluginEnabled").returns(false);
 
-		TestUtils.renderPdfViewer(oPDFViewer);
+		await TestUtils.renderPdfViewer(oPDFViewer);
 
 		assert.equal(document.querySelector("iframe"), null, "iFrame is not rendered");
 	});

@@ -20,7 +20,7 @@ sap.ui.define([
 		return;
 	}
 
-	QUnit.test("Test events in basic usage", function (assert) {
+	QUnit.test("Test events in basic usage", async function (assert) {
 		assert.expect(1);
 		var loadDone = assert.async();
 
@@ -42,10 +42,10 @@ sap.ui.define([
 
 		oPdfViewer = TestUtils.createPdfViewer(oOptions);
 		oPdfViewer.setModel(oModel);
-		TestUtils.renderPdfViewer(oPdfViewer);
+		await TestUtils.renderPdfViewer(oPdfViewer);
 	});
 
-	QUnit.test("Test events when model is changed", function (assert) {
+	QUnit.test("Test events when model is changed", async function (assert) {
 		assert.expect(3);
 		var loadDone1 = assert.async();
 		var loadDone2 = assert.async();
@@ -73,7 +73,7 @@ sap.ui.define([
 			}
 		};
 
-		var runSecondRendering = function () {
+		var runSecondRendering = async function () {
 			oPdfViewer.detachLoaded(fnLoadHandler1);
 			oPdfViewer.attachLoaded(fnLoadHandler2);
 
@@ -83,19 +83,19 @@ sap.ui.define([
 			});
 			assert.equal(oPdfViewer.getSource(), sExpectedSource);
 
-			TestUtils.triggerRerender();
+			await TestUtils.triggerRerender();
 			return Promise.resolve();
 		};
 
 		oPdfViewer = TestUtils.createPdfViewer(oOptions);
 		oPdfViewer.setModel(oModel);
-		TestUtils.renderPdfViewer(oPdfViewer);
+		await TestUtils.renderPdfViewer(oPdfViewer);
 
 		TestUtils.wait(5000)()
 			.then(runSecondRendering);
 	});
 
-	QUnit.test("Test events when property is changed", function (assert) {
+	QUnit.test("Test events when property is changed", async function (assert) {
 		assert.expect(3);
 		var loadDone1 = assert.async();
 		var loadDone2 = assert.async();
@@ -124,7 +124,7 @@ sap.ui.define([
 			}
 		};
 
-		var runSecondRendering = function () {
+		var runSecondRendering = async function () {
 			oPdfViewer.detachLoaded(fnLoadHandler1);
 			oPdfViewer.attachLoaded(fnLoadHandler2);
 
@@ -132,12 +132,12 @@ sap.ui.define([
 			oPdfViewer.setSource(sExpectedSource);
 			assert.equal(oModel.getProperty('/source'), sExpectedSource);
 
-			TestUtils.triggerRerender();
+			await TestUtils.triggerRerender();
 		};
 
 		oPdfViewer = TestUtils.createPdfViewer(oOptions);
 		oPdfViewer.setModel(oModel);
-		TestUtils.renderPdfViewer(oPdfViewer);
+		await TestUtils.renderPdfViewer(oPdfViewer);
 
 		TestUtils.wait(5000)()
 			.then(runSecondRendering);

@@ -20,7 +20,7 @@ sap.ui.define([
 		return;
 	}
 
-	QUnit.test("Test events in standard usage", function (assert) {
+	QUnit.test("Test events in standard usage", async function (assert) {
 		assert.expect(1);
 		var loadDone = assert.async();
 
@@ -37,10 +37,10 @@ sap.ui.define([
 		};
 
 		oPdfViewer = TestUtils.createPdfViewer(oOptions);
-		TestUtils.renderPdfViewer(oPdfViewer);
+		await TestUtils.renderPdfViewer(oPdfViewer);
 	});
 
-	QUnit.test("Test multiple renders", function (assert) {
+	QUnit.test("Test multiple renders", async function (assert) {
 		assert.expect(4);
 		var loadAsyncAssert1 = assert.async();
 		var fnLoadDone1Handler = function () {
@@ -75,33 +75,33 @@ sap.ui.define([
 			}
 		};
 
-		var runSecondRendering = function () {
+		var runSecondRendering = async function () {
 			oPdfViewer.detachLoaded(fnLoadDone1Handler);
 			oPdfViewer.attachLoaded(fnLoadDone2Handler);
 			oPdfViewer.setSource(sourcePath2);
-			TestUtils.triggerRerender();
+			await TestUtils.triggerRerender();
 			return Promise.resolve();
 		};
 
-		var runThirdRendering = function () {
+		var runThirdRendering = async function () {
 			oPdfViewer.detachLoaded(fnLoadDone2Handler);
 			oPdfViewer.attachLoaded(fnLoadDone3Handler);
 			oPdfViewer.setSource(sourcePath1);
-			TestUtils.triggerRerender();
+			await TestUtils.triggerRerender();
 			return Promise.resolve();
 		};
 
-		var runFourthRendering = function () {
+		var runFourthRendering = async function () {
 			oPdfViewer.detachLoaded(fnLoadDone3Handler);
 			oPdfViewer.attachLoaded(fnLoadDone4Handler);
 			oPdfViewer.setSource(sourcePath2);
-			TestUtils.triggerRerender();
+			await TestUtils.triggerRerender();
 			return Promise.resolve();
 		};
 
 		// running tested methods
 		oPdfViewer = TestUtils.createPdfViewer(oOptions);
-		TestUtils.renderPdfViewer(oPdfViewer);
+		await TestUtils.renderPdfViewer(oPdfViewer);
 
 		TestUtils.wait(5000)()
 			.then(runSecondRendering)
@@ -111,7 +111,7 @@ sap.ui.define([
 			.then(runFourthRendering);
 	});
 
-	QUnit.test("Test proeprty:isTrustedSource = true", function (assert) {
+	QUnit.test("Test proeprty:isTrustedSource = true", async function (assert) {
 		assert.expect(2);
 		var loadDone = assert.async();
 
@@ -130,10 +130,10 @@ sap.ui.define([
 		};
 
 		oPdfViewer = TestUtils.createPdfViewer(oOptions);
-		TestUtils.renderPdfViewer(oPdfViewer);
+		await TestUtils.renderPdfViewer(oPdfViewer);
 	});
 
-	QUnit.test("Test property:isTrustedSource = false", function (assert) {
+	QUnit.test("Test property:isTrustedSource = false", async function (assert) {
 		var loadDone = assert.async();
 
 		var oOptions = {
@@ -154,10 +154,10 @@ sap.ui.define([
 			}
 		};
 		oPdfViewer.addEventDelegate(oEventDelegate);
-		TestUtils.renderPdfViewer(oPdfViewer);
+		await TestUtils.renderPdfViewer(oPdfViewer);
 	});
 
-	QUnit.test("Test property:isTrustedSource = false and displayType = Link", function (assert) {
+	QUnit.test("Test property:isTrustedSource = false and displayType = Link", async function (assert) {
 		var loadDone = assert.async();
 
 		var oOptions = {
@@ -177,7 +177,7 @@ sap.ui.define([
 			}
 		};
 		oPdfViewer.addEventDelegate(oEventDelegate);
-		TestUtils.renderPdfViewer(oPdfViewer);
+		await TestUtils.renderPdfViewer(oPdfViewer);
 	});
 
 });

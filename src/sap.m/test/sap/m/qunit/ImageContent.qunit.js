@@ -2,22 +2,22 @@
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/m/ImageContent",
-	"sap/ui/core/Core"
-], function(jQuery, ImageContent, oCore) {
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(jQuery, ImageContent, nextUIUpdate) {
 	"use strict";
 
 
 	var IMAGE_PATH = "test-resources/sap/m/images/";
 
 	QUnit.module("Rendering test - sap.m.ImageContent", {
-		beforeEach : function() {
+		beforeEach : async function() {
 			this.oImageContent = new ImageContent("img-cnt", {
 				src: IMAGE_PATH + "headerImg1.png",
 				description: "image descriptions ...",
 				press: function() {}
 			});
 			this.oImageContent.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach : function() {
 			this.oImageContent.destroy();
@@ -30,26 +30,26 @@ sap.ui.define([
 		assert.ok(document.getElementById("img-cnt-icon-image"), "Image was rendered successfully");
 	});
 
-	QUnit.test("Icon rendered", function(assert) {
+	QUnit.test("Icon rendered", async function(assert) {
 		//Arrange
 		var oSpy = sinon.spy(this.oImageContent, "_setPointerOnImage");
 		//Act
 		this.oImageContent.setSrc("sap-icon://travel-expense");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		//Assert
 		assert.ok(document.getElementById("img-cnt-icon-image"), "Icon was rendered successfully");
 		assert.equal(oSpy.callCount, 1, "During rendering _setPointerOnImage has been called");
 	});
 
 	QUnit.module("Tooltip test", {
-		beforeEach : function() {
+		beforeEach : async function() {
 			this.oImageContent = new ImageContent("img-cnt", {
 				src: IMAGE_PATH + "headerImg1.png",
 				description: "        image descriptions        ",
 				press: function() {}
 			});
 			this.oImageContent.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach : function() {
 			this.oImageContent.destroy();
@@ -74,23 +74,23 @@ sap.ui.define([
 		assert.deepEqual(sAlt, sAltTest, "Description is mapped to alt property of inner icon");
 	});
 
-	QUnit.test("In case no description is set, getAltText method should return the default", function(assert) {
+	QUnit.test("In case no description is set, getAltText method should return the default", async function(assert) {
 		this.oImageContent.setDescription("");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		var sAlt = this.oImageContent.getAggregation("_content").getAlt();
 		assert.deepEqual(sAlt, "", "Alt property of inner control is empty");
 	});
 
-	QUnit.test("In case no description is set, getAltText method should return the default of the inner control", function(assert) {
+	QUnit.test("In case no description is set, getAltText method should return the default of the inner control", async function(assert) {
 		this.oImageContent.setDescription("");
 		this.oImageContent.setSrc("sap-icon://travel-expense");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		var sAltText = this.oImageContent.getAltText();
 		assert.equal(sAltText, "", "Inner control's text should be ignored for decorative images.");
 	});
 
 	QUnit.module("Event tests", {
-		beforeEach : function() {
+		beforeEach : async function() {
 			this.ftnPressHandler = function() {
 			};
 			this.ftnHoverHandler = function() {
@@ -98,7 +98,7 @@ sap.ui.define([
 			this.oImageContent = new ImageContent("img-cnt", {
 				src: IMAGE_PATH + "headerImg1.png"
 			}).placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 			sinon.spy(this, "ftnPressHandler");
 		},
 		afterEach : function() {

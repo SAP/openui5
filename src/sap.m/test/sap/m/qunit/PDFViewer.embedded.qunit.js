@@ -27,7 +27,7 @@ sap.ui.define([
 		return;
 	}
 
-	QUnit.test("Toolbar is shown with download button", function (assert) {
+	QUnit.test("Toolbar is shown with download button", async function (assert) {
 		assert.expect(5);
 		var done = assert.async();
 		var sTitle = "My Title";
@@ -67,10 +67,10 @@ sap.ui.define([
 		oPdfViewer = TestUtils.createPdfViewer(oOptions);
 		oPdfViewer.setModel(oModel);
 
-		TestUtils.renderPdfViewer(oPdfViewer);
+		await TestUtils.renderPdfViewer(oPdfViewer);
 	});
 
-	QUnit.test("Toolbar is shown even when title is filled and download button hidden", function (assert) {
+	QUnit.test("Toolbar is shown even when title is filled and download button hidden", async function (assert) {
 		assert.expect(5);
 		var done = assert.async();
 		var sTitle = "My Title";
@@ -111,10 +111,10 @@ sap.ui.define([
 		oPdfViewer = TestUtils.createPdfViewer(oOptions);
 		oPdfViewer.setModel(oModel);
 
-		TestUtils.renderPdfViewer(oPdfViewer);
+		await TestUtils.renderPdfViewer(oPdfViewer);
 	});
 
-	QUnit.test("Toolbar is hidden when title is empty and download button is hidden", function (assert) {
+	QUnit.test("Toolbar is hidden when title is empty and download button is hidden", async function (assert) {
 		assert.expect(4);
 		var done = assert.async();
 
@@ -151,10 +151,10 @@ sap.ui.define([
 		oPdfViewer = TestUtils.createPdfViewer(oOptions);
 		oPdfViewer.setModel(oModel);
 
-		TestUtils.renderPdfViewer(oPdfViewer);
+		await TestUtils.renderPdfViewer(oPdfViewer);
 	});
 
-	QUnit.test("Rendering with toolbar related changes", function (assert) {
+	QUnit.test("Rendering with toolbar related changes", async function (assert) {
 		assert.expect(9);
 		var done = assert.async();
 
@@ -178,12 +178,12 @@ sap.ui.define([
 		oPdfViewer = TestUtils.createPdfViewer(oOptions);
 		oPdfViewer.setModel(oModel);
 
-		TestUtils.renderPdfViewer(oPdfViewer);
+		await TestUtils.renderPdfViewer(oPdfViewer);
 
 		TestUtils.wait(2000)()
-			.then(function () {
+			.then(async function () {
 				oModel.setData({showDownloadButton: true}, true);
-				TestUtils.triggerRerender();
+				await TestUtils.triggerRerender();
 			})
 			.then(TestUtils.wait(2000))
 			.then(function () {
@@ -196,9 +196,9 @@ sap.ui.define([
 				var oDownloadButton = oPdfViewer.$('toolbarDownloadButton');
 				assert.ok(oDownloadButton.length === 1, 'Download button should be visible');
 			})
-			.then(function () {
+			.then(async function () {
 				oModel.setData({showDownloadButton: false}, true);
-				TestUtils.triggerRerender();
+				await TestUtils.triggerRerender();
 			})
 			.then(TestUtils.wait(2000))
 			.then(function () {
@@ -214,7 +214,7 @@ sap.ui.define([
 			});
 	});
 
-	QUnit.test("DisplayTypes tests", function (assert) {
+	QUnit.test("DisplayTypes tests", async function (assert) {
 		assert.expect(11);
 		var done = assert.async();
 		var sTitle = "My Title";
@@ -237,12 +237,12 @@ sap.ui.define([
 			assert.ok(fnIsContentDisplayed(), "Content is displayed in Auto mode");
 
 			oPdfViewer.setDisplayType(PDFViewerDisplayType.Embedded);
-			TestUtils.triggerRerender();
+			await TestUtils.triggerRerender();
 			assert.equal(oPdfViewer.getDisplayType(), PDFViewerDisplayType.Embedded, "Set displayType to Embedded mode");
 			assert.ok(fnIsContentDisplayed(), "Content is displayed in Embedded mode");
 
 			oPdfViewer.setDisplayType(PDFViewerDisplayType.Link);
-			TestUtils.triggerRerender();
+			await TestUtils.triggerRerender();
 			assert.equal(oPdfViewer.getDisplayType(), PDFViewerDisplayType.Link, "Set displayType to Link mode");
 			assert.ok(oPdfViewer.$("toolbarDownloadButton").length === 1, "Download button is displayed in Link mode");
 			assert.notOk(fnIsContentDisplayed(), "Content is not displayed in Link mode");
@@ -260,7 +260,7 @@ sap.ui.define([
 			Device.system.desktop = false;
 			Device.system.phone = true;
 			oPdfViewer.setDisplayType(PDFViewerDisplayType.Embedded);
-			TestUtils.triggerRerender();
+			await TestUtils.triggerRerender();
 			assert.ok(!fnIsErrorContentDisplayed(), "Error Content is not displayed in Mobile and Embedded mode");
 			Device.system.desktop = true;
 			Device.system.phone = false;
@@ -276,7 +276,7 @@ sap.ui.define([
 
 		oPdfViewer = TestUtils.createPdfViewer(oOptions);
 		oPdfViewer.setModel(oModel);
-		TestUtils.renderPdfViewer(oPdfViewer);
+		await TestUtils.renderPdfViewer(oPdfViewer);
 
 		TestUtils.wait(1000)()
 			.then(fnCheckControlStructure);

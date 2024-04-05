@@ -3,9 +3,9 @@ sap.ui.define([
 	"sap/m/upload/UploadSetwithTable",
 	"sap/m/upload/UploadSetwithTableItem",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"./UploadSetwithTableTestUtils"
-], function (UploadSetwithTable, UploadSetwithTableItem, JSONModel, oCore, TestUtils) {
+], function (UploadSetwithTable, UploadSetwithTableItem, JSONModel, nextUIUpdate, TestUtils) {
 	"use strict";
 
 	function getData() {
@@ -25,7 +25,7 @@ sap.ui.define([
 		};
 	}
 	QUnit.module("UploadSet Table Item general functionality", {
-		beforeEach: function () {
+		beforeEach: async function () {
 
 			this.oUploadSetwithTableItem = TestUtils.createItemTemplate();
 			this.oParent = {
@@ -48,7 +48,7 @@ sap.ui.define([
 				}
 			}).setModel(new JSONModel(getData()));
 			this.oUploadSetwithTable.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oUploadSetwithTableItem.destroy();
@@ -62,48 +62,48 @@ sap.ui.define([
 		assert.ok(this.oUploadSetwithTable, "Instance created successfully");
 	});
 
-	QUnit.test("UploadSet Table Item get/set file name", function (assert) {
+	QUnit.test("UploadSet Table Item get/set file name", async function (assert) {
 
 		assert.equal(this.oUploadSetwithTable.getItems()[0].getFileName(), 'Alice.mp4', "getting uploadsetwithTable item's file name successfully");
 
 		var oItem = this.oUploadSetwithTable.getItems()[0];
 		oItem.setFileName("New_sample.pdf");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(this.oUploadSetwithTable.getItems()[0].getFileName(), "New_sample.pdf", "Getting/Setting the uploadsetwithTable item's name correctly");
 
 	});
 
-	QUnit.test("Getting/setting MIME type of the item", function (assert) {
+	QUnit.test("Getting/setting MIME type of the item", async function (assert) {
 
 		assert.equal(this.oUploadSetwithTable.getItems()[0].getMediaType(), '', "getting uploadsetwithTable item's media type successfully");
 
 		var oItem = this.oUploadSetwithTable.getItems()[0];
 		oItem.setMediaType("pdf");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(this.oUploadSetwithTable.getItems()[0].getMediaType(), "pdf", "Getting/setting uploadsetwithTable item's media type successfully");
 
 	});
 
-	QUnit.test("Getting/setting URL of item", function (assert) {
+	QUnit.test("Getting/setting URL of item", async function (assert) {
 
 		assert.equal(this.oUploadSetwithTable.getItems()[0].getUrl(), '', "getting uploadsetwithTable item's URL successfully");
 
 		var Item = this.oUploadSetwithTable.getItems()[0];
 		Item.setUrl("uploadSetTableDemo/SampleFiles/Animation.gif");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(this.oUploadSetwithTable.getItems()[0].getUrl(), "uploadSetTableDemo/SampleFiles/Animation.gif", "getting/setting uploadsetwithTable item's URL successfully");
 
 	});
 
-	QUnit.test("Getting/setting upload_URL of item", function (assert) {
+	QUnit.test("Getting/setting upload_URL of item", async function (assert) {
 		assert.equal(this.oUploadSetwithTable.getItems()[0].getUploadUrl(), '', "getting uploadsetwithTable item's Upload_URL successfully");
 
 		var Item = this.oUploadSetwithTable.getItems()[0];
 		Item.setUploadUrl("uploadSetTableDemo/SampleFiles/Animation.gif");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(this.oUploadSetwithTable.getItems()[0].getUploadUrl(), "uploadSetTableDemo/SampleFiles/Animation.gif", "getting/setting uploadsetwithTable item's Upload_URL successfully");
 
@@ -115,35 +115,35 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Getting/setting Preview status of item", function (assert) {
+	QUnit.test("Getting/setting Preview status of item", async function (assert) {
 
 		assert.equal(this.oUploadSetwithTable.getItems()[0].getPreviewable(), true, "getting uploadsetwithTable item's Preview status successfully");
 
 		var Item = this.oUploadSetwithTable.getItems()[0];
 		Item.setPreviewable(false);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(this.oUploadSetwithTable.getItems()[0].getUploadUrl(), false, "getting/setting uploadsetwithTable item's Preview status successfully");
 
 	});
-	QUnit.test("Getting/setting filesize of item", function (assert) {
+	QUnit.test("Getting/setting filesize of item", async function (assert) {
 		assert.equal(this.oUploadSetwithTable.getItems()[0].getFileSize(), '', "getting uploadsetwithTable item's file size successfully");
 
 		var Item = this.oUploadSetwithTable.getItems()[0];
 		Item.setFileSize(166.55);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(this.oUploadSetwithTable.getItems()[0].getFileSize(), 166.55, "getting/setting uploadsetwithTable item's file size successfully");
 
 	});
 
-	QUnit.test("UploadSet Table Item get/set file name", function (assert) {
+	QUnit.test("UploadSet Table Item get/set file name", async function (assert) {
 		var oItem = this.oUploadSetwithTable.getItems()[0];
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(this.oUploadSetwithTable.getItems()[0].getFileName(), "Alice.mp4", "Getting/Setting the uploadsetwithTable item's name correctly");
 
 		oItem.setFileName("sample.mp4");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(this.oUploadSetwithTable.getItems()[0].getFileName(), "sample.mp4", "Getting/Setting the uploadsetwithTable item's name correctly");
 	});

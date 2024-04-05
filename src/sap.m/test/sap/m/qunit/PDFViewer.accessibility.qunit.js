@@ -18,7 +18,7 @@ sap.ui.define([
 		return;
 	}
 
-	QUnit.test("Is toolbar rendered in embedded mode", function (assert) {
+	QUnit.test("Is toolbar rendered in embedded mode", async function (assert) {
 		var sExpectedTitleText = "My Cool Title";
 
 		assert.expect(5);
@@ -51,7 +51,7 @@ sap.ui.define([
 		};
 
 		oPDFViewer = TestUtils.createPdfViewer(oOptions);
-		TestUtils.renderPdfViewer(oPDFViewer);
+		await TestUtils.renderPdfViewer(oPDFViewer);
 	});
 
 	QUnit.test("Does popup contain download button", function (assert) {
