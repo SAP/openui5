@@ -88,4 +88,25 @@ sap.ui.define([
         });
     });
 
+    QUnit.test("Check 'validateP13n' method is properly called when switching the view", async function(assert){
+
+        const done = assert.async();
+
+        this.oAdaptationProvider.validateP13n = (oControl, sKey, oPanel) => {
+            assert.equal(oControl, this.oControl, "Correct control provided");
+            assert.equal(sKey, "Test", "Correct key provided");
+            done();
+        };
+
+        const popup = (await this.oUIManager.show(this.oControl, ["Test"], {
+            contentHeight: "25rem",
+            contentWidth: "20rem",
+            showReset: false
+        })).getParent();
+
+        popup._getContainer().fireAfterViewSwitch({
+            target: "Test"
+        });
+    });
+
 });

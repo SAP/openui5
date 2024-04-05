@@ -120,6 +120,12 @@ sap.ui.define([
 							}
 						});
 
+						oP13nContainer._getContainer().attachAfterViewSwitch((oEvt) => {
+							const affectedKey = oEvt.getParameter("target");
+							const affectedPanel = aInitializedPanels[aPanelKeys.indexOf(affectedKey)];
+							that.oAdaptationProvider.validateP13n(oControl, affectedKey, affectedPanel);
+						});
+
 						if (mSettings.showReset !== false) {
 							oP13nContainer.setReset(() => {
 								const fnReset = mSettings.reset instanceof Function ? mSettings.reset : that.oAdaptationProvider.reset.bind(that.oAdaptationProvider);
