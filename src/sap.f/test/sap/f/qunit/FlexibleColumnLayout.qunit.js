@@ -1298,6 +1298,28 @@ function(
 		}.bind(this), 500);
 	});
 
+	QUnit.test("Synchronous switching TwoColumnsMidExpanded/ThreeColumnsMidExpanded",
+		function(assert) {
+
+		// arrange
+		var fnDone = assert.async();
+
+		this.oFCL = oFactory.createFCL({
+			layout: LT.OneColumn
+		});
+
+		// act
+		this.oFCL.setLayout(LT.TwoColumnsMidExpanded);
+		this.oFCL.setLayout(LT.ThreeColumnsMidExpanded);
+
+		this.oFCL._oAnimationEndListener.waitForAllColumnsResizeEnd().then(function() {
+			// assert
+			assert.strictEqual(this.oFCL._$columns["mid"][0].querySelector(".sapFFCLColumnContent").style.width, "", "mid column has auto size");
+			this.oFCL.destroy();
+			fnDone();
+		}.bind(this));
+	});
+
 	QUnit.module("ScreenReader supprot", {
 		beforeEach: function () {
 			this.oFCL = oFactory.createFCL();
