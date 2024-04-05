@@ -12,13 +12,13 @@ sap.ui.define([
 	"sap/m/StandardListItem",
 	"sap/m/Tree",
 	"sap/m/library",
-	"sap/ui/core/Core"
-], function(Element, Library, createAndAppendDiv, qutils, KeyCodes, JSONModel, Sorter, StandardTreeItem, StandardListItem, Tree, library, oCore) {
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(Element, Library, createAndAppendDiv, qutils, KeyCodes, JSONModel, Sorter, StandardTreeItem, StandardListItem, Tree, library, nextUIUpdate) {
 	"use strict";
 	createAndAppendDiv("content").style.height = "100%";
 
-	var IMAGE_PATH = "test-resources/sap/m/images/";
-	var oData = [
+	const IMAGE_PATH = "test-resources/sap/m/images/";
+	const oData = [
 		{
 			text: "Node1",
 			ref: IMAGE_PATH + "action.png",
@@ -94,7 +94,7 @@ sap.ui.define([
 		}
 	];
 
-	var oData2 = [
+	const oData2 = [
 		{
 			text: "Node1",
 			ref: IMAGE_PATH + "action.png"
@@ -137,17 +137,17 @@ sap.ui.define([
 		}
 	];
 
-	function createTree() {
-		var oTreeItem = new StandardTreeItem({title: "{text}", icon: "{ref}"});
-		var oTree = new Tree();
-		var oModel = new JSONModel();
+	async function createTree() {
+		const oTreeItem = new StandardTreeItem({title: "{text}", icon: "{ref}"});
+		const oTree = new Tree();
+		const oModel = new JSONModel();
 
 		oTree.setModel(oModel);
 		//set the data to the model
 		oModel.setData(oData);
 		oTree.bindItems("/", oTreeItem);
 		oTree.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		return oTree;
 	}
@@ -168,8 +168,8 @@ sap.ui.define([
 	*/
 
 	QUnit.module("Rendering", {
-		beforeEach: function () {
-			this.oTree = createTree();
+		beforeEach: async function () {
+			this.oTree = await createTree();
 		},
 		afterEach: function () {
 			this.oTree.destroy();
@@ -178,18 +178,18 @@ sap.ui.define([
 	});
 
 	QUnit.test("Tree items rendering", function(assert) {
-		var oTree = this.oTree;
+		const oTree = this.oTree;
 		assert.ok(document.getElementById(oTree.getItems()[0].getId()), "initial render of first node");
 		assert.ok(document.getElementById(oTree.getItems()[1].getId()), "initial render of second node");
 		assert.ok(document.getElementById(oTree.getItems()[0].getId() + "-icon"), "icon is rendered");
 
-		var oImage = Element.getElementById(oTree.getItems()[0].getId() + "-icon");
+		const oImage = Element.getElementById(oTree.getItems()[0].getId() + "-icon");
 		assert.strictEqual(oImage.getSrc(), IMAGE_PATH + "action.png", "icon source is correct");
 	});
 
 	QUnit.module("Indentation", {
-		beforeEach: function () {
-			this.oTree = createTree();
+		beforeEach: async function () {
+			this.oTree = await createTree();
 		},
 		afterEach: function () {
 			this.oTree.destroy();
@@ -197,13 +197,13 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Indentation of tree nodes", function(assert) {
-		var oTree = this.oTree;
+	QUnit.test("Indentation of tree nodes", async function(assert) {
+		const oTree = this.oTree;
 		assert.equal(oTree.getDeepestLevel(), 0, "deepestLevel");
 
-		var oArrow = Element.getElementById(oTree.getItems()[1].getId() + "-expander");
+		let oArrow = Element.getElementById(oTree.getItems()[1].getId() + "-expander");
 		oArrow.firePress();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(oTree.getDeepestLevel(), 1, "deepestLevel");
 		assert.equal(oTree.getItems()[1].$().css("padding-left"), "0px", "padding");
@@ -211,7 +211,7 @@ sap.ui.define([
 
 		oArrow = Element.getElementById(oTree.getItems()[2].getId() + "-expander");
 		oArrow.firePress();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(oTree.getDeepestLevel(), 2, "deepestLevel");
 		assert.equal(oTree.getItems()[1].$().css("padding-left"), "0px", "padding");
@@ -220,7 +220,7 @@ sap.ui.define([
 
 		oArrow = Element.getElementById(oTree.getItems()[3].getId() + "-expander");
 		oArrow.firePress();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(oTree.getDeepestLevel(), 3, "deepestLevel");
 		assert.equal(oTree.getItems()[1].$().css("padding-left"), "0px", "padding");
@@ -230,15 +230,15 @@ sap.ui.define([
 
 		oArrow = Element.getElementById(oTree.getItems()[4].getId() + "-expander");
 		oArrow.firePress();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oArrow = Element.getElementById(oTree.getItems()[5].getId() + "-expander");
 		oArrow.firePress();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oArrow = Element.getElementById(oTree.getItems()[6].getId() + "-expander");
 		oArrow.firePress();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(oTree.getDeepestLevel(), 6, "deepestLevel");
 		assert.equal(oTree.getItems()[1].$().css("padding-left"), "0px", "padding");
@@ -249,14 +249,14 @@ sap.ui.define([
 		assert.equal(oTree.getItems()[6].$().css("padding-left"), "20px", "padding");
 
 		// collapse
-		var oArrowDomRef = oTree.getItems()[2].$().find(".sapMTreeItemBaseExpander");
+		const oArrowDomRef = oTree.getItems()[2].$().find(".sapMTreeItemBaseExpander");
 		oArrowDomRef.trigger("click");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		//expand
 		oArrow = Element.getElementById(oTree.getItems()[2].getId() + "-expander");
 		oArrow.firePress();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(oTree.getItems()[2].$().css("padding-left"), "4px", "padding");
 
@@ -264,8 +264,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Selection", {
-		beforeEach: function () {
-			this.oTree = createTree();
+		beforeEach: async function () {
+			this.oTree = await createTree();
 		},
 		afterEach: function () {
 			this.oTree.destroy();
@@ -274,7 +274,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Single selection", function(assert) {
-		var oTree = this.oTree;
+		const oTree = this.oTree;
 		oTree.setMode(library.ListMode.SingleSelect);
 		oTree.getItems()[0].setSelected(true);
 		assert.ok(oTree.getItems()[0].getSelected(),"tree item is selected.");
@@ -282,7 +282,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Multi selection", function(assert) {
-		var oTree = this.oTree;
+		const oTree = this.oTree;
 		oTree.setMode(library.ListMode.MultiSelect);
 		oTree.getItems()[0].setSelected(true);
 		oTree.getItems()[1].setSelected(true);
@@ -299,8 +299,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Accessibility", {
-		beforeEach: function () {
-			this.oTree = createTree();
+		beforeEach: async function () {
+			this.oTree = await createTree();
 		},
 		afterEach: function () {
 			this.oTree.destroy();
@@ -309,13 +309,13 @@ sap.ui.define([
 	});
 
 	QUnit.test("Custom announcement on focus", function(assert) {
-		var oTreeItem = this.oTree.getItems()[1];
+		const oTreeItem = this.oTree.getItems()[1];
 		oTreeItem.focus();
 		assert.equal(oTreeItem.getAccessibilityInfo().description, "Node2", "Custom announcement is added without selected state");
 	});
 
-	QUnit.test("applyAriaRole should not have effect on Tree control", function(assert) {
-		var oMyTree = new Tree(),
+	QUnit.test("applyAriaRole should not have effect on Tree control", async function(assert) {
+		const oMyTree = new Tree(),
 			oTemplate = new StandardTreeItem({
 				title: "{title}"
 			}),
@@ -333,7 +333,7 @@ sap.ui.define([
 				"title": "A"
 			}];
 
-		var oModel = new JSONModel();
+		const oModel = new JSONModel();
 		oModel.setData(aTreeData);
 		oMyTree.setModel(oModel);
 
@@ -345,15 +345,15 @@ sap.ui.define([
 		assert.strictEqual(oMyTree.getAriaRole(), "tree", "role='tree' returned");
 
 		oMyTree.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.strictEqual(oMyTree.getDomRef("listUl").getAttribute("role"), oMyTree.getAriaRole(), "role='tree' not affected in DOM");
 		assert.strictEqual(oMyTree.getItems()[0].getDomRef().getAttribute("role"), "treeitem", "role='treeitem', tree item is also not affected in DOM");
 		oMyTree.destroy();
 	});
 
 	QUnit.module("Expanded state", {
-		beforeEach: function () {
-			this.oTree = createTree();
+		beforeEach: async function () {
+			this.oTree = await createTree();
 		},
 		afterEach: function () {
 			this.oTree.destroy();
@@ -361,9 +361,9 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Expand/Collapse", function(assert) {
-		var oTree = this.oTree;
-		var oToggleOpenStateEventSpy = sinon.spy(function(oEvent) {
+	QUnit.test("Expand/Collapse", async function(assert) {
+		const oTree = this.oTree;
+		const oToggleOpenStateEventSpy = sinon.spy(function(oEvent) {
 			oToggleOpenStateEventSpy._mEventParameters = oEvent.mParameters;
 		});
 		oTree.attachToggleOpenState(oToggleOpenStateEventSpy);
@@ -374,9 +374,9 @@ sap.ui.define([
 		oTree.focus();
 		assert.strictEqual(oTree.getItems()[0].$().attr("aria-expanded"), "false", "aria-expanded is false");
 
-		var oArrow = Element.getElementById(oTree.getItems()[0].getId() + "-expander");
+		let oArrow = Element.getElementById(oTree.getItems()[0].getId() + "-expander");
 		oArrow.firePress();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.strictEqual(oTree.getItems().length, 4, "four nodes displayed after tree expanding");
 
@@ -387,12 +387,12 @@ sap.ui.define([
 		assert.ok(oToggleOpenStateEventSpy.calledOnce, "The toggleOpenState event was called once");
 		assertToggleOpenStateParameters(assert, oTree, 0, true, oToggleOpenStateEventSpy._mEventParameters);
 
-		var oArrowDomRef = oTree.getItems()[1].$().find(".sapMTreeItemBaseExpander");
+		let oArrowDomRef = oTree.getItems()[1].$().find(".sapMTreeItemBaseExpander");
 		oArrowDomRef.trigger("click");
 		assert.ok(oToggleOpenStateEventSpy.calledOnce, "Clicked a leaf: The toggleOpenState event was not called");
 
 		oToggleOpenStateEventSpy.reset();
-		var oArrowDomRef = oTree.getItems()[1].$().find(".sapMTreeItemBaseExpander");
+		oArrowDomRef = oTree.getItems()[1].$().find(".sapMTreeItemBaseExpander");
 		oArrowDomRef.trigger("click");
 		assert.ok(oToggleOpenStateEventSpy.notCalled, "Clicked a leaf: The toggleOpenState event was not called");
 
@@ -400,9 +400,9 @@ sap.ui.define([
 		assert.strictEqual(oTree.getItems().length, 4, "four nodes before tree expanding");
 
 		oTree.focus();
-		var oArrow = Element.getElementById(oTree.getItems()[0].getId() + "-expander");
+		oArrow = Element.getElementById(oTree.getItems()[0].getId() + "-expander");
 		oArrow.firePress();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.strictEqual(oTree.getItems().length, 2, "two nodes displayed after tree collapsing");
 
@@ -412,40 +412,40 @@ sap.ui.define([
 		oTree.detachToggleOpenState(oToggleOpenStateEventSpy);
 	});
 
-	QUnit.test("Expand to level and tree item expander tooltip test", function(assert) {
-		var oTree = this.oTree;
-		var oBundle = Library.getResourceBundleFor("sap.m");
+	QUnit.test("Expand to level and tree item expander tooltip test", async function(assert) {
+		const oTree = this.oTree;
+		const oBundle = Library.getResourceBundleFor("sap.m");
 		assert.strictEqual(oTree.getItems()[0]._oExpanderControl.getTooltip(), oBundle.getText("TREE_ITEM_EXPAND_NODE"), "Tooltip is correctly set to the Expander control");
 		oTree.expandToLevel(3);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.ok(oTree.getItems()[0].getExpanded(),"node is expanded");
 		assert.strictEqual(oTree.getItems()[0]._oExpanderControl.getTooltip(), oBundle.getText("TREE_ITEM_COLLAPSE_NODE"), "Tooltip for the Expander control updated correctly");
 		assert.equal(oTree.getItems()[4].getLevel(), 3, "expand to level 3");
 	});
 
 	QUnit.test("Collapse all", function(assert) {
-		var oTree = this.oTree;
+		const oTree = this.oTree;
 		oTree.collapseAll();
 		assert.ok(!oTree.getItems()[0].getExpanded(),"node is expanded");
 		assert.equal(oTree.getItems().length, 2, "node is collapsed");
 	});
 
-	QUnit.test("Expand/collapse multiple nodes", function(assert) {
-		var oTree = this.oTree;
+	QUnit.test("Expand/collapse multiple nodes", async function(assert) {
+		const oTree = this.oTree;
 		oTree.expand([0,1]);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(oTree.getItems().length, 5, "multiple expanding success.");
 
 		oTree.collapse([0,3]);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(oTree.getItems().length, 2, "multiple collapsing success.");
 	});
 
 	QUnit.module("API", {
-		beforeEach: function () {
-			this.oTree = createTree();
+		beforeEach: async function () {
+			this.oTree = await createTree();
 		},
 		afterEach: function () {
 			this.oTree.destroy();
@@ -454,9 +454,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("isLeaf/isTopLevel/getExpanded", function(assert) {
-		var oTree = this.oTree;
+		const oTree = this.oTree;
 		oTree.focus();
-		var oArrow = Element.getElementById(oTree.getItems()[0].getId() + "-expander");
+		let oArrow = Element.getElementById(oTree.getItems()[0].getId() + "-expander");
 		oArrow.firePress();
 		assert.ok(oTree.getItems()[1].getParentNode().getId(), oTree.getItems()[0].getId(), "parent node is found.");
 
@@ -467,15 +467,15 @@ sap.ui.define([
 		assert.ok(!oTree.getItems()[1].isTopLevel(), "second node is not root.");
 
 		oTree.focus();
-		var oArrow = Element.getElementById(oTree.getItems()[0].getId() + "-expander");
+		oArrow = Element.getElementById(oTree.getItems()[0].getId() + "-expander");
 		oArrow.firePress();
 		assert.ok(!oTree.getItems()[0].getExpanded(), "first node is not expanded");
 		assert.ok(!oTree.getItems()[1].getExpanded(), "second node is not expanded");
 	});
 
 	QUnit.module("Keyboard Handling", {
-		beforeEach: function () {
-			this.oTree = createTree();
+		beforeEach: async function () {
+			this.oTree = await createTree();
 		},
 		afterEach: function () {
 			this.oTree.destroy();
@@ -484,15 +484,15 @@ sap.ui.define([
 	});
 
 	QUnit.test("Right + Left key", function(assert) {
-		var oTree = this.oTree;
-		var oToggleOpenStateEventSpy = sinon.spy(function(oEvent) {
+		const oTree = this.oTree;
+		const oToggleOpenStateEventSpy = sinon.spy(function(oEvent) {
 			oToggleOpenStateEventSpy._mEventParameters = oEvent.mParameters;
 		});
 		oTree.attachToggleOpenState(oToggleOpenStateEventSpy);
 
 		assert.ok(!oTree.getItems()[0].getExpanded(), "first node is not expanded");
 		oTree.focus();
-		var oArrowDomRef = oTree.getItems()[0].$();
+		const oArrowDomRef = oTree.getItems()[0].$();
 
 		qutils.triggerKeydown(oArrowDomRef, KeyCodes.ARROW_RIGHT);
 		assert.ok(oTree.getItems()[0].getExpanded(), "first node is expanded");
@@ -514,17 +514,17 @@ sap.ui.define([
 
 	QUnit.test("Validate aggregation", function(assert) {
 		assert.throws(function () {
-			var oTreeItem = new StandardListItem();
-			var oTree = new Tree();
+			const oTreeItem = new StandardListItem();
+			const oTree = new Tree();
 			oTree.addItem(oTreeItem);
 		}, "Wrong aggregation object.");
 	});
 
 	QUnit.module("NoData", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oTree = new Tree();
 			this.oTree.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oTree.destroy();
@@ -537,8 +537,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Binding", {
-		beforeEach: function() {
-			this.oTree = createTree();
+		beforeEach: async function() {
+			this.oTree = await createTree();
 		},
 		afterEach: function() {
 			this.oTree.destroy();
@@ -546,19 +546,19 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("data binding update", function(assert) {
-		var oTree = this.oTree;
+	QUnit.test("data binding update", async function(assert) {
+		const oTree = this.oTree;
 		assert.ok(oTree.getItems()[0].$().find(".sapMTreeItemBaseExpander")[0].hasAttribute("data-sap-ui-icon-content"), "initial binding context.");
 
 		oTree.getModel().setProperty("/", oData2);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(oTree.getItems()[0].$().hasClass("sapMTreeItemBaseLeaf"), "data changed");
 		assert.ok(oTree.getItems()[0].$().find(".sapMTreeItemBaseExpander")[0].hasAttribute("data-sap-ui-icon-content"), "icon has correct source.");
 	});
 
 	QUnit.test("context length", function(assert) {
-		var oTree = this.oTree;
+		const oTree = this.oTree;
 		oTree.expandToLevel(3);
 		assert.strictEqual(oTree.getItems().length, 10, "initial length is 10.");
 
@@ -568,8 +568,8 @@ sap.ui.define([
 		assert.strictEqual(oTree.getItems().length, 6, "new length is 6.");
 	});
 
-	QUnit.test("Sorting scenario", function(assert) {
-		var aTreeData = [{
+	QUnit.test("Sorting scenario", async function(assert) {
+		const aTreeData = [{
 			"title": "C",
 			"titles": [
 				{"title": "Subtitle C"}
@@ -582,25 +582,25 @@ sap.ui.define([
 		}, {
 			"title": "A"
 		}];
-		var oTree = this.oTree;
+		const oTree = this.oTree;
 
 		oTree.getModel().setData(aTreeData);
 		oTree.expandToLevel(1);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// 2nd tree item is a leaf node
-		var oSecondItem = oTree.getItems()[1];
-		var oSecondItemDomRef = oSecondItem.getDomRef();
+		const oSecondItem = oTree.getItems()[1];
+		const oSecondItemDomRef = oSecondItem.getDomRef();
 		assert.ok(!oSecondItem.isTopLevel(), "2nd item is not a top level node");
 		assert.ok(oSecondItem.isLeaf(), "2nd item is a leaf node");
 		assert.ok(oSecondItemDomRef.classList.contains("sapMTreeItemBaseChildren"), "Second item is a child node");
 		assert.ok(oSecondItemDomRef.getAttribute("aria-level"), "2", "aria-level = 2");
 
 		// sort tree items in ascending order
-		var oBinding = oTree.getBinding("items");
-		var oSorter = new Sorter("title", false);
+		const oBinding = oTree.getBinding("items");
+		const oSorter = new Sorter("title", false);
 		oBinding.sort(oSorter);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// 2nd tree item becomes a top level node after sorting is applied
 		assert.ok(oSecondItem.isTopLevel(), "2nd item is a top level node");

@@ -2,7 +2,7 @@
 sap.ui.define([
 	"sap/ui/core/Lib",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/model/json/JSONModel",
@@ -31,14 +31,14 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/model/Sorter",
 	"sap/ui/core/date/UI5Date"
-], function(Library, jQuery, Core, createAndAppendDiv, qutils, JSONModel, Parameters, CustomData, coreLibrary, library, Device, App, Page, Avatar, Button, Bar, List, DisplayListItem, StandardListItem, InputListItem, CustomListItem, ActionListItem, Input, Text, KeyCodes, Control, Element, ListItemBase, Log, Sorter, UI5Date) {
+], function(Library, jQuery, nextUIUpdate, createAndAppendDiv, qutils, JSONModel, Parameters, CustomData, coreLibrary, library, Device, App, Page, Avatar, Button, Bar, List, DisplayListItem, StandardListItem, InputListItem, CustomListItem, ActionListItem, Input, Text, KeyCodes, Control, Element, ListItemBase, Log, Sorter, UI5Date) {
 	"use strict";
 	createAndAppendDiv("content").style.height = "100%";
 
-	var IMAGE_PATH = "test-resources/sap/m/images/";
+	const IMAGE_PATH = "test-resources/sap/m/images/";
 
 	// app
-	var app = new App("myApp");
+	const app = new App("myApp");
 
 	//alert((app.isLandscape() ? "Landscape" : "Portrait"));
 
@@ -47,7 +47,7 @@ sap.ui.define([
 	// create application pages for the different lists
 	// ================================================================================
 	*/
-	var listOverview = new Page("listOverview", {
+	const listOverview = new Page("listOverview", {
 		title : "List Overview",
 		footer : new Bar({
 			contentMiddle : [ new Button({
@@ -57,7 +57,7 @@ sap.ui.define([
 		})
 	});
 
-	var detailPage = new Page("detailPage", {
+	const detailPage = new Page("detailPage", {
 		title : "Detail Page",
 		showNavButton : true,
 		navButtonPress : function() {
@@ -67,7 +67,7 @@ sap.ui.define([
 
 	// ================================================================================
 
-	var standardListThumb = new Page("standardListThumb", {
+	const standardListThumb = new Page("standardListThumb", {
 		title : "Standard List Thumb",
 		showNavButton : true,
 		navButtonPress : function() {
@@ -81,7 +81,7 @@ sap.ui.define([
 		})
 	});
 
-	var standardListIcon = new Page("standardListIcon", {
+	const standardListIcon = new Page("standardListIcon", {
 		title : "Standard List Icon",
 		showNavButton : true,
 		navButtonPress : function() {
@@ -95,7 +95,7 @@ sap.ui.define([
 		})
 	});
 
-	var standardListTitle = new Page("standardListTitle", {
+	const standardListTitle = new Page("standardListTitle", {
 		title : "Standard List Title",
 		showNavButton : true,
 		navButtonPress : function() {
@@ -109,7 +109,7 @@ sap.ui.define([
 		})
 	});
 
-	var standardListNoImage = new Page("standardListNoImage", {
+	const standardListNoImage = new Page("standardListNoImage", {
 		title : "Standard List no Image",
 		showNavButton : true,
 		navButtonPress : function() {
@@ -117,7 +117,7 @@ sap.ui.define([
 		}
 	});
 
-	var displayList = new Page("displayList", {
+	const displayList = new Page("displayList", {
 		title : "Display list",
 		showNavButton : true,
 		navButtonPress : function() {
@@ -131,7 +131,7 @@ sap.ui.define([
 		})
 	});
 
-	var inputList = new Page("inputList", {
+	const inputList = new Page("inputList", {
 		title : "Input List",
 		showNavButton : true,
 		navButtonPress : function() {
@@ -145,7 +145,7 @@ sap.ui.define([
 		})
 	});
 
-	var customList = new Page("customList", {
+	const customList = new Page("customList", {
 		title : "Custom List",
 		showNavButton : true,
 		navButtonPress : function() {
@@ -159,7 +159,7 @@ sap.ui.define([
 		})
 	});
 
-	var groupedList = new Page("groupedList", {
+	const groupedList = new Page("groupedList", {
 		title : "Grouped List",
 		showNavButton : true,
 		navButtonPress : function() {
@@ -173,7 +173,7 @@ sap.ui.define([
 		})
 	});
 
-	var groupedNoHeaderList = new Page("groupedNoHeaderList", {
+	const groupedNoHeaderList = new Page("groupedNoHeaderList", {
 		title : "Grouped List without Header/Footer",
 		showNavButton : true,
 		navButtonPress : function() {
@@ -187,7 +187,7 @@ sap.ui.define([
 		})
 	});
 
-	var selectionList = new Page("selectionList", {
+	const selectionList = new Page("selectionList", {
 		title : "Selection List",
 		showNavButton : true,
 		navButtonPress : function() {
@@ -219,7 +219,7 @@ sap.ui.define([
 		})
 	});
 
-	var invisibleList = new Page("invisibleList", {
+	const invisibleList = new Page("invisibleList", {
 		title : "Invisible List",
 		showNavButton : true,
 		navButtonPress : function() {
@@ -227,7 +227,7 @@ sap.ui.define([
 		}
 	});
 
-	var noDataList = new Page("noDataList", {
+	const noDataList = new Page("noDataList", {
 		title : "No Data List",
 		showNavButton : true,
 		navButtonPress : function() {
@@ -259,9 +259,9 @@ sap.ui.define([
 		})
 	});
 
-	var swipeContentList;
-	var swipeDirection;
-	var swipeContentPage = new Page("swipeContentPage", {
+	let swipeContentList;
+	let swipeDirection;
+	const swipeContentPage = new Page("swipeContentPage", {
 		title : "Swipe Content Test",
 		content : [swipeContentList = new List({
 			inset : true,
@@ -272,10 +272,9 @@ sap.ui.define([
 				}
 			}),
 			swipe : function(e) {
-				var li = e.getParameter("listItem");
+				const li = e.getParameter("listItem");
 				li.setLabel(li.getLabel() + " " + UI5Date.getInstance().toLocaleTimeString());
 				swipeDirection = e.getParameter("swipeDirection");
-				Core.applyChanges();
 			},
 			items : [new DisplayListItem({
 				label : "Test",
@@ -284,7 +283,7 @@ sap.ui.define([
 		})]
 	});
 
-	var backgroundDesignPage = new Page("backgroundDesignPage", {
+	const backgroundDesignPage = new Page("backgroundDesignPage", {
 			title : "List Test Page",
 			showNavButton : true,
 			navButtonPress : function() {
@@ -299,7 +298,7 @@ sap.ui.define([
 	*/
 	// JSON sample data
 
-	var dataOverview = {
+	const dataOverview = {
 		navigation : [ {
 			title : "Standard List Thumb",
 			type : "Navigation",
@@ -343,7 +342,7 @@ sap.ui.define([
 		} ]
 	};
 
-	var dataNavigation = {
+	const dataNavigation = {
 			navigation : [ {
 				title : "Travel Expend",
 				description : "Access the travel expend workflow",
@@ -409,7 +408,7 @@ sap.ui.define([
 			} ]
 		};
 
-	var dataDetail = {
+	const dataDetail = {
 		navigation : [ {
 			title : "Travel Expend",
 			description : "Access the travel expend workflow",
@@ -454,13 +453,13 @@ sap.ui.define([
 	// create templates for the different lists (visible content of each list)
 	// ================================================================================
 	*/
-	var oItemTemplateOverview = new StandardListItem({
+	const oItemTemplateOverview = new StandardListItem({
 		title : "{title}",
 		type : "{type}",
 		press : handlePress
 	});
 
-	var oItemTemplateStandardThumb = new StandardListItem({
+	const oItemTemplateStandardThumb = new StandardListItem({
 		title : "{title}",
 		description : "{description}",
 		icon : "{icon}",
@@ -475,7 +474,7 @@ sap.ui.define([
 		press : handlePress
 	});
 
-	var oItemTemplateStandardIcon = new StandardListItem({
+	const oItemTemplateStandardIcon = new StandardListItem({
 		title : "{title}",
 		description : "{description}",
 		icon : "{icon}",
@@ -483,26 +482,26 @@ sap.ui.define([
 		press : handlePress
 	});
 
-	var oItemTemplateStandardTitle = new StandardListItem({
+	const oItemTemplateStandardTitle = new StandardListItem({
 		title : "{title}",
 		icon : "{icon}",
 		type : "{type}",
 		press : handlePress
 	});
 
-	var oItemTemplateStandardNoImage = new StandardListItem({
+	const oItemTemplateStandardNoImage = new StandardListItem({
 		title : "{title}",
 		description : "{description}",
 		type : "{type}",
 		press : handlePress
 	});
 
-	var oItemTemplateDisplay = new DisplayListItem({
+	const oItemTemplateDisplay = new DisplayListItem({
 		label : "{title}",
 		value : "{description}"
 	});
 
-	var oItemTemplateInput = new InputListItem({
+	const oItemTemplateInput = new InputListItem({
 		label : "{title}",
 		content : new Input({
 			type : "Number",
@@ -510,7 +509,7 @@ sap.ui.define([
 		})
 	});
 
-	var oItemTemplateCustom = new CustomListItem({
+	const oItemTemplateCustom = new CustomListItem({
 		content : new Button({
 			text : "{title}",
 			width : "100%",
@@ -519,7 +518,7 @@ sap.ui.define([
 		})
 	});
 
-	var oItemTemplateSelection = new StandardListItem({
+	const oItemTemplateSelection = new StandardListItem({
 		title : "{title}",
 		description : "{description}",
 		icon : "{icon}",
@@ -527,7 +526,7 @@ sap.ui.define([
 		press : handlePress
 	});
 
-	var oItemTemplateInvisible = new StandardListItem({
+	const oItemTemplateInvisible = new StandardListItem({
 		title : "{title}",
 		description : "{description}",
 		type : "{type}",
@@ -539,14 +538,14 @@ sap.ui.define([
 	// create the list objects for the different pages
 	// ================================================================================
 	*/
-	var oListOverview = new List({
+	const oListOverview = new List({
 		id : "sapMList001",
 		inset : false,
 		headerText : "List Overview",
 		footerText : "These are just some list examples and this won't show all possible combinations."
 	});
 
-	var oListStandardThumb = new List(
+	const oListStandardThumb = new List(
 			{
 				id : "sapMList002",
 				inset : false,
@@ -556,7 +555,7 @@ sap.ui.define([
 				footerText : "We strongly advise you to keep your luggage with you at all times. Any unattended luggage in the terminal will be removed by the security services."
 			});
 
-	var oListStandardIcon = new List(
+	const oListStandardIcon = new List(
 			{
 				id : "sapMList003",
 				inset : false,
@@ -564,7 +563,7 @@ sap.ui.define([
 				footerText : "We strongly advise you to keep your luggage with you at all times. Any unattended luggage in the terminal will be removed by the security services."
 			});
 
-	var oListStandardTitle = new List(
+	const oListStandardTitle = new List(
 			{
 				id : "sapMList004",
 				inset : false,
@@ -572,7 +571,7 @@ sap.ui.define([
 				footerText : "We strongly advise you to keep your luggage with you at all times. Any unattended luggage in the terminal will be removed by the security services."
 			});
 
-	var oListStandardNoImage = new List(
+	const oListStandardNoImage = new List(
 			{
 				id : "sapMList005",
 				inset : false,
@@ -580,7 +579,7 @@ sap.ui.define([
 				footerText : "We strongly advise you to keep your luggage with you at all times. Any unattended luggage in the terminal will be removed by the security services."
 			});
 
-	var oListDisplay = new List(
+	const oListDisplay = new List(
 			{
 				id : "sapMList006",
 				inset : false,
@@ -588,7 +587,7 @@ sap.ui.define([
 				footerText : "We strongly advise you to keep your luggage with you at all times. Any unattended luggage in the terminal will be removed by the security services."
 			});
 
-	var oListInput = new List(
+	const oListInput = new List(
 			{
 				id : "sapMList007",
 				inset : false,
@@ -596,7 +595,7 @@ sap.ui.define([
 				footerText : "We strongly advise you to keep your luggage with you at all times. Any unattended luggage in the terminal will be removed by the security services."
 			});
 
-	var oListCustom = new List(
+	const oListCustom = new List(
 			{
 				id : "sapMList008",
 				inset : false,
@@ -604,42 +603,42 @@ sap.ui.define([
 				footerText : "We strongly advise you to keep your luggage with you at all times. Any unattended luggage in the terminal will be removed by the security services."
 			});
 
-	var oListStandardThumbNoHeader = new List({
+	const oListStandardThumbNoHeader = new List({
 		id : "sapMList002a",
 		inset : false
 	});
 
-	var oListStandardIconNoHeader = new List({
+	const oListStandardIconNoHeader = new List({
 		id : "sapMList003a",
 		inset : false
 	});
 
-	var oListStandardTitleNoHeader = new List({
+	const oListStandardTitleNoHeader = new List({
 		id : "sapMList004a",
 		inset : false
 	});
 
-	var oListStandardNoImageNoHeader = new List({
+	const oListStandardNoImageNoHeader = new List({
 		id : "sapMList005a",
 		inset : false
 	});
 
-	var oListDisplayNoHeader = new List({
+	const oListDisplayNoHeader = new List({
 		id : "sapMList006a",
 		inset : false
 	});
 
-	var oListInputNoHeader = new List({
+	const oListInputNoHeader = new List({
 		id : "sapMList007a",
 		inset : false
 	});
 
-	var oListCustomNoHeader = new List({
+	const oListCustomNoHeader = new List({
 		id : "sapMList008a",
 		inset : false
 	});
 
-	var oListSelection = new List({
+	const oListSelection = new List({
 		id : "sapMList009",
 		inset : false,
 		headerText : "Travel",
@@ -647,7 +646,7 @@ sap.ui.define([
 		mode : library.ListMode.SingleSelect
 	});
 
-	var oListInvisible = new List({
+	const oListInvisible = new List({
 		visible: false,
 		id : "sapMList010",
 		inset : false,
@@ -655,7 +654,7 @@ sap.ui.define([
 		footerText : "We strongly advise you to keep your luggage with you at all times. Any unattended luggage in the terminal will be removed by the security services."
 	});
 
-	var oListNoData = new List({
+	const oListNoData = new List({
 		id : "sapMList011",
 		inset : false,
 		showNoData: true,
@@ -701,8 +700,8 @@ sap.ui.define([
 
 	standardListThumb.addContent(oListStandardThumb);
 
-	var actionList = new List();
-	var actionListItem = new ActionListItem({id: "actionListItem", text: "Action List Item", press: handlePress});
+	const actionList = new List();
+	const actionListItem = new ActionListItem({id: "actionListItem", text: "Action List Item", press: handlePress});
 	actionList.addItem(actionListItem);
 
 	standardListThumb.addContent(actionList);
@@ -739,14 +738,14 @@ sap.ui.define([
 	// ================================================================================
 	*/
 	function bindListData(data, itemTemplate, list) {
-		var oModel = new JSONModel();
+		const oModel = new JSONModel();
 		// set the data for the model
 		oModel.setData(data);
 		// set the model to the list
 		list.setModel(oModel);
 
 		// create a CustomData template, set its key to "answer" and bind its value to the answer data
-		var oDataTemplate = new CustomData({
+		const oDataTemplate = new CustomData({
 			key : "xyz"
 		});
 		oDataTemplate.bindProperty("value", "press");
@@ -767,10 +766,10 @@ sap.ui.define([
 	}
 
 	function deleteItem(oEvent) {
-		var model = oEvent.mParameters.listItem.getModel();
+		const model = oEvent.mParameters.listItem.getModel();
 
-		var deleteId = model.getProperty("", oEvent.mParameters.listItem.getBindingContext());
-		var data = model.getData().navigation;
+		const deleteId = model.getProperty("", oEvent.mParameters.listItem.getBindingContext());
+		const data = model.getData().navigation;
 		jQuery.each(data,function(iIndex, oEntry){
 
 			if (oEntry == deleteId) {
@@ -782,14 +781,20 @@ sap.ui.define([
 	}
 
 	function switchStyle() {
-		var listArray = Array.from(document.querySelectorAll(".sapMList"), function(oElement) {
+		const listArray = Array.from(document.querySelectorAll(".sapMList"), function(oElement) {
 			return Element.closestTo(oElement);
 		});
-		var inset = !listArray[listArray.length - 1].getInset();
-		for ( var i = 0; i < listArray.length; i++) {
+		const inset = !listArray[listArray.length - 1].getInset();
+		for (let i = 0; i < listArray.length; i++) {
 			listArray[i].setInset(inset);
 		}
 		app.getCurrentPage()._refreshIScroll();
+	}
+
+	function timeout(iDuration) {
+		return new Promise(function(resolve) {
+			window.setTimeout(resolve, iDuration);
+		});
 	}
 
 
@@ -799,7 +804,7 @@ sap.ui.define([
 	// ================================================================================
 	*/
 	function setSelectionItem1() {
-		var aItems = oListSelection.getItems();
+		const aItems = oListSelection.getItems();
 		if (oListSelection.getMode() == library.ListMode.SingleSelect || oListSelection.getMode() == library.ListMode.SingleSelectLeft) {
 			aItems[0].setSelected(true);
 		}
@@ -809,7 +814,7 @@ sap.ui.define([
 	}
 
 	function setSelectionItem2() {
-		var aItems = oListSelection.getItems();
+		const aItems = oListSelection.getItems();
 		if (oListSelection.getMode() == library.ListMode.SingleSelect || oListSelection.getMode() == library.ListMode.SingleSelectLeft) {
 			aItems[1].setSelected(true);
 		}
@@ -819,7 +824,7 @@ sap.ui.define([
 	}
 
 	function setSelectionItem3() {
-		var aItems = oListSelection.getItems();
+		const aItems = oListSelection.getItems();
 		if (oListSelection.getMode() == library.ListMode.SingleSelect || oListSelection.getMode() == library.ListMode.SingleSelectLeft) {
 			aItems[2].setSelected(true);
 		}
@@ -829,7 +834,7 @@ sap.ui.define([
 	}
 
 	function setSelectionItem4() {
-		var aItems = oListSelection.getItems();
+		const aItems = oListSelection.getItems();
 		if (oListSelection.getMode() == library.ListMode.SingleSelect || oListSelection.getMode() == library.ListMode.SingleSelectLeft) {
 			aItems[3].setSelected(true);
 		}
@@ -839,7 +844,7 @@ sap.ui.define([
 	}
 
 	function setSelectionItem5() {
-		var aItems = oListSelection.getItems();
+		const aItems = oListSelection.getItems();
 		if (oListSelection.getMode() == library.ListMode.SingleSelect || oListSelection.getMode() == library.ListMode.SingleSelectLeft) {
 			aItems[4].setSelected( (!aItems[4].getModeControl().getSelected()) );
 		}
@@ -849,52 +854,52 @@ sap.ui.define([
 	}
 
 	function checkSingleSelectionItem1() {
-		var aItems = oListSelection.getItems();
+		const aItems = oListSelection.getItems();
 		return aItems[0].getModeControl().getSelected();
 	}
 
 	function checkSingleSelectionItem2() {
-		var aItems = oListSelection.getItems();
+		const aItems = oListSelection.getItems();
 		return aItems[1].getModeControl().getSelected();
 	}
 
 	function checkSingleSelectionItem3() {
-		var aItems = oListSelection.getItems();
+		const aItems = oListSelection.getItems();
 		return aItems[2].getModeControl().getSelected();
 	}
 
 	function checkSingleSelectionItem4() {
-		var aItems = oListSelection.getItems();
+		const aItems = oListSelection.getItems();
 		return aItems[3].getModeControl().getSelected();
 	}
 
 	function checkSingleSelectionItem5() {
-		var aItems = oListSelection.getItems();
+		const aItems = oListSelection.getItems();
 		return aItems[4].getModeControl().getSelected();
 	}
 
 	function checkMultiSelectionItem1() {
-		var aItems = oListSelection.getItems();
+		const aItems = oListSelection.getItems();
 		return aItems[0].getModeControl().getSelected();
 	}
 
 	function checkMultiSelectionItem2() {
-		var aItems = oListSelection.getItems();
+		const aItems = oListSelection.getItems();
 		return aItems[1].getModeControl().getSelected();
 	}
 
 	function checkMultiSelectionItem3() {
-		var aItems = oListSelection.getItems();
+		const aItems = oListSelection.getItems();
 		return aItems[2].getModeControl().getSelected();
 	}
 
 	function checkMultiSelectionItem4() {
-		var aItems = oListSelection.getItems();
+		const aItems = oListSelection.getItems();
 		return aItems[3].getModeControl().getSelected();
 	}
 
 	function checkMultiSelectionItem5() {
-		var aItems = oListSelection.getItems();
+		const aItems = oListSelection.getItems();
 		return aItems[4].getModeControl().getSelected();
 	}
 
@@ -941,8 +946,6 @@ sap.ui.define([
 			.addPage(selectionList).addPage(invisibleList).addPage(noDataList).addPage(swipeContentPage).addPage(backgroundDesignPage);
 	app.setInitialPage("listOverview");
 	app.placeAt("content");
-	Core.applyChanges();
-
 
 	/*
 	// ================================================================================
@@ -956,9 +959,8 @@ sap.ui.define([
 		assert.ok(document.getElementById("sapMList001-listUl").childNodes[0], "Overview ListItem should be rendered");
 	});
 
-	QUnit.test("StandardListItem wrappedItem more button-onTouchStart", function(assert) {
-		this.clock = sinon.useFakeTimers();
-		var oStdLI = new StandardListItem({
+	QUnit.test("StandardListItem wrappedItem more button-onTouchStart", async function(assert) {
+		const oStdLI = new StandardListItem({
 			id: "sdf",
 			title : "Lorem ipsum dolor st amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat.",
 			wrapping: true,
@@ -966,19 +968,19 @@ sap.ui.define([
 		});
 
 		oStdLI.setType("Navigation");
-		var oList = new List({
+		const oList = new List({
 			items : [oStdLI]
 		});
 
 		oList.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		function createEvent(sEventName, oTarget, oParams) {
-			var oEvent = jQuery.Event(sEventName);
+			const oEvent = jQuery.Event(sEventName);
 			oEvent.originalEvent = {};
 			oEvent.target = oTarget;
 			if (oParams) {
-				for (var x in oParams) {
+				for (const x in oParams) {
 					oEvent[x] = oParams[x];
 					oEvent.originalEvent[x] = oParams[x];
 				}
@@ -986,8 +988,8 @@ sap.ui.define([
 			return oEvent;
 		}
 
-		var oTouchStartSpy = sinon.spy(oStdLI, "ontouchstart");
-		var oTouchStart = createEvent("touchstart", document.getElementById(oStdLI.getId() + "-titleButton"), {
+		const oTouchStartSpy = sinon.spy(oStdLI, "ontouchstart");
+		const oTouchStart = createEvent("touchstart", document.getElementById(oStdLI.getId() + "-titleButton"), {
 			srcControl : oStdLI,
 			touches : [{
 				clientX: 0,
@@ -1000,114 +1002,115 @@ sap.ui.define([
 		});
 
 		oStdLI.ontouchstart(oTouchStart);
-		this.clock.tick(100);
+		await nextUIUpdate();
+
 		assert.ok(oTouchStartSpy.calledWithExactly(oTouchStart), "Called Once");
 		assert.notOk(oStdLI.$().hasClass("sapMLIBActive"));
-		this.clock.restore();
 	});
 
-	QUnit.test("standardListThumb rendered - navigate from listitem no 1 to detail page", function(assert) {
-		var done = assert.async();
+	QUnit.test("standardListThumb rendered - navigate from listitem no 1 to detail page", async function(assert) {
 		app.to("standardListThumb", "show");
-		Core.applyChanges();
+		await nextUIUpdate();
+
 		assert.ok(document.getElementById("sapMList002-listUl"), "standardListThumb should be rendered");
 		assert.ok(document.getElementById("sapMList002-listUl").childNodes[0], "standardListThumb ListItem should be rendered");
-		var aItems = oListStandardThumb.getItems();
-		var listItemId = aItems[0].getId();
-		var oListItem = Element.getElementById(listItemId);
-		var oEvent = new jQuery.Event();
+		const aItems = oListStandardThumb.getItems();
+		const listItemId = aItems[0].getId();
+		const oListItem = Element.getElementById(listItemId);
+		const oEvent = new jQuery.Event();
 		oEvent.srcControl = aItems[0];
 		oListItem.ontap(oEvent);
-		setTimeout(function(){
-			Core.applyChanges();
-			assert.ok(document.getElementById("detailPage"), "detailPage should be rendered)");
-			done();
-		},50);
+
+		await timeout(50);
+		await nextUIUpdate();
+
+		assert.ok(document.getElementById("detailPage"), "detailPage should be rendered)");
 	});
 
-	QUnit.test("standardListThumb rendered - navigate from listitem no 2 to detail page", function(assert) {
-		var done = assert.async();
+	QUnit.test("standardListThumb rendered - navigate from listitem no 2 to detail page", async function(assert) {
 		app.back();
-		Core.applyChanges();
+		await nextUIUpdate();
+
 		assert.ok(document.getElementById("sapMList002-listUl"), "standardListThumb should be rendered");
 		assert.ok(document.getElementById("sapMList002-listUl").childNodes[0], "standardListThumb ListItem should be rendered");
-		var aItems = oListStandardThumb.getItems();
-		var listItemId = aItems[1].getId();
-		var oListItem = Element.getElementById(listItemId);
-		var oEvent = new jQuery.Event();
+		const aItems = oListStandardThumb.getItems();
+		const listItemId = aItems[1].getId();
+		const oListItem = Element.getElementById(listItemId);
+		const oEvent = new jQuery.Event();
 		oEvent.srcControl = aItems[1];
 		oListItem.ontap(oEvent);
-		setTimeout(function(){
-			Core.applyChanges();
-			assert.ok(document.getElementById("detailPage"), "detailPage should be rendered)");
-			done();
-		},50);
+
+		await timeout(50);
+		await nextUIUpdate();
+
+		assert.ok(document.getElementById("detailPage"), "detailPage should be rendered)");
 	});
 
-	QUnit.test("standardListThumb rendered - navigate from listitem no 3 to detail page", function(assert) {
-		var done = assert.async();
+	QUnit.test("standardListThumb rendered - navigate from listitem no 3 to detail page", async function(assert) {
 		app.back();
-		Core.applyChanges();
+		await nextUIUpdate();
+
 		assert.ok(document.getElementById("sapMList002-listUl"), "standardListThumb should be rendered");
 		assert.ok(document.getElementById("sapMList002-listUl").childNodes[0], "standardListThumb ListItem should be rendered");
-		var aItems = oListStandardThumb.getItems();
-		var listItemId = aItems[2].getId();
-		var oListItem = Element.getElementById(listItemId);
-		var oEvent = new jQuery.Event();
+		const aItems = oListStandardThumb.getItems();
+		const listItemId = aItems[2].getId();
+		const oListItem = Element.getElementById(listItemId);
+		const oEvent = new jQuery.Event();
 		oEvent.srcControl = aItems[2];
 		oListItem.ontap(oEvent);
-		setTimeout(function(){
-			Core.applyChanges();
-			assert.ok(document.getElementById("detailPage"), "detailPage should be rendered)");
-			done();
-		},50);
+
+		await timeout(50);
+		await nextUIUpdate();
+
+		assert.ok(document.getElementById("detailPage"), "detailPage should be rendered)");
 	});
 
-	QUnit.test("standardListThumb rendered - navigate from listitem no 4 to detail page", function(assert) {
-		var done = assert.async();
+	QUnit.test("standardListThumb rendered - navigate from listitem no 4 to detail page", async function(assert) {
 		app.back();
-		Core.applyChanges();
+		await nextUIUpdate();
+
 		assert.ok(document.getElementById("sapMList002-listUl"), "standardListThumb should be rendered");
 		assert.ok(document.getElementById("sapMList002-listUl").childNodes[0], "standardListThumb ListItem should be rendered");
-		var aItems = oListStandardThumb.getItems();
-		var listItemId = aItems[3].getId();
-		var oListItem = Element.getElementById(listItemId);
-		var oEvent = new jQuery.Event();
+		const aItems = oListStandardThumb.getItems();
+		const listItemId = aItems[3].getId();
+		const oListItem = Element.getElementById(listItemId);
+		const oEvent = new jQuery.Event();
 		oEvent.srcControl = aItems[3];
 		oListItem.ontap(oEvent);
-		setTimeout(function(){
-			Core.applyChanges();
-			assert.ok(document.getElementById("detailPage"), "detailPage should be rendered)");
-			done();
-		},50);
+
+		await timeout(50);
+		await nextUIUpdate();
+
+		assert.ok(document.getElementById("detailPage"), "detailPage should be rendered)");
 	});
 
-	QUnit.test("standardListThumb rendered - navigate from listitem no 5 to detail page", function(assert) {
-		var done = assert.async();
+	QUnit.test("standardListThumb rendered - navigate from listitem no 5 to detail page", async function(assert) {
 		app.back();
-		Core.applyChanges();
+		await nextUIUpdate();
+
 		assert.ok(document.getElementById("sapMList002-listUl"), "standardListThumb should be rendered");
 		assert.ok(document.getElementById("sapMList002-listUl").childNodes[0], "standardListThumb ListItem should be rendered");
-		var aItems = oListStandardThumb.getItems();
-		var listItemId = aItems[4].getId();
-		var oListItem = Element.getElementById(listItemId);
-		var oEvent = new jQuery.Event();
+		const aItems = oListStandardThumb.getItems();
+		const listItemId = aItems[4].getId();
+		const oListItem = Element.getElementById(listItemId);
+		const oEvent = new jQuery.Event();
 		oEvent.srcControl = aItems[4];
 		oListItem.ontap(oEvent);
-		setTimeout(function(){
-			Core.applyChanges();
-			assert.ok(document.getElementById("detailPage"), "detailPage should be rendered)");
-			done();
-		},50);
+
+		await timeout(50);
+		await nextUIUpdate();
+
+		assert.ok(document.getElementById("detailPage"), "detailPage should be rendered)");
 	});
 
-	QUnit.test("standardListThumb rendered - unread indicator, counter, info should be rendered", function(assert) {
+	QUnit.test("standardListThumb rendered - unread indicator, counter, info should be rendered", async function(assert) {
 		app.back();
-		Core.applyChanges();
-		var aItems = oListStandardThumb.getItems();
-		var listItemId = aItems[0].getId();
+		await nextUIUpdate();
 
-		var _bShowUnreadBubble = (Parameters.get({name: "sapUiLIUnreadAsBubble"}) == "true");
+		const aItems = oListStandardThumb.getItems();
+		const listItemId = aItems[0].getId();
+
+		const _bShowUnreadBubble = (Parameters.get({name: "sapUiLIUnreadAsBubble"}) == "true");
 		if (_bShowUnreadBubble) {
 			assert.ok(document.getElementById(listItemId + "-unread"), "standardListThumb unread indicator should be rendered");
 		}
@@ -1116,79 +1119,79 @@ sap.ui.define([
 		assert.ok(document.getElementById("actionListItem"), "actionListItem should be rendered");
 	});
 
-	QUnit.test("standardListIcon rendered", function(assert) {
+	QUnit.test("standardListIcon rendered", async function(assert) {
 		app.to("standardListIcon", "show");
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.ok(document.getElementById("sapMList003-listUl"), "standardListIcon should be rendered");
 		assert.ok(document.getElementById("sapMList003-listUl").childNodes[0], "standardListIcon ListItem should be rendered");
 		app.to("standardListTitle", "show");
-		Core.applyChanges();
+		await nextUIUpdate();
 	});
 
-	QUnit.test("standardListTitle rendered", function(assert) {
+	QUnit.test("standardListTitle rendered", async function(assert) {
 		app.back();
 		assert.ok(document.getElementById("sapMList004-listUl"), "standardListTitle should be rendered");
 		assert.ok(document.getElementById("sapMList004-listUl").childNodes[0], "standardListTitle ListItem should be rendered");
 		app.to("standardListNoImage", "show");
-		Core.applyChanges();
+		await nextUIUpdate();
 	});
 
-	QUnit.test("standardListNoImage rendered", function(assert) {
+	QUnit.test("standardListNoImage rendered", async function(assert) {
 		app.back();
 		assert.ok(document.getElementById("sapMList005-listUl"), "standardListNoImage should be rendered");
 		assert.ok(document.getElementById("sapMList005-listUl").childNodes[0], "standardListNoImage ListItem should be rendered");
 		app.to("displayList", "show");
-		Core.applyChanges();
+		await nextUIUpdate();
 	});
 
-	QUnit.test("displayList rendered", function(assert) {
+	QUnit.test("displayList rendered", async function(assert) {
 		app.back();
 		assert.ok(document.getElementById("sapMList006-listUl"), "displayList should be rendered");
 		assert.ok(document.getElementById("sapMList006-listUl").childNodes[0], "displayList ListItem should be rendered");
 		app.to("inputList", "show");
-		Core.applyChanges();
+		await nextUIUpdate();
 	});
 
-	QUnit.test("inputList rendered", function(assert) {
+	QUnit.test("inputList rendered", async function(assert) {
 		app.back();
 		assert.ok(document.getElementById("sapMList007-listUl"), "inputList should be rendered");
 		assert.ok(document.getElementById("sapMList007-listUl").childNodes[0], "inputList ListItem should be rendered");
 		app.to("customList", "show");
-		Core.applyChanges();
+		await nextUIUpdate();
 	});
 
-	QUnit.test("customList rendered", function(assert) {
+	QUnit.test("customList rendered", async function(assert) {
 		app.back();
 		assert.ok(document.getElementById("sapMList008-listUl"), "customList should be rendered");
 		assert.ok(document.getElementById("sapMList008-listUl").childNodes[0], "customList ListItem should be rendered");
 		app.to("invisibleList", "show");
-		Core.applyChanges();
+		await nextUIUpdate();
 	});
 
-	QUnit.test("invisibleList rendered", function(assert) {
+	QUnit.test("invisibleList rendered", async function(assert) {
 		app.back();
 		assert.ok(!document.getElementById("sapMList010-listUl"), "invisibleList should not be rendered");
 		app.to("noDataList", "show");
-		Core.applyChanges();
+		await nextUIUpdate();
 	});
 
-	QUnit.test("noDataList rendered", function(assert) {
+	QUnit.test("noDataList rendered", async function(assert) {
 		app.back();
 		assert.ok(document.getElementById("sapMList011-listUl"), "noDataList should be rendered");
 		assert.ok(document.getElementById("sapMList011-nodata-text").textContent == "Forgot something???", "noDataList custom text should be rendered");
 		assert.ok(jQuery("#sapMList011-nodata").attr("role") == "listitem", "ARIA role of No Data Entry");
 		app.to("selectionList", "show");
-		Core.applyChanges();
+		await nextUIUpdate();
 	});
 
 	if (jQuery.support.touch) {
-		QUnit.test("swipe left action", function(assert) {
-			var done = assert.async();
+		QUnit.test("swipe left action", async function(assert) {
+			const done = assert.async();
 			app.back();
 			app.to("swipeContentPage", "show");
-			Core.applyChanges();
+			await nextUIUpdate();
 
-			var li = swipeContentList.getItems()[0],
+			const li = swipeContentList.getItems()[0],
 				event = jQuery.Event("swipeleft", {
 					srcControl : li
 				});
@@ -1196,28 +1199,26 @@ sap.ui.define([
 			swipeContentList.onswipeleft(event);
 			assert.equal(swipeDirection, "EndToBegin", "Swipe from the end to the Beginning");
 
-			Core.applyChanges();
+			await nextUIUpdate();
+			await timeout(1000);
 
-			setTimeout(function() {
-				var oContainer = swipeContentList.getDomRef("swp");
-				assert.ok(oContainer instanceof HTMLElement, "Swipe Content is rendered");
-				swipeContentList.swipeOut(function(li, swpcnt){
-					var oContainer = swipeContentList.getDomRef("swp");
-					assert.equal(oContainer, null, "Swipe Content is removed");
-					swipeContentList.setSwipeContent(swpcnt.setText("Disapprove").setType("Reject"));
-					done();
-				});
-			}, 1000);
+			const oContainer = swipeContentList.getDomRef("swp");
+			assert.ok(oContainer instanceof HTMLElement, "Swipe Content is rendered");
+			swipeContentList.swipeOut(function(li, swpcnt){
+				const oContainer = swipeContentList.getDomRef("swp");
+				assert.equal(oContainer, null, "Swipe Content is removed");
+				swipeContentList.setSwipeContent(swpcnt.setText("Disapprove").setType("Reject"));
+				done();
+			});
 		});
 
 
-		QUnit.test("swipe right action", function(assert) {
-			//var done = assert.async();
+		QUnit.test("swipe right action", async function(assert) {
 			app.back();
 			app.to("swipeContentPage", "show");
-			Core.applyChanges();
+			await nextUIUpdate();
 
-			var li = swipeContentList.getItems()[0],
+			const li = swipeContentList.getItems()[0],
 				event = jQuery.Event("swiperight", {
 					srcControl : li
 				});
@@ -1277,112 +1278,99 @@ sap.ui.define([
 		assert.equal(checkSingleSelectionItem5(), true, "SingleSelection: Item 5 should be selected");
 	});
 
-	QUnit.test("selectionList singleSelection item check by tap event on Item 1", function(assert) {
-		var done = assert.async();
-		var aItems = oListSelection.getItems();
-		var radioButtonId1 = aItems[0].getModeControl().getId();
-		var radioButtonId2 = aItems[1].getModeControl().getId();
-		var radioButtonId3 = aItems[2].getModeControl().getId();
-		var radioButtonId4 = aItems[3].getModeControl().getId();
-		var radioButtonId5 = aItems[4].getModeControl().getId();
+	QUnit.test("selectionList singleSelection item check by tap event on Item 1", async function(assert) {
+		const aItems = oListSelection.getItems();
+		const radioButtonId1 = aItems[0].getModeControl().getId();
+		const radioButtonId2 = aItems[1].getModeControl().getId();
+		const radioButtonId3 = aItems[2].getModeControl().getId();
+		const radioButtonId4 = aItems[3].getModeControl().getId();
+		const radioButtonId5 = aItems[4].getModeControl().getId();
 		qutils.triggerEvent("tap", radioButtonId1);
 
-		setTimeout(function() {
-			assert.equal(Element.getElementById(radioButtonId1).getSelected(), true, "SingleSelection: Item 1 should be checked");
-			assert.equal(Element.getElementById(radioButtonId2).getSelected(), false, "SingleSelection: Item 2 should not be checked");
-			assert.equal(Element.getElementById(radioButtonId3).getSelected(), false, "SingleSelection: Item 3 should not be checked");
-			assert.equal(Element.getElementById(radioButtonId4).getSelected(), false, "SingleSelection: Item 4 should not be checked");
-			assert.equal(Element.getElementById(radioButtonId5).getSelected(), false, "SingleSelection: Item 5 should not be checked");
+		await timeout();
 
-			done();
-		}, 0);
+		assert.equal(Element.getElementById(radioButtonId1).getSelected(), true, "SingleSelection: Item 1 should be checked");
+		assert.equal(Element.getElementById(radioButtonId2).getSelected(), false, "SingleSelection: Item 2 should not be checked");
+		assert.equal(Element.getElementById(radioButtonId3).getSelected(), false, "SingleSelection: Item 3 should not be checked");
+		assert.equal(Element.getElementById(radioButtonId4).getSelected(), false, "SingleSelection: Item 4 should not be checked");
+		assert.equal(Element.getElementById(radioButtonId5).getSelected(), false, "SingleSelection: Item 5 should not be checked");
 	});
 
-	QUnit.test("selectionList singleSelection item check by tap event on Item 2", function(assert) {
-		var done = assert.async();
-		var aItems = oListSelection.getItems();
-		var radioButtonId1 = aItems[0].getModeControl().getId();
-		var radioButtonId2 = aItems[1].getModeControl().getId();
-		var radioButtonId3 = aItems[2].getModeControl().getId();
-		var radioButtonId4 = aItems[3].getModeControl().getId();
-		var radioButtonId5 = aItems[4].getModeControl().getId();
+	QUnit.test("selectionList singleSelection item check by tap event on Item 2", async function(assert) {
+		const aItems = oListSelection.getItems();
+		const radioButtonId1 = aItems[0].getModeControl().getId();
+		const radioButtonId2 = aItems[1].getModeControl().getId();
+		const radioButtonId3 = aItems[2].getModeControl().getId();
+		const radioButtonId4 = aItems[3].getModeControl().getId();
+		const radioButtonId5 = aItems[4].getModeControl().getId();
 		qutils.triggerEvent("tap", radioButtonId2);
 
-		setTimeout(function() {
-			assert.equal(Element.getElementById(radioButtonId1).getSelected(), false, "SingleSelection: Item 1 should not be checked");
-			assert.equal(Element.getElementById(radioButtonId2).getSelected(), true, "SingleSelection: Item 2 should be checked");
-			assert.equal(Element.getElementById(radioButtonId3).getSelected(), false, "SingleSelection: Item 3 should not be checked");
-			assert.equal(Element.getElementById(radioButtonId4).getSelected(), false, "SingleSelection: Item 4 should not be checked");
-			assert.equal(Element.getElementById(radioButtonId5).getSelected(), false, "SingleSelection: Item 5 should not be checked");
-			done();
-		}, 0);
+		await timeout();
+
+		assert.equal(Element.getElementById(radioButtonId1).getSelected(), false, "SingleSelection: Item 1 should not be checked");
+		assert.equal(Element.getElementById(radioButtonId2).getSelected(), true, "SingleSelection: Item 2 should be checked");
+		assert.equal(Element.getElementById(radioButtonId3).getSelected(), false, "SingleSelection: Item 3 should not be checked");
+		assert.equal(Element.getElementById(radioButtonId4).getSelected(), false, "SingleSelection: Item 4 should not be checked");
+		assert.equal(Element.getElementById(radioButtonId5).getSelected(), false, "SingleSelection: Item 5 should not be checked");
 	});
 
-	QUnit.test("selectionList singleSelection item check by tap event on Item 3", function(assert) {
-		var done = assert.async();
-		var aItems = oListSelection.getItems();
-		var radioButtonId1 = aItems[0].getModeControl().getId();
-		var radioButtonId2 = aItems[1].getModeControl().getId();
-		var radioButtonId3 = aItems[2].getModeControl().getId();
-		var radioButtonId4 = aItems[3].getModeControl().getId();
-		var radioButtonId5 = aItems[4].getModeControl().getId();
+	QUnit.test("selectionList singleSelection item check by tap event on Item 3", async function(assert) {
+		const aItems = oListSelection.getItems();
+		const radioButtonId1 = aItems[0].getModeControl().getId();
+		const radioButtonId2 = aItems[1].getModeControl().getId();
+		const radioButtonId3 = aItems[2].getModeControl().getId();
+		const radioButtonId4 = aItems[3].getModeControl().getId();
+		const radioButtonId5 = aItems[4].getModeControl().getId();
 		qutils.triggerEvent("tap", radioButtonId3);
 
-		setTimeout(function() {
-			assert.equal(Element.getElementById(radioButtonId1).getSelected(), false, "SingleSelection: Item 1 should not be checked");
-			assert.equal(Element.getElementById(radioButtonId2).getSelected(), false, "SingleSelection: Item 2 should not be checked");
-			assert.equal(Element.getElementById(radioButtonId3).getSelected(), true, "SingleSelection: Item 3 should be checked");
-			assert.equal(Element.getElementById(radioButtonId4).getSelected(), false, "SingleSelection: Item 4 should not be checked");
-			assert.equal(Element.getElementById(radioButtonId5).getSelected(), false, "SingleSelection: Item 5 should not be checked");
-			done();
-		}, 0);
+		await timeout();
+
+		assert.equal(Element.getElementById(radioButtonId1).getSelected(), false, "SingleSelection: Item 1 should not be checked");
+		assert.equal(Element.getElementById(radioButtonId2).getSelected(), false, "SingleSelection: Item 2 should not be checked");
+		assert.equal(Element.getElementById(radioButtonId3).getSelected(), true, "SingleSelection: Item 3 should be checked");
+		assert.equal(Element.getElementById(radioButtonId4).getSelected(), false, "SingleSelection: Item 4 should not be checked");
+		assert.equal(Element.getElementById(radioButtonId5).getSelected(), false, "SingleSelection: Item 5 should not be checked");
 	});
 
-	QUnit.test("selectionList singleSelection item check by tap event on Item 4", function(assert) {
-		var done = assert.async();
-		var aItems = oListSelection.getItems();
-		var radioButtonId1 = aItems[0].getModeControl().getId();
-		var radioButtonId2 = aItems[1].getModeControl().getId();
-		var radioButtonId3 = aItems[2].getModeControl().getId();
-		var radioButtonId4 = aItems[3].getModeControl().getId();
-		var radioButtonId5 = aItems[4].getModeControl().getId();
+	QUnit.test("selectionList singleSelection item check by tap event on Item 4", async function(assert) {
+		const aItems = oListSelection.getItems();
+		const radioButtonId1 = aItems[0].getModeControl().getId();
+		const radioButtonId2 = aItems[1].getModeControl().getId();
+		const radioButtonId3 = aItems[2].getModeControl().getId();
+		const radioButtonId4 = aItems[3].getModeControl().getId();
+		const radioButtonId5 = aItems[4].getModeControl().getId();
 		qutils.triggerEvent("tap", radioButtonId4);
 
-		setTimeout(function() {
-			assert.equal(Element.getElementById(radioButtonId1).getSelected(), false, "SingleSelection: Item 1 should not be checked");
-			assert.equal(Element.getElementById(radioButtonId2).getSelected(), false, "SingleSelection: Item 2 should not be checked");
-			assert.equal(Element.getElementById(radioButtonId3).getSelected(), false, "SingleSelection: Item 3 should not be checked");
-			assert.equal(Element.getElementById(radioButtonId4).getSelected(), true, "SingleSelection: Item 4 should be checked");
-			assert.equal(Element.getElementById(radioButtonId5).getSelected(), false, "SingleSelection: Item 5 should not be checked");
-			done();
-		}, 0);
+		await timeout();
+
+		assert.equal(Element.getElementById(radioButtonId1).getSelected(), false, "SingleSelection: Item 1 should not be checked");
+		assert.equal(Element.getElementById(radioButtonId2).getSelected(), false, "SingleSelection: Item 2 should not be checked");
+		assert.equal(Element.getElementById(radioButtonId3).getSelected(), false, "SingleSelection: Item 3 should not be checked");
+		assert.equal(Element.getElementById(radioButtonId4).getSelected(), true, "SingleSelection: Item 4 should be checked");
+		assert.equal(Element.getElementById(radioButtonId5).getSelected(), false, "SingleSelection: Item 5 should not be checked");
 	});
 
-	QUnit.test("selectionList singleSelection item check by tap event on Item 5", function(assert) {
-		var done = assert.async();
-		var aItems = oListSelection.getItems();
-		var radioButtonId1 = aItems[0].getModeControl().getId();
-		var radioButtonId2 = aItems[1].getModeControl().getId();
-		var radioButtonId3 = aItems[2].getModeControl().getId();
-		var radioButtonId4 = aItems[3].getModeControl().getId();
-		var radioButtonId5 = aItems[4].getModeControl().getId();
+	QUnit.test("selectionList singleSelection item check by tap event on Item 5", async function(assert) {
+		const aItems = oListSelection.getItems();
+		const radioButtonId1 = aItems[0].getModeControl().getId();
+		const radioButtonId2 = aItems[1].getModeControl().getId();
+		const radioButtonId3 = aItems[2].getModeControl().getId();
+		const radioButtonId4 = aItems[3].getModeControl().getId();
+		const radioButtonId5 = aItems[4].getModeControl().getId();
 		qutils.triggerEvent("tap", radioButtonId5);
 
-		setTimeout(function() {
-			assert.equal(Element.getElementById(radioButtonId1).getSelected(), false, "SingleSelection: Item 1 should not be checked");
-			assert.equal(Element.getElementById(radioButtonId2).getSelected(), false, "SingleSelection: Item 2 should not be checked");
-			assert.equal(Element.getElementById(radioButtonId3).getSelected(), false, "SingleSelection: Item 3 should not be checked");
-			assert.equal(Element.getElementById(radioButtonId4).getSelected(), false, "SingleSelection: Item 4 should not be checked");
-			assert.equal(Element.getElementById(radioButtonId5).getSelected(), true, "SingleSelection: Item 5 should be checked");
-			done();
-		}, 0);
+		await timeout();
+
+		assert.equal(Element.getElementById(radioButtonId1).getSelected(), false, "SingleSelection: Item 1 should not be checked");
+		assert.equal(Element.getElementById(radioButtonId2).getSelected(), false, "SingleSelection: Item 2 should not be checked");
+		assert.equal(Element.getElementById(radioButtonId3).getSelected(), false, "SingleSelection: Item 3 should not be checked");
+		assert.equal(Element.getElementById(radioButtonId4).getSelected(), false, "SingleSelection: Item 4 should not be checked");
+		assert.equal(Element.getElementById(radioButtonId5).getSelected(), true, "SingleSelection: Item 5 should be checked");
 	});
 
 	QUnit.test("selectionList switch to SingleSelectionLeft", function(assert) {
 		switchModeSingleLeft();
 		assert.equal(oListSelection.getMode(), library.ListMode.SingleSelectLeft, "Switch to SingleSelectionLeft: Ok");
-		Core.applyChanges();
-
 	});
 
 	QUnit.test("selectionList SingleSelectionLeft Item 1", function(assert) {
@@ -1430,112 +1418,100 @@ sap.ui.define([
 		assert.equal(checkSingleSelectionItem5(), true, "SingleSelectionLeft: Item 5 should be selected");
 	});
 
-	QUnit.test("selectionList SingleSelectionLeft item check by tap event on Item 1", function(assert) {
-		var done = assert.async();
-		var aItems = oListSelection.getItems();
-		var radioButtonId1 = aItems[0].getModeControl().getId();
-		var radioButtonId2 = aItems[1].getModeControl().getId();
-		var radioButtonId3 = aItems[2].getModeControl().getId();
-		var radioButtonId4 = aItems[3].getModeControl().getId();
-		var radioButtonId5 = aItems[4].getModeControl().getId();
+	QUnit.test("selectionList SingleSelectionLeft item check by tap event on Item 1", async function(assert) {
+		const aItems = oListSelection.getItems();
+		const radioButtonId1 = aItems[0].getModeControl().getId();
+		const radioButtonId2 = aItems[1].getModeControl().getId();
+		const radioButtonId3 = aItems[2].getModeControl().getId();
+		const radioButtonId4 = aItems[3].getModeControl().getId();
+		const radioButtonId5 = aItems[4].getModeControl().getId();
 		qutils.triggerEvent("tap", radioButtonId1);
 
-		setTimeout(function() {
-			assert.equal(Element.getElementById(radioButtonId1).getSelected(), true, "SingleSelectionLeft: Item 1 should be checked");
-			assert.equal(Element.getElementById(radioButtonId2).getSelected(), false, "SingleSelectionLeft: Item 2 should not be checked");
-			assert.equal(Element.getElementById(radioButtonId3).getSelected(), false, "SingleSelectionLeft: Item 3 should not be checked");
-			assert.equal(Element.getElementById(radioButtonId4).getSelected(), false, "SingleSelectionLeft: Item 4 should not be checked");
-			assert.equal(Element.getElementById(radioButtonId5).getSelected(), false, "SingleSelectionLeft: Item 5 should not be checked");
+		await timeout();
 
-			done();
-		}, 0);
+		assert.equal(Element.getElementById(radioButtonId1).getSelected(), true, "SingleSelectionLeft: Item 1 should be checked");
+		assert.equal(Element.getElementById(radioButtonId2).getSelected(), false, "SingleSelectionLeft: Item 2 should not be checked");
+		assert.equal(Element.getElementById(radioButtonId3).getSelected(), false, "SingleSelectionLeft: Item 3 should not be checked");
+		assert.equal(Element.getElementById(radioButtonId4).getSelected(), false, "SingleSelectionLeft: Item 4 should not be checked");
+		assert.equal(Element.getElementById(radioButtonId5).getSelected(), false, "SingleSelectionLeft: Item 5 should not be checked");
 	});
 
-	QUnit.test("selectionList SingleSelectionLeft item check by tap event on Item 2", function(assert) {
-		var done = assert.async();
-		var aItems = oListSelection.getItems();
-		var radioButtonId1 = aItems[0].getModeControl().getId();
-		var radioButtonId2 = aItems[1].getModeControl().getId();
-		var radioButtonId3 = aItems[2].getModeControl().getId();
-		var radioButtonId4 = aItems[3].getModeControl().getId();
-		var radioButtonId5 = aItems[4].getModeControl().getId();
+	QUnit.test("selectionList SingleSelectionLeft item check by tap event on Item 2", async function(assert) {
+		const aItems = oListSelection.getItems();
+		const radioButtonId1 = aItems[0].getModeControl().getId();
+		const radioButtonId2 = aItems[1].getModeControl().getId();
+		const radioButtonId3 = aItems[2].getModeControl().getId();
+		const radioButtonId4 = aItems[3].getModeControl().getId();
+		const radioButtonId5 = aItems[4].getModeControl().getId();
 		qutils.triggerEvent("tap", radioButtonId2);
-		setTimeout(function() {
 
-			assert.equal(Element.getElementById(radioButtonId1).getSelected(), false, "SingleSelectionLeft: Item 1 should not be checked");
-			assert.equal(Element.getElementById(radioButtonId2).getSelected(), true, "SingleSelectionLeft: Item 2 should be checked");
-			assert.equal(Element.getElementById(radioButtonId3).getSelected(), false, "SingleSelectionLeft: Item 3 should not be checked");
-			assert.equal(Element.getElementById(radioButtonId4).getSelected(), false, "SingleSelectionLeft: Item 4 should not be checked");
-			assert.equal(Element.getElementById(radioButtonId5).getSelected(), false, "SingleSelectionLeft: Item 5 should not be checked");
-			done();
-		}, 0);
+		await timeout();
+
+		assert.equal(Element.getElementById(radioButtonId1).getSelected(), false, "SingleSelectionLeft: Item 1 should not be checked");
+		assert.equal(Element.getElementById(radioButtonId2).getSelected(), true, "SingleSelectionLeft: Item 2 should be checked");
+		assert.equal(Element.getElementById(radioButtonId3).getSelected(), false, "SingleSelectionLeft: Item 3 should not be checked");
+		assert.equal(Element.getElementById(radioButtonId4).getSelected(), false, "SingleSelectionLeft: Item 4 should not be checked");
+		assert.equal(Element.getElementById(radioButtonId5).getSelected(), false, "SingleSelectionLeft: Item 5 should not be checked");
 	});
 
-	QUnit.test("selectionList SingleSelectionLeft item check by tap event on Item 3", function(assert) {
-		var done = assert.async();
-		var aItems = oListSelection.getItems();
-		var radioButtonId1 = aItems[0].getModeControl().getId();
-		var radioButtonId2 = aItems[1].getModeControl().getId();
-		var radioButtonId3 = aItems[2].getModeControl().getId();
-		var radioButtonId4 = aItems[3].getModeControl().getId();
-		var radioButtonId5 = aItems[4].getModeControl().getId();
+	QUnit.test("selectionList SingleSelectionLeft item check by tap event on Item 3", async function(assert) {
+		const aItems = oListSelection.getItems();
+		const radioButtonId1 = aItems[0].getModeControl().getId();
+		const radioButtonId2 = aItems[1].getModeControl().getId();
+		const radioButtonId3 = aItems[2].getModeControl().getId();
+		const radioButtonId4 = aItems[3].getModeControl().getId();
+		const radioButtonId5 = aItems[4].getModeControl().getId();
 		qutils.triggerEvent("tap", radioButtonId3);
-		setTimeout(function() {
 
-			assert.equal(Element.getElementById(radioButtonId1).getSelected(), false, "SingleSelectionLeft: Item 1 should not be checked");
-			assert.equal(Element.getElementById(radioButtonId2).getSelected(), false, "SingleSelectionLeft: Item 2 should not be checked");
-			assert.equal(Element.getElementById(radioButtonId3).getSelected(), true, "SingleSelectionLeft: Item 3 should be checked");
-			assert.equal(Element.getElementById(radioButtonId4).getSelected(), false, "SingleSelectionLeft: Item 4 should not be checked");
-			assert.equal(Element.getElementById(radioButtonId5).getSelected(), false, "SingleSelectionLeft: Item 5 should not be checked");
-			done();
-		}, 0);
+		await timeout();
+
+		assert.equal(Element.getElementById(radioButtonId1).getSelected(), false, "SingleSelectionLeft: Item 1 should not be checked");
+		assert.equal(Element.getElementById(radioButtonId2).getSelected(), false, "SingleSelectionLeft: Item 2 should not be checked");
+		assert.equal(Element.getElementById(radioButtonId3).getSelected(), true, "SingleSelectionLeft: Item 3 should be checked");
+		assert.equal(Element.getElementById(radioButtonId4).getSelected(), false, "SingleSelectionLeft: Item 4 should not be checked");
+		assert.equal(Element.getElementById(radioButtonId5).getSelected(), false, "SingleSelectionLeft: Item 5 should not be checked");
 	});
 
-	QUnit.test("selectionList SingleSelectionLeft item check by tap event on Item 4", function(assert) {
-		var done = assert.async();
-		var aItems = oListSelection.getItems();
-		var radioButtonId1 = aItems[0].getModeControl().getId();
-		var radioButtonId2 = aItems[1].getModeControl().getId();
-		var radioButtonId3 = aItems[2].getModeControl().getId();
-		var radioButtonId4 = aItems[3].getModeControl().getId();
-		var radioButtonId5 = aItems[4].getModeControl().getId();
+	QUnit.test("selectionList SingleSelectionLeft item check by tap event on Item 4", async function(assert) {
+		const aItems = oListSelection.getItems();
+		const radioButtonId1 = aItems[0].getModeControl().getId();
+		const radioButtonId2 = aItems[1].getModeControl().getId();
+		const radioButtonId3 = aItems[2].getModeControl().getId();
+		const radioButtonId4 = aItems[3].getModeControl().getId();
+		const radioButtonId5 = aItems[4].getModeControl().getId();
 		qutils.triggerEvent("tap", radioButtonId4);
-		setTimeout(function() {
 
-			assert.equal(Element.getElementById(radioButtonId1).getSelected(), false, "SingleSelectionLeft: Item 1 should not be checked");
-			assert.equal(Element.getElementById(radioButtonId2).getSelected(), false, "SingleSelectionLeft: Item 2 should not be checked");
-			assert.equal(Element.getElementById(radioButtonId3).getSelected(), false, "SingleSelectionLeft: Item 3 should not be checked");
-			assert.equal(Element.getElementById(radioButtonId4).getSelected(), true, "SingleSelectionLeft: Item 4 should be checked");
-			assert.equal(Element.getElementById(radioButtonId5).getSelected(), false, "SingleSelectionLeft: Item 5 should not be checked");
-			done();
-		}, 0);
+		await timeout();
+
+		assert.equal(Element.getElementById(radioButtonId1).getSelected(), false, "SingleSelectionLeft: Item 1 should not be checked");
+		assert.equal(Element.getElementById(radioButtonId2).getSelected(), false, "SingleSelectionLeft: Item 2 should not be checked");
+		assert.equal(Element.getElementById(radioButtonId3).getSelected(), false, "SingleSelectionLeft: Item 3 should not be checked");
+		assert.equal(Element.getElementById(radioButtonId4).getSelected(), true, "SingleSelectionLeft: Item 4 should be checked");
+		assert.equal(Element.getElementById(radioButtonId5).getSelected(), false, "SingleSelectionLeft: Item 5 should not be checked");
 	});
 
-	QUnit.test("selectionList SingleSelectionLeft item check by tap event on Item 5", function(assert) {
-		var done = assert.async();
-		var aItems = oListSelection.getItems();
-		var radioButtonId1 = aItems[0].getModeControl().getId();
-		var radioButtonId2 = aItems[1].getModeControl().getId();
-		var radioButtonId3 = aItems[2].getModeControl().getId();
-		var radioButtonId4 = aItems[3].getModeControl().getId();
-		var radioButtonId5 = aItems[4].getModeControl().getId();
+	QUnit.test("selectionList SingleSelectionLeft item check by tap event on Item 5", async function(assert) {
+		const aItems = oListSelection.getItems();
+		const radioButtonId1 = aItems[0].getModeControl().getId();
+		const radioButtonId2 = aItems[1].getModeControl().getId();
+		const radioButtonId3 = aItems[2].getModeControl().getId();
+		const radioButtonId4 = aItems[3].getModeControl().getId();
+		const radioButtonId5 = aItems[4].getModeControl().getId();
 		qutils.triggerEvent("tap", radioButtonId5);
-		setTimeout(function() {
 
-			assert.equal(Element.getElementById(radioButtonId1).getSelected(), false, "SingleSelectionLeft: Item 1 should not be checked");
-			assert.equal(Element.getElementById(radioButtonId2).getSelected(), false, "SingleSelectionLeft: Item 2 should not be checked");
-			assert.equal(Element.getElementById(radioButtonId3).getSelected(), false, "SingleSelectionLeft: Item 3 should not be checked");
-			assert.equal(Element.getElementById(radioButtonId4).getSelected(), false, "SingleSelectionLeft: Item 4 should not be checked");
-			assert.equal(Element.getElementById(radioButtonId5).getSelected(), true, "SingleSelectionLeft: Item 5 should be checked");
-			done();
-		}, 0);
+		await timeout();
+
+		assert.equal(Element.getElementById(radioButtonId1).getSelected(), false, "SingleSelectionLeft: Item 1 should not be checked");
+		assert.equal(Element.getElementById(radioButtonId2).getSelected(), false, "SingleSelectionLeft: Item 2 should not be checked");
+		assert.equal(Element.getElementById(radioButtonId3).getSelected(), false, "SingleSelectionLeft: Item 3 should not be checked");
+		assert.equal(Element.getElementById(radioButtonId4).getSelected(), false, "SingleSelectionLeft: Item 4 should not be checked");
+		assert.equal(Element.getElementById(radioButtonId5).getSelected(), true, "SingleSelectionLeft: Item 5 should be checked");
 	});
 
-	QUnit.test("selectionList switch to multiSelection", function(assert) {
+	QUnit.test("selectionList switch to multiSelection", async function(assert) {
 		switchModeMulti();
 		assert.equal(oListSelection.getMode(), library.ListMode.MultiSelect, "Switch to MultiSelection: Ok");
-		Core.applyChanges();
-
+		await nextUIUpdate();
 	});
 
 	QUnit.test("selectionList multiSelection item check (1,3,5)", function(assert) {
@@ -1570,18 +1546,16 @@ sap.ui.define([
 	});
 
 	QUnit.test("selectionList multiSelection item check by tap event (1,3,5)", function(assert) {
-		var aItems = oListSelection.getItems();
-		var checkBoxId1 = aItems[0].getModeControl().getId();
-		var checkBoxId2 = aItems[1].getModeControl().getId();
-		var checkBoxId3 = aItems[2].getModeControl().getId();
-		var checkBoxId4 = aItems[3].getModeControl().getId();
-		var checkBoxId5 = aItems[4].getModeControl().getId();
-		//qutils.triggerEvent("tap", checkBoxId1);
-		//qutils.triggerEvent("tap", checkBoxId3);
-		//qutils.triggerEvent("tap", checkBoxId5);
-		var oCheckbox1 = Element.getElementById(checkBoxId1);
-		var oCheckbox3 = Element.getElementById(checkBoxId3);
-		var oCheckbox5 = Element.getElementById(checkBoxId5);
+		const aItems = oListSelection.getItems();
+		const checkBoxId1 = aItems[0].getModeControl().getId();
+		const checkBoxId2 = aItems[1].getModeControl().getId();
+		const checkBoxId3 = aItems[2].getModeControl().getId();
+		const checkBoxId4 = aItems[3].getModeControl().getId();
+		const checkBoxId5 = aItems[4].getModeControl().getId();
+
+		const oCheckbox1 = Element.getElementById(checkBoxId1);
+		const oCheckbox3 = Element.getElementById(checkBoxId3);
+		const oCheckbox5 = Element.getElementById(checkBoxId5);
 		oCheckbox1.ontap(new jQuery.Event());
 		oCheckbox3.ontap(new jQuery.Event());
 		oCheckbox5.ontap(new jQuery.Event());
@@ -1599,41 +1573,33 @@ sap.ui.define([
 	});
 
 
-	QUnit.module("Properties", {
-		before: function() {
-			sinon.config.useFakeTimers = true;
-		},
-		after: function() {
-			sinon.config.useFakeTimers = false;
-		}
-	});
+	QUnit.module("Properties");
 
+	QUnit.test("StandardListItem activeIcon", async function(assert) {
 
-	QUnit.test("StandardListItem activeIcon", function(assert) {
-
-		var sIcon = "sap-icon://up";
-		var sActiveIcon = "sap-icon://down";
-		var oStdLI = new StandardListItem({
+		const sIcon = "sap-icon://up";
+		const sActiveIcon = "sap-icon://down";
+		const oStdLI = new StandardListItem({
 			title : "Title",
 			icon : sIcon,
 			activeIcon: sActiveIcon,
 			type : library.ListType.Active
 		});
 
-		var oList = new List({
+		const oList = new List({
 			items : [oStdLI]
 		});
 
 		oList.placeAt("qunit-fixture");
-		Core.applyChanges();
-		var oIcon = Element.closestTo(oStdLI.$().find(".sapUiIcon")[0]);
+		await nextUIUpdate();
+		const oIcon = Element.closestTo(oStdLI.$().find(".sapUiIcon")[0]);
 
 		function createEvent(sEventName, oTarget, oParams) {
-			var oEvent = jQuery.Event(sEventName);
+			const oEvent = jQuery.Event(sEventName);
 			oEvent.originalEvent = {};
 			oEvent.target = oTarget;
 			if (oParams) {
-				for (var x in oParams) {
+				for (const x in oParams) {
 					oEvent[x] = oParams[x];
 					oEvent.originalEvent[x] = oParams[x];
 				}
@@ -1641,7 +1607,7 @@ sap.ui.define([
 			return oEvent;
 		}
 
-		var oTouchStart = createEvent("touchstart", oStdLI.getDomRef(), {
+		const oTouchStart = createEvent("touchstart", oStdLI.getDomRef(), {
 			srcControl : oStdLI,
 			touches : [{
 				clientX: 0,
@@ -1656,11 +1622,10 @@ sap.ui.define([
 
 		assert.strictEqual(oIcon.getSrc(), sIcon, "Icon has correct path before active handling.");
 
-		// wait active feedback
-		this.clock.tick(300);
+		await timeout(300);
 
 		assert.strictEqual(oIcon.getSrc(), sActiveIcon, "Active icon has correct path during active handling");
-		var oTouchEnd = createEvent("touchend", oStdLI.getDomRef(), {
+		const oTouchEnd = createEvent("touchend", oStdLI.getDomRef(), {
 			srcControl : oStdLI,
 			targetTouches : [{
 				clientX: 0,
@@ -1672,27 +1637,25 @@ sap.ui.define([
 		assert.strictEqual(oIcon.getSrc(), sActiveIcon, "Active icon is changed with the previous state after active handling");
 	});
 
-	QUnit.test("setBackgroundDesign", function(assert) {
-		var oListItem = new StandardListItem({
+	QUnit.test("setBackgroundDesign", async function(assert) {
+		const oListItem = new StandardListItem({
 				title : "Title",
 				description: "Description"
 			}),
 			oList = new List({
 				backgroundDesign: library.BackgroundDesign.Solid,
 				items: [oListItem]
-			}),
-			$list,
-			oRenderSpy;
+			});
 
 		// add item to page & render
 		backgroundDesignPage.addContent(oList);
 
 		app.back();
 		app.to("backgroundDesignPage", "show");
-		Core.applyChanges();
+		await nextUIUpdate();
 
-		$list = oList.$();
-		oRenderSpy = this.spy(oList.getRenderer(), "render");
+		let $list = oList.$();
+		const oRenderSpy = this.spy(oList.getRenderer(), "render");
 
 		// call method & do tests
 		assert.strictEqual(oList.getBackgroundDesign(), library.BackgroundDesign.Solid, 'The property "backgroundDesign" is "Solid" on ' + oList);
@@ -1701,14 +1664,14 @@ sap.ui.define([
 		assert.ok(!$list.hasClass("sapMListBGTranslucent"), 'The HTML div container for the list does not have class "sapMListBGTranslucent" on ' + oList);
 
 		assert.strictEqual(oList.setBackgroundDesign(library.BackgroundDesign.Transparent).getBackgroundDesign(), library.BackgroundDesign.Transparent, 'The property "backgroundDesign" is "Transparent" on ' + oList);
-		Core.applyChanges();
+		await nextUIUpdate();
 		$list = oList.$();
 		assert.ok(!$list.hasClass("sapMListBGSolid"), 'The HTML div container for the list does not have class "sapMListBGSolid" on ' + oList);
 		assert.ok($list.hasClass("sapMListBGTransparent"), 'The HTML div container for the list has class "sapMListBGTransparent" on ' + oList);
 		assert.ok(!$list.hasClass("sapMListBGTranslucent"), 'The HTML div container for the list does not have class "sapMListBGTranslucent" on ' + oList);
 
 		assert.strictEqual(oList.setBackgroundDesign(library.BackgroundDesign.Translucent).getBackgroundDesign(), library.BackgroundDesign.Translucent, 'The property "backgroundDesign" is "Translucent" on ' + oList);
-		Core.applyChanges();
+		await nextUIUpdate();
 		$list = oList.$();
 		assert.ok(!$list.hasClass("sapMListBGSolid"), 'The HTML div container for the list does not have class "sapMListBGSolid" on ' + oList);
 		assert.ok(!$list.hasClass("sapMListBGTransparent"), 'The HTML div container for the list does not have class "sapMListBGTransparent" on ' + oList);
@@ -1731,15 +1694,15 @@ sap.ui.define([
 
 	QUnit.module("StandartListItem RTL attributes");
 
-	QUnit.test("setter / getter titleTextDirection", function(assert) {
-		var oStdLI = new StandardListItem({
+	QUnit.test("setter / getter titleTextDirection", async function(assert) {
+		const oStdLI = new StandardListItem({
 			title : "123 456"
 		});
-		var oList = new List({
+		const oList = new List({
 			items : [oStdLI]
 		});
 		oList.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		oStdLI.setTitleTextDirection(coreLibrary.TextDirection.RTL);
 		// Assert
@@ -1749,16 +1712,16 @@ sap.ui.define([
 		oList.destroy();
 	});
 
-	QUnit.test("setter / getter infoTextDirection", function(assert) {
-		var oStdLI = new StandardListItem({
+	QUnit.test("setter / getter infoTextDirection", async function(assert) {
+		const oStdLI = new StandardListItem({
 			title : "Title",
 			info : "+359 123 456"
 		});
-		var oList = new List({
+		const oList = new List({
 			items : [oStdLI]
 		});
 		oList.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		oStdLI.setInfoTextDirection(coreLibrary.TextDirection.RTL);
 		// Assert
@@ -1768,20 +1731,20 @@ sap.ui.define([
 		oList.destroy();
 	});
 
-	QUnit.test("StandardListItem titleTextDirection", function(assert) {
-		var oStdLI = new StandardListItem({
+	QUnit.test("StandardListItem titleTextDirection", async function(assert) {
+		const oStdLI = new StandardListItem({
 			title : "123 456",
 			titleTextDirection: coreLibrary.TextDirection.LTR
 			});
 
-		var oList = new List({
+		const oList = new List({
 			items : [oStdLI]
 		});
 
 		oList.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
-		var oTitle = oStdLI.$().find(".sapMSLITitleOnly");
+		const oTitle = oStdLI.$().find(".sapMSLITitleOnly");
 		// Assert
 		assert.equal(oTitle.attr("dir"), 'ltr', "Title has attribute dir equal to ltr");
 
@@ -1789,21 +1752,21 @@ sap.ui.define([
 		oList.destroy();
 	});
 
-	QUnit.test("StandardListItem infoTextDirection", function(assert) {
-		var oStdLI = new StandardListItem({
+	QUnit.test("StandardListItem infoTextDirection", async function(assert) {
+		const oStdLI = new StandardListItem({
 			title : "Title",
 			info : "+359 1234 567",
 			infoTextDirection: coreLibrary.TextDirection.LTR
 		});
 
-		var oList = new List({
+		const oList = new List({
 			items : [oStdLI]
 		});
 
 		oList.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
-		var oInfo = oStdLI.$().find(".sapMSLIInfo");
+		const oInfo = oStdLI.$().find(".sapMSLIInfo");
 		// Assert
 		assert.equal(oInfo.attr("dir"), 'ltr', "Info has attribute dir equal to ltr");
 
@@ -1811,37 +1774,36 @@ sap.ui.define([
 		oList.destroy();
 	});
 
-	QUnit.test("StandardListItem wrapping behavior (Desktop)", function(assert) {
-		this.clock = sinon.useFakeTimers();
-		var oStdLI = new StandardListItem({
+	QUnit.test("StandardListItem wrapping behavior (Desktop)", async function(assert) {
+		const oStdLI = new StandardListItem({
 			title: "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, seddiamnonumyeirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.",
 			description: "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, seddiamnonumyeirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.",
 			info: "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, seddiamnonumyeirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.",
 			wrapping: true
 		});
 
-		var oList = new List({
+		const oList = new List({
 			items : [oStdLI]
 		});
 
 		oList.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
-		var oRb = Library.getResourceBundleFor("sap.m"),
+		const oRb = Library.getResourceBundleFor("sap.m"),
 			fnToggleExpandCollapse = sinon.spy(oStdLI, "_toggleExpandCollapse");
 
 		// variables for title elements
-		var $titleText = oStdLI.getDomRef("titleText"),
+		let $titleText = oStdLI.getDomRef("titleText"),
 			$titleThreeDots = oStdLI.getDomRef("titleThreeDots"),
 			$titleButton = oStdLI.getDomRef("titleButton");
 
 		// variables for description elements
-		var $descText = oStdLI.getDomRef("descriptionText"),
+		let $descText = oStdLI.getDomRef("descriptionText"),
 			$descThreeDots = oStdLI.getDomRef("descriptionThreeDots"),
 			$descButton = oStdLI.getDomRef("descriptionButton");
 
 		// variables for description elements
-		var $infoText = oStdLI.getDomRef("infoText");
+		const $infoText = oStdLI.getDomRef("infoText");
 
 		// title text test
 		assert.ok(oStdLI.$().hasClass("sapMSLIWrapping"), "Wrapping style class added");
@@ -1850,23 +1812,23 @@ sap.ui.define([
 
 		sinon.spy(Log, "error");
 		oStdLI.setWrapCharLimit(150);
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.equal(oStdLI._getWrapCharLimit(), 150, "WrapCharLimit is configured to 150 characters");
 		assert.equal($titleText.innerText.length, 150, "Desktop limit for collapsed text in wrapping behavior is configured to 150 characters");
 
 		oStdLI.setWrapCharLimit(-1);
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.equal(Log.error.callCount, 1, "Error was logged");
 
 		oStdLI.setWrapCharLimit(0);
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.equal(oStdLI._getWrapCharLimit(), 300, "WrapCharLimit is configured to Default Limit");
 		assert.equal($titleText.innerText.length, 300, "wrapping character limit is set to default value when the property is set to 0");
 
 		oStdLI.setWrapCharLimit(10);
-		Core.applyChanges();
+		await nextUIUpdate();
 		oStdLI.setWrapCharLimit();
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.equal($titleText.innerText.length, 300, "wrapping character limit is set to default value when the property is undefined");
 
 		// safari browser returns the inner text without spaces, hence trim()
@@ -1885,7 +1847,7 @@ sap.ui.define([
 
 		// trigger tap on tilte text
 		jQuery($titleButton).trigger("tap");
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.ok(fnToggleExpandCollapse.calledOnce, "_toggleExpandCollapse function called");
 		$titleText = oStdLI.getDomRef("titleText");
 		$titleThreeDots = oStdLI.getDomRef("titleThreeDots");
@@ -1897,9 +1859,8 @@ sap.ui.define([
 		//trigger onsapspace on description text
 		$descButton.focus();
 		qutils.triggerKeydown($descButton.getAttribute("id"), KeyCodes.SPACE);
-		this.clock.tick(50);
 
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.ok(fnToggleExpandCollapse.calledTwice, "_toggleExpandCollapse function called");
 		$descText = oStdLI.getDomRef("descriptionText");
 		$descThreeDots = oStdLI.getDomRef("descriptionThreeDots");
@@ -1911,23 +1872,23 @@ sap.ui.define([
 		oList.destroy();
 	});
 
-	QUnit.test("StandardListItem infoText min-width test", function(assert) {
-		var oStdLI = new StandardListItem({
+	QUnit.test("StandardListItem infoText min-width test", async function(assert) {
+		const oStdLI = new StandardListItem({
 			title: "This is the Title Text",
 			info: "Success"
 		});
 
-		var oStdLI2 = new StandardListItem({
+		const oStdLI2 = new StandardListItem({
 			title: "This is the Title Text",
 			info: "This is a very very very long information text"
 		});
 
-		var oList = new List({
+		const oList = new List({
 			items : [oStdLI, oStdLI2]
 		});
 
 		oList.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(parseFloat(oStdLI.getDomRef("info").style.minWidth) < 7.5, "calculated info text width set as min-width");
 		assert.strictEqual(oStdLI2.getDomRef("info").style.minWidth, "7.5rem", "7.5rem min-width applied as the info text is long");
@@ -1935,56 +1896,56 @@ sap.ui.define([
 		oList.destroy();
 	});
 
-	QUnit.test("StandardListItem - test onThemeChanged", function(assert) {
-		var oStdLI = new StandardListItem({
+	QUnit.test("StandardListItem - test onThemeChanged", async function(assert) {
+		const oStdLI = new StandardListItem({
 			title: "This is the Title Text",
 			info: "Success",
 			infoState: "Success",
 			infoStateInverted: true
 		});
 
-		var oList = new List({
+		const oList = new List({
 			items : [oStdLI]
 		});
 
 		assert.notOk(oStdLI._initialRender, "item is not rendered yet");
 		oList.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
-		var oEvent = new jQuery.Event();
+		const oEvent = new jQuery.Event();
 		oEvent.theme = "sap_fiori_3";
 		oStdLI.onThemeChanged(oEvent);
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.ok(oStdLI._initialRender, "prevent info text calculation on initial rendering as this is done by the renderer");
 
-		var fnMeasureInfoTextWidth = sinon.spy(oStdLI, "_measureInfoTextWidth");
+		const fnMeasureInfoTextWidth = sinon.spy(oStdLI, "_measureInfoTextWidth");
 		oEvent.theme = "sap_belize";
 		oStdLI.onThemeChanged(oEvent);
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.ok(fnMeasureInfoTextWidth.calledWith(true), "info text width is recalculated onThemeChanged");
 
 		oList.destroy();
 	});
 
-	QUnit.test("StandardListItem inverted info text", function(assert) {
-		var oStdLI = new StandardListItem({
+	QUnit.test("StandardListItem inverted info text", async function(assert) {
+		const oStdLI = new StandardListItem({
 			title: "This is the Title Text",
 			info: "Success"
 		});
 
-		var oList = new List({
+		const oList = new List({
 			items : [oStdLI]
 		});
 
 		oList.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
-		var oInfoTextDom = oStdLI.getDomRef("info");
+		let oInfoTextDom = oStdLI.getDomRef("info");
 		assert.notOk(oStdLI.getInfoStateInverted(), "default value of infoStateInverted=false");
 		assert.notOk(oInfoTextDom.classList.contains("sapMSLIInfoStateInverted"), "Style class for inverted info text not added");
 
 		oStdLI.setInfoStateInverted(true);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(oStdLI.getInfoStateInverted(), "infoStateInverted=true");
 		oInfoTextDom = oStdLI.getDomRef("info");
@@ -1993,22 +1954,22 @@ sap.ui.define([
 		oList.destroy();
 	});
 
-	QUnit.test("StandardListItem wrapping behavior (Phone)", function(assert) {
+	QUnit.test("StandardListItem wrapping behavior (Phone)", async function(assert) {
 		this.stub(Device.system, "phone").value(true);
 
-		var oStdLI = new StandardListItem({
+		const oStdLI = new StandardListItem({
 			title: "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, seddiamnonumyeirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.",
 			wrapping: true
 		});
 
-		var oList = new List({
+		const oList = new List({
 			items : [oStdLI]
 		});
 
 		oList.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
-		var $titleText = oStdLI.getDomRef("titleText");
+		const $titleText = oStdLI.getDomRef("titleText");
 
 		assert.ok($titleText.innerText.length < oStdLI.getTitle().length, "Collapsed text is rendered which has less characters than the provided title text");
 		assert.equal($titleText.innerText.length, 100, "Desktop limit for collapsed text in wrapping behavior is set correctly to 100 characters");
@@ -2016,42 +1977,42 @@ sap.ui.define([
 		oList.destroy();
 	});
 
-	QUnit.test("StandardListItem Avatar Rendering and size)", function(assert) {
+	QUnit.test("StandardListItem Avatar Rendering and size)", async function(assert) {
 
-		var oAvatar1 = new Avatar({
+		const oAvatar1 = new Avatar({
 			id: "sliavatar1",
 			displaySize: "XL",
 			imageFitType: "Cover",
 			src: IMAGE_PATH + "travel_expend.png"
 		});
 
-		var oAvatar2 = new Avatar({
+		const oAvatar2 = new Avatar({
 			id: "sliavatar2",
 			displaySize: "L",
 			imageFitType: "Contain",
 			src: IMAGE_PATH + "travel_expend.png"
 		});
 
-		var oStdLI1 = new StandardListItem({
+		const oStdLI1 = new StandardListItem({
 			title: "This is the Title Text",
 			info: "Success",
 			iconInset: false,
 			avatar: oAvatar1
 		});
 
-		var oStdLI2 = new StandardListItem({
+		const oStdLI2 = new StandardListItem({
 			title: "This is the Title Text",
 			info: "Success",
 			iconInset: true,
 			avatar: oAvatar2
 		});
 
-		var oList = new List({
+		const oList = new List({
 			items : [oStdLI1, oStdLI2]
 		});
 
 		oList.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(document.getElementById("sliavatar1"), "Avatar should be in DOM");
 		assert.ok(oStdLI2.getAvatar(), "Avatar should be in the aggregation");
@@ -2061,18 +2022,18 @@ sap.ui.define([
 
 		// Check the size is not propagated and stays "S" or "XS"
 		oAvatar1.setDisplaySize("XL");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.strictEqual(oAvatar1.getDisplaySize(), "S", "Size of the Avatar1 should stay S");
 
 		oStdLI1.setIconInset(true);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.strictEqual(oAvatar1.getDisplaySize(), "XS", "Size of the Avatar1 should be XS now");
 
 		// Set empty avatar
 		oStdLI2.setAvatar();
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.notOk(oStdLI2.getAvatar(), "Avatar should be removed from the aggregation");
 		assert.notOk(document.getElementById("sliavatar2"), "Avatar should be removed from the DOM");
@@ -2080,17 +2041,17 @@ sap.ui.define([
 		oList.destroy();
 	});
 
-	QUnit.test("StandardListItem wrapping", function(assert) {
-		var oData = {
+	QUnit.test("StandardListItem wrapping", async function(assert) {
+		const oData = {
 			names: [
 				{firstName: "Peter", lastName: undefined},
 				{firstName: "Petra", lastName: "Maier"}
 			]
 		};
-		var oModel = new JSONModel();
+		const oModel = new JSONModel();
 		oModel.setData(oData);
 
-		var oList = new List({
+		const oList = new List({
 			headerText:"Names",
 			mode:"MultiSelect"
 		});
@@ -2106,9 +2067,9 @@ sap.ui.define([
 
 		oList.setModel(oModel);
 		oList.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
-		var oItemDomRef = document.getElementById(oList.getItems()[0].getId() + "-info");
+		let oItemDomRef = document.getElementById(oList.getItems()[0].getId() + "-info");
 		assert.equal(oList.getItems()[0].getTitle(), "", "title is empty string");
 		assert.equal(oList.getItems()[0].getInfo(), "Peter", "info is given");
 		assert.ok(oItemDomRef, "info is rendered although title is empty string");
@@ -2123,25 +2084,25 @@ sap.ui.define([
 
 	QUnit.module("ListItemBase");
 
-	QUnit.test("ListItemBase RenderOutlineClass", function(assert) {
+	QUnit.test("ListItemBase RenderOutlineClass", async function(assert) {
 		this.stub(Device.system, "desktop").value(true);
 
 		// SUT
-		var sut1 = new StandardListItem(),
+		const sut1 = new StandardListItem(),
 			sut2 = new StandardListItem(),
 			list = new List({
 				items : sut1
 			});
 
 		list.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.ok(sut1.$().hasClass("sapMLIBFocusable"), "Outline class is added");
 
 		// Act
 		list.addItem(sut2);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.ok(sut2.$().hasClass("sapMLIBFocusable"), "Outline class is added");
@@ -2150,8 +2111,8 @@ sap.ui.define([
 		list.destroy();
 	});
 
-	QUnit.test("ListItemBase - getAccessibilityText", function(assert) {
-		var TestCtr = Control.extend("TestCtr", {
+	QUnit.test("ListItemBase - getAccessibilityText", async function(assert) {
+		const TestCtr = Control.extend("TestCtr", {
 			metadata : {
 				properties: {
 					"text" : "string"
@@ -2168,38 +2129,38 @@ sap.ui.define([
 			}
 		});
 
-		var oAccInfo = {};
-		var fGetAccessibilityInfo = function() {
+		let oAccInfo = {};
+		const fGetAccessibilityInfo = function() {
 			return oAccInfo;
 		};
-		var fGetAccessibilityInfo2 = function() {
+		const fGetAccessibilityInfo2 = function() {
 			return {description: this.getText()};
 		};
 
-		var oCtr1 = new TestCtr(),
+		const oCtr1 = new TestCtr(),
 			oCtr2 = new TestCtr({text: "UVW"}),
 			oCtr3 = new TestCtr({text: "XYZ"}),
 			oRb = Library.getResourceBundleFor("sap.m");
 
 		oCtr1.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(ListItemBase.getAccessibilityText(), "", "Empty - no control");
 
 		oCtr1.setVisible(false);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(ListItemBase.getAccessibilityText(oCtr1), "", "Empty - invisble");
 		assert.equal(ListItemBase.getAccessibilityText(oCtr1, true), oRb.getText("CONTROL_EMPTY"), "Empty - invisble + detect empty");
 
 		oCtr1.setVisible(true);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(ListItemBase.getAccessibilityText(oCtr1), "", "Empty - getDefaultAccessibilityInfo");
 		assert.equal(ListItemBase.getAccessibilityText(oCtr1, true), oRb.getText("CONTROL_EMPTY"), "Empty - getDefaultAccessibilityInfo + detect empty");
 
 		oCtr1.setText("ABC");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(ListItemBase.getAccessibilityText(oCtr1), "ABC", "getDefaultAccessibilityInfo");
 
@@ -2224,7 +2185,7 @@ sap.ui.define([
 		assert.equal(ListItemBase.getAccessibilityText(oCtr1), "Type Description", "Type and Description");
 
 		oCtr1.setTooltip("Tooltip");
-		Core.applyChanges();
+		await nextUIUpdate();
 		oAccInfo = {
 			description: "Description"
 		};
@@ -2245,7 +2206,7 @@ sap.ui.define([
 		assert.equal(ListItemBase.getAccessibilityText(oCtr1), "Description&Tooltip", "Description contains Tooltip");
 
 		oCtr1.setTooltip(null);
-		Core.applyChanges();
+		await nextUIUpdate();
 		oAccInfo = {
 			description: "Description",
 			enabled: false
@@ -2276,10 +2237,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("ListItemBase - getAccessibilityDescription", function(assert) {
-		var oItem = new ListItemBase(),
+		const oItem = new ListItemBase(),
 			oRb = Library.getResourceBundleFor("sap.m"),
-			aState = [],
-			sContent = "<CONTENT>", sGroup = "", bShowUnread = false, bSelectable = true;
+			sContent = "<CONTENT>";
+		let aState = [], sGroup = "", bShowUnread = false, bSelectable = true;
 
 		oItem.getContentAnnouncement = function() { return sContent; };
 		oItem.getGroupAnnouncement = function() { return sGroup; };
@@ -2293,11 +2254,11 @@ sap.ui.define([
 		oItem.isSelectable = function() { return bSelectable; };
 
 		function check(sDescription) {
-			var sAccText = oItem.getAccessibilityDescription(oRb);
+			const sAccText = oItem.getAccessibilityDescription(oRb);
 			assert.equal(sAccText, aState.join(" . "), sDescription + ": '" + sAccText + "'");
 		}
 
-		var oList = new List({
+		const oList = new List({
 			items: [oItem]
 		});
 
@@ -2420,100 +2381,100 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("getAriaRole", function(assert) {
+	QUnit.test("getAriaRole", async function(assert) {
 		assert.strictEqual(this.oList.getAriaRole(), "list", "'list' is the default role");
 		this.oList.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// list check
-		var oListDomRef = this.oList.getDomRef("listUl");
+		const oListDomRef = this.oList.getDomRef("listUl");
 		assert.strictEqual(oListDomRef.getAttribute("role"), this.oList.getAriaRole(), "role='list' applied in DOM");
 		assert.notOk(oListDomRef.hasAttribute("aria-multiselectable"), "aria-multiselectable attribute not added to DOM, since role='list'");
 
 		// StandardListItem check
-		var oSLIDomRef = this.oSLI.getDomRef();
+		const oSLIDomRef = this.oSLI.getDomRef();
 		assert.strictEqual(oSLIDomRef.getAttribute("role"), "listitem", "role='listitem' applied to list items");
 		assert.strictEqual(oSLIDomRef.getAttribute("aria-posinset"), "1", "correct aria-posinset. Added by default");
 		assert.strictEqual(oSLIDomRef.getAttribute("aria-setsize"), "6", "correct aria-setsize. Added by default");
 		assert.notOk(oSLIDomRef.hasAttribute("aria-selected"), "aria-selected attribute not added, since role='listitem'");
 		this.oSLI.setSelected(true);
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.notOk(oSLIDomRef.hasAttribute("aria-selected"), "aria-selected attribute not added, since role='listitem'");
-		var oSelectedSLIDomRef = this.oSelectedSLI.getDomRef();
+		const oSelectedSLIDomRef = this.oSelectedSLI.getDomRef();
 		assert.notOk(oSelectedSLIDomRef.hasAttribute("aria-selected"), "aria-selected attribute not added although the item is selected, since role='listitem'");
 
 		// CustomListItem check
-		var oCLIDomRef = this.oCLI.getDomRef();
+		const oCLIDomRef = this.oCLI.getDomRef();
 		assert.strictEqual(oCLIDomRef.getAttribute("role"), "listitem", "role='listitem' applied to list items");
 		assert.strictEqual(oCLIDomRef.getAttribute("aria-posinset"), "3", "correct aria-posinset. Added by default");
 		assert.strictEqual(oCLIDomRef.getAttribute("aria-setsize"), "6", "correct aria-setsize. Added by default");
 		assert.notOk(oCLIDomRef.hasAttribute("aria-selected"), "aria-selected attribute not added, since role='listitem'");
 
 		// DisplayListItem check
-		var oDLIDomRef = this.oDLI.getDomRef();
+		const oDLIDomRef = this.oDLI.getDomRef();
 		assert.strictEqual(oDLIDomRef.getAttribute("role"), "listitem", "role='listitem' applied to list items");
 		assert.strictEqual(oDLIDomRef.getAttribute("aria-posinset"), "4", "correct aria-posinset. Added by default");
 		assert.strictEqual(oDLIDomRef.getAttribute("aria-setsize"), "6", "correct aria-setsize. Added by default");
 		assert.notOk(oDLIDomRef.hasAttribute("aria-selected"), "aria-selected attribute not added, since role='listitem'");
 
 		// InputListItem check
-		var oILIDomRef = this.oILI.getDomRef();
+		const oILIDomRef = this.oILI.getDomRef();
 		assert.strictEqual(oILIDomRef.getAttribute("role"), "listitem", "role='listitem' applied to list items");
 		assert.strictEqual(oILIDomRef.getAttribute("aria-posinset"), "5", "correct aria-posinset. Added by default");
 		assert.strictEqual(oILIDomRef.getAttribute("aria-setsize"), "6", "correct aria-setsize. Added by default");
 		assert.notOk(oILIDomRef.hasAttribute("aria-selected"), "aria-selected attribute not added, since role='listitem'");
 
 		// ActionListItem check
-		var oALIDomRef = this.oALI.getDomRef();
+		const oALIDomRef = this.oALI.getDomRef();
 		assert.strictEqual(oALIDomRef.getAttribute("role"), "listitem", "role='listitem' applied to list items");
 		assert.strictEqual(oALIDomRef.getAttribute("aria-posinset"), "6", "correct aria-posinset. Added by default");
 		assert.strictEqual(oALIDomRef.getAttribute("aria-setsize"), "6", "correct aria-setsize. Added by default");
 	});
 
-	QUnit.test("applyAriaRole", function(assert) {
+	QUnit.test("applyAriaRole", async function(assert) {
 		// apply role listbox to the list control
 		this.oList.applyAriaRole("listbox");
 		this.oList.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// list check
-		var oListDomRef = this.oList.getDomRef("listUl");
+		const oListDomRef = this.oList.getDomRef("listUl");
 		assert.strictEqual(this.oList.getAriaRole(), "listbox", "'listbox' is the default role");
 		assert.strictEqual(oListDomRef.getAttribute("role"), this.oList.getAriaRole(), "role='listbox' applied in DOM");
 		assert.ok(oListDomRef.hasAttribute("aria-multiselectable"), "aria-multiselectable attribute added to DOM, since role='listbox'");
 
 		// StandardListItem check
-		var oSLIDomRef = this.oSLI.getDomRef();
+		const oSLIDomRef = this.oSLI.getDomRef();
 		assert.strictEqual(oSLIDomRef.getAttribute("role"), "option", "role='option' applied to list items");
 		assert.ok(oSLIDomRef.hasAttribute("aria-selected"), "aria-selected attribute added, since role='option'");
-		var oSelectedSLIDomRef = this.oSelectedSLI.getDomRef();
+		const oSelectedSLIDomRef = this.oSelectedSLI.getDomRef();
 		assert.ok(oSelectedSLIDomRef.hasAttribute("aria-selected"), "aria-selected attribute, since role='option'");
 
 		// CustomListItem check
-		var oCLIDomRef = this.oCLI.getDomRef();
+		const oCLIDomRef = this.oCLI.getDomRef();
 		assert.strictEqual(oCLIDomRef.getAttribute("role"), "option", "role='option' applied to list items");
 		assert.ok(oCLIDomRef.hasAttribute("aria-selected"), "aria-selected attribute added, since role='option'");
 
 		// DisplayListItem check
-		var oDLIDomRef = this.oDLI.getDomRef();
+		const oDLIDomRef = this.oDLI.getDomRef();
 		assert.strictEqual(oDLIDomRef.getAttribute("role"), "option", "role='option' applied to list items");
 		assert.ok(oDLIDomRef.hasAttribute("aria-selected"), "aria-selected attribute added, since role='option'");
 
 		// InputListItem check
-		var oILIDomRef = this.oILI.getDomRef();
+		const oILIDomRef = this.oILI.getDomRef();
 		assert.strictEqual(oILIDomRef.getAttribute("role"), "option", "role='option' applied to list items");
 		assert.ok(oILIDomRef.hasAttribute("aria-selected"), "aria-selected attribute added, since role='option'");
 
 		// ActionListItem check
-		var oALIDomRef = this.oALI.getDomRef();
+		const oALIDomRef = this.oALI.getDomRef();
 		assert.strictEqual(oALIDomRef.getAttribute("role"), "option", "role='option' applied to list items");
 	});
 
-	QUnit.test("Grouping behavior role='listbox'", function(assert) {
+	QUnit.test("Grouping behavior role='listbox'", async function(assert) {
 		// apply role listbox to the list control
 		this.oList.applyAriaRole("listbox");
 
-		var oData = { // 10 items
+		const oData = { // 10 items
 			items : [ {
 				Key: "Key1",
 				Title : "Title1",
@@ -2556,9 +2517,9 @@ sap.ui.define([
 				Description: "Description10"
 			} ]
 		};
-		var oModel = new JSONModel(oData);
+		const oModel = new JSONModel(oData);
 		this.oList.setModel(oModel);
-		var oSorter = new Sorter({
+		const oSorter = new Sorter({
 			path: "Key",
 			descending: false,
 			group: function(oContext) {
@@ -2584,15 +2545,15 @@ sap.ui.define([
 		});
 
 		this.oList.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
-		var aGroupHeaderListItems = this.oList.getVisibleItems().filter(function(oItem) {
+		const aGroupHeaderListItems = this.oList.getVisibleItems().filter(function(oItem) {
 			return oItem.isGroupHeader();
 		});
 
 		aGroupHeaderListItems.forEach(function(oGroupItem) {
 			assert.ok(oGroupItem.isA("sap.m.CustomListItem"), "GroupHeader is the sap.m.CustomListItem, since groupHeaderFactory is defined");
-			var $GroupItem = oGroupItem.$();
+			const $GroupItem = oGroupItem.$();
 			assert.strictEqual($GroupItem.attr("role"), "group", "role=group assigned to CustomListItem, since its groupHeader");
 			assert.notOk($GroupItem.attr("aria-posinset"), "aria-posinset not added, since its groupHeader");
 			assert.notOk($GroupItem.attr("aria-setsize"), "aria-setsize not added, since its groupHeader");
@@ -2600,8 +2561,8 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Grouping behavior role='list'", function(assert) {
-		var oData = { // 10 items
+	QUnit.test("Grouping behavior role='list'", async function(assert) {
+		const oData = { // 10 items
 			items : [ {
 				Key: "Key1",
 				Title : "Title1",
@@ -2644,9 +2605,9 @@ sap.ui.define([
 				Description: "Description10"
 			} ]
 		};
-		var oModel = new JSONModel(oData);
+		const oModel = new JSONModel(oData);
 		this.oList.setModel(oModel);
-		var oSorter = new Sorter({
+		const oSorter = new Sorter({
 			path: "Key",
 			descending: false,
 			group: function(oContext) {
@@ -2672,15 +2633,15 @@ sap.ui.define([
 		});
 
 		this.oList.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
-		var aGroupHeaderListItems = this.oList.getVisibleItems().filter(function(oItem) {
+		const aGroupHeaderListItems = this.oList.getVisibleItems().filter(function(oItem) {
 			return oItem.isGroupHeader();
 		});
 
 		aGroupHeaderListItems.forEach(function(oGroupItem) {
 			assert.ok(oGroupItem.isA("sap.m.CustomListItem"), "GroupHeader is the sap.m.CustomListItem, since groupHeaderFactory is defined");
-			var $GroupItem = oGroupItem.$();
+			const $GroupItem = oGroupItem.$();
 			assert.strictEqual($GroupItem.attr("role"), "group", "role=group assigned to CustomListItem, since its groupHeader and parent's role=list");
 			assert.notOk($GroupItem.attr("aria-posinset"), "aria-posinset not added, since its groupHeader");
 			assert.notOk($GroupItem.attr("aria-setsize"), "aria-setsize not added, since its groupHeader");

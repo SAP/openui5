@@ -1808,10 +1808,7 @@ sap.ui.define([
 				title: "Test Page for sap.m.ToolbarSpacer"
 			},
 			Tree: {
-				title: "QUnit Page for sap.m.Tree",
-				sinon: {
-					useFakeTimers: true
-				}
+				title: "QUnit Page for sap.m.Tree"
 			},
 			Treeodata: {
 				title: "QUnit Page for sap.m.Tree - odata",
