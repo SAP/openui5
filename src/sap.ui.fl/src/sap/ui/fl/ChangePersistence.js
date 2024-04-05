@@ -180,7 +180,7 @@ sap.ui.define([
 	 */
 	ChangePersistence.prototype.getAllUIChanges = function(mPropertyBag) {
 		var aChanges = union(
-			this.getDependencyMapForComponent().aChanges,
+			UIChangesState.getAllUIChanges(this._mComponent.name),
 			mPropertyBag.includeDirtyChanges && this.getDirtyChanges()
 		).filter(function(oChange) {
 			return (
@@ -361,11 +361,12 @@ sap.ui.define([
 		if (!aDirtyChanges.length && !bCondenseAnyLayer) {
 			return [];
 		}
-		var aPersistedAndSameLayerChanges = this.getDependencyMapForComponent().aChanges.filter(function(oChange) {
+		var aPersistedAndSameLayerChanges = UIChangesState.getAllUIChanges(this._mComponent.name).filter(function(oChange) {
 			if (sLayer === Layer.CUSTOMER && aDraftFilenames) {
 				return oChange.getState() === States.LifecycleState.PERSISTED && aDraftFilenames.includes(oChange.getId());
 			}
-			return oChange.getState() === States.LifecycleState.PERSISTED && LayerUtils.compareAgainstCurrentLayer(oChange.getLayer(), sLayer) === 0;
+			return oChange.getState() === States.LifecycleState.PERSISTED
+				&& LayerUtils.compareAgainstCurrentLayer(oChange.getLayer(), sLayer) === 0;
 		});
 		return aPersistedAndSameLayerChanges.concat(aDirtyChanges);
 	}
@@ -420,11 +421,13 @@ sap.ui.define([
 	}
 
 	/**
-	 * Saves the passed or all dirty changes by calling the appropriate back-end method (create for new changes, deleteChange for deleted changes);
+	 * Saves the passed or all dirty changes by calling the appropriate back-end method
+	 * (create for new changes, deleteChange for deleted changes);
 	 * to ensure the correct order, the methods are called sequentially;
 	 * after a change was saved successfully, it is removed from the dirty changes and the cache is updated.
 	 * If all changes are new they are condensed before they are passed to the Storage. For this the App Component is necessary.
-	 * Condensing is enabled by default for CUSTOMER and USER layers, but can be overruled with the URL Parameter 'sap-ui-xx-condense-changes'
+	 * Condensing is enabled by default for CUSTOMER and USER layers,
+	 * but can be overruled with the URL Parameter 'sap-ui-xx-condense-changes'
 	 *
 	 * @param {sap.ui.core.UIComponent} [oAppComponent] - AppComponent instance
 	 * @param {boolean} [bSkipUpdateCache] - If true, then the dirty change shall be saved for the new created app variant, but not for the current app;
@@ -436,10 +439,24 @@ sap.ui.define([
 	 * @param {string} [sLayer] - Layer for which the changes should be saved
 	 * @returns {Promise} Resolving after all changes have been saved
 	 */
-	ChangePersistence.prototype.saveDirtyChanges = function(oAppComponent, bSkipUpdateCache, aChanges, sParentVersion, aDraftFilenames, bCondenseAnyLayer, sLayer) {
+	ChangePersistence.prototype.saveDirtyChanges = function(
+		oAppComponent,
+		bSkipUpdateCache,
+		aChanges,
+		sParentVersion,
+		aDraftFilenames,
+		bCondenseAnyLayer,
+		sLayer
+	) {
 		var aDirtyChanges = aChanges || this._aDirtyChanges;
 		var sCurrentLayer = aDirtyChanges.length && aDirtyChanges[0].getLayer() || sLayer;
-		var aRelevantChangesForCondensing = getAllRelevantChangesForCondensing.call(this, aDirtyChanges, aDraftFilenames, bCondenseAnyLayer, sCurrentLayer);
+		var aRelevantChangesForCondensing = getAllRelevantChangesForCondensing.call(
+			this,
+			aDirtyChanges,
+			aDraftFilenames,
+			bCondenseAnyLayer,
+			sCurrentLayer
+		);
 		var bIsCondensingEnabled = (
 			isBackendCondensingEnabled(aRelevantChangesForCondensing)
 			&& canGivenChangesBeCondensed(oAppComponent, aRelevantChangesForCondensing, bCondenseAnyLayer)
@@ -470,14 +487,23 @@ sap.ui.define([
 					}.bind(this));
 				}
 				// Non-condensing route
-				return executeWriteAndRemoveCalls.call(this, sCurrentLayer, sRequest, sParentVersion, bSkipUpdateCache, aAllChanges, aCondensedChanges);
+				return executeWriteAndRemoveCalls.call(
+					this,
+					sCurrentLayer,
+					sRequest,
+					sParentVersion,
+					bSkipUpdateCache,
+					aAllChanges,
+					aCondensedChanges
+				);
 			}.bind(this));
 		}
 		return this.saveSequenceOfDirtyChanges(aDirtyChanges, bSkipUpdateCache, sParentVersion);
 	};
 
 	/**
-	 * Saves a sequence of dirty changes by calling the appropriate back-end method (create for new changes, deleteChange for deleted changes);
+	 * Saves a sequence of dirty changes by calling the appropriate back-end method
+	 * (create for new changes, deleteChange for deleted changes);
 	 * to ensure the correct order, the methods are called sequentially;
 	 * after a change was saved successfully, it is removed from the dirty changes and the cache is updated.
 	 *
@@ -738,19 +764,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Collect changes from the dependency map by names
-	 *
-	 * @param {string[]} aNames Names of changes
-	 * @returns {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} aChanges Array of changes with corresponding names
-	 * @private
-	 */
-	ChangePersistence.prototype._getChangesFromMapByNames = function(aNames) {
-		return this.getDependencyMapForComponent().aChanges.filter(function(oChange) {
-			return aNames.indexOf(oChange.getId()) !== -1;
-		});
-	};
-
-	/**
 	 * Removes unsaved changes.
 	 *
 	 * @param {string|string[]} [vLayer] - Layer or multiple layers for which changes shall be deleted. If omitted, changes on all layers are considered.
@@ -847,7 +860,9 @@ sap.ui.define([
 					aNames.push(oChangeContentId.fileName);
 				});
 			}
-			const aChangesToRevert = this._getChangesFromMapByNames(aNames);
+			const aChangesToRevert = UIChangesState.getAllUIChanges(this._mComponent.name).filter(function(oChange) {
+				return aNames.indexOf(oChange.getId()) !== -1;
+			});
 			FlexState.updateStorageResponse(this._mComponent.name, aChangesToRevert.map((oFlexObject) => {
 				return {flexObject: oFlexObject.convertToFileContent(), type: "delete"};
 			}));
