@@ -4,7 +4,7 @@
 
 (function (root, factory) {
 	"use strict";
-	if (self.sap && self.sap.ui && typeof self.sap.ui.define  === 'function') {
+	if (typeof self.sap?.ui?.define === 'function') {
 		sap.ui.define(['sap/ui/thirdparty/URI'], factory);
 	} else if (typeof self.exports === 'object' && typeof self.exports.nodeName !== 'string') {
 		self.exports["ResourcesUtil"] = factory();
