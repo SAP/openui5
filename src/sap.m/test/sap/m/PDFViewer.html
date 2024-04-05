@@ -64,12 +64,12 @@
 			}
 		];
 
-		sap.ui.getCore().setModel(new sap.ui.model.json.JSONModel({
+		var oModel = new sap.ui.model.json.JSONModel({
             DisplayTypesCollection: aDisplayTypesCollection,
 			ModesCollection: aModesCollection,
 			SourcesCollection: aSourcesCollection,
 			EventReactionsCollection: aEventReactionsCollection
-		}), "settingsData");
+		});
 
 		function setupPDFViewer() {
             oPDFViewer.setDisplayType(oDisplayTypeSelect.getSelectedKey());
@@ -288,7 +288,7 @@
 				items: [oSettingsList]
 			})
 		});
-
+		oPage1.setModel(oModel, "settingsData")
 		oSettingsList.setLayoutData(new sap.m.FlexItemData({
 			baseSize: "40%"
 		}));

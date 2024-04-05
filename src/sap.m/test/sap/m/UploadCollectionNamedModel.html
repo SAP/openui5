@@ -525,9 +525,6 @@
 	// set the data for the model
 	oModel.setData(oData);
 
-	// set the model to the core
-	sap.ui.getCore().setModel(oModel, "data");
-
 	var aFileTypes = ["jPg", "tXT", "ppt", "doc", "xls", "pdf", "PNG"];
 
 	/* =========================================================== */
@@ -757,7 +754,7 @@
 		}),
 		content : oUploadCollection
 	});
-
+	oPage.setModel(oModel, "data");
 	// create a mobile App embedding the page and place the App into the HTML document
 	var app = new sap.m.App("myApp", {
 		pages : [oPage]

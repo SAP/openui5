@@ -346,27 +346,21 @@ sap.ui.define([
 		assert.equal(this.oNonActiveItem.oAvatar.$().css("color"), "rgb(255, 255, 255)", "The inactive icon color is white in Default theme");
 		this.applyTheme = function(sTheme, fnCallback) {
 			this.sRequiredTheme = sTheme;
-			if (Theming.getTheme() === this.sRequiredTheme && oCore.isThemeApplied()) {
+			if (Theming.getTheme() === this.sRequiredTheme) {
 				if (typeof fnCallback === "function") {
 					fnCallback.bind(this)();
 					fnCallback = undefined;
 				}
 			} else {
-				oCore.attachThemeChanged(fnThemeApplied.bind(this));
-				oCore.applyTheme(sTheme);
+				Theming.setTheme(sTheme);
+				Theming.attachApplied(fnThemeApplied.bind(this));
 			}
 
 			function fnThemeApplied(oEvent) {
-				oCore.detachThemeChanged(fnThemeApplied);
-				if (Theming.getTheme() === this.sRequiredTheme && oCore.isThemeApplied()) {
-					if (typeof fnCallback === "function") {
-						fnCallback.bind(this)();
-						fnCallback = undefined;
-					}
-				} else {
-					setTimeout(function() {
-						fnThemeApplied(oEvent);
-					}, 1500);
+				Theming.detachApplied(fnThemeApplied);
+				if (typeof fnCallback === "function") {
+					fnCallback.bind(this)();
+					fnCallback = undefined;
 				}
 			}
 		};
