@@ -47,7 +47,7 @@ sap.ui.define([
 				)
 			) {
 				delete oConnectorSpecificPropertyBag.version;
-			} else {
+			} else if (oFlexInfoSession.reloadFlexData) {
 				// a sign that we are in the RTA mode and allContexts query parameter should be set for flex/data request
 				if (oFlexInfoSession.initialAllContexts) {
 					oConnectorSpecificPropertyBag.allContexts = true;
