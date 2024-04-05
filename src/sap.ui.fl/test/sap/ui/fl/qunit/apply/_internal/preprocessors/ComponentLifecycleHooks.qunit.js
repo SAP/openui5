@@ -351,7 +351,7 @@ sap.ui.define([
 			window.sessionStorage.setItem("sap.ui.rta.restart.VENDOR", "MockCompName");
 			sandbox.stub(Utils, "getUshellContainer").returns({
 				getServiceAsync(sServiceName) {
-					if (sServiceName === "ShellNavigation") {
+					if (sServiceName === "ShellNavigationInternal") {
 						return Promise.resolve({
 							navigate() {
 								return true;
@@ -403,7 +403,7 @@ sap.ui.define([
 			]);
 			sandbox.stub(Utils, "getUshellContainer").returns({
 				getServiceAsync(sServiceName) {
-					if (sServiceName === "ShellNavigation") {
+					if (sServiceName === "ShellNavigationInternal") {
 						return Promise.resolve({
 							navigate() {
 								return true;

@@ -3171,9 +3171,9 @@ sap.ui.define([
 				"Navigation", "the Navigation service was loaded"
 			);
 			assert.strictEqual(
-				this.oModel.getUShellService("ShellNavigation"),
-				"ShellNavigation",
-				"the ShellNavigation service was loaded"
+				this.oModel.getUShellService("ShellNavigationInternal"),
+				"ShellNavigationInternal",
+				"the ShellNavigationInternal service was loaded"
 			);
 			assert.notOk(this.oModel.getUShellService("UnknownService"), "the UnknownService service was not loaded");
 		});
