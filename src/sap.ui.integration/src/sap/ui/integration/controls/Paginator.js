@@ -141,20 +141,31 @@ sap.ui.define([
 
 	Paginator.prototype._dataChanged = function() {
 		var oCard = this.getCard(),
-			oContent = oCard.getCardContent(),
-			oList,
-			iTotalCount,
-			bInitialized;
+			oContent = oCard.getCardContent();
 
-		if (!oContent || !oContent.isA("sap.ui.integration.cards.BaseContent") || !oContent.hasData()) {
+		if (!oContent || !oContent.isA("sap.ui.integration.cards.BaseContent")) {
+			this.setPageCount(0);
+			return;
+		}
+
+		oContent.getLoadDependenciesPromise()
+			.then((bLoadSuccessful) => {
+				if (bLoadSuccessful) {
+					this._initFromContent(oContent);
+				}
+			});
+	};
+
+	Paginator.prototype._initFromContent = function(oContent) {
+		if (!oContent.hasData()) {
 			this.setPageCount(0);
 			return;
 		}
 
 		this.setModel(oContent.getModel());
 
-		oList = oContent.getAggregation("_content");
-		bInitialized = EventProvider.hasListener(oList, "updateFinished", this._listUpdateFinishedHandler);
+		const oList = oContent.getAggregation("_content");
+		const bInitialized = EventProvider.hasListener(oList, "updateFinished", this._listUpdateFinishedHandler);
 
 		if (this._hasAnimation() && !bInitialized) {
 			oList.attachEvent("updateFinished", this._listUpdateFinishedHandler);
@@ -170,7 +181,7 @@ sap.ui.define([
 			this._clearAnimation(this);
 		}
 
-		iTotalCount = this.getTotalCount() || oContent.getDataLength();
+		const iTotalCount = this.getTotalCount() || oContent.getDataLength();
 
 		this.setPageCount(Math.ceil(iTotalCount / this.getPageSize()));
 		this.setPageNumber(Math.min(Math.max(0, this.getPageNumber()), this._getLastPageNumber()));
