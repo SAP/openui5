@@ -348,10 +348,9 @@
 			if (oParams.has("filter")) {
 				const oClearFilter = document.createElement("button");
 
+				oClearFilter.type = "button";
 				oClearFilter.innerText = "\u2715"; // X
 				oClearFilter.addEventListener("click", (ev) => {
-					ev.preventDefault();
-
 					oParams.delete("filter");
 					document.location.search = oParams.toString()
 						.replace(rSearchParamWithoutValue, '');
