@@ -316,13 +316,16 @@ sap.ui.define([
 		 * Returns the reference to the <code>ObjectPageLayout</code> for a given control.
 		 * @static
 		 * @param {sap.ui.core.Control} oControl - the control to find ObjectPageLayout for
+ 		 * @param {sap.ui.core.Control} oParentSubSection (optional) - the parent ObjectPageSubSection
 		 * @private
 		 * @returns {*} Object Page layout referance
 		 */
-		getClosestOPL: function (oControl) {
+		getClosestOPL: function (oControl, oParentSubSection) {
 
 			while (oControl && !(BaseObject.isObjectA(oControl, "sap.uxap.ObjectPageLayout"))) {
-				oControl = oControl.getParent();
+				oControl = oControl.getParent() || oParentSubSection;
+				// using oParentSubSection (if any) only the first time, otherwise if no OPL is found up the tree, loop will be infinite
+				oParentSubSection = null;
 			}
 
 			return oControl;

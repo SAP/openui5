@@ -2,6 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/core/ComponentContainer",
+	"sap/ui/core/Control",
 	"sap/m/Shell",
 	"sap/ui/core/Element",
 	"sap/ui/qunit/utils/nextUIUpdate",
@@ -12,7 +13,7 @@ sap.ui.define([
 	"sap/ui/core/mvc/View",
 	"sap/ui/core/mvc/XMLView"
 ],
-function(ComponentContainer, Shell, Element, nextUIUpdate, BlockBase, ObjectPageLayout, ObjectPageSection, ObjectPageSubSection, View, XMLView) {
+function(ComponentContainer, Control, Shell, Element, nextUIUpdate, BlockBase, ObjectPageLayout, ObjectPageSection, ObjectPageSubSection, View, XMLView) {
 	"use strict";
 
 	QUnit.module("BlockBase");
@@ -265,17 +266,20 @@ function(ComponentContainer, Shell, Element, nextUIUpdate, BlockBase, ObjectPage
 
 		oOPL.attachEventOnce("onAfterRenderingDOMReady", function () {
 
-			// Setup
-			createSpy.resetHistory();
+			// Wait for views of other blocks to be created --> as connectToModels is now called async
+			setTimeout(function () {
+				// Setup
+				createSpy.resetHistory();
 
-			// Act: request create the same view more than once
-			oBlock.createView(oExpandViewMetadata);
-			oBlock.createView(oExpandViewMetadata); // request the same view twice
+				// Act: request create the same view more than once
+				oBlock.createView(oExpandViewMetadata);
+				oBlock.createView(oExpandViewMetadata); // request the same view twice
 
-			// Check
-			oBlock.attachEventOnce("viewInit", function () {
-				assert.ok(createSpy.calledOnce, "creation is called once only");
-				done();
+				// Check
+				oBlock.attachEventOnce("viewInit", function () {
+					assert.ok(createSpy.calledOnce, "creation is called once only");
+					done();
+				});
 			});
 		});
 	});
@@ -354,6 +358,59 @@ function(ComponentContainer, Shell, Element, nextUIUpdate, BlockBase, ObjectPage
 			done();
 		});
 
+	});
+
+	QUnit.module("LazyLoading with BlockBase", {
+
+		beforeEach: function (assert) {
+			var done = assert.async();
+			XMLView.create({
+				id: "UxAP-ObjectPageLazyLoadingWithBlocks",
+				viewName: "view.UxAP-ObjectPageLazyLoadingWithBlocks"
+			}).then(function(oView) {
+				this.oObjectPageInfoView = oView;
+				done();
+			}.bind(this));
+		},
+		afterEach: function () {
+			this.oObjectPageInfoView.destroy();
+		}
+	});
+
+	QUnit.test("Check updateBindings for visible and not visible blocks", function (assert) {
+		// Arrange
+		var oOPL = this.oObjectPageInfoView.byId("ObjectPageLayout"),
+			oLastSubSection = this.oObjectPageInfoView.byId("last"),
+			oBlock = oLastSubSection.getBlocks()[0],
+			oSpy = this.spy(Control.prototype, "updateBindings"),
+			done = assert.async();
+
+		this.oObjectPageInfoView.placeAt('qunit-fixture');
+		nextUIUpdate.runSync();
+
+		function checkSpyCalledWithValue() {
+			return oSpy.getCalls().some(function (oCall) {
+				return oCall.thisValue === oBlock;
+			});
+		}
+
+		oOPL.attachEventOnce("onAfterRenderingDOMReady", function () {
+			// Giving time for all async connectToModels calls
+			setTimeout(function () {
+				// Assert
+				assert.notOk(checkSpyCalledWithValue(), "update bindings is NOT called for BlockBase in last SubSection, as it is still not visible");
+
+				// Act - scroll to last SubSection
+				oOPL.scrollToSection(oLastSubSection.getId());
+
+				setTimeout(function () {
+					// Assert
+					assert.ok(checkSpyCalledWithValue, "update bindings is  called for BlockBase in last SubSection, as it is visible now");
+
+					done();
+				}, 300);
+			});
+		});
 	});
 
 });
