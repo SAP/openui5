@@ -110,7 +110,7 @@ sap.ui.define(["sap/ui/base/Object", "sap/ui/core/mvc/XMLView"], function (BaseO
 	 */
 
 
-	/***
+	/**
 	 *
 	 * Gets the view for the particular control
 	 * @returns {object} returns the view object
@@ -122,7 +122,7 @@ sap.ui.define(["sap/ui/base/Object", "sap/ui/core/mvc/XMLView"], function (BaseO
 		return this.getControlOfType(this.getControl(), View);
 	};
 
-	/***
+	/**
 	 * Helper method to get control view
 	 * @private
 	 */
@@ -137,7 +137,7 @@ sap.ui.define(["sap/ui/base/Object", "sap/ui/core/mvc/XMLView"], function (BaseO
 		return undefined;
 	};
 
-	/***
+	/**
 	 *
 	 * Converts the array of objects with key properties to map and adds addIndex
 	 * @param {Array} aArray expects array of objects with key property

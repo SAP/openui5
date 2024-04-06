@@ -41,7 +41,7 @@ sap.ui.define(["sap/ui/thirdparty/jquery"], function (jQuery) {
 			}
 		},
 
-		/***
+		/**
 		 * Gets the selection state for a package/module.
 		 * Package names must end with a slash, modules must not.
 		 * If an ancestor package of the package/module does not exists, undefined is returned.

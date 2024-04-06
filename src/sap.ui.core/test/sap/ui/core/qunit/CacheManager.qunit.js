@@ -170,7 +170,7 @@ sap.ui.define([
 		QUnit.module("Proxy: each API call is being forwarded to the real implementation", {
 			beforeEach: function(assert) {
 
-				/***
+				/**
 				 * Executes given method with given arguments and verifies the execution had happened.
 				 * @param {string} sMethod the method
 				 * @param {string[]} args the arguments to call the method with
@@ -190,7 +190,7 @@ sap.ui.define([
 					});
 				};
 
-				/***
+				/**
 				 * Executes given method with given arguments and verifies the execution had happened.
 				 * @param {string} sMethod CacheManager method to call
 				 * @param {any[]} args Arguments to call the method with

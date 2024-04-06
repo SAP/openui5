@@ -29,10 +29,10 @@ sap.ui.define(["sap/ui/base/Object", "sap/m/p13n/Popup", "sap/ui/core/Lib"], fun
 		}
 	});
 
-	/***
+	/**
 	 *
 	 * Returns singleton instance of PersPopupManager
-	 * @internal
+	 * @private
 	 */
 
 	PersPopupManager.getInstance = function () {
