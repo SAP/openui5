@@ -16,13 +16,15 @@ sap.ui.define([
 	// this should normally happen in the control which listens to the event
 	// also wait for the result so that the scope check in CustomStyleClassSupport can work
 	await new Promise((resolve) => {
-		const value = Parameters.get({
-			name : "sapUiBrand",
-			callback: resolve
+		Theming.attachApplied(() => {
+			const value = Parameters.get({
+				name : "sapUiTstTextColor", // a parameter which is defined by sap.ui.testlib only
+				callback: resolve
+			});
+			if ( value !== undefined ) {
+				resolve();
+			}
 		});
-		if ( value !== undefined ) {
-			resolve();
-		}
 	});
 
 	// define control

@@ -66,7 +66,7 @@ sap.ui.define(function() {
 				},
 				ui5: {
 					libs: "sap.ui.testlib", // only required to establish a CSS scope 'sapTestScope'
-					theme: "sap_hcb"
+					theme: "test_theme_scoped"
 				}
 			},
 			DuplicateIds: {

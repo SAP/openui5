@@ -1,0 +1,28 @@
+.sapUiTstBtn {
+	color: black;
+	background-color: white;
+	height: 21px;
+	vertical-align: top;
+	border: 1px solid black;
+	padding: 0 5px;
+	margin: 0;
+	cursor: pointer;
+	cursor: hand;
+}
+
+.sapUiTstBtnDsbl,
+.sapUiTstBtnDsbl:focus {
+	cursor: default;
+	color: #666666;
+	border-color: black;
+	background-color: white;
+}
+
+.sapUiTstBtnStd:focus,
+.sapUiTstBtnStd:hover {
+	border-color: black;
+	background-color: grey;
+}
+
+/* Inline theming parameters */
+#sap-ui-theme-sap\.ui\.testlib{background-image:url('data:text/plain;utf-8,%7B%22default%22%3A%7B%22sapUiTstTextColor%22%3A%22%23fafafa%22%2C%22sapUiText%22%3A%22%23ffffff%22%2C%22sapUiColor%22%3A%22%23ffffff%22%2C%22sapUiTestUrl1%22%3A%22url(..%2F..%2Fimg1.jpg)%22%2C%22sapUiTestUrl2%22%3A%22url(%27..%2F..%2Ffoo%2Fimg2.jpg%27)%22%2C%22sapUiTestUrl3%22%3A%22url(%5C%22..%2F..%2Ffoo%2Fbar%2Fimg3.jpg%5C%22)%22%2C%22sapUiTestUrl4%22%3A%22url()%22%2C%22sapUiTestUrl5%22%3A%22url(%27%27)%22%2C%22sapUiTestUrl6%22%3A%22url(%5C%22%5C%22)%22%2C%22sapUiTestUrl7%22%3A%22url(%27blob%3Ahttp%3A%2F%2Fexample.com%2F6e88648c-00e1-4512-9695-5b702d8455b4%27)%22%2C%22sapUiTestUrl8%22%3A%22url(%27data%3Atext%2Fplain%3Butf-8%2Cfoo%27)%22%2C%22sapUiTestUrl9%22%3A%22none%22%7D%2C%22scopes%22%3A%7B%22sapTestScope%22%3A%7B%22sapUiText%22%3A%22%23000000%22%2C%22sapUiTstTextColor%22%3A%22%23000000%22%7D%2C%22sapTestScopePlus%22%3A%7B%22sapUiText%22%3A%22%23333333%22%7D%7D%7D')};
