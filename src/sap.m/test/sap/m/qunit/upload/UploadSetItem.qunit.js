@@ -3,23 +3,15 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/m/upload/UploadSet",
 	"sap/m/upload/UploadSetItem",
-	"sap/m/upload/UploadSetRenderer",
-	"sap/m/Toolbar",
-	"sap/m/Label",
-	"sap/m/ListItemBaseRenderer",
-	"sap/m/Dialog",
-	"sap/ui/Device",
-	"sap/m/MessageBox",
 	"sap/ui/model/json/JSONModel",
 	"./UploadSetTestUtils",
 	"sap/ui/core/IconPool",
 	"sap/m/upload/Uploader",
 	"sap/ui/core/Item",
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/core/Element",
 	"sap/m/ObjectStatus"
-], function (KeyCodes, UploadSet, UploadSetItem, UploadSetRenderer, Toolbar, Label, ListItemBaseRenderer,
-			 Dialog, Device, MessageBox, JSONModel, TestUtils, IconPool, Uploader, Item, oCore, Element,ObjectStatus) {
+], function (KeyCodes, UploadSet, UploadSetItem, JSONModel, TestUtils, IconPool, Uploader, Item, nextUIUpdate, Element,ObjectStatus) {
 	"use strict";
 
 	function getData() {
@@ -40,7 +32,7 @@ sap.ui.define([
 		};
 	}
 	QUnit.module("UploadSetItem general functionality", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oUploadSet = new UploadSet("uploadSet", {
 				items: {
 					path: "/items",
@@ -49,7 +41,7 @@ sap.ui.define([
 				}
 			}).setModel(new JSONModel(getData()));
 			this.oUploadSet.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oUploadSet.destroy();
@@ -140,7 +132,7 @@ sap.ui.define([
 	/* Keyboard */
 	/* ======== */
 
-	QUnit.test("Keyboard actions [Enter, Delete, Escape, F2] are handled properly.", function (assert) {
+	QUnit.test("Keyboard actions [Enter, Delete, Escape, F2] are handled properly.", async function (assert) {
 		assert.expect(7);
 		var oItem = this.oUploadSet.getItems()[0],
 			oTarget = {id: oItem.getListItem().getId()},
@@ -182,7 +174,7 @@ sap.ui.define([
 		oDialog.destroy();
 
 		oItem._setInEditMode(true);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		oItem.$("fileNameEdit").addClass( "sapMInputFocused" );
 		this.oUploadSet.onkeydown({
 			target: oTarget,
@@ -328,7 +320,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Icon for UploadSetItem is set based on mimeType, if mimeType is present", function (assert) {
+	QUnit.test("Icon for UploadSetItem is set based on mimeType, if mimeType is present", async function (assert) {
 
 		//Arrange
 		var oItem = new UploadSetItem({
@@ -338,7 +330,7 @@ sap.ui.define([
 
 		//Act
 		this.oUploadSet.insertItem(oItem);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		var oIcon = this.oUploadSet.getItems()[0]._oIcon.getSrc();
 
 		//Assert
@@ -346,7 +338,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Check header fields in UploadSet", function (assert) {
+	QUnit.test("Check header fields in UploadSet", async function (assert) {
 		//Setup
 		var oItem = new UploadSetItem({
 			fileName: "fileName.xlsx",
@@ -363,7 +355,7 @@ sap.ui.define([
 		this.oUploadSet.insertHeaderField(oUSHeaderField);
 
 		this.oUploadSet.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		//Act
 		this.oUploadSet._uploadItemIfGoodToGo(oItem);
@@ -373,7 +365,7 @@ sap.ui.define([
 		assert.equal(oUploaderSpy.args[0][1][0].getText(), "value1", "Header is selected from UploadSet");
 	});
 
-	QUnit.test("Check header fields in UploadSetItem", function (assert) {
+	QUnit.test("Check header fields in UploadSetItem", async function (assert) {
 		//Setup
 		var oItem = new UploadSetItem({
 			fileName: "fileName.xlsx",
@@ -396,7 +388,7 @@ sap.ui.define([
 		oItem.insertHeaderField(oUSIHeaderField);
 
 		this.oUploadSet.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		//Act
 		this.oUploadSet._uploadItemIfGoodToGo(oItem);
@@ -406,7 +398,7 @@ sap.ui.define([
 		assert.equal(oUploaderSpy.args[0][1][0].getText(), "value2", "Header is selected from UploadSetItem");
 	});
 
-	QUnit.test("Test for uploadUrl property", function (assert) {
+	QUnit.test("Test for uploadUrl property", async function (assert) {
 		//Setup
 		var oItem = this.oUploadSet.getItems()[0];
 		var oUploader = new Uploader();
@@ -416,7 +408,7 @@ sap.ui.define([
 		this.oUploadSet.setAggregation("uploader", oUploader);
 
 		this.oUploadSet.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		//Act
 		oUploader.uploadItem(oItem);
@@ -428,12 +420,12 @@ sap.ui.define([
 		oUploader.destroy();
 	});
 
-	QUnit.test("Test for thumnail url undefined", function (assert) {
+	QUnit.test("Test for thumnail url undefined", async function (assert) {
 		//Setup
 		var oItem = this.oUploadSet.getItems()[0];
 		var oIconPoolSpy = this.spy(IconPool, "createControlByURI");
 		this.oUploadSet.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		//Assert
 		oItem.setThumbnailUrl();
@@ -443,34 +435,34 @@ sap.ui.define([
 		assert.ok(oIconPoolSpy.called, "XML Http request is made with UploadSet item's URL");
 	});
 
-	QUnit.test("Test for thumnail url when mediaType not defined", function (assert) {
+	QUnit.test("Test for thumnail url when mediaType not defined", async function (assert) {
 		//Setup
 		var oItem = this.oUploadSet.getItems()[0];
 		this.oUploadSet.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		//Assert
 		oItem.setFileName("sample");
 		oItem.setThumbnailUrl();
 		oItem.setMediaType();
 
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(oItem._getIcon().getSrc(), 'sap-icon://document', "Default document icon is set as list item icon");
 	});
 
-	QUnit.test("Test for accessing edit state of the item", function (assert) {
+	QUnit.test("Test for accessing edit state of the item", async function (assert) {
 		//Setup
 		var oItem = this.oUploadSet.getItems()[0];
 		this.oUploadSet.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		//Assert
 		oItem.setFileName("sample");
 		oItem.setThumbnailUrl();
 		oItem.setMediaType();
 
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(oItem.getEditState(), false, "Initial edit state of the item returned sucessfully.");
 
@@ -538,7 +530,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("UploadSetItem Accessibility Tests", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.fnSpy = this.spy(Element.prototype, "setTooltip");
 			this.oUploadSet = new UploadSet("uploadSet", {
 				items: {
@@ -548,7 +540,7 @@ sap.ui.define([
 				}
 			}).setModel(new JSONModel(getData()));
 			this.oUploadSet.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oUploadSet.destroy();
@@ -579,7 +571,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("UploadSetItems now accespts markersAsStatus aggregation", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oUploadSet = new UploadSet("upload-set",{
 				items: new UploadSetItem("upload-set-item", {
 					markersAsStatus: new ObjectStatus("obj-status", {
@@ -588,7 +580,7 @@ sap.ui.define([
 					})
 				})
 			}).placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oUploadSet.destroy();
@@ -609,7 +601,7 @@ sap.ui.define([
 		}
 	});
 
-	function createUploadSetForProperties(data) {
+	async function createUploadSetForProperties(data) {
 		this.oUploadSet = new UploadSet("uploadSet", {
 			items: {
 				path: "/items",
@@ -618,7 +610,7 @@ sap.ui.define([
 			}
 		}).setModel(new JSONModel(data));
 		this.oUploadSet.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 	}
 
 	function getDataForRendering(oParams) {
@@ -692,9 +684,9 @@ sap.ui.define([
 			expected: ["sapMObjStatus", "sapUiHiddenPlaceholder", "sapMUCSeparator", "sapMObjStatus"]
 		}
 	].forEach(function(data) {
-		QUnit.test(data.message, function (assert) {
+		QUnit.test(data.message, async function (assert) {
 			// Arrange
-			createUploadSetForProperties.call(this, getDataForRendering({statuses: data.statuses}));
+			await createUploadSetForProperties.call(this, getDataForRendering({statuses: data.statuses}));
 
 			// Assert
 			assertClasses(assert, getStatusesDomRefs.call(this, assert), data.expected);
@@ -723,9 +715,9 @@ sap.ui.define([
 			expected: ["sapMUCAttr", "sapUiHiddenPlaceholder", "sapMUCSeparator", "sapMUCAttr"]
 		}
 	].forEach(function(data) {
-		QUnit.test(data.message, function (assert) {
+		QUnit.test(data.message, async function (assert) {
 			// Arrange
-			createUploadSetForProperties.call(this, getDataForRendering({attributes: data.attributes}));
+			await createUploadSetForProperties.call(this, getDataForRendering({attributes: data.attributes}));
 
 			// Assert
 			assertClasses(assert, getAttributesDomRefs.call(this, assert), data.expected);

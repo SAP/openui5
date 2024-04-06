@@ -42,7 +42,7 @@ sap.ui.define([
 		};
 
 		oPdfViewer = TestUtils.createPdfViewer(oOptions);
-		//TestUtils.renderPdfViewer(oPdfViewer);
+		//await TestUtils.renderPdfViewer(oPdfViewer);
 
 		TestUtils.wait(5000)()
 			.then(done);

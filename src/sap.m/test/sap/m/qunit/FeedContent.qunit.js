@@ -3,8 +3,8 @@ sap.ui.define([
 	"sap/m/FeedContent",
 	"sap/ui/core/TooltipBase",
 	"sap/m/library",
-	"sap/ui/core/Core"
-], function(FeedContent, TooltipBase, library, oCore) {
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(FeedContent, TooltipBase, library, nextUIUpdate) {
 	"use strict";
 
 	// shortcut for sap.m.ValueColor
@@ -17,7 +17,7 @@ sap.ui.define([
 	 * @deprecated Since version 1.38.0.
 	 */
 	QUnit.module("Rendering test - sap.m.FeedContent", {
-		beforeEach : function() {
+		beforeEach : async function() {
 			this.oFeedContent = new FeedContent("feed-cnt", {
 				size : Size.M,
 				contentText : "@@notify Great outcome of the Presentation today. The new functionality and the new design was well received.",
@@ -26,7 +26,7 @@ sap.ui.define([
 				truncateValueTo : 4,
 				value : "-888"
 			}).placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach : function () {
 			this.oFeedContent.destroy();
@@ -45,14 +45,14 @@ sap.ui.define([
 	 * @deprecated Since version 1.38.0.
 	 */
 	QUnit.module("Functional tests - sap.m.FeedContent", {
-		beforeEach : function() {
+		beforeEach : async function() {
 			this.oFeedContent = new FeedContent({
 				size : Size.M,
 				valueColor : ValueColor.Neutral,
 				truncateValueTo : 4,
 				value : "-888"
 			}).placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach : function () {
 			this.oFeedContent.destroy();
@@ -109,14 +109,14 @@ sap.ui.define([
 	 * @deprecated Since version 1.38.0.
 	 */
 	QUnit.module("Events test", {
-		beforeEach : function() {
+		beforeEach : async function() {
 			this.oFeedContent = new FeedContent({
 				size : Size.M,
 				valueColor : ValueColor.Neutral,
 				truncateValueTo : 4,
 				value : "-888"
 			}).placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach : function() {
 			this.oFeedContent.destroy();

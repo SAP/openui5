@@ -10,16 +10,16 @@ sap.ui.define("sap.m.qunit.UploadCollectionToolbar", [
 	"sap/m/OverflowToolbar",
 	"sap/m/ToggleButton",
 	"sap/base/Log",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function (UploadCollection, UploadCollectionToolbarPlaceholder, Title, ToolbarSpacer, FileUploader, Button,
-			 OverflowToolbar, ToggleButton, Log, oCore) {
+			 OverflowToolbar, ToggleButton, Log, nextUIUpdate) {
 	"use strict";
 
 	QUnit.module("Toolbar Default", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oUploadCollection = new UploadCollection("noToolbarTest", {});
 			this.oUploadCollection.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oUploadCollection.destroy();
@@ -44,7 +44,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionToolbar", [
 		}
 	});
 
-	QUnit.test("A Toolbar without place holder is provided. Test that an info log has been written", function (assert) {
+	QUnit.test("A Toolbar without place holder is provided. Test that an info log has been written", async function (assert) {
 		//Arrange
 		var oInfoLogStub = this.stub(Log, "info");
 
@@ -61,7 +61,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionToolbar", [
 			})
 		});
 		this.oUploadCollection.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		var bInfoTextWasFound = false;
 		var aStubCalls = oInfoLogStub.getCalls(); //Get correct call of Log.info(...)
@@ -77,7 +77,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionToolbar", [
 	});
 
 	QUnit.module("Toolbar Custom", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oUploadCollection = new UploadCollection("PHToolbarTest", {
 				toolbar: new OverflowToolbar({
 					content: [new Button("element1", {text: "Filter"}),
@@ -91,7 +91,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionToolbar", [
 				})
 			});
 			this.oUploadCollection.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oUploadCollection.destroy();

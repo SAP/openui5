@@ -5,10 +5,10 @@ sap.ui.define([
 	"sap/m/FeedContent",
 	"sap/m/Text",
 	"sap/m/library",
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/m/NumericContent",
 	"sap/m/GenericTile"
-], function(TileContent, NewsContent, FeedContent, Text, library, oCore, NumericContent, GenericTile ) {
+], function(TileContent, NewsContent, FeedContent, Text, library, nextUIUpdate, NumericContent, GenericTile ) {
 	"use strict";
 
 
@@ -17,9 +17,9 @@ sap.ui.define([
 
 
 	QUnit.module("Default Values", {
-		beforeEach : function() {
+		beforeEach : async function() {
 			this.oTileContent = new TileContent();
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach : function() {
 			this.oTileContent.destroy();
@@ -54,7 +54,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("TileContent Inside GenericTile",{
-		beforeEach : function(){
+		beforeEach : async function(){
 			this.tileContent = new TileContent({
 				content: new NumericContent({
 					icon: "sap-icon://world",
@@ -76,7 +76,7 @@ sap.ui.define([
 			//window.setTimeout(function () {this.tileContent.setFooter("Hours Missing")}, 1000);
 			this.tile.placeAt("qunit-fixture");
 			this.tileContent.setFooter("Hours Missing");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 		},
 
@@ -93,7 +93,7 @@ sap.ui.define([
 	 * @deprecated Since version 1.38.0.
 	 */
 	QUnit.module("Rendering", {
-		beforeEach : function() {
+		beforeEach : async function() {
 			this.oNewsTileContent = new TileContent("tc1", {
 				footer : "Current Quarter",
 				unit : "EUR",
@@ -105,7 +105,7 @@ sap.ui.define([
 				})
 			});
 			this.oNewsTileContent.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach : function() {
 			this.oNewsTileContent.destroy();
@@ -120,10 +120,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("Rendering of colored footer", {
-		beforeEach : function() {
+		beforeEach : async function() {
 			this.oTileContent = new TileContent();
 			this.oTileContent.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach : function() {
 			this.oTileContent.destroy();
@@ -134,26 +134,26 @@ sap.ui.define([
 		assert.ok(this.oTileContent.$("footer-text").hasClass("sapMTileCntFooterTextColorNeutral"), "Correct CSS class added");
 	});
 
-	QUnit.test("Critical CSS Class added", function(assert) {
+	QUnit.test("Critical CSS Class added", async function(assert) {
 		//Act
 		this.oTileContent.setFooterColor(ValueColor.Critical);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		//Assert
 		assert.ok(this.oTileContent.$("footer-text").hasClass("sapMTileCntFooterTextColorCritical"), "Correct CSS class added");
 	});
 
-	QUnit.test("Error CSS Class added", function(assert) {
+	QUnit.test("Error CSS Class added", async function(assert) {
 		//Act
 		this.oTileContent.setFooterColor(ValueColor.Error);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		//Assert
 		assert.ok(this.oTileContent.$("footer-text").hasClass("sapMTileCntFooterTextColorError"), "Correct CSS class added");
 	});
 
-	QUnit.test("Good CSS Class added", function(assert) {
+	QUnit.test("Good CSS Class added", async function(assert) {
 		//Act
 		this.oTileContent.setFooterColor(ValueColor.Good);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		//Assert
 		assert.ok(this.oTileContent.$("footer-text").hasClass("sapMTileCntFooterTextColorGood"), "Correct CSS class added");
 	});
@@ -162,7 +162,7 @@ sap.ui.define([
 	 * @deprecated Since version 1.38.0.
 	 */
 	QUnit.module("Functional test", {
-		beforeEach : function() {
+		beforeEach : async function() {
 			this.oFeedTileContent = new TileContent("tc2", {
 				footer : "Current Quarter",
 				unit : "EUR",
@@ -175,7 +175,7 @@ sap.ui.define([
 				})
 			});
 			this.oFeedTileContent.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach : function() {
 			this.oFeedTileContent.destroy();
@@ -190,12 +190,12 @@ sap.ui.define([
 	});
 
 	QUnit.module("Protected property bRenderFooter", {
-		beforeEach : function() {
+		beforeEach : async function() {
 			this.oTileContent = new TileContent("tileContent", {
 				footer : "Current Quarter",
 				unit : "EUR"
 			}).placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach : function() {
 			this.oTileContent.destroy();
@@ -229,24 +229,24 @@ sap.ui.define([
 		assert.equal(this.oTileContent.invalidate.callCount, 0, "The control has not been invalidated.");
 	});
 
-	QUnit.test("Footer is not rendered in case _bRenderFooter is false", function(assert) {
+	QUnit.test("Footer is not rendered in case _bRenderFooter is false", async function(assert) {
 		//Arrange
 		this.oTileContent.setRenderFooter(false);
 
 		//Act
 		this.oTileContent.invalidate();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		//Assert
 		assert.ok(!document.getElementById("tileContent-footer-text"), "No footer has been rendered.");
 	});
 
 	QUnit.module("Protected property _bRenderContent", {
-		beforeEach : function() {
+		beforeEach : async function() {
 			this.oTileContent = new TileContent("tileContent", {
 				content: new Text()
 			}).placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach : function() {
 			this.oTileContent.destroy();
@@ -280,13 +280,13 @@ sap.ui.define([
 		assert.equal(this.oTileContent.invalidate.callCount, 0, "The control has not been invalidated.");
 	});
 
-	QUnit.test("Content is not rendered in case _bRenderContent is false", function(assert) {
+	QUnit.test("Content is not rendered in case _bRenderContent is false", async function(assert) {
 		//Arrange
 		this.oTileContent.setRenderContent(false);
 
 		//Act
 		this.oTileContent.invalidate();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		//Assert
 		assert.ok(!document.getElementById("tileContent-content"), "No content has been rendered.");
@@ -301,7 +301,7 @@ sap.ui.define([
 	/**
 	 * @deprecated Since version 1.38.0.
 	 */
-	QUnit.test("when both content and tile have tooltip", function(assert) {
+	QUnit.test("when both content and tile have tooltip", async function(assert) {
 		this.oTileContent =  new TileContent("tileContent", {
 			size : "Auto",
 			content : new FeedContent({
@@ -311,7 +311,7 @@ sap.ui.define([
 			tooltip: "fulltile"
 		});
 		this.oTileContent.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		var tooltip = "fulltile" + "\n" + "content " + "\n";
 		//Assert
 		assert.equal(document.getElementById("tileContent").title,tooltip);
@@ -320,7 +320,7 @@ sap.ui.define([
 	/**
 	 * @deprecated Since version 1.38.0.
 	 */
-	QUnit.test("when only content has tooltip", function(assert) {
+	QUnit.test("when only content has tooltip", async function(assert) {
 		this.oTileContent =  new TileContent("tileContent1", {
 			size : "Auto",
 			content : new FeedContent("feeditem", {
@@ -329,7 +329,7 @@ sap.ui.define([
 			})
 		});
 		this.oTileContent.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		//Assert
 		assert.equal(document.getElementById("tileContent1").title,"content " + "\n");
 	});
@@ -337,7 +337,7 @@ sap.ui.define([
 	/**
 	 * @deprecated Since version 1.38.0.
 	 */
-	QUnit.test("when only tile has tooltip", function(assert) {
+	QUnit.test("when only tile has tooltip", async function(assert) {
 		this.oTileContent =  new TileContent("tileContent2", {
 			content : new FeedContent("feed2", {
 				size : "Auto"
@@ -345,7 +345,7 @@ sap.ui.define([
 			tooltip: "fulltile"
 		});
 		this.oTileContent.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		//Assert
 		assert.equal(document.getElementById("tileContent2").title,"fulltile");
 	});

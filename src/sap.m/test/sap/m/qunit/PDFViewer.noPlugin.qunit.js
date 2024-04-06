@@ -27,7 +27,7 @@ sap.ui.define([
 		return;
 	}
 
-	QUnit.test("Test displaying of link when pdf plugin is not installed", function (assert) {
+	QUnit.test("Test displaying of link when pdf plugin is not installed", async function (assert) {
 		var done = assert.async();
 
 		var oModel = new JSONModel({
@@ -62,12 +62,12 @@ sap.ui.define([
 			assert.ok(oPdfViewer.$("toolbarDownloadButton").length === 1, "Download button is displayed in Auto mode");
 
 			oPdfViewer.setDisplayType(PDFViewerDisplayType.Embedded);
-			TestUtils.triggerRerender();
+			await TestUtils.triggerRerender();
 			assert.equal(oPdfViewer.getDisplayType(), PDFViewerDisplayType.Embedded, "Set displayType to Embedded mode");
 			assert.ok(fnIsContentDisplayed(), "Content is displayed in Embedded mode");
 
 			oPdfViewer.setDisplayType(PDFViewerDisplayType.Link);
-			TestUtils.triggerRerender();
+			await TestUtils.triggerRerender();
 			assert.equal(oPdfViewer.getDisplayType(), PDFViewerDisplayType.Link, "Set displayType to Link mode");
 			assert.ok(oPdfViewer.$("toolbarDownloadButton").length === 1, "Download button is displayed in Link mode");
 			assert.notOk(fnIsContentDisplayed(), "Content is not displayed in Link mode");
@@ -78,7 +78,7 @@ sap.ui.define([
 			assert.ok(oPdfViewer.$("toolbarDownloadButton").length === 1, "Download button is displayed in Link mode always");
 
 			oPdfViewer.setDisplayType(PDFViewerDisplayType.Embedded);
-			TestUtils.triggerRerender();
+			await TestUtils.triggerRerender();
 			assert.equal(oPdfViewer.getDisplayType(), PDFViewerDisplayType.Embedded, "Set displayType to Embedded mode");
 			assert.ok(fnIsErrorContentDisplayed(), "Error Content is displayed in Embedded mode when pdf plugin is disabled");
 
@@ -87,7 +87,7 @@ sap.ui.define([
 
 		oPdfViewer = TestUtils.createPdfViewer(oOptions);
 		oPdfViewer.setModel(oModel);
-		TestUtils.renderPdfViewer(oPdfViewer);
+		await TestUtils.renderPdfViewer(oPdfViewer);
 
 		if (!Device.system.desktop) {
 			// If a device is desktop and PDF plug-in is disable, assert from 'error' event is run

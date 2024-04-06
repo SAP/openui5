@@ -3,14 +3,13 @@ sap.ui.define([
 	"sap/m/NewsContent",
 	"sap/m/MessageToast",
 	"sap/ui/core/TooltipBase",
-	"sap/m/library",
-	"sap/ui/core/Core"
-], function(NewsContent, MessageToast, TooltipBase, library, oCore) {
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(NewsContent, MessageToast, TooltipBase, nextUIUpdate) {
 	"use strict";
 
 
 	QUnit.module("Basic rendering", {
-		beforeEach : function() {
+		beforeEach : async function() {
 			this.oNewsContent = new NewsContent("news-cnt", {
 				contentText : "SAP Unveils Powerful New Player Comparison Tool Exclusively on NFL.com",
 				subheader : "August 21, 2013",
@@ -20,19 +19,19 @@ sap.ui.define([
 				}
 			});
 			this.oNewsContent.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach : function() {
 			this.oNewsContent.destroy();
 		}
 	});
 
-	QUnit.test("News Content rendered.", function(assert) {
+	QUnit.test("News Content rendered.", async function(assert) {
 		// Arrange
 		var oSpy = sinon.spy(this.oNewsContent, "_setPointerOnContentText");
 		// Act
 		this.oNewsContent.invalidate();
-		oCore.applyChanges();
+		await nextUIUpdate();
 		// Assert
 		assert.ok(document.getElementById("news-cnt"), "NewsContent was rendered successfully");
 		assert.ok(document.getElementById("news-cnt-content-text"), "Content text was rendered successfully");
@@ -40,20 +39,20 @@ sap.ui.define([
 		assert.equal(oSpy.callCount, 1, "During rendering _setPointerOnContentText has been called");
 	});
 
-	QUnit.test("HTML ContentText", function(assert) {
+	QUnit.test("HTML ContentText", async function(assert) {
 		//Act
 		this.oNewsContent.setContentText("My <u>new</u> Text");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		//Assert
 		assert.equal(this.oNewsContent.getProperty("contentText"), "My <u>new</u> Text", "ContentText text has HTML");
 		assert.equal(this.oNewsContent._oContentText.getHtmlText(), "My <u>new</u> Text", "Inner text has HTML");
 		assert.equal(document.getElementById("news-cnt-content-text").innerHTML, "My <u style=\"position: static !important;\">new</u> Text", "Inner text is parsed in DOM");
 	});
 
-	QUnit.test("HTML Subheader", function(assert) {
+	QUnit.test("HTML Subheader", async function(assert) {
 		//Act
 		this.oNewsContent.setSubheader("My <u>new</u> Text");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		//Assert
 		assert.equal(this.oNewsContent.getProperty("subheader"), "My <u>new</u> Text", "Subheader text has HTML");
 		assert.equal(this.oNewsContent._oSubHeaderText.getHtmlText(), "My <u>new</u> Text", "Inner text has HTML");
@@ -61,10 +60,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("Functional tests", {
-		beforeEach : function() {
+		beforeEach : async function() {
 			this.oNewsContent = new NewsContent({
 			}).placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach : function () {
 			this.oNewsContent.destroy();
@@ -137,13 +136,13 @@ sap.ui.define([
 
 
 	QUnit.module("Events test", {
-		beforeEach : function() {
+		beforeEach : async function() {
 			this.oNewsContent = new NewsContent({
 				contentText : "SAP Unveils Powerful New Player Comparison Tool Exclusively on NFL.com",
 				subheader : "August 21, 2013",
 				tooltip : "Test tooltip"
 			}).placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach : function() {
 			this.oNewsContent.destroy();

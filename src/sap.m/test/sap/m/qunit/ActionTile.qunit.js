@@ -14,7 +14,8 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/m/ContentConfig",
 	"sap/ui/core/theming/Parameters",
-	"sap/m/Link"
+	"sap/m/Link",
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	ActionTile,
 	ActionTileContent,
@@ -30,7 +31,8 @@ sap.ui.define([
 	JSONModel,
 	ContentConfig,
 	Parameters,
-	Link
+	Link,
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -63,7 +65,7 @@ sap.ui.define([
 	});
 
     QUnit.module("S4 home Tiles", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			var oModel = new JSONModel({
 				attributes: [
 					{
@@ -139,7 +141,7 @@ sap.ui.define([
 				]
 			}).placeAt("qunit-fixture");
 
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
             this.oToDo.destroy();
@@ -193,7 +195,7 @@ sap.ui.define([
 		assert.equal(this.oSituation.getDomRef().getAttribute("aria-label"),this.oSituation._getAriaText(),"Aria-Label has been rendered Successfully");
 	});
 
-	QUnit.test("Tooltip,aria-label generation on tasks cards when there are less than four attributes", function(assert) {
+	QUnit.test("Tooltip,aria-label generation on tasks cards when there are less than four attributes", async function(assert) {
 		//Arrange
 		var oNewModel = new JSONModel({
 			attributes: [
@@ -211,7 +213,7 @@ sap.ui.define([
 			]
 		});
 		this.oToDo.setModel(oNewModel);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		this.oToDo.getDomRef().dispatchEvent(new Event("mouseenter"));
 		//Act
 		var sToolTip = this.oToDo.getDomRef().getAttribute("title");
@@ -221,22 +223,22 @@ sap.ui.define([
 		assert.equal(sAriaLabel,this.oToDo._getAriaText(),"Aria-label successfully generated");
 	});
 
-	QUnit.test("Setting the width through property", function(assert) {
+	QUnit.test("Setting the width through property", async function(assert) {
 		//Arrange
 		this.oToDo.setWidth("25rem");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		//Assert
 		assert.equal(getComputedStyle(this.oToDo.getDomRef()).width,"400px","Width set correctly");
 	});
 
-	QUnit.test("Setting pressEnabled property", function(assert) {
+	QUnit.test("Setting pressEnabled property", async function(assert) {
 		assert.ok(this.oToDo.getDomRef().classList.contains("sapMPointer"),"Hand icon would be visible");
 		this.oToDo.setPressEnabled(false);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.ok(this.oToDo.getDomRef().classList.contains("sapMAutoPointer"),"Hand icon won't be visible");
 	});
 
-	QUnit.test("Setting enableNavigationButton property", function(assert) {
+	QUnit.test("Setting enableNavigationButton property", async function(assert) {
 		//Assert
 		assert.notOk(this.oToDo.getEnableNavigationButton(),"By default enableActionButton property has been set to false");
 		assert.ok(this.oToDo.hasStyleClass("sapMATHideActionButton"),"Style class has been added sucessfully");
@@ -245,7 +247,7 @@ sap.ui.define([
 		//Arrange
 		this.oToDo.setEnableNavigationButton(true);
 		this.oSituation.setEnableNavigationButton(true);
-		oCore.applyChanges();
+		await nextUIUpdate();
 		//Assert
 		assert.notOk(this.oToDo.hasStyleClass("sapMATHideActionButton"),"Style class should not get added");
 		assert.notOk(this.oSituation.hasStyleClass("sapMATHideActionButton"),"Style class should not get added");
@@ -280,15 +282,15 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("One press event has been attached to the link after rerendering the tile", function(assert) {
+	QUnit.test("One press event has been attached to the link after rerendering the tile", async function(assert) {
 		this.oToDo.setHeader("Demo Tile");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		var oLink = this.oToDo.getTileContent()[0].getAttributes()[1].getContentConfig().getInnerControl();
 		assert.equal(oLink.mEventRegistry.press.length,1,"Only one event has been attached to the press event of the link");
 
 	});
 
-	QUnit.test("ActionTileContent: Header Link Tests", function (assert) {
+	QUnit.test("ActionTileContent: Header Link Tests", async function (assert) {
 		//setup action tile content
 		var oActionTileContent = new ActionTileContent("action-tile-content", {
 			headerLink: new Link()
@@ -300,7 +302,7 @@ sap.ui.define([
 			valueColor:"Critical",
 			tileContent: oActionTileContent
 		}).placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		//should only render header link if present
 		assert.ok(document.getElementById("action-tile-content-header-link"), "header link rendered");
@@ -309,12 +311,12 @@ sap.ui.define([
 		oActionTileContent.setHeaderLink();
 		oActionTileContent.setPriority("Medium");
 		oActionTileContent.setPriorityText("Medium Priority");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.ok(document.getElementById("action-tile-content-priority-value"), "priority rendered");
 
 		//should render header link even if priority is present
 		oActionTileContent.setHeaderLink(new Link());
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.ok(document.getElementById("action-tile-content-header-link"), "header link rendered");
 	});
 });

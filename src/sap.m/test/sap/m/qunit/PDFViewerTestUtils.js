@@ -5,8 +5,8 @@ sap.ui.define([
 	"sap/m/PDFViewer",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/Device",
-	"sap/ui/core/Core"
-], function ($, PDFViewer, JSONModel, Device, oCore) {
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function ($, PDFViewer, JSONModel, Device, nextUIUpdate) {
 	"use strict";
 
 	var testUtils = {};
@@ -49,7 +49,7 @@ sap.ui.define([
 			sTestName = oOptions.testName ? oOptions.testName : index.toString(),
 			oPdfViewer = null;
 
-		QUnit.test(sTestName, function (assert) {
+		QUnit.test(sTestName, async function (assert) {
 			var sResponseHttpCode = oOptions.setup.httpCode;
 			var bExpectLoad = oOptions.expected.load;
 			var bExpectError = oOptions.expected.error;
@@ -109,7 +109,7 @@ sap.ui.define([
 
 			oPdfViewer = that.createPdfViewer(oComponentOptions);
 			oPdfViewer.setModel(oModel);
-			that.renderPdfViewer(oPdfViewer);
+			await that.renderPdfViewer(oPdfViewer);
 		});
 	}.bind(testUtils);
 
@@ -118,13 +118,13 @@ sap.ui.define([
 		return pdfViewer;
 	};
 
-	testUtils.renderPdfViewer = function renderPdfViewer(oPdfViewer) {
+	testUtils.renderPdfViewer = async function renderPdfViewer(oPdfViewer) {
 		oPdfViewer.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 	};
 
-	testUtils.triggerRerender = function triggerRerender() {
-		oCore.applyChanges();
+	testUtils.triggerRerender = async function triggerRerender() {
+		await nextUIUpdate();
 	};
 
 	testUtils.wait = function wait(duration) {

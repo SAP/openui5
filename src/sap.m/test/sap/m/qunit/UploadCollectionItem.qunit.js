@@ -6,8 +6,8 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/ui/Device",
 	"sap/ui/core/util/File",
-	"sap/ui/core/Core"
-], function(UploadCollectionItem, ObjectAttribute, ObjectMarker, mlibrary, Device, File, oCore) {
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(UploadCollectionItem, ObjectAttribute, ObjectMarker, mlibrary, Device, File, nextUIUpdate) {
 	"use strict";
 
 
@@ -16,7 +16,7 @@ sap.ui.define([
 	var URLHelper = mlibrary.URLHelper;
 
 	QUnit.module("Initial Test deprecated properties", {
-		beforeEach : function() {
+		beforeEach : async function() {
 			this.oUploadCollectionItem = new UploadCollectionItem({
 				contributor : "Susan Baker",
 				documentId : "64469d2f-b3c4-a517-20d6-f91ebf85b9da",
@@ -29,7 +29,7 @@ sap.ui.define([
 				uploadedDate : "2014-07-30",
 				url : ""
 			});
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach : function() {
 			this.oUploadCollectionItem.destroy();
@@ -70,7 +70,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Deprecated properties with setter", {
-		beforeEach : function() {
+		beforeEach : async function() {
 			this.oUploadCollectionItem = new UploadCollectionItem({
 				documentId : "64469d2f-b3c4-a517-20d6-f91ebf85b9da",
 				enableEdit : true,
@@ -80,7 +80,7 @@ sap.ui.define([
 				thumbnailUrl : "",
 				url : ""
 			});
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach : function() {
 			this.oUploadCollectionItem.destroy();
@@ -108,14 +108,14 @@ sap.ui.define([
 	});
 
 	QUnit.module("Deprecated properties with pre-filled aggregation", {
-		beforeEach : function() {
+		beforeEach : async function() {
 			this.oUploadCollectionItem = new UploadCollectionItem({
 				attributes : [ new ObjectAttribute({
 					active : false,
 					text : "Test"
 				})]
 			});
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach : function() {
 			this.oUploadCollectionItem.destroy();
@@ -191,14 +191,14 @@ sap.ui.define([
 	});
 
 	QUnit.module("Test getter for all attributes", {
-		beforeEach : function() {
+		beforeEach : async function() {
 			this.oUploadCollectionItem = new UploadCollectionItem({
 				attributes : [ new ObjectAttribute({
 					active : false,
 					text : "Test"
 				})]
 			});
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach : function() {
 			this.oUploadCollectionItem.destroy();
@@ -225,14 +225,14 @@ sap.ui.define([
 	});
 
 	QUnit.module("UploadCollectionItem selected", {
-		beforeEach : function() {
+		beforeEach : async function() {
 			this.oUploadCollectionItem = new UploadCollectionItem({
 				attributes : [ new ObjectAttribute({
 					active : false,
 					text : "Test"
 				})]
 			});
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach : function() {
 			this.oUploadCollectionItem.destroy();
@@ -253,14 +253,14 @@ sap.ui.define([
 	});
 
 	QUnit.module("UploadCollectionItem with markers", {
-		beforeEach : function() {
+		beforeEach : async function() {
 			this.oUploadCollectionItem = new UploadCollectionItem({
 				markers : [ new ObjectMarker({
 					type : "Locked",
 					visibility : "IconOnly"
 				})]
 			});
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach : function() {
 			this.oUploadCollectionItem.destroy();
@@ -279,7 +279,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Download method - XMLHttpRequest", {
-		beforeEach : function() {
+		beforeEach : async function() {
 			this.oUploadCollectionItem = new UploadCollectionItem({
 				contributor : "Susan Baker",
 				documentId : "64469d2f-b3c4-a517-20d6-f91ebf85b9da",
@@ -292,7 +292,7 @@ sap.ui.define([
 				uploadedDate : "2014-07-30",
 				url : "/pathToTheFile/Woman_04.png"
 			});
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		initFakeServer: function(sResponseCode) {
 			this.aFakeRequest = this._oSandbox.useFakeServer();
@@ -361,7 +361,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Download Methods", {
-		beforeEach : function() {
+		beforeEach : async function() {
 			this.oUploadCollectionItem = new UploadCollectionItem({
 				contributor : "Susan Baker",
 				documentId : "64469d2f-b3c4-a517-20d6-f91ebf85b9da",
@@ -374,7 +374,7 @@ sap.ui.define([
 				uploadedDate : "2014-07-30",
 				url : "/pathToTheFile/Woman_04.png"
 			});
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach : function() {
 			this.oUploadCollectionItem.destroy();
