@@ -67,6 +67,9 @@ sap.ui.define([
 		}
 
 		this.spy(sap.ui.loader._, 'loadJSResourceAsync');
+		/**
+		 * @deprecated As of version 1.120
+		 */
 		this.spy(XMLHttpRequest.prototype, 'open');
 		this.spy(sap.ui, 'require');
 		/**
@@ -120,6 +123,9 @@ sap.ui.define([
 			// lib5 should load the json format as fallback
 			checkLibNotInitialized('testlibs.scenario1.lib5');
 			sinon.assert.calledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario1\/lib5\/library-preload\.js$/));
+			/**
+			 * @deprecated As of version 1.120
+			 */
 			sinon.assert.calledWith(XMLHttpRequest.prototype.open, "GET", sinon.match(/scenario1\/lib5\/library-preload\.json$/));
 			/**
 			 * @deprecated As of version 1.120
