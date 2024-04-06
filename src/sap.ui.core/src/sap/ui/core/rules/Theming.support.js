@@ -20,7 +20,7 @@ sap.ui.define([
 	// Rule Definitions
 	//**********************************************************
 
-	/***
+	/**
 	 * Checks for custom css files
 	 */
 	var oCssCheckCustomStyles = {
@@ -77,7 +77,7 @@ sap.ui.define([
 		}
 	};
 
-	/***
+	/**
 	 * Checks for custom styles applied on UI elements
 	 */
 	var oCssCheckCustomStylesThatAffectControls = {
@@ -136,7 +136,7 @@ sap.ui.define([
 		}
 	};
 
-	/***
+	/**
 	 * Checks for custom styles applied on UI elements
 	 *
 	 * @deprecated Since 1.119
