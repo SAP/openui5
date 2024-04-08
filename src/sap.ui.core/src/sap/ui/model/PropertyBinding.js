@@ -175,11 +175,8 @@ sap.ui.define([
 	 * @private
 	 */
 	PropertyBinding.prototype._rawToInternal = function(vValue) {
-		var oFormat;
 		if (this.oType && vValue !== null && vValue !== undefined) {
-			oFormat = this.oType.getModelFormat();
-			assert(oFormat && typeof oFormat.parse === "function", "The input format of " + this.oType + " should be an object with the 'parse' method");
-			vValue = oFormat.parse(vValue);
+			return this.oType.getModelFormat().parse(vValue);
 		}
 		return vValue;
 	};
@@ -191,11 +188,8 @@ sap.ui.define([
 	 * @private
 	 */
 	PropertyBinding.prototype._internalToRaw = function(vValue) {
-		var oFormat;
 		if (vValue !== null && vValue !== undefined) {
-			oFormat = this.oType.getModelFormat();
-			assert(oFormat && typeof oFormat.format === "function", "The model format of " + this.oType + " should be an object with the 'format' method");
-			vValue = oFormat.format(vValue);
+			return this.oType.getModelFormat().format(vValue);
 		}
 		return vValue;
 	};
