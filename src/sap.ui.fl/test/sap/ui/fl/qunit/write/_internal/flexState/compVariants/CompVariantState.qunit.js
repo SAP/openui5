@@ -280,6 +280,14 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("Given persist is called with public variant with favorite check", function(assert) {
+			sandbox.stub(Settings, "getInstanceOrUndef").returns({
+				isPublicLayerAvailable() {
+					return true;
+				},
+				getUserId() {
+					return "userA";
+				}
+			});
 			const sPersistencyKey = "persistency.key";
 			assert.equal(CompVariantState.hasDirtyChanges(sComponentId), false, "hasDirtyChanges is false at beginning");
 			const oVariant = CompVariantState.addVariant({
@@ -296,6 +304,22 @@ sap.ui.define([
 				id: oVariant.getVariantId(),
 				isUserDependent: true,
 				favorite: true,
+				reference: sComponentId,
+				persistencyKey: sPersistencyKey
+			});
+			CompVariantState.updateVariant({
+				id: oVariant.getVariantId(),
+				layer: Layer.PUBLIC,
+				content: {
+					filter: "abc"
+				},
+				reference: sComponentId,
+				persistencyKey: sPersistencyKey
+			});
+			CompVariantState.updateVariant({
+				id: oVariant.getVariantId(),
+				isUserDependent: true,
+				favorite: false,
 				reference: sComponentId,
 				persistencyKey: sPersistencyKey
 			});
@@ -331,6 +355,7 @@ sap.ui.define([
 				);
 				assert.strictEqual(oCompVariantStateMapForPersistencyKey.variants[0].getLayer(), Layer.PUBLIC, "it is a public variant");
 				assert.strictEqual(oCompVariantStateMapForPersistencyKey.variants[0].getFavorite(), false, "with favorite set to false");
+				assert.deepEqual(oCompVariantStateMapForPersistencyKey.variants[0].getContent(), {filter: "abc"}, "with correct content");
 				assert.strictEqual(
 					oCompVariantStateMapForPersistencyKey.changes[0].getLayer(),
 					Layer.USER,
@@ -338,8 +363,8 @@ sap.ui.define([
 				);
 				assert.deepEqual(
 					oCompVariantStateMapForPersistencyKey.changes[0].getContent(),
-					{favorite: true},
-					"with favorite set to true"
+					{favorite: false},
+					"with favorite set to false"
 				);
 			});
 		});

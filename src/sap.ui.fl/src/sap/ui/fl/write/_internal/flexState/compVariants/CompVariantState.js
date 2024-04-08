@@ -605,6 +605,7 @@ sap.ui.define([
 
 		var oVariant = getVariantById(mPropertyBag);
 		var sLayer = determineLayer(mPropertyBag);
+		mPropertyBag.layer ||= sLayer;
 
 		if (mPropertyBag.forceCreate) {
 			createChange(mPropertyBag, oVariant);
