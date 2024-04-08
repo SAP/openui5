@@ -1411,7 +1411,7 @@ sap.ui.define([
 		//BCP: 1980006195
 		oColumn.toggleClass("sapFFCLColumnHidden", iNewWidth === 0);
 
-		if (bShouldRevealColumn || bShouldConcealColumn ) {
+		if (bShouldRevealColumn || bShouldConcealColumn || oOptions.autoSize) {
 			oColumn[0].querySelector(".sapFFCLColumnContent").style.width = "";
 		}
 		oColumn.toggleClass(FlexibleColumnLayout.PINNED_COLUMN_CLASS_NAME, false);
