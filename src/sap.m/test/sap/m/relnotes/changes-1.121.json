@@ -1049,5 +1049,25 @@
         "text": " sap.m.Page: Focus element is scrolled into view"
       }
     ]
+  },
+  "1.121.2": {
+    "date": "April 2024",
+    "notes": [
+      {
+        "id": "bda8f6ad8687e93fd9629cd4a726ca31d091b819",
+        "type": "FIX",
+        "text": " sap.m.MessageToast: Fix permanent display"
+      },
+      {
+        "id": "6199d512aec8858c36c47d0b696a50bbc2a3bec0",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange translation is correct now in Dutch"
+      },
+      {
+        "id": "9a2f825cdd0d7613da5d1d517a788fe73f7268de",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Resolve issue preventing text selection with mouse"
+      }
+    ]
   }
 }

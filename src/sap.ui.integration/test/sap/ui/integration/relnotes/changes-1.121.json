@@ -111,5 +111,15 @@
         ]
       }
     ]
+  },
+  "1.121.2": {
+    "date": "April 2024",
+    "notes": [
+      {
+        "id": "3128f46ae358d35a365da6ecfe8ffaad69d5e5f2",
+        "type": "FIX",
+        "text": " Integration cards: Fixed pagination with microcharts"
+      }
+    ]
   }
 }
