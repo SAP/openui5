@@ -349,14 +349,9 @@ sap.ui.define([
 	 * @param {Map} mIntent Given intent
 	 * @returns {Promise<string|null>} Resolves with navigation URI or null
 	 */
-	Utils.getNavigationUriForIntent = function(mIntent) {
-		return FlexUtils.getUShellService("Navigation").then(function(oUshellNavigationService) {
-			if (oUshellNavigationService && oUshellNavigationService.getHref) {
-				return oUshellNavigationService.getHref(mIntent);
-			}
-
-			return Promise.resolve(null);
-		});
+	Utils.getNavigationUriForIntent = async function(mIntent) {
+		const oNavigationService = await FlexUtils.getUShellService("Navigation");
+		return oNavigationService?.getHref?.(mIntent) || null;
 	};
 
 	/**
@@ -413,21 +408,15 @@ sap.ui.define([
 	 * @param {Array} aIntents Given intents
 	 * @returns {Promise<Array<boolean>>} Resolves with an array of booleans
 	 */
-	Utils.isNavigationSupportedForIntents = function(aIntents) {
-		return FlexUtils.getUShellService("Navigation").then(function(oUshellNavigationService) {
-			if (oUshellNavigationService && oUshellNavigationService.isNavigationSupported) {
-				return oUshellNavigationService.isNavigationSupported(aIntents).then(function(aResults) {
-					return aResults.map(function(oResult) {
-						return oResult && oResult.supported === true;
-					});
-				});
-			}
+	Utils.isNavigationSupportedForIntents = async function(aIntents) {
+		const oNavigationService = await FlexUtils.getUShellService("Navigation");
+		if (oNavigationService?.isNavigationSupported) {
+			const aResults = await oNavigationService.isNavigationSupported(aIntents);
+			return aResults.map((oResult) => oResult && oResult.supported === true);
+		}
 
-			// we assume no navigation support
-			return Promise.resolve(aIntents.map(function() {
-				return false;
-			}));
-		});
+		// we assume no navigation support
+		return aIntents.map(() => false);
 	};
 
 	return Utils;

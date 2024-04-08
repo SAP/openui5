@@ -94,59 +94,59 @@ sap.ui.define([
 	}
 
 	/**
-	 * Navigation filter attached to the ushell ShellNavigation service.
+	 * Navigation filter attached to the ushell ShellNavigationInternal service.
 	 * Each time a shell navigation occurs this function is called.
 	 *
 	 * @param {sap.ui.fl.variants.VariantModel} oModel - Variant Model
 	 * @param {string} sNewHash - New hash
 	 *
-	 * @returns {string} Value that signifies "Continue" navigation in the "ShellNavigation" service of ushell
-	 * (see {@link sap.ushell.services.ShellNavigation})
+	 * @returns {string} Value that signifies "Continue" navigation in the "ShellNavigationInternal" service of ushell
+	 * (see {@link sap.ushell.services.ShellNavigationInternal})
 	 *
 	 * @private
 	 */
 	function _handleVariantIdChangeInURL(oModel, sNewHash) {
 		try {
-			var oURLParsingService = oModel.getUShellService("URLParsing");
+			const oURLParsingService = oModel.getUShellService("URLParsing");
 			if (oURLParsingService) {
-				var oNewParsedHash = oURLParsingService.parseShellHash(sNewHash);
+				const oNewParsedHash = oURLParsingService.parseShellHash(sNewHash);
 				_checkAndUpdateURLParameters(oNewParsedHash, oModel);
 			}
 		} catch (oError) {
 			Log.error(oError.message);
 		}
-		var oShellNavigationService = oModel.getUShellService("ShellNavigation");
-		return oShellNavigationService && oShellNavigationService.NavigationFilterStatus.Continue;
+		const oShellNavigationInternalService = oModel.getUShellService("ShellNavigationInternal");
+		return oShellNavigationInternalService && oShellNavigationInternalService.NavigationFilterStatus.Continue;
 	}
 
 	/**
-	 * Registers navigation filter function for the ushell ShellNavigation service.
+	 * Registers navigation filter function for the ushell ShellNavigationInternal service.
 	 *
 	 * @param {sap.ui.fl.variants.VariantModel} oModel - Variant Model
 	 *
 	 * @private
 	 */
 	function _registerNavigationFilter(oModel) {
-		var oShellNavigationService = oModel.getUShellService("ShellNavigation");
+		const oShellNavigationInternalService = oModel.getUShellService("ShellNavigationInternal");
 		if (!_mVariantIdChangeHandlers[oModel.sFlexReference]) {
 			_mVariantIdChangeHandlers[oModel.sFlexReference] = _handleVariantIdChangeInURL.bind(null, oModel);
-			if (oShellNavigationService) {
-				oShellNavigationService.registerNavigationFilter(_mVariantIdChangeHandlers[oModel.sFlexReference]);
+			if (oShellNavigationInternalService) {
+				oShellNavigationInternalService.registerNavigationFilter(_mVariantIdChangeHandlers[oModel.sFlexReference]);
 			}
 		}
 	}
 
 	/**
-	 * De-registers navigation filter function for the ushell ShellNavigation service.
+	 * De-registers navigation filter function for the ushell ShellNavigationInternal service.
 	 *
 	 * @param {sap.ui.fl.variants.VariantModel} oModel - Variant Model
 	 *
 	 * @private
 	 */
 	function _deRegisterNavigationFilter(oModel) {
-		var oShellNavigationService = oModel.getUShellService("ShellNavigation");
-		if (oShellNavigationService) {
-			oShellNavigationService.unregisterNavigationFilter(_mVariantIdChangeHandlers[oModel.sFlexReference]);
+		const oShellNavigationInternalService = oModel.getUShellService("ShellNavigationInternal");
+		if (oShellNavigationInternalService) {
+			oShellNavigationInternalService.unregisterNavigationFilter(_mVariantIdChangeHandlers[oModel.sFlexReference]);
 			delete _mVariantIdChangeHandlers[oModel.sFlexReference];
 		}
 	}
@@ -164,17 +164,14 @@ sap.ui.define([
 	 * @private
 	 */
 	function setTechnicalURLParameterValues(mPropertyBag) {
-		var oModel = mPropertyBag.model;
-		var oURLParsingService = oModel.getUShellService("URLParsing");
-		var oUshellNavigationService = oModel.getUShellService("Navigation");
-		var oParsedHash = oURLParsingService && oURLParsingService.parseShellHash(hasher.getHash());
+		const oModel = mPropertyBag.model;
+		const oURLParsingService = oModel.getUShellService("URLParsing");
+		const oNavigationService = oModel.getUShellService("Navigation");
+		const oParsedHash = oURLParsingService && oURLParsingService.parseShellHash(hasher.getHash());
 
 		if (oParsedHash && oParsedHash.params) {
-			var mOldHashParams = Object.assign({}, oParsedHash.params);
-			var mTechnicalParameters = oModel.oAppComponent
-				&& oModel.oAppComponent.getComponentData
-				&& oModel.oAppComponent.getComponentData()
-				&& oModel.oAppComponent.getComponentData().technicalParameters;
+			const mOldHashParams = Object.assign({}, oParsedHash.params);
+			const mTechnicalParameters = oModel.oAppComponent?.getComponentData?.()?.technicalParameters;
 			// if mTechnicalParameters are not available we write a warning and continue updating the hash
 			if (!mTechnicalParameters) {
 				Log.warning(
@@ -184,11 +181,15 @@ sap.ui.define([
 			if (mPropertyBag.parameters.length === 0) {
 				delete oParsedHash.params[VariantUtil.VARIANT_TECHNICAL_PARAMETER];
 				// Case when ControlVariantsAPI.clearVariantParameterInURL is called with a parameter
-				mTechnicalParameters && delete mTechnicalParameters[VariantUtil.VARIANT_TECHNICAL_PARAMETER];
+				if (mTechnicalParameters) {
+					delete mTechnicalParameters[VariantUtil.VARIANT_TECHNICAL_PARAMETER];
+				}
 			} else {
 				oParsedHash.params[VariantUtil.VARIANT_TECHNICAL_PARAMETER] = mPropertyBag.parameters;
 				// Technical parameters need to be in sync with the URL hash
-				mTechnicalParameters && (mTechnicalParameters[VariantUtil.VARIANT_TECHNICAL_PARAMETER] = mPropertyBag.parameters);
+				if (mTechnicalParameters) {
+					mTechnicalParameters[VariantUtil.VARIANT_TECHNICAL_PARAMETER] = mPropertyBag.parameters;
+				}
 			}
 
 			if (mPropertyBag.silent) {
@@ -196,7 +197,7 @@ sap.ui.define([
 				hasher.replaceHash(oURLParsingService.constructShellHash(oParsedHash));
 				hasher.changed.active = true; // re-enable changed signal
 			} else if (!deepEqual(mOldHashParams, oParsedHash.params)) {
-				oUshellNavigationService.navigate({
+				oNavigationService.navigate({
 					target: {
 						semanticObject: oParsedHash.semanticObject,
 						action: oParsedHash.action,

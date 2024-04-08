@@ -370,7 +370,7 @@ sap.ui.define([
 			sandbox.stub(VariantManagementState, "waitForInitialVariantChanges").resolves();
 			this.sDefaultStatus = sDefaultStatus;
 			this.oGetUShellServiceStub = sandbox.stub(this.oModel, "getUShellService");
-			this.oGetUShellServiceStub.withArgs("ShellNavigation").returns({
+			this.oGetUShellServiceStub.withArgs("ShellNavigationInternal").returns({
 				NavigationFilterStatus: {
 					Continue: sDefaultStatus
 				},

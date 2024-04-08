@@ -251,14 +251,14 @@ sap.ui.define([
 				Utils.getUShellService("UserInfo"),
 				Utils.getUShellService("URLParsing"),
 				Utils.getUShellService("Navigation"),
-				Utils.getUShellService("ShellNavigation")
+				Utils.getUShellService("ShellNavigationInternal")
 			];
 			return Promise.all(aServicePromises)
 			.then(function(aServices) {
 				setUShellService("UserInfo", aServices[0]);
 				setUShellService("URLParsing", aServices[1]);
 				setUShellService("Navigation", aServices[2]);
-				setUShellService("ShellNavigation", aServices[3]);
+				setUShellService("ShellNavigationInternal", aServices[3]);
 			})
 			.catch(function(vError) {
 				throw new Error(`Error getting service from Unified Shell: ${vError}`);

@@ -603,7 +603,7 @@ sap.ui.define([
 	function getUshellContainerStub(oRegistrationHandlerStub, oDeRegistrationHandlerStub) {
 		var oUShellService = {
 			getServiceAsync(sService) {
-				if (sService === "ShellNavigation") {
+				if (sService === "ShellNavigationInternal") {
 					return Promise.resolve({
 						registerNavigationFilter: oRegistrationHandlerStub,
 						unregisterNavigationFilter: oDeRegistrationHandlerStub,

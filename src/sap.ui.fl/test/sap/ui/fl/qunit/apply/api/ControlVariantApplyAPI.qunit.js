@@ -52,7 +52,7 @@ sap.ui.define([
 						parseShellHash: this.fnParseShellHashStub,
 						constructShellHash() {return "constructedHash";}
 					};
-				case "ShellNavigation":
+				case "ShellNavigationInternal":
 					return {registerNavigationFilter() {}, unregisterNavigationFilter() {}};
 				case "Navigation":
 					return {navigate() {}};
