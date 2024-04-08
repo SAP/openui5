@@ -1,0 +1,268 @@
+/* ================================== */
+/* CSS for control sap.f/CardLoading  */
+/* Base theme                         */
+/* ================================== */
+@_sap_f_Card_FocusBorderWidth: 1px;
+@_sap_f_Card_Background_Placeholder_Color: @sapUiContentPlaceholderloadingBackground;
+@_sap_f_Card_Placeholder_Gradient: linear-gradient(to right, @sapUiContentPlaceholderloadingBackground 0%, @sapUiContentPlaceholderloadingBackground 35%, darken(@sapUiContentPlaceholderloadingBackground, 5) 50%, @sapUiContentPlaceholderloadingBackground 65%, @sapUiContentPlaceholderloadingBackground 100%);
+
+.sapFCard {
+
+	.sapFCardHeader.sapFCardHeaderLoading,
+	&.sapFCardPreview .sapFCardHeader {
+
+		.sapFCardHeaderImage.sapFCardHeaderItemBinded {
+			height: 3rem;
+			width: 3rem;
+			margin-right: 0.75rem;
+			//hide the fallback icon
+		}
+
+		.sapFCardHeaderImage .sapFCardHeaderItemBinded::after {
+			max-height: 2rem;
+			max-width: 2rem;
+			margin-top: 0.5rem;
+		}
+
+		.sapFCardHeaderText .sapFCardStatus.sapFCardHeaderItemBinded {
+			margin-top: 0;
+		}
+
+		.sapFCardHeaderTextSecondLine .sapFCardHeaderItemBinded::after {
+			margin-top: 0.2rem;
+		}
+
+		.sapFCardHeaderDetailsWrapper>.sapFCardHeaderItemBinded::after {
+			max-width: 70%;
+			margin-top: 0.2rem;
+		}
+
+		.sapFCardSubtitle.sapFCardHeaderItemBinded::after {
+			margin-top: 0.3rem;
+		}
+
+		.sapFCardHeaderTextSecondLine .sapFCardHeaderItemBinded::after,
+		.sapFCardSubtitle.sapFCardHeaderItemBinded::after,
+		.sapFCardHeaderDetailsWrapper .sapFCardHeaderItemBinded::after,
+		.sapFCardNumericIndicatorsSide .sapFCardHeaderItemBinded::after,
+		.sapFCardNumericIndicatorsSide .sapFCardHeaderItemBinded.sapMText::after {
+			max-height: 0.6rem;
+		}
+
+		.sapFCardNumericIndicatorsMain .sapFCardHeaderItemBinded::after {
+			margin-top: 0.5rem;
+			width: 80%;
+		}
+
+		.sapFCardHeaderItemBinded {
+			visibility: hidden; // hide the loaded elements (texts, icons, etc.) behind the loading indicators
+		}
+
+		.sapFCardHeaderItemBinded::after {
+			visibility: visible; // ... but show the loading indicator
+		}
+
+		.sapFCardHeaderText .sapFCardHeaderTextFirstLine {
+
+			.sapFCardTitle.sapFCardHeaderItemBinded {
+				flex: 1 0;
+				position: relative;
+			}
+
+			.sapFCardStatus.sapFCardHeaderItemBinded {
+				min-width: 1.5rem;
+				min-height: 1rem;
+			}
+		}
+
+		.sapFCardHeaderItemBinded::after {
+			.sapFCardLoadingShimmerMixin();
+			content: "";
+			position: absolute;
+			width: 100%;
+			height: 100%;
+			max-height: 1rem;
+			top: 0;
+			left: 0;
+		}
+	}
+
+	&.sapUiIntCardTileFlat,
+	&.sapUiIntCardTileFlatWide {
+		.sapFCardHeader.sapFCardHeaderLoading,
+		&.sapFCardPreview .sapFCardHeader {
+			.sapFAvatar.sapFCardHeaderItemBinded::after,
+			.sapFAvatar.sapFCardHeaderItemBinded::after {
+				margin-top: 0;
+				margin-left: 0;
+			}
+
+			.sapFCardAvatarAndIndicatorsLine .sapFCardIcon.sapFAvatar.sapFCardHeaderItemBinded,
+			.sapFCardAvatarAndIndicatorsLine .sapFCardIcon.sapFAvatar.sapFCardHeaderItemBinded {
+				margin-right: 0.5rem;
+			}
+
+			.sapFCardNumericIndicatorsMain .sapFCardHeaderItemBinded::after {
+				margin-top: -2px;
+			}
+		}
+	}
+
+	// no sapFCardHeaderItemBinded class present for the filter?
+	.sapFCardFilterLoading::after {
+		height: 2rem;
+		margin-top: 0.25rem;
+	}
+
+	.sapFCardFilterLoading .sapMSlt {
+		visibility: hidden; // hide the loaded Select behind the loading indicator
+	}
+
+	&.sapFCardPreview .sapFCardFilter,
+	.sapFCardFilterLoading {
+		position: relative;
+		&::after {
+			.sapFCardLoadingShimmerMixin();
+			content: "";
+			position: absolute;
+			top: 2px;
+			bottom: 2px;
+			left: 0;
+			right: 0;
+		}
+	}
+
+	&.sapFCardPreview .sapFCardFooter,
+	.sapFCardFooterLoading {
+		.sapUiIntActionsStrip {
+			position: relative;
+			&::after {
+				content: "";
+				position: absolute;
+				width: 100%;
+				height: 100%;
+				background-color: @sapUiTileBackground;
+			}
+		}
+	}
+
+	.sapFCardNumericHeader.sapFCardHeaderLoading,
+	&.sapFCardPreview .sapFCardNumericHeader {
+		.sapFCardNumericIndicatorsMain .sapFCardHeaderItemBinded {
+			min-width: 5rem;
+		}
+
+		.sapFCardHeaderSideIndicator.sapFCardHeaderItemBinded {
+			flex: 1 0;
+			min-height: 2rem;
+		}
+
+		.sapFCardHeaderDetails.sapFCardHeaderItemBinded {
+			flex: 1 0;
+			min-height: 1rem;
+			width: 100%;
+		}
+	}
+
+	.sapFCardContent {
+
+		.sapFCardContentHidden {
+			display: none;
+		}
+
+		.sapFCardBaseContent.sapFCardContentLoading:not(.sapFCardObjectContent) > :not(.sapFCardContentPlaceholder):not(.sapFCardContentMessageContainer) {
+			display: none;
+		}
+
+		.sapFCardContentPlaceholder {
+			outline: none;
+		}
+
+		.sapFCardContentPlaceholder:focus::before {
+			content: '';
+			display: block;
+			position: absolute;
+			left: 1px;
+			bottom: 1px;
+			right: 1px;
+			top: 1px;
+			border: @_sap_f_Card_FocusBorderWidth dotted @sapUiContentFocusColor;
+			pointer-events: none;
+		}
+
+		.sapFCardContentGenericPlaceholder,
+		.sapFCardContentAnalyticalPlaceholder {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			width: 100%;
+			height: 100%;
+
+			.sapFCardSVG {
+				fill: @sapUiTileBackground;
+			}
+		}
+
+		.sapFCardContentAnalyticalPlaceholder > div {
+			padding: 0.5rem;
+		}
+
+		.sapFCardContentGenericPlaceholder {
+			.sapFCardLoadingShimmer {
+				max-width: 144px;
+				max-height: 144px;
+				height: ~"calc(100% - 4px)"; /* leave place for the focus */
+			}
+		}
+	}
+
+	.sapFCardLoadingShimmer {
+		.sapFCardLoadingShimmerMixin();
+	}
+
+	.sapFCardLoadingShimmerMixin() {
+		background-color: @_sap_f_Card_Background_Placeholder_Color;
+		background-image: @_sap_f_Card_Placeholder_Gradient;
+		background-repeat: no-repeat;
+		background-size: 800px 100%;
+		position: relative;
+		border-radius: 0.25rem;
+
+		[data-sap-ui-animation-mode="full"] & {
+			animation-duration: 2.5s;
+			animation-fill-mode: forwards;
+			animation-iteration-count: infinite;
+			animation-name: placeHolderShimmer;
+			animation-timing-function: linear;
+		}
+
+		[data-sap-ui-animation-mode="basic"] &,
+		[data-sap-ui-animation-mode="minimal"] & {
+			animation-duration: 8s;
+			animation-fill-mode: forwards;
+			animation-iteration-count: infinite;
+			animation-name: placeHolderShimmer;
+			animation-timing-function: linear;
+		}
+	}
+
+	@keyframes placeHolderShimmer {
+		0% {
+			background-position: -468px 0;
+		}
+
+		100% {
+			background-position: 468px 0;
+		}
+	}
+
+	&.sapFCardPreview {
+		.sapFCardHeaderItemBinded::after,
+		.sapFCardFilter::after,
+		.sapFCardLoadingShimmer,
+		.sapUiIntActionsStrip::after {
+			background-image: unset !important;
+			animation-name: unset !important;
+		}
+	}
+}

@@ -1,0 +1,281 @@
+/* =========================================== */
+/* CSS for control sap.f/FlexibleColumnLayout  */
+/* Base theme                                  */
+/* =========================================== */
+
+// synced with FlexibleColumnLayout.COLUMN_SEPARATOR_WIDTH
+@_sap_f_FCL_SeparatorWidth: 1rem;
+@_sap_f_FCL_SeparatorActiveDecorationColors: @sapUiHighlight, @sapUiHighlight;
+@_sap_f_FCL_SeparatorDecorationColors: @sapUiHighlight, fade(@sapUiHighlight, 0);
+@_sap_f_FCL_SeparatorBorder: none;
+@_sap_f_FCL_SeparatorHoverIconBorderColor: @sapUiButtonLiteBorderColor;
+@_sap_f_FCL_SeparatorHoverIconBackground: @sapUiButtonLiteBackground;
+@_sap_f_FCL_SeparatorButtonColor: @sapUiContentIconColor;
+
+.sapFFCL {
+	&, &.sapMNavItem:not(.sapMNavItemHidden) {
+		display: -webkit-flex;
+		display: flex;
+		width: 100%;
+		height: 100%;
+		overflow: hidden;
+		isolation: isolate;
+		z-index: 0;
+		position: relative;
+	}
+
+
+	.sapFFCLColumn {
+		height: 100%;
+		position: relative;
+		visibility: hidden;
+		box-sizing: border-box;
+
+		// When there is content in a panel, it needs min-width
+		&.sapFFCLColumnActive {
+			visibility: visible;
+		}
+
+		&.sapFFCLColumnHidden {
+			display: none;
+		}
+
+		.sapFFCLContainer {
+			height: 100%;
+		}
+
+		&.sapFFCLPinnedColumn {
+			overflow-x: hidden;
+
+			.sapFFCLColumnContent {
+				position: absolute;
+				right: 0;
+			}
+		}
+
+		&.sapFFCLColumnInset {
+			padding: 0 0 0 @_sap_f_FCL_SeparatorWidth;
+		}
+	}
+
+	.sapFFCLColumnContent {
+		height: 100%;
+	}
+
+	.sapUiLocalBusyIndicator {
+		z-index: 4;
+	}
+}
+
+.sapFFCL .sapFFCLColumnSeparator {
+	color: @_sap_f_FCL_SeparatorButtonColor;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	user-select: none;
+	background-color: @sapUiShellBackground;
+	box-sizing: border-box;
+}
+
+.sapFFCLOverlay {
+	display: none;
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+}
+
+.sapFFCLOverlay > .sapFFCLOverlaySeparator {
+	position: absolute;
+	z-index: 3;
+
+	.sapFFCLColumnSeparatorDecorationBefore {
+		flex-grow: 1;
+		background-image: linear-gradient(to top, @_sap_f_FCL_SeparatorActiveDecorationColors);
+	}
+
+	.sapFFCLColumnSeparatorDecorationAfter {
+		flex-grow: 1;
+		background-image: linear-gradient(to bottom ,@_sap_f_FCL_SeparatorActiveDecorationColors);
+	}
+}
+
+.sapFFCL .sapFFCLColumnSeparator {
+	cursor: col-resize;
+	width: 1rem;
+	height: 100%;
+	display: inline-flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	border-left: @_sap_f_FCL_SeparatorBorder;
+	border-right: @_sap_f_FCL_SeparatorBorder;
+	vertical-align: top;
+
+	.sapFFCLColumnSeparatorDecorationBefore {
+		width: 1rem;
+		height: 4rem;
+		background-image: linear-gradient(to top, @_sap_f_FCL_SeparatorDecorationColors);
+		background-size: 0.0625rem 100%;
+		background-repeat: no-repeat;
+		background-position: center;
+	}
+
+	.sapFFCLColumnSeparatorDecorationAfter {
+		width: 1rem;
+		height: 4rem;
+		height: 4rem;
+		background-image: linear-gradient(to bottom, @_sap_f_FCL_SeparatorDecorationColors);
+		background-size: 0.0625rem 100%;
+		background-repeat: no-repeat;
+		background-position: center;
+	}
+
+	.sapFFCLColumnSeparatorGrip {
+		cursor: col-resize;
+		width: 1.5rem;
+		height: 2rem;
+		line-height: 2rem;
+		position: relative;
+		z-index: 1;
+
+		.sapFFCLColumnSeparatorGripIcon {
+			cursor: col-resize;
+			line-height: 1.625rem - @sapUiButtonBorderWidth - @sapUiButtonBorderWidth; // center the icon vertically
+			box-sizing: border-box;
+			height: 1.625rem;
+			width: 1.5rem;
+			margin-top: 3px;
+			border: @sapUiButtonBorderWidth solid @sapUiButtonLiteBorderColor;
+			border-radius: @sapUiButtonBorderCornerRadius;
+			background: @sapUiButtonLiteBackground;
+		}
+	}
+
+	&:hover {
+		.sapFFCLColumnSeparatorDecorationBefore,
+		.sapFFCLColumnSeparatorDecorationAfter {
+			flex-grow: 1;
+			transition: all 0.1s ease-in;
+		}
+
+		.sapFFCLColumnSeparatorGripIcon {
+			background: @_sap_f_FCL_SeparatorHoverIconBackground;
+			border-color: @_sap_f_FCL_SeparatorHoverIconBorderColor;
+		}
+	}
+}
+
+
+// focus outline
+.sapFFCL > .sapFFCLColumnSeparator,
+.sapFFCL > .sapFFCLOverlay > .sapFFCLOverlaySeparator {
+	position: relative;
+
+	&:focus {
+		outline: none;
+	}
+
+	&:focus::after {
+		content: "";
+		display: block;
+		position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+	}
+}
+
+
+.sapFFCLNavigationButton,
+.sapUiSizeCompact & .sapFFCLNavigationButton {
+	// Button hit area size
+	width: 1.5rem;
+	height: 1.5rem;
+	padding: 0; // Vertical button hit area must be the same size as its visible area
+	transition: all 0.1s ease-in;
+	margin-left: -0.25rem;
+	margin-right: -0.25rem;
+	display: inline-block;
+	vertical-align: middle;
+	position: relative;
+	overflow: visible;
+	cursor: col-resize;
+
+	// Reflection: styles overwritten
+	.sapMBtnInner {
+		width: 1.5rem;
+		height: 1.5rem;
+		min-width: auto;
+
+		.sapMBtnIcon {
+			line-height: 1.5rem;
+			width: 1rem;
+			font-size: 1rem;
+			margin-left: 0;
+			margin-right: 0;
+		}
+	}
+	&:before {
+		background-image: linear-gradient(to top, @sapUiHighlight, fade(@sapUiHighlight, 0));
+		background-position-y: -0.3125rem;
+		bottom: 100%;
+	}
+
+	&:after {
+		background-image: linear-gradient(to bottom, @sapUiHighlight,  fade(@sapUiHighlight, 0));
+		background-position-y: 0.3125rem;
+		top: 100%;
+	}
+
+	&:after,
+	&:before {
+		content: '';
+		position: absolute;
+		left: 0;
+		height: 4rem;
+		width: 100%;
+		transition: all 0.1s ease-in;
+		background-repeat: no-repeat;
+		background-size: 0.0625rem 100%;
+		background-position-x: calc(50% - 0.03125rem);
+	}
+	&:hover{
+			&:after,
+			&:before {
+				height: 7rem;
+			}
+	}
+}
+
+// In order to have reveal effect, columns should overlap each other
+.sapFFCLColumnBegin {
+	z-index: 3;
+	flex-shrink: 0;
+	width: 0;
+}
+
+.sapFFCLColumnMid {
+	z-index: 2;
+	width:100%;
+	overflow-x: auto;
+}
+
+.sapFFCLColumnEnd {
+	z-index: 1;
+	flex-shrink: 0;
+	width: 0;
+}
+
+html[data-sap-ui-animation='on'] {
+	.sapFFCL {
+		.sapFFCLColumn.sapFFCLAnimatedColumn {
+			transition: width 560ms cubic-bezier(0.1, 0, 0.05, 1), visibility 560ms ease-in;
+			-webkit-transition: width 560ms cubic-bezier(0.1, 0, 0.05, 1), visibility 560ms ease-in;
+		}
+	}
+}
+
