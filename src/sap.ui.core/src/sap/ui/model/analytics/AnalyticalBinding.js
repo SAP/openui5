@@ -3765,6 +3765,8 @@ sap.ui.define([
 	};
 
 	/**
+	 * @deprecated As of version 1.120, because sap.ui.model.odata.Filter is deprecated since 1.22.
+	 * @ui5-transform-hint replace-call (aFilter) => aFilter
 	 * @private
 	 */
 	AnalyticalBinding.prototype._convertDeprecatedFilterObjects = function(aFilter) {
