@@ -276,8 +276,16 @@ sap.ui.define([
 		/**
 		 * @inheritDoc
 		 */
-		update(mPropertyBag) {
+		async update(mPropertyBag) {
 			var oFlexObject = mPropertyBag.flexObject;
+			if (mFeatures.isVersioningEnabled && mPropertyBag.layer === Layer.CUSTOMER) {
+				mPropertyBag.reference = oFlexObject.reference;
+				const aVersions = await this.versions.load.call(this, mPropertyBag);
+				const sDraftVersionId = aVersions.find((oVersion) => oVersion.isDraft)?.id;
+				if (sDraftVersionId) {
+					oFlexObject.version = sDraftVersionId;
+				}
+			}
 			var sKey = ObjectStorageUtils.createFlexObjectKey(mPropertyBag.flexObject);
 			var vFlexObject = this.storage._itemsStoredAsObjects ? oFlexObject : JSON.stringify(oFlexObject);
 			var vSetResponse = this.storage.setItem(sKey, vFlexObject);
