@@ -1030,13 +1030,30 @@ sap.ui.define([
 		assert.equal(this.oAvatar._badgeRef === null, true, "Badge is attached to Avatar");
 	});
 
-	QUnit.test("Affordance is attached, when details aggregation is presented", function(assert) {
+	QUnit.test("Affordance with detailBox aggregation", function(assert) {
+		var fnDone = assert.async(),
+			oDelegate = {
+				onAfterRendering: function () {
+				// Assert
+				assert.ok(this.oAvatar._badgeRef !== null, "Badge is  attached to Avatar with detailBox, if image is set");
+				this.oAvatar.removeEventDelegate(oDelegate);
+				fnDone();
+			}};
+
+		assert.expect(2);
+
 		// Act
 		this.oAvatar.setDetailBox(new LightBox());
 		oCore.applyChanges();
 
-		//assert
-		assert.equal(this.oAvatar._badgeRef != null, true, "Badge is attached to Avatar");
+		// Assert
+		assert.strictEqual(this.oAvatar._badgeRef, null, "Badge is not attached to Avatar with detailBox, if no image is set");
+
+		// Act
+		this.oAvatar.setSrc(sImagePath);
+		oCore.applyChanges();
+
+		this.oAvatar.addEventDelegate(oDelegate, this);
 	});
 
 	QUnit.test("Affordance is attached, when details aggregation is presented", function(assert) {
