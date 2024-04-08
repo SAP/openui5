@@ -131,7 +131,7 @@
             }
         }
         .sapMGTActionModeContainer {
-            display: none;
+            display: none !important;
         }
     }
 }
@@ -240,6 +240,62 @@
         z-index: 2;
         border-radius: @sapTile_BorderCornerRadius;
         border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+    }
+ }
+
+ .sapMAT.sapMATDynamicHeight {
+    height: auto;
+    display: inline-flex;
+    flex-direction: column;
+    .sapMGTContent {
+        height: auto;
+        .sapMATC {
+            height: auto;
+        }
+        .sapMTileCnt {
+            height: auto;
+            .sapMTileCntContent {
+                height: auto;
+            }
+            .sapMTileCntContent {
+                .sapMFT {
+                    span{
+                        -webkit-line-clamp: initial;
+                        max-height: none;
+                    }
+                    p + span {
+                        -webkit-line-clamp: initial;
+                        max-height: none;
+                    }
+                }
+            }
+        }
+    }
+    .sapMGTActionModeContainer {
+        position: relative;
+        height: fit-content;
+        width: inherit;
+        box-sizing: border-box;
+        display: flex;
+        justify-content: flex-end;
+        padding-right: 2rem;
+        inset: 0;
+        margin-top: auto;
+        top: 0.1875rem;
+    }
+    &.sapMATHideActionButton {
+        .sapMTileCntContent {
+            .sapMFT {
+                span {
+                    -webkit-line-clamp: initial !important;
+                    max-height: none;
+                }
+                p + span {
+                    -webkit-line-clamp: initial !important;
+                    max-height: none;
+                }
+            }
+        }
     }
  }
 

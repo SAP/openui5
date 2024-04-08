@@ -290,6 +290,19 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("ActionTile on whether the height is set to auto when dynamicHeight is enabled", async function (assert) {
+		var iOriginalHeight = getComputedStyle(this.oToDo.getDomRef()).height.slice(0,-2) * 1;
+		this.oToDo.setEnableDynamicHeight(true);
+		this.oToDo.getTileContent()[0].addAggregation({
+			label: "Agreement Type:",
+			type: ContentConfigType.Text,
+			text:"SAP"
+		});
+		await nextUIUpdate();
+		var iCurrentHeight = getComputedStyle(this.oToDo.getDomRef()).height.slice(0,-2) * 1;
+		assert.ok(iCurrentHeight > iOriginalHeight,"Height has been increased dynamically");
+	});
+
 	QUnit.test("ActionTileContent: Header Link Support Tests", async function (assert) {
 		//setup action tile content
 		var oActionTileContent = new ActionTileContent("action-tile-content", {
