@@ -201,7 +201,7 @@ function (
 			{name: "homeIconPressed", parameters: {icon: {type: "sap.m.Image"}}},
 			{name: "menuButtonPressed", parameters: {button: {type: "sap.m.Button"}}},
 			{name: "navButtonPressed", parameters: {button: {type: "sap.m.Button"}}},
-			{name: "copilotPressed", parameters: {image: {type: "sap.m.Image"}}},
+			{name: "copilotPressed", parameters: {image: {type: "sap.m.Image"}, button: {type: "sap.m.Button"}}},
 			{name: "searchButtonPressed", parameters: {button: {type: "sap.m.Button"}}},
 			{name: "notificationsPressed", parameters: {button: {type: "sap.m.Button"}}},
 			{name: "productSwitcherPressed", parameters: {button: {type: "sap.m.Button"}}},
@@ -506,7 +506,7 @@ function (
 		aItems = this.oSB._aControls;
 		aOverflowControls = this.oSB._getOverflowToolbar().getContent();
 		// Assert
-		assert.strictEqual(aContent.length, 6, "Expected number of controls added to OverflowToolbar");
+		assert.strictEqual(aContent.length, 7, "Expected number of controls added to OverflowToolbar");
 		// Assert
 		assert.strictEqual(aItems.length, 12, "Expected number of controls added to OverflowToolbar");
 
@@ -525,13 +525,14 @@ function (
 		assert.ok(aItems[11] === oAdditionalButton2, "Control at index 12 in SB is AdditionalButton 2");
 
 		// Assert - _aOverflowControls
-		assert.strictEqual(aOverflowControls.length, 6, "Overflow Toolbar has 5 controls in it");
+		assert.strictEqual(aOverflowControls.length, 7, "Overflow Toolbar has 6 controls in it");
 		assert.ok(aOverflowControls[0] === this.oSB._oToolbarSpacer, "Control at index 0 is Toolbar Spacer");
 		assert.ok(aOverflowControls[1] === this.oSB._oManagedSearch, "Control at index 1 is Managed Search");
 		assert.ok(aOverflowControls[2] === this.oSB._oSearch, "Control at index 2 is Search");
-		assert.ok(aOverflowControls[3] === this.oSB._oNotifications, "Control at index 3 is Notifications");
-		assert.ok(aOverflowControls[4] === oAdditionalButton1, "Control at index 4 is AdditionalButton 1");
-		assert.ok(aOverflowControls[5] === oAdditionalButton2, "Control at index 5 is AdditionalButton 2");
+		assert.ok(aOverflowControls[3] === this.oSB._oCopilot, "Control at index 3 is Joule");
+		assert.ok(aOverflowControls[4] === this.oSB._oNotifications, "Control at index 4 is Notifications");
+		assert.ok(aOverflowControls[5] === oAdditionalButton1, "Control at index 5 is AdditionalButton 1");
+		assert.ok(aOverflowControls[6] === oAdditionalButton2, "Control at index 6 is AdditionalButton 2");
 	});
 
 	// Responsiveness
@@ -710,7 +711,6 @@ function (
 			sTooltip = this.oRb.getText("SHELLBAR_COPILOT_TOOLTIP");
 
 		// Assert
-		assert.strictEqual(oCopilot.$().attr("role"), "button", "CoPilot role is correct");
 		assert.strictEqual(oCopilot.$().attr("aria-label"), sTooltip, "CoPilot aria-label is correct");
 		assert.strictEqual(oCopilot.getTooltip(), sTooltip, "CoPilot tooltip is correct");
 	});
@@ -831,7 +831,7 @@ function (
 
 			this.iOriginalFixtureWidth = document.getElementById(DOM_RENDER_LOCATION).style.width;
 			// ensure that by default the shellbar has enough space to render all its items
-			document.getElementById(DOM_RENDER_LOCATION).style.width = 1500 + "px";
+			document.getElementById(DOM_RENDER_LOCATION).style.width = 1920 + "px";
 
 			this.oSB = new ShellBar({
 				title: "Application title",
@@ -854,7 +854,7 @@ function (
 			this.oSB.destroy();
 			this.oRb = null;
 			// cleanup
-			document.getElementById(DOM_RENDER_LOCATION).style.width = this.iOrigibalFixtureWidth;
+			document.getElementById(DOM_RENDER_LOCATION).style.width = this.iOriginalFixtureWidth;
 		}
 	});
 
@@ -907,10 +907,13 @@ function (
 			fnDone = assert.async();
 
 
-		assert.expect(1);
+		assert.expect(3);
+
+		// Assert
+		assert.strictEqual(oSearchManager._oSearch.getIsOpen(), true, "Search is always open on XXL screen");
+		assert.strictEqual(oSearchManager._oSearch.getLayoutData().getPriority(), "NeverOverflow", "NeverOverflow priority is set when Search is on XXL screen");
 
 		// Act
-		oSearchManager._oSearch.setIsOpen(false);
 		this.oSB._oResponsiveHandler._transformToPhoneState();
 		Core.applyChanges();
 
@@ -942,6 +945,61 @@ function (
 		assert.strictEqual(this.oSB._oMegaMenu.$().css("visibility"), "hidden", true, "Search " +
 			"bar hides all the content on left on mobile with menu button");
 
+	});
+
+	QUnit.test("From XXL to XL break point with ManagedSearch", function (assert) {
+		var fnDone = assert.async(),
+			oRenderingDelegate = {
+				"onAfterRendering": function () {
+					this.oSB.removeEventDelegate(oRenderingDelegate);
+					// Assert
+					assert.ok(this.oSB._oOverflowToolbar.getContent().indexOf(this.oSB._oManagedSearch) > -1,
+						"Managed Search is in the overflowToolbar on XL screen size");
+					fnDone();
+				}.bind(this)
+			};
+
+		assert.expect(2);
+
+		// Assert
+		assert.strictEqual(this.oSB._oOverflowToolbar.getContent().indexOf(this.oSB._oManagedSearch), -1,
+			"Managed Search is not in the overflowToolbar on XXL screen size");
+
+		// Act
+		document.getElementById(DOM_RENDER_LOCATION).style.width = 800 + "px";
+
+		this.oSB.addEventDelegate(oRenderingDelegate);
+	});
+
+	QUnit.test("From M to XXL break point with ManagedSearch", function (assert) {
+		var fnDone = assert.async(),
+			oRenderingDelegate;
+
+		assert.expect(2);
+
+		// Act
+		document.getElementById(DOM_RENDER_LOCATION).style.width = 500 + "px"; // M screen size
+
+		setTimeout(function () {
+			oRenderingDelegate = {
+				"onAfterRendering": function () {
+					this.oSB.removeEventDelegate(oRenderingDelegate);
+					// Assert
+					assert.strictEqual(this.oSB._oOverflowToolbar.getContent().indexOf(this.oSB._oManagedSearch), -1,
+						"Managed Search is not in the overflowToolbar on XXL screen size");
+					fnDone();
+				}.bind(this)
+			};
+
+			// Assert
+			assert.ok(this.oSB._oOverflowToolbar.getContent().indexOf(this.oSB._oManagedSearch) > -1,
+				"Managed Search is in the overflowToolbar on M screen size");
+
+			// Act
+			document.getElementById(DOM_RENDER_LOCATION).style.width = 1920 + "px";
+
+			this.oSB.addEventDelegate(oRenderingDelegate);
+		}.bind(this), 500);
 	});
 
 	QUnit.module("Events", {
@@ -1017,18 +1075,22 @@ function (
 				// Assert
 				assert.ok(true, "Event was fired");
 				assert.strictEqual(this.oSB._oCopilot.getId(),
-					oEventParamters.image.getId(), "Correct parameter was passed");
+					oEventParamters.button.getId(), "Correct parameter was passed");
+				assert.strictEqual(this.oSB._oCopilot.getIcon(), "sap-icon://da-2", "When  pressed, copilot has correct icon");
 
 				// Clean up
 				done();
 			}.bind(this);
 
-		assert.expect(2);
+		assert.expect(4);
 
 		this.oSB.attachCopilotPressed(function(oEvent) {
 			oEventParamters = oEvent.getParameters();
 			fnTestEvent(oEvent);
 		});
+
+		// Assert
+		assert.strictEqual(this.oSB._oCopilot.getIcon(), "sap-icon://da", "When not pressed, copilot has correct icon");
 
 		// Act
 		this.oSB._oCopilot.firePress();
