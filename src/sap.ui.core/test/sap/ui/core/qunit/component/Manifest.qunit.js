@@ -229,4 +229,5 @@ sap.ui.define([
 
 		Localization.setLanguage(sOldLanguage);
 	});
+
 });
