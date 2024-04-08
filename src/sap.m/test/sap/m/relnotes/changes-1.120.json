@@ -754,5 +754,20 @@
         "text": " sap.m.RadioButtonGroup: There is no error when destroying and adding radio buttons on select"
       }
     ]
+  },
+  "1.120.13": {
+    "date": "April 2024",
+    "notes": [
+      {
+        "id": "1021d0d41ad640c1d7e669833bf5c0513d3d4386",
+        "type": "FIX",
+        "text": " sap.m.Input: Prevent user value override"
+      },
+      {
+        "id": "56e1490939449908f9e1c1d855e7b8c219ba2d1b",
+        "type": "FIX",
+        "text": " sap.m.MessageToast: Fix permanent display"
+      }
+    ]
   }
 }

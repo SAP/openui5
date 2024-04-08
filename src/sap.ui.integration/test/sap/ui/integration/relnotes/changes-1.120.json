@@ -73,5 +73,15 @@
         "text": " Integration Cards: Remove scrollbar from snack layer when not needed"
       }
     ]
+  },
+  "1.120.13": {
+    "date": "April 2024",
+    "notes": [
+      {
+        "id": "780ec5b368a6439466f77ffd358e1e96690faf33",
+        "type": "FIX",
+        "text": " Integration cards: Fixed pagination with microcharts"
+      }
+    ]
   }
 }
