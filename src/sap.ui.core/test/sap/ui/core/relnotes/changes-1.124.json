@@ -1,0 +1,12 @@
+{
+  "1.124.0": {
+    "date": "April 2024",
+    "notes": [
+      {
+        "id": "5814f8dc10e783477f586afffc78e36b3a95a52e",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.type.Unit/Currency#formatValue: document precedence of maxFractionDigits,scale and decimal places"
+      }
+    ]
+  }
+}

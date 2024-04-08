@@ -1,0 +1,12 @@
+{
+  "1.124.0": {
+    "date": "April 2024",
+    "notes": [
+      {
+        "id": "395a8c8f580fbd3ec649ec4e42152d0b83690659",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: update type info for uploadComplete event"
+      }
+    ]
+  }
+}

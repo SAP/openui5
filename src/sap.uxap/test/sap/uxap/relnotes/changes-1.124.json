@@ -1,0 +1,12 @@
+{
+  "1.124.0": {
+    "date": "April 2024",
+    "notes": [
+      {
+        "id": "6bf15babdc4f844a4acaa470129d52c391d8dba9",
+        "type": "FIX",
+        "text": " ObjectPageLayout: Fix lazy loading of data of BlockBases"
+      }
+    ]
+  }
+}

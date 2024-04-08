@@ -1,0 +1,17 @@
+{
+  "1.124.0": {
+    "date": "April 2024",
+    "notes": [
+      {
+        "id": "66fbce07871c648614cff17b7a09dd3d28af2c75",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Do not delete tokens on RIGHT arrow navigation"
+      },
+      {
+        "id": "4192d7b396d83141b8ea45989549eeccbe6e2e0a",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: fix popup rendering"
+      }
+    ]
+  }
+}
