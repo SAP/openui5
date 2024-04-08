@@ -17,7 +17,8 @@ sap.ui.define([
 
 		var FrameType = library.FrameType,
 			GenericTileMode = library.GenericTileMode,
-			LoadState = library.LoadState;
+			LoadState = library.LoadState,
+			Priority = library.Priority;
 	/**
 	* Constructor for a new sap.m.ActionTile control.
 	*
@@ -39,7 +40,27 @@ sap.ui.define([
 
 	var ActionTile = GenericTile.extend("sap.m.ActionTile", /** @lends sap.m.ActionTile.prototype */{
 		metadata: {
-			library: "sap.m"
+			library: "sap.m",
+			properties: {
+				/**
+				 * Decides whether the headerImage should have a frame or not.
+				 *
+				 * @experimental Since 1.124
+				 */
+				enableIconFrame: { type: "boolean", group: "Appearance", defaultValue: false },
+				/**
+				 * Adds a priority indicator for the Action Tile.
+				 *
+				 * @experimental Since 1.124
+				 */
+				"priority": { type: "sap.m.Priority", group: "Data", defaultValue: Priority.None },
+				/**
+				 * Sets the text inside the priority indicator for the Action Tile.
+				 *
+				 * @experimental Since 1.124
+				 */
+				"priorityText": { type: "string", group: "Data", defaultValue: null }
+			}
 		},
 		renderer: {
 			apiVersion: 2,

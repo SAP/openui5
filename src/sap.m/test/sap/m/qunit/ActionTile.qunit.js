@@ -290,18 +290,27 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("ActionTileContent: Header Link Tests", async function (assert) {
+	QUnit.test("ActionTileContent: Header Link Support Tests", async function (assert) {
 		//setup action tile content
 		var oActionTileContent = new ActionTileContent("action-tile-content", {
-			headerLink: new Link()
+			headerLink: new Link(),
+			attributes: [
+				new TileAttribute({
+					label: "Test Attribute",
+					contentConfig: new ContentConfig({
+						type:"Text",
+						text:"Test Value"
+					})
+				})
+			]
 		});
 
 		//render action tile
-		new ActionTile("action-tile", {
+		var oActionTile = new ActionTile("action-tile", {
 			header: "My Action Tile",
-			valueColor:"Critical",
 			tileContent: oActionTileContent
-		}).placeAt("qunit-fixture");
+		});
+		oActionTile.placeAt("qunit-fixture");
 		await nextUIUpdate();
 
 		//should only render header link if present
@@ -315,8 +324,110 @@ sap.ui.define([
 		assert.ok(document.getElementById("action-tile-content-priority-value"), "priority rendered");
 
 		//should render header link even if priority is present
-		oActionTileContent.setHeaderLink(new Link());
+		var sLinkText = "My Custom Link";
+		oActionTileContent.setHeaderLink(new Link({ text: sLinkText }));
 		await nextUIUpdate();
 		assert.ok(document.getElementById("action-tile-content-header-link"), "header link rendered");
+
+		//should return the correct tooltip and aria-label
+		oActionTile.getDomRef().dispatchEvent(new Event("mouseenter"));
+		var sToolTip = oActionTile.getDomRef().getAttribute("title");
+		var sAriaLabel = oActionTile.getDomRef().getAttribute("aria-label");
+		assert.equal(sToolTip, oActionTile._getAriaAndTooltipText(), "tooltip successfully generated");
+		assert.equal(sAriaLabel, oActionTile._getAriaText(), "aria-label successfully generated");
+		assert.ok(sToolTip.includes(sLinkText) && sAriaLabel.includes(sLinkText), "link text present in tooltip and aria-label");
+
+		//Cleanup
+		oActionTile.destroy();
+		oActionTileContent.destroy();
 	});
+
+	QUnit.test("ActionTileContent: Priority Support Tests", async function (assert) {
+		//setup action tile content
+		var oActionTileContent = new ActionTileContent("action-tile-content", {
+			headerLink: new Link(),
+			attributes: [
+				new TileAttribute({
+					label: "Test Attribute",
+					contentConfig: new ContentConfig({
+						type:"Text",
+						text:"Test Value"
+					})
+				})
+			]
+		});
+
+		//render action tile
+		var oActionTile = new ActionTile("action-tile", {
+			header: "My Action Tile",
+			tileContent: oActionTileContent
+		});
+		oActionTile.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		//should not render header container or priority text if priority is not specified
+		assert.notOk(document.getElementById("action-tile-header-container"), "header container not rendered");
+		assert.notOk(document.getElementById("action-tile-priority-text"), "priority text is not rendered");
+
+		//should render header container and priority text if priority is specified
+		var sPriority = "Medium";
+		var sPriorityText = "Medium Priority";
+		oActionTile.setPriority(sPriority);
+		oActionTile.setPriorityText(sPriorityText);
+		await nextUIUpdate();
+		assert.ok(document.getElementById("action-tile-header-container"), "header container is rendered");
+		assert.ok(document.getElementById("action-tile-priority-text"), "priority text is rendered");
+		assert.ok(document.getElementById("action-tile-priority-text").classList.contains(sPriority), "priority style class is applied");
+
+		//should return the correct tooltip and aria-label
+		oActionTile.getDomRef().dispatchEvent(new Event("mouseenter"));
+		var sToolTip = oActionTile.getDomRef().getAttribute("title");
+		var sAriaLabel = oActionTile.getDomRef().getAttribute("aria-label");
+		assert.equal(sToolTip, oActionTile._getAriaAndTooltipText(), "tooltip successfully generated");
+		assert.equal(sAriaLabel, oActionTile._getAriaText(), "aria-label successfully generated");
+		assert.ok(sToolTip.includes(sPriorityText) && sAriaLabel.includes(sPriorityText), "priority text present in tooltip and aria-label");
+
+		//Cleanup
+		oActionTile.destroy();
+		oActionTileContent.destroy();
+	});
+
+	QUnit.test("ActionTileContent: IconFrame Support Tests", async function (assert) {
+		//setup action tile content
+		var oActionTileContent = new ActionTileContent("action-tile-content", {
+			headerLink: new Link(),
+			attributes: [
+				new TileAttribute({
+					label: "Test Attribute",
+					contentConfig: new ContentConfig({
+						type:"Text",
+						text:"Test Value"
+					})
+				})
+			]
+		});
+
+		//render action tile
+		var oActionTile = new ActionTile("action-tile", {
+			header: "My Action Tile",
+			headerImage: "sap-icon://workflow-tasks",
+			tileContent: oActionTileContent
+		});
+		oActionTile.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		//should not render icon frame container if enableIconFrame is not specified or false
+		assert.notOk(document.getElementById("action-tile-icon-frame"), "icon frame not rendered");
+
+		//should render icon frame if enableIconFrame is true
+		oActionTile.setEnableIconFrame(true);
+		await nextUIUpdate();
+
+		assert.ok(document.getElementById("action-tile-icon-frame"), "icon frame is rendered");
+
+		//Cleanup
+		oActionTile.destroy();
+		oActionTileContent.destroy();
+	});
+
 });
