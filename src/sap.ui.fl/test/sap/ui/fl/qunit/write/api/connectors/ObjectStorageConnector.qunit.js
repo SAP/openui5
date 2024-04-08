@@ -206,6 +206,37 @@ sap.ui.define([
 					aExpectedDraftFilenames.forEach((sExpectedName) => {
 						assert.ok(aVersion[0].changeDefinition.filenames.includes(sExpectedName), `the ${sExpectedName} exists as draft`);
 					});
+				})
+				.then(function() {
+					return oConnector.update({
+						flexObject: {
+							creation: "2021-05-04T12:57:32.229Z",
+							fileName: "oChange1",
+							fileType: "change",
+							reference: "sap.ui.fl.test",
+							layer: Layer.CUSTOMER,
+							content: {
+								foo: "bar2"
+							},
+							selector: {
+								id: "selector1"
+							},
+							changeType: "type1"
+						},
+						layer: Layer.CUSTOMER
+					});
+				})
+				.then(function() {
+					return oConnector.loadFlexData({reference: "sap.ui.fl.test", version: Version.Number.Draft});
+				})
+				.then(function(aFlexData) {
+					assert.strictEqual(aFlexData[0].changes.length, 3, "three changes are returned");
+					aFlexData[0].changes.forEach((oChange) => {
+						if (oChange.fileName === "oChange1") {
+							assert.equal(oChange.content.foo, "bar2", "content is updated");
+							assert.ok(oChange.version, "version is set in updated change");
+						}
+					});
 				});
 			});
 
