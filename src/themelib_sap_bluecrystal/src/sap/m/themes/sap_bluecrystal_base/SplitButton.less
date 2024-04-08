@@ -1,0 +1,101 @@
+/* ================================== */
+/* CSS for control sap.m/SplitButton  */
+/* Base theme                         */
+/* ================================== */
+
+.sapMSB {
+	display: inline-block;
+	position: relative;
+	vertical-align: top;
+}
+
+.sapMSB .sapMSBInner .sapMSBText:not(.sapMSBTextIE) .sapMBtnInner {
+	margin-right: 2.5rem;
+}
+
+.sapMSB .sapMSBArrow {
+	position: absolute;
+	top: 0;
+	right: 0;
+}
+
+.sapMSB .sapMSBArrow .sapMBtnIcon {
+	font-size: 0.75rem;
+	line-height: 2.25rem;
+}
+
+.sapUiSizeCompact .sapMSB .sapMSBArrow .sapMBtnIcon {
+	line-height: 1.625rem;
+}
+
+.sapMSB .sapMSBText .sapMBtnInner {
+	text-align: left;
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0;
+}
+
+.sapMSB.sapMBtnTransparent .sapMSBText:hover .sapMBtnInner {
+	border-right-width: 0.0625rem;
+	padding-right: 0.5rem;
+}
+
+.sapMTB-Transparent-CTX .sapMSB .sapMSBText:hover .sapMBtnDefault.sapMBtnInner {
+	border-right-width: 0.0625rem;
+	&.sapMBtnText {
+		padding-right: 0.5rem;
+	}
+}
+
+.sapMSB .sapMSBArrow .sapMBtnInner {
+	border-top-left-radius: 0;
+	border-bottom-left-radius: 0;
+}
+
+.sapMSB:focus {
+	outline: none;
+}
+
+.sapMSB:focus .sapMSBInner::after {
+	content: '';
+	pointer-events: none;
+	position: absolute;
+}
+
+//ie
+.sapMSBTextIE.sapMSBText {
+	padding-right: 2.5rem;
+}
+
+.sapUiSizeCompact {
+	.sapMSB .sapMSBInner .sapMSBText:not(.sapMSBTextIE) .sapMBtnInner {
+		margin-right: 2rem;
+	}
+
+	//ie
+	.sapMSBTextIE.sapMSBText {
+		padding-right: 2rem;
+	}
+
+	.sapMSB .sapMSBInner .sapMSBArrow .sapMBtnIconFirst {
+		padding-left: 0;
+		padding-right: 0;
+	}
+	.sapMTB-Transparent-CTX .sapMSB .sapMSBText:hover .sapMBtnDefault.sapMBtnInner {
+		padding-right: 0.375rem;
+	}
+}
+
+.sapMSB:focus .sapMSBInner:not(.sapMSBInnerDisabled)::after {
+	top: 0.3125rem;
+	bottom: 0.3125rem;
+	left: 0.0625rem;
+	right: 0.0625rem;
+	border: 0.0625rem dotted @sapUiContentFocusColor;
+}
+
+.sapUiSizeCompact {
+	.sapMSB:focus .sapMSBInner:not(.sapMSBInnerDisabled)::after {
+		top: 0.25rem;
+		bottom: 0.25rem;
+	}
+}

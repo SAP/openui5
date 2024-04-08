@@ -1,0 +1,22 @@
+/* ====================================== */
+/* CSS for control sap.m/ScrollContainer  */
+/* Base theme                             */
+/* ====================================== */
+
+.sapMScrollCont {
+	overflow: hidden;
+	position: relative; /* to make the iScroll scrollbars appear at the correct position, if enabled */
+	outline: none;
+}
+
+.sapMScrollContV .sapMScrollContScroll {
+	display: block; /* when there is only vertical scrolling, the whole available width should be consumed */
+}
+
+/* mixin call for creating container content padding classes (arguments: rootContainer, contentSelector) */
+.sapUiContainerContentPadding(~".sapMScrollCont", ~"> .sapMScrollContScroll");
+
+.sapMScrollCont:focus {
+	outline: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+	outline-offset: 0.0625rem;
+}

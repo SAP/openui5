@@ -1,0 +1,284 @@
+/* ================================ */
+/* CSS for control sap.m/SlideTile  */
+/* Base theme                       */
+/* ================================ */
+
+.sapMST {
+	background: transparent;
+	position: relative;
+	display: inline-block;
+	font-size: 0;
+	border-radius: 0.25rem;
+	outline: none;
+	box-shadow: @sapUiShadowLevel0;
+
+	.sapMSTOverflowHidden {
+		overflow: hidden;
+		position: relative;
+		height: 100%;
+		width: 100%;
+		border-radius: 0.23rem 0.23rem 0.25rem 0.25rem;
+	}
+
+	&.sapMSTScopeActions {
+
+		.sapMSTMoreIcon {
+			height: 1rem;
+			position: absolute;
+			right: 0.75rem;
+			bottom: 0.563rem;
+			z-index: 1;
+			color: @sapUiButtonIconColor;
+			pointer-events: none;
+			background-color: transparent;
+			border: 0;
+			.sapMBtnIcon{
+				bottom: 0.6rem;
+				left: 0.9rem;
+				border: 0;
+				color: @sapButton_Lite_TextColor;
+			}
+			&:focus {
+				outline: none;
+			}
+		}
+
+		.sapMSTRemoveButton {
+			width: 1.375rem;
+			height: 1.375rem;
+			border-radius: 50%;
+			padding: 0px;
+			position: absolute;
+			top: -0.5rem;
+			right: -0.5rem;
+			z-index: 3;
+			border: 1px solid @sapUiButtonBorderColor;
+			background-color: @sapUiButtonBackground;
+			color: @sapUiButtonTextColor;
+			overflow: visible;
+
+			.sapMBtnFocusDiv {
+				display: none;
+			}
+
+			.sapMBtnInner {
+				width: 100%;
+				height: 100%;
+				min-width: 0px;
+				border-radius: 50%;
+				border: none;
+				outline-offset: -2px;
+			}
+
+			.sapMBtnIcon {
+				font-size: 0.75rem;
+				margin: 0px;
+				width: 100%;
+
+				&:before {
+					position: relative;
+					top: -0.125rem;
+				}
+			}
+
+			&:focus > .sapMFocusable {
+				outline: none;
+				border-radius: 50%;
+			}
+
+			/* The touch area has a different size and is slightly moved to the left and bottom */
+			&:before {
+				content: "";
+				color: @sapUiButtonIconColor;
+				position: absolute;
+				top: -1px;
+				bottom: -0.6875rem;
+				left: -0.6875rem;
+				right: -0.0625rem;
+			}
+		}
+	}
+}
+
+.sapMST{
+	.sapMGT.sapMGTStateLoading{
+		.sapMTileCnt.News{
+			background-color: transparent;
+		}
+	}
+}
+.sapMST.sapMSTGridContainerOneRemGap.TwoByOne {
+	width: 23rem;
+}
+
+.sapMST.sapMSTGridContainerOneRemGap.TwoByHalf {
+	width: 23rem;
+}
+
+.sapMTileSmallPhone.sapMST.sapMSTGridContainerOneRemGap.TwoByOne{
+	width: 19.5rem;
+}
+
+.sapMTileSmallPhone.sapMST.sapMSTGridContainerOneRemGap.TwoByHalf{
+	width: 19.5rem;
+}
+
+.sapMST.sapMTileSmallPhone {
+	.sapMGT.sapMGTStateLoading.TwoByOne {
+		.sapMTileCntContentShimmerPlaceholderItemTextFooter{
+			width: 5.875rem;
+		}
+	}
+}
+.sapUiSizeCompact{
+	.sapMST {
+		.sapMSTMoreIcon {
+			.sapMBtnIcon{
+				left: 0.3rem;
+				bottom: 0.4rem;
+			}
+		}
+	}
+}
+
+.sapMSTWrapper {
+	position: absolute;
+	left: 100%;
+}
+
+.sapMSTWrapper>.sapMGT,
+html.sap-desktop .sapMSTWrapper>.sapMGT:hover,
+html.sap-phone .sapMGTHvrOutln:active,
+html.sap-tablet .sapMGTHvrOutln:active {
+	box-shadow: none !important;
+}
+
+.sapMST.OneByOne {
+	width: 11rem;
+	height: 11rem;
+}
+
+.sapMST.TwoByOne {
+	width: 22.5rem;
+	height: 11rem;
+}
+
+.sapMST.Stretch {
+	width: 11rem;
+	height: 11rem;
+}
+
+.sapMGTTileStretch {
+	height: 100%;
+	width: 100%;
+}
+
+.sapMGTTileStretch .sapMGT{
+	height: 100%;
+	width: 100%;
+}
+
+.sapMSTFocusDiv {
+	position: absolute;
+	pointer-events: none;
+	left: 1px;
+	top: 1px;
+	right: 1px;
+	bottom: 1px;
+	border-radius: 0.125rem;
+}
+
+/* Bulleted indicator of multiple tiles*/
+.sapMSTBulleted {
+	position: absolute;
+	text-align: center;
+	bottom: 0.25rem;
+	width: 100%;
+	z-index: 1;
+	cursor: pointer;
+}
+
+.sapMSTBulleted > span {
+	display: inline-block;
+	height: 0.375rem;
+	width: 0.375rem;
+	margin: 0 0.25rem;
+	border-radius: 50%;
+}
+
+.sapMST .sapMSTIconClickTapArea {
+	position: absolute;
+	right: 0.75rem;
+	top: 0.75rem;
+	height: 2rem;
+	width: 2rem;
+	z-index: 3;
+	background-color: transparent;
+	border-radius: 50%;
+	cursor: pointer;
+}
+
+.sapMST .sapMSTIconDisplayArea {
+	position: absolute;
+	right: 0.75rem;
+	top: 0.75rem;
+	height: 2rem;
+	width: 2rem;
+	z-index: 1;
+	opacity: 0.6;
+	overflow: hidden;
+	border-radius: 50%;
+}
+
+html.sap-desktop .sapMST .sapMSTIconClickTapArea:hover ~.sapMSTIconDisplayArea {
+	opacity: 0.8;
+}
+
+
+html.sap-desktop .sapMST.sapMSTIconPressed .sapMSTIconClickTapArea:hover ~.sapMSTIconDisplayArea {
+	opacity: 1.0;
+}
+
+.sapMST .sapMSTIconNestedArea {
+	right: 0.75rem;
+	top: 0.75rem;
+	line-height: 2rem;
+	height: 2rem;
+	z-index: 1;
+	position: absolute;
+
+	.sapUiIcon {
+		width: 2rem;
+		line-height: inherit;
+	}
+}
+
+html.sap-phone .sapMST .sapMSTIconClickTapArea,
+html.sap-tablet .sapMST .sapMSTIconClickTapArea {
+	right: 0.25rem;
+	top: 0.25rem;
+	height: 3rem;
+	width: 3rem;
+}
+
+html.sap-desktop .sapMST:not(:hover).sapMST:not(:focus) .sapMSTIconDisplayArea,
+html.sap-desktop .sapMST:not(:hover).sapMST:not(:focus) .sapMSTIconNestedArea,
+html.sap-desktop .sapMST:not(:hover).sapMST:not(:focus) .sapMSTBulleted {
+	visibility: hidden;
+}
+
+.sapMTileSmallPhone {
+	&.sapMST.OneByOne {
+		width: 9.25rem;
+		height: 9.25rem;
+	}
+
+	&.sapMST.TwoByOne {
+		width: 19rem;
+		height: 9.25rem;
+	}
+
+	&.sapMSTBulleted {
+		bottom: 0.188rem;
+	}
+}

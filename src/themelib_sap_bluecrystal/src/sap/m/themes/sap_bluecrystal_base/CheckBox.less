@@ -1,0 +1,276 @@
+/* =============================== */
+/* CSS for control sap.m/CheckBox  */
+/* Base theme                      */
+/* =============================== */
+
+.sapMCb {
+	display: inline-block;
+	position: relative;
+	white-space: normal;
+	box-sizing: border-box;
+	height: 3rem;
+	line-height: 3rem;
+	vertical-align: top;
+	text-align: left;
+	padding: 0 0 0 3rem;
+
+	&:not(.sapMCbBgDis):not(.sapMCbDisplayOnly) {
+		&:hover,
+		.sapMCbLabel:hover {
+			cursor: pointer;
+		}
+		&.sapMCbHasLabel:focus:before {
+			pointer-events: none;
+		}
+	}
+
+	&.sapMCbDisplayOnly {
+		&.sapMCbErr,
+		&.sapMCbInfo,
+		&.sapMCbWarn,
+		&.sapMCbSucc {
+			.sapMCbBg {
+				border: none;
+				&.sapMCbMarkChecked:before {
+					color: @sapUiBaseText;
+				}
+				&.sapMCbMarkPartiallyChecked{
+					border: solid 0.0625rem #89919a
+				}
+
+			}
+		}
+	}
+}
+
+.sapUiForm:not(.sapUiFormEdit-CTX) .sapMCb.sapMCbDisplayOnly {
+	height: 1.125rem;
+	line-height: 1.125rem;
+
+	&:not(.sapMCbBgDis) {
+		padding-left: 1.625rem;
+	}
+
+	.sapMCbBg {
+		top: 0;
+		margin: 0;
+	}
+	&.sapMCbWrapped.sapMCbHasLabel > .sapMLabel.sapMLabelWrapped {
+		margin: 0;
+		line-height: 1.125rem;
+	}
+}
+
+.sapMCb.sapMCbWrapped.sapMCbHasLabel {
+	height: auto;
+	> .sapMLabel.sapMLabelWrapped {
+		margin: 0.875rem 0;
+		line-height: 1.4rem;
+	}
+}
+
+.sapMCb.sapMCbDisplayOnly:not(.sapMCbBgDis) {
+	padding-left: 2.375rem;
+}
+
+.sapUiFormEdit-CTX .sapMCb.sapMCbWrapped.sapMCbHasLabel > .sapMLabel.sapMLabelWrapped {
+	margin: 0.75rem 0;
+}
+
+html[dir="rtl"] .sapMCb {
+	text-align: right;
+}
+
+.sapMCb .sapMLabel {
+	cursor: default;
+	line-height: inherit;
+	display: block;
+
+	&.sapMLabelNoText {
+		position: absolute;
+		visibility: hidden;
+		left: -10000px;
+		top: -10000px;
+	}
+}
+
+.sapMCb>label {
+	vertical-align: top;
+	overflow: hidden;
+	text-overflow:ellipsis;
+	white-space: nowrap;
+	width : 100% /* If you put a CB in a form the with has to be 100% in rtl for text align */
+}
+
+.sapMCbBg { /* check box itself */
+	background-color: @sapUiFieldBackground;
+	border: solid 0.125rem @sapUiFieldBorderColor;
+	display: inline-block;
+	position: absolute;
+	left: 0.8125rem;
+	top: 0.8125rem;
+	height: 1.125rem;
+	width: 1.125rem;
+	line-height: 1.125rem;
+	padding: 0;
+	text-align: center;
+	font-size: 1rem;
+
+	// note: some browsers like Samsung Galaxy S4 with Android 4.2 does not support the "border-radius" shorthand property
+	// but does support the long-hand properties for each corner like "border-top-left-radius"
+	border-top-left-radius: 0.125rem;
+	border-top-right-radius: 0.125rem;
+	border-bottom-right-radius: 0.125rem;
+	border-bottom-left-radius: 0.125rem;
+	-webkit-focus-ring-color: none;
+}
+
+.sapMCbBg > .sapMCbMark,
+.sapMCbBg.sapMCbMark > input{
+	font-size: inherit;
+}
+
+.sapMCbBg.sapMCbMarkChecked:before {
+	content: "\e05b";
+	font-family: "SAP-icons";
+	display: inline-block;
+}
+
+.sapMCbBg.sapMCbMarkChecked.sapMCbMarkPartiallyChecked:before{
+	content: "";
+	width: 100%;
+	height: 100%;
+	background-color: currentColor;
+	border: 0.1875rem solid transparent;
+	box-sizing: border-box;
+	background-clip: padding-box;
+}
+
+.sapUiSizeCompact .sapMCbBg.sapMCbMarkChecked.sapMCbMarkPartiallyChecked:before {
+	border-width: 0.125rem;
+}
+
+.sapMCbBg > input {
+	left: 0;
+	-webkit-appearance: none;
+	position: absolute;
+	visibility: hidden;
+}
+
+html[data-sap-ui-browser^=ff] .sapMCbBg > input {
+	/* in FF the input needs to be positioned exactly behind the visible checkbox for the focus outline */
+	position: absolute;
+}
+
+/* Read only */
+.sapMCbRo .sapMCbBg {
+	background-color: @sapUiFieldReadOnlyBackground;
+	border-color: @sapUiFieldReadOnlyBorderColor;
+}
+
+.sapMCbRo > .sapMCbBg.sapMCbMarkChecked:before {
+	color: @sapUiContentNonInteractiveIconColor;
+}
+
+/* Display only */
+.sapMCbDisplayOnly {
+	font-family: "SAP-icons";
+
+	.sapMCbBg.sapMCbMark.sapMCbMarkChecked.sapMCbMarkPartiallyChecked{
+		border-radius: 0.0625rem;
+		border: 1px solid @sapUiBaseText ;
+
+		&:before {
+			background-color: @sapUiBaseText;
+		}
+	}
+
+	.sapMCbBg:not(.sapMCbMarkPartiallyChecked) {
+		background-color: initial;
+		border: none;
+		margin: 0.125rem;
+
+		&:before {
+			content: "\e19a";
+			font-size: 1rem;
+		}
+
+		&.sapMCbMarkChecked:before {
+			color: @sapUiBaseText;
+			content: "\e03f";
+		}
+	}
+}
+
+/* Compact size */
+.sapUiSizeCompact {
+
+	.sapMCb {
+		height: 2rem;
+		line-height: 2rem;
+		padding-left: 2rem;
+	}
+
+	.sapMCb.sapMCbWrapped.sapMCbHasLabel {
+		height: auto;
+		> .sapMLabel.sapMLabelWrapped {
+			margin: 0.3rem 0;
+		}
+	}
+
+	.sapUiFormEdit-CTX .sapMCb.sapMCbWrapped.sapMCbHasLabel > .sapMLabel.sapMLabelWrapped {
+		margin: 0.25rem 0;
+	}
+
+	.sapMCbBg { /* check box itself */
+		left: 0.5rem;
+		top: 0.5rem;
+		height: 0.75rem;
+		width: 0.75rem;
+		line-height: 0.75rem;
+		font-size: 0.75rem;
+		border-radius: 0;
+	}
+
+	.sapMLIBSelectM > .sapMCb {
+		width: 2rem;
+	}
+
+	.sapUiForm:not(.sapUiFormEdit-CTX) .sapMCb.sapMCbDisplayOnly .sapMCbBg {
+		top: 0.1875rem;
+	}
+
+	.sapMCb.sapMCbDisplayOnly:not(.sapMCbBgDis) {
+		padding-left: 2rem;
+	}
+}
+
+/* Condensed size */
+.sapUiSizeCondensed.sapUiTable,
+.sapUiSizeCondensed .sapUiTable {
+
+	.sapMCb {
+		height: 1.5rem;
+		line-height: 1.5rem;
+		padding-left: 1.5rem;
+	}
+
+	.sapUiTableDataCell > .sapUiTableCellInner > .sapMCb {
+		margin-left: 0.25rem;
+		padding-left: 1.75rem;
+	}
+
+	.sapMCbBg { /* check box itself */
+		left: 0.25rem;
+		top: 0.25rem;
+		height: 0.75rem;
+		width: 0.75rem;
+		line-height: 0.75rem;
+		font-size: 0.625rem;
+		border-radius: 0;
+	}
+}
+
+html[data-sap-ui-browser^="sf"] .sapMCbBg > .sapMCbMark, .sapMCbBg.sapMCbMark > input {
+	margin: 0;
+}

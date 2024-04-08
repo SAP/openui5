@@ -1,0 +1,393 @@
+/* ======================================= */
+/* CSS for control sap.m/PlanningCalendar  */
+/* Base theme                              */
+/* ======================================= */
+
+.sapMPlanCal{
+	background-color: @sapUiListBackground;
+}
+
+.sapMPlanCal > .sapMList .sapMListInfoTBar.sapMTB-Transparent-CTX.sapMTB{
+	padding: 0;
+}
+
+.sapMPlanCal > .sapMList .sapMListInfoTBar.sapMTB-Transparent-CTX.sapMTB >:first-child{
+	margin-left: 0;
+}
+
+.sapMPlanCalHead{
+	width: 20%;
+	height: 3rem;
+}
+
+.sapMPlanCalWithWeekNumbers .sapMPlanCalHead{
+	height: 6rem;
+}
+
+.sapPCRelative.sapMPlanCalWithWeekNumbers .sapMPlanCalHead{
+	height: 3rem;
+}
+
+.sapMPlanCalWithDayNamesLine .sapMPlanCalHead{
+	height: 5rem;
+}
+
+.sapMPlanCalWithWeekNumbers.sapMPlanCalWithDayNamesLine .sapMPlanCalHead{
+	height: 6rem;
+}
+
+.sapMPlanCalHead > .sapMTB.sapMIBar{
+	padding-left: 0.875rem;
+}
+
+.sapMPlanCal .sapUiCalItem.sapUiCalItemWithSecondaryType {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	font-size: 0.75rem;
+	.sapUiCalItemText {
+		height: 50%;
+		line-height: 1.175rem;
+	}
+	.sapUiCalItemAddText {
+		line-height: 1.175rem;
+	}
+}
+
+.sapUiSizeCompact {
+	.sapMPlanCal .sapUiCalNoNameLine .sapUiCalItem {
+		height: 2rem;
+	}
+
+	.sapMPlanCal .sapUiCalOneMonthDatesRow.sapUiCalNoNameLine .sapUiCalItem {
+		height: 3rem;
+	}
+
+	.sapMPlanCalHead {
+		height: 2rem;
+	}
+
+	.sapMPlanCalWithWeekNumbers .sapMPlanCalHead,
+	.sapMPlanCalWithDayNamesLine .sapMPlanCalHead {
+		height: 3rem;
+	}
+
+	.sapMPlanCalWithWeekNumbers.sapMPlanCalWithDayNamesLine .sapMPlanCalHead {
+		height: 6rem;
+	}
+
+	.sapMPlanCal .sapUiCalNoNameLine .sapUiCalItem > .sapUiCalItemText{
+		padding-top: 0;
+		padding-left: 53%;
+		line-height: inherit;
+		text-align: start;
+	}
+
+	.sapMPlanCal .sapUiCalOneMonthDatesRow.sapUiCalNoNameLine .sapUiCalItem > .sapUiCalItemText{
+		padding-top: 1rem;
+		padding-left: 0;
+		text-align: center;
+	}
+
+	.sapMPlanCal .sapUiCalItemNow > .sapUiCalItemText,
+	.sapMPlanCal .sapUiCalNoNameLine .sapUiCalItem.sapUiCalItemNow > .sapUiCalItemText,
+	.sapMPlanCal.sapUiCalNoNameLine .sapUiCalItem.sapUiCalItemNow > .sapUiCalItemText,
+	.sapMPlanCal .sapUiCalNoNameLine .sapUiCalItem.sapUiCalItemNow > .sapUiCalItemText{
+		line-height: 1.725rem;
+	}
+
+	.sapMPlanCal .sapUiCalNoNameLine .sapUiCalItem > .sapUiCalDayName{
+		left: 0;
+		height: 100%;
+		width: 53%;
+		line-height: inherit;
+		padding-top: 0;
+		padding-right: 0.25rem;
+		text-align: end;
+		box-sizing: border-box;
+	}
+
+	.sapMPlanCal .sapUiCalOneMonthDatesRow.sapUiCalNoNameLine .sapUiCalItem > .sapUiCalDayName{
+		left: 0;
+		height: 100%;
+		width: 100%;
+		line-height: inherit;
+		padding-top: 0;
+		padding-right: 0;
+		text-align: center;
+		box-sizing: border-box;
+	}
+
+	.sapMPlanCal .sapMLIB.sapMLIBShowSeparator.sapMSLI {
+		height: auto;
+	}
+}
+
+.sapMPlanCal > .sapMList .sapMPlanCalRowHead > .sapMLIB,
+.sapMPlanCal > .sapMList .sapMPlanCalAppRow > .sapUiCalendarRow,
+.sapMPlanCal > .sapMList .sapMPlanCalAppRow > div > .sapUiCalendarRow{
+	background-color: transparent;
+	display: block;
+	border: none;
+}
+
+/* if Head is displayed next to CalendarRow, use head size as minimum */
+.sapMPlanCal:not(.sapMPlanCalNoHead) > .sapMList > table > tbody > tr > td > .sapUiCalendarRow:not(.sapMPlanCalRowLarge) > .sapUiCalendarRowApps{
+	min-height: 4rem;
+}
+
+/* if Head has 2 lines, CalendarRow must be large */
+.sapMPlanCal:not(.sapMPlanCalNoHead) > .sapMList > table > tbody > tr > td > .sapUiCalendarRow.sapMPlanCalRowLarge > .sapUiCalendarRowApps{
+	min-height: 4rem;
+}
+
+.sapMPlanCalHead > .sapMTB{
+	border-bottom: none;
+}
+
+.sapMPlanCalHead > .sapMTB > .sapMSlt{
+	-webkit-flex-grow: 1;
+	-webkit-box-flex: 1;
+	flex: auto; /* to make the select as big as possible */
+}
+
+.sapMPlanCal > .sapMList .sapMListInfoTBar > .sapMBarChild.sapUiCalRow {
+	width: 80%;
+	padding: 0;
+	margin-left: 0;
+	margin-right: 0;
+}
+
+.sapMPlanCal > .sapMList .sapMListInfoTBar > .sapMBarChild.sapMPlanCalHead {
+	margin-right: 0;
+}
+
+.sapMPlanCal > .sapMList .sapMListInfoTBar > .sapUiCalRow{
+	padding-left: 0;
+	padding-right: 0;
+	padding-bottom: 0;
+}
+
+.sapMPlanCal > .sapMList .sapMListInfoTBar > .sapUiCalRow > .sapUiCalContent >.sapUiCalContentOver{
+	bottom: 0;
+}
+
+.sapMPlanCal > .sapMList .sapMListTblCell.sapMPlanCalRowHead,
+.sapMPlanCal > .sapMList .sapMListTblCell.sapMPlanCalAppRow {
+	padding: 0;
+}
+
+/* Responsiveness */
+.sapMPlanCal > .sapMList > table > tbody > tr > td > .sapMListTblSubCnt,
+.sapMPlanCal > .sapMList > table > tbody > .sapMListTblSubRow > td{
+	padding: 0;
+}
+
+.sapMPlanCal .sapMListTblSubCntRow {
+	display: block;
+}
+
+.sapMPlanCal > .sapMList > table > tbody > tr > td > .sapMListTblSubCnt > .sapMListTblSubCntRow >.sapMListTblSubCntVal{
+	margin: 0;
+}
+
+.sapMPlanCal .sapMSticky > .sapMTB-Transparent-CTX,
+.sapMPlanCal .sapMSticky > .sapMListInfoTBarContainer {
+	background-color: @sapUiListBackground;
+}
+
+.sapMPlanCal.sapMPlanCalNoHead > .sapMList .sapMListInfoTBar,
+.sapMSize0.sapMPlanCal > .sapMList .sapMListInfoTBar,
+.sapMSize1.sapMPlanCal > .sapMList .sapMListInfoTBar{
+	display: block;
+}
+
+.sapMSize0.sapMPlanCal.sapPCRelative > .sapMList .sapMListInfoTBar,
+.sapMSize1.sapMPlanCal.sapPCRelative > .sapMList .sapMListInfoTBar {
+	display: flex;
+}
+
+.sapMPlanCal.sapMPlanCalNoHead > .sapMList .sapMListInfoTBar > .sapMPlanCalHead,
+.sapMPlanCal.sapMPlanCalNoHead > .sapMList .sapMListInfoTBar > .sapUiCalRow,
+.sapMSize0.sapMPlanCal > .sapMList .sapMListInfoTBar > .sapMPlanCalHead,
+.sapMSize0.sapMPlanCal > .sapMList .sapMListInfoTBar > .sapUiCalRow,
+.sapMSize1.sapMPlanCal > .sapMList .sapMListInfoTBar > .sapMPlanCalHead,
+.sapMSize1.sapMPlanCal > .sapMList .sapMListInfoTBar > .sapUiCalRow{
+	width: 100%;
+}
+
+.sapMSize0.sapMPlanCal.sapPCRelative > .sapMList .sapMListInfoTBar > .sapMPlanCalHead,
+.sapMSize1.sapMPlanCal.sapPCRelative > .sapMList .sapMListInfoTBar > .sapMPlanCalHead {
+	width: 20%;
+}
+
+.sapMSize0.sapMPlanCal.sapPCRelative > .sapMList .sapMListInfoTBar > .sapUiCalRow,
+.sapMSize1.sapMPlanCal.sapPCRelative > .sapMList .sapMListInfoTBar > .sapUiCalRow {
+	width: 80%;
+}
+
+.sapMPlanCal.sapMPlanCalNoHead > .sapMList .sapMListInfoTBar > .sapMPlanCalHead,
+.sapMSize0.sapMPlanCal > .sapMList .sapMListInfoTBar > .sapMPlanCalHead,
+.sapMSize1.sapMPlanCal > .sapMList .sapMListInfoTBar > .sapMPlanCalHead{
+	height: auto;
+}
+
+.sapMPlanCal.sapMPlanCalNoHead.sapMPlanCalMultiSel > .sapMList .sapMListInfoTBar > .sapUiCalRow{
+	width: ~'calc(100% - 3rem)';
+}
+
+.sapMPlanCal.sapMPlanCalNoHead.sapMPlanCalMultiSel > .sapMList .sapMListInfoTBar > .sapMCb{
+	width: 3rem;
+	margin: 0;
+	vertical-align: bottom;
+}
+
+.sapMPlanCal.sapMPlanCalNoHead.sapMPlanCalMultiSel > .sapMList .sapMListInfoTBar > .sapMCb > .sapMCbLabel{
+	visibility: hidden;
+}
+
+.sapUiSizeCompact .sapMPlanCal.sapMPlanCalNoHead.sapMPlanCalMultiSel > .sapMList .sapMListInfoTBar > .sapMCb{
+	width: 2.25rem;
+	margin-left: 0.25rem;
+}
+
+.sapMSize0.sapMPlanCal.sapMPlanCalMultiSel > .sapMList .sapMListInfoTBar > .sapMCb,
+.sapMSize1.sapMPlanCal.sapMPlanCalMultiSel > .sapMList .sapMListInfoTBar > .sapMCb{
+	width: auto;
+	margin-left: 0;
+}
+
+.sapMSize0.sapMPlanCal.sapMPlanCalMultiSel > .sapMList .sapMListInfoTBar > .sapMCb > .sapMCbLabel,
+.sapMSize1.sapMPlanCal.sapMPlanCalMultiSel > .sapMList .sapMListInfoTBar > .sapMCb > .sapMCbLabel{
+	visibility: visible;
+}
+
+.sapMSize0.sapMPlanCal.sapMPlanCalMultiSel > .sapMList .sapMListInfoTBar > .sapUiCalRow,
+.sapMSize1.sapMPlanCal.sapMPlanCalMultiSel > .sapMList .sapMListInfoTBar > .sapUiCalRow{
+	width: 100%;
+	display: block;
+}
+.sapMPlanCal .sapMListBGTransparent .sapMLIB:not(.sapMLIBActive):not(.sapMLIBSelected):not(:hover),
+.sapMPlanCal .sapMListBGTranslucent .sapMLIB:not(.sapMLIBActive):not(.sapMLIBSelected):not(:hover),
+.sapMPlanCal .sapMListBGSolid .sapMLIB:not(.sapMLIBActive):not(.sapMLIBSelected):not(:hover) {
+	background: transparent;
+}
+
+.sapMPlanCal {
+	.sapMListTbl .sapMSLIImgIcon.sapUiIcon:not(.sapMLIBImgNav):not(.sapMBtnIcon) {
+		font-size: 1.375rem;
+		height: 3rem;
+		width: 3rem;
+		line-height: 3rem;
+		margin: 0 0.75rem 0 0;
+	}
+
+	.sapMPlanCalRowHead {
+		.sapMLIBContent {
+			position: relative;
+		}
+
+		:not(li) .sapMLIBContent {
+			padding: .5rem 0;
+		}
+
+		.sapMSLIImg {
+			max-width: 3rem;
+			max-height: 3rem;
+			width: auto;
+			height: auto;
+			margin: 0;
+		}
+
+		.sapMSLIDiv {
+			.sapMSLITitleOnly,
+			.sapMSLITitle {
+				white-space: normal;
+			}
+		}
+
+		.sapMSLIThumbnail:not(.sapMSLIWrapping) > .sapMLIBContent > .sapMSLIDiv,
+		.sapMSLIImgIcon + .sapMSLIDiv{
+			box-sizing: border-box;
+			position: absolute;
+			padding-left: calc(3rem + 0.75rem); // Width of the image + right margin
+			width: 100%;
+		}
+
+		.sapMCLI .sapMObjLItem { // row header in custom content scenario
+			display: revert;
+			padding: 0;
+			border-bottom: 0;
+		}
+	}
+
+	.sapUiCalTimesRow,
+	.sapUiCalDatesRow,
+	.sapUiCalMonthsRow {
+		flex: 1;
+	}
+	.sapUiCalendarAppArrowIconLeft,
+	.sapUiCalendarAppArrowIconRight,
+	.sapUiCalendarRowAppsIntHeadIcon {
+		position: relative;
+	}
+	.sapUiCalendarAppContainer {
+		display: flex;
+		align-items: center;
+	}
+	.sapUiCalendarAppContainerRight {
+		flex: 1;
+	}
+}
+
+.sapMPlanCal .sapUiCalHead {
+	display: flex;
+	justify-content: center;
+
+	.sapUiCalHeadPrev,
+	.sapUiCalHeadNext {
+		position: static;
+	}
+}
+
+.sapUiCalAppResizeGhost {
+	position: absolute;
+	top: 0;
+	left: 0;
+	display: inline-block;
+	width: 1px;
+	height: 1px;
+	visibility: hidden;
+	opacity: 0.01;
+}
+
+.sapUiDnDIndicatorHide {
+	display: none !important;
+}
+
+.sapMPCSticky {
+	.sapMPCHead {
+		top: 0;
+	}
+}
+
+.sapMPlanCal .sapUiCalMonthView .sapUiCalWeekNum {
+	text-align: center;
+}
+
+.sapMPlanCal .sapMListTblCell.sapMPlanCalRowHead {
+	vertical-align: top;
+}
+
+.sapMPlanCal .sapMIBar.sapMTB .sapMBarChild ~ .sapUiCalMonthView.sapMBarChild {
+	margin: 0;
+}
+
+.sapMPlanCal.sapMPlanCalMultiSel {
+	&.sapMSize0,
+	&.sapMSize1 {
+		.sapMListInfoTBarContainer .sapMCb {
+			display: none;
+		}
+	}
+}

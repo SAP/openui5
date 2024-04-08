@@ -1,0 +1,231 @@
+/* =============================== */
+/* CSS for control sap.m/LightBox  */
+/* Base theme                      */
+/* =============================== */
+
+@_sap_m_LightBox_MinHeight: 18rem;
+@_sap_m_LightBox_FooterOneLineHeightCompact: 2.5rem;
+@_sap_m_LightBox_FooterTwoLinesHeightCompact: 3.5rem;
+@_sap_m_LightBox_FooterOneLineHeightCozy: 3rem;
+@_sap_m_LightBox_FooterTwoLinesHeightCozy: 3.5rem;
+@_sap_m_LightBox_TitleSectionPadding: 1rem;
+@_sap_m_LightBox_TitleSectionPaddingTwoLines: 0.5rem;
+@_sap_m_LightBox_BusyIndicatorHeight: 1rem;
+@_sap_m_LightBox_SubtitleMarginTop: 0.5rem;
+@_sap_m_LightBox_OverlayBackground: @sapUiBlockLayerBackground;
+@_sap_m_LightBox_ContainerBackground: @sapUiGlobalBackgroundColor;
+@_sap_m_LightBox_OverlayOpacity: 0.9;
+@_sap_m_LightBox_FontFamily: @sapUiFontFamily;
+
+/* ==========================================================================
+   Container
+  ========================================================================== */
+
+.sapMLightBox {
+	min-width: 20rem;
+	max-width: 100%;
+	min-height: 18rem;
+	max-height: 100%;
+	border-radius: @sapUiElementBorderCornerRadius;
+	background-color: @_sap_m_LightBox_ContainerBackground;
+	box-shadow: @sapUiShadowLevel3;
+	outline: none;
+}
+
+html[data-sap-ui-browser^='sf'] .sapMLightBox {
+	-webkit-transform: translateZ(0px); // fixes displaying the control behind the block layer in Safari
+}
+
+.sap-desktop .sapMLightBox {
+	max-width: calc(~"100% - 4rem");
+	max-height: calc(~"100% - 4rem");
+}
+
+.sap-tablet .sapMLightBox {
+	max-width: calc(~"100% - 2rem");
+	max-height: calc(~"100% - 2rem");
+}
+
+.sap-phone .sapMLightBox {
+	max-width: calc(~"100% - 1rem");
+	max-height: calc(~"100% - 1rem");
+}
+
+.sapMLightBoxFooter {
+	background-color: @sapUiPageFooterBackground;
+	border-top: 1px solid @sapUiPageFooterBorderColor;
+}
+
+/* ==========================================================================
+   Overlay
+  ========================================================================== */
+.sapMLightBox + .sapUiBLy {
+	background: @_sap_m_LightBox_OverlayBackground;
+	opacity: @_sap_m_LightBox_OverlayOpacity;
+}
+
+/* ==========================================================================
+   Image
+  ========================================================================== */
+
+.sapMLightBox .sapMImg {
+	margin: auto;
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+}
+
+.sapMLightBox.sapMLightBoxTopCornersRadius .sapMImg {
+	border-radius: @sapUiElementBorderCornerRadius @sapUiElementBorderCornerRadius 0 0;
+}
+
+/* ==========================================================================
+   Footer
+  ========================================================================== */
+
+.sapMLightBoxFooter {
+	display: flex;
+	flex-direction: row;
+	width: 100%;
+	position: absolute;
+	bottom: 0;
+	-webkit-box-direction: normal;
+	-webkit-box-orient: horizontal;
+	-webkit-box-align: start;
+	justify-content: space-between;
+	height: @_sap_m_LightBox_FooterOneLineHeightCozy;
+	align-items: flex-end;
+	border-radius: 0 0 @sapUiElementBorderCornerRadius @sapUiElementBorderCornerRadius;
+
+	&.sapMLightBoxFooterTwoLines {
+		height: @_sap_m_LightBox_FooterTwoLinesHeightCozy;
+	}
+}
+
+.sapMLabel.sapMLightBoxSubtitle  {
+	margin-top: @_sap_m_LightBox_SubtitleMarginTop;
+}
+
+.sapMLightBoxTitleSection {
+	margin: 0 1rem;
+	padding: @_sap_m_LightBox_TitleSectionPadding 0;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	flex: 1;
+}
+
+.sapMLightBoxTwoLines .sapMLightBoxTitleSection {
+	padding: @_sap_m_LightBox_TitleSectionPaddingTwoLines 0;
+}
+
+.sapMLightBoxFooter .sapMBtn {
+	padding-right: 0.25rem;
+}
+
+.sapMTitle.sapMLightBoxTitle,
+.sapMLabel.sapMLightBoxSubtitle {
+	white-space: nowrap;
+	overflow: hidden;
+	text-align: left;
+	text-overflow: ellipsis;
+}
+
+/* ==========================================================================
+   Footer title
+  ========================================================================== */
+
+.sapMLightBoxImageContainer {
+	min-height: calc(@_sap_m_LightBox_MinHeight - 3.5rem);
+	position: absolute;
+	top: 0;
+	bottom: @_sap_m_LightBox_FooterOneLineHeightCozy;
+	width: 100%;
+}
+
+.sapMLightBoxImageContainerTwoLines {
+	height: calc(~"100% - " @_sap_m_LightBox_FooterTwoLinesHeightCozy);
+	position: absolute;
+	top: 0;
+	width: 100%;
+}
+
+/* ==========================================================================
+   Busy Indicator
+  ========================================================================== */
+.sapMLightBox {
+	.sapUiSizeCompact {
+		.sapMBusyIndicator {
+			display: block;
+			margin-top: (@_sap_m_LightBox_MinHeight - @_sap_m_LightBox_BusyIndicatorHeight - @_sap_m_LightBox_FooterOneLineHeightCompact) / 2;
+		}
+
+		.sapMLightBoxTwoLines {
+			.sapMBusyIndicator {
+				height: 14rem;
+				margin-top: (@_sap_m_LightBox_MinHeight - @_sap_m_LightBox_BusyIndicatorHeight - @_sap_m_LightBox_FooterTwoLinesHeightCompact) / 2;
+			}
+		}
+	}
+}
+
+.sapMLightBox {
+	.sapMBusyIndicator {
+		display: block;
+		margin-top: (@_sap_m_LightBox_MinHeight - @_sap_m_LightBox_BusyIndicatorHeight - @_sap_m_LightBox_FooterOneLineHeightCozy) / 2;
+	}
+
+	.sapMLightBoxTwoLines {
+		.sapMBusyIndicator {
+			height: 14rem;
+			margin-top: (@_sap_m_LightBox_MinHeight - @_sap_m_LightBox_BusyIndicatorHeight - @_sap_m_LightBox_FooterTwoLinesHeightCozy) / 2;
+		}
+	}
+}
+
+/* ==========================================================================
+   Error State
+  ========================================================================== */
+
+.sapMLightBox.sapMLightBoxError .sapMLightBoxFooter {
+	position: initial;
+}
+
+/* ==========================================================================
+   Compact
+  ========================================================================== */
+
+.sapUiSizeCompact {
+
+	.sapMLightBoxImageContainer {
+		bottom: @_sap_m_LightBox_FooterOneLineHeightCompact;
+	}
+
+	.sapMLightBoxImageContainerTwoLines {
+		bottom: @_sap_m_LightBox_FooterTwoLinesHeightCompact;
+		height: calc(~"100% - " @_sap_m_LightBox_FooterTwoLinesHeightCompact);
+	}
+
+	.sapMLightBoxFooter {
+		height: @_sap_m_LightBox_FooterOneLineHeightCompact;
+
+		&.sapMLightBoxFooterTwoLines {
+			height: @_sap_m_LightBox_FooterTwoLinesHeightCompact;
+		}
+	}
+
+	.sapMLightBoxTitleSection {
+		padding: 0.75rem 0;
+	}
+
+	.sapMLightBoxTwoLines .sapMLightBoxTitleSection {
+		padding: @_sap_m_LightBox_TitleSectionPaddingTwoLines 0;
+	}
+
+	.sapMLightBoxFooter .sapMBtn {
+		padding-right: 0.5rem;
+		margin-bottom: 0.25rem;
+	}
+}

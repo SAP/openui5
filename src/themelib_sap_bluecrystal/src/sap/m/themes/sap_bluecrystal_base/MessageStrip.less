@@ -1,0 +1,128 @@
+/* =================================== */
+/* CSS for control sap.m/MessageStrip  */
+/* Base theme                          */
+/* =================================== */
+
+.sapMMsgStrip {
+	border: 1px solid;
+	border-radius: 0.1875rem;
+	box-sizing: border-box;
+	font-size: @sapMFontMediumSize;
+	font-weight: normal;
+	padding: 0.4375rem 1rem;
+	position: relative;
+	min-height: 2rem;
+
+	&[data-sap-ui-ms-closable='true'] > .sapMMsgStripMessage {
+		margin-right: 1.25rem;
+	}
+}
+
+html[data-sap-ui-animation='on'] {
+	.sapMMsgStrip {
+		-webkit-transition: opacity 0.2s;
+		transition: opacity 0.2s;
+	}
+
+	.sapMMsgStripCloseButton {
+		-webkit-transition: color 0.1s;
+		transition: color 0.1s;
+	}
+}
+
+.sapMMsgStripClosing {
+	opacity: 0;
+}
+
+.sapMMsgStripIcon {
+	position: absolute;
+	left: 0;
+	width: 2.5rem;
+	font-size: 1rem;
+	text-align: center;
+
+	& ~ .sapMMsgStripMessage {
+		margin-left: 1.5rem;
+	}
+}
+
+.sapMMsgStripMessage {
+	max-height: 10rem;
+	overflow: auto;
+
+	& > .sapMText,
+	& > .sapMFT,
+	& > .sapMLnk {
+		display: inline;
+	}
+
+	& > .sapMLnk {
+		margin-left: 0.25rem;
+
+		&:not(.sapMLnkDsbl) {
+			text-shadow: @sapUiContentTextShadow;
+		}
+	}
+
+	& > .sapMText {
+		line-height: 1.2;
+	}
+
+}
+
+.sapMMsgStripCloseButton {
+	position: absolute;
+	top: -0.5625rem;
+	right: 0.125rem;
+}
+
+.sapUiSizeCompact .sapMMsgStripCloseButton {
+	top: -0.0625rem;
+}
+
+
+.sapMMsgStripCloseButton {
+	position: absolute;
+	top: -0.5625rem;
+	right: 0.125rem;
+}
+
+.sapMMsgStripInformation {
+	background-color: @sapUiNeutralBG;
+	border-color: @sapUiNeutralBorder;
+	color: @sapUiBaseText;
+
+	& .sapMMsgStripIcon {
+		color: @sapUiNeutralElement;
+	}
+}
+
+.sapMMsgStripSuccess {
+	background-color: @sapUiSuccessBG;
+	border-color: @sapUiSuccessBorder;
+	color: @sapUiBaseText;
+
+	& .sapMMsgStripIcon {
+		color: @sapUiPositiveElement;
+	}
+}
+
+.sapMMsgStripWarning {
+	background-color: @sapUiWarningBG;
+	border-color: @sapUiWarningBorder;
+	color: @sapUiBaseText;
+
+	& .sapMMsgStripIcon {
+		color: @sapUiCriticalElement;
+	}
+}
+
+.sapMMsgStripError {
+	background-color: @sapUiErrorBG;
+	border-color: @sapUiErrorBorder;
+	color: @sapUiBaseText;
+
+	& .sapMMsgStripIcon {
+		color: @sapUiNegativeElement;
+	}
+}

@@ -1,0 +1,205 @@
+/* =========================================== */
+/* CSS for control sap.m/IconTabBarSelectList  */
+/* Base theme                                  */
+/* =========================================== */
+
+@_sap_m_IconTabBar_SelectListItem_PaddingLeft: 0.5rem;
+@_sap_m_IconTabBar_SelectListItem_PaddingLeftAdditional: 0;
+@_sap_m_IconTabBar_ListBorderRadius: 0px;
+@_sap_m_IconTabBar_List_Focus_Offset: 1px;
+
+.sapMITBSelectList {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+
+	&:focus {
+		outline: none;
+	}
+}
+
+.sapMITBSelectList .sapMITBSelectItem {
+	position: relative;
+
+	width : 100%;
+
+	box-sizing: border-box;
+
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: flex;
+
+	-webkit-box-align: center;
+	-webkit-align-items: center;
+	align-items: center;
+
+	cursor: pointer;
+
+	.sapUiIcon {
+		cursor: pointer;
+	}
+
+	&.sapMITHUnselectable {
+		cursor: default;
+	}
+}
+
+.sapMITBSelectList .sapMITBSelectItem:not(.sapMITBSep) {
+	padding: 0.75rem 0 0.75rem;
+}
+
+.sapMITBSelectList .sapMITBSep {
+	margin: 0;
+	height: 1rem;
+	justify-content: center;
+	padding-right: 0;
+
+	&:first-child {
+		margin-top: 0.5rem;
+	}
+
+	&.sapMITBSepLine {
+		margin-left: 0;
+		border: 0;
+		position: relative;
+		height: 0.25rem;
+		padding-right: 17px; // big enough to cover the case when a scrollbar appears
+
+		&::before {
+			width: 1rem;
+			content: "";
+		}
+
+		&::after {
+			content: "";
+			width: 100%;
+			border-top: 0.0625rem solid @sapUiGroupTitleBorderColor;
+		}
+	}
+
+	.sapMITBSepIcon {
+		height: 1rem;
+		line-height: 1rem;
+		overflow: hidden;
+	}
+}
+
+.sapMITBSelectItem .sapMITBSelectItemIcon {
+	outline: none;
+	-webkit-user-select: none; /* Chrome all / Safari all */
+	-moz-user-select: none; /* Firefox all */
+	user-select: none;
+}
+
+.sapMITBSelectItem .sapMITBText {
+	display: block;
+	padding: 0 1rem 0 0;
+	pointer-events: none;
+	min-width: 0;  // chrome flex overflow issue
+	overflow: visible;
+	white-space: normal;
+	font-size: @sapMFontMediumSize;
+}
+
+.sapMITBSelectListTextOnly .sapMITBSelectItem .sapMITBText {
+	padding-left: 1rem;
+}
+
+.sapMITBSelectItem:not(.sapMITBSep) .sapUiIcon {
+	font-size: 1.125rem;
+	min-width: 2.75rem;
+}
+
+/* Compact size */
+.sapUiSizeCompact {
+	.sapMITBSelectList .sapMITBSelectItem:not(.sapMITBSep) {
+		padding: 0.5rem 0 0.5rem;
+	}
+
+	.sapMITBSelectItem:not(.sapMITBSep) .sapUiIcon {
+		font-size: 1rem;
+		min-width: 2rem;
+	}
+
+	.sapMITBSelectList .sapMITBSep {
+		&.sapMITBSepLine {
+			padding-right: 0.5rem;
+
+			&::before {
+				width: 0.5rem;
+			}
+		}
+	}
+}
+
+.sapMITBSelectItem {
+	background-color: @sapUiListBackground;
+}
+
+.sapMITBSelectItem {
+	&.sapMITBFilterNeutral,
+	&.sapMITBFilterNegative,
+	&.sapMITBFilterPositive,
+	&.sapMITBFilterCritical {
+		.sapMITBText {
+			color: inherit;
+		}
+	}
+}
+
+.sapMITBSelectItem {
+	&.sapMITBFilterDefault {
+		.sapMITBInlineIcon {
+			color: @sapUiListTextColor
+		}
+	}
+}
+
+.sapMITBSelectItem:not(.sapMITHUnselectable):hover {
+	background-color: @sapUiListHoverBackground;
+}
+
+.sapMITBSelectList .sapMITBSelectItem:not(.sapMITHUnselectable) {
+
+	&:not(.sapUiDnDDragging):active,
+	&.sapMITBSelectItemSelected:not(.sapUiDnDDragging):active {
+		background-color: @sapUiListActiveBackground;
+
+		& > .sapMITBText {
+			color: @sapUiListActiveTextColor;
+		}
+
+		& > .sapUiIcon {
+			color: @sapUiListActiveTextColor;
+		}
+	}
+}
+
+.sapMITBSelectItem:focus {
+	outline: none;
+}
+
+.sapMITBSelectItem:focus::before {
+	border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+	position: absolute;
+	content: " ";
+	top: @_sap_m_IconTabBar_List_Focus_Offset;
+	right:  @_sap_m_IconTabBar_List_Focus_Offset;
+	bottom:  @_sap_m_IconTabBar_List_Focus_Offset;
+	left:  @_sap_m_IconTabBar_List_Focus_Offset;
+	z-index: 2;
+	border-radius: @_sap_m_IconTabBar_ListBorderRadius;
+	pointer-events: none;
+}
+
+.sapMITBSelectItem.sapMITBSelectItemSelected {
+	background-color: @sapUiListSelectionBackgroundColor;
+}
+
+.sapMITBSelectItem.sapMITBSelectItemSelected:hover {
+	background-color: @sapUiListSelectionHoverBackground;
+}
+
+.sapUiDnDIndicator {
+	z-index: 100;
+}

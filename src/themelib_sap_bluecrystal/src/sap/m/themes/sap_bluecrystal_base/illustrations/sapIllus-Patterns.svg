@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs>
+    <pattern id="sapIllus_PatternShadow" data-name="sapIllus_PatternShadow" width="3" height="5.5" patternUnits="userSpaceOnUse" viewBox="0 0 3 5.5">
+      <rect class="sapIllus_NoColor" width="3" height="5.5"/>
+      <circle class="sapIllus_BrandColorPrimary" cx="3" cy="5.5001" r="0.5"/>
+      <circle class="sapIllus_BrandColorPrimary" cy="5.5001" r="0.5"/>
+      <circle class="sapIllus_BrandColorPrimary" cx="1.5" cy="2.7501" r="0.5"/>
+      <circle class="sapIllus_BrandColorPrimary" cx="3" cy="0.0001" r="0.5"/>
+      <circle class="sapIllus_BrandColorPrimary" cy="0.0001" r="0.5"/>
+    </pattern>
+    <pattern id="sapIllus_PatternHighlight" data-name="sapIllus_PatternHighlight" width="3" height="5.5" patternTransform="translate(35.9059 309.6208)" patternUnits="userSpaceOnUse" viewBox="0 0 3 5.5">
+      <rect class="sapIllus_NoColor" width="3" height="5.5"/>
+      <circle class="sapIllus_ObjectFillColor" cx="3.0001" cy="5.5001" r="0.5"/>
+      <circle class="sapIllus_ObjectFillColor" cx="0.0001" cy="5.5001" r="0.5"/>
+      <circle class="sapIllus_ObjectFillColor" cx="1.5001" cy="2.7501" r="0.5"/>
+      <circle class="sapIllus_ObjectFillColor" cx="3.0001" cy="0.0001" r="0.5"/>
+      <circle class="sapIllus_ObjectFillColor" cx="0.0001" cy="0.0001" r="0.5"/>
+    </pattern>
+  </defs>
+</svg>

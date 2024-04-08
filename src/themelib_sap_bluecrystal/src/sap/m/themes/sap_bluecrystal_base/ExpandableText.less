@@ -1,0 +1,87 @@
+/* ===================================== */
+/* CSS for control sap.m/ExpandableText  */
+/* Base theme                            */
+/* ===================================== */
+
+.sapMExText {
+	box-sizing: border-box;
+	white-space: pre-line;
+	word-wrap: break-word; /* works only if browser knows the width */
+	cursor: text;
+	font-size: @sapMFontMediumSize;
+	font-family: @sapUiFontFamily;
+	line-height: normal;
+	color: @sapUiBaseText;
+	max-width: 100%;
+
+	.sapMLnk {
+		vertical-align: bottom;
+	}
+}
+
+.sapMExTextRenderWhitespaceWrap {
+	white-space: pre-wrap;
+}
+
+.sapMExTextBreakWord {
+	/* to break all words even browser does not know the width */
+	word-break: break-all;
+	word-break: break-word;  /* Non standard for old webkits */
+}
+
+.sapMPopover .sapMText.sapMExTextPopover {
+	max-width: 30rem;
+}
+
+.sapMLIBActionable .sapMExText {
+	cursor: pointer;
+}
+
+/*Necessary to align vertically to labels */
+.sapUiForm .sapMExText {
+	overflow: hidden;
+}
+
+.sapUiFormEdit .sapMExText {
+	display: block;
+	line-height: 1.375rem;
+	min-height: 2.75rem; /* for empty text */
+	padding-top: 0.6875rem;
+	padding-bottom: 0.6875rem;
+
+	& > a.sapMLnk {
+		line-height: 1.375rem;
+		padding: 0;
+		margin: 0;
+	}
+}
+html[data-sap-ui-browser^="cr"] .sapUiFormEdit .sapMExText {
+	line-height: 1.4375rem;
+}
+
+.sapUiForm:not(.sapUiFormEdit) .sapMExText {
+	min-height: 1rem; /* for empty text */
+}
+
+.sapMExTextEllipsis {
+	white-space: pre-line;
+	word-spacing: 0.125rem;
+}
+
+/* Compact size */
+.sapUiSizeCompact .sapUiFormEdit .sapMExText {
+	min-height: 2rem; /* for empty text */
+	padding-top: 0.3125rem;
+	padding-bottom: 0.3125rem;
+}
+html[data-sap-ui-browser^="cr"] .sapUiSizeCompact .sapUiFormEdit .sapMExText {
+	line-height: 1.375rem;
+}
+
+.sapMExText .sapMEmptyIndicator.sapMEmptyIndicatorAuto {
+	display: none;
+}
+
+.sapMShowEmpty-CTX .sapMExText .sapMEmptyIndicator.sapMEmptyIndicatorAuto {
+	display: inline-block;
+}
