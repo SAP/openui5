@@ -292,25 +292,24 @@ sap.ui.define([
 			doValidation = true;
 		}
 		if (oConfig.validations && Array.isArray(oConfig.validations) && doValidation) {
+			delete oConfig.validateCheck;
 			for (var i = 0; i < oConfig.validations.length; i++) {
 				var oValidate = this._handleValidation(oConfig.validations[i], value);
 				if (typeof oValidate === "boolean" && !oValidate) {
 					this.fireValidateFailed();
 					oConfig.validateCheck = "failed";
-					return false;
+					return;
 				} else if (typeof oValidate.then === "function") {
 					oValidate.then(function(bResult) {
 						if (!bResult) {
 							this.fireValidateFailed();
 							oConfig.validateCheck = "failed";
-							return false;
 						}
 					}.bind(this));
 				}
 			}
 			this._hideValueState();
 		}
-		return true;
 	};
 
 	BaseField.prototype._requestData = function (oRequest) {
