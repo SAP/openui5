@@ -1028,4 +1028,41 @@ sap.ui.define([
 		 }.bind(this));
 	 });
 
+	 QUnit.module("Check dialog integration", {
+		before: function() {},
+
+		beforeEach: function() {
+			const sFilterBarView = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:mdc="sap.ui.mdc"><mdc:FilterBar id="myFilterBarDirty"><mdc:filterItems><mdc:FilterField id="myFilterBar--field1" conditions="{$filters>/conditions/category}" propertyKey="category" maxConditions="1" dataType="Edm.String" delegate=\'\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}\'/></mdc:filterItems></mdc:FilterBar></mvc:View>';
+			return createAppEnvironment(sFilterBarView, "myFilterBarDirty")
+			.then(function(mCreatedView){
+				this.oView = mCreatedView.view;
+				this.oUiComponentContainer = mCreatedView.container;
+				this.oFilterBar = this.oView.byId('myFilterBarDirty');
+			}.bind(this));
+		},
+		afterEach: function() {
+			this.oUiComponentContainer.destroy();
+		},
+		after: function() {}
+	});
+
+	 QUnit.test("Check that filter condition change types are included for #hasChanges reset button enablement", async function(assert){
+
+		const mConditions = {
+			Category: [{operator: OperatorName.EQ, values:["Test"]}]
+		};
+
+		this.oFilterBar.setFilterConditions({Category: [{operator: OperatorName.EQ, values:["test"]}]});
+
+		await this.oFilterBar.getEngine().createChanges({
+			control: this.oFilterBar,
+			key: "Filter",
+			state: mConditions
+		});
+		const bHasChanges = await this.oFilterBar.getEngine().hasChanges(this.oFilterBar);
+
+		assert.equal(bHasChanges, true, "The filterbar is dirty");
+
+	});
+
 });

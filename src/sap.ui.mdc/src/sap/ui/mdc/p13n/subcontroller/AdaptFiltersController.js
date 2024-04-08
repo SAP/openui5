@@ -46,7 +46,8 @@ sap.ui.define([
 		return {
 			add: "addFilter",
 			remove: "removeFilter",
-			move: "moveFilter"
+			move: "moveFilter",
+			additional: ["addCondition", "removeCondition"]
 		};
 	};
 

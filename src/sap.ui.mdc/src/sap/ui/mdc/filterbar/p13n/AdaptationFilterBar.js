@@ -121,7 +121,6 @@ sap.ui.define([
 			this._updateActiveStatus(oP13nData);
 			this._oFilterBarLayout.setP13nData({ items: oP13nData });
 		}
-		this.fireChange();
 		return pModification;
 	};
 
@@ -404,7 +403,7 @@ sap.ui.define([
 				oP13nData.items.forEach((oItem) => {
 					this.addAggregation("filterItems", this.mFilterFields[oItem.name]);
 				});
-
+				this._attachFields();
 				this._updateActiveStatus(oP13nData.items);
 				this._oFilterBarLayout.setP13nData(oP13nData);
 				this._bFilterFieldsCreated = true;
@@ -412,6 +411,14 @@ sap.ui.define([
 				return this;
 			});
 
+		});
+	};
+
+	AdaptationFilterBar.prototype._attachFields = function() {
+		this.getFilterItems().forEach((oField) => {
+			oField.attachChange((oEvt) => {
+				this.fireChange();
+			});
 		});
 	};
 
