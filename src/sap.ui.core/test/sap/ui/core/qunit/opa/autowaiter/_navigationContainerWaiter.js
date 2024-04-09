@@ -7,16 +7,20 @@ sap.ui.define([
 	"sap/ui/test/autowaiter/_promiseWaiter",
 	"sap/ui/test/autowaiter/_cssTransitionWaiter",
 	"sap/ui/test/autowaiter/_cssAnimationWaiter",
+	"sap/ui/test/autowaiter/_UIUpdatesWaiter",
 	"sap/m/NavContainer",
 	"sap/m/App",
 	"sap/m/Page",
 	"sap/m/Button",
 	"sap/ui/test/opaQunit",
 	"sap/ui/test/Opa5",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/core/IntervalTrigger",
+	"sap/ui/core/ResizeHandler"
 ], function (_LogCollector, _autoWaiter, _timeoutWaiter, _XHRWaiter,
-		_promiseWaiter, _cssTransitionWaiter, _cssAnimationWaiter,
-		NavContainer, App, Page, Button, opaTest, Opa5, nextUIUpdate) {
+		_promiseWaiter, _cssTransitionWaiter, _cssAnimationWaiter, _UIUpdatesWaiter,
+		NavContainer, App, Page, Button, opaTest, Opa5,
+		nextUIUpdate, IntervalTrigger, ResizeHandler) {
 	"use strict";
 
 	var oLogCollector = _LogCollector.getInstance();
@@ -29,22 +33,26 @@ sap.ui.define([
 				this.oPromiseWaiterStub = sinon.stub(_promiseWaiter, "hasPending");
 				this.oCssTransitionWaiterStub = sinon.stub(_cssTransitionWaiter, "hasPending");
 				this.oCssAnimationWaiterStub = sinon.stub(_cssAnimationWaiter, "hasPending");
+				this.oUIUpdatesWaiterStub = sinon.stub(_UIUpdatesWaiter, "hasPending");
 				this.oTimeoutWaiterStub.returns(false);
 				this.oXHRWaiterStub.returns(false);
 				this.oPromiseWaiterStub.returns(false);
 				this.oCssTransitionWaiterStub.returns(false);
 				this.oCssAnimationWaiterStub.returns(false);
+				this.oUIUpdatesWaiterStub.returns(false);
 
 				this.oInitialPageButton = new Button();
 				this.oSecondPageButton = new Button();
-				var oInitialPage = new Page({
+				this.oInitialPage = new Page({
+					showHeader: false,
 					content: this.oInitialPageButton
 				});
 				this.oSecondPage = new Page({
+					showHeader: false,
 					content: this.oSecondPageButton
 				});
 				this.oNavContainer = new FnConstructor({
-					pages: [oInitialPage, this.oSecondPage]
+					pages: [this.oInitialPage, this.oSecondPage]
 				}).placeAt("qunit-fixture");
 
 				return nextUIUpdate();
@@ -56,6 +64,7 @@ sap.ui.define([
 				this.oPromiseWaiterStub.restore();
 				this.oCssTransitionWaiterStub.restore();
 				this.oCssAnimationWaiterStub.restore();
+				this.oUIUpdatesWaiterStub.restore();
 				this.oNavContainer.destroy();
 				return nextUIUpdate();
 			}
@@ -64,24 +73,62 @@ sap.ui.define([
 		QUnit.test("Should not match a Button while its navContainer is navigating", function (assert) {
 			var fnDone = assert.async();
 			var oNavigationLogRegExp = new RegExp("The NavContainer " + this.oNavContainer + " is currently navigating", "g");
+			var bIsAfterNavigate;
 
+			var oIntervalListener = {
+				onTrigger: function() {
+					if (bIsAfterNavigate) {
+						var bInitialResultAfterNavigationFinished = _autoWaiter.hasToWait();
+						var bSecondResultAfterNavigationFinished = _autoWaiter.hasToWait();
+						assert.ok(!bInitialResultAfterNavigationFinished, "Navigation is done");
+						assert.ok(!bSecondResultAfterNavigationFinished, "Navigation is done");
+						assert.ok(!oLogCollector.getAndClearLog().match(oNavigationLogRegExp));
+						IntervalTrigger.removeListener(this.onTrigger, this);
+						fnDone();
+					}
+				}
+			};
+			IntervalTrigger.addListener(oIntervalListener.onTrigger, oIntervalListener);
 			this.oNavContainer.to(this.oSecondPage);
 			var bInitialResultBeforeNavigationFinished = _autoWaiter.hasToWait();
 			var bSecondResultBeforeNavigationFinished = _autoWaiter.hasToWait();
 
 			assert.strictEqual(oLogCollector.getAndClearLog().match(oNavigationLogRegExp).length, 2);
+			assert.ok(bInitialResultBeforeNavigationFinished, "Navigation is in progress");
+			assert.ok(bSecondResultBeforeNavigationFinished, "Navigation is in progress");
 
 			this.oNavContainer.attachAfterNavigate(function () {
-				var bInitialResultAfterNavigationFinished = _autoWaiter.hasToWait();
-				var bSecondResultAfterNavigationFinished = _autoWaiter.hasToWait();
-
-				assert.ok(bInitialResultBeforeNavigationFinished, "Navigation is in progress");
-				assert.ok(bSecondResultBeforeNavigationFinished, "Navigation is in progress");
-				assert.ok(!bInitialResultAfterNavigationFinished, "Navigation is done");
-				assert.ok(!bSecondResultAfterNavigationFinished, "Navigation is done");
-				assert.ok(!oLogCollector.getAndClearLog().match(oNavigationLogRegExp));
-				fnDone();
+				bIsAfterNavigate = true;
 			}, this);
+		});
+
+		QUnit.test("Should wait for resize notifications at navigatiion end", function (assert) {
+			var fnDone = assert.async();
+			var oResizeSpy = this.spy(ResizeHandler.prototype, "checkSizes");
+			var bIsAfterNavigate;
+
+			var oIntervalListener = {
+				onTrigger: function() {
+					if (bIsAfterNavigate) {
+						assert.ok(oResizeSpy.called, "the resize listener is called at the next interval trigger");
+						assert.notOk(_autoWaiter.hasToWait(), "no navigations in progress");
+						IntervalTrigger.removeListener(this.onTrigger, this);
+						fnDone();
+					}
+				}
+			};
+			this.oNavContainer.setDefaultTransitionName("show");
+			// ensure ResizeHandler monitors at least one control for resize:
+			ResizeHandler.register(this.oInitialPage, function(){});
+			IntervalTrigger.addListener(oIntervalListener.onTrigger, oIntervalListener);
+			oResizeSpy.reset();
+
+			// Act
+			this.oNavContainer.to(this.oSecondPage);
+			bIsAfterNavigate = true;
+
+			// Check navigation detected
+			assert.ok(_autoWaiter.hasToWait(), "navigation in progress");
 		});
 	});
 
