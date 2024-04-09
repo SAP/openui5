@@ -498,6 +498,19 @@
 				equal(html.getContent(), sanitizedContent, "HTML sanitized using constructor, wrong order");
 			});
 
+            module("Fixes in caja-html-sanitizer");
+
+            test("Tags wrapped in iframe tag", function() {
+                var sOffensiveContent = "<select><iframe><select><img src=x onerror=alert(1)></select></iframe></select>";
+                var oHTML = new sap.ui.core.HTML({
+                    sanitizeContent: true,
+                    content: sOffensiveContent
+                });
+
+                equal(oHTML.getContent().indexOf("onerror"), -1, "The error handler should be removed");
+                oHTML.destroy();
+            });
+
 		</script>
 	</head>
 	<body>
