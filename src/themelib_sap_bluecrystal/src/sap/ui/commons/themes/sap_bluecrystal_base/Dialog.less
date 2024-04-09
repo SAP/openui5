@@ -1,0 +1,134 @@
+@_sap_ui_commons_Dialog_HeaderHeight: 19px;
+@_sap_ui_commons_Dialog_FooterHeight: 36px;
+
+.sapUiDlg {
+	position: absolute; /*relative;/* enable positioning for children */
+	display: inline-block;
+	outline: none;
+	box-sizing: border-box;
+}
+
+/* header */
+
+.sapUiDlgHdr {
+	height: @_sap_ui_commons_Dialog_HeaderHeight;
+	margin: 10px 10px 0 10px;
+	cursor: move;
+	overflow: hidden;
+	-moz-user-select: none;
+	-webkit-user-select: none;
+}
+
+.sapUiDlgHdr > .sapUiDlgHdrLeft {
+	/* do not set padding here, as this invalidates the header text overlap calculation */
+	font-weight: bold;
+	display: inline-block;
+	overflow: hidden;
+	white-space: nowrap;
+	padding-right: 20px;
+	text-overflow: ellipsis;
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.sapUiDlgHdrBtns {
+	/* the button row on the right-hand side of the panel header */
+	position: absolute;
+	right: 4px;
+	top: 0;
+	padding-left: 5px;
+}
+
+.sapUiDlgHdrBtns > a {
+	/* common style for all buttons in the header */
+	width: 18px;
+	height: 18px;
+	display: inline-block;
+	margin: 5px 1px 0 0;
+	cursor: pointer;
+	color: transparent /* make x text invisible */
+}
+
+.sapUiDlgHdrBtns > a:hover {
+	color: transparent /* make x text invisible */
+}
+
+/* make x text non selectable for firefox so it can't be selected with mouse/keyboard */
+html[data-sap-ui-browser="ff3"] .sapUiDlgHdrBtns > a {
+	-moz-user-select: none;
+	-webkit-user-select: none;
+}
+
+/* content */
+
+.sapUiDlgCont {
+	background-color: @sapUiExtraLightBG;
+	border-width: 0 1px;
+	border-color: @sapUiMediumBorder;
+	border-style: solid;
+	position:absolute; /* required for proper layout, do not change! */
+	left: 0px;
+	right: 0px;
+	bottom: 36px;   /* must equal the footer height! */
+	top: 26px;      /* must equal the header height! */
+	overflow: auto; /* this triggers the Dialog's scrollbars when required */
+	padding: 16px 22px;
+	outline: none;
+}
+
+.sapUiDlgNoPad .sapUiDlgCont {
+	padding: 0px;
+}
+
+.sapUiDlgFlexHeight .sapUiDlgCont,
+.sapUiDlgFlexWidth .sapUiDlgCont {
+	position: relative;
+	top: 0px;
+}
+
+/* footer */
+
+.sapUiDlgFooter {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	height: @_sap_ui_commons_Dialog_FooterHeight;
+}
+
+.sapUiDlgFlexHeight .sapUiDlgFooter {
+	position: static;
+}
+
+.sapUiDlgWave {
+	/* additional decoration element */
+	display: none;
+}
+
+.sapUiDlgBtns {
+	display: inline-block;
+	float: right;
+	padding: 9px 15px 3px 16px;
+	white-space: nowrap;
+}
+
+.sapUiDlgBtns > * {
+	margin-left: 2px;
+}
+
+.sapUiDlgGrip {
+	color: transparent; /* make resize text invisible */
+	position: absolute;
+	right: 4px;
+	bottom: 3px;
+	width: 14px;
+	height: 14px;
+	cursor: nw-resize;
+	background-position: left top;
+}
+
+/* make resize text non selectable for firefox so it can't be selected with mouse/keyboard */
+html[data-sap-ui-browser="ff3"] .sapUiDlgGrip {
+	-moz-user-select: none;
+	-webkit-user-select: none;
+}
