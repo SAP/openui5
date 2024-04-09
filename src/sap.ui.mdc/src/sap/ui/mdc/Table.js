@@ -833,6 +833,7 @@ sap.ui.define([
 				 * @since 1.75
 				 */
 				beforeExport: {
+					allowPreventDefault: true,
 					parameters: {
 						/**
 						 * Contains <code>workbook.columns, dataSource</code>, and other export-related information.
@@ -2441,9 +2442,9 @@ sap.ui.define([
 
 		return new Promise((fnResolve, fnReject) => {
 			Promise.all([
-				that._loadExportLibrary(), that.getControlDelegate().fetchExportCapabilities(that)
+				that.getControlDelegate().fetchExportCapabilities(that), Library.load({name: "sap.ui.export"})
 			]).then((aResult) => {
-				const oExportCapabilities = aResult[1];
+				const [oExportCapabilities] = aResult;
 
 				sap.ui.require(["sap/ui/export/ExportHandler"], (ExportHandler) => {
 					that._oExportHandler = new ExportHandler(oExportCapabilities);
@@ -2485,25 +2486,15 @@ sap.ui.define([
 			}
 		});
 
-		this.fireBeforeExport({
+		const bExecuteDefaultAction = this.fireBeforeExport({
 			exportSettings: oEvent.getParameter("exportSettings"),
 			userExportSettings: oEvent.getParameter("userExportSettings"),
 			filterSettings: aFilters
 		});
-	};
 
-	/**
-	 * Returns promise after loading the export library. The Promise
-	 * will be resolved with a reference to the export library.
-	 *
-	 * @returns {Promise} export library promise
-	 * @private
-	 */
-	Table.prototype._loadExportLibrary = function() {
-		if (!this._oExportLibLoadPromise) {
-			this._oExportLibLoadPromise = Library.load({name: "sap.ui.export"});
+		if (!bExecuteDefaultAction) {
+			oEvent.preventDefault();
 		}
-		return this._oExportLibLoadPromise;
 	};
 
 	/**
