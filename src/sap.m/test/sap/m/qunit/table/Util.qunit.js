@@ -1,5 +1,5 @@
 sap.ui.define([
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/core/Lib",
 	"sap/ui/core/Theming",
 	"sap/m/List",
@@ -24,7 +24,7 @@ sap.ui.define([
 	"sap/ui/model/odata/type/TimeOfDay",
 	"sap/ui/model/odata/v2/ODataListBinding",
 	"sap/ui/core/InvisibleMessage"
-], function(Core, Library, Theming, List, Util, ThemeParameters, JSONListBinding, BooleanType, Byte, DateType, DateTime, DateTimeWithTimezone, Decimal, Double, Single, Guid, Int16, Int32, Int64, SByte, StringType, Time, TimeOfDay, ODataListBinding, InvisibleMessage) {
+], function(nextUIUpdate, Library, Theming, List, Util, ThemeParameters, JSONListBinding, BooleanType, Byte, DateType, DateTime, DateTimeWithTimezone, Decimal, Double, Single, Guid, Int16, Int32, Int64, SByte, StringType, Time, TimeOfDay, ODataListBinding, InvisibleMessage) {
 	"use strict";
 	/* global QUnit,sinon */
 
@@ -45,17 +45,8 @@ sap.ui.define([
 	}
 
 	QUnit.test("measureText", function(assert) {
-		var oThemeParametersStub, fSizeBeforeNewThemeApplied;
-		var done = assert.async();
-		var fnNewThemeApplied = function() {
-			var fSizeAfterNewThemeApplied = Util.measureText("Text");
-			assert.ok(fSizeAfterNewThemeApplied > fSizeBeforeNewThemeApplied);
+		const done = assert.async();
 
-			oThemeParametersStub.restore();
-			Theming.detachApplied(fnNewThemeApplied);
-			Theming.notifyContentDensityChanged();
-			done();
-		};
 		assert.ok(Util.measureText("aaa") > Util.measureText("aa"));
 		assert.ok(Util.measureText("w".repeat(50)) > 30);
 		assert.ok(Util.measureText("i") < 0.5);
@@ -63,20 +54,30 @@ sap.ui.define([
 		assert.ok(Util.measureText("0") < Util.measureText("0", "bold 16px Arial"));
 		assert.ok(Util.measureText("w", "12px Arial") > Util.measureText("w", "10px Arial"));
 
-		fSizeBeforeNewThemeApplied = Util.measureText("Text");
-
-		oThemeParametersStub = sinon.stub(ThemeParameters, "get");
+		const fSizeBeforeNewThemeApplied = Util.measureText("Text");
+		const oThemeParametersStub = sinon.stub(ThemeParameters, "get");
 		oThemeParametersStub.withArgs({ name: "sapMFontMediumSize" }).returns("1rem");
 		oThemeParametersStub.withArgs({ name: "sapUiFontFamily" }).returns("Helvetica");
+
+		const fnNewThemeApplied = function() {
+			const fSizeAfterNewThemeApplied = Util.measureText("Text");
+			assert.ok(fSizeAfterNewThemeApplied > fSizeBeforeNewThemeApplied);
+
+			oThemeParametersStub.restore();
+			Theming.detachApplied(fnNewThemeApplied);
+			Theming.notifyContentDensityChanged();
+			done();
+		};
+
 		Theming.notifyContentDensityChanged();
 		Theming.attachApplied(fnNewThemeApplied);
 	});
 
 	QUnit.test("calcTypeWidth - Boolean", function(assert) {
-		var done = assert.async();
-		var oThemeParametersStub = sinon.stub(ThemeParameters, "get");
-		var fYesBeforeNewThemeApplied = Util.measureText("Yes");
-		var fnNewThemeApplied = function() {
+		const done = assert.async();
+		const oThemeParametersStub = sinon.stub(ThemeParameters, "get");
+		const fYesBeforeNewThemeApplied = Util.measureText("Yes");
+		const fnNewThemeApplied = function() {
 			assert.ok(Util.calcTypeWidth(new BooleanType()) > fYesBeforeNewThemeApplied);
 
 			oThemeParametersStub.restore();
@@ -146,7 +147,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("calcTypeWidth - Other", function(assert) {
-		var done = assert.async();
+		const done = assert.async();
 
 		sap.ui.require(["sap/ui/comp/odata/type/FiscalDate"], function(FiscalDate) {
 			assert.equal(Util.calcTypeWidth(new FiscalDate(null, {maxLength: 10}, {
@@ -161,19 +162,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("calcHeaderWidth", function(assert) {
-		var fSizeBeforeNewThemeApplied, fSizeAfterNewThemeApplied, oThemeParametersStub;
-		var done = assert.async();
-		var fnNewThemeApplied = function() {
-			fSizeAfterNewThemeApplied = Util.calcHeaderWidth("Some Long Header Text", 9);
-			assert.ok(fSizeAfterNewThemeApplied > fSizeBeforeNewThemeApplied);
+		let fSizeAfterNewThemeApplied;
+		const done = assert.async();
 
-			oThemeParametersStub.restore();
-			Theming.detachApplied(fnNewThemeApplied);
-			Theming.notifyContentDensityChanged();
-			done();
-		};
-		var sFontRequired = ThemeParameters.get({ name: "sapMFontLargeSize" }) || "normal";
-		var sFontHeader = ThemeParameters.get({ name: "sapUiColumnHeaderFontWeight" }) || "normal";
+		const sFontRequired = ThemeParameters.get({ name: "sapMFontLargeSize" }) || "normal";
+		const sFontHeader = ThemeParameters.get({ name: "sapUiColumnHeaderFontWeight" }) || "normal";
 
 		assert.equal(Util.calcHeaderWidth("Header"), Util.measureText("Header", sFontHeader), "Column header width calculation without parameters");
 		assert.equal(Util.calcHeaderWidth("Header", 2, 19, 2, true), Util.measureText("Header", sFontHeader) + Util.measureText("*", sFontRequired) + 0.125, "Column header width calculation with required parameter");
@@ -187,18 +180,28 @@ sap.ui.define([
 		assert.ok(Util.calcHeaderWidth("A".repeat(100), 10) > Util.calcHeaderWidth("A".repeat(100), 5));
 		assert.ok(Util.calcHeaderWidth("A".repeat(25), 15) > Util.calcHeaderWidth("A".repeat(20), 15));
 
-		fSizeBeforeNewThemeApplied = Util.calcHeaderWidth("Some Long Header Text", 9);
-
-		oThemeParametersStub = sinon.stub(ThemeParameters, "get");
+		const fSizeBeforeNewThemeApplied = Util.calcHeaderWidth("Some Long Header Text", 9);
+		const oThemeParametersStub = sinon.stub(ThemeParameters, "get");
 		oThemeParametersStub.withArgs({ name: "sapMFontMediumSize" }).returns("1rem");
 		oThemeParametersStub.withArgs({ name: "sapUiFontFamily" }).returns("Arial");
 		oThemeParametersStub.withArgs({ name: "sapUiColumnHeaderFontWeight" }).returns("bold");
+
+		const fnNewThemeApplied = function() {
+			fSizeAfterNewThemeApplied = Util.calcHeaderWidth("Some Long Header Text", 9);
+			assert.ok(fSizeAfterNewThemeApplied > fSizeBeforeNewThemeApplied);
+
+			oThemeParametersStub.restore();
+			Theming.detachApplied(fnNewThemeApplied);
+			Theming.notifyContentDensityChanged();
+			done();
+		};
+
 		Theming.notifyContentDensityChanged();
 		Theming.attachApplied(fnNewThemeApplied);
 	});
 
 	QUnit.test("calcColumnWidth", function(assert) {
-		var ccw = Util.calcColumnWidth.bind(Util);
+		const ccw = Util.calcColumnWidth.bind(Util);
 		assert.equal(ccw(new Byte()), OuterWidth(2), "Byte Type < Min width");
 		assert.equal(ccw(new BooleanType()), OuterWidth(2), "BooleanType Type < Min width");
 
@@ -209,7 +212,7 @@ sap.ui.define([
 		assert.equal(parseInt(ccw(new SByte(), "HeaderText", {truncateLabel: false, headerGap: true})), parseInt(Util.calcHeaderWidth("HeaderText") + 1 + 1.375));
 
 		[new BooleanType(), new Byte(), new Int16(), new Int32(), new Int64(), new Double(), new Decimal(), Str(10), new Time(), new DateType(), new Guid()].forEach(function(oType) {
-			var fWidth = parseFloat(ccw(oType, "", {padding: 0}));
+			const fWidth = parseFloat(ccw(oType, "", {padding: 0}));
 			assert.equal(parseFloat(ccw(oType, "", {padding: 4})), fWidth + 4, "Field Padding: " + oType);
 
 			assert.equal(parseFloat(ccw(oType, "", {maxWidth: 2, padding: 0})), 2, "Field Max Width: " + oType);
@@ -237,32 +240,34 @@ sap.ui.define([
 		assert.equal(ccw([[Str(10), {maxWidth: 3}], [Str(10), {maxWidth: 2}]], "", {maxWidth: 5, treeColumn: true}), OuterWidth(5), "Column maxWidth taken into account for the treeColumn");
 	});
 
-	QUnit.test("showSelectionLimitPopover & hideSelectionLimitPopover", function(assert) {
-		var done = assert.async();
-		var fnGetSelectAllPopoverSpy = sinon.spy(Util, "getSelectAllPopover");
-		var oElement = new List();
+	QUnit.test("showSelectionLimitPopover & hideSelectionLimitPopover", async function(assert) {
+		const done = assert.async();
+		const fnGetSelectAllPopoverSpy = sinon.spy(Util, "getSelectAllPopover");
+		const oElement = new List();
 		oElement.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
+
 		Util.showSelectionLimitPopover(10, oElement);
-		Util.getSelectAllPopover().then(function(oResult) {
-			var oPopover = oResult.oSelectAllNotificationPopover;
-			var oResourceBundle = oResult.oResourceBundle;
-			var sMessage = oResourceBundle.getText("TABLE_SELECT_LIMIT", [10]);
-			oPopover.attachEventOnce("afterOpen", function() {
-				assert.strictEqual(fnGetSelectAllPopoverSpy.callCount, 2, "Util#getSelectAllPopover is called when showSelectionLimitPopovers is called");
-				assert.strictEqual(oPopover.getContent()[0].getText(), sMessage, "Correct warning message displayed on the popover");
-				assert.ok(oPopover.isOpen(), sMessage, "Popover is opened");
-				Util.hideSelectionLimitPopover();
-			});
-			oPopover.attachEventOnce("afterClose", function() {
-				assert.notOk(oPopover.isOpen(), sMessage, "Popover is opened");
-				done();
-			});
+		const oSelectAllPopover = await Util.getSelectAllPopover();
+
+		const oPopover = oSelectAllPopover.oSelectAllNotificationPopover;
+		const oResourceBundle = oSelectAllPopover.oResourceBundle;
+		const sMessage = oResourceBundle.getText("TABLE_SELECT_LIMIT", [10]);
+
+		oPopover.attachEventOnce("afterOpen", function() {
+			assert.strictEqual(fnGetSelectAllPopoverSpy.callCount, 2, "Util#getSelectAllPopover is called when showSelectionLimitPopovers is called");
+			assert.strictEqual(oPopover.getContent()[0].getText(), sMessage, "Correct warning message displayed on the popover");
+			assert.ok(oPopover.isOpen(), "Popover should be open");
+			Util.hideSelectionLimitPopover();
+		});
+		oPopover.attachEventOnce("afterClose", function() {
+			assert.notOk(oPopover.isOpen(), "Popover should be closed");
+			done();
 		});
 	});
 
 	QUnit.test("announceTableUpdate", function(assert) {
-		var oRb = Library.getResourceBundleFor("sap.m"),
+		const oRb = Library.getResourceBundleFor("sap.m"),
 			sText = "Testing Text",
 			fnInvisibleMessageAnnounce = sinon.spy(InvisibleMessage.prototype, "announce");
 
@@ -271,7 +276,7 @@ sap.ui.define([
 		assert.ok(fnInvisibleMessageAnnounce.calledWith(oRb.getText("table.ANNOUNCEMENT_TABLE_UPDATED", [sText])), "Row count was not announced");
 
 		// rowCount > 1
-		var iRowCount = 10;
+		let iRowCount = 10;
 		Util.announceTableUpdate(sText, iRowCount);
 		assert.ok(fnInvisibleMessageAnnounce.calledWith(oRb.getText("table.ANNOUNCEMENT_TABLE_UPDATED_MULT", [sText, iRowCount])), "Multiple updated rows were announced");
 
@@ -289,7 +294,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("announceEmptyColumnMenu", function(assert) {
-		var oRb = Library.getResourceBundleFor("sap.m"),
+		const oRb = Library.getResourceBundleFor("sap.m"),
 			fnInvisibleMessageAnnounce = sinon.spy(InvisibleMessage.prototype, "announce");
 
 		Util.announceEmptyColumnMenu();
@@ -298,10 +303,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("isEmpty", function(assert) {
-		var iLength = 0,
-			sType = "",
-			bIsFinal = true;
-		var oRowBinding = {
+		let iLength = 0,
+			sType = "";
+		const bIsFinal = true;
+		const oRowBinding = {
 			getLength: function() { return iLength; },
 			isA: function(sClass) { return sType == sClass; },
 			isLengthFinal: function() { return bIsFinal; }
@@ -384,12 +389,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("isThemeApplied", function(assert) {
-		var done = assert.async();
-		var sCurrentTheme;
-		var iPass = 0;
+		const done = assert.async();
+		let sCurrentTheme, iPass = 0;
 
-		var fnThemeChanged = (oEvent) => {
-			var sTheme = oEvent.theme;
+		const fnThemeChanged = (oEvent) => {
+			const sTheme = oEvent.theme;
 
 			if (iPass == 0) {
 				sCurrentTheme = Theming.getTheme();
