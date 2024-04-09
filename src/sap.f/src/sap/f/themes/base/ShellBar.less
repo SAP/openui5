@@ -82,6 +82,16 @@
 		margin-left: 0;
 	}
 
+	// Assistant
+	.sapMTB-Transparent-CTX .sapFShellBarAssistantBtn.sapFShellBarItemActive.sapFShellBarItem,
+	.sapFShellBarAssistantBtn.sapFShellBarItemActive.sapFShellBarItem {
+		color: @sapShell_Assistant_ForegroundColor;
+		.sapMBtnIcon,
+		&.sapFShellBarItem.sapMBtn:hover:not(.sapMBtnDisabled) > span.sapMBtnInner.sapMBtnHoverable:not(.sapMToggleBtnPressed) > .sapMBtnIcon {
+			color: @sapShell_Assistant_ForegroundColor;
+		}
+	}
+
 	// Reflection: styles overwritten
 	.sapMBtn .sapMBtnInner {
 		.sapFAvatar {
