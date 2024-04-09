@@ -1,0 +1,25 @@
+/* ======================================= */
+/* CSS for control sap.m/ToolbarSeparator  */
+/* Base theme                              */
+/* ======================================= */
+
+.sapMTBSeparator {
+	width: 0.0625rem;
+	height: 2rem;
+	background: @sapUiToolbarSeparatorColor;
+
+	&.sapMTBSeparatorOverflowToolbar {
+		height: 0.0625rem;
+		margin: 0.25rem 0.5rem;
+		width: auto;
+	}
+}
+
+.sapUiSizeCompact .sapMTBSeparator {
+	height: 1.5rem;
+
+	&.sapMTBSeparatorOverflowToolbar {
+		height: 0.0625rem;
+		margin: 0.1875rem 0.375rem;
+	}
+}

@@ -1,0 +1,137 @@
+/* =========================== */
+/* CSS for control sap.m/Link  */
+/* Base theme                  */
+/* =========================== */
+
+.sapMLnk {
+	color: @sapUiLink;
+	text-decoration: @sapUiLinkTextDecoration;
+	display: inline-block;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	word-wrap: normal;
+	font-family: @sapUiFontFamily;
+	font-size: @sapMFontMediumSize;
+	cursor: pointer;
+
+	&:visited {
+		color: @sapUiLinkVisitedColor;
+	}
+
+	&:not(.sapMLnkDsbl) {
+		&:active {
+			color: @sapUiLinkActiveColor;
+			text-decoration: @sapUiLinkActiveTextDecoration;
+		}
+	}
+}
+
+html.sap-desktop .sapMLnk:not(.sapMLnkDsbl) {
+	&:focus {
+		outline: 1px dotted @sapUiContentFocusColor;
+		outline-offset: -1px;
+		text-decoration: underline;
+	}
+
+	&:hover:not(:active):not(:focus) {
+		color: @sapUiLinkHoverColor;
+		text-decoration: @sapUiLinkHoverTextDecoration;
+	}
+
+}
+
+.sapUiInverted-CTX .sapUiLnk {
+	color: @sapUiLinkInvertedColor;
+}
+
+.sapMLnk.sapMLnkWrapping {
+	white-space: normal;
+	word-wrap: break-word;
+}
+
+.sapMLnk.sapMLinkContainsEmptyIdicator,
+.sapMLnk.sapMLinkContainsEmptyIdicator > * {
+	pointer-events: none;
+	text-decoration: none;
+}
+
+.sapMLnkMaxWidth {
+	max-width: 100%;
+}
+
+
+/* Link in sap.ui.table.* tables */
+
+.sapUiTableCell .sapMLnk {
+	vertical-align: middle;
+}
+
+.sapUiSizeCondensed .sapUiTableCell .sapMLnk {
+	line-height: 1.5rem;
+}
+
+.sapUiHLayoutChildWrapper > .sapMLnk {
+	vertical-align: text-bottom;
+}
+
+.sapMFT .sapMLnk,
+.sapMFT .sapMTitle .sapMLnk {
+	vertical-align: top;
+}
+
+/* Link focus offset and visualization in sap.ui.table.* tables */
+html.sap-desktop .sapUiSizeCondensed .sapUiTableCell .sapMLnk:focus:not(.sapMLnkDsbl) {
+	outline-offset: -2px;
+}
+
+.sapUiForm .sapMLnk {
+	min-height: 1rem; /* do give empty links a size too. Keep the Form stable */
+}
+
+.sapUiFormEdit .sapMLnk {
+	line-height: normal;
+	margin-top: 1rem; /* don't use padding as this would stretch the focus outline */
+	margin-bottom: 0.75rem; /* for some reason browser adds 4px, display: block would lead to stretched focus outline*/
+}
+
+.sapUiFormToolbar .sapMTB .sapMLnk {
+	line-height: normal;
+	margin-top: auto;
+	margin-bottom: auto;
+}
+
+.sapMLnkEmphasized {
+	font-family: @sapUiFontBoldFamily;
+}
+
+.sapMLnk .sapMEmptyIndicator.sapMEmptyIndicatorAuto {
+	display: none;
+}
+
+.sapMShowEmpty-CTX .sapMLnk .sapMEmptyIndicator.sapMEmptyIndicatorAuto {
+	display: inline-block;
+}
+
+.sapMShowEmpty-CTX .sapMLnk .sapMEmptyIndicator.sapMEmptyIndicatorAuto,
+.sapMLnk .sapMEmptyIndicator {
+	color: @sapUiBaseText;
+}
+
+
+.sapMListTblRow.sapMLIBActive .sapMLnk,
+.sapMListTblSubRow.sapMLIBActive .sapMLnk,
+.sapMLIB.sapMLIBActive .sapMLink {
+	text-decoration: none;
+	text-shadow: none;
+ }
+
+/* Compact size */
+.sapUiSizeCompact .sapUiFormEdit .sapMLnk {
+	margin-top: 0.5rem;
+	margin-bottom: 0.25rem;
+}
+
+.sapMLnk:-webkit-any-link:focus {
+	outline: none;
+}

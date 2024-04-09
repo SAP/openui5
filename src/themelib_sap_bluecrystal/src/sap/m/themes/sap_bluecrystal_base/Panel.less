@@ -1,0 +1,165 @@
+/* ============================ */
+/* CSS for control sap.m/Panel  */
+/* Base theme                   */
+/* ============================ */
+
+.sapMPanel {
+	overflow: hidden;
+	box-sizing: border-box;
+	// The following needed for calculation of height for content child
+	position: relative;
+}
+
+.sapMPanel.sapMPanelHasStickyHeader {
+	overflow: visible;
+}
+
+.sapMPanelHdr {
+	box-sizing: border-box;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	text-transform: none;
+	height: 3rem;
+	line-height: 3rem;
+	margin: 0;
+
+	/*
+	* To improve readability Mobile Safari automatically increases
+	* the size of small text so let's disable this
+	*/
+	-webkit-text-size-adjust: none;
+
+	font-weight: @sapUiFontHeaderWeight;
+	font-size: @sapUiGroupTitleFontSize;
+	font-family: @sapUiFontHeaderFamily;
+	color: @sapUiGroupTitleTextColor;
+}
+
+.sapMPanel {
+	.sapMPanelHdr,
+	.sapMTB.sapMPanelHeaderTB {
+		padding-left: 1rem;
+		padding-right: 0.5rem;
+		background-color: @sapUiGroupTitleBackground;
+	}
+
+	&.sapMPanelExpandable {
+		.sapMPanelHdr, .sapMTB.sapMPanelHeaderTB {
+			padding-left: 0;
+		}
+	}
+}
+
+.sapUiSizeCompact {
+	.sapMPanel {
+		min-height: 2rem;
+
+		.sapMPanelHdr {
+			line-height: 2rem;
+			height: 2rem;
+		}
+
+		.sapMPanelWrappingDiv .sapUiIcon {
+			width: 2rem;
+			height: 1.5rem;
+			line-height: 1.5rem;
+		}
+	}
+}
+.sapMPanelStickyHeadingDiv {
+	position: sticky;
+	top: 0;
+	z-index: 4; /* The z-index of the Table sticky header is 3, so we need bigger one to make the Panel header on top*/
+	background-color: @sapUiBaseBG;
+}
+
+.sapMPanelContent {
+	padding: 0.625rem 1rem 1.375rem 1rem;
+	box-sizing: border-box;
+	overflow: auto;
+	white-space: normal;
+
+	/* This is needed in order to remove the additional outline added by tabindex=-1*/
+	&:focus {
+		outline: none;
+	}
+}
+
+.sapMPanelExpandablePart {
+	clear: both;
+}
+
+.sapMPanelWrappingDiv,
+.sapMPanelWrappingDivTb {
+	position: relative;
+	background-color: @sapUiGroupTitleBackground;
+
+	> .sapMBtn {
+		position: absolute;
+		top: 50%;
+		-webkit-transform: translateY(-50%);
+		transform: translateY(-50%);
+		padding-left: 0.25rem;
+		padding-right: 0.25rem;
+	}
+}
+
+.sapMPanelWrappingDiv .sapUiIcon {
+	width: 2.25rem;
+	height: 2.25rem;
+	line-height: 2.25rem;
+	position: absolute;
+	top: 50%;
+	-webkit-transform: translateY(-50%);
+	transform: translateY(-50%);
+	padding: 0.25rem;
+	font-size: 1rem;
+	cursor: inherit;
+	color: @sapUiContentIconColor;
+}
+
+/* if Panel is expandable, we do not wish toolbar to come with own border */
+.sapMPanelWrappingDivTb > .sapMTB {
+	border-width: 0;
+}
+
+.sapMPanelWrappingDiv.sapMPanelWrappingDivExpanded {
+	border-bottom-width: 0;
+}
+
+.sapMPanelWrappingDivTb.sapMPanelWrappingDivTbExpanded {
+	border-bottom-width: 0;
+}
+
+html.sap-tablet .sapUiFioriObjectPage > section > .sapMPanel,
+html.sap-desktop .sapUiFioriObjectPage > section > .sapMPanel {
+	margin: 1rem 0;
+	padding: 0 1rem;
+	box-sizing: border-box;
+}
+
+.sapMPanel .sapMPanelWrappingDiv .sapMPanelHdr,
+.sapMPanel .sapMPanelWrappingDivTb .sapMIBar.sapMTB {
+	margin-left: 2.75rem;
+	padding-left: 0.25rem;
+
+  	>:first-child {
+	  margin-left: 0;
+	}
+}
+
+/* mixin call for creating container content padding classes (arguments: rootContainer, contentSelector) */
+.sapUiContainerContentPadding(~".sapMPanel", ~"> .sapMPanelContent");
+
+
+.sapMPanelExpandable .sapMPanelWrappingDiv {
+	&:focus {
+		outline: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+		outline-offset: -0.1875rem;
+	}
+
+	&:hover {
+		cursor: pointer;
+	}
+}

@@ -1,0 +1,53 @@
+/* ========================================= */
+/* CSS for control sap.m/P13nConditionPanel  */
+/* Base theme                                */
+/* ========================================= */
+
+.sapMConditionPanel .sapUiRespGridMedia-Std-Phone .floatRight {
+	float: right;
+}
+
+.sapMConditionPanel .displayNone {
+	display: none;
+}
+
+.sapMConditionPanel .conditionRootGrid > div + div .sapUiRespGridMedia-Std-Tablet {
+	margin-top: 1rem;
+}
+
+.sapMConditionPanel .conditionRootGrid > div + div .sapUiRespGridMedia-Std-Phone {
+	margin-top: 1rem;
+}
+
+.sapMConditionPanel .conditionAddBtnFloatRight {
+	float: right;
+}
+
+.sapUiSizeCompact .sapMConditionPanel .conditionLabel {
+	margin-top: 0.5rem;
+}
+
+.sapMConditionPanel .conditionLabel {
+	margin-top: 1rem;
+}
+
+.sapMConditionPanel .sapMCb {
+	display: block;
+}
+
+.sapMConditionPanel .sapMTB {
+    border-bottom: 0px; 
+}
+
+.sapMFilterPanel .sapMPanelWrappingDivTb {
+    border-bottom: 0px;
+}
+
+.sapMFilterPanel .sapMTB  {
+    border-bottom: 0px;
+}
+
+//WORKAROUND BCP:1770523047 : set min-height back to 0px 
+.sapMConditionPanel div[class*="sapUiRespGrid"] > div[class*="sapUiRespGridSpan"] {
+	min-height: 0px;
+}

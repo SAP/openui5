@@ -1,0 +1,49 @@
+.sapMPluginsColumnResizerContainer {
+	position: relative;
+}
+
+.sapMPluginsColumnResizerResizing {
+	cursor: col-resize;
+}
+
+.sapMPluginsColumnResizerResizable {
+	border-right: 1px solid @sapUiListBorderColor;
+}
+
+.sapMPluginsColumnResizerHandle {
+	position: absolute;
+	z-index: 2;
+	top: 0;
+	bottom: 0;
+	left: -10000px;
+	width: 0.1875rem;
+	padding: 0 0.125rem;
+	margin-left: -0.25rem;
+	cursor: col-resize;
+	background-clip: content-box;
+	background-color: @sapUiContentDragAndDropActiveColor;
+	-webkit-user-select: none;
+	user-select: none;
+}
+
+.sapMPluginsColumnResizerHandleCircle {
+	content: "";
+	position: absolute;
+	top: 1.5rem;
+	left: -0.4375rem;
+	width: 1rem;
+	height: 1rem;
+	border-radius: 1rem;
+	border: 0.125rem solid @sapUiContentDragAndDropActiveColor;
+	background: @sapUiWhiteBG;
+	pointer-events: none;
+	margin-top: -0.125rem;
+}
+
+.sapMPluginsColumnResizerSizeDetector {
+	position: absolute;
+	left: -1000px;
+	visibility: hidden;
+	display: flex;
+	flex-direction: column;
+}

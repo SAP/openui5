@@ -1,0 +1,65 @@
+/* ==================================== */
+/* CSS for control sap.m/BusyIndicator  */
+/* Base theme                           */
+/* ==================================== */
+
+.sapMBusyIndicator {
+	display: inline-block;
+	text-align: center;
+	outline: none;
+
+	.sapMBusyIndicatorBusyArea {
+		min-width: 3em;
+		min-height: 1em;
+	}
+
+	.sapMLabel {
+		display: block;
+	}
+
+	.sapUiLocalBusyIndicator {
+		background: none;
+		font-size: inherit;
+	}
+}
+
+
+
+.sapMBsyIndAnimation(@name) {
+	animation: @name 1s linear 0s infinite normal none;
+}
+
+html[dir='rtl'][data-sap-ui-animation-mode="full"] .sapMBsyIndIcon {
+	.sapMBsyIndAnimation(sapMBsyIndRotateRTL);
+}
+
+.sapMBsyIndIcon {
+	vertical-align: middle;
+	transform: rotate(0deg) translateZ(0);
+	transition-duration: 0ms;
+}
+
+.sapMBsyIndIcon {
+	.sapMBsyIndAnimation(sapMBsyIndRotate);
+}
+
+html[data-sap-ui-animation-mode="none"] .sapMBsyIndIcon {
+	animation: none;
+}
+
+html[data-sap-ui-animation-mode="basic"],
+html[data-sap-ui-animation-mode="minimal"] {
+	.sapMBsyIndIcon {
+		animation-duration: 12s;
+	}
+}
+
+@keyframes sapMBsyIndRotate {
+	from { transform:rotate(0deg) translateZ(0); }
+	to { transform:rotate(360deg) translateZ(0); }
+}
+
+@keyframes sapMBsyIndRotateRTL {
+	from { transform:rotate(0deg) translateZ(0); }
+	to { transform:rotate(-360deg) translateZ(0); }
+}

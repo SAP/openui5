@@ -1,0 +1,69 @@
+/* ================================== */
+/* CSS for control sap.m/RangeSlider  */
+/* Base theme                         */
+/* ================================== */
+
+.sapMSliderProgress {
+  width: auto;
+}
+
+.sapMSliderProgress:focus {
+  outline: none;
+}
+
+html.sap-desktop .sapMSliderProgress:focus:before {
+  border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+  content: "";
+  display: block;
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  pointer-events: none;
+}
+
+//----- RangeSlider Labels------------
+.sapMSliderLabels {
+  margin: 0.875rem -0.875rem 0 -0.875rem;
+  height: 1rem;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  margin-left: -1.0625rem;
+  margin-right: -1.406rem;
+}
+
+.sapMSliderRangeLabel {
+  display: block;
+  width: 1.75rem;
+  font-size: 0.75rem;
+  align-self: flex-end;
+  text-align: center;
+  direction: ltr;
+}
+
+/* overlap */
+.sapMSliderHandle.sapMSliderHandleOverlap {
+  background-color: @sapUiFieldActiveBorderColor;
+  border: @sapUiFieldActiveBorderColor;
+}
+
+/* pressed */
+.sapMSliderInner > .sapMSliderHandle.sapMSliderHandlePressed {
+  background: @sapUiHighlight;
+  border: 0.125rem solid @sapUiFieldActiveBorderColor;
+}
+
+
+/* ============ */
+/* compact size */
+/* ============ */
+.sapUiSizeCompact {
+  .sapMSliderLabels {
+    margin: 0.5rem -0.6875rem 0 -0.6875rem;
+  }
+
+  .sapMSliderRangeLabel {
+    width: 1.375rem;
+  }
+}

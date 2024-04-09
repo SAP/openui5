@@ -1,0 +1,66 @@
+/* ===================================== */
+/* CSS for control sap.m/ActionListItem  */
+/* Base theme                            */
+/* ===================================== */
+
+.sapMALI {
+	display: -webkit-box;
+	display: flex;
+	height: 2.75rem;
+}
+
+.sapMALIText {
+	-webkit-box-flex: 1;
+	flex: auto;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	min-width: 3rem;
+	display: block;
+	text-align: center;
+	color: @sapUiButtonTextColor;
+}
+
+.sapMALI > .sapMLIBContent {
+	display: -webkit-box;
+	display: flex;
+	-webkit-box-pack: center;
+	justify-content: center;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.sapMALI .sapMLIBUnread,
+.sapMALI .sapMLIBSelectS,
+.sapMALI .sapMLIBSelectM,
+.sapMALI .sapMLIBSelectD {
+	display: none;
+}
+
+/*The active indicator of the list is not specific enough to overwrite this style*/
+.sapMList .sapMLIB.sapMALI:not(.sapMLIBActive) {
+	background: @sapUiButtonActionSelectBackground;
+	border-color: @sapUiButtonActionSelectBorderColor;
+}
+
+html.sap-desktop .sapMList .sapMLIB.sapMALI:not(.sapMLIBActive) {
+	background: @sapUiButtonActionSelectBackground;
+	border-color: @sapUiButtonActionSelectBorderColor;
+}
+
+html.sap-desktop .sapMList .sapMLIB.sapMALI:hover:not(.sapMLIBActive) > .sapMLIBContent {
+	background: @sapUiButtonLiteActionSelectHoverBackground;
+}
+
+/* Compact size */
+.sapUiSizeCompact .sapMALI {
+	height: 2rem;
+}
+
+.sapUiSizeCompact .sapMALI > .sapMLIBContent {
+	line-height: 2rem;
+}
+
+.sapUiSizeCompact .sapMALIText {
+	font-size: @sapMFontMediumSize;
+}

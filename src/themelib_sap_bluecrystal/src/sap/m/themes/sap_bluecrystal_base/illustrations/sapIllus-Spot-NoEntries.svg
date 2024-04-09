@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="128" height="128" viewBox="0 0 128 128" id="sapIllus-Spot-NoEntries">
+    <path class="sapIllus_PatternShadow" d="M101.3716,43.8953a3,3,0,0,0-3-3H34.37a3,3,0,0,0-2.9988,3.0008l.0453,63.9984a3,3,0,0,0,2.9989,3.0008H98.3716a3,3,0,0,0,3-3Z"/>
+    <rect class="sapIllus_ObjectFillColor" x="27.3716" y="35.8953" width="70" height="70" rx="3.0008"/>
+    <path class="sapIllus_BrandColorSecondary" d="M30.3668,35.8953h64.01A2.9952,2.9952,0,0,1,97.3716,38.89V48.8953a0,0,0,0,1,0,0h-70a0,0,0,0,1,0,0V38.89A2.9952,2.9952,0,0,1,30.3668,35.8953Z"/>
+    <rect class="sapIllus_BackgroundColor" x="34.3716" y="60.8953" width="10" height="6" rx="0.9504"/>
+    <rect class="sapIllus_BackgroundColor" x="50.3716" y="60.8953" width="39" height="6" rx="0.9501"/>
+    <rect class="sapIllus_BackgroundColor" x="34.3716" y="74.8953" width="10" height="6" rx="0.9504"/>
+    <rect class="sapIllus_BackgroundColor" x="50.3716" y="74.8953" width="39" height="6" rx="0.9501"/>
+    <rect class="sapIllus_BackgroundColor" x="34.3716" y="88.8953" width="10" height="6" rx="0.9504"/>
+    <rect class="sapIllus_BackgroundColor" x="50.3716" y="88.8953" width="39" height="6" rx="0.9501"/>
+    <path class="sapIllus_StrokeDetailColor" d="M94.3716,35.8953H29.9163a2.7561,2.7561,0,0,0-2.5447,2.8971V48.8953h0v54a3,3,0,0,0,3,3h64a3,3,0,0,0,3-3v-64A3,3,0,0,0,94.3716,35.8953Zm2,3v9h-68v-9a2,2,0,0,1,2-2h64A2,2,0,0,1,96.3716,38.8953Zm-2,66h-64a2,2,0,0,1-2-2v-54H30.193l66.1786,2.9039v51.0961A2,2,0,0,1,94.3716,104.8953Z"/>
+</svg>

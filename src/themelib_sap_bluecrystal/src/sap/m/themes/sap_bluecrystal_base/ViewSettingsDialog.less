@@ -1,0 +1,126 @@
+/* ========================================= */
+/* CSS for control sap.m/ViewSettingsDialog  */
+/* Base theme                                */
+/* ========================================= */
+
+.sapMVSD.sapMDialog.sapUiPopupWithPadding:not(.sapUiNoContentPadding) .sapMDialogScrollCont,
+.sapMVSD.sapMDialog .sapMDialogScrollCont {
+	padding: 0;
+}
+
+.sapMTB.sapMVSDFilterHeaderToolbar {
+	padding-left: 0;
+	padding-right: 1rem;
+	width: 100%;
+	.sapMBarChild.sapMCb {
+		margin-left: 0;
+		.sapMCbLabel {
+			overflow: hidden;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+		}
+		.sapMCbMark {
+			white-space: normal;
+		}
+	}
+}
+
+//needed for removing not needed padding from the dialog which depends on the compatible version
+.sapMVSD.sapUiPopupWithPadding .sapMDialogScrollCont.sapMDialogStretchContent{
+	height: inherit;
+}
+
+.sapMSF.sapMVSDFilterSearchField,
+.sapUiSizeCompact .sapMSF.sapMVSDFilterSearchField {
+	padding: 0.25rem;
+}
+
+.sapUiSizeCompact .sapMTB.sapMListHdrTBar.sapMVSDFilterHeaderToolbar {
+	height: 2rem;
+	padding-left: 0.5rem;
+
+	.sapMLabel.sapMCbLabel {
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+}
+
+.sapUiSizeCompact .sapMSF.sapMVSDFilterSearchField > .sapMSFF {
+	height: 1.5rem;
+}
+
+html.sap-desktop .sapMTB.sapMListHdrTBar.sapMVSDFilterHeaderToolbar {
+	.sapMCb {
+		outline: none;
+		padding-right: 0.5rem;
+	}
+}
+
+.sapMSF.sapMVSDFilterSearchField {
+	border-bottom: 1px solid @sapUiGroupTitleBorderColor;
+}
+
+.sapMVSD .sapMTitle {
+	font-size: @sapMFontHeader5Size;
+	color: @sapUiContentLabelColor;
+}
+
+.sapUiSizeCompact .sapMTB.sapMListHdrTBar.sapMVSDFilterHeaderToolbar {
+	.sapMLabel.sapMCbLabel {
+		font-size: @sapMFontMediumSize;
+	}
+	.sapMCb.sapMBarChild:only-child {
+		padding-left: 2rem;
+	}
+}
+
+.sapUiSizeCozy .sapMTB.sapMListHdrTBar.sapMVSDFilterHeaderToolbar {
+	.sapMLabel.sapMCbLabel {
+		font-size: @sapMFontLargeSize;
+	}
+}
+
+.sapMVSD {
+	.sapMTB {
+		padding: 0 1rem 0 0.5rem;
+	}
+	.sapMLIB > .sapMLIBSelectS:first-child, .sapMLIB > .sapMLIBSelectM:first-child {
+		margin-left: -0.6875rem;
+	}
+	.sapMPageSubHeader .sapMVSDBar {
+		padding-bottom: 0.25rem;
+	}
+	.sapMTB.sapMVSDFilterHeaderToolbar .sapMBarChild.sapMCb {
+		margin-left: 0.3125rem;
+	}
+	.sapMPage > .sapMPageHeader + .sapMPageSubHeader + section {
+		top: 5.75rem;
+	}
+	.sapMPage .sapMVSDCustomTabContent {
+		max-width: 99%;
+	}
+}
+
+.sapUiSizeCompact .sapMVSD {
+	.sapMSFI {
+		height: 1.375rem;
+		line-height: 1.375rem;
+	}
+	.sapMSFB {
+		height: 1.375rem;
+		line-height: 1.375rem;
+	}
+	.sapMLIB > .sapMLIBSelectS:first-child, .sapMLIB > .sapMLIBSelectM:first-child {
+		margin-left: -0.5rem;
+	}
+	.sapMTB.sapMListHdrTBar.sapMVSDFilterHeaderToolbar {
+		padding-left: 0.1875rem;
+	}
+	.sapMPage > .sapMPageHeader + .sapMPageSubHeader + section {
+		top: 4.75rem;
+	}
+}
+
+html.sap-phone .sapMVSDSeg {
+	max-width: min-content;
+}
