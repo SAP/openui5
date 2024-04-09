@@ -19,6 +19,8 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/controlVariants/URLHandler",
 	"sap/ui/fl/apply/_internal/controlVariants/Utils",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
+	"sap/ui/fl/apply/_internal/flexObjects/States",
+	"sap/ui/fl/apply/_internal/flexState/changes/UIChangesState",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/Switcher",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
@@ -54,6 +56,8 @@ sap.ui.define([
 	URLHandler,
 	VariantUtil,
 	FlexObjectFactory,
+	States,
+	UIChangesState,
 	Switcher,
 	VariantManagementState,
 	FlexState,
@@ -144,6 +148,15 @@ sap.ui.define([
 				sandbox.spy(URLHandler, "initialize");
 				this.oDataSelectorUpdateSpy = sandbox.spy(VariantManagementState.getVariantManagementMap(), "addUpdateListener");
 
+				const oPersistedUIChange = FlexObjectFactory.createUIChange({
+					id: "someUIChange",
+					selector: {
+						id: "someControlId"
+					},
+					layer: Layer.CUSTOMER,
+					variantReference: "variant1"
+				});
+				oPersistedUIChange.setProperty("state", States.LifecycleState.PERSISTED);
 				stubFlexObjectsSelector([
 					createVariant({
 						author: VariantUtil.DEFAULT_AUTHOR,
@@ -224,7 +237,8 @@ sap.ui.define([
 						content: {
 							executeOnSelect: true
 						}
-					})
+					}),
+					oPersistedUIChange
 				]);
 
 				this.oModel = new VariantModel({}, {
@@ -239,6 +253,7 @@ sap.ui.define([
 			FlexState.clearRuntimeSteadyObjects(sReference, "RTADemoAppMD");
 			VariantManagementState.resetCurrentVariantReference(sReference);
 			sandbox.restore();
+			this.oModel.oChangePersistence.removeDirtyChanges();
 			this.oModel.destroy();
 			delete this.oFlexController;
 		}
@@ -254,6 +269,12 @@ sap.ui.define([
 			assert.strictEqual(oVMData.currentVariant, "variant1", "the currentVariant was set");
 			assert.strictEqual(oVMData.defaultVariant, "variant1", "the defaultVariant was set");
 			assert.strictEqual(oVMData.modified, false, "the modified flag was set");
+
+			assert.strictEqual(
+				UIChangesState.getLiveDependencyMap(sReference).mChanges.someControlId.length,
+				1,
+				"then the persisted UI change of the current variant is added to the dependency map"
+			);
 		});
 
 		QUnit.test("when destroy() is called", function(assert) {
@@ -262,6 +283,11 @@ sap.ui.define([
 			var oClearSpy = sandbox.spy(VariantManagementState, "clearRuntimeSteadyObjects");
 			var oClearCurrentVariantSpy = sandbox.spy(VariantManagementState, "resetCurrentVariantReference");
 			this.oModel.destroy();
+			assert.strictEqual(
+				UIChangesState.getLiveDependencyMap(sReference).mChanges.someControlId.length,
+				0,
+				"then the persisted UI change of the current variant is removed from the dependency map"
+			);
 			assert.ok(oClearSpy.calledOnce, "then fake standard variants were reset");
 			assert.ok(oClearCurrentVariantSpy.calledOnce, "then the saved current variant was reset");
 			assert.ok(oRemoveSpy.calledWith(this.oModel.fnUpdateListener), "the update listener was removed");

@@ -1515,6 +1515,23 @@ sap.ui.define([
 	 * It clears the fake standard variants and destroys the model.
 	 */
 	VariantModel.prototype.destroy = function() {
+		// Variant dependent control changes of the current variant were added to the
+		// dependency map in the VariantModel constructor and need to be removed
+		const oVariantsMap = this.oDataSelector.get({ reference: this.sFlexReference });
+		const aVariantDependentControlChanges = Object.entries(oVariantsMap)
+		.map(([sVMReference, oVM]) => {
+			const mCurrentVariant = VariantManagementState.getVariant({
+				vmReference: sVMReference,
+				vReference: oVM.currentVariant,
+				reference: this.sFlexReference
+			});
+			return mCurrentVariant.controlChanges;
+		})
+		.flat();
+		aVariantDependentControlChanges.forEach((oChange) => {
+			this.oChangePersistence.removeChange(oChange);
+		});
+
 		this.oDataSelector.removeUpdateListener(this.fnUpdateListener);
 		VariantManagementState.clearRuntimeSteadyObjects(this.sFlexReference, this.oAppComponent.getId());
 		VariantManagementState.resetCurrentVariantReference(this.sFlexReference);
