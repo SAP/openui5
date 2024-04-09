@@ -13,7 +13,7 @@ sap.ui.define([
 	'sap/ui/mdc/enums/ConditionValidated',
 	'sap/ui/mdc/enums/FieldDisplay',
 	'sap/ui/model/FormatException',
-	'sap/ui/core/Element'
+	'sap/ui/mdc/enums/OperatorName'
 ], (
 	BaseDelegate,
 	DefaultTypeMap,
@@ -21,7 +21,7 @@ sap.ui.define([
 	ConditionValidated,
 	FieldDisplay,
 	FormatException,
-	Element
+	OperatorName
 ) => {
 	"use strict";
 
@@ -76,6 +76,39 @@ sap.ui.define([
 		const oNextCondition = Condition.createItemCondition(aValues[0], aValues[1], undefined, undefined, this.createConditionPayload(oField, oControl, aValues));
 		oNextCondition.validated = ConditionValidated.Validated;
 		return oNextCondition;
+	};
+
+	/**
+	 * Enables applications to control condition updates based on pasted values.
+	 * <br/>By default, this method returns conditions with an <code>EQ</code> operator without using the description, as it does not ensure the description is valid.
+	 *
+	 * <b>Note:</b> Returned values can either be strings which should be parsed by the ConditionType itself or pre-created conditions.
+	 *
+	 * @param {sap.ui.mdc.field.FieldBase} oField <code>Field</code> control instance
+ 	 * @param {Array.<{value:string, additionalValue:string}>} aParsedData Pre-parsed paste data
+	 * @param {object} oSettings Condition-related settings object
+ 	 * @param {sap.ui.mdc.condition.Operator} oSettings.defaultOperator Default operator for the current field
+	 * @param {sap.ui.model.SimpleType} oSettings.valueType Configured type for a value
+	 * @param {sap.ui.model.SimpleType} oSettings.additionalValueType Configured type for an additional value
+	 * @returns {Array<sap.ui.mdc.condition.ConditionObject|string>|Promise<array<sap.ui.mdc.condition.ConditionObject|string>>} Array of <code>ConditionObject</code>/<code>string</code> values. If it is not available right away, a <code>Promise</code> is returned.
+	 * @throws {Exception} if the pasted data cannot be converted to conditions
+	 * @protected
+	 * @since 1.124
+	 */
+	FieldBaseDelegate.parsePasteDataToConditions = function(oField, aParsedData, oSettings) {
+		const {defaultOperator} = oSettings;
+		const aResult = [];
+		const bBetweenUsed = defaultOperator?.name === OperatorName.BT;
+		for (let i = 0; i < aParsedData.length; i++) {
+			const oParsedData = aParsedData[i];
+			if (oParsedData.value || bBetweenUsed) {// key/value given, use it
+				aResult.push(Condition.createCondition(defaultOperator.name, bBetweenUsed ? [oParsedData.value, oParsedData.additionalValue] : [oParsedData.value], undefined, undefined, ConditionValidated.NotValidated, undefined)); // only use key, ignore description
+			} else if (oParsedData.additionalValue) { // only additionalValue given, might be an copy of a non-EQ-Token
+				// TODO: how to handle "" as Key with Description?
+				aResult.push(oParsedData.additionalValue);
+			}
+		}
+		return aResult;
 	};
 
 	/**

@@ -570,6 +570,16 @@ sap.ui.define([
 						isSingleValue: true
 					},
 					{
+						formatArgs: [Condition.createCondition(OperatorName.NE, ["Test"])],
+						formatValue: "!(=Test)",
+						parseArgs: ["!(=Test)"],
+						parsedValue: "Test",
+						condition: Condition.createCondition(OperatorName.NE, ["Test"], undefined, undefined, ConditionValidated.NotValidated),
+						isEmpty: false,
+						valid: true,
+						isSingleValue: true
+					},
+					{
 						formatArgs: [Condition.createCondition(OperatorName.NE, ["="])],
 						formatValue: "!(==)",
 						parseArgs: ["!=="],
@@ -638,6 +648,17 @@ sap.ui.define([
 						formatArgs: [Condition.createCondition(OperatorName.NOTLT, ["Test"])],
 						formatValue: "!(<Test)",
 						parseArgs: ["!<Test"],
+						parsedValue: "Test",
+						condition: Condition.createCondition(OperatorName.NOTLT, ["Test"], undefined, undefined, ConditionValidated.NotValidated),
+						isEmpty: false,
+						valid: true,
+						filter: {path: "test", operator: FilterOperator.GE, value1: "Test"},
+						isSingleValue: true
+					},
+					{
+						formatArgs: [Condition.createCondition(OperatorName.NOTLT, ["Test"])],
+						formatValue: "!(<Test)",
+						parseArgs: ["!(<Test)"],
 						parsedValue: "Test",
 						condition: Condition.createCondition(OperatorName.NOTLT, ["Test"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
@@ -720,6 +741,17 @@ sap.ui.define([
 						isSingleValue: true
 					},
 					{
+						formatArgs: [Condition.createCondition(OperatorName.NOTGT, ["Test"])],
+						formatValue: "!(>Test)",
+						parseArgs: ["!(>Test)"],
+						parsedValue: "Test",
+						condition: Condition.createCondition(OperatorName.NOTGT, ["Test"], undefined, undefined, ConditionValidated.NotValidated),
+						isEmpty: false,
+						valid: true,
+						filter: {path: "test", operator: FilterOperator.LE, value1: "Test"},
+						isSingleValue: true
+					},
+					{
 						formatArgs: [Condition.createCondition(OperatorName.NOTGT, [">"])],
 						formatValue: "!(>>)",
 						parseArgs: ["!>>"],
@@ -793,6 +825,16 @@ sap.ui.define([
 						isSingleValue: true
 					},
 					{
+						formatArgs: [Condition.createCondition(OperatorName.NOTLE, ["Test"])],
+						formatValue: "!(<=Test)",
+						parseArgs: ["!(<=Test)"],
+						parsedValue: "Test",
+						condition: Condition.createCondition(OperatorName.NOTLE, ["Test"], undefined, undefined, ConditionValidated.NotValidated),
+						isEmpty: false,
+						valid: true,
+						isSingleValue: true
+					},
+					{
 						formatArgs: [Condition.createCondition(OperatorName.NOTLE, ["<="])],
 						formatValue: "!(<=<=)",
 						parseArgs: ["!<=<="],
@@ -859,6 +901,16 @@ sap.ui.define([
 						formatArgs: [Condition.createCondition(OperatorName.NOTGE, ["Test"])],
 						formatValue: "!(>=Test)",
 						parseArgs: ["!>=Test"],
+						parsedValue: "Test",
+						condition: Condition.createCondition(OperatorName.NOTGE, ["Test"], undefined, undefined, ConditionValidated.NotValidated),
+						isEmpty: false,
+						valid: true,
+						isSingleValue: true
+					},
+					{
+						formatArgs: [Condition.createCondition(OperatorName.NOTGE, ["Test"])],
+						formatValue: "!(>=Test)",
+						parseArgs: ["!(>=Test)"],
 						parsedValue: "Test",
 						condition: Condition.createCondition(OperatorName.NOTGE, ["Test"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
@@ -965,6 +1017,17 @@ sap.ui.define([
 						type: oStringType
 					},
 					{
+						formatArgs: [Condition.createCondition(OperatorName.NotStartsWith, ["Test"]), oStringType, FieldDisplay.Description],
+						formatValue: "!(Test*)",
+						parseArgs: ["!(Test*)", oStringType, FieldDisplay.Description],
+						parsedValue: "Test",
+						condition: Condition.createCondition(OperatorName.NotStartsWith, ["Test"], undefined, undefined, ConditionValidated.NotValidated),
+						isEmpty: false,
+						valid: true,
+						isSingleValue: true,
+						type: oStringType
+					},
+					{
 						formatArgs: [Condition.createCondition(OperatorName.NotStartsWith, ["*"]), oStringType, FieldDisplay.Description],
 						formatValue: "!(**)",
 						parseArgs: ["!**", oStringType, FieldDisplay.Description],
@@ -1031,6 +1094,17 @@ sap.ui.define([
 						formatArgs: [Condition.createCondition(OperatorName.NotEndsWith, ["Test"]), oStringType, FieldDisplay.Description],
 						formatValue: "!(*Test)",
 						parseArgs: ["!*Test", oStringType, FieldDisplay.Description],
+						parsedValue: "Test",
+						condition: Condition.createCondition(OperatorName.NotEndsWith, ["Test"], undefined, undefined, ConditionValidated.NotValidated),
+						isEmpty: false,
+						valid: true,
+						isSingleValue: true,
+						type: oStringType
+					},
+					{
+						formatArgs: [Condition.createCondition(OperatorName.NotEndsWith, ["Test"]), oStringType, FieldDisplay.Description],
+						formatValue: "!(*Test)",
+						parseArgs: ["!(*Test)", oStringType, FieldDisplay.Description],
 						parsedValue: "Test",
 						condition: Condition.createCondition(OperatorName.NotEndsWith, ["Test"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
@@ -1116,6 +1190,17 @@ sap.ui.define([
 						formatArgs: [Condition.createCondition(OperatorName.NOTBT, ["Test1", "Test2"])],
 						formatValue: "!(Test1...Test2)",
 						parseArgs: ["!Test1...Test2"],
+						parsedValue: "Test1Test2",
+						condition: Condition.createCondition(OperatorName.NOTBT, ["Test1", "Test2"], undefined, undefined, ConditionValidated.NotValidated),
+						isEmpty: false,
+						valid: true,
+						filter: {path: "test", operator: FilterOperator.NB, value1: "Test1", value2: "Test2"},
+						isSingleValue: false
+					},
+					{
+						formatArgs: [Condition.createCondition(OperatorName.NOTBT, ["Test1", "Test2"])],
+						formatValue: "!(Test1...Test2)",
+						parseArgs: ["!(Test1...Test2)"],
 						parsedValue: "Test1Test2",
 						condition: Condition.createCondition(OperatorName.NOTBT, ["Test1", "Test2"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
@@ -1248,6 +1333,18 @@ sap.ui.define([
 						type: oStringType
 					},
 					{
+						formatArgs: [Condition.createCondition(OperatorName.NotContains, ["Test"]), oStringType, FieldDisplay.Description],
+						formatValue: "!(*Test*)",
+						parseArgs: ["!(*Test*)", oStringType, FieldDisplay.Description],
+						parsedValue: "Test",
+						condition: Condition.createCondition(OperatorName.NotContains, ["Test"], undefined, undefined, ConditionValidated.NotValidated),
+						isEmpty: false,
+						valid: true,
+						filter:  {path: "test", operator: FilterOperator.NotContains, value1: "Test"},
+						isSingleValue: true,
+						type: oStringType
+					},
+					{
 						formatArgs: [Condition.createCondition(OperatorName.NotContains, ["a", "b"]), oStringType, FieldDisplay.Description],
 						formatValue: "!(*a*)",
 						parseArgs: ["!*a*", oStringType, FieldDisplay.Description],
@@ -1307,6 +1404,17 @@ sap.ui.define([
 						formatArgs: [Condition.createCondition(OperatorName.NotEmpty, [])],
 						formatValue: "!(<empty>)", // TODO: right text?
 						parseArgs: ["!<empty>"],
+						parsedValue: "", // empty array (which is the current return value), joined with space. Better check whether it matches  TODO
+						condition: Condition.createCondition(OperatorName.NotEmpty, [], undefined, undefined, ConditionValidated.NotValidated),
+						isEmpty: false,
+						valid: true,
+						filter: {path: "test", operator: FilterOperator.NE, value1: ""},
+						isSingleValue: true
+					},
+					{
+						formatArgs: [Condition.createCondition(OperatorName.NotEmpty, [])],
+						formatValue: "!(<empty>)", // TODO: right text?
+						parseArgs: ["!(<empty>)"],
 						parsedValue: "", // empty array (which is the current return value), joined with space. Better check whether it matches  TODO
 						condition: Condition.createCondition(OperatorName.NotEmpty, [], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,

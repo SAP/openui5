@@ -5,12 +5,14 @@ sap.ui.define([
 	'sap/ui/mdc/enums/BaseType',
 	'sap/ui/mdc/enums/FieldDisplay',
 	'sap/ui/mdc/condition/FilterOperatorUtil',
+	'sap/ui/mdc/field/FieldBaseDelegate',
 	'sap/ui/model/type/String'
 	],
 	(
 		BaseType,
 		FieldDisplay,
 		FilterOperatorUtil,
+		FieldBaseDelegate,
 		StringType
 	) => {
 		"use strict";
@@ -92,9 +94,9 @@ sap.ui.define([
 
 			this._getBaseTypeForValueType = function(oValueType) {
 
-				const oDelegate = this.oFormatOptions.delegate;
+				const oDelegate = this._getDelegate();
 				const oField = this.oFormatOptions.control;
-				let sBaseType = oDelegate ? oDelegate.getTypeMap(oField).getBaseType(oValueType.name, oValueType.formatOptions, oValueType.constraints) : this._sDefaultBaseType;
+				let sBaseType = oDelegate.getTypeMap(oField).getBaseType(oValueType.name, oValueType.formatOptions, oValueType.constraints);
 
 				if (sBaseType === BaseType.Unit) {
 					sBaseType = BaseType.Numeric;
@@ -258,6 +260,18 @@ sap.ui.define([
 				}
 
 				return oPromise;
+
+			};
+
+			this._getDelegate = function() {
+
+				let oDelegate = this.oFormatOptions.delegate;
+
+				if (!oDelegate) {
+					oDelegate = FieldBaseDelegate;
+				}
+
+				return oDelegate;
 
 			};
 

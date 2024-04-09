@@ -3,10 +3,11 @@
  */
 
 sap.ui.define([
-	'sap/m/MultiInput', 'sap/ui/mdc/field/FieldMultiInputRenderer'
+	'sap/m/MultiInput', 'sap/ui/mdc/field/FieldMultiInputRenderer', "sap/ui/Device"
 ], (
 	MultiInput,
-	FieldMultiInputRenderer
+	FieldMultiInputRenderer,
+	Device
 ) => {
 	"use strict";
 
@@ -46,6 +47,72 @@ sap.ui.define([
 		},
 		renderer: FieldMultiInputRenderer
 	});
+
+	FieldMultiInput.prototype.init = function () {
+
+		MultiInput.prototype.init.apply(this, arguments);
+
+		const oTokenizer = this.getAggregation("tokenizer");
+
+		oTokenizer._fillClipboard = _fillClipboard;
+
+	};
+
+
+	/*
+	 * MultiInput/Tokenizer may sometimes trigger _fillClipboard twice.
+	 * As writing to navigator.clipboard is asynchronous, we prevent writing during a write being in progress (as clipboard otherwise may become empty).
+	*/
+	let bClipboardBusy = false;
+
+	async function _fillClipboard(sShortcutName) {
+
+		if (!navigator.clipboard) {
+			throw new Error(this + " requires a secure context in order to access the clipboard API.");
+		}
+
+		if (!bClipboardBusy) {
+			const aSelectedTokens = this.getSelectedTokens();
+			if (aSelectedTokens.length === 0) {
+				// no token is selected, but a normal character might be selected and will be copied
+				return;
+			}
+
+			bClipboardBusy = true;
+			const sModel = this.getBindingInfo("tokens").model;
+			const sTokensTexts = aSelectedTokens.map((oToken) => {
+				const oConditionType = oToken.getBinding("text").getType();
+				const oCondition = oToken.getBindingContext(sModel).getObject();
+				return oConditionType.getTextForCopy(oCondition);
+			}).join("\r\n");
+
+			const sTokensTextsHTML = "<table><tr>" + aSelectedTokens.map((oToken) => {
+				// we copy it as it is on the token
+				return "<td>" + oToken.getText() + "</td>";
+			}).join("</tr><tr>") + "</tr></table>";
+
+			if (_isHtmlMimeTypeAllowed()) {
+				const sHtmlMimeType = "text/html";
+				const sTextMimeType = "text/plain";
+				const oClipboardItem = new ClipboardItem({
+					[sTextMimeType]: new Blob([sTokensTexts], {type: sTextMimeType}),
+					[sHtmlMimeType]: new Blob([sTokensTextsHTML], {type: sHtmlMimeType})
+				});
+
+				await navigator.clipboard.write([oClipboardItem]);
+			} else {
+				await navigator.clipboard.writeText(sTokensTexts);
+			}
+
+			if (bClipboardBusy) {
+				bClipboardBusy = false;
+			}
+		}
+	}
+
+	function _isHtmlMimeTypeAllowed() {
+		return Boolean(Device.system.desktop && window.ClipboardItem && navigator.clipboard?.write);
+	}
 
 	return FieldMultiInput;
 
