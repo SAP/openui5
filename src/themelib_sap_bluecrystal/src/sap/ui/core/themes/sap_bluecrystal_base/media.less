@@ -1,0 +1,36 @@
+/************ Media queries for screen sizes ************
+
+Usage:
+
+@media (@_sap_ui_core_media_StdDesktop) {
+      .test {
+            width: 50em;
+      }
+}
+
+*********************************************************/
+
+
+/* see sap.ui.Device.media.RANGESETS.SAP_STANDARD*/
+@_sap_ui_core_media_StdDesktop:  ~"screen and (min-width : 1024px)";
+@_sap_ui_core_media_StdTablet:  ~"screen and (min-width : 600px) and (max-width : 1023px)";
+@_sap_ui_core_media_StdPhone:  ~"screen and (max-width : 599px)";
+
+/* see sap.ui.Device.media.RANGESETS.SAP_3STEPS*/
+@_sap_ui_core_media_3StepL:  ~"screen and (min-width : 960px)";
+@_sap_ui_core_media_3StepM:  ~"screen and (min-width : 520px) and (max-width : 959px)";
+@_sap_ui_core_media_3StepS:  ~"screen and (max-width : 519px)";
+
+/* see sap.ui.Device.media.RANGESETS.SAP_4STEPS*/
+@_sap_ui_core_media_4StepXL:  ~"screen and (min-width : 960px)";
+@_sap_ui_core_media_4StepL:  ~"screen and (min-width : 760px) and (max-width : 959px)";
+@_sap_ui_core_media_4StepM:  ~"screen and (min-width : 520px) and (max-width : 759px)";
+@_sap_ui_core_media_4StepS:  ~"screen and (max-width : 519px)";
+
+/* see sap.ui.Device.media.RANGESETS.SAP_6STEPS*/
+@_sap_ui_core_media_6StepXXL:  ~"screen and (min-width : 960px)";
+@_sap_ui_core_media_6StepXL:  ~"screen and (min-width : 768px) and (max-width : 959px)";
+@_sap_ui_core_media_6StepL:  ~"screen and (min-width : 541px) and (max-width : 767px)";
+@_sap_ui_core_media_6StepM:  ~"screen and (min-width : 400px) and (max-width : 540px)";
+@_sap_ui_core_media_6StepS:  ~"screen and (min-width : 241px) and (max-width : 399px)";
+@_sap_ui_core_media_6StepXS:  ~"screen and (max-width : 240px)";

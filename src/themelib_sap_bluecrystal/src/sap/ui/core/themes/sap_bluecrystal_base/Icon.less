@@ -1,0 +1,144 @@
+/* ================================= */
+/* CSS for control sap.ui.core/Icon  */
+/* Base theme                        */
+/* ================================= */
+
+.sapUiIcon {
+	cursor: default;
+	text-align: center;
+	display: inline-block;
+	vertical-align: baseline;
+	line-height: 1;
+	position: relative;
+}
+
+.sapUiTableCell > .sapUiTableCellInner > .sapUiIcon,
+.sapMListTblCell > .sapUiIcon {
+	vertical-align: middle;
+}
+
+.sapUiIconPointer {
+	cursor: pointer;
+}
+
+.sapUiIcon:focus {
+	outline-width: @sapUiContentFocusWidth;
+	outline-style: @sapUiContentFocusStyle;
+	outline-color: @sapUiContentFocusColor;
+}
+
+.sapUiIcon::before {
+	content: attr(data-sap-ui-icon-content);
+	speak: none;
+	font-weight: normal;
+	-webkit-font-smoothing: antialiased;
+}
+
+.sapUiIcon > .sapUiIconTitle {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	left: 0;
+	top: 0;
+}
+
+/*
+ * The mirroring of icon is done on the pesudo element and not the root DOM.
+ * Because:
+ *  1. All direction related css styles are flipped in RTL, for example padding-left
+ *   is changed to padding right in RTL.
+ *  2. The mirroring of an icon in RTL mode flips the css style again which results
+ *   in the wrong direction.
+ *  3. Custom CSS style should be set on the root DOM and not the pesudo element.
+ */
+html[dir=rtl] .sapUiIconMirrorInRTL:not(.sapUiIconSuppressMirrorInRTL) {
+	&::before, &::after /* some controls render the icon using 'after' pesudo element */ {
+		transform: scale(-1,1);
+		-webkit-transform: scale(-1,1); /* Safari and Chrome */
+		display: inline-block; /* pesudo element has display: inline by default and can't apply the transform css style for RTL mode*/
+	}
+}
+
+/**
+ * The Default color and the semantic colors for Icon which always points to the variable across themes.
+ */
+.sapUiIconColorDefault {
+	color: @sapUiContentIconColor;
+}
+
+.sapUiIconColorContrast {
+	color: @sapUiContentContrastIconColor;
+}
+
+.sapUiIconColorNeutral {
+	color: @sapUiNeutralElement;
+}
+
+.sapUiIconColorCritical {
+	color: @sapUiCriticalElement;
+}
+
+.sapUiIconColorPositive {
+	color: @sapUiPositiveElement;
+}
+
+.sapUiIconColorNegative {
+	color: @sapUiNegativeElement;
+}
+
+.sapUiIconColorNonInteractive {
+	color: @sapUiContentNonInteractiveIconColor;
+}
+
+.sapUiIconColorTile {
+	color: @sapUiTileIconColor;
+}
+
+.sapUiIconColorMarker {
+	color: @sapUiContentMarkerIconColor;
+}
+
+.sapUiIconBGColorDefault {
+	color: @sapUiGroupContentBackground;
+	background-color: @sapUiContentIconColor;
+}
+
+.sapUiIconBGColorContrast {
+	color: @sapUiContentIconColor;
+	background-color: @sapUiContentContrastIconColor;
+}
+
+.sapUiIconBGColorNeutral {
+	color: @sapUiGroupContentBackground;
+	background-color: @sapUiNeutralElement;
+}
+
+.sapUiIconBGColorCritical {
+	color: @sapUiGroupContentBackground;
+	background-color: @sapUiCriticalElement;
+}
+
+.sapUiIconBGColorPositive {
+	color: @sapUiGroupContentBackground;
+	background-color: @sapUiPositiveElement;
+}
+
+.sapUiIconBGColorNegative {
+	color: @sapUiGroupContentBackground;
+	background-color: @sapUiNegativeElement;
+}
+
+.sapUiIconBGColorNonInteractive {
+	color: @sapUiGroupContentBackground;
+	background-color: @sapUiContentNonInteractiveIconColor;
+}
+
+.sapUiIconBGColorTile {
+	color: @sapUiGroupContentBackground;
+	background-color: @sapUiTileIconColor;
+}
+
+.sapUiIconBGColorMarker {
+	color: @sapUiGroupContentBackground;
+	background-color: @sapUiContentMarkerIconColor;
+}
