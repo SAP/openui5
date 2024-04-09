@@ -1,0 +1,17 @@
+<svg width="128" height="128" id="tnt-Spot-FaceID-alternate" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+    <ellipse cx="12.06" cy="68.67" rx="11.66" ry="9.43" transform="translate(-54 46.37) rotate(-61.39)" style="fill:var(--sapContent_Illustrative_Color5)" />
+    <path d="m35.45,21.54c1.1,0,2,.9,2,2v24.82c0,1.1-.9,2-2,2s-2-.9-2-2v-24.82c0-1.1.9-2,2-2Z" style="fill:var(--sapContent_Illustrative_Color6)" fill-rule="evenodd" />
+    <circle cx="35.2" cy="19.06" r="6.87" style="fill:var(--sapContent_Illustrative_Color5)" />
+    <path d="m.19,99.03c-.12,2.19,1.67,3.97,3.86,3.97h119.83c2.19,0,3.98-1.78,3.86-3.97-1.95-35.39-29.75-63.45-63.77-63.45S2.14,63.64.19,99.03Z" style="fill:var(--sapContent_Illustrative_Color8)" fill-rule="evenodd" />
+    <path d="m125.74,99.13c-1.89-34.43-28.92-61.56-61.78-61.56S4.08,64.71,2.19,99.13c-.05.97.75,1.86,1.86,1.86h119.83c1.12,0,1.92-.89,1.86-1.86Zm-121.69,3.86c-2.19,0-3.98-1.78-3.86-3.97,1.95-35.39,29.75-63.45,63.77-63.45s61.83,28.06,63.77,63.45c.12,2.19-1.67,3.97-3.86,3.97H4.05Z" style="fill:var(--sapContent_Illustrative_Color5)" fill-rule="evenodd" />
+    <path d="m23.59,87.31c-.2,1.52,1.02,2.82,2.55,2.82h75.64c1.53,0,2.75-1.3,2.55-2.82-2.78-20.88-19.8-36.95-40.37-36.95s-37.59,16.07-40.37,36.95Z" style="fill:var(--sapContent_Illustrative_Color5)" fill-rule="evenodd" />
+    <ellipse cx="115.86" cy="68.67" rx="9.43" ry="11.66" transform="translate(-18.73 63.87) rotate(-28.61)" style="fill:var(--sapContent_Illustrative_Color5)" />
+    <path d="m93.19,21.54c1.1,0,2,.9,2,2v24.82c0,1.1-.9,2-2,2s-2-.9-2-2v-24.82c0-1.1.9-2,2-2Z" style="fill:var(--sapContent_Illustrative_Color6)" fill-rule="evenodd" />
+    <circle cx="92.94" cy="19.06" r="6.87" style="fill:var(--sapContent_Illustrative_Color5)" />
+    <path d="m44.91,102.99V38.62c6.02-1.98,12.42-3.05,19.05-3.05,34.02,0,61.83,28.06,63.77,63.45.12,2.19-1.67,3.97-3.86,3.97H44.91Z" style="fill:var(--sapContent_Illustrative_Color8)" fill-rule="evenodd" />
+    <path d="m46.91,40.09v60.9h76.97c1.12,0,1.92-.89,1.86-1.86-1.89-34.43-28.92-61.56-61.78-61.56-5.92,0-11.64.88-17.05,2.52Zm-2-1.47v64.37h78.97c2.19,0,3.98-1.78,3.86-3.97-1.95-35.39-29.75-63.45-63.77-63.45-6.64,0-13.04,1.07-19.05,3.05Z" style="fill:var(--sapContent_Illustrative_Color4)" fill-rule="evenodd" />
+    <path d="m44.91,90.13v-34.8c5.69-3.17,12.17-4.97,19.05-4.97,20.57,0,37.59,16.07,40.37,36.95.2,1.52-1.02,2.82-2.55,2.82h-56.87Z" style="fill:var(--sapContent_Illustrative_Color4)" fill-rule="evenodd" />
+    <path d="m44.91,74.84v-8.83c1.05-.95,2.45-1.52,3.97-1.52,3.28,0,5.94,2.66,5.94,5.94s-2.66,5.94-5.94,5.94c-1.53,0-2.92-.58-3.97-1.52Zm40.07-4.42c0,3.28-2.66,5.94-5.94,5.94s-5.94-2.66-5.94-5.94,2.66-5.94,5.94-5.94,5.94,2.66,5.94,5.94Z" style="fill:var(--sapContent_Illustrative_Color9)" fill-rule="evenodd" />
+    <path d="m56.14,82.11c.2-.52.78-.77,1.29-.57,3.83,1.48,8.08,1.48,11.91,0,.52-.2,1.09.06,1.29.57.2.52-.06,1.09-.57,1.29-4.3,1.65-9.05,1.65-13.35,0-.52-.2-.77-.78-.57-1.29Z" style="fill:var(--sapContent_Illustrative_Color6)" fill-rule="evenodd" />
+    <rect x="42.28" y="21.53" width="4.91" height="93.19" rx="2.46" ry="2.46" style="fill:var(--sapContent_Illustrative_Color3)" />
+</svg>
