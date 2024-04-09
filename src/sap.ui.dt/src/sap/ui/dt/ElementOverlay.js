@@ -266,16 +266,11 @@ sap.ui.define([
 
 	ElementOverlay.prototype._subscribeToMutationObserver = function(bIsRoot) {
 		var oMutationObserver = Overlay.getMutationObserver();
-
 		var $DomRef = this.getAssociatedDomRef();
 		this._sObservableNodeId = $DomRef && $DomRef.get(0) && $DomRef.get(0).id;
 
 		if (this._sObservableNodeId) {
 			oMutationObserver.registerHandler(this._sObservableNodeId, this._domChangedCallback.bind(this), bIsRoot);
-			// Controls like UI5 Web Components have shadow roots that need to be observed as well
-			if ($DomRef.get(0).shadowRoot) {
-				oMutationObserver.addNode($DomRef.get(0).shadowRoot);
-			}
 		} else if (bIsRoot) {
 			// Needs to be a logged error, otherwise the LayoutEditor isn't working anymore.
 			Log.error("sap.ui.dt.ElementOverlay#_subscribeToMutationObserver: please provide a root control with proper domRef and id to ensure that RTA is working properly");
