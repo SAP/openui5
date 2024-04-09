@@ -2545,7 +2545,7 @@ html4.ELEMENTS = {
 	'hr': 2, //EMPTY
 	'html': 49, //OPTIONAL_ENDTAG, UNSAFE, FOLDABLE
 	'i': 0,
-	'iframe': 4, //CDATA
+	'iframe': 0, //new
 	'img': 2,//EMPTY
 	'input': 2, //EMPTY
 	'ins': 0,

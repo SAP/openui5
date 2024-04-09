@@ -585,4 +585,17 @@ sap.ui.define([
 		assert.equal(html.getContent(), sanitizedContent, "HTML sanitized using constructor, wrong order");
 	});
 
+	QUnit.module("Fixes in caja-html-sanitizer");
+
+	QUnit.test("Tags wrapped in iframe tag", function(assert) {
+		const sOffensiveContent = `<select><iframe><select><img src=x onerror=alert(1)></select></iframe></select>`;
+		const oHTML = new HTML({
+			sanitizeContent: true,
+			content: sOffensiveContent
+		});
+
+		assert.notOk(oHTML.getContent().includes("onerror"), "The error handler should be removed");
+		oHTML.destroy();
+	});
+
 });
