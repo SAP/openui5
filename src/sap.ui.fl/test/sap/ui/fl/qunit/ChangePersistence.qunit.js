@@ -78,52 +78,6 @@ sap.ui.define([
 			});
 		}
 	}, function() {
-		QUnit.test("getAllUIChanges shall return an map array with all UI changes for the component", function(assert) {
-			var oChange1 = FlexObjectFactory.createFromFileContent({
-				fileName: "change1",
-				fileType: "change",
-				layer: Layer.VENDOR,
-				selector: {id: "id1"}
-			});
-			oChange1.setState(States.LifecycleState.PERSISTED);
-			var oChange2 = FlexObjectFactory.createFromFileContent({
-				fileName: "change2",
-				fileType: "change",
-				layer: Layer.CUSTOMER,
-				selector: {id: "id2"}
-			});
-			oChange2.setState(States.LifecycleState.PERSISTED);
-			var oChange3 = FlexObjectFactory.createFromFileContent({
-				fileName: "change3",
-				fileType: "change",
-				layer: Layer.CUSTOMER,
-				selector: {id: "id3"}
-			});
-			oChange3.setState(States.LifecycleState.PERSISTED);
-			var oChange4 = FlexObjectFactory.createFromFileContent({
-				fileName: "change4",
-				fileType: "change",
-				layer: Layer.CUSTOMER,
-				selector: {id: "id4"}
-			});
-			var oChange5 = FlexObjectFactory.createFromFileContent({
-				fileName: "change5",
-				fileType: "change",
-				layer: Layer.CUSTOMER,
-				selector: {id: "id5"}
-			});
-
-			sandbox.stub(UIChangesState, "getAllUIChanges").returns([oChange1, oChange2, oChange3]);
-
-			sandbox.stub(this.oChangePersistence, "getDirtyChanges").returns([oChange4, oChange5]);
-
-			var aAllUIChanges = this.oChangePersistence.getAllUIChanges({
-				includeDirtyChanges: true,
-				layer: Layer.CUSTOMER
-			});
-			assert.deepEqual(aAllUIChanges, [oChange2, oChange3, oChange4, oChange5], "all CUSTOMER layer UI changes are returned");
-		});
-
 		QUnit.test("deleteChanges with bRunTimeCreatedChange parameter set, shall remove the given change from the map", function(assert) {
 			const oAppComponent = {
 				id: "mockAppComponent"

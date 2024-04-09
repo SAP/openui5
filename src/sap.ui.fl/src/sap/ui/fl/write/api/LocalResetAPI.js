@@ -4,6 +4,8 @@
 
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexObjects/States",
+	"sap/ui/fl/apply/_internal/flexState/changes/UIChangesState",
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
@@ -12,6 +14,8 @@ sap.ui.define([
 	"sap/base/util/restricted/_union"
 ], function(
 	States,
+	UIChangesState,
+	ManifestUtils,
 	PersistenceWriteAPI,
 	ChangesWriteAPI,
 	JsControlTreeModifier,
@@ -32,16 +36,13 @@ sap.ui.define([
 	var LocalResetAPI = /** @lends sap.ui.fl.write.api.LocalResetAPI */ {};
 
 	function getAllChanges(oControl, sLayer, sCurrentVariant) {
-		var mPropertyBag = {
-			includeDirtyChanges: true,
-			layer: sLayer
-		};
-		var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(oControl);
-		return oChangePersistence.getAllUIChanges(mPropertyBag)
+		return UIChangesState.getAllUIChanges(ManifestUtils.getFlexReferenceForControl(oControl))
 		.filter(function(oChange) {
 			return (
-				oChange.getState() !== States.LifecycleState.DELETED
-					&& oChange.getVariantReference() === (sCurrentVariant || undefined)
+				oChange.getFileType() === "change"
+				&& oChange.getLayer() === sLayer
+				&& oChange.getState() !== States.LifecycleState.DELETED
+				&& oChange.getVariantReference() === (sCurrentVariant || undefined)
 			);
 		});
 	}

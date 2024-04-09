@@ -3,7 +3,6 @@
  */
 
 sap.ui.define([
-	"sap/base/util/restricted/_union",
 	"sap/base/Log",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/Component",
@@ -23,7 +22,6 @@ sap.ui.define([
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Utils"
 ], function(
-	union,
 	Log,
 	JsControlTreeModifier,
 	Component,
@@ -168,28 +166,6 @@ sap.ui.define([
 	 */
 	ChangePersistence.prototype.getDependencyMapForComponent = function() {
 		return UIChangesState.getLiveDependencyMap(this._mComponent.name);
-	};
-
-	/**
-	 * Returns all changes that are currently loaded for the component.
-	 * @param {object} mPropertyBag - Contains additional data needed for reading changes
-	 * @param {string} [mPropertyBag.layer] - Specifies a single layer for loading changes
-	 * @param {boolean} [mPropertyBag.includeDirtyChanges] - Whether dirty changes of the current session should be included
-	 * @returns {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} Array of changes
-	 * @public
-	 */
-	ChangePersistence.prototype.getAllUIChanges = function(mPropertyBag) {
-		var aChanges = union(
-			UIChangesState.getAllUIChanges(this._mComponent.name),
-			mPropertyBag.includeDirtyChanges && this.getDirtyChanges()
-		).filter(function(oChange) {
-			return (
-				Boolean(oChange)
-				&& oChange.getFileType() === "change"
-				&& LayerUtils.compareAgainstCurrentLayer(oChange.getLayer(), mPropertyBag.layer) === 0
-			);
-		});
-		return aChanges;
 	};
 
 	function finalizeChangeCreation(oChange, oAppComponent) {

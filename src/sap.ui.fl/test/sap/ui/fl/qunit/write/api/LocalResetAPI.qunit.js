@@ -211,8 +211,8 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when the checked control is the selector of a change", function(assert) {
-			var aChanges = [createChange("foo", "element")];
-			sandbox.stub(ChangePersistence.prototype, "getAllUIChanges").returns(aChanges);
+			var aChanges = [createChange("foo", "element"), createChange("bar", "element", {layer: Layer.USER})];
+			sandbox.stub(UIChangesState, "getAllUIChanges").returns(aChanges);
 			var aNestedChanges = LocalResetAPI.getNestedUIChangesForControl(this.oElement, {
 				layer: Layer.CUSTOMER
 			});
@@ -229,7 +229,7 @@ sap.ui.define([
 				createChange("foo", "element"),
 				createChange("bar", "childElement")
 			];
-			sandbox.stub(ChangePersistence.prototype, "getAllUIChanges").returns(aChanges);
+			sandbox.stub(UIChangesState, "getAllUIChanges").returns(aChanges);
 			var aNestedChanges = LocalResetAPI.getNestedUIChangesForControl(this.oElement, {
 				layer: Layer.CUSTOMER
 			});
@@ -249,7 +249,7 @@ sap.ui.define([
 					}
 				}
 			})];
-			sandbox.stub(ChangePersistence.prototype, "getAllUIChanges").returns(aChanges);
+			sandbox.stub(UIChangesState, "getAllUIChanges").returns(aChanges);
 			var aNestedChanges = LocalResetAPI.getNestedUIChangesForControl(this.oElement, {
 				layer: Layer.CUSTOMER
 			});
@@ -264,7 +264,7 @@ sap.ui.define([
 		QUnit.test("when a change was already deleted", function(assert) {
 			var aChanges = [createChange("foo", "element")];
 			aChanges[0].setState(States.LifecycleState.DELETED);
-			sandbox.stub(ChangePersistence.prototype, "getAllUIChanges").returns(aChanges);
+			sandbox.stub(UIChangesState, "getAllUIChanges").returns(aChanges);
 			var aNestedChanges = LocalResetAPI.getNestedUIChangesForControl(this.oElement, {
 				layer: Layer.CUSTOMER
 			});
@@ -292,7 +292,7 @@ sap.ui.define([
 				}),
 				createChange("baz", "element")
 			];
-			sandbox.stub(ChangePersistence.prototype, "getAllUIChanges").returns(aChanges);
+			sandbox.stub(UIChangesState, "getAllUIChanges").returns(aChanges);
 
 			var aNestedChangesForFooVariant = LocalResetAPI.getNestedUIChangesForControl(this.oElement, {
 				layer: Layer.CUSTOMER,
@@ -316,7 +316,7 @@ sap.ui.define([
 
 		QUnit.test("when the selector of a change is the parent of the searched element", function(assert) {
 			var aChanges = [createChange("foo", "parentElement")];
-			sandbox.stub(ChangePersistence.prototype, "getAllUIChanges").returns(aChanges);
+			sandbox.stub(UIChangesState, "getAllUIChanges").returns(aChanges);
 			var aNestedChanges = LocalResetAPI.getNestedUIChangesForControl(this.oElement, {
 				layer: Layer.CUSTOMER
 			});
@@ -330,7 +330,7 @@ sap.ui.define([
 
 		QUnit.test("when the selector of a change is a sibling of the searched element", function(assert) {
 			var aChanges = [createChange("foo", "siblingElement")];
-			sandbox.stub(ChangePersistence.prototype, "getAllUIChanges").returns(aChanges);
+			sandbox.stub(UIChangesState, "getAllUIChanges").returns(aChanges);
 			var aNestedChanges = LocalResetAPI.getNestedUIChangesForControl(this.oElement, {
 				layer: Layer.CUSTOMER
 			});
