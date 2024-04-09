@@ -18,7 +18,6 @@ sap.ui.define([
 
 	/**
 	 * Delegate for {@link sap.ui.mdc.ValueHelp ValueHelp} used in oData v4 environment.<br>
-	 * <b>Note:</b> The class is experimental and the API/behavior is not finalized and hence this should not be used for productive usage.
 	 *
 	 * @namespace
 	 * @author SAP SE

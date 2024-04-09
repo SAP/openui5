@@ -10,8 +10,6 @@ sap.ui.define([
 	/**
 	 * Helper class for sap.ui.mdc.filterbar.vh.GenericVhFilterBarDelegate.
 	 * This GenericVhFilterBarDelegate creates the propertyInfo based on the FilterItems of the Filterbar and does NOT load and analyse any metadata!
-	 * <h3><b>Note:</b></h3>
-	 * The class is experimental and the API/behaviour is not finalised and hence this should not be used for productive usage.
 	 */
 	var GenericVhFilterBarDelegate = Object.assign({}, FilterBarDelegate);
 

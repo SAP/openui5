@@ -19,7 +19,6 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @constructor The ActionToolbarPanel is a list based view to personalize selection and ordering of a Control aggregation.
 	 * @private
-	 * @experimental
 	 * @since 1.85
 	 * @alias sap.ui.mdc.p13n.panels.ActionToolbarPanel
 	 */

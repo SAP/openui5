@@ -35,7 +35,6 @@ sap.ui.define(
 		 * @namespace
 		 * @since 1.82.0
 		 * @private
-		 * @experimental As of version 1.82.0
 		 * @ui5-restricted sap.ui.mdc
 		*/
 		const AdaptationMixin = {};

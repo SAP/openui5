@@ -24,7 +24,6 @@ sap.ui.define([
 	 * @version ${version}
 	 * @since 1.80
 	 * @public
-	 * @experimental As of version 1.54
 	 */
 	const thisLib = Library.init({
 		apiVersion: 2,
@@ -132,7 +131,6 @@ sap.ui.define([
 	 * @interface
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.valuehelp.ITypeaheadContainer
-	 * @experimental As of version 1.95
 	 */
 
 	/**
@@ -332,7 +330,6 @@ sap.ui.define([
 	 * @interface
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.ValueHelp
-	 * @experimental As of version 1.95
 	 */
 
 	/**
@@ -546,7 +543,6 @@ sap.ui.define([
 	 * @interface
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.valuehelp.IDialogContainer
-	 * @experimental As of version 1.95
 	 */
 
 	/**
@@ -632,7 +628,6 @@ sap.ui.define([
 	 * @interface
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.valuehelp.IDialogContainer
-	 * @experimental As of version 1.95
 	 */
 
 	/**
@@ -719,7 +714,6 @@ sap.ui.define([
 	 * @property {object} [payload] Payload of the item.
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
-	 * @experimental As of version 1.95
 	 */
 
 
@@ -870,7 +864,6 @@ sap.ui.define([
 		 * Tree table ({@link sap.ui.table.TreeTable} control) is used.
 		 *
 		 * @private
-		 * @experimental
 		 */
 		TreeTable: "TreeTable",
 		/**
@@ -1307,7 +1300,6 @@ sap.ui.define([
 	 * @namespace
 	 * @name sap.ui.mdc.mixin
 	 * @private
-	 * @experimental As of version 1.82.0
 	 * @ui5-restricted sap.ui.mdc
 	 */
 

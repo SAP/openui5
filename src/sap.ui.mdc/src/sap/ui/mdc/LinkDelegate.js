@@ -10,8 +10,6 @@ sap.ui.define([
 	"use strict";
 	/**
 	 * Base delegate for {@link sap.ui.mdc.Link}. Extend this object in your project to use all functionalities of the {@link sap.ui.mdc.Link}.
-	 * <b>Note:</b>
-	 * The delegate is experimental and the API/behaviour is not finalized and hence this should not be used for productive usage.
 	 * @author SAP SE
 	 * @namespace
 	 * @alias module:sap/ui/mdc/LinkDelegate

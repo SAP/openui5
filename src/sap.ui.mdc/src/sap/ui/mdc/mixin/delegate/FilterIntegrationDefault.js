@@ -34,7 +34,6 @@ sap.ui.define([
 	 * @mixin
 	 * @since 1.121
 	 * @private
-	 * @experimental
 	 * @ui5-restricted sap.ui.mdc
 	 */
 	const FilterIntegrationDefault = {};

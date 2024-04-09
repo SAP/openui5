@@ -47,7 +47,6 @@ sap.ui.define(
 		 * @alias sap.ui.mdc.util.PromiseCache
 		 * @since 1.85.0
 		 * @private
-		 * @experimental
 		 * @ui5-restricted sap.ui.mdc
 		 */
 		const PromiseCache = BaseObject.extend("sap.ui.mdc.util.PromiseCache", /** @lends sap.ui.mdc.util.PromiseCache.prototype */ {

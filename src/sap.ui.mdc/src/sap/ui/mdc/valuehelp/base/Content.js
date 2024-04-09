@@ -73,7 +73,6 @@ sap.ui.define([
 				 * <b>Note:</b> This property must not be set from outside, it must only be used by the corresponding container.
 				 * @private
 				 * @ui5-restricted sap.ui.mdc.valuehelp.base.Container
-				 * @experimental: Do not use - this property is only for internal usage
 				 */
 				conditions: { // TODO: only internal? make restricted?
 					type: "object[]",
@@ -86,7 +85,6 @@ sap.ui.define([
 				 * <b>Note:</b> This property must not be set from outside, it must only be used by the corresponding container.
 				 * @private
 				 * @ui5-restricted sap.ui.mdc.valuehelp.base.Container
-				 * @experimental: Do not use - this property is only for internal usage
 				 */
 				filterValue: { // TODO: how to hide? Or how to access from ValueHelp?
 					type: "string",
@@ -99,7 +97,6 @@ sap.ui.define([
 				 * <b>Note:</b> This property must not be set from outside, it must only be used by the corresponding container.
 				 * @private
 				 * @ui5-restricted sap.ui.mdc.valuehelp.base.Container
-				 * @experimental: Do not use - this property is only for internal usage
 				 */
 				config: {
 					type: "object",
@@ -123,7 +120,6 @@ sap.ui.define([
 				 * <b>Note:</b> This aggregation must not be set from outside, it must only be used by the corresponding container.
 				 * @private
 				 * @ui5-restricted sap.ui.mdc.valuehelp.base.Container
-				 * @experimental: Do not use - this aggregation is only for internal usage
 				 */
 				displayContent: {
 					type: "sap.ui.core.Control",

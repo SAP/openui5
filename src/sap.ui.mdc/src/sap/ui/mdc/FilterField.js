@@ -59,7 +59,6 @@ sap.ui.define([
 	 * @since 1.48.0
 	 *
 	 * @public
-	 * @experimental As of version 1.48.0
 	 */
 	const FilterField = FieldBase.extend("sap.ui.mdc.FilterField", /* @lends sap.ui.mdc.FilterField.prototype */ {
 		metadata: {

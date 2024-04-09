@@ -32,7 +32,6 @@ sap.ui.define(["sap/base/util/Deferred", "sap/ui/mdc/util/loadModules", "sap/bas
 	 * @namespace
 	 * @since 1.100.0
 	 * @private
-	 * @experimental
 	 * @ui5-restricted sap.ui.mdc
 	 */
 	const PropertyHelperMixin = {};

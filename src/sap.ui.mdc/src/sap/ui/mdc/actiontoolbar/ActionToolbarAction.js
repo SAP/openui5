@@ -16,15 +16,13 @@ sap.ui.define([
 	 * @param {object} [mSettings] Initial settings for the new control
 	 * @class
 	 * The action for an {@link sap.ui.mdc.ActionToolbar ActionToolbar} control with given layout information that determines where the wrapped control is displayed on the <code>ActionToolbar</code>.
-	 * <b>Note:</b>
-	 * The control is experimental and the API / behavior is not finalized. It should only be used internally in other mdc controls (e.g.
-	 * chart/table).
 	 * @extends sap.ui.core.Control
 	 * @author SAP SE
 	 * @version ${version}
 	 * @constructor
 	 * @since 1.58
 	 * @public
+	 * @experimental
 	 * @alias sap.ui.mdc.actiontoolbar.ActionToolbarAction
 	 */
 	const ActionToolbarAction = Control.extend("sap.ui.mdc.actiontoolbar.ActionToolbarAction", {

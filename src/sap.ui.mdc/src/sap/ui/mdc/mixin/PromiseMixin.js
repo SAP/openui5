@@ -15,7 +15,6 @@ sap.ui.define(
 		 * @namespace
 		 * @since 1.85.0
 		 * @private
-		 * @experimental
 		 * @ui5-restricted sap.ui.mdc
 		 *
 		 * @borrows sap.ui.mdc.util.PromiseCache.add as addPromise

@@ -31,6 +31,7 @@ sap.ui.define([
 	 * @param {sap.ui.mdc.condition.ConditionObject[]} aConditions Current conditions of the <code>MultiValueField</code> control
 	 * @param {sap.ui.mdc.MultiValueField} oMultiValueField Current <code>MultiValueField</code> control to determine binding information to update the values of the related model
 	 * @public
+	 * @experimental
 	 */
 	MultiValueFieldDelegate.updateItems = function(oPayload, aConditions, oMultiValueField) {
 

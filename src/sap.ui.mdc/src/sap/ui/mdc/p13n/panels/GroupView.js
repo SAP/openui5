@@ -40,7 +40,6 @@ sap.ui.define([
 	 * @extends sap.m.p13n.BasePanel
 	 * @author SAP SE
 	 * @private
-	 * @experimental
 	 * @since 1.85
 	 * @alias sap.ui.mdc.p13n.panels.GroupView
 	 */
