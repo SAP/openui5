@@ -170,8 +170,7 @@ sap.ui.define([
 					add: {
 						delegate: {
 							changeType: "addSimpleFormField",
-							changeOnRelevantContainer: true,
-							supportsDefaultDelegate: true
+							changeOnRelevantContainer: true
 						}
 					}
 				}

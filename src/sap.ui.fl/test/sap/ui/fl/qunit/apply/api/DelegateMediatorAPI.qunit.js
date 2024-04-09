@@ -72,18 +72,17 @@ sap.ui.define([
 		);
 	});
 
-	// TODO: reactivate this test when the registration of read delegates is allowed for the same model type
-	// QUnit.test("When it is called with valid property bag multiple times", function(assert) {
-	// 	DelegateMediatorAPI.registerReadDelegate(this.mPropertyBag);
-	// 	this.mPropertyBag.delegate = "test_delegate2";
-	// 	assert.throws(
-	// 		function() {
-	// 			DelegateMediatorAPI.registerReadDelegate(this.mPropertyBag);
-	// 		}.bind(this),
-	// 		/is already defined!/,
-	// 		"then an exception is thrown"
-	// 	);
-	// });
+	QUnit.test("When it is called with valid property bag multiple times", function(assert) {
+		DelegateMediatorAPI.registerReadDelegate(this.mPropertyBag);
+		this.mPropertyBag.delegate = "test_delegate2";
+		assert.throws(
+			function() {
+				DelegateMediatorAPI.registerReadDelegate(this.mPropertyBag);
+			}.bind(this),
+			/is already defined!/,
+			"then an exception is thrown"
+		);
+	});
 
 	QUnit.module("Given 'registerWriteDelegate' function is called", {
 		beforeEach() {

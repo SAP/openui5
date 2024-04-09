@@ -79,8 +79,7 @@ sap.ui.define([
 		},
 		aggregationName: "formElements",
 		parentAlias: "parentFormContainer",
-		fieldSuffix: "-field",
-		supportsDefault: true
+		fieldSuffix: "-field"
 	});
 	return AddFormField;
 },

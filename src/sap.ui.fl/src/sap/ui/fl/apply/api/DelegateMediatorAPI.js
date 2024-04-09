@@ -19,23 +19,6 @@ sap.ui.define([
 	 */
 	const DelegateMediatorAPI = /** @lends sap.ui.fl.apply.api.DelegateMediatorAPI */{
 		/**
-		 * Registers the default delegate by model type.
-		 *
-		 * @param {object} mPropertyBag - Property bag for default delegate
-		 * @param {object} mPropertyBag.modelType - Default delegate model type
-		 * @param {object} mPropertyBag.delegate - Path to default delegate
-		 * @param {object} mPropertyBag.delegateType - Defines the type of the default delegate.
-		 * Please look at <code>DelegageMediatorAPI.types</code> for possible entries
-	 	 * @param {object} [mPropertyBag.requiredLibraries] - Map of required libraries
-		 * @deprecated since 1.123.0
-		 */
-		registerDefaultDelegate(mPropertyBag) {
-			if (mPropertyBag.modelType !== "sap.ui.model.odata.v2.ODataModel" && mPropertyBag.modelType !== "sap.ui.model.odata.ODataModel") {
-				DelegateMediator.registerReadDelegate(mPropertyBag);
-			}
-		},
-
-		/**
 		 * Register model specific read delegate by the model type.
 		 *
 		 * @param {object} mPropertyBag - Property bag for read delegate
@@ -57,24 +40,6 @@ sap.ui.define([
 		 */
 		registerWriteDelegate(mPropertyBag) {
 			DelegateMediator.registerWriteDelegate(mPropertyBag);
-		},
-
-		/**
-		 * Returns the delegate object for the requested control.
-		 *
-		 * @param {object} mPropertyBag - Property bag
-		 * @param {sap.ui.core.Element|DomNode} mPropertyBag.control - Control for which the corresponding delegate should be returned
-		 * @param {sap.ui.core.util.reflection.BaseTreeModifier} mPropertyBag.modifier - Control tree modifier
-		 * @param {string} [mPropertyBag.modelType] - Model type; required in case you passed the <code>XmlTreeModifier</code>
-		 * @param {boolean} [mPropertyBag.supportsDefault] - Include default delegate if no instance specific delegate is available
-		 * @returns {Promise.<sap.ui.core.util.reflection.FlexDelegateInfo>} Delegate information including the lazy loaded instance of the delegate
-		 * @deprecated since 1.123.0
-		 */
-		getDelegateForControl(mPropertyBag) {
-			return DelegateMediator.getWriteDelegateForControl(
-				mPropertyBag.control,
-				mPropertyBag.modifier
-			);
 		},
 
 		/**
