@@ -183,7 +183,7 @@ sap.ui.define([
 				},
 
 				iShouldSeeGivenColumnsWithHeader: function(sColumnHeaders) {
-					return TableAssertions.iShouldSeeGivenColumnsWithHeader.call(this, sColumnHeaders);
+					return TableAssertions.iShouldSeeGivenColumnsWithHeader.call(this, null, sColumnHeaders);
 				},
 
 				iShouldSeeTheSortDialog: function() {

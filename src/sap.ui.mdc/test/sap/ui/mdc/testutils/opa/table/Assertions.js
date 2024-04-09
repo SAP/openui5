@@ -61,7 +61,7 @@ sap.ui.define([
 			});
 		},
 		// Data Assertions
-		iShouldSeeGivenColumnsWithHeader: function(aColumnHeaders, vTable) {
+		iShouldSeeGivenColumnsWithHeader: function(vTable, aColumnHeaders) {
 			const oSettings = {
 				success: function(oTable) {
 					var aColumns = oTable.getColumns();
