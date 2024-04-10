@@ -138,8 +138,13 @@ sap.ui.define([
     ActionTileContent.prototype.getAltText = function() {
         var sAltText = "";
         var sPriorityText = this.getPriorityText();
+        var oHeaderLink = this.getHeaderLink();
+        var sHeaderLinkText = oHeaderLink && oHeaderLink.getText();
         var aTileAttributes = this.getAggregation("attributes") || [];
-        if (this.getPriority() !== Priority.None && sPriorityText) {
+
+        if (oHeaderLink) {
+            sAltText += (sHeaderLinkText) + "\n";
+        } else if (this.getPriority() !== Priority.None && sPriorityText) {
             sAltText += (sPriorityText) + "\n";
         }
         // Returns the first four attributes to display in the tooltip,aria-label on the ActionTile

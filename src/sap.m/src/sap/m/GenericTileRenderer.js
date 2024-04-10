@@ -329,14 +329,29 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/core/Them
 
 			//Render Header Image
 			if (sHeaderImage) {
-				oControl._oImage.removeStyleClass(ValueColor.None);
-				if (this._sPreviousStyleClass) {
-					oControl._oImage.removeStyleClass(this._sPreviousStyleClass);
+				var bIsIconFrameEnabled = oControl.isA("sap.m.ActionTile") && oControl.getProperty("enableIconFrame");
+				if (!bIsIconFrameEnabled) {
+					oControl._oImage.removeStyleClass(ValueColor.None);
+					if (this._sPreviousStyleClass) {
+						oControl._oImage.removeStyleClass(this._sPreviousStyleClass);
+					}
+					this._sPreviousStyleClass = this._isValueColorValid(oControl.getValueColor()) ? oControl.getValueColor() : ValueColor.None;
+					oControl._oImage.addStyleClass(this._sPreviousStyleClass);
+				} else {
+					oRm.openStart("div", oControl.getId() + "-icon-frame").openEnd();
 				}
-				this._sPreviousStyleClass = this._isValueColorValid(oControl.getValueColor()) ? oControl.getValueColor() : ValueColor.None;
-				oControl._oImage.addStyleClass(this._sPreviousStyleClass);
 
+				oControl._oImage.toggleStyleClass("sapMATIconFrame", bIsIconFrameEnabled);
 				oRm.renderControl(oControl._oImage);
+
+				if (bIsIconFrameEnabled) {
+					oRm.close("div");
+				}
+			}
+
+			var bIsContentPriorityPresent = this._isPriorityPresent(oControl);
+			if (bIsContentPriorityPresent) {
+				oRm.openStart("div", oControl.getId() + "-header-container").class("sapMATHeaderContainer").openEnd();
 			}
 
 			this._renderHeader(oRm, oControl);
@@ -357,10 +372,16 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/core/Them
 				}
 			}
 
-			if (!(isHalfFrame && isContentPresent) && oControl.getSubheader()) {
+			if (bIsContentPriorityPresent) {
+				this._renderPriorityText(oRm, oControl);
+			} else if (!(isHalfFrame && isContentPresent) && oControl.getSubheader()) {
 				this._renderSubheader(oRm, oControl);
 			}
+
+			if (bIsContentPriorityPresent) {
 				oRm.close("div");
+			}
+			oRm.close("div");
 
 			if ( !oControl._isIconMode() ) { //Restrict creation of Footer for IconMode
 				oRm.openStart("div", oControl.getId() + "-content");
@@ -433,6 +454,34 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/core/Them
 		} else {
 			oRm.close("div");
 		}
+	};
+
+	/**
+	 * Checks if the priority is present for a tile.
+	 * Applies only for ActionMode.
+	 *
+	 * @private
+	 * @param {object} oControl - The tile control instance.
+	 * @returns {boolean} - Returns true if the content priority is present; otherwise, returns false.
+	 */
+	GenericTileRenderer._isPriorityPresent = function (oControl) {
+		return oControl.isA("sap.m.ActionTile") && oControl.getProperty("priority") && oControl.getProperty("priorityText");
+	};
+
+	/**
+	 * Renders the priority text for the tile.
+	 *
+	 * @private
+	 * @param {object} oRm - The RenderManager instance.
+	 * @param {object} oControl - The control instance to render.
+	 */
+	GenericTileRenderer._renderPriorityText = function (oRm, oControl) {
+		oRm.openStart("div", oControl.getId() + "-priority-text");
+		oRm.class("sapMTilePriorityValue");
+		oRm.class(oControl.getProperty("priority"));
+		oRm.openEnd();
+		oRm.text(oControl.getProperty("priorityText"));
+		oRm.close("div");
 	};
 
 	/**

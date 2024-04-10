@@ -5,7 +5,7 @@
 
 .sapMAT{
     width: 20rem;
-    height: 21.875rem;
+    height: 22.875rem;
     border-radius: @sapTile_BorderCornerRadius;
     position: relative;
     padding: 1rem;
@@ -27,6 +27,31 @@
             color: @sapTile_TitleTextColor !important;
             line-height: 1.5rem;
             cursor: pointer;
+        }
+        .sapMATHeaderContainer {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            justify-content: space-between;
+            .sapMGTTitle {
+                line-height: 1.2;
+                font-size: 0.875rem;
+            }
+            .sapMTilePriorityValue {
+                font-size: 0.875rem;
+                &.High {
+                    color: @sapNegativeTextColor;
+                }
+                &.Medium {
+                    color: @sapCriticalTextColor;
+                }
+                &.Low {
+                    color: @sapPositiveTextColor;
+                }
+                &.VeryHigh {
+                    color: @sapIndicationColor_1_BorderColor;
+                }
+            }
         }
     }
     .sapMGTActionModeContainer {
@@ -155,7 +180,8 @@
         flex-direction: row;
         align-items: center;
         gap: 0.5rem;
-        height: 2.75rem;
+        height: 3.25rem;
+        margin-bottom: 1rem;
         .sapMGTHdrIconImage.Neutral {
             color:  @sapUiNeutralText;
         }
@@ -171,7 +197,7 @@
         .sapMGTHdrIconImage.None {
             color: @sapUiTileIconColor
         }
-        .sapMGTHdrIconImage.sapUiIcon{
+        .sapMGTHdrIconImage.sapUiIcon:not(.sapMATIconFrame) {
             &::before {
                 height: 2.75rem;
                 font-weight: 400;
@@ -180,6 +206,18 @@
                 display: flex;
                 align-items: end;
                 text-align: center;
+            }
+        }
+        .sapMGTHdrIconImage.sapUiIcon.sapMATIconFrame {
+            height: 3.25rem;
+            width: 3.25rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: @sapAvatar_10_Background;
+            border-radius: @sapElement_BorderCornerRadius;
+            &::before {
+                font-size: 1.125rem;
             }
         }
     }
