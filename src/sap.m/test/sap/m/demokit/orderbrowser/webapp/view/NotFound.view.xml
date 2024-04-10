@@ -2,12 +2,14 @@
 	controllerName="sap.ui.demo.orderbrowser.controller.NotFound"
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc">
-	<MessagePage
+	<Page
 		id="page"
 		title="{i18n>notFoundTitle}"
-		text="{i18n>notFoundText}"
-		icon="sap-icon://document"
 		showNavButton="true"
 		navButtonPress=".onNavBack">
-	</MessagePage>
+		<IllustratedMessage
+			title="{i18n>notFoundText}"
+			illustrationType="sapIllus-PageNotFound"
+			enableDefaultTitleAndDescription="false"/>
+	</Page>
 </mvc:View>
