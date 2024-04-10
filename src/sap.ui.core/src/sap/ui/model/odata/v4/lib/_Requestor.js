@@ -1364,7 +1364,7 @@ sap.ui.define([
 		this.bBatchSent = true;
 		aRequests = this.mergeGetRequests(aRequests);
 		this.batchRequestSent(sGroupId, aRequests, bHasChanges);
-		return this.sendBatch(aRequests, sGroupId)
+		return this.sendBatch(aRequests, sGroupId, bHasChanges)
 			.then(function (aResponses) {
 				visit(aRequests, aResponses);
 			}).catch(function (oError) {
@@ -1911,11 +1911,12 @@ sap.ui.define([
 	 *
 	 * @param {object[]} aRequests The requests
 	 * @param {string} sGroupId The group ID
+	 * @param {boolean} bHasChanges Whether the batch contains change requests
 	 * @returns {Promise} A promise on the responses
 	 *
 	 * @private
 	 */
-	_Requestor.prototype.sendBatch = function (aRequests, sGroupId) {
+	_Requestor.prototype.sendBatch = function (aRequests, sGroupId, bHasChanges) {
 		var oBatchRequest = _Batch.serializeBatchRequest(aRequests,
 				this.getGroupSubmitMode(sGroupId) === "Auto"
 					? "Group ID: " + sGroupId
@@ -1925,7 +1926,9 @@ sap.ui.define([
 
 		return this.processOptimisticBatch(aRequests, sGroupId)
 			|| this.sendRequest("POST", "$batch" + this.sQueryParams,
-				Object.assign(oBatchRequest.headers, mBatchHeaders), oBatchRequest.body
+				Object.assign(oBatchRequest.headers, mBatchHeaders,
+					bHasChanges ? undefined : {"sap-cancel-on-close" : "true"}),
+				oBatchRequest.body
 			).then(function (oResponse) {
 				if (oResponse.messages !== null) {
 					throw new Error("Unexpected 'sap-messages' response header for batch request");
