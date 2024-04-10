@@ -1,0 +1,186 @@
+/* =============================================== */
+/* CSS for control sap.ui.layout/ResponsiveLayout  */
+/* Base theme                                      */
+/* =============================================== */
+
+.sapUiRLContainer.sapUiFormContainerTitle > .sapUiFormTitle.sapUiFormTitleExpandable{
+	padding-left: 2.25rem;
+}
+
+.sapUiRLContainer.sapUiFormContainerTitle > .sapUiFormTitle.sapUiFormTitleExpandable > button{
+	left: -0.5rem;
+}
+.sapUiRLContainerColl > .sapUiRLContainerCont{
+	display: none;
+}
+
+/* make labels before fields right aligned */
+.sapUiRLElementWithLabel > .sapUiRFLRow:first-child > .sapUiRFLContainer:first-child:not(.sapUiRFLFullLength) > div{
+	text-align: end;
+}
+
+.sapUiFormResLayout > div {
+	padding: 1rem;
+	box-sizing: border-box;
+}
+
+.sapUiFormM .sapUiRFLPaddingClass,
+.sapUiFormM .sapUiRFLMultiContent.sapUiRFLPaddingClass {
+	padding: 0 0 0 0.5rem;
+}
+
+.sapUiRLContainerCont > .sapUiRFL >.sapUiRFLRow >.sapUiRFLContainer{
+	padding-right: 0.5rem;
+}
+
+.sapUiRLContainerCont > .sapUiRFL >.sapUiRFLRow >.sapUiRFLContainer:last-child{
+	padding-right: 0;
+}
+
+.sapUiRLElementWithLabel > .sapUiRFLCompleteRow:first-child > .sapUiRFLContainer.sapUiRFLFullLength > .sapUiRFLContainerContent.sapUiRFLPaddingClass{
+	padding-bottom: 0;
+}
+
+.sapUiFormEdit.sapUiFormM .sapUiRLElementWithLabel > .sapUiRFLRow:not(.sapUiRFLCompleteRow) > .sapUiRFLContainer:first-child > .sapUiRFLContainerContent{
+	padding-top: 1rem;
+}
+
+html[data-sap-ui-browser^="ff"] .sapUiFormEdit.sapUiFormM .sapUiRLElementWithLabel > .sapUiRFLRow:not(.sapUiRFLCompleteRow) > .sapUiRFLContainer:first-child > .sapUiRFLContainerContent{
+	padding-top: 0.9375rem;
+}
+
+.sapUiSizeCompact .sapUiFormEdit.sapUiFormM .sapUiRLElementWithLabel > .sapUiRFLRow:not(.sapUiRFLCompleteRow) > .sapUiRFLContainer:first-child > .sapUiRFLContainerContent{
+	padding-top: 0.5rem;
+}
+
+html[data-sap-ui-browser^="ff"].sapUiSizeCompact .sapUiFormEdit.sapUiFormM .sapUiRLElementWithLabel > .sapUiRFLRow:not(.sapUiRFLCompleteRow) > .sapUiRFLContainer:first-child > .sapUiRFLContainerContent,
+html[data-sap-ui-browser^="ff"] .sapUiSizeCompact .sapUiFormEdit.sapUiFormM .sapUiRLElementWithLabel > .sapUiRFLRow:not(.sapUiRFLCompleteRow) > .sapUiRFLContainer:first-child > .sapUiRFLContainerContent{
+	padding-top: 0.4375rem;
+}
+
+.sapUiFormResLayout .sapUiRFLRow > .sapUiRFLContainer.sapUiRFLFullLength > .sapUiRFLContainerContent > .sapUiRLElement > .sapUiRFLRow:last-child > .sapUiRFLFullLength:last-child{
+	padding-bottom: 0.625rem;
+}
+.sapUiForm > .sapUiFormResLayout > .sapUiRFL .sapUiRFLRow:last-child > .sapUiRFLContainer.sapUiRFLFullLength > .sapUiRFLContainerContent > .sapUiRLElement > .sapUiRFLRow:last-child > .sapUiRFLFullLength:last-child{
+	/* last element in row has no padding bottom */
+	padding-bottom: 0;
+}
+
+.sapUiRLElementFields > .sapUiRFLRow > .sapUiRFLContainer:first-child > .sapUiRFLContainerContent.sapUiRFLPaddingClass:first-child,
+.sapUiRLElementFields > .sapUiRFLRow > .sapUiRFLContainer:first-child > .sapUiRFLContainerContent.sapUiRFLMultiContainerContent.sapUiRFLPaddingClass:first-child > .sapUiRFLMultiContent.sapUiRFLPaddingClass:first-child{
+	padding-left: 0.5rem;
+}
+.sapUiRLElementFields > .sapUiRFLRow > .sapUiRFLContainer:first-child > .sapUiRFLContainerContent.sapUiRFLMultiContainerContent.sapUiRFLPaddingClass:first-child,
+.sapUiRFLFullLength > .sapUiRFLContainerContent > .sapUiRLElementFields > .sapUiRFLRow > .sapUiRFLContainer:first-child > .sapUiRFLContainerContent.sapUiRFLPaddingClass:first-child,
+.sapUiRFLFullLength > .sapUiRFLContainerContent > .sapUiRLElementFields > .sapUiRFLRow > .sapUiRFLContainer:first-child > .sapUiRFLContainerContent.sapUiRFLPaddingClass:first-child > .sapUiRFLMultiContent.sapUiRFLPaddingClass:first-child{
+	padding-left: 0;
+}
+
+.sapUiRFLRow > .sapUiRFLContainer > .sapUiRFLContainerContent > .sapUiRLContainer{
+	/* space between 2 containers, devide it to previous and next container to have the same size for all*/
+	padding-left: 0.5rem;
+	padding-right: 1rem;
+}
+.sapUiRFLRow > .sapUiRFLContainer:first-child > .sapUiRFLContainerContent > .sapUiRLContainer{
+	padding-left: 0;
+}
+.sapUiRFLRow > .sapUiRFLContainer:last-child > .sapUiRFLContainerContent > .sapUiRLContainer{
+	padding-right: 0;
+}
+
+/* full size labels in mobile */
+.sapUiFormM .sapUiFormResLayout .sapUiRFLRow:first-child > .sapUiRFLContainer.sapUiRFLFullLength > .sapUiFormElementLbl{
+	padding-top: 0.25rem;
+}
+
+/* full-size label under title/toolbar in compact mode */
+.sapUiSizeCompact .sapUiFormM .sapUiFormContainerTitle > .sapUiRLContainerCont > .sapUiRFL > .sapUiRFLRow:first-child > .sapUiRFLContainer .sapUiRFLContainerContent > .sapUiRLElementWithLabel > .sapUiRFLRow:first-child > .sapUiRFLContainer.sapUiRFLFullLength > .sapUiFormElementLbl{
+	padding-top: 0.5rem;
+}
+
+/* Title */
+.sapUiFormResLayout > .sapUiFormTitle{
+	box-sizing: border-box;
+	padding: 0 1rem 0 1rem;
+}
+
+.sapUiFormResLayout .sapUiFormTitle > img,
+.sapUiFormResLayout .sapUiFormTitle > span{
+	margin-right: 0.1875rem;
+}
+
+/* Toolbar */
+.sapUiFormResLayout.sapUiFormToolbar > div:first-child {
+	height: 3rem; /* to have in compact mode and in commons always 3rem on Form header */
+	line-height: 3rem;
+	padding: 0 1rem 0 1rem;
+}
+
+/* vertical spacing between containers */
+.sapUiFormResLayout > .sapUiRFL > .sapUiRFLRow > .sapUiRFLContainer > .sapUiRFLContainerContent > .sapUiRLContainer{
+	padding-top: 2rem;
+}
+
+html.sap-phone .sapUiFormResLayout > .sapUiRFL > .sapUiRFLRow > .sapUiRFLContainer > .sapUiRFLContainerContent > .sapUiRLContainer{
+	padding-top: 1rem;
+}
+
+.sapUiForm > .sapUiFormResLayout > .sapUiRFL > .sapUiRFLRow:first-child > .sapUiRFLContainer > .sapUiRFLContainerContent > .sapUiRLContainer{
+	padding-top: 0;
+}
+
+/* In Cozy mode put first FormContainers with title or toolbar 0.5rem on top */
+.sapUiFormM > .sapUiFormResLayout > .sapUiRFL > .sapUiRFLRow:first-child > .sapUiRFLContainer > .sapUiRFLContainerContent > .sapUiRLContainer.sapUiFormContainerTitle,
+.sapUiFormM > .sapUiFormResLayout > .sapUiRFL > .sapUiRFLRow:first-child > .sapUiRFLContainer > .sapUiRFLContainerContent > .sapUiRLContainer.sapUiFormContainerToolbar{
+	margin-top: -0.5rem;
+}
+.sapUiFormM > .sapUiFormResLayout > .sapUiRFL > .sapUiRFLRow:first-child > .sapUiRFLContainer{
+	overflow: visible; /* to show expander and toolbar completely */
+}
+
+/* only one container - reduce top padding*/
+.sapUiFormM > .sapUiFormResLayout > .sapUiFormContainerTitle,
+.sapUiFormM > .sapUiFormResLayout > .sapUiFormContainerToolbar{
+	padding-top: 0.5rem;
+}
+
+.sapUiSizeCompact .sapUiFormM > .sapUiFormResLayout > .sapUiRFL > .sapUiRFLRow:first-child > .sapUiRFLContainer > .sapUiRFLContainerContent > .sapUiRLContainer.sapUiFormContainerTitle,
+.sapUiSizeCompact .sapUiFormM > .sapUiFormResLayout > .sapUiRFL > .sapUiRFLRow:first-child > .sapUiRFLContainer > .sapUiRFLContainerContent > .sapUiRLContainer.sapUiFormContainerToolbar{
+	margin-top: 0;
+}
+
+.sapUiSizeCompact .sapUiFormM > .sapUiFormResLayout > .sapUiFormContainerTitle,
+.sapUiSizeCompact .sapUiFormM > .sapUiFormResLayout > .sapUiFormContainerToolbar{
+	padding-top: 1rem;
+}
+
+/* for display mode add padding to elements to have spacing between */
+.sapUiFormM:not(.sapUiFormEdit) .sapUiRFLContainerContent{
+	font-size: 1px; /* as browser adds some px to text to meet font-size*/
+}
+
+.sapUiFormM:not(.sapUiFormEdit) .sapUiRFLContainerContent .sapUiIcon:not(.sapMBtnIcon),
+.sapUiFormM:not(.sapUiFormEdit) .sapUiRFLContainerContent .sapMCbBg{
+	font-size: @sapUiFontSize; /* to set default font size on icons */
+}
+
+.sapUiFormM:not(.sapUiFormEdit) .sapUiRLElement > .sapUiRFLRow{
+	padding-top: 0.25rem;
+	padding-bottom: 0.25rem;
+}
+
+.sapUiFormM:not(.sapUiFormEdit) .sapUiRLContainerCont > .sapUiRFL > .sapUiRFLRow:first-child > .sapUiRFLContainer > .sapUiRFLContainerContent > .sapUiRLElement > .sapUiRFLRow:first-child{
+	padding-top: 0;
+}
+
+.sapUiFormM:not(.sapUiFormEdit) .sapUiRLContainerCont > .sapUiRFL > .sapUiRFLRow:last-child > .sapUiRFLContainer > .sapUiRFLContainerContent > .sapUiRLElement > .sapUiRFLRow:last-child{
+	padding-bottom: 0;
+}
+
+.sapUiFormM:not(.sapUiFormEdit) > .sapUiFormResLayout .sapUiRFLRow:first-child > .sapUiRFLContainer.sapUiRFLFullLength > .sapUiRFLContainerContent > .sapMLabel{
+	padding-bottom: 0;
+}
+
+.sapUiFormM:not(.sapUiFormEdit) > .sapUiFormResLayout .sapUiRFLRow > .sapUiRFLContainer.sapUiRFLFullLength > .sapUiRFLContainerContent > .sapUiRLElement > .sapUiRFLRow:last-child > .sapUiRFLFullLength:last-child{
+	padding-bottom: 0.25rem;
+}
