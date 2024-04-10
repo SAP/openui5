@@ -1,0 +1,69 @@
+/* ============================================================ */
+/* CSS for control sap.ui.integration.controls/ImageWithOverlay */
+/* Base theme                                                   */
+/* ============================================================ */
+
+.sapUiIntImageWithOverlay {
+	display: flex;
+
+	.sapUiIntImgWithOverlayImg {
+		width: 100%;
+		height: 100%;
+	}
+
+	.sapUiIntImgWithOverlayLayout {
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		padding: 1rem;
+		height: 100%;
+		opacity: 0;
+
+		.sapMText {
+			line-height: 1.5rem;
+
+			&.sapUiIntImgWithOverlayTitle {
+				font-size:  1.75rem;
+				line-height: 1.75rem;
+				font-weight: 900;
+			}
+		}
+	}
+
+	&.sapUiIntImageWithOverlayPaddingMediumStart .sapUiIntImgWithOverlayLayout {
+		padding-inline-start: @sapUiMarginMedium;
+	}
+}
+
+.sapFCardObjectGroup {
+	.sapUiIntImageWithOverlay.sapFCardObjectImageFullWidth.sapFCardObjectImage:only-child {
+		height:  ~"calc(100% + 32px)";
+	}
+
+	.sapUiIntImageWithOverlay:not(.sapFCardObjectImageFullWidth):only-child .sapUiIntImgWithOverlayImg {
+		max-height: 100%;
+	}
+}
+
+.sapUiIntImgWithOverlayLoaded .sapUiIntImgWithOverlayLayout {
+	animation: sapUiInImgWithOverlayFadeInAnimation ease 1s;
+	animation-iteration-count: 1;
+	animation-fill-mode: forwards;
+	animation-delay: 500ms;
+}
+
+@keyframes sapUiInImgWithOverlayFadeInAnimation {
+	0% {
+		opacity: 0;
+	}
+
+	100% {
+		opacity: 1;
+	}
+}
+
+.sapUiIntImageWithOverlay.sapUiIntImgWithOverlayNoAnimation .sapUiIntImgWithOverlayLayout {
+	opacity: 1;
+}
