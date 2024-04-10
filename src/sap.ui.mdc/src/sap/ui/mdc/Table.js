@@ -1523,7 +1523,7 @@ sap.ui.define([
 			if (aPropertyLabels.length > 1) {
 				sFilterText = oResourceBundle.getText("table.MULTIPLE_FILTERS_ACTIVE", [aPropertyLabels.length, oListFormat.format(aPropertyLabels)]);
 			} else {
-				sFilterText = oResourceBundle.getText("table.ONE_FILTER_ACTIVE", aPropertyLabels[0]);
+				sFilterText = oResourceBundle.getText("table.ONE_FILTER_ACTIVE", aPropertyLabels);
 			}
 
 			if (!oFilterInfoBar.getVisible()) {
