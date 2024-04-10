@@ -9,7 +9,7 @@ sap.ui.define([
 ) => {
 	"use strict";
 
-	return Controller.extend("sap.ui.mdc.demokit.sample.FieldTypes.Controller", {
+	return Controller.extend("mdc.sample.Controller", {
 
 		onInit: function() {
 			// init dates in Model

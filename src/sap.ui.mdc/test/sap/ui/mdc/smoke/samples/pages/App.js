@@ -55,7 +55,7 @@ sap.ui.define([
 	return Opa5.createPageObjects({
 		onTheApp: {
 			actions: {
-				iChangeTheSliderValueInTheFilterField: function(iValue, bInShowValues) {
+				iChangeTheSliderValueInTheField: function(iValue, bIsFilterField, bInShowValues) {
 					function fnChangeSliderValue() {
 						return this.waitFor({
 							searchOpenDialogs: !!bInShowValues,
@@ -63,7 +63,7 @@ sap.ui.define([
 							success: function(aControl){
 								const oSlider = aControl[0];
 								this.waitFor({
-									controlType: "sap.ui.mdc.FilterField",
+									controlType: bIsFilterField ? "sap.ui.mdc.FilterField" : "sap.ui.mdc.Field",
 									matchers: new Descendant(oSlider),
 									actions: function() {
 										oSlider.setValue(iValue);
@@ -181,6 +181,40 @@ sap.ui.define([
 					}
 
 					return fnPressKeyOnMultiInput.call(this);
+				},
+				iChangeTheCheckBoxValueInTheField: function(bValue) {
+					return this.waitFor({
+						searchOpenDialogs: false,
+						controlType: "sap.m.CheckBox",
+						success: function(aControl){
+							const oCheckBox = aControl[0];
+							this.waitFor({
+								controlType:  "sap.ui.mdc.Field",
+								matchers: new Descendant(oCheckBox),
+								actions: function() {
+									oCheckBox.setSelected(bValue);
+								}
+							});
+						},
+						errorMessage: "The action could not be performed."
+					});
+				},
+				iChangeTheMaskInputValueInTheField: function(sValue) {
+					return this.waitFor({
+						searchOpenDialogs: false,
+						controlType: "sap.m.MaskInput",
+						success: function(aControl){
+							const oMaskInput = aControl[0];
+							this.waitFor({
+								controlType:  "sap.ui.mdc.Field",
+								matchers: new Descendant(oMaskInput),
+								actions: function() {
+									oMaskInput.setValue(sValue);
+								}
+							});
+						},
+						errorMessage: "The action could not be performed."
+					});
 				},
 				/**
 				 * Retrieves the table instance by ID and forwards it to the provided callback function

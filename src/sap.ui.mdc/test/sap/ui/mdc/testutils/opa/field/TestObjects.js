@@ -54,6 +54,30 @@ sap.ui.define([
 				 */
 				iShouldSeeTheFieldWithValues: function(vIdentifier, sValue) {
 					return fieldAssertions.iShouldSeeTheField.call(this, vIdentifier, sValue);
+				},
+				/**
+				 * Opa5 test assertion
+				 * @memberof onTheMDCField
+				 * @method iShouldSeeTheField
+				 * @param {string | Object} vIdentifier ID or a plain object providing properties identifying of the given <code>sap.ui.mdc.Field</code>
+				 * @param {string} sValue Value that is expected in the <code>sap.ui.mdc.Field</code>
+				 * @returns {Promise} OPA waitFor
+				 * @public
+				 */
+				iShouldSeeTheField: function(vIdentifier) {
+					return fieldAssertions.iShouldSeeTheField.call(this, vIdentifier);
+				},
+				/**
+				 * Opa5 test assertion
+				 * @memberof onTheMDCField
+				 * @method iShouldSeeTheFieldWithMatchingValue
+				 * @param {string | Object} vIdentifier ID or a plain object providing properties identifying of the given <code>sap.ui.mdc.Field</code>
+				 * @param {RegExp} oRegex RegEx that matches against the value of <code>sap.ui.mdc.Field</code>
+				 * @returns {Promise} OPA waitFor
+				 * @public
+				 */
+				iShouldSeeTheFieldWithMatchingValue: function(vIdentifier, oRegex) {
+					return fieldAssertions.iShouldSeeTheFieldWithMatchingValue.call(this, vIdentifier, oRegex);
 				}
 
 			}

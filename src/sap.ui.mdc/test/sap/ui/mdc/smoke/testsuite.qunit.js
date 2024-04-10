@@ -48,6 +48,14 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 			"TableJson": {
 				group: "Demokit samples",
 				sinon: false
+			},
+			"FieldTypes": {
+				group: "Demokit samples",
+				sinon: false
+			},
+			"FieldCustomContent": {
+				group: "Demokit samples",
+				sinon: false
 			}
 		}
 	};

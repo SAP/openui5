@@ -133,7 +133,7 @@ sap.ui.define([
 	opaTest(`Slider FilterField works`, function (Given, When, Then) {
 		const oCondition = aCustomControls["sap.m.Slider"];
 
-		When.onTheApp.iChangeTheSliderValueInTheFilterField(1000);
+		When.onTheApp.iChangeTheSliderValueInTheField(1000, true);
 		Then.iShouldSeeConditons("sap.ui.mdc.FilterBar", oCondition);
 		Then.onTheApp.iShouldSeeACodeEditorWithContent(JSON.stringify(oCondition, "\t", 4), "__editor0");
 	});
@@ -157,7 +157,7 @@ sap.ui.define([
 	opaTest(`Changes in "Show Values" are correctly reflected`, function (Given, When, Then) {
 		When.onTheMDCFilterBar.iPressOnTheAdaptFiltersButton();
 		When.onTheMDCFilterBar.iPressTheAdaptFiltersShowValuesButton();
-		When.onTheApp.iChangeTheSliderValueInTheFilterField(50000, true);
+		When.onTheApp.iChangeTheSliderValueInTheField(50000, true, true);
 		When.onTheApp.iChangeTheSegementedButtonValueInTheFilterField("Planning", true);
 
 		When.onTheApp.iEnterTextOnTheMultiInputFilterField("another text", true);
