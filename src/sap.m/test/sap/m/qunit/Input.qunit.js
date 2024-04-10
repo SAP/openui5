@@ -7026,6 +7026,8 @@ sap.ui.define([
 	QUnit.test("Value state", function (assert) {
 		// Arrange
 		var sValueStateText = "Error message. Extra long text used as an error message. Extra long text used as an error message - 2. Extra long text used as an error message - 3.";
+		var fnCloseValueStateSpy = sinon.spy(this.inputWithSuggestions, "closeValueStateMessage");
+
 		this.inputWithSuggestions.setShowValueStateMessage(true);
 		this.inputWithSuggestions.setValueState("Error");
 
@@ -7043,6 +7045,7 @@ sap.ui.define([
 
 		// Assert
 		assert.strictEqual(this.inputWithSuggestions._getSuggestionsPopover().getPopover().$().find(".sapMValueStateHeaderText").text(), "Some Error", "value state message is displayed in the suggestion popover");
+		assert.strictEqual(fnCloseValueStateSpy.called, true, "The value state message popup has been closed prior opening of the suggestions popover");
 
 		// Act
 		this.inputWithSuggestions.setValueStateText(sValueStateText);
