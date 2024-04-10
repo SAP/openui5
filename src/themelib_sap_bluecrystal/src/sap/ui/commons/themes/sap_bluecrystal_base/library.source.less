@@ -2,18 +2,8 @@
  * ${copyright}
  */
 
-/***********************************************************************************
-/* Due to deprecation of sap_bluecrystal with SAPUI5 version 1.44 the
-/* inheritance of the base theme is now updated to an inheritance of a static
-/* copy of the base theme named sap_bluecrystal_base. The repsective
-/* control css files of base are copied to the sap_bluecrystal_base theme folder.
-/* This decoupling of the base theme is introduced with SAPUI5 version 1.124.
-***********************************************************************************/
-
-
-@import "../sap_bluecrystal_base/library.source.less";
-@import "../../../../../sap/ui/core/themes/sap_bluecrystal/base.less";
-@import "../../../../../sap/ui/core/themes/sap_bluecrystal/global.less";
+@import "../../../../../sap/ui/core/themes/base/base.less";
+@import "../../../../../sap/ui/core/themes/base/global.less";
 
 @import "AbsoluteLayout.less";
 @import "Accordion.less";
@@ -29,12 +19,17 @@
 @import "ComboBox.less";
 @import "DatePicker.less";
 @import "Dialog.less";
-@import "DropdownBox.less";
 @import "FileUploader.less";
+@import "Form.less";
 @import "FormattedTextView.less";
+@import "FormLayout.less";
+@import "GridLayout.less";
 @import "HorizontalDivider.less";
+@import "HorizontalLayout.less";
 @import "Image.less";
 @import "InPlaceEdit.less";
+@import "jQueryUiBase.less";
+@import "jQueryUiDatepicker.less";
 @import "Label.less";
 @import "layout.less";
 @import "Link.less";
@@ -52,11 +47,15 @@
 @import "RadioButton.less";
 @import "RadioButtonGroup.less";
 @import "RatingIndicator.less";
+@import "ResponsiveContainer.less";
+@import "ResponsiveFlowLayout.less";
+@import "ResponsiveLayout.less";
 @import "RichTooltip.less";
 @import "RoadMap.less";
 @import "RowRepeater.less";
 @import "SearchField.less";
 @import "SegmentedButton.less";
+@import "SimpleForm.less";
 @import "Slider.less";
 @import "Splitter.less";
 @import "TabStrip.less";
@@ -68,3 +67,4 @@
 @import "Tree.less";
 @import "TriStateCheckBox.less";
 @import "ValueHelpField.less";
+@import "ControlsInUITable.less";
