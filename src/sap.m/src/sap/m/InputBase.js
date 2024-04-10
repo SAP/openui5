@@ -964,12 +964,17 @@ function(
 		// To avoid execution of the opening logic after the closing one,
 		// when closing the suggestions dialog on mobile devices, due to race condition,
 		// the value state message should be closed with timeout because it's opened that way
-		setTimeout(function() {
-			if (this._oValueStateMessage) {
-				this._detachValueStateLinkPress();
-				this._oValueStateMessage.close();
-			}
-		}.bind(this), 0);
+		if (Device.system.phone){
+			setTimeout(function() {
+				if (this._oValueStateMessage) {
+					this._detachValueStateLinkPress();
+					this._oValueStateMessage.close();
+				}
+			}.bind(this), 0);
+		} else if (this._oValueStateMessage) {
+			this._detachValueStateLinkPress();
+			this._oValueStateMessage.close();
+		}
 	};
 
 	/**

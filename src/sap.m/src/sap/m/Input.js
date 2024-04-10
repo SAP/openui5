@@ -3052,6 +3052,7 @@ function(
 
 		oPopover = oSuggPopover.getPopover();
 		oPopover.attachBeforeOpen(function () {
+			this.closeValueStateMessage();
 			this._updateSuggestionsPopoverValueState();
 		}, this);
 
@@ -3118,7 +3119,7 @@ function(
 					this._refreshListItems();
 				}, this)
 				.attachBeforeOpen(function() {
-					var oSuggestionsInput = oSuggPopover.getInput();
+						var oSuggestionsInput = oSuggPopover.getInput();
 					// set the same placeholder and maxLength as the original input
 					["placeholder",
 						"maxLength",
