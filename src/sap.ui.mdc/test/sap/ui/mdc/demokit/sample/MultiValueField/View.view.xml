@@ -7,7 +7,7 @@
 		xmlns:core="sap.ui.core"
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns:form="sap.ui.layout.form"
-		controllerName="sap.ui.mdc.demokit.sample.MultiValueField.Controller">
+		controllerName="mdc.sample.Controller">
 
 	<form:SimpleForm layout="ColumnLayout" editable="{path: 'view>/editMode'}">
 		<form:toolbar>

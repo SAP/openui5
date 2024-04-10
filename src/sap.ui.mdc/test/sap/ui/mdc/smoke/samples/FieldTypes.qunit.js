@@ -7,9 +7,6 @@ sap.ui.define([
 
 	Opa5.extendConfig({
 		viewNamespace: "sap.ui.mdc.demokit.sample.FieldTypes",
-		// arrangements: new Arrangement(),
-		// actions: new Action(),
-		// assertions: new Assertion(),
 		appParams: {
 			"sap-ui-animation": false
 		}
