@@ -23,6 +23,9 @@ sap.ui.define(function() {
 				title: "QUnit page for Fast Keyboard Navigation (F6)",
 				autostart: false
 			},
+			/**
+			 * @deprecated As of version 1.120, together with the UI5 Web Components enablement
+			 */
 			FastNavigationWithWebComponents: {
 				title: "QUnit page for Fast Keyboard Navigation (F6) using Web Components",
 				autostart: false,
