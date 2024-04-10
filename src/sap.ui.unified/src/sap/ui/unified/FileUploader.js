@@ -698,6 +698,12 @@ sap.ui.define([
 		return this;
 	};
 
+	FileUploader.prototype.setName = function (sName) {
+		this.setProperty("name", sName, false);
+		this._rerenderInputField();
+		return this;
+	};
+
 	FileUploader.prototype.setFileType = function(vTypes) {
 		// Compatibility issue: converting the given types to an array in case it is a string
 		var aTypes = this._convertTypesToArray(vTypes);

@@ -488,6 +488,29 @@ sap.ui.define([
 		oFileUploader.destroy();
 	});
 
+	QUnit.test("input has the correct name attribute", async function(assert) {
+		//Setup
+		var oFileUploader = createFileUploader({
+			name: "testNameAttribute"
+		});
+
+		oFileUploader.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		assert.equal(oFileUploader.$().find("input[type='file']").attr("name"),
+			"testNameAttribute",
+			"name attribute is correct initially");
+
+		oFileUploader.setName("newTestNameAttribute");
+		await nextUIUpdate();
+
+		assert.equal(oFileUploader.$().find("input[type='file']").attr("name"),
+			"newTestNameAttribute",
+			"name attribute is correct after using setter");
+		//cleanup
+		oFileUploader.destroy();
+	});
+
 	QUnit.test("Test valueStateText property - setter/getter", async function (assert) {
 		var oFileUploader = createFileUploader(),
 			VALUE_STATE_TEXT = "Test";
