@@ -15,6 +15,13 @@
   </dependencies>
 
   <appData>
+    <manifest xmlns="http://www.sap.com/ui5/buildext/manifest">
+      <sap.ui5>
+        <library>
+          <i18n>false</i18n><!-- no default i18n bundle in this lib -->
+        </library>
+      </sap.ui5>
+    </manifest>
     <selenium xmlns="http://www.sap.com/ui5/buildext/selenium" package="com.sap.ui5.selenium.dt" />
     <!-- excludes for the JSCoverage -->
     <jscoverage xmlns="http://www.sap.com/ui5/buildext/jscoverage" >
