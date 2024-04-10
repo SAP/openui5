@@ -265,10 +265,11 @@ sap.ui.define([
 	});
 
 	QUnit.module("Resize", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oTable = TableQUnitUtils.createTable({
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(100)
 			});
+			await this.oTable.qunit.whenRenderingFinished();
 		},
 		afterEach: function() {
 			this.oTable.destroy();
@@ -299,7 +300,7 @@ sap.ui.define([
 		var iY = $Resizer.offset().top;
 
 		assert.equal($Resizer.length, 1, "The handle to resize the table is visible");
-		assert.equal(this.oTable._getRowCounts().count, 10, "Initial visible rows");
+		assert.equal(this.oTable.getRowMode().getRowCount(), 10, "Initial row count");
 		fnTestAdaptations(false);
 
 		qutils.triggerMouseEvent(this.oTable.$("sb"), "mousedown", 0, 0, 10, iY, 0);
@@ -312,7 +313,7 @@ sap.ui.define([
 		}
 		qutils.triggerMouseEvent($Table, "mouseup", 0, 0, 10, iY + 10, 0);
 		// resized table by 110px, in cozy mode this allows 2 rows to be added
-		assert.equal(this.oTable._getRowCounts().count, 12, "Visible rows after resize");
+		assert.equal(this.oTable.getRowMode().getRowCount(), 12, "Row count after resize");
 		await this.oTable.qunit.whenRenderingFinished();
 		assert.ok(iInitialHeight < this.oTable.$().height(), "Height of the table increased");
 		fnTestAdaptations(false);
