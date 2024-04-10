@@ -233,12 +233,27 @@ sap.ui.define([
 		 * Called before the control is rendered.
 		 */
 		TabContainer.prototype.onBeforeRendering = function() {
+			this._transferItemsCustomData();
 
 			if (this.getSelectedItem()) {
 				return;
 			}
 
 			this._setDefaultTab();
+		};
+
+		/**
+		 * Transfers TabContainerItems newly added customData to their respective internal TabStripItems.
+		 * @private
+		 */
+		TabContainer.prototype._transferItemsCustomData = function() {
+			var	aInnerItems = this._getTabStrip().getItems();
+
+			this.getItems().forEach((oItem, iIndex) => {
+				oItem.removeAllAggregation("customData").forEach((oCustomItem) => {
+					aInnerItems[iIndex].addCustomData(oCustomItem);
+				});
+			});
 		};
 
 		/**

@@ -335,6 +335,26 @@ sap.ui.define([
 		assert.equal(oSpy.calledOnce, true, 'Invalidate method called when the modified property is changed.');
 	});
 
+	QUnit.test("additionally added customData is forwarded inner items5", async function(assert) {
+		//Arrange
+		var aItems = this.oTabContainer.getItems(),
+			aInnerItems = this.oTabContainer._getTabStrip().getItems();
+
+		// Act
+		aItems[0].addCustomData(new CustomData({
+			key: "custom0",
+			value: "data0",
+			writeToDom: true
+		}));
+
+		await nextUIUpdate(this.clock);
+
+		// Assert
+		assert.strictEqual(aInnerItems[0].getCustomData()[0].getKey(), "custom0", 'Inner item has proper customData key');
+		assert.strictEqual(aInnerItems[0].getCustomData()[0].getValue(), "data0", 'Inner item has proper customData value');
+		assert.strictEqual(aInnerItems[0].getDomRef().getAttribute("data-custom0"), "data0", 'Inner item has customData value rendered in an attribute');
+	});
+
 	QUnit.module("Focus", {
 		beforeEach: async function () {
 			this.oTabContainer = new TabContainer({
