@@ -281,6 +281,9 @@ html.sap-desktop .sapUiCalItemSel:not(.sapUiCalItemNow):not(.sapUiCalItemSelBetw
 .sapUiCalItemOtherMonth {
 	background-color: @sapUiListBackground;
 	color: @_sap_ui_unified_Calendar_ItemOtherMonthColor;
+	&.sapUiCalItemDsbl{
+		opacity: @sapUiContentDisabledOpacity;
+	}
 }
 
 .sapUiCalItemSel {
@@ -316,6 +319,13 @@ html.sap-desktop .sapUiCalItemOtherMonth:not(.sapUiCalItemSel) :not(.sapUiCalWee
 	.sapUiCalItemText {
 		line-height: 2.75rem;
 		border: 0.0625rem solid @sapUiListSelectionBorderColor;
+	}
+}
+
+.sapUiCalMonthPicker,
+.sapUiCalYearPicker {
+	.sapUiCalItem.sapUiCalItemDsbl {
+		opacity: @sapUiContentDisabledOpacity;
 	}
 }
 
