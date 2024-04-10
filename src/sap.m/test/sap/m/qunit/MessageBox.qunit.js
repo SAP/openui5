@@ -1582,4 +1582,20 @@ sap.ui.define([
 		oMessageBox.destroy();
 	});
 
+	QUnit.module("Destroying");
+
+	QUnit.test("auto destroy when app/view is destroyed", function (assert) {
+		// arrange
+		MessageBox.show("Message", {
+			id: "messageId",
+			dependentOn: app
+		});
+
+		var oMessageBox = Element.getElementById("messageId");
+
+		app.destroy();
+
+		// assert
+		assert.ok(oMessageBox.isDestroyed(), "Message box is destroyed");
+	});
 });
