@@ -315,7 +315,8 @@ sap.ui.define([
 					return this.waitFor({
 						id: "list",
 						success: function (oList) {
-							Opa5.assert.strictEqual(oList.getNoDataText(), oList.getModel("i18n").getProperty("masterListNoDataWithFilterOrSearchText"), "the list should show the no data text for search and filter");
+							Opa5.assert.strictEqual(oList.getNoData().getTitle(), oList.getModel("i18n").getProperty("masterListNoDataWithFilterOrSearchText"), "the list should show the no data text for search and filter");
+							Opa5.assert.ok(!!oList.getNoData().getDomRef(), "the NoData text is visible");
 						},
 						errorMessage: "list does not show the no data text for search and filter"
 					});

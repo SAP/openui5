@@ -36,12 +36,17 @@
 					groupHeaderFactory: '.createGroupHeader'
 				}"
 				busyIndicatorDelay="{masterView>/delay}"
-				noDataText="{masterView>/noDataText}"
 				mode="{= ${device>/system/phone} ? 'None' : 'SingleSelectMaster'}"
 				growing="true"
 				growingScrollToLoad="true"
 				updateFinished=".onUpdateFinished"
 				selectionChange=".onSelectionChange">
+				<noData>
+					<IllustratedMessage
+						title="{masterView>/noDataText}"
+						illustrationType="sapIllus-NoFilterResults"
+						enableDefaultTitleAndDescription="false"/>
+				</noData>
 				<infoToolbar>
 					<Toolbar
 						active="true"

@@ -32,7 +32,7 @@ sap.ui.define([
 
 				iShouldSeeTheNotFoundGeneralPage: function (sPageViewName) {
 					return this.waitFor({
-						controlType: "sap.m.MessagePage",
+						controlType: "sap.m.IllustratedMessage",
 						viewName: sPageViewName,
 						success: function () {
 							Opa5.assert.ok(true, "Shows the message page");
@@ -55,7 +55,7 @@ sap.ui.define([
 						viewName: sNotFoundView,
 						success: function (oPage) {
 							Opa5.assert.strictEqual(oPage.getTitle(), oPage.getModel("i18n").getProperty("notFoundTitle"), "The not found text is shown as title");
-							Opa5.assert.strictEqual(oPage.getText(), oPage.getModel("i18n").getProperty("notFoundText"), "The resource not found text is shown");
+							Opa5.assert.strictEqual(oPage.getContent()[0].getTitle(), oPage.getModel("i18n").getProperty("notFoundText"), "The resource not found text is shown");
 						},
 						errorMessage: "Did not display the resource not found text"
 					});
@@ -67,7 +67,7 @@ sap.ui.define([
 						viewName: sDetailNotFoundView,
 						success: function (oPage) {
 							Opa5.assert.strictEqual(oPage.getTitle(), oPage.getModel("i18n").getProperty("detailTitle"), "The object text is shown as title");
-							Opa5.assert.strictEqual(oPage.getText(), oPage.getModel("i18n").getProperty("noObjectFoundText"), "The object not found text is shown");
+							Opa5.assert.strictEqual(oPage.getContent()[0].getTitle(), oPage.getModel("i18n").getProperty("noObjectFoundText"), "The object not found text is shown");
 						},
 						errorMessage: "Did not display the object not found text"
 					});
