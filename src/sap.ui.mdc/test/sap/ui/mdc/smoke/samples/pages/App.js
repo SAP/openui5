@@ -12,8 +12,9 @@ sap.ui.define([
 	"test-resources/sap/ui/mdc/testutils/opa/actions/TriggerEvent",
 	"sap/ui/core/Lib",
 	"test-resources/sap/ui/mdc/testutils/opa/table/waitForTable",
-	"test-resources/sap/ui/mdc/testutils/opa/p13n/waitForP13nDialog"
-], function(Opa5, PropertyStrictEquals, Ancestor, Descendant, Sibling, Press, EnterText, TriggerEvent, Library, waitForTable, waitForP13nDialog) {
+	"test-resources/sap/ui/mdc/testutils/opa/p13n/waitForP13nDialog",
+	"sap/ui/events/KeyCodes"
+], function(Opa5, PropertyStrictEquals, Ancestor, Descendant, Sibling, Press, EnterText, TriggerEvent, Library, waitForTable, waitForP13nDialog, KeyCodes) {
 	"use strict";
 
 
@@ -303,6 +304,190 @@ sap.ui.define([
 							});
 						}
 					});
+				},
+				/**
+				 * Presses "Show Filters" button on ValueHelp dialog
+				 * @param {string} sValueHelpId ID of <code>sap.ui.mdc.ValueHelp</code> control
+				 * @param {string} sKey Key of mdc messagebundle for the text of the button
+				 * @returns {Promise} OPA waitFor
+				 */
+				iPressButtonOnValueHelpDialogWithText: function(sValueHelpId, sKey) {
+					const sButtonText = oMDCBundle.getText(sKey);
+					return this.waitFor({
+						id: sValueHelpId,
+						controlType: "sap.ui.mdc.ValueHelp",
+						success: function (oValueHelp) {
+							Opa5.assert.ok(oValueHelp, "ValueHelp found");
+							return this.waitFor({
+								controlType: "sap.ui.mdc.valuehelp.Dialog",
+								matchers: new Ancestor(oValueHelp),
+								success: function (aValueHelpDialog) {
+									Opa5.assert.ok(aValueHelpDialog.length, "Dialog on ValueHelp found");
+									return this.waitFor({
+										controlType: "sap.m.Button",
+										matchers: [
+											new Ancestor(aValueHelpDialog[0]),
+											new PropertyStrictEquals({
+												name: "text",
+												value: sButtonText
+											})
+										],
+										success: function (aButton) {
+											Opa5.assert.ok(aButton.length, `Button with text ${sButtonText} on Dialog found`);
+										},
+										actions: new Press(),
+										errorMessage: `No Button with text ${sButtonText} on Dialog was found`
+									});
+								},
+								errorMessage: `No Dialog on ValueHelp was found`
+							});
+						},
+						errorMessage: `No ValueHelp with ID "${sValueHelpId}" was found`
+					});
+				},
+				/**
+				 * Presses "Show Filters" button on ValueHelp dialog
+				 * @param {string} sFilterBarId ID of <code>sap.ui.mdc.FilterBar</code> control
+				 * @returns {Promise} OPA waitFor
+				 */
+				iPressGoButtonOnFilterBar: function(sFilterBarId) {
+					const sButtonText = oMDCBundle.getText("filterbar.GO");
+					return this.waitFor({
+						id: sFilterBarId,
+						controlType: "sap.ui.mdc.FilterBar",
+						success: function (oFilterBar) {
+							Opa5.assert.ok(oFilterBar, "FilterBar found");
+							return this.waitFor({
+								controlType: "sap.m.Button",
+								matchers: [
+									new Ancestor(oFilterBar),
+									new PropertyStrictEquals({
+										name: "text",
+										value: sButtonText
+									})
+								],
+								success: function (aButton) {
+									Opa5.assert.ok(aButton.length, `Button with text ${sButtonText} on FilterBar found`);
+								},
+								actions: new Press(),
+								errorMessage: `No Button with text ${sButtonText} on FilterBar was found`
+							});
+						},
+						errorMessage: `No FilterBar with ID "${sFilterBarId}" was found`
+					});
+				},
+				/**
+				 * Enters text on a FilterField
+				 * @param {string} sFilterFieldId ID of <code>sap.ui.mdc.FilterField</code> control
+				 * @param {string} sValue Value that should be entered into <code>sap.ui.mdc.FilterField</code> control
+				 * @returns {Promise} OPA waitFor
+				 */
+				iEnterTextOnFilterField: function(sFilterFieldId, sValue) {
+					return this.waitFor({
+						id: sFilterFieldId,
+						controlType: "sap.ui.mdc.FilterField",
+						success: function (oFilterField) {
+							Opa5.assert.ok(oFilterField, `FilterField was found`);
+						},
+						actions: new EnterText({ text: sValue }),
+						errorMessage: `No FilterField control was found`
+					});
+				},
+				/**
+				 * Enters text on a FilterField
+				 * @param {string} sFilterFieldId ID of <code>sap.ui.mdc.FilterField</code> control
+				 * @param {string} sValue Value that should be entered into <code>sap.ui.mdc.FilterField</code> control
+				 * @returns {Promise} OPA waitFor
+				 */
+				iPressEnter: function(sFilterFieldId, sValue) {
+					return this.waitFor({
+						id: sFilterFieldId,
+						controlType: "sap.ui.mdc.FilterField",
+						success: function (oFilterField) {
+							Opa5.assert.ok(oFilterField, `FilterField was found`);
+						},
+						actions: new TriggerEvent({event: "keydown", payload: {which: KeyCodes.ENTER, keyCode: KeyCodes.ENTER}}),
+						errorMessage: `No FilterField control was found`
+					});
+				},
+				/**
+				 * Opens the ValueHelp dialog for a Field
+				 * @param {string} sFieldId ID of <code>sap.ui.mdc.Field</code> control
+				 * @returns {Promise} OPA waitFor
+				 */
+				iOpenTheValueHelpForField: function (sFieldId) {
+					return this.waitFor({
+						id: sFieldId,
+						controlType: "sap.ui.mdc.Field",
+						success: function (oField) {
+							Opa5.assert.ok(oField, `Found Field with ID ${sFieldId}`);
+							oField.focus();
+							new TriggerEvent({event: "keydown", payload: {which: 115, keyCode: 115}}).executeOn(oField.getCurrentContent()[0]); // doesnt work with focusdomref
+						},
+						errorMessage: `No Field with ID ${sFieldId} was found`
+					});
+				},
+				/**
+				 * Closes the ValueHelp dialog
+				 * @returns {Promise} OPA waitFor
+				 */
+				iCloseTheValueHelpDialog: function () {
+					const sCancelButtonText = oMDCBundle.getText("valuehelp.CANCEL");
+
+					return this.waitFor({
+						controlType: "sap.ui.mdc.valuehelp.Dialog",
+						success: function (aValueHelpDialog) {
+							Opa5.assert.ok(aValueHelpDialog.length, `Found ValueHelp dialog`);
+							const oDialog = aValueHelpDialog[0];
+							this.waitFor({
+								controlType: "sap.m.Button",
+								matchers: [
+									new Ancestor(oDialog),
+									new PropertyStrictEquals({
+										name: "text",
+										value: sCancelButtonText
+									})
+								],
+								actions: new Press()
+							});
+						},
+						errorMessage: `No ValueHelp dialog was found`
+					});
+				},
+				/**
+				 * Click on a row in Table
+				 * @param {string|sap.ui.core.Control} vTable ID of Table or control instance
+				 * @param {number} iRowIndex Index of the row to click
+				 * @param {boolean} bResponsiveTable Whether the table is a responsive table or a grid table
+				 * @returns {Promise} OPA waitFor
+				 */
+				iClickOnRow(vTable, iRowIndex, bResponsiveTable = true) {
+
+					return waitForTable.call(this, vTable, {
+						success(oTable) {
+							this.waitFor({
+								controlType: bResponsiveTable ? "sap.m.Table" : "sap.ui.table.Table",
+								matchers: new Ancestor(oTable),
+								success: function(aInnerTable) {
+									Opa5.assert.ok(aInnerTable.length, `Found Control sap.m.Table in sap.ui.mdc.Table`);
+									let oRow;
+									this.waitFor({
+										controlType: bResponsiveTable ? "sap.m.ColumnListItem" : "sap.ui.table.Row",
+										matchers: new Ancestor(aInnerTable[0]),
+										success: function(aRows) {
+											oRow = aRows[iRowIndex];
+											Opa5.assert.ok(true, `Clicked on row ${iRowIndex}`);
+											this.waitFor({
+												controlType: "sap.m.Text",
+												matchers: new Ancestor(oRow),
+												actions: new Press()
+											});
+										}
+									});
+								}
+							});
+						}
+					});
 				}
 			},
 			assertions: {
@@ -358,18 +543,28 @@ sap.ui.define([
 				 * Checks whether the MDC Table has a specific number of rows
 				 * @param {string|sap.ui.core.Control} vTable ID of Table or control instance
 				 * @param {number} iRowCount Count of rows
+				 * @param {boolean} bResponsiveTable Whether the table is a responsive table or a grid table
 				 * @returns {Promise} OPA waitFor
 				 */
-				iShouldSeeRows(vTable, iRowCount) {
+				iShouldSeeRows(vTable, iRowCount, bResponsiveTable = true) {
+					const fnFilterEmptyRows = function(aItems) {
+						return aItems.filter(function(oItem) {
+							return oItem.getCells().some(function(oCell) {
+								return oCell.getText();
+							});
+						});
+					};
+
 					return waitForTable.call(this, vTable, {
 						success(oTable) {
 							this.waitFor({
-								controlType: "sap.m.Table",
+								controlType: bResponsiveTable ? "sap.m.Table" : "sap.ui.table.Table",
 								matchers: new Ancestor(oTable),
-								success: function(aMTable) {
-									Opa5.assert.ok(aMTable.length, `Found Control sap.m.Table in sap.ui.mdc.Table`);
-									const aItems = aMTable[0].getItems();
-									Opa5.assert.equal(aItems.length, iRowCount, "I see correct amount of rows");
+								success: function(aInnerTable) {
+									Opa5.assert.ok(aInnerTable.length, `Found Control sap.m.Table in sap.ui.mdc.Table`);
+									const aRows = bResponsiveTable ? aInnerTable[0].getItems() : aInnerTable[0].getRows();
+									const aFilteredRows = fnFilterEmptyRows(aRows);
+									Opa5.assert.equal(aFilteredRows.length, iRowCount, "I see correct amount of rows");
 								}
 							});
 						}
@@ -388,6 +583,41 @@ sap.ui.define([
 							Opa5.assert.ok(oItem, "'More' button is visible on the screen");
 						},
 						errorMessage: "No 'More' button found"
+					});
+				},
+				/**
+				 * Checks for an Input control with a specific vlaue
+				 * @param {string} sInputId ID of <code>sap.m.Input</code> control
+				 * @param {string} sValue Value of <code>sap.m.Input</code> control
+				 * @returns {Promise} OPA waitFor
+				 */
+				iShouldSeeTheInputWithValue: function(sInputId, sValue) {
+					return this.waitFor({
+						id: sInputId,
+						controlType: "sap.m.Input",
+						matchers: new PropertyStrictEquals({
+							name: "value",
+							value: sValue
+						}),
+						success: function (oItem) {
+							Opa5.assert.ok(oItem, `Input control with value "${sValue}" was found`);
+						},
+						errorMessage: `No Input control with value "${sValue}" was found`
+					});
+				},
+				/**
+				 * Checks whether a FilterField is visible
+				 * @param {string} sFilterFieldId ID of <code>sap.ui.mdc.FilterField</code> control
+				 * @returns {Promise} OPA waitFor
+				 */
+				iShouldSeeFilterField: function(sFilterFieldId) {
+					return this.waitFor({
+						id: sFilterFieldId,
+						controlType: "sap.ui.mdc.FilterField",
+						success: function (oFilterField) {
+							Opa5.assert.ok(oFilterField, `FilterField was found`);
+						},
+						errorMessage: `No FilterField control was found`
 					});
 				}
 			}
