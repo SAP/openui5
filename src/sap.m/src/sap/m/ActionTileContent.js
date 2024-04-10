@@ -147,9 +147,9 @@ sap.ui.define([
         } else if (this.getPriority() !== Priority.None && sPriorityText) {
             sAltText += (sPriorityText) + "\n";
         }
-        // Returns the first four attributes to display in the tooltip,aria-label on the ActionTile
+        // Returns the attributes to display in the tooltip,aria-label on the ActionTile
         var aText = [];
-        for (var iIndex = 0; iIndex < aTileAttributes.length && iIndex < 4; iIndex++) {
+        for (var iIndex = 0; iIndex < aTileAttributes.length; iIndex++) {
             aText.push(aTileAttributes[iIndex].getLabel());
             aText.push(aTileAttributes[iIndex].getContentConfig()?.getText());
         }

@@ -43,6 +43,12 @@ sap.ui.define([
 			library: "sap.m",
 			properties: {
 				/**
+				 * The height of the tile changes dynamically to accommodate the content inside it
+				 *
+				 * @experimental Since 1.124
+				 */
+				enableDynamicHeight: { type: "boolean", group: "Appearance", defaultValue: false },
+				/**
 				 * Decides whether the headerImage should have a frame or not.
 				 *
 				 * @experimental Since 1.124
@@ -87,11 +93,8 @@ sap.ui.define([
 		if (this.getHeaderImage()) {
 			this.addStyleClass("sapMATHeaderImage");
 		}
-		if (this.getEnableNavigationButton()) {
-			this.removeStyleClass("sapMATHideActionButton");
-		} else {
-			this.addStyleClass("sapMATHideActionButton");
-		}
+		this.toggleStyleClass("sapMATDynamicHeight", this.getEnableDynamicHeight());
+		this.toggleStyleClass("sapMATHideActionButton", !this.getEnableNavigationButton());
 		GenericTile.prototype.onBeforeRendering.apply(this, arguments);
 	};
 
