@@ -7,7 +7,6 @@
 		  xmlns:sap.ui.layout="sap.ui.layout"
 		  xmlns:sap.ui.dt="sap.ui.dt"
 		  xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
-		  xmlns:webc="sap.ui.webc.main"
 		  controllerName="sap.ui.rta.test.ComplexTest">
 
 	<Page title="{i18n>appTitle}" id="mainPage">
@@ -546,41 +545,6 @@
 						</ColumnListItem>
 					</items>
 				</Table>
-			</Panel>
-			<Panel id="webComponents" expandable="true" headerText="Panel with Web Components" width="auto" class="sapUiResponsiveMargin">
-				<webc:Panel id="webComponentsPanel" headerText="WebC Panel">
-					<webc:Button id="webComponentButton" text="WebC Button" />
-					<webc:CheckBox id="webComponentCheckBox" text="WebC Checkbox" />
-					<webc:Title text="Web Components Table" level="H3" />
-					<webc:Table id="webComponentsTable" rows="{ProductCollection>/}">
-						<webc:columns>
-							<webc:TableColumn id="webComponentsTableColumn1">
-								<webc:Label text="Product"/>
-							</webc:TableColumn>
-							<webc:TableColumn id="webComponentsTableColumn2">
-								<webc:Label text="Supplier"/>
-							</webc:TableColumn>
-							<webc:TableColumn id="webComponentsTableColumn3">
-								<webc:Label text="Price"/>
-							</webc:TableColumn>
-						</webc:columns>
-						<webc:rows>
-							<webc:TableRow type="Active">
-								<webc:cells>
-									<webc:TableCell>
-										<webc:Label text="{ProductCollection>Name} ({ProductCollection>ProductId})"/>
-									</webc:TableCell>
-									<webc:TableCell>
-										<webc:Label text="{ProductCollection>SupplierName}" />
-									</webc:TableCell>
-									<webc:TableCell>
-										<webc:Label text="{ProductCollection>Price} {ProductCollection>CurrencyCode}" />
-									</webc:TableCell>
-								</webc:cells>
-							</webc:TableRow>
-						</webc:rows>
-					</webc:Table>
-				</webc:Panel>
 			</Panel>
 		</content>
 	</Page>

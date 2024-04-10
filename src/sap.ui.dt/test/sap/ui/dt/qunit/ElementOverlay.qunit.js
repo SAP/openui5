@@ -27,7 +27,6 @@ sap.ui.define([
 	"sap/f/DynamicPage",
 	"sap/f/DynamicPageTitle",
 	"sap/f/DynamicPageHeader",
-	"sap/ui/webc/main/CheckBox",
 	"sap/ui/dt/qunit/TestUtil",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/qunit/utils/nextUIUpdate"
@@ -58,7 +57,6 @@ sap.ui.define([
 	DynamicPage,
 	DynamicPageTitle,
 	DynamicPageHeader,
-	WebComponentCheckBox,
 	TestUtil,
 	sinon,
 	nextUIUpdate
@@ -512,38 +510,6 @@ sap.ui.define([
 			.then(function() {
 				assert.ok(DOMUtil.isVisible(this.oOverlay.getDomRef()), "the overlay is also visible in DOM");
 			}.bind(this));
-		});
-	});
-
-	QUnit.module("Given that an Overlay is created for a control with a shadow root (e.g. web component)", {
-		async beforeEach(assert) {
-			const fnDone = assert.async();
-			this.oCheckBox = new WebComponentCheckBox();
-			this.oCheckBox.placeAt("qunit-fixture");
-			await nextUIUpdate();
-			this.oDesignTime = new DesignTime({
-				rootElements: [this.oCheckBox]
-			});
-			this.oDesignTime.attachEventOnce("synced", function() {
-				this.oCheckboxOverlay = OverlayRegistry.getOverlay(this.oCheckBox);
-				fnDone();
-			}.bind(this));
-		},
-		afterEach() {
-			this.oDesignTime.destroy();
-			this.oCheckBox.destroy();
-		}
-	}, function() {
-		QUnit.test("when the control's text is modified...", async function(assert) {
-			const fnDone = assert.async();
-			sandbox.stub(this.oCheckboxOverlay, "applyStyles").callsFake(function() {
-				assert.ok(true, "applyStyles is called");
-				fnDone();
-				return Promise.resolve();
-			});
-			this.oCheckBox.setText("This is a very long text");
-			// Ensure that the rerendering takes place - this test would sometimes fail without the line below
-			await nextUIUpdate();
 		});
 	});
 
