@@ -700,7 +700,7 @@ function(
 	 *
 	 * @since 1.28
 	 * @public
-	 * @deprecated Since version 1.58.
+	 * @deprecated As of version 1.58, replaced by N-more/N-items labels.
 	 */
 	MultiInput.prototype.openMultiLine = function () {
 		// the multiline functionality is deprecated
@@ -712,7 +712,7 @@ function(
 	 *
 	 * @since 1.28
 	 * @public
-	 * @deprecated Since version 1.58.
+	 * @deprecated As of version 1.58, replaced by N-more/N-items labels.
 	 */
 	MultiInput.prototype.closeMultiLine = function () {
 		// the multiline functionality is deprecated
