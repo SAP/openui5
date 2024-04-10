@@ -30,9 +30,12 @@
 			data-sap-ui-libs="sap.m, sap.ushell, sap.ui.rta"
 			data-sap-ui-compat-version="edge"
 			data-sap-ui-flexibility-services='[{"connector": "LocalStorageConnector"}]'
+			data-sap-ui-oninit="module:flpSandboxConfig/appStart"
+			data-sap-ui-resourceroots='{
+				"flpSandboxConfig": "./flpSandboxConfig"
+			}'
 			src="../../../../../../../../resources/sap-ui-core.js">
 		</script>
-		<script src="flpSandboxConfig/appStart.js"></script>
 		<link rel="stylesheet" href="flpSandboxConfig/style.css">
 	</head>
 
