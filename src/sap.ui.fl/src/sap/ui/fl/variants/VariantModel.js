@@ -216,7 +216,7 @@ sap.ui.define([
 		var oSettings = Settings.getInstanceOrUndef();
 		var bUserIsAuthorized = oSettings &&
 			(oSettings.isKeyUser() || !oSettings.getUserId() ||
-			(oSettings.isPublicFlVariantEnabled() && oSettings.getUserId().toUpperCase() === oVariant.author.toUpperCase()));
+			(oSettings.isPublicFlVariantEnabled() && oSettings.getUserId().toUpperCase() === oVariant.instance.getSupportInformation().user.toUpperCase()));
 		oVariant.remove = bUserIsAuthorized;
 		oVariant.rename = bUserIsAuthorized;
 		oVariant.change = bUserIsAuthorized;
