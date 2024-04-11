@@ -6,6 +6,7 @@ sap.ui.define([
 	return UIComponent.extend("sap.ui.demo.MockServer.Component", {
 
 		metadata: {
+			interfaces: ["sap.ui.core.IAsyncContentCreation"],
 			manifest: "json"
 		},
 
