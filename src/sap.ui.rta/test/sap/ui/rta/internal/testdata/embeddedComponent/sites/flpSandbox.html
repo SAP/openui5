@@ -87,24 +87,14 @@
 			window['sap-ui-config'].libs = 'sap.m,sap.ushell,sap.ui.rta';
 			window['sap-ui-config'].compatVersion = 'edge';
 			window['sap-ui-config'].frameOptions = 'allow';
-			window['sap-ui-config'].resourceroots = {"sap.ui.rta.test": "./../../"};
+			window['sap-ui-config'].resourceroots = {"sap.ui.rta.test": "./../../", "flpSandboxConfig": "./flpSandboxConfig"};
 			window['sap-ui-config'].flexibilityServices = '[{"connector": "LocalStorageConnector"}]';
-
+			window['sap-ui-config'].onInit = 'module:flpSandboxConfig/appStart';
 			document.write('<script src="' + __sPathPrefix + '/resources/sap-ui-core.js"><' + '/script>');
 		</script>
 
 		<script>
 			document.write('<script src="' + __sPathPrefix + '/test-resources/sap/ushell/bootstrap/standalone.js"><' + '/script>');
-		</script>
-
-		<script type="text/javascript">
-			sap.ui.require(["sap/ui/core/Core"], (Core) => {
-				Core.ready().then(() => {
-					sap.ui.require("sap/ushell/Container").createRenderer(true).then(function(oRenderer){
-						oRenderer.placeAt("content");
-					});
-				})
-			});
 		</script>
 
 	</head>
