@@ -2,7 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils.ODataV2",
-	"sap/ui/table/qunit/rowmodes/sets/RowsUpdated.ODataV2",
+	"sap/ui/table/qunit/rowmodes/shared/RowsUpdated.ODataV2",
 	"sap/ui/table/Table",
 	"sap/ui/table/rowmodes/Fixed"
 ], function(

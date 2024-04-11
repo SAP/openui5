@@ -2016,68 +2016,62 @@ sap.ui.define([
 
 	QUnit.module("Column header", {
 		beforeEach: function() {
-			createTable({}, function(oTable) {
-				oTable.addColumn(new Column({
-					multiLabels: [
-						new Label({text: "Last Name"}),
-						new Label({text: "Second level header"})
-					],
-					template: new Text({text: "lastName"})
-				}));
-				oTable.addColumn(new Column({
-					multiLabels: [
-						new Label({text: "First Name", textAlign: "Right"}),
-						new Label({text: "Name of the person"})
-					],
-					template: new Input({value: "name"})
-				}));
-				oTable.addColumn(new Column({
-					label: new Label({text: "Checked (very long label text to show wrapping behavior)"}),
-					template: new CheckBox({selected: true}),
-					hAlign: "Center"
-				}));
+			this.oTable = TableQUnitUtils.createTable({
+				columns: [
+					new Column({
+						multiLabels: [
+							new Label({text: "Last Name"}),
+							new Label({text: "Second level header"})
+						],
+						template: new Text({text: "lastName"})
+					}),
+					new Column({
+						multiLabels: [
+							new Label({text: "First Name", textAlign: "Right"}),
+							new Label({text: "Name of the person"})
+						],
+						template: new Input({value: "name"})
+					}),
+					new Column({
+						label: new Label({text: "Checked (very long label text to show wrapping behavior)"}),
+						template: new CheckBox({selected: true}),
+						hAlign: "Center"
+					})
+				]
 			});
 		},
 		afterEach: function() {
-			destroyTable();
+			this.oTable.destroy();
 		}
 	});
 
 	QUnit.test("Row and cell count", function(assert) {
-		assert.equal(oTable.$().find(".sapUiTableColHdrTr").length, 2, "Header row count");
-		assert.equal(oTable.$().find(".sapUiTableColHdrTr .sapUiTableHeaderCell").length, 6, "Cell count");
+		assert.equal(this.oTable.$().find(".sapUiTableColHdrTr").length, 2, "Header row count");
+		assert.equal(this.oTable.$().find(".sapUiTableColHdrTr .sapUiTableHeaderCell").length, 6, "Cell count");
 	});
 
-	QUnit.test("Height", function(assert) {
+	QUnit.test("Height", async function(assert) {
 		const aDensities = ["sapUiSizeCozy", "sapUiSizeCompact", "sapUiSizeCondensed", undefined];
 		let pSequence = Promise.resolve();
 		const iPadding = 14;
-		let aRowDomRefs;
-		let iHeightWithoutIcons;
 		let iFixedPartHeight;
 		let iScrollablePartHeight;
 
-		oTable.removeAllColumns();
-		oTable.addColumn(new Column({label: new HeightTestControl(), template: new HeightTestControl()}));
-		oTable.addColumn(new Column({label: new HeightTestControl(), template: new HeightTestControl()}));
-		oTable.setFixedColumnCount(1);
-		oTable.setRowActionCount(1);
-		oTable.setRowActionTemplate(new RowAction());
-
-		function test(mTestSettings) {
-			pSequence = pSequence.then(function() {
-				oTable.setRowMode(RowModeType.Fixed);
-				oTable.setColumnHeaderHeight(mTestSettings.columnHeaderHeight || 0);
-				oTable.getColumns()[1].setLabel(new HeightTestControl({height: (mTestSettings.labelHeight || 1) + "px"}));
-				TableQUnitUtils.setDensity(oTable, mTestSettings.density);
-
-				return new Promise(function(resolve) {
-					oTable.attachEventOnce("rowsUpdated", resolve);
-				});
-			}).then(function() {
-				TableQUnitUtils.assertColumnHeaderHeights(assert, oTable, mTestSettings);
+		const test = (mTestSettings) => {
+			pSequence = pSequence.then(async () => {
+				this.oTable.setColumnHeaderHeight(mTestSettings.columnHeaderHeight || 0);
+				this.oTable.getColumns()[1].setLabel(new HeightTestControl({height: (mTestSettings.labelHeight || 1) + "px"}));
+				await this.oTable.qunit.setDensity(mTestSettings.density);
+				TableQUnitUtils.assertColumnHeaderHeights(assert, this.oTable, mTestSettings);
 			});
-		}
+		};
+
+		this.oTable.destroyColumns();
+		this.oTable.addColumn(new Column({label: new HeightTestControl(), template: new HeightTestControl()}));
+		this.oTable.addColumn(new Column({label: new HeightTestControl(), template: new HeightTestControl()}));
+		this.oTable.setFixedColumnCount(1);
+		this.oTable.setRowActionCount(1);
+		this.oTable.setRowActionTemplate(new RowAction());
 
 		aDensities.forEach(function(sDensity) {
 			test({
@@ -2115,52 +2109,41 @@ sap.ui.define([
 			});
 		});
 
-		pSequence = pSequence.then(async function() {
-			oTable.insertColumn(new Column({
-				label: new Text({text: "a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a"}),
-				template: new HeightTestControl(),
-				width: "100px"
-			}), 1);
+		await pSequence;
 
-			await nextUIUpdate();
+		this.oTable.insertColumn(new Column({
+			label: new Text({text: "a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a"}),
+			template: new HeightTestControl(),
+			width: "100px"
+		}), 1);
+		await this.oTable.qunit.whenRenderingFinished();
 
-			return new Promise(function(resolve) {
-				oTable.attachEventOnce("rowsUpdated", resolve);
-			});
-		}).then(function() {
-			aRowDomRefs = oTable.getDomRef().querySelectorAll(".sapUiTableColHdrTr");
-			iHeightWithoutIcons = aRowDomRefs[0].getBoundingClientRect().height;
+		const aRowDomRefs = this.oTable.getDomRef().querySelectorAll(".sapUiTableColHdrTr");
+		const iHeightWithoutIcons = aRowDomRefs[0].getBoundingClientRect().height;
 
-			/** @deprecated As of version 1.120 */
-			oTable.getColumns()[1].setSorted(true);
-			oTable.getColumns()[1].setSortOrder(SortOrder.Ascending);
-			oTable.getColumns()[1].setFiltered(true);
-			return new Promise((resolve) => {
-				oTable.attachEventOnce("rowsUpdated", resolve);
-			});
-		}).then(function() {
-			iFixedPartHeight = aRowDomRefs[0].getBoundingClientRect().height;
-			iScrollablePartHeight = aRowDomRefs[1].getBoundingClientRect().height;
-			assert.ok(iFixedPartHeight > iHeightWithoutIcons, "Height increased after adding icons");
-			assert.strictEqual(iFixedPartHeight, iScrollablePartHeight, "Fixed and scrollable part have the same height after adding icons");
+		/** @deprecated As of version 1.120 */
+		this.oTable.getColumns()[1].setSorted(true);
+		this.oTable.getColumns()[1].setSortOrder(SortOrder.Ascending);
+		this.oTable.getColumns()[1].setFiltered(true);
+		await this.oTable.qunit.whenRenderingFinished();
 
-			/** @deprecated As of version 1.120 */
-			oTable.getColumns()[1].setSorted(false);
-			oTable.getColumns()[1].setSortOrder(SortOrder.None);
-			oTable.getColumns()[1].setFiltered(false);
-			return new Promise((resolve) => {
-				oTable.attachEventOnce("rowsUpdated", resolve);
-			});
-		}).then(function() {
-			iFixedPartHeight = aRowDomRefs[0].getBoundingClientRect().height;
-			iScrollablePartHeight = aRowDomRefs[1].getBoundingClientRect().height;
-			assert.strictEqual(iFixedPartHeight, iHeightWithoutIcons, "After removing the icons, the height is the same as before");
-			assert.strictEqual(iFixedPartHeight, iScrollablePartHeight, "Fixed and scrollable part have the same height after removing icons");
-		}).then(function() {
-			TableQUnitUtils.setDensity(oTable, "sapUiSizeCozy");
-		});
+		iFixedPartHeight = aRowDomRefs[0].getBoundingClientRect().height;
+		iScrollablePartHeight = aRowDomRefs[1].getBoundingClientRect().height;
+		assert.ok(iFixedPartHeight > iHeightWithoutIcons, "Height increased after adding icons");
+		assert.strictEqual(iFixedPartHeight, iScrollablePartHeight, "Fixed and scrollable part have the same height after adding icons");
 
-		return pSequence;
+		/** @deprecated As of version 1.120 */
+		this.oTable.getColumns()[1].setSorted(false);
+		this.oTable.getColumns()[1].setSortOrder(SortOrder.None);
+		this.oTable.getColumns()[1].setFiltered(false);
+		await this.oTable.qunit.whenRenderingFinished();
+
+		iFixedPartHeight = aRowDomRefs[0].getBoundingClientRect().height;
+		iScrollablePartHeight = aRowDomRefs[1].getBoundingClientRect().height;
+		assert.strictEqual(iFixedPartHeight, iHeightWithoutIcons, "After removing the icons, the height is the same as before");
+		assert.strictEqual(iFixedPartHeight, iScrollablePartHeight, "Fixed and scrollable part have the same height after removing icons");
+
+		this.oTable.qunit.resetDensity();
 	});
 
 	/**
@@ -2171,27 +2154,22 @@ sap.ui.define([
 		let pSequence = Promise.resolve();
 		const iPadding = 14;
 
-		oTable.removeAllColumns();
-		oTable.addColumn(new Column({label: new HeightTestControl(), template: new HeightTestControl()}));
-		oTable.addColumn(new Column({label: new HeightTestControl(), template: new HeightTestControl()}));
-		oTable.setFixedColumnCount(1);
-		oTable.setRowActionCount(1);
-		oTable.setRowActionTemplate(new RowAction());
-
-		function test(mTestSettings) {
-			pSequence = pSequence.then(function() {
-				oTable.setColumnHeaderHeight(mTestSettings.columnHeaderHeight || 0);
-				oTable.setRowHeight(mTestSettings.rowHeight || 0);
-				oTable.getColumns()[1].setLabel(new HeightTestControl({height: (mTestSettings.labelHeight || 1) + "px"}));
-				TableQUnitUtils.setDensity(oTable, mTestSettings.density);
-
-				return new Promise(function(resolve) {
-					oTable.attachEventOnce("rowsUpdated", resolve);
-				});
-			}).then(function() {
-				TableQUnitUtils.assertColumnHeaderHeights(assert, oTable, mTestSettings);
+		const test = (mTestSettings) => {
+			pSequence = pSequence.then(async () => {
+				this.oTable.setColumnHeaderHeight(mTestSettings.columnHeaderHeight || 0);
+				this.oTable.setRowHeight(mTestSettings.rowHeight || 0);
+				this.oTable.getColumns()[1].setLabel(new HeightTestControl({height: (mTestSettings.labelHeight || 1) + "px"}));
+				await this.oTable.qunit.setDensity(mTestSettings.density);
+				TableQUnitUtils.assertColumnHeaderHeights(assert, this.oTable, mTestSettings);
 			});
-		}
+		};
+
+		this.oTable.destroyColumns();
+		this.oTable.addColumn(new Column({label: new HeightTestControl(), template: new HeightTestControl()}));
+		this.oTable.addColumn(new Column({label: new HeightTestControl(), template: new HeightTestControl()}));
+		this.oTable.setFixedColumnCount(1);
+		this.oTable.setRowActionCount(1);
+		this.oTable.setRowActionTemplate(new RowAction());
 
 		aDensities.forEach(function(sDensity) {
 			test({
@@ -2276,12 +2254,12 @@ sap.ui.define([
 		});
 
 		return pSequence.then(() => {
-			TableQUnitUtils.setDensity(oTable, "sapUiSizeCozy");
+			this.oTable.qunit.resetDensity();
 		});
 	});
 
 	QUnit.test("Equal widths", function(assert) {
-		const $Table = oTable.$();
+		const $Table = this.oTable.$();
 		const $Head1 = $Table.find(".sapUiTableColHdrTr:eq(0)");
 		const $Head2 = $Table.find(".sapUiTableColHdrTr:eq(1)");
 		assert.equal($Head1.find(".sapUiTableHeaderCell:eq(0)").width(), $Head2.find(".sapUiTableHeaderCell:eq(0)").width(),
@@ -2294,7 +2272,7 @@ sap.ui.define([
 
 	QUnit.test("Equal heights", function(assert) {
 		assert.expect(6);
-		const $Table = oTable.$();
+		const $Table = this.oTable.$();
 
 		$Table.find(".sapUiTableColHdrTr").each(function(index, row) {
 			const rowIndex = index;
@@ -4142,31 +4120,30 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("Functions (public/private), mouse/touch events, properties", {
+	QUnit.module("Functions, properties", {
 		beforeEach: function() {
-			createTable();
-			this.sinon = sinon.sandbox.create();
+			this.oTable = TableQUnitUtils.createTable({
+				rows: "{/}",
+				models: TableQUnitUtils.createJSONModelWithEmptyRows(10),
+				columns: [
+					TableQUnitUtils.createTextColumn()
+				]
+			});
 		},
 		afterEach: function() {
-			this.sinon.restore();
-			destroyTable();
+			this.oTable.destroy();
 		}
 	});
 
-	QUnit.test("test onThemeChanged function", function(assert) {
-		const fnInvalidate = sinon.spy(oTable, "invalidate");
-		oTable.onThemeChanged();
+	QUnit.test("#onThemeChanged", function(assert) {
+		const fnInvalidate = sinon.spy(this.oTable, "invalidate");
+		this.oTable.onThemeChanged();
 		assert.ok(fnInvalidate.called, "invalidate() called from onThemeChanged()");
 	});
 
-	QUnit.test("test _enableTextSelection function", function(assert) {
-		oTable._enableTextSelection(oTable.getDomRef());
-		assert.ok(oTable.getDomRef().hasAttribute("unselectable", "off"), "_enableTextSelection is on");
-	});
-
-	QUnit.test("Check for tooltip", function(assert) {
-		oTable.setTooltip("Table Tooltip");
-		assert.strictEqual(oTable.getTooltip(), "Table Tooltip", "Table tooltip set correctly");
+	QUnit.test("#_enableTextSelection", function(assert) {
+		this.oTable._enableTextSelection(this.oTable.getDomRef());
+		assert.ok(this.oTable.getDomRef().hasAttribute("unselectable", "off"), "_enableTextSelection is on");
 	});
 
 	/**
@@ -4174,115 +4151,91 @@ sap.ui.define([
 	 */
 	QUnit.test("Check for Fixed Rows and Fixed Bottom Rows", function(assert) {
 		const fnError = sinon.spy(Log, "error");
-		assert.equal(oTable._getFixedTopRowContexts().length, 0, "fixedRowContexts returned an empty array");
-		oTable.setFixedRowCount(5);
-		assert.equal(oTable.getFixedRowCount(), 5, "fixedRowCount is set to 5");
-		assert.equal(oTable._getFixedTopRowContexts().length, 5,
+
+		assert.equal(this.oTable._getFixedTopRowContexts().length, 0, "fixedRowContexts returned an empty array");
+		this.oTable.setFixedRowCount(5);
+		assert.equal(this.oTable.getFixedRowCount(), 5, "fixedRowCount is set to 5");
+		assert.equal(this.oTable._getFixedTopRowContexts().length, 5,
 			"fixedRowContexts returned non empty array when fixedRowCount is set");
 		assert.equal(fnError.callCount, 0, "Error was not logged so far");
-		oTable.setFixedRowCount(-1);
-		assert.ok(oTable.getFixedRowCount() !== -1, "Attempt to set fixedRowCount as negative number, error message must have been logged");
+		this.oTable.setFixedRowCount(-1);
+		assert.ok(this.oTable.getFixedRowCount() !== -1, "Attempt to set fixedRowCount as negative number, error message must have been logged");
 		assert.equal(fnError.args[0][0], "Number of fixed rows must be greater or equal 0", "Appropriate error message was logged");
-		oTable.setFixedRowCount(0);
-		assert.equal(oTable.getFixedRowCount(), 0, "Resetting fixedRowCount to 0");
-		assert.equal(oTable._getFixedBottomRowContexts().length, 0, "FixedBottomRowContexts returned an empty array");
-		oTable.setFixedBottomRowCount(3);
-		assert.equal(oTable.getFixedBottomRowCount(), 3, "FixedBottomRowCount is set to 3");
-		assert.equal(oTable._getFixedBottomRowContexts().length, 3,
+		this.oTable.setFixedRowCount(0);
+		assert.equal(this.oTable.getFixedRowCount(), 0, "Resetting fixedRowCount to 0");
+		assert.equal(this.oTable._getFixedBottomRowContexts().length, 0, "FixedBottomRowContexts returned an empty array");
+		this.oTable.setFixedBottomRowCount(3);
+		assert.equal(this.oTable.getFixedBottomRowCount(), 3, "FixedBottomRowCount is set to 3");
+		assert.equal(this.oTable._getFixedBottomRowContexts().length, 3,
 			"fixedBottomRowContexts returned non empty array when fixedBottomRowCount and bindingLength is set");
-		oTable._updateFixedBottomRows();
-		assert.equal(oTable.getFirstVisibleRow(), 0, "_updateFixedBottomRows() called with the updated fixedBottomRowCount");
-		oTable.setVisibleRowCount(250);
+			this.oTable._updateFixedBottomRows();
+		assert.equal(this.oTable.getFirstVisibleRow(), 0, "_updateFixedBottomRows() called with the updated fixedBottomRowCount");
+		this.oTable.setVisibleRowCount(250);
 		oCore.applyChanges();
-		oTable._updateFixedBottomRows();
-		assert.ok(oTable._getTotalRowCount() < oTable.getVisibleRowCount(), "_updateFixedBottomRows() called where bindingLength < visibleRowCount");
-		oTable.setVisibleRowCount(7);
-		assert.equal(oTable.getVisibleRowCount(), 7, "resetting visibleRowCount to 7");
-		oTable.setFixedBottomRowCount(-1);
-		assert.ok(oTable.getFixedBottomRowCount() !== -1,
+		this.oTable._updateFixedBottomRows();
+		assert.ok(this.oTable._getTotalRowCount() < this.oTable.getVisibleRowCount(), "_updateFixedBottomRows() called where bindingLength < visibleRowCount");
+		this.oTable.setVisibleRowCount(7);
+		assert.equal(this.oTable.getVisibleRowCount(), 7, "resetting visibleRowCount to 7");
+		this.oTable.setFixedBottomRowCount(-1);
+		assert.ok(this.oTable.getFixedBottomRowCount() !== -1,
 			"Attempt to set fixedBottomRowCount as negative number, error mesaage must have been logged");
 		assert.equal(fnError.args[1][0], "Number of fixed bottom rows must be greater or equal 0", "Appropriate error message was logged");
 		fnError.restore(); // restoring original Log.error() method, else exception is thrown
 	});
 
-	QUnit.test("Check show overlay", function(assert) {
-		oTable.setShowOverlay(true);
-		assert.strictEqual(oTable.getShowOverlay(), true, "Overlay is set on the Table");
-		oTable.setShowOverlay(false);
-		assert.strictEqual(oTable.getShowOverlay(), false, "Overlay is removed");
-	});
-
-	QUnit.test("Check for custom filters", function(assert) {
-		oTable.setEnableCustomFilter(true);
-		assert.strictEqual(oTable.getEnableCustomFilter(), true, "Custom filter is enabled");
-		oTable.setEnableCustomFilter(false);
-		assert.strictEqual(oTable.getEnableCustomFilter(), false, "Custom filter is disabled");
-	});
-
-	QUnit.test("Check for column freeze", function(assert) {
-		oTable.setEnableColumnFreeze(true);
-		assert.strictEqual(oTable.getEnableColumnFreeze(), true, "Column freeze is enabled");
-		oTable.setEnableColumnFreeze(false);
-		assert.strictEqual(oTable.getEnableColumnFreeze(), false, "Column freeze is disabled");
-	});
-
-	QUnit.test("Check for table focus", function(assert) {
-		assert.strictEqual(oTable.getFocusInfo().id, oTable.getId(), "Table has focus");
-		assert.ok(oTable.applyFocusInfo(oTable.getFocusInfo()), "Focus is applied on the table");
-	});
-
-	QUnit.test("Test for function that cannot be used programmatically", function(assert) {
+	QUnit.test("Mutators of the 'rows' aggregation", function(assert) {
 		const fnError = sinon.spy(Log, "error");
-		assert.equal(oTable.getRows().length, 10, "Row count before row operations is 10");
+		assert.equal(this.oTable.getRows().length, 10, "Row count before row operations is 10");
 		assert.equal(fnError.callCount, 0, "Error was not logged so far");
-		oTable.insertRow();
-		assert.equal(oTable.getRows().length, 10, "insertRow() called, but it cannot be programmatically be used. No row inserted");
+		this.oTable.insertRow();
+		assert.equal(this.oTable.getRows().length, 10, "insertRow() called, but it cannot be programmatically be used. No row inserted");
 		assert.equal(fnError.args[0][0], "The control manages the rows aggregation. The method \"insertRow\" cannot be used programmatically!",
 			"Error message logged");
-		oTable.addRow();
-		assert.equal(oTable.getRows().length, 10, "addRow() called, but it cannot be programmatically be used. No row added");
+		this.oTable.addRow();
+		assert.equal(this.oTable.getRows().length, 10, "addRow() called, but it cannot be programmatically be used. No row added");
 		assert.equal(fnError.args[1][0], "The control manages the rows aggregation. The method \"addRow\" cannot be used programmatically!",
 			"Error message logged");
-		oTable.removeRow();
-		assert.equal(oTable.getRows().length, 10, "removeRow() called, but it cannot be programmatically be used. No row removed");
+		this.oTable.removeRow();
+		assert.equal(this.oTable.getRows().length, 10, "removeRow() called, but it cannot be programmatically be used. No row removed");
 		assert.equal(fnError.args[2][0], "The control manages the rows aggregation. The method \"removeRow\" cannot be used programmatically!",
 			"Error message logged");
-		oTable.removeAllRows();
-		assert.equal(oTable.getRows().length, 10, "removeAllRows() called, but it cannot be programmatically be used. None of the rows are removed");
+		this.oTable.removeAllRows();
+		assert.equal(this.oTable.getRows().length, 10, "removeAllRows() called, but it cannot be programmatically be used. None of the rows are removed");
 		assert.equal(fnError.args[3][0], "The control manages the rows aggregation. The method \"removeAllRows\" cannot be used programmatically!",
 			"Error message logged");
-		oTable.destroyRows();
-		assert.equal(oTable.getRows().length, 10, "destroyRows() called, but it cannot be programmatically be used. None of the rows are destoryed");
+		this.oTable.destroyRows();
+		assert.equal(this.oTable.getRows().length, 10, "destroyRows() called, but it cannot be programmatically be used. None of the rows are destoryed");
 		assert.equal(fnError.args[4][0], "The control manages the rows aggregation. The method \"destroyRows\" cannot be used programmatically!",
 			"Error message logged");
 		fnError.restore();
 	});
 
-	QUnit.test("test autoResizeColumn function", function(assert) {
-		const oColumn = oTable.getColumns()[0];
+	QUnit.test("#autoResizeColumn", function(assert) {
+		const oColumn = this.oTable.getColumns()[0];
 		oColumn.setResizable(false);
 		oColumn.setAutoResizable(false);
-		oTable.autoResizeColumn(0);
+		this.oTable.autoResizeColumn(0);
 		assert.ok(!oColumn.getResizable(), "Columns did not resize as getResizable() returned false");
 		assert.ok(!oColumn.getAutoResizable(), "Columns did not resize as getAutoResizable() returned false");
 		oColumn.setResizable(true);
 		oColumn.setAutoResizable(true);
 		const sOldColumnWidth = oColumn.getWidth();
-		oTable.autoResizeColumn(0);
+		this.oTable.autoResizeColumn(0);
 		assert.ok(oColumn.getWidth() !== sOldColumnWidth, "Columns have been resized");
 	});
 
-	QUnit.test("Check for table focus", function(assert) {
-		assert.strictEqual(oTable.getFocusInfo().id, oTable.getId(), "Table has focus");
-		assert.ok(oTable.applyFocusInfo(oTable.getFocusInfo()), "Focus is applied on the table");
-		oTable.getFocusDomRef();
-		assert.equal(oTable._getItemNavigation().getFocusedDomRef(), oTable.getColumns()[0].getDomRef());
+	QUnit.test("#getFocusInfo, #applyFocusInfo", function(assert) {
+		assert.strictEqual(this.oTable.getFocusInfo().id, this.oTable.getId(), "Table has focus");
+		assert.ok(this.oTable.applyFocusInfo(this.oTable.getFocusInfo()), "Focus is applied on the table");
+		//this.oTable.getFocusDomRef();
+		assert.equal(this.oTable._getItemNavigation().getFocusedDomRef(), this.oTable.getColumns()[0].getDomRef());
 	});
 
 	/**
 	 * @deprecated As of version 1.115
 	 */
 	QUnit.test("#_onPersoApplied", function(assert) {
+		const oTable = this.oTable;
 		const oColumn = oTable.getColumns()[0];
 		const oBinding = oTable.getBinding();
 		const oBindingSort = sinon.spy(oBinding, "sort");
@@ -4338,18 +4291,18 @@ sap.ui.define([
 	QUnit.test("#setBusy", function(assert) {
 		const oControlSetBusy = sinon.spy(Control.prototype, "setBusy");
 
-		oTable.attachEvent("busyStateChanged", function(oEvent) {
+		this.oTable.attachEvent("busyStateChanged", function(oEvent) {
 			assert.step("busy: " + oEvent.getParameter("busy"));
 		});
 
-		oTable.setBusy(false);
-		oTable.setBusy(true, "customBusySection");
+		this.oTable.setBusy(false);
+		this.oTable.setBusy(true, "customBusySection");
 		assert.ok(oControlSetBusy.calledWithExactly(true, "sapUiTableGridCnt"), "Control#setBusy");
-		oTable.setBusy(true);
-		oTable.setBusy(false);
-		oTable.setBusy();
-		oTable.setBusy(true);
-		oTable.setBusy();
+		this.oTable.setBusy(true);
+		this.oTable.setBusy(false);
+		this.oTable.setBusy();
+		this.oTable.setBusy(true);
+		this.oTable.setBusy();
 
 		assert.verifySteps(["busy: true", "busy: false", "busy: true", "busy: false"], "busyStateChanged event");
 
@@ -4359,25 +4312,21 @@ sap.ui.define([
 	/**
 	 * @deprecated As of version 1.110
 	 */
-	QUnit.test("test setGroupBy function", function(assert) {
-		oTable.setEnableGrouping(false);
-		assert.ok(!oTable.getEnableGrouping(), "Grouping not enabled");
-		oTable.setEnableGrouping(true);
-		assert.ok(oTable.getEnableGrouping(), "Grouping enabled");
-		assert.equal(oTable.setGroupBy("gender").getGroupBy(), null, "test for string value as paramenter, grouping not applied");
-		const oColumn = oTable.getColumns()[5];
-		assert.equal(oTable.setGroupBy(oColumn).getGroupBy(), oColumn.getId(), "Grouping set");
-	});
-
-	QUnit.test("test setThreshold function", function(assert) {
-		oTable.setThreshold(3);
-		assert.equal(oTable.getThreshold(), 3, "Threshold set to 3");
+	QUnit.test("#setGroupBy", function(assert) {
+		this.oTable.setEnableGrouping(false);
+		assert.ok(!this.oTable.getEnableGrouping(), "Grouping not enabled");
+		this.oTable.setEnableGrouping(true);
+		assert.ok(this.oTable.getEnableGrouping(), "Grouping enabled");
+		assert.equal(this.oTable.setGroupBy("gender").getGroupBy(), null, "test for string value as paramenter, grouping not applied");
+		const oColumn = this.oTable.getColumns()[0];
+		assert.equal(this.oTable.setGroupBy(oColumn).getGroupBy(), oColumn.getId(), "Grouping set");
 	});
 
 	/**
 	 * @deprecated As of version 1.119
 	 */
 	QUnit.test("Table Resize", function(assert) {
+		const oTable = this.oTable;
 		oTable.setVisibleRowCountMode("Auto");
 		oCore.applyChanges();
 
@@ -4404,7 +4353,7 @@ sap.ui.define([
 
 	QUnit.test("Window Resize", function(assert) {
 		const done = assert.async();
-		const oUpdateTableSizesStub = sinon.spy(oTable, "_updateTableSizes");
+		const oUpdateTableSizesStub = sinon.spy(this.oTable, "_updateTableSizes");
 
 		function fireResizeEvent() {
 			return new Promise(function(resolve) {
@@ -4417,10 +4366,10 @@ sap.ui.define([
 			});
 		}
 
-		fireResizeEvent().then(function() {
+		fireResizeEvent().then(() => {
 			assert.ok(oUpdateTableSizesStub.notCalled, "Zoom factor did not change -> _updateTableSizes was not called");
 
-			oTable._nDevicePixelRatio = 1.15; // Default should be 1.
+			this.oTable._nDevicePixelRatio = 1.15; // Default should be 1.
 			return fireResizeEvent();
 		}).then(function() {
 			if (Device.browser.chrome) {
@@ -4434,92 +4383,88 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("test _setLargeDataScrolling function", function(assert) {
-		oTable._setLargeDataScrolling(true);
-		assert.ok(oTable._bLargeDataScrolling, "Large data scrolling enabled");
-		oTable._setLargeDataScrolling(false);
-		assert.ok(!oTable._bLargeDataScrolling, "Large data scrolling disabled");
+	QUnit.test("#_setLargeDataScrolling", function(assert) {
+		this.oTable._setLargeDataScrolling(true);
+		assert.ok(this.oTable._bLargeDataScrolling, "Large data scrolling enabled");
+		this.oTable._setLargeDataScrolling(false);
+		assert.ok(!this.oTable._bLargeDataScrolling, "Large data scrolling disabled");
 	});
 
 	QUnit.test("#_getContexts", function(assert) {
-		const oGetContexts = sinon.stub(oTable.getBinding(), "getContexts");
+		const oGetContexts = sinon.stub(this.oTable.getBinding(), "getContexts");
 		const sReturnValue = "Binding#getContexts return value";
 
 		oGetContexts.returns(sReturnValue);
 
-		assert.strictEqual(oTable._getContexts(), sReturnValue, "Called without arguments: Return value");
+		assert.strictEqual(this.oTable._getContexts(), sReturnValue, "Called without arguments: Return value");
 		assert.equal(oGetContexts.callCount, 1, "Called without arguments: Binding#getContexts called once");
 		assert.ok(oGetContexts.calledWithExactly(undefined, undefined, undefined, undefined),
 			"Called without arguments: Binding#getContexts call arguments");
 
 		oGetContexts.resetHistory();
-		assert.strictEqual(oTable._getContexts(1), sReturnValue, "Called with (1): Return value");
+		assert.strictEqual(this.oTable._getContexts(1), sReturnValue, "Called with (1): Return value");
 		assert.equal(oGetContexts.callCount, 1, "Called with (1): Binding#getContexts called once");
 		assert.ok(oGetContexts.calledWithExactly(1, undefined, undefined, undefined), "Called with (1): Binding#getContexts call arguments");
 
 		oGetContexts.resetHistory();
-		assert.strictEqual(oTable._getContexts(1, 2), sReturnValue, "Called with (1, 2): Return value");
+		assert.strictEqual(this.oTable._getContexts(1, 2), sReturnValue, "Called with (1, 2): Return value");
 		assert.equal(oGetContexts.callCount, 1, "Called with (1, 2): Binding#getContexts called once");
 		assert.ok(oGetContexts.calledWithExactly(1, 2, undefined, undefined), "Called with (1, 2): Binding#getContexts call arguments");
 
 		oGetContexts.resetHistory();
-		assert.strictEqual(oTable._getContexts(1, 2, 3), sReturnValue, "Called with (1, 2, 3): Return value");
+		assert.strictEqual(this.oTable._getContexts(1, 2, 3), sReturnValue, "Called with (1, 2, 3): Return value");
 		assert.equal(oGetContexts.callCount, 1, "Called with (1, 2, 3): Binding#getContexts called once");
 		assert.ok(oGetContexts.calledWithExactly(1, 2, 3, undefined), "Called with (1, 2, 3): Binding#getContexts call arguments");
 
 		oGetContexts.resetHistory();
-		assert.strictEqual(oTable._getContexts(1, 2, 3, true), sReturnValue, "Called with (1, 2, 3, true): Return value");
+		assert.strictEqual(this.oTable._getContexts(1, 2, 3, true), sReturnValue, "Called with (1, 2, 3, true): Return value");
 		assert.equal(oGetContexts.callCount, 1, "Called with (1, 2, 3, true): Binding#getContexts called once");
 		assert.ok(oGetContexts.calledWithExactly(1, 2, 3, true), "Called with (1, 2, 3, true): Binding#getContexts call arguments");
 
 		oGetContexts.resetHistory();
-		assert.strictEqual(oTable._getContexts(1, 2, 3, false), sReturnValue, "Called with (1, 2, 3, false): Return value");
+		assert.strictEqual(this.oTable._getContexts(1, 2, 3, false), sReturnValue, "Called with (1, 2, 3, false): Return value");
 		assert.equal(oGetContexts.callCount, 1, "Called with (1, 2, 3, false): Binding#getContexts called once");
 		assert.ok(oGetContexts.calledWithExactly(1, 2, 3, false), "Called with (1, 2, 3, false): Binding#getContexts call arguments");
 
 		oGetContexts.resetHistory();
-		assert.strictEqual(oTable._getContexts(1, null, undefined, true), sReturnValue, "Called with (1, null, undefined, true): Return value");
+		assert.strictEqual(this.oTable._getContexts(1, null, undefined, true), sReturnValue, "Called with (1, null, undefined, true): Return value");
 		assert.equal(oGetContexts.callCount, 1, "Called with (1, null, undefined, true): Binding#getContexts called once");
 		assert.ok(oGetContexts.calledWithExactly(1, null, undefined, true),
 			"Called with (1, null, undefined, true): Binding#getContexts call arguments");
 
-		oTable.unbindRows();
-		assert.deepEqual(oTable._getContexts(1, 2, 3), [], "Called without binding: Return value");
-	});
-
-	QUnit.test("test _getColumnsWidth function", function(assert) {
-		assert.ok(oTable._getColumnsWidth() > 600 && oTable._getColumnsWidth() < 900, "Columns width returned");
+		this.oTable.unbindRows();
+		assert.deepEqual(this.oTable._getContexts(1, 2, 3), [], "Called without binding: Return value");
 	});
 
 	QUnit.test("#_getBaseRowHeight", function(assert) {
 		const oRowMode = new FixedRowMode();
 
-		oTable.setRowMode(oRowMode);
+		this.oTable.setRowMode(oRowMode);
 		sinon.stub(oRowMode, "getBaseRowContentHeight");
 
 		oRowMode.getBaseRowContentHeight.returns(98);
-		assert.strictEqual(oTable._getBaseRowHeight(), 99, "The base row height is application defined (99)");
+		assert.strictEqual(this.oTable._getBaseRowHeight(), 99, "The base row height is application defined (99)");
 
 		oRowMode.getBaseRowContentHeight.returns(9);
-		assert.strictEqual(oTable._getBaseRowHeight(), 10, "The base row height is application defined (10)");
+		assert.strictEqual(this.oTable._getBaseRowHeight(), 10, "The base row height is application defined (10)");
 
 		oRowMode.getBaseRowContentHeight.returns(0);
-		assert.strictEqual(oTable._getBaseRowHeight(), TableUtils.DefaultRowHeight.sapUiSizeCozy,
+		assert.strictEqual(this.oTable._getBaseRowHeight(), TableUtils.DefaultRowHeight.sapUiSizeCozy,
 			"The base row height is correct in cozy density (49)");
 
-		TableQUnitUtils.setDensity(oTable, "sapUiSizeCompact");
-		assert.strictEqual(oTable._getBaseRowHeight(), TableUtils.DefaultRowHeight.sapUiSizeCompact,
+		this.oTable.qunit.setDensity("sapUiSizeCompact");
+		assert.strictEqual(this.oTable._getBaseRowHeight(), TableUtils.DefaultRowHeight.sapUiSizeCompact,
 			"The base row height is correct in compact density (33)");
 
-		TableQUnitUtils.setDensity(oTable, "sapUiSizeCondensed");
-		assert.strictEqual(oTable._getBaseRowHeight(), TableUtils.DefaultRowHeight.sapUiSizeCondensed,
+		this.oTable.qunit.setDensity("sapUiSizeCondensed");
+		assert.strictEqual(this.oTable._getBaseRowHeight(), TableUtils.DefaultRowHeight.sapUiSizeCondensed,
 			"The base row height is correct in condensed density (25)");
 
-		TableQUnitUtils.setDensity(oTable);
-		assert.strictEqual(oTable._getBaseRowHeight(), TableUtils.DefaultRowHeight.undefined,
+		this.oTable.qunit.setDensity();
+		assert.strictEqual(this.oTable._getBaseRowHeight(), TableUtils.DefaultRowHeight.undefined,
 			"The base row height is correct in undefined density (33)");
 
-		TableQUnitUtils.setDensity(oTable, "sapUiSizeCozy");
+		this.oTable.qunit.resetDensity();
 	});
 
 	/**
@@ -4528,33 +4473,32 @@ sap.ui.define([
 	QUnit.test("#_getBaseRowHeight (legacy)", function(assert) {
 		const oBody = document.body;
 
-		oTable.setRowHeight(98);
-		assert.strictEqual(oTable._getBaseRowHeight(), 99, "The base row height is application defined (99)");
+		this.oTable.setRowHeight(98);
+		assert.strictEqual(this.oTable._getBaseRowHeight(), 99, "The base row height is application defined (99)");
 
-		oTable.setRowHeight(9);
-		assert.strictEqual(oTable._getBaseRowHeight(), 10, "The base row height is application defined (10)");
+		this.oTable.setRowHeight(9);
+		assert.strictEqual(this.oTable._getBaseRowHeight(), 10, "The base row height is application defined (10)");
 
-		oTable.setRowHeight(0);
-		assert.strictEqual(oTable._getBaseRowHeight(), TableUtils.DefaultRowHeight.sapUiSizeCozy,
+		this.oTable.setRowHeight(0);
+		assert.strictEqual(this.oTable._getBaseRowHeight(), TableUtils.DefaultRowHeight.sapUiSizeCozy,
 			"The base row height is correct in cozy size (49)");
 
 		oBody.classList.add("sapUiSizeCozy");
 	});
 
 	QUnit.test("#_getTotalRowCount", function(assert) {
-		oTable.bindRows({path: "/modelData"});
-		assert.strictEqual(oTable._getTotalRowCount(), 200, "Binding#getLength defines the total row count in the table");
+		assert.strictEqual(this.oTable._getTotalRowCount(), 10, "Binding#getLength defines the total row count in the table");
 
-		oTable.bindRows({path: "/modelData", length: 5});
-		assert.strictEqual(oTable._getTotalRowCount(), 5, "The \"length\" parameter in the binding info overrides Binding#getLength");
+		this.oTable.bindRows({path: "/", length: 5});
+		assert.strictEqual(this.oTable._getTotalRowCount(), 5, "The \"length\" parameter in the binding info overrides Binding#getLength");
 
-		const oModel = oTable.getModel();
-		oTable.setModel(null);
-		assert.strictEqual(oTable._getTotalRowCount(), 0, "Without a binding the total row count is 0, regardless of the binding info");
-		oTable.setModel(oModel);
+		const oModel = this.oTable.getModel();
+		this.oTable.setModel(null);
+		assert.strictEqual(this.oTable._getTotalRowCount(), 0, "Without a binding the total row count is 0, regardless of the binding info");
+		this.oTable.setModel(oModel);
 
-		oTable.unbindRows();
-		assert.strictEqual(oTable._getTotalRowCount(), 0, "Without a binding or binding info the total row count is 0");
+		this.oTable.unbindRows();
+		assert.strictEqual(this.oTable._getTotalRowCount(), 0, "Without a binding or binding info the total row count is 0");
 	});
 
 	QUnit.module("Performance", {

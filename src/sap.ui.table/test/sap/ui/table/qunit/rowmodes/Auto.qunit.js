@@ -2,9 +2,9 @@
 
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
-	"sap/ui/table/qunit/rowmodes/sets/FixedRowHeight",
-	"sap/ui/table/qunit/rowmodes/sets/RowCountConstraints",
-	"sap/ui/table/qunit/rowmodes/sets/RowsUpdated",
+	"sap/ui/table/qunit/rowmodes/shared/FixedRowHeight",
+	"sap/ui/table/qunit/rowmodes/shared/RowCountConstraints",
+	"sap/ui/table/qunit/rowmodes/shared/RowsUpdated",
 	"sap/ui/table/rowmodes/Auto",
 	"sap/ui/table/Table",
 	"sap/ui/table/Column",
@@ -138,13 +138,10 @@ sap.ui.define([
 		oTable.setRowActionTemplate(new RowAction());
 
 		function test(mTestSettings) {
-			sequence = sequence.then(function() {
+			sequence = sequence.then(async function() {
 				oTable.setRowHeight(mTestSettings.rowHeight || 0);
 				oTable.getColumns()[1].setTemplate(new HeightTestControl({height: (mTestSettings.templateHeight || 1) + "px"}));
-				TableQUnitUtils.setDensity(oTable, mTestSettings.density);
-
-				return oTable.qunit.whenRenderingFinished();
-			}).then(function() {
+				await oTable.qunit.setDensity(mTestSettings.density);
 				TableQUnitUtils.assertRowHeights(assert, oTable, mTestSettings);
 			});
 		}
@@ -205,7 +202,7 @@ sap.ui.define([
 		});
 
 		return sequence.then(function() {
-			TableQUnitUtils.setDensity(oTable, "sapUiSizeCozy");
+			oTable.qunit.resetDensity();
 		});
 	});
 
