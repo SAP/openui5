@@ -95,7 +95,7 @@ sap.ui.define([
 		],
 		check: function(oIssueManager, oCoreFacade, oScope) {
 			const aTables = SupportHelper.find(oScope, true, "sap.ui.table.Table");
-			const bIsZoomedInChrome = Device.browser.chrome && window.devicePixelRatio != 1;
+			const bIsZoomedInChrome = Device.browser.chrome && window.devicePixelRatio !== 1;
 
 			for (let i = 0; i < aTables.length; i++) {
 				const aVisibleRows = aTables[i].getRows();

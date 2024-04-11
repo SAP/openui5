@@ -94,7 +94,7 @@ sap.ui.define([
 				success: function(oData) {
 					for (let i = 0; i < oData.ProductCollection.length; i++) {
 						const oProduct = oData.ProductCollection[i];
-						oProduct.Available = oProduct.Status == "Available" ? true : false;
+						oProduct.Available = oProduct.Status === "Available" ? true : false;
 						if (i === 1) {
 							oProduct.NavigatedState = true;
 						}
@@ -136,7 +136,7 @@ sap.ui.define([
 			}
 
 			for (let i = 0; i < this.modes.length; i++) {
-				if (sKey == this.modes[i].key) {
+				if (sKey === this.modes[i].key) {
 					const aRes = this.modes[i].handler();
 					iCount = aRes[0];
 					oTemplate = aRes[1];

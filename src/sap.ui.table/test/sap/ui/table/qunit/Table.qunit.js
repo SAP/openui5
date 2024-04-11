@@ -2516,9 +2516,9 @@ sap.ui.define([
 
 		assert.deepEqual(this.oTable.getSortedColumns(), [aColumns[1]], "Sorted columns");
 		/** @deprecated As of version 1.120 */
-		assert.ok(aColumns[0].getSorted() == false, "First column not sorted");
+		assert.ok(aColumns[0].getSorted() === false, "First column not sorted");
 		/** @deprecated As of version 1.120 */
-		assert.ok(aColumns[1].getSorted() == true, "Second column sorted");
+		assert.ok(aColumns[1].getSorted() === true, "Second column sorted");
 		assert.strictEqual(aColumns[0].getSortOrder(), SortOrder.None, "Sort order of first column");
 		assert.strictEqual(aColumns[1].getSortOrder(), SortOrder.Descending, "Sort order of second column");
 		assert.deepEqual(this.oTable.getBinding().aSorters, [new Sorter("FirstName", true)], "Binding sorters");
@@ -2533,9 +2533,9 @@ sap.ui.define([
 
 		assert.deepEqual(this.oTable.getSortedColumns(), [aColumns[0]], "Sorted columns");
 		/** @deprecated As of version 1.120 */
-		assert.ok(aColumns[0].getSorted() == true, "First column sorted");
+		assert.ok(aColumns[0].getSorted() === true, "First column sorted");
 		/** @deprecated As of version 1.120 */
-		assert.ok(aColumns[1].getSorted() == false, "Second column not sorted");
+		assert.ok(aColumns[1].getSorted() === false, "Second column not sorted");
 		assert.strictEqual(aColumns[0].getSortOrder(), SortOrder.Ascending, "Sort order of first column");
 		assert.strictEqual(aColumns[1].getSortOrder(), SortOrder.None, "Sort order of second column");
 		assert.deepEqual(this.oTable.getBinding().aSorters, [new Sorter("LastName", false)], "Binding sorters");
@@ -2551,9 +2551,9 @@ sap.ui.define([
 
 		assert.deepEqual(this.oTable.getSortedColumns(), [aColumns[1]], "Sorted columns");
 		/** @deprecated As of version 1.120 */
-		assert.ok(aColumns[0].getSorted() == false, "First column not sorted");
+		assert.ok(aColumns[0].getSorted() === false, "First column not sorted");
 		/** @deprecated As of version 1.120 */
-		assert.ok(aColumns[1].getSorted() == true, "Second column sorted");
+		assert.ok(aColumns[1].getSorted() === true, "Second column sorted");
 		assert.strictEqual(aColumns[0].getSortOrder(), SortOrder.None, "Sort order of first column");
 		assert.strictEqual(aColumns[1].getSortOrder(), SortOrder.Ascending, "Sort order of second column");
 		assert.deepEqual(this.oTable.getBinding().aSorters, [new Sorter("FirstName", false)], "Binding sorters");
@@ -2592,9 +2592,9 @@ sap.ui.define([
 
 		assert.deepEqual(this.oTable.getSortedColumns(), [], "Sorted columns");
 		/** @deprecated As of version 1.120 */
-		assert.ok(aColumns[0].getSorted() == false, "First column not sorted");
+		assert.ok(aColumns[0].getSorted() === false, "First column not sorted");
 		/** @deprecated As of version 1.120 */
-		assert.ok(aColumns[1].getSorted() == false, "Second column not sorted");
+		assert.ok(aColumns[1].getSorted() === false, "Second column not sorted");
 		assert.strictEqual(aColumns[0].getSortOrder(), SortOrder.None, "Sort order of first column");
 		assert.strictEqual(aColumns[1].getSortOrder(), SortOrder.None, "Sort order of second column");
 		assert.equal(this.oTable.getBinding().aSorters, null, "Binding sorters");
@@ -2605,9 +2605,9 @@ sap.ui.define([
 
 		assert.deepEqual(this.oTable.getSortedColumns(), [aColumns[0]], "Sorted columns");
 		/** @deprecated As of version 1.120 */
-		assert.ok(aColumns[0].getSorted() == true, "First column sorted");
+		assert.ok(aColumns[0].getSorted() === true, "First column sorted");
 		/** @deprecated As of version 1.120 */
-		assert.ok(aColumns[1].getSorted() == false, "Second column not sorted");
+		assert.ok(aColumns[1].getSorted() === false, "Second column not sorted");
 		assert.strictEqual(aColumns[0].getSortOrder(), SortOrder.Ascending, "Sort order of first column");
 		assert.strictEqual(aColumns[1].getSortOrder(), SortOrder.None, "Sort order of second column");
 		assert.deepEqual(this.oTable.getBinding().aSorters, [new Sorter("LastName", false)], "Binding sorters");

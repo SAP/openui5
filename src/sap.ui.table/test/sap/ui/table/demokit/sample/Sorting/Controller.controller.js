@@ -57,7 +57,7 @@ sap.ui.define([
 						oProduct.DeliveryDate = Date.now() - (i % 10 * 4 * 24 * 60 * 60 * 1000);
 						oProduct.DeliveryDateStr = oDateFormat.format(UI5Date.getInstance(oProduct.DeliveryDate));
 						oProduct.Heavy = oProduct.WeightMeasure > 1000 ? "true" : "false";
-						oProduct.Available = oProduct.Status == "Available" ? true : false;
+						oProduct.Available = oProduct.Status === "Available" ? true : false;
 					}
 
 					oData.Suppliers = aSuppliersData;
@@ -98,7 +98,7 @@ sap.ui.define([
 		sortDeliveryDate: function(oEvent) {
 			const oCurrentColumn = oEvent.getParameter("column");
 			const oDeliveryDateColumn = this.byId("deliverydate");
-			if (oCurrentColumn != oDeliveryDateColumn) {
+			if (oCurrentColumn !== oDeliveryDateColumn) {
 				oDeliveryDateColumn.setSortOrder(SortOrder.None); //No multi-column sorting
 				return;
 			}

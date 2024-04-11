@@ -121,7 +121,7 @@ sap.ui.define([
 			if (oSelectionMode !== SelectionMode.None) {
 				// aria description for selection mode in table
 				_writeAccText(oRm, sTableId, "ariaselection",
-					TableUtils.getResourceText(oSelectionMode == SelectionMode.MultiToggle ? "TBL_TABLE_SELECTION_MULTI" : "TBL_TABLE_SELECTION_SINGLE"));
+					TableUtils.getResourceText(oSelectionMode === SelectionMode.MultiToggle ? "TBL_TABLE_SELECTION_MULTI" : "TBL_TABLE_SELECTION_SINGLE"));
 			}
 
 			if (oTable.getComputedFixedColumnCount() > 0) {

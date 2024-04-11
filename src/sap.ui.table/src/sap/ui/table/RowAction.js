@@ -178,7 +178,7 @@ sap.ui.define([
 		let sText;
 
 		if (bActive) {
-			sText = TableUtils.getResourceText(iVisibleItems == 1
+			sText = TableUtils.getResourceText(iVisibleItems === 1
 											   ? "TBL_ROW_ACTION_SINGLE_ACTION"
 											   : "TBL_ROW_ACTION_MULTIPLE_ACTION", [iVisibleItems]);
 		} else {

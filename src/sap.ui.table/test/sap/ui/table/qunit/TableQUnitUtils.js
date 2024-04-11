@@ -714,7 +714,7 @@ sap.ui.define([
 				oContainerElement.style.width = mSizes.width;
 			}
 
-			if ((mSizes.height != null && mSizes.height != sOldHeight) || (mSizes.width != null && mSizes.width != sOldWidth)) {
+			if ((mSizes.height != null && mSizes.height !== sOldHeight) || (mSizes.width != null && mSizes.width !== sOldWidth)) {
 				// Give the table time to react. Default interval of IntervalTrigger singleton that is used by the ResizeHandler is 200ms.
 				return TableQUnitUtils.wait(250).then(oTable.qunit.whenRenderingFinished);
 			} else {
@@ -1685,14 +1685,14 @@ sap.ui.define([
 				oRow[aFields[j]] = aFields[j] + (i + 1);
 				oTree[aFields[j]] = aFields[j] + (i + 1);
 				oTree.rows[0][aFields[j]] = aFields[j] + "SUB" + (i + 1);
-				if (i == 0) {
+				if (i === 0) {
 					oTable.addColumn(new Column({
 						label: aFields[j] + "_TITLE",
 						width: "100px",
-						tooltip: j == 2 ? aFields[j] + "_TOOLTIP" : null,
+						tooltip: j === 2 ? aFields[j] + "_TOOLTIP" : null,
 						template: new TestControl({
 							text: "{" + aFields[j] + "}",
-							visible: j != 3,
+							visible: j !== 3,
 							tabbable: !!bFocusableCellTemplates
 						})
 					}));

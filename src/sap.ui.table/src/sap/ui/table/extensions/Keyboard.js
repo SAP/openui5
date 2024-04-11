@@ -503,7 +503,7 @@ sap.ui.define([
 	 */
 	KeyboardExtension.prototype.getLastFocusedCellInfo = function() {
 		const iHeader = TableUtils.getHeaderRowCount(this.getTable());
-		if (!this._oLastFocusedCellInfo || this._oLastFocusedCellInfo.header != iHeader) {
+		if (!this._oLastFocusedCellInfo || this._oLastFocusedCellInfo.header !== iHeader) {
 			const oInfo = TableUtils.getFocusedItemInfo(this.getTable());
 			const iDfltIdx = ExtensionHelper.getInitialItemNavigationIndex(this);
 
@@ -546,7 +546,7 @@ sap.ui.define([
 		if (oCellInfo.isOfType(TableUtils.CELLTYPE.ANY) && oTable) {
 			const $Elem = jQuery(oElement);
 
-			if ($Elem.attr("tabindex") != "0") {
+			if ($Elem.attr("tabindex") !== "0") {
 				const oItemNav = oTable._getItemNavigation();
 
 				if (oItemNav && oItemNav.aItemDomRefs) {

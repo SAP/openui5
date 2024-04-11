@@ -1235,7 +1235,7 @@ sap.ui.define([
 		const aRowsInScrollableColumnsArea = oDomRef.querySelectorAll(".sapUiTableCtrlScroll > tbody > tr" + sRowCSSClass);
 		const iRowCount = bHeader ? TableUtils.getHeaderRowCount(this) : this.getRows().length;
 		let aRowHeights = [];
-		const bIsZoomedInChrome = Device.browser.chrome && window.devicePixelRatio != 1;
+		const bIsZoomedInChrome = Device.browser.chrome && window.devicePixelRatio !== 1;
 
 		if (bHeader) {
 			if (this.getColumnHeaderHeight() > 0) {
@@ -1563,7 +1563,7 @@ sap.ui.define([
 					if (domWidth !== null) {
 						if (domWidth <= minWidth) {
 							return {headers: aColHeaders, newWidth: calcNewWidth(domWidth, minWidth)};
-						} else if (colHeader && colHeader.style.width != colWidth) {
+						} else if (colHeader && colHeader.style.width !== colWidth) {
 							aNotFixedVariableColumns.push({col: col, header: colHeader, minWidth: minWidth, headers: aColHeaders});
 							// reset the minimum style width that was set previously
 							return {headers: aColHeaders, newWidth: colWidth};
@@ -2285,7 +2285,7 @@ sap.ui.define([
 
 	Table.prototype.setVisibleRowCount = function(iVisibleRowCount) {
 		const sVisibleRowCountMode = this.getVisibleRowCountMode();
-		if (sVisibleRowCountMode == "Auto") {
+		if (sVisibleRowCountMode === "Auto") {
 			Log.error("VisibleRowCount will be ignored since VisibleRowCountMode is set to Auto", this);
 			return this;
 		}

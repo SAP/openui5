@@ -238,7 +238,7 @@ sap.ui.define([
 					threshold: iBindingThreshold,
 					countMode: sCountMode,
 					operationMode: sOperationMode,
-					numberOfExpandedLevels: iInitialLevel == "" ? 0 : iInitialLevel,
+					numberOfExpandedLevels: iInitialLevel === "" ? 0 : iInitialLevel,
 					treeState: oTreeState,
 					//navigation: {orgHierarchyRoot: "toChildren", orgHierarchy: "toChildren"}
 					treeAnnotationProperties: bUseLocalMetadata ? {
@@ -399,7 +399,7 @@ sap.ui.define([
 			const iSelectedIndex = oTable.getSelectedIndex();
 			const oViewModel = this.getView().getModel();
 
-			if (iSelectedIndex == -1) {
+			if (iSelectedIndex === -1) {
 				MessageToast.show("Select a parent node first.");
 				return;
 			}
@@ -495,7 +495,7 @@ sap.ui.define([
 		onPaste: function() {
 			const oTable = this.byId("tableOData");
 			const iSelectedIndex = oTable.getSelectedIndex();
-			if (this._oClipboardModel && iSelectedIndex != -1) {
+			if (this._oClipboardModel && iSelectedIndex !== -1) {
 				this.openClipboard();
 			} else {
 				MessageToast.show("Select a new parent node first.");
@@ -639,7 +639,7 @@ sap.ui.define([
 
 				// insert in currently selected index
 				const iSelectedIndex = oTable.getSelectedIndex();
-				if (iSelectedIndex != -1 && oTreeHandle) {
+				if (iSelectedIndex !== -1 && oTreeHandle) {
 					const oBinding = oTable.getBinding();
 					const oNewParentContext = oTable.getContextByIndex(iSelectedIndex);
 					if (oNewParentContext) {
@@ -649,7 +649,7 @@ sap.ui.define([
 
 					// remove the re-inserted node from the clipboard
 					this._oClipboardModelData.nodes = this._oClipboardModelData.nodes.filter(function(o) {
-						return o.key != sKey;
+						return o.key !== sKey;
 					});
 					this._oClipboardModel.setData(this._oClipboardModelData);
 				}

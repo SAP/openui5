@@ -40,7 +40,7 @@ sap.ui.define("sap/ui/table/sample/TableExampleUtils", [
 	const Utils = {};
 
 	Utils.showInfo = function(aItems, oBy) {
-		if (typeof (aItems) == "string") {
+		if (typeof (aItems) === "string") {
 			jQuery.ajax(aItems, {
 				dataType: "json",
 				success: function(oData) {

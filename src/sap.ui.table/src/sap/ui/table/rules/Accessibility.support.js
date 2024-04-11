@@ -26,7 +26,7 @@ sap.ui.define([
 		check: function(oIssueManager, oCoreFacade, oScope) {
 			const aTables = SupportHelper.find(oScope, true, "sap.ui.table.Table");
 			for (let i = 0; i < aTables.length; i++) {
-				if (!aTables[i].getTitle() && aTables[i].getAriaLabelledBy().length == 0) {
+				if (!aTables[i].getTitle() && aTables[i].getAriaLabelledBy().length === 0) {
 					SupportHelper.reportIssue(oIssueManager, "The table does not have an accessible label.",
 						Severity.High, aTables[i].getId());
 				}

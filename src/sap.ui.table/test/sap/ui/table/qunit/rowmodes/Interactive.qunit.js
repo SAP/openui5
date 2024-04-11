@@ -296,7 +296,7 @@ sap.ui.define([
 			assert.ok(oEvent.isPropagationStopped() && bDuringResize || !oEvent.isPropagationStopped() && !bDuringResize,
 				"Stopped Propagation of selectstart event");
 			const sUnselectable = jQuery(document.body).attr("unselectable") || "off";
-			assert.ok(sUnselectable == (bDuringResize ? "on" : "off"), "Text Selection switched " + (bDuringResize ? "off" : "on"));
+			assert.ok(sUnselectable === (bDuringResize ? "on" : "off"), "Text Selection switched " + (bDuringResize ? "off" : "on"));
 		};
 
 		assert.equal($Resizer.length, 1, "The handle to resize the table is visible");
@@ -307,7 +307,7 @@ sap.ui.define([
 		for (let i = 0; i < 10; i++) {
 			iY += 10;
 			qutils.triggerMouseEvent($Table, "mousemove", 0, 0, 10, iY, 0);
-			if (i == 5) { // Just check somewhere in between
+			if (i === 5) { // Just check somewhere in between
 				fnTestAdaptations(true);
 			}
 		}

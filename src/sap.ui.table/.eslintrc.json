@@ -35,6 +35,7 @@
 				"no-whitespace-before-property": "error",
 				"object-curly-newline": ["error", {"consistent": true}],
 				"object-curly-spacing": "error",
+				"eqeqeq": ["error", "always", {"null": "ignore"}],
 				"max-depth": ["warn", 4],
 				"max-len": ["warn", 150],
 				"complexity": ["warn", { "max": 12 }]

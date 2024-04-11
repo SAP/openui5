@@ -82,7 +82,7 @@ sap.ui.define([
 			iLevel = iLevel ? iLevel : 0;
 
 			ACCInfoHelper._normalize(oSourceInfo);
-			if (iLevel == 0) {
+			if (iLevel === 0) {
 				ACCInfoHelper._normalize(oTargetInfo);
 				oTargetInfo._descriptions = [];
 			}
@@ -100,7 +100,7 @@ sap.ui.define([
 				}
 			});
 
-			if (iLevel == 0) {
+			if (iLevel === 0) {
 				oTargetInfo.description = oTargetInfo._descriptions.join(" ").trim();
 				oTargetInfo._descriptions = undefined;
 			}
@@ -238,7 +238,7 @@ sap.ui.define([
 					return false;
 				}
 				const sText = oLabel && oLabel.getText ? oLabel.getText() : "";
-				return sTooltip == sText;
+				return sTooltip === sText;
 			}
 
 			let sTooltip = oColumn.getTooltip_AsString();
@@ -302,8 +302,8 @@ sap.ui.define([
 				const iRowNumber = oRow ? ExtensionHelper.getRowIndex(oRow) : 0;
 				const mGridSize = ExtensionHelper.getGridSize(oTable);
 
-				bIsRowChanged = oExtension._iLastRowNumber != iRowNumber || (oExtension._iLastRowNumber == iRowNumber && oExtension._iLastColumnNumber == iColumnNumber);
-				bIsColChanged = oExtension._iLastColumnNumber != iColumnNumber;
+				bIsRowChanged = oExtension._iLastRowNumber !== iRowNumber || (oExtension._iLastRowNumber === iRowNumber && oExtension._iLastColumnNumber === iColumnNumber);
+				bIsColChanged = oExtension._iLastColumnNumber !== iColumnNumber;
 				bIsInitial = oExtension._iLastRowNumber == null && oExtension._iLastColumnNumber == null;
 				oTable.$("rownumberofrows").text(bIsRowChanged && iRowNumber > 0 ? TableUtils.getResourceText("TBL_ROW_ROWCOUNT", [iRowNumber, mGridSize.rowCount]) : ".");
 				oTable.$("colnumberofcols").text(bIsColChanged ? TableUtils.getResourceText("TBL_COL_COLCOUNT", [iColumnNumber, mGridSize.columnCount]) : ".");
@@ -463,7 +463,7 @@ sap.ui.define([
 					if (bIsGroupHeader && bRowChange) {
 						aLabels.splice(3, 0, sRowId + "-groupHeader");
 					}
-					const bContainsTreeIcon = $Cell.find(".sapUiTableTreeIcon").not(".sapUiTableTreeIconLeaf").length == 1;
+					const bContainsTreeIcon = $Cell.find(".sapUiTableTreeIcon").not(".sapUiTableTreeIconLeaf").length === 1;
 
 					if ((bContainsTreeIcon || bIsGroupHeader) && (bRowChange || bColChange)) {
 						aDescriptions.push(oTable.getId() + (!oRow.isExpanded() ? "-rowexpandtext" : "-rowcollapsetext"));

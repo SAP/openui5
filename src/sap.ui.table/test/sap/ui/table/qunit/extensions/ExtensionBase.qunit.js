@@ -32,7 +32,7 @@ sap.ui.define([
 			if (mSettings.assert) {
 				mSettings.assert.ok(!!mSettings, "Init: Settings exists");
 				mSettings.assert.ok(!!oTable, "Init: Table exists");
-				mSettings.assert.ok(sTableType == TABLETYPES.ANALYTICAL || sTableType == TABLETYPES.TREE || sTableType == TABLETYPES.STANDARD,
+				mSettings.assert.ok(sTableType === TABLETYPES.ANALYTICAL || sTableType === TABLETYPES.TREE || sTableType === TABLETYPES.STANDARD,
 					"Init: Type exists");
 
 				switch (sTableType) {
@@ -83,17 +83,17 @@ sap.ui.define([
 		const oExtension = ExtensionBase.enrich(oStandardTable, BaseObject, {name: "TEST"});
 		assert.strictEqual(oExtension, null, "enrich does not accept other types than ExtensionBase");
 		assert.ok(!oStandardTable._getTEST, "No getter for Extension created");
-		assert.ok(oStandardTable._aExtensions.length == iNumberOfStandardExtensions, "Number of registered Extensions not changed");
+		assert.ok(oStandardTable._aExtensions.length === iNumberOfStandardExtensions, "Number of registered Extensions not changed");
 	});
 
 	QUnit.test("enrich - correct type", function(assert) {
 		const iNumberOfStandardExtensions = oStandardTable._aExtensions.length;
 		const oExtension = ExtensionBase.enrich(oStandardTable, MyExtension, {name: "TEST2"});
 		assert.ok(oExtension instanceof MyExtension, "enrich does not accept other types than ExtensionBase");
-		assert.ok(typeof oStandardTable._getTEST2 == "function", "Getter for Extension created");
+		assert.ok(typeof oStandardTable._getTEST2 === "function", "Getter for Extension created");
 
 		const aExtensions = oStandardTable._aExtensions;
-		assert.ok(aExtensions.length == iNumberOfStandardExtensions + 1, "Number of registered Extensions");
+		assert.ok(aExtensions.length === iNumberOfStandardExtensions + 1, "Number of registered Extensions");
 		assert.ok(aExtensions[aExtensions.length - 1] === oExtension, "Extension registered");
 	});
 
@@ -132,7 +132,7 @@ sap.ui.define([
 
 	QUnit.test("Generated Getter", function(assert) {
 		const oExtension = ExtensionBase.enrich(oStandardTable, MyExtension, {name: "TEST"});
-		assert.ok(typeof oStandardTable._getTEST == "function", "Getter for Extension created");
+		assert.ok(typeof oStandardTable._getTEST === "function", "Getter for Extension created");
 		assert.strictEqual(oStandardTable._getTEST(), oExtension, "Getter returns extension instance");
 
 		// Extension without name and getter possible -> no error should occur
@@ -169,20 +169,20 @@ sap.ui.define([
 
 		oStandardTable.placeAt("qunit-fixture");
 		await nextUIUpdate();
-		assert.ok(iCount == 0, "Balanced calls of attach and detach"); // beforeRendering calls _detachEvents, afterRendering _attachEvents
-		assert.ok(iCounter == 2, "Attach and detach called");
+		assert.ok(iCount === 0, "Balanced calls of attach and detach"); // beforeRendering calls _detachEvents, afterRendering _attachEvents
+		assert.ok(iCounter === 2, "Attach and detach called");
 
 		ExtensionBase.detachEvents(oStandardTable);
-		assert.ok(iCount == -1, "detach called");
+		assert.ok(iCount === -1, "detach called");
 		ExtensionBase.attachEvents(oStandardTable);
-		assert.ok(iCount == 0, "attach called");
+		assert.ok(iCount === 0, "attach called");
 
 		oStandardTable._detachExtensions();
 		iCounter = 0;
 		ExtensionBase.attachEvents(oStandardTable);
-		assert.ok(iCounter == 0, "Attach not called");
+		assert.ok(iCounter === 0, "Attach not called");
 		ExtensionBase.detachEvents(oStandardTable);
-		assert.ok(iCounter == 0, "Detach not called");
+		assert.ok(iCounter === 0, "Detach not called");
 
 		bActive = false;
 	});

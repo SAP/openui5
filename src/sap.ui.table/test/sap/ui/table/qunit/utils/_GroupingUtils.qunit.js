@@ -514,7 +514,7 @@ sap.ui.define([
 			test: function() {
 				assert.equal(oTable._getTotalRowCount(), 10, "Row count after grouping");
 				for (let i = 0; i < oTable.getRows().length; i++) {
-					if (i == 0 || i == 5) {
+					if (i === 0 || i === 5) {
 						assert.ok(oTable.getRows()[i].isGroupHeader(), "Row " + i + " is group header");
 					} else {
 						assert.ok(!oTable.getRows()[i].isGroupHeader(), "Row " + i + " is leaf");

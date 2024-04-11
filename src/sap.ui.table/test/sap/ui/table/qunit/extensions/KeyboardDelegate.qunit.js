@@ -65,7 +65,7 @@ sap.ui.define([
 		const oExt = oTbl._getKeyboardExtension();
 		const sType = oExt._delegate && oExt._delegate.getMetadata ? oExt._delegate.getMetadata().getName() : null;
 		oTbl.destroy();
-		return sType == sExpectedType;
+		return sType === sExpectedType;
 	}
 
 	// Checks whether the given DomRef is contained or equals (in) one of the given container
@@ -107,7 +107,7 @@ sap.ui.define([
 		oParams.metaKey = false;
 		oParams.ctrlKey = false;
 
-		if (typeof (oTarget) == "string") {
+		if (typeof (oTarget) === "string") {
 			oTarget = document.getElementById(oTarget);
 		}
 
