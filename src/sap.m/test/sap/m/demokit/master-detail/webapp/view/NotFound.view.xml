@@ -3,13 +3,14 @@
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc">
 
-	<MessagePage
+	<IllustratedMessage
 		id="page"
 		title="{i18n>notFoundTitle}"
-		text="{i18n>notFoundText}"
-		icon="sap-icon://document"
-		showNavButton="true"
-		navButtonPress=".onNavBack">
-	</MessagePage>
+		description="{i18n>notFoundText}"
+		illustrationType="sapIllus-PageNotFound">
+		<additionalContent>
+			<Button text="Not Found Action" press=".onNavBack" />
+		</additionalContent>
+	</IllustratedMessage>
 
 </mvc:View>
