@@ -502,6 +502,7 @@ sap.ui.define([
 				assert.strictEqual(oClearStub.callCount, 1, "and cleared");
 				const oInfoSession = FlexInfoSession.getByReference(sReference);
 				assert.strictEqual(oInfoSession.displayedAdaptationId, "id_5678", "the displayed adaptationId is provided by refreshAdaptationModel");
+				assert.strictEqual(oInfoSession.reloadFlexData, true, "the reloadFlexData is set");
 				assert.strictEqual(oInfoSession.version, sActiveVersion, "and active version is set by version model");
 				assert.strictEqual(this.oVersionsModel.getProperty("/displayedVersion"), sActiveVersion, "and displayed version is active version");
 				assert.strictEqual(this.oVersionsModel.getProperty("/persistedVersion"), sActiveVersion, "and persisted version is active version");
@@ -545,6 +546,7 @@ sap.ui.define([
 				assert.strictEqual(oClearStub.callCount, 1, "and cleared");
 				const oInfoSession = FlexInfoSession.getByReference(sReference);
 				assert.strictEqual(oInfoSession.displayedAdaptationId, "id_5678", "and set displayedAdaptationId");
+				assert.strictEqual(oInfoSession.reloadFlexData, true, "the reloadFlexData is set");
 				assert.strictEqual(oInfoSession.version, sActiveVersion, "and active version is set by version model");
 				assert.strictEqual(this.oVersionsModel.getProperty("/displayedVersion"), sActiveVersion,
 					"and displayed version is active version");
@@ -799,6 +801,7 @@ sap.ui.define([
 				assert.strictEqual(oAdaptationsRefreshStub.calledOnce, true, "then the Adaptation Model was refreshed");
 				const oInfoSession = FlexInfoSession.getByReference(sReference);
 				assert.strictEqual(oInfoSession.displayedAdaptationId, sDisplayedAdaptationId, "then the FlexState gets the correct adaptationId");
+				assert.strictEqual(oInfoSession.reloadFlexData, true, "the reloadFlexData is set");
 				assert.strictEqual(oDiscardInfo.backendChangesDiscarded, true, "then the discard outcome was returned");
 				assert.strictEqual(oDiscardInfo.dirtyChangesDiscarded, true, "then the discard outcome was returned");
 				const oCallingPropertyBag = oDiscardStub.getCall(0).args[0];
@@ -828,6 +831,7 @@ sap.ui.define([
 				assert.strictEqual(oClearStub.calledOnce, true, "then the FlexState was cleared");
 				const oInfoSession = FlexInfoSession.getByReference(sReference);
 				assert.strictEqual(oInfoSession.displayedAdaptationId, sDisplayedAdaptationId, "then the FlexState gets the correct adaptationId");
+				assert.strictEqual(oInfoSession.reloadFlexData, true, "the reloadFlexData is set");
 				assert.strictEqual(oDiscardInfo.backendChangesDiscarded, true, "then the discard outcome was returned");
 				assert.strictEqual(oDiscardInfo.dirtyChangesDiscarded, true, "then the discard outcome was returned");
 				assert.deepEqual(oDiscardStub.getCall(0).args[0].reference, sReference, "the reference was passed");

@@ -214,6 +214,7 @@ sap.ui.define([
 			const oFlexInfo = FlexInfoSession.getByReference(sReference);
 			oFlexInfo.version = mPropertyBag.version;
 			oFlexInfo.displayedAdaptationId = sDisplayedAdaptationId;
+			oFlexInfo.reloadFlexData = true;
 			FlexInfoSession.setByReference(oFlexInfo, sReference);
 			FlexState.clearState(sReference);
 		});
@@ -294,11 +295,12 @@ sap.ui.define([
 					layer: mPropertyBag.layer,
 					reference: sReference
 				});
+				const oFlexInfo = FlexInfoSession.getByReference(sReference);
+				oFlexInfo.reloadFlexData = true;
 				if (bHasAdaptationsModel) {
 					return ContextBasedAdaptationsAPI.refreshAdaptationModel(mPropertyBag)
 					.then(function(sDisplayedAdaptationId) {
 						// invalidate flexState to trigger getFlexData for the current active version after discard
-						const oFlexInfo = FlexInfoSession.getByReference(sReference);
 						oFlexInfo.displayedAdaptationId = sDisplayedAdaptationId;
 						FlexInfoSession.setByReference(oFlexInfo, sReference);
 						FlexState.clearState(sReference);
@@ -306,6 +308,7 @@ sap.ui.define([
 					});
 				}
 				// invalidate flexState to trigger getFlexData for the current active version after discard
+				FlexInfoSession.setByReference(oFlexInfo, sReference);
 				FlexState.clearState(sReference);
 				return oDiscardInfo;
 			}

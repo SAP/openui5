@@ -908,7 +908,7 @@ sap.ui.define([
 			var oKeyUserConnectorStub = sandbox.stub(KeyUserConnector, "loadFlexData").resolves();
 			var oJsObjectConnectorStub = sandbox.stub(JsObjectConnector, "loadFlexData").resolves();
 
-			FlexInfoSession.setByReference({version: Version.Number.Draft}, "app.id");
+			FlexInfoSession.setByReference({version: Version.Number.Draft, reloadFlexData: true}, "app.id");
 			window.sessionStorage.setItem("sap.ui.rta.restart.CUSTOMER", true);
 
 			return Storage.loadFlexData({
@@ -932,7 +932,7 @@ sap.ui.define([
 			var oLrepConnectorStub = sandbox.stub(LrepConnector, "loadFlexData").resolves();
 			var oJsObjectConnectorStub = sandbox.stub(JsObjectConnector, "loadFlexData").resolves();
 
-			FlexInfoSession.setByReference({version: Version.Number.Draft}, "app.id");
+			FlexInfoSession.setByReference({version: Version.Number.Draft, reloadFlexData: true}, "app.id");
 			window.sessionStorage.setItem("sap.ui.rta.restart.CUSTOMER", true);
 
 			return Storage.loadFlexData({
