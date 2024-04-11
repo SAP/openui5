@@ -4,6 +4,7 @@
 
 sap.ui.define([
 	"sap/base/util/restricted/_omit",
+	"sap/base/util/Deferred",
 	"sap/base/util/each",
 	"sap/base/util/merge",
 	"sap/base/util/ObjectPath",
@@ -22,6 +23,7 @@ sap.ui.define([
 	"sap/ui/fl/requireAsync"
 ], function(
 	_omit,
+	Deferred,
 	each,
 	merge,
 	ObjectPath,
@@ -350,30 +352,25 @@ sap.ui.define([
 		return mFilteredReturn;
 	}
 
-	function loadFlexData(mPropertyBag) {
-		_mInitPromises[mPropertyBag.reference] = Loader.loadFlexData(mPropertyBag)
-		.then(async (mResponse) => {
-			mResponse.authors = await Loader.loadVariantsAuthors(mPropertyBag.reference);
-			return mResponse;
-		}).then((mResponse) => {
-			// The following line is used by the Flex Support Tool to set breakpoints - please adjust the tool if you change it!
-			_mInstances[mPropertyBag.reference] = merge({}, {
-				unfilteredStorageResponse: mResponse,
-				preparedMaps: {},
-				componentId: mPropertyBag.componentId,
-				componentData: mPropertyBag.componentData,
-				partialFlexState: mPropertyBag.partialFlexState
-			});
+	async function loadFlexData(mPropertyBag) {
+		const mResponse = await Loader.loadFlexData(mPropertyBag);
+		mResponse.authors = await Loader.loadVariantsAuthors(mPropertyBag.reference);
 
-			storeInfoInSession(mPropertyBag.reference, mResponse);
-
-			// no further changes to storageResponse properties allowed
-			Object.freeze(_mInstances[mPropertyBag.reference].storageResponse);
-			Object.freeze(_mInstances[mPropertyBag.reference].unfilteredStorageResponse);
-			return mResponse;
+		// The following line is used by the Flex Support Tool to set breakpoints - please adjust the tool if you change it!
+		_mInstances[mPropertyBag.reference] = merge({}, {
+			unfilteredStorageResponse: mResponse,
+			preparedMaps: {},
+			componentId: mPropertyBag.componentId,
+			componentData: mPropertyBag.componentData,
+			partialFlexState: mPropertyBag.partialFlexState
 		});
 
-		return _mInitPromises[mPropertyBag.reference];
+		storeInfoInSession(mPropertyBag.reference, mResponse);
+
+		// no further changes to storageResponse properties allowed
+		Object.freeze(_mInstances[mPropertyBag.reference].storageResponse);
+		Object.freeze(_mInstances[mPropertyBag.reference].unfilteredStorageResponse);
+		return mResponse;
 	}
 
 	function storeInfoInSession(sReference, mResponse) {
@@ -436,30 +433,45 @@ sap.ui.define([
 	 * @param {boolean} [mPropertyBag.partialFlexState=false] - if true state is initialized partially and does not include flex bundles
 	 * @returns {Promise<undefined>} Resolves a promise as soon as FlexState is initialized
 	 */
-	FlexState.initialize = function(mPropertyBag) {
-		return Promise.all([
-			lazyLoadModules()
-		])
-		.then(function() {
-			enhancePropertyBag(mPropertyBag);
-			var sFlexReference = mPropertyBag.reference;
+	FlexState.initialize = async function(mPropertyBag) {
+		enhancePropertyBag(mPropertyBag);
+		const sFlexReference = mPropertyBag.reference;
 
-			if (_mInitPromises[sFlexReference]) {
-				return _mInitPromises[sFlexReference]
-				.then(checkPartialFlexState.bind(null, mPropertyBag))
-				.then(checkComponentId)
-				.then(function(mEvaluatedProperties) {
-					return mEvaluatedProperties.reInitialize
-						? loadFlexData(mEvaluatedProperties)
-						: _mInstances[sFlexReference].unfilteredStorageResponse;
-				});
+		const oOldInitPromise = _mInitPromises[sFlexReference];
+		const oNewInitPromise = new Deferred();
+		_mInitPromises[sFlexReference] = oNewInitPromise;
+		await lazyLoadModules();
+
+		if (oOldInitPromise) {
+			await oOldInitPromise.promise;
+			checkPartialFlexState(mPropertyBag);
+			checkComponentId(mPropertyBag);
+			if (mPropertyBag.reInitialize) {
+				await loadFlexData(mPropertyBag);
 			}
+		} else {
+			await loadFlexData(mPropertyBag);
+		}
 
-			return loadFlexData(mPropertyBag);
-		})
-		.then(function(mPropertyBag) {
-			initializeNewInstance(mPropertyBag);
-		}.bind(null, mPropertyBag));
+		initializeNewInstance(mPropertyBag);
+		oNewInitPromise.resolve();
+	};
+
+	/**
+	 * Waits until the FlexState is initialized
+	 * This is only necessary if <code>FlexState.initialize</code> cannot be called directly
+	 * due to missing information for the backend request (e.g. asyncHints)
+	 *
+	 * @param {string} sFlexReference - Flex reference of the app
+	 * @returns {Promise<undefined>} Promise that resolves as soon as FlexState is initialized
+	 */
+	FlexState.waitForInitialization = function(sFlexReference) {
+		const oInitPromise = _mInitPromises[sFlexReference]?.promise;
+		if (!oInitPromise) {
+			Log.error("FlexState.waitForInitialization was called before FlexState.initialize");
+			return Promise.resolve();
+		}
+		return oInitPromise;
 	};
 
 	/**
@@ -505,7 +517,7 @@ sap.ui.define([
 	 * @param {string} [mPropertyBag.adaptationId] - Context-based adaptation for which the state should be updated
 	 * @returns {Promise<undefined>} Resolves when the data is loaded and the runtime persistence is updated
 	 */
-	FlexState.update = function(mPropertyBag) {
+	FlexState.update = async function(mPropertyBag) {
 		enhancePropertyBag(mPropertyBag);
 		var sReference = mPropertyBag.reference;
 		var oCurrentRuntimePersistence = _mInstances[sReference].runtimePersistence;
@@ -519,19 +531,21 @@ sap.ui.define([
 			_oChangePersistenceFactory._instanceCache[sReference].removeDirtyChanges();
 		}
 
-		return (_mInitPromises[sReference] || Promise.resolve())
-		.then(loadFlexData.bind(this, mPropertyBag))
-		.then(function() {
-			_mInstances[sReference].storageResponse = filterByMaxLayer(sReference, _mInstances[sReference].unfilteredStorageResponse);
-			var bUpdated = updateRuntimePersistence(
-				sReference,
-				_mInstances[sReference].storageResponse,
-				oCurrentRuntimePersistence
-			);
-			if (bUpdated) {
-				oFlexObjectsDataSelector.checkUpdate({ reference: sReference });
-			}
-		});
+		const oOldInitPromise = _mInitPromises[sReference].promise;
+		const oNewInitPromise = new Deferred();
+		_mInitPromises[sReference] = oNewInitPromise;
+		await oOldInitPromise;
+		await loadFlexData(mPropertyBag);
+		oNewInitPromise.resolve();
+		_mInstances[sReference].storageResponse = filterByMaxLayer(sReference, _mInstances[sReference].unfilteredStorageResponse);
+		var bUpdated = updateRuntimePersistence(
+			sReference,
+			_mInstances[sReference].storageResponse,
+			oCurrentRuntimePersistence
+		);
+		if (bUpdated) {
+			oFlexObjectsDataSelector.checkUpdate({ reference: sReference });
+		}
 	};
 
 	function getChangeCategory(oChangeDefinition) {
@@ -824,7 +838,7 @@ sap.ui.define([
 	// TODO: also used by the CompVariantState to mutate the storage response, this has to be changed
 	FlexState.getStorageResponse = function(sReference) {
 		if (_mInitPromises[sReference]) {
-			return _mInitPromises[sReference].then(function() {
+			return _mInitPromises[sReference].promise.then(function() {
 				return _mInstances[sReference].unfilteredStorageResponse;
 			});
 		}

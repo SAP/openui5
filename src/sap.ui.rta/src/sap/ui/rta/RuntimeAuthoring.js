@@ -591,6 +591,7 @@ sap.ui.define([
 			checkToolbarAndExecuteFunction.call(this, "hide", bSkipSave);
 			this.fireStop();
 			if (!bSkipRestart) {
+				ReloadInfoAPI.removeInfoSessionStorage(this.getRootControlInstance());
 				ReloadManager.handleReloadOnExit(oReloadInfo);
 			}
 			VersionsAPI.clearInstances();

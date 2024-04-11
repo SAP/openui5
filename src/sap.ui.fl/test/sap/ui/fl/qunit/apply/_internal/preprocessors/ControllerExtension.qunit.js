@@ -95,7 +95,7 @@ sap.ui.define([
 		/**
 		 * @deprecated Since version 1.58 due to <code>sap.ui.base.Metadata.getPublicMethods</code> deprecation
 		 */
-		QUnit.test("When a component id is provided and one code extension with two methods is present", async function(assert) {
+		QUnit.test("When a component id is provided and one code extension with two methods is present", function(assert) {
 			var sModuleName = "sap/ui/fl/qunit/ControllerExtension/1.0.0/codeExtensions/firstCodeExt";
 			sap.ui.define(sModuleName, ["sap/ui/core/mvc/ControllerExtension"], function(ControllerExtension) { // legacy-relevant: simulates a loaded code extension. no option to replace this regarding legacy free coding
 				return ControllerExtension.extend("ui.s2p.mm.purchorder.approve.Extension1", {
@@ -141,7 +141,10 @@ sap.ui.define([
 				},
 				getManifestEntry() {}
 			};
-			await FlQUnitUtils.initializeFlexStateWithData(sandbox, "ui.s2p.mm.purchorder.approve.view.S2", {changes: [oChange]});
+			// Don't await the initialization here because in real apps the getControllerExtensions flow
+			// might be called before the FlexState is fully initialized and thus should be able to take
+			// care of waiting for it
+			FlQUnitUtils.initializeFlexStateWithData(sandbox, "ui.s2p.mm.purchorder.approve.view.S2", {changes: [oChange]});
 			sandbox.stub(Utils, "getAppComponentForControl").returns(oAppComponent);
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sControllerName);
 

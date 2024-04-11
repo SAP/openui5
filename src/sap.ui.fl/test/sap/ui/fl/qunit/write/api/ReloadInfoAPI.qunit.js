@@ -548,9 +548,7 @@ sap.ui.define([
 			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
 
 			var oExpectedReloadInfo = ReloadInfoAPI.getReloadMethod(oReloadInfo);
-			var oFlexInfoFronSession = JSON.parse(window.sessionStorage.getItem("sap.ui.fl.info.true"));
 			assert.equal(oExpectedReloadInfo.reloadMethod, this.oRELOAD.VIA_HASH, "then VIA_HASH reloadMethod was set");
-			assert.equal(oFlexInfoFronSession, null, "then allContexts is null in session storage");
 		});
 
 		QUnit.test("and isEndUserAdaptation is true and there are also no other reasons for reload", function(assert) {

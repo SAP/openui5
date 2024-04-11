@@ -105,6 +105,37 @@ sap.ui.define([
 			}.bind(this));
 		});
 
+		QUnit.test("when waiting for the state initialization", async function(assert) {
+			const oLogErrorStub = sandbox.stub(Log, "error");
+			await FlexState.waitForInitialization(sReference);
+			assert.strictEqual(
+				oLogErrorStub.withArgs("FlexState.waitForInitialization was called before FlexState.initialize").callCount,
+				1,
+				"then before the init call the promise resolves immediately but an error is logged"
+			);
+
+			const oFlexInitPromise = FlexState.initialize({
+				reference: sReference,
+				componentId: sComponentId
+			});
+			const fnAfterInitializationFake = sandbox.stub();
+			FlexState.waitForInitialization(sReference).then(fnAfterInitializationFake);
+			assert.strictEqual(
+				fnAfterInitializationFake.callCount,
+				0,
+				"then the promise is not resolved before the initialization is finished"
+			);
+
+			// Finish initialization
+			await oFlexInitPromise;
+
+			assert.strictEqual(
+				fnAfterInitializationFake.callCount,
+				1,
+				"then the promise is resolved after the initialization is finished"
+			);
+		});
+
 		QUnit.test("When a FlexObject is added and removed", async function(assert) {
 			await FlexState.initialize({
 				reference: sReference,
