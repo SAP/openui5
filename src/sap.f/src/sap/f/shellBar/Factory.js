@@ -169,9 +169,10 @@ sap.ui.define([
 				press: function (oEvent) {
 					var oSource = oEvent.getSource();
 					oSource.getIcon() === "sap-icon://da" ? oSource.setIcon("sap-icon://da-2") : oSource.setIcon("sap-icon://da");
+					oSource.toggleStyleClass("sapFShellBarItemActive");
 					this._oContext.fireEvent("copilotPressed", {image: null, button: this._oControls.oCopilot});
 				}.bind(this)
-			})
+			}).addStyleClass("sapFShellBarAssistantBtn")
 			.setLayoutData(new OverflowToolbarLayoutData({
 				priority: OverflowToolbarPriority.Low
 			}));
