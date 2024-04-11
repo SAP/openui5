@@ -59,7 +59,14 @@
                                                 id="fbSelectBuildingDialog"
                                                 delegate="{name: 'mdc/sample/delegate/JSONFilterBarDelegate', payload: {}}">
                                                 <vhfb:filterItems>
-                                                    <mdc:FilterField id="ffCountry" label="Country" dataType= "String" display="Description" propertyKey="buildingCountry" conditions= "{$filters>/conditions/buildingCountry}" valueHelp= "vhCountry">
+                                                    <mdc:FilterField
+                                                        id="ffCountry"
+                                                        label="Country"
+                                                        dataType= "String"
+                                                        display="Description"
+                                                        propertyKey="buildingCountry"
+                                                        conditions= "{$filters>/conditions/buildingCountry}"
+                                                        valueHelp= "vhCountry">
                                                         <mdc:dependents>
                                                             <mdc:ValueHelp
                                                                 id="vhCountry"
@@ -72,60 +79,60 @@
                                                                                 items='{path : "facilities>/countries", sorter: { path: "name", ascending: "true" }  }'
                                                                                 width="20rem"
                                                                                 mode="MultiSelect">
-                                                                            <columns>
-                                                                                <Column/>
-                                                                            </columns>
-                                                                            <items>
-                                                                                <ColumnListItem type="Active">
-                                                                                    <Text text="{facilities>name}"/>
-                                                                                </ColumnListItem>
-                                                                            </items>
-                                                                        </Table>
-                                                                    </mdcvc:MTable>
-                                                                </mdcv:Popover>
-                                                            </mdc:typeahead>
-                                                        </mdc:ValueHelp>
-                                                    </mdc:dependents>
-                                                </mdc:FilterField>
-                                                <mdc:FilterField
-                                                    id="ffLocation"
-                                                    label="Location"
-                                                    dataType= "String"
-                                                    display="Description"
-                                                    propertyKey="buildingLocation"
-                                                    conditions="{$filters>/conditions/buildingLocation}"
-                                                    valueHelp="vhLocation">
-                                                </mdc:FilterField>
+                                                                                <columns>
+                                                                                    <Column/>
+                                                                                </columns>
+                                                                                <items>
+                                                                                    <ColumnListItem type="Active">
+                                                                                        <Text text="{facilities>name}"/>
+                                                                                    </ColumnListItem>
+                                                                                </items>
+                                                                            </Table>
+                                                                        </mdcvc:MTable>
+                                                                    </mdcv:Popover>
+                                                                </mdc:typeahead>
+                                                            </mdc:ValueHelp>
+                                                        </mdc:dependents>
+                                                    </mdc:FilterField>
+                                                    <mdc:FilterField
+                                                        id="ffLocation"
+                                                        label="Location"
+                                                        dataType= "String"
+                                                        display="Description"
+                                                        propertyKey="buildingLocation"
+                                                        conditions="{$filters>/conditions/buildingLocation}"
+                                                        valueHelp="vhLocation">
+                                                        <mdc:dependents>
+                                                            <mdc:ValueHelp
+                                                                id="vhLocation"
+                                                                delegate="{name: 'mdc/sample/delegate/JSONValueHelpDelegate', payload: {}}">
+                                                                <mdc:typeahead>
+                                                                    <mdcv:Popover title="Location Selection">
+                                                                        <mdcvc:MTable
+                                                                            id="locationTypeAhead"
+                                                                            keyPath="id"
+                                                                            descriptionPath="name">
+                                                                            <Table
+                                                                                id="taTableLocation"
+                                                                                items='{path : "facilities>/locations", sorter: { path: "name", ascending: "true" }  }'
+                                                                                width="20rem"
+                                                                                mode="MultiSelect">
+                                                                                <columns>
+                                                                                    <Column/>
+                                                                                </columns>
+                                                                                <items>
+                                                                                    <ColumnListItem type="Active">
+                                                                                        <Text text="{facilities>name}"/>
+                                                                                    </ColumnListItem>
+                                                                                </items>
+                                                                            </Table>
+                                                                        </mdcvc:MTable>
+                                                                    </mdcv:Popover>
+                                                                </mdc:typeahead>
+                                                            </mdc:ValueHelp>
+                                                        </mdc:dependents>
+                                                    </mdc:FilterField>
                                                 </vhfb:filterItems>
-                                                <vhfb:dependents>
-                                                    <mdc:ValueHelp
-                                                        id="vhLocation"
-                                                        delegate="{name: 'mdc/sample/delegate/JSONValueHelpDelegate', payload: {}}">
-                                                        <mdc:typeahead>
-                                                            <mdcv:Popover title="Location Selection">
-                                                                <mdcvc:MTable
-                                                                    id="locationTypeAhead"
-                                                                    keyPath="id"
-                                                                    descriptionPath="name">
-                                                                    <Table
-                                                                        id="taTableLocation"
-                                                                        items='{path : "facilities>/locations", sorter: { path: "name", ascending: "true" }  }'
-                                                                        width="20rem"
-                                                                        mode="MultiSelect">
-                                                                        <columns>
-                                                                            <Column/>
-                                                                        </columns>
-                                                                        <items>
-                                                                            <ColumnListItem type="Active">
-                                                                                <Text text="{facilities>name}"/>
-                                                                            </ColumnListItem>
-                                                                        </items>
-                                                                    </Table>
-                                                                </mdcvc:MTable>
-                                                            </mdcv:Popover>
-                                                        </mdc:typeahead>
-                                                    </mdc:ValueHelp>
-                                                </vhfb:dependents>
                                             </vhfb:FilterBar>
                                         </mdcvc:filterBar>
                                         <mdc:Table id="mdcTableBuildings"

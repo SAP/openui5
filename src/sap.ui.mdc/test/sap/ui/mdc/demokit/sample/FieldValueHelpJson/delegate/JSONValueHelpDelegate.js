@@ -1,15 +1,11 @@
 sap.ui.define([
 	"sap/ui/mdc/ValueHelpDelegate",
 	"sap/ui/mdc/p13n/StateUtil",
-	"sap/ui/model/Filter",
-	"sap/ui/model/FilterOperator",
 	"sap/ui/mdc/condition/Condition",
 	"sap/ui/mdc/enums/ConditionValidated"
 ], function (
 	ValueHelpDelegate,
 	StateUtil,
-	Filter,
-	FilterOperator,
 	Condition,
 	ConditionValidated
 ) {
@@ -34,14 +30,15 @@ sap.ui.define([
 
 	// This delegate method sets the out-parameter for the "Country"
 	JSONValueHelpDelegate.onConditionPropagation = function (oValueHelp, sReason, oConfig) {
-		const oFilterBar = oValueHelp.getParent();
-
 		if (sReason !== "ControlChange") {
 			return;
 		}
 
+		const oFilterField = oValueHelp.getParent();
+		const oFilterBar = oFilterField.getParent();
+
 		// find all conditions carrying country information
-		const aAllConditionCountrysAndRegions = oFilterBar && oFilterBar.getConditions().reduce(function (aResult, oCondition) {
+		const aAllConditionCountrysAndRegions = oFilterField?.getConditions().reduce(function (aResult, oCondition) {
 			if (oCondition.payload) {
 				Object.values(oCondition.payload).forEach(function (aSegments) {
 					aSegments.forEach(function (oSegment) {
@@ -53,7 +50,6 @@ sap.ui.define([
 			}
 			return aResult;
 		}, []);
-
 
 		if (aAllConditionCountrysAndRegions?.length) {
 			StateUtil.retrieveExternalState(oFilterBar).then(function (oState) {
@@ -78,7 +74,4 @@ sap.ui.define([
 	};
 
 	return JSONValueHelpDelegate;
-
-}
-
-);
+});
