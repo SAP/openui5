@@ -9,6 +9,7 @@ sap.ui.define([
 	return UIComponent.extend("sap.ui.demo.cart.Component", {
 
 		metadata: {
+			interfaces: ["sap.ui.core.IAsyncContentCreation"],
 			manifest: "json"
 		},
 

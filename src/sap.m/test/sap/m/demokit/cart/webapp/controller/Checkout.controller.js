@@ -1,25 +1,21 @@
 sap.ui.define([
 	"./BaseController",
-	"../model/cart",
 	"../model/EmailType",
 	"../model/formatter",
 	"sap/m/Link",
 	"sap/m/MessageBox",
 	"sap/m/MessageItem",
 	"sap/m/MessagePopover",
-	"sap/ui/Device",
 	"sap/ui/core/Messaging",
 	"sap/ui/model/json/JSONModel"
 ], function (
 	BaseController,
-	cart,
 	EmailType,
 	formatter,
 	Link,
 	MessageBox,
 	MessageItem,
 	MessagePopover,
-	Device,
 	Messaging,
 	JSONModel
 ) {
@@ -98,7 +94,8 @@ sap.ui.define([
 		 * @param {sap.ui.base.Event} oEvent Press event of the button to display the MessagePopover
 		 */
 		onShowMessagePopoverPress: function (oEvent) {
-			var oButton = oEvent.getSource();
+			var oButton = oEvent.getSource(),
+				oMessagePopover;
 
 			var oLink = new Link({
 				text: "Show more information",
@@ -117,7 +114,7 @@ sap.ui.define([
 			});
 
 			if (!this.byId("errorMessagePopover")) {
-				var oMessagePopover = new MessagePopover(this.createId("messagePopover"), {
+				oMessagePopover = new MessagePopover(this.createId("messagePopover"), {
 					items: {
 						path: 'message>/',
 						template: oMessageTemplate
@@ -229,6 +226,7 @@ sap.ui.define([
 		/**
 		 * Checks the corresponding step after activation to decide whether the user can proceed or needs
 		 * to correct the input
+		 * @param {sap.ui.base.Event} oEvent Event object
 		 */
 		onCheckStepActivation: function(oEvent) {
 			this._clearMessages();
@@ -280,7 +278,7 @@ sap.ui.define([
 		/**
 		 * Checks if one or more of the inputs are empty
 		 * @param {array} aInputIds - Input ids to be checked
-		 * @returns {boolean}
+		 * @returns {boolean} Whether at least one input field contains invalid data
 		 * @private
 		 */
 		_checkInputFields : function (aInputIds) {
