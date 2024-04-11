@@ -349,34 +349,6 @@ sap.ui.define([
 					}
 				},
 				/**
-				 * This event is fired when the user starts dragging an uploaded item.
-				 * @event
-				 * @param {sap.ui.base.Event} oControlEvent
-				 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
-				 * @param {object} oControlEvent.getParameters
-				 * @param {sap.ui.core.Element} oControlEvent.getParameters.target The target element that is dragged
-				 * @param {sap.ui.core.dnd.DragSession} oControlEvent.getParameters.dragSession The UI5 <code>dragSession</code> object that exists only during drag and drop
-				 * @param {Event} oControlEvent.getParameters.browserEvent The underlying browser event
-				 * @public
-				 */
-				itemDragStart: {
-				},
-				/**
-				 * This event is fired when an uploaded item is dropped on the new table row position.
-				 * @event
-				 * @param {sap.ui.base.Event} oControlEvent
-				 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
-				 * @param {object} oControlEvent.getParameters
-				 * @param {sap.ui.core.dnd.DragSession} oControlEvent.getParameters.dragSession The UI5 <code>dragSession</code> object that exists only during drag and drop
-				 * @param {sap.ui.core.Element} oControlEvent.getParameters.draggedControl The element being dragged
-				 * @param {sap.ui.core.Element} oControlEvent.getParameters.droppedControl The element being dropped
-				 * @param {sap.ui.core.dnd.RelativeDropPosition} oControlEvent.getParameters.dropPosition The calculated position of the drop action relative to the <code>droppedControl</code>.
-				 * @param {Event} oControlEvent.getParameters.browserEvent The underlying browser event
-				 * @public
-				 */
-				itemDrop: {
-				},
-				/**
 				 * This event is fired when plugin is activated.
 				 */
                 onActivated: {
@@ -1145,14 +1117,6 @@ sap.ui.define([
 				return oEntry.entryType === sType;
 			});
 		}
-	};
-
-	UploadSetwithTable.prototype._onDragStartItem = function (oEvent) {
-		this.fireItemDragStart(oEvent);
-	};
-
-	UploadSetwithTable.prototype._onDropItem = function (oEvent) {
-		this.fireItemDrop(oEvent);
 	};
 
 	UploadSetwithTable.prototype._onDragEnterFile = function (oEvent) {
