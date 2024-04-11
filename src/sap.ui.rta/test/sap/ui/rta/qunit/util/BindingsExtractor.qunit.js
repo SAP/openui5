@@ -161,6 +161,23 @@ sap.ui.define([
 			);
 		});
 
+		QUnit.test("when collecting the BindingPaths for the Smart Form Group bound to EntityType02 and main data model, and providing a depth", function(assert) {
+			var oMainModel = this.oView.getModel();
+			var oGroup = this.oView.byId("GroupEntityType02");
+			var oGroupElement = this.oView.byId("EntityType02.CompProp1");
+			var oForm = this.oView.byId("MainForm");
+			var mBindings = BindingsExtractor.collectBindingPaths(oGroup, oMainModel, null, 1);
+
+			assert.ok(
+				!mBindings.bindingPaths.includes(oGroupElement.getFields()[0].getBindingPath("value")),
+				"the bound property inside the group element field is not found"
+			);
+			assert.ok(
+				!mBindings.bindingContextPaths.includes(oForm.getBindingContext().getPath()),
+				"the bound property inside the form is not found"
+			);
+		});
+
 		QUnit.test("when getBindingContextPath is called for element without bindingContext", function(assert) {
 			var oElementWithoutContext = new Button("my-new-button");
 			assert.strictEqual(BindingsExtractor.getBindingContextPath(oElementWithoutContext),

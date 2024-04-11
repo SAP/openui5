@@ -26,11 +26,12 @@ function(
 	 * @param {sap.ui.core.Control} oElement - Starting point of the search
 	 * @param {sap.ui.model.Model} oModel - Model for filtering irrelevant binding paths
 	 * @param {sap.ui.core.Control} [oRelevantContainerElement] - if this element is given then only bindings from element related to the relevant container are considered
+	 * @param {number} iDepth - If provided only bindings from children up to the given depth are considered
 	 * @returns {{bindingPaths: Array, bindingContextPaths: Array}} - returns with all relevant bindingPaths and all bindingContextPaths for all properties of the element
 	 *
 	 * @private
 	 */
-	BindingsExtractor.collectBindingPaths = function(oElement, oModel, oRelevantContainerElement) {
+	BindingsExtractor.collectBindingPaths = function(oElement, oModel, oRelevantContainerElement, iDepth) {
 		var mBindingsCollection = {
 			bindingPaths: [],
 			bindingContextPaths: []
@@ -41,7 +42,8 @@ function(
 			element: oElement,
 			model: oModel,
 			relevantContainerElement: oRelevantContainerElement,
-			parent: oParent
+			parent: oParent,
+			depth: iDepth
 		});
 
 		if (oParent) {
@@ -58,13 +60,16 @@ function(
 
 					if (oTemplateDefaultAggregation) {
 						var sTemplateDefaultAggregationName = oTemplateDefaultAggregation.name;
-						var oTemplateElement = ElementUtil.getAggregation(oTemplate, sTemplateDefaultAggregationName)[iPositionOfInvisibleElement];
+						var oTemplateElement = ElementUtil.getAggregation(
+							oTemplate, sTemplateDefaultAggregationName
+						)[iPositionOfInvisibleElement];
 						aBindings = aBindings.concat(BindingsExtractor.getBindings({
 							model: oModel,
 							element: oTemplateElement,
 							template: true,
 							relevantContainerElement: oRelevantContainerElement,
-							parent: oParent
+							parent: oParent,
+							depth: iDepth
 						}));
 					}
 				}
@@ -135,15 +140,24 @@ function(
 		}
 		var aAggregationNames = sAggregationName ? [sAggregationName] : Object.keys(oElement.getMetadata().getAllAggregations());
 
-		aAggregationNames.forEach(function(sAggregationNameInLoop) {
-			aBindings = aBindings.concat(getBindingsForAggregation(oElement, oModel, mPropertyBag.template, sAggregationNameInLoop, oRelevantContainerElement));
-		});
+		if (!Number.isInteger(mPropertyBag.depth) || mPropertyBag.depth > 0) {
+			aAggregationNames.forEach(function(sAggregationNameInLoop) {
+				aBindings = aBindings.concat(getBindingsForAggregation(
+					oElement,
+					oModel,
+					mPropertyBag.template,
+					sAggregationNameInLoop,
+					oRelevantContainerElement,
+					mPropertyBag.depth && mPropertyBag.depth - 1
+				));
+			});
+		}
 
 		// Remove duplicates
 		return _uniqWith(aBindings, deepEqual);
 	};
 
-	function getBindingsForAggregation(oElement, oModel, bTemplate, sAggregationName, oRelevantContainerElement) {
+	function getBindingsForAggregation(oElement, oModel, bTemplate, sAggregationName, oRelevantContainerElement, iDepth) {
 		var aBindings = [];
 		var aElements = [];
 		var oTemplate;
@@ -183,7 +197,8 @@ function(
 						model: oModel,
 						template: bIsInTemplate,
 						relevantContainerElement: oRelevantContainerElement,
-						parent: oElement
+						parent: oElement,
+						depth: iDepth
 					})
 				);
 			}
