@@ -1255,6 +1255,7 @@ sap.ui.define([
 	 * @param {boolean} bAsyncMode Whether or not the component is loaded in async mode
 	 * @returns {Promise[]|null} An array of promises from then loaded services
 	 * @private
+	 * @ui5-transform-hint replace-param bAsyncMode true
 	 */
 	function activateServices(oComponent, bAsyncMode) {
 		var oServices = oComponent._getManifestEntry("/sap.ui5/services", true);
@@ -1531,6 +1532,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.core.ComponentContainer
+	 * @ui5-transform-hint replace-param mConfig.async true
 	 */
 	Component._createComponent = function(mConfig, oOwnerComponent) {
 
@@ -2092,6 +2094,10 @@ sap.ui.define([
 		return mModelConfigurations;
 	};
 
+	/**
+	 * @private
+	 * @ui5-transform-hint replace-param bSync false
+	 */
 	Component._loadManifestModelClasses = function(mModelConfigurations, sLogComponentName, bSync) {
 		const aLoadPromises = [];
 
@@ -3232,6 +3238,10 @@ sap.ui.define([
 			return vObj;
 		}
 
+		/**
+		 * @private
+		 * @ui5-transform-hint replace-param bAsync true
+		 */
 		function preload(sComponentName, bAsync) {
 
 			var sController = sComponentName + '.Component',
@@ -3269,19 +3279,23 @@ sap.ui.define([
 						sPreloadName = sController.replace(/\./g, "/") + (http2 ? '-h2-preload.js' : '-preload.js'); // URN
 						return sap.ui.loader._.loadJSResourceAsync(sPreloadName).catch(errorLogging(sPreloadName, true));
 					}
-				}
-
-				try {
-					sPreloadName = sController + '-preload'; // Module name
-					sap.ui.requireSync(sPreloadName.replace(/\./g, "/")); // legacy-relevant: Sync path
-				} catch (e) {
-					errorLogging(sPreloadName, false)(e);
+				} else {
+					try {
+						sPreloadName = sController + '-preload'; // Module name
+						sap.ui.requireSync(sPreloadName.replace(/\./g, "/")); // legacy-relevant: Sync path
+					} catch (e) {
+						errorLogging(sPreloadName, false)(e);
+					}
 				}
 			} else if (bAsync) {
 				return Promise.resolve();
 			}
 		}
 
+		/**
+		 * @private
+		 * @ui5-transform-hint replace-param bAsync true
+		 */
 		function preloadDependencies(sComponentName, oManifest, bAsync) {
 
 			var aPromises = [];
