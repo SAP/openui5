@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/m/ToolbarSpacer",
 	"sap/m/Button",
 	"sap/m/ButtonRenderer",
+	"sap/m/ComboBox",
 	"sap/m/library",
 	"sap/ui/core/library",
 	"sap/ui/thirdparty/jquery",
@@ -52,6 +53,7 @@ sap.ui.define([
 	ToolbarSpacer,
 	Button,
 	ButtonRenderer,
+	ComboBox,
 	mobileLibrary,
 	coreLibrary,
 	jQuery,
@@ -4007,6 +4009,58 @@ sap.ui.define([
 		//Clean up
 		oOverflowToolbarToggleButton.destroy();
 	});
+
+	QUnit.test("getControlConfig ComboBox", function (assert) {
+		// Arrange
+		var oComboBox = new ComboBox(),
+			oConfig;
+
+		// Act
+		oConfig = OverflowToolbarAssociativePopoverControls.getControlConfig(oComboBox);
+
+		// Assert
+		assert.strictEqual(oConfig.canOverflow, true, "oComboBox can overflow");
+		assert.ok(oConfig.noInvalidationProps.indexOf("enabled") > -1, "ComboBox does not invalidate on 'enabled' property change");
+		assert.ok(oConfig.noInvalidationProps.indexOf("value") > -1, "ComboBox does not invalidate on 'value' property change");
+		assert.ok(oConfig.noInvalidationProps.indexOf("selectedItemId") > -1, "ComboBox does not invalidate on 'selectedItemId' property change");
+		assert.ok(oConfig.noInvalidationProps.indexOf("selectedKey") > -1, "ComboBox does not invalidate on 'selectedKey' property change");
+		assert.ok(oConfig.noInvalidationProps.indexOf("open") > -1, "ComboBox does not invalidate on 'open' property change");
+		assert.ok(oConfig.noInvalidationProps.indexOf("_open") > -1, "ComboBox does not invalidate on '_open' property change");
+		assert.ok(oConfig.noInvalidationProps.indexOf("effectiveShowClearIcon") > -1, "ComboBox does not invalidate on 'effectiveShowClearIcon' property change");
+
+		//Clean up
+		oComboBox.destroy();
+	});
+
+	QUnit.test("Popover menu is not closed with click on ComboBox", function (assert) {
+		// Arrange
+		var oComboBox = new ComboBox({
+			layoutData: new OverflowToolbarLayoutData({
+					closeOverflowOnInteraction: false,
+					priority: OverflowToolbarPriority.AlwaysOverflow
+				})
+			}),
+			oOTB = new OverflowToolbar({
+				content: [oComboBox]
+			}),
+			oSpy;
+
+		oOTB.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		oSpy = this.spy(oOTB._getPopover(), "close");
+
+		// Act
+		oOTB._getOverflowButton().firePress();
+		oComboBox.getArrowIcon().firePress();
+
+		// Assert
+		assert.ok(oSpy.notCalled, "Popover menu is not closed");
+
+		//Clean up
+		oOTB.destroy();
+	});
+
 
 	QUnit.test("Check Button's 'type' property change when inside Overflow Popover", function(assert) {
 		var oButton = new Button({
