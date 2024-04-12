@@ -67,7 +67,7 @@ sap.ui.define([
 						oProduct.DeliveryDate = Date.now() - (i % 10 * 4 * 24 * 60 * 60 * 1000);
 						oProduct.DeliveryDateStr = oDateFormat.format(UI5Date.getInstance(oProduct.DeliveryDate));
 						oProduct.Heavy = oProduct.WeightMeasure > 1000 ? "true" : "false";
-						oProduct.Available = oProduct.Status == "Available" ? true : false;
+						oProduct.Available = oProduct.Status === "Available" ? true : false;
 					}
 
 					oData.Suppliers = aSuppliersData;
@@ -94,7 +94,7 @@ sap.ui.define([
 		onColumnMenuOpen: function(oEvent) {
 			const oCurrentColumn = oEvent.getSource();
 			const oImageColumn = this.byId("image");
-			if (oCurrentColumn != oImageColumn) {
+			if (oCurrentColumn !== oImageColumn) {
 				return;
 			}
 
@@ -107,7 +107,7 @@ sap.ui.define([
 				return; //Do not use context menus on touch devices
 			}
 
-			if (oEvent.getParameter("columnId") != this.getView().createId("productId")) {
+			if (oEvent.getParameter("columnId") !== this.getView().createId("productId")) {
 				return; //Custom context menu for product id column only
 			}
 
@@ -141,7 +141,7 @@ sap.ui.define([
 		onQuantitySort: function(oEvent) {
 			const bAdd = oEvent.getParameter("ctrlKey") === true;
 			const oColumn = this.byId("quantity");
-			const sOrder = oColumn.getSortOrder() == "Ascending" ? "Descending" : "Ascending";
+			const sOrder = oColumn.getSortOrder() === "Ascending" ? "Descending" : "Ascending";
 
 			this.byId("table").sort(oColumn, sOrder, bAdd);
 		},

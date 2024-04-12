@@ -723,8 +723,8 @@ sap.ui.define([
 
 		for (let i = 0; i < aColumns.length; i++) {
 			const oColumnRef = aColumns[i].getDomRef();
-			assert.equal(oColumnRef.getAttribute("draggable"), i == 0 ? null : "true", "Column " + i + " has correct value for draggable");
-			assert.equal(oColumnRef.getAttribute("data-sap-ui-draggable"), i == 0 ? null : "true", "Column " + i + " has correct value for data-sap-ui-draggable");
+			assert.equal(oColumnRef.getAttribute("draggable"), i === 0 ? null : "true", "Column " + i + " has correct value for draggable");
+			assert.equal(oColumnRef.getAttribute("data-sap-ui-draggable"), i === 0 ? null : "true", "Column " + i + " has correct value for data-sap-ui-draggable");
 		}
 
 		this.oDragAndDropExtension._ExtensionDelegate.ondragenter = function(oEvent) {

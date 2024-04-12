@@ -826,22 +826,22 @@ sap.ui.define([
 				aBetween = sValue.match(/(.*)\s*\.\.\s*(.*)/);
 
 				// determine the filter operator depending on the
-				if (sValue.indexOf("=") == 0) {
+				if (sValue.indexOf("=") === 0) {
 					sOperator = FilterOperator.EQ;
 					sParsedValue = sValue.substr(1);
-				} else if (sValue.indexOf("!=") == 0) {
+				} else if (sValue.indexOf("!=") === 0) {
 					sOperator = FilterOperator.NE;
 					sParsedValue = sValue.substr(2);
-				} else if (sValue.indexOf("<=") == 0) {
+				} else if (sValue.indexOf("<=") === 0) {
 					sOperator = FilterOperator.LE;
 					sParsedValue = sValue.substr(2);
-				} else if (sValue.indexOf("<") == 0) {
+				} else if (sValue.indexOf("<") === 0) {
 					sOperator = FilterOperator.LT;
 					sParsedValue = sValue.substr(1);
-				} else if (sValue.indexOf(">=") == 0) {
+				} else if (sValue.indexOf(">=") === 0) {
 					sOperator = FilterOperator.GE;
 					sParsedValue = sValue.substr(2);
-				} else if (sValue.indexOf(">") == 0) {
+				} else if (sValue.indexOf(">") === 0) {
 					sOperator = FilterOperator.GT;
 					sParsedValue = sValue.substr(1);
 				} else if (aBetween) {
@@ -856,13 +856,13 @@ sap.ui.define([
 						sOperator = FilterOperator.LE;
 						sParsedValue = aBetween[2];
 					}
-				} else if (bIsString && sValue.indexOf("*") == 0 && sValue.lastIndexOf("*") == sValue.length - 1) {
+				} else if (bIsString && sValue.indexOf("*") === 0 && sValue.lastIndexOf("*") === sValue.length - 1) {
 					sOperator = FilterOperator.Contains;
 					sParsedValue = sValue.substr(1, sValue.length - 2);
-				} else if (bIsString && sValue.indexOf("*") == 0) {
+				} else if (bIsString && sValue.indexOf("*") === 0) {
 					sOperator = FilterOperator.EndsWith;
 					sParsedValue = sValue.substr(1);
-				} else if (bIsString && sValue.lastIndexOf("*") == sValue.length - 1) {
+				} else if (bIsString && sValue.lastIndexOf("*") === sValue.length - 1) {
 					sOperator = FilterOperator.StartsWith;
 					sParsedValue = sValue.substr(0, sValue.length - 1);
 				} else {
@@ -970,7 +970,7 @@ sap.ui.define([
 
 	Column.prototype.setProperty = function(sName, vValue) {
 		const oTable = this._getTable();
-		const bValueChanged = oTable && this.getProperty(sName) != vValue;
+		const bValueChanged = oTable && this.getProperty(sName) !== vValue;
 		const bNeedRowsUpdate = bValueChanged && sName === "visible";
 		const bInvalidateFixedColCount = bValueChanged && (sName === "visible" || sName === "headerSpan");
 		const vReturn = Element.prototype.setProperty.apply(this, arguments);

@@ -310,7 +310,7 @@ sap.ui.define([
 	AnalyticalTable.prototype.getModel = function(sName) {
 		const oModel = Table.prototype.getModel.apply(this, arguments);
 		const oRowBindingInfo = this.getBindingInfo("rows");
-		if (oModel && oRowBindingInfo && oRowBindingInfo.model == sName) {
+		if (oModel && oRowBindingInfo && oRowBindingInfo.model === sName) {
 			ODataModelAdapter.apply(oModel);
 		}
 		return oModel;
@@ -398,7 +398,7 @@ sap.ui.define([
 		 */
 		if (!oBindingInfo.parameters.hasOwnProperty("autoExpandMode")) {
 			let sExpandMode = this.getAutoExpandMode();
-			if (sExpandMode != "Bundled" && sExpandMode != "Sequential") {
+			if (sExpandMode !== "Bundled" && sExpandMode !== "Sequential") {
 				sExpandMode = "Bundled";
 			}
 			oBindingInfo.parameters.autoExpandMode = sExpandMode;
@@ -826,9 +826,9 @@ sap.ui.define([
 			this._aGroupedColumns = jQuery.grep(this._aGroupedColumns, function(sValue) {
 				//check if vColum is an object with getId function
 				if (vColumn.getId) {
-					return sValue != vColumn.getId();
+					return sValue !== vColumn.getId();
 				} else {
-					return sValue == vColumn;
+					return sValue === vColumn;
 				}
 			});
 		}
@@ -958,18 +958,18 @@ sap.ui.define([
 
 					// if one column of a dimension is grouped, the dimension is considered as grouped.
 					// all columns which are not explicitly grouped will be flagged as dependendGrouped in the next step
-					if (oColumn.getGrouped() && aGroupedDimensions.indexOf(sDimensionName) == -1) {
+					if (oColumn.getGrouped() && aGroupedDimensions.indexOf(sDimensionName) === -1) {
 						aGroupedDimensions.push(sDimensionName);
 					}
 
-					if (aDimensions.indexOf(sDimensionName) == -1) {
+					if (aDimensions.indexOf(sDimensionName) === -1) {
 						aDimensions.push(sDimensionName);
 					}
 				}
 			}
 
 			aUngroupedDimensions = jQuery.grep(aDimensions, function(s) {
-				return aGroupedDimensions.indexOf(aGroupedDimensions, s) == -1;
+				return aGroupedDimensions.indexOf(aGroupedDimensions, s) === -1;
 			});
 
 			// for all grouped dimensions
@@ -985,7 +985,7 @@ sap.ui.define([
 
 				// if there is only one dimension left, their columns must remain visible even though they are grouped.
 				// this behavior is controlled by the flag _bLastGroupAndGrouped
-				if (aGroupedDimensions.length == aDimensions.length) {
+				if (aGroupedDimensions.length === aDimensions.length) {
 					oDimension = oResult.findDimensionByPropertyName(Element.getElementById(this._aGroupedColumns[this._aGroupedColumns.length - 1]).getLeadingProperty());
 					const aGroupedDimensionColumns = oDimensionIndex[oDimension.getName()].columns;
 					jQuery.each(aGroupedDimensionColumns, function(i, o) {
@@ -994,7 +994,7 @@ sap.ui.define([
 				}
 			}
 
-			if (aUngroupedDimensions.length == 1) {
+			if (aUngroupedDimensions.length === 1) {
 				jQuery.each(oDimensionIndex[aUngroupedDimensions[0]].columns, function(j, o) {
 					o._isLastGroupableLeft = true;
 				});

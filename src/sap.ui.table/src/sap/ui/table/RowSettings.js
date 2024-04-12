@@ -72,7 +72,7 @@ sap.ui.define([
 	});
 
 	RowSettings.prototype.validateProperty = function(sPropertyName, oValue) {
-		if (sPropertyName != "highlight" || oValue == null /* null or undefined */) {
+		if (sPropertyName !== "highlight" || oValue == null /* null or undefined */) {
 			return Element.prototype.validateProperty.apply(this, arguments);
 		}
 

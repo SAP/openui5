@@ -412,7 +412,7 @@ sap.ui.define([
 			}
 
 			if (ColumnUtils.hasHeaderSpan(oColumn)
-				|| ColumnUtils.getParentSpannedColumns(oTable, oColumn.getId()).length != 0) {
+				|| ColumnUtils.getParentSpannedColumns(oTable, oColumn.getId()).length !== 0) {
 				// No movement if the column is spanned by an other column or itself defines a span
 				return false;
 			}
@@ -484,7 +484,7 @@ sap.ui.define([
 				}
 			} else {
 				const oAfterColumn = aColumns[iNewIndex]; // The column to be moved will appear before this column.
-				if (ColumnUtils.getParentSpannedColumns(oTable, oAfterColumn.getId()).length != 0) {
+				if (ColumnUtils.getParentSpannedColumns(oTable, oAfterColumn.getId()).length !== 0) {
 					// If column which is currently at the desired target position is spanned by previous columns
 					// also the column to reorder would be spanned after the move.
 					return false;

@@ -88,7 +88,7 @@ oTable = this.byId("table");
 
 			if (oRange) {
 				MessageBox.confirm("Do you want to paste at position " + (oRange.from.rowIndex + "/" + oRange.from.colIndex) + "?", {onClose: function(sAction) {
-					handlePaste(aData, sAction == "OK" ? oRange : null);
+					handlePaste(aData, sAction === "OK" ? oRange : null);
 				}});
 			} else {
 				handlePaste(aData, null);

@@ -113,7 +113,7 @@ sap.ui.define([
 
 		if (TableUtils.hasRowActions(oTable)) {
 			const iRowActionCount = oTable.getRowActionCount();
-			rm.class(iRowActionCount == 1 ? "sapUiTableRActS" : "sapUiTableRAct");
+			rm.class(iRowActionCount === 1 ? "sapUiTableRActS" : "sapUiTableRAct");
 		} else if (TableUtils.hasRowNavigationIndicators(oTable)) {
 			rm.class("sapUiTableRowNavIndicator");
 		}
@@ -375,7 +375,7 @@ sap.ui.define([
 		rm.openStart("div", oTable.getId() + "-sapUiTableColHdrScr");
 		rm.class("sapUiTableCHA"); // marker for the column header area
 		rm.class("sapUiTableCtrlScr");
-		if (aCols.length == 0) {
+		if (aCols.length === 0) {
 			rm.class("sapUiTableHasNoColumns");
 		}
 		if (iFixedColumnCount > 0) {
@@ -497,7 +497,7 @@ sap.ui.define([
 
 		if (aLabels.length > 0) {
 			oLabel = aLabels[iHeader];
-		} else if (iHeader == 0) {
+		} else if (iHeader === 0) {
 			oLabel = oColumn.getLabel();
 		}
 
@@ -671,10 +671,10 @@ sap.ui.define([
 		}
 
 		if (mRowCounts.fixedTop > 0) {
-			if (iIndex == mRowCounts.fixedTop - 1) {
+			if (iIndex === mRowCounts.fixedTop - 1) {
 				rm.class("sapUiTableRowLastFixedTop");
 			}
-			if (iIndex == mRowCounts.fixedTop) {
+			if (iIndex === mRowCounts.fixedTop) {
 				rm.class("sapUiTableRowFirstScrollable");
 			}
 		}
@@ -703,7 +703,7 @@ sap.ui.define([
 			rm.class("sapUiTableRowSel");
 		}
 
-		if (iRowIndex % 2 != 0 && oTable.getAlternateRowColors() && !TableUtils.Grouping.isInTreeMode(oTable)) {
+		if (iRowIndex % 2 !== 0 && oTable.getAlternateRowColors() && !TableUtils.Grouping.isInTreeMode(oTable)) {
 			rm.class("sapUiTableRowAlternate");
 		}
 
@@ -838,7 +838,7 @@ sap.ui.define([
 
 		rm.openStart("tr");
 		rm.class("sapUiTableCtrlCol");
-		if (iStartRow == 0) {
+		if (iStartRow === 0) {
 			rm.class("sapUiTableCtrlFirstCol");
 		}
 		if (bHeader) {
@@ -887,7 +887,7 @@ sap.ui.define([
 			const oColParam = aColParams[iCol];
 
 			if (oColParam.shouldRender) {
-				if (iStartRow == 0) {
+				if (iStartRow === 0) {
 					rm.openStart("th", oTable.getId() + sSuffix + iCol);
 					oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "TH", {column: oColumn});
 				} else {
@@ -900,7 +900,7 @@ sap.ui.define([
 					rm.class("sapUiTableFirstVisibleColumnTH");
 				}
 				rm.openEnd();
-				if (iStartRow == 0 && TableUtils.getHeaderRowCount(oTable) == 0 && !bHeader) {
+				if (iStartRow === 0 && TableUtils.getHeaderRowCount(oTable) === 0 && !bHeader) {
 					if (oColumn.getMultiLabels().length > 0) {
 						rm.renderControl(oColumn.getMultiLabels()[0]);
 					} else {
@@ -1059,8 +1059,8 @@ sap.ui.define([
 		function renderColumn(oColumn, iIndex) {
 			this.renderCol(rm, oTable, oColumn, iRow, oColumn._nSpan,
 				iIndex === 0,
-				bFixedTable && (iIndex == iLastVisibleCol),
-				!bFixedTable && (iIndex == iLastVisibleCol),
+				bFixedTable && (iIndex === iLastVisibleCol),
+				!bFixedTable && (iIndex === iLastVisibleCol),
 				oColumn._nSpan === 1 && !oColumn._bIconsRendered);
 
 			oColumn._bIconsRendered = oColumn._bIconsRendered || oColumn._nSpan === 1;
@@ -1111,7 +1111,7 @@ sap.ui.define([
 			rm.class("sapUiTableRowSel");
 		}
 
-		if (iRowIndex % 2 != 0 && oTable.getAlternateRowColors() && !TableUtils.Grouping.isInTreeMode(oTable)) {
+		if (iRowIndex % 2 !== 0 && oTable.getAlternateRowColors() && !TableUtils.Grouping.isInTreeMode(oTable)) {
 			rm.class("sapUiTableRowAlternate");
 		}
 

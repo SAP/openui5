@@ -280,7 +280,7 @@ sap.ui.define([
 
 		if (bColumnFreezeEnabled) {
 			const iColumnIndex = oColumn.getIndex();
-			const bIsFixedColumn = iColumnIndex + TableUtils.Column.getHeaderSpan(oColumn) == oTable.getComputedFixedColumnCount();
+			const bIsFixedColumn = iColumnIndex + TableUtils.Column.getHeaderSpan(oColumn) === oTable.getComputedFixedColumnCount();
 
 			this.addItem(this._createMenuItem(
 				"freeze",

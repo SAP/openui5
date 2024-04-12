@@ -493,11 +493,11 @@ sap.ui.define([
 		/**
 		 * @deprecated as of 1.118
 		 */
-		assert.ok(oTable.getSelectedIndex() == 3, "LeadIndex 0 is selected");
+		assert.ok(oTable.getSelectedIndex() === 3, "LeadIndex 0 is selected");
 
 		assert.deepEqual(oTable.getSelectedIndices(), [0, 1, 3], "Selected indices array is correct");
 		const oBinding = oTable.getBinding();
-		assert.ok(oBinding.getSelectedNodesCount() == 3, "# of selected nodes is correct");
+		assert.ok(oBinding.getSelectedNodesCount() === 3, "# of selected nodes is correct");
 
 		// test clear selection
 		oTable.clearSelection();
@@ -505,10 +505,10 @@ sap.ui.define([
 		/**
 		 * @deprecated as of 1.118
 		 */
-		assert.ok(oTable.getSelectedIndex() == -1, "LeadIndex is removed");
+		assert.ok(oTable.getSelectedIndex() === -1, "LeadIndex is removed");
 
 		assert.deepEqual(oTable.getSelectedIndices(), [], "Selected indices array is correct");
-		assert.ok(oBinding.getSelectedNodesCount() == 0, "# of selected nodes is correct");
+		assert.ok(oBinding.getSelectedNodesCount() === 0, "# of selected nodes is correct");
 	});
 
 	QUnit.test("Selection Plugin", function(assert) {

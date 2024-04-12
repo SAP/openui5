@@ -580,7 +580,7 @@ sap.ui.define([
 
 		for (i = -1; i <= oTable.getColumns().length + 2; i++) {
 			bExpect = true;
-			if (i < 1 || i == 4) {
+			if (i < 1 || i === 4) {
 				bExpect = false;
 			}
 			assert.ok(ColumnUtils.isColumnMovableTo(oColumn, i) === bExpect, "Move to index " + i + (bExpect ? "" : " not") + " possible");
@@ -593,7 +593,7 @@ sap.ui.define([
 
 		for (i = -1; i <= oTable.getColumns().length + 2; i++) {
 			bExpect = true;
-			if (i < 1 || i == 4) {
+			if (i < 1 || i === 4) {
 				bExpect = false;
 			}
 			assert.ok(ColumnUtils.isColumnMovableTo(oColumn, i) === bExpect, "Move to index " + i + (bExpect ? "" : " not") + " possible");
@@ -608,7 +608,7 @@ sap.ui.define([
 
 		for (i = -1; i <= oTable.getColumns().length + 2; i++) {
 			bExpect = true;
-			if (i < 1 || i == 2) {
+			if (i < 1 || i === 2) {
 				bExpect = false;
 			}
 			assert.ok(ColumnUtils.isColumnMovableTo(oColumn, i) === bExpect, "Move to index " + i + (bExpect ? "" : " not") + " possible");

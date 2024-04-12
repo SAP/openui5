@@ -757,7 +757,7 @@ sap.ui.define([
 	QUnit.test("focusItem", function(assert) {
 		let oCell = getCell(1, 1);
 		TableUtils.focusItem(oTable, 14 /*SelectAll + 5 Headers + 1st Row (Rowselector + 5 cells) + 2nd row (Rowselector + 2 cells)*/);
-		assert.ok(oCell.get(0) != document.activeElement, "Focus not set becuase item navigation not yet initialized");
+		assert.ok(oCell.get(0) !== document.activeElement, "Focus not set becuase item navigation not yet initialized");
 		getCell(0, 0, true);
 		TableUtils.focusItem(oTable, 14 /*SelectAll + 5 Headers + 1st Row (Rowselector + 5 cells) + 2nd row (Rowselector + 2 cells)*/);
 		oCell = getCell(1, 1);
@@ -1039,8 +1039,8 @@ sap.ui.define([
 
 		for (let j = 0; j < 2; j++) {
 			for (let i = 0; i < iVisibleRowCount; i++) {
-				assert.equal(TableUtils.isFirstScrollableRow(oTable, getCell(i, 0)), i == iFixedTop, "isFirstScrollableRow (" + i + ")");
-				assert.equal(TableUtils.isLastScrollableRow(oTable, getCell(i, 0)), i == iVisibleRowCount - iFixedBottom - 1,
+				assert.equal(TableUtils.isFirstScrollableRow(oTable, getCell(i, 0)), i === iFixedTop, "isFirstScrollableRow (" + i + ")");
+				assert.equal(TableUtils.isLastScrollableRow(oTable, getCell(i, 0)), i === iVisibleRowCount - iFixedBottom - 1,
 					"isLastScrollableRow (" + i + ")");
 			}
 			oTable._getScrollExtension().scrollVertically(true);
@@ -1461,7 +1461,7 @@ sap.ui.define([
 		const fnThemeChanged = (oEvent) => {
 			const sTheme = oEvent.theme;
 
-			if (iPass == 0) {
+			if (iPass === 0) {
 				sCurrentTheme = Theming.getTheme();
 				iPass++;
 				assert.strictEqual(sTheme, sCurrentTheme, "Initial: Correct current Theme: " + sTheme);
@@ -1470,7 +1470,7 @@ sap.ui.define([
 				// (next check would fail depending on the scenario).
 				Theming.setTheme("my_dummy_theme");
 				assert.notOk(TableUtils.isThemeApplied(), "sap_horizon_hcb is not applied after setTheme");
-			} else if (iPass == 1) {
+			} else if (iPass === 1) {
 				iPass++;
 				assert.strictEqual(sTheme, "my_dummy_theme", "After Change: Correct current Theme: " + sTheme);
 				assert.ok(TableUtils.isThemeApplied(), sTheme + " is applied");

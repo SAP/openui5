@@ -989,7 +989,7 @@ sap.ui.define([
 			} else if (vHandlerId === undefined) {
 				// deregister all resize handlers if no specific is named
 				for (const sKey in oTable._mResizeHandlerIds) {
-					if (typeof sKey == "string" && oTable._mResizeHandlerIds.hasOwnProperty(sKey)) {
+					if (typeof sKey === "string" && oTable._mResizeHandlerIds.hasOwnProperty(sKey)) {
 						aHandlerIds.push(sKey);
 					}
 				}
@@ -1019,7 +1019,7 @@ sap.ui.define([
 				const $Ref = jQuery(row);
 				row = parseInt($Ref.add($Ref.parent()).filter("[data-sap-ui-rowindex]").attr("data-sap-ui-rowindex"));
 			}
-			return row == oTable._getRowCounts().fixedTop;
+			return row === oTable._getRowCounts().fixedTop;
 		},
 
 		/**
@@ -1035,7 +1035,7 @@ sap.ui.define([
 				row = parseInt($Ref.add($Ref.parent()).filter("[data-sap-ui-rowindex]").attr("data-sap-ui-rowindex"));
 			}
 			const mRowCounts = oTable._getRowCounts();
-			return row == mRowCounts.count - mRowCounts.fixedBottom - 1;
+			return row === mRowCounts.count - mRowCounts.fixedBottom - 1;
 		},
 
 		/**
@@ -1130,7 +1130,7 @@ sap.ui.define([
 		 * @returns {boolean} Whether the width is variable/flexible.
 		 */
 		isVariableWidth: function(sWidth) {
-			return !sWidth || sWidth == "auto" || sWidth.toString().match(/%$/);
+			return !sWidth || sWidth === "auto" || sWidth.toString().match(/%$/);
 		},
 
 		/**

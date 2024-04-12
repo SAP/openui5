@@ -29,7 +29,7 @@ sap.ui.define([
 
 			SupportHelper.checkLogEntries(function(oLogEntry) {
 				// Filter out totally irrelevant issues
-				if (oLogEntry.level != Log.Level.ERROR && oLogEntry.level != Log.Level.FATAL) {
+				if (oLogEntry.level !== Log.Level.ERROR && oLogEntry.level !== Log.Level.FATAL) {
 					return false;
 				}
 				const oInfo = oLogEntry.supportInfo;

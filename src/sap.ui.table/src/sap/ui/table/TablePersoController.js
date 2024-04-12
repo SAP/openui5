@@ -356,7 +356,7 @@ sap.ui.define([
 					const sProperty = this._aColumnProperties[j];
 					if (oColumnInfo[sProperty] !== undefined) {
 						try {
-							if (oMetadata.hasProperty(sProperty) && oColumn.getProperty(sProperty) != oColumnInfo[sProperty]) {
+							if (oMetadata.hasProperty(sProperty) && oColumn.getProperty(sProperty) !== oColumnInfo[sProperty]) {
 								oColumn.setProperty(sProperty, oColumnInfo[sProperty]);
 							}
 						} catch (ex) {

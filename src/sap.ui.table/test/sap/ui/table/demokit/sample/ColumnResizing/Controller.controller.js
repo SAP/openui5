@@ -55,7 +55,7 @@ sap.ui.define([
 						oProduct.DeliveryDate = Date.now() - (i % 10 * 4 * 24 * 60 * 60 * 1000);
 						oProduct.DeliveryDateStr = oDateFormat.format(UI5Date.getInstance(oProduct.DeliveryDate));
 						oProduct.Heavy = oProduct.WeightMeasure > 1000 ? "true" : "false";
-						oProduct.Available = oProduct.Status == "Available" ? true : false;
+						oProduct.Available = oProduct.Status === "Available" ? true : false;
 					}
 
 					oData.Suppliers = aSuppliersData;
@@ -75,7 +75,7 @@ sap.ui.define([
 			const sColumnWidthMode = oEvent ? oEvent.getParameter("item").getKey() : "Static";
 			let oWidthData;
 
-			if (sColumnWidthMode == "Flexible") {
+			if (sColumnWidthMode === "Flexible") {
 				oWidthData = {
 					name: "25%",
 					category: "25%",
@@ -85,7 +85,7 @@ sap.ui.define([
 				};
 			} else {
 				oWidthData = {
-					name: sColumnWidthMode == "Mixed" ? "20%" : "13rem",
+					name: sColumnWidthMode === "Mixed" ? "20%" : "13rem",
 					category: "11rem",
 					image: "7rem",
 					quantity: "6rem",
@@ -99,7 +99,7 @@ sap.ui.define([
 		onColumnResize: function(oEvent) {
 			const oColumn = oEvent.getParameter("column");
 
-			if (this.byId("deliverydate") == oColumn) {
+			if (this.byId("deliverydate") === oColumn) {
 				oEvent.preventDefault();
 			} else {
 				this._messageBuffer.push("Column '" + oColumn.getLabel().getText() + "' was resized to " + oEvent.getParameter("width") + ".");

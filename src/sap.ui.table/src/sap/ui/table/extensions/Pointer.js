@@ -253,7 +253,7 @@ sap.ui.define([
 			// Create a copy of  all visible cells in the column, including the header cells without colspan
 			const $cells = $this.find("td[data-sap-ui-colid = \"" + oCol.getId() + "\"]:not([colspan])")
 							  .filter(function(index, element) {
-								  return element.style.display != "none";
+								  return element.style.display !== "none";
 							  }).children().clone();
 			$cells.removeAttr("id"); // remove all id attributes
 
@@ -418,9 +418,9 @@ sap.ui.define([
 				return;
 			}
 
-			if (oPos.before || (oPos.after && oPos.index == this._iDnDColIndex)) {
+			if (oPos.before || (oPos.after && oPos.index === this._iDnDColIndex)) {
 				this._iNewColPos = oPos.index;
-			} else if (oPos.after && oPos.index != this._iDnDColIndex) {
+			} else if (oPos.after && oPos.index !== this._iDnDColIndex) {
 				this._iNewColPos = oPos.index + 1;
 			}
 
@@ -783,7 +783,7 @@ sap.ui.define([
 
 			oTable._iLastHoveredVisibleColumnIndex = 0;
 			oTable._bIsColumnResizerMoving = false;
-			oTable._iFirstReorderableIndex = sTableType == ExtensionBase.TABLETYPES.TREE ? 1 : 0;
+			oTable._iFirstReorderableIndex = sTableType === ExtensionBase.TABLETYPES.TREE ? 1 : 0;
 
 			return "PointerExtension";
 		},

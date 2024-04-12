@@ -1157,7 +1157,7 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 			let oItem;
 			if (mActions[item].input) {
 				const oActionValue = getValue(mActions[item]);
-				const bIsBoolean = mActions[item].input == "boolean";
+				const bIsBoolean = mActions[item].input === "boolean";
 				let sValue = null;
 
 				if (bIsBoolean) {
@@ -1679,7 +1679,7 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 			}
 		});
 
-		if (typeof vPlacement == "function") {
+		if (typeof vPlacement === "function") {
 			vPlacement(oButton);
 			vPlacement(oSettingsSelector);
 		} else {
@@ -1781,7 +1781,7 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 					template: new CheckBox({selected: "{" + sItem + "}"}),
 					minWidth: 120
 				});
-				if (mConfig[sItem].input == "boolean") {
+				if (mConfig[sItem].input === "boolean") {
 					oColumn.setTemplate(new CheckBox({enabled: !mConfig[sItem].disabled, selected: "{" + sItem + "}"}));
 				} else {
 					oColumn.setTemplate(new Input({enabled: !mConfig[sItem].disabled, value: "{" + sItem + "}"}));
@@ -1813,7 +1813,7 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 	function setDensity(sDensity, oTable) {
 		if (sDensity !== "") {
 			document.body.classList.toggle("sapUiSizeCozy", sDensity === "sapUiSizeCozy");
-			document.body.classList.toggle("sapUiSizeCompact", sDensity != "sapUiSizeCozy");
+			document.body.classList.toggle("sapUiSizeCompact", sDensity !== "sapUiSizeCozy");
 			oTable.toggleStyleClass("sapUiSizeCondensed", sDensity === "sapUiSizeCondensed");
 			oTable.invalidate();
 		}

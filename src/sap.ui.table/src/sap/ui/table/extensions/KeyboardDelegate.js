@@ -997,7 +997,7 @@ sap.ui.define([
 		const $Target = jQuery(oEvent.target);
 
 		if ($Target.hasClass("sapUiTableOuterBefore") || $Target.hasClass("sapUiTableOuterAfter")
-			|| (oEvent.target != this.getDomRef("overlay") && this.getShowOverlay())) {
+			|| (oEvent.target !== this.getDomRef("overlay") && this.getShowOverlay())) {
 			this.$("overlay").trigger("focus");
 
 		} else if ($Target.hasClass("sapUiTableCtrlBefore")) {

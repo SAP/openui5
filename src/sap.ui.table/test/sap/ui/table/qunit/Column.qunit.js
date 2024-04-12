@@ -1552,7 +1552,7 @@ const oCell2DomRef = this._oColumn2.getDomRef();
 		assert.equal(oColumn1.getFilterType().formatValue("123", "string"), "??", "Format options applied.");
 
 		vType = function(oValue) {
-			return oValue == 1;
+			return oValue === 1;
 		};
 		oColumn1.setFilterType(vType);
 		assert.equal(typeof oColumn1.getFilterType(), "function", "Type is a function");

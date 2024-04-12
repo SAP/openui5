@@ -62,7 +62,7 @@ sap.ui.define([
 			const sName = oContext.getProperty("name");
 			const sType = oContext.getProperty("type");
 			const sSemantics = oContext.getProperty("sap:semantics");
-			const bVisible = oContext.getProperty("sap:visible") != "false";
+			const bVisible = oContext.getProperty("sap:visible") !== "false";
 			let iLen = oContext.getProperty("maxLength");
 			let sColumnWidth = "5rem";
 
@@ -70,7 +70,7 @@ sap.ui.define([
 				const sUnit = oContext.getProperty("sap:unit");
 				if (sUnit) {
 					const sUnitType = oModel.getMetaModel().getMetaContext("/ProductSet/" + sUnit).getProperty()["sap:semantics"];
-					if (sUnitType == "currency-code") {
+					if (sUnitType === "currency-code") {
 						return new Currency({value: {path: sName, type: new StringType()}, currency: {path: sUnit}});
 					}
 				}
@@ -86,9 +86,9 @@ sap.ui.define([
 			}
 
 			return new Column(sId, {
-				visible: bVisible && sSemantics != "unit-of-measure" && sSemantics != "currency-code",
-				sortProperty: oContext.getProperty("sap:sortable") == "true" ? sName : null,
-				filterProperty: oContext.getProperty("sap:filterable") == "true" ? sName : null,
+				visible: bVisible && sSemantics !== "unit-of-measure" && sSemantics !== "currency-code",
+				sortProperty: oContext.getProperty("sap:sortable") === "true" ? sName : null,
+				filterProperty: oContext.getProperty("sap:filterable") === "true" ? sName : null,
 				width: sColumnWidth,
 				label: new Label({text: "{/#Product/" + sName + "/@sap:label}"}),
 				hAlign: sType && sType.indexOf("Decimal") >= 0 ? "End" : "Begin",
