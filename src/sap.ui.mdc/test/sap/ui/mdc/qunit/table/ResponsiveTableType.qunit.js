@@ -1,4 +1,4 @@
-/* global QUnit */
+/* global QUnit, sinon */
 // These are some globals generated due to fl (signals, hasher) and m (hyphenation) libs.
 
 sap.ui.define([
@@ -67,6 +67,134 @@ sap.ui.define([
 			assert.equal(oTable._oTable.getPopinLayout(), "GridSmall", "popinLayout is set to GridSmall type on the inner table");
 			oTable.destroy();
 		});
+	});
+
+	QUnit.test("ShowDetails button lifecycle", async function(assert) {
+		const oModel = new JSONModel();
+			oModel.setData({
+				testPath: [
+					{test: "Test1"}, {test: "Test2"}, {test: "Test3"}, {test: "Test4"}, {test: "Test5"}
+				]
+			});
+
+		const oTable = new Table({
+				delegate: {
+					name: sDelegatePath,
+					payload: {
+						collectionPath: "/testPath"
+					}
+				},
+				type: new ResponsiveTableType({
+					showDetailsButton: true
+				}),
+				columns: [
+					new Column({
+						header: "Column A",
+						hAlign: "Begin",
+						template: new Text({
+							text: "{test}"
+						}),
+						extendedSettings: new ResponsiveColumnSettings({
+							importance: "High"
+						})
+					}),
+					new Column({
+						header: "Column B",
+						hAlign: "Begin",
+						template: new Text({
+							text: "{test}"
+						}),
+						extendedSettings: new ResponsiveColumnSettings({
+							importance: "High"
+						})
+					}),
+					new Column({
+						header: "Column C",
+						hAlign: "Begin",
+						template: new Text({
+							text: "{test}"
+						}),
+						extendedSettings: new ResponsiveColumnSettings({
+							importance: "Medium"
+						})
+					}),
+					new Column({
+						header: "Column D",
+						hAlign: "Begin",
+						template: new Text({
+							text: "{test}"
+						}),
+						extendedSettings: new ResponsiveColumnSettings({
+							importance: "Low"
+						})
+					}),
+					new Column({
+						header: "Column E",
+						hAlign: "Begin",
+						template: new Text({
+							text: "{test}"
+						}),
+						extendedSettings: new ResponsiveColumnSettings({
+							importance: "Low"
+						})
+					}),
+					new Column({
+						header: "Column F",
+						hAlign: "Begin",
+						template: new Text({
+							text: "{test}"
+						}),
+						extendedSettings: new ResponsiveColumnSettings({
+							importance: "High"
+						})
+					})
+				]
+			});
+
+		oTable.setModel(oModel);
+		oTable.placeAt("qunit-fixture");
+		let oType = oTable.getType();
+		const fSetParent = sinon.spy(oType, "setParent");
+		sap.ui.getCore().applyChanges();
+
+		await TableQUnitUtils.waitForBinding(oTable);
+		oTable._oTable.setContextualWidth("600px");
+		sap.ui.getCore().applyChanges();
+		assert.ok(oType._oShowDetailsButton.getVisible(), "button is visible since table has popins");
+		let oShowDetailsButton = oType._oShowDetailsButton;
+
+		oTable.setType(new ResponsiveTableType({showDetailsButton: true}));
+		assert.equal(fSetParent.callCount, 1);
+		assert.strictEqual(oShowDetailsButton.bIsDestroyed, true);
+		assert.notOk(oType._oShowDetailsButton, "showdetail button is destroyed");
+		fSetParent.restore();
+
+		sap.ui.getCore().applyChanges();
+		await TableQUnitUtils.waitForBinding(oTable);
+		oType = oTable.getType();
+		oTable._oTable.setContextualWidth("600px");
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(oType._oShowDetailsButton.getVisible(), "button is visible since table has popins");
+		oShowDetailsButton = oType._oShowDetailsButton;
+		oType.destroy();
+		assert.strictEqual(oShowDetailsButton.bIsDestroyed, true);
+		assert.notOk(oType._oShowDetailsButton, "showdetail button is destroyed");
+
+		oTable.setType(new ResponsiveTableType({showDetailsButton: true}));
+		oShowDetailsButton = oType._oShowDetailsButton;
+		sap.ui.getCore().applyChanges();
+		oType = oTable.getType();
+
+		await TableQUnitUtils.waitForBinding(oTable);
+		oType = oTable.getType();
+		oTable._oTable.setContextualWidth("600px");
+		sap.ui.getCore().applyChanges();
+		assert.ok(oType._oShowDetailsButton.getVisible(), "button is visible since table has popins");
+		oShowDetailsButton = oType._oShowDetailsButton;
+		oTable.destroyType();
+		assert.strictEqual(oShowDetailsButton.bIsDestroyed, true);
+		assert.notOk(oType._oShowDetailsButton, "showdetail button is destroyed");
 	});
 
 	QUnit.module("extendedSettings");

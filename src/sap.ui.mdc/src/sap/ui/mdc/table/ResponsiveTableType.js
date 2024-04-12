@@ -105,6 +105,15 @@ sap.ui.define([
 		return this.setProperty("detailsButtonSetting", aPriorities, true);
 	};
 
+	ResponsiveTableType.prototype.setParent = function() {
+		TableTypeBase.prototype.setParent.apply(this, arguments);
+		if (this._oShowDetailsButton) {
+			this._oShowDetailsButton.destroy();
+			this._oShowDetailsButton = null;
+		}
+		return this;
+	};
+
 	ResponsiveTableType.prototype.updateTableByProperty = function(sProperty, vValue) {
 		const oResponsiveTable = this.getInnerTable();
 
@@ -552,6 +561,14 @@ sap.ui.define([
 			oResponsiveTable.getHiddenInPopin().includes(oColumn.getInnerColumn().getImportance()) &&
 			(oTable.getColumns().pop() === oColumn)) {
 			this._toggleShowDetails(false);
+		}
+	};
+
+	ResponsiveTableType.prototype.exit = function() {
+		TableTypeBase.prototype.exit.apply(this, arguments);
+		if (this._oShowDetailsButton) {
+			this._oShowDetailsButton.destroy();
+			this._oShowDetailsButton = null;
 		}
 	};
 

@@ -660,13 +660,13 @@ sap.ui.define([
 			fInnerTableDestroySpy = sinon.spy(this.oTable._oTable, "destroy");
 			fInnerTemplateDestroySpy = sinon.spy(this.oTable._oRowTemplate, "destroy");
 
-			// Setting same table type does nothing
+			// Setting same table type re-initialises table
 			this.oTable.setType("ResponsiveTable");
 			this.oTable.setSelectionMode("Multi");
 
-			assert.ok(fInnerTableDestroySpy.notCalled);
-			assert.ok(fInnerTemplateDestroySpy.notCalled);
-			assert.equal(this.oTable._oTable.getGrowingScrollToLoad(), false);
+			assert.ok(fInnerTableDestroySpy.called);
+			assert.ok(fInnerTemplateDestroySpy.called);
+			assert.notOk(this.oTable._oTable);
 
 			this.oTable.setType(new ResponsiveTableType({
 				growingMode: "Scroll"
@@ -727,11 +727,11 @@ sap.ui.define([
 			fInnerTableDestroySpy = sinon.spy(this.oTable._oTable, "destroy");
 			fInnerTemplateDestroySpy = sinon.spy(this.oTable._oRowTemplate, "destroy");
 
-			// Setting same table type does nothing
+			// Setting same table type re-initialises table
 			this.oTable.setType("ResponsiveTable");
-			assert.ok(this.oTable._oTable.isA("sap.m.Table"));
-			assert.ok(fInnerTableDestroySpy.notCalled);
-			assert.ok(fInnerTemplateDestroySpy.notCalled);
+			assert.notOk(this.oTable._oTable);
+			assert.ok(fInnerTableDestroySpy.called);
+			assert.ok(fInnerTemplateDestroySpy.called);
 
 			this.oTable.setType("Table");
 			assert.ok(fInnerTableDestroySpy.calledOnce);

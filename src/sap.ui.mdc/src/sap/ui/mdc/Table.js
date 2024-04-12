@@ -1212,7 +1212,7 @@ sap.ui.define([
 	};
 
 	Table.prototype.setType = function(vType) {
-		if (!this.bCreated || this.getType() == vType) {
+		if (!this.bCreated ) {
 			return this.setAggregation("type", vType, true);
 		}
 
