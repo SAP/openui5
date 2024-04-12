@@ -289,14 +289,14 @@
 	</script>
 
 	<script>
-		sap.ui.getCore().attachInit(function () {
 			sap.ui.require([
+				"sap/ui/core/Core",
 				"sap/ui/core/mvc/XMLView",
 				'sap/ui/core/mvc/Controller',
 				'sap/ui/model/json/JSONModel',
 				'sap/m/Token'
-			], function (XMLView, Controller, JSONModel, Token) {
-
+			], async function (Core, XMLView, Controller, JSONModel, Token) {
+				await Core.ready();
 				Controller.extend("myController", {
 					_btnToControlMap: {
 						"btnInput1": "input1",
@@ -412,7 +412,6 @@
 							oViewInstance.placeAt("content");
 						});
 			});
-		});
 	</script>
 	<style type="text/css">
 		.customClassForVisualTests {

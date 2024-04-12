@@ -13,15 +13,16 @@
 		}'>
 	</script>
 	<style>
-		.sapUiBody {
+		#body.sapUiBody {
 			height: 100vh;
 			overflow: hidden;
 		}
 	</style>
 
 	<script>
-		sap.ui.getCore().attachInit(function () {
 			sap.ui.require([
+				"sap/ui/core/Core",
+				"sap/ui/core/Element",
 				"sap/ui/webc/main/ComboBox",
 				"sap/ui/webc/main/ComboBoxItem",
 				"sap/ui/webc/main/ComboBoxGroupItem",
@@ -32,7 +33,9 @@
 				"sap/ui/webc/fiori/Bar",
 				"sap/ui/webc/main/Button",
 				"sap/ui/layout/VerticalLayout"
-			], function (
+			], async function (
+				Core,
+				Element,
 				ComboBox,
 				ComboBoxItem,
 				ComboBoxGroupItem,
@@ -44,6 +47,8 @@
 				Button,
 				VerticalLayout
 			) {
+				await Core.ready();
+
 				var oVerticalLayout = new VerticalLayout({
 					content: [
 						new Label("label1", {
@@ -377,7 +382,7 @@
 					url: "https://dummyjson.com/products?limit=20",
 					dataType: "json",
 					success: function (data) {
-						var oComboBox = sap.ui.getCore().byId("comboBox11");
+						var oComboBox = Element.getElementById("comboBox11");
 						oComboBox.setModel(new sap.ui.model.json.JSONModel({ modelData: data.products }));
 						oComboBox.bindAggregation("items", {
 							path: "/modelData",
@@ -446,7 +451,6 @@
 
 				oPage.placeAt("body");
 			});
-		});
 	</script>
 </head>
 
