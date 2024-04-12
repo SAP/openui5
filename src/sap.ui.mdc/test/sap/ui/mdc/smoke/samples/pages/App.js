@@ -346,8 +346,8 @@ sap.ui.define([
 				 */
 				iShouldSeeATable: function(vTable) {
 					return waitForTable.call(this, vTable, {
-						success: function() {
-							Opa5.assert.ok(true, "I see the table");
+						success: function(oTable) {
+							Opa5.assert.ok(oTable, "I see the table");
 						}
 					});
 				},
@@ -363,8 +363,15 @@ sap.ui.define([
 				iShouldSeeRows(vTable, iRowCount) {
 					return waitForTable.call(this, vTable, {
 						success(oTable) {
-							const aItems = oTable.getAggregation("_content").getItems();
-							Opa5.assert.equal(aItems.length, iRowCount, "I see correct amount of context-based adaptations");
+							this.waitFor({
+								controlType: "sap.m.Table",
+								matchers: new Ancestor(oTable),
+								success: function(aMTable) {
+									Opa5.assert.ok(aMTable.length, `Found Control sap.m.Table in sap.ui.mdc.Table`);
+									const aItems = aMTable[0].getItems();
+									Opa5.assert.equal(aItems.length, iRowCount, "I see correct amount of rows");
+								}
+							});
 						}
 					});
 				},
