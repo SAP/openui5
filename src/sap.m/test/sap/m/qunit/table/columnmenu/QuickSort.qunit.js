@@ -1,15 +1,15 @@
 /*global QUnit*/
 sap.ui.define([
 	"sap/ui/core/Lib",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/m/table/columnmenu/Menu",
 	"sap/m/table/columnmenu/QuickSort",
 	"sap/m/table/columnmenu/QuickSortItem",
 	"sap/m/Button",
 	"sap/m/library",
-	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/core/library"
-], function(Library, QUnitUtils, Menu, QuickSort, QuickSortItem, Button, library, nextUIUpdate, CoreLibrary) {
+], function(Library, nextUIUpdate, QUnitUtils, Menu, QuickSort, QuickSortItem, Button, library, CoreLibrary) {
 	"use strict";
 
 	QUnit.module("Basic", {
@@ -30,7 +30,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Defaults", function(assert) {
-		var oQuickSort = new QuickSort({
+		const oQuickSort = new QuickSort({
 			items: new QuickSortItem()
 		});
 
@@ -50,12 +50,12 @@ sap.ui.define([
 	});
 
 	QUnit.test("Label", function(assert) {
-		var oBundle = Library.getResourceBundleFor("sap.m");
-		var sLabel = oBundle.getText("table.COLUMNMENU_QUICK_SORT", "A");
-		var aItems = this.oQuickSort.getItems();
+		const oBundle = Library.getResourceBundleFor("sap.m");
+		let sLabel = oBundle.getText("table.COLUMNMENU_QUICK_SORT", "A");
+		let aItems = this.oQuickSort.getItems();
 		assert.equal(aItems[0]._getLabel(aItems.length), sLabel, "QuickSort label of single item is correct.");
 
-		var oItem = new QuickSortItem({
+		const oItem = new QuickSortItem({
 			key: "propertyB",
 			label: "B",
 			sortOrder: "Descending"
@@ -69,8 +69,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Content", function(assert) {
-		var oBundle = Library.getResourceBundleFor("sap.m");
-		var aContent = this.oQuickSort.getEffectiveQuickActions()[0].getContent();
+		const oBundle = Library.getResourceBundleFor("sap.m");
+		const aContent = this.oQuickSort.getEffectiveQuickActions()[0].getContent();
 		assert.ok(aContent, "The quick sort has content");
 
 		assert.equal(aContent.length, 2, "The quick sort has 2 buttons");
@@ -79,7 +79,7 @@ sap.ui.define([
 		assert.equal(aContent[1].getText(), oBundle.getText("table.COLUMNMENU_SORT_DESCENDING"), "Descending button");
 		assert.ok(!aContent[1].getPressed(), "The descending button is not pressed");
 
-		var oItem = new QuickSortItem({
+		const oItem = new QuickSortItem({
 			key: "propertyB",
 			label: "B",
 			sortOrder: "Descending"
@@ -87,7 +87,7 @@ sap.ui.define([
 		this.oQuickSort.addItem(oItem);
 
 		assert.notOk(this.oQuickSort._oContent, "The content is destroyed after addItem call");
-		var aQuickActions = this.oQuickSort.getEffectiveQuickActions();
+		const aQuickActions = this.oQuickSort.getEffectiveQuickActions();
 		assert.equal(aQuickActions.length, 2, "The quick sort has 2 quick actions");
 		assert.equal(aQuickActions[0].getProperty("label"), oBundle.getText("table.COLUMNMENU_QUICK_SORT", "A"), "The label for the quick action is set correctly");
 		assert.equal(aQuickActions[1].getProperty("label"), oBundle.getText("table.COLUMNMENU_QUICK_SORT", "B"), "The label for the quick action is set correctly");
@@ -141,15 +141,15 @@ sap.ui.define([
 	});
 
 	QUnit.test("Change", function(assert) {
-		var done = assert.async();
-		var oMenu = this.oColumnMenu;
+		const done = assert.async();
+		const oMenu = this.oColumnMenu;
 		oMenu.openBy(this.oButton);
 
-		var oQuickSort = oMenu.getAggregation("quickActions")[0];
+		const oQuickSort = oMenu.getAggregation("quickActions")[0];
 
 		oQuickSort.attachChange(function(oEvent) {
 			assert.ok(true, "Sort event has been fired");
-			var oItem = oEvent.getParameter("item");
+			const oItem = oEvent.getParameter("item");
 			assert.equal(oItem.getKey(), "propertyA", "The item is passed as event parameter");
 			assert.equal(oItem.getSortOrder(), "Descending", "The sortOrder property of the item is correct");
 
@@ -180,7 +180,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Items", function(assert) {
-		var oItem = new QuickSortItem({
+		const oItem = new QuickSortItem({
 			key: "propertyB",
 			label: "B",
 			sortOrder: "Ascending"
