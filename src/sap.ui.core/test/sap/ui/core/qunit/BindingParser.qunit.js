@@ -2,6 +2,7 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/base/future",
 	"sap/ui/base/BindingParser",
 	"sap/ui/base/ExpressionParser",
 	"sap/ui/base/ManagedObject",
@@ -14,7 +15,7 @@ sap.ui.define([
 	"sap/ui/model/type/Date",
 	"sap/ui/model/type/String",
 	"sap/base/Log"
-], function (BindingParser, ExpressionParser, ManagedObject, BindingInfo, InvisibleText, Filter,
+], function (future, BindingParser, ExpressionParser, ManagedObject, BindingInfo, InvisibleText, Filter,
 	Sorter, JSONModel, Currency, Date, String, Log) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
@@ -274,14 +275,37 @@ sap.ui.define([
 		assert.strictEqual(o.formatter, undefined, "parse should return no formatter");
 	});
 
-	QUnit.test("Single Binding with non-existing type", function (assert) {
-		this.oLogMock.expects("error").once().calledWith(sinon.match(/Failed to resolve type 'does.not.exist'. Maybe not loaded or a typo\?/));
+	/** @deprecated As of 1.120, if a type cannot be resolved an Error is thrown with UI5 2.0 */
+	QUnit.test("Single Binding with non-existing type (future=false)", function (assert) {
+		future.active = false;
+		this.oLogMock.expects("error")
+			.calledWith(sinon.match(/Failed to resolve type 'does.not.exist'. Maybe not loaded or a typo\?/));
+
+		// code under test
 		var o = parse("{path:'something', type: 'does.not.exist'}", oController);
+
 		assert.strictEqual(typeof o, "object", "parse should return an object");
 		assert.strictEqual(o.parts, undefined, "binding info should not be a composite binding info");
 		assert.strictEqual(o.path, "something", "path should be as specified");
 		assert.strictEqual(o.type, undefined, "parse should set type to undefined");
 		assert.strictEqual(o.formatter, undefined, "parse should return no formatter");
+		future.active = undefined; // restores configured default
+	});
+
+	QUnit.test("Single Binding with non-existing type (future=true)", function (assert) {
+		try {
+			future.active = true;
+
+			// code under test
+			parse("{path:'something', type: 'does.not.exist'}", oController);
+
+			assert.ok(false, "Expected Error not thrown");
+		} catch (e) {
+			assert.ok(e instanceof Error);
+			assert.strictEqual(e.message, "Failed to resolve type 'does.not.exist'. Maybe not loaded or a typo?");
+		} finally {
+			future.active = undefined; // restores configured default
+		}
 	});
 
 	/**
@@ -873,11 +897,13 @@ sap.ui.define([
 	});
 	//TODO have mergeParts fail on hierarchies with more than two levels?
 
-	QUnit.test("mergeParts fails for unsupported properties, error is logged", function (assert) {
+	/** @deprecated As of 1.120, if a type cannot be resolved an Error is thrown with UI5 2.0 */
+	QUnit.test("mergeParts fails for unsupported properties, error is logged (future=false)", function (assert) {
 		var sBinding
 			= "{:= ${parts:[{path:'/foo'},{path:'/bar'}],type:'sap.ui.model.type.Currency'} }",
 			oBindingInfo;
 
+		future.active = false;
 		this.oLogMock.expects("error")
 			.calledWith(sinon.match(/Cannot merge parts: Unsupported property: type/), sBinding,
 				"sap.ui.base.BindingParser");
@@ -892,6 +918,23 @@ sap.ui.define([
 		assert.strictEqual(oBindingInfo.parts.length, 1,
 			"# embedded bindings in composite binding");
 		assert.ok(oBindingInfo.parts[0].type instanceof Currency);
+		future.active = undefined; // restores configured default
+	});
+
+	QUnit.test("mergeParts fails for unsupported properties, error is logged (future=true)", function (assert) {
+		try {
+			future.active = true;
+
+			// code under test
+			parse("{:= ${parts:[{path:'/foo'},{path:'/bar'}],type:'sap.ui.model.type.Currency'} }");
+
+			assert.ok(false, "Unexpected success");
+		} catch (oError) {
+			assert.ok(oError instanceof Error);
+			assert.strictEqual(oError.message, "Cannot merge parts: Unsupported property: type");
+		} finally {
+			future.active = undefined; // restores configured default
+		}
 	});
 
 	QUnit.test("mergeParts with constants and part with empty path", function (assert) {
@@ -977,13 +1020,15 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("functionsNotFound", function (assert) {
+	/** @deprecated As of 1.120, if a formatter cannot be resolved an error is thrown with UI5 2.0 */
+	QUnit.test("functionsNotFound (future=false)", function (assert) {
 		//TODO "{parts:[{path:'/foo',formatter:'foo'},{path:'/bar',formatter:'bar'}]}"
 		//     formatters inside parts are not supported?!
 
 		var sBinding = "{path:'/foo',formatter:'foo'} {path:'/bar',formatter:'.bar'}",
 			oBindingInfo;
 
+		future.active = false;
 		// bTolerateFunctionsNotFound = false
 		this.oLogMock.expects("error").calledWith(sinon.match(/formatter function foo not found!/));
 		this.oLogMock.expects("error").calledWith(sinon.match(/formatter function .bar not found!/));
@@ -994,6 +1039,24 @@ sap.ui.define([
 		oBindingInfo = parse(sBinding, null, true, /*bTolerateFunctionsNotFound*/true);
 
 		assert.deepEqual(oBindingInfo.functionsNotFound, ["foo", ".bar"]);
+		future.active = undefined; // restores configured default
+	});
+
+	QUnit.test("functionsNotFound (future=true)", function (assert) {
+		try {
+			future.active = true;
+
+			// code under test
+			parse("{path:'/foo',formatter:'foo'} {path:'/bar',formatter:'.bar'}", null, true,
+				/*bTolerateFunctionsNotFound*/false);
+
+			assert.ok(false, "Unexpected success");
+		} catch (oError) {
+			assert.ok(oError instanceof Error);
+			assert.strictEqual(oError.message, "formatter function foo not found!");
+		} finally {
+			future.active = undefined; // restores configured default
+		}
 	});
 
 	QUnit.test("Expression binding: usage in composite binding", function (assert) {
