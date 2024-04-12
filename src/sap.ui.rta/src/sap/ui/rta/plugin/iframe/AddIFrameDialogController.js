@@ -3,8 +3,7 @@
  */
 sap.ui.define([
 	"sap/base/Log",
-	"sap/m/Popover",
-	"sap/m/Text",
+	"sap/m/Token",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
@@ -16,8 +15,7 @@ sap.ui.define([
 	"sap/ui/rta/plugin/iframe/urlCleaner"
 ], function(
 	Log,
-	Popover,
-	Text,
+	Token,
 	Controller,
 	Element,
 	Lib,
@@ -37,7 +35,7 @@ sap.ui.define([
 
 	var _aTextInputFields = ["frameUrl", "title"];
 	var _aNumericInputFields = ["frameWidth", "frameHeight"];
-	var _aOtherInputFields = ["frameWidthUnit", "frameHeightUnit", "useLegacyNavigation"];
+	var _aOtherInputFields = ["frameWidthUnit", "frameHeightUnit", "advancedSettings"];
 
 	function isValidUrl(sUrl) {
 		if (
@@ -52,11 +50,49 @@ sap.ui.define([
 		return IFrame.isValidUrl(encodeURI(sUrl));
 	}
 
+	function multiInputValidator(oValue) {
+		const sText = oValue.text;
+		return new Token({key: sText, text: sText});
+	}
+
 	return Controller.extend("sap.ui.rta.plugin.iframe.AddIFrameDialogController", {
 		// eslint-disable-next-line object-shorthand
 		constructor: function(oJSONModel, mSettings) {
 			this._oJSONModel = oJSONModel;
 			this._importSettings(mSettings);
+		},
+
+		configureMultiInput() {
+			// This syntax is the suggested way by the UI5 documentation to trigger a submit on the input field on focus loss
+			const oMultiInput = Element.getElementById("sapUiRtaAddIFrameDialog_AddAdditionalParametersInput");
+			oMultiInput.addValidator(multiInputValidator);
+		},
+
+		onSwitchChange() {
+			this._oJSONModel.setProperty("/settingsUpdate/value", true);
+		},
+
+		/**
+		 * Event handler for token update
+		 * @param {sap.ui.base.Event} oEvent - Event
+		 */
+		onTokenUpdate(oEvent) {
+			let aSandboxParameters = this._oJSONModel.getProperty("/advancedSettings/value/additionalSandboxParameters");
+
+			if (oEvent.getParameter("type") === "added") {
+				oEvent.getParameter("addedTokens").forEach(function(oToken) {
+					aSandboxParameters = [...aSandboxParameters, oToken.getText()];
+				});
+			} else if (oEvent.getParameter("type") === "removed") {
+				oEvent.getParameter("removedTokens").forEach(function(oToken) {
+					aSandboxParameters = aSandboxParameters.filter(function(sText) {
+						return sText !== oToken.getText();
+					});
+				});
+			}
+
+			this._oJSONModel.setProperty("/advancedSettings/value/additionalSandboxParameters", aSandboxParameters);
+			this._oJSONModel.setProperty("/settingsUpdate/value", true);
 		},
 
 		/**
@@ -114,11 +150,9 @@ sap.ui.define([
 			try {
 				this._oJSONModel.setProperty("/previewUrl/value", sURL);
 				this._oJSONModel.setProperty("/previousFrameUrl/value", sReturnedURL);
-				this._oJSONModel.setProperty(
-					"/previewUseLegacyNavigation/value",
-					this._oJSONModel.getProperty("/useLegacyNavigation/value")
-				);
-				oIFrame.applySettings({ url: sURL });
+				this._oJSONModel.setProperty("/settingsUpdate/value", false);
+
+				oIFrame.applySettings({ url: sURL, advancedSettings: this._oJSONModel.getProperty("/advancedSettings/value") });
 			} catch (oError) {
 				Log.error("Error previewing the URL: ", oError);
 			}
@@ -142,26 +176,6 @@ sap.ui.define([
 			var oFilter = new Filter("label", FilterOperator.Contains, oEvent.getParameter("newValue"));
 			var oBinding = Element.getElementById("sapUiRtaAddIFrameDialog_ParameterTable").getBinding("items");
 			oBinding.filter([oFilter]);
-		},
-
-		onLegacyNavigationInfoPress(oEvent) {
-			const oButton = oEvent.getSource();
-			if (!this._oPopover) {
-				this._oPopover = new Popover(
-					`${oButton.getId()}-popover`,
-					{
-						showHeader: false,
-						contentWidth: "400px",
-						content: [
-							new Text({
-								text: "{/text/useLegacyNavigationInfo}"
-							}).addStyleClass("sapUiSmallMargin")
-						]
-					}
-				);
-				oButton.addDependent(this._oPopover);
-			}
-			this._oPopover.openBy(oButton);
 		},
 
 		/**

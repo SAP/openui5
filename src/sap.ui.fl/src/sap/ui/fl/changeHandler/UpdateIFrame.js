@@ -22,7 +22,7 @@ sap.ui.define([
 	 */
 	var UpdateIFrame = {};
 
-	var aUpdatableProperties = ["width", "height", "url", "useLegacyNavigation", "_settings"];
+	const aUpdatableProperties = ["width", "height", "url", "_settings", "advancedSettings"];
 
 	/**
 	 * Extract an IFrame control settings.

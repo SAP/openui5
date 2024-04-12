@@ -4,23 +4,18 @@
 
 // Provides control sap.ui.fl.util.IFrame
 sap.ui.define([
-	"../library",
 	"sap/ui/core/Control",
 	"sap/ui/model/json/JSONModel",
 	"./getContainerUserInfo",
-	"sap/base/util/extend",
-	"sap/base/util/restricted/_CancelablePromise",
 	"sap/base/security/URLListValidator",
 	"sap/base/Log",
 	"./IFrameRenderer",
+	"../library",
 	"sap/ui/core/library"
 ], function(
-	library,
 	Control,
 	JSONModel,
 	getContainerUserInfo,
-	extend,
-	CancelablePromise,
 	URLListValidator,
 	Log,
 	IFrameRenderer
@@ -93,11 +88,13 @@ sap.ui.define([
 				renameInfo: {type: "object", group: "Data", defaultValue: null},
 
 				/**
-				 * Define whether to set the URL by creating a new history entry (legacy) or replacing the current one.
+				 * Contains the Iframe sandbox attributes
 				 */
-				useLegacyNavigation: {
-					type: "boolean",
-					defaultValue: false
+				advancedSettings: {
+					type: "object",
+					defaultValue: {
+						additionalSandboxParameters: []
+					}
 				},
 
 				/**
@@ -106,7 +103,15 @@ sap.ui.define([
 				 *  @private
 				 *  @ui5-restricted sap.ui.fl
 				 */
-				_settings: {type: "object", group: "Data", defaultValue: null}
+				_settings: {
+					type: "object",
+					group: "Data",
+					defaultValue: {
+						advancedSettings: {
+							additionalSandboxParameters: []
+						}
+					}
+				}
 			},
 
 			designtime: "sap/ui/fl/designtime/util/IFrame.designtime"
@@ -127,59 +132,26 @@ sap.ui.define([
 			return this._oInitializePromise ? this._oInitializePromise : Promise.reject();
 		},
 
-		_setUrlLegacy(sEncodedUrl) {
-			// Setting the url of the IFrame directly can lead to issues
-			// if the change doesn't result in a reload of the embedded page
-			// e.g. when a navigation parameter is changed
-			// To avoid problems with the ushell and the embedded apps, it is safer
-			// to unload the iframe content first and thus force a full browser reload
-
-			if (this._oSetUrlPromise) {
-				this._oSetUrlPromise.cancel();
-				delete this._oSetUrlPromise;
-			}
-
-			this.setProperty("url", "");
-
-			this._oSetUrlPromise = new CancelablePromise(function(fnResolve, fnReject, onCancel) {
-				onCancel.shouldReject = false;
-				// Use a timeout here to avoid issues with browser caching in Chrome
-				// that seem to lead to a mismatch between IFrame content and src,
-				// see Chromium issue 324102
-				setTimeout(fnResolve, 0);
-			});
-
-			this._oSetUrlPromise.then(function() {
-				delete this._oSetUrlPromise;
-				this.setProperty("url", sEncodedUrl);
-			}.bind(this));
-		},
-
 		setUrl(sUrl) {
 			// Could contain special characters from bindings that need to be encoded
 			// Make sure that it was not encoded before
 			var sEncodedUrl = decodeURI(sUrl) === sUrl ? encodeURI(sUrl) : sUrl;
 
 			if (IFrame.isValidUrl(sEncodedUrl).result) {
-				if (this.getUseLegacyNavigation()) {
-					// Set by pushing to the history
-					this._setUrlLegacy(sEncodedUrl);
-				} else {
-					// Set by replacing the last entry
-					const oNewUrl = IFrame._toUrl(sEncodedUrl);
-					const oOldUrl = IFrame._toUrl(this.getUrl() || "about:blank");
-					if (
-						oOldUrl.origin === oNewUrl.origin
-						&& oOldUrl.pathname === oNewUrl.pathname
-						&& oOldUrl.search === oNewUrl.search
-						&& oOldUrl.hash !== oNewUrl.hash
-					) {
-						// Only the hash changed, site is not going to reload automatically
-						// Set an artificial frame buster search parameter to force a refresh
-						oNewUrl.searchParams.append("sap-ui-xx-fl-forceEmbeddedContentRefresh", Date.now());
-					}
-					this.setProperty("url", oNewUrl.toString());
+				// Set by replacing the last entry
+				const oNewUrl = IFrame._toUrl(sEncodedUrl);
+				const oOldUrl = IFrame._toUrl(this.getUrl() || "about:blank");
+				if (
+					oOldUrl.origin === oNewUrl.origin
+					&& oOldUrl.pathname === oNewUrl.pathname
+					&& oOldUrl.search === oNewUrl.search
+					&& oOldUrl.hash !== oNewUrl.hash
+				) {
+					// Only the hash changed, site is not going to reload automatically
+					// Set an artificial frame buster search parameter to force a refresh
+					oNewUrl.searchParams.append("sap-ui-xx-fl-forceEmbeddedContentRefresh", Date.now());
 				}
+				this.setProperty("url", oNewUrl.toString());
 			} else {
 				Log.error("Provided URL is not valid as an IFrame src");
 			}
@@ -193,9 +165,7 @@ sap.ui.define([
 		},
 
 		onAfterRendering() {
-			if (!this.getUseLegacyNavigation()) {
-				this._replaceIframeLocation(this.getUrl());
-			}
+			this._replaceIframeLocation(this.getUrl());
 		},
 
 		applySettings(mSettings, ...aOtherArgs) {
@@ -203,9 +173,9 @@ sap.ui.define([
 			Control.prototype.applySettings.apply(this, [mOtherSettings, ...aOtherArgs]);
 			Control.prototype.applySettings.apply(this, [{ url }, ...aOtherArgs]);
 			if (mSettings) {
-				var mMergedSettings = this.getProperty("_settings") || {};
+				let mMergedSettings = {...this.getProperty("_settings") || {}};
 				if (mSettings._settings) {
-					extend(mMergedSettings, mSettings._settings);
+					mMergedSettings = {...mMergedSettings, ...mSettings._settings};
 				} else {
 					Object.keys(mSettings)
 					.filter(function(sPropertyName) {
@@ -215,7 +185,8 @@ sap.ui.define([
 						mMergedSettings[sPropertyName] = unbind(mSettings[sPropertyName]);
 					});
 				}
-				this.setProperty("_settings", mMergedSettings);
+				this.setProperty("advancedSettings", { ...mMergedSettings.advancedSettings });
+				this.setProperty("_settings", { ...mMergedSettings });
 			}
 		},
 

@@ -17,9 +17,9 @@
 		contentWidth="50rem"
 		contentHeight="44rem"
 		core:require="{ FloatType: 'sap/ui/model/type/Float' }"
+		afterOpen="configureMultiInput"
 	>
 		<content>
-
 			<layout:VerticalLayout
 					id="sapUiRtaAddIFrameDialog_VL"
 					width="100%"
@@ -72,7 +72,7 @@
 										ariaLabelledBy="sapUiRtaAddIFrameDialog_WidthUnitLabel"
 										selectedKey="{dialogInfo>/frameWidthUnit/value}"
 										items="{dialogInfo>/unitsOfWidthMeasure}"
-										showSecondaryValues= "true"
+										showSecondaryValues="true"
 										columnRatio="1:5"
 										width="auto"
 										maxWidth="400px">
@@ -99,7 +99,7 @@
 										selectedKey="{dialogInfo>/frameHeightUnit/value}"
 										forceSelection="false"
 										items="{dialogInfo>/unitsOfHeightMeasure}"
-										showSecondaryValues= "true"
+										showSecondaryValues="true"
 										columnRatio="1:5"
 										width="auto"
 										maxWidth="400px">
@@ -208,7 +208,7 @@
 								<ToolbarSpacer />
 								<Button
 									id="sapUiRtaAddIFrameDialog_PreviewButton"
-									enabled="{= !${dialogInfo>/frameUrlError/value} &amp;&amp; ${dialogInfo>/previousFrameUrl/value} !== ${dialogInfo>/frameUrl/value} || ${dialogInfo>/previewUseLegacyNavigation/value} !== ${dialogInfo>/useLegacyNavigation/value}}"
+									enabled="{= !${dialogInfo>/frameUrlError/value} &amp;&amp; (${dialogInfo>/previousFrameUrl/value} !== ${dialogInfo>/frameUrl/value} || ${dialogInfo>/settingsUpdate/value})}"
 									text="{=${dialogInfo>/previewUrl/value} === '' ? ${dialogInfo>/text/showPreviewButton} : ${dialogInfo>/text/updatePreviewButton} }"
 									press="onShowPreview"
 									class="sapUiTinyMarginTop sapUiRtaAddIFrameDialogPreviewButton" />
@@ -219,7 +219,12 @@
 							<Link
 								id="sapUiRtaAddIFrameDialog_PreviewLink"
 								class="sapUiRtaAddIFrameDialogPreviewLink"
-								href="{dialogInfo>/previewUrl/value}" text="{dialogInfo>/previewUrl/value}" wrapping="true" visible="{= !!${dialogInfo>/previewUrl/value} }" />
+								href="{dialogInfo>/previewUrl/value}"
+								text="{dialogInfo>/previewUrl/value}"
+								wrapping="true"
+								visible="{= !!${dialogInfo>/previewUrl/value} }"
+								target="_blank"
+							/>
 						</content>
 					</Panel>
 				</layout:Grid>
@@ -244,8 +249,8 @@
 									id="sapUiRtaAddIFrameDialog_PreviewFrame"
 									height="100%"
 									title="{dialogInfo>/text/previewFrameLabel}"
-									useLegacyNavigation="{dialogInfo>/previewUseLegacyNavigation/value/}"
 									class="sapUiRtaAddIFrameDialogPreviewFrame"
+									advancedSettings="{dialogInfo>/advancedSettings/value}"
 									visible="{= !!${dialogInfo>/previewUrl/value} }"/>
 						</items>
 					</VBox>
@@ -269,22 +274,116 @@
 							</OverflowToolbar>
 						</headerToolbar>
 						<content>
-							<HBox
-								alignItems="Center"
-								class="sapUiRtaAddIFrameDialogLegacyNavigationContainer">
-								<Switch
-									id="sapUiRtaAddIFrameDialog_UseLegacyNavigationToggle"
-									customTextOn=" "
-									customTextOff=" "
-									state="{dialogInfo>/useLegacyNavigation/value}" />
-								<Label
-									text="{dialogInfo>/text/useLegacyNavigationLabel}" />
-								<Button
-									icon="sap-icon://hint"
-									type="Transparent"
-									press="onLegacyNavigationInfoPress"
-									ariaHasPopup="Dialog" />
-								</HBox>
+							<MessageStrip
+								id="sapUiRtaAddIFrameDialog_SecurityWarningMessage"
+								text="{dialogInfo>/text/additionalParametersSecurityWarningText}"
+								type="Warning"
+								showIcon="true"
+								showCloseButton="true"
+								class="sapUiSmallMarginBottom">
+								<link>
+									<Link text="{dialogInfo>/text/additionalParametersWarningMoreInfoText}"
+										target="_blank"
+										href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/iframe#sandbox"/>
+								</link>
+							</MessageStrip>
+							<form:Form editable="true">
+								<form:layout>
+									<form:ResponsiveGridLayout
+										id="sapUiRtaAddIFrameDialog_SanboxPropertiesForm"
+										adjustLabelSpan="false" singleContainerFullSize="false"
+										labelSpanXL="6" labelSpanL="6" labelSpanM="6" labelSpanS="12"
+										columnsXL="2" columnsL="2" columnsM="2"/>
+									</form:layout>
+										<form:FormContainer>
+											<form:FormElement label="allow-forms">
+												<Switch
+													change="onSwitchChange"
+													id="sapUiRtaAddIFrameDialog_allowFormsSwitch"
+													customTextOn=" "
+													customTextOff=" "
+													state="{dialogInfo>/advancedSettings/value/allow-forms}" />
+											</form:FormElement>
+											<form:FormElement label="allow-popups">
+												<Switch
+													change="onSwitchChange"
+													id="sapUiRtaAddIFrameDialog_allowPopupsSwitch"
+													customTextOn=" "
+													customTextOff=" "
+													state="{dialogInfo>/advancedSettings/value/allow-popups}" />
+											</form:FormElement>
+											<form:FormElement label="allow-scripts">
+												<Switch
+													change="onSwitchChange"
+													id="sapUiRtaAddIFrameDialog_allowScriptsSwitch"
+													customTextOn=" "
+													customTextOff=" "
+													state="{dialogInfo>/advancedSettings/value/allow-scripts}" />
+											</form:FormElement>
+											<form:FormElement label="allow-modals">
+												<Switch
+													change="onSwitchChange"
+													id="sapUiRtaAddIFrameDialog_allowModalsSwitch"
+													customTextOn=" "
+													customTextOff=" "
+													state="{dialogInfo>/advancedSettings/value/allow-modals}" />
+											</form:FormElement>
+											<form:FormElement label="allow-same-origin">
+												<Switch
+													change="onSwitchChange"
+													id="sapUiRtaAddIFrameDialog_allowSameOriginSwitch"
+													customTextOn=" "
+													customTextOff=" "
+													state="{dialogInfo>/advancedSettings/value/allow-same-origin}" />
+											</form:FormElement>
+										</form:FormContainer>
+										<form:FormContainer>
+											<form:FormElement label="allow-top-navigation">
+												<Switch
+													change="onSwitchChange"
+													id="sapUiRtaAddIFrameDialog_allowTopNavigationSwitch"
+													customTextOn=" "
+													customTextOff=" "
+													state="{dialogInfo>/advancedSettings/value/allow-top-navigation}" />
+											</form:FormElement>
+											<form:FormElement label="allow-downloads">
+												<Switch
+													change="onSwitchChange"
+													id="sapUiRtaAddIFrameDialog_allowDownloadsSwitch"
+													customTextOn=" "
+													customTextOff=" "
+													state="{dialogInfo>/advancedSettings/value/allow-downloads}" />
+											</form:FormElement>
+											<form:FormElement label="allow-downloads-without-user-activation">
+												<Switch
+													change="onSwitchChange"
+													id="sapUiRtaAddIFrameDialog_allowDownloadsWithoutUserActivationSwitch"
+													customTextOn=" "
+													customTextOff=" "
+													state="{dialogInfo>/advancedSettings/value/allow-downloads-without-user-activation}" />
+											</form:FormElement>
+											<form:FormElement>
+												<Label
+													id="sapUiRtaAddIFrameDialog_AddAdditionalParametersLabel"
+													class="sapUiSmallMarginTop"
+													text="{dialogInfo>/text/additionalSandboxParametersLabel}"
+													labelFor="sapUiRtaAddIFrameDialog_AddAdditionalParametersInput" />
+											</form:FormElement>
+											<form:FormElement>
+												<MultiInput
+													id="sapUiRtaAddIFrameDialog_AddAdditionalParametersInput"
+													placeholder="{dialogInfo>/text/additionalSandboxParametersPlaceholder}"
+													showValueHelp="false"
+													tokenUpdate="onTokenUpdate"
+													tokens="{dialogInfo>/advancedSettings/value/additionalSandboxParameters}"
+													ariaLabelledBy="sapUiRtaAddIFrameDialog_AddAdditionalParametersLabel">
+													<tokens>
+														<Token text="{dialogInfo>}" key="{dialogInfo>}"/>
+													</tokens>
+												</MultiInput>
+									</form:FormElement>
+								</form:FormContainer>
+							</form:Form>
 						</content>
 					</Panel>
 				</layout:Grid>
@@ -295,7 +394,6 @@
 			<core:InvisibleText id="sapUiRtaAddIFrameDialog_HeightUnitLabel" text="{dialogInfo>/text/heightUnitLabel}"/>
 			<core:InvisibleText id="sapUiRtaAddIFrameDialog_ParameterSearchLabel" text="{dialogInfo>/text/parameterSearchLabel}"/>
 		</content>
-
 		<beginButton>
 			<Button
 				id="sapUiRtaAddIFrameDialogSaveButton"

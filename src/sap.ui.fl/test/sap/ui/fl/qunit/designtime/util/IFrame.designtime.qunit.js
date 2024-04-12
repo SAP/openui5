@@ -30,8 +30,7 @@ sap.ui.define([
 					propertyName: "text",
 					selectorControlId: "labelId",
 					sourceControlId: "labelId"
-				},
-				useLegacyNavigation: false
+				}
 			});
 			this.oLabel = new Label("labelId", {text: "myInitialTitle"});
 			this.oIFrame.placeAt("qunit-fixture");
@@ -51,14 +50,18 @@ sap.ui.define([
 					frameHeight: "100",
 					frameHeightUnit: "vh",
 					frameUrl: "newUrl",
-					useLegacyNavigation: false,
-					title: "myNewTitle"
+					title: "myNewTitle",
+					advancedSettings: {
+						additionalSandboxParameters: []
+					}
 				},
 				updateContent: {
 					url: "newUrl",
 					width: "50px",
 					height: "100vh",
-					useLegacyNavigation: false
+					advancedSettings: {
+						additionalSandboxParameters: []
+					}
 				},
 				renameContent: {
 					value: "myNewTitle"
@@ -72,7 +75,9 @@ sap.ui.define([
 					frameHeight: "100",
 					frameHeightUnit: "px",
 					frameUrl: "https://example.com",
-					useLegacyNavigation: false,
+					advancedSettings: {
+						additionalSandboxParameters: []
+					},
 					title: "myNewTitle"
 				},
 				renameContent: {
@@ -87,14 +92,18 @@ sap.ui.define([
 					frameHeight: "100",
 					frameHeightUnit: "px",
 					frameUrl: "https://example.com",
-					useLegacyNavigation: false,
-					title: "myInitialTitle"
+					title: "myInitialTitle",
+					advancedSettings: {
+						additionalSandboxParameters: []
+					}
 				},
 				updateContent: {
 					url: "https://example.com",
 					width: "50px",
 					height: "100px",
-					useLegacyNavigation: false
+					advancedSettings: {
+						additionalSandboxParameters: []
+					}
 				}
 			},
 			{
@@ -105,32 +114,50 @@ sap.ui.define([
 					frameHeight: "100",
 					frameHeightUnit: "%",
 					frameUrl: "https://example.com",
-					useLegacyNavigation: false,
-					title: "myInitialTitle"
+					title: "myInitialTitle",
+					advancedSettings: {
+						additionalSandboxParameters: []
+					}
 				},
 				updateContent: {
 					url: "https://example.com",
 					width: "100px",
 					height: "100%",
-					useLegacyNavigation: false
+					advancedSettings: {
+						additionalSandboxParameters: []
+					}
 				}
 			},
 			{
-				testTitle: "only useLegacyNavigation changed",
+				testTitle: "only advancedSettings changed",
 				dialogReturn: {
 					frameWidth: "100",
 					frameWidthUnit: "px",
 					frameHeight: "100",
 					frameHeightUnit: "px",
 					frameUrl: "https://example.com",
-					useLegacyNavigation: true,
-					title: "myInitialTitle"
+					title: "myInitialTitle",
+					advancedSettings: {
+						additionalSandboxParameters: ["allow-pointer-lock"],
+						"allow-forms": true,
+						"allow-popups": true,
+						"allow-scripts": true,
+						"allow-modals": true,
+						"allow-same-origin": true
+					}
 				},
 				updateContent: {
 					url: "https://example.com",
 					width: "100px",
 					height: "100px",
-					useLegacyNavigation: true
+					advancedSettings: {
+						additionalSandboxParameters: ["allow-pointer-lock"],
+						"allow-forms": true,
+						"allow-popups": true,
+						"allow-scripts": true,
+						"allow-modals": true,
+						"allow-same-origin": true
+					}
 				}
 			},
 			{
@@ -141,8 +168,10 @@ sap.ui.define([
 					frameHeight: "100",
 					frameHeightUnit: "px",
 					frameUrl: "https://example.com",
-					useLegacyNavigation: false,
-					title: "myInitialTitle"
+					title: "myInitialTitle",
+					advancedSettings: {
+						additionalSandboxParameters: []
+					}
 				}
 			},
 			{
