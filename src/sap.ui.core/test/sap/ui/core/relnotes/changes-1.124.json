@@ -3,6 +3,11 @@
     "date": "April 2024",
     "notes": [
       {
+        "id": "78cfc2c84d3723715f394ca175dd792ffe3eccc5",
+        "type": "FEATURE",
+        "text": " core/UIComponent: Provide internal hook for router class definition"
+      },
+      {
         "id": "5814f8dc10e783477f586afffc78e36b3a95a52e",
         "type": "FIX",
         "text": " sap.ui.model.odata.type.Unit/Currency#formatValue: document precedence of maxFractionDigits,scale and decimal places"

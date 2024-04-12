@@ -3,6 +3,26 @@
     "date": "April 2024",
     "notes": [
       {
+        "id": "877aa206427f646cddf78b509e1d347708327cb4",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Fix closing Popover with ComboBox"
+      },
+      {
+        "id": "002ebff4f2ae18a281c1b95b80d31bc8a822afeb",
+        "type": "FIX",
+        "text": " sap.m.Input: ValueStateMessage with FormattedText displays links twice"
+      },
+      {
+        "id": "086ac67db853ad5f9e9cef16eab8ecdb540523db",
+        "type": "FIX",
+        "text": " sap.m.TimePickerClock: fixed time selection when the page is scrolled"
+      },
+      {
+        "id": "0eef8b3074b91fd0984810447f479f0d0eb8f4d0",
+        "type": "FEATURE",
+        "text": " We've have now introduced the enableDynamicHeight property for the tiles to expand dynamically when the content inside the tiles expands"
+      },
+      {
         "id": "66fbce07871c648614cff17b7a09dd3d28af2c75",
         "type": "FIX",
         "text": " sap.m.MultiInput: Do not delete tokens on RIGHT arrow navigation"
