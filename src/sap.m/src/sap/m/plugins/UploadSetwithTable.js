@@ -27,9 +27,8 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/m/MenuButton",
 	"sap/m/MenuItem",
-	"sap/m/Menu",
-	"sap/ui/mdc/table/DragDropConfig"
-], function (PluginBase, Element, Log, Library1, FileUploader, UploaderHttpRequestMethod, UploadItem, deepEqual, Library, IllustratedMessageType, IllustratedMessage, IllustratedMessageSize, Uploader, DragDropInfo, DropInfo, FilePreviewDialog, EventBase, Dialog, Label, Input, MessageBox, Button, Core, MenuButton, MenuItem, Menu, MDCDropConfig) {
+	"sap/m/Menu"
+], function (PluginBase, Element, Log, Library1, FileUploader, UploaderHttpRequestMethod, UploadItem, deepEqual, Library, IllustratedMessageType, IllustratedMessage, IllustratedMessageSize, Uploader, DragDropInfo, DropInfo, FilePreviewDialog, EventBase, Dialog, Label, Input, MessageBox, Button, Core, MenuButton, MenuItem, Menu) {
 	"use strict";
 
 	/**
@@ -1490,14 +1489,21 @@ sap.ui.define([
 		},
 		// Set Drag and Drop configuration for the table when upload plugin is activated.
 		setDragDropConfig: function () {
-			const oPlugin = this.getPluginInstance();
-			const oControl = this.getControlInstance();
-			const oDragDropConfig = oPlugin._oDragDropConfig = new MDCDropConfig({
-				droppable: true
-			});
+			// Loading MDC library's Drag and Drop configuration for the table.
+			sap.ui.require(["sap/ui/mdc/table/DragDropConfig"], (MDCDragDropConfig) => {
 
-			oDragDropConfig.attachDrop(oPlugin._onDropFile.bind(oPlugin));
-			oControl.addDragDropConfig(oDragDropConfig);
+				const oPlugin = this.getPluginInstance();
+				const oControl = this.getControlInstance();
+				const oDragDropConfig = oPlugin._oDragDropConfig = new MDCDragDropConfig({
+					droppable: true
+				});
+
+				oDragDropConfig.attachDrop(oPlugin._onDropFile.bind(oPlugin));
+				oControl.addDragDropConfig(oDragDropConfig);
+
+			}, () => {
+				Log.error("Failed to load MDC library for Drag and Drop configuration.");
+			});
 		},
 		// Set default illustrations for the table when no data is available. set only when upload plugin is activated.
 		setDefaultIllustrations: function() {
