@@ -174,7 +174,7 @@ sap.ui.define([
 			"sap.m.ComboBox": {
 				canOverflow: true,
 				listenForEvents: [],
-				noInvalidationProps: ["enabled", "value", "selectedItemId", "selectedKey", "open"]
+				noInvalidationProps: ["enabled", "value", "selectedItemId", "selectedKey", "open", "_open", "effectiveShowClearIcon"]
 			},
 			"sap.m.SearchField": {
 				canOverflow: true,
