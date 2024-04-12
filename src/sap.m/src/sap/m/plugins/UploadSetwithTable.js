@@ -24,11 +24,8 @@ sap.ui.define([
 	"sap/m/Input",
 	"sap/m/MessageBox",
 	"sap/m/Button",
-	"sap/ui/core/Core",
-	"sap/m/MenuButton",
-	"sap/m/MenuItem",
-	"sap/m/Menu"
-], function (PluginBase, Element, Log, Library1, FileUploader, UploaderHttpRequestMethod, UploadItem, deepEqual, Library, IllustratedMessageType, IllustratedMessage, IllustratedMessageSize, Uploader, DragDropInfo, DropInfo, FilePreviewDialog, EventBase, Dialog, Label, Input, MessageBox, Button, Core, MenuButton, MenuItem, Menu) {
+	"sap/ui/core/Core"
+], function (PluginBase, Element, Log, Library1, FileUploader, UploaderHttpRequestMethod, UploadItem, deepEqual, Library, IllustratedMessageType, IllustratedMessage, IllustratedMessageSize, Uploader, DragDropInfo, DropInfo, FilePreviewDialog, EventBase, Dialog, Label, Input, MessageBox, Button, Core) {
 	"use strict";
 
 	/**
@@ -97,24 +94,24 @@ sap.ui.define([
 				 */
 				uploadEnabled: {type: "boolean", defaultValue: true},
 				/** Callback function to perform additional validations or configurations for the item queued up for upload and to finally trigger the upload.
-				 * @callback sap.m.upload.UploadSetwithTable.itemValidationHandler
-				 * @param {sap.m.upload.UploadSetwithTable.ItemInfo} oItemInfo The info of the item queued for upload.
+				 * @callback sap.m.upload.itemValidationHandler
+				 * @param {sap.m.upload.ItemInfo} oItemInfo The info of the item queued for upload.
 				 * @returns {Promise<sap.m.upload.UploadItem>} oPromise, once resolved the UploadSetWithTable control initiates the upload.
 				 * @public
 				**/
 
 				/**
-				 * @typedef {object} sap.m.upload.UploadSetwithTable.ItemInfo
-				 * @description Item info object sent as paramter to {@link sap.m.upload.UploadSetwithTable.itemValidationHandler itemValidationHandler callback}
+				 * @typedef {object} sap.m.upload.ItemInfo
+				 * @description Item info object sent as paramter to {@link sap.m.upload.itemValidationHandler itemValidationHandler callback}
 				 * @property {sap.m.upload.UploadItem} oItem Current item queued for upload.
 				 * @property {number} iTotalItemsForUpload Total count of items queued for upload.
-				 * @property {sap.m.upload.UploadSetwithTable} oSource Source on which the callback was invoked.
+				 * @property {sap.m.plugins.UploadSetwithTable} oSource Source on which the callback was invoked.
 				 * @public
 				**/
 
 				/**
-				 * Defines a {@link sap.m.upload.UploadSetwithTable.itemValidationHandler callback function} that is invoked when each UploadItem is queued up for upload.
-				 * This callback is invoked with {@link sap.m.upload.UploadSetwithTable.ItemInfo parameters} and the callback is expected to return a promise to the control. Once the promise is resolved, the control initiates the upload process.
+				 * Defines a {@link sap.m.upload.itemValidationHandler callback function} that is invoked when each UploadItem is queued up for upload.
+				 * This callback is invoked with {@link sap.m.upload.ItemInfo parameters} and the callback is expected to return a promise to the control. Once the promise is resolved, the control initiates the upload process.
 				 * Configure this property only when any additional configuration or validations are to be performed before the upload of each item.
 				 * The upload process is triggered manually by resolving the promise returned to the control.
 				**/
@@ -123,10 +120,6 @@ sap.ui.define([
 				 * Lets the user upload entire files from directories and sub directories.
 				*/
 				 directory: {type: "boolean", group: "Behavior", defaultValue: false},
-				/**
-				 * If set to true, the variant management gets enabled.
-				 */
-				enableVariantManagement: {type: "boolean", defaultValue: false},
 				/**
 				  * Enables CloudFile picker feature to upload files from cloud.
 				  * @experimental Since 1.120
@@ -367,8 +360,6 @@ sap.ui.define([
 
 	UploadSetwithTable.findOn = PluginBase.findOn;
 
-	var MenuButtonMode = Library.MenuButtonMode;
-
 	/**
 	 * Event Delegate that containts events, that need to be executed after control events.
 	 */
@@ -400,19 +391,12 @@ sap.ui.define([
 	};
 
 	UploadSetwithTable.prototype.exit = function() {
-		if (this.getControl()  && !this.getControl().isDestroyed()) {
-			// this.removeSelection();
-		}
-
+		this.getConfig("cleanupPluginInstanceSettings");
 		PluginBase.prototype.exit.call(this);
 	};
 
 	UploadSetwithTable.prototype.setParent = function() {
 		PluginBase.prototype.setParent.apply(this, arguments);
-		if (!this.getParent() && this._oUploadButton) {
-			this._oUploadButton.destroy(true);
-			this._oUploadButton = null;
-		}
 	};
 
 	// Overriden Setter methods
@@ -690,19 +674,6 @@ sap.ui.define([
 
 	// Private API's
 
-	UploadSetwithTable.prototype._getActionToReplacePlaceholder = function(sPlaceHolderFor) {
-		switch (sPlaceHolderFor) {
-			case UploadSetwithTableActionPlaceHolder.UploadButtonPlaceholder:
-				return !this.getUploadButtonInvisible() ? this.getDefaultFileUploader() : null;
-				// return this.getCloudFilePickerEnabled() && !this.getUploadButtonInvisible() ? this._getCloudFilePickerMenu() : this.getDefaultFileUploader();
-			case UploadSetwithTableActionPlaceHolder.CloudFilePickerButtonPlaceholder:
-				return this.getCloudFilePickerEnabled() ? this._getCloudFilePickerButton() : null;
-			default:
-				break;
-		}
-		return null;
-	};
-
 	/**
 	* Internal API return the dialog for document rename.
 	* @param {sap.m.upload.UploadItem} oItem item to be renamed.
@@ -851,20 +822,6 @@ sap.ui.define([
 			oInput.setShowValueStateMessage(false);
 			oInput.setProperty("valueState", "None", true);
 		}
-	};
-
-    UploadSetwithTable.prototype._setControlInToolbar = function(iIndex, control) {
-		this._oToolbar.getContent()[iIndex].setVisible(false);
-		this._oToolbar.insertContent(control, iIndex);
-	};
-
-	UploadSetwithTable.prototype._getPlaceholderPosition = function(toolbar, placeholderType) {
-		for (var i = 0; i < toolbar.getContent().length; i++) {
-			if (toolbar.getContent()[i].isA("sap.m.upload.ActionsPlaceholder") && toolbar.getContent()[i].getPlaceholderFor() === placeholderType) {
-				return i;
-			}
-		}
-		return -1;
 	};
 
     UploadSetwithTable.prototype._onFileUploaderChange = function (oEvent) {
@@ -1045,14 +1002,6 @@ sap.ui.define([
 		this._uploadItemIfGoodToGo(oItem);
 	};
 
-    UploadSetwithTable.prototype._getRowConfigElement = function() {
-        const oUploadSetItemControl = this.getRowConfiguration();
-        oUploadSetItemControl.setUploadState("Ready");
-		oUploadSetItemControl.setParent(this);
-
-		return oUploadSetItemControl;
-    };
-
 	/**
 	 * Drag and drop of files implmentation subject to change depending on the thr UX feedback for folder upload scenarios and warning message display scenarios
 	 * @param {sap.ui.base.Event} oEvent Drop Event when file is dropped on the Table.
@@ -1064,7 +1013,7 @@ sap.ui.define([
 			Log.error("Upload is not enabled, to continue uploading with drag and drop of files enable property 'UploadEnabled' ");
 			return;
 		}
-		let oItems = oEvent.getParameter("browserEvent").dataTransfer.items;
+		let oItems = oEvent.getParameter("browserEvent")?.dataTransfer?.items || [];
 		oItems = Array.from(oItems);
 
 		// Filtering out only webkitentries (files/folders system entries) by excluding non file / directory types.
@@ -1105,7 +1054,8 @@ sap.ui.define([
 		}
 		if (oItems && oItems.length) {
 			this._getFilesFromDataTransferItems(oItems).then( (oFiles) => {
-				if (oFiles && oFiles.length) {
+				const oFileUploader = this.getDefaultFileUploader();
+				if (oFiles && oFiles.length && oFileUploader?._areFilesAllowed(oFiles)) {
 					this._processSelectedFileObjects(oFiles);
 				}
 			});
@@ -1171,21 +1121,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns CloudFile picker menu button
-	 * @return {sap.m.MenuButton} CloudPicker & LocalFileUpload Menu button
-	 * @private
-	 */
-	UploadSetwithTable.prototype._getCloudFilePickerMenu = function () {
-		this._oMenuButton = new MenuButton({
-			text: this._oRb.getText("UPLOAD_SET_DEFAULT_LFP_BUTTON_TEXT"),
-			buttonMode: MenuButtonMode.Split,
-			menu: this._getMenuButtonItems(),
-			defaultAction: this.fileSelectionHandler.bind(this)
-		});
-		return this._oMenuButton;
-	};
-
-	/**
 	 * Returns Cloud File picker button
 	 * @return {sap.m.Button} Cloudfile Picker button
 	 * @private
@@ -1219,16 +1154,6 @@ sap.ui.define([
 				this._oMenuButton.setText(oItem.getText());
 				break;
 		}
-	};
-
-	UploadSetwithTable.prototype._getMenuButtonItems = function () {
-		return new Menu({
-			items: [
-				new MenuItem({ text: this._oRb.getText("UPLOAD_SET_DEFAULT_LFP_BUTTON_TEXT") }),
-				new MenuItem({ text: this.getCloudFilePickerButtonText() ? this.getCloudFilePickerButtonText() : this._oRb.getText("UPLOAD_SET_DEFAULT_CFP_BUTTON_TEXT") })
-			],
-			itemSelected: this._itemSelectedCallback.bind(this)
-		});
 	};
 
 	/**
@@ -1311,6 +1236,7 @@ sap.ui.define([
 			var oItem = new UploadItem({
 				uploadState: UploadState.Ready
 			});
+			oItem.setParent(this); // setting the parent as UploadSetwithTable for file validations
 			oItem._setFileObject(oFile);
 			oItem.setFileName(oFile.name);
 
