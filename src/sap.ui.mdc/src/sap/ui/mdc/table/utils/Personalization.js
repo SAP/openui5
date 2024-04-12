@@ -3,8 +3,10 @@
  */
 
 sap.ui.define([
+	"sap/ui/mdc/enums/ProcessingStrategy",
 	"sap/ui/core/library"
 ], (
+	ProcessingStrategy,
 	CoreLibrary
 ) => {
 	"use strict";
@@ -58,7 +60,13 @@ sap.ui.define([
 	 * @param {sap.ui.mdc.Table} oTable The table that is personalized with the dialog.
 	 */
 	PersonalizationUtils.openSettingsDialog = function(oTable) {
-		openP13nDialog(oTable, oTable.getActiveP13nModes());
+		openP13nDialog(oTable, oTable.getActiveP13nModes(), {
+			reset: () => {
+				// By default, only changes related to the given keys (visible panels in the p13n dialog) are reset. Instead, all changes need to be
+				// reset, including changes related to inactive or faceless p13n modes, such as column width (has no panel in the dialog).
+				oTable.getEngine().reset(oTable);
+			}
+		});
 	};
 
 	/**
@@ -67,37 +75,44 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.mdc.Table} oTable The table that is personalized with the dialog.
 	 * @param {function} [fnOnClose] This callback is called after the filter dialog is closed.
-	 * @returns {Promise<sap.m.ResponsivePopover | sap.m.Dialog>} A promise that resolves with the p13n dialog.
 	 */
 	PersonalizationUtils.openFilterDialog = function(oTable, fnOnClose) {
-		return openP13nDialog(oTable, ["Filter"], fnOnClose);
+		openP13nDialog(oTable, "Filter", {
+			close: fnOnClose
+		});
 	};
 
-	function openP13nDialog(oTable, aPanelKeys, fnOnClose) {
-		return oTable.finalizePropertyHelper().then(() => {
-			const oEngine = oTable.getEngine();
+	/**
+	 * Opens the p13n dialog.
+	 *
+	 * @param {sap.ui.mdc.Table} oTable Instance of the table
+	 * @param {string | string[]} vChangeKeys The keys of change types as they are registered in the engine for the controllers
+	 * @param {object} [mSettings] P13n dialog settings
+	 * @param {boolean} [mSettings.reset] Callback that is called when the <code>Reset</code> button is pressed
+	 * @param {function} [mSettings.close] Callback that is called when the dialog is closed
+	 */
+	async function openP13nDialog(oTable, vChangeKeys, mSettings = {}) {
+		await oTable.finalizePropertyHelper();
 
-			if (oTable.getInbuiltFilter()) {
-				oTable.getInbuiltFilter().setVisibleFields(null);
+		if (oTable.getInbuiltFilter()) {
+			oTable.getInbuiltFilter().setVisibleFields(null);
+		}
+
+		const oEngine = oTable.getEngine();
+		const oP13nControl = await oEngine.show(oTable, vChangeKeys, {
+			reset: mSettings.reset,
+			close: () => {
+				mSettings.close?.();
+				oEngine.waitForChanges(oTable).then(() => {
+					delete oTable._bUserPersonalizationActive;
+				});
 			}
-
-			return oEngine.show(oTable, aPanelKeys, {
-				close: function() {
-					if (fnOnClose) {
-						fnOnClose();
-					}
-					oEngine.waitForChanges(oTable).then(() => {
-						delete oTable._bUserPersonalizationActive;
-					});
-				}
-			}).then((oP13nControl) => {
-				if (oP13nControl) {
-					// The promise resolves with a control instance only if the dialog is opened.
-					oTable._bUserPersonalizationActive = true;
-				}
-				return oP13nControl;
-			});
 		});
+
+		if (oP13nControl) {
+			// Engine#show resolves with a control instance only if the dialog is opened.
+			oTable._bUserPersonalizationActive = true;
+		}
 	}
 
 	/**
@@ -147,19 +162,16 @@ sap.ui.define([
 	};
 
 	/**
-	 * Creates a filter change and applies it to the table.
+	 * Creates a change that removes all filters and applies it to the table.
 	 *
 	 * @param {sap.ui.mdc.Table} oTable The table for which to create the change.
-	 * @param {object} mSettings The change details.
-	 * @param {Array} mSettings.conditions The filter conditions that should be applied to the table.
-	 * @param {sap.ui.mdc.enums.ProcessingStrategy|boolean} mSettings.strategy The processing strategy on how to apply the change.
 	 */
-	PersonalizationUtils.createFilterChange = function(oTable, mSettings) {
+	PersonalizationUtils.createClearFiltersChange = function(oTable) {
 		oTable.getEngine().createChanges({
 			control: oTable,
 			key: "Filter",
-			state: mSettings.conditions,
-			applyAbsolute: mSettings.strategy
+			state: [],
+			applyAbsolute: ProcessingStrategy.FullReplace
 		});
 	};
 

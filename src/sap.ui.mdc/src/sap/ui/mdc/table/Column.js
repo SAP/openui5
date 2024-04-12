@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/base/ManagedObjectModel",
+	"sap/ui/model/BindingMode",
 	"sap/ui/core/Control",
 	"sap/ui/mdc/enums/TableType"
 ], (
@@ -22,6 +23,7 @@ sap.ui.define([
 	Element,
 	JSONModel,
 	ManagedObjectModel,
+	BindingMode,
 	Control,
 	TableType
 ) => {
@@ -201,9 +203,9 @@ sap.ui.define([
 		this._oSettingsModel = new JSONModel({
 			width: this.getWidth(),
 			calculatedWidth: null,
-			p13nWidth: null,
-			resizable: false
+			p13nWidth: null
 		});
+		this._oManagedObjectModel.setDefaultBindingMode(BindingMode.OneWay);
 	};
 
 	Column.prototype.getInnerColumn = function() {
@@ -295,8 +297,8 @@ sap.ui.define([
 				},
 				hAlign: "{$this>/hAlign}",
 				label: this._getColumnHeaderLabel(),
-				resizable: "{$columnSettings>/resizable}",
-				autoResizable: "{$columnSettings>/resizable}",
+				resizable: "{$sap.ui.mdc.Table>/enableColumnResize}",
+				autoResizable: "{$sap.ui.mdc.Table>/enableColumnResize}",
 				tooltip: oTooltipBindingInfo,
 				template: this.getTemplateClone()
 			});
@@ -360,7 +362,7 @@ sap.ui.define([
 					tooltip: oTooltipBindingInfo ? oTooltipBindingInfo : "",
 					wrapping: {
 						parts: [
-							{ path: "$this>/headerVisible" }, { path: "$columnSettings>/resizable" }
+							{path: "$this>/headerVisible"}, {path: "$sap.ui.mdc.Table>/enableColumnResize"}
 						],
 						formatter: function(bHeaderVisible, bResizable) {
 							return oTable._isOfType(TableType.ResponsiveTable) && bHeaderVisible && !bResizable;
@@ -455,18 +457,6 @@ sap.ui.define([
 		return Control.prototype.setTooltip.apply(this, arguments);
 	};
 
-	Column.prototype._onTableChange = function(oEvent) {
-		if (oEvent.getParameter("name") === "enableColumnResize") {
-			this._readTableSettings();
-		}
-	};
-
-	Column.prototype._readTableSettings = function() {
-		const oTable = this.getTable();
-
-		this._oSettingsModel.setProperty("/resizable", oTable.getEnableColumnResize());
-	};
-
 	Column.prototype.setParent = function(oParent) {
 		const oPreviousTable = this.getTable();
 		Control.prototype.setParent.apply(this, arguments);
@@ -488,20 +478,11 @@ sap.ui.define([
 
 		this._calculateColumnWidth();
 		this._readP13nValues();
-		this._readTableSettings();
-		oTable.attachEvent("_change", this._onTableChange, this);
 	};
 
-	Column.prototype._disconnectFromTable = function(oTable) {
-		oTable = oTable || this.getTable();
-
-		if (!oTable) {
-			return;
-		}
-
-		if (this._oInnerColumn) {
-			this._oInnerColumn.destroy();
-		}
+	Column.prototype._disconnectFromTable = function(oTable = this.getTable()) {
+		this._oInnerColumn?.destroy();
+		delete this._oInnerColumn;
 	};
 
 	Column.prototype._onModifications = function() {

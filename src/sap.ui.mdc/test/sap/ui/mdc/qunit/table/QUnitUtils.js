@@ -208,7 +208,7 @@ sap.ui.define([
 		});
 	};
 
-	QUnitUtils.waitForSettingsDialog = function(oTable) {
+	QUnitUtils.waitForP13nPopup = function(oTable) {
 		let oObserver;
 
 		return new Promise(function(resolve) {
@@ -217,7 +217,7 @@ sap.ui.define([
 					const fnOriginalOpen = oChange.child.open;
 					oChange.child.open = function() {
 						fnOriginalOpen.apply(this, arguments);
-						resolve(oChange.child._oPopup);
+						resolve(oChange.child);
 					};
 				}
 			}).observe(oTable, {
@@ -230,9 +230,9 @@ sap.ui.define([
 		});
 	};
 
-	QUnitUtils.closeSettingsDialog = function(oTable) {
-		const oP13nPopup = oTable.getDependents().find(function(oDepentent) {
-			return oDepentent.isA("sap.m.p13n.Popup");
+	QUnitUtils.closeP13nPopup = function(oTable) {
+		const oP13nPopup = oTable.getDependents().find(function(oDependent) {
+			return oDependent.isA("sap.m.p13n.Popup");
 		});
 
 		if (!oP13nPopup) {
@@ -243,7 +243,7 @@ sap.ui.define([
 			oP13nPopup._oPopup.attachEventOnce("afterClose", function() {
 				resolve();
 			});
-			qutils.triggerKeydown(oP13nPopup._oPopup.getDomRef(), KeyCodes.ESCAPE);
+			qutils.triggerKeydown(oP13nPopup.getPanels()[0].getDomRef(), KeyCodes.ESCAPE);
 		});
 	};
 
