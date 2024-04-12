@@ -1522,6 +1522,8 @@ sap.ui.define([
 				oPopover.getFooter().setVisible(bVisible);
 			}
 
+			bVisible && oPopover.invalidate();
+
 			return this;
 		};
 

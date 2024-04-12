@@ -1811,6 +1811,26 @@ sap.ui.define([
 		this.ddr._oPopup.close();
 	});
 
+	QUnit.test("Internal Popover is invalidated only on setting footer visibility to true", function(assert) {
+		// arrange
+		this.ddr._createPopup();
+
+		var oPopover = this.ddr._oPopup.getAggregation("_popup"),
+			oPopupInvalidateSpy = this.spy(oPopover, "invalidate");
+
+		// act
+		this.ddr._setFooterVisibility(false);
+
+		// assert - check if the validation handler's bubbling is cancelled by the responsive popover
+		assert.ok(oPopupInvalidateSpy.notCalled, "invalidate method of the popover is not called when footer visibity is set fo false");
+
+		// act
+		this.ddr._setFooterVisibility(true);
+
+		// assert - check if the validation handler's bubbling is cancelled by the responsive popover
+		assert.ok(oPopupInvalidateSpy.called, "invalidate method of the popover is called when footer visibity is set fo truse");
+	});
+
 	QUnit.module("Groups", {
 		beforeEach: async function() {
 			this.ddr = new DynamicDateRange();
