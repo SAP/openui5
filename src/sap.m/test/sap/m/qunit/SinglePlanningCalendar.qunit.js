@@ -23,7 +23,7 @@ sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/unified/DateRange",
-    "sap/ui/core/Icon"
+	"sap/ui/core/Icon"
 ], function(
 	Localization,
 	Element,
@@ -778,7 +778,8 @@ sap.ui.define([
 			}),
 			oFakeEvent = {
 				target: jQuery("<div></div>").attr({
-					"class": "sapMSPCMonthDay"
+					"class": "sapMSPCMonthDay",
+					"sap-ui-date": "100000"
 				}).get(0),
 				srcControl: oSPC.getAggregation("_mvgrid")
 			},

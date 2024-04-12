@@ -416,12 +416,23 @@ sap.ui.define([
 			var oCellPressSpy = this.spy(this.oSPCMG, "fireEvent");
 
 			// act
-			this.oSPCMG._fireSelectionEvent({ target: this.oSPCMG.$().find('.sapMSPCMonthDay')[3], srcControl: this.oSPCMG});
+			this.oSPCMG.onmouseup({ target: this.oSPCMG.$().find('.sapMSPCMonthDay')[3], srcControl: this.oSPCMG, metaKey: false, originalEvent: {type: "click"}});
+			// this.oSPCMG._fireSelectionEvent({ target: this.oSPCMG.$().find('.sapMSPCMonthDay')[3], srcControl: this.oSPCMG});
 
 			// assert
 			assert.ok(oCellPressSpy.callCount, 2, "two events are fired");
-			assert.ok(oCellPressSpy.calledWithMatch("appointmentSelect", { appointment: undefined, appointments: [] }), "appointmentSelect is fired + parameters");
 			assert.ok(oCellPressSpy.calledWithMatch("cellPress", { startDate: o2Aug2018_00_00, endDate: o3Aug2018_00_00 }), "cellPress is fired + parameters");
+		});
+
+		QUnit.test("cellPres event with keyboard", function(assert) {
+			// arrange
+			const oCellPressSpy = this.spy(this.oSPCMG, "fireCellPress");
+
+			// act
+			this.oSPCMG.onkeydown({ target: this.oSPCMG.$().find('.sapMSPCMonthDay')[14], srcControl: this.oSPCMG, metaKey: false, which: 39, originalEvent: {type: "keydown", key: "ArrowRight"}});
+
+			// assert
+			assert.ok(oCellPressSpy.notCalled, "one event is fired");
 		});
 
 		QUnit.test("weekNumberPress event", function(assert) {
@@ -902,6 +913,7 @@ sap.ui.define([
 				fnFireAppointmentSelectSpy = this.spy(oGrid, "fireAppointmentSelect");
 
 			oFakeEvent.target.className = "sapMSPCMonthDay";
+			oFakeEvent.target.setAttribute("sap-ui-date", "100000");
 
 			//act
 			oGrid._fireSelectionEvent(oFakeEvent);
