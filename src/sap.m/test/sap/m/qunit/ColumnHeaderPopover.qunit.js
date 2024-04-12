@@ -2,7 +2,7 @@
 /*global QUnit, sinon */
 sap.ui.define([
 	"sap/base/i18n/Localization",
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
 	"sap/ui/qunit/utils/createAndAppendDiv",
@@ -18,7 +18,7 @@ sap.ui.define([
 	"sap/ui/core/Item"
 ], function(
 	Localization,
-	Core,
+	nextUIUpdate,
 	Element,
 	Library,
 	createAndAppendDiv,
@@ -35,6 +35,12 @@ sap.ui.define([
 ) {
 	"use strict";
 	createAndAppendDiv("content");
+
+	function waitSomeTime(iMillis) {
+		return new Promise((resolve) => {
+			setTimeout(resolve, iMillis);
+		});
+	}
 
 	function createCHP(sId) {
 
@@ -103,7 +109,7 @@ sap.ui.define([
 
 QUnit.module("Initial Check");
 
-QUnit.test("Overview rendered", function(assert){
+QUnit.test("Overview rendered", async function(assert){
 	var oPopover = createCHP("test1");
 
 	var oButton = new Button({
@@ -114,10 +120,10 @@ QUnit.test("Overview rendered", function(assert){
 	});
 
 	oButton.placeAt("content");
-	Core.applyChanges();
+	await nextUIUpdate();
 
 	oPopover.openBy(oButton);
-	this.clock.tick(500);
+	await waitSomeTime(500);
 
 	var oRBPopover = oPopover.getAggregation("_popover");
 
@@ -128,7 +134,7 @@ QUnit.test("Overview rendered", function(assert){
 	oPopover.destroy();
 });
 
-QUnit.test("Item render", function(assert){
+QUnit.test("Item render", async function(assert){
 	var oPopover = createCHP("test2");
 	var oButton = new Button({
 		text : "open columnHeaderPopover",
@@ -137,9 +143,9 @@ QUnit.test("Item render", function(assert){
 		}
 	});
 	oButton.placeAt("content");
-	Core.applyChanges();
+	await nextUIUpdate();
 	oPopover.openBy(oButton);
-	this.clock.tick(1000);
+	await waitSomeTime(1000);
 
 	var oRBPopover = oPopover.getAggregation("_popover");
 	var $popover = oRBPopover.$();
@@ -170,7 +176,7 @@ QUnit.test("Item render", function(assert){
 
 QUnit.module("Aggregation");
 
-QUnit.test("update item", function(assert){
+QUnit.test("update item", async function(assert){
 	var oPopover = createCHP("test3");
 	var oItem1 = oPopover.getItems()[3];
 	var oItem2 = new ColumnPopoverActionItem({text: "Hello"});
@@ -183,14 +189,14 @@ QUnit.test("update item", function(assert){
 	});
 
 	oButton.placeAt("content");
-	Core.applyChanges();
+	await nextUIUpdate();
 
 	oPopover.openBy(oButton);
-	this.clock.tick(2000);
+	await waitSomeTime(1000);
 
 	oPopover.removeItem(oItem1);
 	oPopover.addItem(oItem2);
-	this.clock.tick(2000);
+	await waitSomeTime(1000);
 
 	assert.equal(oPopover.getItems().length, 4, "ColumnHeaderPopover has 4 items as aggregations");
 
@@ -208,7 +214,7 @@ QUnit.test("update item", function(assert){
 
 QUnit.module("ColumnPopoverItem");
 
-QUnit.test("ColumnPopoverActionItem", function(assert){
+QUnit.test("ColumnPopoverActionItem", async function(assert){
 	assert.expect(4);
 
 	var oPopover = createCHP("test3");
@@ -216,7 +222,7 @@ QUnit.test("ColumnPopoverActionItem", function(assert){
 	var oButton = new Button({text : "open columnHeaderPopover"});
 
 	oButton.placeAt("content");
-	Core.applyChanges();
+	await nextUIUpdate();
 
 	oPopover.getItems()[2].attachPress(function() {
 		assert.ok(document.activeElement === oButton.getFocusDomRef(), "Focus is on the Button which opened the Popover before");
@@ -231,7 +237,7 @@ QUnit.test("ColumnPopoverActionItem", function(assert){
 		bPopoverClosed = true;
 	});
 
-	this.clock.tick(500);
+	await waitSomeTime(500);
 
 	var oRBPopover = oPopover.getAggregation("_popover");
 
@@ -245,7 +251,7 @@ QUnit.test("ColumnPopoverActionItem", function(assert){
 	oPopover.destroy();
 });
 
-QUnit.test("ColumnPopoverCustomItem", function(assert){
+QUnit.test("ColumnPopoverCustomItem", async function(assert){
 	var oPopover = createCHP("test4");
 
 	var oButton = new Button({
@@ -256,10 +262,10 @@ QUnit.test("ColumnPopoverCustomItem", function(assert){
 	});
 
 	oButton.placeAt("content");
-	Core.applyChanges();
+	await nextUIUpdate();
 
 	oPopover.openBy(oButton);
-	this.clock.tick(500);
+	await waitSomeTime(500);
 
 	var oRBPopover = oPopover.getAggregation("_popover");
 	var oCustomButton1Dom = oRBPopover.$().find("button")[0];
@@ -270,26 +276,26 @@ QUnit.test("ColumnPopoverCustomItem", function(assert){
 
 	qutils.triggerEvent("tap", oCustomButton1.getId());
 
-	this.clock.tick(500);
+	await waitSomeTime(500);
 
 	assert.equal(oRBPopover.getContent()[1].getVisible(), true, "content of the first custom is visible after the first custom item is pressed");
 
 	var oCustomButton2Dom = oRBPopover.$().find("button")[2];
 	var oCustomButton2 = Element.getElementById(oCustomButton2Dom.id);
 	qutils.triggerEvent("tap", oCustomButton2.getId());
-	this.clock.tick(500);
+	await waitSomeTime(500);
 
 	assert.equal(oRBPopover.getContent()[1].getVisible(), false, "content of the first custom is not visible after the second custom item is pressed");
 	assert.equal(oRBPopover.getContent()[2].getVisible(), true, "content of the second custom is visible after the second custom item is pressed");
 
 	oCustomButton2.destroy();
-	Core.applyChanges();
-	this.clock.tick(5000);
+	await nextUIUpdate();
+	await waitSomeTime(500);
 
 	assert.ok(oRBPopover.$().find("input"), "content of the second custom item is removed");
 
 	qutils.triggerEvent("tap", oCustomButton1.getId());
-	this.clock.tick(500);
+	await waitSomeTime(500);
 
 	assert.equal(oRBPopover.getContent()[1].getVisible(), true, "content of the first custom is still visible after the second custom item is deleted");
 
@@ -297,7 +303,7 @@ QUnit.test("ColumnPopoverCustomItem", function(assert){
 	oPopover.destroy();
 });
 
-QUnit.test("ColumnPopoverSortItem", function(assert){
+QUnit.test("ColumnPopoverSortItem", async function(assert){
 	var oPopover = createCHP("test5");
 	var oSortItem1 = new ColumnPopoverSortItem({
 		items:[
@@ -327,11 +333,11 @@ QUnit.test("ColumnPopoverSortItem", function(assert){
 	});
 
 	oButton.placeAt("content");
-	Core.applyChanges();
+	await nextUIUpdate();
 
 	oButton.getFocusDomRef().focus();
 	oPopover.openBy(oButton);
-	this.clock.tick(500);
+	await waitSomeTime(500);
 
 	var oRBPopover = oPopover.getAggregation("_popover");
 	var $popover = oRBPopover.$();
@@ -346,16 +352,16 @@ QUnit.test("ColumnPopoverSortItem", function(assert){
 
 	qutils.triggerEvent("tap", oSortButton1.getId());
 	assert.ok(document.activeElement === oButton.getFocusDomRef(), "Focus is on the Button which opened the Popover before");
-	this.clock.tick(500);
+	await waitSomeTime(500);
 
 	assert.equal($popover[0].style.display, "none", "columnHeaderPopover is closed");
 
 	oButton.getFocusDomRef().focus();
 	oPopover.openBy(oButton);
-	this.clock.tick(500);
+	await waitSomeTime(500);
 
 	qutils.triggerEvent("tap", oSortButton2.getId());
-	this.clock.tick(500);
+	await waitSomeTime(500);
 
 	assert.equal(oRBPopover.$().find("li").length, 2, "sort children are rendered");
 
@@ -363,7 +369,7 @@ QUnit.test("ColumnPopoverSortItem", function(assert){
 	var oSortItem = Element.getElementById(oSortItemDom.id);
 
 	qutils.triggerEvent("tap", oSortItem.getId());
-	this.clock.tick(500);
+	await waitSomeTime(500);
 
 	assert.ok(document.activeElement === oButton.getFocusDomRef(), "Focus is on the Button which opened the Popover before " + document.activeElement.id);
 	assert.ok(oSortEventSpy.calledOnce, "The SortEvent event was called once");
@@ -374,7 +380,7 @@ QUnit.test("ColumnPopoverSortItem", function(assert){
 	oPopover.destroy();
 });
 
-QUnit.test("item visibility", function(assert){
+QUnit.test("item visibility", async function(assert){
 	var oPopover = createCHP("test6");
 	var oItem1 = oPopover.getItems()[0];
 
@@ -386,30 +392,30 @@ QUnit.test("item visibility", function(assert){
 	});
 
 	oButton.placeAt("content");
-	Core.applyChanges();
+	await nextUIUpdate();
 
 	oPopover.openBy(oButton);
-	this.clock.tick(2000);
+	await waitSomeTime(1000);
 
 	assert.equal(oPopover.getAggregation("_popover").$().find("button").length, 4, "Popover has 4 buttons");
 
 	oPopover.getAggregation("_popover").close();
-	this.clock.tick(2000);
+	await waitSomeTime(1000);
 
 	oItem1.setVisible(true);
 
 	oPopover.openBy(oButton);
-	this.clock.tick(2000);
+	await waitSomeTime(1000);
 
 	assert.equal(oPopover.getAggregation("_popover").$().find("button").length, 5, "Popover has 5 buttons");
 
 	oPopover.getAggregation("_popover").close();
-	this.clock.tick(2000);
+	await waitSomeTime(1000);
 
 	oItem1.setVisible(false);
 
 	oPopover.openBy(oButton);
-	this.clock.tick(2000);
+	await waitSomeTime(1000);
 
 	assert.equal(oPopover.getAggregation("_popover").$().find("button").length, 4, "Popover has 4 buttons");
 
