@@ -29,7 +29,7 @@
 			<mdcField:MultiValueFieldItem key="{path: 'data>key', type:'sap.ui.model.type.String', constraints: {maxLength: 2}}" description="{path: 'data>description', type:'sap.ui.model.type.String'}" />
 		</mdc:MultiValueField>
 
-		<Label text="date field"/>
+		<Label text="date Field"/>
 		<mdc:MultiValueField id="F4-date"
 			items="{path: 'data>/dates'}"
 			display="Value"

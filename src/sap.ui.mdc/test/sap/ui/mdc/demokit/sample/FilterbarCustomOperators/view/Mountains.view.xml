@@ -60,7 +60,7 @@
 				</VBox>
 				<HBox width="100%">
 					<VBox width="50%">
-						<Text text="The following JSON is the output of the FilterField's conditions." class="sapUiSmallMarginBottom" />
+						<Text text="The following JSON is the output of the conditions of the FilterField." class="sapUiSmallMarginBottom" />
 						<ce:CodeEditor
 							type="json"
 							value="{/conditionsText}"
@@ -72,7 +72,7 @@
 							}" />
 					</VBox>
 					<VBox width="50%">
-						<Text text="The following text is the output of the FilterField's model filter." class="sapUiSmallMarginBottom" />
+						<Text text="The following text is the output of the model filter of the FilterField." class="sapUiSmallMarginBottom" />
 						<ce:CodeEditor
 							type="text"
 							value="{/modelFilterText}"

@@ -65,17 +65,17 @@
 				"category": "Smart Controls",
 				"since": "1.116",
 				"samples": [
-					"sap.ui.mdc.demokit.sample.TableFilterBarJson",
+					"sap.ui.mdc.demokit.sample.LinkPayloadJson",
+					"sap.ui.mdc.demokit.sample.FieldTypes",
+					"sap.ui.mdc.demokit.sample.FieldCustomContent",
 					"sap.ui.mdc.demokit.sample.FieldValueHelpJson",
 					"sap.ui.mdc.demokit.sample.FieldValueHelpTypes",
-					"sap.ui.mdc.demokit.sample.FieldCustomContent",
-					"sap.ui.mdc.demokit.sample.FieldTypes",
 					"sap.ui.mdc.demokit.sample.MultiValueField",
-					"sap.ui.mdc.demokit.sample.LinkPayloadJson",
 					"sap.ui.mdc.demokit.sample.FilterbarTypes",
 					"sap.ui.mdc.demokit.sample.FilterbarCustomContent",
+					"sap.ui.mdc.demokit.sample.FilterbarCustomOperators",
 					"sap.ui.mdc.demokit.sample.TableJson",
-					"sap.ui.mdc.demokit.sample.FilterbarCustomOperators"
+					"sap.ui.mdc.demokit.sample.TableFilterBarJson"
 				]
 			}
 		],
@@ -165,60 +165,61 @@
 				"id": "sap.ui.mdc.sample.StateUtil",
 				"name": "7.1 StateUtil overview",
 				"description": "example demonstrating StateUtil functionality"
-			}, {
-				"id": "sap.ui.mdc.demokit.sample.TableFilterBarJson",
-                "name": "Table with FilterBar and JSON model",
-                "description": "A basic delegate setup using a combination of a table with a filter bar including variant management, with a simplified metadata definition in a separate file."
-			},
-			{
-				"id": "sap.ui.mdc.demokit.sample.FieldValueHelpJson",
-				"name": "Field with ValueHelp and JSON model",
-				"description": "A field and value help setup including a sophisticated value help dialog with filter and search capabilities."
-			},
-			{
-				"id": "sap.ui.mdc.demokit.sample.FieldValueHelpTypes",
-				"name": "Field with different types of ValueHelp and JSON model",
-				"description": "Shows different types of ValueHelps."
-			},
-			{
-				"id": "sap.ui.mdc.demokit.sample.FieldCustomContent",
-				"name": "Fields with custom content controls",
-				"description": "Fields with custom controls as content."
-			},
-			{
-				"id": "sap.ui.mdc.demokit.sample.FieldTypes",
-				"name": "Fields for different data types",
-				"description": "Fields with different data types rendering different input controls."
-			},
-			{
-				"id": "sap.ui.mdc.demokit.sample.MultiValueField",
-				"name": "MultiValueField",
-				"description": "A MultiValueField updating its JSON model"
 			},
 			{
 				"id": "sap.ui.mdc.demokit.sample.LinkPayloadJson",
-				"name": "Link with JSON model",
-				"description": "Using a delegate payload for controlling the behavior of a Link control"
+				"name": "Link - with JSON model",
+				"description": "A link using a delegate payload"
+			},
+			{
+				"id": "sap.ui.mdc.demokit.sample.FieldTypes",
+				"name": "Field - with various data types",
+				"description": "Fields with various data types rendering various input controls"
+			},
+			{
+				"id": "sap.ui.mdc.demokit.sample.FieldCustomContent",
+				"name": "Field - with custom controls",
+				"description": "Fields rendering custom inner controls"
+			},
+			{
+				"id": "sap.ui.mdc.demokit.sample.FieldValueHelpJson",
+				"name": "Field - with value help dialog",
+				"description": "A field with a more complex value help dialog including filter and search features"
+			},
+			{
+				"id": "sap.ui.mdc.demokit.sample.FieldValueHelpTypes",
+				"name": "Field - with various types of value help",
+				"description": "Fields with multiple value helps including typeahead, dropdowns, or dialog"
+			},
+			{
+				"id": "sap.ui.mdc.demokit.sample.MultiValueField",
+				"name": "MultiValueField - with value help",
+				"description": "Multi-value field of type string and date with a value help dialog"
 			},
 			{
 				"id": "sap.ui.mdc.demokit.sample.FilterbarTypes",
-				"name": "Different FilterField types in a FilterBar",
-				"description": "A filter bar with multiple filter fields of different data types"
+				"name": "FilterBar - with various data types",
+				"description": "A filter bar with several filter fields of various data types"
 			},
 			{
 				"id": "sap.ui.mdc.demokit.sample.FilterbarCustomContent",
-				"name": "A FilterBar with custom controls",
-				"description": "A filter bar that uses custom controls for filtering content."
-			},
-			{
-				"id": "sap.ui.mdc.demokit.sample.TableJson",
-				"name": "Table with JSON model",
-				"description": "A simple table with enabled personalization."
+				"name": "FilterBar - with custom controls",
+				"description": "A filter bar with filter fields rendering custom inner controls"
 			},
 			{
 				"id": "sap.ui.mdc.demokit.sample.FilterbarCustomOperators",
-				"name": "A FilterField with custom operators",
-				"description": "A filter bar with two custom operators"
+				"name": "FilterBar - with custom operators",
+				"description": "A filter bar with custom operators of type integer and date"
+			},
+			{
+				"id": "sap.ui.mdc.demokit.sample.TableJson",
+				"name": "Table - with personalization",
+				"description": "A table with basic configuration and enabled personalization"
+			},
+			{
+				"id": "sap.ui.mdc.demokit.sample.TableFilterBarJson",
+				"name": "Table - with filter bar",
+				"description": "A table with a filter bar including variant management"
 			}
 		]
 	}
