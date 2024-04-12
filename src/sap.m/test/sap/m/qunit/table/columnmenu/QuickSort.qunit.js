@@ -7,9 +7,9 @@ sap.ui.define([
 	"sap/m/table/columnmenu/QuickSortItem",
 	"sap/m/Button",
 	"sap/m/library",
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/core/library"
-], function(Library, QUnitUtils, Menu, QuickSort, QuickSortItem, Button, library, oCore, CoreLibrary) {
+], function(Library, QUnitUtils, Menu, QuickSort, QuickSortItem, Button, library, nextUIUpdate, CoreLibrary) {
 	"use strict";
 
 	QUnit.module("Basic", {
@@ -118,7 +118,7 @@ sap.ui.define([
 			QUnitUtils.triggerEvent("mouseup", sId);
 			QUnitUtils.triggerEvent("click", sId);
 		},
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oButton = new Button();
 			this.oButton.placeAt("qunit-fixture");
 
@@ -132,7 +132,7 @@ sap.ui.define([
 				})]
 			});
 
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oColumnMenu.destroy();
