@@ -245,6 +245,13 @@ sap.ui.define([
 		});
 	});
 
+    /**
+     * @deprecated As of version 1.120
+     *
+     * Preserve DOM is tested with a XMLView where HTML tags are used. Since
+     * the support of HTML tags in XMLView is deprecated, those tests are
+     * deprecated as well.
+     */
 	QUnit.module("Preserve DOM");
 
 	QUnit.test("async loading", function(assert) {

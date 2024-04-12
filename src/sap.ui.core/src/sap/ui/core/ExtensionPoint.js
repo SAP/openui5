@@ -73,6 +73,7 @@ sap.ui.define(["sap/base/future", "sap/base/Log", "sap/ui/core/mvc/View", "sap/u
 	 * @param {boolean} [bAsync=false] whether the ExtensionPoint content should be loaded asynchronously, defaults to sync
 	 *
 	 * @private
+	 * @ui5-transform-hint replace-param bAsync true
 	 */
 	ExtensionPoint._factory = function(oContainer, sExtName, fnCreateDefaultContent, oTargetControl, sAggregationName, bAsync) {
 		var oExtensionConfig, oView, vResult, sViewOrFragmentName;
@@ -338,6 +339,7 @@ sap.ui.define(["sap/base/future", "sap/base/Log", "sap/ui/core/mvc/View", "sap/u
 	 * @since 1.56.0
 	 * @public
 	 * @static
+	 * @ui5-transform-hint replace-param mOptions.async true
 	 */
 	ExtensionPoint.load = function(mOptions) {
 		return Promise.resolve(

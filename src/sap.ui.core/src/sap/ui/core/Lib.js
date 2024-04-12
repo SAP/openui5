@@ -436,6 +436,7 @@ sap.ui.define([
 		 * @param {boolean} [bJSON] Whether the "json" file type is set
 		 * @returns {string} The determined file type. It can be "js", "json", "none", or "both".
 		 * @private
+		 * @ui5-transform-hint replace-param bJSON false
 		 */
 		_getFileType: function (bJSON) {
 			var sFileType;
@@ -493,7 +494,8 @@ sap.ui.define([
 			}, {}));
 		},
 
-		/* Internal function for preloading a library which still supports the legacy parameters:
+		/**
+		 * Internal function for preloading a library which still supports the legacy parameters:
 		 *
 		 * <ul>
 		 * <li><code>mOptions.sync</code>: load the preload file in sync mode</li>
@@ -504,11 +506,13 @@ sap.ui.define([
 		 * @param [mOptions.url] URL to load the library from
 		 * @param [mOptions.lazy] Whether the library-preload-lazy bundle should be loaded instead of the
 		 *  library-preload bundle
-		 * @param @deprecated [mOptions.sync] Whether to load the preload bundle in sync mode
-		 * @param @deprecated [mOptions.json] Whether to load the preload in JSON format
+		 * @param [mOptions.sync] @deprecated Whether to load the preload bundle in sync mode
+		 * @param [mOptions.json] @deprecated Whether to load the preload in JSON format
 		 * @returns {Promise<Lib>|Lib} A promise that resolves with the library instance in async mode and the library
 		 *  instance itself in sync mode
 		 * @private
+		 * @ui5-transform-hint replace-param mOptions.sync false
+		 * @ui5-transform-hint replace-param mOptions.json false
 		 */
 		_preload: function(mOptions) {
 			mOptions = mOptions || {};
@@ -673,6 +677,7 @@ sap.ui.define([
 		 * @returns {Promise|object} A promise that resolves with the dependency information of the library in async
 		 *  mode or the dependency information directly in sync mode
 		 * @private
+		 * @ui5-transform-hint replace-param mOptions.sync false
 		 */
 		_preloadJSFormat: function(mOptions) {
 			mOptions = mOptions || {};
@@ -727,6 +732,7 @@ sap.ui.define([
 		 * @returns {Promise|object} A promise that resolves with the dependency information of the library in async
 		 *  mode or the dependency information directly in sync mode
 		 * @private
+		 * @deprecated
 		 */
 		_preloadJSONFormat: function(mOptions) {
 			mOptions = mOptions || {};
@@ -1754,7 +1760,10 @@ sap.ui.define([
 
 		// if library has not been loaded yet, create a library
 		if (!oLibrary) {
-			// ensure namespace
+			/**
+             * Ensure namespace.
+             * @deprecated since 1.120
+             */
 			ObjectPath.create(sLibraryName);
 			oLibrary = Library._get(sLibraryName, true /* bCreate */);
 		}

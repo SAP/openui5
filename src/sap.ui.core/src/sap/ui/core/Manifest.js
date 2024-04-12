@@ -412,6 +412,7 @@ sap.ui.define([
 		 * @return {Promise<void>|undefined} Promise for required *.js resources
 		 *
 		 * @private
+		 * @ui5-transform-hint replace-param bAsync true
 		 */
 		_loadIncludes: function(bAsync) {
 			var mResources = this.getEntry("/sap.ui5/resources"), oPromise;
@@ -422,10 +423,12 @@ sap.ui.define([
 
 			var sComponentName = this.getComponentName();
 
-			// [Deprecated since 1.94]: Load JS files.
-			//                          Standard dependencies should be used instead.
-			var aJSResources = mResources["js"];
-			if (aJSResources) {
+			/**
+			 * Load JS files.
+			 * @eprecated As of version 1.94, standard dependencies should be used instead.
+			 */
+			if (mResources["js"]) {
+				var aJSResources = mResources["js"];
 				var requireAsync = function (sModule) {
 					// Wrap promise within function because OPA waitFor (sap/ui/test/autowaiter/_promiseWaiter.js)
 					// can't deal with a promise instance in the wrapped then handler
@@ -513,6 +516,7 @@ sap.ui.define([
 		 * @return {Promise<void>} Promise containing further promises of dependent libs and components requests
 		 *
 		 * @private
+		 * @ui5-transform-hint replace-param bAsync true
 		 */
 		_loadDependencies: function(bAsync) {
 			var aPromises = [];

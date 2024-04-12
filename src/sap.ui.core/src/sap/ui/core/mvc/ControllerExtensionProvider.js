@@ -59,6 +59,7 @@ sap.ui.define(["sap/base/future", "sap/ui/core/Component"], function(future, Com
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.core.mvc.Controller
+	 * @ui5-transform-hint replace-param bAsync true
 	 */
 	ControllerExtensionProvider.getControllerExtensions = function(sControllerName, sComponentId, sViewId, bAsync) {
 		var mControllerExtensions = {
@@ -162,6 +163,7 @@ sap.ui.define(["sap/base/future", "sap/ui/core/Component"], function(future, Com
 	 * @param {boolean} bAsync Load async or not
 	 * @return {ExtensionProvider|Promise|undefined} ExtensionProvider <code>Promise</code> in case of asynchronous loading
 	 *           or the <code>ExtensionProvider</code> in case of synchronous loading or undefined in case no provider exists
+	 * @ui5-transform-hint replace-param bAsync true
 	 */
 	function loadExtensionProvider(bAsync) {
 		var sProviderName = ControllerExtensionProvider._sExtensionProvider.replace(/\./g, "/"),

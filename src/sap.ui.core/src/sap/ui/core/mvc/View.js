@@ -319,6 +319,7 @@ sap.ui.define([
 	 * @param {boolean} bAsync Whether processing is async or not
 	 * @return {object} oPreprocessorImpl
 	 * @private
+	 * @ui5-transform-hint replace-param bAsync true
 	 */
 	function initPreprocessor(oPreprocessor, bAsync) {
 		var oPreprocessorImpl;
@@ -434,6 +435,7 @@ sap.ui.define([
 	 * @returns {Promise|undefined} A promise for asynchronous or undefined for synchronous controllers
 	 * @throws {Error}
 	 * @private
+	 * @ui5-transform-hint replace-param mSettings.async true
 	 */
 	var createAndConnectController = function(oThis, mSettings) {
 		var bAsync = mSettings.async;
@@ -573,6 +575,10 @@ sap.ui.define([
 			}
 		}
 
+		/**
+		 * @private
+		 * @ui5-transform-hint replace-param bAsync true
+		 */
 		var fnPropagateOwner = function(fnCallback, bAsync) {
 			assert(typeof fnCallback === "function", "fn must be a function");
 			var oOwnerComponent = Component && Component.getOwnerComponentFor(that);
@@ -1484,6 +1490,10 @@ sap.ui.define([
 		}.bind(this), mPreprocessorSettings);
 	};
 
+	/**
+	 * @private
+	 * @ui5-transform-hint replace-param mSettings.async true
+	 */
 	View.prototype.initViewSettings = function(mSettings) {
 		// check if renderer exists, otherwise default it
 		if (!this.getMetadata()._oRenderer) {
