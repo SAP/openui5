@@ -1,6 +1,0 @@
-<HBox xmlns="sap.m">
-	<items>
-		<Label text="{named>name}"/>
-		<Label text="{named>phone}"/>
-	</items>
-</HBox>
