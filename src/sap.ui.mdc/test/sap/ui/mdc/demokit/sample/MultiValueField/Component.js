@@ -3,5 +3,5 @@ sap.ui.define([
   ], function (UIComponent) {
 	"use strict";
 
-	return UIComponent.extend("sap.ui.mdc.demokit.sample.MultiValueField.webapp.Component");
+	return UIComponent.extend("mdc.sample.Component");
 });

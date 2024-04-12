@@ -56,6 +56,10 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 			"FieldCustomContent": {
 				group: "Demokit samples",
 				sinon: false
+			},
+			"MultiValueField": {
+				group: "Demokit samples",
+				sinon: false
 			}
 		}
 	};

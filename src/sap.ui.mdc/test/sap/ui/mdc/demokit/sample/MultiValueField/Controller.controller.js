@@ -9,7 +9,7 @@ sap.ui.define([
 ) => {
 	"use strict";
 
-	return Controller.extend("sap.ui.mdc.demokit.sample.MultiValueField.Controller", {
+	return Controller.extend("mdc.sample.Controller", {
 
 		onInit: function() {
 			const oViewModel = new JSONModel({
