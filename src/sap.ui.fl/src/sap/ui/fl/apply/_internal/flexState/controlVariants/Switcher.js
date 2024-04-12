@@ -4,12 +4,14 @@
 
 sap.ui.define([
 	"sap/base/util/restricted/_pick",
-	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
-	"sap/ui/fl/apply/_internal/changes/Reverter"
+	"sap/ui/fl/apply/_internal/changes/Applier",
+	"sap/ui/fl/apply/_internal/changes/Reverter",
+	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState"
 ], function(
 	_pick,
-	VariantManagementState,
-	Reverter
+	Applier,
+	Reverter,
+	VariantManagementState
 ) {
 	"use strict";
 
@@ -97,8 +99,7 @@ sap.ui.define([
 			var mChangesToBeSwitched = getControlChangesForVariantSwitch(mPropertyBag);
 
 			await Reverter.revertMultipleChanges(mChangesToBeSwitched.changesToBeReverted, mPropertyBag);
-			// TODO: apply variantChanges() should be moved out of flex controller
-			await mPropertyBag.flexController.applyVariantChanges(mChangesToBeSwitched.changesToBeApplied, mPropertyBag.appComponent);
+			await Applier.applyMultipleChanges(mChangesToBeSwitched.changesToBeApplied, mPropertyBag);
 			VariantManagementState.setCurrentVariant(mPropertyBag);
 		}
 
