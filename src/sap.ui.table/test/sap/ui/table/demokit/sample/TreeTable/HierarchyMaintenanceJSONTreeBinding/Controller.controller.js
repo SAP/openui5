@@ -7,36 +7,36 @@ sap.ui.define([
 
 	return Controller.extend("sap.ui.table.sample.TreeTable.HierarchyMaintenanceJSONTreeBinding.Controller", {
 		onInit: function() {
-			var oModel = new JSONModel("test-resources/sap/ui/table/demokit/sample/TreeTable/HierarchyMaintenanceJSONTreeBinding/Clothing.json");
+			const oModel = new JSONModel("test-resources/sap/ui/table/demokit/sample/TreeTable/HierarchyMaintenanceJSONTreeBinding/Clothing.json");
 
 			this.getView().setModel(oModel);
 			this._aClipboardData = [];
 		},
 
 		onCollapseAll: function() {
-			var oTreeTable = this.byId("TreeTable");
+			const oTreeTable = this.byId("TreeTable");
 			oTreeTable.collapseAll();
 		},
 
 		onExpandFirstLevel: function() {
-			var oTreeTable = this.byId("TreeTable");
+			const oTreeTable = this.byId("TreeTable");
 			oTreeTable.expandToLevel(1);
 		},
 
 		onDragStart: function(oEvent) {
-			var oTreeTable = this.byId("TreeTable");
-			var oDragSession = oEvent.getParameter("dragSession");
-			var oDraggedRow = oEvent.getParameter("target");
-			var iDraggedRowIndex = oDraggedRow.getIndex();
-			var aSelectedIndices = oTreeTable.getSelectedIndices();
-			var aDraggedRowContexts = [];
+			const oTreeTable = this.byId("TreeTable");
+			const oDragSession = oEvent.getParameter("dragSession");
+			const oDraggedRow = oEvent.getParameter("target");
+			const iDraggedRowIndex = oDraggedRow.getIndex();
+			const aSelectedIndices = oTreeTable.getSelectedIndices();
+			const aDraggedRowContexts = [];
 
 			if (aSelectedIndices.length > 0) {
 				// If rows are selected, do not allow to start dragging from a row which is not selected.
 				if (aSelectedIndices.indexOf(iDraggedRowIndex) === -1) {
 					oEvent.preventDefault();
 				} else {
-					for (var i = 0; i < aSelectedIndices.length; i++) {
+					for (let i = 0; i < aSelectedIndices.length; i++) {
 						aDraggedRowContexts.push(oTreeTable.getContextByIndex(aSelectedIndices[i]));
 					}
 				}
@@ -50,25 +50,25 @@ sap.ui.define([
 		},
 
 		onDrop: function(oEvent) {
-			var oTreeTable = this.byId("TreeTable");
-			var oDragSession = oEvent.getParameter("dragSession");
-			var oDroppedRow = oEvent.getParameter("droppedControl");
-			var aDraggedRowContexts = oDragSession.getComplexData("hierarchymaintenance").draggedRowContexts;
-			var oNewParentContext = oTreeTable.getContextByIndex(oDroppedRow.getIndex());
+			const oTreeTable = this.byId("TreeTable");
+			const oDragSession = oEvent.getParameter("dragSession");
+			const oDroppedRow = oEvent.getParameter("droppedControl");
+			const aDraggedRowContexts = oDragSession.getComplexData("hierarchymaintenance").draggedRowContexts;
+			const oNewParentContext = oTreeTable.getContextByIndex(oDroppedRow.getIndex());
 
 			if (aDraggedRowContexts.length === 0 || !oNewParentContext) {
 				return;
 			}
 
-			var oModel = oTreeTable.getBinding().getModel();
-			var oNewParent = oNewParentContext.getProperty();
+			const oModel = oTreeTable.getBinding().getModel();
+			const oNewParent = oNewParentContext.getProperty();
 
 			// In the JSON data of this example the children of a node are inside an array with the name "categories".
 			if (!oNewParent.categories) {
 				oNewParent.categories = []; // Initialize the children array.
 			}
 
-			for (var i = 0; i < aDraggedRowContexts.length; i++) {
+			for (let i = 0; i < aDraggedRowContexts.length; i++) {
 				if (oNewParentContext.getPath().indexOf(aDraggedRowContexts[i].getPath()) === 0) {
 					// Avoid moving a node into one of its child nodes.
 					continue;
@@ -83,9 +83,9 @@ sap.ui.define([
 		},
 
 		onCut: function(oEvent) {
-			var oTreeTable = this.byId("TreeTable");
-			var aSelectedIndices = oTreeTable.getSelectedIndices();
-			var oModel = oTreeTable.getBinding().getModel();
+			const oTreeTable = this.byId("TreeTable");
+			const aSelectedIndices = oTreeTable.getSelectedIndices();
+			const oModel = oTreeTable.getBinding().getModel();
 
 			if (aSelectedIndices.length === 0) {
 				MessageToast.show("Select at least one row first.");
@@ -93,9 +93,9 @@ sap.ui.define([
 			}
 
 			// Cut the data.
-			for (var i = 0; i < aSelectedIndices.length; i++) {
-				var oContext = oTreeTable.getContextByIndex(aSelectedIndices[i]);
-				var oData = oContext.getProperty();
+			for (let i = 0; i < aSelectedIndices.length; i++) {
+				const oContext = oTreeTable.getContextByIndex(aSelectedIndices[i]);
+				const oData = oContext.getProperty();
 
 				if (oData) {
 					this._aClipboardData.push(oContext.getProperty());
@@ -111,17 +111,17 @@ sap.ui.define([
 		},
 
 		onPaste: function(oEvent) {
-			var oTreeTable = this.byId("TreeTable");
-			var aSelectedIndices = oTreeTable.getSelectedIndices();
-			var oModel = oTreeTable.getBinding().getModel();
+			const oTreeTable = this.byId("TreeTable");
+			const aSelectedIndices = oTreeTable.getSelectedIndices();
+			const oModel = oTreeTable.getBinding().getModel();
 
 			if (aSelectedIndices.length !== 1) {
 				MessageToast.show("Select exactly one row first.");
 				return;
 			}
 
-			var oNewParentContext = oTreeTable.getContextByIndex(aSelectedIndices[0]);
-			var oNewParent = oNewParentContext.getProperty();
+			const oNewParentContext = oTreeTable.getContextByIndex(aSelectedIndices[0]);
+			const oNewParent = oNewParentContext.getProperty();
 
 			// In the JSON data of this example the children of a node are inside an array with the name "categories".
 			if (!oNewParent.categories) {

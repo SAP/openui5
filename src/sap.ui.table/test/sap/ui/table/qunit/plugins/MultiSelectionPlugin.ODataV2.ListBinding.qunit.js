@@ -13,17 +13,17 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var iCount = 400;
+	let iCount = 400;
 
 	function createData(iStartIndex, iLength, bPaging) {
-		var aData = [];
-		var sService = "MyService" + (bPaging ? "WithPaging" : "");
+		const aData = [];
+		const sService = "MyService" + (bPaging ? "WithPaging" : "");
 
 		if (iStartIndex + iLength > iCount) {
 			iLength = iCount - iStartIndex;
 		}
 
-		for (var i = iStartIndex; i < iStartIndex + iLength; i++) {
+		for (let i = iStartIndex; i < iStartIndex + iLength; i++) {
 			aData.push({
 				__metadata: {
 					uri: "http://localhost:8088/" + sService + "/ProductSet(ProductID='" + i + "')",
@@ -37,15 +37,15 @@ sap.ui.define([
 	}
 
 	function createResponse(iStartIndex, iLength, iPageSize) {
-		var mResponse = {
+		const mResponse = {
 			headers: {
 				"Content-Type": "application/json;charset=utf-8"
 			}
 		};
-		var bPageLimitReached = iPageSize != null && iPageSize > 0 && iLength > iPageSize;
+		const bPageLimitReached = iPageSize != null && iPageSize > 0 && iLength > iPageSize;
 
 		if (bPageLimitReached) {
-			var sSkipToken = "&$skiptoken='" + (iStartIndex + iPageSize - 1) + "'";
+			const sSkipToken = "&$skiptoken='" + (iStartIndex + iPageSize - 1) + "'";
 			mResponse.message = {d: {results: createData(iStartIndex, iPageSize, true)}};
 			mResponse.message.d.__next = "http://localhost:8088/MyServiceWithPaging/ProductSet?$top=" + (iLength - iPageSize) + sSkipToken;
 		} else {
@@ -72,10 +72,10 @@ sap.ui.define([
 		regExp: /^GET \/MyService(WithPaging)?\/ProductSet\?\$skip=(\d+)\&\$top=(\d+)$/,
 		response: {
 			buildResponse: function(aMatches, oResponse) {
-				var iPageSize = aMatches[1] ? 50 : 0;
-				var iSkip = parseInt(aMatches[2]);
-				var iTop = parseInt(aMatches[3]);
-				var mResponse = createResponse(iSkip, iTop, iPageSize);
+				const iPageSize = aMatches[1] ? 50 : 0;
+				const iSkip = parseInt(aMatches[2]);
+				const iTop = parseInt(aMatches[3]);
+				const mResponse = createResponse(iSkip, iTop, iPageSize);
 
 				oResponse.headers = mResponse.headers;
 				oResponse.message = JSON.stringify(mResponse.message);
@@ -94,8 +94,8 @@ sap.ui.define([
 	}
 
 	function assertContextsAvailable(assert, oTable, iNumber) {
-		var oBinding = oTable.getBinding();
-		var aContexts = oBinding.getContexts(0, iNumber, 0, true);
+		const oBinding = oTable.getBinding();
+		const aContexts = oBinding.getContexts(0, iNumber, 0, true);
 
 		assert.equal(oBinding.getAllCurrentContexts().length, iNumber, "The expected number of binding contexts is available");
 		assert.equal(aContexts.length, iNumber, "Binding contexts in relevant range are available");

@@ -9,7 +9,7 @@ sap.ui.define([
 	QUnit.module("sap.m.DataStateIndicator");
 
 	QUnit.test("Support", function(assert) {
-		var bTableSupportsDataStateIndicator;
+		let bTableSupportsDataStateIndicator;
 
 		try {
 			/* eslint-disable no-new */

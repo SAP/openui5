@@ -26,8 +26,8 @@ sap.ui.define([
 	}
 
 	function assertContextsAvailable(assert, oTable, iNumber) {
-		var oBinding = oTable.getBinding();
-		var aContexts = oBinding.getContexts(0, iNumber, 0, true);
+		const oBinding = oTable.getBinding();
+		const aContexts = oBinding.getContexts(0, iNumber, 0, true);
 
 		assert.equal(oBinding.getAllCurrentContexts().length, iNumber, "The expected number of binding contexts is available");
 		assert.equal(aContexts.length, iNumber, "Binding contexts in relevant range are available");

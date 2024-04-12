@@ -33,8 +33,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("getRow", function(assert) {
-		var oRow = new Row();
-		var oTable = new Table();
+		const oRow = new Row();
+		const oTable = new Table();
 
 		assert.strictEqual(this.oRowAction.getRow(), null, "Returns null if there is no parent");
 
@@ -49,8 +49,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("_getSize", function(assert) {
-		var oRow = new Row();
-		var oTable = new Table();
+		const oRow = new Row();
+		const oTable = new Table();
 
 		assert.strictEqual(this.oRowAction._getSize(), 2, "Returns 2 if not in a table");
 
@@ -81,8 +81,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Item.getRowAction", function(assert) {
-		var oItem = new RowActionItem();
-		var oRow = new Row();
+		const oItem = new RowActionItem();
+		const oRow = new Row();
 
 		assert.strictEqual(oItem.getRowAction(), null, "Returns null if there is no parent");
 
@@ -97,7 +97,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Item._getIcon", function(assert) {
-		var oItem = new RowActionItem();
+		const oItem = new RowActionItem();
 
 		this.oRowAction.addItem(oItem);
 		assert.ok(!oItem._getIcon(), "No Icon set");
@@ -110,15 +110,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("Item._getText", function(assert) {
-		var oItem = new RowActionItem();
-		var sText;
+		const oItem = new RowActionItem();
+		const sText = TableUtils.getResourceBundle().getText("TBL_ROW_ACTION_NAVIGATE");
 
 		this.oRowAction.addItem(oItem);
 		assert.ok(!oItem._getText(false), "No Text or Tooltip set (Text preferred)");
 		assert.ok(!oItem._getText(true), "No Text or Tooltip set (Tooltip preferred)");
 
 		oItem.setType("Navigation");
-		sText = TableUtils.getResourceBundle().getText("TBL_ROW_ACTION_NAVIGATE");
 		assert.equal(oItem._getText(false), sText, "No Text or Tooltip set but type (Text preferred)");
 		assert.equal(oItem._getText(true), sText, "No Text or Tooltip set but type (Tooltip preferred)");
 
@@ -146,7 +145,7 @@ sap.ui.define([
 		fnChanges.apply(that);
 		oCore.applyChanges();
 
-		var aChildren = that.oRowAction.getDomRef().children;
+		const aChildren = that.oRowAction.getDomRef().children;
 
 		aExpectedIcons = aExpectedIcons.map(function(sIcon) {
 			if (sIcon.startsWith("sap-icon://")) {
@@ -157,22 +156,22 @@ sap.ui.define([
 		});
 
 		if (aExpectedIcons.length === 0) {
-			var bIconsHidden = true;
-			for (var i = 0; i < aChildren.length; i++) {
+			let bIconsHidden = true;
+			for (let i = 0; i < aChildren.length; i++) {
 				bIconsHidden = bIconsHidden && aChildren[i].classList.contains("sapUiTableActionHidden");
 			}
 			assert.ok(bIconsHidden, "All Icons hidden");
 		} else if (aExpectedIcons.length === 1) {
-			var aItems = that.oRowAction.getItems();
-			var iVisibleIndex = aItems[0].getVisible() ? 0 : 1;
-			var iHiddenIndex = iVisibleIndex === 0 ? 1 : 0;
-			var oVisibleIcon = that.oRowAction.getAggregation("_icons")[iVisibleIndex];
+			const aItems = that.oRowAction.getItems();
+			const iVisibleIndex = aItems[0].getVisible() ? 0 : 1;
+			const iHiddenIndex = iVisibleIndex === 0 ? 1 : 0;
+			const oVisibleIcon = that.oRowAction.getAggregation("_icons")[iVisibleIndex];
 			assert.ok(!aChildren[iVisibleIndex].classList.contains("sapUiTableActionHidden"), "The correct icon is visible");
 			assert.ok(aChildren[iHiddenIndex].classList.contains("sapUiTableActionHidden"), "The correct icon is hidden");
 			assert.equal(oVisibleIcon.getSrc(), aExpectedIcons[0], "Visible icon has correct src");
 			assert.equal(oVisibleIcon.getTooltip_AsString(), aExpectedTexts[0], "Visible icon has correct tooltip");
 		} else if (aExpectedIcons.length === 2) {
-			var aIcons = that.oRowAction.getAggregation("_icons");
+			const aIcons = that.oRowAction.getAggregation("_icons");
 			assert.ok(!aChildren[0].classList.contains("sapUiTableActionHidden"), "Icon 1 visible");
 			assert.ok(!aChildren[1].classList.contains("sapUiTableActionHidden"), "Icon 2 visible");
 			assert.equal(aIcons[0].getSrc(), aExpectedIcons[0], "Icon 1 has correct src");
@@ -339,7 +338,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Press on first item", function(assert) {
-		var oEventParams = null;
+		let oEventParams = null;
 		this.oRowAction.getItems()[0].attachPress(function(oEvent) {
 			oEventParams = oEvent.getParameters();
 		});
@@ -350,7 +349,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Press on second item", function(assert) {
-		var oEventParams = null;
+		let oEventParams = null;
 		this.oRowAction.getItems()[1].attachPress(function(oEvent) {
 			oEventParams = oEvent.getParameters();
 		});
@@ -361,7 +360,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Press on second item (non-fixed column layout)", async function(assert) {
-		var oEventParams = null;
+		let oEventParams = null;
 
 		this.oRowAction._bFixedLayout = false;
 		this.oRowAction.getItems()[1].attachPress(function(oEvent) {
@@ -378,7 +377,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Press on menu item (click / tab)", async function(assert) {
-		var oEventParams = null;
+		let oEventParams = null;
 
 		this.oRowAction.addItem(new RowActionItem({icon: "sap-icon://account", tooltip: "C"}));
 		await nextUIUpdate();
@@ -392,7 +391,7 @@ sap.ui.define([
 		qutils.triggerEvent(Device.support.touch && !Device.system.desktop ? "tap" : "click", this.aInnerIcons[1].getDomRef());
 		assert.ok(!oEventParams, "Press Event Not Triggered");
 
-		var oMenu = this.oRowAction.getAggregation("_menu");
+		const oMenu = this.oRowAction.getAggregation("_menu");
 		assert.ok(oMenu, "Menu initialized");
 		assert.ok(oMenu.bOpen, "Menu is open");
 		assert.equal(oMenu.getItems().length, 2, "Menu has 2 Items");
@@ -404,7 +403,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Press on menu item (enter)", async function(assert) {
-		var oEventParams = null;
+		let oEventParams = null;
 
 		this.oRowAction.addItem(new RowActionItem({icon: "sap-icon://account", tooltip: "C"}));
 		await nextUIUpdate();
@@ -418,7 +417,7 @@ sap.ui.define([
 		qutils.triggerKeydown(this.aInnerIcons[1].getDomRef(), "ENTER");
 		assert.ok(!oEventParams, "Press Event Not Triggered");
 
-		var oMenu = this.oRowAction.getAggregation("_menu");
+		const oMenu = this.oRowAction.getAggregation("_menu");
 		assert.ok(oMenu, "Menu initialized");
 		assert.ok(oMenu.bOpen, "Menu is open");
 		assert.equal(oMenu.getItems().length, 2, "Menu has 2 Items");
@@ -430,7 +429,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Press on menu item with count 1", async function(assert) {
-		var oEventParams = null;
+		let oEventParams = null;
 
 		this.stub(this.oRowAction, "_getSize").returns(1);
 
@@ -446,7 +445,7 @@ sap.ui.define([
 		this.aInnerIcons[0].firePress();
 		assert.ok(!oEventParams, "Press Event Not Triggered");
 
-		var oMenu = this.oRowAction.getAggregation("_menu");
+		const oMenu = this.oRowAction.getAggregation("_menu");
 		assert.ok(oMenu, "Menu initialized");
 		assert.ok(oMenu.bOpen, "Menu is open");
 		assert.equal(oMenu.getItems().length, 3, "Menu has 3 Items");
@@ -471,7 +470,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("getAccessibilityInfo", function(assert) {
-		var oGetSizeStub = this.stub(this.oRowAction, "_getSize");
+		const oGetSizeStub = this.stub(this.oRowAction, "_getSize");
 
 		TableUtils.getResourceBundle(); // Make sure the resource bundle is available and ready for use.
 
@@ -509,27 +508,27 @@ sap.ui.define([
 	});
 
 	QUnit.test("Icon label", async function(assert) {
-		var oRow = new Row();
-		var oTable = new Table("table", {
+		const oRow = new Row();
+		const oTable = new Table("table", {
 			rowActionCount: 1
 		});
-		var aIcons = this.oRowAction.getAggregation("_icons");
+		const aIcons = this.oRowAction.getAggregation("_icons");
 
 		oTable.addDependent(oRow);
 		this.stub(this.oRowAction, "getRow").returns(oRow);
 		this.oRowAction.invalidate();
 		await nextUIUpdate();
 
-		for (var i = 0; i < aIcons.length; i++) {
+		for (let i = 0; i < aIcons.length; i++) {
 			assert.equal(aIcons[i].getAriaLabelledBy().length, 1, "Number of Labels correct for item " + i);
 			assert.equal(aIcons[i].getAriaLabelledBy()[0], oTable.getId() + "-rowacthdr", "Label correct for item " + i);
 		}
 	});
 
 	QUnit.test("Menu icon", async function(assert) {
-		var aIcons = this.oRowAction.getAggregation("_icons");
+		const aIcons = this.oRowAction.getAggregation("_icons");
 
-		for (var i = 0; i < aIcons.length; i++) {
+		for (let i = 0; i < aIcons.length; i++) {
 			assert.ok(!aIcons[i].getDomRef().getAttribute("aria-haspopup"), "No aria-haspopup on icon " + i);
 		}
 

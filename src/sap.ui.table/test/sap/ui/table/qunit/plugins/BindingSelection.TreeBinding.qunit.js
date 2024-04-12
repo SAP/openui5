@@ -13,15 +13,14 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var oAnnotationMockServer = new MockServer({
+	const oAnnotationMockServer = new MockServer({
 		rootUri: "/metadata/"
 	});
-	var aAnnotationsMockdata;
-	var sURLPrefix = sap.ui.require.toUrl("sap/ui/core/qunit");
-	var SelectionMode = library.SelectionMode;
+	const sURLPrefix = sap.ui.require.toUrl("sap/ui/core/qunit");
+	const SelectionMode = library.SelectionMode;
 
 	oAnnotationMockServer.simulate(sURLPrefix + "/model/metadata_odtbmd.xml", sURLPrefix + "/model/odtbmd/");
-	aAnnotationsMockdata = oAnnotationMockServer._oMockdata.GLAccountHierarchyInChartOfAccountsLiSet;
+	const aAnnotationsMockdata = oAnnotationMockServer._oMockdata.GLAccountHierarchyInChartOfAccountsLiSet;
 	aAnnotationsMockdata.forEach(function(oAnnotationMockdata) {
 		oAnnotationMockdata.FinStatementHierarchyLevelVal = parseInt(oAnnotationMockdata.FinStatementHierarchyLevelVal);
 	});
@@ -59,8 +58,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("#setSelected", function(assert) {
-		var oSelectionPlugin = this.oTable._getSelectionPlugin();
-		var oSelectionChangeSpy = sinon.spy();
+		const oSelectionPlugin = this.oTable._getSelectionPlugin();
+		const oSelectionChangeSpy = sinon.spy();
 
 		oSelectionPlugin.attachSelectionChange(oSelectionChangeSpy);
 
@@ -104,7 +103,7 @@ sap.ui.define([
 		const oEvent = {
 			setMarked: function() {}
 		};
-		var oSelectionPlugin = this.oTable._getSelectionPlugin();
+		const oSelectionPlugin = this.oTable._getSelectionPlugin();
 		const oClearSelectionSpy = sinon.spy(oSelectionPlugin, "clearSelection");
 		const oSelectAllSpy = sinon.spy(oSelectionPlugin, "selectAll");
 		const oSetMarkedSpy = sinon.spy(oEvent, "setMarked");

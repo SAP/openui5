@@ -13,14 +13,13 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var oAnnotationMockServer = new MockServer({
+	const oAnnotationMockServer = new MockServer({
 		rootUri: "/metadata/"
 	});
-	var aAnnotationsMockdata;
-	var sURLPrefix = sap.ui.require.toUrl("sap/ui/core/qunit");
+	const sURLPrefix = sap.ui.require.toUrl("sap/ui/core/qunit");
 
 	oAnnotationMockServer.simulate(sURLPrefix + "/model/metadata_odtbmd.xml", sURLPrefix + "/model/odtbmd/");
-	aAnnotationsMockdata = oAnnotationMockServer._oMockdata.GLAccountHierarchyInChartOfAccountsLiSet;
+	const aAnnotationsMockdata = oAnnotationMockServer._oMockdata.GLAccountHierarchyInChartOfAccountsLiSet;
 	aAnnotationsMockdata.forEach(function(oAnnotationMockdata) {
 		oAnnotationMockdata.FinStatementHierarchyLevelVal = parseInt(oAnnotationMockdata.FinStatementHierarchyLevelVal);
 	});
@@ -65,9 +64,9 @@ sap.ui.define([
 		this.oMultiSelectionPlugin.setLimit(0);
 		await this.oTable.qunit.whenRenderingFinished();
 		await this.oMultiSelectionPlugin.selectAll();
-		var oBinding = this.oTable.getBinding();
-		var iBindingLength = oBinding.getLength();
-		var aContexts = oBinding.getContexts(0, iBindingLength, 0);
+		const oBinding = this.oTable.getBinding();
+		const iBindingLength = oBinding.getLength();
+		const aContexts = oBinding.getContexts(0, iBindingLength, 0);
 
 		assert.equal(aContexts.length, iBindingLength, "All binding contexts are available");
 		assert.ok(!aContexts.includes(undefined), "There are no undefined contexts");
@@ -75,7 +74,7 @@ sap.ui.define([
 
 	QUnit.test("Select range", function(assert) {
 		return this.oMultiSelectionPlugin.setSelectionInterval(0, 189).then(function() {
-			var aContexts = this.oTable.getBinding().getContexts(0, 190, 0);
+			const aContexts = this.oTable.getBinding().getContexts(0, 190, 0);
 
 			assert.equal(aContexts.length, 190, "Binding contexts in selected range are available");
 			assert.ok(!aContexts.includes(undefined), "There are no undefined contexts");

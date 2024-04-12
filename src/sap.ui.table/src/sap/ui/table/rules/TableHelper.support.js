@@ -9,10 +9,10 @@ sap.ui.define([
 ], function(SupportLib, Log) {
 	"use strict";
 
-	var Severity = SupportLib.Severity;
-	var Audiences = SupportLib.Audiences; // Control, Internal, Application
+	const Severity = SupportLib.Severity;
+	const Audiences = SupportLib.Audiences; // Control, Internal, Application
 
-	var TableSupportHelper = {
+	const TableSupportHelper = {
 		DOCU_REF: "https://ui5.sap.com/",
 
 		/**
@@ -94,10 +94,10 @@ sap.ui.define([
 		 * @returns {sap.ui.core.Element[]} All existing control instances
 		 */
 		find: function(oScope, bVisibleOnly, sType) {
-			var mElements = oScope.getElements();
-			var aResult = [];
-			for (var n in mElements) {
-				var oElement = mElements[n];
+			const mElements = oScope.getElements();
+			const aResult = [];
+			for (const n in mElements) {
+				const oElement = mElements[n];
 				if (oElement.isA(sType)) {
 					if (bVisibleOnly && oElement.getDomRef() || !bVisibleOnly) {
 						aResult.push(oElement);
@@ -127,9 +127,9 @@ sap.ui.define([
 		 *                         otherwise the next entry is passed for checking.
 		 */
 		checkLogEntries: function(fnFilter, fnCheck) {
-			var aLog = Log.getLogEntries(); //oScope.getLoggedObjects(); /*getLoggedObjects returns only log entries with supportinfo*/
-			var oLogEntry;
-			for (var i = 0; i < aLog.length; i++) {
+			const aLog = Log.getLogEntries(); //oScope.getLoggedObjects(); /*getLoggedObjects returns only log entries with supportinfo*/
+			let oLogEntry;
+			for (let i = 0; i < aLog.length; i++) {
 				oLogEntry = aLog[i];
 				if (fnFilter(oLogEntry)) {
 					if (fnCheck(oLogEntry)) {

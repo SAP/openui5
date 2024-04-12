@@ -48,10 +48,10 @@ sap.ui.define([
 
 	// Test fails in Safari, skip until fixed
 	QUnit[Device.browser.safari ? "skip" : "test"]("Horizontal scrollbar position", function(assert) {
-		var oHSb = this.oTable._getScrollExtension().getHorizontalScrollbar();
-		var oHSbContent = this.oTable.getDomRef("hsb-content");
-		var oHSbComputedStyle = window.getComputedStyle(oHSb);
-		var oHSbContentComputedStyle = window.getComputedStyle(oHSbContent);
+		const oHSb = this.oTable._getScrollExtension().getHorizontalScrollbar();
+		const oHSbContent = this.oTable.getDomRef("hsb-content");
+		const oHSbComputedStyle = window.getComputedStyle(oHSb);
+		const oHSbContentComputedStyle = window.getComputedStyle(oHSbContent);
 
 		assert.strictEqual(oHSbComputedStyle.marginLeft, "91px", "Left margin");
 		assert.strictEqual(oHSbComputedStyle.marginRight, "48px", "Right margin");
@@ -81,20 +81,20 @@ sap.ui.define([
 	});
 
 	QUnit.test("Focus", function(assert) {
-		var oTable = this.oTable;
+		const oTable = this.oTable;
 
 		function getScrollLeft() {
 			return jQuery(oTable._getScrollExtension().getHorizontalScrollbar()).scrollLeftRTL();
 		}
 
 		function isScrolledIntoView(oCell) {
-			var oRowContainer = oTable.getDomRef("sapUiTableCtrlScr");
-			var iScrollLeft = getScrollLeft();
-			var iRowContainerWidth = oRowContainer.clientWidth;
-			var iCellLeft = oCell.offsetLeft;
-			var iCellRight = iCellLeft + oCell.offsetWidth;
-			var iOffsetLeft = iCellLeft - iScrollLeft;
-			var iOffsetRight = iCellRight - iRowContainerWidth - iScrollLeft;
+			const oRowContainer = oTable.getDomRef("sapUiTableCtrlScr");
+			const iScrollLeft = getScrollLeft();
+			const iRowContainerWidth = oRowContainer.clientWidth;
+			const iCellLeft = oCell.offsetLeft;
+			const iCellRight = iCellLeft + oCell.offsetWidth;
+			const iOffsetLeft = iCellLeft - iScrollLeft;
+			const iOffsetRight = iCellRight - iRowContainerWidth - iScrollLeft;
 
 			return iOffsetLeft >= 0 && iOffsetRight <= 0;
 		}
@@ -155,7 +155,7 @@ sap.ui.define([
 	QUnit.module("Special cases");
 
 	QUnit.test("Scrolling inside the cell", function(assert) {
-		var DummyControl = Control.extend("sap.ui.table.test.DummyControl", {
+		const DummyControl = Control.extend("sap.ui.table.test.DummyControl", {
 			renderer: {
 				apiVersion: 2,
 				render: function(oRm, oControl) {
@@ -185,7 +185,7 @@ sap.ui.define([
 			}
 		});
 
-		var oTable = TableQUnitUtils.createTable({
+		const oTable = TableQUnitUtils.createTable({
 			columns: [
 				new Column({template: new DummyControl(), width: "20px"}),
 				new Column({template: new DummyControl(), width: "20px"})
@@ -200,10 +200,10 @@ sap.ui.define([
 		});
 
 		function test(sTitle, iColumnIndex) {
-			var oCellContent = oTable.getRows()[0].getCells()[iColumnIndex].getDomRef();
+			const oCellContent = oTable.getRows()[0].getCells()[iColumnIndex].getDomRef();
 
 			return oTable.qunit.focus(oCellContent).then(function() {
-				var $InnerCellElement = TableUtils.getCell(oTable, oCellContent).find(".sapUiTableCellInner");
+				const $InnerCellElement = TableUtils.getCell(oTable, oCellContent).find(".sapUiTableCellInner");
 
 				assert.strictEqual($InnerCellElement.scrollLeftRTL(), $InnerCellElement[0].scrollWidth - $InnerCellElement[0].clientWidth,
 					sTitle + ": The cell content is not scrolled horizontally");

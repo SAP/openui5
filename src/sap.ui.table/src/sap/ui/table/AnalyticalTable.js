@@ -38,8 +38,8 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var GroupEventType = library.GroupEventType;
-	var _private = TableUtils.createWeakMapFacade();
+	const GroupEventType = library.GroupEventType;
+	const _private = TableUtils.createWeakMapFacade();
 
 	/**
 	 * Constructor for a new AnalyticalTable.
@@ -61,7 +61,7 @@ sap.ui.define([
 	 * @see {@link topic:08197fa68e4f479cbe30f639cc1cd22c sap.ui.table}
 	 * @see {@link fiori:/analytical-table-alv/ Analytical Table}
 	 */
-	var AnalyticalTable = Table.extend("sap.ui.table.AnalyticalTable", /** @lends sap.ui.table.AnalyticalTable.prototype */ {metadata: {
+	const AnalyticalTable = Table.extend("sap.ui.table.AnalyticalTable", /** @lends sap.ui.table.AnalyticalTable.prototype */ {metadata: {
 
 		library: "sap.ui.table",
 		properties: {
@@ -182,12 +182,12 @@ sap.ui.define([
 	 * @inheritDoc
 	 */
 	AnalyticalTable.prototype._getFixedBottomRowContexts = function() {
-		var oBinding = this.getBinding();
+		const oBinding = this.getBinding();
 		return oBinding ? [oBinding.getGrandTotalNode()] : [];
 	};
 
 	AnalyticalTable.prototype._getContexts = function(iStartIndex, iLength, iThreshold) {
-		var oBinding = this.getBinding();
+		const oBinding = this.getBinding();
 		if (oBinding) {
 			// first call getContexts to trigger data load but return nodes instead of contexts
 			return oBinding.getNodes(iStartIndex, iLength, iThreshold);
@@ -308,8 +308,8 @@ sap.ui.define([
 	};
 
 	AnalyticalTable.prototype.getModel = function(sName) {
-		var oModel = Table.prototype.getModel.apply(this, arguments);
-		var oRowBindingInfo = this.getBindingInfo("rows");
+		const oModel = Table.prototype.getModel.apply(this, arguments);
+		const oRowBindingInfo = this.getBindingInfo("rows");
 		if (oModel && oRowBindingInfo && oRowBindingInfo.model == sName) {
 			ODataModelAdapter.apply(oModel);
 		}
@@ -397,7 +397,7 @@ sap.ui.define([
 		 * @deprecated As of Version 1.44
 		 */
 		if (!oBindingInfo.parameters.hasOwnProperty("autoExpandMode")) {
-			var sExpandMode = this.getAutoExpandMode();
+			let sExpandMode = this.getAutoExpandMode();
 			if (sExpandMode != "Bundled" && sExpandMode != "Sequential") {
 				sExpandMode = "Bundled";
 			}
@@ -412,11 +412,11 @@ sap.ui.define([
 	};
 
 	AnalyticalTable.prototype._getColumnInformation = function() {
-		var aColumns = [],
-			aTableColumns = this.getColumns();
+		const aColumns = [];
+		const aTableColumns = this.getColumns();
 
-		for (var i = 0; i < this._aGroupedColumns.length; i++) {
-			var oColumn = Element.getElementById(this._aGroupedColumns[i]);
+		for (let i = 0; i < this._aGroupedColumns.length; i++) {
+			const oColumn = Element.getElementById(this._aGroupedColumns[i]);
 
 			if (!oColumn) {
 				continue;
@@ -432,8 +432,8 @@ sap.ui.define([
 			});
 		}
 
-		for (var i = 0; i < aTableColumns.length; i++) {
-			var oColumn = aTableColumns[i];
+		for (let i = 0; i < aTableColumns.length; i++) {
+			const oColumn = aTableColumns[i];
 
 			if (this._aGroupedColumns.indexOf(oColumn.getId()) > -1) {
 				continue;
@@ -457,9 +457,9 @@ sap.ui.define([
 	};
 
 	function updateRowState(oState) {
-		var oBinding = this.getBinding();
-		var oBindingInfo = this.getBindingInfo("rows");
-		var oNode = oState.context;
+		const oBinding = this.getBinding();
+		const oBindingInfo = this.getBindingInfo("rows");
+		const oNode = oState.context;
 
 		oState.context = oNode.context; // The AnalyticalTable requests nodes from the binding.
 
@@ -490,24 +490,24 @@ sap.ui.define([
 	AnalyticalTable.prototype.onRowsUpdated = function(mParameters) {
 		Table.prototype.onRowsUpdated.apply(this, arguments);
 
-		var aRows = this.getRows();
-		var oBinding = this.getBinding();
-		var oFirstVisibleColumn = this._getVisibleColumns()[0];
+		const aRows = this.getRows();
+		const oBinding = this.getBinding();
+		const oFirstVisibleColumn = this._getVisibleColumns()[0];
 
-		for (var iRowIndex = 0; iRowIndex < aRows.length; iRowIndex++) {
+		for (let iRowIndex = 0; iRowIndex < aRows.length; iRowIndex++) {
 			// show or hide the totals if not enabled - needs to be done by Table
 			// control since the model could be reused and thus the values cannot
 			// be cleared in the model - and the binding has no control over the
 			// value mapping - this happens directly via the context!
-			var oRow = aRows[iRowIndex];
-			var aCells = oRow.getCells();
-			var iCellCount = aCells.length;
+			const oRow = aRows[iRowIndex];
+			const aCells = oRow.getCells();
+			const iCellCount = aCells.length;
 
-			for (var iCellIndex = 0; iCellIndex < iCellCount; iCellIndex++) {
-				var oAnalyticalColumn = Column.ofCell(aCells[iCellIndex]);
-				var bIsMeasureCell = oBinding ? oBinding.isMeasure(oAnalyticalColumn.getLeadingProperty()) : false;
-				var $td = jQuery(aCells[iCellIndex].$().closest("td"));
-				var bHideCellContent = false;
+			for (let iCellIndex = 0; iCellIndex < iCellCount; iCellIndex++) {
+				const oAnalyticalColumn = Column.ofCell(aCells[iCellIndex]);
+				const bIsMeasureCell = oBinding ? oBinding.isMeasure(oAnalyticalColumn.getLeadingProperty()) : false;
+				const $td = jQuery(aCells[iCellIndex].$().closest("td"));
+				let bHideCellContent = false;
 
 				if (oRow.isSummary() && bIsMeasureCell) {
 					bHideCellContent = !oAnalyticalColumn.getSummed();
@@ -521,7 +521,7 @@ sap.ui.define([
 	};
 
 	function onOpenTableContextMenu(oCellInfo, oMenu) {
-		var oRow = oCellInfo.isOfType(TableUtils.CELLTYPE.ANYCONTENTCELL) ? this.getRows()[oCellInfo.rowIndex] : null;
+		const oRow = oCellInfo.isOfType(TableUtils.CELLTYPE.ANYCONTENTCELL) ? this.getRows()[oCellInfo.rowIndex] : null;
 
 		if (!oRow || !oRow.isGroupHeader()) {
 			this._removeGroupHeaderMenuItems(oMenu);
@@ -533,13 +533,13 @@ sap.ui.define([
 	}
 
 	AnalyticalTable.prototype._addGroupHeaderMenuItems = function(oMenu) {
-		var that = this;
+		const that = this;
 
 		function getGroupColumnInfo() {
-			var iIndex = that._iGroupedLevel - 1;
+			const iIndex = that._iGroupedLevel - 1;
 
 			if (that._aGroupedColumns[iIndex]) {
-				var oGroupedColumn = that.getColumns().filter(function(oColumn) {
+				const oGroupedColumn = that.getColumns().filter(function(oColumn) {
 					return that._aGroupedColumns[iIndex] === oColumn.getId();
 				})[0];
 
@@ -560,11 +560,11 @@ sap.ui.define([
 			this._mGroupHeaderMenuItems["visibility"] = new MenuItem({
 				text: TableUtils.getResourceText("TBL_SHOW_COLUMN"),
 				select: function() {
-					var oGroupColumnInfo = getGroupColumnInfo();
+					const oGroupColumnInfo = getGroupColumnInfo();
 
 					if (oGroupColumnInfo) {
-						var oColumn = oGroupColumnInfo.column,
-							bShowIfGrouped = oColumn.getShowIfGrouped();
+						const oColumn = oGroupColumnInfo.column;
+						const bShowIfGrouped = oColumn.getShowIfGrouped();
 						oColumn.setShowIfGrouped(!bShowIfGrouped);
 
 						that.fireGroup({column: oColumn, groupedColumns: oColumn.getParent()._aGroupedColumns, type: (!bShowIfGrouped ? GroupEventType.showGroupedColumn : GroupEventType.hideGroupedColumn)});
@@ -578,10 +578,10 @@ sap.ui.define([
 			this._mGroupHeaderMenuItems["ungroup"] = new MenuItem({
 				text: TableUtils.getResourceText("TBL_UNGROUP"),
 				select: function() {
-					var oGroupColumnInfo = getGroupColumnInfo();
+					const oGroupColumnInfo = getGroupColumnInfo();
 
 					if (oGroupColumnInfo && oGroupColumnInfo.column) {
-						var oUngroupedColumn = oGroupColumnInfo.column;
+						const oUngroupedColumn = oGroupColumnInfo.column;
 
 						oUngroupedColumn.setGrouped(false);
 						that.fireGroup({column: oUngroupedColumn, groupedColumns: that._aGroupedColumns, type: GroupEventType.ungroup});
@@ -595,11 +595,11 @@ sap.ui.define([
 			this._mGroupHeaderMenuItems["ungroupall"] = new MenuItem({
 				text: TableUtils.getResourceText("TBL_UNGROUP_ALL"),
 				select: function() {
-					var aColumns = that.getColumns();
+					const aColumns = that.getColumns();
 
 					that.suspendUpdateAnalyticalInfo();
 
-					for (var i = 0; i < aColumns.length; i++) {
+					for (let i = 0; i < aColumns.length; i++) {
 						aColumns[i].setGrouped(false);
 					}
 
@@ -614,11 +614,11 @@ sap.ui.define([
 			this._mGroupHeaderMenuItems["moveup"] = new MenuItem({
 				text: TableUtils.getResourceText("TBL_MOVE_UP"),
 				select: function() {
-					var oGroupColumnInfo = getGroupColumnInfo();
+					const oGroupColumnInfo = getGroupColumnInfo();
 
 					if (oGroupColumnInfo) {
-						var oColumn = oGroupColumnInfo.column;
-						var iIndex = that._aGroupedColumns.indexOf(oColumn.getId());
+						const oColumn = oGroupColumnInfo.column;
+						const iIndex = that._aGroupedColumns.indexOf(oColumn.getId());
 						if (iIndex > 0) {
 							that._aGroupedColumns[iIndex] = that._aGroupedColumns.splice(iIndex - 1, 1, that._aGroupedColumns[iIndex])[0];
 							that.updateAnalyticalInfo();
@@ -635,11 +635,11 @@ sap.ui.define([
 			this._mGroupHeaderMenuItems["movedown"] = new MenuItem({
 				text: TableUtils.getResourceText("TBL_MOVE_DOWN"),
 				select: function() {
-					var oGroupColumnInfo = getGroupColumnInfo();
+					const oGroupColumnInfo = getGroupColumnInfo();
 
 					if (oGroupColumnInfo) {
-						var oColumn = oGroupColumnInfo.column;
-						var iIndex = that._aGroupedColumns.indexOf(oColumn.getId());
+						const oColumn = oGroupColumnInfo.column;
+						const iIndex = that._aGroupedColumns.indexOf(oColumn.getId());
 						if (iIndex < that._aGroupedColumns.length) {
 							that._aGroupedColumns[iIndex] = that._aGroupedColumns.splice(iIndex + 1, 1, that._aGroupedColumns[iIndex])[0];
 							that.updateAnalyticalInfo();
@@ -723,9 +723,9 @@ sap.ui.define([
 		}
 		oMenu.addItem(this._mGroupHeaderMenuItems["expandall"]);
 
-		var oGroupColumnInfo = getGroupColumnInfo();
+		const oGroupColumnInfo = getGroupColumnInfo();
 		if (oGroupColumnInfo) {
-			var oColumn = oGroupColumnInfo.column;
+			const oColumn = oGroupColumnInfo.column;
 			if (oColumn.getShowIfGrouped()) {
 				this._mGroupHeaderMenuItems["visibility"].setText(TableUtils.getResourceText("TBL_HIDE_COLUMN"));
 			} else {
@@ -744,13 +744,13 @@ sap.ui.define([
 			return;
 		}
 
-		for (var sItemKey in this._mGroupHeaderMenuItems) {
+		for (const sItemKey in this._mGroupHeaderMenuItems) {
 			oMenu.removeItem(this._mGroupHeaderMenuItems[sItemKey]);
 		}
 	};
 
 	AnalyticalTable.prototype._cleanupGroupHeaderMenuItems = function() {
-		for (var sItemKey in this._mGroupHeaderMenuItems) {
+		for (const sItemKey in this._mGroupHeaderMenuItems) {
 			this._mGroupHeaderMenuItems[sItemKey].destroy();
 		}
 		this._mGroupHeaderMenuItems = null;
@@ -798,7 +798,7 @@ sap.ui.define([
 
 	AnalyticalTable.prototype.addColumn = function(vColumn, bSuppressInvalidate) {
 		//@TODO: Implement addColumn(Column[] || oColumn)
-		var oColumn = this._getColumn(vColumn);
+		const oColumn = this._getColumn(vColumn);
 		if (oColumn.getGrouped()) {
 			this._addGroupedColumn(oColumn.getId());
 		}
@@ -809,7 +809,7 @@ sap.ui.define([
 	};
 
 	AnalyticalTable.prototype.insertColumn = function(vColumn, iIndex, bSuppressInvalidate) {
-		var oColumn = this._getColumn(vColumn);
+		const oColumn = this._getColumn(vColumn);
 		if (oColumn.getGrouped()) {
 			this._addGroupedColumn(oColumn.getId());
 		}
@@ -819,7 +819,7 @@ sap.ui.define([
 	};
 
 	AnalyticalTable.prototype.removeColumn = function(vColumn, bSuppressInvalidate) {
-		var oResult = Table.prototype.removeColumn.apply(this, arguments);
+		const oResult = Table.prototype.removeColumn.apply(this, arguments);
 
 		// only remove from grouped columns if not caused by column move.
 		if (!this._bReorderInProcess) {
@@ -840,7 +840,7 @@ sap.ui.define([
 
 	AnalyticalTable.prototype.removeAllColumns = function(bSuppressInvalidate) {
 		this._aGroupedColumns = [];
-		var aResult = Table.prototype.removeAllColumns.apply(this, arguments);
+		const aResult = Table.prototype.removeAllColumns.apply(this, arguments);
 
 		this._updateColumns(bSuppressInvalidate);
 
@@ -849,7 +849,7 @@ sap.ui.define([
 
 	AnalyticalTable.prototype._getColumn = function(vColumn) {
 		if (typeof vColumn === "string") {
-			var oColumn = new AnalyticalColumn({
+			const oColumn = new AnalyticalColumn({
 				leadingProperty: vColumn,
 				template: vColumn,
 				managed: true
@@ -880,10 +880,10 @@ sap.ui.define([
 			return;
 		}
 
-		var oBinding = this.getBinding();
+		const oBinding = this.getBinding();
 		if (oBinding) {
-			var aColumnInfo = this._getColumnInformation();
-			var iNumberOfExpandedLevels = oBinding.getNumberOfExpandedLevels() || 0;
+			const aColumnInfo = this._getColumnInformation();
+			const iNumberOfExpandedLevels = oBinding.getNumberOfExpandedLevels() || 0;
 
 			// The binding does not support the number of expanded levels to be bigger than the number of grouped columns.
 			if (iNumberOfExpandedLevels > this._aGroupedColumns.length) {
@@ -908,7 +908,7 @@ sap.ui.define([
 	};
 
 	AnalyticalTable.prototype._updateTotalRow = function(bSuppressInvalidate) {
-		var oBinding = this.getBinding();
+		const oBinding = this.getBinding();
 
 		this.setProperty("rowCountConstraints", {
 			fixedTop: false,
@@ -921,20 +921,20 @@ sap.ui.define([
 			return;
 		}
 
-		var oBinding = this.getBinding(),
-			oResult = oBinding && oBinding.getAnalyticalQueryResult();
+		const oBinding = this.getBinding();
+		const oResult = oBinding && oBinding.getAnalyticalQueryResult();
 
 		if (oResult) {
-			var aColumns = this.getColumns(),
-				aGroupedDimensions = [],
-				aUngroupedDimensions = [],
-				aDimensions = [],
-				oDimensionIndex = {},
-				oColumn,
-				oDimension;
+			const aColumns = this.getColumns();
+			const aGroupedDimensions = [];
+			let aUngroupedDimensions = [];
+			const aDimensions = [];
+			const oDimensionIndex = {};
+			let oColumn;
+			let oDimension;
 
 			// calculate an index of all dimensions and their columns. Grouping is done per dimension.
-			for (var i = 0; i < aColumns.length; i++) {
+			for (let i = 0; i < aColumns.length; i++) {
 				oColumn = aColumns[i];
 				oColumn._isLastGroupableLeft = false;
 				oColumn._bLastGroupAndGrouped = false;
@@ -945,11 +945,11 @@ sap.ui.define([
 					continue;
 				}
 
-				var sLeadingProperty = oColumn.getLeadingProperty();
+				const sLeadingProperty = oColumn.getLeadingProperty();
 				oDimension = oResult.findDimensionByPropertyName(sLeadingProperty);
 
 				if (oDimension) {
-					var sDimensionName = oDimension.getName();
+					const sDimensionName = oDimension.getName();
 					if (!oDimensionIndex[sDimensionName]) {
 						oDimensionIndex[sDimensionName] = {dimension: oDimension, columns: [oColumn]};
 					} else {
@@ -987,7 +987,7 @@ sap.ui.define([
 				// this behavior is controlled by the flag _bLastGroupAndGrouped
 				if (aGroupedDimensions.length == aDimensions.length) {
 					oDimension = oResult.findDimensionByPropertyName(Element.getElementById(this._aGroupedColumns[this._aGroupedColumns.length - 1]).getLeadingProperty());
-					var aGroupedDimensionColumns = oDimensionIndex[oDimension.getName()].columns;
+					const aGroupedDimensionColumns = oDimensionIndex[oDimension.getName()].columns;
 					jQuery.each(aGroupedDimensionColumns, function(i, o) {
 						o._bLastGroupAndGrouped = true;
 					});
@@ -1003,17 +1003,17 @@ sap.ui.define([
 	};
 
 	AnalyticalTable.prototype._getFirstMeasureColumnIndex = function() {
-		var oBinding = this.getBinding(),
-			oResultSet = oBinding && oBinding.getAnalyticalQueryResult(),
-			aColumns = this._getVisibleColumns();
+		const oBinding = this.getBinding();
+		const oResultSet = oBinding && oBinding.getAnalyticalQueryResult();
+		const aColumns = this._getVisibleColumns();
 
 		if (!oResultSet) {
 			return -1;
 		}
 
-		for (var i = 0; i < aColumns.length; i++) {
-			var oColumn = aColumns[i],
-				sLeadingProperty = oColumn.getLeadingProperty();
+		for (let i = 0; i < aColumns.length; i++) {
+			const oColumn = aColumns[i];
+			const sLeadingProperty = oColumn.getLeadingProperty();
 
 			if (oResultSet.findMeasureByName(sLeadingProperty) || oResultSet.findMeasureByPropertyName(sLeadingProperty)) {
 				return i;
@@ -1022,11 +1022,11 @@ sap.ui.define([
 	};
 
 	AnalyticalTable.prototype._getTotalRowCount = function() {
-		var iTotalRowCount = Table.prototype._getTotalRowCount.apply(this, arguments);
+		let iTotalRowCount = Table.prototype._getTotalRowCount.apply(this, arguments);
 
 		if (iTotalRowCount === 1) {
-			var oBinding = this.getBinding();
-			var bHasGrandTotal = oBinding ? oBinding.providesGrandTotal() && oBinding.hasTotaledMeasures() : false;
+			const oBinding = this.getBinding();
+			const bHasGrandTotal = oBinding ? oBinding.providesGrandTotal() && oBinding.hasTotaledMeasures() : false;
 
 			if (bHasGrandTotal) {
 				iTotalRowCount = 0; // If there's only the grand total, the table has to act as if it's empty.
@@ -1043,7 +1043,7 @@ sap.ui.define([
 	 * @public
 	 */
 	AnalyticalTable.prototype.getTotalSize = function() {
-		var oBinding = this.getBinding();
+		const oBinding = this.getBinding();
 		if (oBinding) {
 			return oBinding.getTotalSize();
 		}
@@ -1057,8 +1057,8 @@ sap.ui.define([
 	AnalyticalTable.prototype._onPersoApplied = function() {
 		Table.prototype._onPersoApplied.apply(this, arguments);
 		this._aGroupedColumns = [];
-		var aColumns = this.getColumns();
-		for (var i = 0, l = aColumns.length; i < l; i++) {
+		const aColumns = this.getColumns();
+		for (let i = 0, l = aColumns.length; i < l; i++) {
 			if (aColumns[i].getGrouped()) {
 				this._addGroupedColumn(aColumns[i].getId());
 			}
@@ -1073,7 +1073,7 @@ sap.ui.define([
 	};
 
 	AnalyticalTable.prototype._removeGroupedColumn = function(sColumnId) {
-		var iIndex = this._aGroupedColumns.indexOf(sColumnId);
+		const iIndex = this._aGroupedColumns.indexOf(sColumnId);
 
 		if (iIndex >= 0) {
 			this._aGroupedColumns.splice(iIndex, 1);
@@ -1282,16 +1282,16 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.comp
 	 */
 	AnalyticalTable.prototype.getAnalyticalInfoOfRow = function(oRow) {
-		var oBinding = this.getBinding();
-		var oContext = oRow ? oRow.getRowBindingContext() : null;
+		const oBinding = this.getBinding();
+		const oContext = oRow ? oRow.getRowBindingContext() : null;
 
 		if (!TableUtils.isA(oRow, "sap.ui.table.Row") || oRow.getParent() !== this || !oBinding || !oContext) {
 			return null;
 		}
 
-		var bIsGrandTotal = oContext === oBinding.getGrandTotalContext();
-		var oContextInfo = null;
-		var iLevel = -1;
+		const bIsGrandTotal = oContext === oBinding.getGrandTotalContext();
+		let oContextInfo = null;
+		let iLevel = -1;
 		if (bIsGrandTotal) {
 			oContextInfo = oBinding.getGrandTotalContextInfo();
 			iLevel = 0;
@@ -1302,15 +1302,15 @@ sap.ui.define([
 			}
 		}
 
-		var bIsGroup = oContextInfo && oBinding.nodeHasChildren && oBinding.nodeHasChildren(oContextInfo);
-		var bIsGroupTotal = !bIsGroup && !bIsGrandTotal && oContextInfo && oContextInfo.nodeState && oContextInfo.nodeState.sum;
+		const bIsGroup = oContextInfo && oBinding.nodeHasChildren && oBinding.nodeHasChildren(oContextInfo);
+		const bIsGroupTotal = !bIsGroup && !bIsGrandTotal && oContextInfo && oContextInfo.nodeState && oContextInfo.nodeState.sum;
 
-		var aGroupedColumns = [];
+		const aGroupedColumns = [];
 
 		if (bIsGroupTotal || bIsGroup) {
-			var aAllGroupedColumns = this.getGroupedColumns();
+			const aAllGroupedColumns = this.getGroupedColumns();
 			if (aAllGroupedColumns.length > 0 && iLevel > 0 && iLevel <= aAllGroupedColumns.length) {
-				for (var i = 0; i < iLevel; i++) {
+				for (let i = 0; i < iLevel; i++) {
 					aGroupedColumns.push(aAllGroupedColumns[i]);
 				}
 			}
@@ -1343,7 +1343,7 @@ sap.ui.define([
 			return;
 		}
 
-		var oBinding = this.getBinding();
+		const oBinding = this.getBinding();
 
 		if (!oBinding.bUseBatchRequests) {
 			_private(this).bPendingRequest = true;
@@ -1357,7 +1357,7 @@ sap.ui.define([
 			return;
 		}
 
-		var oBinding = this.getBinding();
+		const oBinding = this.getBinding();
 
 		if (!oBinding.bUseBatchRequests) {
 			_private(this).bPendingRequest = false;

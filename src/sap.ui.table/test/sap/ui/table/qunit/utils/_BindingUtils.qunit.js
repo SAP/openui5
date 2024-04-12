@@ -8,8 +8,8 @@ sap.ui.define([
 ], function(TableUtils, MockServer, Table, ODataModel) {
 	"use strict";
 
-	var sServiceURI = "/service/";
-	var iResponseTime = 10;
+	const sServiceURI = "/service/";
+	const iResponseTime = 10;
 
 	function createODataModel(sURL) {
 		sURL = sURL == null ? sServiceURI : sURL;
@@ -24,11 +24,11 @@ sap.ui.define([
 			autoRespondAfter: iResponseTime
 		});
 
-		var oMockServer = new MockServer({
+		const oMockServer = new MockServer({
 			rootUri: sServiceURI
 		});
 
-		var sURLPrefix = sap.ui.require.toUrl("sap/ui/table/qunit");
+		const sURLPrefix = sap.ui.require.toUrl("sap/ui/table/qunit");
 		oMockServer.simulate(sURLPrefix + "/mockdata/metadata.xml", sURLPrefix + "/mockdata/");
 		oMockServer.start();
 		return oMockServer;
@@ -46,8 +46,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("metadataLoaded", function(assert) {
-		var done = assert.async();
-		var oTable = this.oTable;
+		const done = assert.async();
+		const oTable = this.oTable;
 
 		assert.expect(4);
 

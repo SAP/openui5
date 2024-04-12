@@ -32,12 +32,12 @@ sap.ui.define([
 	});
 
 	QUnit.test("Initialization", function(assert) {
-		var oExtension = this.oTable._getScrollIOSExtension();
+		const oExtension = this.oTable._getScrollIOSExtension();
 		assert.ok(oExtension, "Extension available in table");
 	});
 
 	QUnit.test("Destruction", function(assert) {
-		var oExtension = this.oTable._getScrollIOSExtension();
+		const oExtension = this.oTable._getScrollIOSExtension();
 
 		this.oTable.destroy();
 		assert.ok(!oExtension.getTable(), "Reference to table removed");
@@ -68,13 +68,13 @@ sap.ui.define([
 			this.oTable.destroy();
 		},
 		assertThumbHeight: function(assert) {
-			var oTable = this.oTable;
-			var oScrollExtension = oTable._getScrollExtension();
-			var iVerticalScrollbarHeight = oScrollExtension.getVerticalScrollbarHeight();
-			var iVerticalScrollHeight = oScrollExtension.getVerticalScrollHeight();
-			var oVSb = oScrollExtension.getVerticalScrollbar();
-			var oVSbIOS = oVSb.nextSibling;
-			var oVSbThumb = oVSbIOS.firstChild;
+			const oTable = this.oTable;
+			const oScrollExtension = oTable._getScrollExtension();
+			const iVerticalScrollbarHeight = oScrollExtension.getVerticalScrollbarHeight();
+			const iVerticalScrollHeight = oScrollExtension.getVerticalScrollHeight();
+			const oVSb = oScrollExtension.getVerticalScrollbar();
+			const oVSbIOS = oVSb.nextSibling;
+			const oVSbThumb = oVSbIOS.firstChild;
 
 			assert.strictEqual(oVSbThumb.style.height, Math.round(Math.pow(iVerticalScrollbarHeight, 2) / iVerticalScrollHeight) + "px",
 				"The thumb height is correct");
@@ -82,13 +82,13 @@ sap.ui.define([
 	});
 
 	QUnit.test("Visibility, thumb height and position update", async function(assert) {
-		var oScrollExtension = this.oTable._getScrollExtension();
-		var oVSb = oScrollExtension.getVerticalScrollbar();
-		var oVSbIOS = oVSb.nextSibling;
-		var oVSbThumb = oVSbIOS.firstChild;
-		var oScrollIOSExtension = this.oTable._getScrollIOSExtension();
-		var oTotalRowCountChangeSpy = sinon.spy(oScrollIOSExtension, "onTotalRowCountChanged");
-		var oUpdatePositionSpy = sinon.spy(oScrollIOSExtension, "updateVerticalScrollbarThumbPosition");
+		const oScrollExtension = this.oTable._getScrollExtension();
+		const oVSb = oScrollExtension.getVerticalScrollbar();
+		let oVSbIOS = oVSb.nextSibling;
+		let oVSbThumb = oVSbIOS.firstChild;
+		const oScrollIOSExtension = this.oTable._getScrollIOSExtension();
+		const oTotalRowCountChangeSpy = sinon.spy(oScrollIOSExtension, "onTotalRowCountChanged");
+		const oUpdatePositionSpy = sinon.spy(oScrollIOSExtension, "updateVerticalScrollbarThumbPosition");
 
 		assert.ok(oVSbIOS.parentElement.classList.contains("sapUiTableHidden") && oVSbThumb.style.height === "0px",
 			"Table content fits height -> Vertical scrollbar is not visible");
@@ -139,22 +139,22 @@ sap.ui.define([
 			}.bind(this);
 		},
 		assertThumbPosition: function(assert) {
-			var oScrollExtension = this.oTable._getScrollExtension();
-			var oVSb = oScrollExtension.getVerticalScrollbar();
-			var oVSbIOS = oVSb.nextSibling;
-			var oVSbThumb = oVSbIOS.firstChild;
-			var iVerticalScrollbarHeight = oScrollExtension.getVerticalScrollbarHeight();
-			var iVerticalScrollHeight = oScrollExtension.getVerticalScrollHeight();
-			var iVerticalScrollTop = oScrollExtension.getVerticalScrollbar().scrollTop;
+			const oScrollExtension = this.oTable._getScrollExtension();
+			const oVSb = oScrollExtension.getVerticalScrollbar();
+			const oVSbIOS = oVSb.nextSibling;
+			const oVSbThumb = oVSbIOS.firstChild;
+			const iVerticalScrollbarHeight = oScrollExtension.getVerticalScrollbarHeight();
+			const iVerticalScrollHeight = oScrollExtension.getVerticalScrollHeight();
+			const iVerticalScrollTop = oScrollExtension.getVerticalScrollbar().scrollTop;
 
-			var iScrollPosition = Math.round(iVerticalScrollTop * iVerticalScrollbarHeight / iVerticalScrollHeight);
+			const iScrollPosition = Math.round(iVerticalScrollTop * iVerticalScrollbarHeight / iVerticalScrollHeight);
 			assert.strictEqual(oVSbThumb.style.top, iScrollPosition + "px", "Thumb position is correct");
 		}
 	});
 
 	QUnit.test("Scroll by setting FirstVisibleRow", function(assert) {
-		var that = this;
-		var oTable = this.oTable;
+		const that = this;
+		const oTable = this.oTable;
 
 		return oTable.qunit.whenRenderingFinished().then(function() {
 			that.assertThumbPosition(assert);
@@ -172,8 +172,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Touch scroll on table content", function(assert) {
-		var that = this;
-		var oTable = this.oTable;
+		const that = this;
+		const oTable = this.oTable;
 
 		return oTable.qunit.whenRenderingFinished().then(function() {
 			oTable.qunit.preventFocusOnTouch();
@@ -191,8 +191,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("touchMove on scroll thumb", function(assert) {
-		var that = this;
-		var oTable = this.oTable;
+		const that = this;
+		const oTable = this.oTable;
 
 		return oTable.qunit.whenRenderingFinished().then(function() {
 			oTable.qunit.preventFocusOnTouch();
@@ -209,9 +209,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("pointerDown on scrollbar", function(assert) {
-		var that = this;
-		var oTable = this.oTable;
-		var oTarget = oTable._getScrollIOSExtension().getVerticalScrollbar();
+		const that = this;
+		const oTable = this.oTable;
+		const oTarget = oTable._getScrollIOSExtension().getVerticalScrollbar();
 
 		return oTable.qunit.whenRenderingFinished().then(function() {
 			oTarget.dispatchEvent(new PointerEvent("pointerdown", {
@@ -234,9 +234,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("pointerDown on scrollbar after rendering only rows", function(assert) {
-		var that = this;
-		var oTable = this.oTable;
-		var oTarget;
+		const that = this;
+		const oTable = this.oTable;
+		let oTarget;
 
 		oTable.setRowMode(RowModeType.Auto);
 

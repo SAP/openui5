@@ -13,8 +13,8 @@ sap.ui.define([
 	"use strict";
 
 	function defaultGroupHeaderFormatter(oContext, mGroupLevelInfo) {
-		var sResourceKey = "TBL_ROW_GROUP_TITLE";
-		var aValues = [mGroupLevelInfo.property.label, oContext.getProperty(mGroupLevelInfo.property.path, true)];
+		let sResourceKey = "TBL_ROW_GROUP_TITLE";
+		const aValues = [mGroupLevelInfo.property.label, oContext.getProperty(mGroupLevelInfo.property.path, true)];
 
 		if (mGroupLevelInfo.textProperty) {
 			sResourceKey = "TBL_ROW_GROUP_TITLE_FULL";
@@ -37,7 +37,7 @@ sap.ui.define([
 	 * @alias sap.ui.table.plugins.V4Aggregation
 	 * @borrows sap.ui.table.plugins.PluginBase.findOn as findOn
 	 */
-	var V4Aggregation = PluginBase.extend("sap.ui.table.plugins.V4Aggregation", /** @lends sap.ui.table.plugins.V4Aggregation.prototype */ {
+	const V4Aggregation = PluginBase.extend("sap.ui.table.plugins.V4Aggregation", /** @lends sap.ui.table.plugins.V4Aggregation.prototype */ {
 		metadata: {
 			library: "sap.ui.table",
 			properties: {
@@ -75,7 +75,7 @@ sap.ui.define([
 	 * @inheritDoc
 	 */
 	V4Aggregation.prototype.activate = function() {
-		var oBinding = this.getTableBinding();
+		const oBinding = this.getTableBinding();
 
 		if (oBinding && !oBinding.isA("sap.ui.model.odata.v4.ODataListBinding")) {
 			return;
@@ -116,7 +116,7 @@ sap.ui.define([
 		TableUtils.Hook.deregister(this, TableUtils.Hook.Keys.Row.Expand, expandRow, this);
 		TableUtils.Hook.deregister(this, TableUtils.Hook.Keys.Row.Collapse, collapseRow, this);
 
-		var oBinding = oTable.getBinding();
+		const oBinding = oTable.getBinding();
 		if (oBinding) {
 			oBinding.setAggregation();
 		}
@@ -128,7 +128,7 @@ sap.ui.define([
 	 * @param {sap.ui.table.plugins.V4Aggregation} oPlugin The instance of the plugin.
 	 */
 	function resetCellContentVisibilitySettings(oPlugin) {
-		var oTable = oPlugin.getTable();
+		const oTable = oPlugin.getTable();
 
 		if (oTable) {
 			oTable.getColumns().forEach(function(oColumn) {
@@ -143,15 +143,15 @@ sap.ui.define([
 	 * @param {sap.ui.table.plugins.V4Aggregation} oPlugin The instance of the plugin.
 	 */
 	function updateCellContentVisibilitySettings(oPlugin) {
-		var oTable = oPlugin.getTable();
-		var sGroupSummary = oPlugin.getGroupSummary();
+		const oTable = oPlugin.getTable();
+		const sGroupSummary = oPlugin.getGroupSummary();
 
 		if (!oTable || !oPlugin._mColumnState) {
 			return;
 		}
 
 		oTable.getColumns().forEach(function(oColumn) {
-			var mColumnState = oPlugin._mColumnState[oColumn.getId()];
+			const mColumnState = oPlugin._mColumnState[oColumn.getId()];
 
 			if (mColumnState) {
 				oColumn._setCellContentVisibilitySettings({
@@ -195,12 +195,12 @@ sap.ui.define([
 	};
 
 	V4Aggregation.prototype.updateRowState = function(oState) {
-		var iLevel = oState.context.getProperty("@$ui5.node.level");
-		var bContainsTotals = oState.context.getProperty("@$ui5.node.isTotal");
-		var bIsLeaf = oState.context.getProperty("@$ui5.node.isExpanded") === undefined;
-		var bIsGrandTotal = iLevel === 0 && bContainsTotals;
-		var bIsGroupHeader = iLevel > 0 && !bIsLeaf;
-		var bIsGroupTotal = !bIsGroupHeader && bContainsTotals;
+		const iLevel = oState.context.getProperty("@$ui5.node.level");
+		const bContainsTotals = oState.context.getProperty("@$ui5.node.isTotal");
+		const bIsLeaf = oState.context.getProperty("@$ui5.node.isExpanded") === undefined;
+		const bIsGrandTotal = iLevel === 0 && bContainsTotals;
+		const bIsGroupHeader = iLevel > 0 && !bIsLeaf;
+		const bIsGroupTotal = !bIsGroupHeader && bContainsTotals;
 
 		oState.level = iLevel;
 		oState.expandable = bIsGroupHeader;
@@ -214,9 +214,9 @@ sap.ui.define([
 		}
 
 		if (bIsGroupHeader) {
-			var mGroupLevelInfo = this._aGroupLevels[iLevel - 1];
-			var fnGroupHeaderFormatter = this.getGroupHeaderFormatter();
-			var sCustomGroupHeaderTitle = fnGroupHeaderFormatter ? fnGroupHeaderFormatter(oState.context, mGroupLevelInfo.property.key) : undefined;
+			const mGroupLevelInfo = this._aGroupLevels[iLevel - 1];
+			const fnGroupHeaderFormatter = this.getGroupHeaderFormatter();
+			const sCustomGroupHeaderTitle = fnGroupHeaderFormatter ? fnGroupHeaderFormatter(oState.context, mGroupLevelInfo.property.key) : undefined;
 
 			if (sCustomGroupHeaderTitle === undefined) {
 				oState.title = defaultGroupHeaderFormatter(oState.context, mGroupLevelInfo);
@@ -274,9 +274,9 @@ sap.ui.define([
 			this._aGroupLevels = undefined;
 			this._sSearch = undefined;
 		} else {
-			var aAllUnitProperties = [];
-			var aAllAdditionalProperties = [];
-			var aAdditionalProperties;
+			const aAllUnitProperties = [];
+			let aAllAdditionalProperties = [];
+			let aAdditionalProperties;
 
 			// Always use keys in the properties to be grouped
 			this._mGroup = this.getPropertyInfos().reduce(function(mGroup, oPropertyInfo) {
@@ -294,7 +294,7 @@ sap.ui.define([
 			this._mAggregate = {};
 
 			// Find grouped and aggregated properties
-			var aVisible = oAggregateInfo.visible.concat();	// Copy
+			const aVisible = oAggregateInfo.visible.concat();	// Copy
 			if (oAggregateInfo.groupLevels) {
 				// We need to consider groupLevels as visible properties, to add them in the query properly if they have an 'additionally' property
 				oAggregateInfo.groupLevels.forEach(function(sGroupLevelName) {
@@ -304,7 +304,7 @@ sap.ui.define([
 				});
 			}
 			aVisible.forEach(function(sVisiblePropertyName) {
-				var oPropertyInfo = this.findPropertyInfo(sVisiblePropertyName);
+				const oPropertyInfo = this.findPropertyInfo(sVisiblePropertyName);
 
 				if (!oPropertyInfo) {
 					return;
@@ -331,7 +331,7 @@ sap.ui.define([
 					}
 
 					if (oPropertyInfo.unit) {
-						var oUnitPropertyInfo = this.findPropertyInfo(oPropertyInfo.unit);
+						const oUnitPropertyInfo = this.findPropertyInfo(oPropertyInfo.unit);
 						if (oUnitPropertyInfo) {
 							this._mAggregate[oPropertyInfo.path].unit = oUnitPropertyInfo.path;
 							aAllUnitProperties.push(oUnitPropertyInfo.path);
@@ -343,7 +343,7 @@ sap.ui.define([
 						oPropertyInfo.aggregationDetails.customAggregate.contextDefiningProperties) {
 
 						oPropertyInfo.aggregationDetails.customAggregate.contextDefiningProperties.forEach(function(sContextDefiningPropertyName) {
-							var oDefiningPropertyInfo = this.findPropertyInfo(sContextDefiningPropertyName);
+							const oDefiningPropertyInfo = this.findPropertyInfo(sContextDefiningPropertyName);
 							if (oDefiningPropertyInfo) {
 								this._mGroup[oDefiningPropertyInfo.path] = {};
 								aAdditionalProperties = getAdditionalPropertyPaths(this, oPropertyInfo);
@@ -361,7 +361,7 @@ sap.ui.define([
 			this._aGroupLevels = [];
 			if (oAggregateInfo.groupLevels) {
 				oAggregateInfo.groupLevels.forEach(function(sGroupLevelName) {
-					var oGroupedPropertyInfo = this.findPropertyInfo(sGroupLevelName);
+					const oGroupedPropertyInfo = this.findPropertyInfo(sGroupLevelName);
 					if (oGroupedPropertyInfo) {
 						this._aGroupLevels.push({
 							property: oGroupedPropertyInfo,
@@ -410,7 +410,7 @@ sap.ui.define([
 			return;
 		}
 
-		var mAggregation = {
+		const mAggregation = {
 			aggregate: deepClone(this._mAggregate),
 			group: deepClone(this._mGroup),
 			groupLevels: this._aGroupLevels ? this._aGroupLevels.map(function(mGroupLevelInfo) {
@@ -429,7 +429,7 @@ sap.ui.define([
 
 	function getAdditionalPropertyPaths(oPlugin, oPropertyInfo) {
 		if (oPropertyInfo.text) {
-			var oTextPropertyInfo = oPlugin.findPropertyInfo(oPropertyInfo.text);
+			const oTextPropertyInfo = oPlugin.findPropertyInfo(oPropertyInfo.text);
 			if (oTextPropertyInfo) {
 				return [oTextPropertyInfo.path];
 			}
@@ -439,7 +439,7 @@ sap.ui.define([
 	}
 
 	function expandRow(oRow) {
-		var oBindingContext = oRow.getRowBindingContext();
+		const oBindingContext = oRow.getRowBindingContext();
 
 		if (oBindingContext) {
 			oBindingContext.expand();
@@ -447,7 +447,7 @@ sap.ui.define([
 	}
 
 	function collapseRow(oRow) {
-		var oBindingContext = oRow.getRowBindingContext();
+		const oBindingContext = oRow.getRowBindingContext();
 
 		if (oBindingContext) {
 			oBindingContext.collapse();
@@ -471,18 +471,18 @@ sap.ui.define([
 	};
 
 	V4Aggregation.prototype.updateAggregation = function() {
-		var oBinding = this.getTableBinding();
+		const oBinding = this.getTableBinding();
 		if (oBinding) {
 			oBinding.setAggregation(this.getAggregationInfo());
 		}
 	};
 
 	function handleGrandTotals(oPlugin, mAggregation) {
-		var sTotalSummaryOnTop = oPlugin.getTotalSummaryOnTop();
-		var sTotalSummaryOnBottom = oPlugin.getTotalSummaryOnBottom();
-		var bShowTotalSummaryOnTop = sTotalSummaryOnTop === "On" || sTotalSummaryOnTop === "Fixed";
-		var bShowTotalSummaryOnBottom = sTotalSummaryOnBottom === "On" || sTotalSummaryOnBottom === "Fixed";
-		var bHasGrandTotals = Object.keys(mAggregation.aggregate).some(function(sKey) {
+		const sTotalSummaryOnTop = oPlugin.getTotalSummaryOnTop();
+		const sTotalSummaryOnBottom = oPlugin.getTotalSummaryOnBottom();
+		const bShowTotalSummaryOnTop = sTotalSummaryOnTop === "On" || sTotalSummaryOnTop === "Fixed";
+		const bShowTotalSummaryOnBottom = sTotalSummaryOnBottom === "On" || sTotalSummaryOnBottom === "Fixed";
+		const bHasGrandTotals = Object.keys(mAggregation.aggregate).some(function(sKey) {
 			return mAggregation.aggregate[sKey].grandTotal;
 		});
 
@@ -505,7 +505,7 @@ sap.ui.define([
 	}
 
 	function handleGroupTotals(oPlugin, mAggregation) {
-		var sGroupSummary = oPlugin.getGroupSummary();
+		const sGroupSummary = oPlugin.getGroupSummary();
 
 		if (sGroupSummary === "Top") {
 			mAggregation.subtotalsAtBottomOnly = undefined;

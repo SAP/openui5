@@ -47,7 +47,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Change constraints", function(assert) {
-		var that = this;
+		const that = this;
 
 		this.oRowMode.setFixedTopRowCount(2);
 		this.oRowMode.setFixedBottomRowCount(2);

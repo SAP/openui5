@@ -9,12 +9,12 @@ sap.ui.define([
 	"use strict";
 
 	// Shortcuts
-	var SelectionMode = library.SelectionMode;
+	const SelectionMode = library.SelectionMode;
 
 	/*
 	 * Renders a hidden element with the given id, text and css classes.
 	 */
-	var _writeAccText = function(oRm, sParentId, sId, sText, aCSSClasses) {
+	const _writeAccText = function(oRm, sParentId, sId, sText, aCSSClasses) {
 		aCSSClasses = aCSSClasses || [];
 		aCSSClasses.push("sapUiInvisibleText");
 
@@ -47,7 +47,7 @@ sap.ui.define([
 	 * @private
 	 * @alias sap.ui.table.extensions.AccessibilityRender
 	 */
-	var AccRenderExtension = ExtensionBase.extend("sap.ui.table.extensions.AccessibilityRender",
+	const AccRenderExtension = ExtensionBase.extend("sap.ui.table.extensions.AccessibilityRender",
 		/** @lends sap.ui.table.extensions.AccessibilityRender.prototype */ {
 		/**
 		 * @override
@@ -70,7 +70,7 @@ sap.ui.define([
 				return;
 			}
 
-			var sTableId = oTable.getId();
+			const sTableId = oTable.getId();
 
 			oRm.openStart("div");
 			oRm.class("sapUiTableHiddenTexts");
@@ -117,7 +117,7 @@ sap.ui.define([
 			// aria description for column with required content
 			_writeAccText(oRm, sTableId, "ariarequired", TableUtils.getResourceText("TBL_COL_REQUIRED"));
 
-			var oSelectionMode = oTable.getSelectionMode();
+			const oSelectionMode = oTable.getSelectionMode();
 			if (oSelectionMode !== SelectionMode.None) {
 				// aria description for selection mode in table
 				_writeAccText(oRm, sTableId, "ariaselection",
@@ -147,15 +147,15 @@ sap.ui.define([
 		 * @public
 		 */
 		writeAriaAttributesFor: function(oRm, oTable, sType, mParams) {
-			var oExtension = oTable._getAccExtension();
+			const oExtension = oTable._getAccExtension();
 
 			if (!oExtension.getAccMode()) {
 				return;
 			}
 
-			var mAttributes = oExtension.getAriaAttributesFor(sType, mParams);
+			const mAttributes = oExtension.getAriaAttributesFor(sType, mParams);
 
-			var oValue, sKey;
+			let oValue; let sKey;
 			for (sKey in mAttributes) {
 				oValue = mAttributes[sKey];
 				if (Array.isArray(oValue)) {
@@ -181,9 +181,9 @@ sap.ui.define([
 				return;
 			}
 
-			var bIsSelected = oTable._getSelectionPlugin().isSelected(oRow);
-			var mKeyboardTexts = oTable._getAccExtension().getKeyboardTexts();
-			var sText = bIsSelected ? mKeyboardTexts.rowDeselect : mKeyboardTexts.rowSelect;
+			const bIsSelected = oTable._getSelectionPlugin().isSelected(oRow);
+			const mKeyboardTexts = oTable._getAccExtension().getKeyboardTexts();
+			const sText = bIsSelected ? mKeyboardTexts.rowDeselect : mKeyboardTexts.rowSelect;
 
 			_writeAccText(oRm, oRow.getId(), "rowselecttext", oRow.isEmpty() ? "" : sText, ["sapUiTableAriaRowSel"]);
 		},
@@ -203,8 +203,8 @@ sap.ui.define([
 				return;
 			}
 
-			var oRowSettings = oRow.getAggregation("_settings");
-			var sHighlightText = oRowSettings._getHighlightText();
+			const oRowSettings = oRow.getAggregation("_settings");
+			const sHighlightText = oRowSettings._getHighlightText();
 
 			_writeAccText(oRm, oRow.getId(), "highlighttext", sHighlightText);
 		},

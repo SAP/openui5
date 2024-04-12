@@ -27,7 +27,7 @@ sap.ui.define(['./ColumnMenu', "sap/ui/unified/MenuRenderer", './utils/TableUtil
 	 *
 	 * @deprecated As of version 1.117, replaced by the <code>headerMenu</code> association of <code>sap.ui.table.Column</code>.
 	 */
-	var AnalyticalColumnMenu = ColumnMenu.extend("sap.ui.table.AnalyticalColumnMenu", /** @lends sap.ui.table.AnalyticalColumnMenu.prototype */ {
+	const AnalyticalColumnMenu = ColumnMenu.extend("sap.ui.table.AnalyticalColumnMenu", /** @lends sap.ui.table.AnalyticalColumnMenu.prototype */ {
 		metadata: {
 			library: "sap.ui.table"
 		},
@@ -51,8 +51,8 @@ sap.ui.define(['./ColumnMenu', "sap/ui/unified/MenuRenderer", './utils/TableUtil
 	 * @private
 	 */
 	AnalyticalColumnMenu.prototype._addGroupMenuItem = function() {
-		var oColumn = this._getColumn();
-		var oTable = this._getTable();
+		const oColumn = this._getColumn();
+		const oTable = this._getTable();
 
 		if (oColumn.isGroupableByMenu()) {
 			this._oGroupIcon = this._createMenuItem(
@@ -60,11 +60,11 @@ sap.ui.define(['./ColumnMenu', "sap/ui/unified/MenuRenderer", './utils/TableUtil
 				"TBL_GROUP",
 				oColumn.getGrouped() ? "accept" : null,
 				function(oEvent) {
-					var oMenuItem = oEvent.getSource();
-					var bGrouped = !oColumn.getGrouped();
+					const oMenuItem = oEvent.getSource();
+					const bGrouped = !oColumn.getGrouped();
 
 					if (bGrouped && !oColumn.getShowIfGrouped()) {
-						var oDomRef;
+						let oDomRef;
 
 						if (TableUtils.isNoDataVisible(oTable)) {
 							oDomRef = oTable.getDomRef("noDataCnt");
@@ -90,7 +90,7 @@ sap.ui.define(['./ColumnMenu', "sap/ui/unified/MenuRenderer", './utils/TableUtil
 	 * @private
 	 */
 	AnalyticalColumnMenu.prototype._addSumMenuItem = function() {
-		var oColumn = this._getColumn();
+		const oColumn = this._getColumn();
 
 		if (oColumn._isAggregatableByMenu()) {
 			this._oSumItem = this._createMenuItem(
@@ -98,8 +98,8 @@ sap.ui.define(['./ColumnMenu', "sap/ui/unified/MenuRenderer", './utils/TableUtil
 				"TBL_TOTAL",
 				oColumn.getSummed() ? "accept" : null,
 				jQuery.proxy(function(oEvent) {
-					var oMenuItem = oEvent.getSource(),
-						bSummed = oColumn.getSummed();
+					const oMenuItem = oEvent.getSource();
+					const bSummed = oColumn.getSummed();
 
 					oColumn.setSummed(!bSummed);
 					oMenuItem.setIcon(!bSummed ? "sap-icon://accept" : null);
@@ -112,7 +112,7 @@ sap.ui.define(['./ColumnMenu', "sap/ui/unified/MenuRenderer", './utils/TableUtil
 	AnalyticalColumnMenu.prototype.open = function() {
 		ColumnMenu.prototype.open.apply(this, arguments);
 
-		var oColumn = this._getColumn();
+		const oColumn = this._getColumn();
 		this._oSumItem && this._oSumItem.setIcon(oColumn.getSummed() ? "sap-icon://accept" : null);
 		this._oGroupIcon && this._oGroupIcon.setIcon(oColumn.getGrouped() ? "sap-icon://accept" : null);
 	};

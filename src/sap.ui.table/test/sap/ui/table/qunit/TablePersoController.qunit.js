@@ -13,7 +13,8 @@ sap.ui.define([
 ], function(Element, TableQUnitUtils, TablePersoController, qutils, Table, Column, JSONModel, jQuery, oCore) {
 	"use strict";
 
-	var oController = null, oTable = null;
+	let oController = null;
+let oTable = null;
 
 	function createController(mControllerSettings, mTableSettings) {
 		// init settings
@@ -21,7 +22,7 @@ sap.ui.define([
 		mTableSettings = mTableSettings || {};
 
 		// table data
-		var oData = {
+		const oData = {
 			items: [
 				{name: "Michelle", color: "orange", number: 3.14},
 				{name: "Joseph", color: "blue", number: 1.618},
@@ -36,7 +37,7 @@ sap.ui.define([
 		 */
 		mTableSettings.showColumnVisibilityMenu = true;
 		mTableSettings.columns = jQuery.map(oData.cols, function(colname) {
-			var oAggregations = {
+			const oAggregations = {
 				label: new TableQUnitUtils.TestControl({text: colname}),
 				visible: colname === "Color" ? false : true, // Color column should be invisible by default
 				template: new TableQUnitUtils.TestControl({
@@ -84,20 +85,20 @@ sap.ui.define([
 
 	QUnit.test("autoSave", function(assert) {
 		assert.expect(5);
-		var getPersDataCalls = 0;
-		var setPersDataCalls = 0;
+		let getPersDataCalls = 0;
+		let setPersDataCalls = 0;
 
 		createController({
 			persoService: {
 				getPersData: function() {
 					getPersDataCalls++;
-					var oDeferred = jQuery.Deferred();
+					const oDeferred = jQuery.Deferred();
 					oDeferred.resolve();
 					return oDeferred.promise();
 				},
 				setPersData: function() {
 					setPersDataCalls++;
-					var oDeferred = jQuery.Deferred();
+					const oDeferred = jQuery.Deferred();
 					oDeferred.resolve();
 					return oDeferred.promise();
 				},
@@ -155,13 +156,13 @@ sap.ui.define([
 
 	QUnit.test("persoService / table", function(assert) {
 		assert.expect(1);
-		var getPersDataCalls = 0;
+		let getPersDataCalls = 0;
 
 		createController({
 			persoService: {
 				getPersData: function() {
 					getPersDataCalls++;
-					var oDeferred = jQuery.Deferred();
+					const oDeferred = jQuery.Deferred();
 					oDeferred.resolve();
 					return oDeferred.promise();
 				},
@@ -174,7 +175,7 @@ sap.ui.define([
 			}
 		});
 
-		var oService = oController.getPersoService();
+		const oService = oController.getPersoService();
 
 		oController.setPersoService(null);
 		oController.setTable(null);
@@ -199,14 +200,14 @@ sap.ui.define([
 	 */
 	QUnit.test("Column visibility (autoSave)", function(assert) {
 		assert.expect(16);
-		var done = assert.async();
-		var getPersDataCalls = 0;
+		const done = assert.async();
+		let getPersDataCalls = 0;
 
 		createController({
 			persoService: {
 				getPersData: function() {
 					getPersDataCalls++;
-					var oDeferred = jQuery.Deferred();
+					const oDeferred = jQuery.Deferred();
 					oDeferred.resolve(this.oBundle);
 					return oDeferred.promise();
 				},
@@ -245,7 +246,7 @@ sap.ui.define([
 					}, "setPersData should receive the correct data");
 
 					this.oBundle = oBundle;
-					var oDeferred = jQuery.Deferred();
+					const oDeferred = jQuery.Deferred();
 					oDeferred.resolve();
 					return oDeferred.promise();
 				},
@@ -257,9 +258,9 @@ sap.ui.define([
 
 		assert.equal(getPersDataCalls, 1, "getPersData of service should be called 1 time.");
 
-		var oNumberColumn = Element.getElementById("Number");
-		var oColorColumn = Element.getElementById("Color");
-		var oNameColumn = Element.getElementById("Name");
+		const oNumberColumn = Element.getElementById("Number");
+		const oColorColumn = Element.getElementById("Color");
+		const oNameColumn = Element.getElementById("Name");
 
 		assert.equal(oNameColumn.getVisible(), true, "Name column should be visible.");
 		assert.equal(oColorColumn.getVisible(), false, "Color column should be invisible.");
@@ -267,9 +268,9 @@ sap.ui.define([
 
 		oNameColumn.attachEventOnce("columnMenuOpen", function() {
 			TableQUnitUtils.wait(0).then(function() {
-				var oNameMenu = oNameColumn.getMenu();
-				var sVisibilityMenuItemId = oNameMenu.getId() + "-column-visibilty";
-				var aSubmenuItems = oTable._oColumnVisibilityMenuItem.getSubmenu().getItems();
+				const oNameMenu = oNameColumn.getMenu();
+				const sVisibilityMenuItemId = oNameMenu.getId() + "-column-visibilty";
+				const aSubmenuItems = oTable._oColumnVisibilityMenuItem.getSubmenu().getItems();
 				qutils.triggerMouseEvent(sVisibilityMenuItemId, "click");
 				qutils.triggerMouseEvent(aSubmenuItems[2].$(), "click");
 
@@ -312,15 +313,15 @@ sap.ui.define([
 	 */
 	QUnit.test("Column visibility (no autoSave)", function(assert) {
 		assert.expect(19);
-		var done = assert.async();
-		var getPersDataCalls = 0;
+		const done = assert.async();
+		let getPersDataCalls = 0;
 
 		createController({
 			autoSave: false,
 			persoService: {
 				getPersData: function() {
 					getPersDataCalls++;
-					var oDeferred = jQuery.Deferred();
+					const oDeferred = jQuery.Deferred();
 					oDeferred.resolve(this.oBundle);
 					return oDeferred.promise();
 				},
@@ -359,7 +360,7 @@ sap.ui.define([
 					}, "setPersData should receive the correct data");
 
 					this.oBundle = oBundle;
-					var oDeferred = jQuery.Deferred();
+					const oDeferred = jQuery.Deferred();
 					oDeferred.resolve();
 					return oDeferred.promise();
 				},
@@ -371,9 +372,9 @@ sap.ui.define([
 
 		assert.equal(getPersDataCalls, 1, "getPersData of service should be called 1 time.");
 
-		var oNumberColumn = Element.getElementById("Number");
-		var oColorColumn = Element.getElementById("Color");
-		var oNameColumn = Element.getElementById("Name");
+		const oNumberColumn = Element.getElementById("Number");
+		const oColorColumn = Element.getElementById("Color");
+		const oNameColumn = Element.getElementById("Name");
 
 		assert.equal(oNameColumn.getVisible(), true, "Name column should be visible.");
 		assert.equal(oColorColumn.getVisible(), false, "Color column should be invisible.");
@@ -381,10 +382,10 @@ sap.ui.define([
 
 		oNameColumn.attachEventOnce("columnMenuOpen", function() {
 			TableQUnitUtils.wait(0).then(function() {
-				var oNameMenu = oNameColumn.getMenu();
-				var sVisibilityMenuItemId = oNameMenu.getId() + "-column-visibilty";
+				const oNameMenu = oNameColumn.getMenu();
+				const sVisibilityMenuItemId = oNameMenu.getId() + "-column-visibilty";
 
-				var aSubmenuItems = oTable._oColumnVisibilityMenuItem.getSubmenu().getItems();
+				const aSubmenuItems = oTable._oColumnVisibilityMenuItem.getSubmenu().getItems();
 				qutils.triggerMouseEvent(sVisibilityMenuItemId, "click");
 				qutils.triggerMouseEvent(aSubmenuItems[2].$(), "click");
 
@@ -432,13 +433,13 @@ sap.ui.define([
 
 	QUnit.test("Manual table changes via API", function(assert) {
 		assert.expect(11);
-		var getPersDataCalls = 0;
+		let getPersDataCalls = 0;
 
 		createController({
 			persoService: {
 				getPersData: function() {
 					getPersDataCalls++;
-					var oDeferred = jQuery.Deferred();
+					const oDeferred = jQuery.Deferred();
 					oDeferred.resolve(this.oBundle);
 					return oDeferred.promise();
 				},
@@ -478,7 +479,7 @@ sap.ui.define([
 					}, "setPersData should receive the correct data");
 
 					this.oBundle = oBundle;
-					var oDeferred = jQuery.Deferred();
+					const oDeferred = jQuery.Deferred();
 					oDeferred.resolve();
 					return oDeferred.promise();
 				},
@@ -490,9 +491,9 @@ sap.ui.define([
 
 		assert.equal(getPersDataCalls, 1, "getPersData of service should be called 1 time.");
 
-		var oNumberColumn = Element.getElementById("Number"),
-			oColorColumn = Element.getElementById("Color"),
-			oNameColumn = Element.getElementById("Name");
+		const oNumberColumn = Element.getElementById("Number");
+		const oColorColumn = Element.getElementById("Color");
+		const oNameColumn = Element.getElementById("Name");
 
 		assert.equal(oNameColumn.getVisible(), true, "Name column should be visible.");
 		assert.equal(oColorColumn.getVisible(), false, "Color column should be invisible.");
@@ -526,7 +527,7 @@ sap.ui.define([
 	QUnit.test("Column multiLabels", function(assert) {
 		createController();
 
-		var oTablePersoData = oController._getCurrentTablePersoData(true);
+		const oTablePersoData = oController._getCurrentTablePersoData(true);
 		assert.equal(oTablePersoData.aColumns[0].text, "Name - Second level header", "Name column has the correct label in TablePersoDialog");
 		assert.equal(oTablePersoData.aColumns[1].text, "Color - Second level header", "Color column has the correct label in TablePersoDialog");
 		assert.equal(oTablePersoData.aColumns[2].text, "Number", "Number column has the correct label in TablePersoDialog");
@@ -540,13 +541,13 @@ sap.ui.define([
 
 	QUnit.test("CustomDataKey", function(assert) {
 		assert.expect(11);
-		var getPersDataCalls = 0;
+		let getPersDataCalls = 0;
 
 		createController({
 			persoService: {
 				getPersData: function() {
 					getPersDataCalls++;
-					var oDeferred = jQuery.Deferred();
+					const oDeferred = jQuery.Deferred();
 					oDeferred.resolve(this.oBundle);
 					return oDeferred.promise();
 				},
@@ -586,7 +587,7 @@ sap.ui.define([
 					}, "setPersData should receive the correct data");
 
 					this.oBundle = oBundle;
-					var oDeferred = jQuery.Deferred();
+					const oDeferred = jQuery.Deferred();
 					oDeferred.resolve();
 					return oDeferred.promise();
 				},
@@ -598,16 +599,16 @@ sap.ui.define([
 
 		// set the persoKey custom data property
 		oTable.data("persoKey", "P13N_" + oTable.getId());
-		var aColumns = oTable.getColumns();
-		for (var i = 0, l = aColumns.length; i < l; i++) {
+		const aColumns = oTable.getColumns();
+		for (let i = 0, l = aColumns.length; i < l; i++) {
 			aColumns[i].data("persoKey", "P13N_" + aColumns[i].getId());
 		}
 
 		assert.equal(getPersDataCalls, 1, "getPersData of service should be called 1 time.");
 
-		var oNumberColumn = Element.getElementById("Number");
-		var oColorColumn = Element.getElementById("Color");
-		var oNameColumn = Element.getElementById("Name");
+		const oNumberColumn = Element.getElementById("Number");
+		const oColorColumn = Element.getElementById("Color");
+		const oNameColumn = Element.getElementById("Name");
 
 		assert.equal(oNameColumn.getVisible(), true, "Name column should be visible.");
 		assert.equal(oColorColumn.getVisible(), false, "Color column should be invisible.");

@@ -10,9 +10,9 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var Hook = TableUtils.Hook.Keys;
-	var oHookInstallation = {};
-	var _private = TableUtils.createWeakMapFacade();
+	const Hook = TableUtils.Hook.Keys;
+	const oHookInstallation = {};
+	const _private = TableUtils.createWeakMapFacade();
 
 	/**
 	 * Constructor for a new table plugin.
@@ -33,7 +33,7 @@ sap.ui.define([
 	 * @since 1.75
 	 * @alias sap.ui.table.plugins.PluginBase
 	 */
-	var PluginBase = Element.extend("sap.ui.table.plugins.PluginBase", /** @lends sap.ui.table.plugins.PluginBase.prototype */ {
+	const PluginBase = Element.extend("sap.ui.table.plugins.PluginBase", /** @lends sap.ui.table.plugins.PluginBase.prototype */ {
 		metadata: {
 			"abstract": true,
 			library: "sap.ui.table"
@@ -202,7 +202,7 @@ sap.ui.define([
 	 * @protected
 	 */
 	PluginBase.prototype.getTable = function() {
-		var oParent = this.getParent();
+		const oParent = this.getParent();
 		return TableUtils.isA(oParent, "sap.ui.table.Table") ? oParent : null;
 	};
 
@@ -213,8 +213,8 @@ sap.ui.define([
 	 * @protected
 	 */
 	PluginBase.prototype.getTableBinding = function() {
-		var oTable = this.getTable();
-		var oBinding = oTable ? oTable.getBinding() : null;
+		const oTable = this.getTable();
+		const oBinding = oTable ? oTable.getBinding() : null;
 		return oBinding ? oBinding : null;
 	};
 
@@ -240,7 +240,7 @@ sap.ui.define([
 	PluginBase.prototype.setRowCountConstraints = function(mConstraints) {
 		// TODO: Add a type definition for a protected type "rowCountConstraints" in the library file to document the parameter
 		//  RowMode#getRowCountConstraints + PluginBase#setRowCountConstraints
-		var oTable = this.getTable();
+		const oTable = this.getTable();
 
 		if (oTable) {
 			oTable._setRowCountConstraints(mConstraints);
@@ -253,7 +253,7 @@ sap.ui.define([
 	 * @protected
 	 */
 	PluginBase.prototype.activate = function() {
-		var oTable = this.getTable();
+		const oTable = this.getTable();
 
 		if (!oTable || this.isActive()) {
 			return;
@@ -262,7 +262,7 @@ sap.ui.define([
 		TableUtils.Hook.install(oTable, oHookInstallation, this);
 		this.onActivate(oTable);
 
-		var oTableBinding = this.getTableBinding();
+		const oTableBinding = this.getTableBinding();
 		if (oTableBinding) {
 			this.onTableRowsBound(oTableBinding);
 		}
@@ -276,7 +276,7 @@ sap.ui.define([
 	 * @protected
 	 */
 	PluginBase.prototype.deactivate = function() {
-		var oTable = this.getTable();
+		const oTable = this.getTable();
 
 		if (!this.isActive()) {
 			return;

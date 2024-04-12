@@ -13,7 +13,7 @@ sap.ui.define([
 			// call the init function of the parent
 			UIComponent.prototype.init.apply(this, arguments);
 
-			var sODataServiceUrl = "/here/goes/your/odata/service/url/";
+			const sODataServiceUrl = "/here/goes/your/odata/service/url/";
 
 			// init our mock server
 			this.oMockServer = mockserver.init(sODataServiceUrl);
@@ -27,7 +27,7 @@ sap.ui.define([
 			);
 		},
 		exit: function() {
-			var oModel = this.getModel();
+			const oModel = this.getModel();
 			this.setModel();
 			oModel.destroy();
 

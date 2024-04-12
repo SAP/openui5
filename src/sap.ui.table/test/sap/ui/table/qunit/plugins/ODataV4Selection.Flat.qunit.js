@@ -38,9 +38,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("Lifecycle", function(assert) {
-		var oTable = this.oTable;
-		var oODataV4Selection = oTable.getDependents()[0];
-		var oIcon = oODataV4Selection.getAggregation("icon");
+		const oTable = this.oTable;
+		let oODataV4Selection = oTable.getDependents()[0];
+		const oIcon = oODataV4Selection.getAggregation("icon");
 
 		assert.strictEqual(oIcon.getSrc(), IconPool.getIconURI(TableUtils.ThemeParameters.clearSelectionIcon), "DeselectAll icon is correct");
 		assert.ok(!oIcon.getUseIconTooltip(), "DeselectAll icon has no tooltip");
@@ -48,13 +48,13 @@ sap.ui.define([
 		assert.ok(!oODataV4Selection._isLimitDisabled(), "limit is not disabled by default");
 		oTable.removeDependent(oODataV4Selection);
 
-		var oActivateSpy = sinon.spy(oODataV4Selection, "onActivate");
+		const oActivateSpy = sinon.spy(oODataV4Selection, "onActivate");
 		oTable.addDependent(oODataV4Selection);
 		assert.ok(oActivateSpy.calledOnce, "the selection plugin is activated");
 		assert.strictEqual(oTable.getSelectionMode(), "MultiToggle",
 			"selectionMode of the table is set to the default selectionMode of the plugin");
 
-		var oClearSelectionSpy = sinon.spy(oODataV4Selection, "clearSelection");
+		const oClearSelectionSpy = sinon.spy(oODataV4Selection, "clearSelection");
 		oODataV4Selection.onDeactivate(oTable);
 		assert.strictEqual(oTable.getSelectionMode(), "None", "when plugin is deactivated selectionMode of the table is set to None");
 		assert.ok(oClearSelectionSpy.calledOnce, "when plugin is deactivated selection is cleared");
@@ -66,10 +66,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("Enable/Disable", function(assert) {
-		var oTable = this.oTable;
-		var oODataV4Selection = oTable.getDependents()[0];
-		var oActivateSpy = sinon.spy(oODataV4Selection, "activate");
-		var oDeactivateSpy = sinon.spy(oODataV4Selection, "deactivate");
+		const oTable = this.oTable;
+		const oODataV4Selection = oTable.getDependents()[0];
+		const oActivateSpy = sinon.spy(oODataV4Selection, "activate");
+		const oDeactivateSpy = sinon.spy(oODataV4Selection, "deactivate");
 
 		oODataV4Selection.setEnabled(false);
 		assert.ok(oDeactivateSpy.calledOnce);
@@ -81,9 +81,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("getRenderConfig", function(assert) {
-		var oTable = this.oTable;
-		var oODataV4Selection = oTable.getDependents()[0];
-		var oHeaderSelector = oODataV4Selection.getRenderConfig().headerSelector;
+		const oTable = this.oTable;
+		const oODataV4Selection = oTable.getDependents()[0];
+		let oHeaderSelector = oODataV4Selection.getRenderConfig().headerSelector;
 
 		assert.strictEqual(oHeaderSelector.type, "clear");
 		assert.strictEqual(oHeaderSelector.visible, true);
@@ -99,8 +99,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("setSelectionMode", function(assert) {
-		var oTable = this.oTable;
-		var oODataV4Selection = oTable.getDependents()[0];
+		const oTable = this.oTable;
+		const oODataV4Selection = oTable.getDependents()[0];
 
 		assert.strictEqual(oODataV4Selection.getSelectionMode(), "MultiToggle", "default selectionMode");
 		assert.strictEqual(oTable.getSelectionMode(), "MultiToggle", "selectionMode of the table");
@@ -110,12 +110,12 @@ sap.ui.define([
 	});
 
 	QUnit.test("onTableRowsBound", function(assert) {
-		var oTable = this.oTable;
-		var oODataV4Selection = oTable.getDependents()[0];
-		var oModelStub = sinon.stub(oTable.getBinding().getModel(), "isA");
+		const oTable = this.oTable;
+		const oODataV4Selection = oTable.getDependents()[0];
+		const oModelStub = sinon.stub(oTable.getBinding().getModel(), "isA");
 
 		oModelStub.withArgs("sap.ui.model.odata.v4.ODataModel").returns(false);
-		var oDeactivateSpy = sinon.spy(oODataV4Selection, "deactivate");
+		const oDeactivateSpy = sinon.spy(oODataV4Selection, "deactivate");
 
 		oODataV4Selection.onTableRowsBound(oTable.getBinding());
 		assert.ok(oDeactivateSpy.calledOnce, "if the model is not sap.ui.model.odata.v4.ODataModel, the plugin is deactivated");
@@ -142,12 +142,12 @@ sap.ui.define([
 	});
 
 	QUnit.test("Selection", function(assert) {
-		var oTable = this.oTable;
-		var oODataV4Selection = oTable.getDependents()[0];
+		const oTable = this.oTable;
+		const oODataV4Selection = oTable.getDependents()[0];
 		const oSelectionChangeSpy = sinon.spy();
 
 		oODataV4Selection.attachSelectionChange(oSelectionChangeSpy);
-		var oRow, aSelectedContexts;
+		let oRow; let aSelectedContexts;
 
 		aSelectedContexts = oODataV4Selection.getSelectedContexts();
 		assert.strictEqual(aSelectedContexts.length, 0, 'Count of selected contexts is 0');
@@ -180,9 +180,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("onHeaderSelectorPress", function(assert) {
-		var oTable = this.oTable;
-		var oODataV4Selection = oTable.getDependents()[0];
-		var oRow = oTable.getRows()[0];
+		const oTable = this.oTable;
+		const oODataV4Selection = oTable.getDependents()[0];
+		let oRow = oTable.getRows()[0];
 
 		oODataV4Selection.setSelected(oRow, true);
 		oRow = oTable.getRows()[1];
@@ -204,9 +204,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("onKeyboardShortcut", function(assert) {
-		var oTable = this.oTable;
-		var oODataV4Selection = oTable.getDependents()[0];
-		var oRow = oTable.getRows()[0];
+		const oTable = this.oTable;
+		const oODataV4Selection = oTable.getDependents()[0];
+		let oRow = oTable.getRows()[0];
 
 		oODataV4Selection.setSelected(oRow, true);
 		oRow = oTable.getRows()[1];
@@ -228,8 +228,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Range selection (limit not reached)", function(assert) {
-		var oTable = this.oTable;
-		var oODataV4Selection = oTable.getDependents()[0];
+		const oTable = this.oTable;
+		const oODataV4Selection = oTable.getDependents()[0];
 
 		assert.equal(oODataV4Selection.getLimit(), 200, "default limit is 200");
 		this.triggerRowSelectorClick(oTable, 0, false);
@@ -251,8 +251,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Reverse range selection (limit not reached)", function(assert) {
-		var oTable = this.oTable;
-		var oODataV4Selection = oTable.getDependents()[0];
+		const oTable = this.oTable;
+		const oODataV4Selection = oTable.getDependents()[0];
 
 		oTable.setFirstVisibleRow(95);
 		return oTable.qunit.whenRenderingFinished().then(function() {
@@ -278,10 +278,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("Range selection (limit reached)", function(assert) {
-		var oTable = this.oTable;
-		var oODataV4Selection = oTable.getDependents()[0];
-		var oScrollTableSpy = sinon.spy(TableUtils, "scrollTableToIndex");
-		var oNotificationSpy = sinon.spy(TableUtils, "showNotificationPopoverAtIndex");
+		const oTable = this.oTable;
+		const oODataV4Selection = oTable.getDependents()[0];
+		const oScrollTableSpy = sinon.spy(TableUtils, "scrollTableToIndex");
+		const oNotificationSpy = sinon.spy(TableUtils, "showNotificationPopoverAtIndex");
 
 		oODataV4Selection.setLimit(100);
 		this.triggerRowSelectorClick(oTable, 0, false);
@@ -318,10 +318,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("Reverse range selection (limit reached)", function(assert) {
-		var oTable = this.oTable;
-		var oODataV4Selection = oTable.getDependents()[0];
-		var oScrollTableSpy = sinon.spy(TableUtils, "scrollTableToIndex");
-		var oNotificationSpy = sinon.spy(TableUtils, "showNotificationPopoverAtIndex");
+		const oTable = this.oTable;
+		const oODataV4Selection = oTable.getDependents()[0];
+		const oScrollTableSpy = sinon.spy(TableUtils, "scrollTableToIndex");
+		const oNotificationSpy = sinon.spy(TableUtils, "showNotificationPopoverAtIndex");
 
 		oODataV4Selection.setLimit(100);
 		oTable.setFirstVisibleRow(300);

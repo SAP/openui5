@@ -27,9 +27,9 @@ sap.ui.define([
 	 * Allows to selectively forward the events to the item navigation.
 	 * "this" in the function context is the table instance
 	 */
-	var ItemNavigationDelegate = {
+	const ItemNavigationDelegate = {
 		_forward: function(oTable, oEvent) {
-			var oIN = oTable._getItemNavigation();
+			const oIN = oTable._getItemNavigation();
 
 			if (oIN != null
 				&& !oTable._getKeyboardExtension().isItemNavigationSuspended()
@@ -58,7 +58,7 @@ sap.ui.define([
 	 * Event handling which is independent of the used keyboard delegate.
 	 * "this" in the function context is the table instance.
 	 */
-	var ExtensionDelegate = {
+	const ExtensionDelegate = {
 		onBeforeRendering: function(oEvent) {
 			/*
 			 * In a normal rendering, the process is as follows:
@@ -80,7 +80,7 @@ sap.ui.define([
 			this._oStoredFocusInfo = this.getFocusInfo();
 		},
 		onAfterRendering: function(oEvent) {
-			var bRenderedRows = oEvent && oEvent.isMarked("renderRows");
+			const bRenderedRows = oEvent && oEvent.isMarked("renderRows");
 
 			this._getKeyboardExtension().invalidateItemNavigation();
 
@@ -97,7 +97,7 @@ sap.ui.define([
 			delete this._oStoredFocusInfo;
 		},
 		onfocusin: function(oEvent) {
-			var oExtension = this._getKeyboardExtension();
+			const oExtension = this._getKeyboardExtension();
 
 			if (!oExtension._bIgnoreFocusIn) {
 				ExtensionHelper.initItemNavigation(this._getKeyboardExtension());
@@ -117,7 +117,7 @@ sap.ui.define([
 	/*
 	 * Provides utility functions used this extension
 	 */
-	var ExtensionHelper = {
+	const ExtensionHelper = {
 		initItemNavigation: function(oExtension, bSkipInitFocusedIndex) {
 			if (ExtensionHelper.isItemNavigationInvalid(oExtension)) {
 				ExtensionHelper._initItemNavigation(oExtension, bSkipInitFocusedIndex);
@@ -129,23 +129,23 @@ sap.ui.define([
 		 * TabIndexes are set by the ItemNavigation.
 		 */
 		_initItemNavigation: function(oExtension, bSkipInitFocusedIndex) {
-			var oTable = oExtension.getTable();
+			const oTable = oExtension.getTable();
 
 			if (!oTable) {
 				return;
 			}
 
-			var $Table = oTable.$();
-			var iRowCount = oTable.getRows().length;
-			var iColumnCount = TableUtils.getVisibleColumnCount(oTable);
-			var bHasRowHeader = TableUtils.hasRowHeader(oTable);
-			var bHasRowActions = TableUtils.hasRowActions(oTable);
-			var bHasFixedColumns = TableUtils.hasFixedColumns(oTable);
-			var i;
+			const $Table = oTable.$();
+			const iRowCount = oTable.getRows().length;
+			let iColumnCount = TableUtils.getVisibleColumnCount(oTable);
+			const bHasRowHeader = TableUtils.hasRowHeader(oTable);
+			const bHasRowActions = TableUtils.hasRowActions(oTable);
+			const bHasFixedColumns = TableUtils.hasFixedColumns(oTable);
+			let i;
 
 			// create the list of item dom refs
-			var aItemDomRefs = [],
-				aRowHdrDomRefs, aRowActionDomRefs, $topLeft, $middleLeft, $bottomLeft;
+			let aItemDomRefs = [];
+			let aRowHdrDomRefs; let aRowActionDomRefs; let $topLeft; let $middleLeft; let $bottomLeft;
 
 			if (bHasFixedColumns) {
 				$topLeft = $Table.find(".sapUiTableCtrlFixed.sapUiTableCtrlRowFixed:not(.sapUiTableCHT)");
@@ -153,9 +153,9 @@ sap.ui.define([
 				$bottomLeft = $Table.find(".sapUiTableCtrlFixed.sapUiTableCtrlRowFixedBottom:not(.sapUiTableCHT)");
 			}
 
-			var $topRight = $Table.find(".sapUiTableCtrlScroll.sapUiTableCtrlRowFixed:not(.sapUiTableCHT)");
-			var $middleRight = $Table.find(".sapUiTableCtrlScroll.sapUiTableCtrlRowScroll:not(.sapUiTableCHT)");
-			var $bottomRight = $Table.find(".sapUiTableCtrlScroll.sapUiTableCtrlRowFixedBottom:not(.sapUiTableCHT)");
+			const $topRight = $Table.find(".sapUiTableCtrlScroll.sapUiTableCtrlRowFixed:not(.sapUiTableCHT)");
+			const $middleRight = $Table.find(".sapUiTableCtrlScroll.sapUiTableCtrlRowScroll:not(.sapUiTableCHT)");
+			const $bottomRight = $Table.find(".sapUiTableCtrlScroll.sapUiTableCtrlRowFixedBottom:not(.sapUiTableCHT)");
 
 			if (bHasRowHeader) {
 				aRowHdrDomRefs = $Table.find(".sapUiTableRowSelectionCell").get();
@@ -190,13 +190,13 @@ sap.ui.define([
 
 			// add the column headers and select all
 			if (oTable.getColumnHeaderVisible()) {
-				var aHeaderDomRefs = [];
+				let aHeaderDomRefs = [];
 
 				// Returns the .sapUiTableColHdr elements (.sapUiTableColHdrCnt .sapUiTableCtrlFixed .sapUiTableColHdrTr)
-				var $FixedHeaders = $Table.find(".sapUiTableCHT.sapUiTableCtrlFixed>tbody>tr");
+				const $FixedHeaders = $Table.find(".sapUiTableCHT.sapUiTableCtrlFixed>tbody>tr");
 				// Returns the .sapUiTableColHdr elements (.sapUiTableColHdrCnt .sapUiTableCtrlScr .sapUiTableColHdrTr)
-				var $ScrollHeaders = $Table.find(".sapUiTableCHT.sapUiTableCtrlScroll>tbody>tr");
-				var iHeaderRowCount = TableUtils.getHeaderRowCount(oTable);
+				const $ScrollHeaders = $Table.find(".sapUiTableCHT.sapUiTableCtrlScroll>tbody>tr");
+				const iHeaderRowCount = TableUtils.getHeaderRowCount(oTable);
 
 				for (i = 0; i < iHeaderRowCount; i++) {
 					if (bHasRowHeader) {
@@ -225,7 +225,7 @@ sap.ui.define([
 				oExtension._itemNavigation = new ItemNavigation();
 				oExtension._itemNavigation.setTableMode(true);
 				oExtension._itemNavigation.attachEvent(ItemNavigation.Events.AfterFocus, function(oEvent) {
-					var oInfo = TableUtils.getFocusedItemInfo(oTable);
+					const oInfo = TableUtils.getFocusedItemInfo(oTable);
 					oInfo.header = TableUtils.getHeaderRowCount(oTable);
 					oInfo.domRef = null; //Do not keep dom references
 
@@ -270,7 +270,7 @@ sap.ui.define([
 	 * @private
 	 * @alias sap.ui.table.extensions.Keyboard
 	 */
-	var KeyboardExtension = ExtensionBase.extend("sap.ui.table.extensions.Keyboard",
+	const KeyboardExtension = ExtensionBase.extend("sap.ui.table.extensions.Keyboard",
 		/** @lends sap.ui.table.extensions.Keyboard.prototype */ {
 		/**
 		 * @override
@@ -320,7 +320,7 @@ sap.ui.define([
 		 */
 		destroy: function() {
 			// Deregister the delegates
-			var oTable = this.getTable();
+			const oTable = this.getTable();
 			if (oTable) {
 				oTable.removeEventDelegate(ExtensionDelegate);
 				oTable.removeEventDelegate(this._delegate);
@@ -398,8 +398,8 @@ sap.ui.define([
 	 * @param {HTMLElement} oPreviousFocusRef The previously focused element.
 	 */
 	KeyboardExtension.prototype.updateNoDataAndOverlayFocus = function() {
-		var oTable = this.getTable();
-		var oActiveElement = document.activeElement;
+		const oTable = this.getTable();
+		const oActiveElement = document.activeElement;
 
 		if (!oTable || !oTable.getDomRef()) {
 			return;
@@ -447,7 +447,7 @@ sap.ui.define([
 
 	function restoreFocusToDataCell(oTable, oKeyboardExtension) {
 		if (!jQuery(oKeyboardExtension._oLastFocus.Ref).hasClass("sapUiTableCell")) {
-			var oParentCell = TableUtils.getParentCell(oTable, oKeyboardExtension._oLastFocus.Ref);
+			const oParentCell = TableUtils.getParentCell(oTable, oKeyboardExtension._oLastFocus.Ref);
 
 			if (oParentCell && oParentCell[0] && jQuery(oParentCell[0]).hasClass("sapUiTableCell")) {
 				oParentCell[0].focus();
@@ -502,10 +502,10 @@ sap.ui.define([
 	 * @returns {sap.ui.table.utils.TableUtils.FocusedItemInfo} The cell info of the last focused cell.
 	 */
 	KeyboardExtension.prototype.getLastFocusedCellInfo = function() {
-		var iHeader = TableUtils.getHeaderRowCount(this.getTable());
+		const iHeader = TableUtils.getHeaderRowCount(this.getTable());
 		if (!this._oLastFocusedCellInfo || this._oLastFocusedCellInfo.header != iHeader) {
-			var oInfo = TableUtils.getFocusedItemInfo(this.getTable());
-			var iDfltIdx = ExtensionHelper.getInitialItemNavigationIndex(this);
+			const oInfo = TableUtils.getFocusedItemInfo(this.getTable());
+			const iDfltIdx = ExtensionHelper.getInitialItemNavigationIndex(this);
 
 			return {
 				cellInRow: iDfltIdx,
@@ -540,17 +540,17 @@ sap.ui.define([
 			return;
 		}
 
-		var oTable = this.getTable();
-		var oCellInfo = TableUtils.getCellInfo(oElement);
+		const oTable = this.getTable();
+		const oCellInfo = TableUtils.getCellInfo(oElement);
 
 		if (oCellInfo.isOfType(TableUtils.CELLTYPE.ANY) && oTable) {
-			var $Elem = jQuery(oElement);
+			const $Elem = jQuery(oElement);
 
 			if ($Elem.attr("tabindex") != "0") {
-				var oItemNav = oTable._getItemNavigation();
+				const oItemNav = oTable._getItemNavigation();
 
 				if (oItemNav && oItemNav.aItemDomRefs) {
-					for (var i = 0; i < oItemNav.aItemDomRefs.length; i++) {
+					for (let i = 0; i < oItemNav.aItemDomRefs.length; i++) {
 						if (oItemNav.aItemDomRefs[i]) {
 							oItemNav.aItemDomRefs[i].setAttribute("tabindex", "-1");
 						}

@@ -9,7 +9,7 @@ sap.ui.define([
 ], function(ExtensionBase, TableUtils) {
 	"use strict";
 
-	var ExtensionDelegate = {
+	const ExtensionDelegate = {
 		onAfterRendering: function() {
 			this.attachScrollbar();
 		}
@@ -30,7 +30,7 @@ sap.ui.define([
 	 * @private
 	 * @alias sap.ui.table.extensions.ScrollingIOS
 	 */
-	var ScrollIOSExtension = ExtensionBase.extend("sap.ui.table.extensions.ScrollingIOS", /** @lends sap.ui.table.extensions.ScrollingIOS.prototype */ {
+	const ScrollIOSExtension = ExtensionBase.extend("sap.ui.table.extensions.ScrollingIOS", /** @lends sap.ui.table.extensions.ScrollingIOS.prototype */ {
 		/**
 		 * @override
 		 * @inheritDoc
@@ -47,7 +47,7 @@ sap.ui.define([
 		 * @inheritDoc
 		 */
 		destroy: function() {
-			var oTable = this.getTable();
+			const oTable = this.getTable();
 
 			TableUtils.removeDelegate(oTable, ExtensionDelegate);
 			clearTimeout(this._iUpdateDefaultScrollbarPositionTimeoutId);
@@ -59,7 +59,7 @@ sap.ui.define([
 		 * @inheritDoc
 		 */
 		_attachEvents: function() {
-			var oTable = this.getTable();
+			const oTable = this.getTable();
 
 			TableUtils.Hook.register(oTable, TableUtils.Hook.Keys.Table.TotalRowCountChanged, this.onTotalRowCountChanged, this);
 			TableUtils.Hook.register(oTable, TableUtils.Hook.Keys.Table.UpdateSizes, this.onUpdateTableSizes, this);
@@ -70,21 +70,21 @@ sap.ui.define([
 		 * @inheritDoc
 		 */
 		_detachEvents: function() {
-			var oTable = this.getTable();
+			const oTable = this.getTable();
 
-			var oVSb = oTable._getScrollExtension().getVerticalScrollbar();
+			const oVSb = oTable._getScrollExtension().getVerticalScrollbar();
 			if (oVSb) {
 				oVSb.removeEventListener("scroll", this._onVerticalScrollEventHandler);
 			}
 			delete this._onVerticalScrollEventHandler;
 
-			var oVSbIOS = this.getVerticalScrollbar();
+			const oVSbIOS = this.getVerticalScrollbar();
 			if (oVSbIOS) {
 				oVSbIOS.removeEventListener("pointerdown", this._onPointerDownEventHandler);
 			}
 			delete this._onPointerDownEventHandler;
 
-			var oVSbThumb = this.getVerticalScrollbarThumb();
+			const oVSbThumb = this.getVerticalScrollbarThumb();
 			if (oVSbThumb) {
 				oVSbThumb.removeEventListener("touchmove", this._onTouchMoveEventHandler);
 			}
@@ -108,10 +108,10 @@ sap.ui.define([
 	 * Inserts the scrollbar into the DOM if it does not yet exist.
 	 */
 	ScrollIOSExtension.prototype.attachScrollbar = function() {
-		var oTable = this.getTable();
-		var oVSb = oTable._getScrollExtension().getVerticalScrollbar();
-		var oVSbIOS = this.getVerticalScrollbar();
-		var oVSbThumb = this.getVerticalScrollbarThumb();
+		const oTable = this.getTable();
+		const oVSb = oTable._getScrollExtension().getVerticalScrollbar();
+		let oVSbIOS = this.getVerticalScrollbar();
+		let oVSbThumb = this.getVerticalScrollbarThumb();
 
 		if (!oVSb || !oVSb.isConnected) {
 			return;
@@ -149,7 +149,7 @@ sap.ui.define([
 	 * @returns {HTMLElement|null} Returns <code>null</code>, if the vertical scrollbar does not exist.
 	 */
 	ScrollIOSExtension.prototype.getVerticalScrollbar = function() {
-		var oTable = this.getTable();
+		const oTable = this.getTable();
 		return oTable ? oTable.getDomRef("vsb-ios") : null;
 	};
 
@@ -159,7 +159,7 @@ sap.ui.define([
 	 * @returns {HTMLElement|null} Returns <code>null</code>, if the vertical scrollbar thumb does not exist.
 	 */
 	ScrollIOSExtension.prototype.getVerticalScrollbarThumb = function() {
-		var oVSb = this.getVerticalScrollbar();
+		const oVSb = this.getVerticalScrollbar();
 		return oVSb ? oVSb.firstElementChild : null;
 	};
 
@@ -167,8 +167,8 @@ sap.ui.define([
 	 * Performs a full update of the vertical scrollbar.
 	 */
 	ScrollIOSExtension.prototype.updateVerticalScrollbar = function() {
-		var oTable = this.getTable();
-		var oVSbIOS = this.getVerticalScrollbar();
+		const oTable = this.getTable();
+		const oVSbIOS = this.getVerticalScrollbar();
 
 		oVSbIOS.style.height = oTable._getScrollExtension().getVerticalScrollbarHeight() + "px";
 		oVSbIOS.style.top = Math.max(0, oTable._getRowCounts().fixedTop * oTable._getBaseRowHeight() - 1) + "px";
@@ -181,7 +181,7 @@ sap.ui.define([
 	 * Updates the position of the vertical scroll thumb
 	 */
 	ScrollIOSExtension.prototype.updateVerticalScrollbarThumbPosition = function() {
-		var oVSbThumb = this.getVerticalScrollbarThumb();
+		const oVSbThumb = this.getVerticalScrollbarThumb();
 
 		if (oVSbThumb) {
 			oVSbThumb.style.top = this.getCalculateThumbOffset() + "px";
@@ -192,9 +192,9 @@ sap.ui.define([
 	 * Updates the height of the vertical scroll thumb
 	 */
 	ScrollIOSExtension.prototype.updateVerticalScrollbarThumbHeight = function() {
-		var oTable = this.getTable();
-		var oScrollExtension = oTable._getScrollExtension();
-		var oVSbThumb = this.getVerticalScrollbarThumb();
+		const oTable = this.getTable();
+		const oScrollExtension = oTable._getScrollExtension();
+		const oVSbThumb = this.getVerticalScrollbarThumb();
 
 		if (oVSbThumb) {
 			if (oScrollExtension.isVerticalScrollbarRequired()) {
@@ -211,10 +211,10 @@ sap.ui.define([
 	 * @returns {int} The calculated height of the vertical scroll thumb
 	 */
 	ScrollIOSExtension.prototype.getCalculateThumbHeight = function() {
-		var oTable = this.getTable();
-		var oScrollExtension = oTable._getScrollExtension();
-		var iVerticalScrollbarHeight = oScrollExtension.getVerticalScrollbarHeight();
-		var iVerticalScrollHeight = oScrollExtension.getVerticalScrollHeight();
+		const oTable = this.getTable();
+		const oScrollExtension = oTable._getScrollExtension();
+		const iVerticalScrollbarHeight = oScrollExtension.getVerticalScrollbarHeight();
+		const iVerticalScrollHeight = oScrollExtension.getVerticalScrollHeight();
 
 		return Math.round(Math.pow(iVerticalScrollbarHeight, 2) / iVerticalScrollHeight);
 	};
@@ -225,12 +225,12 @@ sap.ui.define([
 	 * @returns {number} The calculated offset of the vertical scroll thumb
 	 */
 	ScrollIOSExtension.prototype.getCalculateThumbOffset = function() {
-		var oTable = this.getTable();
-		var oScrollExtension = oTable._getScrollExtension();
-		var iVerticalScrollbarHeight = oScrollExtension.getVerticalScrollbarHeight();
-		var iVerticalScrollHeight = oScrollExtension.getVerticalScrollHeight();
-		var oVSb = oScrollExtension.getVerticalScrollbar();
-		var iVerticalScrollTop = oVSb ? oScrollExtension.getVerticalScrollbar().scrollTop : 0;
+		const oTable = this.getTable();
+		const oScrollExtension = oTable._getScrollExtension();
+		const iVerticalScrollbarHeight = oScrollExtension.getVerticalScrollbarHeight();
+		const iVerticalScrollHeight = oScrollExtension.getVerticalScrollHeight();
+		const oVSb = oScrollExtension.getVerticalScrollbar();
+		const iVerticalScrollTop = oVSb ? oScrollExtension.getVerticalScrollbar().scrollTop : 0;
 
 		return Math.round(iVerticalScrollTop * iVerticalScrollbarHeight / iVerticalScrollHeight);
 	};
@@ -241,13 +241,13 @@ sap.ui.define([
 	 * @param {jQuery.Event} oEvent The event triggered
 	 */
 	ScrollIOSExtension.prototype.onTouchMove = function(oEvent) {
-		var oTable = this.getTable();
-		var oScrollExtension = oTable._getScrollExtension();
-		var oVSbThumb = this.getVerticalScrollbarThumb();
-		var iThumbTop = oVSbThumb.getBoundingClientRect().y;
-		var iThumbHeight = this.getCalculateThumbHeight();
-		var iTop = oVSbThumb.offsetTop + oEvent.touches[0].pageY - iThumbTop - iThumbHeight / 2;
-		var iOffset = Math.min(oScrollExtension.getVerticalScrollbarHeight() - iThumbHeight, Math.max(0, iTop));
+		const oTable = this.getTable();
+		const oScrollExtension = oTable._getScrollExtension();
+		const oVSbThumb = this.getVerticalScrollbarThumb();
+		const iThumbTop = oVSbThumb.getBoundingClientRect().y;
+		const iThumbHeight = this.getCalculateThumbHeight();
+		const iTop = oVSbThumb.offsetTop + oEvent.touches[0].pageY - iThumbTop - iThumbHeight / 2;
+		const iOffset = Math.min(oScrollExtension.getVerticalScrollbarHeight() - iThumbHeight, Math.max(0, iTop));
 
 		oEvent.preventDefault();
 		oEvent.stopPropagation();
@@ -266,13 +266,13 @@ sap.ui.define([
 	 * @param {jQuery.Event} oEvent The event triggered
 	 */
 	ScrollIOSExtension.prototype.onPointerDown = function(oEvent) {
-		var oTable = this.getTable();
-		var oScrollExtension = oTable._getScrollExtension();
-		var oVSbThumb = this.getVerticalScrollbarThumb();
-		var iThumbTop = oVSbThumb.getBoundingClientRect().y;
-		var iThumbHeight = this.getCalculateThumbHeight();
-		var iTop = oVSbThumb.offsetTop + oEvent.clientY - iThumbTop - iThumbHeight / 2;
-		var iOffset = Math.min(oScrollExtension.getVerticalScrollbarHeight() - iThumbHeight, Math.max(0, iTop));
+		const oTable = this.getTable();
+		const oScrollExtension = oTable._getScrollExtension();
+		const oVSbThumb = this.getVerticalScrollbarThumb();
+		const iThumbTop = oVSbThumb.getBoundingClientRect().y;
+		const iThumbHeight = this.getCalculateThumbHeight();
+		const iTop = oVSbThumb.offsetTop + oEvent.clientY - iThumbTop - iThumbHeight / 2;
+		const iOffset = Math.min(oScrollExtension.getVerticalScrollbarHeight() - iThumbHeight, Math.max(0, iTop));
 
 		oEvent.preventDefault();
 		oEvent.stopPropagation();
@@ -288,20 +288,20 @@ sap.ui.define([
 	 * @param {number} iThumbHeight The height of the scroll thumb
 	 */
 	ScrollIOSExtension.prototype.updateDefaultScrollbarPosition = function(iOffset, iThumbHeight) {
-		var oTable = this.getTable();
+		const oTable = this.getTable();
 		if (!oTable) {
 			return;
 		}
 
-		var oScrollExtension = oTable._getScrollExtension();
-		var iScrollbarHeight = oScrollExtension.getVerticalScrollbarHeight();
+		const oScrollExtension = oTable._getScrollExtension();
+		const iScrollbarHeight = oScrollExtension.getVerticalScrollbarHeight();
 
 		if (iOffset + iThumbHeight >= iScrollbarHeight) {
 			oScrollExtension.scrollVerticallyMax(true);
 		} else {
-			var iScrollTop = iOffset * oScrollExtension.getVerticalScrollHeight() / iScrollbarHeight;
+			const iScrollTop = iOffset * oScrollExtension.getVerticalScrollHeight() / iScrollbarHeight;
 
-			var oVSb = oScrollExtension.getVerticalScrollbar();
+			const oVSb = oScrollExtension.getVerticalScrollbar();
 			oVSb.scrollTop = iScrollTop;
 		}
 	};

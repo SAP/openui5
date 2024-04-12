@@ -32,7 +32,7 @@ sap.ui.define([
 	 * @alias sap.ui.table.plugins.SelectionPlugin
 	 * @borrows sap.ui.table.plugins.PluginBase.findOn as findOn
 	 */
-	var SelectionPlugin = PluginBase.extend("sap.ui.table.plugins.SelectionPlugin", {metadata: {
+	const SelectionPlugin = PluginBase.extend("sap.ui.table.plugins.SelectionPlugin", {metadata: {
 		"abstract": true,
 		library: "sap.ui.table",
 		properties: {
@@ -55,7 +55,7 @@ sap.ui.define([
 	SelectionPlugin.findOn = PluginBase.findOn;
 
 	SelectionPlugin.prototype.setParent = function(oParent) {
-		var oTable = this.getTable();
+		const oTable = this.getTable();
 
 		PluginBase.prototype.setParent.apply(this, arguments);
 		(oParent || oTable)._initSelectionPlugin();

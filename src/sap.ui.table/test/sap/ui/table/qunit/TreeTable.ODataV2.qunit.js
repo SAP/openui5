@@ -24,18 +24,18 @@ sap.ui.define([
 	"use strict";
 
 	//MockServer for use with annotated tree
-	var oAnnotationMockServer = new MockServer({
+	const oAnnotationMockServer = new MockServer({
 		rootUri: "/metadata/"
 	});
-	var sURLPrefix = sap.ui.require.toUrl("sap/ui/core/qunit");
+	const sURLPrefix = sap.ui.require.toUrl("sap/ui/core/qunit");
 	oAnnotationMockServer.simulate(sURLPrefix + "/model/metadata_odtbmd.xml", sURLPrefix + "/model/odtbmd/");
 
 	/**
 	 * Clean-Up Hierarchy Annotation Mockdata/Metadata
 	 * This is necessary because, the V1 ODataTreeBinding implements routines not conform to the Hierarchy Annotation Spec.
 	 */
-	var aAnnotationsMockdata = oAnnotationMockServer._oMockdata.GLAccountHierarchyInChartOfAccountsLiSet;
-	for (var i = 0; i < aAnnotationsMockdata.length; i++) {
+	const aAnnotationsMockdata = oAnnotationMockServer._oMockdata.GLAccountHierarchyInChartOfAccountsLiSet;
+	for (let i = 0; i < aAnnotationsMockdata.length; i++) {
 		//convert string based level properties (NUMC fields) to real numbers
 		aAnnotationsMockdata[i].FinStatementHierarchyLevelVal = parseInt(aAnnotationsMockdata[i].FinStatementHierarchyLevelVal);
 	}
@@ -97,7 +97,7 @@ sap.ui.define([
 		assert.equal(aRows.length, 10, "10 Rows present");
 
 		let iContexts = 0;
-		for (var i = 0; i < aRows.length; i++) {
+		for (let i = 0; i < aRows.length; i++) {
 			if (aRows[i].getBindingContext()) {
 				iContexts++;
 			}
@@ -175,12 +175,12 @@ sap.ui.define([
 			"Expand(0) after Collapse recursive: 8 nodes are collapsed");
 
 		// check margins of levels
-		var iLevel0a = parseInt(this.oTable.getRows()[0].$().find(".sapUiTableTreeIcon").css("margin-left"));
-		var iLevel1a = parseInt(this.oTable.getRows()[1].$().find(".sapUiTableTreeIcon").css("margin-left"));
-		var iLevel2a = parseInt(this.oTable.getRows()[2].$().find(".sapUiTableTreeIcon").css("margin-left"));
-		var iLevel2b = parseInt(this.oTable.getRows()[3].$().find(".sapUiTableTreeIcon").css("margin-left"));
-		var iLevel2c = parseInt(this.oTable.getRows()[8].$().find(".sapUiTableTreeIcon").css("margin-left"));
-		var iLevel1b = parseInt(this.oTable.getRows()[9].$().find(".sapUiTableTreeIcon").css("margin-left"));
+		const iLevel0a = parseInt(this.oTable.getRows()[0].$().find(".sapUiTableTreeIcon").css("margin-left"));
+		const iLevel1a = parseInt(this.oTable.getRows()[1].$().find(".sapUiTableTreeIcon").css("margin-left"));
+		const iLevel2a = parseInt(this.oTable.getRows()[2].$().find(".sapUiTableTreeIcon").css("margin-left"));
+		const iLevel2b = parseInt(this.oTable.getRows()[3].$().find(".sapUiTableTreeIcon").css("margin-left"));
+		const iLevel2c = parseInt(this.oTable.getRows()[8].$().find(".sapUiTableTreeIcon").css("margin-left"));
+		const iLevel1b = parseInt(this.oTable.getRows()[9].$().find(".sapUiTableTreeIcon").css("margin-left"));
 
 		assert.ok(iLevel0a < iLevel1a, "Margin-left: Level 0 smaller Level 1");
 		assert.ok(iLevel1a < iLevel2a, "Margin-left: Level 1 smaller Level 2");
@@ -254,26 +254,26 @@ sap.ui.define([
 	});
 
 	QUnit.test("Number Of Expanded Levels", function(assert) {
-		var done = assert.async();
+		const done = assert.async();
 		this.oTable = createTable.call(this, {rowMode: new FixedRowMode({rowCount: 15})});
 
-		var oBinding;
+		let oBinding;
 
-		var fnHandler1 = function() {
+		const fnHandler1 = function() {
 			attachRowsUpdatedOnce(this.oTable, fnHandler2, this);
 		};
 
-		var fnHandler2 = function() {
+		const fnHandler2 = function() {
 			oBinding = this.oTable.getBinding();
 			// test some defaults
 			assert.equal(oBinding.mParameters.numberOfExpandedLevels, 1, "Number of expanded levels is 1");
 			assert.equal(oBinding.mParameters.rootLevel, 1, "RootLevel is 1");
 
-			var aRows = this.oTable.getRows();
+			const aRows = this.oTable.getRows();
 			assert.equal(aRows.length, 15, "15 Rows present");
 
-			var iCountContexts = 0;
-			for (var i = 0; i < aRows.length; i++) {
+			let iCountContexts = 0;
+			for (let i = 0; i < aRows.length; i++) {
 				if (aRows[i].getBindingContext()) {
 					iCountContexts++;
 				}
@@ -304,21 +304,21 @@ sap.ui.define([
 	});
 
 	QUnit.test("Root Level 2", function(assert) {
-		var done = assert.async();
+		const done = assert.async();
 		this.oTable = createTable.call(this);
-		var oBinding;
+		let oBinding;
 
-		var fnHandler1 = function() {
+		const fnHandler1 = function() {
 			// test some defaults
 			oBinding = this.oTable.getBinding();
 			assert.notOk(oBinding.mParameters.numberOfExpandedLevels, "Number of expanded levels is not set");
 			assert.equal(oBinding.mParameters.rootLevel, 2, "RootLevel is 2");
 			assert.ok(!this.oTable.getExpandFirstLevel(), "Expand first Level is false");
-			var aRows = this.oTable.getRows();
+			const aRows = this.oTable.getRows();
 			assert.equal(aRows.length, 10, "10 Rows present");
 
-			var iCountContexts = 0;
-			for (var i = 0; i < aRows.length; i++) {
+			let iCountContexts = 0;
+			for (let i = 0; i < aRows.length; i++) {
 				if (aRows[i].getBindingContext()) {
 					iCountContexts++;
 				}
@@ -344,15 +344,15 @@ sap.ui.define([
 	});
 
 	QUnit.test("Selection", function(assert) {
-		var done = assert.async();
+		const done = assert.async();
 		this.oTable = createTable.call(this, {rowMode: new FixedRowMode({rowCount: 15})});
-		var oBinding;
+		let oBinding;
 
-		var fnHandler0 = function() {
+		const fnHandler0 = function() {
 			attachRowsUpdatedOnce(this.oTable, fnHandler1, this);
 		};
 
-		var fnHandler1 = function() {
+		const fnHandler1 = function() {
 
 			oBinding = this.oTable.getBinding();
 			// the selection is already handled by the ODataTreeBindingAdapter.qunit.html
@@ -416,7 +416,7 @@ sap.ui.define([
 
 		};
 
-		var fnHandler2 = function() {
+		const fnHandler2 = function() {
 			attachRowsUpdatedOnce(this.oTable, fnHandler3, this);
 			assert.deepEqual(oBinding.getSelectedIndices(), this.oTable.getSelectedIndices(), "Collapse(0): SelectedIndices OK");
 			assert.deepEqual(this.oTable.getSelectedIndices(), [0], "Collapse(0): SelectedIndices Values OK");
@@ -427,7 +427,7 @@ sap.ui.define([
 
 		// collapseRecursive=false
 		// collapse(0)
-		var fnHandler3 = function() {
+		const fnHandler3 = function() {
 			assert.deepEqual(oBinding.getSelectedIndices(), this.oTable.getSelectedIndices(), "Expand(0): SelectedIndices OK");
 			assert.deepEqual(this.oTable.getSelectedIndices(), [0], "Expand(0): SelectedIndices Values OK");
 			assert.equal(this.oTable.$().find(".sapUiTableRowSel .sapUiTableRowSelectionCell").length, 1, "Only one row selected");
@@ -447,7 +447,7 @@ sap.ui.define([
 		};
 
 		// expand(0)
-		var fnHandler4 = function() {
+		const fnHandler4 = function() {
 
 			assert.deepEqual(oBinding.getSelectedIndices(), this.oTable.getSelectedIndices(),
 				"Collapse(0), CollapseRecursive=false: SelectedIndices OK");
@@ -459,7 +459,7 @@ sap.ui.define([
 			this.oTable.expand(0);
 		};
 
-		var fnHandler5 = function() {
+		const fnHandler5 = function() {
 			assert.deepEqual(oBinding.getSelectedIndices(), this.oTable.getSelectedIndices(),
 				"Expand(0), CollapseRecursive=false: SelectedIndices OK");
 			assert.deepEqual(this.oTable.getSelectedIndices(), [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
@@ -484,20 +484,20 @@ sap.ui.define([
 	});
 
 	QUnit.test("SelectAll with scrolling and paging", function(assert) {
-		var done = assert.async();
+		const done = assert.async();
 		this.oTable = createTable.call(this);
 
-		var fnHandler0 = function() {
+		const fnHandler0 = function() {
 			attachRowsUpdatedOnce(this.oTable, fnHandler1, this);
 		};
 
-		var fnHandler1 = function() {
+		const fnHandler1 = function() {
 			this.oTable.selectAll();
 			assert.equal(this.oTable.getSelectedIndices().length, 55, "55 Nodes in Tree");
 			assert.equal(this.oTable._getTotalRowCount(), 55, "Binding length is 55");
 
-			var i = 1;
-			var fnVisibleRowHandler = function() {
+			let i = 1;
+			const fnVisibleRowHandler = function() {
 				// section length is the row count, make sure to scroll to all the sections/nodes
 				if (i < this.oTable._getMaxFirstVisibleRowIndex()) {
 					i += this.oTable._getRowCounts().count;
@@ -524,11 +524,11 @@ sap.ui.define([
 	 * @deprecated As of version 1.76
 	 */
 	QUnit.test("Change rootLevel", function(assert) {
-		var done = assert.async();
+		const done = assert.async();
 		this.oTable = createTable.call(this, {rootLevel: 2});
-		var oBinding;
+		let oBinding;
 
-		var fnHandler1 = function() {
+		const fnHandler1 = function() {
 			oBinding = this.oTable.getBinding();
 			assert.equal(this.oTable.getRootLevel(), oBinding.getRootLevel(), "Root Level OK");
 			assert.equal(this.oTable.getRootLevel(), 2, "Root Level is 2");
@@ -536,7 +536,7 @@ sap.ui.define([
 			this.oTable.setRootLevel(1);
 		};
 
-		var fnHandler2 = function() {
+		const fnHandler2 = function() {
 			assert.equal(this.oTable.getRootLevel(), oBinding.getRootLevel(), "Root Level OK");
 			assert.equal(this.oTable.getRootLevel(), 1, "Root Level is 0");
 			done();
@@ -550,15 +550,15 @@ sap.ui.define([
 	 * @deprecated As of version 1.76
 	 */
 	QUnit.test("Relative Binding", function(assert) {
-		var done = assert.async();
+		const done = assert.async();
 		this.oTable = createTable.call(this, {rootLevel: 2});
-		var oBinding;
+		let oBinding;
 
 		/**
 		 * The actual Table test case is the same as for the root level change.
 		 * This is only for validation that the table works as before when setting a binding context later.
 		 */
-		var fnHandler1 = function() {
+		const fnHandler1 = function() {
 			oBinding = this.oTable.getBinding();
 			assert.equal(this.oTable.getRootLevel(), oBinding.getRootLevel(), "Root Level OK");
 			assert.equal(this.oTable.getRootLevel(), 2, "Root Level is 2");
@@ -566,7 +566,7 @@ sap.ui.define([
 			this.oTable.setRootLevel(1);
 		};
 
-		var fnHandler2 = function() {
+		const fnHandler2 = function() {
 			assert.equal(this.oTable.getRootLevel(), oBinding.getRootLevel(), "Root Level OK");
 			assert.equal(this.oTable.getRootLevel(), 1, "Root Level is 0");
 			done();
@@ -582,7 +582,7 @@ sap.ui.define([
 		assert.equal(oBinding.isA("sap.ui.model.odata.v2.ODataTreeBinding"), true, "Binding is created");
 
 		// set the binding context for the table to make it absolute --> everything else should be handled by the tree binding
-		var sContextPath = "/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')";
+		const sContextPath = "/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')";
 		oBinding.oModel.createBindingContext(sContextPath, null, function(oCreatedContext) {
 			this.oTable.setBindingContext(oCreatedContext);
 		}.bind(this));
@@ -609,7 +609,7 @@ sap.ui.define([
 			TableQUnitUtils.setDefaultSettings();
 		},
 		assertState: function(assert, sMessage, mExpectation) {
-			var oTable = this.getTable();
+			const oTable = this.getTable();
 
 			assert.deepEqual({
 				pendingRequests: oTable._hasPendingRequests(),
@@ -622,8 +622,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Initial request; Automatic BusyIndicator disabled", function(assert) {
-		var done = assert.async();
-		var that = this;
+		const done = assert.async();
+		const that = this;
 
 		assert.expect(4);
 
@@ -654,8 +654,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Initial request; Automatic BusyIndicator enabled", function(assert) {
-		var done = assert.async();
-		var that = this;
+		const done = assert.async();
+		const that = this;
 
 		assert.expect(5);
 
@@ -687,8 +687,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Multiple sequential and parallel requests", function(assert) {
-		var done = assert.async();
-		var that = this;
+		const done = assert.async();
+		const that = this;
 
 		assert.expect(25);
 
@@ -749,9 +749,9 @@ sap.ui.define([
 
 			return this.oTable.qunit.whenRenderingFinished().then(function() {
 				this.oObserver = new MutationObserver(function(aRecords) {
-					var oRecord = aRecords[0];
-					var bNoDataWasVisible = oRecord.oldValue.includes("sapUiTableEmpty");
-					var bNoDataIsVisible = oRecord.target.classList.contains("sapUiTableEmpty");
+					const oRecord = aRecords[0];
+					const bNoDataWasVisible = oRecord.oldValue.includes("sapUiTableEmpty");
+					const bNoDataIsVisible = oRecord.target.classList.contains("sapUiTableEmpty");
 
 					if (bNoDataWasVisible !== bNoDataIsVisible) {
 						this.iNoDataVisibilityChanges++;
@@ -782,7 +782,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("After rendering with data", function(assert) {
-		var pDone;
+		let pDone;
 
 		this.oTable.destroy();
 		this.oTable = TableQUnitUtils.createTable(TreeTable, function(oTable) {
@@ -802,7 +802,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("After rendering without data", function(assert) {
-		var pDone;
+		let pDone;
 
 		this.oTable.destroy();
 		this.oTable = TableQUnitUtils.createTable(TreeTable, {
@@ -827,7 +827,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Filter", function(assert) {
-		var that = this;
+		const that = this;
 
 		this.oTable.getBinding().filter(new Filter({path: "GLAccountName", operator: "EQ", value1: "DoesNotExist"}), "Application");
 		return this.oTable.qunit.whenRenderingFinished().then(function() {
@@ -841,7 +841,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Rerender while filtering", async function(assert) {
-		var that = this;
+		const that = this;
 
 		this.oTable.getBinding().filter(new Filter({path: "GLAccountName", operator: "EQ", value1: "DoesNotExist"}), "Application");
 		this.oTable.invalidate();
@@ -869,8 +869,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Bind/Unbind", function(assert) {
-		var oBindingInfo = this.oTable.getBindingInfo("rows");
-		var that = this;
+		const oBindingInfo = this.oTable.getBindingInfo("rows");
+		const that = this;
 
 		this.oTable.unbindRows();
 		return this.oTable.qunit.whenRenderingFinished().then(function() {
@@ -885,8 +885,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Rerender while binding/unbinding", async function(assert) {
-		var oBindingInfo = this.oTable.getBindingInfo("rows");
-		var that = this;
+		const oBindingInfo = this.oTable.getBindingInfo("rows");
+		const that = this;
 
 		this.oTable.unbindRows();
 		this.oTable.invalidate();

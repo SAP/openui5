@@ -36,8 +36,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Content", function(assert) {
-		var oTable = this.oTable;
-		var pSequence = Promise.resolve();
+		const oTable = this.oTable;
+		let pSequence = Promise.resolve();
 
 		function test(mTestSettings) {
 			pSequence = pSequence.then(function() {
@@ -109,8 +109,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Header", function(assert) {
-		var oTable = this.oTable;
-		var pSequence = Promise.resolve();
+		const oTable = this.oTable;
+		let pSequence = Promise.resolve();
 
 		function test(mTestSettings) {
 			pSequence = pSequence.then(function() {

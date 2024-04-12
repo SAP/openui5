@@ -7,8 +7,8 @@ sap.ui.define([
 ], function(TableUtils, Row, Column) {
 	"use strict";
 
-	var Hook = TableUtils.Hook;
-	var oHookWithArguments = {
+	const Hook = TableUtils.Hook;
+	const oHookWithArguments = {
 		key: "Table.UpdateRows",
 		validCall: function(oScope) {
 			TableUtils.Hook.call(oScope, this.key, TableUtils.RowsUpdateReason.Change);
@@ -20,7 +20,7 @@ sap.ui.define([
 			assert.deepEqual(Array.prototype.slice.call(_arguments), [TableUtils.RowsUpdateReason.Change], "Arguments are correct");
 		}
 	};
-	var oHookWithoutArguments = {
+	const oHookWithoutArguments = {
 		key: "Table.RowsUnbound",
 		validCall: function(oScope) {
 			TableUtils.Hook.call(oScope, this.key);
@@ -58,11 +58,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("Invalid key", function(assert) {
-		var oTable = this.oFakeTable;
-		var sCustomHookKey = "My.Custom.HookKey";
-		var oInstallationSpy = sinon.spy();
-		var oRegistrationSpy = sinon.spy();
-		var oObject = {};
+		const oTable = this.oFakeTable;
+		const sCustomHookKey = "My.Custom.HookKey";
+		const oInstallationSpy = sinon.spy();
+		const oRegistrationSpy = sinon.spy();
+		const oObject = {};
 
 		oObject[sCustomHookKey] = oInstallationSpy;
 
@@ -75,11 +75,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("Invalid scope", function(assert) {
-		var oTable = this.oFakeTable;
-		var oInvalidScope = {};
-		var oInstallationSpy = sinon.spy();
-		var oRegistrationSpy = sinon.spy();
-		var oObject = {};
+		const oTable = this.oFakeTable;
+		const oInvalidScope = {};
+		const oInstallationSpy = sinon.spy();
+		const oRegistrationSpy = sinon.spy();
+		const oObject = {};
 
 		oObject[oHookWithArguments.key] = oInstallationSpy;
 
@@ -109,11 +109,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("Foreign scope", function(assert) {
-		var oTable = this.oFakeTable;
-		var oOtherTable = {fakeTable: true};
-		var oInstallationSpy = sinon.spy();
-		var oRegistrationSpy = sinon.spy();
-		var oObject = {};
+		const oTable = this.oFakeTable;
+		const oOtherTable = {fakeTable: true};
+		const oInstallationSpy = sinon.spy();
+		const oRegistrationSpy = sinon.spy();
+		const oObject = {};
 
 		this.oTableUtilsIsAStub.withArgs(oOtherTable, "sap.ui.table.Table").returns(true);
 
@@ -127,8 +127,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Arguments", function(assert) {
-		var oTable = this.oFakeTable;
-		var oObject = {};
+		const oTable = this.oFakeTable;
+		const oObject = {};
 
 		oObject[oHookWithArguments.key] = function() {
 			oHookWithArguments.assertArguments(assert, arguments);
@@ -150,7 +150,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Invalid arguments", function(assert) {
-		var oTable = this.oFakeTable;
+		const oTable = this.oFakeTable;
 
 		oHookWithArguments.invalidCall(oTable);
 		oHookWithoutArguments.invalidCall(oTable);
@@ -175,8 +175,8 @@ sap.ui.define([
 
 	// There are currently no hooks with optional arguments that could be used for testing.
 	QUnit.skip("Optional arguments", function(assert) {
-		var oRow = new Row();
-		var oHookWithOptionalArguments = {
+		const oRow = new Row();
+		const oHookWithOptionalArguments = {
 			key: "Row.ToggleOpenState",
 			validCalls: [
 				function(oScope) {
@@ -204,10 +204,10 @@ sap.ui.define([
 				}
 			]
 		};
-		var oTable = this.oFakeTable;
+		const oTable = this.oFakeTable;
 
-		for (var i = 0; i < oHookWithOptionalArguments.validCalls.length; i++) {
-			var handler = function() { //eslint-disable-line no-loop-func
+		for (let i = 0; i < oHookWithOptionalArguments.validCalls.length; i++) {
+			const handler = function() { //eslint-disable-line no-loop-func
 				oHookWithOptionalArguments.assertArguments[this](assert, arguments);
 			}.bind(i);
 			Hook.register(oTable, oHookWithOptionalArguments.key, handler);
@@ -216,7 +216,7 @@ sap.ui.define([
 		}
 
 		assert.throws(function() {
-			var handler = function() {};
+			const handler = function() {};
 			Hook.register(oTable, oHookWithOptionalArguments.key, handler);
 			oHookWithOptionalArguments.invalidCall(oTable);
 			Hook.deregister(oTable, oHookWithOptionalArguments.key, handler);
@@ -226,8 +226,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Call order", function(assert) {
-		var oTable = this.oFakeTable;
-		var oObject = {};
+		const oTable = this.oFakeTable;
+		const oObject = {};
 
 		oObject[oHookWithArguments.key] = function() {
 			assert.step("Hook with arguments: Installation");
@@ -264,11 +264,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("Context", function(assert) {
-		var oTable = this.oFakeTable;
-		var oInstallationSpy = sinon.spy();
-		var oRegistrationSpy = sinon.spy();
-		var oObject = {};
-		var oContext = {context: "My Context"};
+		const oTable = this.oFakeTable;
+		const oInstallationSpy = sinon.spy();
+		const oRegistrationSpy = sinon.spy();
+		const oObject = {};
+		const oContext = {context: "My Context"};
 
 		oObject[oHookWithArguments.key] = oInstallationSpy;
 
@@ -309,8 +309,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Register and deregister", function(assert) {
-		var oTable = this.oFakeTable;
-		var oSpy = sinon.spy();
+		const oTable = this.oFakeTable;
+		const oSpy = sinon.spy();
 
 		Hook.register(oTable, oHookWithArguments.key, oSpy);
 		oHookWithArguments.validCall(oTable);
@@ -323,13 +323,13 @@ sap.ui.define([
 	});
 
 	QUnit.test("Multiple registrations", function(assert) {
-		var oTable = this.oFakeTable;
-		var oContext = {};
-		var oSpy1 = sinon.spy();
-		var oSpy2 = sinon.spy();
-		var oSpy3 = sinon.spy();
-		var oSpy4 = sinon.spy();
-		var oSpy5 = sinon.spy();
+		const oTable = this.oFakeTable;
+		const oContext = {};
+		const oSpy1 = sinon.spy();
+		const oSpy2 = sinon.spy();
+		const oSpy3 = sinon.spy();
+		const oSpy4 = sinon.spy();
+		const oSpy5 = sinon.spy();
 
 		Hook.register(oTable, oHookWithArguments.key, oSpy1);
 		Hook.register(oTable, oHookWithArguments.key, oSpy1);
@@ -365,9 +365,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("Install and uninstall", function(assert) {
-		var oTable = this.oFakeTable;
-		var oObject = {};
-		var oSpy = sinon.spy();
+		const oTable = this.oFakeTable;
+		const oObject = {};
+		const oSpy = sinon.spy();
 
 		oObject[oHookWithArguments.key] = oSpy;
 		Hook.install(oTable, oObject);
@@ -381,8 +381,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Install but not implement hooks", function(assert) {
-		var oTable = this.oFakeTable;
-		var oObject = {};
+		const oTable = this.oFakeTable;
+		const oObject = {};
 
 		Hook.install(oTable, oObject);
 		oHookWithArguments.validCall(oTable);
@@ -391,8 +391,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Install and implement hooks afterwards", function(assert) {
-		var oTable = this.oFakeTable;
-		var oObject = {};
+		const oTable = this.oFakeTable;
+		const oObject = {};
 
 		Hook.install(oTable, oObject);
 		oObject[oHookWithArguments.key] = sinon.spy();
@@ -402,14 +402,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("Multiple installations", function(assert) {
-		var oTable = this.oFakeTable;
-		var oObject1 = {};
-		var oObject2 = {};
-		var oObject3 = {};
-		var oContext = {};
-		var oSpy1 = sinon.spy();
-		var oSpy2 = sinon.spy();
-		var oSpy3 = sinon.spy();
+		const oTable = this.oFakeTable;
+		const oObject1 = {};
+		const oObject2 = {};
+		const oObject3 = {};
+		const oContext = {};
+		const oSpy1 = sinon.spy();
+		const oSpy2 = sinon.spy();
+		const oSpy3 = sinon.spy();
 
 		oObject1[oHookWithArguments.key] = oSpy1;
 		oObject2[oHookWithArguments.key] = oSpy2;

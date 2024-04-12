@@ -15,7 +15,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var TestMenu, TestAdapter, oTestAdapterInstance, oInjectMenuItemsSpy, oRemoveItemsSpy, oAfterMenuDestroyedSpy;
+	let TestMenu; let TestAdapter; let oTestAdapterInstance; let oInjectMenuItemsSpy; let oRemoveItemsSpy; let oAfterMenuDestroyedSpy;
 
 	sap.ui.define("sap/ui/table/menus/test/TestAdapter", function() {
 		TestAdapter = ColumnHeaderMenuAdapter.extend("sap.ui.table.menus.test.TestAdapter", {
@@ -81,7 +81,7 @@ sap.ui.define([
 		this.oColumn1._cellPressed = this.oColumn1.getDomRef();
 
 		return ColumnHeaderMenuAdapter.activateFor(this.oColumn1).then(function() {
-			var sDefaultAdapterName = null;
+			const sDefaultAdapterName = null;
 
 			if (sDefaultAdapterName) {
 				assert.ok(sap.ui.require("sap/ui/table/menus/" + sDefaultAdapterName), "Default adapter loaded");
@@ -92,13 +92,13 @@ sap.ui.define([
 	});
 
 	QUnit.test("activateFor - specific adapter", function(assert) {
-		var done = assert.async();
-		var that = this;
+		const done = assert.async();
+		const that = this;
 
 		ColumnHeaderMenuAdapter.activateFor(that.oColumn1);
 
 		setTimeout(function() {
-			var mInjectionTarget = oTestAdapterInstance._mInjectionTarget;
+			let mInjectionTarget = oTestAdapterInstance._mInjectionTarget;
 
 			assert.ok(oInjectMenuItemsSpy.calledOnceWith(that.oMenu1, that.oColumn1), "injectMenuItems is called once with the correct parameters");
 			assert.ok(mInjectionTarget.column === that.oColumn1 && mInjectionTarget.menu === that.oMenu1, "the injection target is correct");
@@ -117,12 +117,12 @@ sap.ui.define([
 	});
 
 	QUnit.test("destroy", function(assert) {
-		var done = assert.async();
-		var that = this;
+		const done = assert.async();
+		const that = this;
 
 		ColumnHeaderMenuAdapter.activateFor(that.oColumn2);
 		setTimeout(function() {
-			var oObserveSpy = sinon.spy(oTestAdapterInstance._oColumnHeaderMenuObserver, "disconnect");
+			const oObserveSpy = sinon.spy(oTestAdapterInstance._oColumnHeaderMenuObserver, "disconnect");
 
 			that.oMenu2.destroy();
 			assert.ok(oAfterMenuDestroyedSpy.called, "onAfterMenuDestroyed is called");
@@ -137,9 +137,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("Adapter lifecycle", function(assert) {
-		var done = assert.async();
-		var oActivateSpy = sinon.spy(ColumnHeaderMenuAdapter, "activateFor");
-		var oUnlinkSpy = sinon.spy(ColumnHeaderMenuAdapter, "unlink");
+		const done = assert.async();
+		const oActivateSpy = sinon.spy(ColumnHeaderMenuAdapter, "activateFor");
+		const oUnlinkSpy = sinon.spy(ColumnHeaderMenuAdapter, "unlink");
 
 		this.oColumn1._openHeaderMenu(this.oColumn1.getDomRef());
 
@@ -148,7 +148,7 @@ sap.ui.define([
 		oInjectMenuItemsSpy.reset();
 
 		setTimeout(function() {
-			var oAdapterInstance = oTestAdapterInstance;
+			const oAdapterInstance = oTestAdapterInstance;
 			assert.ok(oTestAdapterInstance, "TestAdapter is initialized");
 			assert.ok(oInjectMenuItemsSpy.calledOnce, 1, "injectMenuItems is called once");
 
@@ -159,7 +159,7 @@ sap.ui.define([
 			assert.ok(oRemoveItemsSpy.calledOnce, "removeMenuItems is called once");
 			assert.ok(oInjectMenuItemsSpy.calledTwice, "injectMenuItems is called once");
 
-			var oDestroySpy = sinon.spy(oTestAdapterInstance, "destroy");
+			const oDestroySpy = sinon.spy(oTestAdapterInstance, "destroy");
 			this.oColumn1.destroy();
 			assert.ok(oUnlinkSpy.calledOnce);
 			assert.ok(oDestroySpy.notCalled);

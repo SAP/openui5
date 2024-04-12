@@ -8,14 +8,14 @@ sap.ui.define([
 ], function(SupportHelper, SupportLibrary, CoreLibrary) {
 	"use strict";
 
-	var Categories = SupportLibrary.Categories;
-	var Severity = SupportLibrary.Severity;
-	var MessageType = CoreLibrary.MessageType;
+	const Categories = SupportLibrary.Categories;
+	const Severity = SupportLibrary.Severity;
+	const MessageType = CoreLibrary.MessageType;
 
 	/*
 	 * Validates whether aria-labelledby is correctly set
 	 */
-	var oAccessibleLabel = SupportHelper.normalizeRule({
+	const oAccessibleLabel = SupportHelper.normalizeRule({
 		id: "AccessibleLabel",
 		minversion: "1.38",
 		categories: [Categories.Accessibility],
@@ -24,8 +24,8 @@ sap.ui.define([
 		resolution: "Use the 'ariaLabelledBy' association of the 'sap.ui.table.Table' control "
 					+ "to define a proper accessible labeling.",
 		check: function(oIssueManager, oCoreFacade, oScope) {
-			var aTables = SupportHelper.find(oScope, true, "sap.ui.table.Table");
-			for (var i = 0; i < aTables.length; i++) {
+			const aTables = SupportHelper.find(oScope, true, "sap.ui.table.Table");
+			for (let i = 0; i < aTables.length; i++) {
 				if (!aTables[i].getTitle() && aTables[i].getAriaLabelledBy().length == 0) {
 					SupportHelper.reportIssue(oIssueManager, "The table does not have an accessible label.",
 						Severity.High, aTables[i].getId());
@@ -37,7 +37,7 @@ sap.ui.define([
 	/*
 	 * Validates sap.ui.core.Icon column templates.
 	 */
-	var oAccessibleRowHighlight = SupportHelper.normalizeRule({
+	const oAccessibleRowHighlight = SupportHelper.normalizeRule({
 		id: "AccessibleRowHighlight",
 		minversion: "1.62",
 		categories: [Categories.Accessibility],
@@ -51,13 +51,13 @@ sap.ui.define([
 				"#/api/sap.ui.table.RowSettings/methods/getHighlightText")
 		],
 		check: function(oIssueManager, oCoreFacade, oScope) {
-			var aTables = SupportHelper.find(oScope, true, "sap.ui.table.Table");
+			const aTables = SupportHelper.find(oScope, true, "sap.ui.table.Table");
 
 			function checkRowHighlight(oRow) {
-				var oRowSettings = oRow.getAggregation("_settings");
-				var sHighlight = oRowSettings ? oRowSettings.getHighlight() : null;
-				var sHighlightText = oRowSettings ? oRowSettings.getHighlightText() : null;
-				var sRowId = oRow.getId();
+				const oRowSettings = oRow.getAggregation("_settings");
+				const sHighlight = oRowSettings ? oRowSettings.getHighlight() : null;
+				const sHighlightText = oRowSettings ? oRowSettings.getHighlightText() : null;
+				const sRowId = oRow.getId();
 
 				if (oRowSettings && !(sHighlight in MessageType) && sHighlightText === "") {
 					SupportHelper.reportIssue(oIssueManager,
@@ -65,7 +65,7 @@ sap.ui.define([
 				}
 			}
 
-			for (var i = 0; i < aTables.length; i++) {
+			for (let i = 0; i < aTables.length; i++) {
 				aTables[i].getRows().forEach(checkRowHighlight);
 			}
 		}

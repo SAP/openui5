@@ -93,7 +93,7 @@ sap.ui.define([
 		}
 	});
 
-	var aTestData = [{
+	const aTestData = [{
 		label: "Empty aggregation info",
 		aggregationInfo: {},
 		expectedGroup: undefined,
@@ -238,17 +238,16 @@ sap.ui.define([
 
 	aTestData.forEach(function(oData) {
 		QUnit.test(oData.label, function(assert) {
-			var aTestData = oData.testData || [oData];
+			const aTestData = oData.testData || [oData];
 
 			aTestData.forEach(function(oData) {
-				var mAggregationInfo;
-				var bEmptyAggregationInfo = oData.aggregationInfo == null || Object.keys(oData.aggregationInfo).length === 0;
-				var bExpectedTotalsSetting = bEmptyAggregationInfo ? undefined : true;
-				var oUpdateAggregationSpy = this.spy(this.oPlugin, "updateAggregation");
+				const bEmptyAggregationInfo = oData.aggregationInfo == null || Object.keys(oData.aggregationInfo).length === 0;
+				const bExpectedTotalsSetting = bEmptyAggregationInfo ? undefined : true;
+				const oUpdateAggregationSpy = this.spy(this.oPlugin, "updateAggregation");
 
 				this.oPlugin.setAggregationInfo(oData.aggregationInfo);
 
-				mAggregationInfo = this.oPlugin.getAggregationInfo();
+				const mAggregationInfo = this.oPlugin.getAggregationInfo();
 				assert.equal(oUpdateAggregationSpy.callCount, 1, "updateAggregation is called only once");
 
 				if (bEmptyAggregationInfo) {
@@ -268,7 +267,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Property 'groupSummary'", function(assert) {
-		var mExpectedAggregationInfo = {
+		const mExpectedAggregationInfo = {
 			group: {prop1: {}, prop2: {}},
 			groupLevels: [],
 			aggregate: {prop5: {grandTotal: true}},
@@ -299,7 +298,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Properties 'totalSummaryOnTop' and 'totalSummaryOnBottom'", function(assert) {
-		var mExpectedAggregationInfo = {
+		const mExpectedAggregationInfo = {
 			group: {prop1: {}, prop2: {}},
 			groupLevels: [],
 			aggregate: {prop5: {subtotals: true}},
@@ -380,14 +379,14 @@ sap.ui.define([
 		totalSummaryOnBottom: "Fixed"
 	}].forEach(function(mTestData) {
 		QUnit.test(JSON.stringify(mTestData), function(assert) {
-			var oSetRowCountConstraints = this.spy(this.oPlugin, "setRowCountConstraints");
+			const oSetRowCountConstraints = this.spy(this.oPlugin, "setRowCountConstraints");
 
 			this.oPlugin.setTotalSummaryOnTop(mTestData.totalSummaryOnTop);
 			this.oPlugin.setTotalSummaryOnBottom(mTestData.totalSummaryOnBottom);
 			this.stub(this.oPlugin, "getTableBinding").returns({setAggregation: function() {}});
 
-			var bFixedTopEnabled = this.oPlugin.getTotalSummaryOnTop() === "Fixed";
-			var bFixedBottomEnabled = this.oPlugin.getTotalSummaryOnBottom() === "Fixed";
+			const bFixedTopEnabled = this.oPlugin.getTotalSummaryOnTop() === "Fixed";
+			const bFixedBottomEnabled = this.oPlugin.getTotalSummaryOnBottom() === "Fixed";
 
 			this.oPlugin.setAggregationInfo({
 				visible: ["Property1"],
@@ -469,7 +468,7 @@ sap.ui.define([
 		}
 	});
 
-	var aTestData2 = [{
+	const aTestData2 = [{
 		label: "Leaf row",
 		context: {},
 		expectedType: undefined,
@@ -539,13 +538,13 @@ sap.ui.define([
 
 	aTestData2.forEach(function(oData) {
 		QUnit.test(oData.label, function(assert) {
-			var oContext = {
+			const oContext = {
 				getProperty: function(sPath) {
 					return sPath.startsWith("@$ui5") ? oData.context[sPath] : sPath + "_value";
 				}
 			};
 
-			var oState = {context: oContext, Type: {Summary: "Summary", GroupHeader: "GroupHeader"}};
+			const oState = {context: oContext, Type: {Summary: "Summary", GroupHeader: "GroupHeader"}};
 			this.oPlugin.updateRowState(oState);
 			assert.equal(oState.type, oData.expectedType, "check row type: " + oData.expectedType);
 			assert.equal(oState.level, oData.expectedLevel, "check row level: " + oData.expectedLevel);
@@ -562,15 +561,15 @@ sap.ui.define([
 	});
 
 	QUnit.test("Invalid return value of the group header formatter", function(assert) {
-		var oContextData = {"@$ui5.node.level": 1, "@$ui5.node.isExpanded": false};
-		var oContext = {
+		const oContextData = {"@$ui5.node.level": 1, "@$ui5.node.isExpanded": false};
+		const oContext = {
 			getProperty: function(sPath) {
 				return oContextData[sPath];
 			}
 		};
-		var oState = {context: oContext, Type: {Summary: "Summary", GroupHeader: "GroupHeader"}};
-		var oExpectedError = new Error("The group header title must be a string or undefined");
-		var that = this;
+		const oState = {context: oContext, Type: {Summary: "Summary", GroupHeader: "GroupHeader"}};
+		const oExpectedError = new Error("The group header title must be a string or undefined");
+		const that = this;
 
 		this.oPlugin.setGroupHeaderFormatter(function() {
 			return null;
@@ -598,9 +597,9 @@ sap.ui.define([
 		beforeEach: function() {
 			this.oTable = TableQUnitUtils.createTable({
 				columns: (function() {
-					var aColumns = [];
-					for (var i = 0; i < 7; i++) {
-						var oColumn = TableQUnitUtils.createTextColumn({id: "col" + i});
+					const aColumns = [];
+					for (let i = 0; i < 7; i++) {
+						const oColumn = TableQUnitUtils.createTextColumn({id: "col" + i});
 						this.spy(oColumn, "_setCellContentVisibilitySettings");
 						aColumns.push(oColumn);
 					}
@@ -616,9 +615,9 @@ sap.ui.define([
 		},
 		assertColumnCellVisibilitySettings: function(assert, mExpectedSettings, sTitle, bSkipReset) {
 			this.oPlugin.getTable().getColumns().forEach(function(oColumn) {
-				var sColumnId = oColumn.getId();
-				var oSpy = oColumn._setCellContentVisibilitySettings;
-				var sMessagePrefix = sTitle ? sTitle + ": " : "";
+				const sColumnId = oColumn.getId();
+				const oSpy = oColumn._setCellContentVisibilitySettings;
+				let sMessagePrefix = sTitle ? sTitle + ": " : "";
 
 				sMessagePrefix += sColumnId + " - ";
 
@@ -682,7 +681,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Property 'groupSummary'", function(assert) {
-		var mExpectedSettings = {
+		const mExpectedSettings = {
 			col0: {
 				groupHeader: {expanded: false, collapsed: false},
 				summary: {group: false, total: false}

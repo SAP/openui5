@@ -27,8 +27,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Rebind", function(assert) {
-		var oTable = TableQUnitUtils.createTable();
-		var oSelectionChangeSpy = sinon.spy();
+		const oTable = TableQUnitUtils.createTable();
+		const oSelectionChangeSpy = sinon.spy();
 
 		return oTable.qunit.whenRenderingFinished().then(function() {
 			oTable.setSelectionInterval(2, 6);
@@ -42,8 +42,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Unbind", function(assert) {
-		var oTable = TableQUnitUtils.createTable();
-		var oSelectionChangeSpy = sinon.spy();
+		const oTable = TableQUnitUtils.createTable();
+		const oSelectionChangeSpy = sinon.spy();
 
 		return oTable.qunit.whenRenderingFinished().then(function() {
 			oTable.setSelectionInterval(2, 6);
@@ -57,8 +57,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Sort", function(assert) {
-		var oTable = TableQUnitUtils.createTable();
-		var oSelectionChangeSpy = sinon.spy();
+		const oTable = TableQUnitUtils.createTable();
+		const oSelectionChangeSpy = sinon.spy();
 
 		return oTable.qunit.whenRenderingFinished().then(function() {
 			oTable.setSelectionInterval(2, 6);
@@ -74,8 +74,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Filter", function(assert) {
-		var oTable = TableQUnitUtils.createTable();
-		var oSelectionChangeSpy = sinon.spy();
+		const oTable = TableQUnitUtils.createTable();
+		const oSelectionChangeSpy = sinon.spy();
 
 		return oTable.qunit.whenRenderingFinished().then(function() {
 			oTable.setSelectionInterval(2, 6);
@@ -91,7 +91,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Initial change of total number of rows", function(assert) {
-		var oTable = TableQUnitUtils.createTable(function(oTable) {
+		const oTable = TableQUnitUtils.createTable(function(oTable) {
 			oTable.setSelectionInterval(2, 6);
 		});
 
@@ -102,7 +102,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Selection during rebind", function(assert) {
-		var oTable = TableQUnitUtils.createTable();
+		const oTable = TableQUnitUtils.createTable();
 
 		return oTable.qunit.whenRenderingFinished().then(function() {
 			oTable.bindRows(oTable.getBindingInfo("rows"));
@@ -114,12 +114,12 @@ sap.ui.define([
 	});
 
 	QUnit.test("#onKeyboardShortcut - Event Marking", function(assert) {
-		var oTable = TableQUnitUtils.createTable();
+		const oTable = TableQUnitUtils.createTable();
 		const sEventMarker = "sapUiTableClearAll";
 		const oEvent = {
 			setMarked: function() {}
 		};
-		var oSelectionPlugin = oTable._getSelectionPlugin();
+		const oSelectionPlugin = oTable._getSelectionPlugin();
 		const oClearSelectionSpy = sinon.spy(oSelectionPlugin, "clearSelection");
 		const oSelectAllSpy = sinon.spy(oSelectionPlugin, "selectAll");
 		const oSetMarkedSpy = sinon.spy(oEvent, "setMarked");

@@ -28,7 +28,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var GroupEventType = library.GroupEventType;
+	const GroupEventType = library.GroupEventType;
 
 	function isInstanceOfAnalyticalTable(oControl) {
 		return TableUtils.isA(oControl, "sap.ui.table.AnalyticalTable");
@@ -51,7 +51,7 @@ sap.ui.define([
 	 * @public
 	 * @alias sap.ui.table.AnalyticalColumn
 	 */
-	var AnalyticalColumn = Column.extend("sap.ui.table.AnalyticalColumn", /** @lends sap.ui.table.AnalyticalColumn.prototype */ {metadata: {
+	const AnalyticalColumn = Column.extend("sap.ui.table.AnalyticalColumn", /** @lends sap.ui.table.AnalyticalColumn.prototype */ {metadata: {
 
 		library: "sap.ui.table",
 		properties: {
@@ -103,23 +103,23 @@ sap.ui.define([
 	};
 
 	AnalyticalColumn.prototype._setGrouped = function(bGrouped) {
-		var oTable = this._getTable();
-		var sGroupEventType = bGrouped ? GroupEventType.group : GroupEventType.ungroup;
+		const oTable = this._getTable();
+		const sGroupEventType = bGrouped ? GroupEventType.group : GroupEventType.ungroup;
 
 		this.setGrouped(bGrouped);
 		oTable.fireGroup({column: this, groupedColumns: oTable._aGroupedColumns, type: sGroupEventType});
 	};
 
 	AnalyticalColumn.prototype._isAggregatableByMenu = function() {
-		var oTable = this._getTable(),
-			oBinding = oTable.getBinding(),
-			oResultSet = oBinding && oBinding.getAnalyticalQueryResult();
+		const oTable = this._getTable();
+		const oBinding = oTable.getBinding();
+		const oResultSet = oBinding && oBinding.getAnalyticalQueryResult();
 
 		return oTable && oResultSet && oResultSet.findMeasureByPropertyName(this.getLeadingProperty());
 	};
 
 	AnalyticalColumn.prototype.setGrouped = function(bGrouped) {
-		var oParent = this.getParent();
+		const oParent = this.getParent();
 
 		if (isInstanceOfAnalyticalTable(oParent)) {
 			if (bGrouped) {
@@ -129,14 +129,14 @@ sap.ui.define([
 			}
 		}
 
-		var bReturn = this.setProperty("grouped", bGrouped);
+		const bReturn = this.setProperty("grouped", bGrouped);
 		this._updateColumns();
 
 		return bReturn;
 	};
 
 	AnalyticalColumn.prototype.setSummed = function(bSummed) {
-		var bReturn = this.setProperty("summed", bSummed, true);
+		const bReturn = this.setProperty("summed", bSummed, true);
 		this._updateTableAnalyticalInfo();
 		return bReturn;
 	};
@@ -148,13 +148,13 @@ sap.ui.define([
 	};
 
 	AnalyticalColumn.prototype.getLabel = function() {
-		var oLabel = this.getAggregation("label");
+		let oLabel = this.getAggregation("label");
 		try {
 			if (!oLabel) {
 				if (!this._oBindingLabel) {
-					var oParent = this.getParent();
+					const oParent = this.getParent();
 					if (isInstanceOfAnalyticalTable(oParent)) {
-						var oBinding = oParent.getBinding();
+						const oBinding = oParent.getBinding();
 						if (oBinding) {
 							this._oBindingLabel = TableUtils._getTableTemplateHelper().createLabel();
 							this.addDependent(this._oBindingLabel);
@@ -173,12 +173,12 @@ sap.ui.define([
 	};
 
 	AnalyticalColumn.prototype.getFilterProperty = function() {
-		var sProperty = this.getProperty("filterProperty");
+		let sProperty = this.getProperty("filterProperty");
 		if (!sProperty) {
-			var oParent = this.getParent();
+			const oParent = this.getParent();
 			if (isInstanceOfAnalyticalTable(oParent)) {
-				var oBinding = oParent.getBinding();
-				var sLeadingProperty = this.getLeadingProperty();
+				const oBinding = oParent.getBinding();
+				const sLeadingProperty = this.getLeadingProperty();
 				if (oBinding && oBinding.getFilterablePropertyNames().indexOf(sLeadingProperty) > -1) {
 					sProperty = sLeadingProperty;
 				}
@@ -188,12 +188,12 @@ sap.ui.define([
 	};
 
 	AnalyticalColumn.prototype.getSortProperty = function() {
-		var sProperty = this.getProperty("sortProperty");
+		let sProperty = this.getProperty("sortProperty");
 		if (!sProperty) {
-			var oParent = this.getParent();
+			const oParent = this.getParent();
 			if (isInstanceOfAnalyticalTable(oParent)) {
-				var oBinding = oParent.getBinding();
-				var sLeadingProperty = this.getLeadingProperty();
+				const oBinding = oParent.getBinding();
+				const sLeadingProperty = this.getLeadingProperty();
 				if (oBinding && oBinding.getSortablePropertyNames().indexOf(sLeadingProperty) > -1) {
 					sProperty = sLeadingProperty;
 				}
@@ -203,13 +203,13 @@ sap.ui.define([
 	};
 
 	AnalyticalColumn.prototype.getFilterType = function() {
-		var vFilterType = this.getProperty("filterType");
+		let vFilterType = this.getProperty("filterType");
 		if (!vFilterType) {
-			var oParent = this.getParent();
+			const oParent = this.getParent();
 			if (isInstanceOfAnalyticalTable(oParent)) {
-				var oBinding = oParent.getBinding();
-				var sLeadingProperty = this.getLeadingProperty(),
-					oProperty = oBinding && oBinding.getProperty(sLeadingProperty);
+				const oBinding = oParent.getBinding();
+				const sLeadingProperty = this.getLeadingProperty();
+				const oProperty = oBinding && oBinding.getProperty(sLeadingProperty);
 				if (oProperty) {
 					switch (oProperty.type) {
 						case "Edm.Time":
@@ -241,21 +241,21 @@ sap.ui.define([
 	};
 
 	AnalyticalColumn.prototype._updateColumns = function(bSupressRefresh, bForceChange) {
-		var oParent = this.getParent();
+		const oParent = this.getParent();
 		if (isInstanceOfAnalyticalTable(oParent)) {
 			oParent._updateColumns(bSupressRefresh, bForceChange);
 		}
 	};
 
 	AnalyticalColumn.prototype._updateTableAnalyticalInfo = function(bSupressRefresh) {
-		var oParent = this.getParent();
+		const oParent = this.getParent();
 		if (oParent && isInstanceOfAnalyticalTable(oParent) && !oParent._bSuspendUpdateAnalyticalInfo) {
 			oParent.updateAnalyticalInfo(bSupressRefresh);
 		}
 	};
 
 	AnalyticalColumn.prototype._updateTableColumnDetails = function() {
-		var oParent = this.getParent();
+		const oParent = this.getParent();
 		if (oParent && isInstanceOfAnalyticalTable(oParent) && !oParent._bSuspendUpdateAnalyticalInfo) {
 			oParent._updateTableColumnDetails();
 		}
@@ -274,10 +274,10 @@ sap.ui.define([
 	 * @deprecated As of Version 1.117
 	 */
 	AnalyticalColumn.prototype._menuHasItems = function() {
-		var fnMenuHasItems = function() {
-			var oTable = this.getParent();
-			var oBinding = oTable.getBinding();
-			var oResultSet = oBinding && oBinding.getAnalyticalQueryResult();
+		const fnMenuHasItems = function() {
+			const oTable = this.getParent();
+			const oBinding = oTable.getBinding();
+			const oResultSet = oBinding && oBinding.getAnalyticalQueryResult();
 			return (oTable && oResultSet && oResultSet.findMeasureByPropertyName(this.getLeadingProperty())); // totals menu entry
 		}.bind(this);
 
@@ -299,16 +299,16 @@ sap.ui.define([
 	 * @returns {boolean}
 	 */
 	AnalyticalColumn.prototype.isFilterableByMenu = function() {
-		var sFilterProperty = this.getFilterProperty();
+		const sFilterProperty = this.getFilterProperty();
 		if (!sFilterProperty || !this.getShowFilterMenuEntry()) {
 			// not required to get binding and do addtional checks if there is no filterProperty set or derived
 			// or if the filter menu entry shall not be displayed at all
 			return false;
 		}
 
-		var oParent = this.getParent();
+		const oParent = this.getParent();
 		if (isInstanceOfAnalyticalTable(oParent)) {
-			var oBinding = oParent.getBinding();
+			const oBinding = oParent.getBinding();
 			// metadata must be evaluated which can only be done when the collection is known and the metadata is loaded
 			// this is usually the case when a binding exists.
 			if (oBinding) {
@@ -343,12 +343,12 @@ sap.ui.define([
 	 * @return {boolean} <code>true</code> if the column is groupable
 	 */
 	AnalyticalColumn.prototype.isGroupableByMenu = function() {
-		var oParent = this.getParent();
+		const oParent = this.getParent();
 
 		if (isInstanceOfAnalyticalTable(oParent)) {
-			var oBinding = oParent.getBinding();
+			const oBinding = oParent.getBinding();
 			if (oBinding) {
-				var oResultSet = oBinding.getAnalyticalQueryResult();
+				const oResultSet = oBinding.getAnalyticalQueryResult();
 				if (oResultSet && oResultSet.findDimensionByPropertyName(this.getLeadingProperty())
 					&& oBinding.getSortablePropertyNames().indexOf(this.getLeadingProperty()) > -1
 					&& oBinding.getFilterablePropertyNames().indexOf(this.getLeadingProperty()) > -1) {

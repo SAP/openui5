@@ -14,17 +14,17 @@ sap.ui.define([
 
 		onInit: function() {
 			// set explored app's demo model on this sample
-			var oJSONModel = this.initSampleDataModel();
+			const oJSONModel = this.initSampleDataModel();
 			this.getView().setModel(oJSONModel);
 
-			var fnPress = this.handleActionPress.bind(this);
+			const fnPress = this.handleActionPress.bind(this);
 
 			this.modes = [
 				{
 					key: "Navigation",
 					text: "Navigation",
 					handler: function() {
-						var oTemplate = new RowAction({items: [
+						const oTemplate = new RowAction({items: [
 							new RowActionItem({
 								type: "Navigation",
 								press: fnPress,
@@ -37,7 +37,7 @@ sap.ui.define([
 					key: "NavigationDelete",
 					text: "Navigation & Delete",
 					handler: function() {
-						var oTemplate = new RowAction({items: [
+						const oTemplate = new RowAction({items: [
 							new RowActionItem({
 								type: "Navigation",
 								press: fnPress,
@@ -51,7 +51,7 @@ sap.ui.define([
 					key: "NavigationCustom",
 					text: "Navigation & Custom",
 					handler: function() {
-						var oTemplate = new RowAction({items: [
+						const oTemplate = new RowAction({items: [
 							new RowActionItem({
 								type: "Navigation",
 								press: fnPress,
@@ -65,7 +65,7 @@ sap.ui.define([
 					key: "Multi",
 					text: "Multiple Actions",
 					handler: function() {
-						var oTemplate = new RowAction({items: [
+						const oTemplate = new RowAction({items: [
 							new RowActionItem({icon: "sap-icon://attachment", text: "Attachment", press: fnPress}),
 							new RowActionItem({icon: "sap-icon://search", text: "Search", press: fnPress}),
 							new RowActionItem({icon: "sap-icon://edit", text: "Edit", press: fnPress}),
@@ -87,13 +87,13 @@ sap.ui.define([
 		},
 
 		initSampleDataModel: function() {
-			var oModel = new JSONModel();
+			const oModel = new JSONModel();
 
 			jQuery.ajax(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"), {
 				dataType: "json",
 				success: function(oData) {
-					for (var i = 0; i < oData.ProductCollection.length; i++) {
-						var oProduct = oData.ProductCollection[i];
+					for (let i = 0; i < oData.ProductCollection.length; i++) {
+						const oProduct = oData.ProductCollection[i];
 						oProduct.Available = oProduct.Status == "Available" ? true : false;
 						if (i === 1) {
 							oProduct.NavigatedState = true;
@@ -110,8 +110,8 @@ sap.ui.define([
 		},
 
 		onNavIndicatorsToggle: function(oEvent) {
-			var oTable = this.byId("table");
-			var oToggleButton = oEvent.getSource();
+			const oTable = this.byId("table");
+			const oToggleButton = oEvent.getSource();
 
 			if (oToggleButton.getPressed()) {
 				oTable.setRowSettingsTemplate(new RowSettings({
@@ -127,17 +127,17 @@ sap.ui.define([
 		},
 
 		switchState: function(sKey) {
-			var oTable = this.byId("table");
-			var iCount = 0;
-			var oTemplate = oTable.getRowActionTemplate();
+			const oTable = this.byId("table");
+			let iCount = 0;
+			let oTemplate = oTable.getRowActionTemplate();
 			if (oTemplate) {
 				oTemplate.destroy();
 				oTemplate = null;
 			}
 
-			for (var i = 0; i < this.modes.length; i++) {
+			for (let i = 0; i < this.modes.length; i++) {
 				if (sKey == this.modes[i].key) {
-					var aRes = this.modes[i].handler();
+					const aRes = this.modes[i].handler();
 					iCount = aRes[0];
 					oTemplate = aRes[1];
 					break;
@@ -149,8 +149,8 @@ sap.ui.define([
 		},
 
 		handleActionPress: function(oEvent) {
-			var oRow = oEvent.getParameter("row");
-			var oItem = oEvent.getParameter("item");
+			const oRow = oEvent.getParameter("row");
+			const oItem = oEvent.getParameter("item");
 			MessageToast.show("Item " + (oItem.getText() || oItem.getType()) + " pressed for product with id " +
 				this.getView().getModel().getProperty("ProductId", oRow.getBindingContext()));
 		}

@@ -26,7 +26,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("#setSelected", function(assert) {
-		var oSelectionPlugin = this.oTable._getSelectionPlugin();
+		const oSelectionPlugin = this.oTable._getSelectionPlugin();
 
 		oSelectionPlugin.setSelected(this.oTable.getRows()[0], true);
 		assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [0], "Select a row");
@@ -101,7 +101,7 @@ sap.ui.define([
 			rows: {path: "/"},
 			models: TableQUnitUtils.createJSONModelWithEmptyRows(10)
 		}, function(oTable) {
-			var oSelectionPlugin = oTable._getSelectionPlugin();
+			const oSelectionPlugin = oTable._getSelectionPlugin();
 			oSelectionPlugin.attachEventOnce("selectionChange", function(oEvent) {
 				assert.deepEqual(oEvent.getParameter("_internalTrigger"), undefined,
 					"SelectionChange _internalTrigger parameter is undefined");
@@ -125,7 +125,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Change total number of rows after rendering", function(assert) {
-		var oSelectionPlugin = this.oTable._getSelectionPlugin();
+		const oSelectionPlugin = this.oTable._getSelectionPlugin();
 		oSelectionPlugin.attachEventOnce("selectionChange", function(oEvent) {
 			assert.deepEqual(oEvent.getParameter("_internalTrigger"), true,
 				"SelectionChange _internalTrigger parameter is true after total number of row change");
@@ -167,7 +167,7 @@ sap.ui.define([
 		const oEvent = {
 			setMarked: function() {}
 		};
-		var oSelectionPlugin = this.oTable._getSelectionPlugin();
+		const oSelectionPlugin = this.oTable._getSelectionPlugin();
 		const oClearSelectionSpy = sinon.spy(oSelectionPlugin, "clearSelection");
 		const oSelectAllSpy = sinon.spy(oSelectionPlugin, "selectAll");
 		const oSetMarkedSpy = sinon.spy(oEvent, "setMarked");

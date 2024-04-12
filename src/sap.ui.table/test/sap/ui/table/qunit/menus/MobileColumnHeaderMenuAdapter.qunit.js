@@ -88,14 +88,14 @@ sap.ui.define([
 			this.oTable.destroy();
 		},
 		openColumnMenu: function(iColumnIndex) {
-			var oElement = this.oTable.qunit.getColumnHeaderCell(iColumnIndex);
+			const oElement = this.oTable.qunit.getColumnHeaderCell(iColumnIndex);
 
 			oElement.focus();
 			qutils.triggerMouseEvent(oElement, "mousedown", null, null, null, null, 0);
 			qutils.triggerMouseEvent(oElement, "click");
 
 			return new Promise(function(resolve) {
-				var oMenu = this["oMenu" + (iColumnIndex + 1)];
+				const oMenu = this["oMenu" + (iColumnIndex + 1)];
 
 				if (oMenu.isOpen()) {
 					resolve();
@@ -115,11 +115,11 @@ sap.ui.define([
 			});
 		},
 		getQuickAction: function(oMenu, sType) {
-			var oQuickActionContainer = oMenu.getAggregation("_quickActions")[0];
+			const oQuickActionContainer = oMenu.getAggregation("_quickActions")[0];
 			if (!oQuickActionContainer) {
 				return null;
 			}
-			var aQuickActions = oQuickActionContainer.getQuickActions().filter(function(oQuickAction) {
+			const aQuickActions = oQuickActionContainer.getQuickActions().filter(function(oQuickAction) {
 				return oQuickAction.isA("sap.m.table.columnmenu." + sType);
 			});
 
@@ -128,30 +128,30 @@ sap.ui.define([
 	});
 
 	QUnit.test("Menu entries", function(assert) {
-		var that = this;
-		var oColumn, oMenu;
+		const that = this;
+		let oColumn; let oMenu;
 
 		return this.openColumnMenu(0).then(function() {
 			oColumn = that.oTable.getColumns()[0];
 			oMenu = oColumn.getHeaderMenuInstance();
 
-			var oQuickSort = that.getQuickAction(oMenu, "QuickSort");
-			var aQuickSortItems = oQuickSort.getItems();
+			const oQuickSort = that.getQuickAction(oMenu, "QuickSort");
+			const aQuickSortItems = oQuickSort.getItems();
 			assert.equal(aQuickSortItems.length, 1, "Quick sort item count");
 			assert.strictEqual(aQuickSortItems[0].getKey(), undefined, "Quick sort 'key'");
 			assert.strictEqual(aQuickSortItems[0].getLabel(), oColumn.getLabel().getText(), "Quick sort 'label'");
 			assert.strictEqual(aQuickSortItems[0].getSortOrder(), CoreLibrary.SortOrder.Descending, "Quick sort 'sortOrder'");
 
-			var oQuickFilter = that.getQuickAction(oMenu, "QuickAction")[0];
-			var aQuickFilterContent = oQuickFilter.getContent();
-			var sQuickFilterLabel = Library.getResourceBundleFor("sap.m").getText("table.COLUMNMENU_QUICK_FILTER", oColumn.getLabel().getText());
+			const oQuickFilter = that.getQuickAction(oMenu, "QuickAction")[0];
+			const aQuickFilterContent = oQuickFilter.getContent();
+			const sQuickFilterLabel = Library.getResourceBundleFor("sap.m").getText("table.COLUMNMENU_QUICK_FILTER", oColumn.getLabel().getText());
 			assert.strictEqual(oQuickFilter.getLabel(), sQuickFilterLabel, "Quick filter 'label'");
 			assert.equal(aQuickFilterContent.length, 1, "Quick filter content count");
 			assert.ok(aQuickFilterContent[0].isA("sap.m.Input"), "Quick filter content is a sap.m.Input");
 			assert.strictEqual(aQuickFilterContent[0].getValue(), "initial filter value", "Quick filter value");
 
-			var oQuickFreeze = that.getQuickAction(oMenu, "QuickAction")[1];
-			var aQuickFreezeContent = oQuickFreeze.getContent();
+			const oQuickFreeze = that.getQuickAction(oMenu, "QuickAction")[1];
+			const aQuickFreezeContent = oQuickFreeze.getContent();
 			assert.equal(aQuickFreezeContent.length, 1, "Quick freeze content count");
 			assert.ok(aQuickFreezeContent[0].isA("sap.m.Button"), "Quick freeze content is a sap.m.Button");
 			assert.equal(aQuickFreezeContent[0].getText(), TableUtils.getResourceText("TBL_FREEZE"), "Quick freeze button text");
@@ -161,23 +161,23 @@ sap.ui.define([
 			oColumn = that.oTable.getColumns()[1];
 			oMenu = oColumn.getHeaderMenuInstance();
 
-			var oQuickSort = that.getQuickAction(oMenu, "QuickSort");
-			var aQuickSortItems = oQuickSort.getItems();
+			const oQuickSort = that.getQuickAction(oMenu, "QuickSort");
+			const aQuickSortItems = oQuickSort.getItems();
 			assert.equal(aQuickSortItems.length, 1, "Quick sort item count");
 			assert.strictEqual(aQuickSortItems[0].getKey(), undefined, "Quick sort 'key'");
 			assert.strictEqual(aQuickSortItems[0].getLabel(), oColumn.getLabel().getText(), "Quick sort 'label'");
 			assert.strictEqual(aQuickSortItems[0].getSortOrder(), CoreLibrary.SortOrder.None, "Quick sort 'sortOrder'");
 
-			var oQuickFilter = that.getQuickAction(oMenu, "QuickAction")[0];
-			var aQuickFilterContent = oQuickFilter.getContent();
-			var sQuickFilterLabel = Library.getResourceBundleFor("sap.m").getText("table.COLUMNMENU_QUICK_FILTER", oColumn.getLabel().getText());
+			const oQuickFilter = that.getQuickAction(oMenu, "QuickAction")[0];
+			const aQuickFilterContent = oQuickFilter.getContent();
+			const sQuickFilterLabel = Library.getResourceBundleFor("sap.m").getText("table.COLUMNMENU_QUICK_FILTER", oColumn.getLabel().getText());
 			assert.strictEqual(oQuickFilter.getLabel(), sQuickFilterLabel, "Quick filter 'label'");
 			assert.equal(aQuickFilterContent.length, 1, "Quick filter content count");
 			assert.ok(aQuickFilterContent[0].isA("sap.m.Input"), "Quick filter content is a sap.m.Input");
 			assert.strictEqual(aQuickFilterContent[0].getValue(), "", "Quick filter value");
 
-			var oQuickFreeze = that.getQuickAction(oMenu, "QuickAction")[1];
-			var aQuickFreezeContent = oQuickFreeze.getContent();
+			const oQuickFreeze = that.getQuickAction(oMenu, "QuickAction")[1];
+			const aQuickFreezeContent = oQuickFreeze.getContent();
 			assert.equal(aQuickFreezeContent.length, 1, "Quick freeze content count");
 			assert.ok(aQuickFreezeContent[0].isA("sap.m.Button"), "Quick freeze content is a sap.m.Button");
 			assert.equal(aQuickFreezeContent[0].getText(), TableUtils.getResourceText("TBL_FREEZE"), "Quick freeze button text");
@@ -203,15 +203,15 @@ sap.ui.define([
 	 * @deprecated As of version 1.110
 	 */
 	QUnit.test("Menu entries - QuickGroup", function(assert) {
-		var that = this;
-		var oColumn, oMenu;
+		const that = this;
+		let oColumn; let oMenu;
 
 		return this.openColumnMenu(0).then(function() {
 			oColumn = that.oTable.getColumns()[0];
 			oMenu = oColumn.getHeaderMenuInstance();
 
-			var oQuickGroup = that.getQuickAction(oMenu, "QuickGroup");
-			var aQuickGroupItems = oQuickGroup.getItems();
+			const oQuickGroup = that.getQuickAction(oMenu, "QuickGroup");
+			const aQuickGroupItems = oQuickGroup.getItems();
 			assert.equal(aQuickGroupItems.length, 1, "Quick group item count");
 			assert.strictEqual(aQuickGroupItems[0].getKey(), undefined, "Quick group 'key'");
 			assert.strictEqual(aQuickGroupItems[0].getLabel(), oColumn.getLabel().getText(), "Quick group 'label'");
@@ -222,8 +222,8 @@ sap.ui.define([
 			oColumn = that.oTable.getColumns()[1];
 			oMenu = oColumn.getHeaderMenuInstance();
 
-			var oQuickGroup = that.getQuickAction(oMenu, "QuickGroup");
-			var aQuickGroupItems = oQuickGroup.getItems();
+			const oQuickGroup = that.getQuickAction(oMenu, "QuickGroup");
+			const aQuickGroupItems = oQuickGroup.getItems();
 			assert.equal(aQuickGroupItems.length, 1, "Quick group item count");
 			assert.strictEqual(aQuickGroupItems[0].getKey(), undefined, "Quick group 'key'");
 			assert.strictEqual(aQuickGroupItems[0].getLabel(), oColumn.getLabel().getText(), "Quick group 'label'");
@@ -232,15 +232,15 @@ sap.ui.define([
 	});
 
 	QUnit.test("Quick Sort", function(assert) {
-		var that = this;
-		var oTable = this.oTable;
-		var oColumnSortSpy = this.spy(this.oColumn1, "_sort");
-		var oMenu, oQuickAction;
+		const that = this;
+		const oTable = this.oTable;
+		const oColumnSortSpy = this.spy(this.oColumn1, "_sort");
+		let oMenu; let oQuickAction;
 
 		return this.openColumnMenu(0).then(function() {
 			oMenu = oTable.getColumns()[0].getHeaderMenuInstance();
 			oQuickAction = that.getQuickAction(oMenu, "QuickSort").getItems()[0].getAggregation("quickAction");
-			var aContent = oQuickAction.getContent();
+			const aContent = oQuickAction.getContent();
 
 			qutils.triggerMouseEvent(aContent[0].getId(), "mousedown", null, null, null, null, 0);
 			qutils.triggerMouseEvent(aContent[0].getId(), "click");
@@ -260,17 +260,17 @@ sap.ui.define([
 	});
 
 	QUnit.test("Quick Filter and validation", function(assert) {
-		var that = this;
-		var oTable = this.oTable;
-		var oColumn = this.oColumn1;
-		var oColumnGetFilterStateSpy = this.spy(oColumn, "_getFilterState");
-		var oColumnFilterSpy = this.spy(oColumn, "filter");
-		var oMenu, oQuickFilter;
+		const that = this;
+		const oTable = this.oTable;
+		const oColumn = this.oColumn1;
+		const oColumnGetFilterStateSpy = this.spy(oColumn, "_getFilterState");
+		const oColumnFilterSpy = this.spy(oColumn, "filter");
+		let oMenu; let oQuickFilter;
 
 		return this.openColumnMenu(0).then(function() {
 			oMenu = oTable.getColumns()[0].getHeaderMenuInstance();
 			oQuickFilter = that.getQuickAction(oMenu, "QuickAction")[0];
-			var oFilterField = oQuickFilter.getContent()[0];
+			const oFilterField = oQuickFilter.getContent()[0];
 
 			assert.ok(oColumnGetFilterStateSpy.calledOnce, "Column#_getFilterState is called once when the menu opens");
 			oFilterField.setValue("test");
@@ -298,14 +298,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("Custom Filter", function(assert) {
-		var oTable = this.oTable;
-		var oColumn = this.oColumn2;
+		const oTable = this.oTable;
+		const oColumn = this.oColumn2;
 
 		oTable.setEnableCustomFilter(true);
 
 		return this.openColumnMenu(1).then(function() {
-			var oMenu = oTable.getColumns()[1].getHeaderMenuInstance();
-			var oCustomFilter = oMenu.getAggregation("_items")[0].getItems()[0];
+			const oMenu = oTable.getColumns()[1].getHeaderMenuInstance();
+			const oCustomFilter = oMenu.getAggregation("_items")[0].getItems()[0];
 
 			assert.equal(oCustomFilter.getLabel(), TableUtils.getResourceText("TBL_FILTER_ITEM"), "Custom filter label is correct");
 			assert.equal(oCustomFilter.getIcon(), "sap-icon://filter", "Custom filter icon is correct");
@@ -325,15 +325,15 @@ sap.ui.define([
 	 * @deprecated As of version 1.110
 	 */
 	QUnit.test("Quick Group", function(assert) {
-		var that = this;
-		var oTable = this.oTable;
-		var oColumnSetGroupedSpy = this.spy(this.oColumn1, "_setGrouped");
-		var oMenu, oQuickGroup;
+		const that = this;
+		const oTable = this.oTable;
+		const oColumnSetGroupedSpy = this.spy(this.oColumn1, "_setGrouped");
+		let oMenu; let oQuickGroup;
 
 		return this.openColumnMenu(0).then(function() {
 			oMenu = oTable.getColumns()[0].getHeaderMenuInstance();
 			oQuickGroup = that.getQuickAction(oMenu, "QuickGroup");
-			var aContent = oQuickGroup.getContent();
+			const aContent = oQuickGroup.getContent();
 
 			oMenu.attachEventOnce("afterClose", function() {
 				assert.ok(oColumnSetGroupedSpy.calledOnceWithExactly(true), "Column#_setGrouped is called once with the correct parameters");
@@ -354,12 +354,12 @@ sap.ui.define([
 	});
 
 	QUnit.test("Quick Total", function(assert) {
-		var that = this;
-		var oTable = this.oTable;
-		var oMenu, oQuickTotal;
+		const that = this;
+		const oTable = this.oTable;
+		let oMenu; let oQuickTotal;
 
 		// simulate AnalyticalTable
-		var oAnalyticalTableStub = sinon.stub(TableUtils, "isA");
+		const oAnalyticalTableStub = sinon.stub(TableUtils, "isA");
 		oAnalyticalTableStub.callThrough();
 		oAnalyticalTableStub.withArgs(oTable, "sap.ui.table.AnalyticalTable").returns(true);
 		this.oColumn2._isAggregatableByMenu = function() {
@@ -372,12 +372,12 @@ sap.ui.define([
 			assert.ok(true, "setSummed is called");
 		};
 
-		var oColumnSetSummedSpy = this.spy(this.oColumn2, "setSummed");
+		const oColumnSetSummedSpy = this.spy(this.oColumn2, "setSummed");
 
 		return this.openColumnMenu(1).then(function() {
 			oMenu = oTable.getColumns()[1].getHeaderMenuInstance();
 			oQuickTotal = that.getQuickAction(oMenu, "QuickTotal");
-			var aContent = oQuickTotal.getContent();
+			const aContent = oQuickTotal.getContent();
 
 			qutils.triggerMouseEvent(aContent[0].getId(), "mousedown", null, null, null, null, 0);
 			qutils.triggerMouseEvent(aContent[0].getId(), "click");
@@ -397,15 +397,15 @@ sap.ui.define([
 	});
 
 	QUnit.test("Quick Freeze", function(assert) {
-		var that = this;
-		var oTable = this.oTable;
-		var oSetFixedColumnCountSpy = this.spy(this.oTable, "setFixedColumnCount");
-		var oMenu, oQuickFreeze;
+		const that = this;
+		const oTable = this.oTable;
+		const oSetFixedColumnCountSpy = this.spy(this.oTable, "setFixedColumnCount");
+		let oMenu; let oQuickFreeze;
 
 		return this.openColumnMenu(0).then(function() {
 			oMenu = oTable.getColumns()[0].getHeaderMenuInstance();
 			oQuickFreeze = that.getQuickAction(oMenu, "QuickAction")[1];
-			var aContent = oQuickFreeze.getContent();
+			const aContent = oQuickFreeze.getContent();
 
 			qutils.triggerMouseEvent(aContent[0].getId(), "mousedown", null, null, null, null, 0);
 			qutils.triggerMouseEvent(aContent[0].getId(), "click");
@@ -423,18 +423,18 @@ sap.ui.define([
 	});
 
 	QUnit.test("Resize", function(assert) {
-		var that = this;
-		var oTable = this.oTable;
-		var bOriginalPointerSupport = Device.support.pointer;
-		var bOriginalDesktopSupport = Device.system.desktop;
+		const that = this;
+		const oTable = this.oTable;
+		const bOriginalPointerSupport = Device.support.pointer;
+		const bOriginalDesktopSupport = Device.system.desktop;
 
 		Device.support.pointer = false;
 		Device.system.desktop = false;
 
 		return this.openColumnMenu(0).then(function() {
-			var oMenu = oTable.getColumns()[0].getHeaderMenuInstance();
-			var oQuickResize = that.getQuickAction(oMenu, "QuickAction")[2];
-			var aContent = oQuickResize.getContent();
+			const oMenu = oTable.getColumns()[0].getHeaderMenuInstance();
+			const oQuickResize = that.getQuickAction(oMenu, "QuickAction")[2];
+			const aContent = oQuickResize.getContent();
 
 			assert.strictEqual(oQuickResize.getLabel(), "", "label is empty");
 			assert.strictEqual(aContent[0].getText(), Library.getResourceBundleFor("sap.m").getText("table.COLUMNMENU_RESIZE"), "button text is correct");
@@ -470,7 +470,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("injectMenuItems", function(assert) {
-		var oAddAggregationSpy = sinon.spy(this.oMenu, "addAggregation");
+		const oAddAggregationSpy = sinon.spy(this.oMenu, "addAggregation");
 
 		this.oAdapter.injectMenuItems(this.oMenu, this.oColumn);
 		assert.ok(oAddAggregationSpy.calledTwice, "Menu.addAggregation is called twice");
@@ -481,7 +481,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("removeMenuItems", function(assert) {
-		var oRemoveAggregationSpy = sinon.spy(this.oMenu, "removeAggregation");
+		const oRemoveAggregationSpy = sinon.spy(this.oMenu, "removeAggregation");
 
 		this.oAdapter.removeMenuItems(this.oMenu);
 		assert.ok(oRemoveAggregationSpy.calledTwice, "Menu.removeAggregation is called twice");
@@ -505,8 +505,8 @@ sap.ui.define([
 
 	QUnit.test("destroy", function(assert) {
 		this.oAdapter.injectMenuItems(this.oMenu, this.oColumn);
-		var oDestroyQuickActionsSpy = sinon.spy(this.oAdapter, "_destroyQuickActions");
-		var oDestroyItemsSpy = sinon.spy(this.oAdapter, "_destroyItems");
+		const oDestroyQuickActionsSpy = sinon.spy(this.oAdapter, "_destroyQuickActions");
+		const oDestroyItemsSpy = sinon.spy(this.oAdapter, "_destroyItems");
 		assert.ok(this.oAdapter._oQuickActionContainer, "reference to the QuickActionContainer is added");
 		assert.ok(this.oAdapter._oItemContainer, "reference to the ItemContainer is added");
 		assert.ok(this.oAdapter._oQuickSort, "reference to the QuickSort is added");

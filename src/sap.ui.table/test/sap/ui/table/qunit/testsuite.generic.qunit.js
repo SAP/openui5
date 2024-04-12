@@ -3,7 +3,7 @@ sap.ui.define([
 ], function(GenericTestCollection) {
 	"use strict";
 
-	var oConfig = GenericTestCollection.createTestsuiteConfig({
+	const oConfig = GenericTestCollection.createTestsuiteConfig({
 		library: "sap.ui.table"
 	});
 

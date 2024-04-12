@@ -21,18 +21,18 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var createTables = window.createTables;
-	var destroyTables = window.destroyTables;
-	var initRowActions = window.initRowActions;
-	var getRowHeader = window.getRowHeader;
-	var getCell = window.getCell;
-	var getRowAction = window.getRowAction;
-	var fakeGroupRow = window.fakeGroupRow;
-	var fakeSumRow = window.fakeSumRow;
-	var DropPosition = CoreLibrary.dnd.DropPosition;
+	const createTables = window.createTables;
+	const destroyTables = window.destroyTables;
+	const initRowActions = window.initRowActions;
+	const getRowHeader = window.getRowHeader;
+	const getCell = window.getCell;
+	const getRowAction = window.getRowAction;
+	const fakeGroupRow = window.fakeGroupRow;
+	const fakeSumRow = window.fakeSumRow;
+	const DropPosition = CoreLibrary.dnd.DropPosition;
 
 	function createDragEvent(sDragEventType) {
-		var oJQueryDragEvent = jQuery.Event(sDragEventType);
+		const oJQueryDragEvent = jQuery.Event(sDragEventType);
 
 		if (Device.browser.safari) {
 			oJQueryDragEvent.originalEvent = new Event(sDragEventType, {
@@ -62,9 +62,9 @@ sap.ui.define([
 	}
 
 	function triggerDragEvent(sType, oControl, mTestParameters) {
-		var oEvent = createDragEvent(sType);
+		const oEvent = createDragEvent(sType);
 		oEvent._mTestParameters = mTestParameters;
-		var oDomRef = oControl.getDomRef ? oControl.getDomRef() : oControl;
+		const oDomRef = oControl.getDomRef ? oControl.getDomRef() : oControl;
 		if (oDomRef) {
 			jQuery(oDomRef).trigger(oEvent);
 		}
@@ -80,12 +80,12 @@ sap.ui.define([
 	});
 
 	QUnit.test("Initialization", function(assert) {
-		var oExtension = this.oTable._getDragAndDropExtension();
+		const oExtension = this.oTable._getDragAndDropExtension();
 		assert.ok(oExtension, "Extension available in table");
 	});
 
 	QUnit.test("Destruction", function(assert) {
-		var oExtension = this.oTable._getDragAndDropExtension();
+		const oExtension = this.oTable._getDragAndDropExtension();
 
 		this.oTable.destroy();
 		assert.ok(!oExtension.getTable(), "Reference to table removed");
@@ -110,7 +110,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Drag session data", function(assert) {
-		var oFakeEvent = {
+		const oFakeEvent = {
 			dragSession: {
 				mData: {},
 				setComplexData: function(sId, oData) {
@@ -127,9 +127,9 @@ sap.ui.define([
 				}
 			}
 		};
-		var mSessionData;
-		var iOriginalPageXOffset = window.pageXOffset;
-		var iOriginalPageYOffset = window.pageYOffset;
+		let mSessionData;
+		const iOriginalPageXOffset = window.pageXOffset;
+		const iOriginalPageYOffset = window.pageYOffset;
 
 		// Prepare for all tests.
 		oFakeEvent.dragSession.setComplexData("sap.ui.table-" + this.oTable.getId(), {
@@ -153,10 +153,10 @@ sap.ui.define([
 		this.oDragAndDropExtension._ExtensionDelegate.ondragenter.call(this.oTable, oFakeEvent);
 
 		mSessionData = oFakeEvent.dragSession.getComplexData("sap.ui.table-" + this.oTable.getId());
-		var iPageYOffset = window.pageYOffset;
-		var iPageXOffset = window.pageXOffset;
-		var mVerticalScrollRect = this.oTable.getDomRef("table").getBoundingClientRect();
-		var mHorizontalScrollRect = this.oTable.getDomRef("sapUiTableCtrlScr").getBoundingClientRect();
+		const iPageYOffset = window.pageYOffset;
+		const iPageXOffset = window.pageXOffset;
+		const mVerticalScrollRect = this.oTable.getDomRef("table").getBoundingClientRect();
+		const mHorizontalScrollRect = this.oTable.getDomRef("sapUiTableCtrlScr").getBoundingClientRect();
 
 		assert.deepEqual(mSessionData.verticalScrollEdge, {
 			bottom: mVerticalScrollRect.bottom + iPageYOffset,
@@ -177,8 +177,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Scrolling & Indicator size - dragover", function(assert) {
-		var oFakeIndicator = jQuery("<div></div>").attr("style", "width: 0; height: 0; left: 0; right: 0");
-		var oFakeEvent = {
+		const oFakeIndicator = jQuery("<div></div>").attr("style", "width: 0; height: 0; left: 0; right: 0");
+		const oFakeEvent = {
 			dragSession: {
 				mData: {},
 				mConfig: {},
@@ -205,8 +205,8 @@ sap.ui.define([
 				}
 			}
 		};
-		var iThreshold = 50;
-		var that = this;
+		const iThreshold = 50;
+		const that = this;
 
 		function testScrolling(oEvent, iPageY, iPageX, iExpectedScrollPosition) {
 			oEvent.pageY = iPageY;
@@ -224,9 +224,9 @@ sap.ui.define([
 					setTimeout(resolve, 500);
 				})
 			]).then(that.oTable.qunit.whenRenderingFinished).then(function() {
-				var oScrollExtension = that.oTable._getScrollExtension();
-				var oVSb = oScrollExtension.getVerticalScrollbar();
-				var oHSb = oScrollExtension.getHorizontalScrollbar();
+				const oScrollExtension = that.oTable._getScrollExtension();
+				const oVSb = oScrollExtension.getVerticalScrollbar();
+				const oHSb = oScrollExtension.getHorizontalScrollbar();
 				assert.strictEqual(oVSb.scrollTop, iExpectedScrollPosition, "The vertical scroll position is correct: " + iExpectedScrollPosition);
 				assert.strictEqual(oHSb.scrollLeft, iExpectedScrollPosition, "The horizontal scroll position is correct: " + iExpectedScrollPosition);
 			});
@@ -235,7 +235,7 @@ sap.ui.define([
 		function testIndicatorSize(oEvent, iExpectedWidth, iExpectedHeight, iExpectedLeft, iExpectedRight) {
 			that.oDragAndDropExtension._ExtensionDelegate.ondragover.call(that.oTable, oEvent);
 
-			var oIndicator = oEvent.dragSession.getIndicator();
+			const oIndicator = oEvent.dragSession.getIndicator();
 
 			assert.strictEqual(oIndicator.style.width, iExpectedWidth + "px",
 				"The style \"width\" of the indicator has the expected value");
@@ -367,13 +367,13 @@ sap.ui.define([
 	});
 
 	QUnit.test("Draggable", function(assert) {
-		var fnOriginalDragStartHandler = this.oDragAndDropExtension._ExtensionDelegate.ondragstart;
+		const fnOriginalDragStartHandler = this.oDragAndDropExtension._ExtensionDelegate.ondragstart;
 
 		this.oDragAndDropExtension._ExtensionDelegate.ondragstart = function(oEvent) {
 			fnOriginalDragStartHandler.apply(oTable, arguments);
 
-			var mParams = oEvent._mTestParameters;
-			var sMessagePrefix = mParams.sRowType + " row - " + mParams.sRowAreaType + " area: ";
+			const mParams = oEvent._mTestParameters;
+			const sMessagePrefix = mParams.sRowType + " row - " + mParams.sRowAreaType + " area: ";
 
 			if (mParams.sRowType === "Standard") {
 				assert.ok(!oEvent.isDefaultPrevented(),
@@ -390,7 +390,7 @@ sap.ui.define([
 		};
 
 		function test($Target, mTestParameters) {
-			var oDragStartEvent = createDragEvent("dragstart");
+			const oDragStartEvent = createDragEvent("dragstart");
 			oDragStartEvent._mTestParameters = mTestParameters;
 			$Target.trigger(oDragStartEvent);
 		}
@@ -433,15 +433,15 @@ sap.ui.define([
 	});
 
 	QUnit.test("Droppable & Drag session data", async function(assert) {
-		var fnOriginalDragEnterHandler = this.oDragAndDropExtension._ExtensionDelegate.ondragenter;
+		const fnOriginalDragEnterHandler = this.oDragAndDropExtension._ExtensionDelegate.ondragenter;
 
 		this.oDragAndDropExtension._ExtensionDelegate.ondragenter = function(oEvent) {
 			fnOriginalDragEnterHandler.apply(oTable, arguments);
 
-			var mParams = oEvent._mTestParameters;
-			var bDraggingOverItself = oEvent.dragSession.getDragControl() === oEvent.dragSession.getDropControl();
-			var sDropPosition = oTable.getDragDropConfig()[0].getDropPosition();
-			var sMessagePrefix = "[DropPosition=" + sDropPosition + "] " + mParams.sRowType + " row - ";
+			const mParams = oEvent._mTestParameters;
+			const bDraggingOverItself = oEvent.dragSession.getDragControl() === oEvent.dragSession.getDropControl();
+			const sDropPosition = oTable.getDragDropConfig()[0].getDropPosition();
+			let sMessagePrefix = "[DropPosition=" + sDropPosition + "] " + mParams.sRowType + " row - ";
 
 			if (bDraggingOverItself) {
 				sMessagePrefix += " Dragging the row over its own " + mParams.sRowAreaType + " area: ";
@@ -454,11 +454,11 @@ sap.ui.define([
 
 				assert.ok(!oEvent.isDefaultPrevented(), sMessagePrefix + "The default action was be prevented");
 
-				var bVerticalScrollbarVisible = oTable._getScrollExtension().isVerticalScrollbarVisible();
-				var mTableCntRect = oTable.getDomRef("sapUiTableCnt").getBoundingClientRect();
+				const bVerticalScrollbarVisible = oTable._getScrollExtension().isVerticalScrollbarVisible();
+				const mTableCntRect = oTable.getDomRef("sapUiTableCnt").getBoundingClientRect();
 
 				if (mParams.sRowType === "Empty") {
-					var oLastNonEmptyRow = this.getRows()[TableUtils.getNonEmptyRowCount(this) - 1];
+					const oLastNonEmptyRow = this.getRows()[TableUtils.getNonEmptyRowCount(this) - 1];
 					assert.strictEqual(oEvent.dragSession.getDropControl(), oLastNonEmptyRow,
 						sMessagePrefix + "The drop control was set to the last non-empty row");
 				}
@@ -492,7 +492,7 @@ sap.ui.define([
 			}
 
 			oTable.getRows()[mTestParameters.iFromRowIndex].$().trigger(createDragEvent("dragstart"));
-			var oDragEnterEvent = createDragEvent("dragenter");
+			let oDragEnterEvent = createDragEvent("dragenter");
 			oDragEnterEvent._mTestParameters = mTestParameters;
 			getTarget(mTestParameters.iToRowIndex).trigger(oDragEnterEvent);
 
@@ -512,8 +512,8 @@ sap.ui.define([
 		}
 
 		async function testEmptyRow() {
-			var sOriginalDropPosition = oTable.getDragDropConfig()[0].getDropPosition();
-			var iOriginalRowCount = oTable.getRowMode().getRowCount();
+			const sOriginalDropPosition = oTable.getDragDropConfig()[0].getDropPosition();
+			const iOriginalRowCount = oTable.getRowMode().getRowCount();
 
 			oTable.getRowMode().setRowCount(10);
 			await nextUIUpdate();
@@ -560,15 +560,15 @@ sap.ui.define([
 	});
 
 	QUnit.test("Droppable with empty rows aggregation (NoData not shown)", async function(assert) {
-		var oClock = sinon.useFakeTimers();
-		var fnOriginalDragEnterHandler = this.oDragAndDropExtension._ExtensionDelegate.ondragenter;
+		const oClock = sinon.useFakeTimers();
+		const fnOriginalDragEnterHandler = this.oDragAndDropExtension._ExtensionDelegate.ondragenter;
 
 		this.oDragAndDropExtension._ExtensionDelegate.ondragenter = function(oEvent) {
 			fnOriginalDragEnterHandler.apply(oTable, arguments);
 
-			var mParams = oEvent._mTestParameters;
-			var sDropPosition = oTreeTable.getDragDropConfig()[0].getDropPosition();
-			var sMessagePrefix = "[DropPosition=" + sDropPosition + "] " + mParams.sRowAreaType + " area: ";
+			const mParams = oEvent._mTestParameters;
+			const sDropPosition = oTreeTable.getDragDropConfig()[0].getDropPosition();
+			const sMessagePrefix = "[DropPosition=" + sDropPosition + "] " + mParams.sRowAreaType + " area: ";
 
 			assert.ok(!oEvent.isMarked("NonDroppable"), sMessagePrefix + "The event was not marked as \"NonDroppable\"");
 			assert.strictEqual(oEvent.dragSession.getDropControl(), oTable, sMessagePrefix + "The drop control was set to the table");
@@ -578,7 +578,7 @@ sap.ui.define([
 
 		function test($Target, mTestParameters) {
 			oTreeTable.getRows()[0].$().trigger(createDragEvent("dragstart"));
-			var oDragEnterEvent = createDragEvent("dragenter");
+			const oDragEnterEvent = createDragEvent("dragenter");
 			oDragEnterEvent._mTestParameters = mTestParameters;
 			$Target.trigger(oDragEnterEvent);
 		}
@@ -603,15 +603,15 @@ sap.ui.define([
 	});
 
 	QUnit.test("Expand rows - longdragover", function(assert) {
-		var oFakeEvent = {
+		const oFakeEvent = {
 			dragSession: {
 				getDropControl: function() {}
 			},
 			target: null
 		};
-		var oRow1ExpandSpy = sinon.spy(oTable.getRows()[0], "expand");
-		var oRow2ExpandSpy = sinon.spy(oTable.getRows()[1], "expand");
-		var oRow3ExpandSpy = sinon.spy(oTable.getRows()[2], "expand");
+		const oRow1ExpandSpy = sinon.spy(oTable.getRows()[0], "expand");
+		const oRow2ExpandSpy = sinon.spy(oTable.getRows()[1], "expand");
+		const oRow3ExpandSpy = sinon.spy(oTable.getRows()[2], "expand");
 
 		oFakeEvent.target = getRowHeader(0)[0];
 		this.oDragAndDropExtension._ExtensionDelegate.onlongdragover.call(oTable, oFakeEvent);
@@ -664,7 +664,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Draggable", function(assert) {
-		var aColumns = oTable.getColumns();
+		const aColumns = oTable.getColumns();
 		assert.notOk(this.oDDI.isDraggable(aColumns[1]), "Columns are not draggable by default");
 
 		this.oDDI.bIgnoreMetadataCheck = true;
@@ -672,8 +672,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Droppable", function(assert) {
-		var aColumns = oTable.getColumns();
-		var oDragEnterEvent = createDragEvent("dragenter");
+		const aColumns = oTable.getColumns();
+		const oDragEnterEvent = createDragEvent("dragenter");
 		oDragEnterEvent.target = aColumns[0].getDomRef();
 		assert.notOk(this.oDDI.isDroppable(aColumns[0], oDragEnterEvent), "Columns are not droppable by default");
 
@@ -682,7 +682,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Indicator Size", async function(assert) {
-		var aColumns = oTable.getColumns();
+		const aColumns = oTable.getColumns();
 
 		this.oDDI.bIgnoreMetadataCheck = true;
 		oTable.invalidate();
@@ -712,8 +712,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Draggable - TreeTable case", async function(assert) {
-		var fnOriginalDragEnterHandler = this.oDragAndDropExtension._ExtensionDelegate.ondragenter;
-		var aColumns = oTreeTable.getColumns();
+		const fnOriginalDragEnterHandler = this.oDragAndDropExtension._ExtensionDelegate.ondragenter;
+		const aColumns = oTreeTable.getColumns();
 
 		oTreeTable.addDragDropConfig(this.oDDI);
 		this.oDDI.bIgnoreMetadataCheck = true;
@@ -721,8 +721,8 @@ sap.ui.define([
 		oTreeTable.invalidate();
 		await nextUIUpdate();
 
-		for (var i = 0; i < aColumns.length; i++) {
-			var oColumnRef = aColumns[i].getDomRef();
+		for (let i = 0; i < aColumns.length; i++) {
+			const oColumnRef = aColumns[i].getDomRef();
 			assert.equal(oColumnRef.getAttribute("draggable"), i == 0 ? null : "true", "Column " + i + " has correct value for draggable");
 			assert.equal(oColumnRef.getAttribute("data-sap-ui-draggable"), i == 0 ? null : "true", "Column " + i + " has correct value for data-sap-ui-draggable");
 		}
@@ -730,7 +730,7 @@ sap.ui.define([
 		this.oDragAndDropExtension._ExtensionDelegate.ondragenter = function(oEvent) {
 			fnOriginalDragEnterHandler.apply(oTreeTable, arguments);
 
-			var mParams = oEvent._mTestParameters;
+			const mParams = oEvent._mTestParameters;
 
 			if (mParams.bShouldMove) {
 				assert.notOk(oEvent.isMarked("NonDroppable"), "Column movable: Event is not marked as NonDroppable");
@@ -750,8 +750,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Draggable - Fixed Columns", async function(assert) {
-		var fnOriginalDragEnterHandler = this.oDragAndDropExtension._ExtensionDelegate.ondragenter;
-		var aColumns = oTable.getColumns();
+		const fnOriginalDragEnterHandler = this.oDragAndDropExtension._ExtensionDelegate.ondragenter;
+		const aColumns = oTable.getColumns();
 		oTable.setFixedColumnCount(2);
 
 		this.oDDI.bIgnoreMetadataCheck = true;
@@ -759,8 +759,8 @@ sap.ui.define([
 		oTable.invalidate();
 		await nextUIUpdate();
 
-		for (var i = 0; i < aColumns.length; i++) {
-			var oColumnRef = aColumns[i].getDomRef();
+		for (let i = 0; i < aColumns.length; i++) {
+			const oColumnRef = aColumns[i].getDomRef();
 			assert.equal(oColumnRef.getAttribute("draggable"), i < 2 ? null : "true", "Column " + i + " has correct value for draggable");
 			assert.equal(oColumnRef.getAttribute("data-sap-ui-draggable"), i < 2 ? null : "true", "Column " + i + " has correct value for data-sap-ui-draggable");
 		}
@@ -768,7 +768,7 @@ sap.ui.define([
 		this.oDragAndDropExtension._ExtensionDelegate.ondragenter = function(oEvent) {
 			fnOriginalDragEnterHandler.apply(oTable, arguments);
 
-			var mParams = oEvent._mTestParameters;
+			const mParams = oEvent._mTestParameters;
 
 			if (mParams.bShouldMove) {
 				assert.notOk(oEvent.isMarked("NonDroppable"), "Column movable: Event is not marked as NonDroppable");

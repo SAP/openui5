@@ -23,8 +23,8 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var HeightTestControl = TableQUnitUtils.HeightTestControl;
-	var aDensities = ["sapUiSizeCozy", "sapUiSizeCompact", "sapUiSizeCondensed", undefined];
+	const HeightTestControl = TableQUnitUtils.HeightTestControl;
+	const aDensities = ["sapUiSizeCozy", "sapUiSizeCompact", "sapUiSizeCondensed", undefined];
 
 	TableQUnitUtils.setDefaultSettings({
 		rowMode: new FixedRowMode(),
@@ -63,14 +63,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("Property getters", function(assert) {
-		var oTable = TableQUnitUtils.createTable({
+		const oTable = TableQUnitUtils.createTable({
 			visibleRowCountMode: "Fixed",
 			visibleRowCount: 5,
 			fixedRowCount: 1,
 			fixedBottomRowCount: 2,
 			rowHeight: 8
 		});
-		var oMode = this.getDefaultRowMode(oTable);
+		const oMode = this.getDefaultRowMode(oTable);
 
 		assert.strictEqual(oMode.getRowCount(), 5, "The row count is taken from the table");
 		assert.strictEqual(oMode.getFixedTopRowCount(), 1, "The fixed top row count is taken from the table");
@@ -109,7 +109,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("#getRowContainerStyles", function(assert) {
-		var oMode = this.getDefaultRowMode(this.oTable);
+		const oMode = this.getDefaultRowMode(this.oTable);
 
 		sinon.stub(oMode, "getComputedRowCounts").returns({count: 9});
 		sinon.stub(oMode, "getBaseRowHeightOfTable").returns(9);
@@ -120,8 +120,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Row height", function(assert) {
-		var oTable = this.oTable;
-		var sequence = Promise.resolve();
+		const oTable = this.oTable;
+		let sequence = Promise.resolve();
 
 		oTable.addColumn(new Column({template: new HeightTestControl()}));
 		oTable.addColumn(new Column({template: new HeightTestControl()}));
@@ -217,9 +217,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("Initialize with hideEmptyRows=false", function(assert) {
-		var oDisableNoDataSpy = sinon.spy(FixedRowMode.prototype, "disableNoData");
-		var oEnableNoDataSpy = sinon.spy(FixedRowMode.prototype, "enableNoData");
-		var oTableInvalidateSpy = sinon.spy(this.oTable, "invalidate");
+		const oDisableNoDataSpy = sinon.spy(FixedRowMode.prototype, "disableNoData");
+		const oEnableNoDataSpy = sinon.spy(FixedRowMode.prototype, "enableNoData");
+		const oTableInvalidateSpy = sinon.spy(this.oTable, "invalidate");
 
 		this.oTable.setAggregation("rowMode", new FixedRowMode().setHideEmptyRows(false));
 
@@ -234,9 +234,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("Initialize with hideEmptyRows=true", function(assert) {
-		var oDisableNoDataSpy = sinon.spy(FixedRowMode.prototype, "disableNoData");
-		var oEnableNoDataSpy = sinon.spy(FixedRowMode.prototype, "enableNoData");
-		var oTableInvalidateSpy = sinon.spy(this.oTable, "invalidate");
+		const oDisableNoDataSpy = sinon.spy(FixedRowMode.prototype, "disableNoData");
+		const oEnableNoDataSpy = sinon.spy(FixedRowMode.prototype, "enableNoData");
+		const oTableInvalidateSpy = sinon.spy(this.oTable, "invalidate");
 
 		this.oTable.setAggregation("rowMode", new FixedRowMode().setHideEmptyRows(true));
 
@@ -251,9 +251,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("Change 'hideEmptyRows' property", function(assert) {
-		var oRowMode = new FixedRowMode();
-		var oDisableNoData = sinon.spy(oRowMode, "disableNoData");
-		var oEnableNoData = sinon.spy(oRowMode, "enableNoData");
+		const oRowMode = new FixedRowMode();
+		const oDisableNoData = sinon.spy(oRowMode, "disableNoData");
+		const oEnableNoData = sinon.spy(oRowMode, "enableNoData");
 
 		oRowMode.setHideEmptyRows(false);
 		assert.ok(oDisableNoData.notCalled, "Change from true to false: #disableNoData was not called");
@@ -301,8 +301,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Change row count", function(assert) {
-		var oTable = this.createTable();
-		var oGetContextsSpy = this.oGetContextsSpy;
+		const oTable = this.createTable();
+		const oGetContextsSpy = this.oGetContextsSpy;
 
 		oTable.setFirstVisibleRow(10);
 

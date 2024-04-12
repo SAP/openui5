@@ -6,11 +6,11 @@
 sap.ui.define(["sap/ui/base/DataType", "sap/ui/model/ChangeReason"], function(DataType, ChangeReason) {
 	"use strict";
 
-	var Hooks = new window.WeakMap();
-	var MASTER_HOOK_KEY = {};
-	var mKeyMapForExternalUsage = {};
-	var mHookMetadataByKey = {};
-	var aForbiddenTypes = ["function"];
+	const Hooks = new window.WeakMap();
+	const MASTER_HOOK_KEY = {};
+	const mKeyMapForExternalUsage = {};
+	const mHookMetadataByKey = {};
+	const aForbiddenTypes = ["function"];
 
 	/**
 	 * Static collection of utility functions providing a table internal hook system.
@@ -73,7 +73,7 @@ sap.ui.define(["sap/ui/base/DataType", "sap/ui/model/ChangeReason"], function(Da
 	 *
 	 * @private
 	 */
-	var HookUtils = {};
+	const HookUtils = {};
 
 	/*
 	 * This table internal hooks system is intended to simplify the communication between table modules. Such modules might need to be decoupled from
@@ -107,7 +107,7 @@ sap.ui.define(["sap/ui/base/DataType", "sap/ui/model/ChangeReason"], function(Da
 	 * Forbidden types: "function"
 	 */
 
-	var mHookMetadata = {
+	const mHookMetadata = {
 		Table: {
 			// Called when Table#bindRows or Table#bindAggregation("rows", ...) is called, before Control#bindAggregation.
 			BindRows: {
@@ -249,20 +249,20 @@ sap.ui.define(["sap/ui/base/DataType", "sap/ui/model/ChangeReason"], function(Da
 	 * @param {string} sKey The hook to call.
 	 */
 	HookUtils.call = function(oScope, sKey) {
-		var aHooks = Hooks.get(oScope);
+		const aHooks = Hooks.get(oScope);
 
 		if (!isValidScope(oScope) || !isValidKey(sKey)) {
 			return;
 		}
 
-		var mHookMetadata = getHookMetadataByKey(sKey);
+		const mHookMetadata = getHookMetadataByKey(sKey);
 
 		if (aHooks == null) {
 			return;
 		}
 
-		var aArguments = sanitizeArguments(Array.prototype.slice.call(arguments, 2));
-		var bArgumentsValid = validateArguments(mHookMetadata, aArguments);
+		const aArguments = sanitizeArguments(Array.prototype.slice.call(arguments, 2));
+		const bArgumentsValid = validateArguments(mHookMetadata, aArguments);
 
 		if (!bArgumentsValid) {
 			throw new Error("Hook with key " + sKey + " was not called. Invalid arguments passed\n" + oScope);
@@ -270,8 +270,8 @@ sap.ui.define(["sap/ui/base/DataType", "sap/ui/model/ChangeReason"], function(Da
 
 		aHooks.map((oHook) => {
 			if (oHook.key === MASTER_HOOK_KEY) {
-				var oCall = {};
-				var oHandlerContext = oHook.handlerContext == null ? oHook.target : oHook.handlerContext;
+				const oCall = {};
+				const oHandlerContext = oHook.handlerContext == null ? oHook.target : oHook.handlerContext;
 
 				oCall[sKey] = aArguments;
 				HookUtils.TableUtils.dynamicCall(oHook.target, oCall, oHandlerContext);
@@ -297,13 +297,13 @@ sap.ui.define(["sap/ui/base/DataType", "sap/ui/model/ChangeReason"], function(Da
 			return;
 		}
 
-		var aHooks = Hooks.get(oScope);
+		let aHooks = Hooks.get(oScope);
 
 		if (aHooks == null) {
 			aHooks = [];
 		}
 
-		var bMasterHookInstalled = aHooks.some(function(oHook) {
+		const bMasterHookInstalled = aHooks.some(function(oHook) {
 			return oHook.key === MASTER_HOOK_KEY && oHook.target === oTarget && oHook.handlerContext === oThis;
 		});
 
@@ -328,14 +328,14 @@ sap.ui.define(["sap/ui/base/DataType", "sap/ui/model/ChangeReason"], function(Da
 	 * @param {Object} [oThis] The context of hook handler calls.
 	 */
 	HookUtils.uninstall = function(oScope, oTarget, oThis) {
-		var aHooks = Hooks.get(oScope);
+		const aHooks = Hooks.get(oScope);
 
 		if (aHooks == null || !oTarget) {
 			return;
 		}
 
-		for (var i = 0; i < aHooks.length; i++) {
-			var oHook = aHooks[i];
+		for (let i = 0; i < aHooks.length; i++) {
+			const oHook = aHooks[i];
 
 			if (oHook.key === MASTER_HOOK_KEY && oHook.target === oTarget && oHook.handlerContext === oThis) {
 				aHooks.splice(i, 1);
@@ -364,7 +364,7 @@ sap.ui.define(["sap/ui/base/DataType", "sap/ui/model/ChangeReason"], function(Da
 			return;
 		}
 
-		var aHooks = Hooks.get(oScope);
+		let aHooks = Hooks.get(oScope);
 
 		if (aHooks == null) {
 			aHooks = [];
@@ -390,14 +390,14 @@ sap.ui.define(["sap/ui/base/DataType", "sap/ui/model/ChangeReason"], function(Da
 	 * @param {Object} [oThis] The context of hook handler calls.
 	 */
 	HookUtils.deregister = function(oScope, sKey, fnHandler, oThis) {
-		var aHooks = Hooks.get(oScope);
+		const aHooks = Hooks.get(oScope);
 
 		if (aHooks == null) {
 			return;
 		}
 
-		for (var i = 0; i < aHooks.length; i++) {
-			var oHook = aHooks[i];
+		for (let i = 0; i < aHooks.length; i++) {
+			const oHook = aHooks[i];
 
 			if (oHook.key === sKey && oHook.handler === fnHandler && oHook.handlerContext === oThis) {
 				aHooks.splice(i, 1);
@@ -414,7 +414,7 @@ sap.ui.define(["sap/ui/base/DataType", "sap/ui/model/ChangeReason"], function(Da
 
 	function extractKeys(mKeys, mCurrent, sCurrentKey) {
 		Object.keys(mCurrent).forEach(function(sProperty) {
-			var sKey = sCurrentKey ? sCurrentKey + "." + sProperty : sProperty;
+			const sKey = sCurrentKey ? sCurrentKey + "." + sProperty : sProperty;
 
 			if ("arguments" in mCurrent[sProperty]) {
 				aForbiddenTypes.forEach(function(sForbiddenType) {
@@ -449,7 +449,7 @@ sap.ui.define(["sap/ui/base/DataType", "sap/ui/model/ChangeReason"], function(Da
 
 	function sanitizeArguments(aArguments) {
 		while (aArguments.length > 0) {
-			var vArgument = aArguments.pop();
+			const vArgument = aArguments.pop();
 			if (vArgument != null) {
 				aArguments.push(vArgument);
 				break;
@@ -461,7 +461,7 @@ sap.ui.define(["sap/ui/base/DataType", "sap/ui/model/ChangeReason"], function(Da
 
 	function validateArguments(mHookMetadata, aArguments) {
 		return mHookMetadata.arguments.length >= aArguments.length && aArguments.every(function(vValue, iIndex) {
-			var mArgument = mHookMetadata.arguments[iIndex];
+			const mArgument = mHookMetadata.arguments[iIndex];
 			if (typeof mArgument.type === "function") {
 				return mArgument.type(vValue);
 			}

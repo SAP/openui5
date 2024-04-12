@@ -29,15 +29,15 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var createTables = window.createTables;
-	var destroyTables = window.destroyTables;
-	var getCell = window.getCell;
-	var getColumnHeader = window.getColumnHeader;
-	var getRowHeader = window.getRowHeader;
-	var getRowAction = window.getRowAction;
-	var getSelectAll = window.getSelectAll;
-	var initRowActions = window.initRowActions;
-	var TestControl = TableQUnitUtils.TestControl;
+	const createTables = window.createTables;
+	const destroyTables = window.destroyTables;
+	const getCell = window.getCell;
+	const getColumnHeader = window.getColumnHeader;
+	const getRowHeader = window.getRowHeader;
+	const getRowAction = window.getRowAction;
+	const getSelectAll = window.getSelectAll;
+	const initRowActions = window.initRowActions;
+	const TestControl = TableQUnitUtils.TestControl;
 
 	QUnit.module("Lifecycle", {
 		beforeEach: function() {
@@ -55,13 +55,13 @@ sap.ui.define([
 	});
 
 	QUnit.test("Initialization", function(assert) {
-		var oExtension = this.oTable._getKeyboardExtension();
-		var iDelegateCount = 0;
+		const oExtension = this.oTable._getKeyboardExtension();
+		let iDelegateCount = 0;
 
 		assert.ok(oExtension, "Extension available in table");
 		assert.ok(!oExtension._itemNavigation, "Item Navigation not yet initialized");
 
-		for (var i = 0; i < this.oTable.aDelegates.length; i++) {
+		for (let i = 0; i < this.oTable.aDelegates.length; i++) {
 			if (this.oTable.aDelegates[i].oDelegate === oExtension._delegate) {
 				iDelegateCount++;
 			}
@@ -74,7 +74,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Destruction", function(assert) {
-		var oExtension = this.oTable._getKeyboardExtension();
+		const oExtension = this.oTable._getKeyboardExtension();
 
 		this.oTable.destroy();
 		assert.ok(!oExtension.getTable(), "Reference to table removed");
@@ -92,7 +92,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("init() / destroy()", function(assert) {
-		var oExtension = ExtensionBase.enrich(new Table(), KeyboardExtension);
+		const oExtension = ExtensionBase.enrich(new Table(), KeyboardExtension);
 		assert.ok(!oExtension._itemNavigation, "Item Navigation not yet initialized");
 		oExtension.initItemNavigation();
 		assert.ok(oExtension._itemNavigation, "Item Navigation initialized on focus");
@@ -101,7 +101,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("invalidation", function(assert) {
-		var oExtension = oTable._getKeyboardExtension();
+		const oExtension = oTable._getKeyboardExtension();
 		assert.ok(oExtension._itemNavigationInvalidated, "Item Navigation invalid due to initial rendering");
 		oExtension.initItemNavigation();
 		assert.ok(!oExtension._itemNavigationInvalidated, "Item Navigation valid after initItemNavigation");
@@ -109,20 +109,20 @@ sap.ui.define([
 		assert.ok(oExtension._itemNavigationInvalidated, "Item Navigation invalid after invalidateItemNavigation");
 	});
 
-	var aEvents = [
+	const aEvents = [
 		"focusin", "sapfocusleave", "mousedown", "sapnext", "sapnextmodifiers", "sapprevious", "sappreviousmodifiers",
 		"sappageup", "sappagedown", "saphome", "saphomemodifiers", "sapend", "sapendmodifiers", "sapkeyup"
 	];
 
 	function setupItemNavigationFakeTest(assert) {
-		var oControl = new TestControl();
-		var oExtension = ExtensionBase.enrich(oControl, KeyboardExtension);
+		const oControl = new TestControl();
+		const oExtension = ExtensionBase.enrich(oControl, KeyboardExtension);
 		oExtension._itemNavigation = {
 			destroy: function() {
 			}
 		};
 		/* eslint-disable no-loop-func */
-		for (var i = 0; i < aEvents.length; i++) {
+		for (let i = 0; i < aEvents.length; i++) {
 			oExtension._itemNavigation["on" + aEvents[i]] = function(oEvent) {
 				assert.ok(true, oEvent.type + " reached ItemNavigation");
 			};
@@ -133,10 +133,10 @@ sap.ui.define([
 	}
 
 	QUnit.test("ItemNavigationDelegate", function(assert) {
-		var oControl = setupItemNavigationFakeTest(assert);
+		const oControl = setupItemNavigationFakeTest(assert);
 
 		assert.expect(14);
-		for (var i = 0; i < aEvents.length; i++) {
+		for (let i = 0; i < aEvents.length; i++) {
 			/*eslint-disable new-cap */
 			oControl._handleEvent(jQuery.Event(aEvents[i]));
 			/*eslint-enable new-cap */
@@ -146,8 +146,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Suspend / Resume", function(assert) {
-		var oControl = setupItemNavigationFakeTest(assert);
-		var i;
+		const oControl = setupItemNavigationFakeTest(assert);
+		let i;
 
 		oControl._getKeyboardExtension().suspendItemNavigation();
 
@@ -171,14 +171,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("Marked Event", function(assert) {
-		var oControl = setupItemNavigationFakeTest(assert);
-		var i;
+		const oControl = setupItemNavigationFakeTest(assert);
+		let i;
 
 		assert.expect(14);
 
 		for (i = 0; i < aEvents.length; i++) {
 			/*eslint-disable new-cap */
-			var oEvent = jQuery.Event(aEvents[i]);
+			const oEvent = jQuery.Event(aEvents[i]);
 			/*eslint-enable new-cap */
 			oEvent.setMarked("sapUiTableSkipItemNavigation");
 			oControl._handleEvent(oEvent);
@@ -194,11 +194,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("Stored Focus Position", function(assert) {
-		var oExtension = oTable._getKeyboardExtension();
+		const oExtension = oTable._getKeyboardExtension();
 		oExtension._oLastFocusedCellInfo = null;
 		oExtension.initItemNavigation();
 
-		var oInfo = oExtension.getLastFocusedCellInfo();
+		let oInfo = oExtension.getLastFocusedCellInfo();
 		assert.strictEqual(oInfo.cell, oTable.columnCount + 2 /* 2* row header*/, "cell");
 		assert.strictEqual(oInfo.row, 1, "row");
 		assert.strictEqual(oInfo.columnCount, oTable.columnCount + 1 /*row header*/, "columnCount");
@@ -231,20 +231,20 @@ sap.ui.define([
 	});
 
 	QUnit.test("Silent Focus", function(assert) {
-		var oDelegate = {
+		const oDelegate = {
 			onfocusin: function(oEvent) {
 				assert.ok(oEvent.isMarked("sapUiTableIgnoreFocusIn"), "Focus Event is marked to be ignored");
 			}
 		};
 		oTable.addEventDelegate(oDelegate);
 		assert.expect(1);
-		var oExtension = oTable._getKeyboardExtension();
+		const oExtension = oTable._getKeyboardExtension();
 		oExtension.setSilentFocus(getCell(0, 0));
 		oTable.removeEventDelegate(oDelegate);
 	});
 
 	QUnit.test("Resize Bar", function(assert) {
-		var oDelegate = {
+		const oDelegate = {
 			onfocusin: function(oEvent) {
 				assert.ok(false, "The resize bar should not get focus");
 			}
@@ -256,8 +256,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Action Mode", function(assert) {
-		var oControl = new TestControl();
-		var oExtension = ExtensionBase.enrich(oControl, KeyboardExtension);
+		const oControl = new TestControl();
+		const oExtension = ExtensionBase.enrich(oControl, KeyboardExtension);
 
 		oExtension._delegate = {
 			enterActionMode: sinon.stub(),
@@ -342,12 +342,12 @@ sap.ui.define([
 	});
 
 	QUnit.test("Overlay / NoData focus handling", function(assert) {
-		var done = assert.async();
+		const done = assert.async();
 
 		function doAfterNoDataDisplayed() {
 			assert.strictEqual(document.activeElement, oTable.getDomRef("overlay"), "focus is still on overlay after no data is displayed");
 			oTable.setShowOverlay(false);
-			var oElem = getColumnHeader(0);
+			const oElem = getColumnHeader(0);
 			assert.equal(document.activeElement, oElem.get(0), "focus is on first column header after the overlay disappeared");
 			done();
 		}
@@ -366,7 +366,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Restore focus position after overlay", function(assert) {
-		var $Cell = getCell(1, 1, true);
+		let $Cell = getCell(1, 1, true);
 
 		this.addCreationRow(oTable);
 
@@ -381,7 +381,7 @@ sap.ui.define([
 		oTable.setShowOverlay(false);
 		assert.strictEqual(document.activeElement, $Cell[0], "focus is restored on the data cell");
 
-		var $Input = TableUtils.getFirstInteractiveElement(oTable.getCreationRow());
+		const $Input = TableUtils.getFirstInteractiveElement(oTable.getCreationRow());
 		oTable.getCreationRow().resetFocus();
 		oTable.setShowOverlay(true);
 		assert.strictEqual(document.activeElement, oTable.getDomRef("overlay"), "focus is on overlay");
@@ -399,9 +399,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("Restore focus position after noData", function(assert) {
-		var done = assert.async();
-		var oModel = oTable.getModel();
-		var $Cell = getCell(1, 1, true);
+		const done = assert.async();
+		const oModel = oTable.getModel();
+		const $Cell = getCell(1, 1, true);
 
 		function onRowsUpdated() {
 			if (TableUtils.isNoDataVisible(oTable)) {
@@ -419,9 +419,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("Restore focus position after noData when column has been removed", function(assert) {
-		var done = assert.async();
-		var oModel = oTable.getModel();
-		var $Cell = getCell(1, 1, true);
+		const done = assert.async();
+		const oModel = oTable.getModel();
+		const $Cell = getCell(1, 1, true);
 
 		function onRowsUpdated() {
 			if (TableUtils.isNoDataVisible(oTable)) {
@@ -440,10 +440,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("Restore focus position after noData when focus has been on the cell content", function(assert) {
-		var done = assert.async();
-		var oModel = oTable.getModel();
+		const done = assert.async();
+		const oModel = oTable.getModel();
 
-		var $Cell = getCell(1, 5);
+		const $Cell = getCell(1, 5);
 		TableUtils.getInteractiveElements($Cell)[0].focus();
 
 		function onRowsUpdated() {
@@ -464,8 +464,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("NoData focus handling with CreationRow", function(assert) {
-		var done = assert.async();
-		var oModel = oTable.getModel();
+		const done = assert.async();
+		const oModel = oTable.getModel();
 
 		this.addCreationRow(oTable);
 
@@ -482,7 +482,7 @@ sap.ui.define([
 			}
 		}
 
-		var $Input = TableUtils.getFirstInteractiveElement(oTable.getCreationRow());
+		const $Input = TableUtils.getFirstInteractiveElement(oTable.getCreationRow());
 		oTable.getCreationRow().resetFocus();
 		oTable.attachRowsUpdated(onRowsUpdated);
 		oTable.setModel(new JSONModel());
@@ -492,24 +492,22 @@ sap.ui.define([
 		initRowActions(oTable, 1, 1);
 		await nextUIUpdate();
 
-		var oKeyboardExtension = oTable._getKeyboardExtension();
-		var aTestElementIds = [
+		const oKeyboardExtension = oTable._getKeyboardExtension();
+		const aTestElementIds = [
 			getCell(0, 0)[0].id,
 			getColumnHeader(0)[0].id,
 			getRowHeader(0)[0].id,
 			getRowAction(0)[0].id,
 			getSelectAll()[0].id
 		];
-		var oInitItemNavigationSpy;
-		var oInvalidateItemNavigationSpy;
-		var oOnFocusInSpy = sinon.spy();
+		const oOnFocusInSpy = sinon.spy();
 
 		oTable.addEventDelegate({
 			onfocusin: oOnFocusInSpy
 		});
 
 		oKeyboardExtension._debug();
-		oInitItemNavigationSpy = sinon.spy(oKeyboardExtension._ExtensionHelper, "_initItemNavigation");
+		const oInitItemNavigationSpy = sinon.spy(oKeyboardExtension._ExtensionHelper, "_initItemNavigation");
 
 		await aTestElementIds.reduce(async function(acc, sId) {
 			await acc;
@@ -537,10 +535,10 @@ sap.ui.define([
 		}, Promise.resolve());
 
 		// Focus a cell in the TreeTable to check if the Table steals the focus.
-		var oFocusedElement = getCell(0, 0, true, null, oTreeTable)[0];
+		const oFocusedElement = getCell(0, 0, true, null, oTreeTable)[0];
 
 		oInitItemNavigationSpy.resetHistory();
-		oInvalidateItemNavigationSpy = sinon.spy(oKeyboardExtension, "invalidateItemNavigation");
+		const oInvalidateItemNavigationSpy = sinon.spy(oKeyboardExtension, "invalidateItemNavigation");
 		oOnFocusInSpy.resetHistory();
 		oTable.invalidate();
 		await nextUIUpdate();
@@ -569,9 +567,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("Focus restoration after data update (DataCell -> NoData -> previously focused DataCell)", function(assert) {
-		var done = assert.async();
-		var oCell = oTable.getRows()[0].getDomRef("col0");
-		var oModel = new JSONModel({modelData: oTable.getModel().getData()});
+		const done = assert.async();
+		const oCell = oTable.getRows()[0].getDomRef("col0");
+		const oModel = new JSONModel({modelData: oTable.getModel().getData()});
 
 		oCell.focus();
 		oTable.setModel(new JSONModel());
@@ -590,9 +588,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("Focus restoration after unbind and then bind (DataCell -> NoData -> previously focused DataCell)", function(assert) {
-		var done = assert.async();
-		var oCell = oTable.getRows()[0].getDomRef("col0");
-		var oModel = new JSONModel({modelData: oTable.getModel().getData()});
+		const done = assert.async();
+		const oCell = oTable.getRows()[0].getDomRef("col0");
+		const oModel = new JSONModel({modelData: oTable.getModel().getData()});
 
 		oCell.focus();
 		oTable.unbindRows();

@@ -39,9 +39,9 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var initRowActions = window.initRowActions;
-	var HeightControl = TableQUnitUtils.HeightTestControl;
-	var MouseWheelDeltaMode = {
+	const initRowActions = window.initRowActions;
+	const HeightControl = TableQUnitUtils.HeightTestControl;
+	const MouseWheelDeltaMode = {
 		PIXEL: 0,
 		LINE: 1,
 		PAGE: 2
@@ -57,12 +57,12 @@ sap.ui.define([
 	});
 
 	QUnit.test("Initialization", function(assert) {
-		var oExtension = this.oTable._getScrollExtension();
+		const oExtension = this.oTable._getScrollExtension();
 		assert.ok(oExtension, "Extension available in table");
 	});
 
 	QUnit.test("Destruction", function(assert) {
-		var oExtension = this.oTable._getScrollExtension();
+		const oExtension = this.oTable._getScrollExtension();
 
 		this.oTable.destroy();
 		assert.ok(!oExtension.getTable(), "Reference to table removed");
@@ -88,10 +88,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("Horizontal scrollbar visibility", async function(assert) {
-		var oTable = this.oTable;
-		var oScrollExtension = oTable._getScrollExtension();
-		var oHSb = oScrollExtension.getHorizontalScrollbar();
-		var oModel = oTable.getModel();
+		const oTable = this.oTable;
+		const oScrollExtension = oTable._getScrollExtension();
+		const oHSb = oScrollExtension.getHorizontalScrollbar();
+		const oModel = oTable.getModel();
 
 		assert.ok(oHSb.offsetWidth > 0 && oHSb.offsetHeight > 0, "Table content does not fit: Horizontal scrollbar is visible");
 
@@ -119,12 +119,12 @@ sap.ui.define([
 
 	// Test fails in Safari, skip until fixed
 	QUnit[Device.browser.safari ? "skip" : "test"]("Horizontal scrollbar position", function(assert) {
-		var oTable = this.oTable;
-		var oScrollExtension = oTable._getScrollExtension();
-		var oHSb = oScrollExtension.getHorizontalScrollbar();
-		var oHSbContent = oTable.getDomRef("hsb-content");
-		var oHSbComputedStyle = window.getComputedStyle(oHSb);
-		var oHSbContentComputedStyle = window.getComputedStyle(oHSbContent);
+		const oTable = this.oTable;
+		const oScrollExtension = oTable._getScrollExtension();
+		const oHSb = oScrollExtension.getHorizontalScrollbar();
+		const oHSbContent = oTable.getDomRef("hsb-content");
+		const oHSbComputedStyle = window.getComputedStyle(oHSb);
+		const oHSbContentComputedStyle = window.getComputedStyle(oHSbContent);
 
 		oTable.invalidate();
 		oCore.applyChanges();
@@ -150,10 +150,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("Vertical scrollbar visibility", function(assert) {
-		var oTable = this.oTable;
-		var oScrollExtension = oTable._getScrollExtension();
-		var oVSb = oScrollExtension.getVerticalScrollbar();
-		var iOriginalApiVersion = TableRenderer.apiVersion;
+		const oTable = this.oTable;
+		const oScrollExtension = oTable._getScrollExtension();
+		let oVSb = oScrollExtension.getVerticalScrollbar();
+		const iOriginalApiVersion = TableRenderer.apiVersion;
 
 		assert.ok(oVSb.offsetWidth > 0 && oVSb.offsetHeight > 0, "Table content does not fit height -> Vertical scrollbar is visible");
 
@@ -186,9 +186,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("Vertical scrollbar position", async function(assert) {
-		var oScrollExtension = this.oTable._getScrollExtension();
-		var oVSb = oScrollExtension.getVerticalScrollbar();
-		var oVSbComputedStyle = window.getComputedStyle(oVSb);
+		const oScrollExtension = this.oTable._getScrollExtension();
+		const oVSb = oScrollExtension.getVerticalScrollbar();
+		const oVSbComputedStyle = window.getComputedStyle(oVSb);
 
 		this.oTable.setColumnHeaderHeight(78);
 		await this.oTable.qunit.whenRenderingFinished();
@@ -212,7 +212,7 @@ sap.ui.define([
 		}));
 
 		await this.oTable.qunit.whenRenderingFinished();
-		var oVSb = this.oTable._getScrollExtension().getVerticalScrollbar();
+		const oVSb = this.oTable._getScrollExtension().getVerticalScrollbar();
 		assert.equal(oVSb.clientHeight, 5 * this.oTable._getBaseRowHeight(), "Vertical scrollbar height is correct");
 	});
 
@@ -237,12 +237,12 @@ sap.ui.define([
 	});
 
 	QUnit.test("scrollVertically (row-wise)", function(assert) {
-		var oTable = this.oTable;
-		var oScrollExtension = oTable._getScrollExtension();
-		var iTotalRowCount = oTable._getTotalRowCount();
-		var iVisibleRowCount = oTable._getRowCounts().count;
-		var iNotVisibleRows = iTotalRowCount - iVisibleRowCount;
-		var i;
+		const oTable = this.oTable;
+		const oScrollExtension = oTable._getScrollExtension();
+		const iTotalRowCount = oTable._getTotalRowCount();
+		const iVisibleRowCount = oTable._getRowCounts().count;
+		const iNotVisibleRows = iTotalRowCount - iVisibleRowCount;
+		let i;
 
 		for (i = 0; i < iNotVisibleRows + 2; i++) {
 			if (i < iNotVisibleRows) {
@@ -270,18 +270,18 @@ sap.ui.define([
 	});
 
 	QUnit.test("scrollVertically (page-wise)", function(assert) {
-		var oTable = this.oTable;
-		var mRowCounts = oTable._getRowCounts();
-		var oScrollExtension = oTable._getScrollExtension();
-		var iTotalRowCount = oTable._getTotalRowCount();
-		var iVisibleRowCount = mRowCounts.count;
-		var iFixedTop = mRowCounts.fixedTop;
-		var iFixedBottom = mRowCounts.fixedBottom;
-		var iNotVisibleRows = iTotalRowCount - iVisibleRowCount;
-		var iPageSize = iVisibleRowCount - iFixedTop - iFixedBottom;
-		var iPages = Math.ceil((iTotalRowCount - iFixedTop - iFixedBottom) / iPageSize);
-		var iCurrentPosition = 0;
-		var i;
+		const oTable = this.oTable;
+		const mRowCounts = oTable._getRowCounts();
+		const oScrollExtension = oTable._getScrollExtension();
+		const iTotalRowCount = oTable._getTotalRowCount();
+		const iVisibleRowCount = mRowCounts.count;
+		const iFixedTop = mRowCounts.fixedTop;
+		const iFixedBottom = mRowCounts.fixedBottom;
+		const iNotVisibleRows = iTotalRowCount - iVisibleRowCount;
+		const iPageSize = iVisibleRowCount - iFixedTop - iFixedBottom;
+		const iPages = Math.ceil((iTotalRowCount - iFixedTop - iFixedBottom) / iPageSize);
+		let iCurrentPosition = 0;
+		let i;
 
 		for (i = 0; i < iPages + 2; i++) {
 			if (i < iPages - 1) {
@@ -312,8 +312,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("scrollVerticallyMax", async function(assert) {
-		var oScrollExtension = this.oTable._getScrollExtension();
-		var iTotalRowCount = this.oTable._getTotalRowCount();
+		const oScrollExtension = this.oTable._getScrollExtension();
+		const iTotalRowCount = this.oTable._getTotalRowCount();
 
 		/* More data rows than visible rows, with fixed top/bottom rows */
 		// ↓ Down
@@ -364,7 +364,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("getHorizontalScrollbar", function(assert) {
-		var oScrollExtension = this.oTable._getScrollExtension();
+		const oScrollExtension = this.oTable._getScrollExtension();
 
 		assert.strictEqual(oScrollExtension.getHorizontalScrollbar(), this.oTable.getDomRef(library.SharedDomRef.HorizontalScrollBar),
 			"Returned: Horizontal scrollbar element");
@@ -375,9 +375,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("getVerticalScrollbar", function(assert) {
-		var oScrollExtension = this.oTable._getScrollExtension();
-		var oScrollbar = oScrollExtension.getVerticalScrollbar();
-		var oScrollbarParent = oScrollbar.parentNode;
+		const oScrollExtension = this.oTable._getScrollExtension();
+		const oScrollbar = oScrollExtension.getVerticalScrollbar();
+		const oScrollbarParent = oScrollbar.parentNode;
 
 		assert.strictEqual(oScrollExtension.getVerticalScrollbar(), this.oTable.getDomRef(library.SharedDomRef.VerticalScrollBar),
 			"Returned the vertical scrollbar");
@@ -396,7 +396,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("isHorizontalScrollbarVisible", async function(assert) {
-		var oScrollExtension = this.oTable._getScrollExtension();
+		const oScrollExtension = this.oTable._getScrollExtension();
 
 		assert.ok(oScrollExtension.isHorizontalScrollbarVisible(), "Table content does not fit width -> Horizontal scrollbar is visible");
 
@@ -406,7 +406,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("isVerticalScrollbarVisible", async function(assert) {
-		var oScrollExtension = this.oTable._getScrollExtension();
+		const oScrollExtension = this.oTable._getScrollExtension();
 
 		assert.ok(oScrollExtension.isVerticalScrollbarVisible(), "Table content does not fit height -> Vertical scrollbar is visible");
 
@@ -416,10 +416,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("updateVerticalScrollbarHeight", function(assert) {
-		var oScrollExtension = this.oTable._getScrollExtension();
-		var oVSb = oScrollExtension.getVerticalScrollbar();
-		var oGetVerticalScrollbarHeightStub = sinon.stub(oScrollExtension, "getVerticalScrollbarHeight");
-		var iInitialVSbHeight = getHeight(oVSb);
+		const oScrollExtension = this.oTable._getScrollExtension();
+		const oVSb = oScrollExtension.getVerticalScrollbar();
+		const oGetVerticalScrollbarHeightStub = sinon.stub(oScrollExtension, "getVerticalScrollbarHeight");
+		const iInitialVSbHeight = getHeight(oVSb);
 
 		function getHeight(oElement) {
 			return oElement.getBoundingClientRect().height;
@@ -439,9 +439,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("updateVerticalScrollHeight", function(assert) {
-		var oScrollExtension = this.oTable._getScrollExtension();
-		var oVSb = oScrollExtension.getVerticalScrollbar();
-		var oGetVerticalScrollHeightStub = sinon.stub(oScrollExtension, "getVerticalScrollHeight");
+		const oScrollExtension = this.oTable._getScrollExtension();
+		const oVSb = oScrollExtension.getVerticalScrollbar();
+		const oGetVerticalScrollHeightStub = sinon.stub(oScrollExtension, "getVerticalScrollHeight");
 
 		oGetVerticalScrollHeightStub.returns(888);
 		oScrollExtension.updateVerticalScrollHeight();
@@ -455,11 +455,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("getVerticalScrollHeight", function(assert) {
-		var oTable = this.oTable;
-		var oScrollExtension = oTable._getScrollExtension();
-		var oGetTotalRowCountStub = sinon.stub(oTable, "_getTotalRowCount");
-		var oGetRowCountsStub = sinon.stub(oTable, "_getRowCounts");
-		var oGetBaseRowHeightStub = sinon.stub(oTable, "_getBaseRowHeight");
+		const oTable = this.oTable;
+		const oScrollExtension = oTable._getScrollExtension();
+		const oGetTotalRowCountStub = sinon.stub(oTable, "_getTotalRowCount");
+		const oGetRowCountsStub = sinon.stub(oTable, "_getRowCounts");
+		const oGetBaseRowHeightStub = sinon.stub(oTable, "_getBaseRowHeight");
 
 		oTable._bVariableRowHeightEnabled = false;
 		oGetTotalRowCountStub.returns(11);
@@ -511,10 +511,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("isVerticalScrollbarRequired", function(assert) {
-		var oTable = this.oTable;
-		var oScrollExtension = oTable._getScrollExtension();
-		var oGetTotalRowCountStub = sinon.stub(oTable, "_getTotalRowCount");
-		var oGetRowCountsStub = sinon.stub(oTable, "_getRowCounts");
+		const oTable = this.oTable;
+		const oScrollExtension = oTable._getScrollExtension();
+		const oGetTotalRowCountStub = sinon.stub(oTable, "_getTotalRowCount");
+		const oGetRowCountsStub = sinon.stub(oTable, "_getRowCounts");
 
 		oTable._bVariableRowHeightEnabled = true;
 
@@ -551,17 +551,17 @@ sap.ui.define([
 	});
 
 	QUnit.test("registerForMouseWheel", function(assert) {
-		var oScrollExtension = this.oTable._getScrollExtension();
-		var Div = document.createElement("div");
-		var vReturn = oScrollExtension.registerForMouseWheel([Div], oScrollExtension.constructor.ScrollDirection.BOTH);
+		const oScrollExtension = this.oTable._getScrollExtension();
+		const Div = document.createElement("div");
+		const vReturn = oScrollExtension.registerForMouseWheel([Div], oScrollExtension.constructor.ScrollDirection.BOTH);
 
 		assert.strictEqual(vReturn, null, "The method should return null without synchronization enabled");
 	});
 
 	QUnit.test("registerForTouch", function(assert) {
-		var oScrollExtension = this.oTable._getScrollExtension();
-		var Div = document.createElement("div");
-		var vReturn = oScrollExtension.registerForMouseWheel([Div], oScrollExtension.constructor.ScrollDirection.BOTH);
+		const oScrollExtension = this.oTable._getScrollExtension();
+		const Div = document.createElement("div");
+		const vReturn = oScrollExtension.registerForMouseWheel([Div], oScrollExtension.constructor.ScrollDirection.BOTH);
 
 		assert.strictEqual(vReturn, null, "The method should return null without synchronization enabled");
 	});
@@ -586,15 +586,15 @@ sap.ui.define([
 			this.oTable.destroy();
 		},
 		assertSynchronization: function(assert, iScrollPosition) {
-			var oHSb = this.oTable._getScrollExtension().getHorizontalScrollbar();
-			var oHeaderScroll = this.oTable.getDomRef("sapUiTableColHdrScr");
-			var oContentScroll = this.oTable.getDomRef("sapUiTableCtrlScr");
+			const oHSb = this.oTable._getScrollExtension().getHorizontalScrollbar();
+			const oHeaderScroll = this.oTable.getDomRef("sapUiTableColHdrScr");
+			const oContentScroll = this.oTable.getDomRef("sapUiTableCtrlScr");
 
 			if (iScrollPosition == null) {
 				iScrollPosition = oHSb.scrollLeft;
 			}
 
-			var bIsSynchronized = oHSb.scrollLeft === iScrollPosition
+			const bIsSynchronized = oHSb.scrollLeft === iScrollPosition
 								  && oHSb.scrollLeft === oHeaderScroll.scrollLeft
 								  && oHSb.scrollLeft === oContentScroll.scrollLeft;
 
@@ -606,10 +606,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("Scrollbar", function(assert) {
-		var oTable = this.oTable;
-		var oHSb = oTable._getScrollExtension().getHorizontalScrollbar();
-		var oHeaderScroll = oTable.getDomRef("sapUiTableColHdrScr");
-		var oContentScroll = oTable.getDomRef("sapUiTableCtrlScr");
+		const oTable = this.oTable;
+		const oHSb = oTable._getScrollExtension().getHorizontalScrollbar();
+		const oHeaderScroll = oTable.getDomRef("sapUiTableColHdrScr");
+		const oContentScroll = oTable.getDomRef("sapUiTableCtrlScr");
 
 		return new Promise(function(resolve) {
 			// Scroll right to 200
@@ -621,7 +621,7 @@ sap.ui.define([
 				oHSb.scrollLeft = i * 10;
 			}
 
-			for (var i = 1; i <= 20; i++) {
+			for (let i = 1; i <= 20; i++) {
 				window.setTimeout(scrollRight.bind(this, i), i);
 			}
 		}).then(function() {
@@ -640,7 +640,7 @@ sap.ui.define([
 					oHSb.scrollLeft = 200 - i * 10;
 				}
 
-				for (var i = 1; i <= 18; i++) {
+				for (let i = 1; i <= 18; i++) {
 					window.setTimeout(scrollLeft.bind(this, i, resolve), i);
 				}
 			});
@@ -652,12 +652,12 @@ sap.ui.define([
 	});
 
 	QUnit.test("MouseWheel", function(assert) {
-		var oTable = this.oTable;
-		var oHSb;
-		var iCurrentScrollPosition;
-		var iMinColumnWidth = TableUtils.Column.getMinColumnWidth();
-		var DeltaMode = MouseWheelDeltaMode;
-		var that = this;
+		const oTable = this.oTable;
+		let oHSb;
+		let iCurrentScrollPosition;
+		const iMinColumnWidth = TableUtils.Column.getMinColumnWidth();
+		const DeltaMode = MouseWheelDeltaMode;
+		const that = this;
 
 		function scrollForwardAndBackToBeginning(oTargetElement) {
 			return oTable.qunit.scrollHSbTo(0).then(function() {
@@ -699,9 +699,9 @@ sap.ui.define([
 
 		function scrollWithMouseWheel(oTargetElement, iScrollDelta, iDeltaMode, bShift, iExpectedScrollPosition, bValidTarget) {
 			return new Promise(function(resolve) {
-				var oWheelEvent = TableQUnitUtils.createMouseWheelEvent(iScrollDelta, iDeltaMode, bShift);
-				var oStopPropagationSpy = sinon.spy(oWheelEvent, "stopPropagation");
-				var bExpectScrolling = false;
+				const oWheelEvent = TableQUnitUtils.createMouseWheelEvent(iScrollDelta, iDeltaMode, bShift);
+				const oStopPropagationSpy = sinon.spy(oWheelEvent, "stopPropagation");
+				let bExpectScrolling = false;
 
 				oTargetElement.dispatchEvent(oWheelEvent);
 
@@ -756,12 +756,12 @@ sap.ui.define([
 	});
 
 	QUnit.test("Touch", function(assert) {
-		var oTable = this.oTable;
-		var oHSb;
-		var iCurrentScrollPosition;
-		var bOriginalPointerSupport = Device.support.pointer;
-		var bOriginalTouchSupport = Device.support.touch;
-		var that = this;
+		const oTable = this.oTable;
+		let oHSb;
+		let iCurrentScrollPosition;
+		const bOriginalPointerSupport = Device.support.pointer;
+		const bOriginalTouchSupport = Device.support.touch;
+		const that = this;
 
 		function scrollForwardAndBackToBeginning(oTargetElement) {
 			return oTable.qunit.scrollHSbTo(0).then(function() {
@@ -807,8 +807,8 @@ sap.ui.define([
 
 		function scrollWithTouch(iScrollDelta, iExpectedScrollPosition, bValidTarget) {
 			return new Promise(function(resolve) {
-				var oTouchEvent = TableQUnitUtils.doTouchScrolling(iScrollDelta);
-				var bExpectScrolling = false;
+				const oTouchEvent = TableQUnitUtils.doTouchScrolling(iScrollDelta);
+				let bExpectScrolling = false;
 
 				// Touch move is also a swipe on touch devices. See the moveHandler method in jquery-mobile-custom.js, to know why
 				// preventDefault is always called on touch devices (except in chrome on desktop).
@@ -883,20 +883,20 @@ sap.ui.define([
 	});
 
 	QUnit.test("Focus", async function(assert) {
-		var oTable = this.oTable;
+		const oTable = this.oTable;
 
 		function getScrollLeft() {
 			return oTable._getScrollExtension().getHorizontalScrollbar().scrollLeft;
 		}
 
 		function isScrolledIntoView(oCell) {
-			var oRowContainer = oTable.getDomRef("sapUiTableCtrlScr");
-			var iScrollLeft = getScrollLeft();
-			var iRowContainerWidth = oRowContainer.clientWidth;
-			var iCellLeft = oCell.offsetLeft;
-			var iCellRight = iCellLeft + oCell.offsetWidth;
-			var iOffsetLeft = iCellLeft - iScrollLeft;
-			var iOffsetRight = iCellRight - iRowContainerWidth - iScrollLeft;
+			const oRowContainer = oTable.getDomRef("sapUiTableCtrlScr");
+			const iScrollLeft = getScrollLeft();
+			const iRowContainerWidth = oRowContainer.clientWidth;
+			const iCellLeft = oCell.offsetLeft;
+			const iCellRight = iCellLeft + oCell.offsetWidth;
+			const iOffsetLeft = iCellLeft - iScrollLeft;
+			const iOffsetRight = iCellRight - iRowContainerWidth - iScrollLeft;
 
 			return iOffsetLeft >= 0 && iOffsetRight <= 0;
 		}
@@ -1017,15 +1017,15 @@ sap.ui.define([
 		},
 		forEachTestedRowMode: function(fnForEach) {
 			// This array should ensure the expected order in which row modes are tested.
-			var aTestedRowModeNames = ["FixedRowMode", "AutoRowMode"];
-			var that = this;
+			const aTestedRowModeNames = ["FixedRowMode", "AutoRowMode"];
+			const that = this;
 
 			function getRowMode(sKey) {
 				return this.mTestedRowModes[sKey];
 			}
 
-			for (var i = 0; i < aTestedRowModeNames.length; i++) {
-				var sKey = aTestedRowModeNames[i];
+			for (let i = 0; i < aTestedRowModeNames.length; i++) {
+				const sKey = aTestedRowModeNames[i];
 
 				fnForEach(Object.create(null, {
 					key: {value: sKey},
@@ -1045,10 +1045,10 @@ sap.ui.define([
 			bVariableRowHeights = bVariableRowHeights === true;
 			iBindingLength = iBindingLength == null ? this.mDefaultSettings.bindingLength : iBindingLength;
 
-			var iRowCount = 10 + (bVariableRowHeights ? 1 : 0);
-			var iScrollHeight = (Math.max(iBindingLength, iRowCount) - (bVariableRowHeights ? 1 : 0)) * this.iBaseRowHeight
+			const iRowCount = 10 + (bVariableRowHeights ? 1 : 0);
+			const iScrollHeight = (Math.max(iBindingLength, iRowCount) - (bVariableRowHeights ? 1 : 0)) * this.iBaseRowHeight
 								+ (bVariableRowHeights ? 98 : 0); // Buffer
-			var iScrollbarHeight = 10 * this.iBaseRowHeight;
+			const iScrollbarHeight = 10 * this.iBaseRowHeight;
 
 			return Math.min(1000000, iScrollHeight) - iScrollbarHeight;
 		},
@@ -1090,11 +1090,11 @@ sap.ui.define([
 			}
 		},
 		_bypassBinding: function(oTable, iLength) {
-			var fnGetTotalRowCount = oTable._getTotalRowCount;
+			const fnGetTotalRowCount = oTable._getTotalRowCount;
 
 			oTable.__iBindingLength = iLength;
 			oTable._getTotalRowCount = function() {
-				var oBinding = oTable.getBinding();
+				const oBinding = oTable.getBinding();
 				if (oBinding) {
 					oBinding.getLength = function() {
 						return oTable.__iBindingLength;
@@ -1103,14 +1103,14 @@ sap.ui.define([
 				return fnGetTotalRowCount.apply(oTable, arguments);
 			};
 			oTable._getContexts = function(iStartIndex, iLength) {
-				var aContexts = [];
+				const aContexts = [];
 				if (this.getBinding()) {
-					var iBindingLength = oTable.__iBindingLength;
-					var iCount = iStartIndex + iLength > iBindingLength ? iBindingLength - iStartIndex : iLength;
-					var bVariableHeights = TableUtils.isVariableRowHeightEnabled(oTable);
+					const iBindingLength = oTable.__iBindingLength;
+					const iCount = iStartIndex + iLength > iBindingLength ? iBindingLength - iStartIndex : iLength;
+					const bVariableHeights = TableUtils.isVariableRowHeightEnabled(oTable);
 
-					for (var i = 0; i < iCount; i++) {
-						var iIndex = iStartIndex + i;
+					for (let i = 0; i < iCount; i++) {
+						const iIndex = iStartIndex + i;
 						aContexts.push(new Context(oTable.getModel(), iIndex % 2 === 0 || !bVariableHeights ? "/configA" : "/configB"));
 					}
 				}
@@ -1125,7 +1125,7 @@ sap.ui.define([
 				return;
 			}
 
-			var oData = JSON.parse(JSON.stringify(this.mDefaultSettings.models.getProperty("/")));
+			const oData = JSON.parse(JSON.stringify(this.mDefaultSettings.models.getProperty("/")));
 
 			if (iHeightA != null) {
 				oData.configA.rowHeight = iHeightA + "px";
@@ -1142,8 +1142,8 @@ sap.ui.define([
 				return;
 			}
 
-			var iOldLength = this.oTable._getTotalRowCount();
-			var oBinding = this.oTable.getBinding();
+			const iOldLength = this.oTable._getTotalRowCount();
+			const oBinding = this.oTable.getBinding();
 
 			this.oTable.__iBindingLength = iNewLength;
 
@@ -1153,19 +1153,19 @@ sap.ui.define([
 			}
 		},
 		fakeODataBindingChange: function() {
-			var oBinding = this.oTable ? this.oTable.getBinding() : null;
+			const oBinding = this.oTable ? this.oTable.getBinding() : null;
 			if (oBinding) {
 				oBinding.fireEvent("change", {reason: ChangeReason.Change});
 			}
 		},
 		fakeODataBindingRefresh: function(iNewLength) {
-			var oBinding = this.oTable ? this.oTable.getBinding() : null;
+			const oBinding = this.oTable ? this.oTable.getBinding() : null;
 
 			if (!oBinding) {
 				return;
 			}
 
-			var iBindingLength = this.oTable.__iBindingLength;
+			const iBindingLength = this.oTable.__iBindingLength;
 			this.changeBindingLength(0);
 			oBinding.fireEvent("refresh", {reason: ChangeReason.Refresh});
 
@@ -1195,10 +1195,10 @@ sap.ui.define([
 				return Promise.reject();
 			}
 
-			var that = this;
-			var iFirstVisibleRow = this.oTable.getFirstVisibleRow();
-			var iScrollPosition = this.oTable._getScrollExtension().getVerticalScrollbar().scrollTop;
-			var iInnerScrollPosition = this.oTable.getDomRef("tableCCnt").scrollTop;
+			const that = this;
+			const iFirstVisibleRow = this.oTable.getFirstVisibleRow();
+			const iScrollPosition = this.oTable._getScrollExtension().getVerticalScrollbar().scrollTop;
+			const iInnerScrollPosition = this.oTable.getDomRef("tableCCnt").scrollTop;
 
 			this.oTable.invalidate();
 			oCore.applyChanges();
@@ -1225,11 +1225,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("Initial scroll position; Tiny data; Fixed row heights", function(assert) {
-		var that = this;
-		var pTestSequence = Promise.resolve();
+		const that = this;
+		let pTestSequence = Promise.resolve();
 
 		function test(mConfig) {
-			var oTable = that.createTable({
+			const oTable = that.createTable({
 				rowMode: mConfig.rowMode,
 				firstVisibleRow: mConfig.firstVisibleRow,
 				bindingLength: 5
@@ -1257,13 +1257,13 @@ sap.ui.define([
 	});
 
 	QUnit.test("Initial scroll position; Tiny data; Variable row heights", function(assert) {
-		var that = this;
-		var pTestSequence = Promise.resolve();
-		var iMaxFirstVisibleRow = that.getMaxFirstVisibleRow(10, true);
-		var iMaxScrollTop = that.getMaxScrollTop(10, true);
+		const that = this;
+		let pTestSequence = Promise.resolve();
+		const iMaxFirstVisibleRow = that.getMaxFirstVisibleRow(10, true);
+		const iMaxScrollTop = that.getMaxScrollTop(10, true);
 
 		function test(mConfig) {
-			var oTable = that.createTable({
+			const oTable = that.createTable({
 				rowMode: mConfig.rowMode,
 				firstVisibleRow: mConfig.initialFirstVisibleRow,
 				bindingLength: mConfig.bindingLength,
@@ -1316,12 +1316,12 @@ sap.ui.define([
 	});
 
 	QUnit.test("Initial scroll position; Small data; Fixed row heights", function(assert) {
-		var that = this;
-		var pTestSequence = Promise.resolve();
-		var iMaxFirstVisibleRow = that.getMaxFirstVisibleRow();
+		const that = this;
+		let pTestSequence = Promise.resolve();
+		const iMaxFirstVisibleRow = that.getMaxFirstVisibleRow();
 
 		function test(mConfig) {
-			var oTable = that.createTable({
+			const oTable = that.createTable({
 				rowMode: mConfig.rowMode,
 				firstVisibleRow: mConfig.firstVisibleRow
 			});
@@ -1361,14 +1361,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("Initial scroll position; Small data; Variable row heights", function(assert) {
-		var that = this;
-		var pTestSequence = Promise.resolve();
-		var iMaxFirstVisibleRow = this.getMaxFirstVisibleRow(null, true);
-		var iMaxFirstRenderedRow = this.getMaxFirstRenderedRow();
-		var iMaxScrollTop = this.getMaxScrollTop(null, true);
+		const that = this;
+		let pTestSequence = Promise.resolve();
+		const iMaxFirstVisibleRow = this.getMaxFirstVisibleRow(null, true);
+		const iMaxFirstRenderedRow = this.getMaxFirstRenderedRow();
+		const iMaxScrollTop = this.getMaxScrollTop(null, true);
 
 		function test(mConfig) {
-			var oTable = that.createTable({
+			const oTable = that.createTable({
 				rowMode: mConfig.rowMode,
 				firstVisibleRow: mConfig.initialFirstVisibleRow,
 				_bVariableRowHeightEnabled: true
@@ -1462,14 +1462,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("Initial scroll position; Large data; Fixed row heights", function(assert) {
-		var that = this;
-		var pTestSequence = Promise.resolve();
-		var iBindingLength = 1000000000;
-		var iMaxFirstVisibleRow = this.getMaxFirstVisibleRow(iBindingLength);
-		var iMaxScrollTop = this.getMaxScrollTop(iBindingLength);
+		const that = this;
+		let pTestSequence = Promise.resolve();
+		const iBindingLength = 1000000000;
+		const iMaxFirstVisibleRow = this.getMaxFirstVisibleRow(iBindingLength);
+		const iMaxScrollTop = this.getMaxScrollTop(iBindingLength);
 
 		function test(mConfig) {
-			var oTable = that.createTable({
+			const oTable = that.createTable({
 				rowMode: mConfig.rowMode,
 				firstVisibleRow: mConfig.firstVisibleRow,
 				bindingLength: iBindingLength
@@ -1526,15 +1526,15 @@ sap.ui.define([
 	});
 
 	QUnit.test("Initial scroll position; Large data; Variable row heights", function(assert) {
-		var that = this;
-		var pTestSequence = Promise.resolve();
-		var iBindingLength = 1000000000;
-		var iMaxFirstVisibleRow = this.getMaxFirstVisibleRow(iBindingLength, true);
-		var iMaxFirstRenderedRow = this.getMaxFirstRenderedRow(iBindingLength);
-		var iMaxScrollTop = this.getMaxScrollTop(iBindingLength, true);
+		const that = this;
+		let pTestSequence = Promise.resolve();
+		const iBindingLength = 1000000000;
+		const iMaxFirstVisibleRow = this.getMaxFirstVisibleRow(iBindingLength, true);
+		const iMaxFirstRenderedRow = this.getMaxFirstRenderedRow(iBindingLength);
+		const iMaxScrollTop = this.getMaxScrollTop(iBindingLength, true);
 
 		function test(mConfig) {
-			var oTable = that.createTable({
+			const oTable = that.createTable({
 				rowMode: mConfig.rowMode,
 				firstVisibleRow: mConfig.initialFirstVisibleRow,
 				bindingLength: iBindingLength,
@@ -1629,17 +1629,17 @@ sap.ui.define([
 	});
 
 	QUnit.test("Initial scroll position; Large data; Fixed row heights; Floating point precision edge case", function(assert) {
-		var that = this;
-		var iBindingLength = 1000000000;
-		var oTable = this.createTable({
+		const that = this;
+		const iBindingLength = 1000000000;
+		const oTable = this.createTable({
 			rowMode: this.mTestedRowModes.FixedRowMode.setRowCount(18),
 			firstVisibleRow: iBindingLength,
 			bindingLength: iBindingLength
 		});
 
 		return oTable.qunit.whenRenderingFinished().then(function() {
-			var iExpectedFirstVisibleRow = iBindingLength - 18;
-			var iExpectedScrollPosition = 1000000 - oTable._getScrollExtension().getVerticalScrollbar().clientHeight;
+			const iExpectedFirstVisibleRow = iBindingLength - 18;
+			const iExpectedScrollPosition = 1000000 - oTable._getScrollExtension().getVerticalScrollbar().clientHeight;
 			that.assertPosition(assert, iExpectedFirstVisibleRow, iExpectedScrollPosition, 0, "After rendering");
 		}).then(function() {
 			return that.testRestoration(assert);
@@ -1647,9 +1647,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("Initial scroll position; Large data; Variable row heights; Floating point precision edge case", function(assert) {
-		var that = this;
-		var iBindingLength = 1000000000;
-		var oTable = this.createTable({
+		const that = this;
+		const iBindingLength = 1000000000;
+		const oTable = this.createTable({
 			rowMode: this.mTestedRowModes.FixedRowMode.setRowCount(18),
 			firstVisibleRow: iBindingLength,
 			bindingLength: iBindingLength,
@@ -1657,7 +1657,7 @@ sap.ui.define([
 		});
 
 		return oTable.qunit.whenRenderingFinished().then(function() {
-			var iExpectedScrollPosition = 1000000 - oTable._getScrollExtension().getVerticalScrollbar().clientHeight;
+			const iExpectedScrollPosition = 1000000 - oTable._getScrollExtension().getVerticalScrollbar().clientHeight;
 			that.assertPosition(assert, 999999991, iExpectedScrollPosition, 1059, "After rendering");
 		}).then(function() {
 			return that.testRestoration(assert);
@@ -1665,12 +1665,12 @@ sap.ui.define([
 	});
 
 	QUnit.test("Initial scroll position if bound after rendering; Small data; Fixed row heights", function(assert) {
-		var that = this;
-		var pTestSequence = Promise.resolve();
-		var iMaxFirstVisibleRow = this.getMaxFirstVisibleRow();
+		const that = this;
+		let pTestSequence = Promise.resolve();
+		const iMaxFirstVisibleRow = this.getMaxFirstVisibleRow();
 
 		function test(mConfig) {
-			var oTable = that.createTable({
+			const oTable = that.createTable({
 				models: undefined,
 				rowMode: mConfig.rowMode,
 				firstVisibleRow: mConfig.initialFirstVisibleRow
@@ -1715,13 +1715,13 @@ sap.ui.define([
 	});
 
 	QUnit.test("Initial scroll position if bound after rendering; Small data; Variable row heights", function(assert) {
-		var that = this;
-		var pTestSequence = Promise.resolve();
-		var iMaxFirstVisibleRow = this.getMaxFirstVisibleRow(null, true);
-		var iMaxScrollTop = this.getMaxScrollTop(null, true);
+		const that = this;
+		let pTestSequence = Promise.resolve();
+		const iMaxFirstVisibleRow = this.getMaxFirstVisibleRow(null, true);
+		const iMaxScrollTop = this.getMaxScrollTop(null, true);
 
 		function test(mConfig) {
-			var oTable = that.createTable({
+			const oTable = that.createTable({
 				models: undefined,
 				rowMode: mConfig.rowMode,
 				_bVariableRowHeightEnabled: true,
@@ -1776,12 +1776,12 @@ sap.ui.define([
 	});
 
 	QUnit.test("Initial scroll position if binding length initialized after rendering; Small data; Fixed row heights", function(assert) {
-		var that = this;
-		var pTestSequence = Promise.resolve();
-		var iMaxFirstVisibleRow = this.getMaxFirstVisibleRow();
+		const that = this;
+		let pTestSequence = Promise.resolve();
+		const iMaxFirstVisibleRow = this.getMaxFirstVisibleRow();
 
 		function test(mConfig) {
-			var oTable = that.createTable({
+			const oTable = that.createTable({
 				rowMode: mConfig.rowMode,
 				firstVisibleRow: mConfig.initialFirstVisibleRow,
 				bindingLength: 0,
@@ -1827,13 +1827,13 @@ sap.ui.define([
 	});
 
 	QUnit.test("Initial scroll position if binding length initialized after rendering; Small data; Variable row heights", function(assert) {
-		var that = this;
-		var pTestSequence = Promise.resolve();
-		var iMaxFirstVisibleRow = this.getMaxFirstVisibleRow(null, true);
-		var iMaxScrollTop = this.getMaxScrollTop(null, true);
+		const that = this;
+		let pTestSequence = Promise.resolve();
+		const iMaxFirstVisibleRow = this.getMaxFirstVisibleRow(null, true);
+		const iMaxScrollTop = this.getMaxScrollTop(null, true);
 
 		function test(mConfig) {
-			var oTable = that.createTable({
+			const oTable = that.createTable({
 				rowMode: mConfig.rowMode,
 				_bVariableRowHeightEnabled: true,
 				firstVisibleRow: mConfig.initialFirstVisibleRow,
@@ -1886,11 +1886,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("Initial scroll position if binding length changed after rendering; Small data; Fixed row heights", function(assert) {
-		var that = this;
-		var pTestSequence = Promise.resolve();
+		const that = this;
+		let pTestSequence = Promise.resolve();
 
 		function test(mConfig) {
-			var oTable = that.createTable({
+			const oTable = that.createTable({
 				rowMode: mConfig.rowMode,
 				firstVisibleRow: mConfig.firstVisibleRow,
 				bindingLength: that.mDefaultSettings.bindingLength - 1
@@ -1926,11 +1926,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("Initial scroll position if binding length changed after rendering; Small data; Variable row heights", function(assert) {
-		var that = this;
-		var pTestSequence = Promise.resolve();
+		const that = this;
+		let pTestSequence = Promise.resolve();
 
 		function test(mConfig) {
-			var oTable = that.createTable({
+			const oTable = that.createTable({
 				rowMode: mConfig.rowMode,
 				firstVisibleRow: mConfig.firstVisibleRow,
 				bindingLength: that.mDefaultSettings.bindingLength - 1,
@@ -1967,16 +1967,16 @@ sap.ui.define([
 	});
 
 	QUnit.test("Scroll with scrollbar; Tiny data; Variable row heights", function(assert) {
-		var that = this;
-		var pTestSequence = Promise.resolve();
+		const that = this;
+		let pTestSequence = Promise.resolve();
 
 		function test(mConfig) {
-			var oTable = that.createTable({
+			const oTable = that.createTable({
 				rowMode: mConfig.rowMode,
 				bindingLength: 10,
 				_bVariableRowHeightEnabled: true
 			});
-			var sTitle = mConfig.rowMode + ", ScrollTop set to ";
+			const sTitle = mConfig.rowMode + ", ScrollTop set to ";
 
 			return oTable.qunit.whenRenderingFinished().then(oTable.qunit.$scrollVSbTo(1)).then(function() {
 				that.assertPosition(assert, 0, 1, 5, sTitle + "1");
@@ -2007,16 +2007,16 @@ sap.ui.define([
 	});
 
 	QUnit.test("Scroll with scrollbar; Small data; Fixed row heights", function(assert) {
-		var that = this;
-		var pTestSequence = Promise.resolve();
-		var iMaxFirstVisibleRow = this.getMaxFirstVisibleRow();
-		var iMaxScrollTop = this.getMaxScrollTop();
+		const that = this;
+		let pTestSequence = Promise.resolve();
+		const iMaxFirstVisibleRow = this.getMaxFirstVisibleRow();
+		const iMaxScrollTop = this.getMaxScrollTop();
 
 		function test(mConfig) {
-			var oTable = that.createTable({
+			const oTable = that.createTable({
 				rowMode: mConfig.rowMode
 			});
-			var sTitle = mConfig.rowMode + ", ScrollTop set to ";
+			const sTitle = mConfig.rowMode + ", ScrollTop set to ";
 
 			return oTable.qunit.whenRenderingFinished().then(oTable.qunit.$scrollVSbTo(1)).then(function() {
 				that.assertPosition(assert, 0, 1, 0, sTitle + "1");
@@ -2047,8 +2047,8 @@ sap.ui.define([
 			}).then(oTable.qunit.$scrollVSbTo(0)).then(function() {
 				that.assertPosition(assert, 0, 0, 0, sTitle + "0");
 			}).then(function() {
-				var oScrollExtension = oTable._getScrollExtension();
-				var oScrollbar = oTable._getScrollExtension().getVerticalScrollbar();
+				const oScrollExtension = oTable._getScrollExtension();
+				const oScrollbar = oTable._getScrollExtension().getVerticalScrollbar();
 
 				// Test restarting the scrollbar scroll process.
 
@@ -2081,17 +2081,17 @@ sap.ui.define([
 	});
 
 	QUnit.test("Scroll with scrollbar; Small data; Variable row heights", function(assert) {
-		var that = this;
-		var pTestSequence = Promise.resolve();
-		var iMaxFirstVisibleRow = this.getMaxFirstVisibleRow(null, true);
-		var iMaxScrollTop = this.getMaxScrollTop(null, true);
+		const that = this;
+		let pTestSequence = Promise.resolve();
+		const iMaxFirstVisibleRow = this.getMaxFirstVisibleRow(null, true);
+		const iMaxScrollTop = this.getMaxScrollTop(null, true);
 
 		function test(mConfig) {
-			var oTable = that.createTable({
+			const oTable = that.createTable({
 				rowMode: mConfig.rowMode,
 				_bVariableRowHeightEnabled: true
 			});
-			var sTitle = mConfig.rowMode + ", ScrollTop set to ";
+			const sTitle = mConfig.rowMode + ", ScrollTop set to ";
 
 			return oTable.qunit.whenRenderingFinished().then(oTable.qunit.$scrollVSbTo(1)).then(function() {
 				that.assertPosition(assert, 0, 1, 1, sTitle + "1");
@@ -2122,8 +2122,8 @@ sap.ui.define([
 			}).then(oTable.qunit.$scrollVSbTo(0)).then(function() {
 				that.assertPosition(assert, 0, 0, 0, sTitle + "0");
 			}).then(function() {
-				var oScrollExtension = oTable._getScrollExtension();
-				var oScrollbar = oTable._getScrollExtension().getVerticalScrollbar();
+				const oScrollExtension = oTable._getScrollExtension();
+				const oScrollbar = oTable._getScrollExtension().getVerticalScrollbar();
 
 				// Test restarting the scrollbar scroll process.
 
@@ -2154,19 +2154,19 @@ sap.ui.define([
 	});
 
 	QUnit.test("Scroll with scrollbar; Large data; Fixed row heights", function(assert) {
-		var that = this;
-		var pTestSequence = Promise.resolve();
-		var iBindingLength = 1000000000;
-		var iMaxFirstVisibleRow = this.getMaxFirstVisibleRow(iBindingLength);
-		var iMaxScrollTop = this.getMaxScrollTop(iBindingLength);
-		var iRowsPerPixel = iMaxFirstVisibleRow / iMaxScrollTop;
+		const that = this;
+		let pTestSequence = Promise.resolve();
+		const iBindingLength = 1000000000;
+		const iMaxFirstVisibleRow = this.getMaxFirstVisibleRow(iBindingLength);
+		const iMaxScrollTop = this.getMaxScrollTop(iBindingLength);
+		const iRowsPerPixel = iMaxFirstVisibleRow / iMaxScrollTop;
 
 		function test(mConfig) {
-			var oTable = that.createTable({
+			const oTable = that.createTable({
 				rowMode: mConfig.rowMode,
 				bindingLength: iBindingLength
 			});
-			var sTitle = mConfig.rowMode + ", ScrollTop set to ";
+			const sTitle = mConfig.rowMode + ", ScrollTop set to ";
 
 			return oTable.qunit.whenRenderingFinished().then(oTable.qunit.$scrollVSbTo(1)).then(function() {
 				that.assertPosition(assert, Math.floor(iRowsPerPixel), 1, 0, sTitle + "1");
@@ -2205,14 +2205,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("Scroll with scrollbar; Large data; Variable row heights", function(assert) {
-		var that = this;
-		var pTestSequence = Promise.resolve();
-		var iBindingLength = 1000000000;
-		var iMaxFirstVisibleRow = this.getMaxFirstVisibleRow(iBindingLength, true);
-		var iMaxScrollTop = this.getMaxScrollTop(iBindingLength, true);
+		const that = this;
+		let pTestSequence = Promise.resolve();
+		const iBindingLength = 1000000000;
+		const iMaxFirstVisibleRow = this.getMaxFirstVisibleRow(iBindingLength, true);
+		const iMaxScrollTop = this.getMaxScrollTop(iBindingLength, true);
 
 		function test(mConfig) {
-			var oTable = that.createTable({
+			const oTable = that.createTable({
 				rowMode: mConfig.rowMode,
 				bindingLength: iBindingLength,
 				_bVariableRowHeightEnabled: true
@@ -2257,11 +2257,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("Scroll with scrollbar if binding length changed after rendering; Small data; Fixed row heights", function(assert) {
-		var that = this;
-		var pTestSequence = Promise.resolve();
+		const that = this;
+		let pTestSequence = Promise.resolve();
 
 		function test(mConfig) {
-			var oTable = that.createTable({
+			const oTable = that.createTable({
 				rowMode: mConfig.rowMode,
 				bindingLength: 99
 			}, function(oTable) {
@@ -2287,11 +2287,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("Scroll with scrollbar if re-rendered after setting FirstVisibleRow; Small data; Fixed row heights", function(assert) {
-		var that = this;
-		var pTestSequence = Promise.resolve();
+		const that = this;
+		let pTestSequence = Promise.resolve();
 
 		function test(mConfig) {
-			var oTable = that.createTable({
+			const oTable = that.createTable({
 				rowMode: mConfig.rowMode
 			});
 
@@ -2318,11 +2318,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("Scroll with scrollbar if re-rendered while setting FirstVisibleRow; Small data; Fixed row heights", function(assert) {
-		var that = this;
-		var pTestSequence = Promise.resolve();
+		const that = this;
+		let pTestSequence = Promise.resolve();
 
 		function test(mConfig) {
-			var oTable = that.createTable({
+			const oTable = that.createTable({
 				rowMode: mConfig.rowMode
 			});
 
@@ -2349,18 +2349,18 @@ sap.ui.define([
 	});
 
 	QUnit.test("Scroll by setting FirstVisibleRow; Tiny data; Variable row heights", function(assert) {
-		var that = this;
-		var pTestSequence = Promise.resolve();
-		var iMaxFirstVisibleRow = this.getMaxFirstVisibleRow(10, true);
-		var iMaxScrollTop = this.getMaxScrollTop(10, true);
+		const that = this;
+		let pTestSequence = Promise.resolve();
+		const iMaxFirstVisibleRow = this.getMaxFirstVisibleRow(10, true);
+		const iMaxScrollTop = this.getMaxScrollTop(10, true);
 
 		function test(mConfig) {
-			var oTable = that.createTable({
+			const oTable = that.createTable({
 				rowMode: mConfig.rowMode,
 				bindingLength: 10,
 				_bVariableRowHeightEnabled: true
 			});
-			var sTitle = mConfig.rowMode + ", FirstVisibleRow set to ";
+			const sTitle = mConfig.rowMode + ", FirstVisibleRow set to ";
 
 			return oTable.qunit.whenRenderingFinished().then(function() {
 				oTable.setFirstVisibleRow(1);
@@ -2402,16 +2402,16 @@ sap.ui.define([
 	});
 
 	QUnit.test("Scroll by setting FirstVisibleRow; Small data; Fixed row heights", function(assert) {
-		var that = this;
-		var pTestSequence = Promise.resolve();
-		var iMaxFirstVisibleRow = this.getMaxFirstVisibleRow();
-		var iMaxScrollTop = this.getMaxScrollTop();
+		const that = this;
+		let pTestSequence = Promise.resolve();
+		const iMaxFirstVisibleRow = this.getMaxFirstVisibleRow();
+		const iMaxScrollTop = this.getMaxScrollTop();
 
 		function test(mConfig) {
-			var oTable = that.createTable({
+			const oTable = that.createTable({
 				rowMode: mConfig.rowMode
 			});
-			var sTitle = mConfig.rowMode + ", FirstVisibleRow set to ";
+			const sTitle = mConfig.rowMode + ", FirstVisibleRow set to ";
 
 			return oTable.qunit.whenRenderingFinished().then(function() {
 				oTable.setFirstVisibleRow(1);
@@ -2450,18 +2450,18 @@ sap.ui.define([
 	});
 
 	QUnit.test("Scroll by setting FirstVisibleRow; Small data; Variable row heights", function(assert) {
-		var that = this;
-		var pTestSequence = Promise.resolve();
-		var iMaxFirstRenderedRow = this.getMaxFirstRenderedRow();
-		var iMaxFirstVisibleRow = this.getMaxFirstVisibleRow(null, true);
-		var iMaxScrollTop = this.getMaxScrollTop(null, true);
+		const that = this;
+		let pTestSequence = Promise.resolve();
+		const iMaxFirstRenderedRow = this.getMaxFirstRenderedRow();
+		const iMaxFirstVisibleRow = this.getMaxFirstVisibleRow(null, true);
+		const iMaxScrollTop = this.getMaxScrollTop(null, true);
 
 		function test(mConfig) {
-			var oTable = that.createTable({
+			const oTable = that.createTable({
 				rowMode: mConfig.rowMode,
 				_bVariableRowHeightEnabled: true
 			});
-			var sTitle = mConfig.rowMode + ", FirstVisibleRow set to ";
+			const sTitle = mConfig.rowMode + ", FirstVisibleRow set to ";
 
 			return oTable.qunit.whenRenderingFinished().then(function() {
 				oTable.setFirstVisibleRow(1);
@@ -2512,19 +2512,19 @@ sap.ui.define([
 	});
 
 	QUnit.test("Scroll by setting FirstVisibleRow; Large data; Fixed row heights", function(assert) {
-		var that = this;
-		var pTestSequence = Promise.resolve();
-		var iBindingLength = 1000000000;
-		var iMaxFirstVisibleRow = this.getMaxFirstVisibleRow(iBindingLength);
-		var iMaxScrollTop = this.getMaxScrollTop(iBindingLength);
-		var iMiddleFirstVisibleRow = Math.floor((Math.round(iMaxScrollTop / 2) / iMaxScrollTop) * iMaxFirstVisibleRow);
+		const that = this;
+		let pTestSequence = Promise.resolve();
+		const iBindingLength = 1000000000;
+		const iMaxFirstVisibleRow = this.getMaxFirstVisibleRow(iBindingLength);
+		const iMaxScrollTop = this.getMaxScrollTop(iBindingLength);
+		const iMiddleFirstVisibleRow = Math.floor((Math.round(iMaxScrollTop / 2) / iMaxScrollTop) * iMaxFirstVisibleRow);
 
 		function test(mConfig) {
-			var oTable = that.createTable({
+			const oTable = that.createTable({
 				rowMode: mConfig.rowMode,
 				bindingLength: iBindingLength
 			});
-			var sTitle = mConfig.rowMode + ", FirstVisibleRow set to ";
+			const sTitle = mConfig.rowMode + ", FirstVisibleRow set to ";
 
 			return oTable.qunit.whenRenderingFinished().then(function() {
 				oTable.setFirstVisibleRow(1);
@@ -2566,20 +2566,20 @@ sap.ui.define([
 	});
 
 	QUnit.test("Scroll by setting FirstVisibleRow; Large data; Variable row heights", function(assert) {
-		var that = this;
-		var pTestSequence = Promise.resolve();
-		var iBindingLength = 1000000000;
-		var iMaxFirstRenderedRow = this.getMaxFirstRenderedRow(iBindingLength);
-		var iMaxFirstVisibleRow = this.getMaxFirstVisibleRow(iBindingLength, true);
-		var iMaxScrollTop = this.getMaxScrollTop(iBindingLength, true);
+		const that = this;
+		let pTestSequence = Promise.resolve();
+		const iBindingLength = 1000000000;
+		const iMaxFirstRenderedRow = this.getMaxFirstRenderedRow(iBindingLength);
+		const iMaxFirstVisibleRow = this.getMaxFirstVisibleRow(iBindingLength, true);
+		const iMaxScrollTop = this.getMaxScrollTop(iBindingLength, true);
 
 		function test(mConfig) {
-			var oTable = that.createTable({
+			const oTable = that.createTable({
 				rowMode: mConfig.rowMode,
 				bindingLength: iBindingLength,
 				_bVariableRowHeightEnabled: true
 			});
-			var sTitle = mConfig.rowMode + ", FirstVisibleRow set to ";
+			const sTitle = mConfig.rowMode + ", FirstVisibleRow set to ";
 
 			return oTable.qunit.whenRenderingFinished().then(function() {
 				oTable.setFirstVisibleRow(1);
@@ -2631,11 +2631,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("Scroll by setting FirstVisibleRow when re-rendering; Small data; Fixed row heights", function(assert) {
-		var that = this;
-		var pTestSequence = Promise.resolve();
+		const that = this;
+		let pTestSequence = Promise.resolve();
 
 		function test(mConfig) {
-			var oTable = that.createTable({
+			const oTable = that.createTable({
 				rowMode: mConfig.rowMode
 			});
 
@@ -2661,11 +2661,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("Scroll by setting FirstVisibleRow when re-rendering; Small data; Variable row heights", function(assert) {
-		var that = this;
-		var pTestSequence = Promise.resolve();
+		const that = this;
+		let pTestSequence = Promise.resolve();
 
 		function test(mConfig) {
-			var oTable = that.createTable({
+			const oTable = that.createTable({
 				rowMode: mConfig.rowMode,
 				_bVariableRowHeightEnabled: true
 			});
@@ -2692,11 +2692,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("Scroll by setting FirstVisibleRow when binding refresh; Small data; Fixed row heights", function(assert) {
-		var that = this;
-		var pTestSequence = Promise.resolve();
+		const that = this;
+		let pTestSequence = Promise.resolve();
 
 		function test(mConfig) {
-			var oTable = that.createTable({
+			const oTable = that.createTable({
 				rowMode: mConfig.rowMode
 			});
 
@@ -2720,11 +2720,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("Scroll by setting FirstVisibleRow when binding refresh; Small data; Variable row heights", function(assert) {
-		var that = this;
-		var pTestSequence = Promise.resolve();
+		const that = this;
+		let pTestSequence = Promise.resolve();
 
 		function test(mConfig) {
-			var oTable = that.createTable({
+			const oTable = that.createTable({
 				rowMode: mConfig.rowMode,
 				_bVariableRowHeightEnabled: true
 			});
@@ -2749,11 +2749,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("Scroll by setting FirstVisibleRow before being bound; Small data; Fixed row heights", function(assert) {
-		var that = this;
-		var pTestSequence = Promise.resolve();
+		const that = this;
+		let pTestSequence = Promise.resolve();
 
 		function test(mConfig) {
-			var oTable = that.createTable({
+			const oTable = that.createTable({
 				models: undefined,
 				rowMode: mConfig.rowMode
 			});
@@ -2779,11 +2779,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("Scroll by setting FirstVisibleRow before being bound; Small data; Variable row heights", function(assert) {
-		var that = this;
-		var pTestSequence = Promise.resolve();
+		const that = this;
+		let pTestSequence = Promise.resolve();
 
 		function test(mConfig) {
-			var oTable = that.createTable({
+			const oTable = that.createTable({
 				models: undefined,
 				rowMode: mConfig.rowMode,
 				_bVariableRowHeightEnabled: true
@@ -2810,10 +2810,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("Scroll with mouse wheel; Small data; Fixed row heights", function(assert) {
-		var that = this;
-		var oTable = this.createTable();
-		var iMaxFirstVisibleRow = this.getMaxFirstVisibleRow();
-		var iMaxScrollTop = this.getMaxScrollTop();
+		const that = this;
+		const oTable = this.createTable();
+		const iMaxFirstVisibleRow = this.getMaxFirstVisibleRow();
+		const iMaxScrollTop = this.getMaxScrollTop();
 
 		function scrollWithMouseWheel(iScrollDelta, iDeltaMode) {
 			return function() {
@@ -2842,12 +2842,12 @@ sap.ui.define([
 	});
 
 	QUnit.test("Scroll with mouse wheel; Small data; Variable row heights", function(assert) {
-		var that = this;
-		var oTable = this.createTable({
+		const that = this;
+		const oTable = this.createTable({
 			_bVariableRowHeightEnabled: true
 		});
-		var iMaxFirstVisibleRow = this.getMaxFirstVisibleRow(null, true);
-		var iMaxScrollTop = this.getMaxScrollTop(null, true);
+		const iMaxFirstVisibleRow = this.getMaxFirstVisibleRow(null, true);
+		const iMaxScrollTop = this.getMaxScrollTop(null, true);
 
 		function scrollWithMouseWheel(iScrollDelta, iDeltaMode) {
 			return function() {
@@ -2894,14 +2894,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("Scroll with mouse wheel; Large data; Fixed row heights", function(assert) {
-		var that = this;
-		var iBindingLength = 1000000000;
-		var oTable = this.createTable({
+		const that = this;
+		const iBindingLength = 1000000000;
+		const oTable = this.createTable({
 			bindingLength: iBindingLength
 		});
-		var iMaxFirstVisibleRow = this.getMaxFirstVisibleRow(iBindingLength);
-		var iMaxScrollTop = this.getMaxScrollTop(iBindingLength);
-		var nPixelsPerRow = iMaxScrollTop / iMaxFirstVisibleRow;
+		const iMaxFirstVisibleRow = this.getMaxFirstVisibleRow(iBindingLength);
+		const iMaxScrollTop = this.getMaxScrollTop(iBindingLength);
+		const nPixelsPerRow = iMaxScrollTop / iMaxFirstVisibleRow;
 
 		function scrollWithMouseWheel(iScrollDelta, iDeltaMode) {
 			return function() {
@@ -2913,23 +2913,23 @@ sap.ui.define([
 			};
 		}
 
-		var pReady = oTable.qunit.whenRenderingFinished();
+		const pReady = oTable.qunit.whenRenderingFinished();
 
 		return pReady.then(scrollWithMouseWheel(that.iBaseRowHeight - 1, MouseWheelDeltaMode.PIXEL)).then(function() {
 			that.assertPosition(assert, 1, 1, 0, "Scrolled " + (that.iBaseRowHeight - 1) + " pixels down");
 		}).then(scrollWithMouseWheel(1, MouseWheelDeltaMode.PIXEL)).then(function() {
 			that.assertPosition(assert, 2, 1, 0, "Scrolled 1 pixel down");
 		}).then(scrollWithMouseWheel(500000, MouseWheelDeltaMode.PIXEL)).then(function() {
-			var iFirstVisibleRow = 2 + Math.floor(500000 / that.iBaseRowHeight);
-			var iScrollTop = Math.round(iFirstVisibleRow * nPixelsPerRow);
+			const iFirstVisibleRow = 2 + Math.floor(500000 / that.iBaseRowHeight);
+			const iScrollTop = Math.round(iFirstVisibleRow * nPixelsPerRow);
 			that.assertPosition(assert, iFirstVisibleRow, iScrollTop, 0, "Scrolled 500000 pixels down");
 		}).then(scrollWithMouseWheel(2, MouseWheelDeltaMode.LINE)).then(function() {
-			var iFirstVisibleRow = 4 + Math.floor(500000 / that.iBaseRowHeight);
-			var iScrollTop = Math.round(iFirstVisibleRow * nPixelsPerRow);
+			const iFirstVisibleRow = 4 + Math.floor(500000 / that.iBaseRowHeight);
+			const iScrollTop = Math.round(iFirstVisibleRow * nPixelsPerRow);
 			that.assertPosition(assert, iFirstVisibleRow, iScrollTop, 0, "Scrolled 2 rows down");
 		}).then(scrollWithMouseWheel(2, MouseWheelDeltaMode.PAGE)).then(function() {
-			var iFirstVisibleRow = 24 + Math.floor(500000 / that.iBaseRowHeight);
-			var iScrollTop = Math.round(iFirstVisibleRow * nPixelsPerRow);
+			const iFirstVisibleRow = 24 + Math.floor(500000 / that.iBaseRowHeight);
+			const iScrollTop = Math.round(iFirstVisibleRow * nPixelsPerRow);
 			that.assertPosition(assert, iFirstVisibleRow, iScrollTop, 0, "Scrolled 2 pages down");
 		}).then(scrollWithMouseWheel(1000000000000, MouseWheelDeltaMode.PIXEL)).then(function() {
 			that.assertPosition(assert, iMaxFirstVisibleRow, iMaxScrollTop, 0, "Scrolled to the bottom");
@@ -2938,16 +2938,16 @@ sap.ui.define([
 		}).then(scrollWithMouseWheel(-1, MouseWheelDeltaMode.PIXEL)).then(function() {
 			that.assertPosition(assert, iMaxFirstVisibleRow - 2, iMaxScrollTop - 1, 0, "Scrolled 1 pixel up");
 		}).then(scrollWithMouseWheel(-500000, MouseWheelDeltaMode.PIXEL)).then(function() {
-			var iFirstVisibleRow = iMaxFirstVisibleRow - 2 - Math.floor(500000 / that.iBaseRowHeight);
-			var iScrollTop = Math.round(iFirstVisibleRow * nPixelsPerRow);
+			const iFirstVisibleRow = iMaxFirstVisibleRow - 2 - Math.floor(500000 / that.iBaseRowHeight);
+			const iScrollTop = Math.round(iFirstVisibleRow * nPixelsPerRow);
 			that.assertPosition(assert, iFirstVisibleRow, iScrollTop, 0, "Scrolled 500000 pixels up");
 		}).then(scrollWithMouseWheel(-2, MouseWheelDeltaMode.LINE)).then(function() {
-			var iFirstVisibleRow = iMaxFirstVisibleRow - 4 - Math.floor(500000 / that.iBaseRowHeight);
-			var iScrollTop = Math.round(iFirstVisibleRow * nPixelsPerRow);
+			const iFirstVisibleRow = iMaxFirstVisibleRow - 4 - Math.floor(500000 / that.iBaseRowHeight);
+			const iScrollTop = Math.round(iFirstVisibleRow * nPixelsPerRow);
 			that.assertPosition(assert, iFirstVisibleRow, iScrollTop, 0, "Scrolled 2 rows up");
 		}).then(scrollWithMouseWheel(-2, MouseWheelDeltaMode.PAGE)).then(function() {
-			var iFirstVisibleRow = iMaxFirstVisibleRow - 24 - Math.floor(500000 / that.iBaseRowHeight);
-			var iScrollTop = Math.round(iFirstVisibleRow * nPixelsPerRow);
+			const iFirstVisibleRow = iMaxFirstVisibleRow - 24 - Math.floor(500000 / that.iBaseRowHeight);
+			const iScrollTop = Math.round(iFirstVisibleRow * nPixelsPerRow);
 			that.assertPosition(assert, iFirstVisibleRow, iScrollTop, 0, "Scrolled 2 pages up");
 		}).then(scrollWithMouseWheel(-1000000000000, MouseWheelDeltaMode.PIXEL)).then(function() {
 			that.assertPosition(assert, 0, 0, 0, "Scrolled to the top");
@@ -2955,14 +2955,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("Scroll with mouse wheel; Large data; Variable row heights", function(assert) {
-		var that = this;
-		var iBindingLength = 1000000000;
-		var oTable = this.createTable({
+		const that = this;
+		const iBindingLength = 1000000000;
+		const oTable = this.createTable({
 			bindingLength: iBindingLength,
 			_bVariableRowHeightEnabled: true
 		});
-		var iMaxFirstVisibleRow = this.getMaxFirstVisibleRow(iBindingLength, true);
-		var iMaxScrollTop = this.getMaxScrollTop(iBindingLength, true);
+		const iMaxFirstVisibleRow = this.getMaxFirstVisibleRow(iBindingLength, true);
+		const iMaxScrollTop = this.getMaxScrollTop(iBindingLength, true);
 
 		function scrollWithMouseWheel(iScrollDelta, iDeltaMode) {
 			return function() {
@@ -2974,7 +2974,7 @@ sap.ui.define([
 			};
 		}
 
-		var pReady = oTable.qunit.whenRenderingFinished();
+		const pReady = oTable.qunit.whenRenderingFinished();
 
 		return pReady.then(scrollWithMouseWheel(that.iBaseRowHeight - 1, MouseWheelDeltaMode.PIXEL)).then(function() {
 			that.assertPosition(assert, 1, 1, 0, "Scrolled " + (that.iBaseRowHeight - 1) + " pixels down");
@@ -3018,9 +3018,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("Handling of mouse wheel events that do scroll", function(assert) {
-		var done = assert.async();
-		var that = this;
-		var oTable = this.createTable({
+		const done = assert.async();
+		const that = this;
+		const oTable = this.createTable({
 			title: "test",
 			extension: [new HeightControl()],
 			footer: new HeightControl(),
@@ -3030,9 +3030,9 @@ sap.ui.define([
 		}, function(oTable) {
 			oTable.addColumn(new Column({template: new HeightControl()}));
 		});
-		var oWheelEvent;
-		var oStopPropagationSpy;
-		var pTestSequence = Promise.resolve();
+		let oWheelEvent;
+		let oStopPropagationSpy;
+		let pTestSequence = Promise.resolve();
 
 		function test(mConfig) {
 			return oTable.qunit.scrollVSbTo(0).then(function() {
@@ -3047,7 +3047,7 @@ sap.ui.define([
 		}
 
 		pTestSequence = pTestSequence.then(oTable.qunit.whenRenderingFinished).then(function() {
-			var aTestConfigs = [
+			const aTestConfigs = [
 				{name: "Cell in fixed column", element: oTable.qunit.getDataCell(0, 0)},
 				{name: "Cell in scrollable column", element: oTable.qunit.getDataCell(0, 1)},
 				{name: "Row header cell", element: oTable.qunit.getRowHeaderCell(0)},
@@ -3068,10 +3068,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("Handling of mouse wheel events that do not scroll", function(assert) {
-		var done = assert.async();
-		var that = this;
+		const done = assert.async();
+		const that = this;
 
-		var oTable = this.createTable({
+		const oTable = this.createTable({
 			title: "test",
 			extension: [new HeightControl()],
 			footer: new HeightControl(),
@@ -3081,14 +3081,14 @@ sap.ui.define([
 		}, function(oTable) {
 			oTable.addColumn(new Column({template: new HeightControl()}));
 		});
-		var pTestSequence = Promise.resolve();
+		let pTestSequence = Promise.resolve();
 
 		function test(mConfig) {
-			var iScrollDelta = mConfig.scrollDelta == null ? 50 : mConfig.scrollDelta;
-			var oWheelEvent = TableQUnitUtils.createMouseWheelEvent(iScrollDelta, MouseWheelDeltaMode.PIXEL, false);
-			var oStopPropagationSpy = sinon.spy(oWheelEvent, "stopPropagation");
-			var iExpectedFirstVisibleRow = mConfig.firstVisibleRow == null ? 0 : mConfig.firstVisibleRow;
-			var iExpectedScrollTop = mConfig.scrollTop == null ? 0 : mConfig.scrollTop;
+			const iScrollDelta = mConfig.scrollDelta == null ? 50 : mConfig.scrollDelta;
+			const oWheelEvent = TableQUnitUtils.createMouseWheelEvent(iScrollDelta, MouseWheelDeltaMode.PIXEL, false);
+			const oStopPropagationSpy = sinon.spy(oWheelEvent, "stopPropagation");
+			const iExpectedFirstVisibleRow = mConfig.firstVisibleRow == null ? 0 : mConfig.firstVisibleRow;
+			const iExpectedScrollTop = mConfig.scrollTop == null ? 0 : mConfig.scrollTop;
 
 			mConfig.element.dispatchEvent(oWheelEvent);
 
@@ -3101,8 +3101,8 @@ sap.ui.define([
 		}
 
 		pTestSequence = pTestSequence.then(oTable.qunit.whenRenderingFinished).then(function() {
-			var oDomRef = oTable.getDomRef();
-			var aTestConfigs = [
+			const oDomRef = oTable.getDomRef();
+			const aTestConfigs = [
 				{name: "Horizontal scrollbar", element: oTable._getScrollExtension().getHorizontalScrollbar()},
 				{name: "Column header container", element: oDomRef.querySelector(".sapUiTableColHdrCnt")},
 				{name: "Extension container", element: oDomRef.querySelector(".sapUiTableExt")},
@@ -3141,16 +3141,16 @@ sap.ui.define([
 	});
 
 	QUnit.test("Scroll with touch; Small data; Fixed row heights", function(assert) {
-		var that = this;
-		var bOriginalPointerSupport = Device.support.pointer;
-		var bOriginalTouchSupport = Device.support.touch;
+		const that = this;
+		const bOriginalPointerSupport = Device.support.pointer;
+		const bOriginalTouchSupport = Device.support.touch;
 
 		Device.support.pointer = false;
 		Device.support.touch = true;
 
-		var oTable = this.createTable();
-		var iMaxFirstVisibleRow = this.getMaxFirstVisibleRow();
-		var iMaxScrollTop = this.getMaxScrollTop();
+		const oTable = this.createTable();
+		const iMaxFirstVisibleRow = this.getMaxFirstVisibleRow();
+		const iMaxScrollTop = this.getMaxScrollTop();
 
 		function scrollWithTouch(iScrollDelta) {
 			return function() {
@@ -3183,18 +3183,18 @@ sap.ui.define([
 	});
 
 	QUnit.test("Scroll with touch; Small data; Variable row heights", function(assert) {
-		var that = this;
-		var bOriginalPointerSupport = Device.support.pointer;
-		var bOriginalTouchSupport = Device.support.touch;
+		const that = this;
+		const bOriginalPointerSupport = Device.support.pointer;
+		const bOriginalTouchSupport = Device.support.touch;
 
 		Device.support.pointer = false;
 		Device.support.touch = true;
 
-		var oTable = this.createTable({
+		const oTable = this.createTable({
 			_bVariableRowHeightEnabled: true
 		});
-		var iMaxFirstVisibleRow = this.getMaxFirstVisibleRow(null, true);
-		var iMaxScrollTop = this.getMaxScrollTop(null, true);
+		const iMaxFirstVisibleRow = this.getMaxFirstVisibleRow(null, true);
+		const iMaxScrollTop = this.getMaxScrollTop(null, true);
 
 		function scrollWithTouch(iScrollDelta) {
 			return function() {
@@ -3231,20 +3231,20 @@ sap.ui.define([
 	});
 
 	QUnit.test("Scroll with touch; Large data; Fixed row heights;", function(assert) {
-		var that = this;
-		var bOriginalPointerSupport = Device.support.pointer;
-		var bOriginalTouchSupport = Device.support.touch;
+		const that = this;
+		const bOriginalPointerSupport = Device.support.pointer;
+		const bOriginalTouchSupport = Device.support.touch;
 
 		Device.support.pointer = false;
 		Device.support.touch = true;
 
-		var iBindingLength = 1000000000;
-		var oTable = this.createTable({
+		const iBindingLength = 1000000000;
+		const oTable = this.createTable({
 			bindingLength: iBindingLength
 		});
-		var iMaxFirstVisibleRow = this.getMaxFirstVisibleRow(iBindingLength);
-		var iMaxScrollTop = this.getMaxScrollTop(iBindingLength);
-		var iRowsPerPixel = iMaxFirstVisibleRow / iMaxScrollTop;
+		const iMaxFirstVisibleRow = this.getMaxFirstVisibleRow(iBindingLength);
+		const iMaxScrollTop = this.getMaxScrollTop(iBindingLength);
+		const iRowsPerPixel = iMaxFirstVisibleRow / iMaxScrollTop;
 
 		function scrollWithTouch(iScrollDelta) {
 			return function() {
@@ -3282,20 +3282,20 @@ sap.ui.define([
 	});
 
 	QUnit.test("Scroll with touch; Large data; Variable row heights", function(assert) {
-		var that = this;
-		var bOriginalPointerSupport = Device.support.pointer;
-		var bOriginalTouchSupport = Device.support.touch;
+		const that = this;
+		const bOriginalPointerSupport = Device.support.pointer;
+		const bOriginalTouchSupport = Device.support.touch;
 
 		Device.support.pointer = false;
 		Device.support.touch = true;
 
-		var iBindingLength = 1000000000;
-		var oTable = this.createTable({
+		const iBindingLength = 1000000000;
+		const oTable = this.createTable({
 			bindingLength: iBindingLength,
 			_bVariableRowHeightEnabled: true
 		});
-		var iMaxFirstVisibleRow = this.getMaxFirstVisibleRow(iBindingLength, true);
-		var iMaxScrollTop = this.getMaxScrollTop(iBindingLength, true);
+		const iMaxFirstVisibleRow = this.getMaxFirstVisibleRow(iBindingLength, true);
+		const iMaxScrollTop = this.getMaxScrollTop(iBindingLength, true);
 
 		function scrollWithTouch(iScrollDelta) {
 			return function() {
@@ -3332,15 +3332,15 @@ sap.ui.define([
 	});
 
 	QUnit.test("Handling of touch events that do scroll", function(assert) {
-		var done = assert.async();
-		var that = this;
-		var bOriginalPointerSupport = Device.support.pointer;
-		var bOriginalTouchSupport = Device.support.touch;
+		const done = assert.async();
+		const that = this;
+		const bOriginalPointerSupport = Device.support.pointer;
+		const bOriginalTouchSupport = Device.support.touch;
 
 		Device.support.pointer = false;
 		Device.support.touch = true;
 
-		var oTable = this.createTable({
+		const oTable = this.createTable({
 			title: "test",
 			extension: [new HeightControl()],
 			footer: new HeightControl(),
@@ -3350,9 +3350,9 @@ sap.ui.define([
 		}, function(oTable) {
 			oTable.addColumn(new Column({template: new HeightControl()}));
 		});
-		var oTouchMoveEvent;
-		var oStopPropagationSpy;
-		var pTestSequence = Promise.resolve();
+		let oTouchMoveEvent;
+		let oStopPropagationSpy;
+		let pTestSequence = Promise.resolve();
 
 		function test(mConfig) {
 			return oTable.qunit.scrollVSbTo(0).then(function() {
@@ -3370,7 +3370,7 @@ sap.ui.define([
 		oTable.qunit.preventFocusOnTouch();
 
 		pTestSequence = pTestSequence.then(oTable.qunit.whenRenderingFinished).then(function() {
-			var aTestConfigs = [
+			const aTestConfigs = [
 				{name: "Cell in fixed column", element: oTable.qunit.getDataCell(0, 0)},
 				{name: "Cell in scrollable column", element: oTable.qunit.getDataCell(0, 1)},
 				{name: "Row header cell", element: oTable.qunit.getRowHeaderCell(0)},
@@ -3387,7 +3387,7 @@ sap.ui.define([
 			});
 
 			pTestSequence = pTestSequence.then(oTable.qunit.$scrollVSbTo(0)).then(function() {
-				var iMaxScrollTop = that.getMaxScrollTop();
+				const iMaxScrollTop = that.getMaxScrollTop();
 
 				function testOutsideBoundaries(iScrollDelta) {
 					oTouchMoveEvent = TableQUnitUtils.doTouchScrolling(0, iScrollDelta);
@@ -3421,15 +3421,15 @@ sap.ui.define([
 	});
 
 	QUnit.test("Handling of touch events that do not scroll", function(assert) {
-		var done = assert.async();
-		var that = this;
-		var bOriginalPointerSupport = Device.support.pointer;
-		var bOriginalTouchSupport = Device.support.touch;
+		const done = assert.async();
+		const that = this;
+		const bOriginalPointerSupport = Device.support.pointer;
+		const bOriginalTouchSupport = Device.support.touch;
 
 		Device.support.pointer = false;
 		Device.support.touch = true;
 
-		var oTable = this.createTable({
+		const oTable = this.createTable({
 			title: "test",
 			extension: [new HeightControl()],
 			footer: new HeightControl(),
@@ -3439,22 +3439,22 @@ sap.ui.define([
 		}, function(oTable) {
 			oTable.addColumn(new Column({template: new HeightControl()}));
 		});
-		var pTestSequence = Promise.resolve();
+		let pTestSequence = Promise.resolve();
 
 		function test(mConfig) {
-			var iScrollDelta = mConfig.scrollDelta == null ? 50 : mConfig.scrollDelta;
+			const iScrollDelta = mConfig.scrollDelta == null ? 50 : mConfig.scrollDelta;
 
 			if (mConfig.skipStartTouchScrolling !== true) {
 				TableQUnitUtils.startTouchScrolling(mConfig.element);
 			}
-			var oTouchMoveEvent = TableQUnitUtils.doTouchScrolling(0, iScrollDelta);
+			const oTouchMoveEvent = TableQUnitUtils.doTouchScrolling(0, iScrollDelta);
 			if (mConfig.skipStartTouchScrolling === true) {
 				TableQUnitUtils.endTouchScrolling();
 			}
 
-			var oStopPropagationSpy = sinon.spy(oTouchMoveEvent, "stopPropagation");
-			var iExpectedFirstVisibleRow = mConfig.firstVisibleRow == null ? 0 : mConfig.firstVisibleRow;
-			var iExpectedScrollTop = mConfig.scrollTop == null ? 0 : mConfig.scrollTop;
+			const oStopPropagationSpy = sinon.spy(oTouchMoveEvent, "stopPropagation");
+			const iExpectedFirstVisibleRow = mConfig.firstVisibleRow == null ? 0 : mConfig.firstVisibleRow;
+			const iExpectedScrollTop = mConfig.scrollTop == null ? 0 : mConfig.scrollTop;
 
 			return TableQUnitUtils.wait(100).then(function() {
 				that.assertPosition(assert, iExpectedFirstVisibleRow, iExpectedScrollTop, 0, "Touch - " + mConfig.name + ": Not scrolled");
@@ -3466,8 +3466,8 @@ sap.ui.define([
 		oTable.qunit.preventFocusOnTouch();
 
 		pTestSequence = pTestSequence.then(oTable.qunit.whenRenderingFinished).then(function() {
-			var oDomRef = oTable.getDomRef();
-			var aTestConfigs = [
+			const oDomRef = oTable.getDomRef();
+			const aTestConfigs = [
 				{name: "Horizontal scrollbar", element: oTable._getScrollExtension().getHorizontalScrollbar()},
 				{name: "Column header container", element: oDomRef.querySelector(".sapUiTableColHdrCnt")},
 				{name: "Title container", element: oDomRef.querySelector(".sapUiTableHdr")},
@@ -3524,10 +3524,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("Scroll the viewport; Tiny data; Variable row heights", function(assert) {
-		var that = this;
-		var iMaxFirstVisibleRow = this.getMaxFirstVisibleRow(10, true);
-		var iMaxScrollTop = this.getMaxScrollTop(10, true);
-		var pTestSequence = Promise.resolve();
+		const that = this;
+		const iMaxFirstVisibleRow = this.getMaxFirstVisibleRow(10, true);
+		const iMaxScrollTop = this.getMaxScrollTop(10, true);
+		let pTestSequence = Promise.resolve();
 
 		function scrollViewport(iScrollTop) {
 			return function() {
@@ -3537,7 +3537,7 @@ sap.ui.define([
 		}
 
 		function test(mConfig) {
-			var oTable = that.createTable({
+			const oTable = that.createTable({
 				rowMode: mConfig.rowMode,
 				bindingLength: 10,
 				_bVariableRowHeightEnabled: true
@@ -3567,11 +3567,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("Scroll the viewport; Small data; Variable row heights", function(assert) {
-		var that = this;
-		var iMaxFirstVisibleRow = this.getMaxFirstVisibleRow(null, true);
-		var iMaxFirstRenderedRow = this.getMaxFirstRenderedRow();
-		var iMaxScrollTop = this.getMaxScrollTop(null, true);
-		var pTestSequence = Promise.resolve();
+		const that = this;
+		const iMaxFirstVisibleRow = this.getMaxFirstVisibleRow(null, true);
+		const iMaxFirstRenderedRow = this.getMaxFirstRenderedRow();
+		const iMaxScrollTop = this.getMaxScrollTop(null, true);
+		let pTestSequence = Promise.resolve();
 
 		function scrollViewport(iScrollTop) {
 			return function() {
@@ -3581,7 +3581,7 @@ sap.ui.define([
 		}
 
 		function test(mConfig) {
-			var oTable = that.createTable({
+			const oTable = that.createTable({
 				rowMode: mConfig.rowMode,
 				_bVariableRowHeightEnabled: true
 			});
@@ -3619,12 +3619,12 @@ sap.ui.define([
 	});
 
 	QUnit.test("Scroll the viewport; Large data; Variable row heights", function(assert) {
-		var that = this;
-		var iBindingLength = 1000000000;
-		var iMaxFirstVisibleRow = this.getMaxFirstVisibleRow(iBindingLength, true);
-		var iMaxFirstRenderedRow = this.getMaxFirstRenderedRow(iBindingLength);
-		var iMaxScrollTop = this.getMaxScrollTop(iBindingLength, true);
-		var pTestSequence = Promise.resolve();
+		const that = this;
+		const iBindingLength = 1000000000;
+		const iMaxFirstVisibleRow = this.getMaxFirstVisibleRow(iBindingLength, true);
+		const iMaxFirstRenderedRow = this.getMaxFirstRenderedRow(iBindingLength);
+		const iMaxScrollTop = this.getMaxScrollTop(iBindingLength, true);
+		let pTestSequence = Promise.resolve();
 
 		function scrollViewport(iScrollTop, bExpectScrollbarScrolling) {
 			return function() {
@@ -3639,7 +3639,7 @@ sap.ui.define([
 		}
 
 		function test(mConfig) {
-			var oTable = that.createTable({
+			const oTable = that.createTable({
 				rowMode: mConfig.rowMode,
 				bindingLength: iBindingLength,
 				_bVariableRowHeightEnabled: true
@@ -3678,8 +3678,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Scroll row-wise with #scrollVertically; Small data; Fixed row heights", function(assert) {
-		var oTable = this.createTable();
-		var that = this;
+		const oTable = this.createTable();
+		const that = this;
 
 		return this.oTable.qunit.whenRenderingFinished().then(function() {
 			oTable._getScrollExtension().scrollVertically(true, false);
@@ -3692,10 +3692,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("Scroll row-wise with #scrollVertically; Small data; Variable row heights", function(assert) {
-		var oTable = this.createTable({
+		const oTable = this.createTable({
 			_bVariableRowHeightEnabled: true
 		});
-		var that = this;
+		const that = this;
 
 		return this.oTable.qunit.whenRenderingFinished().then(function() {
 			oTable._getScrollExtension().scrollVertically(true, false);
@@ -3708,8 +3708,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Scroll page-wise with #scrollVertically; Small data; Fixed row heights", function(assert) {
-		var oTable = this.createTable();
-		var that = this;
+		const oTable = this.createTable();
+		const that = this;
 
 		return this.oTable.qunit.whenRenderingFinished().then(function() {
 			oTable._getScrollExtension().scrollVertically(true, true);
@@ -3722,10 +3722,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("Scroll page-wise with #scrollVertically; Small data; Variable row heights", function(assert) {
-		var oTable = this.createTable({
+		const oTable = this.createTable({
 			_bVariableRowHeightEnabled: true
 		});
-		var that = this;
+		const that = this;
 
 		return this.oTable.qunit.whenRenderingFinished().then(function() {
 			oTable._getScrollExtension().scrollVertically(true, true);
@@ -3738,10 +3738,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("Scroll to top and bottom with #scrollVerticallyMax; Small data; Fixed row heights", function(assert) {
-		var oTable = this.createTable();
-		var iMaxFirstVisibleRow = this.getMaxFirstVisibleRow();
-		var iMaxScrollTop = this.getMaxScrollTop();
-		var that = this;
+		const oTable = this.createTable();
+		const iMaxFirstVisibleRow = this.getMaxFirstVisibleRow();
+		const iMaxScrollTop = this.getMaxScrollTop();
+		const that = this;
 
 		return this.oTable.qunit.whenRenderingFinished().then(function() {
 			oTable._getScrollExtension().scrollVerticallyMax(true);
@@ -3754,12 +3754,12 @@ sap.ui.define([
 	});
 
 	QUnit.test("Scroll to top and bottom with #scrollVerticallyMax; Small data; Variable row heights", function(assert) {
-		var oTable = this.createTable({
+		const oTable = this.createTable({
 			_bVariableRowHeightEnabled: true
 		});
-		var iMaxFirstVisibleRow = this.getMaxFirstVisibleRow(null, true);
-		var iMaxScrollTop = this.getMaxScrollTop(null, true);
-		var that = this;
+		const iMaxFirstVisibleRow = this.getMaxFirstVisibleRow(null, true);
+		const iMaxScrollTop = this.getMaxScrollTop(null, true);
+		const that = this;
 
 		return this.oTable.qunit.whenRenderingFinished().then(function() {
 			oTable._getScrollExtension().scrollVerticallyMax(true);
@@ -3772,11 +3772,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("Restore scroll position after setting ScrollTop; Tiny data; Variable row heights", function(assert) {
-		var that = this;
-		var pTestSequence = Promise.resolve();
+		const that = this;
+		let pTestSequence = Promise.resolve();
 
 		function test(mConfig) {
-			var oTable = that.createTable({
+			const oTable = that.createTable({
 				rowMode: mConfig.rowMode,
 				bindingLength: 10,
 				_bVariableRowHeightEnabled: true
@@ -3812,11 +3812,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("Restore scroll position after setting ScrollTop; Small data; Fixed row heights", function(assert) {
-		var that = this;
-		var pTestSequence = Promise.resolve();
+		const that = this;
+		let pTestSequence = Promise.resolve();
 
 		function test(mConfig) {
-			var oTable = that.createTable({
+			const oTable = that.createTable({
 				rowMode: mConfig.rowMode
 			});
 
@@ -3859,11 +3859,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("Restore scroll position after setting ScrollTop; Small data; Variable row heights", function(assert) {
-		var that = this;
-		var pTestSequence = Promise.resolve();
+		const that = this;
+		let pTestSequence = Promise.resolve();
 
 		function test(mConfig) {
-			var oTable = that.createTable({
+			const oTable = that.createTable({
 				rowMode: mConfig.rowMode,
 				_bVariableRowHeightEnabled: true
 			});
@@ -3907,11 +3907,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("Restore scroll position after setting ScrollTop; Large data; Fixed row heights", function(assert) {
-		var that = this;
-		var pTestSequence = Promise.resolve();
+		const that = this;
+		let pTestSequence = Promise.resolve();
 
 		function test(mConfig) {
-			var oTable = that.createTable({
+			const oTable = that.createTable({
 				rowMode: mConfig.rowMode,
 				bindingLength: 1000000000
 			});
@@ -3955,11 +3955,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("Restore scroll position after setting ScrollTop; Large data; Variable row heights", function(assert) {
-		var that = this;
-		var pTestSequence = Promise.resolve();
+		const that = this;
+		let pTestSequence = Promise.resolve();
 
 		function test(mConfig) {
-			var oTable = that.createTable({
+			const oTable = that.createTable({
 				rowMode: mConfig.rowMode,
 				bindingLength: 1000000000,
 				_bVariableRowHeightEnabled: true
@@ -4004,11 +4004,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("Restore scroll position after setting FirstVisibleRow; Tiny data; Variable row heights", function(assert) {
-		var that = this;
-		var pTestSequence = Promise.resolve();
+		const that = this;
+		let pTestSequence = Promise.resolve();
 
 		function test(mConfig) {
-			var oTable = that.createTable({
+			const oTable = that.createTable({
 				rowMode: mConfig.rowMode,
 				bindingLength: 10,
 				_bVariableRowHeightEnabled: true
@@ -4048,11 +4048,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("Restore scroll position after setting FirstVisibleRow; Small data; Fixed row heights", function(assert) {
-		var that = this;
-		var pTestSequence = Promise.resolve();
+		const that = this;
+		let pTestSequence = Promise.resolve();
 
 		function test(mConfig) {
-			var oTable = that.createTable({
+			const oTable = that.createTable({
 				rowMode: mConfig.rowMode
 			});
 
@@ -4095,11 +4095,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("Restore scroll position after setting FirstVisibleRow; Small data; Variable row heights", function(assert) {
-		var that = this;
-		var pTestSequence = Promise.resolve();
+		const that = this;
+		let pTestSequence = Promise.resolve();
 
 		function test(mConfig) {
-			var oTable = that.createTable({
+			const oTable = that.createTable({
 				rowMode: mConfig.rowMode,
 				_bVariableRowHeightEnabled: true
 			});
@@ -4143,11 +4143,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("Restore scroll position after setting FirstVisibleRow; Large data; Fixed row heights", function(assert) {
-		var that = this;
-		var pTestSequence = Promise.resolve();
+		const that = this;
+		let pTestSequence = Promise.resolve();
 
 		function test(mConfig) {
-			var oTable = that.createTable({
+			const oTable = that.createTable({
 				rowMode: mConfig.rowMode,
 				bindingLength: 1000000000
 			});
@@ -4191,11 +4191,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("Restore scroll position after setting FirstVisibleRow; Large data; Variable row heights", function(assert) {
-		var that = this;
-		var pTestSequence = Promise.resolve();
+		const that = this;
+		let pTestSequence = Promise.resolve();
 
 		function test(mConfig) {
-			var oTable = that.createTable({
+			const oTable = that.createTable({
 				rowMode: mConfig.rowMode,
 				bindingLength: 1000000000,
 				_bVariableRowHeightEnabled: true
@@ -4240,8 +4240,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Restore scroll position after changing the row heights; Tiny data; Variable row heights", function(assert) {
-		var that = this;
-		var pTestSequence = Promise.resolve();
+		const that = this;
+		let pTestSequence = Promise.resolve();
 
 		function changeRowHeights(iHeightA, iHeightB) {
 			return function() {
@@ -4251,12 +4251,12 @@ sap.ui.define([
 		}
 
 		function test(mConfig) {
-			var oTable = that.createTable({
+			const oTable = that.createTable({
 				rowMode: mConfig.rowMode,
 				bindingLength: 10,
 				_bVariableRowHeightEnabled: true
 			});
-			var sTitle = mConfig.rowMode + ", Changed row heights";
+			const sTitle = mConfig.rowMode + ", Changed row heights";
 
 			return oTable.qunit.whenRenderingFinished().then(changeRowHeights(100, 175)).then(function() {
 				that.assertPosition(assert, 0, 0, 0, sTitle + " when scrolled to top");
@@ -4285,8 +4285,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Restore scroll position after changing the row heights; Small data; Variable row heights", function(assert) {
-		var that = this;
-		var pTestSequence = Promise.resolve();
+		const that = this;
+		let pTestSequence = Promise.resolve();
 
 		function changeRowHeights(iHeightA, iHeightB) {
 			return function() {
@@ -4296,11 +4296,11 @@ sap.ui.define([
 		}
 
 		function test(mConfig) {
-			var oTable = that.createTable({
+			const oTable = that.createTable({
 				rowMode: mConfig.rowMode,
 				_bVariableRowHeightEnabled: true
 			});
-			var sTitle = mConfig.rowMode + ", Changed row heights";
+			const sTitle = mConfig.rowMode + ", Changed row heights";
 
 			return oTable.qunit.whenRenderingFinished().then(changeRowHeights(100, 175)).then(function() {
 				that.assertPosition(assert, 0, 0, 0, sTitle + " when scrolled to top");
@@ -4331,8 +4331,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Restore scroll position after changing the row heights; Large data; Variable row heights", function(assert) {
-		var that = this;
-		var pTestSequence = Promise.resolve();
+		const that = this;
+		let pTestSequence = Promise.resolve();
 
 		function changeRowHeights(iHeightA, iHeightB) {
 			return function() {
@@ -4342,12 +4342,12 @@ sap.ui.define([
 		}
 
 		function test(mConfig) {
-			var oTable = that.createTable({
+			const oTable = that.createTable({
 				rowMode: mConfig.rowMode,
 				bindingLength: 1000000000,
 				_bVariableRowHeightEnabled: true
 			});
-			var sTitle = mConfig.rowMode + ", Changed row heights";
+			const sTitle = mConfig.rowMode + ", Changed row heights";
 
 			return oTable.qunit.whenRenderingFinished().then(changeRowHeights(100, 175)).then(function() {
 				that.assertPosition(assert, 0, 0, 0, sTitle + " when scrolled to top");
@@ -4378,8 +4378,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Restore scroll position after changing the row count; Tiny data; Variable row heights", function(assert) {
-		var that = this;
-		var pTestSequence = Promise.resolve();
+		const that = this;
+		let pTestSequence = Promise.resolve();
 
 		function setRowCount(oRowMode, iRowCount) {
 			if (oRowMode instanceof FixedRowMode) {
@@ -4391,15 +4391,15 @@ sap.ui.define([
 		}
 
 		function test(mConfig) {
-			var oTable = that.createTable({
+			const oTable = that.createTable({
 				rowMode: mConfig.rowMode,
 				bindingLength: 10,
 				_bVariableRowHeightEnabled: true
 			});
-			var sTitle = mConfig.rowMode + ", ";
-			var iFirstVisibleRow;
-			var iScrollPosition;
-			var iInnerScrollPosition;
+			const sTitle = mConfig.rowMode + ", ";
+			let iFirstVisibleRow;
+			let iScrollPosition;
+			let iInnerScrollPosition;
 
 			return oTable.qunit.whenRenderingFinished().then(oTable.qunit.$scrollVSbTo(50)).then(function() {
 				iFirstVisibleRow = oTable.getFirstVisibleRow();
@@ -4465,8 +4465,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Restore scroll position after changing the row count; Small data; Fixed row heights", function(assert) {
-		var that = this;
-		var pTestSequence = Promise.resolve();
+		const that = this;
+		let pTestSequence = Promise.resolve();
 
 		function setRowCount(oRowMode, iRowCount) {
 			if (oRowMode instanceof FixedRowMode) {
@@ -4478,12 +4478,12 @@ sap.ui.define([
 		}
 
 		function test(mConfig) {
-			var oTable = that.createTable({
+			const oTable = that.createTable({
 				rowMode: mConfig.rowMode
 			});
-			var sTitle = mConfig.rowMode + ", ";
-			var iFirstVisibleRow;
-			var iScrollPosition;
+			const sTitle = mConfig.rowMode + ", ";
+			let iFirstVisibleRow;
+			let iScrollPosition;
 
 			return oTable.qunit.whenRenderingFinished().then(oTable.qunit.$scrollVSbTo(50)).then(function() {
 				iFirstVisibleRow = oTable.getFirstVisibleRow();
@@ -4541,8 +4541,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Restore scroll position after changing the row count; Small data; Variable row heights", function(assert) {
-		var that = this;
-		var pTestSequence = Promise.resolve();
+		const that = this;
+		let pTestSequence = Promise.resolve();
 
 		function setRowCount(oRowMode, iRowCount) {
 			if (oRowMode instanceof FixedRowMode) {
@@ -4554,14 +4554,14 @@ sap.ui.define([
 		}
 
 		function test(mConfig) {
-			var oTable = that.createTable({
+			const oTable = that.createTable({
 				rowMode: mConfig.rowMode,
 				_bVariableRowHeightEnabled: true
 			});
-			var sTitle = mConfig.rowMode + ", ";
-			var iFirstVisibleRow;
-			var iScrollPosition;
-			var iInnerScrollPosition;
+			const sTitle = mConfig.rowMode + ", ";
+			let iFirstVisibleRow;
+			let iScrollPosition;
+			let iInnerScrollPosition;
 
 			return oTable.qunit.whenRenderingFinished().then(oTable.qunit.$scrollVSbTo(50)).then(function() {
 				iFirstVisibleRow = oTable.getFirstVisibleRow();
@@ -4632,8 +4632,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Restore scroll position after changing the row count; Large data; Fixed row heights", function(assert) {
-		var that = this;
-		var pTestSequence = Promise.resolve();
+		const that = this;
+		let pTestSequence = Promise.resolve();
 
 		function setRowCount(oRowMode, iRowCount) {
 			if (oRowMode instanceof FixedRowMode) {
@@ -4645,13 +4645,13 @@ sap.ui.define([
 		}
 
 		function test(mConfig) {
-			var oTable = that.createTable({
+			const oTable = that.createTable({
 				rowMode: mConfig.rowMode,
 				bindingLength: 1000000000
 			});
-			var sTitle = mConfig.rowMode + ", ";
-			var iFirstVisibleRow;
-			var iScrollPosition;
+			const sTitle = mConfig.rowMode + ", ";
+			let iFirstVisibleRow;
+			let iScrollPosition;
 
 			return oTable.qunit.whenRenderingFinished().then(function() {
 				setRowCount(mConfig.rowMode, 9);
@@ -4720,8 +4720,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Restore scroll position after changing the row count; Large data; Variable row heights", function(assert) {
-		var that = this;
-		var pTestSequence = Promise.resolve();
+		const that = this;
+		let pTestSequence = Promise.resolve();
 
 		function setRowCount(oRowMode, iRowCount) {
 			if (oRowMode instanceof FixedRowMode) {
@@ -4733,15 +4733,15 @@ sap.ui.define([
 		}
 
 		function test(mConfig) {
-			var oTable = that.createTable({
+			const oTable = that.createTable({
 				rowMode: mConfig.rowMode,
 				bindingLength: 1000000000,
 				_bVariableRowHeightEnabled: true
 			});
-			var sTitle = mConfig.rowMode + ", ";
-			var iFirstVisibleRow;
-			var iScrollPosition;
-			var iInnerScrollPosition;
+			const sTitle = mConfig.rowMode + ", ";
+			let iFirstVisibleRow;
+			let iScrollPosition;
+			let iInnerScrollPosition;
 
 			return oTable.qunit.whenRenderingFinished().then(function() {
 				setRowCount(mConfig.rowMode, 9);
@@ -4821,12 +4821,12 @@ sap.ui.define([
 	});
 
 	QUnit.test("Restore scroll position after changing the row count on resize; Small data; Fixed row heights", function(assert) {
-		var that = this;
-		var oTable = this.createTable({
+		const that = this;
+		const oTable = this.createTable({
 			rowMode: this.mTestedRowModes.AutoRowMode.setMinRowCount(8)
 		});
-		var iFirstVisibleRow;
-		var iScrollPosition;
+		let iFirstVisibleRow;
+		let iScrollPosition;
 
 		return oTable.qunit.whenRenderingFinished().then(oTable.qunit.$scrollVSbTo(200)).then(function() {
 			iFirstVisibleRow = oTable.getFirstVisibleRow();
@@ -4850,19 +4850,19 @@ sap.ui.define([
 	});
 
 	QUnit.test("Restore scroll position after binding length change; Tiny data; Variable row heights", function(assert) {
-		var that = this;
-		var pTestSequence = Promise.resolve();
+		const that = this;
+		let pTestSequence = Promise.resolve();
 
 		function test(mConfig) {
-			var oTable = that.createTable({
+			const oTable = that.createTable({
 				rowMode: mConfig.rowMode,
 				bindingLength: 10,
 				_bVariableRowHeightEnabled: true
 			});
-			var sTitle = mConfig.rowMode + ", ";
-			var iFirstVisibleRow;
-			var iScrollPosition;
-			var iInnerScrollPosition;
+			const sTitle = mConfig.rowMode + ", ";
+			let iFirstVisibleRow;
+			let iScrollPosition;
+			let iInnerScrollPosition;
 
 			return oTable.qunit.whenRenderingFinished().then(oTable.qunit.$scrollVSbTo(40)).then(function() {
 				iFirstVisibleRow = oTable.getFirstVisibleRow();
@@ -4982,16 +4982,16 @@ sap.ui.define([
 	});
 
 	QUnit.test("Restore scroll position after binding length change; Small data; Fixed row heights", function(assert) {
-		var that = this;
-		var pTestSequence = Promise.resolve();
+		const that = this;
+		let pTestSequence = Promise.resolve();
 
 		function test(mConfig) {
-			var oTable = that.createTable({
+			const oTable = that.createTable({
 				rowMode: mConfig.rowMode
 			});
-			var sTitle = mConfig.rowMode + ", ";
-			var iFirstVisibleRow;
-			var iScrollPosition;
+			const sTitle = mConfig.rowMode + ", ";
+			let iFirstVisibleRow;
+			let iScrollPosition;
 
 			return oTable.qunit.whenRenderingFinished().then(oTable.qunit.$scrollVSbTo(60)).then(function() {
 				iFirstVisibleRow = oTable.getFirstVisibleRow();
@@ -5104,18 +5104,18 @@ sap.ui.define([
 	});
 
 	QUnit.test("Restore scroll position after binding length change; Small data; Variable row heights", function(assert) {
-		var that = this;
-		var pTestSequence = Promise.resolve();
+		const that = this;
+		let pTestSequence = Promise.resolve();
 
 		function test(mConfig) {
-			var oTable = that.createTable({
+			const oTable = that.createTable({
 				rowMode: mConfig.rowMode,
 				_bVariableRowHeightEnabled: true
 			});
-			var sTitle = mConfig.rowMode + ", ";
-			var iFirstVisibleRow;
-			var iScrollPosition;
-			var iInnerScrollPosition;
+			const sTitle = mConfig.rowMode + ", ";
+			let iFirstVisibleRow;
+			let iScrollPosition;
+			let iInnerScrollPosition;
 
 			return oTable.qunit.whenRenderingFinished().then(oTable.qunit.$scrollVSbTo(60)).then(function() {
 				iFirstVisibleRow = oTable.getFirstVisibleRow();
@@ -5235,18 +5235,18 @@ sap.ui.define([
 	});
 
 	QUnit.test("Restore scroll position after binding length change; Large data; Fixed row heights", function(assert) {
-		var that = this;
-		var pTestSequence = Promise.resolve();
-		var iBindingLength = 1000000000;
+		const that = this;
+		let pTestSequence = Promise.resolve();
+		const iBindingLength = 1000000000;
 
 		function test(mConfig) {
-			var oTable = that.createTable({
+			const oTable = that.createTable({
 				rowMode: mConfig.rowMode,
 				bindingLength: iBindingLength
 			});
-			var sTitle = mConfig.rowMode + ", ";
-			var iFirstVisibleRow;
-			var iScrollPosition;
+			const sTitle = mConfig.rowMode + ", ";
+			let iFirstVisibleRow;
+			let iScrollPosition;
 
 			return oTable.qunit.whenRenderingFinished().then(oTable.qunit.$scrollVSbTo(60)).then(function() {
 				iFirstVisibleRow = oTable.getFirstVisibleRow();
@@ -5359,20 +5359,20 @@ sap.ui.define([
 	});
 
 	QUnit.test("Restore scroll position after binding length change; Large data; Variable row heights", function(assert) {
-		var that = this;
-		var pTestSequence = Promise.resolve();
-		var iBindingLength = 1000000000;
+		const that = this;
+		let pTestSequence = Promise.resolve();
+		const iBindingLength = 1000000000;
 
 		function test(mConfig) {
-			var oTable = that.createTable({
+			const oTable = that.createTable({
 				rowMode: mConfig.rowMode,
 				bindingLength: iBindingLength,
 				_bVariableRowHeightEnabled: true
 			});
-			var sTitle = mConfig.rowMode + ", ";
-			var iFirstVisibleRow;
-			var iScrollPosition;
-			var iInnerScrollPosition;
+			const sTitle = mConfig.rowMode + ", ";
+			let iFirstVisibleRow;
+			let iScrollPosition;
+			let iInnerScrollPosition;
 
 			return oTable.qunit.whenRenderingFinished().then(oTable.qunit.$scrollVSbTo(60)).then(function() {
 				iFirstVisibleRow = oTable.getFirstVisibleRow();
@@ -5492,10 +5492,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("The table's DOM is removed without notifying the table", function(assert) {
-		var oTable = this.createTable();
-		var oScrollExtension = oTable._getScrollExtension();
-		var oTableElement;
-		var oTableParentElement;
+		const oTable = this.createTable();
+		const oScrollExtension = oTable._getScrollExtension();
+		let oTableElement;
+		let oTableParentElement;
 
 		return oTable.qunit.whenRenderingFinished().then(function() {
 			oTableElement = oTable.getDomRef();
@@ -5554,7 +5554,7 @@ sap.ui.define([
 	QUnit.module("Special cases");
 
 	QUnit.test("Scrolling inside the cell", function(assert) {
-		var DummyControl = Control.extend("sap.ui.table.test.DummyControl", {
+		const DummyControl = Control.extend("sap.ui.table.test.DummyControl", {
 			renderer: {
 				apiVersion: 2,
 				render: function(oRm, oControl) {
@@ -5584,7 +5584,7 @@ sap.ui.define([
 			}
 		});
 
-		var oTable = TableQUnitUtils.createTable({
+		const oTable = TableQUnitUtils.createTable({
 			columns: [
 				new Column({template: new DummyControl(), width: "20px"}),
 				new Column({template: new DummyControl(), width: "20px"})
@@ -5599,10 +5599,10 @@ sap.ui.define([
 		});
 
 		function test(sTitle, iColumnIndex) {
-			var oCellContent = oTable.getRows()[0].getCells()[iColumnIndex].getDomRef();
+			const oCellContent = oTable.getRows()[0].getCells()[iColumnIndex].getDomRef();
 
 			return oTable.qunit.focus(oCellContent).then(function() {
-				var $InnerCellElement = TableUtils.getCell(oTable, oCellContent).find(".sapUiTableCellInner");
+				const $InnerCellElement = TableUtils.getCell(oTable, oCellContent).find(".sapUiTableCellInner");
 
 				assert.strictEqual($InnerCellElement[0].scrollLeft, 0, sTitle + ": The cell content is not scrolled horizontally");
 				assert.strictEqual($InnerCellElement[0].scrollTop, 0, sTitle + ": The cell content is not scrolled vertically");
@@ -5635,9 +5635,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("Scrollbar", function(assert) {
-		var oTable = this.oTable;
-		var oCellContent = oTable.getRows()[0].getCells()[0].getDomRef();
-		var oEvent;
+		const oTable = this.oTable;
+		const oCellContent = oTable.getRows()[0].getCells()[0].getDomRef();
+		let oEvent;
 
 		return oTable.qunit.focus(oCellContent).then(function() {
 			// Horizontal
@@ -5659,8 +5659,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Scrollbar; Large data scrolling", function(assert) {
-		var oTable = this.oTable;
-		var oCellContent = oTable.getRows()[0].getCells()[0].getDomRef();
+		const oTable = this.oTable;
+		const oCellContent = oTable.getRows()[0].getCells()[0].getDomRef();
 
 		oTable._bLargeDataScrolling = true;
 
@@ -5676,10 +5676,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("MouseWheel", function(assert) {
-		var oTable = this.oTable;
-		var oCellContent = oTable.getRows()[0].getCells()[0].getDomRef();
-		var oTableContainer = oTable.getDomRef("tableCCnt");
-		var oWheelEvent;
+		const oTable = this.oTable;
+		const oCellContent = oTable.getRows()[0].getCells()[0].getDomRef();
+		const oTableContainer = oTable.getDomRef("tableCCnt");
+		let oWheelEvent;
 
 		return oTable.qunit.focus(oCellContent).then(function() {
 			// Horizontal
@@ -5699,13 +5699,13 @@ sap.ui.define([
 	});
 
 	QUnit.test("MouseWheel; textarea element inside a cell", async function(assert) {
-		var oWheelEvent = TableQUnitUtils.createMouseWheelEvent(20, MouseWheelDeltaMode.PIXEL, false);
-		var oStopPropagationSpy = sinon.spy(oWheelEvent, "stopPropagation");
+		let oWheelEvent = TableQUnitUtils.createMouseWheelEvent(20, MouseWheelDeltaMode.PIXEL, false);
+		const oStopPropagationSpy = sinon.spy(oWheelEvent, "stopPropagation");
 
 		this.oTable.insertColumn(new Column({template: new TextArea({value: "A\nB\nC\nD\nE"})}), 0);
 		await this.oTable.qunit.whenRenderingFinished();
 
-		var oTargetElement = this.oTable.qunit.getDataCell(0, 0).querySelector("textarea");
+		const oTargetElement = this.oTable.qunit.getDataCell(0, 0).querySelector("textarea");
 		oTargetElement.dispatchEvent(oWheelEvent);
 
 		await TableQUnitUtils.wait(100);
@@ -5738,9 +5738,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("Touch", function(assert) {
-		var oTable = this.oTable;
-		var bOriginalPointerSupport = Device.support.pointer;
-		var bOriginalTouchSupport = Device.support.touch;
+		const oTable = this.oTable;
+		const bOriginalPointerSupport = Device.support.pointer;
+		const bOriginalTouchSupport = Device.support.touch;
 
 		Device.support.pointer = false;
 		Device.support.touch = true;
@@ -5770,8 +5770,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("FirstVisibleRow", function(assert) {
-		var oTable = this.oTable;
-		var oCellContent = oTable.getRows()[0].getCells()[0].getDomRef();
+		const oTable = this.oTable;
+		const oCellContent = oTable.getRows()[0].getCells()[0].getDomRef();
 
 		return oTable.qunit.focus(oCellContent).then(function() {
 			assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");

@@ -10,31 +10,31 @@ sap.ui.define([
 ], function(Log, library, Controller, MessageToast, JSONModel, DateFormat, jQuery, UI5Date) {
 	"use strict";
 
-	var SelectionBehavior = library.SelectionBehavior,
-		SelectionMode = library.SelectionMode;
+	const SelectionBehavior = library.SelectionBehavior;
+	const SelectionMode = library.SelectionMode;
 
 	return Controller.extend("sap.ui.table.sample.Selection.Controller", {
 
 		onInit: function() {
 			// set explored app's demo model on this sample
-			var oJSONModel = this.initSampleDataModel();
-			var oView = this.getView();
+			const oJSONModel = this.initSampleDataModel();
+			const oView = this.getView();
 			oView.setModel(oJSONModel);
 
-			var aSelectionModes = [];
+			const aSelectionModes = [];
 			jQuery.each(SelectionMode, function(k, v) {
 				if (k != SelectionMode.Multi) {
 					aSelectionModes.push({key: k, text: v});
 				}
 			});
 
-			var aSelectionBehaviors = [];
+			const aSelectionBehaviors = [];
 			jQuery.each(SelectionBehavior, function(k, v) {
 				aSelectionBehaviors.push({key: k, text: v});
 			});
 
 			// create JSON model instance
-			var oModel = new JSONModel({
+			const oModel = new JSONModel({
 				"selectionitems": aSelectionModes,
 				"behavioritems": aSelectionBehaviors
 			});
@@ -43,19 +43,19 @@ sap.ui.define([
 		},
 
 		initSampleDataModel: function() {
-			var oModel = new JSONModel();
+			const oModel = new JSONModel();
 
-			var oDateFormat = DateFormat.getDateInstance({source: {pattern: "timestamp"}, pattern: "dd/MM/yyyy"});
+			const oDateFormat = DateFormat.getDateInstance({source: {pattern: "timestamp"}, pattern: "dd/MM/yyyy"});
 
 			jQuery.ajax(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"), {
 				dataType: "json",
 				success: function(oData) {
-					var aTemp1 = [];
-					var aTemp2 = [];
-					var aSuppliersData = [];
-					var aCategoryData = [];
-					for (var i = 0; i < oData.ProductCollection.length; i++) {
-						var oProduct = oData.ProductCollection[i];
+					const aTemp1 = [];
+					const aTemp2 = [];
+					const aSuppliersData = [];
+					const aCategoryData = [];
+					for (let i = 0; i < oData.ProductCollection.length; i++) {
+						const oProduct = oData.ProductCollection[i];
 						if (oProduct.SupplierName && aTemp1.indexOf(oProduct.SupplierName) < 0) {
 							aTemp1.push(oProduct.SupplierName);
 							aSuppliersData.push({Name: oProduct.SupplierName});
@@ -88,23 +88,23 @@ sap.ui.define([
 				MessageToast.show("selectionMode:All is deprecated. Please select another one.");
 				return;
 			}
-			var oTable = this.byId("table1");
+			const oTable = this.byId("table1");
 			oTable.setSelectionMode(oEvent.getParameter("selectedItem").getKey());
 		},
 
 		onBehaviourModeChange: function(oEvent) {
-			var oTable = this.byId("table1");
+			const oTable = this.byId("table1");
 			oTable.setSelectionBehavior(oEvent.getParameter("selectedItem").getKey());
 		},
 
 		onSwitchChange: function(oEvent) {
-			var oTable = this.byId("table1");
+			const oTable = this.byId("table1");
 			oTable.setEnableSelectAll(oEvent.getParameter("state"));
 		},
 
 		getSelectedIndices: function(evt) {
-			var aIndices = this.byId("table1").getSelectedIndices();
-			var sMsg;
+			const aIndices = this.byId("table1").getSelectedIndices();
+			let sMsg;
 			if (aIndices.length < 1) {
 				sMsg = "no item selected";
 			} else {
@@ -114,9 +114,9 @@ sap.ui.define([
 		},
 
 		getContextByIndex: function(evt) {
-			var oTable = this.byId("table1");
-			var iIndex = oTable.getSelectedIndex();
-			var sMsg;
+			const oTable = this.byId("table1");
+			const iIndex = oTable.getSelectedIndex();
+			let sMsg;
 			if (iIndex < 0) {
 				sMsg = "no item selected";
 			} else {

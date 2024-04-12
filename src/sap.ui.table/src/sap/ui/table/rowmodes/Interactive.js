@@ -39,7 +39,7 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @version ${version}
 	 */
-	var InteractiveRowMode = RowMode.extend("sap.ui.table.rowmodes.Interactive", /** @lends sap.ui.table.rowmodes.Interactive.prototype */ {
+	const InteractiveRowMode = RowMode.extend("sap.ui.table.rowmodes.Interactive", /** @lends sap.ui.table.rowmodes.Interactive.prototype */ {
 		metadata: {
 			library: "sap.ui.table",
 			"final": true,
@@ -83,12 +83,12 @@ sap.ui.define([
 		}
 	});
 
-	var TableDelegate = {};
+	const TableDelegate = {};
 
 	/*
 	 * Provides drag&drop resize capabilities.
 	 */
-	var ResizeHelper = {};
+	const ResizeHelper = {};
 
 	/**
 	 * @inheritDoc
@@ -127,7 +127,7 @@ sap.ui.define([
 		 * @deprecated As of version 1.119
 		 */
 		if (this.bLegacy) {
-			var oTable = this.getTable();
+			const oTable = this.getTable();
 			return oTable ? oTable.getVisibleRowCount() : 0;
 		}
 
@@ -139,7 +139,7 @@ sap.ui.define([
 		 * @deprecated As of version 1.119
 		 */
 		if (this.bLegacy) {
-			var oTable = this.getTable();
+			const oTable = this.getTable();
 			return oTable ? oTable.getFixedRowCount() : 0;
 		}
 
@@ -151,7 +151,7 @@ sap.ui.define([
 		 * @deprecated As of version 1.119
 		 */
 		if (this.bLegacy) {
-			var oTable = this.getTable();
+			const oTable = this.getTable();
 			return oTable ? oTable.getFixedBottomRowCount() : 0;
 		}
 
@@ -163,7 +163,7 @@ sap.ui.define([
 		 * @deprecated As of version 1.119
 		 */
 		if (this.bLegacy) {
-			var oTable = this.getTable();
+			const oTable = this.getTable();
 			return oTable ? oTable.getMinAutoRowCount() : 0;
 		}
 
@@ -175,7 +175,7 @@ sap.ui.define([
 		 * @deprecated As of version 1.119
 		 */
 		if (this.bLegacy) {
-			var oTable = this.getTable();
+			const oTable = this.getTable();
 			return oTable ? oTable.getRowHeight() : 0;
 		}
 
@@ -193,9 +193,9 @@ sap.ui.define([
 	 * @inheritDoc
 	 */
 	InteractiveRowMode.prototype.getComputedRowCounts = function() {
-		var iRowCount = this.getConfiguredRowCount();
-		var iFixedTopRowCount = this.getFixedTopRowCount();
-		var iFixedBottomRowCount = this.getFixedBottomRowCount();
+		const iRowCount = this.getConfiguredRowCount();
+		const iFixedTopRowCount = this.getFixedTopRowCount();
+		const iFixedBottomRowCount = this.getFixedBottomRowCount();
 
 		return this.computeStandardizedRowCounts(iRowCount, iFixedTopRowCount, iFixedBottomRowCount);
 	};
@@ -213,7 +213,7 @@ sap.ui.define([
 	 * @inheritDoc
 	 */
 	InteractiveRowMode.prototype.getRowContainerStyles = function() {
-		var sHeight = this.getComputedRowCounts().count * this.getBaseRowHeightOfTable() + "px";
+		const sHeight = this.getComputedRowCounts().count * this.getBaseRowHeightOfTable() + "px";
 
 		/**
 		 * @deprecated As of version 1.119
@@ -229,7 +229,7 @@ sap.ui.define([
 	 * @inheritDoc
 	 */
 	InteractiveRowMode.prototype.renderRowStyles = function(oRM) {
-		var iRowContentHeight = this.getRowContentHeight();
+		const iRowContentHeight = this.getRowContentHeight();
 
 		if (iRowContentHeight > 0) {
 			oRM.style("height", this.getBaseRowHeightOfTable() + "px");
@@ -240,7 +240,7 @@ sap.ui.define([
 	 * @inheritDoc
 	 */
 	InteractiveRowMode.prototype.renderCellContentStyles = function(oRM) {
-		var iRowContentHeight = this.getRowContentHeight();
+		let iRowContentHeight = this.getRowContentHeight();
 
 		/**
 		 * @deprecated As of version 1.119
@@ -283,7 +283,7 @@ sap.ui.define([
 	 * @private
 	 */
 	InteractiveRowMode.prototype._onTableRefreshRows = function() {
-		var iRowCount = this.getConfiguredRowCount();
+		const iRowCount = this.getConfiguredRowCount();
 
 		if (iRowCount > 0) {
 			this.initTableRowsAfterDataRequested(iRowCount);
@@ -315,8 +315,8 @@ sap.ui.define([
 	 * @this sap.ui.table.rowmodes.Interactive
 	 */
 	TableDelegate.onAfterRendering = function(oEvent) {
-		var oTable = this.getTable();
-		var bRenderedRows = oEvent && oEvent.isMarked("renderRows");
+		const oTable = this.getTable();
+		const bRenderedRows = oEvent && oEvent.isMarked("renderRows");
 
 		if (!bRenderedRows && oTable.getRows().length > 0) {
 			this.fireRowsUpdated(TableUtils.RowsUpdateReason.Render);
@@ -327,7 +327,7 @@ sap.ui.define([
 	 * @this sap.ui.table.rowmodes.Interactive
 	 */
 	TableDelegate.onmousedown = function(oEvent) {
-		var oTable = this.getTable();
+		const oTable = this.getTable();
 
 		if (oEvent.button === 0 && oEvent.target === oTable.getDomRef("sb")) {
 			ResizeHelper.initInteractiveResizing(oTable, this, oEvent);
@@ -342,15 +342,15 @@ sap.ui.define([
 	 * @param {jQuery.Event} oEvent The event object.
 	 */
 	ResizeHelper.initInteractiveResizing = function(oTable, oMode, oEvent) {
-		var $Body = jQuery(document.body);
-		var $Splitter = oTable.$("sb");
-		var $Document = jQuery(document);
-		var offset = $Splitter.offset();
-		var height = $Splitter.height();
-		var width = $Splitter.width();
-		var bTouch = oTable._isTouchEvent(oEvent);
+		const $Body = jQuery(document.body);
+		const $Splitter = oTable.$("sb");
+		const $Document = jQuery(document);
+		const offset = $Splitter.offset();
+		const height = $Splitter.height();
+		const width = $Splitter.width();
+		const bTouch = oTable._isTouchEvent(oEvent);
 
-		var oGhostDiv = document.createElement("div");
+		const oGhostDiv = document.createElement("div");
 		oGhostDiv.style.width = width + "px";
 		oGhostDiv.style.height = height + "px";
 		oGhostDiv.style.left = offset.left + "px";
@@ -359,7 +359,7 @@ sap.ui.define([
 		oGhostDiv.id = oTable.getId() + "-ghost";
 		$Body.append(oGhostDiv);
 
-		var oOverlayDiv = document.createElement("div");
+		const oOverlayDiv = document.createElement("div");
 		oOverlayDiv.style.top = "0px";
 		oOverlayDiv.style.bottom = "0px";
 		oOverlayDiv.style.left = "0px";
@@ -384,13 +384,13 @@ sap.ui.define([
 	 * @param {jQuery.Event} oEvent The event object.
 	 */
 	ResizeHelper.exitInteractiveResizing = function(oMode, oEvent) {
-		var $Document = jQuery(document);
-		var $Table = this.$();
-		var $Ghost = this.$("ghost");
-		var iLocationY = ResizeHelper.getEventPosition(this, oEvent).y;
-		var iNewHeight = iLocationY - $Table.find(".sapUiTableCCnt").offset().top - $Ghost.height() - $Table.find(".sapUiTableFtr").height();
-		var iUserDefinedRowCount = Math.floor(iNewHeight / oMode.getBaseRowHeightOfTable());
-		var iNewRowCount = Math.max(1, iUserDefinedRowCount, oMode.getMinRowCount());
+		const $Document = jQuery(document);
+		const $Table = this.$();
+		const $Ghost = this.$("ghost");
+		const iLocationY = ResizeHelper.getEventPosition(this, oEvent).y;
+		const iNewHeight = iLocationY - $Table.find(".sapUiTableCCnt").offset().top - $Ghost.height() - $Table.find(".sapUiTableFtr").height();
+		const iUserDefinedRowCount = Math.floor(iNewHeight / oMode.getBaseRowHeightOfTable());
+		let iNewRowCount = Math.max(1, iUserDefinedRowCount, oMode.getMinRowCount());
 
 		/**
 		 * @deprecated As of version 1.119
@@ -419,8 +419,8 @@ sap.ui.define([
 	 * @param {jQuery.Event} oEvent The event object.
 	 */
 	ResizeHelper.onMouseMoveWhileInteractiveResizing = function(oEvent) {
-		var iLocationY = ResizeHelper.getEventPosition(this, oEvent).y;
-		var iMin = this.$().offset().top;
+		const iLocationY = ResizeHelper.getEventPosition(this, oEvent).y;
+		const iMin = this.$().offset().top;
 
 		if (iLocationY > iMin) {
 			this.$("ghost").css("top", iLocationY + "px");
@@ -436,17 +436,17 @@ sap.ui.define([
 	 * @returns {{x: int, y: int}} The event position.
 	 */
 	ResizeHelper.getEventPosition = function(oTable, oEvent) {
-		var oPosition;
+		const oPosition = getTouchObject(oEvent) || oEvent;
 
 		function getTouchObject(oTouchEvent) {
 			if (!oTable._isTouchEvent(oTouchEvent)) {
 				return null;
 			}
 
-			var aTouchEventObjectNames = ["touches", "targetTouches", "changedTouches"];
+			const aTouchEventObjectNames = ["touches", "targetTouches", "changedTouches"];
 
-			for (var i = 0; i < aTouchEventObjectNames.length; i++) {
-				var sTouchEventObjectName = aTouchEventObjectNames[i];
+			for (let i = 0; i < aTouchEventObjectNames.length; i++) {
+				const sTouchEventObjectName = aTouchEventObjectNames[i];
 
 				if (oEvent[sTouchEventObjectName] && oEvent[sTouchEventObjectName][0]) {
 					return oEvent[sTouchEventObjectName][0];
@@ -458,8 +458,6 @@ sap.ui.define([
 
 			return null;
 		}
-
-		oPosition = getTouchObject(oEvent) || oEvent;
 
 		return {x: oPosition.pageX, y: oPosition.pageY};
 	};

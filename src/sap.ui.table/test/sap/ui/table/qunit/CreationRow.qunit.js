@@ -21,8 +21,8 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var TestControl = TableQUnitUtils.TestControl;
-	var TestInputControl = TableQUnitUtils.TestInputControl;
+	const TestControl = TableQUnitUtils.TestControl;
+	const TestInputControl = TableQUnitUtils.TestInputControl;
 
 	QUnit.module("Public API", {
 		beforeEach: function() {
@@ -52,14 +52,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("#resetFocus", async function(assert) {
-		var oCreationRow = this.oTable.getCreationRow();
+		const oCreationRow = this.oTable.getCreationRow();
 
 		this.oTable.qunit.getDataCell(0, 0).focus();
 
 		assert.strictEqual(oCreationRow.resetFocus(), true, "Returned true, because an element was focused");
 		assert.strictEqual(document.activeElement, oCreationRow.getCells()[1].getDomRef(), "The first interactive element is focused");
 
-		var oInput = oCreationRow.getCells()[1].getDomRef();
+		const oInput = oCreationRow.getCells()[1].getDomRef();
 		assert.strictEqual(oInput.selectionStart, 0, "The selection starts from index 0");
 		assert.strictEqual(oInput.selectionEnd, 5, "The selection ends as index 5");
 
@@ -99,9 +99,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("#_fireApply", async function(assert) {
-		var oCreationRow = this.oTable.getCreationRow();
-		var oApplySpy = sinon.spy();
-		var oResetFocusSpy = sinon.spy(oCreationRow, "resetFocus");
+		const oCreationRow = this.oTable.getCreationRow();
+		const oApplySpy = sinon.spy();
+		const oResetFocusSpy = sinon.spy(oCreationRow, "resetFocus");
 
 		oCreationRow.attachApply(oApplySpy);
 
@@ -160,7 +160,7 @@ sap.ui.define([
 		this.oTable.setCreationRow(this.oCreationRow);
 		await this.oTable.qunit.whenRenderingFinished();
 
-		var oDefaultToolbar = this.oCreationRow.getAggregation("_defaultToolbar");
+		const oDefaultToolbar = this.oCreationRow.getAggregation("_defaultToolbar");
 
 		assert.notEqual(oDefaultToolbar.getDomRef(), null, "No custom toolbar is set: The default toolbar is rendered");
 
@@ -177,7 +177,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Horizontal scrollbar position in the DOM", async function(assert) {
-		var sBusySection = "sapUiTableGridCnt";
+		const sBusySection = "sapUiTableGridCnt";
 
 		this.oTable.setCreationRow(this.oCreationRow);
 		await this.oTable.qunit.whenRenderingFinished();
@@ -237,30 +237,30 @@ sap.ui.define([
 	});
 
 	QUnit.test("Root", function(assert) {
-		var oRow = this.oTable.getCreationRow();
-		var $Row = oRow.$();
+		const oRow = this.oTable.getCreationRow();
+		const $Row = oRow.$();
 
 		assert.strictEqual($Row.attr("role"), "form", "Aria Role of creation row root element");
 		assert.strictEqual($Row.attr("aria-labelledby"), oRow.getId() + "-label", "Label of creation row root element");
 	});
 
 	QUnit.test("Default Toolbar", function(assert) {
-		var oRow = this.oTable.getCreationRow();
-		var oDefaultToolbar = oRow.getAggregation("_defaultToolbar");
+		const oRow = this.oTable.getCreationRow();
+		const oDefaultToolbar = oRow.getAggregation("_defaultToolbar");
 
 		assert.strictEqual(oDefaultToolbar.getAriaLabelledBy()[0], oRow.getId() + "-label", "Default toolbar has correct label");
 	});
 
 	QUnit.test("Inner table elements", function(assert) {
-		var oRow = this.oTable.getCreationRow();
-		var $Row = oRow.$();
+		const oRow = this.oTable.getCreationRow();
+		const $Row = oRow.$();
 
 		assert.strictEqual($Row.find("table").attr("role"), "presentation", "Aria Role of creation row inner table element");
 	});
 
 	QUnit.test("Cells", function(assert) {
-		var oRow = this.oTable.getCreationRow();
-		var aCells = oRow.getCells();
+		const oRow = this.oTable.getCreationRow();
+		const aCells = oRow.getCells();
 
 		assert.strictEqual(aCells[0].getAriaLabelledBy()[0], "column1", "The first cell is labelled by the correct column");
 		assert.strictEqual(aCells[1].getAriaLabelledBy()[0], "column2", "The first cell is labelled by the correct column");
@@ -300,13 +300,13 @@ sap.ui.define([
 	});
 
 	QUnit.test("Fire apply with Enter, CTRL+Enter", function(assert) {
-		var oTable = this.oTable;
-		var oCreationRow = oTable.getCreationRow();
-		var oInput = oCreationRow.getCells()[0];
-		var oFormElement = oInput.getDomRef();
-		var oFireApplySpy = sinon.spy(oCreationRow, "_fireApply");
-		var aEvents = [];
-		var oClock = sinon.useFakeTimers();
+		const oTable = this.oTable;
+		const oCreationRow = oTable.getCreationRow();
+		const oInput = oCreationRow.getCells()[0];
+		let oFormElement = oInput.getDomRef();
+		const oFireApplySpy = sinon.spy(oCreationRow, "_fireApply");
+		let aEvents = [];
+		const oClock = sinon.useFakeTimers();
 
 		function test(fnAct, fnAssert) {
 			oFireApplySpy.resetHistory();
@@ -446,11 +446,11 @@ sap.ui.define([
 			this.oTable.destroy();
 		},
 		assertCells: function(assert) {
-			var aActualCells = this.oTable.getCreationRow().getCells().map(function(oCell) {
-				var sText = oCell.getText();
+			const aActualCells = this.oTable.getCreationRow().getCells().map(function(oCell) {
+				const sText = oCell.getText();
 				return sText.substring(0, sText.length - 1);
 			});
-			var aExpectedCells = Array.prototype.slice.call(arguments, 1);
+			const aExpectedCells = Array.prototype.slice.call(arguments, 1);
 
 			assert.deepEqual(aActualCells, aExpectedCells, "The creation row has the correct cells");
 		}
@@ -561,7 +561,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Do not create if a custom toolbar is provided", async function(assert) {
-		var oToolbar = new Toolbar();
+		const oToolbar = new Toolbar();
 		this.oCreationRow.setToolbar(oToolbar);
 		this.oTable.setCreationRow(this.oCreationRow);
 		await this.oTable.qunit.whenRenderingFinished();
@@ -574,7 +574,7 @@ sap.ui.define([
 		this.oCreationRow.placeAt("qunit-fixture");
 		await nextUIUpdate();
 
-		var oDefaultToolbar = this.oCreationRow.getAggregation("_defaultToolbar");
+		const oDefaultToolbar = this.oCreationRow.getAggregation("_defaultToolbar");
 
 		this.oCreationRow.setToolbar(new Toolbar());
 		await nextUIUpdate();
@@ -589,7 +589,7 @@ sap.ui.define([
 		this.oTable.setCreationRow(this.oCreationRow);
 		await this.oTable.qunit.whenRenderingFinished();
 
-		var oToolbarDestroySpy = sinon.spy(this.oCreationRow.getAggregation("_defaultToolbar"), "destroy");
+		const oToolbarDestroySpy = sinon.spy(this.oCreationRow.getAggregation("_defaultToolbar"), "destroy");
 
 		this.oCreationRow.destroy();
 		assert.ok(oToolbarDestroySpy.calledOnce, "The default toolbar is destroyed");
@@ -600,8 +600,8 @@ sap.ui.define([
 		this.oTable.setCreationRow(this.oCreationRow);
 		await this.oTable.qunit.whenRenderingFinished();
 
-		var oApplyButton = this.oCreationRow.getAggregation("_defaultToolbar").getContent().slice(-1)[0];
-		var oApplySpy = sinon.spy(this.oCreationRow, "_fireApply");
+		const oApplyButton = this.oCreationRow.getAggregation("_defaultToolbar").getContent().slice(-1)[0];
+		const oApplySpy = sinon.spy(this.oCreationRow, "_fireApply");
 
 		oApplyButton.firePress();
 
@@ -623,8 +623,8 @@ sap.ui.define([
 		this.oTable.setCreationRow(this.oCreationRow);
 		await this.oTable.qunit.whenRenderingFinished();
 
-		var oApplyButton = this.oCreationRow.getAggregation("_defaultToolbar").getContent().slice(-1)[0];
-		var oApplyButtonAfterRendering = sinon.spy();
+		const oApplyButton = this.oCreationRow.getAggregation("_defaultToolbar").getContent().slice(-1)[0];
+		const oApplyButtonAfterRendering = sinon.spy();
 
 		oApplyButton.addEventDelegate({
 			onAfterRendering: oApplyButtonAfterRendering

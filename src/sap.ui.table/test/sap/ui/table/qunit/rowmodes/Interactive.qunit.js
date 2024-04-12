@@ -27,8 +27,8 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var HeightTestControl = TableQUnitUtils.HeightTestControl;
-	var aDensities = ["sapUiSizeCozy", "sapUiSizeCompact", "sapUiSizeCondensed", undefined];
+	const HeightTestControl = TableQUnitUtils.HeightTestControl;
+	const aDensities = ["sapUiSizeCozy", "sapUiSizeCompact", "sapUiSizeCondensed", undefined];
 
 	TableQUnitUtils.setDefaultSettings({
 		rowMode: new InteractiveRowMode(),
@@ -67,7 +67,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Property getters", function(assert) {
-		var oTable = TableQUnitUtils.createTable({
+		const oTable = TableQUnitUtils.createTable({
 			visibleRowCountMode: "Interactive",
 			visibleRowCount: 5,
 			fixedRowCount: 1,
@@ -75,7 +75,7 @@ sap.ui.define([
 			minAutoRowCount: 3,
 			rowHeight: 9
 		});
-		var oMode = this.getDefaultRowMode(oTable);
+		const oMode = this.getDefaultRowMode(oTable);
 
 		assert.strictEqual(oMode.getRowCount(), 5, "The row count is taken from the table");
 		assert.strictEqual(oMode.getFixedTopRowCount(), 1, "The fixed row count is taken from the table");
@@ -119,8 +119,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Row height", function(assert) {
-		var oTable = this.oTable;
-		var sequence = Promise.resolve();
+		const oTable = this.oTable;
+		let sequence = Promise.resolve();
 
 		oTable.addColumn(new Column({template: new HeightTestControl()}));
 		oTable.addColumn(new Column({template: new HeightTestControl()}));
@@ -214,7 +214,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Initialization", function(assert) {
-		var oGetContextsSpy = this.oGetContextsSpy;
+		const oGetContextsSpy = this.oGetContextsSpy;
 
 		return this.oTable.qunit.whenRenderingFinished().then(function() {
 			assert.strictEqual(oGetContextsSpy.callCount, 1, "Method to get contexts called once");
@@ -223,8 +223,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Change row count", function(assert) {
-		var oTable = this.oTable;
-		var oGetContextsSpy = this.oGetContextsSpy;
+		const oTable = this.oTable;
+		const oGetContextsSpy = this.oGetContextsSpy;
 
 		oTable.setFirstVisibleRow(10);
 
@@ -277,34 +277,34 @@ sap.ui.define([
 	});
 
 	QUnit.test("D&D Resizer", async function(assert) {
+		const $Table = this.oTable.$();
+		const $Resizer = $Table.find(".sapUiTableHeightResizer");
+		const iInitialHeight = $Table.height();
+		let iY = $Resizer.offset().top;
+
 		const fnTestAdaptations = (bDuringResize) => {
 			assert.equal(this.oTable.getDomRef("rzoverlay") != null, bDuringResize,
 				"The handle to resize overlay is" + (bDuringResize ? "" : " not") + " visible");
 			assert.equal(this.oTable.getDomRef("ghost") != null, bDuringResize,
 				"The handle to resize ghost is" + (bDuringResize ? "" : " not") + " visible");
 
-			var oEvent = jQuery.Event({type: "selectstart"});
+			const oEvent = jQuery.Event({type: "selectstart"});
 			oEvent.target = this.oTable.getDomRef();
 			$Table.trigger(oEvent);
 			assert.ok(oEvent.isDefaultPrevented() && bDuringResize || !oEvent.isDefaultPrevented() && !bDuringResize,
 				"Prevent Default of selectstart event");
 			assert.ok(oEvent.isPropagationStopped() && bDuringResize || !oEvent.isPropagationStopped() && !bDuringResize,
 				"Stopped Propagation of selectstart event");
-			var sUnselectable = jQuery(document.body).attr("unselectable") || "off";
+			const sUnselectable = jQuery(document.body).attr("unselectable") || "off";
 			assert.ok(sUnselectable == (bDuringResize ? "on" : "off"), "Text Selection switched " + (bDuringResize ? "off" : "on"));
 		};
-
-		var $Table = this.oTable.$();
-		var $Resizer = $Table.find(".sapUiTableHeightResizer");
-		var iInitialHeight = $Table.height();
-		var iY = $Resizer.offset().top;
 
 		assert.equal($Resizer.length, 1, "The handle to resize the table is visible");
 		assert.equal(this.oTable.getRowMode().getRowCount(), 10, "Initial row count");
 		fnTestAdaptations(false);
 
 		qutils.triggerMouseEvent(this.oTable.$("sb"), "mousedown", 0, 0, 10, iY, 0);
-		for (var i = 0; i < 10; i++) {
+		for (let i = 0; i < 10; i++) {
 			iY += 10;
 			qutils.triggerMouseEvent($Table, "mousemove", 0, 0, 10, iY, 0);
 			if (i == 5) { // Just check somewhere in between

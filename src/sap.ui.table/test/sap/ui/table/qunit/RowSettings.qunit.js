@@ -24,16 +24,16 @@ sap.ui.define([
 	"use strict";
 
 	// mapping of global function calls
-	var createTables = window.createTables;
-	var destroyTables = window.destroyTables;
-	var fakeGroupRow = window.fakeGroupRow;
-	var fakeSumRow = window.fakeSumRow;
-	var removeRowActions = window.removeRowActions;
+	const createTables = window.createTables;
+	const destroyTables = window.destroyTables;
+	const fakeGroupRow = window.fakeGroupRow;
+	const fakeSumRow = window.fakeSumRow;
+	const removeRowActions = window.removeRowActions;
 
-	var MessageType = CoreLibrary.MessageType;
-	var IndicationColor = CoreLibrary.IndicationColor;
+	const MessageType = CoreLibrary.MessageType;
+	const IndicationColor = CoreLibrary.IndicationColor;
 
-	var iRowsWithHighlight = 13;
+	const iRowsWithHighlight = 13;
 
 	/**
 	 * Sets up the row settings template in the table.
@@ -45,10 +45,10 @@ sap.ui.define([
 			highlight: {
 				path: "",
 				formatter: function() {
-					var oRow = this._getRow();
+					const oRow = this._getRow();
 
 					if (oRow != null) {
-						var iIndex = oRow.getIndex();
+						const iIndex = oRow.getIndex();
 
 						if (iIndex === 0) {
 							return MessageType.Success;
@@ -99,30 +99,30 @@ sap.ui.define([
 			destroyTables();
 		},
 		assertRendering: function(assert, bRendered) {
-			var aRows = oTable.getRows();
+			const aRows = oTable.getRows();
 
-			for (var iRowIndex = 0; iRowIndex < aRows.length; iRowIndex++) {
-				var oRow = aRows[iRowIndex];
-				var oHighlightElement = oRow.getDomRef("highlight");
+			for (let iRowIndex = 0; iRowIndex < aRows.length; iRowIndex++) {
+				const oRow = aRows[iRowIndex];
+				const oHighlightElement = oRow.getDomRef("highlight");
 
 				assert.strictEqual(oHighlightElement == null, !bRendered,
 					"The highlight element of row " + (iRowIndex + 1) + " is " + (bRendered ? "" : "not ") + "in the DOM");
 			}
 		},
 		getColorRgb: function(sThemeParameterName) {
-			var sHexColor = ThemeParameters.get({name: sThemeParameterName});
+			let sHexColor = ThemeParameters.get({name: sThemeParameterName});
 			// Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
-			var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+			const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
 			sHexColor = sHexColor.replace(shorthandRegex, function(m, r, g, b) {
 				return r + r + g + g + b + b;
 			});
 
-			var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(sHexColor);
+			const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(sHexColor);
 
 			if (result != null) {
-				var r = parseInt(result[1], 16);
-				var g = parseInt(result[2], 16);
-				var b = parseInt(result[3], 16);
+				const r = parseInt(result[1], 16);
+				const g = parseInt(result[2], 16);
+				const b = parseInt(result[3], 16);
 
 				return "rgb(" + r + ", " + g + ", " + b + ")";
 			} else {
@@ -130,15 +130,15 @@ sap.ui.define([
 			}
 		},
 		assertText: function(assert, iRowIndex, sExpectedText) {
-			var oRow = oTable.getRows()[iRowIndex];
-			var oHighlightTextElement = oRow.getDomRef("highlighttext");
+			const oRow = oTable.getRows()[iRowIndex];
+			const oHighlightTextElement = oRow.getDomRef("highlighttext");
 
 			assert.strictEqual(oHighlightTextElement.innerHTML, sExpectedText, "The highlight text is correct");
 		},
 		assertColor: function(assert, iRowIndex, sExpectedBackgroundColor) {
-			var oRow = oTable.getRows()[iRowIndex];
-			var oHighlightElement = oRow.getDomRef("highlight");
-			var sActualBackgroundColor = getComputedStyle(oHighlightElement).backgroundColor;
+			const oRow = oTable.getRows()[iRowIndex];
+			const oHighlightElement = oRow.getDomRef("highlight");
+			let sActualBackgroundColor = getComputedStyle(oHighlightElement).backgroundColor;
 
 			if (sActualBackgroundColor === "rgba(0, 0, 0, 0)") {
 				sActualBackgroundColor = "transparent";
@@ -148,15 +148,15 @@ sap.ui.define([
 				"The highlight element of row " + (iRowIndex + 1) + " has the correct background color");
 		},
 		assertColors: function(assert) {
-			var aRows = oTable.getRows();
+			const aRows = oTable.getRows();
 
-			for (var iRowIndex = 0; iRowIndex < aRows.length; iRowIndex++) {
-				var oRow = aRows[iRowIndex];
-				var oHighlightElement = oRow.getDomRef("highlight");
+			for (let iRowIndex = 0; iRowIndex < aRows.length; iRowIndex++) {
+				const oRow = aRows[iRowIndex];
+				const oHighlightElement = oRow.getDomRef("highlight");
 
 				if (iRowIndex < iRowsWithHighlight) {
-					var sHighlight = oRow.getAggregation("_settings").getHighlight();
-					var sRGBBackgroundColor;
+					const sHighlight = oRow.getAggregation("_settings").getHighlight();
+					let sRGBBackgroundColor;
 
 					switch (sHighlight) {
 						case MessageType.Success:
@@ -208,11 +208,11 @@ sap.ui.define([
 			}
 		},
 		assertWidths: function(assert, sDensity) {
-			var aRows = oTable.getRows();
+			const aRows = oTable.getRows();
 
-			for (var iRowIndex = 0; iRowIndex < aRows.length; iRowIndex++) {
-				var oRow = aRows[iRowIndex];
-				var oHighlightElement = oRow.getDomRef("highlight");
+			for (let iRowIndex = 0; iRowIndex < aRows.length; iRowIndex++) {
+				const oRow = aRows[iRowIndex];
+				const oHighlightElement = oRow.getDomRef("highlight");
 
 				if (iRowIndex < iRowsWithHighlight) {
 					assert.strictEqual(oHighlightElement.getBoundingClientRect().width, 7,
@@ -226,10 +226,10 @@ sap.ui.define([
 			}
 		},
 		assertRowHeaderWidths: function(assert, iStandardRowHeaderWidth, sDensity) {
-			var aRows = oTable.getRows();
+			const aRows = oTable.getRows();
 
-			for (var iRowIndex = 0; iRowIndex < aRows.length; iRowIndex++) {
-				var oRowHeaderElement = oTable.getDomRef("rowsel" + iRowIndex);
+			for (let iRowIndex = 0; iRowIndex < aRows.length; iRowIndex++) {
+				const oRowHeaderElement = oTable.getDomRef("rowsel" + iRowIndex);
 
 				assert.strictEqual(oRowHeaderElement.getBoundingClientRect().width, iStandardRowHeaderWidth + 7,
 					sDensity + ": The header element of row " + (iRowIndex + 1) + " has the correct width"
@@ -262,7 +262,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Rendering", function(assert) {
-		var oBody = document.getElementsByTagName("body")[0];
+		const oBody = document.getElementsByTagName("body")[0];
 
 		this.assertRendering(assert, true);
 		this.assertColors(assert);
@@ -289,7 +289,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("setHighlight", async function(assert) {
-		var oOnAfterRenderingEventListener = this.spy();
+		const oOnAfterRenderingEventListener = this.spy();
 
 		this.assertColor(assert, 0, this.getColorRgb("sapUiSuccessBorder"));
 		this.assertText(assert, 0, TableUtils.getResourceBundle().getText("TBL_ROW_STATE_SUCCESS"));
@@ -304,7 +304,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("setHighlightText", async function(assert) {
-		var oOnAfterRenderingEventListener = this.spy();
+		const oOnAfterRenderingEventListener = this.spy();
 
 		this.assertText(assert, 0, TableUtils.getResourceBundle().getText("TBL_ROW_STATE_SUCCESS"));
 
@@ -317,12 +317,12 @@ sap.ui.define([
 	});
 
 	QUnit.test("_getHighlightCSSClassName", function(assert) {
-		var aRows = oTable.getRows();
+		const aRows = oTable.getRows();
 
-		for (var iRowIndex = 0; iRowIndex < iRowsWithHighlight; iRowIndex++) {
-			var oRow = aRows[iRowIndex];
-			var oRowSettings = oRow.getAggregation("_settings");
-			var sCSSClassName = "sapUiTableRowHighlight";
+		for (let iRowIndex = 0; iRowIndex < iRowsWithHighlight; iRowIndex++) {
+			const oRow = aRows[iRowIndex];
+			const oRowSettings = oRow.getAggregation("_settings");
+			let sCSSClassName = "sapUiTableRowHighlight";
 
 			if (iRowIndex === 0) {
 				sCSSClassName += "Success";
@@ -358,12 +358,12 @@ sap.ui.define([
 	});
 
 	QUnit.test("_getHighlightText - Default texts", function(assert) {
-		var aRows = oTable.getRows();
+		const aRows = oTable.getRows();
 
-		for (var iRowIndex = 0; iRowIndex < iRowsWithHighlight; iRowIndex++) {
-			var oRow = aRows[iRowIndex];
-			var oRowSettings = oRow.getAggregation("_settings");
-			var sHighlightText = "";
+		for (let iRowIndex = 0; iRowIndex < iRowsWithHighlight; iRowIndex++) {
+			const oRow = aRows[iRowIndex];
+			const oRowSettings = oRow.getAggregation("_settings");
+			let sHighlightText = "";
 
 			if (iRowIndex === 0) {
 				sHighlightText = TableUtils.getResourceBundle().getText("TBL_ROW_STATE_" + MessageType.Success.toUpperCase());
@@ -382,13 +382,13 @@ sap.ui.define([
 	});
 
 	QUnit.test("_getHighlightText - Custom texts", function(assert) {
-		var aRows = oTable.getRows();
-		var sCustomHighlightText = "Custom highlight text";
+		const aRows = oTable.getRows();
+		const sCustomHighlightText = "Custom highlight text";
 
-		for (var iRowIndex = 0; iRowIndex < iRowsWithHighlight; iRowIndex++) {
-			var oRow = aRows[iRowIndex];
-			var oRowSettings = oRow.getAggregation("_settings");
-			var sHighlightText = sCustomHighlightText;
+		for (let iRowIndex = 0; iRowIndex < iRowsWithHighlight; iRowIndex++) {
+			const oRow = aRows[iRowIndex];
+			const oRowSettings = oRow.getAggregation("_settings");
+			let sHighlightText = sCustomHighlightText;
 
 			oRowSettings.setHighlightText(sCustomHighlightText);
 
@@ -424,10 +424,10 @@ sap.ui.define([
 				navigated: {
 					path: "",
 					formatter: function() {
-						var oRow = this._getRow();
+						const oRow = this._getRow();
 
 						if (oRow != null) {
-							var iIndex = oRow.getIndex();
+							const iIndex = oRow.getIndex();
 
 							if (iIndex === 1) {
 								return true;
@@ -443,11 +443,11 @@ sap.ui.define([
 			destroyTables();
 		},
 		assertNavIndicatorRendering: function(assert, hasRowActions, bRendered) {
-			var aRows = oTable.getRows();
+			const aRows = oTable.getRows();
 
-			for (var iRowIndex = 0; iRowIndex < aRows.length; iRowIndex++) {
-				var oRow = aRows[iRowIndex];
-				var oNavIndicator = oRow.getDomRef("navIndicator");
+			for (let iRowIndex = 0; iRowIndex < aRows.length; iRowIndex++) {
+				const oRow = aRows[iRowIndex];
+				const oNavIndicator = oRow.getDomRef("navIndicator");
 
 				assert.strictEqual(oNavIndicator == null, !bRendered,
 					"The navigated indicator of row " + (iRowIndex + 1) + " is " + (bRendered ? "" : "not ") + "in the DOM when RowActions column " +

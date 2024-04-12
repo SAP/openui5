@@ -90,7 +90,7 @@ sap.ui.define([
 	QUnit.test("Re-render and refresh", function(assert) {
 		this.createTable();
 
-		return this.oTable.qunit.whenBindingChange().then(this.oTable.qunit.whenRenderingFinished).then(async() => {
+		return this.oTable.qunit.whenBindingChange().then(this.oTable.qunit.whenRenderingFinished).then(async () => {
 			this.resetRowsUpdatedSpy();
 			this.oTable.invalidate();
 			this.oTable.getBinding().refresh(true);

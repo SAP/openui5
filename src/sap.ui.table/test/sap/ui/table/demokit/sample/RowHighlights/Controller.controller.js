@@ -11,18 +11,18 @@ sap.ui.define([
 
 		onInit: function() {
 			// set explored app's demo model on this sample
-			var oJSONModel = this.initSampleDataModel();
+			const oJSONModel = this.initSampleDataModel();
 			this.getView().setModel(oJSONModel);
 		},
 
 		initSampleDataModel: function() {
-			var oModel = new JSONModel();
+			const oModel = new JSONModel();
 
 			jQuery.ajax(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"), {
 				dataType: "json",
 				success: function(oData) {
-					for (var i = 0; i < oData.ProductCollection.length; i++) {
-						var oProduct = oData.ProductCollection[i];
+					for (let i = 0; i < oData.ProductCollection.length; i++) {
+						const oProduct = oData.ProductCollection[i];
 
 						if (i === 0) {
 							oProduct.Status = "Success";
@@ -64,8 +64,8 @@ sap.ui.define([
 		},
 
 		onHighlightToggle: function(oEvent) {
-			var oTable = this.byId("table");
-			var oToggleButton = oEvent.getSource();
+			const oTable = this.byId("table");
+			const oToggleButton = oEvent.getSource();
 
 			if (oToggleButton.getPressed()) {
 				oTable.setRowSettingsTemplate(new RowSettings({
@@ -81,8 +81,8 @@ sap.ui.define([
 		},
 
 		onSelectionModeChange: function(oEvent) {
-			var oTable = this.byId("table");
-			var sKey = oEvent.getParameter("selectedItem").getKey();
+			const oTable = this.byId("table");
+			const sKey = oEvent.getParameter("selectedItem").getKey();
 
 			oTable.setSelectionMode(sKey);
 		}

@@ -11,10 +11,10 @@ sap.ui.define([
 ], function(deepExtend, Button, Toolbar, JSONModel, Column, tableLibrary, TreeTable, Text, Label) {
 	"use strict";
 
-	var SelectionMode = tableLibrary.SelectionMode;
+	const SelectionMode = tableLibrary.SelectionMode;
 
 	// TABLE TEST DATA
-	var oData = {
+	const oData = {
 		root: {
 			name: "root",
 			description: "moep moep",
@@ -154,7 +154,7 @@ sap.ui.define([
 		}
 	};
 
-	for (var i = 0; i < 20; i++) {
+	for (let i = 0; i < 20; i++) {
 		oData["root"][3][i] = {
 			name: "subitem3-" + i,
 			description: "subitem3-" + i + " description",
@@ -163,7 +163,7 @@ sap.ui.define([
 	}
 
 	// create table with supported sap.m controls
-	var oTable = new TreeTable({
+	const oTable = new TreeTable({
 		expandFirstLevel: true,
 		columns: [
 			new Column({label: new Label({text: "Alfa"}), template: new Text({text: "{name}", wrapping: false}), filterProperty: "name", sortProperty: "name"}),
@@ -185,13 +185,13 @@ sap.ui.define([
 	]}));
 
 	// set Model and bind Table
-	var oModel = new JSONModel();
+	const oModel = new JSONModel();
 	oModel.setData(oData);
 	oTable.setModel(oModel);
 	oTable.bindRows("/root");
 
 	oTable.placeAt("content");
 
-	var oButtonAfterTable = new Button({text: "Just a Button after the Table"});
+	const oButtonAfterTable = new Button({text: "Just a Button after the Table"});
 	oButtonAfterTable.placeAt("content");
 });

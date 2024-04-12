@@ -16,7 +16,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var _private = TableUtils.createWeakMapFacade();
+	const _private = TableUtils.createWeakMapFacade();
 
 	/**
 	 * Constructor for a new <code>RowMode</code>.
@@ -37,14 +37,14 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @version ${version}
 	 */
-	var RowMode = Element.extend("sap.ui.table.rowmodes.RowMode", /** @lends sap.ui.table.rowmodes.RowMode.prototype */ {
+	const RowMode = Element.extend("sap.ui.table.rowmodes.RowMode", /** @lends sap.ui.table.rowmodes.RowMode.prototype */ {
 		metadata: {
 			library: "sap.ui.table",
 			"abstract": true
 		}
 	});
 
-	var TableDelegate = {};
+	const TableDelegate = {};
 
 	RowMode.prototype.init = function() {
 		/*
@@ -119,7 +119,7 @@ sap.ui.define([
 	 * @private
 	 */
 	RowMode.prototype.cancelAsyncOperations = function() {
-		var oTable = this.getTable();
+		const oTable = this.getTable();
 
 		if (oTable) {
 			clearTimeout(oTable._mTimeouts.refreshRowsCreateRows);
@@ -134,8 +134,8 @@ sap.ui.define([
 	 * @private
 	 */
 	RowMode.prototype.registerHooks = function() {
-		var oTable = this.getTable();
-		var Hook = TableUtils.Hook.Keys;
+		const oTable = this.getTable();
+		const Hook = TableUtils.Hook.Keys;
 
 		TableUtils.Hook.register(oTable, Hook.Table.RowsUnbound, this._onTableRowsUnbound, this);
 		TableUtils.Hook.register(oTable, Hook.Table.UpdateRows, this._onTableUpdateRows, this);
@@ -152,8 +152,8 @@ sap.ui.define([
 	 * @private
 	 */
 	RowMode.prototype.deregisterHooks = function() {
-		var oTable = this.getTable();
-		var Hook = TableUtils.Hook.Keys;
+		const oTable = this.getTable();
+		const Hook = TableUtils.Hook.Keys;
 
 		TableUtils.Hook.deregister(oTable, Hook.Table.RowsUnbound, this._onTableRowsUnbound, this);
 		TableUtils.Hook.deregister(oTable, Hook.Table.UpdateRows, this._onTableUpdateRows, this);
@@ -232,7 +232,7 @@ sap.ui.define([
 	 * @private
 	 */
 	RowMode.prototype.getTable = function() {
-		var oParent = this.getParent();
+		const oParent = this.getParent();
 		return TableUtils.isA(oParent, "sap.ui.table.Table") ? oParent : null;
 	};
 
@@ -242,7 +242,7 @@ sap.ui.define([
 	 * @private
 	 */
 	RowMode.prototype.updateTable = function(sReason /* private parameter */) {
-		var oTable = this.getTable();
+		const oTable = this.getTable();
 
 		if (!oTable) {
 			return;
@@ -252,7 +252,7 @@ sap.ui.define([
 
 		// Update the rows aggregation and the row's binding contexts.
 		oTable._adjustFirstVisibleRowToTotalRowCount(); // TODO: Move this to Table#onBeforeRendering as soon as #renderTableRows is removed
-		var bRowsAggregationChanged = this.updateTableRows();
+		const bRowsAggregationChanged = this.updateTableRows();
 
 		if (oTable._bInvalid) {
 			// No need to update the DOM or fire the _rowsUpdated event if the table is about to rerender.
@@ -297,7 +297,7 @@ sap.ui.define([
 	 * @private
 	 */
 	RowMode.prototype.getBaseRowHeightOfTable = function() {
-		var oTable = this.getTable();
+		const oTable = this.getTable();
 		return oTable ? oTable._getBaseRowHeight() : 0;
 	};
 
@@ -308,7 +308,7 @@ sap.ui.define([
 	 * @private
 	 */
 	RowMode.prototype.getDefaultRowContentHeightOfTable = function() {
-		var oTable = this.getTable();
+		const oTable = this.getTable();
 		return oTable ? oTable._getDefaultRowContentHeight() : 0;
 	};
 
@@ -319,7 +319,7 @@ sap.ui.define([
 	 * @private
 	 */
 	RowMode.prototype.getTotalRowCountOfTable = function() {
-		var oTable = this.getTable();
+		const oTable = this.getTable();
 		return oTable ? oTable._getTotalRowCount() : 0;
 	};
 
@@ -340,7 +340,7 @@ sap.ui.define([
 	 * @private
 	 */
 	RowMode.prototype._onTableUpdateRows = function(sReason) {
-		var oTable = this.getTable();
+		const oTable = this.getTable();
 
 		clearTimeout(oTable._mTimeouts.refreshRowsCreateRows);
 		_private(this).updateTableAsync(sReason);
@@ -354,7 +354,7 @@ sap.ui.define([
 	 * @private
 	 */
 	RowMode.prototype.applyTableStyles = function(oRM) {
-		var mTableStyles = this.getTableStyles();
+		const mTableStyles = this.getTableStyles();
 
 		if (oRM) {
 			oRM.style("height", mTableStyles.height);
@@ -363,8 +363,8 @@ sap.ui.define([
 			return;
 		}
 
-		var oTable = this.getTable();
-		var oTableDomRef = oTable ? oTable.getDomRef() : null;
+		const oTable = this.getTable();
+		const oTableDomRef = oTable ? oTable.getDomRef() : null;
 
 		if (oTableDomRef) {
 			oTableDomRef.style.height = mTableStyles.height;
@@ -381,15 +381,15 @@ sap.ui.define([
 	 * @private
 	 */
 	RowMode.prototype.applyTableBottomPlaceholderStyles = function(oRM) {
-		var mPlaceholderStyles = this.getTableBottomPlaceholderStyles();
+		const mPlaceholderStyles = this.getTableBottomPlaceholderStyles();
 
 		if (oRM) {
 			oRM.style("height", mPlaceholderStyles.height);
 			return;
 		}
 
-		var oTable = this.getTable();
-		var oPlaceholder = oTable ? oTable.getDomRef("placeholder-bottom") : null;
+		const oTable = this.getTable();
+		const oPlaceholder = oTable ? oTable.getDomRef("placeholder-bottom") : null;
 
 		if (oPlaceholder) {
 			oPlaceholder.style.height = mPlaceholderStyles.height;
@@ -404,7 +404,7 @@ sap.ui.define([
 	 * @private
 	 */
 	RowMode.prototype.applyRowContainerStyles = function(oRM) {
-		var mRowContainerStyles = this.getRowContainerStyles();
+		const mRowContainerStyles = this.getRowContainerStyles();
 
 		if (oRM) {
 			oRM.style("height", mRowContainerStyles.height);
@@ -413,8 +413,8 @@ sap.ui.define([
 			return;
 		}
 
-		var oTable = this.getTable();
-		var oRowContainer = oTable ? oTable.getDomRef("tableCCnt") : null;
+		const oTable = this.getTable();
+		const oRowContainer = oTable ? oTable.getDomRef("tableCCnt") : null;
 
 		if (oRowContainer) {
 			oRowContainer.style.height = mRowContainerStyles.height;
@@ -438,7 +438,7 @@ sap.ui.define([
 	 * @private
 	 */
 	RowMode.prototype.computeStandardizedRowCounts = function(iCount, iFixedTop, iFixedBottom) {
-		var mRowCountConstraints = this.getRowCountConstraints();
+		const mRowCountConstraints = this.getRowCountConstraints();
 
 		if (mRowCountConstraints.fixedTop === true) {
 			iFixedTop = 1;
@@ -501,7 +501,7 @@ sap.ui.define([
 	RowMode.prototype.getRowCountConstraints = function() {
 		// TODO: Add a type definition for a protected type "rowCountConstraints" in the library file to document the return value
 		//  RowMode#getRowCountConstraints + PluginBase#setRowCountConstraints
-		var oTable = this.getTable();
+		const oTable = this.getTable();
 		return oTable ? oTable.getProperty("rowCountConstraints") || {} : {};
 	};
 
@@ -528,7 +528,7 @@ sap.ui.define([
 	 * @private
 	 */
 	RowMode.prototype.renderInTableBottomArea = function(oRM) {
-		var mPlaceholderHeight = this.getTableBottomPlaceholderStyles();
+		const mPlaceholderHeight = this.getTableBottomPlaceholderStyles();
 
 		if (mPlaceholderHeight === undefined) {
 			return;
@@ -550,8 +550,8 @@ sap.ui.define([
 	 * @private
 	 */
 	RowMode.prototype.initTableRowsAfterDataRequested = function(iRowCount) {
-		var oTable = this.getTable();
-		var oBinding = oTable.getBinding();
+		const oTable = this.getTable();
+		const oBinding = oTable.getBinding();
 
 		clearTimeout(oTable._mTimeouts.refreshRowsCreateRows);
 
@@ -568,9 +568,10 @@ sap.ui.define([
 					return;
 				}
 
-				var aRows = createRows(oTable, iRowCount), oRow;
+				const aRows = createRows(oTable, iRowCount);
+let oRow;
 
-				for (var i = 0; i < aRows.length; i++) {
+				for (let i = 0; i < aRows.length; i++) {
 					oRow = aRows[i];
 					// prevent propagation of parent binding context; else incorrect data might be requested by the model.
 					oRow.setRowBindingContext(null, oTable);
@@ -591,10 +592,10 @@ sap.ui.define([
 	 * @private
 	 */
 	RowMode.prototype.updateTableRows = function() {
-		var oTable = this.getTable();
-		var aRows = oTable.getRows();
-		var iNewNumberOfRows = this.getComputedRowCounts().count;
-		var bRowsAggregationChanged = false;
+		const oTable = this.getTable();
+		let aRows = oTable.getRows();
+		let iNewNumberOfRows = this.getComputedRowCounts().count;
+		let bRowsAggregationChanged = false;
 
 		// There is no need to have rows in the aggregation if the NoData overlay is enabled and no binding is available.
 		if (TableUtils.isNoDataVisible(oTable) && !oTable.getBinding()) {
@@ -605,8 +606,8 @@ sap.ui.define([
 		}
 
 		// Clear the text selection if text inside rows is selected and the content is going to change, for example on scroll.
-		var oRowContainer = oTable.getDomRef("tableCCnt");
-		var oSelection = window.getSelection();
+		const oRowContainer = oTable.getDomRef("tableCCnt");
+		const oSelection = window.getSelection();
 		if (oRowContainer && oSelection.containsNode(oRowContainer, true)) {
 			oSelection.empty();
 		}
@@ -641,33 +642,33 @@ sap.ui.define([
 	 * @private
 	 */
 	RowMode.prototype.renderTableRows = function() {
-		var oTable = this.getTable();
-		var oTBody = oTable ? oTable.getDomRef("tableCCnt") : null;
+		const oTable = this.getTable();
+		const oTBody = oTable ? oTable.getDomRef("tableCCnt") : null;
 
 		if (!oTBody) {
 			return;
 		}
 
 		// make sure to call rendering event delegates even in case of DOM patching
-		var oBeforeRenderingEvent = jQuery.Event("BeforeRendering");
+		const oBeforeRenderingEvent = jQuery.Event("BeforeRendering");
 		oBeforeRenderingEvent.setMarked("renderRows");
 		oBeforeRenderingEvent.srcControl = oTable;
 		oTable._handleEvent(oBeforeRenderingEvent);
 
-		var oRM = new RenderManager().getInterface();
-		var oRenderer = oTable.getRenderer();
+		const oRM = new RenderManager().getInterface();
+		const oRenderer = oTable.getRenderer();
 		oRenderer.renderTableCCnt(oRM, oTable);
 		oRM.flush(oTBody, false, false);
 		oRM.destroy();
 
 		// make sure to call rendering event delegates even in case of DOM patching
-		var oAfterRenderingEvent = jQuery.Event("AfterRendering");
+		const oAfterRenderingEvent = jQuery.Event("AfterRendering");
 		oAfterRenderingEvent.setMarked("renderRows");
 		oAfterRenderingEvent.srcControl = oTable;
 		oTable._handleEvent(oAfterRenderingEvent);
 
-		var bHasRows = oTable.getRows().length > 0;
-		var oDomRef = oTable.getDomRef();
+		const bHasRows = oTable.getRows().length > 0;
+		const oDomRef = oTable.getDomRef();
 		oDomRef.querySelector(".sapUiTableCtrlBefore").setAttribute("tabindex", bHasRows ? "0" : "-1");
 		oDomRef.querySelector(".sapUiTableCtrlAfter").setAttribute("tabindex", bHasRows ? "0" : "-1");
 
@@ -677,8 +678,8 @@ sap.ui.define([
 		// Therefore, the width is set of the content table is set back to be the same as the header table.
 		// BCP: 2380079867
 		if (Device.browser.safari) {
-			var oHdrCol = document.getElementById(oTable.getId() + "-header");
-			var oHdrCnt = document.getElementById(oTable.getId() + "-table");
+			const oHdrCol = document.getElementById(oTable.getId() + "-header");
+			const oHdrCnt = document.getElementById(oTable.getId() + "-table");
 
 			oHdrCnt.style.width = oHdrCol.style.width;
 		}
@@ -693,7 +694,7 @@ sap.ui.define([
 	 * @private
 	 */
 	RowMode.prototype.getRowContexts = function(iRequestLength) {
-		var oTable = this.getTable();
+		const oTable = this.getTable();
 		return oTable ? oTable._getRowContexts(iRequestLength) : [];
 	};
 
@@ -706,7 +707,7 @@ sap.ui.define([
 	 * @private
 	 */
 	RowMode.prototype.fireRowsUpdated = function(sReason) {
-		var oTable = this.getTable();
+		const oTable = this.getTable();
 
 		if (!oTable || !oTable._bContextsAvailable) {
 			return;
@@ -743,7 +744,7 @@ sap.ui.define([
 
 		_private(this).bNoDataDisabled = true;
 
-		var oTable = this.getTable();
+		const oTable = this.getTable();
 		if (oTable) {
 			oTable.invalidate();
 		}
@@ -762,7 +763,7 @@ sap.ui.define([
 
 		_private(this).bNoDataDisabled = false;
 
-		var oTable = this.getTable();
+		const oTable = this.getTable();
 		if (oTable) {
 			oTable.invalidate();
 		}
@@ -785,12 +786,12 @@ sap.ui.define([
 	 * @param {int} iNewNumberOfRows The number of rows that need to be in the aggregation.
 	 */
 	function updateRowsAggregation(oMode, iNewNumberOfRows) {
-		var oTable = oMode.getTable();
-		var aRows = oTable.getRows();
+		const oTable = oMode.getTable();
+		let aRows = oTable.getRows();
 
 		if (aRows.length < iNewNumberOfRows) {
 			// Create missing rows.
-			var aNewRows = createRows(oTable, iNewNumberOfRows - aRows.length);
+			const aNewRows = createRows(oTable, iNewNumberOfRows - aRows.length);
 
 			aRows = aRows.concat(aNewRows);
 
@@ -802,7 +803,7 @@ sap.ui.define([
 			});
 		} else {
 			// Remove rows that are not required.
-			for (var i = aRows.length - 1; i >= iNewNumberOfRows; i--) {
+			for (let i = aRows.length - 1; i >= iNewNumberOfRows; i--) {
 				oTable.removeAggregation("rows", i, true);
 			}
 
@@ -819,10 +820,10 @@ sap.ui.define([
 	 * @returns {sap.ui.table.Row[]} The created rows.
 	 */
 	function createRows(oTable, iRowCount) {
-		var aRows = [];
-		var iStartIndex = oTable.getRows().length;
+		const aRows = [];
+		const iStartIndex = oTable.getRows().length;
 
-		for (var i = 0; i < iRowCount; i++) {
+		for (let i = 0; i < iRowCount; i++) {
 			aRows.push(oTable._getRowClone(iStartIndex + i));
 		}
 
@@ -837,15 +838,15 @@ sap.ui.define([
 	 * @param {Array<sap.ui.table.Row>} [aRows] The rows for which the contexts are to be updated.
 	 */
 	function updateBindingContextsOfRows(oMode, aRows) {
-		var oTable = oMode.getTable();
+		const oTable = oMode.getTable();
 
 		if (!oTable || aRows.length === 0) {
 			return;
 		}
 
-		var aContexts = oMode.getRowContexts(aRows.length);
+		const aContexts = oMode.getRowContexts(aRows.length);
 
-		for (var i = 0; i < aRows.length; i++) {
+		for (let i = 0; i < aRows.length; i++) {
 			aRows[i].setRowBindingContext(aContexts[i], oTable);
 		}
 	}
@@ -858,7 +859,7 @@ sap.ui.define([
 	 * @this sap.ui.table.rowmodes.RowMode
 	 */
 	TableDelegate.onBeforeRendering = function(oEvent) {
-		var bRenderedRows = oEvent && oEvent.isMarked("renderRows");
+		const bRenderedRows = oEvent && oEvent.isMarked("renderRows");
 
 		if (!bRenderedRows) {
 			this._bFiredRowsUpdatedAfterRendering = false;

@@ -6,28 +6,21 @@ sap.ui.define([
 	return {
 
 		init: function(sODataServiceUrl) {
-			var oMockServer, sLocalServicePath;
-
-			// create
-			oMockServer = new MockServer({
+			const oMockServer = new MockServer({
 				rootUri: sODataServiceUrl
 			});
+			const sLocalServicePath = sap.ui.require.toUrl("sap/ui/table/sample/TreeTable/ODataAnnotationsTreeBinding/localService");
 
-			// configure
 			MockServer.config({
 				autoRespond: true,
 				autoRespondAfter: 500
 			});
 
-			sLocalServicePath = sap.ui.require.toUrl("sap/ui/table/sample/TreeTable/ODataAnnotationsTreeBinding/localService");
-
-			// simulate
 			oMockServer.simulate(sLocalServicePath + "/metadata.xml", {
 				sMockdataBaseUrl: sLocalServicePath + "/mockdata",
 				bGenerateMissingMockData: false
 			});
 
-			// start
 			oMockServer.start();
 
 			return oMockServer;

@@ -7,8 +7,8 @@ sap.ui.define([
 ], function(SupportHelper, SupportLibrary) {
 	"use strict";
 
-	var Categories = SupportLibrary.Categories;
-	var Severity = SupportLibrary.Severity;
+	const Categories = SupportLibrary.Categories;
+	const Severity = SupportLibrary.Severity;
 
 	/**
 	 * Loops over all columns of all visible tables and calls the given callback with the following parameters:
@@ -21,13 +21,13 @@ sap.ui.define([
 	 * @param {string} [sType] If given an additional type check is performed.
 	 */
 	function checkColumnTemplate(fnDoCheck, oScope, sType) {
-		var aTables = SupportHelper.find(oScope, true, "sap.ui.table.Table");
-		var aColumns, oTemplate;
+		const aTables = SupportHelper.find(oScope, true, "sap.ui.table.Table");
+		let aColumns; let oTemplate;
 
-		for (var i = 0; i < aTables.length; i++) {
+		for (let i = 0; i < aTables.length; i++) {
 			aColumns = aTables[i].getColumns();
 
-			for (var k = 0; k < aColumns.length; k++) {
+			for (let k = 0; k < aColumns.length; k++) {
 				oTemplate = aColumns[k].getTemplate();
 
 				if (oTemplate && oTemplate.isA(sType)) {
@@ -40,7 +40,7 @@ sap.ui.define([
 	/*
 	 * Validates sap.m.Text column templates.
 	 */
-	var oTextWrapping = SupportHelper.normalizeRule({
+	const oTextWrapping = SupportHelper.normalizeRule({
 		id: "ColumnTemplateTextWrapping",
 		minversion: "1.38",
 		categories: [Categories.Usage],
@@ -51,7 +51,7 @@ sap.ui.define([
 					+ "control is used as a column template.",
 		check: function(oIssueManager, oCoreFacade, oScope) {
 			checkColumnTemplate(function(oTable, oColumn, oMTextTemplate) {
-				var sColumnId = oColumn.getId();
+				const sColumnId = oColumn.getId();
 
 				if (oMTextTemplate.isBound("wrapping") || (!oMTextTemplate.isBound("wrapping") && oMTextTemplate.getWrapping())) {
 					SupportHelper.reportIssue(oIssueManager, "Column '" + sColumnId + "' of table '" + oTable.getId() + "' uses an "
@@ -66,7 +66,7 @@ sap.ui.define([
 		}
 	});
 
-	var oLinkWrapping = SupportHelper.normalizeRule({
+	const oLinkWrapping = SupportHelper.normalizeRule({
 		id: "ColumnTemplateLinkWrapping",
 		minversion: "1.38",
 		categories: [Categories.Usage],
@@ -76,7 +76,7 @@ sap.ui.define([
 		check: function(oIssueManager, oCoreFacade, oScope) {
 			checkColumnTemplate(function(oTable, oColumn, oMLinkTemplate) {
 				if (oMLinkTemplate.isBound("wrapping") || (!oMLinkTemplate.isBound("wrapping") && oMLinkTemplate.getWrapping())) {
-					var sColumnId = oColumn.getId();
+					const sColumnId = oColumn.getId();
 					SupportHelper.reportIssue(oIssueManager, "Column '" + sColumnId + "' of table '" + oTable.getId() + "' uses an "
 															 + "'sap.m.Link' control with wrapping enabled.", Severity.High, sColumnId);
 				}

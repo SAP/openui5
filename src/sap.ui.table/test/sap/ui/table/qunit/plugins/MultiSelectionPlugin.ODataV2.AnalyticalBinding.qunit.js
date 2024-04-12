@@ -21,23 +21,23 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var sServiceURI = "http://o4aFakeService:8080";
+	const sServiceURI = "http://o4aFakeService:8080";
 
 	o4aFakeService.fake({
 		baseURI: sServiceURI
 	});
 
 	function createResponseData(iSkip, iTop, iCount) {
-		var sRecordTemplate = "{\"__metadata\":{\"uri\":\"http://o4aFakeService:8080/ActualPlannedCostsResults('{index}')\","
+		const sRecordTemplate = "{\"__metadata\":{\"uri\":\"http://o4aFakeService:8080/ActualPlannedCostsResults('{index}')\","
 							  + "\"type\":\"tmp.u012345.cca.CCA.ActualPlannedCostsResultsType\"},"
 							  + "\"CostCenter\":\"CostCenter-{index}\""
 							  + ",\"PlannedCosts\":\"499.99\""
 							  + ",\"Currency\":\"EUR\""
 							  + "}";
-		var aRecords = [];
-		var sCount = iCount != null ? ",\"__count\":\"" + iCount + "\"" : "";
+		const aRecords = [];
+		const sCount = iCount != null ? ",\"__count\":\"" + iCount + "\"" : "";
 
-		for (var i = iSkip, iLastIndex = iSkip + iTop; i < iLastIndex; i++) {
+		for (let i = iSkip, iLastIndex = iSkip + iTop; i < iLastIndex; i++) {
 			aRecords.push(sRecordTemplate.replace(/({index})/g, i));
 		}
 
@@ -45,7 +45,7 @@ sap.ui.define([
 	}
 
 	function createResponse(iSkip, iTop, iCount, bGrandTotal) {
-		var sGrandTotalResponse =
+		const sGrandTotalResponse =
 			bGrandTotal
 				? "--AAD136757C5CF75E21C04F59B8682CEA0\r\n" +
 				  "Content-Type: application/http\r\n" +
@@ -62,7 +62,7 @@ sap.ui.define([
 				  + "\"__count\":\"1\"}}\r\n"
 				: "";
 
-		var sCountResponse =
+		const sCountResponse =
 			iCount != null
 				? "--AAD136757C5CF75E21C04F59B8682CEA0\r\n" +
 				  "Content-Type: application/http\r\n" +
@@ -188,8 +188,8 @@ sap.ui.define([
 		this.oMultiSelectionPlugin.setLimit(0);
 		await this.oTable.qunit.whenRenderingFinished();
 		await this.oMultiSelectionPlugin.selectAll();
-		var oBinding = this.oTable.getBinding();
-		var aContexts = oBinding.getContexts(0, 200, 0);
+		const oBinding = this.oTable.getBinding();
+		const aContexts = oBinding.getContexts(0, 200, 0);
 
 		assert.equal(aContexts.length, 200, "All binding contexts are available");
 		assert.ok(!aContexts.includes(undefined), "There are no undefined contexts");
@@ -197,7 +197,7 @@ sap.ui.define([
 
 	QUnit.test("Select range", function(assert) {
 		return this.oMultiSelectionPlugin.setSelectionInterval(0, 189).then(function() {
-			var aContexts = this.oTable.getBinding().getContexts(0, 190, 0);
+			const aContexts = this.oTable.getBinding().getContexts(0, 190, 0);
 
 			assert.equal(aContexts.length, 190, "Binding contexts in selected range are available");
 			assert.ok(!aContexts.includes(undefined), "There are no undefined contexts");
@@ -232,7 +232,7 @@ sap.ui.define([
 		this.oMultiSelectionPlugin.setLimit(0);
 		await this.oTable.qunit.whenRenderingFinished();
 		await this.oMultiSelectionPlugin.selectAll();
-		var aContexts = this.oTable.getBinding().getContexts(0, 200, 0);
+		const aContexts = this.oTable.getBinding().getContexts(0, 200, 0);
 		assert.equal(aContexts.length, 200, "All binding contexts are available");
 		assert.ok(!aContexts.includes(undefined), "There are no undefined contexts");
 	});

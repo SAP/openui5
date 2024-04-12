@@ -8,7 +8,7 @@ sap.ui.define([
 ], function(library, TableUtils, Element, MenuItem, IconPool) {
 	"use strict";
 
-	var RowActionType = library.RowActionType;
+	const RowActionType = library.RowActionType;
 
 	/**
 	 * Constructor for a new RowActionItem.
@@ -29,7 +29,7 @@ sap.ui.define([
 	 * @public
 	 * @alias sap.ui.table.RowActionItem
 	 */
-	var Item = Element.extend("sap.ui.table.RowActionItem", /** @lends sap.ui.table.RowActionItem.prototype */ {
+	const Item = Element.extend("sap.ui.table.RowActionItem", /** @lends sap.ui.table.RowActionItem.prototype */ {
 		metadata: {
 			library: "sap.ui.table",
 			properties: {
@@ -93,7 +93,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Item.prototype.getRowAction = function() {
-		var oParent = this.getParent();
+		const oParent = this.getParent();
 		return TableUtils.isA(oParent, "sap.ui.table.RowAction") ? oParent : null;
 	};
 
@@ -103,7 +103,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Item.prototype._firePress = function() {
-		var oRowAction = this.getRowAction();
+		const oRowAction = this.getRowAction();
 
 		this.firePress({
 			item: this,
@@ -136,7 +136,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Item.prototype._getIcon = function() {
-		var oIcon = this.getIcon();
+		const oIcon = this.getIcon();
 		if (oIcon) {
 			return oIcon;
 		}
@@ -157,7 +157,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Item.prototype._getText = function(bPreferTooltip) {
-		var sText = bPreferTooltip ? (this.getTooltip_AsString() || this.getText()) : (this.getText() || this.getTooltip_AsString());
+		const sText = bPreferTooltip ? (this.getTooltip_AsString() || this.getText()) : (this.getText() || this.getTooltip_AsString());
 		if (sText) {
 			return sText;
 		}

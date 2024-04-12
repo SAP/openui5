@@ -22,7 +22,7 @@ sap.ui.define([
 	 *
 	 * @type {WeakMapConstructor}
 	 */
-	var ColumnToVisibilitySubmenuItemMap = new window.WeakMap();
+	const ColumnToVisibilitySubmenuItemMap = new window.WeakMap();
 
 	/**
 	 * Constructor for a new ColumnMenu.
@@ -46,7 +46,7 @@ sap.ui.define([
 	 *
 	 * @deprecated As of version 1.117, use the {@link sap.m.table.columnmenu.Menu} instead.
 	 */
-	var ColumnMenu = Menu.extend("sap.ui.table.ColumnMenu", /** @lends sap.ui.table.ColumnMenu.prototype */ {
+	const ColumnMenu = Menu.extend("sap.ui.table.ColumnMenu", /** @lends sap.ui.table.ColumnMenu.prototype */ {
 		metadata: {
 			library: "sap.ui.table"
 		},
@@ -105,12 +105,12 @@ sap.ui.define([
 	};
 
 	ColumnMenu.prototype._getColumn = function() {
-		var oParent = this.getParent();
+		const oParent = this.getParent();
 		return TableUtils.isA(oParent, "sap.ui.table.Column") ? oParent : null;
 	};
 
 	ColumnMenu.prototype._getTable = function() {
-		var oColumn = this._getColumn();
+		const oColumn = this._getColumn();
 		return oColumn ? oColumn._getTable() : null;
 	};
 
@@ -123,7 +123,7 @@ sap.ui.define([
 	};
 
 	ColumnMenu.prototype._removeColumnVisibilityFromAggregation = function() {
-		var oTable = this._getTable();
+		const oTable = this._getTable();
 		if (!oTable || oTable._oColumnVisibilityMenuItem) {
 			return;
 		}
@@ -184,11 +184,11 @@ sap.ui.define([
 	 * @private
 	 */
 	ColumnMenu.prototype._addSortMenuItem = function(bDesc) {
-		var oColumn = this._getColumn();
+		const oColumn = this._getColumn();
 
 		if (oColumn.isSortableByMenu()) {
-			var sDir = bDesc ? "desc" : "asc";
-			var sIcon = bDesc ? "sort-descending" : "sort-ascending";
+			const sDir = bDesc ? "desc" : "asc";
+			const sIcon = bDesc ? "sort-descending" : "sort-ascending";
 
 			this.addItem(this._createMenuItem(
 				sDir,
@@ -206,11 +206,11 @@ sap.ui.define([
 	 * @private
 	 */
 	ColumnMenu.prototype._addFilterMenuItem = function() {
-		var oColumn = this._getColumn();
+		const oColumn = this._getColumn();
 
 		if (oColumn.isFilterableByMenu()) {
-			var oTable = oColumn.getParent();
-			var bCustomFilterEnabled = oTable && oTable.getEnableCustomFilter();
+			const oTable = oColumn.getParent();
+			const bCustomFilterEnabled = oTable && oTable.getEnableCustomFilter();
 
 			if (bCustomFilterEnabled) {
 				this.addItem(this._createMenuItem(
@@ -242,17 +242,17 @@ sap.ui.define([
 	 * @private
 	 */
 	ColumnMenu.prototype._addGroupMenuItem = function() {
-		var oColumn = this._getColumn();
+		const oColumn = this._getColumn();
 
 		if (oColumn.isGroupableByMenu()) {
-			var oTable = this._getTable();
+			const oTable = this._getTable();
 
 			this.addItem(this._createMenuItem(
 				"group",
 				"TBL_GROUP",
 				null,
 				function() {
-					var oDomRef;
+					let oDomRef;
 					oTable.setGroupBy(oColumn);
 
 					if (TableUtils.isNoDataVisible(oTable)) {
@@ -274,13 +274,13 @@ sap.ui.define([
 	 * @private
 	 */
 	ColumnMenu.prototype._addFreezeMenuItem = function() {
-		var oColumn = this._getColumn();
-		var oTable = this._getTable();
-		var bColumnFreezeEnabled = oTable && oTable.getEnableColumnFreeze();
+		const oColumn = this._getColumn();
+		const oTable = this._getTable();
+		const bColumnFreezeEnabled = oTable && oTable.getEnableColumnFreeze();
 
 		if (bColumnFreezeEnabled) {
-			var iColumnIndex = oColumn.getIndex();
-			var bIsFixedColumn = iColumnIndex + TableUtils.Column.getHeaderSpan(oColumn) == oTable.getComputedFixedColumnCount();
+			const iColumnIndex = oColumn.getIndex();
+			const bIsFixedColumn = iColumnIndex + TableUtils.Column.getHeaderSpan(oColumn) == oTable.getComputedFixedColumnCount();
 
 			this.addItem(this._createMenuItem(
 				"freeze",
@@ -288,7 +288,7 @@ sap.ui.define([
 				null,
 				function() {
 					// forward the event
-					var bExecuteDefault = oTable.fireColumnFreeze({
+					const bExecuteDefault = oTable.fireColumnFreeze({
 						column: oColumn
 					});
 
@@ -310,13 +310,13 @@ sap.ui.define([
 	 * @private
 	 */
 	ColumnMenu.prototype._addColumnVisibilityMenuItem = function() {
-		var oTable = this._getTable();
+		const oTable = this._getTable();
 
 		if (oTable && oTable.getShowColumnVisibilityMenu()) {
 			if (!oTable._oColumnVisibilityMenuItem || oTable._oColumnVisibilityMenuItem.bIsDestroyed) {
 				oTable._oColumnVisibilityMenuItem = this._createMenuItem("column-visibilty", "TBL_COLUMNS");
 
-				var oColumnVisibiltyMenu = new Menu(oTable._oColumnVisibilityMenuItem.getId() + "-menu");
+				const oColumnVisibiltyMenu = new Menu(oTable._oColumnVisibilityMenuItem.getId() + "-menu");
 				oTable._oColumnVisibilityMenuItem.setSubmenu(oColumnVisibiltyMenu);
 			}
 
@@ -332,17 +332,17 @@ sap.ui.define([
 	 * @private
 	 */
 	ColumnMenu.prototype._createColumnVisibilityMenuItem = function(oColumn) {
-		var oTable = this._getTable();
-		var sText = TableUtils.Column.getHeaderText(oColumn);
+		const oTable = this._getTable();
+		const sText = TableUtils.Column.getHeaderText(oColumn);
 
 		return new MenuItem({
 			text: sText,
 			icon: oColumn.getVisible() ? "sap-icon://accept" : null,
 			ariaLabelledBy: [oTable.getId() + (oColumn.getVisible() ? "-ariahidecolmenu" : "-ariashowcolmenu")],
 			select: jQuery.proxy(function(oEvent) {
-				var bVisible = !oColumn.getVisible();
+				const bVisible = !oColumn.getVisible();
 				if (bVisible || TableUtils.getVisibleColumnCount(oTable) > 1) {
-					var bExecuteDefault = true;
+					let bExecuteDefault = true;
 					if (TableUtils.isA(oTable, "sap.ui.table.Table")) {
 						bExecuteDefault = oTable.fireColumnVisibility({
 							column: oColumn,
@@ -351,7 +351,7 @@ sap.ui.define([
 					}
 					if (bExecuteDefault) {
 						if (oTable.getFocusDomRef().getAttribute("id") === oColumn.getId()) {
-							var aVisibleColumns = oTable._getVisibleColumns();
+							const aVisibleColumns = oTable._getVisibleColumns();
 							aVisibleColumns[Math.min(aVisibleColumns.indexOf(oColumn) + 1, TableUtils.getVisibleColumnCount(oTable) - 2)].focus();
 						}
 						oColumn.setVisible(bVisible);
@@ -405,10 +405,10 @@ sap.ui.define([
 	 * @private
 	 */
 	ColumnMenu.prototype._setFilterValue = function(sValue) {
-		var oColumn = this.getParent();
-		var oTable = (oColumn ? oColumn.getParent() : undefined);
+		const oColumn = this.getParent();
+		const oTable = (oColumn ? oColumn.getParent() : undefined);
 
-		var oFilterField = Element.getElementById(this.getId() + "-filter");
+		const oFilterField = Element.getElementById(this.getId() + "-filter");
 		if (oFilterField && oFilterField.setValue && (oTable && !oTable.getEnableCustomFilter())) {
 			oFilterField.setValue(sValue);
 		}
@@ -422,10 +422,10 @@ sap.ui.define([
 	 * @private
 	 */
 	ColumnMenu.prototype._setFilterState = function(sFilterState) {
-		var oColumn = this.getParent();
-		var oTable = (oColumn ? oColumn.getParent() : undefined);
+		const oColumn = this.getParent();
+		const oTable = (oColumn ? oColumn.getParent() : undefined);
 
-		var oFilterField = Element.getElementById(this.getId() + "-filter");
+		const oFilterField = Element.getElementById(this.getId() + "-filter");
 		if (oFilterField && oFilterField.setValueState && (oTable && !oTable.getEnableCustomFilter())) {
 			oFilterField.setValueState(sFilterState);
 		}
@@ -433,10 +433,10 @@ sap.ui.define([
 	};
 
 	function getSortedColumns(oTable) {
-		var aColumns = oTable.getColumns();
+		let aColumns = oTable.getColumns();
 
 		if (oTable.getColumnVisibilityMenuSorter && typeof oTable.getColumnVisibilityMenuSorter === "function") {
-			var oSorter = oTable.getColumnVisibilityMenuSorter();
+			const oSorter = oTable.getColumnVisibilityMenuSorter();
 			if (typeof oSorter === "function") {
 				aColumns = aColumns.sort(oSorter);
 			}
@@ -447,9 +447,9 @@ sap.ui.define([
 	// is column set to invisible by analytical metadata
 	function isAnalyticalColumnInvisible(oBinding, oColumn) {
 		if (oColumn.isA("sap.ui.table.AnalyticalColumn")) {
-			var oQueryResult = oBinding.getAnalyticalQueryResult();
-			var oEntityType = oQueryResult.getEntityType();
-			var oMetadata = oBinding.getModel().getProperty("/#" + oEntityType.getTypeDescription().name + "/" + oColumn.getLeadingProperty() + "/sap:visible");
+			const oQueryResult = oBinding.getAnalyticalQueryResult();
+			const oEntityType = oQueryResult.getEntityType();
+			const oMetadata = oBinding.getModel().getProperty("/#" + oEntityType.getTypeDescription().name + "/" + oColumn.getLeadingProperty() + "/sap:visible");
 
 			if (oMetadata && (oMetadata.value === "false" || oMetadata.value === false)) {
 				return true;
@@ -459,24 +459,24 @@ sap.ui.define([
 	}
 
 	ColumnMenu.prototype._updateColumnVisibilityMenuItem = function() {
-		var oTable = this._getTable();
+		const oTable = this._getTable();
 		if (!oTable || !oTable._oColumnVisibilityMenuItem) {
 			return;
 		}
 
-		var oSubmenu = oTable._oColumnVisibilityMenuItem.getSubmenu();
+		const oSubmenu = oTable._oColumnVisibilityMenuItem.getSubmenu();
 		if (!oSubmenu) {
 			return;
 		}
 
-		var aColumns = getSortedColumns(oTable);
-		var aSubmenuItems = oSubmenu.getItems();
-		var aVisibleColumns = oTable._getVisibleColumns();
-		var oBinding = oTable.getBinding();
-		var bAnalyticalBinding = TableUtils.isA(oBinding, "sap.ui.model.analytics.AnalyticalBinding");
+		const aColumns = getSortedColumns(oTable);
+		let aSubmenuItems = oSubmenu.getItems();
+		const aVisibleColumns = oTable._getVisibleColumns();
+		const oBinding = oTable.getBinding();
+		const bAnalyticalBinding = TableUtils.isA(oBinding, "sap.ui.model.analytics.AnalyticalBinding");
 
-		for (var i = 0; i < aColumns.length; i++) {
-			var oColumn = aColumns[i];
+		for (let i = 0; i < aColumns.length; i++) {
+			const oColumn = aColumns[i];
 
 			if (bAnalyticalBinding) {
 				if (isAnalyticalColumnInvisible(oBinding, oColumn)) {
@@ -484,22 +484,22 @@ sap.ui.define([
 				}
 			}
 
-			var oItem = ColumnToVisibilitySubmenuItemMap.get(oColumn);
+			let oItem = ColumnToVisibilitySubmenuItemMap.get(oColumn);
 
 			if (!oItem || oItem.bIsDestroyed) {
-				var oItem = this._createColumnVisibilityMenuItem(oColumn);
+				oItem = this._createColumnVisibilityMenuItem(oColumn);
 				oSubmenu.insertItem(oItem, i);
 				ColumnToVisibilitySubmenuItemMap.set(oColumn, oItem);
 			} else {
-				var iIndex = aSubmenuItems.indexOf(oItem);
+				const iIndex = aSubmenuItems.indexOf(oItem);
 				if (i !== iIndex) {
 					oSubmenu.removeItem(oItem);
 					oSubmenu.insertItem(oItem, i);
 				}
 			}
 
-			var bVisible = aVisibleColumns.indexOf(oColumn) > -1;
-			var sIcon = bVisible ? "sap-icon://accept" : "";
+			const bVisible = aVisibleColumns.indexOf(oColumn) > -1;
+			const sIcon = bVisible ? "sap-icon://accept" : "";
 			aSubmenuItems = oSubmenu.getItems();
 			aSubmenuItems[i].setProperty("icon", sIcon);
 			aSubmenuItems[i].setEnabled(!bVisible || aVisibleColumns.length > 1);
@@ -507,7 +507,7 @@ sap.ui.define([
 			aSubmenuItems[i].addAriaLabelledBy(oTable.getId() + (bVisible ? "-ariahidecolmenu" : "-ariashowcolmenu"));
 		}
 
-		for (var i = aSubmenuItems.length; i > aColumns.length; i--) {
+		for (let i = aSubmenuItems.length; i > aColumns.length; i--) {
 			aSubmenuItems[i - 1].destroy();
 		}
 	};

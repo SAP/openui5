@@ -12,7 +12,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var SelectionMode = library.SelectionMode;
+	const SelectionMode = library.SelectionMode;
 
 	/**
 	 * Constructs an instance of sap.ui.table.plugins.BindingSelection
@@ -24,7 +24,7 @@ sap.ui.define([
 	 * @private
 	 * @alias sap.ui.table.plugins.BindingSelection
 	 */
-	var BindingSelection = SelectionPlugin.extend("sap.ui.table.plugins.BindingSelection", {
+	const BindingSelection = SelectionPlugin.extend("sap.ui.table.plugins.BindingSelection", {
 		metadata: {
 			library: "sap.ui.table",
 			properties: {
@@ -65,7 +65,7 @@ sap.ui.define([
 		}
 
 		if (mConfig && mConfig.range) {
-			var iLastSelectedIndex = this.getSelectedIndex();
+			const iLastSelectedIndex = this.getSelectedIndex();
 
 			if (iLastSelectedIndex >= 0) {
 				this.addSelectionInterval(iLastSelectedIndex, oRow.getIndex());
@@ -95,7 +95,8 @@ sap.ui.define([
 	};
 
 	function toggleSelectAll(oPlugin) {
-		var oTable = oPlugin.getTable(), bSelectAll;
+		const oTable = oPlugin.getTable();
+let bSelectAll;
 
 		// in order to fire the rowSelectionChanged event, the SourceRowIndex mus be set to -1
 		// to indicate that the selection was changed by user interaction
@@ -149,7 +150,7 @@ sap.ui.define([
 			return;
 		}
 
-		var oBinding = this.getTableBinding();
+		const oBinding = this.getTableBinding();
 
 		if (oBinding && oBinding.addSelectionInterval) {
 			if (this.getSelectionMode() === SelectionMode.Single) {
@@ -166,7 +167,7 @@ sap.ui.define([
 	 * @inheritDoc
 	 */
 	BindingSelection.prototype.clearSelection = function() {
-		var oBinding = this.getTableBinding();
+		const oBinding = this.getTableBinding();
 
 		if (oBinding && oBinding.clearSelection) {
 			oBinding.clearSelection();
@@ -178,7 +179,7 @@ sap.ui.define([
 	 * @inheritDoc
 	 */
 	BindingSelection.prototype.getSelectedIndex = function() {
-		var oBinding = this.getTableBinding();
+		const oBinding = this.getTableBinding();
 
 		if (oBinding && oBinding.getSelectedIndex) {
 			return oBinding.getSelectedIndex();
@@ -192,10 +193,10 @@ sap.ui.define([
 	 * @inheritDoc
 	 */
 	BindingSelection.prototype.getSelectedIndices = function() {
-		var oBinding = this.getTableBinding();
+		const oBinding = this.getTableBinding();
 
 		if (this.getSelectionMode() === SelectionMode.Single) {
-			var iSelectedIndex = this.getSelectedIndex();
+			const iSelectedIndex = this.getSelectedIndex();
 
 			if (iSelectedIndex === -1) {
 				return [];
@@ -216,12 +217,12 @@ sap.ui.define([
 	 * @inheritDoc
 	 */
 	BindingSelection.prototype.getSelectableCount = function() {
-		var oBinding = this.getTableBinding();
+		const oBinding = this.getTableBinding();
 
 		if (!oBinding) {
 			return 0;
 		} else if (oBinding.isA("sap.ui.model.analytics.AnalyticalBinding")) {
-			var oRootNode = oBinding.getGrandTotalContextInfo();
+			const oRootNode = oBinding.getGrandTotalContextInfo();
 			return oRootNode ? oRootNode.totalNumberOfLeafs : 0;
 		} else {
 			return oBinding.getLength();
@@ -233,7 +234,7 @@ sap.ui.define([
 	 * @inheritDoc
 	 */
 	BindingSelection.prototype.getSelectedCount = function() {
-		var oBinding = this.getTableBinding();
+		const oBinding = this.getTableBinding();
 
 		if (oBinding && oBinding.getSelectedNodesCount) {
 			return oBinding.getSelectedNodesCount();
@@ -247,7 +248,7 @@ sap.ui.define([
 	 * @inheritDoc
 	 */
 	BindingSelection.prototype.isIndexSelectable = function(iIndex) {
-		var oBinding = this.getTableBinding();
+		const oBinding = this.getTableBinding();
 
 		if (oBinding && oBinding.isIndexSelectable) {
 			return oBinding.isIndexSelectable(iIndex);
@@ -262,7 +263,7 @@ sap.ui.define([
 	 * @inheritDoc
 	 */
 	BindingSelection.prototype.isIndexSelected = function(iIndex) {
-		var oBinding = this.getTableBinding();
+		const oBinding = this.getTableBinding();
 
 		if (this.getSelectionMode() === SelectionMode.Single) {
 			if (iIndex < 0) {
@@ -284,7 +285,7 @@ sap.ui.define([
 	 * @inheritDoc
 	 */
 	BindingSelection.prototype.removeSelectionInterval = function(iIndexFrom, iIndexTo) {
-		var oBinding = this.getTableBinding();
+		const oBinding = this.getTableBinding();
 
 		if (oBinding && oBinding.removeSelectionInterval) {
 			oBinding.removeSelectionInterval(iIndexFrom, iIndexTo);
@@ -300,7 +301,7 @@ sap.ui.define([
 			return;
 		}
 
-		var oBinding = this.getTableBinding();
+		const oBinding = this.getTableBinding();
 
 		if (oBinding && oBinding.selectAll) {
 			oBinding.selectAll();
@@ -320,7 +321,7 @@ sap.ui.define([
 			// Index -1 means to clear the selection. The binding doesn't know that -1 means no selection.
 			this.clearSelection();
 		} else {
-			var oBinding = this.getTableBinding();
+			const oBinding = this.getTableBinding();
 
 			if (oBinding && oBinding.setSelectedIndex) {
 				oBinding.setSelectedIndex(iIndex);
@@ -337,7 +338,7 @@ sap.ui.define([
 			return;
 		}
 
-		var oBinding = this.getTableBinding();
+		const oBinding = this.getTableBinding();
 
 		if (oBinding && oBinding.setSelectionInterval) {
 			if (this.getSelectionMode() === SelectionMode.Single) {
@@ -355,7 +356,7 @@ sap.ui.define([
 	 * @public
 	 */
 	BindingSelection.prototype.setSelectionMode = function(sSelectionMode) {
-		var sOldSelectionMode = this.getSelectionMode();
+		const sOldSelectionMode = this.getSelectionMode();
 
 		this.setProperty("selectionMode", sSelectionMode);
 
@@ -373,12 +374,12 @@ sap.ui.define([
 	 * @private
 	 */
 	BindingSelection.prototype._getHighestSelectableIndex = function() {
-		var oBinding = this.getTableBinding();
+		const oBinding = this.getTableBinding();
 
 		if (!oBinding) {
 			return -1;
 		} else if (oBinding.isA("sap.ui.model.analytics.AnalyticalBinding")) {
-			var bHasGrandTotal = oBinding.providesGrandTotal() && oBinding.hasTotaledMeasures();
+			const bHasGrandTotal = oBinding.providesGrandTotal() && oBinding.hasTotaledMeasures();
 			return oBinding.getLength() - (bHasGrandTotal ? 2 : 1);
 		} else {
 			return oBinding.getLength() - 1;
@@ -417,7 +418,7 @@ sap.ui.define([
 	 * @private
 	 */
 	BindingSelection.prototype._onBindingChange = function(oEvent) {
-		var sReason = typeof (oEvent) === "object" ? oEvent.getParameter("reason") : oEvent;
+		const sReason = typeof (oEvent) === "object" ? oEvent.getParameter("reason") : oEvent;
 
 		if (sReason === "sort" || sReason === "filter") {
 			this.clearSelection();
@@ -425,8 +426,8 @@ sap.ui.define([
 	};
 
 	BindingSelection.prototype._onSelectionChange = function(oEvent) {
-		var aRowIndices = oEvent.getParameter("rowIndices");
-		var bSelectAll = oEvent.getParameter("selectAll");
+		const aRowIndices = oEvent.getParameter("rowIndices");
+		const bSelectAll = oEvent.getParameter("selectAll");
 
 		this.fireSelectionChange({
 			rowIndices: aRowIndices,

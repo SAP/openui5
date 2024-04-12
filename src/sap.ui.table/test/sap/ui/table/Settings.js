@@ -87,18 +87,18 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 	"use strict";
 
 	// shortcut for sap.ui.core.Popup.Dock
-	var Dock = Popup.Dock;
+	const Dock = Popup.Dock;
 
 	// shortcut for sap.ui.core.MessageType
-	var MessageType = coreLibrary.MessageType;
+	const MessageType = coreLibrary.MessageType;
 
 	// shortcut for sap.m.ButtonType
-	var ButtonType = mobileLibrary.ButtonType;
+	const ButtonType = mobileLibrary.ButtonType;
 
-	var TABLESETTINGS = window.TABLESETTINGS = {};
+	const TABLESETTINGS = window.TABLESETTINGS = {};
 
 	// Test data
-	var i, l;
+	let i; let l;
 
 	TABLESETTINGS.listTestData = [
 		{lastName: "Dente", name: "Alfred", checked: true, linkText: "www.sap.com", href: "http://www.sap.com", src: "images/Person.png", gender: "male", rating: 4, money: 5.67, birthday: "1968-05-06", currency: "EUR", objStatusText: "Name OK Text", objStatusTitle: "Name OK Title", objStatusState: "Success", highlightState: "Success"},
@@ -123,7 +123,7 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 		{lastName: "Summer", name: "Paige", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "female", rating: 3, money: 5.67, birthday: "1968-01-01", currency: "EUR", objStatusText: "Name OK Text", objStatusTitle: "Name OK Title", objStatusState: "Success", highlightState: "Information"}
 	];
 
-	var aOrgData = deepExtend([], TABLESETTINGS.listTestData);
+	const aOrgData = deepExtend([], TABLESETTINGS.listTestData);
 	for (i = 0; i < 9; i++) {
 		TABLESETTINGS.listTestData = TABLESETTINGS.listTestData.concat(deepExtend([], aOrgData));
 	}
@@ -377,7 +377,7 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 		}
 	};
 
-	var DEFAULTACTIONS = {
+	const DEFAULTACTIONS = {
 		I18N: {
 			text: "Internationalization",
 			group: {
@@ -426,7 +426,7 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 					text: "Mode",
 					selectedKey: "FIXED_ENUM",
 					value: function(oTable) {
-						var vRowMode = oTable.getRowMode();
+						const vRowMode = oTable.getRowMode();
 
 						if (typeof vRowMode === "string") {
 							return vRowMode.toUpperCase() + "_ENUM";
@@ -435,13 +435,13 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 						}
 					},
 					choice: (() => {
-						var mSettings = {};
+						const mSettings = {};
 
 						Object.keys(RowModeType).forEach((sType) => {
 							function refreshUI(bIsEnum) {
 								TABLESETTINGS.actions.ROWMODES.group.ROWMODE.selectedKey = sType.toUpperCase() + (bIsEnum ? "_ENUM" : "");
 
-								for (var sKey in TABLESETTINGS.actions.ROWMODES.group) {
+								for (const sKey in TABLESETTINGS.actions.ROWMODES.group) {
 									if (sKey.startsWith("SETTING")) {
 										TABLESETTINGS.actions.ROWMODES.group[sKey].hidden = true;
 									}
@@ -559,8 +559,8 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 				SELECTIONPLUGIN: {
 					text: "Selection Plugin",
 					value: function(oTable) {
-						var oSelectionPlugin = oTable._getSelectionPlugin();
-						var sName = oSelectionPlugin ? oSelectionPlugin.getMetadata().getName().split(".").pop().toUpperCase() : "NONE";
+						const oSelectionPlugin = oTable._getSelectionPlugin();
+						const sName = oSelectionPlugin ? oSelectionPlugin.getMetadata().getName().split(".").pop().toUpperCase() : "NONE";
 						return sName in this.choice ? sName : "NONE";
 					},
 					choice: {
@@ -574,7 +574,7 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 							text: "MultiSelection",
 							action: function(oTable) {
 								oTable.destroyDependents();
-								var oPlugin = new MultiSelectionPlugin({
+								const oPlugin = new MultiSelectionPlugin({
 									limit: 20,
 									enableNotification: true
 								});
@@ -594,7 +594,7 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 				CELLSELECTIONPLUGIN: {
 					text: "Cell Selection Plugin",
 					value: function(oTable) {
-						var oPlugin = oTable.getDependents().find(function(oDependent) {
+						const oPlugin = oTable.getDependents().find(function(oDependent) {
 							return oDependent.isA("sap.m.plugins.CellSelector");
 						});
 						return oPlugin ? "CELLSELECTOR" : "NONE";
@@ -603,10 +603,10 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 						NONE: {
 							text: "None",
 							action: function(oTable) {
-								var aDependents = oTable.getDependents(),
-									oPlugin = aDependents.find(function(oDependent) {
-										return oDependent.isA("sap.m.plugins.CellSelector");
-									});
+								const aDependents = oTable.getDependents();
+								const oPlugin = aDependents.find(function(oDependent) {
+									return oDependent.isA("sap.m.plugins.CellSelector");
+								});
 								oTable.removeDependent(oPlugin);
 							}
 						},
@@ -626,7 +626,7 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 				DENSITY: {
 					text: "Density",
 					value: function(oTable) {
-						var sDensity = TableUtils.getContentDensity(oTable);
+						const sDensity = TableUtils.getContentDensity(oTable);
 						if (!sDensity || sDensity.indexOf("sapUiSize") === -1) {
 							return null;
 						}
@@ -880,7 +880,7 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 							text: "Navigation",
 							action: function(oTable) {
 								TABLESETTINGS.actions.AREAS.group.ROWACTIONS.selectedKey = "NAVIGATION";
-								var oTemplate = new RowAction({items: [
+								const oTemplate = new RowAction({items: [
 									new RowActionItem({
 										type: "Navigation",
 										press: fnRowActionPress,
@@ -902,7 +902,7 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 							text: "Navigation & Delete",
 							action: function(oTable) {
 								TABLESETTINGS.actions.AREAS.group.ROWACTIONS.selectedKey = "NAVIGATIONDELETE";
-								var oTemplate = new RowAction({items: [
+								const oTemplate = new RowAction({items: [
 									new RowActionItem({
 										type: "Navigation",
 										press: fnRowActionPress,
@@ -925,7 +925,7 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 							text: "Navigation & Custom",
 							action: function(oTable) {
 								TABLESETTINGS.actions.AREAS.group.ROWACTIONS.selectedKey = "NAVIGATIONCUSTOM";
-								var oTemplate = new RowAction({items: [
+								const oTemplate = new RowAction({items: [
 									new RowActionItem({
 										type: "Navigation",
 										press: fnRowActionPress,
@@ -948,7 +948,7 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 							text: "Multiple Actions",
 							action: function(oTable) {
 								TABLESETTINGS.actions.AREAS.group.ROWACTIONS.selectedKey = "MULTI";
-								var oTemplate = new RowAction({items: [
+								const oTemplate = new RowAction({items: [
 									new RowActionItem({icon: "sap-icon://attachment", text: "Attachment", press: fnRowActionPress}),
 									new RowActionItem({icon: "sap-icon://search", text: "Search", press: fnRowActionPress}),
 									new RowActionItem({icon: "sap-icon://edit", text: "Edit", press: fnRowActionPress}),
@@ -961,7 +961,7 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 							text: "Multiple Actions (1 Column)",
 							action: function(oTable) {
 								TABLESETTINGS.actions.AREAS.group.ROWACTIONS.selectedKey = "MULTI_ONE";
-								var oTemplate = new RowAction({items: [
+								const oTemplate = new RowAction({items: [
 									new RowActionItem({icon: "sap-icon://attachment", text: "Attachment", press: fnRowActionPress}),
 									new RowActionItem({icon: "sap-icon://search", text: "Search", press: fnRowActionPress}),
 									new RowActionItem({icon: "sap-icon://edit", text: "Edit", press: fnRowActionPress}),
@@ -988,9 +988,9 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 					action: function(oTable, bValue) {
 						if (bValue) {
 							sap.ui.require(["sap/ui/table/CreationRow"], function(CreationRow) {
-								var oBinding = oTable.getBinding();
-								var oModel = oBinding ? oBinding.getModel() : null;
-								var oCreationContext = oModel ? oModel.createBindingContext("/new") : null;
+								const oBinding = oTable.getBinding();
+								const oModel = oBinding ? oBinding.getModel() : null;
+								const oCreationContext = oModel ? oModel.createBindingContext("/new") : null;
 
 								if (oModel) {
 									oModel.setProperty("", {}, oCreationContext);
@@ -1001,7 +1001,7 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 										undefined: oCreationContext
 									},
 									apply: function(oEvent) {
-										var oData = oModel.getObject(oBinding.getPath());
+										const oData = oModel.getObject(oBinding.getPath());
 
 										oData.push(oCreationContext.getObject());
 										oModel.setProperty("", {}, oCreationContext);
@@ -1116,9 +1116,9 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 		}
 	};
 
-	var bInit = false;
-	var oSettingsMenu = null;
-	var oReopenTimer;
+	let bInit = false;
+	let oSettingsMenu;
+	let oReopenTimer;
 
 	function setReopenTimer() {
 		if (oReopenTimer) {
@@ -1140,10 +1140,10 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 	}
 
 	function initMenu(mActions) {
-		var oMenu = new UnifiedMenu();
+		const oMenu = new UnifiedMenu();
 
 		function onSelectTextFieldItem(oEvent) {
-			var oTFItem = oEvent.getParameter("item");
+			const oTFItem = oEvent.getParameter("item");
 			oTFItem._action(TABLESETTINGS.table, oTFItem._boolean ? !!oTFItem.getValue() : oTFItem.getValue());
 			setReopenTimer();
 		}
@@ -1153,12 +1153,12 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 			setReopenTimer();
 		}
 
-		for (var item in mActions) {
-			var oItem;
+		for (const item in mActions) {
+			let oItem;
 			if (mActions[item].input) {
-				var oActionValue = getValue(mActions[item]);
-				var bIsBoolean = mActions[item].input == "boolean";
-				var sValue = null;
+				const oActionValue = getValue(mActions[item]);
+				const bIsBoolean = mActions[item].input == "boolean";
+				let sValue = null;
 
 				if (bIsBoolean) {
 					sValue = oActionValue ? "X" : null;
@@ -1183,17 +1183,17 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 		return oMenu;
 	}
 
-	function initFormElements(mActions, iLevel) {
-		var aResult = [];
+	function initFormElements(mActions) {
+		const aResult = [];
 
-		function addSettings(oAction) {
-			var oActionValue = getValue(oAction);
-			var oClass = null;
-			var mSettings = {
+		function addSettings(oAction, sItem) {
+			const oActionValue = getValue(oAction);
+			let oClass = null;
+			const mSettings = {
 				visible: !oAction.hidden,
 				enabled: !oAction.disabled
 			};
-			var oRelatedControl = null;
+			let oRelatedControl = null;
 
 			if (oAction.group) {
 				oClass = Button;
@@ -1202,25 +1202,25 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 				mSettings.press = function(oEvent) {
 					oEvent.getSource()._related.open(false, oEvent.getSource(), Dock.BeginTop, Dock.BeginBottom, oEvent.getSource());
 				};
-				oRelatedControl = initMenu(mActions[item].group);
+				oRelatedControl = initMenu(mActions[sItem].group);
 			} else if (oAction.choice) {
 				oClass = Select;
 				mSettings.items = [];
 				mSettings.forceSelection = false;
 				mSettings.selectedKey = oActionValue || null;
 				mSettings.change = function(oEvent) {
-					var oSelectedItem = oEvent.getParameter("selectedItem");
+					const oSelectedItem = oEvent.getParameter("selectedItem");
 					if (oSelectedItem._action) {
 						oSelectedItem._action(TABLESETTINGS.table);
 					}
 				};
-				for (var item in oAction.choice) {
-					if (!oAction.choice[item].hidden && !oAction.choice[item].disabled) {
-						var oItem = new Item({
-							text: oAction.choice[item].text,
-							key: item
+				for (const sItem in oAction.choice) {
+					if (!oAction.choice[sItem].hidden && !oAction.choice[sItem].disabled) {
+						const oItem = new Item({
+							text: oAction.choice[sItem].text,
+							key: sItem
 						});
-						oItem._action = oAction.choice[item].action;
+						oItem._action = oAction.choice[sItem].action;
 						mSettings.items.push(oItem);
 					}
 				}
@@ -1253,9 +1253,9 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 				return null;
 			}
 
-			var oLabel = new Label({text: oAction.text, tooltip: oAction.text});
+			const oLabel = new Label({text: oAction.text, tooltip: oAction.text});
 			aResult.push(oLabel);
-			var oControl = new oClass(mSettings);
+			const oControl = new oClass(mSettings);
 			oControl._action = oAction.action;
 			oControl._related = oRelatedControl;
 			aResult.push(oControl);
@@ -1263,15 +1263,15 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 			return oControl;
 		}
 
-		for (var item in mActions) {
-			addSettings(mActions[item]);
+		for (const sItem in mActions) {
+			addSettings(mActions[sItem], sItem);
 		}
 
 		return aResult;
 	}
 
 	function initForm(mActions) {
-		var oForm = new SimpleForm({
+		const oForm = new SimpleForm({
 			editable: true,
 			layout: "ResponsiveGridLayout",
 			columnsXL: 2,
@@ -1283,13 +1283,13 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 			labelSpanS: 7
 		});
 
-		var oSettingsSelector = new Select({
+		const oSettingsSelector = new Select({
 			width: "100%",
 			selectedKey: loadAppliedSettingsKey(),
 			items: (function() {
-				var aItems = [];
+				const aItems = [];
 
-				for (var key in TABLESETTINGS.storedSettings) {
+				for (const key in TABLESETTINGS.storedSettings) {
 					aItems.push(new Item({
 						key: key,
 						text: key
@@ -1299,9 +1299,9 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 				return aItems;
 			})(),
 			change: function(oEvent) {
-				var sSettingsKey = oEvent.getParameter("selectedItem").getKey();
-				var sSettingsSnapshot = TABLESETTINGS.storedSettings[sSettingsKey];
-				var oDialog = Element.getElementById("settingsDialog");
+				const sSettingsKey = oEvent.getParameter("selectedItem").getKey();
+				const sSettingsSnapshot = TABLESETTINGS.storedSettings[sSettingsKey];
+				const oDialog = Element.getElementById("settingsDialog");
 
 				applySettingsSnapshot(TABLESETTINGS.table, sSettingsSnapshot);
 				saveAppliedSettingsKey(sSettingsKey);
@@ -1312,11 +1312,11 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 			}
 		});
 
-		var oNewSettingsInput = new Input({
+		const oNewSettingsInput = new Input({
 			placeholder: "Name"
 		});
 
-		var aFormElements = [
+		let aFormElements = [
 			new Title({text: "Save/Load Settings"}),
 			new VBox({
 				renderType: "Bare",
@@ -1329,15 +1329,15 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 								icon: "sap-icon://delete",
 								text: "Delete",
 								press: function(oEvent) {
-									var sDeleteSettingsKey = oSettingsSelector.getSelectedKey();
+									const sDeleteSettingsKey = oSettingsSelector.getSelectedKey();
 
 									deleteSettingsSnapshot(sDeleteSettingsKey);
 									TABLESETTINGS.storedSettings = loadSettingsSnapshots();
 
 									function createSelectItems() {
-										var aSelectItems = [];
+										const aSelectItems = [];
 
-										for (var key in TABLESETTINGS.storedSettings) {
+										for (const key in TABLESETTINGS.storedSettings) {
 											aSelectItems.push(new Item({
 												key: key,
 												text: key
@@ -1347,17 +1347,17 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 										return aSelectItems;
 									}
 
-									var sSelects = [
+									const sSelects = [
 										Element.getElementById("settingsSelector"),
 										oSettingsSelector
 									];
 
-									for (var i = 0; i < sSelects.length; i++) {
-										var oSelect = sSelects[i];
-										var aNewSelectItems = createSelectItems();
+									for (let i = 0; i < sSelects.length; i++) {
+										const oSelect = sSelects[i];
+										const aNewSelectItems = createSelectItems();
 
 										oSelect.removeAllItems();
-										for (var j = 0; j < aNewSelectItems.length; j++) {
+										for (let j = 0; j < aNewSelectItems.length; j++) {
 											oSelect.addItem(aNewSelectItems[j]);
 										}
 										oSelect.setSelectedKey("Default");
@@ -1377,16 +1377,16 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 								icon: "sap-icon://save",
 								text: "Save",
 								press: function(oEvent) {
-									var sNewSettingsKey = oNewSettingsInput.getValue();
+									const sNewSettingsKey = oNewSettingsInput.getValue();
 
 									saveSettingsSnapshot(sNewSettingsKey, createSettingsSnapshot(TABLESETTINGS.table));
 									saveAppliedSettingsKey(sNewSettingsKey);
 									TABLESETTINGS.storedSettings = loadSettingsSnapshots();
 
 									function createSelectItems() {
-										var aSelectItems = [];
+										const aSelectItems = [];
 
-										for (var key in TABLESETTINGS.storedSettings) {
+										for (const key in TABLESETTINGS.storedSettings) {
 											aSelectItems.push(new Item({
 												key: key,
 												text: key
@@ -1396,17 +1396,17 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 										return aSelectItems;
 									}
 
-									var sSelects = [
+									const sSelects = [
 										Element.getElementById("settingsSelector"),
 										oSettingsSelector
 									];
 
-									for (var i = 0; i < sSelects.length; i++) {
-										var oSelect = sSelects[i];
-										var aNewSelectItems = createSelectItems();
+									for (let i = 0; i < sSelects.length; i++) {
+										const oSelect = sSelects[i];
+										const aNewSelectItems = createSelectItems();
 
 										oSelect.removeAllItems();
-										for (var j = 0; j < aNewSelectItems.length; j++) {
+										for (let j = 0; j < aNewSelectItems.length; j++) {
 											oSelect.addItem(aNewSelectItems[j]);
 										}
 										oSelect.setSelectedKey(sNewSettingsKey);
@@ -1419,9 +1419,9 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 			})
 		];
 
-		var mUncategorizedActions = {};
-		var bHasUncategorizedActions = false;
-		for (var item in mActions) {
+		const mUncategorizedActions = {};
+		let bHasUncategorizedActions = false;
+		for (const item in mActions) {
 			if (mActions[item].group) {
 				aFormElements.push(new Title({text: mActions[item].text}));
 				aFormElements = aFormElements.concat(initFormElements(mActions[item].group));
@@ -1435,7 +1435,7 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 			aFormElements = aFormElements.concat(initFormElements(mUncategorizedActions));
 		}
 
-		for (var i = 0; i < aFormElements.length; i++) {
+		for (let i = 0; i < aFormElements.length; i++) {
 			oForm.addContent(aFormElements[i]);
 		}
 
@@ -1443,7 +1443,7 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 	}
 
 	function initDialog(mActions) {
-		var oDialog = new Dialog({
+		const oDialog = new Dialog({
 			id: "settingsDialog",
 			title: "Table Settings",
 			resizable: true,
@@ -1461,8 +1461,8 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 	}
 
 	function createSettingsSnapshot(oTable) {
-		var mTableSnapshot = {};
-		var sPublicPropertyName;
+		const mTableSnapshot = {};
+		let sPublicPropertyName;
 
 		// Public table properties.
 		for (sPublicPropertyName in oTable.mProperties) {
@@ -1479,7 +1479,7 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 		}
 
 		// Public row settings properties
-		var oRowSettings = oTable.getRowSettingsTemplate();
+		const oRowSettings = oTable.getRowSettingsTemplate();
 		if (oRowSettings != null) {
 			mTableSnapshot["RowSettings"] = {};
 
@@ -1498,12 +1498,12 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 		}
 
 		// Private table properties
-		var aPrivatePropertyNames = [
+		const aPrivatePropertyNames = [
 			"_bLargeDataScrolling", "_bVariableRowHeightEnabled"
 		];
 
-		for (var i = 0; i < aPrivatePropertyNames.length; i++) {
-			var sPrivatePropertyName = aPrivatePropertyNames[i];
+		for (let i = 0; i < aPrivatePropertyNames.length; i++) {
+			const sPrivatePropertyName = aPrivatePropertyNames[i];
 
 			mTableSnapshot[sPrivatePropertyName] = {};
 			mTableSnapshot[sPrivatePropertyName].value = oTable[sPrivatePropertyName];
@@ -1515,10 +1515,10 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 	}
 
 	function applySettingsSnapshot(oTable, sSnapshot) {
-		var mSettings;
-		var sPropertyName;
-		var oSetting;
-		var sSetterName;
+		let mSettings;
+		let sPropertyName;
+		let oSetting;
+		let sSetterName;
 
 		try {
 			mSettings = JSON.parse(sSnapshot);
@@ -1546,7 +1546,7 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 		}
 
 		// Public and private row settings properties.
-		var oRowSettings = null;
+		let oRowSettings = null;
 
 		if (mSettings.hasOwnProperty("RowSettings")) {
 			oRowSettings = new RowSettings();
@@ -1592,13 +1592,13 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 	}
 
 	function loadSettingsSnapshots() {
-		var mSettings = [];
+		const mSettings = [];
 
 		if (window.localStorage.getItem("TableSettings_Default") == null) {
 			window.localStorage.setItem("TableSettings_Default", createSettingsSnapshot(TABLESETTINGS.table));
 		}
 
-		for (var sKey in window.localStorage) {
+		for (const sKey in window.localStorage) {
 			if (sKey.substring(0, "TableSettings_".length) === "TableSettings_") {
 				mSettings[sKey.replace("TableSettings_", "")] = window.localStorage.getItem(sKey);
 			}
@@ -1639,13 +1639,13 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 		TABLESETTINGS.actions = deepExtend({}, DEFAULTACTIONS, mCustomActions || {});
 		TABLESETTINGS.storedSettings = loadSettingsSnapshots();
 
-		var sAppliedSettingsKey = loadAppliedSettingsKey();
+		const sAppliedSettingsKey = loadAppliedSettingsKey();
 
 		if (sAppliedSettingsKey !== "Default") {
 			applySettingsSnapshot(oTable, TABLESETTINGS.storedSettings[sAppliedSettingsKey]);
 		}
 
-		var oButton = new Button({icon: "sap-icon://action-settings", tooltip: "Settings", press: function() {
+		const oButton = new Button({icon: "sap-icon://action-settings", tooltip: "Settings", press: function() {
 			if (oSettingsMenu == null) {
 				oSettingsMenu = initDialog(TABLESETTINGS.actions);
 			} else {
@@ -1655,13 +1655,13 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 			oSettingsMenu.open();
 		}});
 
-		var oSettingsSelector = new Select({
+		const oSettingsSelector = new Select({
 			id: "settingsSelector",
 			selectedKey: sAppliedSettingsKey,
 			items: (function() {
-				var aItems = [];
+				const aItems = [];
 
-				for (var key in TABLESETTINGS.storedSettings) {
+				for (const key in TABLESETTINGS.storedSettings) {
 					aItems.push(new Item({
 						key: key,
 						text: key
@@ -1671,8 +1671,8 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 				return aItems;
 			})(),
 			change: function(oEvent) {
-				var sSettingsKey = oEvent.getParameter("selectedItem").getKey();
-				var sSettingsSnapshot = TABLESETTINGS.storedSettings[sSettingsKey];
+				const sSettingsKey = oEvent.getParameter("selectedItem").getKey();
+				const sSettingsSnapshot = TABLESETTINGS.storedSettings[sSettingsKey];
 
 				applySettingsSnapshot(oTable, sSettingsSnapshot);
 				saveAppliedSettingsKey(sSettingsKey);
@@ -1689,8 +1689,8 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 	};
 
 	TABLESETTINGS.addServiceSettings = function(oTable, sKey, fnOnSettingsChange, fnInitToolbar) {
-		var mServiceSettings = JSON.parse(window.localStorage.getItem(sKey)) || {};
-		var oToolbar = new Toolbar({
+		const mServiceSettings = JSON.parse(window.localStorage.getItem(sKey)) || {};
+		const oToolbar = new Toolbar({
 			content: [
 				new Input("TableSettings_ServiceUrl", {
 					value: mServiceSettings.url,
@@ -1713,7 +1713,7 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 			tooltip: "Go",
 			icon: "sap-icon://restart",
 			press: function() {
-				var mNewServiceSettings = {
+				const mNewServiceSettings = {
 					url: Element.getElementById("TableSettings_ServiceUrl").getValue(),
 					collection: Element.getElementById("TableSettings_Collection").getValue()
 				};
@@ -1732,34 +1732,34 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 
 	//*************************
 
-	var oColumnSettingsModel = new JSONModel();
+	const oColumnSettingsModel = new JSONModel();
 
 	function createAndOpenColumnDialog(oTable, mConfig) {
-		var aData = [];
-		var aColumns = oTable.getColumns();
-		for (var i = 0; i < aColumns.length; i++) {
-			var oSetting = {
+		const aData = [];
+		const aColumns = oTable.getColumns();
+		for (let i = 0; i < aColumns.length; i++) {
+			const oSetting = {
 				id: aColumns[i].getId(),
 				label: aColumns[i].getLabel() ? aColumns[i].getLabel().getText() : aColumns[i].getId()
 			};
-			for (var item in mConfig) {
-				oSetting[item] = getValue(mConfig[item], aColumns[i]);
+			for (const sItem in mConfig) {
+				oSetting[sItem] = getValue(mConfig[sItem], aColumns[i]);
 			}
 			aData.push(oSetting);
 		}
 		oColumnSettingsModel.setData({columns: aData});
 
 		function changeSettings() {
-			var aData = oColumnSettingsModel.getData().columns;
-			for (var i = 0; i < aData.length; i++) {
-				var oColumn = Element.getElementById(aData[i].id);
-				for (var item in mConfig) {
+			const aData = oColumnSettingsModel.getData().columns;
+			for (let i = 0; i < aData.length; i++) {
+				const oColumn = Element.getElementById(aData[i].id);
+				for (const item in mConfig) {
 					mConfig[item].action(oColumn, aData[i][item]);
 				}
 			}
 		}
 
-		var oSettingsTable = new Table({
+		const oSettingsTable = new Table({
 			selectionMode: "None",
 			rows: "{/columns}",
 			fixedColumnCount: 1,
@@ -1773,24 +1773,24 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 		});
 		oSettingsTable.setModel(oColumnSettingsModel);
 
-		var oColumn;
-		for (var item in mConfig) {
-			if (!mConfig[item].hidden) {
+		let oColumn;
+		for (const sItem in mConfig) {
+			if (!mConfig[sItem].hidden) {
 				oColumn = new Column({
-					label: mConfig[item].text,
-					template: new CheckBox({selected: "{" + item + "}"}),
+					label: mConfig[sItem].text,
+					template: new CheckBox({selected: "{" + sItem + "}"}),
 					minWidth: 120
 				});
-				if (mConfig[item].input == "boolean") {
-					oColumn.setTemplate(new CheckBox({enabled: !mConfig[item].disabled, selected: "{" + item + "}"}));
+				if (mConfig[sItem].input == "boolean") {
+					oColumn.setTemplate(new CheckBox({enabled: !mConfig[sItem].disabled, selected: "{" + sItem + "}"}));
 				} else {
-					oColumn.setTemplate(new Input({enabled: !mConfig[item].disabled, value: "{" + item + "}"}));
+					oColumn.setTemplate(new Input({enabled: !mConfig[sItem].disabled, value: "{" + sItem + "}"}));
 				}
 				oSettingsTable.addColumn(oColumn);
 			}
 		}
 
-		var oDialog = new Dialog({
+		const oDialog = new Dialog({
 			title: "Table Column Settings",
 			resizable: true,
 			contentWidth: "1000px",
@@ -1819,11 +1819,11 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 		}
 	}
 
-	var oCustom;
-	var oEmptyModel = new JSONModel();
+	let oCustom;
+	const oEmptyModel = new JSONModel();
 
 	function switchNoData(oTable, sState) {
-		var oNoDataConfig = TABLESETTINGS.actions.AREAS.group.NODATA;
+		const oNoDataConfig = TABLESETTINGS.actions.AREAS.group.NODATA;
 		switch (sState) {
 			case "TEXT":
 				oNoDataConfig.setData(oTable, true);
@@ -1853,14 +1853,14 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 	}
 
 	function fnRowActionPress(oEvent) {
-		var oRow = oEvent.getParameter("row");
-		var oItem = oEvent.getParameter("item");
+		const oRow = oEvent.getParameter("row");
+		const oItem = oEvent.getParameter("item");
 
 		MessageToast.show("Item " + (oItem.getText() || oItem.getType()) + " in row " + oRow.getIndex() + " pressed.");
 	}
 
 	function switchRowActions(oTable, iCount, oTemplate) {
-		var oCurrentTemplate = oTable.getRowActionTemplate();
+		const oCurrentTemplate = oTable.getRowActionTemplate();
 		if (oCurrentTemplate) {
 			oCurrentTemplate.destroy();
 		}

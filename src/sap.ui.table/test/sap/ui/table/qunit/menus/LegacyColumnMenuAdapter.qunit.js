@@ -23,9 +23,9 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var createTables = window.createTables;
-	var destroyTables = window.destroyTables;
-	var Dock = Popup.Dock;
+	const createTables = window.createTables;
+	const destroyTables = window.destroyTables;
+	const Dock = Popup.Dock;
 
 	/**
 	 * @deprecated As of Version 1.117
@@ -40,12 +40,12 @@ sap.ui.define([
 	});
 
 	QUnit.test("Open Menu", function(assert) {
-		var oTable = window.oTable;
-		var done = assert.async();
-		var oColumnA = oTable.getColumns()[0];
-		var oColumnB = oTable.getColumns()[1];
-		var oMenuA = oColumnA.getMenu();
-		var oColumnSelectSpy = sinon.spy(oTable, "fireColumnSelect");
+		const oTable = window.oTable;
+		const done = assert.async();
+		const oColumnA = oTable.getColumns()[0];
+		const oColumnB = oTable.getColumns()[1];
+		const oMenuA = oColumnA.getMenu();
+		const oColumnSelectSpy = sinon.spy(oTable, "fireColumnSelect");
 
 		oColumnA.setSortProperty("A");
 		oColumnB.setFilterProperty("B");
@@ -54,13 +54,13 @@ sap.ui.define([
 		oColumnA.attachEventOnce("columnMenuOpen", function() {
 			TableQUnitUtils.wait(0).then(function() {
 				assert.ok(oColumnSelectSpy.calledOnce, "ColumnSelect event is fired");
-				var oMenuA = oColumnA.getMenu();
+				const oMenuA = oColumnA.getMenu();
 				assert.ok(oMenuA.isA("sap.ui.table.ColumnMenu"), "column menu is created and the menu aggregation of the column is set");
 				assert.equal(oMenuA.getId(), oColumnA.getId() + "-menu", "column menu has correct id assigned");
 				assert.ok(oMenuA.getDomRef(), "column menu is added to the dom");
 
-				var oMenuOpenSpy = sinon.spy(oMenuA, "open");
-				var oMenuCloseSpy = sinon.spy(oMenuA, "close");
+				const oMenuOpenSpy = sinon.spy(oMenuA, "open");
+				const oMenuCloseSpy = sinon.spy(oMenuA, "close");
 
 				oColumnB._openHeaderMenu(oColumnB.getDomRef());
 				assert.ok(oMenuCloseSpy.calledOnce, "other column menus are closed");
@@ -77,16 +77,16 @@ sap.ui.define([
 	});
 
 	QUnit.test("Menu has no items", function(assert) {
-		var oTable = window.oTable;
-		var done = assert.async();
-		var oColumn = oTable.getColumns()[0];
-		var oCellDomRef = oColumn.getDomRef();
+		const oTable = window.oTable;
+		const done = assert.async();
+		const oColumn = oTable.getColumns()[0];
+		const oCellDomRef = oColumn.getDomRef();
 		oColumn.setFilterProperty("A");
 
 		oColumn.attachEventOnce("columnMenuOpen", function() {
 			TableQUnitUtils.wait(0).then(function() {
-				var oMenu = oColumn.getMenu();
-				var oMenuOpenSpy = sinon.spy(oMenu, "open");
+				const oMenu = oColumn.getMenu();
+				const oMenuOpenSpy = sinon.spy(oMenu, "open");
 				oColumn._openHeaderMenu(oCellDomRef);
 				assert.ok(oMenuOpenSpy.calledOnce, "column menu opens");
 				oMenuOpenSpy.resetHistory();
@@ -101,26 +101,26 @@ sap.ui.define([
 	});
 
 	QUnit.test("Column Header CellMenu", function(assert) {
-		var oTable = window.oTable;
-		var done = assert.async();
-		var oColumn = oTable.getColumns()[0];
-		var oCellDomRef = oColumn.getDomRef();
-		var bOriginalDeviceSystemDesktop = Device.system.desktop;
+		const oTable = window.oTable;
+		const done = assert.async();
+		const oColumn = oTable.getColumns()[0];
+		const oCellDomRef = oColumn.getDomRef();
+		const bOriginalDeviceSystemDesktop = Device.system.desktop;
 
 		Device.system.desktop = true;
 		oColumn.setFilterProperty("A");
 
 		oColumn.attachEventOnce("columnMenuOpen", function() {
 			TableQUnitUtils.wait(0).then(function() {
-				var oMenu = oColumn.getMenu();
-				var oMenuOpenSpy = sinon.spy(oMenu, "open");
+				const oMenu = oColumn.getMenu();
+				const oMenuOpenSpy = sinon.spy(oMenu, "open");
 				oColumn._openHeaderMenu(oCellDomRef);
 				assert.ok(oMenuOpenSpy.calledOnce, "column menu opens");
 				oMenuOpenSpy.resetHistory();
 
 				Device.system.desktop = false;
 				oColumn._openHeaderMenu(oCellDomRef);
-				var $ColumnCellMenu = oTable.$().find(".sapUiTableCHT .sapUiTableCellTouchMenu");
+				let $ColumnCellMenu = oTable.$().find(".sapUiTableCHT .sapUiTableCellTouchMenu");
 				assert.ok($ColumnCellMenu.length, "cell menu is applied");
 				assert.ok($ColumnCellMenu.find(".sapUiTableColDropDown").length, "cell menu contains a menu button");
 				assert.ok($ColumnCellMenu.find(".sapUiTableColResizer").length, "cell menu contains a resizer button");
@@ -138,18 +138,18 @@ sap.ui.define([
 	});
 
 	QUnit.test("Hooks", function(assert) {
-		var oTable = window.oTable;
-		var done = assert.async();
-		var oColumn = oTable.getColumns()[0];
+		const oTable = window.oTable;
+		const done = assert.async();
+		const oColumn = oTable.getColumns()[0];
 		oColumn.setSortProperty("A");
 		oColumn.setFilterProperty("A");
 
 		oColumn.attachEventOnce("columnMenuOpen", function() {
 			TableQUnitUtils.wait(0).then(function() {
-				var oMenu = oColumn.getMenu();
-				var oInvalidateSpy = sinon.spy(oMenu, "_invalidate");
-				var oSetFilterValueSpy = sinon.spy(oMenu, "_setFilterValue");
-				var oSetFilterStateSpy = sinon.spy(oMenu, "_setFilterState");
+				const oMenu = oColumn.getMenu();
+				const oInvalidateSpy = sinon.spy(oMenu, "_invalidate");
+				const oSetFilterValueSpy = sinon.spy(oMenu, "_setFilterValue");
+				const oSetFilterStateSpy = sinon.spy(oMenu, "_setFilterState");
 				oColumn.setSortProperty(undefined);
 				assert.ok(oInvalidateSpy.calledOnce, "column menu is invalidated");
 
@@ -199,9 +199,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("Open Menu", function(assert) {
-		var done = assert.async();
-		var aColumns = this.oTable.getColumns();
-		var aColumnHeaders = document.querySelectorAll('[role="columnheader"]');
+		const done = assert.async();
+		const aColumns = this.oTable.getColumns();
+		const aColumnHeaders = document.querySelectorAll('[role="columnheader"]');
 
 		function triggerClick(oCellDomRef) {
 			qutils.triggerMouseEvent(oCellDomRef, "mousedown", null, null, null, null, 0);
@@ -210,9 +210,9 @@ sap.ui.define([
 
 		aColumns[0].attachEventOnce("columnMenuOpen", function() {
 			TableQUnitUtils.wait(0).then(function() {
-				var oMenuOpenSpy = sinon.stub(ColumnMenu.prototype, "open");
+				const oMenuOpenSpy = sinon.stub(ColumnMenu.prototype, "open");
 
-				for (var i = 0; i < 6; i++) {
+				for (let i = 0; i < 6; i++) {
 					triggerClick(aColumnHeaders[i]);
 					if (aColumnHeaders[i].getAttribute("colspan")) {
 						assert.ok(oMenuOpenSpy.notCalled, "Menu#open not called because of the colspan attribute");
