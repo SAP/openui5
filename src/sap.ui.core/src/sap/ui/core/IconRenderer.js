@@ -53,6 +53,7 @@ sap.ui.define(['./_IconRegistry', './library', "sap/base/security/encodeCSS"], f
 
 		oRm.openStart("span", oControl);
 		oRm.class("sapUiIcon");
+        oRm.attr("tabindex", "0");
 
 		if (bIconInfo) {
 			oRm.accessibilityState(oControl, oAccAttributes);

@@ -379,7 +379,7 @@ sap.ui.define([
 		var $icon = this.oAriaIcon.$();
 
 		assert.strictEqual($icon.attr("role"), "presentation", "role should be set to presentation");
-		assert.strictEqual($icon.attr("tabindex"), undefined, "no tabindex is set");
+		assert.strictEqual($icon.attr("tabindex"), "0", "tabindex is set to 0");
 		assert.strictEqual($icon.attr("aria-hidden"), 'true', "aria-hidden is enabled");
 		assert.notEqual(getIconTitle(this.oAriaIcon), undefined, "title is output using icon text");
 		assert.notEqual($icon.attr("aria-label"), undefined, "aria-label is output");
@@ -403,7 +403,7 @@ sap.ui.define([
 		assert.strictEqual($icon.attr("aria-hidden"), undefined, "aria-hidden isn't output in DOM");
 		assert.strictEqual(getIconTitle(this.oAriaIcon), this.sTooltip, "title is rendered with property 'tooltip'");
 		assert.strictEqual($icon.attr("aria-label"), this.sTooltip, "aria-label is output using the 'tooltip'");
-		assert.strictEqual($icon.attr("tabindex"), undefined, "no tabindex is set");
+		assert.strictEqual($icon.attr("tabindex"),"0" , "tabindex is set to 0");
 
 		// setting alt makes the aria-label differ from the title.
 		this.oAriaIcon.setAlt(this.sAlt);
