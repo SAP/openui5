@@ -11,7 +11,7 @@
     sSampleId = getUrlParam('sap-ui-xx-sample-id'),
     sOrigin = getUrlParam('sap-ui-xx-sample-origin'),
     sLib = getUrlParam('sap-ui-xx-sample-lib'),
-    sPresetTheme = getUrlParam('sap-ui-theme') || 'sap_fiori_3',
+    sPresetTheme = getUrlParam('sap-ui-theme') || 'sap_horizon',
     sPresetRTL = getUrlParam('sap-ui-rtl') || false,
     sPresetDensity = getUrlParam('sap-ui-density'),
     oPath = {},
