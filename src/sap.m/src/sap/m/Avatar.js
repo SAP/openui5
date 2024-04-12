@@ -540,6 +540,10 @@ sap.ui.define([
 	 * @private
 	 */
 	Avatar.prototype._validateSrc = function (sSrc) {
+		if (!sSrc) {
+			return this;
+		}
+
 		if (IconPool.isIconURI(sSrc)) {
 			this._sActualType = AvatarType.Icon;
 			this._bIsDefaultIcon = IconPool.getIconInfo(sSrc) ? false : true;
@@ -551,7 +555,7 @@ sap.ui.define([
 			this.preloadedImage = new window.Image();
 			this.preloadedImage.src = sSrc;
 			this.preloadedImage.onload = this._onImageLoad.bind(this);
-			this.preloadedImage.onerror = this._onImageError.bind(this);
+			this.preloadedImage.onerror = this._onImageError.bind(this, sSrc);
 		}
 
 		return this;
@@ -725,6 +729,7 @@ sap.ui.define([
 			this._bIsDefaultIcon = false;
 			this.getDetailBox() && this.invalidate();
 		}
+		this._bImageLoadError = false;
 		delete this.preloadedImage;
 	};
 
@@ -733,7 +738,11 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	 Avatar.prototype._onImageError = function() {
+	 Avatar.prototype._onImageError = function(sSrc) {
+		if (this.getSrc() !== sSrc) {
+			return;
+		}
+
 		this._cleanCSS();
 
 		if (!this._bIsDefaultIcon) {

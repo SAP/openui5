@@ -263,6 +263,28 @@ sap.ui.define([
 		assert.strictEqual($oAvatarImageHolder.style.backgroundImage, sExpectedOutputImage, "correct style value");
 	});
 
+	QUnit.test("Avatar with sync changed src property to invalid/valid has correct css style", function (assert) {
+		var sExpectedOutputImage = 'url("' + sImagePath + '")',
+			sWrongPath = "wrong-image-path",
+			fnDone = assert.async(),
+			that = this,
+			$oAvatarImageHolder,
+			oStub = this.stub(this.oAvatar, "_onImageError").callsFake(function(sSrc) {
+				oStub.restore(); // avoid endless recursion
+				that.oAvatar._onImageError(sSrc);
+				$oAvatarImageHolder = that.oAvatar.$().find('.sapFAvatarImageHolder').get(0);
+				assert.strictEqual($oAvatarImageHolder.style.backgroundImage, sExpectedOutputImage, "correct style value");
+				assert.ok(that.oAvatar.$().hasClass("sapFAvatarImage"), "Avatar has image class");
+
+				fnDone();
+			});
+
+		// Act
+		this.oAvatar.setSrc(sWrongPath);
+		this.oAvatar.setSrc(sImagePath);
+		oCore.applyChanges();
+	});
+
 	QUnit.test("Avatar with initials in valid format", function (assert) {
 		this.oAvatar.setInitials("SR");
 		oCore.applyChanges();
@@ -391,9 +413,10 @@ sap.ui.define([
 		var $oAvatar,
 			done = assert.async(),
 			that = this,
-			oStub = this.stub(this.oAvatar, "_onImageError").callsFake(function() {
+			sWrongPath = "_",
+			oStub = this.stub(this.oAvatar, "_onImageError").callsFake(function(sSrc) {
 				oStub.restore(); // avoid endless recursion
-				that.oAvatar._onImageError();
+				that.oAvatar._onImageError(sSrc);
 				$oAvatar = that.oAvatar.$();
 
 				//Assert
@@ -409,7 +432,7 @@ sap.ui.define([
 
 		//Act
 		this.oAvatar.setInitials("PB");
-		this.oAvatar.setSrc("_");
+		this.oAvatar.setSrc(sWrongPath);
 		oCore.applyChanges();
 	});
 
@@ -449,9 +472,10 @@ sap.ui.define([
 		var $oAvatar,
 			done = assert.async(),
 			that = this,
-			oStub = this.stub(this.oAvatar, "_onImageError").callsFake(function() {
+			sWrongPath = "_",
+			oStub = this.stub(this.oAvatar, "_onImageError").callsFake(function(sSrc) {
 				oStub.restore(); // avoid endless recursion
-				that.oAvatar._onImageError();
+				that.oAvatar._onImageError(sSrc);
 				$oAvatar = that.oAvatar.$();
 
 				//Assert
@@ -466,7 +490,7 @@ sap.ui.define([
 		assert.expect(2);
 
 		//Act
-		this.oAvatar.setSrc("_");
+		this.oAvatar.setSrc(sWrongPath);
 		oCore.applyChanges();
 	});
 
