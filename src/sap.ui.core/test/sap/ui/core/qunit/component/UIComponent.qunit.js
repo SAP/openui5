@@ -1,5 +1,6 @@
 sap.ui.define([
 	"sap/base/Log",
+	"sap/m/Button",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/Component",
 	"sap/ui/core/ComponentContainer",
@@ -7,7 +8,7 @@ sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/mvc/View",
 	"sap/ui/qunit/utils/nextUIUpdate"
-], function(Log, ManagedObject, Component, ComponentContainer, Element, UIComponent, View, nextUIUpdate) {
+], function(Log, Button, ManagedObject, Component, ComponentContainer, Element, UIComponent, View, nextUIUpdate) {
 
 	"use strict";
 	/*global sinon, QUnit*/
@@ -733,39 +734,37 @@ sap.ui.define([
 		});
 	});
 
-	sap.ui.require(["sap/ui/core/UIComponent", "sap/m/Button"], function (UIComponent, Button) {
-		QUnit.test("UIComponent - getRootControl returns null before init", function (assert) {
-			var oRootControlBeforeInit,
-				oRootControlAfterInit,
-				oCreatedContent;
+	QUnit.test("UIComponent - getRootControl returns null before init", function (assert) {
+		var oRootControlBeforeInit,
+			oRootControlAfterInit,
+			oCreatedContent;
 
-			var MyExtension = UIComponent.extend("my.getRootControl.Component", {
-				init: function () {
-					oRootControlBeforeInit = this.getRootControl();
-					UIComponent.prototype.init.apply(this, arguments);
-					oRootControlAfterInit = this.getRootControl();
-				},
+		var MyExtension = UIComponent.extend("my.getRootControl.Component", {
+			init: function () {
+				oRootControlBeforeInit = this.getRootControl();
+				UIComponent.prototype.init.apply(this, arguments);
+				oRootControlAfterInit = this.getRootControl();
+			},
 
-				createContent: function() {
-					oCreatedContent = new Button({
-						"text": "The Button"
-					});
-					return oCreatedContent;
-				}
+			createContent: function() {
+				oCreatedContent = new Button({
+					"text": "The Button"
+				});
+				return oCreatedContent;
+			}
 
-			});
-
-			var oComponent = new MyExtension();
-
-			var oComponent2 = new UIComponent();
-			assert.strictEqual(oRootControlBeforeInit, null);
-			assert.strictEqual(oRootControlAfterInit, oCreatedContent);
-			// no create content
-			assert.strictEqual(oComponent2.getRootControl(), null);
-
-			oComponent.destroy();
-			oComponent2.destroy();
 		});
+
+		var oComponent = new MyExtension();
+
+		var oComponent2 = new UIComponent();
+		assert.strictEqual(oRootControlBeforeInit, null);
+		assert.strictEqual(oRootControlAfterInit, oCreatedContent);
+		// no create content
+		assert.strictEqual(oComponent2.getRootControl(), null);
+
+		oComponent.destroy();
+		oComponent2.destroy();
 	});
 
 	QUnit.module("Async loading of manifest modules before component instantiation", {
@@ -1614,6 +1613,46 @@ sap.ui.define([
 			assert.ok(oComponent.getRootControl().byId("myPanel"), "View content created on Component resolve");
 			oSyncXhrSpy.restore();
 		});
+	});
+
+	QUnit.module("UIComponent Hooks", {
+		beforeEach() {
+			this.hookSpy = this.spy();
+			window._oHookSpy = this.hookSpy;
+
+			this.requireSpy = this.spy(sap.ui, "require");
+			this.componentName = "sap.ui.test.routerClass";
+		},
+		afterEach() {
+			this.component.destroy();
+			delete window._oHookSpy;
+		}
+	});
+
+	QUnit.test("_fnGetRouterClassName", async function(assert) {
+		this.component = await Component.create({
+			name: this.componentName
+		});
+
+		const oRouter = this.component.getRouter();
+		assert.equal(oRouter.getMetadata().getName(), "sap.f.routing.Router", "Respect the info returned from RouterClassComponent._fnGetRouterClassName");
+		assert.equal(this.hookSpy.callCount, 3, "The hook must be called 3 times, twice in Component.js and once in UIComponent.js");
+
+		this.hookSpy.getCalls().forEach((oCall) => {
+			assert.strictEqual(oCall.args[0], this.component.getMetadata().getClass().getMetadata().getManifestObject(), "The hook should be called with correct manifest object");
+		});
+
+		const oLoadedModules = new Set();
+		this.requireSpy.getCalls().forEach((oCall) => {
+			if (Array.isArray(oCall.args[0])) {
+				oCall.args[0].forEach((sPath) => {
+					oLoadedModules.add(sPath);
+				});
+			}
+		});
+
+		assert.notOk(oLoadedModules.has("sap/m/routing/Router"), "sap.m.routing.Router isn't loaded");
+		assert.ok(oLoadedModules.has("sap/f/routing/Router"), "sap.f.routing.Router is loaded");
 	});
 });
 

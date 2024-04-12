@@ -207,6 +207,8 @@ sap.ui.define([
 			return 2; // instance specific manifest => metadata version 2!
 		};
 
+		oMetadataProxy[Symbol("isProxy")] = true;
+
 		return oMetadataProxy;
 
 	}
@@ -2602,59 +2604,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Collects the module names of the routing related classes from the given manifest:
-	 *   - Router (e.g. sap.m.routing.Router)
-	 *   - Targets (e.g. sap.ui.core.routing.Targets)
-	 *   - sap.ui.core.routing.Views
-	 *   - The base class of the root view (e.g. sap.ui.core.mvc.XMLView)
-	 * @param {sap.ui.core.Manifest} oManifest the manifest from which the routing config is read
-	 * @returns {string[]} an array containing the module names of all relevant routing classes
-	 */
-	function collectRoutingClasses(oManifest) {
-		const aModuleNames = [];
-
-		// lookup rootView class
-		let sRootViewType;
-		const oRootView = oManifest.getEntry("/sap.ui5/rootView");
-		if (typeof oRootView === "string") {
-			// String as rootView defaults to ViewType XML
-			// See: UIComponent#createContent and UIComponentMetadata#_convertLegacyMetadata
-			sRootViewType = "XML";
-		} else if (oRootView && typeof oRootView === "object" && oRootView.type) {
-			sRootViewType = oRootView.type;
-		}
-		if (sRootViewType && ViewType[sRootViewType]) {
-			const sViewClass = "sap/ui/core/mvc/" + ViewType[sRootViewType] + "View";
-			aModuleNames.push(sViewClass);
-		}
-
-		// lookup of the router / targets and views class
-		// ASYNC Only: prevents lazy synchronous loading in UIComponent#init (regardless of manifirst or manilast)
-		const oRouting = oManifest.getEntry("/sap.ui5/routing");
-		if (oRouting) {
-			if (oRouting.routes) {
-				// the "sap.ui5/routing/config/routerClass" entry can also contain a Router constructor
-				// See the typedef "sap.ui.core.UIComponent.RoutingMetadata" in sap/ui/core/UIComponent.js
-				const vRouterClass = oManifest.getEntry("/sap.ui5/routing/config/routerClass") || "sap.ui.core.routing.Router";
-				if (typeof vRouterClass === "string") {
-					const sRouterClassModule = vRouterClass.replace(/\./g, "/");
-					aModuleNames.push(sRouterClassModule);
-				}
-			} else if (oRouting.targets) {
-				// Same as with "routes", see comment above.
-				const vTargetClass = oManifest.getEntry("/sap.ui5/routing/config/targetsClass") || "sap.ui.core.routing.Targets";
-				if (typeof vTargetClass === "string") {
-					const sTargetClassModule = vTargetClass.replace(/\./g, "/");
-					aModuleNames.push(sTargetClassModule);
-				}
-				aModuleNames.push("sap/ui/core/routing/Views");
-			}
-		}
-
-		return aModuleNames;
-	}
-
-	/**
 	 * Loads a module and logs a potential loading error as a warning.
 	 *
 	 * @param {string} sModuleName the module to be loaded
@@ -2674,6 +2623,12 @@ sap.ui.define([
 		});
 
 		return def.promise;
+	}
+
+	function findRoutingClasses(oClassMetadata) {
+		const fnCollectRoutingClasses = oClassMetadata.getStaticProperty("collectRoutingClasses");
+		const mRoutingClasses = typeof fnCollectRoutingClasses == "function" ? fnCollectRoutingClasses.call(oClassMetadata.getClass()) : {};
+		return Object.values(mRoutingClasses);
 	}
 
 	/*
@@ -2823,7 +2778,7 @@ sap.ui.define([
 
 					// [1] after evaluating the manifest & loading the necessary dependencies,
 					//     we make sure the routing related classes are required before instantiating the Component
-					const aRoutingClassNames = collectRoutingClasses(oManifest);
+					const aRoutingClassNames = findRoutingClasses(oClassMetadata);
 					const aModuleLoadingPromises = aRoutingClassNames.map((sClassName) => {
 						return loadModuleAndLog(sClassName, sComponentName);
 					});
@@ -3235,6 +3190,13 @@ sap.ui.define([
 					return oInstance;
 
 				};
+
+				oMetadataProxy.getClass = function() {
+					return oClassProxy;
+				};
+
+				oClassProxy[Symbol("isProxy")] = true;
+
 				// overload the getMetadata function
 				oClassProxy.getMetadata = function() {
 					return oMetadataProxy;
@@ -3760,7 +3722,8 @@ sap.ui.define([
 				}
 
 				// collect routing related class names for async loading
-				const aModuleNames = collectRoutingClasses(oManifest);
+				const oClassMetadata = oControllerClass.getMetadata();
+				const aModuleNames = findRoutingClasses(oClassMetadata);
 
 				// lookup model classes
 				var mManifestModels = merge({}, oManifest.getEntry("/sap.ui5/models"));

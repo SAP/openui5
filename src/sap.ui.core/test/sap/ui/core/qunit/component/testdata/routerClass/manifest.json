@@ -1,0 +1,38 @@
+{
+	"sap.app": {
+		"id": "sap.ui.test.routerClass"
+	},
+	"sap.ui5": {
+		"dependencies": {
+			"libs": {
+				"sap.ui.core": {},
+				"sap.m": {}
+			}
+		},
+		"rootView": {
+			"viewName": "sap.ui.test.routerClass.Main",
+			"type": "XML"
+		},
+		"routing": {
+			"config": {
+				"routerClass": "sap.m.routing.Router"
+			},
+			"routes": [
+				{
+					"name": "firstRoute",
+					"pattern": "first/{firstMandatoryParameter}"
+				}
+			],
+			"targets": {
+				"myTarget": {
+					"viewType": "XML"
+				}
+			}
+		}
+	},
+	"sap.ui.generic.app": {
+		"settings": {
+			"flexibleColumnLayout": true
+		}
+	}
+}

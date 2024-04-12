@@ -429,6 +429,24 @@ sap.ui.define([
 	};
 
 	/**
+	 * Traverse up through the parent chain to find the static property on the class.
+	 *
+	 * @param {string} sStaticName The name of the static property
+	 * @returns {any} If found, returns the static property
+	 * @private
+	 * @ui5-restricted sap.ui.core
+	 */
+	Metadata.prototype.getStaticProperty = function(sStaticName) {
+		let oMetadata = this;
+		while (oMetadata && !(sStaticName in oMetadata.getClass())) {
+			oMetadata = oMetadata.getParent();
+		}
+		const oClass = oMetadata?.getClass();
+
+		return oClass?.[sStaticName];
+	};
+
+	/**
 	 * @since 1.3.1
 	 * @private
 	 */
