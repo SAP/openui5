@@ -12,39 +12,26 @@ sap.ui.define([
 			actions: {
 				iSelectASection: function(sSectionName) {
 					return this.waitFor({
-						controlType: "sap.m.Button",
-						matchers: [
-							new Properties({text: sSectionName})
-						],
-						actions: new Press(),
-						errorMessage: "Section button for " + sSectionName + " not found."
-					});
-				},
-
-				iSelectASectionWithSubsections: function(sSectionName) {
-					return this.waitFor({
-						controlType: "sap.m.MenuButton",
-						matchers: [
-							new Properties({text: sSectionName})
-						],
-						success: function(aMenuButtons){
-							var oMenuButton =  aMenuButtons[0],
-							oArrowButton = oMenuButton.getAggregation("_button").getAggregation("_arrowButton");
-							oArrowButton.$().trigger("tap");
+						controlType: "sap.uxap.ObjectPageLayout",
+						success: function(aPage) {
+							var oPage = aPage[0],
+								oSection = oPage.getSections().find((s) => s.getTitle() === sSectionName);
+							oPage.setSelectedSection(oSection);
 						},
-						// actions: new Press(),
-						errorMessage: "Section button for " + sSectionName + " not found."
+						errorMessage: "ObjectPage not found."
 					});
 				},
 
-				iSelectASubSectionFromTheMenu: function(sSectionName) {
+				iSelectASubSection: function(sSectionName, sSubSectionName) {
 					return this.waitFor({
-						controlType: "sap.ui.unified.MenuItem",
-						matchers: [
-							new Properties({text: sSectionName})
-						],
-						actions: new Press(),
-						errorMessage: "Subsection button for " + sSectionName + " not found."
+						controlType: "sap.uxap.ObjectPageLayout",
+						success: function(aPage) {
+							var oPage = aPage[0],
+								oSection = oPage.getSections().find((s) => s.getTitle() === sSectionName),
+								oSubSection = oSection.getSubSections().find((s) => s.getTitle() === sSubSectionName);
+							aPage[0].scrollToSection(oSubSection.getId());
+						},
+						errorMessage: "ObjectPage not found."
 					});
 				},
 

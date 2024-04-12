@@ -51,7 +51,7 @@ sap.ui.define([
 		and.iSelectATreeNode("Object");
 		When.onTheSubApiDetailPage.iSelectASection("Constructor");
 		Then.onTheSubApiDetailPage.iShouldSeeTheCorrectSectionSelected("Constructor");
-		When.onTheSubApiDetailPage.iSelectASectionWithSubsections("Methods").and.iSelectASubSectionFromTheMenu("Summary");
+		When.onTheSubApiDetailPage.iSelectASubSection("Methods", "Summary");
 		Then.onTheSubApiDetailPage.iShouldSeeTheCorrectSectionSelected("Methods");
 	});
 

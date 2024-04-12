@@ -54,7 +54,7 @@ sap.ui.define([
 		// Action
 		When.onTheAppPage.iPressTheResourcesTabButton();
 		// Assertions
-		Then.onTheResourcesPage.iShouldSeeTheToolsPage();
+		Then.onTheResourcesPage.iShouldSeeTheResourcesPage();
 	});
 
 	opaTest("Should navigate to Welcome Page", function (Given, When, Then) {
