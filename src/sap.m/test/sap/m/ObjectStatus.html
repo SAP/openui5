@@ -319,7 +319,7 @@
 	});
 
 // Object Attribute inside Table
-	var data = aNotificationTypesSettings = [{
+	var data = [{
 		inverted: false,
 		text: "not inverted status - John Doe Ñagçyfox"
 		}, {
@@ -331,7 +331,7 @@
 
 	var oVBox = new sap.m.VBox();
 
-	oNotificationTypeTable = new sap.m.Table("notificationSettingsTable", {
+	const oNotificationTypeTable = new sap.m.Table("notificationSettingsTable", {
 		backgroundDesign: sap.m.BackgroundDesign.Transparent,
 		showSeparators: sap.m.ListSeparators.All,
 		columns: [
@@ -382,7 +382,7 @@
 		// Arrange the table columns according to the cells content width
 		oNotificationTypeTable.setFixedLayout(false);
 
-		oTableRowTemplate = new sap.m.ColumnListItem({
+		const oTableRowTemplate = new sap.m.ColumnListItem({
 			cells : [
 				new sap.m.ObjectStatus({
 					title: "Some title",

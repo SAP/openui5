@@ -167,9 +167,6 @@
 		]
 	});
 
-	// set the model to the core
-	sap.ui.getCore().setModel(oModel);
-
 	var oActionTemplate = new sap.ui.core.Item({
 		key: "{key}",
 		text: "{text}"
@@ -275,7 +272,8 @@
 					]
 				})
 			]
-		})
+		}),
+		models: oModel
 	});
 	oApp.placeAt("content");
 

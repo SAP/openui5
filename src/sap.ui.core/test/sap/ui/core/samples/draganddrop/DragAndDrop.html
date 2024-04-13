@@ -34,7 +34,6 @@ var oData = {
 
 var oModel = new sap.ui.model.json.JSONModel();
 oModel.setData(oData);
-sap.ui.getCore().setModel(oModel);
 
 var oIconList = new sap.m.List({
 	headerText: "Icons",
@@ -302,7 +301,8 @@ var oPage = new sap.m.Page({
 });
 
 var oApp = new sap.m.App({
-	pages: [oPage]
+	pages: [oPage],
+	models: oModel
 }).placeAt("content");
 
 </script>
