@@ -1,7 +1,16 @@
 /*!
  * ${copyright}
  */
-@import "../base/library.source.less";
+/***********************************************************************************
+/* Due to deprecation of sap_bluecrystal with SAPUI5 version 1.44 the
+/* inheritance of the base theme is now updated to an inheritance of a static
+/* copy of the base theme named sap_bluecrystal_base. The respective
+/* control css files of base are copied to the sap_bluecrystal_base theme folder.
+/* This decoupling of the base theme is introduced with SAPUI5 version 1.124.
+***********************************************************************************/
+
+
+@import "../sap_bluecrystal_base/library.source.less";
 @import "../../../../sap/ui/core/themes/sap_bluecrystal/base.less";
 @import "../../../../sap/ui/core/themes/sap_bluecrystal/global.less";
 @import "AnchorBar.less";
