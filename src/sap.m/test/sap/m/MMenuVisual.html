@@ -28,21 +28,21 @@
 				oApp,
 				oPage;
 
-			oButton1 = Button("B1", {
+			oButton1 = new Button("B1", {
 				text:'FirstButton',
 				press: function(oEvent){
 					oMenu1.openBy(oEvent.getSource().getDomRef());
 				}
 			});
 
-			oButton2 = Button("B2", {
+			oButton2 = new Button("B2", {
 				text:'SecondButton',
 				press: function(oEvent){
 					oMenu2.openBy(oEvent.getSource().getDomRef());
 				}
 			});
 
-			oButton3 = Button("B3", {
+			oButton3 = new Button("B3", {
 				text:'ThirdButton',
 				press: function(oEvent){
 					oMenu3.openBy(oEvent.getSource().getDomRef());

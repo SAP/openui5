@@ -9,11 +9,12 @@
 			src='../../../../../../resources/sap-ui-core.js'
 			data-sap-ui-xx-supportedLanguages="en"
 			data-sap-ui-theme='sap_belize'
-			data-sap-ui-libs='sap.m'></script>
+			data-sap-ui-libs='sap.m'
+			data-sap-ui-resource-roots='{
+				"mvc": "./mvc"
+			}'></script>
 
 		<script>
-			sap.ui.loader.config({paths: {"mvc": "./mvc"}});
-
 			var oData = {
 				names: [
 					{firstName: "Peter", lastName: "Mueller"},
@@ -28,10 +29,14 @@
 			// create a Model with this data
 			var oModel = new sap.ui.model.json.JSONModel();
 			oModel.setData(oData);
-			sap.ui.getCore().setModel(oModel);
 
 			// create the UI
-			sap.ui.xmlview({viewName:"mvc.betweenLists"}).placeAt("content");
+			const XMLView = sap.ui.requireSync("sap/ui/core/mvc/XMLView");
+			XMLView.create({
+				viewName:"mvc.betweenLists"
+			}).then((oView) => {
+				oView.setModel(oModel).placeAt("content");
+			});
 		</script>
 
 	</head>

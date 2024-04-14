@@ -8,7 +8,7 @@
 	data-sap-ui-libs="sap.ui.comp,sap.m"
 	data-sap-ui-preload="sync"
 	data-sap-ui-compatVersion="edge"
-	src="../../../../../resources/sap-ui-core.js">
+	src="../../../../../../../../resources/sap-ui-core.js">
 
 </script>
 <script>
@@ -89,7 +89,7 @@
 
 	var oUseTemp = new sap.m.CheckBox({
 		text : "Use Package",
-		checked: true,
+		selected: true,
 		select : function() {
 			bTemp= !bTemp;
 		}
@@ -97,7 +97,7 @@
 
 	var oUseLREP = new sap.m.CheckBox({
 		text : "Use LREP Object",
-		checked: true,
+		selected: true,
 		select : function() {
 			bLrep= !bLrep;
 		}
@@ -105,7 +105,7 @@
 
 	var oUsePackages = new sap.m.CheckBox({
 		text : "Use Transports",
-		checked: true,
+		selected: true,
 		select : function() {
 			bPackages= !bPackages;
 		}
@@ -113,7 +113,7 @@
 
 	var oHidePackage = new sap.m.CheckBox({
 		text : "Hide Package",
-		checked: true,
+		selected: true,
 		select : function() {
 			bHidePackage= !bHidePackage;
 		}

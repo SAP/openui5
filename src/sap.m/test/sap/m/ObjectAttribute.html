@@ -203,7 +203,7 @@
 	});
 
 // Object Attribute inside Table
-	var data = aNotificationTypesSettings = [{
+	var data = [{
 		NotificationTypeId: "type1"
 		}, {
 		NotificationTypeId: "type2",
@@ -213,7 +213,7 @@
 
 	var oVBox = new sap.m.VBox();
 
-	oNotificationTypeTable = new sap.m.Table("notificationSettingsTable", {
+	const oNotificationTypeTable = new sap.m.Table("notificationSettingsTable", {
 		backgroundDesign: sap.m.BackgroundDesign.Transparent,
 		showSeparators: sap.m.ListSeparators.All,
 		columns: [
@@ -244,7 +244,7 @@
 		// Arrange the table columns according to the cells content width
 		oNotificationTypeTable.setFixedLayout(false);
 
-		oTableRowTemplate = new sap.m.ColumnListItem({
+		const oTableRowTemplate = new sap.m.ColumnListItem({
 			cells : [
 				new sap.m.ObjectAttribute({
 						title: "Some title",

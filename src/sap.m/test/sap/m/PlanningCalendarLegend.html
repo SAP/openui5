@@ -164,6 +164,7 @@
 					})]
 			});
 		}
+		const oPCLCompact = oPCLegendAll.clone().addStyleClass("sapUiSizeCompact");
 		var oPage = new sap.m.Page("oPlanningCalendarLegendPage", {
 			title: "PlanningCalendarLegend",
 			content: [
@@ -175,7 +176,7 @@
 						}),
 						new sap.m.Panel({
 							headerText: "PlanningCalendarLegend in compact mode",
-							content: [createChangeWidthInput(oPCLCompact = oPCLegendAll.clone().addStyleClass("sapUiSizeCompact")), oPCLCompact]
+							content: [createChangeWidthInput(oPCLCompact), oPCLCompact]
 						}),
 						new sap.m.Panel({
 							headerText: "PlanningCalendarLegend with default standard items & custom items",
