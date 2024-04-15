@@ -1585,6 +1585,213 @@ sap.ui.define([
 			}
 			return oUploadSetItem;
 		}
+	 },
+	 "sap.m.Table": {
+		_oPluginInstance: null,
+		_oControlInstance: null,
+		_sModelName: undefined,
+		_bIsTableBound: false,
+		setPluginInstance: function(oPlugin) {
+			this._oPluginInstance = oPlugin;
+		},
+		getPluginInstance: function() {
+			return this._oPluginInstance;
+		},
+		setControlInstance: function(oControl) {
+			this._oControlInstance = oControl;
+		},
+		getControlInstance: function() {
+			return this._oControlInstance;
+		},
+		setPluginDefaultSettings: function() {
+			this.setDragDropConfig();
+			this.setDefaultIllustrations();
+		},
+		setIsTableBound: function(oControl) {
+			if (oControl?.getBinding("items")) {
+				this._bIsTableBound = true;
+			} else {
+				this._bIsTableBound = false;
+			}
+		},
+		getIsTableBound: function() {
+			return this._bIsTableBound;
+		},
+		setModelName: function(oControl) {
+			if (oControl?.isA("sap.m.Table")) {
+				this._sModelName = oControl?.getBindingInfo("items")?.model;
+			}
+		},
+		getModelName: function() {
+			return this._sModelName;
+		},
+		// Set Drag and Drop configuration for the table when upload plugin is activated.
+		setDragDropConfig: function () {
+			const oPlugin = this.getPluginInstance();
+			const oControl = this.getControlInstance();
+
+			var oDragDropConfig = new DragDropInfo({
+				sourceAggregation: "items",
+				targetAggregation: "items"
+			});
+			var oDropConfig = new DropInfo({
+				dropEffect:"Move",
+				dropPosition:"OnOrBetween",
+				dragEnter: [oPlugin?._onDragEnterFile, oPlugin],
+				drop: [oPlugin?._onDropFile, oPlugin]
+			});
+			oControl?.addDragDropConfig(oDragDropConfig);
+			oControl?.addDragDropConfig(oDropConfig);
+		},
+		// Set default illustrations for the table when no data is available. set only when upload plugin is activated.
+		setDefaultIllustrations: function() {
+			const oPlugin = this.getPluginInstance();
+			const oControl = this.getControlInstance();
+			const oNoDataIllustration = oPlugin?.getNoDataIllustration();
+
+			if (oControl && oPlugin) {
+				if (!oNoDataIllustration) {
+					oPlugin._illustratedMessage = oPlugin._getDefaultNoDataIllustration();
+				} else {
+					oPlugin._illustratedMessage = oNoDataIllustration;
+				}
+				oControl.setNoData(oPlugin._illustratedMessage);
+        }
+		},
+		cleanupPluginInstanceSettings: function() {
+			const oPlugin = this.getPluginInstance();
+			const oControl = this.getControlInstance();
+
+			// remove nodata aggregations added from plugin activation.
+			if (oControl) {
+				oControl.setNoData(null);
+			}
+			if (oPlugin) {
+				oPlugin.setPreviewDialog(null);
+				oPlugin._illustratedMessage = null;
+			}
+
+			if (oPlugin._oDragDropConfig && oControl) {
+				oControl.removeDragDropConfig(oPlugin._oDragDropConfig);
+				oPlugin._oDragDropConfig = null;
+			}
+		},
+		// Handles preview of the context passed. Requires access to all the contexts of inner table to setup the preview along with carousel.
+		openFilePreview: function(oBindingContext) {
+			const oPlugin = this.getPluginInstance();
+			const oControl = this.getControlInstance();
+
+			const oRowConfiguration = oPlugin.getRowConfiguration();
+			const oContexts = this.getTableContexts(oControl);
+			let aUploadSetItems = [];
+			if (oContexts?.length) {
+				aUploadSetItems = this.getItemsMap(oContexts, oRowConfiguration);
+			}
+
+			const oPreviewUploaditem = aUploadSetItems.find((oItem) => oItem?.data("path") === oBindingContext.getPath());
+
+			if (oPreviewUploaditem) {
+				oPlugin._initiateFilePreview(oPreviewUploaditem, aUploadSetItems);
+			}
+		},
+		// Handles download of the file through the context passed.
+		download: function(mDownloadInfo) {
+			const {oBindingContext, bAskForLocation} = mDownloadInfo;
+			const oPlugin = this.getPluginInstance();
+			const oItem = this.getItemForContext(oBindingContext);
+			if (oItem && oItem.getUrl()) {
+				return oPlugin._initiateFileDownload(oItem, bAskForLocation);
+			}
+			return false;
+		},
+		getTableContexts: function(oTable) {
+			return oTable?.getBinding("items")?.getContexts() || null;
+		},
+		getItemsMap: function(aItemContexts) {
+			return aItemContexts.map((oItemContext) => {
+				return this.getItemForContext(oItemContext);
+			});
+		},
+		bindItemProperty: function(oItem, mBindingInfo) {
+			const {property, propertyPath, modelName} = mBindingInfo;
+
+			oItem.bindProperty(property, {
+				path: modelName ? `${modelName}>${propertyPath}` : propertyPath,
+				mode: sap.ui.model.BindingMode.TwoWay
+			});
+		},
+		getItemForContext: function(oBindingContext) {
+			const oPlugin = this.getPluginInstance();
+			const sModelName = this.getModelName();
+			const oRowConfiguration = oPlugin.getRowConfiguration();
+
+			const oUploadSetItem = new UploadItem({
+				customData: [
+					new sap.ui.core.CustomData({
+					key: "path",
+					value: oBindingContext.getPath()
+				}),
+				new sap.ui.core.CustomData({
+					key: "context",
+					value: oBindingContext
+				})
+			]
+			});
+
+			// Setting plugin as parent to the item to maintain the reference and access to plugin methods.
+			oUploadSetItem.setParent(oPlugin);
+
+			if (sModelName) {
+			oUploadSetItem.setBindingContext(oBindingContext, sModelName);
+			} else {
+				oUploadSetItem.setBindingContext(oBindingContext);
+			}
+
+			// BindProperties only if the types are valid else skip the binding to default value
+			if (oRowConfiguration._fileNameValidator(oBindingContext)) {
+				this.bindItemProperty(oUploadSetItem, {
+					property: "fileName",
+					propertyPath: oRowConfiguration.getFileNamePath(),
+					modelName: sModelName
+				});
+			}
+			if (oRowConfiguration._urlValidator(oBindingContext)) {
+				this.bindItemProperty(oUploadSetItem, {
+					property: "url",
+					propertyPath: oRowConfiguration.getUrlPath(),
+					modelName: sModelName
+				});
+			}
+			if (oRowConfiguration._mediaTypeValidator(oBindingContext)) {
+				this.bindItemProperty(oUploadSetItem, {
+					property: "mediaType",
+					propertyPath: oRowConfiguration.getMediaTypePath(),
+					modelName: sModelName
+				});
+			}
+			if (oRowConfiguration._uploadUrlValidator(oBindingContext)) {
+				this.bindItemProperty(oUploadSetItem, {
+					property: "uploadUrl",
+					propertyPath: oRowConfiguration.getUploadUrlPath(),
+					modelName: sModelName
+				});
+			}
+			if (oRowConfiguration._previewableValidator(oBindingContext)) {
+				this.bindItemProperty(oUploadSetItem, {
+					property: "previewable",
+					propertyPath: oRowConfiguration.getPreviewablePath(),
+					modelName: sModelName
+				});
+			}
+			if (oRowConfiguration._fileSizeValidator(oBindingContext)) {
+				this.bindItemProperty(oUploadSetItem, {
+					property: "fileSize",
+					propertyPath: oRowConfiguration.getFileSizePath(),
+					modelName: sModelName
+				});
+			}
+			return oUploadSetItem;
+		}
 	 }
     }, UploadSetwithTable);
 
