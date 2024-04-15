@@ -1308,7 +1308,11 @@ sap.ui.define([
 				//Fix for RTE in PopUp
 				oEventBus.publish("sap.ui","__beforePopupClose", { domNode : this._$().get(0) });
 				var oStatic = StaticArea.getUIArea();
-				oStatic.removeContent(oStatic.indexOfContent(this.oContent), true);
+
+				const iIndex = oStatic.indexOfContent(this.oContent);
+				if (iIndex >= 0) {
+					oStatic.removeContent(iIndex, true);
+				}
 			} else if (this._bUIAreaPatched) { // if the getUIArea function is patched, delete it
 				delete this.oContent.getUIArea;
 			}
