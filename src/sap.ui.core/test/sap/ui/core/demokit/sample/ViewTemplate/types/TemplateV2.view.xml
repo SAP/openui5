@@ -5,13 +5,14 @@
 	xmlns:form="sap.ui.layout.form"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1"
+	template:require="{AH: 'sap/ui/model/odata/AnnotationHelper'}"
 	width="100%">
 	<form:SimpleForm columnsM="1" editable="true" id="simpleForm" labelSpanL="12"
 			labelSpanM="12" layout="ResponsiveGridLayout">
 		<core:Title text="com.sap.vocabularies.UI.v1.Identification"/>
 		<template:repeat list="{meta>com.sap.vocabularies.UI.v1.Identification}">
-			<Label labelFor="Identification::{meta>Value/Path}" text="{path: 'meta>Label', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
-			<Input id="Identification::{meta>Value/Path}" value="{path: 'meta>Value', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
+			<Label labelFor="Identification::{meta>Value/Path}" text="{path: 'meta>Label', formatter: 'AH.format'}"/>
+			<Input id="Identification::{meta>Value/Path}" value="{path: 'meta>Value', formatter: 'AH.format'}"/>
 		</template:repeat>
 	</form:SimpleForm>
 </mvc:View>
