@@ -1864,7 +1864,7 @@ sap.ui.define([
 		oSendBatchExpectation = oRequestorMock.expects("sendBatch")
 			.withExactArgs(sinon.match(function (aRequests) {
 				return aRequests === aMergedRequests;
-			}), sGroupId)
+			}), sGroupId, "~bHasChanges~")
 			.resolves(aBatchResults);
 		oBatchResponseReceivedExpectation = oRequestorMock.expects("batchResponseReceived")
 			.withExactArgs(sGroupId, sinon.match(function (aRequests) {
@@ -1913,7 +1913,7 @@ sap.ui.define([
 		oRequestor.request("GET", "Products", this.createGroupLock());
 		aExpectedRequests.iChangeSet = 0;
 		this.mock(oRequestor).expects("sendBatch")
-			.withExactArgs(aExpectedRequests, "groupId").resolves([
+			.withExactArgs(aExpectedRequests, "groupId", false).resolves([
 				createResponse({})
 			]);
 
@@ -2047,7 +2047,7 @@ sap.ui.define([
 			undefined, undefined, undefined, fnMergePatch8));
 		aExpectedRequests.iChangeSet = 0;
 		this.mock(oRequestor).expects("sendBatch")
-			.withExactArgs(aExpectedRequests, "groupId").resolves([
+			.withExactArgs(aExpectedRequests, "groupId", true).resolves([
 				[
 					createResponse({Name : "bar2", Note : "hello, world"}),
 					createResponse({Name : "p1"}),
@@ -2154,7 +2154,7 @@ sap.ui.define([
 
 			aExpectedRequests.iChangeSet = 0;
 			this.mock(oRequestor).expects("sendBatch")
-				.withExactArgs(aExpectedRequests, "groupId")
+				.withExactArgs(aExpectedRequests, "groupId", false)
 				.resolves([createResponse(oFixture.mProductsResponse)]);
 
 			return Promise.all([
@@ -2528,63 +2528,72 @@ sap.ui.define([
 	//*********************************************************************************************
 [true, false].forEach(function (bSubmitModeIsAuto) {
 	[null, "[{code : 42}]"].forEach(function (sMessage) {
-		QUnit.test("sendBatch(...), message=" + sMessage, function (assert) {
-			var oBatchRequest = {
-					body : "abcd",
-					headers : {
-						"Content-Type" : "multipart/mixed; boundary=batch_id-0123456789012-345",
-						"MIME-Version" : "1.0"
-					}
-				},
-				aBatchRequests = [{}],
-				sEpilogue = bSubmitModeIsAuto ? "Group ID: groupId" : "Group ID (API): groupId",
-				aExpectedResponses = [],
-				sGroupId = "groupId",
-				oRequestor = _Requestor.create("/Service/", oModelInterface, undefined,
-					{"sap-client" : "123"}),
-				oResult = "abc",
-				sResponseContentType = "multipart/mixed; boundary=foo";
+		[false, true].forEach(function (bHasChanges) {
+	const sTitle = "sendBatch(...), message=" + sMessage + ", bHasChanges=" + bHasChanges;
+	QUnit.test(sTitle, function (assert) {
+		var oBatchRequest = {
+				body : "~body~",
+				headers : {
+					"Content-Type" : "multipart/mixed; boundary=batch_id-0123456789012-345",
+					"MIME-Version" : "1.0"
+				}
+			},
+			aBatchRequests = [{}],
+			sEpilogue = bSubmitModeIsAuto ? "Group ID: groupId" : "Group ID (API): groupId",
+			mExpectedBatchHeaders = {
+				"Content-Type" : oBatchRequest.headers["Content-Type"],
+				"MIME-Version" : oBatchRequest.headers["MIME-Version"],
+				Accept : "multipart/mixed"
+			},
+			aExpectedResponses = [],
+			sGroupId = "groupId",
+			oRequestor = _Requestor.create("/Service/", oModelInterface, undefined,
+				{"sap-client" : "123"}),
+			oResult = "abc",
+			sResponseContentType = "multipart/mixed; boundary=foo";
 
-			this.mock(oRequestor).expects("getGroupSubmitMode")
-				.withExactArgs(sGroupId)
-				.returns(bSubmitModeIsAuto ? "Auto" : "API");
-			this.mock(oModelInterface).expects("isIgnoreETag").withExactArgs()
-				.returns("~bIgnoreETag~");
-			this.mock(_Batch).expects("serializeBatchRequest")
-				.withExactArgs(sinon.match.same(aBatchRequests), sEpilogue, "~bIgnoreETag~")
-				.returns(oBatchRequest);
+		if (!bHasChanges) {
+			mExpectedBatchHeaders["sap-cancel-on-close"] = "true";
+		}
 
-			this.mock(oRequestor).expects("processOptimisticBatch")
-				.withExactArgs(sinon.match.same(aBatchRequests), sGroupId);
-			this.mock(oRequestor).expects("sendRequest")
-				.withExactArgs("POST", "$batch?sap-client=123", sinon.match({
-						"Content-Type" : oBatchRequest.headers["Content-Type"],
-						"MIME-Version" : oBatchRequest.headers["MIME-Version"]
-					}), sinon.match.same(oBatchRequest.body))
-				.resolves({contentType : sResponseContentType, body : oResult,
-					messages : sMessage});
+		this.mock(oRequestor).expects("getGroupSubmitMode")
+			.withExactArgs(sGroupId)
+			.returns(bSubmitModeIsAuto ? "Auto" : "API");
+		this.mock(oModelInterface).expects("isIgnoreETag").withExactArgs()
+			.returns("~bIgnoreETag~");
+		this.mock(_Batch).expects("serializeBatchRequest")
+			.withExactArgs(sinon.match.same(aBatchRequests), sEpilogue, "~bIgnoreETag~")
+			.returns(oBatchRequest);
 
-			this.mock(_Batch).expects("deserializeBatchResponse").exactly(sMessage === null ? 1 : 0)
-				.withExactArgs(sResponseContentType, oResult)
-				.returns(aExpectedResponses);
+		this.mock(oRequestor).expects("processOptimisticBatch")
+			.withExactArgs(sinon.match.same(aBatchRequests), sGroupId);
+		this.mock(oRequestor).expects("sendRequest")
+			.withExactArgs("POST", "$batch?sap-client=123", mExpectedBatchHeaders, "~body~")
+			.resolves({contentType : sResponseContentType, body : oResult,
+				messages : sMessage});
 
-			return oRequestor.sendBatch(aBatchRequests, sGroupId)
-				.then(function (oPayload) {
-					assert.ok(sMessage === null, "unexpected success");
-					assert.strictEqual(oPayload, aExpectedResponses);
-				}, function (oError) {
-					assert.ok(sMessage !== null, "unexpected error");
-					assert.ok(oError instanceof Error);
-					assert.strictEqual(oError.message,
-						"Unexpected 'sap-messages' response header for batch request");
-				});
+		this.mock(_Batch).expects("deserializeBatchResponse").exactly(sMessage === null ? 1 : 0)
+			.withExactArgs(sResponseContentType, oResult)
+			.returns(aExpectedResponses);
+
+		return oRequestor.sendBatch(aBatchRequests, sGroupId, bHasChanges)
+			.then(function (oPayload) {
+				assert.ok(sMessage === null, "unexpected success");
+				assert.strictEqual(oPayload, aExpectedResponses);
+			}, function (oError) {
+				assert.ok(sMessage !== null, "unexpected error");
+				assert.ok(oError instanceof Error);
+				assert.strictEqual(oError.message,
+					"Unexpected 'sap-messages' response header for batch request");
+			});
+	});
 		});
 	});
 });
 
 	//*****************************************************************************************
 	QUnit.test("sendBatch(...), consume optimisticBatch result", function (assert) {
-		var aBatchRequests = {},
+		var aBatchRequests = [],
 			sGroupId = "foo",
 			oOptimisticBatchResult = {},
 			oRequestor = _Requestor.create("/Service/", oModelInterface);
@@ -3002,7 +3011,7 @@ sap.ui.define([
 
 		aExpectedRequests.iChangeSet = 1;
 		this.mock(oRequestor).expects("sendBatch")
-			.withExactArgs(aExpectedRequests, "groupId")
+			.withExactArgs(aExpectedRequests, "groupId", true)
 			.resolves([createResponse(), createResponse(), createResponse()]);
 
 		oRequestor.processBatch("groupId");
@@ -3215,7 +3224,7 @@ sap.ui.define([
 
 		aExpectedRequests.iChangeSet = 0;
 		this.mock(oRequestor).expects("sendBatch")
-			.withExactArgs(aExpectedRequests, "groupId")
+			.withExactArgs(aExpectedRequests, "groupId", true)
 			.resolves([createResponse({}), createResponse({})]);
 
 		// code under test
@@ -3285,7 +3294,7 @@ sap.ui.define([
 
 		aExpectedRequests.iChangeSet = 0;
 		this.mock(oRequestor).expects("sendBatch")
-			.withExactArgs(aExpectedRequests, "groupId").resolves([createResponse()]);
+			.withExactArgs(aExpectedRequests, "groupId", true).resolves([createResponse()]);
 
 		// code under test
 		oRequestor.processBatch("groupId");
@@ -3364,7 +3373,7 @@ sap.ui.define([
 		this.mock(oRequestor).expects("isChangeSetOptional").withExactArgs().returns(true);
 		aExpectedRequests.iChangeSet = 0;
 		this.mock(oRequestor).expects("sendBatch")
-			.withExactArgs(aExpectedRequests, "groupId").resolves([createResponse()]);
+			.withExactArgs(aExpectedRequests, "groupId", true).resolves([createResponse()]);
 
 		// code under test
 		return oRequestor.processBatch("groupId");
