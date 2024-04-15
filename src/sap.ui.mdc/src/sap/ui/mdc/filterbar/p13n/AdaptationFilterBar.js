@@ -343,6 +343,7 @@ sap.ui.define([
 
 			if (this._bFilterFieldsCreated) {
 				return pConditions.then(() => {
+					this._updateActiveStatus(this.oAdaptationData.items);
 					this._oFilterBarLayout.setP13nData(this.getP13nData());
 					return this;
 				});
