@@ -78,4 +78,33 @@ sap.ui.define([
 		// code under test
 		assert.strictEqual(Context.hasChanged(oContext, oContext), false);
 	});
+
+	//*********************************************************************************************
+	QUnit.test("setProperty", function (assert) {
+		const oModel = {setProperty() {}};
+		const oContext = new Context(oModel, "~sContextPath");
+
+		this.mock(oModel).expects("setProperty")
+			.withExactArgs("~sBindingPath", "~vValue", sinon.match.same(oContext), true)
+			.returns(true);
+
+		// code under test
+		oContext.setProperty("~sBindingPath", "~vValue");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("setProperty: value cannot be set by model", function (assert) {
+		const oModel = {setProperty() {}};
+		const oContext = new Context(oModel, "~sContextPath");
+
+		this.mock(oModel).expects("setProperty")
+			.withExactArgs("~sBindingPath", "~vValue", sinon.match.same(oContext), true)
+			.returns(false);
+
+		assert.throws(function () {
+			// code under test
+			oContext.setProperty("~sBindingPath", "~vValue");
+		 }, new Error("Cannot set the value ~vValue for the property ~sBindingPath as the context path ~sContextPath"
+				+ " does not refer to a valid entry in the model data."));
+	});
 });
