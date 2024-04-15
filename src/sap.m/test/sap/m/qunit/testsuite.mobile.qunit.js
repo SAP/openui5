@@ -825,10 +825,6 @@ sap.ui.define([
 			},
 			MultiInput: {
 				title: "QUnit page for sap.m.MultiInput",
-				sinon: {
-					version: 1, // test has issues with sinon-4 fake timer
-					useFakeTimers: true
-				},
 				ui5: {
 					theme: "sap_horizon"
 				}

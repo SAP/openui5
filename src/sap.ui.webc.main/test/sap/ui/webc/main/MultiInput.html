@@ -13,15 +13,15 @@
 		}'>
 	</script>
 	<style>
-		.sapUiBody {
+		#body.sapUiBody {
 			height: 100vh;
 			overflow: hidden;
 		}
 	</style>
 
 	<script>
-		sap.ui.getCore().attachInit(function () {
 			sap.ui.require([
+				"sap/ui/core/Core",
 				"sap/ui/webc/main/MultiInput",
 				"sap/ui/webc/main/SuggestionItem",
 				"sap/ui/webc/main/SuggestionGroupItem",
@@ -34,7 +34,8 @@
 				"sap/ui/webc/fiori/Bar",
 				"sap/ui/webc/fiori/Page",
 				"sap/ui/layout/VerticalLayout",
-			], function (
+			], async function (
+				Core,
 				MultiInput,
 				SuggestionItem,
 				SuggestionGroupItem,
@@ -48,6 +49,7 @@
 				Page,
 				VerticalLayout
 			) {
+				await Core.ready();
 				var oVerticalLayout = new VerticalLayout({
 					content: [
 						new Label("label12", {
@@ -472,7 +474,7 @@
 					url: "https://dummyjson.com/products?limit=30",
 					dataType: "json",
 					success: function (data) {
-						var oMI = sap.ui.getCore().byId("multiInput18");
+						var oMI = sap.ui.core.Element.getElementById("multiInput18");
 						oMI.setModel(new sap.ui.model.json.JSONModel({ modelData: data.products }));
 						oMI.bindAggregation("tokens", {
 							path: "/modelData",
@@ -555,7 +557,6 @@
 
 				oPage.placeAt("body");
 			});
-		});
 	</script>
 </head>
 
