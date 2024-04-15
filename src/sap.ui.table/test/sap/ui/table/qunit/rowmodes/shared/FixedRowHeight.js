@@ -30,7 +30,7 @@ sap.ui.define([
 			});
 		},
 		afterEach: function() {
-			TableQUnitUtils.setDensity(this.oTable, "sapUiSizeCozy");
+			this.oTable.qunit.resetDensity();
 			this.oTable.destroy();
 		}
 	});
@@ -40,12 +40,10 @@ sap.ui.define([
 		let pSequence = Promise.resolve();
 
 		function test(mTestSettings) {
-			pSequence = pSequence.then(function() {
+			pSequence = pSequence.then(async function() {
 				oTable.getRowMode().setRowContentHeight(mTestSettings.rowContentHeight || 0);
 				oTable.getColumns()[1].getTemplate().setHeight((mTestSettings.templateHeight || 1) + "px");
-				TableQUnitUtils.setDensity(oTable, mTestSettings.density);
-				oTable.invalidate();
-			}).then(oTable.qunit.whenRenderingFinished).then(function() {
+				await oTable.qunit.setDensity(mTestSettings.density);
 				TableQUnitUtils.assertRowHeights(assert, oTable, mTestSettings);
 			});
 		}
@@ -113,11 +111,9 @@ sap.ui.define([
 		let pSequence = Promise.resolve();
 
 		function test(mTestSettings) {
-			pSequence = pSequence.then(function() {
+			pSequence = pSequence.then(async function() {
 				oTable.getRowMode().setRowContentHeight(mTestSettings.rowContentHeight || 0);
-				TableQUnitUtils.setDensity(oTable, mTestSettings.density);
-				oTable.invalidate();
-			}).then(oTable.qunit.whenRenderingFinished).then(function() {
+				await oTable.qunit.setDensity(mTestSettings.density);
 				TableQUnitUtils.assertColumnHeaderHeights(assert, oTable, mTestSettings);
 			});
 		}

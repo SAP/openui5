@@ -789,6 +789,39 @@ sap.ui.define([
 				return oTable.qunit.focus(oElement);
 			};
 		};
+
+		/**
+		 * Sets the content density and invalidates the table.
+		 *
+		 * @param {string} [sDensity] The content density value to be set.
+		 * @returns {Promise} A promise that resolves after the rendering of the table is finished.
+		 */
+		oTable.qunit.setDensity = function(sDensity) {
+			document.body.classList.remove("sapUiSizeCozy");
+			document.body.classList.remove("sapUiSizeCompact");
+			oTable.removeStyleClass("sapUiSizeCondensed");
+
+			if (sDensity != null) {
+				if (sDensity === "sapUiSizeCondensed") {
+					document.body.classList.add("sapUiSizeCompact");
+					oTable.addStyleClass("sapUiSizeCondensed");
+				} else {
+					document.body.classList.add(sDensity);
+				}
+			}
+
+			oTable.invalidate();
+			return oTable.qunit.whenRenderingFinished();
+		};
+
+		/**
+		 * Resets to the original content density and invalidates the table.
+		 *
+		 * @returns {Promise} A promise that resolves after the rendering of the table is finished.
+		 */
+		oTable.qunit.resetDensity = function() {
+			return oTable.qunit.setDensity("sapUiSizeCozy");
+		};
 	}
 
 	function addHelpers(oTable) {
@@ -1243,29 +1276,6 @@ sap.ui.define([
 		return function() {
 			return TableQUnitUtils.wait(iMilliseconds);
 		};
-	};
-
-	/**
-	 * Sets the content density.
-	 *
-	 * @param {sap.ui.table.Table} oTable Instance of the table.
-	 * @param {string} [sDensity] The content density value to be set.
-	 */
-	TableQUnitUtils.setDensity = function(oTable, sDensity) {
-		document.body.classList.remove("sapUiSizeCozy");
-		document.body.classList.remove("sapUiSizeCompact");
-		oTable.removeStyleClass("sapUiSizeCondensed");
-
-		if (sDensity != null) {
-			if (sDensity === "sapUiSizeCondensed") {
-				document.body.classList.add("sapUiSizeCompact");
-				oTable.addStyleClass("sapUiSizeCondensed");
-			} else {
-				document.body.classList.add(sDensity);
-			}
-		}
-
-		oCore.applyChanges();
 	};
 
 	/**
