@@ -52,6 +52,7 @@ sap.ui.define([
 	"use strict";
 
 	const sandbox = sinon.createSandbox();
+	const sControlId = "controlId";
 
 	function getInitialDependencyMap(mPropertyBag) {
 		return merge(DependencyHandler.createEmptyDependencyMap(), mPropertyBag);
@@ -1008,6 +1009,71 @@ sap.ui.define([
 					oControl.destroy();
 				});
 			}.bind(this));
+		});
+	});
+
+	QUnit.module("applyMultipleChanges", {
+		beforeEach() {
+			this.oControl = new Label(sControlId);
+			this.oAddChangeStub = sandbox.stub(DependencyHandler, "addRuntimeChangeToMap");
+			this.oChangeHandlerApplyChangeStub = sandbox.stub();
+			sandbox.stub(ChangeUtils, "getChangeHandler").resolves({
+				applyChange: this.oChangeHandlerApplyChangeStub,
+				revertChange() {},
+				completeChangeContent() {}
+			});
+		},
+		afterEach() {
+			sandbox.restore();
+			this.oControl.destroy();
+		}
+	}, function() {
+		QUnit.test("when all changes can be applied", async function(assert) {
+			const oChange0 = FlexObjectFactory.createFromFileContent(getLabelChangeContent("a", sControlId));
+			const oChange1 = FlexObjectFactory.createFromFileContent(getLabelChangeContent("b", sControlId));
+			const oChange2 = FlexObjectFactory.createFromFileContent(getLabelChangeContent("c", sControlId));
+			await Applier.applyMultipleChanges([oChange0, oChange1, oChange2], {
+				appComponent: {},
+				reference: "DummyFlexReference"
+			});
+			assert.strictEqual(this.oChangeHandlerApplyChangeStub.callCount, 3, "all changes were applied");
+			assert.strictEqual(this.oAddChangeStub.callCount, 3, "all changes were added to the runtime map");
+		});
+
+		QUnit.test("when one change can't be applied", async function(assert) {
+			ChangeUtils.getChangeHandler.restore();
+			sandbox.stub(ChangeUtils, "getChangeHandler")
+			.onFirstCall().resolves({
+				applyChange: () => Promise.reject(),
+				revertChange() {},
+				completeChangeContent() {}
+			})
+			.resolves({
+				applyChange: this.oChangeHandlerApplyChangeStub,
+				revertChange() {},
+				completeChangeContent() {}
+			});
+			const oChange0 = FlexObjectFactory.createFromFileContent(getLabelChangeContent("a", sControlId));
+			const oChange1 = FlexObjectFactory.createFromFileContent(getLabelChangeContent("b", sControlId));
+			const oChange2 = FlexObjectFactory.createFromFileContent(getLabelChangeContent("c", sControlId));
+			await Applier.applyMultipleChanges([oChange0, oChange1, oChange2], {
+				appComponent: {},
+				reference: "DummyFlexReference"
+			});
+			assert.strictEqual(this.oChangeHandlerApplyChangeStub.callCount, 2, "two changes were applied");
+			assert.strictEqual(this.oAddChangeStub.callCount, 2, "two changes were added to the runtime map");
+		});
+
+		QUnit.test("when one control is not available", async function(assert) {
+			const oChange0 = FlexObjectFactory.createFromFileContent(getLabelChangeContent("a", sControlId));
+			const oChange1 = FlexObjectFactory.createFromFileContent(getLabelChangeContent("b", "notExistingId"));
+			const oChange2 = FlexObjectFactory.createFromFileContent(getLabelChangeContent("c", sControlId));
+			await Applier.applyMultipleChanges([oChange0, oChange1, oChange2], {
+				appComponent: {},
+				reference: "DummyFlexReference"
+			});
+			assert.strictEqual(this.oChangeHandlerApplyChangeStub.callCount, 2, "two changes were applied");
+			assert.strictEqual(this.oAddChangeStub.callCount, 2, "two changes were added to the runtime map");
 		});
 	});
 

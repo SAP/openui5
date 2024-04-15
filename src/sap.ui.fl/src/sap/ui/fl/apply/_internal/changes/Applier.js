@@ -380,6 +380,36 @@ sap.ui.define([
 	};
 
 	/**
+	 * Applies a given array of changes sequentially. If the change was successfully applied it is added to the LiveDependencyMap.
+	 *
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} aChanges - FlexObjects to be applied
+	 * @param {object} mPropertyBag - Object with parameters as properties
+	 * @param {object} mPropertyBag.reference - Flex reference
+	 * @param {object} mPropertyBag.appComponent - App Component instance
+	 * @returns {Promise} Resolves after all changes were applied
+	 */
+	Applier.applyMultipleChanges = function(aChanges, mPropertyBag) {
+		mPropertyBag.modifier = JsControlTreeModifier;
+		const aPromises = aChanges.map(function(oChange) {
+			oChange.setQueuedForApply();
+			return function() {
+				const oControl = JsControlTreeModifier.bySelector(oChange.getSelector(), mPropertyBag.appComponent);
+				if (oControl) {
+					return Applier.applyChangeOnControl(oChange, oControl, mPropertyBag)
+					.then(function(oResult) {
+						if (oResult.success) {
+							const oLiveDependencyMap = UIChangesState.getLiveDependencyMap(mPropertyBag.reference);
+							DependencyHandler.addRuntimeChangeToMap(oChange, mPropertyBag.appComponent, oLiveDependencyMap);
+						}
+					});
+				}
+				return Promise.resolve();
+			};
+		});
+		return FlUtils.execPromiseQueueSequentially(aPromises);
+	};
+
+	/**
 	 * Gets the dependency map and gets all changes for that control from the map, then, depending on
 	 * dependencies, directly applies the change or saves the callback to apply in the dependency.
 	 *

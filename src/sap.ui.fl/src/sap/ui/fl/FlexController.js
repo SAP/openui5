@@ -7,7 +7,6 @@ sap.ui.define([
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/write/_internal/Versions",
-	"sap/ui/fl/apply/_internal/changes/Applier",
 	"sap/ui/fl/apply/_internal/changes/Reverter",
 	"sap/ui/fl/apply/_internal/controlVariants/URLHandler",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
@@ -15,14 +14,12 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
-	"sap/ui/core/Element",
-	"sap/base/Log"
+	"sap/ui/core/Element"
 ], function(
 	Utils,
 	Layer,
 	ChangePersistenceFactory,
 	Versions,
-	Applier,
 	Reverter,
 	URLHandler,
 	States,
@@ -30,8 +27,7 @@ sap.ui.define([
 	FlexState,
 	ControlVariantApplyAPI,
 	JsControlTreeModifier,
-	Element,
-	Log
+	Element
 ) {
 	"use strict";
 
@@ -312,33 +308,6 @@ sap.ui.define([
 	FlexController.prototype.removeDirtyChanges = function(vLayer, oComponent, oControl, sGenerator, aChangeTypes, bSkipUrlUpdate) {
 		return this._oChangePersistence.removeDirtyChanges(vLayer, oComponent, oControl, sGenerator, aChangeTypes)
 		.then(revertChangesAndUpdateVariantModel.bind(this, oComponent, bSkipUrlUpdate));
-	};
-
-	/**
-	 * Applying variant changes.
-	 *
-	 * @param {array} aChanges - Array of relevant changes
-	 * @param {sap.ui.core.Component} oAppComponent - Application component instance
-	 * @returns {Promise|sap.ui.fl.Utils.FakePromise} Returns promise that is resolved after all changes were applied in asynchronous or FakePromise for the synchronous processing scenario
-	 * @public
-	 */
-	FlexController.prototype.applyVariantChanges = function(aChanges, oAppComponent) {
-		var oControl;
-		return aChanges.reduce(function(oPreviousPromise, oChange) {
-			return oPreviousPromise.then(function() {
-				var mPropertyBag = {
-					modifier: JsControlTreeModifier,
-					appComponent: oAppComponent
-				};
-				this._oChangePersistence._addRunTimeCreatedChangeToDependencyMap(oAppComponent, oChange);
-				oControl = mPropertyBag.modifier.bySelector(oChange.getSelector(), oAppComponent);
-				if (oControl) {
-					return Applier.applyChangeOnControl(oChange, oControl, mPropertyBag);
-				}
-				Log.error("A flexibility change tries to change a nonexistent control.");
-				return undefined;
-			}.bind(this));
-		}.bind(this), (Utils.FakePromise ? new Utils.FakePromise() : Promise.resolve()));
 	};
 
 	/**

@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/base/util/restricted/_pick",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/Switcher",
+	"sap/ui/fl/apply/_internal/changes/Applier",
 	"sap/ui/fl/apply/_internal/changes/Reverter",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/thirdparty/sinon-4"
@@ -11,6 +12,7 @@ sap.ui.define([
 	_pick,
 	VariantManagementState,
 	Switcher,
+	Applier,
 	Reverter,
 	JsControlTreeModifier,
 	sinon
@@ -38,9 +40,6 @@ sap.ui.define([
 				},
 				id: "change2"
 			}];
-			this.oFlexController = {
-				applyVariantChanges: sandbox.stub()
-			};
 			this.oAppComponent = {type: "appComponent"};
 
 			this.mPropertyBag = {
@@ -53,6 +52,7 @@ sap.ui.define([
 			};
 
 			sandbox.stub(Reverter, "revertMultipleChanges").resolves();
+			sandbox.stub(Applier, "applyMultipleChanges").resolves();
 			sandbox.stub(VariantManagementState, "setCurrentVariant");
 			sandbox.stub(VariantManagementState, "getControlChangesForVariant")
 			.callThrough()
@@ -80,7 +80,7 @@ sap.ui.define([
 				"then revert of changes was correctly triggered"
 			);
 			assert.ok(
-				this.oFlexController.applyVariantChanges.calledWith(this.aTargetControlChangesForVariant, this.oAppComponent),
+				Applier.applyMultipleChanges.calledWith(this.aTargetControlChangesForVariant, this.mPropertyBag),
 				"then apply of changes was correctly triggered"
 			);
 			assert.ok(
