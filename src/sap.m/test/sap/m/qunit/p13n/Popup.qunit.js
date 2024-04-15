@@ -134,6 +134,19 @@ sap.ui.define([
 		assert.equal(this.oPopup._oPopup.getButtons()[3].getText(), "Custom 2");
 	});
 
+	QUnit.test("Check propagation of compact style class", function(assert) {
+
+		const oControlWithCompactStyle = new Control();
+
+		oControlWithCompactStyle.addStyleClass("sapUiSizeCompact");
+		this.oPopup.setParent(oControlWithCompactStyle);
+
+		this.oPopup.open(this.oSource);
+		const bIsCompact = this.oPopup._oPopup.hasStyleClass("sapUiSizeCompact");
+
+		assert.ok(bIsCompact, "The compact style class has been propagated to the Popup");
+	});
+
 	QUnit.module("p13n.Popup check events & parameters", {
 		beforeEach: async function() {
 			var oPopup = new P13nPopup();
