@@ -7,7 +7,6 @@ sap.ui.define([
 	"sap/ui/table/qunit/rowmodes/shared/RowsUpdated",
 	"sap/ui/table/Table",
 	"sap/ui/table/Column",
-	"sap/ui/table/RowAction",
 	"sap/ui/table/rowmodes/Interactive",
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/qunit/QUnitUtils",
@@ -19,7 +18,6 @@ sap.ui.define([
 	RowsUpdatedTest,
 	Table,
 	Column,
-	RowAction,
 	InteractiveRowMode,
 	TableUtils,
 	qutils,
@@ -126,7 +124,7 @@ sap.ui.define([
 		oTable.addColumn(new Column({template: new HeightTestControl()}));
 		oTable.setFixedColumnCount(1);
 		oTable.setRowActionCount(1);
-		oTable.setRowActionTemplate(new RowAction());
+		oTable.setRowActionTemplate(TableQUnitUtils.createRowAction(null));
 
 		function test(mTestSettings) {
 			sequence = sequence.then(async function() {

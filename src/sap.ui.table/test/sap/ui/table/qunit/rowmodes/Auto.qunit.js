@@ -8,7 +8,6 @@ sap.ui.define([
 	"sap/ui/table/rowmodes/Auto",
 	"sap/ui/table/Table",
 	"sap/ui/table/Column",
-	"sap/ui/table/RowAction",
 	"sap/ui/table/CreationRow",
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/Device"
@@ -20,7 +19,6 @@ sap.ui.define([
 	AutoRowMode,
 	Table,
 	Column,
-	RowAction,
 	CreationRow,
 	TableUtils,
 	Device
@@ -135,7 +133,7 @@ sap.ui.define([
 		oTable.addColumn(new Column({template: new HeightTestControl()}));
 		oTable.setFixedColumnCount(1);
 		oTable.setRowActionCount(1);
-		oTable.setRowActionTemplate(new RowAction());
+		oTable.setRowActionTemplate(TableQUnitUtils.createRowAction(null));
 
 		function test(mTestSettings) {
 			sequence = sequence.then(async function() {

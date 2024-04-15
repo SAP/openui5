@@ -23,7 +23,6 @@ sap.ui.define([
 
 	const createTables = window.createTables;
 	const destroyTables = window.destroyTables;
-	const initRowActions = window.initRowActions;
 	const getRowHeader = window.getRowHeader;
 	const getCell = window.getCell;
 	const getRowAction = window.getRowAction;
@@ -308,7 +307,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Rows", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			createTables();
 
 			this.oDragAndDropExtension = oTable._getDragAndDropExtension();
@@ -318,14 +317,16 @@ sap.ui.define([
 				sourceAggregation: "rows",
 				targetAggregation: "rows"
 			}));
-
-			initRowActions(oTable, 1, 1);
+			oTable.setRowActionTemplate(TableQUnitUtils.createRowAction(null));
+			oTable.setRowActionCount(1);
 
 			oTreeTable.addDragDropConfig(new DragDropInfo({
 				sourceAggregation: "rows",
 				targetAggregation: "rows",
 				targetElement: oTable
 			}));
+
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			destroyTables();

@@ -53,7 +53,6 @@ sap.ui.define([
 	const getRowAction = window.getRowAction;
 	const getSelectAll = window.getSelectAll;
 	const iNumberOfRows = window.iNumberOfRows;
-	const initRowActions = window.initRowActions;
 	const checkFocus = window.checkFocus;
 	const fakeGroupRow = window.fakeGroupRow;
 	const TestInputControl = TableQUnitUtils.TestInputControl;
@@ -413,8 +412,10 @@ sap.ui.define([
 		Device.os.macintosh = bIsMacintosh;
 	});
 
-	QUnit.test("_allowsToggleExpandedState; Standard row", function(assert) {
-		initRowActions(oTable, 2, 2);
+	QUnit.test("_allowsToggleExpandedState; Standard row", async function(assert) {
+		oTable.setRowActionTemplate(TableQUnitUtils.createRowAction(null));
+		oTable.setRowActionCount(1);
+		await nextUIUpdate();
 
 		assert.ok(!KeyboardDelegate._allowsToggleExpandedState(oTable, getCell(0, 0)[0]),
 			"Returned False: Pressing a key on a normal data cell can not toggle a group");
@@ -431,7 +432,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("_allowsToggleExpandedState; Group row", async function(assert) {
-		initRowActions(oTable, 2, 2);
+		oTable.setRowActionTemplate(TableQUnitUtils.createRowAction(null));
+		oTable.setRowActionCount(1);
+		await nextUIUpdate();
 		await fakeGroupRow(0, oTable);
 
 		assert.ok(KeyboardDelegate._allowsToggleExpandedState(oTable, getCell(0, 1)[0]),
@@ -443,7 +446,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("_allowsToggleExpandedState; Tree row", async function(assert) {
-		initRowActions(oTreeTable, 2, 2);
+		oTreeTable.setRowActionTemplate(TableQUnitUtils.createRowAction(null));
+		oTreeTable.setRowActionCount(1);
+		await nextUIUpdate();
 
 		const oTreeIconCell = getCell(0, 0, null, null, oTreeTable)[0];
 		const sTreeIconOpenClass = "sapUiTableTreeIconNodeOpen";
@@ -567,15 +572,17 @@ sap.ui.define([
 	});
 
 	QUnit.module("Interactive elements", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			createTables();
 
 			TableQUnitUtils.addColumn(oTable, "Focusable & Not Tabbable", "Focus&NoTabSpan", false, true, false);
 			TableQUnitUtils.addColumn(oTable, "Not Focusable & Not Tabbable", "NoFocus&NoTabSpan", false, false, false);
 			TableQUnitUtils.addColumn(oTable, "Focusable & Tabbable", "Focus&TabInput", true, null, true);
 			TableQUnitUtils.addColumn(oTable, "Focusable & Not Tabbable", "Focus&NoTabInput", true, null, false);
+			oTable.setRowActionTemplate(TableQUnitUtils.createRowAction());
+			oTable.setRowActionCount(2);
 
-			initRowActions(oTable, 2, 2);
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			destroyTables();
@@ -644,7 +651,8 @@ sap.ui.define([
 		assert.strictEqual($FirstInteractiveElement[0], getRowAction(0).find(".sapUiTableActionIcon:visible")[0],
 			"First row: The correct element was returned");
 
-		initRowActions(oTable, 1, 0);
+		oTable.setRowActionCount(0);
+		await nextUIUpdate();
 		$FirstInteractiveElement = KeyboardDelegate._getFirstInteractiveElement(oTable.getRows()[0]);
 		assert.strictEqual($FirstInteractiveElement, null, "Row has no interactive elements: Null was returned");
 
@@ -652,13 +660,14 @@ sap.ui.define([
 		assert.strictEqual($FirstInteractiveElement, null, "No parameter passed: Null was returned");
 	});
 
-	QUnit.test("_getLastInteractiveElement", function(assert) {
+	QUnit.test("_getLastInteractiveElement", async function(assert) {
 		let $LastInteractiveElement = KeyboardDelegate._getLastInteractiveElement(oTable.getRows()[0]);
 		assert.strictEqual($LastInteractiveElement.length, 1, "First row with row actions: One element was returned");
 		assert.strictEqual($LastInteractiveElement.get(-1), getRowAction(0).find(".sapUiTableActionIcon:visible").get(-1),
 			"First row with row actions: The correct element was returned");
 
-		initRowActions(oTable, 2, 0);
+		oTable.setRowActionCount(0);
+		await nextUIUpdate();
 		$LastInteractiveElement = KeyboardDelegate._getLastInteractiveElement(oTable.getRows()[0]);
 		assert.strictEqual($LastInteractiveElement.length, 1, "First row without row actions: One element was returned");
 		assert.strictEqual($LastInteractiveElement[0].value, "Focus&NoTabInput1", "First row without row actions: The correct element was returned");
@@ -843,8 +852,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("Row Actions", async function(assert) {
-		initRowActions(oTable, 1, 1);
+		oTable.setRowActionTemplate(TableQUnitUtils.createRowAction(null));
+		oTable.setRowActionCount(1);
 		await nextUIUpdate();
+
 		let oElem = checkFocus(getRowAction(1, true), assert);
 		simulateTabEvent(oElem, false);
 		oElem = checkFocus(document.getElementById("Focus2"), assert);
@@ -1250,13 +1261,17 @@ sap.ui.define([
 		this.testArrowKeys(assert);
 	});
 
-	QUnit.test("Row Actions", function(assert) {
-		initRowActions(this.oTable, 1, 1);
+	QUnit.test("Row Actions", async function(assert) {
+		this.oTable.setRowActionTemplate(TableQUnitUtils.createRowAction(null));
+		this.oTable.setRowActionCount(1);
+		await this.oTable.qunit.whenRenderingFinished();
+
 		this.testArrowKeys(assert);
 	});
 
 	QUnit.test("Fixed columns + fixed rows + row header + column header + row actions", async function(assert) {
-		initRowActions(this.oTable, 1, 1);
+		this.oTable.setRowActionTemplate(TableQUnitUtils.createRowAction(null));
+		this.oTable.setRowActionCount(1);
 		this.oTable.setFixedColumnCount(1);
 		this.oTable.setRowMode(new FixedRowMode({
 			rowCount: 6,
@@ -1302,7 +1317,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Multi header + row actions", async function(assert) {
-		initRowActions(this.oTable, 1, 1);
+		this.oTable.setRowActionTemplate(TableQUnitUtils.createRowAction(null));
+		this.oTable.setRowActionCount(1);
 		this.oTable.getColumns()[0].addMultiLabel(new TestControl({text: "a"}));
 		this.oTable.getColumns()[1].addMultiLabel(new TestControl({text: "b"}));
 		this.oTable.getColumns()[1].addMultiLabel(new TestControl({text: "b1"}));
@@ -1647,14 +1663,16 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Inside Row Actions, Fixed Rows (Range Selection)", function(assert) {
+	QUnit.test("Inside Row Actions, Fixed Rows (Range Selection)", async function(assert) {
 		this.oTable.setRowMode(new FixedRowMode({
 			rowCount: 6,
 			fixedTopRowCount: 2,
 			fixedBottomRowCount: 2
 		}));
 		this.oTable.setSelectionBehavior(library.SelectionBehavior.RowOnly);
-		initRowActions(this.oTable, 1, 1);
+		this.oTable.setRowActionTemplate(TableQUnitUtils.createRowAction(null));
+		this.oTable.setRowActionCount(1);
+		await this.oTable.qunit.whenRenderingFinished();
 
 		const that = this;
 		let oTarget = this.oTable.qunit.getRowActionCell(0);
@@ -1757,9 +1775,12 @@ sap.ui.define([
 		this.triggerKey(Key.Arrow.LEFT, this.oTable.qunit.getDataCell(0, 0), this.oTable.qunit.getRowHeaderCell(0));
 	});
 
-	QUnit.test("Move between Row Actions and Row (Range Selection)", function(assert) {
+	QUnit.test("Move between Row Actions and Row (Range Selection)", async function(assert) {
 		this.oTable.setSelectionBehavior(library.SelectionBehavior.Row);
-		initRowActions(this.oTable, 1, 1);
+		this.oTable.setRowActionTemplate(TableQUnitUtils.createRowAction(null));
+		this.oTable.setRowActionCount(1);
+		await this.oTable.qunit.whenRenderingFinished();
+
 		this.oTable.qunit.getRowActionCell(0).focus();
 		qutils.triggerKeydown(this.oTable.qunit.getRowActionCell(0), Key.SHIFT, false, false, false); // Start selection mode.
 		this.triggerKey(Key.Arrow.LEFT, this.oTable.qunit.getRowActionCell(0), this.oTable.qunit.getDataCell(0, -1));
@@ -1915,9 +1936,11 @@ sap.ui.define([
 		this.triggerKey(Key.HOME, this.oTable.qunit.getColumnHeaderCell(this.oTable.getFixedColumnCount()), this.oTable.qunit.getColumnHeaderCell(0));
 	});
 
-	QUnit.test("Column header; 1 (of 5) fixed columns with row actions", function(assert) {
+	QUnit.test("Column header; 1 (of 5) fixed columns with row actions", async function(assert) {
 		this.oTable.setFixedColumnCount(1);
-		initRowActions(this.oTable, 2, 2);
+		this.oTable.setRowActionTemplate(TableQUnitUtils.createRowAction(null));
+		this.oTable.setRowActionCount(1);
+		await this.oTable.qunit.whenRenderingFinished();
 
 		// First Non-Fixed area - First Column Header
 		// *END* -> Non-Fixed area - Last Column Header
@@ -2110,8 +2133,10 @@ sap.ui.define([
 		this.triggerKey(Key.END, this.oTable.qunit.getDataCell(0, 0), this.oTable.qunit.getDataCell(0, 4));
 	});
 
-	QUnit.test("Row action", function(assert) {
-		initRowActions(this.oTable, 2, 2);
+	QUnit.test("Row action", async function(assert) {
+		this.oTable.setRowActionTemplate(TableQUnitUtils.createRowAction(null));
+		this.oTable.setRowActionCount(1);
+		await this.oTable.qunit.whenRenderingFinished();
 
 		// Row Action
 		// *END* -> Row Action
@@ -2127,9 +2152,11 @@ sap.ui.define([
 		this.triggerKey(Key.END, this.oTable.qunit.getDataCell(0, -1), this.oTable.qunit.getRowActionCell(0));
 	});
 
-	QUnit.test("Row action; 1 (of 5) fixed columns", function(assert) {
+	QUnit.test("Row action; 1 (of 5) fixed columns", async function(assert) {
 		this.oTable.setFixedColumnCount(1);
-		initRowActions(this.oTable, 2, 2);
+		this.oTable.setRowActionTemplate(TableQUnitUtils.createRowAction(null));
+		this.oTable.setRowActionCount(1);
+		await this.oTable.qunit.whenRenderingFinished();
 
 		// Row Action
 		// *END* -> Row Action
@@ -2148,9 +2175,11 @@ sap.ui.define([
 		this.triggerKey(Key.END, this.oTable.qunit.getDataCell(0, -1), this.oTable.qunit.getRowActionCell(0));
 	});
 
-	QUnit.test("Row action; 2 (of 5) fixed columns", function(assert) {
+	QUnit.test("Row action; 2 (of 5) fixed columns", async function(assert) {
 		this.oTable.setFixedColumnCount(2);
-		initRowActions(this.oTable, 2, 2);
+		this.oTable.setRowActionTemplate(TableQUnitUtils.createRowAction(null));
+		this.oTable.setRowActionCount(1);
+		await this.oTable.qunit.whenRenderingFinished();
 
 		// Row Action
 		// *END* -> Row Action
@@ -2172,9 +2201,11 @@ sap.ui.define([
 		this.triggerKey(Key.END, this.oTable.qunit.getDataCell(0, -1), this.oTable.qunit.getRowActionCell(0));
 	});
 
-	QUnit.test("Row action; 5 (of 5) fixed columns", function(assert) {
+	QUnit.test("Row action; 5 (of 5) fixed columns", async function(assert) {
 		this.oTable.setFixedColumnCount(5);
-		initRowActions(this.oTable, 2, 2);
+		this.oTable.setRowActionTemplate(TableQUnitUtils.createRowAction(null));
+		this.oTable.setRowActionCount(1);
+		await this.oTable.qunit.whenRenderingFinished();
 
 		// Row Action
 		// *END* -> Row Action
@@ -2702,8 +2733,10 @@ sap.ui.define([
 		assert.equal(this.oTable.getRows()[iRowCount - 1].getIndex(), iTotalRowCount - 1, "Row index");
 	});
 
-	QUnit.test("Row action column", function(assert) {
-		initRowActions(this.oTable, 2, 2);
+	QUnit.test("Row action column", async function(assert) {
+		this.oTable.setRowActionTemplate(TableQUnitUtils.createRowAction(null));
+		this.oTable.setRowActionCount(1);
+		await this.oTable.qunit.whenRenderingFinished();
 
 		const iTotalRowCount = this.oTable._getTotalRowCount();
 		const iRowCount = this.oTable._getRowCounts().count;
@@ -2728,9 +2761,11 @@ sap.ui.define([
 		assert.equal(this.oTable.getRows()[iRowCount - 1].getIndex(), iTotalRowCount - 1, "Row index");
 	});
 
-	QUnit.test("Row action column - Less data rows than rendered rows", function(assert) {
+	QUnit.test("Row action column - Less data rows than rendered rows", async function(assert) {
 		this.oTable.getRowMode().setRowCount(10);
-		initRowActions(this.oTable, 2, 2);
+		this.oTable.setRowActionTemplate(TableQUnitUtils.createRowAction(null));
+		this.oTable.setRowActionCount(1);
+		await this.oTable.qunit.whenRenderingFinished();
 
 		const iTotalRowCount = this.oTable._getTotalRowCount();
 		const iNonEmptyRowCount = TableUtils.getNonEmptyRowCount(this.oTable);
@@ -2751,13 +2786,15 @@ sap.ui.define([
 		assert.equal(this.oTable.getRows()[0].getIndex(), 0, "Row index");
 	});
 
-	QUnit.test("Row action column - Less data rows than rendered rows and fixed rows", function(assert) {
+	QUnit.test("Row action column - Less data rows than rendered rows and fixed rows", async function(assert) {
 		this.oTable.setRowMode(new FixedRowMode({
 			rowCount: 12,
 			fixedTopRowCount: 2,
 			fixedBottomRowCount: 2
 		}));
-		initRowActions(this.oTable, 2, 2);
+		this.oTable.setRowActionTemplate(TableQUnitUtils.createRowAction(null));
+		this.oTable.setRowActionCount(1);
+		await this.oTable.qunit.whenRenderingFinished();
 
 		const iTotalRowCount = this.oTable._getTotalRowCount();
 		const mRowCounts = this.oTable._getRowCounts();
@@ -2789,9 +2826,11 @@ sap.ui.define([
 		assert.equal(this.oTable.getRows()[mRowCounts.fixedTop].getIndex(), mRowCounts.fixedTop, "Row index");
 	});
 
-	QUnit.test("Row action column - No Column Header", function(assert) {
+	QUnit.test("Row action column - No Column Header", async function(assert) {
 		this.oTable.setColumnHeaderVisible(false);
-		initRowActions(this.oTable, 2, 2);
+		this.oTable.setRowActionTemplate(TableQUnitUtils.createRowAction(null));
+		this.oTable.setRowActionCount(1);
+		await this.oTable.qunit.whenRenderingFinished();
 
 		const iTotalRowCount = this.oTable._getTotalRowCount();
 		const iRowCount = this.oTable._getRowCounts().count;
@@ -2812,7 +2851,7 @@ sap.ui.define([
 		assert.equal(this.oTable.getRows()[0].getIndex(), 0, "Row index");
 	});
 
-	QUnit.test("Row action column - Multi Header and Fixed Top/Bottom Rows", function(assert) {
+	QUnit.test("Row action column - Multi Header and Fixed Top/Bottom Rows", async function(assert) {
 		this.oTable.getColumns()[0].addMultiLabel(new TestControl({text: "a_1_1"}));
 		this.oTable.getColumns()[0].addMultiLabel(new TestControl({text: "a_2_1"}));
 		this.oTable.getColumns()[0].addMultiLabel(new TestControl({text: "a_3_1"}));
@@ -2828,7 +2867,9 @@ sap.ui.define([
 			fixedTopRowCount: 2,
 			fixedBottomRowCount: 2
 		}));
-		initRowActions(this.oTable, 2, 2);
+		this.oTable.setRowActionTemplate(TableQUnitUtils.createRowAction(null));
+		this.oTable.setRowActionCount(1);
+		await this.oTable.qunit.whenRenderingFinished();
 
 		const iTotalRowCount = this.oTable._getTotalRowCount();
 		const mRowCounts = this.oTable._getRowCounts();
@@ -2977,7 +3018,7 @@ sap.ui.define([
 		 * @param {Object} assert QUnit assert object.
 		 * @private
 		 */
-		testPageKeys: function(assert) {
+		testPageKeys: async function(assert) {
 			const mRowCounts = this.oTable._getRowCounts();
 			const iTotalRowCount = this.oTable._getTotalRowCount();
 			const iNonEmptyRowCount = TableUtils.getNonEmptyRowCount(this.oTable);
@@ -3149,7 +3190,9 @@ sap.ui.define([
 
 			/* Test on row actions */
 
-			initRowActions(this.oTable, 2, 2);
+			this.oTable.setRowActionTemplate(TableQUnitUtils.createRowAction(null));
+			this.oTable.setRowActionCount(1);
+			await this.oTable.qunit.whenRenderingFinished();
 
 			// First Row Action -> *PAGE_UP* -> First Row Action
 			this.triggerKey(Key.Page.UP, this.oTable.qunit.getRowActionCell(0), this.oTable.qunit.getRowActionCell(0));
@@ -3470,12 +3513,14 @@ sap.ui.define([
 		this.triggerKey(Key.Page.UP, this.oTable.qunit.getColumnHeaderCell(0), this.oTable.qunit.getSelectAllCell());
 	});
 
-	QUnit.test("Column header; With row actions", function(assert) {
+	QUnit.test("Column header; With row actions", async function(assert) {
 		const iColumnCount = this.oTable.getColumns().length;
 		let oTarget;
 		let i;
 
-		initRowActions(this.oTable, 2, 2);
+		this.oTable.setRowActionTemplate(TableQUnitUtils.createRowAction(null));
+		this.oTable.setRowActionCount(1);
+		await this.oTable.qunit.whenRenderingFinished();
 
 		// SelectAll -> *PAGE_UP* -> SelectAll
 		this.triggerKey(Key.Page.UP, this.oTable.qunit.getSelectAllCell(), this.oTable.qunit.getSelectAllCell());
@@ -3555,12 +3600,14 @@ sap.ui.define([
 		this.triggerKey(Key.Page.UP, this.oTable.qunit.getDataCell(0, 0), this.oTable.qunit.getRowHeaderCell(0));
 	});
 
-	QUnit.test("Content; With row actions", function(assert) {
+	QUnit.test("Content; With row actions", async function(assert) {
 		const iColumnCount = this.oTable.getColumns().length;
 		let oTarget;
 		let i;
 
-		initRowActions(this.oTable, 2, 2);
+		this.oTable.setRowActionTemplate(TableQUnitUtils.createRowAction(null));
+		this.oTable.setRowActionCount(1);
+		await this.oTable.qunit.whenRenderingFinished();
 
 		// Selection cell -> *PAGE_DOWN* -> First cell
 		this.triggerKey(Key.Page.DOWN, this.oTable.qunit.getRowHeaderCell(0), this.oTable.qunit.getDataCell(0, 0));
@@ -4176,9 +4223,11 @@ sap.ui.define([
 		qutils.triggerKeydown(oTreeIcon, Key.SPACE, false, false, false);
 	});
 
-	QUnit.test("After leaving action mode", function(assert) {
+	QUnit.test("After leaving action mode", async function(assert) {
 		oTable.setFixedColumnCount(1);
-		initRowActions(oTable, 1, 1);
+		oTable.setRowActionTemplate(TableQUnitUtils.createRowAction());
+		oTable.setRowActionCount(1);
+		await nextUIUpdate();
 
 		function test(oInitiallyFocusedCell, oTestedCell, oFinallyFocusedCell, fnKeyPress, sTitle) {
 			const bTestedCellIsRowHeader = TableUtils.getCellInfo(oTestedCell).isOfType(TableUtils.CELLTYPE.ROWHEADER);
@@ -5905,7 +5954,9 @@ let bSelected;
 		qutils.triggerKeydown(oElem, Key.A, false, false, true);
 		assert.ok(!legacyAreAllRowsSelected(oTable), "On Data Cell: All rows deselected");
 
-		initRowActions(oTable, 2, 2);
+		oTable.setRowActionTemplate(TableQUnitUtils.createRowAction(null));
+		oTable.setRowActionCount(1);
+		await nextUIUpdate();
 		oElem = checkFocus(getRowAction(0, true), assert);
 		qutils.triggerKeydown(oElem, Key.A, false, false, true);
 		assert.ok(legacyAreAllRowsSelected(oTable), "On Row Action: All rows selected");
@@ -6073,7 +6124,9 @@ let bSelected;
 			}
 		}
 
-		initRowActions(oTable, 2, 2);
+		oTable.setRowActionTemplate(TableQUnitUtils.createRowAction(null));
+		oTable.setRowActionCount(1);
+		await nextUIUpdate();
 		await test(library.SelectionMode.None, []);
 		await test(library.SelectionMode.Single, [1]);
 		await test(library.SelectionMode.MultiToggle, [0, 1, 2]);
@@ -6185,7 +6238,9 @@ let bSelected;
 		this.testNoCollapseExpand(assert, oTable, getSelectAll());
 		testFocus(getSelectAll());
 
-		initRowActions(oTable, 2, 2);
+		oTable.setRowActionTemplate(TableQUnitUtils.createRowAction(null));
+		oTable.setRowActionCount(1);
+		await nextUIUpdate();
 		await fakeGroupRow(0, oTable);
 		this.testCollapseExpandAndFocus(assert, oTable, getRowAction(0));
 	});
@@ -6271,7 +6326,9 @@ let bSelected;
 		this.testNoCollapseExpand(assert, oTable, getSelectAll());
 		testFocus(getSelectAll());
 
-		initRowActions(oTable, 2, 2);
+		oTable.setRowActionTemplate(TableQUnitUtils.createRowAction(null));
+		oTable.setRowActionCount(1);
+		await nextUIUpdate();
 		await fakeGroupRow(0, oTable);
 		this.testCollapseExpandAndFocus(assert, oTable, getRowAction(0));
 	});
@@ -6361,7 +6418,9 @@ let bSelected;
 		this.testNoCollapseExpand(assert, oTable, getSelectAll());
 		testFocus(getSelectAll());
 
-		initRowActions(oTable, 2, 2);
+		oTable.setRowActionTemplate(TableQUnitUtils.createRowAction(null));
+		oTable.setRowActionCount(1);
+		await nextUIUpdate();
 		await fakeGroupRow(0, oTable);
 		this.testCollapseExpandAndFocus(assert, oTable, getRowAction(0));
 	});
@@ -6375,33 +6434,41 @@ let bSelected;
 
 	QUnit.module("Interaction > ContextMenu", {
 		beforeEach: async function() {
-			await setupTest();
+			this.oTable = TableQUnitUtils.createTable({
+				columns: [
+					TableQUnitUtils.createTextColumn(),
+					TableQUnitUtils.createInteractiveTextColumn(),
+					TableQUnitUtils.createInputColumn().destroyLabel().setLabel(new TestInputControl())
+				],
+				rows: {path: "/"},
+				models: TableQUnitUtils.createJSONModelWithEmptyRows(5),
+				rowActionTemplate: TableQUnitUtils.createRowAction(),
+				rowActionCount: 1
+			});
+			await this.oTable.qunit.whenRenderingFinished();
 		},
 		afterEach: function() {
-			teardownTest();
+			this.oTable.destroy();
 		}
 	});
 
 	QUnit.test("On a cell", function(assert) {
-		const oContextMenuEventHandlerSpy = this.spy(oTable._getKeyboardExtension()._delegate, "oncontextmenu");
+		const oContextMenuEventHandlerSpy = this.spy(this.oTable._getKeyboardExtension()._delegate, "oncontextmenu");
 		const oOpenContextMenuSpy = this.spy(TableUtils.Menu, "openContextMenu");
-
-		initRowActions(oTable, 1, 1);
-
 		const aTestElements = [
-			getCell(0, 0),
-			getRowHeader(0),
-			getRowAction(0),
-			getColumnHeader(0),
-			getSelectAll()
+			this.oTable.qunit.getDataCell(0, 0),
+			this.oTable.qunit.getRowHeaderCell(0),
+			this.oTable.qunit.getRowActionCell(0),
+			this.oTable.qunit.getColumnHeaderCell(0),
+			this.oTable.qunit.getSelectAllCell()
 		];
 
-		aTestElements.forEach(function(oElem) {
-			oElem.trigger("focus");
+		aTestElements.forEach((oElem) => {
+			oElem.focus();
 			jQuery(oElem).trigger("contextmenu");
 			const oContextMenuEventArgument = oContextMenuEventHandlerSpy.args[0][0];
 
-			assert.ok(oOpenContextMenuSpy.calledOnceWithExactly(oTable, oContextMenuEventArgument),
+			assert.ok(oOpenContextMenuSpy.calledOnceWithExactly(this.oTable, oContextMenuEventArgument),
 				"TableUtils.Menu.openContextMenu was called with the correct arguments");
 			checkFocus(oElem, assert);
 
@@ -6411,10 +6478,10 @@ let bSelected;
 	});
 
 	QUnit.test("On a pseudo cell", function(assert) {
-		const oContextMenuEventHandlerSpy = this.spy(oTable._getKeyboardExtension()._delegate, "oncontextmenu");
+		const oContextMenuEventHandlerSpy = this.spy(this.oTable._getKeyboardExtension()._delegate, "oncontextmenu");
 		let oContextMenuEventArgument;
 		const oOpenContextMenuSpy = this.spy(TableUtils.Menu, "openContextMenu");
-		let oElem = getCell(0, 0)[0];
+		let oElem = this.oTable.qunit.getDataCell(0, 0);
 
 		oElem.classList.remove("sapUiTableDataCell");
 		oElem.classList.add("sapUiTablePseudoCell");
@@ -6429,7 +6496,7 @@ let bSelected;
 		oOpenContextMenuSpy.resetHistory();
 		oContextMenuEventHandlerSpy.resetHistory();
 
-		oElem = oTable.getRows()[0].getCells()[0].getDomRef();
+		oElem = this.oTable.getRows()[0].getCells()[1].getDomRef();
 		oElem.focus();
 		jQuery(oElem).trigger("contextmenu");
 		assert.ok(oOpenContextMenuSpy.notCalled, "TableUtils.Menu.openContextMenu was not called");
@@ -6439,17 +6506,15 @@ let bSelected;
 		assert.ok(!oContextMenuEventArgument.isDefaultPrevented(), "Opening of the default context menu was not prevented");
 	});
 
-	QUnit.test("On cell content", function(assert) {
-		const oContextMenuEventHandlerSpy = this.spy(oTable._getKeyboardExtension()._delegate, "oncontextmenu");
+	QUnit.test("On interactive cell content", function(assert) {
+		const oContextMenuEventHandlerSpy = this.spy(this.oTable._getKeyboardExtension()._delegate, "oncontextmenu");
 		const oOpenContextMenuSpy = this.spy(TableUtils.Menu, "openContextMenu");
-
-		oTable.getColumns()[0].setLabel(new TestInputControl());
-		initRowActions(oTable, 1, 1);
-
 		const aTestElements = [
-			oTable.getRows()[0].getCells()[0].getDomRef(),
-			oTable.getRows()[0].getRowAction().getAggregation("_icons")[0].getDomRef(),
-			oTable.getColumns()[0].getLabel().getDomRef()
+			this.oTable.getRows()[0].getRowAction().getAggregation("_icons")[0].getDomRef(),
+			this.oTable.getRows()[0].getCells()[1].getDomRef(),
+			this.oTable.getColumns()[1].getLabel().getDomRef(),
+			this.oTable.getRows()[0].getCells()[2].getDomRef(),
+			this.oTable.getColumns()[2].getLabel().getDomRef()
 		];
 
 		aTestElements.forEach(function(oElem) {
@@ -6466,11 +6531,31 @@ let bSelected;
 		});
 	});
 
+	QUnit.test("On non-interactive cell content", function(assert) {
+		const oContextMenuEventHandlerSpy = this.spy(this.oTable._getKeyboardExtension()._delegate, "oncontextmenu");
+		const oOpenContextMenuSpy = this.spy(TableUtils.Menu, "openContextMenu");
+		const aTestElements = [
+			this.oTable.getRows()[0].getCells()[0].getDomRef(),
+			this.oTable.getColumns()[0].getLabel().getDomRef()
+		];
+
+		aTestElements.forEach((oElem) => {
+			jQuery(oElem).trigger("contextmenu");
+			assert.ok(oOpenContextMenuSpy.notCalled, "TableUtils.Menu.openContextMenu was not called");
+
+			const oContextMenuEventArgument = oContextMenuEventHandlerSpy.args[0][0];
+			assert.ok(!oContextMenuEventArgument.isDefaultPrevented(), "Opening of the default context menu was not prevented");
+
+			oOpenContextMenuSpy.resetHistory();
+			oContextMenuEventHandlerSpy.resetHistory();
+		});
+	});
+
 	QUnit.module("Action Mode > Enter and Leave", {
 		beforeEach: async function() {
 			await setupTest();
 
-			oTable.removeAllColumns();
+			oTable.destroyColumns();
 			TableQUnitUtils.addColumn(oTable, "Focusable & Tabbable", "Focus&TabInput", true, null, true);
 			TableQUnitUtils.addColumn(oTable, "Focusable & Not Tabbable", "Focus&NoTabSpan", false, true, false, null, null, true);
 			TableQUnitUtils.addColumn(oTable, "Not Focusable & Not Tabbable", "NoFocus&NoTabSpan", false, false, false, null, null, true);
@@ -6751,8 +6836,10 @@ let bSelected;
 		assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
 	});
 
-	QUnit.test("F2 - On a Row Action Cell", function(assert) {
-		initRowActions(oTable, 2, 2);
+	QUnit.test("F2 - On a Row Action Cell", async function(assert) {
+		oTable.setRowActionTemplate(TableQUnitUtils.createRowAction());
+		oTable.setRowActionCount(2);
+		await nextUIUpdate();
 
 		// Focus cell with a focusable & tabbable element inside.
 		let oElem = checkFocus(getRowAction(0, true), assert);
@@ -6771,7 +6858,8 @@ let bSelected;
 		assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
 
 		// No content in row action cell
-		initRowActions(oTable, 2, 0);
+		oTable.setRowActionTemplate(TableQUnitUtils.createRowAction(null));
+		await nextUIUpdate();
 		oElem = checkFocus(getRowAction(0, true), assert);
 		qutils.triggerKeydown(oElem, Key.F2, false, false, false);
 		checkFocus(getRowAction(0), assert);
@@ -6878,9 +6966,11 @@ let bSelected;
 		checkFocus(oElem, assert);
 	});
 
-	QUnit.test("Space & Enter - On a Row Action Cell - Row selection not possible and no click handler", function(assert) {
+	QUnit.test("Space & Enter - On a Row Action Cell - Row selection not possible and no click handler", async function(assert) {
 		oTable.clearSelection();
-		initRowActions(oTable, 2, 2);
+		oTable.setRowActionTemplate(TableQUnitUtils.createRowAction());
+		oTable.setRowActionCount(2);
+		await nextUIUpdate();
 
 		/* Enter key */
 
@@ -6915,7 +7005,8 @@ let bSelected;
 		oTable._getKeyboardExtension().setActionMode(false);
 
 		// No content in row action cell
-		initRowActions(oTable, 2, 0);
+		oTable.setRowActionTemplate(TableQUnitUtils.createRowAction(null));
+		await nextUIUpdate();
 		oElem = checkFocus(getRowAction(0, true), assert);
 		qutils.triggerKeydown(oElem, Key.ENTER, false, false, false);
 		checkFocus(getRowAction(0), assert);
@@ -7122,9 +7213,9 @@ let bSelected;
 		beforeEach: async function() {
 			await setupTest();
 
-			oTable.removeColumn(2); // Remove unnecessary columns to speed up the test.
-			oTable.removeColumn(2);
-			oTable.removeColumn(2);
+			oTable.getColumns()[2].destroy(); // Remove unnecessary columns to speed up the test.
+			oTable.getColumns()[2].destroy();
+			oTable.getColumns()[2].destroy();
 			TableQUnitUtils.addColumn(oTable, "Focusable & Not Tabbable", "Focus&NoTabSpan", false, true, false);
 			TableQUnitUtils.addColumn(oTable, "Not Focusable & Not Tabbable", "NoFocus&NoTabSpan", false, false, false);
 			TableQUnitUtils.addColumn(oTable, "Focusable & Tabbable", "Focus&TabInput", true, null, true);
@@ -7786,66 +7877,77 @@ let bSelected;
 		return this.testActionModeTabNavigation(assert);
 	});
 
-	QUnit.test("TAB & Shift+TAB - Row Headers, Fixed Columns, Row Actions", function(assert) {
+	QUnit.test("TAB & Shift+TAB - Row Headers, Fixed Columns, Row Actions", async function(assert) {
 		oTable.setFixedColumnCount(2);
-		initRowActions(oTable, 2, 2);
+		oTable.setRowActionTemplate(TableQUnitUtils.createRowAction());
+		oTable.setRowActionCount(2);
+		await nextUIUpdate();
 
 		return this.testActionModeTabNavigation(assert);
 	});
 
-	QUnit.test("TAB & Shift+TAB - Row Headers, Fixed Columns, Row Actions, Fixed Top Rows, Fixed Bottom Rows", function(assert) {
-		oTable.setFixedColumnCount(2);
-		oTable.setRowMode(new FixedRowMode({
-			rowCount: 6,
-			fixedTopRowCount: 2,
-			fixedBottomRowCount: 2
-		}));
-		initRowActions(oTable, 2, 2);
-
-		return this.testActionModeTabNavigation(assert);
-	});
-
-	QUnit.test("TAB & Shift+TAB - Row Headers, Fixed Columns, Empty Row Actions, Fixed Top Rows, Fixed Bottom Rows", function(assert) {
+	QUnit.test("TAB & Shift+TAB - Row Headers, Fixed Columns, Row Actions, Fixed Top Rows, Fixed Bottom Rows", async function(assert) {
 		oTable.setFixedColumnCount(2);
 		oTable.setRowMode(new FixedRowMode({
 			rowCount: 6,
 			fixedTopRowCount: 2,
 			fixedBottomRowCount: 2
 		}));
-		initRowActions(oTable, 1, 0);
+		oTable.setRowActionTemplate(TableQUnitUtils.createRowAction());
+		oTable.setRowActionCount(2);
+		await nextUIUpdate();
 
 		return this.testActionModeTabNavigation(assert);
 	});
 
-	QUnit.test("TAB & Shift+TAB - Grouping", function(assert) {
+	QUnit.test("TAB & Shift+TAB - Row Headers, Fixed Columns, Empty Row Actions, Fixed Top Rows, Fixed Bottom Rows", async function(assert) {
+		oTable.setFixedColumnCount(2);
+		oTable.setRowMode(new FixedRowMode({
+			rowCount: 6,
+			fixedTopRowCount: 2,
+			fixedBottomRowCount: 2
+		}));
+		oTable.setRowActionTemplate(TableQUnitUtils.createRowAction(null));
+		oTable.setRowActionCount(1);
+		await nextUIUpdate();
+
+		return this.testActionModeTabNavigation(assert);
+	});
+
+	QUnit.test("TAB & Shift+TAB - Grouping", async function(assert) {
 		oTable.setSelectionMode(library.SelectionMode.None);
 		this.setRowStates();
+		await nextUIUpdate();
 
 		return this.testActionModeTabNavigation(assert);
 	});
 
-	QUnit.test("TAB & Shift+TAB - Row Headers, Fixed Columns, Row Actions, Fixed Top Rows, Fixed Bottom Rows, Grouping", function(assert) {
+	QUnit.test("TAB & Shift+TAB - Row Headers, Fixed Columns, Row Actions, Fixed Top Rows, Fixed Bottom Rows, Grouping", async function(assert) {
 		oTable.setFixedColumnCount(2);
 		oTable.setRowMode(new FixedRowMode({
 			rowCount: 6,
 			fixedTopRowCount: 2,
 			fixedBottomRowCount: 2
 		}));
-		initRowActions(oTable, 2, 2);
+		oTable.setRowActionTemplate(TableQUnitUtils.createRowAction());
+		oTable.setRowActionCount(2);
 		this.setRowStates();
+		await nextUIUpdate();
 
 		return this.testActionModeTabNavigation(assert);
 	});
 
-	QUnit.test("TAB & Shift+TAB - Row Headers, Fixed Columns, Empty Row Actions, Fixed Top Rows, Fixed Bottom Rows, Grouping", function(assert) {
+	QUnit.test("TAB & Shift+TAB - Row Headers, Fixed Columns, Empty Row Actions, Fixed Top Rows, Fixed Bottom Rows, Grouping", async function(assert) {
 		oTable.setFixedColumnCount(2);
 		oTable.setRowMode(new FixedRowMode({
 			rowCount: 6,
 			fixedTopRowCount: 2,
 			fixedBottomRowCount: 2
 		}));
-		initRowActions(oTable, 1, 0);
+		oTable.setRowActionTemplate(TableQUnitUtils.createRowAction(null));
+		oTable.setRowActionCount(1);
 		this.setRowStates();
+		await nextUIUpdate();
 
 		return this.testActionModeTabNavigation(assert);
 	});
@@ -7885,13 +7987,19 @@ let bSelected;
 		return this.testActionModeUpDownNavigation(assert, -1, true);
 	});
 
-	QUnit.test("Ctrl+Up & Ctrl+Down - On Row Actions", function(assert) {
-		initRowActions(oTable, 1, 1);
+	QUnit.test("Ctrl+Up & Ctrl+Down - On Row Actions", async function(assert) {
+		oTable.setRowActionTemplate(TableQUnitUtils.createRowAction());
+		oTable.setRowActionCount(1);
+		await nextUIUpdate();
+
 		return this.testActionModeUpDownNavigation(assert, -2, true);
 	});
 
-	QUnit.test("Up & Down - On Row Actions", function(assert) {
-		initRowActions(oTable, 1, 1);
+	QUnit.test("Up & Down - On Row Actions", async function(assert) {
+		oTable.setRowActionTemplate(TableQUnitUtils.createRowAction());
+		oTable.setRowActionCount(1);
+		await nextUIUpdate();
+
 		return this.testActionModeUpDownNavigation(assert, -2, false);
 	});
 
@@ -8034,7 +8142,7 @@ let bSelected;
 		oTable.setFixedColumnCount(0);
 		oTable.getRowMode().setRowCount(1);
 		oTable.setSelectionMode(library.SelectionMode.None);
-		oTable.removeAllColumns();
+		oTable.destroyColumns();
 		TableQUnitUtils.addColumn(oTable, "Focus&TabSpan", "Focus&TabSpan", false, true, true).getTemplate().addEventDelegate({
 			onsapfocusleave: function() {
 				aEvents.push("sapfocusleave");

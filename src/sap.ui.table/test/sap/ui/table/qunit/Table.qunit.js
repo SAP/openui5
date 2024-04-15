@@ -9,8 +9,6 @@ sap.ui.define([
 	"sap/ui/table/Column",
 	"sap/ui/table/ColumnMenu",
 	"sap/ui/table/TablePersoController",
-	"sap/ui/table/RowAction",
-	"sap/ui/table/RowActionItem",
 	"sap/ui/table/RowSettings",
 	"sap/ui/table/rowmodes/Type",
 	"sap/ui/table/rowmodes/Fixed",
@@ -60,8 +58,6 @@ sap.ui.define([
 	Column,
 	ColumnMenu,
 	TablePersoController,
-	RowAction,
-	RowActionItem,
 	RowSettings,
 	RowModeType,
 	FixedRowMode,
@@ -696,7 +692,7 @@ sap.ui.define([
 		oTable.addColumn(new Column({template: new HeightTestControl({height: "{height}"})}));
 		oTable.setFixedColumnCount(1);
 		oTable.setRowActionCount(1);
-		oTable.setRowActionTemplate(new RowAction());
+		oTable.setRowActionTemplate(TableQUnitUtils.createRowAction(null));
 		oCore.applyChanges();
 
 		return new Promise(function(resolve) {
@@ -786,7 +782,7 @@ sap.ui.define([
 		assert.ok(!oTable.$().hasClass("sapUiTableRActS"), "No row action template: No CSS class sapUiTableRActS");
 		assert.ok(!oTable.$("sapUiTableRowActionScr").length, "No row action template: No action area");
 
-		oTable.setRowActionTemplate(new RowAction());
+		oTable.setRowActionTemplate(TableQUnitUtils.createRowAction(null));
 		await nextUIUpdate();
 		assert.ok(oTable.$().hasClass("sapUiTableRAct"), "CSS class sapUiTableRAct");
 		assert.ok(!oTable.$().hasClass("sapUiTableRActS"), "No CSS class sapUiTableRActS");
@@ -1070,9 +1066,7 @@ sap.ui.define([
 
 		// check for row actions
 		oTable.setRowActionCount(1);
-		oTable.setRowActionTemplate(new RowAction({
-			items: new RowActionItem()
-		}));
+		oTable.setRowActionTemplate(TableQUnitUtils.createRowAction(null));
 		await nextUIUpdate();
 		assert.equal(oTable.$().find(".sapUiTableRowAlternate").length,
 				 oTable.$().find(".sapUiTableRowAlternate").filter(isAlternatingRow).length,
@@ -2071,7 +2065,7 @@ sap.ui.define([
 		this.oTable.addColumn(new Column({label: new HeightTestControl(), template: new HeightTestControl()}));
 		this.oTable.setFixedColumnCount(1);
 		this.oTable.setRowActionCount(1);
-		this.oTable.setRowActionTemplate(new RowAction());
+		this.oTable.setRowActionTemplate(TableQUnitUtils.createRowAction(null));
 
 		aDensities.forEach(function(sDensity) {
 			test({
@@ -2169,7 +2163,7 @@ sap.ui.define([
 		this.oTable.addColumn(new Column({label: new HeightTestControl(), template: new HeightTestControl()}));
 		this.oTable.setFixedColumnCount(1);
 		this.oTable.setRowActionCount(1);
-		this.oTable.setRowActionTemplate(new RowAction());
+		this.oTable.setRowActionTemplate(TableQUnitUtils.createRowAction(null));
 
 		aDensities.forEach(function(sDensity) {
 			test({
@@ -3955,7 +3949,7 @@ sap.ui.define([
 				fixedColumnCount: 1,
 				selectionMode: SelectionMode.MultiToggle,
 				rowActionCount: 1,
-				rowActionTemplate: new RowAction({items: [new RowActionItem()]}),
+				rowActionTemplate: TableQUnitUtils.createRowAction(),
 				extension: [
 					new Title({text: "TABLEHEADER"}),
 					new Toolbar({active: true, content: [new PasteTestControl({tagName: "div", handleOnPaste: false})]}),
@@ -6068,7 +6062,7 @@ sap.ui.define([
 		oTable.qunit.addTextColumn();
 		oTable.setFixedColumnCount(1);
 		oTable.setRowActionCount(1);
-		oTable.setRowActionTemplate(new RowAction({items: [new RowActionItem()]}));
+		oTable.setRowActionTemplate(TableQUnitUtils.createRowAction(null));
 
 		return oTable.qunit.whenRenderingFinished().then(function() {
 			aRowInfo.forEach(function(mRowInfo, iIndex) {

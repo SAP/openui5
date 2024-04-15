@@ -2,9 +2,8 @@
 
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/table/Column",
-	"sap/ui/table/RowAction",
-	"sap/ui/table/RowActionItem",
 	"sap/ui/table/rowmodes/Type",
 	"sap/ui/table/rowmodes/Fixed",
 	"sap/ui/table/rowmodes/Auto",
@@ -20,9 +19,8 @@ sap.ui.define([
 	"sap/ui/model/ChangeReason"
 ], function(
 	TableQUnitUtils,
+	nextUIUpdate,
 	Column,
-	RowAction,
-	RowActionItem,
 	RowModeType,
 	FixedRowMode,
 	AutoRowMode,
@@ -39,7 +37,6 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	const initRowActions = window.initRowActions;
 	const HeightControl = TableQUnitUtils.HeightTestControl;
 	const MouseWheelDeltaMode = {
 		PIXEL: 0,
@@ -142,7 +139,7 @@ sap.ui.define([
 		oTable.insertColumn(TableQUnitUtils.createTextColumn().setWidth("40px"), 0);
 		oTable.setFixedColumnCount(1);
 		oTable.setRowActionCount(2);
-		oTable.setRowActionTemplate(new RowAction({items: [new RowActionItem({type: library.RowActionType.Navigation})]}));
+		oTable.setRowActionTemplate(TableQUnitUtils.createRowAction(null));
 		oCore.applyChanges();
 		assert.strictEqual(oHSbComputedStyle.marginLeft, "88px", "Fixed columns and row actions: Left margin");
 		assert.strictEqual(oHSbComputedStyle.marginRight, "91px", "Fixed columns and row actions: Right margin");
@@ -651,7 +648,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("MouseWheel", function(assert) {
+	QUnit.test("MouseWheel", async function(assert) {
 		const oTable = this.oTable;
 		let oHSb;
 		let iCurrentScrollPosition;
@@ -735,7 +732,9 @@ sap.ui.define([
 		}
 
 		oTable.setFixedColumnCount(1);
-		initRowActions(oTable, 1, 1);
+		oTable.setRowActionTemplate(TableQUnitUtils.createRowAction(null));
+		oTable.setRowActionCount(1);
+		await nextUIUpdate();
 
 		return oTable.qunit.whenRenderingFinished().then(function() {
 			oHSb = oTable._getScrollExtension().getHorizontalScrollbar();
@@ -755,7 +754,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Touch", function(assert) {
+	QUnit.test("Touch", async function(assert) {
 		const oTable = this.oTable;
 		let oHSb;
 		let iCurrentScrollPosition;
@@ -859,7 +858,9 @@ sap.ui.define([
 		oTable.setRowMode(new FixedRowMode({
 			fixedTopRowCount: 1
 		}));
-		initRowActions(oTable, 1, 1);
+		oTable.setRowActionTemplate(TableQUnitUtils.createRowAction(null));
+		oTable.setRowActionCount(1);
+		await nextUIUpdate();
 
 		return oTable.qunit.whenRenderingFinished().then(function() {
 			oHSb = oTable._getScrollExtension().getHorizontalScrollbar();
@@ -3021,12 +3022,9 @@ sap.ui.define([
 		const done = assert.async();
 		const that = this;
 		const oTable = this.createTable({
-			title: "test",
-			extension: [new HeightControl()],
-			footer: new HeightControl(),
 			fixedColumnCount: 1,
 			rowActionCount: 1,
-			rowActionTemplate: new RowAction({items: [new RowActionItem({type: library.RowActionType.Navigation})]})
+			rowActionTemplate: TableQUnitUtils.createRowAction()
 		}, function(oTable) {
 			oTable.addColumn(new Column({template: new HeightControl()}));
 		});
@@ -3074,10 +3072,7 @@ sap.ui.define([
 		const oTable = this.createTable({
 			title: "test",
 			extension: [new HeightControl()],
-			footer: new HeightControl(),
-			fixedColumnCount: 1,
-			rowActionCount: 1,
-			rowActionTemplate: new RowAction({items: [new RowActionItem({type: library.RowActionType.Navigation})]})
+			footer: new HeightControl()
 		}, function(oTable) {
 			oTable.addColumn(new Column({template: new HeightControl()}));
 		});
@@ -3341,12 +3336,9 @@ sap.ui.define([
 		Device.support.touch = true;
 
 		const oTable = this.createTable({
-			title: "test",
-			extension: [new HeightControl()],
-			footer: new HeightControl(),
 			fixedColumnCount: 1,
 			rowActionCount: 1,
-			rowActionTemplate: new RowAction({items: [new RowActionItem({type: library.RowActionType.Navigation})]})
+			rowActionTemplate: TableQUnitUtils.createRowAction()
 		}, function(oTable) {
 			oTable.addColumn(new Column({template: new HeightControl()}));
 		});
@@ -3432,10 +3424,7 @@ sap.ui.define([
 		const oTable = this.createTable({
 			title: "test",
 			extension: [new HeightControl()],
-			footer: new HeightControl(),
-			fixedColumnCount: 1,
-			rowActionCount: 1,
-			rowActionTemplate: new RowAction({items: [new RowActionItem({type: library.RowActionType.Navigation})]})
+			footer: new HeightControl()
 		}, function(oTable) {
 			oTable.addColumn(new Column({template: new HeightControl()}));
 		});

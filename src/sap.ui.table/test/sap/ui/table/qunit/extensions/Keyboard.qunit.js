@@ -2,30 +2,28 @@
 
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
+	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/table/utils/TableUtils",
-	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/table/Table",
 	"sap/ui/table/CreationRow",
-	"sap/ui/dom/containsOrEquals",
 	"sap/ui/table/extensions/ExtensionBase",
 	"sap/ui/table/extensions/Keyboard",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core"
+	"sap/ui/dom/containsOrEquals"
 ], function(
 	TableQUnitUtils,
+	qutils,
 	nextUIUpdate,
 	TableUtils,
-	qutils,
 	Table,
 	CreationRow,
-	containsOrEquals,
 	ExtensionBase,
 	KeyboardExtension,
 	JSONModel,
 	jQuery,
-	oCore
+	containsOrEquals
 ) {
 	"use strict";
 
@@ -36,7 +34,6 @@ sap.ui.define([
 	const getRowHeader = window.getRowHeader;
 	const getRowAction = window.getRowAction;
 	const getSelectAll = window.getSelectAll;
-	const initRowActions = window.initRowActions;
 	const TestControl = TableQUnitUtils.TestControl;
 
 	QUnit.module("Lifecycle", {
@@ -319,25 +316,21 @@ sap.ui.define([
 	QUnit.module("Focus handling", {
 		beforeEach: async function() {
 			createTables();
-
 			oTable.addColumn(TableQUnitUtils.createInputColumn({text: "test3"}));
 			await nextUIUpdate();
-
-			this.addCreationRow = function(oTable) {
-				oTable.addColumn(TableQUnitUtils.createTextColumn({text: "test"}).setCreationTemplate(
-					new TestControl({text: "test"})
-				));
-
-				oTable.addColumn(TableQUnitUtils.createTextColumn({text: "test2"}).setCreationTemplate(
-					new TableQUnitUtils.TestInputControl({text: "test2"})
-				));
-
-				oTable.setCreationRow(new CreationRow());
-				oCore.applyChanges();
-			};
 		},
 		afterEach: function() {
 			destroyTables();
+		},
+		addCreationRow: async function() {
+			oTable.addColumn(TableQUnitUtils.createTextColumn({text: "test"}).setCreationTemplate(
+				new TestControl({text: "test"})
+			));
+			oTable.addColumn(TableQUnitUtils.createTextColumn({text: "test2"}).setCreationTemplate(
+				new TableQUnitUtils.TestInputControl({text: "test2"})
+			));
+			oTable.setCreationRow(new CreationRow());
+			await nextUIUpdate();
 		}
 	});
 
@@ -365,10 +358,10 @@ sap.ui.define([
 		oTable.setModel(new JSONModel());
 	});
 
-	QUnit.test("Restore focus position after overlay", function(assert) {
+	QUnit.test("Restore focus position after overlay", async function(assert) {
 		let $Cell = getCell(1, 1, true);
 
-		this.addCreationRow(oTable);
+		await this.addCreationRow();
 
 		oTable.setShowOverlay(true);
 		assert.strictEqual(document.activeElement, oTable.getDomRef("overlay"), "focus is on overlay");
@@ -377,7 +370,7 @@ sap.ui.define([
 
 		oTable.setShowOverlay(true);
 		assert.strictEqual(document.activeElement, oTable.getDomRef("overlay"), "focus is on overlay");
-		oTable.removeColumn(oTable.getColumns()[1]);
+		oTable.getColumns()[1].destroy();
 		oTable.setShowOverlay(false);
 		assert.strictEqual(document.activeElement, $Cell[0], "focus is restored on the data cell");
 
@@ -394,8 +387,7 @@ sap.ui.define([
 		oTable.setShowOverlay(true);
 		assert.strictEqual(document.activeElement, oTable.getDomRef("overlay"), "focus is on overlay");
 		oTable.setShowOverlay(false);
-		assert.ok(window.checkFocus($Cell, assert),
-			"focus is restored on the data cell");
+		assert.ok(window.checkFocus($Cell, assert), "focus is restored on the data cell");
 	});
 
 	QUnit.test("Restore focus position after noData", function(assert) {
@@ -426,7 +418,7 @@ sap.ui.define([
 		function onRowsUpdated() {
 			if (TableUtils.isNoDataVisible(oTable)) {
 				assert.strictEqual(document.activeElement, oTable.getDomRef("noDataCnt"), "focus is on no data");
-				oTable.removeColumn(oTable.getColumns()[0]);
+				oTable.getColumns()[0].destroy();
 				oTable.setModel(oModel);
 			} else {
 				assert.strictEqual(document.activeElement, $Cell[0], "focus is restored on the data cell");
@@ -463,11 +455,11 @@ sap.ui.define([
 		}, 200);
 	});
 
-	QUnit.test("NoData focus handling with CreationRow", function(assert) {
+	QUnit.test("NoData focus handling with CreationRow", async function(assert) {
 		const done = assert.async();
 		const oModel = oTable.getModel();
 
-		this.addCreationRow(oTable);
+		await this.addCreationRow();
 
 		function onRowsUpdated() {
 			if (TableUtils.isNoDataVisible(oTable)) {
@@ -489,7 +481,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Focus restoration and item navigation reinitialization", async function(assert) {
-		initRowActions(oTable, 1, 1);
+		oTable.setRowActionTemplate(TableQUnitUtils.createRowAction(null));
+		oTable.setRowActionCount(1);
 		await nextUIUpdate();
 
 		const oKeyboardExtension = oTable._getKeyboardExtension();

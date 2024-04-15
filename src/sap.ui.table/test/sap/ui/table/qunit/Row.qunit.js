@@ -15,7 +15,6 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	const initRowActions = window.initRowActions;
 	const TestControl = TableQUnitUtils.TestControl;
 
 	QUnit.module("Cells", {
@@ -132,9 +131,9 @@ sap.ui.define([
 					TableQUnitUtils.createTextColumn({text: "Column2"}),
 					TableQUnitUtils.createTextColumn({text: "Column3"}).setVisible(false),
 					TableQUnitUtils.createTextColumn({text: "Column4"})
-				]
-			}, function(oTable) {
-				initRowActions(oTable, 2, 2);
+				],
+				rowActionTemplate: TableQUnitUtils.createRowAction(),
+				rowActionCount: 2
 			});
 
 			return this.oTable.qunit.whenRenderingFinished();

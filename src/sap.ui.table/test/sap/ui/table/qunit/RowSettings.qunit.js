@@ -28,7 +28,6 @@ sap.ui.define([
 	const destroyTables = window.destroyTables;
 	const fakeGroupRow = window.fakeGroupRow;
 	const fakeSumRow = window.fakeSumRow;
-	const removeRowActions = window.removeRowActions;
 
 	const MessageType = CoreLibrary.MessageType;
 	const IndicationColor = CoreLibrary.IndicationColor;
@@ -489,10 +488,12 @@ sap.ui.define([
 		this.assertNavIndicatorRendering(assert, true, false);
 	});
 
-	QUnit.test("Rendering", function(assert) {
+	QUnit.test("Rendering with navigation row action", async function(assert) {
 		this.assertNavIndicatorRendering(assert, true, true);
 
-		removeRowActions(oTable);
+		oTable.destroyRowActionTemplate();
+		oTable.setRowActionCount(0);
+		await nextUIUpdate();
 
 		this.assertNavIndicatorRendering(assert, false, true);
 	});

@@ -8,7 +8,6 @@ sap.ui.define([
 	"sap/ui/table/rowmodes/Fixed",
 	"sap/ui/table/Table",
 	"sap/ui/table/Column",
-	"sap/ui/table/RowAction",
 	"sap/ui/table/utils/TableUtils"
 ], function(
 	TableQUnitUtils,
@@ -18,7 +17,6 @@ sap.ui.define([
 	FixedRowMode,
 	Table,
 	Column,
-	RowAction,
 	TableUtils
 ) {
 	"use strict";
@@ -127,7 +125,7 @@ sap.ui.define([
 		oTable.addColumn(new Column({template: new HeightTestControl()}));
 		oTable.setFixedColumnCount(1);
 		oTable.setRowActionCount(1);
-		oTable.setRowActionTemplate(new RowAction());
+		oTable.setRowActionTemplate(TableQUnitUtils.createRowAction(null));
 
 		function test(mTestSettings) {
 			sequence = sequence.then(async function() {
