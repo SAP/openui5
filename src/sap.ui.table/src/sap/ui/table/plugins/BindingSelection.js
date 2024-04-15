@@ -96,7 +96,11 @@ sap.ui.define([
 
 	function toggleSelectAll(oPlugin) {
 		const oTable = oPlugin.getTable();
-let bSelectAll;
+		let bSelectAll;
+
+		if (oPlugin.getSelectionMode() !== SelectionMode.MultiToggle) {
+			return false;
+		}
 
 		// in order to fire the rowSelectionChanged event, the SourceRowIndex mus be set to -1
 		// to indicate that the selection was changed by user interaction
@@ -297,7 +301,7 @@ let bSelectAll;
 	 * @inheritDoc
 	 */
 	BindingSelection.prototype.selectAll = function() {
-		if (this.getSelectionMode() === SelectionMode.None) {
+		if (this.getSelectionMode() !== SelectionMode.MultiToggle) {
 			return;
 		}
 

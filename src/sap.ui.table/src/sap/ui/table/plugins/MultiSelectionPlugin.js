@@ -207,15 +207,16 @@ sap.ui.define([
 
 	MultiSelectionPlugin.prototype.onKeyboardShortcut = function(sType, oEvent) {
 		if (sType === "toggle") { // ctrl + a
+			if (this.getSelectionMode() !== SelectionMode.MultiToggle) {
+				return;
+			}
+
 			if (this._bLimitDisabled) {
 				if (!toggleSelection(this)) {
 					oEvent?.setMarked("sapUiTableClearAll");
 				}
 			} else {
-				const sSelectionMode = this.getSelectionMode();
-				if (sSelectionMode === SelectionMode.MultiToggle) {
-					this.addSelectionInterval(0, this._getHighestSelectableIndex());
-				}
+				this.addSelectionInterval(0, this._getHighestSelectableIndex());
 			}
 		} else if (sType === "clear") { // ctrl + shift + a
 			this.clearSelection();

@@ -569,7 +569,7 @@ sap.ui.define([
 				}
 
 				const aRows = createRows(oTable, iRowCount);
-let oRow;
+				let oRow;
 
 				for (let i = 0; i < aRows.length; i++) {
 					oRow = aRows[i];

@@ -22,22 +22,10 @@ sap.ui.define([
 				],
 				rowMode: new FixedRowMode({
 					rowCount: 12
-				})
+				}),
+				rows: "{/}"
 			});
-			this.iCurrentState = 0;
-
-			TableUtils.Hook.register(this.oTable, TableUtils.Hook.Keys.Row.UpdateState, function(oState) {
-				Object.assign(oState, this.aRowStates[this.iCurrentState]);
-				this.iCurrentState++;
-			}, this);
-
-			this.oTable.attachRowsUpdated(function() {
-				this.iCurrentState = 0;
-			}, this);
-
-			this.oTable.bindRows({
-				path: "/"
-			});
+			this.oTable.qunit.setRowStates(this.aRowStates);
 
 			return this.oTable.qunit.whenRenderingFinished();
 		},

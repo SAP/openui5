@@ -1,105 +1,71 @@
-/*global QUnit, oTable */
+/*global QUnit */
 
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
-	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/table/RowSettings",
+	"sap/ui/table/Row",
+	"sap/ui/table/rowmodes/Fixed",
 	"sap/ui/table/utils/TableUtils",
+	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/library",
 	"sap/ui/core/message/MessageType",
-	"sap/ui/core/theming/Parameters",
-	"sap/ui/core/Core",
-	"sap/ui/table/RowAction",
-	"sap/ui/table/RowActionItem"
+	"sap/ui/core/theming/Parameters"
 ], function(
 	TableQUnitUtils,
-	nextUIUpdate,
 	RowSettings,
+	Row,
+	FixedRowMode,
 	TableUtils,
+	JSONModel,
 	CoreLibrary,
 	MessageType,
-	ThemeParameters,
-	oCore,
-	RowAction,
-	RowActionItem
+	ThemeParameters
 ) {
 	"use strict";
 
-	// mapping of global function calls
-	const createTables = window.createTables;
-	const destroyTables = window.destroyTables;
-	const fakeGroupRow = window.fakeGroupRow;
-	const fakeSumRow = window.fakeSumRow;
-
 	const IndicationColor = CoreLibrary.IndicationColor;
 
-	const iRowsWithHighlight = 13;
-
-	/**
-	 * Sets up the row settings template in the table.
-	 */
-	function initRowSettings() {
-		oTable.getRowMode().setRowCount(iRowsWithHighlight + 2);
-
-		oTable.setRowSettingsTemplate(new RowSettings({
-			highlight: {
-				path: "",
-				formatter: function() {
-					const oRow = this._getRow();
-
-					if (oRow != null) {
-						const iIndex = oRow.getIndex();
-
-						if (iIndex === 0) {
-							return MessageType.Success;
-						} else if (iIndex === 1) {
-							return MessageType.Warning;
-						} else if (iIndex === 2) {
-							return MessageType.Error;
-						} else if (iIndex === 3) {
-							return MessageType.Information;
-						} else if (iIndex === 4) {
-							return MessageType.None;
-						} else if (iIndex === 5) {
-							return IndicationColor.Indication01;
-						} else if (iIndex === 6) {
-							return IndicationColor.Indication02;
-						} else if (iIndex === 7) {
-							return IndicationColor.Indication03;
-						} else if (iIndex === 8) {
-							return IndicationColor.Indication04;
-						} else if (iIndex === 9) {
-							return IndicationColor.Indication05;
-						} else if (iIndex === 10) {
-							return IndicationColor.Indication06;
-						} else if (iIndex === 11) {
-							return IndicationColor.Indication07;
-						} else if (iIndex === 12) {
-							return IndicationColor.Indication08;
-						}
-					}
-
-					return "None";
-				}
-			}
-		}));
-
-		oCore.applyChanges();
-	}
-
 	QUnit.module("Highlights", {
-		beforeEach: function() {
-			createTables(false, false, iRowsWithHighlight + 2);
-			initRowSettings();
-			return fakeGroupRow(iRowsWithHighlight).then(function() {
-				return fakeSumRow(iRowsWithHighlight + 1);
+		beforeEach: async function() {
+			this.iRowsWithHighlight = 13;
+			this.oTable = TableQUnitUtils.createTable({
+				rows: "{/}",
+				models: new JSONModel([
+					{highlight: MessageType.Success},
+					{highlight: MessageType.Warning},
+					{highlight: MessageType.Error},
+					{highlight: MessageType.Information},
+					{highlight: MessageType.None},
+					{highlight: IndicationColor.Indication01},
+					{highlight: IndicationColor.Indication02},
+					{highlight: IndicationColor.Indication03},
+					{highlight: IndicationColor.Indication04},
+					{highlight: IndicationColor.Indication05},
+					{highlight: IndicationColor.Indication06},
+					{highlight: IndicationColor.Indication07},
+					{highlight: IndicationColor.Indication08}
+				]),
+				columns: TableQUnitUtils.createTextColumn(),
+				rowMode: new FixedRowMode({
+					rowCount: this.iRowsWithHighlight + 2
+				}),
+				rowSettingsTemplate: new RowSettings({
+					highlight: "{highlight}"
+				})
 			});
+
+			TableUtils.Grouping.setHierarchyMode(this.oTable, TableUtils.Grouping.HierarchyMode.Group);
+			this.oTable.qunit.setRowStates(Array(this.iRowsWithHighlight)
+				.concat({type: Row.prototype.Type.GroupHeader, expandable: true})
+				.concat({type: Row.prototype.Type.Summary}));
+
+			await this.oTable.qunit.whenRenderingFinished();
 		},
 		afterEach: function() {
-			destroyTables();
+			this.oTable.destroy();
 		},
 		assertRendering: function(assert, bRendered) {
-			const aRows = oTable.getRows();
+			const aRows = this.oTable.getRows();
 
 			for (let iRowIndex = 0; iRowIndex < aRows.length; iRowIndex++) {
 				const oRow = aRows[iRowIndex];
@@ -130,13 +96,13 @@ sap.ui.define([
 			}
 		},
 		assertText: function(assert, iRowIndex, sExpectedText) {
-			const oRow = oTable.getRows()[iRowIndex];
+			const oRow = this.oTable.getRows()[iRowIndex];
 			const oHighlightTextElement = oRow.getDomRef("highlighttext");
 
 			assert.strictEqual(oHighlightTextElement.innerHTML, sExpectedText, "The highlight text is correct");
 		},
 		assertColor: function(assert, iRowIndex, sExpectedBackgroundColor) {
-			const oRow = oTable.getRows()[iRowIndex];
+			const oRow = this.oTable.getRows()[iRowIndex];
 			const oHighlightElement = oRow.getDomRef("highlight");
 			let sActualBackgroundColor = getComputedStyle(oHighlightElement).backgroundColor;
 
@@ -148,13 +114,13 @@ sap.ui.define([
 				"The highlight element of row " + (iRowIndex + 1) + " has the correct background color");
 		},
 		assertColors: function(assert) {
-			const aRows = oTable.getRows();
+			const aRows = this.oTable.getRows();
 
 			for (let iRowIndex = 0; iRowIndex < aRows.length; iRowIndex++) {
 				const oRow = aRows[iRowIndex];
 				const oHighlightElement = oRow.getDomRef("highlight");
 
-				if (iRowIndex < iRowsWithHighlight) {
+				if (iRowIndex < this.iRowsWithHighlight) {
 					const sHighlight = oRow.getAggregation("_settings").getHighlight();
 					let sRGBBackgroundColor;
 
@@ -208,13 +174,13 @@ sap.ui.define([
 			}
 		},
 		assertWidths: function(assert, sDensity) {
-			const aRows = oTable.getRows();
+			const aRows = this.oTable.getRows();
 
 			for (let iRowIndex = 0; iRowIndex < aRows.length; iRowIndex++) {
 				const oRow = aRows[iRowIndex];
 				const oHighlightElement = oRow.getDomRef("highlight");
 
-				if (iRowIndex < iRowsWithHighlight) {
+				if (iRowIndex < this.iRowsWithHighlight) {
 					assert.strictEqual(oHighlightElement.getBoundingClientRect().width, 7,
 						sDensity + ": The highlight element of row " + (iRowIndex + 1) + " has the correct width"
 					);
@@ -226,10 +192,10 @@ sap.ui.define([
 			}
 		},
 		assertRowHeaderWidths: function(assert, iStandardRowHeaderWidth, sDensity) {
-			const aRows = oTable.getRows();
+			const aRows = this.oTable.getRows();
 
 			for (let iRowIndex = 0; iRowIndex < aRows.length; iRowIndex++) {
-				const oRowHeaderElement = oTable.getDomRef("rowsel" + iRowIndex);
+				const oRowHeaderElement = this.oTable.getDomRef("rowsel" + iRowIndex);
 
 				assert.strictEqual(oRowHeaderElement.getBoundingClientRect().width, iStandardRowHeaderWidth + 7,
 					sDensity + ": The header element of row " + (iRowIndex + 1) + " has the correct width"
@@ -239,24 +205,24 @@ sap.ui.define([
 	});
 
 	QUnit.test("Rendering - Settings not configured", async function(assert) {
-		oTable.setRowSettingsTemplate(null);
-		await nextUIUpdate();
+		this.oTable.setRowSettingsTemplate(null);
+		await this.oTable.qunit.whenRenderingFinished();
 
 		this.assertRendering(assert, false);
 	});
 
 	QUnit.test("Rendering - Highlights not configured", async function(assert) {
-		oTable.setRowSettingsTemplate(new RowSettings({
+		this.oTable.setRowSettingsTemplate(new RowSettings({
 			highlight: null
 		}));
-		await nextUIUpdate();
+		await this.oTable.qunit.whenRenderingFinished();
 
 		this.assertRendering(assert, false);
 
-		oTable.setRowSettingsTemplate(new RowSettings({
+		this.oTable.setRowSettingsTemplate(new RowSettings({
 			highlight: MessageType.None
 		}));
-		await nextUIUpdate();
+		await this.oTable.qunit.whenRenderingFinished();
 
 		this.assertRendering(assert, false);
 	});
@@ -294,9 +260,9 @@ sap.ui.define([
 		this.assertColor(assert, 0, this.getColorRgb("sapUiSuccessBorder"));
 		this.assertText(assert, 0, TableUtils.getResourceBundle().getText("TBL_ROW_STATE_SUCCESS"));
 
-		oTable.addEventDelegate({onAfterRendering: oOnAfterRenderingEventListener});
-		oTable.getRows()[0].getAggregation("_settings").setHighlight(MessageType.Error);
-		await nextUIUpdate();
+		this.oTable.addEventDelegate({onAfterRendering: oOnAfterRenderingEventListener});
+		this.oTable.getRows()[0].getAggregation("_settings").setHighlight(MessageType.Error);
+		await this.oTable.qunit.whenRenderingFinished();
 
 		assert.ok(oOnAfterRenderingEventListener.notCalled, "The table did not re-render after changing a highlight");
 		this.assertColor(assert, 0, this.getColorRgb("sapUiErrorBorder"));
@@ -308,18 +274,18 @@ sap.ui.define([
 
 		this.assertText(assert, 0, TableUtils.getResourceBundle().getText("TBL_ROW_STATE_SUCCESS"));
 
-		oTable.addEventDelegate({onAfterRendering: oOnAfterRenderingEventListener});
-		oTable.getRows()[0].getAggregation("_settings").setHighlightText("testitext");
-		await nextUIUpdate();
+		this.oTable.addEventDelegate({onAfterRendering: oOnAfterRenderingEventListener});
+		this.oTable.getRows()[0].getAggregation("_settings").setHighlightText("testitext");
+		await this.oTable.qunit.whenRenderingFinished();
 
 		assert.ok(oOnAfterRenderingEventListener.notCalled, "The table did not re-render after changing a highlight text");
 		this.assertText(assert, 0, "testitext");
 	});
 
 	QUnit.test("_getHighlightCSSClassName", function(assert) {
-		const aRows = oTable.getRows();
+		const aRows = this.oTable.getRows();
 
-		for (let iRowIndex = 0; iRowIndex < iRowsWithHighlight; iRowIndex++) {
+		for (let iRowIndex = 0; iRowIndex < this.iRowsWithHighlight; iRowIndex++) {
 			const oRow = aRows[iRowIndex];
 			const oRowSettings = oRow.getAggregation("_settings");
 			let sCSSClassName = "sapUiTableRowHighlight";
@@ -358,9 +324,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("_getHighlightText - Default texts", function(assert) {
-		const aRows = oTable.getRows();
+		const aRows = this.oTable.getRows();
 
-		for (let iRowIndex = 0; iRowIndex < iRowsWithHighlight; iRowIndex++) {
+		for (let iRowIndex = 0; iRowIndex < this.iRowsWithHighlight; iRowIndex++) {
 			const oRow = aRows[iRowIndex];
 			const oRowSettings = oRow.getAggregation("_settings");
 			let sHighlightText = "";
@@ -382,10 +348,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("_getHighlightText - Custom texts", function(assert) {
-		const aRows = oTable.getRows();
+		const aRows = this.oTable.getRows();
 		const sCustomHighlightText = "Custom highlight text";
 
-		for (let iRowIndex = 0; iRowIndex < iRowsWithHighlight; iRowIndex++) {
+		for (let iRowIndex = 0; iRowIndex < this.iRowsWithHighlight; iRowIndex++) {
 			const oRow = aRows[iRowIndex];
 			const oRowSettings = oRow.getAggregation("_settings");
 			let sHighlightText = sCustomHighlightText;
@@ -402,48 +368,38 @@ sap.ui.define([
 	});
 
 	QUnit.test("_getRow", function(assert) {
-		assert.strictEqual(oTable.getRows()[0].getAggregation("_settings")._getRow().getIndex(), 0, "The correct row was returned");
-		assert.strictEqual(oTable.getRowSettingsTemplate()._getRow(), null, "Null is returned when called on the template");
+		assert.strictEqual(this.oTable.getRows()[0].getAggregation("_settings")._getRow().getIndex(), 0, "The correct row was returned");
+		assert.strictEqual(this.oTable.getRowSettingsTemplate()._getRow(), null, "Null is returned when called on the template");
 	});
 
 	QUnit.module("Navigated indicators", {
 		beforeEach: async function() {
-			createTables(false, false, 3);
-
-			oTable.getRowMode().setRowCount(3);
-			oTable.setRowActionTemplate(new RowAction({
-				items: [
-					new RowActionItem({
-						type: "Navigation"
-					})
-				]
-			}));
-			oTable.setRowActionCount(1);
-
-			oTable.setRowSettingsTemplate(new RowSettings({
-				navigated: {
-					path: "",
-					formatter: function() {
-						const oRow = this._getRow();
-
-						if (oRow != null) {
-							const iIndex = oRow.getIndex();
-
-							if (iIndex === 1) {
-								return true;
-							}
+			this.oTable = TableQUnitUtils.createTable({
+				rows: "{/}",
+				models: TableQUnitUtils.createJSONModelWithEmptyRows(3),
+				columns: TableQUnitUtils.createTextColumn(),
+				rowMode: new FixedRowMode({
+					rowCount: 3
+				}),
+				rowSettingsTemplate: new RowSettings({
+					navigated: {
+						path: "",
+						formatter: function() {
+							return this._getRow().getIndex() === 1;
 						}
 					}
-				}
-			}));
+				}),
+				rowActionTemplate: TableQUnitUtils.createRowAction([{type: "Navigation"}]),
+				setRowActionCount: 1
+			});
 
-			await nextUIUpdate();
+			await this.oTable.qunit.whenRenderingFinished();
 		},
 		afterEach: function() {
-			destroyTables();
+			this.oTable.destroy();
 		},
 		assertNavIndicatorRendering: function(assert, hasRowActions, bRendered) {
-			const aRows = oTable.getRows();
+			const aRows = this.oTable.getRows();
 
 			for (let iRowIndex = 0; iRowIndex < aRows.length; iRowIndex++) {
 				const oRow = aRows[iRowIndex];
@@ -467,24 +423,24 @@ sap.ui.define([
 	});
 
 	QUnit.test("Rendering - Settings not configured", async function(assert) {
-		oTable.setRowSettingsTemplate(null);
-		await nextUIUpdate();
+		this.oTable.setRowSettingsTemplate(null);
+		await this.oTable.qunit.whenRenderingFinished();
 
 		this.assertNavIndicatorRendering(assert, true, false);
 	});
 
 	QUnit.test("Rendering - Navigated not configured", async function(assert) {
-		oTable.setRowSettingsTemplate(new RowSettings({
+		this.oTable.setRowSettingsTemplate(new RowSettings({
 			navigated: null
 		}));
-		await nextUIUpdate();
+		await this.oTable.qunit.whenRenderingFinished();
 
 		this.assertNavIndicatorRendering(assert, true, false);
 
-		oTable.setRowSettingsTemplate(new RowSettings({
+		this.oTable.setRowSettingsTemplate(new RowSettings({
 			navigated: false
 		}));
-		await nextUIUpdate();
+		await this.oTable.qunit.whenRenderingFinished();
 
 		this.assertNavIndicatorRendering(assert, true, false);
 	});
@@ -492,9 +448,9 @@ sap.ui.define([
 	QUnit.test("Rendering with navigation row action", async function(assert) {
 		this.assertNavIndicatorRendering(assert, true, true);
 
-		oTable.destroyRowActionTemplate();
-		oTable.setRowActionCount(0);
-		await nextUIUpdate();
+		this.oTable.destroyRowActionTemplate();
+		this.oTable.setRowActionCount(0);
+		await this.oTable.qunit.whenRenderingFinished();
 
 		this.assertNavIndicatorRendering(assert, false, true);
 	});

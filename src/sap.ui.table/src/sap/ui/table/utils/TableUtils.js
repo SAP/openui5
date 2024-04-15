@@ -1379,11 +1379,10 @@ sap.ui.define([
 		 * Gets the first interactive element in the data cells of a row.
 		 *
 		 * @param {sap.ui.table.Row|sap.ui.table.CreationRow} oRow
-		 * @param {boolean} [bRowActionCells=false] Indicates whether the <code>RowAction</code> cells are taken
-		 * into consideration
+		 * @param {boolean} [bRowActionCell=false] Whether the row action cell is taken into consideration
 		 * @return {HTMLElement|null} The first interactive DOM element
 		 */
-		getFirstInteractiveElement: function(oRow, bRowActionCells) {
+		getFirstInteractiveElement: function(oRow, bRowActionCell) {
 			if (!oRow) {
 				return null;
 			}
@@ -1391,7 +1390,7 @@ sap.ui.define([
 			const oTable = oRow.getTable();
 			const aCells = oRow.getCells();
 
-			if (bRowActionCells === true && TableUtils.hasRowActions(oTable)) {
+			if (bRowActionCell === true && TableUtils.hasRowActions(oTable)) {
 				aCells.push(oRow.getRowAction());
 			}
 

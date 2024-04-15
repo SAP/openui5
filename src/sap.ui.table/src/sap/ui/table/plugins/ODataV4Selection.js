@@ -276,6 +276,10 @@ sap.ui.define([
 
 	ODataV4Selection.prototype.onKeyboardShortcut = function(sType, oEvent) {
 		if (sType === "toggle") { // ctrl + a
+			if (this.getSelectionMode() !== SelectionMode.MultiToggle) {
+				return;
+			}
+
 			if (this._isLimitDisabled()) {
 				if (toggleSelectAll(this) === false) {
 					oEvent?.setMarked("sapUiTableClearAll");
