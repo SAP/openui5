@@ -1547,5 +1547,15 @@
         "text": " sap/ui/model/odata/ODataMetadata#_getPropertyMetadata: fix for complex type property"
       }
     ]
+  },
+  "1.71.64": {
+    "date": "April 2024",
+    "notes": [
+      {
+        "id": "b61214731e28789105616b8ddd4f068308f9c7a3",
+        "type": "FIX",
+        "text": " core.Popup: always assign the content with a valid UIArea"
+      }
+    ]
   }
 }
