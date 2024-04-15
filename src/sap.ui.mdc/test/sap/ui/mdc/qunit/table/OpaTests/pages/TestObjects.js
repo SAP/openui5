@@ -3,12 +3,16 @@ sap.ui.define([
 	"test-resources/sap/ui/mdc/qunit/table/OpaTests/pages/Actions",
 	"test-resources/sap/ui/mdc/qunit/table/OpaTests/pages/Assertions",
 	"test-resources/sap/ui/mdc/qunit/p13n/OpaTests/utility/Action",
+	"test-resources/sap/ui/mdc/qunit/p13n/OpaTests/utility/Assertion",
+	"test-resources/sap/ui/mdc/qunit/p13n/OpaTests/utility/Arrangement",
 	"test-resources/sap/ui/mdc/testutils/opa/table/waitForTable"
 ], function(
 	/** @type sap.ui.test.Opa5 */ Opa5,
 	/** @type sap.ui.test.Opa5 */ AppActions,
 	/** @type sap.ui.test.Opa5 */ AppAssertions,
 	/** @type sap.ui.test.Opa5 */ P13nAction,
+	/** @type sap.ui.test.Opa5 */ P13nAssertion,
+	/** @type sap.ui.test.Opa5 */ P13nArrangement,
 	waitForTable
 ) {
 	"use strict";
@@ -50,6 +54,18 @@ sap.ui.define([
 					return aColumnName.forEach((sColumnName) => {
 						this.iSelectColumn(sColumnName, null, undefined, bModal);
 					});
+				}
+			}
+		},
+		P13nAssertions: {
+			baseClass: P13nAssertion,
+			assertions: {
+				/** Checks if the filter dialog is open.
+				 *
+				 * @returns {Promise} OPA waitFor
+				 */
+				iShouldSeeTheFilterDialog: function() {
+					return this.iShouldSeeDialogTitle(P13nArrangement.P13nDialog.Titles.filter);
 				}
 			}
 		}

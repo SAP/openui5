@@ -2,6 +2,7 @@
 	xmlns:mdc="sap.ui.mdc"
 	xmlns:mdcTable="sap.ui.mdc.table"
 	xmlns="sap.m"
+    xmlns:plugins="sap.m.plugins"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:variants="sap.ui.fl.variants"
 	controllerName="sap.ui.mdc.table.OpaTests.appODataV4Flat.Controller"
@@ -15,7 +16,7 @@
                     name: 'sap/ui/mdc/table/OpaTests/appODataV4Flat/TableDelegate', 
                     payload: {collectionName: 'ProductList'}
                 }"
-                p13nMode="Column,Sort,Filter,Group"
+                p13nMode="Column,Sort,Filter{= !${data>/tableType} || ${data>/tableType} === 'GridTableType' ? '' : ',Group'}"
                 showPasteButton="true"
                 enableExport="true"
                 beforeExport="onBeforeExport"
@@ -43,6 +44,10 @@
                 <mdc:variant>
                     <variants:VariantManagement id="mdcTable-vm" for="mdcTable" />
                 </mdc:variant>
+                <mdc:actions>
+                    <Button id="setMessagesButton" text="Set messages" press=".setMessages" />
+                    <Button id="clearMessagesButton" text="Remove messages" press=".clearMessages" />
+                </mdc:actions>
                 <mdc:type>
                     <template:if test="{= ${data>/tableType} === 'GridTableType'}">
                         <template:then>
@@ -115,6 +120,9 @@
                         </mdcTable:extendedSettings>
                     </mdcTable:Column>
                 </mdc:columns>
+                <mdc:dataStateIndicator>
+                    <plugins:DataStateIndicator enableFiltering="true" />
+                </mdc:dataStateIndicator>
             </mdc:Table>
         </Page>
     </App>

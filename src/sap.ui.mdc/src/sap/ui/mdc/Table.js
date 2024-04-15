@@ -722,10 +722,6 @@ sap.ui.define([
 				/**
 				 * <code>DataStateIndicator</code> plugin that can be used to show binding-related messages.
 				 *
-				 * <b>Note:</b> The message filtering is not yet supported for this control. Therefore the
-				 * {@link sap.m.plugins.DataStateIndicator#getEnableFiltering enableFiltering} property of the <code>DataStateIndicator</code> plugin
-				 * must not be set to <code>true</code>.
-				 *
 				 * @since 1.89
 				 */
 				dataStateIndicator: {

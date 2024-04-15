@@ -841,6 +841,63 @@ sap.ui.define([
 				}),
 				actions: new Press()
 			});
+		},
+
+		/**
+		 * Presses the element of the DataStateIndicator plugin that toggles filtering by messages.
+		 *
+		 * @param {string | sap.ui.mdc.Table} vTable Id or instance of the table
+		 * @returns {Promise} OPA waitFor
+		 */
+		iPressFilterOfDataStateIndicator: function(vTable) {
+			return waitForTable.call(this, vTable, {
+				success: function(oTable) {
+					this.waitFor({
+						controlType: "sap.m.MessageStrip",
+						matchers: [{
+							ancestor: oTable,
+							properties: {
+								type: "Error"
+							}
+						}],
+						success: function(oMessageStrip) {
+							this.waitFor({
+								controlType: "sap.m.Link",
+								matchers: [{
+									ancestor: oMessageStrip
+								}],
+								actions: new Press(),
+								errorMessage: "Filter link in MessageStrip not found"
+							});
+						},
+						errorMessage: "MessageStrip of DataStateIndicator not found in the table"
+					});
+				}
+			});
+		},
+
+		/**
+		 * Presses the element of the DataStateIndicator plugin that toggles filtering by messages.
+		 *
+		 * @param {string | sap.ui.mdc.Table} vTable Id or instance of the table
+		 * @returns {Promise} OPA waitFor
+		 */
+		iPressFilterInfoBarOfDataStateIndicator: function(vTable) {
+			return waitForTable.call(this, vTable, {
+				success: function(oTable) {
+					this.waitFor({
+						controlType: "sap.m.Toolbar",
+						matchers: [{
+							ancestor: oTable,
+							properties: {
+								design: "Info"
+							}
+						}],
+						actions: new Press(),
+						errorMessage: "Filter info toolbar of DataStateIndicator not found in the table"
+					});
+				}
+			});
 		}
 	};
 });
