@@ -564,6 +564,45 @@
 		inverted: true
 	}), oPage);
 
+	addToPage(new sap.ui.layout.form.SimpleForm({
+		editable: true,
+		content: [
+			new sap.m.Text({text: "Inverted ObjectStatus in Editable form"}),
+			new sap.m.Label({text: "Descr"}),
+			new sap.m.ObjectStatus({
+				text: "Indication 6",
+				inverted: true,
+				state: "Indication06"
+			}),
+			new sap.m.Label({text: "Descr"}),
+			new sap.m.ObjectStatus({
+				title: "title",
+				text: "Indication 04",
+				inverted: true,
+				state: "Indication04"
+			})
+		]
+	}), oPage);
+
+	addToPage(new sap.ui.layout.form.SimpleForm({
+		editable: false,
+		content: [
+			new sap.m.Text({text: "Inverted ObjectStatus in Non editable form"}),
+			new sap.m.Label({text: "Descr"}),
+			new sap.m.ObjectStatus({
+				text: "Indication 3",
+				inverted: true,
+				state: "Indication03"
+			}),
+			new sap.m.Label({text: "Descr"}),
+			new sap.m.ObjectStatus({
+				title: "title",
+				text: "Indication 16",
+				state: "Indication16",
+				inverted: true
+			})
+		]
+	}), oPage);
 </script>
 
 </head>
