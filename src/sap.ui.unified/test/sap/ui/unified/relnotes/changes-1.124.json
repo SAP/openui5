@@ -3,6 +3,11 @@
     "date": "April 2024",
     "notes": [
       {
+        "id": "987de568d0fce564caab110580d064b127ab8de7",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: name setters now work properly"
+      },
+      {
         "id": "395a8c8f580fbd3ec649ec4e42152d0b83690659",
         "type": "FIX",
         "text": " sap.ui.unified.FileUploader: update type info for uploadComplete event"
