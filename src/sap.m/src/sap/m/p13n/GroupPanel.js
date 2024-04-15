@@ -108,6 +108,7 @@ sap.ui.define([
 			items: [
 				new CheckBox({
 					enabled: sKey ? true : false,
+					wrapping: true,
 					selected: oItem.hasOwnProperty("showIfGrouped") ? oItem.showIfGrouped : true,
 					select: (oEvt) => {
 						const oPanel = oEvt.getSource().getParent().getParent().getParent().getParent().getParent().getParent();
