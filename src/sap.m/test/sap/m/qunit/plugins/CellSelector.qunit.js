@@ -3,30 +3,30 @@
  */
 /* global QUnit, sinon */
 sap.ui.define([
-	"sap/ui/core/Core",
-	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/events/KeyCodes",
-	"sap/m/plugins/CellSelector",
-	"sap/ui/table/Table",
-	"sap/ui/model/odata/v2/ODataModel",
-	"sap/ui/core/util/MockServer",
-	"sap/ui/table/Column",
-	"sap/ui/table/rowmodes/Fixed",
+	"sap/m/Dialog",
 	"sap/m/Text",
+	"sap/m/plugins/CellSelector",
+	"sap/ui/core/CustomData",
+	"sap/ui/core/util/MockServer",
 	"sap/ui/core/dnd/DragDropInfo",
 	"sap/ui/core/dnd/DropInfo",
-	"sap/m/Dialog",
-	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/CustomData",
+	"sap/ui/events/KeyCodes",
 	"sap/ui/mdc/Table",
-	"sap/ui/mdc/table/Column"
-], function (Core, qutils, KeyCodes, CellSelector, GridTable, ODataModel, MockServer, GridColumn, GridFixedRowMode, Text, DragDropInfo, DropInfo, Dialog, JSONModel, CustomData, MDCTable, MDCColumn) {
+	"sap/ui/mdc/table/Column",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/odata/v2/ODataModel",
+	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/table/Column",
+	"sap/ui/table/Table",
+	"sap/ui/table/rowmodes/Fixed"
+], function (Dialog, Text, CellSelector, CustomData, MockServer, DragDropInfo, DropInfo, KeyCodes, MDCTable, MDCColumn, JSONModel, ODataModel, qutils, nextUIUpdate, GridColumn, GridTable, GridFixedRowMode) {
 	"use strict";
 
 	const sServiceURI = "/service/";
 
-	var aData = [];
-	for (var i = 0; i < 25; i++) {
+	const aData = [];
+	for (let i = 0; i < 25; i++) {
 		aData.push({
 			id: i,
 			name: "name" + i,
@@ -34,7 +34,7 @@ sap.ui.define([
 		});
 	}
 
-	var oJSONModel = new JSONModel(aData);
+	const oJSONModel = new JSONModel(aData);
 
 	function createTable() {
 		return new GridTable({
@@ -52,7 +52,21 @@ sap.ui.define([
 		});
 	}
 
-	function createMDCTable(mSettings) {
+	async function getTable() {
+		const oCellSelector = new CellSelector({ rangeLimit: 15 });
+		const oTable = createTable();
+		const nextRowsUpdatedEvent = new Promise((fnResolve) => {
+			oTable.attachEventOnce("rowsUpdated", fnResolve);
+		});
+
+		oTable.addDependent(oCellSelector);
+		oTable.placeAt("qunit-fixture");
+
+		await nextRowsUpdatedEvent;
+		return oTable;
+	}
+
+	async function createMDCTable(mSettings) {
 		mSettings = Object.assign({
 			type: "Table",
 			delegate: {
@@ -73,33 +87,29 @@ sap.ui.define([
 			models: oJSONModel
 		}, mSettings);
 
-		var oTable = new MDCTable(mSettings);
+		const oTable = new MDCTable(mSettings);
 		oTable.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
+
 		return oTable;
 	}
 
 	function getCell(oTable, iRow, iCol) {
-		var oRowInstance = oTable.getRows().find(function (oRow) {
+		const oRowInstance = oTable.getRows().find(function (oRow) {
 			return oRow.getIndex() === iRow;
 		});
-		if (oRowInstance) {
-			return oRowInstance.getCells()[iCol].$().parents("td")[0];
-		}
+
+		return oRowInstance?.getCells()[iCol].$().parents("td")[0];
 	}
 
 	QUnit.module("API", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oMockServer = new MockServer({ rootUri : sServiceURI });
 			this.oMockServer.simulate("test-resources/sap/m/qunit/data/metadata.xml", "test-resources/sap/m/qunit/data");
 			this.oMockServer.start();
 
-			this.oCellSelector = new CellSelector({ rangeLimit: 15 });
-			this.oTable = createTable();
-			this.oTable.addDependent(this.oCellSelector);
-			this.oTable.placeAt("qunit-fixture");
-
-			Core.applyChanges();
+			this.oTable = await getTable();
+			this.oCellSelector = this.oTable.getDependents().find((oPlugin) => oPlugin.isA("sap.m.plugins.CellSelector"));
 		},
 		afterEach: function() {
 			this.oMockServer.destroy();
@@ -108,32 +118,30 @@ sap.ui.define([
 	});
 
 	QUnit.test("RangeLimit Property - getSelectionRange/getSelectedRowContexts APIs", function (assert) {
-		this.oTable.addDependent(this.oCellSelector);
-		var done = assert.async();
+		const done = assert.async();
+		const oTable = this.oTable;
 
-		this.oTable.attachEventOnce("rowsUpdated", () => {
-			var oBinding = this.oTable.getBinding("rows");
-			var oGetContextsSpy = sinon.spy(oBinding, "getContexts");
-			assert.ok(oBinding.getLength() > this.oCellSelector.getRangeLimit());
+		const oBinding = oTable.getBinding("rows");
+		const oGetContextsSpy = sinon.spy(oBinding, "getContexts");
+		assert.ok(oBinding.getLength() > this.oCellSelector.getRangeLimit());
 
-			var oCell = getCell(this.oTable, 1, 0); // first cell of first row
-			qutils.triggerKeydown(oCell, KeyCodes.SPACE); // select first cell of first row
-			qutils.triggerKeyup(oCell, KeyCodes.SPACE); // select first cell of first row
-			assert.equal(oBinding.getAllCurrentContexts().length, this.oTable.getThreshold() + this.oTable.getRowMode().getRowCount());
+		const oCell = getCell(oTable, 1, 0); // first cell of first row
+		qutils.triggerKeydown(oCell, KeyCodes.SPACE); // select first cell of first row
+		qutils.triggerKeyup(oCell, KeyCodes.SPACE); // select first cell of first row
+		assert.equal(oBinding.getAllCurrentContexts().length, oTable.getThreshold() + oTable.getRowMode().getRowCount());
 
-			qutils.triggerKeyup(oCell, KeyCodes.SPACE, false, false, true /* Ctrl */); // enlarge selection to all rows and cells
-			assert.equal(oGetContextsSpy.callCount, 1);
-			assert.ok(oGetContextsSpy.calledWithExactly(0, this.oCellSelector.getRangeLimit(), 0, true));
-			assert.deepEqual(this.oCellSelector.getSelectionRange(), {from: {rowIndex: 0, colIndex: 0}, to: {rowIndex: Infinity, colIndex: 0}});
+		qutils.triggerKeyup(oCell, KeyCodes.SPACE, false, false, true /* Ctrl */); // enlarge selection to all rows and cells
+		assert.equal(oGetContextsSpy.callCount, 1);
+		assert.ok(oGetContextsSpy.calledWithExactly(0, this.oCellSelector.getRangeLimit(), 0, true));
+		assert.deepEqual(this.oCellSelector.getSelectionRange(), {from: {rowIndex: 0, colIndex: 0}, to: {rowIndex: Infinity, colIndex: 0}});
 
-			oBinding.attachEventOnce("dataReceived", setTimeout.bind(0, () => {
-				assert.equal(oBinding.getAllCurrentContexts().length, this.oCellSelector.getRangeLimit());
-				assert.equal(this.oCellSelector.getSelectedRowContexts().length, this.oCellSelector.getRangeLimit());
-				assert.deepEqual(this.oCellSelector.getSelectedRowContexts(), oBinding.getAllCurrentContexts().slice(0, this.oCellSelector.getRangeLimit()));
+		oBinding.attachEventOnce("dataReceived", () => {
+			assert.equal(oBinding.getAllCurrentContexts().length, this.oCellSelector.getRangeLimit());
+			assert.equal(this.oCellSelector.getSelectedRowContexts().length, this.oCellSelector.getRangeLimit());
+			assert.deepEqual(this.oCellSelector.getSelectedRowContexts(), oBinding.getAllCurrentContexts().slice(0, this.oCellSelector.getRangeLimit()));
 
-				oGetContextsSpy.restore();
-				done();
-			}));
+			oGetContextsSpy.restore();
+			done();
 		});
 	});
 
@@ -142,282 +150,261 @@ sap.ui.define([
 	});
 
 	QUnit.test("Drag compatibility", function(assert) {
-		var done = assert.async();
-		this.oTable.addDependent(this.oCellSelector);
+		const oTable = this.oTable;
+
 		assert.ok(this.oCellSelector.getEnabled(), "CellSelector is enabled");
 		assert.ok(this.oCellSelector.isActive(), "CellSelector is active");
 
-		this.oTable.removeDependent(this.oCellSelector);
+		oTable.removeDependent(this.oCellSelector);
 
 		const oConfig = new DragDropInfo({
 			sourceAggregation: "rows",
 			targetAggregation: "rows",
 			enabled: true
 		});
-		this.oTable.addDragDropConfig(oConfig);
-		this.oTable.addDependent(this.oCellSelector);
+		oTable.addDragDropConfig(oConfig);
+		oTable.addDependent(this.oCellSelector);
 		assert.ok(this.oCellSelector.isActive(), "CellSelector is active");
-		this.oTable.attachEventOnce("rowsUpdated", () => {
-			var oSelectCellsSpy = sinon.spy(this.oCellSelector, "_selectCells");
-			var oCell = getCell(this.oTable, 1, 0); // first cell of first row
-			qutils.triggerKeydown(oCell, KeyCodes.SPACE); // select first cell of first row
-			qutils.triggerKeyup(oCell, KeyCodes.SPACE); // select first cell of first row
-			assert.equal(oSelectCellsSpy.callCount, 0, "No cells are selected");
-			assert.deepEqual(this.oCellSelector.getSelectionRange(), null);
 
-			oConfig.setEnabled(false);
-			qutils.triggerKeydown(oCell, KeyCodes.SPACE); // select first cell of first row
-			qutils.triggerKeyup(oCell, KeyCodes.SPACE); // select first cell of first row
-			assert.equal(oSelectCellsSpy.callCount, 1, "Cells have been selected");
-			assert.deepEqual(this.oCellSelector.getSelectionRange(), {from: {rowIndex: 1, colIndex: 0}, to: {rowIndex: 1, colIndex: 0}});
+		const oSelectCellsSpy = sinon.spy(this.oCellSelector, "_selectCells");
+		const oCell = getCell(oTable, 1, 0); // first cell of first row
+		qutils.triggerKeydown(oCell, KeyCodes.SPACE); // select first cell of first row
+		qutils.triggerKeyup(oCell, KeyCodes.SPACE); // select first cell of first row
+		assert.equal(oSelectCellsSpy.callCount, 0, "No cells are selected");
+		assert.deepEqual(this.oCellSelector.getSelectionRange(), null);
 
-			this.oCellSelector.removeSelection();
+		oConfig.setEnabled(false);
+		qutils.triggerKeydown(oCell, KeyCodes.SPACE); // select first cell of first row
+		qutils.triggerKeyup(oCell, KeyCodes.SPACE); // select first cell of first row
+		assert.equal(oSelectCellsSpy.callCount, 1, "Cells have been selected");
+		assert.deepEqual(this.oCellSelector.getSelectionRange(), {from: {rowIndex: 1, colIndex: 0}, to: {rowIndex: 1, colIndex: 0}});
 
-			oSelectCellsSpy.reset();
+		this.oCellSelector.removeSelection();
 
-			const oDropInfo = new DropInfo({
-				targetAggregation: "rows",
-				enabled: true
-			});
-			this.oTable.addDragDropConfig(oDropInfo);
+		oSelectCellsSpy.reset();
 
-			qutils.triggerKeyup(oCell, KeyCodes.SPACE); // select first cell of first row
-			qutils.triggerKeydown(oCell, KeyCodes.SPACE); // select first cell of first row
-			assert.equal(oSelectCellsSpy.callCount, 1, "Cells have been selected");
-			assert.deepEqual(this.oCellSelector.getSelectionRange(), {from: {rowIndex: 1, colIndex: 0}, to: {rowIndex: 1, colIndex: 0}});
-
-			done();
+		const oDropInfo = new DropInfo({
+			targetAggregation: "rows",
+			enabled: true
 		});
+		oTable.addDragDropConfig(oDropInfo);
+
+		qutils.triggerKeyup(oCell, KeyCodes.SPACE); // select first cell of first row
+		qutils.triggerKeydown(oCell, KeyCodes.SPACE); // select first cell of first row
+		assert.equal(oSelectCellsSpy.callCount, 1, "Cells have been selected");
+		assert.deepEqual(this.oCellSelector.getSelectionRange(), {from: {rowIndex: 1, colIndex: 0}, to: {rowIndex: 1, colIndex: 0}});
 	});
 
 	QUnit.test("removeSelection with invalid session object", function (assert) {
-		this.oTable.addDependent(this.oCellSelector);
-		var done = assert.async();
+		const oCell = getCell(this.oTable, 1, 0); // first cell of first row
+		qutils.triggerKeydown(oCell, KeyCodes.SPACE); // select first cell of first row
+		qutils.triggerKeyup(oCell, KeyCodes.SPACE); // select first cell of first row
+		assert.deepEqual(this.oCellSelector.getSelectionRange(), {from: {rowIndex: 1, colIndex: 0}, to: {rowIndex: 1, colIndex: 0}});
 
-		this.oTable.attachEventOnce("rowsUpdated", () => {
-			var oCell = getCell(this.oTable, 1, 0); // first cell of first row
-			qutils.triggerKeydown(oCell, KeyCodes.SPACE); // select first cell of first row
-			qutils.triggerKeyup(oCell, KeyCodes.SPACE); // select first cell of first row
-			assert.deepEqual(this.oCellSelector.getSelectionRange(), {from: {rowIndex: 1, colIndex: 0}, to: {rowIndex: 1, colIndex: 0}});
+		this.oCellSelector.removeSelection();
+		assert.deepEqual(this.oCellSelector.getSelectionRange(), null, "Selection has been removed");
 
-			this.oCellSelector.removeSelection();
-			assert.deepEqual(this.oCellSelector.getSelectionRange(), null, "Selection has been removed");
-
-			this.oCellSelector.exit();
-			this.oCellSelector.removeSelection();
-			assert.deepEqual(this.oCellSelector._oSession, { cellRefs: [], cellTypes: [] }, "Session has been cleared");
-
-			done();
-		});
+		this.oCellSelector.exit();
+		this.oCellSelector.removeSelection();
+		assert.deepEqual(this.oCellSelector._oSession, { cellRefs: [], cellTypes: [] }, "Session has been cleared");
 	});
 
 	QUnit.test("getSelection", function (assert) {
-		this.oTable.addDependent(this.oCellSelector);
-		var done = assert.async();
+		var oTable = this.oTable;
+		const oCellSelector = this.oCellSelector;
+		const oBinding = this.oTable.getBinding("rows");
 
-		this.oTable.attachEventOnce("rowsUpdated", () => {
-			var oBinding = this.oTable.getBinding("rows");
+		let oSelection = oCellSelector.getSelection();
+		assert.equal(oSelection.columns.length, 0, "Selection contains 0 column");
+		assert.equal(oSelection.rows.length, 0, "Selection contains 0 rows");
 
-			var oSelection = this.oCellSelector.getSelection();
-			assert.equal(oSelection.columns.length, 0, "Selection contains 0 column");
-			assert.equal(oSelection.rows.length, 0, "Selection contains 0 rows");
+		const fnSelectionChangeSpy = sinon.spy();
+		oCellSelector.attachEvent("selectionChange", fnSelectionChangeSpy);
 
-			const fnSelectionChangeSpy = sinon.spy();
-			this.oCellSelector.attachEvent("selectionChange", fnSelectionChangeSpy);
+		let oCell = getCell(oTable, 1, 0); // first cell of first row
+		qutils.triggerKeydown(oCell, KeyCodes.SPACE); // select first cell of first row
+		qutils.triggerKeyup(oCell, KeyCodes.SPACE); // select first cell of first row
+		assert.deepEqual(oCellSelector.getSelectionRange(), {from: {rowIndex: 1, colIndex: 0}, to: {rowIndex: 1, colIndex: 0}});
+		assert.equal(fnSelectionChangeSpy.callCount, 1);
+		fnSelectionChangeSpy.reset();
 
-			var oCell = getCell(this.oTable, 1, 0); // first cell of first row
-			qutils.triggerKeydown(oCell, KeyCodes.SPACE); // select first cell of first row
-			qutils.triggerKeyup(oCell, KeyCodes.SPACE); // select first cell of first row
-			assert.deepEqual(this.oCellSelector.getSelectionRange(), {from: {rowIndex: 1, colIndex: 0}, to: {rowIndex: 1, colIndex: 0}});
-			assert.equal(fnSelectionChangeSpy.callCount, 1);
-			fnSelectionChangeSpy.reset();
+		oSelection = oCellSelector.getSelection();
+		assert.equal(oSelection.columns.length, 1, "Selection contains one column");
+		assert.equal(oSelection.columns[0], oTable.getColumns()[0], "Selection contains correct column");
+		assert.equal(oSelection.rows.length, 1, "Selection contains 1 row");
+		assert.equal(oSelection.rows[0], oBinding.getContextByIndex(1), "Selection contains correct context");
 
-			oSelection = this.oCellSelector.getSelection();
-			assert.equal(oSelection.columns.length, 1, "Selection contains one column");
-			assert.equal(oSelection.columns[0], this.oTable.getColumns()[0], "Selection contains correct column");
-			assert.equal(oSelection.rows.length, 1, "Selection contains 1 row");
-			assert.equal(oSelection.rows[0], oBinding.getContextByIndex(1), "Selection contains correct context");
+		qutils.triggerKeydown(oCell, KeyCodes.ARROW_RIGHT, true, false, false);
+		qutils.triggerKeyup(oCell, KeyCodes.ARROW_RIGHT, true, false, false);
+		assert.equal(fnSelectionChangeSpy.callCount, 1);
+		fnSelectionChangeSpy.reset();
 
-			qutils.triggerKeydown(oCell, KeyCodes.ARROW_RIGHT, true, false, false);
-			qutils.triggerKeyup(oCell, KeyCodes.ARROW_RIGHT, true, false, false);
-			assert.equal(fnSelectionChangeSpy.callCount, 1);
-			fnSelectionChangeSpy.reset();
+		oCell = getCell(oTable, 1, 1);
+		qutils.triggerKeydown(oCell, KeyCodes.ARROW_DOWN, true, false, false);
+		qutils.triggerKeyup(oCell, KeyCodes.ARROW_DOWN, true, false, false);
+		assert.equal(fnSelectionChangeSpy.callCount, 1);
+		fnSelectionChangeSpy.reset();
 
-			oCell = getCell(this.oTable, 1, 1);
-			qutils.triggerKeydown(oCell, KeyCodes.ARROW_DOWN, true, false, false);
-			qutils.triggerKeyup(oCell, KeyCodes.ARROW_DOWN, true, false, false);
-			assert.equal(fnSelectionChangeSpy.callCount, 1);
-			fnSelectionChangeSpy.reset();
+		oCell = getCell(oTable, 2, 1);
+		qutils.triggerKeydown(oCell, KeyCodes.ARROW_DOWN, true, false, false);
+		qutils.triggerKeyup(oCell, KeyCodes.ARROW_DOWN, true, false, false);
+		assert.equal(fnSelectionChangeSpy.callCount, 1);
+		fnSelectionChangeSpy.reset();
 
-			oCell = getCell(this.oTable, 2, 1);
-			qutils.triggerKeydown(oCell, KeyCodes.ARROW_DOWN, true, false, false);
-			qutils.triggerKeyup(oCell, KeyCodes.ARROW_DOWN, true, false, false);
-			assert.equal(fnSelectionChangeSpy.callCount, 1);
-			fnSelectionChangeSpy.reset();
+		oSelection = oCellSelector.getSelection();
+		assert.equal(oSelection.columns.length, 2, "Selection contains 2 columns");
+		assert.equal(oSelection.columns[0], oTable.getColumns()[0], "Selection contains correct column");
+		assert.equal(oSelection.columns[1], oTable.getColumns()[1], "Selection contains correct column");
+		assert.equal(oSelection.rows.length, 3, "Selection contains 3 rows");
+		assert.equal(oSelection.rows[0], oBinding.getContextByIndex(1), "Selection contains context of second row");
+		assert.equal(oSelection.rows[1], oBinding.getContextByIndex(2), "Selection contains context of third row");
+		assert.equal(oSelection.rows[2], oBinding.getContextByIndex(3), "Selection contains context of fourth row");
 
-			oSelection = this.oCellSelector.getSelection();
-			assert.equal(oSelection.columns.length, 2, "Selection contains 2 columns");
-			assert.equal(oSelection.columns[0], this.oTable.getColumns()[0], "Selection contains correct column");
-			assert.equal(oSelection.columns[1], this.oTable.getColumns()[1], "Selection contains correct column");
-			assert.equal(oSelection.rows.length, 3, "Selection contains 3 rows");
-			assert.equal(oSelection.rows[0], oBinding.getContextByIndex(1), "Selection contains context of second row");
-			assert.equal(oSelection.rows[1], oBinding.getContextByIndex(2), "Selection contains context of third row");
-			assert.equal(oSelection.rows[2], oBinding.getContextByIndex(3), "Selection contains context of fourth row");
+		oSelection = oCellSelector.getSelection(true);
+		assert.equal(oSelection.columns.length, 2, "Selection contains 2 columns");
+		assert.equal(oSelection.columns[0], oTable.getColumns()[0], "Selection contains correct column");
+		assert.equal(oSelection.columns[1], oTable.getColumns()[1], "Selection contains correct column");
+		assert.equal(oSelection.rows.length, 3, "Selection contains 3 rows");
+		assert.equal(oSelection.rows[0], oBinding.getContextByIndex(1), "Selection contains context of second row");
+		assert.equal(oSelection.rows[1], oBinding.getContextByIndex(2), "Selection contains context of third row");
+		assert.equal(oSelection.rows[2], oBinding.getContextByIndex(3), "Selection contains context of fourth row");
 
-			oSelection = this.oCellSelector.getSelection(true);
-			assert.equal(oSelection.columns.length, 2, "Selection contains 2 columns");
-			assert.equal(oSelection.columns[0], this.oTable.getColumns()[0], "Selection contains correct column");
-			assert.equal(oSelection.columns[1], this.oTable.getColumns()[1], "Selection contains correct column");
-			assert.equal(oSelection.rows.length, 3, "Selection contains 3 rows");
-			assert.equal(oSelection.rows[0], oBinding.getContextByIndex(1), "Selection contains context of second row");
-			assert.equal(oSelection.rows[1], oBinding.getContextByIndex(2), "Selection contains context of third row");
-			assert.equal(oSelection.rows[2], oBinding.getContextByIndex(3), "Selection contains context of fourth row");
+		// Grouping with V4 (Context with property)
 
-			// Grouping with V4 (Context with property)
+		const oBindingContextStub = sinon.stub(oBinding.getContextByIndex(1), "getProperty");
+		oBindingContextStub.withArgs("@ui5.node.isExpanded").returns(true);
+		oSelection = oCellSelector.getSelection(true);
 
-			const oBindingContextStub = sinon.stub(oBinding.getContextByIndex(1), "getProperty");
-			oBindingContextStub.withArgs("@ui5.node.isExpanded").returns(true);
-			oSelection = this.oCellSelector.getSelection(true);
+		assert.equal(oSelection.columns.length, 2, "Selection contains 2 columns");
+		assert.equal(oSelection.columns[0], oTable.getColumns()[0], "Selection contains correct column");
+		assert.equal(oSelection.columns[1], oTable.getColumns()[1], "Selection contains correct column");
+		assert.equal(oSelection.rows.length, 2, "Selection contains only 2 rows (Group Header with V4)");
+		assert.equal(oSelection.rows[0], oBinding.getContextByIndex(2), "Selection contains context of third row");
+		assert.equal(oSelection.rows[1], oBinding.getContextByIndex(3), "Selection contains context of fourth row");
 
-			assert.equal(oSelection.columns.length, 2, "Selection contains 2 columns");
-			assert.equal(oSelection.columns[0], this.oTable.getColumns()[0], "Selection contains correct column");
-			assert.equal(oSelection.columns[1], this.oTable.getColumns()[1], "Selection contains correct column");
-			assert.equal(oSelection.rows.length, 2, "Selection contains only 2 rows (Group Header with V4)");
-			assert.equal(oSelection.rows[0], oBinding.getContextByIndex(2), "Selection contains context of third row");
-			assert.equal(oSelection.rows[1], oBinding.getContextByIndex(3), "Selection contains context of fourth row");
+		oBindingContextStub.restore();
 
-			oBindingContextStub.restore();
+		// Grouping with V2 (Node)
 
-			// Grouping with V2 (Node)
+		// very hacky way to simulate grouping
+		oBinding.getNodeByIndex = function(iIndex) {
+			return iIndex == 1 ? "ignore" : "content";
+		};
+		oBinding.nodeHasChildren = function(oContext) {
+			return oContext == "ignore";
+		};
 
-			// very hacky way to simulate grouping
-			oBinding.getNodeByIndex = function(iIndex) {
-				return iIndex == 1 ? "ignore" : "content";
-			};
-			oBinding.nodeHasChildren = function(oContext) {
-				return oContext == "ignore";
-			};
+		oSelection = this.oCellSelector.getSelection(true);
 
-			oSelection = this.oCellSelector.getSelection(true);
+		assert.equal(oSelection.columns.length, 2, "Selection contains 2 columns");
+		assert.equal(oSelection.columns[0], oTable.getColumns()[0], "Selection contains correct column");
+		assert.equal(oSelection.columns[1], oTable.getColumns()[1], "Selection contains correct column");
+		assert.equal(oSelection.rows.length, 2, "Selection contains only 2 rows (Group Header with V2)");
+		assert.equal(oSelection.rows[0], oBinding.getContextByIndex(2), "Selection contains context of third row");
+		assert.equal(oSelection.rows[1], oBinding.getContextByIndex(3), "Selection contains context of fourth row");
 
-			assert.equal(oSelection.columns.length, 2, "Selection contains 2 columns");
-			assert.equal(oSelection.columns[0], this.oTable.getColumns()[0], "Selection contains correct column");
-			assert.equal(oSelection.columns[1], this.oTable.getColumns()[1], "Selection contains correct column");
-			assert.equal(oSelection.rows.length, 2, "Selection contains only 2 rows (Group Header with V2)");
-			assert.equal(oSelection.rows[0], oBinding.getContextByIndex(2), "Selection contains context of third row");
-			assert.equal(oSelection.rows[1], oBinding.getContextByIndex(3), "Selection contains context of fourth row");
+		this.oCellSelector.removeSelection();
+		assert.equal(fnSelectionChangeSpy.callCount, 1);
+		fnSelectionChangeSpy.reset();
 
-			this.oCellSelector.removeSelection();
-			assert.equal(fnSelectionChangeSpy.callCount, 1);
-			fnSelectionChangeSpy.reset();
-
-			this.oCellSelector.removeSelection();
-			assert.equal(fnSelectionChangeSpy.callCount, 0);
-			fnSelectionChangeSpy.reset();
-
-			done();
-		});
+		this.oCellSelector.removeSelection();
+		assert.equal(fnSelectionChangeSpy.callCount, 0);
+		fnSelectionChangeSpy.reset();
 	});
 
 	QUnit.test("Selection with mouse only with left-click", function(assert) {
-		this.oTable.addDependent(this.oCellSelector);
-		var done = assert.async();
+		const oCellSelector = this.oCellSelector;
+		const oCell = getCell(this.oTable, 1, 0); // first cell of first row
 
-		this.oTable.attachEventOnce("rowsUpdated", () => {
-			var oCell = getCell(this.oTable, 1, 0); // first cell of first row
-			qutils.triggerEvent("mousedown", oCell, { button: 0, ctrlKey: true }); // select first cell of first row with left-click/primary button
-			assert.ok(this.oCellSelector._bMouseDown, "Flag has been set");
-			qutils.triggerEvent("mouseup", oCell);
-			assert.deepEqual(this.oCellSelector.getSelectionRange(), {from: {rowIndex: 1, colIndex: 0}, to: {rowIndex: 1, colIndex: 0}}, "Cell has been selected");
+		qutils.triggerEvent("mousedown", oCell, { button: 0, ctrlKey: true }); // select first cell of first row with left-click/primary button
+		assert.ok(oCellSelector._bMouseDown, "Flag has been set");
+		qutils.triggerEvent("mouseup", oCell);
+		assert.deepEqual(oCellSelector.getSelectionRange(), {from: {rowIndex: 1, colIndex: 0}, to: {rowIndex: 1, colIndex: 0}}, "Cell has been selected");
 
-			this.oCellSelector.removeSelection();
-			assert.deepEqual(this.oCellSelector.getSelectionRange(), null, "Selection has been removed");
+		oCellSelector.removeSelection();
+		assert.deepEqual(oCellSelector.getSelectionRange(), null, "Selection has been removed");
 
-			qutils.triggerEvent("mousedown", oCell, { button: 1, ctrlKey: true }); // try to select with something else than left-click/primary button
-			assert.notOk(this.oCellSelector._bMouseDown, "Flag has not been set");
-			qutils.triggerEvent("mouseup", oCell);
-			assert.deepEqual(this.oCellSelector.getSelectionRange(), null, "Nothing has been selected");
-
-			done();
-		});
+		qutils.triggerEvent("mousedown", oCell, { button: 1, ctrlKey: true }); // try to select with something else than left-click/primary button
+		assert.notOk(oCellSelector._bMouseDown, "Flag has not been set");
+		qutils.triggerEvent("mouseup", oCell);
+		assert.deepEqual(oCellSelector.getSelectionRange(), null, "Nothing has been selected");
 	});
 
 	QUnit.test("_selectCells should not be called when hovering same cell", function(assert) {
-		this.oTable.addDependent(this.oCellSelector);
-		var done = assert.async();
-
+		const oTable = this.oTable;
+		const oCellSelector = this.oCellSelector;
 		const oEvent = {target: null, preventDefault: () => {}, stopImmediatePropagation: () => {}};
-		const oSelectCellsSpy = sinon.spy(this.oCellSelector, "_selectCells");
+		const oSelectCellsSpy = sinon.spy(oCellSelector, "_selectCells");
 
-		this.oTable.attachEventOnce("rowsUpdated", () => {
-			var oCell = getCell(this.oTable, 1, 0); // first cell of first row
-			qutils.triggerEvent("mousedown", oCell, { button: 0, ctrlKey: true }); // select first cell of first row with left-click/primary button
-			assert.ok(this.oCellSelector._bMouseDown, "Flag has been set");
-			assert.deepEqual(this.oCellSelector.getSelectionRange(), {from: {rowIndex: 1, colIndex: 0}, to: {rowIndex: 1, colIndex: 0}}, "Cell has been selected");
-			assert.equal(oSelectCellsSpy.callCount, 1, "_selectCells was called once");
+		let oCell = getCell(oTable, 1, 0); // first cell of first row
+		qutils.triggerEvent("mousedown", oCell, { button: 0, ctrlKey: true }); // select first cell of first row with left-click/primary button
+		assert.ok(oCellSelector._bMouseDown, "Flag has been set");
+		assert.deepEqual(oCellSelector.getSelectionRange(), {from: {rowIndex: 1, colIndex: 0}, to: {rowIndex: 1, colIndex: 0}}, "Cell has been selected");
+		assert.equal(oSelectCellsSpy.callCount, 1, "_selectCells was called once");
 
-			oCell = getCell(this.oTable, 1, 1);
-			oEvent.target = oCell;
-			this.oCellSelector._onmousemove(oEvent);
-			assert.deepEqual(this.oCellSelector.getSelectionRange(), {from: {rowIndex: 1, colIndex: 0}, to: {rowIndex: 1, colIndex: 1}}, "Cell has been selected");
-			assert.equal(oSelectCellsSpy.callCount, 2, "_selectCells was called again");
+		oCell = getCell(oTable, 1, 1);
+		oEvent.target = oCell;
+		oCellSelector._onmousemove(oEvent);
+		assert.deepEqual(oCellSelector.getSelectionRange(), {from: {rowIndex: 1, colIndex: 0}, to: {rowIndex: 1, colIndex: 1}}, "Cell has been selected");
+		assert.equal(oSelectCellsSpy.callCount, 2, "_selectCells was called again");
 
-			// Hover same cell again
-			this.oCellSelector._onmousemove(oEvent);
-			assert.deepEqual(this.oCellSelector.getSelectionRange(), {from: {rowIndex: 1, colIndex: 0}, to: {rowIndex: 1, colIndex: 1}}, "Cell has been selected");
-			assert.equal(oSelectCellsSpy.callCount, 2, "_selectCells was not called again, as hovered cell has not changed");
+		// Hover same cell again
+		oCellSelector._onmousemove(oEvent);
+		assert.deepEqual(oCellSelector.getSelectionRange(), {from: {rowIndex: 1, colIndex: 0}, to: {rowIndex: 1, colIndex: 1}}, "Cell has been selected");
+		assert.equal(oSelectCellsSpy.callCount, 2, "_selectCells was not called again, as hovered cell has not changed");
 
-			oCell = getCell(this.oTable, 1, 0);
-			oEvent.target = oCell;
-			this.oCellSelector._onmousemove(oEvent);
-			assert.deepEqual(this.oCellSelector.getSelectionRange(), {from: {rowIndex: 1, colIndex: 0}, to: {rowIndex: 1, colIndex: 0}}, "Cell has been selected");
-			assert.equal(oSelectCellsSpy.callCount, 3, "_selectCells was called thrice as hovered cell changed");
+		oCell = getCell(oTable, 1, 0);
+		oEvent.target = oCell;
+		oCellSelector._onmousemove(oEvent);
+		assert.deepEqual(oCellSelector.getSelectionRange(), {from: {rowIndex: 1, colIndex: 0}, to: {rowIndex: 1, colIndex: 0}}, "Cell has been selected");
+		assert.equal(oSelectCellsSpy.callCount, 3, "_selectCells was called thrice as hovered cell changed");
 
-			qutils.triggerEvent("mouseup", oCell);
-			assert.deepEqual(this.oCellSelector.getSelectionRange(), {from: {rowIndex: 1, colIndex: 0}, to: {rowIndex: 1, colIndex: 0}}, "Cell has been selected");
-
-			done();
-		});
+		qutils.triggerEvent("mouseup", oCell);
+		assert.deepEqual(oCellSelector.getSelectionRange(), {from: {rowIndex: 1, colIndex: 0}, to: {rowIndex: 1, colIndex: 0}}, "Cell has been selected");
 	});
 
-	QUnit.test("MDCTable - getSelection", function(assert) {
+	QUnit.test("MDCTable - getSelection", async function(assert) {
 		const done = assert.async();
+
+		// Release CellSelector from preconfigured table
 		this.oTable.removeDependent(this.oCellSelector);
 		this.oTable.destroy();
-		this.oTable = createMDCTable();
-		this.oTable.addDependent(this.oCellSelector);
 
-		this.oTable.initialized().then(() => {
-			this.oTable._oTable.attachEventOnce("rowsUpdated", () => {
-				assert.equal(this.oTable.getCellSelectorPluginOwner(), this.oTable._oTable, "The inner table is set as plugin owner for the CellSelector");
-				assert.ok(this.oCellSelector.getEnabled(), "CellSelector Plugin is enabled");
-				assert.ok(this.oCellSelector.isActive(), "CellSelector is active");
+		const oTable = await createMDCTable();
+		oTable.addDependent(this.oCellSelector);
 
-				const oCell = this.oTable._oTable.getRows()[0].getCells()[0].$().parents("td")[0];
+		await oTable.initialized();
 
-				let oSelection = this.oCellSelector.getSelection();
-				assert.equal(oSelection.rows.length, 0, "No cells selected (rows)");
-				assert.equal(oSelection.columns.length, 0, "No cells selected (columns)");
+		oTable._oTable.attachEventOnce("rowsUpdated", () => {
+			assert.equal(oTable.getCellSelectorPluginOwner(), oTable._oTable, "The inner table is set as plugin owner for the CellSelector");
+			assert.ok(this.oCellSelector.getEnabled(), "CellSelector Plugin is enabled");
+			assert.ok(this.oCellSelector.isActive(), "CellSelector is active");
 
-				qutils.triggerKeydown(oCell, KeyCodes.SPACE); // select first cell of first row
-				qutils.triggerKeyup(oCell, KeyCodes.SPACE); // select first cell of first row
+			const oCell = oTable._oTable.getRows()[0].getCells()[0].$().parents("td")[0];
 
-				oSelection = this.oCellSelector.getSelection();
-				assert.equal(oSelection.rows.length, 1, "1 cell selected (rows)");
-				assert.equal(oSelection.columns.length, 1, "1 cell selected (columns)");
+			let oSelection = this.oCellSelector.getSelection();
+			assert.equal(oSelection.rows.length, 0, "No cells selected (rows)");
+			assert.equal(oSelection.columns.length, 0, "No cells selected (columns)");
 
-				const oBinding = this.oTable._oTable.getBinding("rows");
-				assert.equal(oSelection.rows[0], oBinding.getContexts(0, 1)[0], "Returned row context is correct");
-				assert.equal(oSelection.columns[0], this.oTable.getColumns()[0], "Retruned column is correct");
-				assert.ok(oSelection.columns[0].isA("sap.ui.mdc.table.Column"), "Column is a MDCColumn");
+			qutils.triggerKeydown(oCell, KeyCodes.SPACE); // select first cell of first row
+			qutils.triggerKeyup(oCell, KeyCodes.SPACE); // select first cell of first row
 
-				done();
-			});
+			oSelection = this.oCellSelector.getSelection();
+			assert.equal(oSelection.rows.length, 1, "1 cell selected (rows)");
+			assert.equal(oSelection.columns.length, 1, "1 cell selected (columns)");
+
+			const oBinding = oTable._oTable.getBinding("rows");
+			assert.equal(oSelection.rows[0], oBinding.getContexts(0, 1)[0], "Returned row context is correct");
+			assert.equal(oSelection.columns[0], oTable.getColumns()[0], "Retruned column is correct");
+			assert.ok(oSelection.columns[0].isA("sap.ui.mdc.table.Column"), "Column is a MDCColumn");
+
+			oTable.destroy();
+			done();
 		});
 	});
 
 	QUnit.module("Dialog Behavior", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oMockServer = new MockServer({ rootUri : sServiceURI });
 			this.oMockServer.simulate("test-resources/sap/m/qunit/data/metadata.xml", "test-resources/sap/m/qunit/data");
 			this.oMockServer.start();
@@ -431,7 +418,7 @@ sap.ui.define([
 				content: this.oTable
 			}).placeAt("qunit-fixture");
 
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oMockServer.destroy();
@@ -439,29 +426,34 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Escape Handling", function(assert) {
-		var clock = sinon.useFakeTimers();
+	QUnit.test("Escape Handling", async function(assert) {
 		this.oDialog.open();
-		clock.tick(500);
-		Core.applyChanges();
+		await new Promise((fnResolve) => {
+			this.oDialog.attachEventOnce("afterOpen", function(oEvent) {
+				assert.ok(oEvent.getSource().isOpen(), "Dialog is open");
+				fnResolve();
+			});
+		});
 
-		var oCell = getCell(this.oTable, 1, 0); // first cell of first row
+		const oCell = getCell(this.oTable, 1, 0); // first cell of first row
 		qutils.triggerKeydown(oCell, KeyCodes.SPACE); // select first cell of first row
 		qutils.triggerKeyup(oCell, KeyCodes.SPACE); // select first cell of first row
 		assert.deepEqual(this.oCellSelector.getSelectionRange(), {from: {rowIndex: 1, colIndex: 0}, to: {rowIndex: 1, colIndex: 0}});
 
 		qutils.triggerKeydown(oCell, KeyCodes.ESCAPE);
 		qutils.triggerKeyup(oCell, KeyCodes.ESCAPE);
-		clock.tick(500);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(this.oCellSelector.getSelectionRange(), null, "Selection is cleared");
 		assert.ok(this.oDialog.isOpen(), "Dialog is still open");
 
 		qutils.triggerKeydown(oCell, KeyCodes.ESCAPE);
-		clock.tick(500);
-		Core.applyChanges();
 
-		assert.notOk(this.oDialog.isOpen(), "Dialog is closed");
+		await new Promise((fnResolve) => {
+			this.oDialog.attachEventOnce("afterClose", function(oEvent) {
+				assert.notOk(oEvent.getSource().isOpen(), "Dialog is closed");
+				fnResolve();
+			});
+		});
 	});
 });
