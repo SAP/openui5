@@ -423,8 +423,6 @@ function(
 			this.setErrorMessageAnnouncementState(false);
 		}
 
-		this.$("message").text(this.getValueStateText());
-
 		// now dom value is up-to-date
 		this._bCheckDomValue = false;
 
