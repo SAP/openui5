@@ -33,7 +33,8 @@ sap.ui.define([],
 					}
 				},
 				reveal: {
-					changeType: "unhideControl"
+					changeType: "unhideControl",
+					depthOfRelevantBindings: 1
 				},
 				rename: function () {
 					return {

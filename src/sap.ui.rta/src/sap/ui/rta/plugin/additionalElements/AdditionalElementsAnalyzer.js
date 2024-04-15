@@ -386,18 +386,20 @@ sap.ui.define([
 		return !bHasAddViaDelegate;
 	}
 
-	function _enhanceByMetadata(oElement, sAggregationName, oInvisibleElement, mActions, aRepresentedProperties, aProperties) {
-		var mAddViaDelegate = mActions.addViaDelegate;
-		var sModelName = _getModelName(mAddViaDelegate);
-		var oModel = oElement.getModel(sModelName);
-		var bIncludeElement = true;
-		var aBindingPaths = [];
+	function _enhanceByMetadata(oElement, sAggregationName, mInvisibleElement, mActions, aRepresentedProperties, aProperties) {
+		const mAddViaDelegate = mActions.addViaDelegate;
+		const sModelName = _getModelName(mAddViaDelegate);
+		const oModel = oElement.getModel(sModelName);
+		let bIncludeElement = true;
+		let aBindingPaths = [];
+		const oInvisibleElement = mInvisibleElement.element;
+		const iDepth = mInvisibleElement.action.depthOfRelevantBindings;
 
 		if (aRepresentedProperties) {
 			aBindingPaths = _getRepresentedBindingPathsOfInvisibleElement(oInvisibleElement, aRepresentedProperties);
 		// BCP: 1880498671
 		} else if (_getBindingContextPath(oElement, sAggregationName, sModelName) === _getBindingContextPath(oInvisibleElement, sAggregationName, sModelName)) {
-			aBindingPaths = BindingsExtractor.collectBindingPaths(oInvisibleElement, oModel).bindingPaths;
+			aBindingPaths = BindingsExtractor.collectBindingPaths(oInvisibleElement, oModel, null, iDepth).bindingPaths;
 		} else if (mAddViaDelegate && BindingsExtractor.getBindings({
 			element: oInvisibleElement,
 			model: oModel
@@ -451,7 +453,9 @@ sap.ui.define([
 
 					oInvisibleElement.__label = ElementUtil.getLabelForElement(oInvisibleElement, mRevealAction.getLabel);
 
-					var bIncludeElement = _enhanceByMetadata(oElement, sAggregationName, oInvisibleElement, mActions, aRepresentedProperties, aProperties);
+					var bIncludeElement = _enhanceByMetadata(
+						oElement, sAggregationName, mInvisibleElement, mActions, aRepresentedProperties, aProperties
+					);
 
 					if (bIncludeElement) {
 						aAllElementData.push({

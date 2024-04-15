@@ -31,30 +31,34 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given a test view", TestUtils.commonHooks(), function() {
-		QUnit.test("checks if navigation and absolute binding work (form example)", async function(assert) {
-			var oGroupElement1 = this.oView.byId("EntityType02.NavigationProperty"); // With correct navigation binding
-			var oGroupElement2 = this.oView.byId("EntityType02.IncorrectNavigationProperty"); // With incorrect navigation binding
-			var oGroupElement3 = this.oView.byId("EntityType02.AbsoluteBinding"); // Absolute binding
-			var oGroupElement4 = this.oView.byId("EntityType02.technicalInvisibleProp"); // UI.Hidden Annotation binding
-			await nextUIUpdate();
-			var oGroup = oGroupElement4.getParent();
-			return registerTestOverlaysWithRelevantContainer.call(this,	oGroup)
-			.then(function() {
-				var oActionsObject = {
+		[true, false].forEach(function(bUseDepthOfRelevantBindings) {
+			let sName = "checks if navigation and absolute binding work (form example)";
+			if (bUseDepthOfRelevantBindings) {
+				sName += " with depthOfRelevantBindings";
+			}
+			QUnit.test(sName, async function(assert) {
+				const oGroupElement1 = this.oView.byId("EntityType02.NavigationProperty"); // With correct navigation binding
+				const oGroupElement2 = this.oView.byId("EntityType02.IncorrectNavigationProperty"); // With incorrect navigation binding
+				const oGroupElement3 = this.oView.byId("EntityType02.AbsoluteBinding"); // Absolute binding
+				const oGroupElement4 = this.oView.byId("EntityType02.technicalInvisibleProp"); // UI.Hidden Annotation binding
+				await nextUIUpdate();
+				const oGroup = oGroupElement4.getParent();
+				await registerTestOverlaysWithRelevantContainer.call(this, oGroup);
+				const oActionsObject = {
 					aggregation: "formElements",
 					reveal: {
 						elements: [{
 							element: oGroupElement1,
-							action: {} // nothing relevant for the analyzer tests
+							action: {depthOfRelevantBindings: bUseDepthOfRelevantBindings ? 0 : null}
 						}, {
 							element: oGroupElement2,
-							action: {} // nothing relevant for the analyzer tests
+							action: {depthOfRelevantBindings: bUseDepthOfRelevantBindings ? 0 : null}
 						}, {
 							element: oGroupElement3,
-							action: {} // nothing relevant for the analyzer tests
+							action: {depthOfRelevantBindings: bUseDepthOfRelevantBindings ? 0 : null}
 						}, {
 							element: oGroupElement4,
-							action: {} // nothing relevant for the analyzer tests
+							action: {depthOfRelevantBindings: bUseDepthOfRelevantBindings ? 0 : null}
 						}]
 					},
 					addViaDelegate: {
@@ -63,18 +67,37 @@ sap.ui.define([
 						}
 					}
 				};
-				return AdditionalElementsAnalyzer.enhanceInvisibleElements(oGroupElement1.getParent(), oActionsObject).then(function(aAdditionalElements) {
+				const aAdditionalElements = await AdditionalElementsAnalyzer.enhanceInvisibleElements(oGroupElement1.getParent(), oActionsObject);
+				if (!bUseDepthOfRelevantBindings) {
 					// We expect only one element to be returned with a correct navigation property
-					assert.equal(aAdditionalElements.length, 2, "then there are 2 additional Elements available");
-					assert.equal(aAdditionalElements[0].label, oGroupElement1.getLabelText(), "the element with correct navigation binding should be in the list");
-					assert.equal(aAdditionalElements[0].tooltip, oGroupElement1.getLabelText(), "the label is used as tooltip for elements with navigation binding");
-					assert.equal(aAdditionalElements[1].label, oGroupElement3.getLabelText(), "the element with absolute binding should be in the list");
-					assert.equal(aAdditionalElements[1].tooltip, oGroupElement3.getLabelText(), "the label is used as tooltip for elements with absolute binding");
-				});
-			}.bind(this))
-			.then(function() {
+					assert.deepEqual(
+						aAdditionalElements.length, 2,
+						"then there are 2 additional Elements available"
+					);
+					assert.deepEqual(
+						aAdditionalElements[0].label, oGroupElement1.getLabelText(),
+						"the element with correct navigation binding should be in the list"
+					);
+					assert.deepEqual(
+						aAdditionalElements[0].tooltip, oGroupElement1.getLabelText(),
+						"the label is used as tooltip for elements with navigation binding"
+					);
+					assert.deepEqual(
+						aAdditionalElements[1].label, oGroupElement3.getLabelText(),
+						"the element with absolute binding should be in the list"
+					);
+					assert.deepEqual(
+						aAdditionalElements[1].tooltip, oGroupElement3.getLabelText(),
+						"the label is used as tooltip for elements with absolute binding"
+					);
+				} else {
+					assert.deepEqual(
+						aAdditionalElements.length, 4,
+						"then there are 4 additional Elements available"
+					);
+				}
 				this.oDesignTime.destroy();
-			}.bind(this));
+			});
 		});
 
 		QUnit.test("checks if navigation and absolute binding work (object page layout example)", async function(assert) {
