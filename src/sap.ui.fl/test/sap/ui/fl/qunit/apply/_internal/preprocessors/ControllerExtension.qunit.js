@@ -122,7 +122,10 @@ sap.ui.define([
 				},
 				getManifestEntry() {}
 			};
-			await FlQUnitUtils.initializeFlexStateWithData(sandbox, "ui.s2p.mm.purchorder.approve.view.S2", {changes: [oChange]});
+			// Don't await the initialization here because in real apps the getControllerExtensions flow
+			// might be called before the FlexState is fully initialized and thus should be able to take
+			// care of waiting for it
+			FlQUnitUtils.initializeFlexStateWithData(sandbox, "ui.s2p.mm.purchorder.approve.view.S2", {changes: [oChange]});
 			sandbox.stub(Utils, "getAppComponentForControl").returns(oAppComponent);
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sControllerName);
 

@@ -84,14 +84,16 @@ sap.ui.define([
 			}
 			var sFlexReference = ManifestUtils.getFlexReferenceForControl(oAppComponent);
 
-			const aFlexObjects = FlexState.getFlexObjectsDataSelector().get({reference: sFlexReference});
-			var aExtensionModules = aFlexObjects.filter(function(oChange) {
-				return isCodeExt(oChange) && isForController(sControllerName, oChange);
-			}).map(function(oChange) {
-				return oChange.getModuleName();
-			});
+			return FlexState.waitForInitialization(sFlexReference).then(() => {
+				const aFlexObjects = FlexState.getFlexObjectsDataSelector().get({reference: sFlexReference});
+				var aExtensionModules = aFlexObjects.filter(function(oChange) {
+					return isCodeExt(oChange) && isForController(sControllerName, oChange);
+				}).map(function(oChange) {
+					return oChange.getModuleName();
+				});
 
-			return getExtensionModules(aExtensionModules);
+				return getExtensionModules(aExtensionModules);
+			});
 		}
 
 		return [];
