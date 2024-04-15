@@ -2475,3 +2475,197 @@ html.sap-desktop .sapMGT.sapMGTTwoByHalf.sapMGTIconMode.HighContrastTile:not(.sa
 		outline-offset: 0 !important;
 	}
 }
+
+//Badge Styles
+
+//Styles when Icon and Text are present
+
+.sapMGT {
+	.sapMGTBadge {
+		position: absolute;
+		top: -0.6rem;
+		right: 0.5rem;
+		border-radius: 0.5rem;
+		font-weight: bold;
+		font-size: 0.75rem;
+		padding: 0 0.5rem;
+		font-size: @sapFontSmallSize;
+		height: 1rem;
+		line-height: 1rem;
+		z-index: 2;
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: center;
+		gap: 0.3125rem;
+		border: 0.0625rem solid transparent;
+		.sapMGTBadgeText {
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+		&.sapMGTBadgeOnlyIcon{
+			border-radius: 1.375rem;
+			padding: 0;
+			height: 1.375rem;
+			width: 1.375rem;
+			top: -0.75rem;
+			.sapUiIcon {
+				top: 0.0625rem;
+			}
+		}
+		.sapMGTBadgeOverlay {
+			position: absolute;
+			inset: -1px;
+			border-radius: 0.5rem;
+			opacity: 0.8;
+		}
+		&.sapMGTBadgeTextPresent {
+			.sapUiIcon {
+				line-height: 0;
+			}
+		}
+	}
+	&.OneByOne {
+		.sapMGTBadge {
+			.sapMGTBadgeText{
+				max-width: 7.9rem;
+			}
+		}
+	}
+	&.TwoByOne {
+		.sapMGTBadge {
+			.sapMGTBadgeText {
+				max-width: 19.55rem;
+			}
+		}
+	}
+	&.TwoByHalf {
+		.sapMGTBadge {
+			.sapMGTBadgeText {
+				max-width: 19.55rem;
+			}
+		}
+	}
+	&.OneByHalf {
+		.sapMGTBadge {
+			.sapMGTBadgeText{
+				max-width: 7.9rem;
+			}
+		}
+	}
+}
+
+.sapMGT.sapMTileSmallPhone {
+	&.OneByOne {
+		.sapMGTBadge {
+			.sapMGTBadgeText {
+				max-width: 6.25rem;
+			}
+		}
+	}
+	&.TwoByOne {
+		.sapMGTBadge {
+			.sapMGTBadgeText {
+				max-width: 15.85rem;
+			}
+		}
+	}
+	&.TwoByHalf {
+		.sapMGTBadge {
+			.sapMGTBadgeText {
+				max-width: 15.85rem;
+			}
+		}
+	}
+	&.OneByHalf {
+		.sapMGTBadge {
+			.sapMGTBadgeText {
+				max-width: 6.25rem;
+			}
+		}
+	}
+}
+
+//Styles when only text is present
+.sapMGT {
+	&.OneByOne {
+		.sapMGTBadge.sapMGTBadgeOnlyText {
+			.sapMGTBadgeText {
+				max-width: 9.0625rem;
+			}
+		}
+	}
+
+	&.TwoByOne {
+		.sapMGTBadge.sapMGTBadgeOnlyText {
+			.sapMGTBadgeText {
+				max-width: 20.5625rem;
+			}
+		}
+	}
+
+	&.OneByHalf {
+		.sapMGTBadge.sapMGTBadgeOnlyText {
+			.sapMGTBadgeText {
+				max-width: 9.0625rem;
+			}
+		}
+	}
+
+	&.TwoByHalf {
+		.sapMGTBadge.sapMGTBadgeOnlyText {
+			.sapMGTBadgeText {
+				max-width: 20.5625rem;
+			}
+		}
+	}
+}
+
+.sapMGT.sapMTileSmallPhone {
+	&.OneByOne {
+		.sapMGTBadge.sapMGTBadgeOnlyText {
+			.sapMGTBadgeText {
+				max-width: 7.3125rem;
+			}
+		}
+	}
+
+	&.TwoByOne {
+		.sapMGTBadge.sapMGTBadgeOnlyText {
+			.sapMGTBadgeText {
+				max-width: 17.0625rem;
+			}
+		}
+	}
+
+	&.OneByHalf {
+		.sapMGTBadge.sapMGTBadgeOnlyText {
+			.sapMGTBadgeText {
+				max-width: 7.3125rem;
+			}
+		}
+	}
+
+	&.TwoByHalf {
+		.sapMGTBadge.sapMGTBadgeOnlyText {
+			.sapMGTBadgeText {
+				max-width: 17.0625rem;
+			}
+		}
+	}
+}
+
+//Styles in IconMode tile when size is TwoByHalf
+
+.sapMGT.sapMGTIconMode.TwoByHalf {
+	.sapMGTBadge.sapMGTBadgeOnlyIcon {
+		top: -0.125rem;
+		left: 2.125rem;
+	}
+	&.sapMTileSmallPhone {
+		.sapMGTBadge.sapMGTBadgeOnlyIcon {
+			top: 0.3125rem;
+		}
+	}
+}
