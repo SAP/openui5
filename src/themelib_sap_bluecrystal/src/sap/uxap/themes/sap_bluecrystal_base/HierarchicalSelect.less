@@ -1,0 +1,197 @@
+/* ============================================ */
+/* CSS for control sap.uxap/HierarchicalSelect  */
+/* Base theme                                   */
+/* ============================================ */
+
+.sapUxAPHierarchicalSelect {
+	width: 2rem;
+	margin: 0;
+
+	.sapMSltLabel {
+		padding: 0 2.5rem 0 1rem;
+	}
+
+	.sapMSltIcon {
+		width: 1.625rem;
+		height: 1.625rem;
+		line-height: 1.625rem;
+		font-size: 1rem;
+		padding: 0;
+		border-radius: 0.125rem;
+		position: absolute;
+		top: 0.6875rem;
+
+		&::before {
+			width: 1.625rem;
+			height: 1.625rem;
+			position: absolute;
+			top: 0;
+			left: 0;
+		}
+	}
+
+	&.sapMSltHoverable.sapMSltIconOnly.sapMSltPressed.sapMSlt.sapMSltFocused > .sapMSltIcon {
+		outline: none;
+	}
+}
+
+.sapUiSizeCompact .sapUxAPHierarchicalSelect.sapMSlt,
+.sapUiSizeCompact .sapUiContainer-Narrow .sapUxAPHierarchicalSelect.sapMSlt {
+	height: 2rem;
+	margin-top: 0;
+	margin-bottom: 0;
+}
+
+.sapUiSizeCompact .sapUxAPHierarchicalSelect .sapMSltIcon {
+	top: 0.125rem;
+}
+
+/* select label */
+
+.sapUxAPHierarchicalSelect,
+.sapUxAPHierarchicalSelect .sapMSltLabel,
+.sapUxAPHierarchicalSelect .sapMSltArrow {
+	line-height: 3rem;
+}
+
+.sapUiSizeCompact .sapUxAPHierarchicalSelect,
+.sapUiSizeCompact .sapUxAPHierarchicalSelect .sapMSltLabel,
+.sapUiSizeCompact .sapUxAPHierarchicalSelect .sapMSltArrow {
+	line-height: 2rem;
+}
+
+.sapUxAPHierarchicalSelect .sapMSltArrow,
+.sapUiSizeCompact .sapUxAPHierarchicalSelect .sapMSltArrow {
+	width: 2.5rem;
+}
+
+.sapMSltPicker .sapUxAPHierarchicalSelect.sapMSltBar::after {
+	font-family: "SAP-icons";
+	speak: none;
+	content: "\e03e";
+}
+
+.sapUiSizeCompact .sapMSltPicker .sapUxAPHierarchicalSelect.sapMSltBar::after {
+	line-height: 2rem;
+}
+
+/* OVERVIEW BUTTON */
+.sapUxAPHierarchicalSelect.sapMSltIconOnly {
+	position: absolute;
+	right: 0;
+	top: 0;
+	height: 3rem;
+}
+
+.sapUiSizeCompact .sapUxAPHierarchicalSelect.sapMSltIconOnly {
+	height: 2rem;
+}
+
+/* inner list */
+
+.sapUxAPHierarchicalSelectFirstLevel.sapMSelectListItem,
+.sapUxAPHierarchicalSelectSecondLevel.sapMSelectListItem {
+	height: auto;
+	border-bottom: none;
+}
+
+.sapUxAPHierarchicalSelectFirstLevel.sapMSelectListItem,
+.sapUxAPHierarchicalSelectSecondLevel.sapMSelectListItem {
+	white-space: normal;
+	line-height: normal;
+	padding: 1rem 0.5rem 1rem 1rem;
+}
+
+.sapUiSizeCompact .sapUxAPHierarchicalSelectFirstLevel.sapMSelectListItem,
+.sapUiSizeCompact .sapUxAPHierarchicalSelectSecondLevel.sapMSelectListItem {
+	padding: 0.5rem;
+}
+
+.sapUxAPHierarchicalSelectSecondLevel.sapMSelectListItem {
+	text-indent: 1.5rem;
+}
+
+.sapUxAPHierarchicalSelectUpperCase .sapMSltLabel,
+.sapMSltPickerFirstLevelUpperCase .sapMInputBaseInner,
+.sapMSltPickerFirstLevelUpperCase .sapUxAPHierarchicalSelectFirstLevel.sapMSelectListItem {
+	text-transform: uppercase;
+}
+
+/* styling needed to achieve underline of the select label on phone */
+.sapUxAPObjectPageLayout-Std-Phone, .sap-phone {
+
+	.sapUxAPHierarchicalSelect {
+		display: flex;
+		 .sapMSltLabel {
+			position: relative;
+			padding-left: 0;
+			display: inline-block;
+			vertical-align: top;
+			line-height: 2.2rem;
+			width: auto;
+			padding-right: 0;
+			overflow: visible;
+		 	min-width: 0;
+			.sapMSelectListItemText {
+				display: inline-block;
+				width: 100%;
+				text-overflow: ellipsis;
+				overflow: hidden;
+				box-sizing: border-box;
+			}
+		}
+
+		.sapMSltArrow {
+			position: static;
+			flex-shrink: 0;
+			margin-left: auto;
+		}
+	}
+
+	.sapMSlt.sapUxAPHierarchicalSelect.sapMBarChild {
+		height: 3rem;
+		border: none;
+		padding-left: 1rem;
+	}
+}
+
+.sap-phone .sapUiSizeCompact,
+.sapUiSizeCompact .sapUxAPObjectPageLayout-Std-Phone {
+	.sapUxAPHierarchicalSelect .sapMSltLabel {
+		padding-bottom: 0.3rem;
+	}
+
+	.sapMSlt.sapUxAPHierarchicalSelect {
+		height: 2rem;
+	}
+}
+
+/* IE and Edge ignores outline-offset. Use an overlay: */
+/* TODO remove after the end of support for Internet Explorer */
+html[data-sap-ui-browser^="ie"].sap-desktop,
+html[data-sap-ui-browser^="ed"].sap-desktop {
+	.sapMSlt.sapUxAPHierarchicalSelect:focus  > .sapMSltArrow {
+		box-shadow: none;
+	}
+
+	.sapUxAPHierarchicalSelect.sapMSltHoverable.sapMSltIconOnly.sapMSlt:not(.sapMSltPressed):focus {
+		&:before {
+			border: none;
+		}
+		> .sapMSltIcon {
+			outline: none;
+			position: relative;
+		}
+		> .sapMSltIcon:after {
+			content: " ";
+			box-sizing: border-box;
+			width: 100%;
+			height: 100%;
+			position: absolute;
+			left: 0;
+			top: 0;
+			border: 1px dashed @sapUiContentFocusColor;
+			pointer-events: none;
+		}
+	}
+}
