@@ -479,7 +479,7 @@ sap.ui.define([
 
 	QUnit.module("automatic start", {
 		beforeEach() {
-			sandbox.stub(FlexRuntimeInfoAPI, "getFlexReference");
+			sandbox.stub(FlexRuntimeInfoAPI, "getFlexReference").returns("ABC");
 			ReloadManager.disableAutomaticStart(Layer.USER);
 			ReloadManager.disableAutomaticStart(Layer.CUSTOMER);
 		},
@@ -491,7 +491,8 @@ sap.ui.define([
 			ReloadManager.enableAutomaticStart(Layer.CUSTOMER, {});
 			window.sessionStorage.getItem(`sap.ui.rta.restart.${Layer.CUSTOMER}`);
 			var sValue = window.sessionStorage.getItem(`sap.ui.rta.restart.${Layer.CUSTOMER}`);
-			assert.strictEqual(sValue, "true", "the value is correct");
+			assert.strictEqual(sValue, "ABC", "the value is correct");
+			assert.ok(FlexInfoSession.getByReference("ABC").reloadFlexData, "reloadFlexData is set");
 		});
 	});
 
