@@ -558,7 +558,7 @@ sap.ui.define([
 				oParentTarget = this._mTargets[sParent];
 
 				if (!oParentTarget) {
-					future.errorThrows("The target '" + oTarget._oOptions._name + " has a parent '" + sParent + "' defined, but it was not found in the other targets", this);
+					future.errorThrows("The target '" + oTarget._oOptions._name + "' has a parent '" + sParent + "' defined, but it was not found in the other targets", this);
 					return;
 				}
 

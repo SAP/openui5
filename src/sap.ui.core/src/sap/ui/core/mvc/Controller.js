@@ -758,7 +758,7 @@ sap.ui.define([
 
 		Controller.prototype.connectToView = function(oView) {
 			this.oView = oView;
-			const sControllerName = this.oView.getControllerName?.() || "sap.ui.core.mvc.Controller";
+			const sControllerName = this.getMetadata().getName();
 
 			if (this.onInit) {
 				const fnInit = function() { _enforceNoReturnValue(this.onInit.apply(this, arguments), /*mLogInfo=*/{ name: "onInit", component: sControllerName }); };

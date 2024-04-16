@@ -26,7 +26,7 @@
 			<m:CheckBox text="HEY named aggregation!" />
 			<mvc:View async="true" id="MyJSView" viewName="module:example/mvc/TypedView2"></mvc:View>
 			<mvc:XMLView async="true" id="MyXMLView" viewName="example.mvc.test2"></mvc:XMLView>
-			<mvc:XMLView async="true" id="MyHTMLView" viewName="example.mvc.test2" controllerName="example.mvc.test"></mvc:XMLView>
+			<mvc:XMLView async="true" id="MyHTMLView" viewName="example.mvc.test2"></mvc:XMLView>
 		</m:content>
 	</m:Panel>
 </mvc:View>

@@ -25,8 +25,8 @@ sap.ui.define([
 	var mObjects = {};
 
 	var sXmlViewContent =
-		"<mvc:View height=\"100%\" xmlns:mvc=\"sap.ui.core.mvc\" xmlns:core=\"sap.ui.core\" xmlns=\"sap.m\" id=\"view\"" +
-		"	displayBlock=\"true\" unknownProperty=\"true\">" +
+		"<mvc:View height=\"100%\" xmlns:mvc=\"sap.ui.core.mvc\" xmlns:core=\"sap.ui.core\" xmlns=\"sap.m\" " +
+		"	displayBlock=\"true\">" +
 		"	<Panel id=\"panel\">" +
 		"		<content>" +
 		"			<Button text=\"Button\" id=\"button1\" />" +

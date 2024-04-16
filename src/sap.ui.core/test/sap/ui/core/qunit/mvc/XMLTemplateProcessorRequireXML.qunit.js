@@ -3,6 +3,7 @@ sap.ui.define([
 	'sap/ui/core/Component',
 	"sap/ui/core/mvc/View",
 	"sap/m/InstanceManager",
+	"sap/base/future",
 	"sap/base/Log",
 	"sap/base/util/merge",
 	"sap/ui/model/json/JSONModel",
@@ -10,7 +11,7 @@ sap.ui.define([
 	"sap/ui/core/routing/HashChanger",
 	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(Component, View,
-	InstanceManager, Log, merge, JSONModel, XMLView, HashChanger, nextUIUpdate) {
+	InstanceManager, future, Log, merge, JSONModel, XMLView, HashChanger, nextUIUpdate) {
 	"use strict";
 
 	var TESTDATA_PREFIX = "testdata.xml-require";
@@ -347,8 +348,13 @@ sap.ui.define([
 			InstanceManager.closeAllDialogs();
 			InstanceManager.closeAllPopovers();
 		}
-	}, {
-		testDescription: "Parsing core:require in XMLView with fragment with missing definition in require context",
+	},
+
+	/**
+	 * @deprecated
+	 */
+	{
+		testDescription: "Parsing core:require in XMLView with fragment with missing definition in require context (future=false)",
 		viewName: ".view.XMLTemplateProcessorAsync_fragment_insufficient_require",
 		settings: {
 			async: {
@@ -358,9 +364,29 @@ sap.ui.define([
 				}
 			}
 		},
+		future: false,
 		runAssertions: function (oView, mSpies, assert, bAsync) {
 			var oWarningSpy = mSpies.warning;
 			assert.ok(oWarningSpy.calledWith(sinon.match(/Event handler name 'Toast.show\('This is a toast'\)' could not be resolved to an event handler function/)));
+		}
+	}, {
+		testDescription: "Parsing core:require in XMLView with fragment with missing definition in require context (future=true)",
+		viewName: ".view.XMLTemplateProcessorAsync_fragment_insufficient_require",
+		settings: {
+			async: {
+				create: async (name, setting, assert) => {
+					const oView = createView(name, setting);
+					assert.rejects(oView);
+					await oView.catch((err) => {
+							assert.ok(err.message.includes("Event handler name 'Toast.show('This is a toast')' could not be resolved to an event handler function"),
+							"View creation rejects with correct error");
+						});
+				}
+			}
+		},
+		future: true,
+		runAssertions: function (oView, mSpies, assert, bAsync) {
+
 		}
 	}, {
 		testDescription: "Parsing core:require in XMLView with fragment with missing definition in require context with preprocessors enabled",
@@ -383,8 +409,13 @@ sap.ui.define([
 			sinon.assert.neverCalledWith(oWarningSpy, "Variable: Toast isn't defined in the require context of the current XMLView/Fragment");
 			assert.ok(oWarningSpy.neverCalledWith(sinon.match(/Event handler name 'Toast.show\('This is a toast'\)' could not be resolved to an event handler function/)));
 		}
-	}, {
-		testDescription: "Parsing core:require in XMLView with fragment w/o require context",
+	},
+
+	/**
+	 * @deprecated
+	 */
+	{
+		testDescription: "Parsing core:require in XMLView with fragment w/o require context (future=false)",
 		viewName: ".view.XMLTemplateProcessorAsync_fragment_require_noRequire",
 		settings: {
 			async: {
@@ -394,12 +425,37 @@ sap.ui.define([
 				}
 			}
 		},
+		future: false,
 		runAssertions: function (oView, mSpies, assert, bAsync) {
 			var oWarningSpy = mSpies.warning;
 			assert.ok(oWarningSpy.calledWith(sinon.match(/Event handler name 'Toast.show\('Problem occurred'\)' could not be resolved to an event handler function/)));
 		}
 	}, {
-		testDescription: "Parsing core:require in XMLView with nested view and the require context isn't forwarded to nested view",
+		testDescription: "Parsing core:require in XMLView with fragment w/o require context (future=true)",
+		viewName: ".view.XMLTemplateProcessorAsync_fragment_require_noRequire",
+		settings: {
+			async: {
+				create: async (name, setting, assert) => {
+					const oView = createView(name, setting);
+					assert.rejects(oView);
+					await oView.catch((err) => {
+							assert.ok(err.message.includes("Event handler name 'Toast.show('Problem occurred')' could not be resolved to an event handler function"),
+							"View creation rejects with correct error");
+						});
+				}
+			}
+		},
+		future: true,
+		runAssertions: function (oView, mSpies, assert, bAsync) {
+
+		}
+	},
+
+	/**
+	 * @deprecated
+	 */
+	{
+		testDescription: "Parsing core:require in XMLView with nested view and the require context isn't forwarded to nested view (future=false)",
 		viewName: ".view.XMLTemplateProcessorAsync_require_nested",
 		settings: {
 			async: {
@@ -410,6 +466,7 @@ sap.ui.define([
 				}
 			}
 		},
+		future: false,
 		runAssertions: function (oView, mSpies, assert, bAsync) {
 			var oCreateSpy = mSpies._create;
 			var oWarningSpy = mSpies.warning;
@@ -420,7 +477,34 @@ sap.ui.define([
 			});
 		}
 	}, {
-		testDescription: "Parsing core:require in ExtensionPoint",
+		testDescription: "Parsing core:require in XMLView with nested view and the require context isn't forwarded to nested view (future=true)",
+		viewName: ".view.XMLTemplateProcessorAsync_require_nested",
+		settings: {
+			async: {
+				create: async (name, setting, assert) => {
+					const oView = createView(name, setting)
+						.then((oView) => {
+							return oView.getContent()[0].loaded();
+						});
+					assert.rejects(oView);
+					await oView.catch((err) => {
+						assert.ok(err.message.includes("Event handler name 'Box.show('MessageBox')' could not be resolved to an event handler function"),
+						"View creation rejects with correct error");
+					});
+				}
+			}
+		},
+		future: true,
+		runAssertions: function (oView, mSpies, assert, bAsync) {
+
+		}
+	},
+
+	/**
+	 * @deprecated
+	 */
+	{
+		testDescription: "Parsing core:require in ExtensionPoint (future=false)",
 		settings: {
 			async: {
 				create: function () {
@@ -435,6 +519,7 @@ sap.ui.define([
 				}
 			}
 		},
+		future: false,
 		runAssertions: function (oView, mSpies, assert, bAsync) {
 			var oWarningSpy = mSpies.warning;
 
@@ -464,8 +549,35 @@ sap.ui.define([
 			});
 		}
 	}, {
-		testDescription: "Parsing core:require in ExpressionBinding",
-		viewName: ".view.XMLTemplateProcessorAsync_require_expression",
+		testDescription: "Parsing core:require in ExtensionPoint (future=true)",
+		settings: {
+			async: {
+				create: async (name, settings, assert) => {
+					const oComponent = Component.create({
+						name: TESTDATA_PREFIX + ".extension-points.Child"
+					}).then(function (oComponent) {
+						return oComponent.getRootControl().loaded();
+					});
+					assert.rejects(oComponent);
+					await oComponent.catch((err) => {
+						assert.ok(err.message.includes("Event handler name 'Toast.show('Do you really want to close?')' could not be resolved to an event handler function"),
+						"View creation rejects with correct error");
+					});
+				}
+			}
+		},
+		future: true,
+		runAssertions: function (oView, mSpies, assert, bAsync) {
+
+		}
+	},
+
+	/**
+	 * @deprecated
+	 */
+	{
+		testDescription: "Parsing core:require in ExpressionBinding (future=false)",
+		viewName: ".view.XMLTemplateProcessorAsync_require_expressionFaulty",
 		settings: {
 			async: {
 				create: createView,
@@ -477,6 +589,7 @@ sap.ui.define([
 				}
 			}
 		},
+		future: false,
 		runAssertions: function (oView, mSpies, assert, bAsync) {
 
 			var oModel = new JSONModel({
@@ -542,11 +655,13 @@ sap.ui.define([
 				bAsync = true,
 				mSpies;
 
+			future.active = oConfig.future;
+
 			if (oConfig.settings.async.spies) {
 				mSpies = createSpies(oConfig.settings.async.spies, this);
 			}
 
-			return oConfig.settings.async.create(oConfig.viewName, oConfig.settings.async.additionalViewSettings)
+			return oConfig.settings.async.create(oConfig.viewName, oConfig.settings.async.additionalViewSettings, assert)
 				.then(function (oView) {
 					return oConfig.runAssertions.call(that, oView, mSpies, assert, bAsync);
 				}, function(oError) {
@@ -555,6 +670,8 @@ sap.ui.define([
 					} else {
 						throw oError;
 					}
+				}).then(() => {
+					future.active = undefined;
 				});
 		});
 	});

@@ -700,35 +700,31 @@ sap.ui.define([
 			}
 
 			if (bAsync && fnAsyncCallback && Object.keys(vResult).length !== aNames.length) {
-				if (!ThemeManager.themeLoaded) {
-					resolveWithParameter = function () {
-						ThemeManager._detachThemeApplied(resolveWithParameter);
-						var vParams = this.get({ // Don't pass callback again
-							name: vName.name,
-							scopeElement: vName.scopeElement
-						});
+				resolveWithParameter = function () {
+					Theming.detachApplied(resolveWithParameter);
+					var vParams = this.get({ // Don't pass callback again
+						name: vName.name,
+						scopeElement: vName.scopeElement
+					});
 
-						if (!vParams || (typeof vParams === "object" && (Object.keys(vParams).length !== aNames.length))) {
-							future.errorThrows("One or more parameters could not be found.", "sap.ui.core.theming.Parameters");
-						}
-
-						fnAsyncCallback(vParams);
-						aCallbackRegistry.splice(aCallbackRegistry.findIndex(findRegisteredCallback), 1);
-					}.bind(this);
-
-					// Check if identical callback is already registered and reregister with current parameters
-					iIndex = aCallbackRegistry.findIndex(findRegisteredCallback);
-					if (iIndex >= 0) {
-						ThemeManager._detachThemeApplied(aCallbackRegistry[iIndex].eventHandler);
-						aCallbackRegistry[iIndex].eventHandler = resolveWithParameter;
-					} else {
-						aCallbackRegistry.push({ callback: fnAsyncCallback, eventHandler: resolveWithParameter });
+					if (!vParams || (typeof vParams === "object" && (Object.keys(vParams).length !== aNames.length))) {
+						future.errorThrows("One or more parameters could not be found.", "sap.ui.core.theming.Parameters");
 					}
-					ThemeManager._attachThemeApplied(resolveWithParameter);
-					return undefined; // Don't return partial result in case we expect applied event.
+
+					fnAsyncCallback(vParams);
+					aCallbackRegistry.splice(aCallbackRegistry.findIndex(findRegisteredCallback), 1);
+				}.bind(this);
+
+				// Check if identical callback is already registered and reregister with current parameters
+				iIndex = aCallbackRegistry.findIndex(findRegisteredCallback);
+				if (iIndex >= 0) {
+					Theming.detachApplied(aCallbackRegistry[iIndex].eventHandler);
+					aCallbackRegistry[iIndex].eventHandler = resolveWithParameter;
 				} else {
-					future.errorThrows("One or more parameters could not be found.", "sap.ui.core.theming.Parameters");
+					aCallbackRegistry.push({ callback: fnAsyncCallback, eventHandler: resolveWithParameter });
 				}
+				Theming.attachApplied(resolveWithParameter);
+				return undefined; // Don't return partial result in case we expect applied event.
 			}
 
 			return aNames.length === 1 ? vResult[aNames[0]] : vResult;

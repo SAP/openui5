@@ -1,4 +1,4 @@
-<mvc:View controllerName="my.Controller09" xmlns:m="sap.m"
+<mvc:View xmlns:m="sap.m"
 	xmlns:mvc="sap.ui.core.mvc" xmlns="http://www.w3.org/1999/xhtml"
 	displayBlock="true">
 	<m:Panel id="myPanel">

@@ -8,7 +8,7 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 				paths: {
 					"testdata/fragments": "test-resources/sap/ui/core/qunit/testdata/fragments/", // fragments used in views
 
-					// @deprecated as of 1.110
+// @deprecated as of 1.110
 					"testdata/fragments_legacyAPIs": "test-resources/sap/ui/core/qunit/testdata/fragments_legacyAPIs/", // fragments used in views
 					"testdata/mvc": "test-resources/sap/ui/core/qunit/mvc/testdata", // used by async tests
 
@@ -25,6 +25,16 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 				libs: ["sap.ui.core", "sap.ui.layout", "sap.m"],
 				theme: "sap_fiori_3",
 				language: "en"
+			},
+			qunit: {
+				versions : {
+					"2.18" : {
+						module : "test-resources/sap/ui/core/qunit/thirdparty/qunit-2.18",
+						css : "test-resources/sap/ui/core/qunit/thirdparty/qunit-2.18.css"
+					}
+				},
+				version : "2.18",
+				reorder : false
 			}
 		},
 		tests: {
@@ -69,7 +79,7 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 				}
 			},
 			XMLTemplateProcessor: {
-				title: "QUnit Page for XMLTemplateProcessor (sync)",
+				title: "QUnit Page for XMLTemplateProcessor",
 				loader: {
 					paths: {
 						"my": "test-resources/sap/ui/core/qunit/fragment/"

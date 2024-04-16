@@ -1148,7 +1148,6 @@ sap.ui.define([
 
 			this.oXmlString = (
 				'<mvc:View ' +
-					'id="testComponent---myView" ' +
 					'xmlns:mvc="sap.ui.core.mvc" ' +
 					'xmlns="sap.m"' +
 				'>' +

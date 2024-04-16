@@ -91,6 +91,9 @@ sap.ui.define(function () {
 				bootCore: false,
 				page: "test-resources/sap/ui/core/qunit/rule/app/syncXHRBootstrapDebug.qunit.html?sap-language=en"
 			},
+			/**
+			 * @deprecated
+			 */
 			"app/controllerExtension": {
 				title: "QUnit Tests for controller extensions",
 				loader: {

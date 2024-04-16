@@ -14,9 +14,7 @@
 	"sap.ui5": {
 
 		"resourceRoots": {
-			"foo.bar": "../../foo/bar",
-			"absolute": "http://absolute/uri",
-			"server.absolute": "/server/absolute/uri"
+			"foo.bar": "../../foo/bar"
 		},
 
 		"resources": {
@@ -56,8 +54,8 @@
 				"uri": "i18n/i18n.properties"
 			},
 			"sfapi": {
-				"type": "sap.ui.model.odata.ODataModel",
-				"uri": "./some/odata/service"
+				"type": "sap.ui.model.odata.v2.ODataModel",
+				"uri": "./some/odata/service/"
 			}
 		},
 

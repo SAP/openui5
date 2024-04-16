@@ -288,7 +288,7 @@ sap.ui.define([
 	+  '</dependents>'
 	+  '</Panel>'
 	+  '<Panel headerText="innerButton" id="PANELV32">'
-	+  '<mvc:View async="true" id="EMBEDDEDVIEW" viewName="my.command.Command2" type="XML"/>'
+	+  '<mvc:XMLView async="true" id="EMBEDDEDVIEW" viewName="my.command.Command2"/>'
 	+  '</Panel>'
 	+  '</Panel>'
 	+  '</mvc:View>';

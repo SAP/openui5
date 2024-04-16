@@ -1,0 +1,40 @@
+<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m"
+	displayBlock="true"
+	controllerName="testdata.xml-require.view.XMLTemplateProcessorAsync_require_expression">
+	<App>
+		<Page title="Hello" core:require="{
+				Foo:'testdata/xml-require/helper/OutputText',
+				Bar:'testdata/xml-require/helper/OutputText',
+				myDateType:'sap/ui/model/type/Date'
+			}">
+			<Label id="foo" text="{= ${/amount} > 1000 ? Foo.foo() : Bar.bar()}"/>
+			<Label id="bar" visible="{= ${/foobar} === Foo.foo()}"/>
+			<Label id="formatter" text="{path:'/test', formatter:'Foo.format'}"/>
+			<Label id="formatterGlobal" text="{path:'/test', formatter:'testdata.xml-require.helper.OutputText.format'}"/>
+			<Label id="formatterLocal" text="{path:'/test', formatter:'.format'}"/>
+			<Label id="text" text="{= Foo.checkExistence(${/exist}) ? ${/text1} : ${/text2}}"/>
+			<Label core:require="{
+					myDecimal:'sap/ui/model/type/Float'
+				}" id="type" text="{path:'/number', type:'myDecimal', formatOptions:{decimals: 3}}"/>
+			<List core:require="{
+					Factory:'testdata/xml-require/helper/Factory'
+				}" id="list" items="{path:'/items', factory:'Factory.createItem'}"></List>
+			<Button id="button" text="Use variable for type" press=".onButtonPress(${
+					path: '/date',
+					type: 'myDateType',
+					formatOptions: {
+						pattern: 'yyyy-MM',
+						source: {pattern: 'timestamp'}
+					}
+				})" />
+			<Button id="button1" text="Use namespace+name for type" press=".onButtonPress(${
+					path: '/date',
+					type: 'sap.ui.model.type.Date',
+					formatOptions: {
+						pattern: 'yyyy',
+						source: {pattern: 'timestamp'}
+					}
+				})" />
+		</Page>
+	</App>
+</mvc:View>

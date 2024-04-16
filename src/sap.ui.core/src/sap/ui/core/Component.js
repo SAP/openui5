@@ -2620,12 +2620,10 @@ sap.ui.define([
 		const def = new Deferred();
 
 		sap.ui.require([sModuleName], def.resolve, (err) => {
-			future.warningThrows(`Cannot load module '${sModuleName}'. ` +
+			future.warningRejects(def.resolve, def.reject, `Cannot load module '${sModuleName}'. ` +
 				"This will most probably cause an error once the module is used later on.",
 				sComponentName, "sap.ui.core.Component");
 			Log.warning(err);
-
-			def.resolve();
 		});
 
 		return def.promise;
@@ -2785,8 +2783,14 @@ sap.ui.define([
 					// [1] after evaluating the manifest & loading the necessary dependencies,
 					//     we make sure the routing related classes are required before instantiating the Component
 					const aRoutingClassNames = findRoutingClasses(oClassMetadata);
-					const aModuleLoadingPromises = aRoutingClassNames.map((sClassName) => {
-						return loadModuleAndLog(sClassName, sComponentName);
+					const aModuleLoadingPromises = aRoutingClassNames.map((vClass) => {
+						let pClass;
+						if (typeof vClass === 'function') {
+							pClass = Promise.resolve(vClass);
+						} else {
+							pClass = loadModuleAndLog(vClass, sComponentName);
+						}
+						return pClass;
 					});
 
 					// [2] Async require for all(!) manifests models ("preload: true" models might be required already)

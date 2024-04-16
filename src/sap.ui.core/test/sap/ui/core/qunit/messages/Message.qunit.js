@@ -218,6 +218,10 @@ sap.ui.define([
 ].forEach(function (sType0, i0, aTypes) {
 	var oMessage0 = new Message({type : sType0});
 
+	/**
+	 * Creating Messages with an unknown type will not be possible in UI5 2.x
+	 * @deprecated
+	 */
 	QUnit.test("compare " + sType0 + " with unknown", function (assert) {
 		var oMessageUnknown = new Message({type : "unknown"});
 

@@ -1,12 +1,13 @@
 /*global sinon, QUnit*/
 sap.ui.define([
+	"sap/base/future",
 	"sap/base/Log",
 	"sap/base/util/ObjectPath",
 	"sap/base/util/isPlainObject",
 	"sap/ui/base/DataType",
 	"sap/ui/core/Lib",
 	'sap/ui/core/library' // provides sap.ui.core data type and enums
-], function (Log, ObjectPath, isPlainObject, DataType, Library) {
+], function (future, Log, ObjectPath, isPlainObject, DataType, Library) {
 	"use strict";
 
 	function random(values) {
@@ -483,6 +484,9 @@ sap.ui.define([
 
 	QUnit.module("Type Lookup");
 
+	/**
+	 * @deprecated As of version 1.120
+	 */
 	QUnit.test("non-existing type", function (assert) {
 		var oWarningSpy = this.spy(Log, "warning");
 		var oErrorSpy = this.spy(Log, "error");
@@ -608,6 +612,9 @@ sap.ui.define([
 		assert.equal(oType.isValid('hello              world'), true, "both together are okay");
 	});
 
+	/**
+	 * @deprecated As of version 1.120
+	 */
 	QUnit.test("re-defining a type", function (assert) {
 		var oWarningSpy = this.spy(Log, "warning");
 		var oErrorSpy = this.spy(Log, "error");

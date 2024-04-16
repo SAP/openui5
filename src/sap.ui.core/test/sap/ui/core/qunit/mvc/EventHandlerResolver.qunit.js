@@ -3,10 +3,12 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/mvc/EventHandlerResolver",
+	"sap/base/future",
 	"sap/base/Log",
 	"sap/ui/model/type/Integer",
-	"sap/ui/model/type/Date"
-], function(Control, JSONModel, EventHandlerResolver, Log, IntegerType, DateType) {
+	"sap/ui/model/type/Date",
+	"sap/ui/model/type/String"
+], function(Control, JSONModel, EventHandlerResolver, future, Log, IntegerType, DateType, StringType) {
 	"use strict";
 
 	var oController;
@@ -75,8 +77,11 @@ sap.ui.define([
 		}
 	});
 
-
-	QUnit.test("Plain handler resolution", function(assert) {
+	/**
+	 * @deprecated
+	 */
+	QUnit.test("Plain handler resolution (future=false)", function(assert) {
+		future.active = false;
 		var fnController = EventHandlerResolver.resolveEventHandler(".fnControllerMethod", oController)[0];
 		assert.equal(fnController, oController.fnControllerMethod, "Controller method should be found");
 
@@ -90,6 +95,28 @@ sap.ui.define([
 
 		var fnGlobal = EventHandlerResolver.resolveEventHandler("ns.deepMethod", oController);
 		assert.strictEqual(fnGlobal, undefined, "Function name with deeper path shouldn't be searched in the controller");
+		future.active = undefined;
+	});
+
+	QUnit.test("Plain handler resolution (future=true)", function(assert) {
+		future.active = true;
+		var fnController = EventHandlerResolver.resolveEventHandler(".fnControllerMethod", oController)[0];
+		assert.equal(fnController, oController.fnControllerMethod, "Controller method should be found");
+
+		/**
+		 * @deprecated
+		 */
+		(() => {
+			var fnGlobal = EventHandlerResolver.resolveEventHandler("testEventHandlerResolver.subobject.someGlobalMethod", oController)[0];
+			assert.equal(fnGlobal, window.testEventHandlerResolver.subobject.someGlobalMethod, "Global method should be found");
+		})();
+
+		assert.throws(() => {
+				EventHandlerResolver.resolveEventHandler("ns.deepMethod", oController);
+			},
+			new Error("Event handler name 'ns.deepMethod' could not be resolved to an event handler function"),
+			"Function name with deeper path shouldn't be searched in the controller");
+		future.active = undefined;
 	});
 
 	QUnit.test("Handler resolution when parentheses are present", function(assert) {
@@ -141,7 +168,11 @@ sap.ui.define([
 		assert.equal(oSpy.callCount, 1, "Module method should be called once");
 	});
 
+	/**
+	 * @deprecated
+	 */
 	QUnit.test("Log warning for usage of not properly XML-required modules", function(assert) {
+		future.active = false;
 		var logSpy = sinon.spy(Log, "warning");
 
 		// immediately call the resolving handler
@@ -154,6 +185,22 @@ sap.ui.define([
 		assert.ok(logSpy.calledWith(sinon.match(/Event handler name 'Module.someMethod\(\)' could not be resolved to an event handler function/)));
 
 		logSpy.restore();
+		future.active = undefined;
+	});
+
+	QUnit.test("Throw error for usage of not properly XML-required modules (future=true)", function(assert) {
+		future.active = true;
+
+		const sExpectedMessage = "Event handler name 'Module.someMethod()' could not be resolved to an event handler function";
+		// immediately call the resolving handler
+		assert.throws(() => EventHandlerResolver.resolveEventHandler("Module.someMethod()", oController, {Module: {}}),
+			new Error(sExpectedMessage),
+			"Error thrown");
+		// test without associated controller
+		assert.throws(() => EventHandlerResolver.resolveEventHandler("Module.someMethod()", null, {Module: {}}),
+			new Error(sExpectedMessage),
+			"Error thrown");
+		future.active = undefined;
 	});
 
 	QUnit.test("'this' context when no parenthese is present", function(assert) {
@@ -432,8 +479,11 @@ sap.ui.define([
 		}
 	});
 
-
-	QUnit.test("error cases (and edge cases)", function(assert) {
+	/**
+	 * @deprecated
+	 */
+	QUnit.test("error cases (and edge cases) (future=false)", function(assert) {
+		future.active = false;
 		var fnFromController;
 
 		// unclosed braces
@@ -519,6 +569,94 @@ sap.ui.define([
 		}, function(err){
 			return err.message.indexOf("Bad") > -1;
 		}, "Error should be thrown for non-closed double quotes");
+		future.active = undefined;
+	});
+
+	QUnit.test("error cases (and edge cases) (future=true)", function(assert) {
+		future.active = true;
+		let fnFromController;
+
+		// unclosed braces
+		assert.throws(() => {
+			fnFromController = EventHandlerResolver.resolveEventHandler(".fnControllerMethod(${/someModelProperty)", oController)[0];
+			fnFromController(oDummyEvent);
+		} , (err) => {
+			return err.message.indexOf("no closing braces found") > -1;
+		}, "Correct error should be thrown for non-matching braces");
+
+		// unresolvable formatter
+		fnFromController = EventHandlerResolver.resolveEventHandler(".fnControllerMethod(${path:'/someModelProperty', formatter: '.myNotExistingFormatter'})", oController)[0];
+		assert.throws(() => fnFromController(oDummyEvent),
+			new Error("formatter function .myNotExistingFormatter not found!"),
+			"Error should be thrown for unresolvable formatter");
+
+		// globals within the expression
+		const spy = sinon.spy(Log, "warning");
+		fnFromController = EventHandlerResolver.resolveEventHandler(".fnControllerMethod(Math.max(1))", oController)[0];
+		fnFromController(oDummyEvent);
+		assert.equal(spy.callCount, 2, "Warning should be logged for globals inside parameter section");
+		assert.ok(spy.args[0][0].indexOf("Unsupported global identifier") > -1, "Warning should be logged for globals inside parameter section");
+		Log.warning.restore();
+
+		// wrong expression syntax
+		assert.throws(() => {
+			fnFromController = EventHandlerResolver.resolveEventHandler(".fnControllerMethod(${/someModelProperty} + {/someModelProperty})", oController)[0];
+			fnFromController(oDummyEvent);
+		}, (err) => {
+			return err.message.indexOf("Expected IDENTIFIER") > -1;
+		}, "Error should be thrown for expression syntax error");
+
+		// no expressions within
+		assert.throws(() => EventHandlerResolver.resolveEventHandler(".fnControllerMethod({= 'abc'})", oController),
+			new Error("It looks like an event handler parameter contains a binding expression ({=...}). This is not allowed and will cause an error later on because the entire event handler is already considered an expression: .fnControllerMethod({= 'abc'})"),
+			"Error should be thrown for expressions inside parameter section");
+		assert.throws(() => {
+			fnFromController(oDummyEvent);
+		}, (err) => {
+			return true; // browser-dependent message
+		}, "Error should be thrown for expressions inside parameter section");
+
+		// starting with a brace
+		assert.throws(() => {
+			fnFromController = EventHandlerResolver.resolveEventHandler("(${/someModelProperty})", oController)[0];
+			fnFromController(oDummyEvent);
+		}, (err) => {
+			return err.message.indexOf("starts with a bracket") > -1;
+		}, "Error should be thrown when starting with a bracket");
+
+		// wrong binding path
+		/*	TODO: help the user detect such issues without making too much noise when an empty value is perfectly fine
+		spy = sinon.spy(Log, "warning");
+		fnFromController = EventHandlerResolver.resolveEventHandler(".fnControllerMethod(${/thisdoesnotExist})", oController)[0];
+		fnFromController(oDummyEvent);
+		assert.equal(spy.callCount, 1, "Warning should be logged for empty values (which may indicate wrong bindings)");
+		assert.ok(spy.args[0][0].indexOf("EventHandlerResolver: no value was returned") > -1, "Warning should be logged for empty values (which may indicate wrong bindings)");
+		*/
+
+		// too many closing braces
+		assert.throws(() => {
+			fnFromController = EventHandlerResolver.resolveEventHandler(".fnControllerMethod(${/someModelProperty}})", oController)[0];
+			fnFromController(oDummyEvent);
+		}, (err) => {
+			return err.message.indexOf("but instead saw }") > -1;
+		}, "Error should be thrown for too many closing braces");
+
+		// non-closed single quotes
+		assert.throws(() => {
+			fnFromController = EventHandlerResolver.resolveEventHandler(".fnControllerMethod('x)", oController)[0];
+			fnFromController(oDummyEvent);
+		}, (err) => {
+			return err.message.indexOf("Bad") > -1;
+		}, "Error should be thrown for non-closed single quotes");
+
+		// non-closed double quotes
+		assert.throws(() => {
+			fnFromController = EventHandlerResolver.resolveEventHandler(".fnControllerMethod(\"x)", oController)[0];
+			fnFromController(oDummyEvent);
+		}, (err) => {
+			return err.message.indexOf("Bad") > -1;
+		}, "Error should be thrown for non-closed double quotes");
+		future.active = undefined;
 	});
 
 	QUnit.module("sap.ui.core.mvc.EventHandlerResolver - parse()");

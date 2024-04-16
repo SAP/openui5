@@ -76,7 +76,7 @@ sap.ui.define(["sap/ui/test/v2models/empty/Component"], function(EmptyExtensionC
 					"models": {
 
 						// inherit and only change settings
-						"ODataModel": {
+						"v2-ODataModel": {
 							"settings": {
 								"useBatch": true,
 								"skipMetadataAnnotationParsing": true

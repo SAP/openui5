@@ -120,8 +120,7 @@ sap.ui.define([
 					},
 					"testdata.customizing.sap.Sub3": {
 						"customizableText": {
-							"visible": false,
-							"wrapping": false // this should NOT work!! Only visible.
+							"visible": false
 						}
 					},
 					"testdata.customizing.sap.Sub4": {

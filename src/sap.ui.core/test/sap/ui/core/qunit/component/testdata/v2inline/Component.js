@@ -23,9 +23,7 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 
 					"resourceRoots": {
 						"x.y.z": "anypath",
-						"foo.bar": "../../foo/bar",
-						"absolute": "http://absolute/uri",
-						"server.absolute": "/server/absolute/uri"
+						"foo.bar": "../../foo/bar"
 					},
 
 					"resources": {
@@ -66,7 +64,7 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 						},
 						"sfapi": {
 							"type": "sap.ui.model.odata.v2.ODataModel",
-							"uri": "./some/odata/service"
+							"uri": "./some/odata/service/"
 						}
 					},
 

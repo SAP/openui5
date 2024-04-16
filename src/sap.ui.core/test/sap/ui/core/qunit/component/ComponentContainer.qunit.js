@@ -1,9 +1,10 @@
 sap.ui.define([
+	'sap/base/future',
 	'sap/base/Log',
 	'sap/ui/core/library',
 	'sap/ui/core/Component',
 	'sap/ui/core/ComponentContainer'
-], function(Log, sapUiCore, Component, ComponentContainer) {
+], function(future, Log, sapUiCore, Component, ComponentContainer) {
 
 	"use strict";
 	/*global QUnit, sinon */
@@ -67,7 +68,11 @@ sap.ui.define([
 		oComponentContainer.onBeforeRendering();
 	});
 
-	QUnit.test("Create component async - componentFailed (default)", function (assert) {
+	/**
+	 * @deprecated
+	 */
+	QUnit.test("Create component async - componentFailed (default) (future=false)", function (assert) {
+		future.active = false;
 		var done = assert.async();
 		var oComponentContainer = new ComponentContainer({
 			name: "samples.components.unkown",
@@ -81,11 +86,30 @@ sap.ui.define([
 				Promise.resolve().then(function() {
 					assert.ok(oLogErrorSpy.calledWith(sinon.match(/Failed to load component for container/)));
 					assert.strictEqual(oLogErrorSpy.callCount, 1, "One error should have been logged");
+					future.active = undefined;
 					done();
 				});
 			}.bind(this)
 		});
 		oComponentContainer.onBeforeRendering();
+	});
+
+	QUnit.test("Create component async - componentFailed (default) (future=true)", async function (assert) {
+		future.active = true;
+		var oComponentContainer = new ComponentContainer({
+			name: "samples.components.unkown",
+			async: true,
+			componentFailed: function(oEvent) {
+				var oReason = oEvent.getParameter("reason");
+				assert.ok(true, "Was not able to create component, componentFailed fired");
+				assert.ok(oReason.message.indexOf("failed to load") === 0, "Error object is passed as reason");
+			}
+		});
+		oComponentContainer.onBeforeRendering();
+		await oComponentContainer._oComponentPromise.catch((err) => {
+			assert.ok(err.message.includes("failed to load 'samples/components/unkown/Component.js"), "Component creation fails with correct error");
+			future.active = undefined;
+		});
 	});
 
 	QUnit.test("Create component async - componentFailed (prevent Default)", function (assert) {

@@ -88,6 +88,16 @@ sap.ui.define(function() {
 						"testdata/core": "test-resources/sap/ui/core/qunit/"
 					}
 				},
+				qunit: {
+					versions : {
+						"2.18" : {
+							module : "test-resources/sap/ui/core/qunit/thirdparty/qunit-2.18",
+							css : "test-resources/sap/ui/core/qunit/thirdparty/qunit-2.18.css"
+						}
+					},
+					version : "2.18",
+					reorder : false
+				},
 				module: [
 					"testdata/core/Element_base.qunit",
 					"testdata/core/Element_base_legacyAPIs.qunit",

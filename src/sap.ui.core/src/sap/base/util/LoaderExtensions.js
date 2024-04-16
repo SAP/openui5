@@ -293,11 +293,7 @@ sap.ui.define([
 			// load data
 			iSyncCallBehavior = sap.ui.loader._.getSyncCallBehavior();
 			if (!mOptions.async && iSyncCallBehavior) {
-				if (iSyncCallBehavior >= 1) { // temp. raise a warning only
-					Log.error("[nosync] loading resource '" + (sResourceName || mOptions.url) + "' with sync XHR");
-				} else {
-					throw new Error("[nosync] loading resource '" + (sResourceName || mOptions.url) + "' with sync XHR");
-				}
+				Log.warning("[nosync] loading resource '" + (sResourceName || mOptions.url) + "' with sync XHR");
 			}
 
 			var oHeaders = {};

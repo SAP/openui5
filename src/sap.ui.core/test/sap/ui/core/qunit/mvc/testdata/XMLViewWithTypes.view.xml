@@ -11,7 +11,7 @@
 		}" />
 
 		<!-- unknown type -->
-		<m:Input id="inputField_invalidType" value="{path:'/value', type:'sap.ui.non.existing.Type'}" />
+		<m:Input id="inputField_invalidType" value="{path:'/value'}" />
 
 		<!-- custom data-->
 		<m:customData>

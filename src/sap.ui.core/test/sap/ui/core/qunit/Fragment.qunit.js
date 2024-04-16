@@ -688,7 +688,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Fragment.load with properties 'name' and 'definition' provided at the same time", function (assert) {
-		var myXml = '<Button xmlns="sap.m" id="xmlfragbtn2" text="This is an XML Fragment" press="doSomething"></Button>';
+		var myXml = '<Button xmlns="sap.m" id="xmlfragbtn2" text="This is an XML Fragment"></Button>';
 		var oLogErrorSpy = this.spy(Log, "error");
 		return Fragment.load({
 			name: "testdata.fragments.XMLTestFragmentNoController",
