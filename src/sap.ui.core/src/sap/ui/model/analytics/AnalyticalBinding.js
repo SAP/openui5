@@ -4846,14 +4846,24 @@ sap.ui.define([
 	 * @private
 	 */
 	AnalyticalBinding.prototype._addSorters = function (oSortExpression, aGroupingSorters) {
-		var aSorters = this._canApplySortersToGroups()
-				? [].concat(this.aSorter).concat(aGroupingSorters)
+		var bCanApplySortersToGroups = this._canApplySortersToGroups(),
+			aSorters = bCanApplySortersToGroups
+				? this.aSorter
 				: [].concat(aGroupingSorters).concat(this.aSorter);
 
-		aSorters.forEach(function (oSorter) {
-			oSortExpression.addSorter(oSorter.sPath, oSorter.bDescending
-				? odata4analytics.SortOrder.Descending : odata4analytics.SortOrder.Ascending);
-		});
+		function addSorter(bIgnoreIfAlreadySorted, oSorter) {
+			oSortExpression.addSorter(oSorter.sPath,
+				oSorter.bDescending
+					? odata4analytics.SortOrder.Descending
+					: odata4analytics.SortOrder.Ascending,
+				bIgnoreIfAlreadySorted);
+		}
+
+		aSorters.forEach(addSorter.bind(null, false));
+		if (bCanApplySortersToGroups) {
+			// grouping sorters must not overwrite sort order
+			aGroupingSorters.forEach(addSorter.bind(null, true));
+		}
 	};
 
 	/**

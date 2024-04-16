@@ -581,6 +581,9 @@ sap.ui.define([
 		oQueryResultRequest.setMeasures(/*all*/);
 
 		oSortExpression.addSorter("CostCenter", odata4analytics.SortOrder.Ascending);
+		// BCP: 2380000530, ignore addSorter call if the sort expression already contains a
+		// sorter for that property
+		oSortExpression.addSorter("CostCenter", odata4analytics.SortOrder.Descending, true);
 
 		oFilterExpression.addSetCondition("Currency", [
 			"EUR", "USD", "GBP"
@@ -605,7 +608,7 @@ sap.ui.define([
 		assert.strictEqual(sEntriesURI, sRefBaseURI + sSorterString,
 			"QueryResultEntries URI correctly constructed.");
 
-		oSortExpression.addSorter("ControllingArea", odata4analytics.SortOrder.Descending);
+		oSortExpression.addSorter("ControllingArea", odata4analytics.SortOrder.Descending, true);
 		sSorterString = "&$orderby=CostCenter asc,ControllingArea desc";
 		sSetURI = oQueryResultRequest.getURIToQueryResultEntries();
 		assert.strictEqual(sSetURI, sRefBaseURI + sSorterString,
