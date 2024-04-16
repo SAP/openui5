@@ -83,7 +83,7 @@ sap.ui.define([
 
 		oToolbar.animation = false;
 		oToolbar.placeAt("qunit-fixture");
-		await nextUIUpdate();
+		await nextUIUpdate.runSync(); // await is only kept to indicate later call w/o ".runSync"
 		return oToolbar;
 	}
 
