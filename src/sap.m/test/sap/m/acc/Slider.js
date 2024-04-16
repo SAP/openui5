@@ -6,8 +6,8 @@ sap.ui.define([
 	"sap/m/Slider",
 	"sap/m/Toolbar",
 	"sap/m/ToolbarSpacer",
-	"sap/ui/core/HTML"
-], function(App, CheckBox, Page, ResponsiveScale, Slider, Toolbar, ToolbarSpacer, HTML) {
+	"sap/m/Label"
+], function(App, CheckBox, Page, ResponsiveScale, Slider, Toolbar, ToolbarSpacer, Label) {
 	"use strict";
 
 	var oCompactMode = new CheckBox("compactMode", {
@@ -27,42 +27,49 @@ sap.ui.define([
 			})
 		}).addStyleClass("sapUiContentPadding"),
 
-		oDefaultTitle = new HTML({ content: "<h2>Default</h2>" }),
+		oDefaultLabel = new Label("defaultLabel",{ text: "Default" }),
 		oDefaultSlider = new Slider({
 			value: 30,
 			min: 0,
-			max: 100
+			max: 100,
+			ariaLabelledBy: oDefaultLabel.getId()
 		}),
 
-		oDisabledTitle = new HTML({ content: "<h2>Disabled</h2>" }),
+		oDisabledLabel = new Label("disabledLabel", { text: "Disabled" }),
 		oDisabledSlider = new Slider({
 			value: 20,
-			enabled: false
+			enabled: false,
+			ariaLabelledBy: oDisabledLabel.getId()
 		}),
 
-		oTooltipTitle = new HTML({ content: "<h2>Slider with tooltip</h2>" }),
+		oTooltipLabel = new Label("tooltipLabel", { text: "Slider with tooltip" }),
 		oTooltipSlider = new Slider({
 			value: 10.3,
 			step: 0.1,
 			min: 0,
 			max: 20,
-			showAdvancedTooltip: true
+			showAdvancedTooltip: true,
+			ariaLabelledBy: oTooltipLabel.getId()
 		}),
 
-		oInputTitle = new HTML({ content: "<h2>Slider with input</h2>" }),
+		oInputLabel = new Label("inputLabel", { text: "Slider with input" }),
 		oInputSlider = new Slider({
 			value: 160,
 			step: 0.5,
 			min: 0,
 			max: 500,
 			showAdvancedTooltip: true,
-			inputsAsTooltips: true
+			inputsAsTooltips: true,
+			ariaLabelledBy: oInputLabel.getId()
 		}),
 
-		oTickMarksTitle = new HTML({ content: "<h2>Slider with tickmarks</h2>" }),
-		oTickMarksSlider = new Slider({enableTickmarks: true}),
+		oTickMarksLabel = new Label("tickmarksLabel", { text: "Slider with tickmarks" }),
+		oTickMarksSlider = new Slider({
+			enableTickmarks: true,
+			ariaLabelledBy: oTickMarksLabel.getId()
+		}),
 
-		oLabelsTitle = new HTML({ content: "<h2>Slider with tickmarks and labels</h2>" }),
+		oLabelsLabel = new Label("labelsLabel", { text: "Slider with tickmarks and labels" }),
 		oLabelsSlider = new Slider({
 			min: 0,
 			max: 40,
@@ -71,7 +78,8 @@ sap.ui.define([
 			showAdvancedTooltip: true,
 			scale: new ResponsiveScale({
 				tickmarksBetweenLabels: 1
-			})
+			}),
+			ariaLabelledBy: oLabelsLabel.getId()
 		});
 
 	new App("myApp", {initialPage: "page1", pages: [oPage]}).placeAt("body");
@@ -79,9 +87,9 @@ sap.ui.define([
 	// Wait for a tick, so the Page would be rendered and the Sliders could be resized properly on any browser
 	setTimeout(function () {
 		[
-			oDefaultTitle, oDefaultSlider, oDisabledTitle, oDisabledSlider,
-			oTooltipTitle, oTooltipSlider, oInputTitle, oInputSlider,
-			oTickMarksTitle, oTickMarksSlider, oLabelsTitle, oLabelsSlider
+			oDefaultLabel, oDefaultSlider, oDisabledLabel, oDisabledSlider,
+			oTooltipLabel, oTooltipSlider, oInputLabel, oInputSlider,
+			oTickMarksLabel, oTickMarksSlider, oLabelsLabel, oLabelsSlider
 		].forEach(oPage.addContent, oPage);
 	});
 });
