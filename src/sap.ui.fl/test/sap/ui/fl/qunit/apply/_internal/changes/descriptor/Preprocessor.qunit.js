@@ -67,7 +67,8 @@ sap.ui.define([
 								minVersion: "1.44"
 							}
 						}
-					}
+					},
+					appDescriptorChange: true
 				}, {
 					changeType: "appdescr_ui5_addLibraries",
 					content: {
@@ -76,7 +77,8 @@ sap.ui.define([
 								minVersion: "1.40.0"
 							}
 						}
-					}
+					},
+					appDescriptorChange: true
 				}, {
 					changeType: "appdescr_ui5_addLibraries",
 					content: {
@@ -85,7 +87,8 @@ sap.ui.define([
 								minVersion: "1.60.9"
 							}
 						}
-					}
+					},
+					appDescriptorChange: true
 				}
 			];
 
@@ -109,13 +112,16 @@ sap.ui.define([
 								minVersion: "1.44"
 							}
 						}
-					}
+					},
+					appDescriptorChange: true
 				}, {
 					changeType: "appdescr_ovp_addNewCard",
-					content: {}
+					content: {},
+					appDescriptorChange: true
 				}, {
 					changeType: "appdescr_app_addNewInbound",
-					content: {}
+					content: {},
+					appDescriptorChange: true
 				}
 			];
 

@@ -12,7 +12,6 @@ sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
-	"sap/ui/fl/apply/_internal/flexState/appDescriptorChanges/prepareAppDescriptorMap",
 	"sap/ui/fl/apply/_internal/flexState/compVariants/prepareCompVariantsMap",
 	"sap/ui/fl/apply/_internal/flexState/DataSelector",
 	"sap/ui/fl/apply/_internal/flexState/InitialPrepareFunctions",
@@ -32,7 +31,6 @@ sap.ui.define([
 	Component,
 	FlexObjectFactory,
 	States,
-	prepareAppDescriptorMap,
 	prepareCompVariantsMap,
 	DataSelector,
 	InitialPrepareFunctions,
@@ -45,13 +43,14 @@ sap.ui.define([
 ) {
 	"use strict";
 
+	const sAppDescriptorNamespace = "sap.ui.fl.apply._internal.flexObjects.AppDescriptorChange";
+
 	/**
 	 * Flex state class to persist maps and raw state (cache) for a given component reference.
 	 * The persistence happens inside an object mapped to the component reference, with the following properties:
 	 *
 	 *	{
 	 * 		preparedMaps: {
-	 * 			appDescriptorMap: {},
 	 * 			compVariantsMap: {},
 	 * 		},
 	 * 		storageResponse: {
@@ -98,7 +97,6 @@ sap.ui.define([
 	var _oChangePersistenceFactory;
 	var _mFlexObjectInfo = {
 		appDescriptorChanges: {
-			prepareFunction: prepareAppDescriptorMap,
 			pathInResponse: []
 		},
 		changes: {
@@ -213,6 +211,20 @@ sap.ui.define([
 		}
 	});
 
+	const oAppDescriptorChangesDataSelector = new DataSelector({
+		id: "appDescriptorChanges",
+		parentDataSelector: oFlexObjectsDataSelector,
+		executeFunction(aFlexObjects) {
+			return aFlexObjects.filter((oFlexObject) => {
+				return oFlexObject.isA(sAppDescriptorNamespace);
+			});
+		},
+		checkInvalidation(mParameters, oUpdateInfo) {
+			const bRelevantType = ["addFlexObject", "removeFlexObject"].includes(oUpdateInfo.type);
+			return bRelevantType && oUpdateInfo.updatedObject?.isA(sAppDescriptorNamespace);
+		}
+	});
+
 	function getInstanceEntryOrThrowError(sReference, sMapName) {
 		if (!_mInstances[sReference]) {
 			initializeEmptyState(sReference);
@@ -237,10 +249,6 @@ sap.ui.define([
 	function updateInstance(sReference, oUpdate) {
 		_mInstances[sReference] = merge(_mInstances[sReference], oUpdate);
 		oFlexObjectsDataSelector.checkUpdate({ reference: sReference });
-	}
-
-	function getAppDescriptorMap(sReference) {
-		return getInstanceEntryOrThrowError(sReference, "appDescriptorChanges");
 	}
 
 	function getCompVariantsMap(sReference) {
@@ -862,7 +870,7 @@ sap.ui.define([
 	};
 
 	FlexState.getAppDescriptorChanges = function(sReference) {
-		return getAppDescriptorMap(sReference).appDescriptorChanges;
+		return oAppDescriptorChangesDataSelector.get({ reference: sReference });
 	};
 
 	FlexState.getUI2Personalization = function(sReference) {

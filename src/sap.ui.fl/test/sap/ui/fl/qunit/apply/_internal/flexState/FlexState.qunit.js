@@ -364,7 +364,9 @@ sap.ui.define([
 				mEmptyResponse,
 				{
 					changes: {
-						appDescriptorChanges: [{changeType: "moveChange"}],
+						appDescriptorChanges: [
+							{appDescriptorChange: true}
+						],
 						comp: {
 							variants: [{changeType: "variant1"}]
 						}
@@ -381,10 +383,18 @@ sap.ui.define([
 					2,
 					"then the flexObjects are created and added to the selector"
 				);
+				assert.deepEqual(FlexState.getAppDescriptorChanges(sReference).length,
+					1,
+					"then the data is set correctly");
 				assert.strictEqual(
-					FlexState.getFlexObjectsDataSelector().get({reference: sReference})[0].getFlexObjectMetadata().changeType,
-					"moveChange",
-					"then the data is set correctly"
+					FlexState.getAppDescriptorChanges(sReference)[0].getFileType(),
+					"change",
+					"then the file type is correct"
+				);
+				assert.strictEqual(
+					FlexState.getFlexObjectsDataSelector().get({reference: sReference})[0].getFileType(),
+					"change",
+					"then the file type is correct"
 				);
 				assert.strictEqual(
 					FlexState.getFlexObjectsDataSelector().get({reference: sReference})[1].getFlexObjectMetadata().changeType,
@@ -542,7 +552,6 @@ sap.ui.define([
 			})
 			.then(function() {
 				assert.equal(this.oCallPrepareFunctionStub.callCount, 0, "no prepare function was called");
-				assert.strictEqual(FlexState.getAppDescriptorChanges(sReference), "appDescriptorChanges", "the prepare is called");
 			}.bind(this));
 		});
 
@@ -555,19 +564,18 @@ sap.ui.define([
 				assert.strictEqual(this.oIsLayerFilteringRequiredStub.callCount, 1, "the filtering is done during initialization");
 				assert.strictEqual(this.oGetFlexInfoSessionStub.callCount, 3, "get flex info session during initialization");
 
-				assert.strictEqual(FlexState.getAppDescriptorChanges(sReference), "appDescriptorChanges", "the correct map is returned");
-				assert.strictEqual(this.oCallPrepareFunctionStub.callCount, 1, "the prepare function was called once for AppDescriptors");
+				assert.deepEqual(FlexState.getAppDescriptorChanges(sReference), [], "the correct map is returned");
 				assert.strictEqual(this.oIsLayerFilteringRequiredStub.callCount, 1, "the filtering was not triggered again");
 				assert.strictEqual(this.oGetFlexInfoSessionStub.callCount, 3, "get flex info session was not triggered again");
-				assert.strictEqual(FlexState.getAppDescriptorChanges(sReference), "appDescriptorChanges", "the correct map is returned");
-				assert.strictEqual(this.oCallPrepareFunctionStub.callCount, 1, "the prepare function was not called again");
+				assert.deepEqual(FlexState.getAppDescriptorChanges(sReference), [], "the correct map is returned");
+				assert.strictEqual(this.oCallPrepareFunctionStub.callCount, 0, "the prepare function was not called again");
 				assert.strictEqual(this.oIsLayerFilteringRequiredStub.callCount, 1, "the filtering was not triggered again");
 				assert.strictEqual(this.oGetFlexInfoSessionStub.callCount, 3, "get flex info session was not triggered again");
 
 				assert.strictEqual(FlexState.getCompVariantsMap(sReference), "compVariants", "the correct map is returned");
-				assert.strictEqual(this.oCallPrepareFunctionStub.callCount, 2, "the prepare function was called once for the CompVariants");
+				assert.strictEqual(this.oCallPrepareFunctionStub.callCount, 1, "the prepare function was called once for the CompVariants");
 				assert.strictEqual(FlexState.getCompVariantsMap(sReference), "compVariants", "the correct map is returned");
-				assert.strictEqual(this.oCallPrepareFunctionStub.callCount, 2, "the prepare function was not called again");
+				assert.strictEqual(this.oCallPrepareFunctionStub.callCount, 1, "the prepare function was not called again");
 				assert.strictEqual(this.oIsLayerFilteringRequiredStub.callCount, 1, "the filtering was not triggered again");
 				assert.strictEqual(this.oGetFlexInfoSessionStub.callCount, 3, "get flex info session was not triggered again");
 			}.bind(this));
