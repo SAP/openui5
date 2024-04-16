@@ -183,6 +183,7 @@ sap.ui.define([
 		QUnit.test("applies all applicable changes", async function(assert) {
 			const oAppComponent = RtaQunitUtils.createAndStubAppComponent(sandbox, "myAppComponent");
 			const oApplierStub = sandbox.stub(Applier, "applyAllChangesForXMLView");
+			const oWaitForInitStub = sandbox.stub(FlexState, "waitForInitialization");
 			sandbox.stub(UIChangesState, "getAllApplicableUIChanges").returns([
 				{ getSelector: () => { return { id: "testView--foo" }; } },
 				{ getSelector: () => { return { id: "testView-bar" }; } },
@@ -193,6 +194,7 @@ sap.ui.define([
 				id: "testView",
 				componentId: "myAppComponent"
 			});
+			assert.strictEqual(oWaitForInitStub.callCount, 1, "the FlexState init was waited for");
 			assert.strictEqual(oApplierStub.lastCall.args[1].length, 1, "only one change was passed");
 			assert.strictEqual(oApplierStub.lastCall.args[0].reference, "myAppComponent", "the reference was added to the properties");
 			oAppComponent.destroy();

@@ -102,6 +102,9 @@ sap.ui.define([
 			}
 
 			const sReference = ManifestUtils.getFlexReferenceForControl(oAppComponent);
+
+			await FlexState.waitForInitialization(sReference);
+
 			const mPropertyBag = merge({
 				appComponent: oAppComponent,
 				modifier: XmlTreeModifier,
