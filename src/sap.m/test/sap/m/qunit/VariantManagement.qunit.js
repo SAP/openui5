@@ -57,10 +57,10 @@ sap.ui.define([
 		var aItems = oManagementTable.getItems();
 		var aCells = aItems[iRow].getCells();
 
-		var oInput = aCells[1].$("inner");
+		var oInput = aCells[1];
 		oInput.focus();
-		oInput.val(vValue);
-		QUnitUtils.triggerEvent("input", oInput);
+		oInput.setValue(vValue);
+		QUnitUtils.triggerEvent("input", oInput.getFocusDomRef());
 		await nextUIUpdate();
 	};
 
@@ -1030,7 +1030,7 @@ sap.ui.define([
 		this.oVM.onclick();
 	});
 
-	QUnit.test("check opens check event 'cancel'", function(assert) {
+	QUnit.test("check opens check event 'cancel'", async function(assert) {
 		var done = assert.async();
 
 		this.oVM.addItem(new VariantItem({key: "1", title:"One", rename: false, sharing: "public", executeOnSelect: true, author: "A"}));
@@ -1038,6 +1038,8 @@ sap.ui.define([
 		this.oVM.addItem(new VariantItem({key: "3", title:"Three", favorite: true, remove: true, sharing: "private", executeOnSelect: true, author: "A"}));
 		this.oVM.addItem(new VariantItem({key: "4", title:"Four", favorite: false, rename: false, sharing: "public", author: "B"}));
 		this.oVM.setDefaultKey("3");
+
+		await nextUIUpdate();
 
 		this.oVM.attachManageCancel(function(oEvent) {
 
@@ -1106,7 +1108,6 @@ sap.ui.define([
 			await fChangeTitle(this.oVM.oManagementTable, 2, "newName2");
 			await fChangeDelete(this.oVM.oManagementTable, 2);
 
-
 			aItems = this.oVM.oManagementTable.getItems();
 			assert.ok(aItems, "items in the management table exists");
 			assert.equal(aItems.length, 4,  "expected count of items in the management table exists");
@@ -1151,6 +1152,8 @@ sap.ui.define([
 				srcControl: null
 			});
 
+			await nextUIUpdate();
+
 		}.bind(this));
 
 
@@ -1169,7 +1172,7 @@ sap.ui.define([
 
 
 		var fOriginalCall = this.oVM._openVariantList.bind(this.oVM);
-		sinon.stub(this.oVM, "_openVariantList").callsFake(function (oEvent) {
+		sinon.stub(this.oVM, "_openVariantList").callsFake(async function (oEvent) {
 
 			fOriginalCall(oEvent);
 
@@ -1178,6 +1181,8 @@ sap.ui.define([
 			QUnitUtils.triggerTouchEvent("tap", oTarget, {
 				srcControl: null
 			});
+
+			await nextUIUpdate();
 
 		}.bind(this));
 
