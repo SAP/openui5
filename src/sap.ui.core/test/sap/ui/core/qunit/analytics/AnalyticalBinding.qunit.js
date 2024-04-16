@@ -1025,12 +1025,12 @@ sap.ui.define([
 		select : "ActualCosts,CostCenter,CostCenterText,CostElement,CostElementText,Currency,"
 			+ "PlannedCosts",
 		expectedSelect : "CostElement,CostCenter,ActualCosts,Currency,PlannedCosts,Currency,"
-			+ "CostCenterText,CostElementText"
+			+ "CostElementText,CostCenterText"
 	}, { // with additional selects: with dimensions text and measures without a unit
 		analyticalInfo : [oCostCenterGrouped, oCostElementText, oActualCostsTotal],
 		select : "ActualCosts,CostCenter,CostCenterText,CostElement,CostElementText,Currency",
-		expectedSelect : "CostCenter,CostElementText,ActualCosts,Currency,CostElement,"
-			+ "CostCenterText"
+		expectedSelect : "CostCenter,CostElementText,ActualCosts,Currency,CostCenterText,"
+			+ "CostElement"
 	}].forEach(function (oFixture, i) {
 		QUnit.test("getDownloadURL: no duplicate units / select parameter: " + i,
 				function (assert) {
@@ -1326,29 +1326,42 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	[{
-		additionalSelects : ["CostElementText", "CostCenterText"],
+		additionalSelects : [],
 		analyticalInfo : [oCostCenterGrouped, oCostElementGrouped, oCurrencyGrouped,
 			oActualCostsTotal],
+		dimensionToTextProperty : {
+			"CostElement" : "CostElementText",
+			"CostCenter" : "CostCenterText"
+		},
 		select : "CostCenter,CostElement,Currency,ActualCosts,CostElementText,CostCenterText"
 	},
-	// CostElementText is contained in in additionalSelects and it will be part of $select
+	// CostElementText is contained in additionalSelects, and it will be part of $select
 	// calculated by the analytical binding; we don't want to reimplement the $select computation;
 	// we ensured that no additional dimension or measure is contained; redundant entries need to
 	// removed in _getQueryODataRequestOptions
 	{
-		additionalSelects : ["CostCenterText"],
+		additionalSelects : [],
 		analyticalInfo : [oCostCenterGrouped, oCostElementText, oCurrencyGrouped,
 			oActualCostsTotal],
+		dimensionToTextProperty : {
+			"CostElement" : "CostElementText",
+			"CostCenter" : "CostCenterText"
+		},
 		select : "CostCenter,CostElement,CostElementText,Currency,ActualCosts,CostCenterText"
 	}, { // selects with whitespace characters
-		additionalSelects : ["CostCenterText"],
-		analyticalInfo : [oCostCenterGrouped, oCostElementText, oCurrencyGrouped,
+		additionalSelects : [],
+			analyticalInfo : [oCostCenterGrouped, oCostElementText, oCurrencyGrouped,
 			oActualCostsTotal],
+		dimensionToTextProperty : {
+			"CostElement" : "CostElementText",
+			"CostCenter" : "CostCenterText"
+		},
 		select : "CostCenter ,\tCostElement, CostElementText ,Currency,ActualCosts \
 				,CostCenterText"
 	}, { // trim only whitespace at the beginning and at the end of a property name
 		additionalSelects : ["CostCenter Text"], // whitespace is not removed -> server error
 		analyticalInfo : [oCostCenterGrouped, oCurrencyGrouped, oActualCostsTotal],
+		dimensionToTextProperty : {},
 		select : "CostCenter,Currency,ActualCosts,CostCenter Text"
 	}, {
 		additionalSelects : [],
@@ -1356,12 +1369,18 @@ sap.ui.define([
 		// the binding; CostElement does not need to be part of the select parameter
 		analyticalInfo : [oCostCenterGrouped, oCurrencyGrouped, oActualCostsTotal,
 			oCostElementText],
+		dimensionToTextProperty : {
+			"CostElement" : "CostElementText"
+		},
 		select : "CostCenter,Currency,ActualCosts,CostElementText"
 	}, {
-		additionalSelects : ["CostCenterText"],
+		additionalSelects : [],
 		// the oActualCostsTotal has the associated unit Currency which gets automatically selected
 		// by the binding; Currency does not need to be part of the select parameter
 		analyticalInfo : [oCostCenterGrouped, oActualCostsTotal],
+		dimensionToTextProperty : {
+			"CostCenter" : "CostCenterText"
+		},
 		select : "CostCenter,ActualCosts,CostCenterText"
 	}].forEach(function (oFixture, i) {
 		QUnit.test("updateAnalyticalInfo: additional selects - " + i, function (assert) {
@@ -1384,11 +1403,25 @@ sap.ui.define([
 			AnalyticalTreeBindingAdapter.apply(oBinding);
 
 			oModel.attachMetadataLoaded(function () {
-				// Code under test
+				// code under test
 				oBinding.initialize(); //calls oBinding.updateAnalyticalInfo
 
 				assert.deepEqual(oBinding.aAdditionalSelects, oFixture.additionalSelects);
 
+				var entries = Object.entries(oBinding.oDimensionDetailsSet);
+				for (var i = 0; i < entries.length; i++) {
+					var sName = entries[i][0];
+					var oDetails = entries[i][1];
+					var sTextProperty = oDetails.textPropertyName;
+					if (sName in oFixture.dimensionToTextProperty) {
+						assert.strictEqual(sTextProperty, oFixture.dimensionToTextProperty[sName]);
+						delete oFixture.dimensionToTextProperty[sName];
+					} else {
+						assert.strictEqual(sTextProperty, undefined);
+					}
+				}
+				assert.strictEqual(Object.keys(oFixture.dimensionToTextProperty).length, 0,
+					"all text properties found");
 				done();
 			});
 		});
@@ -1403,7 +1436,7 @@ sap.ui.define([
 		useBatchRequests : true,
 		expectedSelects : [
 			"ActualCosts,Currency", // sum request
-			"CostCenter,CostElement,Currency,ActualCosts,CostElementText" // data request
+			"CostCenter,CostElement,CostElementText,Currency,ActualCosts" // data request
 		]
 	}, {
 		analyticalInfo : [oCostCenterGrouped, oCostElementUngrouped, oCurrencyUngrouped,
@@ -1415,7 +1448,7 @@ sap.ui.define([
 			"ActualCosts,Currency", // sum request,
 			"CostCenter,CostElement,Currency", // count
 			"CostCenter,ActualCosts,Currency", // top level group request
-			"CostCenter,CostElement,Currency,ActualCosts,CostElementText" // data request
+			"CostCenter,CostElement,CostElementText,Currency,ActualCosts" // data request
 		]
 	}, {
 		analyticalInfo : [oCostCenterUngrouped, oCostElementUngrouped, oCurrencyUngrouped,
@@ -1426,7 +1459,7 @@ sap.ui.define([
 		expectedSelects : [
 			"ActualCosts,Currency", // sum request
 			"CostCenter,CostElement,Currency", // count
-			"CostCenter,CostElement,Currency,ActualCosts,CostElementText" // data request
+			"CostCenter,CostElement,CostElementText,Currency,ActualCosts" // data request
 		]
 	}, { // don't have the unit column in analytical info
 		analyticalInfo : [oCostElementUngrouped, oActualCostsTotal, oActualPlannedCostsPercentage],
@@ -1436,7 +1469,7 @@ sap.ui.define([
 		expectedSelects : [
 			"ActualCosts,Currency", // sum request
 			// data request
-			"CostElement,ActualCosts,Currency,ActualPlannedCostsPercentage,CostElementText"
+			"CostElement,CostElementText,ActualCosts,Currency,ActualPlannedCostsPercentage"
 		]
 	}].forEach(function (oFixture, i) {
 		QUnit.test("_getQueryODataRequestOptions is called as expected - " + i, function (assert) {
@@ -2338,6 +2371,25 @@ sap.ui.define([
 
 			done();
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("updateAnalyticalInfo: calls _updateDimensionDetailsTextProperty", function (assert) {
+		var oAnalyticalBindingMock = this.mock(AnalyticalBinding);
+		oAnalyticalBindingMock.expects("_updateDimensionDetailsTextProperty")
+			.withExactArgs(
+				sinon.match(function (oDimension) {return oDimension.getName() === "CostElement";}),
+				"CostElement",
+				sinon.match(function (oDimensionDetails) {return oDimensionDetails.name === "CostElement";})
+			);
+		oAnalyticalBindingMock.expects("_updateDimensionDetailsTextProperty")
+			.withExactArgs(
+				sinon.match(function (oDimension) {return oDimension.getName() === "CostElement";}),
+				"CostElementText",
+				sinon.match(function (oDimensionDetails) {return oDimensionDetails.name === "CostElement";})
+			);
+
+		return setupAnalyticalBinding(2, {}, undefined, [oCostElementGrouped, oCostElementText]);
 	});
 
 	//*********************************************************************************************
@@ -4093,5 +4145,31 @@ sap.ui.define([
 
 		// code under test - simulate abort and call error handler
 		oSetupExpectation.args[0][0].error(oError);
+	});
+
+	//*********************************************************************************************
+[undefined, {name : "~differentPropertyName"}].forEach(function (oTextProperty, i) {
+	QUnit.test("_updateDimensionDetailsTextProperty: property is not the text property, " + i, function (assert) {
+		var oDimension = {getTextProperty : function () {}};
+		this.mock(oDimension).expects("getTextProperty").withExactArgs().returns(oTextProperty);
+		var oDimensionDetails = {textPropertyName : "unchanged"};
+
+		// code under test
+		AnalyticalBinding._updateDimensionDetailsTextProperty(oDimension, "~propertyName", oDimensionDetails);
+
+		assert.strictEqual(oDimensionDetails.textPropertyName, "unchanged");
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("_updateDimensionDetailsTextProperty: property is the text property", function (assert) {
+		var oDimension = {getTextProperty : function () {}};
+		this.mock(oDimension).expects("getTextProperty").withExactArgs().returns({name : "~propertyName"});
+		var oDimensionDetails = {};
+
+		// code under test
+		AnalyticalBinding._updateDimensionDetailsTextProperty(oDimension, "~propertyName", oDimensionDetails);
+
+		assert.strictEqual(oDimensionDetails.textPropertyName, "~propertyName");
 	});
 });
