@@ -1,5 +1,6 @@
 /*global QUnit, sinon */
 sap.ui.define([
+	"sap/base/future",
 	"sap/base/Log",
 	"sap/base/i18n/Formatting",
 	"sap/base/i18n/Localization",
@@ -21,7 +22,7 @@ sap.ui.define([
 	"sap/ui/model/type/TimeInterval",
 	"sap/ui/model/type/Unit",
 	"sap/ui/test/TestUtils"
-], function(Log, Formatting, Localization, Library, UI5Date, NumberFormat, FormatException, ParseException,
+], function(future, Log, Formatting, Localization, Library, UI5Date, NumberFormat, FormatException, ParseException,
 		ValidateException, BooleanType, CurrencyType, DateTimeType, DateTimeIntervalType, FileSizeType, FloatType,
 		IntegerType, StringType, TimeType, TimeIntervalType, UnitType, TestUtils) {
 	"use strict";
@@ -75,6 +76,46 @@ sap.ui.define([
 			assert.strictEqual(oType.bShowMeasure, vTruthy);
 			assert.strictEqual(oType.bShowNumber, vTruthy);
 		});
+	}
+
+	/**
+	 * Calls the given function with the internal type "untype" on the given type instance and checks that the given
+	 * exception is thrown. Uses <code>future.active = false</code> to simulate the behavior of UI5 1.x.
+	 *
+	 * @param {object} assert The QUnit assert object
+	 * @param {sap.ui.model.type.Type} oType The type instance
+	 * @param {"formatValue"|"parseValue"} sFunction The function to be called on the type instance
+	 * @param {any} vValue The value to be passed to the function
+	 * @param {sap.ui.model.FormatException|sap.ui.model.ParseException} oException The expected exception instance
+	 *
+	 * @deprecated As of 1.120, with UI5 2.0 unsupported types throw an Error
+	 */
+	function checkUnsupportedTypeOld(assert, oType, sFunction, vValue, oException) {
+		future.active = false;
+		assert.throws(() => {
+			// code under test
+			oType[sFunction](vValue, "untype");
+		}, oException);
+		future.active = undefined;// restores configured default
+	}
+
+	/**
+	 * Calls the given function with the internal type "untype" on the given type instance and checks that an error is
+	 * thrown, that the internal type is not supported. Uses <code>future.active = true</code> to simulate the behavior
+	 * of UI5 2.x.
+	 *
+	 * @param {object} assert The QUnit assert object
+	 * @param {sap.ui.model.type.Type} oType The type instance
+	 * @param {"formatValue"|"parseValue"} sFunction The function to be called on the type instance
+	 * @param {any} vValue The value to be passed to the function
+	 */
+	function checkUnsupportedType(assert, oType, sFunction, vValue) {
+		future.active = true;
+		assert.throws(() => {
+			// code under test - with UI5 2.0 unsupported types throw an Error
+			oType[sFunction](vValue, "untype");
+		}, new Error("data type 'untype' could not be found."));
+		future.active = undefined;// restores configured default
 	}
 
 	var sDefaultLanguage = Localization.getLanguage();
@@ -258,7 +299,10 @@ sap.ui.define([
 		assert.deepEqual(currencyType.parseValue("EUR3.555", "string"), [3.555, "EUR"], "parse test");
 		assert.deepEqual(currencyType.parseValue("¥-3.555", "string"), [-3.555, "JPY"], "parse test");
 
-		assert.throws(function () { currencyType.parseValue(true, "untype"); }, ParseException, "parse test");
+		/** @deprecated As of 1.120, with UI5 2.0 unsupported types throw an Error */
+		checkUnsupportedTypeOld(assert, currencyType, "parseValue", true,
+			new ParseException("Don't know how to parse Currency from untype"));
+		checkUnsupportedType(assert, currencyType, "parseValue", true);
 		assert.throws(function () { currencyType.parseValue(true, "boolean"); }, ParseException, "parse test");
 		assert.throws(function () { currencyType.parseValue("test", "string"); }, checkParseException, "parse test");
 	});
@@ -866,8 +910,10 @@ sap.ui.define([
 
 		assert.strictEqual(dateType.formatValue(null, "string"), "", "format test");
 		assert.strictEqual(dateType.formatValue(undefined, "string"), "", "format test");
-
-		assert.throws(function () { dateType.formatValue(dateValue.getTime(), "untype"); }, FormatException, "format test");
+		/** @deprecated As of 1.120, with UI5 2.0 unsupported types throw an Error */
+		checkUnsupportedTypeOld(assert, dateType, "formatValue", dateValue.getTime(),
+			new FormatException("Don't know how to format Date to untype"));
+		checkUnsupportedType(assert, dateType, "formatValue", dateValue.getTime());
 	});
 
 	QUnit.test("dateTime parseValue", function (assert) {
@@ -886,7 +932,10 @@ sap.ui.define([
 		dateType = new DateTimeType({ source: { pattern: "timestamp" }, pattern: "dd.MM.yyyy HH:mm" });
 		assert.strictEqual(dateType.parseValue("24.01.2012 14:33", "string"), dateValue.getTime(), "parse test with timestamp");
 
-		assert.throws(function () { dateType.parseValue(true, "untype"); }, ParseException, "parse test");
+		/** @deprecated As of 1.120, with UI5 2.0 unsupported types throw an Error */
+		checkUnsupportedTypeOld(assert, dateType, "parseValue", true,
+			new ParseException("Don't know how to parse Date from untype"));
+		checkUnsupportedType(assert, dateType, "parseValue", true);
 		assert.throws(function () { dateType.parseValue(true, "boolean"); }, ParseException, "parse test");
 		assert.throws(function () { dateType.parseValue("test", "string"); }, checkParseException, "parse test");
 	});
@@ -1028,10 +1077,10 @@ sap.ui.define([
 		assert.throws(function () { filesizeType.formatValue("1 kB", "float"); }, FormatException, "format test: 1 kB-float");
 
 		assert.strictEqual(filesizeType.formatValue(null, "untype"), null, "format test: null-untype");
-		assert.throws(function () { filesizeType.formatValue(1000, "untype"); }, FormatException, "format test: 1000-untype");
-		assert.throws(function () { filesizeType.formatValue(1000.5, "untype"); }, FormatException, "format test: 1000.5-untype");
-		assert.throws(function () { filesizeType.formatValue("Hello", "untype"); }, FormatException, "format test: Hello-untype");
-		assert.throws(function () { filesizeType.formatValue("1 kB", "untype"); }, FormatException, "format test: 1 kB-untype");
+		/** @deprecated As of 1.120, with UI5 2.0 unsupported types throw an Error */
+		checkUnsupportedTypeOld(assert, filesizeType, "formatValue", 1000,
+			new FormatException("Don't know how to format FileSize to untype"));
+		checkUnsupportedType(assert, filesizeType, "formatValue", 1000);
 
 		filesizeType.setFormatOptions({ source: {} });
 
@@ -1054,10 +1103,6 @@ sap.ui.define([
 		assert.strictEqual(filesizeType.formatValue("1 kB", "float"), 1000, "format test: 1kB-float-inputformat");
 
 		assert.strictEqual(filesizeType.formatValue(null, "untype"), null, "format test: null-untype-inputformat");
-		assert.throws(function () { filesizeType.formatValue(1000, "untype"); }, FormatException, "format test: 1000-untype-inputformat");
-		assert.throws(function () { filesizeType.formatValue(1000.5, "untype"); }, FormatException, "format test: 1000.5-untype-inputformat");
-		assert.throws(function () { filesizeType.formatValue("Hello", "untype"); }, FormatException, "format test: Hello-untype-inputformat");
-		assert.throws(function () { filesizeType.formatValue("1 kB", "untype"); }, FormatException, "format test: 1kB-untype-inputformat");
 	});
 
 	QUnit.test("filesize parseValue", function (assert) {
@@ -1077,11 +1122,10 @@ sap.ui.define([
 		assert.strictEqual(filesizeType.parseValue(1000.5, "float"), 1000.5, "parse test: 1000.5 kB-float");
 
 		assert.strictEqual(filesizeType.parseValue(null, "untype"), null, "parse test: null-untype");
-		assert.throws(function () { filesizeType.parseValue("Hello", "untype"); }, ParseException, "parse test: Hello-untype");
-		assert.throws(function () { filesizeType.parseValue("1 kB", "untype"); }, ParseException, "parse test: 1 kB-untype");
-		assert.throws(function () { filesizeType.parseValue("1.0005 kB", "untype"); }, ParseException, "parse test: 1.0005 kB-untype");
-		assert.throws(function () { filesizeType.parseValue(1000, "untype"); }, ParseException, "parse test: 1000-untype");
-		assert.throws(function () { filesizeType.parseValue(1000.5, "untype"); }, ParseException, "parse test: 1000.5 kB-untype");
+		/** @deprecated As of 1.120, with UI5 2.0 unsupported types throw an Error */
+		checkUnsupportedTypeOld(assert, filesizeType, "parseValue", 1000,
+			new ParseException("Don't know how to parse FileSize from untype"));
+		checkUnsupportedType(assert, filesizeType, "parseValue", 1000);
 
 		filesizeType.setFormatOptions({ source: {} });
 
@@ -1099,11 +1143,6 @@ sap.ui.define([
 		assert.strictEqual(filesizeType.parseValue(1000.5, "float").toUpperCase(), "1.0005 KB", "parse test: 1000.5 kB-float-inputformat");
 
 		assert.strictEqual(filesizeType.parseValue(null, "untype"), null, "parse test: null-untype");
-		assert.throws(function () { filesizeType.parseValue("Hello", "untype"); }, ParseException, "parse test: Hello-untype-inputformat");
-		assert.throws(function () { filesizeType.parseValue("1 kB", "untype"); }, ParseException, "parse test: 1 kB-untype-inputformat");
-		assert.throws(function () { filesizeType.parseValue("1.0005 kB", "untype"); }, ParseException, "parse test: 1.0005 kB-untype-inputformat");
-		assert.throws(function () { filesizeType.parseValue(1000, "untype"); }, ParseException, "parse test: 1000-untype-inputformat");
-		assert.throws(function () { filesizeType.parseValue(1000.5, "untype"); }, ParseException, "parse test: 1000.5 kB-untype-inputformat");
 	});
 
 	QUnit.test("filesize validateValue", function (assert) {
@@ -1269,7 +1308,10 @@ sap.ui.define([
 		assert.strictEqual(floatType.formatValue(134.00, "float"), 134, "format test");
 		assert.strictEqual(floatType.formatValue(134.000, "float"), 134, "format test");
 
-		assert.throws(function () { floatType.formatValue(22.0, "untype"); }, FormatException, "format test");
+		/** @deprecated As of 1.120, with UI5 2.0 unsupported types throw an Error */
+		checkUnsupportedTypeOld(assert, floatType, "formatValue", 22.0,
+			new FormatException("Don't know how to format Float to untype"));
+		checkUnsupportedType(assert, floatType, "formatValue", 22.0);
 	});
 
 	QUnit.test("float parseValue", function (assert) {
@@ -1284,7 +1326,10 @@ sap.ui.define([
 		assert.strictEqual(floatType.parseValue(-4.3657, "float"), -4.3657, "parse test");
 		assert.strictEqual(floatType.parseValue(4.657, "float"), 4.657, "parse test");
 
-		assert.throws(function () { floatType.parseValue(true, "untype"); }, ParseException, "parse test");
+		/** @deprecated As of 1.120, with UI5 2.0 unsupported types throw an Error */
+		checkUnsupportedTypeOld(assert, floatType, "parseValue", true,
+			new ParseException("Don't know how to parse Float from untype"));
+		checkUnsupportedType(assert, floatType, "parseValue", true);
 		assert.throws(function () { floatType.parseValue(true, "boolean"); }, ParseException, "parse test");
 		assert.throws(function () { floatType.parseValue("test", "string"); }, ParseException, "parse test");
 	});
@@ -1410,7 +1455,10 @@ sap.ui.define([
 		assert.strictEqual(intType.formatValue(344456, "float"), 344456, "format test");
 
 		assert.throws(function () { intType.formatValue(33456, "boolean"); }, "format test");
-		assert.throws(function () { intType.formatValue(22, "untype"); }, FormatException, "format test");
+		/** @deprecated As of 1.120, with UI5 2.0 unsupported types throw an Error */
+		checkUnsupportedTypeOld(assert, intType, "formatValue", 22,
+			new FormatException("Don't know how to format Integer to untype"));
+		checkUnsupportedType(assert, intType, "formatValue", 22);
 	});
 
 	QUnit.test("integer parseValue", function (assert) {
@@ -1430,7 +1478,11 @@ sap.ui.define([
 			assert.throws(function () { intType.parseValue("true", "float"); },
 				new ParseException("EnterInt"), "parse test");
 		});
-		assert.throws(function () { intType.parseValue(true, "untype"); }, ParseException, "parse test");
+		/** @deprecated As of 1.120, with UI5 2.0 unsupported types throw an Error */
+		checkUnsupportedTypeOld(assert, intType, "parseValue", true,
+			new ParseException("Don't know how to parse Integer from untype"));
+		checkUnsupportedType(assert, intType, "parseValue", true);
+
 		assert.throws(function () { intType.parseValue(true, "boolean"); }, ParseException, "parse test");
 		assert.throws(function () { intType.parseValue("test", "string"); }, checkParseException, "parse test");
 	});
@@ -1584,7 +1636,10 @@ sap.ui.define([
 		assert.strictEqual(stringType.formatValue("1.34", "float"), 1.34);
 		assert.strictEqual(stringType.formatValue("33.456", "float"), 33.456);
 
-		assert.throws(function () { stringType.formatValue("33.456", "untype"); });
+		/** @deprecated As of 1.120, with UI5 2.0 unsupported types throw an Error */
+		checkUnsupportedTypeOld(assert, stringType, "formatValue", "33.456",
+			new FormatException("Don't know how to format String to untype"));
+		checkUnsupportedType(assert, stringType, "formatValue", "33.456");
 		assert.throws(function () { stringType.formatValue("notfalse", "boolean"); },
 			FormatException);
 		assert.throws(function () { stringType.formatValue("NaN", "int"); }, FormatException);
@@ -1603,7 +1658,11 @@ sap.ui.define([
 		assert.strictEqual(stringType.parseValue(-222, "int"), "-222");
 		assert.strictEqual(stringType.parseValue(-4.3657, "float"), "-4.3657");
 
-		assert.throws(function () { stringType.parseValue(true, "untype"); }, ParseException);
+		/** @deprecated As of 1.120, with UI5 2.0 unsupported types throw an Error */
+		checkUnsupportedTypeOld(assert, stringType, "parseValue", true,
+			new ParseException("Don't know how to parse String from untype"));
+		checkUnsupportedType(assert, stringType, "parseValue", true);
+
 	});
 
 	QUnit.test("string validateValue", function (assert) {
@@ -1732,7 +1791,10 @@ sap.ui.define([
 		assert.strictEqual(timeType.formatValue(null, "string"), "", "format test");
 		assert.strictEqual(timeType.formatValue(undefined, "string"), "", "format test");
 
-		assert.throws(function () { timeType.formatValue(timeValue.getTime(), "untype"); }, FormatException, "format test");
+		/** @deprecated As of 1.120, with UI5 2.0 unsupported types throw an Error */
+		checkUnsupportedTypeOld(assert, timeType, "formatValue", timeValue.getTime(),
+			new FormatException("Don't know how to format Date to untype"));
+		checkUnsupportedType(assert, timeType, "formatValue", timeValue.getTime());
 	});
 
 	QUnit.test("time parseValue", function (assert) {
@@ -1751,7 +1813,10 @@ sap.ui.define([
 		timeType = new TimeType({ source: { pattern: "timestamp" }, pattern: "HH:mm:ss" });
 		assert.strictEqual(timeType.parseValue("16:58:49", "string"), timeValue.getTime(), "parse test with timestamp");
 
-		assert.throws(function () { timeType.parseValue(true, "untype"); }, ParseException, "parse test");
+		/** @deprecated As of 1.120, with UI5 2.0 unsupported types throw an Error */
+		checkUnsupportedTypeOld(assert, timeType, "parseValue", true,
+			new ParseException("Don't know how to parse Date from untype"));
+		checkUnsupportedType(assert, timeType, "parseValue", true);
 		assert.throws(function () { timeType.parseValue(true, "boolean"); }, ParseException, "parse test");
 		assert.throws(function () { timeType.parseValue("test", "string"); }, checkParseException, "parse test");
 	});
@@ -2001,7 +2066,10 @@ sap.ui.define([
 		//  this will be changed once the strict mode is implemented in
 		//  sap.ui.core.format.NumberFormat
 		assert.throws(function () { unitType.parseValue("3333", "string"); }, ParseException, "parse test");
-		assert.throws(function () { unitType.parseValue(true, "untype"); }, ParseException, "parse test");
+		/** @deprecated As of 1.120, with UI5 2.0 unsupported types throw an Error */
+		checkUnsupportedTypeOld(assert, unitType, "parseValue", true,
+			new ParseException("Don't know how to parse Unit from untype"));
+		checkUnsupportedType(assert, unitType, "parseValue", true);
 		assert.throws(function () { unitType.parseValue(true, "boolean"); }, ParseException, "parse test");
 		assert.throws(function () { unitType.parseValue("test", "string"); }, ParseException, "parse test");
 	});
