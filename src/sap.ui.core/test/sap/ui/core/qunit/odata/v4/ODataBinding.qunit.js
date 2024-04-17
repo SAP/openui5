@@ -2629,7 +2629,11 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [
-	"$$canonicalPath", "$$noPatch", "$$ownRequest", "$$patchWithoutSideEffects"
+	"$$canonicalPath",
+	"$$keepSelectOnFilter",
+	"$$noPatch",
+	"$$ownRequest",
+	"$$patchWithoutSideEffects"
 ].forEach(function (sName) {
 	QUnit.test("checkBindingParameters, " + sName, function (assert) {
 		var aAllowedParameters = [sName],

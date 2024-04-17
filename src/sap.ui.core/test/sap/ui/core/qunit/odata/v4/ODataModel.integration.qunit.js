@@ -285,8 +285,9 @@ sap.ui.define([
 	 *
 	 * @param {object} assert - The QUnit assert object
 	 * @param {sap.ui.model.odata.v4.Context} oContext - A context
-	 * @param {boolean} bSelected - The expected value for the "selected" property,
-	 *    <code>undefined</code> is a valid value for the annotation.
+	 * @param {boolean} bSelected - The expected value for the "selected" property.
+	 *   If <code>undefined</code> is given, the selection state of the context is asserted against
+	 *   <code>false</code>.
 	 * @param {string} [sText] - A message for the assertion
 	 */
 	function checkSelected(assert, oContext, bSelected, sText) {
@@ -26048,6 +26049,105 @@ sap.ui.define([
 	});
 	});
 });
+
+	//*********************************************************************************************
+	// Scenario: Selection state of a hierarchy is reset on changing "$$aggregation.search"
+	// parameter. Test with "select all" and with selecting two nodes explicitly.
+	//
+	// JIRA: CPOUI5ODATAV4-2203
+	// SNOW: CS20240007001494
+	QUnit.test("CPOUI5ODATAV4-2203: $$aggregation.search", async function (assert) {
+		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
+		const sView = `
+<t:Table id="table" rows="{path : '/EMPLOYEES',
+		parameters : {
+			$$aggregation : {
+				hierarchyQualifier : 'OrgChart'
+			}
+		}}" threshold="0" visibleRowCount="3">
+	<Text id="selected" text="{= %{@$ui5.context.isSelected} }"/>
+	<Text text="{= %{@$ui5.node.isExpanded} }"/>
+	<Text text="{= %{@$ui5.node.level} }"/>
+	<Text text="{ID}"/>
+</t:Table>`;
+		const sUrl = "EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
+			+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart',NodeProperty='ID',"
+			+ "Levels=1)"
+			+ "&$select=DrillState,ID&$count=true&$skip=0&$top=3";
+		const oResponse = {
+			"@odata.count" : "2",
+			value : [{
+				ID : "0",
+				DrillState : "leaf"
+			}, {
+				ID : "1",
+				DrillState : "leaf"
+			}]
+		};
+
+		this.expectRequest(sUrl, oResponse)
+			.expectChange("selected", [undefined, undefined]);
+
+		await this.createView(assert, sView, oModel);
+
+		const oTable = this.oView.byId("table");
+		const oListBinding = oTable.getBinding("rows");
+		const [oNode0, oNode1] = oListBinding.getCurrentContexts();
+		const oHeaderContext = oListBinding.getHeaderContext();
+
+		this.expectChange("selected", [true, true]);
+
+		// prepare selection
+		oHeaderContext.setSelected(true);
+
+		checkSelected(assert, oHeaderContext, true);
+		checkSelected(assert, oNode0, true);
+		checkSelected(assert, oNode1, true);
+
+		this.expectChange("selected", [false, false])
+			.expectRequest("EMPLOYEES?$apply="
+				+ "ancestors($root/EMPLOYEES,OrgChart,ID,search(covfefe),keep start)"
+				+ "/com.sap.vocabularies.Hierarchy.v1.TopLevels("
+				+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart',NodeProperty='ID',"
+				+ "Levels=1)"
+				+ "&$select=DrillState,ID&$count=true&$skip=0&$top=3",
+				oResponse)
+			.expectChange("selected", [undefined, undefined]);
+
+		// code under test
+		oListBinding.setAggregation({...oListBinding.getAggregation(), search : "covfefe"});
+
+		await this.waitForChanges(assert, "set $$aggregation.search");
+
+		// code under test
+		checkSelected(assert, oHeaderContext, false);
+		checkSelected(assert, oNode0, undefined);
+		checkSelected(assert, oNode1, undefined);
+
+		this.expectChange("selected", [true, true]);
+
+		// select two row contexts (no "select all")
+		oNode0.setSelected(true);
+		oNode1.setSelected(true);
+
+		checkSelected(assert, oHeaderContext, false);
+		checkSelected(assert, oNode0, true);
+		checkSelected(assert, oNode1, true);
+
+		this.expectChange("selected", [false, false])
+			.expectRequest(sUrl, oResponse)
+			.expectChange("selected", [undefined, undefined]);
+
+		// code under test (search value does not matter)
+		oListBinding.setAggregation({...oListBinding.getAggregation(), search : undefined});
+
+		await this.waitForChanges(assert, "set $$aggregation.search to undefined");
+
+		// code under test
+		checkSelected(assert, oHeaderContext, false);
+		checkSelected(assert, oNode0, undefined);
+		checkSelected(assert, oNode1, undefined);
+	});
 
 	//*********************************************************************************************
 	// Scenario: Show the top pyramid of a recursive hierarchy, expanded to level 2. Scroll down
@@ -54465,10 +54565,11 @@ make root = ${bMakeRoot}`;
 	//
 	// Do likewise for selection which implicitly keeps alive (JIRA: CPOUI5ODATAV4-2053).
 	// Select via setSelected and setting the client-side annotation (JIRA: CPOUI5ODATAV4-1944).
+	// Filter removes selection (JIRA: CPOUI5ODATAV4-2203).
 [false, true].forEach(function (bImplicitly) {
 	[false, true].forEach(function (bUseAnnotation) {
 		var sTitle = "CPOUI5ODATAV4-488: Refresh w/" + (bImplicitly ? " implicitly" : "")
-				+ " kept-alive context, selection via annotation= " + bUseAnnotation;
+				+ " kept-alive context, selection via annotation=" + bUseAnnotation;
 
 	QUnit.test(sTitle, function (assert) {
 		var oKeptContext,
@@ -54660,7 +54761,7 @@ make root = ${bMakeRoot}`;
 			]);
 		}).then(function () {
 			that.expectRequest("SalesOrderList?$count=true&$filter=GrossAmount lt 0"
-				+ "&$select=GrossAmount,SalesOrderID&$skip=0&$top=2", {
+					+ "&$select=GrossAmount,SalesOrderID&$skip=0&$top=2", {
 					"@odata.count" : "0",
 					value : []
 				});
@@ -54669,6 +54770,10 @@ make root = ${bMakeRoot}`;
 
 			return that.waitForChanges(assert, "filter to make list empty");
 		}).then(function () {
+			if (bImplicitly) { // Filter removes selection (JIRA: CPOUI5ODATAV4-2203)
+				return;
+			}
+
 			that.expectRequest("SalesOrderList?$filter=SalesOrderID eq '2'"
 					+ "&$select=GrossAmount,SalesOrderID", {
 					value : [{
@@ -54681,9 +54786,9 @@ make root = ${bMakeRoot}`;
 				// code under test
 				oListBinding.getHeaderContext().requestSideEffects(["GrossAmount"]),
 				that.waitForChanges(assert, "request side effects for kept contexts only")
-			]);
-		}).then(function () {
-			assert.strictEqual(oKeptContext2.getProperty("GrossAmount"), "149.5");
+			]).then(function () {
+				assert.strictEqual(oKeptContext2.getProperty("GrossAmount"), "149.5");
+			});
 		});
 	});
 	});
@@ -58295,14 +58400,15 @@ make root = ${bMakeRoot}`;
 				Team_Id : "NEW"
 			},
 			oModel = this.createTeaBusiModel({autoExpandSelect : true}),
-			sView = '\
-<t:Table id="table" rows="{/TEAMS}" threshold="0" visibleRowCount="3">\
-	<Text id="id" text="{Team_Id}"/>\
-	<Text id="memberCount" text="{MEMBER_COUNT}"/>\
-</t:Table>\
-<FlexBox id="form">\
-	<Text id="name" text="{Name}"/>\
-</FlexBox>',
+			sView = `
+<t:Table id="table" rows="{parameters : {$$keepSelectOnFilter : true}, path : '/TEAMS'}"
+		threshold="0" visibleRowCount="3">
+	<Text id="id" text="{Team_Id}"/>
+<Text id="memberCount" text="{MEMBER_COUNT}"/>
+</t:Table>
+<FlexBox id="form">
+	<Text id="name" text="{Name}"/>
+</FlexBox>`,
 			that = this;
 
 		this.expectRequest("TEAMS?$select=MEMBER_COUNT,Team_Id&$skip=0&$top=3", {
@@ -64164,6 +64270,141 @@ make root = ${bMakeRoot}`;
 
 		await this.waitForChanges(assert, "swap context of property binding");
 	});
+
+	//*********************************************************************************************
+	// Scenario: Setting a filter or changing $filter or $search parameters resets the selection
+	// state of all contexts of a list binding.
+	// (1) : "Select all" & unselect one row context
+	// (2) : Selecting an already selected header context selects all row contexts again
+	// (3) : Select two row contexts (no "select all")
+	// JIRA: CPOUI5ODATAV4-2203
+	// SNOW: CS20240007001494
+[
+	{method : "filter", value : FilterType.Application, query : "GrossAmount ge 0"},
+	{method : "filter", value : FilterType.Control, query : "GrossAmount ge 0"},
+	{method : "changeParameters", value : "$filter", query : "GrossAmount ge 0"},
+	{method : "changeParameters", value : "$search", query : "0"}
+].forEach((oFixture) => {
+	[false, true].forEach((bSuspend) => {
+	const sTitle = `CPOUI5ODATAV4-2203: Reset selection on ${oFixture.value}, suspend=${bSuspend}`;
+	QUnit.test(sTitle, async function (assert) {
+		const oModel = this.createSalesOrdersModel({autoExpandSelect : true});
+		const sView = `
+<Table id="table" items="{/SalesOrderList}">
+	<Text id="id" text="{SalesOrderID}"/>
+	<Text id="grossAmount" text="{GrossAmount}"/>
+	<Input id="selected" value="{path : '@$ui5.context.isSelected', targetType: 'any'}"/>
+</Table>`;
+
+		this.expectRequest("SalesOrderList?$select=GrossAmount,SalesOrderID&$skip=0&$top=100", {
+				value : [
+					{SalesOrderID : "1", GrossAmount : "1000"},
+					{SalesOrderID : "2", GrossAmount : "2000"},
+					{SalesOrderID : "3", GrossAmount : "3000"}
+				]
+			})
+			.expectChange("id", ["1", "2", "3"])
+			.expectChange("grossAmount", ["1,000.00", "2,000.00", "3,000.00"])
+			.expectChange("selected", [undefined, undefined, undefined]);
+
+		await this.createView(assert, sView, oModel);
+
+		const oTable = this.oView.byId("table");
+		const oListBinding = oTable.getBinding("items");
+		const oHeaderContext = oListBinding.getHeaderContext();
+		const oItems = oTable.getItems();
+
+		this.expectChange("selected", [true, true, true]);
+		this.expectChange("selected", [, false]);
+
+		oHeaderContext.setSelected(true);
+		oItems[1].getBindingContext().setSelected(false);
+
+		assert.strictEqual(oHeaderContext.isSelected(), true);
+
+		this.expectRequest("SalesOrderList?$select=GrossAmount,SalesOrderID&"
+				+ (oFixture.method === "filter" ? "$filter" : oFixture.value) + "=" + oFixture.query
+				+ "&$skip=0&$top=100", {
+				value : [
+					{SalesOrderID : "1", GrossAmount : "1000"},
+					{SalesOrderID : "2", GrossAmount : "2000"},
+					{SalesOrderID : "3", GrossAmount : "3000"}
+				]
+			})
+			// #filter / #changeParameters resets the selection for "old" contexts
+			.expectChange("selected", [false, /*false*/, false])
+			.expectChange("selected", [undefined, undefined, undefined]);
+
+		if (bSuspend) {
+			oListBinding.suspend();
+		}
+		if (oFixture.method === "filter") {
+			// code under test
+			oListBinding.filter(new Filter("GrossAmount", FilterOperator.GE, 0), oFixture.value);
+		} else {
+			// code under test
+			oListBinding.changeParameters({[oFixture.value] : oFixture.query});
+		}
+		if (bSuspend) {
+			oListBinding.resume();
+		}
+
+		assert.strictEqual(oHeaderContext.isSelected(), false);
+
+		await this.waitForChanges(assert, "after (1)");
+
+		this.expectChange("selected", [true, true, true]);
+		this.expectChange("selected", [false]);
+		this.expectChange("selected", [true]);
+		this.expectChange("selected", [false, false, false]); // preparation for test below
+
+		oHeaderContext.setSelected(true);
+		oItems[0].getBindingContext().setSelected(false);
+		// code under test - "select all" again selects all row contexts, even if the header context
+		// is already selected
+		oHeaderContext.setSelected(true);
+		oHeaderContext.setSelected(false); // preparation for test below
+
+		await this.waitForChanges(assert, "reselect all (2)");
+
+		this.expectChange("selected", [true, , true]);
+
+		oItems[0].getBindingContext().setSelected(true);
+		oItems[2].getBindingContext().setSelected(true);
+
+		// same filter/search value will do nothing
+		const sQuery = oFixture.query.replace("0", "1");
+
+		this.expectRequest("SalesOrderList?$select=GrossAmount,SalesOrderID&"
+				+ (oFixture.method === "filter" ? "$filter" : oFixture.value) + "=" + sQuery
+				+ "&$skip=0&$top=100", {
+				value : [
+					{SalesOrderID : "1", GrossAmount : "1000"},
+					{SalesOrderID : "2", GrossAmount : "2000"},
+					{SalesOrderID : "3", GrossAmount : "3000"}
+				]
+			})
+			.expectChange("selected", [false, , false])
+			.expectChange("selected", [undefined, undefined, undefined]);
+
+		if (bSuspend) {
+			oListBinding.suspend();
+		}
+		if (oFixture.method === "filter") {
+			// code under test
+			oListBinding.filter(new Filter("GrossAmount", FilterOperator.GE, 1), oFixture.value);
+		} else {
+			// code under test
+			oListBinding.changeParameters({[oFixture.value] : sQuery});
+		}
+		if (bSuspend) {
+			oListBinding.resume();
+		}
+
+		await this.waitForChanges(assert, "after (2)");
+	});
+	});
+});
 
 	//*********************************************************************************************
 	// Scenario: Dependent ContextBinding below a dependent ListBinding, below of an absolute

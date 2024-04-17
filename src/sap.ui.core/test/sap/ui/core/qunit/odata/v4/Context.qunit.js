@@ -4570,32 +4570,41 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[false, true].forEach(function (bHasChangeListeners) {
-	QUnit.test("setSelected: with change listeners=" + bHasChangeListeners, function () {
-		const oCache = {setProperty : mustBeMocked};
-		const oBinding = {getHeaderContext : "~function~", _getAllExistingContexts : mustBeMocked};
+[false, true].forEach(function (bIsHeaderContext) {
+	[false, true].forEach(function (bHasChangeListeners) {
+		if (!bIsHeaderContext && bHasChangeListeners) {
+			return; // unrealistic
+		}
+		const sTitle = `setSelected: is header context=${bIsHeaderContext},
+			with change listeners=${bHasChangeListeners}`;
+
+	QUnit.test(sTitle, function () {
+		const oBinding = {getHeaderContext : mustBeMocked, _getAllExistingContexts : mustBeMocked};
 		// Note: oBinding is optional, it might already be missing in certain cases!
 		const oContext = Context.create({/*oModel*/}, oBinding, "/some/path", 42);
-		const aRowContexts = [
-			{setSelected : mustBeMocked},
-			{setSelected : mustBeMocked}
-		];
 
 		if (bHasChangeListeners) {
 			oContext.mChangeListeners = "~mChangeListeners~";
+		}
+		this.mock(oContext).expects("isDeleted").withExactArgs().returns(false);
+		this.mock(oBinding).expects("getHeaderContext").returns(bIsHeaderContext ? oContext : null);
+		if (bIsHeaderContext) {
+			const aRowContexts = [
+				{setSelected : mustBeMocked},
+				{setSelected : mustBeMocked}
+			];
 			this.mock(oBinding).expects("_getAllExistingContexts").withExactArgs()
 				.returns(aRowContexts);
 			aRowContexts.forEach((oRowContext) => {
 				this.mock(oRowContext).expects("setSelected").withExactArgs("~selected~");
 			});
 		}
-
-		this.mock(oContext).expects("isDeleted").withExactArgs().returns(false);
 		this.mock(_Helper).expects("fireChange").exactly(bHasChangeListeners ? 1 : 0)
 			.withExactArgs("~mChangeListeners~", "", "~selected~");
 		this.mock(oContext).expects("withCache")
 			.withExactArgs(sinon.match.func, "")
 			.callsFake((fnProcessor) => {
+				const oCache = {setProperty : mustBeMocked};
 				this.mock(oCache).expects("setProperty")
 					.withExactArgs("@$ui5.context.isSelected", "~selected~", "~sPath~");
 
@@ -4606,35 +4615,59 @@ sap.ui.define([
 		// code under test
 		oContext.setSelected("~selected~");
 	});
+	});
 });
 
 	//*********************************************************************************************
-	QUnit.test("setSelected: special cases", function () {
+	QUnit.test("setSelected: binding destroyed", function () {
 		const oBinding = {
-			getHeaderContext : function () {}
+			getHeaderContext : mustBeMocked
 		};
-		const oCache = {};
 		const oContext = Context.create({/*oModel*/}, oBinding, "/some/path", 42);
-		const oContextMock = this.mock(oContext);
 
-		oContextMock.expects("isDeleted").withExactArgs().returns(false);
-		oContextMock.expects("withCache")
+		this.mock(oContext).expects("isDeleted").withExactArgs().returns(false);
+		this.mock(oBinding).expects("getHeaderContext").returns(undefined);
+		this.mock(oContext).expects("withCache")
 			.withExactArgs(sinon.match.func, "")
 			.callsFake((fnProcessor) => {
 				oContext.oBinding = undefined;
 
-				return fnProcessor(oCache, "~sPath~");
+				return fnProcessor({}, "~sPath~");
 			});
-		oContextMock.expects("doSetSelected").withExactArgs(true);
+		this.mock(oContext).expects("doSetSelected").withExactArgs(true);
 
 		// code under test - binding destroyed
 		oContext.setSelected(true);
+	});
 
-		// no additional calls to withCache
-		oContextMock.expects("doSetSelected").withExactArgs(false);
+	//*********************************************************************************************
+	QUnit.test("setSelected: flag already set", function () {
+		const oBinding = {
+			getHeaderContext : mustBeMocked,
+			onKeepAliveChanged : mustBeMocked
+		};
+		const oContext = Context.create({/*oModel*/}, oBinding, "/some/path", 42);
 
-		// code under test - flag unchanged
-		oContext.setSelected(false);
+		oContext.mChangeListeners = "~mChangeListeners~";
+		this.mock(oContext).expects("isDeleted").twice().withExactArgs().returns(false);
+		this.mock(oBinding).expects("getHeaderContext").twice().returns(undefined);
+		this.mock(_Helper).expects("fireChange").withExactArgs("~mChangeListeners~", "", true);
+		this.mock(oContext).expects("withCache")
+			.withExactArgs(sinon.match.func, "")
+			.callsFake((fnProcessor) => {
+				const oCache = {setProperty : mustBeMocked};
+				this.mock(oCache).expects("setProperty")
+					.withExactArgs("@$ui5.context.isSelected", true, "~sPath~");
+
+				return fnProcessor(oCache, "~sPath~");
+			});
+		this.mock(oBinding).expects("onKeepAliveChanged").twice().withExactArgs(oContext);
+
+		// code under test
+		oContext.setSelected(true);
+
+		// code under test
+		oContext.setSelected(true);
 	});
 
 	//*********************************************************************************************

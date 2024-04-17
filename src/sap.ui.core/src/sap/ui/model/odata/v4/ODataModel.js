@@ -905,6 +905,10 @@ sap.ui.define([
 	 *   model's group ID is used, see {@link sap.ui.model.odata.v4.ODataModel#constructor}.
 	 *   Valid values are <code>undefined</code>, '$auto', '$auto.*', '$direct' or application group
 	 *   IDs as specified in {@link sap.ui.model.odata.v4.ODataModel}.
+	 * @param {boolean} [mParameters.$$keepSelectOnFilter]
+	 *   Whether the selection state of the list binding is kept when a filter is changed; this
+	 *   includes dynamic filters, '$filter', '$search', and <code>$$aggregation.search</code>.
+	 *   Supported since 1.123.0.
 	 * @param {sap.ui.model.odata.OperationMode} [mParameters.$$operationMode]
 	 *   The operation mode for filtering and sorting with the model's operation mode as default.
 	 *   Since 1.39.0, the operation mode {@link sap.ui.model.odata.OperationMode.Server} is
