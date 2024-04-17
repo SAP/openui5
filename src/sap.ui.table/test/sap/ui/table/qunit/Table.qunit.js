@@ -3952,8 +3952,14 @@ sap.ui.define([
 				rowActionTemplate: TableQUnitUtils.createRowAction(),
 				extension: [
 					new Title({text: "TABLEHEADER"}),
-					new Toolbar({active: true, content: [new PasteTestControl({tagName: "div", handleOnPaste: false})]}),
-					new PasteTestControl({tagName: "div", handleOnPaste: false})
+					new Toolbar({active: true, content: [
+						new PasteTestControl({tagName: "div", handleOnPaste: false}),
+						new PasteTestControl({tagName: "div", handleOnPaste: true}),
+						new PasteTestControl({tagName: "input", handleOnPaste: false})
+					]}),
+					new PasteTestControl({tagName: "div", handleOnPaste: false}),
+					new PasteTestControl({tagName: "div", handleOnPaste: true}),
+					new PasteTestControl({tagName: "input", handleOnPaste: false})
 				],
 				footer: new PasteTestControl({tagName: "div", handleOnPaste: false})
 			}, function(oTable) {
@@ -4043,24 +4049,16 @@ sap.ui.define([
 		}
 	});
 
-	/**
-	 * @deprecated As of version 1.72
-	 */
-	QUnit.test("Paste event should not be fired on the title", function(assert) {
+	QUnit.test("Paste event should be fired on other table areas - the toolbar, its content, ...", function(assert) {
 		this.test(assert, "Title control", oTable.getExtension()[0].getDomRef(), false);
-	});
-
-	/**
-	 * @deprecated As of version 1.38
-	 */
-	QUnit.test("Paste event should not be fired on the toolbar", function(assert) {
-		this.test(assert, "Toolbar control", oTable.getExtension()[1].getDomRef(), false);
-		this.test(assert, "Toolbar content control", oTable.getExtension()[1].getContent()[0].getDomRef(), false);
-	});
-
-	QUnit.test("Elements where the paste event should not be fired", function(assert) {
-		this.test(assert, "Extension control", oTable.getExtension()[2].getDomRef(), false);
-		this.test(assert, "Footer control", oTable.getFooter().getDomRef(), false);
+		this.test(assert, "Toolbar control", oTable.getExtension()[1].getFocusDomRef(), true);
+		this.test(assert, "Toolbar content control 1", oTable.getExtension()[1].getContent()[0].getDomRef(), true);
+		this.test(assert, "Toolbar content control 2", oTable.getExtension()[1].getContent()[1].getDomRef(), false);
+		this.test(assert, "Toolbar content control 3", oTable.getExtension()[1].getContent()[2].getDomRef(), false);
+		this.test(assert, "Extension control 1", oTable.getExtension()[2].getDomRef(), true);
+		this.test(assert, "Extension control 2", oTable.getExtension()[3].getDomRef(), false);
+		this.test(assert, "Extension control 3", oTable.getExtension()[4].getDomRef(), false);
+		this.test(assert, "Footer control", oTable.getFooter().getDomRef(), true);
 	});
 
 	QUnit.test("NoData", async function(assert) {
