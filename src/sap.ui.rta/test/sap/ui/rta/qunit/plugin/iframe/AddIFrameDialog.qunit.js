@@ -467,9 +467,9 @@ sap.ui.define([
 				);
 
 				const oAdvancedSettings = this.oAddIFrameDialog._oJSONModel.getProperty("/advancedSettings/value");
-				assert.strictEqual(oAdvancedSettings["allow-forms"], true, "then the model is set correctly");
+				assert.strictEqual(oAdvancedSettings.allowForms, true, "then the model is set correctly");
 				oAllowFormsSwitch.setState(false);
-				assert.strictEqual(oAdvancedSettings["allow-forms"], false, "then the model is updated correctly");
+				assert.strictEqual(oAdvancedSettings.allowForms, false, "then the model is updated correctly");
 
 				oAdditionalParametersInput.setValue("allow-pointer-lock");
 				QUnitUtils.triggerKeydown(oAdditionalParametersInput.getFocusDomRef(), KeyCodes.ENTER);

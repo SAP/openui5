@@ -16,6 +16,7 @@ sap.ui.define([
 	 function createsSandboxAttributesString(oAdvancedSettings) {
 		return Object.keys(oAdvancedSettings)
 		.filter((sKey) => oAdvancedSettings[sKey])
+		.map((sKey) => sKey.replace(/[A-Z]/g, "-$&").toLowerCase())
 		.join(" ");
 	}
 
