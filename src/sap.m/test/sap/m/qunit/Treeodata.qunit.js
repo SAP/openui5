@@ -1,23 +1,21 @@
 /*global QUnit */
 
 sap.ui.define([
-	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/core/util/MockServer",
-	"sap/ui/model/odata/v2/ODataModel",
 	"sap/m/StandardTreeItem",
 	"sap/m/Tree",
-	"sap/ui/core/Core"
-], function(createAndAppendDiv, qutils, MockServer, ODataModelV2, StandardTreeItem, Tree, oCore) {
+	"sap/ui/core/util/MockServer",
+	"sap/ui/model/odata/v2/ODataModel",
+	"sap/ui/qunit/utils/createAndAppendDiv",
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(StandardTreeItem, Tree, MockServer, ODataModelV2, createAndAppendDiv, nextUIUpdate) {
 	"use strict";
+
 	createAndAppendDiv("content").style.height = "100%";
 
-
-
 	QUnit.module("initial check", {
-		beforeEach: function(){
+		beforeEach: async function() {
 			// create odata service
-			var sMetaDataURI = "test-resources/sap/m/mockdata/";
+			const sMetaDataURI = "test-resources/sap/m/mockdata/";
 
 			// configure respond to requests delay
 			MockServer.config({
@@ -26,7 +24,7 @@ sap.ui.define([
 			});
 
 			// create mockserver
-			var oMockServer = new MockServer({
+			const oMockServer = new MockServer({
 				rootUri : "/odataFake/"
 			});
 			this.oMockServer = oMockServer;
@@ -36,13 +34,13 @@ sap.ui.define([
 			this.oMockServer.start();
 
 			// creat Tree ***************************************
-			var oTemplate = new StandardTreeItem({
+			const oTemplate = new StandardTreeItem({
 				title: "{odata>Description}"
 			});
 
-			var oTree = new Tree();
+			const oTree = new Tree();
 
-			var oModel = new ODataModelV2("/odataFake/", {useBatch:false});
+			const oModel = new ODataModelV2("/odataFake/", { useBatch:false });
 			oTree.setModel(oModel, "odata");
 
 			oTree.bindItems({
@@ -54,7 +52,7 @@ sap.ui.define([
 			});
 
 			oTree.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oTree = oTree;
 		},
@@ -72,137 +70,104 @@ sap.ui.define([
 	// ================================================================================
 	*/
 
-	QUnit.test("initial", function(assert) {
-		var done = assert.async();
-		var that = this;
+	QUnit.test("initial", async function(assert) {
+		const oTree = this.oTree;
 
-		this.oTree.attachUpdateFinished(function() {
-			var aItems = that.oTree.getItems();
-			assert.equal(aItems.length, 3, "the initial loading is done.");
-			done();
-		}
+		await new Promise((fnResolve) => {
+			oTree.attachEventOnce("updateFinished", fnResolve);
+		});
 
-		);
+		const aItems = oTree.getItems();
+		assert.equal(aItems.length, 3, "the initial loading is done.");
 	});
 
-	QUnit.test("expand", function(assert) {
-		var done = assert.async();
+	QUnit.test("expand", async function(assert) {
+		const oTree = this.oTree;
 
-		var that = this;
-		var fn1 = function() {
-			that.oTree.detachUpdateFinished(fn1);
+		await new Promise((fnResolve) => {
+			oTree.attachEventOnce("updateFinished", fnResolve);
+		});
 
-			that.oTree.attachUpdateFinished(fn2);
-
-			var oArrowDomRef = that.oTree.getItems()[0].$().find(".sapMTreeItemBaseExpander");
+		const oArrowDomRef = oTree.getItems()[0].$().find(".sapMTreeItemBaseExpander");
 			oArrowDomRef.trigger("click");
-		};
 
-		var fn2 = function() {
-			that.oTree.detachUpdateFinished(fn2);
+		// expand fires change event before data of children nodes is loaded
+		// to render the expand icon immediately and not wait for the data loaded
+		await new Promise((fnResolve) => {
+			oTree.attachEventOnce("updateFinished", fnResolve);
+		});
 
-			// expand fires change event before data of children nodes is loaded
-			// to render the expand icon immediately and not wait for the data loaded
-			that.oTree.attachUpdateFinished(fn3);
-		};
+		await new Promise((fnResolve) => {
+			oTree.attachEventOnce("updateFinished", fnResolve);
+		});
 
-		var fn3 = function() {
-			that.oTree.detachUpdateFinished(fn3);
-
-			var aItems = that.oTree.getItems();
-			assert.equal(aItems.length, 5, "expanding is done.");
-			done();
-		};
-
-		that.oTree.attachUpdateFinished(fn1);
+		const aItems = oTree.getItems();
+		assert.equal(aItems.length, 5, "expanding is done.");
 	});
 
-	QUnit.test("collapse", function(assert) {
-		var done = assert.async();
+	QUnit.test("collapse", async function(assert) {
+		const oTree = this.oTree;
 
-		var that = this;
-		var fn1 = function() {
-			that.oTree.detachUpdateFinished(fn1);
+		await new Promise((fnResolve) => {
+			oTree.attachEventOnce("updateFinished", fnResolve);
+		});
 
-			that.oTree.attachUpdateFinished(fn2);
+		let oArrowDomRef = oTree.getItems()[0].$().find(".sapMTreeItemBaseExpander");
+		oArrowDomRef.trigger("click");
 
-			var oArrowDomRef = that.oTree.getItems()[0].$().find(".sapMTreeItemBaseExpander");
-			oArrowDomRef.trigger("click");
-		};
+		// expand fires change event before data of children nodes is loaded
+		// to render the expand icon immediately and not wait for the data loaded
+		await new Promise((fnResolve) => {
+			oTree.attachEventOnce("updateFinished", fnResolve);
+		});
 
-		var fn2 = function() {
-			that.oTree.detachUpdateFinished(fn2);
+		await new Promise((fnResolve) => {
+			oTree.attachEventOnce("updateFinished", fnResolve);
+		});
 
-			// expand fires change event before data of children nodes is loaded
-			// to render the expand icon immediately and not wait for the data loaded
-			that.oTree.attachUpdateFinished(fn3);
-		};
+		// trigger collapse
+		oArrowDomRef = oTree.getItems()[0].$().find(".sapMTreeItemBaseExpander");
+		oArrowDomRef.trigger("click");
 
-		var fn3 = function() {
-			// expanded
-			that.oTree.detachUpdateFinished(fn3);
-			that.oTree.attachUpdateFinished(fn4);
+		await new Promise((fnResolve) => {
+			oTree.attachEventOnce("updateFinished", fnResolve);
+		});
 
-			// trigger collapse
-			var oArrowDomRef = that.oTree.getItems()[0].$().find(".sapMTreeItemBaseExpander");
-			oArrowDomRef.trigger("click");
-		};
-
-		var fn4 = function() {
-			that.oTree.detachUpdateFinished(fn4);
-
-			var aItems = that.oTree.getItems();
-			assert.equal(aItems.length, 3, "collapsing is done.");
-			done();
-		};
-
-		that.oTree.attachUpdateFinished(fn1);
+		const aItems = oTree.getItems();
+		assert.equal(aItems.length, 3, "collapsing is done.");
 	});
 
-	QUnit.test("expand/collapse multiple nodes", function(assert) {
-		var done = assert.async();
+	QUnit.test("expand/collapse multiple nodes", async function(assert) {
+		const oTree = this.oTree;
 
-		var that = this;
-		var fn1 = function() {
-			that.oTree.detachUpdateFinished(fn1);
+		await new Promise((fnResolve) => {
+			oTree.attachEventOnce("updateFinished", fnResolve);
+		});
 
-			that.oTree.attachUpdateFinished(fn2);
+		// trigger expand
+		oTree.expand([0,1]);
 
-			// trigger expand
-			that.oTree.expand([0,1]);
-		};
+		// expand fires change event before data of children nodes is loaded
+		// to render the expand icon immediately and not wait for the data loaded
+		await new Promise((fnResolve) => {
+			oTree.attachEventOnce("updateFinished", fnResolve);
+		});
 
-		var fn2 = function() {
-			that.oTree.detachUpdateFinished(fn2);
+		await new Promise((fnResolve) => {
+			oTree.attachEventOnce("updateFinished", fnResolve);
+		});
 
-			// expand fires change event before data of children nodes is loaded
-			// to render the expand icon immediately and not wait for the data loaded
-			that.oTree.attachUpdateFinished(fn3);
-		};
+		let aItems = oTree.getItems();
+		assert.equal(aItems.length, 8, "expanding multiple nodes is done.");
 
-		var fn3 = function() {
-			// expanded
-			that.oTree.detachUpdateFinished(fn3);
+		// trigger collapse
+		oTree.collapse([0,3]);
 
-			var aItems = that.oTree.getItems();
-			assert.equal(aItems.length, 8, "expanding multiple nodes is done.");
+		await new Promise((fnResolve) => {
+			oTree.attachEventOnce("updateFinished", fnResolve);
+		});
 
-			that.oTree.attachUpdateFinished(fn4);
-
-			// trigger collapse
-			that.oTree.collapse([0,3]);
-		};
-
-		var fn4 = function() {
-			that.oTree.detachUpdateFinished(fn4);
-
-			var aItems = that.oTree.getItems();
-			assert.equal(aItems.length, 3, "collapsing multiple nodes is done.");
-			done();
-		};
-
-		that.oTree.attachUpdateFinished(fn1);
-
+		aItems = oTree.getItems();
+		assert.equal(aItems.length, 3, "collapsing multiple nodes is done.");
 	});
-
 });
