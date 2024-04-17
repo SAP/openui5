@@ -73,8 +73,6 @@ sap.ui.define([
 				&& this.isRenameEnabled([oOverlay])
 			) {
 				oOverlay.attachBrowserEvent("click", RenameHandler._onClick, this);
-			} else {
-				oOverlay.detachBrowserEvent("click", RenameHandler._onClick, this);
 			}
 		},
 
@@ -274,7 +272,10 @@ sap.ui.define([
 			var aSelection = oEvent.getParameter("selection");
 
 			// detach events from previous selection
-			this._aSelection.forEach(RenameHandler._manageClickEvent, this);
+			this._aSelection.forEach((vSelection) => {
+				const oOverlay = vSelection.getSource ? vSelection.getSource() : vSelection;
+				oOverlay.detachBrowserEvent("click", RenameHandler._onClick, this);
+			});
 			// attach events to the new selection
 			aSelection.forEach(RenameHandler._manageClickEvent, this);
 

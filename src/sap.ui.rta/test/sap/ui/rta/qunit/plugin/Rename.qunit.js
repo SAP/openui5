@@ -195,6 +195,19 @@ sap.ui.define([
 			}, 50);
 		});
 
+		QUnit.test("when the renamed element is destroyed", function(assert) {
+			sandbox.stub(this.oRenamePlugin, "getResponsibleElementOverlay").callsFake((oElementOverlay) => {
+				// If the element of the overlay doesn't exist anymore
+				// control-specific logic in the designtime might break
+				assert.ok(
+					oElementOverlay.getElement(),
+					"then responsible element checks must not be executed for overlays of destroyed elements"
+				);
+			});
+			QUnitUtils.triggerEvent("click", this.oFormContainerOverlay.getDomRef());
+			this.oFormContainer.destroy();
+		});
+
 		QUnit.test("when _isEditable is called", function(assert) {
 			this.oFormContainerOverlay.setDesignTimeMetadata({
 				actions: {
