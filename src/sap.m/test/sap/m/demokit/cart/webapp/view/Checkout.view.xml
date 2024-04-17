@@ -62,7 +62,6 @@
 												formatter : '.formatter.price'
 											}"
 											numberUnit="EUR"
-											press=".onEntryListPress"
 											iconDensityAware="false">
 											<firstStatus>
 												<ObjectStatus
@@ -726,7 +725,6 @@
 											formatter : '.formatter.price'
 										}"
 										numberUnit="EUR"
-										press=".onEntryListPress"
 										iconDensityAware="false">
 										<firstStatus>
 											<ObjectStatus
