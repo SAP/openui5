@@ -1449,11 +1449,6 @@ function(
 		oDomRef && this.getFocusDomRef().setAttribute("aria-expanded", "true");
 		this._bPickerIsOpening = false;
 
-		// reset the initial focus back to the input
-		if (!this.isPlatformTablet()) {
-			this.getPicker().setInitialFocus(this);
-		}
-
 		// If there are links in the value state take the links out of
 		// the tab chain by default. They will be tabbable only if the focus in the value state message
 		aValueStateLinks.forEach(function(oLink) {
