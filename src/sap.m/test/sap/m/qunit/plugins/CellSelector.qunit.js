@@ -585,6 +585,29 @@ sap.ui.define([
 		fnSelectionChangeSpy.reset();
 	});
 
+	QUnit.test("keyboard remove selection", function (assert) {
+		const oTable = this.oTable;
+		const oCellSelector = this.oCellSelector;
+
+		const fnSelectionChangeSpy = sinon.spy();
+		oCellSelector.attachEvent("selectionChange", fnSelectionChangeSpy);
+
+		let oCell = getCell(oTable, 1, 0); // first cell of first row
+		qutils.triggerKeydown(oCell, KeyCodes.SPACE); // select first cell of first row
+		qutils.triggerKeyup(oCell, KeyCodes.SPACE); // select first cell of first row
+
+		oTable.addDelegate({
+			onkeydown: function(oEvent) {
+				oEvent.setMarked(oCellSelector.getConfig("eventClearedAll"));
+			}
+		}, true);
+
+		oCell = getCell(oTable, 2, 0);
+		qutils.triggerKeydown(oCell, KeyCodes.A, false, false, true);
+
+		assert.equal(this.oCellSelector.getSelectionRange(), null, "Selection is cleared");
+	});
+
 	QUnit.module("Dialog Behavior", {
 		beforeEach: async function() {
 			this.oMockServer = new MockServer({ rootUri : sServiceURI });

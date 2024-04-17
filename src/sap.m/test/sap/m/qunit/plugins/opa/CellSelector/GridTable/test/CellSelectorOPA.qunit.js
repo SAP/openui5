@@ -312,19 +312,6 @@ sap.ui.define([
 			When.Keyboard.iRemoveSelection(true);
 			Then.iSeeCellsSelected();
 
-			// Trying to clear with 2x CTRL + A with no Select All => nothing happens
-			selectBlock();
-			When.iFocusCell(1, 3);
-			When.Keyboard.iSelectAll();
-			Then.iSeeCellsSelected({ rowIndex: 1, colIndex: 1 }, { rowIndex: 1, colIndex: 3 });
-			Then.iSeeRowsSelected();
-
-			When.Keyboard.iSelectAll();
-			Then.iSeeCellsSelected({ rowIndex: 1, colIndex: 1 }, { rowIndex: 1, colIndex: 3 });
-			Then.iSeeRowsSelected();
-
-			When.Keyboard.iRemoveSelection(true);
-			Then.iSeeCellsSelected();
 
 			// Trying to clear with 2x CTRL + A with Select All => clears selection, also clears cells
 			Given.iChangeSelectAllState(true);

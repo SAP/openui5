@@ -118,7 +118,7 @@ sap.ui.define([
 	MultiSelectionPlugin.prototype.init = function() {
 		SelectionPlugin.prototype.init.apply(this, arguments);
 
-		const oIcon = new Icon({src: IconPool.getIconURI(TableUtils.ThemeParameters.clearSelectionIcon), useIconTooltip: false});
+		const oIcon = new Icon({src: IconPool.getIconURI(TableUtils.ThemeParameters.checkboxIcon), useIconTooltip: false});
 		oIcon.addStyleClass("sapUiTableSelectClear");
 		this.setAggregation("icon", oIcon, true);
 
@@ -180,11 +180,12 @@ sap.ui.define([
 
 		return {
 			headerSelector: {
-				type: this._bLimitDisabled ? "toggle" : "clear",
+				type: this._bLimitDisabled ? "toggle" : "custom",
 				icon: this.getAggregation("icon"),
 				visible: this.getSelectionMode() === SelectionMode.MultiToggle && this.getShowHeaderSelector(),
-				enabled: this._bLimitDisabled || this.getSelectedCount() > 0,
-				selected: this.getSelectableCount() > 0 && this.getSelectableCount() === this.getSelectedCount()
+				enabled: this.getSelectableCount() > 0,
+				selected: this.getSelectableCount() > 0 && this.getSelectableCount() === this.getSelectedCount(),
+				tooltip: this.getSelectedCount() === 0 ? TableUtils.getResourceText("TBL_SELECT_ALL") : TableUtils.getResourceText("TBL_DESELECT_ALL")
 			}
 		};
 	};
@@ -198,17 +199,28 @@ sap.ui.define([
 
 		if (mRenderConfig.headerSelector.type === "toggle") {
 			toggleSelection(this);
-		} else if (mRenderConfig.headerSelector.type === "clear") {
-			this.clearSelection();
+		} else if (mRenderConfig.headerSelector.type === "custom") {
+			 if (this.getSelectedCount() > 0) {
+				 this.clearSelection();
+			 } else {
+				this.addSelectionInterval(0, this._getHighestSelectableIndex());
+			 }
 		}
 	};
 
 	MultiSelectionPlugin.prototype.onKeyboardShortcut = function(sType, oEvent) {
-		if (sType === "toggle") {
-			if (this._bLimitDisabled && toggleSelection(this) === false) {
-				oEvent?.setMarked("sapUiTableClearAll");
+		if (sType === "toggle") { // ctrl + a
+			if (this._bLimitDisabled) {
+				if (!toggleSelection(this)) {
+					oEvent?.setMarked("sapUiTableClearAll");
+				}
+			} else {
+				const sSelectionMode = this.getSelectionMode();
+				if (sSelectionMode === SelectionMode.MultiToggle) {
+					this.addSelectionInterval(0, this._getHighestSelectableIndex());
+				}
 			}
-		} else if (sType === "clear") {
+		} else if (sType === "clear") { // ctrl + shift + a
 			this.clearSelection();
 			oEvent?.setMarked("sapUiTableClearAll");
 		}
@@ -512,8 +524,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * @override
-	 * @inheritDoc
+	 * Returns the number of selectable rows.
+	 *
+	 * @returns {int} The number of selectable rows.
 	 */
 	MultiSelectionPlugin.prototype.getSelectableCount = function() {
 		if (this.oInnerSelectionPlugin) {
@@ -577,6 +590,26 @@ sap.ui.define([
 	};
 
 	/**
+	 * Changes the current icon and tooltip text of the header selection icon in the given plugin object based on the selection.
+	 *
+	 * @param {sap.ui.table.plugins.MultiSelectionPlugin} oPlugin The plugin to toggle the selection on.
+	 */
+	function updateHeaderSelectorIcon(oPlugin) {
+		if (!oPlugin._bLimitDisabled) {
+			const oIcon = oPlugin.getAggregation("icon");
+			const iSelectedCount = oPlugin.getSelectedCount();
+
+			if (oPlugin.getSelectableCount() === iSelectedCount) {
+				oIcon.setSrc(IconPool.getIconURI(TableUtils.ThemeParameters.allSelectedIcon));
+			} else if (iSelectedCount !== 0) {
+				oIcon.setSrc(IconPool.getIconURI(TableUtils.ThemeParameters.clearSelectionIcon));
+			} else {
+				oIcon.setSrc(IconPool.getIconURI(TableUtils.ThemeParameters.checkboxIcon));
+			}
+		}
+	}
+
+	/**
 	 * Fires the _onSelectionChange event.
 	 *
 	 * @param oEvent
@@ -584,6 +617,8 @@ sap.ui.define([
 	 */
 	MultiSelectionPlugin.prototype._onSelectionChange = function(oEvent) {
 		const aRowIndices = oEvent.getParameter("rowIndices");
+
+		updateHeaderSelectorIcon(this);
 
 		this.fireSelectionChange({
 			rowIndices: aRowIndices,
@@ -608,7 +643,7 @@ sap.ui.define([
 	};
 
 	MultiSelectionPlugin.prototype.onThemeChanged = function() {
-		this.getAggregation("icon").setSrc(IconPool.getIconURI(TableUtils.ThemeParameters.clearSelectionIcon));
+		updateHeaderSelectorIcon(this);
 	};
 
 	return MultiSelectionPlugin;

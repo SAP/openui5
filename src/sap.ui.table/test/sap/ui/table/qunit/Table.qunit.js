@@ -5034,7 +5034,7 @@ sap.ui.define([
 
 		this.oTestPlugin.getRenderConfig = function() {
 			return {
-				headerSelector: {type: "clear", visible: true, enabled: false, selected: false}
+				headerSelector: {type: "custom", visible: true, enabled: false, selected: false, tooltip: sDeselectAllTitleText}
 			};
 		};
 		this.oTable.invalidate();
@@ -5045,7 +5045,7 @@ sap.ui.define([
 
 		this.oTestPlugin.getRenderConfig = function() {
 			return {
-				headerSelector: {type: "clear", visible: false, enabled: false, selected: false}
+				headerSelector: {type: "custom", visible: false, enabled: false, selected: false, tooltip: sDeselectAllTitleText}
 			};
 		};
 		this.oTable.invalidate();
@@ -5077,7 +5077,7 @@ sap.ui.define([
 
 		this.oTestPlugin.getRenderConfig = function() {
 			return {
-				headerSelector: {type: "clear", visible: true,	enabled: true, selected: false}
+				headerSelector: {type: "custom", visible: true,	enabled: true, selected: false, tooltip: sDeselectAllTitleText}
 			};
 		};
 		this.oTable.invalidate();
@@ -5088,7 +5088,7 @@ sap.ui.define([
 
 		this.oTestPlugin.getRenderConfig = function() {
 			return {
-				headerSelector: {type: "clear", visible: false, enabled: true,	selected: false}
+				headerSelector: {type: "custom", visible: false, enabled: true,	selected: false, tooltip: sDeselectAllTitleText}
 			};
 		};
 		this.oTable.invalidate();
@@ -5098,7 +5098,7 @@ sap.ui.define([
 
 		this.oTestPlugin.getRenderConfig = function() {
 			return {
-				headerSelector: {type: "clear", icon: new Icon({src: "sap-icon://clear-all"}), visible: true, enabled: true, selected: false}
+				headerSelector: {type: "custom", icon: new Icon({src: "sap-icon://clear-all"}), visible: true, enabled: true, selected: false}
 			};
 		};
 		this.oTable.invalidate();
@@ -5106,7 +5106,7 @@ sap.ui.define([
 		Elem = this.oTable.getDomRef("selall");
 		assert.ok(Elem.firstChild.classList.contains("sapUiIcon"), "header selector icon is rendered");
 		assert.equal(Element.closestTo(this.oTable.getDomRef("selall").firstChild).getSrc(), "sap-icon://clear-all", "The icon source is correct");
-		assert.equal(Elem.getAttribute("title"), sDeselectAllTitleText, "Tooltip is correct");
+		assert.notEqual(Elem.getAttribute("title"), sDeselectAllTitleText, "Tooltip is not set through missing tooltip in render config");
 	});
 
 	QUnit.test("Selection API", function(assert) {

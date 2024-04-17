@@ -3152,8 +3152,7 @@ sap.ui.define([
 		}
 
 		const mRenderConfig = this._getSelectionPlugin().getRenderConfig();
-		let sSelectAllResourceTextID;
-		let sSelectAllText;
+
 		const $SelectAll = this.$("selall");
 
 		// trigger the rows to update their selection
@@ -3168,27 +3167,26 @@ sap.ui.define([
 			return;
 		}
 
+		// update the DOM without going through the whole table rendering
 		if (mRenderConfig.headerSelector.type === "toggle") {
 			const bAllRowsSelected = mRenderConfig.headerSelector.selected;
 
 			$SelectAll.toggleClass("sapUiTableSelAll", !bAllRowsSelected);
 			this._getAccExtension().setSelectAllState(bAllRowsSelected);
 
-			sSelectAllResourceTextID = bAllRowsSelected ? "TBL_DESELECT_ALL" : "TBL_SELECT_ALL";
-		} else if (mRenderConfig.headerSelector.type === "clear") {
+			const sSelectAllResourceTextID = bAllRowsSelected ? "TBL_DESELECT_ALL" : "TBL_SELECT_ALL";
+			const sTitle = TableUtils.getResourceText(sSelectAllResourceTextID);
+			$SelectAll.attr('title', sTitle);
+		} else if (mRenderConfig.headerSelector.type === "custom") {
 			$SelectAll.toggleClass("sapUiTableSelAllDisabled", !mRenderConfig.headerSelector.enabled);
-			sSelectAllResourceTextID = "TBL_DESELECT_ALL";
 
 			if (mRenderConfig.headerSelector.enabled) {
 				$SelectAll.removeAttr("aria-disabled");
 			} else {
 				$SelectAll.attr("aria-disabled", "true");
 			}
-		}
-
-		if (sSelectAllResourceTextID) {
-			sSelectAllText = TableUtils.getResourceText(sSelectAllResourceTextID);
-			$SelectAll.attr('title', sSelectAllText);
+			const sTitle = mRenderConfig.headerSelector.tooltip;
+			$SelectAll.attr('title', sTitle);
 		}
 	};
 
