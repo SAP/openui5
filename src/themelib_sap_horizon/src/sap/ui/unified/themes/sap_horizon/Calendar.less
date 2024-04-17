@@ -186,7 +186,7 @@ html.sap-desktop .sapUiCalHead > .sapUiCalHeadB:active {
 	overflow: hidden;
 }
 
-html.sap-desktop .sapUiCalItem:not(.sapUiCalItemSel):not(.sapUiCalItemWeekEnd):focus {
+html.sap-desktop .sapUiCalItem:not(.sapUiCalItemSel):not(.sapUiCalItemWeekEnd):focus:not(:hover) {
 	background-color: @sapUiLegendWorkingBackground;
 }
 
@@ -265,10 +265,6 @@ html.sap-desktop .sapUiCalItemWeekEnd:not(.sapUiCalItemSel):focus {
 .sapUiCalItem:hover,
 .sapUiCalItemWeekEnd:hover {
 	background-color: @sapUiListHoverBackground;
-}
-
-.sapUiCalItemWeekEnd:hover {
-	filter: brightness (105%);
 }
 
 html.sap-desktop .sapUiCalDatesRow .sapUiCalItemWeekEnd:not(.sapUiCalItemSel):hover,
@@ -569,13 +565,20 @@ html.sap-desktop .sapUiCalItemOtherMonth:not(.sapUiCalItemSel) :not(.sapUiCalWee
 	background-color: @sapUiListHoverBackground;
 }
 
-.sapUiCalItem.sapUiCalItemSel:not(.sapUiCalItemSelBetween){
+.sapUiCalItem.sapUiCalItemSel:not(.sapUiCalItemSelBetween):not(:hover) {
 	background-color: @sapUiContentSelectedBackground;
 	color: @sapUiContentSelectedTextColor;
 }
 
-.sapUiCalItem.sapUiCalItemSel:not(.sapUiCalItemSelBetween):hover{
-	background-color: @sapUiListHoverBackground;
+.sapUiCalItem.sapUiCalItemSel {
+	background-color: @sapUiContentSelectedHoverBackground;
+	&:not(.sapUiCalItemSelBetween):not(.sapUiCalItemSelStart):not(.sapUiCalItemSelEnd):hover {
+		background-color: @sapUiListHoverBackground;
+	}
+}
+
+.sapUiCalItemWeekEnd:hover {
+	filter: brightness(105%);
 }
 
 .sapUiCalMonthPicker,
