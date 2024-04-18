@@ -827,12 +827,12 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[false, true].forEach(function (bCreated) {
+// undefined: not transient; false: transient predicate, but reinserted; true: transient
+[undefined, false, true].forEach(function (bTransient) {
 	["", "EMPLOYEE_2_EQUIPMENTS"].forEach(function (sPath) {
 		[false, true].forEach(function (bDeleted) {
-			var sTitle = "_Cache#removeElement, bCreated = " + bCreated + ", bDeleted=" + bDeleted
-					+ ", sPath = " + sPath;
-
+			const sTitle = "_Cache#removeElement, bTransient = " + bTransient + ", bDeleted="
+				+ bDeleted + ", sPath = " + sPath;
 			QUnit.test(sTitle, function (assert) {
 				var sByPredicate,
 					oCache = new _Cache(this.oRequestor, "EMPLOYEES('42')"),
@@ -849,16 +849,16 @@ sap.ui.define([
 					// Assume there is no more data on the server; if element at index 1 is created
 					// on the client, then 1 element has been read from server otherwise all 3 are
 					// read from the server
-					iLimit = bCreated ? 1 : 3;
+					iLimit = bTransient ? 1 : 3;
 
-				oCache.adjustIndexes = function () {};
+				oCache.adjustIndexes = mustBeMocked;
 				if (sPath === "") {
 					oCache.iLimit = iLimit;
 				}
 				aCacheData.$byPredicate = {"('1')" : oElement};
-				aCacheData.$created = bCreated ? 2 : 0;
-				oCache.iActiveElements = bCreated && !sPath ? 1 : 0;
-				if (bCreated) {
+				aCacheData.$created = bTransient ? 2 : 0;
+				oCache.iActiveElements = bTransient && !sPath ? 1 : 0;
+				if (bTransient !== undefined) {
 					aCacheData[1]["@$ui5._"].transientPredicate = "($uid=id-1-23)";
 					aCacheData.$byPredicate["($uid=id-1-23)"] = oElement;
 				}
@@ -878,7 +878,7 @@ sap.ui.define([
 				// code under test
 				iIndex = oCache.removeElement(2, "('1')", aCacheData, sPath);
 
-				assert.strictEqual(aCacheData.$created, bCreated ? 1 : 0);
+				assert.strictEqual(aCacheData.$created, bTransient ? 1 : 0);
 				assert.strictEqual(oCache.iActiveElements, 0);
 				assert.strictEqual(iIndex, 1);
 				assert.deepEqual(aCacheData, [{
@@ -890,7 +890,7 @@ sap.ui.define([
 					JSON.stringify(aCacheData.$byPredicate),
 					bDeleted ? sByPredicate : "{}");
 				if (sPath === "") {
-					assert.strictEqual(oCache.iLimit, bCreated ? 1 : 2);
+					assert.strictEqual(oCache.iLimit, bTransient ? 1 : 2);
 				} else {
 					assert.notOk("iLimit" in oCache);
 				}

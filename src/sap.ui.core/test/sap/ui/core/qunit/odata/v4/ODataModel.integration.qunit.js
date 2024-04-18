@@ -66345,4 +66345,165 @@ const sView = `
 			]);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: Create an item, persist it, select it and sort the cache. Because of the selected
+	// (and thus effectively kept-alive) element, the cache cannot be recreated. Then delete the
+	// created persisted item again and create another item. See that it is excluded when paging,
+	// and that all elements are shown. $count is used so that we have a size limit for the read
+	// requests.
+	// (The bug caused $created and iActiveElements to be wrong. And iActiveElements is used to
+	// calculate $count and the limit for subsequent reads.)
+	// SNOW: DINC0109748
+	QUnit.test("DINC0109748", async function (assert) {
+		const oModel = this.createSalesOrdersModel({autoExpandSelect : true});
+		const sView = `
+<Text id="count" text="{$count}"/>
+<Table id="table" growing="true" growingThreshold="2"
+		items="{path : '/SalesOrderList', parameters : {$count : true}}">
+	<Text id="id" text="{SalesOrderID}"/>
+</Table>`;
+
+		this.expectRequest("SalesOrderList?$count=true&$select=SalesOrderID&$skip=0&$top=2", {
+				"@odata.count" : "4",
+				value : [
+					{SalesOrderID : "1"},
+					{SalesOrderID : "2"}
+				]
+			})
+			.expectChange("count")
+			.expectChange("id", ["1", "2"]);
+
+		await this.createView(assert, sView, oModel);
+
+		const oTable = this.oView.byId("table");
+		const oListBinding = oTable.getBinding("items");
+
+		this.expectChange("count", "4");
+
+		this.oView.byId("count").setBindingContext(oListBinding.getHeaderContext());
+
+		await this.waitForChanges(assert, "count");
+
+		this.expectChange("id", ["5"])
+			.expectChange("count", "5")
+			.expectRequest({
+				method : "POST",
+				url : "SalesOrderList",
+				payload : {SalesOrderID : "5"}
+			}, {
+				SalesOrderID : "5"
+			});
+
+		const oSalesOrder5 = oListBinding.create({SalesOrderID : "5"}, true);
+
+		await Promise.all([
+			oSalesOrder5.created(),
+			this.waitForChanges(assert, "create Sales Order 5")
+		]);
+
+		oSalesOrder5.setSelected(true); // ensure that the cache is reset and not recreated
+
+		this.expectRequest("SalesOrderList?$count=true&$select=SalesOrderID"
+				+ "&$orderby=SalesOrderID desc&$skip=0&$top=2", {
+				"@odata.count" : "5",
+				value : [
+					{SalesOrderID : "5"},
+					{SalesOrderID : "4"}
+				]
+			})
+			.expectChange("id", [, "4"]);
+
+		oListBinding.sort(new Sorter("SalesOrderID", true));
+
+		await this.waitForChanges(assert, "sort desc");
+
+		checkTable("after sort", assert, oTable, [
+			"/SalesOrderList('5')",
+			"/SalesOrderList('4')"
+		], [["5"], ["4"]], 5);
+
+		this.expectChange("count", "4")
+			.expectRequest("DELETE SalesOrderList('5')")
+			.expectRequest("SalesOrderList?$count=true&$select=SalesOrderID"
+				+ "&$orderby=SalesOrderID desc&$filter=not (SalesOrderID eq '5')&$skip=1&$top=1", {
+				"@odata.count" : "4",
+				value : [
+					{SalesOrderID : "3"}
+				]
+			})
+			.expectChange("id", [, "3"]);
+
+		await Promise.all([
+			// code under test
+			oSalesOrder5.delete(),
+			this.waitForChanges(assert, "delete Sales Order 4")
+		]);
+
+		checkTable("after delete", assert, oTable, [
+			"/SalesOrderList('4')",
+			"/SalesOrderList('3')"
+		], [["4"], ["3"]], 4);
+
+		this.expectChange("id", ["6"])
+			.expectChange("count", "5")
+			.expectRequest({
+				method : "POST",
+				url : "SalesOrderList",
+				payload : {SalesOrderID : "6"}
+			}, {
+				SalesOrderID : "6"
+			});
+
+		oListBinding.create({SalesOrderID : "6"}, true);
+
+		await this.waitForChanges(assert, "create Sales Order 6");
+
+		checkTable("after create", assert, oTable, [
+			"/SalesOrderList('6')",
+			"/SalesOrderList('4')",
+			"/SalesOrderList('3')"
+		], [["6"], ["4"]], 5);
+
+		this.expectRequest("SalesOrderList?$count=true&$select=SalesOrderID"
+				+ "&$orderby=SalesOrderID desc&$filter=not (SalesOrderID eq '6')&$skip=2&$top=1", {
+				"@odata.count" : "4",
+				value : [
+					{SalesOrderID : "2"}
+				]
+			})
+			.expectChange("id", [,, "3", "2"]);
+
+		oTable.requestItems(); // show more items (requests one to have four)
+
+		await this.waitForChanges(assert, "show more items");
+
+		checkTable("after 'more'", assert, oTable, [
+			"/SalesOrderList('6')",
+			"/SalesOrderList('4')",
+			"/SalesOrderList('3')",
+			"/SalesOrderList('2')"
+		], [["6"], ["4"], ["3"], ["2"]], 5);
+
+		this.expectRequest("SalesOrderList?$count=true&$select=SalesOrderID"
+				+ "&$orderby=SalesOrderID desc&$filter=not (SalesOrderID eq '6')&$skip=3&$top=1", {
+				"@odata.count" : "4",
+				value : [
+					{SalesOrderID : "1"}
+				]
+			})
+			.expectChange("id", [,,,, "1"]);
+
+		oTable.requestItems(); // show more items (requests the missing one)
+
+		await this.waitForChanges(assert, "show more items again");
+
+		checkTable("after 'more' again", assert, oTable, [
+			"/SalesOrderList('6')",
+			"/SalesOrderList('4')",
+			"/SalesOrderList('3')",
+			"/SalesOrderList('2')",
+			"/SalesOrderList('1')"
+		], [["6"], ["4"], ["3"], ["2"], ["1"]]);
+	});
 });

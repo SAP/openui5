@@ -1697,22 +1697,18 @@ sap.ui.define([
 			// the element might have moved due to parallel insert/delete
 			iIndex = _Cache.getElementIndex(aElements, sPredicate, iIndex);
 		}
-		const bDeleted = oElement?.["@$ui5.context.isDeleted"];
-		if (!bDeleted) {
+		if (oElement && !oElement["@$ui5.context.isDeleted"]) {
 			delete aElements.$byPredicate[sPredicate];
+			delete aElements.$byPredicate[
+				_Helper.getPrivateAnnotation(oElement, "transientPredicate")];
 		}
 		if (iIndex >= 0) {
 			aElements.splice(iIndex, 1);
 			_Helper.addToCount(this.mChangeListeners, sPath, aElements, -1);
-			const sTransientPredicate
-				= oElement && _Helper.getPrivateAnnotation(oElement, "transientPredicate");
-			if (sTransientPredicate) {
+			if (iIndex < aElements.$created) {
 				aElements.$created -= 1;
 				if (!sPath) {
 					this.iActiveElements -= 1;
-				}
-				if (!bDeleted) {
-					delete aElements.$byPredicate[sTransientPredicate];
 				}
 			} else if (!sPath) {
 				this.iLimit -= 1; // this doesn't change Infinity
