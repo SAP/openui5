@@ -998,7 +998,11 @@ sap.ui.define([
 	 * @private
 	 */
 	FlexibleColumnLayout.prototype._restoreFocusToColumn = function (sCurrentColumn) {
-		var oElement = this._oColumnFocusInfo[sCurrentColumn];
+		var oElement = this._oColumnFocusInfo[sCurrentColumn],
+			oCurrentColumn = this._getColumnByStringName(sCurrentColumn);
+		if (this._isFocusInCurrentColumn(oCurrentColumn)) {
+			return;
+		}
 
 		if (!oElement || isEmptyObject(oElement)) {
 			// if no element was stored, get first focusable
@@ -1047,6 +1051,16 @@ sap.ui.define([
 		}
 
 		return false;
+	};
+
+	/**
+	 * Checks whether or not the focus is already in the current column
+	 * @param {Object} oCurrentColumn the current column
+	 * @returns {boolean} whether or not the focus is in the current column
+	 * @private
+	 */
+	FlexibleColumnLayout.prototype._isFocusInCurrentColumn = function (oCurrentColumn) {
+		return oCurrentColumn._isFocusInControl(oCurrentColumn);
 	};
 
 	FlexibleColumnLayout.prototype._getControlWidth = function () {

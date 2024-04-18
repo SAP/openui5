@@ -2038,9 +2038,10 @@ function(
 			this.oBtn1 = new Button({text: "Button1"});
 			this.oBtn2 = new Button({text: "Button2"});
 			this.oBtn3 = new Button({text: "Button3"});
+			this.firstFocusableBtn = new Button({text: "Focus Btn"});
 
 			this.oPage1 = oFactory.createPage("page1", this.oBtn1);
-			this.oPage2 = oFactory.createPage("page2", this.oBtn2);
+			this.oPage2 = oFactory.createPage("page2", [this.firstFocusableBtn, this.oBtn2]);
 			this.oPage3 = oFactory.createPage("page3", this.oBtn3);
 
 			this.oFCL = oFactory.createFCL({
@@ -2181,6 +2182,21 @@ function(
 
 		// Clean up
 		oStub.restore();
+	});
+
+	QUnit.test("Should keep focus if it is already in the current column", function (assert) {
+		// Arrange
+		var oExpectedFocusedElement = this.oBtn2.getDomRef();
+
+		// Act
+		this.oFCL.setLayout(LT.MidColumnFullScreen);
+
+		this.oBtn2.focus();
+		this.oFCL.setLayout(LT.TwoColumnsMidExpanded);
+
+		// Assert
+		assert.ok(document.activeElement === oExpectedFocusedElement,
+   "Focus is saved on the same element as before the resize, because it was already in the current column");
 	});
 
 	QUnit.module("Column width calculations", {
