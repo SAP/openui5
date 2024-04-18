@@ -7,10 +7,11 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/core/Lib",
 	"sap/ui/core/library",
+	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/nextUIUpdate"
-], function(Icon, IconPool, _IconRegistry, Log, Device, Library, library, jQuery, qutils, nextUIUpdate) {
+], function(Icon, IconPool, _IconRegistry, Log, Device, Library, library, KeyCodes, jQuery, qutils, nextUIUpdate) {
 	"use strict";
 
 	// shortcut for type from sap.ui.core
@@ -668,4 +669,219 @@ sap.ui.define([
 		assert.strictEqual(this.oIcon.$().css("font-family").replace(/"|'/g, ""), "SAP-icons-TNT", "Icon font family has been set properly after the font is loaded");
 	});
 
+	QUnit.module("Keyboard Support");
+
+	QUnit.test("Pressing 'Enter' key should fire 'press' on keydown", async function(assert) {
+		// System under Test
+		const pressSpy = this.spy(),
+			oIcon = new Icon({
+				press: pressSpy
+			}).placeAt("qunit-fixture");
+
+		await nextUIUpdate();
+
+		// Action
+		qutils.triggerKeydown(oIcon.getDomRef(), KeyCodes.ENTER);
+
+		// Assert
+		assert.equal(pressSpy.callCount, 1, "Press event should be fired once");
+
+		pressSpy.resetHistory();
+
+		// Action
+		qutils.triggerKeydown(oIcon.getDomRef(), KeyCodes.ENTER, false, false, true);
+
+		// Assert
+		assert.equal(pressSpy.callCount, 0, "Press event was not fired for Ctrl+ENTER");
+
+		// Cleanup
+		oIcon.destroy();
+	});
+
+	QUnit.test("Pressing 'Enter' key should not fire 'press' on keyup", async function(assert) {
+		// System under Test
+		const pressSpy = this.spy(),
+			oIcon = new Icon({
+				press: pressSpy
+			}).placeAt("qunit-fixture");
+
+		await nextUIUpdate();
+
+		// Action
+		qutils.triggerKeyup(oIcon.getDomRef(), KeyCodes.ENTER);
+
+		// Assert
+		assert.equal(pressSpy.callCount, 0, "Press event should not be fired");
+
+		// Cleanup
+		oIcon.destroy();
+	});
+
+	QUnit.test("Pressing 'Space' key should not fire 'press' on keydown", async function(assert) {
+		// System under Test
+		const pressSpy = this.spy(),
+			oIcon = new Icon({
+				press: pressSpy
+			}).placeAt("qunit-fixture");
+
+		await nextUIUpdate();
+
+		// Action
+		qutils.triggerKeydown(oIcon.getDomRef(), KeyCodes.SPACE);
+
+		// Assert
+		assert.equal(pressSpy.callCount, 0, "Press event should not be fired");
+
+		// Cleanup
+		oIcon.destroy();
+	});
+
+	QUnit.test("Pressing 'Space' key should fire 'press' on keyup", async function(assert) {
+		// System under Test
+		const pressSpy = this.spy(),
+			oIcon = new Icon({
+				press: pressSpy
+			}).placeAt("qunit-fixture");
+
+		await nextUIUpdate();
+
+		// Action
+		qutils.triggerKeyup(oIcon.getDomRef(), KeyCodes.SPACE);
+
+		// Assert
+		assert.equal(pressSpy.callCount, 1, "Press event should be fired once");
+
+		// Cleanup
+		oIcon.destroy();
+	});
+
+	QUnit.test("Pressing 'Space' key should not fire 'press' if 'ESCAPE' key is pressed and released after the Space is released", async function(assert) {
+		// System under Test
+		const pressSpy = this.spy(),
+			oIcon = new Icon({
+				press: pressSpy
+			}).placeAt("qunit-fixture");
+
+		await nextUIUpdate();
+
+		// Action
+		// first keydown on SPACE, keydown on ESCAPE, release SPACE then release ESCAPE
+		qutils.triggerKeydown(oIcon.getDomRef(), KeyCodes.SPACE);
+		qutils.triggerKeydown(oIcon.getDomRef(), KeyCodes.ESCAPE);
+		qutils.triggerKeyup(oIcon.getDomRef(), KeyCodes.SPACE);
+		qutils.triggerKeyup(oIcon.getDomRef(), KeyCodes.ESCAPE);
+
+		// Assert
+		assert.equal(pressSpy.callCount, 0, "Press event should not be fired");
+
+		// Cleanup
+		oIcon.destroy();
+	});
+
+	QUnit.test("Pressing 'Space' key should not fire 'press' if 'ESCAPE' key is pressed then 'Space' key is released and then Escape is released", async function(assert) {
+		// System under Test
+		const pressSpy = this.spy(),
+			oIcon = new Icon({
+				press: pressSpy
+			}).placeAt("qunit-fixture");
+
+		await nextUIUpdate();
+
+		// Action
+		// first keydown on SPACE, keydown on ESCAPE, release ESCAPE then release SPACE
+		qutils.triggerKeydown(oIcon.getDomRef(), KeyCodes.SPACE);
+		qutils.triggerKeydown(oIcon.getDomRef(), KeyCodes.ESCAPE);
+		qutils.triggerKeyup(oIcon.getDomRef(), KeyCodes.ESCAPE);
+		qutils.triggerKeyup(oIcon.getDomRef(), KeyCodes.SPACE);
+
+		// Assert
+		assert.equal(pressSpy.callCount, 0, "Press event should not be fired");
+
+		// Cleanup
+		oIcon.destroy();
+	});
+
+	QUnit.test("_bPressedSpace is reset on pressing 'Escape' key", async function(assert) {
+		// System under Test
+		const oIcon = (new Icon()).placeAt("qunit-fixture");
+
+		await nextUIUpdate();
+
+		// Action
+		// first keydown on SPACE, keydown on ESCAPE, release ESCAPE then the flag should be set to false
+		qutils.triggerKeydown(oIcon.getDomRef(), KeyCodes.SPACE);
+		qutils.triggerKeydown(oIcon.getDomRef(), KeyCodes.ESCAPE);
+		qutils.triggerKeyup(oIcon.getDomRef(), KeyCodes.ESCAPE);
+
+		// Assert
+		assert.ok(!oIcon._bPressedSpace, "_bPressedSpace is set to false once the escape is released");
+
+		// Cleanup
+		oIcon.destroy();
+  });
+
+	QUnit.test("Pressing 'Space' key should not fire 'press' if 'SHIFT' key is pressed and released after the 'Space' key is released", async function(assert) {
+		// System under Test
+		const pressSpy = this.spy(),
+			oIcon = new Icon({
+				press: pressSpy
+			}).placeAt("qunit-fixture");
+
+		await nextUIUpdate();
+
+		// Action
+		// first keydown on SPACE, keydown on SHIFT, release SPACE then release SHIFT
+		qutils.triggerKeydown(oIcon.getDomRef(), KeyCodes.SPACE);
+		qutils.triggerKeydown(oIcon.getDomRef(), KeyCodes.SHIFT);
+		qutils.triggerKeyup(oIcon.getDomRef(), KeyCodes.SPACE);
+		qutils.triggerKeyup(oIcon.getDomRef(), KeyCodes.SHIFT);
+
+		// Assert
+		assert.equal(pressSpy.callCount, 0, "Press event should not be fired");
+
+		// Cleanup
+		oIcon.destroy();
+	});
+
+	QUnit.test("Pressing 'Space' key should not fire 'press' if 'SHIFT' key is pressed then 'Space' key is released and then 'SHIFT' key is released", async function(assert) {
+		// System under Test
+		const pressSpy = this.spy(),
+			oIcon = new Icon({
+				press: pressSpy
+			}).placeAt("qunit-fixture");
+
+		await nextUIUpdate();
+
+		// Action
+		// first keydown on SPACE, keydown on SHIFT, release ESCAPE then release SHIFT
+		qutils.triggerKeydown(oIcon.getDomRef(), KeyCodes.SPACE);
+		qutils.triggerKeydown(oIcon.getDomRef(), KeyCodes.SHIFT);
+		qutils.triggerKeyup(oIcon.getDomRef(), KeyCodes.SHIFT);
+		qutils.triggerKeyup(oIcon.getDomRef(), KeyCodes.SPACE);
+
+		// Assert
+		assert.equal(pressSpy.callCount, 0, "Press event should not be fired");
+
+		// Cleanup
+		oIcon.destroy();
+	});
+
+	QUnit.test("All keys should be ignored when 'Space' key is pressed", async function(assert) {
+		// System under Test
+		var oEvent = { preventDefault: this.spy() },
+			oIcon = new Icon().placeAt("qunit-fixture");
+
+		await nextUIUpdate(this.clock);
+
+		// Action
+		// first keydown on SPACE, keydown on ESCAPE, release ESCAPE then release SPACE
+		qutils.triggerKeydown(oIcon.getDomRef(), KeyCodes.SPACE);
+		oIcon.onkeydown(oEvent);
+
+		// Assert
+		assert.equal(oEvent.preventDefault.callCount, 1, "PreventDefault is called");
+
+		// Cleanup
+		oIcon.destroy();
+	});
 });

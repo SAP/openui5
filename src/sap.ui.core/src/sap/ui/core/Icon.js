@@ -226,26 +226,9 @@ sap.ui.define([
 			oEvent.setMarked();
 		}
 
-		var sActiveColor = this.getActiveColor(),
-			sActiveBackgroundColor = this.getActiveBackgroundColor(),
-			$Icon;
-
-		if (sActiveColor || sActiveBackgroundColor) {
-
-			// change the source only when the first finger is on the Icon, the following fingers doesn't affect
-			if (!oEvent.targetTouches || (oEvent.targetTouches && oEvent.targetTouches.length === 1)) {
-				$Icon = this.$();
-
-				$Icon.addClass("sapUiIconActive");
-
-				if (sActiveColor) {
-					this._addColorClass(sActiveColor, "color");
-				}
-
-				if (sActiveBackgroundColor) {
-					this._addColorClass(sActiveBackgroundColor, "background-color");
-				}
-			}
+		// change the source only when the first finger is on the Icon, the following fingers doesn't affect
+		if (!oEvent.targetTouches || (oEvent.targetTouches && oEvent.targetTouches.length === 1)) {
+			this._activeIcon();
 		}
 	};
 
@@ -256,13 +239,45 @@ sap.ui.define([
 	 * @private
 	 */
 	Icon.prototype[Device.support.touch ? "ontouchend" : "onmouseup"] = function(oEvent) {
-
 		// change the source back only when all fingers leave the icon
 		if (!oEvent.targetTouches || (oEvent.targetTouches && oEvent.targetTouches.length === 0)) {
-
-			this.$().removeClass("sapUiIconActive");
-			this._restoreColors(Device.system.desktop ? "hover" : undefined);
+			this._deactiveIcon();
 		}
+	};
+
+
+	/**
+	 * Set the icon color and icon background color to active
+	 * @private
+	 */
+	Icon.prototype._activeIcon = function() {
+		var sActiveColor = this.getActiveColor(),
+			sActiveBackgroundColor = this.getActiveBackgroundColor(),
+			$Icon;
+
+		if (sActiveColor || sActiveBackgroundColor) {
+			// change the source only when the first finger is on the Icon, the following fingers doesn't affect
+			$Icon = this.$();
+
+			$Icon.addClass("sapUiIconActive");
+
+			if (sActiveColor) {
+				this._addColorClass(sActiveColor, "color");
+			}
+
+			if (sActiveBackgroundColor) {
+				this._addColorClass(sActiveBackgroundColor, "background-color");
+			}
+		}
+	};
+
+	/**
+	 * Restore the icon color and the icon background color
+	 * @private
+	 */
+	Icon.prototype._deactiveIcon = function() {
+		this.$().removeClass("sapUiIconActive");
+		this._restoreColors(Device.system.desktop ? "hover" : undefined);
 	};
 
 	/**
@@ -271,7 +286,6 @@ sap.ui.define([
 	 * @private
 	 */
 	Icon.prototype.onmouseover = function() {
-
 		var sHoverColor = this.getHoverColor(),
 			sHoverBackgroundColor = this.getHoverBackgroundColor();
 
@@ -311,32 +325,39 @@ sap.ui.define([
 	/* ----------------------------------------------------------- */
 	/* Keyboard handling                                           */
 	/* ----------------------------------------------------------- */
-
-	/**
-	 * Handle the key down event for SPACE and ENTER.
-	 *
-	 * @param {jQuery.Event} oEvent - the keyboard event.
-	 * @private
-	 */
 	Icon.prototype.onkeydown = function(oEvent) {
-		if (oEvent.which === KeyCodes.SPACE || oEvent.which === KeyCodes.ENTER) {
-			// note: prevent document scrolling
-			oEvent.preventDefault();
+		if ((oEvent.which === KeyCodes.SPACE || oEvent.which === KeyCodes.ENTER || oEvent.which === KeyCodes.ESCAPE || oEvent.which === KeyCodes.SHIFT)
+			&& !oEvent.ctrlKey && !oEvent.metaKey) {
+			if (this.hasListeners("press") && (oEvent.which === KeyCodes.SPACE || oEvent.which === KeyCodes.ENTER)) {
+				// mark the event for components that needs to know if the event was handled by the control
+				oEvent.setMarked();
 
-			var $Icon = this.$(),
-				sActiveColor = this.getActiveColor(),
-				sActiveBackgroundColor = this.getActiveBackgroundColor();
-
-			$Icon.addClass("sapUiIconActive");
-
-			if (sActiveColor) {
-				this._addColorClass(sActiveColor, "color");
+				this._activeIcon();
 			}
 
-			if (sActiveBackgroundColor) {
-				this._addColorClass(sActiveBackgroundColor, "background-color");
+			if (oEvent.which === KeyCodes.ENTER) {
+				this.firePress({/* no parameters */});
+			}
+
+			if (oEvent.which === KeyCodes.SPACE) {
+				this._bPressedSpace = true;
+			}
+
+			// set inactive state of the button and marked ESCAPE or SHIFT as pressed only if SPACE was pressed before it
+			if (this._bPressedSpace) {
+				if (oEvent.which === KeyCodes.SHIFT || oEvent.which === KeyCodes.ESCAPE) {
+					this._bPressedEscapeOrShift = true;
+					// set inactive button state
+					this._deactiveIcon();
+				}
+			}
+
+		} else {
+			if (this._bPressedSpace) {
+				oEvent.preventDefault();
 			}
 		}
+
 	};
 
 	/**
@@ -346,19 +367,32 @@ sap.ui.define([
 	 * @private
 	 */
 	Icon.prototype.onkeyup = function(oEvent) {
-		if (oEvent.which === KeyCodes.SPACE || oEvent.which === KeyCodes.ENTER) {
-			this.$().removeClass("sapUiIconActive");
-			this._restoreColors();
-		}
-	};
 
-	Icon.prototype.onsapenter = Icon.prototype.onsapspace = function(oEvent) {
-		if (this.hasListeners("press")) {
-			// mark the event for components that needs to know if the event was handled
+		if (oEvent.which === KeyCodes.ENTER) {
+			// mark the event for components that needs to know if the event was handled by the button
 			oEvent.setMarked();
+
+			// set inactive button state
+			this._deactiveIcon();
 		}
 
-		this.firePress({/* no parameters */});
+		if (oEvent.which === KeyCodes.SPACE) {
+			if (!this._bPressedEscapeOrShift) {
+				// mark the event for components that needs to know if the event was handled by the button
+				oEvent.setMarked();
+
+				// set inactive button state
+				this._deactiveIcon();
+				this.firePress({/* no parameters */});
+			} else {
+				this._bPressedEscapeOrShift = false;
+			}
+			this._bPressedSpace = false;
+		}
+
+		if (oEvent.which === KeyCodes.ESCAPE){
+			this._bPressedSpace = false;
+		}
 	};
 
 	/* =========================================================== */
