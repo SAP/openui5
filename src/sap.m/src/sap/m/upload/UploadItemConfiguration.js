@@ -33,10 +33,6 @@ sap.ui.define([
 				library: "sap.m",
 				properties: {
 					/**
-					 * model name if defined and bound to the table bindings items/rows
-					*/
-					modelName: {type: "string", defaultValue: null},
-					/**
 					 * specifies the path in the model to the file name.
 					 */
 					fileNamePath: {type: "string", defaultValue: null},

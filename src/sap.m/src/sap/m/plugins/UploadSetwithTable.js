@@ -94,15 +94,15 @@ sap.ui.define([
 				 */
 				uploadEnabled: {type: "boolean", defaultValue: true},
 				/** Callback function to perform additional validations or configurations for the item queued up for upload and to finally trigger the upload.
-				 * @callback sap.m.upload.itemValidationHandler
-				 * @param {sap.m.upload.ItemInfo} oItemInfo The info of the item queued for upload.
+				 * @callback sap.m.plugins.UploadSetwithTable.itemValidationHandler
+				 * @param {sap.m.plugins.UploadSetwithTable.ItemInfo} oItemInfo The info of the item queued for upload.
 				 * @returns {Promise<sap.m.upload.UploadItem>} oPromise, once resolved the UploadSetWithTable control initiates the upload.
 				 * @public
 				**/
 
 				/**
-				 * @typedef {object} sap.m.upload.ItemInfo
-				 * @description Item info object sent as paramter to {@link sap.m.upload.itemValidationHandler itemValidationHandler callback}
+				 * @typedef {object} sap.m.plugins.UploadSetwithTable.ItemInfo
+				 * @description Item info object sent as paramter to {@link sap.m.plugins.UploadSetwithTable.itemValidationHandler itemValidationHandler callback}
 				 * @property {sap.m.upload.UploadItem} oItem Current item queued for upload.
 				 * @property {number} iTotalItemsForUpload Total count of items queued for upload.
 				 * @property {sap.m.plugins.UploadSetwithTable} oSource Source on which the callback was invoked.
@@ -110,8 +110,8 @@ sap.ui.define([
 				**/
 
 				/**
-				 * Defines a {@link sap.m.upload.itemValidationHandler callback function} that is invoked when each UploadItem is queued up for upload.
-				 * This callback is invoked with {@link sap.m.upload.ItemInfo parameters} and the callback is expected to return a promise to the control. Once the promise is resolved, the control initiates the upload process.
+				 * Defines a {@link sap.m.plugins.UploadSetwithTable.itemValidationHandler callback function} that is invoked when each UploadItem is queued up for upload.
+				 * This callback is invoked with {@link sap.m.plugins.UploadSetwithTable.ItemInfo parameters} and the callback is expected to return a promise to the control. Once the promise is resolved, the control initiates the upload process.
 				 * Configure this property only when any additional configuration or validations are to be performed before the upload of each item.
 				 * The upload process is triggered manually by resolving the promise returned to the control.
 				**/
@@ -154,7 +154,7 @@ sap.ui.define([
 				 */
 				noDataIllustration: { type: "sap.m.IllustratedMessage", multiple: false }
 			},
-            //defaultAggregation: "rowConfiguration",
+            defaultAggregation: "rowConfiguration",
 			associations: {
 				/**
 				 * Dialog with a carousel to preview files uploaded.
@@ -350,6 +350,17 @@ sap.ui.define([
 						 */
 						oPlugin: {type: "sap.m.plugins.UploadSetwithTable"}
 					}
+				},
+				/**
+				 * This event is fired when plugin is deactivated.
+				 */
+				onDeactivated: {
+					parameters: {
+						/**
+						 * Control to which plugin was connected.
+						 */
+						control: {type: "sap.ui.core.Control"}
+					}
 				}
 			}
 		}
@@ -388,6 +399,7 @@ sap.ui.define([
 
 	UploadSetwithTable.prototype.onDeactivate = function (oControl) {
 		this.getConfig("cleanupPluginInstanceSettings");
+		this.fireOnDeactivated({control: oControl});
 	};
 
 	UploadSetwithTable.prototype.exit = function() {
