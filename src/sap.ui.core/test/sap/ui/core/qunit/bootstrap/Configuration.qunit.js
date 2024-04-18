@@ -10,16 +10,16 @@ sap.ui.define([
 	'sap/ui/core/Core',
 	'sap/ui/core/Lib',
 	'sap/ui/core/date/CalendarWeekNumbering',
-	'sap/ui/core/format/TimezoneUtil',
 	'sap/ui/core/Theming',
 	'sap/base/config',
 	'sap/base/Log',
 	"sap/base/config/GlobalConfigurationProvider",
+	'sap/base/i18n/date/TimezoneUtils',
 	'../routing/HistoryUtils',
 	'sap/ui/base/config/URLConfigurationProvider',
 	'sap/ui/core/LocaleData' // only used indirectly via Configuration.getCalendarType
-], function(CalendarType, Configuration, Core, Library, CalendarWeekNumbering, TimezoneUtil, Theming, BaseConfig, Log,
-		GlobalConfigurationProvider, HistoryUtils, URLConfigurationProvider/*, LocaleData*/) {
+], function(CalendarType, Configuration, Core, Library, CalendarWeekNumbering, Theming, BaseConfig, Log,
+		GlobalConfigurationProvider, TimezoneUtils, HistoryUtils, URLConfigurationProvider/*, LocaleData*/) {
 	"use strict";
 
 	var browserUrl = {
@@ -42,7 +42,7 @@ sap.ui.define([
 	var AnimationMode = Configuration.AnimationMode;
 	let mConfigStubValues = {};
 
-	var sLocalTimezone = TimezoneUtil.getLocalTimezone();
+	var sLocalTimezone = TimezoneUtils.getLocalTimezone();
 
 	function getHtmlAttribute(sAttribute) {
 		return document.documentElement.getAttribute(sAttribute);
