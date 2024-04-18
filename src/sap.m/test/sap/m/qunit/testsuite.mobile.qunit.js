@@ -160,10 +160,7 @@ sap.ui.define([
 				}
 			},
 			Column: {
-				title: "Column - sap.m",
-				sinon: {
-					useFakeTimers: true
-				}
+				title: "Column - sap.m"
 			},
 			ColumnHeaderPopover: {
 				title: "QUnit Page for sap.m.ColumnHeaderPopover",
