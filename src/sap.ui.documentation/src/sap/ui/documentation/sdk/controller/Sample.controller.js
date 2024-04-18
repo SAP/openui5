@@ -23,7 +23,6 @@ sap.ui.define([
 	"sap/ui/documentation/sdk/util/Resources",
 	"./config/sampleForwardingConfig",
 	"sap/base/strings/capitalize",
-	"sap/ui/core/Configuration",
 	"sap/base/i18n/Localization"
 ], function(
 	Element,
@@ -45,7 +44,6 @@ sap.ui.define([
 	ResourcesUtil,
 	sampleForwardingConfig,
 	capitalize,
-	Configuration,
 	Localization
 ) {
 		"use strict";
@@ -64,7 +62,6 @@ sap.ui.define([
 			/* =========================================================== */
 
 			onInit: function () {
-				var oConfiguration = Configuration;
 				SampleBaseController.prototype.onInit.call(this);
 
 				this.oRouter = this.getRouter();
@@ -76,7 +73,7 @@ sap.ui.define([
 					rtaLoaded: false,
 					density: this.getOwnerComponent().getContentDensityClass(),
 					rtl: Localization.getRTL(),
-					theme: oConfiguration.getTheme(),
+					theme: Theming.getTheme(),
 					showWarning: false
 				});
 
