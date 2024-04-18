@@ -1,23 +1,20 @@
 sap.ui.define([
-	"sap/m/Table",
 	"sap/m/Button",
+	"sap/m/Table",
 	"sap/m/OverflowToolbarButton",
+	"sap/m/plugins/PasteProvider",
 	"sap/ui/Device",
-	"sap/ui/core/Core",
+	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
 	"sap/ui/core/ShortcutHintsMixin",
-	"sap/m/plugins/PasteProvider",
-	"sap/ui/core/Element",
-	"sap/ui/core/HTML",
-	"sap/ui/core/Icon",
-	"sap/m/Popover"
-], function(Table, Button, OverflowToolbarButton, Device, Core, coreLib, ShortcutHintsMixin, PasteProvider, Element) {
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(Button, Table, OverflowToolbarButton, PasteProvider, Device, Element, Library, ShortcutHintsMixin, nextUIUpdate) {
 
 	"use strict";
 	/*global sinon, QUnit, ClipboardEvent, DataTransfer */
 
 	function triggerPasteEvent(oDomRef, sText) {
-		var oPasteEvent = new ClipboardEvent("paste", {
+		const oPasteEvent = new ClipboardEvent("paste", {
 			clipboardData: new DataTransfer(),
 			bubbles: true
 		});
@@ -27,8 +24,14 @@ sap.ui.define([
 	}
 
 	function getPopover() {
-		var oPopoverDomRef = document.querySelector(".sapMPopover");
+		const oPopoverDomRef = document.querySelector(".sapMPopover");
 		return oPopoverDomRef && Element.getElementById(oPopoverDomRef.id);
+	}
+
+	function timeout(iDuration) {
+		return new Promise(function(resolve) {
+			window.setTimeout(resolve, iDuration);
+		});
 	}
 
 	QUnit.test("Not Applicable", function(assert) {
@@ -37,10 +40,9 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Defaults", function(assert) {
-		const done = assert.async();
+	QUnit.test("Defaults", async function(assert) {
 		const fnShortcutHintsMixinSpy = sinon.spy(ShortcutHintsMixin, "addConfig");
-		const oBundle = coreLib.getResourceBundleFor("sap.m");
+		const oBundle = Library.getResourceBundleFor("sap.m");
 		const oTable = new Table();
 		const oPlugin = new PasteProvider({
 			pasteFor: oTable.getId()
@@ -49,7 +51,7 @@ sap.ui.define([
 			dependents: oPlugin
 		});
 		oButton.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(oButton.getIcon(), "sap-icon://paste");
 		assert.equal(oButton.getTooltip_AsString(), "Paste");
@@ -58,20 +60,19 @@ sap.ui.define([
 		oPlugin.setEnabled(false);
 		assert.notOk(oButton.hasListeners("press"));
 
-		setTimeout(() => {
-			assert.ok(ShortcutHintsMixin.isControlRegistered(oButton.getId()), "ShortcutHintsMixin is registered for the Button");
-			assert.ok(fnShortcutHintsMixinSpy.calledWithExactly(
-				oButton,
-				sinon.match({ message: oBundle.getText(Device.os.macintosh ? "PASTEPROVIDER_SHORTCUT_MAC" : "PASTEPROVIDER_SHORTCUT_WIN") }),
-				oTable
-			), "ShortcutHintsMixin config of the Button is correct");
-			fnShortcutHintsMixinSpy.restore();
-			done();
-		});
+		await timeout();
+
+		assert.ok(ShortcutHintsMixin.isControlRegistered(oButton.getId()), "ShortcutHintsMixin is registered for the Button");
+		assert.ok(fnShortcutHintsMixinSpy.calledWithExactly(
+			oButton,
+			sinon.match({ message: oBundle.getText(Device.os.macintosh ? "PASTEPROVIDER_SHORTCUT_MAC" : "PASTEPROVIDER_SHORTCUT_WIN") }),
+			oTable
+		), "ShortcutHintsMixin config of the Button is correct");
+		fnShortcutHintsMixinSpy.restore();
 	});
 
 	QUnit.module("PasteProvider", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oAssociationPasteSpy = sinon.spy();
 			this.oPluginPasteSpy = sinon.spy();
 
@@ -90,7 +91,7 @@ sap.ui.define([
 
 			this.oButton.placeAt("qunit-fixture");
 			this.oTable.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oButton.destroy();
@@ -98,44 +99,40 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("navigator.clipboard API: not supported", function(assert) {
-		var done = assert.async();
-		var sClipboardText = "Aa\tBb\nCc\tDd";
-		var oDeviceStub = sinon.stub(Device.system, "desktop").value(true);
-		var oClipboardStub = sinon.stub(window, "navigator").value({clipboard: undefined});
+	QUnit.test("navigator.clipboard API: not supported", async function(assert) {
+		const sClipboardText = "Aa\tBb\nCc\tDd";
+		const oDeviceStub = sinon.stub(Device.system, "desktop").value(true);
+		const oClipboardStub = sinon.stub(window, "navigator").value({clipboard: undefined});
 		this.oButton.focus();
 		this.oButton.firePress();
 
-		setTimeout(function() {
-			var oClock = sinon.useFakeTimers();
-			assert.ok(getPopover().getShowArrow());
-			assert.equal(getPopover().getPlacement(), "Auto");
-			assert.ok(getPopover().$().text().includes(" + V"));
-			assert.ok(this.oTable.$().hasClass("sapMPluginsPasteProviderHighlight"));
-			assert.equal(document.activeElement, getPopover().$().find("[contenteditable]")[0]);
+		await timeout(600); /* focus is not testable otherwise */
 
-			getPopover().$().trigger("keypress");
-			triggerPasteEvent(getPopover().getDomRef(), sClipboardText);
-			assert.ok(this.oPluginPasteSpy.calledWithMatch({ text: sClipboardText, data: [["Aa", "Bb"], ["Cc", "Dd"]] }));
-			assert.ok(this.oAssociationPasteSpy.calledOnce);
+		assert.ok(getPopover().getShowArrow());
+		assert.equal(getPopover().getPlacement(), "Auto");
+		assert.ok(getPopover().$().text().includes(" + V"));
+		assert.ok(this.oTable.$().hasClass("sapMPluginsPasteProviderHighlight"));
+		assert.equal(document.activeElement, getPopover().$().find("[contenteditable]")[0]);
 
-			assert.notOk(this.oTable.$().hasClass("sapMPluginsPasteProviderHighlight"));
-			assert.ok(getPopover());
+		getPopover().$().trigger("keypress");
+		triggerPasteEvent(getPopover().getDomRef(), sClipboardText);
+		assert.ok(this.oPluginPasteSpy.calledWithMatch({ text: sClipboardText, data: [["Aa", "Bb"], ["Cc", "Dd"]] }));
+		assert.ok(this.oAssociationPasteSpy.calledOnce);
 
-			oClock.tick(500);
-			assert.notOk(getPopover().isOpen());
-			assert.equal(document.activeElement, this.oButton.getFocusDomRef());
+		assert.notOk(this.oTable.$().hasClass("sapMPluginsPasteProviderHighlight"));
+		assert.ok(getPopover());
 
-			oClipboardStub.restore();
-			oDeviceStub.restore();
-			oClock.restore();
-			done();
-		}.bind(this), 600 /* focus is not testable otherwise */);
+		await timeout(500);
+		assert.notOk(getPopover().isOpen());
+		assert.equal(document.activeElement, this.oButton.getFocusDomRef());
+
+		oClipboardStub.restore();
+		oDeviceStub.restore();
 	});
 
-	QUnit.test("navigator.clipboard API: Clipboard Access Denied", function(assert) {
-		var sClipboardText = "Dd\tBb\nCc\tAa";
-		var oClipboardStub = sinon.stub(window, "navigator").value({
+	QUnit.test("navigator.clipboard API: Clipboard Access Denied", async function(assert) {
+		const sClipboardText = "Dd\tBb\nCc\tAa";
+		const oClipboardStub = sinon.stub(window, "navigator").value({
 			clipboard: {
 				readText: function() {
 					return {
@@ -146,34 +143,30 @@ sap.ui.define([
 				}
 			}
 		});
-		var sPasteRegionId = "nodata";
+		const sPasteRegionId = "nodata";
 		this.oTable.getDomRef().removeAttribute("data-sap-ui-pasteregion");
 		this.oTable.getDomRef(sPasteRegionId).setAttribute("data-sap-ui-pasteregion", "true");
 		this.oButton.focus();
 		this.oButton.firePress();
 
-		return Promise.resolve().then(function() {
-			var oClock = sinon.useFakeTimers();
-			assert.ok(this.oTable.$(sPasteRegionId).hasClass("sapMPluginsPasteProviderHighlight"));
+		assert.ok(this.oTable.$(sPasteRegionId).hasClass("sapMPluginsPasteProviderHighlight"));
 
-			triggerPasteEvent(getPopover().getDomRef(), sClipboardText);
-			assert.ok(this.oPluginPasteSpy.calledWithMatch({ text: sClipboardText, data: [["Dd", "Bb"], ["Cc", "Aa"]] }));
-			assert.ok(this.oAssociationPasteSpy.calledOnce);
+		triggerPasteEvent(getPopover().getDomRef(), sClipboardText);
+		assert.ok(this.oPluginPasteSpy.calledWithMatch({ text: sClipboardText, data: [["Dd", "Bb"], ["Cc", "Aa"]] }));
+		assert.ok(this.oAssociationPasteSpy.calledOnce);
 
-			assert.notOk(this.oTable.$(sPasteRegionId).hasClass("sapMPluginsPasteProviderHighlight"));
-			assert.ok(getPopover());
+		assert.notOk(this.oTable.$(sPasteRegionId).hasClass("sapMPluginsPasteProviderHighlight"));
+		assert.ok(getPopover());
+		await timeout(400);
 
-			oClock.tick(400);
-			assert.notOk(getPopover().isOpen());
+		assert.notOk(getPopover().isOpen());
 
-			oClipboardStub.restore();
-			oClock.restore();
-		}.bind(this));
+		oClipboardStub.restore();
 	});
 
 	QUnit.test("navigator.clipboard API: Clipboard Access Granted", function(assert) {
-		var sClipboardText;
-		var oClipboardStub = sinon.stub(window, "navigator").value({
+		let sClipboardText;
+		const oClipboardStub = sinon.stub(window, "navigator").value({
 			clipboard: {
 				readText: function() {
 					return {
@@ -197,7 +190,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Paste-Button", function(assert) {
-		const sText = coreLib.getResourceBundleFor("sap.m").getText("PASTEPROVIDER_PASTE");
+		const sText = Library.getResourceBundleFor("sap.m").getText("PASTEPROVIDER_PASTE");
 		assert.equal(this.oButton.getTooltip(), sText, "Paste Button Tooltip");
 		assert.ok(!this.oButton.getText(), "Paste Button Text");
 		this.oOverflowButton = new OverflowToolbarButton({

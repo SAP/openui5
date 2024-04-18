@@ -1,14 +1,14 @@
 /*global QUnit sinon*/
 sap.ui.define([
 	"sap/ui/core/Lib",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/m/table/columnmenu/Menu",
 	"sap/m/table/columnmenu/QuickGroup",
 	"sap/m/table/columnmenu/QuickGroupItem",
 	"sap/m/Button",
-	"sap/m/library",
-	"sap/ui/qunit/utils/nextUIUpdate"
-], function(Library, QUnitUtils, Menu, QuickGroup, QuickGroupItem, Button, library, nextUIUpdate) {
+	"sap/m/library"
+], function(Library, nextUIUpdate, QUnitUtils, Menu, QuickGroup, QuickGroupItem, Button, library) {
 	"use strict";
 
 	QUnit.module("Basic", {
@@ -34,7 +34,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Defaults", function(assert) {
-		var oQuickGroup = new QuickGroup({
+		const oQuickGroup = new QuickGroup({
 			items: new QuickGroupItem()
 		});
 
@@ -58,22 +58,22 @@ sap.ui.define([
 	});
 
 	QUnit.test("Label", function(assert) {
-		var oBundle = Library.getResourceBundleFor("sap.m");
-		var sLabel = oBundle.getText("table.COLUMNMENU_QUICK_GROUP");
+		const oBundle = Library.getResourceBundleFor("sap.m");
+		const sLabel = oBundle.getText("table.COLUMNMENU_QUICK_GROUP");
 		assert.equal(this.oQuickGroup.getLabel(), sLabel, "QuickGroup label is correct.");
 	});
 
 	QUnit.test("setLabel on QuickGroupItem", function(assert) {
-		var oQuickGroupItem = this.oQuickGroup.getItems()[0];
+		const oQuickGroupItem = this.oQuickGroup.getItems()[0];
 		oQuickGroupItem.setLabel("New label");
 		assert.equal(oQuickGroupItem.getLabel(), "New label", "New QuickGroupItem label is correct");
 
-		var oToggleButton = this.oQuickGroup.getDependents()[0];
+		const oToggleButton = this.oQuickGroup.getDependents()[0];
 		assert.strictEqual(oToggleButton.getText(), oQuickGroupItem.getLabel(), "QuickGroupItem's ToggleButton label is updated correctly");
 	});
 
 	QUnit.test("Content", function(assert) {
-		var aContent = this.oQuickGroup.getContent();
+		const aContent = this.oQuickGroup.getContent();
 		assert.ok(aContent, "The quick group has content");
 		assert.strictEqual(aContent[0].getParent(), this.oQuickGroup, "The content is in the control tree");
 		assert.strictEqual(aContent[1].getParent(), this.oQuickGroup, "The content is in the control tree");
@@ -90,8 +90,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("QuickGroupItem setGrouped", function(assert) {
-		var oQuickGroupItem = this.oQuickGroup.getItems()[0];
-		var oButton = this.oQuickGroup.getContent()[0];
+		const oQuickGroupItem = this.oQuickGroup.getItems()[0];
+		const oButton = this.oQuickGroup.getContent()[0];
 
 		oQuickGroupItem.setGrouped(true);
 		assert.ok(oButton.getPressed(), "The pressed state of the button is updated");
@@ -135,16 +135,16 @@ sap.ui.define([
 	});
 
 	QUnit.test("Change", function(assert) {
-		var done = assert.async();
-		var oMenu = this.oColumnMenu;
+		const done = assert.async();
+		const oMenu = this.oColumnMenu;
 		oMenu.openBy(this.oButton);
 
-		var oQuickGroup = oMenu.getAggregation("quickActions")[0];
-		var aItems = oQuickGroup.getContent();
+		const oQuickGroup = oMenu.getAggregation("quickActions")[0];
+		const aItems = oQuickGroup.getContent();
 
 		oQuickGroup.attachChange(function(oEvent) {
 			assert.ok(true, "Change event has been fired");
-			var oItem = oEvent.getParameter("item");
+			const oItem = oEvent.getParameter("item");
 			assert.equal(oItem.getKey(), "propertyB", "The item is passed as event parameter");
 			assert.ok(oItem.getGrouped(), "The grouped property of the item is correct");
 
@@ -175,8 +175,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Items", function(assert) {
-		var oDestroySpy = sinon.spy(this.oQuickGroup, "destroyContent");
-		var oItem = new QuickGroupItem({
+		const oDestroySpy = sinon.spy(this.oQuickGroup, "destroyContent");
+		const oItem = new QuickGroupItem({
 			key: "propertyB",
 			label: "B",
 			grouped: false

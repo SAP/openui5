@@ -1,14 +1,14 @@
 /*global QUnit sinon*/
 sap.ui.define([
 	"sap/ui/core/Lib",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/m/table/columnmenu/Menu",
 	"sap/m/table/columnmenu/QuickTotal",
 	"sap/m/table/columnmenu/QuickTotalItem",
 	"sap/m/Button",
-	"sap/m/library",
-	"sap/ui/qunit/utils/nextUIUpdate"
-], function(Library, QUnitUtils, Menu, QuickTotal, QuickTotalItem, Button, library, nextUIUpdate) {
+	"sap/m/library"
+], function(Library, nextUIUpdate, QUnitUtils, Menu, QuickTotal, QuickTotalItem, Button, library) {
 	"use strict";
 
 	QUnit.module("Basic", {
@@ -34,7 +34,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Defaults", function(assert) {
-		var oQuickTotal = new QuickTotal({
+		const oQuickTotal = new QuickTotal({
 			items: new QuickTotalItem()
 		});
 
@@ -58,22 +58,22 @@ sap.ui.define([
 	});
 
 	QUnit.test("Label", function(assert) {
-		var oBundle = Library.getResourceBundleFor("sap.m");
-		var sLabel = oBundle.getText("table.COLUMNMENU_QUICK_TOTAL");
+		const oBundle = Library.getResourceBundleFor("sap.m");
+		const sLabel = oBundle.getText("table.COLUMNMENU_QUICK_TOTAL");
 		assert.equal(this.oQuickTotal.getLabel(), sLabel, "QuickTotal label is correct.");
 	});
 
 	QUnit.test("setLabel on QuickTotalItem", function(assert) {
-		var ooQuickTotalItem = this.oQuickTotal.getItems()[0];
+		const ooQuickTotalItem = this.oQuickTotal.getItems()[0];
 		ooQuickTotalItem.setLabel("New label");
 		assert.equal(ooQuickTotalItem.getLabel(), "New label", "New QuickTotalItem label is correct");
 
-		var oToggleButton = this.oQuickTotal.getDependents()[0];
+		const oToggleButton = this.oQuickTotal.getDependents()[0];
 		assert.strictEqual(oToggleButton.getText(), ooQuickTotalItem.getLabel(), "QuickTotalItem's ToggleButton label is updated correctly");
 	});
 
 	QUnit.test("Content", function(assert) {
-		var aContent = this.oQuickTotal.getContent();
+		const aContent = this.oQuickTotal.getContent();
 		assert.ok(aContent, "The quick total has content");
 		assert.strictEqual(aContent[0].getParent(), this.oQuickTotal, "The content is in the control tree");
 		assert.strictEqual(aContent[1].getParent(), this.oQuickTotal, "The content is in the control tree");
@@ -90,8 +90,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("QuickTotalItem setTotaled", function(assert) {
-		var oQuickTotalItem = this.oQuickTotal.getItems()[0];
-		var oButton = this.oQuickTotal.getContent()[0];
+		const oQuickTotalItem = this.oQuickTotal.getItems()[0];
+		const oButton = this.oQuickTotal.getContent()[0];
 
 		oQuickTotalItem.setTotaled(true);
 		assert.ok(oButton.getPressed(), "The pressed state of the button is updated");
@@ -135,16 +135,16 @@ sap.ui.define([
 	});
 
 	QUnit.test("Change", function(assert) {
-		var done = assert.async();
-		var oMenu = this.oColumnMenu;
+		const done = assert.async();
+		const oMenu = this.oColumnMenu;
 		oMenu.openBy(this.oButton);
 
-		var oQuickTotal = oMenu.getAggregation("quickActions")[0];
-		var aItems = oQuickTotal.getContent();
+		const oQuickTotal = oMenu.getAggregation("quickActions")[0];
+		const aItems = oQuickTotal.getContent();
 
 		oQuickTotal.attachChange(function(oEvent) {
 			assert.ok(true, "Change event has been fired");
-			var oItem = oEvent.getParameter("item");
+			const oItem = oEvent.getParameter("item");
 			assert.equal(oItem.getKey(), "PropertyA", "The item is passed as event parameter");
 			assert.ok(oItem.getTotaled(), "The totaled property of the item is correct");
 
@@ -175,8 +175,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Items", function(assert) {
-		var oDestroySpy = sinon.spy(this.oQuickTotal, "destroyContent");
-		var oItem = new QuickTotalItem({
+		const oDestroySpy = sinon.spy(this.oQuickTotal, "destroyContent");
+		const oItem = new QuickTotalItem({
 			key: "propertyB",
 			label: "B",
 			totaled: false
