@@ -55,6 +55,9 @@ sap.ui.define(function() {
 			"base/util/Deferred": {
 				title: "QUnit Page for Deferred"
 			},
+			/**
+			 * @deprecated
+			 */
 			"base/util/defineCoupledProperty": {
 				title: "QUnit Page for defineCoupledProperty"
 			},
