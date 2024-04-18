@@ -25,7 +25,7 @@ sap.ui.define([],
 			{
 				"id": "tooling",
 				"text": "UI5 Tooling",
-				"href": "https://github.com/SAP/ui5-tooling"
+				"href": "https://sap.github.io/ui5-tooling/"
 			},
 			{
 				"id": "fioriTools",
