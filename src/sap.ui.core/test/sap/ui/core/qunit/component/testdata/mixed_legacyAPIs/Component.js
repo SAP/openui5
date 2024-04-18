@@ -4,11 +4,9 @@ sap.ui.define([
 	"use strict";
 
 
-	var Component = UIComponent.extend("sap.ui.test.mixed.Component", {
+	var Component = UIComponent.extend("sap.ui.test.mixed_legacyAPIs.Component", {
 
-		metadata: {
-			manifest: "json"
-		}
+		metadata: "json"
 
 	});
 

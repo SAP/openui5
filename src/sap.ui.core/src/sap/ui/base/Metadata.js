@@ -464,8 +464,14 @@ sap.ui.define([
 		assert(!oClassInfo || typeof oClassInfo === "object");
 		assert(!FNMetaImpl || isFunction(FNMetaImpl));
 
-		// allow metadata class to preprocess
 		FNMetaImpl = FNMetaImpl || Metadata;
+
+		/**
+		 * allow metadata class to preprocess
+		 * Component- and UIComponentMetadata uses this to derive if "component.json"
+		 * must be loaded synchronously.
+		 * @deprecated
+		 */
 		if ( isFunction(FNMetaImpl.preprocessClassInfo) ) {
 			oClassInfo = FNMetaImpl.preprocessClassInfo(oClassInfo);
 		}

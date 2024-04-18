@@ -627,6 +627,10 @@ sap.ui.define([
 			}
 		});
 
+		/**
+		 * component.json is the deprecated predecessor to the manifest.json
+		 * @deprecated
+		 */
 		QUnit.test("Async loading of manifests with component.json", function(assert) {
 			return fnComponentFactory("./testdata/inherit/manifest.json", "sap.ui.test.inherit").then(function(oComponent) {
 				assert.ok(oComponent instanceof Component, "Component has been created.");
