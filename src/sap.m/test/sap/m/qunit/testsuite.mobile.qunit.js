@@ -533,7 +533,8 @@ sap.ui.define([
 					only: "//sap\/m\/GenericTile.*/"
 				},
 				ui5: {
-					language: "en"
+					language: "en",
+					theme: "sap_horizon"
 				}
 			},
 			ActionTile: {
