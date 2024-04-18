@@ -1369,7 +1369,7 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	const fnRearrangeTest = async function(oTable, iColumnIndexFrom, iColumnIndexTo) {
+	const fnRearrangeTest = async function(oTable, iColumnIndexFrom, iColumnIndexTo, bKeyboardHandling) {
 		oTable.addColumn(new Column({
 			propertyKey: "col0",
 			header: "col0",
@@ -1411,9 +1411,14 @@ sap.ui.define([
 					sorters: []
 				});
 
-				triggerDragEvent("dragstart", aInnerColumns[iColumnIndexFrom]);
-				triggerDragEvent("dragenter", aInnerColumns[iColumnIndexTo]);
-				triggerDragEvent("drop", aInnerColumns[iColumnIndexTo]);
+				if (bKeyboardHandling && iColumnIndexFrom + 1 === iColumnIndexTo) {
+					aInnerColumns[iColumnIndexFrom].focus();
+					QUtils.triggerEvent("keydown", document.activeElement, {code: "ArrowRight", ctrlKey: true});
+				} else {
+					triggerDragEvent("dragstart", aInnerColumns[iColumnIndexFrom]);
+					triggerDragEvent("dragenter", aInnerColumns[iColumnIndexTo]);
+					triggerDragEvent("drop", aInnerColumns[iColumnIndexTo]);
+				}
 
 				oTable.getCurrentState.restore();
 				resolve();
@@ -1426,6 +1431,19 @@ sap.ui.define([
 
 		this.oTable.placeAt("qunit-fixture");
 		await fnRearrangeTest(this.oTable, 0, 1); // move from 0 --> 1
+		assert.ok(oCreateColumnReordeChangeSpy.calledOnce);
+		assert.ok(oCreateColumnReordeChangeSpy.calledWithExactly(this.oTable, {
+			column: this.oTable.getColumns()[0],
+			index: 1
+		}));
+		oCreateColumnReordeChangeSpy.restore();
+	});
+
+	QUnit.test("rearrange columns via keyboard handling", async function(assert) {
+		const oCreateColumnReordeChangeSpy = sinon.spy(PersonalizationUtils, "createColumnReorderChange");
+
+		this.oTable.placeAt("qunit-fixture");
+		await fnRearrangeTest(this.oTable, 0, 1, true); // move from 0 --> 1
 		assert.ok(oCreateColumnReordeChangeSpy.calledOnce);
 		assert.ok(oCreateColumnReordeChangeSpy.calledWithExactly(this.oTable, {
 			column: this.oTable.getColumns()[0],
@@ -5161,6 +5179,7 @@ sap.ui.define([
 			const bEnabled = oTable.getP13nMode().indexOf("Column") > -1;
 
 			assert.equal(oTable._oTable.getDragDropConfig()[0].getEnabled(), bEnabled, "DragDropConfig for column reordering");
+			assert.ok(oTable._oTable.getDragDropConfig()[0].getKeyboardHandling(), "Keyboard handling for column reordering");
 		}
 	});
 
