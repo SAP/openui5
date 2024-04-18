@@ -7,21 +7,12 @@
 // ---------------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------------
 sap.ui.define([
-	"sap/ui/core/Lib", "sap/ui/mdc/FilterBarDelegate"
-], (Library, FilterBarDelegate) => {
+	"sap/ui/mdc/valuehelp/FilterBarDelegate"
+], (FilterBarDelegate) => {
 	"use strict";
 
-	const mdcMessageBundle = Library.getResourceBundleFor("sap.ui.mdc");
-
-	const ValueHelpFilterBarDelegate = Object.assign({}, FilterBarDelegate);
-
-	ValueHelpFilterBarDelegate.fetchProperties = function(oFilterBar) {
-		return Promise.resolve([{
-			name: "$search",
-			label: mdcMessageBundle.getText("filterbar.SEARCH"),
-			dataType: "sap.ui.model.type.String"
-		}]);
-	};
-
-	return ValueHelpFilterBarDelegate;
+	/**
+	 * @deprecated since 1.124.0 - Please use the <code>sap.ui.mdc.valuehelp.FilterBarDelegate</code> control instead.
+	 */
+	return FilterBarDelegate;
 });
