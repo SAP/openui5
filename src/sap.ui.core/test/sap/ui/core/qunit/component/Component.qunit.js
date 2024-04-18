@@ -2,6 +2,7 @@ sap.ui.define([
 	'sap/ui/qunit/utils/createAndAppendDiv',
 	"sap/ui/qunit/utils/nextUIUpdate",
 	'sap/ui/core/Component',
+	'sap/ui/core/Supportability',
 	'sap/ui/core/ComponentContainer',
 	'sap/ui/core/ComponentRegistry',
 	'sap/ui/core/Messaging',
@@ -12,8 +13,9 @@ sap.ui.define([
 	'sap/base/util/deepExtend',
 	'sap/base/util/LoaderExtensions',
 	'sap/ui/core/Manifest',
-	'sap/base/i18n/ResourceBundle'
-], function (createAndAppendDiv, nextUIUpdate, Component, ComponentContainer, ComponentRegistry, Messaging, UIComponentMetadata, SamplesRoutingComponent, SamplesRouterExtension, Log, deepExtend, LoaderExtensions, Manifest, ResourceBundle) {
+	'sap/base/i18n/ResourceBundle',
+	'sap/ui/VersionInfo'
+], function (createAndAppendDiv, nextUIUpdate, Component, Supportability, ComponentContainer, ComponentRegistry, Messaging, UIComponentMetadata, SamplesRoutingComponent, SamplesRouterExtension, Log, deepExtend, LoaderExtensions, Manifest, ResourceBundle, VersionInfo) {
 
 	"use strict";
 	/*global sinon, QUnit, foo*/
@@ -2747,4 +2749,19 @@ sap.ui.define([
 		}.bind(this));
 	});
 
+	QUnit.module("Multiple minUI5Version");
+
+	QUnit.test("Ensure that each major version can only be included once", async function (assert) {
+		assert.expect(1);
+		const oStub = sinon.stub(Supportability, "isDebugModeEnabled").callsFake(() => { return true; });
+	    const oLogStub = sinon.stub(Log, "isLoggable").callsFake(() => { return true; });
+
+		await Component.create({
+			name: "testdata.minUI5Version"
+		}).catch((error) => {
+			assert.equal(error.message, "The minimal UI5 versions defined in the manifest must not include multiple versions with the same major version, Component: testdata.minUI5Version.", "Error thrown because manifest contains multiple minUI5Versions with the same major version");
+			oStub.restore();
+			oLogStub.restore();
+		});
+	});
 });

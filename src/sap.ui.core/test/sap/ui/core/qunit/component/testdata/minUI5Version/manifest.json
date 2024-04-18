@@ -1,0 +1,12 @@
+{
+	"sap.app": {
+		"id": "sap.ui.test.minUI5Version"
+	},
+	"sap.ui5": {
+		"dependencies": {
+			"minUI5Version": ["1.108", "1.120"],
+			"libs": {
+			}
+		}
+	}
+}
