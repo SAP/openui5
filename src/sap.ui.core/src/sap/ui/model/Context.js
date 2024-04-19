@@ -3,8 +3,10 @@
  */
 /*eslint-disable max-len */
 // Provides an abstraction for model bindings
-sap.ui.define(['sap/ui/base/Object', "sap/base/util/isPlainObject"],
-	function(BaseObject, isPlainObject) {
+sap.ui.define([
+	"sap/base/util/isPlainObject",
+	"sap/ui/base/Object"
+], function (isPlainObject, BaseObject) {
 	"use strict";
 
 
@@ -81,6 +83,28 @@ sap.ui.define(['sap/ui/base/Object', "sap/base/util/isPlainObject"],
 	 */
 	Context.prototype.getProperty = function(sPath) {
 		return this.oModel.getProperty(sPath, this);
+	};
+
+	/**
+	 * Sets the given value for the property with the given binding path relative to this context in the model.
+	 *
+	 * @param {string} sPath
+	 *   The binding path
+	 * @param {any} vValue
+	 *   The value to set
+	 * @param {string} [sGroupId]
+	 *   Not used in default implementation; may be used by sub classes
+	 * @param {boolean} [bRetry]
+	 *   Not used in default implementation; may be used by sub classes
+	 * @throws {Error}
+	 *   If the value cannot be set because this context does not refer to a valid entry in the model data
+	 * @private
+	 */
+	Context.prototype.setProperty = function(sPath, vValue, sGroupId, bRetry) {
+		if (!this.oModel.setProperty(sPath, vValue, this, /*bAsyncUpdate*/ true)) {
+			throw new Error("Cannot set the value " + vValue + " for the property " + sPath + " as the context path "
+				+ this.getPath() + " does not refer to a valid entry in the model data.");
+		}
 	};
 
 	/**

@@ -2177,6 +2177,7 @@ sap.ui.define([
 	 * @see sap.ui.model.odata.v4.ODataListBinding#event:patchCompleted
 	 * @since 1.67.0
 	 */
+	// @override sap.ui.model.Context#setProperty
 	Context.prototype.setProperty = function (sPath, vValue, sGroupId, bRetry) {
 		var oGroupLock = null,
 			oModel = this.oModel,
