@@ -1747,6 +1747,20 @@ sap.ui.define([
 								]
 							},
 							{
+								title: 'OAuth 3LO',
+								key: 'oauth3lo',
+								mockServer: true,
+								experimental: true,
+								consentFlow: true,
+								files: [
+									{
+										url: '/samples/data/oauth3lo/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									}
+								]
+							},
+							{
 								title: 'Mock Data for Preview',
 								key: 'mockData',
 								experimental: true,

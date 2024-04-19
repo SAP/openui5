@@ -4,6 +4,7 @@ sap.ui.define([
 	"./activities/mockServer",
 	"./agenda/mockServer",
 	"./csrf/mockServer",
+	"./oauth3lo/mockServer",
 	"./products/mockServer",
 	"./user/mockServer",
 	"sap/ui/core/util/MockServer"
@@ -13,6 +14,7 @@ sap.ui.define([
 	timeline_mockServer,
 	dateTime_mockServer,
 	csrf_mockServer,
+	oauth3lo_mockServer,
 	products_mockServer,
 	user_mockSever,
 	MockServer
@@ -27,6 +29,7 @@ sap.ui.define([
 		timeline_mockServer,
 		dateTime_mockServer,
 		csrf_mockServer,
+		oauth3lo_mockServer,
 		products_mockServer,
 		user_mockSever
 	];

@@ -1,0 +1,18 @@
+<mvc:View controllerName="sap.ui.integration.localServices.oath3lo.consentApp.Controller"
+	displayBlock="true"
+	height="100%"
+	xmlns:core="sap.ui.core"
+	xmlns="sap.m"
+	xmlns:w="sap.ui.integration.widgets"
+	xmlns:f="sap.f"
+	xmlns:mvc="sap.ui.core.mvc">
+	<App>
+		<Page class="sapUiContentPadding" showHeader="false">
+			<VBox class="sapUiSmallMargin">
+				<Title text="Simulation For OAuth 3LO" />
+				<Button press=".giveConsent" text="Simulate Giving a Consent" />
+				<Text id="redirectText" />
+			</VBox>
+		</Page>
+	</App>
+</mvc:View>

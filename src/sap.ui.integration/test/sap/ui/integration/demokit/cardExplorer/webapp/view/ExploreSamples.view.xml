@@ -30,6 +30,7 @@
 						/>
 						<MessageStrip text="This feature is experimental - it may be deleted, or incompatible API changes may be done before its official public release." visible="{= !!${/sample/experimental} || !!${/subSample/experimental} }" showIcon="true" type="Warning" class="sapUiSmallMargin"/>
 						<MessageStrip text="This sample uses a mock server which may interfere with your data requests." visible="{= !!${/sample/mockServer} || !!${/subSample/mockServer} }" showIcon="true" type="Warning" class="sapUiSmallMargin"/>
+						<MessageStrip text="The consent flow is simulated. Give consent in the popover window to proceed. Reload the browser window to retrigger the consent flow again." visible="{= !!${/sample/consentFlow} || !!${/subSample/consentFlow} }" showIcon="true" type="Warning" class="sapUiSmallMargin"/>
 						<f:GridContainer id="cardContainer" visible="{= !${settings>/useIFrame} }"></f:GridContainer>
 						<core:HTML id="iframeWrapper" visible="{= ${settings>/useIFrame} }" preferDOM="false" content='&lt;div style="height:100%;"&gt;&lt;/div&gt;'>
 							<core:layoutData>
@@ -62,7 +63,7 @@
 							<MenuButton id="downloadSampleButton" icon="sap-icon://download" tooltip="Download" text="Download" type="Transparent">
 								<menu>
 									<Menu>
-										<MenuItem text="Manifest File" 
+										<MenuItem text="Manifest File"
 											icon="sap-icon://document-text"
 											visible="{= !${settings>/isApplication} }"
 											press=".onDownloadCardManifestFile" />

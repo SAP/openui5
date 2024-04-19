@@ -2230,9 +2230,16 @@ sap.ui.define([
 	 * @private
 	 */
 	Card.prototype._handleError = function (mErrorInfo) {
-		var sLogMessage = mErrorInfo.requestErrorParams ? mErrorInfo.requestErrorParams.message : mErrorInfo.title,
-			oContent = this.getCardContent(),
-			mMessageSettings;
+		const oExtensionMessage = this._extensionErrorOverride(mErrorInfo);
+		if (oExtensionMessage) {
+			this.showBlockingMessage(oExtensionMessage);
+			return;
+		}
+
+		const sLogMessage = mErrorInfo.requestErrorParams ? mErrorInfo.requestErrorParams.message : mErrorInfo.title,
+			oContent = this.getCardContent();
+
+		let mMessageSettings;
 
 		Log.error(sLogMessage, mErrorInfo.originalError, "sap.ui.integration.widgets.Card");
 		this.fireEvent("_error", { message: sLogMessage });
@@ -2254,6 +2261,17 @@ sap.ui.define([
 		} else {
 			this.getCardHeader().setAggregation("_error", BlockingMessage.create(mMessageSettings, this));
 		}
+	};
+
+	Card.prototype._extensionErrorOverride = function (mErrorInfo) {
+		const oExtension = this.getAggregation("_extension");
+
+		if (!oExtension || !oExtension.overrideBlockingMessage) {
+			return null;
+		}
+
+		const oResponse = mErrorInfo?.requestErrorParams?.response;
+		return oExtension.overrideBlockingMessage(oResponse);
 	};
 
 	/**

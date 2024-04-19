@@ -1,0 +1,90 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>OAuth 3LO</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="../../../scripts/boot.js"></script>
+</head>
+
+<body class="sapUiBody topicBody">
+
+	<div class="topic">
+		<div class="content">
+
+			<h1 id="overview">
+				OAuth 3LO
+			</h1>
+
+			<div class="messageStripWarning">
+				Experimental feature since version 1.124. The API may change.
+			</div>
+
+			<p>
+				In a scenario where the card data requests need to go through OAuth 3LO (Three Legged OAuth) the card developer can use the built-in extension "sap.ui.integration.extensions.OAuth3LO".
+			</p>
+
+			<h2 id="usage">Usage</h2>
+			<p>
+				To use the OAuth3LO extension, you need to include it in the manifest file by using the property "extension".
+				<br>
+				It will intercept the data requests which the card makes and if the user has not given access to the requested data yet, a button opening a consent popup will appear.
+			</p>
+			<pre class="lang-json">"extension": "module:sap/ui/integration/extensions/OAuth3LO"</pre>
+
+			<h2 id="expectedHttpResponse">Expected HTTP Response</h2>
+			<p>
+				In order for the OAuth 3LO process to work, when the user has not given access yet, the card will expect an HTTP response with status code "502" and header "sap-3lo-flow".
+				If you are developing your own host application and need more details on the integration see the <a href="../../../index.html#/integrate/oauth3lo" target="_parent">Integrate OAuth 3LO</a> topic.
+			</p>
+
+			<p>
+				<b>Note:</b> This feature is dependent on the host environment. Check your host application (e.g. SAP Build Work Zone) for more instructions how to configure this feature.
+			</p>
+
+			<h2 id="example">
+				Example
+			</h2>
+
+			<pre class="lang-json">{
+	"sap.card": {
+		"type": "List",
+		"extension": "module:sap/ui/integration/extensions/OAuth3LO",
+		"configuration": {
+			"destinations": {
+				"ProductsMockServerWithOAuth3LO": {
+					"name": "ProductsMockServerWithOAuth3LO",
+					"label": "Products Mock OAuth3LO",
+					"defaultUrl": "/getDataWithOAuth3LO"
+				}
+			}
+		},
+		"data": {
+			"request": {
+				"url": "{{destinations.ProductsMockServerWithOAuth3LO}}/Products",
+				"method": "GET",
+				"withCredentials": true,
+				"parameters": {
+					"$format": "json"
+				}
+			}
+		},
+		"content": {
+			"data": {
+				"path": "/value"
+			},
+			"item": {
+				"title": "{ProductName}"
+			}
+		}
+	}
+}</pre>
+
+			<a class="try-button" href="../../../index.html#/explore/data/oauth3lo" target="_parent">Try it Out</a>
+		</div>
+	</div>
+</body>
+
+</html>

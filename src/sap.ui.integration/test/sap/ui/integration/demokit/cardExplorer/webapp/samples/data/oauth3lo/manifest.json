@@ -1,0 +1,65 @@
+{
+	"_version": "1.14.0",
+	"sap.app": {
+		"id": "card.explorer.data.3lo.card",
+		"type": "card",
+		"title": "Sample for data request with OAuth 3LO",
+		"subTitle": "Sample for data request with OAuth 3LO",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Data",
+				"Card",
+				"Sample",
+				"OAuth",
+				"3LO"
+			]
+		}
+	},
+	"sap.card": {
+		"type": "List",
+		"extension": "module:sap/ui/integration/extensions/OAuth3LO",
+		"configuration": {
+			"destinations": {
+				"ProductsMockServerWithOAuth3LO": {
+					"name": "ProductsMockServerWithOAuth3LO",
+					"label": "Products Mock OAuth3LO",
+					"defaultUrl": "/getDataWithOAuth3LO"
+				}
+			}
+		},
+		"data": {
+			"request": {
+				"url": "{{destinations.ProductsMockServerWithOAuth3LO}}/Products",
+				"method": "GET",
+				"withCredentials": true,
+				"parameters": {
+					"$format": "json"
+				}
+			}
+		},
+		"header": {
+			"title": "Products",
+			"subTitle": "In Stock Information",
+			"icon": {
+				"src": "sap-icon://product"
+			}
+		},
+		"content": {
+			"data": {
+				"path": "/value"
+			},
+			"item": {
+				"title": "{ProductName}",
+				"description": "{UnitsInStock} units in stock",
+				"highlight": "{= ${Discontinued} ? 'Error' : 'Success'}"
+			},
+			"maxItems": 5
+		}
+	}
+}

@@ -217,6 +217,17 @@ sap.ui.define([
 	};
 
 	/**
+	 * Override this method to provide a custom blocking message in case of an automatic blocking message shown by the card.
+	 * It will be called when there is a <code>NoData</code> or an <code>Error</code> message.
+	 * @private
+	 * @ui5-restricted sap.ui.integration
+	 * @returns {sap.ui.integration.BlockingMessageSettings} The blocking message settings.
+	 */
+	Extension.prototype.overrideBlockingMessage = function () {
+		return null;
+	};
+
+	/**
 	 * Sets the card.
 	 *
 	 * @param {object} oCard The card.
