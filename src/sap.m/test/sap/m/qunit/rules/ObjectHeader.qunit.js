@@ -10,7 +10,9 @@ sap.ui.define([
 	"test-resources/sap/ui/support/TestHelper"
 ], function (Page, ObjectHeader, ObjectMarker, ObjectStatus, ObjectNumber, HeaderContainer, testRule)  {
 	"use strict";
-
+	/**
+	 * @deprecated as of version 1.16,<code>markFlagged</code> has been replaced by <code>markers</code> aggregation
+	 */
 	QUnit.module("ObjectHeader markers aggregation with markFlagged: true", {
 		beforeEach: function () {
 			this.page = new Page("objectHeaderContext", {
@@ -26,6 +28,9 @@ sap.ui.define([
 		}
 	});
 
+	/**
+	 * @deprecated as of version 1.16,<code>markFlagged</code> has been replaced by <code>markers</code> aggregation
+	 */
 	testRule({
 		executionScopeType: "subtree",
 		executionScopeSelectors: "objectHeaderContext",
@@ -34,6 +39,9 @@ sap.ui.define([
 		expectedNumberOfIssues: 1
 	});
 
+	/**
+	 * @deprecated as of version 1.16,<code>markFavorite</code> has been replaced by <code>markers</code> aggregation
+	 */
 	QUnit.module("ObjectHeader markers aggregation with markFavorite: true", {
 		beforeEach: function () {
 			this.page = new Page("objectHeaderContext", {
@@ -49,6 +57,9 @@ sap.ui.define([
 		}
 	});
 
+	/**
+	 * @deprecated as of version 1.16,<code>markFavorite</code> has been replaced by <code>markers</code> aggregation
+	 */
 	testRule({
 		executionScopeType: "subtree",
 		executionScopeSelectors: "objectHeaderContext",
@@ -57,6 +68,9 @@ sap.ui.define([
 		expectedNumberOfIssues: 1
 	});
 
+	/**
+	 * @deprecated as of version 1.16,<code>firstStatus</code> has been replaced by <code>markers</code> aggregation
+	 */
 	QUnit.module("ObjectHeader statuses with set firstStatus", {
 		beforeEach: function () {
 			this.page = new Page("objectHeaderContext", {
@@ -72,6 +86,9 @@ sap.ui.define([
 		}
 	});
 
+	/**
+	 * @deprecated as of version 1.16,<code>firstStatus</code> has been replaced by <code>markers</code> aggregation
+	 */
 	testRule({
 		executionScopeType: "subtree",
 		executionScopeSelectors: "objectHeaderContext",
@@ -80,6 +97,9 @@ sap.ui.define([
 		expectedNumberOfIssues: 1
 	});
 
+	/**
+	 * @deprecated as of version 1.16,<code>secondStatus</code> has been replaced by <code>markers</code> aggregation
+	 */
 	QUnit.module("ObjectHeader statuses with set secondStatus", {
 		beforeEach: function () {
 			this.page = new Page("objectHeaderContext", {
@@ -95,6 +115,9 @@ sap.ui.define([
 		}
 	});
 
+	/**
+	 * @deprecated as of version 1.16,<code>secondStatus</code> has been replaced by <code>markers</code> aggregation
+	 */
 	testRule({
 		executionScopeType: "subtree",
 		executionScopeSelectors: "objectHeaderContext",
