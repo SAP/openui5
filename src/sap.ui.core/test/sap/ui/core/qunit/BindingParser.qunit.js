@@ -925,8 +925,8 @@ sap.ui.define([
 		try {
 			future.active = true;
 
-			// code under test
-			parse("{:= ${parts:[{path:'/foo'},{path:'/bar'}],type:'sap.ui.model.type.Currency'} }");
+			// code under test - use Currency to avoid that the UI5 2.0 build removes the unused dependency
+			parse("{:= ${parts:[{path:'/foo'},{path:'/bar'}],type:'" + Currency.getMetadata().getName() + "'} }");
 
 			assert.ok(false, "Unexpected success");
 		} catch (oError) {
