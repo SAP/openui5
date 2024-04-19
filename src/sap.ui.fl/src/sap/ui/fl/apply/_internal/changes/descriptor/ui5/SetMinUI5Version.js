@@ -38,46 +38,55 @@ sap.ui.define([
 		 * @ui5-restricted sap.ui.fl.apply._internal
 		 */
 		applyChange(oManifest, oChange) {
-			// Rules:
+			// General Rules:
 			// Compare major versions with each other and set always highest version.
 			// Major version which is only included in one (base app or change) will be dropped.
 			// If no major version remains throw exception.
-			// If result has more than one entry: Additionally check that for version major 1.x.x that minimum version is 1.120.0.
+			// If change has more than one entry: Additionally check that for version major 1.x.x that minimum version is 1.120.0.
 			// If result has only one value then reduce to type string.
 
-			const changeMinUI5Version = oChange.getContent().minUI5Version;
-			if (!oChange.getContent().hasOwnProperty("minUI5Version")) {
+			var aChangeMinUI5Version = oChange.getContent().minUI5Version;
+			if (!aChangeMinUI5Version) {
 				throw new Error("No minUI5Version in change content provided");
 			}
+			if (typeof aChangeMinUI5Version === "string") {
+				aChangeMinUI5Version = [aChangeMinUI5Version];
+			}
+
+			const mChangeMinUi5Version = {};
+			aChangeMinUI5Version.forEach(function(changeMinUI5Version) {
+				const oVersion = new Version(changeMinUI5Version);
+				if (mChangeMinUi5Version[oVersion.getMajor()]) {
+					throw new Error("Each major version can only be provided once in minUI5Version of change content");
+				}
+				mChangeMinUi5Version[oVersion.getMajor()] = [changeMinUI5Version, oVersion];
+			});
 
 			var {minUI5Version: aMinUI5Version} = oManifest["sap.ui5"].dependencies;
 			if (!aMinUI5Version) {
 				throw new Error("sap.ui5/dependencies/minUI5Version missing in base manifest");
 			}
-
 			if (typeof aMinUI5Version === "string") {
 				aMinUI5Version = [aMinUI5Version];
 			}
 
-			var vChangeVersion = new Version(changeMinUI5Version);
-			// drop major versions which are only included in base app and not in change
-			aMinUI5Version = aMinUI5Version.filter(function(item) {
-				var vItemVersion = new Version(item);
-				return vItemVersion.getMajor() === vChangeVersion.getMajor();
-			});
+			aMinUI5Version = aMinUI5Version.map(function(sCurrMinUI5Version) {
+				const oCurrMinUI5Version = new Version(sCurrMinUI5Version);
+				const aChangeVersionForMajor = mChangeMinUi5Version[oCurrMinUI5Version.getMajor()];
+				if (!aChangeVersionForMajor) {
+					return null;
+				}
+				const [sChangeMinUI5VersionForMajor, oChangeMinUI5VersionForMajor] = aChangeVersionForMajor;
+
+				return (oCurrMinUI5Version.compareTo(oChangeMinUI5VersionForMajor) <= 0) ?
+					sChangeMinUI5VersionForMajor : sCurrMinUI5Version;
+			}).filter((sMinVersion) => sMinVersion);
+
 			if (aMinUI5Version.length === 0) {
 				throw new Error("Upgrade/Downgrade for different major version not possible");
 			}
 
-			var aNewMinUI5Version = aMinUI5Version;
-			aNewMinUI5Version = aMinUI5Version.map(function(minUI5Version) {
-				var vCurrentVersion = new Version(minUI5Version);
-				if (vCurrentVersion.compareTo(vChangeVersion) <= 0 && vCurrentVersion.getMajor() === vChangeVersion.getMajor()) {
-					return changeMinUI5Version;
-				}
-				return minUI5Version;
-			});
-			oManifest["sap.ui5"].dependencies.minUI5Version = aNewMinUI5Version.length === 1 ? aNewMinUI5Version[0] : aNewMinUI5Version;
+			oManifest["sap.ui5"].dependencies.minUI5Version = aMinUI5Version.length === 1 ? aMinUI5Version[0] : aMinUI5Version;
 			return oManifest;
 		}
 
