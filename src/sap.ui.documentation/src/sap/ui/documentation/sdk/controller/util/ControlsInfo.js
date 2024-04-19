@@ -56,7 +56,7 @@ sap.ui.define(["sap/ui/thirdparty/jquery", 'sap/ui/documentation/library', "sap/
 					"Map",
 					"Utility",
 					"Web Components",
-					"Smart Controls",
+					"Metadata-Driven Controls",
 					"Personalization"
 				];
 				var afilterProps = ["namespace", "since", "category"]; // content density are set manually
