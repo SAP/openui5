@@ -167,13 +167,6 @@ sap.ui.define([
 			},
 			ColumnHeaderPopover: {
 				title: "QUnit Page for sap.m.ColumnHeaderPopover",
-				qunit: {
-					version: 1 // TBD: test fails locally, no chance to migrate it
-				},
-				sinon: {
-					version: 1, // TBD: test fails locally, no chance to migrate it
-					useFakeTimers: true
-				},
 				ui5: {
 					language: "en-US"
 				}

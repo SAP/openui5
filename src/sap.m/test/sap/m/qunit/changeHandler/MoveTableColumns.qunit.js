@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/core/mvc/XMLView",
 	"sap/base/util/deepExtend",
 	"test-resources/sap/ui/fl/api/FlexTestAPI"
@@ -19,7 +19,7 @@ sap.ui.define([
 	ComponentContainer,
 	JSONModel,
 	createAndAppendDiv,
-	oCore,
+	nextUIUpdate,
 	XMLView,
 	deepExtend,
 	FlexTestAPI
@@ -101,7 +101,7 @@ sap.ui.define([
 
 			this.oUiComponent = new Comp("comp");
 
-			return this.oUiComponent.rootControlLoaded().then(function() {
+			return this.oUiComponent.rootControlLoaded().then(async function() {
 				// Place component in container and display
 				this.oUiComponentContainer = new ComponentContainer({
 					component : this.oUiComponent
@@ -110,7 +110,7 @@ sap.ui.define([
 
 				this.oView = this.oUiComponent.getRootControl();
 
-				oCore.applyChanges();
+				await nextUIUpdate();
 
 				this.oTable = this.oView.byId('myTable');
 				this.oColumn0 = this.oView.byId('column0');
@@ -280,7 +280,7 @@ sap.ui.define([
 			});
 			this.oUiComponent = new Comp("comp");
 
-			return this.oUiComponent.rootControlLoaded().then(function() {
+			return this.oUiComponent.rootControlLoaded().then(async function() {
 				// Place component in container and display
 				this.oUiComponentContainer = new ComponentContainer({
 					component : this.oUiComponent
@@ -307,7 +307,7 @@ sap.ui.define([
 					}]
 				}));
 
-				oCore.applyChanges();
+				await nextUIUpdate();
 
 				this.oTable = this.oView.byId('myTable');
 

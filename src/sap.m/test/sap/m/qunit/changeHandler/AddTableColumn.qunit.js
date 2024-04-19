@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/base/util/deepExtend",
 	"test-resources/sap/ui/fl/api/FlexTestAPI"
 ], function(
@@ -18,7 +18,7 @@ sap.ui.define([
 	ComponentContainer,
 	JSONModel,
 	createAndAppendDiv,
-	oCore,
+	nextUIUpdate,
 	deepExtend,
 	FlexTestAPI
 ) {
@@ -97,8 +97,8 @@ sap.ui.define([
 						].join("");
 
 						var oView = XMLView.create({
-							 id : this.createId("view"),
-							 definition : oXmlStringWithBinding
+							id : this.createId("view"),
+							definition : oXmlStringWithBinding
 						});
 						return oView;
 					}
@@ -112,7 +112,7 @@ sap.ui.define([
 			return Component.create({
 				id: "comp",
 				name: "test"
-			}).then(function(oComponent) {
+			}).then(async function(oComponent) {
 				this.oUiComponent = oComponent;
 
 				// Place component in container and display
@@ -144,7 +144,7 @@ sap.ui.define([
 					}]
 				}));
 
-				oCore.applyChanges();
+				await nextUIUpdate();
 
 				var oDOMParser = new DOMParser();
 				var oXmlDocument = oDOMParser.parseFromString(oXmlString, "application/xml");
