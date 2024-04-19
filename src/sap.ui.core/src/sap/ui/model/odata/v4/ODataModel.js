@@ -893,6 +893,10 @@ sap.ui.define([
 	 *   Whether a binding relative to an {@link sap.ui.model.odata.v4.Context} uses the canonical
 	 *   path computed from its context's path for data service requests; only the value
 	 *   <code>true</code> is allowed.
+	 * @param {boolean} [mParameters.$$clearSelectionOnFilter]
+	 *   Whether the selection state of the list binding is cleared when a filter is changed; this
+	 *   includes dynamic filters, '$filter', '$search', and <code>$$aggregation.search</code>.
+	 *   Supported since 1.120.13.
 	 * @param {boolean} [mParameters.$$getKeepAliveContext]
 	 *   Whether this binding is considered for a match when {@link #getKeepAliveContext} is called;
 	 *   only the value <code>true</code> is allowed. Must not be combined with <code>$apply</code>,

@@ -113,8 +113,8 @@ sap.ui.define([
 
 		mParameters = _Helper.clone(mParameters) || {};
 		this.checkBindingParameters(mParameters, ["$$aggregation", "$$canonicalPath",
-			"$$getKeepAliveContext", "$$groupId", "$$operationMode", "$$ownRequest",
-			"$$patchWithoutSideEffects", "$$sharedRequest", "$$updateGroupId"]);
+			"$$clearSelectionOnFilter", "$$getKeepAliveContext", "$$groupId", "$$operationMode",
+			"$$ownRequest", "$$patchWithoutSideEffects", "$$sharedRequest", "$$updateGroupId"]);
 		const aFilters = _Helper.toArray(vFilters);
 		if (mParameters.$$aggregation && aFilters[0] === Filter.NONE) {
 			throw new Error("Cannot combine Filter.NONE with $$aggregation");
@@ -308,8 +308,9 @@ sap.ui.define([
 
 	/**
 	 * Applies the given map of parameters to this binding's parameters and triggers the
-	 * creation of a new cache if called with a change reason. Since 1.111.0, the header context is
-	 * deselected.
+	 * creation of a new cache if called with a change reason. Since 1.111.0, all contexts (incl.
+	 * the header context) are deselected if the binding parameter '$$clearSelectionOnFilter' is set
+	 * and '$filter', '$search', or <code>$$aggregation.search</code> parameters have changed
 	 *
 	 * @param {object} mParameters
 	 *   Map of binding parameters, {@link sap.ui.model.odata.v4.ODataModel#constructor}
@@ -339,6 +340,11 @@ sap.ui.define([
 			}
 			sApply = _AggregationHelper.buildApply(mParameters.$$aggregation).$apply;
 		}
+
+		const bResetSelection = this.mParameters?.$$clearSelectionOnFilter
+			&& (mParameters.$filter !== this.mParameters.$filter
+				|| mParameters.$search !== this.mParameters.$search
+				|| mParameters.$$aggregation?.search !== this.mParameters.$$aggregation?.search);
 		this.mQueryOptions = this.oModel.buildQueryOptions(mParameters, true);
 		this.oQueryOptionsPromise = undefined; // @see #doFetchOrGetQueryOptions
 		this.mParameters = mParameters; // store mParameters at binding after validation
@@ -361,14 +367,14 @@ sap.ui.define([
 			return;
 		}
 
+		if (bResetSelection) {
+			this.resetSelection();
+		}
 		this.removeCachesAndMessages("");
 		this.fetchCache(this.oContext);
 		this.reset(sChangeReason);
-		if (this.oHeaderContext) {
-			this.oHeaderContext.setSelected(false);
-			// Update after the refresh event, otherwise $count is fetched before the request
-			this.oHeaderContext.checkUpdate();
-		}
+		// Update after the refresh event, otherwise $count is fetched before the request
+		this.oHeaderContext?.checkUpdate();
 	};
 
 	/**
@@ -1989,7 +1995,9 @@ sap.ui.define([
 
 	/**
 	 * Filters the list with the given filters. Since 1.97.0, if filters are unchanged, no request
-	 * is sent, regardless of pending changes. Since 1.111.0, the header context is deselected.
+	 * is sent, regardless of pending changes. Since 1.111.0, all contexts (incl. the header
+	 * context) are deselected, but (since 1.120.13) only if the binding parameter
+	 * '$$clearSelectionOnFilter' is set.
 	 *
 	 * If there are pending changes that cannot be ignored, an error is thrown. Use
 	 * {@link #hasPendingChanges} to check if there are such pending changes. If there are, call
@@ -2094,15 +2102,15 @@ sap.ui.define([
 			return this;
 		}
 
+		if (this.mParameters.$$clearSelectionOnFilter) {
+			this.resetSelection();
+		}
 		this.createReadGroupLock(this.getGroupId(), true);
 		this.removeCachesAndMessages("");
 		this.fetchCache(this.oContext);
 		this.reset(ChangeReason.Filter);
-		if (this.oHeaderContext) {
-			this.oHeaderContext.setSelected(false);
-			// Update after the refresh event, otherwise $count is fetched before the request
-			this.oHeaderContext.checkUpdate();
-		}
+		// Update after the refresh event, otherwise $count is fetched before the request
+		this.oHeaderContext?.checkUpdate();
 
 		return this;
 	};
@@ -4090,6 +4098,23 @@ sap.ui.define([
 	};
 
 	/**
+	 * Sets the selection state of all contexts (including the header context) to not selected.
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype.resetSelection = function () {
+		this.oHeaderContext?.setSelected(false);
+
+		return this.aContexts.filter(function (oContext) {
+			return oContext;
+		}).concat(Object.values(this.mPreviousContextsByPath).filter(function (oContext) {
+			return oContext.isEffectivelyKeptAlive();
+		})).forEach(function (oContext) {
+			oContext.setSelected(false);
+		});
+	};
+
+	/**
 	 * Restores all created elements, the bFirstCreateAtEnd flag and the iCreatedContexts,
 	 * iActiveContexts counters from cache to this list binding.
 	 *
@@ -4128,6 +4153,10 @@ sap.ui.define([
 		this.sResumeChangeReason = undefined;
 
 		if (bRefresh) {
+			if (this.mParameters.$$clearSelectionOnFilter
+				&& sResumeChangeReason === ChangeReason.Filter) {
+				this.resetSelection();
+			}
 			this.removeCachesAndMessages("");
 			if (sResumeAction === "onChange") {
 				this.onChange();
@@ -4270,7 +4299,9 @@ sap.ui.define([
 	 *   proposal <a href="https://issues.oasis-open.org/browse/ODATA-1452">ODATA-1452</a>, then
 	 *   <code>ODataUtils.formatLiteral(sSearch, "Edm.String");</code> should be used to encapsulate
 	 *   the whole search string beforehand (see {@link
-	 *   sap.ui.model.odata.v4.ODataUtils.formatLiteral}).
+	 *   sap.ui.model.odata.v4.ODataUtils.formatLiteral}). Since 1.120.13, all contexts, including
+	 *   the header context are deselected if the '$$clearSelectionOnFilter' binding parameter is
+	 *   set and the search parameter is changed.
 	 * @param {boolean} [oAggregation.subtotalsAtBottomOnly]
 	 *   Tells whether subtotals for aggregatable properties are displayed at the bottom only, as a
 	 *   separate row after all children, when a group level node is expanded (since 1.86.0);
