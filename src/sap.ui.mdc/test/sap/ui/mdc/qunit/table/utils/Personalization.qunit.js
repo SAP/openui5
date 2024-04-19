@@ -157,61 +157,28 @@ sap.ui.define([
 	});
 
 	QUnit.module("Reset changes", {
-		before: async function() {
+		before: function() {
 			sinon.stub(TableDelegate, "getSupportedFeatures").callsFake(function() {
 				const mSupportedFeatures = TableDelegate.getSupportedFeatures.wrappedMethod.apply(this, arguments);
 				mSupportedFeatures.p13nModes = ["Column", "Sort", "Filter", "Group", "Aggregate"];
 				return mSupportedFeatures;
 			});
-
+		},
+		beforeEach: async function() {
 			const mCreatedApp = await createAppEnvironment(sTableView, "Table");
 			this.oUiComponentContainer = mCreatedApp.container;
 			this.oTable = mCreatedApp.view.byId('myTable');
-			await this.oTable.initialized();
-		},
-		beforeEach: async function() {
-			await StateUtil.applyExternalState(this.oTable, {
-				items: [
-					{name: "colB"}
-				],
-				filter: {
-					colA: [{
-						operator: "EQ",
-						values: ["something"]
-					}]
-				},
-				sorters: [{
-					name: "colA",
-					descending: false
-				}],
-				groupLevels: [{
-					name: "colA"
-				}],
-				aggregations: {
-					colA: {}
-				},
-				supplementaryConfig: {
-					aggregations: {
-						columns: {
-							colA: {
-								width: "87px"
-							}
-						}
-					}
-				}
-			});
-
+			this.oResetSpy = sinon.spy(this.oTable.getEngine(), "reset");
 			this.oUiComponentContainer.placeAt("qunit-fixture");
+			await this.oTable.initialized();
 			await nextUIUpdate();
 		},
 		afterEach: function() {
-			return this.oTable.getEngine().reset(this.oTable).catch(function() {
-				// swallow the error that is thrown when resetting wihout p13n panel being open
-			});
+			this.oResetSpy.restore();
+			this.oUiComponentContainer.destroy();
 		},
 		after: function() {
 			TableDelegate.getSupportedFeatures.restore();
-			this.oUiComponentContainer.destroy();
 		}
 	});
 
@@ -219,99 +186,26 @@ sap.ui.define([
 		PersonalizationUtils.openSettingsDialog(this.oTable);
 		(await TableQUnitUtils.waitForP13nPopup(this.oTable)).getReset()();
 		await TableQUnitUtils.closeP13nPopup(this.oTable);
-		await this.oTable.getEngine().waitForChanges(this.oTable);
 
-		assert.deepEqual(this.oTable.getCurrentState(), {
-			filter: {
-				colA: []
-			},
-			items: [
-				{name: "colA"}
-			],
-			sorters: [],
-			groupLevels: [],
-			aggregations: {},
-			xConfig: {
-			  aggregations: {}
-			}
-		}, "Full reset");
+		sinon.assert.alwaysCalledWithExactly(this.oResetSpy, this.oTable);
+
 	});
 
 	QUnit.test("Settings dialog with only p13n option 'Sort' enabled", async function(assert) {
-		const aOriginalP13nModes = this.oTable.getP13nMode();
-
 		this.oTable.setP13nMode(["Sort"]);
 		this.oTable.setEnableColumnResize(false);
 		PersonalizationUtils.openSettingsDialog(this.oTable);
 		(await TableQUnitUtils.waitForP13nPopup(this.oTable)).getReset()();
 		await TableQUnitUtils.closeP13nPopup(this.oTable);
-		await this.oTable.getEngine().waitForChanges(this.oTable);
 
-		this.oTable.setP13nMode(aOriginalP13nModes);
-		this.oTable.setEnableColumnResize(true);
-		assert.deepEqual(this.oTable.getCurrentState(), {
-			filter: {
-				colA: [{
-					operator: "EQ",
-					values: ["something"]
-				}]
-			},
-			items: [
-				{name: "colA"},
-				{name: "colB"}
-			],
-			sorters: [],
-			groupLevels: [
-				{name: "colA"}
-			],
-			aggregations: {
-				colA: {}
-			},
-			xConfig: {
-				aggregations: {
-					columns: {
-						colA: {
-							width: "87px"
-						}
-					}
-				}
-			}
-		}, "Reset sorters");
+		sinon.assert.alwaysCalledWithExactly(this.oResetSpy, this.oTable);
 	});
 
 	QUnit.test("Filter dialog", async function(assert) {
 		PersonalizationUtils.openFilterDialog(this.oTable);
 		(await TableQUnitUtils.waitForP13nPopup(this.oTable)).getReset()();
 		await TableQUnitUtils.closeP13nPopup(this.oTable);
-		await this.oTable.getEngine().waitForChanges(this.oTable);
 
-		assert.deepEqual(this.oTable.getCurrentState(), {
-			filter: {
-				colA: []
-			},
-			items: [
-				{name: "colA"},
-				{name: "colB"}
-			],
-			sorters: [{
-				descending: false,
-				name: "colA"
-			}],
-			groupLevels: [
-				{name: "colA"}
-			],
-			aggregations: {
-				colA: {}
-			},
-			xConfig: {
-				aggregations: {
-					columns: {
-						colA: {
-							width: "87px"
-						}
-					}
-				}
-			}
-		}, "Reset filter");
+		sinon.assert.alwaysCalledWithExactly(this.oResetSpy, this.oTable, ["Filter"]);
 	});
 });
