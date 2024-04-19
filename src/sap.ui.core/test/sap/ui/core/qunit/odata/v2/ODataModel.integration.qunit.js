@@ -22865,4 +22865,82 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 		return this.createView(assert, sView, oModel);
 	});
+
+	//*********************************************************************************************
+	// Scenario: If a context of a property binding is changed during an asynchronous validation, the validated value is
+	// saved for the correct entity in the model.
+	// JIRA: CPOUI5MODELS-1618
+	QUnit.test("ODataPropertyBinding with asynchronous type validation", function (assert) {
+		const oModel = createSalesOrdersModel({defaultBindingMode : BindingMode.TwoWay});
+		const sView = `
+<t:Table id="table" rows="{path: '/SalesOrderSet'}" visibleRowCount="2">
+	<Input id="Note" value="{path: 'Note', type: 'sap.ui.model.type.String'}"/>
+</t:Table>`;
+		this.expectHeadRequest()
+			.expectRequest("SalesOrderSet?$skip=0&$top=102", {
+				results: [{
+					__metadata: {uri: "/SalesOrderSet('1')"},
+					SalesOrderID: "1",
+					Note: "Note1"
+				},
+				{
+					__metadata: {uri: "/SalesOrderSet('2')"},
+					SalesOrderID: "2",
+					Note: "Note2"
+				},
+				{
+					__metadata: {uri: "/SalesOrderSet('3')"},
+					SalesOrderID: "3",
+					Note: "Note3"
+				},
+				{
+					__metadata: {uri: "/SalesOrderSet('4')"},
+					SalesOrderID: "4",
+					Note: "Note4"
+				}]
+			})
+			.expectValue("Note", ["Note1", "Note2"]);
+		let fnResolveHandler1, fnResolveHandler2, oTable, pSetValuePromise1, pSetValuePromise2, oTypeMock;
+
+		return this.createView(assert, sView, oModel).then(() => {
+			this.expectValue("Note", "Note2", 1);
+			this.expectValue("Note", "Note3", 2);
+
+			oTable = this.oView.byId("table");
+			const oBinding = oTable.getRows()[0].getCells()[0].getBinding("value");
+			oTypeMock = this.mock(oBinding.getType());
+			oTypeMock.expects("validateValue").withExactArgs("NewNote1").returns(new Promise((fnResolve) => {
+				fnResolveHandler1 = fnResolve;
+			}));
+			pSetValuePromise1 = oBinding.setExternalValue("NewNote1");
+			oTable.setFirstVisibleRow(1);
+
+			return this.waitForChanges(assert, "Change first entry and scroll");
+		}).then(() => {
+			this.expectValue("Note", "Note3", 2);
+			this.expectValue("Note", "Note4", 3);
+
+			const oBinding = oTable.getRows()[0].getCells()[0].getBinding("value");
+			oTypeMock.expects("validateValue").withExactArgs("NewNote2").returns(new Promise((fnResolve) => {
+				fnResolveHandler2 = fnResolve;
+			}));
+			pSetValuePromise2 = oBinding.setExternalValue("NewNote2");
+			oTable.setFirstVisibleRow(2);
+
+			return this.waitForChanges(assert, "Change second entry and scroll again");
+		}).then(() => {
+			fnResolveHandler1();
+			fnResolveHandler2();
+
+			return Promise.all([pSetValuePromise1, pSetValuePromise2,
+				this.waitForChanges(assert, "Validation of the changes finished")]);
+		}).then(() => {
+			this.expectValue("Note", "NewNote1", 0);
+			this.expectValue("Note", "NewNote2", 1);
+
+			oTable.setFirstVisibleRow(0);
+
+			return this.waitForChanges(assert, "Scroll back up and see correct values");
+		});
+	});
 });

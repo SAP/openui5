@@ -97,13 +97,13 @@ sap.ui.define([
 	 * @param {boolean} [bRetry]
 	 *   Not used in default implementation; may be used by sub classes
 	 * @throws {Error}
-	 *   If the value cannot be set because this context does not refer to a valid entry in the model data
+	 *   If the value cannot be set because this context does not refer to an entry in the model data
 	 * @private
 	 */
 	Context.prototype.setProperty = function(sPath, vValue, sGroupId, bRetry) {
 		if (!this.oModel.setProperty(sPath, vValue, this, /*bAsyncUpdate*/ true)) {
 			throw new Error("Cannot set the value " + vValue + " for the property " + sPath + " as the context path "
-				+ this.getPath() + " does not refer to a valid entry in the model data.");
+				+ this.getPath() + " does not refer to an entry in the model data.");
 		}
 	};
 

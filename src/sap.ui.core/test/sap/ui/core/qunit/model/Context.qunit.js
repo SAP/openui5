@@ -105,6 +105,6 @@ sap.ui.define([
 			// code under test
 			oContext.setProperty("~sBindingPath", "~vValue");
 		 }, new Error("Cannot set the value ~vValue for the property ~sBindingPath as the context path ~sContextPath"
-				+ " does not refer to a valid entry in the model data."));
+				+ " does not refer to an entry in the model data."));
 	});
 });
