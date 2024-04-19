@@ -3,12 +3,9 @@ sap.ui.define([
 	"sap/ui/test/opaQunit",
 	'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/utility/Assertion',
 	"test-resources/sap/ui/mdc/testutils/opa/filterfield/Actions",
-	"test-resources/sap/ui/mdc/testutils/opa/filterfield/Actions",
-	"sap/ui/events/KeyCodes",
 	"test-resources/sap/ui/mdc/smoke/samples/pages/App",
-	"test-resources/sap/ui/mdc/testutils/opa/TestLibrary",
-	"test-resources/sap/ui/mdc/testutils/opa/table/TestObjects"
-], function (Opa5, opaTest, P13nAssertion, FilterFieldActions, KeyCodes, App, TestLibrary, TestObjects) {
+	"test-resources/sap/ui/mdc/testutils/opa/TestLibrary"
+], function (Opa5, opaTest, P13nAssertion, FilterFieldActions, App, TestLibrary) {
 	"use strict";
 
 	Opa5.extendConfig({

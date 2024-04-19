@@ -60,6 +60,18 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 			"MultiValueField": {
 				group: "Demokit samples",
 				sinon: false
+			},
+			"FieldValueHelpTypes": {
+				group: "Demokit samples",
+				sinon: false
+			},
+			"FieldValueHelpJson": {
+				group: "Demokit samples",
+				sinon: false
+			},
+			"TableFilterBarJson": {
+				group: "Demokit samples",
+				sinon: false
 			}
 		}
 	};

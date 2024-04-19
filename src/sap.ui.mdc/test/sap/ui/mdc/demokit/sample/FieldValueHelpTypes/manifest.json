@@ -1,7 +1,7 @@
 {
 	"_version": "1.60.0",
 	"sap.app": {
-		"id": "sap.ui.mdc.demokit.sample.FieldValueHelpTypes",
+		"id": "mdc.sample.FieldValueHelpTypes",
 		"type": "application",
 		"title": "Fields for different types",
 		"applicationVersion": {
@@ -37,7 +37,7 @@
             "mdc.sample": "./"
         },
 		"rootView": {
-			"viewName": "sap.ui.mdc.demokit.sample.FieldValueHelpTypes.View",
+			"viewName": "mdc.sample.View",
 			"type": "XML",
 			"async": true,
 			"id": "sample"
