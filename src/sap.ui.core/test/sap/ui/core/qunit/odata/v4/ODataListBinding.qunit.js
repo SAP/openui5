@@ -30,9 +30,9 @@ sap.ui.define([
 	/*eslint no-sparse-arrays: 0 */
 	"use strict";
 
-	var aAllowedBindingParameters = ["$$aggregation", "$$canonicalPath", "$$getKeepAliveContext",
-			"$$groupId", "$$operationMode", "$$ownRequest", "$$patchWithoutSideEffects",
-			"$$sharedRequest", "$$updateGroupId"],
+	var aAllowedBindingParameters = ["$$aggregation", "$$canonicalPath", "$$clearSelectionOnFilter",
+			"$$getKeepAliveContext", "$$groupId", "$$operationMode", "$$ownRequest",
+			"$$patchWithoutSideEffects", "$$sharedRequest", "$$updateGroupId"],
 		sClassName = "sap.ui.model.odata.v4.ODataListBinding",
 		oContextPrototype = Object.getPrototypeOf(Context.create(null, null, "/foo")),
 		oParentBinding = {
@@ -776,6 +776,7 @@ sap.ui.define([
 				$filter : "bar"
 			};
 
+		oBinding.mParameters = {$$clearSelectionOnFilter : true};
 		if (bAggregation) {
 			mParameters.$$aggregation = oAggregation;
 		}
@@ -788,13 +789,12 @@ sap.ui.define([
 		this.mock(oBinding).expects("isRootBindingSuspended").withExactArgs().returns(bSuspended);
 		this.mock(oBinding).expects("setResumeChangeReason").exactly(bSuspended ? 1 : 0)
 			.withExactArgs(ChangeReason.Change);
+		this.mock(oBinding).expects("resetSelection").withExactArgs().exactly(bSuspended ? 0 : 1);
 		this.mock(oBinding).expects("removeCachesAndMessages").exactly(iCallCount)
 			.withExactArgs("");
 		this.mock(oBinding).expects("fetchCache").exactly(iCallCount)
 			.withExactArgs(sinon.match.same(oBinding.oContext));
 		this.mock(oBinding).expects("reset").exactly(iCallCount).withExactArgs(ChangeReason.Change);
-		this.mock(oBinding.oHeaderContext).expects("setSelected").exactly(iCallCount)
-			.withExactArgs(false);
 		this.mock(oBinding.oHeaderContext).expects("checkUpdate").exactly(iCallCount)
 			.withExactArgs();
 
@@ -1021,6 +1021,46 @@ sap.ui.define([
 		assert.strictEqual(oBinding.mParameters.$$aggregation, oFixture.oNewAggregation);
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("applyParameters: reset selection", function (assert) {
+		const oBinding = this.bindList("/EMPLOYEES");
+		const oBindingMock = this.mock(oBinding);
+
+		delete oBinding.mParameters; // call from constructor
+		oBindingMock.expects("resetSelection").never();
+
+		// code under test
+		oBinding.applyParameters({});
+
+		oBinding.mParameters = {};
+
+		// code under test
+		oBinding.applyParameters({});
+
+		oBinding.mParameters = {$$clearSelectionOnFilter : true};
+
+		const oResetSelectionExpectation = oBindingMock.expects("resetSelection")
+			.withExactArgs();
+		const oRemoveCacheExpectation = oBindingMock.expects("removeCachesAndMessages")
+			.withExactArgs("");
+
+		// code under test
+		oBinding.applyParameters({$filter : "foo", $$clearSelectionOnFilter : true});
+
+		assert.ok(oResetSelectionExpectation.calledBefore(oRemoveCacheExpectation));
+
+		oBindingMock.expects("resetSelection").exactly(2).withExactArgs();
+		oBindingMock.expects("removeCachesAndMessages").exactly(2).withExactArgs("");
+
+		// code under test
+		oBinding.applyParameters({$search : "foo", $$clearSelectionOnFilter : true});
+
+		oBinding.mParameters = {$$aggregation : {search : "foo"}, $$clearSelectionOnFilter : true};
+
+		// code under test
+		oBinding.applyParameters({$$aggregation : {search : "bar"}});
+	});
 
 	//*********************************************************************************************
 [undefined, false, true].forEach(function (bDrop) {
@@ -3482,6 +3522,7 @@ sap.ui.define([
 
 				oBinding = this.bindList("/EMPLOYEES", undefined, undefined, undefined, {
 					$filter : sStaticFilter,
+					$$clearSelectionOnFilter : true,
 					$$operationMode : OperationMode.Server
 				});
 				assert.ok(oBinding.oQueryOptionsPromise);
@@ -3500,12 +3541,14 @@ sap.ui.define([
 					.returns(false);
 				oBindingMock.expects("hasPendingChanges").withExactArgs(true).returns(false);
 				oBindingMock.expects("isRootBindingSuspended").withExactArgs().returns(bSuspended);
+				const oResetSelectionExpectation = oBindingMock.expects("resetSelection")
+					.withExactArgs().exactly(bSuspended ? 0 : 1);
 				oBindingMock.expects("getGroupId").exactly(bSuspended ? 0 : 1)
 					.withExactArgs().returns("groupId");
 				oBindingMock.expects("createReadGroupLock").exactly(bSuspended ? 0 : 1)
 					.withExactArgs("groupId", true);
-				oBindingMock.expects("removeCachesAndMessages").exactly(bSuspended ? 0 : 1)
-					.withExactArgs("");
+				const oRemoveCacheExpectation = oBindingMock.expects("removeCachesAndMessages")
+					.exactly(bSuspended ? 0 : 1).withExactArgs("");
 				oBindingMock.expects("fetchCache").exactly(bSuspended ? 0 : 1)
 					.withExactArgs(sinon.match.same(oBinding.oContext))
 					.callsFake(function () {
@@ -3515,13 +3558,15 @@ sap.ui.define([
 					.withExactArgs(ChangeReason.Filter);
 				oBindingMock.expects("setResumeChangeReason").exactly(bSuspended ? 1 : 0)
 					.withExactArgs(ChangeReason.Filter);
-				this.mock(oBinding.oHeaderContext).expects("setSelected")
-					.exactly(bSuspended ? 0 : 1).withExactArgs(false);
 				this.mock(oBinding.oHeaderContext).expects("checkUpdate")
 					.exactly(bSuspended ? 0 : 1).withExactArgs();
 
 				// code under test
 				assert.strictEqual(oBinding.filter(oFilter, sFilterType), oBinding, "chaining");
+
+				if (!bSuspended) {
+					assert.ok(oResetSelectionExpectation.calledBefore(oRemoveCacheExpectation));
+				}
 
 				if (sFilterType === FilterType.Control) {
 					assert.strictEqual(oBinding.aFilters, aFilters);
@@ -11506,6 +11551,48 @@ child nodes added=${iCount}, expandTo=${iExpandTo}, make root=${bMakeRoot}`;
 
 		// code under test
 		oBinding.onKeepAliveChanged(oContext);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("resumeInternal: reset selection", function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES");
+
+		oBinding.sResumeChangeReason = ChangeReason.Filter;
+		oBinding.mParameters = {$$clearSelectionOnFilter : true};
+
+		const oResetSelectionExpectation = this.mock(oBinding).expects("resetSelection")
+			.withExactArgs();
+		const oRemoveCacheExpectation = this.mock(oBinding).expects("removeCachesAndMessages")
+			.withExactArgs("");
+
+		// code under test
+		oBinding.resumeInternal();
+
+		assert.ok(oResetSelectionExpectation.calledBefore(oRemoveCacheExpectation));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("resetSelection", function () {
+		const oBinding = this.bindList("/SalesOrderList");
+		const oContext0 = {isEffectivelyKeptAlive : mustBeMocked, setSelected : mustBeMocked};
+		const oContext1 = {isEffectivelyKeptAlive : mustBeMocked, setSelected : mustBeMocked};
+
+		oBinding.aContexts = [oContext0];
+		oBinding.mPreviousContextsByPath.some_path = oContext1;
+
+		this.mock(oBinding.oHeaderContext).expects("setSelected").withExactArgs(false);
+		this.mock(oContext0).expects("setSelected").twice().withExactArgs(false);
+		this.mock(oContext1).expects("isEffectivelyKeptAlive").twice().withExactArgs()
+			.returns(true);
+		this.mock(oContext1).expects("setSelected").twice().withExactArgs(false);
+
+		// code under test
+		oBinding.resetSelection();
+
+		oBinding.oHeaderContext = undefined;
+
+		// code under test
+		oBinding.resetSelection();
 	});
 });
 
