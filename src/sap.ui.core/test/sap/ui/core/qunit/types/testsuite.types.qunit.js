@@ -89,12 +89,6 @@ sap.ui.define(function () {
 				},
 				title: "QUnit Page for sap/ui/model/SimpleType"
 			},
-			TimezoneUtil: {
-				coverage : {
-					only : "sap/ui/core/format/TimezoneUtil"
-				},
-				title: "QUnit Page for sap/ui/core/format/TimezoneUtil"
-			},
 			Types: {
 				coverage : {
 					only : "[sap/ui/model/type/Boolean,sap/ui/model/type/String,sap/ui/model/type/Integer,sap/ui/model/type/Float,sap/ui/model/type/Currency,sap/ui/model/type/Unit,sap/ui/model/type/Time,sap/ui/model/type/DateTime,sap/ui/model/type/TimeInverval,sap/ui/model/type/DateTimeInterval,sap/ui/model/type/FileSize]"

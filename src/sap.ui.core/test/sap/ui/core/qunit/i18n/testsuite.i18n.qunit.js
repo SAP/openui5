@@ -108,6 +108,12 @@ sap.ui.define(function() {
 				coverage: {
 					only: "sap/ui/core/date/UniversalDateUtils"
 				}
+			},
+			"TimezoneUtils": {
+				coverage: {
+					only: "sap/base/i18n/date/TimezoneUtils"
+				},
+				title: "QUnit Page for sap/base/i18n/date/TimezoneUtils"
 			}
 		}
 	};
