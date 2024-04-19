@@ -8,8 +8,7 @@ sap.ui.define([
 	"./arrangements/Startup",
 	"./MasterJourney",
 	"./NavigationJourney",
-	"./NotFoundJourney",
-	"./BusyJourney"
+	"./NotFoundJourney"
 ], function (Opa5, Startup) {
 	"use strict";
 	Opa5.extendConfig({
