@@ -47,8 +47,13 @@ sap.ui.define([
 		var TEST_DELEGATE_PATH = "sap/ui/rta/enablement/TestDelegate";
 		//ensure a default delegate exists for a model not used anywhere else
 		var SomeModel = JSONModel.extend("sap.ui.layout.simpleform.qunit.test.Model");
-		DelegateMediatorAPI.registerDefaultDelegate({
+		DelegateMediatorAPI.registerReadDelegate({
 			modelType: SomeModel.getMetadata().getName(),
+			delegate: TEST_DELEGATE_PATH
+		});
+		// ensure a default write delegate exists for the requested control
+		DelegateMediatorAPI.registerWriteDelegate({
+			controlType: "sap.ui.layout.form.SimpleForm",
 			delegate: TEST_DELEGATE_PATH
 		});
 

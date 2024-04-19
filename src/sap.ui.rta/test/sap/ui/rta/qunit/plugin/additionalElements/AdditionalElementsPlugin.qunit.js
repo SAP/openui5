@@ -14,6 +14,7 @@ sap.ui.define([
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/Util",
+	"sap/ui/fl/apply/_internal/DelegateMediator",
 	"sap/ui/fl/apply/api/DelegateMediatorAPI",
 	"sap/ui/fl/write/api/FieldExtensibility",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
@@ -44,6 +45,7 @@ sap.ui.define([
 	DesignTime,
 	OverlayRegistry,
 	DtUtil,
+	DelegateMediator,
 	DelegateMediatorAPI,
 	FieldExtensibility,
 	ChangesWriteAPI,
@@ -68,31 +70,24 @@ sap.ui.define([
 	// 5. avoid creation of many DesignTime instances just for creating one single overlay <=
 	// 6. add comprehensive comments at least to each module - what is going on there
 
-	var TEST_DELEGATE_PATH = "sap/ui/rta/enablement/TestDelegate";
-	// ensure a default delegate exists for a model not used anywhere else
-	var SomeModel = JSONModel.extend("sap.ui.rta.qunit.test.Model");
-	var DEFAULT_DELEGATE_REGISTRATION = {
-		modelType: SomeModel.getMetadata().getName(),
-		names: ["sap/ui/comp/smartfield/flexibility/ODataV2Delegate"],
-		delegate: TEST_DELEGATE_PATH,
-		delegateType: DelegateMediatorAPI.types.COMPLETE,
-		requiredLibraries: {
-			"sap.uxap": {
-				minVersion: "1.44",
-				lazy: false
-			},
-			"sap.ui.layout": {
-				minVersion: "1.20",
-				lazy: false
-			}
+	const TEST_DELEGATE_PATH = "sap/ui/rta/enablement/TestDelegate";
+	const DEFAULT_REQURIED_LIBRARIES = {
+		"sap.uxap": {
+			minVersion: "1.44",
+			lazy: false
+		},
+		"sap.ui.layout": {
+			minVersion: "1.20",
+			lazy: false
 		}
 	};
-	DelegateMediatorAPI.registerDefaultDelegate(DEFAULT_DELEGATE_REGISTRATION);
+
+	// ensure a model specific delegate exists for a model not used anywhere else
+	const SomeModel = JSONModel.extend("sap.ui.rta.qunit.test.Model");
 
 	sinon.stub(Settings, "getInstance").resolves(new Settings({}));
-	sinon.stub(DelegateMediatorAPI, "getKnownDefaultDelegateLibraries").returns(["sap.uxap", "sap.ui.layout"]);
 
-	var DEFAULT_MANIFEST = {
+	const DEFAULT_MANIFEST = {
 		"sap.app": {
 			id: "applicationId",
 			applicationVersion: {
@@ -116,10 +111,10 @@ sap.ui.define([
 			}
 		}
 	};
-	var oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sinon, "applicationId", DEFAULT_MANIFEST);
+	const oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sinon, "applicationId", DEFAULT_MANIFEST);
 
-	var sVariantManagementReference = "test-variant-management-reference";
-	var sandbox = sinon.createSandbox();
+	const sVariantManagementReference = "test-variant-management-reference";
+	const sandbox = sinon.createSandbox();
 
 	function registerControlsForChanges() {
 		sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
@@ -131,10 +126,10 @@ sap.ui.define([
 		});
 	}
 
-	var ON_SIBLING = "SIBLING";
-	var ON_CHILD = "CHILD";
-	var ON_CONTAINER = "CONTAINER";
-	var ON_IRRELEVANT = "IRRELEVANT";
+	const ON_SIBLING = "SIBLING";
+	const ON_CHILD = "CHILD";
+	const ON_CONTAINER = "CONTAINER";
+	const ON_IRRELEVANT = "IRRELEVANT";
 
 	QUnit.module("Context Menu Operations: Given a plugin whose dialog always close with OK", {
 		async beforeEach(assert) {
@@ -161,6 +156,7 @@ sap.ui.define([
 			this.oDesignTime.destroy();
 			this.oPlugin.destroy();
 			this.oPseudoPublicParent.destroy();
+			DelegateMediator.clear();
 			sandbox.restore();
 		}
 	}, function() {
@@ -210,24 +206,14 @@ sap.ui.define([
 					add: {
 						delegate: {
 							changeType: "foo",
-							supportsDefaultDelegate: true
+							changeOnRelevantContainer: true
 						}
 					}
 				},
 				sibling: true,
-				msg: "when the control's dt metadata has an add.delegate with default delegate and NO reveal action"
-			},
-			{
-				dtMetadata: {
-					add: {
-						delegate: {
-							changeType: "foo",
-							changeOnRelevantContainer: true,
-							supportsDefaultDelegate: true
-						}
-					}
+				delegateRegistration: {
+					instanceSpecific: true
 				},
-				sibling: true,
 				msg: "when the control's dt metadata has an add.delegate with instancespecific delegate and NO reveal action"
 			},
 			{
@@ -246,7 +232,12 @@ sap.ui.define([
 			var sAggregationName = test.sibling ? "content" : "contentLeft";
 
 			QUnit.test(sPrefix + test.msg, function(assert) {
-				return createOverlayWithAggregationActions.call(this, test.dtMetadata, sOverlayType)
+				return createOverlayWithAggregationActions.call(
+					this,
+					test.dtMetadata,
+					sOverlayType,
+					test.delegateRegistration
+				)
 				.then(function(oOverlay) {
 					function fnReturnOverlay() {
 						return oOverlay;
@@ -272,19 +263,22 @@ sap.ui.define([
 		});
 
 		QUnit.test(" when the control's dt metadata has add via delegate action but the delegate is read-only", function(assert) {
-			sandbox.stub(DelegateMediatorAPI, "getDelegateForControl").resolves(
-				Object.assign(DEFAULT_DELEGATE_REGISTRATION, {
-					delegateType: DelegateMediatorAPI.types.READONLY
-				})
-			);
-			return createOverlayWithAggregationActions.call(this, {
-				add: {
-					delegate: {
-						changeType: "foo",
-						supportsDefaultDelegate: true
+			return createOverlayWithAggregationActions.call(
+				this,
+				{
+					add: {
+						delegate: {
+							changeType: "foo"
+						}
 					}
+				},
+				ON_SIBLING,
+				{
+					instanceSpecific: false,
+					modelSpecificRead: true,
+					controlSpecificWrite: false
 				}
-			}, ON_SIBLING)
+			)
 			.then(function(oOverlay) {
 				this.oPlugin.registerElementOverlay(oOverlay);
 				return DtUtil.waitForSynced(this.oDesignTime, function() {
@@ -297,19 +291,21 @@ sap.ui.define([
 		});
 
 		QUnit.test(" when the control's dt metadata has add via delegate action but the delegate is write-only", function(assert) {
-			sandbox.stub(DelegateMediatorAPI, "getDelegateForControl").resolves(
-				Object.assign(DEFAULT_DELEGATE_REGISTRATION, {
-					delegateType: DelegateMediatorAPI.types.WRITEONLY
-				})
-			);
-			return createOverlayWithAggregationActions.call(this, {
-				add: {
-					delegate: {
-						changeType: "foo",
-						supportsDefaultDelegate: true
+			return createOverlayWithAggregationActions.call(
+				this,
+				{
+					add: {
+						delegate: {
+							changeType: "foo"
+						}
 					}
+				}, ON_SIBLING,
+				{
+					instanceSpecific: false,
+					modelSpecificRead: false,
+					controlSpecificWrite: true
 				}
-			}, ON_SIBLING)
+			)
 			.then(function(oOverlay) {
 				this.oPlugin.registerElementOverlay(oOverlay);
 				return DtUtil.waitForSynced(this.oDesignTime, function() {
@@ -444,6 +440,7 @@ sap.ui.define([
 			this.oDesignTime.destroy();
 			this.oPlugin.destroy();
 			this.oPseudoPublicParent.destroy();
+			DelegateMediator.clear();
 			sandbox.restore();
 		}
 	}, function() {
@@ -539,6 +536,7 @@ sap.ui.define([
 		afterEach() {
 			this.oPlugin.destroy();
 			this.oPseudoPublicParent.destroy();
+			DelegateMediator.clear();
 			sandbox.restore();
 		}
 	}, function() {
@@ -771,95 +769,6 @@ sap.ui.define([
 				}.bind(this));
 			});
 
-			QUnit.test(`${sPrefix}when the control's dt metadata has only an add via delegate action and a default delegate is available`, function(assert) {
-				var done = assert.async();
-				var sChangeType = "addFields";
-				var sAggregationName = "contentLeft";
-				var oElement;
-
-				this.oPlugin.attachEventOnce("elementModified", function(oEvent) {
-					var iExpectedIndex = 0;
-					if (test.sibling) {
-						iExpectedIndex = 1;
-						oElement = oElement.getParent();
-					}
-					var oExpectedCommandProperties = {
-						newControlId: "bar_EntityType01_Property03",
-						index: iExpectedIndex,
-						bindingString: "Property03",
-						entityType: "EntityType01",
-						parentId: "bar",
-						propertyName: "Name1",
-						name: "addDelegateProperty",
-						relevantForSave: true,
-						changeType: sChangeType,
-						jsOnly: false,
-						oDataServiceUri: "",
-						oDataServiceVersion: undefined,
-						modelType: "sap.ui.rta.qunit.test.Model",
-						relevantContainerId: "bar",
-						runtimeOnly: undefined,
-						selector: {
-							id: oElement.getId(),
-							appComponent: oMockedAppComponent,
-							controlType: oElement.getMetadata().getName()
-						},
-						variantIndependent: false
-					};
-					var oCompositeCommand = oEvent.getParameter("command");
-					var aCommands = oCompositeCommand.getCommands();
-
-					assert.strictEqual(aCommands.length, 1, "then one command is created");
-
-					var oAddDelegatePropertyCommand = aCommands[0];
-					assert.deepEqual(
-						oAddDelegatePropertyCommand.mProperties,
-						oExpectedCommandProperties,
-						"then the addDelegateProperty command was created correctly"
-					);
-
-					done();
-				});
-
-				return test.overlay.call(this, {
-					add: {
-						delegate: {
-							changeType: sChangeType,
-							supportsDefaultDelegate: true
-						}
-					}
-				}, test.sibling ? ON_SIBLING : ON_CHILD)
-
-				.then(function(oCreatedOverlay) {
-					oElement = oCreatedOverlay.getElement();
-					return this.oPlugin.showAvailableElements(test.sibling, sAggregationName, [oCreatedOverlay])
-					.then(function() {
-						assert.strictEqual(
-							this.oPlugin.isEnabled([oCreatedOverlay], test.sibling, sAggregationName),
-							true,
-							"then isEnabled() returns true"
-						);
-					}.bind(this));
-				}.bind(this))
-
-				.then(function() {
-					assert.equal(
-						this.fnGetUnrepresentedDelegateProperties.callCount,
-						1,
-						"then the analyzer was called once for addViaDelegate elements"
-					);
-					assert.equal(
-						this.fnEnhanceInvisibleElementsStub.callCount,
-						0,
-						"then the analyzer was not called for invisible elements"
-					);
-					assertDialogModelLength.call(this, assert, 3, "then all three addViaDelegate elements are part of the dialog model");
-					var bValidDialogElements = this.oPlugin.getDialog().getElements().every(function(oElement, iIndex) {
-						return oElement.label === `delegate${iIndex}`;
-					});
-					assert.ok(bValidDialogElements, "then all elements in the dialog are valid");
-				}.bind(this));
-			});
 			QUnit.test(`${sPrefix}when the control's dt metadata has addViaDelegate with a valid delegate configured`, function(assert) {
 				var done = assert.async();
 				var sChangeType = "addFields";
@@ -914,14 +823,20 @@ sap.ui.define([
 					Log.error.restore();
 					done();
 				});
-				return test.overlay.call(this, {
-					add: {
-						delegate: {
-							changeType: sChangeType
-						}
+				return test.overlay.call(
+					this,
+					{
+						add: {
+							delegate: {
+								changeType: sChangeType
+							}
+						},
+						delegateModulePath: sDelegatePath
 					},
-					delegateModulePath: sDelegatePath
-				}, test.sibling ? ON_SIBLING : ON_CHILD)
+					test.sibling ? ON_SIBLING : ON_CHILD,
+					true, // instancespecific delegate registration
+					false // controlspecific delegate registration
+				)
 
 				.then(function(oOverlay) {
 					return this.oPlugin.showAvailableElements(test.sibling, sAggregationName, [oOverlay]);
@@ -1165,30 +1080,31 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("when the control's dt metadata has a reveal and addViaDelegate and the default delegate is not available", function(assert) {
-			sandbox.stub(Library, "load").callsFake(function(...aArgs) {
-				const [oLibrary] = aArgs;
-				if (DelegateMediatorAPI.getKnownDefaultDelegateLibraries().includes(oLibrary.name)) {
-					return Promise.reject();
-				}
-				return Library.load.wrappedMethod.apply(this, aArgs);
-			});
-
-			return createOverlayWithAggregationActions.call(this, {
-				add: {
-					delegate: {
-						changeType: "addFields"
+		QUnit.test("when the control's dt metadata has a reveal and addViaDelegate and delegate definitions are not available", function(assert) {
+			return createOverlayWithAggregationActions.call(
+				this,
+				{
+					add: {
+						delegate: {
+							changeType: "addFields"
+						}
+					},
+					reveal: {
+						changeType: "unhideControl"
+					},
+					responsibleElement: {
+						target: this.oSibling,
+						source: this.oPseudoPublicParent,
+						actionsFromResponsibleElement: ["reveal"]
 					}
 				},
-				reveal: {
-					changeType: "unhideControl"
-				},
-				responsibleElement: {
-					target: this.oSibling,
-					source: this.oPseudoPublicParent,
-					actionsFromResponsibleElement: ["reveal"]
+				ON_CONTAINER,
+				{
+					instanceSpecific: false,
+					modelSpecificRead: false,
+					controlSpecificWrite: false
 				}
-			}, ON_CONTAINER)
+			)
 			.then(function(oCreatedOverlay) {
 				return AdditionalElementsActionExtractor.getActions(true, oCreatedOverlay, this.oPlugin);
 			}.bind(this)).then(function(mActions) {
@@ -1197,33 +1113,38 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("when the control's dt metadata has an instance-specific delegate and an unavailable default delegate", function(assert) {
-			sandbox.stub(Library, "load").callsFake(function(...aArgs) {
-				const [oLibrary] = aArgs;
-				if (DelegateMediatorAPI.getKnownDefaultDelegateLibraries().includes(oLibrary.name)) {
-					return Promise.reject();
-				}
-				return Library.load.wrappedMethod.apply(this, aArgs);
-			});
-
+		QUnit.test("when the control's dt metadata has an instance-specific delegate and an unavailable model-specific read delegate", function(assert) {
 			RtaQunitUtils.stubSapUiRequire(sandbox, [{
 				name: ["path/to/instancespecific/delegate"],
-				stub: { getPropertyInfo() {} }
+				stub: {
+					getPropertyInfo() {},
+					createLabel() {},
+					createLayout() {}
+				}
 			}]);
 
-			return createOverlayWithAggregationActions.call(this, {
-				add: {
-					delegate: {
-						changeType: "addFields"
-					}
+			return createOverlayWithAggregationActions.call(
+				this,
+				{
+					add: {
+						delegate: {
+							changeType: "addFields"
+						}
+					},
+					responsibleElement: {
+						target: this.oSibling,
+						source: this.oPseudoPublicParent,
+						actionsFromResponsibleElement: ["reveal"]
+					},
+					delegateModulePath: "path/to/instancespecific/delegate"
 				},
-				responsibleElement: {
-					target: this.oSibling,
-					source: this.oPseudoPublicParent,
-					actionsFromResponsibleElement: ["reveal"]
-				},
-				delegateModulePath: "path/to/instancespecific/delegate"
-			}, ON_CONTAINER)
+				ON_CONTAINER,
+				{
+					instanceSpecific: true,
+					modelSpecificRead: false,
+					controlSpecificWrite: false
+				}
+			)
 			.then(function(oCreatedOverlay) {
 				return AdditionalElementsActionExtractor.getActions(true, oCreatedOverlay, this.oPlugin);
 			}.bind(this)).then(function(mActions) {
@@ -1457,8 +1378,7 @@ sap.ui.define([
 			return createOverlayWithAggregationActions.call(this, {
 				add: {
 					delegate: {
-						changeType: "addFields",
-						supportsDefaultDelegate: true
+						changeType: "addFields"
 					}
 				}
 			}, ON_CHILD)
@@ -1471,7 +1391,8 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("when the control's dt metadata has an add via delegate action on relevant container and default delegate is available", function(assert) {
+		QUnit.test("when the control's dt metadata has an add via delegate action on relevant container with model specific read delegate "
+		+ "and control specific write delegate are available", function(assert) {
 			var done = assert.async();
 			var sAggregationName = "contentLeft";
 			this.oPlugin.attachEventOnce("elementModified", function(oEvent) {
@@ -1486,21 +1407,21 @@ sap.ui.define([
 					"then the addLibrary command is created with the proper reference"
 				);
 				// Non-existing library
-				var sLib1 = Object.keys(DEFAULT_DELEGATE_REGISTRATION.requiredLibraries)[0];
+				const sLib1 = Object.keys(DEFAULT_REQURIED_LIBRARIES)[0];
 				// Existing library but with lazy: true
-				var sLib2 = Object.keys(DEFAULT_DELEGATE_REGISTRATION.requiredLibraries)[1];
+				const sLib2 = Object.keys(DEFAULT_REQURIED_LIBRARIES)[1];
 				assert.equal(
 					oAddLibrary.getParameters().libraries[sLib1].minVersion,
-					DEFAULT_DELEGATE_REGISTRATION.requiredLibraries[sLib1].minVersion,
+					DEFAULT_REQURIED_LIBRARIES[sLib1].minVersion,
 					"then the addLibrary command is created with the library which was not on the manifest"
 				);
 				assert.equal(
 					oAddLibrary.getParameters().libraries[sLib2].minVersion,
-					DEFAULT_DELEGATE_REGISTRATION.requiredLibraries[sLib2].minVersion,
+					DEFAULT_REQURIED_LIBRARIES[sLib2].minVersion,
 					"then the addLibrary command is created with the library which was on the manifest with lazy: true"
 				);
 
-				var oAddCmd = oCompositeCommand.getCommands()[1];
+				const oAddCmd = oCompositeCommand.getCommands()[1];
 				assert.equal(oAddCmd.getName(), "addDelegateProperty",
 					"then the addDelegateProperty command is created ");
 				assert.equal(oAddCmd.getParentId(), "bar", "then the parentId is set correctly ");
@@ -1511,15 +1432,23 @@ sap.ui.define([
 				done();
 			});
 
-			return createOverlayWithAggregationActions.call(this, {
-				add: {
-					delegate: {
-						changeType: "addFields",
-						changeOnRelevantContainer: true,
-						supportsDefaultDelegate: true
+			return createOverlayWithAggregationActions.call(
+				this,
+				{
+					add: {
+						delegate: {
+							changeType: "addFields",
+							changeOnRelevantContainer: true
+						}
 					}
+				},
+				ON_CHILD,
+				{
+					instanceSpecific: false,
+					modelSpecificRead: true,
+					controlSpecificWrite: true
 				}
-			}, ON_CHILD)
+			)
 			.then(function(oOverlay) {
 				return this.oPlugin.showAvailableElements(false, sAggregationName, [oOverlay]);
 			}.bind(this))
@@ -1529,21 +1458,22 @@ sap.ui.define([
 			});
 		});
 
-		function givenAddHasLibraryDependencyToDefaultDelegatesLibDependencies() {
+		function givenAddHasLibraryDependencyToWriteDelegateLibDependencies() {
 			sandbox.stub(oMockedAppComponent, "getManifestEntry").callsFake(function(sPath) {
 				if (sPath.indexOf("libs")) {
 					return merge(
 						{},
 						DEFAULT_MANIFEST["sap.ui5"].dependencies.libs,
-						DEFAULT_DELEGATE_REGISTRATION.requiredLibraries
+						DEFAULT_REQURIED_LIBRARIES
 					);
 				}
 				return {};
 			});
 		}
 
-		QUnit.test("when the control's dt metadata has an add via delegate action on relevant container and default delegate is available, but library dependency already exists", function(assert) {
-			givenAddHasLibraryDependencyToDefaultDelegatesLibDependencies();
+		QUnit.test("when the control's dt metadata has an add via delegate action on relevant container "
+		+ "and read write delegates are available, but library dependency already exists", function(assert) {
+			givenAddHasLibraryDependencyToWriteDelegateLibDependencies();
 			var sAggregationName = "contentLeft";
 
 			var done = assert.async();
@@ -1565,8 +1495,7 @@ sap.ui.define([
 				add: {
 					delegate: {
 						changeType: "addFields",
-						changeOnRelevantContainer: true,
-						supportsDefaultDelegate: true
+						changeOnRelevantContainer: true
 					}
 				}
 			}, ON_CHILD)
@@ -1579,7 +1508,8 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("when the control's dt metadata has an add via delegate action on relevant container and default delegate is available, but library dependency has lazy: true", function(assert) {
+		QUnit.test("when the control's dt metadata has an add via delegate action on relevant container and model specific read delegate "
+		+ "and control specific write delegates are available, but library dependency has lazy: true", function(assert) {
 			sandbox.stub(oMockedAppComponent, "getManifestEntry").callsFake(function(sPath) {
 				// Only missing dependency becomes "layout" which is set with "lazy: true"
 				if (sPath.indexOf("libs")) {
@@ -1611,24 +1541,32 @@ sap.ui.define([
 					"then the addLibrary command is created with the proper reference"
 				);
 				// Existing library but with lazy: true
-				var sLib = Object.keys(DEFAULT_DELEGATE_REGISTRATION.requiredLibraries)[0];
+				var sLib = Object.keys(DEFAULT_REQURIED_LIBRARIES)[0];
 				assert.equal(
 					oAddLibrary.getParameters().libraries[sLib].minVersion,
-					DEFAULT_DELEGATE_REGISTRATION.requiredLibraries[sLib].minVersion,
+					DEFAULT_REQURIED_LIBRARIES[sLib].minVersion,
 					"then the addLibrary command is created with the library which was on the manifest with lazy: true"
 				);
 				done();
 			});
 
-			return createOverlayWithAggregationActions.call(this, {
-				add: {
-					delegate: {
-						changeType: "addFields",
-						changeOnRelevantContainer: true,
-						supportsDefaultDelegate: true
+			return createOverlayWithAggregationActions.call(
+				this,
+				{
+					add: {
+						delegate: {
+							changeType: "addFields",
+							changeOnRelevantContainer: true
+						}
 					}
+				},
+				ON_CHILD,
+				{
+					instanceSpecific: false,
+					modelSpecificRead: true,
+					controlSpecificWrite: true
 				}
-			}, ON_CHILD)
+			)
 			.then(function(oOverlay) {
 				return this.oPlugin.showAvailableElements(false, sAggregationName, [oOverlay]);
 			}.bind(this))
@@ -1773,6 +1711,7 @@ sap.ui.define([
 			sandbox.restore();
 			this.oPlugin.destroy();
 			this.oPseudoPublicParent.destroy();
+			DelegateMediator.clear();
 		}
 	}, function() {
 		QUnit.test("when no addViaDelegate action is available", async function(assert) {
@@ -2135,6 +2074,7 @@ sap.ui.define([
 			this.oButton.destroy();
 			this.oDesignTime.destroy();
 			this.oPlugin.destroy();
+			DelegateMediator.clear();
 		}
 	}, function() {
 		QUnit.test("when the control gets destroyed during isEditable", function(assert) {
@@ -2176,7 +2116,7 @@ sap.ui.define([
 			content: [this.oControl]
 		});
 
-		// attach a default model used for default delegate determination
+		// attach a model used for model specific read delegate determination
 		const oModel = new SomeModel();
 		oModel.sServiceUrl = "foo";
 		this.oPseudoPublicParent.setModel(oModel);
@@ -2288,25 +2228,58 @@ sap.ui.define([
 		}
 	}
 
-	function enhanceForAddViaDelegate(mActions) {
-		var mAddViaDelegateAction = ObjectPath.get(["add", "delegate"], mActions);
+	function attachInstancespecificDelegate(mActions, oRelevantContainer) {
+		// attach instancespecific delegate to the control, where the modelspecific read delegate is also valid for.
+		// instancespecific delegate should always overrule the modelspecific read delegate registered in delegate mediator.
+		const oCustomData = new CustomData({
+			key: "sap-ui-custom-settings",
+			value: {
+				"sap.ui.fl": {
+					delegate: JSON.stringify({
+						name: mActions.delegateModulePath || TEST_DELEGATE_PATH
+					})
+				}
+			}
+		});
+		oRelevantContainer.insertAggregation("customData", oCustomData, 0, /* bSuppressInvalidate= */true);
+	}
+
+	function registerControlSpecificWriteDelegate(oRelevantContainer) {
+		DelegateMediatorAPI.registerWriteDelegate({
+			controlType: oRelevantContainer.getMetadata().getName(),
+			delegate: TEST_DELEGATE_PATH,
+			requiredLibraries: DEFAULT_REQURIED_LIBRARIES
+		});
+	}
+
+	function registerReadDelegate() {
+		DelegateMediatorAPI.registerReadDelegate({
+			modelType: SomeModel.getMetadata().getName(),
+			delegate: TEST_DELEGATE_PATH
+		});
+	}
+
+	function enhanceForAddViaDelegate(mActions, mDelegateRegistration) {
+		const mAddViaDelegateAction = ObjectPath.get(["add", "delegate"], mActions);
 		if (mAddViaDelegateAction) {
-			// attach instancespecific delegate into to the control, the default delegate is also valid for this control
-			// but instancespecific delegate should always overrule the default delegate registered in delegate mediator.
-			var oCustomDataValue = {};
-			var sDelegateModulePath = mActions.delegateModulePath || TEST_DELEGATE_PATH;
-			oCustomDataValue["sap.ui.fl"] = {
-				delegate: JSON.stringify({
-					name: sDelegateModulePath,
-					delegateType: DelegateMediatorAPI.types.COMPLETE
-				})
-			};
-			var oCustomData = new CustomData({
-				key: "sap-ui-custom-settings",
-				value: oCustomDataValue
-			});
-			var {oControl} = this;
-			oControl.insertAggregation("customData", oCustomData, 0, /* bSuppressInvalidate= */true);
+			mDelegateRegistration = merge(
+				{
+					modelSpecificRead: true,
+					controlSpecificWrite: false,
+					instanceSpecific: true
+				},
+				mDelegateRegistration
+			); // default test setting
+			const oRelevantContainer = mAddViaDelegateAction.changeOnRelevantContainer ? this.oPseudoPublicParent : this.oControl;
+			if (mDelegateRegistration?.modelSpecificRead) {
+				registerReadDelegate();
+			}
+			if (mDelegateRegistration?.controlSpecificWrite) {
+				registerControlSpecificWriteDelegate(oRelevantContainer);
+			}
+			if (mDelegateRegistration?.instanceSpecific) {
+				attachInstancespecificDelegate(mActions, oRelevantContainer);
+			}
 		}
 	}
 
@@ -2314,7 +2287,11 @@ sap.ui.define([
 	//                                                    oControl (Bar)
 	//                 contentLeft                                        contentMiddle         contentRight
 	// [oSibling, <oUnsupportedInvisible>, <oInvisible1>, <oInvisible2>        EMPTY          oIrrelevantChild]
-	function createOverlayWithAggregationActions(mActions, sOverlayType) {
+	function createOverlayWithAggregationActions(
+		mActions,
+		sOverlayType,
+		mDelegateRegistration = {}
+	) {
 		var mChildNames = {
 			singular: "I18N_KEY_USER_FRIENDLY_CONTROL_NAME",
 			plural: "I18N_KEY_USER_FRIENDLY_CONTROL_NAME_PLURAL"
@@ -2401,7 +2378,11 @@ sap.ui.define([
 				this.oSiblingOverlay = OverlayRegistry.getOverlay(this.oSibling);
 				this.oIrrelevantOverlay = OverlayRegistry.getOverlay(this.oIrrelevantChild);
 				enhanceForResponsibleElement(mActions);
-				enhanceForAddViaDelegate.call(this, mActions);
+				enhanceForAddViaDelegate.call(
+					this,
+					mActions,
+					mDelegateRegistration
+				);
 				resolve();
 			}.bind(this));
 		}.bind(this))

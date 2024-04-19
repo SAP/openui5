@@ -151,7 +151,9 @@ function(
 		createLayout(mPropertyBag) {
 			var bParametersValid =
 				checkCommonParametersForControl(mPropertyBag)
-				&& mPropertyBag.fieldSelector && typeof mPropertyBag.fieldSelector === "object" && typeof mPropertyBag.fieldSelector.id === "string";
+				&& mPropertyBag.fieldSelector
+				&& typeof mPropertyBag.fieldSelector === "object"
+				&& typeof mPropertyBag.fieldSelector.id === "string";
 
 			if (bParametersValid) {
 				if (!mPropertyBag.payload.useCreateLayout) {
@@ -168,11 +170,22 @@ function(
 				.then(function(mCreatedSpecificControlInfo) {
 					mSpecificControlInfo = mCreatedSpecificControlInfo;
 					oValueHelp = mSpecificControlInfo.valueHelp;
-					return oModifier.createControl(mLayoutSettings.payload.layoutType, mLayoutSettings.appComponent, mLayoutSettings.view, mPropertyBag.fieldSelector);
+					return oModifier.createControl(
+						mLayoutSettings.payload.layoutType,
+						mLayoutSettings.appComponent,
+						mLayoutSettings.view,
+						mPropertyBag.fieldSelector
+					);
 				})
 				.then(function(oCreatedLayout) {
 					oLayout = oCreatedLayout;
-					return oModifier.insertAggregation(oLayout, mLayoutSettings.payload.aggregation, mSpecificControlInfo.control, 0, mLayoutSettings.view);
+					return oModifier.insertAggregation(
+						oLayout,
+						mLayoutSettings.payload.aggregation,
+						mSpecificControlInfo.control,
+						0,
+						mLayoutSettings.view
+					);
 				})
 				.then(function() {
 					// some layout controls do not require a label control
@@ -186,7 +199,13 @@ function(
 				})
 				.then(function(oLabel) {
 					if (oLabel) {
-						return oModifier.insertAggregation(oLayout, mLayoutSettings.payload.labelAggregation, oLabel, 0, mLayoutSettings.view);
+						return oModifier.insertAggregation(
+							oLayout,
+							mLayoutSettings.payload.labelAggregation,
+							oLabel,
+							0,
+							mLayoutSettings.view
+						);
 					}
 					return undefined;
 				})

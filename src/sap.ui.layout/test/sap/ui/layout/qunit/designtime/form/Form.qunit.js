@@ -374,10 +374,15 @@ sap.ui.define([
 			afterRedo : confirmFieldIsAdded.bind(null, "valueHelp")
 		});
 
-		//ensure a default delegate exists for a model not used anywhere else
+		// ensure a default read delegate exists for a model not used anywhere else
 		var SomeModel = JSONModel.extend("sap.ui.layout.form.qunit.test.Model");
-		DelegateMediatorAPI.registerDefaultDelegate({
+		DelegateMediatorAPI.registerReadDelegate({
 			modelType: SomeModel.getMetadata().getName(),
+			delegate: TEST_DELEGATE_PATH
+		});
+		// ensure a default write delegate exists for a control
+		DelegateMediatorAPI.registerWriteDelegate({
+			controlType: "sap.ui.layout.form.Form",
 			delegate: TEST_DELEGATE_PATH
 		});
 		elementActionTest("Checking the add action via delegate with a default delegate", {

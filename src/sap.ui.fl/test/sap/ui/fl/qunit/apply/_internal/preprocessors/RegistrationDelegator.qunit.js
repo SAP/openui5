@@ -10,7 +10,6 @@ sap.ui.define([
 	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerRegistration",
 	"sap/ui/fl/apply/api/DelegateMediatorAPI",
 	"sap/ui/fl/apply/_internal/DelegateMediator",
-	"sap/ui/fl/apply/_internal/DelegateMediatorNew",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/base/DesignTime"
 ], function(
@@ -23,7 +22,6 @@ sap.ui.define([
 	ChangeHandlerRegistration,
 	DelegateMediatorAPI,
 	DelegateMediator,
-	DelegateMediatorNew,
 	sinon,
 	DesignTime
 ) {
@@ -35,7 +33,6 @@ sap.ui.define([
 		afterEach() {
 			sandbox.restore();
 			DelegateMediator.clear();
-			DelegateMediatorNew.clear();
 		}
 	}, function() {
 		QUnit.test("Check if all the registration functions were called", function(assert) {
@@ -49,7 +46,7 @@ sap.ui.define([
 			var oRegisterExtensionProviderStub = sandbox.stub(MvcController, "registerExtensionProvider");
 			var oRegisterXMLPreprocessorStub = sandbox.stub(XMLView, "registerPreprocessor");
 			var oRegisterExtensionPointProviderStub = sandbox.stub(ExtensionPoint, "registerExtensionProvider");
-			var oRegisterDefaultDelegateStub = sandbox.stub(DelegateMediatorAPI, "registerDefaultDelegate");
+			var oRegisterReadDelegateStub = sandbox.stub(DelegateMediatorAPI, "registerReadDelegate");
 
 			var fnDone = assert.async();
 			sap.ui.require(["sap/ui/fl/library"], function() {
@@ -62,7 +59,7 @@ sap.ui.define([
 				assert.equal(oRegisterExtensionProviderStub.callCount, 1, "Extension provider called.");
 				assert.equal(oRegisterXMLPreprocessorStub.callCount, 1, "XML preprocessor called.");
 				assert.equal(oRegisterExtensionPointProviderStub.callCount, 1, "ExtensionPoint called.");
-				assert.equal(oRegisterDefaultDelegateStub.callCount, 1, "DefaultDelegate called.");
+				assert.equal(oRegisterReadDelegateStub.callCount, 3, "delegate registration is called.");
 				assert.ok(Component._fnPreprocessManifest);
 				fnDone();
 			});
@@ -75,14 +72,12 @@ sap.ui.define([
 	QUnit.module("sap.ui.fl.RegistrationDelegator getExtensionPointProvider function", {
 		beforeEach() {
 			var oRegisterExtensionProviderStub = sandbox.stub(ExtensionPoint, "registerExtensionProvider");
-			DelegateMediator._mDefaultDelegateItems = [];
 			RegistrationDelegator.registerAll();
 			[this.fnExtensionProvider] = oRegisterExtensionProviderStub.firstCall.args;
 		},
 		afterEach() {
 			sandbox.restore();
 			DelegateMediator.clear();
-			DelegateMediatorNew.clear();
 		}
 	}, function() {
 		QUnit.test("When extension point handling is disabled", function(assert) {
@@ -106,6 +101,33 @@ sap.ui.define([
 			sandbox.stub(ManifestUtils, "isFlexExtensionPointHandlingEnabled").returns(true);
 			assert.strictEqual(this.fnExtensionProvider({}), sApplyProcessorPath, "then the processor module path is returned");
 		});
+	});
+
+	QUnit.module("sap.ui.fl.RegistrationDelegator 'registerModelSpecificReadDelegates' function", {
+		afterEach() {
+			sandbox.restore();
+			DelegateMediator.clear();
+		}
+	});
+
+	QUnit.test("When 'registerModelSpecificReadDelegates' is called", function(assert) {
+		var oRegisterReadDelegateStub = sandbox.stub(DelegateMediatorAPI, "registerReadDelegate");
+		RegistrationDelegator.registerAll();
+		assert.strictEqual(
+			oRegisterReadDelegateStub.getCall(0).args[0].modelType,
+			"sap.ui.model.odata.v4.ODataModel",
+			"then the model type is 'sap.ui.model.odata.v4.ODataModel'"
+		);
+		assert.strictEqual(
+			oRegisterReadDelegateStub.getCall(1).args[0].modelType,
+			"sap.ui.model.odata.v2.ODataModel",
+			"then the model type is 'sap.ui.model.odata.v2.ODataModel'"
+		);
+		assert.strictEqual(
+			oRegisterReadDelegateStub.getCall(2).args[0].modelType,
+			"sap.ui.model.odata.ODataModel",
+			"then the model type is 'sap.ui.model.odata.ODataModel'"
+		);
 	});
 
 	QUnit.done(function() {

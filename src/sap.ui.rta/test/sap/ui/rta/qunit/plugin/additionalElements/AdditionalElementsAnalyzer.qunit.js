@@ -67,7 +67,10 @@ sap.ui.define([
 						}
 					}
 				};
-				const aAdditionalElements = await AdditionalElementsAnalyzer.enhanceInvisibleElements(oGroupElement1.getParent(), oActionsObject);
+				const aAdditionalElements = await AdditionalElementsAnalyzer.enhanceInvisibleElements(
+					oGroupElement1.getParent(),
+					oActionsObject
+				);
 				if (!bUseDepthOfRelevantBindings) {
 					// We expect only one element to be returned with a correct navigation property
 					assert.deepEqual(
@@ -128,13 +131,18 @@ sap.ui.define([
 						}
 					}
 				};
-				return AdditionalElementsAnalyzer.enhanceInvisibleElements(oSection1.getParent(), oActionsObject).then(function(aAdditionalElements) {
+				return AdditionalElementsAnalyzer.enhanceInvisibleElements(oSection1.getParent(), oActionsObject)
+				.then(function(aAdditionalElements) {
 					// We expect only two elements to be returned with a correct navigation property
 					assert.equal(aAdditionalElements.length, 2, "then there are 2 additional Elements available");
-					assert.equal(aAdditionalElements[0].label, oSection1.getTitle(), "the element with correct navigation binding should be in the list");
-					assert.equal(aAdditionalElements[0].tooltip, oSection1.getTitle(), "the label is used as tooltip for elements with navigation binding");
-					assert.equal(aAdditionalElements[1].label, oSection2.getTitle(), "the element with absolute binding should be in the list");
-					assert.equal(aAdditionalElements[1].tooltip, oSection2.getTitle(), "the label is used as tooltip for elements with absolute binding");
+					assert.equal(aAdditionalElements[0].label, oSection1.getTitle(),
+						"the element with correct navigation binding should be in the list");
+					assert.equal(aAdditionalElements[0].tooltip, oSection1.getTitle(),
+						"the label is used as tooltip for elements with navigation binding");
+					assert.equal(aAdditionalElements[1].label, oSection2.getTitle(),
+						"the element with absolute binding should be in the list");
+					assert.equal(aAdditionalElements[1].tooltip, oSection2.getTitle(),
+						"the label is used as tooltip for elements with absolute binding");
 				});
 			}.bind(this))
 			.then(function() {
@@ -157,7 +165,8 @@ sap.ui.define([
 						}]
 					}
 				};
-				return AdditionalElementsAnalyzer.enhanceInvisibleElements(oSection1.getParent(), oActionsObject).then(function(aAdditionalElements) {
+				return AdditionalElementsAnalyzer.enhanceInvisibleElements(oSection1.getParent(), oActionsObject)
+				.then(function(aAdditionalElements) {
 					assert.notOk(aAdditionalElements[0].originalLabel, "the section does not have an original label");
 				});
 			})
@@ -193,13 +202,18 @@ sap.ui.define([
 				}
 			};
 
-			return AdditionalElementsAnalyzer.enhanceInvisibleElements(oGroupElement1.getParent(), oActionsObject).then(function(aAdditionalElements) {
+			return AdditionalElementsAnalyzer.enhanceInvisibleElements(oGroupElement1.getParent(), oActionsObject)
+			.then(function(aAdditionalElements) {
 				// We expect only one element to be returned with a correct navigation property
 				assert.equal(aAdditionalElements.length, 2, "then there are 2 additional Elements available");
-				assert.equal(aAdditionalElements[0].label, oGroupElement1.getLabel(), "the element with correct navigation binding should be in the list");
-				assert.equal(aAdditionalElements[0].tooltip, oGroupElement1.getLabel(), "the label is used as tooltip for elements with navigation binding");
-				assert.equal(aAdditionalElements[1].label, oGroupElement3.getLabel(), "the element with absolute binding should be in the list");
-				assert.equal(aAdditionalElements[1].tooltip, oGroupElement3.getLabel(), "the label is used as tooltip for elements with absolute binding");
+				assert.equal(aAdditionalElements[0].label, oGroupElement1.getLabel(),
+					"the element with correct navigation binding should be in the list");
+				assert.equal(aAdditionalElements[0].tooltip, oGroupElement1.getLabel(),
+					"the label is used as tooltip for elements with navigation binding");
+				assert.equal(aAdditionalElements[1].label, oGroupElement3.getLabel(),
+					"the element with absolute binding should be in the list");
+				assert.equal(aAdditionalElements[1].tooltip, oGroupElement3.getLabel(),
+					"the label is used as tooltip for elements with absolute binding");
 			});
 		});
 
@@ -221,7 +235,8 @@ sap.ui.define([
 			setTimeout(function() {
 				AdditionalElementsAnalyzer.enhanceInvisibleElements(oGroupElement1.getParent(), oActionsObject)
 				.then(function(aAdditionalElements) {
-					assert.equal(aAdditionalElements[0].label, oGroupElement1.getDataSourceLabel(), "the displayed label is the data source label");
+					assert.equal(aAdditionalElements[0].label, oGroupElement1.getDataSourceLabel(),
+						"the displayed label is the data source label");
 					fnDone();
 				});
 			});
@@ -255,7 +270,8 @@ sap.ui.define([
 					]
 				}
 			};
-			return AdditionalElementsAnalyzer.enhanceInvisibleElements(oObjectPageLayout, oActionsObject).then(function(aAdditionalElements) {
+			return AdditionalElementsAnalyzer.enhanceInvisibleElements(oObjectPageLayout, oActionsObject)
+			.then(function(aAdditionalElements) {
 				assert.equal(aAdditionalElements.length, 4, "then 4 additional sections are available");
 				TestUtils.assertElementsEqual(aAdditionalElements[0], {
 					selected: false,
@@ -313,7 +329,8 @@ sap.ui.define([
 					mActionObject.relevantContainer = this.mAddViaDelegateAction.relevantContainer;
 				}
 
-				return AdditionalElementsAnalyzer.getUnrepresentedDelegateProperties(oGroup, mActionObject).then(function(aAdditionalElements) {
+				return AdditionalElementsAnalyzer.getUnrepresentedDelegateProperties(oGroup, mActionObject)
+				.then(function(aAdditionalElements) {
 					assert.equal(aAdditionalElements.length, 5, "then 5 additional properties are available");
 					assert.deepEqual(aAdditionalElements[0], {
 						selected: false,
@@ -393,7 +410,8 @@ sap.ui.define([
 				relevantContainer: this.mAddViaDelegateAction.relevantContainer
 			};
 
-			return AdditionalElementsAnalyzer.getUnrepresentedDelegateProperties(oGroup, mActionObject).then(function(aAdditionalElements) {
+			return AdditionalElementsAnalyzer.getUnrepresentedDelegateProperties(oGroup, mActionObject)
+			.then(function(aAdditionalElements) {
 				assert.equal(aAdditionalElements.length, 10, "then 10 additional properties are available");
 				assert.deepEqual(aAdditionalElements[0], {
 					selected: false,
@@ -479,12 +497,15 @@ sap.ui.define([
 				}
 			};
 
-			return AdditionalElementsAnalyzer.enhanceInvisibleElements(oGroup, oActionsObject).then(function(aAdditionalElements) {
+			return AdditionalElementsAnalyzer.enhanceInvisibleElements(oGroup, oActionsObject)
+			.then(function(aAdditionalElements) {
 				assert.equal(aAdditionalElements.length, 2, "then the 2 invisible elements with oData are returned");
 				assert.equal(aAdditionalElements[0].label, "Renamed Label", "element with custom label renamed");
-				assert.equal(aAdditionalElements[0].originalLabel, "EntityType02_Property03", "element contains original label from oData and not custom label");
+				assert.equal(aAdditionalElements[0].originalLabel, "EntityType02_Property03",
+					"element contains original label from oData and not custom label");
 				assert.equal(aAdditionalElements[0].type, "invisible", "element made invisible");
-				assert.equal(aAdditionalElements[0].tooltip, "Entity2-EntityType02_Property03-QuickInfo (from annotation)", "quickinfo annotation is used as tooltip also for hidden elements, if available");
+				assert.equal(aAdditionalElements[0].tooltip, "Entity2-EntityType02_Property03-QuickInfo (from annotation)",
+					"quickinfo annotation is used as tooltip also for hidden elements, if available");
 				assert.equal(aAdditionalElements[1].originalLabel, "", "element contains original label blank as it was not renamed");
 				assert.equal(aAdditionalElements[1].type, "invisible", "element made invisible");
 				assert.equal(aAdditionalElements[1].tooltip, "ComplexProperty 01-QuickInfo", "sap:quickinfo is used as tooltip");
@@ -512,8 +533,10 @@ sap.ui.define([
 				}
 			};
 
-			return AdditionalElementsAnalyzer.enhanceInvisibleElements(oGroup, oActionsObject).then(function(aAdditionalElements) {
-				assert.ok(aAdditionalElements.some(TestUtils.isFieldPresent.bind(null, oGroupElement1)), "then the field is available on the dialog");
+			return AdditionalElementsAnalyzer.enhanceInvisibleElements(oGroup, oActionsObject)
+			.then(function(aAdditionalElements) {
+				assert.ok(aAdditionalElements.some(TestUtils.isFieldPresent.bind(null, oGroupElement1)),
+					"then the field is available on the dialog");
 			});
 		});
 
@@ -522,7 +545,7 @@ sap.ui.define([
 			var oGroupElement = this.oView.byId("EntityType01.Prop11");
 
 			// Simulate that the field control property is returned after the regular value property
-			var oDelegateMediatorStub = this.sandbox.stub(DelegateMediatorAPI, "getDelegateForControl");
+			var oDelegateMediatorStub = this.sandbox.stub(DelegateMediatorAPI, "getReadDelegateForControl");
 			function getDelegateForControl(...aArgs) {
 				return oDelegateMediatorStub.wrappedMethod.apply(this, aArgs)
 				.then(function(oDelegateInfo) {
@@ -559,8 +582,10 @@ sap.ui.define([
 				}
 			};
 
-			return AdditionalElementsAnalyzer.enhanceInvisibleElements(oGroup, oActionsObject).then(function(aAdditionalElements) {
-				assert.ok(aAdditionalElements.some(TestUtils.isFieldPresent.bind(null, oGroupElement)), "then the field is available on the dialog");
+			return AdditionalElementsAnalyzer.enhanceInvisibleElements(oGroup, oActionsObject)
+			.then(function(aAdditionalElements) {
+				assert.ok(aAdditionalElements.some(TestUtils.isFieldPresent.bind(null, oGroupElement)),
+					"then the field is available on the dialog");
 			});
 		});
 
@@ -587,9 +612,12 @@ sap.ui.define([
 				}
 			};
 
-			return AdditionalElementsAnalyzer.enhanceInvisibleElements(oGroup, oActionsObject).then(function(aAdditionalElements) {
-				assert.ok(aAdditionalElements.some(TestUtils.isFieldPresent.bind(null, oGroupElement1)), "then the field is available on the dialog");
-				assert.notOk(aAdditionalElements.some(TestUtils.isFieldPresent.bind(null, oGroupElement2)), "then the field2 is not available on the dialog");
+			return AdditionalElementsAnalyzer.enhanceInvisibleElements(oGroup, oActionsObject)
+			.then(function(aAdditionalElements) {
+				assert.ok(aAdditionalElements.some(TestUtils.isFieldPresent.bind(null, oGroupElement1)),
+					"then the field is available on the dialog");
+				assert.notOk(aAdditionalElements.some(TestUtils.isFieldPresent.bind(null, oGroupElement2)),
+					"then the field2 is not available on the dialog");
 			});
 		});
 
@@ -612,8 +640,10 @@ sap.ui.define([
 				}
 			};
 
-			return AdditionalElementsAnalyzer.enhanceInvisibleElements(oGroup, oActionsObject).then(function(aAdditionalElements) {
-				assert.notOk(aAdditionalElements.some(TestUtils.isFieldPresent.bind(null, oGroupElement1)), "then the field2 is not available on the dialog");
+			return AdditionalElementsAnalyzer.enhanceInvisibleElements(oGroup, oActionsObject)
+			.then(function(aAdditionalElements) {
+				assert.notOk(aAdditionalElements.some(TestUtils.isFieldPresent.bind(null, oGroupElement1)),
+					"then the field2 is not available on the dialog");
 			});
 		});
 
@@ -640,9 +670,12 @@ sap.ui.define([
 				}
 			};
 
-			return AdditionalElementsAnalyzer.enhanceInvisibleElements(oGroup, oActionsObject).then(function(aAdditionalElements) {
-				assert.ok(aAdditionalElements.some(TestUtils.isFieldPresent.bind(null, oGroupElement1)), "then the field is available on the dialog");
-				assert.notOk(aAdditionalElements.some(TestUtils.isFieldPresent.bind(null, oGroupElement2)), "then the field2 is not available on the dialog");
+			return AdditionalElementsAnalyzer.enhanceInvisibleElements(oGroup, oActionsObject)
+			.then(function(aAdditionalElements) {
+				assert.ok(aAdditionalElements.some(TestUtils.isFieldPresent.bind(null, oGroupElement1)),
+					"then the field is available on the dialog");
+				assert.notOk(aAdditionalElements.some(TestUtils.isFieldPresent.bind(null, oGroupElement2)),
+					"then the field2 is not available on the dialog");
 			});
 		});
 
@@ -671,8 +704,10 @@ sap.ui.define([
 			this.sandbox.stub(oGroupElement1, "getBindingContext").returns({ getPath() { return "/fake/binding/path/groupElement1"; }});
 			this.sandbox.stub(BindingsExtractor, "getBindings").returns(["fakeBinding"]);
 
-			return AdditionalElementsAnalyzer.enhanceInvisibleElements(oGroup, oActionsObject).then(function(aAdditionalElements) {
-				assert.notOk(aAdditionalElements.some(TestUtils.isFieldPresent.bind(null, oGroupElement1)), "then the field is not available on the dialog");
+			return AdditionalElementsAnalyzer.enhanceInvisibleElements(oGroup, oActionsObject)
+			.then(function(aAdditionalElements) {
+				assert.notOk(aAdditionalElements.some(TestUtils.isFieldPresent.bind(null, oGroupElement1)),
+					"then the field is not available on the dialog");
 			});
 		});
 
@@ -695,8 +730,10 @@ sap.ui.define([
 				}
 			};
 
-			return AdditionalElementsAnalyzer.enhanceInvisibleElements(oGroup, oActionsObject).then(function(aAdditionalElements) {
-				assert.notOk(aAdditionalElements.some(TestUtils.isFieldPresent.bind(null, oGroupElement1)), "then the other field is not available on the dialog");
+			return AdditionalElementsAnalyzer.enhanceInvisibleElements(oGroup, oActionsObject)
+			.then(function(aAdditionalElements) {
+				assert.notOk(aAdditionalElements.some(TestUtils.isFieldPresent.bind(null, oGroupElement1)),
+					"then the other field is not available on the dialog");
 			});
 		});
 
@@ -721,8 +758,10 @@ sap.ui.define([
 				}
 			};
 
-			return AdditionalElementsAnalyzer.enhanceInvisibleElements(oGroup, oActionsObject).then(function(aAdditionalElements) {
-				assert.notOk(aAdditionalElements.some(TestUtils.isFieldPresent.bind(null, oGroupElement1)), "then the other field is not available on the dialog");
+			return AdditionalElementsAnalyzer.enhanceInvisibleElements(oGroup, oActionsObject)
+			.then(function(aAdditionalElements) {
+				assert.notOk(aAdditionalElements.some(TestUtils.isFieldPresent.bind(null, oGroupElement1)),
+					"then the other field is not available on the dialog");
 			});
 		});
 
@@ -748,8 +787,10 @@ sap.ui.define([
 				}
 			};
 
-			return AdditionalElementsAnalyzer.enhanceInvisibleElements(oGroup, oActionsObject).then(function(aAdditionalElements) {
-				assert.ok(aAdditionalElements.some(TestUtils.isFieldPresent.bind(null, oGroupElement1)), "then the field is available on the dialog");
+			return AdditionalElementsAnalyzer.enhanceInvisibleElements(oGroup, oActionsObject)
+			.then(function(aAdditionalElements) {
+				assert.ok(aAdditionalElements.some(TestUtils.isFieldPresent.bind(null, oGroupElement1)),
+					"then the field is available on the dialog");
 			});
 		});
 
@@ -782,7 +823,8 @@ sap.ui.define([
 				}
 			};
 
-			return AdditionalElementsAnalyzer.enhanceInvisibleElements(oGroup, oActionsObject).then(function(aAdditionalElements) {
+			return AdditionalElementsAnalyzer.enhanceInvisibleElements(oGroup, oActionsObject)
+			.then(function(aAdditionalElements) {
 				assert.equal(aAdditionalElements.length, 2, "then there are 2 additional Elements available");
 				assert.equal(aAdditionalElements[0].label, "RenamedLabel", "the unbound normal property is found");
 				assert.equal(aAdditionalElements[1].label, "RenamedLabel", "the unbound complex property is found");
@@ -814,8 +856,10 @@ sap.ui.define([
 				}
 			};
 
-			return AdditionalElementsAnalyzer.enhanceInvisibleElements(oSimpleForm, oActionsObject).then(function(aAdditionalElements) {
-				assert.equal(aAdditionalElements.length, 4, "then the 3 invisible elements with oData + the element without binding are returned");
+			return AdditionalElementsAnalyzer.enhanceInvisibleElements(oSimpleForm, oActionsObject)
+			.then(function(aAdditionalElements) {
+				assert.equal(aAdditionalElements.length, 4,
+					"then the 3 invisible elements with oData + the element without binding are returned");
 				assert.equal(aAdditionalElements[0].label, "Invisible 1", "then the label is set correctly");
 				assert.equal(aAdditionalElements[1].label, "Complex Invisible oData Property", "then the label is set correctly");
 				assert.ok(typeof aAdditionalElements[2].label === "string", "the element without binding is assigned a label");
@@ -848,7 +892,8 @@ sap.ui.define([
 				}
 			};
 
-			return AdditionalElementsAnalyzer.enhanceInvisibleElements(oGroup, oActionsObject).then(function(aAdditionalElements) {
+			return AdditionalElementsAnalyzer.enhanceInvisibleElements(oGroup, oActionsObject)
+			.then(function(aAdditionalElements) {
 				assert.equal(aAdditionalElements.length, 1, "then there is 1 additional Element available");
 				assert.equal(aAdditionalElements[0].label, "Field with property bound to control field", "the property is found");
 			});
@@ -870,7 +915,8 @@ sap.ui.define([
 				}
 			};
 
-			return AdditionalElementsAnalyzer.getUnrepresentedDelegateProperties(oTable, mAddViaDelegateAction).then(function(aAdditionalElements) {
+			return AdditionalElementsAnalyzer.getUnrepresentedDelegateProperties(oTable, mAddViaDelegateAction)
+			.then(function(aAdditionalElements) {
 				assert.strictEqual(aAdditionalElements.length, 3, "then there are 3 additional columns available");
 			});
 		});
