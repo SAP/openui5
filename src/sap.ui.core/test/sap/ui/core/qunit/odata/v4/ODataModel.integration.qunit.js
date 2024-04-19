@@ -5347,7 +5347,6 @@ sap.ui.define([
 	// Additionally ODLB#getDownloadUrl is tested
 	// JIRA: CPOUI5ODATAV4-12
 	//
-	// "Select all" is reset by #filter (JIRA: CPOUI5ODATAV4-1943).
 	// Data binding for selection (JIRA: CPOUI5ODATAV4-1944).
 	QUnit.test("Relative ODLB inherits parent ODCB's query options on filter", function (assert) {
 		var oBinding,
@@ -5419,7 +5418,7 @@ sap.ui.define([
 			oBinding.filter(
 				new Filter("EQUIPMENT_2_PRODUCT/SupplierIdentifier", FilterOperator.EQ, 2));
 
-			checkSelected(assert, oHeaderContext, false);
+			checkSelected(assert, oHeaderContext, true);
 			assert.throws(function () {
 				oBinding.getDownloadUrl();
 			}, new Error("Result pending"));
@@ -5433,7 +5432,7 @@ sap.ui.define([
 			]);
 		}).then(function () {
 			assert.deepEqual(oHeaderContext.getObject(""), {
-				"@$ui5.context.isSelected" : false,
+				"@$ui5.context.isSelected" : true,
 				$count : 2
 			}, "JIRA: CPOUI5ODATAV4-1944");
 		});
@@ -7268,7 +7267,6 @@ sap.ui.define([
 	// Also check that unchanged $expand/$select is tolerated by #changeParameters
 	// JIRA: CPOUI5ODATAV4-1098
 	//
-	// "Select all" is reset by #changeParameters (JIRA: CPOUI5ODATAV4-1943).
 	// Data binding for selection (JIRA: CPOUI5ODATAV4-1944).
 	QUnit.test("ODLB: $count and changeParameters()", function (assert) {
 		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
@@ -7319,7 +7317,7 @@ sap.ui.define([
 				$select : "SalesOrderID"
 			});
 
-			checkSelected(assert, oHeaderContext, false);
+			checkSelected(assert, oHeaderContext, true);
 
 			return that.waitForChanges(assert);
 		});
@@ -26077,8 +26075,9 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	// Scenario: Selection state of a hierarchy is reset on changing "$$aggregation.search"
-	// parameter. Test with "select all" and with selecting two nodes explicitly.
+	// Scenario: With binding parameter $$clearSelectionOnFilter set, the selection state of a
+	// hierarchy is reset on changing "$$aggregation.search" parameter. Test with "select all" and
+	// with selecting two nodes explicitly.
 	//
 	// JIRA: CPOUI5ODATAV4-2203
 	// SNOW: CS20240007001494
@@ -26089,7 +26088,8 @@ sap.ui.define([
 		parameters : {
 			$$aggregation : {
 				hierarchyQualifier : 'OrgChart'
-			}
+			},
+			$$clearSelectionOnFilter : true
 		}}" threshold="0" visibleRowCount="3">
 	<Text id="selected" text="{= %{@$ui5.context.isSelected} }"/>
 	<Text text="{= %{@$ui5.node.isExpanded} }"/>
@@ -59671,8 +59671,7 @@ make root = ${bMakeRoot}`;
 			},
 			oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			sView = `
-<t:Table id="table" rows="{parameters : {$$keepSelectOnFilter : true}, path : '/TEAMS'}"
-		threshold="0" visibleRowCount="3">
+<t:Table id="table" rows="{/TEAMS}" threshold="0" visibleRowCount="3">
 	<Text id="id" text="{Team_Id}"/>
 <Text id="memberCount" text="{MEMBER_COUNT}"/>
 </t:Table>
@@ -65542,8 +65541,8 @@ make root = ${bMakeRoot}`;
 	});
 
 	//*********************************************************************************************
-	// Scenario: Setting a filter or changing $filter or $search parameters resets the selection
-	// state of all contexts of a list binding.
+	// Scenario: With binding parameter $$clearSelectionOnFilter set, setting a filter or changing
+	// $filter or $search parameters resets the selection state of all contexts of a list binding.
 	// (1) : "Select all" & unselect one row context
 	// (2) : Selecting an already selected header context selects all row contexts again
 	// (3) : Select two row contexts (no "select all")
@@ -65560,7 +65559,7 @@ make root = ${bMakeRoot}`;
 	QUnit.test(sTitle, async function (assert) {
 		const oModel = this.createSalesOrdersModel({autoExpandSelect : true});
 		const sView = `
-<Table id="table" items="{/SalesOrderList}">
+<Table id="table" items="{parameters: {$$clearSelectionOnFilter: true}, path:'/SalesOrderList'}">
 	<Text id="id" text="{SalesOrderID}"/>
 	<Text id="grossAmount" text="{GrossAmount}"/>
 	<Input id="selected" value="{path : '@$ui5.context.isSelected', targetType: 'any'}"/>

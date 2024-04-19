@@ -891,6 +891,10 @@ sap.ui.define([
 	 *   Whether a binding relative to an {@link sap.ui.model.odata.v4.Context} uses the canonical
 	 *   path computed from its context's path for data service requests; only the value
 	 *   <code>true</code> is allowed.
+	 * @param {boolean} [mParameters.$$clearSelectionOnFilter]
+	 *   Whether the selection state of the list binding is cleared when a filter is changed; this
+	 *   includes dynamic filters, '$filter', '$search', and <code>$$aggregation.search</code>.
+	 *   Supported since 1.120.13.
 	 * @param {boolean} [mParameters.$$getKeepAliveContext]
 	 *   Whether this binding is considered for a match when {@link #getKeepAliveContext} is called;
 	 *   only the value <code>true</code> is allowed. Must not be combined with <code>$apply</code>,
@@ -904,10 +908,6 @@ sap.ui.define([
 	 *   model's group ID is used, see {@link sap.ui.model.odata.v4.ODataModel#constructor}.
 	 *   Valid values are <code>undefined</code>, '$auto', '$auto.*', '$direct' or application group
 	 *   IDs as specified in {@link sap.ui.model.odata.v4.ODataModel}.
-	 * @param {boolean} [mParameters.$$keepSelectOnFilter]
-	 *   Whether the selection state of the list binding is kept when a filter is changed; this
-	 *   includes dynamic filters, '$filter', '$search', and <code>$$aggregation.search</code>.
-	 *   Supported since 1.123.0.
 	 * @param {sap.ui.model.odata.OperationMode} [mParameters.$$operationMode]
 	 *   The operation mode for filtering and sorting with the model's operation mode as default.
 	 *   Since 1.39.0, the operation mode {@link sap.ui.model.odata.OperationMode.Server} is
