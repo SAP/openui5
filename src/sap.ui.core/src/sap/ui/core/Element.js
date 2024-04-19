@@ -911,6 +911,26 @@ sap.ui.define([
 		return this.getDomRef() || null;
 	};
 
+
+	/**
+	 * Returns the intersection of two intervals. When the intervals don't
+	 * intersect at all, <code>null</code> is returned.
+	 *
+	 * For example, <code>intersection([0, 3], [2, 4])</code> returns
+	 * <code>[2, 3]</code>
+	 *
+	 * @param {number[]} interval1 The first interval
+	 * @param {number[]} interval2 The second interval
+	 * @returns {number[]|null} The intersection or null when the intervals are apart from each other
+	 */
+	function intersection(interval1, interval2) {
+		if ( interval2[0] > interval1[1] || interval1[0] > interval2[1]) {
+			return null;
+		} else {
+			return [Math.max(interval1[0], interval2[0]), Math.min(interval1[1], interval2[1])];
+		}
+	}
+
 	/**
 	 * Checks whether an element is able to get the focus after {@link #focus} is called.
 	 *
@@ -937,13 +957,19 @@ sap.ui.define([
 		}
 
 		var oCurrentDomRef = oFocusDomRef;
-		var oRect = oCurrentDomRef.getBoundingClientRect();
+		var aViewport = [[0, window.innerWidth], [0, window.innerHeight]];
 
-		// find the first parent element whose position is within the current view port
-		// because document.elementsFromPoint can return meaningful DOM elements only when the given coordinate is
+		var aIntersectionX;
+		var aIntersectionY;
+
+		// find the first element through the parent chain which intersects
+		// with the current viewport because document.elementsFromPoint can
+		// return meaningful DOM elements only when the given coordinate is
 		// within the current view port
-		while ((oRect.x < 0 || oRect.x > window.innerWidth ||
-			oRect.y < 0 || oRect.y > window.innerHeight)) {
+		while (!aIntersectionX || !aIntersectionY) {
+			var oRect = oCurrentDomRef.getBoundingClientRect();
+			aIntersectionX = intersection(aViewport[0], [oRect.x, oRect.x + oRect.width]);
+			aIntersectionY = intersection(aViewport[1], [oRect.y, oRect.y + oRect.height]);
 
 			if (oCurrentDomRef.assignedSlot) {
 				// assigned slot's bounding client rect has all properties set to 0
@@ -958,11 +984,12 @@ sap.ui.define([
 			} else {
 				break;
 			}
-
-			oRect = oCurrentDomRef.getBoundingClientRect();
 		}
 
-		var aElements = document.elementsFromPoint(oRect.x, oRect.y);
+		var aElements = document.elementsFromPoint(
+			Math.floor((aIntersectionX[0] + aIntersectionX[1]) / 2),
+			Math.floor((aIntersectionY[0] + aIntersectionY[1]) / 2)
+		);
 
 		var iFocusDomRefIndex = aElements.findIndex(function(oElement) {
 			return oElement.contains(oFocusDomRef);
