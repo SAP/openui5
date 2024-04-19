@@ -260,6 +260,7 @@
 					containerQuery="true"
 					defaultSpan="XL12 L12 M12 S12">
 					<Panel
+						id="sapUiRtaAddIFrameDialog_AdvancedSettingsPanel"
 						expandable="true"
 						width="auto"
 						expanded="false"
