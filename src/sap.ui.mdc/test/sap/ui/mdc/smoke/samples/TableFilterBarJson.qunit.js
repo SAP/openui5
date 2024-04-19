@@ -7,6 +7,7 @@ sap.ui.define([
 	"use strict";
 
 	Opa5.extendConfig({
+		autoWait: true,
 		appParams: {
 			"sap-ui-animation": false
 		}
@@ -28,7 +29,8 @@ sap.ui.define([
 			"Height",
 			"Range",
 			"First Ascent",
-			"Countries"
+			"Countries",
+			"Parent Mountain"
 		]);
 	});
 
