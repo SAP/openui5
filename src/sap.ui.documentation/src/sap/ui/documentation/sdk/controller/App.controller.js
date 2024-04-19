@@ -1261,7 +1261,7 @@ sap.ui.define([
 			var sQueryParams = "?Release_version=" + this._getUI5Version()
 				+ "&Source=" + this._getUI5Distribution()
 				+ "&Type=" + this._getUI5VersionType()
-				+ "&product=SAPUI5%2FOpenUI5"
+				+ "&product=UI5%20Demo%20Kit"
 				+ "&product_filter=UI5"
 				+ "&cluster=BTP"
 				+ "&page=" + encodeURIComponent(document.location.href);
@@ -1277,7 +1277,7 @@ sap.ui.define([
 
 		longSurveyRedirect: function () {
 			var sBaseUrl = "https://sapinsights.eu.qualtrics.com/jfe/form/SV_7X5P63Zg5zXC5zE",
-				sQueryParams = "?product=SAPUI5%2FOpenUI5"
+				sQueryParams = "?product=UI5%20Demo%20Kit"
 					+ "&product_filter=UI5"
 					+ "&cluster=BTP"
 					+ "&page=" + encodeURIComponent(document.location.href),
