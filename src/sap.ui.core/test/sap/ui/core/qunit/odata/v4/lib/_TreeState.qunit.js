@@ -319,9 +319,13 @@ sap.ui.define([
 
 		// we ignore the filters as they are not relevant
 		oTreeState.mPredicate2OutOfPlace = {
+			"~node0Predicate~" : {
+				nodePredicate : "~node0Predicate~",
+				parentPredicate : "~parent1Predicate~"
+			},
 			"~node1Predicate~" : {
 				nodePredicate : "~node1Predicate~",
-				parentPredicate : "~parent1Predicate~"
+				parentPredicate : "~node0Predicate~"
 			},
 			"~node2Predicate~" : {
 				nodePredicate : "~node2Predicate~"
@@ -337,12 +341,95 @@ sap.ui.define([
 		};
 
 		// code under test
+		oTreeState.deleteOutOfPlace("~parent1Predicate~");
+
+		assert.deepEqual(Object.keys(oTreeState.mPredicate2OutOfPlace), [
+				"~node0Predicate~",
+				"~node1Predicate~",
+				"~node2Predicate~",
+				"~node3Predicate~",
+				"~node4Predicate~"
+			], "unchanged");
+
+		// code under test
 		oTreeState.deleteOutOfPlace("~node1Predicate~");
+
+		assert.deepEqual(oTreeState.mPredicate2OutOfPlace, {
+			"~node0Predicate~" : {
+				nodePredicate : "~node0Predicate~",
+				parentPredicate : "~parent1Predicate~"
+			},
+			"~node2Predicate~" : {
+				nodePredicate : "~node2Predicate~"
+			}
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("deleteOutOfPlace: bUpAndDown", function (assert) {
+		const oTreeState = new _TreeState("~sNodeProperty~");
+
+		// we ignore the filters as they are not relevant
+		// parent1
+		//   node1
+		//     node3
+		//       node4
+		//       node5
+		//     node6
+		// node2
+		oTreeState.mPredicate2OutOfPlace = {
+			"~node1Predicate~" : {
+				nodePredicate : "~node1Predicate~",
+				parentPredicate : "~parent1Predicate~"
+			},
+			"~node2Predicate~" : {
+				nodePredicate : "~node2Predicate~"
+			},
+			"~node3Predicate~" : {
+				nodePredicate : "~node3Predicate~",
+				parentPredicate : "~node1Predicate~"
+			},
+			"~node4Predicate~" : {
+				nodePredicate : "~node4Predicate~",
+				parentPredicate : "~node3Predicate~"
+			},
+			"~node5Predicate~" : {
+				nodePredicate : "~node5Predicate~",
+				parentPredicate : "~node3Predicate~"
+			},
+			"~node6Predicate~" : {
+				nodePredicate : "~node6Predicate~",
+				parentPredicate : "~node1Predicate~"
+			}
+		};
+
+		// code under test
+		oTreeState.deleteOutOfPlace("~node4Predicate~", true);
 
 		assert.deepEqual(oTreeState.mPredicate2OutOfPlace, {
 			"~node2Predicate~" : {
 				nodePredicate : "~node2Predicate~"
 			}
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("isOutOfPlace", function (assert) {
+		const oTreeState = new _TreeState("~sNodeProperty~");
+
+		// we ignore all details as they are not relevant
+		oTreeState.mPredicate2OutOfPlace = {
+			"~node1Predicate~" : {},
+			"~node2Predicate~" : null
+		};
+
+		// code under test
+		assert.strictEqual(oTreeState.isOutOfPlace("~node1Predicate~"), true);
+
+		// code under test
+		assert.strictEqual(oTreeState.isOutOfPlace("~node2Predicate~"), true);
+
+		// code under test
+		assert.strictEqual(oTreeState.isOutOfPlace("~node3Predicate~"), false);
 	});
 });

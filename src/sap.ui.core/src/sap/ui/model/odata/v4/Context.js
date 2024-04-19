@@ -1268,19 +1268,14 @@ sap.ui.define([
 	};
 
 	/**
-	 * Moves this node to the given parent (in case of a recursive hierarchy, see
-	 * {@link sap.ui.model.odata.v4.ODataListBinding#setAggregation}, where
-	 * <code>oAggregation.expandTo</code> must be either one or at least
-	 * <code>Number.MAX_SAFE_INTEGER</code>). No other
+	 * Moves this node to the given new parent (in case of a recursive hierarchy, see
+	 * {@link sap.ui.model.odata.v4.ODataListBinding#setAggregation}). No other
 	 * {@link sap.ui.model.odata.v4.ODataListBinding#create creation}, {@link #delete deletion}, or
 	 * move must be pending, and no other modification (including collapse of some ancestor node)
 	 * must happen while this move is pending! Omitting a new parent turns this node into a root
 	 * node (since 1.121.0).
 	 *
-	 * This context's {@link #getIndex index} may change and, in case of
-	 * <code>oAggregation.expandTo : 1</code>, it becomes "created persisted", with
-	 * {@link #isTransient} returning <code>false</code> etc. In case of
-	 * <code>oAggregation.expandTo >= Number.MAX_SAFE_INTEGER</code>, a created node becomes simply
+	 * This context's {@link #getIndex index} may change and a created node becomes simply
 	 * "persisted", with {@link #isTransient} returning <code>undefined</code> etc.
 	 *
 	 * @param {object} [oParameters] - A parameter object
@@ -1290,11 +1285,14 @@ sap.ui.define([
 	 *   rejected in case of an error
 	 * @throws {Error} If
 	 *   <ul>
-	 *     <li> the parent is (a descendant of) this node,
-	 *     <li> <code>oAggregation.expandTo</code> is unsupported,
-	 *     <li> this node is {@link #isDeleted deleted},
-	 *     <li> this node is {@link #isTransient transient},
-	 *     <li> this node is not in the collection (has no {@link #getIndex index}).
+	 *     <li> there is no recursive hierarchy,
+	 *     <li> the new parent is (a descendant of) this node,
+	 *     <li> this node or the new parent is
+	 *       <ul>
+	 *         <li> {@link #isDeleted deleted},
+	 *         <li> {@link #isTransient transient},
+	 *         <li> not in the collection (has no {@link #getIndex index}).
+	 *     </ul>
 	 *   </ul>
 	 *
 	 * @experimental As of version 1.119.0
@@ -1303,6 +1301,10 @@ sap.ui.define([
 	Context.prototype.move = function ({parent : oParent = null} = {}) {
 		if (this.isDeleted() || this.isTransient() || this.iIndex === undefined) {
 			throw new Error("Cannot move " + this);
+		}
+		if (oParent
+			&& (oParent.isDeleted() || oParent.isTransient() || oParent.iIndex === undefined)) {
+			throw new Error("Cannot move to " + oParent);
 		}
 		if (this.isAncestorOf(oParent)) {
 			throw new Error("Unsupported parent context: " + oParent);
@@ -1972,23 +1974,6 @@ sap.ui.define([
 	Context.prototype.resetKeepAlive = function () {
 		this.bKeepAlive = false;
 		this.bSelected = false;
-	};
-
-	/**
-	 * Sets this context's state from "persisted" to "created persisted".
-	 *
-	 * Note: this is a private and internal API. Do not call this!
-	 *
-	 * @throws {Error} If this context is already "created"
-	 *
-	 * @private
-	 */
-	Context.prototype.setCreatedPersisted = function () {
-		if (this.oCreatedPromise) {
-			throw new Error("Already 'created', currently transient: " + this.isTransient());
-		}
-		this.oCreatedPromise = Promise.resolve();
-		this.oSyncCreatePromise = SyncPromise.resolve();
 	};
 
 	/**

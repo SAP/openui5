@@ -89,10 +89,23 @@ sap.ui.define([
 		 * Deletes a node and all its descendants from the out-of-place list (making them in-place).
 		 *
 		 * @param {string} sPredicate - The node's key predicate
+		 * @param {boolean} [bUpAndDown] - Whether to start from top-most out-of-place ancestor
 		 *
 		 * @public
 		 */
-		deleteOutOfPlace(sPredicate) {
+		deleteOutOfPlace(sPredicate, bUpAndDown) {
+			if (!this.isOutOfPlace(sPredicate)) {
+				return; // already in place
+			}
+			if (bUpAndDown) {
+				for (;;) { // find top-most out-of-place ancestor
+					const sParentPredicate = this.mPredicate2OutOfPlace[sPredicate].parentPredicate;
+					if (!this.isOutOfPlace(sParentPredicate)) {
+						break;
+					}
+					sPredicate = sParentPredicate;
+				}
+			}
 			delete this.mPredicate2OutOfPlace[sPredicate];
 			Object.values(this.mPredicate2OutOfPlace).forEach((oOutOfPlace) => {
 				if (oOutOfPlace.parentPredicate === sPredicate) {
@@ -196,6 +209,18 @@ sap.ui.define([
 		 */
 		getOutOfPlacePredicates() {
 			return Object.keys(this.mPredicate2OutOfPlace);
+		}
+
+		/**
+		 * Tells whether the node with the given key predicate is currently out of place.
+		 *
+		 * @param {string} sPredicate - The node's key predicate
+		 * @returns {boolean} Whether the node is out of place
+		 *
+		 * @public
+		 */
+		isOutOfPlace(sPredicate) {
+			return sPredicate in this.mPredicate2OutOfPlace;
 		}
 
 		/**

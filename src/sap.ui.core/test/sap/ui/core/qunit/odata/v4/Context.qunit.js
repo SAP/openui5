@@ -88,37 +88,12 @@ sap.ui.define([
 
 		assert.throws(function () {
 			// code under test
-			oContext.setCreatedPersisted();
-		}, new Error("Already 'created', currently transient: true"));
-		assert.throws(function () {
-			// code under test
 			oContext.setPersisted();
 		}, new Error("Not 'created persisted'"));
 
 		fnResolve("bar");
 		return oCreatedPromise.then(function () {
 			assert.strictEqual(bCreatedPromisePending, false, "Created Promise resolved");
-		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("setCreatedPersisted", function (assert) {
-		const oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/foo", 42);
-
-		// code under test
-		oContext.setCreatedPersisted();
-
-		assert.strictEqual(oContext.isInactive(), undefined);
-		assert.strictEqual(oContext.isTransient(), false);
-		assert.ok(oContext.created() instanceof Promise);
-
-		assert.throws(function () {
-			// code under test
-			oContext.setCreatedPersisted();
-		}, new Error("Already 'created', currently transient: false"));
-
-		return oContext.created().then(function (vResult) {
-			assert.strictEqual(vResult, undefined);
 		});
 	});
 
@@ -2193,14 +2168,12 @@ sap.ui.define([
 			move : mustBeMocked
 		};
 		const oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES('42')", 42);
+		const oParent = Context.create({/*oModel*/}, {/*oBinding*/}, "/EMPLOYEES('23')", 23);
+		this.mock(oContext).expects("isAncestorOf")
+			.withExactArgs(i ? null : sinon.match.same(oParent)).returns(false);
 		let bResolved = false;
-		this.stub(oContext, "toString"); // called by SinonJS, would call #isTransient :-(
-		this.mock(oContext).expects("isDeleted").withExactArgs().returns(false);
-		this.mock(oContext).expects("isTransient").withExactArgs().returns(false);
-		this.mock(oContext).expects("isAncestorOf").withExactArgs(i ? null : "~oParent~")
-			.returns(false);
 		this.mock(oBinding).expects("move")
-			.withExactArgs(sinon.match.same(oContext), i ? null : "~oParent~")
+			.withExactArgs(sinon.match.same(oContext), i ? null : sinon.match.same(oParent))
 			.returns(new SyncPromise(function (resolve) {
 				setTimeout(function () {
 					bResolved = true;
@@ -2212,7 +2185,7 @@ sap.ui.define([
 		switch (i) {
 			case 0:
 				// code under test
-				oPromise = oContext.move({parent : "~oParent~"});
+				oPromise = oContext.move({parent : oParent});
 				break;
 
 			case 1:
@@ -2240,15 +2213,14 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("move: Unsupported parent context", function (assert) {
 		const oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/EMPLOYEES('42')", 42);
-		this.stub(oContext, "toString"); // called by SinonJS, would call #isTransient :-(
-		this.mock(oContext).expects("isDeleted").withExactArgs().returns(false);
-		this.mock(oContext).expects("isTransient").withExactArgs().returns(false);
-		this.mock(oContext).expects("isAncestorOf").withExactArgs("~oParent~").returns(true);
+		const oParent = Context.create({/*oModel*/}, {/*oBinding*/}, "/EMPLOYEES('23')", 23);
+		this.mock(oContext).expects("isAncestorOf").withExactArgs(sinon.match.same(oParent))
+			.returns(true);
 
 		assert.throws(function () {
 			// code under test
-			oContext.move({parent : "~oParent~"});
-		}, new Error("Unsupported parent context: ~oParent~"));
+			oContext.move({parent : oParent});
+		}, new Error("Unsupported parent context: " + oParent));
 	});
 
 	//*********************************************************************************************
@@ -2257,15 +2229,15 @@ sap.ui.define([
 			move : mustBeMocked
 		};
 		const oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES('42')", 42);
-		this.stub(oContext, "toString"); // called by SinonJS, would call #isTransient :-(
-		this.mock(oContext).expects("isDeleted").withExactArgs().returns(false);
-		this.mock(oContext).expects("isTransient").withExactArgs().returns(false);
-		this.mock(oContext).expects("isAncestorOf").withExactArgs("~oParent~").returns(false);
-		this.mock(oBinding).expects("move").withExactArgs(sinon.match.same(oContext), "~oParent~")
+		const oParent = Context.create({/*oModel*/}, {/*oBinding*/}, "/EMPLOYEES('23')", 23);
+		this.mock(oContext).expects("isAncestorOf").withExactArgs(sinon.match.same(oParent))
+			.returns(false);
+		this.mock(oBinding).expects("move")
+			.withExactArgs(sinon.match.same(oContext), sinon.match.same(oParent))
 			.returns(SyncPromise.reject("~error~"));
 
 		// code under test
-		const oPromise = oContext.move({parent : "~oParent~"});
+		const oPromise = oContext.move({parent : oParent});
 
 		assert.ok(oPromise instanceof Promise);
 		return oPromise.then(function () {
@@ -2311,6 +2283,47 @@ sap.ui.define([
 			// code under test
 			oContext.move();
 		}, new Error("Cannot move " + oContext));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("move: Cannot move; parent deleted", function (assert) {
+		const oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/EMPLOYEES('42')", 42);
+		const oParent = Context.create({/*oModel*/}, {/*oBinding*/}, "/EMPLOYEES('23')", 23);
+		// Note: cannot easily mock #toString which calls #isDeleted etc.
+		this.mock(oParent).expects("isDeleted").withExactArgs().atLeast(1).returns(true);
+
+		assert.throws(function () {
+			// code under test
+			oContext.move({parent : oParent});
+		}, new Error("Cannot move to " + oParent));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("move: Cannot move; parent transient", function (assert) {
+		const oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/EMPLOYEES('42')", 42);
+		const oParent = Context.create({/*oModel*/}, {/*oBinding*/}, "/EMPLOYEES('23')", 23);
+		// Note: cannot easily mock #toString which calls #isDeleted etc.
+		this.mock(oParent).expects("isDeleted").withExactArgs().atLeast(1).returns(false);
+		this.mock(oParent).expects("isTransient").withExactArgs().atLeast(1).returns(true);
+
+		assert.throws(function () {
+			// code under test
+			oContext.move({parent : oParent});
+		}, new Error("Cannot move to " + oParent));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("move: Cannot move; parent outside collection", function (assert) {
+		const oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/EMPLOYEES('42')", 42);
+		const oParent = Context.create({/*oModel*/}, {/*oBinding*/}, "/EMPLOYEES('23')");
+		// Note: cannot easily mock #toString which calls #isDeleted etc.
+		this.mock(oParent).expects("isDeleted").withExactArgs().atLeast(1).returns(false);
+		this.mock(oParent).expects("isTransient").withExactArgs().atLeast(1).returns(false);
+
+		assert.throws(function () {
+			// code under test
+			oContext.move({parent : oParent});
+		}, new Error("Cannot move to " + oParent));
 	});
 
 	//*********************************************************************************************

@@ -160,7 +160,7 @@ sap.ui.define([
 					iIndex = oDeleted.index;
 					const iDeletedIndex = vCacheData.$deleted.indexOf(oDeleted);
 					if (iIndex !== undefined) {
-						that.restoreElement(iIndex, oEntity, iDeletedIndex, undefined, vCacheData,
+						that.restoreElement(iIndex, oEntity, iDeletedIndex, vCacheData,
 							sParentPath);
 					}
 					vCacheData.$deleted.splice(iDeletedIndex, 1);
@@ -1926,8 +1926,6 @@ sap.ui.define([
 	 * @param {object} oElement - The element to restore
 	 * @param {int} [iDeletedIndex]
 	 *   The index of the entry in <code>aElements.$deleted</code> if any
-	 * @param {string} [sTransientPredicate]
-	 *  The element's (future) transient predicate, defaults to its current one
 	 * @param {object[]} [aElements]
 	 *   The array of elements, defaults to a collection cache's own elements
 	 * @param {string} [sPath=""]
@@ -1937,9 +1935,9 @@ sap.ui.define([
 	 * @protected
 	 */
 	_Cache.prototype.restoreElement = function (iIndex, oElement, iDeletedIndex,
-			sTransientPredicate = _Helper.getPrivateAnnotation(oElement, "transientPredicate"),
 			aElements = this.aElements, sPath = "") {
 		this.adjustIndexes(sPath, aElements, iIndex, 1, iDeletedIndex);
+		const sTransientPredicate = _Helper.getPrivateAnnotation(oElement, "transientPredicate");
 		if (sTransientPredicate) {
 			aElements.$created += 1;
 			if (!sPath) {

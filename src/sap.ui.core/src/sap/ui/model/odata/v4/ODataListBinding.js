@@ -1096,6 +1096,9 @@ sap.ui.define([
 					// reuse the previous context, unless it is created (and persisted), but not
 					// kept alive; always reuse created contexts in a recursive hierarchy
 					delete this.mPreviousContextsByPath[sContextPath];
+					if (oContext.created() && !("@$ui5.context.isTransient" in aResults[i])) {
+						oContext.setPersisted();
+					}
 					oContext.iIndex = i$skipIndex;
 					oContext.checkUpdate();
 				} else if (_Helper.hasPrivateAnnotation(aResults[i], "context")) {
@@ -3067,24 +3070,32 @@ sap.ui.define([
 
 	/**
 	 * Inserts a new gap into <code>this.aContexts</code> just after the given index and with the
-	 * given positive length.
+	 * given positive length. Note that the given index may be the last within the array, but not
+	 * outside!
 	 *
 	 * @param {number} iPreviousIndex - Last index just before the new gap
 	 * @param {number} iLength - Positive length of the new gap
+	 * @throws {Error} If the index is outside of the array
 	 *
 	 * @private
 	 */
 	ODataListBinding.prototype.insertGap = function (iPreviousIndex, iLength) {
 		const aContexts = this.aContexts;
-		for (let i = aContexts.length - 1; i > iPreviousIndex; i -= 1) {
-			const oMovingContext = aContexts[i];
-			if (oMovingContext) {
-				oMovingContext.iIndex += iLength;
-				aContexts[i + iLength] = oMovingContext;
-				delete aContexts[i]; // Note: iLength > 0
+		if (iPreviousIndex >= aContexts.length) {
+			throw new Error("Array index out of bounds: " + iPreviousIndex);
+		} else if (iPreviousIndex === aContexts.length - 1) {
+			aContexts.length += iLength;
+		} else {
+			for (let i = aContexts.length - 1; i > iPreviousIndex; i -= 1) {
+				const oMovingContext = aContexts[i];
+				if (oMovingContext) {
+					oMovingContext.iIndex += iLength;
+					aContexts[i + iLength] = oMovingContext;
+					delete aContexts[i]; // Note: iLength > 0
+				}
+				// else: nothing to do because !(i in aContexts) and aContexts[i + iLength]
+				// has been deleted before (loop works backwards)
 			}
-			// else: nothing to do because !(i in aContexts) and aContexts[i + iLength]
-			// has been deleted before (loop works backwards)
 		}
 		this.iMaxLength += iLength;
 	};
@@ -3251,18 +3262,15 @@ sap.ui.define([
 	/**
 	 * Moves the given (child) node to the given parent. An expanded (child) node is silently
 	 * collapsed before and expanded after the move. A collapsed parent is automatically expanded;
-	 * so is a leaf. The (child) node is added as the parent's 1st child (created persisted) in case
-	 * of expandTo:1, or "in place" (and simply persisted) else.
-	 * Omitting a new parent turns the child into a root.
+	 * so is a leaf. The (child) node is added to the parent at its proper position ("in place") and
+	 * simply "persisted". Omitting a new parent turns the child into a root.
 	 *
 	 * @param {sap.ui.model.odata.v4.Context} oChildContext - The (child) node to be moved
 	 * @param {sap.ui.model.odata.v4.Context} [oParentContext] - The new parent's context
 	 * @returns {sap.ui.base.SyncPromise<void>}
 	 *   A promise which is resolved without a defined result when the move is finished, or
 	 *   rejected in case of an error
-	 * @throws {Error}
-	 *   If <code>oAggregation.expandTo</code> is unsupported (neither one nor at least
-	 *   <code>Number.MAX_SAFE_INTEGER</code>).
+	 * @throws {Error} If there is no recursive hierarchy
 	 *
 	 * @private
 	 */
@@ -3289,50 +3297,37 @@ sap.ui.define([
 		if (!oAggregation || !oAggregation.hierarchyQualifier) {
 			throw new Error("Missing recursive hierarchy");
 		}
-		if (oAggregation.expandTo > 1 && oAggregation.expandTo < Number.MAX_SAFE_INTEGER) {
-			throw new Error("Unsupported $$aggregation.expandTo: " + oAggregation.expandTo);
-		} // Note: undefined is well allowed!
 
 		const bExpanded = oChildContext.isExpanded();
 		if (bExpanded) {
 			this.collapse(oChildContext, /*bSilent*/true);
 		}
 
+		const sUpdateGroupId = this.getUpdateGroupId();
+		const oGroupLock = this.lockGroup(sUpdateGroupId, true, true);
 		const sChildPath = oChildContext.getCanonicalPath().slice(1);
 		const sParentPath = oParentContext?.getCanonicalPath().slice(1); // before #lockGroup!
-		const oGroupLock = this.lockGroup(this.getUpdateGroupId(), true, true);
+		const {promise : oPromise, refresh : bRefresh}
+			= this.oCache.move(oGroupLock, sChildPath, sParentPath);
 
-		return this.oCache.move(oGroupLock, sChildPath, sParentPath).then(([iCount, iNewIndex]) => {
+		if (bRefresh) {
+			if (bExpanded) {
+				this.expand(oChildContext, /*bSilent*/true).unwrap(); // guaranteed to be sync!
+			}
+			return SyncPromise.all([
+				oPromise,
+				this.requestSideEffects(sUpdateGroupId, [""])
+			]);
+		}
+
+		return oPromise.then(([iCount, iNewIndex]) => {
 			if (iCount > 1) { // Note: skip oChildContext which is treated below
 				this.insertGap(oParentContext.getModelIndex(), iCount - 1);
 			}
-
 			const iOldIndex = oChildContext.getModelIndex();
-			if (oAggregation.expandTo > 1) {
-				if (oChildContext.created()) {
-					oChildContext.setPersisted();
-				}
-				this.aContexts.splice(iOldIndex, 1);
-				this.aContexts.splice(iNewIndex, 0, oChildContext);
-				setIndices(iOldIndex, iNewIndex);
-			} else {
-				if (!oChildContext.created()) {
-					oChildContext.setCreatedPersisted();
-				}
-				// Note: w/o oParentContext, iParentIndex === -1 and iParentIndex + 1 === 0 :-)
-				const iParentIndex = oParentContext
-					? oParentContext.getModelIndex() // Note: !== iOldIndex
-					: -1;
-				if (iOldIndex < iParentIndex) {
-					this.aContexts.splice(iParentIndex + 1, 0, oChildContext);
-					this.aContexts.splice(iOldIndex, 1); // parent moves to lower index!
-					setIndices(iOldIndex, iParentIndex);
-				} else if (iOldIndex > iParentIndex + 1) {
-					this.aContexts.splice(iOldIndex, 1); // parent unaffected!
-					this.aContexts.splice(iParentIndex + 1, 0, oChildContext);
-					setIndices(iParentIndex + 1, iOldIndex);
-				} // else: iOldIndex === iParentIndex + 1 => nothing to do
-			}
+			this.aContexts.splice(iOldIndex, 1);
+			this.aContexts.splice(iNewIndex, 0, oChildContext);
+			setIndices(iOldIndex, iNewIndex);
 
 			if (bExpanded) {
 				this.expand(oChildContext).unwrap(); // guaranteed to be sync! incl. _fireChange
