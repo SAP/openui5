@@ -149,7 +149,7 @@ sap.ui.define([
 
 		this.oReadyPromise.then(() => {
 
-			if (!this.oPopover) {
+			if (!this.oPopover || !this.oPopover?.isOpen()) {
 				this.fireBeforeOpen();
 
 				if (this.getItems().length === 0) {
@@ -161,32 +161,26 @@ sap.ui.define([
 
 			} else if (this.oPopover?.isOpen()) {
 				this.oPopover.close();
-			} else {
-				this.oPopover.destroy();
-				delete this.oPopover;
 			}
 		});
 	};
 
 	SelectionButton.prototype._openPopover = function() {
-		this.oPopover = this._createPopover();
+		if (!this.oPopover) {
+			this.oPopover = this._createPopover();
+
+			// eslint-disable-next-line prefer-arrow-callback
+			this.oPopover.attachAfterOpen(function() {
+				// eslint-disable-next-line prefer-destructuring
+				const oList = this.oPopover.getContent()[1];
+				// eslint-disable-next-line prefer-destructuring
+				const oSelectedItem = oList.getItems().filter((oItem) => { return oItem.getSelected(); })[0];
+				oSelectedItem?.focus();
+
+			}.bind(this));
+		}
+
 		this._createModel();
-
-		// eslint-disable-next-line prefer-arrow-callback
-		this.oPopover.attachAfterOpen(function() {
-			// eslint-disable-next-line prefer-destructuring
-			const oList = this.oPopover.getContent()[1];
-			// eslint-disable-next-line prefer-destructuring
-			const oSelectedItem = oList.getItems().filter((oItem) => { return oItem.getSelected(); })[0];
-			oSelectedItem?.focus();
-
-		}.bind(this));
-
-		this.oPopover.attachAfterClose(() => {
-			this.oPopover.destroy();
-			delete this.oPopover;
-		});
-
 		this.oPopover.openBy(this);
 	};
 
@@ -324,6 +318,7 @@ sap.ui.define([
 		const [oSearchField, oSortBtn] = oBar.getContentMiddle();
 
 		oSearchField.setVisible(this.getSearchEnabled());
+		oSearchField.setValue("");
 		oSortBtn.setVisible(this.getSortEnabled());
 		oBar.setVisible(this.getSearchEnabled() || this.getSortEnabled());
 	};
