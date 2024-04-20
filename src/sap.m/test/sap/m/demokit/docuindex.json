@@ -1764,6 +1764,18 @@
 				"sap.m.sample.VariantManagement",
 				"sap.m.sample.VariantManagement.model"
 			]
+		},
+		{
+			"id": "sap.m.plugins.UploadSetwithTable",
+			"name": "Upload Set with Table Plugin",
+			"category": "Action",
+			"since": "1.124",
+			"samples":[
+				"sap.m.sample.UploadSetwithTablePlugin.ResponsiveTableSimple",
+				"sap.m.sample.UploadSetwithTablePlugin.ResponsiveTableFileDialogs",
+				"sap.m.sample.UploadSetwithTablePlugin.ResponsiveTableFilePreview",
+				"sap.m.sample.UploadSetwithTablePlugin.GridTableSimple"
+			]
 		}
 	  ],
 	  "samples": [
@@ -3959,6 +3971,26 @@
 			"id": "sap.m.sample.VariantManagement",
 			"name": "VariantManagement using dedicated items",
 			"description": "VariantManagement with dedicated items"
+		},
+		{
+			"id": "sap.m.sample.UploadSetwithTablePlugin.ResponsiveTableSimple",
+			"name": "Plugin for Responsive Table (sap.m.Table)",
+			"description": "This example demonstrates the usage of UploadSetwithTable plugin for responsive table with the features of upload, download, drag & drop, remove and rename of files. It also demonstrates how the uploaded files can be displayed in a table."
+		},
+		{
+			"id": "sap.m.sample.UploadSetwithTablePlugin.ResponsiveTableFileDialogs",
+			"name": "Plugin for Responsive Table (sap.m.Table) - File upload with user dialogs",
+			"description": "This example demonstrates usage of itemValidationHandler callback to leverage additional validations and configurations for the items that are to be uploaded, and also the manual trigger of the upload process. The user input can be captured for each file with the help of the user dialog implemented at the application controller, before its upload."
+		},
+		{
+			"id": "sap.m.sample.UploadSetwithTablePlugin.ResponsiveTableFilePreview",
+			"name": "Plugin for Responsive Table (sap.m.Table) - File Preview",
+			"description": "This example showcases how uploaded files can be previewed with FilePreviewDialog control and its related configuration. UploadSetwithTable plugin creates and uses default instance of FilePreviewDialog, if not defined."
+		},
+		{
+			"id": "sap.m.sample.UploadSetwithTablePlugin.GridTableSimple",
+			"name": "Plugin for Grid Table (sap.ui.table.Table)",
+			"description": "This example demonstrates the usage of UploadSetwithTable plugin for grid table with the features of upload, download, drag & drop, remove and rename of files. It also demonstrates how the uploaded files can be displayed in a table."
 		}
 	  ]
 	}

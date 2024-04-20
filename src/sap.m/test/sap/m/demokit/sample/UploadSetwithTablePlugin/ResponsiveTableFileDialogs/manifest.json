@@ -1,0 +1,71 @@
+{
+	"sap.app": {
+		"id": "responsiveFileDialogs.table.sample",
+		"type": "application",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"title": "Responsive Table",
+		"description": "Responsive Table application",
+		"dataSources": {
+			"documentDataSource" : {
+				"uri": "model/documents.json",
+				"type": "JSON"
+			}
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
+	},
+	"sap.ui5": {
+		"config": {
+			"sample": {
+				"files": [
+					"view/UploadSetwithTable.view.xml",
+					"model/documents.json",
+					"manifest.json",
+					"controller/Page.controller.js",
+					"view/fragment/AddViaUrl.fragment.xml",
+					"model/mockserver.js"
+				]
+			}
+		},
+		"flexEnabled": false,
+		"resourceRoots": {
+            "responsiveFileDialogs.table.sample": "./"
+        },
+		"dependencies": {
+			"minUI5Version": "1.120.0",
+			"libs": {
+				"sap.f": {},
+				"sap.m": {},
+				"sap.ui.core": {},
+				"sap.ui.fl": {},
+				"sap.ui.mdc": {},
+				"sap.ui.table": {}
+			}
+		},
+		"contentDensities": {
+			"compact": true,
+			"cozy": true
+		},
+		"handleValidation": true,
+		"models": {
+			"documents": {
+				"type": "sap.ui.model.json.JSONModel",
+				"dataSource": "documentDataSource"
+			}
+		},
+		"rootView": {
+			"viewName": "responsiveFileDialogs.table.sample.view.UploadSetwithTable",
+			"type": "XML",
+			"async": true,
+			"id": "sample"
+		}
+	}
+}
