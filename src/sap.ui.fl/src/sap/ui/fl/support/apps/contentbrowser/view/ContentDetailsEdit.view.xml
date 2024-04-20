@@ -3,7 +3,6 @@
 		  xmlns:f="sap.ui.layout.form">
 	<Page title="{path: 'selectedContent>/', formatter: '.oDataUtils.formatItemTitle'}">
 		<f:SimpleForm
-				minWidth="1024"
 				maxContainerCols="1"
 				editable="false"
 				layout="ResponsiveGridLayout"

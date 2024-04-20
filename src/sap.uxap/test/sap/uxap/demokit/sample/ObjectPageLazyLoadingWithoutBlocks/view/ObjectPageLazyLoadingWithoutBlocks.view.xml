@@ -33,7 +33,6 @@
 							<ObjectPageLazyLoader stashed="true" id="Section1stashed">
 								<m:VBox class="sapUiSmallMargin">
 									<f:SimpleForm
-											minWidth="1024"
 											maxContainerCols="2"
 											editable="false"
 											layout="ResponsiveGridLayout"
@@ -70,7 +69,6 @@
 							<ObjectPageLazyLoader stashed="true" id="Section2stashed">
 								<m:VBox class="sapUiSmallMargin">
 									<f:SimpleForm
-											minWidth="1024"
 											maxContainerCols="2"
 											editable="false"
 											layout="ResponsiveGridLayout"
@@ -107,7 +105,6 @@
 							<ObjectPageLazyLoader stashed="true" id="Section3stashed">
 								<m:VBox class="sapUiSmallMargin">
 									<f:SimpleForm
-											minWidth="1024"
 											maxContainerCols="2"
 											editable="false"
 											layout="ResponsiveGridLayout"
@@ -144,7 +141,6 @@
 							<ObjectPageLazyLoader stashed="true" id="Section4stashed">
 								<m:VBox class="sapUiSmallMargin">
 									<f:SimpleForm
-											minWidth="1024"
 											maxContainerCols="2"
 											editable="false"
 											layout="ResponsiveGridLayout"
@@ -181,7 +177,6 @@
 							<ObjectPageLazyLoader stashed="true" id="Section5stashed">
 								<m:VBox class="sapUiSmallMargin">
 									<f:SimpleForm
-											minWidth="1024"
 											maxContainerCols="2"
 											editable="false"
 											layout="ResponsiveGridLayout"
@@ -218,7 +213,6 @@
 							<ObjectPageLazyLoader stashed="true" id="Section6stashed">
 								<m:VBox class="sapUiSmallMargin">
 									<f:SimpleForm
-											minWidth="1024"
 											maxContainerCols="2"
 											editable="false"
 											layout="ResponsiveGridLayout"
@@ -255,7 +249,6 @@
 							<ObjectPageLazyLoader stashed="true" id="Section7stashed">
 								<m:VBox class="sapUiSmallMargin">
 									<f:SimpleForm
-											minWidth="1024"
 											maxContainerCols="2"
 											editable="false"
 											layout="ResponsiveGridLayout"
@@ -292,7 +285,6 @@
 							<ObjectPageLazyLoader stashed="true" id="Section8stashed">
 								<m:VBox class="sapUiSmallMargin">
 									<f:SimpleForm
-											minWidth="1024"
 											maxContainerCols="2"
 											editable="false"
 											layout="ResponsiveGridLayout"
@@ -329,7 +321,6 @@
 							<ObjectPageLazyLoader stashed="true" id="Section9stashed">
 								<m:VBox class="sapUiSmallMargin">
 									<f:SimpleForm
-											minWidth="1024"
 											maxContainerCols="2"
 											editable="false"
 											layout="ResponsiveGridLayout"
@@ -366,7 +357,6 @@
 							<ObjectPageLazyLoader stashed="true" id="Section10stashed">
 								<m:VBox class="sapUiSmallMargin">
 									<f:SimpleForm
-											minWidth="1024"
 											maxContainerCols="2"
 											editable="false"
 											layout="ResponsiveGridLayout"
@@ -403,7 +393,6 @@
 							<ObjectPageLazyLoader stashed="true" id="Section11stashed">
 								<m:VBox class="sapUiSmallMargin">
 									<f:SimpleForm
-											minWidth="1024"
 											maxContainerCols="2"
 											editable="false"
 											layout="ResponsiveGridLayout"
@@ -440,7 +429,6 @@
 							<ObjectPageLazyLoader stashed="true" id="Section12stashed">
 								<m:VBox class="sapUiSmallMargin">
 									<f:SimpleForm
-											minWidth="1024"
 											maxContainerCols="2"
 											editable="false"
 											layout="ResponsiveGridLayout"
@@ -477,7 +465,6 @@
 							<ObjectPageLazyLoader stashed="true" id="Section13stashed">
 								<m:VBox class="sapUiSmallMargin">
 									<f:SimpleForm
-											minWidth="1024"
 											maxContainerCols="2"
 											editable="false"
 											layout="ResponsiveGridLayout"
@@ -514,7 +501,6 @@
 							<ObjectPageLazyLoader stashed="true" id="Section14stashed">
 								<m:VBox class="sapUiSmallMargin">
 									<f:SimpleForm
-											minWidth="1024"
 											maxContainerCols="2"
 											editable="false"
 											layout="ResponsiveGridLayout"
@@ -551,7 +537,6 @@
 							<ObjectPageLazyLoader stashed="true" id="Section15stashed">
 								<m:VBox class="sapUiSmallMargin">
 									<f:SimpleForm
-											minWidth="1024"
 											maxContainerCols="2"
 											editable="false"
 											layout="ResponsiveGridLayout"
@@ -588,7 +573,6 @@
 							<ObjectPageLazyLoader stashed="true" id="Section16stashed">
 								<m:VBox class="sapUiSmallMargin">
 									<f:SimpleForm
-											minWidth="1024"
 											maxContainerCols="2"
 											editable="false"
 											layout="ResponsiveGridLayout"
@@ -625,7 +609,6 @@
 							<ObjectPageLazyLoader stashed="true" id="Section17stashed">
 								<m:VBox class="sapUiSmallMargin">
 									<f:SimpleForm
-											minWidth="1024"
 											maxContainerCols="2"
 											editable="false"
 											layout="ResponsiveGridLayout"
@@ -662,7 +645,6 @@
 							<ObjectPageLazyLoader stashed="true" id="Section18stashed">
 								<m:VBox class="sapUiSmallMargin">
 									<f:SimpleForm
-											minWidth="1024"
 											maxContainerCols="2"
 											editable="false"
 											layout="ResponsiveGridLayout"
@@ -699,7 +681,6 @@
 							<ObjectPageLazyLoader stashed="true" id="Section19stashed">
 								<m:VBox class="sapUiSmallMargin">
 									<f:SimpleForm
-											minWidth="1024"
 											maxContainerCols="2"
 											editable="false"
 											layout="ResponsiveGridLayout"
@@ -736,7 +717,6 @@
 							<ObjectPageLazyLoader stashed="true" id="Section20stashed">
 								<m:VBox class="sapUiSmallMargin">
 									<f:SimpleForm
-											minWidth="1024"
 											maxContainerCols="2"
 											editable="false"
 											layout="ResponsiveGridLayout"
@@ -773,7 +753,6 @@
 							<ObjectPageLazyLoader stashed="true" id="Section21stashed">
 								<m:VBox class="sapUiSmallMargin">
 									<f:SimpleForm
-											minWidth="1024"
 											maxContainerCols="2"
 											editable="false"
 											layout="ResponsiveGridLayout"

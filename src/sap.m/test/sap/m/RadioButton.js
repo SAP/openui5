@@ -513,7 +513,6 @@ sap.ui.define([
 		});
 
 		var RTLSimpleForm = new SimpleForm("RTLSimpleForm", {
-			minWidth: 1024,
 			maxContainerCols: 2,
 			content: [
 				new Text("heading", {

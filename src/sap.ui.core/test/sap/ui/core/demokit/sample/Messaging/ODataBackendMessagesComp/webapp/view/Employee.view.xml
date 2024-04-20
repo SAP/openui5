@@ -9,7 +9,6 @@
 			<form:SimpleForm
 				id="form"
 				busy="{view>/busy}"
-				minWidth="1024"
 				maxContainerCols="2"
 				editable="true"
 				layout="ResponsiveGridLayout"

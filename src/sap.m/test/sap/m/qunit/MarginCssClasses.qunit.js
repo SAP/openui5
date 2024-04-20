@@ -48,7 +48,6 @@ sap.ui.define([
 		"                        key=\"info\"" +
 		"                        text=\"Info\">" +
 		"                        <f:SimpleForm" +
-		"                            minWidth=\"1024\"" +
 		"                            maxContainerCols=\"2\"" +
 		"                            layout=\"ResponsiveGridLayout\" >" +
 		"                            <f:title>" +
@@ -73,7 +72,6 @@ sap.ui.define([
 		"            </IconTabBar>" +
 		"            <f:SimpleForm" +
 		"                id=\"simpleForm\"" +
-		"                minWidth=\"1024\"" +
 		"                maxContainerCols=\"2\"" +
 		"                layout=\"ResponsiveGridLayout\" >" +
 		"                <f:title>" +

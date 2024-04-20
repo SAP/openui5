@@ -9,7 +9,6 @@
 					icon="sap-icon://attachment"
 					text="{i18n>content}">
 					<f:SimpleForm
-						minWidth="1024"
 						maxContainerCols="1"
 						editable="false"
 						layout="ResponsiveGridLayout"

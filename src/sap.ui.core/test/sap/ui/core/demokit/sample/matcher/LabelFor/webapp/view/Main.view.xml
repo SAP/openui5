@@ -9,7 +9,6 @@
 				<content>
 					<form:SimpleForm
 							id="form"
-							minWidth="600"
 							maxContainerCols="2"
 							editable="true"
 							layout="ResponsiveGridLayout" >
