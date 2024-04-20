@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/table/RowSettings",
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/core/library",
+	"sap/ui/core/message/MessageType",
 	"sap/ui/core/theming/Parameters",
 	"sap/ui/core/Core",
 	"sap/ui/table/RowAction",
@@ -16,6 +17,7 @@ sap.ui.define([
 	RowSettings,
 	TableUtils,
 	CoreLibrary,
+	MessageType,
 	ThemeParameters,
 	oCore,
 	RowAction,
@@ -29,7 +31,6 @@ sap.ui.define([
 	const fakeGroupRow = window.fakeGroupRow;
 	const fakeSumRow = window.fakeSumRow;
 
-	const MessageType = CoreLibrary.MessageType;
 	const IndicationColor = CoreLibrary.IndicationColor;
 
 	const iRowsWithHighlight = 13;

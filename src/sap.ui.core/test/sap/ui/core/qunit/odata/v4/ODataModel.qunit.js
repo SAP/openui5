@@ -23,17 +23,15 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/lib/_MetadataRequestor",
 	"sap/ui/model/odata/v4/lib/_Parser",
 	"sap/ui/model/odata/v4/lib/_Requestor",
-	"sap/ui/core/library",
+	"sap/ui/core/message/MessageType",
 	"sap/ui/test/TestUtils"
 ], function (Log, Localization, SyncPromise, Rendering, Supportability, CacheManager, Message,
 		Messaging, Binding, BindingMode, BaseContext, Model, OperationMode, Context,
 		ODataMetaModel, ODataModel, SubmitMode, _Helper, _MetadataRequestor, _Parser, _Requestor,
-		library, TestUtils) {
+		MessageType, TestUtils) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataModel",
-		// shortcut for sap.ui.core.MessageType
-		MessageType = library.MessageType,
 		sServiceUrl = "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/";
 
 	function mustBeMocked() { throw new Error("Must be mocked"); }

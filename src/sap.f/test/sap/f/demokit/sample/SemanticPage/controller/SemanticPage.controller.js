@@ -1,23 +1,19 @@
 sap.ui.define([
-	'sap/ui/core/library',
 	"sap/ui/core/Messaging",
 	'sap/ui/core/message/ControlMessageProcessor',
 	'sap/ui/core/message/Message',
+	'sap/ui/core/message/MessageType',
 	'sap/ui/core/mvc/Controller',
-	'sap/ui/model/Filter',
 	'sap/ui/model/json/JSONModel',
 	'sap/m/MessagePopover',
 	'sap/m/MessageItem',
 	'sap/m/MessageBox'
-], function(coreLibrary, Messaging, ControlMessageProcessor, Message, Controller, Filter, JSONModel, MessagePopover, MessageItem, MessageBox) {
+], function(Messaging, ControlMessageProcessor, Message, MessageType, Controller, JSONModel, MessagePopover, MessageItem, MessageBox) {
 	"use strict";
-
-	var MessageType = coreLibrary.MessageType;
 
 	return Controller.extend("sap.f.sample.SemanticPage.controller.SemanticPage", {
 		onInit: function () {
-			var oMessageProcessor = new ControlMessageProcessor(),
-				oMessageManager = Messaging;
+			var oMessageProcessor = new ControlMessageProcessor();
 
 			this.oModel = new JSONModel();
 			this.oModel.loadData(sap.ui.require.toUrl("sap/f/sample/SemanticPage/model/model.json"), null, false);
@@ -25,8 +21,8 @@ sap.ui.define([
 			this.oEditAction = this.byId("editAction");
 			this.oSemanticPage.setModel(this.oModel);
 
-			oMessageManager.registerMessageProcessor(oMessageProcessor);
-			oMessageManager.addMessages(
+			Messaging.registerMessageProcessor(oMessageProcessor);
+			Messaging.addMessages(
 				new Message({
 					message: "Something wrong happened",
 					type: MessageType.Error,

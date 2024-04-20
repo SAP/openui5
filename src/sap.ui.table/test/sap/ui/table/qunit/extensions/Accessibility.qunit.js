@@ -15,6 +15,7 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/ControlBehavior",
 	"sap/ui/core/library",
+	"sap/ui/core/message/MessageType",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
@@ -34,6 +35,7 @@ sap.ui.define([
 	oCore,
 	ControlBehavior,
 	coreLibrary,
+	MessageType,
 	JSONModel,
 	Filter,
 	FilterOperator,
@@ -1998,14 +2000,14 @@ sap.ui.define([
 		await nextUIUpdate();
 
 		const aVisibleHighlights = [
-			coreLibrary.MessageType.Success,
-			coreLibrary.MessageType.Warning,
-			coreLibrary.MessageType.Error,
-			coreLibrary.MessageType.Information
+			MessageType.Success,
+			MessageType.Warning,
+			MessageType.Error,
+			MessageType.Information
 		].concat(Object.getOwnPropertyNames(coreLibrary.IndicationColor));
 
 		const aInvisibleHighlights = [
-			coreLibrary.MessageType.None,
+			MessageType.None,
 			null
 		];
 
@@ -2041,7 +2043,7 @@ sap.ui.define([
 			}));
 			await nextUIUpdate();
 
-			if (sHighlight in coreLibrary.MessageType) {
+			if (sHighlight in MessageType) {
 				sHighlightText = TableUtils.getResourceBundle().getText("TBL_ROW_STATE_" + sHighlight.toUpperCase());
 			}
 

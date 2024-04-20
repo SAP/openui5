@@ -14,7 +14,7 @@ sap.ui.define([
 	"sap/m/plugins/PluginBase",
 	"sap/ui/fl/write/api/ControlPersonalizationWriteAPI",
 	"sap/ui/qunit/utils/nextUIUpdate",
-	"sap/ui/core/library",
+	"sap/ui/core/message/MessageType",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/Sorter",
 	"sap/ui/model/Filter",
@@ -41,7 +41,7 @@ sap.ui.define([
 	PluginBase,
 	ControlPersonalizationWriteAPI,
 	nextUIUpdate,
-	coreLibrary,
+	MessageType,
 	ODataModel,
 	Sorter,
 	Filter,
@@ -1378,14 +1378,14 @@ sap.ui.define([
 		assert.deepEqual(this.oTable.validateState({
 			items: [{name: "Name"}, {name: "name_country"}]
 		}, "Sort"), {
-			validation: coreLibrary.MessageType.None,
+			validation: MessageType.None,
 			message: undefined
 		}, "No sorted properties");
 
 		assert.deepEqual(this.oTable.validateState({
 			sorters: [{name: "Name"}, {name: "Country"}]
 		}, "Sort"), {
-			validation: coreLibrary.MessageType.Information,
+			validation: MessageType.Information,
 			message: sMessage
 		}, "Sorted properties and no visible columns");
 
@@ -1393,7 +1393,7 @@ sap.ui.define([
 			items: [{name: "Name"}, {name: "Country"}, {name: "name_country"}],
 			sorters: [{name: "Name"}, {name: "Country"}]
 		}, "Sort"), {
-			validation: coreLibrary.MessageType.None,
+			validation: MessageType.None,
 			message: undefined
 		}, "All sorted properties visible");
 
@@ -1401,7 +1401,7 @@ sap.ui.define([
 			items: [{name: "Name"}],
 			sorters: [{name: "Country"}]
 		}, "Sort"), {
-			validation: coreLibrary.MessageType.Information,
+			validation: MessageType.Information,
 			message: sMessage
 		}, "Sorted property invisible");
 
@@ -1409,7 +1409,7 @@ sap.ui.define([
 			items: [{name: "Name"}, {name: "name_country"}],
 			sorters: [{name: "Country"}]
 		}, "Sort"), {
-			validation: coreLibrary.MessageType.None,
+			validation: MessageType.None,
 			message: undefined
 		}, "Sorted property is part of a visible complex property");
 
@@ -1418,7 +1418,7 @@ sap.ui.define([
 			items: [{name: "Name"}],
 			sorters: [{name: "Country"}]
 		}, "Sort"), {
-			validation: coreLibrary.MessageType.None,
+			validation: MessageType.None,
 			message: undefined
 		}, "Sorted property invisible and analytical features not enabled");
 	});
@@ -1429,14 +1429,14 @@ sap.ui.define([
 		assert.deepEqual(this.oTable.validateState({
 			items: [{name: "Name"}, {name: "Country"}, {name: "name_country"}]
 		}, "Group"), {
-			validation: coreLibrary.MessageType.None,
+			validation: MessageType.None,
 			message: undefined
 		}, "No grouped properties");
 
 		assert.deepEqual(this.oTable.validateState({
 			groupLevels: [{name: "Country"}]
 		}, "Group"), {
-			validation: coreLibrary.MessageType.None,
+			validation: MessageType.None,
 			message: undefined
 		}, "Grouped properties and no visible columns");
 
@@ -1444,7 +1444,7 @@ sap.ui.define([
 			items: [{name: "Name"}],
 			aggregations: {Name: {}}
 		}, "Group"), {
-			validation: coreLibrary.MessageType.Information,
+			validation: MessageType.Information,
 			message: oResourceBundle.getText("table.PERSONALIZATION_DIALOG_GROUP_RESTRICTION_TOTALS", "Name")
 		}, "Grouping and aggreagtion can't be used simulatneously");
 
@@ -1452,7 +1452,7 @@ sap.ui.define([
 			items: [{name: "Name"}, {name: "name_country"}],
 			groupLevels: [{name: "Country"}]
 		}, "Group"), {
-			validation: coreLibrary.MessageType.None,
+			validation: MessageType.None,
 			message: undefined
 		}, "The grouped property is part of a visible complex property");
 
@@ -1461,7 +1461,7 @@ sap.ui.define([
 			items: [{name: "Name"}],
 			groupLevels: [{name: "Country"}]
 		}, "Group"), {
-			validation: coreLibrary.MessageType.Information,
+			validation: MessageType.Information,
 			message: oResourceBundle.getText("table.PERSONALIZATION_DIALOG_GROUP_RESTRICTION_VISIBLE")
 		}, "Grouped property invisible with ResponsiveTable type");
 	});
@@ -1472,7 +1472,7 @@ sap.ui.define([
 		assert.deepEqual(this.oTable.validateState({
 			items: [{name: "Name"}, {name: "Country"}, {name: "name_country"}]
 		}, "Column"), {
-			validation: coreLibrary.MessageType.None,
+			validation: MessageType.None,
 			message: undefined
 		}, "Valid state");
 
@@ -1480,7 +1480,7 @@ sap.ui.define([
 			items: [{name: "Name"}],
 			sorters: [{name: "Country"}]
 		}, "Column"), {
-			validation: coreLibrary.MessageType.Information,
+			validation: MessageType.Information,
 			message: oResourceBundle.getText("table.PERSONALIZATION_DIALOG_SORT_RESTRICTION")
 		}, "Removing the column that contains a sorted property");
 
@@ -1488,7 +1488,7 @@ sap.ui.define([
 			items: [{name: "Name"}],
 			aggregations: {Country: {}}
 		}, "Column"), {
-			validation: coreLibrary.MessageType.Information,
+			validation: MessageType.Information,
 			message: oResourceBundle.getText("table.PERSONALIZATION_DIALOG_TOTAL_RESTRICTION")
 		}, "Removing the column that contains an aggregated property");
 
@@ -1497,7 +1497,7 @@ sap.ui.define([
 			sorters: [{name: "Country"}],
 			aggregations: {Country: {}}
 		}, "Column"), {
-			validation: coreLibrary.MessageType.Information,
+			validation: MessageType.Information,
 			message: oResourceBundle.getText("table.PERSONALIZATION_DIALOG_TOTAL_RESTRICTION")
 				+ "\n" + oResourceBundle.getText("table.PERSONALIZATION_DIALOG_SORT_RESTRICTION")
 		}, "Removing the column that contains a sorted and an aggregated property");
@@ -1507,7 +1507,7 @@ sap.ui.define([
 			items: [{name: "Name"}],
 			groupLevels: [{name: "Country"}]
 		}, "Column"), {
-			validation: coreLibrary.MessageType.Information,
+			validation: MessageType.Information,
 			message: oResourceBundle.getText("table.PERSONALIZATION_DIALOG_GROUP_RESTRICTION_VISIBLE")
 		}, "Removing the column that contains a grouped property with ResponsiveTable type");
 	});

@@ -4,23 +4,21 @@
 /*global QUnit*/
 // QUnit script for DataBinding Messages
 sap.ui.define([
-	"sap/ui/core/library",
 	"sap/ui/core/Messaging",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/core/message/Message",
+	"sap/ui/core/message/MessageType",
 	"sap/m/Input",
 	"test-resources/sap/ui/core/qunit/odata/data/ODataModelFakeService" // used only indirectly
 ], function(
-	library,
 	Messaging,
 	ODataModel,
 	Message,
+	MessageType,
 	Input,
-	fakeService
+	_fakeService
 ) {
 	"use strict";
-
-	var MessageType = library.MessageType;
 
 	var sServiceUri = "http://services.odata.org/V3/Northwind/Northwind.svc/";
 	sServiceUri = "/proxy/http/" + sServiceUri.replace("http://","");

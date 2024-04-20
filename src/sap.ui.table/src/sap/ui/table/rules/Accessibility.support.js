@@ -4,13 +4,12 @@
 sap.ui.define([
 	"./TableHelper.support",
 	"sap/ui/support/library",
-	"sap/ui/core/library"
-], function(SupportHelper, SupportLibrary, CoreLibrary) {
+	"sap/ui/core/message/MessageType"
+], function(SupportHelper, SupportLibrary, MessageType) {
 	"use strict";
 
 	const Categories = SupportLibrary.Categories;
 	const Severity = SupportLibrary.Severity;
-	const MessageType = CoreLibrary.MessageType;
 
 	/*
 	 * Validates whether aria-labelledby is correctly set

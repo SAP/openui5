@@ -8,9 +8,9 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/m/p13n/modification/FlexModificationHandler",
 	"sap/m/MessageStrip",
-	"sap/ui/core/library",
 	"sap/ui/core/Element",
 	"sap/ui/core/ElementRegistry",
+	"sap/ui/core/message/MessageType",
 	"sap/m/p13n/modules/DefaultProviderRegistry",
 	"sap/m/p13n/modules/UIManager",
 	"sap/m/p13n/modules/StateHandlerRegistry",
@@ -22,9 +22,9 @@ sap.ui.define([
 	Log,
 	FlexModificationHandler,
 	MessageStrip,
-	coreLibrary,
 	Element,
 	ElementRegistry,
+	MessageType,
 	DefaultProviderRegistry,
 	UIManager,
 	StateHandlerRegistry,
@@ -34,9 +34,6 @@ sap.ui.define([
 	"use strict";
 
 	const ERROR_INSTANCING = "Engine: This class is a singleton. Please use the getInstance() method instead.";
-
-	//Shortcut to 'MessageType'
-	const MessageType = coreLibrary.MessageType;
 
 	/*global WeakMap */
 	const _mRegistry = new WeakMap();

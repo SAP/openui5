@@ -26,6 +26,7 @@ sap.ui.define([
 	"./GroupHeaderListItem",
 	'sap/ui/core/InvisibleText',
 	"sap/ui/core/library",
+	"sap/ui/core/message/MessageType",
 	"sap/ui/base/ManagedObject",
 	"./MessageViewRenderer",
 	"sap/ui/events/KeyCodes",
@@ -56,6 +57,7 @@ sap.ui.define([
 	GroupHeaderListItem,
 	InvisibleText,
 	coreLibrary,
+	MessageType,
 	ManagedObject,
 	MessageViewRenderer,
 	KeyCodes,
@@ -66,9 +68,6 @@ sap.ui.define([
 
 	// shortcut for sap.ui.core.ValueState
 	var ValueState = coreLibrary.ValueState;
-
-	// shortcut for sap.ui.core.MessageType
-	var MessageType = coreLibrary.MessageType;
 
 	// shortcut for sap.m.ListType
 	var ListType = library.ListType;

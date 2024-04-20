@@ -13,6 +13,7 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/message/Message",
+	"sap/ui/core/message/MessageType",
 	"sap/base/Log"
 ], function(
 	Library,
@@ -28,6 +29,7 @@ sap.ui.define([
 	Core,
 	JSONModel,
 	Message,
+	MessageType,
 	Log
 ) {
 	"use strict";
@@ -40,9 +42,6 @@ sap.ui.define([
 
 	// shortcut for sap.ui.core.TextDirection
 	var TextDirection = coreLibrary.TextDirection;
-
-	// shortcut for sap.ui.core.message.MessageType
-	var MessageType = coreLibrary.MessageType;
 
 	createAndAppendDiv("content");
 

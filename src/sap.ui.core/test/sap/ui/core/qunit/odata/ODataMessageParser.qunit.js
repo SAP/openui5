@@ -3,8 +3,8 @@
 
 sap.ui.define([
 	"test-resources/sap/ui/core/qunit/odata/data/ODataMessagesFakeService",
-	"sap/ui/core/library",
 	"sap/ui/core/Messaging",
+	"sap/ui/core/message/MessageType",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/model/odata/ODataMetadata",
 	"sap/ui/model/odata/ODataMessageParser",
@@ -13,12 +13,10 @@ sap.ui.define([
 	"sap/m/Input",
 	"sap/m/Button",
 	"sap/ui/layout/VerticalLayout"
-], function(fakeService, library, Messaging, ODataModel, ODataMetadata, ODataMessageParser, BindingMode, StringType,
-			Input, Button, VerticalLayout) {
+], function(fakeService, Messaging, MessageType, ODataModel, ODataMetadata, ODataMessageParser,
+			BindingMode, StringType, Input, Button, VerticalLayout) {
 	"use strict";
 
-	// shortcut for sap.ui.core.MessageType
-	var MessageType = library.MessageType;
 	var oInput = new Input({value:"{json>/Products(1)/ProductName}"});
 	var oInput2 = new Input({value:"{xml>/Products(1)/ProductName}"});
 

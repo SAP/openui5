@@ -23,6 +23,7 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/core/Item",
 	"sap/ui/core/library",
+	"sap/ui/core/message/MessageType",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/unified/CalendarAppointment",
 	"sap/ui/unified/CalendarLegendItem",
@@ -54,6 +55,7 @@ sap.ui.define([
 	Element,
 	Item,
 	coreLibrary,
+	MessageType,
 	JSONModel,
 	CalendarAppointment,
 	CalendarLegendItem,
@@ -65,9 +67,6 @@ sap.ui.define([
 
 	// shortcut for sap.ui.unified.CalendarDayType
 	var CalendarDayType = unifiedLibrary.CalendarDayType;
-
-	// shortcut for sap.ui.core.MessageType
-	var MessageType = coreLibrary.MessageType;
 
 	// shortcut for sap.ui.core.TitleLevel
 	var TitleLevel = coreLibrary.TitleLevel;

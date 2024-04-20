@@ -5,6 +5,7 @@ sap.ui.define([
 	'sap/ui/model/Model',
 	'sap/ui/model/type/Integer',
 	'sap/ui/core/message/Message',
+	'sap/ui/core/message/MessageType',
 	'sap/ui/core/Messaging',
 	'sap/ui/core/library',
 	'sap/ui/core/Component',
@@ -15,7 +16,7 @@ sap.ui.define([
 	'sap/ui/qunit/utils/createAndAppendDiv',
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/test/TestUtils"
-], function(isPlainObject, Input, Model, Integer, Message, Messaging, library, Component, ComponentContainer, Element, JSONModel, UIComponent, createAndAppendDiv, nextUIUpdate, TestUtils){
+], function(isPlainObject, Input, Model, Integer, Message, MessageType, Messaging, library, Component, ComponentContainer, Element, JSONModel, UIComponent, createAndAppendDiv, nextUIUpdate, TestUtils){
 	"use strict";
 
 	// create content div
@@ -281,7 +282,7 @@ sap.ui.define([
 	QUnit.test("Model: Refresh with force update", function(assert) {
 		var done = assert.async();
 		var oModel = new Model();
-		var oMessage = new Message({message: "myMessage", type: library.MessageType.Error, processor: oModel});
+		var oMessage = new Message({message: "myMessage", type: MessageType.Error, processor: oModel});
 		oModel.setMessages({"/test": oMessage});
 		oModel.attachMessageChange(function(oEvent){
 			assert.strictEqual(oMessage, oEvent.getParameter("oldMessages")[0]);

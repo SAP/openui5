@@ -14,9 +14,9 @@
 <script>
 	sap.ui.require([
 		"sap/ui/model/json/JSONModel", "sap/ui/table/TreeTable", "sap/ui/table/Column", "sap/m/Text", "sap/m/Link", "sap/ui/core/Icon",
-		"sap/m/Toolbar",
-		"sap/ui/layout/Splitter", "sap/ui/core/Control"
-	], function(JSONModel, TreeTable, Column, Text, Link, Icon, Toolbar, Splitter, Control) {
+		"sap/m/Toolbar", "sap/m/Label",
+		"sap/ui/layout/Splitter", "sap/ui/core/Control", "sap/ui/thirdparty/jquery"
+	], function(JSONModel, TreeTable, Column, Text, Link, Icon, Toolbar, Label, Splitter, Control, jQuery) {
 		var iGeneratedSizeFactors = 0;
 
 		function getSizeFactor() {
@@ -276,28 +276,28 @@
 			selectionBehavior: "Row",
 			columns: [
 				new Column({
-					label: new sap.m.Label({text: "Name"}),
+					label: new Label({text: "Name"}),
 					template: new Text({text: "{name}", wrapping: false}),
 					sortProperty: "name",
 					filterProperty: "name",
 					width: "250px"
 				}),
 				new Column({
-					label: new sap.m.Label({text: "Description"}),
+					label: new Label({text: "Description"}),
 					template: new Text({text: "{description}", wrapping: false}),
 					sortProperty: "description",
 					filterProperty: "description",
 					width: "400px"
 				}),
 				new Column({
-					label: new sap.m.Label({text: "State"}),
+					label: new Label({text: "State"}),
 					template: new Text({text: "{highlightState}", wrapping: false}),
 					sortProperty: "highlightState",
 					filterProperty: "highlightState",
 					width: "250px"
 				}),
 				new Column({
-					label: new sap.m.Label({text: "Icon"}),
+					label: new Label({text: "Icon"}),
 					template: new Icon({
 						src: "sap-icon://account",
 						size: {path: "sizeFactor", formatter: function(iFactor) {return (iFactor * 48) + "px";}}
@@ -321,7 +321,7 @@
 			selectionBehavior: "Row",
 			columns: [
 				new Column({
-					label: new sap.m.Label({text: "Name"}),
+					label: new Label({text: "Name"}),
 					template: new Text({text: "{name}", wrapping: false}),
 					sortProperty: "name",
 					filterProperty: "name",

@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/message/Message",
+	"sap/ui/core/message/MessageType",
 	"sap/ui/thirdparty/jquery"
 ], function(
 	Library,
@@ -25,6 +26,7 @@ sap.ui.define([
 	Label,
 	JSONModel,
 	Message,
+	MessageType,
 	jQuery
 ) {
 	"use strict";
@@ -34,9 +36,6 @@ sap.ui.define([
 
 	// shortcut for sap.ui.core.TextAlign
 	var TextAlign = coreLibrary.TextAlign;
-
-	// shortcut for sap.ui.core.message.MessageType
-	var MessageType = coreLibrary.MessageType;
 
 	var DOM_RENDER_LOCATION = "qunit-fixture";
 

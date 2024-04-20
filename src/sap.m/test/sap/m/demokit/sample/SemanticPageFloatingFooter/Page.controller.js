@@ -2,16 +2,14 @@ sap.ui.define([
 	"sap/ui/core/Messaging",
 	'sap/ui/core/message/ControlMessageProcessor',
 	'sap/ui/core/message/Message',
+	'sap/ui/core/message/MessageType',
 	'sap/ui/core/mvc/Controller',
-	'sap/ui/core/library',
 	'sap/ui/model/json/JSONModel',
 	'sap/m/MessagePopover',
 	'sap/m/MessageItem',
 	'sap/m/MessageToast'
-], function (Messaging, ControlMessageProcessor, Message, Controller, coreLibrary, JSONModel, MessagePopover, MessageItem, MessageToast) {
+], function (Messaging, ControlMessageProcessor, Message, MessageType, Controller, JSONModel, MessagePopover, MessageItem, MessageToast) {
 	"use strict";
-
-	var MessageType = coreLibrary.MessageType;
 
 	var PageController = Controller.extend("sap.m.sample.SemanticPageFloatingFooter.Page", {
 

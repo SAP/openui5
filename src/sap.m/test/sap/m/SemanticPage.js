@@ -1,7 +1,6 @@
 sap.ui.define(
     [
 		"sap/base/Log",
-        "sap/ui/core/library",
         "sap/ui/layout/library",
         "sap/m/library",
         "sap/m/semantic/MultiSelectAction",
@@ -55,11 +54,11 @@ sap.ui.define(
         "sap/m/Bar",
         "sap/m/SearchField",
         "sap/ui/core/Messaging",
+        "sap/ui/core/message/MessageType",
         "sap/ui/core/Element"
     ],
     function (
 		Log,
-        coreLibrary,
         layoutLibrary,
         mLibrary,
         MultiSelectAction,
@@ -113,6 +112,7 @@ sap.ui.define(
         Bar,
         SearchField,
         Messaging,
+        MessageType,
         Element
     ) {
         "use strict";
@@ -146,8 +146,6 @@ sap.ui.define(
         var ButtonType = mLibrary.ButtonType;
         var InputType = mLibrary.InputType;
 		var SelectType = mLibrary.SelectType;
-
-        var MessageType = coreLibrary.MessageType;
 
         var SimpleFormLayout = layoutLibrary.form.SimpleFormLayout;
 

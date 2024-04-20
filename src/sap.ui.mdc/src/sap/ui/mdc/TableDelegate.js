@@ -12,7 +12,7 @@ sap.ui.define([
 	"sap/m/plugins/PluginBase",
 	"sap/ui/model/Sorter",
 	"sap/ui/core/Lib",
-	"sap/ui/core/library"
+	"sap/ui/core/message/MessageType"
 ], (
 	AggregationBaseDelegate,
 	FilterIntegrationDefault,
@@ -23,7 +23,7 @@ sap.ui.define([
 	PluginBase,
 	Sorter,
 	Lib,
-	coreLibrary
+	MessageType
 ) => {
 	"use strict";
 
@@ -385,7 +385,7 @@ sap.ui.define([
 		if (sKey == "Filter" && oTable._oMessageFilter) {
 			const oResourceBundle = Lib.getResourceBundleFor("sap.ui.mdc");
 			return {
-				validation: coreLibrary.MessageType.Information,
+				validation: MessageType.Information,
 				message: oResourceBundle.getText("table.PERSONALIZATION_DIALOG_FILTER_MESSAGESTRIP")
 			};
 		}

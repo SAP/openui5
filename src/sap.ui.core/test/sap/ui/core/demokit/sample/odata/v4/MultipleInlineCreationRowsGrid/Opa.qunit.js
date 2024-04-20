@@ -6,19 +6,17 @@ QUnit.config.autostart = false;
 sap.ui.require([
 	"sap/base/Log",
 	"sap/ui/core/Core",
-	"sap/ui/core/library",
+	"sap/ui/core/message/MessageType",
 	"sap/ui/core/sample/common/Helper",
 	"sap/ui/core/sample/common/pages/Any",
 	"sap/ui/core/sample/odata/v4/MultipleInlineCreationRowsGrid/pages/Main",
 	"sap/ui/test/opaQunit",
 	"sap/ui/test/TestUtils",
 	"sap/ui/core/sample/odata/v4/MultipleInlineCreationRowsGrid/SandboxModel" // preload only
-], function (Log, Core, library, Helper, Any, Main, opaTest, TestUtils) {
+], function (Log, Core, MessageType, Helper, Any, Main, opaTest, TestUtils) {
 	"use strict";
 
 	Core.ready().then(function () {
-		var MessageType = library.MessageType; // shortcut for sap.ui.core.MessageType
-
 		Helper.qUnitModule("sap.ui.core.sample.odata.v4.MultipleInlineCreationRowsGrid");
 
 		if (TestUtils.isRealOData()) {

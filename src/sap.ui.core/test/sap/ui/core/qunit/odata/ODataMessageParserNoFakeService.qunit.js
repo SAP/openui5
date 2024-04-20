@@ -4,21 +4,19 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/Lib",
-	"sap/ui/core/library",
 	"sap/ui/core/Messaging",
 	"sap/ui/core/message/Message",
+	"sap/ui/core/message/MessageType",
 	"sap/ui/model/odata/MessageScope",
 	"sap/ui/model/odata/ODataMessageParser",
 	"sap/ui/model/odata/ODataMetadata",
 	"sap/ui/model/odata/ODataUtils"
-], function (Log, Library, coreLibrary, Messaging, Message, MessageScope, ODataMessageParser, ODataMetadata, ODataUtils) {
+], function (Log, Library, Messaging, Message, MessageType, MessageScope, ODataMessageParser, ODataMetadata, ODataUtils) {
 	/*global QUnit,sinon*/
 	/*eslint camelcase: 0, max-nested-callbacks: 0, no-warning-comments: 0*/
 	"use strict";
 
-	var sClassName = "sap.ui.model.odata.ODataMessageParser",
-		// shortcuts for enums
-		MessageType = coreLibrary.MessageType;
+	var sClassName = "sap.ui.model.odata.ODataMessageParser";
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.ODataMessageParser (ODataMessageParserNoFakeService)", {

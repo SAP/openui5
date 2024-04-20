@@ -3,6 +3,7 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/core/message/ControlMessageProcessor",
 	"sap/ui/core/message/Message",
+	"sap/ui/core/message/MessageType",
 	"sap/ui/core/Messaging",
 	"sap/ui/core/UIAreaRegistry",
 	"sap/ui/model/FormatException",
@@ -20,6 +21,7 @@ sap.ui.define([
 	coreLibrary,
 	ControlMessageProcessor,
 	Message,
+	MessageType,
 	Messaging,
 	UIAreaRegistry,
 	FormatException,
@@ -40,7 +42,6 @@ sap.ui.define([
 	createAndAppendDiv("content");
 
 	// shortcuts for enums from the sap.ui.core namespace
-	var MessageType = coreLibrary.MessageType;
 	var ValueState = coreLibrary.ValueState;
 
 	var oModel;

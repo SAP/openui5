@@ -22,7 +22,7 @@
 				<snappedHeading>
 					<m:FlexBox wrap="Wrap" fitContainer="true" alignItems="Center">
 						<m:FlexBox wrap="NoWrap" fitContainer="true" alignItems="Center" class="sapUiTinyMarginEnd">
-							<f:Avatar
+							<m:Avatar
 								src="https://sdk.openui5.org/{products>ProductPicUrl}"
 								displaySize="S"
 								displayShape="Square"
@@ -52,12 +52,12 @@
 
 		<headerContent>
 			<m:FlexBox wrap="Wrap" fitContainer="true" alignItems="Stretch">
-				<f:Avatar
+				<m:Avatar
 					src="https://sdk.openui5.org/{products>ProductPicUrl}"
 					displaySize="L"
 					displayShape="Square"
 					class="sapUiTinyMarginEnd">
-				</f:Avatar>
+				</m:Avatar>
 				<m:VBox justifyContent="Center" class="sapUiSmallMarginEnd">
 					<m:Label text="Main Category"/>
 					<m:Text text="{products>MainCategory}"/>

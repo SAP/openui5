@@ -4,22 +4,21 @@
 sap.ui.define([
 	"sap/f/library",
 	"sap/m/MessageBox",
-	"sap/ui/core/library",
 	"sap/ui/core/Messaging",
 	"sap/ui/core/message/Message",
+	"sap/ui/core/message/MessageType",
 	"sap/ui/core/sample/common/Controller",
 	"sap/ui/model/Sorter",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/v4/SubmitMode",
 	"sap/ui/test/TestUtils"
-], function (library, MessageBox, coreLibrary, Messaging, Message, Controller, Sorter, JSONModel,
+], function (library, MessageBox, Messaging, Message, MessageType, Controller, Sorter, JSONModel,
 		SubmitMode, TestUtils) {
 	"use strict";
 
 	var oSearchParams = new URLSearchParams(window.location.search),
 		iEmptyRowCount = parseInt(oSearchParams.get("emptyRows") || "2"),
 		LayoutType = library.LayoutType,
-		MessageType = coreLibrary.MessageType,
 		bLegacy;
 
 	return Controller.extend("sap.ui.core.sample.odata.v4.MultipleInlineCreationRowsGrid.Main", {

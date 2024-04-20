@@ -5,8 +5,8 @@ sap.ui.define([
 	"sap/m/p13n/SelectionPanel",
 	"sap/ui/model/Sorter",
 	"sap/m/MessageStrip",
-	"sap/ui/core/library"
-], (SelectionPanel, Sorter, MessageStrip, coreLibrary) => {
+	"sap/ui/core/message/MessageType"
+], (SelectionPanel, Sorter, MessageStrip, MessageType) => {
 	"use strict";
 
 	/**
@@ -200,7 +200,7 @@ sap.ui.define([
 
 		const oMessageStrip = new MessageStrip({
 			text: this._getResourceText("p13n.MESSAGE_DISABLED_ITEMS"),
-			type: coreLibrary.MessageType.Warning,
+			type: MessageType.Warning,
 			showIcon: true
 		});
 		this.setMessageStrip(oMessageStrip);

@@ -7,18 +7,17 @@ sap.ui.define([
 	"sap/m/MessageToast",
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/format/DateFormat",
-	"sap/ui/core/library",
+	"sap/ui/core/message/MessageType",
 	"sap/ui/core/sample/common/Controller",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/FilterType",
 	"sap/ui/model/Sorter"
-], function (Log, MessageBox, MessageToast, UI5Date, DateFormat, library, Controller, Filter,
+], function (Log, MessageBox, MessageToast, UI5Date, DateFormat, MessageType, Controller, Filter,
 		FilterOperator, FilterType, Sorter) {
 	"use strict";
 
 	var oDateFormat = DateFormat.getTimeInstance({pattern : "HH:mm"}),
-		MessageType = library.MessageType,
 		sServiceNamespace = "com.sap.gateway.default.zui5_epm_sample.v0002.";
 
 	return Controller.extend("sap.ui.core.sample.odata.v4.SalesOrders.Main", {

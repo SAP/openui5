@@ -19,7 +19,7 @@
 					<l:Grid defaultSpan="XL6 L6 M6 S12" content="{path: 'groupedAvatars>/'}">
 						<HBox alignItems="Center">
 							<VBox>
-								<f:Avatar class="sapUiTinyMarginEnd"
+								<Avatar class="sapUiTinyMarginEnd"
 										src="{groupedAvatars>src}"
 										initials="{groupedAvatars>initials}"
 										tooltip="{groupedAvatars>initials}"

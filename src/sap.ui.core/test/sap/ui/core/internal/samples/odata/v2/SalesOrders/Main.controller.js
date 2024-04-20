@@ -9,20 +9,19 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/m/MessageBox",
 	"sap/m/MessageToast",
-	"sap/ui/core/library",
 	"sap/ui/core/Element",
 	"sap/ui/core/Messaging",
 	"sap/ui/core/message/Message",
+	"sap/ui/core/message/MessageType",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/Sorter",
 	"sap/ui/model/odata/ODataUtils"
 ], function (Log, encodeURL, isEmptyObject, DynamicDateRange, mobileLibrary, MessageBox, MessageToast,
-		coreLibrary, Element, Messaging, Message, Controller, Filter, FilterOperator, Sorter, ODataUtils) {
+		Element, Messaging, Message, MessageType, Controller, Filter, FilterOperator, Sorter, ODataUtils) {
 	"use strict";
 	var sClassname = "sap.ui.core.internal.samples.odata.v2.SalesOrders.Main.controller",
-		MessageType = coreLibrary.MessageType,
 		StandardDynamicDateRangeKeys = mobileLibrary.StandardDynamicDateRangeKeys;
 
 	return Controller.extend("sap.ui.core.internal.samples.odata.v2.SalesOrders.Main", {
@@ -684,8 +683,8 @@ sap.ui.define([
 		 * update the row highlight. The formatter function parameters for messages resp. row data
 		 * are not needed to compute the highlight property.
 		 *
-		 * @returns {sap.ui.core.MessageType} The message type for the row highlight or undefined in
-		 *   case the formatter is called when the row has no binding context yet.
+		 * @returns {module:sap/ui/core/message/MessageType} The message type for the row highlight
+		 *   or undefined in case the formatter is called when the row has no binding context yet.
 		 */
 		rowHighlight : function (/*aMessages, oRowData*/) {
 			var aMessages,

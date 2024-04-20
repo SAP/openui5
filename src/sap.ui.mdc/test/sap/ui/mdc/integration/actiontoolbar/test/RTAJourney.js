@@ -5,16 +5,16 @@
 /* global QUnit */
 
 sap.ui.define([
-    "sap/ui/core/library",
     "sap/ui/core/Lib",
+    "sap/ui/core/message/MessageType",
     "sap/ui/test/Opa5",
 	"sap/ui/test/opaQunit",
     "sap/ui/mdc/enums/ActionToolbarActionAlignment",
     "sap/ui/mdc/ActionToolbarTesting/pages/App",
     "test-resources/sap/ui/rta/integration/pages/Adaptation"
 ], function(
-    coreLibrary,
     Library,
+    MessageType,
 	Opa5,
 	opaTest,
     ActionToolbarActionAlignment
@@ -203,7 +203,7 @@ sap.ui.define([
 
             // Change button order
             When.onTheApp.iCannotMoveAction("Action 3");
-            Then.onPageWithRTA.iShouldSeeTheMessageStrip(oRb.getText("p13n.MESSAGE_DISABLED_ITEMS"), coreLibrary.MessageType.Warning);
+            Then.onPageWithRTA.iShouldSeeTheMessageStrip(oRb.getText("p13n.MESSAGE_DISABLED_ITEMS"), MessageType.Warning);
 
             // Close dialog
             When.onTheApp.iPressOkButtonOnP13nDialog();
