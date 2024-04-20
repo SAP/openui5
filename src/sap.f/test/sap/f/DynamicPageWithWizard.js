@@ -45,7 +45,6 @@ sap.ui.define([
 				text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec eget turpis quis felis luctus consectetur. Nulla eros sem, tincidunt sit amet ipsum at, laoreet fringilla risus. Curabitur tempus arcu sit amet volutpat gravida. Sed blandit leo vel lectus tempus, ac laoreet dui tempus. Curabitur placerat orci a faucibus rutrum. Praesent mattis ante vel enim posuere, a luctus lacus posuere. Aliquam imperdiet leo sit amet auctor vestibulum. Nunc consequat, turpis faucibus porttitor eleifend, nisi eros auctor est, in ultricies magna elit in quam. Phasellus risus felis, cursus at libero sed, consequat tristique lectus. Nullam quis eros diam. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Fusce dignissim turpis quis elit finibus elementum. Fusce aliquet enim ante. Morbi vitae turpis urna."
 			}),
 			new SimpleForm({
-				minWidth: 1024,
 				maxContainerCols: 2,
 				editable: true,
 				content: [
@@ -92,7 +91,6 @@ sap.ui.define([
 		icon: "sap-icon://simple-payment",
 		content: [
 			new SimpleForm({
-				minWidth: 1024,
 				maxContainerCols: 2,
 				editable: true,
 				content: [
@@ -144,7 +142,6 @@ sap.ui.define([
 		},
 		content: [
 			new SimpleForm({
-				minWidth: 1024,
 				maxContainerCols: 2,
 				editable: true,
 				content: [

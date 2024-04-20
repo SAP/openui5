@@ -3,7 +3,7 @@
 	xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">
 	<Page class="sapUiFioriObjectPage" showHeader="false">
 		<content>
-			<f:SimpleForm id="FieldGroupView" minWidth="1024"
+			<f:SimpleForm id="FieldGroupView"
 				maxContainerCols="2" editable="true" layout="ResponsiveGridLayout"
 				title="Shopping Cart - Checkout" labelSpanL="4" labelSpanM="4"
 				emptySpanL="0" emptySpanM="0" columnsL="2" columnsM="2"

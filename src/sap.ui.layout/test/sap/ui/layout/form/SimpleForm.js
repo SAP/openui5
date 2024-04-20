@@ -109,7 +109,6 @@ sap.ui.require([
 			{
 				// use ResponsiveGridLayout as Default - Layout for Form can only be created on rendering
 				// layout: LayoutLib.form.SimpleFormLayout.ResponsiveGridLayout,
-				minWidth : 1024,
 				maxContainerCols: 2,
 				title: "Form title",
 				editable: true,
@@ -220,7 +219,6 @@ sap.ui.require([
 
 	var oSimpleForm2 = new SimpleForm("SF2", {
 		layout: LayoutLib.form.SimpleFormLayout.ResponsiveGridLayout, // use ResponsiveGridLayout manual set - to force creating of layout directly
-		minWidth : 1024,
 		maxContainerCols: 2,
 		editable: false,
 		backgroundDesign: LayoutLib.BackgroundDesign.Transparent,

@@ -15,7 +15,6 @@ sap.ui.define([
 
 	new SimpleForm({
 		id: "SF1",
-		minWidth : 1024,
 		maxContainerCols: 2,
 		editable: true,
 		title: new Title({text: "Customer data"}),

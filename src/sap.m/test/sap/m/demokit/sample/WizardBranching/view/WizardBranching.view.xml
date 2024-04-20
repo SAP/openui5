@@ -209,7 +209,6 @@
 				<content>
 					<form:SimpleForm
 							title="1. List of products"
-							minWidth="1024"
 							editable="false"
 							layout="ResponsiveGridLayout">
 						<List mode="None"
@@ -239,7 +238,6 @@
 
 					<form:SimpleForm
 							title="2. Payment type"
-							minWidth="1024"
 							editable="false"
 							layout="ResponsiveGridLayout">
 						<form:content>
@@ -252,7 +250,6 @@
 					<form:SimpleForm
 							visible="{= ${/selectedPayment}==='Credit Card' ? true : false}"
 							title="3. Credit Card payment"
-							minWidth="1024"
 							editable="false"
 							layout="ResponsiveGridLayout">
 						<form:content>
@@ -271,7 +268,6 @@
 					<form:SimpleForm
 							visible="{= ${/selectedPayment}==='Bank Transfer' ? true : false}"
 							title="3. Bank Transfer"
-							minWidth="1024"
 							editable="false"
 							layout="ResponsiveGridLayout">
 						<form:content>
@@ -295,7 +291,6 @@
 					<form:SimpleForm
 							visible="{= ${/selectedPayment}==='Cash on Delivery' ? true : false}"
 							title="3. Cash on delivery"
-							minWidth="1024"
 							editable="false"
 							layout="ResponsiveGridLayout">
 						<form:content>
@@ -313,7 +308,6 @@
 
 					<form:SimpleForm
 							title="4. Billing Address"
-							minWidth="1024"
 							editable="false"
 							layout="ResponsiveGridLayout">
 						<form:content>
@@ -333,7 +327,6 @@
 
 					<form:SimpleForm
 							title="5. Delivery type"
-							minWidth="1024"
 							editable="false"
 							layout="ResponsiveGridLayout">
 						<form:content>

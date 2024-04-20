@@ -160,7 +160,6 @@
 							title="Review page">
 								<form:SimpleForm
 										title="1. Product Type"
-										minWidth="1024"
 										editable="false"
 										layout="ResponsiveGridLayout">
 									<form:content>
@@ -172,7 +171,6 @@
 
 								<form:SimpleForm
 										title="2. Product Information"
-										minWidth="1024"
 										editable="false"
 										layout="ResponsiveGridLayout">
 									<form:content>
@@ -190,7 +188,6 @@
 
 								<form:SimpleForm
 										title="3. Optional Information"
-										minWidth="1024"
 										editable="false"
 										layout="ResponsiveGridLayout">
 									<form:content>
@@ -212,7 +209,6 @@
 
 								<form:SimpleForm
 										title="4. Pricing"
-										minWidth="1024"
 										editable="false"
 										layout="ResponsiveGridLayout">
 									<form:content>
