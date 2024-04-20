@@ -3,7 +3,7 @@
  */
 
 // sap.ui.mdc.AggregationBaseDelegate
-sap.ui.define(['sap/ui/mdc/BaseDelegate', 'sap/ui/core/library'], (BaseDelegate, coreLibrary) => {
+sap.ui.define(['sap/ui/mdc/BaseDelegate', 'sap/ui/core/message/MessageType'], (BaseDelegate, MessageType) => {
 	"use strict";
 
 	/**
@@ -96,7 +96,7 @@ sap.ui.define(['sap/ui/mdc/BaseDelegate', 'sap/ui/core/library'], (BaseDelegate,
 	 */
 	AggregationBaseDelegate.validateState = function(oControl, oState) {
 
-		const sValidation = coreLibrary.MessageType.None;
+		const sValidation = MessageType.None;
 
 		return {
 			validation: sValidation,

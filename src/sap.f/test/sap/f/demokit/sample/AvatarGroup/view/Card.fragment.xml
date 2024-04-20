@@ -7,7 +7,7 @@
 		<f:content>
 			<l:VerticalLayout class="sapUiContentPadding">
 				<HBox alignItems="Center">
-					<f:Avatar src="{personData>/src}"
+					<Avatar src="{personData>/src}"
 							initials="{personData>/initials}"
 							tooltip="{personData>/initials}"
 							fallbackIcon="{personData>/fallbackIcon}"

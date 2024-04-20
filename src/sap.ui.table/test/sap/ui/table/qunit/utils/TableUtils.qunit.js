@@ -9,9 +9,9 @@ sap.ui.define([
 	"sap/ui/table/CreationRow",
 	"sap/ui/table/rowmodes/Fixed",
 	"sap/ui/table/library",
-	"sap/ui/core/library",
 	"sap/ui/core/Control",
 	"sap/ui/core/Theming",
+	"sap/ui/core/message/MessageType",
 	"sap/ui/table/RowSettings",
 	"sap/ui/base/Object",
 	"sap/base/i18n/ResourceBundle",
@@ -29,9 +29,9 @@ sap.ui.define([
 	CreationRow,
 	FixedRowMode,
 	TableLibrary,
-	CoreLibrary,
 	Control,
 	Theming,
+	MessageType,
 	RowSettings,
 	BaseObject,
 	ResourceBundle,
@@ -392,27 +392,27 @@ sap.ui.define([
 		assert.ok(!TableUtils.hasRowHighlights(oTable), "No row highlight configured: Returned false");
 
 		oTable.setRowSettingsTemplate(new RowSettings({
-			highlight: CoreLibrary.MessageType.None
+			highlight: MessageType.None
 		}));
 		assert.ok(!TableUtils.hasRowHighlights(oTable), "Row highlight is set to 'None': Returned false");
 
 		oTable.setRowSettingsTemplate(new RowSettings({
-			highlight: CoreLibrary.MessageType.Success
+			highlight: MessageType.Success
 		}));
 		assert.ok(TableUtils.hasRowHighlights(oTable), "Row highlight is set to 'Success': Returned true");
 
 		oTable.setRowSettingsTemplate(new RowSettings({
-			highlight: CoreLibrary.MessageType.Warning
+			highlight: MessageType.Warning
 		}));
 		assert.ok(TableUtils.hasRowHighlights(oTable), "Row highlight is set to 'Warning': Returned true");
 
 		oTable.setRowSettingsTemplate(new RowSettings({
-			highlight: CoreLibrary.MessageType.Error
+			highlight: MessageType.Error
 		}));
 		assert.ok(TableUtils.hasRowHighlights(oTable), "Row highlight is set to 'Error': Returned true");
 
 		oTable.setRowSettingsTemplate(new RowSettings({
-			highlight: CoreLibrary.MessageType.Information
+			highlight: MessageType.Information
 		}));
 		assert.ok(TableUtils.hasRowHighlights(oTable), "Row highlight is set to 'Information': Returned true");
 

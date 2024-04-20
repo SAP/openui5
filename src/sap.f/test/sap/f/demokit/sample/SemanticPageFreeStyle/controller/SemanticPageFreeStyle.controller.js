@@ -1,18 +1,16 @@
 sap.ui.define([
-	'sap/ui/core/library',
 	"sap/ui/core/Messaging",
 	'sap/ui/core/mvc/Controller',
 	'sap/ui/core/message/ControlMessageProcessor',
 	'sap/ui/core/message/Message',
+	'sap/ui/core/message/MessageType',
 	'sap/ui/model/json/JSONModel',
 	'sap/ui/Device',
 	'sap/m/MessagePopover',
 	'sap/m/MessageItem',
 	'sap/m/MessageToast'
-], function(coreLibrary, Messaging, Controller, ControlMessageProcessor, Message, JSONModel, Device, MessagePopover, MessageItem, MessageToast) {
+], function(Messaging, Controller, ControlMessageProcessor, Message, MessageType, JSONModel, Device, MessagePopover, MessageItem, MessageToast) {
 	"use strict";
-
-	var MessageType = coreLibrary.MessageType;
 
 	return Controller.extend("sap.f.sample.SemanticPageFreeStyle.controller.SemanticPageFreeStyle", {
 		onInit: function () {
@@ -23,11 +21,10 @@ sap.ui.define([
 			this.oSemanticPage.setModel(this.oModel);
 
 			var oMessageProcessor = new ControlMessageProcessor();
-			var oMessageManager = Messaging;
 
-			oMessageManager.registerMessageProcessor(oMessageProcessor);
+			Messaging.registerMessageProcessor(oMessageProcessor);
 
-			oMessageManager.addMessages(
+			Messaging.addMessages(
 				new Message({
 					message: "Something wrong happened",
 					type: MessageType.Error,

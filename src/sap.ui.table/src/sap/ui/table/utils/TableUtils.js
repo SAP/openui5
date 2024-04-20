@@ -13,11 +13,11 @@ sap.ui.define([
 	"sap/ui/base/Object",
 	"sap/ui/core/Element",
 	"sap/ui/core/ResizeHandler",
-	"sap/ui/core/library",
 	"sap/ui/core/theming/Parameters",
 	"sap/ui/core/Theming",
 	"sap/ui/core/Icon",
 	"sap/ui/core/Lib",
+	"sap/ui/core/message/MessageType",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/thirdparty/jquery",
 	"sap/base/util/restricted/_throttle",
@@ -32,11 +32,11 @@ sap.ui.define([
 	BaseObject,
 	Element,
 	ResizeHandler,
-	coreLibrary,
 	ThemeParameters,
 	Theming,
 	Icon,
 	Lib,
+	MessageType,
 	ChangeReason,
 	jQuery,
 	throttle,
@@ -47,7 +47,6 @@ sap.ui.define([
 	// Shortcuts
 	const SelectionBehavior = library.SelectionBehavior;
 	const SelectionMode = library.SelectionMode;
-	const MessageType = coreLibrary.MessageType;
 
 	/**
 	 * The resource bundle of the sap.ui.table library.

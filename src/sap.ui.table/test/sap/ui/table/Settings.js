@@ -19,10 +19,10 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 	"sap/ui/core/Core",
 	"sap/ui/core/Element",
 	"sap/ui/core/Item",
-	"sap/ui/core/library",
 	"sap/ui/core/Locale",
 	"sap/ui/core/Popup",
 	"sap/ui/core/Title",
+	"sap/ui/core/message/MessageType",
 	"sap/ui/layout/form/SimpleForm",
 	// layout used for SimpleForm
 	"sap/ui/layout/form/ResponsiveGridLayout",
@@ -62,10 +62,10 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 	oCore,
 	Element,
 	Item,
-	coreLibrary,
 	Locale,
 	Popup,
 	Title,
+	MessageType,
 	SimpleForm,
 	ResponsiveGridLayout,
 	JSONModel,
@@ -88,9 +88,6 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 
 	// shortcut for sap.ui.core.Popup.Dock
 	const Dock = Popup.Dock;
-
-	// shortcut for sap.ui.core.MessageType
-	const MessageType = coreLibrary.MessageType;
 
 	// shortcut for sap.m.ButtonType
 	const ButtonType = mobileLibrary.ButtonType;

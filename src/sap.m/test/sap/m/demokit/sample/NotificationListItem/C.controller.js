@@ -1,14 +1,11 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
-	"sap/ui/core/library",
+	"sap/ui/core/message/MessageType",
 	"sap/m/Link",
 	"sap/m/MessageStrip",
 	"sap/m/MessageToast"
-], function (Controller, coreLibrary, Link, MessageStrip, MessageToast) {
+], function (Controller, MessageType, Link, MessageStrip, MessageToast) {
 	"use strict";
-
-	// shortcut for sap.ui.core.MessageType
-	var MessageType = coreLibrary.MessageType;
 
 	return Controller.extend("sap.m.sample.NotificationListItem.C", {
 

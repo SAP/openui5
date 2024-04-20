@@ -12,8 +12,8 @@ sap.ui.define([
 	"sap/ui/mdc/util/loadModules",
 	"sap/m/plugins/PluginBase",
 	"sap/ui/core/Lib",
-	"sap/ui/core/library",
 	"sap/ui/core/format/ListFormat",
+	"sap/ui/core/message/MessageType",
 	"sap/ui/base/ManagedObjectObserver"
 ], (
 	TableDelegate,
@@ -25,8 +25,8 @@ sap.ui.define([
 	loadModules,
 	PluginBase,
 	Lib,
-	coreLibrary,
 	ListFormat,
+	MessageType,
 	ManagedObjectObserver
 ) => {
 	"use strict";
@@ -327,7 +327,7 @@ sap.ui.define([
 			// Sorting by properties that are not visible in the table (not requested from the backend) is not possible in analytical scenarios.
 			// Corresponding sort conditions are not applied.
 			return {
-				validation: coreLibrary.MessageType.Information,
+				validation: MessageType.Information,
 				message: Lib.getResourceBundleFor("sap.ui.mdc").getText("table.PERSONALIZATION_DIALOG_SORT_RESTRICTION")
 			};
 		}
@@ -354,7 +354,7 @@ sap.ui.define([
 				// It is not possible to group and aggregate by the same property at the same time. Aggregated properties that are also groupable are
 				// filtered out in the GroupController. This message should inform the user about that.
 				return {
-					validation: coreLibrary.MessageType.Information,
+					validation: MessageType.Information,
 					message: oResourceBundle.getText("table.PERSONALIZATION_DIALOG_GROUP_RESTRICTION_TOTALS", [
 						oListFormat.format(aAggregatedGroupableProperties)
 					])
@@ -365,7 +365,7 @@ sap.ui.define([
 				// Grouping by a property that isn't visible in the table (not requested from the backend) causes issues with the group header text.
 				// Corresponding group conditions are not applied.
 				return {
-					validation: coreLibrary.MessageType.Information,
+					validation: MessageType.Information,
 					message: oResourceBundle.getText("table.PERSONALIZATION_DIALOG_GROUP_RESTRICTION_VISIBLE")
 				};
 			}
@@ -384,7 +384,7 @@ sap.ui.define([
 				// Grouping by a property that isn't visible in the table (not requested from the backend) causes issues with the group header text.
 				// Corresponding group conditions are not applied.
 				return {
-					validation: coreLibrary.MessageType.Information,
+					validation: MessageType.Information,
 					message: oResourceBundle.getText("table.PERSONALIZATION_DIALOG_GROUP_RESTRICTION_VISIBLE")
 				};
 			}
@@ -405,7 +405,7 @@ sap.ui.define([
 
 		if (sMessage) {
 			return {
-				validation: coreLibrary.MessageType.Information,
+				validation: MessageType.Information,
 				message: sMessage
 			};
 		}

@@ -11,17 +11,17 @@ sap.ui.require([
 	"sap/ui/core/library",
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/format/DateFormat",
+	"sap/ui/core/message/MessageType",
 	"sap/ui/core/sample/common/pages/Any",
 	"sap/ui/core/sample/ViewTemplate/types/pages/Main",
 	"sap/ui/test/opaQunit",
 	"sap/ui/test/TestUtils"
-], function (Log, Localization, Core, Lib, library, UI5Date, DateFormat, Any, Main, opaTest,
-			 TestUtils) {
+], function (Log, Localization, Core, Lib, library, UI5Date, DateFormat, MessageType, Any, Main,
+			 opaTest, TestUtils) {
 	"use strict";
 
 	Core.ready().then(function () {
 		var sDefaultLanguage = Localization.getLanguage(),
-			MessageType = library.MessageType, // shortcut for sap.ui.core.MessageType
 			ValueState = library.ValueState; // shortcut for sap.ui.core.ValueState
 
 		QUnit.module("sap.ui.core.sample.ViewTemplate.types", {

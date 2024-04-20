@@ -18,7 +18,7 @@ sap.ui.define([
 	"sap/m/plugins/PluginBase",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/core/Lib",
-	"sap/ui/core/library",
+	"sap/ui/core/message/MessageType",
 	"sap/ui/model/Filter",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/Sorter",
@@ -43,7 +43,7 @@ sap.ui.define([
 	PluginBase,
 	nextUIUpdate,
 	Library,
-	coreLibrary,
+	MessageType,
 	Filter,
 	JSONModel,
 	Sorter,
@@ -127,12 +127,12 @@ sap.ui.define([
 		const oState = {};
 		let oValidationState = this.oTable.validateState(oState, "Group");
 
-		assert.equal(oValidationState.validation, coreLibrary.MessageType.None, "No message");
+		assert.equal(oValidationState.validation, MessageType.None, "No message");
 		assert.equal(oValidationState.message, undefined, "Message text is not defined");
 
 		this.oTable._oMessageFilter = new Filter("Key1", "EQ", "11");
 		oValidationState = this.oTable.validateState(oState, "Filter");
-		assert.equal(oValidationState.validation, coreLibrary.MessageType.Information, "Information message, Filters are ignored");
+		assert.equal(oValidationState.validation, MessageType.Information, "Information message, Filters are ignored");
 		assert.equal(oValidationState.message, oResourceBundle.getText("table.PERSONALIZATION_DIALOG_FILTER_MESSAGESTRIP"), "Message text");
 	});
 

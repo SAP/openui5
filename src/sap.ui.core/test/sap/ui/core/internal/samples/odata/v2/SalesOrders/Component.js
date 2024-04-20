@@ -8,15 +8,14 @@
  * @version @version@
  */
 sap.ui.define([
-	"sap/ui/core/library",
 	"sap/ui/core/Messaging",
 	"sap/ui/core/UIComponent",
+	"sap/ui/core/message/MessageType",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/MessageScope"
-], function (coreLibrary, Messaging, UIComponent, JSONModel, MessageScope) {
+], function (Messaging, UIComponent, MessageType, JSONModel, MessageScope) {
 	"use strict";
-	var MessageType = coreLibrary.MessageType,
-		aItemFilter = [{
+	var aItemFilter = [{
 			icon : "",
 			text : "Show all",
 			type : "Show all"

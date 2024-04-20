@@ -21,7 +21,7 @@
 						<snappedHeading>
 							<m:FlexBox wrap="Wrap" fitContainer="true" alignItems="Center">
 								<m:FlexBox wrap="NoWrap" fitContainer="true" alignItems="Center" class="sapUiTinyMarginEnd">
-									<f:Avatar src="../../../../../../../{products>ProductPicUrl}" displaySize="S" displayShape="Square"/>
+									<m:Avatar src="../../../../../../../{products>ProductPicUrl}" displaySize="S" displayShape="Square"/>
 									<m:Title text="{products>Name}" wrapping="true" class="sapUiTinyMarginEnd"/>
 								</m:FlexBox>
 							</m:FlexBox>
@@ -58,11 +58,11 @@
 
 				<headerContent>
 					<m:FlexBox wrap="Wrap" fitContainer="true" alignItems="Stretch">
-						<f:Avatar src="../../../../../../../{products>ProductPicUrl}"
+						<m:Avatar src="../../../../../../../{products>ProductPicUrl}"
 								  displaySize="L"
 								  displayShape="Square"
 								  class="sapUiTinyMarginEnd">
-						</f:Avatar>
+						</m:Avatar>
 						<m:VBox justifyContent="Center" class="sapUiSmallMarginEnd">
 							<m:Label text="Main Category"/>
 							<m:Text text="{products>MainCategory}"/>

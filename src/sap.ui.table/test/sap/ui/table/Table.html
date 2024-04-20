@@ -339,7 +339,7 @@
 		oTable.unbindRows();
 	}
 
-	var bBindTable = jQuery.sap.getUriParameters().get("sap-ui-xx-table-bind") !== "false";
+	var bBindTable = (new URLSearchParams(window.location.search)).get("sap-ui-xx-table-bind") !== "false";
 	if (bBindTable) {
 		rebind();
 	}

@@ -13,6 +13,7 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/m/Link",
 	"sap/ui/core/message/Message",
+	"sap/ui/core/message/MessageType",
 	"sap/ui/core/InvisibleText"
 ], function(
 	Element,
@@ -28,12 +29,10 @@ sap.ui.define([
 	coreLibrary,
 	Link,
 	Message,
+	MessageType,
 	InvisibleText
 ) {
 	"use strict";
-
-	// shortcut for sap.ui.core.MessageType
-	var MessageType = coreLibrary.MessageType;
 
 	// shortcut for sap.ui.core.ValueState
 	var ValueState = coreLibrary.ValueState;

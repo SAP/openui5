@@ -9,9 +9,9 @@ sap.ui.define([
 	"sap/m/List",
 	"sap/m/Panel",
 	"sap/m/StandardListItem",
-	"sap/ui/core/library",
 	"sap/ui/core/Messaging",
 	"sap/ui/core/message/Message",
+	"sap/ui/core/message/MessageType",
 	"sap/ui/core/util/MockServer",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/Filter",
@@ -24,13 +24,11 @@ sap.ui.define([
 	"sap/ui/table/Table",
 	"sap/ui/table/Column"
 ], function (each, isEmptyObject, UI5Date, DateTimePicker, Input, Label, List, Panel, ListItem,
-		library, Messaging, Message, MockServer, ChangeReason, Filter, Sorter, UpdateMethod, ODataModel,
-		DateTime, createAndAppendDiv, nextUIUpdate, Table, Column
+		Messaging, Message, MessageType, MockServer, ChangeReason, Filter, Sorter, UpdateMethod,
+		ODataModel, DateTime, createAndAppendDiv, nextUIUpdate, Table, Column
 ) {
 	"use strict";
 
-	// shortcut for sap.ui.core.MessageType
-	var MessageType = library.MessageType;
 	var sServiceUri = "/SalesOrderSrv/";
 	var sDataRootPath =  "test-resources/sap/ui/core/qunit/testdata/SalesOrder/";
 	var oModel, spy;

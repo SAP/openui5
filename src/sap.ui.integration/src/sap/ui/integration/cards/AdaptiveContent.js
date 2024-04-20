@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/base/i18n/Localization",
 	"sap/ui/core/Lib",
 	"sap/ui/integration/library",
-	"sap/ui/core/library",
+	"sap/ui/core/message/MessageType",
 	"sap/ui/dom/includeScript",
 	"sap/ui/integration/cards/BaseContent",
 	"sap/ui/integration/cards/adaptivecards/elements/hostConfig",
@@ -14,14 +14,11 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/base/Log"
 ],
-	function(Localization, Library, library, coreLibrary, includeScript, BaseContent, hostConfig, VBox, HTML, JSONModel, Log) {
+	function(Localization, Library, library, MessageType, includeScript, BaseContent, hostConfig, VBox, HTML, JSONModel, Log) {
 		"use strict";
 
 		// lazy dependencies, loaded on demand
 		var AdaptiveCards, ACData, Markdown, UI5InputText, UI5InputNumber, UI5InputChoiceSet, UI5InputTime, UI5InputDate, UI5InputToggle, ActionRender;
-
-		// shortcut for sap.ui.core.MessageType
-		var MessageType = coreLibrary.MessageType;
 
 		/**
 		 * Constructor for a new <code>AdaptiveContent</code>.

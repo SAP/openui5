@@ -13,14 +13,14 @@ sap.ui.define([
 	"sap/m/p13n/PersistenceProvider",
 	"sap/ui/fl/variants/VariantManagement",
 	"sap/m/p13n/BasePanel",
-	"sap/ui/core/library",
 	"sap/m/p13n/enums/PersistenceMode",
 	"sap/ui/core/Control",
+	"sap/ui/core/message/MessageType",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/m/p13n/modules/xConfigAPI",
 	"sap/m/p13n/MetadataHelper",
 	"sap/ui/core/CustomData"
-], function (Control, Engine, Controller, FlexRuntimeInfoAPI, FlexModificationHandler, ModificationHandler, TestModificationHandler, BaseObject, VBox, HBox, PersistenceProvider, VariantManagement, BasePanel, coreLibrary, PersistenceMode, CoreControl, nextUIUpdate, xConfigAPI, MetadataHelper, CustomData) {
+], function (Control, Engine, Controller, FlexRuntimeInfoAPI, FlexModificationHandler, ModificationHandler, TestModificationHandler, BaseObject, VBox, HBox, PersistenceProvider, VariantManagement, BasePanel, PersistenceMode, CoreControl, MessageType, nextUIUpdate, xConfigAPI, MetadataHelper, CustomData) {
 	"use strict";
 
 	QUnit.module("Modification Handler", {
@@ -760,7 +760,7 @@ sap.ui.define([
 
 		this.oControl.validateState = function(){
 			return {
-				validation: coreLibrary.MessageType.Warning,
+				validation: MessageType.Warning,
 				message: "Test"
 			};
 		};
@@ -780,7 +780,7 @@ sap.ui.define([
 		/*var mValidation = */Engine.getInstance().validateP13n(this.oControl, "Test2", oP13nUI);
 
 		//API change; calidateP13n does not return value enymore
-		//assert.equal(mValidation.validation, coreLibrary.MessageType.Warning, "The correct validation state provided");
+		//assert.equal(mValidation.validation, MessageType.Warning, "The correct validation state provided");
 		//assert.equal(mValidation.message, "Test", "The correct validation messsage provided");
 
 		//Check if the strip has been placed in the BasePanel content area
@@ -804,7 +804,7 @@ sap.ui.define([
 
 		this.oControl.validateState = function(){
 			return {
-				validation: coreLibrary.MessageType.None,
+				validation: MessageType.None,
 				message: "Test"
 			};
 		};

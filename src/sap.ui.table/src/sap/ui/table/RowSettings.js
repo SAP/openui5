@@ -4,11 +4,15 @@
 
 // Provides control sap.ui.table.RowSettings
 sap.ui.define([
-	'sap/ui/core/Element', './utils/TableUtils', 'sap/ui/base/DataType', './library', 'sap/ui/core/library'
-], function(Element, TableUtils, DataType, library, coreLibrary) {
+	'sap/ui/core/Element',
+	'./utils/TableUtils',
+	'sap/ui/base/DataType',
+	'./library',
+	'sap/ui/core/library',
+	'sap/ui/core/message/MessageType'
+], function(Element, TableUtils, DataType, library, coreLibrary, MessageType) {
 	"use strict";
 
-	const MessageType = coreLibrary.MessageType;
 	const IndicationColor = coreLibrary.IndicationColor;
 
 	/**

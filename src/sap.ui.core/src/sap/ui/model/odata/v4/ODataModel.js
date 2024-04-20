@@ -34,12 +34,12 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/i18n/Localization",
 	"sap/ui/base/SyncPromise",
-	"sap/ui/core/library",
 	"sap/ui/core/Messaging",
 	"sap/ui/core/Rendering",
 	"sap/ui/core/Supportability",
 	"sap/ui/core/cache/CacheManager",
 	"sap/ui/core/message/Message",
+	"sap/ui/core/message/MessageType",
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/Context",
 	"sap/ui/model/Model",
@@ -47,8 +47,8 @@ sap.ui.define([
 	"sap/ui/thirdparty/URI"
 ], function (ODataContextBinding, ODataListBinding, ODataMetaModel, ODataPropertyBinding,
 		SubmitMode, _GroupLock, _Helper, _MetadataRequestor, _Parser, _Requestor, assert, Log,
-		Localization, SyncPromise, coreLibrary, Messaging, Rendering, Supportability,
-		CacheManager, Message, BindingMode, BaseContext, Model, OperationMode, URI) {
+		Localization, SyncPromise, Messaging, Rendering, Supportability, CacheManager,
+		Message, MessageType, BindingMode, BaseContext, Model, OperationMode, URI) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataModel",
@@ -57,7 +57,6 @@ sap.ui.define([
 			"$select"],
 		// binding-specific parameters allowed in getKeepAliveContext
 		aGetKeepAliveParameters = ["$$groupId", "$$patchWithoutSideEffects", "$$updateGroupId"],
-		MessageType = coreLibrary.MessageType,
 		aMessageTypes = [
 			undefined,
 			MessageType.Success,

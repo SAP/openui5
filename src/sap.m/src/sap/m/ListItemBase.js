@@ -7,11 +7,11 @@ sap.ui.define([
 	"sap/ui/base/DataType",
 	"sap/ui/model/BindingMode",
 	"sap/ui/Device",
-	"sap/ui/core/library",
 	"sap/ui/core/Control",
 	"sap/ui/core/IconPool",
 	"sap/ui/core/Icon",
 	"sap/ui/core/InvisibleText",
+	"sap/ui/core/message/MessageType",
 	"sap/ui/core/theming/Parameters",
 	"sap/ui/core/ShortcutHintsMixin",
 	"./library",
@@ -29,11 +29,11 @@ function(
 	DataType,
 	BindingMode,
 	Device,
-	coreLibrary,
 	Control,
 	IconPool,
 	Icon,
 	InvisibleText,
+	MessageType,
 	ThemeParameters,
 	ShortcutHintsMixin,
 	library,
@@ -56,9 +56,6 @@ function(
 
 	// shortcut for sap.m.ButtonType
 	var ButtonType = library.ButtonType;
-
-	// shortcut for sap.ui.core.MessageType
-	var MessageType = coreLibrary.MessageType;
 
 
 	/**

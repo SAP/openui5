@@ -11,10 +11,10 @@ sap.ui.define([
 	"sap/ui/base/ManagedObjectObserver",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/core/Lib",
-	"sap/ui/core/library",
 	"sap/ui/core/Messaging",
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/message/Message",
+	"sap/ui/core/message/MessageType",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/mvc/View",
 	"sap/ui/core/Rendering",
@@ -38,7 +38,7 @@ sap.ui.define([
 	// load Table resources upfront to avoid loading times > 1 second for the first test using Table
 	// "sap/ui/table/Table"
 ], function (Log, Localization, merge, uid, Input, Device, ManagedObjectObserver, SyncPromise,
-		Library, coreLibrary, Messaging, UI5Date, Message, Controller, View, Rendering, BindingMode, Filter,
+		Library, Messaging, UI5Date, Message, MessageType, Controller, View, Rendering, BindingMode, Filter,
 		FilterOperator, FilterType, Model, Sorter, JSONModel, MessageModel, CountMode, MessageScope, Decimal,
 		Context, ODataModel, XMLModel, TestUtils, datajs, XMLHelper) {
 	/*global QUnit, sinon*/
@@ -47,7 +47,6 @@ sap.ui.define([
 
 	var sDefaultLanguage = Localization.getLanguage(),
 		sDefaultTimezone = Localization.getTimezone(),
-		MessageType = coreLibrary.MessageType, // shortcut for sap.ui.core.MessageType
 		NO_CONTENT = {/*204 no content*/},
 		sODataListBindingClassName = "sap.ui.model.odata.v2.ODataListBinding",
 		sODataMessageParserClassName = "sap.ui.model.odata.ODataMessageParser",
@@ -56,7 +55,7 @@ sap.ui.define([
 		rRowIndex = /~(\d+)~/,
 		/**
 		 * Maps back-end response severity values to the values defined in the enumeration
-		 * <code>sap.ui.core.MessageType</code>.
+		 * <code>sap/ui/core/message/MessageType</code>.
 		 */
 		mSeverityMap = {
 			error : MessageType.Error,

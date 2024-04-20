@@ -1,11 +1,8 @@
 /*global QUnit */
 sap.ui.define(
-	["sap/m/MessageItem", "sap/ui/core/library"],
-	function(MessageItem, coreLibrary) {
+	["sap/m/MessageItem", "sap/ui/core/message/MessageType"],
+	function(MessageItem, MessageType) {
 		"use strict";
-
-		// shortcut for sap.ui.core.MessageType
-		var MessageType = coreLibrary.MessageType;
 
 
 		QUnit.module("MessageItem Public API", {

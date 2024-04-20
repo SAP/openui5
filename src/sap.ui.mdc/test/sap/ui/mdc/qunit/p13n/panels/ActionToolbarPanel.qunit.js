@@ -5,12 +5,10 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon",
 	"sap/ui/base/Event",
 	"sap/ui/qunit/utils/nextUIUpdate",
-	"sap/ui/core/library",
+	"sap/ui/core/message/MessageType",
 	"sap/m/ColumnListItem"
-], function (ActionToolbarPanel, StandardListItem, sinon, Event, nextUIUpdate, coreLibrary, ColumnListItem) {
+], function (ActionToolbarPanel, StandardListItem, sinon, Event, nextUIUpdate, MessageType, ColumnListItem) {
 	"use strict";
-
-	const MessageType = coreLibrary.MessageType;
 
 	QUnit.module("ActionToolbarPanel API tests", {
 		beforeEach: async function() {

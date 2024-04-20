@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/library",
 	"sap/ui/core/IconPool",
+	"sap/ui/core/message/MessageType",
 	"sap/m/library",
 	"sap/m/Toolbar",
 	"sap/ui/core/message/Message",
@@ -27,6 +28,7 @@ sap.ui.define([
 	JSONModel,
 	coreLibrary,
 	IconPool,
+	MessageType,
 	mobileLibrary,
 	Toolbar,
 	Message,
@@ -40,9 +42,6 @@ sap.ui.define([
 
 	// shortcut for sap.ui.core.ValueState
 	var ValueState = coreLibrary.ValueState;
-
-	// shortcut for sap.ui.core.MessageType
-	var MessageType = coreLibrary.MessageType;
 
 	// shortcut for sap.m.PlacementType
 	var PlacementType = mobileLibrary.PlacementType;
