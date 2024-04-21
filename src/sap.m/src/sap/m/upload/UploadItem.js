@@ -60,7 +60,13 @@ sap.ui.define([
 					/**
 					 * Specifies file size of the item in bytes.
 					 */
-					fileSize: {type: "float", defaultValue: 0}
+					fileSize: {type: "float", defaultValue: 0},
+					/**
+					 * This property is used in the {@link sap.m.upload.FilePreviewDialog FilePreviewDialog} to determine if the file is from a trusted source before displaying.
+					 * This property must be set to true if the file is from a trusted source.
+					 * @since 1.125
+					 */
+					isTrustedSource: {type: "boolean", defaultValue: false}
 				},
 				aggregations: {
 					/**
