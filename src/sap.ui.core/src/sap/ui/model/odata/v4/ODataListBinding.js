@@ -3266,7 +3266,8 @@ sap.ui.define([
 	 * simply "persisted". Omitting a new parent turns the child into a root.
 	 *
 	 * @param {sap.ui.model.odata.v4.Context} oChildContext - The (child) node to be moved
-	 * @param {sap.ui.model.odata.v4.Context} [oParentContext] - The new parent's context
+	 * @param {sap.ui.model.odata.v4.Context|null} oParentContext - The new parent's context
+	 * @param {sap.ui.model.odata.v4.Context|null} [oSiblingContext] - The next sibling's context
 	 * @returns {sap.ui.base.SyncPromise<void>}
 	 *   A promise which is resolved without a defined result when the move is finished, or
 	 *   rejected in case of an error
@@ -3274,7 +3275,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	ODataListBinding.prototype.move = function (oChildContext, oParentContext) {
+	ODataListBinding.prototype.move = function (oChildContext, oParentContext, oSiblingContext) {
 		/*
 		 * Sets the <code>iIndex</code> of every context instance inside the given range. Allows for
 		 * start greater than end and swaps both in that case.
@@ -3306,16 +3307,28 @@ sap.ui.define([
 		const sUpdateGroupId = this.getUpdateGroupId();
 		const oGroupLock = this.lockGroup(sUpdateGroupId, true, true);
 		const sChildPath = oChildContext.getCanonicalPath().slice(1);
-		const sParentPath = oParentContext?.getCanonicalPath().slice(1); // before #lockGroup!
-		const {promise : oPromise, refresh : bRefresh}
-			= this.oCache.move(oGroupLock, sChildPath, sParentPath);
+		const sParentPath = oParentContext === null
+			? null
+			: oParentContext.getCanonicalPath().slice(1); // before #lockGroup!
+		const sSiblingPath = oSiblingContext === null
+			? null
+			: oSiblingContext?.getCanonicalPath().slice(1); // before #lockGroup!
+		const sNonCanonicalChildPath = oSiblingContext === undefined
+			? undefined
+			: oChildContext.getPath().slice(1);
+		const {promise : oPromise, refresh : bRefresh} = this.oCache.move(oGroupLock, sChildPath,
+			sParentPath, sSiblingPath, sNonCanonicalChildPath);
 
 		if (bRefresh) {
 			if (bExpanded) {
 				this.expand(oChildContext, /*bSilent*/true).unwrap(); // guaranteed to be sync!
 			}
 			return SyncPromise.all([
-				oPromise,
+				oPromise.then(function ([,, iNewIndex]) {
+					if (oSiblingContext !== undefined) {
+						oChildContext.iIndex = iNewIndex;
+					}
+				}),
 				this.requestSideEffects(sUpdateGroupId, [""])
 			]);
 		}
