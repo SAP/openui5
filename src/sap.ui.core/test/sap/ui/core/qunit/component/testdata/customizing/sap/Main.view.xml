@@ -14,7 +14,6 @@
 		<core:Fragment fragmentName="testdata.customizing.sap.Frag1" type="XML" />
 		<core:Fragment id="frag1" fragmentName="testdata.customizing.sap.Frag1" type="XML" />
 
-		<html:h2>JSView Extension Tests start below:</html:h2>
 		<mvc:View viewName="module:testdata/customizing/sap/Sub4Typed" />
 
 		<mvc:XMLView id="sub6View" viewName="testdata.customizing.sap.Sub6" />

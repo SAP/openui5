@@ -2,7 +2,7 @@
 		  xmlns="sap.uxap"
 		  xmlns:layout="sap.ui.layout"
 		  xmlns:m="sap.m"
-		  xmlns:html="http://www.w3.org/1999/xhtml"
+		  xmlns:core="sap.ui.core"
 		  height="100%">
 	<ObjectPageLayout id="ObjectPageLayout"
 					  enableLazyLoading="false"
@@ -60,7 +60,7 @@
 					<ObjectPageSubSection id="goalsSectionSS1" title=" ">
 						<blocks>
 							<m:Panel height="300px">
-								<html:div class="dummyBlockContent100Pct7">goalsSectionSS1</html:div>
+								<core:HTML content="&lt;div class=&quot;dummyBlockContent100Pct7&quot;&gt;goalsSectionSS1&lt;/div&gt;" />
 							</m:Panel>
 						</blocks>
 					</ObjectPageSubSection>
@@ -72,7 +72,7 @@
 					<ObjectPageSubSection id="personalSectionSS1" title="Connect">
 						<blocks>
 							<m:Panel height="300px">
-								<html:div class="dummyBlockContent100Pct7">personalSectionSS1</html:div>
+								<core:HTML content="&lt;div class=&quot;dummyBlockContent100Pct7&quot;&gt;personalSectionSS1&lt;/div&gt;" />
 							</m:Panel>
 						</blocks>
 					</ObjectPageSubSection>
@@ -80,12 +80,12 @@
 					<ObjectPageSubSection id="personalSectionSS2" title="Payment information">
 						<blocks>
 							<m:Panel height="300px">
-								<html:div class="dummyBlockContent100Pct7">personalSectionSS2</html:div>
+								<core:HTML content="&lt;div class=&quot;dummyBlockContent100Pct7&quot;&gt;personalSectionSS2&lt;/div&gt;" />
 							</m:Panel>
 						</blocks>
 						<moreBlocks>
 							<m:Panel height="300px">
-								<html:div class="dummyBlockContent100Pct7">personalSectionSS2 more block</html:div>
+								<core:HTML content="&lt;div class=&quot;dummyBlockContent100Pct7&quot;&gt;personalSectionSS2 more block&lt;/div&gt;" />
 							</m:Panel>
 						</moreBlocks>
 					</ObjectPageSubSection>
@@ -97,7 +97,7 @@
 					<ObjectPageSubSection id="employmentSectionSS1" title="Job information">
 						<blocks>
 							<m:Panel height="300px">
-								<html:div class="dummyBlockContent100Pct7">employmentSectionSS1</html:div>
+								<core:HTML content="&lt;div class=&quot;dummyBlockContent100Pct7&quot;&gt;employmentSectionSS1&lt;/div&gt;" />
 							</m:Panel>
 						</blocks>
 					</ObjectPageSubSection>
@@ -105,12 +105,12 @@
 					<ObjectPageSubSection id="employmentSectionSS2" title="Employee Details" mode="Collapsed" importance="Medium">
 						<blocks>
 							<m:Panel height="300px">
-								<html:div class="dummyBlockContent100Pct7">employmentSectionSS2</html:div>
+								<core:HTML content="&lt;div class=&quot;dummyBlockContent100Pct7&quot;&gt;employmentSectionSS2&lt;/div&gt;" />
 							</m:Panel>
 						</blocks>
 						<moreBlocks>
 							<m:Panel height="300px">
-								<html:div class="dummyBlockContent100Pct7">employmentSectionSS2 more blocks</html:div>
+								<core:HTML content="&lt;div class=&quot;dummyBlockContent100Pct7&quot;&gt;employmentSectionSS2 more blocks&lt;/div&gt;" />
 							</m:Panel>
 						</moreBlocks>
 					</ObjectPageSubSection>
@@ -118,7 +118,7 @@
 					<ObjectPageSubSection id="employmentSectionSS3" title="Job Relationship" mode="Collapsed" importance="Low">
 						<blocks>
 							<m:Panel height="300px">
-								<html:div class="dummyBlockContent100Pct7">employmentSectionSS3</html:div>
+								<core:HTML content="&lt;div class=&quot;dummyBlockContent100Pct7&quot;&gt;employmentSectionSS3&lt;/div&gt;" />
 							</m:Panel>
 						</blocks>
 					</ObjectPageSubSection>

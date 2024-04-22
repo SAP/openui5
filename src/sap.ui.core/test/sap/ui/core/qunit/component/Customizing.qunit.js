@@ -89,8 +89,8 @@ sap.ui.define([
 		assert.ok(document.getElementById("theComponent---mainView--sub2View--customSubSubView1"), "XMLView Extension should be rendered");
 		assert.ok(document.getElementById("theComponent---mainView--sub2View--customSubSubView1--customFrag1Btn"), "Button of XMLView Extension should be rendered");
 
-		// extension within html Control
-		assert.ok(document.getElementById("theComponent---mainView--sub2View--customFrag21Btn"), "Button of XMLView Extension inside html Control should be rendered");
+		// extension within child Control
+		assert.ok(document.getElementById("theComponent---mainView--sub2View--customFrag21Btn"), "Button of XMLView Extension in child control should be rendered");
 	});
 
 

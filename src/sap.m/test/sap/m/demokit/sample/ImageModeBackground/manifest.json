@@ -17,6 +17,13 @@
 				"sap.ui.core": {}
 			}
 		},
+		"resources": {
+			"css": [
+				{
+					"uri": "css/styles.css"
+				}
+			]
+		},
 		"config": {
 			"sample": {
 				"files": [

@@ -54,7 +54,7 @@
 							<Text text="Repeating background" class="sapUiSmallMarginTop"/>
 						</VBox>
 						<VBox alignItems="Center">
-							<html:div style="background-color: #A9EAFF">
+							<HBox class="imageContainer">
 								<Image
 										src="{img>/products/pic3}"
 										mode="{/imageMode}"
@@ -62,7 +62,7 @@
 										backgroundSize="contain"
 										backgroundPosition="center center"
 										width="6em" />
-							</html:div>
+							</HBox>
 							<Text text="The background adjusts its lower dimension in order to fit in the container" class="sapUiSmallMarginTop"/>
 						</VBox>
 					</l:content>

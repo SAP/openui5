@@ -2,7 +2,7 @@
 		xmlns="sap.m"
 		xmlns:l="sap.ui.layout"
 		xmlns:mvc="sap.ui.core.mvc"
-		xmlns:html="http://www.w3.org/1999/xhtml"
+		xmlns:core="sap.ui.core"
 		controllerName="sap.ui.layout.sample.GridProperties.controller.GridProperties"
 		class="GridPropertiesSample">
 
@@ -44,10 +44,10 @@
 				class="gridWrapper">
 			<l:Grid
 					containerQuery="true">
-				<html:div class="exampleDiv"/>
-				<html:div class="exampleDiv"/>
-				<html:div class="exampleDiv"/>
-				<html:div class="exampleDiv"/>
+				<core:HTML content="&lt;div class=&quot;exampleDiv&quot; /&gt;" />
+				<core:HTML content="&lt;div class=&quot;exampleDiv&quot; /&gt;" />
+				<core:HTML content="&lt;div class=&quot;exampleDiv&quot; /&gt;" />
+				<core:HTML content="&lt;div class=&quot;exampleDiv&quot; /&gt;" />
 			</l:Grid>
 		</l:VerticalLayout>
 
@@ -70,12 +70,12 @@
 			<l:Grid
 					containerQuery="true"
 					defaultSpan="XL2 L4">
-				<html:div class="exampleDiv"/>
-				<html:div class="exampleDiv"/>
-				<html:div class="exampleDiv"/>
-				<html:div class="exampleDiv"/>
-				<html:div class="exampleDiv"/>
-				<html:div class="exampleDiv"/>
+				<core:HTML content="&lt;div class=&quot;exampleDiv&quot; /&gt;" />
+				<core:HTML content="&lt;div class=&quot;exampleDiv&quot; /&gt;" />
+				<core:HTML content="&lt;div class=&quot;exampleDiv&quot; /&gt;" />
+				<core:HTML content="&lt;div class=&quot;exampleDiv&quot; /&gt;" />
+				<core:HTML content="&lt;div class=&quot;exampleDiv&quot; /&gt;" />
+				<core:HTML content="&lt;div class=&quot;exampleDiv&quot; /&gt;" />
 			</l:Grid>
 		</l:VerticalLayout>
 
@@ -119,7 +119,7 @@
 					containerQuery="true"
 					defaultIndent="L1 M4 S6"
 					defaultSpan="L6 M6 S6">
-				<html:div class="exampleDiv"/>
+				<core:HTML content="&lt;div class=&quot;exampleDiv&quot; /&gt;" />
 			</l:Grid>
 		</l:VerticalLayout>
 
@@ -153,8 +153,8 @@
 					containerQuery="true"
 					defaultIndent="L1 M3"
 					defaultSpan="L3 M3 S3">
-				<html:div class="exampleDiv"/>
-				<html:div class="exampleDiv"/>
+				<core:HTML content="&lt;div class=&quot;exampleDiv&quot; /&gt;" />
+				<core:HTML content="&lt;div class=&quot;exampleDiv&quot; /&gt;" />
 			</l:Grid>
 		</l:VerticalLayout>
 
@@ -186,10 +186,10 @@
 			<l:Grid
 					containerQuery="true"
 					hSpacing="0">
-				<html:div class="exampleDiv"/>
-				<html:div class="exampleDiv contrastColor"/>
-				<html:div class="exampleDiv"/>
-				<html:div class="exampleDiv contrastColor"/>
+				<core:HTML content="&lt;div class=&quot;exampleDiv&quot; /&gt;" />
+				<core:HTML content="&lt;div class=&quot;exampleDiv contrastColor&quot; /&gt;" />
+				<core:HTML content="&lt;div class=&quot;exampleDiv&quot; /&gt;" />
+				<core:HTML content="&lt;div class=&quot;exampleDiv contrastColor&quot; /&gt;" />
 			</l:Grid>
 		</l:VerticalLayout>
 
@@ -211,10 +211,10 @@
 			<l:Grid
 					containerQuery="true"
 					hSpacing="2">
-				<html:div class="exampleDiv"/>
-				<html:div class="exampleDiv"/>
-				<html:div class="exampleDiv"/>
-				<html:div class="exampleDiv"/>
+				<core:HTML content="&lt;div class=&quot;exampleDiv&quot; /&gt;" />
+				<core:HTML content="&lt;div class=&quot;exampleDiv&quot; /&gt;" />
+				<core:HTML content="&lt;div class=&quot;exampleDiv&quot; /&gt;" />
+				<core:HTML content="&lt;div class=&quot;exampleDiv&quot; /&gt;" />
 			</l:Grid>
 		</l:VerticalLayout>
 
@@ -257,8 +257,8 @@
 					containerQuery="true"
 					vSpacing="0"
 					defaultSpan="L12 M12 S12">
-				<html:div class="exampleDiv"/>
-				<html:div class="exampleDiv contrastColor"/>
+				<core:HTML content="&lt;div class=&quot;exampleDiv&quot; /&gt;" />
+				<core:HTML content="&lt;div class=&quot;exampleDiv contrastColor&quot; /&gt;" />
 			</l:Grid>
 		</l:VerticalLayout>
 
@@ -291,8 +291,8 @@
 					containerQuery="true"
 					vSpacing="2"
 					defaultSpan="L12 M12 S12">
-				<html:div class="exampleDiv"/>
-				<html:div class="exampleDiv"/>
+				<core:HTML content="&lt;div class=&quot;exampleDiv&quot; /&gt;" />
+				<core:HTML content="&lt;div class=&quot;exampleDiv&quot; /&gt;" />
 			</l:Grid>
 		</l:VerticalLayout>
 
@@ -323,10 +323,10 @@
 			<l:Grid
 					containerQuery="true"
 					width="65%">
-				<html:div class="exampleDiv"/>
-				<html:div class="exampleDiv"/>
-				<html:div class="exampleDiv"/>
-				<html:div class="exampleDiv"/>
+				<core:HTML content="&lt;div class=&quot;exampleDiv&quot; /&gt;" />
+				<core:HTML content="&lt;div class=&quot;exampleDiv&quot; /&gt;" />
+				<core:HTML content="&lt;div class=&quot;exampleDiv&quot; /&gt;" />
+				<core:HTML content="&lt;div class=&quot;exampleDiv&quot; /&gt;" />
 			</l:Grid>
 		</l:VerticalLayout>
 
@@ -369,10 +369,10 @@
 					containerQuery="true"
 					position="Right"
 					width="65%">
-				<html:div class="exampleDiv"/>
-				<html:div class="exampleDiv"/>
-				<html:div class="exampleDiv"/>
-				<html:div class="exampleDiv"/>
+				<core:HTML content="&lt;div class=&quot;exampleDiv&quot; /&gt;" />
+				<core:HTML content="&lt;div class=&quot;exampleDiv&quot; /&gt;" />
+				<core:HTML content="&lt;div class=&quot;exampleDiv&quot; /&gt;" />
+				<core:HTML content="&lt;div class=&quot;exampleDiv&quot; /&gt;" />
 			</l:Grid>
 		</l:VerticalLayout>
 
@@ -405,10 +405,10 @@
 					containerQuery="true"
 					position="Center"
 					width="65%">
-				<html:div class="exampleDiv"/>
-				<html:div class="exampleDiv"/>
-				<html:div class="exampleDiv"/>
-				<html:div class="exampleDiv"/>
+				<core:HTML content="&lt;div class=&quot;exampleDiv&quot; /&gt;" />
+				<core:HTML content="&lt;div class=&quot;exampleDiv&quot; /&gt;" />
+				<core:HTML content="&lt;div class=&quot;exampleDiv&quot; /&gt;" />
+				<core:HTML content="&lt;div class=&quot;exampleDiv&quot; /&gt;" />
 			</l:Grid>
 		</l:VerticalLayout>
 

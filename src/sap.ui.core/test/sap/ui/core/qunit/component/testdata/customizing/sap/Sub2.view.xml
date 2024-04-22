@@ -11,9 +11,7 @@
 
 
 	<Panel id="panel">
-		<html:div id="htmlDiv">
-			<core:ExtensionPoint name="extension21" />
-		</html:div>
+		<core:ExtensionPoint name="extension21" />
 	</Panel>
 
 	<core:ExtensionPoint name="extension3" />

@@ -57,7 +57,7 @@ sap.ui.define([
 	var oConfig = {
 		viewClass : XMLView,
 		viewClassName : XMLView.getMetadata().getName(),
-		idsToBeChecked : ["myPanel", "Button1", "localTableId"]
+		idsToBeChecked : ["myPanel", "Button1", "Button2", "Button3"]
 	};
 
 	var fnWaitForNestedViews = function(oView) {
@@ -110,6 +110,69 @@ sap.ui.define([
 		}).then(fnWaitForNestedViews);
 	}, /* bCheckViewData = */ true);
 
+	/**
+	 * @deprecated since version 1.120 because the view contains HTML and SVG nodes
+	 */
+	(() => {
+		const sViewName = "example.mvc.legacy.test";
+
+		const oConfig = {
+			viewClass : XMLView,
+			viewClassName : XMLView.getMetadata().getName(),
+			idsToBeChecked : ["myPanel", "Button1", "localTableId"]
+		};
+		let sViewXML;
+		pViewXMLLoaded = pViewXMLLoaded.then(() => {
+			return Promise.resolve(
+				jQuery.ajax({
+					url: sap.ui.require.toUrl(sViewName.replace(/\./g, "/") + ".view.xml"),
+					dataType: "text"
+				})
+			);
+		}).then(function(sResult) {
+			sViewXML = sResult;
+		});
+
+		// run the full testset for a view loaded from a file
+		testsuite(oConfig, "XMLView (contains HTML or SVG nodes) creation loading from file", function() {
+			return XMLView.create({
+				viewName: sViewName
+			}).then(fnWaitForNestedViews);
+		});
+
+		// run the full testset for a view created from a string
+		testsuite(oConfig, "XMLView (contains HTML or SVG nodes) creation via XML string", function() {
+			// let the XMLView parse the XML string
+			return XMLView.create({
+				definition: sViewXML
+			}).then(fnWaitForNestedViews);
+		});
+
+		// run the full testset for a view created from an XML document
+		testsuite(oConfig, "XMLView (contains HTML or SVG nodes) creation via XML document", function() {
+			// parse the XML string and pass the XML document
+			return XMLView.create({
+				definition: XMLHelper.parse(sViewXML)
+			}).then(fnWaitForNestedViews);
+		});
+
+		// run the full testset for a view created from the root element of an XML document
+		testsuite(oConfig, "XMLView (contains HTML or SVG nodes) creation via XML node", function() {
+			// parse the XML string and pass the XML root element
+			return XMLView.create({
+				xmlNode: XMLHelper.parse(sViewXML).documentElement
+			}).then(fnWaitForNestedViews);
+		});
+
+		// run the full testset for a view created via the generic factory method
+		testsuite(oConfig, "XMLView (contains HTML or SVG nodes) creation using generic view factory", function() {
+			return View.create({
+				type: ViewType.XML,
+				viewName: sViewName,
+				viewData: {test:"testdata"}
+			}).then(fnWaitForNestedViews);
+		}, /* bCheckViewData = */ true);
+	})();
 
 	var sDefaultLanguage = Localization.getLanguage();
 
@@ -133,12 +196,33 @@ sap.ui.define([
 		});
 	});
 
+	/**
+	 * @deprecated
+	 */
+	QUnit.test("Using native HTML in XMLViews (future=false)", async function (assert) {
+		future.active = false;
+		const oView = await XMLView.create({
+			viewName: 'example.mvc.HtmlOnRoot'
+		});
+
+		assert.ok(oView, "XMLView containing native HTML content is created successfully.");
+		future.active = false;
+	});
+
+	QUnit.test("Using native HTML in XMLViews (future=true)", async function (assert) {
+		future.active = true;
+		await assert.rejects(XMLView.create({
+			viewName: 'example.mvc.HtmlOnRoot'
+		}), "View creation rejects because XMLView contains HTML content on root.");
+		future.active = false;
+	});
+
 	QUnit.test("async loading new Factory with resource bundle", function(assert) {
 		var oResourceBundleCreateSpy = sinon.spy(ResourceBundle, "create");
 		var oViewPromise = XMLView.create({definition: "" +
 				"<mvc:View resourceBundleName=\"testdata.mvc.text\"\n" +
 				"\t\t   resourceBundleAlias=\"i18n\"\n" +
-				"\t\t   xmlns:mvc=\"sap.ui.core.mvc\" xmlns=\"sap.m\" xmlns:html=\"http://www.w3.org/1999/xhtml\">\n" +
+				"\t\t   xmlns:mvc=\"sap.ui.core.mvc\" xmlns=\"sap.m\">\n" +
 				"\t<Panel id=\"aPanel\">\n" +
 				"\t\t<Button id=\"Button1\" text=\"{i18n>TEXT_CLOSE}\"></Button>\n" +
 				"\t</Panel>\n" +
@@ -260,7 +344,7 @@ sap.ui.define([
 
 		// load and place view, force rendering
 		var oView = View._create({
-			viewName: 'example.mvc.test',
+			viewName: 'example.mvc.legacy.test',
 			type: ViewType.XML,
 			async: true
 		}).placeAt('content');
@@ -324,7 +408,7 @@ sap.ui.define([
 
 		// load view, embed it in a Panel and force rendering
 		return XMLView.create({
-			viewName: 'example.mvc.test'
+			viewName: 'example.mvc.legacy.test'
 		}).then(async function(oView) {
 			var oPanel = new Panel({
 				text: "My View",
@@ -399,7 +483,7 @@ sap.ui.define([
 
 		return XMLView.create({
 			id: "xmlview",
-			viewName: 'example.mvc.test'
+			viewName: 'example.mvc.legacy.test'
 		}).then(async function(oView) {
 			xmlview = oView;
 
@@ -441,7 +525,7 @@ sap.ui.define([
 
 		// load and place view, force rendering
 		return XMLView.create({
-			viewName: "example.mvc.test"
+			viewName: 'example.mvc.legacy.test'
 		}).then(async function(oView) {
 			oView.placeAt("content");
 			var oPanel = oView.byId("myPanel");
@@ -509,7 +593,7 @@ sap.ui.define([
 
 		// load and place view, force rendering
 		return XMLView.create({
-			viewName: 'example.mvc.test'
+			viewName: 'example.mvc.legacy.test'
 		}).then(async function(oView) {
 			oView.placeAt("content");
 			await nextUIUpdate();
@@ -529,7 +613,7 @@ sap.ui.define([
 
 		// load and place view, force rendering
 		return XMLView.create({
-			viewName: 'example.mvc.test'
+			viewName: 'example.mvc.legacy.test'
 		}).then(async function(oView) {
 			oView.placeAt("content");
 			await nextUIUpdate();
@@ -546,6 +630,8 @@ sap.ui.define([
 			oDomRef.parentElement.removeChild(oDomRef);
 		});
 	});
+
+	QUnit.module("Nested XMLViews");
 
 	/**
 	 * @deprecated
@@ -748,7 +834,7 @@ sap.ui.define([
 	// error
 	QUnit.test("Error in template - no default aggregation defined", function(assert) {
 		var sXml = [
-				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:test="sap.ui.testlib" xmlns="http://www.w3.org/1999/xhtml">',
+				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:test="sap.ui.testlib">',
 				'	<test:TestButton>',
 				'		<test:Error/>',
 				'	</test:TestButton>',
@@ -769,7 +855,7 @@ sap.ui.define([
 
 	QUnit.test("Error in template - text in aggregation", function(assert) {
 		var sXml = [
-				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:test="sap.ui.testlib" xmlns="http://www.w3.org/1999/xhtml">',
+				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:test="sap.ui.testlib">',
 				'	<test:TestButton>',
 				'		Error',
 				'	</test:TestButton>',
@@ -809,7 +895,11 @@ sap.ui.define([
 		});
 	});
 
-	// encoding
+
+	/**
+	 * encoding
+	 * @deprecated since 1.120 because the view has HTML or SVG nodes
+	 */
 	QUnit.test("Encoding", function(assert) {
 
 		var xmlWithHTMLFragment = [
@@ -989,15 +1079,12 @@ sap.ui.define([
 
 	QUnit.test("Named Aggregation", function(assert) {
 		var sXmlWithNamedAggregations = [
-			'<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns:test="sap.ui.testlib" xmlns:html="http://www.w3.org/1999/xhtml" controllerName="example.mvc.test">',
+			'<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns:test="sap.ui.testlib" controllerName="example.mvc.test">',
 			'  <mvc:content>',
 			'    <test:TestButton id="contentButton" />',
-			'    <html:div id="div1">test1</html:div>',
 			'  </mvc:content>',
 			'  <mvc:dependents>',
 			'    <test:TestButton id="dependentButton" />',
-			'    <html:div id="div2">test2</html:div>',
-			'    plain text node',
 			'    <core:Fragment id="innerFragment" fragmentName="testdata.fragments.XMLFragmentDialog" type="XML"/>',
 			'  </mvc:dependents>',
 			'</mvc:View>'
@@ -1036,13 +1123,6 @@ sap.ui.define([
 			assert.strictEqual(oView.getDependents()[0].getId(),"viewWithNamedAggregations--dependentButton", "viewWithNamedAggregations: The dependent button was added correctly to dependents aggregation");
 			assert.strictEqual(oView.getDependents()[1].getId(),"viewWithNamedAggregations--innerFragment--xmlDialog", "viewWithNamedAggregations: The dialog control from the dependent fragment was added correctly to dependents aggregation");
 
-			var oDiv1 = document.getElementById(oView.createId("div1"));
-			assert.ok(oDiv1, "XHTML element in 'content' aggregation is rendered");
-			assert.equal(oDiv1.childNodes.length, 1, "The div has one child");
-			assert.equal(oDiv1.childNodes[0].textContent, "test1", "The text content is correct");
-			assert.notOk(document.getElementById(oView.createId("div2")), "XHTML element in 'dependents' aggregation is NOT rendered");
-			assert.notOk(oDiv1.nextSibling.textContent.trim(), "HTML nodes or text nodes outside the content aggregation shouldn't be rendered");
-
 			oView.destroy();
 		}).then(function() {
 			return XMLView.create({
@@ -1068,6 +1148,53 @@ sap.ui.define([
 		});
 	});
 
+	/**
+	 * @deprecated since version 1.120 because the views contain HTML or SVG nodes
+	 */
+	QUnit.test("Named Aggregation (Views contain HTML nodes)", function(assert) {
+		var sXmlWithNamedAggregations = [
+			'<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns:test="sap.ui.testlib" xmlns:html="http://www.w3.org/1999/xhtml" controllerName="example.mvc.test">',
+			'  <mvc:content>',
+			'    <test:TestButton id="contentButton" />',
+			'    <html:div id="div1">test1</html:div>',
+			'  </mvc:content>',
+			'  <mvc:dependents>',
+			'    <test:TestButton id="dependentButton" />',
+			'    <html:div id="div2">test2</html:div>',
+			'    plain text node',
+			'    <core:Fragment id="innerFragment" fragmentName="testdata.fragments.XMLFragmentDialog" type="XML"/>',
+			'  </mvc:dependents>',
+			'</mvc:View>'
+		].join('');
+
+		return XMLView.create({
+			id: "viewWithNamedAggregations",
+			definition: sXmlWithNamedAggregations
+		}).then(async function(oView) {
+			oView.placeAt("content");
+			await nextUIUpdate();
+
+			assert.strictEqual(oView.getContent()[0].getId(),"viewWithNamedAggregations--contentButton", "viewWithNamedAggregations: The button was added correctly to content aggregation");
+
+			var oDependentButton = oView.byId("dependentButton");
+			assert.notOk(oDependentButton.getDomRef(), "controls that aren't in the content aggregation of the view shouldn't be rendered");
+			assert.strictEqual(oView.getDependents()[0].getId(),"viewWithNamedAggregations--dependentButton", "viewWithNamedAggregations: The dependent button was added correctly to dependents aggregation");
+			assert.strictEqual(oView.getDependents()[1].getId(),"viewWithNamedAggregations--innerFragment--xmlDialog", "viewWithNamedAggregations: The dialog control from the dependent fragment was added correctly to dependents aggregation");
+
+			var oDiv1 = document.getElementById(oView.createId("div1"));
+			assert.ok(oDiv1, "XHTML element in 'content' aggregation is rendered");
+			assert.equal(oDiv1.childNodes.length, 1, "The div has one child");
+			assert.equal(oDiv1.childNodes[0].textContent, "test1", "The text content is correct");
+			assert.notOk(document.getElementById(oView.createId("div2")), "XHTML element in 'dependents' aggregation is NOT rendered");
+			assert.notOk(oDiv1.nextSibling.textContent.trim(), "HTML nodes or text nodes outside the content aggregation shouldn't be rendered");
+
+			oView.destroy();
+		});
+	});
+
+	/**
+	 * @deprecated since version 1.120 because the view has HTML nodes
+	 */
 	QUnit.test("Error should be thrown when 'content' aggregation of View is bound and binding template contains HTML node", function(assert) {
 		var sXmlWithBoundContent = [
 			'<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns:test="sap.ui.testlib" xmlns:html="http://www.w3.org/1999/xhtml" ',
