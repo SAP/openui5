@@ -17,7 +17,8 @@
 			"wrappingType": "Hyphenated",
 			"unitOfMeasurement": "{unitOfMeasurement}",
 			"details": {
-				"text": "{details/text}"
+				"text": "{details/text}",
+				"state": "Success"
 			},
 			"detailsMaxLines": 2,
 			"actions": [
