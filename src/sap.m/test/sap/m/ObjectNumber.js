@@ -122,6 +122,12 @@ sap.ui.define([
 		active: true
 	});
 
+	var on102 = new ObjectNumber("on102", {
+		number: "1.50",
+		unit: "EUR",
+		active: true
+	});
+
 	var txt11 = new Label({text: "Inverted ObjectNumber"});
 
 	var on11 = new ObjectNumber("on11", {
@@ -147,6 +153,12 @@ sap.ui.define([
 
 	var on14 = new ObjectNumber("on14", {
 		number: "1.50",
+		active: true
+	}).addStyleClass("sapMObjectNumberLarge");
+
+	var on142 = new ObjectNumber("on142", {
+		number: "1.50",
+		unit: "EUR",
 		active: true
 	}).addStyleClass("sapMObjectNumberLarge");
 
@@ -231,6 +243,7 @@ sap.ui.define([
 			on9,
 			txt10,
 			on10,
+			on102,
 			txt11,
 			on11,
 			txt12,
@@ -239,6 +252,7 @@ sap.ui.define([
 			on13,
 			txt14,
 			on14,
+			on142,
 			txt15,
 			on15,
 			txt16,
