@@ -342,6 +342,9 @@ sap.ui.define([
 		});
 	});
 
+	/**
+	 * @deprecated
+	 */
 	QUnit.test("Get view sync", function(assert) {
 		var oViewOption = {
 				viewName: "qunit.view.Async1",

@@ -1,5 +1,6 @@
 sap.ui.define([
 	"require",
+	"sap/base/future",
 	"sap/base/Log",
 	"sap/base/util/deepClone",
 	"sap/ui/VersionInfo",
@@ -7,7 +8,7 @@ sap.ui.define([
 	"sap/ui/core/_UrlResolver",
 	"sap/ui/core/Supportability",
 	"sap/ui/thirdparty/URI"
-], function(require, Log, deepClone, VersionInfo, Component, _UrlResolver, Supportability, URI) {
+], function(require, future, Log, deepClone, VersionInfo, Component, _UrlResolver, Supportability, URI) {
 
 	"use strict";
 	/*global QUnit*/
@@ -77,7 +78,7 @@ sap.ui.define([
 					},
 					"sfapi": {
 						"type": "sap.ui.model.odata.v2.ODataModel",
-						"uri": "./some/odata/service"
+						"uri": "./some/odata/service/"
 					}
 				},
 				"rootView": {
@@ -152,9 +153,7 @@ sap.ui.define([
 				"sap.ui5": {
 					"resourceRoots": {
 						"x.y.z": "anypath",
-						"foo.bar": "../../foo/bar",
-						"absolute": "http://absolute/uri",
-						"server.absolute": "/server/absolute/uri"
+						"foo.bar": "../../foo/bar"
 					},
 					"resources": {
 						"js": [
@@ -192,7 +191,7 @@ sap.ui.define([
 						},
 						"sfapi": {
 							"type": "sap.ui.model.odata.v2.ODataModel",
-							"uri": "./some/odata/service"
+							"uri": "./some/odata/service/"
 						}
 					},
 					"rootView": {
@@ -326,19 +325,39 @@ sap.ui.define([
 				"ResourceRoot 'foo.bar' registered (" + getModulePath("foo.bar") + ")");
 
 			// (server-)absolute resource roots are not allowed and therefore won't be registered!
+			/**
+			 * @deprecated
+			 */
 			assert.ok(!new URI("http://absolute/uri")
 				.equals(new URI(getModulePath("absolute"))),
 				"ResourceRoot 'absolute' not registered (" + getModulePath("absolute") + ")");
+			/**
+			 * @deprecated
+			 */
 			assert.ok(!new URI("/server/absolute/uri")
 				.equals(new URI(getModulePath("server.absolute"))),
 				"ResourceRoot 'server.absolute' not registered (" + getModulePath("server.absolute") + ")");
 		});
 
-		QUnit.test("Manifest Validation", function(assert) {
+		/**
+		 * @deprecated
+		 */
+		QUnit.test("Manifest Validation (future=false)", function(assert) {
+			future.active = false;
 			assert.deepEqual(this.oMetadata._getManifest(), this.oExpectedManifest, "Manifest is correct!");
 			assert.strictEqual(this.oMetadata._getManifestEntry("foo.bar"), null, "Manifest entry with string value is not allowed and should return null");
 			assert.strictEqual(this.oMetadata._getManifestEntry("foo"), null, "Manifest entry without a dot is not allowed and should return null");
 			assert.strictEqual(this.oMetadata._getManifestEntry("baz.buz"), undefined, "Not existing manifest entry should return undefined");
+			future.active = undefined;
+		});
+
+		QUnit.test("Manifest Validation (future=true)", function(assert) {
+			future.active = true;
+			assert.deepEqual(this.oMetadata._getManifest(), this.oExpectedManifest, "Manifest is correct!");
+			assert.throws(() => this.oMetadata._getManifestEntry("foo.bar"), null, "Manifest entry with string value is not allowed and should return null");
+			assert.throws(() => this.oMetadata._getManifestEntry("foo"), null, "Manifest entry without a dot is not allowed and should return null");
+			assert.strictEqual(this.oMetadata._getManifestEntry("baz.buz"), undefined, "Not existing manifest entry should return undefined");
+			future.active = undefined;
 		});
 
 		/**
@@ -793,5 +812,47 @@ sap.ui.define([
 	function destroyComponent(oComponent){
 		oComponent.destroy();
 	}
+
+	sap.ui.define("my/failing/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
+		return UIComponent.extend("my.failing.Component", {
+			metadata: {}
+		});
+	});
+
+	QUnit.test("Absolute resource roots should fail (future=true)", async (assert) => {
+		future.active = true;
+		assert.expect(1);
+		await Component.create({
+			name: "my.failing",
+			manifest: {
+				"sap.ui5": {
+					resourceRoots: {
+						absolute: "http://absolute/uri"
+					}
+				}
+			}
+		}).catch((err) => {
+			assert.ok(err.message.includes('Resource root for "absolute" is absolute and therefore won\'t be registered! "http://absolute/uri"'), "Component creation rejects with wrong resource roots");
+			future.active = undefined;
+		});
+	});
+
+	QUnit.test("Absolute resource roots should fail (future=true)", async (assert) => {
+		future.active = true;
+		assert.expect(1);
+		await Component.create({
+			name: "my.failing",
+			manifest: {
+				"sap.ui5": {
+					resourceRoots: {
+						"server.absolute": "/server/absolute/uri"
+					}
+				}
+			}
+		}).catch((err) => {
+			assert.ok(err.message.includes('Resource root for "server.absolute" is absolute and therefore won\'t be registered! "/server/absolute/uri"'), "Component creation rejects with wrong resource roots");
+			future.active = undefined;
+		});
+	});
 
 });

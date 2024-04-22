@@ -302,7 +302,7 @@ sap.ui.define([
 			}, function(oError) {
 				// Assert
 				assert.ok(oError instanceof Error, "The promise is rejected with an error object");
-				assert.ok(oError.message.includes("The target myTarget has a control id or a parent but no 'controlAggregation' was set, so the target could not be displayed. - Target: myTarget"), "The error message is correct");
+				assert.ok(oError.message.includes("The target myTarget has a control id or a parent but no 'controlAggregation' was set, so the target could not be displayed."), "The error message is correct");
 			});
 	});
 

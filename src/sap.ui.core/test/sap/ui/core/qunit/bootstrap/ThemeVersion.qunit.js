@@ -83,6 +83,9 @@ sap.ui.define([
 		);
 	});
 
+	/**
+	 * @deprecated
+	 */
 	QUnit.test("library-parameters.json", function(assert) {
 		this.initFakeServer();
 

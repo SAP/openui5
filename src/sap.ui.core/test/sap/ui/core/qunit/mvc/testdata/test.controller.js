@@ -50,6 +50,10 @@ sap.ui.define([
 			return "formatted-" + oValue;
 		},
 
+		closeDialog: function() {
+			Element.getElementById("xmlDialog").close();
+		},
+
 		sap: {
 			doIt: function (oEvent) {
 				QUnit.config.current.assert.ok(true, "Event of " + oEvent.getSource().getId() + " executed in controller");

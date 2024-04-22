@@ -6,7 +6,7 @@
 		<Label id="More1" text="Diameter:"/><Input id="TFMore1" value="1/4 inch"/>
 		<Label id="More2" text="Length:"/><Input id="TFMore2" value="2 inch"/>
 		<Label id="More3" text="Package Quantity:"/><Input id="TFMore3" value="500"/>
-		<Link id="showMore" text="show details..." press="showMore"></Link>
-		<Link id="hideMore" text="hide details..." press="hideMore"	visible="false"></Link>
+		<Link id="showMore" text="show details..." ></Link>
+		<Link id="hideMore" text="hide details..." 	visible="false"></Link>
 	</form:SimpleForm>
 </mvc:View>

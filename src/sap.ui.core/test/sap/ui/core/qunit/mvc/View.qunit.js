@@ -30,7 +30,7 @@ sap.ui.define([
 		oView.destroy();
 	});
 
-	/**
+/**
 	 * @deprecated As of 1.120
 	 */
 	QUnit.module("sap.ui.core.mvc.View#runPreprocessor(sync)", {
@@ -828,7 +828,7 @@ sap.ui.define([
 		}
 	});
 
-	/**
+/**
 	 * @deprecated As of version 1.110
 	 */
 	QUnit.test("Sync view created via constructor", function(assert) {

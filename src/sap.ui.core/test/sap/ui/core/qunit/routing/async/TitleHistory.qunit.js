@@ -1,12 +1,13 @@
 /*global QUnit, sinon, hasher */
 sap.ui.define([
+	"sap/base/future",
 	"sap/base/Log",
 	"sap/ui/core/mvc/View",
 	"sap/ui/core/routing/HashChanger",
 	"sap/ui/core/routing/Router",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/App"
-], function (Log, View, HashChanger, Router, JSONModel, App) {
+], function (future, Log, View, HashChanger, Router, JSONModel, App) {
 	"use strict";
 
 	function createXmlView () {
@@ -582,7 +583,11 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	QUnit.test("Home Route declaration with dynamic parts", function(assert) {
+	/**
+	 * @deprecated As of version 1.120
+	 */
+	QUnit.test("Home Route declaration with dynamic parts (future=false)", function(assert) {
+		future.active = false;
 		// Arrange
 		var sHomeTitle = "HOME",
 			sProductTitle = "PRODUCT",
@@ -643,7 +648,60 @@ sap.ui.define([
 			assert.strictEqual(fnEventSpy.callCount, 1, "titleChanged event is fired.");
 			assert.strictEqual(oParameters.title, sProductTitle, "Did pass product title value to the event parameters");
 			this.spy.restore();
+			future.active = undefined;
 		}.bind(this));
+	});
+
+	QUnit.test("Home Route declaration with dynamic parts (future=true)", function (assert) {
+		future.active = true;
+		// Arrange
+		var sHomeTitle = "HOME",
+			sProductTitle = "PRODUCT",
+			fnEventSpy = this.spy();
+
+		this.oRouterConfig = {
+			home: {
+				pattern: "home/{testid}",
+				target: "home"
+			},
+			product: {
+				pattern: "/product",
+				target: "product"
+			}
+		};
+
+		this.oTargetConfig = {
+			home: {
+				title: sHomeTitle
+			},
+			product: {
+				title: sProductTitle
+			}
+		};
+
+		this.oDefaults = {
+			// only shells will be used
+			controlAggregation: "pages",
+			viewName: "foo",
+			controlId: this.oApp.getId(),
+			homeRoute: "home",
+			async: true
+		};
+
+		this.oRouter = new Router(this.oRouterConfig, this.oDefaults, null, this.oTargetConfig);
+
+		this.oRouteMatchedSpies = Object.keys(this.oRouterConfig).reduce(this.getRouteMatchedSpy, {});
+
+		this.oRouter.attachTitleChanged(fnEventSpy);
+
+		hasher.setHash(this.oRouterConfig.product.pattern);
+
+		// Act
+		// Assert
+		assert.throws(() => { this.oRouter.initialize(); }, new Error("Routes with dynamic parts cannot be resolved as home route."),
+			"Throws error because home route cannot contain dynamic parts");
+		assert.strictEqual(fnEventSpy.callCount, 0, "titleChanged event isn't fired.");
+		future.active = undefined;
 	});
 
 	QUnit.test("App home indicator for later navigations", function(assert) {
@@ -704,7 +762,11 @@ sap.ui.define([
 		this.oRouter.initialize();
 	});
 
-	QUnit.test("App home indicator for later navigations with dynamic parts", function(assert) {
+	/**
+	 * @deprecated As of version 1.120
+	 */
+	QUnit.test("App home indicator for later navigations with dynamic parts (future=false)", function(assert) {
+		future.active = false;
 		// Arrange
 		var sHomeTitle = "HOME",
 			sProductTitle = "PRODUCT",
@@ -763,11 +825,57 @@ sap.ui.define([
 				assert.deepEqual(this.oRouter.getTitleHistory()[0], oRefProductRoute);
 				assert.deepEqual(this.oRouter.getTitleHistory()[1], oRefHomeRoute);
 				assert.strictEqual(this.oRouter.getTitleHistory().length, 2, "Home route should be added to history.");
+				future.active = undefined;
 				done();
 			}
 		}.bind(this));
 
 		// Act
 		this.oRouter.initialize();
+	});
+
+	QUnit.test("App home indicator for later navigations with dynamic parts (future=true)", function(assert) {
+		future.active = true;
+		// Arrange
+		var sHomeTitle = "HOME",
+			sProductTitle = "PRODUCT";
+
+		this.oRouterConfig = {
+			home : {
+				pattern: "home/{testId}",
+				target: "home"
+			},
+			product : {
+				pattern : "/product",
+				target: "product"
+			}
+		};
+
+		this.oTargetConfig = {
+			home: {
+				title: sHomeTitle
+			},
+			product: {
+				title: sProductTitle
+			}
+		};
+
+		this.oDefaults = {
+			// only shells will be used
+			controlAggregation: "pages",
+			viewName: "foo",
+			controlId: this.oApp.getId(),
+			homeRoute: "home",
+			async: true
+		};
+
+		this.oRouter = new Router(this.oRouterConfig, this.oDefaults, null, this.oTargetConfig);
+
+		hasher.setHash(this.oRouterConfig.product.pattern);
+
+		// Act
+		// Assert
+		assert.throws(() => { this.oRouter.initialize(); }, new Error("Routes with dynamic parts cannot be resolved as home route."),
+			"Throws error because home route cannot contain dynamic parts");
 	});
 });

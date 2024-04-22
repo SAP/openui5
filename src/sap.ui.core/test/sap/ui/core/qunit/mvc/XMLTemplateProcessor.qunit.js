@@ -5,20 +5,22 @@ sap.ui.define([
 	"sap/ui/core/mvc/View",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/util/XMLHelper",
+	"sap/base/future",
 	"sap/base/Log",
 	"sap/ui/base/DesignTime",
 	"sap/ui/thirdparty/jquery"
-], function (coreLibrary, XMLTemplateProcessor, View, XMLView, XMLHelper, Log, DesignTime, jQuery) {
+], function (coreLibrary, XMLTemplateProcessor, View, XMLView, XMLHelper, future, Log, DesignTime, jQuery) {
 	"use strict";
 
 	// shortcut for sap.ui.core.mvc.ViewType
 	var ViewType = coreLibrary.mvc.ViewType;
 
 	var sRootView =
-		'<mvc:View height="100%" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" id="root">' +
+		'<mvc:View height="100%" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
 		'</mvc:View>';
 
-	var sView =
+
+	const sView =
 		'<mvc:View height="100%" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m" id="view" ' +
 			'xmlns:dt="sap.ui.dt" displayBlock="true" unknownProperty="true">' +
 			'<Panel id="panel">' +
@@ -35,7 +37,42 @@ sap.ui.define([
 				'</content>' +
 			'</Panel>' +
 		'</mvc:View>';
+	const sView2 =
+		'<mvc:View height="100%" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m" ' +
+			'xmlns:dt="sap.ui.dt" displayBlock="true" >' +
+			'<Panel id="panel">' +
+				'<content>' +
+					'<Button text="Button" id="button"></Button>' +
+					'<Button text="Button With Designtime Data" id="buttonWithDTData" dt:test="testvalue"></Button>' +
+					'<Button text="Button using core:require" id="buttonRequire" core:require="{Link:\'sap/m/Link\'}"></Button>' +
+					'<Button text="Button using Designtime Data and core:require" id="buttonWithDTDataAndRequire" dt:test="testvalue2" core:require="{Link:\'sap/m/Link\'}"></Button>' +
+					'<Button text="StashedButton" id="stashedButton" stashed="true"></Button>' +
+					'<Button text="Wrong Type value" id="brokenButton"></Button>' +
+					'<core:ExtensionPoint name="extension">' +
+						'<Button text="ExtensionButton" id="extensionButton"></Button>' +
+					'</core:ExtensionPoint>' +
+				'</content>' +
+			'</Panel>' +
+		'</mvc:View>';
 
+	const sView3 =
+		'<mvc:View height="100%" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m" ' +
+			'xmlns:dt="sap.ui.dt" displayBlock="true" >' +
+			'<Panel id="panel">' +
+				'<content>' +
+					'<Button text="Button" id="button"></Button>' +
+					'<Button text="Button With Designtime Data" id="buttonWithDTData" dt:test="testvalue"></Button>' +
+					'<Button text="Button using core:require" id="buttonRequire" core:require="{Link:\'sap/m/Link\'}"></Button>' +
+					'<Button text="Button using Designtime Data and core:require" id="buttonWithDTDataAndRequire" dt:test="testvalue2" core:require="{Link:\'sap/m/Link\'}"></Button>' +
+					'<Button text="StashedButton" id="stashedButton" stashed="true"></Button>' +
+					'<Button text="Wrong Type value" id="brokenButton" type="somethingInvalid"></Button>' +
+					'<Button text="Wrong Type value" id="brokenButton"></Button>' +
+					'<core:ExtensionPoint name="extension">' +
+						'<Button text="ExtensionButton" id="extensionButton"></Button>' +
+					'</core:ExtensionPoint>' +
+				'</content>' +
+			'</Panel>' +
+		'</mvc:View>';
 
 	/**
 	 * @deprecated As of version 1.120
@@ -78,8 +115,12 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	QUnit.module("parseScalarType", {
+	/**
+	 * @deprecated
+	 */
+	QUnit.module("parseScalarType (future=false)", {
 		beforeEach: function() {
+			future.active = false;
 			this.oLogSpy = sinon.spy(Log, "error");
 			this.pViewLoaded = XMLView.create({
 				definition: sView
@@ -90,6 +131,7 @@ sap.ui.define([
 			return this.pViewLoaded.then(function (oView) {
 				this.oLogSpy.restore();
 				oView.destroy();
+				future.active = undefined;
 			}.bind(this));
 		}
 	});
@@ -97,6 +139,19 @@ sap.ui.define([
 	QUnit.test("Error Logging of invalid type values", function (assert) {
 		assert.ok(this.oLogSpy.calledOnce, "Log.error was only called once");
 		assert.ok(this.oLogSpy.calledWith(sinon.match(/Value 'somethingInvalid' is not valid for type 'sap.m.ButtonType'./)), "Log.error spy was called");
+	});
+
+	QUnit.module("parseScalarType (future=true)", {});
+
+	QUnit.test("Error Logging of invalid type values", async function (assert) {
+		future.active = true;
+		const oView = XMLView.create({
+			definition: sView3
+		});
+		assert.rejects(oView);
+		await oView.catch((err) => {
+			assert.ok(err.message.includes("Value 'somethingInvalid' is not valid for type 'sap.m.ButtonType'.", "View creation rejected with type error"));
+		});
 	});
 
 	/**
@@ -532,7 +587,7 @@ sap.ui.define([
 	QUnit.module("Custom Settings",{
 		beforeEach: function() {
 			this.pView = XMLView.create({
-				definition: sView,
+				definition: sView2,
 				id: "view"
 			});
 			this.xml = XMLHelper.parse(sView);

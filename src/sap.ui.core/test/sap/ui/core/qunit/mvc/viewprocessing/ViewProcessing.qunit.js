@@ -1,5 +1,6 @@
 /*global QUnit, sinon */
 sap.ui.define([
+	"sap/base/future",
 	"sap/base/Log",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/UIComponent",
@@ -12,7 +13,7 @@ sap.ui.define([
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/StashedControlSupport",
 	"sap/ui/qunit/utils/nextUIUpdate"
-], function(Log, Controller, UIComponent, Component, Element, Panel, HBox, MyGlobal, SyncPromise, XMLView, StashedControlSupport, nextUIUpdate) {
+], function(future, Log, Controller, UIComponent, Component, Element, Panel, HBox, MyGlobal, SyncPromise, XMLView, StashedControlSupport, nextUIUpdate) {
 
 	"use strict";
 
@@ -300,10 +301,10 @@ sap.ui.define([
 	/**
 	 * Tests parsing of a control which is not properly defined (does not return its class)
 	 * In V1: We check if the control is retrieved via globals + an error log.
-	 * In V2: we only check for the error log.
+	 * @deprecated
 	 */
-	QUnit.test("Bad control processing", async function(assert) {
-
+	QUnit.test("Bad control processing (future=false)", async function(assert) {
+		future.active = false;
 		const oLogSpy = this.spy(Log, "error");
 
 		// view
@@ -329,6 +330,24 @@ sap.ui.define([
 		})();
 
 		oLogSpy.restore();
+		future.active = undefined;
+	});
+
+	/**
+	 * Tests parsing of a control which is not properly defined (does not return its class)
+	 * In V2: we only check for the error log.
+	 */
+	QUnit.test("Bad control processing (future=true)", async function(assert) {
+		future.active = true;
+
+		// Check for error concerning the missing module content
+		const oView = this.viewFactory("myViewBadControl", "sap.ui.core.qunit.mvc.viewprocessing.ViewProcessingBadControl");
+		await assert.rejects(oView);
+		oView.catch((err) => {
+			assert.ok(err.message.includes("Control 'sap.ui.core.qunit.mvc.viewprocessing.BadControl' did not return a class definition from sap.ui.define."), "Error must be thrown");
+		});
+
+		future.active = undefined;
 	});
 
 

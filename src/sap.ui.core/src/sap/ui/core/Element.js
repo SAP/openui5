@@ -1927,9 +1927,7 @@ sap.ui.define([
 			oDomRef = vParam;
 		} else if (vParam.jquery) {
 			oDomRef = vParam[0];
-			future.errorThrows("Do not call Element.closestTo() with jQuery object as parameter. \
-				The function should be called with either a DOM Element or a CSS selector. \
-				(future error, ignored for now)");
+			future.errorThrows("Do not call Element.closestTo() with jQuery object as parameter. The function should be called with either a DOM Element or a CSS selector.");
 		} else {
 			throw new TypeError("Element.closestTo accepts either a DOM element or a CSS selector string as parameter, but not '" + vParam + "'");
 		}

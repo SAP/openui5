@@ -40,9 +40,6 @@ sap.ui.define(["sap/ui/core/mvc/ControllerExtension"], function(ControllerExtens
 			onAfterRendering: function() {
 				QUnit.config.current.assert.ok(this instanceof ControllerExtension, "onAfterRendering: Context is ControllerExtension 'Extension'");
 				QUnit.config.current.assert.equal(this.getMetadata().getNamespace(), "my.test.reuse", "onAfterRendering: Context is correct ControllerExtension 'Extension'");
-			},
-			myFinalMethod: function() {
-				return "Final Methods could not be overidden by an extension";
 			}
 		}
 	});

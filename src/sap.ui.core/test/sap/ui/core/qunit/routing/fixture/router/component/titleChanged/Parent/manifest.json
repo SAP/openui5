@@ -42,8 +42,9 @@
 				}
 			],
 			"targets": {
+				"home": {},
 				"view1": {
-					"home": "MyView1",
+					"name": "MyView1",
 					"title": "home"
 				},
 				"second": {

@@ -228,9 +228,6 @@ sap.ui.define([
 		extHookLegacy: null,
 		extension1: ControllerExt1,
 		extension2: ControllerExt1.override({
-			finalMethod: function() {
-				return "overridden by myExtension2";
-			},
 			myBefore: function() {
 				this.base.overrideCalledBefore = true;
 			},
@@ -382,9 +379,6 @@ sap.ui.define([
 						publicMethodToOverride: function() {
 							QUnit.config.current.assert.strictEqual(this.getMetadata().getName(), "example.ProviderExt2", "Context of override function set to ProviderExt2 extension");
 							return "overridden by ProviderExt2";
-						},
-						finalMethod: function() {
-							QUnit.config.current.assert.ok(false, "Original method flagged final. Never should happen");
 						}
 					}
 				},

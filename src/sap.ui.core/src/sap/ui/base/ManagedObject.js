@@ -3922,7 +3922,7 @@ sap.ui.define([
 	* @since 1.28
 	*/
 	ManagedObject.prototype.propagateMessages = function(sName, aMessages) {
-		future.warningThrows("Message for " + this + ", Property " + sName);
+		future.warningThrows("Message for " + this + ", Property " + sName + " received. Control " + this.getMetadata().getName() + " does not support messaging without using data binding.");
 	};
 
 	/**

@@ -10,7 +10,6 @@
 			<Label id="foo" text="{= ${/amount} > 1000 ? Foo.foo() : Bar.bar()}"/>
 			<Label id="bar" visible="{= ${/foobar} === Foo.foo()}"/>
 			<Label id="formatter" text="{path:'/test', formatter:'Foo.format'}"/>
-			<Label id="formatterGlobal" text="{path:'/test', formatter:'testdata.xml-require.helper.OutputText.format'}"/>
 			<Label id="formatterLocal" text="{path:'/test', formatter:'.format'}"/>
 			<Label id="text" text="{= Foo.checkExistence(${/exist}) ? ${/text1} : ${/text2}}"/>
 			<Label core:require="{

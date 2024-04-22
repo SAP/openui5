@@ -38,9 +38,6 @@ sap.ui.define(["sap/ui/core/mvc/ControllerExtension"], function(ControllerExtens
 			},
 			onAfterRendering: function() {
 				this.base.getLifeCycleCalls().onAfterRendering.push('reuseExtension');
-			},
-			myFinalMethod: function() {
-				return "Final Methods could not be overidden by an extension";
 			}
 		}
 	});

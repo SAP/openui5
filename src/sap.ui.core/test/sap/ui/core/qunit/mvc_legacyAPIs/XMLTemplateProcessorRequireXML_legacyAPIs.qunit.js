@@ -426,7 +426,7 @@ sap.ui.define([
 		}
 	}, {
 		testDescription: "Parsing core:require in ExpressionBinding",
-		viewName: ".view.XMLTemplateProcessorAsync_require_expression",
+		viewName: ".view.XMLTemplateProcessorAsync_require_expressionFaulty",
 		settings: {
 			sync: {
 				create: createView,
