@@ -148,5 +148,15 @@
         "text": " sap.m.ProgressIndicator: Fiori 3 theme alignment"
       }
     ]
+  },
+  "1.96.29": {
+    "date": "April 2024",
+    "notes": [
+      {
+        "id": "bd05ef12ae28243db9567c046b22dff22ae0cd9d",
+        "type": "FIX",
+        "text": " ColumnListItem: Adjust box-shadow in HCW theme"
+      }
+    ]
   }
 }
