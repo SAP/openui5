@@ -13,7 +13,7 @@
 		},
 		{
 			"control" : "sap.ui.unified.CalendarLegend",
-			"url" : "../CalendarLegend.html",
+			"url" : "./CalendarLegend.html",
 			"appComponent" : "CA-UI5-CTR-BAL"
 		},
 		{
