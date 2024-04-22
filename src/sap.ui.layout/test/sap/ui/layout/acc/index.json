@@ -49,7 +49,7 @@
 	  },
 	  {
 		"control": "sap.ui.layout.HorizontalLayout",
-		"url": "../HorizontalLayout.html",
+		"url": "./HorizontalLayout.html",
 		"appComponent": "CA-UI5-CTR-BAL"
 	  }
 	]
