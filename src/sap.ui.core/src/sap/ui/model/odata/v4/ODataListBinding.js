@@ -1107,6 +1107,11 @@ sap.ui.define([
 					oContext = _Helper.getPrivateAnnotation(aResults[i], "context");
 					oContext.iIndex = i$skipIndex;
 					// oContext.checkUpdate(); // Note: no changes expected here
+					sContextPath = oContext.getPath();
+					if (this.mPreviousContextsByPath[sContextPath] === oContext) {
+						// MUST not be both in this.aContexts and in this.mPreviousContextsByPath!
+						delete this.mPreviousContextsByPath[sContextPath];
+					}
 				} else {
 					oContext = Context.create(oModel, this, sContextPath, i$skipIndex);
 					oContext.setSelected(this.oHeaderContext.isSelected());

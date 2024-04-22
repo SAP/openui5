@@ -4357,7 +4357,7 @@ sap.ui.define([
 			oContext1 = Context.create(this.oModel, oBinding, "/EMPLOYEES('B')", 99),
 			oContext2 = Context.create(this.oModel, oBinding, "/EMPLOYEES('C')", 1),
 			oContext3 = {},
-			oContext4 = {},
+			oContext4 = {getPath : mustBeMocked},
 			oContextMock = this.mock(Context);
 
 		// must be mocked here, so that later bind grabs the mock
@@ -4375,6 +4375,7 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(this.oModel), sinon.match.same(oBinding),
 				"/EMPLOYEES('C')", 1)
 			.returns(oContext2);
+		this.mock(oContext4).expects("getPath").withExactArgs().returns("/EMPLOYEES('E')");
 		oBindingMock.expects("destroyPreviousContextsLater")
 			.withExactArgs(["/EMPLOYEES('A')", "/EMPLOYEES('D')"]);
 
@@ -4511,20 +4512,27 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("createContexts: reuse created from 'context' annotation", function (assert) {
+[false, true].forEach(function (bSame) {
+	const sTitle = `createContexts: reuse created from 'context' annotation, same : ${bSame}`;
+
+	QUnit.test(sTitle, function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES"),
 			oCreatedContext = Context.create(this.oModel, oBinding, "/EMPLOYEES('1')", -1,
 				SyncPromise.resolve()),
-			oNewContext = {};
+			oNewContext = bSame ? oCreatedContext : {
+				getPath : mustBeMocked
+			};
 
 		oBinding.mPreviousContextsByPath = {
 			"/EMPLOYEES('1')" : oCreatedContext
 		};
 
 		this.mock(Context).expects("create").never();
-		this.mock(this.oModel).expects("addPrerenderingTask")
-			.withExactArgs(sinon.match.func).callsArg(0);
-		this.mock(oCreatedContext).expects("destroy").withExactArgs();
+		this.mock(oCreatedContext).expects("checkUpdate").never();
+		this.mock(oCreatedContext).expects("destroy").never();
+		this.mock(oNewContext).expects("getPath").withExactArgs().returns("/EMPLOYEES('1')");
+		this.mock(oBinding).expects("destroyPreviousContextsLater")
+			.withExactArgs(bSame ? [] : ["/EMPLOYEES('1')"]);
 
 		// code under test
 		oBinding.createContexts(42, [{
@@ -4533,7 +4541,11 @@ sap.ui.define([
 
 		assert.strictEqual(oBinding.aContexts[42], oNewContext);
 		assert.strictEqual(oNewContext.iIndex, 42);
+		assert.deepEqual(oBinding.mPreviousContextsByPath, bSame
+			? {} // removed
+			: {"/EMPLOYEES('1')" : oCreatedContext}); // unchanged
 	});
+});
 
 	//*********************************************************************************************
 // undefined -> the reinsertion callback is not called because the binding already has another cache
