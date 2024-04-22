@@ -77,8 +77,8 @@ sap.ui.define([
 										editable: true,
 										title: "Possible usages (may require additional coding)",
 										content: [
-											addMask("Serial number (case sensitive, only capital letters allowed)", "CCCC-CCCC-CCCC-CCCC-CCCC", "Enter serial number", "_", [ruleCollection[4].rule]),
-											addMask("Product activation key (case sensitive, only capital letters allowed)", "SAP-CCCCC-CCCCC", "Enter activation key", "_", [ruleCollection[4].rule]),
+											addMask("Serial number", "CCCC-CCCC-CCCC-CCCC-CCCC", "Enter serial number", "_", [ruleCollection[4].rule]),
+											addMask("Product activation key", "SAP-CCCCC-CCCCC", "Enter activation key", "_", [ruleCollection[4].rule]),
 											addMask("ISBN", "999-99-999-9999-9", "Enter ISBN", "_")
 										]
 									})
