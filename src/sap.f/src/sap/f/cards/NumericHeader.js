@@ -226,6 +226,15 @@ sap.ui.define([
 				},
 
 				/**
+				 * Micro Chart
+				 * @experimental since 1.124
+				 */
+				microChart: {
+					type: "sap.ui.core.Control",
+					multiple: false
+				},
+
+				/**
 				 * Used to display title text
 				 */
 				_title: { type: "sap.m.Text", multiple: false, visibility: "hidden" },

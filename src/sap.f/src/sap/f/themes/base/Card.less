@@ -284,11 +284,23 @@ ui-integration-card.sapFCardTransparent > [data-sap-ui-area] > .sapFCard {
 	.sapFCardAvatarAndIndicatorsLine {
 		display: flex;
 		align-items: center;
+		overflow: hidden;
 
 		.sapFCardIcon.sapFAvatar {
 			margin-top: 0.5rem;
 			margin-right: 0;
 		}
+	}
+
+	.sapFCardAvatarAndIndicatorsLine .sapUiIntMicrochartChartWrapper {
+		flex-grow: 1;
+		margin-top: 0.5rem;
+		max-width: 8.5rem;
+		min-width: 5rem
+	}
+
+	.sapFCardAvatarAndIndicatorsLine .sapUiIntMicrochartChartWrapper:only-child {
+		max-width: 100%;
 	}
 
 	.sapFCardNumericIndicators {
@@ -603,3 +615,4 @@ ui-integration-card.sapFCardFocusFullCard > [data-sap-ui-area] > .sapFCard {
 		box-shadow: @sapUiShadow;
 	}
 }
+

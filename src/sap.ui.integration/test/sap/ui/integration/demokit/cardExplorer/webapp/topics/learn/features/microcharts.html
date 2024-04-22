@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-	<title>Card Microcharts</title>
+	<title>Card Micro Charts</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<script src="../../../scripts/boot.js"></script>
@@ -12,23 +12,23 @@
 	<div class="topic">
 		<div class="content">
 			<h1 id="overview">
-				Card Microcharts
+				Card Micro Charts
 			</h1>
 			<div class="messageStripWarning">
 				Experimental feature since version 1.80. The API may change.
 			</div>
 			<p>
-				Microcharts help you to visualize information in a compact non-interactive manner. They are used to
+				Micro Charts help you to visualize information in a compact non-interactive manner. They are used to
 				display changes in the data or provide tracking at a glance.
-				Currently supported types are <code>Bullet</code> and <code>StackedBar</code>. They can be embedded in a
-				List card.
+				Currently supported types for Numeric Header are <code>Bullet</code>, <code>Column</code>, <code>HarveyBall</code>, <code>Line</code>, <code>Radial</code> and <code>StackedBar</code>.
+				Supported types for List Card are <code>Bullet</code> and <code>StackedBar</code>.
 				For more information when to use them read the <a target="_blank"
 					href="https://experience.sap.com/fiori-design-web/micro-chart/">Fiori Design Guidelines</a>.
 			</p>
 
 			<h2 id="properties">Properties</h2>
 			<p>
-				Microcharts have the following common properties:
+				Micro Charts have the following common properties:
 			</p>
 			<div class="tableWrapper">
 				<table>
@@ -43,28 +43,16 @@
 					</tr>
 					<tr>
 						<td>type</td>
-						<td>"Bullet", "StackedBar"</td>
+						<td>"Bullet", "Column", "HarveyBall", "Line", "Radial", "StackedBar"</td>
 						<td></td>
 						<td>Yes</td>
-						<td>Specifies one of the available microchart types. See details for every different type below.</td>
-						<td>1.24</td>
-						<td>1.80</td>
-					</tr>
-					<tr>
-						<td>displayValue</td>
-						<td>string</td>
-						<td></td>
-						<td>No</td>
-						<td>The value, which is displayed next to the chart.</td>
-						<td>1.24</td>
-						<td>1.80</td>
-					</tr>
-					<tr>
-						<td>maxValue</td>
-						<td>float</td>
-						<td></td>
-						<td>No</td>
-						<td>The maximum value.</td>
+						<td>
+							Specifies one of the available micro charts types. See details for every different type below.
+							<br>
+							<b>Note</b> Only "Bullet" and "StackedBar" are supported in List Card.
+							<br>
+							<b>Note</b> Since 1.124 all types are supported in Numeric Header.
+						</td>
 						<td>1.24</td>
 						<td>1.80</td>
 					</tr>
@@ -73,14 +61,14 @@
 						<td>boolean</td>
 						<td>true</td>
 						<td>No</td>
-						<td>Visibility of the microchart.</td>
+						<td>Visibility of the micro chart.</td>
 						<td>1.56.0</td>
 						<td>1.116</td>
 					</tr>
 				</table>
 			</div>
 
-			<h2 id="bullet">Bullet Microchart</h2>
+			<h2 id="bullet">Bullet Micro Chart</h2>
 			<img src="../../images/microChart_bullet.png" alt="Stacked Bar chart">
 			<div id="bulletProperties" class="boldBlock">Properties</div>
 			<div class="tableWrapper">
@@ -106,6 +94,22 @@
 						<td><a data-demokit-href="#/api/sap.m.ValueColor" target="_blank">sap.m.ValueColor</a></td>
 						<td>No</td>
 						<td>The color of the chart.</td>
+						<td>1.24</td>
+						<td>1.80</td>
+					</tr>
+					<tr>
+						<td>displayValue</td>
+						<td>string</td>
+						<td>No</td>
+						<td>The value, which is displayed next to the chart.</td>
+						<td>1.24</td>
+						<td>1.80</td>
+					</tr>
+					<tr>
+						<td>maxValue</td>
+						<td>float</td>
+						<td>No</td>
+						<td>The maximum value.</td>
 						<td>1.24</td>
 						<td>1.80</td>
 					</tr>
@@ -165,8 +169,7 @@
 					</tr>
 				</table>
 			</div>
-
-			<h2 id="stackedBar">StackedBar Microchart</h2>
+			<h2 id="stackedBar">StackedBar Micro Chart</h2>
 			<img src="../../images/microChart_stackedBar.png" alt="Stacked Bar chart">
 			<p><b>Note:</b> For this type of chart a legend is also displayed in the card.</p>
 			<div id="stackedBarProperties" class="boldBlock">Properties</div>
@@ -184,7 +187,23 @@
 						<td>bars</td>
 						<td><a href="#barApi">Bar[]</a></td>
 						<td>Yes</td>
-						<td>The bars of the microchart.</td>
+						<td>The bars of the micro chart.</td>
+						<td>1.24</td>
+						<td>1.80</td>
+					</tr>
+					<tr>
+						<td>displayValue</td>
+						<td>string</td>
+						<td>No</td>
+						<td>The value, which is displayed next to the chart.</td>
+						<td>1.24</td>
+						<td>1.80</td>
+					</tr>
+					<tr>
+						<td>maxValue</td>
+						<td>float</td>
+						<td>No</td>
+						<td>The maximum value.</td>
 						<td>1.24</td>
 						<td>1.80</td>
 					</tr>
@@ -237,8 +256,25 @@
 				</table>
 			</div>
 
+			<h2 id="column">Column Micro Chart</h2>
+			<p>
+				For reference see this <a href="../../../index.html#/explore/microCharts/columnChart" target="_parent">sample in the Explore section</a>.
+			</p>
+			<h2 id="harveyBall">HarveyBall Micro Chart</h2>
+			<p>
+				For reference see this <a href="../../../index.html#/explore/microCharts/harveyBallChart" target="_parent">sample in the Explore section</a>.
+			</p>
+			<h2 id="line">Line Micro Chart</h2>
+			<p>
+				For reference see this <a href="../../../index.html#/explore/microCharts/lineChart" target="_parent">sample in the Explore section</a>.
+			</p>
+			<h2 id="radial">Radial Micro Chart</h2>
+			<p>
+				For reference see this <a href="../../../index.html#/explore/microCharts/radialChart" target="_parent">sample in the Explore section</a>.
+			</p>
+
 			<h2 id="examples">Examples</h2>
-			<p>Example of a List card with Bullet microchart:</p>
+			<p>Example of a List card with Bullet micro charts:</p>
 			<pre class="lang-json">
 {
 	"sap.app": {
@@ -290,7 +326,7 @@
 }
 </pre>
 
-			<p>Example of a List card with StackedBar microchart:</p>
+			<p>Example of a List card with StackedBar micro charts:</p>
 			<pre class="lang-json">
 {
 	"sap.app": {

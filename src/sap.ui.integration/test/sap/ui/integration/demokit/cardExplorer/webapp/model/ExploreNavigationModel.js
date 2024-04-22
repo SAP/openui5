@@ -1797,6 +1797,34 @@ sap.ui.define([
 						]
 					},
 					{
+						key: 'dataTimestamp',
+						target: 'exploreSamples',
+						title: 'Data Timestamp',
+						experimental: true,
+						subSamples: [
+							{
+								title: 'Default Header',
+								key: 'defaultHeader',
+								experimental: true,
+								settings: {
+									rows: 5,
+									columns: 4
+								},
+								manifestUrl: '/samples/dataTimestamp/default.json'
+							},
+							{
+								title: 'Numeric Header',
+								key: 'numericHeader',
+								experimental: true,
+								settings: {
+									rows: 5,
+									columns: 4
+								},
+								manifestUrl: '/samples/dataTimestamp/numeric.json'
+							}
+						]
+					},
+					{
 						key: 'dateRange',
 						target: 'exploreSamples',
 						title: 'Date Ranges',
@@ -2017,6 +2045,116 @@ sap.ui.define([
 						]
 					},
 					{
+						key: 'microCharts',
+						target: 'exploreSamples',
+						title: 'Micro Charts',
+						experimental: true,
+						subSamples: [
+							{
+								title: 'Line Chart',
+								key: 'lineChart',
+								experimental: true,
+								files: [
+									{
+										url: '/samples/microCharts/lineChart/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/microCharts/lineChart/data.json',
+										name: 'data.json',
+										key: 'data.json'
+									}
+								]
+							},
+							{
+								title: 'Bullet Chart',
+								key: 'bulletChart',
+								experimental: true,
+								files: [
+									{
+										url: '/samples/microCharts/bulletChart/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/microCharts/bulletChart/data.json',
+										name: 'data.json',
+										key: 'data.json'
+									}
+								]
+							},
+							{
+								title: 'Column Chart',
+								key: 'columnChart',
+								experimental: true,
+								files: [
+									{
+										url: '/samples/microCharts/columnChart/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/microCharts/columnChart/data.json',
+										name: 'data.json',
+										key: 'data.json'
+									}
+								]
+							},
+							{
+								title: 'Harvey Ball Chart',
+								key: 'harveyBallChart',
+								experimental: true,
+								files: [
+									{
+										url: '/samples/microCharts/harveyBallChart/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/microCharts/harveyBallChart/data.json',
+										name: 'data.json',
+										key: 'data.json'
+									}
+								]
+							},
+							{
+								title: 'Radial Chart',
+								key: 'radialChart',
+								experimental: true,
+								files: [
+									{
+										url: '/samples/microCharts/radialChart/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/microCharts/radialChart/data.json',
+										name: 'data.json',
+										key: 'data.json'
+									}
+								]
+							},
+							{
+								title: 'Stacked Bar Chart',
+								key: 'stackedBar',
+								experimental: true,
+								files: [
+									{
+										url: '/samples/microCharts/stackedBar/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/microCharts/stackedBar/data.json',
+										name: 'data.json',
+										key: 'data.json'
+									}
+								]
+							}
+						]
+					},
+					{
 						key: 'pagination',
 						target: 'exploreSamples',
 						title: 'Pagination',
@@ -2129,34 +2267,6 @@ sap.ui.define([
 								url: '/samples/translation/i18n/i18n_en.properties',
 								name: 'i18n/i18n_en.properties',
 								key: 'i18n/i18n_en.properties'
-							}
-						]
-					},
-					{
-						key: 'dataTimestamp',
-						target: 'exploreSamples',
-						title: 'Data Timestamp',
-						experimental: true,
-						subSamples: [
-							{
-								title: 'Default Header',
-								key: 'defaultHeader',
-								experimental: true,
-								settings: {
-									rows: 5,
-									columns: 4
-								},
-								manifestUrl: '/samples/dataTimestamp/default.json'
-							},
-							{
-								title: 'Numeric Header',
-								key: 'numericHeader',
-								experimental: true,
-								settings: {
-									rows: 5,
-									columns: 4
-								},
-								manifestUrl: '/samples/dataTimestamp/numeric.json'
 							}
 						]
 					}

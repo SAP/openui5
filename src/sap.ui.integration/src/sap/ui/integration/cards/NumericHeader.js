@@ -12,7 +12,8 @@ sap.ui.define([
 	"sap/ui/integration/util/BindingHelper",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/integration/util/BindingResolver",
-	"sap/ui/integration/util/LoadingProvider"
+	"sap/ui/integration/util/LoadingProvider",
+	"sap/ui/integration/controls/Microchart"
 ], function (
 	extend,
 	FNumericHeader,
@@ -24,7 +25,8 @@ sap.ui.define([
 	BindingHelper,
 	JSONModel,
 	BindingResolver,
-	LoadingProvider
+	LoadingProvider,
+	Microchart
 ) {
 	"use strict";
 
@@ -131,6 +133,11 @@ sap.ui.define([
 
 			mSettings.toolbar = oActionsToolbar;
 
+			if (mConfiguration.chart) {
+				Microchart.loadDependencies().then(() => {
+					this.setMicroChart(Microchart.create(mConfiguration.chart));
+				});
+			}
 			FNumericHeader.call(this, sId, mSettings);
 		},
 		metadata: {

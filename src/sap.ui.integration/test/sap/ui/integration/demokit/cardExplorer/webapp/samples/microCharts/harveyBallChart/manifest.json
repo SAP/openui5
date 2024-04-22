@@ -1,0 +1,89 @@
+{
+	"sap.app": {
+		"id": "card.explorer.harveyBallChart.list.card",
+		"type": "card",
+		"title": "Sample of a List with Harvey Ball Chart",
+		"subTitle": "Sample of a List with Harvey Ball Chart",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"List",
+				"Chart",
+				"Card",
+				"Sample"
+			]
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://list"
+		}
+	},
+	"sap.card": {
+		"type": "List",
+		"data": {
+			"request": {
+				"url": "./data.json"
+			}
+		},
+		"header": {
+			"data": {
+				"path": "/header"
+			},
+			"type": "Numeric",
+			"title": "Income from products",
+			"status": {
+				"text": "5 of 20"
+			},
+			"subTitle": "Revenue",
+			"unitOfMeasurement": "EUR",
+			"mainIndicator": {
+				"number": "{number}",
+				"unit": "{unit}",
+				"trend": "{trend}",
+				"state": "{state}"
+			},
+			"sideIndicators": [
+				{
+					"title": "Target",
+					"number": "{target/number}",
+					"unit": "{target/unit}"
+				}
+			],
+			"details": "{details}",
+			"chart": {
+				"type": "HarveyBall",
+				"color": "{state}",
+				"total": "{chart/total}",
+				"totalScale": "{chart/totalScale}",
+				"showTotal": true,
+				"percentage": "{chart/percentage}",
+				"fraction": "{chart/fraction}",
+				"fractionScale": "{chart/fractionScale}"
+			}
+		},
+		"content": {
+			"data": {
+				"path": "/items"
+			},
+			"maxItems": 5,
+			"item": {
+				"icon": {
+					"src": "sap-icon://product"
+				},
+				"title": "{Name}",
+				"description": "{Description}",
+				"info": {
+					"value": "{= ${percentage} > 40 ? 'Above Plan' : ${percentage} > 19 ? 'On Plan' : 'Below Plan' }",
+					"state": "{Highlight}"
+				}
+			}
+		}
+	}
+}

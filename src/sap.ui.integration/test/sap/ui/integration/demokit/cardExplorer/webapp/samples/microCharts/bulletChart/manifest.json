@@ -1,0 +1,95 @@
+{
+	"sap.app": {
+		"id": "card.explorer.bulletChart.list.card",
+		"type": "card",
+		"title": "Sample of a List with Bullet Chart",
+		"subTitle": "Sample of a List with Bullet Chart",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"List",
+				"Chart",
+				"Card",
+				"Sample"
+			]
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://list"
+		}
+	},
+	"sap.card": {
+		"type": "List",
+		"data": {
+			"request": {
+				"url": "./data.json"
+			}
+		},
+		"header": {
+			"data": {
+				"path": "/header"
+			},
+			"type": "Numeric",
+			"title": "Income from products",
+			"subTitle": "Revenue",
+			"status": {
+				"text": "5 of 20"
+			},
+			"unitOfMeasurement": "EUR",
+			"mainIndicator": {
+				"number": "{number}",
+				"unit": "{unit}",
+				"trend": "{trend}",
+				"state": "{state}"
+			},
+			"sideIndicators": [
+				{
+					"title": "Target",
+					"number": "{target/number}",
+					"unit": "{target/unit}"
+				}
+			],
+			"details": "{details}",
+			"chart": {
+				"type": "Bullet",
+				"minValue": 0,
+				"maxValue": "{expected}",
+				"target": "{chartTarget}",
+				"value": "{chartActual}",
+				"scale": "€",
+				"color": "{state}"
+			}
+		},
+		"content": {
+			"data": {
+				"path": "/items"
+			},
+			"maxItems": 5,
+			"item": {
+				"title": "{Name}",
+				"description": "{Description}",
+				"info": {
+					"value": "{= format.currency(${Actual} - ${Target}, 'EUR', {currencyCode:false})} {= ${Actual} - ${Target} >= 0 ? 'Profit' : 'Loss' }",
+					"state": "{Highlight}"
+				},
+				"chart": {
+					"type": "Bullet",
+					"minValue": 0,
+					"maxValue": "{Expected}",
+					"target": "{Target}",
+					"value": "{Actual}",
+					"scale": "€",
+					"displayValue": "{= format.currency(${Actual}, 'EUR', {currencyCode:false})}",
+					"color": "{ChartColor}"
+				}
+			}
+		}
+	}
+}

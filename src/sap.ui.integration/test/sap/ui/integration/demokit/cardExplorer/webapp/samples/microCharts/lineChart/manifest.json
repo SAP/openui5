@@ -1,0 +1,92 @@
+{
+	"sap.app": {
+		"id": "card.explorer.lineChart.list.card",
+		"type": "card",
+		"title": "Sample of a List with Line Chart",
+		"subTitle": "Sample of a List with Line Chart",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"List",
+				"Chart",
+				"Card",
+				"Sample"
+			]
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://list"
+		}
+	},
+	"sap.card": {
+		"type": "List",
+		"data": {
+			"request": {
+				"url": "./data.json"
+			}
+		},
+		"header": {
+			"data": {
+				"path": "/header"
+			},
+			"type": "Numeric",
+			"title": "Price Growth",
+			"mainIndicator": {
+				"number": "{Lines/1/Points/3/Y}",
+				"unit": "EUR",
+				"trend": "Up",
+				"state": "Good"
+			},
+			"status": {
+				"text": "5 of 20"
+			},
+			"chart": {
+				"type": "Line",
+				"leftTopLabel": "0",
+				"rightTopLabel": "30",
+				"maxXValue": 30,
+				"maxYValue": 400,
+				"minXValue": 0,
+				"minYValue": 0,
+				"leftBottomLabel": "June 1",
+				"rightBottomLabel": "June 30",
+				"lines": {
+					"path": "Lines",
+					"template": {
+						"color": "{color}",
+						"lineType": "{type}",
+						"showPoints": true,
+						"points": {
+							"path": "Points",
+							"template": {
+								"x": "{X}",
+								"y": "{Y}"
+							}
+						}
+					}
+				}
+			}
+		},
+		"content": {
+			"data": {
+				"path": "/items"
+			},
+			"maxItems": 5,
+			"item": {
+				"title": "{Name}",
+				"description": "{Description}",
+				"info": {
+					"value": "{= ${Lines/0/Points/3/Y}} EUR",
+					"state": "{Highlight}"
+				}
+			}
+		}
+	}
+}

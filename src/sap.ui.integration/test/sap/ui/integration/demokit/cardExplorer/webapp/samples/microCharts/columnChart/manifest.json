@@ -1,0 +1,86 @@
+{
+	"sap.app": {
+		"id": "card.explorer.columnChart.list.card",
+		"type": "card",
+		"title": "Sample of a List with Column Chart",
+		"subTitle": "Sample of a List with Column Chart",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"List",
+				"Chart",
+				"Card",
+				"Sample"
+			]
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://list"
+		}
+	},
+	"sap.card": {
+		"type": "List",
+		"data": {
+			"request": {
+				"url": "./data.json"
+			}
+		},
+		"header": {
+			"data": {
+				"path": "/header"
+			},
+			"type": "Numeric",
+			"title": "Income from products",
+			"subTitle": "Revenue",
+			"status": {
+				"text": "5 of 20"
+			},
+			"unitOfMeasurement": "EUR",
+			"mainIndicator": {
+				"number": "{number}",
+				"unit": "{unit}",
+				"trend": "{trend}",
+				"state": "{state}"
+			},
+			"details": "{details}",
+			"chart": {
+				"type": "Column",
+				"leftTopLabel": "0M",
+				"rightTopLabel": "80M",
+				"leftBottomLabel": "June 1",
+				"rightBottomLabel": "June 30",
+				"columns": {
+					"path": "chart/columns",
+					"template": {
+						"color": "{color}",
+						"value": "{value}"
+					}
+				}
+			}
+		},
+		"content": {
+			"maxItems": 5,
+			"data": {
+				"path": "/items"
+			},
+			"item": {
+				"icon": {
+					"src": "sap-icon://product"
+				},
+				"title": "{Name}",
+				"description": "{Description}",
+				"info": {
+					"value": "{= ${Highlight} === 'Success' ? 'Profit' : 'Loss' }",
+					"state": "{Highlight}"
+				}
+			}
+		}
+	}
+}

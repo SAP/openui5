@@ -1,0 +1,170 @@
+{
+	"header": {
+		"number": "20.53",
+		"unit": "K",
+		"trend": "Down",
+		"state": "Error",
+		"target": {
+			"number": 100,
+			"unit": "K"
+		},
+		"details": "Q1, 2018",
+		"chart": {
+			"columns": [
+				{
+					"color": "Error",
+					"value": 100
+				},
+				{
+					"color": "Critical",
+					"value": 250
+				},
+				{
+					"color": "Good",
+					"value": 400
+				},
+				{
+					"color": "Error",
+					"value": 100
+				}
+			]
+		}
+	},
+	"items": [
+		{
+			"Name": "Comfort Easy",
+			"Description": "32 GB Digital Assistant",
+			"Highlight": "Success",
+			"TopLeft": "",
+			"TopRight": "",
+			"BottomLeft": "",
+			"BottomRight": "",
+			"Columns": [
+				{
+					"color": "Error",
+					"value": 100
+				},
+				{
+					"color": "Critical",
+					"value": 250
+				},
+				{
+					"color": "Good",
+					"value": 400
+				},
+				{
+					"color": "Error",
+					"value": 100
+				}
+			]
+		},
+		{
+			"Name": "ITelO Vault",
+			"Description": "Digital Organizer",
+			"Highlight": "Success",
+			"TopLeft": "",
+			"TopRight": "",
+			"BottomLeft": "",
+			"BottomRight": "",
+			"Columns": [
+				{
+					"color": "Error",
+					"value": 100
+				},
+				{
+					"color": "Critical",
+					"value": 250
+				},
+				{
+					"color": "Good",
+					"value": 400
+				},
+				{
+					"color": "Error",
+					"value": 100
+				}
+			]
+		},
+		{
+			"Name": "Notebook Professional 15",
+			"Description": "Multitouch LCD",
+			"Highlight": "Success",
+			"TopLeft": "",
+			"TopRight": "",
+			"BottomLeft": "",
+			"BottomRight": "",
+			"Columns": [
+				{
+					"color": "Error",
+					"value": 100
+				},
+				{
+					"color": "Critical",
+					"value": 250
+				},
+				{
+					"color": "Good",
+					"value": 400
+				},
+				{
+					"color": "Error",
+					"value": 100
+				}
+			]
+		},
+		{
+			"Name": "Ergo Screen E-I",
+			"Description": "Optimum Hi-Resolution max.",
+			"Highlight": "Warning",
+			"TopLeft": "",
+			"TopRight": "",
+			"BottomLeft": "",
+			"BottomRight": "",
+			"Columns": [
+				{
+					"color": "Error",
+					"value": 100
+				},
+				{
+					"color": "Critical",
+					"value": 250
+				},
+				{
+					"color": "Good",
+					"value": 400
+				},
+				{
+					"color": "Error",
+					"value": 100
+				}
+			]
+		},
+		{
+			"Name": "Laser Professional Eco",
+			"Description": "Powerful 500 MHz processor",
+			"Highlight": "Error",
+			"TopLeft": "",
+			"TopRight": "",
+			"BottomLeft": "",
+			"BottomRight": "",
+			"Columns": [
+				{
+					"color": "Error",
+					"value": 100
+				},
+				{
+					"color": "Critical",
+					"value": 250
+				},
+				{
+					"color": "Good",
+					"value": 400
+				},
+				{
+					"color": "Error",
+					"value": 100
+				}
+			]
+		}
+	]
+}

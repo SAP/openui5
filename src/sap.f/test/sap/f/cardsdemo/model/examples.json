@@ -147,6 +147,12 @@
 		"group": "Header and Footer"
 	},
 	{
+		"title": "Micro Charts",
+		"description": "Example page for Card with Micro Charts in Header",
+		"route": "microCharts",
+		"group": "Header and Footer"
+	},
+	{
 		"title": "Footer",
 		"description": "Having buttons with actions in a footer",
 		"route": "footer",

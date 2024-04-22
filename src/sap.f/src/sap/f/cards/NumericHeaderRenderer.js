@@ -211,6 +211,11 @@ sap.ui.define([
 		BaseHeaderRenderer.renderAvatar(oRm, oNH);
 		NumericHeaderRenderer.renderIndicators(oRm, oNH);
 
+		var oMicroChart = oNH.getMicroChart();
+		if (oMicroChart) {
+			oRm.renderControl(oMicroChart);
+		}
+
 		oRm.close("div");
 	};
 
