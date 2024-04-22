@@ -32,11 +32,14 @@
 	</mvc:View>
 </script>
 <script>
+(function() {
+	"use strict";
+
 	jQuery.sap.require("sap.ui.core.HTML");
 	jQuery.sap.require("sap.ui.core.IconPool");
 
 	// Transform page to size compact
-	var sCompact = jQuery.sap.getUriParameters().get("compact");
+	const sCompact = new URLSearchParams(window.location.search).get("compact");
 	if(sCompact) {
 		$(document).ready(function() {
 			$("#content").addClass("sapUiSizeCompact");
@@ -1119,7 +1122,7 @@
 		app.addPage(page, true).addPage(page2, false);
 
 	}) ();
-
+})();
 </script>
 </head>
 <body id="body" class="sapUiBody">
