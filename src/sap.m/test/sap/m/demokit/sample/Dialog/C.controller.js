@@ -75,6 +75,7 @@ sap.ui.define([
 						}
 					}),
 					endButton: new Button({
+						type: ButtonType.Emphasized,
 						text: "Close",
 						press: function () {
 							this.oFixedSizeDialog.close();
@@ -106,6 +107,7 @@ sap.ui.define([
 						}
 					}),
 					endButton: new Button({
+						type: ButtonType.Emphasized,
 						text: "Close",
 						press: function () {
 							this.oResizableDialog.close();
@@ -137,6 +139,7 @@ sap.ui.define([
 						}
 					}),
 					endButton: new Button({
+						type: ButtonType.Emphasized,
 						text: "Close",
 						press: function () {
 							this.oDraggableDialog.close();
@@ -158,6 +161,7 @@ sap.ui.define([
 					content: new Text({ text: "Try to close this Dialog with the Escape key" }).addStyleClass("sapUiSmallMargin"),
 					buttons: [
 						new Button({
+							type: ButtonType.Emphasized,
 							text: "Simply close",
 							press: function () {
 								this.oEscapePreventDialog.close();
@@ -173,6 +177,7 @@ sap.ui.define([
 								icon: IconPool.getIconURI("message-information"),
 								buttons: [
 									new Button({
+										type: ButtonType.Emphasized,
 										text: "Yes",
 										press: function () {
 											this.oConfirmEscapePreventDialog.close();
