@@ -333,7 +333,7 @@ sap.ui.define([
 					if (oTable._isOfType(TableType.ResponsiveTable)) {
 						this._oScrollContainer.scrollTo(0, 0);
 					} else if (bTableBound) { //scrollToIndex throws error if internal table doesn't exist
-						return oTable.scrollToIndex(0);
+						oTable.scrollToIndex(0);
 					}
 				}
 			}
