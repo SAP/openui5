@@ -3,6 +3,31 @@
     "date": "April 2024",
     "notes": [
       {
+        "id": "edeae1280ded8904ce694445714c152dc0fee7a4",
+        "type": "FIX",
+        "text": " sap.m.Toolbar: Fix left aligment in Tables"
+      },
+      {
+        "id": "4daf3ebff09fc67cb49443be810ecac4c0c2b09c",
+        "type": "FIX",
+        "text": " sap.m.Slider: Accessibility samples adjusments"
+      },
+      {
+        "id": "a066621b55d12b013d96fd185361ae353ac4e402",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: Inverted status is displayed correctly in Form"
+      },
+      {
+        "id": "eb0b9a2e9e5560db50a50193434bdf6a9b9ebb19",
+        "type": "FIX",
+        "text": " sap.m.Avatar: Fix image loading of Avatar"
+      },
+      {
+        "id": "2f26090df9c84ea827abaf07dc7e5f4044eed2e8",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: fix footer buttons visibility when there is not enough space"
+      },
+      {
         "id": "877aa206427f646cddf78b509e1d347708327cb4",
         "type": "FIX",
         "text": " sap.m.OverflowToolbar: Fix closing Popover with ComboBox"

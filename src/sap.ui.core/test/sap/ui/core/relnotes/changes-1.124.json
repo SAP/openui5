@@ -3,6 +3,11 @@
     "date": "April 2024",
     "notes": [
       {
+        "id": "3b3dbab6b1944ebb7471bfc37c5e51a0d7a09fd6",
+        "type": "FIX",
+        "text": " core/LabelEnablement: getIdForLabel only on sap.ui.core.Control"
+      },
+      {
         "id": "78cfc2c84d3723715f394ca175dd792ffe3eccc5",
         "type": "FEATURE",
         "text": " core/UIComponent: Provide internal hook for router class definition"

@@ -3,6 +3,36 @@
     "date": "April 2024",
     "notes": [
       {
+        "id": "d37d3649f493ba85fba8dc2fbdef69d8cc3b2c5e",
+        "type": "FIX",
+        "text": " sap.m.Toolbar: Fix Toolbars in .sapUiTableOnObjectPageAdjustments"
+      },
+      {
+        "id": "edeae1280ded8904ce694445714c152dc0fee7a4",
+        "type": "FIX",
+        "text": " sap.m.Toolbar: Fix left aligment in Tables"
+      },
+      {
+        "id": "d778f7a6b767da58dc54a505b41ce7e168a07f77",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: fixed hover color for selected and focused days"
+      },
+      {
+        "id": "e46596ecdd4e37068e1a28c3738bd42f149457e8",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: fixed hover color for selected day"
+      },
+      {
+        "id": "a066621b55d12b013d96fd185361ae353ac4e402",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: Inverted status is displayed correctly in Form"
+      },
+      {
+        "id": "44a4c33f30a71fbeb7220544fc6b3cadea9045ff",
+        "type": "FIX",
+        "text": " sap.f.FlexibleColumnLayout: Title alignment"
+      },
+      {
         "id": "f7392aefaff152989b534cc2c470d2b2998668c2",
         "type": "FIX",
         "text": " sap.f.ShellBar: New Assistant color added"
