@@ -3920,6 +3920,7 @@ sap.ui.define([
 		// act
 		qutils.triggerKeydown(oMultiComboBox.getFocusDomRef(), KeyCodes.F4);
 		this.clock.tick(500);
+		var oItemDomRef = oMultiComboBox._getList().getItems()[0].getDomRef();
 
 		// assertions
 		assert.strictEqual(fnShowSpy.callCount, 1, "onsapshow was called exactly once");
@@ -3930,6 +3931,8 @@ sap.ui.define([
 			'The MultiComboBox must have the css class “' + InputBase.ICON_PRESSED_CSS_CLASS);
 		assert.strictEqual(oMultiComboBox.getFocusDomRef().getAttribute("aria-expanded"), "true", "aria-expanded should be true");
 		assert.ok(!oMultiComboBox._isListInSuggestMode(), 'Complete list is open');
+		assert.strictEqual(document.activeElement, oItemDomRef, "The first item in the list is focused");
+		assert.ok(oItemDomRef.hasAttribute("aria-labelledby"), "The first item has an aria-labelledby attribute");
 
 		// cleanup
 		oMultiComboBox.destroy();
