@@ -19,7 +19,7 @@ sap.ui.define([
 	 * @class
 	 * <code>sap.m.upload.UploadItem</code> represents one item to be uploaded using the {@link sap.m.plugins.UploadSetwithTable UploadSetwithTable}
 	 *
-	 * <b>Note:</b> This Element should only be used within the {@link sap.m.plugins.UploadSetwithTable UploadSetwithTable} control.
+	 * <b>Note:</b> This element should only be used within the {@link sap.m.plugins.UploadSetwithTable UploadSetwithTable} plugin.
 	 * @extends sap.ui.core.Element
 	 * @author SAP SE
 	 * @constructor
