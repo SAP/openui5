@@ -606,6 +606,27 @@
 	}), oPage);
 
 	addToPage(new sap.m.ObjectStatus({
+		state: "Success",
+		inverted: true,
+		icon: "sap-icon://alert"
+	}).addStyleClass("sapMObjectStatusLarge"), oPage);
+
+	addToPage(new sap.m.ObjectStatus({
+		state: "Success",
+		inverted: true,
+		text: "Large inverted",
+		active: true
+	}).addStyleClass("sapMObjectStatusLarge"), oPage);
+
+	addToPage(new sap.m.ObjectStatus({
+		state: "Warning",
+		inverted: true,
+		icon: "sap-icon://alert",
+		text: "Large inverted",
+		active: true
+	}).addStyleClass("sapMObjectStatusLarge"), oPage);
+
+	addToPage(new sap.m.ObjectStatus({
 		state: "Error",
 		icon: "sap-icon://alert",
 		text : "Very long not active status containing only text Ñagçyfox Created by John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John DoeÑagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe"
