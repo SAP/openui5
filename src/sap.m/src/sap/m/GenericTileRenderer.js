@@ -633,10 +633,6 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/core/Them
 	GenericTileRenderer._renderHeader = function(oRm, oControl) {
 		oRm.openStart("div", oControl.getId() + "-hdr-text");
 		oRm.class("sapMGTHdrTxt");
-		if (oControl._isActionMode() && this._isValueColorValid(oControl.getValueColor())) {
-			oRm.class("sapMGTCriticalHdrTxt");
-			oRm.class(oControl.getValueColor());
-		}
 		oRm.openEnd();
 		oRm.renderControl(oControl._oTitle);
 		oRm.close("div");
