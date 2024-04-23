@@ -1261,6 +1261,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @see #isInactive
+	 * @see #move
 	 * @since 1.43.0
 	 */
 	Context.prototype.isTransient = function () {
@@ -1275,8 +1276,15 @@ sap.ui.define([
 	 * must happen while this move is pending! Omitting a new parent turns this node into a root
 	 * node (since 1.121.0).
 	 *
-	 * This context's {@link #getIndex index} may change and a created node becomes simply
-	 * "persisted", with {@link #isTransient} returning <code>undefined</code> etc.
+	 * The move changes the {@link #getIndex index} of this context, of all of its descendants, and
+	 * of all other nodes affected by the move.
+	 *
+	 * If this node is created, it becomes simply "persisted", with {@link #isTransient} returning
+	 * <code>undefined</code> etc. In this case, all descendants of this node are created themselves
+	 * and also become "persisted" - otherwise, they remain unaffected. If the new parent is
+	 * created, then its lowest-level {@link #getParent ancestor} is determined which is created as
+	 * well (this may be the new parent itself). All descendants of that node are created themselves
+	 * and also become "persisted" - otherwise, they remain unaffected.
 	 *
 	 * @param {object} [oParameters] - A parameter object
 	 * @param {sap.ui.model.odata.v4.Context} [oParameters.parent=null] - The new parent's context
