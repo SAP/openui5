@@ -523,6 +523,8 @@ function(
 		// Counter for concurrent issues with setValue:
 		this._iSetCount = 0;
 
+		this._isValueInitial = false;
+
 		this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 	};
 
@@ -587,6 +589,10 @@ function(
 
 		InputBase.prototype.onBeforeRendering.call(this);
 
+		if (!this.getDomRef() && this.getValue()) {
+			this._isValueInitial = true;
+		}
+
 		this._deregisterEvents();
 
 		if (sSelectedKey) {
@@ -630,6 +636,20 @@ function(
 			If the input has FormattedText aggregation while the suggestions popover is open then
 			it's new, because the old is already switched to have the value state header as parent */
 			this._updateSuggestionsPopoverValueState();
+		}
+	};
+
+	/**
+	 * Overwrites the onAfterRendering.
+	 *
+	 * @public
+	 */
+	Input.prototype.onAfterRendering = function() {
+		InputBase.prototype.onAfterRendering.call(this);
+
+		if (this._isValueInitial && this.getType() === InputType.Password) {
+			this.getDomRef("inner").value = this.getProperty("value");
+			this._isValueInitial = false;
 		}
 	};
 

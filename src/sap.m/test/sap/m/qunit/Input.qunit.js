@@ -154,6 +154,39 @@ sap.ui.define([
 		assert.equal(i1.getType(), typeDefault, "Input Type: Default");
 	});
 
+	QUnit.test("Inner input value - type password", function(assert) {
+		// Arrange
+		var oInput = new sap.m.Input({
+			type: "Password",
+			value: "A"
+		});
+
+		oInput.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		var oInnerInput = oInput.getFocusDomRef();
+
+		assert.notOk(oInnerInput.getAttribute("value"), "Value attribute is not rendered");
+		assert.strictEqual(oInput.getProperty("value"), "A", "Value is correct");
+		assert.strictEqual(oInnerInput.value, "A", "Initial value is set");
+
+		// Act
+		oInnerInput.focus();
+		qutils.triggerKeydown(oInput._$input, KeyCodes.BACKSPACE);
+		var oFakeKeydown = jQuery.Event("keydown", { which: KeyCodes.B });
+		oInput._$input.trigger("focus").trigger(oFakeKeydown).val("BB").trigger("input");
+		qutils.triggerKeydown(oInnerInput, KeyCodes.SPACE);
+		qutils.triggerKeyup(oInnerInput, KeyCodes.SPACE);
+		this.clock.tick();
+
+		// Assert
+		assert.notOk(oInnerInput.getAttribute("value"), "Value attribute is not rendered");
+		assert.strictEqual(oInput.getValue(), "BB", "Value is updated correctly");
+
+		// Clean
+		oInput.destroy();
+	});
+
 	QUnit.test("InputEnabled", function(assert) {
 		var enabled = false;
 		i1.setEnabled(enabled);
