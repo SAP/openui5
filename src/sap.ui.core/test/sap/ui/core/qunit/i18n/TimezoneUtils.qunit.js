@@ -2,11 +2,11 @@
 sap.ui.define([
 	"../i18n/helper/_timezones",
 	"sap/base/Log",
+	"sap/base/i18n/date/TimezoneUtils",
 	"sap/ui/core/Locale",
 	"sap/ui/core/LocaleData",
-	"sap/ui/core/date/UI5Date",
-	"sap/ui/core/format/TimezoneUtil"
-], function (timezones, Log, Locale, LocaleData, UI5Date, TimezoneUtil) {
+	"sap/ui/core/date/UI5Date"
+], function (timezones, Log, TimezoneUtils, Locale, LocaleData, UI5Date) {
 		"use strict";
 
 		/**
@@ -15,12 +15,19 @@ sap.ui.define([
 		 */
 		var aTimezoneIDs = Object.keys(LocaleData.getInstance(new Locale("en")).getTimezoneTranslations());
 
-		QUnit.module("isValidTimezone");
+		QUnit.module("sap/base/i18n/date/TimezoneUtils", {
+			beforeEach : function () {
+				this.oLogMock = this.mock(Log);
+				this.oLogMock.expects("error").never();
+				this.oLogMock.expects("warning").never();
+			}
+		});
 
 		QUnit.test("valid timezones (UI5 json data)", function (assert) {
 			aTimezoneIDs.forEach(function (sTimezone) {
 				if (!timezones.aUnsupportedBrowserTimezoneIDs.includes(sTimezone)) {
-					assert.ok(TimezoneUtil.isValidTimezone(sTimezone), sTimezone + " should be a valid timezone (UI5 json data).");
+					assert.ok(TimezoneUtils.isValidTimezone(sTimezone), sTimezone
+						+ " should be a valid timezone (UI5 json data).");
 				}
 			});
 		});
@@ -28,7 +35,8 @@ sap.ui.define([
 		QUnit.test("valid timezones (CLDR)", function (assert) {
 			timezones.aCLDRTimezoneIDs.forEach(function (sTimezone) {
 				if (!timezones.aUnsupportedBrowserTimezoneIDs.includes(sTimezone)) {
-					assert.ok(TimezoneUtil.isValidTimezone(sTimezone), sTimezone + " should be a valid timezone (CLDR).");
+					assert.ok(TimezoneUtils.isValidTimezone(sTimezone), sTimezone
+						+ " should be a valid timezone (CLDR).");
 				}
 			});
 		});
@@ -36,7 +44,8 @@ sap.ui.define([
 		QUnit.test("valid timezones (ABAP)", function (assert) {
 			timezones.aABAPTimezoneIDs.forEach(function (sTimezone) {
 				if (!timezones.aUnsupportedBrowserTimezoneIDs.includes(sTimezone)) {
-					assert.ok(TimezoneUtil.isValidTimezone(sTimezone), sTimezone + " should be a valid timezone (ABAP).");
+					assert.ok(TimezoneUtils.isValidTimezone(sTimezone), sTimezone
+						+ " should be a valid timezone (ABAP).");
 				}
 			});
 		});
@@ -44,31 +53,33 @@ sap.ui.define([
 		QUnit.test("valid timezones (tz)", function (assert) {
 			timezones.aTzTimezoneIDs.forEach(function (sTimezone) {
 				if (!timezones.aUnsupportedBrowserTimezoneIDs.includes(sTimezone)) {
-					assert.ok(TimezoneUtil.isValidTimezone(sTimezone), sTimezone + " should be a valid timezone (tz).");
+					assert.ok(TimezoneUtils.isValidTimezone(sTimezone), sTimezone
+						+ " should be a valid timezone (tz).");
 				}
 			});
 		});
 
 		QUnit.test("invalid timezones", function (assert) {
-			assert.notOk(TimezoneUtil.isValidTimezone(""), "Empty string should not be a valid timezone.");
-			assert.notOk(TimezoneUtil.isValidTimezone(123), "A number should not be a valid timezone.");
-			assert.notOk(TimezoneUtil.isValidTimezone(undefined), "undefined should not be a valid timezone.");
-			assert.notOk(TimezoneUtil.isValidTimezone(null), "null should not be a valid timezone.");
-			assert.notOk(TimezoneUtil.isValidTimezone("SAP/Walldorf"), "SAP/Walldorf should not be a valid timezone.");
-			assert.notOk(TimezoneUtil.isValidTimezone("Asia/Hanoi"), "Asia/Hanoi should not be a valid timezone.");
-			assert.notOk(TimezoneUtil.isValidTimezone(UI5Date.getInstance()), "A date should not be a valid timezone.");
+			assert.notOk(TimezoneUtils.isValidTimezone(""), "Empty string should not be a valid timezone.");
+			assert.notOk(TimezoneUtils.isValidTimezone(123), "A number should not be a valid timezone.");
+			assert.notOk(TimezoneUtils.isValidTimezone(undefined), "undefined should not be a valid timezone.");
+			assert.notOk(TimezoneUtils.isValidTimezone(null), "null should not be a valid timezone.");
+			assert.notOk(TimezoneUtils.isValidTimezone("SAP/Walldorf"), "SAP/Walldorf should not be a valid timezone.");
+			assert.notOk(TimezoneUtils.isValidTimezone("Asia/Hanoi"), "Asia/Hanoi should not be a valid timezone.");
+			assert.notOk(TimezoneUtils.isValidTimezone(UI5Date.getInstance()),
+				"A date should not be a valid timezone.");
 		});
-
-		QUnit.module("calculateOffset");
 
 		QUnit.test("Calculate offset Europe/Berlin", function (assert) {
 			var oDate = UI5Date.getInstance("2021-10-13T13:22:33Z");
-			assert.equal(TimezoneUtil.calculateOffset(oDate, "Europe/Berlin"), -2 * 3600, "Timezone difference of -2 hours should match.");
+			assert.strictEqual(TimezoneUtils.calculateOffset(oDate, "Europe/Berlin"), -2 * 3600,
+				"Timezone difference of -2 hours should match.");
 		});
 
 		QUnit.test("Calculate offset America/New_York", function (assert) {
 			var oDate = UI5Date.getInstance("2021-10-13T15:22:33Z");
-			assert.equal(TimezoneUtil.calculateOffset(oDate, "America/New_York"), 4 * 3600, "Timezone difference of 4 hours should match.");
+			assert.strictEqual(TimezoneUtils.calculateOffset(oDate, "America/New_York"), 4 * 3600,
+				"Timezone difference of 4 hours should match.");
 		});
 
 		QUnit.test("Historical timezones", function (assert) {
@@ -107,7 +118,7 @@ sap.ui.define([
 					diff: -2 * 3600
 				}
 			].forEach(function(oFixture) {
-				assert.deepEqual(TimezoneUtil.calculateOffset(oFixture.inputDate, "Europe/Berlin"), oFixture.diff,
+				assert.deepEqual(TimezoneUtils.calculateOffset(oFixture.inputDate, "Europe/Berlin"), oFixture.diff,
 					"Input Date '" + oFixture.inputDate + "' should have diff " + oFixture.diff);
 			});
 		});
@@ -362,63 +373,65 @@ sap.ui.define([
 					timezoneDiff: -14
 				}
 			].forEach(function (oFixture) {
-				assert.equal(
-					TimezoneUtil.calculateOffset(UI5Date.getInstance(oFixture.targetDate), oFixture.targetTimezone),
+				assert.strictEqual(
+					TimezoneUtils.calculateOffset(UI5Date.getInstance(oFixture.targetDate), oFixture.targetTimezone),
 					oFixture.timezoneDiff * 3600,
 					"Timezone difference of " + oFixture.timezoneDiff + " hours in " + oFixture.targetTimezone
 						+ " for input date " + UI5Date.getInstance(oFixture.targetDate) + ".");
 			});
 		});
 
-		QUnit.module("convertToTimezone");
-
 		QUnit.test("try to convert to invalid time", function (assert) {
 			// 2018 Sun, 7 Oct, 02:00	AEST → AEDT	+1 hour (DST start)	UTC+11h
 			var oDate = Date.UTC(2018, 9, 7, 2, 30);
 			// Sun Oct 07 2018 15:30:00 GMT+0200
 			var iExpectedEDT = Date.UTC(2018, 9, 7, 13, 30);
-			assert.equal(TimezoneUtil.convertToTimezone(UI5Date.getInstance(oDate), "Australia/Sydney").getTime(),
-				iExpectedEDT, "Date should be converted.");
+			assert.strictEqual(TimezoneUtils.convertToTimezone(UI5Date.getInstance(oDate), "Australia/Sydney")
+				.getTime(), iExpectedEDT, "Date should be converted.");
 
 			var oDate1 = Date.UTC(2018, 9, 6, 16, 30);
 			var iExpectedEDT1 = Date.UTC(2018, 9, 7, 3, 30);
-			assert.equal(TimezoneUtil.convertToTimezone(UI5Date.getInstance(oDate1), "Australia/Sydney").getTime(),
-				iExpectedEDT1, "Date should be converted.");
+			assert.strictEqual(TimezoneUtils.convertToTimezone(UI5Date.getInstance(oDate1), "Australia/Sydney")
+				.getTime(), iExpectedEDT1, "Date should be converted.");
 
 
 			var oDate2 = Date.UTC(2018, 9, 6, 15, 30);
 			var iExpectedEDT2 = Date.UTC(2018, 9, 7, 1, 30);
-			assert.equal(TimezoneUtil.convertToTimezone(UI5Date.getInstance(oDate2), "Australia/Sydney").getTime(),
-				iExpectedEDT2, "Date should be converted.");
+			assert.strictEqual(TimezoneUtils.convertToTimezone(UI5Date.getInstance(oDate2), "Australia/Sydney")
+				.getTime(), iExpectedEDT2, "Date should be converted.");
 
 			var oDate3 = Date.UTC(2018, 9, 6, 14, 30);
 			var iExpectedEDT3 = Date.UTC(2018, 9, 7, 0, 30);
-			assert.equal(TimezoneUtil.convertToTimezone(UI5Date.getInstance(oDate3), "Australia/Sydney").getTime(),
-				iExpectedEDT3, "Date should be converted.");
+			assert.strictEqual(TimezoneUtils.convertToTimezone(UI5Date.getInstance(oDate3), "Australia/Sydney")
+				.getTime(), iExpectedEDT3, "Date should be converted.");
 		});
 
 		QUnit.test("convert to America/New_York", function (assert) {
 			// Timezone difference UTC-4 (Eastern Daylight Time - EDT)
 			var oDateEDT = UI5Date.getInstance("2021-10-13T15:22:33Z");
 			var iExpectedEDT = Date.UTC(2021, 9, 13, 11, 22, 33);
-			assert.equal(TimezoneUtil.convertToTimezone(oDateEDT, "America/New_York").getTime(), iExpectedEDT, "Date should be converted.");
+			assert.strictEqual(TimezoneUtils.convertToTimezone(oDateEDT, "America/New_York").getTime(), iExpectedEDT,
+				"Date should be converted.");
 
 			// Timezone difference UTC-5 (Eastern Standard Time - EST)
 			var oDateEST = UI5Date.getInstance("2021-11-13T15:22:33Z");
 			var iExpectedEST = Date.UTC(2021, 10, 13, 10, 22, 33);
-			assert.equal(TimezoneUtil.convertToTimezone(oDateEST, "America/New_York").getTime(), iExpectedEST, "Date should be converted.");
+			assert.strictEqual(TimezoneUtils.convertToTimezone(oDateEST, "America/New_York").getTime(), iExpectedEST,
+				"Date should be converted.");
 		});
 
 		QUnit.test("convert to Europe/Berlin", function (assert) {
 			// Timezone difference UTC+2 (Central European Summer Time)
 			var oDateSummer = UI5Date.getInstance("2021-10-13T15:22:33Z");
 			var iExpectedSummer = Date.UTC(2021, 9, 13, 17, 22, 33);
-			assert.equal(TimezoneUtil.convertToTimezone(oDateSummer, "Europe/Berlin").getTime(), iExpectedSummer, "Date should be converted.");
+			assert.strictEqual(TimezoneUtils.convertToTimezone(oDateSummer, "Europe/Berlin").getTime(), iExpectedSummer,
+				"Date should be converted.");
 
 			// Timezone difference UTC+1 (Central European Standard Time)
 			var oDateStandard = UI5Date.getInstance("2021-11-13T15:22:33Z");
 			var iExpectedStandard = Date.UTC(2021, 10, 13, 16, 22, 33);
-			assert.equal(TimezoneUtil.convertToTimezone(oDateStandard, "Europe/Berlin").getTime(), iExpectedStandard, "Date should be converted.");
+			assert.strictEqual(TimezoneUtils.convertToTimezone(oDateStandard, "Europe/Berlin").getTime(),
+				iExpectedStandard, "Date should be converted.");
 		});
 
 		QUnit.test("Historical timezones", function (assert) {
@@ -457,8 +470,8 @@ sap.ui.define([
 					outputDate: UI5Date.getInstance("1946-05-24T04:00:00Z")
 				}
 			].forEach(function(oFixture) {
-				assert.deepEqual(TimezoneUtil.convertToTimezone(oFixture.inputDate, "Europe/Berlin"), oFixture.outputDate,
-					"Input Date '" + oFixture.inputDate + "' should be converted.");
+				assert.deepEqual(TimezoneUtils.convertToTimezone(oFixture.inputDate, "Europe/Berlin"),
+					oFixture.outputDate, "Input Date '" + oFixture.inputDate + "' should be converted.");
 			});
 		});
 
@@ -523,15 +536,14 @@ sap.ui.define([
 					}
 				}
 			].forEach(function(oFixture) {
-				assert.deepEqual(TimezoneUtil.convertToTimezone(oFixture.createInputDate(), "Europe/Berlin"),
-					oFixture.createOutputDate(), "Input Date '" + oFixture.createInputDate() + "' should be converted.");
+				assert.deepEqual(TimezoneUtils.convertToTimezone(oFixture.createInputDate(), "Europe/Berlin"),
+					oFixture.createOutputDate(), "Input Date '" + oFixture.createInputDate()
+						+ "' should be converted.");
 			});
 		});
 
-		QUnit.module("getLocalTimezone");
-
 		QUnit.test("local timezone", function (assert) {
-			var sLocalTimezone = TimezoneUtil.getLocalTimezone();
+			var sLocalTimezone = TimezoneUtils.getLocalTimezone();
 			assert.ok(sLocalTimezone, "local timezone can be retrieved");
 			assert.ok(timezones.aTzTimezoneIDs.includes(sLocalTimezone) || aTimezoneIDs.includes(sLocalTimezone),
 				"Local timezone should be in list: " + sLocalTimezone);
@@ -540,64 +552,50 @@ sap.ui.define([
 		QUnit.test("convert CLDR to ABAP", function (assert) {
 			const oDateTimeFormatMock = this.mock(Intl.DateTimeFormat.prototype);
 
-			for (const [sCLDR_ID, sABAP_ID] of Object.entries(TimezoneUtil.mCLDR2ABAPTimezones)) {
-				TimezoneUtil._clearLocalTimezoneCache();
+			for (const [sCLDR_ID, sABAP_ID] of Object.entries(TimezoneUtils.mCLDR2ABAPTimezones)) {
+				TimezoneUtils._clearLocalTimezoneCache();
 				oDateTimeFormatMock.expects("resolvedOptions").returns({timeZone: sCLDR_ID});
 
 				// code under test
-				assert.strictEqual(TimezoneUtil.getLocalTimezone(), sABAP_ID, sCLDR_ID + " -> " + sABAP_ID);
+				assert.strictEqual(TimezoneUtils.getLocalTimezone(), sABAP_ID, sCLDR_ID + " -> " + sABAP_ID);
 			}
 		});
 
 		QUnit.test("only retrieve timezone if cache is empty (string)", function (assert) {
-			TimezoneUtil._clearLocalTimezoneCache();
+			TimezoneUtils._clearLocalTimezoneCache();
 			// the browser's Intl.DateTimeFormat implementation may return undefined in case of OS default timezone
 			this.mock(Intl.DateTimeFormat.prototype).expects("resolvedOptions").returns({timeZone: undefined});
 
 			// code under test
-			assert.strictEqual(TimezoneUtil.getLocalTimezone(), undefined);
-			assert.strictEqual(TimezoneUtil.getLocalTimezone(), undefined,
+			assert.strictEqual(TimezoneUtils.getLocalTimezone(), undefined);
+			assert.strictEqual(TimezoneUtils.getLocalTimezone(), undefined,
 				"second call uses cache, does not call Intl.DateTimeFormat API again");
 		});
 
-		QUnit.module("Fixed date with end of January", {
-			beforeEach: function () {
-				this.clock = sinon.useFakeTimers(UI5Date.getInstance("2022-01-31T15:22:33Z").getTime());
-			},
-			afterEach: function () {
-				this.clock.restore();
-			}
-		});
-
-		QUnit.test("convert from UTC to UTC", function (assert) {
+		QUnit.test("convert from UTC to UTC, with fixed date end of January", function (assert) {
+			this.clock = sinon.useFakeTimers(UI5Date.getInstance("2022-01-31T15:22:33Z").getTime());
 			// The date creation from fields provided by the Intl.DateTimeFormat API must be in the
 			// correct order and use the UNIX epoch start date (new Date(0)).
 			// Otherwise if created from a new Date() with date January 31st when calling
 			// setUTCMonth, it would automatically shift to the next month, because February does
 			// not have the 31 days.
 			var oDate = UI5Date.getInstance("2021-11-13T15:22:33Z");
-			assert.deepEqual(TimezoneUtil.convertToTimezone(oDate, "UTC"), oDate, "Date should be converted.");
-		});
+			assert.deepEqual(TimezoneUtils.convertToTimezone(oDate, "UTC"), oDate, "Date should be converted.");
 
-		QUnit.module("Integration", {
-			beforeEach : function () {
-				this.oLogMock = this.mock(Log);
-				this.oLogMock.expects("error").never();
-				this.oLogMock.expects("warning").never();
-			}
+			this.clock.restore();
 		});
 
 		QUnit.test("convertToTimezone + calculateOffset + isValidTimezone", function (assert) {
 			var oDate = UI5Date.getInstance(Date.UTC(2018, 9, 7, 2, 30));
 			aTimezoneIDs.forEach(function (sTimezone) {
 
-				assert.ok(TimezoneUtil.isValidTimezone(sTimezone), "timezone is valid: " + sTimezone);
+				assert.ok(TimezoneUtils.isValidTimezone(sTimezone), "timezone is valid: " + sTimezone);
 
 				// forth
-				var oConvertedDate = TimezoneUtil.convertToTimezone(oDate, sTimezone);
+				var oConvertedDate = TimezoneUtils.convertToTimezone(oDate, sTimezone);
 
 				// back
-				var iOffsetSeconds = TimezoneUtil.calculateOffset(oConvertedDate, sTimezone);
+				var iOffsetSeconds = TimezoneUtils.calculateOffset(oConvertedDate, sTimezone);
 				oConvertedDate.setUTCSeconds(iOffsetSeconds);
 
 				// check
@@ -610,7 +608,7 @@ sap.ui.define([
 			var oParts;
 
 			// code under test
-			oParts = TimezoneUtil._getParts(UI5Date.getInstance(0), "Europe/Berlin");
+			oParts = TimezoneUtils._getParts(UI5Date.getInstance(0), "Europe/Berlin");
 
 			assert.deepEqual(oParts, {
 					day: "01",
@@ -637,7 +635,7 @@ sap.ui.define([
 	{oDate: new Date(Date.UTC(2024, 3, 6, 17)), iExpectedOffset: -11}
 ].forEach((oFixture, i) => {
 	QUnit.test("calculateOffset: Australia/Hobart, #" + i, function (assert) {
-		assert.strictEqual(TimezoneUtil.calculateOffset(oFixture.oDate, "Australia/Hobart"),
+		assert.strictEqual(TimezoneUtils.calculateOffset(oFixture.oDate, "Australia/Hobart"),
 			oFixture.iExpectedOffset * 3600);
 	});
 });
@@ -653,7 +651,7 @@ sap.ui.define([
 	{oDate: new Date(Date.UTC(2024, 3, 8, 10)), iExpectedOffset: 6}
 ].forEach((oFixture, i) => {
 	QUnit.test("calculateOffset: Pacific/Easter, #" + i, function (assert) {
-		assert.strictEqual(TimezoneUtil.calculateOffset(oFixture.oDate, "Pacific/Easter"),
+		assert.strictEqual(TimezoneUtils.calculateOffset(oFixture.oDate, "Pacific/Easter"),
 			oFixture.iExpectedOffset * 3600);
 	});
 });
@@ -663,20 +661,20 @@ sap.ui.define([
 		const oDate = {getTime() {}};
 		const oDateInTimezone = {getTime() {}};
 		const sTimezone = "~sTimezone";
-		const oTimezoneUtilMock = this.mock(TimezoneUtil);
+		const oTimezoneUtilsMock = this.mock(TimezoneUtils);
 		this.mock(oDate).expects("getTime").returns(42000);
 		this.mock(oDateInTimezone).expects("getTime").returns(13000);
-		oTimezoneUtilMock.expects("convertToTimezone").withExactArgs(sinon.match.same(oDate), sTimezone)
+		oTimezoneUtilsMock.expects("convertToTimezone").withExactArgs(sinon.match.same(oDate), sTimezone)
 			.returns(oDateInTimezone);
 		// -> iInitialOffset = 42000 - 13000 = 29000
 		const oFirstGuessInTimezone = {getTime() {}};
 		this.mock(oFirstGuessInTimezone).expects("getTime").returns(42000);
-		oTimezoneUtilMock.expects("convertToTimezone").withExactArgs(new Date(/*42000 + 29000*/71000), sTimezone)
+		oTimezoneUtilsMock.expects("convertToTimezone").withExactArgs(new Date(/*42000 + 29000*/71000), sTimezone)
 			.returns(oFirstGuessInTimezone);
 		// -> iSecondOffset = 71000 - 42000 = 29000
 
 		// code under test - both time zone offsets are equal
-		assert.strictEqual(TimezoneUtil.calculateOffset(oDate, sTimezone), 29);
+		assert.strictEqual(TimezoneUtils.calculateOffset(oDate, sTimezone), 29);
 	});
 
 	//*********************************************************************************************
@@ -684,24 +682,24 @@ sap.ui.define([
 		const oDate = {getTime() {}};
 		const oDateInTimezone = {getTime() {}};
 		const sTimezone = "~sTimezone";
-		const oTimezoneUtilMock = this.mock(TimezoneUtil);
+		const oTimezoneUtilsMock = this.mock(TimezoneUtils);
 		this.mock(oDate).expects("getTime").returns(42000);
 		this.mock(oDateInTimezone).expects("getTime").returns(13000);
-		oTimezoneUtilMock.expects("convertToTimezone").withExactArgs(sinon.match.same(oDate), sTimezone)
+		oTimezoneUtilsMock.expects("convertToTimezone").withExactArgs(sinon.match.same(oDate), sTimezone)
 			.returns(oDateInTimezone);
 		// -> iInitialOffset = 42000 - 13000 = 29000
 		const oFirstGuessInTimezone = {getTime() {}};
 		this.mock(oFirstGuessInTimezone).expects("getTime").returns(38000);
-		oTimezoneUtilMock.expects("convertToTimezone").withExactArgs(new Date(/*42000 + 29000*/71000), sTimezone)
+		oTimezoneUtilsMock.expects("convertToTimezone").withExactArgs(new Date(/*42000 + 29000*/71000), sTimezone)
 			.returns(oFirstGuessInTimezone);
 		// -> iSecondOffset = 71000 - 38000 = 33000
 		const oSecondGuessInTimezone = {getTime() {}};
 		this.mock(oSecondGuessInTimezone).expects("getTime").returns(42000);
-		oTimezoneUtilMock.expects("convertToTimezone").withExactArgs(new Date(/*42000 + 33000*/75000), sTimezone)
+		oTimezoneUtilsMock.expects("convertToTimezone").withExactArgs(new Date(/*42000 + 33000*/75000), sTimezone)
 			.returns(oSecondGuessInTimezone);
 
 		// code under test - both time zone offsets are equal
-		assert.strictEqual(TimezoneUtil.calculateOffset(oDate, sTimezone), 33);
+		assert.strictEqual(TimezoneUtils.calculateOffset(oDate, sTimezone), 33);
 	});
 
 	//*********************************************************************************************
@@ -712,24 +710,24 @@ sap.ui.define([
 		const oDate = {getTime() {}};
 		const oDateInTimezone = {getTime() {}};
 		const sTimezone = "~sTimezone";
-		const oTimezoneUtilMock = this.mock(TimezoneUtil);
+		const oTimezoneUtilsMock = this.mock(TimezoneUtils);
 		this.mock(oDate).expects("getTime").returns(42000);
 		this.mock(oDateInTimezone).expects("getTime").returns(13000);
-		oTimezoneUtilMock.expects("convertToTimezone").withExactArgs(sinon.match.same(oDate), sTimezone)
+		oTimezoneUtilsMock.expects("convertToTimezone").withExactArgs(sinon.match.same(oDate), sTimezone)
 			.returns(oDateInTimezone);
 		// -> iInitialOffset = 42000 - 13000 = 29000
 		const oFirstGuessInTimezone = {getTime() {}};
 		this.mock(oFirstGuessInTimezone).expects("getTime").returns(38000);
-		oTimezoneUtilMock.expects("convertToTimezone").withExactArgs(new Date(/*42000 + 29000*/71000), sTimezone)
+		oTimezoneUtilsMock.expects("convertToTimezone").withExactArgs(new Date(/*42000 + 29000*/71000), sTimezone)
 			.returns(oFirstGuessInTimezone);
 		// -> iSecondOffset = 71000 - 38000 = 33000
 		const oSecondGuessInTimezone = {getTime() {}};
 		this.mock(oSecondGuessInTimezone).expects("getTime").returns(bUseFirstOffset ? 34000 : 44000);
-		oTimezoneUtilMock.expects("convertToTimezone").withExactArgs(new Date(/*42000 + 33000*/75000), sTimezone)
+		oTimezoneUtilsMock.expects("convertToTimezone").withExactArgs(new Date(/*42000 + 33000*/75000), sTimezone)
 			.returns(oSecondGuessInTimezone);
 
 		// code under test - both time zone offsets are equal
-		assert.strictEqual(TimezoneUtil.calculateOffset(oDate, sTimezone), bUseFirstOffset ? 29 : 33);
+		assert.strictEqual(TimezoneUtils.calculateOffset(oDate, sTimezone), bUseFirstOffset ? 29 : 33);
 	});
 });
 });

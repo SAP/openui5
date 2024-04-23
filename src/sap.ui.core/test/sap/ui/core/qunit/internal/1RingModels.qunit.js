@@ -30,7 +30,7 @@ sap.ui.require([
 		// "sap/ui/core/qunit/i18n/LocaleData.qunit",
 
 		// ***************************************************************************************
-		// sap.ui.core.date.* - tests are contained in testsuite.i18.qunit.js
+		// sap.ui.core.date.* and sap.base.i18n.date.* - tests are contained in testsuite.i18.qunit.js
 		// ***************************************************************************************
 		"sap/ui/core/qunit/date/_Calendars.qunit",
 		"sap/ui/core/qunit/i18n/Buddhist.qunit",
@@ -39,6 +39,7 @@ sap.ui.require([
 		"sap/ui/core/qunit/i18n/Islamic.qunit",
 		"sap/ui/core/qunit/i18n/Japanese.qunit",
 		"sap/ui/core/qunit/i18n/Persian.qunit",
+		"sap/ui/core/qunit/i18n/TimezoneUtils.qunit",
 		"sap/ui/core/qunit/i18n/UI5Date.qunit",
 		"sap/ui/core/qunit/i18n/UniversalDate.qunit",
 		"sap/ui/core/qunit/i18n/UniversalDateUtils.qunit",
@@ -60,7 +61,6 @@ sap.ui.require([
 		"sap/ui/core/qunit/types/DateInterval.qunit",
 		"sap/ui/core/qunit/types/FileSizeFormat.qunit",
 		"sap/ui/core/qunit/types/ListFormat.qunit",
-		"sap/ui/core/qunit/types/TimezoneUtil.qunit",
 
 		// ***************************************************************************************
 		// sap.ui.core.rules.Model.support - tests are contained in testsuite.rule.qunit.js
