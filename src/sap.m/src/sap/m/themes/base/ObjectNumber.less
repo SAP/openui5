@@ -207,12 +207,18 @@ html.sap-desktop .sapMObjectNumberActive:focus {
 	}
 }
 
+.sapMObjectNumberActive:not(.sapMObjectNumberInverted) .sapMObjectNumberInner {
+	* {
+		text-decoration: underline;
+	}
+}
+
 .sapMObjectNumberActive:not(.sapMObjectNumberInverted) {
 	&.sapMObjectNumberPressed .sapMObjectNumberInner,
 	& .sapMObjectNumberInner:hover,
 	& .sapMObjectNumberInner:active {
 		* {
-			text-decoration: underline;
+			text-decoration: none;
 		}
 	}
 }
