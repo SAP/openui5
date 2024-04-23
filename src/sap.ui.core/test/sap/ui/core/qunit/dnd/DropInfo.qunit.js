@@ -220,6 +220,7 @@ sap.ui.define([
 			assert.ok(mParameters.dragSession, "dragSession exists");
 			assert.strictEqual(mParameters.target, oControl, "target is valid");
 			assert.strictEqual(mParameters.browserEvent, oDragEnterEvent.originalEvent, "browserEvent is valid");
+			assert.strictEqual(mParameters.dropPosition, "On", "dropPosition is valid");
 		});
 		var oDropInfo = new DropInfo({
 			dragEnter: fnDragEnterSpy
@@ -232,6 +233,9 @@ sap.ui.define([
 		oDragEnterEvent.dragSession = {
 			getDropControl: function() {
 				return oControl;
+			},
+			getDropPosition: function() {
+				return "On";
 			}
 		};
 
@@ -292,8 +296,16 @@ sap.ui.define([
 		};
 
 		var bEventValue = oDropInfo.fireDragOver(oDragOverEvent);
-		assert.ok(fnDragOverSpy.calledOnce, "dragOver event is fired once");
-		assert.ok(bEventValue, "dragOver event is returned true");
+		assert.ok(fnDragOverSpy.calledOnce, "DragOver event is fired once");
+		assert.ok(bEventValue, "DragOver event is returned true");
+
+		oDropInfo.detachDragOver(fnDragOverSpy);
+		oDropInfo.attachDragOver(function(oEvent) {
+			oEvent.preventDefault();
+		});
+
+		bEventValue = oDropInfo.fireDragOver(oDragOverEvent);
+		assert.notOk(bEventValue, "default is prevented for dragOver event");
 
 		oControl.destroy();
 	});

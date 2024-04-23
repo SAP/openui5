@@ -163,7 +163,6 @@ sap.ui.define([
 			});
 			triggerEvent("dragstart", this.oDraggedRow);
 			assert.equal(fnPreventDefaultSpy.callCount, 1, "preventDefault of the dragstart event is called");
-			fnPreventDefaultSpy.restore();
 
 			triggerEvent("dragstart", this.oDraggedRow);
 
@@ -174,15 +173,24 @@ sap.ui.define([
 				assert.equal(oEvent.getParameter("bindingContext"), this.oInvalidDroppedRow.getBindingContext(), "dragEnter event bindingContext parameter is correct");
 				assert.equal(oEvent.getParameter("browserEvent"), oDragEvent, "browserEvent parameter of dragEnter event is provided");
 				assert.equal(oEvent.getParameter("browserEvent").type, oEvent.getId().toLowerCase(), "event types are matched");
+				assert.equal(oEvent.getParameter("dropPosition"), "On", "Drop position is provided for dragenter");
 				oEvent.preventDefault();
 			});
 			triggerEvent("dragenter", this.oInvalidDroppedRow);
 			assert.notOk(document.querySelector(".sapUiDnDIndicator").clientWidth, "Drop indicator is not visible");
-
+			assert.equal(fnPreventDefaultSpy.callCount, 2, "preventDefault of the dragenter event is called");
 			triggerEvent("dragenter", this.oDroppedRow);
+
+			this.oDragDropConfig.attachEventOnce("dragOver", (oEvent) => {
+				oEvent.preventDefault();
+			});
+			triggerEvent("dragover", this.oDroppedRow);
+			assert.equal(fnPreventDefaultSpy.callCount, 3, "preventDefault of the dragover event is called");
+
 			triggerEvent("dragover", this.oDroppedRow);
 			triggerEvent("drop", this.oDroppedRow);
 			triggerEvent("dragend", this.oDraggedRow);
+			fnPreventDefaultSpy.restore();
 		};
 
 		return this.oTable._fullyInitialized().then(() => {

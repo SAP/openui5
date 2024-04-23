@@ -497,7 +497,7 @@ sap.ui.define([
 		$Indicator = jQuery(oEvent.dragSession.getIndicator());
 		mIndicatorOffset = $Indicator.offset();
 
-		assert.ok(oGetDropAreaRectSpy.calledOnce, "getDropAreaRect is called once");
+		assert.ok(oGetDropAreaRectSpy.calledTwice, "getDropAreaRect is called once for calculation once for the visual drop indicator");
 		assert.ok(oGetDropAreaRectSpy.calledOn(oDiv2), "getDropAreaRect is called on the Div2");
 		assert.strictEqual($Indicator.attr("data-drop-position"), "Between", "Indicator's data-drop-position attribute is set to between");
 		assert.strictEqual($Indicator.attr("data-drop-layout"), "Vertical", "Indicator's data-drop-layout attribute is set to vertical.");
@@ -546,7 +546,7 @@ sap.ui.define([
 		mIndicatorOffset = $Indicator.offset();
 
 		assert.strictEqual($Indicator.attr("data-drop-layout"), "Horizontal", "Indicator's data-drop-layout attribute is still Horizontal.");
-		assert.strictEqual($Indicator.height(), oDiv2.$().height() , "Indicator's height is equal to dropped item's height.");
+		assert.strictEqual($Indicator.height(), oDiv2.$().height(), "Indicator's height is equal to dropped item's height.");
 		assert.strictEqual(mIndicatorOffset.top, mTargetOffset.top , "Indicator's top position is equal to dropped item's top position.");
 		assert.strictEqual(mIndicatorOffset.left, mTargetOffset.left + oDiv2.$().width(), "Indicator's left position is equal to dropped item's right position.");
 		assert.strictEqual(oEvent.dragSession.getDropPosition(), "After", "Drop position is set correctly");
@@ -566,6 +566,76 @@ sap.ui.define([
 		// cleanup
 		oDiv2.$().trigger("dragend");
 		assert.ok($Indicator.is(":hidden"), "Indicator is hidden after dragend");
+	});
+
+	QUnit.test("preventDefault on dragover event", function(assert) {
+		let oEvent, mTargetRect;
+		const oDiv1 = this.oControl.getTopItems()[0];
+		const oDiv2 = this.oControl.getTopItems()[1];
+
+		// drag start from Div1
+		oEvent = createjQueryDragEventDummy("dragstart", oDiv1);
+		oEvent.target.focus();
+		DragAndDrop.preprocessEvent(oEvent);
+
+		// dragenter to the end of Div2
+		this.oControl.getDragDropConfig()[0].attachEventOnce("dragEnter", function(oEvent) {
+			assert.equal(oEvent.getParameter("target"), oDiv2);
+			assert.equal(oEvent.getParameter("dropPosition"), "After");
+		});
+		oEvent = createjQueryDragEventDummy("dragenter", oDiv2);
+		mTargetRect = oDiv2.getDomRef().getBoundingClientRect();
+		oEvent.pageY = mTargetRect.bottom - 1;
+		oEvent.pageX = mTargetRect.left + 1;
+		oDiv2.$().trigger(oEvent);
+		const $Indicator = jQuery(oEvent.dragSession.getIndicator());
+		assert.ok($Indicator.is(":visible"), "Indicator is visible after dragenter on Div2");
+
+		// dragover on the end of Div2
+		this.oControl.getDragDropConfig()[0].attachDragOver(function(oEvent) {
+			const oDropControl = oEvent.getParameter("target");
+			const sDropPosition = oEvent.getParameter("dropPosition");
+			if ((oDropControl == oDiv1 && sDropPosition == "After") || (oDropControl == oDiv2 && sDropPosition == "Before")) {
+				oEvent.preventDefault(); // do not let dropping between Div1 and Div2
+			}
+		});
+		oEvent = createjQueryDragEventDummy("dragover", oDiv2);
+		oEvent.pageY = mTargetRect.bottom - 2;
+		oDiv2.$().trigger(oEvent);
+		assert.ok($Indicator.is(":visible"), "Indicator is still visible after dragover");
+
+		// dragover on the beginnig of Div2
+		oEvent = createjQueryDragEventDummy("dragover", oDiv2);
+		oEvent.pageY = mTargetRect.top + 1;
+		oDiv2.$().trigger(oEvent);
+		assert.ok($Indicator.is(":hidden"), "Indicator is not visible since the default is prevented for the dragover event");
+
+		// dragenter to the beginning of Div1
+		this.oControl.getDragDropConfig()[0].attachEventOnce("dragEnter", function(oEvent) {
+			assert.equal(oEvent.getParameter("target"), oDiv1);
+			assert.equal(oEvent.getParameter("dropPosition"), "Before");
+		});
+		oEvent = createjQueryDragEventDummy("dragenter", oDiv1);
+		mTargetRect = oDiv1.getDomRef().getBoundingClientRect();
+		oEvent.pageY = mTargetRect.top + 1;
+		oEvent.pageX = mTargetRect.left + 1;
+		oDiv1.$().trigger(oEvent);
+		assert.ok($Indicator.is(":visible"), "Indicator is visible after dragenter on Div1");
+
+		// dragover on the beginning of Div1
+		oEvent = createjQueryDragEventDummy("dragover", oDiv1);
+		oEvent.pageY = mTargetRect.top + 2;
+		oDiv1.$().trigger(oEvent);
+		assert.ok($Indicator.is(":visible"), "Indicator is still visible after dragover");
+
+		// dragover on the end of Div1
+		oEvent = createjQueryDragEventDummy("dragover", oDiv1);
+		oEvent.pageY = mTargetRect.bottom - 1;
+		oDiv1.$().trigger(oEvent);
+		assert.ok($Indicator.is(":hidden"), "Indicator is not visible since the default is prevented for the dragover event");
+
+		// cleanup
+		oDiv1.$().trigger("dragend");
 	});
 
 	QUnit.module("Drop on empty aggregation", {
