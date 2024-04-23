@@ -1353,6 +1353,7 @@ sap.ui.define([
 			// Assert Card Container
 			assert.strictEqual(oCardDomRef.getAttribute("role"), "region", "Card container should have a role - region");
 			assert.strictEqual(oCardDomRef.getAttribute("aria-labelledby"), this.oCard._getAriaLabelledIds(), "Card container should have aria-lebelledby - pointing to the static text '[Type of Card] Card' id and title id");
+			assert.notOk(oCardDomRef.hasAttribute("tabindex"), "Card container should NOT have 'tabindex'");
 
 			// Assert Card Header
 			assert.notOk(oHeaderDomRef.getAttribute("role"), "Card header should not have a role");
@@ -1418,6 +1419,33 @@ sap.ui.define([
 			assert.strictEqual(oHeaderFocusDomRef.getAttribute("aria-labelledby"), sAriaLabelledByIds, "Card header's focusable element should have aria-lebelledby - pointing to an element describing the card type, title, subtitle, status text and avatar ids if there is one");
 			assert.strictEqual(oHeaderFocusDomRef.getAttribute("tabindex"), "0", "Card header's focusable element should have tabindex=0");
 			assert.strictEqual(oHeaderFocusDomRef.getAttribute("role"), "button", "Card header's focusable element should have role=button");
+		});
+
+		QUnit.test("Generic when card has dataMode is set to 'Inactive'", async function (assert) {
+			this.oCard.setDataMode(CardDataMode.Inactive);
+			this.oCard.setManifest(oManifest_ListCard);
+
+			await nextUIUpdate();
+
+			const oCardDomRef = this.oCard.getDomRef();
+
+			// Assert
+			assert.strictEqual(oCardDomRef.getAttribute("tabindex"), "0", "Card container should have 'tabindex'");
+
+			// Act
+			this.oCard.focus();
+
+			// Assert
+			assert.strictEqual(document.activeElement, oCardDomRef);
+
+			// Act
+			this.oCard.setDataMode(CardDataMode.Active);
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			// Assert
+			assert.notOk(oCardDomRef.hasAttribute("tabindex"), "Card container should NOT have 'tabindex'");
+			assert.strictEqual(document.activeElement, this.oCard.getCardHeader().getFocusDomRef(), "Active element has been changed correctly after data mode change");
 		});
 
 		QUnit.test("Numeric Header", async function (assert) {

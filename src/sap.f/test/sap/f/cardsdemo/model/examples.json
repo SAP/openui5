@@ -92,6 +92,13 @@
 		"group": "Layout Examples"
 	},
 	{
+		"title": "No Layout",
+		"description": "Cards without specific layout",
+		"route": "noLayout",
+		"usage": "",
+		"group": "Layout Examples"
+	},
+	{
 		"title": "Navigation Action",
 		"description": "Navigation action examples",
 		"route": "navigationService",
