@@ -8,8 +8,7 @@
 	"sap.ui5": {
 		"rootView": {
 			"viewName": "sap.ui.core.sample.TypeFileSize.V",
-			"type": "XML",
-			"async": true
+			"type": "XML"
 		},
 		"dependencies": {
 			"libs": {
