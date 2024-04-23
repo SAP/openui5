@@ -17,7 +17,8 @@ sap.ui.define([
 					actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
 					emphasizedAction: MessageBox.Action.OK,
 					initialFocus: MessageBox.Action.CANCEL,
-					styleClass: sResponsivePaddingClasses
+					styleClass: sResponsivePaddingClasses,
+					dependentOn: this.getView()
 				}
 			);
 		},
@@ -31,7 +32,8 @@ sap.ui.define([
 					actions: [MessageBox.Action.YES, MessageBox.Action.NO, "Custom Action"],
 					emphasizedAction: "Custom Action",
 					initialFocus: "Custom Action",
-					styleClass: sResponsivePaddingClasses
+					styleClass: sResponsivePaddingClasses,
+					dependentOn: this.getView()
 				}
 			);
 		}

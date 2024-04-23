@@ -43,7 +43,8 @@ sap.ui.define([
 				emphasizedAction: "Manage Products",
 				onClose: function (sAction) {
 					MessageToast.show("Action selected: " + sAction);
-				}
+				},
+				dependentOn: this.getView()
 			});
 		},
 
@@ -53,9 +54,9 @@ sap.ui.define([
 				emphasizedAction: MessageBox.Action.OK,
 				onClose: function (sAction) {
 					MessageToast.show("Action selected: " + sAction);
-				}
+				},
+				dependentOn: this.getView()
 			});
 		}
-
 	});
 });
