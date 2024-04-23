@@ -7863,6 +7863,7 @@ sap.ui.define([
 
 	QUnit.test("Selection of group header", function(assert) {
 		var aVisibleItems, oGroupHeader;
+		var oSuggPopover = this.oInput._getSuggestionsPopover();
 
 		// act
 		this.oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
@@ -7882,6 +7883,14 @@ sap.ui.define([
 
 		//assert
 		assert.strictEqual(document.activeElement, this.oInput.getFocusDomRef(), "The focus is in the input field");
+
+		// act
+		qutils.triggerKeydown(this.oInput.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+		qutils.triggerKeydown(this.oInput.getFocusDomRef(), KeyCodes.ENTER);
+
+		//assert
+		assert.ok(oGroupHeader.hasStyleClass("sapMLIBFocused"), "The focus outline is over the group header");
+		assert.ok(oSuggPopover.isOpen(), "The popover remains open");
 	});
 
 	QUnit.test("Behaviour for a 'startsWith' item selection", async function (assert) {

@@ -1446,28 +1446,27 @@ function(
 		const aItems = this._hasTabularSuggestions() ? this.getSuggestionRows() : this.getSuggestionItems();
 		const oSuggestionsPopover = this._getSuggestionsPopover();
 		const oSelectedItem = oSuggestionsPopover?.getItemsContainer()?.getSelectedItem();
+		const oFocusedItem = bFocusInPopup && oSuggestionsPopover.getFocusedListItem();
 		const sText = oSelectedItem?.getTitle?.() || oSelectedItem?.getCells?.()[0]?.getText?.() || "";
 		const bPendingSuggest = !!this._iSuggestDelay && !sText.toLowerCase().includes(this._getTypedInValue().toLowerCase());
 		let bFireSubmit = this.getEnabled() && this.getEditable();
-		let iValueLength, oFocusedItem;
+		let iValueLength;
 
 		// when enter is pressed before the timeout of suggestion delay, suggest event is cancelled
 		this.cancelPendingSuggest();
 
 		bFocusInPopup && this.setSelectionUpdatedFromList(true);
 
-		if (this.getShowSuggestion() && this._bDoTypeAhead && bPopupOpened && !this.isComposingCharacter() && !bPendingSuggest) {
-			oFocusedItem = oSuggestionsPopover.getFocusedListItem();
+		// prevent closing of popover, when Enter is pressed on a group header
+		if (this._bDoTypeAhead && oFocusedItem && oFocusedItem.isA("sap.m.GroupHeaderListItem")) {
+			return;
+		}
 
+		if (this._bDoTypeAhead && bPopupOpened && !this.isComposingCharacter() && !bPendingSuggest) {
 			if (this._hasTabularSuggestions()) {
 				oSelectedItem && this.setSelectionRow(oSelectedItem, true);
 			} else {
 				oSelectedItem && this.setSelectionItem(ListHelpers.getItemByListItem(aItems, oSelectedItem), true);
-			}
-
-			// prevent closing of popover, when Enter is pressed on a group header
-			if (oFocusedItem && oFocusedItem.isA("sap.m.GroupHeaderListItem")) {
-				return;
 			}
 		}
 
