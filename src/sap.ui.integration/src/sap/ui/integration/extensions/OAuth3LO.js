@@ -147,7 +147,9 @@ sap.ui.define([
 
 		OAuth3LOHelper.openConsentWindow(sConsentUrl, oHeader.popupWindow);
 
-		this._startPolling(oHeader);
+		window.addEventListener("focus", () => {
+			this._startPolling(oHeader);
+		}, { once: true });
 	};
 
 	/**

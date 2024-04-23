@@ -60,6 +60,11 @@ function (
 
 			const oFakeWindow = { };
 			this.fnWindowOpenStub = this.stub(window, "open").returns(oFakeWindow);
+			this.fnWindowAddListenerStub = this.stub(window, "addEventListener", (sEvent, fnListener) => {
+				if (sEvent === "focus") {
+					this.fnWindowFocusListener = fnListener;
+				}
+			});
 
 			this.fnPollingStub = this.stub(Utils, "polling", (fnRequest) => {
 				this.pNextPollingRequest = fnRequest();
@@ -70,6 +75,7 @@ function (
 			this.oMockServer.destroy();
 
 			this.fnWindowOpenStub.restore();
+			this.fnWindowAddListenerStub.restore();
 
 			this.fnPollingStub.restore();
 		}
@@ -106,6 +112,7 @@ function (
 
 		// simulate consent given
 		OAuth3LOMockServer.consentGiven = true;
+		this.fnWindowFocusListener();
 		await this.pNextPollingRequest;
 		await nextCardDataReadyEvent(oCard);
 
@@ -139,6 +146,7 @@ function (
 
 		// simulate consent given
 		OAuth3LOMockServer.consentGiven = true;
+		this.fnWindowFocusListener();
 		await this.pNextPollingRequest;
 		await nextCardDataReadyEvent(oCard1);
 
