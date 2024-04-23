@@ -30,7 +30,7 @@
 	}
 
 	var oFormatSettings = sap.ui.getCore().getConfiguration().getFormatSettings();
-	var oParams = jQuery.sap.getUriParameters();
+	const oParams = new URLSearchParams(window.location.search);
 	var v;
 	if ( v = oParams.get("sap-ui-legacy-date-format") ) {
 		oFormatSettings.setLegacyDateFormat(v);
