@@ -652,6 +652,77 @@ sap.ui.define([
 			oCard.destroy();
 		});
 
+		QUnit.test("Attribute data-help-id with sap.app/id", async function (assert) {
+			// Arrange
+			const oCard = new Card({
+				manifest: oManifest_ListCard
+			});
+
+			// Act
+			oCard.placeAt(DOM_RENDER_LOCATION);
+			await nextCardReadyEvent(oCard);
+
+			// Assert
+			assert.strictEqual(oCard.getDomRef().dataset["helpId"], "my.card.qunit.test.ListCard", "Attribute data-help-id is correct");
+
+			// Clean up
+			oCard.destroy();
+		});
+
+		QUnit.test("Attribute data-help-id with sap.app/id", async function (assert) {
+			// Arrange
+			const oCard = new Card({
+				manifest: oManifest_ListCard
+			});
+
+			oCard.data("help-id", "test-host-help-id", true);
+
+			// Act
+			oCard.placeAt(DOM_RENDER_LOCATION);
+			await nextCardReadyEvent(oCard);
+
+			// Assert
+			assert.strictEqual(oCard.getDomRef().dataset["helpId"], "test-host-help-id", "Attribute data-help-id is correct");
+
+			// Clean up
+			oCard.destroy();
+		});
+
+		QUnit.test("Attribute data-help-id with sap.card/configuration/helpId", async function (assert) {
+			// Arrange
+			const oCard = new Card({
+				manifest: {
+					"sap.app": {
+						"id": "my.card.qunit.test.helpId"
+					},
+					"sap.card": {
+						"type": "List",
+						"configuration": {
+							"helpId": "test-config-help-id"
+						},
+						"header": {
+							"title": "Test"
+						},
+						"content": {
+							"item": {
+								"title": "item1"
+							}
+						}
+					}
+				}
+			});
+
+			// Act
+			oCard.placeAt(DOM_RENDER_LOCATION);
+			await nextCardReadyEvent(oCard);
+
+			// Assert
+			assert.strictEqual(oCard.getDomRef().dataset["helpId"], "test-config-help-id", "Attribute data-help-id is correct");
+
+			// Clean up
+			oCard.destroy();
+		});
+
 		QUnit.test("Card with manifest as object, without baseUrl", async function (assert) {
 			// Arrange
 			var oCard = new Card({

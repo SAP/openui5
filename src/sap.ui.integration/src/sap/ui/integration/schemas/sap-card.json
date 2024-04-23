@@ -74,6 +74,10 @@
           "description": "Markdown enablement for Adaptive Content",
           "type": "boolean"
         },
+        "helpId": {
+          "description": "[Experimental] The help-id which will be rendered as data-help-id on the base element of the card.",
+          "type": "string"
+        },
         "modelSizeLimit": {
           "description": "[Experimental] Represents the maximum number of entries that are used for list bindings.",
           "oneOf": [
