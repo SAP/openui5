@@ -326,22 +326,20 @@ sap.ui.define([
 			.setBackgroundColor(this.getIconBackgroundColor())
 			.setDisplaySize(this.getIconSize());
 
-		if (!this.isPropertyInitial("detailsState") && !this.isPropertyInitial("detailsMaxLines")) {
-			Log.error("Both details state and details max lines can not be used at the same time. Max lines setting will be ignored.");
-		}
+		this._getDetails()
+			.setText(this.getDetails())
+			.setMaxLines(this.getDetailsMaxLines())
+			.setWrappingType(this.getWrappingType());
 
 		if (!this.isPropertyInitial("detailsState")) {
-			this._createDetails(true)
-				.setText(this.getDetails())
-				.setState(this.getDetailsState());
-		} else {
-			this._createDetails()
-				.setText(this.getDetails())
-				.setMaxLines(this.getDetailsMaxLines())
-				.setWrappingType(this.getWrappingType());
+			Object.values(ValueState).forEach((sState) => {
+				this._getDetails().removeStyleClass(`sapFCardNumericHeaderDetailsState${sState}`);
+			});
 
-			this._enhanceText(this._getDetails());
+			this._getDetails().addStyleClass(`sapFCardNumericHeaderDetailsState${this.getDetailsState()}`);
 		}
+
+		this._enhanceText(this._getDetails());
 
 		this._getNumericIndicators()
 			.setNumber(this.getNumber())
@@ -459,42 +457,20 @@ sap.ui.define([
 	};
 
 	/**
-	 * Create details and return it.
-	 * @private
-	 * @param {boolean} bUseObjectStatus If set to true the details will be sap.m.ObjectStatus
-	 * @return {sap.m.Text|sap.m.ObjectStatus} The details aggregation
-	 */
-	NumericHeader.prototype._createDetails = function (bUseObjectStatus) {
-		var oControl = this.getAggregation("_details");
-
-		if (oControl?.isA("sap.m.Text") && bUseObjectStatus) {
-			oControl.destroy();
-		} else if (oControl) {
-			return oControl;
-		}
-
-		var oSettings = {
-			id: this._getDetailsId()
-		};
-
-		if (bUseObjectStatus) {
-			oControl = new ObjectStatus(oSettings);
-		} else {
-			oControl = new Text(oSettings);
-		}
-
-		this.setAggregation("_details", oControl);
-
-		return oControl;
-	};
-
-	/**
 	 * Gets the control create for showing details.
 	 * @private
-	 * @return {sap.m.Text|sap.m.ObjectStatus} The details aggregation
+	 * @return {sap.m.Text} The details aggregation
 	 */
 	NumericHeader.prototype._getDetails = function () {
-		return this.getAggregation("_details");
+		var oControl = this.getAggregation("_details");
+
+		if (!oControl) {
+			oControl = new Text(this._getDetailsId()).addStyleClass("sapFCardHeaderDetails");
+
+			this.setAggregation("_details", oControl);
+		}
+
+		return oControl;
 	};
 
 	/**

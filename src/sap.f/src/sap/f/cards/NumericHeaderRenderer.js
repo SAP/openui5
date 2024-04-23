@@ -274,7 +274,6 @@ sap.ui.define([
 				oDetails.addStyleClass("sapFCardHeaderItemBinded");
 			}
 
-			oDetails.addStyleClass("sapFCardHeaderDetails");
 			oRm.renderControl(oDetails);
 		}
 

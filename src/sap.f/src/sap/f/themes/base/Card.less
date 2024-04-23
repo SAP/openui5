@@ -333,6 +333,28 @@ ui-integration-card.sapFCardTransparent > [data-sap-ui-area] > .sapFCard {
 		flex-grow: 1;
 	}
 
+	.sapFCardNumericHeaderDetailsState {
+		&None {
+			color: @sapUiNeutralText;
+		}
+
+		&Success {
+			color: @sapUiPositiveText;
+		}
+
+		&Warning {
+			color: @sapUiCriticalText;
+		}
+
+		&Error {
+			color: @sapUiNegativeText;
+		}
+
+		&Information {
+			color: @sapUiInformativeText;
+		}
+	}
+
 	.sapFCardHeaderLineIncludesDataTimestamp .sapFCardHeaderDetails {
 		margin-right: 1rem;
 	}
