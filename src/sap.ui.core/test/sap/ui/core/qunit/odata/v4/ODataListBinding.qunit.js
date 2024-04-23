@@ -11049,7 +11049,7 @@ sap.ui.define([
 [false, true].forEach((bIsExpanded) => {
 	[1, 4].forEach((iCount) => {
 		[false, true].forEach((bMakeRoot) => {
-			[23, 42].forEach((iNewIndex) => {
+			[23, 42, 101, 999].forEach((iNewIndex) => {
 				const sTitle = `move: expanded=${bIsExpanded}, child nodes added=${iCount},
  make root=${bMakeRoot}, new index=${iNewIndex}`;
 
@@ -11101,7 +11101,7 @@ sap.ui.define([
 							oBinding.aContexts[i] = {iIndex : i};
 						} // else: leave some gaps ;-)
 					}
-					const iOldIndex = 23 + 42 - iNewIndex; // "the other one"
+					const iOldIndex = iNewIndex === 42 ? 23 : 42; // "the other one"
 					this.mock(oChildContext).expects("getModelIndex").withExactArgs()
 						.returns(iOldIndex);
 					oBinding.aContexts[iOldIndex] = oChildContext;
@@ -11126,6 +11126,7 @@ sap.ui.define([
 		return oSyncPromise.then(function (vResult) {
 			assert.strictEqual(vResult, undefined, "without a defined result");
 			assert.strictEqual(oBinding.aContexts[iNewIndex], oChildContext);
+			assert.strictEqual(oChildContext.iIndex, iNewIndex);
 			for (let i = 0; i < 100; i += 1) {
 				if (oBinding.aContexts[i]) {
 					assert.strictEqual(oBinding.aContexts[i].iIndex, i, `iIndex @ ${i}`);
