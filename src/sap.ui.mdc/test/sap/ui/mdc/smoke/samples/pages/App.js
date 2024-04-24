@@ -619,6 +619,56 @@ sap.ui.define([
 						},
 						errorMessage: `No FilterField control was found`
 					});
+				},
+				/**
+				 * Checks whether a Upload button is visible
+				 * @param {string} vTable ID of <code>sap.ui.mdc.Table</code> control
+				 * @param {boolean} bResponsiveTable Whether the table is a responsive table or a grid table
+				 * @returns {Promise} OPA waitFor
+				 */
+				iShouldSeeUploadButton: function(vTable, bResponsiveTable = true) {
+					return waitForTable.call(this, vTable, {
+						success(oTable) {
+							this.waitFor({
+								controlType: bResponsiveTable ? "sap.m.Table" : "sap.ui.table.Table",
+								matchers: new Ancestor(oTable),
+								success: function(aInnerTable) {
+									const sControlName = bResponsiveTable ? "sap.m.Table" : "sap.ui.table.Table";
+									Opa5.assert.ok(aInnerTable.length, `Found Control ${sControlName} in sap.ui.mdc.Table`);
+									this.waitFor({
+										controlType: "sap.ui.mdc.ActionToolbar",
+										matchers: new Ancestor(aInnerTable[0]),
+										success: function(oActionToolbar) {
+											Opa5.assert.ok(true, `ActionToolbar was found`);
+											this.waitFor({
+												controlType: "sap.ui.unified.FileUploader",
+												matchers: new Ancestor(oActionToolbar[0]),
+												success: function(oUploadButton) {
+													Opa5.assert.ok(oUploadButton, `Upload button is visible`);
+												},
+												errorMessage: "No Upload button found"
+											});
+										}
+									});
+								}
+							});
+						}
+					});
+				},
+				/**
+				 * Checks whether a Download button is visible
+				 * @param {string} sDownloadButtonId ID of <code>sap.ui.mdc</code> control
+				 * @returns {Promise} OPA waitFor
+				 */
+				iShouldseeDownloadButton: function(sDownloadButtonId) {
+					return this.waitFor({
+						id: sDownloadButtonId,
+						controlType: "sap.ui.mdc.actiontoolbar.ActionToolbarAction",
+						success: function (oButton) {
+							Opa5.assert.ok(oButton, "Download button is visible");
+						},
+						errorMessage: "No Download button found"
+					});
 				}
 			}
 		}
