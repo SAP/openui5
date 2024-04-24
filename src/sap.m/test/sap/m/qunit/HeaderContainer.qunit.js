@@ -1461,6 +1461,30 @@ sap.ui.define([
 		await nextUIUpdate();
 
 	});
+	QUnit.module("HeaderContainer with snapToRow enabled", {
+		beforeEach: async function () {
+			this.oHeaderContainer = new HeaderContainer({
+				gridLayout: true,
+				orientation: Orientation.Horizontal,
+				showDividers: false,
+				scrollTime: 1000,
+				snapToRow: true,
+				content: createTile()
+			}).placeAt("qunit-fixture");
+			await nextUIUpdate();
+		},
+		afterEach: function () {
+			if (this.oHeaderContainer) {
+				this.oHeaderContainer.destroy();
+				this.oHeaderContainer = null;
+			}
+		}
+	});
+
+	QUnit.test("Min-Height of the tile to be set as 100%",function (assert) {
+		var oGenericTile = this.oHeaderContainer.getContent()[0];
+		assert.equal(getComputedStyle(oGenericTile.getDomRef()).minHeight,"100%","min-height has been set to 100%");
+	});
 	QUnit.module("HeaderContainer with RTL", {
 		beforeEach: async function () {
 		Localization.setRTL(true);
