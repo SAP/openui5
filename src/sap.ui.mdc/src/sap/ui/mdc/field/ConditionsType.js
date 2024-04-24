@@ -11,6 +11,7 @@ sap.ui.define([
 		'sap/ui/mdc/condition/ConditionValidateException',
 		'sap/ui/mdc/condition/FilterOperatorUtil',
 		'sap/ui/mdc/enums/ConditionValidated',
+		'sap/ui/mdc/enums/FieldDisplay',
 		'sap/ui/mdc/enums/OperatorName',
 		'sap/ui/model/SimpleType',
 		'sap/ui/model/FormatException',
@@ -28,6 +29,7 @@ sap.ui.define([
 		ConditionValidateException,
 		FilterOperatorUtil,
 		ConditionValidated,
+		FieldDisplay,
 		OperatorName,
 		SimpleType,
 		FormatException,
@@ -297,13 +299,32 @@ sap.ui.define([
 			// Currently only the key should be pasted in this case. As it cannot be distinguished if pasted from Table or somewhere else, this pattern is used for all pasting.
 
 			if (aPastedTexts.length > 1 || (aPastedTexts.length === 1 && aPastedTexts[0].length > 1)) { // if only one value pasted, but contains different columns use PasteHelper too
+				const oAdditionalValueType = bBetweenUsed ? oType : this._getDefaultType();
 				const aColumnsInfo = [
 					{property: "value", type: oType},
-					{property: "additionalValue", type: bBetweenUsed ? oType : this._getAdditionalValueType()} // in between case use the second column as "to"-value
+					{property: "additionalValue", type: oAdditionalValueType/*this._getAdditionalValueType()*/} // in between case use the second column as "to"-value
 				];
-				const pParsedValues = PasteHelper.parse(aPastedTexts, aColumnsInfo).then((oResult) => {return _parsedValuesIntoConditions.call(this, oResult, iIndex, oDefaultOperator, bBetweenUsed);});
-
-				return this._fnReturnPromise(pParsedValues);
+				return this._fnReturnPromise(PasteHelper.parse(aPastedTexts, aColumnsInfo).then((oResult) => {
+					if (oResult.errors) {
+						if (oResult.errors.length === 1) { // if only one error just return it
+							throw new ParseException(oResult.errors[0].message);
+						} else { // if different errors use generic error message
+							throw new ParseException(this._oResourceBundle.getText("field.PASTE_ERROR"));
+						}
+					}
+					return Promise.resolve(this._getDelegate().parsePasteDataToConditions(this.oFormatOptions.control, oResult.parsedData, {
+						defaultOperator: oDefaultOperator,
+						valueType: oType,
+						additionalValueType: oAdditionalValueType
+					})).then((aPasteConditions) => {
+						const aParsedPasteConditions = aPasteConditions.map((vCondition) => (typeof vCondition === 'string' ? this._oConditionType._parseValue(vCondition, "string", false, FieldDisplay.Value) : vCondition));
+						let aConditions = this.oFormatOptions.getConditions && this.oFormatOptions.getConditions();
+						aParsedPasteConditions.forEach((oPasteCondition, n) => {
+							aConditions = _parseConditionToConditions.call(this, oPasteCondition, aConditions, iIndex >= 0 ? iIndex + n : iIndex, true);
+						});
+						return aConditions;
+					});
+				}));
 			} else {
 				return _parseSingleValue.call(this, vValue, sSourceType, iIndex);
 			}
@@ -323,32 +344,6 @@ sap.ui.define([
 
 		}
 
-		function _parsedValuesIntoConditions(oParsedValues, iIndex, oOperator, bBetweenUsed) {
-
-			if (oParsedValues.errors) {
-				if (oParsedValues.errors.length === 1) { // if only one error just return it
-					throw new ParseException(oParsedValues.errors[0].message);
-				} else { // if different errors use generic error message
-					throw new ParseException(this._oResourceBundle.getText("field.PASTE_ERROR"));
-				}
-			} else {
-				let aConditions = this.oFormatOptions.getConditions && this.oFormatOptions.getConditions();
-
-				for (let i = 0; i < oParsedValues.parsedData.length; i++) {
-					const oParsedData = oParsedValues.parsedData[i]; // only use key, ignore description
-					const oCondition = Condition.createCondition(oOperator.name, [oParsedData.value], undefined, undefined, ConditionValidated.NotValidated, undefined);
-					if (bBetweenUsed) { // in between case use the second column as "to"-value
-						oCondition.values.push(oParsedData.additionalValue);
-					}
-					aConditions = _parseConditionToConditions.call(this, oCondition, aConditions, iIndex, true);
-					if (iIndex >= 0) {
-						iIndex++;
-					}
-				}
-				return aConditions;
-			}
-
-		}
 
 		function _parseValues(aValues, sSourceType, iIndex, fnParse, fnHandleError) {
 

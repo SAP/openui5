@@ -363,31 +363,32 @@ sap.ui.define([
 
 		let aConditions = [Condition.createCondition(OperatorName.EQ, ["X"], undefined, undefined, ConditionValidated.NotValidated, undefined)];
 		oConditionsType.setFormatOptions({operators: [], maxConditions: -1, getConditions: function() {return aConditions;}, asyncParsing: fnAsync});
-		aConditions = await oConditionsType.parseValue("I1\n!=I2\nI3	I5");
+		aConditions = await oConditionsType.parseValue("I1\n!=I2\nI3\tI5\n\tA*");
 		assert.ok(aConditions, "Result returned");
 		assert.ok(Array.isArray(aConditions), "Arry returned");
-		assert.equal(aConditions.length, 4, "4 condition returned");
+		assert.equal(aConditions.length, 5, "5 condition returned");
 		_checkCondition(assert, aConditions[0], OperatorName.EQ, ["X"], ConditionValidated.NotValidated);
 		_checkCondition(assert, aConditions[1], OperatorName.EQ, ["I1"], ConditionValidated.NotValidated);
 		_checkCondition(assert, aConditions[2], OperatorName.EQ, ["!=I2"], ConditionValidated.NotValidated);
 		_checkCondition(assert, aConditions[3], OperatorName.EQ, ["I3"], ConditionValidated.NotValidated);
+		_checkCondition(assert, aConditions[4], OperatorName.StartsWith, ["A"], ConditionValidated.NotValidated);
 
 		// for multipleLines allow linebreaks
 		aConditions = [Condition.createCondition(OperatorName.EQ, ["X"], undefined, undefined, ConditionValidated.NotValidated, undefined)];
 		oConditionsType.setFormatOptions({operators: [OperatorName.EQ], maxConditions: -1, multipleLines: true, getConditions: function() {return aConditions;}, asyncParsing: fnAsync});
 		// eslint-disable-next-line require-atomic-updates
-		aConditions = await oConditionsType.parseValue("I1\n!=I2\nI3	I5");
+		aConditions = await oConditionsType.parseValue("I1\n!=I2\nI3\tI5");
 		assert.ok(aConditions, "Result returned");
 		assert.ok(Array.isArray(aConditions), "Arry returned");
 		assert.equal(aConditions.length, 2, "2 condition returned");
 		_checkCondition(assert, aConditions[0], OperatorName.EQ, ["X"], ConditionValidated.NotValidated);
-		_checkCondition(assert, aConditions[1], OperatorName.EQ, ["I1\n!=I2\nI3	I5"], ConditionValidated.NotValidated);
+		_checkCondition(assert, aConditions[1], OperatorName.EQ, ["I1\n!=I2\nI3\tI5"], ConditionValidated.NotValidated);
 
 		// for BT use two values
 		aConditions = [Condition.createCondition(OperatorName.EQ, ["X"], undefined, undefined, ConditionValidated.NotValidated, undefined)];
 		oConditionsType.setFormatOptions({operators: [OperatorName.BT], maxConditions: -1, multipleLines: false, getConditions: function() {return aConditions;}, asyncParsing: fnAsync});
 		// eslint-disable-next-line require-atomic-updates
-		aConditions = await oConditionsType.parseValue("I1	I2\nI3	I5");
+		aConditions = await oConditionsType.parseValue("I1\tI2\nI3\tI5");
 		assert.ok(aConditions, "Result returned");
 		assert.ok(Array.isArray(aConditions), "Arry returned");
 		assert.equal(aConditions.length, 3, "3 condition returned");

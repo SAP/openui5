@@ -11,9 +11,10 @@ sap.ui.define([
 	'sap/base/util/merge',
 	'sap/base/util/deepEqual',
 	'sap/base/i18n/Localization',
+	'sap/base/strings/escapeRegExp',
 	'./Condition',
 	'sap/ui/mdc/enums/ConditionValidated',
-	'sap/base/strings/escapeRegExp',
+	'sap/ui/mdc/enums/FieldDisplay',
 	'sap/ui/mdc/enums/OperatorOverwrite',
 	'sap/ui/mdc/enums/OperatorValueType'
 ], (
@@ -26,9 +27,10 @@ sap.ui.define([
 	merge,
 	deepEqual,
 	Localization,
+	escapeRegExp,
 	Condition,
 	ConditionValidated,
-	escapeRegExp,
+	FieldDisplay,
 	OperatorOverwrite,
 	OperatorValueType
 ) => {
@@ -106,6 +108,7 @@ sap.ui.define([
 	 * @param {string} [oConfiguration.additionalInfo] additionalInfo text for the operator. Will be shown in the operator suggest as second column. If not used (undefined) the Include or Exclude information of the operator is used.
 	 * @param {object} [oConfiguration.group] Additional group settings for the operator. Will be used by the <code>DynamicDateRange</code>. If not used (undefined), the operators will be added to the include and exclude groups.
 	 * @param {string} oConfiguration.group.id Group ID for the operator.
+	 * @param {function} [oConfiguration.getTextForCopy] Function to determine the text copied into clipboard
 	 * The following groups are available for the <code>DynamicDateRange</code> control:<br>
 	 * <ul>
 	 * <li>1 - Single Dates</li>
@@ -435,17 +438,19 @@ sap.ui.define([
 	 * @param {sap.ui.model.Type[]} [aCompositeTypes] Additional types used for each part of a <code>CompositeType</code>
 	 * @param {sap.ui.model.Type} [oAdditionalType] Data type for additional value
 	 * @param {sap.ui.model.Type[]} [aAdditionalCompositeTypes] Additional types used for each part of a <code>CompositeType</code> (if <code>oAdditionalType</code> is a <code>CompositeType</code>)
+	 * @param {string} [sCustomFormat] Custom text format which should be formatted
 	 * @returns {string} formatted text
 	 * @throws {sap.ui.model.FormatException} if the values cannot be formatted
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
 	 */
-	Operator.prototype.format = function(oCondition, oType, sDisplay, bHideOperator, aCompositeTypes, oAdditionalType, aAdditionalCompositeTypes) { // sDisplay, oAdditionalType and aAdditionalCompositeTypes needed in EQ formatter
+	Operator.prototype.format = function(oCondition, oType, sDisplay, bHideOperator, aCompositeTypes, oAdditionalType, aAdditionalCompositeTypes, sCustomFormat) { // sDisplay, oAdditionalType and aAdditionalCompositeTypes needed in EQ formatter
 
 		const aValues = oCondition.values;
 		const iCount = this.valueTypes.length;
-		let sTokenText = bHideOperator && iCount === 1 ? "{0}" : this.tokenFormat;
+		const sTextFormat = sCustomFormat || this.tokenFormat;
+		let sTokenText = bHideOperator && iCount === 1 ? "{0}" : sTextFormat;
 		for (let i = 0; i < iCount; i++) {
 			let oUseType;
 			let aUseCompositeTypes;
@@ -686,6 +691,30 @@ sap.ui.define([
 				}
 			}
 		}
+
+	};
+
+	/**
+	 * Determines the text that is copied to clipboard.
+	 *
+	 * @param {sap.ui.mdc.condition.ConditionObject} oCondition Condition
+	 * @param {sap.ui.model.Type} [oType] Data type
+	 * @param {sap.ui.mdc.enums.FieldDisplay} [sDisplay] Display mode
+	 * @param {boolean} [bHideOperator=false] If set, the operator must not be visible for the user, so only the formatted value is shown
+	 * @param {sap.ui.model.Type[]} [aCompositeTypes] Additional types used for each part of a <code>CompositeType</code>
+	 * @param {sap.ui.model.Type} [oAdditionalType] Data type for additional value
+	 * @param {sap.ui.model.Type[]} [aAdditionalCompositeTypes] Additional types used for each part of a <code>CompositeType</code> (if <code>oAdditionalType</code> is a <code>CompositeType</code>)
+	 * @returns {string} key/description piar seperated by TAB
+	 * @throws {sap.ui.model.FormatException} if the values cannot be formatted
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.mdc
+	 */
+	Operator.prototype.getTextForCopy = function(oCondition, oType, sDisplay, bHideOperator, aCompositeTypes, oAdditionalType, aAdditionalCompositeTypes) {
+
+		// in default case just return the standard formatting as "description"
+		// This needs to be parsed from the target FilterField to determine the operator
+		return "\t" + this.format(oCondition, oType, sDisplay, bHideOperator, aCompositeTypes, oAdditionalType, aAdditionalCompositeTypes);
 
 	};
 
@@ -980,7 +1009,8 @@ sap.ui.define([
 			"getCheckValue",
 			"getValues",
 			"checkValidated",
-			"getLongText"
+			"getLongText",
+			"getTextForCopy"
 		].forEach((sMethodName) => {
 			Object.defineProperty(this, sMethodName, {
 				get: function() {

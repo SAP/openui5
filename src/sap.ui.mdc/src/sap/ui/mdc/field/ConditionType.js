@@ -296,6 +296,35 @@ sap.ui.define([
 		}
 
 		/**
+		 * Determines the text what is copied to clipboard if a token or item with the condition
+		 * is selected and copied.
+		 * For equal-conditions key/description pairs needs to be copied to allow pasing of such conditions.
+		 *
+		 * @param {sap.ui.mdc.condition.ConditionObject} oCondition
+		 *	The condition to be copied
+		 * @return {string} key/description pair seperated by TAB
+		 * @throws {sap.ui.model.FormatException}
+		 *	If formatting to the target type is not possible
+		 *
+		 * @protected
+		 */
+		 ConditionType.prototype.getTextForCopy = function(oCondition) {
+
+			// TODO: what if description is not known in the moment? Can copy be async?
+			const oOperator = FilterOperatorUtil.getOperator(oCondition.operator);
+			const oType = this._getValueType();
+			const sDisplay = this._getDisplay();
+			const bIsUnit = this._isUnit(oType);
+			const bHideOperator = (this._getHideOperator() && oCondition.values.length === 1) || bIsUnit;
+			const aCompositeTypes = this._getCompositeTypes();
+			const oAdditionalType = this._getAdditionalValueType();
+			const aAdditionalCompositeTypes = this._getAdditionalCompositeTypes();
+
+			return oOperator.getTextForCopy(oCondition, oType, sDisplay, bHideOperator, aCompositeTypes, oAdditionalType, aAdditionalCompositeTypes);
+
+		 };
+
+		/**
 		 * Parses an external value of the given source type to a condition that holds the value in model
 		 * representation.
 		 * These values are parsed using the given data type. Depending on the operator
@@ -347,6 +376,7 @@ sap.ui.define([
 		 *	name (For example, if a unit should be forwarded as raw value <code>sap.ui.mdc.raw:1</code> can be used).
 		 * @param {boolean} bInputValidationEnabled
 		 *	If set, input validation is enabled, otherwise disabled, even if delegate or ValueHelp allows it. (Pasting multiple values)
+		 * @param {sap.ui.mdc.enums.FieldDisplay} [sForceDisplay] Display mode to use, independend of configured one
 		 * @return {null|sap.ui.mdc.condition.ConditionObject|Promise<null|sap.ui.mdc.condition.ConditionObject>}
 		 *	The condition or a <code>Promise</code> resolving with the condition.
 		 *  If there is no value, <code>null</code> is returned.
@@ -356,7 +386,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.ui.mdc.field.ConditionsType
 		 */
-		ConditionType.prototype._parseValue = function(vValue, sSourceType, bInputValidationEnabled) {
+		ConditionType.prototype._parseValue = function(vValue, sSourceType, bInputValidationEnabled, sForceDisplay) {
 
 			if (this._bDestroyed) { // if destroyed do nothing
 				return null;
@@ -379,7 +409,7 @@ sap.ui.define([
 				}
 			}
 
-			const sDisplay = this._getDisplay();
+			const sDisplay = sForceDisplay ? sForceDisplay : this._getDisplay();
 			const oType = this._getValueType();
 			const oOriginalType = this._getOriginalType();
 			const aOperators = this._getOperators();
@@ -531,9 +561,9 @@ sap.ui.define([
 				const sName = oOriginalType.getMetadata().getName();
 				const oFormatOptions = oOriginalType.getFormatOptions();
 				const oConstraints = oOriginalType.getConstraints();
-				const oDelegate = this.oFormatOptions.delegate;
+				const oDelegate = this._getDelegate();
 				const oField = this.oFormatOptions.control;
-				const sBaseType = oDelegate && oDelegate.getTypeMap(oField).getBaseType(sName, oFormatOptions, oConstraints); // don't use _getBaseType to get "real" unit type
+				const sBaseType = oDelegate.getTypeMap(oField).getBaseType(sName, oFormatOptions, oConstraints); // don't use _getBaseType to get "real" unit type
 				if ((sBaseType === BaseType.Unit || sBaseType === BaseType.DateTime) &&
 					!oCondition.values[0][1] && oType._aCurrentValue) {
 					// TODO: if no unit provided use last one
@@ -924,35 +954,25 @@ sap.ui.define([
 		function _isInputValidationEnabled() {
 
 			const oValueHelp = _getValueHelp.call(this);
-			const oDelegate = this.oFormatOptions.delegate;
+			const oDelegate = this._getDelegate();
 
-			if (oDelegate) {
-				return oDelegate.isInputValidationEnabled(this.oFormatOptions.control, oValueHelp);
-			} else {
-				return !!oValueHelp;
-			}
+			return oDelegate.isInputValidationEnabled(this.oFormatOptions.control, oValueHelp);
 
 		}
 
 		function _isInvalidInputAllowed() {
 
 			const oValueHelp = _getValueHelp.call(this);
-			const oDelegate = this.oFormatOptions.delegate;
+			const oDelegate = this._getDelegate();
 
-			if (oDelegate) {
-				return oDelegate.isInvalidInputAllowed(this, oValueHelp);
-			} else if (oValueHelp) {
-				return !oValueHelp.getValidateInput();
-			} else {
-				return true;
-			}
+			return oDelegate.isInvalidInputAllowed(this, oValueHelp);
 
 		}
 
 		function _getItemForValue(vValue, vParsedValue, vParsedDescription, oType, oAdditionalType, oBindingContext, bCheckKey, bCheckDescription, bExactMatch) {
 
 			const oValueHelp = _getValueHelp.call(this);
-			const oDelegate = this.oFormatOptions.delegate;
+			const oDelegate = this._getDelegate();
 			const oControl = this.oFormatOptions.control;
 			const oConfig = {
 				value: vValue,
@@ -968,38 +988,17 @@ sap.ui.define([
 				control: oControl
 			};
 
-			if (oDelegate) {
-				return oDelegate.getItemForValue(oControl, oValueHelp, oConfig);
-			} else if (oValueHelp) {
-				return oValueHelp.getItemForValue(oConfig);
-			}
+			return oDelegate.getItemForValue(oControl, oValueHelp, oConfig);
 
 		}
 
 		function _getDescription(vKey, oCondition, oType, oAdditionalType, oBindingContext) {
 
 			const oValueHelp = _getValueHelp.call(this);
-			const oDelegate = this.oFormatOptions.delegate;
+			const oDelegate = this._getDelegate();
 			const oControl = this.oFormatOptions.control;
-			if (oDelegate) {
-				return oDelegate.getDescription(oControl, oValueHelp, vKey, oCondition.inParameters, oCondition.outParameters, oBindingContext, undefined, undefined, oCondition.payload, oControl, oType);
-			} else if (oValueHelp) {
-				const oConfig = {
-					value: vKey,
-					parsedValue: vKey,
-					parsedDescription: undefined,
-					dataType: oType,
-					context: { inParameters: oCondition.inParameters, outParameters: oCondition.outParameters, payload: oCondition.payload },
-					bindingContext: oBindingContext,
-					checkKey: true,
-					checkDescription: false,
-					caseSensitive: true, // case sensitive as used to get description for known key
-					exception: FormatException,
-					exactMatch: true,
-					control: oControl
-				};
-				return oValueHelp.getItemForValue(oConfig);
-			}
+
+			return oDelegate.getDescription(oControl, oValueHelp, vKey, oCondition.inParameters, oCondition.outParameters, oBindingContext, undefined, undefined, oCondition.payload, oControl, oType);
 
 		}
 
