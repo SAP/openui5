@@ -78,6 +78,34 @@ function (
 		oAvatarGroup.destroy();
 	});
 
+	QUnit.test("Tooltip", async function (assert) {
+
+		// Arrange
+		var sTooltip = "Test tooltip",
+				oAvatarGroup = new AvatarGroup({
+				tooltip: sTooltip
+			}),
+			$oDomRef;
+
+		// Act
+		oAvatarGroup.placeAt(DOM_RENDER_LOCATION);
+		await nextUIUpdate();
+		$oDomRef = oAvatarGroup.$();
+
+		// Assert
+		assert.strictEqual($oDomRef.attr("title"), sTooltip, "The AvatarGroup has tooltip shown, when in Group mode");
+
+		// Act
+		oAvatarGroup.setGroupType("Individual");
+		await nextUIUpdate();
+
+		// Assert
+		assert.strictEqual($oDomRef.attr("title"), undefined, "The AvatarGroup does not have tooltip shown, when in Individual mode");
+
+		// Clean up
+		oAvatarGroup.destroy();
+	});
+
 	QUnit.module("Rendering different sizes", {
 		beforeEach: setupFunction,
 		afterEach: teardownFunction
