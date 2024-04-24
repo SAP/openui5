@@ -109,6 +109,7 @@ sap.ui.define([
 				"sap.ui.mdc.FilterBar": "sap/ui/mdc/flexibility/FilterBar",
 				"sap.ui.mdc.filterbar.p13n.AdaptationFilterBar": "sap/ui/mdc/flexibility/FilterBar",
 				"sap.ui.mdc.filterbar.vh.FilterBar": "sap/ui/mdc/flexibility/FilterBar",
+				"sap.ui.mdc.valuehelp.FilterBar": "sap/ui/mdc/flexibility/FilterBar",
 				"sap.ui.mdc.link.PanelItem": "sap/ui/mdc/flexibility/PanelItem",
 				"sap.ui.mdc.link.Panel": "sap/ui/mdc/flexibility/Panel",
 				"sap.ui.mdc.ActionToolbar": "sap/ui/mdc/flexibility/ActionToolbar",

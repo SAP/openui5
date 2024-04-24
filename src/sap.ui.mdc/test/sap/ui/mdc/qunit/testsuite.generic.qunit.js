@@ -183,7 +183,7 @@ sap.ui.define([
 			},
 			"sap.ui.mdc.MultiValueField": {
 				create: async (MultiValueField, mSettings) => {
-					const aModules = await fnRequire(["sap/ui/model/json/JSONModel", "sap/ui/model/type/String", "sap/ui/mdc/enums/FieldDisplay", "sap/ui/mdc/enums/FieldEditMode", "sap/ui/mdc/field/MultiValueFieldItem", "sap/ui/mdc/ValueHelp", "sap/ui/mdc/valuehelp/Dialog", "sap/ui/mdc/valuehelp/content/MTable", "sap/m/Table", "sap/m/Column", "sap/m/ColumnListItem", "sap/m/Label", "sap/m/Text", "sap/ui/mdc/valuehelp/content/Conditions", "sap/ui/mdc/field/MultiValueFieldDelegate", "sap/ui/mdc/ValueHelpDelegate", "sap/ui/mdc/field/FieldMultiInput", "sap/m/ScrollContainer", "sap/ui/layout/FixFlex", "sap/ui/mdc/filterbar/vh/FilterBar", "sap/ui/mdc/filterbar/vh/FilterBarDelegate", "sap/ui/fl/library"]);
+					const aModules = await fnRequire(["sap/ui/model/json/JSONModel", "sap/ui/model/type/String", "sap/ui/mdc/enums/FieldDisplay", "sap/ui/mdc/enums/FieldEditMode", "sap/ui/mdc/field/MultiValueFieldItem", "sap/ui/mdc/ValueHelp", "sap/ui/mdc/valuehelp/Dialog", "sap/ui/mdc/valuehelp/content/MTable", "sap/m/Table", "sap/m/Column", "sap/m/ColumnListItem", "sap/m/Label", "sap/m/Text", "sap/ui/mdc/valuehelp/content/Conditions", "sap/ui/mdc/field/MultiValueFieldDelegate", "sap/ui/mdc/ValueHelpDelegate", "sap/ui/mdc/field/FieldMultiInput", "sap/m/ScrollContainer", "sap/ui/layout/FixFlex", "sap/ui/mdc/valuehelp/FilterBar", "sap/ui/mdc/valuehelp/FilterBarDelegate", "sap/ui/fl/library"]);
 					const sId = mSettings && mSettings.id;
 
 					const oModel = new aModules[0]({

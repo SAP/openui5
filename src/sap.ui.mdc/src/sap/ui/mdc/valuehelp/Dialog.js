@@ -463,7 +463,7 @@ sap.ui.define([
 	Dialog.prototype._retrieveGroupSelect = function() {
 		return this._retrievePromise("collectiveSearchSelect", () => {
 			return loadModules([
-				"sap/ui/mdc/filterbar/vh/CollectiveSearchSelect", "sap/m/VariantItem", "sap/ui/model/json/JSONModel"
+				"sap/ui/mdc/valuehelp/CollectiveSearchSelect", "sap/m/VariantItem", "sap/ui/model/json/JSONModel"
 			]).then(
 				(aModules) => {
 					const CollectiveSearchSelect = aModules[0];

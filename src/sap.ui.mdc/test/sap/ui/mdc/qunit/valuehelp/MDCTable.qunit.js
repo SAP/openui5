@@ -11,7 +11,7 @@ sap.ui.define([
 	"sap/ui/mdc/enums/ConditionValidated",
 	"sap/ui/mdc/enums/OperatorName",
 	"sap/ui/mdc/enums/ValueHelpSelectionType",
-	"sap/ui/mdc/filterbar/vh/FilterBar",
+	"sap/ui/mdc/valuehelp/FilterBar",
 	"sap/ui/mdc/FilterField", // to have it loaded when BasicSearch should be created
 	"sap/ui/model/ParseException",
 	"sap/ui/model/FormatException",

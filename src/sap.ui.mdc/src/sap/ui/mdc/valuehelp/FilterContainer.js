@@ -20,7 +20,7 @@ sap.ui.define(
 	) => {
 		"use strict";
 		/**
-		 * Constructor for a new filterBar/vh/FilterContainer.
+		 * Constructor for a new valuehelp/FilterContainer.
 		 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 		 * @class The FilterContainer is a IFilterContainer implementation for <code>AlignedFlowLayout</code>
 		 * @extends sap.ui.mdc.filterbar.IFilterContainer
