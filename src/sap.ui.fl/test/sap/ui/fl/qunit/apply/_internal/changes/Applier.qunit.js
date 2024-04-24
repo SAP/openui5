@@ -1040,6 +1040,32 @@ sap.ui.define([
 			assert.strictEqual(this.oAddChangeStub.callCount, 3, "all changes were added to the runtime map");
 		});
 
+		QUnit.test("when a change status and custom data are not in sync", async function(assert) {
+			const oChange0 = FlexObjectFactory.createFromFileContent(getLabelChangeContent("a", sControlId));
+			const oChange1 = FlexObjectFactory.createFromFileContent(getLabelChangeContent("b", sControlId));
+			const oChange2 = FlexObjectFactory.createFromFileContent(getLabelChangeContent("c", sControlId));
+			// only change status says applied, but not actually applied on the control -> status gets reset and the change gets applied
+			oChange0.markFinished();
+
+			// change already applied on control, but status is wrong -> status gets set to applied and the change will be skipped
+			sandbox.stub(FlexCustomData, "hasChangeApplyFinishedCustomData")
+			.onCall(1).returns(true)
+			.returns(false);
+			sandbox.stub(FlexCustomData, "getAppliedCustomDataValue")
+			.onCall(1).returns(true)
+			.returns(false);
+
+			await Applier.applyMultipleChanges([oChange0, oChange1, oChange2], {
+				appComponent: {},
+				reference: "DummyFlexReference"
+			});
+			assert.strictEqual(this.oChangeHandlerApplyChangeStub.callCount, 2, "all applicable changes were applied");
+			assert.strictEqual(this.oAddChangeStub.callCount, 3, "all changes were added to the runtime map");
+			assert.strictEqual(oChange0.isApplyProcessFinished(), true, "the first change is marked as finished");
+			assert.strictEqual(oChange1.isApplyProcessFinished(), true, "the first change is marked as finished");
+			assert.strictEqual(oChange2.isApplyProcessFinished(), true, "the first change is marked as finished");
+		});
+
 		QUnit.test("when one change can't be applied", async function(assert) {
 			ChangeUtils.getChangeHandler.restore();
 			sandbox.stub(ChangeUtils, "getChangeHandler")
