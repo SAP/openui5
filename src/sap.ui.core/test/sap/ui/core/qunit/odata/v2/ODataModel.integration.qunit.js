@@ -4735,6 +4735,8 @@ usePreliminaryContext : false}}">\
 			oObjectPage = that.oView.byId("objectPage");
 
 			assert.deepEqual(oMessage.getControlIds(), []);
+			that.expectValueState("note1", "Error", oSalesOrder1NoteError.message)
+				.expectValueState("note2", "Error", oSalesOrder1NoteError.message);
 
 			oObjectPage.setBindingContext(
 				that.oView.byId("table").getItems()[0].getBindingContext());
