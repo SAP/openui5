@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/Device",
+	"sap/ui/core/InvisibleMessage",
 	"sap/m/Input",
 	"sap/m/InputBase",
 	"sap/ui/core/Item",
@@ -43,6 +44,7 @@ sap.ui.define([
 	qutils,
 	createAndAppendDiv,
 	Device,
+	InvisibleMessage,
 	Input,
 	InputBase,
 	Item,
@@ -4659,9 +4661,11 @@ sap.ui.define([
 		oInputWithSuggestions.destroy();
 	});
 
-	QUnit.test("General - Input suggestions description", async function(assert) {
+	QUnit.test("Invisible Message - Input suggestions description", async function(assert) {
 		this.clock = sinon.useFakeTimers();
+
 		// Arrange
+		var oAnnounceSpy = this.spy(InvisibleMessage.prototype, "announce");
 		var oMessageBundle = Library.getResourceBundleFor("sap.m"),
 			oInput = new Input({
 				showSuggestion: true,
@@ -4685,18 +4689,11 @@ sap.ui.define([
 		oInput._$input.trigger("focus").val("I").trigger("input");
 		this.clock.tick(400);
 
-		// Assert
-		assert.ok(!!oInput.getDomRef("SuggDescr"), "The description is added in the DOM.");
-		assert.strictEqual(oInput.getDomRef("SuggDescr").innerText,
-			oMessageBundle.getText("INPUT_SUGGESTIONS_MORE_HITS", 2), "The description has correct text.");
+		//Assert
+		assert.ok(oAnnounceSpy.calledWith(oMessageBundle.getText("INPUT_SUGGESTIONS_MORE_HITS", 2)), "The description has correct text.");
 
-		// Act
-		oInput.onfocusout();
-
-		// Assert
-		assert.notOk(oInput.$("SuggDescr").text(), "The suggestion description is cleared");
-
-		// Cleanup
+		//Clean up
+		oAnnounceSpy.restore();
 		oInput.destroy();
 	});
 
@@ -8268,30 +8265,11 @@ sap.ui.define([
 		assert.strictEqual(fnGetVisisbleItems(this.oInput._getSuggestionsTable().getItems()).length, 1, "Only the matching items are visible");
 	});
 
-	QUnit.test("If suggestions hidden text is empty when there are no suggestions", async function (assert) {
-		this.clock = sinon.useFakeTimers();
-		var oInput = new Input({ showSuggestion: true });
-
-		oInput.placeAt("content");
-		await nextUIUpdate(this.clock);
-
-		oInput.showItems(function () { return true; });
-		this.clock.tick(400);
-		await nextUIUpdate(this.clock);
-
-		oInput.focus();
-		await nextUIUpdate(this.clock);
-
-		var sDescription = oInput.getDomRef("SuggDescr").innerText;
-
-		assert.strictEqual(sDescription, "", "Description is empty");
-
-		oInput.destroy();
-	});
 
 	QUnit.test("If suggestions[tabular] hidden text is empty when there are no suggestions", async function (assert) {
 		this.clock = sinon.useFakeTimers();
 		var oInput = new Input({ showSuggestion: true });
+		var oAnnounceSpy = this.spy(InvisibleMessage.prototype, "announce");
 		var oMessageBundle = Library.getResourceBundleFor("sap.m");
 
 		oInput.addSuggestionColumn(new Column({ header: new Label({text: "Text"}) }));
@@ -8312,11 +8290,11 @@ sap.ui.define([
 		oInput.focus();
 		await nextUIUpdate(this.clock);
 
-		var sDescription = oInput.getDomRef("SuggDescr").innerText;
-		var sExpectedText = oMessageBundle.getText("INPUT_SUGGESTIONS_ONE_HIT");
+		//Assert
+		assert.ok(oAnnounceSpy.calledWith(oMessageBundle.getText("INPUT_SUGGESTIONS_ONE_HIT")), "Contains information about 1 item");
 
-		assert.strictEqual(sDescription, sExpectedText, "Contains information about 1 item");
-
+		//Clean up
+		oAnnounceSpy.restore();
 		oInput.destroy();
 	});
 
