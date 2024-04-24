@@ -135,7 +135,7 @@ sap.ui.define([
 
 			if (mConfiguration.chart) {
 				Microchart.loadDependencies().then(() => {
-					this.setMicroChart(Microchart.create(mConfiguration.chart));
+					this.setMicroChart(Microchart.create(mConfiguration.chart, true));
 				});
 			}
 			FNumericHeader.call(this, sId, mSettings);
