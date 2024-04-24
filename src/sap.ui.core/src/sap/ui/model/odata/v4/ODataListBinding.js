@@ -3331,7 +3331,12 @@ sap.ui.define([
 			}
 			const iOldIndex = oChildContext.getModelIndex();
 			this.aContexts.splice(iOldIndex, 1);
-			this.aContexts.splice(iNewIndex, 0, oChildContext);
+			if (iNewIndex > this.aContexts.length) {
+				this.aContexts[iNewIndex] = oChildContext;
+				// Note: no need to adjust iMaxLength
+			} else {
+				this.aContexts.splice(iNewIndex, 0, oChildContext);
+			}
 			setIndices(iOldIndex, iNewIndex);
 
 			if (bExpanded) {

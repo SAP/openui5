@@ -26097,8 +26097,8 @@ sap.ui.define([
 	<Text text="{ID}"/>
 </t:Table>`;
 		const sUrl = "EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
-			+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart',NodeProperty='ID',"
-			+ "Levels=1)"
+			+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart',NodeProperty='ID'"
+			+ ",Levels=1)"
 			+ "&$select=DrillState,ID&$count=true&$skip=0&$top=3";
 		const oResponse = {
 			"@odata.count" : "2",
@@ -26134,8 +26134,8 @@ sap.ui.define([
 			.expectRequest("EMPLOYEES?$apply="
 				+ "ancestors($root/EMPLOYEES,OrgChart,ID,search(covfefe),keep start)"
 				+ "/com.sap.vocabularies.Hierarchy.v1.TopLevels("
-				+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart',NodeProperty='ID',"
-				+ "Levels=1)"
+				+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart',NodeProperty='ID'"
+				+ ",Levels=1)"
 				+ "&$select=DrillState,ID&$count=true&$skip=0&$top=3",
 				oResponse)
 			.expectChange("selected", [undefined, undefined]);
@@ -33145,6 +33145,144 @@ sap.ui.define([
 		}
 	});
 });
+
+	//*********************************************************************************************
+	// Scenario: A node is moved to root level, outside of view, but is still shown in the right
+	// position when scrolling.
+	// JIRA: CPOUI5ODATAV4-2547
+	QUnit.test("Recursive Hierarchy: move outside of view", async function (assert) {
+		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
+		const sUrl = "EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
+			+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart',NodeProperty='ID')";
+		const sSelect = "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name";
+		const sView = `
+<t:Table id="table" rows="{path : '/EMPLOYEES',
+		parameters : {
+			$$aggregation : {
+				expandTo : 1E16,
+				hierarchyQualifier : 'OrgChart'
+			}
+		}}" threshold="0" visibleRowCount="3">
+	<Text text="{= %{@$ui5.node.isExpanded} }"/>
+	<Text text="{= %{@$ui5.node.level} }"/>
+	<Text text="{Name}"/>
+</t:Table>`;
+
+		// 1 Alpha
+		//   2 Beta
+		// 3 Gamma
+		// 4 Delta
+		this.expectRequest(sUrl + sSelect + "&$count=true&$skip=0&$top=3", {
+				"@odata.count" : "4",
+				value : [{
+					DescendantCount : "1",
+					DistanceFromRoot : "0",
+					DrillState : "expanded",
+					ID : "1",
+					Name : "Alpha"
+				}, {
+					DescendantCount : "0",
+					DistanceFromRoot : "1",
+					DrillState : "leaf",
+					ID : "2",
+					Name : "Beta"
+				}, {
+					DescendantCount : "0",
+					DistanceFromRoot : "0",
+					DrillState : "leaf",
+					ID : "3",
+					Name : "Gamma"
+				}]
+			});
+
+		await this.createView(assert, sView, oModel);
+
+		const oTable = this.oView.byId("table");
+		checkTable("initial page", assert, oTable, [
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('2')",
+			"/EMPLOYEES('3')"
+		], [
+			[true, 1, "Alpha"],
+			[undefined, 2, "Beta"],
+			[undefined, 1, "Gamma"]
+		], 4);
+		const oListBinding = oTable.getBinding("rows");
+		const oBeta = oListBinding.getCurrentContexts()[1];
+
+		this.expectRequest({
+				batchNo : 2,
+				headers : {
+					Prefer : "return=minimal"
+				},
+				method : "PATCH",
+				payload : {
+					"EMPLOYEE_2_MANAGER@odata.bind" : null
+				},
+				url : "EMPLOYEES('2')"
+			}) // 204 No Content
+			.expectRequest({
+				batchNo : 2,
+				url : sUrl + "&$filter=ID eq '2'&$select=LimitedRank"
+			}, {
+				value : [{
+					LimitedRank : "3"
+				}]
+			})
+			// 1 Alpha
+			// 3 Gamma
+			// 4 Delta
+			// 2 Beta (moved here)
+			.expectRequest({
+				batchNo : 3,
+				url : sUrl + sSelect + "&$skip=2&$top=1"
+			}, {
+				value : [{
+					DescendantCount : "0",
+					DistanceFromRoot : "0",
+					DrillState : "leaf",
+					ID : "4",
+					Name : "Delta"
+				}]
+			});
+
+		await Promise.all([
+			// code under test
+			oBeta.move({parent : null}),
+			this.waitForChanges(assert, "move 2 (Beta) to root")
+		]);
+
+		checkTable("after move 2 (Beta) to root", assert, oTable, [
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('3')",
+			"/EMPLOYEES('4')",
+			"/EMPLOYEES('2')"
+		], [
+			[undefined, 1, "Alpha"],
+			[undefined, 1, "Gamma"],
+			[undefined, 1, "Delta"]
+		]);
+		assert.strictEqual(oBeta.getIndex(), 3);
+
+		// "The index of the first visible row is too high. The value has been set to 1."
+		oTable.setFirstVisibleRow(/*3*/ 1);
+
+		await Promise.all([
+			resolveLater(undefined, 0), // table update takes a moment
+			this.waitForChanges(assert, "scroll to 2 (Beta)")
+		]);
+
+		checkTable("after scroll to 2 (Beta)", assert, oTable, [
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('3')",
+			"/EMPLOYEES('4')",
+			"/EMPLOYEES('2')"
+		], [
+			[undefined, 1, "Gamma"],
+			[undefined, 1, "Delta"],
+			[undefined, 1, "Beta"]
+		], 4);
+	});
 
 	//*********************************************************************************************
 	// Scenario: A hierarchy has an initial expandTo=1 and three visible rows. Expand and collapse
