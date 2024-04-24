@@ -72,8 +72,9 @@ sap.ui.define([
 	 * @extends sap.ui.core.Element
 	 * @version ${version}
 	 * @author SAP SE
-	 *
-	 * @private
+	 * @experimental Since 1.124
+	 * @public
+	 * @since 1.124
 	 * @alias sap.m.plugins.UploadSetwithTable
 	 * @borrows sap.m.plugins.PluginBase.findOn as findOn
 	 */
