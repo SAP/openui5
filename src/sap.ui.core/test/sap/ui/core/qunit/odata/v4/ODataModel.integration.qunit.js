@@ -5216,8 +5216,6 @@ sap.ui.define([
 	//
 	// Additionally ODLB#getDownloadUrl is tested
 	// JIRA: CPOUI5ODATAV4-12
-	//
-	// "Select all" is reset by #filter (JIRA: CPOUI5ODATAV4-1943).
 	QUnit.test("Relative ODLB inherits parent ODCB's query options on filter", function (assert) {
 		var oBinding,
 			oModel,
@@ -5260,8 +5258,6 @@ sap.ui.define([
 			var sResourceUrl = "EMPLOYEES('42')/EMPLOYEE_2_EQUIPMENTS?$orderby=ID&$select=Name&c1=a"
 					+ "&c2=b&$filter=EQUIPMENT_2_PRODUCT/SupplierIdentifier%20eq%202";
 
-			oBinding.getHeaderContext().setSelected(true); // "select all"
-
 			that.expectRequest(sResourceUrl + "&$skip=0&$top=100", {
 					value : [
 						{Name : "Monitor Basic 24"},
@@ -5273,8 +5269,6 @@ sap.ui.define([
 			// code under test - filter becomes async because product metadata has to be loaded
 			oBinding.filter(
 				new Filter("EQUIPMENT_2_PRODUCT/SupplierIdentifier", FilterOperator.EQ, 2));
-
-			assert.notOk(oBinding.getHeaderContext().isSelected(), "JIRA: CPOUI5ODATAV4-1943");
 
 			assert.throws(function () {
 				oBinding.getDownloadUrl();
@@ -7114,8 +7108,6 @@ sap.ui.define([
 	//
 	// Also check that unchanged $expand/$select is tolerated by #changeParameters
 	// JIRA: CPOUI5ODATAV4-1098
-	//
-	// "Select all" is reset by #changeParameters (JIRA: CPOUI5ODATAV4-1943).
 	QUnit.test("ODLB: $count and changeParameters()", function (assert) {
 		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			oTable,
@@ -7148,8 +7140,6 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			oTableBinding.getHeaderContext().setSelected(true); // "select all"
-
 			that.expectRequest("SalesOrderList?$expand=SO_2_BP&$select=SalesOrderID"
 					+ "&$filter=SalesOrderID gt '0500000001'&$skip=0&$top=100",
 					{value : [{SalesOrderID : "0500000002", SO_2_BP : null}]}
@@ -7163,8 +7153,6 @@ sap.ui.define([
 				$filter : "SalesOrderID gt '0500000001'",
 				$select : "SalesOrderID"
 			});
-
-			assert.notOk(oTableBinding.getHeaderContext().isSelected(), "JIRA: CPOUI5ODATAV4-1943");
 
 			return that.waitForChanges(assert);
 		});
@@ -59314,6 +59302,139 @@ make root = ${bMakeRoot}`;
 		await Promise.all([oContext.created(), oSubmitPromise]);
 
 		assert.strictEqual(bSubmitBatchCompleted, true);
+	});
+
+	//*********************************************************************************************
+	// Scenario: With binding parameter $$clearSelectionOnFilter set, setting a filter or changing
+	// $filter or $search parameters resets the selection state of all contexts of a list binding.
+	// SNOW: CS20240007001494
+[
+	{method : "filter", value : FilterType.Application, query : "GrossAmount ge 0"},
+	{method : "filter", value : FilterType.Control, query : "GrossAmount ge 0"},
+	{method : "changeParameters", value : "$filter", query : "GrossAmount ge 0"},
+	{method : "changeParameters", value : "$search", query : "0"}
+].forEach((oFixture) => {
+	[false, true].forEach((bSuspend) => {
+	const sTitle = `Reset selection on ${oFixture.value}, suspend=${bSuspend}`;
+	QUnit.test(sTitle, async function (assert) {
+		const oModel = this.createSalesOrdersModel({autoExpandSelect : true});
+		const sView = `
+<Table id="table" items="{parameters: {$$clearSelectionOnFilter: true}, path:'/SalesOrderList'}">
+	<Text id="id" text="{SalesOrderID}"/>
+	<Text id="grossAmount" text="{GrossAmount}"/>
+</Table>`;
+
+		this.expectRequest("SalesOrderList?$select=GrossAmount,SalesOrderID&$skip=0&$top=100", {
+				value : [
+					{SalesOrderID : "1", GrossAmount : "1000"},
+					{SalesOrderID : "2", GrossAmount : "2000"},
+					{SalesOrderID : "3", GrossAmount : "3000"}
+				]
+			})
+			.expectChange("id", ["1", "2", "3"])
+			.expectChange("grossAmount", ["1,000.00", "2,000.00", "3,000.00"]);
+
+		await this.createView(assert, sView, oModel);
+
+		const oTable = this.oView.byId("table");
+		const oListBinding = oTable.getBinding("items");
+		const oHeaderContext = oListBinding.getHeaderContext();
+		const [oItem0, oItem1] = oListBinding.getCurrentContexts();
+
+		oHeaderContext.setSelected(true);
+		oItem0.setSelected(true);
+		oItem1.setSelected(true);
+
+		this.expectRequest("SalesOrderList?$select=GrossAmount,SalesOrderID&"
+				+ (oFixture.method === "filter" ? "$filter" : oFixture.value) + "=" + oFixture.query
+				+ "&$skip=0&$top=100", {
+				value : [
+					{SalesOrderID : "1", GrossAmount : "1000"},
+					{SalesOrderID : "2", GrossAmount : "2000"},
+					{SalesOrderID : "3", GrossAmount : "3000"}
+				]
+			});
+
+		if (bSuspend) {
+			oListBinding.suspend();
+		}
+		if (oFixture.method === "filter") {
+			// code under test
+			oListBinding.filter(new Filter("GrossAmount", FilterOperator.GE, 0), oFixture.value);
+		} else {
+			// code under test
+			oListBinding.changeParameters({[oFixture.value] : oFixture.query});
+		}
+		if (bSuspend) {
+			oListBinding.resume();
+		}
+
+		assert.strictEqual(oHeaderContext.isSelected(), false);
+		assert.strictEqual(oItem0.isSelected(), false);
+		assert.strictEqual(oItem1.isSelected(), false);
+
+		await this.waitForChanges(assert);
+	});
+	});
+});
+
+	//*********************************************************************************************
+	// Scenario: With binding parameter $$clearSelectionOnFilter set, the selection state of a
+	// hierarchy is reset on changing "$$aggregation.search" parameter.
+	//
+	// SNOW: CS20240007001494
+	QUnit.test("Reset selection on new $$aggregation.search", async function (assert) {
+		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
+		const sView = `
+<t:Table id="table" rows="{path : '/EMPLOYEES',
+		parameters : {
+			$$aggregation : {
+				hierarchyQualifier : 'OrgChart'
+			}, $$clearSelectionOnFilter: true
+		}}" threshold="0" visibleRowCount="3">
+	<Text text="{= %{@$ui5.node.isExpanded} }"/>
+	<Text text="{= %{@$ui5.node.level} }"/>
+	<Text text="{ID}"/>
+</t:Table>`;
+		const sUrl = "EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
+			+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart',NodeProperty='ID',"
+			+ "Levels=1)"
+			+ "&$select=DrillState,ID&$count=true&$skip=0&$top=3";
+		const oResponse = {
+			"@odata.count" : "2",
+			value : [{
+				ID : "0",
+				DrillState : "leaf"
+			}, {
+				ID : "1",
+				DrillState : "leaf"
+			}]
+		};
+
+		this.expectRequest(sUrl, oResponse);
+
+		await this.createView(assert, sView, oModel);
+
+		const oTable = this.oView.byId("table");
+		const oListBinding = oTable.getBinding("rows");
+		const [oNode0, oNode1] = oListBinding.getCurrentContexts();
+
+		oNode0.setSelected(true);
+
+		this.expectRequest("EMPLOYEES?$apply="
+				+ "ancestors($root/EMPLOYEES,OrgChart,ID,search(covfefe),keep start)"
+				+ "/com.sap.vocabularies.Hierarchy.v1.TopLevels("
+				+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart',NodeProperty='ID',"
+				+ "Levels=1)"
+				+ "&$select=DrillState,ID&$count=true&$skip=0&$top=3",
+				oResponse);
+
+		// code under test
+		oListBinding.setAggregation({...oListBinding.getAggregation(), search : "covfefe"});
+
+		await this.waitForChanges(assert, "set $$aggregation.search");
+
+		assert.strictEqual(oNode1.isSelected(), false);
 	});
 
 	//*********************************************************************************************

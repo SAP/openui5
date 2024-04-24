@@ -150,6 +150,7 @@ sap.ui.define([
 	 *     {@link sap.ui.model.odata.v4.ODataListBinding#updateAnalyticalInfo} (but without
 	 *     validation here)
 	 *   <li> '$$canonicalPath' with value <code>true</code>
+	 *   <li> '$$clearSelectionOnFilter' with value <code>true</code>
 	 *   <li> '$$groupId' with allowed values as specified in {@link #checkGroupId}
 	 *   <li> '$$updateGroupId' with allowed values as specified in {@link #checkGroupId}
 	 *   <li> '$$inheritExpandSelect' with allowed values <code>false</code> and <code>true</code>
@@ -231,6 +232,7 @@ sap.ui.define([
 						});
 					// falls through
 				case "$$canonicalPath":
+				case "$$clearSelectionOnFilter":
 				case "$$noPatch":
 				case "$$ownRequest":
 				case "$$patchWithoutSideEffects":
