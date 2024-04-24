@@ -48,8 +48,7 @@
 									path: 'Price',
 									formatter: '.formatter.numberUnit'
 								}"
-								unit="{Currency}"
-								/>
+								unit="{Currency}"/>
 						</cells>
 					</ColumnListItem>
 				</items>

@@ -285,7 +285,8 @@ sap.ui.define([
 		},
 
 		_rewriteRelativeURLs: function (sRawHTMLFile, sFileName) {
-			const rQuotedUrl = /(['"])(?:[a-zA-Z0-9./])*(resources|test-resources)\//g;
+			// No rewrite for the data-sap-ui-testsuite attribute as it contains a module name, not a path.
+			const rQuotedUrl = /(?<!data-sap-ui-testsuite=)(['"])(?:[a-zA-Z0-9./])*(resources|test-resources)\//g;
 			const sRelativePathToRoot = this._getRelativePathToRoot(sFileName);
 			return sRawHTMLFile.replaceAll(rQuotedUrl, "$1" + sRelativePathToRoot + "$2/");
 		},

@@ -5,7 +5,7 @@
 	"sap.ui5": {
 		"config": {
 			"sample": {
-				"iframe": "webapp/test/unit/unitTests.qunit.html",
+				"iframe": "webapp/test/Test.qunit.html?testsuite=test-resources/sap/ui/demo/bulletinboard/testsuite.qunit&test=unit/unitTests",
 				"stretch": true,
 				"files": [
 					"webapp/controller/App.controller.js",
@@ -24,8 +24,6 @@
 					"webapp/test/integration/arrangements/Startup.js",
 					"webapp/test/integration/pages/Post.js",
 					"webapp/test/integration/pages/Worklist.js",
-					"webapp/test/integration/AllJourneys.js",
-					"webapp/test/integration/opaTests.qunit.html",
 					"webapp/test/integration/opaTests.qunit.js",
 					"webapp/test/integration/PostJourney.js",
 					"webapp/test/integration/WorklistJourney.js",
@@ -33,12 +31,11 @@
 					"webapp/test/unit/model/FlaggedType.js",
 					"webapp/test/unit/model/formatter.js",
 					"webapp/test/unit/model/models.js",
-					"webapp/test/unit/AllTests.js",
-					"webapp/test/unit/unitTests.qunit.html",
 					"webapp/test/unit/unitTests.qunit.js",
 					"webapp/test.html",
 					"webapp/test/mockServer.html",
 					"webapp/test/initMockServer.js",
+					"webapp/test/Test.qunit.html",
 					"webapp/test/testsuite.qunit.html",
 					"webapp/test/testsuite.qunit.js",
 					"webapp/view/App.view.xml",
