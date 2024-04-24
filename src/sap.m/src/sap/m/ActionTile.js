@@ -5,20 +5,26 @@
 sap.ui.define([
 	"./library",
 	"sap/m/GenericTile",
+	"sap/m/Avatar",
 	"sap/m/ToDoCardRenderer",
 	"sap/m/GenericTileRenderer"
 ], function (
 	library,
 	GenericTile,
+	Avatar,
 	ToDoCardRenderer,
 	GenericTileRenderer
 	) {
 		"use strict";
 
-		var FrameType = library.FrameType,
-			GenericTileMode = library.GenericTileMode,
-			LoadState = library.LoadState,
-			Priority = library.Priority;
+	var FrameType = library.FrameType,
+		GenericTileMode = library.GenericTileMode,
+		LoadState = library.LoadState,
+		Priority = library.Priority,
+		AvatarSize = library.AvatarSize,
+		AvatarShape = library.AvatarShape,
+		AvatarColor = library.AvatarColor;
+
 	/**
 	* Constructor for a new sap.m.ActionTile control.
 	*
@@ -59,13 +65,13 @@ sap.ui.define([
 				 *
 				 * @experimental Since 1.124
 				 */
-				"priority": { type: "sap.m.Priority", group: "Data", defaultValue: Priority.None },
+				priority: { type: "sap.m.Priority", group: "Data", defaultValue: Priority.None },
 				/**
 				 * Sets the text inside the priority indicator for the Action Tile.
 				 *
 				 * @experimental Since 1.124
 				 */
-				"priorityText": { type: "string", group: "Data", defaultValue: null }
+				priorityText: { type: "string", group: "Data", defaultValue: null }
 			}
 		},
 		renderer: {
@@ -130,6 +136,52 @@ sap.ui.define([
 	 */
 
 	ActionTile.prototype._setupResizeClassHandler = function() {};
+
+	/**
+	 * Sets the enableIconFrame property of the ActionTile.
+	 *
+	 * @public
+	 * @param {boolean} bValue - Determines whether the icon frame should be enabled or not.
+	 */
+	ActionTile.prototype.setEnableIconFrame = function(bValue) {
+		if (!this._oAvatar && bValue) {
+			this._oAvatar = new Avatar(this.getId() + "-icon-frame", {
+				displaySize: AvatarSize.Custom,
+				customDisplaySize: "3.25rem",
+				displayShape: AvatarShape.Square,
+				backgroundColor: AvatarColor.Placeholder
+			}).addStyleClass("sapMATIconFrame");
+
+			var sHeaderImage = this.getHeaderImage();
+			if (sHeaderImage) {
+				this._oAvatar.setSrc(sHeaderImage);
+			}
+		}
+
+		this.setProperty("enableIconFrame", bValue);
+		return this;
+	};
+
+	/**
+	 * Returns the icon frame (Avatar) instance associated with the ActionTile.
+	 *
+	 * @return {sap.m.Avatar} The Avatar instance representing the icon frame.
+	 */
+	ActionTile.prototype._getIconFrame = function() {
+		return this._oAvatar;
+	};
+
+	/**
+	 * Exit lifecycle method for the ActionTile.
+	 *
+	 */
+	ActionTile.prototype.exit = function() {
+		GenericTile.prototype.exit.apply(this, arguments);
+
+		if (this._oAvatar) {
+			this._oAvatar.destroy();
+		}
+	};
 
 	return ActionTile;
 });

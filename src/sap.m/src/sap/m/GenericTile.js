@@ -1459,7 +1459,16 @@ sap.ui.define([
 
 				this._oImage.addStyleClass("sapMGTHdrIconImage");
 			}
+
+			//update Avatar source if icon frame is enabled
+			if (this.isA("sap.m.ActionTile") && this.getProperty("enableIconFrame")) {
+				var oIconFrame = this._getIconFrame();
+				if (oIconFrame) {
+					oIconFrame.setSrc(uri);
+				}
+			}
 		}
+
 		return this.setProperty("headerImage", uri);
 	};
 

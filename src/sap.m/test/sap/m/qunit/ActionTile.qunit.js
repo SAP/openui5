@@ -15,7 +15,8 @@ sap.ui.define([
 	"sap/m/ContentConfig",
 	"sap/ui/core/theming/Parameters",
 	"sap/m/Link",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/core/Element"
 ], function(
 	ActionTile,
 	ActionTileContent,
@@ -32,7 +33,8 @@ sap.ui.define([
 	ContentConfig,
 	Parameters,
 	Link,
-	nextUIUpdate
+	nextUIUpdate,
+	Element
 ) {
 	"use strict";
 
@@ -437,6 +439,7 @@ sap.ui.define([
 		await nextUIUpdate();
 
 		assert.ok(document.getElementById("action-tile-icon-frame"), "icon frame is rendered");
+		assert.ok(Element.getElementById("action-tile-icon-frame").isA("sap.m.Avatar"), "icon frame is an avatar control");
 
 		//Cleanup
 		oActionTile.destroy();
