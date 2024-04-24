@@ -110,6 +110,10 @@ sap.ui.define(['sap/ui/core/library', './library', 'sap/ui/core/Core'],
 				oRm.openEnd();
 			}
 
+			oRm.openStart("span", oObjStatus.getId() + "-wrapper");
+			oRm.class("sapMObjStatusWrapper");
+			oRm.openEnd();
+
 			if (oObjStatus.getIcon()) {
 				oRm.openStart("span", oObjStatus.getId() + "-statusIcon");
 				oRm.class("sapMObjStatusIcon");
@@ -135,6 +139,8 @@ sap.ui.define(['sap/ui/core/library', './library', 'sap/ui/core/Core'],
 			} else if (oObjStatus.getEmptyIndicatorMode() !== EmptyIndicatorMode.Off && !oObjStatus.getText()) {
 				this.renderEmptyIndicator(oRm, oObjStatus);
 			}
+
+			oRm.close("span");
 
 			if (oObjStatus._isActive()) {
 				oRm.close("span");

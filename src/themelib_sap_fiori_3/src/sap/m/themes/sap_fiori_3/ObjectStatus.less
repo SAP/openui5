@@ -37,19 +37,10 @@
 
 .sapMObjStatusInverted {
 	min-width: 1.25rem;
-	& .sapMObjStatusText,
-	& .sapMObjStatusIcon.sapMObjStatusIconOnly,
-	& .sapMObjStatusIcon .sapMObjStatusIconOnly,
-	& .sapMObjStatusLink .sapMObjStatusIcon.sapMObjStatusIconOnly,
-	& .sapMObjStatusLink .sapMObjStatusText {
-		border-radius: @sapUiElementBorderCornerRadius;
-	}
-	& .sapMObjStatusIcon {
-		border-radius: @sapUiElementBorderCornerRadius 0 0 @sapUiElementBorderCornerRadius;
-	}
-	& .sapMObjStatusIcon + .sapMObjStatusText {
-		border-radius: 0 @sapUiElementBorderCornerRadius @sapUiElementBorderCornerRadius 0;
-	}
+}
+
+.sapMObjStatusWrapper {
+	border-radius: @sapUiElementBorderCornerRadius;
 }
 
 .sapMObjStatusInverted .sapMObjStatusText,
@@ -72,8 +63,16 @@
 
 .sapMListTblCell {
 	.sapMObjStatus.sapMObjStatusInverted {
-		.sapMObjStatusIcon{
+		.sapMObjStatusIcon {
 			vertical-align: middle;
 		}
 	}
 }
+
+.sapMObjStatusInverted .sapMObjStatusText,
+.sapMObjStatusInverted .sapMObjStatusIcon,
+.sapMObjStatusInverted .sapMObjStatusLink:active .sapMObjStatusText,
+.sapMObjStatusInverted .sapMObjStatusLink:active .sapMObjStatusIcon {
+	text-shadow: @sapUiContentContrastTextShadow;
+}
+
