@@ -545,6 +545,87 @@ sap.ui.define([
 	 * @see {@link topic:d2ef0099542d44dc868719d908e576d0 Object Page Headers}
 	 */
 
-	return thisLib;
+	/**
+	 * Static method for creating an instance of the header content.
+	 *
+	 * @function
+	 * @name sap.uxap.IHeaderContent.createInstance
+	 * @ui5-restricted
+	 * @param {array} aContent The content array for the instance
+	 * @param {boolean} bVisible Whether the instance should be visible
+	 * @param {string} sContentDesign The content design
+	 * @param {boolean} bPinnable Whether the instance is pinnable
+	 * @param {string} sStableId Stable ID text
+	 * @private
+	*/
 
+	/**
+	 * Method for checking if the header content supports pin button.
+	 *
+	 * @function
+	 * @name sap.uxap.IHeaderContent.supportsPinUnpin
+	 * @ui5-restricted
+	 * @private
+	 * @returns {boolean} Whether or not the header content supports pin button.
+	*/
+
+	/**
+	 * Method for checking if the header content supports child page design (ObjectPageLayout related).
+	 *
+	 * @function
+	 * @name sap.uxap.IHeaderContent.supportsChildPageDesign
+	 * @ui5-restricted
+	 * @private
+	 * @returns {boolean} Whether or not the header content supports child page design (ObjectPageLayout related).
+	*/
+
+	/**
+	 * Method for checking if always expanded header content is supported.
+	 *
+	 * @function
+	 * @name sap.uxap.IHeaderContent.supportsAlwaysExpanded
+	 * @ui5-restricted
+	 * @private
+	 * @returns {boolean} Whether or not supports always expanded header content.
+	*/
+
+	/**
+	 * Toggles the collapse button's visibility of the header content.
+	 *
+	 * @function
+	 * @name sap.uxap.IHeaderContent._toggleCollapseButton
+	 * @ui5-restricted
+	 * @param {boolean} bToggle Whether the collapse button should be shown or not
+	 * @private
+	*/
+
+	/**
+	 * Internal setter for the collapse button's visibility of the header content.
+	 *
+	 * @function
+	 * @name sap.uxap.IHeaderContent._setShowCollapseButton
+	 * @ui5-restricted
+	 * @param {boolean} bToggle Whether the collapse button should be shown or not
+	 * @private
+	*/
+
+	/**
+	 * Focuses the collapse button of the header content.
+	 *
+	 * @function
+	 * @name sap.uxap.IHeaderContent._focusCollapseButton
+	 * @ui5-restricted
+	 * @private
+	*/
+
+	/**
+	 * Focuses the pin button of the header content.
+	 *
+	 * @function
+	 * @name sap.uxap.IHeaderContent._focusPinButton
+	 * @ui5-restricted
+	 * @private
+	*/
+
+	return thisLib;
 });
