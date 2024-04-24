@@ -90,10 +90,9 @@ sap.ui.define([
 			throw new Error("'modelType' and 'delegate' properties are required for registration!");
 		}
 		// No overriding of read delegates possible
-		// TODO: enable check for overriding of read delegates in the following change, when the sapui5.runtime change-4 is merged
-		// if (mModelSpecificDelegateItems[mPropertyBag.modelType]) {
-		// 	throw new Error(`modelType ${mPropertyBag.modelType} is already defined!`);
-		// }
+		if (mModelSpecificDelegateItems[mPropertyBag.modelType]) {
+			throw new Error(`modelType ${mPropertyBag.modelType} is already defined!`);
+		}
 		mModelSpecificDelegateItems[mPropertyBag.modelType] = {
 			name: mPropertyBag.delegate,
 			modelType: mPropertyBag.modelType

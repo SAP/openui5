@@ -149,8 +149,7 @@ sap.ui.define([
 		},
 		parentAlias: "_", //ensure to take the fallback
 		fieldSuffix: "", //no suffix needed
-		skipCreateLayout: true, //simple form needs field and label separately
-		supportsDefault: true
+		skipCreateLayout: true //simple form needs field and label separately
 	});
 
 	AddSimpleFormField.getChangeVisualizationInfo = function(oChange, oAppComponent) {
