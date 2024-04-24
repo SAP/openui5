@@ -35,9 +35,39 @@ sap.ui.define([
 	 * @param {object} [mSettings] Initial settings for the new <code>UploadSetwithTable</code>
 	 *
 	 * @class
-	 * The <code>UploadSetwithTable</code> plugin enables upload inside the table when it is added as a dependent to the control.
-	 * <br>It provides the ability to upload files from the local file system and from cloud file picker.
+	 * The <code>UploadSetwithTable</code> plugin enables uploading within a table when it is added as a dependent to the table control.
+	 * <br> This plugin provides an Upload button to upload files from the local file system. To do so, the user of the plugin must place {@link sap.m.upload.ActionsPlaceholder Actions Placeholder} control at the desired table area and then associate the actions of the plugin with the placeholder.
+	 * <br> The plugin provides the ability to upload files from the local system as well as from cloud file picker and includes other notable features such as validation, file preview, download.
 	 *
+	 * <br> The following controls support this plugin:
+	 * <ul>
+	 * <li>{@link sap.ui.mdc.Table MDC Table}</li>
+	 * <li>{@link sap.m.Table Responsive Table}</li>
+	 * <li>{@link sap.m.GridTable Grid Table}</li>
+	 * </ul>
+	 *
+	 * <caption>Consider the following before using the plugin: </caption>
+	 * <ul>
+	 * <li>It gets activated when it is added as a dependent to the table control. It gets deactivated when it is removed from the table control or when the table control is destroyed.</li>
+	 * <li>It fires onActivated and onDeactivated events when it is activated and deactivated, respectively.</li>
+	 * <li>Configuring the rowConfiguration aggregation (type {@link sap.m.upload.UploadItemConfiguration UploadItemConfiguration}) of this plugin is mandatory to use the features such as file preview, download etc.</li>
+	 * <li>It works only with the table control when the table is bound to the model to perform the operations such as rename, download etc.</li>
+	 * </ul>
+	 *
+	 * @example <caption>Connecting the plugin to table control</caption>
+	 * <pre>
+	 *   oTable.addDependent(new UploadSetwithTable({
+	 *			uploadUrl: "uploadUrl",
+	 *			fileTypes: ["jpg", "jpeg", "png"],
+	 *		    actions: "uploadButton" // Associating the actions with the ID of the ActionPlaceholder control in the table, where the upload button should be rendered.
+	 *  }));
+	 *
+	 *  // example of sap.m.upload.ActionsPlaceholder control placed in the table toolbar for rendering the upload button.
+	 *  new ActionPlaceHolder({
+	 * 	 	id: "uploadButton", // ID of the ActionPlaceholder control to be associated with the plugin actions.
+	 * 		placeholderFor: UploadSetwithTableActionPlaceHolder.UploadButtonPlaceholder
+	 * 	});
+	 * </pre>
 	 *
 	 * @extends sap.ui.core.Element
 	 * @version ${version}
@@ -82,7 +112,7 @@ sap.ui.define([
 				/**
 				 * Lets the user select multiple files from the same folder and then upload them.
 				 *
-				 * If multiple property is set to false, the control shows an error message if more than one file is chosen for drag & drop.
+				 * If multiple property is set to false, the plugin shows an error message if more than one file is chosen for drag & drop.
 				 */
 				multiple: {type: "boolean", group: "Behavior", defaultValue: false},
 				/**
@@ -96,7 +126,7 @@ sap.ui.define([
 				/** Callback function to perform additional validations or configurations for the item queued up for upload and to finally trigger the upload.
 				 * @callback sap.m.plugins.UploadSetwithTable.itemValidationHandler
 				 * @param {sap.m.plugins.UploadSetwithTable.ItemInfo} oItemInfo The info of the item queued for upload.
-				 * @returns {Promise<sap.m.upload.UploadItem>} oPromise, once resolved the UploadSetWithTable control initiates the upload.
+				 * @returns {Promise<sap.m.upload.UploadItem>} oPromise, once resolved the UploadSetWithTable plugin initiates the upload.
 				 * @public
 				**/
 
@@ -111,9 +141,9 @@ sap.ui.define([
 
 				/**
 				 * Defines a {@link sap.m.plugins.UploadSetwithTable.itemValidationHandler callback function} that is invoked when each UploadItem is queued up for upload.
-				 * This callback is invoked with {@link sap.m.plugins.UploadSetwithTable.ItemInfo parameters} and the callback is expected to return a promise to the control. Once the promise is resolved, the control initiates the upload process.
+				 * This callback is invoked with {@link sap.m.plugins.UploadSetwithTable.ItemInfo parameters} and the callback is expected to return a promise to the plugin. Once the promise is resolved, the plugin initiates the upload process.
 				 * Configure this property only when any additional configuration or validations are to be performed before the upload of each item.
-				 * The upload process is triggered manually by resolving the promise returned to the control.
+				 * The upload process is triggered manually by resolving the promise returned to the plugin.
 				**/
 				itemValidationHandler: {type: "function", defaultValue: null},
 				/**
@@ -146,7 +176,7 @@ sap.ui.define([
 				 */
 				headerFields: {type: "sap.ui.core.Item", multiple: true, singularName: "headerField"},
 				/**
-				 * Row configuration information for each UplaodItem in the model.
+				 * Row configuration information for each uploadItem in the model.
 				 */
                 rowConfiguration: {type: "sap.m.upload.UploadItemConfiguration", multiple: false},
 				/**
@@ -158,16 +188,15 @@ sap.ui.define([
 			associations: {
 				/**
 				 * Dialog with a carousel to preview files uploaded.
-				 * <br>If it is not defined, the control creates and uses the instance of {@link sap.m.upload.FilePreviewDialog FilePreviewDialog}.
+				 * <br>If it is not defined, the plugin creates and uses the instance of {@link sap.m.upload.FilePreviewDialog FilePreviewDialog}.
 				 */
 				previewDialog: {type: "sap.m.upload.FilePreviewDialog", multiple: false},
 
 				/**
-				 * Actions Provided by the plugin.
-				 * <br> sap.m.UploadSetwithTableActionPlaceHolder enum value is used to determine the action control.
-				 * <br> Action buttons are rendered in place of the placeholder.
-				 * <br> For example, if the placeholder is set to UploadButtonPlaceholder, the Upload button is rendered.
-				 * <br> For example, if the placeholder is set to CloudFilePickerButtonPlaceholder, the CloudFilePicker button is rendered.
+				 * Actions provided by the plugin.
+				 * <br> {@link sap.m.UploadSetwithTableActionPlaceHolder UploadSetwithTableActionPlaceHolder} enum is used to determine the action control to be rendered.
+				 * <br> Action buttons are rendered instead of the placeholder.
+				 * <br> For example, if the "placeholderFor" property is set to UploadButtonPlaceholder, the Upload button is rendered.
 				 * <br> Note: The action buttons are rendered only when the association to the placeholder control is set.
 				 */
 				actions: {type: "sap.m.upload.ActionsPlaceholder", multiple: true}
@@ -357,7 +386,7 @@ sap.ui.define([
 				onDeactivated: {
 					parameters: {
 						/**
-						 * Control to which plugin was connected.
+						 * Control to which the plugin was connected.
 						 */
 						control: {type: "sap.ui.core.Control"}
 					}

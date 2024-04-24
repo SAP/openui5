@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-// Provides control sap.m.upload.UploadSetwithTableItem.
+// Provides Element sap.m.upload.UploadItemConfiguration.
 sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/Element"
@@ -15,12 +15,10 @@ sap.ui.define([
 	 * @param {string} [sId] Id for the new Element, it is generated automatically if no ID is provided.
 	 * @param {object} [mSettings] Initial settings for the new Element.
 	 * @class
-	 * <code>sap.m.UploadItemConfiguration</code> represents the configuration for the items in the {@link sap.m.plugins.UploadSetwithTable UploadSetwithTable} Plugin.
-	 * The confguration template represents the paths in the model to the file name, mediaType, url, uploadUrl, previewable and file size properties of the {@link sap.m.upload.UploadItem UploadItem}
-	 * which is essesntial to the plugin in understanding the structure of the model data bound and continue with the operations.
+	 * <code>sap.m.UploadItemConfiguration</code> represents the configuration for the items in the {@link sap.m.plugins.UploadSetwithTable UploadSetwithTable} plugin.
+	 * <br>The configuration template represents the paths in the model to the file name, mediaType, url, uploadUrl, previewable, and file size properties in reference to the {@link sap.m.upload.UploadItem UploadItem}. This is essential for the plugin in understanding the structure of the model data bound to continue with operations.
+	 * <br><b>Note:</b> Configuration is mandatory for the plugin to offer the features such as file preview, download, rename etc. The element must be used only within the {@link sap.m.plugins.UploadSetwithTable UploadSetwithTable} plugin.
 	 *
-	 * <b>Note:</b> Configuration is mandatory for the plugin to offer the features like File preview, download, rename etc.
-	 * <b>Note:</b> This Element should only be used within the {@link sap.m.plugins.UploadSetwithTable UploadSetwithTable} Plugin.
 	 * @extends sap.ui.core.Element
 	 * @author SAP SE
 	 * @constructor
@@ -33,7 +31,7 @@ sap.ui.define([
 				library: "sap.m",
 				properties: {
 					/**
-					 * specifies the path in the model to the file name.
+					 * Specifies the path in the model to the file name
 					 */
 					fileNamePath: {type: "string", defaultValue: null},
 					/**
@@ -41,11 +39,11 @@ sap.ui.define([
 					 */
 					mediaTypePath: {type: "string", defaultValue: null},
 					/**
-					 * Specifies the path in the model to the file url. Used to download/access the file.
+					 * Specifies the path in the model to the file URL. It is used to download/access the file.
 					 */
 					urlPath: {type: "string", defaultValue: null},
 					/**
-					 * Specifies the path in the model for upload url. used to upload the file.
+					 * Specifies the path in the model for upload URL. Used to upload the file.
 					 */
 					uploadUrlPath: {type: "string", defaultValue: null},
 					/**
@@ -53,7 +51,7 @@ sap.ui.define([
 					 */
 					previewablePath: {type: "string", defaultValue: null},
 					/**
-					 * Specifies file size of the item in bytes.
+					 * Specifies path in the model to the file size.
 					 */
 					fileSizePath: {type: "string", defaultValue: null}
 				}
