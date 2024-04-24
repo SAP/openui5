@@ -101,17 +101,17 @@ sap.ui.define([
 			},
 			aggregations: {
 				/**
-				 * {@link sap.ui.mdc.filterbar.vh.FilterBar FilterBar} used for filtering.
+				 * {@link sap.ui.mdc.valuehelp.FilterBar FilterBar} used for filtering.
 				 */
 				filterBar: {
-					type: "sap.ui.mdc.filterbar.vh.FilterBar",
+					type: "sap.ui.mdc.valuehelp.FilterBar",
 					multiple: false
 				},
 				/**
-				 * Default {@link sap.ui.mdc.filterbar.vh.FilterBar FilterBar}, created internally if none given.
+				 * Default {@link sap.ui.mdc.valuehelp.FilterBar FilterBar}, created internally if none given.
 				 */
 				_defaultFilterBar: {
-					type: "sap.ui.mdc.filterbar.vh.FilterBar",
+					type: "sap.ui.mdc.valuehelp.FilterBar",
 					multiple: false,
 					visibility: "hidden"
 				}
@@ -295,11 +295,11 @@ sap.ui.define([
 
 	/**
 	 * Creates the default <code>FilterBar</code> control.
-	 * @returns {Promise<sap.ui.mdc.filterbar.vh.FilterBar>} FilterBar
+	 * @returns {Promise<sap.ui.mdc.valuehelp.FilterBar>} FilterBar
 	 */
 	FilterableListContent.prototype._createDefaultFilterBar = function() {
 		return loadModules([
-			"sap/ui/mdc/filterbar/vh/FilterBar"
+			"sap/ui/mdc/valuehelp/FilterBar"
 		]).then((aModules) => {
 			if (this.isDestroyStarted()) {
 				return null;
@@ -375,7 +375,7 @@ sap.ui.define([
 
 	/**
 	 * Gets the currently used <code>FilterBar</code> control.
-	 * @returns {sap.ui.mdc.filterbar.vh.FilterBar} FilterBar
+	 * @returns {sap.ui.mdc.valuehelp.FilterBar} FilterBar
 	 *
 	 * @since: 1.121.0
 	 * @protected
@@ -537,7 +537,7 @@ sap.ui.define([
 	/**
 	 * Sets the collective Search to the <code>FilterBar</code>.
 	 *
-	 * @param {sap.ui.mdc.filterbar.vh.CollectiveSearchSelect} oCollectiveSearchSelect Collective search control
+	 * @param {sap.ui.mdc.valuehelp.CollectiveSearchSelect} oCollectiveSearchSelect Collective search control
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.valuehelp.Dialog
