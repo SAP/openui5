@@ -2061,21 +2061,14 @@ sap.ui.define([
 		const iMaxConditions = this.getMaxConditions();
 		const aOperators = this.getSupportedOperators();
 		const aContentOld = this.getAggregation("_content", []);
-		let oContentOld;
-		let sControlNameOld;
-
 		const bMultipleLines = this.getMultipleLines();
 		const bIsTriggerable = this._bTriggerable;
 		const oContentType = this.getContentFactory().getContentType(this.getBaseType(), this.getMaxConditions(), bIsTriggerable);
-
-		if (aContentOld.length > 0) {
-			oContentOld = aContentOld[0];
-			sControlNameOld = oContentOld.getMetadata().getName().replace(/\./g, "/");
-		}
-
+		const [oContentOld] = aContentOld;
+		const sControlNameOld = oContentOld?.getMetadata().getName().replace(/\./g, "/");
 		const sContentMode = this.getContentFactory().getContentMode(oContentType, sEditMode, iMaxConditions, bMultipleLines, aOperators);
 		const aControlNames = oContentType.getControlNames(sContentMode, aOperators[0]);
-		const sControlName = aControlNames[0];
+		const [sControlName] = aControlNames;
 		if (sControlName !== sControlNameOld) {
 			this.getContentFactory().setHideOperator(_isOnlyOneSingleValue.call(this, aOperators)); // in single value eq Field hide operator
 
@@ -2098,7 +2091,8 @@ sap.ui.define([
 			}
 
 			const sId = _getIdForInternalControl.call(this);
-			this._oCreateContentPromise = this.getContentFactory().createContent(oContentType, sContentMode, sId);
+			const oDelegate = this.getControlDelegate();
+			this._oCreateContentPromise = oDelegate.createContent(this, sContentMode, sId);
 			this._oCreateContentPromise.then((aControls) => {
 				delete this._oCreateContentPromise; // after finished new creation request can be sync again (clear at the beginning as error might break function before end)
 

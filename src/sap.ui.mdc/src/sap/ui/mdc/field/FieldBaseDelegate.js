@@ -38,6 +38,22 @@ sap.ui.define([
 	 */
 	const FieldBaseDelegate = Object.assign({}, BaseDelegate);
 
+	/**
+	 * Provides the possibility to customize / replace the internal content of a field
+	 *
+ 	 * @param {sap.ui.mdc.field.FieldBase} oField <code>Field</code> control instance
+	 * @param {sap.ui.mdc.enums.ContentMode} sContentMode A given content mode
+	 * @param {string} sId ID of the internal control to be created.
+	 * @returns {Promise<sap.ui.core.Control[]>} Array containing the created controls
+	 *
+	 * @protected
+	 * @since 1.124.0
+	 */
+	FieldBaseDelegate.createContent = function(oField, sContentMode, sId) {
+		const oContentType = oField.getContentFactory().getContentType(oField.getBaseType(), oField.getMaxConditions(), oField._bTriggerable);
+		return oField.getContentFactory().createContent(oContentType, sContentMode, sId);
+	};
+
 	FieldBaseDelegate.getTypeMap = function() {
 		return DefaultTypeMap;
 	};

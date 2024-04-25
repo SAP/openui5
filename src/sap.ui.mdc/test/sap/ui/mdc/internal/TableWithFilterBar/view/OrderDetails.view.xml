@@ -86,9 +86,9 @@
 								</mdc:Field>
 
 								<Label text="Created On"></Label>
-								<mdc:Field id="fCreatedOn" delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{parts: [{path: 'createdAt', type: 'sap.ui.model.odata.type.DateTimeOffset', constraints: {precision: 7, V4: true}}, {path: 'view>/timezone', type: 'sap.ui.model.odata.type.String'}], type: 'sap.ui.model.odata.type.DateTimeWithTimezone'}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}"/>
+								<mdc:Field id="fCreatedOn" delegate='\{"name": "sap/ui/v4demo/delegate/OrderDetails.FieldBase.delegate", "payload": \{\}\}' value="{parts: [{path: 'createdAt', type: 'sap.ui.model.odata.type.DateTimeOffset', constraints: {precision: 7, V4: true}}, {path: 'view>/timezone', type: 'sap.ui.model.odata.type.String'}], type: 'sap.ui.model.odata.type.DateTimeWithTimezone'}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}"/>
 								<Label text="Modified On"></Label>
-								<mdc:Field id="fModifiedOn" delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{parts: [{path: 'modifiedAt', type: 'sap.ui.model.odata.type.DateTimeOffset', constraints: {precision: 7, V4: true}}, {path: 'view>/timezone', type: 'sap.ui.model.odata.type.String'}], type: 'sap.ui.model.odata.type.DateTimeWithTimezone', formatOptions: {showDate: true, showTime: true, showTimezone: true}}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}"/>
+								<mdc:Field id="fModifiedOn" delegate='\{"name": "sap/ui/v4demo/delegate/OrderDetails.FieldBase.delegate", "payload": \{\}\}' value="{parts: [{path: 'modifiedAt', type: 'sap.ui.model.odata.type.DateTimeOffset', constraints: {precision: 7, V4: true}}, {path: 'view>/timezone', type: 'sap.ui.model.odata.type.String'}], type: 'sap.ui.model.odata.type.DateTimeWithTimezone', formatOptions: {showDate: true, showTime: true, showTimezone: true}}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}"/>
 							</f:SimpleForm>
 						</uxap:blocks>
 					</uxap:ObjectPageSubSection>
