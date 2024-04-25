@@ -1,3 +1,7 @@
+/**
+ * @fileoverview
+ * @deprecated As of version 1.20, replaced by sap/ui/thirdparty/jqueryui/jquery-ui-effect-scale.js
+ */
 (function(jQuery, sap) {
 
 	var MESSAGE = "The file sap/ui/thirdparty/jqueryui/jquery-effects-scale.js has been renamed to sap/ui/thirdparty/jqueryui/jquery-ui-effect-scale.js! Please update the dependencies accordingly.";

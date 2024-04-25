@@ -1,3 +1,7 @@
+/**
+ * @fileoverview
+ * @deprecated As of version 1.20, replaced by sap/ui/thirdparty/jqueryui/jquery-ui-effect-shake.js
+ */
 (function(jQuery, sap) {
 
 	var MESSAGE = "The file sap/ui/thirdparty/jqueryui/jquery-effects-shake.js has been renamed to sap/ui/thirdparty/jqueryui/jquery-ui-effect-shake.js! Please update the dependencies accordingly.";
