@@ -328,7 +328,13 @@ sap.ui.define([
 		onInit: function () {
 			const oSamplesPanel = this.byId("samples");
 
-			aChartSamples.forEach((oSample, iInd) => {
+			const aFullSamples = aChartSamples.concat(aChartSamples.map((oSample) => {
+				oSample = deepClone(oSample);
+				oSample.size = "S";
+				return oSample;
+			}));
+
+			aFullSamples.forEach((oSample, iInd) => {
 				const oSampleManifest = deepClone(oManifest);
 				oSampleManifest["sap.card"].header.chart = oSample;
 				oSampleManifest["sap.card"].header.data = {json: oData};

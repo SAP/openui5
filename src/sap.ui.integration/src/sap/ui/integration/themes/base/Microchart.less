@@ -36,3 +36,27 @@
 		}
 	}
 }
+
+.sapUiIntMicrochartInHeader.sapUiIntMicrochartChartWrapper {
+	flex-grow: 1;
+	margin-top: 0.5rem;
+	max-width: 8.5rem;
+	min-width: 5rem;
+
+	&:has(.sapUiIntMicrochartSizeS) {
+		max-height: 3.5rem;
+		margin-top: 0.25rem;
+		max-width: 8.25rem;
+
+		&:has(.sapMSLIInfo) {
+			max-width: 13rem;
+		}
+	}
+	.sapUiIntMicrochartSizeS {
+		height: 3.5rem;
+	}
+
+	&:only-child {
+		max-width: 100%;
+	}
+}

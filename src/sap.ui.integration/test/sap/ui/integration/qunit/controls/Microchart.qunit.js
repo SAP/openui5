@@ -3,11 +3,13 @@
 sap.ui.define([
 	"sap/ui/integration/controls/Microchart",
 	"sap/ui/qunit/utils/nextUIUpdate",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/base/util/deepClone"
 ], function(
 	Microchart,
 	nextUIUpdate,
-	Log
+	Log,
+	deepClone
 ) {
 	"use strict";
 
@@ -260,8 +262,15 @@ sap.ui.define([
 	QUnit.module("Creating");
 
 	QUnit.test("Create different types", async function (assert) {
+		// Add also with size S
+		const aFullSamples = aSamples.concat(aSamples.map((oSample) => {
+			oSample = deepClone(oSample);
+			oSample.size = "S";
+			return oSample;
+		}));
+
 		await testWithMicrochart(assert, async () => {
-			for (const oSettings of aSamples) {
+			for (const oSettings of aFullSamples) {
 				// Arrange
 				const fnLogErrorSpy = this.spy(Log, "error");
 				const oChartWrapper = Microchart.create(oSettings);

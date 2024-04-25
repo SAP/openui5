@@ -3,8 +3,11 @@
  */
 
 sap.ui.define([
-], function() {
+	"sap/m/library"
+], function(mLibrary) {
 	"use strict";
+
+	const Size = mLibrary.Size;
 
 	/**
 	 * MicrochartRenderer renderer.
@@ -24,8 +27,13 @@ sap.ui.define([
 		// chart
 		oRm.openStart("div")
 			.class("sapUiIntMicrochartChart")
-			.style("height", oMicrochart.getHeight())
-			.openEnd();
+			.class("sapUiIntMicrochartSize" + oMicrochart.getSize());
+
+		if (oMicrochart.getSize() === Size.Responsive) {
+			oRm.style("height", oMicrochart.getHeight());
+		}
+
+		oRm.openEnd();
 
 		oRm.openStart("div")
 			.class("sapUiIntMicrochartChartInner")

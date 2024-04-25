@@ -58,6 +58,7 @@
 			],
 			"details": "{details}",
 			"chart": {
+				"size": "S",
 				"type": "Radial",
 				"color": "{state}",
 				"total": "{chart/total}",

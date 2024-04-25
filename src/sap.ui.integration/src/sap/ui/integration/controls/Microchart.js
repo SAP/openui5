@@ -60,6 +60,30 @@ sap.ui.define([
 
 		return sColor;
 	}
+	/**
+	 * Prepares and validates the size for chart. Only size <code>S</code> and <code>Responsive</code> are allowed.
+	 * If size is invalid - method fallbacks to size <code>Responsive</code>.
+	 * @param {string} sSize The size.
+	 * @returns {string} The validated size.
+	 */
+	function prepareSize(sSize) {
+		if (!sSize) {
+			return Size.Responsive;
+		}
+
+		if (typeof sSize !== "string") {
+			return BindingHelper.reuse(sSize);
+		}
+
+		const bIsValid = sSize === Size.S || sSize === Size.Responsive;
+
+		if (!bIsValid) {
+			Log.error("The value for size is not correct. Only size 'S' and 'Responsive' are supported. Given '" + sSize + "'.", "sap.ui.integration.controls.Microchart");
+			return Size.Responsive;
+		}
+
+		return sSize;
+	}
 
 	/**
 	 * Constructor for a new Microchart.
@@ -94,7 +118,11 @@ sap.ui.define([
 				/**
 				 * The minimal height of the chart.
 				 */
-				height: { type: "sap.ui.core.CSSSize", defaultValue: "1rem" }
+				height: { type: "sap.ui.core.CSSSize", defaultValue: "1rem" },
+				/**
+				 * The size of the underlying chart.
+				 */
+				size: { type: "sap.m.Size", defaultValue: Size.Responsive }
 			},
 			aggregations: {
 				/**
@@ -152,9 +180,10 @@ sap.ui.define([
 	/**
 	 * Creates new Microchart.
 	 * @param {object} oChartSettings Chart configuration from the manifest.
+	 * @param {boolean} bIsForHeader The chart will be used in a card header.
 	 * @returns {sap.ui.integration.controls.Microchart} New Microchart.
 	 */
-	Microchart.create = function (oChartSettings) {
+	Microchart.create = function (oChartSettings, bIsForHeader) {
 		var oChart,
 			sForceHeight = "1rem";
 
@@ -176,13 +205,20 @@ sap.ui.define([
 			sForceHeight = "3rem";
 		}
 
-		return new Microchart({
+		const oMicrochart = new Microchart({
 			valueColor: BindingHelper.reuse(oChartSettings.color),
+			size: prepareSize(oChartSettings.size),
 			displayValue: oChartSettings.displayValue,
 			chart: oChart,
 			height: sForceHeight,
 			visible: oChartSettings.visible
 		});
+
+		if (bIsForHeader) {
+			oMicrochart.addStyleClass("sapUiIntMicrochartInHeader");
+		}
+
+		return oMicrochart;
 	};
 
 	/**
@@ -202,7 +238,7 @@ sap.ui.define([
 		}
 
 		return new BulletMicroChart({
-			size: Size.Responsive,
+			size: prepareSize(oChartSettings.size),
 			minValue: oChartSettings.minValue,
 			maxValue: oChartSettings.maxValue,
 			targetValue: oChartSettings.target,
@@ -233,7 +269,7 @@ sap.ui.define([
 		});
 
 		return new StackedBarMicroChart({
-			size: Size.Responsive,
+			size: prepareSize(oChartSettings.size),
 			bars: aBars,
 			maxValue: oChartSettings.maxValue
 		});
@@ -247,7 +283,7 @@ sap.ui.define([
 	Microchart._createHarveyBallChart = function (oChartSettings) {
 		var vColor = validateBarValueColor(oChartSettings.color);
 		return new HarveyBallMicroChart({
-				size: Size.Responsive,
+				size: prepareSize(oChartSettings.size),
 				total: oChartSettings.total,
 				totalScale: oChartSettings.totalScale,
 				alignContent: "Right",
@@ -271,7 +307,7 @@ sap.ui.define([
 	Microchart._createLineChart = function (oChartSettings) {
 		var vColor = validateBarValueColor(oChartSettings.color);
 		var oChart = new LineMicroChart({
-			size: Size.Responsive,
+			size: prepareSize(oChartSettings.size),
 			color: BindingHelper.reuse(vColor),
 			maxXValue: oChartSettings.maxXValue,
 			minXValue: oChartSettings.minXValue,
@@ -356,7 +392,7 @@ sap.ui.define([
 	Microchart._createRadialChart = function (oChartSettings) {
 		var vColor = validateBarValueColor(oChartSettings.color);
 		return new RadialMicroChart({
-			size: Size.Responsive,
+			size: prepareSize(oChartSettings.size),
 			valueColor: BindingHelper.reuse(vColor),
 			total: oChartSettings.total,
 			showPercentageSymbol: oChartSettings.showPercentageSymbol,
@@ -373,7 +409,7 @@ sap.ui.define([
 	 */
 	Microchart._createColumnChart = function (oChartSettings){
 		var mSettings = {
-			size: Size.Responsive,
+			size: prepareSize(oChartSettings.size),
 			allowColumnLabels: oChartSettings.allowColumnLabels,
 			leftTopLabel: new ColumnMicroChartLabel({ label: oChartSettings.leftTopLabel }),
 			leftBottomLabel: new ColumnMicroChartLabel({ label: oChartSettings.leftBottomLabel }),
