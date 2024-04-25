@@ -44,9 +44,10 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/core/Them
 		var sAriaRoleDescription = oControl.getAriaRoleDescription();
 		var sAriaRole = oControl.getAriaRole();
 		var isHalfFrame = frameType === frameTypes.OneByHalf || frameType === frameTypes.TwoByHalf;
-		var sBGColor = oControl._sBGColor;
+		var sBGColor = oControl._oBadgeColors["backgroundColor"];
 		var bIsIconModeOneByOne = oControl._isIconMode() && frameType === frameTypes.OneByOne;
 		var aLinkTileContent = oControl.getLinkTileContents();
+		var oBadge = oControl.getBadge();
 
 		// Render a link when URL is provided, not in action scope and the state is enabled
 		var bRenderLink = oControl.getUrl() && (!oControl._isInActionScope() || oControl.getMode() === GenericTileMode.IconMode) && sState !== LoadState.Disabled && !oControl._isNavigateActionEnabled();
@@ -449,11 +450,57 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/core/Them
 		if (oControl._isInActionScope()) {
 			this._renderActionsScope(oRm, oControl);
 		}
+		if (oBadge && (oBadge.getSrc() || oBadge.getText()) && (!oControl._isInActionScope() || oControl._isIconModeOfTypeTwoByHalf() )) {
+			this._renderBadge(oRm,oControl);
+		}
 		if (bRenderLink) {
 			oRm.close("a");
 		} else {
 			oRm.close("div");
 		}
+	};
+
+	/**
+	 * Renders a badge on top of GenericTile.
+	 * @param {sap.ui.core.RenderManager} oRm - The RenderManager instance.
+	 * @param {sap.m.GenericTile} oControl The GenericTile control
+	 * @private
+	 */
+
+	GenericTileRenderer._renderBadge = function(oRm,oControl) {
+		var oBadge = oControl.getBadge();
+		var sBadgeText = oBadge.getText();
+		var bIsIconOnlyPresent = oBadge.getSrc() && !oBadge.getText();
+		var bIsTextOnlyPresent = !oBadge.getSrc() && oBadge.getText();
+		oRm.openStart("div");
+		oRm.class("sapMGTBadge");
+		if (oBadge.getText() && oBadge.getSrc()) {
+			oRm.class("sapMGTBadgeTextPresent");
+		}
+		oRm.style("background",oControl._oBadgeColors["badgeBackgroundColor"]);
+		oRm.style("color",oControl._oBadgeColors["badgeTextColor"]);
+		oRm.style("border-color",oControl._oBadgeColors["badgeBorderColor"]);
+		oRm.class((bIsIconOnlyPresent) ? "sapMGTBadgeOnlyIcon" : null);
+		oRm.class((bIsTextOnlyPresent) ? "sapMGTBadgeOnlyText" : null);
+		oRm.openEnd();
+		if (oBadge.getSrc()) {
+			oRm.renderControl(oControl._oBadgeIcon);
+		}
+		if (sBadgeText) {
+			oRm.openStart("span");
+			oRm.class("sapMGTBadgeText");
+			oRm.openEnd();
+			oRm.text(sBadgeText);
+			oRm.close("span");
+		}
+		if (oControl.getState() != LoadState.Loaded) {
+			oRm.openStart("div");
+			oRm.class("sapMGTBadgeOverlay");
+			oRm.style("background",oControl._oBadgeColors["badgeBackgroundColor"]);
+			oRm.openEnd();
+			oRm.close("div");
+		}
+		oRm.close("div");
 	};
 
 	/**

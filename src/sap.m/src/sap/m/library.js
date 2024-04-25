@@ -440,6 +440,7 @@ sap.ui.define([
 			"sap.m.ImageCustomData",
 			"sap.m.LightBoxItem",
 			"sap.m.LinkTileContent",
+			"sap.m.Badge",
 			"sap.m.OverflowToolbarLayoutData",
 			"sap.m.MaskInputRule",
 			"sap.m.MenuItem",

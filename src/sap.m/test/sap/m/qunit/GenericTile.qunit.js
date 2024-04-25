@@ -31,12 +31,13 @@ sap.ui.define([
 	"sap/f/dnd/GridDropInfo",
 	"sap/ui/core/Theming",
 	"sap/m/LinkTileContent",
+	"sap/m/Badge",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	// used only indirectly
 	"sap/ui/events/jquery/EventExtension"
 ], function(Localization, Element, jQuery, GenericTile, TileContent, NumericContent, ImageContent, Device, IntervalTrigger, ResizeHandler, GenericTileLineModeRenderer,
 	Button, Text, ScrollContainer, FlexBox, GenericTileRenderer, library, isEmptyObject, KeyCodes, oCore, GridContainerItemLayoutData, GridContainerSettings,
-	GridContainer, FormattedText, NewsContent, Parameters, qutils, DragInfo, GridDropInfo, Theming, LinkTileContent, nextUIUpdate) {
+	GridContainer, FormattedText, NewsContent, Parameters, qutils, DragInfo, GridDropInfo, Theming, LinkTileContent, Badge, nextUIUpdate) {
 	"use strict";
 
 	// shortcut for sap.m.Size
@@ -3958,7 +3959,7 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", async f
 			assert.equal(this.oGenericTile.getMode(), GenericTileMode.IconMode, "CurrentMode is " + GenericTileMode.IconMode);
 			assert.equal(this.oGenericTile.getFrameType(), FrameType.OneByOne, "Current FrameType is " + FrameType.OneByOne);
 			assert.equal(this.oGenericTile.getTileIcon(), undefined, "No Tile Icon.");
-			assert.equal(this.oGenericTile._sBGColor,this.DEFAULT_BG_COLOR, "Default Background Color has been set");
+			assert.equal(this.oGenericTile._oBadgeColors["backgroundColor"],this.DEFAULT_BG_COLOR, "Default Background Color has been set");
 			assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTHdrContent").length, 1, "Header Created.");
 			assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTHdrTxt").length, 1, "Header Text Created.");
 			assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTSubHdrTxt").length, 1, "SubHeader Text is created.");
@@ -3974,7 +3975,7 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", async f
 				assert.equal(this.oGenericTile.getMode(), GenericTileMode.IconMode, "CurrentMode is " + GenericTileMode.IconMode);
 				assert.equal(this.oGenericTile.getFrameType(), FrameType.OneByOne, "Current FrameType is " + FrameType.OneByOne);
 				assert.equal(this.oGenericTile.getTileIcon(), "sap-icon://key", "Tile Icon is present.");
-				assert.equal(this.oGenericTile._sBGColor, "#c35500", "Tile Background Color is present");
+				assert.equal(this.oGenericTile._oBadgeColors["backgroundColor"], "#c35500", "Tile Background Color is present");
 				assert.ok(this.oGenericTile._oIcon.isA("sap.ui.core.Icon"), "Icon Created");
 				assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTHdrContent").length, 1, "Header Created.");
 				assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTHdrTxt").length, 1, "Header Text Created.");
@@ -3992,7 +3993,7 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", async f
 					assert.equal(this.oGenericTile.getMode(), GenericTileMode.IconMode, "CurrentMode is " + GenericTileMode.IconMode);
 					assert.equal(this.oGenericTile.getFrameType(), FrameType.OneByOne, "Current FrameType is " + FrameType.OneByOne);
 					assert.equal(this.oGenericTile.getTileIcon(), IMAGE_PATH + "female_BaySu.jpg", "Tile Icon is present.");
-					assert.equal(this.oGenericTile._sBGColor, "#c35500", "Tile Background Color is present");
+					assert.equal(this.oGenericTile._oBadgeColors["backgroundColor"], "#c35500", "Tile Background Color is present");
 					assert.ok(this.oGenericTile._oIcon.isA("sap.m.Image"), "Image Created.");
 					assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTHdrContent").length, 1, "Header Created.");
 					assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTHdrTxt").length, 1, "Header Text Created.");
@@ -4028,7 +4029,7 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", async f
 			assert.equal(this.oGenericTile.getMode(), GenericTileMode.IconMode, "CurrentMode is " + GenericTileMode.IconMode);
 			assert.equal(this.oGenericTile.getFrameType(), FrameType.TwoByHalf, "Current FrameType is " + FrameType.TwoByHalf);
 			assert.equal(this.oGenericTile.getTileIcon(), undefined, "No Tile Icon.");
-			assert.equal(this.oGenericTile._sBGColor, this.DEFAULT_BG_COLOR, "Default Background Color has been set");
+			assert.equal(this.oGenericTile._oBadgeColors["backgroundColor"], this.DEFAULT_BG_COLOR, "Default Background Color has been set");
 			assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTHdrContent").length, 1, "Header Created.");
 			assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTHdrTxt").length, 1, "Header Text Created.");
 			assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTSubHdrTxt").length, 0, "SubHeader Text is created.");
@@ -4044,7 +4045,7 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", async f
 				assert.equal(this.oGenericTile.getMode(), GenericTileMode.IconMode, "CurrentMode is " + GenericTileMode.IconMode);
 				assert.equal(this.oGenericTile.getFrameType(), FrameType.TwoByHalf, "Current FrameType is " + FrameType.TwoByHalf);
 				assert.equal(this.oGenericTile.getTileIcon(), "sap-icon://key", "Tile Icon is present.");
-				assert.equal(this.oGenericTile._sBGColor, "#d23a0a", "Default background color is restored");
+				assert.equal(this.oGenericTile._oBadgeColors["backgroundColor"], "#d23a0a", "Default background color is restored");
 				assert.ok(this.oGenericTile._oIcon.isA("sap.ui.core.Icon"), "Icon Created");
 				assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTHdrContent").length, 1, "Header Created.");
 				assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTHdrTxt").length, 1, "Header Text Created.");
@@ -4062,7 +4063,7 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", async f
 					assert.equal(this.oGenericTile.getMode(), GenericTileMode.IconMode, "CurrentMode is " + GenericTileMode.IconMode);
 					assert.equal(this.oGenericTile.getFrameType(), FrameType.TwoByHalf, "Current FrameType is " + FrameType.TwoByHalf);
 					assert.equal(this.oGenericTile.getTileIcon(), IMAGE_PATH + "female_BaySu.jpg", "Tile Icon is present.");
-					assert.equal(this.oGenericTile._sBGColor, "#d23a0a", "Default background color is restored");
+					assert.equal(this.oGenericTile._oBadgeColors["backgroundColor"], "#d23a0a", "Default background color is restored");
 					assert.ok(this.oGenericTile._oIcon.isA("sap.m.Image"), "Image Created");
 					assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTHdrContent").length, 1, "Header Created.");
 					assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTHdrTxt").length, 1, "Header Text Created.");
@@ -5685,6 +5686,28 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", async f
 
 	QUnit.test("Announcement of text tile should only be done once", function (assert) {
 		assert.ok(this.isRepeatedTwice(this.oGenericTile.getDomRef().getAttribute("aria-label"),"tile"),"The word tile has been announced only once");
+	});
+
+	QUnit.module("GenericTile when badge is used", {
+		beforeEach: async function () {
+			this.oGenericTile = new GenericTile({
+				header: "Test Header",
+				subheader: "Test Subheader",
+				frameType: FrameType.TwoByOne,
+				badge:[
+					new Badge({src:"sap-icon://ai",text:"SAP",textColor: "sapCriticalTextColor",backgroundColor: "sapWarningBackground", borderColor: "sapWarningBorderColor"})
+				]
+			}).placeAt("qunit-fixture");
+			await nextUIUpdate();
+		},
+		afterEach: function () {
+			this.oGenericTile.destroy();
+			this.oGenericTile = null;
+		}
+	});
+
+	QUnit.test("Check whether the badge is rendered", function (assert) {
+		assert.ok(document.querySelector(".sapMGTBadge"),"Badge has been rendered");
 	});
 
 });
