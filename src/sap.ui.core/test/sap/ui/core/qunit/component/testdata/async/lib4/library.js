@@ -4,6 +4,7 @@ sap.ui.define(['sap/ui/core/Lib'],
 
 	return Library.init({
 		name:"sap.test.lib4",
+		apiVersion: 2,
 		noLibraryCSS:true
 	});
 });

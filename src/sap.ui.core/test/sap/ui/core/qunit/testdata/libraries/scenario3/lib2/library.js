@@ -7,6 +7,7 @@ sap.ui.define([
 	"use strict";
 	return Library.init({
 		name: "testlibs.scenario3.lib2",
+		apiVersion: 2,
 		dependencies: [
 			"testlibs.scenario3.lib3",
 			"testlibs.scenario3.lib4"

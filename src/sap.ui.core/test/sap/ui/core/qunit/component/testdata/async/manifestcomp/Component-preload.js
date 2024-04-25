@@ -1,3 +1,4 @@
+//@ui5-bundle sap/test/manifestcomp/Component-preload.js
 /*eslint-disable*/
 sap.ui.predefine("sap/test/manifestcomp/Component",['sap/ui/core/Component'],function(Component){"use strict";var ManifestComponent=Component.extend("sap.test.manifestcomp.Component",{metadata:{manifest:"json"}});return ManifestComponent;});
 sap.ui.require.preload({

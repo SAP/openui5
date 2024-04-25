@@ -3,6 +3,6 @@
 	"name":"sap.test.lib4.library-preload",
 	"dependencies":[],
 	"modules":{
-		"sap/test/lib4/library.js":"sap.ui.define(['sap/ui/core/Lib'],function(Library){\"use strict\";return Library.init({name:\"sap.test.lib4\",noLibraryCSS:true});});"
+		"sap/test/lib4/library.js":"sap.ui.define(['sap/ui/core/Lib'],function(Library){\"use strict\";return Library.init({name:\"sap.test.lib4\",apiVersion:2,noLibraryCSS:true});});"
 	}
 }

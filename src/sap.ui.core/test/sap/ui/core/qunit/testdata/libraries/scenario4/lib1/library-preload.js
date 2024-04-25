@@ -1,3 +1,4 @@
+//@ui5-bundle testlibs/scenario4/lib1/library-preload.js
 sap.ui.predefine("testlibs/scenario4/lib1/library",[
 	"sap/ui/core/Lib",
 	"sap/ui/core/library",
@@ -6,6 +7,7 @@ sap.ui.predefine("testlibs/scenario4/lib1/library",[
 	"use strict";
 	return Library.init({
 		name: "testlibs.scenario4.lib1",
+		apiVersion: 2,
 		dependencies: [
 			"testlibs.scenario4.lib2"
 		],
