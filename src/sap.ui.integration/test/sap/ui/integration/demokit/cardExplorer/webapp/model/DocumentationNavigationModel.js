@@ -133,6 +133,12 @@ sap.ui.define([
 						key: 'destinations'
 					},
 					{
+						title: 'Help ID',
+						target: 'learnDetail',
+						key: 'helpId',
+						experimental: true
+					},
+					{
 						title: 'Manifest Parameters',
 						target: 'learnDetail',
 						key: 'manifestParameters'

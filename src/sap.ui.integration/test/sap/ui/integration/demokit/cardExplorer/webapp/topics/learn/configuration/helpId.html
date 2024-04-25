@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>CSRF Tokens</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="../../../scripts/boot.js"></script>
+</head>
+
+<body class="sapUiBody topicBody">
+
+	<div class="topic">
+		<div class="content">
+			<h1 id="overview">Help ID</h1>
+			<div class="messageStripWarning">
+				Experimental feature since version 1.124. The API may change.
+			</div>
+			<p>
+				Since version 1.124, the rendered card has an attribute <code>data-help-id</code> on its root element. Its default value is equal to the <code>sap.app/id</code> from the card's manifest.
+				<br>
+				This <code>data-help-id</code> is useful when connecting the card with a help system for the end user, e.g. "SAP Companion".
+			</p>
+			<p>
+				The <code>data-help-id</code> can be overwritten by the card developer (in the card manifest), or by the host environment.
+				<br>
+				The order of priority is:
+				<ol>
+					<li>Host environment with <code>oCard.data("help-id", "your-help-id", true);</code>. It overwrites all other options.</li>
+					<li>Card manifest <code>sap.card/configuration/helpId</code>.</li>
+					<li>Card manifest <code>sap.app/id</code>. (Default)</li>
+				</ol>
+			</p>
+
+			<h2 id="examples">Example</h2>
+			In card manifest:
+			<pre class="lang-json">
+{
+	"sap.app": {
+		<mark>"id": "card.explorer.helpId.card",</mark>
+		"type": "card"
+	},
+	"sap.card": {
+		"type": "List",
+		"configuration": {
+			<mark>"helpId": "your-help-id"</mark>
+		},
+		"header": {
+			"title": "Example with Help ID"
+		}
+	}
+}</pre>
+In host environment:
+<pre class="lang-js">
+oCard.data("help-id", "your-help-id", true);</pre>
+
+		</div>
+	</div>
+</body>
+
+</html>
