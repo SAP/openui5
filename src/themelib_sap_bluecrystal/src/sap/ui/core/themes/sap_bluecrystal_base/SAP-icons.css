@@ -6,7 +6,7 @@
 @font-face {
 	font-family: "SAP-icons";
 	src:
-		url('fonts/SAP-icons.woff2') format('woff2'),
+		url('../base/fonts/SAP-icons.woff2') format('woff2'),
 		local('SAP-icons'); /* fallback to local installed font in case it can't be loaded (e.g. font download is disabled due to browser security settings) */
 	font-weight: normal;
 	font-style: normal;
