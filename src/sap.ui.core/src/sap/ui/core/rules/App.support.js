@@ -17,17 +17,6 @@ sap.ui.define([
 	var Severity = SupportLib.Severity; // Hint, Warning, Error
 	var Audiences = SupportLib.Audiences; // Control, Internal, Application
 
-	var aObsoleteFunctionNames = ["jQuery.sap.require", "$.sap.require", "sap.ui.requireSync", "jQuery.sap.sjax"];
-
-	// avoid spoiling the globalAPIRule by using Object.getOwnPropertyDescriptor
-	if (jQuery && jQuery.sap && Object.getOwnPropertyDescriptor(jQuery.sap, "sjax").value) {
-		aObsoleteFunctionNames.push("jQuery.sap.syncHead",
-			"jQuery.sap.syncGet",
-			"jQuery.sap.syncPost",
-			"jQuery.sap.syncGetText",
-			"jQuery.sap.syncGetJSON");
-	}
-
 	//**********************************************************
 	// Rule Definitions
 	//**********************************************************
@@ -65,6 +54,17 @@ sap.ui.define([
 					}
 				}
 			});
+
+			const aObsoleteFunctionNames = ["jQuery.sap.require", "$.sap.require", "sap.ui.requireSync", "jQuery.sap.sjax"];
+			// avoid spoiling the globalAPIRule by using Object.getOwnPropertyDescriptor
+			if (jQuery && jQuery.sap && Object.getOwnPropertyDescriptor(jQuery.sap, "sjax").value) {
+				aObsoleteFunctionNames.push(
+					"jQuery.sap.syncHead",
+					"jQuery.sap.syncGet",
+					"jQuery.sap.syncPost",
+					"jQuery.sap.syncGetText",
+					"jQuery.sap.syncGetJSON");
+			}
 
 			// checks the given module's functions code for invalidContent
 			// returns an array which contains the functions with invalid content
