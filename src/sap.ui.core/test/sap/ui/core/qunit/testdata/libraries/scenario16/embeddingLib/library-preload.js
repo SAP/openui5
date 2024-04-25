@@ -1,3 +1,4 @@
+//@ui5-bundle testlibs/scenario16/embeddingLib/library-preload.js
 sap.ui.predefine("testlibs/scenario16/embeddingLib/library",[
 	"sap/ui/core/Lib",
 	"sap/ui/core/library"
@@ -5,6 +6,7 @@ sap.ui.predefine("testlibs/scenario16/embeddingLib/library",[
 	"use strict";
 	return Library.init({
 		name: "testlibs.scenario16.embeddingLib",
+		apiVersion: 2,
 		dependencies: [
 		],
 		noLibraryCSS: true

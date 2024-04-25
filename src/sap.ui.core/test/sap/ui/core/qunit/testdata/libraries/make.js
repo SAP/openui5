@@ -61,6 +61,7 @@ function makeLib(lib, dependencies) {
 	"use strict";
 	return Library.init({
 		name: "${makeName(lib)}",
+		apiVersion: 2,
 		dependencies: [${deps.map((dep) => `
 			"${makeName(dep)}"`).join(",")}
 		],
@@ -126,6 +127,7 @@ function makeLibPreloadJS(lib, dependencies) {
 	const preloadJS = [];
 	const options = _components[lib];
 
+	preloadJS.push(`//@ui5-bundle ${makeModule(lib)}/library-preload.js`);
 	preloadJS.push( makePredefine( makeLib(lib, dependencies), makeModule(`${lib}.library`)) );
 	if (options) {
 		preloadJS.push(makePredefine(options.code, makeModule(`${lib}.${options.name}.Component`)));

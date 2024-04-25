@@ -1,9 +1,11 @@
+//@ui5-bundle sap/test/lib4/library-preload.js
 sap.ui.predefine("sap/test/lib4/library", ['sap/ui/core/Lib'],
 	function(Library) {
 	"use strict";
 
 	return Library.init({
 		name:"sap.test.lib4",
+		apiVersion:2,
 		noLibraryCSS:true
 	});
 });

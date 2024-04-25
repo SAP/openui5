@@ -7,7 +7,7 @@
 		"testlibs.scenario2.lib7.library-preload"
 	],
 	"modules": {
-		"testlibs/scenario2/lib2/library.js": "sap.ui.define([\n\t\"sap/ui/core/Lib\",\n\t\"sap/ui/core/library\",\n\t\"testlibs/scenario2/lib4/library\",\n\t\"testlibs/scenario2/lib1/library\",\n\t\"testlibs/scenario2/lib7/library\"\n], function(Library) {\n\t\"use strict\";\n\treturn Library.init({\n\t\tname: \"testlibs.scenario2.lib2\",\n\t\tdependencies: [\n\t\t\t\"testlibs.scenario2.lib4\",\n\t\t\t\"testlibs.scenario2.lib1\",\n\t\t\t\"testlibs.scenario2.lib7\"\n\t\t],\n\t\tnoLibraryCSS: true\n\t});\n});",
+		"testlibs/scenario2/lib2/library.js": "sap.ui.define([\n\t\"sap/ui/core/Lib\",\n\t\"sap/ui/core/library\",\n\t\"testlibs/scenario2/lib4/library\",\n\t\"testlibs/scenario2/lib1/library\",\n\t\"testlibs/scenario2/lib7/library\"\n], function(Library) {\n\t\"use strict\";\n\treturn Library.init({\n\t\tname: \"testlibs.scenario2.lib2\",\n\t\tapiVersion: 2,\n\t\tdependencies: [\n\t\t\t\"testlibs.scenario2.lib4\",\n\t\t\t\"testlibs.scenario2.lib1\",\n\t\t\t\"testlibs.scenario2.lib7\"\n\t\t],\n\t\tnoLibraryCSS: true\n\t});\n});",
 		"testlibs/scenario2/lib2/manifest.json": "{\n\t\"sap.ui5\": {\n\t\t\"dependencies\": {\n\t\t\t\"libs\": {\n\t\t\t\t\"testlibs.scenario2.lib4\": {\n\t\t\t\t\t\"minVersion\": \"1.0.0\"\n\t\t\t\t},\n\t\t\t\t\"testlibs.scenario2.lib1\": {\n\t\t\t\t\t\"minVersion\": \"1.0.0\"\n\t\t\t\t},\n\t\t\t\t\"testlibs.scenario2.lib6\": {\n\t\t\t\t\t\"minVersion\": \"1.0.0\",\n\t\t\t\t\t\"lazy\": true\n\t\t\t\t},\n\t\t\t\t\"testlibs.scenario2.lib7\": {\n\t\t\t\t\t\"minVersion\": \"1.0.0\"\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t}\n}"
 	}
 }

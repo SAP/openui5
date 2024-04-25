@@ -10,6 +10,7 @@ sap.ui.define([
 	// delegate further initialization of this library to the framework
 	return Library.init({
 		name : "sap.ui.failingcssimport.testlib",
+		apiVersion:2,
 		version: "1.0.0",
 		dependencies : ["sap.ui.core"],
 		types: [],

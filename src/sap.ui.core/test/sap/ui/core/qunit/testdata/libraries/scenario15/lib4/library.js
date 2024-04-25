@@ -5,6 +5,7 @@ sap.ui.define([
 	"use strict";
 	return Library.init({
 		name: "testlibs.scenario15.lib4",
+		apiVersion: 2,
 		dependencies: [
 		],
 		noLibraryCSS: true

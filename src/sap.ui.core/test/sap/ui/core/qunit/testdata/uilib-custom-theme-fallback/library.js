@@ -10,6 +10,7 @@ sap.ui.define([
 	// delegate further initialization of this library to the Core
 	return Library.init({
 		name : "sap.ui.customthemefallback.testlib",
+		apiVersion:2,
 		version: "1.0.0",
 		dependencies : ["sap.ui.core"],
 		types: [],

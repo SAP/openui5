@@ -5,6 +5,7 @@ sap.ui.define([
 	"use strict";
 	return Library.init({
 		name: "testlibs.scenario16.embeddingLib",
+		apiVersion: 2,
 		dependencies: [
 		],
 		noLibraryCSS: true

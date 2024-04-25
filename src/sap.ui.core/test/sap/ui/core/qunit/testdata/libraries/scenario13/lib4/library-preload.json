@@ -2,7 +2,7 @@
 	"version": "2.0",
 	"name": "testlibs.scenario13.lib4.library-preload",
 	"modules": {
-		"testlibs/scenario13/lib4/library.js": "sap.ui.define([\n\t\"sap/ui/core/Lib\",\n\t\"sap/ui/core/library\"\n], function(Library) {\n\t\"use strict\";\n\treturn Library.init({\n\t\tname: \"testlibs.scenario13.lib4\",\n\t\tdependencies: [\n\t\t],\n\t\tnoLibraryCSS: true\n\t});\n});",
+		"testlibs/scenario13/lib4/library.js": "sap.ui.define([\n\t\"sap/ui/core/Lib\",\n\t\"sap/ui/core/library\"\n], function(Library) {\n\t\"use strict\";\n\treturn Library.init({\n\t\tname: \"testlibs.scenario13.lib4\",\n\t\tapiVersion: 2,\n\t\tdependencies: [\n\t\t],\n\t\tnoLibraryCSS: true\n\t});\n});",
 		"testlibs/scenario13/lib4/manifest.json": "{\n\t\"sap.ui5\": {\n\t\t\"dependencies\": {\n\t\t\t\"libs\": {}\n\t\t}\n\t}\n}"
 	}
 }
