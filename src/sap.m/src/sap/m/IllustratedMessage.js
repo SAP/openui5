@@ -327,6 +327,8 @@ sap.ui.define([
 
 	IllustratedMessage.prototype.init = function () {
 		this._sLastKnownMedia = null;
+		this._oLastKnownWidthForMedia = {};
+		this._oLastKnownHeightForMedia = {};
 		this._updateInternalIllustrationSetAndType(this.getIllustrationType());
 		EventBus.getInstance().subscribe("sapMIllusPool-assetLdgFailed", this._handleMissingAsset.bind(this));
 	};
@@ -622,7 +624,7 @@ sap.ui.define([
 	 */
 	IllustratedMessage.prototype._updateMedia = function (iWidth, iHeight) {
 		var bVertical = this.getEnableVerticalResponsiveness(),
-			sNewMedia;
+			sNewMedia, iLastKnownWidth, iLastKnownHeight;
 
 		if (!iWidth && !iHeight) {
 			return;
@@ -641,7 +643,21 @@ sap.ui.define([
 		}
 
 		this._updateSymbol(sNewMedia);
-		this._updateMediaStyle(sNewMedia);
+
+		iLastKnownWidth = this._oLastKnownWidthForMedia[sNewMedia];
+		iLastKnownHeight = this._oLastKnownHeightForMedia[sNewMedia];
+		// prevents infinite resizing, when same width is detected for the same media,
+		// excluding the case in which, the control is placed inside expand/collapse container
+		if (this._sLastKnownMedia !== sNewMedia &&
+			!(iLastKnownWidth && iWidth === iLastKnownWidth
+			&& iLastKnownHeight && iHeight === iLastKnownHeight)
+			|| this._oLastKnownWidthForMedia[this._sLastKnownMedia] === 0
+			|| this._oLastKnownHeightForMedia[this._sLastKnownMedia] === 0) {
+			this._updateMediaStyle(sNewMedia);
+			this._oLastKnownWidthForMedia[sNewMedia] = iWidth;
+			this._oLastKnownHeightForMedia[sNewMedia] = iHeight;
+			this._sLastKnownMedia = sNewMedia;
+		}
 	};
 
 	/**

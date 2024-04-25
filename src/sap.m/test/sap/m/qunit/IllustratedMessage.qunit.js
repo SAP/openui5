@@ -554,7 +554,7 @@ function(
 
 	QUnit.test("_updateMedia (vertical) with enableVerticalResponsiveness property", function (assert) {
 		// Assert
-		assert.expect(24);
+		assert.expect(23);
 
 		// Arrange
 		var fnUpdateMediaStyleSpy = this.spy(this.oIllustratedMessage, "_updateMediaStyle");
@@ -565,8 +565,6 @@ function(
 		this.oIllustratedMessage._updateMedia(9999, IllustratedMessage.BREAK_POINTS_HEIGHT[IllustratedMessage.BREAK_POINTS_HEIGHT.Dialog]);
 
 		// Assert
-		assert.ok(fnUpdateMediaStyleSpy.calledOnce,
-			"_updateMediaStyle is called once inside the _updateMedia call even if enableVerticalResponsiveness is 'false'");
 		assert.ok(fnUpdateSymbolSpy.calledOnce,
 			"_updateSymbol is called once inside the _updateMedia call even if enableVerticalResponsiveness is 'false'");
 		assert.notOk(this.oIllustratedMessage.$().hasClass(sScalableClass),
@@ -602,6 +600,24 @@ function(
 			fnUpdateMediaStyleSpy.resetHistory();
 			fnUpdateSymbolSpy.resetHistory();
 		}, this);
+	});
+
+	QUnit.test("_updateMedia prevents infinite resize", function (assert) {
+
+		var fnUpdateMediaStyleSpy = this.spy(this.oIllustratedMessage, "_updateMediaStyle");
+
+		// Act - setting initial size
+		this.oIllustratedMessage._updateMedia(IllustratedMessage.BREAK_POINTS["DIALOG"], IllustratedMessage.BREAK_POINTS_HEIGHT["DIALOG"]);
+
+		// Act - setting new size
+		this.oIllustratedMessage._updateMedia(IllustratedMessage.BREAK_POINTS["SCENE"], IllustratedMessage.BREAK_POINTS_HEIGHT["SCENE"]);
+
+		// Act - back to initial size
+		fnUpdateMediaStyleSpy.resetHistory();
+		this.oIllustratedMessage._updateMedia(IllustratedMessage.BREAK_POINTS["DIALOG"], IllustratedMessage.BREAK_POINTS_HEIGHT["DIALOG"]);
+
+		// Assert
+		assert.strictEqual(fnUpdateMediaStyleSpy.callCount, 0, "_updateMediaStyle not called. Infinite resize prevented.");
 	});
 
 	QUnit.test("IllustratedMessage should fit its container height when enableVerticalResponsiveness property is true", function (assert) {
