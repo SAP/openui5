@@ -263,8 +263,63 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_setBoundValue: with type, async, fnParse rejects", function (assert) {
+	QUnit.test("_setBoundValue: with type, async, context changed", function (assert) {
+		const oType = {validateValue() {}};
+		const oContext0 = {setProperty() {}};
 		const oPropertyBinding = {
+			oContext: oContext0,
+			sPath: "~sPath",
+			oType: oType,
+			getDataState() {}
+		};
+		this.mock(oPropertyBinding).expects("getDataState").withExactArgs().returns({});
+		let fnParseResolve;
+		const oParseValuePromise = new Promise(function(resolve, rejected) {
+			fnParseResolve = resolve;
+		});
+		const oHelper = {fnParse() {}};
+		this.mock(oHelper).expects("fnParse").withExactArgs("~vValue").returns(oParseValuePromise);
+		const oTypeMock = this.mock(oType);
+		oTypeMock.expects("validateValue").never();
+		let bResolved = false;
+
+		// code under test
+		const oPromise = PropertyBinding.prototype._setBoundValue.call(oPropertyBinding, "~vValue", oHelper.fnParse);
+		oPromise.then(() => {
+			bResolved = true;
+		});
+
+		assert.notOk(bResolved);
+
+		let fnValidateResolve;
+		const oValidateValuePromise = new Promise((resolve, rejected) => {
+			fnValidateResolve = resolve;
+		});
+		oTypeMock.expects("validateValue").withExactArgs("~vParsedValue").returns(oValidateValuePromise);
+
+		// code under test
+		fnParseResolve("~vParsedValue");
+
+		assert.notOk(bResolved);
+		// simulate context change
+		oPropertyBinding.oContext = {};
+
+		this.mock(oContext0).expects("setProperty").withExactArgs("~sPath", "~vParsedValue", undefined, true);
+
+		// code under test
+		fnValidateResolve();
+
+		return oPromise.then((vResult) => {
+			assert.strictEqual(vResult, undefined);
+		});
+	});
+
+	//*********************************************************************************************
+[true, false].forEach((bContextChange) => {
+	const sTitle = "_setBoundValue: with type, async, fnParse rejects, context change: " + bContextChange;
+	QUnit.test(sTitle, function (assert) {
+		const oPropertyBinding = {
+			oContext: "~oContext0",
 			oType: "~oType",
 			checkDataState() {},
 			getDataState() {}
@@ -282,8 +337,10 @@ sap.ui.define([
 		// code under test
 		const oPromise = PropertyBinding.prototype._setBoundValue.call(oPropertyBinding, "~vValue", oHelper.fnParse);
 
-		this.mock(oDataState).expects("setInvalidValue").withExactArgs("~vValue");
-		oPropertyBindingMock.expects("checkDataState").withExactArgs();
+		oPropertyBinding.oContext = bContextChange ? "~oContext1" : "~oContext0";
+
+		this.mock(oDataState).expects("setInvalidValue").withExactArgs("~vValue").exactly(bContextChange ? 0 : 1);
+		oPropertyBindingMock.expects("checkDataState").withExactArgs().exactly(bContextChange ? 0 : 1);
 
 		// code under test
 		fnParseReject("~Error");
@@ -294,6 +351,7 @@ sap.ui.define([
 			assert.strictEqual(oException, "~Error");
 		});
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("_setBoundValue: with type, async, validateValue rejects", function (assert) {
