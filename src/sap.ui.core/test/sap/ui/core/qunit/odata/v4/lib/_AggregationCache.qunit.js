@@ -1084,9 +1084,10 @@ sap.ui.define([
 		};
 		const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, oAggregation);
 		const sQueryOptions = JSON.stringify(oCache.mQueryOptions);
-		const oCacheMock = this.mock(oCache);
-		oCacheMock.expects("getTypes").atLeast(1).returns("~Types~");
+		this.mock(oCache).expects("getTypes").atLeast(1).returns("~Types~");
 		const oNode = {"@$ui5.node.level" : 3};
+		oCache.aElements[7] = {"@$ui5._" : {rank : "~iRank~"}}; // wrong "parent", see below
+		oCache.aElements[17] = {"@$ui5._" : {rank : "~iRank~"}};
 		oCache.aElements[20] = {"@$ui5.node.level" : 0};
 		oCache.aElements[21] = {"@$ui5.node.level" : 4};
 		oCache.aElements[22] = {"@$ui5.node.level" : 4};
@@ -1110,18 +1111,15 @@ sap.ui.define([
 				oHelperMock.expects("getKeyPredicate")
 					.withExactArgs("~Parent~", "/Foo", "~Types~")
 					.returns("('n/a')");
-				if (bCandidateFound) {
+				if (bCandidateFound) { // parent already in cache
 					oCache.aElements.$byPredicate["('n/a')"] = "~ParentOutsideCollection~";
-					oHelperMock.expects("getPrivateAnnotation")
-						.withExactArgs("~ParentOutsideCollection~", "rank")
-						.returns(undefined);
-				} else { // parent not already in cache
-					oHelperMock.expects("getPrivateAnnotation").never();
 				}
-				oCacheMock.expects("getArrayIndex").never(); // not yet
+				oHelperMock.expects("getPrivateAnnotation").exactly(bCandidateFound ? 1 : 0)
+					.withExactArgs("~ParentOutsideCollection~", "rank")
+					.returns(undefined);
 				oHelperMock.expects("setPrivateAnnotation")
 					.withExactArgs("~Parent~", "parent", sinon.match.same(oCache.oFirstLevel));
-				oCacheMock.expects("requestRank")
+				this.mock(oCache).expects("requestRank")
 					.withExactArgs("~Parent~", "~GroupLock~")
 					.callsFake(async () => {
 						await "next tick";
@@ -1132,21 +1130,35 @@ sap.ui.define([
 						oCache.aElements[17] = "~ParentInsideCollection~";
 						this.mock(oCache.oFirstLevel).expects("calculateKeyPredicate")
 							.withExactArgs("~Parent~", "~Types~", "/Foo");
-						oCacheMock.expects("getArrayIndex").withExactArgs("~iRank~")
-							.returns(17);
+						oHelperMock.expects("getPrivateAnnotation").atLeast(1)
+							.withExactArgs(sinon.match.any, "parent")
+							.callsFake(function (oNode) {
+								return oNode === oCache.aElements[7]
+									? "n/a"
+									: oCache.oFirstLevel;
+							});
+						oHelperMock.expects("getPrivateAnnotation").atLeast(1)
+							.withExactArgs(sinon.match.any, "rank")
+							.callsFake(function (oNode) {
+								return oNode === "~ParentInsideCollection~"
+									|| oNode === oCache.aElements[7]
+									? "~iRank~"
+									: "n/a";
+							});
 						oHelperMock.expects("getPrivateAnnotation")
 							.withExactArgs("~ParentInsideCollection~", "placeholder")
 							.returns(bParentIsPlaceholder);
-						oCacheMock.expects("insertNode").exactly(bParentIsPlaceholder ? 1 : 0)
+						this.mock(oCache).expects("insertNode")
+							.exactly(bParentIsPlaceholder ? 1 : 0)
 							.withExactArgs("~Parent~", "~iRank~", 17);
 
 						return "~iRank~";
 					});
-				oPropertiesExpectation = oCacheMock.expects("requestProperties")
+				oPropertiesExpectation = this.mock(oCache).expects("requestProperties")
 					.withExactArgs("~Parent~", ["DistFromRoot", "myDrillState",
 						"LtdDescendant_Count"], "~GroupLock~", true)
 					.resolves();
-				oNodePropertyExpectation = oCacheMock.expects("requestNodeProperty")
+				oNodePropertyExpectation = this.mock(oCache).expects("requestNodeProperty")
 					.withExactArgs("~Parent~", "~GroupLock~", false)
 					.resolves();
 
@@ -1173,10 +1185,7 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-["~rank~", 0].forEach((iRank) => {
-	const sTitle = "fetchParentIndex: parent already inside collection, rank = " + iRank;
-
-	QUnit.test(sTitle, async function (assert) {
+	QUnit.test("fetchParentIndex: parent already inside collection", async function (assert) {
 		const oAggregation = {
 			$DistanceFromRoot : "DistFromRoot",
 			$DrillState : "myDrillState",
@@ -1211,10 +1220,8 @@ sap.ui.define([
 					.returns("('42')");
 				this.mock(_Helper).expects("getPrivateAnnotation")
 					.withExactArgs("~ParentInCache~", "rank")
-					.returns(iRank);
-				this.mock(oCache).expects("getArrayIndex")
-					.withExactArgs(iRank)
-					.returns("~iIndex~");
+					.returns(0); // anything but undefined
+				oCache.aElements[42] = "~ParentInCache~";
 				this.mock(oCache).expects("requestRank").never();
 
 				return {value : ["~Parent~"]};
@@ -1226,11 +1233,10 @@ sap.ui.define([
 		assert.strictEqual(_Helper.getPrivateAnnotation(oNode, "parentIndexPromise"), oPromise,
 			"cached");
 		assert.ok(oPromise instanceof SyncPromise);
-		assert.strictEqual(await oPromise, "~iIndex~");
+		assert.strictEqual(await oPromise, 42);
 		assert.strictEqual(JSON.stringify(oCache.mQueryOptions), sQueryOptions, "unchanged");
 		assert.notOk(_Helper.hasPrivateAnnotation(oNode, "parentIndexPromise"), "gone");
 	});
-});
 
 	//*********************************************************************************************
 	QUnit.test("fetchParentIndex: clean up on failed request", async function (assert) {
@@ -3750,94 +3756,26 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[
-	{iRange : 1, iRank : 1, iIndex : 1},
-	{iRange : 3, iRank : 2, iIndex : 3},
-	{iRange : 5, iRank : 3, iIndex : 5},
-	{iRange : 6, iRank : 4, iIndex : 5},
-	{iRange : 7, iRank : 6, iIndex : 7},
-	{iRange : 8, iRank : 7, iIndex : 6}
-].forEach(function (oFixture) {
-	const sTitle = "getArrayIndex: iRank = " + oFixture.iRank + "; iIndex = " + oFixture.iIndex;
-	QUnit.test(sTitle, function (assert) {
-		const oCache = _AggregationCache.create(this.oRequestor, "~", "", {},
-				{hierarchyQualifier : "X"});
-
+	QUnit.test("getArrayIndex", function (assert) {
+		const oCache
+			= _AggregationCache.create(this.oRequestor, "~", "", {}, {hierarchyQualifier : "X"});
 		oCache.aElements = [{
-				parent : oCache.oFirstLevel,
-				rank : 0
-			}, {
-				parent : oCache.oFirstLevel,
-				rank : 23
-			}, {
-				parent : oCache.oFirstLevel,
-				rank : 1
-			}, {
-				parent : "~oGroupLevelCache~",
-				rank : "n/a"
-			}, {
-				parent : oCache.oFirstLevel,
-				rank : 2
-			}, {
-				"@$ui5.node.isExpanded" : false,
-				descendants : 1,
-				parent : oCache.oFirstLevel,
-				rank : 3
-			}, {
-				"@$ui5.node.isExpanded" : false,
-				descendants : 0,
-				parent : oCache.oFirstLevel,
-				rank : 4
-			}, {
-				"@$ui5.node.isExpanded" : false,
-				descendants : 2,
-				parent : oCache.oFirstLevel,
-				rank : 5
-			}];
-
-		const oHelperMock = this.mock(_Helper);
-
-		function setupMocks(iRange) {
-			oHelperMock.expects("hasPrivateAnnotation").never();
-			for (let i = 0; i < iRange; i += 1) {
-				const oNode = oCache.aElements[i];
-				oHelperMock.expects("getPrivateAnnotation")
-					.withExactArgs(sinon.match.same(oNode), "parent")
-					.returns(oNode.parent);
-				oHelperMock.expects("getPrivateAnnotation")
-					.exactly(oNode.rank === "n/a" ? 0 : 1)
-					.withExactArgs(sinon.match.same(oNode), "rank")
-					.returns(oNode.rank);
-				oHelperMock.expects("getPrivateAnnotation")
-					.exactly(oNode["@$ui5.node.isExpanded"] === false ? 1 : 0)
-					.withExactArgs(sinon.match.same(oNode), "descendants", 0)
-					.returns(oNode.descendants);
-			}
-		}
-
-		setupMocks(oFixture.iRange);
-
-		assert.strictEqual(
-			// code under test
-			oCache.getArrayIndex(oFixture.iRank), oFixture.iIndex);
-	});
-});
-
-	//*********************************************************************************************
-	QUnit.test("getArrayIndex: throws Error without rank", function (assert) {
-		const oCache = _AggregationCache.create(this.oRequestor, "~", "", {},
-				{hierarchyQualifier : "X"});
-
-		oCache.aElements = [{
-			"@$ui5._" : { // no private annotation "rank"
-				parent : oCache.oFirstLevel
-			}
+			"@$ui5._" : {rank : 42},
+			"@$ui5.context.isTransient" : false // out of place!
+		}, {
+			"@$ui5._" : {rank : 1}
+		}, {
+			"@$ui5._" : {rank : 3}
 		}];
 
-		assert.throws(function () {
-			// code under test
-			oCache.getArrayIndex(1);
-		}, new Error("Missing rank"));
+		// code under test
+		assert.strictEqual(oCache.getArrayIndex(0), 1);
+
+		// code under test
+		assert.strictEqual(oCache.getArrayIndex(2), 2);
+
+		// code under test
+		assert.strictEqual(oCache.getArrayIndex(4), 3);
 	});
 
 	//*********************************************************************************************

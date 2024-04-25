@@ -30615,7 +30615,7 @@ sap.ui.define([
 					value : [{
 						"@odata.etag" : "n/a",
 						_ : {
-							Limited_Rank : "1" // moved *before* "Beta""
+							Limited_Rank : "1" // moved *before* "Beta"
 						}
 					}]
 				})
@@ -31051,8 +31051,8 @@ sap.ui.define([
 					}]
 				})
 				.expectChange("etag", [,,, "etag1.6"])
-				.expectChange("etag", [, "etag9.1", "etag0.3", "etag2.4"]) //TODO
-				.expectChange("name", [, "Aleph #2", "Alpha #2", "Gamma #2"]); //TODO
+				.expectChange("etag", [, "etag1.6", "etag0.3", "etag2.4"])
+				.expectChange("name", [, "Beta #2", "Alpha #2", "Gamma #2"]);
 
 			return Promise.all([
 				// code under test
@@ -31061,14 +31061,14 @@ sap.ui.define([
 			]);
 		}).then(function () {
 			checkCreatedPersisted(assert, oNewRoot);
-			assert.strictEqual(oNewRoot.getIndex(), /*TODO 0*/1, "still out-of-place");
-			assert.strictEqual(oBeta.getIndex(), /*TODO 1*/0);
+			assert.strictEqual(oNewRoot.getIndex(), 0, "still out-of-place");
+			assert.strictEqual(oBeta.getIndex(), 1);
 
 			return that.checkAllContexts("after move Beta to make it a root node", assert,
 				oListBinding, ["@$ui5.context.isTransient", "@$ui5.node.isExpanded",
 					"@$ui5.node.level", "@odata.etag", "Name", "_/NodeID"], [
-					[undefined, undefined, 1, "etag1.6", "Beta #2", "1,false"], //TODO wrong place!
 					[false, undefined, 1, "etag9.1", "Aleph #2", "9,false"], // still out-of-place
+					[undefined, undefined, 1, "etag1.6", "Beta #2", "1,false"],
 					[undefined, true, 1, "etag0.3", "Alpha #2", "0,false"],
 					[undefined, undefined, 2, "etag2.4", "Gamma #2", "2,false"]
 				]);
