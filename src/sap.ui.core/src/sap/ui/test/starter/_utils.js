@@ -77,6 +77,32 @@ sap.ui.define([
 		return str.replace(/&/g, "&amp;").replace(/</g, "&lt;");
 	}
 
+	// assume the document.baseURI to be constant
+	const [baseOrigin, baseURL] = (() => {
+		const url = new URL(document.baseURI);
+		return [url.origin, url.origin + url.pathname];
+	})();
+
+	function toAbsoluteURL(sUrl) {
+		// check for ui5 scheme
+		if (sUrl.startsWith("ui5:")) {
+			// check for authority
+			if (!sUrl.startsWith("ui5://")) {
+				throw new Error("URLs using the 'ui5' protocol must be absolute. Relative and server absolute URLs are reserved for future use.");
+			}
+
+			const sNoScheme = sUrl.slice(6 /* "ui5://".length */);
+			sUrl = sap.ui.require.toUrl(sNoScheme);
+		} else {
+			// not a ui5:// URL
+			// in the context of the test starter, it then by convention is relative to the UI5 baseUrl (parent of "resources/")
+			sUrl = sap.ui.require.toUrl("") + "/../" + sUrl;
+		}
+		const url = new URL(sUrl, baseURL);
+		// for same origin URLs, return a URL w/o origin, otherwise the full URL
+		return url.origin === baseOrigin ? url.pathname + url.search + url.hash : url.href;
+	}
+
 	// ---- Suite Configuration ----
 
 	var DEFAULT_CONFIG = {
@@ -196,7 +222,7 @@ sap.ui.define([
 				oTestConfig.module = resolvePackage(resolvePlaceholders(oTestConfig.module, name));
 			}
 			oTestConfig.beforeBootstrap = resolvePackage(resolvePlaceholders(oTestConfig.beforeBootstrap, name));
-			oTestConfig.page = resolvePlaceholders(oTestConfig.page, name);
+			oTestConfig.page = toAbsoluteURL(resolvePlaceholders(oTestConfig.page, name));
 
 			if (oTestConfig.uriParams) {
 				var oUri = new URI(oTestConfig.page);

@@ -118,12 +118,11 @@
 			+ "</div>"
 			+ "<ol id='qunit-tests'>";
 		oSuiteConfig.sortedTests.forEach(function(oTestConfig) {
-			var sPageUrl = sap.ui.require.toUrl("") + "/../" + oTestConfig.page;
 			sLinkHTML += "<li class='" + (oTestConfig.skip ? "skipped" : "pass") + "'>" +
 					(oTestConfig.skip ? "<em class='qunit-skipped-label'>skipped</em>" : "") +
 					"<strong>" +
 					(oTestConfig.group ? "<span class='module-name'>" + oTestConfig.group + "<span>: " : "") +
-					"<a class='test-name' href='" + sPageUrl + "' target='_blank'>" + oTestConfig.name + "</a></strong></li>";
+					"<a class='test-name' href='" +  oTestConfig.page + "' target='_blank'>" + oTestConfig.name + "</a></strong></li>";
 		});
 		sLinkHTML += "</ol>"
 			+ "<div id='redirect-hint'><div>"
@@ -198,12 +197,10 @@
 	window.suite = function() {
 
 		function createSuite(oSuiteConfig) {
-			var sContextPath = new URL(sap.ui.require.toUrl("") + "/../", document.baseURI).pathname;
-
 			var oSuite = new JSUnitSuite();
 			oSuiteConfig.sortedTests.forEach(function(oTestConfig) {
 				if (!oTestConfig.skip) {
-					oSuite.addTestPage(sContextPath + oTestConfig.page, oTestConfig);
+					oSuite.addTestPage(oTestConfig.page, oTestConfig);
 				}
 			});
 			return oSuite;
