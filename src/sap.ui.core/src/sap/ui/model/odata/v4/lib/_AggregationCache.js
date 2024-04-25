@@ -1270,8 +1270,12 @@ sap.ui.define([
 	 *   A lock for the group to associate the requests with
 	 * @param {string} sChildPath
 	 *   The (child) node's path relative to the cache
-	 * @param {string} [sParentPath=null]
+	 * @param {string|null} sParentPath
 	 *   The parent node's path relative to the cache
+	 * @param {string|null} [sSiblingPath]
+	 *   The next sibling's path relative to the cache
+	 * @param {string} [sNonCanonicalChildPath]
+	 *   The (child) node's non-canonical path (relative to the service)
 	 * @returns {{promise : sap.ui.base.SyncPromise<number[]>, refresh : boolean}}
 	 *   An object with two properties:
 	 *   - <code>promise</code>: A promise which is resolved with the number of child nodes added
@@ -1282,7 +1286,8 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	_AggregationCache.prototype.move = function (oGroupLock, sChildPath, sParentPath = null) {
+	_AggregationCache.prototype.move = function (oGroupLock, sChildPath, sParentPath, sSiblingPath,
+			sNonCanonicalChildPath) {
 		let bRefreshNeeded = !this.bUnifiedCache;
 
 		const sChildPredicate = sChildPath.slice(sChildPath.indexOf("("));
@@ -1312,18 +1317,39 @@ sap.ui.define([
 			}
 		}
 
+		const invokeNextSibling = () => {
+			if (sSiblingPath !== undefined) {
+				bRefreshNeeded = true;
+				const sSiblingPredicate = sSiblingPath?.slice(sSiblingPath.indexOf("("));
+				let oSiblingNode = this.aElements.$byPredicate[sSiblingPredicate];
+				oSiblingNode = oSiblingNode
+					? this.oAggregation.$Key.reduce((oKeys, sKey) => {
+							oKeys[sKey] = oSiblingNode[sKey];
+							return oKeys;
+						}, {})
+					: null;
+
+				return this.oRequestor.request("POST", sNonCanonicalChildPath + "/"
+						+ this.oAggregation.$Actions.ChangeNextSiblingAction,
+					oGroupLock.getUnlockedCopy(), {Prefer : "return=minimal"},
+					{NextSibling : oSiblingNode});
+			}
+		};
+
 		let oPromise = SyncPromise.all([
 			this.oRequestor.request("PATCH", sChildPath, oGroupLock, {
 					"If-Match" : oChildNode,
 					Prefer : "return=minimal"
 				}, {[this.oAggregation.$ParentNavigationProperty + "@odata.bind"] : sParentPath},
 				/*fnSubmit*/null, function fnCancel() { /*nothing to do*/ }),
+			invokeNextSibling(),
 			// GET LimitedRank iff. no side-effects refresh needed
-			bRefreshNeeded || this.requestRank(oChildNode, oGroupLock)
+			bRefreshNeeded && sSiblingPath === undefined
+				|| this.requestRank(oChildNode, oGroupLock)
 		]);
 
 		if (!bRefreshNeeded) {
-			oPromise = oPromise.then(([oPatchResult, iPreorderRank]) => {
+			oPromise = oPromise.then(([oPatchResult,, iPreorderRank]) => {
 				let iResult = 1;
 				switch (oParentNode ? oParentNode["@$ui5.node.isExpanded"] : true) {
 					case false:

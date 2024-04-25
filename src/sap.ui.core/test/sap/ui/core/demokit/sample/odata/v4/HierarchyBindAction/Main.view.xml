@@ -60,24 +60,43 @@
 		</Column>
 		<Column width="4em">
 			<template>
-				<m:Button enabled="{= %{@$ui5.node.isExpanded} !== false}" id="create"
+				<m:Button enabled="{= %{@$ui5.node.isExpanded} !== false}"
 					icon="sap-icon://create" press=".onCreate" tooltip="Create New Child"/>
 			</template>
 		</Column>
 		<Column width="4em">
 			<template>
-				<m:Button id="move" icon="sap-icon://move" press=".onMove" tooltip="Move"/>
+				<m:Button icon="sap-icon://move" press=".onMove($event, undefined)"
+					tooltip="Move To Parent..."/>
 			</template>
 		</Column>
 		<Column width="4em">
 			<template>
-				<m:Button id="delete" icon="sap-icon://delete" press=".onDelete" tooltip="Delete"/>
+				<m:Button icon="sap-icon://map" press=".onMove($event, '?')"
+					tooltip="Move Just Before Sibling..."/>
+			</template>
+		</Column>
+		<Column width="4em">
+			<template>
+				<m:Button icon="sap-icon://arrow-bottom" press=".onMove($event, null)"
+					tooltip="Move As Last Child Of..."/>
 			</template>
 		</Column>
 		<Column width="4em">
 			<template>
 				<m:Button enabled="{= %{@$ui5.node.level} > 1}" icon="sap-icon://back-to-top"
-					press=".onMakeRoot" tooltip="Make Root"/>
+					press=".onMakeRoot($event, undefined)" tooltip="Make Root"/>
+			</template>
+		</Column>
+		<Column width="4em">
+			<template>
+				<m:Button icon="sap-icon://pull-down" press=".onMakeRoot($event, null)"
+					tooltip="Make Last Root"/>
+			</template>
+		</Column>
+		<Column width="4em">
+			<template>
+				<m:Button icon="sap-icon://delete" press=".onDelete" tooltip="Delete"/>
 			</template>
 		</Column>
 	</TreeTable>
@@ -91,4 +110,9 @@
 			<m:StandardListItem title="{Id}" type="Active" />
 		</m:SelectDialog>
 	</mvc:dependents>
+
+	<m:FormattedText htmlText="&lt;em>Available URL parameters:&lt;/em>
+		&lt;ul>
+			&lt;li> &lt;code>expandTo&lt;/code> Either * for &lt;em>expand all&lt;/em> or a number; default 1
+			&lt;li> &lt;code>visibleRowCount&lt;/code> A number; default 10"/>
 </mvc:View>

@@ -1226,7 +1226,9 @@ sap.ui.define([
 			sQueryOptionsJSON = JSON.stringify(mQueryOptions);
 
 		if (bStored) {
+			oAggregation.$Actions = "~actions~";
 			oAggregation.$DrillState = "myDrillState";
+			oAggregation.$Key = "~key~";
 			oAggregation.$NodeProperty = "SomeNodeID";
 			oAggregation.$ParentNavigationProperty = "SomeParentNavigation";
 		}
@@ -1259,13 +1261,21 @@ sap.ui.define([
 		oAggregationMock.expects("$fetchMetadata").exactly(bStored ? 0 : 1)
 			.withExactArgs("/meta/@com.sap.vocabularies.Hierarchy.v1.RecursiveHierarchy#X")
 			.returns(SyncPromise.resolve(oRecursiveHierarchy));
+		oAggregationMock.expects("$fetchMetadata").exactly(bStored ? 0 : 1)
+			.withExactArgs("/meta/$Type/$Key")
+			.returns(SyncPromise.resolve("~key~"));
+		oAggregationMock.expects("$fetchMetadata").exactly(bStored ? 0 : 1)
+			.withExactArgs("/meta/@com.sap.vocabularies.Hierarchy.v1.RecursiveHierarchyActions#X")
+			.returns(SyncPromise.resolve("~actions~"));
 		oExpectedAggregation = Object.assign({
 			expandTo : iExpandTo || 1,
 			hierarchyQualifier : "X",
 			$fetchMetadata : oAggregation.$fetchMetadata, // remember the mock(!)
 			$metaPath : "/meta",
 			$path : "/Foo",
+			$Actions : "~actions~",
 			$DrillState : "myDrillState",
+			$Key : "~key~",
 			$NodeProperty : "SomeNodeID",
 			$ParentNavigationProperty : "SomeParentNavigation"
 		}, oExpectedAggregation);
@@ -1333,7 +1343,7 @@ sap.ui.define([
 	].forEach((oRecursiveHierarchy, j) => {
 		[false, true].forEach((bStored) => {
 			const sTitle = "buildApply4Hierarchy: children of a given parent, #" + i + ", #" + j
-				+ ", $LimitedRank already stored" + bStored;
+				+ ", $LimitedRank already stored: " + bStored;
 
 	QUnit.test(sTitle, function (assert) {
 		var oAggregation = Object.assign({
@@ -1363,6 +1373,13 @@ sap.ui.define([
 		oAggregationMock.expects("$fetchMetadata")
 			.withExactArgs("/meta/path/@com.sap.vocabularies.Hierarchy.v1.RecursiveHierarchy#XYZ")
 			.returns(SyncPromise.resolve(oRecursiveHierarchy));
+		oAggregationMock.expects("$fetchMetadata")
+			.withExactArgs("/meta/path/$Type/$Key")
+			.returns(SyncPromise.resolve("~key~"));
+		oAggregationMock.expects("$fetchMetadata")
+			.withExactArgs(
+				"/meta/path/@com.sap.vocabularies.Hierarchy.v1.RecursiveHierarchyActions#XYZ")
+			.returns(SyncPromise.resolve("~actions~"));
 
 		// code under test
 		assert.deepEqual(_AggregationHelper.buildApply4Hierarchy(oAggregation, mQueryOptions), {
@@ -1379,6 +1396,8 @@ sap.ui.define([
 			assert.strictEqual(oAggregation.$LimitedRank, "path/to/LimitedRank",
 				"derived from DrillState");
 		}
+		assert.strictEqual(oAggregation.$Actions, "~actions~");
+		assert.strictEqual(oAggregation.$Key, "~key~");
 		assert.strictEqual(oAggregation.$NodeProperty, "myID");
 		assert.strictEqual(oAggregation.$ParentNavigationProperty, "myParentNavigation");
 	});

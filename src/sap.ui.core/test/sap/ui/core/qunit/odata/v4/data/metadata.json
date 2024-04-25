@@ -277,6 +277,18 @@
 			"$kind": "Property"
 		}
 	},
+	"com.sap.gateway.default.iwbep.tea_busi.v0001.__FAKE__AcChangeNextSibling" : [{
+		"$kind" : "Action",
+		"$IsBound" : true,
+		"$Parameter" : [{
+			"$Name" : "_it",
+			"$Nullable" : false,
+			"$Type" : "com.sap.gateway.default.iwbep.tea_busi.v0001.Worker"
+		}, {
+			"$Name" : "NextSibling",
+			"$Type" : "com.sap.gateway.default.iwbep.tea_busi.v0001.__FAKE__NextSiblingWorker"
+		}]
+	}],
 	"com.sap.gateway.default.iwbep.tea_busi.v0001.ComplexType_City" : {
 		"$kind" : "ComplexType",
 		"POSTALCODE" : {
@@ -730,6 +742,15 @@
 			"$kind" : "Property"
 		}
 	},
+	"com.sap.gateway.default.iwbep.tea_busi.v0001.__FAKE__NextSiblingWorker" : {
+		"$kind" : "ComplexType",
+		"ID" : {
+			"$Nullable" : false,
+			"$Type" : "Edm.String",
+			"$kind" : "Property",
+			"$MaxLength" : 4
+		}
+	},
 	"com.sap.gateway.default.iwbep.tea_busi.v0001." : {
 		"$kind" : "Schema",
 		"$Annotations" : {
@@ -750,6 +771,9 @@
 					"DistanceFromRootProperty": {"$PropertyPath": "DistanceFromRoot"},
 					"DrillStateProperty": {"$PropertyPath": "DrillState"},
 					"LimitedDescendantCountProperty": {"$PropertyPath": "DescendantCount"}
+				},
+				"@com.sap.vocabularies.Hierarchy.v1.RecursiveHierarchyActions#OrgChart" : {
+					"ChangeNextSiblingAction" : "com.sap.gateway.default.iwbep.tea_busi.v0001.__FAKE__AcChangeNextSibling"
 				}
 			},
 			"com.sap.gateway.default.iwbep.tea_busi.v0001.Worker/LOCATION/COUNTRY" : {

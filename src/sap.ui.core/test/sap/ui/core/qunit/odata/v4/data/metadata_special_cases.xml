@@ -134,6 +134,10 @@
 				<Property Name="numericSeverity" Type="Edm.Byte" Nullable="false" />
 				<Property Name="longtextUrl" Type="Edm.String" Nullable="true" />
 			</ComplexType>
+			<ComplexType Name="NextSiblingType">
+				<Property Name="ArtistID" Type="Edm.String" Nullable="false"/>
+				<Property Name="IsActiveEntity" Type="Edm.Boolean" Nullable="false"/>
+			</ComplexType>
 			<ComplexType Name="Person">
 				<Property Name="Address" Type="special.cases.Address" />
 				<Property Name="Name" Type="Edm.String" Nullable="false" />
@@ -173,6 +177,10 @@
 				<Parameter Name="Price" Type="Edm.Decimal" Precision="13" Scale="variable" />
 				<Parameter Name="CurrencyCode" Type="Edm.String" MaxLength="5"/>
 				<ReturnType Type="special.cases.PublicationsType" Nullable="false"/>
+			</Action>
+			<Action Name="ChangeNextSibling" IsBound="true">
+				<Parameter Name="_it" Type="special.cases.ArtistsType" Nullable="false"/>
+				<Parameter Name="NextSibling" Type="special.cases.NextSiblingType" Nullable="true"/>
 			</Action>
 			<Function Name="GetDefaults" EntitySetPath="_it" IsBound="true">
 				<Parameter Name="_it" Type="Collection(special.cases.ArtistsType)" Nullable="false"/>
@@ -376,6 +384,11 @@
 						<PropertyValue Property="LimitedDescendantCount" Path="_/DescendantCount"/>
 						<!--Edm.Int64-->
 						<PropertyValue Property="LimitedRank" Path="_/Limited_Rank"/>
+					</Record>
+				</Annotation>
+				<Annotation Qualifier="OrgChart" Term="com.sap.vocabularies.Hierarchy.v1.RecursiveHierarchyActions">
+					<Record>
+						<PropertyValue Property="ChangeNextSiblingAction" String="special.cases.ChangeNextSibling"/>
 					</Record>
 				</Annotation>
 			</Annotations>

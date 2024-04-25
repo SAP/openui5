@@ -880,7 +880,7 @@ sap.ui.define([
 		if (this.iIndex === undefined) {
 			return undefined;
 		}
-		if (this.oBinding.isFirstCreateAtEnd()) {
+		if (this.oBinding?.isFirstCreateAtEnd()) {
 			if (this.iIndex < 0) { // this does not include undefined for a kept-alive context
 				return this.oBinding.bLengthFinal
 					? this.oBinding.iMaxLength - this.iIndex - 1
@@ -908,7 +908,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Context.prototype.getModelIndex = function () {
-		if (this.iIndex !== undefined && this.oBinding.iCreatedContexts) {
+		if (this.iIndex !== undefined && this.oBinding?.iCreatedContexts) {
 			return this.iIndex + this.oBinding.iCreatedContexts;
 		}
 		return this.iIndex;
@@ -1306,7 +1306,10 @@ sap.ui.define([
 	 * @experimental As of version 1.119.0
 	 * @public
 	 */
-	Context.prototype.move = function ({parent : oParent = null} = {}) {
+	Context.prototype.move = function ({nextSibling : oNextSibling, parent : oParent} = {}) {
+		if (oNextSibling === undefined && oParent === undefined) {
+			return Promise.resolve(); // "no move happens"
+		}
 		if (this.isDeleted() || this.isTransient() || this.iIndex === undefined) {
 			throw new Error("Cannot move " + this);
 		}
@@ -1318,7 +1321,7 @@ sap.ui.define([
 			throw new Error("Unsupported parent context: " + oParent);
 		}
 
-		return Promise.resolve(this.oBinding.move(this, oParent));
+		return Promise.resolve(this.oBinding.move(this, oParent, oNextSibling));
 	};
 
 	/**

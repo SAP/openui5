@@ -82,10 +82,13 @@ sap.ui.define([
 			this.initMessagePopover("table");
 		},
 
-		onMakeRoot : async function (oEvent) {
+		onMakeRoot : async function (oEvent, vNextSibling) {
 			try {
 				this.getView().setBusy(true);
-				await oEvent.getSource().getBindingContext().move();
+				await oEvent.getSource().getBindingContext().move({
+					nextSibling : vNextSibling,
+					parent : null
+				});
 			} catch (oError) {
 				MessageBox.alert(oError.message, {icon : MessageBox.Icon.ERROR, title : "Error"});
 			} finally {
@@ -93,8 +96,9 @@ sap.ui.define([
 			}
 		},
 
-		onMove : function (oEvent) {
-			this.oNode = oEvent.getSource().getBindingContext();
+		onMove : function (oEvent, vNextSibling) {
+			this._vNextSibling = vNextSibling;
+			this._oNode = oEvent.getSource().getBindingContext();
 			const oSelectDialog = this.byId("moveDialog");
 			const oListBinding = oSelectDialog.getBinding("items");
 			if (oListBinding.isSuspended()) {
@@ -102,7 +106,7 @@ sap.ui.define([
 			} else {
 				oListBinding.refresh();
 			}
-			oSelectDialog.setBindingContext(this.oNode);
+			oSelectDialog.setBindingContext(this._oNode);
 			oSelectDialog.open();
 		},
 
@@ -110,13 +114,32 @@ sap.ui.define([
 			try {
 				this.getView().setBusy(true);
 				const sParentId = oEvent.getParameter("selectedItem").getTitle();
-				const oParent = this.oNode.getBinding().getAllCurrentContexts()
+				const oParent = this._oNode.getBinding().getAllCurrentContexts()
 					.find((oNode) => oNode.getProperty("Id") === sParentId);
 				if (!oParent) {
 					throw new Error(`Parent ${sParentId} not yet loaded`);
 				}
 
-				await this.oNode.move({parent : oParent});
+				if (this._vNextSibling === "?") {
+					await this._oNode.move({
+						nextSibling : oParent,
+						parent : oParent.getParent()
+					});
+				} else {
+					await this._oNode.move({
+						nextSibling : this._vNextSibling,
+						parent : oParent
+					});
+				}
+
+				const oTable = this.byId("table");
+				const iParentIndex = oParent.getIndex();
+				if (iParentIndex < oTable.getFirstVisibleRow()
+					|| iParentIndex + 1
+						>= oTable.getFirstVisibleRow() + oTable.getRowMode().getRowCount()) {
+					// make sure parent & child are visible
+					oTable.setFirstVisibleRow(iParentIndex);
+				}
 			} catch (oError) {
 				MessageBox.alert(oError.message, {icon : MessageBox.Icon.ERROR, title : "Error"});
 			} finally {

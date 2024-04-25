@@ -30259,7 +30259,7 @@ sap.ui.define([
 			oListBinding = oRoot.getBinding();
 			assert.throws(function () {
 				// code under test
-				oListBinding.getHeaderContext().move();
+				oListBinding.getHeaderContext().move({parent : null});
 			}, new Error("Cannot move " + sFriend));
 			assert.throws(function () {
 				// code under test
@@ -30320,7 +30320,7 @@ sap.ui.define([
 			oBetaCreated = oBeta.created();
 			assert.throws(function () {
 				// code under test
-				oBeta.move();
+				oBeta.move({parent : null});
 			}, new Error("Cannot move " + oBeta), "too early");
 			assert.throws(function () {
 				// code under test
@@ -31056,7 +31056,7 @@ sap.ui.define([
 
 			return Promise.all([
 				// code under test
-				oBeta.move(),
+				oBeta.move({parent : null}),
 				that.waitForChanges(assert, "move Beta to make it a root node")
 			]);
 		}).then(function () {
@@ -31514,7 +31514,7 @@ sap.ui.define([
 
 		assert.throws(function () {
 			// code under test
-			oNewRoot.move();
+			oNewRoot.move({parent : null});
 		}, new Error("Cannot move " + oNewRoot), "too late");
 		assert.throws(function () {
 			// code under test
@@ -36470,7 +36470,7 @@ make root = ${bMakeRoot}`;
 
 			await Promise.all([
 				// code under test
-				oBeta.move(),
+				oBeta.move({parent : null}),
 				this.waitForChanges(assert, "move Beta to make it a root node")
 			]);
 
@@ -36535,6 +36535,415 @@ make root = ${bMakeRoot}`;
 	});
 	});
 });
+
+	//*********************************************************************************************
+	// Scenario: Move Delta below a new parent Alpha and insert it before Gamma. Move Delta back to
+	// root level explicitly to the last sibling position, where Delta is no longer visible but its
+	// index is properly updated.
+	// JIRA: CPOUI5ODATAV4-2228
+	QUnit.test("Recursive Hierarchy: move to nextSibling", async function (assert) {
+		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
+		const sNextSiblingAction
+			= "/com.sap.gateway.default.iwbep.tea_busi.v0001.__FAKE__AcChangeNextSibling";
+		const sSelect = "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name";
+		const sUrl = "EMPLOYEES"
+			+ "?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root/EMPLOYEES"
+			+ ",HierarchyQualifier='OrgChart',NodeProperty='ID',Levels=2)";
+const sView = `
+<t:Table id="table" rows="{path : '/EMPLOYEES',
+		parameters : {
+			$$aggregation : {
+				expandTo : 2,
+				hierarchyQualifier : 'OrgChart'
+			}
+		}}" threshold="0" visibleRowCount="4">
+	<Text text="{= %{@$ui5.node.isExpanded} }"/>
+	<Text text="{= %{@$ui5.node.level} }"/>
+	<Text text="{Name}"/>
+</t:Table>`;
+
+		// 1 Alpha
+		//   2 Beta
+		//   3 Gamma
+		// 4 Delta
+		// 5 Epsilon
+		this.expectRequest(sUrl + sSelect + "&$count=true&$skip=0&$top=4", {
+				"@odata.count" : "5",
+				value : [{
+					DescendantCount : "2",
+					DistanceFromRoot : "0",
+					DrillState : "expanded",
+					ID : "1",
+					Name : "Alpha"
+				}, {
+					DescendantCount : "0",
+					DistanceFromRoot : "1",
+					DrillState : "leaf",
+					ID : "2",
+					Name : "Beta"
+				}, {
+					DescendantCount : "0",
+					DistanceFromRoot : "1",
+					DrillState : "leaf",
+					ID : "3",
+					Name : "Gamma"
+				}, {
+					DescendantCount : "0",
+					DistanceFromRoot : "0",
+					DrillState : "leaf",
+					ID : "4",
+					Name : "Delta"
+				}]
+			});
+
+		await this.createView(assert, sView, oModel);
+
+		const oTable = this.oView.byId("table");
+		checkTable("initial page", assert, oTable, [
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('2')",
+			"/EMPLOYEES('3')",
+			"/EMPLOYEES('4')"
+		], [
+			[true, 1, "Alpha"],
+			[undefined, 2, "Beta"],
+			[undefined, 2, "Gamma"],
+			[undefined, 1, "Delta"]
+		], 5);
+		const oListBinding = oTable.getBinding("rows");
+		const [oAlpha,, oGamma, oDelta] = oListBinding.getCurrentContexts();
+
+		// code under test: no move happens
+		oAlpha.move();
+
+		this.expectRequest({
+				batchNo : 2,
+				headers : {
+					Prefer : "return=minimal"
+				},
+				method : "PATCH",
+				payload : {
+					"EMPLOYEE_2_MANAGER@odata.bind" : "EMPLOYEES('1')"
+				},
+				url : "EMPLOYEES('4')"
+			}) // 204 No Content
+			.expectRequest({
+				batchNo : 2,
+				headers : {
+					Prefer : "return=minimal"
+				},
+				method : "POST",
+				payload : {
+					NextSibling : {ID : "3"}
+				},
+				url : "EMPLOYEES('4')" + sNextSiblingAction
+			}) // 204 No Content
+			.expectRequest({
+				batchNo : 2,
+				url : sUrl + "&$filter=ID eq '4'&$select=LimitedRank"
+			}, {
+				value : [{
+					LimitedRank : "2"
+				}]
+			})
+			// 1 Alpha
+			//   2 Beta
+			//   4 Delta
+			//   3 Gamma
+			// 5 Epsilon
+			.expectRequest({
+				batchNo : 2,
+				url : sUrl + sSelect + "&$count=true&$skip=0&$top=4"
+			}, {
+				"@odata.count" : "5",
+				value : [{
+					DescendantCount : "3",
+					DistanceFromRoot : "0",
+					DrillState : "expanded",
+					ID : "1",
+					Name : "Alpha"
+				}, {
+					DescendantCount : "0",
+					DistanceFromRoot : "1",
+					DrillState : "leaf",
+					ID : "2",
+					Name : "Beta"
+				}, {
+					DescendantCount : "0",
+					DistanceFromRoot : "1",
+					DrillState : "leaf",
+					ID : "4",
+					Name : "Delta"
+				}, {
+					DescendantCount : "0",
+					DistanceFromRoot : "1",
+					DrillState : "leaf",
+					ID : "3",
+					Name : "Gamma"
+				}]
+			});
+
+		await Promise.all([
+			// code under test
+			oDelta.move({nextSibling : oGamma, parent : oAlpha}),
+			this.waitForChanges(assert, "move Delta before Gamma (below Alpha)")
+		]);
+
+		checkTable("after move Delta before Gamma (below Alpha)", assert, oTable, [
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('2')",
+			"/EMPLOYEES('4')",
+			"/EMPLOYEES('3')"
+		], [
+			[true, 1, "Alpha"],
+			[undefined, 2, "Beta"],
+			[undefined, 2, "Delta"],
+			[undefined, 2, "Gamma"]
+		], 5);
+
+		this.expectRequest({
+				batchNo : 3,
+				headers : {
+					Prefer : "return=minimal"
+				},
+				method : "PATCH",
+				payload : {
+					"EMPLOYEE_2_MANAGER@odata.bind" : null
+				},
+				url : "EMPLOYEES('4')"
+			}) // 204 No Content
+			.expectRequest({
+				batchNo : 3,
+				headers : {
+					Prefer : "return=minimal"
+				},
+				method : "POST",
+				payload : {
+					NextSibling : null
+				},
+				url : "EMPLOYEES('4')" + sNextSiblingAction
+			}) // 204 No Content
+			.expectRequest({
+				batchNo : 3,
+				url : sUrl + "&$filter=ID eq '4'&$select=LimitedRank"
+			}, {
+				value : [{
+					LimitedRank : "4"
+				}]
+			})
+			// 1 Alpha
+			//   2 Beta
+			//   3 Gamma
+			// 5 Epsilon
+			// 4 Delta
+			.expectRequest({
+				batchNo : 3,
+				url : sUrl + sSelect + "&$count=true&$skip=0&$top=4"
+			}, {
+				"@odata.count" : "5",
+				value : [{
+					DescendantCount : "2",
+					DistanceFromRoot : "0",
+					DrillState : "expanded",
+					ID : "1",
+					Name : "Alpha"
+				}, {
+					DescendantCount : "0",
+					DistanceFromRoot : "1",
+					DrillState : "leaf",
+					ID : "2",
+					Name : "Beta"
+				}, {
+					DescendantCount : "0",
+					DistanceFromRoot : "1",
+					DrillState : "leaf",
+					ID : "3",
+					Name : "Gamma"
+				}, {
+					DescendantCount : "0",
+					DistanceFromRoot : "0",
+					DrillState : "leaf",
+					ID : "5",
+					Name : "Epsilon"
+				}]
+			});
+
+		await Promise.all([
+			// code under test
+			oDelta.move({nextSibling : null, parent : null}),
+			this.waitForChanges(assert, "move Delta to last position of root level")
+		]);
+
+		checkTable("after move Delta to last position of root level", assert, oTable, [
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('2')",
+			"/EMPLOYEES('3')",
+			"/EMPLOYEES('5')"
+		], [
+			[true, 1, "Alpha"],
+			[undefined, 2, "Beta"],
+			[undefined, 2, "Gamma"],
+			[undefined, 1, "Epsilon"]
+		], 5);
+		assert.strictEqual(oDelta.getIndex(), 4);
+
+		this.expectRequest(sUrl + sSelect + "&$skip=4&$top=1", {
+				value : [{
+					DescendantCount : "0",
+					DistanceFromRoot : "0",
+					DrillState : "leaf",
+					ID : "4",
+					Name : "Delta"
+				}]
+			});
+
+		// "The index of the first visible row is too high. The value has been set to 1."
+		oTable.setFirstVisibleRow(/*4*/ 1);
+
+		await this.waitForChanges(assert, "scroll to Delta");
+
+		checkTable("after scroll to Delta", assert, oTable, [
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('2')",
+			"/EMPLOYEES('3')",
+			"/EMPLOYEES('5')",
+			"/EMPLOYEES('4')"
+		], [
+			[undefined, 2, "Beta"],
+			[undefined, 2, "Gamma"],
+			[undefined, 1, "Epsilon"],
+			[undefined, 1, "Delta"]
+		]);
+	});
+
+	//*********************************************************************************************
+	// Scenario: Move a root node to the first position. The POST for moving the position requires
+	// a non-canonical URL. The NextSibling's complex type requires multiple keys.
+	// JIRA: CPOUI5ODATAV4-2228
+	QUnit.test("Recursive Hierarchy: nextSibling (non-canonical path)", async function (assert) {
+		const oModel = this.createSpecialCasesModel({autoExpandSelect : true});
+		const sFriend = "/Artists(ArtistID='99',IsActiveEntity=false)/_Friend";
+		const sUrl = sFriend.slice(1)
+			+ "?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root" + sFriend
+			+ ",HierarchyQualifier='OrgChart',NodeProperty='_/NodeID',Levels=1)";
+		const sSelect = "&$select=ArtistID,IsActiveEntity,Name,_/DrillState,_/NodeID";
+		const sView = `
+<t:Table id="table" rows="{path : '/Artists(ArtistID=\\'99\\',IsActiveEntity=false)/_Friend',
+		parameters : {
+			$$aggregation : {hierarchyQualifier : 'OrgChart'}
+		}}" threshold="0" visibleRowCount="3">
+	<Text text="{= %{@$ui5.node.isExpanded} }"/>
+	<Text text="{= %{@$ui5.node.level} }"/>
+	<Text text="{Name}"/>
+</t:Table>`;
+
+		// 1 Alpha
+		// 2 Beta
+		this.expectRequest(sUrl + sSelect + "&$count=true&$skip=0&$top=3", {
+				"@odata.count" : "2",
+				value : [{
+					ArtistID : "1",
+					IsActiveEntity : false,
+					Name : "Alpha",
+					_ : {
+						DrillState : "leaf",
+						NodeID : "1,false"
+					}
+				}, {
+					ArtistID : "2",
+					IsActiveEntity : false,
+					Name : "Beta",
+					_ : {
+						DrillState : "leaf",
+						NodeID : "2,false"
+					}
+				}]
+			});
+
+		await this.createView(assert, sView, oModel);
+
+		const oTable = this.oView.byId("table");
+		checkTable("initial page", assert, oTable, [
+			sFriend + "(ArtistID='1',IsActiveEntity=false)",
+			sFriend + "(ArtistID='2',IsActiveEntity=false)"
+		], [
+			[undefined, 1, "Alpha"],
+			[undefined, 1, "Beta"]
+		]);
+		const oListBinding = oTable.getBinding("rows");
+		const [oAlpha, oBeta] = oListBinding.getCurrentContexts();
+
+		this.expectRequest({
+				batchNo : 2,
+				headers : {
+					Prefer : "return=minimal"
+				},
+				method : "PATCH",
+				payload : {
+					"BestFriend@odata.bind" : null
+				},
+				url : "Artists(ArtistID='2',IsActiveEntity=false)"
+			}) // 204 No Content
+			.expectRequest({
+				batchNo : 2,
+				headers : {
+					Prefer : "return=minimal"
+				},
+				method : "POST",
+				payload : {
+					NextSibling : {ArtistID : "1", IsActiveEntity : false}
+				},
+				url : sFriend.slice(1)
+					+ "(ArtistID='2',IsActiveEntity=false)/special.cases.ChangeNextSibling"
+			}) // 204 No Content
+			.expectRequest({
+				batchNo : 2,
+				url : sUrl
+					+ "&$filter=ArtistID eq '2' and IsActiveEntity eq false&$select=_/Limited_Rank"
+			}, {
+				value : [{
+					_ : {Limited_Rank : "0"}
+				}]
+			})
+			.expectRequest({
+				batchNo : 2,
+				url : sUrl + sSelect + "&$count=true&$skip=0&$top=3"
+			}, {
+				"@odata.count" : "2",
+				value : [{
+					ArtistID : "2",
+					IsActiveEntity : false,
+					Name : "Beta",
+					_ : {
+						DrillState : "leaf",
+						NodeID : "2,false"
+					}
+				}, {
+					ArtistID : "1",
+					IsActiveEntity : false,
+					Name : "Alpha",
+					_ : {
+						DrillState : "leaf",
+						NodeID : "1,false"
+					}
+				}]
+			});
+
+		await Promise.all([
+			// code under test
+			oBeta.move({nextSibling : oAlpha, parent : null}),
+			this.waitForChanges(assert, "move Beta to the front")
+		]);
+
+		checkTable("after move Beta to the front", assert, oTable, [
+			sFriend + "(ArtistID='2',IsActiveEntity=false)",
+			sFriend + "(ArtistID='1',IsActiveEntity=false)"
+		], [
+			[undefined, 1, "Beta"],
+			[undefined, 1, "Alpha"]
+		]);
+		assert.strictEqual(oBeta.getIndex(), 0);
+	});
 
 	//*********************************************************************************************
 	// Scenario: Show the first level of a recursive hierarchy ("Alpha", "Omega"), expand "Alpha".

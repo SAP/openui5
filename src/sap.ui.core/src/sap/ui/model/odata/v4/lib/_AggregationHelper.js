@@ -46,6 +46,7 @@ sap.ui.define([
 			hierarchyQualifier : "string",
 			search : "string"
 		},
+		sSapHierarchy = "com.sap.vocabularies.Hierarchy.v1.",
 		/**
 		 * Collection of helper methods for data aggregation.
 		 *
@@ -409,7 +410,9 @@ sap.ui.define([
 		 * "$apply" is constructed to avoid timing issues with metadata. The paths for
 		 * DistanceFromRoot, DrillState, LimitedDescendantCount, LimitedRank, NodeProperty, and
 		 * ParentNavigationProperty are stored at <code>oAggregation</code> using a "$" prefix (if
-		 * not already stored).
+		 * not already stored). The node type's list of key properties is stored as "$Key". The
+		 * "com.sap.vocabularies.Hierarchy.v1.RecursiveHierarchyActions" annotation is stored as
+		 * "$Actions".
 		 *
 		 * @param {object} oAggregation
 		 *   An object holding the information needed for a recursive hierarchy; see
@@ -460,7 +463,7 @@ sap.ui.define([
 					let sPropertyPath = oAggregation["$" + sProperty];
 					if (!sPropertyPath) {
 						mRecursiveHierarchy ??= oAggregation.$fetchMetadata(oAggregation.$metaPath
-								+ "/@com.sap.vocabularies.Hierarchy.v1.RecursiveHierarchy#"
+								+ "/@" + sSapHierarchy + "RecursiveHierarchy#"
 								+ oAggregation.hierarchyQualifier
 							).getResult();
 
@@ -494,6 +497,12 @@ sap.ui.define([
 				if (!mQueryOptions.$select.includes(sNodeProperty)) {
 					mQueryOptions.$select.push(sNodeProperty);
 				}
+				oAggregation.$Actions ??= oAggregation.$fetchMetadata(
+						oAggregation.$metaPath + "/@" + sSapHierarchy
+						+ "RecursiveHierarchyActions#" + oAggregation.hierarchyQualifier
+					).getResult();
+				oAggregation.$Key ??= oAggregation.$fetchMetadata(
+					oAggregation.$metaPath + "/$Type/$Key").getResult();
 			}
 
 			let sApply = "";
@@ -529,7 +538,7 @@ sap.ui.define([
 				}
 				oAggregation.expandTo ??= 1;
 				const sExpandLevels = !bAllLevels && oAggregation.$ExpandLevels;
-				sApply += "com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root"
+				sApply += sSapHierarchy + "TopLevels(HierarchyNodes=$root"
 					+ (oAggregation.$path || "")
 					+ ",HierarchyQualifier='" + oAggregation.hierarchyQualifier
 					+ "',NodeProperty='" + sNodeProperty + "'"

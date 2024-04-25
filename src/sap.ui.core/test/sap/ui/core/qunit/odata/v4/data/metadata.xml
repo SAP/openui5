@@ -143,6 +143,9 @@
 			<ComplexType Name="__CT__FAKE__Message">
 				<Property Name="__FAKE__Messages" Type="Collection(SAP__self.__FAKE__Message)" Nullable="false" />
 			</ComplexType>
+			<ComplexType Name="__FAKE__NextSiblingWorker">
+				<Property Name="ID" Type="Edm.String" Nullable="false" MaxLength="4"/>
+			</ComplexType>
 			<Action Name="AcChangeManagerOfDepartment" IsBound="true">
 				<Parameter Name="DEPARTMENT" Type="com.sap.gateway.default.iwbep.tea_busi.v0001.Department"
 					Nullable="false"/>
@@ -204,6 +207,10 @@
 				<Parameter Name="_it" Type="com.sap.gateway.default.iwbep.tea_busi.v0001.MANAGER" Nullable="false"/>
 				<Parameter Name="Message" Type="Edm.String"/>
 				<ReturnType Type="com.sap.gateway.default.iwbep.tea_busi.v0001.MANAGER"/>
+			</Action>
+			<Action Name="__FAKE__AcChangeNextSibling" IsBound="true">
+				<Parameter Name="_it" Type="com.sap.gateway.default.iwbep.tea_busi.v0001.Worker" Nullable="false"/>
+				<Parameter Name="NextSibling" Type="com.sap.gateway.default.iwbep.tea_busi.v0001.__FAKE__NextSiblingWorker" Nullable="true"/>
 			</Action>
 			<Function Name="FuGetEmployeeAges">
 				<ReturnType Type="Collection(Edm.Int16)" Nullable="false"/>
@@ -387,7 +394,7 @@
 				<Annotation Term="SAP__common.ValueListWithFixedValues"/>
 			</Annotations>
 			<Annotations Target="SAP__self.Worker">
-				<Annotation Qualifier="OrgChart" Term="Org.OData.Aggregation.V1.RecursiveHierarchy">
+				<Annotation Qualifier="OrgChart" Term="Aggregation.RecursiveHierarchy">
 					<Record>
 						<PropertyValue Property="NodeProperty" PropertyPath="ID"/>
 						<!-- TODO "Its type MUST be the entity type annotated with this term"
@@ -396,7 +403,7 @@
 						<PropertyValue Property="ParentNavigationProperty" NavigationPropertyPath="EMPLOYEE_2_MANAGER"/>
 					</Record>
 				</Annotation>
-				<Annotation Qualifier="OrgChart" Term="com.sap.vocabularies.Hierarchy.v1.RecursiveHierarchy">
+				<Annotation Qualifier="OrgChart" Term="Hierarchy.RecursiveHierarchy">
 					<Record>
 						<!--Edm.Int64-->
 						<PropertyValue Property="DistanceFromRootProperty" PropertyPath="DistanceFromRoot"/>
@@ -404,6 +411,11 @@
 						<PropertyValue Property="DrillStateProperty" PropertyPath="DrillState"/>
 						<!--Edm.Int64-->
 						<PropertyValue Property="LimitedDescendantCountProperty" PropertyPath="DescendantCount"/>
+					</Record>
+				</Annotation>
+				<Annotation Qualifier="OrgChart" Term="Hierarchy.RecursiveHierarchyActions">
+					<Record>
+						<PropertyValue Property="ChangeNextSiblingAction" String="com.sap.gateway.default.iwbep.tea_busi.v0001.__FAKE__AcChangeNextSibling"/>
 					</Record>
 				</Annotation>
 			</Annotations>

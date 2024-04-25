@@ -221,6 +221,16 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("getIndex/getModelIndex: return index after destroy", function (assert) {
+		const oContext = Context.create(undefined/*oModel*/, undefined/*oBinding*/, "/foo", 42);
+
+		// code under test
+		assert.strictEqual(oContext.getIndex(), 42);
+		// code under test
+		assert.strictEqual(oContext.getModelIndex(), 42);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("path must be absolute", function (assert) {
 		assert.throws(function () {
 			Context.create(null, null, "foo");
@@ -2162,18 +2172,34 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[0, 1, 2, 3].forEach((i) => { // 0: w/ parent, 1: null parent, 2: no parent, 3: no args
-	QUnit.test(`move: #${i}`, function (assert) {
+[undefined, {}, {parent : undefined}, {nextSibling : undefined},
+	{nextSibling : undefined, parent : undefined}].forEach(function (mParameters, i) {
+	QUnit.test("move: no move happens, " + i, async function (assert) {
+		const oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/EMPLOYEES('42')", 42);
+
+		// code under test
+		const oPromise = oContext.move(mParameters);
+
+		assert.ok(oPromise instanceof Promise);
+		assert.strictEqual(await oPromise, undefined);
+	});
+});
+
+	//*********************************************************************************************
+[null, Context.create({/*oModel*/}, {/*oBinding*/}, "/EMPLOYEES('23')", 23)].forEach((oParent) => {
+	[undefined, null, Context.create({/*oModel*/}, {/*oBinding*/}, "/EMPLOYEES('24')", 24)]
+		.forEach((oSibling) => {
+	QUnit.test(`move: parent=${oParent}, nextSibling=${oSibling}`, function (assert) {
 		const oBinding = {
 			move : mustBeMocked
 		};
 		const oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES('42')", 42);
-		const oParent = Context.create({/*oModel*/}, {/*oBinding*/}, "/EMPLOYEES('23')", 23);
 		this.mock(oContext).expects("isAncestorOf")
-			.withExactArgs(i ? null : sinon.match.same(oParent)).returns(false);
+			.withExactArgs(sinon.match.same(oParent)).returns(false);
 		let bResolved = false;
 		this.mock(oBinding).expects("move")
-			.withExactArgs(sinon.match.same(oContext), i ? null : sinon.match.same(oParent))
+			.withExactArgs(sinon.match.same(oContext), sinon.match.same(oParent),
+				sinon.match.same(oSibling))
 			.returns(new SyncPromise(function (resolve) {
 				setTimeout(function () {
 					bResolved = true;
@@ -2181,32 +2207,14 @@ sap.ui.define([
 				}, 0);
 			}));
 
-		let oPromise;
-		switch (i) {
-			case 0:
-				// code under test
-				oPromise = oContext.move({parent : oParent});
-				break;
-
-			case 1:
-				// code under test
-				oPromise = oContext.move({parent : null});
-				break;
-
-			case 2:
-				// code under test
-				oPromise = oContext.move({});
-				break;
-
-			default:
-				// code under test
-				oPromise = oContext.move();
-		}
+		// code under test
+		const oPromise = oContext.move({nextSibling : oSibling, parent : oParent});
 
 		assert.ok(oPromise instanceof Promise);
 		return oPromise.then(function () {
 			assert.ok(bResolved, "not too soon");
 		});
+	});
 	});
 });
 
@@ -2233,7 +2241,7 @@ sap.ui.define([
 		this.mock(oContext).expects("isAncestorOf").withExactArgs(sinon.match.same(oParent))
 			.returns(false);
 		this.mock(oBinding).expects("move")
-			.withExactArgs(sinon.match.same(oContext), sinon.match.same(oParent))
+			.withExactArgs(sinon.match.same(oContext), sinon.match.same(oParent), undefined)
 			.returns(SyncPromise.reject("~error~"));
 
 		// code under test
@@ -2255,7 +2263,7 @@ sap.ui.define([
 
 		assert.throws(function () {
 			// code under test
-			oContext.move();
+			oContext.move({parent : null});
 		}, new Error("Cannot move " + oContext));
 	});
 
@@ -2268,7 +2276,7 @@ sap.ui.define([
 
 		assert.throws(function () {
 			// code under test
-			oContext.move();
+			oContext.move({parent : null});
 		}, new Error("Cannot move " + oContext));
 	});
 
@@ -2281,7 +2289,7 @@ sap.ui.define([
 
 		assert.throws(function () {
 			// code under test
-			oContext.move();
+			oContext.move({parent : null});
 		}, new Error("Cannot move " + oContext));
 	});
 

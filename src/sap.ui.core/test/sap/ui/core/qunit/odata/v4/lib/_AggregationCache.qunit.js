@@ -4520,13 +4520,13 @@ sap.ui.define([
 
 		const {promise : oSyncPromise, refresh : bRefresh}
 			// code under test
-			= oCache.move("~oGroupLock~", "Foo('23')");
+			= oCache.move("~oGroupLock~", "Foo('23')", null);
 
 		assert.strictEqual(oSyncPromise.isPending(), true);
 		assert.strictEqual(bRefresh, true, "refresh needed");
 
 		return oSyncPromise.then(function (vResult) {
-				assert.deepEqual(vResult, ["~result~", true], "good enough for timing");
+				assert.deepEqual(vResult, ["~result~", undefined, true], "good enough for timing");
 			});
 	});
 
@@ -4556,13 +4556,13 @@ sap.ui.define([
 
 		const {promise : oSyncPromise, refresh : bRefresh}
 			// code under test
-			= oCache.move("~oGroupLock~", "Foo('23')");
+			= oCache.move("~oGroupLock~", "Foo('23')", null);
 
 		assert.strictEqual(oSyncPromise.isPending(), true);
 		assert.strictEqual(bRefresh, true, "refresh needed");
 
 		return oSyncPromise.then(function (vResult) {
-				assert.deepEqual(vResult, ["~result~", true], "good enough for timing");
+				assert.deepEqual(vResult, ["~result~", undefined, true], "good enough for timing");
 			});
 	});
 
@@ -4599,7 +4599,7 @@ sap.ui.define([
 		assert.strictEqual(bRefresh, true, "refresh needed");
 
 		return oSyncPromise.then(function (vResult) {
-				assert.deepEqual(vResult, ["~result~", true], "good enough for timing");
+				assert.deepEqual(vResult, ["~result~", undefined, true], "good enough for timing");
 			});
 	});
 
@@ -4638,7 +4638,7 @@ sap.ui.define([
 		assert.strictEqual(bRefresh, true, "refresh needed");
 
 		return oSyncPromise.then(function (vResult) {
-				assert.deepEqual(vResult, ["~result~", true], "good enough for timing");
+				assert.deepEqual(vResult, ["~result~", undefined, true], "good enough for timing");
 			});
 	});
 
@@ -4682,8 +4682,56 @@ sap.ui.define([
 		assert.strictEqual(bRefresh, true, "refresh needed");
 
 		return oSyncPromise.then(function (vResult) {
-				assert.deepEqual(vResult, ["~result~", true], "good enough for timing");
+				assert.deepEqual(vResult, ["~result~", undefined, true], "good enough for timing");
 			});
+	});
+});
+
+	//*********************************************************************************************
+[null, "Foo('43')"].forEach((sSiblingPath) => {
+	QUnit.test(`move: refresh needed (sibling=${sSiblingPath})`, async function (assert) {
+		const oCache = _AggregationCache.create(this.oRequestor, "n/a", "", {}, {
+				$Actions : {ChangeNextSiblingAction : "changeNextSibling"},
+				$Key : ["foo", "baz"],
+				$ParentNavigationProperty : "myParent",
+				expandTo : Number.MAX_SAFE_INTEGER,
+				hierarchyQualifier : "X"
+			});
+		oCache.aElements.$byPredicate["('23')"] = "~oChildNode~";
+		oCache.aElements.$byPredicate["('42')"] = {"@$ui5.node.isExpanded" : true}; // parent
+		oCache.aElements.$byPredicate["('43')"] = {foo : "A", bar : "B", baz : "C"}; // sibling
+		const oTreeStateMock = this.mock(oCache.oTreeState);
+		oTreeStateMock.expects("isOutOfPlace").withExactArgs("('23')").returns(false);
+		oTreeStateMock.expects("isOutOfPlace").withExactArgs("('42')").returns(false);
+		oTreeStateMock.expects("deleteOutOfPlace").never();
+		const oGroupLock = {getUnlockedCopy : mustBeMocked};
+		const oRequestorMock = this.mock(this.oRequestor);
+		oRequestorMock.expects("request")
+			.withExactArgs("PATCH", "Foo('23')", sinon.match.same(oGroupLock), {
+					"If-Match" : "~oChildNode~",
+					Prefer : "return=minimal"
+				}, {"myParent@odata.bind" : "Foo('42')"},
+				/*fnSubmit*/null, /*fnCancel*/sinon.match.func)
+			.resolves("~patchParentResult~");
+		this.mock(oGroupLock).expects("getUnlockedCopy").withExactArgs().returns("~groupLockCopy~");
+		oRequestorMock.expects("request")
+			.withExactArgs("POST", "non/canonical/changeNextSibling", "~groupLockCopy~",
+				{Prefer : "return=minimal"},
+				{NextSibling : sSiblingPath ? {foo : "A", baz : "C"} : null})
+			.resolves("~changeSiblingResult~");
+		this.mock(oCache).expects("requestRank")
+			.withExactArgs("~oChildNode~", sinon.match.same(oGroupLock))
+			.resolves("~rankResult~");
+
+		const {promise : oSyncPromise, refresh : bRefresh}
+			// code under test
+			= oCache.move(oGroupLock, "Foo('23')", "Foo('42')", sSiblingPath, "non/canonical");
+
+		assert.strictEqual(oSyncPromise.isPending(), true);
+		assert.strictEqual(bRefresh, true, "refresh needed");
+
+		assert.deepEqual(await oSyncPromise,
+			["~patchParentResult~", "~changeSiblingResult~", "~rankResult~"]);
 	});
 });
 
@@ -4777,7 +4825,7 @@ make root = ${bMakeRoot}`;
 
 		// code under test
 		const {promise : oSyncPromise, refresh : bRefresh}
-			= oCache.move("~oGroupLock~", "Foo('23')", bMakeRoot ? undefined : "Foo('42')");
+			= oCache.move("~oGroupLock~", "Foo('23')", bMakeRoot ? null : "Foo('42')");
 
 		assert.strictEqual(oSyncPromise.isPending(), true);
 		assert.strictEqual(bRefresh, false);
