@@ -358,22 +358,27 @@ sap.ui.define([
 	 */
 
 	/**
-	 * @class Core Class of the SAP UI Library.
+	 * @class Singleton Core instance of the SAP UI Library.
 	 *
-	 * This class boots the Core framework and makes it available for the application
-	 * by requiring <code>sap.ui.core.Core</code>.
-	 *
-	 * The Core provides a {@link #ready ready function} to execute code after the core was booted.
+	 * The module export of <code>sap/ui/core/Core</code> is <b>not</b> a class, but the singleton Core instance itself.
+	 * The <code>sap.ui.core.Core</code> class itself must not be instantiated, except by the framework itself.
+	*
+	 * The Core provides a {@link #ready ready function} to execute code after the Core was booted.
 	 *
 	 * Example:
 	 * <pre>
 	 *
-	 *   oCore.ready(function() {
-	 *       ...
-	 *   });
+	 *   sap.ui.require(["sap/ui/core/Core"], async function(Core) {
 	 *
-	 *   await oCore.ready();
-	 *   ...
+	 *     // Usage of a callback function
+	 *     Core.ready(function() {
+	 *       ...
+	 *     });
+	 *
+	 *     // Usage of Core.ready() as a Promise
+	 *     await Core.ready();
+	 *     ...
+	 *   });
 	 *
 	 * </pre>
 	 *
@@ -3242,7 +3247,9 @@ sap.ui.define([
 		Rendering.addPrerenderingTask(fnPrerenderingTask, bFirst);
 	};
 
-	/** Returns a Promise that resolves if the Core is initialized.
+	/**
+	 * Returns a Promise that resolves if the Core is initialized.
+	 * Additionally, a callback function can be passed, for use cases where using Promises is not an option.
 	 *
 	 * @param {function():void} [fnReady] If the Core is ready the function will be called immediately, otherwise when the ready Promise resolves.
 	 * @returns {Promise<undefined>} The ready promise
