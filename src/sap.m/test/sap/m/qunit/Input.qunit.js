@@ -13,6 +13,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/Sorter",
 	"sap/ui/core/library",
+	"sap/ui/core/Icon",
 	"sap/ui/core/ListItem",
 	"sap/ui/base/ObjectPool",
 	"sap/m/Column",
@@ -52,6 +53,7 @@ sap.ui.define([
 	JSONModel,
 	Sorter,
 	coreLibrary,
+	Icon,
 	ListItem,
 	ObjectPool,
 	Column,
@@ -6913,7 +6915,7 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("it should select tablular suggestion item on backspace when having exact match", async function (assert) {
+	QUnit.test("it should select tabular suggestion item on backspace when having exact match", async function (assert) {
 		// Arrange
 		const oInput = new Input({
 			value: "1000",
@@ -6947,6 +6949,68 @@ sap.ui.define([
 
 		assert.ok(oInput._getSuggestionsPopover().getItemsContainer().getItems()[1].getSelected(), "The second item should be selected");
 
+		oInput.destroy();
+	});
+
+	QUnit.test("tabular suggestion items with icon content in cells should not throw an error on typeahead", async function (assert) {
+		// Arrange
+		const oInput = new Input({
+			showSuggestion: true,
+			suggestionColumns: [
+				new Column({})
+			],
+			suggestionRows: [
+				new ColumnListItem({
+					cells: [
+						new Icon({ src: "sap-icon://add" })
+					],
+					type: "Active"
+				})
+			]
+		}).placeAt("content");
+
+		await nextUIUpdate(this.clock);
+
+		// Act
+		oInput.focus();
+		oInput._$input.trigger("focus").val("100").trigger("input");
+		this.clock.tick(500);
+
+		// Assert
+		assert.ok(true, "No error is thrown");
+
+		// Clean
+		oInput.destroy();
+	});
+
+	QUnit.test("tabular suggestion items with icon content in cells should not throw an error with binding", function (assert) {
+		// Arrange
+		var oInput = new Input({
+			showSuggestion: true,
+			suggestionColumns: [new Column({ header: new Label({ text: "header" }) })]
+		});
+
+		var oTableItemTemplate = new ColumnListItem({
+			cells: [new Icon({ src: "{uri}" })]
+		});
+
+		var oSuggestionData = {
+			tabularSuggestionItems: [{ uri: "sap-icon://add" }, { uri: "sap-icon://remove" }]
+		};
+
+		var oModel = new JSONModel(oSuggestionData);
+
+		// Act
+		oInput.setModel(oModel);
+		oInput.bindSuggestionRows({
+			path: "/tabularSuggestionItems",
+			template: oTableItemTemplate
+		});
+
+		// Assert
+		assert.ok(true, "No error is thrown");
+
+		// Clean
 		oInput.destroy();
 	});
 

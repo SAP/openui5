@@ -1672,10 +1672,7 @@ function(
 		this._bSuspendInvalidate = true;
 		this.updateAggregation("suggestionItems");
 
-		const fnCheckMatchingSuggestions = (sCurrentValue) => {
-			return this.getSuggestionItems().some((item) => (item.getText().toLowerCase() === sCurrentValue.toLowerCase()) && !item.isA("sap.ui.core.SeparatorItem"));
-		};
-		if (fnCheckMatchingSuggestions(this.getValue()) && this._isSuggestionsPopoverOpen()) {
+		if (this.checkMatchingSuggestionItems(this.getValue()) && this._isSuggestionsPopoverOpen()) {
 			this._handleTypeAhead(this);
 		}
 
@@ -2057,11 +2054,7 @@ function(
 		this.updateAggregation("suggestionRows");
 		this._synchronizeSuggestions();
 
-		const fnCheckMatchingTabularSuggestions = (sCurrentValue) => {
-			return this.getSuggestionRows().some((row) => (row.getCells?.()[0]?.getText().toLowerCase() === sCurrentValue.toLowerCase()) && !row.isA("sap.m.GroupHeaderListItem"));
-		};
-
-		if (fnCheckMatchingTabularSuggestions(this.getValue()) && this._isSuggestionsPopoverOpen()) {
+		if (this.checkMatchingTabularSuggestionItems(this.getValue()) && this._isSuggestionsPopoverOpen()) {
 			this._handleTypeAhead(this);
 		}
 
@@ -2285,13 +2278,7 @@ function(
 
 		oInput._setProposedItemText(null);
 
-		const fnCheckMatchingSuggestions = (sCurrentValue) => {
-			return this.getSuggestionItems().some((item) => (item.getText().toLowerCase() === sCurrentValue.toLowerCase()) && !item.isA("sap.ui.core.SeparatorItem"));
-		};
-		const fnCheckMatchingTabularSuggestions = (sCurrentValue) => {
-			return this.getSuggestionRows().some((row) => row.getCells?.()[0]?.getText().toLowerCase() === sCurrentValue.toLowerCase());
-		};
-		const bExactMatch = this._hasTabularSuggestions() ? fnCheckMatchingTabularSuggestions(sValue) : fnCheckMatchingSuggestions(sValue);
+		const bExactMatch = this._hasTabularSuggestions() ? this.checkMatchingTabularSuggestionItems(sValue) : this.checkMatchingSuggestionItems(sValue);
 
 		if (!bDoTypeAhead && !bExactMatch) {
 			return;
@@ -3619,6 +3606,25 @@ function(
 
 	Input.prototype.getFormObservingProperties = function() {
 		return ["value", "description"];
+	};
+
+
+	/**
+	 * Check if the current value is matching with a suggestion item.
+	 *
+	 * @private
+	 */
+	Input.prototype.checkMatchingSuggestionItems =  function(sCurrentValue) {
+		return this.getSuggestionItems().some((item) => (item.getText?.().toLowerCase() === sCurrentValue.toLowerCase()) && !item.isA("sap.ui.core.SeparatorItem"));
+	};
+
+	/**
+	 * Check if the current value is matching with a tabular suggestion item.
+	 *
+	 * @private
+	 */
+	Input.prototype.checkMatchingTabularSuggestionItems =  function(sCurrentValue) {
+		return this.getSuggestionRows().some((row) => row.getCells?.()[0]?.getText?.().toLowerCase() === sCurrentValue.toLowerCase() && !row.isA("sap.m.GroupHeaderListItem"));
 	};
 
 	return Input;
