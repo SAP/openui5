@@ -166,7 +166,7 @@
             <copyright>2014 jQuery Foundation and other contributors</copyright>
             <pattern partial="true" otherContent="SAP" explanation="Selectors.js is overall written by SAP, but contains code taken from jQuery UI (see the respective comments)">sap/ui/dom/jquery/Selectors.js</pattern>
         </lib>
-        <lib name="jquery_UI-1-10-4" displayName="jQuery UI 1.10" npmName="jquery-ui" version="1.10.4" hash="3d3f58e254f8c6848fb56dbfebfbcd13" homepage="https://jqueryui.com" id="73554900106100000044">
+        <lib name="jquery_UI-1-10-4" displayName="jQuery UI 1.10" npmName="jquery-ui" version="1.10.4" hash="498bcb26a8bc6c4681158baf9623c368" homepage="https://jqueryui.com" id="73554900106100000044">
             <license url="http://jQuery.org/license" type="MIT" />
             <copyright>2014 jQuery Foundation and other contributors</copyright>
             <pattern>sap/ui/thirdparty/jqueryui/*</pattern>

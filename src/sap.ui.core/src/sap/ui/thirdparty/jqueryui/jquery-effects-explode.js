@@ -1,3 +1,7 @@
+/**
+ * @fileoverview
+ * @deprecated As of version 1.20, replaced by sap/ui/thirdparty/jqueryui/jquery-ui-effect-explode.js
+ */
 (function(jQuery, sap) {
 
 	var MESSAGE = "The file sap/ui/thirdparty/jqueryui/jquery-effects-explode.js has been renamed to sap/ui/thirdparty/jqueryui/jquery-ui-effect-explode.js! Please update the dependencies accordingly.";
