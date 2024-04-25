@@ -1,0 +1,229 @@
+<mvc:View
+	height="100%"
+	displayBlock="true"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:f="sap.f"
+	xmlns:core="sap.ui.core"
+	xmlns:mdc="sap.ui.mdc"
+	xmlns:mdct="sap.ui.mdc.table"
+	xmlns:vm="sap.ui.fl.variants"
+	xmlns:Table1="sap.ui.mdc.table.Table"
+	controllerName="responsive.table.sample.controller.Page"
+	xmlns:upload="sap.m.upload"
+	xmlns:mdcat="sap.ui.mdc.actiontoolbar">
+
+	<f:DynamicPage id="page">
+		<f:content>
+			<Table
+				id="table-uploadSet"
+				sticky="ColumnHeaders,HeaderToolbar"
+				width="auto"
+				mode="MultiSelect"
+				fixedLayout="false"
+				inset="true"
+				autoPopinMode="true"
+				hiddenInPopin="None"
+				items="{path: 'documents>/items', templateShareable: false}"
+				selectionChange="onSelectionChange">
+
+				<headerToolbar>
+					<OverflowToolbar>
+						<Title
+								text="Documents ({= ${documents>/items}.length})"
+								level="H2"
+						/>
+						<ToolbarSpacer />
+						
+						<SearchField
+                        width="20%"
+                        liveChange="onSearch"
+                    >
+                        <layoutData>
+                            <OverflowToolbarLayoutData
+                                priority="NeverOverflow"
+                            />
+                        </layoutData>
+                    </SearchField>
+                    <ToolbarSeparator />
+
+                    <!-- Use the UploadButtonPlaceholder to add the UploadButton to the toolbar -->
+                    <upload:ActionsPlaceholder id="uploadButton" placeholderFor="UploadButtonPlaceholder" />
+					
+                    <Button
+                        id="downloadSelectedButton"
+                        text="Download"
+                        enabled="false"
+                        press="onDownloadFiles"
+                    />
+                    <MenuButton text="Add">
+                        <menu>
+                            <Menu>
+                                <MenuItem
+                                    text="URL"
+                                    press="openAddOrEditDialog"
+                                />
+                            </Menu>
+                        </menu>
+                        <layoutData>
+                            <OverflowToolbarLayoutData
+                                priority="AlwaysOverflow"
+                            />
+                        </layoutData>
+                    </MenuButton>
+                    <Button
+                        id="removeDocumentButton"
+                        text="Remove"
+                        press="onRemoveButtonPress"
+                        enabled="false"
+                    >
+                        <layoutData>
+                            <OverflowToolbarLayoutData
+                                priority="AlwaysOverflow"
+                            />
+                        </layoutData>
+                    </Button>
+                    <Button
+                        id="renameButton"
+                        enabled="false"
+                        press="onRenameDocument"
+                        text="Rename"
+                    >
+                        <layoutData>
+                            <OverflowToolbarLayoutData
+                                priority="AlwaysOverflow"
+                            />
+                        </layoutData>
+                    </Button>
+                    <Button
+                        id="editUrlButton"
+                        text="Edit URL"
+                        enabled="false"
+                        press="onEditUrl"
+                    >
+                        <layoutData>
+                            <OverflowToolbarLayoutData
+                                priority="AlwaysOverflow"
+                            />
+                        </layoutData>
+                    </Button>
+					</OverflowToolbar>
+				</headerToolbar>
+
+				<dependents>
+						<plugins.UploadSetwithTable
+						uploadUrl="/uploadFiles"
+						multiple="true"
+						beforeInitiatingItemUpload="onBeforeInitiatingItemUpload"
+						beforeUploadStarts="onBeforeUploadStarts"
+						itemRenamed="onDocumentRenamedSuccess"
+						uploadCompleted="onUploadCompleted"
+						onActivated="onPluginActivated"
+						cloudFilePickerEnabled="true"
+						actions="uploadButton"
+						>
+							<rowConfiguration>
+								<upload.UploadItemConfiguration
+								fileNamePath="fileName"
+								mediaTypePath="mediaType"
+								urlPath="url"
+								previewablePath="previewable"
+								fileSizePath="fileSize"
+								/>
+							</rowConfiguration>
+						</plugins.UploadSetwithTable>
+				</dependents>
+
+				 <columns>
+					<Column id="fileName" importance="High">
+						<header>
+							<Label text="File Name" />
+						</header>
+					</Column>
+					<Column id="id">
+						<header>
+							<Label text="ID" />
+						</header>
+					</Column>
+					<Column id="revision">
+						<header>
+							<Label text="Revision" />
+						</header>
+					</Column>
+					<Column id="status">
+						<header>
+							<Label text="Status" />
+						</header>
+					</Column>
+					<Column id="fileSize">
+						<header>
+							<Label text="File Size" />
+						</header>
+					</Column>
+					<Column id="lastModified">
+						<header>
+							<Label text="Last Modified" />
+						</header>
+					</Column>
+					<Column id="actionButton" importance="High" />
+            </columns>
+
+
+			<items>
+                <ColumnListItem
+					press="onItemPress"
+					highlight="{= ${documents>uploadState} === 'Complete' ? 'Indication05' : null }"
+                >
+
+                <!-- Cells with cell template defining content for each column (cells and columns work with 1:1 mapping) -->
+                    <cells>
+                        <HBox>
+                            <Image
+                                src="{documents>imageUrl}"
+                                class="sapMUSTItemImage sapMUSTItemIcon"
+                                visible="{= ${documents>imageUrl} !== undefined}"
+                            />
+                            <core:Icon
+                                src="{parts: ['documents>mediaType', 'documents>fileName'], formatter: '.getIconSrc' }"
+                                color="white"
+                                visible="{= ${documents>imageUrl} === undefined || ${documents>imageUrl} === '' }"
+                                class="sapMUSTItemImage sapMUSTItemIcon"
+                            />
+                            <VBox
+                                class="sapUiTinyMargin sapUiSmallMarginBegin"
+                            >
+                                <Link
+                                    text="{documents>fileName}"
+                                    press="openPreview"
+                                    class="sapUiTinyMarginBottom"
+                                />
+                                <Text text="{documents>documentType}" />
+                            </VBox>
+                        </HBox>
+                        <Text text="{documents>id}" />
+                        <Link text="{documents>revision}" />
+                        <Text text="{documents>status}" />
+                       <Text
+                            text="{parts: ['documents>fileSize'], formatter: '.getFileSizeWithUnits'}"
+                        />
+                         <VBox>
+                            <Text text="{documents>lastModifiedBy}" />
+                            <Text
+                                class="sapUiTinyMarginTop"
+                                text="{documents>lastmodified}"
+                            />
+                        </VBox>
+                       <Button
+                            class="sapUiTinyMarginBegin"
+                            type="Transparent"
+                            icon="sap-icon://decline"
+                            press="onRemoveHandler"
+                        />
+                    </cells>
+                </ColumnListItem>
+            </items>
+			</Table>
+		</f:content>
+	</f:DynamicPage>
+
+</mvc:View>
