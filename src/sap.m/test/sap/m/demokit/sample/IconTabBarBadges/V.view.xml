@@ -50,12 +50,14 @@
 			class="sapUiResponsiveContentPadding">
 			<items>
 				<IconTabFilter
+					icon="sap-icon://process"
 					key="info"
 					text="Info"
 					count="3">
 					<Text text="Info content goes here ..." />
 				</IconTabFilter>
 				<IconTabFilter
+					icon="sap-icon://attachment"
 					key="attachments"
 					text="Attachments"
 					count="4321">
@@ -65,12 +67,14 @@
 					<Text text="Attachments go here ..." />
 				</IconTabFilter>
 				<IconTabFilter
+					icon="sap-icon://notes"
 					key="notes"
 					text="Notes"
 					count="333">
 					<Text text="Notes go here ..." />
 				</IconTabFilter>
 				<IconTabFilter
+					icon="sap-icon://hint"
 					key="people"
 					text="People"
 					count="34">

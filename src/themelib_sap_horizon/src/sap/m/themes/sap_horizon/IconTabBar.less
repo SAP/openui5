@@ -135,7 +135,7 @@
 // Variables
 // ==========================================================================
 
-@_sap_m_IconTabBar_TextHoverColor: @sapUiContentFocusColor;
+@_sap_m_IconTabBar_TextHoverColor: @sapUiContentSelectedForegroundColor;
 @_sap_m_IconTabBar_SelectedTextColor: @sapUiContentSelectedForegroundColor;
 @_sap_m_IconTabBar_SelectedTextHoverColor: darken(@sapUiSelected, 10);
 @_sap_m_IconTabBar_ArrowScroll_AfterHeight: 1px;
@@ -472,20 +472,6 @@
 
 	.sapMITBFilterExpandIcon {
 		color: @sapUiBaseText;
-	}
-}
-
-.sapMITBFilterDefault {
-	.sapMITBFilterWrapper:hover {
-		.sapMITBText {
-			color: @sapUiContentSelectedForegroundColor;
-		}
-	}
-
-	.sapMITBFilterExpandBtn:hover {
-		.sapMITBFilterExpandIcon {
-			color: @sapUiBaseText;
-		}
 	}
 }
 

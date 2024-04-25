@@ -597,7 +597,7 @@ sap.ui.define([
 			oRM.openStart("div", sId + "-text")
 				.class("sapMITBText");
 
-			if (!oIcon && !bShowAll) {
+			if (!bShowAll) {
 				oRM.class("sapMITBBadgeHolder");
 			}
 

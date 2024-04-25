@@ -408,6 +408,24 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("Badge is shown on tab with text and icon", function (assert) {
+		// Arrange
+		this.oITH.setMode("Inline");
+		var oTab = 	new IconTabFilter({
+			text: "Tab2",
+			key: "tab2",
+			icon: "sap-icon://attachment",
+			customData: [
+				new BadgeCustomData()
+			]
+		});
+		this.oITH.addItem(oTab);
+		Core.applyChanges();
+
+		// Assert
+		assert.ok(oTab.$().find(".sapMBadgeIndicator").length, "Badge indicator is rendered");
+	});
+
 	QUnit.test("Badge is shown", function (assert) {
 		// Arrange
 		var oTab = 	new IconTabFilter({
