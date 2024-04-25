@@ -92,7 +92,7 @@
 		},
 		{
 			"control": "sap.m.DateRangeSelection",
-			"url": "../DateRangeSelection.html",
+			"url": "./DateRangeSelection.html",
 			"appComponent": "CA-UI5-CTR-BAL"
 		},
 		{
