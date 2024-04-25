@@ -56,12 +56,7 @@ sap.ui.define([
 						sTopicId: sTopicId,
 						oModel: oModel
 					};
-					// Only scroll after the dom is ready
-					setTimeout(function () {
-						if (oLastItem.getDomRef() && !isInViewport(oLastItem.getDomRef())) {
-							this._scrollTreeItemIntoView(oLastItem);
-						}
-					}.bind(this), 0);
+					this._scrollTreeItemIntoView(oLastItem);
 				}
 			},
 
@@ -83,9 +78,30 @@ sap.ui.define([
 				return null;
 			},
 
-			_scrollTreeItemIntoView: function (oItem) {
-				var oPage = this.byId("page");
-				oPage.scrollToElement(oItem.getDomRef(), TREE_SCROLL_DURATION);
+			_scrollTreeItemIntoView: function(oItem) {
+				var oTreeContainer = this.byId("treeContainer"),
+					oItemDom = oItem.getDomRef();
+
+				function fnScrollIntoView() {
+					var oTreeContainerScroller = oTreeContainer.getScrollDelegate();
+					if (oItemDom && isInOverflow(oItemDom, oTreeContainerScroller?.getContainerDomRef())) {
+						oTreeContainerScroller.scrollToElement(oItemDom, TREE_SCROLL_DURATION);
+					}
+				}
+
+				if (!oItemDom) {
+					// Only scroll after the dom is ready
+					oItem.addEventDelegate({
+						onAfterRendering: function() {
+							oItem.removeEventDelegate(this);
+							oItemDom = oItem.getDomRef();
+							fnScrollIntoView();
+						}
+					});
+					return;
+				}
+
+				fnScrollIntoView();
 			},
 
 			/**
@@ -170,15 +186,15 @@ sap.ui.define([
 			}
 		});
 
-		function isInViewport (oDomElement) {
-
-			var oRect = oDomElement.getBoundingClientRect();
+		function isInOverflow (oElement, oContainer) {
+			const oElemRect = oElement.getBoundingClientRect();
+			const oContRect = oContainer.getBoundingClientRect();
 
 			return (
-				oRect.top >= 0 &&
-				oRect.left >= 0 &&
-				oRect.bottom <= jQuery(document).height() &&
-				oRect.right <= jQuery(document).width()
+			  oElemRect.bottom > oContRect.bottom ||
+			  oElemRect.top < oContRect.top ||
+			  oElemRect.right > oContRect.right ||
+			  oElemRect.left < oContRect.left
 			);
 		}
 

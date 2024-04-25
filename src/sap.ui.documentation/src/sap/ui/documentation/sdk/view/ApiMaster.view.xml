@@ -33,7 +33,7 @@
 		</subHeader>
 
 		<content>
-			<l:FixFlex fixFirst="false">
+			<l:FixFlex id="treeContainer" fixFirst="false" minFlexSize="100">
 				<l:flexContent>
 					<Tree
 						id="tree"
