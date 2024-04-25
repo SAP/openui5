@@ -307,7 +307,7 @@ sap.ui.define([
 	function getTableContent(oTable) {
 		return oTable.getRows().map(function(oRow) {
 			return oRow.getCells().map(function (oCell) {
-				return oCell.getText();
+				return oCell.getText ? oCell.getText() : oCell.getValue();
 			});
 		});
 	}
@@ -22872,7 +22872,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	// saved for the correct entity in the model.
 	// JIRA: CPOUI5MODELS-1618
 	QUnit.test("ODataPropertyBinding with asynchronous type validation", function (assert) {
-		const oModel = createSalesOrdersModel({defaultBindingMode : BindingMode.TwoWay});
+		const oModel = createSalesOrdersModel({defaultBindingMode: BindingMode.TwoWay});
 		const sView = `
 <t:Table id="table" rows="{path: '/SalesOrderSet'}" visibleRowCount="2">
 	<Input id="Note" value="{path: 'Note', type: 'sap.ui.model.type.String'}"/>
@@ -22901,7 +22901,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				}]
 			})
 			.expectValue("Note", ["Note1", "Note2"]);
-		let fnResolveHandler1, fnResolveHandler2, oTable, pSetValuePromise1, pSetValuePromise2, oTypeMock;
+		let fnResolveValidateValue1, fnResolveValidateValue2, oTable, pSetExternalValue1, pSetExternalValue2, oTypeMock;
 
 		return this.createView(assert, sView, oModel).then(() => {
 			this.expectValue("Note", "Note2", 1);
@@ -22911,9 +22911,9 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			const oBinding = oTable.getRows()[0].getCells()[0].getBinding("value");
 			oTypeMock = this.mock(oBinding.getType());
 			oTypeMock.expects("validateValue").withExactArgs("NewNote1").returns(new Promise((fnResolve) => {
-				fnResolveHandler1 = fnResolve;
+				fnResolveValidateValue1 = fnResolve;
 			}));
-			pSetValuePromise1 = oBinding.setExternalValue("NewNote1");
+			pSetExternalValue1 = oBinding.setExternalValue("NewNote1");
 			oTable.setFirstVisibleRow(1);
 
 			return this.waitForChanges(assert, "Change first entry and scroll");
@@ -22923,17 +22923,17 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 			const oBinding = oTable.getRows()[0].getCells()[0].getBinding("value");
 			oTypeMock.expects("validateValue").withExactArgs("NewNote2").returns(new Promise((fnResolve) => {
-				fnResolveHandler2 = fnResolve;
+				fnResolveValidateValue2 = fnResolve;
 			}));
-			pSetValuePromise2 = oBinding.setExternalValue("NewNote2");
+			pSetExternalValue2 = oBinding.setExternalValue("NewNote2");
 			oTable.setFirstVisibleRow(2);
 
 			return this.waitForChanges(assert, "Change second entry and scroll again");
 		}).then(() => {
-			fnResolveHandler1();
-			fnResolveHandler2();
+			fnResolveValidateValue1();
+			fnResolveValidateValue2();
 
-			return Promise.all([pSetValuePromise1, pSetValuePromise2,
+			return Promise.all([pSetExternalValue1, pSetExternalValue2,
 				this.waitForChanges(assert, "Validation of the changes finished")]);
 		}).then(() => {
 			this.expectValue("Note", "NewNote1", 0);
@@ -22942,6 +22942,93 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			oTable.setFirstVisibleRow(0);
 
 			return this.waitForChanges(assert, "Scroll back up and see correct values");
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: If a context of a composite binding is changed during an asynchronous validation, the validated value
+	// is saved for the correct entity in the model.
+	// JIRA: CPOUI5MODELS-1618
+	QUnit.test("CompositeBinding with asynchronous type validation", function (assert) {
+		const oModel = createSalesOrdersModel({defaultBindingMode: BindingMode.TwoWay});
+		const sView = `
+<t:Table id="table" rows="{path: '/SalesOrderSet'}" visibleRowCount="2">
+<Input id="GrossAmount" value="{
+	parts: [{path: 'GrossAmount'}, {path: 'CurrencyCode'}],
+	type: 'sap.ui.model.type.Currency'}"/>
+</t:Table>`;
+
+		this.expectHeadRequest()
+			.expectRequest("SalesOrderSet?$skip=0&$top=102", {
+				results: [{
+					__metadata: {uri: "/SalesOrderSet('1')"},
+					SalesOrderID: "1",
+					GrossAmount: "10",
+					CurrencyCode: "EUR"
+				},
+				{
+					__metadata: {uri: "/SalesOrderSet('2')"},
+					SalesOrderID: "2",
+					GrossAmount: "5",
+					CurrencyCode: "JPY"
+				},
+				{
+					__metadata: {uri: "/SalesOrderSet('3')"},
+					SalesOrderID: "3",
+					GrossAmount: "15",
+					CurrencyCode: "USD"
+				},
+				{
+					__metadata: {uri: "/SalesOrderSet('4')"},
+					SalesOrderID: "4",
+					GrossAmount: "20",
+					CurrencyCode: "USDN"
+				}]
+			});
+
+		let fnResolveValidateValue1;
+		let fnResolveValidateValue2;
+		let oTable;
+		let pSetExternalValue1;
+		let pSetExternalValue2;
+		let oTypeMock;
+
+		return this.createView(assert, sView, oModel).then(() => {
+			oTable = this.oView.byId("table");
+			assert.deepEqual(getTableContent(oTable), [["10.00\u00a0EUR"], ["5\u00a0JPY"]]);
+
+			const oBinding = oTable.getRows()[0].getCells()[0].getBinding("value");
+			oTypeMock = this.mock(oBinding.getType());
+			oTypeMock.expects("validateValue").withExactArgs([16, "EUR"]).returns(new Promise((fnResolve) => {
+				fnResolveValidateValue1 = fnResolve;
+			}));
+			pSetExternalValue1 = oBinding.setExternalValue("16 EUR");
+			oTable.setFirstVisibleRow(1);
+
+			return this.waitForChanges(assert, "Change first entry and scroll");
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["5\u00a0JPY"], ["15.00\u00a0USD"]]);
+
+			const oBinding = oTable.getRows()[0].getCells()[0].getBinding("value");
+			oTypeMock.expects("validateValue").withExactArgs([29, "JPY"]).returns(new Promise((fnResolve) => {
+				fnResolveValidateValue2 = fnResolve;
+			}));
+			pSetExternalValue2 = oBinding.setExternalValue("29 JPY");
+			oTable.setFirstVisibleRow(2);
+
+			return this.waitForChanges(assert, "Change second entry and scroll again");
+		}).then(() => {
+			fnResolveValidateValue1();
+			fnResolveValidateValue2();
+
+			return Promise.all([pSetExternalValue1, pSetExternalValue2,
+				this.waitForChanges(assert, "Validation of the changes finished")]);
+		}).then(() => {
+			oTable.setFirstVisibleRow(0);
+
+			return this.waitForChanges(assert, "Scroll back up and see correct values");
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["16.00\u00a0EUR"], ["29\u00a0JPY"]]);
 		});
 	});
 });
