@@ -3264,10 +3264,12 @@ sap.ui.define([
 	};
 
 	/**
-	 * Moves the given (child) node to the given parent. An expanded (child) node is silently
-	 * collapsed before and expanded after the move. A collapsed parent is automatically expanded;
-	 * so is a leaf. The (child) node is added to the parent at its proper position ("in place") and
-	 * simply "persisted". Omitting a new parent turns the child into a root.
+	 * Moves the given (child) node to the given parent, just before the given next sibling. An
+	 * expanded (child) node is silently collapsed before and expanded after the move. A collapsed
+	 * parent is automatically expanded; so is a leaf. The (child) node is added to the parent at
+	 * its proper position ("in place") and simply "persisted". Specifying a next sibling always
+	 * leads to a subsequent side-effects refresh within the same $batch, but still the moved
+	 * (child) node's index is updated to the new position.
 	 *
 	 * @param {sap.ui.model.odata.v4.Context} oChildContext - The (child) node to be moved
 	 * @param {sap.ui.model.odata.v4.Context|null} oParentContext - The new parent's context

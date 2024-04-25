@@ -1249,7 +1249,10 @@ sap.ui.define([
 	/**
 	 * Moves the (child) node with the given path to the parent node with the given path by sending
 	 * a PATCH request for "<parent navigation>@odata.bind". The (child) node may be a leaf or a
-	 * collapsed node, but not expanded! Omitting a new parent turns the child into a root.
+	 * collapsed node, but not expanded! A <code>null</code> parent turns the child into a root.
+	 * The optional sibling path invokes an action for moving the (child) node before the given
+	 * sibling (or with <code>null</code> to the last sibling position) by sending a POST request
+	 * for the "ChangeNextSiblingAction".
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
 	 *   A lock for the group to associate the requests with
@@ -1260,7 +1263,8 @@ sap.ui.define([
 	 * @param {string|null} [sSiblingPath]
 	 *   The next sibling's path relative to the cache
 	 * @param {string} [sNonCanonicalChildPath]
-	 *   The (child) node's non-canonical path (relative to the service)
+	 *   The (child) node's non-canonical path (relative to the service); only used when
+	 *   <code>sSiblingPath</code> is given
 	 * @returns {{promise : sap.ui.base.SyncPromise<number[]>, refresh : boolean}}
 	 *   An object with two properties:
 	 *   - <code>promise</code>: A promise which is resolved with the number of child nodes added
