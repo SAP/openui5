@@ -9656,7 +9656,11 @@ sap.ui.define([
 	//*********************************************************************************************
 [0, 3].forEach((iCount) => {
 	[false, true].forEach((bSilent) => {
-	QUnit.test(`collapse: iCount = ${iCount}, bSilent = ${bSilent}`, function (assert) {
+		[false, true].forEach((bCountGiven) => {
+			const sTitle = `collapse: iCount = ${iCount}, bSilent = ${bSilent}`
+				+ `, bCountGiven = ${bCountGiven}`;
+
+	QUnit.test(sTitle, function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES"),
 			oCollapseExpectation,
 			oContext = {
@@ -9690,23 +9694,25 @@ sap.ui.define([
 		oBinding.iMaxLength = 8;
 		aContextsBefore = oBinding.aContexts.slice();
 		assert.deepEqual(oBinding.mPreviousContextsByPath, {});
-		this.mock(oContext).expects("getModelIndex").withExactArgs().returns(1);
-		this.mock(oContext).expects("getPath").withExactArgs().returns("~contextpath~");
-		this.mock(oBinding.oHeaderContext).expects("getPath").withExactArgs()
-			.returns("~bindingpath~");
-		this.mock(_Helper).expects("getRelativePath")
+		this.mock(oContext).expects("getModelIndex").exactly(iCount ? 1 : 0).withExactArgs()
+			.returns(1);
+		this.mock(oContext).expects("getPath").exactly(bCountGiven ? 0 : 1).withExactArgs()
+			.returns("~contextpath~");
+		this.mock(oBinding.oHeaderContext).expects("getPath").exactly(bCountGiven ? 0 : 1)
+			.withExactArgs().returns("~bindingpath~");
+		this.mock(_Helper).expects("getRelativePath").exactly(bCountGiven ? 0 : 1)
 			.withExactArgs("~contextpath~", "~bindingpath~").returns("~cachepath~");
 		oCollapseExpectation = this.mock(oBinding.oCache).expects("collapse")
-			.withExactArgs("~cachepath~").returns(iCount);
+			.exactly(bCountGiven ? 0 : 1).withExactArgs("~cachepath~").returns(iCount);
 		oFireChangeExpectation = this.mock(oBinding).expects("_fireChange")
 			.exactly(iCount && !bSilent ? 1 : 0)
 			.withExactArgs({reason : ChangeReason.Change});
 
 		// code under test
-		oBinding.collapse(oContext, bSilent);
+		oBinding.collapse(oContext, bSilent, bCountGiven ? iCount : undefined);
 
 		if (iCount) {
-			if (!bSilent) {
+			if (!bSilent && !bCountGiven) {
 				sinon.assert.callOrder(oCollapseExpectation, oFireChangeExpectation);
 			}
 			assert.strictEqual(oBinding.aContexts[0], aContextsBefore[0], "0");
@@ -9737,6 +9743,7 @@ sap.ui.define([
 			assert.deepEqual(oBinding.mPreviousContextsByPath, {});
 		}
 	});
+		});
 	});
 });
 
@@ -11036,10 +11043,8 @@ sap.ui.define([
 	QUnit.test(sTitle, function (assert) {
 		const oChildContext = {
 			getCanonicalPath : mustBeMocked,
-			getModelIndex : mustBeMocked,
-			isExpanded : mustBeMocked
+			getModelIndex : mustBeMocked
 		};
-		this.mock(oChildContext).expects("isExpanded").withExactArgs().returns(bIsExpanded);
 		this.mock(oChildContext).expects("getCanonicalPath").withExactArgs().returns("/~child~");
 		const oParentContext = bMakeRoot ? null : {
 			getCanonicalPath : mustBeMocked,
@@ -11053,8 +11058,6 @@ sap.ui.define([
 		// Note: autoExpandSelect at model would be required for hierarchyQualifier, but that leads
 		// too far :-(
 		oBinding.mParameters.$$aggregation = {hierarchyQualifier : "X"};
-		const oCollapseExpectation = this.mock(oBinding).expects("collapse")
-			.exactly(bIsExpanded ? 1 : 0).withExactArgs(sinon.match.same(oChildContext), true);
 		this.mock(oBinding).expects("getUpdateGroupId").withExactArgs().returns("~group~");
 		this.mock(oBinding).expects("lockGroup").withExactArgs("~group~", true, true)
 			.returns("~oGroupLock~");
@@ -11062,9 +11065,8 @@ sap.ui.define([
 			move : mustBeMocked
 		};
 		oBinding.oCache = oCache;
-		const oMoveExpectation = this.mock(oCache).expects("move")
-			.withExactArgs("~oGroupLock~", "~child~", bMakeRoot ? null : "~parent~", undefined,
-				undefined)
+		this.mock(oCache).expects("move").withExactArgs("~oGroupLock~", "~child~",
+				bMakeRoot ? null : "~parent~", undefined, undefined)
 			.returns({promise : new SyncPromise((resolve) => {
 				setTimeout(() => {
 					if (oParentContext) {
@@ -11073,6 +11075,8 @@ sap.ui.define([
 					}
 					this.mock(oBinding).expects("insertGap").exactly(iCount > 1 ? 1 : 0)
 						.withExactArgs("~iParentIndex~", iCount - 1);
+					this.mock(oBinding).expects("collapse").exactly(bIsExpanded ? 1 : 0)
+						.withExactArgs(sinon.match.same(oChildContext), true, "~iCollapseCount~");
 					for (let i = 0; i < 100; i += 1) {
 						if (i % 5) {
 							oBinding.aContexts[i] = {iIndex : i};
@@ -11088,7 +11092,7 @@ sap.ui.define([
 					this.mock(oBinding).expects("_fireChange").exactly(bIsExpanded ? 0 : 1)
 						.withExactArgs({reason : ChangeReason.Change});
 
-					resolve([iCount, iNewIndex]);
+					resolve([iCount, iNewIndex, bIsExpanded ? "~iCollapseCount~" : undefined]);
 				}, 0);
 			}), refresh : false});
 
@@ -11096,9 +11100,6 @@ sap.ui.define([
 		const oSyncPromise = oBinding.move(oChildContext, bMakeRoot ? null : oParentContext);
 
 		assert.strictEqual(oSyncPromise.isPending(), true);
-		if (bIsExpanded) {
-			sinon.assert.callOrder(oCollapseExpectation, oMoveExpectation);
-		}
 
 		return oSyncPromise.then(function (vResult) {
 			assert.strictEqual(vResult, undefined, "without a defined result");
@@ -11117,20 +11118,16 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-[false, true].forEach((bIsExpanded) => {
-	[false, true].forEach((bMakeRoot) => {
-		[undefined, null, {}].forEach((oSiblingContext) => {
-			const sTitle = `move: refresh; expanded=${bIsExpanded}, make root=${bMakeRoot},
-with sibling=${oSiblingContext}`;
+[false, true].forEach((bMakeRoot) => {
+	[undefined, null, {}].forEach((oSiblingContext) => {
+		const sTitle = `move: refresh; make root=${bMakeRoot}, with sibling=${oSiblingContext}`;
 
 	QUnit.test(sTitle, async function (assert) {
 		const oChildContext = {
 			getCanonicalPath : mustBeMocked,
 			getPath : mustBeMocked,
-			isExpanded : mustBeMocked,
 			iIndex : 23
 		};
-		this.mock(oChildContext).expects("isExpanded").withExactArgs().returns(bIsExpanded);
 		this.mock(oChildContext).expects("getCanonicalPath").withExactArgs().returns("/~child~");
 		const bHasSibling = oSiblingContext !== undefined;
 		this.mock(oChildContext).expects("getPath").exactly(bHasSibling ? 1 : 0)
@@ -11153,8 +11150,8 @@ with sibling=${oSiblingContext}`;
 		// Note: autoExpandSelect at model would be required for hierarchyQualifier, but that leads
 		// too far :-(
 		oBinding.mParameters.$$aggregation = {hierarchyQualifier : "X"};
-		const oCollapseExpectation = this.mock(oBinding).expects("collapse")
-			.exactly(bIsExpanded ? 1 : 0).withExactArgs(sinon.match.same(oChildContext), true);
+		this.mock(oBinding).expects("collapse").never();
+		this.mock(oBinding).expects("expand").never();
 		this.mock(oBinding).expects("getUpdateGroupId").withExactArgs().returns("~group~");
 		this.mock(oBinding).expects("lockGroup").withExactArgs("~group~", true, true)
 			.returns("~oGroupLock~");
@@ -11166,9 +11163,6 @@ with sibling=${oSiblingContext}`;
 			.withExactArgs("~oGroupLock~", "~child~", bMakeRoot ? null : "~parent~", sSiblingPath,
 				bHasSibling ? "~childNonCanonical~" : undefined)
 			.returns({promise : Promise.resolve([undefined, undefined, 42]), refresh : true});
-		const oExpandExpectation = this.mock(oBinding).expects("expand")
-			.exactly(bIsExpanded ? 1 : 0).withExactArgs(sinon.match.same(oChildContext), true)
-			.returns(SyncPromise.resolve());
 		const oRequestSideEffectsExpectation = this.mock(oBinding).expects("requestSideEffects")
 			.withExactArgs("~group~", [""]).returns(SyncPromise.resolve("~sideEffectsResult~"));
 		this.mock(oBinding).expects("insertGap").never();
@@ -11179,35 +11173,21 @@ with sibling=${oSiblingContext}`;
 			oSiblingContext);
 
 		assert.strictEqual(oSyncPromise.isPending(), true);
-		if (bIsExpanded) {
-			sinon.assert.callOrder(oCollapseExpectation, oMoveExpectation, oExpandExpectation,
-				oRequestSideEffectsExpectation);
-		}
+		sinon.assert.callOrder(oMoveExpectation, oRequestSideEffectsExpectation);
 
 		const [, vSideEffectsResult] = await oSyncPromise;
 		// iIndex===42 can only have been set after waiting for the move promise
 		assert.strictEqual(oChildContext.iIndex, oSiblingContext === undefined ? 23 : 42);
 		assert.strictEqual(vSideEffectsResult, "~sideEffectsResult~");
 	});
-		});
 	});
 });
 
 	//*********************************************************************************************
-[false, true].forEach((bIsExpanded) => {
-	[false, true].forEach((bExpandFails) => {
-		const sTitle = `move: fails, expanded=${bIsExpanded}, expand fails=${bExpandFails}`;
-
-		if (bExpandFails && !bIsExpanded) {
-			return;
-		}
-
-	QUnit.test(sTitle, function (assert) {
+	QUnit.test("move: fails", function (assert) {
 		const oChildContext = {
-			getCanonicalPath : mustBeMocked,
-			isExpanded : mustBeMocked
+			getCanonicalPath : mustBeMocked
 		};
-		this.mock(oChildContext).expects("isExpanded").withExactArgs().returns(bIsExpanded);
 		this.mock(oChildContext).expects("getCanonicalPath").withExactArgs().returns("/~child~");
 		const oParentContext = {
 			getCanonicalPath : mustBeMocked
@@ -11217,8 +11197,7 @@ with sibling=${oSiblingContext}`;
 		// Note: autoExpandSelect at model would be required for hierarchyQualifier, but that leads
 		// too far :-(
 		oBinding.mParameters.$$aggregation = {hierarchyQualifier : "X"};
-		this.mock(oBinding).expects("collapse").exactly(bIsExpanded ? 1 : 0)
-			.withExactArgs(sinon.match.same(oChildContext), true);
+		this.mock(oBinding).expects("collapse").never();
 		this.mock(oBinding).expects("getUpdateGroupId").withExactArgs().returns("~group~");
 		this.mock(oBinding).expects("lockGroup").withExactArgs("~group~", true, true)
 			.returns("~oGroupLock~");
@@ -11229,36 +11208,28 @@ with sibling=${oSiblingContext}`;
 		this.mock(oCache).expects("move")
 			.withExactArgs("~oGroupLock~", "~child~", "~parent~", undefined, undefined)
 			.returns({promise : SyncPromise.reject("~error~"), refresh : false});
-		this.mock(oBinding).expects("expand").exactly(bIsExpanded ? 1 : 0)
-			.withExactArgs(sinon.match.same(oChildContext), true)
-			.returns(bExpandFails ? SyncPromise.reject("~expandError~") : SyncPromise.resolve());
+		this.mock(oBinding).expects("expand").never();
 
 		// code under test
 		const oSyncPromise = oBinding.move(oChildContext, oParentContext);
 
 		assert.strictEqual(oSyncPromise.isRejected(), true);
-		assert.strictEqual(oSyncPromise.getResult(), bExpandFails ? "~expandError~" : "~error~");
+		assert.strictEqual(oSyncPromise.getResult(), "~error~");
 
 		oSyncPromise.caught(); // avoid "Uncaught (in promise)"
 	});
-	});
-});
 
 	//*********************************************************************************************
 	QUnit.test("move: no refresh, expand fails", function (assert) {
 		const oChildContext = {
 			created : mustBeMocked,
 			getCanonicalPath : mustBeMocked,
-			getModelIndex : mustBeMocked,
-			isExpanded : mustBeMocked
+			getModelIndex : mustBeMocked
 		};
-		this.mock(oChildContext).expects("isExpanded").withExactArgs().returns(true);
 		const oBinding = this.bindList("/EMPLOYEES");
 		// Note: autoExpandSelect at model would be required for hierarchyQualifier, but that leads
 		// too far :-(
 		oBinding.mParameters.$$aggregation = {hierarchyQualifier : "X"};
-		this.mock(oBinding).expects("collapse")
-			.withExactArgs(sinon.match.same(oChildContext), true);
 		this.mock(oBinding).expects("getUpdateGroupId").withExactArgs().returns("~group~");
 		this.mock(oBinding).expects("lockGroup").withExactArgs("~group~", true, true)
 			.returns("~oGroupLock~");
@@ -11269,9 +11240,11 @@ with sibling=${oSiblingContext}`;
 		oBinding.oCache = oCache;
 		this.mock(oCache).expects("move")
 			.withExactArgs("~oGroupLock~", "~child~", null, undefined, undefined)
-			.returns({promise : SyncPromise.resolve([1, 43]), refresh : false});
+			.returns({promise : SyncPromise.resolve([1, 43, "~iCollapseCount~"]), refresh : false});
 		this.mock(oBinding).expects("requestSideEffects").never();
 		this.mock(oBinding).expects("insertGap").never();
+		this.mock(oBinding).expects("collapse")
+			.withExactArgs(sinon.match.same(oChildContext), true, "~iCollapseCount~");
 		this.mock(oChildContext).expects("getModelIndex").withExactArgs().returns(43);
 		this.mock(oBinding).expects("expand")
 			.withExactArgs(sinon.match.same(oChildContext))
@@ -11285,44 +11258,6 @@ with sibling=${oSiblingContext}`;
 		assert.strictEqual(oSyncPromise.getResult(), "~error~");
 
 		oSyncPromise.caught(); // avoid "Uncaught (in promise)"
-	});
-
-	//*********************************************************************************************
-	QUnit.test("move: refresh, expand fails", function (assert) {
-		const oChildContext = {
-			getCanonicalPath : mustBeMocked,
-			isExpanded : mustBeMocked
-		};
-		this.mock(oChildContext).expects("isExpanded").withExactArgs().returns(true);
-		const oBinding = this.bindList("/EMPLOYEES");
-		// Note: autoExpandSelect at model would be required for hierarchyQualifier, but that leads
-		// too far :-(
-		oBinding.mParameters.$$aggregation = {hierarchyQualifier : "X"};
-		this.mock(oBinding).expects("collapse")
-			.withExactArgs(sinon.match.same(oChildContext), true);
-		this.mock(oBinding).expects("getUpdateGroupId").withExactArgs().returns("~group~");
-		this.mock(oBinding).expects("lockGroup").withExactArgs("~group~", true, true)
-			.returns("~oGroupLock~");
-		this.mock(oChildContext).expects("getCanonicalPath").withExactArgs().returns("/~child~");
-		const oCache = {
-			move : mustBeMocked
-		};
-		oBinding.oCache = oCache;
-		this.mock(oCache).expects("move")
-			.withExactArgs("~oGroupLock~", "~child~", null, undefined, undefined)
-			.returns({promise : SyncPromise.resolve(), refresh : true});
-		const oError = new Error("This call intentionally failed");
-		this.mock(oBinding).expects("expand")
-			.withExactArgs(sinon.match.same(oChildContext), true)
-			.returns(SyncPromise.reject(oError));
-		this.mock(oBinding).expects("requestSideEffects").never();
-		this.mock(oBinding).expects("insertGap").never();
-		this.mock(oBinding).expects("_fireChange").never();
-
-		assert.throws(function () {
-			// code under test
-			oBinding.move(oChildContext, null);
-		}, oError);
 	});
 
 	//*********************************************************************************************

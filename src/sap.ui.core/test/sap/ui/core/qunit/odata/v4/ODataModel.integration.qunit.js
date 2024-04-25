@@ -32265,7 +32265,7 @@ sap.ui.define([
 				batchNo : 5,
 				// Note: Levels=2
 				url : sBaseUrl.slice(0, -1) + ",ExpandLevels="
-					+ JSON.stringify([{NodeID : "9", Levels : 1}, {NodeID : "1", Levels : 1}])
+					+ JSON.stringify([{NodeID : "1", Levels : 1}, {NodeID : "9", Levels : 1}])
 					+ ")&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name"
 					+ "&$count=true&$skip=0&$top=10"
 			}, {
@@ -32388,7 +32388,7 @@ sap.ui.define([
 				batchNo : 6,
 				// Note: Levels=2
 				url : sBaseUrl.slice(0, -1) + ",ExpandLevels="
-					+ JSON.stringify([{NodeID : "9", Levels : 1}, {NodeID : "1", Levels : 1}])
+					+ JSON.stringify([{NodeID : "1", Levels : 1}, {NodeID : "9", Levels : 1}])
 					+ ")&$filter=ID eq '0'&$select=LimitedRank"
 			}, {
 				value : [{
@@ -32747,9 +32747,9 @@ sap.ui.define([
 					oAlpha, // "/EMPLOYEES('0')",
 					oBeta, // "/EMPLOYEES('1')",
 					oDelta, // "/EMPLOYEES('3')", // moved here
-					"/EMPLOYEES('3.1')", //TODO oEpsilon
-					"/EMPLOYEES('3.1.1')", //TODO oZeta
-					"/EMPLOYEES('3.2')", //TODO oEta
+					oEpsilon, // "/EMPLOYEES('3.1')"
+					oZeta, // "/EMPLOYEES('3.1.1')"
+					oEta, // "/EMPLOYEES('3.2')"
 					oGamma // "/EMPLOYEES('2')"
 				], [
 					[undefined, true, 1, "0", "Alpha"],
@@ -32891,7 +32891,7 @@ sap.ui.define([
 					oEta, // "/EMPLOYEES('3.2')",
 					oBeta, // "/EMPLOYEES('1')",
 					oEpsilon, // "/EMPLOYEES('3.1')", // moved here
-					"/EMPLOYEES('3.1.1')", //TODO oZeta
+					oZeta, // "/EMPLOYEES('3.1.1')"
 					oGamma // "/EMPLOYEES('2')"
 				], [
 					[undefined, true, 1, "0", "Alpha"],
@@ -33034,7 +33034,7 @@ sap.ui.define([
 					oBeta, // "/EMPLOYEES('1')",
 					oGamma, // "/EMPLOYEES('2')",
 					oEpsilon, // "/EMPLOYEES('3.1')", // moved here
-					"/EMPLOYEES('3.1.1')" //TODO oZeta
+					oZeta // "/EMPLOYEES('3.1.1')"
 				], [
 					[undefined, true, 1, "0", "Alpha"],
 					[/*TODO false*/undefined, true, 2, "3", "Delta"], // still created
@@ -33128,7 +33128,7 @@ sap.ui.define([
 					oDelta, // "/EMPLOYEES('3')",
 					oEta, // "/EMPLOYEES('3.2')",
 					oEpsilon, // "/EMPLOYEES('3.1')", // moved here
-					"/EMPLOYEES('3.1.1')" //TODO oZeta
+					oZeta // "/EMPLOYEES('3.1.1')"
 				], [
 					[undefined, true, 1, "0", "Alpha"],
 					[undefined, undefined, 2, "1", "Beta"],
