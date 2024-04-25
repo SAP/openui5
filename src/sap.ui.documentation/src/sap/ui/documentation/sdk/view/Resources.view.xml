@@ -101,18 +101,13 @@
 												<FlexItemData growFactor="1" />
 											</layoutData>
 										</Text>
-
-										<Button
+										<Link
+											class="sapUiDemoKitResourcesCardLink"
+											href="{resources>/iconExplorer/href}"
+											target="_blank"
 											text="{i18n>RESOURCES_CARD_LINK_ICON_EXPLORER}"
-											icon="sap-icon://action"
-											type="Transparent"
-											accessibleRole="Link"
 											tooltip="{i18n>RESOURCES_CARD_LINK_TOOLTIP}"
-											press=".onButtonPress">
-											<customData>
-												<core:CustomData key="href" value="{resources>/iconExplorer/href}" />
-											</customData>
-										</Button>
+											wrapping="true" />
 									</VBox>
 								</f:content>
 							</f:Card>
@@ -133,18 +128,13 @@
 												<FlexItemData growFactor="1" />
 											</layoutData>
 										</Text>
-
-										<Button
+										<Link
+											class="sapUiDemoKitResourcesCardLink"
+											href="{resources>/accessibilityGuide/href}"
+											target="_blank"
 											text="{i18n>RESOURCES_CARD_LINK_ACC_GUIDE}"
-											icon="sap-icon://action"
-											type="Transparent"
-											accessibleRole="Link"
 											tooltip="{i18n>RESOURCES_CARD_LINK_TOOLTIP}"
-											press=".onButtonPress">
-											<customData>
-												<core:CustomData key="href" value="{resources>/accessibilityGuide/href}" />
-											</customData>
-										</Button>
+											wrapping="true" />
 									</VBox>
 								</f:content>
 							</f:Card>
@@ -200,18 +190,13 @@
 												<FlexItemData growFactor="1" />
 											</layoutData>
 										</Text>
-
-										<Button
+										<Link
+											class="sapUiDemoKitResourcesCardLink"
+											href="{resources>/tooling/href}"
+											target="_blank"
 											text="{i18n>RESOURCES_CARD_LINK_TOOLING}"
-											icon="sap-icon://action"
-											type="Transparent"
-											accessibleRole="Link"
 											tooltip="{i18n>RESOURCES_CARD_LINK_TOOLTIP}"
-											press=".onButtonPress">
-											<customData>
-												<core:CustomData key="href" value="{resources>/tooling/href}" />
-											</customData>
-										</Button>
+											wrapping="true" />
 									</VBox>
 								</f:content>
 							</f:Card>
@@ -228,18 +213,13 @@
 												<FlexItemData growFactor="1" />
 											</layoutData>
 										</Text>
-
-										<Button
+										<Link
+											class="sapUiDemoKitResourcesCardLink"
+											href="{resources>/fioriTools/href}"
+											target="_blank"
 											text="{i18n>RESOURCES_CARD_LINK_FIORI_TOOLS}"
-											icon="sap-icon://action"
-											type="Transparent"
-											accessibleRole="Link"
 											tooltip="{i18n>RESOURCES_CARD_LINK_TOOLTIP}"
-											press=".onButtonPress">
-											<customData>
-												<core:CustomData key="href" value="{resources>/fioriTools/href}" />
-											</customData>
-										</Button>
+											wrapping="true" />
 									</VBox>
 								</f:content>
 							</f:Card>
@@ -256,18 +236,13 @@
 												<FlexItemData growFactor="1" />
 											</layoutData>
 										</Text>
-
-										<Button
+										<Link
+											class="sapUiDemoKitResourcesCardLink"
+											href="{resources>/cardExplorer/href}"
+											target="_blank"
 											text="{i18n>RESOURCES_CARD_LINK_CARD_EXPLORER}"
-											icon="sap-icon://action"
-											type="Transparent"
-											accessibleRole="Link"
 											tooltip="{i18n>RESOURCES_CARD_LINK_TOOLTIP}"
-											press=".onButtonPress">
-											<customData>
-												<core:CustomData key="href" value="{resources>/cardExplorer/href}" />
-											</customData>
-										</Button>
+											wrapping="true" />
 									</VBox>
 								</f:content>
 							</f:Card>
@@ -288,18 +263,13 @@
 												<FlexItemData growFactor="1" />
 											</layoutData>
 										</Text>
-
-										<Button
+										<Link
+											class="sapUiDemoKitResourcesCardLink"
+											href="{resources>/fpmExplorer/href}"
+											target="_blank"
 											text="{i18n>RESOURCES_CARD_LINK_FPM_EXPLORER}"
-											icon="sap-icon://action"
-											type="Transparent"
-											accessibleRole="Link"
 											tooltip="{i18n>RESOURCES_CARD_LINK_TOOLTIP}"
-											press=".onButtonPress">
-											<customData>
-												<core:CustomData key="href" value="{resources>/fpmExplorer/href}" />
-											</customData>
-										</Button>
+											wrapping="true" />
 									</VBox>
 								</f:content>
 							</f:Card>
@@ -316,18 +286,13 @@
 												<FlexItemData growFactor="1" />
 											</layoutData>
 										</Text>
-
-										<Button
+										<Link
+											class="sapUiDemoKitResourcesCardLink"
+											href="{resources>/businessAppStudio/href}"
+											target="_blank"
 											text="{i18n>RESOURCES_CARD_LINK_BUSINESS_APP_STUDIO}"
-											icon="sap-icon://action"
-											type="Transparent"
-											accessibleRole="Link"
 											tooltip="{i18n>RESOURCES_CARD_LINK_TOOLTIP}"
-											press=".onButtonPress">
-											<customData>
-												<core:CustomData key="href" value="{resources>/businessAppStudio/href}" />
-											</customData>
-										</Button>
+											wrapping="true" />
 									</VBox>
 								</f:content>
 							</f:Card>
@@ -384,18 +349,13 @@
 												<FlexItemData growFactor="1" />
 											</layoutData>
 										</Text>
-
-										<Button
+										<Link
+											class="sapUiDemoKitResourcesCardLink"
+											href="{resources>/themeDesigner/href}"
+											target="_blank"
 											text="{i18n>RESOURCES_CARD_LINK_THEME_DESIGNER}"
-											icon="sap-icon://action"
-											type="Transparent"
-											accessibleRole="Link"
 											tooltip="{i18n>RESOURCES_CARD_LINK_TOOLTIP}"
-											press=".onButtonPress">
-											<customData>
-												<core:CustomData key="href" value="{resources>/themeDesigner/href}" />
-											</customData>
-										</Button>
+											wrapping="true" />
 									</VBox>
 								</f:content>
 							</f:Card>
@@ -412,18 +372,13 @@
 												<FlexItemData growFactor="1" />
 											</layoutData>
 										</Text>
-
-										<Button
+										<Link
+											class="sapUiDemoKitResourcesCardLink"
+											href="{resources>/themeParameterToolbox/href}"
+											target="_blank"
 											text="{i18n>RESOURCES_CARD_LINK_THEME_PARAMETER_TOOLBOX}"
-											icon="sap-icon://action"
-											type="Transparent"
-											accessibleRole="Link"
 											tooltip="{i18n>RESOURCES_CARD_LINK_TOOLTIP}"
-											press=".onButtonPress">
-											<customData>
-												<core:CustomData key="href" value="{resources>/themeParameterToolbox/href}" />
-											</customData>
-										</Button>
+											wrapping="true" />
 									</VBox>
 								</f:content>
 							</f:Card>
@@ -440,18 +395,13 @@
 												<FlexItemData growFactor="1" />
 											</layoutData>
 										</Text>
-
-										<Button
+										<Link
+											class="sapUiDemoKitResourcesCardLink"
+											href="{resources>/flexibility/href}"
+											target="_blank"
 											text="{i18n>RESOURCES_CARD_LINK_FLEXIBILITY}"
-											icon="sap-icon://action"
-											type="Transparent"
-											accessibleRole="Link"
 											tooltip="{i18n>RESOURCES_CARD_LINK_TOOLTIP}"
-											press=".onButtonPress">
-											<customData>
-												<core:CustomData key="href" value="{resources>/flexibility/href}" />
-											</customData>
-										</Button>
+											wrapping="true" />
 									</VBox>
 								</f:content>
 							</f:Card>
@@ -508,18 +458,13 @@
 												<FlexItemData growFactor="1" />
 											</layoutData>
 										</Text>
-
-										<Button
+										<Link
+											class="sapUiDemoKitResourcesCardLink"
+											href="{resources>/inspector/href}"
+											target="_blank"
 											text="{i18n>RESOURCES_CARD_LINK_INSPECTOR}"
-											icon="sap-icon://action"
-											type="Transparent"
-											accessibleRole="Link"
 											tooltip="{i18n>RESOURCES_CARD_LINK_TOOLTIP}"
-											press=".onButtonPress">
-											<customData>
-												<core:CustomData key="href" value="{resources>/inspector/href}" />
-											</customData>
-										</Button>
+											wrapping="true" />
 									</VBox>
 								</f:content>
 							</f:Card>
@@ -536,18 +481,13 @@
 												<FlexItemData growFactor="1" />
 											</layoutData>
 										</Text>
-
-										<Button
+										<Link
+											class="sapUiDemoKitResourcesCardLink"
+											href="{resources>/supportAssistant/href}"
+											target="_blank"
 											text="{i18n>RESOURCES_CARD_LINK_SUPPORT_ASSISTANT}"
-											icon="sap-icon://action"
-											type="Transparent"
-											accessibleRole="Link"
 											tooltip="{i18n>RESOURCES_CARD_LINK_TOOLTIP}"
-											press=".onButtonPress">
-											<customData>
-												<core:CustomData key="href" value="{resources>/supportAssistant/href}" />
-											</customData>
-										</Button>
+											wrapping="true" />
 									</VBox>
 								</f:content>
 							</f:Card>
@@ -602,25 +542,19 @@
 									<card:Header title="{i18n>RESOURCES_CARD_TITLE_TEST_RECORDER}" iconSrc="sap-icon://record" />
 								</f:header>
 								<f:content>
-									<VBox class="sapUiDemoKitResourcesCardContentSpacing"
-										wrap="Wrap">
+									<VBox class="sapUiDemoKitResourcesCardContentSpacing" wrap="Wrap">
 										<Text text="{i18n>RESOURCES_CARD_DESC_TEST_RECORDER}">
 											<layoutData>
 												<FlexItemData growFactor="1" />
 											</layoutData>
 										</Text>
-
-										<Button
+										<Link
+											class="sapUiDemoKitResourcesCardLink"
+											href="{resources>/testRecorder/href}"
+											target="_blank"
 											text="{i18n>RESOURCES_CARD_LINK_TEST_RECORDER}"
-											icon="sap-icon://action"
-											type="Transparent"
-											accessibleRole="Link"
 											tooltip="{i18n>RESOURCES_CARD_LINK_TOOLTIP}"
-											press=".onButtonPress">
-											<customData>
-												<core:CustomData key="href" value="{resources>/testRecorder/href}" />
-											</customData>
-										</Button>
+											wrapping="true" />
 									</VBox>
 								</f:content>
 							</f:Card>
@@ -631,25 +565,19 @@
 									<card:Header title="{i18n>RESOURCES_CARD_TITLE_WDI5}" iconSrc="sap-icon://order-status" />
 								</f:header>
 								<f:content>
-									<VBox class="sapUiDemoKitResourcesCardContentSpacing"
-										wrap="Wrap">
+									<VBox class="sapUiDemoKitResourcesCardContentSpacing" wrap="Wrap">
 										<Text text="{i18n>RESOURCES_CARD_DESC_WDI5}">
 											<layoutData>
 												<FlexItemData growFactor="1" />
 											</layoutData>
 										</Text>
-
-										<Button
+										<Link
+											class="sapUiDemoKitResourcesCardLink"
+											href="{resources>/wdi5/href}"
+											target="_blank"
 											text="{i18n>RESOURCES_CARD_LINK_WDI5}"
-											icon="sap-icon://action"
-											type="Transparent"
-											accessibleRole="Link"
 											tooltip="{i18n>RESOURCES_CARD_LINK_TOOLTIP}"
-											press=".onButtonPress">
-											<customData>
-												<core:CustomData key="href" value="{resources>/wdi5/href}" />
-											</customData>
-										</Button>
+											wrapping="true" />
 									</VBox>
 								</f:content>
 							</f:Card>

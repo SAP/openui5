@@ -4,14 +4,13 @@
 	}
 
 	.sapUiDemoKitDemoAppsMain {
-		[class*="sapUiDemoKitDemoAppsCategory"]
-		.sapUiDemoKitDemoAppsRegularCard.sapFCard {
-			.sapUiDemoKitCardHeader.sapFCardHeader {
-				background-color: @sapUiTileBackground;
+		.sapUiDemoKitDemoAppsCardContentSpacing {
+			padding: 1rem;
+		}
 
-				&:hover {
-					background-color: @sapActiveColor;
-				}
+		[class*="sapUiDemoKitDemoAppsCategory"] .sapUiDemoKitDemoAppsRegularCard.sapFCard {
+			.sapFCardHeader {
+				background-color: @sapUiTileBackground;
 
 				.sapFAvatar:not(.sapMAvatarPressed):not(.sapMAvatarDisabled):hover {
 					background-color: unset;

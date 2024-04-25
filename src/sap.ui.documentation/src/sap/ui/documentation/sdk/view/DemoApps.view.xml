@@ -18,7 +18,7 @@
 		width="100%"
 		height="100%">
 
-		<VBox class="sapUiMediumMargin sapUiLargeMarginBottom">
+		<VBox class="sapUiDemoKitDemoAppsIntroCardSpacing">
 			<f:Card class="sapUiDemoKitDemoAppsIntroCard">
 				<f:header>
 					<card:Header
@@ -34,7 +34,7 @@
 			</f:Card>
 		</VBox>
 
-		<grid:CSSGrid class="sapUiDemoKitDemoAppsPaddingBeginEnd sapUiDemoKitDemoAppsPaddingBottom">
+		<grid:CSSGrid class="sapUiDemoKitDemoAppsLayoutSpacing">
 			<!-- Page Content Ratio Config -->
 			<grid:customLayout>
 				<grid:GridResponsiveLayout>
@@ -104,11 +104,10 @@
 
 							<f:Card class="sapUiDemoKitDemoAppsRegularCard">
 								<f:header>
-									<custom:DemoKitCardHeader title="{name}" href="{ref}"
-										iconSrc="{= 'sap-icon://' + ${icon} }" />
+									<card:Header title="{name}" iconSrc="{= 'sap-icon://' + ${icon} }" />
 								</f:header>
 								<f:content>
-									<VBox class="sapUiDemoKitDemoAppsContentPadding" wrap="Wrap">
+									<VBox class="sapUiDemoKitDemoAppsCardContentSpacing" wrap="Wrap">
 										<Text class="sapUiSmallMarginBottom" text="{desc}" >
 											<layoutData>
 												<FlexItemData growFactor="1" />
@@ -126,16 +125,11 @@
 												wrapping="true" />
 										</VBox>
 										<HBox wrap="Wrap">
-											<Label
-												class="sapUiTinyMarginEnd"
-												design="Bold"
-												text="{i18n>DEMO_APPS_LIBRARY}"
-												wrapping="true" />
 											<Link
-												href="{ path: 'lib', formatter: '.formatter.libraryLink' }"
+												class="sapUiDemoKitDemoAppsCardLink"
+												href="{ref}"
 												target="_blank"
-												text="{lib}"
-												enabled="{ path: 'lib', formatter: '.formatter.libraryLinkEnabled' }"
+												text="{i18n>DEMO_APPS_CARD_LINK}"
 												wrapping="true" />
 										</HBox>
 									</VBox>

@@ -20,16 +20,26 @@
 	.sapUiDemoKitDemoAppsPage {
 
 		// Utilities
-		.sapUiDemoKitDemoAppsContentPadding {
-			padding: 1rem;
+		.sapUiDemoKitDemoAppsLayoutSpacing {
+			padding: 0 2rem 3rem 2rem;
 		}
 
-		.sapUiDemoKitDemoAppsPaddingBeginEnd {
-			padding: 0 2rem;
+		.sapUiDemoKitDemoAppsIntroCardSpacing {
+			margin: 2rem 2rem 3rem 2rem;
 		}
 
-		.sapUiDemoKitDemoAppsPaddingBottom {
-			padding-bottom: 3rem;
+		.sapUiDemoKitDemoAppsCardContentSpacing {
+			padding: 1rem 1rem .5rem 1rem;
+			row-gap: .5rem;
+		}
+
+		.sapUiDemoKitDemoAppsCardLink {
+			&:before {
+				content: "\e05a";
+				font-family: "SAP-icons";
+				vertical-align: bottom;
+				margin-right: .25rem;
+			}
 		}
 
 		// Intro Card
@@ -87,37 +97,11 @@
 			}
 
 			.sapUiDemoKitDemoAppsRegularCard.sapFCard {
-				.sapUiDemoKitCardHeader.sapFCardHeader {
-					transition: background-color 0.2s ease;
-					text-decoration: none;
-
-					&:hover {
-						.sapFCardHeaderText {
-							.sapFCardTitle {
-								::after {
-									visibility: visible;
-									opacity: 1;
-								}
-							}
-						}
-					}
-
+				.sapFCardHeader {
 					.sapFCardHeaderText {
 						.sapFCardTitle {
 							font-size: @sapMFontLargeSize;
 							color: @demoAppsCardHeaderTextColor;
-							cursor: pointer;
-
-							::after {
-								font-family: SAP-icons;
-								font-size: .8rem;
-								content: "\e05a";
-								vertical-align: middle;
-								visibility: hidden;
-								opacity: 0;
-								transition: all 200ms ease;
-								margin-left: .5rem;
-							}
 						}
 					}
 
@@ -129,48 +113,32 @@
 
 			.sapUiDemoKitDemoAppsCategoryShowcase {
 				.sapUiDemoKitDemoAppsRegularCard.sapFCard {
-					.sapUiDemoKitCardHeader.sapFCardHeader {
+					.sapFCardHeader {
 						background-color: @demoAppsShowcaseCardHeaderBgColor;
-
-						&:hover {
-							background-color: lighten(@demoAppsShowcaseCardHeaderBgColor, 5%);
-						}
 					}
 				}
 			}
 
 			.sapUiDemoKitDemoAppsCategoryTutorial {
 				.sapUiDemoKitDemoAppsRegularCard.sapFCard {
-					.sapUiDemoKitCardHeader.sapFCardHeader {
+					.sapFCardHeader {
 						background-color: @demoAppsTutorialCardHeaderBgColor;
-
-						&:hover {
-							background-color: lighten(@demoAppsTutorialCardHeaderBgColor, 5%);
-						}
 					}
 				}
 			}
 
 			.sapUiDemoKitDemoAppsCategoryRTA {
 				.sapUiDemoKitDemoAppsRegularCard.sapFCard {
-					.sapUiDemoKitCardHeader.sapFCardHeader {
+					.sapFCardHeader {
 						background-color: @demoAppsRTACardHeaderBgColor;
-
-						&:hover {
-							background-color: lighten(@demoAppsRTACardHeaderBgColor, 5%);
-						}
 					}
 				}
 			}
 
 			.sapUiDemoKitDemoAppsCategoryMisc {
 				.sapUiDemoKitDemoAppsRegularCard.sapFCard {
-					.sapUiDemoKitCardHeader.sapFCardHeader {
+					.sapFCardHeader {
 						background-color: @demoAppsMiscCardHeaderBgColor;
-
-						&:hover {
-							background-color: lighten(@demoAppsMiscCardHeaderBgColor, 5%);
-						}
 					}
 				}
 			}
@@ -220,6 +188,14 @@
 		}
 
 		@media screen and (max-width: 63.9375em) {
+			.sapUiDemoKitDemoAppsLayoutSpacing {
+				padding: 0 1rem 2rem 1rem;
+			}
+
+			.sapUiDemoKitDemoAppsIntroCardSpacing {
+				margin: 1rem 1rem 2rem 1rem;
+			}
+
 			.sapUiDemoKitDemoAppsAside {
 				order: -1;
 				margin-top: 0;
