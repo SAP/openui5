@@ -14,6 +14,7 @@ sap.ui.define([
 	};
 	var CardDesign = library.CardDesign;
 	var CardPreviewMode = library.CardPreviewMode;
+	const CardDataMode = library.CardDataMode;
 
 	return FCardRenderer.extend("sap.ui.integration.widgets.CardRenderer", {
 		apiVersion: 2,
@@ -48,6 +49,10 @@ sap.ui.define([
 
 			if (oCardManifest && oCardManifest.get(MANIFEST_PATHS.APP_ID)) {
 				oRm.attr("data-sap-ui-card-id", oCardManifest.get(MANIFEST_PATHS.APP_ID));
+			}
+
+			if (oCard.getManifest() && (!oCard.getCardHeader() || oCard._getActualDataMode() !== CardDataMode.Active)) {
+				oRm.attr("tabindex", "0");
 			}
 		},
 

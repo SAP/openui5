@@ -338,6 +338,11 @@
 					"pattern": "microCharts",
 					"name": "microCharts",
 					"target": "microCharts"
+				},
+				{
+					"pattern": "noLayout",
+					"name": "noLayout",
+					"target": "noLayout"
 				}
 			],
 			"targets": {
@@ -598,6 +603,11 @@
 				"microCharts": {
 					"id": "microCharts",
 					"name": "MicroCharts",
+					"level": 1
+				},
+				"noLayout": {
+					"id": "noLayout",
+					"name": "NoLayout",
 					"level": 1
 				}
 			}

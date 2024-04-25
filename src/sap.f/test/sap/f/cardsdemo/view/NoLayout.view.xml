@@ -1,0 +1,31 @@
+<mvc:View
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:w="sap.ui.integration.widgets"
+	displayBlock="true"
+	controllerName="sap.f.cardsdemo.controller.NoLayout">
+	<Page title="{i18n>appTitle}" class="sapUiResponsiveContentPadding" >
+		<subHeader>
+			<Toolbar>
+				<ToolbarSpacer />
+				<Title text="No Layout" />
+				<ToolbarSpacer/>
+			</Toolbar>
+		</subHeader>
+
+		<mvc:View viewName="sap.f.cardsdemo.view.common.CommonCardSettings" type="XML" async="true" />
+		<Button text="Dummy tab stop" class="sapUiSmallMarginTopBottom"/>
+		<w:Card
+			manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/tablecontent/groups.json"
+			class="sapUiSmallMarginTopBottom" />
+		<w:Card
+			manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/tablecontent/groups.json"
+			class="sapUiSmallMarginTopBottom" />
+		<FlexBox height="2000px"/>
+		<w:Card
+			id="reachMeIfYouCan"
+			manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/tablecontent/bindings.json"
+			class="sapUiSmallMarginTopBottom" />
+		<Button id="dummyTabStop" text="Dummy tab stop"/>
+	</Page>
+</mvc:View>
