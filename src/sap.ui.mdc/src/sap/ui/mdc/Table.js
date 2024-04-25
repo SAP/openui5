@@ -657,9 +657,10 @@ sap.ui.define([
 				/**
 				 * Columns of the table.
 				 *
-				 * <b>Note:</b> This aggregation is managed by the control, can only be populated during the definition in the XML view, and is not
-				 * bindable. Any changes of the initial aggregation content might result in unwanted effects. Changes of the aggregation have to be
-				 * made with the {@link sap.ui.mdc.p13n.StateUtil StateUtil}.
+				 * <b>Note:</b>
+				 * This aggregation is managed by the control, can only be populated during the definition in the XML view, and is not bindable.
+				 * Any changes of the initial aggregation content might result in undesired effects.
+				 * Changes of the aggregation have to be made with the {@link sap.ui.mdc.p13n.StateUtil StateUtil}.
 				 */
 				columns: {
 					type: "sap.ui.mdc.table.Column",

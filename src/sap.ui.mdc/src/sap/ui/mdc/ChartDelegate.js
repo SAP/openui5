@@ -472,6 +472,10 @@ sap.ui.define([
 	/**
 	 * Returns the relevant property info based on the metadata used with the chart instance.
 	 *
+	 * <b>Note:</b>
+	 * The result of this function must be kept stable throughout the lifecycle of your application.
+	 * Any changes of the returned values might result in undesired effects.
+	 *
 	 * @param {sap.ui.mdc.Chart} oChart Reference to the chart
 	 * @returns {Promise<sap.ui.mdc.chart.PropertyInfo[]>} Array of the property infos that is used within the chart
 	 *

@@ -188,6 +188,7 @@ sap.ui.define([
 
 					/**
 					 * Contains all the displayed {@link sap.ui.mdc.FilterField filter fields} of the <code>FilterBarBase</code> control.
+					 *
 					 * <b>Note:</b>
 					 * This aggregation is managed by the control, can only be populated during the definition in the XML view, and is not bindable.
 					 * Any changes of the initial aggregation content might result in undesired effects.

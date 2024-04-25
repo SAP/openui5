@@ -68,6 +68,10 @@ sap.ui.define([
 	 *
 	 * By default, this method returns a <code>Promise</code> that resolves with an empty array.
 	 *
+	 * <b>Note:</b>
+	 * The result of this function must be kept stable throughout the lifecycle of your application.
+	 * Any changes of the returned values might result in undesired effects.
+	 *
 	 * @name module:sap/ui/mdc/TableDelegate.fetchProperties
 	 * @function
 	 * @param {sap.ui.mdc.Table} oTable Instance of the table

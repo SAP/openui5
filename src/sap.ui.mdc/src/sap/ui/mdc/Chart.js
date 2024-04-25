@@ -333,6 +333,7 @@ sap.ui.define([
 					/**
 					 * This aggregation describes actions that are added to the chart toolbar.<br>
 					 * For more information, see {@link sap.ui.mdc.actiontoolbar.ActionToolbarAction}.
+					 *
 					 * <b>Note:</b>
 					 * This aggregation is managed by the control, can only be populated during the definition in the XML view, and is not bindable.
 					 * Any changes of the initial aggregation content might result in undesired effects.
@@ -985,7 +986,7 @@ sap.ui.define([
 					}.bind(this)
 				});
 
-				const aItems = this.getControlDelegate().getDrillableItems(this).map(function(oItem) { return { key: oItem.getPropertyKey(), text: oItem.getLabel() }; });
+				const aItems = this.getControlDelegate().getDrillableItems(this).map((oItem) => { return { key: oItem.getPropertyKey(), text: oItem.getLabel() }; });
 				_oBreadcrumbs.update(aItems);
 				this.setAggregation("_breadcrumbs", _oBreadcrumbs);
 			}
@@ -1069,7 +1070,7 @@ sap.ui.define([
 			this._rebind();
 
 			//Update the breadcrumbs after an MDC Item change
-			const aItems = this.getControlDelegate().getDrillableItems(this).map(function(oItem) { return { key: oItem.getPropertyKey(), text: oItem.getLabel() }; });
+			const aItems = this.getControlDelegate().getDrillableItems(this).map((oItem) => { return { key: oItem.getPropertyKey(), text: oItem.getLabel() }; });
 			this.getAggregation("_breadcrumbs").update(aItems);
 		};
 
