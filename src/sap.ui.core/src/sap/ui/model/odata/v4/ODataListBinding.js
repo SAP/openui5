@@ -113,7 +113,7 @@ sap.ui.define([
 
 		mParameters = _Helper.clone(mParameters) || {};
 		this.checkBindingParameters(mParameters, ["$$aggregation", "$$canonicalPath",
-			"$$getKeepAliveContext", "$$groupId", "$$keepSelectOnFilter", "$$operationMode",
+			"$$clearSelectionOnFilter", "$$getKeepAliveContext", "$$groupId", "$$operationMode",
 			"$$ownRequest", "$$patchWithoutSideEffects", "$$sharedRequest", "$$updateGroupId"]);
 		const aFilters = _Helper.toArray(vFilters);
 		if (mParameters.$$aggregation && aFilters[0] === Filter.NONE) {
@@ -310,10 +310,9 @@ sap.ui.define([
 
 	/**
 	 * Applies the given map of parameters to this binding's parameters and initiates the
-	 * creation of a new cache if called with a change reason. Since 1.111.0, all contexts (incl.
-	 * the header context) are deselected if the '$filter', '$search', or
-	 * <code>$$aggregation.search</code> parameters have changed, unless binding parameter
-	 * '$$keepSelectOnFilter' is set.
+	 * creation of a new cache if called with a change reason. Deselects all contexts (incl. the
+	 * header context) if the binding parameter '$$clearSelectionOnFilter' is set and '$filter',
+	 * '$search', or <code>$$aggregation.search</code> parameters have changed.
 	 *
 	 * @param {object} mParameters
 	 *   Map of binding parameters, {@link sap.ui.model.odata.v4.ODataModel#constructor}
@@ -348,7 +347,7 @@ sap.ui.define([
 			sApply = _AggregationHelper.buildApply(mParameters.$$aggregation).$apply;
 		}
 
-		const bResetSelection = this.mParameters && !this.mParameters.$$keepSelectOnFilter
+		const bResetSelection = this.mParameters?.$$clearSelectionOnFilter
 			&& (aChangedParameters?.includes("$filter") || aChangedParameters?.includes("$search")
 				|| mParameters.$$aggregation?.search !== this.mParameters.$$aggregation?.search);
 
@@ -2023,8 +2022,8 @@ sap.ui.define([
 	/**
 	 * Filters the list with the given filters. Since 1.97.0, if filters are unchanged, no request
 	 * is sent, regardless of pending changes. Since 1.111.0, all contexts (incl. the header
-	 * context) are deselected, but (since 1.123.0) only if the binding parameter
-	 * '$$keepSelectOnFilter' is not set.
+	 * context) are deselected, but (since 1.120.13) only if the binding parameter
+	 * '$$clearSelectionOnFilter' is set.
 	 *
 	 * If there are pending changes that cannot be ignored, an error is thrown. Use
 	 * {@link #hasPendingChanges} to check if there are such pending changes. If there are, call
@@ -2130,7 +2129,7 @@ sap.ui.define([
 			return this;
 		}
 
-		if (!this.mParameters.$$keepSelectOnFilter) {
+		if (this.mParameters.$$clearSelectionOnFilter) {
 			this.oHeaderContext?.setSelected(false); // must be done before resetting the cache
 		}
 		this.createReadGroupLock(this.getGroupId(), true);
@@ -4187,8 +4186,8 @@ sap.ui.define([
 		this.sResumeChangeReason = undefined;
 
 		if (bRefresh) {
-			if (sResumeChangeReason === ChangeReason.Filter
-					&& !this.mParameters.$$keepSelectOnFilter) {
+			if (this.mParameters.$$clearSelectionOnFilter
+				&& sResumeChangeReason === ChangeReason.Filter) {
 				this.oHeaderContext?.setSelected(false);
 			}
 			this.removeCachesAndMessages("");
@@ -4333,9 +4332,9 @@ sap.ui.define([
 	 *   proposal <a href="https://issues.oasis-open.org/browse/ODATA-1452">ODATA-1452</a>, then
 	 *   <code>ODataUtils.formatLiteral(sSearch, "Edm.String");</code> should be used to encapsulate
 	 *   the whole search string beforehand (see {@link
-	 *   sap.ui.model.odata.v4.ODataUtils.formatLiteral}). Since 1.123.0, all contexts, including
-	 *   the header context are deselected if the search parameter is changed (but only if the
-	 *   '$$keepSelectOnFilter' binding parameter is not set).
+	 *   sap.ui.model.odata.v4.ODataUtils.formatLiteral}). Since 1.120.13, all contexts, including
+	 *   the header context are deselected if the '$$clearSelectionOnFilter' binding parameter is
+	 *   set and the search parameter is changed.
 	 * @param {boolean} [oAggregation.subtotalsAtBottomOnly]
 	 *   Tells whether subtotals for aggregatable properties are displayed at the bottom only, as a
 	 *   separate row after all children, when a group level node is expanded (since 1.86.0);

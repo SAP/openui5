@@ -2630,7 +2630,7 @@ sap.ui.define([
 	//*********************************************************************************************
 [
 	"$$canonicalPath",
-	"$$keepSelectOnFilter",
+	"$$clearSelectionOnFilter",
 	"$$noPatch",
 	"$$ownRequest",
 	"$$patchWithoutSideEffects"
