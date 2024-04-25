@@ -136,7 +136,10 @@
 			</ComplexType>
 			<ComplexType Name="NextSiblingType">
 				<Property Name="ArtistID" Type="Edm.String" Nullable="false"/>
-				<Property Name="IsActiveEntity" Type="Edm.Boolean" Nullable="false"/>
+				<!-- IsActiveEntity is not a realistic property here -->
+				<!-- <Property Name="IsActiveEntity" Type="Edm.Boolean" Nullable="false"/> -->
+				<!-- add a non-key property for demonstrating the multi key scenario -->
+				<Property Name="Name" Type="Edm.String" MaxLength="255"/>
 			</ComplexType>
 			<ComplexType Name="Person">
 				<Property Name="Address" Type="special.cases.Address" />

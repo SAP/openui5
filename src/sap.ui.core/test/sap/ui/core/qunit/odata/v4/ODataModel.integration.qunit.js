@@ -36891,7 +36891,8 @@ const sView = `
 				},
 				method : "POST",
 				payload : {
-					NextSibling : {ArtistID : "1", IsActiveEntity : false}
+					// Note: add a non-key property for demonstrating the multi key scenario
+					NextSibling : {ArtistID : "1", Name : "Alpha"}
 				},
 				url : sFriend.slice(1)
 					+ "(ArtistID='2',IsActiveEntity=false)/special.cases.ChangeNextSibling"

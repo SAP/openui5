@@ -410,9 +410,8 @@ sap.ui.define([
 		 * "$apply" is constructed to avoid timing issues with metadata. The paths for
 		 * DistanceFromRoot, DrillState, LimitedDescendantCount, LimitedRank, NodeProperty, and
 		 * ParentNavigationProperty are stored at <code>oAggregation</code> using a "$" prefix (if
-		 * not already stored). The node type's list of key properties is stored as "$Key". The
-		 * "com.sap.vocabularies.Hierarchy.v1.RecursiveHierarchyActions" annotation is stored as
-		 * "$Actions".
+		 * not already stored). The "com.sap.vocabularies.Hierarchy.v1.RecursiveHierarchyActions"
+		 * annotation is stored as "$Actions".
 		 *
 		 * @param {object} oAggregation
 		 *   An object holding the information needed for a recursive hierarchy; see
@@ -501,8 +500,6 @@ sap.ui.define([
 						oAggregation.$metaPath + "/@" + sSapHierarchy
 						+ "RecursiveHierarchyActions#" + oAggregation.hierarchyQualifier
 					).getResult();
-				oAggregation.$Key ??= oAggregation.$fetchMetadata(
-					oAggregation.$metaPath + "/$Type/$Key").getResult();
 			}
 
 			let sApply = "";

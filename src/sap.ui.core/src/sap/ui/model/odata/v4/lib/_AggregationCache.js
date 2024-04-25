@@ -1320,19 +1320,25 @@ sap.ui.define([
 		const invokeNextSibling = () => {
 			if (sSiblingPath !== undefined) {
 				bRefreshNeeded = true;
+				const sActionPath = sNonCanonicalChildPath + "/"
+					+ this.oAggregation.$Actions.ChangeNextSiblingAction;
 				const sSiblingPredicate = sSiblingPath?.slice(sSiblingPath.indexOf("("));
 				let oSiblingNode = this.aElements.$byPredicate[sSiblingPredicate];
-				oSiblingNode = oSiblingNode
-					? this.oAggregation.$Key.reduce((oKeys, sKey) => {
-							oKeys[sKey] = oSiblingNode[sKey];
-							return oKeys;
-						}, {})
-					: null;
+				if (oSiblingNode) {
+					const oNextSiblingType = this.oAggregation.$fetchMetadata(
+						_Helper.getMetaPath("/" + sActionPath + "/@$ui5.overload/NextSibling/")
+					).getResult();
+					const aKeys = Object.keys(oNextSiblingType).filter((sKey) => sKey[0] !== "$");
+					oSiblingNode = aKeys.reduce((oKeys, sKey) => {
+						oKeys[sKey] = oSiblingNode[sKey];
+						return oKeys;
+					}, {});
+				} else {
+					oSiblingNode = null;
+				}
 
-				return this.oRequestor.request("POST", sNonCanonicalChildPath + "/"
-						+ this.oAggregation.$Actions.ChangeNextSiblingAction,
-					oGroupLock.getUnlockedCopy(), {Prefer : "return=minimal"},
-					{NextSibling : oSiblingNode});
+				return this.oRequestor.request("POST", sActionPath, oGroupLock.getUnlockedCopy(),
+					{Prefer : "return=minimal"}, {NextSibling : oSiblingNode});
 			}
 		};
 

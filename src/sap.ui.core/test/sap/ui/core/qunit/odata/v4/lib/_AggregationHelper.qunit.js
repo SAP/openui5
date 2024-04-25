@@ -1228,7 +1228,6 @@ sap.ui.define([
 		if (bStored) {
 			oAggregation.$Actions = "~actions~";
 			oAggregation.$DrillState = "myDrillState";
-			oAggregation.$Key = "~key~";
 			oAggregation.$NodeProperty = "SomeNodeID";
 			oAggregation.$ParentNavigationProperty = "SomeParentNavigation";
 		}
@@ -1262,9 +1261,6 @@ sap.ui.define([
 			.withExactArgs("/meta/@com.sap.vocabularies.Hierarchy.v1.RecursiveHierarchy#X")
 			.returns(SyncPromise.resolve(oRecursiveHierarchy));
 		oAggregationMock.expects("$fetchMetadata").exactly(bStored ? 0 : 1)
-			.withExactArgs("/meta/$Type/$Key")
-			.returns(SyncPromise.resolve("~key~"));
-		oAggregationMock.expects("$fetchMetadata").exactly(bStored ? 0 : 1)
 			.withExactArgs("/meta/@com.sap.vocabularies.Hierarchy.v1.RecursiveHierarchyActions#X")
 			.returns(SyncPromise.resolve("~actions~"));
 		oExpectedAggregation = Object.assign({
@@ -1275,7 +1271,6 @@ sap.ui.define([
 			$path : "/Foo",
 			$Actions : "~actions~",
 			$DrillState : "myDrillState",
-			$Key : "~key~",
 			$NodeProperty : "SomeNodeID",
 			$ParentNavigationProperty : "SomeParentNavigation"
 		}, oExpectedAggregation);
@@ -1374,9 +1369,6 @@ sap.ui.define([
 			.withExactArgs("/meta/path/@com.sap.vocabularies.Hierarchy.v1.RecursiveHierarchy#XYZ")
 			.returns(SyncPromise.resolve(oRecursiveHierarchy));
 		oAggregationMock.expects("$fetchMetadata")
-			.withExactArgs("/meta/path/$Type/$Key")
-			.returns(SyncPromise.resolve("~key~"));
-		oAggregationMock.expects("$fetchMetadata")
 			.withExactArgs(
 				"/meta/path/@com.sap.vocabularies.Hierarchy.v1.RecursiveHierarchyActions#XYZ")
 			.returns(SyncPromise.resolve("~actions~"));
@@ -1397,7 +1389,6 @@ sap.ui.define([
 				"derived from DrillState");
 		}
 		assert.strictEqual(oAggregation.$Actions, "~actions~");
-		assert.strictEqual(oAggregation.$Key, "~key~");
 		assert.strictEqual(oAggregation.$NodeProperty, "myID");
 		assert.strictEqual(oAggregation.$ParentNavigationProperty, "myParentNavigation");
 	});

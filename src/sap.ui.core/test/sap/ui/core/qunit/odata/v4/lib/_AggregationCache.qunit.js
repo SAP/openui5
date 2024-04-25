@@ -4692,8 +4692,8 @@ sap.ui.define([
 	QUnit.test(`move: refresh needed (sibling=${sSiblingPath})`, async function (assert) {
 		const oCache = _AggregationCache.create(this.oRequestor, "n/a", "", {}, {
 				$Actions : {ChangeNextSiblingAction : "changeNextSibling"},
-				$Key : ["foo", "baz"],
 				$ParentNavigationProperty : "myParent",
+				$fetchMetadata : mustBeMocked,
 				expandTo : Number.MAX_SAFE_INTEGER,
 				hierarchyQualifier : "X"
 			});
@@ -4713,6 +4713,12 @@ sap.ui.define([
 				}, {"myParent@odata.bind" : "Foo('42')"},
 				/*fnSubmit*/null, /*fnCancel*/sinon.match.func)
 			.resolves("~patchParentResult~");
+		this.mock(_Helper).expects("getMetaPath").exactly(sSiblingPath ? 1 : 0)
+			.withExactArgs("/non/canonical/changeNextSibling/@$ui5.overload/NextSibling/")
+			.returns("~metaPath~");
+		this.mock(oCache.oAggregation).expects("$fetchMetadata").exactly(sSiblingPath ? 1 : 0)
+			.withExactArgs("~metaPath~")
+			.returns(SyncPromise.resolve({foo : "n/a", $bar : "n/a", baz : "n/a"}));
 		this.mock(oGroupLock).expects("getUnlockedCopy").withExactArgs().returns("~groupLockCopy~");
 		oRequestorMock.expects("request")
 			.withExactArgs("POST", "non/canonical/changeNextSibling", "~groupLockCopy~",
