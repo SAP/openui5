@@ -19,7 +19,7 @@ sap.ui.define([
 	 */
 	const DelegateMediatorAPI = /** @lends sap.ui.fl.apply.api.DelegateMediatorAPI */{
 		/**
-		 * Register model specific read delegate by the model type.
+		 * Register model-specific read delegate by the model type.
 		 *
 		 * @param {object} mPropertyBag - Property bag for read delegate
 		 * @param {object} mPropertyBag.modelType - Read delegate model type
@@ -30,11 +30,11 @@ sap.ui.define([
 		},
 
 		/**
-		 * Registers a control specific write delegate by control type.
+		 * Registers a control-specific write delegate by control type.
 		 *
-		 * @param {object} mPropertyBag - Property bag for control specific delegate
+		 * @param {object} mPropertyBag - Property bag for control-specific delegate
 		 * @param {object} mPropertyBag.controlType - Control type
-		 * @param {object} mPropertyBag.delegate - path to control specific delegate
+		 * @param {object} mPropertyBag.delegate - Path to control-specific delegate
 		 * @param {object} [mPropertyBag.requiredLibraries] - Map of required libraries
 		 * @param {object} [mPropertyBag.payload] - Payload for the delegate
 		 */
@@ -43,8 +43,8 @@ sap.ui.define([
 		},
 
 		/**
-		 * Returns the model specific read delegate for the requested control.
-		 * The instancespcific read delegate is returned if available.
+		 * Returns the model-specific read delegate for the requested control.
+		 * The instance-specific read delegate is returned if available.
 		 *
 		 * @param {object} mPropertyBag - Property bag
 		 * @param {sap.ui.core.Element|DomNode} mPropertyBag.control - Control for which the corresponding delegate should be returned
@@ -63,7 +63,7 @@ sap.ui.define([
 
 		/**
 		 * Returns the write delegate for the requested control.
-	 	 * The instancespecific write delegate is returned if available.
+	 	 * The instance-specific write delegate is returned if available.
 		 *
 		 * @param {object} mPropertyBag - Property bag
 		 * @param {sap.ui.core.Element|DomNode} mPropertyBag.control - Control for which the corresponding delegate should be returned
