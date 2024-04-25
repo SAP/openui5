@@ -11,6 +11,14 @@
 
 .sapMHdrCntr.Horizontal {
 	max-width: 100%;
+	&.sapMHdrCntrSnapToRow {
+		.sapMScrollContScroll {
+			display: inline-flex;
+			.sapMHdrCntrItemCntr > * {
+				min-height: 100%;
+			}
+		}
+	}
 }
 
 .sapMHdrCntr.Vertical {
