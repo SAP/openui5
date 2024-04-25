@@ -9,10 +9,10 @@ sap.ui.define([
 	"use strict";
 
 	Opa5.extendConfig({
-		viewNamespace: "sap.ui.mdc.demokit.sample.LinkPayloadJson",
 		arrangements: new Arrangement(),
 		actions: new Action(),
 		assertions: new Assertion(),
+		autoWait: true,
 		appParams: {
 			"sap-ui-animation": false
 		}

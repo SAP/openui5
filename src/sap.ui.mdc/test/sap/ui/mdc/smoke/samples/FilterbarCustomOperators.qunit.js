@@ -11,9 +11,9 @@ sap.ui.define([
 	"use strict";
 
 	Opa5.extendConfig({
-		viewNamespace: "sap.ui.mdc.demokit.sample.FilterbarCustomOperators",
 		assertions: new P13nAssertion(),
 		actions: FilterFieldActions,
+		autoWait: true,
 		appParams: {
 			"sap-ui-animation": false
 		}
