@@ -25,6 +25,32 @@ sap.ui.define([
 			reveal: {
 				changeType: "unhideControl"
 			}
+		},
+		properties: {
+			url: {
+				ignore: true
+			},
+			width: {
+				ignore: true
+			},
+			height: {
+				ignore: true
+			},
+			title: {
+				ignore: true
+			},
+			asContainer: {
+				ignore: true
+			},
+			renameInfo: {
+				ignore: true
+			},
+			advancedSettings: {
+				ignore: true
+			},
+			_settings: {
+				ignore: true
+			}
 		}
 	};
 });
