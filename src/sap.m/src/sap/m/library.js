@@ -702,11 +702,13 @@ sap.ui.define([
 	thisLib.UploadSetwithTableActionPlaceHolder = {
 	   /**
 		* Placeholder for variant management.
+		* @deprecated As of version 1.124, the concept has been discarded.
 		* @public
 		*/
 	   VariantManagementPlaceholder: "VariantManagementPlaceholder",
 	   /**
 		* Placeholder for personalization settings button.
+		* @deprecated As of version 1.124, the concept has been discarded.
 		* @public
 		*/
 	   PersonalizationSettingsPlaceholder: "PersonalizationSettingsPlaceholder",

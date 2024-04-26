@@ -25,8 +25,7 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @constructor
 	 * @public
-	 * @experimental since 1.120
-	 * @since 1.120
+	 * @deprecated as of version 1.124, replaced by {@link sap.m.upload.UploadItem}
 	 * @version ${version}
 	 * @alias sap.m.upload.UploadSetwithTableItem
 	 */
