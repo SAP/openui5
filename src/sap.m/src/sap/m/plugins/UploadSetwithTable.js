@@ -1402,12 +1402,14 @@ sap.ui.define([
 	};
 
 	UploadSetwithTable.prototype._getDefaultNoDataIllustration = function() {
-		return new IllustratedMessage({
+		const oIllustratedMessage =  new IllustratedMessage({
 			illustrationType: IllustratedMessageType.UploadCollection,
 			illustrationSize: IllustratedMessageSize.Spot,
 			title: this._oRb.getText("UPLOADSET_WITH_TABLE_NO_DATA_TEXT"),
 			description: this._oRb.getText("UPLOADSET_WITH_TABLE_NO_DATA_DESCRIPTION")
 		});
+		oIllustratedMessage.addStyleClass("sapMUSTP-IllustratedMessage-container");
+		return oIllustratedMessage;
 	};
 
 
