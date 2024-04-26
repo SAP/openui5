@@ -11,7 +11,7 @@ sap.ui.define([
 				"id": "comp---view--myTable"
 			},
 			"content": {
-				"name": "Category",
+				"key": "Category",
 				"descending": false,
 				"index": 0
 			}
@@ -25,7 +25,7 @@ sap.ui.define([
 				"id": "comp---view--myTable"
 			},
 			"content": {
-				"name": "Category",
+				"key": "Category",
 				"descending": false,
 				"index": 0
 			}
@@ -78,7 +78,7 @@ sap.ui.define([
 				const aSorters = oSortConditions.sorters;
 
 				assert.equal(aSorters.length, 1, "one sorter has been created");
-				assert.equal(aSorters[0].name, "Category", "correct sorter has been created");
+				assert.equal(aSorters[0].key, "Category", "correct sorter has been created");
 				assert.equal(aSorters[0].descending, false, "correct sort order has been created");
 
 				done();
@@ -106,7 +106,7 @@ sap.ui.define([
 				const aSorters = oSortConditions.sorters;
 
 				assert.equal(aSorters.length, 1, "one sorter has been created");
-				assert.equal(aSorters[0].name, "Category", "correct sorter has been created");
+				assert.equal(aSorters[0].key, "Category", "correct sorter has been created");
 				assert.equal(aSorters[0].descending, false, "correct sort order has been created");
 
 				//create removeSort
@@ -153,7 +153,7 @@ sap.ui.define([
 				const aSorters = oSortConditions.sorters;
 
 				assert.equal(aSorters.length, 1, "one sorter has been created");
-				assert.equal(aSorters[0].name, "Category", "correct sorter has been created");
+				assert.equal(aSorters[0].key, "Category", "correct sorter has been created");
 				assert.equal(aSorters[0].descending, false, "correct sort order has been created");
 
 				//create removeSort
@@ -163,7 +163,7 @@ sap.ui.define([
 						id: "comp---view--myTable"
 					},
 					content: {
-						name: "someNonExistingPropertyName"
+						key: "someNonExistingPropertyName"
 					}
 				};
 				return ChangesWriteAPI.create({
@@ -195,7 +195,7 @@ sap.ui.define([
 		this.oTable.setSortConditions({
 			sorters: [
 				{
-					"name": "Category",
+					"key": "Category",
 					"descending": false
 				}
 			]

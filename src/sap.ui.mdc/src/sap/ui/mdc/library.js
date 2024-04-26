@@ -1377,7 +1377,7 @@ sap.ui.define([
 	 * Defines the <code>items</code> to be added to the controls default aggregation.
 	 *
 	 * @typedef {object} sap.ui.mdc.State.Items
-	 * @property {string} name of the item
+	 * @property {string} key of the item
 	 * @property {int} [position] of the item in the aggregation
 	 * @property {boolean} [visible = true] State of the item
 	 *
@@ -1387,7 +1387,7 @@ sap.ui.define([
 	 * Defines the <code>sorters</code> to be added to the controls sorting state.
 	 *
 	 * @typedef {object} sap.ui.mdc.State.Sorters
-	 * @property {string} name of the sorted item
+	 * @property {string} key of the sorted item
 	 * @property {boolean} descending Sort order for this item
 	 * @property {boolean} [sorted = true] Defines if the item has to be sorted
 	 *
@@ -1397,7 +1397,7 @@ sap.ui.define([
 	 * Defines the <code>groupes</code> to be added to the controls grouping state.
 	 *
 	 * @typedef {object} sap.ui.mdc.State.GroupLevels
-	 * @property {string} name of the grouped item
+	 * @property {string} key of the grouped item
 	 * @property {boolean} [grouped = true] Defines if the item has to be grouped
 	 *
 	 * @public

@@ -839,15 +839,18 @@ sap.ui.define([
 		const oState = {
 			sorters: [
 				{
+					key: "String",
 					name: "String",
 					descending: true
 				}
 			],
 			items: [
 				{
+					key:  "Decimal",
 					name: "Decimal"
 				},
 				{
+					key:  "Double",
 					name: "Double"
 				}
 			]
@@ -879,6 +882,7 @@ sap.ui.define([
 		const oState = {
 			sorters: [
 				{
+					key: "String",
 					name: "String",
 					descending: true
 				}
@@ -1013,6 +1017,7 @@ sap.ui.define([
 		const oState = {
 			sorters: [
 				{
+					key: "String",
 					name: "String",
 					descending: true
 				}
@@ -1075,6 +1080,7 @@ sap.ui.define([
 		const oState = {
 			groupLevels: [
 				{
+					key: "String",
 					name: "String"
 				}
 			]
@@ -1297,10 +1303,12 @@ sap.ui.define([
 		const oState = {
 			sorters: [
 				{
-				  "name": "Name",
-				  "descending": false
+					"key": "Name",
+					"name": "Name",
+					"descending": false
 				},
 				{
+					"key": "Date",
 					"name": "Date",
 					"descending": true
 				}

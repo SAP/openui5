@@ -69,16 +69,16 @@ sap.ui.define([
 		 * 			]
 		 * 		},
 		 * 		items: [
-		 *			{name: "Category", position: 3},
-		 *			{name: "Country", visible: false}
+		 *			{key: "Category", position: 3},
+		 *			{key: "Country", visible: false}
 		 *       ],
 		 *       sorters: [
-		 *			{name: "Category", "descending": false},
-		 *			{name: "NoCategory", "descending": false, "sorted": false}
+		 *			{key: "Category", "descending": false},
+		 *			{key: "NoCategory", "descending": false, "sorted": false}
 		 *       ],
 		 *		groupLevels: [
-		 *			{name: "Category"},
-		 *			{name: "Country", grouped: false}
+		 *			{key: "Category"},
+		 *			{key: "Country", grouped: false}
 		 *       ],
 		 *		aggregations: {
 		 *			Region: {},

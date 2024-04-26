@@ -37,7 +37,9 @@ sap.ui.define([
 		if (mDeltaConfig.changedState instanceof Array) {
 			const aStateMapped = merge([], mDeltaConfig.changedState);
 			aStateMapped.map((oStateItem) => {
-				oStateItem.key = oStateItem.name;
+				if (oStateItem.hasOwnProperty("name") && !oStateItem.hasOwnProperty("key")) {
+					oStateItem.key = oStateItem.name;
+				}
 				return oStateItem;
 			});
 			mDeltaConfig.changedState = aStateMapped;
@@ -67,6 +69,24 @@ sap.ui.define([
 			}
 		};
 		return oMoveChange;
+	};
+
+	MDCSelectionController.prototype._getChangeContent = (oProperty, aDeltaAttributes) => {
+
+		const oChangeContent = {};
+
+		// Index
+		if (oProperty.hasOwnProperty("index") && oProperty.index >= 0) {
+			oChangeContent.index = oProperty.index;
+		}
+
+		aDeltaAttributes.forEach((sAttribute) => {
+			if (oProperty.hasOwnProperty(sAttribute)) {
+				oChangeContent[sAttribute == "key" ? "name" : sAttribute] = oProperty[sAttribute];
+			}
+		});
+
+		return oChangeContent;
 	};
 
 	return MDCSelectionController;
