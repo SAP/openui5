@@ -1,4 +1,4 @@
-sap.ui.define(function() {
+sap.ui.define("sap.m.sample.TableBreadcrumb.Formatter", [], function() {
 	"use strict";
 
 	var Formatter = {
