@@ -246,6 +246,7 @@ sap.ui.define([
 		// Fake direct require to a library.js module by just calling initLibrary
 		Library.init({
 			name : "sap.ui.fake.testlib",
+			apiVersion: 2,
 			version: "1.0.0",
 			dependencies : ["sap.ui.core"],
 			types: [],

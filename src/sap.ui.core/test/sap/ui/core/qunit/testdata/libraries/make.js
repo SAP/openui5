@@ -366,7 +366,12 @@ makeLibWith("lib5", {js:true});
 scenario("scenario9");
 makeLibWith("lib1", {js:true});
 
-// scenario 10-12 are mocked in unit tests
+// scenario 10 is mocked in unit tests
+
+scenario("scenario11");
+makeLibWith("lib1", {});
+
+// scenario 12 is mocked in unit tests
 
 scenario("scenario13");
 makeLibWith("lib1", {js:true}, ['lib3', 'lib4', 'lib5']);
