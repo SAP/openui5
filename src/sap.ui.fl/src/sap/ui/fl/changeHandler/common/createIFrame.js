@@ -34,8 +34,10 @@ sap.ui.define([
 			mIFrameSettings._settings[sIFrameProperty] = vValue;
 		});
 
-		mIFrameSettings.advancedSettings = oChangeContent?.advancedSettings;
-		mIFrameSettings._settings.advancedSettings = oChangeContent?.advancedSettings;
+		if (oChangeContent?.advancedSettings) {
+			mIFrameSettings.advancedSettings = oChangeContent.advancedSettings;
+			mIFrameSettings._settings.advancedSettings = oChangeContent?.advancedSettings;
+		}
 
 		if (mRenameInfo) {
 			mIFrameSettings.renameInfo = mRenameInfo;
