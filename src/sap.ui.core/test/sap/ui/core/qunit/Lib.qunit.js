@@ -82,6 +82,7 @@ sap.ui.define([
 		sap.ui.predefine('testlibs/scenario1/lib3/library', ["sap/ui/core/Lib"], function(Library) {
 			return Library.init({
 				name: 'testlibs.scenario1.lib3',
+				apiVersion: 2,
 				noLibraryCSS: true
 			});
 		});
@@ -338,6 +339,7 @@ sap.ui.define([
 		sap.ui.predefine('testlibs/scenario2/lib3/library', ["sap/ui/core/Lib"], function(Library) {
 			return Library.init({
 				name: 'testlibs.scenario2.lib3',
+				apiVersion: 2,
 				noLibraryCSS: true
 			});
 		});
@@ -595,6 +597,7 @@ sap.ui.define([
 			], function(DataType, Library) {
 				const oThisLib = Library.init({
 					name: 'testing.pseudo.modules.deprecation',
+					apiVersion: 2,
 					noLibraryCSS: true,
 					types: [
 						"testing.pseudo.modules.deprecation.SomeEnum",
@@ -607,6 +610,7 @@ sap.ui.define([
 					"A": "A",
 					"B": "B"
 				};
+				DataType.registerEnum("testing.pseudo.modules.deprecation.SomeEnum", oThisLib.SomeEnum);
 
 				oThisLib.HexNumber = DataType.createType('testing.pseudo.modules.deprecation.HexNumber', {
 						isValid : function(vValue) {

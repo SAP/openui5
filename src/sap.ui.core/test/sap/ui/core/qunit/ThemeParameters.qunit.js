@@ -87,7 +87,10 @@ sap.ui.define([
 			name: "sapUiAsyncThemeParamForLib5"
 		}), undefined, "'undefined' should be returned for a parameter of a library that currently is not loaded");
 
-		Library.init({ name: "testlibs.themeParameters.lib5" });
+		Library.init({
+			name: "testlibs.themeParameters.lib5",
+			apiVersion: 2
+		});
 
 		Parameters.get({
 			name: "sapUiAsyncThemeParamForLib5",

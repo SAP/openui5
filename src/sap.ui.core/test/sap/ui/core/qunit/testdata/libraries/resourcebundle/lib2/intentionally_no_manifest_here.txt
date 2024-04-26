@@ -1,0 +1,7 @@
+This library intentionally does not contain a manifest.json file!
+
+See test case
+
+	"Static method 'getResourceBundleFor' called on known library where manifest.json does NOT exist"
+
+in Lib.qunit.js. 

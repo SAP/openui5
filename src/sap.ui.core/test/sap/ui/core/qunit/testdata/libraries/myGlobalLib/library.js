@@ -6,6 +6,7 @@ sap.ui.define([
 	"use strict";
 	var thisLib = sap.ui.getCore().initLibrary({
 		name: 'testlibs.myGlobalLib',
+		apiVersion: 1, // this is a legacy scenario
 		types: [
 			"testlibs.myGlobalLib.types.HalfTheTruth"
 		],
