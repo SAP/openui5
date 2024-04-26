@@ -2,16 +2,14 @@
  * ${copyright}
  */
 /*eslint-disable max-len */
-// Provides class sap.ui.model.odata.TreeBindingAdapter
+// Provides class sap.ui.model.TreeBindingCompatibilityAdapter
 sap.ui.define(["sap/base/util/each"],
 	function(each) {
 		"use strict";
 
 		/**
-		 * Adapter for TreeBindings to add the ListBinding functionality and use the
+		 * Adapter for {@link sap.ui.model.odata.ODataTreeBinding} to add the list binding functionality and use the
 		 * tree structure in list based controls.
-		 *
-		 * This module is only for experimental and internal use!
 		 *
 		 * @param {sap.ui.model.TreeBinding} oBinding
 		 *   The binding to add ListBinding functionality to
@@ -20,8 +18,10 @@ sap.ui.define(["sap/base/util/each"],
 		 *   selection handling
 		 *
 		 * @alias sap.ui.model.TreeBindingCompatibilityAdapter
-		 * @class
-		 * @protected
+		 * @namespace
+		 *
+		 * @private
+		 * @ui5-restricted sap.m.Tree, sap.ui.table.TreeTable
 		 *
 		 * @deprecated since 1.96.0; use {@link sap.ui.model.TreeBindingAdapter} instead
 		 */
