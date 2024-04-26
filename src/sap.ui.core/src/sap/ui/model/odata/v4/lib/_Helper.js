@@ -161,8 +161,9 @@ sap.ui.define([
 		 * @param {object} oOperationMetadata
 		 *   The operation metadata to determine whether a given message target is a parameter
 		 *   of the operation
-		 * @param {string} sParameterContextPath
-		 *   The parameter context path
+		 * @param {string} [sParameterContextPath]
+		 *   The parameter context path, needed for adjusting a message target in case it is an
+		 *   operation parameter, except the binding parameter
 		 * @param {string} [sContextPath]
 		 *   The context path for a bound operation
 		 *
@@ -170,7 +171,9 @@ sap.ui.define([
 		 */
 		adjustTargets : function (oMessage, oOperationMetadata, sParameterContextPath,
 				sContextPath) {
-			var sAdditionalTargetsKey = _Helper.getAnnotationKey(oMessage, ".additionalTargets"),
+			var sAdditionalTargetsKey = "additionalTargets" in oMessage
+					? "additionalTargets"
+					: _Helper.getAnnotationKey(oMessage, ".additionalTargets"),
 				aTargets;
 
 			aTargets = [oMessage.target].concat(oMessage[sAdditionalTargetsKey])
@@ -1277,8 +1280,9 @@ sap.ui.define([
 		 * @param {object} oOperationMetadata
 		 *   The operation metadata to determine whether a given message target is a parameter
 		 *   of the operation
-		 * @param {string} sParameterContextPath
-		 *   The parameter context path
+		 * @param {string} [sParameterContextPath]
+		 *   The parameter context path, needed for adjusting a message target in case it is an
+		 *   operation parameter, except the binding parameter
 		 * @param {string} [sContextPath]
 		 *   The context path for a bound operation
 		 * @returns {string|undefined} The adjusted target, or <code>undefined</code> if the target
@@ -1287,7 +1291,7 @@ sap.ui.define([
 		 * @private
 		 */
 		getAdjustedTarget : function (sTarget, oOperationMetadata, sParameterContextPath,
-					sContextPath) {
+				sContextPath) {
 			var bIsParameterName,
 				sParameterName,
 				aSegments;
@@ -1301,6 +1305,9 @@ sap.ui.define([
 			if (oOperationMetadata.$IsBound
 					&& sParameterName === oOperationMetadata.$Parameter[0].$Name) {
 				sTarget = _Helper.buildPath(sContextPath, aSegments.join("/"));
+				return sTarget;
+			}
+			if (!sParameterContextPath) {
 				return sTarget;
 			}
 			bIsParameterName = oOperationMetadata.$Parameter.some(function (oParameter) {

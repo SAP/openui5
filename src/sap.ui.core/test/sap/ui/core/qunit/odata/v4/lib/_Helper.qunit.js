@@ -4551,18 +4551,32 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [true, false].forEach(function (bTargetIsValid) {
-	var sTitle = "adjustTargets: with additional targets, target is valid: " + bTargetIsValid;
+	[true, false].forEach(function (bAnnotation) {
+	var sTitle = "adjustTargets: with additional targets, annotation: " + bAnnotation
+			+ ", target is valid: " + bTargetIsValid;
 
 	QUnit.test(sTitle, function (assert) {
 		var oHelperMock = this.mock(_Helper),
+			oMessage;
+
+		if (bAnnotation) {
 			oMessage = {
 				target : "target",
 				"@foo.additionalTargets" : ["additional1", "foo", "additional2"]
 			};
 
-		oHelperMock.expects("getAnnotationKey")
-			.withExactArgs(sinon.match.same(oMessage), ".additionalTargets")
-			.returns("@foo.additionalTargets");
+			oHelperMock.expects("getAnnotationKey")
+				.withExactArgs(sinon.match.same(oMessage), ".additionalTargets")
+				.returns("@foo.additionalTargets");
+		} else {
+			oMessage = {
+				target : "target",
+				additionalTargets : ["additional1", "foo", "additional2"],
+				"@foo.additionalTargets" : "n/a" // additionalTargets must win!
+			};
+
+			oHelperMock.expects("getAnnotationKey").never();
+		}
 		oHelperMock.expects("getAdjustedTarget")
 			.withExactArgs("target", "oOperationMetadata", "sParameterContextPath", "sContextPath")
 			.returns(bTargetIsValid ? "~adjusted~" : undefined);
@@ -4583,18 +4597,21 @@ sap.ui.define([
 		_Helper.adjustTargets(oMessage, "oOperationMetadata", "sParameterContextPath",
 			"sContextPath");
 
-		if (bTargetIsValid) {
-			assert.deepEqual(oMessage, {
-				target : "~adjusted~",
-				"@foo.additionalTargets" : ["~adjusted1~", "~adjusted2~"]
-			});
+		const oExpectedMessage = {
+			target : bTargetIsValid ? "~adjusted~" : "~adjusted1~",
+			"@foo.additionalTargets" : "n/a"
+		};
+		const aAdditionalTargets
+			= bTargetIsValid ? ["~adjusted1~", "~adjusted2~"] : ["~adjusted2~"];
+
+		if (bAnnotation) {
+			oExpectedMessage["@foo.additionalTargets"] = aAdditionalTargets;
 		} else {
-			assert.deepEqual(oMessage, {
-				target : "~adjusted1~",
-				"@foo.additionalTargets" : ["~adjusted2~"]
-			});
+			oExpectedMessage.additionalTargets = aAdditionalTargets;
 		}
+		assert.deepEqual(oMessage, oExpectedMessage);
 	});
+});
 });
 
 	//*********************************************************************************************
@@ -4623,6 +4640,11 @@ sap.ui.define([
 			_Helper.getAdjustedTarget("$Parameter/foo/bar", oOperationMetadata,
 				"~parameterContextPath~"),
 			"~parameterContextPath~/foo/bar");
+
+		assert.strictEqual(
+			// code under test
+			_Helper.getAdjustedTarget("foo/bar", oOperationMetadata),
+			"foo/bar");
 	});
 
 	//*********************************************************************************************
