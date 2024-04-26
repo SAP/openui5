@@ -446,7 +446,7 @@ sap.ui.define([
 	 * @param {object} [mPropertyBag.contexts] - Map of contexts that restrict the visibility of the variant
 	 * @param {string[]} [mPropertyBag.contexts.role] - List of roles which are allowed to see the variant
 	 * @param {sap.ui.fl.Layer} mPropertyBag.layer - Layer in which the variant removal takes place;
-	 * @param {string} mPropertyBag.adaptationId - ID of the context-based adaptation
+	 * @param {string} [mPropertyBag.adaptationId] - ID of the context-based adaptation
 	 * @param {boolean} [mPropertyBag.forceCreate] - Parameter that forces a new change to be created
 	 * this either updates the variant from the layer or writes a change to that layer.
 	 * @returns {sap.ui.fl.apply._internal.flexObjects.CompVariant} The updated variant
@@ -585,10 +585,10 @@ sap.ui.define([
 				}
 			});
 
-			if (mPropertyBag.adaptationId !== undefined) {
-				oChange.setAdaptationId(mPropertyBag.adaptationId);
-			} else if (mPropertyBag.changeSpecificData && mPropertyBag.changeSpecificData.adaptationId !== undefined) {
-				oChange.setAdaptationId(mPropertyBag.changeSpecificData.adaptationId);
+			const sAdaptationId = mPropertyBag.adaptationId || mPropertyBag?.changeSpecificData?.adaptationId;
+
+			if (sAdaptationId) {
+				oChange.setAdaptationId(sAdaptationId);
 			}
 
 			if (mPropertyBag.name) {
