@@ -846,10 +846,9 @@ sap.ui.define([
 				const oParent = oResult.value[0];
 				const oCandidate = this.aElements.$byPredicate[
 					_Helper.getKeyPredicate(oParent, this.sMetaPath, this.getTypes())];
-				const iCandidateRank
-					= oCandidate && _Helper.getPrivateAnnotation(oCandidate, "rank");
-				if (iCandidateRank !== undefined) { // parent already inside collection
-					return this.getArrayIndex(iCandidateRank);
+				if (oCandidate && _Helper.getPrivateAnnotation(oCandidate, "rank") !== undefined) {
+					// parent already inside collection
+					return this.aElements.indexOf(oCandidate);
 				}
 
 				_Helper.setPrivateAnnotation(oParent, "parent", this.oFirstLevel);
@@ -867,7 +866,9 @@ sap.ui.define([
 				// Note: overridden by _AggregationCache.calculateKeyPredicateRH
 				this.oFirstLevel.calculateKeyPredicate(oParent, this.getTypes(), this.sMetaPath);
 
-				const iParentIndex = this.getArrayIndex(iRank);
+				const iParentIndex = this.aElements.findIndex(
+					(oNode) => _Helper.getPrivateAnnotation(oNode, "parent") === this.oFirstLevel
+						&& _Helper.getPrivateAnnotation(oNode, "rank") === iRank);
 				if (_Helper.getPrivateAnnotation(this.aElements[iParentIndex], "placeholder")) {
 					this.insertNode(oParent, iRank, iParentIndex);
 				} // else: parent already inside collection
@@ -960,46 +961,30 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the index in <code>aElements</code> for a given rank. The given (limited preorder)
-	 * rank does not reflect the correct position of a node in the cache. On the one hand nodes
-	 * within group level caches or out of place nodes (e.g. created or moved nodes) are causing
-	 * that the position of the node to be inserted is further down, on the other hand collapsed
-	 * nodes in the first level cache are causing that the insert position is further up.
+	 * Returns the index in <code>this.aElements</code> for a given (limited preorder) rank. No node
+	 * with that rank is already present, but it needs to be inserted at the returned index later.
+	 * A unified cache is assumed. Takes care of collapsed or out-of-place nodes.
 	 *
 	 * @param {number} iRank
 	 *   The (limited preorder) rank of a node
 	 * @returns {number}
 	 *   The array index
-	 * @throws {Error}
-	 *   If a node w/o rank is encountered within the first level cache
 	 *
 	 * @private
 	 */
 	_AggregationCache.prototype.getArrayIndex = function (iRank) {
-		let iIndex = iRank;
-		for (let i = 0; i < iIndex; i += 1) {
+		var i;
+
+		for (i = 0; i < this.aElements.length; i += 1) {
 			const oNode = this.aElements[i];
-			if (oNode["@$ui5.node.isExpanded"] === false) {
-				// descendants of collapsed nodes in oFirstLevel are reducing the rank in the list;
-				// descendants of nodes in group level caches must NOT be taken into account, these
-				// nodes have no private Annotation for the descendants
-				iIndex -= _Helper.getPrivateAnnotation(oNode, "descendants", 0);
-			}
-			// nodes of group level caches or out of place nodes must be taken into account
-			if (_Helper.getPrivateAnnotation(oNode, "parent") !== this.oFirstLevel) {
-				iIndex += 1;
-			} else {
-				const iNodeRank = _Helper.getPrivateAnnotation(oNode, "rank");
-				if (iNodeRank === undefined) {
-					throw new Error("Missing rank");
-				}
-				if (iNodeRank > iRank) {
-					iIndex += 1;
-				}
+			const iNodeRank = _Helper.getPrivateAnnotation(oNode, "rank");
+			// out-of-place nodes are ignored; nothing to do for collapsed nodes
+			if (iNodeRank > iRank && !("@$ui5.context.isTransient" in oNode)) {
+				return i;
 			}
 		}
 
-		return iIndex;
+		return i;
 	};
 
 	/**
