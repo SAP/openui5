@@ -52,15 +52,26 @@ sap.ui.define([
 					frameUrl: "newUrl",
 					title: "myNewTitle",
 					advancedSettings: {
-						additionalSandboxParameters: []
+						additionalSandboxParameters: [],
+						allowForms: true,
+						allowPopups: true,
+						allowScripts: true,
+						allowModals: true,
+						allowSameOrigin: true
 					}
+
 				},
 				updateContent: {
 					url: "newUrl",
 					width: "50px",
 					height: "100vh",
 					advancedSettings: {
-						additionalSandboxParameters: []
+						additionalSandboxParameters: [],
+						allowForms: true,
+						allowPopups: true,
+						allowScripts: true,
+						allowModals: true,
+						allowSameOrigin: true
 					}
 				},
 				renameContent: {
@@ -75,9 +86,6 @@ sap.ui.define([
 					frameHeight: "100",
 					frameHeightUnit: "px",
 					frameUrl: "https://example.com",
-					advancedSettings: {
-						additionalSandboxParameters: []
-					},
 					title: "myNewTitle"
 				},
 				renameContent: {
@@ -92,18 +100,12 @@ sap.ui.define([
 					frameHeight: "100",
 					frameHeightUnit: "px",
 					frameUrl: "https://example.com",
-					title: "myInitialTitle",
-					advancedSettings: {
-						additionalSandboxParameters: []
-					}
+					title: "myInitialTitle"
 				},
 				updateContent: {
 					url: "https://example.com",
 					width: "50px",
-					height: "100px",
-					advancedSettings: {
-						additionalSandboxParameters: []
-					}
+					height: "100px"
 				}
 			},
 			{
@@ -114,18 +116,12 @@ sap.ui.define([
 					frameHeight: "100",
 					frameHeightUnit: "%",
 					frameUrl: "https://example.com",
-					title: "myInitialTitle",
-					advancedSettings: {
-						additionalSandboxParameters: []
-					}
+					title: "myInitialTitle"
 				},
 				updateContent: {
 					url: "https://example.com",
 					width: "100px",
-					height: "100%",
-					advancedSettings: {
-						additionalSandboxParameters: []
-					}
+					height: "100%"
 				}
 			},
 			{
@@ -139,11 +135,11 @@ sap.ui.define([
 					title: "myInitialTitle",
 					advancedSettings: {
 						additionalSandboxParameters: ["allow-pointer-lock"],
-						"allow-forms": true,
-						"allow-popups": true,
-						"allow-scripts": true,
-						"allow-modals": true,
-						"allow-same-origin": true
+						allowForms: true,
+						allowPopups: true,
+						allowScripts: true,
+						allowModals: true,
+						allowSameOrigin: true
 					}
 				},
 				updateContent: {
@@ -152,11 +148,11 @@ sap.ui.define([
 					height: "100px",
 					advancedSettings: {
 						additionalSandboxParameters: ["allow-pointer-lock"],
-						"allow-forms": true,
-						"allow-popups": true,
-						"allow-scripts": true,
-						"allow-modals": true,
-						"allow-same-origin": true
+						allowForms: true,
+						allowPopups: true,
+						allowScripts: true,
+						allowModals: true,
+						allowSameOrigin: true
 					}
 				}
 			},
@@ -168,10 +164,7 @@ sap.ui.define([
 					frameHeight: "100",
 					frameHeightUnit: "px",
 					frameUrl: "https://example.com",
-					title: "myInitialTitle",
-					advancedSettings: {
-						additionalSandboxParameters: []
-					}
+					title: "myInitialTitle"
 				}
 			},
 			{

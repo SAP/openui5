@@ -152,7 +152,7 @@ sap.ui.define([
 				this._oJSONModel.setProperty("/previousFrameUrl/value", sReturnedURL);
 				this._oJSONModel.setProperty("/settingsUpdate/value", false);
 
-				oIFrame.applySettings({ url: sURL, advancedSettings: this._oJSONModel.getProperty("/advancedSettings/value") });
+				oIFrame.applySettings({ url: sURL, advancedSettings: {...this._oJSONModel.getProperty("/advancedSettings/value")} });
 			} catch (oError) {
 				Log.error("Error previewing the URL: ", oError);
 			}

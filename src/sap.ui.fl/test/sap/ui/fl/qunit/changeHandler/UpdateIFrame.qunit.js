@@ -52,10 +52,7 @@ sap.ui.define([
 				height: sDefaultSize,
 				url: sOpenUI5Url,
 				_settings: {
-					url: sOpenUI5Url,
-					advancedSettings: {
-						additionalSandboxParameters: []
-					}
+					url: sOpenUI5Url
 				}
 			});
 
@@ -118,11 +115,11 @@ sap.ui.define([
 		QUnit.test("when an advanced settings update is reverted", async function(assert) {
 			const oAdvancedSettings = {
 				additionalSandboxParameters: [],
-				"allow-forms": false,
-				"allow-popups": true,
-				"allow-scripts": true,
-				"allow-modals": true,
-				"allow-same-origin": true
+				allowForms: false,
+				allowPopups: true,
+				allowScripts: true,
+				allowModals: true,
+				allowSameOrigin: true
 			};
 			UpdateIFrame.completeChangeContent(
 				this.oChange,
@@ -142,7 +139,14 @@ sap.ui.define([
 			await UpdateIFrame.revertChange(this.oChange, this.oIFrame, mPropertyBag);
 			assert.deepEqual(
 				this.oIFrame.getAdvancedSettings(),
-				{ additionalSandboxParameters: [] },
+				{
+					additionalSandboxParameters: [],
+					allowForms: true,
+					allowPopups: true,
+					allowScripts: true,
+					allowModals: true,
+					allowSameOrigin: true
+				},
 				"then the advanced settings were reverted correctly"
 			);
 		});
