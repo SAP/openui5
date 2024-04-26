@@ -1,28 +1,30 @@
 /*global QUnit,sinon */
 sap.ui.define([
-	"sap/ui/core/Element",
-	"sap/ui/model/json/JSONModel",
+	"sap/base/util/extend",
+	"sap/m/Column",
+	"sap/m/ColumnListItem",
+	"sap/m/Label",
+	"sap/m/Table",
 	"sap/ui/core/Icon",
 	"sap/ui/model/Sorter",
-	"sap/m/Table",
-	"sap/m/Column",
-	"sap/m/Label",
-	"sap/m/ColumnListItem",
-	"sap/ui/core/Core",
-	"sap/base/util/extend",
-	"sap/ui/thirdparty/jquery",
+	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/v4/ODataModel",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/test/TestUtils"
-], function(Element, JSONModel, Icon, Sorter, Table, Column, Label, ColumnListItem, oCore, extend, jQuery, ODataV4Model, TestUtils) {
+], function(extend, Column, ColumnListItem, Label, Table, Icon, Sorter, JSONModel, ODataV4Model, nextUIUpdate, TestUtils) {
 	"use strict";
 
+	let $MergedLabel, $MergedIcon;
 
+	async function ui5Event(sEventName, oControl) {
+		return await new Promise((fnResolve) => {
+			oControl?.attachEventOnce(sEventName, fnResolve);
+		});
+	}
 
-	var $MergedLabel, $MergedIcon;
+	function createTable(sId, bGrowing, oBindConfig) {
 
-	function createSUT(sId, bGrowing, oBindConfig){
-
-		var oTable = new Table(sId, {
+		const oTable = new Table(sId, {
 			growing : bGrowing,
 			growingThreshold : 5,
 			columns : [
@@ -45,7 +47,7 @@ sap.ui.define([
 		});
 
 		// JSON sample data
-		var data = {
+		const data = {
 			teamMembers:[
 				{lastName:"Doe",gender:"Male"},
 				{lastName:"Ali",gender:"Female"},
@@ -60,13 +62,13 @@ sap.ui.define([
 			]};
 
 		// create JSON model instance
-		var oModel = new JSONModel();
+		const oModel = new JSONModel();
 
 		// set the data for the model
 		oModel.setData(data);
 
 		// define the template
-		var oItemTemplate = new ColumnListItem({
+		const oItemTemplate = new ColumnListItem({
 			cells : [
 				new Icon({
 					src : {
@@ -97,135 +99,109 @@ sap.ui.define([
 
 	QUnit.module("Display");
 
-	QUnit.test("Merge Label and Icon", function(assert) {
-			var sut = createSUT("MergeDuplicates");
-		sut.placeAt("qunit-fixture");
-		oCore.applyChanges();
+	QUnit.test("Merge Label and Icon", async function(assert) {
+		const oTable = createTable("MergeDuplicates");
 
-		var oTable = Element.getElementById("MergeDuplicates");
+		oTable.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
 		$MergedLabel = oTable.getItems()[3].getCells()[2].$();
 		$MergedIcon = oTable.getItems()[3].getCells()[0].$();
 
-			assert.ok($MergedLabel.hasClass("sapMListTblCellDupCnt"), "duplicated label should be merged.");
-			assert.strictEqual($MergedLabel.text(), "Male", "duplicated label is still available in the dom for screen readers.");
+		assert.ok($MergedLabel.hasClass("sapMListTblCellDupCnt"), "duplicated label should be merged.");
+		assert.strictEqual($MergedLabel.text(), "Male", "duplicated label is still available in the dom for screen readers.");
+		assert.ok($MergedIcon.hasClass("sapMListTblCellDupCnt"), "duplicated icon should be merged.");
 
-			assert.ok($MergedIcon.hasClass("sapMListTblCellDupCnt"), "duplicated icon should be merged.");
-
-		//clean up
-		sut.destroy();
+		oTable.destroy();
 	});
 
-	QUnit.test("Merge in Growing Feature", function(assert) {
-		var sut = createSUT("MergeDuplicates", true);
-		sut.placeAt("qunit-fixture");
-		oCore.applyChanges();
+	QUnit.test("Merge in Growing Feature", async function(assert) {
+		const oTable = createTable("MergeDuplicates", true);
 
-		var oDeferred = jQuery.Deferred();
-		oDeferred.promise(sut);
-		sut.attachUpdateFinished(
-			oDeferred.resolve()
-		);
+		oTable.placeAt("qunit-fixture");
+		await nextUIUpdate();
 
-		sut._oGrowingDelegate.requestNewPage();
-		sut.done(function() {
-			var oTable = Element.getElementById("MergeDuplicates");
-			var $FirstLabelAfterGrowing = oTable.getItems()[5].getCells()[2].$();
-			var $FirstIconAfterGrowing =  oTable.getItems()[5].getCells()[0].$();
+		oTable._oGrowingDelegate.requestNewPage();
+		await ui5Event("updateFinished", oTable);
 
-			assert.ok($FirstLabelAfterGrowing.hasClass("sapMListTblCellDupCnt"), "label of the first item after growing should be merged.");
-			assert.strictEqual($FirstLabelAfterGrowing.text(), "Male", "duplicated label is still available in the dom for screen readers.");
+		const $FirstLabelAfterGrowing = oTable.getItems()[5].getCells()[2].$();
+		const $FirstIconAfterGrowing =  oTable.getItems()[5].getCells()[0].$();
 
-			assert.ok($FirstIconAfterGrowing.hasClass("sapMListTblCellDupCnt"), "icon of the first item after growing should be merged.");
-		});
+		assert.ok($FirstLabelAfterGrowing.hasClass("sapMListTblCellDupCnt"), "label of the first item after growing should be merged.");
+		assert.strictEqual($FirstLabelAfterGrowing.text(), "Male", "duplicated label is still available in the dom for screen readers.");
 
-		//clean up
-		sut.destroy();
+		assert.ok($FirstIconAfterGrowing.hasClass("sapMListTblCellDupCnt"), "icon of the first item after growing should be merged.");
+
+		oTable.destroy();
 	});
 
-	QUnit.test("Merge when Group Header occures", function(assert) {
-		var oLastNameSorter = new Sorter("lastName", false, true);
+	QUnit.test("Merge when Group Header occures", async function(assert) {
+		const oLastNameSorter = new Sorter("lastName", false, true);
+		const oTable = createTable("MergeDuplicates", false, {sorter: oLastNameSorter});
 
-		var sut = createSUT("MergeDuplicates", false, {sorter: oLastNameSorter});
-		sut.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		oTable.placeAt("qunit-fixture");
+		await nextUIUpdate();
 
-		var oTable = Element.getElementById("MergeDuplicates");
-		var labelBeforeHeader = "before";
-		var labelAfterHeader = "after";
-
-		//get label text of the item before header
-		labelBeforeHeader = oTable.getItems()[3].getCells()[2].$().text();
-
-		//get label text of the item after header
-		labelAfterHeader = oTable.getItems()[5].getCells()[2].$().text();
+		const labelBeforeHeader = oTable.getItems()[3].getCells()[2].$().text();
+		const labelAfterHeader = oTable.getItems()[5].getCells()[2].$().text();
 
 		assert.ok(labelBeforeHeader == labelAfterHeader, "label value after group header should not be merged.");
 
-		//test for icon value
-		var iconAfterHeader = "after";
-		//get icon src of the item after header
-		iconAfterHeader = oTable.getItems()[5].getCells()[0].getDomRef();
+		const iconAfterHeader = oTable.getItems()[5].getCells()[0].getDomRef();
 
 		assert.ok(iconAfterHeader, "icon src after group header should not be merged");
 
-		//clean up
-		sut.destroy();
+		oTable.destroy();
 	});
 
-	QUnit.test("Merge when Table Rerendering", function(assert) {
-		var sut = createSUT("MergeDuplicates");
-		sut.placeAt("qunit-fixture");
-		oCore.applyChanges();
+	QUnit.test("Merge when Table Rerendering", async function(assert) {
+		const oTable = createTable("MergeDuplicates");
 
-		var data = {
+		oTable.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		const data = {
 				teamMembers:[
 					{lastName:"Doe" ,gender:"Male"}
 				]};
 
-		sut.setModel(new JSONModel(data));
-		oCore.applyChanges();
+		oTable.setModel(new JSONModel(data));
+		await nextUIUpdate();
 
-		var oTable = Element.getElementById("MergeDuplicates");
+		const labelLastValue = oTable.getColumns()[2].getLastValue();
+		const iconLastValue = oTable.getColumns()[0].getLastValue();
 
-		//test for label value
-		var labelLastValue = oTable.getColumns()[2].getLastValue();
-		//test for icon value
-		var iconLastValue = oTable.getColumns()[0].getLastValue();
-
-
-		//rerender the table
 		oTable.invalidate();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
-		var labelAfterRender = oTable.getItems()[0].getCells()[2].$().text();
-		var iconAfterRender = oTable.getItems()[0].getCells()[0].getSrc();
+		const labelAfterRender = oTable.getItems()[0].getCells()[2].$().text();
+		const iconAfterRender = oTable.getItems()[0].getCells()[0].getSrc();
 
 		assert.ok(labelLastValue == labelAfterRender, "last value of label should be cleared if there is only one row");
 		assert.ok(iconLastValue == iconAfterRender, "last value of icon should be cleared if there is only one row");
 
-		//clean up
-		sut.destroy();
+		oTable.destroy();
 	});
 
-	QUnit.test("Merge when Items Rerendering", function(assert) {
-		var sut = createSUT("MergeDuplicates");
-		sut.placeAt("qunit-fixture");
-		oCore.applyChanges();
+	QUnit.test("Merge when Items Rerendering", async function(assert) {
+		const oTable = createTable("MergeDuplicates");
 
-		var data = {
+		oTable.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		const data = {
 				teamMembers:[
 					{lastName:"Doe" ,gender:"Male"},
 					{lastName:"Doe" ,gender:"Male"}
 				]};
 
-		sut.setModel(new JSONModel(data));
-		oCore.applyChanges();
+		oTable.setModel(new JSONModel(data));
+		await nextUIUpdate();
 
-		var oTable = Element.getElementById("MergeDuplicates"),
-			oFirstItem = oTable.getItems()[0],
+		const oFirstItem = oTable.getItems()[0],
 			oSecondItem = oTable.getItems()[1];
 
-		var mBeforeRendering = {
+		const mBeforeRendering = {
 			firstItem: {
 				label: oFirstItem.getCells()[2].$().text(),
 				icon: oFirstItem.getCells()[0].getSrc()
@@ -239,9 +215,9 @@ sap.ui.define([
 		//rerender the items
 		oFirstItem.invalidate();
 		oSecondItem.invalidate();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
-		var mAfterRendering = {
+		const mAfterRendering = {
 			firstItem: {
 				label: oFirstItem.getCells()[2].$().text(),
 				icon: oFirstItem.getCells()[0].getSrc()
@@ -255,7 +231,7 @@ sap.ui.define([
 		assert.deepEqual(mBeforeRendering, mAfterRendering, "Items rendering does not change the merging status");
 
 		//clean up
-		sut.destroy();
+		oTable.destroy();
 	});
 
 	QUnit.module("OData V4", {
@@ -276,7 +252,7 @@ sap.ui.define([
 				}
 			});
 		},
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oModel = new ODataV4Model({
 				serviceUrl: "/MyService/",
 				operationMode: "Server"
@@ -302,7 +278,7 @@ sap.ui.define([
 			});
 
 			this.oTable.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oModel.destroy();
@@ -313,36 +289,33 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Merge cells", function(assert) {
-		var that = this;
+	QUnit.test("Merge cells", async function(assert) {
+		const oTable = this.oTable;
+		const that = this;
 
-		return new Promise(function(resolve) {
-			that.oTable.attachEventOnce("updateFinished", resolve);
-		}).then(function() {
-			assert.notOk(that.oTable.getItems()[0].getCells()[0].$().hasClass("sapMListTblCellDupCnt"));
-			assert.ok(that.oTable.getItems()[1].getCells()[0].$().hasClass("sapMListTblCellDupCnt"));
-			assert.ok(that.oTable._oGrowingDelegate._bApplyChunkAsync);
-			return new Promise(function(resolve) {
-				that.oTable.$("trigger").trigger("tap");
-				that.oTable.attachEventOnce("updateFinished", resolve);
-			});
-		}).then(function() {
-			assert.ok(that.oTable.getItems()[2].getCells()[0].$().hasClass("sapMListTblCellDupCnt"));
-			assert.ok(that.oTable.getItems()[3].getCells()[0].$().hasClass("sapMListTblCellDupCnt"));
-			return new Promise(function(resolve) {
-				that.oTable.$("trigger").trigger("tap");
-				that.oTable.attachEventOnce("updateStarted", function() {
-					that.oTable._oGrowingDelegate._aChunk = [new ColumnListItem({
-						cells: new Label({ text: "My Company" })
-					})];
-					that.oTable._oGrowingDelegate.applyChunkAsync(0);
-				});
-				that.oTable.attachEventOnce("updateFinished", resolve);
-			});
-		}).then(function() {
-			assert.equal(that.oTable.getItems().length, 6);
-			assert.equal(that.oTable.getItemsContainerDomRef().childElementCount, 6);
-			assert.equal(that.oTable.getItems()[0].getCells()[0].getText(), "SAP");
-		});
+		await ui5Event("updateFinished", oTable);
+
+		assert.notOk(oTable.getItems()[0].getCells()[0].$().hasClass("sapMListTblCellDupCnt"));
+		assert.ok(oTable.getItems()[1].getCells()[0].$().hasClass("sapMListTblCellDupCnt"));
+		assert.ok(oTable._oGrowingDelegate._bApplyChunkAsync);
+
+		oTable.$("trigger").trigger("tap");
+		await ui5Event("updateFinished", oTable);
+
+		assert.ok(that.oTable.getItems()[2].getCells()[0].$().hasClass("sapMListTblCellDupCnt"));
+		assert.ok(that.oTable.getItems()[3].getCells()[0].$().hasClass("sapMListTblCellDupCnt"));
+
+		oTable.$("trigger").trigger("tap");
+		await ui5Event("updateStarted", oTable);
+
+		oTable._oGrowingDelegate._aChunk = [new ColumnListItem({
+			cells: new Label({ text: "My Company" })
+		})];
+		oTable._oGrowingDelegate.applyChunkAsync(0);
+		await ui5Event("updateFinished", oTable);
+
+		assert.equal(that.oTable.getItems().length, 6);
+		assert.equal(that.oTable.getItemsContainerDomRef().childElementCount, 6);
+		assert.equal(that.oTable.getItems()[0].getCells()[0].getText(), "SAP");
 	});
 });
