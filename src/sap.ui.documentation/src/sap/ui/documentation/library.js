@@ -42,8 +42,7 @@ sap.ui.define([
 			"sap.ui.documentation.ObjectPageSubSection",
 			"sap.ui.documentation.ParamText",
 			"sap.ui.documentation.Search",
-			"sap.ui.documentation.TitleLink",
-			"sap.ui.documentation.DemoKitCardHeader"
+			"sap.ui.documentation.TitleLink"
 		],
 		elements: [
 			"sap.ui.documentation.Row",

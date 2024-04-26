@@ -74,7 +74,7 @@ sap.ui.require([
 			controlType: "sap.f.Card",
 			matchers: function (oCard) {
 				var $Card = oCard.$(),
-					$TitleElement = $Card.find('.sapUiDemoKitCardHeader .sapFCardTitle > span');
+					$TitleElement = $Card.find('.sapFCardHeader .sapFCardTitle > span');
 
 				return $TitleElement.text() === 'Shopping Cart';
 			},
@@ -92,9 +92,8 @@ sap.ui.require([
 				// icon
 				Then.waitFor({
 					viewName: sViewName,
-					controlType: "sap.ui.documentation.DemoKitCardHeader",
+					controlType: "sap.f.cards.Header",
 					matchers: [
-						new Ancestor(oCard),
 						new Properties({ iconSrc: "sap-icon://" + oData.icon })
 					],
 					success: function () {
@@ -105,11 +104,9 @@ sap.ui.require([
 				// title
 				Then.waitFor({
 					viewName: sViewName,
-					controlType: "sap.ui.documentation.DemoKitCardHeader",
+					controlType: "sap.f.cards.Header",
 					matchers: [
-						new Ancestor(oCard),
 						new Properties({
-							href: oData.ref,
 							title: oData.name
 						})
 					],
@@ -128,19 +125,6 @@ sap.ui.require([
 					],
 					success: function () {
 						Opa5.assert.ok(true, "The description \"" + oData.desc + "\" is displayed correctly");
-					}
-				});
-
-				// library link
-				Then.waitFor({
-					viewName: sViewName,
-					controlType: "sap.m.Link",
-					matchers: [
-						new Ancestor(oCard),
-						new Properties({ text: oData.lib })
-					],
-					success: function () {
-						Opa5.assert.ok(true, "The library link \"" + oData.lib + "\" is displayed correctly");
 					}
 				});
 
