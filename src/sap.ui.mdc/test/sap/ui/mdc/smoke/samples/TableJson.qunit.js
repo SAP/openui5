@@ -9,9 +9,9 @@ sap.ui.define([
 	"use strict";
 
 	Opa5.extendConfig({
-		viewNamespace: "sap.ui.mdc.demokit.sample.TableJson",
 		assertions: new P13nAssertion(),
 		actions: {...FilterFieldActions },
+		autoWait: true,
 		appParams: {
 			"sap-ui-animation": false
 		}
