@@ -1,9 +1,9 @@
 {
 
-	"name": "sap.ui.test.mixed.Component",
+	"name": "sap.ui.test.mixed_legacyAPIs.Component",
 
 	"sap.app": {
-		"id": "sap.ui.test.mixed",
+		"id": "sap.ui.test.mixed_legacyAPIs",
 		"applicationVersion": {
 			"version": "1.0.0"
 		},
@@ -15,10 +15,18 @@
 
 		"resourceRoots": {
 			"x.y.z": "anypath",
-			"foo.bar": "../../foo/bar"
+			"foo.bar": "../../foo/bar",
+			"absolute": "http://absolute/uri",
+			"server.absolute": "/server/absolute/uri"
 		},
 
 		"resources": {
+			"js": [
+				{
+					"uri": "script.js"
+				},
+				{}
+			],
 			"css": [
 				{
 					"uri": "style.css",

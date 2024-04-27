@@ -180,7 +180,9 @@ sap.ui.define([
 			"sap.ui5": {
 				"resourceRoots": {
 					"x.y.z": "anypath",
-					"foo.bar": "../../foo/bar"
+					"foo.bar": "../../foo/bar",
+					"absolute": "http://absolute/uri",
+					"server.absolute": "/server/absolute/uri"
 				},
 				"resources": iMetadataVersion === 1 ? {
 					"js": [
@@ -306,6 +308,17 @@ sap.ui.define([
 		this.oExpectedRawManifest["sap.app"]["description"] = "{{description}}";
 		this.oExpectedRawManifest["sap.ui5"]["extends"]["extensions"]["sap.ui.viewModification"]
 			["sap.ui.test.view.Main"]["myControlId"]["text"] = "{{mytext}}";
+
+		// some manifest.json files are shared with the modern tests
+		// we need to adapt the expectations for these manifest.json files
+		// We remove the invalid absolute URLs which are tested separately (see "mixed_legacyAPIs")
+		if (["v2", "mixed"].includes(sComponentName)) {
+			this.oExpectedManifest["sap.ui5"].resourceRoots = {
+				"x.y.z": "anypath",
+				"foo.bar": "../../foo/bar"
+			};
+			this.oExpectedRawManifest["sap.ui5"].resourceRoots = deepExtend({}, this.oExpectedManifest["sap.ui5"].resourceRoots);
+		}
 
 	}
 
@@ -541,12 +554,12 @@ sap.ui.define([
 
 
 	/*
-	 * TEST CODE: Component Metadata v1 & v2 (mixed)
+	 * TEST CODE: Component Metadata v1 & v2 (mixed_legacyAPIs)
 	 */
 
-	QUnit.module("Component Metadata v1 & v2 (mixed)", {
+	QUnit.module("Component Metadata v1 & v2 (mixed_legacyAPIs)", {
 		beforeEach: function() {
-			moduleSetup.call(this, "mixed", 2);
+			moduleSetup.call(this, "mixed_legacyAPIs", 2);
 		},
 		afterEach: function() {
 			moduleTeardown.call(this);
@@ -634,6 +647,14 @@ sap.ui.define([
 				};
 
 			});
+
+			// The most specific Component in the inheritance chain only should contain a server relative URL,
+			// absolute URLs are tested in the following Component variants: "v2", "mixed_legacyAPIs"
+			// Additionally the parent components bring absolute URLs with them.
+			this.oExpectedManifest["sap.ui5"].resourceRoots = {
+				"foo.bar": "../../foo/bar"
+			};
+			this.oExpectedRawManifest["sap.ui5"].resourceRoots = deepExtend({}, this.oExpectedManifest["sap.ui5"].resourceRoots);
 		},
 		afterEach: function() {
 			moduleTeardown.call(this);
