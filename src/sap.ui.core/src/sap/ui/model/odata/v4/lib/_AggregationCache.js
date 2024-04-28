@@ -1311,7 +1311,7 @@ sap.ui.define([
 				let oSiblingNode = this.aElements.$byPredicate[sSiblingPredicate];
 				if (oSiblingNode) {
 					const oNextSiblingType = this.oAggregation.$fetchMetadata(
-						_Helper.getMetaPath("/" + sActionPath + "/@$ui5.overload/NextSibling/")
+						_Helper.getMetaPath("/" + sActionPath + "/NextSibling/")
 					).getResult();
 					const aKeys = Object.keys(oNextSiblingType).filter((sKey) => sKey[0] !== "$");
 					oSiblingNode = aKeys.reduce((oKeys, sKey) => {
