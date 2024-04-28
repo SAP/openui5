@@ -36549,7 +36549,7 @@ make root = ${bMakeRoot}`;
 		const sUrl = "EMPLOYEES"
 			+ "?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root/EMPLOYEES"
 			+ ",HierarchyQualifier='OrgChart',NodeProperty='ID',Levels=2)";
-const sView = `
+		const sView = `
 <t:Table id="table" rows="{path : '/EMPLOYEES',
 		parameters : {
 			$$aggregation : {
@@ -36814,6 +36814,195 @@ const sView = `
 			[undefined, 1, "Epsilon"],
 			[undefined, 1, "Delta"]
 		]);
+	});
+
+	//*********************************************************************************************
+	// Scenario: Expand Alpha and then move a child which was part of the group level cache to the
+	// last sibling position of the root level, where it is no longer visible but its index is
+	// properly updated. The requested rank for determining the new index uses the updated
+	// ExpandLevels.
+	// The binding uses filter, search, sorter, and custom query options to verify that the URL for
+	// requesting the rank uses all relevant query options.
+	// JIRA: CPOUI5ODATAV4-2572
+	QUnit.test("Recursive Hierarchy: move nextSibling (from level cache)", async function (assert) {
+		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
+		const sNextSiblingAction
+			= "/com.sap.gateway.default.iwbep.tea_busi.v0001.__FAKE__AcChangeNextSibling";
+		const sFilterSearch = "ancestors($root/EMPLOYEES,OrgChart,ID,filter(Is_Manager)"
+			+ "/search(covfefe),keep start)";
+		const sSelect = "&$select=DrillState,ID,Name";
+		const sUrl = "EMPLOYEES?custom=foo&$apply=" + sFilterSearch + "/orderby(ENTRYDATE)"
+			+ "/com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root/EMPLOYEES"
+			+ ",HierarchyQualifier='OrgChart',NodeProperty='ID',Levels=1)";
+		const sView = `
+<t:Table id="table" rows="{path : '/EMPLOYEES',
+		parameters : {
+			$$aggregation : {
+				hierarchyQualifier : 'OrgChart',
+				search : 'covfefe'
+			},
+			$filter : 'Is_Manager',
+			$orderby : 'ENTRYDATE',
+			custom : 'foo'
+		}}" threshold="0" visibleRowCount="2">
+	<Text text="{= %{@$ui5.node.isExpanded} }"/>
+	<Text text="{= %{@$ui5.node.level} }"/>
+	<Text text="{Name}"/>
+</t:Table>`;
+
+		// 1 Alpha
+		//   2 Beta
+		//   3 Gamma
+		// 4 Delta
+		this.expectRequest(sUrl + sSelect + "&$count=true&$skip=0&$top=2", {
+				"@odata.count" : "2",
+				value : [{
+					DrillState : "collapsed",
+					ID : "1",
+					Name : "Alpha"
+				}, {
+					DrillState : "leaf",
+					ID : "4",
+					Name : "Delta"
+				}]
+			});
+
+		await this.createView(assert, sView, oModel);
+
+		const oTable = this.oView.byId("table");
+		checkTable("initial page", assert, oTable, [
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('4')"
+		], [
+			[false, 1, "Alpha"],
+			[undefined, 1, "Delta"]
+		]);
+		const oListBinding = oTable.getBinding("rows");
+		const [oAlpha] = oListBinding.getCurrentContexts();
+
+		this.expectRequest("EMPLOYEES?custom=foo&$apply=" + sFilterSearch
+				+ "/descendants($root/EMPLOYEES,OrgChart,ID,filter(ID eq '1'),1)"
+				+ "/orderby(ENTRYDATE)" + sSelect + "&$count=true&$skip=0&$top=2", {
+				"@odata.count" : "2",
+				value : [{
+					DrillState : "leaf",
+					ID : "2",
+					Name : "Beta"
+				}, {
+					DrillState : "leaf",
+					ID : "3",
+					Name : "Gamma"
+				}]
+			});
+
+		oAlpha.expand();
+
+		await this.waitForChanges(assert, "expand Alpha");
+
+		checkTable("after expand Alpha", assert, oTable, [
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('2')",
+			"/EMPLOYEES('3')",
+			"/EMPLOYEES('4')"
+		], [
+			[true, 1, "Alpha"],
+			[undefined, 2, "Beta"]
+		]);
+		const oBeta = oListBinding.getCurrentContexts()[1];
+
+		this.expectRequest({
+				batchNo : 3,
+				headers : {
+					Prefer : "return=minimal"
+				},
+				method : "PATCH",
+				payload : {
+					"EMPLOYEE_2_MANAGER@odata.bind" : null
+				},
+				url : "EMPLOYEES('2')"
+			}) // 204 No Content
+			.expectRequest({
+				batchNo : 3,
+				headers : {
+					Prefer : "return=minimal"
+				},
+				method : "POST",
+				payload : {
+					NextSibling : null
+				},
+				url : "EMPLOYEES('2')" + sNextSiblingAction
+			}) // 204 No Content
+			.expectRequest({
+				batchNo : 3,
+				url : sUrl.slice(0, -1) + ",ExpandLevels="
+					+ JSON.stringify([{NodeID : "1", Levels : 1}])
+					+ ")" + "&$filter=ID eq '2'&$select=LimitedRank"
+			}, {
+				value : [{
+					LimitedRank : "3"
+				}]
+			})
+			// 1 Alpha
+			//   3 Gamma
+			// 4 Delta
+			// 2 Beta
+			.expectRequest({
+				batchNo : 3,
+				url : sUrl.slice(0, -1) + ",ExpandLevels="
+					+ JSON.stringify([{NodeID : "1", Levels : 1}])
+					+ ")&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name"
+					+ "&$count=true&$skip=0&$top=2"
+			}, {
+				"@odata.count" : "4",
+				value : [{
+					DescendantCount : "1",
+					DistanceFromRoot : "0",
+					DrillState : "expanded",
+					ID : "1",
+					Name : "Alpha"
+				}, {
+					DescendantCount : "0",
+					DistanceFromRoot : "1",
+					DrillState : "leaf",
+					ID : "3",
+					Name : "Gamma"
+				}]
+			});
+
+		await Promise.all([
+			// code under test
+			oBeta.move({nextSibling : null, parent : null}),
+			this.waitForChanges(assert, "move Beta to last root position")
+		]);
+
+		assert.strictEqual(oBeta.getIndex(), 3);
+
+		this.expectRequest(sUrl.slice(0, -1) + ",ExpandLevels="
+				+ JSON.stringify([{NodeID : "1", Levels : 1}])
+				+ ")&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name"
+				+ "&$skip=2&$top=2", {
+				value : [{
+					DescendantCount : "0",
+					DistanceFromRoot : "0",
+					DrillState : "leaf",
+					ID : "4",
+					Name : "Delta"
+				}, {
+					DescendantCount : "0",
+					DistanceFromRoot : "0",
+					DrillState : "leaf",
+					ID : "2",
+					Name : "Beta"
+				}]
+			});
+
+		await this.checkAllContexts("after move Beta to last root position", assert, oListBinding,
+			["@$ui5.node.isExpanded", "@$ui5.node.level", "Name"], [
+				[true, 1, "Alpha"],
+				[undefined, 2, "Gamma"],
+				[undefined, 1, "Delta"],
+				[undefined, 1, "Beta"]
+			]);
 	});
 
 	//*********************************************************************************************
