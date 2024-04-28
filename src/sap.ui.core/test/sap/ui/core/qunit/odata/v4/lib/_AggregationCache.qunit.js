@@ -4412,7 +4412,8 @@ sap.ui.define([
 				}, {"myParent@odata.bind" : "Foo('42')"},
 				/*fnSubmit*/null, /*fnCancel*/sinon.match.func)
 			.rejects(oError);
-		this.mock(oCache).expects("requestRank").withExactArgs("~oChildNode~", "~oGroupLock~")
+		this.mock(oCache).expects("requestRank")
+			.withExactArgs("~oChildNode~", "~oGroupLock~", false)
 			.rejects("n/a");
 
 		const {promise : oSyncPromise, refresh : bRefresh}
@@ -4664,7 +4665,7 @@ sap.ui.define([
 				{NextSibling : sSiblingPath ? {foo : "A", baz : "C"} : null})
 			.resolves("~changeSiblingResult~");
 		this.mock(oCache).expects("requestRank")
-			.withExactArgs("~oChildNode~", sinon.match.same(oGroupLock))
+			.withExactArgs("~oChildNode~", sinon.match.same(oGroupLock), true)
 			.resolves("~rankResult~");
 
 		const {promise : oSyncPromise, refresh : bRefresh}
@@ -4727,7 +4728,7 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oParentNode));
 		const oCacheMock = this.mock(oCache);
 		oCacheMock.expects("requestRank")
-			.withExactArgs(sinon.match.same(oChildNode), "~oGroupLock~").resolves(17);
+			.withExactArgs(sinon.match.same(oChildNode), "~oGroupLock~", false).resolves(17);
 		this.mock(this.oRequestor).expects("request")
 			.withExactArgs("PATCH", "Foo('23')", "~oGroupLock~", {
 					"If-Match" : sinon.match.same(oChildNode),
@@ -5217,36 +5218,55 @@ sap.ui.define([
 	//*********************************************************************************************
 [true, false].forEach((bInheritResult) => {
 	[true, false].forEach((bDropFilter) => {
-		const sTitle = "requestProperties: bInheritResult = " + bInheritResult
-			+ ", bDropFilter = " + bDropFilter;
+		[true, false].forEach((bRefreshNeeded) => {
+			const sTitle = "requestProperties: bInheritResult = " + bInheritResult
+				+ ", bDropFilter = " + bDropFilter + ", bRefreshNeeded = " + bRefreshNeeded;
 
 	QUnit.test(sTitle, async function (assert) {
 		const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, {
 			hierarchyQualifier : "X",
+			$ExpandLevels : "~ExpandLevels~",
 			$LimitedRank : "~LimitedRank~"
 		});
+		// restore _AggregationHelper.buildApply4Hierarchy of beforeEach to allow mocking it again
+		_AggregationHelper.buildApply4Hierarchy.restore();
 		const oParentCache = {
 			$parentFilter : "~parentFilter~",
 			getQueryOptions : mustBeMocked
 		};
 		const aSelect = ["path/to/property0", "path/to/property1"];
-		const oHelperMock = this.mock(_Helper);
-		oHelperMock.expects("getPrivateAnnotation").withExactArgs("~oElement~", "parent")
-			.returns(oParentCache);
-		this.mock(oParentCache).expects("getQueryOptions").exactly(bDropFilter ? 0 : 1)
-			.withExactArgs()
+		const mQueryOptions = {
 			// Note: buildApply4Hierarchy has already removed $$filterBeforeAggregate, $filter,
 			// and $orderby and integrated these into $apply!
-			.returns({
-				$apply : "A.P.P.L.E.",
-				$count : "n/a",
-				$expand : "n/a",
-				$select : ["n/a"],
-				foo : "bar",
-				"sap-client" : "123"
-			});
+			$apply : "A.P.P.L.E.",
+			$count : "n/a",
+			$expand : "n/a",
+			$select : ["n/a"],
+			foo : "bar",
+			"sap-client" : "123"
+		};
+		this.mock(oCache.oTreeState).expects("getExpandLevels").exactly(bRefreshNeeded ? 1 : 0)
+			.withExactArgs()
+			.returns("~UpToDateExpandLevels~");
+		this.mock(_AggregationHelper).expects("buildApply4Hierarchy")
+			.exactly(bRefreshNeeded ? 1 : 0)
+			.withExactArgs({
+					hierarchyQualifier : "X",
+					$ExpandLevels : "~UpToDateExpandLevels~",
+					$LimitedRank : "~LimitedRank~"
+				}, sinon.match.same(oCache.mQueryOptions))
+			.returns(mQueryOptions);
+		const oHelperMock = this.mock(_Helper);
+		oHelperMock.expects("getPrivateAnnotation").exactly(bRefreshNeeded ? 0 : 1)
+			.withExactArgs("~oElement~", "parent")
+			.returns(oParentCache);
+		this.mock(oParentCache).expects("getQueryOptions")
+			.exactly(bDropFilter || bRefreshNeeded ? 0 : 1)
+			.withExactArgs()
+			.returns(mQueryOptions);
 		this.mock(oCache).expects("getTypes").withExactArgs().returns("~getTypes~");
-		this.mock(_AggregationHelper).expects("dropFilter").exactly(bDropFilter ? 1 : 0)
+		this.mock(_AggregationHelper).expects("dropFilter")
+			.exactly(bDropFilter && !bRefreshNeeded ? 1 : 0)
 			.withExactArgs(sinon.match.same(oCache.oAggregation),
 				sinon.match.same(oCache.mQueryOptions), "~parentFilter~")
 			.returns({
@@ -5286,10 +5306,13 @@ sap.ui.define([
 
 		assert.strictEqual(
 			// code under test
-			await oCache
-				.requestProperties("~oElement~", aSelect, oGroupLock, bInheritResult, bDropFilter),
+			await oCache.requestProperties("~oElement~", aSelect, oGroupLock, bInheritResult,
+				bDropFilter, bRefreshNeeded),
 			bInheritResult ? undefined : "~oResult~");
+
+		assert.strictEqual(oCache.oAggregation.$ExpandLevels, "~ExpandLevels~", "not overwritten");
 	});
+		});
 	});
 });
 
@@ -5300,14 +5323,15 @@ sap.ui.define([
 			$LimitedRank : "~LimitedRank~"
 		});
 		this.mock(oCache).expects("requestProperties")
-			.withExactArgs("~oElement~", ["~LimitedRank~"], "~oGroupLock~")
+			.withExactArgs("~oElement~", ["~LimitedRank~"], "~oGroupLock~", false, false,
+				"~bRefreshNeeded~")
 			.resolves("~oResult~");
 		this.mock(_Helper).expects("drillDown").withExactArgs("~oResult~", "~LimitedRank~")
 			.returns("42");
 
 		assert.strictEqual(
 			// code under test
-			await oCache.requestRank("~oElement~", "~oGroupLock~"),
+			await oCache.requestRank("~oElement~", "~oGroupLock~", "~bRefreshNeeded~"),
 			42);
 	});
 

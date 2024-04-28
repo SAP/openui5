@@ -1343,7 +1343,7 @@ sap.ui.define([
 			invokeNextSibling(),
 			// GET LimitedRank iff. no side-effects refresh needed
 			bRefreshNeeded && sSiblingPath === undefined
-				|| this.requestRank(oChildNode, oGroupLock)
+				|| this.requestRank(oChildNode, oGroupLock, bRefreshNeeded)
 		]);
 
 		if (!bRefreshNeeded) {
@@ -1887,6 +1887,9 @@ sap.ui.define([
 	 * @param {boolean} [bDropFilter]
 	 *   Whether to drop the list's filter from the request in order to support out-of-place nodes
 	 *   outside the list's current collection
+	 * @param {boolean} [bRefreshNeeded]
+	 *   Whether to request the rank with up-to-date ExpandLevels because a side-effects refresh is
+	 *   about to follow; cannot be used in combination with <code>bDropFilter</code>
 	 * @returns {Promise<object|void>}
 	 *   A promise which is resolved without a defined result in case <code>bInheritResult</code> is
 	 *   set to <code>true</code>, or with the result object, or rejected in case of an error
@@ -1894,7 +1897,7 @@ sap.ui.define([
 	 * @private
 	 */
 	_AggregationCache.prototype.requestProperties = async function (oElement, aSelect, oGroupLock,
-			bInheritResult, bDropFilter) {
+			bInheritResult, bDropFilter, bRefreshNeeded) {
 		function getApply(mQueryOptions) { // keep $apply and custom query options
 			mQueryOptions = {...mQueryOptions};
 			// Note: $filter is overwritten below, $orderby is part of $apply already
@@ -1904,11 +1907,21 @@ sap.ui.define([
 			return mQueryOptions;
 		}
 
-		const oCache = _Helper.getPrivateAnnotation(oElement, "parent");
-		const mQueryOptions = bDropFilter
-			? _AggregationHelper
-				.dropFilter(this.oAggregation, this.mQueryOptions, oCache.$parentFilter)
-			: getApply(oCache.getQueryOptions());
+		let mQueryOptions;
+		if (bRefreshNeeded) {
+			const oAggregation = {
+				...this.oAggregation,
+				$ExpandLevels : this.oTreeState.getExpandLevels()
+			};
+			mQueryOptions = getApply(
+				_AggregationHelper.buildApply4Hierarchy(oAggregation, this.mQueryOptions));
+		} else {
+			const oCache = _Helper.getPrivateAnnotation(oElement, "parent");
+			mQueryOptions = bDropFilter
+				? _AggregationHelper
+					.dropFilter(this.oAggregation, this.mQueryOptions, oCache.$parentFilter)
+				: getApply(oCache.getQueryOptions());
+		}
 		mQueryOptions.$filter = _Helper.getKeyFilter(oElement, this.sMetaPath, this.getTypes());
 		const sResourcePath = this.sResourcePath
 			+ this.oRequestor.buildQueryString(this.sMetaPath, mQueryOptions, false, true);
@@ -1934,15 +1947,19 @@ sap.ui.define([
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
 	 *   An original lock for the group ID to be used for the GET request, to be cloned via
 	 *   {@link sap.ui.model.odata.v4.lib._GroupLock#getUnlockedCopy}
+	 * @param {boolean} [bRefreshNeeded]
+	 *   Whether to request the rank with up-to-date ExpandLevels because a side-effects refresh is
+	 *   about to follow
 	 * @returns {Promise<number>}
 	 *   A promise which is resolved with the (limited preorder) rank of the given element, or
 	 *   rejected in case of an error
 	 *
 	 * @private
 	 */
-	_AggregationCache.prototype.requestRank = async function (oElement, oGroupLock) {
-		const oResult
-			= await this.requestProperties(oElement, [this.oAggregation.$LimitedRank], oGroupLock);
+	_AggregationCache.prototype.requestRank = async function (oElement, oGroupLock,
+			bRefreshNeeded) {
+		const oResult = await this.requestProperties(oElement, [this.oAggregation.$LimitedRank],
+			oGroupLock, false, false, bRefreshNeeded);
 
 		return parseInt(_Helper.drillDown(oResult, this.oAggregation.$LimitedRank));
 	};
