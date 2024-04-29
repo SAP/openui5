@@ -56,7 +56,10 @@ sap.ui.define([
 						sTopicId: sTopicId,
 						oModel: oModel
 					};
-					this._scrollTreeItemIntoView(oLastItem);
+
+					setTimeout(function() {
+						this._scrollTreeItemIntoView(oLastItem);
+					}.bind(this));
 				}
 			},
 
@@ -79,29 +82,15 @@ sap.ui.define([
 			},
 
 			_scrollTreeItemIntoView: function(oItem) {
-				var oTreeContainer = this.byId("treeContainer"),
-					oItemDom = oItem.getDomRef();
+				var oItemDom = oItem.getDomRef(),
+					oTreeContainer = this.byId("treeContainer"),
+					oTreeContainerDomRef = oTreeContainer.getDomRef(),
+					oTreeContainerScroller = oTreeContainer.getScrollDelegate();
 
-				function fnScrollIntoView() {
-					var oTreeContainerScroller = oTreeContainer.getScrollDelegate();
-					if (oItemDom && isInOverflow(oItemDom, oTreeContainerScroller?.getContainerDomRef())) {
-						oTreeContainerScroller.scrollToElement(oItemDom, TREE_SCROLL_DURATION);
-					}
+
+				if (oItemDom && isInOverflow(oItemDom, oTreeContainerDomRef)) {
+					oTreeContainerScroller.scrollToElement(oItemDom, TREE_SCROLL_DURATION);
 				}
-
-				if (!oItemDom) {
-					// Only scroll after the dom is ready
-					oItem.addEventDelegate({
-						onAfterRendering: function() {
-							oItem.removeEventDelegate(this);
-							oItemDom = oItem.getDomRef();
-							fnScrollIntoView();
-						}
-					});
-					return;
-				}
-
-				fnScrollIntoView();
 			},
 
 			/**
