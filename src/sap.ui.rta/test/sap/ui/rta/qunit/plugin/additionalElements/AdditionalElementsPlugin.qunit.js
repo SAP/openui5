@@ -959,6 +959,170 @@ sap.ui.define([
 			}.bind(this));
 		});
 
+		QUnit.test("when getMenuItems() is called with only siblings", function(assert) {
+			return createOverlayWithAggregationActions.call(
+				this,
+				{
+					add: {
+						delegate: {
+							changeType: "addFields"
+						}
+					}
+				},
+				ON_SIBLING,
+				true, // instancespecific delegate registration
+				false // controlspecific delegate registration
+			)
+			.then((oOverlay) => {
+				sandbox.stub(this.oPlugin, "getAllElements")
+				.withArgs(false, [oOverlay]).returns([]) // without child
+				.withArgs(true, [oOverlay]).returns(["sibling1"]); // one siblings
+
+				sandbox.stub(this.oPlugin, "isAvailable")
+				.withArgs([oOverlay], false).returns(true) // is available for add elements as child
+				.withArgs([oOverlay], true).returns(true); // is available for add elements as sibling
+
+				sandbox.stub(this.oPlugin, "enhanceItemWithResponsibleElement")
+				.callsFake((oMenuItem) => oMenuItem);
+
+				return this.oPlugin.getMenuItems([oOverlay]);
+			})
+			.then(function(aMenuItems) {
+				assert.equal(
+					aMenuItems[0].id,
+					"CTX_ADD_ELEMENTS_AS_SIBLING",
+					"there is an entry for add elements as sibling, no submenu required"
+				);
+			});
+		});
+
+		QUnit.test("when getMenuItems() is called with only children, one aggregation", function(assert) {
+			const oPseudoPublicParentOverlay = { id: "pseudoPublicParentOverlay" };
+			sandbox.stub(this.oPlugin, "getAllElements")
+			.withArgs(false, [oPseudoPublicParentOverlay]).returns(["child2"]) // one child (with aggregation), no multiple aggregations
+			.withArgs(true, [oPseudoPublicParentOverlay]).returns([]); // without siblings
+
+			sandbox.stub(this.oPlugin, "isAvailable")
+			.withArgs([oPseudoPublicParentOverlay], false).returns(true) // is available for add elements as child
+			.withArgs([oPseudoPublicParentOverlay], true).returns(true); // is available for add elements as sibling
+
+			sandbox.stub(this.oPlugin, "enhanceItemWithResponsibleElement")
+			.callsFake((oMenuItem) => oMenuItem);
+
+			return this.oPlugin.getMenuItems([oPseudoPublicParentOverlay])
+			.then(function(aMenuItems) {
+				assert.equal(
+					aMenuItems[0].id,
+					"CTX_ADD_ELEMENTS_AS_CHILD",
+					"there is an entry for add elements as child, no submenu required"
+				);
+			});
+		});
+
+		QUnit.test("when getMenuItems() is called with only children and multiple aggregations", function(assert) {
+			return createOverlayWithAggregationActions.call(
+				this,
+				{
+					add: {
+						delegate: {
+							changeType: "addFields"
+						}
+					}
+				},
+				ON_SIBLING,
+				true, // instancespecific delegate registration
+				false // controlspecific delegate registration
+			)
+			.then((oOverlay) => {
+				sandbox.stub(this.oPlugin, "getAllElements")
+				.withArgs(false, [oOverlay]).returns(["child1", "child2"]) // two childs, with multiple aggregations
+				.withArgs(true, [oOverlay]).returns([]); // one siblings
+
+				sandbox.stub(this.oPlugin, "isAvailable")
+				.withArgs([oOverlay], false).returns(true) // is available for add elements as child
+				.withArgs([oOverlay], true).returns(true); // is available for add elements as sibling
+
+				sandbox.stub(this.oPlugin, "enhanceItemWithResponsibleElement")
+				.callsFake((oMenuItem) => oMenuItem);
+
+				return this.oPlugin.getMenuItems([oOverlay]);
+			})
+			.then(function(aMenuItems) {
+				assert.equal(
+					aMenuItems[0].id,
+					"CTX_ADD_ELEMENTS_AS_CHILD",
+					"there is an entry for add elements as child"
+				);
+				assert.equal(
+					aMenuItems[0].submenu.length,
+					2,
+					"there are two submenus for the two aggregations"
+				);
+				assert.equal(
+					aMenuItems[0].submenu[0].id,
+					"CTX_ADD_ELEMENTS_AS_CHILD_0",
+					"the first submenu is for the first aggregation"
+				);
+				assert.equal(
+					aMenuItems[0].submenu[1].id,
+					"CTX_ADD_ELEMENTS_AS_CHILD_1",
+					"the second submenu is for the second aggregation"
+				);
+			});
+		});
+
+		QUnit.test("when getMenuItems() is called with children and siblings", function(assert) {
+			return createOverlayWithAggregationActions.call(
+				this,
+				{
+					add: {
+						delegate: {
+							changeType: "addFields"
+						}
+					}
+				},
+				ON_SIBLING,
+				true, // instancespecific delegate registration
+				false // controlspecific delegate registration
+			)
+			.then((oOverlay) => {
+				sandbox.stub(this.oPlugin, "getAllElements")
+				.withArgs(false, [oOverlay]).returns(["child1"]) // one child, no multiple aggregations
+				.withArgs(true, [oOverlay]).returns(["sibling1"]); // one siblings
+
+				sandbox.stub(this.oPlugin, "isAvailable")
+				.withArgs([oOverlay], false).returns(true) // is available for add elements as child
+				.withArgs([oOverlay], true).returns(true); // is available for add elements as sibling
+
+				sandbox.stub(this.oPlugin, "enhanceItemWithResponsibleElement")
+				.callsFake((oMenuItem) => oMenuItem);
+
+				return this.oPlugin.getMenuItems([oOverlay]);
+			})
+			.then(function(aMenuItems) {
+				assert.equal(
+					aMenuItems[0].id,
+					"CTX_ADD_ELEMENTS_CHILD_AND_SIBLING",
+					"there is an entry for add elements as child"
+				);
+				assert.equal(
+					aMenuItems[0].submenu.length,
+					2,
+					"there are two submenus for the two aggregations"
+				);
+				assert.equal(
+					aMenuItems[0].submenu[0].id,
+					"CTX_ADD_ELEMENTS_AS_CHILD_0",
+					"the first submenu is for the child"
+				);
+				assert.equal(
+					aMenuItems[0].submenu[1].id,
+					"CTX_ADD_ELEMENTS_AS_SIBLING_0",
+					"the second submenu is for the sibling"
+				);
+			});
+		});
+
 		QUnit.test("when the control's dt metadata has a disabled reveal action along with an enabled reveal action on the responsible element and getActions() is called", function(assert) {
 			sandbox.stub(this.oPlugin, "isAvailable").callsFake(function(...aArgs) {
 				if (aArgs[0][0] === this.oPseudoPublicParentOverlay) {
