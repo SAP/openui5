@@ -1671,9 +1671,9 @@ sap.ui.define([
 									oModelConfig.type = 'sap.ui.model.odata.v2.ODataModel';
 								} else {
 									future.errorThrows('Component Manifest: Provided OData version "' + sODataVersion + '" in ' +
-									'dataSource "' + oModelConfig.dataSource + '" for model "' + sModelName + '" is unknown. ' +
-									'Falling back to default model type "sap.ui.model.odata.v2.ODataModel".',
-									'["sap.app"]["dataSources"]["' + oModelConfig.dataSource + '"]', sLogComponentName);
+										'dataSource "' + oModelConfig.dataSource + '" for model "' + sModelName + '" is unknown.',
+										{ suffix: 'Falling back to default model type "sap.ui.model.odata.v2.ODataModel".' },
+										'["sap.app"]["dataSources"]["' + oModelConfig.dataSource + '"]', sLogComponentName);
 									oModelConfig.type = 'sap.ui.model.odata.v2.ODataModel';
 								}
 								break;
@@ -2620,8 +2620,7 @@ sap.ui.define([
 		const def = new Deferred();
 
 		sap.ui.require([sModuleName], def.resolve, (err) => {
-			future.warningRejects(def.resolve, def.reject, `Cannot load module '${sModuleName}'. ` +
-				"This will most probably cause an error once the module is used later on.",
+			future.warningRejects(def.resolve, def.reject, `Cannot load module '${sModuleName}'.`,
 				sComponentName, "sap.ui.core.Component");
 			Log.warning(err);
 		});
@@ -3618,8 +3617,7 @@ sap.ui.define([
 							return Component._fnLoadComponentCallback(oConfigCopy, oLoadedManifest);
 						} catch (oError) {
 							future.errorThrows("Callback for loading the component \"" + oLoadedManifest.getComponentName() +
-								"\" run into an error. The callback was skipped and the component loading resumed.",
-								oError, "sap.ui.core.Component");
+								"\" run into an error.", { cause: oError , suffix: "The callback was skipped and the component loading resumed." }, oError, "sap.ui.core.Component");
 						}
 					}
 				};

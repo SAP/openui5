@@ -484,7 +484,7 @@ sap.ui.define([
 							return oController;
 						});
 					}, function(err){
-						future.errorThrows("Controller Extension Provider: Error '" + err + "' thrown in " + Controller._sExtensionProvider + "; extension provider ignored.");
+						future.errorThrows("Controller Extension Provider: Error '" + err + "' thrown in " + Controller._sExtensionProvider + ".", { suffix: "Extension provider is ignored." });
 						return oController;
 					});
 			} else {

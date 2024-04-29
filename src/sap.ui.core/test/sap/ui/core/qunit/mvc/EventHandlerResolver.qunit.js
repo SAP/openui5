@@ -608,7 +608,7 @@ sap.ui.define([
 
 		// no expressions within
 		assert.throws(() => EventHandlerResolver.resolveEventHandler(".fnControllerMethod({= 'abc'})", oController),
-			new Error("It looks like an event handler parameter contains a binding expression ({=...}). This is not allowed and will cause an error later on because the entire event handler is already considered an expression: .fnControllerMethod({= 'abc'})"),
+			new Error("It looks like an event handler parameter contains a binding expression ({=...}). This is not allowed because the entire event handler is already considered an expression: .fnControllerMethod({= 'abc'})"),
 			"Error should be thrown for expressions inside parameter section");
 		assert.throws(() => {
 			fnFromController(oDummyEvent);
