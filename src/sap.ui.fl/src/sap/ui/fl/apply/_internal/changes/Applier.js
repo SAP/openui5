@@ -83,7 +83,7 @@ sap.ui.define([
 		return mPropertyBag.modifier.targets === "xmlTree";
 	}
 
-	function checkAndAdjustChangeStatus(oControl, oChange, mPropertyBag) {
+	function checkAndAdjustChangeStatus(oControl, oChange, mPropertyBag, bSkipDependencies) {
 		// in case of changes in templates, the original control is not always available at this point
 		// example: rename on a control created by a change inside a template
 		var oOriginalControl = Utils.getControlIfTemplateAffected(oChange, oControl, mPropertyBag).control;
@@ -96,7 +96,7 @@ sap.ui.define([
 		if (bChangeStatusAppliedFinished && !bIsCurrentlyAppliedOnControl) {
 			// if a change was already processed and is not applied anymore, then the control was destroyed and recreated.
 			// In this case we need to recreate/copy the dependencies if we are applying in JS
-			if (!isXmlModifier(mPropertyBag)) {
+			if (!bSkipDependencies) {
 				UIChangesState.copyDependenciesFromCompleteDependencyMap(oChange, mPropertyBag.appComponent);
 			}
 			oChange.setInitialApplyState();
@@ -391,10 +391,13 @@ sap.ui.define([
 	Applier.applyMultipleChanges = function(aChanges, mPropertyBag) {
 		mPropertyBag.modifier = JsControlTreeModifier;
 		const aPromises = aChanges.map(function(oChange) {
-			oChange.setQueuedForApply();
-			return function() {
-				const oControl = JsControlTreeModifier.bySelector(oChange.getSelector(), mPropertyBag.appComponent);
-				if (oControl) {
+			const oControl = JsControlTreeModifier.bySelector(oChange.getSelector(), mPropertyBag.appComponent);
+			if (oControl) {
+				checkAndAdjustChangeStatus(oControl, oChange, mPropertyBag, true);
+				if (!oChange.isApplyProcessFinished()) {
+					oChange.setQueuedForApply();
+				}
+				return function() {
 					return Applier.applyChangeOnControl(oChange, oControl, mPropertyBag)
 					.then(function(oResult) {
 						if (oResult.success) {
@@ -402,9 +405,9 @@ sap.ui.define([
 							DependencyHandler.addRuntimeChangeToMap(oChange, mPropertyBag.appComponent, oLiveDependencyMap);
 						}
 					});
-				}
-				return Promise.resolve();
-			};
+				};
+			}
+			return () => Promise.resolve();
 		});
 		return FlUtils.execPromiseQueueSequentially(aPromises);
 	};
@@ -488,7 +491,7 @@ sap.ui.define([
 			.then(function(oChangeHandler) {
 				mPropertyBag.changeHandler = oChangeHandler;
 				oChange.setQueuedForApply();
-				checkAndAdjustChangeStatus(oControl, oChange, mPropertyBag);
+				checkAndAdjustChangeStatus(oControl, oChange, mPropertyBag, true);
 
 				if (!oChange.isApplyProcessFinished()) {
 					if (typeof mPropertyBag.changeHandler.onAfterXMLChangeProcessing === "function") {
