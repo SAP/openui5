@@ -3,6 +3,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/i18n/Localization",
 	"sap/base/util/deepEqual",
+	"sap/ui/base/DataType",
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/CompositeBinding",
@@ -17,7 +18,7 @@ sap.ui.define([
 	"sap/ui/model/type/Float",
 	"sap/ui/model/type/Integer",
 	"sap/ui/model/type/String"
-], function (Log, Localization, deepEqual, UI5Date, BindingMode, CompositeBinding, CompositeType,
+], function (Log, Localization, deepEqual, DataType, UI5Date, BindingMode, CompositeBinding, CompositeType,
 		Context, ParseException, PropertyBinding, StaticBinding, ValidateException, JSONModel,
 		TypeDate, TypeFloat, TypeInteger, TypeString
 ) {
@@ -164,6 +165,171 @@ sap.ui.define([
 		assert.equal(this.model.getProperty("/a"), 3,
 			"setExternalValue() does change model values for contained bindings");
 	});
+
+	//*********************************************************************************************
+[{
+	sMethod: "_setRawValue",
+	bInternalValues: false,
+	bRawValues: true
+}, {
+	sMethod: "_setInternalValue",
+	bInternalValues: true,
+	bRawValues: false
+}, {
+	sMethod: "_setExternalValue",
+	bInternalValues: false,
+	bRawValues: false
+}].forEach(function (oFixture) {
+	QUnit.test(`setExternalValue /w async type and context changed for method ${oFixture.sMethod}`, function (assert) {
+		const oBinding1 = {
+			getBindingMode() {},
+			getContext() {}
+		};
+		const oBinding2 = {
+			getBindingMode() {},
+			getContext() {}
+		};
+		const oCompositeBinding = {
+			aBindings: [oBinding1, oBinding2],
+			sInternalType: "string",
+			bInternalValues: oFixture.bInternalValues,
+			bRawValues: oFixture.bRawValues,
+			oType: {
+				getParseWithValues() {},
+				parseValue() {},
+				validateValue() {}
+			},
+			getDataState() {},
+			getValidateValues() {},
+			getValue() {}
+		};
+		const oDataState = {
+			setInvalidValue() {},
+			setValue() {}
+		};
+		this.mock(DataType).expects("getType").withExactArgs("string").returns("~oType");
+		const oCompositeBindingMock = this.mock(oCompositeBinding);
+		oCompositeBindingMock.expects("getDataState").withExactArgs().returns(oDataState);
+		const oBindingMock1 = this.mock(oBinding1);
+		oBindingMock1.expects("getContext").withExactArgs().returns("~oUpdateContext1");
+		const oBindingMock2 = this.mock(oBinding2);
+		oBindingMock2.expects("getContext").withExactArgs().returns("~oUpdateContext2");
+		const oTypeMock = this.mock(oCompositeBinding.oType);
+		oTypeMock.expects("getParseWithValues").withExactArgs().returns(false);
+		oTypeMock.expects("parseValue")
+			.withExactArgs("~vValue", "string", undefined)
+			.returns(["~vParsedValue1", "~vParsedValue2"]);
+		oCompositeBindingMock.expects("getValidateValues")
+			.withExactArgs(["~vParsedValue1", "~vParsedValue2"])
+			.returns("~aValidateValues");
+		oTypeMock.expects("validateValue")
+			.withExactArgs("~aValidateValues").returns(Promise.resolve());
+
+		// code under test
+		const oPromise = CompositeBinding.prototype.setExternalValue.call(oCompositeBinding, "~vValue");
+
+		// After validation the contexts have changed due to the async nature of the type's validation
+		oBindingMock1.expects("getContext").withExactArgs().returns("~oNewContext1");
+		oBindingMock2.expects("getContext").withExactArgs().returns("~oNewContext1");
+		oBinding1[oFixture.sMethod] = () => {};
+		oBinding2[oFixture.sMethod] = () => {};
+		oBindingMock1.expects("getBindingMode").withExactArgs().returns(BindingMode.TwoWay);
+		oBindingMock1.expects(oFixture.sMethod).withExactArgs("~vParsedValue1" , "~oUpdateContext1");
+		oBindingMock2.expects("getBindingMode").withExactArgs().returns(BindingMode.TwoWay);
+		oBindingMock2.expects(oFixture.sMethod).withExactArgs("~vParsedValue2" , "~oUpdateContext2");
+		const oDataStateMock = this.mock(oDataState);
+		oDataStateMock.expects("setInvalidValue").withExactArgs(undefined);
+		oCompositeBindingMock.expects("getValue").withExactArgs().returns("~vValue");
+		oDataStateMock.expects("setValue").withExactArgs("~vValue");
+
+		return oPromise.then((vResult) => {
+			assert.strictEqual(vResult, undefined);
+		});
+	});
+});
+
+//*********************************************************************************************
+[{
+	sMethod: "_setRawValue",
+	bInternalValues: false,
+	bRawValues: true
+}, {
+	sMethod: "_setInternalValue",
+	bInternalValues: true,
+	bRawValues: false
+}, {
+	sMethod: "_setExternalValue",
+	bInternalValues: false,
+	bRawValues: false
+}].forEach(function (oFixture) {
+	const sTitle = `setExternalValue /w async type and w/o context changed for method ${oFixture.sMethod}`;
+	QUnit.test(sTitle, function (assert) {
+		const oBinding1 = {
+			getBindingMode() {},
+			getContext() {}
+		};
+		const oBinding2 = {
+			getBindingMode() {},
+			getContext() {}
+		};
+		const oCompositeBinding = {
+			aBindings: [oBinding1, oBinding2],
+			sInternalType: "string",
+			bInternalValues: oFixture.bInternalValues,
+			bRawValues: oFixture.bRawValues,
+			oType: {
+				getParseWithValues() {},
+				parseValue() {},
+				validateValue() {}
+			},
+			getDataState() {},
+			getValidateValues() {},
+			getValue() {}
+		};
+		const oDataState = {
+			setInvalidValue() {},
+			setValue() {}
+		};
+		this.mock(DataType).expects("getType").withExactArgs("string").returns("~oType");
+		const oCompositeBindingMock = this.mock(oCompositeBinding);
+		oCompositeBindingMock.expects("getDataState").withExactArgs().returns(oDataState);
+		const oBindingMock1 = this.mock(oBinding1);
+		oBindingMock1.expects("getContext").withExactArgs().returns("~oUpdateContext1");
+		const oBindingMock2 = this.mock(oBinding2);
+		oBindingMock2.expects("getContext").withExactArgs().returns("~oUpdateContext2");
+		const oTypeMock = this.mock(oCompositeBinding.oType);
+		oTypeMock.expects("getParseWithValues").withExactArgs().returns(false);
+		oTypeMock.expects("parseValue")
+			.withExactArgs("~vValue", "string", undefined)
+			.returns(["~vParsedValue1", "~vParsedValue2"]);
+		oCompositeBindingMock.expects("getValidateValues")
+			.withExactArgs(["~vParsedValue1", "~vParsedValue2"])
+			.returns("~aValidateValues");
+		oTypeMock.expects("validateValue")
+			.withExactArgs("~aValidateValues").returns(Promise.resolve());
+
+		// code under test
+		const oPromise = CompositeBinding.prototype.setExternalValue.call(oCompositeBinding, "~vValue");
+
+		// After validation the contexts have changed due to the async nature of the type's validation
+		oBindingMock1.expects("getContext").withExactArgs().returns("~oUpdateContext1");
+		oBindingMock2.expects("getContext").withExactArgs().returns("~oUpdateContext2");
+		oBinding1[oFixture.sMethod] = () => {};
+		oBinding2[oFixture.sMethod] = () => {};
+		oBindingMock1.expects("getBindingMode").withExactArgs().returns(BindingMode.TwoWay);
+		oBindingMock1.expects(oFixture.sMethod).withExactArgs("~vParsedValue1" , undefined);
+		oBindingMock2.expects("getBindingMode").withExactArgs().returns(BindingMode.TwoWay);
+		oBindingMock2.expects(oFixture.sMethod).withExactArgs("~vParsedValue2" , undefined);
+		const oDataStateMock = this.mock(oDataState);
+		oDataStateMock.expects("setInvalidValue").withExactArgs(undefined);
+		oCompositeBindingMock.expects("getValue").withExactArgs().returns("~vValue");
+		oDataStateMock.expects("setValue").withExactArgs("~vValue");
+
+		return oPromise.then((vResult) => {
+			assert.strictEqual(vResult, undefined);
+		});
+	});
+});
 
 	QUnit.test("disabled methods", function(assert) {
 		assert.equal(this.composite.getContext(), null, "getContext() always returns null");
@@ -746,17 +912,17 @@ sap.ui.define([
 	});
 
 	QUnit.test("Call setInternalValue()", function(assert) {
-		var oSpy1 = this.spy(this.binding1, "setInternalValue");
-		var oSpy2 = this.spy(this.binding2, "setInternalValue");
-		var oSpy3 = this.spy(this.binding3, "setInternalValue");
+		var oSpy1 = this.spy(this.binding1, "_setInternalValue");
+		var oSpy2 = this.spy(this.binding2, "_setInternalValue");
+		var oSpy3 = this.spy(this.binding3, "_setInternalValue");
 
 		var oTypeSpy = this.spy(this.type, "getModelFormat");
 
 		this.compositeUseInternalValue.setExternalValue("1 2 3");
 
-		assert.equal(oSpy1.callCount, 1, "setInternalValue() function should be called");
-		assert.equal(oSpy2.callCount, 1, "setInternalValue() function should be called");
-		assert.equal(oSpy3.callCount, 1, "setInternalValue() function should be called");
+		assert.equal(oSpy1.callCount, 1, "_setInternalValue() function should be called");
+		assert.equal(oSpy2.callCount, 1, "_setInternalValue() function should be called");
+		assert.equal(oSpy3.callCount, 1, "_setInternalValue() function should be called");
 		assert.equal(oTypeSpy.callCount, 1, "getModelFormat() function should be called");
 	});
 

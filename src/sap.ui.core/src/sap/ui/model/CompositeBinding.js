@@ -362,7 +362,9 @@ sap.ui.define([
 
 		oDataState = this.getDataState();
 
+		let aUpdateContexts;
 		if (this.oType) {
+			aUpdateContexts = this.aBindings.map((oBinding) => oBinding.getContext());
 			pValues = SyncPromise.resolve().then(function() {
 				var aCurrentValues;
 				if (that.oType.getParseWithValues()) {
@@ -392,14 +394,18 @@ sap.ui.define([
 			that.aBindings.forEach(function(oBinding, iIndex) {
 				var sBindingMode = oBinding.getBindingMode();
 				oValue = aValues[iIndex];
+				let oUpdateContext;
+				if (aUpdateContexts && aUpdateContexts[iIndex] !== oBinding.getContext()) {
+					oUpdateContext = aUpdateContexts[iIndex];
+				}
 				// if a value is undefined skip the update of the nestend binding - this allows partial updates
 				if (oValue !== undefined  && sBindingMode !== BindingMode.OneWay && sBindingMode !== BindingMode.OneTime) {
 					if (that.bRawValues) {
-						oBinding.setRawValue(oValue);
+						oBinding._setRawValue(oValue, oUpdateContext);
 					} else if (that.bInternalValues) {
-						oBinding.setInternalValue(oValue);
+						oBinding._setInternalValue(oValue, oUpdateContext);
 					} else {
-						oBinding.setExternalValue(oValue);
+						oBinding._setExternalValue(oValue, oUpdateContext);
 					}
 				}
 			});
