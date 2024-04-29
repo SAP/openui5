@@ -38,7 +38,7 @@ a.appTitle {
 	text-decoration: none;
 }
 
-a.appTitle .sapMTitle {
+a.appTitle.sapMTitle {
 	cursor: pointer;
 }
 

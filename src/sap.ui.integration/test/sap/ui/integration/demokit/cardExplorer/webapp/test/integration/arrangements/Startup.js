@@ -22,7 +22,7 @@ sap.ui.define([
 			});
 
 			return this.waitFor({
-				controlType: "sap.m.Title",
+				controlType: "sap.m.Link",
 				matchers: new Properties({ text: "UI Integration Cards" }),
 				success: function () {
 					Opa5.assert.ok(true, "Card Explorer has started");
