@@ -1,0 +1,65 @@
+<mvc:View
+		xmlns:mvc="sap.ui.core.mvc"
+		controllerName="sap.m.test.plugins.CellSelector.ResponsiveTableOPA.Controller"
+		xmlns="sap.m"
+		xmlns:u="sap.ui.unified"
+		xmlns:core="sap.ui.core"
+		xmlns:plugins="sap.m.plugins"
+		height="100%">
+	<App class="sapUiContentPadding">
+		<Page showHeader="false">
+			<Table
+				id="table"
+				growing="true"
+				mode="MultiSelect"
+				multiSelectMode="ClearAll"
+				items="{
+					path: '/ProductSet',
+					sorter: {
+						path: 'Name'
+					}
+				}">
+				<columns>
+					<Column width="17rem">
+						<Text text="{/#Product/Name/@sap:label}" />
+					</Column>
+					<Column minScreenWidth="Desktop" demandPopin="true">
+						<Text text="{/#Product/Category/@sap:label}" />
+					</Column>
+					<Column minScreenWidth="Desktop" demandPopin="true">
+						<Text text="{/#Product/SupplierName/@sap:label}" />
+					</Column>
+					<Column width="9rem" hAlign="End">
+						<Text text="{/#Product/Price/@sap:label}" />
+					</Column>
+					<Column width="9rem" hAlign="End">
+						<Text text="{/#Product/Width/@sap:label}" />
+					</Column>
+				</columns>
+				
+				<items>
+					<ColumnListItem vAlign="Middle">
+						<cells>
+							<ObjectIdentifier
+								title="{Name}"
+								text="{ProductID}"/>
+							<Input
+								text="{Category}" />
+							<Text
+								text="{SupplierName}" />
+							<u:Currency value="{
+								path: 'Price',
+								type: 'sap.ui.model.type.String'
+							}" currency="{CurrencyCode}"/>
+							<Text
+								text="{Width}x{Height}x{Depth} {DimUnit}"/>
+						</cells>
+					</ColumnListItem>
+				</items>
+				<dependents>
+					<plugins:CellSelector id="cellSelector" />
+				</dependents>
+			</Table>
+		</Page>
+	</App>
+</mvc:View>

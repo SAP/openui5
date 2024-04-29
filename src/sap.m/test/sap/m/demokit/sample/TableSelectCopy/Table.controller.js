@@ -5,7 +5,7 @@ sap.ui.define([
 ], function(Controller, JSONModel, formatMessage) {
 	"use strict";
 
-	const TableController = Controller.extend("sap.m.sample.TableCopy.Table", {
+	const TableController = Controller.extend("sap.m.sample.TableSelectCopy.Table", {
 		onInit: function () {
 			// set explored app's demo model on this sample
 			this.oProductsModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"));

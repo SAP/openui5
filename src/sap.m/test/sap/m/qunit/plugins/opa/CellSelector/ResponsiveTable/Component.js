@@ -3,11 +3,11 @@ sap.ui.define(['sap/ui/core/UIComponent', "sap/ui/core/util/MockServer", "sap/ui
 		"use strict";
 
 		var sServiceURI = "/ProductSet/";
-		var sMetaDataURI = "../../../../mockdata/";
+		var sMetaDataURI = "../../../../../mockdata/";
 
-		var Component = UIComponent.extend("sap.m.test.plugins.CellSelectorOPA.Component", {
+		var Component = UIComponent.extend("sap.m.test.plugins.CellSelector.ResponsiveTableOPA.Component", {
 			metadata: {
-				id: "CellSelectorOPA",
+				id: "ResponsiveTableOPA",
 				manifest: "json"
 			},
 			init: function() {

@@ -3,6 +3,6 @@ sap.ui.define([
 ], function(Controller) {
 	"use strict";
 
-	return Controller.extend("sap.m.test.plugins.CellSelectorOPA.Controller", {
+	return Controller.extend("sap.m.test.plugins.CellSelector.ResponsiveTableOPA.Controller", {
 	});
 });

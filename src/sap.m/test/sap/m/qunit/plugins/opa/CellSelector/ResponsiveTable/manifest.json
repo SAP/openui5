@@ -1,6 +1,6 @@
 {
 	"sap.app": {
-		"id": "sap.m.test.plugins.CellSelectorOPA",
+		"id": "sap.m.test.plugins.CellSelector.ResponsiveTableOPA",
 		"applicationVersion": {
 			"version": "1.0.0"
 		}
@@ -8,7 +8,7 @@
 	"sap.ui5": {
 		"rootView": {
 			"id": "MyView",
-			"viewName": "sap.m.test.plugins.CellSelectorOPA.CellSelector",
+			"viewName": "sap.m.test.plugins.CellSelector.ResponsiveTableOPA.View",
 			"type": "XML",
 			"async": true
 		},

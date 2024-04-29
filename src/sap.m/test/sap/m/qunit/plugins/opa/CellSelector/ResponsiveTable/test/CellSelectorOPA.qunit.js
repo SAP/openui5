@@ -3,12 +3,12 @@
 sap.ui.define([
 	'sap/ui/test/Opa5',
 	'sap/ui/test/opaQunit',
-	'./pages/Actions',
-	'./pages/Assertions',
-	'./pages/Arrangements',
-	'./pages/Keyboard',
-	'./pages/Mouse',
-	'./utils/Util'
+	'../../pages/Actions',
+	'../../pages/Assertions',
+	'../../pages/Arrangements',
+	'../../pages/Keyboard',
+	'../../pages/Mouse',
+	'../../utils/Util'
 ], function (
 	Opa5,
 	opaTest,
@@ -27,7 +27,7 @@ sap.ui.define([
 		assertions: Assertions,
 		autoWait: true,
 		async: true,
-		timeout: 40
+		timeout: 100
 	});
 
 	[{dir: "LTR", forward: true }, {dir: "RTL", forward: false }].forEach((oConfig) => {
@@ -35,13 +35,13 @@ sap.ui.define([
 
 		opaTest("App startup", function(Given, When, Then) {
 			// Setup
-			Given.iStartMyApp(oConfig.dir);
+			Given.iStartMyResponsiveTableApp(oConfig.dir);
 
 			// Act
 			When.iLookAtTheScreen();
 
 			// Assert
-			Then.iSeeTable();
+			Then.iSeeResponsiveTable();
 		});
 
 		opaTest("Single Cell Interaction", function (Given, When, Then) {
@@ -148,7 +148,7 @@ sap.ui.define([
 			When.Keyboard.iNavigate(false, false);
 			When.Keyboard.iNavigate(false, false);
 
-			Then.iSeeCellsSelected({ rowIndex: 9, colIndex: 1 }, { rowIndex: 9, colIndex: 1 });
+			Then.iSeeCellsSelected({ rowIndex: 9, colIndex: 1 }, { rowIndex: 13, colIndex: 1 });
 
 			When.Keyboard.iRemoveSelection();
 			Then.iSeeCellsSelected();
@@ -176,7 +176,7 @@ sap.ui.define([
 
 		opaTest("Row Selection", function(Given, When, Then) {
 			// Selection Mode: None
-			Given.iChangeSelectionMode(Util.SelectionMode.None);
+			Given.iChangeSelectionMode(Util.ResponsiveTableSelectionMode.None);
 
 			When.iFocusCell(1, 1);
 			When.Keyboard.iSelectDeselectCell();
@@ -192,7 +192,7 @@ sap.ui.define([
 			Then.iSeeCellsSelected();
 
 			// Selection Mode: Single
-			Given.iChangeSelectionMode(Util.SelectionMode.Single);
+			Given.iChangeSelectionMode(Util.ResponsiveTableSelectionMode.Single);
 
 			When.iFocusCell(1, 1);
 			When.Keyboard.iSelectDeselectCell();
@@ -221,7 +221,7 @@ sap.ui.define([
 			Then.iSeeCellsSelected();
 
 			// Selection Mode: Multi
-			Given.iChangeSelectionMode(Util.SelectionMode.Multi);
+			Given.iChangeSelectionMode(Util.ResponsiveTableSelectionMode.Multi);
 
 			When.iFocusCell(1, 1);
 			When.Keyboard.iSelectDeselectCell();
@@ -247,6 +247,13 @@ sap.ui.define([
 			Then.iSeeRowsSelected(1, 3);
 
 			When.Keyboard.iRemoveSelection();
+			Then.iSeeCellsSelected();
+
+			// Block selection is not initiated on row when the row is not selected
+			When.Keyboard.iRemoveSelection();
+			When.iFocusRow(0);
+			When.Keyboard.iSelectNextCell(false, true);
+			Then.iSeeRowsSelected();
 			Then.iSeeCellsSelected();
 		});
 
@@ -294,54 +301,36 @@ sap.ui.define([
 			selectRows();
 			selectBlock();
 			When.iFocusCell(0, 0);
-			When.Keyboard.iRemoveSelection();
+			When.Keyboard.iRemoveSelection(true);
 			Then.iSeeCellsSelected();
 			Then.iSeeRowsSelected(3, 4);
-
-			// Trying to clear when focus is in input => nothing happens
-			selectBlock();
-			When.iFocusCell(1, 2);
-			When.Keyboard.iSelectInnerControl();
-			When.Keyboard.iRemoveSelection();
-			Then.iSeeCellsSelected({ rowIndex: 1, colIndex: 1 }, { rowIndex: 1, colIndex: 3 });
-
-			When.Keyboard.iRemoveSelection(true);
-			Then.iSeeCellsSelected({ rowIndex: 1, colIndex: 1 }, { rowIndex: 1, colIndex: 3 });
-
-			When.Keyboard.iSelectInnerControl();
-			When.Keyboard.iRemoveSelection(true);
-			Then.iSeeCellsSelected();
 
 			// Trying to clear with 2x CTRL + A with no Select All => nothing happens
 			selectBlock();
 			When.iFocusCell(1, 3);
 			When.Keyboard.iSelectAll();
 			Then.iSeeCellsSelected({ rowIndex: 1, colIndex: 1 }, { rowIndex: 1, colIndex: 3 });
-			Then.iSeeRowsSelected();
+			Then.iSeeRowsSelected(3, 4);
 
 			When.Keyboard.iSelectAll();
 			Then.iSeeCellsSelected({ rowIndex: 1, colIndex: 1 }, { rowIndex: 1, colIndex: 3 });
-			Then.iSeeRowsSelected();
-
-			When.Keyboard.iRemoveSelection(true);
-			Then.iSeeCellsSelected();
+			Then.iSeeRowsSelected(3, 4);
 
 			// Trying to clear with 2x CTRL + A with Select All => clears selection, also clears cells
-			Given.iChangeSelectAllState(true);
+			Given.iChangeMultiSelectMode("SelectAll");
 
 			selectBlock();
 			When.iFocusCell(1, 1);
 			When.Keyboard.iSelectAll();
 			Then.iSeeCellsSelected();
-			Then.iSeeRowsSelected(0, 114);
+			Then.iSeeRowsSelected(0, 19);
 
+			When.iFocusCell(1, 1);
 			When.Keyboard.iSelectAll();
 			Then.iSeeCellsSelected();
 			Then.iSeeRowsSelected();
 
-			When.Keyboard.iRemoveSelection(true);
-			Then.iSeeCellsSelected();
-			Given.iChangeSelectAllState(false);
+			Given.iChangeMultiSelectMode("ClearAll");
 		});
 
 		opaTest("Column Selection", function(Given, When, Then) {
@@ -354,7 +343,7 @@ sap.ui.define([
 			Then.iSeeCellFocused({ rowIndex: 1, colIndex: 1 });
 
 			When.Keyboard.iSelectColumns();
-			Then.iSeeCellsSelected({ rowIndex: 0, colIndex: 1 }, { rowIndex: rangeLimit - 1, colIndex: 1 });
+			Then.iSeeCellsSelected({ rowIndex: 0, colIndex: 1 }, { rowIndex: 19, colIndex: 1 });
 
 			When.Keyboard.iRemoveSelection();
 			Then.iSeeCellsSelected();
@@ -438,10 +427,10 @@ sap.ui.define([
 			Then.iSeeRowsSelected(1, 3);
 
 			// Focus row and try to extend row selection => row selection extends
-			When.iFocusCell(3, 1);
+			When.iFocusRow(3);
 			When.Keyboard.iSelectNextCell(false, true);
 
-			Then.iSeeCellFocused({ rowIndex: 4, colIndex: 1});
+			Then.iSeeRowFocused({ rowIndex: 4 });
 			Then.iSeeCellsSelected();
 			Then.iSeeRowsSelected(1, 4);
 
@@ -463,11 +452,11 @@ sap.ui.define([
 			Then.iSeeRowsSelected(1, 4);
 
 			// Focus selected row with cell selection block, but focus is outside of block => extend row selection and clear cells
-			When.iFocusCell(4, 2);
+			When.iFocusRow(4);
 			When.Keyboard.iSelectNextCell(false, true);
 			When.Keyboard.iSelectNextCell(false, true);
 
-			Then.iSeeCellFocused({ rowIndex: 6, colIndex: 2 });
+			Then.iSeeRowFocused({ rowIndex: 6 });
 			Then.iSeeCellsSelected();
 			Then.iSeeRowsSelected(1, 6);
 
@@ -480,6 +469,14 @@ sap.ui.define([
 			Then.iSeeCellsSelected({ rowIndex: 0, colIndex: 0 }, { rowIndex: 2, colIndex: 0 });
 			Then.iSeeRowsSelected(1, 6);
 
+			// Block selection not possible on selection column
+			When.Keyboard.iRemoveSelection();
+			When.iFocusCell(0, 0);
+			When.Keyboard.iSelectNextCell(true, !oConfig.forward);
+			Then.iSeeCellsSelected({ rowIndex: 0, colIndex: 0 }, { rowIndex: 0, colIndex: 0 });
+			When.Keyboard.iSelectNextCell(false, oConfig.forward);
+			Then.iSeeCellsSelected({ rowIndex: 0, colIndex: 0 }, { rowIndex: 0, colIndex: 0 });
+
 			Then.iTeardownMyApp();
 		});
 
@@ -487,13 +484,13 @@ sap.ui.define([
 
 		opaTest("App startup", function(Given, When, Then) {
 			// Setup
-			Given.iStartMyApp(oConfig.dir);
+			Given.iStartMyResponsiveTableApp(oConfig.dir);
 
 			// Act
 			When.iLookAtTheScreen();
 
 			// Assert
-			Then.iSeeTable();
+			Then.iSeeResponsiveTable();
 		});
 
 		opaTest("Single cell selection", function(Given, When, Then) {
@@ -540,17 +537,17 @@ sap.ui.define([
 			Then.iSeeCellsSelected({ rowIndex: 1, colIndex: 1 }, { rowIndex: 1, colIndex: 2 });
 			Then.iSeeCellFocused({ rowIndex: 1, colIndex: 2 });
 
-			When.Mouse.iExtendTo(1, 5);
+			When.Mouse.iExtendTo(1, 4);
 			Then.iSeeCellsSelected({ rowIndex: 1, colIndex: 1 }, { rowIndex: 1, colIndex: 5 });
-			Then.iSeeCellFocused({ rowIndex: 1, colIndex: 5 });
+			Then.iSeeCellFocused({ rowIndex: 1, colIndex: 4 });
 
 			When.Mouse.iExtendTo(3, 3);
 			Then.iSeeCellsSelected({ rowIndex: 1, colIndex: 1 }, { rowIndex: 3, colIndex: 3 });
 			Then.iSeeCellFocused({ rowIndex: 3, colIndex: 3 });
 
-			When.Mouse.iExtendTo(5, 5);
+			When.Mouse.iExtendTo(5, 4);
 			Then.iSeeCellsSelected({ rowIndex: 1, colIndex: 1 }, { rowIndex: 5, colIndex: 5 });
-			Then.iSeeCellFocused({ rowIndex: 5, colIndex: 5 });
+			Then.iSeeCellFocused({ rowIndex: 5, colIndex: 4 });
 
 			When.Mouse.iExtendTo(2, 2);
 			Then.iSeeCellsSelected({ rowIndex: 1, colIndex: 1 }, { rowIndex: 2, colIndex: 2 });
@@ -560,14 +557,13 @@ sap.ui.define([
 			Then.iSeeCellsSelected({ rowIndex: 0, colIndex: 0 }, { rowIndex: 1, colIndex: 1 });
 			Then.iSeeCellFocused({ rowIndex: 0, colIndex: 0 });
 
-			When.Mouse.iExtendTo(5, 5, true);
+			When.Mouse.iExtendTo(5, 4, true);
 			Then.iSeeCellsSelected({ rowIndex: 1, colIndex: 1 }, { rowIndex: 5, colIndex: 5 });
-			Then.iSeeCellFocused({ rowIndex: 5, colIndex: 5 });
+			Then.iSeeCellFocused({ rowIndex: 5, colIndex: 4 });
 
 			// Select new block
 			When.Mouse.iPressCell(0, 0);
 			Then.iSeeCellsSelected({ rowIndex: 1, colIndex: 1 }, { rowIndex: 5, colIndex: 5 });
-			Then.iSeeCellFocused({ rowIndex: 0, colIndex: 0 });
 
 			When.Mouse.iExtendTo(2, 0, true);
 			Then.iSeeCellsSelected({ rowIndex: 0, colIndex: 0 }, { rowIndex: 2, colIndex: 0 });
@@ -579,6 +575,7 @@ sap.ui.define([
 
 		opaTest("Border & Edge Selection", function(Given, When, Then) {
 			const bIsRTL = oConfig.dir == "RTL";
+			Given.iSetPageEnableScrolling(false); // disable scrolling to exclude the scrollbar width from calculations
 
 			When.Mouse.iPressCell(2, 2);
 			Then.iSeeCellsSelected();
@@ -610,36 +607,36 @@ sap.ui.define([
 			When.Mouse.iExtendBorderTo(bIsRTL ? "right" : "left", { rowIndex: 5, colIndex: 2 }, { rowIndex: 7, colIndex: 3 }, { rowIndex: 7, colIndex: 0 }, bIsRTL);
 			Then.iSeeCellsSelected({ rowIndex: 5, colIndex: 0 }, { rowIndex: 7, colIndex: 3 });
 
-			When.Mouse.iExtendBorderTo(bIsRTL ? "left" : "right", { rowIndex: 5, colIndex: 2 }, { rowIndex: 7, colIndex: 3 }, { rowIndex: 5, colIndex: 5 }, bIsRTL);
-			Then.iSeeCellsSelected({ rowIndex: 5, colIndex: 0 }, { rowIndex: 7, colIndex: 5 });
+			When.Mouse.iExtendBorderTo(bIsRTL ? "left" : "right", { rowIndex: 5, colIndex: 2 }, { rowIndex: 7, colIndex: 3 }, { rowIndex: 5, colIndex: 4 }, bIsRTL);
+			Then.iSeeCellsSelected({ rowIndex: 5, colIndex: 0 }, { rowIndex: 7, colIndex: 4 });
 
 			// Check edge states
 			When.Mouse.iHoverEdge(true, oConfig.forward, { rowIndex: 5, colIndex: 0 });
 			Then.iCheckEdgeState(true, oConfig.forward, 5, 0);
 
-			When.Mouse.iHoverEdge(true, !oConfig.forward, { rowIndex: 5, colIndex: 5 });
-			Then.iCheckEdgeState(true, !oConfig.forward, 5, 5);
+			When.Mouse.iHoverEdge(true, !oConfig.forward, { rowIndex: 5, colIndex: 4 });
+			Then.iCheckEdgeState(true, !oConfig.forward, 5, 4);
 
-			When.Mouse.iHoverEdge(false, !oConfig.forward, { rowIndex: 7, colIndex: 5 });
-			Then.iCheckEdgeState(false, !oConfig.forward, 7, 5);
+			When.Mouse.iHoverEdge(false, !oConfig.forward, { rowIndex: 7, colIndex: 4 });
+			Then.iCheckEdgeState(false, !oConfig.forward, 7, 4);
 
 			When.Mouse.iHoverEdge(false, oConfig.forward, { rowIndex: 7, colIndex: 0 });
 			Then.iCheckEdgeState(false, oConfig.forward, 7, 0);
 
 			// Extending different edges
 			When.Mouse.iExtendEdgeTo(true, oConfig.forward, { rowIndex: 5, colIndex: 0 }, { rowIndex: 2, colIndex: 2 });
-			Then.iSeeCellsSelected({ rowIndex: 2, colIndex: 2 }, { rowIndex: 7, colIndex: 5 });
+			Then.iSeeCellsSelected({ rowIndex: 2, colIndex: 2 }, { rowIndex: 7, colIndex: 4 });
 
 			When.Mouse.iExtendEdgeTo(true, oConfig.forward, { rowIndex: 2, colIndex: 2 }, { rowIndex: 9, colIndex: 1 });
-			Then.iSeeCellsSelected({ rowIndex: 7, colIndex: 1 }, { rowIndex: 9, colIndex: 5 });
+			Then.iSeeCellsSelected({ rowIndex: 7, colIndex: 1 }, { rowIndex: 9, colIndex: 4 });
 
-			When.Mouse.iExtendEdgeTo(true, !oConfig.forward, { rowIndex: 7, colIndex: 5 }, { rowIndex: 1, colIndex: 3 });
+			When.Mouse.iExtendEdgeTo(true, !oConfig.forward, { rowIndex: 7, colIndex: 4 }, { rowIndex: 1, colIndex: 3 });
 			Then.iSeeCellsSelected({ rowIndex: 1, colIndex: 1 }, { rowIndex: 9, colIndex: 3 });
 
-			When.Mouse.iExtendEdgeTo(false, oConfig.forward, { rowIndex: 9, colIndex: 1 }, { rowIndex: 5, colIndex: 5 });
-			Then.iSeeCellsSelected({ rowIndex: 1, colIndex: 3 }, { rowIndex: 5, colIndex: 5 });
+			When.Mouse.iExtendEdgeTo(false, oConfig.forward, { rowIndex: 9, colIndex: 1 }, { rowIndex: 5, colIndex: 4 });
+			Then.iSeeCellsSelected({ rowIndex: 1, colIndex: 3 }, { rowIndex: 5, colIndex: 4 });
 
-			When.Mouse.iExtendEdgeTo(false, !oConfig.forward, { rowIndex: 5, colIndex: 5 }, { rowIndex: 0, colIndex: 0 });
+			When.Mouse.iExtendEdgeTo(false, !oConfig.forward, { rowIndex: 5, colIndex: 4 }, { rowIndex: 0, colIndex: 0 });
 			Then.iSeeCellsSelected({ rowIndex: 0, colIndex: 0 }, { rowIndex: 1, colIndex: 3 });
 
 			When.Mouse.iSelectDeselectCell(0, 0);

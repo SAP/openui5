@@ -1426,7 +1426,7 @@
 			"sap.m.sample.TableNavigated",
 			"sap.m.sample.TableAutoPopin",
 			"sap.m.sample.TableStrictLayout",
-			"sap.m.sample.TableCopy",
+			"sap.m.sample.TableSelectCopy",
 			"sap.m.sample.p13n.Engine",
 			"sap.m.sample.p13n.EngineMultipleController"
 		  ]
@@ -3208,8 +3208,8 @@
 			"description": "This example demonstrates the Strict layout and the column resizing of the table."
 		},
 		{
-			"id": "sap.m.sample.TableCopy",
-			"name": "Table - CopyProvider",
+			"id": "sap.m.sample.TableSelectCopy",
+			"name": "Table - CellSelector, CopyProvider",
 			"description": "This example demonstrates how the Table data can be copied to the clipboard via CopyProvider plugin."
 		},
 		{

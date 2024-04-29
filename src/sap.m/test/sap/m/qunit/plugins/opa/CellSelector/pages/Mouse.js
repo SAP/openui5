@@ -36,7 +36,7 @@ sap.ui.define([
 	// Emulates a mousemove event
 	function mousemove(oTable, oTarget, oParams) {
 		const oCellSelector = Util.getCellSelector(oTable);
-		const oEvent = Object.assign({ target: oTarget, preventDefault: () => {}, stopImmediatePropagation: () => {} }, oParams);
+		const oEvent = Object.assign({ type: "mousemove", target: oTarget, preventDefault: () => {}, stopImmediatePropagation: () => {} }, oParams);
 		oCellSelector._onmousemove(oEvent);
 	}
 
@@ -64,7 +64,9 @@ sap.ui.define([
 						success: function(oTable) {
 							const oCellRef = Util.getCell(oTable, iRow, iCol);
 							mousemove(oTable, oCellRef);
-							bRelease && triggerMouseEvent(oCellRef, "mouseup");
+							if (bRelease) {
+								triggerMouseEvent(oCellRef, "mouseup");
+							}
 						}
 					});
 				},

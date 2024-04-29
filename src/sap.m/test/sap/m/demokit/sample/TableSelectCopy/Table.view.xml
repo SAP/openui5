@@ -1,5 +1,5 @@
 <mvc:View
-	controllerName="sap.m.sample.TableCopy.Table"
+	controllerName="sap.m.sample.TableSelectCopy.Table"
 	xmlns="sap.m"
 	xmlns:core="sap.ui.core"
 	xmlns:mvc="sap.ui.core.mvc"
@@ -58,6 +58,7 @@
 			</ColumnListItem>
 		</items>
 		<dependents>
+			<plugins:CellSelector id="cellSelector" />
 			<plugins:CopyProvider id="copyProvider" extractData=".extractData" />
 		</dependents>
 	</Table>

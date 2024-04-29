@@ -18,6 +18,14 @@ sap.ui.define([
 					oCell.focus();
 				}
 			});
+		},
+		iFocusRow: function(iRow) {
+			Util.waitForTable.call(this, {
+				success: function(oTable) {
+					var oRow = Util.getRow(oTable, iRow);
+					oRow.focus();
+				}
+			});
 		}
 	};
 });

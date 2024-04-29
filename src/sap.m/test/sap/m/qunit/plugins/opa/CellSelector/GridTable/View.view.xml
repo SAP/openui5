@@ -3,7 +3,7 @@
 		xmlns="sap.ui.table"
 		xmlns:u="sap.ui.unified"
 		xmlns:plugins="sap.ui.table.plugins"
-		controllerName="sap.m.test.plugins.CellSelectorOPA.Controller"
+		controllerName="sap.m.test.plugins.CellSelector.GridTableOPA.Controller"
 		xmlns:m="sap.m"
 		height="100%">
 	<m:App class="sapUiContentPadding">

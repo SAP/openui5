@@ -10,9 +10,18 @@ sap.ui.define([
 	"use strict";
 
 	return {
-		iSeeTable: function() {
+		iSeeGridTable: function() {
 			return this.waitFor({
 				controlType: "sap.ui.table.Table",
+				success: function(oTable) {
+					Opa5.assert.ok(oTable, "Table is visible");
+				},
+				errorMessage: "Could not find table."
+			});
+		},
+		iSeeResponsiveTable: function() {
+			return this.waitFor({
+				controlType: "sap.m.Table",
 				success: function(oTable) {
 					Opa5.assert.ok(oTable, "Table is visible");
 				},
@@ -23,26 +32,34 @@ sap.ui.define([
 			return Util.waitForTable.call(this, {
 				success: function(oTable) {
 					var bAllSelected = true;
+					var aRows;
+					if (oTable.isA("sap.ui.table.Table")) {
+						aRows = oTable.getRows();
+					} else {
+						aRows = oTable.getItems();
+					}
 
-					oTable.getRows().forEach(function(oRow) {
-						var iRow = oRow.getIndex();
+					for (var iRow = 0; iRow < aRows.length; iRow++) {
+						var oRow = aRows[iRow];
+						var iRowIndex;
+						if (oTable.isA("sap.ui.table.Table")) {
+							iRowIndex = oRow.getIndex();
+						} else {
+							iRowIndex = iRow;
+						}
 						var aCells = oRow.getCells();
 
-						oTable.getColumns().forEach(function(oColumn, iCol) {
-							if (!oColumn.getDomRef()) {
-								return;
-							}
-
-							var bCellState = Util.getCellSelectionState(Util.getCellRef(aCells[iCol]));
+						for (var iCol = 0; iCol < aCells.length; iCol++) {
+							var bCellState = Util.getCellSelectionState(Util.getCellRef(oTable, aCells[iCol]));
 							if (!mFrom || !mTo
-								|| (iRow < mFrom.rowIndex || iRow > mTo.rowIndex
+								|| (iRowIndex < mFrom.rowIndex || iRowIndex > mTo.rowIndex
 								|| iCol < mFrom.colIndex || iCol > mTo.colIndex)) {
 								bCellState = !bCellState;
 							}
 
 							bAllSelected &&= bCellState;
-						});
-					});
+						}
+					}
 
 					var sMessage = `No cells are selected.`;
 					if (mFrom || mTo) {
@@ -67,17 +84,40 @@ sap.ui.define([
 		iSeeRowsSelected: function(iStart, iEnd) {
 			return Util.waitForTable.call(this, {
 				success: function(oTable) {
-					const oSelectionPlugin = Util.getSelectionPlugin(oTable) || oTable;
+					if (oTable.isA("sap.ui.table.Table")) {
+						const oSelectionPlugin = Util.getSelectionPlugin(oTable) || oTable;
+						const aSelection = oSelectionPlugin.getSelectedIndices();
 
-					const aSelection = oSelectionPlugin.getSelectedIndices();
+						if (iStart === undefined || iEnd === undefined) {
+							Opa5.assert.equal(aSelection.length, 0, "No rows selected.");
+						}
 
-					if (iStart === undefined || iEnd === undefined) {
-						Opa5.assert.equal(aSelection.length, 0, "No rows selected.");
+						for (const iSelected of aSelection) {
+							Opa5.assert.ok(iSelected >= iStart && iSelected <= iEnd, `Row ${iSelected} is selected.`);
+						}
+					} else {
+						var aItems = oTable.getItems();
+						var aSelectedItems = oTable.getSelectedItems();
+
+						if (iStart === undefined || iEnd === undefined) {
+							Opa5.assert.equal(aSelectedItems.length, 0, "No rows selected.");
+						}
+
+						for (var i = iStart; i <= iEnd; i++) {
+							Opa5.assert.ok(aSelectedItems.includes(aItems[i]), `Row ${i} is selected.`);
+						}
 					}
+				}
+			});
+		},
+		iSeeRowFocused: function(mFocus) {
+			return Util.waitForTable.call(this, {
+				success: function(oTable) {
+					var oRow = Util.getRow(oTable, mFocus.rowIndex);
+					Opa5.assert.ok(oRow, `Row (${mFocus.rowIndex}) exists`);
 
-					for (const iSelected of aSelection) {
-						Opa5.assert.ok(iSelected >= iStart && iSelected <= iEnd, `Row ${iSelected} is selected.`);
-					}
+					var $Row = jQuery(oRow);
+					Opa5.assert.ok($Row.is(":focus"), `Row is focused`);
 				}
 			});
 		},
@@ -103,7 +143,7 @@ sap.ui.define([
 					}
 
 					const iExpectedPx = parseInt(oResizer.style[bIsRow ? "top" : "left"]);
-					Opa5.assert.equal(iExpectedPx, oCellRect[sType], "Border is at correct position");
+					Opa5.assert.equal(iExpectedPx, parseInt(oCellRect[sType]), "Border is at correct position");
 				}
 			});
 		},
@@ -124,8 +164,8 @@ sap.ui.define([
 					};
 					const iExpectedRowPx = parseInt(oResizer.style.top);
 					const iExpectedColPx = parseInt(oResizer.style.left);
-					Opa5.assert.equal(iExpectedColPx, oCellRect[mEdgeStyle.col], "Edge is at correct X position");
-					Opa5.assert.equal(iExpectedRowPx, oCellRect[mEdgeStyle.row], "Edge is at correct Y position");
+					Opa5.assert.equal(iExpectedColPx, parseInt(oCellRect[mEdgeStyle.col]), "Edge is at correct X position");
+					Opa5.assert.equal(iExpectedRowPx, parseInt(oCellRect[mEdgeStyle.row]), "Edge is at correct Y position");
 				}
 			});
 		}
