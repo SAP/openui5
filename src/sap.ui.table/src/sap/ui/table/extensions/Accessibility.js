@@ -671,7 +671,7 @@ sap.ui.define([
 							if (mParams && mParams.enabled) {
 								mAttributes["aria-checked"] = mParams.checked ? "true" : "false";
 							}
-						} else if (mRenderConfig.headerSelector.type === "clear") {
+						} else if (mRenderConfig.headerSelector.type === "custom") {
 							mAttributes["role"] = ["button"];
 							if (!mParams || !mParams.enabled) {
 								mAttributes["aria-disabled"] = "true";

@@ -10,10 +10,6 @@ sap.ui.define([
 
 	QUnit.module("Selection");
 
-	opaTest("Deselect All visible", function(Given, When, Then) {
-		Then.onTheAppMDCTable.iShouldSeeTheDeselectAllIcon(sTableId);
-	});
-
 	opaTest("Remove the selection limit", function(Given, When, Then) {
 		When.onTheAppMDCTable.iChangeSelectionLimit(sTableId, 0);
 		Then.onTheAppMDCTable.iShouldSeeTheSelectAllCheckBox(sTableId);

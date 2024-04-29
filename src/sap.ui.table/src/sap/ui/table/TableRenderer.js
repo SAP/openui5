@@ -430,14 +430,15 @@ sap.ui.define([
 		rm.class("sapUiTableHeaderCell");
 		rm.class("sapUiTableRowSelectionHeaderCell");
 
-		let sSelectAllResourceTextID;
 		if (mRenderConfig.headerSelector.visible) {
 			const bAllRowsSelected = mRenderConfig.headerSelector.selected;
 
 			if (mRenderConfig.headerSelector.type === "toggle") {
-				sSelectAllResourceTextID = bAllRowsSelected ? "TBL_DESELECT_ALL" : "TBL_SELECT_ALL";
-			} else if (mRenderConfig.headerSelector.type === "clear") {
-				sSelectAllResourceTextID = "TBL_DESELECT_ALL";
+				const sTitle = bAllRowsSelected ? "TBL_DESELECT_ALL" : "TBL_SELECT_ALL";
+				rm.attr("title", TableUtils.getResourceText(sTitle));
+			} else if (mRenderConfig.headerSelector.type === "custom") {
+				const sTitle = mRenderConfig.headerSelector.tooltip;
+				rm.attr("title", sTitle);
 
 				if (!mRenderConfig.headerSelector.enabled) {
 					rm.class("sapUiTableSelAllDisabled");
@@ -445,9 +446,6 @@ sap.ui.define([
 				}
 			}
 
-			if (sSelectAllResourceTextID) {
-				rm.attr("title", TableUtils.getResourceText(sSelectAllResourceTextID));
-			}
 			if (!bAllRowsSelected) {
 				rm.class("sapUiTableSelAll");
 			} else {
@@ -468,7 +466,7 @@ sap.ui.define([
 		rm.openEnd();
 
 		if (mRenderConfig.headerSelector.visible) {
-			if (mRenderConfig.headerSelector.type === "clear" && mRenderConfig.headerSelector.icon) {
+			if (mRenderConfig.headerSelector.type === "custom" && mRenderConfig.headerSelector.icon) {
 				rm.renderControl(mRenderConfig.headerSelector.icon);
 			} else {
 				rm.openStart("div");

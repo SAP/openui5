@@ -88,8 +88,7 @@ sap.ui.define([
 
 	ODataV4Selection.prototype.init = function() {
 		SelectionPlugin.prototype.init.apply(this, arguments);
-
-		const oIcon = new Icon({src: IconPool.getIconURI(TableUtils.ThemeParameters.clearSelectionIcon), useIconTooltip: false});
+		const oIcon = new Icon({src: IconPool.getIconURI(TableUtils.ThemeParameters.checkboxIcon), useIconTooltip: false});
 		oIcon.addStyleClass("sapUiTableSelectClear");
 		this.setAggregation("icon", oIcon, true);
 
@@ -160,18 +159,51 @@ sap.ui.define([
 		return this.getSelectedContexts().length;
 	};
 
+	/**
+	 * Returns the number of selectable rows.
+	 *
+	 * @param {sap.ui.table.plugins.ODataV4Selection} oPlugin The plugin to getthe number of selectable rows from.
+	 * @returns {int} The number of selectable rows.
+	 */
+	function getSelectableCount(oPlugin) {
+		return oPlugin.getTableBinding()?.getLength() ?? 0;
+	}
+
+	/**
+	 * Changes the current icon and tooltip text of the header selection icon in the given plugin object based on the selection.
+	 *
+	 * @param {sap.ui.table.plugins.ODataV4Selection} oPlugin The plugin to change the header selection icon on.
+	 */
+	function updateHeaderSelectorIcon(oPlugin) {
+		if (!oPlugin._isLimitDisabled()) {
+			const oIcon = oPlugin.getAggregation("icon");
+			const iSelectedCount = oPlugin.getSelectedCount();
+
+			if (getSelectableCount(oPlugin) === iSelectedCount) {
+				oIcon.setSrc(IconPool.getIconURI(TableUtils.ThemeParameters.allSelectedIcon));
+			} else if (iSelectedCount !== 0) {
+				oIcon.setSrc(IconPool.getIconURI(TableUtils.ThemeParameters.clearSelectionIcon));
+			} else {
+				oIcon.setSrc(IconPool.getIconURI(TableUtils.ThemeParameters.checkboxIcon));
+			}
+		}
+	}
+
 	ODataV4Selection.prototype.getRenderConfig = function() {
 		if (!this.isActive()) {
 			return SelectionPlugin.prototype.getRenderConfig.apply(this, arguments);
 		}
 
+		updateHeaderSelectorIcon(this);
+
 		return {
 			headerSelector: {
-				type: this._isLimitDisabled() ? "toggle" : "clear",
+				type: this._isLimitDisabled() ? "toggle" : "custom",
 				icon: this.getAggregation("icon"),
 				visible: this.getSelectionMode() === SelectionMode.MultiToggle && !this.getHideHeaderSelector(),
-				enabled: this._isLimitDisabled() || this.getSelectedCount() > 0,
-				selected: areAllRowsSelected(this)
+				enabled: getSelectableCount(this) > 0,
+				selected: areAllRowsSelected(this),
+				tooltip: this.getSelectedCount() === 0 ? TableUtils.getResourceText("TBL_SELECT_ALL") : TableUtils.getResourceText("TBL_DESELECT_ALL")
 			}
 		};
 	};
@@ -230,17 +262,31 @@ sap.ui.define([
 
 		if (mRenderConfig.headerSelector.type === "toggle") {
 			toggleSelectAll(this);
-		} else if (mRenderConfig.headerSelector.type === "clear") {
-			this.clearSelection();
+		} else if (mRenderConfig.headerSelector.type === "custom") {
+			if (this.getSelectedCount() > 0) {
+				this.clearSelection();
+			} else {
+				const oBinding = this.getTableBinding();
+				if (oBinding && oBinding.getLength() > 0) {
+					select(this, 0, oBinding.getLength() - 1);
+				}
+			}
 		}
 	};
 
 	ODataV4Selection.prototype.onKeyboardShortcut = function(sType, oEvent) {
-		if (sType === "toggle") {
-			if (this._isLimitDisabled() && toggleSelectAll(this) === false) {
-				oEvent?.setMarked("sapUiTableClearAll");
+		if (sType === "toggle") { // ctrl + a
+			if (this._isLimitDisabled()) {
+				if (toggleSelectAll(this) === false) {
+					oEvent?.setMarked("sapUiTableClearAll");
+				}
+			} else {
+				const oBinding = this.getTableBinding();
+				if (oBinding && oBinding.getLength() > 0) {
+					select(this, 0, oBinding.getLength() - 1);
+				}
 			}
-		} else if (sType === "clear") {
+		} else if (sType === "clear") { // ctrl + shift + a
 			this.clearSelection();
 			oEvent?.setMarked("sapUiTableClearAll");
 		}
@@ -376,7 +422,7 @@ sap.ui.define([
 	};
 
 	ODataV4Selection.prototype.onThemeChanged = function() {
-		this.getAggregation("icon").setSrc(IconPool.getIconURI(TableUtils.ThemeParameters.clearSelectionIcon));
+		updateHeaderSelectorIcon(this);
 	};
 
 	return ODataV4Selection;

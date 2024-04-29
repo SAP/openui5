@@ -154,6 +154,8 @@ sap.ui.define([
 		navigationIcon: "navigation-right-arrow",
 		deleteIcon: "sys-cancel",
 		clearSelectionIcon: "clear-all",
+		allSelectedIcon: "complete",
+		checkboxIcon: "border",
 		navIndicatorWidth: 3
 	};
 
@@ -1470,6 +1472,8 @@ sap.ui.define([
 					"_sap_ui_table_NavigationIcon",
 					"_sap_ui_table_DeleteIcon",
 					"_sap_ui_table_ClearSelectionIcon",
+					"_sap_ui_table_AllSelectedIcon",
+					"_sap_ui_table_CheckboxIcon",
 					"_sap_ui_table_NavIndicatorWidth"
 				]
 			});
@@ -1493,6 +1497,8 @@ sap.ui.define([
 			mThemeParameters.navigationIcon = mParams["_sap_ui_table_NavigationIcon"];
 			mThemeParameters.deleteIcon = mParams["_sap_ui_table_DeleteIcon"];
 			mThemeParameters.clearSelectionIcon = mParams["_sap_ui_table_ClearSelectionIcon"];
+			mThemeParameters.allSelectedIcon = mParams["_sap_ui_table_AllSelectedIcon"];
+			mThemeParameters.checkboxIcon = mParams["_sap_ui_table_CheckboxIcon"];
 			mThemeParameters.navIndicatorWidth = getPixelValue("_sap_ui_table_NavIndicatorWidth");
 		},
 
