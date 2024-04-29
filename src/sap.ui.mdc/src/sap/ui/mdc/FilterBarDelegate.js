@@ -94,6 +94,9 @@ sap.ui.define(["sap/ui/mdc/AggregationBaseDelegate", "sap/ui/mdc/enums/FilterBar
 	/**
 	 * Retrieves the relevant metadata for a given payload and returns the property info array.
 	 *
+	 * <b>Note:</b>
+	 * The result of this function must be kept stable throughout the lifecycle of your application.
+	 * Any changes of the returned values might result in undesired effects.
 	 * @public
 	 * @param {sap.ui.mdc.FilterBar} oFilterBar Instance of the {@link sap.ui.mdc.FilterBar FilterBar} control
 	 * @returns {Promise<sap.ui.mdc.filterbar.PropertyInfo[]>} <code>Promise</code> that resolves into an array of property info objects
