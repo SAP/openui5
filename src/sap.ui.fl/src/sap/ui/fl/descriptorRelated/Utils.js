@@ -42,14 +42,23 @@ sap.ui.define([
 		}
 	};
 
-	Utils.prototype.checkParameterAndType = function(mParameters, sParameterName, sType) {
-		if (sType === "array") {
-			if (mParameters === undefined || mParameters[sParameterName] === undefined || !Array.isArray(mParameters[sParameterName])) {
-				throw new Error(`No parameter "${sParameterName}" of type ${sType} provided`);
+	Utils.prototype.checkParameterAndType = function(mParameters, sParameterName, aTypes) {
+		if (typeof aTypes === "string") {
+			aTypes = [aTypes];
+		}
+		var bTypeValid;
+		aTypes.forEach(function(sType) {
+			if (sType === "array") {
+				if (mParameters !== undefined && mParameters[sParameterName] !== undefined && Array.isArray(mParameters[sParameterName])) {
+					bTypeValid = true;
+				}
+			// eslint-disable-next-line valid-typeof
+			} else if (mParameters !== undefined && mParameters[sParameterName] !== undefined && typeof mParameters[sParameterName] === sType) {
+				bTypeValid = true;
 			}
-		// eslint-disable-next-line valid-typeof
-		} else if (mParameters === undefined || mParameters[sParameterName] === undefined || typeof mParameters[sParameterName] !== sType) {
-			throw new Error(`No parameter "${sParameterName}" of type ${sType} provided`);
+		});
+		if (!bTypeValid) {
+			throw new Error(`No parameter "${sParameterName}" of type ${aTypes} provided`);
 		}
 	};
 

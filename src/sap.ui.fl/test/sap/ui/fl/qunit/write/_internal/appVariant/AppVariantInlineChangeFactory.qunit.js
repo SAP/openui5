@@ -1601,6 +1601,18 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("appdescr_ui5_setMinUI5Version", function(assert) {
+			return AppVariantInlineChangeFactory.create_ui5_setMinUI5Version({
+				changeType: "appdescr_ui5_setMinUI5Version",
+				content: {
+					minUI5Version: ["1.120.0", "2.2.0"]
+				}
+			}).then(function(oDescriptorInlineChange) {
+				assert.notEqual(oDescriptorInlineChange, null);
+				assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_ui5_setMinUI5Version");
+			});
+		});
+
 		QUnit.test("appdescr_ui5_setMinUI5Version failure", function(assert) {
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_ui5_setMinUI5Version({
