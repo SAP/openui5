@@ -107,7 +107,8 @@
 				"since": "1.116",
 				"samples": [
 					"sap.ui.mdc.demokit.sample.TableJson",
-					"sap.ui.mdc.demokit.sample.TableFilterBarJson"
+					"sap.ui.mdc.demokit.sample.TableFilterBarJson",
+					"sap.ui.mdc.demokit.sample.UploadSetwithTablePlugin"
 				]
 			}
 		],
@@ -252,6 +253,11 @@
 				"id": "sap.ui.mdc.demokit.sample.TableFilterBarJson",
 				"name": "Table - with filter bar",
 				"description": "A table with a filter bar including variant management"
+			},
+			{
+				"id": "sap.ui.mdc.demokit.sample.UploadSetwithTablePlugin",
+				"name": "Table - with UploadSetwithTable Plugin",
+				"description": "A table using sap.m.plugins.UploadSetwithTable plugin to demonstrate the features of upload, download, drag & drop, remove and rename of files."
 			}
 		]
 	}

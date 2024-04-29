@@ -1,0 +1,72 @@
+{
+	"sap.app": {
+		"id": "mdc.sample",
+		"type": "application",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"title": "MDC Sample",
+		"description": "MDC Sample Application",
+		"dataSources": {
+			"documentDataSource" : {
+				"uri": "model/documents.json",
+				"type": "JSON"
+			}
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
+	},
+	"sap.ui5": {
+		"config": {
+			"sample": {
+				"files": [
+					"view/UploadSetwithTable.view.xml",
+					"controller/Page.controller.js",
+					"model/documents.json",
+					"delegate/JSONTableDelegate.js",
+					"model/metadata/JSONPropertyInfo.js",
+					"helper.js",
+					"manifest.json"
+				]
+			}
+		},
+		"flexEnabled": false,
+		"resourceRoots": {
+            "mdc.sample": "./"
+        },
+		"dependencies": {
+			"minUI5Version": "1.120.0",
+			"libs": {
+				"sap.f": {},
+				"sap.m": {},
+				"sap.ui.core": {},
+				"sap.ui.fl": {},
+				"sap.ui.mdc": {},
+				"sap.ui.table": {}
+			}
+		},
+		"contentDensities": {
+			"compact": true,
+			"cozy": true
+		},
+		"handleValidation": true,
+		"models": {
+			"documents": {
+				"type": "sap.ui.model.json.JSONModel",
+				"dataSource": "documentDataSource"
+			}
+		},
+		"rootView": {
+			"viewName": "mdc.sample.view.UploadSetwithTable",
+			"type": "XML",
+			"async": true,
+			"id": "sample"
+		}
+	}
+}

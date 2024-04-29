@@ -72,6 +72,10 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 			"TableFilterBarJson": {
 				group: "Demokit samples",
 				sinon: false
+			},
+			"UploadSetwithTablePlugin": {
+				group: "Demokit samples",
+				sinon: false
 			}
 		}
 	};

@@ -1,0 +1,199 @@
+<mvc:View
+	height="100%"
+	displayBlock="true"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:f="sap.f"
+	xmlns:core="sap.ui.core"
+	xmlns:mdc="sap.ui.mdc"
+	xmlns:mdct="sap.ui.mdc.table"
+	xmlns:vm="sap.ui.fl.variants"
+	controllerName="mdc.sample.controller.Page"
+	xmlns:upload="sap.m.upload">
+
+	<f:DynamicPage id="page">
+		<f:content>
+			<mdc:Table
+				id="table-uploadSet"
+				header="Documents"
+				type="ResponsiveTable"
+				threshold="100"
+				filter="filterbar"
+				showRowCount="true"
+                p13nMode="Column,Sort,Group"
+				delegate="{
+					name: 'mdc/sample/delegate/JSONTableDelegate',
+					payload: {
+						bindingPath: 'documents>/items'
+					}
+				}"
+				selectionMode="Multi"
+				selectionChange="onSelectionChange">
+
+                <mdc:variant>
+                    <vm:VariantManagement id="variants" for="table-uploadSet"/>
+                </mdc:variant>
+
+				<mdc:actions>
+						<upload:ActionsPlaceholder id="uploadButton" placeholderFor="UploadButtonPlaceholder" />
+						<Button
+                        id="downloadSelectedButton"
+                        text="Download"
+                        enabled="false"
+                        press="onDownloadFiles"
+                    	/>
+						<MenuButton text="Add">
+                        <menu>
+                            <Menu>
+                                <MenuItem
+                                    text="URL"
+                                    press="openAddOrEditDialog"
+                                />
+                            </Menu>
+                        </menu>
+							<layoutData>
+								<OverflowToolbarLayoutData
+									priority="AlwaysOverflow"
+								/>
+							</layoutData>
+                    	</MenuButton>
+                    <Button
+                        id="removeDocumentButton"
+                        text="Remove"
+                        press="onRemoveButtonPress"
+                        enabled="false"
+                    >
+                        <layoutData>
+                            <OverflowToolbarLayoutData
+                                priority="AlwaysOverflow"
+                            />
+                        </layoutData>
+                    </Button>
+                    <Button
+                        id="renameButton"
+                        enabled="false"
+                        press="onRenameDocument"
+                        text="Rename"
+                    >
+                        <layoutData>
+                            <OverflowToolbarLayoutData
+                                priority="AlwaysOverflow"
+                            />
+                        </layoutData>
+                    </Button>
+                    <Button
+                        id="editUrlButton"
+                        text="Edit URL"
+                        enabled="false"
+                        press="onEditUrl"
+                    >
+                        <layoutData>
+                            <OverflowToolbarLayoutData
+                                priority="AlwaysOverflow"
+                            />
+                        </layoutData>
+                    </Button>
+				</mdc:actions>
+
+				<mdc:dependents>
+						<plugins.UploadSetwithTable
+						uploadUrl="/uploadFiles"
+						multiple="true"
+						beforeUploadStarts="onBeforeUploadStarts"
+						itemRenamed="onDocumentRenamedSuccess"
+						uploadCompleted="onUploadCompleted"
+						onActivated="onPluginActivated"
+						actions="uploadButton"
+						>
+							<rowConfiguration>
+								<upload.UploadItemConfiguration
+								fileNamePath="fileName"
+								mediaTypePath="mediaType"
+								urlPath="url"
+								previewablePath="previewable"
+								fileSizePath="fileSize"
+								/>
+							</rowConfiguration>
+						</plugins.UploadSetwithTable>
+				</mdc:dependents>
+
+
+				<mdc:rowSettings>
+						<mdc:table.RowSettings highlight="{=${documents>uploadState} === 'Complete' ? 'Indication05' : null }" >
+						</mdc:table.RowSettings>
+				</mdc:rowSettings>
+				
+				 <mdct:Column
+				 	propertyKey="fileName"
+				 	header="File Name">
+                    <HBox>
+                            <Image
+                                src="{documents>imageUrl}"
+                                class="sapMUSTItemImage sapMUSTItemIcon"
+                                visible="{= ${documents>imageUrl} !== undefined}"
+                            />
+                            <core:Icon
+                                src="{parts: ['documents>mediaType', 'documents>fileName'], formatter: '.getIconSrc' }"
+                                color="white"
+                                visible="{= ${documents>imageUrl} === undefined || ${documents>imageUrl} === '' }"
+                                class="sapMUSTItemImage sapMUSTItemIcon"
+                            />
+                            <VBox
+                                class="sapUiTinyMargin sapUiSmallMarginBegin"
+                            >
+                                <Link
+                                    text="{documents>fileName}"
+                                    press="openPreview"
+                                    class="sapUiTinyMarginBottom"
+                                />
+                                <Text text="{documents>documentType}" />
+                            </VBox>
+                        </HBox>
+                </mdct:Column>
+                 <mdct:Column 
+				 	propertyKey="id"
+				 	header="ID">
+                    <Text text="{documents>id}" />
+                </mdct:Column>
+                 <mdct:Column 
+				 	propertyKey="revision"
+				 	header="Revision">
+                    <Link text="{documents>revision}" />
+                </mdct:Column>
+                 <mdct:Column 
+				 	propertyKey="status"
+				 	header="Status">
+                    <Text text="{documents>status}" />
+                </mdct:Column>
+                <mdct:Column 
+				 	propertyKey="fileSize"
+				 	header="File Size">
+                     <Text
+                            text="{parts: ['documents>fileSize'], formatter: '.getFileSizeWithUnits'}"
+                        />
+                </mdct:Column>
+                 <mdct:Column 
+				 	propertyKey="lastModified"
+				 	header="Last Modified">
+                    <VBox>
+                            <Text text="{documents>lastModifiedBy}" />
+                            <Text
+                                class="sapUiTinyMarginTop"
+                                text="{documents>lastmodified}"
+                            />
+                        </VBox>
+                </mdct:Column>
+                 <mdct:Column 
+				 	propertyKey="removeAction"> 
+					<Button
+                            class="sapUiTinyMarginBegin"
+                            type="Transparent"
+                            icon="sap-icon://decline"
+                            press="onRemoveHandler"
+                        />
+					</mdct:Column>
+			</mdc:Table>
+		</f:content>
+	</f:DynamicPage>
+
+</mvc:View>
