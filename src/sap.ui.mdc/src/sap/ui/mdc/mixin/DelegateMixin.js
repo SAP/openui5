@@ -62,7 +62,6 @@ sap.ui.define(["sap/ui/mdc/util/loadModules", "sap/base/Log", "sap/ui/mdc/BaseDe
 	 * @namespace
 	 * @since 1.76.0
 	 * @private
-	 * @experimental
 	 * @ui5-restricted sap.ui.mdc
 	 */
 	const DelegateMixin = {};

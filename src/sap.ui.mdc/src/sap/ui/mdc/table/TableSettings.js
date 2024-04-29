@@ -29,12 +29,9 @@ sap.ui.define([
 	let oRb;
 	/**
 	 * P13n/Settings helper class for sap.ui.mdc.Table.
-	 * <h3><b>Note:</b></h3>
-	 * The class is experimental and the API/behaviour is not finalised and hence this should not be used for productive usage.
 	 *
 	 * @author SAP SE
 	 * @private
-	 * @experimental
 	 * @since 1.60
 	 * @alias sap.ui.mdc.table.TableSettings
 	 */

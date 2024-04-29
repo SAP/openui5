@@ -38,7 +38,6 @@ sap.ui.define([
 		 * @extends sap.ui.model.json.JSONPropertyBinding
 		 * @private
 		 * @ui5-restricted sap.ui.mdc
-		 * @experimental As of version 1.60
 		 * @since 1.60.0
 		 */
 		const ConditionModelPropertyBinding = JSONPropertyBinding.extend("sap.ui.mdc.condition.ConditionModelPropertyBinding", {

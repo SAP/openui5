@@ -24,7 +24,6 @@ sap.ui.define([
 	 * @version ${version}
 	 *
 	 * @private
-	 * @experimental
 	 * @since 1.85
 	 * @alias sap.ui.mdc.table.V4AnalyticsPropertyHelper
 	 */

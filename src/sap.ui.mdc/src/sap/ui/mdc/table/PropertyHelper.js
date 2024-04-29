@@ -33,7 +33,6 @@ sap.ui.define([
 	 * @version ${version}
 	 *
 	 * @private
-	 * @experimental
 	 * @since 1.83
 	 * @alias sap.ui.mdc.table.PropertyHelper
 	 */

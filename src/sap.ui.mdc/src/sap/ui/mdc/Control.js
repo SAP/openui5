@@ -43,7 +43,6 @@ sap.ui.define([
 	 *
 	 * @since 1.61
 	 * @public
-	 * @experimental As of version 1.61
 	 */
 	const Control = CoreControl.extend("sap.ui.mdc.Control", /** @lends sap.ui.mdc.Control.prototype */ {
 		metadata: {
@@ -63,7 +62,6 @@ sap.ui.define([
 				 * }</code></pre>
 				 * <b>Note:</b> Ensure that the related file can be requested (any required library has to be loaded before that).<br>
 				 * Do not bind or modify the module. This property can only be configured during control initialization.
-				 * @experimental
 				 */
 				delegate: {
 					type: "object",

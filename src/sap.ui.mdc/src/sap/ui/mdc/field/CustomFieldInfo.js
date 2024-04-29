@@ -18,7 +18,6 @@ sap.ui.define([
 	 * @constructor
 	 * @private
 	 * @ui5-restricted sap.fe
-	 * @experimental As of version 1.54
 	 * @since 1.54.0
 	 * @alias sap.ui.mdc.field.CustomFieldInfo
 	 */

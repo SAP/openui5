@@ -22,9 +22,6 @@ sap.ui.define([
 	 * Configuration class for type handling in delegates.
 	 * Allows mapping of model types to {@link sap.ui.mdc.enums.BaseType} and enables model-specific type configuration.
 	 *
-	 * <b>Note:</b>
-	 * This utility is experimental and the API/behavior is not finalized. Hence, it should not be used for productive usage.
-	 *
 	 * @namespace
 	 * @author SAP SE
 	 * @public

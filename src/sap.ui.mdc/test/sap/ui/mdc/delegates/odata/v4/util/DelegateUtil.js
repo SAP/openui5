@@ -18,7 +18,6 @@ sap.ui.define(['sap/ui/mdc/util/FilterUtil',
 	 * Utility class used by mdc v4 delegates for parameter handling
 	 *
 	 * @private
-	 * @experimental This module is only for internal/experimental use!
 	 */
 	var DelegateUtil = {
 

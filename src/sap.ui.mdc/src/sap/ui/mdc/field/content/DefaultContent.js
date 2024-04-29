@@ -20,7 +20,6 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
-	 * @experimental As of version 1.87
 	 * @since 1.87
 	 * @alias sap.ui.mdc.field.content.DefaultContent
 	 */

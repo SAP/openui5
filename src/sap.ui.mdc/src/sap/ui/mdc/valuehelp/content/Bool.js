@@ -23,7 +23,6 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
 	 * @since 1.95.0
-	 * @experimental As of version 1.95
 	 * @alias sap.ui.mdc.valuehelp.content.Bool
 	 */
 	const Bool = FixedList.extend("sap.ui.mdc.valuehelp.content.Bool", /** @lends sap.ui.mdc.valuehelp.content.Bool.prototype */ {

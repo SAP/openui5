@@ -273,7 +273,6 @@ sap.ui.define([
 	 * @since 1.58
 	 * @alias sap.ui.mdc.Table
 	 * @public
-	 * @experimental As of version 1.58.0
 	 */
 	const Table = Control.extend("sap.ui.mdc.Table", {
 		metadata: {
@@ -331,7 +330,6 @@ sap.ui.define([
 				 * <b>Note:</b> Ensure that the related file can be requested (any required library has to be loaded before that).<br>
 				 * Do not bind or modify the module. This property can only be configured during control initialization.
 				 *
-				 * @experimental
 				 */
 				delegate: {
 					type: "object",
@@ -353,8 +351,8 @@ sap.ui.define([
 				/**
 				 * Defines style of the header. For more information, see {@link sap.m.Title#setTitleStyle}.
 				 *
-				 * @experimental Internal use only
 				 * @ui5-restricted sap.fe
+				 * @experimental
 				 * @since 1.116
 				 */
 				headerStyle: {
@@ -671,8 +669,9 @@ sap.ui.define([
 				 *
 				 * <b>Note:</b> Once the binding supports creating transient records, this aggregation will be removed.
 				 *
-				 * @experimental Do not use
 				 * @ui5-restricted sap.fe
+				 * @experimental Do not use
+				 * @deprecated As of version 1.124, the concept has been discarded.
 				 */
 				creationRow: {
 					type: "sap.ui.mdc.table.CreationRow",
@@ -1945,7 +1944,6 @@ sap.ui.define([
 	 * </ul>
 	 *
 	 * @param {boolean} bShowP13nButton
-	 * @experimental This setting is only temporary and will be replaced with an alternative API in future releases.
 	 * @since 1.108
 	 * @private
 	 * @ui5-restricted sap.fe

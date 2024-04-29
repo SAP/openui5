@@ -29,8 +29,6 @@ sap.ui.define([
 	 * @property {string} key
 	 *   Unique, stable key for the property. It must only contain characters allowed for IDs, see {@link sap.ui.core.ID}. Does not have to be an
 	 *   existing attribute in the data model or the technical name of an attribute in the data model.
-	 *   <b>Note:</b>
-	 *   'key' replaces the deprecated 'name' attribute, which will also be interpolated by the PropertyHelper for legacy code support.
 	 * @property {string} [path]
 	 *   The technical path for a data source property.
 	 * @property {string} label
@@ -595,7 +593,6 @@ sap.ui.define([
 	 * @version ${version}
 	 *
 	 * @private
-	 * @experimental
 	 * @since 1.83
 	 * @alias sap.ui.mdc.util.PropertyHelper
 	 */

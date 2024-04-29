@@ -6,7 +6,6 @@
  * Helper to determine qunit test execution ability
  *
  * @private
- * @experimental This module is only for internal/experimental use!
  */
 sap.ui.define(["sap/ui/thirdparty/jquery"], function(jQuery) {
 	"use strict";

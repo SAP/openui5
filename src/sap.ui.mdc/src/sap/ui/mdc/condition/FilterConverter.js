@@ -28,7 +28,6 @@ sap.ui.define([
 		 *
 		 * @private
 		 * @ui5-restricted sap.ui.mdc
-		 * @experimental As of version 1.78
 		 */
 		const FilterConverter = {
 

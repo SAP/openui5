@@ -25,7 +25,6 @@ sap.ui.define([
 		 * @version ${version}
 		 * @private
 		 * @ui5-restricted sap.ui.mdc
-		 * @experimental As of version 1.74
 		 * @since 1.74.0
 		 * @alias sap.ui.mdc.condition.ConditionConverter
 		 */

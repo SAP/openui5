@@ -71,7 +71,6 @@ sap.ui.define([
 	 * @public
 	 * @since 1.95.0
 	 * @alias sap.ui.mdc.ValueHelp
-	 * @experimental As of version 1.95.0
 	 */
 	const ValueHelp = Element.extend("sap.ui.mdc.ValueHelp", /** @lends sap.ui.mdc.ValueHelp.prototype */ {
 		metadata: {
@@ -104,7 +103,6 @@ sap.ui.define([
 				 * }</code></pre>
 				 * <b>Note:</b> Ensure that the related file can be requested (any required library has to be loaded before that).<br>
 				 * Do not bind or modify the module. This property can only be configured during control initialization.
-				 * @experimental
 				 */
 				delegate: {
 					type: "object",

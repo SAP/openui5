@@ -19,11 +19,8 @@ sap.ui.define([
 	/**
 	 * Extension of the Delegate for {@link sap.ui.mdc.Link}. This extension provides all historical featurs of the FlpLinkHandler.
 	 * This class will determine NavigationTargets depending on the semanticObjects given by a payload
-	 * <b>Note:</b>
-	 * The class is experimental and the API/behaviour is not finalized and hence this should not be used for productive usage.
 	 * @author SAP SE
 	 * @private
-	 * @experimental
 	 * @since 1.120
 	 * @alias sap.ui.mdc.ushell.LinkDelegate
 	 */

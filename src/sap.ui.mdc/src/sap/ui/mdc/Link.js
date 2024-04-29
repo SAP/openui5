@@ -76,7 +76,6 @@ sap.ui.define([
 	 * @since 1.74
 	 *
 	 * @public
-	 * @experimental As of version 1.74.0
 	 */
 	const Link = FieldInfoBase.extend("sap.ui.mdc.Link", /** @lends sap.ui.mdc.Link.prototype */ {
 		metadata: {
@@ -103,7 +102,6 @@ sap.ui.define([
 				 * }</code></pre>
 				 * <b>Note:</b> Ensure that the related file can be requested (any required library has to be loaded before that).<br>
 				 * Do not bind or modify the module. This property can only be configured during control initialization.
-				 * @experimental
 				 */
 				delegate: {
 					type: "object",

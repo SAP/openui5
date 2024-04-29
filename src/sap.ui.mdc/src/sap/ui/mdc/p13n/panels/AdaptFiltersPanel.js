@@ -35,7 +35,6 @@ sap.ui.define([
 	 * @extends sap.m.p13n.AbstractContainer
 	 * @author SAP SE
 	 * @private
-	 * @experimental
 	 * @since 1.85
 	 * @alias sap.ui.mdc.p13n.panels.AdaptFiltersPanel
 	 */

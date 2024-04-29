@@ -48,7 +48,6 @@ sap.ui.define([
 				 *
 				 * @private
 				 * @ui5-restricted
-				 * @experimental: Do not use - this property is only for internal usage
 				 */
 				localFilterValue: {
 					type: "string"

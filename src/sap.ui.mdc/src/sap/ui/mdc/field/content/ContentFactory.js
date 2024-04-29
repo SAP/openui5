@@ -25,7 +25,6 @@ sap.ui.define([
 	 * @name sap.ui.mdc.field.content
 	 * @since 1.87.0
 	 * @private
-	 * @experimental As of version 1.87
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
 	 */
 
@@ -35,7 +34,6 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
-	 * @experimental As of version 1.87
 	 * @since 1.87
 	 * @alias sap.ui.mdc.field.content.ContentFactory
 	 * @extends sap.ui.base.Object

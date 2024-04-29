@@ -24,7 +24,6 @@ sap.ui.define(["sap/ui/base/DataType"], (DataType) => {
 		 * Equivalent to the default configuration of {@link sap.ui.mdc.table.TreeTableType}
 		 *
 		 * @private
-		 * @experimental
 		 */
 		TreeTable: "TreeTable",
 		/**
