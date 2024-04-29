@@ -4652,7 +4652,7 @@ sap.ui.define([
 				/*fnSubmit*/null, /*fnCancel*/sinon.match.func)
 			.resolves("~patchParentResult~");
 		this.mock(_Helper).expects("getMetaPath").exactly(sSiblingPath ? 1 : 0)
-			.withExactArgs("/non/canonical/changeNextSibling/@$ui5.overload/NextSibling/")
+			.withExactArgs("/non/canonical/changeNextSibling/NextSibling/")
 			.returns("~metaPath~");
 		this.mock(oCache.oAggregation).expects("$fetchMetadata").exactly(sSiblingPath ? 1 : 0)
 			.withExactArgs("~metaPath~")
