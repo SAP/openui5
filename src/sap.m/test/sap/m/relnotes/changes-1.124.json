@@ -3,6 +3,76 @@
     "date": "April 2024",
     "notes": [
       {
+        "id": "f4778711191966a1c425084bede0d2d51688b9f7",
+        "type": "FIX",
+        "text": " sap.m.Input: Exception prevented in case of tabular suggestions"
+      },
+      {
+        "id": "002db3c2232516061e8081f62717bbb12fc4edb8",
+        "type": "FIX",
+        "text": " sap.m.Dialog: The toolbar spacer is no longer hidden on phone"
+      },
+      {
+        "id": "8022d6af808884acf184827ef7e0d927b2c04bca",
+        "type": "FEATURE",
+        "text": " We now support snapToRow property that sets the height of the inner controls to 100%"
+      },
+      {
+        "id": "b3e5c3ee7d272f511a3a349a56c6acce91e8bdc0",
+        "type": "FEATURE",
+        "text": " We've now introduced the badge element that is used within the GenericTile control as a combination of an icon and a text"
+      },
+      {
+        "id": "3bbe34230ede61dc91c68d840be85154d911dd54",
+        "type": "FIX",
+        "text": " sap.m.Input: Available items announcement improved"
+      },
+      {
+        "id": "8705d9c962d2c95bf446b378a6f02ca03c080da0",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Speech output corrected"
+      },
+      {
+        "id": "d1b0251307f87988af32dce9fefb2ab71cc18ee0",
+        "type": "FIX",
+        "text": " sap.m.Input: Prevent suggestions popover closing on Enter key"
+      },
+      {
+        "id": "456fb69f7f9bb3ab2dff1762a772e97410df882b",
+        "type": "FIX",
+        "text": " sap.m.Input: Prevent value DOM update when password type is used"
+      },
+      {
+        "id": "ca995a66fe22a0d7d57a5a8fa365bd36238ab641",
+        "type": "FIX",
+        "text": " GenericTile: Remove the critical color on the text when the tile is in ActionMode"
+      },
+      {
+        "id": "c176619e916ed2088b181a5b0ebcbd30d6ba8157",
+        "type": "FIX",
+        "text": " sap.m.MaskInput: remove too descriptive label"
+      },
+      {
+        "id": "a6a1699888e573639b510f1a02296d1cda4e9877",
+        "type": "FEATURE",
+        "text": " sap.m.MessageBox: Add new dependentOn option"
+      },
+      {
+        "id": "64120120a1edb11edb26d30da169393088b0c8c0",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Badge is visible on tab with text and icon - inline mode"
+      },
+      {
+        "id": "67ee83c9a812f2c15d6255b1cd7e5700bb659508",
+        "type": "FIX",
+        "text": " sap.m.IllustratedMessage: Prevent infinite resize"
+      },
+      {
+        "id": "73d34ad5b12475c8263abb3be57ef54cfc13567d",
+        "type": "FIX",
+        "text": " sap.m.Toolbar: Title font-size fixed"
+      },
+      {
         "id": "edeae1280ded8904ce694445714c152dc0fee7a4",
         "type": "FIX",
         "text": " sap.m.Toolbar: Fix left aligment in Tables"

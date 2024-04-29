@@ -3,6 +3,22 @@
     "date": "April 2024",
     "notes": [
       {
+        "id": "4c3b89fd1f3bda2b24923608eae6b134b12e13f5",
+        "type": "FIX",
+        "text": " FCL: Restore focus same column fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370131414"
+          }
+        ]
+      },
+      {
+        "id": "4f0daa9f64d80c093a7def00d5e26c95c0e8657a",
+        "type": "FIX",
+        "text": " Integration Cards: Card with Auto data mode can be reached by keyboard"
+      },
+      {
         "id": "44a4c33f30a71fbeb7220544fc6b3cadea9045ff",
         "type": "FIX",
         "text": " sap.f.FlexibleColumnLayout: Title alignment"

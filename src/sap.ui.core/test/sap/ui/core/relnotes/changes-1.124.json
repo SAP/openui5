@@ -3,6 +3,16 @@
     "date": "April 2024",
     "notes": [
       {
+        "id": "1ac10ce70de1a637e108de93a4c6a3639407ad4d",
+        "type": "FEATURE",
+        "text": " Test Starter: Support ui5:// URLs for \"page\""
+      },
+      {
+        "id": "1cd0ca6e126914d4be93672e85d730dbc533567e",
+        "type": "FIX",
+        "text": " sap/base/util/Version: fix type signature of `compareTo` method"
+      },
+      {
         "id": "3b3dbab6b1944ebb7471bfc37c5e51a0d7a09fd6",
         "type": "FIX",
         "text": " core/LabelEnablement: getIdForLabel only on sap.ui.core.Control"

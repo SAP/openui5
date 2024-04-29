@@ -1,0 +1,12 @@
+{
+  "1.124.0": {
+    "date": "April 2024",
+    "notes": [
+      {
+        "id": "002db3c2232516061e8081f62717bbb12fc4edb8",
+        "type": "FIX",
+        "text": " sap.m.Dialog: The toolbar spacer is no longer hidden on phone"
+      }
+    ]
+  }
+}
