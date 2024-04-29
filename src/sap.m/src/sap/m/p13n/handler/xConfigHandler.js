@@ -109,7 +109,7 @@ sap.ui.define([
 						return Engine.getInstance().readXConfig(oControl, {
 								propertyBag: mPropertyBag
 							})
-							.then((oPriorAggregationConfig) => {
+							.then(async (oPriorAggregationConfig) => {
 								const sOperation = getOperationType(oChange.getChangeType());
 								sAffectedAggregation = oChange.getContent().targetAggregation;
 
@@ -128,20 +128,15 @@ sap.ui.define([
 									oRevertData.value = null;
 								}
 
-								const oController = Engine.getInstance().getController(oControl, oChange.getChangeType());
-								const aCurrentState = oController?.getCurrentState();
-								let oStateItem;
-								if (aCurrentState && aCurrentState instanceof Array) {
-									oStateItem = aCurrentState.find((oItem, iIndex) => {
+								if (!oPriorAggregationConfig) {
+									const aCurrentState = await xConfigAPI.getCurrentItemState(oControl, {propertyBag: mPropertyBag, changeType: oChange.getChangeType()}, oPriorAggregationConfig, sAffectedAggregation);
+									const oStateItem = aCurrentState.find((oItem, iIndex) => {
 										return oItem.key === oChange.getContent().key;
 									});
+									oRevertData.index = aCurrentState.indexOf(oStateItem);
 								}
 
 								oRevertData.targetAggregation = oChange.getContent().targetAggregation;
-
-								if (oStateItem) {
-									oRevertData.index = aCurrentState.indexOf(oStateItem);
-								}
 
 								if (oPriorAggregationConfig &&
 									oPriorAggregationConfig.aggregations &&
@@ -150,6 +145,7 @@ sap.ui.define([
 									oPriorAggregationConfig.aggregations[sAffectedAggregation][oChange.getContent().key][sAffectedProperty]
 								) {
 									oRevertData.value = oPriorAggregationConfig.aggregations[sAffectedAggregation][oChange.getContent().key][sAffectedProperty];
+									oRevertData.index = oPriorAggregationConfig.aggregations[sAffectedAggregation][oChange.getContent().key].position !== undefined ? oPriorAggregationConfig.aggregations[sAffectedAggregation][oChange.getContent().key].position : oRevertData.index;
 								}
 
 								oChange.setRevertData(oRevertData);
