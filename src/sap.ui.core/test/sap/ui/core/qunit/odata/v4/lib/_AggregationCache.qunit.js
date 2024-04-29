@@ -4682,12 +4682,14 @@ sap.ui.define([
 	//*********************************************************************************************
 [undefined, false, true].forEach((bNewParentExpanded) => {
 	[false, true].forEach((bMakeRoot) => {
-	const sTitle = `move: expand all, new parent's @$ui5.node.isExpanded = ${bNewParentExpanded},
-make root = ${bMakeRoot}`;
-
-	if (bMakeRoot && bNewParentExpanded !== undefined) {
-		return;
-	}
+		[undefined, false, true].forEach((bChildExpanded) => {
+			const sTitle = "move: unified cache, no refresh needed"
+				+ ", new parent's @$ui5.node.isExpanded = " + bNewParentExpanded
+				+ ", make root = " + bMakeRoot
+				+ ", child's @$ui5.node.isExpanded = " + bChildExpanded;
+			if (bMakeRoot && bNewParentExpanded !== undefined) {
+				return;
+			}
 
 	QUnit.test(sTitle, async function (assert) {
 		var oUpdateExistingExpectation;
@@ -4698,15 +4700,19 @@ make root = ${bMakeRoot}`;
 				hierarchyQualifier : "X"
 			});
 		oCache.bUnifiedCache = true; // simulate a previous side-effects refresh
+		const oChildNode = {
+			"@$ui5.node.isExpanded" : bChildExpanded,
+			Name : "(child) node" // makes deepEqual more useful ;-)
+		};
 		const oParentNode = bMakeRoot ? undefined : {
 			"@$ui5.node.isExpanded" : bNewParentExpanded,
 			"@$ui5.node.level" : 9
 		};
 		// Note: oParentNode's index in aElements MUST not matter!
 		oCache.aElements
-			= ["a", "b", "~oChildNode~", "d", "e", "f", "g", "h", "i"];
+			= ["a", "b", oChildNode, "d", "e", "f", "g", "h", "i"];
 		oCache.aElements.$byPredicate = {
-			"('23')" : "~oChildNode~",
+			"('23')" : oChildNode,
 			"('42')" : oParentNode
 		};
 		const oTreeStateMock = this.mock(oCache.oTreeState);
@@ -4720,15 +4726,17 @@ make root = ${bMakeRoot}`;
 		oTreeStateMock.expects("expand").exactly(bNewParentExpanded === false ? 1 : 0)
 			.withExactArgs(sinon.match.same(oParentNode));
 		const oCacheMock = this.mock(oCache);
-		oCacheMock.expects("requestRank").withExactArgs("~oChildNode~", "~oGroupLock~")
-			.resolves(17);
+		oCacheMock.expects("requestRank")
+			.withExactArgs(sinon.match.same(oChildNode), "~oGroupLock~").resolves(17);
 		this.mock(this.oRequestor).expects("request")
 			.withExactArgs("PATCH", "Foo('23')", "~oGroupLock~", {
-					"If-Match" : "~oChildNode~",
+					"If-Match" : sinon.match.same(oChildNode),
 					Prefer : "return=minimal"
 				}, {"myParent@odata.bind" : bMakeRoot ? null : "Foo('42')"},
 				/*fnSubmit*/null, /*fnCancel*/sinon.match.func)
 			.resolves({"@odata.etag" : "etag"});
+		const oCollapseExpectation = oCacheMock.expects("collapse").exactly(bChildExpanded ? 1 : 0)
+			.withExactArgs("('23')").returns("~collapseCount~");
 		oCacheMock.expects("expand").exactly(bNewParentExpanded === false ? 1 : 0)
 			.withExactArgs(_GroupLock.$cached, "('42')").returns(SyncPromise.resolve(47));
 		oHelperMock.expects("updateAll")
@@ -4736,34 +4744,38 @@ make root = ${bMakeRoot}`;
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "('42')",
 				sinon.match.same(oParentNode), {"@$ui5.node.isExpanded" : true});
 		oHelperMock.expects("getPrivateAnnotation")
-			.withExactArgs("~oChildNode~", "descendants", 0).returns(4);
+			.withExactArgs(sinon.match.same(oChildNode), "descendants", 0).returns(4);
 		oCacheMock.expects("adjustDescendantCount")
-			.withExactArgs("~oChildNode~", 2, -(4 + 1))
+			.withExactArgs(sinon.match.same(oChildNode), 2, -(4 + 1))
 			.callsFake(function () {
 				assert.notOk(oUpdateExistingExpectation.called, "old level needed!");
 				assert.deepEqual(oCache.aElements,
-					["a", "b", "~oChildNode~", "d", "e", "f", "g", "h", "i"],
+					["a", "b", oChildNode, "d", "e", "f", "g", "h", "i"],
 					"not spliced yet");
+				assert.strictEqual(oCollapseExpectation.called, !!bChildExpanded,
+					"collapse before splice");
 			});
 		oHelperMock.expects("getPrivateAnnotation")
-			.withExactArgs("~oChildNode~", "rank").returns("~rank~");
+			.withExactArgs(sinon.match.same(oChildNode), "rank").returns("~rank~");
 		const oShiftRankForMoveExpectation = oCacheMock.expects("shiftRankForMove")
 			.withExactArgs("~rank~", 4 + 1, 17);
 		this.mock(oCache.oFirstLevel).expects("move").withExactArgs("~rank~", 17, 4 + 1);
 		oUpdateExistingExpectation = oHelperMock.expects("updateExisting")
-			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "('23')", "~oChildNode~", {
-				"@odata.etag" : "etag",
-				"@$ui5.node.level" : bMakeRoot ? 1 : 10,
-				"@$ui5.context.isTransient" : undefined
-			});
-		oHelperMock.expects("setPrivateAnnotation").withExactArgs("~oChildNode~", "rank", 17);
+			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "('23')",
+				sinon.match.same(oChildNode), {
+					"@odata.etag" : "etag",
+					"@$ui5.node.level" : bMakeRoot ? 1 : 10,
+					"@$ui5.context.isTransient" : undefined
+				});
+		oHelperMock.expects("setPrivateAnnotation")
+			.withExactArgs(sinon.match.same(oChildNode), "rank", 17);
 		const oGetArrayIndexExpectation = oCacheMock.expects("getArrayIndex")
 			.withExactArgs(17).returns(7);
 		oCacheMock.expects("adjustDescendantCount")
-			.withExactArgs("~oChildNode~", 7, +(4 + 1))
+			.withExactArgs(sinon.match.same(oChildNode), 7, +(4 + 1))
 			.callsFake(function () {
 				assert.deepEqual(oCache.aElements,
-					["a", "b", "d", "e", "f", "g", "h", "~oChildNode~", "i"],
+					["a", "b", "d", "e", "f", "g", "h", oChildNode, "i"],
 					"already moved");
 			});
 
@@ -4773,15 +4785,18 @@ make root = ${bMakeRoot}`;
 
 		assert.strictEqual(oSyncPromise.isPending(), true);
 		assert.strictEqual(bRefresh, false);
+		assert.notOk(oCollapseExpectation.called, "avoid early collapse");
 
-		const [iResult, iNewIndex] = await oSyncPromise;
-
-		assert.strictEqual(iResult, bNewParentExpanded === false ? 47 + 1 : 1);
-		assert.strictEqual(iNewIndex, 7);
+		assert.deepEqual(await oSyncPromise, [
+			bNewParentExpanded === false ? 47 + 1 : 1, // iResult
+			7, // iNewIndex
+			bChildExpanded === true ? "~collapseCount~" : undefined
+		]);
 		assert.deepEqual(oCache.aElements,
-			["a", "b", "d", "e", "f", "g", "h", "~oChildNode~", "i"]);
+			["a", "b", "d", "e", "f", "g", "h", oChildNode, "i"]);
 		assert.ok(oShiftRankForMoveExpectation.calledBefore(oGetArrayIndexExpectation));
 	});
+		});
 	});
 });
 

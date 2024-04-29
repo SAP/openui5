@@ -690,27 +690,27 @@ sap.ui.define([
 	 *   The context corresponding to the group node
 	 * @param {boolean} [bSilent]
 	 *   Whether no ("change") events should be fired
+	 * @param {number} [iCount]
+	 *   The count of nodes affected by the collapse, in case the cache already performed it
 	 * @throws {Error}
 	 *   If the binding's root binding is suspended
 	 *
 	 * @private
 	 * @see #expand
 	 */
-	ODataListBinding.prototype.collapse = function (oContext, bSilent) {
-		var aContexts = this.aContexts,
-			iCount = this.oCache.collapse(
-				_Helper.getRelativePath(oContext.getPath(), this.oHeaderContext.getPath())),
-			iModelIndex = oContext.getModelIndex(),
-			i,
-			that = this;
+	ODataListBinding.prototype.collapse = function (oContext, bSilent, iCount) {
+		iCount ??= this.oCache.collapse(
+			_Helper.getRelativePath(oContext.getPath(), this.oHeaderContext.getPath()));
 
 		if (iCount > 0) {
-			aContexts.splice(iModelIndex + 1, iCount).forEach(function (oContext) {
+			const aContexts = this.aContexts;
+			const iModelIndex = oContext.getModelIndex();
+			aContexts.splice(iModelIndex + 1, iCount).forEach((oContext) => {
 				if (!oContext.created()) {
-					that.mPreviousContextsByPath[oContext.getPath()] = oContext;
+					this.mPreviousContextsByPath[oContext.getPath()] = oContext;
 				} // else: created (even persisted) is kept inside "context" annotation
 			});
-			for (i = iModelIndex + 1; i < aContexts.length; i += 1) {
+			for (let i = iModelIndex + 1; i < aContexts.length; i += 1) {
 				if (aContexts[i]) {
 					aContexts[i].iIndex = i;
 				}
@@ -3305,11 +3305,6 @@ sap.ui.define([
 			throw new Error("Missing recursive hierarchy");
 		}
 
-		const bExpanded = oChildContext.isExpanded();
-		if (bExpanded) {
-			this.collapse(oChildContext, /*bSilent*/true);
-		}
-
 		const sUpdateGroupId = this.getUpdateGroupId();
 		const oGroupLock = this.lockGroup(sUpdateGroupId, true, true);
 		const sChildPath = oChildContext.getCanonicalPath().slice(1);
@@ -3326,9 +3321,6 @@ sap.ui.define([
 			sParentPath, sSiblingPath, sNonCanonicalChildPath);
 
 		if (bRefresh) {
-			if (bExpanded) {
-				this.expand(oChildContext, /*bSilent*/true).unwrap(); // guaranteed to be sync!
-			}
 			return SyncPromise.all([
 				oPromise.then(function ([,, iNewIndex]) {
 					if (oSiblingContext !== undefined) {
@@ -3339,9 +3331,12 @@ sap.ui.define([
 			]);
 		}
 
-		return oPromise.then(([iCount, iNewIndex]) => {
+		return oPromise.then(([iCount, iNewIndex, iCollapseCount]) => {
 			if (iCount > 1) { // Note: skip oChildContext which is treated below
 				this.insertGap(oParentContext.getModelIndex(), iCount - 1);
+			}
+			if (iCollapseCount) { // Note: _AC#collapse already done!
+				this.collapse(oChildContext, /*bSilent*/true, iCollapseCount);
 			}
 			const iOldIndex = oChildContext.getModelIndex();
 			this.aContexts.splice(iOldIndex, 1);
@@ -3353,16 +3348,11 @@ sap.ui.define([
 			}
 			setIndices(iOldIndex, iNewIndex);
 
-			if (bExpanded) {
+			if (iCollapseCount) {
 				this.expand(oChildContext).unwrap(); // guaranteed to be sync! incl. _fireChange
 			} else {
 				this._fireChange({reason : ChangeReason.Change});
 			}
-		}, (oError) => {
-			if (bExpanded) {
-				this.expand(oChildContext, /*bSilent*/true).unwrap(); // guaranteed to be sync!
-			}
-			throw oError;
 		});
 	};
 
