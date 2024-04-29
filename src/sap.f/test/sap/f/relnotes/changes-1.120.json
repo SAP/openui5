@@ -138,5 +138,30 @@
         "text": " sap.f.FlexibleColumnLayout: Fixed incorrect rendering of separator"
       }
     ]
+  },
+  "1.120.13": {
+    "date": "April 2024",
+    "notes": [
+      {
+        "id": "20aa18f9080331e4d901f7ed2be3bb7e7e25bc7e",
+        "type": "FIX",
+        "text": " sap.f.FlexibleColumnLayout: Title alignment"
+      },
+      {
+        "id": "c361191e77cee3cbcd32bc692d8aadaa8782d002",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageHeader: Aligned with visual specification",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370081951"
+          },
+          {
+            "type": "BCP",
+            "reference": "2370103521"
+          }
+        ]
+      }
+    ]
   }
 }

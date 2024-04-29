@@ -759,6 +759,11 @@
     "date": "April 2024",
     "notes": [
       {
+        "id": "f35e654c4417e813f7a7bc6136d3ab7fdba29f96",
+        "type": "FIX",
+        "text": " sap.m.Input: Prevent value DOM update when password type is used"
+      },
+      {
         "id": "1021d0d41ad640c1d7e669833bf5c0513d3d4386",
         "type": "FIX",
         "text": " sap.m.Input: Prevent user value override"

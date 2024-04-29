@@ -189,6 +189,11 @@
     "date": "April 2024",
     "notes": [
       {
+        "id": "20aa18f9080331e4d901f7ed2be3bb7e7e25bc7e",
+        "type": "FIX",
+        "text": " sap.f.FlexibleColumnLayout: Title alignment"
+      },
+      {
         "id": "18739a4c3e61740ae5c954249dc2bac281d55d9d",
         "type": "FIX",
         "text": " sap.m.Button: Emphasized button is displayed correctly now in horizon theme",

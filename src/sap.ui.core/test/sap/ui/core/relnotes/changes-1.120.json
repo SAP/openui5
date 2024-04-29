@@ -772,5 +772,25 @@
         ]
       }
     ]
+  },
+  "1.120.13": {
+    "date": "April 2024",
+    "notes": [
+      {
+        "id": "5399537123ba854624bcc80f04cf850295ac8ddb",
+        "type": "FIX",
+        "text": " sap.ui.model.type.Currency: amount scale is used instead of currency's decimal places"
+      },
+      {
+        "id": "04bb93033ca71f0aa9285ee6d857244b20fbf591",
+        "type": "FIX",
+        "text": " sap.ui.model.type.Unit: do not overwrite Unit's maxFractionDigits format option"
+      },
+      {
+        "id": "fbbc2a876585b555fa086f1243e2cfa2568c26f3",
+        "type": "FIX",
+        "text": " sap.ui.model.type.Unit: amount scale is used instead of unit's decimal places"
+      }
+    ]
   }
 }
