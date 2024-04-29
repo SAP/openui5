@@ -1708,7 +1708,7 @@ function(
 	};
 
 	SplitContainer.prototype._handleResize = function() {
-		var isLandscape = Device.orientation.landscape,
+			var isLandscape = Device.orientation.landscape,
 			_currentPage = this._oDetailNav.getCurrentPage(),
 			mode = this.getMode();
 
@@ -1908,7 +1908,6 @@ function(
 		this._oShowMasterBtn = new Button(this.getId() + "-MasterBtn", {
 			icon: IconPool.getIconURI("menu2"),
 			tooltip: this.getMasterButtonTooltip(),
-			type: ButtonType.Default,
 			press: jQuery.proxy(this._onMasterButtonTap, this)
 		}).addStyleClass("sapMSplitContainerMasterBtn");
 	};
@@ -1933,12 +1932,16 @@ function(
 			aHeaderContent = oHeaderAggregation.aAggregationContent;
 
 		for (var i = 0; i < aHeaderContent.length; i++) {
-			if (aHeaderContent[i] instanceof Button && aHeaderContent[i].getVisible()
-				&& (aHeaderContent[i].getType() == ButtonType.Back || (aHeaderContent[i].getType() == ButtonType.Up
-				&& aHeaderContent[i] !== this._oShowMasterBtn))) {
+			if (aHeaderContent[i] instanceof Button && aHeaderContent[i].getVisible()) {
+				/**
+				 * @deprecated As of version 1.120
+				 */
+				if (aHeaderContent[i].getType() !== ButtonType.Back && !(aHeaderContent[i].getType() == ButtonType.Up && aHeaderContent[i] !== this._oShowMasterBtn)) {
+					continue;
+				}
 				this._bDetailNavButton = true;
 				return;
-			}
+				}
 		}
 		this._bDetailNavButton = false;
 
