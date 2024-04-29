@@ -967,7 +967,7 @@ sap.ui.define([
 			name: "sap.ui.test.v2models.parent",
 			manifest: oManifestJson
 		}).catch((error) => {
-			assert.ok(error.message.includes(`Cannot load module 'sap/ui/not/defined/Model'. This will most probably cause an error once the module is used later on.`),
+			assert.ok(error.message.includes(`Cannot load module 'sap/ui/not/defined/Model'.`),
 				"Error thrown because defined model class is not found.");
 
 			future.active = undefined;
@@ -1036,7 +1036,7 @@ sap.ui.define([
 			name: "sap.ui.test.v2models.parent",
 			manifest: oManifestJson
 		}).catch((error) => {
-			assert.ok(error.message.includes(`Component Manifest: Provided OData version "3.0" in dataSource "unknown-odataVersion" for model "v2-ODataModel-unknown-odataVersion" is unknown. Falling back to default model type "sap.ui.model.odata.v2.ODataModel".`),
+			assert.ok(error.message.includes(`Component Manifest: Provided OData version "3.0" in dataSource "unknown-odataVersion" for model "v2-ODataModel-unknown-odataVersion" is unknown.`),
 				"Error thrown because unknown dataSource defined in Component Manifest.");
 
 			future.active = undefined;

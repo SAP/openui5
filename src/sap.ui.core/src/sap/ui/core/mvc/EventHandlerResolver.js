@@ -121,7 +121,7 @@ sap.ui.define([
 						if (iEndBracket > iStartBracket) {
 
 							if (sName.substring(iStartBracket).indexOf("{=") > -1) {
-								future.warningThrows("It looks like an event handler parameter contains a binding expression ({=...}). This is not allowed and will cause an error later on " +
+								future.warningThrows("It looks like an event handler parameter contains a binding expression ({=...}). This is not allowed " +
 									"because the entire event handler is already considered an expression: " + sName);
 							}
 

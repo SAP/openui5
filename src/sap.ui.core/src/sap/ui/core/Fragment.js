@@ -182,7 +182,7 @@ function(
 	 */
 	Fragment.registerType = function(sType, oFragmentImpl) {
 		if (typeof (sType) !== "string") {
-			future.errorThrows("Ignoring non-string Fragment type: " + sType);
+			future.errorThrows("Invalid non-string Fragment type: '" + sType + "'.", { suffix: "It will be ignored." });
 			return;
 		}
 
