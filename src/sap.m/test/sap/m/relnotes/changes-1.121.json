@@ -1069,5 +1069,15 @@
         "text": " sap.m.Carousel: Resolve issue preventing text selection with mouse"
       }
     ]
+  },
+  "1.121.3": {
+    "date": "April 2024",
+    "notes": [
+      {
+        "id": "c1829a8a29f34e4f2a555512dec4983820b530df",
+        "type": "FIX",
+        "text": " sap.m.Input: Prevent value DOM update when password type is used"
+      }
+    ]
   }
 }
