@@ -75,7 +75,7 @@
                 <module>sap/m/SlideTile</module>
                 <module>sap/m/GenericTile</module>
                 <module>sap/m/LinkTileContent</module>
-                <module>sap/m/Badge</module>
+                <module>sap/m/TileInfo</module>
                 <module>sap/m/ContentConfig</module>
                 <module>sap/m/TileContent</module>
                 <module>sap/m/FeedContent</module>
@@ -84,6 +84,7 @@
                 <module>sap/m/ImageContent</module>
                 <module>sap/m/HeaderContainer</module>
                 <module>sap/m/GenericTileMode</module>
+                <module>sap/m/TileInfoColor</module>
                 <module>sap/m/GenericTileScope</module>
                 <module>sap/m/TileSizeBehavior</module>
                 <module>sap/m/Size</module>

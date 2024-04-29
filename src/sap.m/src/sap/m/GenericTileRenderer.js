@@ -474,12 +474,12 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/core/Them
 		var bIsTextOnlyPresent = !oBadge.getSrc() && oBadge.getText();
 		oRm.openStart("div");
 		oRm.class("sapMGTBadge");
+		oRm.class("sapMGTBadgeBackgroundColor" + oBadge.getBackgroundColor());
+		oRm.class("sapMGTBadgeColor" + oBadge.getTextColor());
+		oRm.class("sapMGTBadgeBorderColor" + oBadge.getBorderColor());
 		if (oBadge.getText() && oBadge.getSrc()) {
 			oRm.class("sapMGTBadgeTextPresent");
 		}
-		oRm.style("background",oControl._oBadgeColors["badgeBackgroundColor"]);
-		oRm.style("color",oControl._oBadgeColors["badgeTextColor"]);
-		oRm.style("border-color",oControl._oBadgeColors["badgeBorderColor"]);
 		oRm.class((bIsIconOnlyPresent) ? "sapMGTBadgeOnlyIcon" : null);
 		oRm.class((bIsTextOnlyPresent) ? "sapMGTBadgeOnlyText" : null);
 		oRm.openEnd();
@@ -496,7 +496,7 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/core/Them
 		if (oControl.getState() != LoadState.Loaded) {
 			oRm.openStart("div");
 			oRm.class("sapMGTBadgeOverlay");
-			oRm.style("background",oControl._oBadgeColors["badgeBackgroundColor"]);
+			oRm.class("sapMGTBadgeBackgroundColor" + oBadge.getBackgroundColor());
 			oRm.openEnd();
 			oRm.close("div");
 		}

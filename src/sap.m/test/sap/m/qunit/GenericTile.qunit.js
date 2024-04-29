@@ -31,7 +31,7 @@ sap.ui.define([
 	"sap/f/dnd/GridDropInfo",
 	"sap/ui/core/Theming",
 	"sap/m/LinkTileContent",
-	"sap/m/Badge",
+	"sap/m/TileInfo",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	// used only indirectly
 	"sap/ui/events/jquery/EventExtension"
@@ -5695,7 +5695,7 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", async f
 				subheader: "Test Subheader",
 				frameType: FrameType.TwoByOne,
 				badge:[
-					new Badge({src:"sap-icon://ai",text:"SAP",textColor: "sapCriticalTextColor",backgroundColor: "sapWarningBackground", borderColor: "sapWarningBorderColor"})
+					new Badge({src:"sap-icon://ai",text:"SAP",textColor: "CriticalTextColor",backgroundColor: "WarningBackground", borderColor: "WarningBorderColor"})
 				]
 			}).placeAt("qunit-fixture");
 			await nextUIUpdate();

@@ -289,7 +289,7 @@ sap.ui.define([
 				 *  A badge that is attached to the GenericTile.
 				 * @experimental since 1.124
 				 */
-				badge: {type: "sap.m.Badge",multiple:false,bindable: "bindable"},
+				badge: {type: "sap.m.TileInfo",multiple:false,bindable: "bindable"},
 				/**
 				 * The hidden aggregation for the title.
 				 */
@@ -683,9 +683,6 @@ sap.ui.define([
 		}
 		this._isLinkTileContentPresent = this.getLinkTileContents().length > 0;
 		if (oBadge) {
-			this._applyColors("badgeTextColor",oBadge.getTextColor());
-			this._applyColors("badgeBackgroundColor",oBadge.getBackgroundColor());
-			this._applyColors("badgeBorderColor",oBadge.getBorderColor());
 			this._oBadgeIcon.setSrc(oBadge.getSrc());
 		}
 	};
@@ -858,7 +855,7 @@ sap.ui.define([
 				name: sColor,
 				callback: function(sParamColor) {
 					this._oBadgeColors[sKey] = sParamColor;
-					this._invalidate();
+					this.invalidate();
 				}.bind(this)
 			});
 			if (sFetchedColor) {
