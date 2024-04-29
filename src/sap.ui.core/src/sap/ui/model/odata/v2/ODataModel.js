@@ -2182,14 +2182,12 @@ sap.ui.define([
 	 *     OperationMode.Client}, and</li>
 	 *   <li>the {@link sap.ui.table.TreeTable} is used.</li>
 	 *   </ul>
-	 *   The feature is only available when using the <code>ODataTreeBindingAdapter</code>, which is
-	 *   automatically applied when using the <code>sap.ui.table.TreeTable</code>. The tree state
-	 *   handle will contain all necessary information to expand the tree to the given state.
+	 *   The feature is only available when using the {@link sap.ui.table.TreeTable}. The tree
+	 *   state handle will contain all necessary information to expand the tree to the given state.
 	 *
 	 *   This feature is not supported if
 	 *   {@link sap.ui.model.odata.OperationMode.Server OperationMode.Server} or
-	 *   {@link sap.ui.model.odata.OperationMode.Auto OperationMode.Auto} is used. See also
-	 *   {@link sap.ui.model.odata.ODataTreeBindingAdapter#getCurrentTreeState}
+	 *   {@link sap.ui.model.odata.OperationMode.Auto OperationMode.Auto} is used.
 	 *  @param {sap.ui.model.odata.CountMode} [mParameters.countMode]
 	 *    Defines the count mode of this binding; if not specified, the default count mode of the
 	 *    binding's model is applied. The resulting count mode must not be
