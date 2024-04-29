@@ -8,8 +8,8 @@ sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/ui/fl/apply/_internal/changes/Applier",
 	"sap/ui/fl/apply/_internal/changes/Utils",
-	"sap/ui/fl/apply/_internal/flexState/changes/UIChangesState",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
+	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/Utils",
@@ -20,8 +20,8 @@ sap.ui.define([
 	Component,
 	Applier,
 	ChangesUtils,
-	UIChangesState,
 	VariantManagementState,
+	FlexObjectState,
 	FlexState,
 	ManifestUtils,
 	Utils,
@@ -68,7 +68,7 @@ sap.ui.define([
 	 * @public
 	 */
 	function getChangesForView(mPropertyBag) {
-		const aAllApplicableUIChanges = UIChangesState.getAllApplicableUIChanges(mPropertyBag.reference);
+		const aAllApplicableUIChanges = FlexObjectState.getAllApplicableUIChanges(mPropertyBag.reference);
 		return aAllApplicableUIChanges.filter(ChangesUtils.isChangeInView.bind(undefined, mPropertyBag));
 	}
 

@@ -11,7 +11,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/Applier",
 	"sap/ui/fl/apply/_internal/changes/Reverter",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
-	"sap/ui/fl/apply/_internal/flexState/changes/UIChangesState",
+	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/descriptorRelated/api/DescriptorChangeFactory",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerStorage",
@@ -34,7 +34,7 @@ sap.ui.define([
 	Applier,
 	Reverter,
 	States,
-	UIChangesState,
+	FlexObjectState,
 	DescriptorChangeFactory,
 	Settings,
 	ChangeHandlerStorage,
@@ -291,7 +291,7 @@ sap.ui.define([
 			];
 			var oFlResourceBundle = Lib.getResourceBundleFor("sap.ui.fl");
 
-			sandbox.stub(UIChangesState, "getOpenDependentChangesForControl").returns(aDependentChanges);
+			sandbox.stub(FlexObjectState, "getOpenDependentChangesForControl").returns(aDependentChanges);
 
 			return ChangesWriteAPI.apply(mPropertyBag).catch(function(oError) {
 				assert.equal(oApplyStub.callCount, 1, "the change got applied");

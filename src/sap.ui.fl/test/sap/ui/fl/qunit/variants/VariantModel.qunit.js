@@ -20,7 +20,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/controlVariants/Utils",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
-	"sap/ui/fl/apply/_internal/flexState/changes/UIChangesState",
+	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/Switcher",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
@@ -57,7 +57,7 @@ sap.ui.define([
 	VariantUtil,
 	FlexObjectFactory,
 	States,
-	UIChangesState,
+	FlexObjectState,
 	Switcher,
 	VariantManagementState,
 	FlexState,
@@ -271,7 +271,7 @@ sap.ui.define([
 			assert.strictEqual(oVMData.modified, false, "the modified flag was set");
 
 			assert.strictEqual(
-				UIChangesState.getLiveDependencyMap(sReference).mChanges.someControlId.length,
+				FlexObjectState.getLiveDependencyMap(sReference).mChanges.someControlId.length,
 				1,
 				"then the persisted UI change of the current variant is added to the dependency map"
 			);
@@ -284,7 +284,7 @@ sap.ui.define([
 			var oClearCurrentVariantSpy = sandbox.spy(VariantManagementState, "resetCurrentVariantReference");
 			this.oModel.destroy();
 			assert.strictEqual(
-				UIChangesState.getLiveDependencyMap(sReference).mChanges.someControlId.length,
+				FlexObjectState.getLiveDependencyMap(sReference).mChanges.someControlId.length,
 				0,
 				"then the persisted UI change of the current variant is removed from the dependency map"
 			);

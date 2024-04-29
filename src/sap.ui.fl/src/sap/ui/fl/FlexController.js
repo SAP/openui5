@@ -10,7 +10,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/Reverter",
 	"sap/ui/fl/apply/_internal/controlVariants/URLHandler",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
-	"sap/ui/fl/apply/_internal/flexState/changes/UIChangesState",
+	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
@@ -23,7 +23,7 @@ sap.ui.define([
 	Reverter,
 	URLHandler,
 	States,
-	UIChangesState,
+	FlexObjectState,
 	FlexState,
 	ControlVariantApplyAPI,
 	JsControlTreeModifier,
@@ -170,7 +170,7 @@ sap.ui.define([
 		const oAppComponent = mPropertyBag.selector.appComponent || Utils.getAppComponentForControl(oControl);
 
 		mPropertyBag.changeTypes ||= [];
-		var mChangesMap = UIChangesState.getLiveDependencyMap(this._sComponentName);
+		var mChangesMap = FlexObjectState.getLiveDependencyMap(this._sComponentName);
 		var aPromises = [];
 		var mDependencies = Object.assign({}, mChangesMap.mDependencies);
 		var {mChanges} = mChangesMap;

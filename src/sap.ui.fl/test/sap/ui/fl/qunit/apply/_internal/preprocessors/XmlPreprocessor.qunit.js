@@ -3,8 +3,8 @@
 sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/ui/fl/apply/_internal/changes/Applier",
-	"sap/ui/fl/apply/_internal/flexState/changes/UIChangesState",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
+	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/_internal/preprocessors/XmlPreprocessor",
@@ -14,8 +14,8 @@ sap.ui.define([
 ], function(
 	Component,
 	Applier,
-	UIChangesState,
 	VariantManagementState,
+	FlexObjectState,
 	FlexState,
 	ManifestUtils,
 	XmlPreprocessor,
@@ -184,7 +184,7 @@ sap.ui.define([
 			const oAppComponent = RtaQunitUtils.createAndStubAppComponent(sandbox, "myAppComponent");
 			const oApplierStub = sandbox.stub(Applier, "applyAllChangesForXMLView");
 			const oWaitForInitStub = sandbox.stub(FlexState, "waitForInitialization");
-			sandbox.stub(UIChangesState, "getAllApplicableUIChanges").returns([
+			sandbox.stub(FlexObjectState, "getAllApplicableUIChanges").returns([
 				{ getSelector: () => { return { id: "testView--foo" }; } },
 				{ getSelector: () => { return { id: "testView-bar" }; } },
 				{ getSelector: () => { return { id: "testView1--foo1" }; } },

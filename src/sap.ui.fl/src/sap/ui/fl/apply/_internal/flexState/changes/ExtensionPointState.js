@@ -10,7 +10,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/Utils",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
-	"sap/ui/fl/apply/_internal/flexState/changes/UIChangesState",
+	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerStorage",
@@ -24,7 +24,7 @@ sap.ui.define([
 	ChangesUtils,
 	FlexObjectFactory,
 	FlexObjectStates,
-	UIChangesState,
+	FlexObjectState,
 	FlexState,
 	ManifestUtils,
 	ChangeHandlerStorage,
@@ -140,7 +140,7 @@ sap.ui.define([
 			Log.error("Missing name from extension point info!");
 			return [];
 		}
-		const aFlexObjects = UIChangesState.getAllApplicableUIChanges(sReference);
+		const aFlexObjects = FlexObjectState.getAllApplicableUIChanges(sReference);
 		return aFlexObjects.filter((oFlexObject) => {
 			if (oFlexObject.getSelector().name !== mPropertyBag.extensionPointName) {
 				return false;

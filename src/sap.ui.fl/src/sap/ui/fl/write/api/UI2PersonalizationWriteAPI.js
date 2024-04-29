@@ -4,12 +4,10 @@
 
 sap.ui.define([
 	"sap/ui/fl/write/_internal/flexState/UI2Personalization/UI2PersonalizationState",
-	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/base/util/restricted/_omit"
 ], function(
 	UI2PersonalizationState,
-	FlexState,
 	ManifestUtils,
 	_omit
 ) {

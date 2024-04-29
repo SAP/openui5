@@ -19,9 +19,9 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/controlVariants/URLHandler",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/apply/_internal/flexState/changes/DependencyHandler",
-	"sap/ui/fl/apply/_internal/flexState/changes/UIChangesState",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/Switcher",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
+	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/_internal/controlVariants/Utils",
 	"sap/ui/fl/Layer",
@@ -48,9 +48,9 @@ sap.ui.define([
 	URLHandler,
 	FlexObjectFactory,
 	DependencyHandler,
-	UIChangesState,
 	Switcher,
 	VariantManagementState,
+	FlexObjectState,
 	ManifestUtils,
 	VariantUtil,
 	Layer,
@@ -330,7 +330,7 @@ sap.ui.define([
 			// Initialize data
 			this.updateData();
 
-			const oLiveDependencyMap = UIChangesState.getLiveDependencyMap(this.sFlexReference);
+			const oLiveDependencyMap = FlexObjectState.getLiveDependencyMap(this.sFlexReference);
 			VariantManagementState.getInitialUIChanges(
 				{reference: this.sFlexReference},
 				this.oAppComponent.getId(),

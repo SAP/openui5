@@ -13,6 +13,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/changes/UIChangesState",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/fl/apply/_internal/flexState/DataSelector",
+	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/initial/api/Version",
 	"sap/ui/fl/registry/Settings",
@@ -32,6 +33,7 @@ sap.ui.define([
 	UIChangesState,
 	VariantManagementState,
 	DataSelector,
+	FlexObjectState,
 	FlexState,
 	Version,
 	Settings,
@@ -165,7 +167,7 @@ sap.ui.define([
 	 * @public
 	 */
 	ChangePersistence.prototype.getDependencyMapForComponent = function() {
-		return UIChangesState.getLiveDependencyMap(this._mComponent.name);
+		return FlexObjectState.getLiveDependencyMap(this._mComponent.name);
 	};
 
 	function finalizeChangeCreation(oChange, oAppComponent) {
