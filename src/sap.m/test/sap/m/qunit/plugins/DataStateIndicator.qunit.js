@@ -372,7 +372,7 @@ sap.ui.define([
 				if (aDependencies.length === 2 && aDependencies[0] === "sap/m/Text" && aDependencies[1] === "sap/m/Toolbar") {
 					fnCallback(Text, Toolbar);
 				} else {
-					fnRequire(aDependencies, fnCallback);
+					return fnRequire(aDependencies, fnCallback);
 				}
 			});
 		},
