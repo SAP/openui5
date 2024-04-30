@@ -1275,8 +1275,9 @@ sap.ui.define([
 	 * move must be pending, and no other modification (including the collapse of an ancestor node)
 	 * must happen while this move is pending!
 	 *
-	 * The move changes the {@link #getIndex index} of this context, of all of its descendants, and
-	 * of all other nodes affected by the move.
+	 * The move potentially changes the {@link #getIndex index} of this context, of all of its
+	 * descendants, and of all other nodes affected by the move. Any index change can, however, only
+	 * be observed reliably for this context itself.
 	 *
 	 * The move changes the
 	 * {@link topic:c9723f8265f644af91c0ed941e114d46/section_CST context states} of the nodes as
@@ -1292,6 +1293,14 @@ sap.ui.define([
 	 *     descendants of that node are then themselves in the "created" state and also become
 	 *     "persisted"; otherwise, their states remain unaffected by the move.
 	 * </ul>
+	 *
+	 * Note that a node in the "created" state is not shown in its usual position as defined by the
+	 * service and the current sort order, but out of place as the first child of its parent. It is
+	 * even shown if it doesn't match current search or filter criteria! Once it becomes simply
+	 * "persisted" due to the move (as described above), this special handling ends. The node is
+	 * then shown in place again, or it might even not be shown anymore due to the search or filter
+	 * criteria. If the latter happens to this context, its {@link #getIndex index} becomes
+	 * <code>undefined</code>.
 	 *
 	 * @param {object} oParameters - A parameter object
 	 * @param {sap.ui.model.odata.v4.Context|null} [oParameters.nextSibling]

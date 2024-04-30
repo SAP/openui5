@@ -866,9 +866,7 @@ sap.ui.define([
 				// Note: overridden by _AggregationCache.calculateKeyPredicateRH
 				this.oFirstLevel.calculateKeyPredicate(oParent, this.getTypes(), this.sMetaPath);
 
-				const iParentIndex = this.aElements.findIndex(
-					(oNode) => _Helper.getPrivateAnnotation(oNode, "parent") === this.oFirstLevel
-						&& _Helper.getPrivateAnnotation(oNode, "rank") === iRank);
+				const iParentIndex = this.findIndex(iRank);
 				if (_Helper.getPrivateAnnotation(this.aElements[iParentIndex], "placeholder")) {
 					this.insertNode(oParent, iRank, iParentIndex);
 				} // else: parent already inside collection
@@ -934,6 +932,24 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the index in <code>this.aElements</code> for a given (limited preorder) rank where
+	 * either a node or placeholder with that rank is present and belongs to the first level cache.
+	 *
+	 * @param {number} iRank
+	 *   The (limited preorder) rank of a node
+	 * @returns {number}
+	 *   The array index
+	 *
+	 * @private
+	 * @see #getInsertIndex
+	 */
+	_AggregationCache.prototype.findIndex = function (iRank) {
+		return this.aElements.findIndex(
+			(oNode) => _Helper.getPrivateAnnotation(oNode, "rank") === iRank
+					&& _Helper.getPrivateAnnotation(oNode, "parent") === this.oFirstLevel);
+	};
+
+	/**
 	 * Returns an array containing all current elements of this aggregation cache's flat list; the
 	 * array is annotated with the collection's $count. If there are placeholders, the corresponding
 	 * objects will be ignored and set to <code>undefined</code>.
@@ -958,33 +974,6 @@ sap.ui.define([
 		aAllElements.$count = this.aElements.$count;
 
 		return aAllElements;
-	};
-
-	/**
-	 * Returns the index in <code>this.aElements</code> for a given (limited preorder) rank. No node
-	 * with that rank is already present, but it needs to be inserted at the returned index later.
-	 * A unified cache is assumed. Takes care of collapsed or out-of-place nodes.
-	 *
-	 * @param {number} iRank
-	 *   The (limited preorder) rank of a node
-	 * @returns {number}
-	 *   The array index
-	 *
-	 * @private
-	 */
-	_AggregationCache.prototype.getArrayIndex = function (iRank) {
-		var i;
-
-		for (i = 0; i < this.aElements.length; i += 1) {
-			const oNode = this.aElements[i];
-			const iNodeRank = _Helper.getPrivateAnnotation(oNode, "rank");
-			// out-of-place nodes are ignored; nothing to do for collapsed nodes
-			if (iNodeRank > iRank && !("@$ui5.context.isTransient" in oNode)) {
-				return i;
-			}
-		}
-
-		return i;
 	};
 
 	/**
@@ -1025,6 +1014,35 @@ sap.ui.define([
 	 */
 	_AggregationCache.prototype.getDownloadUrl = function (_sPath, _mCustomQueryOptions) {
 		return this.sDownloadUrl;
+	};
+
+	/**
+	 * Returns the index in <code>this.aElements</code> for a given (limited preorder) rank. No node
+	 * with that rank is already present, but it needs to be inserted at the returned index later.
+	 * A unified cache is assumed. Takes care of collapsed or out-of-place nodes.
+	 *
+	 * @param {number} iRank
+	 *   The (limited preorder) rank of a node
+	 * @returns {number}
+	 *   The array index
+	 *
+	 * @private
+	 * @see #findIndex
+	 */
+	_AggregationCache.prototype.getInsertIndex = function (iRank) {
+		var i;
+
+		for (i = 0; i < this.aElements.length; i += 1) {
+			const oNode = this.aElements[i];
+			// out-of-place nodes are ignored; nothing to do for collapsed nodes
+			if (_Helper.getPrivateAnnotation(oNode, "rank") > iRank
+				&& !this.oTreeState.isOutOfPlace(
+					_Helper.getPrivateAnnotation(oNode, "predicate"))) {
+				return i;
+			}
+		}
+
+		return i;
 	};
 
 	/**
@@ -1264,16 +1282,17 @@ sap.ui.define([
 	 * @param {string} [sNonCanonicalChildPath]
 	 *   The (child) node's non-canonical path (relative to the service); only used when
 	 *   <code>sSiblingPath</code> is given
-	 * @returns {{promise : sap.ui.base.SyncPromise<number[]>, refresh : boolean}}
+	 * @returns {{promise : sap.ui.base.SyncPromise<function():number|number[]>, refresh : boolean}}
 	 *   An object with two properties:
-	 *   - <code>promise</code>: A promise which is resolved with an array of numbers when the move
-	 *     is finished, or rejected in case of an error. In case a refresh is needed, the promise is
-	 *     resolved without a defined result. Those numbers are:
-	 *     - the number of child nodes added (normally one, but maybe more in case parent node was
-	 *       collapsed before),
-	 *     - the new index of the (child) node,
-	 *     - the number of descendant nodes that were affected by the collapse of the (child) node
-	 *       (<code>undefined</code> in case the (child) node was not expanded)
+	 *   - <code>promise</code>: A promise which is resolved when the move is finished, or rejected
+	 *     in case of an error. In case a refresh is needed, the promise is resolved with a function
+	 *     that can be called w/o args once the refresh is finished; it then returns the new index
+	 *     of the moved node (or <code>undefined</code>). Else it resolves with with an array of:
+	 *     - the number of child nodes added (normally one, but maybe more in case the parent node
+	 *       was collapsed before),
+	 *     - the new index of the moved node,
+	 *     - the number of descendant nodes that were affected by collapsing the moved node
+	 *       (<code>undefined</code> in case the moved node was not expanded before)
 	 *   - <code>refresh</code>: A flag indicating whether a side-effects refresh is needed
 	 *
 	 * @public
@@ -1341,13 +1360,17 @@ sap.ui.define([
 				}, {[this.oAggregation.$ParentNavigationProperty + "@odata.bind"] : sParentPath},
 				/*fnSubmit*/null, function fnCancel() { /*nothing to do*/ }),
 			invokeNextSibling(),
-			// GET LimitedRank iff. no side-effects refresh needed
-			bRefreshNeeded && sSiblingPath === undefined
-				|| this.requestRank(oChildNode, oGroupLock, bRefreshNeeded)
+			this.requestRank(oChildNode, oGroupLock, bRefreshNeeded)
 		]);
 
-		if (!bRefreshNeeded) {
-			oPromise = oPromise.then(([oPatchResult,, iPreorderRank]) => {
+		if (bRefreshNeeded) {
+			oPromise = oPromise.then(([,, iRank]) => {
+				return () => { // Note: caller MUST wait for side-effects refresh first
+					return iRank === undefined ? undefined : this.findIndex(iRank);
+				};
+			});
+		} else {
+			oPromise = oPromise.then(([oPatchResult,, iRank]) => {
 				const iCount = oChildNode["@$ui5.node.isExpanded"]
 					? this.collapse(sChildPredicate)
 					: undefined;
@@ -1371,16 +1394,16 @@ sap.ui.define([
 				this.adjustDescendantCount(oChildNode, iOldIndex, -iOffset);
 				this.aElements.splice(iOldIndex, 1);
 				const iOldRank = _Helper.getPrivateAnnotation(oChildNode, "rank");
-				this.shiftRankForMove(iOldRank, iOffset, iPreorderRank);
-				this.oFirstLevel.move(iOldRank, iPreorderRank, iOffset);
+				this.shiftRankForMove(iOldRank, iOffset, iRank);
+				this.oFirstLevel.move(iOldRank, iRank, iOffset);
 				// update the cache with the PATCH response (Note: "@odata.etag" is optional!)
 				_Helper.updateExisting(this.mChangeListeners, sChildPredicate, oChildNode, {
 					"@odata.etag" : oPatchResult["@odata.etag"],
 					"@$ui5.context.isTransient" : undefined,
 					"@$ui5.node.level" : oParentNode ? oParentNode["@$ui5.node.level"] + 1 : 1
 				});
-				_Helper.setPrivateAnnotation(oChildNode, "rank", iPreorderRank);
-				const iNewIndex = this.getArrayIndex(iPreorderRank);
+				_Helper.setPrivateAnnotation(oChildNode, "rank", iRank);
+				const iNewIndex = this.getInsertIndex(iRank);
 				this.aElements.splice(iNewIndex, 0, oChildNode);
 				this.adjustDescendantCount(oChildNode, iNewIndex, +iOffset);
 
@@ -1403,10 +1426,7 @@ sap.ui.define([
 	 */
 	_AggregationCache.prototype.moveOutOfPlaceNodes = function (iParentRank,
 			aOutOfPlacePredicates) {
-		const iParentIndex = iParentRank === undefined
-			? -1
-			: this.aElements.findIndex(
-				(oNode) => _Helper.getPrivateAnnotation(oNode, "rank") === iParentRank);
+		const iParentIndex = iParentRank === undefined ? -1 : this.findIndex(iParentRank);
 		aOutOfPlacePredicates.forEach((sNodePredicate) => {
 			const oNode = this.aElements.$byPredicate[sNodePredicate];
 			if (oNode) {
@@ -1890,9 +1910,10 @@ sap.ui.define([
 	 * @param {boolean} [bRefreshNeeded]
 	 *   Whether to request the rank with up-to-date ExpandLevels because a side-effects refresh is
 	 *   about to follow; cannot be used in combination with <code>bDropFilter</code>
-	 * @returns {Promise<object|void>}
+	 * @returns {Promise<object|undefined|void>}
 	 *   A promise which is resolved without a defined result in case <code>bInheritResult</code> is
-	 *   set to <code>true</code>, or with the result object, or rejected in case of an error
+	 *   set to <code>true</code>, or with the result object (which may be <code>undefined</code>),
+	 *   or rejected in case of an error
 	 *
 	 * @private
 	 */
@@ -1950,9 +1971,9 @@ sap.ui.define([
 	 * @param {boolean} [bRefreshNeeded]
 	 *   Whether to request the rank with up-to-date ExpandLevels because a side-effects refresh is
 	 *   about to follow
-	 * @returns {Promise<number>}
-	 *   A promise which is resolved with the (limited preorder) rank of the given element, or
-	 *   rejected in case of an error
+	 * @returns {Promise<number|undefined>}
+	 *   A promise which is resolved with the (limited preorder) rank of the given element (which
+	 *   may well be <code>undefined</code>), or rejected in case of an error
 	 *
 	 * @private
 	 */
@@ -1961,7 +1982,7 @@ sap.ui.define([
 		const oResult = await this.requestProperties(oElement, [this.oAggregation.$LimitedRank],
 			oGroupLock, false, false, bRefreshNeeded);
 
-		return parseInt(_Helper.drillDown(oResult, this.oAggregation.$LimitedRank));
+		return oResult && parseInt(_Helper.drillDown(oResult, this.oAggregation.$LimitedRank));
 	};
 
 	/**
