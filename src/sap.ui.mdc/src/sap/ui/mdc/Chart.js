@@ -485,6 +485,7 @@ sap.ui.define([
 		 * @property {object} [unitPath]
 		 *  The name of the unit property which will be used to display and format measure values with a unit value on a selectionDetails popover
 		 * @public
+		 * @experimental As of version 1.80
 		 */
 
 
@@ -985,7 +986,7 @@ sap.ui.define([
 					}.bind(this)
 				});
 
-				const aItems = this.getControlDelegate().getDrillableItems(this).map(function(oItem) { return { key: oItem.getPropertyKey(), text: oItem.getLabel() }; });
+				const aItems = this.getControlDelegate().getDrillableItems(this).map((oItem) => { return { key: oItem.getPropertyKey(), text: oItem.getLabel() }; });
 				_oBreadcrumbs.update(aItems);
 				this.setAggregation("_breadcrumbs", _oBreadcrumbs);
 			}
@@ -1069,7 +1070,7 @@ sap.ui.define([
 			this._rebind();
 
 			//Update the breadcrumbs after an MDC Item change
-			const aItems = this.getControlDelegate().getDrillableItems(this).map(function(oItem) { return { key: oItem.getPropertyKey(), text: oItem.getLabel() }; });
+			const aItems = this.getControlDelegate().getDrillableItems(this).map((oItem) => { return { key: oItem.getPropertyKey(), text: oItem.getLabel() }; });
 			this.getAggregation("_breadcrumbs").update(aItems);
 		};
 

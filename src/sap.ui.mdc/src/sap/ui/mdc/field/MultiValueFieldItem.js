@@ -23,6 +23,7 @@ sap.ui.define([
 	 * @since 1.93.0
 	 * @public
 	 * @alias sap.ui.mdc.field.MultiValueFieldItem
+	 * @experimental As of version 1.93
 	 */
 	const MultiValueFieldItem = Element.extend("sap.ui.mdc.field.MultiValueFieldItem", /** @lends sap.ui.mdc.field.MultiValueFieldItem.prototype */ {
 		metadata: {

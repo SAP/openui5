@@ -18,6 +18,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @since 1.88
+	 * @experimental As of version 1.88
 	 * @alias sap.ui.mdc.chart.SelectionDetailsActions
 	 */
 	const SelectionDetailsActions = Element.extend("sap.ui.mdc.chart.SelectionDetailsActions", {

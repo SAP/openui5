@@ -27,6 +27,7 @@ sap.ui.define([
 		 * @version ${version}
 		 * @constructor
 		 * @public
+		 * @experimental As of version 1.88
 		 * @since 1.88
 		 * @alias sap.ui.mdc.chart.ChartSelectionDetails
 		 */
