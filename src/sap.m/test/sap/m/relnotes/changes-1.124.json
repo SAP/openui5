@@ -3,6 +3,11 @@
     "date": "April 2024",
     "notes": [
       {
+        "id": "cc74013ff479022fa7c61b101c878d26870e171b",
+        "type": "FEATURE",
+        "text": " For GenericTile, we've now updated the badge element name to Tileinfo, and also created a new enum TileInfoColor that adds color to the TileInfo element"
+      },
+      {
         "id": "f4778711191966a1c425084bede0d2d51688b9f7",
         "type": "FIX",
         "text": " sap.m.Input: Exception prevented in case of tabular suggestions"
