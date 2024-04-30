@@ -2,7 +2,6 @@
 	xmlns="sap.m"
 	xmlns:core="sap.ui.core"
 	xmlns:custom="sap.ui.documentation"
-	xmlns:html="http://www.w3.org/1999/xhtml"
 	xmlns:l="sap.ui.layout">
 	<l:BlockLayoutCell
 			backgroundColorSet="ColorSet10"
@@ -84,7 +83,7 @@
 				hSpacing="0"
 				vSpacing="0">
 			<l:VerticalLayout width="100%">
-				<html:div class="sapUIDisclaimerLink sapUiSmallMarginBottom">
+				<custom:DivContainer class="sapUIDisclaimerLink sapUiSmallMarginBottom">
 					<custom:TitleLink
 						href="https://experience.sap.com/fiori-design/"
 						text="{i18n>WELCOME_BLOCK_5_TITLE}"
@@ -95,7 +94,7 @@
 						tooltip="{i18n>LEGAL_DISCLAIMER_EXTERNAL_TOOLTIP}"
 						width="1.25rem"
 						press="onDisclaimerLinkPress"/>
-				</html:div>
+				</custom:DivContainer>
 				<Text
 						text="{i18n>WELCOME_BLOCK_5_TEXT}"
 						class="sapUiSmallMarginBottom"/>
