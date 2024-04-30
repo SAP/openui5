@@ -15,6 +15,8 @@ sap.ui.define([
 	 * @since 1.74
 	 * @alias sap.m.P13nOperationsHelper
 	 * @class
+	 * @deprecated As of version 1.124, replaced
+ by the artifacts provided in {@link sap.m.p13n}.
 	 */
 	var P13nOperationsHelper = function () {
 		this.init();

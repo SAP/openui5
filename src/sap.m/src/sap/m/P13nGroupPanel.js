@@ -28,7 +28,7 @@ sap.ui.define([
 	 * @extends sap.m.P13nPanel
 	 * @version ${version}
 	 * @constructor
-	 * @deprecated as of version 1.98. Use the {@link sap.m.p13n.GroupPanel} instead.
+	 * @deprecated As of version 1.98. Use the {@link sap.m.p13n.GroupPanel} instead.
 	 * @public
 	 * @since 1.26.0
 	 * @alias sap.m.P13nGroupPanel

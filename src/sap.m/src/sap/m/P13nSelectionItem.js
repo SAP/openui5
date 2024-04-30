@@ -21,6 +21,7 @@ sap.ui.define([
 	 * @private
 	 * @since 1.46.0
 	 * @alias sap.m.P13nSelectionItem
+	 * @deprecated As of version 1.124, replaced by the artifacts in {@link sap.m.p13n}.
 	 */
 	var P13nSelectionItem = Item.extend("sap.m.P13nSelectionItem", /** @lends sap.m.P13nSelectionItem.prototype */
 	{

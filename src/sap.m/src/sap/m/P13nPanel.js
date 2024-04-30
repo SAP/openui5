@@ -21,6 +21,7 @@ sap.ui.define([
 	 * @abstract
 	 * @since 1.26.0
 	 * @alias sap.m.P13nPanel
+	 * @deprecated As of 1.124, replaced by the artifacts in {@link sap.m.p13n}.
 	 */
 	var P13nPanel = Control.extend("sap.m.P13nPanel", /** @lends sap.m.P13nPanel.prototype */
 	{
