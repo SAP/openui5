@@ -17,7 +17,6 @@ sap.ui.define([
 	 * OpenUI5 library that contains metadata-driven composite controls, which can be extended
 	 * for use with any SAPUI5 model and data protocol.
 	 *
-	 * @see {@link topic:1dd2aa91115d43409452a271d11be95b sap.ui.mdc}
 	 * @namespace
 	 * @alias sap.ui.mdc
 	 * @author SAP SE

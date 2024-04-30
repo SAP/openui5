@@ -15,6 +15,7 @@ sap.ui.define([
 	 * @extends sap.ui.core.Element
 	 * @author SAP SE
 	 * @public
+	 * @experimental As of version 1.88
 	 * @since 1.88
 	 * @alias sap.ui.mdc.chart.Item
 	 */

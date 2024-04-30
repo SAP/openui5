@@ -18,6 +18,7 @@ sap.ui.define([
 	 * @since 1.93.0
 	 * @extends module:sap/ui/mdc/field/FieldBaseDelegate
 	 * @alias module:sap/ui/mdc/field/MultiValueFieldDelegate
+	 * @experimental As of version 1.93
 	 */
 	const MultiValueFieldDelegate = Object.assign({}, FieldBaseDelegate);
 
