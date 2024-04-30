@@ -272,9 +272,11 @@ sap.ui.define(["./PluginBase", "sap/base/Log", "sap/base/strings/formatMessage",
 				...mSettings
 			});
 			sap.ui.require(["sap/ui/core/ShortcutHintsMixin"], (ShortcutHintsMixin) => {
-				ShortcutHintsMixin.addConfig(this._oCopyButton, {
-					message: oBundle.getText(Device.os.macintosh ? "COPYPROVIDER_SHORTCUT_MAC" : "COPYPROVIDER_SHORTCUT_WIN")
-				}, this.getParent());
+				if (this._oCopyButton) { // Button might be destroyed in the meantime, esp. in tests
+					ShortcutHintsMixin.addConfig(this._oCopyButton, {
+						message: oBundle.getText(Device.os.macintosh ? "COPYPROVIDER_SHORTCUT_MAC" : "COPYPROVIDER_SHORTCUT_WIN")
+					}, this.getParent());
+				}
 			});
 		}
 		return this._oCopyButton;
