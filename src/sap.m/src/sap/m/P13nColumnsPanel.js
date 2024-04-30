@@ -60,7 +60,7 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @version ${version}
 	 * @constructor
-	 * @deprecated as of version 1.98. Use the {@link sap.m.p13n.SelectionPanel} instead.
+	 * @deprecated As of version 1.98. Use the {@link sap.m.p13n.SelectionPanel} instead.
 	 * @public
 	 * @since 1.26.0
 	 * @alias sap.m.P13nColumnsPanel

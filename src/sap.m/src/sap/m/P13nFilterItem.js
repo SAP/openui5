@@ -20,6 +20,7 @@ sap.ui.define([
 	 * @public
 	 * @since 1.26.0
 	 * @alias sap.m.P13nFilterItem
+	 * @deprecated As of version 1.124, replaced by the artifacts in {@link sap.m.p13n}.
 	 */
 	var P13nFilterItem = Item.extend("sap.m.P13nFilterItem", /** @lends sap.m.P13nFilterItem.prototype */
 	{

@@ -27,6 +27,7 @@ sap.ui.define([
 	 * @property {string} value1
 	 * @property {string} value2
 	 * @public
+	 * @deprecated As of version 1.124, replaced by the artifacts in {@link sap.m.p13n}.
 	 */
 
 	// shortcut for sap.m.P13nPanelType
@@ -47,6 +48,7 @@ sap.ui.define([
 	 * @public
 	 * @since 1.26.0
 	 * @alias sap.m.P13nFilterPanel
+	 * @deprecated As of version 1.124, replaced by the artifacts in {@link sap.m.p13n}.
 	 */
 	var P13nFilterPanel = P13nPanel.extend("sap.m.P13nFilterPanel", /** @lends sap.m.P13nFilterPanel.prototype */ {
 		metadata: {
