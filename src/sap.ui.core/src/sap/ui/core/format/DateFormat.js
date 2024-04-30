@@ -2741,9 +2741,9 @@ sap.ui.define([
 		// no need to use UI5Date.getInstance as only the UTC timestamp is used
 		oDate = UniversalDate.getInstance(new Date(0), sCalendarType);
 		oDate.setUTCEra(oDateValue.era || UniversalDate.getCurrentEra(sCalendarType));
-		oDate.setUTCFullYear(iYear);
-		oDate.setUTCMonth(oDateValue.month || 0);
-		oDate.setUTCDate(oDateValue.day || 1);
+		// Set parsed year, month and day in one call to avoid calculation issues when converting the calendar specific
+		// date into a Gregorian date.
+		oDate.setUTCFullYear(iYear, oDateValue.month || 0, oDateValue.day || 1);
 		oDate.setUTCHours(oDateValue.hour || 0);
 		oDate.setUTCMinutes(oDateValue.minute || 0);
 		oDate.setUTCSeconds(oDateValue.second || 0);
