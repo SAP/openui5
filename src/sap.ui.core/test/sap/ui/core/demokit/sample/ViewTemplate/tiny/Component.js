@@ -22,7 +22,10 @@ sap.ui.define([
 		ViewType = library.mvc.ViewType; // shortcut for sap.ui.core.mvc.ViewType
 
 	return UIComponent.extend("sap.ui.core.sample.ViewTemplate.tiny.Component", {
-		metadata : "json",
+		metadata : {
+			interfaces : ["sap.ui.core.IAsyncContentCreation"],
+			manifest : "json"
+		},
 
 		createContent : function () {
 			var oModel = new ODataModel(
