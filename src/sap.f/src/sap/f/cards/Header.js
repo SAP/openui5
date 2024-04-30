@@ -301,6 +301,10 @@ sap.ui.define([
 			aIds.push(this.getId() + "-status");
 		}
 
+		if (this.getDataTimestamp()) {
+			aIds.push(this.getId() + "-dataTimestamp");
+		}
+
 		if (this.getIconSrc() || this.getIconInitials()) {
 			aIds.push(this.getId() + "-ariaAvatarText");
 		}
