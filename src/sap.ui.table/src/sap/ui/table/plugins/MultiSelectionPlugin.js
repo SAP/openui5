@@ -118,10 +118,6 @@ sap.ui.define([
 	MultiSelectionPlugin.prototype.init = function() {
 		SelectionPlugin.prototype.init.apply(this, arguments);
 
-		const oIcon = new Icon({src: IconPool.getIconURI(TableUtils.ThemeParameters.checkboxIcon), useIconTooltip: false});
-		oIcon.addStyleClass("sapUiTableSelectClear");
-		this.setAggregation("icon", oIcon, true);
-
 		this._bLimitReached = false;
 		this._bLimitDisabled = this.getLimit() === 0;
 		this.oInnerSelectionPlugin = null;
@@ -136,6 +132,7 @@ sap.ui.define([
 		this.oInnerSelectionPlugin.attachSelectionChange(this._onSelectionChange, this);
 		oTable.addAggregation("_hiddenDependents", this.oInnerSelectionPlugin);
 		oTable.setProperty("selectionMode", this.getSelectionMode());
+		updateHeaderSelectorIcon(this);
 	};
 
 	/**
@@ -255,6 +252,8 @@ sap.ui.define([
 
 		this.setProperty("selectionMode", sSelectionMode);
 
+		updateHeaderSelectorIcon(this);
+
 		return this;
 	};
 
@@ -267,6 +266,9 @@ sap.ui.define([
 		// invalidate only when the limit changes from 0 to a positive value or vice versa
 		this.setProperty("limit", iLimit, !!this.getLimit() === !!iLimit);
 		this._bLimitDisabled = iLimit === 0;
+
+		updateHeaderSelectorIcon(this);
+
 		return this;
 	};
 
@@ -595,7 +597,13 @@ sap.ui.define([
 	 * @param {sap.ui.table.plugins.MultiSelectionPlugin} oPlugin The plugin to toggle the selection on.
 	 */
 	function updateHeaderSelectorIcon(oPlugin) {
-		if (!oPlugin._bLimitDisabled) {
+		if (oPlugin.getSelectionMode() === SelectionMode.MultiToggle && !oPlugin._bLimitDisabled) {
+			if (!oPlugin.getAggregation("icon")) {
+				const oIcon = new Icon({useIconTooltip: false});
+				oIcon.addStyleClass("sapUiTableSelectClear");
+				oPlugin.setAggregation("icon", oIcon, true);
+			}
+
 			const oIcon = oPlugin.getAggregation("icon");
 			const iSelectedCount = oPlugin.getSelectedCount();
 
@@ -606,6 +614,8 @@ sap.ui.define([
 			} else {
 				oIcon.setSrc(IconPool.getIconURI(TableUtils.ThemeParameters.checkboxIcon));
 			}
+		} else {
+			oPlugin.destroyAggregation("icon");
 		}
 	}
 
