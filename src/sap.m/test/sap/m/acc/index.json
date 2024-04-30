@@ -413,7 +413,7 @@
 		},
 		{
 			"control": "sap.m.PlanningCalendar",
-			"url": "../PlanningCalendar.html",
+			"url": "./PlanningCalendar.html",
 			"appComponent": "CA-UI5-CTR-BAL",
 			"accTest": {
 				"name": "sap.m.PlanningCalendar",
