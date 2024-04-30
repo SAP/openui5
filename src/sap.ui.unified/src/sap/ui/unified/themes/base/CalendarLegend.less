@@ -43,7 +43,7 @@
 .sapUiUnifiedLegendDescription {
 	display: inline-block;
 	line-height: 1rem;
-	margin-top: 0.25rem;
+	margin-top: 0.375rem;
 	margin-bottom: 0.25rem;
 	/* width is 100% without the width and margin of sapUiUnifiedLegendSquare
 	(the square in front of the legend description) */
@@ -55,27 +55,25 @@
 .sapUiUnifiedLegendSquare {
 	display: inline-block;
 	vertical-align: top;
-	height: 16px;
-	width: 16px;
 	margin: 4px 8px 4px 4px;
 	background: @sapUiListBackground;
 }
 
 .sapUiUnifiedLegendSquareColor {
-	height: 14px;
-	width: 14px;
-	margin: 1px;
+	height: 0.875rem;
+	width: 0.875rem;
+	margin: 0.125rem;
 	background: lighten(@sapUiContentForegroundColor, 5);
-	border: 1px solid @sapUiContentForegroundBorderColor;
-	box-sizing: border-box;
+	border: 0.0625rem solid @sapUiContentForegroundBorderColor;
+	box-sizing: content-box;
 	border-radius: 0.125rem;
 }
 
 .sapUiUnifiedLegendSquareSelected {
-	height: 10px;
-	width: 10px;
+	height: 1rem;
+	width: 1rem;
 	background: @sapUiListBackground;
-	border: 2px solid @sapUiCalendarColorToday;
+	border: 0.125rem solid @sapUiCalendarColorToday;
 
 }
 
@@ -117,16 +115,16 @@
 }
 
 .sapUiSizeCompact .sapUiUnifiedLegendDescription {
-	line-height: 12px;
+	line-height: 0.75rem;
 }
 
 /*** items and colors ***/
 
 .sapUiUnifiedLegendToday > .sapUiUnifiedLegendSquare > .sapUiUnifiedLegendSquareColor {
-	height: 10px;
-	width: 10px;
+	height: 0.75rem;
+	width: 0.75rem;
 	background-color: @sapUiListBackground;
-	border: 2px solid @sapUiCalendarColorToday;
+	border: 0.125rem solid @sapUiCalendarColorToday;
 	box-sizing: content-box;
 }
 
