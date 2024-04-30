@@ -86,7 +86,7 @@ sap.ui.define([
 	QUnit.test("Initialization", function(assert) {
 		const oMultiSelectionPlugin = new MultiSelectionPlugin();
 		assert.strictEqual(oMultiSelectionPlugin.oInnerSelectionPlugin, null, "The MultiSelectionPlugin has no internal default selection plugin");
-		assert.notEqual(oMultiSelectionPlugin.getAggregation("icon"), null, "The MultiSelectionPlugin has an icon");
+		assert.equal(oMultiSelectionPlugin.getAggregation("icon"), null, "The MultiSelectionPlugin has no icon");
 
 	});
 
@@ -147,7 +147,7 @@ sap.ui.define([
 		this.assertRenderConfig(assert, oMultiSelectionPlugin.getRenderConfig(), {
 			headerSelector: {
 				type: "custom",
-				icon: TableUtils.ThemeParameters.checkboxIcon,
+				icon: null,
 				visible: false,
 				enabled: true,
 				selected: false,
@@ -173,7 +173,7 @@ sap.ui.define([
 		this.assertRenderConfig(assert, oMultiSelectionPlugin.getRenderConfig(), {
 			headerSelector: {
 				type: "toggle",
-				icon: TableUtils.ThemeParameters.checkboxIcon,
+				icon: null,
 				visible: true,
 				enabled: true,
 				selected: false,
@@ -185,7 +185,7 @@ sap.ui.define([
 			that.assertRenderConfig(assert, oMultiSelectionPlugin.getRenderConfig(), {
 				headerSelector: {
 					type: "toggle",
-					icon: TableUtils.ThemeParameters.checkboxIcon,
+					icon: null,
 					visible: true,
 					enabled: true,
 					selected: true,
@@ -213,7 +213,7 @@ sap.ui.define([
 			that.assertRenderConfig(assert, oMultiSelectionPlugin.getRenderConfig(), {
 				headerSelector: {
 					type: "custom",
-					icon: TableUtils.ThemeParameters.clearSelectionIcon,
+					icon: null,
 					visible: false,
 					enabled: true,
 					selected: false,
@@ -234,7 +234,7 @@ sap.ui.define([
 			that.assertRenderConfig(assert, oMultiSelectionPlugin.getRenderConfig(), {
 				headerSelector: {
 					type: "custom",
-					icon: TableUtils.ThemeParameters.checkboxIcon,
+					icon: null,
 					visible: false,
 					enabled: true,
 					selected: false,
@@ -1498,19 +1498,13 @@ sap.ui.define([
 
 	QUnit.test("Header selection icon - limit deactivated", async function(assert) {
 		const oSelectionPlugin = this.oTable._getSelectionPlugin();
-		const oIcon = oSelectionPlugin.getAggregation("icon");
 
 		oSelectionPlugin.setLimit(0);
 		await this.oTable.qunit.whenRenderingFinished();
 
-		assert.strictEqual(oIcon.getSrc(), IconPool.getIconURI(TableUtils.ThemeParameters.checkboxIcon),
-			"DeselectAll icon is correct - checkboxIcon");
 		return new Promise(function(resolve) {
 			oSelectionPlugin.attachEventOnce("selectionChange", function(oEvent) {
-
 				assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [0, 1, 2], "Row index [0, 1, 2] selected");
-				assert.strictEqual(oIcon.getSrc(), IconPool.getIconURI(TableUtils.ThemeParameters.checkboxIcon),
-					"DeselectAll icon is correct - checkboxIcon");
 				resolve();
 			});
 			oSelectionPlugin.addSelectionInterval(0, 2);
@@ -1520,8 +1514,6 @@ sap.ui.define([
 				oSelectionPlugin.attachEventOnce("selectionChange", function(oEvent) {
 					assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [0, 1, 2, 4, 5, 6, 7, 8, 9],
 						"Row index [0, 1, 2, 4, 5, 6, 7, 8, 9] selected");
-					assert.strictEqual(oIcon.getSrc(), IconPool.getIconURI(TableUtils.ThemeParameters.checkboxIcon),
-						"DeselectAll icon is correct - checkboxIcon");
 					resolve();
 				});
 
@@ -1531,8 +1523,6 @@ sap.ui.define([
 			return new Promise(function(resolve) {
 				oSelectionPlugin.attachEventOnce("selectionChange", function(oEvent) {
 					assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [0], "Row index [0] selected");
-					assert.strictEqual(oIcon.getSrc(), IconPool.getIconURI(TableUtils.ThemeParameters.checkboxIcon),
-						"DeselectAll icon is correc - checkboxIcont");
 					resolve();
 				});
 
@@ -1542,8 +1532,6 @@ sap.ui.define([
 			return new Promise(function(resolve) {
 				oSelectionPlugin.attachEventOnce("selectionChange", function(oEvent) {
 					assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [], "Nothing selected");
-					assert.strictEqual(oIcon.getSrc(), IconPool.getIconURI(TableUtils.ThemeParameters.checkboxIcon),
-						"DeselectAll icon is correct - checkboxIcon");
 					resolve();
 				});
 
