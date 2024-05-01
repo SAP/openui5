@@ -4,11 +4,11 @@ sap.ui.define([
 	"sap/ui/layout/form/Form",
 	"sap/ui/layout/form/FormContainer",
 	"sap/ui/layout/form/FormElement",
-	"sap/ui/layout/form/GridLayout",
+	"sap/ui/layout/form/ResponsiveGridLayout",
 	"sap/ui/core/ListItem",
 	"sap/m/ComboBox",
 	"sap/m/CheckBox"
-], function(testfwk, oCore, Form, FormContainer, FormElement, GridLayout, ListItem, ComboBox, CheckBox) {
+], function(testfwk, oCore, Form, FormContainer, FormElement, ResponsiveGridLayout, ListItem, ComboBox, CheckBox) {
 	"use strict";
 
 	function updateItems(oCombo, mValues, sDefault) {
@@ -30,8 +30,9 @@ sap.ui.define([
 
 		new Form({
 			editable: true,
-			layout: new GridLayout({
-				singleColumn: true
+			layout: new ResponsiveGridLayout({
+				breakpointM: 200,
+				labelSpanM: 6
 			}),
 			formContainers: [
 				new FormContainer({
