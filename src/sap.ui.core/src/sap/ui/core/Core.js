@@ -553,9 +553,6 @@ sap.ui.define([
 			oFrameOptionsConfig.allowlistService = Security.getAllowlistService();
 			this.oFrameOptions = new FrameOptions(oFrameOptionsConfig);
 
-			// let Element and Component get friend access to the respective register/deregister methods
-			this._grantFriendAccess();
-
 			// handle libraries & modules
 			this.aModules = BaseConfig.get({
 				name: "sapUiModules",
@@ -950,17 +947,6 @@ sap.ui.define([
 	Core.M_EVENTS = {ControlEvent: "ControlEvent", UIUpdated: "UIUpdated", ThemeChanged: "ThemeChanged", ThemeScopingChanged: "themeScopingChanged", LocalizationChanged: "localizationChanged",
 			LibraryChanged : "libraryChanged",
 			ValidationError : "validationError", ParseError : "parseError", FormatError : "formatError", ValidationSuccess : "validationSuccess"};
-
-	/**
-	 * The core allows some friend components to register/deregister themselves
-	 * @private
-	 */
-	Core.prototype._grantFriendAccess = function() {
-		// grant ElementMetadata "friend" access to Core for registration
-		ElementMetadata.prototype.register = function(oMetadata) {
-			Library._registerElement(oMetadata);
-		};
-	};
 
 	/**
 	 * Set the body's browser-related attributes.
