@@ -1831,6 +1831,24 @@ sap.ui.define([
 		},
 
 		/**
+		 * Inserts the given element into the given array at the given index, even it is beyond the
+		 * array's current length.
+		 *
+		 * @param {any[]} aElements - Some array
+		 * @param {number} iIndex - Some index
+		 * @param {any} vElement - Some element
+		 *
+		 * @public
+		 */
+		insert : function (aElements, iIndex, vElement) {
+			if (iIndex >= aElements.length) { // Note: #splice ignores iIndex then!
+				aElements[iIndex] = vElement;
+			} else {
+				aElements.splice(iIndex, 0, vElement);
+			}
+		},
+
+		/**
 		 * Returns a copy of given query options where "$expand" and "$select" are replaced by the
 		 * intersection with the given (navigation) property paths.
 		 *
