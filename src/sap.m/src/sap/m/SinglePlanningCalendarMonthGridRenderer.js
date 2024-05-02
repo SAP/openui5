@@ -156,7 +156,8 @@ sap.ui.define([
 				oFormat = oControl._getDateFormatter(),
 				bToday = oDay.isSame(CalendarDate.fromLocalJSDate(UI5Date.getInstance())),
 				oType,
-				sLegendItemType;
+				sLegendItemType,
+				sMoreLinkDescId;
 
 			oRm.openStart("div");
 			oRm.class("sapMSPCMonthDay");
@@ -211,11 +212,19 @@ sap.ui.define([
 			oRm.close("div");
 
 			if (more) {
+				sMoreLinkDescId = oFormat.format(oDay.toLocalJSDate()) + "-MoreLinkDesc";
 				oRm.openStart("div");
 				oRm.class("sapMSPCMonthLnkMore");
 				oRm.openEnd();
 
-				oRm.renderControl(oControl._getMoreLink(more, oDay, iCellIndex));
+				oRm.renderControl(oControl._getMoreLink(more, oDay, iCellIndex, sMoreLinkDescId));
+
+				oRm.openStart("span", sMoreLinkDescId);
+				oRm.class("sapUiInvisibleText");
+				oRm.openEnd();
+				oRm.text(oControl._getMoreLinkDescription(more, oDay.toLocalJSDate()));
+				oRm.close("span");
+
 				oRm.close("div");
 			}
 
