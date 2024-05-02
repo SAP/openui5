@@ -172,11 +172,11 @@ sap.ui.define([
 		 *   are supported in order to load schemas on demand from other $metadata documents and
 		 *   include them into the current service ("cross-service references").
 		 * @param {string} [mParameters.synchronizationMode]
+		 *   <b>deprecated:</b> As of Version 1.110.0, this parameter is obsolete; see also
+		 *   {@link topic:648e360fa22d46248ca783dc6eb44531 Data Reuse}
 		 *   (Controls synchronization between different bindings which refer to the same data for
 		 *   the case data changes in one binding. Must be set to 'None' which means bindings are
 		 *   not synchronized at all; all other values are not supported and lead to an error.)
-		 *   <b>deprecated:</b> As of Version 1.110.0, this parameter is obsolete; see also
-		 *   {@link topic:648e360fa22d46248ca783dc6eb44531 Data Reuse}
 		 * @param {string} [mParameters.updateGroupId]
 		 *   The group ID that is used for update requests. If no update group ID is specified,
 		 *   <code>mParameters.groupId</code> is used. Valid update group IDs are
@@ -1325,7 +1325,7 @@ sap.ui.define([
 	 *
 	 * It is possible to create binding contexts pointing to metadata. A '##' is recognized
 	 * as separator in the resolved path and splits it into two parts; note that '#' may also be
-	 * used as separator but is deprecated since 1.51.
+	 * used as separator but is <b>deprecated</b> since 1.51.
 	 * The part before the separator is transformed into a metadata context (see
 	 * {@link sap.ui.model.odata.v4.ODataMetaModel#getMetaContext}). The part following the
 	 * separator is then interpreted relative to this metadata context, even if it starts with

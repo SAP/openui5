@@ -2856,7 +2856,7 @@ sap.ui.define([
 	 * with a dot, which is stripped before lookup; see the <code>&lt;template:alias></code>
 	 * instruction for XML Templating. In case of an absolute name, it is searched in
 	 * <code>mParameters.scope</code> first and then in the global namespace. (Using the global
-	 * namespace is deprecated as of version 1.120.3). The names "requestCurrencyCodes" and
+	 * namespace is <b>deprecated</b> as of version 1.120.3). The names "requestCurrencyCodes" and
 	 * "requestUnitsOfMeasure" default to {@link #requestCurrencyCodes} and
 	 * {@link #requestUnitsOfMeasure} resp. if not present in <code>mParameters.scope</code>. This
 	 * function is called with the current object (or primitive value) and additional details and
@@ -2980,8 +2980,8 @@ sap.ui.define([
 	 *   Scope for lookup of aliases for computed annotations (since 1.43.0) as a map from alias to
 	 *   a module (like <code>{AH : AnnotationHelper}</code>) or function (like
 	 *   <code>{format : AnnotationHelper.format}</code>); the alias must not contain a dot.
-	 *   Since 1.120.3 looking up a computed annotation via its global name is deprecated; always
-	 *   use this scope instead.
+	 *   Since 1.120.3 looking up a computed annotation via its global name is <b>deprecated</b>;
+	 *   always use this scope instead.
 	 * @returns {Promise<any>}
 	 *   A promise which is resolved with the requested metadata value as soon as it is available;
 	 *   it is rejected if the requested metadata cannot be loaded

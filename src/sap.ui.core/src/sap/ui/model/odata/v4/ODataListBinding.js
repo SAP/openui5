@@ -4235,11 +4235,11 @@ sap.ui.define([
 	 *   used to remove the data aggregation object, which allows to set <code>$apply</code>
 	 *   explicitly afterwards. <code>null</code> is not supported.
 	 *   <br>
-	 *   Since 1.89.0, the deprecated property <code>"grandTotal like 1.84" : true</code> can be
-	 *   used to turn on the handling of grand totals like in 1.84.0, using aggregates of aggregates
-	 *   and thus allowing to filter by aggregated properties while grand totals are needed. Beware
-	 *   that methods like "average" or "countdistinct" are not compatible with this approach, and
-	 *   it cannot be combined with group levels.
+	 *   Since 1.89.0, the <b>deprecated</b> property <code>"grandTotal like 1.84" : true</code> can
+	 *   be used to turn on the handling of grand totals like in 1.84.0, using aggregates of
+	 *   aggregates and thus allowing to filter by aggregated properties while grand totals are
+	 *   needed. Beware that methods like "average" or "countdistinct" are not compatible with this
+	 *   approach, and it cannot be combined with group levels.
 	 *   <br>
 	 *   Since 1.105.0, either a recursive hierarchy or pure data aggregation is supported, but no
 	 *   mix; <code>hierarchyQualifier</code> is the leading property that decides between those two
