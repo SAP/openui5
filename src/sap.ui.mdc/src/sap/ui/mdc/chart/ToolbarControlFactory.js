@@ -79,8 +79,12 @@ sap.ui.define([
 		return oTitle;
 	};
 
-	ToolbarControlFactory.createSelectionDetailsBtn = function(sId, fncGetSelectionDetailsActions) {
-		const oChartSelectionDetails = new ChartSelectionDetails(sId + "-selectionDetails", {});
+	ToolbarControlFactory.createSelectionDetailsBtn = function(sId, mSettings) {
+		const fncGetSelectionDetailsActions =  mSettings.getSelectionDetailsActions;
+		delete mSettings.getSelectionDetailsActions;
+
+		//mSettings = merge({}, mSettings);
+		const oChartSelectionDetails = new ChartSelectionDetails(sId + "-selectionDetails", mSettings);
 
 		oChartSelectionDetails.attachBeforeOpen((oEvent) => {
 			const oChartSelectionDetails = oEvent.getSource();
@@ -92,7 +96,7 @@ sap.ui.define([
 				const aSelectionItems = oChartSelectionDetails.getItems();
 
 				aSelectionItems.forEach((oItem) => {
-					const aItemActions = oSelectionDetailsActions.getDetailsItemActions();
+					const aItemActions = oSelectionDetailsActions?.getDetailsItemActions() || [];
 					aItemActions.forEach((oAction) => {
 						oClone = oAction.clone();
 						oItem.addAction(oClone);
@@ -100,7 +104,7 @@ sap.ui.define([
 				});
 
 				// Update list actions
-				const aDetailsActions = oSelectionDetailsActions.getDetailsActions();
+				const aDetailsActions = oSelectionDetailsActions?.getDetailsActions() || [];
 				oChartSelectionDetails.removeAllActions();
 				aDetailsActions.forEach((oAction) => {
 					oClone = oAction.clone();
@@ -108,7 +112,7 @@ sap.ui.define([
 				});
 
 				// Update group actions
-				const aActionGroups = oSelectionDetailsActions.getActionGroups();
+				const aActionGroups = oSelectionDetailsActions?.getActionGroups() || [];
 				oChartSelectionDetails.removeAllActionGroups();
 				aActionGroups.forEach((oActionGroup) => {
 					oClone = oActionGroup.clone();
