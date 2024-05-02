@@ -6,7 +6,7 @@ sap.ui.define([
 	'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/utility/Action',
 	'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/utility/Assertion',
 	'test-resources/sap/ui/mdc/testutils/opa/TestLibrary'
-], function (Opa5, opaTest, Arrangement, TestUtil, Action, Assertion, TestLibrary) {
+], function(Opa5, opaTest, Arrangement, TestUtil, Action, Assertion, TestLibrary) {
 	'use strict';
 
 	if (window.blanket) {
@@ -23,35 +23,35 @@ sap.ui.define([
 	});
 
 	let aTableItems = [
-		{p13nItem: "Name", selected: true},
-		{p13nItem: "Founding Year", selected: true},
-		{p13nItem: "Changed By", selected: true},
-		{p13nItem: "Created On", selected: true},
-		{p13nItem: "artistUUID", selected: false},
-		{p13nItem: "Breakout Year", selected: false},
-		{p13nItem: "Changed On", selected: false},
-		{p13nItem: "City of Origin", selected: false},
-		{p13nItem: "City of Origin + Text", selected: false},
-		{p13nItem: "Country", selected: false},
-		{p13nItem: "Country + Text", selected: false},
-		{p13nItem: "Created (Complex)", selected: false},
-		{p13nItem: "Created By", selected: false},
-		{p13nItem: "regionOfOrigin_code", selected: false},
-		{p13nItem: "regionOfOrigin_code + Text", selected: false}
+		{ p13nItem: "Name", selected: true },
+		{ p13nItem: "Founding Year", selected: true },
+		{ p13nItem: "Changed By", selected: true },
+		{ p13nItem: "Created On", selected: true },
+		{ p13nItem: "artistUUID", selected: false },
+		{ p13nItem: "Breakout Year", selected: false },
+		{ p13nItem: "Changed On", selected: false },
+		{ p13nItem: "City of Origin", selected: false },
+		{ p13nItem: "City of Origin + Text", selected: false },
+		{ p13nItem: "Country", selected: false },
+		{ p13nItem: "Country + Text", selected: false },
+		{ p13nItem: "Created (Complex)", selected: false },
+		{ p13nItem: "Created By", selected: false },
+		{ p13nItem: "regionOfOrigin_code", selected: false },
+		{ p13nItem: "regionOfOrigin_code + Text", selected: false }
 	];
 
 	let aSortItems = [
-		{p13nItem: "artistUUID", descending: false},
-		{p13nItem: "Breakout Year", descending: false},
-		{p13nItem: "Changed By", descending: false},
-		{p13nItem: "Changed On", descending: false},
-		{p13nItem: "City of Origin", descending: false},
-		{p13nItem: "Country", descending: false},
-		{p13nItem: "Created By", descending: false},
-		{p13nItem: "Created On", descending: false},
-		{p13nItem: "Founding Year", descending: false},
-		{p13nItem: "Name", descending: false},
-		{p13nItem: "regionOfOrigin_code", descending: false}
+		{ p13nItem: "artistUUID", descending: false },
+		{ p13nItem: "Breakout Year", descending: false },
+		{ p13nItem: "Changed By", descending: false },
+		{ p13nItem: "Changed On", descending: false },
+		{ p13nItem: "City of Origin", descending: false },
+		{ p13nItem: "Country", descending: false },
+		{ p13nItem: "Created By", descending: false },
+		{ p13nItem: "Created On", descending: false },
+		{ p13nItem: "Founding Year", descending: false },
+		{ p13nItem: "Name", descending: false },
+		{ p13nItem: "regionOfOrigin_code", descending: false }
 	];
 
 	const aAvailableFilters = ["artistUUID", "Breakout Year", "Changed By", "Changed On", "City of Origin", "Country", "Created By", "Created On", "Founding Year", "Name", "regionOfOrigin_code"];
@@ -59,7 +59,7 @@ sap.ui.define([
 
 	const sViewSettings = Arrangement.P13nDialog.Titles.settings;
 
-	opaTest("When I start the 'appUnderTestTable' app, the table should appear and contain some columns", function (Given, When, Then) {
+	opaTest("When I start the 'appUnderTestTable' app, the table should appear and contain some columns", function(Given, When, Then) {
 		//insert application
 		Given.iStartMyAppInAFrame({
 			source: 'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html',
@@ -78,7 +78,7 @@ sap.ui.define([
 		Then.theVariantManagementIsDirty(false);
 	});
 
-	opaTest("When I Resize the columns and save it as new variant", function (Given, When, Then) {
+	opaTest("When I Resize the columns and save it as new variant", function(Given, When, Then) {
 		When.iSimulateColumnResize("Name", "500px");
 		When.iSaveVariantAs("Standard", "ColumnResizeVariant");
 		When.iSelectDefaultVariant("ColumnResizeVariant");
@@ -95,7 +95,7 @@ sap.ui.define([
 		Then.iShouldSeeSelectedVariant("Standard");
 	});
 
-	opaTest("When I press on 'Add/Remove Columns' button, the table-specific-dialog opens", function (Given, When, Then) {
+	opaTest("When I press on 'Add/Remove Columns' button, the table-specific-dialog opens", function(Given, When, Then) {
 		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
 
 		Then.thePersonalizationDialogOpens();
@@ -107,13 +107,13 @@ sap.ui.define([
 		When.iPressDialogOk();
 	});
 
-	opaTest("Open the filter personalization dialog", function (Given, When, Then) {
+	opaTest("Open the filter personalization dialog", function(Given, When, Then) {
 		//Intially, all filters are available and no filters are set in Standard variant
 		Then.onTheMDCTable.iCheckAvailableFilters(sTableID, aAvailableFilters);
 		Then.onTheMDCTable.iCheckFilterPersonalization(sTableID, []);
 	});
 
-	opaTest("When I close the 'View Settings' dialog without doing changes, the table has not been changed", function (Given, When, Then) {
+	opaTest("When I close the 'View Settings' dialog without doing changes, the table has not been changed", function(Given, When, Then) {
 		//check initially visible columns
 		Then.iShouldSeeVisibleColumnsInOrder("sap.ui.mdc.table.Column", [
 			"name", "foundingYear", "modifiedBy", "createdAt"
@@ -123,7 +123,7 @@ sap.ui.define([
 		Then.theVariantManagementIsDirty(false);
 	});
 
-	opaTest("When I press on 'Sort' tab, sort p13n should show", function (Given, When, Then) {
+	opaTest("When I press on 'Sort' tab, sort p13n should show", function(Given, When, Then) {
 		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
 
 		//open 'sort' tab
@@ -140,7 +140,7 @@ sap.ui.define([
 
 	});
 
-	opaTest("When I close the view settings dialog on 'sort' tab, the table has not been changed", function (Given, When, Then) {
+	opaTest("When I close the view settings dialog on 'sort' tab, the table has not been changed", function(Given, When, Then) {
 
 		//close dialog
 		When.iPressDialogOk();
@@ -158,7 +158,7 @@ sap.ui.define([
 	// ----------------------------------------------------------------
 	// Define a new sorter
 	// ----------------------------------------------------------------
-	opaTest("Add a sorter for 'Country'", function (Given, When, Then) {
+	opaTest("Add a sorter for 'Country'", function(Given, When, Then) {
 		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
 
 		When.iSwitchToP13nTab("Sort");
@@ -171,7 +171,7 @@ sap.ui.define([
 
 	});
 
-	opaTest("When I close the 'Selected Columns' button, the table has been changed", function (Given, When, Then) {
+	opaTest("When I close the 'Selected Columns' button, the table has been changed", function(Given, When, Then) {
 		When.iPressDialogOk();
 
 		//close p13n dialog
@@ -189,7 +189,7 @@ sap.ui.define([
 	// ----------------------------------------------------------------
 	// Move a Column to the top
 	// ----------------------------------------------------------------
-	opaTest("When I select the 'Country' column and move it to the top, the table should be changed", function (Given, When, Then) {
+	opaTest("When I select the 'Country' column and move it to the top, the table should be changed", function(Given, When, Then) {
 
 		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
 		Then.thePersonalizationDialogOpens();
@@ -208,7 +208,7 @@ sap.ui.define([
 	// ----------------------------------------------------------------
 	// Select two columns and 'Cancel'
 	// ----------------------------------------------------------------
-	opaTest("When I do some changes and press 'Cancel', the changes should be discarded", function (Given, When, Then) {
+	opaTest("When I do some changes and press 'Cancel', the changes should be discarded", function(Given, When, Then) {
 		When.iPressDialogOk();
 		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
 		Then.thePersonalizationDialogOpens();
@@ -237,7 +237,7 @@ sap.ui.define([
 	// ----------------------------------------------------------------
 	// Select two columns and 'Escape' and reopen to check
 	// ----------------------------------------------------------------
-	opaTest("When I do some changes and press 'Escape', the changes should be discarded + Dialog should open again", function (Given, When, Then) {
+	opaTest("When I do some changes and press 'Escape', the changes should be discarded + Dialog should open again", function(Given, When, Then) {
 		When.iPressDialogOk();
 		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
 		Then.thePersonalizationDialogOpens();
@@ -266,7 +266,7 @@ sap.ui.define([
 	// ----------------------------------------------------------------
 	// Select two columns and 'Confirm'
 	// ----------------------------------------------------------------
-	opaTest("When I select two additional columns and move them one up, the table should be changed", function (Given, When, Then) {
+	opaTest("When I select two additional columns and move them one up, the table should be changed", function(Given, When, Then) {
 		When.iPressDialogOk();
 		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
 		Then.thePersonalizationDialogOpens();
@@ -290,7 +290,7 @@ sap.ui.define([
 	// ----------------------------------------------------------------
 	// Close the dialog
 	// ----------------------------------------------------------------
-	opaTest("Close the dialog", function (Given, When, Then) {
+	opaTest("Close the dialog", function(Given, When, Then) {
 		When.iPressDialogOk();
 
 		//close p13n dialog
@@ -300,27 +300,27 @@ sap.ui.define([
 	// ----------------------------------------------------------------
 	// Reopen the dialog to see if it the items have been rearranged
 	// ----------------------------------------------------------------
-	opaTest("Reopen the dialog to see if it the items have been rearranged", function (Give, When, Then) {
+	opaTest("Reopen the dialog to see if it the items have been rearranged", function(Give, When, Then) {
 		//Reopen the dialog
 		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
 		Then.thePersonalizationDialogOpens();
 
 		aTableItems = [
-			{p13nItem: "Created By", selected: true},
-			{p13nItem: "Breakout Year", selected: true},
-			{p13nItem: "Country", selected: true},
-			{p13nItem: "Name", selected: true},
-			{p13nItem: "Founding Year", selected: true},
-			{p13nItem: "Changed By", selected: true},
-			{p13nItem: "Created On", selected: true},
-			{p13nItem: "artistUUID", selected: false},
-			{p13nItem: "Changed On", selected: false},
-			{p13nItem: "City of Origin", selected: false},
-			{p13nItem: "City of Origin + Text", selected: false},
-			{p13nItem: "Country + Text", selected: false},
-			{p13nItem: "Created (Complex)", selected: false},
-			{p13nItem: "regionOfOrigin_code", selected: false},
-			{p13nItem: "regionOfOrigin_code + Text", selected: false}
+			{ p13nItem: "Created By", selected: true },
+			{ p13nItem: "Breakout Year", selected: true },
+			{ p13nItem: "Country", selected: true },
+			{ p13nItem: "Name", selected: true },
+			{ p13nItem: "Founding Year", selected: true },
+			{ p13nItem: "Changed By", selected: true },
+			{ p13nItem: "Created On", selected: true },
+			{ p13nItem: "artistUUID", selected: false },
+			{ p13nItem: "Changed On", selected: false },
+			{ p13nItem: "City of Origin", selected: false },
+			{ p13nItem: "City of Origin + Text", selected: false },
+			{ p13nItem: "Country + Text", selected: false },
+			{ p13nItem: "Created (Complex)", selected: false },
+			{ p13nItem: "regionOfOrigin_code", selected: false },
+			{ p13nItem: "regionOfOrigin_code + Text", selected: false }
 		];
 
 		Then.iShouldSeeP13nItems(aTableItems);
@@ -330,7 +330,7 @@ sap.ui.define([
 	// ----------------------------------------------------------------
 	// Assert 'Reorder' functionality
 	// ----------------------------------------------------------------
-	opaTest("check order", function (Given, When, Then) {
+	opaTest("check order", function(Given, When, Then) {
 		//Reorder table items
 		Then.iShouldSeeP13nItem("Created By", 0);
 		Then.iShouldSeeP13nItem("Breakout Year", 1);
@@ -341,14 +341,14 @@ sap.ui.define([
 		Then.iShouldSeeP13nItem("Created On", 6);
 	});
 
-	opaTest("check search", function (Given, When, Then) {
+	opaTest("check search", function(Given, When, Then) {
 		When.iEnterValueInP13nSearchField("name");
 
-		Then.iShouldSeeP13nItems([{p13nItem: "Name", selected: true}]);
+		Then.iShouldSeeP13nItems([{ p13nItem: "Name", selected: true }]);
 		Then.iShouldSeeP13nItem("Name", 0);
 	});
 
-	opaTest("check column header sort functionality: all previous sorters are deleted", function (Given, When, Then) {
+	opaTest("check column header sort functionality: all previous sorters are deleted", function(Given, When, Then) {
 		//close Dialog
 		When.iPressDialogOk();
 
@@ -364,13 +364,13 @@ sap.ui.define([
 		Then.thePersonalizationDialogOpens();
 
 		aSortItems = [
-			{p13nItem: "Founding Year", sorted: true, descending: false}
+			{ p13nItem: "Founding Year", sorted: true, descending: false }
 		];
 
 		Then.iShouldSeeP13nSortItems(aSortItems);
 	});
 
-	opaTest("sort another column via context menu: only new column should be sorted", function (Given, When, Then) {
+	opaTest("sort another column via context menu: only new column should be sorted", function(Given, When, Then) {
 		//close Dialog
 		When.iPressDialogOk();
 
@@ -386,7 +386,7 @@ sap.ui.define([
 		Then.thePersonalizationDialogOpens();
 
 		aSortItems = [
-			{p13nItem: "Name", sorted: true, descending: true}
+			{ p13nItem: "Name", sorted: true, descending: true }
 		];
 
 		Then.iShouldSeeP13nSortItems(aSortItems);
@@ -395,4 +395,38 @@ sap.ui.define([
 		Then.iTeardownMyAppFrame();
 	});
 
+	opaTest("Should be able to select all columns", function(Given, When, Then) {
+		Given.iStartMyAppInAFrame({
+			source: 'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html',
+			autoWait: true
+		});
+
+		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
+		Then.thePersonalizationDialogOpens();
+
+		When.iSelectAllColumns();
+
+		aTableItems = [
+			{ p13nItem: "Name", selected: true },
+			{ p13nItem: "Founding Year", selected: true },
+			{ p13nItem: "Changed By", selected: true },
+			{ p13nItem: "Created On", selected: true },
+			{ p13nItem: "artistUUID", selected: true },
+			{ p13nItem: "Breakout Year", selected: true },
+			{ p13nItem: "Changed On", selected: true },
+			{ p13nItem: "City of Origin", selected: true },
+			{ p13nItem: "City of Origin + Text", selected: true },
+			{ p13nItem: "Country", selected: true },
+			{ p13nItem: "Country + Text", selected: true },
+			{ p13nItem: "Created (Complex)", selected: true },
+			{ p13nItem: "Created By", selected: true },
+			{ p13nItem: "regionOfOrigin_code", selected: true },
+			{ p13nItem: "regionOfOrigin_code + Text", selected: true }
+		];
+
+		Then.iShouldSeeP13nItems(aTableItems);
+
+		When.iPressDialogOk();
+		Then.thePersonalizationDialogShouldBeClosed();
+	});
 });

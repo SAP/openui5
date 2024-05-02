@@ -15,7 +15,7 @@ sap.ui.define([
 	"test-resources/sap/ui/mdc/testutils/opa/p13n/waitForPanelInP13n",
 	"./actions/PressKey",
 	"sap/m/MessageBox"
-], function (Library, Opa5, Press, Properties, Ancestor, Descendant, EnterText, TestUtil, PropertyStrictEquals, waitForPanelInP13n, PressKey, MessageBox) {
+], function(Library, Opa5, Press, Properties, Ancestor, Descendant, EnterText, TestUtil, PropertyStrictEquals, waitForPanelInP13n, PressKey, MessageBox) {
 	"use strict";
 
 	function iPressResetInControl(sControl) {
@@ -30,7 +30,7 @@ sap.ui.define([
 					controlType: sControl
 				}
 			},
-			success:function(aBtn) {
+			success: function(aBtn) {
 				Opa5.assert.equal(aBtn.length, 1, sControl + " with 'Reset' Button found");
 			},
 			actions: new Press()
@@ -48,7 +48,7 @@ sap.ui.define([
 	 */
 	const Action = Opa5.extend("sap.ui.mdc.qunit.p13n.test.Action", {
 
-		iLookAtTheScreen: function () {
+		iLookAtTheScreen: function() {
 			return this;
 		},
 
@@ -171,7 +171,7 @@ sap.ui.define([
 			});
 		},
 
-		waitForP13nItem: function(oSettings){
+		waitForP13nItem: function(oSettings) {
 			const bModal = oSettings.hasOwnProperty("modal") ? oSettings.modal : true;
 			const sItemNameSpace = oSettings.itemNameSpace || "sap.m.ColumnListItem";
 			const sPopoverTitle = oSettings.title;
@@ -180,7 +180,7 @@ sap.ui.define([
 
 			const aMatchers = [];
 
-			if (sPopoverTitle){
+			if (sPopoverTitle) {
 				aMatchers.push(new PropertyStrictEquals({
 					name: "title",
 					value: sPopoverTitle
@@ -190,7 +190,7 @@ sap.ui.define([
 			return this.waitFor({
 				controlType: bModal ? "sap.m.Dialog" : "sap.m.ResponsivePopover",
 				matchers: aMatchers,
-				success: function () {
+				success: function() {
 					this.waitFor({
 						searchOpenDialogs: true,
 						controlType: "sap.m.Label",
@@ -198,12 +198,12 @@ sap.ui.define([
 							name: "text",
 							value: sColumnName
 						}),
-						success: function (aLabels) {
+						success: function(aLabels) {
 							this.waitFor({
 								searchOpenDialogs: true,
 								controlType: sItemNameSpace,
 								matchers: new Descendant(aLabels[0], false),
-								success: function (aColumnListItems) {
+								success: function(aColumnListItems) {
 									fSuccess(aColumnListItems);
 								}
 							});
@@ -213,7 +213,7 @@ sap.ui.define([
 			});
 		},
 
-		waitForP13nChartItemTemplateBox: function(oSettings){
+		waitForP13nChartItemTemplateBox: function(oSettings) {
 			const bModal = oSettings.hasOwnProperty("modal") ? oSettings.modal : true;
 			const sPopoverTitle = oSettings.title;
 			const sKind = oSettings.kind;
@@ -223,7 +223,7 @@ sap.ui.define([
 			const sPlaceholderName = MDCRb.getText('chart.PERSONALIZATION_DIALOG_TEMPLATE_PLACEHOLDER');
 			const aMatchers = [];
 
-			if (sPopoverTitle){
+			if (sPopoverTitle) {
 				aMatchers.push(new PropertyStrictEquals({
 					name: "title",
 					value: sPopoverTitle
@@ -233,7 +233,7 @@ sap.ui.define([
 			return this.waitFor({
 				controlType: bModal ? "sap.m.Dialog" : "sap.m.ResponsivePopover",
 				matchers: aMatchers,
-				success: function () {
+				success: function() {
 					this.waitFor({
 						searchOpenDialogs: true,
 						controlType: "sap.m.ComboBox",
@@ -241,8 +241,8 @@ sap.ui.define([
 							name: "placeholder",
 							value: sPlaceholderName
 						}),
-						success: function (aComboBox) {
-							if (sKind === "Dimension" || sKind === "Groupable"){
+						success: function(aComboBox) {
+							if (sKind === "Dimension" || sKind === "Groupable") {
 								fSuccess(aComboBox[0]);
 							} else {
 								fSuccess(aComboBox[1]);
@@ -253,7 +253,7 @@ sap.ui.define([
 			});
 		},
 
-		iChangeComboBoxSelection : function(oComboBox, sNew, oSettings) {
+		iChangeComboBoxSelection: function(oComboBox, sNew, oSettings) {
 			new Press().executeOn(oComboBox);
 			this.waitFor({
 				controlType: "sap.m.Popover",
@@ -289,8 +289,8 @@ sap.ui.define([
 				modal: typeof bLive == "boolean" ? !bLive : true,
 				success: function(aItems) {
 					const oFilterField = aItems.length > 1 ? aItems[1].getContent()[1].getItems()[0] : aItems[0].getCells()[1];
-					Opa5.assert.ok(oFilterField,"FilterField found");
-					setTimeout(function(){
+					Opa5.assert.ok(oFilterField, "FilterField found");
+					setTimeout(function() {
 						new EnterText({
 							text: sText
 						}).executeOn(oFilterField);
@@ -299,7 +299,7 @@ sap.ui.define([
 			});
 		},
 
-		iPressOnButtonWithText: function (sText) {
+		iPressOnButtonWithText: function(sText) {
 			return this.waitFor({
 				searchOpenDialogs: true,
 				controlType: "sap.m.Button",
@@ -311,7 +311,7 @@ sap.ui.define([
 			});
 		},
 
-		iPressOnButtonWithIcon: function (sIcon) {
+		iPressOnButtonWithIcon: function(sIcon) {
 			return this.waitFor({
 				controlType: "sap.m.Button",
 				matchers: new PropertyStrictEquals({
@@ -334,13 +334,13 @@ sap.ui.define([
 						icon: sViewIcon
 					}
 				},
-				success:function(aBtn) {
+				success: function(aBtn) {
 					Opa5.assert.equal(aBtn.length, 1, "Adapt Filters Panel toggle found");
 				},
 				actions: new Press()
 			});
 		},
-		iClickOnP13nSelect: function (sName) {
+		iClickOnP13nSelect: function(sName) {
 			return this.waitFor({
 				controlType: "sap.m.ComboBox",
 				searchOpenDialogs: true,
@@ -355,7 +355,7 @@ sap.ui.define([
 				actions: new Press()
 			});
 		},
-		iSelectP13nMenuItem: function (sName) {
+		iSelectP13nMenuItem: function(sName) {
 			return this.waitFor({
 				searchOpenDialogs: true,
 				controlType: "sap.m.StandardListItem",
@@ -367,7 +367,7 @@ sap.ui.define([
 				actions: new Press()
 			});
 		},
-		iRemoveSorting: function () {
+		iRemoveSorting: function() {
 			return this.waitFor({
 				searchOpenDialogs: true,
 				controlType: "sap.m.Button",
@@ -379,7 +379,7 @@ sap.ui.define([
 				actions: new Press()
 			});
 		},
-		iSelectColumn: function (sColumnName, sPopoverTitle, aP13nItems, bModal, bFilter) {
+		iSelectColumn: function(sColumnName, sPopoverTitle, aP13nItems, bModal, bFilter) {
 			return this.waitForP13nItem({
 				columnName: sColumnName,
 				title: sPopoverTitle,
@@ -391,14 +391,14 @@ sap.ui.define([
 					const oCheckBox = oColumnListItem.getMultiSelectControl();
 					new Press().executeOn(oCheckBox);
 					//optional array update
-					if (aP13nItems){
+					if (aP13nItems) {
 						const iIndex = oColumnListItem.getParent().getItems().indexOf(oColumnListItem);
 						aP13nItems[iIndex].selected = oCheckBox.getSelected();
 					}
 				}
 			});
 		},
-		iAddDimension : function(sColumnName, sPopoverTitle, aP13nItems, bModal){
+		iAddDimension: function(sColumnName, sPopoverTitle, aP13nItems, bModal) {
 			return this.waitForP13nChartItemTemplateBox({
 				title: sPopoverTitle,
 				items: aP13nItems,
@@ -409,7 +409,7 @@ sap.ui.define([
 				}.bind(this)
 			});
 		},
-		iAddMeasure : function(sColumnName, sPopoverTitle, aP13nItems, bModal){
+		iAddMeasure: function(sColumnName, sPopoverTitle, aP13nItems, bModal) {
 			return this.waitForP13nChartItemTemplateBox({
 				title: sPopoverTitle,
 				items: aP13nItems,
@@ -420,20 +420,20 @@ sap.ui.define([
 				}.bind(this)
 			});
 		},
-		iRemoveDimension : function(sColumnName){
+		iRemoveDimension: function(sColumnName) {
 
 			return this.waitFor({
 				searchOpenDialogs: true,
 				controlType: "sap.m.ComboBox",
-				matchers: function(oComboBox){
+				matchers: function(oComboBox) {
 					return oComboBox.getSelectedItem() ? oComboBox.getSelectedItem().getText() === sColumnName : false;
 				},
-				success: function(aComboBox){
+				success: function(aComboBox) {
 					this.waitFor({
 						searchOpenDialogs: true,
 						controlType: "sap.m.ColumnListItem",
 						matchers: new Descendant(aComboBox[0]),
-						success: function(aListItem){
+						success: function(aListItem) {
 							this.waitFor({
 								searchOpenDialogs: true,
 								controlType: "sap.m.Button",
@@ -451,7 +451,7 @@ sap.ui.define([
 				}
 			});
 		},
-		iClickOnListItem: function (sItemText) {
+		iClickOnListItem: function(sItemText) {
 			return this.waitFor({
 				searchOpenDialogs: true,
 				controlType: "sap.m.StandardListItem",
@@ -462,15 +462,15 @@ sap.ui.define([
 				actions: new Press()
 			});
 		},
-		iSimulateColumnResize: function (sName, sWidth) {
+		iSimulateColumnResize: function(sName, sWidth) {
 			return this.waitFor({
 				controlType: "sap.ui.table.Table",
 				success: function(aTable) {
-					aTable[0].fireColumnResize({column:aTable[0].getColumns()[0],width: sWidth});
+					aTable[0].fireColumnResize({ column: aTable[0].getColumns()[0], width: sWidth });
 				}
 			});
 		},
-		iClickOnColumn: function(sName, bResponsiveTable){
+		iClickOnColumn: function(sName, bResponsiveTable) {
 			const sColumnNameSpace = bResponsiveTable ? "sap.m.Column" : "sap.ui.table.Column";
 			const sTableNameSpace = bResponsiveTable ? "sap.m.Table" : "sap.ui.table.Table";
 			return this.waitFor({
@@ -481,12 +481,12 @@ sap.ui.define([
 						controlType: "sap.m.Label",
 						matchers: [
 							new PropertyStrictEquals({
-							name: "text",
-							value: sName
-						}),
-						new Ancestor(aTables[0])
-					],
-						success: function(aLabels){
+								name: "text",
+								value: sName
+							}),
+							new Ancestor(aTables[0])
+						],
+						success: function(aLabels) {
 							return this.waitFor({
 								controlType: sColumnNameSpace,
 								matchers: new Descendant(aLabels[0]),
@@ -498,7 +498,7 @@ sap.ui.define([
 			});
 
 		},
-		iClickOnTableItem: function (sItemText) {
+		iClickOnTableItem: function(sItemText) {
 			return this.waitFor({
 				searchOpenDialogs: true,
 				controlType: "sap.m.Label",
@@ -506,7 +506,7 @@ sap.ui.define([
 					name: "text",
 					value: sItemText
 				}),
-				success: function (aLabels) {
+				success: function(aLabels) {
 					this.waitFor({
 						controlType: "sap.m.ColumnListItem",
 						matchers: new Descendant(aLabels[0]),
@@ -515,14 +515,14 @@ sap.ui.define([
 				}
 			});
 		},
-		iClickOnTableItemWithComboBox: function (sItemName) {
+		iClickOnTableItemWithComboBox: function(sItemName) {
 			return this.waitFor({
 				searchOpenDialogs: true,
 				controlType: "sap.m.ComboBox",
-				matchers: function(oComboBox){
+				matchers: function(oComboBox) {
 					return oComboBox.getSelectedItem() ? oComboBox.getSelectedItem().getText() === sItemName : false;
 				},
-				success: function (aLabels) {
+				success: function(aLabels) {
 					this.waitFor({
 						controlType: "sap.m.ColumnListItem",
 						matchers: new Descendant(aLabels[0]),
@@ -535,15 +535,15 @@ sap.ui.define([
 			return this.waitFor({
 				controlType: "sap.ui.dt.ElementOverlay",
 				success: function(aOverlays) {
-					aOverlays.forEach(function(oOverlay){
-						if (oOverlay.getElement().isA(sNameSpace)){
+					aOverlays.forEach(function(oOverlay) {
+						if (oOverlay.getElement().isA(sNameSpace)) {
 							new Press().executeOn(oOverlay);
 						}
 					});
 				}
 			});
 		},
-		iPressButtonWithText: function (sText) {
+		iPressButtonWithText: function(sText) {
 			return this.waitFor({
 				controlType: "sap.m.Button",
 				matchers: new PropertyStrictEquals({
@@ -561,7 +561,7 @@ sap.ui.define([
 				}
 			});
 		},
-		iPressDialogCancel: function(){
+		iPressDialogCancel: function() {
 			return this.waitFor({
 				controlType: "sap.m.Dialog",
 				success: function() {
@@ -569,7 +569,7 @@ sap.ui.define([
 				}
 			});
 		},
-		iSelectVariant: function (sVariantName) {
+		iSelectVariant: function(sVariantName) {
 			return this.waitFor({
 				controlType: "sap.ui.fl.variants.VariantManagement",
 				matchers: {
@@ -577,11 +577,11 @@ sap.ui.define([
 						controlType: "sap.m.App"
 					}
 				},
-				check: function (aVariantManagements) {
+				check: function(aVariantManagements) {
 					return !!aVariantManagements.length;
 				},
 				actions: new Press(),
-				success: function (aVariantManagements) {
+				success: function(aVariantManagements) {
 					Opa5.assert.equal(aVariantManagements.length, 1, "VariantManagement found");
 					// var aVariantItem = aSmartVariantManagements[0].getVariantItems().filter(function(oVariantItem) {
 					// return oVariantItem.getText() === sVariantName;
@@ -604,7 +604,7 @@ sap.ui.define([
 		/*
 		* This method will select a variant as default by passing the desired variant name
 		*/
-		iSelectDefaultVariant: function(sVariant){
+		iSelectDefaultVariant: function(sVariant) {
 			return this.waitFor({
 				controlType: "sap.ui.fl.variants.VariantManagement",
 				matchers: {
@@ -613,7 +613,7 @@ sap.ui.define([
 					}
 				},
 				actions: new Press(),
-				success: function(aVM){
+				success: function(aVM) {
 					this.waitFor({
 						controlType: "sap.m.Button",
 						matchers: new PropertyStrictEquals({
@@ -621,23 +621,23 @@ sap.ui.define([
 							value: "Manage"
 						}),
 						actions: new Press(),
-						success: function(){
+						success: function() {
 							this.waitFor({
 								controlType: "sap.m.Input",
 								matchers: new PropertyStrictEquals({
 									name: "value",
 									value: sVariant
 								}),
-								success: function(aInput){
+								success: function(aInput) {
 									this.waitFor({
 										controlType: "sap.m.ColumnListItem",
 										matchers: new Descendant(aInput[0]),
-										success: function(aColumnListItem){
+										success: function(aColumnListItem) {
 											this.waitFor({
 												controlType: "sap.m.RadioButton",
 												matchers: new Ancestor(aColumnListItem[0]),
 												actions: new Press(),
-												success: function(aBtn){
+												success: function(aBtn) {
 													this.waitFor({
 														searchOpenDialogs: true,
 														controlType: "sap.m.Button",
@@ -671,13 +671,13 @@ sap.ui.define([
 					}
 				},
 				success: function(aVM) {
-					aVM.forEach(function (oVM) {
+					aVM.forEach(function(oVM) {
 						oVM.destroy();
 					});
 				}
 			});
 		},
-		iSaveVariantAs: function (sVariantNameOld, sVariantNameNew) {
+		iSaveVariantAs: function(sVariantNameOld, sVariantNameNew) {
 			return this.waitFor({
 				controlType: "sap.ui.fl.variants.VariantManagement",
 				matchers: {
@@ -685,7 +685,7 @@ sap.ui.define([
 						controlType: "sap.m.App"
 					}
 				},
-				check: function (aVariantManagements) {
+				check: function(aVariantManagements) {
 					return !!aVariantManagements.length;
 				},
 				// matchers: new PropertyStrictEquals({
@@ -693,7 +693,7 @@ sap.ui.define([
 				// 	value: "*standard*"
 				// }),
 				actions: new Press(),
-				success: function (aVariantManagements) {
+				success: function(aVariantManagements) {
 					Opa5.assert.equal(aVariantManagements.length, 1, "VariantManagement found");
 					this.waitFor({
 						controlType: "sap.m.Button",
@@ -702,7 +702,7 @@ sap.ui.define([
 							value: TestUtil.getTextFromResourceBundle("sap.m", "VARIANT_MANAGEMENT_SAVEAS")
 						}),
 						actions: new Press(),
-						success: function (aButtons) {
+						success: function(aButtons) {
 							Opa5.assert.equal(aButtons.length, 1, "'Save As' button found");
 							this.waitFor({
 								controlType: "sap.m.Input",
@@ -713,7 +713,7 @@ sap.ui.define([
 								actions: new EnterText({
 									text: sVariantNameNew
 								}),
-								success: function (aInputs) {
+								success: function(aInputs) {
 									Opa5.assert.ok(aInputs[0].getValue() === sVariantNameNew, "Input value is set to '" + sVariantNameNew + "'");
 									this.waitFor({
 										controlType: "sap.m.Button",
@@ -722,7 +722,7 @@ sap.ui.define([
 											value: TestUtil.getTextFromResourceBundle("sap.m", "VARIANT_MANAGEMENT_SAVE")
 										}),
 										actions: new Press(),
-										success: function (aButtons) {
+										success: function(aButtons) {
 											Opa5.assert.equal(aButtons.length, 1, "'OK' button found");
 										}
 									});
@@ -747,6 +747,15 @@ sap.ui.define([
 						})
 					});
 				}
+			});
+		},
+		iSelectAllColumns: function(bSelectAll) {
+			return this.waitFor({
+				controlType: "sap.m.CheckBox",
+				matchers: function(oCheckBox) {
+					return oCheckBox.getSelected() !== bSelectAll && oCheckBox.getId().endsWith("-sa");
+				},
+				actions: new Press()
 			});
 		}
 	});
