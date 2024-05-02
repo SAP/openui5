@@ -274,6 +274,8 @@ sap.ui.define([
 
 				/**
 				 * Defines the text that is displayed when no {@link sap.m.PlanningCalendarRow PlanningCalendarRows} are assigned.
+				 * <b>Note:</b> If both <code>noDataText</code> property and <code>noData</code> aggregation are provided, the <code>noData</code> aggregation takes priority.
+				 * If the <code>noData</code> aggregation is undefined or set to null, the <code>noDataText</code> property is used instead.
 				 */
 				noDataText : {type : "string", group : "Misc", defaultValue : null},
 
@@ -504,7 +506,18 @@ sap.ui.define([
 				/**
 				 * Hidden, for internal use only.
 				 */
-				header : {type : "sap.ui.core.Control", multiple : false, visibility : "hidden"}
+				header : {type : "sap.ui.core.Control", multiple : false, visibility : "hidden"},
+
+				/**
+				 * Defines the custom visualization if there is no data available.
+				 * <b>Note:</b> If both <code>noDataText</code> property and <code>noData</code> aggregation are provided, the <code>noData</code> aggregation takes priority.
+				 * If the <code>noData</code> aggregation is undefined or set to null, the <code>noDataText</code> property is used instead.
+				 * @since 1.125.0
+				 */
+				noData : {type: "sap.ui.core.Control", multiple: false, altTypes: ["string"], forwarding: {
+					idSuffix: "-Table",
+					aggregation: "noData"
+				}}
 
 			},
 			associations: {
@@ -522,6 +535,7 @@ sap.ui.define([
 				 * @since 1.40.0
 				 */
 				legend: { type: "sap.ui.unified.CalendarLegend", multiple: false}
+
 			},
 			events : {
 

@@ -494,6 +494,15 @@ sap.ui.define([
 		}
 	});
 
+	var oDeleteRowsButton = new Button("B_DeleteAllRows", {
+		icon: "sap-icon://delete",
+		tooltip: "Delete all rows",
+		press: function(oEvent) {
+			var oPC = Element.getElementById("PC1");
+			oPC.removeAllRows();
+		}
+	});
+
 	var oButtonAddAppointment = new Button("B_AddAppointment", {
 		icon: "sap-icon://add",
 		tooltip: "Add appointment",
@@ -783,6 +792,13 @@ sap.ui.define([
 	var oOLI = new ObjectListItem({
 		title: "{name}",
 		intro: "{text}"
+	});
+
+	var oIMNoData = new sap.m.IllustratedMessage({
+		illustrationType: sap.m.IllustratedMessageType.EmptyPlanningCalendar,
+		illustrationSize: sap.m.IllustratedMessageSize.Dialog,
+		title: "No Data",
+		description: "Try to add rows here"
 	});
 
 	var oPC1 = new PlanningCalendar("PC1", {
@@ -1340,6 +1356,7 @@ sap.ui.define([
 			oButton2,
 			oButtonAddAppointment,
 			oButtonAddRow,
+			oDeleteRowsButton,
 			oButtonShowIntervalHeaders,
 			oButtonShowRowHeaders,
 			oButtonShowWeekNumbers,
@@ -1366,7 +1383,8 @@ sap.ui.define([
 		appointmentSelect: handleAppointmentSelect,
 		startDateChange: handleStartDateChange,
 		rowHeaderPress: handleRowHeaderPress,
-		rowSelectionChange: handleRowSelectionChange
+		rowSelectionChange: handleRowSelectionChange,
+		noData: oIMNoData
 	});
 
 	var oLabel = new Label({
