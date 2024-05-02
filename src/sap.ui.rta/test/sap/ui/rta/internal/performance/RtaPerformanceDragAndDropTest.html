@@ -37,59 +37,7 @@
 			document.write('<script src="' + __sPathPrefix + '/resources/sap-ui-core.js"><' + '/script>');
 		</script>
 
-		<script>
-			function startDragAndDrop() {
-				sap.ui.require([
-					"dt/performance/PerformanceTestUtil"
-				], function(
-					DtPerformanceTestUtil
-				) {
-					jQuery.get("./dragAndDrop/dragDropEvents.json")
-					.done(function(aEvents) {
-						DtPerformanceTestUtil.measureApplyStylePerformance("applyStylesDragDrop", 3000);
-
-						(function fnRecursiveloop(aEvents) {
-							var aEvent = aEvents.shift();
-							if (aEvent) {
-								setTimeout(function() {
-									jQuery("#" + aEvent[1]).trigger(aEvent[0]);
-									fnRecursiveloop(aEvents);
-								}, aEvent[0] === "dragenter" ? 50 : 0);
-							}
-						}) (aEvents);
-					}.bind(this));
-				});
-			}
-
-			function startResizeTest() {
-				sap.ui.require([
-					"dt/performance/PerformanceTestUtil"
-				], function(
-					DtPerformanceTestUtil
-				) {
-					DtPerformanceTestUtil.measureApplyStylePerformance("applyStylesResize", 2000);
-
-					var iStartWidth = document.getElementById("content").getBoundingClientRect().width,
-						aWidthsToTest = [450, 300, 650, 500],
-						iJumpsInPxls = 5,
-						iNextWidth = iStartWidth - (iStartWidth % iJumpsInPxls);
-
-					(function fnRecursiveloop(aWidthsToTest) {
-						var iTargetWidth = aWidthsToTest.shift();
-						if (iTargetWidth) {
-							for(iNextWidth = iStartWidth - (iStartWidth % iJumpsInPxls); iNextWidth !== iTargetWidth; iNextWidth = (iTargetWidth > iStartWidth) ? iNextWidth + iJumpsInPxls : iNextWidth - iJumpsInPxls) {
-								setTimeout(function(iNextWidth) { document.getElementById("content").style.width = iNextWidth + 'px'; }, 0, iNextWidth);
-							}
-							iStartWidth = iNextWidth;
-							setTimeout(function() {
-								document.getElementById("content").style.width = iNextWidth + 'px';
-								fnRecursiveloop(aWidthsToTest, iStartWidth, iJumpsInPxls);
-							}, 100);
-						}
-					}) (aWidthsToTest, iStartWidth, iJumpsInPxls);
-				});
-			}
-		</script>
+		<script src="RtaPerformanceDragAndDropTest.js"></script>
 	</head>
 	<body class="sapUiBody">
 		<div id="content"></div>
