@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/unified/DateRange",
 	"sap/ui/unified/calendar/CalendarDate",
+	"sap/ui/core/Core",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/qunit/utils/createAndAppendDiv"
 ], function(
@@ -27,6 +28,7 @@ sap.ui.define([
 	UI5Date,
 	DateRange,
 	CalendarDate,
+	Core,
 	KeyCodes,
 	createAndAppendDiv
 ) {
@@ -37,6 +39,7 @@ sap.ui.define([
 		var SinglePlanningCalendarSelectionMode = mobileLibrary.SinglePlanningCalendarSelectionMode;
 		var LinkAccessibleRole = mobileLibrary.LinkAccessibleRole;
 
+		var o1Aug2018_00_00 = UI5Date.getInstance(2018, 7, 1);
 		var o2Aug2018_00_00 = UI5Date.getInstance(2018, 7, 2);
 		var o2Aug2018_18_00 = UI5Date.getInstance(2018, 7, 2, 18, 0, 0);
 		var o3Aug2018_00_00 = UI5Date.getInstance(2018, 7, 3);
@@ -52,6 +55,18 @@ sap.ui.define([
 					startDate: o2Aug2018_00_00,
 					firstDayOfWeek: 1,
 					appointments: [
+						new CalendarAppointment({
+							startDate: o1Aug2018_00_00,
+							endDate: o1Aug2018_00_00
+						}),
+						new CalendarAppointment({
+							startDate: o1Aug2018_00_00,
+							endDate: o1Aug2018_00_00
+						}),
+						new CalendarAppointment({
+							startDate: o1Aug2018_00_00,
+							endDate: o1Aug2018_00_00
+						}),
 						new CalendarAppointment({
 							startDate: o2Aug2018_00_00,
 							endDate: o2Aug2018_18_00
@@ -102,6 +117,24 @@ sap.ui.define([
 			assert.ok(oLink, "there is something");
 			assert.ok(oLink.isA("sap.m.Link"), "it's a link");
 			assert.equal(oLink.getText().toLowerCase(), "3 more", "it's text is correct");
+		});
+
+		QUnit.test("The more link has a correct description", function(assert) {
+			// prepare
+			const oLink = this.oSPC._aLinks[3];
+			const oLinkWithOneAppMore = this.oSPC._aLinks[2];
+			const sFormattedStringFor3More = this.oSPC._oFormatAriaFullDayCell.format(o2Aug2018_00_00);
+			const sFormattedStringFor1More = this.oSPC._oFormatAriaFullDayCell.format(o1Aug2018_00_00);
+			const oBundle = Core.getLibraryResourceBundle("sap.m");
+			const sLinkDescription3More = oLink.getDomRef().nextSibling.textContent;
+			const sLinkDescription1More = oLinkWithOneAppMore.getDomRef().nextSibling.textContent;
+
+			const sLinkDescription1MoreExpectation = oBundle.getText("SPC_MORE_LINK_ONE_APPOINTMENT", [sFormattedStringFor1More]);
+			const sLinkDescription3MoreExpectation = oBundle.getText("SPC_MORE_LINK_MULTIPLE_APPOINTMENTS", ["3", sFormattedStringFor3More]);
+
+			// assert
+			assert.equal(sLinkDescription1More, sLinkDescription1MoreExpectation, "it's text is correct");
+			assert.equal(sLinkDescription3More, sLinkDescription3MoreExpectation, "it's text is correct");
 		});
 
 		QUnit.test("more link shows correct value for multi-day appointments", function(assert) {

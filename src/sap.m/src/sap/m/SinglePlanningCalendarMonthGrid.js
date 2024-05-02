@@ -396,6 +396,7 @@ sap.ui.define([
 
 			for (var i = 0; i < this._aLinks.length; i++) {
 				if (this._aLinks[i]) {
+					this._aLinks[i].removeDelegate(this.oAfterLinkRenderDelegate);
 					this._aLinks[i].destroy();
 				}
 			}
@@ -820,12 +821,13 @@ sap.ui.define([
 			return aChangedApps;
 		};
 
-		SinglePlanningCalendarMonthGrid.prototype._getMoreLink = function(iAppointmentsCount, oCalendarDate, iCellIndex) {
+		SinglePlanningCalendarMonthGrid.prototype._getMoreLink = function(iAppointmentsCount, oCalendarDate, iCellIndex, sMoreLinkDescId) {
 			var sMore = Core
 					.getLibraryResourceBundle("sap.m")
 					.getText("SPC_MORE_LINK", [iAppointmentsCount.toString()]),
 				oLink = new Link({
 					accessibleRole: LinkAccessibleRole.Button,
+					ariaLabelledBy: [sMoreLinkDescId],
 					text: sMore,
 					press: this._handleMorePress
 				}).addCustomData(new CustomData({
@@ -833,13 +835,35 @@ sap.ui.define([
 					value: oCalendarDate.valueOf().toString(),
 					writeToDom: true
 				}));
+			this.oAfterLinkRenderDelegate = this._getMoreLinkOnAfterRenderingDelegate(oLink);
 
 			if (this._aLinks[iCellIndex]) {
+				this._aLinks[iCellIndex].removeDelegate(this.oAfterLinkRenderDelegate);
 				this._aLinks[iCellIndex].destroy();
 			}
+
+			oLink.addDelegate(this.oAfterLinkRenderDelegate);
 			this._aLinks[iCellIndex] = oLink;
 
 			return oLink;
+		};
+
+		SinglePlanningCalendarMonthGrid.prototype._getMoreLinkOnAfterRenderingDelegate = function (oLink) {
+			return {
+				onAfterRendering: function() {
+					const oLinkDomRef = oLink.getDomRef();
+					const sDescriptionId = oLinkDomRef.getAttribute("aria-labelledby").split(" ")[0];
+					oLinkDomRef.setAttribute("aria-labelledby", sDescriptionId);
+				}
+			};
+		};
+
+		SinglePlanningCalendarMonthGrid.prototype._getMoreLinkDescription = function (iAppointmentsCount, oCalendarDate) {
+			const sFormattedString = this._oFormatAriaFullDayCell.format(oCalendarDate);
+			const oBundle = Core.getLibraryResourceBundle("sap.m");
+			return iAppointmentsCount === 1 ?
+				oBundle.getText("SPC_MORE_LINK_ONE_APPOINTMENT", [sFormattedString]) :
+				oBundle.getText("SPC_MORE_LINK_MULTIPLE_APPOINTMENTS", [iAppointmentsCount.toString(), sFormattedString]);
 		};
 
 		SinglePlanningCalendarMonthGrid.prototype._handleMorePress = function(oEvent) {
