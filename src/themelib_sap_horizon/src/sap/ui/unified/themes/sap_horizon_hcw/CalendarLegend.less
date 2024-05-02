@@ -12,10 +12,10 @@
 			content: "";
 			position: absolute;
 			box-sizing: border-box;
-			left: 0.0625rem;
-			top: 0.0625rem;
-			right: 0.0625rem;
-			bottom: 0.0625rem;
+			left: 0.125rem;
+			top: 0.125rem;
+			right: 0.125rem;
+			bottom: 0.125rem;
 			border: @sapContent_FocusWidth @sapContent_FocusStyle @sapUiContentFocusColor;
 			pointer-events: none;
 		}
@@ -30,5 +30,23 @@
 .sapUiUnifiedLegendNonWorkingDay {
 	& > .sapUiUnifiedLegendSquare > .sapUiUnifiedLegendSquareColor {
 		background: @sapUiLegendNonWorkingBackground;
+	}
+}
+
+.sapUiSizeCompact {
+	.sapUiUnifiedLegendSquare > .sapUiUnifiedLegendSquareColor {
+		margin: 0.1875rem;
+	}
+
+	.sapUiUnifiedLegendItem {
+
+		&:focus {
+			&::after {
+				left: 0.0625rem;
+				top: 0.0625rem;
+				right: 0.0625rem;
+				bottom: 0.0625rem;
+			}
+		}
 	}
 }
