@@ -23,7 +23,10 @@ sap.ui.define([
 	// shortcut for sap.ui.core.mvc.ViewType
 
 	return BaseComponent.extend("sap.ui.core.sample.ViewTemplate.valuelist.Component", {
-		metadata : "json",
+		metadata : {
+			interfaces : ["sap.ui.core.IAsyncContentCreation"],
+			manifest : "json"
+		},
 
 		createContent : function () {
 			var sMockServerBaseUri

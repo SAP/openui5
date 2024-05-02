@@ -1,0 +1,37 @@
+{
+	"_version" : "1.60.0",
+	"sap.app" : {
+		"ach" : "CA-UI5-COR",
+		"applicationVersion" : {
+			"version" : "${version}"
+		},
+		"description" : "Minimal sample for XML Templating. Requires a properly configured proxy.",
+		"id" : "sap.ui.core.demokit.sample.ViewTemplate.tiny",
+		"title" : "XML Templating: minimal sample",
+		"type" : "application"
+	},
+	"sap.ui" : {
+		"technology" : "UI5"
+	},
+	"sap.ui5" : {
+		"config": {
+			"sample": {
+				"files": [
+					"annotations.xml",
+					"Component.js",
+					"Field.fragment.xml",
+					"manifest.json",
+					"Template.view.xml"
+				]
+			}
+		},
+		"dependencies" : {
+			"minUI5Version" : "1.120",
+			"libs" : {
+				"sap.m" : {},
+				"sap.ui.core" : {},
+				"sap.ui.layout" : {}
+			}
+		}
+	}
+}

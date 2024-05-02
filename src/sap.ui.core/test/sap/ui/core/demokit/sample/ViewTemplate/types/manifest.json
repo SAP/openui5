@@ -1,0 +1,42 @@
+{
+	"_version" : "1.60.0",
+	"sap.app" : {
+		"ach" : "CA-UI5-COR",
+		"applicationVersion" : {
+			"version" : "${version}"
+		},
+		"description" : "XML Templating sample with UI5 core primitive OData types",
+		"id" : "sap.ui.core.sample.ViewTemplate.types",
+		"title" : "XML Templating: UI5 OData types",
+		"type" : "application"
+	},
+	"sap.ui" : {
+		"technology" : "UI5"
+	},
+	"sap.ui5" : {
+		"config": {
+			"sample": {
+				"files": [
+					"Component.js",
+					"manifest.json",
+					"Template.controller.js",
+					"TemplateV2.view.xml",
+					"TemplateV4.view.xml",
+					"Types.controller.js",
+					"Types.view.xml",
+					"../../common/Controller.js"
+				]
+			}
+		},
+		"dependencies" : {
+			"minUI5Version" : "1.120",
+			"libs" : {
+				"sap.m" : {},
+				"sap.ui.codeeditor" : {},
+				"sap.ui.core" : {},
+				"sap.ui.layout" : {}
+			}
+		},
+		"handleValidation" : true
+	}
+}

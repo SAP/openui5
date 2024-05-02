@@ -1,0 +1,49 @@
+{
+	"_version" : "1.60.0",
+	"sap.app" : {
+		"ach" : "CA-UI5-COR",
+		"applicationVersion" : {
+			"version" : "${version}"
+		},
+		"description" : "Separate loading of value lists to reduce size of OData service metadata to be loaded",
+		"id" : "sap.ui.core.demokit.sample.ViewTemplate.valuelist",
+		"title" : "Separate Value List Loading",
+		"type" : "application"
+	},
+	"sap.ui" : {
+		"technology" : "UI5"
+	},
+	"sap.ui5" : {
+		"config": {
+			"sample": {
+				"files": [
+					"Component.js",
+					"Main.view.xml",
+					"manifest.json",
+					"ValueHelp.js",
+					"data/Items.json",
+					"data/metadata.xml",
+					"data/metadata_ItemCompanyCode.xml",
+					"data/metadata_ItemCompanyCode_ItemCustomer.xml",
+					"data/metadata_ItemCustomer.xml",
+					"data/metadata_none.xml",
+					"data/metadata_VL_SH_DEBIALAND1.xml",
+					"data/metadata_VL_SH_H_T001WAERS.xml",
+					"data/VL_CT_TCURC.json",
+					"data/VL_SH_DEBIA.json",
+					"data/VL_SH_DEBID.json",
+					"data/VL_SH_FARP_T005.json",
+					"data/VL_SH_H_T001.json"
+				]
+			}
+		},
+		"dependencies" : {
+			"minUI5Version" : "1.120",
+			"libs" : {
+				"sap.m" : {},
+				"sap.ui.core" : {}
+			}
+		},
+		"handleValidation" : true
+	}
+}
