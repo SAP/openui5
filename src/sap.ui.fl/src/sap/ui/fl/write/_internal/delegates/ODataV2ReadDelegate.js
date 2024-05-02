@@ -168,8 +168,8 @@ sap.ui.define(["sap/ui/model/ListBinding"], function(ListBinding) {
 			return mPayload?.path;
 		}
 		return checkForAbsoluteAggregationBinding(oElement, sAggregationName)
-			? getDefaultModelBindingData(oElement, true, sAggregationName).path
-			: getDefaultModelBindingData(oElement, false, sAggregationName).getPath();
+			? getDefaultModelBindingData(oElement, true, sAggregationName)?.path
+			: getDefaultModelBindingData(oElement, false, sAggregationName)?.getPath();
 	}
 
 	/**
