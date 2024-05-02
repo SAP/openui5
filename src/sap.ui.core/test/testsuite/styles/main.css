@@ -52,6 +52,7 @@ body {
 #sap-ui-SettingsWindow {
 	grid-column: 1;
 	grid-row: 4;
+	overflow: scroll;
 }
 
 #sap-ui-ContentWindow {
@@ -395,6 +396,10 @@ h2 {
 #sap-ui-SettingsWindow > div {
 	box-sizing: border-box;
 	padding: 5px;
+}
+
+#sap-ui-SettingsWindow .sapUiFormResGrid > div {
+	padding: 0;
 }
 
 #sap-ui-ContentWindowFrame {
