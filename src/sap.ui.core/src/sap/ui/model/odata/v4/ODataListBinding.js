@@ -176,89 +176,30 @@ sap.ui.define([
 	asODataParentBinding(ODataListBinding.prototype);
 
 	/**
-	 * Attach event handler <code>fnFunction</code> to the 'createActivate' event of this binding.
-	 *
-	 * @param {function} fnFunction The function to call when the event occurs
-	 * @param {object} [oListener] Object on which to call the given function
-	 * @returns {this} <code>this</code> to allow method chaining
-	 *
-	 * @public
-	 * @since 1.98.0
+	 * @override
+	 * @see sap.ui.model.Binding#_checkDataStateMessages
 	 */
-	ODataListBinding.prototype.attachCreateActivate = function (fnFunction, oListener) {
-		return this.attachEvent("createActivate", fnFunction, oListener);
+	ODataListBinding.prototype._checkDataStateMessages = function (oDataState, sResolvedPath) {
+		if (sResolvedPath) {
+			oDataState.setModelMessages(this.oModel.getMessagesByPath(sResolvedPath, true));
+		}
 	};
 
 	/**
-	 * Detach event handler <code>fnFunction</code> from the 'createActivate' event of this binding.
+	 * Returns all currently existing contexts of this list binding in no special order.
 	 *
-	 * @param {function} fnFunction The function to call when the event occurs
-	 * @param {object} [oListener] Object on which to call the given function
-	 * @returns {this} <code>this</code> to allow method chaining
+	 * @returns {sap.ui.model.odata.v4.Context[]}
+	 *   All currently existing contexts of this list binding, in no special order
 	 *
-	 * @public
-	 * @since 1.98.0
+	 * @private
+	 * @see #getAllCurrentContexts
 	 */
-	ODataListBinding.prototype.detachCreateActivate = function (fnFunction, oListener) {
-		return this.detachEvent("createActivate", fnFunction, oListener);
-	};
-
-	/**
-	 * Attach event handler <code>fnFunction</code> to the 'createCompleted' event of this binding.
-	 *
-	 * @param {function} fnFunction The function to call when the event occurs
-	 * @param {object} [oListener] Object on which to call the given function
-	 * @returns {this} <code>this</code> to allow method chaining
-	 *
-	 * @public
-	 * @since 1.66.0
-	 */
-	ODataListBinding.prototype.attachCreateCompleted = function (fnFunction, oListener) {
-		return this.attachEvent("createCompleted", fnFunction, oListener);
-	};
-
-	/**
-	 * Detach event handler <code>fnFunction</code> from the 'createCompleted' event of this
-	 * binding.
-	 *
-	 * @param {function} fnFunction The function to call when the event occurs
-	 * @param {object} [oListener] Object on which to call the given function
-	 * @returns {this} <code>this</code> to allow method chaining
-	 *
-	 * @public
-	 * @since 1.66.0
-	 */
-	ODataListBinding.prototype.detachCreateCompleted = function (fnFunction, oListener) {
-		return this.detachEvent("createCompleted", fnFunction, oListener);
-	};
-
-	/**
-	 * Attach event handler <code>fnFunction</code> to the 'createSent' event of this binding.
-	 *
-	 * @param {function} fnFunction The function to call when the event occurs
-	 * @param {object} [oListener] Object on which to call the given function
-	 * @returns {this} <code>this</code> to allow method chaining
-	 *
-	 * @public
-	 * @since 1.66.0
-	 */
-	ODataListBinding.prototype.attachCreateSent = function (fnFunction, oListener) {
-		return this.attachEvent("createSent", fnFunction, oListener);
-	};
-
-	/**
-	 * Detach event handler <code>fnFunction</code> from the 'createSent' event of this
-	 * binding.
-	 *
-	 * @param {function} fnFunction The function to call when the event occurs
-	 * @param {object} [oListener] Object on which to call the given function
-	 * @returns {this} <code>this</code> to allow method chaining
-	 *
-	 * @public
-	 * @since 1.66.0
-	 */
-	ODataListBinding.prototype.detachCreateSent = function (fnFunction, oListener) {
-		return this.detachEvent("createSent", fnFunction, oListener);
+	ODataListBinding.prototype._getAllExistingContexts = function () {
+		return (this.aContexts ?? []).filter(function (oContext) {
+			return oContext;
+		}).concat(Object.values(this.mPreviousContextsByPath).filter(function (oContext) {
+			return oContext.isEffectivelyKeptAlive();
+		}));
 	};
 
 	/**
@@ -605,6 +546,48 @@ sap.ui.define([
 	 */
 
 	/**
+	 * Attach event handler <code>fnFunction</code> to the 'createActivate' event of this binding.
+	 *
+	 * @param {function} fnFunction The function to call when the event occurs
+	 * @param {object} [oListener] Object on which to call the given function
+	 * @returns {this} <code>this</code> to allow method chaining
+	 *
+	 * @public
+	 * @since 1.98.0
+	 */
+	ODataListBinding.prototype.attachCreateActivate = function (fnFunction, oListener) {
+		return this.attachEvent("createActivate", fnFunction, oListener);
+	};
+
+	/**
+	 * Attach event handler <code>fnFunction</code> to the 'createCompleted' event of this binding.
+	 *
+	 * @param {function} fnFunction The function to call when the event occurs
+	 * @param {object} [oListener] Object on which to call the given function
+	 * @returns {this} <code>this</code> to allow method chaining
+	 *
+	 * @public
+	 * @since 1.66.0
+	 */
+	ODataListBinding.prototype.attachCreateCompleted = function (fnFunction, oListener) {
+		return this.attachEvent("createCompleted", fnFunction, oListener);
+	};
+
+	/**
+	 * Attach event handler <code>fnFunction</code> to the 'createSent' event of this binding.
+	 *
+	 * @param {function} fnFunction The function to call when the event occurs
+	 * @param {object} [oListener] Object on which to call the given function
+	 * @returns {this} <code>this</code> to allow method chaining
+	 *
+	 * @public
+	 * @since 1.66.0
+	 */
+	ODataListBinding.prototype.attachCreateSent = function (fnFunction, oListener) {
+		return this.attachEvent("createSent", fnFunction, oListener);
+	};
+
+	/**
 	 * See {@link sap.ui.base.EventProvider#attachEvent}
 	 *
 	 * @param {string} sEventId The identifier of the event to listen for
@@ -624,16 +607,6 @@ sap.ui.define([
 				+ "': v4.ODataListBinding#attachEvent");
 		}
 		return ListBinding.prototype.attachEvent.apply(this, arguments);
-	};
-
-	/**
-	 * @override
-	 * @see sap.ui.model.Binding#_checkDataStateMessages
-	 */
-	ODataListBinding.prototype._checkDataStateMessages = function (oDataState, sResolvedPath) {
-		if (sResolvedPath) {
-			oDataState.setModelMessages(this.oModel.getMessagesByPath(sResolvedPath, true));
-		}
 	};
 
 	/**
@@ -1364,6 +1337,50 @@ sap.ui.define([
 	};
 
 	/**
+	 * Detach event handler <code>fnFunction</code> from the 'createActivate' event of this binding.
+	 *
+	 * @param {function} fnFunction The function to call when the event occurs
+	 * @param {object} [oListener] Object on which to call the given function
+	 * @returns {this} <code>this</code> to allow method chaining
+	 *
+	 * @public
+	 * @since 1.98.0
+	 */
+	ODataListBinding.prototype.detachCreateActivate = function (fnFunction, oListener) {
+		return this.detachEvent("createActivate", fnFunction, oListener);
+	};
+
+	/**
+	 * Detach event handler <code>fnFunction</code> from the 'createCompleted' event of this
+	 * binding.
+	 *
+	 * @param {function} fnFunction The function to call when the event occurs
+	 * @param {object} [oListener] Object on which to call the given function
+	 * @returns {this} <code>this</code> to allow method chaining
+	 *
+	 * @public
+	 * @since 1.66.0
+	 */
+	ODataListBinding.prototype.detachCreateCompleted = function (fnFunction, oListener) {
+		return this.detachEvent("createCompleted", fnFunction, oListener);
+	};
+
+	/**
+	 * Detach event handler <code>fnFunction</code> from the 'createSent' event of this
+	 * binding.
+	 *
+	 * @param {function} fnFunction The function to call when the event occurs
+	 * @param {object} [oListener] Object on which to call the given function
+	 * @returns {this} <code>this</code> to allow method chaining
+	 *
+	 * @public
+	 * @since 1.66.0
+	 */
+	ODataListBinding.prototype.detachCreateSent = function (fnFunction, oListener) {
+		return this.detachEvent("createSent", fnFunction, oListener);
+	};
+
+	/**
 	 * @override
 	 * @see sap.ui.model.odata.v4.ODataBinding#doCreateCache
 	 */
@@ -1995,31 +2012,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * @override
-	 * @see sap.ui.model.odata.v4.ODataParentBinding#findContextForCanonicalPath
-	 */
-	ODataListBinding.prototype.findContextForCanonicalPath = function (sCanonicalPath) {
-		var aKeptAliveContexts = Object.values(this.mPreviousContextsByPath)
-				.filter(function (oCandidate) {
-					return oCandidate.isEffectivelyKeptAlive();
-				});
-
-		function check(aContexts) {
-			return aContexts.find(function (oCandidate) {
-				var oPromise;
-
-				if (oCandidate) {
-					oPromise = oCandidate.fetchCanonicalPath();
-					oPromise.caught();
-					return oPromise.getResult() === sCanonicalPath;
-				}
-			});
-		}
-
-		return check(aKeptAliveContexts) || check(this.aContexts);
-	};
-
-	/**
 	 * Filters the list with the given filters. Since 1.97.0, if filters are unchanged, no request
 	 * is sent, regardless of pending changes. Since 1.111.0, all contexts (incl. the header
 	 * context) are deselected, but (since 1.120.13) only if the binding parameter
@@ -2140,6 +2132,31 @@ sap.ui.define([
 		this.oHeaderContext?.checkUpdate();
 
 		return this;
+	};
+
+	/**
+	 * @override
+	 * @see sap.ui.model.odata.v4.ODataParentBinding#findContextForCanonicalPath
+	 */
+	ODataListBinding.prototype.findContextForCanonicalPath = function (sCanonicalPath) {
+		var aKeptAliveContexts = Object.values(this.mPreviousContextsByPath)
+				.filter(function (oCandidate) {
+					return oCandidate.isEffectivelyKeptAlive();
+				});
+
+		function check(aContexts) {
+			return aContexts.find(function (oCandidate) {
+				var oPromise;
+
+				if (oCandidate) {
+					oPromise = oCandidate.fetchCanonicalPath();
+					oPromise.caught();
+					return oPromise.getResult() === sCanonicalPath;
+				}
+			});
+		}
+
+		return check(aKeptAliveContexts) || check(this.aContexts);
 	};
 
 	/**
@@ -2766,28 +2783,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Converts the view index of a context to the model index in case there are contexts created at
-	 * the end.
-	 *
-	 * @param {number} iViewIndex The view index
-	 * @returns {number} The model index
-	 *
-	 * @private
-	 */
-	ODataListBinding.prototype.getModelIndex = function (iViewIndex) {
-		if (!this.bFirstCreateAtEnd) {
-			return iViewIndex;
-		}
-		if (!this.bLengthFinal) { // created at end, but the read is pending and $count unknown yet
-			return this.aContexts.length - iViewIndex - 1;
-		}
-		return iViewIndex < this.getLength() - this.iCreatedContexts
-			? iViewIndex + this.iCreatedContexts
-			// Note: the created rows are mirrored at the end
-			: this.getLength() - iViewIndex - 1;
-	};
-
-	/**
 	 * Calls {@link sap.ui.model.odata.v4.Context#setKeepAlive} at the context for the given path
 	 * and returns it. Since 1.100.0 the function always returns such a context. If none exists yet,
 	 * it is created without data and a request for its entity is sent.
@@ -2903,6 +2898,28 @@ sap.ui.define([
 			return this.iMaxLength + this.iCreatedContexts;
 		}
 		return this.aContexts.length ? this.aContexts.length + 10 : 0;
+	};
+
+	/**
+	 * Converts the view index of a context to the model index in case there are contexts created at
+	 * the end.
+	 *
+	 * @param {number} iViewIndex The view index
+	 * @returns {number} The model index
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype.getModelIndex = function (iViewIndex) {
+		if (!this.bFirstCreateAtEnd) {
+			return iViewIndex;
+		}
+		if (!this.bLengthFinal) { // created at end, but the read is pending and $count unknown yet
+			return this.aContexts.length - iViewIndex - 1;
+		}
+		return iViewIndex < this.getLength() - this.iCreatedContexts
+			? iViewIndex + this.iCreatedContexts
+			// Note: the created rows are mirrored at the end
+			: this.getLength() - iViewIndex - 1;
 	};
 
 	/**
@@ -4724,23 +4741,6 @@ sap.ui.define([
 					}))
 			};
 		}
-	};
-
-	/**
-	 * Returns all currently existing contexts of this list binding in no special order.
-	 *
-	 * @returns {sap.ui.model.odata.v4.Context[]}
-	 *   All currently existing contexts of this list binding, in no special order
-	 *
-	 * @private
-	 * @see #getAllCurrentContexts
-	 */
-	ODataListBinding.prototype._getAllExistingContexts = function () {
-		return (this.aContexts ?? []).filter(function (oContext) {
-			return oContext;
-		}).concat(Object.values(this.mPreviousContextsByPath).filter(function (oContext) {
-			return oContext.isEffectivelyKeptAlive();
-		}));
 	};
 
 	//*********************************************************************************************

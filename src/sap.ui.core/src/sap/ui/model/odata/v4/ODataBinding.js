@@ -455,15 +455,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * @override
-	 * @see sap.ui.base.EventProvider#getEventingParent
-	 */
-	ODataBinding.prototype.getEventingParent = function () {
-		// this allows that dataRequested/dataReceived events are bubbled up to the model
-		return this.oModel;
-	};
-
-	/**
 	 * Hook method for {@link #fetchOrGetQueryOptionsForOwnCache} to determine the query options for
 	 * this binding.
 	 *
@@ -477,6 +468,15 @@ sap.ui.define([
 	 * @name sap.ui.model.odata.v4.ODataBinding#doFetchOrGetQueryOptions
 	 * @private
 	 */
+
+	/**
+	 * @override
+	 * @see sap.ui.base.EventProvider#getEventingParent
+	 */
+	ODataBinding.prototype.getEventingParent = function () {
+		// this allows that dataRequested/dataReceived events are bubbled up to the model
+		return this.oModel;
+	};
 
 	/**
 	 * Creates a cache for this binding if a cache is needed and updates <code>oCachePromise</code>.
@@ -1081,17 +1081,6 @@ sap.ui.define([
 	 */
 
 	/**
-	 * Whether the binding is transient (relative to a transient context).
-	 *
-	 * @returns {boolean} Whether the binding is transient
-	 *
-	 * @private
-	 */
-	ODataBinding.prototype.isTransient = function () {
-		return this.sReducedPath && this.sReducedPath.includes("($uid=");
-	};
-
-	/**
 	 * Method not supported
 	 *
 	 * @returns {boolean}
@@ -1138,6 +1127,17 @@ sap.ui.define([
 		var oRootBinding = this.getRootBinding();
 
 		return oRootBinding && oRootBinding.isSuspended();
+	};
+
+	/**
+	 * Whether the binding is transient (relative to a transient context).
+	 *
+	 * @returns {boolean} Whether the binding is transient
+	 *
+	 * @private
+	 */
+	ODataBinding.prototype.isTransient = function () {
+		return this.sReducedPath && this.sReducedPath.includes("($uid=");
 	};
 
 	/**

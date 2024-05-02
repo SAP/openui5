@@ -2021,6 +2021,41 @@ sap.ui.define([
 	};
 
 	/**
+	 * Determines which value lists are relevant. Filters out irrelevant value lists by using the
+	 * <code>aRawRelevantQualifiers</code> parameter.
+	 *
+	 * @param {object} mValueListByQualifier
+	 *   A map of qualifier to value list mapping objects that should be filtered
+	 * @param {object[]} aRawRelevantQualifiers
+	 *   The raw value of the "ValueListRelevantQualifiers" annotation
+	 * @param {string} sMetaPath
+	 *   Absolute path that points to the annotation
+	 * @param {sap.ui.model.odata.v4.Context} oContext
+	 *   Context to resolve edm:Path references contained in the annotation
+	 * @returns {Promise}
+	 *   A promise which is resolved with the filtered map of qualifier to value list mapping
+	 *   objects
+	 *
+	 * @private
+	 * @see #requestValueListInfo
+	 */
+	ODataMetaModel.prototype.filterValueListRelevantQualifiers = function (mValueListByQualifier,
+		aRawRelevantQualifiers, sMetaPath, oContext) {
+		return this.requestValue4Annotation(aRawRelevantQualifiers, sMetaPath, oContext)
+			.then(function (aRelevantQualifiers) {
+				var mValueListByRelevantQualifier = {};
+
+				aRelevantQualifiers.forEach(function (sKey) {
+					if (sKey in mValueListByQualifier) {
+						mValueListByRelevantQualifier[sKey] = mValueListByQualifier[sKey];
+					}
+				});
+
+				return mValueListByRelevantQualifier;
+			});
+	};
+
+	/**
 	 * Returns the absolute service URL corresponding to the given relative $metadata URL.
 	 *
 	 * @param {string} sUrl
@@ -3316,41 +3351,6 @@ sap.ui.define([
 				return mValueListByRelevantQualifier;
 			});
 		});
-	};
-
-	/**
-	 * Determines which value lists are relevant. Filters out irrelevant value lists by using the
-	 * <code>aRawRelevantQualifiers</code> parameter.
-	 *
-	 * @param {object} mValueListByQualifier
-	 *   A map of qualifier to value list mapping objects that should be filtered
-	 * @param {object[]} aRawRelevantQualifiers
-	 *   The raw value of the "ValueListRelevantQualifiers" annotation
-	 * @param {string} sMetaPath
-	 *   Absolute path that points to the annotation
-	 * @param {sap.ui.model.odata.v4.Context} oContext
-	 *   Context to resolve edm:Path references contained in the annotation
-	 * @returns {Promise}
-	 *   A promise which is resolved with the filtered map of qualifier to value list mapping
-	 *   objects
-	 *
-	 * @private
-	 * @see #requestValueListInfo
-	 */
-	ODataMetaModel.prototype.filterValueListRelevantQualifiers = function (mValueListByQualifier,
-		aRawRelevantQualifiers, sMetaPath, oContext) {
-		return this.requestValue4Annotation(aRawRelevantQualifiers, sMetaPath, oContext)
-			.then(function (aRelevantQualifiers) {
-				var mValueListByRelevantQualifier = {};
-
-				aRelevantQualifiers.forEach(function (sKey) {
-					if (sKey in mValueListByQualifier) {
-						mValueListByRelevantQualifier[sKey] = mValueListByQualifier[sKey];
-					}
-				});
-
-				return mValueListByRelevantQualifier;
-			});
 	};
 
 	/**

@@ -1143,6 +1143,32 @@ sap.ui.define([
 	 */
 
 	/**
+	 * Returns an array containing all current elements of a collection or single cache for the
+	 * given relative path; the array is annotated with the collection's $count. If there are
+	 * pending requests, the corresponding promises will be ignored and set to
+	 * <code>undefined</code>.
+	 *
+	 * @param {string} [sPath]
+	 *   Relative path to drill-down into, may be empty (only for collection cache)
+	 * @returns {object[]} The cache elements
+	 *
+	 * @public
+	 */
+	_Cache.prototype.getAllElements = function (sPath) {
+		var aAllElements;
+
+		if (sPath) {
+			return this.getValue(sPath);
+		}
+		aAllElements = this.aElements.map(function (oElement) {
+			return oElement instanceof SyncPromise ? undefined : oElement;
+		});
+		aAllElements.$count = this.aElements.$count;
+
+		return aAllElements;
+	};
+
+	/**
 	 * Returns the collection at the given path and removes it from the cache if it is marked as
 	 * transferable.
 	 *
@@ -1171,32 +1197,6 @@ sap.ui.define([
 		delete oParent[sName];
 
 		return vValue;
-	};
-
-	/**
-	 * Returns an array containing all current elements of a collection or single cache for the
-	 * given relative path; the array is annotated with the collection's $count. If there are
-	 * pending requests, the corresponding promises will be ignored and set to
-	 * <code>undefined</code>.
-	 *
-	 * @param {string} [sPath]
-	 *   Relative path to drill-down into, may be empty (only for collection cache)
-	 * @returns {object[]} The cache elements
-	 *
-	 * @public
-	 */
-	_Cache.prototype.getAllElements = function (sPath) {
-		var aAllElements;
-
-		if (sPath) {
-			return this.getValue(sPath);
-		}
-		aAllElements = this.aElements.map(function (oElement) {
-			return oElement instanceof SyncPromise ? undefined : oElement;
-		});
-		aAllElements.$count = this.aElements.$count;
-
-		return aAllElements;
 	};
 
 	/**
@@ -1295,6 +1295,17 @@ sap.ui.define([
 	};
 
 	/**
+	 * Gets the cache's resource path.
+	 *
+	 * @returns {string} The resource path
+	 *
+	 * @public
+	 */
+	_Cache.prototype.getResourcePath = function () {
+		return this.sResourcePath;
+	};
+
+	/**
 	 * Returns the existing map from meta path to type.
 	 *
 	 * @returns {Object<object>}
@@ -1320,17 +1331,6 @@ sap.ui.define([
 	// eslint-disable-next-line valid-jsdoc -- in the subclasses the function does return a value
 	_Cache.prototype.getValue = function (_sPath) {
 		throw new Error("Unsupported operation");
-	};
-
-	/**
-	 * Gets the cache's resource path.
-	 *
-	 * @returns {string} The resource path
-	 *
-	 * @public
-	 */
-	_Cache.prototype.getResourcePath = function () {
-		return this.sResourcePath;
 	};
 
 	/**
