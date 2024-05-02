@@ -6509,7 +6509,7 @@ sap.ui.define([
 	 *   <li>{@link #callFunction}.</li>
 	 * </ul>
 	 *
-	 * @param {array} [aPath]
+	 * @param {string[]} [aPath]
 	 *   Paths to be reset; if no array is passed, all changes are reset
 	 * @param {boolean} [bAll=false]
 	 *   Whether also deferred requests are taken into account so that they are aborted
@@ -6524,6 +6524,50 @@ sap.ui.define([
 	 * @see #hasPendingChanges
 	 */
 	ODataModel.prototype.resetChanges = function (aPath, bAll, bDeleteCreatedEntities) {
+		return this._resetChanges(aPath, bAll, bDeleteCreatedEntities);
+	};
+
+	/**
+	 * Resets pending changes and aborts corresponding requests as specified by {@link #resetChanges}, but does not
+	 * enforce a control update after resetting the changes.
+	 *
+	 * @param {string[]} [aPath]
+	 *   Paths to be reset; if no array is passed, all changes are reset
+	 * @param {boolean} [bAll=false]
+	 *   Whether also deferred requests are taken into account so that they are aborted
+	 * @param {boolean} [bDeleteCreatedEntities=false]
+	 *   Whether to delete the entities created via {@link #createEntry} or {@link #callFunction};
+	 *   since 1.95.0
+	 * @returns {Promise}
+	 *   Resolves when all regarded changes have been reset.
+	 *
+	 * @private
+	 * @since 1.125.0
+	 * @ui5-restricted sap.ui.comp.smartmultiinput
+	 */
+	ODataModel.prototype.resetChangesWithoutUpdate = function (aPath, bAll, bDeleteCreatedEntities) {
+		return this._resetChanges(aPath, bAll, bDeleteCreatedEntities, false);
+	};
+
+	/**
+	 * Resets pending changes and aborts corresponding requests as specified by {@link #resetChanges}, but in addition
+	 * allows to specify whether to enforce a control update after resetting the changes.
+	 *
+	 * @param {string[]} [aPath]
+	 *   Paths to be reset; if no array is passed, all changes are reset
+	 * @param {boolean} [bAll=false]
+	 *   Whether also deferred requests are taken into account so that they are aborted
+	 * @param {boolean} [bDeleteCreatedEntities=false]
+	 *   Whether to delete the entities created via {@link #createEntry} or {@link #callFunction};
+	 *   since 1.95.0
+	 * @param {boolean} [bForceUpdate=true]
+	 *   Whether to enforce a control update after resetting the changes
+	 * @returns {Promise}
+	 *   Resolves when all regarded changes have been reset.
+	 *
+	 * @private
+	 */
+	ODataModel.prototype._resetChanges = function (aPath, bAll, bDeleteCreatedEntities, bForceUpdate) {
 		var aRemoveKeys,
 			pMetaDataLoaded = this.oMetadata.loaded(),
 			aRemoveRootKeys = [],
@@ -6598,7 +6642,7 @@ sap.ui.define([
 				oBinding._resetChanges(aPath);
 			}
 		});
-		this.checkUpdate(true);
+		this.checkUpdate(bForceUpdate === undefined ? true : bForceUpdate);
 
 		return pMetaDataLoaded;
 	};

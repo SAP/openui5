@@ -6552,7 +6552,7 @@ sap.ui.define([
 	//*********************************************************************************************
 [false, true].forEach(function (bAll) {
 	[false, true].forEach(function (bDeleteCreatedEntities) {
-	var sTitle = "resetChanges: no paths; bAll=" + bAll + ", bDeleteCreatedEntities="
+	var sTitle = "_resetChanges: no paths; bAll=" + bAll + ", bDeleteCreatedEntities="
 		+ bDeleteCreatedEntities;
 
 	QUnit.test(sTitle, function (assert) {
@@ -6602,7 +6602,7 @@ sap.ui.define([
 
 		// code under test
 		assert.strictEqual(
-			ODataModel.prototype.resetChanges.call(oModel, undefined, bAll, bDeleteCreatedEntities),
+			ODataModel.prototype._resetChanges.call(oModel, undefined, bAll, bDeleteCreatedEntities),
 			oPromise);
 
 		oModelMock.expects("abortInternalRequest").withExactArgs("deferred0").exactly(bAll ? 1 : 0);
@@ -6623,7 +6623,7 @@ sap.ui.define([
 			{bDeleteEntity : undefined, oQuxMetadata : {}},
 			{bDeleteEntity : bDeleteCreatedEntities, oQuxMetadata : {created : {}}}
 		].forEach(function (oFixture) {
-	var sTitle = "resetChanges: with paths; bAll=" + bAll + ", bDeleteCreatedEntities="
+	var sTitle = "_resetChanges: with paths; bAll=" + bAll + ", bDeleteCreatedEntities="
 		+ bDeleteCreatedEntities + ", oMetadata=" + JSON.stringify(oFixture.oQuxMetadata);
 
 	QUnit.test(sTitle, function (assert) {
@@ -6738,7 +6738,7 @@ sap.ui.define([
 
 		// code under test
 		assert.strictEqual(
-			ODataModel.prototype.resetChanges.call(oModel,
+			ODataModel.prototype._resetChanges.call(oModel,
 				["/Z", "/Z/Y/X", "/Bar/P", "/Baz", "/Bar/Q/X", "/Qux", "/Foo/S"],
 				bAll, bDeleteCreatedEntities),
 			oPromise);
@@ -6778,7 +6778,7 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("resetChanges: calls oBinding._resetChanges", function (assert) {
+	QUnit.test("_resetChanges: calls oBinding._resetChanges", function (assert) {
 		var oBinding1 = {_resetChanges : function () {}},
 			oBinding2 = {_resetChanges : function () {}},
 			oModel = {
@@ -6797,8 +6797,57 @@ sap.ui.define([
 		this.mock(oModel).expects("checkUpdate").withExactArgs(true);
 
 		// code under test
-		assert.strictEqual(ODataModel.prototype.resetChanges.call(oModel, aPath),
+		assert.strictEqual(ODataModel.prototype._resetChanges.call(oModel, aPath),
 			"~pMetaDataLoaded");
+	});
+
+
+	//*********************************************************************************************
+	QUnit.test("_resetChanges: with bForceUpdate=false", function (assert) {
+		const oModel = {
+			oMetadata : {loaded() {}},
+			checkUpdate() {},
+			getBindings() {}
+		};
+
+		this.mock(oModel.oMetadata).expects("loaded").withExactArgs().returns("~pMetaDataLoaded");
+		this.mock(oModel).expects("getBindings").withExactArgs().returns([]);
+		this.mock(oModel).expects("checkUpdate").withExactArgs(false);
+
+		// code under test
+		assert.strictEqual(ODataModel.prototype._resetChanges.call(oModel, /*aPath*/ undefined, /*bAll*/ undefined,
+			/*bDeleteCreatedEntities*/ undefined, /*bForceUpdate*/ false), "~pMetaDataLoaded");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("resetChanges delegates to _resetChanges", function (assert) {
+		const oModel = {
+			_resetChanges() {}
+		};
+
+		this.mock(oModel).expects("_resetChanges")
+			.withExactArgs("~aPath", "~bAll", "~bDeleteCreated")
+			.returns("~pReturn");
+
+		// code under test
+		assert.strictEqual(ODataModel.prototype.resetChanges.call(oModel, "~aPath", "~bAll", "~bDeleteCreated"),
+			"~pReturn");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("resetChangesWithoutUpdate delegates to _resetChanges", function (assert) {
+		const oModel = {
+			_resetChanges() {}
+		};
+
+		this.mock(oModel).expects("_resetChanges")
+			.withExactArgs("~aPath", "~bAll", "~bDeleteCreated", false)
+			.returns("~pReturn");
+
+		// code under test
+		assert.strictEqual(
+			ODataModel.prototype.resetChangesWithoutUpdate.call(oModel, "~aPath", "~bAll", "~bDeleteCreated"),
+			"~pReturn");
 	});
 
 	//*********************************************************************************************
