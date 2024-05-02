@@ -14,7 +14,7 @@
 						<Button id="rebind" text="Initialize" press="onRebind"/>
 					</Toolbar>
 				</headerToolbar>
-				<form:SimpleForm editable="true" layout="ColumnLayout">
+				<form:SimpleForm editable="true" layout="ResponsiveGridLayout">
 					<core:Title text="Value field"/>
 					<Label text="Value"/>
 					<Input id="valueContent" value="{init>/initialValue/content}"/>
@@ -37,9 +37,9 @@
 				</form:SimpleForm>
 			</Panel>
 			<Toolbar design="Transparent">
-				<Title level="H2" text="Two Fields"/>
+				<Title id="title1" level="H2" text="Two Fields"/>
 			</Toolbar>
-			<form:SimpleForm editable="true" layout="ColumnLayout">
+			<form:SimpleForm editable="true" layout="ResponsiveGridLayout" ariaLabelledBy="title1">
 				<Label text="Value"/>
 				<Input editable="{/valueEditable}" enabled="{/valueEnabled}" id="value"/>
 				<Label id="unitLabel"/>
@@ -48,9 +48,9 @@
 				<Text text="{= 'value=' + ${/value} + ', unit=' + ${/unit} }"/>
 			</form:SimpleForm>
 			<Toolbar design="Transparent">
-				<Title level="H2" text="One Field"/>
+				<Title id="title2" level="H2" text="One Field"/>
 			</Toolbar>
-			<form:SimpleForm editable="true" layout="ColumnLayout">
+			<form:SimpleForm editable="true" layout="ResponsiveGridLayout" ariaLabelledBy="title2">
 				<Label text="Amount"/>
 				<Input editable="true" id="full"/>
 			</form:SimpleForm>
