@@ -1,19 +1,23 @@
 <mvc:View
+	class="sapUiSizeCompact"
 	controllerName="sap.ui.core.internal.samples.client.MusicCollection.Main"
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:t="sap.ui.table">
 	<App>
 		<Page>
-		<Toolbar>
-			<Title level="H1" text="{ui>/itemsCount} Items"/>
-		</Toolbar>
 		<t:TreeTable id="treetable"
+			ariaLabelledBy="title"
 			rows="{
 				events : {change : '.onUpdateItemsCount'},
 				path : '/root',
 				parameters : {numberOfExpandedLevels : 1}
 			}">
+			<t:extension>
+				<Toolbar>
+					<Title id="title" level="H1" text="{ui>/itemsCount} Items"/>
+				</Toolbar>
+			</t:extension>
 			<t:columns>
 				<t:Column filterProperty="name">
 					<Label text="Name"></Label>
