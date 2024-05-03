@@ -340,66 +340,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Converts the resource path. Transforms literals in key predicates from V4 to V2 syntax.
-	 *
-	 * @param {string} sResourcePath The V4 resource path
-	 * @returns {string} The resource path as required for V2
-	 *
-	 * @public
-	 */
-	// @override sap.ui.model.odata.v4.lib._Requestor#convertResourcePath
-	_V2Requestor.convertResourcePath = function (sResourcePath) {
-		var iIndex = sResourcePath.indexOf("?"),
-			sQueryString = "",
-			aSegments,
-			iSubPathLength = -1,
-			that = this;
-
-		if (iIndex > 0) {
-			sQueryString = sResourcePath.slice(iIndex);
-			sResourcePath = sResourcePath.slice(0, iIndex);
-		}
-		aSegments = sResourcePath.split("/");
-		return aSegments.map(function (sSegment) {
-			var aMatches = rSegmentWithPredicate.exec(sSegment);
-
-			iSubPathLength += sSegment.length + 1;
-			if (aMatches) {
-				sSegment = aMatches[1] + that.convertKeyPredicate(aMatches[2],
-					"/" + sResourcePath.slice(0, iSubPathLength));
-			}
-			return sSegment;
-		}).join("/") + sQueryString;
-	};
-
-	/**
-	 * Converts an OData V2 value of type Edm.Time to the corresponding OData V4 Edm.TimeOfDay value
-	 *
-	 * @param {string} sV2Value
-	 *   The OData V2 value
-	 * @returns {string}
-	 *   The corresponding OData V4 value
-	 * @throws {Error}
-	 *   If the V2 value is not convertible
-	 *
-	 * @private
-	 */
-	_V2Requestor.convertTimeOfDay = function (sV2Value) {
-		var oDate,
-			aMatches = rTime.exec(sV2Value),
-			iTicks;
-
-		if (!aMatches) {
-			throw new Error("Not a valid Edm.Time value '" + sV2Value + "'");
-		}
-
-		iTicks = Date.UTC(1970, 0, 1, aMatches[1] || 0, aMatches[2] || 0, aMatches[3] || 0);
-		// no need to use UI5Date.getInstance as only UTC is relevant
-		oDate = new Date(iTicks);
-		return oTimeFormatter.format(oDate) + (aMatches[4] || "");
-	};
-
-	/**
 	 * Converts a complex value or a collection of complex values from an OData V2 response payload
 	 * to an object in OData V4 JSON format.
 	 *
@@ -505,6 +445,66 @@ sap.ui.define([
 					+ "' of property '" + sPropertyName + "' in type '" + sTypeName
 					+ "' is unknown; cannot convert value: " + vValue);
 		}
+	};
+
+	/**
+	 * Converts the resource path. Transforms literals in key predicates from V4 to V2 syntax.
+	 *
+	 * @param {string} sResourcePath The V4 resource path
+	 * @returns {string} The resource path as required for V2
+	 *
+	 * @public
+	 */
+	// @override sap.ui.model.odata.v4.lib._Requestor#convertResourcePath
+	_V2Requestor.convertResourcePath = function (sResourcePath) {
+		var iIndex = sResourcePath.indexOf("?"),
+			sQueryString = "",
+			aSegments,
+			iSubPathLength = -1,
+			that = this;
+
+		if (iIndex > 0) {
+			sQueryString = sResourcePath.slice(iIndex);
+			sResourcePath = sResourcePath.slice(0, iIndex);
+		}
+		aSegments = sResourcePath.split("/");
+		return aSegments.map(function (sSegment) {
+			var aMatches = rSegmentWithPredicate.exec(sSegment);
+
+			iSubPathLength += sSegment.length + 1;
+			if (aMatches) {
+				sSegment = aMatches[1] + that.convertKeyPredicate(aMatches[2],
+					"/" + sResourcePath.slice(0, iSubPathLength));
+			}
+			return sSegment;
+		}).join("/") + sQueryString;
+	};
+
+	/**
+	 * Converts an OData V2 value of type Edm.Time to the corresponding OData V4 Edm.TimeOfDay value
+	 *
+	 * @param {string} sV2Value
+	 *   The OData V2 value
+	 * @returns {string}
+	 *   The corresponding OData V4 value
+	 * @throws {Error}
+	 *   If the V2 value is not convertible
+	 *
+	 * @private
+	 */
+	_V2Requestor.convertTimeOfDay = function (sV2Value) {
+		var oDate,
+			aMatches = rTime.exec(sV2Value),
+			iTicks;
+
+		if (!aMatches) {
+			throw new Error("Not a valid Edm.Time value '" + sV2Value + "'");
+		}
+
+		iTicks = Date.UTC(1970, 0, 1, aMatches[1] || 0, aMatches[2] || 0, aMatches[3] || 0);
+		// no need to use UI5Date.getInstance as only UTC is relevant
+		oDate = new Date(iTicks);
+		return oTimeFormatter.format(oDate) + (aMatches[4] || "");
 	};
 
 	/**

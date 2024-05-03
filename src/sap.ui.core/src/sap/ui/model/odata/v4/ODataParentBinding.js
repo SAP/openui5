@@ -49,134 +49,6 @@ sap.ui.define([
 	var sClassName = "sap.ui.model.odata.v4.ODataParentBinding";
 
 	/**
-	 * Attach event handler <code>fnFunction</code> to the 'patchCompleted' event of this binding.
-	 *
-	 * @param {function} fnFunction The function to call when the event occurs
-	 * @param {object} [oListener] Object on which to call the given function
-	 * @returns {this} <code>this</code> to allow method chaining
-	 *
-	 * @public
-	 * @since 1.59.0
-	 */
-	ODataParentBinding.prototype.attachPatchCompleted = function (fnFunction, oListener) {
-		return this.attachEvent("patchCompleted", fnFunction, oListener);
-	};
-
-	/**
-	 * Detach event handler <code>fnFunction</code> from the 'patchCompleted' event of this binding.
-	 *
-	 * @param {function} fnFunction The function to call when the event occurs
-	 * @param {object} [oListener] Object on which to call the given function
-	 * @returns {this} <code>this</code> to allow method chaining
-	 *
-	 * @public
-	 * @since 1.59.0
-	 */
-	ODataParentBinding.prototype.detachPatchCompleted = function (fnFunction, oListener) {
-		return this.detachEvent("patchCompleted", fnFunction, oListener);
-	};
-
-	/**
-	 * Handles exceptional cases of setting the property with the given path to the given value.
-	 *
-	 * @param {string} sPath
-	 *   A path (absolute or relative to this binding)
-	 * @param {any} vValue
-	 *   The new value which must be primitive
-	 * @param {sap.ui.model.odata.v4.lib._GroupLock} [oGroupLock]
-	 *   A lock for the group ID to be used for the PATCH request; without a lock, no PATCH is sent
-	 * @returns {sap.ui.base.SyncPromise|undefined}
-	 *   <code>undefined</code> for the general case which is handled generically by the caller
-	 *   {@link sap.ui.model.odata.v4.Context#doSetProperty} or a <code>SyncPromise</code> for the
-	 *   exceptional case
-	 *
-	 * @abstract
-	 * @function
-	 * @name sap.ui.model.odata.v4.ODataParentBinding#doSetProperty
-	 * @private
-	 */
-
-	/**
-	 * Binding specific code for suspend.
-	 *
-	 * @private
-	 */
-	ODataParentBinding.prototype.doSuspend = function () {
-		// nothing to do here
-	};
-
-	/**
-	 * Finds the context that matches the given canonical path.
-	 *
-	 * @param {string} sCanonicalPath
-	 *   The canonical path of an entity (as a context path with the leading "/")
-	 * @returns {sap.ui.model.odata.v4.Context}
-	 *   A matching context or <code>undefined</code> if there is none
-	 *
-	 * @function
-	 * @name sap.ui.model.odata.v4.ODataParentBinding#findContextForCanonicalPath
-	 * @private
-	 */
-
-	/**
-	 * Fire event 'patchCompleted' to attached listeners, if the last PATCH request is completed.
-	 *
-	 * @param {boolean} bSuccess Whether the current PATCH request has been processed successfully
-	 * @private
-	 */
-	ODataParentBinding.prototype.firePatchCompleted = function (bSuccess) {
-		if (this.iPatchCounter === 0) {
-			throw new Error("Completed more PATCH requests than sent");
-		}
-		this.iPatchCounter -= 1;
-		this.bPatchSuccess &&= bSuccess;
-		if (this.iPatchCounter === 0) {
-			this.fireEvent("patchCompleted", {success : this.bPatchSuccess});
-			this.bPatchSuccess = true;
-		}
-	};
-
-	/**
-	 * Attach event handler <code>fnFunction</code> to the 'patchSent' event of this binding.
-	 *
-	 * @param {function} fnFunction The function to call when the event occurs
-	 * @param {object} [oListener] Object on which to call the given function
-	 * @returns {this} <code>this</code> to allow method chaining
-	 *
-	 * @public
-	 * @since 1.59.0
-	 */
-	ODataParentBinding.prototype.attachPatchSent = function (fnFunction, oListener) {
-		return this.attachEvent("patchSent", fnFunction, oListener);
-	};
-
-	/**
-	 * Detach event handler <code>fnFunction</code> from the 'patchSent' event of this binding.
-	 *
-	 * @param {function} fnFunction The function to call when the event occurs
-	 * @param {object} [oListener] Object on which to call the given function
-	 * @returns {this} <code>this</code> to allow method chaining
-	 *
-	 * @public
-	 * @since 1.59.0
-	 */
-	ODataParentBinding.prototype.detachPatchSent = function (fnFunction, oListener) {
-		return this.detachEvent("patchSent", fnFunction, oListener);
-	};
-
-	/**
-	 * Fire event 'patchSent' to attached listeners, if the first PATCH request is sent.
-	 *
-	 * @private
-	 */
-	ODataParentBinding.prototype.firePatchSent = function () {
-		this.iPatchCounter += 1;
-		if (this.iPatchCounter === 1) {
-			this.fireEvent("patchSent");
-		}
-	};
-
-	/**
 	 * Find the context in the uppermost binding in the hierarchy that can be reached with an empty
 	 * path.
 	 *
@@ -192,6 +64,53 @@ sap.ui.define([
 			return this.oContext.getBinding()._findEmptyPathParentContext(this.oContext);
 		}
 		return oContext;
+	};
+
+	/**
+	 * Resumes this binding. The binding can again fire change events and initiate data service
+	 * requests.
+	 *
+	 * @param {boolean} bAsPrerenderingTask
+	 *   Whether resume is done as a prerendering task
+	 * @throws {Error}
+	 *   If this binding is relative to an {@link sap.ui.model.odata.v4.Context} or if it is an
+	 *   operation binding or if it is not suspended
+	 *
+	 * @private
+	 * @see #suspend
+	 */
+	ODataParentBinding.prototype._resume = function (bAsPrerenderingTask) {
+		var that = this;
+
+		function doResume() {
+			that.bSuspended = false;
+			if (that.oResumePromise) {
+				that.resumeInternal(true);
+				that.oResumePromise.$resolve();
+				that.oResumePromise = undefined;
+			}
+		}
+
+		if (this.oOperation) {
+			throw new Error("Cannot resume an operation binding: " + this);
+		}
+		if (!this.isRoot()) {
+			throw new Error("Cannot resume a relative binding: " + this);
+		}
+		if (!this.bSuspended) {
+			throw new Error("Cannot resume a not suspended binding: " + this);
+		}
+
+		if (bAsPrerenderingTask) {
+			// wait one additional prerendering because resume itself starts in a prerendering task
+			this.createReadGroupLock(this.getGroupId(), true, 1);
+			// dependent bindings are only removed in a *new task* in ManagedObject#updateBindings
+			// => must only resume in prerendering task
+			this.oModel.addPrerenderingTask(doResume);
+		} else {
+			this.createReadGroupLock(this.getGroupId(), true);
+			doResume();
+		}
 	};
 
 	/**
@@ -321,6 +240,34 @@ sap.ui.define([
 			return true;
 		}
 		return false;
+	};
+
+	/**
+	 * Attach event handler <code>fnFunction</code> to the 'patchCompleted' event of this binding.
+	 *
+	 * @param {function} fnFunction The function to call when the event occurs
+	 * @param {object} [oListener] Object on which to call the given function
+	 * @returns {this} <code>this</code> to allow method chaining
+	 *
+	 * @public
+	 * @since 1.59.0
+	 */
+	ODataParentBinding.prototype.attachPatchCompleted = function (fnFunction, oListener) {
+		return this.attachEvent("patchCompleted", fnFunction, oListener);
+	};
+
+	/**
+	 * Attach event handler <code>fnFunction</code> to the 'patchSent' event of this binding.
+	 *
+	 * @param {function} fnFunction The function to call when the event occurs
+	 * @param {object} [oListener] Object on which to call the given function
+	 * @returns {this} <code>this</code> to allow method chaining
+	 *
+	 * @public
+	 * @since 1.59.0
+	 */
+	ODataParentBinding.prototype.attachPatchSent = function (fnFunction, oListener) {
+		return this.attachEvent("patchSent", fnFunction, oListener);
 	};
 
 	/**
@@ -704,6 +651,63 @@ sap.ui.define([
 	};
 
 	/**
+	 * Detach event handler <code>fnFunction</code> from the 'patchCompleted' event of this binding.
+	 *
+	 * @param {function} fnFunction The function to call when the event occurs
+	 * @param {object} [oListener] Object on which to call the given function
+	 * @returns {this} <code>this</code> to allow method chaining
+	 *
+	 * @public
+	 * @since 1.59.0
+	 */
+	ODataParentBinding.prototype.detachPatchCompleted = function (fnFunction, oListener) {
+		return this.detachEvent("patchCompleted", fnFunction, oListener);
+	};
+
+	/**
+	 * Detach event handler <code>fnFunction</code> from the 'patchSent' event of this binding.
+	 *
+	 * @param {function} fnFunction The function to call when the event occurs
+	 * @param {object} [oListener] Object on which to call the given function
+	 * @returns {this} <code>this</code> to allow method chaining
+	 *
+	 * @public
+	 * @since 1.59.0
+	 */
+	ODataParentBinding.prototype.detachPatchSent = function (fnFunction, oListener) {
+		return this.detachEvent("patchSent", fnFunction, oListener);
+	};
+
+	/**
+	 * Handles exceptional cases of setting the property with the given path to the given value.
+	 *
+	 * @param {string} sPath
+	 *   A path (absolute or relative to this binding)
+	 * @param {any} vValue
+	 *   The new value which must be primitive
+	 * @param {sap.ui.model.odata.v4.lib._GroupLock} [oGroupLock]
+	 *   A lock for the group ID to be used for the PATCH request; without a lock, no PATCH is sent
+	 * @returns {sap.ui.base.SyncPromise|undefined}
+	 *   <code>undefined</code> for the general case which is handled generically by the caller
+	 *   {@link sap.ui.model.odata.v4.Context#doSetProperty} or a <code>SyncPromise</code> for the
+	 *   exceptional case
+	 *
+	 * @abstract
+	 * @function
+	 * @name sap.ui.model.odata.v4.ODataParentBinding#doSetProperty
+	 * @private
+	 */
+
+	/**
+	 * Binding specific code for suspend.
+	 *
+	 * @private
+	 */
+	ODataParentBinding.prototype.doSuspend = function () {
+		// nothing to do here
+	};
+
+	/**
 	 * Determines whether a child binding with the given context and path can use
 	 * the cache of this binding or one of its ancestor bindings. If this is the case, enhances
 	 * the aggregated query options of this binding with the query options computed from the child
@@ -995,6 +999,49 @@ sap.ui.define([
 	};
 
 	/**
+	 * Finds the context that matches the given canonical path.
+	 *
+	 * @param {string} sCanonicalPath
+	 *   The canonical path of an entity (as a context path with the leading "/")
+	 * @returns {sap.ui.model.odata.v4.Context}
+	 *   A matching context or <code>undefined</code> if there is none
+	 *
+	 * @function
+	 * @name sap.ui.model.odata.v4.ODataParentBinding#findContextForCanonicalPath
+	 * @private
+	 */
+
+	/**
+	 * Fire event 'patchCompleted' to attached listeners, if the last PATCH request is completed.
+	 *
+	 * @param {boolean} bSuccess Whether the current PATCH request has been processed successfully
+	 * @private
+	 */
+	ODataParentBinding.prototype.firePatchCompleted = function (bSuccess) {
+		if (this.iPatchCounter === 0) {
+			throw new Error("Completed more PATCH requests than sent");
+		}
+		this.iPatchCounter -= 1;
+		this.bPatchSuccess &&= bSuccess;
+		if (this.iPatchCounter === 0) {
+			this.fireEvent("patchCompleted", {success : this.bPatchSuccess});
+			this.bPatchSuccess = true;
+		}
+	};
+
+	/**
+	 * Fire event 'patchSent' to attached listeners, if the first PATCH request is sent.
+	 *
+	 * @private
+	 */
+	ODataParentBinding.prototype.firePatchSent = function () {
+		this.iPatchCounter += 1;
+		if (this.iPatchCounter === 1) {
+			this.fireEvent("patchSent");
+		}
+	};
+
+	/**
 	 * Returns the absolute base path used for path reduction of child (property) bindings. This is
 	 * the shortest possible path of a binding that may carry the data for the reduced path. A
 	 * parent binding is not eligible if it uses a different update group with submit mode API.
@@ -1019,6 +1066,19 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the unique number of this bindings's generation, or <code>0</code> if it does not
+	 * belong to any specific generation. This number can be inherited from a parent context.
+	 *
+	 * @returns {number}
+	 *   The unique number of this binding's generation, or <code>0</code>
+	 *
+	 * @private
+	 */
+	ODataParentBinding.prototype.getGeneration = function () {
+		return this.bRelative && this.oContext.getGeneration && this.oContext.getGeneration() || 0;
+	};
+
+	/**
 	 * Returns the query options that can be inherited from this binding, including late query
 	 * options.
 	 *
@@ -1034,19 +1094,6 @@ sap.ui.define([
 		return this.mCacheQueryOptions
 			|| _Helper.getQueryOptionsForPath(
 				this.oContext.getBinding().getInheritableQueryOptions(), this.sPath);
-	};
-
-	/**
-	 * Returns the unique number of this bindings's generation, or <code>0</code> if it does not
-	 * belong to any specific generation. This number can be inherited from a parent context.
-	 *
-	 * @returns {number}
-	 *   The unique number of this binding's generation, or <code>0</code>
-	 *
-	 * @private
-	 */
-	ODataParentBinding.prototype.getGeneration = function () {
-		return this.bRelative && this.oContext.getGeneration && this.oContext.getGeneration() || 0;
 	};
 
 	/**
@@ -1307,22 +1354,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Resumes this binding and all dependent bindings, fires a change or refresh event afterwards.
-	 *
-	 * @param {boolean} bCheckUpdate
-	 *   Parameter is ignored; dependent property bindings of a list binding never call checkUpdate
-	 * @param {boolean} [bParentHasChanges]
-	 *   Whether there are changes on the parent binding that become active after resuming. If
-	 *   <code>true</code>, this binding is allowed to reuse the parent cache, otherwise this
-	 *   binding has to create its own cache
-	 *
-	 * @abstract
-	 * @function
-	 * @name sap.ui.model.odata.v4.ODataParentBinding#resumeInternal
-	 * @private
-	 */
-
-	/**
 	 * If there is a refresh promise created by {@link #createRefreshPromise}, it is resolved with
 	 * the given promise and cleared. Does not reject the refresh promise with a canceled error.
 	 *
@@ -1341,53 +1372,6 @@ sap.ui.define([
 			this.oRefreshPromise = null;
 		}
 		return oPromise;
-	};
-
-	/**
-	 * Resumes this binding. The binding can again fire change events and initiate data service
-	 * requests.
-	 *
-	 * @param {boolean} bAsPrerenderingTask
-	 *   Whether resume is done as a prerendering task
-	 * @throws {Error}
-	 *   If this binding is relative to an {@link sap.ui.model.odata.v4.Context} or if it is an
-	 *   operation binding or if it is not suspended
-	 *
-	 * @private
-	 * @see #suspend
-	 */
-	ODataParentBinding.prototype._resume = function (bAsPrerenderingTask) {
-		var that = this;
-
-		function doResume() {
-			that.bSuspended = false;
-			if (that.oResumePromise) {
-				that.resumeInternal(true);
-				that.oResumePromise.$resolve();
-				that.oResumePromise = undefined;
-			}
-		}
-
-		if (this.oOperation) {
-			throw new Error("Cannot resume an operation binding: " + this);
-		}
-		if (!this.isRoot()) {
-			throw new Error("Cannot resume a relative binding: " + this);
-		}
-		if (!this.bSuspended) {
-			throw new Error("Cannot resume a not suspended binding: " + this);
-		}
-
-		if (bAsPrerenderingTask) {
-			// wait one additional prerendering because resume itself starts in a prerendering task
-			this.createReadGroupLock(this.getGroupId(), true, 1);
-			// dependent bindings are only removed in a *new task* in ManagedObject#updateBindings
-			// => must only resume in prerendering task
-			this.oModel.addPrerenderingTask(doResume);
-		} else {
-			this.createReadGroupLock(this.getGroupId(), true);
-			doResume();
-		}
 	};
 
 	/**
@@ -1436,6 +1420,22 @@ sap.ui.define([
 		this._resume(true);
 		return Promise.resolve(this.oResumePromise);
 	};
+
+	/**
+	 * Resumes this binding and all dependent bindings, fires a change or refresh event afterwards.
+	 *
+	 * @param {boolean} bCheckUpdate
+	 *   Parameter is ignored; dependent property bindings of a list binding never call checkUpdate
+	 * @param {boolean} [bParentHasChanges]
+	 *   Whether there are changes on the parent binding that become active after resuming. If
+	 *   <code>true</code>, this binding is allowed to reuse the parent cache, otherwise this
+	 *   binding has to create its own cache
+	 *
+	 * @abstract
+	 * @function
+	 * @name sap.ui.model.odata.v4.ODataParentBinding#resumeInternal
+	 * @private
+	 */
 
 	/**
 	 * Adds the key properties of the entity reached by the given navigation property path to

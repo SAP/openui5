@@ -1060,32 +1060,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Tells whether there are only PATCH requests with the "Prefer" header set to "return=minimal"
-	 * (results from using $$patchWithoutSideEffects=true) enqueued in the batch queue with the
-	 * given group ID.
-	 *
-	 * @param {string} sGroupId
-	 *   The group ID
-	 * @returns {boolean}
-	 *   Returns <code>true</code> if only PATCHes are enqueued in the batch queue with the given
-	 *   group ID
-	 *
-	 * @private
-	 */
-	_Requestor.prototype.hasOnlyPatchesWithoutSideEffects = function (sGroupId) {
-		return this.getGroupSubmitMode(sGroupId) === "Auto"
-			&& !!this.mBatchQueue[sGroupId]
-			&& this.mBatchQueue[sGroupId].every(function (vChangeSetOrRequest) {
-				// PATCH requests must be in a change set which is modeled as an array
-				return Array.isArray(vChangeSetOrRequest)
-					&& vChangeSetOrRequest.every(function (oRequest) {
-					return oRequest.method === "PATCH"
-						&& oRequest.headers.Prefer === "return=minimal";
-				});
-			});
-	};
-
-	/**
 	 * Tells whether there are changes (that is, updates via PATCH or bound actions via POST) for
 	 * the given group ID and given entity.
 	 *
@@ -1109,6 +1083,32 @@ sap.ui.define([
 			});
 		}
 		return false;
+	};
+
+	/**
+	 * Tells whether there are only PATCH requests with the "Prefer" header set to "return=minimal"
+	 * (results from using $$patchWithoutSideEffects=true) enqueued in the batch queue with the
+	 * given group ID.
+	 *
+	 * @param {string} sGroupId
+	 *   The group ID
+	 * @returns {boolean}
+	 *   Returns <code>true</code> if only PATCHes are enqueued in the batch queue with the given
+	 *   group ID
+	 *
+	 * @private
+	 */
+	_Requestor.prototype.hasOnlyPatchesWithoutSideEffects = function (sGroupId) {
+		return this.getGroupSubmitMode(sGroupId) === "Auto"
+			&& !!this.mBatchQueue[sGroupId]
+			&& this.mBatchQueue[sGroupId].every(function (vChangeSetOrRequest) {
+				// PATCH requests must be in a change set which is modeled as an array
+				return Array.isArray(vChangeSetOrRequest)
+					&& vChangeSetOrRequest.every(function (oRequest) {
+					return oRequest.method === "PATCH"
+						&& oRequest.headers.Prefer === "return=minimal";
+				});
+			});
 	};
 
 	/**
@@ -1186,6 +1186,46 @@ sap.ui.define([
 	 */
 	_Requestor.prototype.isChangeSetOptional = function () {
 		return true;
+	};
+
+	/**
+	 * Creates a group lock for the given group.
+	 *
+	 * A group lock is a hint that a request is expected which may be added asynchronously.
+	 * If the expected request must be part of the next batch request for that group,
+	 * <code>bLocked</code> needs to be set to <code>true</code>. {@link #submitBatch} waits until
+	 * all group locks for that group are unlocked again. A group lock is automatically unlocked if
+	 * {@link #request} is called with that group lock. If the caller of {@link #lockGroup}
+	 * recognizes that no request needs to be added, the caller must unlock the group lock. In case
+	 * of an error the caller of {@link #lockGroup} must call
+	 * {@link sap.ui.model.odata.v4.lib._GroupLock#unlock} with <code>bForce = true</code>.
+	 *
+	 * @param {string} sGroupId
+	 *   The group ID
+	 * @param {object} oOwner
+	 *   The lock's owner for debugging
+	 * @param {boolean} [bLocked]
+	 *   Whether the created lock is locked
+	 * @param {boolean} [bModifying]
+	 *   Whether the reason for the group lock is a modifying request
+	 * @param {function} [fnCancel]
+	 *   Function that is called when the group lock is canceled
+	 * @returns {sap.ui.model.odata.v4.lib._GroupLock}
+	 *   The group lock
+	 * @throws {Error}
+	 *   If <code>bModifying</code> is set but <code>bLocked</code> is unset.
+	 *
+	 * @public
+	 */
+	_Requestor.prototype.lockGroup = function (sGroupId, oOwner, bLocked, bModifying, fnCancel) {
+		var oGroupLock;
+
+		oGroupLock = new _GroupLock(sGroupId, oOwner, bLocked, bModifying, this.getSerialNumber(),
+			fnCancel);
+		if (bLocked) {
+			this.aLockedGroupLocks.push(oGroupLock);
+		}
+		return oGroupLock;
 	};
 
 	/**
@@ -1380,58 +1420,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns a sync promise that is resolved when the requestor is ready to be used. The V4
-	 * requestor is ready immediately. Subclasses may behave differently.
-	 *
-	 * @returns {sap.ui.base.SyncPromise} A sync promise that is resolved immediately with no result
-	 *
-	 * @public
-	 */
-	_Requestor.prototype.ready = function () {
-		return SyncPromise.resolve();
-	};
-
-	/**
-	 * Creates a group lock for the given group.
-	 *
-	 * A group lock is a hint that a request is expected which may be added asynchronously.
-	 * If the expected request must be part of the next batch request for that group,
-	 * <code>bLocked</code> needs to be set to <code>true</code>. {@link #submitBatch} waits until
-	 * all group locks for that group are unlocked again. A group lock is automatically unlocked if
-	 * {@link #request} is called with that group lock. If the caller of {@link #lockGroup}
-	 * recognizes that no request needs to be added, the caller must unlock the group lock. In case
-	 * of an error the caller of {@link #lockGroup} must call
-	 * {@link sap.ui.model.odata.v4.lib._GroupLock#unlock} with <code>bForce = true</code>.
-	 *
-	 * @param {string} sGroupId
-	 *   The group ID
-	 * @param {object} oOwner
-	 *   The lock's owner for debugging
-	 * @param {boolean} [bLocked]
-	 *   Whether the created lock is locked
-	 * @param {boolean} [bModifying]
-	 *   Whether the reason for the group lock is a modifying request
-	 * @param {function} [fnCancel]
-	 *   Function that is called when the group lock is canceled
-	 * @returns {sap.ui.model.odata.v4.lib._GroupLock}
-	 *   The group lock
-	 * @throws {Error}
-	 *   If <code>bModifying</code> is set but <code>bLocked</code> is unset.
-	 *
-	 * @public
-	 */
-	_Requestor.prototype.lockGroup = function (sGroupId, oOwner, bLocked, bModifying, fnCancel) {
-		var oGroupLock;
-
-		oGroupLock = new _GroupLock(sGroupId, oOwner, bLocked, bModifying, this.getSerialNumber(),
-			fnCancel);
-		if (bLocked) {
-			this.aLockedGroupLocks.push(oGroupLock);
-		}
-		return oGroupLock;
-	};
-
-	/**
 	 * This function has two tasks:
 	 * <ul>
 	 *   <li> We are in the 1st app start, no optimistic batch payload stored so far. If optimistic
@@ -1550,6 +1538,18 @@ sap.ui.define([
 				return true;
 			}
 		});
+	};
+
+	/**
+	 * Returns a sync promise that is resolved when the requestor is ready to be used. The V4
+	 * requestor is ready immediately. Subclasses may behave differently.
+	 *
+	 * @returns {sap.ui.base.SyncPromise} A sync promise that is resolved immediately with no result
+	 *
+	 * @public
+	 */
+	_Requestor.prototype.ready = function () {
+		return SyncPromise.resolve();
 	};
 
 	/**

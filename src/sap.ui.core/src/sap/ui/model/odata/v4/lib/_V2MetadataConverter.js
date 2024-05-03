@@ -769,6 +769,26 @@ sap.ui.define([
 	};
 
 	/**
+	 * Post-processing of all bound operations: key properties are removed from parameters.
+	 */
+	_V2MetadataConverter.prototype.processBoundOperations = function () {
+		var that = this;
+
+		this.aBoundOperations.forEach(function (oOperation) {
+			var oEntityType = that.result[oOperation.$Parameter[0].$Type];
+
+			oEntityType.$Key.forEach(function (sKeyName) {
+				oOperation.$Parameter.some(function (oParameter, i) {
+					if (oParameter.$Name === sKeyName) {
+						oOperation.$Parameter.splice(i, 1);
+						return true;
+					}
+				});
+			});
+		});
+	};
+
+	/**
 	 * Processes a ComplexType element.
 	 *
 	 * @param {Element} oElement The element
@@ -1298,26 +1318,6 @@ sap.ui.define([
 			pushPropertyPath("@Org.OData.Capabilities.V1.SortRestrictions",
 				"NonSortableProperties", "sortable");
 		}
-	};
-
-	/**
-	 * Post-processing of all bound operations: key properties are removed from parameters.
-	 */
-	_V2MetadataConverter.prototype.processBoundOperations = function () {
-		var that = this;
-
-		this.aBoundOperations.forEach(function (oOperation) {
-			var oEntityType = that.result[oOperation.$Parameter[0].$Type];
-
-			oEntityType.$Key.forEach(function (sKeyName) {
-				oOperation.$Parameter.some(function (oParameter, i) {
-					if (oParameter.$Name === sKeyName) {
-						oOperation.$Parameter.splice(i, 1);
-						return true;
-					}
-				});
-			});
-		});
 	};
 
 	/**
