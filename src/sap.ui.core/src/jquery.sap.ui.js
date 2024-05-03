@@ -30,7 +30,7 @@ sap.ui.define([
 	 * @name jQuery#root
 	 * @function
 	 * @public
-	 * @deprecated since 1.58
+	 * @deprecated as of version 1.58. Use {@link sap.ui.core.Control#placeAt Control#placeAt} instead for adding a control, or use {@link sap.ui.core.UIArea#getContent} to retrieve a content control.
 	 */
 	jQuery.fn.root = function(oRootControl) {
 		// handle 'setRoot'
@@ -69,7 +69,11 @@ sap.ui.define([
 	 * @name jQuery#uiarea
 	 * @function
 	 * @public
-	 * @deprecated since 1.58
+	 * @deprecated As of version 1.58. Applications should
+	 *    not be interested in a certain <code>UIArea</code>. They should only
+	 *    assign controls by using {@link sap.ui.core.Control.prototype.placeAt
+	 *    Control.prototype.placeAt} or by the API of a <code>UIArea</code> as reachable
+	 *    via {@link sap.ui.core.Control.prototype.getUIArea Control.prototype.getUIArea}.
 	 */
 	jQuery.fn.uiarea = function(iIdx) {
 		// UIAreas need to have IDs... so reduce to those elements first
