@@ -60,6 +60,23 @@ sap.ui.define([
 				this.oConfigurationStub.restore();
 				this.oConfigurationStub = null;
 			}
+		},
+		assertModelInstances: function(mClasses) {
+			this.mModels = {};
+			for (var sName in mClasses) {
+				var oClass = mClasses[sName];
+				var oModel = this.oComponent.getModel(sName || undefined);
+				this.mModels[sName] = oModel;
+				QUnit.assert.ok(oModel instanceof oClass,
+					'Expected model "' + sName + '" to be an instance of ' + oClass.getMetadata().getName());
+			}
+		},
+		assertModelsDestroyed: function() {
+			for (var sName in this.mModels) {
+				var oModel = this.mModels[sName];
+				QUnit.assert.ok(oModel && oModel.bDestroyed,
+					'Expected model "' + sName + '" to be destroyed');
+			}
 		}
 	};
 	// Binds all the helper functions to the test instance
@@ -192,5 +209,74 @@ sap.ui.define([
 		});
 
 		fnAssert.call(this, assert);
+	});
+
+	QUnit.test("metadata v1 with models", function(assert) {
+		this.stubGetUriParameters();
+
+		return Component.create({
+			name: "sap.ui.test.v1",
+			manifest: false
+		}).then(function(oComponent) {
+			this.oComponent = oComponent;
+
+			// sap.ui.model.resource.ResourceModel
+			sinon.assert.callCount(this.modelSpy.resource, 1);
+
+			// model: "i18n"
+			sinon.assert.calledWithExactly(this.modelSpy.resource, {
+				bundleUrl: "test-resources/sap/ui/core/qunit/component/testdata/v1/i18n/i18n.properties"
+			});
+
+			// check if models are set on component (and save them internally)
+			this.assertModelInstances({
+				"i18n": this.modelSpy.resource,
+				"sfapi": this.modelSpy.odataV2
+			});
+
+			// destroy the component
+			this.oComponent.destroy();
+
+			// check if all models got destroyed (uses the models from #assertModelInstances)
+			this.assertModelsDestroyed();
+
+			// check if internal models references were removed
+			assert.ok(!this.oComponent._mManifestModels, "Component should not have internal model references anymore");
+
+		}.bind(this));
+	});
+
+	QUnit.test("metadata v1 without models", function(assert) {
+
+		return Component.create({
+			name: "sap.ui.test.v1empty",
+			manifest: false
+		}).then(function(oComponent) {
+			this.oComponent = oComponent;
+
+			/**
+			 * @deprecated As of version 1.48
+			 */
+			// sap.ui.model.odata.ODataModel
+			sinon.assert.callCount(this.modelSpy.odata, 0);
+
+			// sap.ui.model.odata.v2.ODataModel
+			sinon.assert.callCount(this.modelSpy.odataV2, 0);
+			// sap.ui.model.json.JSONModel
+			sinon.assert.callCount(this.modelSpy.json, 0);
+			// sap.ui.model.xml.XMLModel
+			sinon.assert.callCount(this.modelSpy.xml, 0);
+			// sap.ui.model.resource.ResourceModel
+			sinon.assert.callCount(this.modelSpy.resource, 0);
+			// sap.ui.test.v2models.CustomModel
+			sinon.assert.callCount(this.modelSpy.custom, 0);
+
+			assert.ok(!this.oComponent.getModel(), "Component should not have a model");
+			assert.deepEqual(this.oComponent._mManifestModels, {}, "Component should not have internal model references");
+
+			// destroy the component
+			this.oComponent.destroy();
+
+		}.bind(this));
 	});
 });
