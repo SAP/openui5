@@ -133,7 +133,7 @@ sap.ui.define([
 				oCreateDialog = this.byId("createSalesOrderItemDialog");
 
 			if (!oBindingContext) {
-				return; // TODO: can we disable the button if no context is set?
+				return;
 			}
 
 			bDeepCreate = oBindingContext.isTransient();
@@ -393,51 +393,59 @@ sap.ui.define([
 		},
 
 		onInit : function () {
-			var oItemsBindingContext,
-				oRowSettings = this.byId("rowsettings"),
-				oView = this.getView(),
-				oItemsBinding = oView.byId("ToLineItems").getBinding("rows"),
-				oModel = oView.getModel(),
-				oUiModel = oView.getModel("ui"),
-				iInlineCreationRows = oUiModel.getProperty("/inlineCreationRows"),
-				that = this;
+			var oView = this.getView(),
+				oItemsTable = oView.byId("ToLineItems");
 
-			oModel.attachMessageChange(this.handleMessageChange, this);
+			function doInit () {
+				var oItemsBindingContext,
+					oRowSettings = this.byId("rowsettings"),
+					oItemsBinding = oItemsTable.getBinding("rows"),
+					oModel = oView.getModel(),
+					oUiModel = oView.getModel("ui"),
+					iInlineCreationRows = oUiModel.getProperty("/inlineCreationRows"),
+					that = this;
 
-			// adding the formatter dynamically is a prerequisite that it is called with the control
-			// as 'this'
-			oRowSettings.bindProperty("highlight", {
-				parts : [
-					'messages>/',
-					'' // ensure formatter is called on scrolling
-				],
-				formatter : this.rowHighlight
-			});
+				oItemsTable.detachModelContextChange(doInit, this);
+				oModel.attachMessageChange(this.handleMessageChange, this);
 
-			if (!iInlineCreationRows) {
-				return;
-			}
+				// adding the formatter dynamically is a prerequisite that it is called with the control
+				// as 'this'
+				oRowSettings.bindProperty("highlight", {
+					parts : [
+						'messages>/',
+						'' // ensure formatter is called on scrolling
+					],
+					formatter : this.rowHighlight
+				});
 
-			// collection length may not be final on initial data load: one must always check
-			// until the length is final
-			oItemsBinding.attachEvent("dataReceived", function () {
-				var i;
-
-				if (oItemsBindingContext !== oItemsBinding.getContext()) {
+				if (!iInlineCreationRows) {
 					return;
 				}
 
-				if (oItemsBinding.isLengthFinal()
-						&& oItemsBinding.isFirstCreateAtEnd() === undefined) {
-					for (i = 0; i < iInlineCreationRows; i += 1) {
-						that.createInactiveLineItem();
+				// collection length may not be final on initial data load: one must always check
+				// until the length is final
+				oItemsBinding.attachEvent("dataReceived", function () {
+					var i;
+
+					if (oItemsBindingContext !== oItemsBinding.getContext()) {
+						return;
 					}
-				}
-			});
-			// store binding context on data request to check it is unchanged when data is received
-			oItemsBinding.attachEvent("dataRequested", function () {
-				oItemsBindingContext = oItemsBinding.getContext();
-			});
+
+					if (oItemsBinding.isLengthFinal()
+							&& oItemsBinding.isFirstCreateAtEnd() === undefined) {
+						for (i = 0; i < iInlineCreationRows; i += 1) {
+							that.createInactiveLineItem();
+						}
+					}
+				});
+				// store binding context on data request to check it is unchanged when data is received
+				oItemsBinding.attachEvent("dataRequested", function () {
+					oItemsBindingContext = oItemsBinding.getContext();
+				});
+
+			}
+			// initialization has to wait for view model/context propagation
+			oItemsTable.attachModelContextChange(doInit, this);
 		},
 
 		onMessagePopoverClosed : function () {
