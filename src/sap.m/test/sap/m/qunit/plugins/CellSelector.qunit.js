@@ -472,10 +472,14 @@ sap.ui.define([
 
 			this.oCellSelector = new CellSelector({ rangeLimit: 15 });
 			this.oTable = createResponsiveTable();
+			const nextUpdateFinishedEvent = new Promise((fnResolve) => {
+				this.oTable.attachEventOnce("updateFinished", fnResolve);
+			});
 			this.oTable.addDependent(this.oCellSelector);
 			this.oTable.placeAt("qunit-fixture");
 
 			await nextUIUpdate();
+			await nextUpdateFinishedEvent;
 		},
 		afterEach: function() {
 			this.oMockServer.destroy();
