@@ -3,9 +3,12 @@
  */
 
 sap.ui.define([
-	"./SelectionController", "sap/m/p13n/SelectionPanel", "sap/ui/core/Lib"
-], (BaseController, SelectionPanel, Library) => {
+	"./SelectionController", "sap/m/p13n/SelectionPanel", "sap/ui/core/Lib", "sap/m/library"
+], (BaseController, SelectionPanel, Library, mLibrary) => {
 	"use strict";
+
+	// shortcut for sap.m.MultiSelectMode
+	const { MultiSelectMode } = mLibrary;
 
 	const oResourceBundle = Library.getResourceBundleFor("sap.ui.mdc");
 	const ColumnController = BaseController.extend("sap.ui.mdc.p13n.subcontroller.ColumnController");
@@ -34,7 +37,8 @@ sap.ui.define([
 			showHeader: true,
 			enableCount: true,
 			title: oResourceBundle.getText("fieldsui.COLUMNS"),
-			fieldColumn: oResourceBundle.getText("fieldsui.COLUMNS")
+			fieldColumn: oResourceBundle.getText("fieldsui.COLUMNS"),
+			multiSelectMode: MultiSelectMode.SelectAll
 		});
 		oSelectionPanel.setEnableReorder(this._bReorderingEnabled);
 		return oSelectionPanel.setP13nData(oAdaptationData.items);
