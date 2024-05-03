@@ -60,6 +60,15 @@
 				]
 			},
 			{
+				"id": "sap.ui.mdc",
+				"name": "Overview",
+				"category": "Metadata-Driven Controls (sap.ui.mdc)",
+				"since": "1.116",
+				"samples": [
+					"sap.ui.mdc.demokit.sample.TableFilterBarJson"
+				]
+			},
+			{
 				"id": "sap.ui.mdc.Link",
 				"name": "Link",
 				"category": "Metadata-Driven Controls (sap.ui.mdc)",
@@ -107,7 +116,6 @@
 				"since": "1.116",
 				"samples": [
 					"sap.ui.mdc.demokit.sample.TableJson",
-					"sap.ui.mdc.demokit.sample.TableFilterBarJson",
 					"sap.ui.mdc.demokit.sample.UploadSetwithTablePlugin"
 				]
 			}
