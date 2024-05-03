@@ -817,7 +817,7 @@ sap.ui.define([
 	 * @public
 	 * @static
 	 * @function
-	 * @deprecated since 1.58
+	 * @deprecated as of version 1.58. Use native JavaScript instead.
 	 */
 	jQuery.sap.getter = function(oValue) {
 		return function() {
@@ -1542,7 +1542,7 @@ sap.ui.define([
 		 * @see jQuery.sap.isDeclared
 		 * @public
 		 * @static
-		 * @deprecated since 1.58
+		 * @deprecated as of version 1.58. Applications must not rely on such internal information. There is no API replacement.
 		 * @function
 		 */
 		jQuery.sap.getAllDeclaredModules = LoaderExtensions.getAllRequiredModules;
@@ -1904,7 +1904,7 @@ sap.ui.define([
 	 * @type void
 	 * @public
 	 * @static
-	 * @deprecated since 1.58
+	 * @deprecated as of version 1.58. Do not use to avoid violation of Content Security Policy (CSP).
 	 * @SecSink {0|XSS} Parameter is evaluated
 	 */
 	jQuery.sap.globalEval = function() {
