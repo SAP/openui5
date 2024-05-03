@@ -1061,16 +1061,14 @@ sap.ui.define([
 [undefined, "~path~"].forEach(function (sPath) {
 	[false, true].forEach(function (bTransient) {
 		[false, true].forEach(function (bDefault) {
-			[42, 43].forEach((iLength) => {
-	const sTitle = `_Cache#restoreElement, path=${sPath}, transient=${bTransient},
- default=${bDefault}, length=${iLength}`;
+			const sTitle = `_Cache#restoreElement, path=${sPath}, transient=${bTransient}`
+				+ `, default=${bDefault}`;
 
 	QUnit.test(sTitle, function (assert) {
 		const oCache = new _Cache(this.oRequestor, "TEAMS");
 		oCache.iLimit = 234;
 		oCache.iActiveElements = 1;
 		const aElements = [];
-		aElements.length = iLength;
 		aElements.$byPredicate = {};
 		aElements.$created = 2;
 		if (bDefault) {
@@ -1086,8 +1084,8 @@ sap.ui.define([
 		oHelperMock.expects("addToCount")
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), sPath0,
 				sinon.match.same(aElements), 1);
-		this.mock(aElements).expects("splice").exactly(iLength > 42 ? 1 : 0)
-			.withExactArgs(42, 0, "~oElement~");
+		oHelperMock.expects("insert")
+			.withExactArgs(sinon.match.same(aElements), 42, "~oElement~");
 		oHelperMock.expects("getPrivateAnnotation").withExactArgs("~oElement~", "predicate")
 			.returns("~predicate~");
 
@@ -1099,11 +1097,7 @@ sap.ui.define([
 		assert.strictEqual(aElements.$created, bTransient ? 3 : 2);
 		assert.strictEqual(oCache.iActiveElements, bTransient && !sPath ? 2 : 1);
 		assert.deepEqual(aElements.$byPredicate, {"~predicate~" : "~oElement~"});
-		if (iLength <= 42) {
-			assert.strictEqual(aElements[42], "~oElement~", "avoid #splice here");
-		}
 	});
-			});
 		});
 	});
 });

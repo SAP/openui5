@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/thirdparty/URI"
 ], function (Log, deepEqual, merge, uid, SyncPromise, _Helper, URI) {
+	/*eslint no-sparse-arrays: 0 */
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.lib._Helper";
@@ -4159,6 +4160,31 @@ sap.ui.define([
 				bar : "<bar>"
 			}
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("insert", function (assert) {
+		const aElements = [1, 2, 3];
+
+		// code under test
+		_Helper.insert(aElements, 1, 42);
+
+		assert.deepEqual(aElements, [1, 42, 2, 3]);
+
+		// code under test
+		_Helper.insert(aElements, 0, 0);
+
+		assert.deepEqual(aElements, [0, 1, 42, 2, 3]);
+
+		// code under test
+		_Helper.insert(aElements, 5, 4);
+
+		assert.deepEqual(aElements, [0, 1, 42, 2, 3, 4]);
+
+		// code under test
+		_Helper.insert(aElements, 10, 99);
+
+		assert.deepEqual(aElements, [0, 1, 42, 2, 3, 4,,,,, 99]);
 	});
 
 	//*********************************************************************************************

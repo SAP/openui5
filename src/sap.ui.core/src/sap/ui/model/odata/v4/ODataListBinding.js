@@ -3357,12 +3357,8 @@ sap.ui.define([
 			}
 			const iOldIndex = oChildContext.getModelIndex();
 			this.aContexts.splice(iOldIndex, 1);
-			if (iNewIndex > this.aContexts.length) {
-				this.aContexts[iNewIndex] = oChildContext;
-				// Note: no need to adjust iMaxLength
-			} else {
-				this.aContexts.splice(iNewIndex, 0, oChildContext);
-			}
+			// Note: no need to adjust iMaxLength
+			_Helper.insert(this.aContexts, iNewIndex, oChildContext);
 			setIndices(iOldIndex, iNewIndex);
 
 			if (iCollapseCount) {

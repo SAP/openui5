@@ -11032,7 +11032,7 @@ sap.ui.define([
 [false, true].forEach((bIsExpanded) => {
 	[1, 4].forEach((iCount) => {
 		[false, true].forEach((bMakeRoot) => {
-			[23, 42, 101, 999].forEach((iNewIndex) => {
+			[23, 42].forEach((iNewIndex) => {
 				const sTitle = `move: expanded=${bIsExpanded}, child nodes added=${iCount},
  make root=${bMakeRoot}, new index=${iNewIndex}`;
 
@@ -11086,6 +11086,10 @@ sap.ui.define([
 					this.mock(oChildContext).expects("getModelIndex").withExactArgs()
 						.returns(iOldIndex);
 					oBinding.aContexts[iOldIndex] = oChildContext;
+					this.mock(_Helper).expects("insert")
+						.withExactArgs(sinon.match.same(oBinding.aContexts), iNewIndex,
+							sinon.match.same(oChildContext))
+						.callThrough(); // needed for "setIndices"
 					this.mock(oBinding).expects("expand").exactly(bIsExpanded ? 1 : 0)
 						.withExactArgs(sinon.match.same(oChildContext))
 						.returns(SyncPromise.resolve());
@@ -11246,6 +11250,9 @@ sap.ui.define([
 		this.mock(oBinding).expects("collapse")
 			.withExactArgs(sinon.match.same(oChildContext), true, "~iCollapseCount~");
 		this.mock(oChildContext).expects("getModelIndex").withExactArgs().returns(43);
+		this.mock(_Helper).expects("insert")
+			.withExactArgs(sinon.match.same(oBinding.aContexts), 43,
+				sinon.match.same(oChildContext));
 		this.mock(oBinding).expects("expand")
 			.withExactArgs(sinon.match.same(oChildContext))
 			.returns(SyncPromise.reject("~error~"));
