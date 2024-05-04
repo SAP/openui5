@@ -81,7 +81,6 @@
 					showNavButton="true"
 					navButtonPress="onNavBack"
 					title="{/title}"
-					icon="img/144_iPad_Retina_Web_Clip.png"
 					enableScrolling="false">
 					<landmarkInfo>
 						<PageAccessibleLandmarkInfo rootRole="Region" rootLabel="Details" headerRole="Region" headerLabel="Header" contentRole="Main" contentLabel="Content"></PageAccessibleLandmarkInfo>

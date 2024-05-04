@@ -827,7 +827,7 @@
 						<m:Text id="MyText" text="Event" width="400px" wrapping="false"></m:Text>
 					</m:contentLeft>
 					<m:contentMiddle>
-						<m:SegmentedButton selectedKey="P0" width="320px" select="handleButton">
+						<m:SegmentedButton selectedKey="P0" width="320px" selectionChange="handleButton">
 							<m:items>
 								<m:SegmentedButtonItem key="P0" text="Simple"></m:SegmentedButtonItem>
 							</m:items>

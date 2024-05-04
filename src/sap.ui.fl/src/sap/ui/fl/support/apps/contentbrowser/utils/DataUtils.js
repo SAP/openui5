@@ -66,8 +66,7 @@ sap.ui.define([
 			}
 
 			return new GroupHeaderListItem({
-				title: sTitle,
-				upperCase: false
+				title: sTitle
 			});
 		},
 

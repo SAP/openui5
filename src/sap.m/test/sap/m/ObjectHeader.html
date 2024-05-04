@@ -217,8 +217,9 @@
 				number : "999.999.999.999.999.999,00",
 				numberUnit : "EUR",
 				attributes : attrs2,
-				markFlagged : true,
-				showMarkers : true
+				markers: [
+					new sap.m.ObjectMarker({type: sap.m.ObjectMarkerType.Flagged})
+				]
 			});
 
 	var oh6 = new sap.m.ObjectHeader("oh6", {
@@ -249,16 +250,18 @@
 		icon : sap.ui.core.IconPool.getIconURI("attachment"),
 		iconActive : true,
 		iconPress : oh7PressHandler,
-		markFlagged : true,
-		showMarkers : true
+		markers: [
+			new sap.m.ObjectMarker({type: sap.m.ObjectMarkerType.Flagged})
+		]
 	});
 
 	var oh8 = new sap.m.ObjectHeader("oh8", {
 		number : "3,00",
 		numberUnit : "EUR",
 		numberState : sap.ui.core.ValueState.Success,
-		markFavorite : true,
-		showMarkers : true
+		markers: [
+			new sap.m.ObjectMarker({type: sap.m.ObjectMarkerType.Favorite})
+		]
 	});
 
 	var oh9 = new sap.m.ObjectHeader("oh9", {
@@ -272,8 +275,9 @@
 		attributes : [ new sap.m.ObjectAttribute({
 			text : "First Attribute"
 		}), new sap.m.ObjectAttribute({}), new sap.m.ObjectAttribute({}), ],
-		markFavorite : true,
-		showMarkers : true
+		markers: [
+			new sap.m.ObjectMarker({type: sap.m.ObjectMarkerType.Favorite})
+		]
 	});
 
 	var oh10 = new sap.m.ObjectHeader("oh10", {
@@ -319,8 +323,9 @@
 		}), new sap.m.ObjectAttribute({
 			text : "Progress Indicator 2 with 80% witdh"
 		})],
-		markFlagged : true,
-		showMarkers : true
+		markers: [
+			new sap.m.ObjectMarker({type: sap.m.ObjectMarkerType.Flagged})
+		]
 	});
 
 	var oh11 = new sap.m.ObjectHeader({
@@ -328,9 +333,10 @@
 		number : "3.628.000",
 		numberUnit : "EUR",
 		numberState : sap.ui.core.ValueState.Success,
-		markFavorite : true,
-		markFlagged : true,
-		showMarkers : true
+		markers: [
+			new sap.m.ObjectMarker({type: sap.m.ObjectMarkerType.Favorite}),
+			new sap.m.ObjectMarker({type: sap.m.ObjectMarkerType.Flagged})
+		]
 	});
 
 	var oh12 = new sap.m.ObjectHeader({
@@ -338,8 +344,9 @@
 		number : "3.628.000",
 		numberUnit : "EUR",
 		numberState : sap.ui.core.ValueState.Success,
-		markFavorite : true,
-		showMarkers : true
+		markers: [
+			new sap.m.ObjectMarker({type: sap.m.ObjectMarkerType.Favorite})
+		]
 	});
 
 	var oh13 = new sap.m.ObjectHeader({
@@ -347,8 +354,9 @@
 		number : "3.628.000",
 		numberUnit : "EUR",
 		numberState : sap.ui.core.ValueState.Error,
-		markFlagged : true,
-		showMarkers : true
+		markers: [
+			new sap.m.ObjectMarker({type: sap.m.ObjectMarkerType.Flagged})
+		]
 	});
 
 	var oh14 = new sap.m.ObjectHeader({
@@ -361,8 +369,9 @@
 		}), new sap.m.ObjectAttribute({
 			text : "Attribute number 2"
 		}) ],
-		markFlagged : true,
-		showMarkers : true
+		markers: [
+			new sap.m.ObjectMarker({type: sap.m.ObjectMarkerType.Flagged})
+		]
 	});
 
 	var oh15 = new sap.m.ObjectHeader({
@@ -370,9 +379,10 @@
 		number : "3.628.000",
 		numberUnit : "EUR",
 		numberState : sap.ui.core.ValueState.Error,
-		markFavorite : true,
-		markFlagged : true,
-		showMarkers : true
+		markers: [
+			new sap.m.ObjectMarker({type: sap.m.ObjectMarkerType.Favorite}),
+			new sap.m.ObjectMarker({type: sap.m.ObjectMarkerType.Flagged})
+		]
 	});
 
 	//test popover title
@@ -423,9 +433,10 @@
 		number : "1.000",
 		numberUnit : "EUR",
 		numberState : sap.ui.core.ValueState.Error,
-		markFavorite : true,
-		markFlagged : true,
-		showMarkers : true,
+		markers: [
+			new sap.m.ObjectMarker({type: sap.m.ObjectMarkerType.Favorite}),
+			new sap.m.ObjectMarker({type: sap.m.ObjectMarkerType.Flagged})
+		],
 		icon : sap.ui.core.IconPool.getIconURI("attachment"),
 		iconActive : true,
 		iconPress : oh7PressHandler
@@ -487,9 +498,10 @@
 			text : "Status # 15",
 			state : sap.ui.core.ValueState.None
 		}) ],
-		markFavorite : true,
-		markFlagged : true,
-		showMarkers : true
+		markers: [
+			new sap.m.ObjectMarker({type: sap.m.ObjectMarkerType.Favorite}),
+			new sap.m.ObjectMarker({type: sap.m.ObjectMarkerType.Flagged})
+		]
 	});
 
 	var oh18 = new sap.m.ObjectHeader("oh18", {
@@ -533,8 +545,9 @@
 		}), new sap.m.ObjectAttribute({
 			text : "Productivity Progress Indicator"
 		}), ],
-		markFlagged : true,
-		showMarkers : true
+		markers: [
+			new sap.m.ObjectMarker({type: sap.m.ObjectMarkerType.Flagged})
+		]
 	});
 
 	var ohCondensedId1 = "ohc1";
@@ -769,7 +782,7 @@
 	}));
 	detail.addContent(new sap.m.Button({
 		id : "favorite-button",
-		text : "Favorite",
+		text : sap.m.ObjectMarkerType.Favorite,
 		press : function() {
 
 			oh15.setMarkFavorite(!oh15.getMarkFavorite());

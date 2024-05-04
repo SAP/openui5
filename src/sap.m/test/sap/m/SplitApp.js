@@ -256,7 +256,7 @@ sap.ui.define([
 		content: [
 			new List({
 				mode: Device.system.phone ? ListMode.None : ListMode.SingleSelectMaster,
-				select: function(oEv) {
+				selectionChange: function(oEv) {
 					if (oEv.getParameter("listItem").getId() == "listDetail2") {
 						oMasterPage2.addContent(oButtonToLast);
 						oMasterPage2.addContent(oButtonToFirst);

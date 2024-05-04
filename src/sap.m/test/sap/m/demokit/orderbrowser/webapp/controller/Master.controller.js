@@ -277,8 +277,7 @@ sap.ui.define([
 		 */
 		createGroupHeader : function (oGroup) {
 			return new GroupHeaderListItem({
-				title : oGroup.text,
-				upperCase : false
+				title : oGroup.text
 			});
 		},
 

@@ -74,7 +74,7 @@
 						text="Hi, I'm Denise. I am passionate about what I do and I'll go the extra mile to make the customer win."/>
 				<m:ObjectStatus text="In Stock" state="Error"/>
 				<m:ObjectStatus title="Label" text="In Stock" state="Warning"/>
-				<m:ObjectNumber number="1000" numberUnit="SOOK" emphasized="false" state="Success"/>
+				<m:ObjectNumber number="1000" unit="SOOK" emphasized="false" state="Success"/>
 				<m:ProgressIndicator
 						percentValue="30"
 						displayValue="30%"
@@ -86,7 +86,7 @@
 								showSeparatorAfter="false"/>
 					</layout:layoutData>
 					<m:Label text="PC, Unrestricted-Use Stock"/>
-					<m:ObjectNumber class="sapMObjectNumberLarge" number="219" numberUnit="K"></m:ObjectNumber>
+					<m:ObjectNumber class="sapMObjectNumberLarge" number="219" unit="K"></m:ObjectNumber>
 				</layout:VerticalLayout>
 				<layout:VerticalLayout>
 					<layout:layoutData>
@@ -95,7 +95,7 @@
 								showSeparatorAfter="false"/>
 					</layout:layoutData>
 					<m:Label text="PC, Not in Small Size"/>
-					<m:ObjectNumber class="sapMObjectNumberLarge" number="220" numberUnit="K"></m:ObjectNumber>
+					<m:ObjectNumber class="sapMObjectNumberLarge" number="220" unit="K"></m:ObjectNumber>
 				</layout:VerticalLayout>
 				<layout:VerticalLayout>
 					<layout:layoutData>
@@ -104,7 +104,7 @@
 								showSeparatorAfter="false"/>
 					</layout:layoutData>
 					<m:Label text="PC, Not in Medium Size"/>
-					<m:ObjectNumber class="sapMObjectNumberLarge" number="221" numberUnit="K"></m:ObjectNumber>
+					<m:ObjectNumber class="sapMObjectNumberLarge" number="221" unit="K"></m:ObjectNumber>
 				</layout:VerticalLayout>
 				<layout:VerticalLayout>
 					<layout:layoutData>
@@ -113,7 +113,7 @@
 								showSeparatorAfter="true"/>
 					</layout:layoutData>
 					<m:Label text="PC, Not in Large Size"/>
-					<m:ObjectNumber class="sapMObjectNumberLarge" number="219" numberUnit="K"></m:ObjectNumber>
+					<m:ObjectNumber class="sapMObjectNumberLarge" number="219" unit="K"></m:ObjectNumber>
 				</layout:VerticalLayout>
 				<m:ObjectAttribute title="Label" text="In Stock"/>
 				<m:Button icon="sap-icon://nurse"/>

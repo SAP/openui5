@@ -11,7 +11,7 @@
 
     <script>
 
-        /* Non-modal popup --> sap.m.Popover*/
+        /* Non-modal popup ==> sap.m.Popover*/
         var fnOpenPopover = function(){
             oPopoverStandalone.openBy(oOpenPopoverButton);
         };
@@ -69,7 +69,7 @@
         var oDialogInnerPopover = new sap.m.Dialog({
             title: "Inner Dialog of Popover",
             content: [new sap.m.Text({ text: "Inner Dialog of Popover Lorem ipsum" })],
-            leftButton: oCloseDialogInnerPopoverButton
+            beginButton: oCloseDialogInnerPopoverButton
         });
 
         var oPopoverStandalone = new sap.m.Popover({
@@ -125,12 +125,12 @@
         var oDialogInner = new sap.m.Dialog({
             title: "Inner Dialog Title",
             content: new sap.m.Text({ text:"Inner Dialog Lorem ipsum"}),
-            rightButton: oCloseBtnInner
+            endButton: oCloseBtnInner
         });
 
         var oDialog = new sap.m.Dialog({
             title: "Dialog Title",
-            leftButton: oCloseBtn
+            beginButton: oCloseBtn
         });
 
         var oBusyButton = new sap.m.Button({

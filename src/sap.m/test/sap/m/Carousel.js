@@ -234,10 +234,10 @@ sap.ui.define([
 					placement : PlacementType.Bottom,
 					title : "Popover",
 					showHeader : true,
-					leftButton : new Button({
+					beginButton : new Button({
 						text : "Left"
 					}),
-					rightButton : new Button({
+					endButton : new Button({
 						text : "Right"
 					}),
 					footer : footer,

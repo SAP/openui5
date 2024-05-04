@@ -8,7 +8,7 @@
 			<List
 					mode="SingleSelectMaster"
 					includeItemInSelection="true"
-					select="handleItemSelect"
+					selectionChange="handleItemSelect"
 					items="{/ProductCollection}">
 				<StandardListItem title="{text}"/>
 			</List>

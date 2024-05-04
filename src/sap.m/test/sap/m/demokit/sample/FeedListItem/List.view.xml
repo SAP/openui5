@@ -15,7 +15,6 @@
 					icon="{AuthorPicUrl}"
 					senderPress="onPress"
 					iconPress="onPress"
-					iconDensityAware="false"
 					info="{Type}"
 					timestamp="{Date}"
 					text="{Text}"

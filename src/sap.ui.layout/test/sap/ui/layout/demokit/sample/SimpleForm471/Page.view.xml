@@ -20,7 +20,7 @@
 			</Page>
 		</detailPages>
 		<masterPages>
-			<Page id="master" title="Master" icon="sap-icon://action" class="sapUiStdPage">
+			<Page id="master" title="Master" class="sapUiStdPage">
 				<content>
 					<List>
 						<items>

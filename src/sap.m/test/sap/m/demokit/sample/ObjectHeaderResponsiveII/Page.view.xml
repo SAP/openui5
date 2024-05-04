@@ -17,9 +17,6 @@
 			formatOptions: {showMeasure: false}
 		}"
 		numberUnit="{CurrencyCode}"
-		showMarkers="true"
-		markFlagged="true"
-		markFavorite="true"
 		numberState="Success"
 		backgroundDesign="Translucent"
 		class="sapUiResponsivePadding--header" >
@@ -32,6 +29,10 @@
 				text="Pending"
 				state="Warning"/>
 		</statuses>
+		<markers>
+			<ObjectMarker type="Flagged"/>
+			<ObjectMarker type="Favorite"/>
+		</markers>
 		<headerContainer>
 			<IconTabBar
 				id="itb1"

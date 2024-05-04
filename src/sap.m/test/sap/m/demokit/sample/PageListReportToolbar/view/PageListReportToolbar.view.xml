@@ -48,10 +48,10 @@
 							<ToolbarSpacer />
 							<SearchField width="12rem" />
 							<SegmentedButton>
-								<buttons>
-									<Button icon="sap-icon://table-view" />
-									<Button icon="sap-icon://bar-chart" />
-								</buttons>
+								<items>
+									<SegmentedButtonItem icon="sap-icon://table-view" />
+									<SegmentedButtonItem icon="sap-icon://bar-chart" />
+								</items>
 							</SegmentedButton>
 							<Button icon="sap-icon://group-2" type="Transparent" />
 							<Button icon="sap-icon://action-settings" type="Transparent" />

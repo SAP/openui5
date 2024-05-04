@@ -11,7 +11,7 @@
 		valueColor="Error" indicator="Down" class="sapUiSmallMargin"
 		press="press" />
 
-	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" size="L" header="Country-Specific Profit Margin" subheader="Expenses" press="press">
+	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Country-Specific Profit Margin" subheader="Expenses" press="press">
 		<TileContent unit="EUR" footer="Current Quarter">
 			<NumericContent scale="M" value="1.96" valueColor="Error" indicator="Up" withMargin="false" />
 		</TileContent>

@@ -169,16 +169,16 @@
 						// indents
 
 						new HTML({
-							content: '<p>L1 M1<br />Indent L1 M1</p>',
+							content: '<p>L1 M1<br>Indent L1 M1</p>',
 							layoutData: new GridData({
 								span: "L1 M1",
-								indentLarge: 1, // test deprecated property
+								indentL: 1,
 								indentM: 1,
 								visibleS: false
 							})
 						}),
 						new HTML({
-							content: '<p>L1 M1<br />Indent L8 M8</p>',
+							content: '<p>L1 M1<br>Indent L8 M8</p>',
 							layoutData: new GridData({
 								span: "L1 M1",
 								indent: "M8",
@@ -187,7 +187,7 @@
 							})
 						}),
 						new HTML({
-							content: '<p>L1 M1<br />Indent L2 M2</p>',
+							content: '<p>L1 M1<br>Indent L2 M2</p>',
 							layoutData: new GridData({
 								span: "L1 M1",
 								indent: "L2 M2",
@@ -197,7 +197,7 @@
 							})
 						}),
 						new HTML({
-							content: '<p>L1 M1<br />Indent L6 M6</p>',
+							content: '<p>L1 M1<br>Indent L6 M6</p>',
 							layoutData: new GridData({
 								span: "L1 M1",
 								indent: "L6 M6",
@@ -206,7 +206,7 @@
 							})
 						}),
 						new HTML({
-							content: '<p>L1 M1<br />Indent L3 M3</p>',
+							content: '<p>L1 M1<br>Indent L3 M3</p>',
 							layoutData: new GridData({
 								span: "L1 M1",
 								indent: "L3 M3",
@@ -216,7 +216,7 @@
 							})
 						}),
 						new HTML({
-							content: '<p>L1 M1<br />Indent L4 M4</p>',
+							content: '<p>L1 M1<br>Indent L4 M4</p>',
 							layoutData: new GridData({
 								span: "L1 M1",
 								indent: "L4 M4",
@@ -224,36 +224,36 @@
 							})
 						}),
 						new HTML({
-							content: '<p>L1 M1<br />Indent L4 M4</p>',
+							content: '<p>L1 M1<br>Indent L4 M4</p>',
 							layoutData: new GridData({
 								span: "L1 M1",
 								indent: "L4 M4",
 								linebreakL: true,
 								linebreakM: true,
-								visibleOnSmall: false
+								visibleS: false
 							})
 						}),
 						new HTML({
-							content: '<p>L1 M1<br />Indent L2 M2</p>',
+							content: '<p>L1 M1<br>Indent L2 M2</p>',
 							layoutData: new GridData({
 								span: "L1 M1",
 								indent: "L2 M2",
-								visibleOnSmall: false
+								visibleS: false
 							})
 						}),
 						new HTML({
-							content: '<p>L2 M2<br />Indent L5 M5</p>',
+							content: '<p>L2 M2<br>Indent L5 M5</p>',
 							layoutData: new GridData({
 								span: "L2 M2",
 								indent: "L5 M5",
 								linebreakL: true,
 								linebreakM: true,
-								visibleOnSmall: false
+								visibleS: false
 							})
 						}),
 
 						new HTML({
-							content: '<p>L6 M6 S6<br />Indent L3 M3 S3<br />linebreakL linebreakM linebreakS</p>',
+							content: '<p>L6 M6 S6<br>Indent L3 M3 S3<br>linebreakL linebreakM linebreakS</p>',
 							layoutData: new GridData({
 								span: "L6 M6 S6",
 								indent: "L3 M3 S3",
@@ -266,7 +266,7 @@
 						// visisble
 
 						new HTML({
-							content: '<p>L12 M12 S12<br />visibleOnLarge visibleOnMedium visibleOnSmall</p>',
+							content: '<p>L12 M12 S12<br>visibleL visibleM visibleS</p>',
 							layoutData: new GridData({
 								span: "L12 M12 S12",
 								visibleL: true,
@@ -275,7 +275,7 @@
 							})
 						}),
 						new HTML({
-							content: '<p>L12 M12 S12<br />visibleOnLarge</p>',
+							content: '<p>L12 M12 S12<br>visibleL</p>',
 							layoutData: new GridData({
 								span: "L12 M12 S12",
 								visibleL: true,
@@ -284,25 +284,25 @@
 							})
 						}),
 						new HTML({
-							content: '<p>L12 M12 S12<br />visibleOnMedium</p>',
-							layoutData: new GridData({
-								span: "L12 M12 S12",
-								visibleOnLarge: false, // test deprecated properties
-								visibleOnMedium: true,
-								visibleOnSmall: false
-							})
-						}),
-						new HTML({
-							content: '<p>L12 M12 S12<br />visibleOnSmall</p>',
+							content: '<p>L12 M12 S12<br>visibleM</p>',
 							layoutData: new GridData({
 								span: "L12 M12 S12",
 								visibleL: false,
 								visibleM: true,
+								visibleS: false
+							})
+						}),
+						new HTML({
+							content: '<p>L12 M12 S12<br>visibleS</p>',
+							layoutData: new GridData({
+								span: "L12 M12 S12",
+								visibleL: false,
+								visibleM: false,
 								visibleS: true
 							})
 						}),
 
-									// small
+						// small
 
 						new HTML({
 							content: '<p>(L1 M1 S1)</p>',
