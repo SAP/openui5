@@ -21,12 +21,13 @@ sap.ui.define([
 	'sap/ui/thirdparty/jquery',
 	'sap/ui/Global',
 	'sap/ui/base/Object',
+	'sap/ui/core/Element',
 	'sap/ui/core/mvc/View',
 	'sap/ui/test/matchers/Ancestor',
 	'sap/ui/test/matchers/MatcherFactory',
 	'sap/ui/test/pipelines/MatcherPipeline',
 	'sap/ui/test/_OpaLogger'
-], function (extend, ObjectPath, $, Global, UI5Object, View, Ancestor, MatcherFactory,
+], function (extend, ObjectPath, $, Global, UI5Object, UI5Element, View, Ancestor, MatcherFactory,
 			MatcherPipeline, _OpaLogger) {
 
 		/**
@@ -296,17 +297,7 @@ sap.ui.define([
 
 			// get controls whose roots are in the subtree of oJQueryElement
 			_getControlsInContainer: function (oJQueryElement) {
-				var aAllControls = oJQueryElement.find("*").control();
-				var aResult = [];
-				aAllControls.forEach(function (oControl) {
-					var bUnique = !aResult.filter(function (oUniqueControl) {
-						return oUniqueControl.getId() === oControl.getId();
-					}).length;
-					if (bUnique) {
-						aResult.push(oControl);
-					}
-				});
-				return aResult;
+				return toUniqueControls(oJQueryElement.find("*"));
 			},
 
 			_isControlInView: function (oControl, sViewName) {
@@ -803,6 +794,39 @@ sap.ui.define([
 			}
 			return sap.ui.require("sap/ui/core/Element").registry;
 		};
+
+		let toUniqueControls = function($DOMElements) {
+			const aControls = [];
+			$DOMElements.each((_idx, oDomRef) => {
+				const oUI5Element = UI5Element.closestTo(oDomRef);
+				if (oUI5Element && !aControls.includes(oUI5Element)) {
+					aControls.push(oUI5Element);
+				}
+			});
+			return aControls;
+		};
+
+		/**
+		 * Fallback to an implementation based on jQuery plugin when UI5Element.closestTo does not
+		 * exist yet (when the application under test is executed with a much older UI5 version).
+		 *
+		 * @deprecated Since 1.106
+		 */
+		if (typeof UI5Element.closestTo !== "function") {
+			toUniqueControls = function ($DOMElements) {
+				var aAllControls = $DOMElements.control();
+				var aResult = [];
+				aAllControls.forEach(function (oControl) {
+					var bUnique = !aResult.filter(function (oUniqueControl) {
+						return oUniqueControl.getId() === oControl.getId();
+					}).length;
+					if (bUnique) {
+						aResult.push(oControl);
+					}
+				});
+				return aResult;
+			};
+		}
 
 		return OpaPlugin;
 	});
