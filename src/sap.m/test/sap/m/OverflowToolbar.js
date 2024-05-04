@@ -23,6 +23,7 @@ sap.ui.define([
 	"sap/m/ToolbarLayoutData",
 	"sap/m/ToggleButton",
 	"sap/m/SegmentedButton",
+	"sap/m/SegmentedButtonItem",
 	"sap/m/Input",
 	"sap/m/DateTimePicker",
 	"sap/m/DateRangeSelection",
@@ -66,6 +67,7 @@ sap.ui.define([
 	ToolbarLayoutData,
 	ToggleButton,
 	SegmentedButton,
+	SegmentedButtonItem,
 	Input,
 	DateTimePicker,
 	DateRangeSelection,
@@ -574,19 +576,19 @@ sap.ui.define([
 		}),
 		new SegmentedButton({
 			ariaLabelledBy: "dummy_label_acc_name",
-			buttons: [
-				new Button({
+			items: [
+				new SegmentedButtonItem({
 					text : "Left Button"
 				}),
-				new Button({
+				new SegmentedButtonItem({
 					icon: sNotesIconURI,
 					tooltip: "Notes"
 				}),
-				new Button({
+				new SegmentedButtonItem({
 					text : "Disabled Button",
 					enabled: false
 				}),
-				new Button({
+				new SegmentedButtonItem({
 					text : "Right Button"
 				})
 			]

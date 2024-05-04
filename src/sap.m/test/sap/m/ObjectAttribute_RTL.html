@@ -101,9 +101,10 @@ var worstCase = new sap.m.ObjectListItem({
     attributes: aAttrs1,
     firstStatus: new sap.m.ObjectStatus({text: "Positive Ñagçyfox", state: "Success", tooltip: "Status tip"}),
     secondStatus: new sap.m.ObjectStatus({text: "Negative Ñagçyfox", state: "Error"}),
-    showMarkers: true,
-    markFlagged: true,
-    markFavorite: true
+    markers: [
+        new sap.m.ObjectMarker({type: "Flagged"}),
+        new sap.m.ObjectMarker({type: "Favorite"})
+    ]
 });
 list.addItem(worstCase);
 page.addContent(list);

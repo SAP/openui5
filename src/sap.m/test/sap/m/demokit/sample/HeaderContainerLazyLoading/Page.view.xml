@@ -12,9 +12,6 @@
 		title="{Name}"
 		number="{Price}"
 		numberUnit="{CurrencyCode}"
-		showMarkers="true"
-		markFlagged="true"
-		markFavorite="true"
 		numberState="Success"
 		backgroundDesign="Translucent">
 		<attributes>
@@ -28,6 +25,10 @@
 				text="Pending"
 				state="Warning"/>
 		</statuses>
+		<markers>
+			<ObjectMarker type="Flagged"/>
+			<ObjectMarker type="Favorite"/>
+		</markers>
 		<headerContainer>
 			<HeaderContainer scrollStep="200" id="headerContainer" scroll="onScroll" content="{/ContentData/}">
 				<NumericContent scale="M" value="{value}" valueColor="{color}" indicator="{growth}" press="press" />

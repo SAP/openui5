@@ -18,9 +18,6 @@
 					formatOptions: {showMeasure: false}
 				}"
 				numberUnit="{CurrencyCode}"
-				showMarkers="true"
-				markFlagged="true"
-				markFavorite="true"
 				numberState="Success"
 				backgroundDesign="Translucent">
 				<attributes>
@@ -34,6 +31,10 @@
 						text="Pending"
 						state="Warning" />
 				</statuses>
+				<markers>
+					<ObjectMarker type="Flagged"/>
+					<ObjectMarker type="Favorite"/>
+				</markers>
 			</ObjectHeader>
 		</l:fixContent>
 		<l:flexContent>

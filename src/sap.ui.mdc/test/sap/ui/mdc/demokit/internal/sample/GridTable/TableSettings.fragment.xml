@@ -5,7 +5,7 @@
 	<Dialog
 			title="Table Settings"
 			class="sapUiContentPadding"
-			stretchOnPhone="true"
+			stretch="true"
 			id="tableSettings"
 			horizontalScrolling="false"
 			draggable="true"

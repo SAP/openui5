@@ -53,7 +53,7 @@ sap.ui.define([
 				content: new List({
 					mode: "SingleSelectMaster",
 					includeItemInSelection: true,
-					select: function (oEvt) {
+					selectionChange: function (oEvt) {
 						oObjectHeaderWithTitleSelector.setTitle(oEvt.getParameter("listItem").getTitle());
 						window.oPopover.close();
 					},

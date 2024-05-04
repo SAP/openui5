@@ -155,7 +155,6 @@ sap.ui.define([
 				headerImage : "{headerImage}",
 				frameType : "{frameType}",
 				header : "{header}",
-				size : "{size}",
 				state : "{state}",
 				failedText : "{failedText}",
 				backgroundImage : "{backgroundImage}",

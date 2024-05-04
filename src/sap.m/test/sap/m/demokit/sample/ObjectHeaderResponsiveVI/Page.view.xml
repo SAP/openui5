@@ -22,9 +22,6 @@
 			formatOptions: {showMeasure: false}
 		}"
 		numberUnit="{CurrencyCode}"
-		showMarkers="true"
-		markFlagged="true"
-		markFavorite="true"
 		numberState="Success"
 		backgroundDesign="Translucent">
 		<ObjectAttribute
@@ -36,5 +33,9 @@
 				text="Pending"
 				state="Warning"/>
 		</statuses>
+		<markers>
+			<ObjectMarker type="Flagged"/>
+			<ObjectMarker type="Favorite"/>
+		</markers>
 	</ObjectHeader>
 </mvc:View>

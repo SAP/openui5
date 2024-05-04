@@ -25,9 +25,11 @@
 					width="100%">
 				<SegmentedButton
 						width="320px">
-					<Button icon="sap-icon://iphone" text="Mobile"/>
-					<Button icon="sap-icon://sys-monitor" text="Desktop"/>
-					<Button icon="sap-icon://database" text="Other"/>
+					<items>
+						<SegmentedButtonItem icon="sap-icon://iphone" text="Mobile"/>
+						<SegmentedButtonItem icon="sap-icon://sys-monitor" text="Desktop"/>
+						<SegmentedButtonItem icon="sap-icon://database" text="Other"/>
+					</items>
 				</SegmentedButton>
 			</HBox>
 		</WizardStep>
@@ -87,11 +89,13 @@
 						id="DP3"
 						displayFormat="short"/>
 				<Label text="Availability"/>
-				<SegmentedButton selectedButton="inStock">
-					<Button text="In store" id="inStock"/>
-					<Button text="In depot"/>
-					<Button text="In repository"/>
-					<Button text="Out of stock"/>
+				<SegmentedButton selectedItem="inStock">
+					<items>
+						<SegmentedButtonItem text="In store" id="inStock"/>
+						<SegmentedButtonItem text="In depot"/>
+						<SegmentedButtonItem text="In repository"/>
+						<SegmentedButtonItem text="Out of stock"/>
+					</items>
 				</SegmentedButton>
 				<Label text="Size"/>
 				<Input/>

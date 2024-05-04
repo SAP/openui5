@@ -59,7 +59,7 @@
 								showMeasure: false
 							}
 						}"
-						numberUnit="{detailView>/currency}"/>
+						unit="{detailView>/currency}"/>
 				</l:VerticalLayout>
 			</l:HorizontalLayout>
 		</semantic:headerContent>

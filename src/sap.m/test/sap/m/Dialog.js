@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/m/Page",
 	"sap/m/Button",
 	"sap/m/SegmentedButton",
+	"sap/m/SegmentedButtonItem",
 	"sap/m/ToggleButton",
 	"sap/m/CheckBox",
 	"sap/m/Input",
@@ -49,6 +50,7 @@ sap.ui.define([
 	Page,
 	Button,
 	SegmentedButton,
+	SegmentedButtonItem,
 	ToggleButton,
 	CheckBox,
 	Input,
@@ -589,7 +591,6 @@ sap.ui.define([
 		var oSimpleForm = new SimpleForm({
 			maxContainerCols: 3,
 			editable: false,
-			labelMinWidth: 30,
 			content: [oTitle,
 				oLabel,
 				oText,
@@ -1908,8 +1909,7 @@ sap.ui.define([
 						subHeader: new Bar({
 							contentLeft: [new SegmentedButton({
 								width: "100%",
-								buttons: [new Button({
-									type: mLibrary.ButtonType.Default,
+								items: [new SegmentedButtonItem({
 									text: "Filter"
 								})]
 							})]

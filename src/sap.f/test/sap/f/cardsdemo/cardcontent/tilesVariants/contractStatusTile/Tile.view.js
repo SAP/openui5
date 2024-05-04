@@ -25,7 +25,6 @@ sap.ui.define([
             return new GenericTile({
                 header: "{/tileTitle}",
                 subheader: "{/tileSubtitle}",
-                size: "Auto",
                 sizeBehavior: "{/sizeBehavior}",
                 backgroundImage: "{/backgroundImage}",
                 url: {
@@ -33,7 +32,6 @@ sap.ui.define([
                     formatter: this.getController().formatters.urlToExternal
                 },
                 tileContent: [new TileContent({
-                    size: "Auto",
                     unit: "Refresh counter",
                     content: [new NumericContent({
                         value: "{/refreshCount}",

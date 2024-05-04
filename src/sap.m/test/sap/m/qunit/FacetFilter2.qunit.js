@@ -2676,8 +2676,7 @@ sap.ui.define([
 
 	function getGroupHeader(oGroup) {
 		return new GroupHeaderListItem( {
-			title: "Group: " + oGroup.key,
-			upperCase: false
+			title: "Group: " + oGroup.key
 		} );
 	}
 

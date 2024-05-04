@@ -13,7 +13,7 @@
 		<Image src="resources/sap/ui/documentation/sdk/images/demoAppsTeaser.png"
 			densityAware="false" width="100%">
 			<layoutData>
-				<l:GridData visibleOnSmall="false" />
+				<l:GridData visibleS="false" />
 			</layoutData>
 		</Image>
 	</l:Grid>
@@ -51,7 +51,7 @@
 		<Image src="{1/ProductPicUrl2}" densityAware="false" width="100%">
 			<layoutData>
 				<l:GridData linebreakXL="false" linebreakL="true"
-					visibleOnMedium="false" visibleOnSmall="true" indent="L1"/>
+					visibleM="false" visibleS="true" indent="L1"/>
 			</layoutData>
 		</Image>
 	</l:Grid>

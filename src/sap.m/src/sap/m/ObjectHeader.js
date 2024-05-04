@@ -201,7 +201,7 @@ sap.ui.define([
 				 * If set to <code>true</code>, the <code>ObjectHeader</code> can be marked with icons such as favorite and flag.
 				 *
 				 * @since 1.16.0
-				 * @deprecated as of version 1.42.0, replaced by <code>markers</code> aggregationv.
+				 * @deprecated as of version 1.42.0, replaced by <code>markers</code> aggregation.
 				 * This property is valid only if you are using the already deprecated properties - <code>markFlagged</code> and <code>markFavorite</code>.
 				 * If you are using <code>markers</code>, the visibility of the markers depends on what is set in the aggregation itself.
 				 */

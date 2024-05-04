@@ -138,7 +138,6 @@ sap.ui.define([
 			title: oGroup.key
 				? this.oTextResources.getText("TIT_VERSION_HISTORY_PUBLISHED")
 				: this.oTextResources.getText("TIT_VERSION_HISTORY_UNPUBLISHED"),
-			upperCase: false,
 			visible: this.getToolbar().getModel("versions").getProperty("/publishVersionVisible")
 		}).addStyleClass("sapUiRtaVersionHistoryGrouping").addStyleClass("sapUiRtaVersionHistory");
 	}

@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/ui/core/Item",
 	"sap/m/SearchField",
 	"sap/m/SegmentedButton",
+	"sap/m/SegmentedButtonItem",
 	"sap/m/library",
 	"sap/m/ToolbarSpacer",
 	"sap/m/ToggleButton",
@@ -39,6 +40,7 @@ sap.ui.define([
 	Item,
 	SearchField,
 	SegmentedButton,
+	SegmentedButtonItem,
 	mobileLibrary,
 	ToolbarSpacer,
 	ToggleButton,
@@ -65,9 +67,6 @@ sap.ui.define([
 
 	// shortcut for sap.m.SelectType
 	var SelectType = mobileLibrary.SelectType;
-
-	// shortcut for sap.m.ButtonType
-	var ButtonType = mobileLibrary.ButtonType;
 
 	var oApp = new App();
 	var sAddIconURI = IconPool.getIconURI("add");
@@ -103,24 +102,20 @@ sap.ui.define([
 				width : "200px"
 			}),
 			new SegmentedButton({
-				buttons: [
-					new Button({
-						type: ButtonType.Default,
+				items: [
+					new SegmentedButtonItem({
 						icon: sAddIconURI,
 						enabled: true
 					}),
-					new Button({
-						type: ButtonType.Default,
+					new SegmentedButtonItem({
 						icon: sAddIconURI,
 						enabled: true
 					}),
-					new Button({
-						type: ButtonType.Default,
+					new SegmentedButtonItem({
 						icon: sAddIconURI,
 						enabled: true
 					}),
-					new Button({
-						type: ButtonType.Default,
+					new SegmentedButtonItem({
 						icon: sAddIconURI,
 						enabled: true
 					})
@@ -340,15 +335,15 @@ sap.ui.define([
 					}),
 					new ToolbarSpacer(),
 					new SegmentedButton({
-						selectedButton : "sbi1",
-						buttons : [
-							new Button("sbi1", {
+						selectedItem : "sbi1",
+						items : [
+							new SegmentedButtonItem("sbi1", {
 								text : "Seg-"
 							}),
-							new Button({
+							new SegmentedButtonItem({
 								text : "-men-"
 							}),
-							new Button({
+							new SegmentedButtonItem({
 								text : "-ted Button"
 							})
 						]
