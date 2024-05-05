@@ -93,6 +93,11 @@ sap.ui.define([
 				advancedSettings: {
 					type: "object",
 					defaultValue: {
+						allowForms: true,
+						allowPopups: true,
+						allowScripts: true,
+						allowModals: true,
+						allowSameOrigin: true,
 						additionalSandboxParameters: []
 					}
 				},
@@ -106,11 +111,7 @@ sap.ui.define([
 				_settings: {
 					type: "object",
 					group: "Data",
-					defaultValue: {
-						advancedSettings: {
-							additionalSandboxParameters: []
-						}
-					}
+					defaultValue: null
 				}
 			},
 
@@ -185,7 +186,6 @@ sap.ui.define([
 						mMergedSettings[sPropertyName] = unbind(mSettings[sPropertyName]);
 					});
 				}
-				this.setProperty("advancedSettings", { ...mMergedSettings.advancedSettings });
 				this.setProperty("_settings", { ...mMergedSettings });
 			}
 		},

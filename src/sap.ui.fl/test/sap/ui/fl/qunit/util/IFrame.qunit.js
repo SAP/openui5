@@ -29,14 +29,6 @@ sap.ui.define([
 	const sUserLastName = "Doe";
 	const sUserFullName = `${sUserFirstName} ${sUserLastName}`;
 	const sUserEmail = `${(`${sUserFirstName}.${sUserLastName}`).toLowerCase()}@sap.com`;
-	const oDefaultAdvancedSettings = {
-		additionalSandboxParameters: [],
-		"allow-forms": true,
-		"allow-popups": true,
-		"allow-scripts": true,
-		"allow-modals": true,
-		"allow-same-origin": true
-	};
 
 	function checkUrl(assert, oIFrame, sExpectedUrl, sDescription) {
 		return (oIFrame._oSetUrlPromise || Promise.resolve())
@@ -55,8 +47,7 @@ sap.ui.define([
 				width: sDefaultSize,
 				height: sDefaultSize,
 				url: sOpenUI5Url,
-				title: sTitle,
-				advancedSettings: oDefaultAdvancedSettings
+				title: sTitle
 			});
 			this.oIFrame.placeAt("qunit-fixture");
 		},
