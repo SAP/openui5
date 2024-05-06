@@ -1,7 +1,7 @@
 sap.ui.define([
 	"./ValueHelp.delegate",
 	"sap/ui/mdc/FilterField",
-	"sap/ui/mdc/filterbar/vh/FilterBar",
+	"sap/ui/mdc/valuehelp/FilterBar",
 	"sap/ui/mdc/Table",
 	"sap/ui/mdc/table/Column",
 	"sap/ui/mdc/table/GridTableType",

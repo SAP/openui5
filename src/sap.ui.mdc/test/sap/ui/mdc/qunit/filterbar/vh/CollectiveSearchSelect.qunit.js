@@ -1,7 +1,7 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/mdc/filterbar/vh/CollectiveSearchSelect",
+	"sap/ui/mdc/valuehelp/CollectiveSearchSelect",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/qunit/utils/nextUIUpdate",

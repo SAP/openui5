@@ -14,7 +14,7 @@ sap.ui.define([
 	"sap/ui/mdc/enums/ConditionValidated",
 	"sap/ui/mdc/enums/OperatorName",
 	"sap/ui/mdc/enums/ValueHelpSelectionType",
-	"sap/ui/mdc/filterbar/vh/FilterBar",
+	"sap/ui/mdc/valuehelp/FilterBar",
 	// to have it loaded when BasicSearch should be created
 	"sap/ui/mdc/FilterField",
 	"sap/ui/model/ParseException",
@@ -1673,7 +1673,7 @@ sap.ui.define([
 				assert.ok(oFixContent.hasStyleClass("sapMdcValueHelpPanelFilterbar"), "VBox has style class sapMdcValueHelpPanelFilterbar");
 				assert.equal(oFixContent.getItems().length, 1, "VBox number of items");
 				const oFilterBar = oFixContent.getItems()[0];
-				assert.ok(oFilterBar.isA("sap.ui.mdc.filterbar.vh.FilterBar"), "VBox item is FilterBar");
+				assert.ok(oFilterBar.isA("sap.ui.mdc.valuehelp.FilterBar"), "VBox item is FilterBar");
 				// const oConditions = oFilterBar.getInternalConditions();
 				// assert.equal(oConditions["*text,additionalText*"][0].values[0], "X", "Search condition in FilterBar");
 				const oFlexContent = oContent.getFlexContent();

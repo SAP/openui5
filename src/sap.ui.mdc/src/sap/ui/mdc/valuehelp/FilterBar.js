@@ -7,7 +7,7 @@ sap.ui.define(
 		"sap/ui/mdc/filterbar/FilterBarBase",
 		"sap/ui/mdc/filterbar/FilterBarBaseRenderer",
 		"sap/ui/mdc/filterbar/aligned/FilterItemLayout",
-		"sap/ui/mdc/filterbar/vh/FilterContainer",
+		"sap/ui/mdc/valuehelp/FilterContainer",
 		"sap/m/Button",
 		"sap/m/p13n/enums/PersistenceMode"
 	],
@@ -70,7 +70,7 @@ sap.ui.define(
 						delegate: {
 							type: "object",
 							defaultValue: {
-								name: "sap/ui/mdc/filterbar/vh/FilterBarDelegate",
+								name: "sap/ui/mdc/valuehelp/FilterBarDelegate",
 								payload: {
 									modelName: undefined,
 									collectionName: ""

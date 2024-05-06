@@ -6,7 +6,7 @@ sap.ui.define([
 	"./ValueHelp.delegate",
 	"sap/ui/core/Element",
 	"sap/ui/mdc/valuehelp/content/MTable",
-	"sap/ui/mdc/filterbar/vh/FilterBar",
+	"sap/ui/mdc/valuehelp/FilterBar",
 	"sap/ui/mdc/FilterField",
 	"sap/m/library",
 	"sap/m/Table",
