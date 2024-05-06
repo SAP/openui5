@@ -12,7 +12,7 @@ sap.ui.define([
 	// _TreeState
 	//*********************************************************************************************
 	/**
-	 * A class holding the tree state for recursive hierarchies. It keeps track which nodes have
+	 * A class holding the tree state for a recursive hierarchy. It keeps track which nodes have
 	 * been manually expanded resp. collapsed and is able to build the "ExpandLevels" parameter for
 	 * the "TopLevels" request (see {@link #getExpandLevels}).
 	 *
