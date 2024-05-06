@@ -1,57 +1,55 @@
-/*global QUnit, sinon */
+/*global QUnit */
 sap.ui.define([
-	"sap/ui/core/Core",
-	"sap/m/Table",
-	"sap/ui/Device",
 	"sap/m/Button",
 	"sap/m/Column",
+	"sap/m/ColumnListItem",
+	"sap/m/Label",
 	"sap/m/library",
 	"sap/m/Page",
-	"sap/m/ColumnListItem",
+	"sap/m/Table",
 	"sap/m/Text",
-	"sap/m/Label",
 	"sap/m/table/columnmenu/Menu",
 	"sap/m/table/columnmenu/QuickAction",
 	"sap/m/table/columnmenu/Item",
+	"sap/ui/Device",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery"
-], function(Core, Table, Device, Button, Column, library, Page, ColumnListItem, Text, Label, ColumnMenu, QuickAction, Item, jQuery) {
+], function(Button, Column, ColumnListItem, Label, library, Page, Table, Text, ColumnMenu, QuickAction, Item, Device, nextUIUpdate, jQuery) {
 	"use strict";
 
-
+	async function timeout(iDuration) {
+		await new Promise((fnResolve) => {
+			window.setTimeout(fnResolve, iDuration);
+		});
+	}
 
 	QUnit.module("popin");
 
-	QUnit.test("ShouldSetDemandPopin", function(assert) {
-		var fnTestCase = function(initialValue, valueToSet,bShouldInvalidate, expectedValidateToBeCalled){
-			//SUT
-			var result,
-				originalInvalidate,
-				invalidateWasCalled = false,
-				sut = new Column();
+	QUnit.test("Should set demandPopin", function(assert) {
+		const fnTestCase = function(initialValue, valueToSet, bShouldInvalidate, expectedValidateToBeCalled) {
+			let invalidateWasCalled = false;
+			const oColumn = new Column();
 
-			if (bShouldInvalidate){
-				sut.setMinScreenWidth("9001px");
+			if (bShouldInvalidate) {
+				oColumn.setMinScreenWidth("9001px");
 			}
 
-			originalInvalidate = sut.invalidate;
-			sut.invalidate = function(){
-				originalInvalidate.call(sut);
+			const originalInvalidate = oColumn.invalidate;
+			oColumn.invalidate = function() {
+				originalInvalidate.call(oColumn);
 				invalidateWasCalled = true;
 			};
 
-			//Act
-			sut.setProperty("demandPopin", initialValue);
-			result = sut.setDemandPopin(valueToSet);
+			oColumn.setProperty("demandPopin", initialValue);
+			const result = oColumn.setDemandPopin(valueToSet);
 
-			//Assert
-			assert.strictEqual(sut.getDemandPopin(), valueToSet,"demandPopin was set");
-			assert.strictEqual(sut,result, "should be chainable");
-			if (expectedValidateToBeCalled){
+			assert.strictEqual(oColumn.getDemandPopin(), valueToSet,"demandPopin was set");
+			assert.strictEqual(oColumn,result, "should be chainable");
+			if (expectedValidateToBeCalled) {
 				assert.equal(bShouldInvalidate, invalidateWasCalled,"invalidate was called");
 			}
 
-			//Cleanup
-			sut.destroy();
+			oColumn.destroy();
 		};
 
 		//Same Value - no invalidate should not be called
@@ -69,26 +67,18 @@ sap.ui.define([
 		fnTestCase(false, true, false, false);
 	});
 
-	QUnit.test("ShouldKnowThatItIsAPopin", function(assert) {
-		var fnTestCase = function(demandsPopin, hasMedia, hasMatchingMedia, expectedResult){
-			//SUT
-			var result,
-				sut = new Column();
+	QUnit.test("Should know that it is a popin", function(assert) {
+		const fnTestCase = function(demandsPopin, hasMedia, hasMatchingMedia, expectedResult) {
+			const oColumn = new Column();
 
 			if (hasMedia) {
-				sut._media = { matches: hasMatchingMedia };
+				oColumn._media = { matches: hasMatchingMedia };
 			}
 
-			sut.setProperty("demandPopin", demandsPopin);
+			oColumn.setProperty("demandPopin", demandsPopin);
+			assert.equal(oColumn.isPopin(), expectedResult);
 
-			//Act
-			result = sut.isPopin();
-
-			//Assert
-			assert.equal(result, expectedResult);
-
-			//Cleanup
-			sut.destroy();
+			oColumn.destroy();
 		};
 
 		//Demands no Popin - should always be false
@@ -110,26 +100,18 @@ sap.ui.define([
 
 	QUnit.module("size and visibility");
 
-	QUnit.test("ShouldKnowIfItIsHidden", function(assert) {
-		var fnTestCase = function( expectedResult, hasMedia, hasMatchingMedia, minWidth){
-			//SUT
-			var result,
-				sut = new Column();
+	QUnit.test("Should know if it is hidden", function(assert) {
+		const fnTestCase = function(expectedResult, hasMedia, hasMatchingMedia, minWidth) {
+			const oColumn = new Column();
 
 			if (hasMedia) {
-				sut._media = { matches: hasMatchingMedia };
+				oColumn._media = { matches: hasMatchingMedia };
 			}
 
-			sut._minWidth = minWidth;
+			oColumn._minWidth = minWidth;
+			assert.strictEqual(oColumn.isHidden(), expectedResult);
 
-			//Act
-			result = sut.isHidden();
-
-			//Assert
-			assert.strictEqual(result, expectedResult);
-
-			//Cleanup
-			sut.destroy();
+			oColumn.destroy();
 		};
 
 		//if it has media it should return if media matches
@@ -145,218 +127,205 @@ sap.ui.define([
 		fnTestCase(false, false, undefined, 0);
 	});
 
-	QUnit.test("ShouldValidateMinWidth", function(assert) {
-		var fnTestCase = function(width){
-			//SUT
-			var sut = new Column();
+	QUnit.test("Should validate minWidth", function(assert) {
+		const fnTestCase = function(width) {
+			const oColumn = new Column();
 
-			//Act
-			sut._validateMinWidth(width);
+			oColumn._validateMinWidth(width);
+			assert.ok(true, "valid minScreenWidth : " + width);
 
-			//Assert
-			assert.ok(true,"valid minScreenWidth : " + width);
-
-			//Cleanup
-			sut.destroy();
+			oColumn.destroy();
 		};
 
 		//invalid testcases
-		assert.throws(function(){ fnTestCase(1);},/expected string for property "minScreenWidth" of /,"raised error because it expects a string");
-		assert.throws(function(){ fnTestCase("random string");},/or sap.m.ScreenSize enumeration for property/,"raised error because it expects a valid screenSize");
-		assert.throws(function(){ fnTestCase("eightpx");},/or sap.m.ScreenSize enumeration for property/,"raised error because it expects a valid screenSize");
-		assert.throws(function(){ fnTestCase("5pxa");},/or sap.m.ScreenSize enumeration for property/,"raised error because it expects a valid screenSize");
-		assert.throws(function(){ fnTestCase("-5px");},/or sap.m.ScreenSize enumeration for property/,"raised error because it expects a valid screenSize");
-		assert.throws(function(){ fnTestCase("5%");},/or sap.m.ScreenSize enumeration for property/,"raised error because it expects a valid screenSize");
+		assert.throws(function() { fnTestCase(1); }, /expected string for property "minScreenWidth" of /, "raised error because it expects a string");
+		assert.throws(function() { fnTestCase("random string"); }, /or sap.m.ScreenSize enumeration for property/, "raised error because it expects a valid screenSize");
+		assert.throws(function() { fnTestCase("eightpx"); }, /or sap.m.ScreenSize enumeration for property/, "raised error because it expects a valid screenSize");
+		assert.throws(function() { fnTestCase("5pxa"); }, /or sap.m.ScreenSize enumeration for property/, "raised error because it expects a valid screenSize");
+		assert.throws(function() { fnTestCase("-5px"); }, /or sap.m.ScreenSize enumeration for property/, "raised error because it expects a valid screenSize");
+		assert.throws(function() { fnTestCase("5%"); }, /or sap.m.ScreenSize enumeration for property/, "raised error because it expects a valid screenSize");
 
 		//valid ones
 		fnTestCase("8px");
 		fnTestCase("100000em");
 		fnTestCase("0rem");
 
-		for ( var screenSize in library.ScreenSize) {
+		for (const screenSize in library.ScreenSize) {
 			fnTestCase(screenSize);
 		}
 	});
 
-	QUnit.test("ShouldKnowIfWidthIsPredefined", function(assert) {
-		//SUT
-		var sut = new Column({minScreenWidth : "tablet"});
+	QUnit.test("Should know if width is predefined", function(assert) {
+		const oColumn = new Column({minScreenWidth : "tablet"});
 
-		//Assert
-		assert.strictEqual(sut._minWidth, "600px");
+		assert.strictEqual(oColumn._minWidth, "600px");
 
-		//Cleanup
-		sut.destroy();
+		oColumn.destroy();
 	});
 
-	QUnit.test("Visible property should not make the column visible when hidden by minScreenWidth", function(assert) {
-		var clock = sinon.useFakeTimers(),
-			oTable = new Table({
+	QUnit.test("Visible property should not make the column visible when hidden by minScreenWidth", async function(assert) {
+		const oTable = new Table({
 				contextualWidth: "Desktop",
 				columns: [
 					new Column()
 				]
 			}),
-			sut = new Column({
+			oColumn = new Column({
 				minScreenWidth: "Tablet"
 			});
 
-		oTable.addColumn(sut);
+		oTable.addColumn(oColumn);
 		oTable.placeAt("qunit-fixture");
-		Core.applyChanges();
-		assert.ok(sut.getVisible(), "Column is visible");
-		assert.ok(sut.getDomRef(), "Column is rendered");
+		await nextUIUpdate();
+
+		assert.ok(oColumn.getVisible(), "Column is visible");
+		assert.ok(oColumn.getDomRef(), "Column is rendered");
 
 		oTable.setContextualWidth("Phone");
-		clock.tick(1);
-		assert.notOk(sut.getDomRef(), "Column is not rendered due to minScreenWidth");
+		await timeout();
+
+		assert.notOk(oColumn.getDomRef(), "Column is not rendered due to minScreenWidth");
 		assert.notOk(oTable.hasPopin(), "Table has no popin");
 
-		sut.setVisible(false);
-		clock.tick(1);
-		assert.notOk(sut.getDomRef(), "Column is not rendered due to visible=false");
+		oColumn.setVisible(false);
+		await timeout();
 
-		sut.setVisible(true);
-		clock.tick(1);
-		assert.ok(sut.isHidden(), "Column is hidden");
+		assert.notOk(oColumn.getDomRef(), "Column is not rendered due to visible=false");
+
+		oColumn.setVisible(true);
+		await timeout();
+
+		assert.ok(oColumn.isHidden(), "Column is hidden");
 		assert.notOk(oTable.hasPopin(), "Table has no popin");
-		assert.notOk(sut.getDomRef(), "Column is still not rendered due to minScreenWidth");
+		assert.notOk(oColumn.getDomRef(), "Column is still not rendered due to minScreenWidth");
 
 		oTable.setContextualWidth("Desktop");
-		clock.tick(1);
-		assert.notOk(sut.isHidden(), "Column is not hidden any more");
-		assert.ok(sut.getDomRef(), "Column is rendered");
+		await timeout();
+
+		assert.notOk(oColumn.isHidden(), "Column is not hidden any more");
+		assert.ok(oColumn.getDomRef(), "Column is rendered");
 
 		oTable.destroy();
 	});
 
 	QUnit.module("media");
 
-	QUnit.test("ShouldAddMedia", function(assert) {
+	QUnit.test("Should add media", function(assert) {
 
-		var fnTestCase = function(width,matches) {
-			//SUT
-			var sut = new Column({minScreenWidth: width});
+		const fnTestCase = function(width,matches) {
+			const oColumn = new Column({minScreenWidth: width});
 
-			//Act
-			sut._addMedia();
+			oColumn._addMedia();
 
-			//Assert
-			assert.ok(sut._media);
-			assert.strictEqual(sut._media.matches, matches);
+			assert.ok(oColumn._media);
+			assert.strictEqual(oColumn._media.matches, matches);
 
-			//Cleanup
-			sut.destroy();
+			oColumn.destroy();
 		};
 
 		fnTestCase("300000px",false);
 		fnTestCase("100px",true);
 	});
 
-	QUnit.test("ShouldClearMedia", function(assert) {
-		//SUT
-		var sut = new Column({minScreenWidth: "100px"});
+	QUnit.test("Should clear media", function(assert) {
+		const oColumn = new Column({minScreenWidth: "100px"});
 
+		oColumn._addMedia();
+		assert.ok(oColumn._media);
 
-		//Act
-		sut._addMedia();
-		assert.ok(sut._media);
-		sut._clearMedia();
+		oColumn._clearMedia();
+		assert.ok(!oColumn._media);
 
-		//Assert
-		assert.ok(!sut._media);
-
-		//Cleanup
-		sut.destroy();
+		oColumn.destroy();
 	});
 
 	QUnit.module("events");
 
-	QUnit.test("Media handler should not be attached if the table is not rendered yet", function (assert) {
-		var mediaAttachSpy = this.spy(Device.media, "attachHandler"),
-				sut = new Column({
+	QUnit.test("Media handler should not be attached if the table is not rendered yet", async function (assert) {
+		const mediaAttachSpy = this.spy(Device.media, "attachHandler"),
+				oColumn = new Column({
 					minScreenWidth : "phone"
 				}),
 				parent = new Table({
-					columns : sut
+					columns : oColumn
 				});
 
 		assert.ok(!mediaAttachSpy.called, "Media handler not attached initially");
 
 		parent.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(mediaAttachSpy.called, "Media handler attached when table is rendered");
 
 		parent.destroy();
 	});
 
-	QUnit.test("Media handler should be attached when adding a column to a rendered table", function (assert) {
-		var mediaAttachSpy = this.spy(Device.media, "attachHandler"),
-				sut = new Column({
+	QUnit.test("Media handler should be attached when adding a column to a rendered table", async function (assert) {
+		const mediaAttachSpy = this.spy(Device.media, "attachHandler"),
+				oColumn = new Column({
 					minScreenWidth : "phone"
 				}),
 				parent = new Table({});
 
 		parent.placeAt("qunit-fixture");
-		parent.addColumn(sut);
-		Core.applyChanges();
+		parent.addColumn(oColumn);
+		await nextUIUpdate();
 
 		assert.ok(mediaAttachSpy.called, "Media handler called immediately");
 
-		assert.equal(sut.getInitialOrder(), 0, "initial order is correct after rendering");
-		parent.removeColumn(sut);
-		assert.equal(sut.getInitialOrder(), -1, "initial order is not cashed and correct after removal");
+		assert.equal(oColumn.getInitialOrder(), 0, "initial order is correct after rendering");
+		parent.removeColumn(oColumn);
+		assert.equal(oColumn.getInitialOrder(), -1, "initial order is not cashed and correct after removal");
 
 		parent.destroy();
 	});
 
-	QUnit.test("ShouldNotifyOnResize", function(assert) {
+	QUnit.test("Should notify on resize", async function(assert) {
 
 		//System under Test + Arrange
-		var tableResizeSpy = this.spy(Table.prototype, "onColumnResize"),
-			sut = new Column({
+		const tableResizeSpy = this.spy(Table.prototype, "onColumnResize"),
+			oColumn = new Column({
 				minScreenWidth : "phone"
 			}),
 			parent = new Table({
-				columns : [new Column(), sut]
+				columns : [new Column(), oColumn]
 			});
 
 		// The table needs to be rendered for the column media object to be initialized
 		parent.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
-		sut._notifyResize({from: 240}); // this is the default value for minScreenWidth="phone"
-		this.clock.tick(1);
+		oColumn._notifyResize({from: 240}); // this is the default value for minScreenWidth="phone"
+		await timeout();
 
 		assert.ok(!tableResizeSpy.called, "Table resize not called, if media is the same");
 
-		sut._notifyResize({from: 0});
-		this.clock.tick(1);
+		oColumn._notifyResize({from: 0});
+		await timeout();
 
 		assert.equal(tableResizeSpy.callCount, 1, "Table resize called, if media is different");
 
-		sut.setVisible(false);
-		sut._notifyResize({from: 100});
-		this.clock.tick(1);
+		oColumn.setVisible(false);
+		oColumn._notifyResize({from: 100});
+		await timeout();
 		assert.equal(tableResizeSpy.callCount, 1, "Table resize not called, since column is invisible");
 
-		sut.setVisible(true);
-		Core.applyChanges();
-		assert.ok(sut.getDomRef(), "Visible column is rendered");
+		oColumn.setVisible(true);
+		await nextUIUpdate();
+		assert.ok(oColumn.getDomRef(), "Visible column is rendered");
 
 		parent.destroy();
 	});
 
-	QUnit.test("Should not notify when contextual width is set to a parent container, but this width is in the same range as the device width (when initially rendered without contextual width)", function (assert) {
+	QUnit.test("Should not notify when contextual width is set to a parent container, but this width is in the same range as the device width (when initially rendered without contextual width)", async function (assert) {
 
 		//Setup is a sap.m.Page holding a Table. Setting contextual width on the page affects the table
-		var tableResizeSpy = this.spy(Table.prototype, "onColumnResize"),
-				sut = new Column({
+		const tableResizeSpy = this.spy(Table.prototype, "onColumnResize"),
+				oColumn = new Column({
 					minScreenWidth : "tablet"
 				}),
 				parent = new Table({
-					columns : sut
+					columns : oColumn
 				}),
 				page = new Page({
 					content: [parent]
@@ -364,27 +333,27 @@ sap.ui.define([
 
 		// The table is rendered without contextual width, the Device.media API is used
 		page.placeAt("qunit-fixture");
-		Core.applyChanges();
-		this.clock.tick(1);
+		await nextUIUpdate();
+		await timeout();
 		assert.ok(!tableResizeSpy.called, "Initially no resize is needed, table normally rendered as for desktop");
 
 		// Set contextual width to a parent (as for tablet or above) and wait 1 tick for onColumnResize
 		page._applyContextualSettings({contextualWidth: 600});
-		this.clock.tick(1);
+		await timeout();
 		assert.equal(tableResizeSpy.callCount, 0, "After applying contextual width to a parent container, but this width is in the same range, onColumnResize is not called");
 
 		page.destroy();
 	});
 
-	QUnit.test("Should notify when contextual width is set to a parent container, and this width is in a different range compared to device width (when initially rendered without contextual width)", function (assert) {
+	QUnit.test("Should notify when contextual width is set to a parent container, and this width is in a different range compared to device width (when initially rendered without contextual width)", async function (assert) {
 
 		//Setup is a sap.m.Page holding a Table. Setting contextual width on the page affects the table
-		var tableResizeSpy = this.spy(Table.prototype, "onColumnResize"),
-				sut = new Column({
+		const tableResizeSpy = this.spy(Table.prototype, "onColumnResize"),
+				oColumn = new Column({
 					minScreenWidth : "tablet"
 				}),
 				parent = new Table({
-					columns : [new Column(), sut]
+					columns : [new Column(), oColumn]
 				}),
 				page = new Page({
 					content: [parent]
@@ -392,117 +361,117 @@ sap.ui.define([
 
 		// The table is rendered without contextual width, the Device.media API is used
 		page.placeAt("qunit-fixture");
-		Core.applyChanges();
-		this.clock.tick(1);
+		await nextUIUpdate();
+		await timeout();
 
 		assert.ok(!tableResizeSpy.called, "Initially no resize is needed, table normally rendered as for desktop");
 
 		// Set contextual width to a parent (as for phone) and wait 1 tick for onColumnResize
 		page._applyContextualSettings({contextualWidth: 100});
-		this.clock.tick(1);
+		await timeout();
 		assert.equal(tableResizeSpy.callCount, 1, "After applying contextual width to a parent container, and this width is in a different range, onColumnResize is called");
 
 		// Now set contextual width that doesn't go beyond a breakpoint
 		page._applyContextualSettings({contextualWidth: 101});
-		this.clock.tick(1);
+		await timeout();
 		// callCount is still 1
 		assert.equal(tableResizeSpy.callCount, 1, "After applying contextual width to a parent container, but this width isn't in a different range, onColumnResize is not called");
 
 		// Now set contextual width that goes beyond a breakpoint (tablet starts at 600)
 		page._applyContextualSettings({contextualWidth: 600});
-		this.clock.tick(1);
+		await timeout();
 		assert.equal(tableResizeSpy.callCount, 2, "After applying contextual width to a parent container, and this width is in a different range, onColumnResize is called");
 
 		page.destroy();
 	});
 
-	QUnit.test("Should notify when contextual width changes beyond a breakpoint (when already rendered with contextual width)", function (assert) {
+	QUnit.test("Should notify when contextual width changes beyond a breakpoint (when already rendered with contextual width)", async function (assert) {
 
 		//Setup is a sap.m.Page holding a Table. Setting contextual width on the page affects the table
-		var tableResizeSpy = this.spy(Table.prototype, "onColumnResize"),
-				sut = new Column({
+		const tableResizeSpy = this.spy(Table.prototype, "onColumnResize"),
+				oColumn = new Column({
 					minScreenWidth : "tablet"
 				}),
 				parent = new Table({
-					columns : [sut, new Column()]
+					columns : [oColumn, new Column()]
 				}),
 				page = new Page({}); // we want the page to be empty so we can insert the table later
 
 
 		page.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 		page._applyContextualSettings({contextualWidth: 100});
 
 		// Place the table in a container that already has contextual settings
 		page.addContent(parent);
-		this.clock.tick(1);
+		await timeout();
 
 		assert.ok(!tableResizeSpy.called, "Initially no resize is needed - the table is rendered as for phone");
 
 		// Now change the contextual width significantly (tablet starts at 600) and wait 1 tick for onColumnResize
 		page._applyContextualSettings({contextualWidth: 600});
-		this.clock.tick(1);
+		await timeout();
 
 		assert.equal(tableResizeSpy.callCount, 1, "After applying contextual width to a parent container, and this width is in a different range, onColumnResize is called");
 
 		page.destroy();
 	});
 
-	QUnit.test("Should notify when contextual width is removed from a parent, and this width was in a different range compared to device width", function (assert) {
+	QUnit.test("Should notify when contextual width is removed from a parent, and this width was in a different range compared to device width", async function (assert) {
 
 		//Setup is a sap.m.Page holding a Table. Setting contextual width on the page affects the table
-		var tableResizeSpy = this.spy(Table.prototype, "onColumnResize"),
-				sut = new Column({
+		const tableResizeSpy = this.spy(Table.prototype, "onColumnResize"),
+				oColumn = new Column({
 					minScreenWidth : "tablet"
 				}),
 				parent = new Table({
-					columns : [sut, new Column()]
+					columns : [oColumn, new Column()]
 				}),
 				page = new Page({}); // we want the page to be empty so we can insert the table later
 
 
 		page.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 		page._applyContextualSettings({contextualWidth: 100});
 
 		// Place the table in a container that already has contextual settings
 		page.addContent(parent);
-		this.clock.tick(1);
+		await timeout();
 		assert.ok(!tableResizeSpy.called, "Initially no resize is needed - the table is rendered as for phone");
 
 		// Now remove contextual settings - the table will be rerendered as for desktop
 		page._applyContextualSettings({});
-		this.clock.tick(1);
+		await timeout();
 		assert.equal(tableResizeSpy.callCount, 1, "After removing contextual with from a parent container, and this width was in another range compared to the device size range, onColumnResize is called");
 
 		page.destroy();
 	});
 
-	QUnit.test("Should not notify when contextual width is removed from a parent, but this width wasn't in a different range compared to device width", function (assert) {
+	QUnit.test("Should not notify when contextual width is removed from a parent, but this width wasn't in a different range compared to device width", async function (assert) {
 
 		//Setup is a sap.m.Page holding a Table. Setting contextual width on the page affects the table
-		var tableResizeSpy = this.spy(Table.prototype, "onColumnResize"),
-				sut = new Column({
+		const tableResizeSpy = this.spy(Table.prototype, "onColumnResize"),
+				oColumn = new Column({
 					minScreenWidth : "tablet"
 				}),
 				parent = new Table({
-					columns : sut
+					columns : oColumn
 				}),
 				page = new Page({}); // we want the page to be empty so we can insert the table later
 
 
 		page.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 		page._applyContextualSettings({contextualWidth: 1000});
 
 		// Place the table in a container that already has contextual settings
 		page.addContent(parent);
-		this.clock.tick(1);
+		await timeout();
 		assert.ok(!tableResizeSpy.called, "Initially no resize is needed - the table is rendered as for tablet since contextual width is 1000 already");
 
 		// Now remove contextual settings - the table will not be rerendered as it is already showing the column
 		page._applyContextualSettings({});
-		this.clock.tick(1);
+		await timeout();
 		assert.equal(tableResizeSpy.callCount, 0, "After removing contextual width from a parent container, but this width was in the same range compared to the device width, onColumnResize is not called");
 
 		page.destroy();
@@ -513,15 +482,12 @@ sap.ui.define([
 
 	QUnit.test("Should convert units correctly", function(assert) {
 
-		var fnTestCase = function(width, px) {
-			//SUT
-			var sut = new Column({minScreenWidth: width});
+		const fnTestCase = function(width, px) {
+			const oColumn = new Column({minScreenWidth: width});
 
-			//Assert
-			assert.strictEqual(sut._minWidth, px);
+			assert.strictEqual(oColumn._minWidth, px);
 
-			//Cleanup
-			sut.destroy();
+			oColumn.destroy();
 		};
 
 		fnTestCase("64rem", "1024px");
@@ -531,15 +497,15 @@ sap.ui.define([
 		fnTestCase("63px", "63px");
 	});
 
-	QUnit.test("Sorted property and sort icon", function(assert) {
-		var sut = new Column({
+	QUnit.test("Sorted property and sort icon", async function(assert) {
+		const oColumn = new Column({
 			hAlign: "Center",
 			header: new Label({
 				text: "Column"
 			})
 		}),
 		parent = new Table({
-			columns : sut,
+			columns : oColumn,
 			items: new ColumnListItem({
 				cells: new Text({
 					text: "cell"
@@ -548,78 +514,78 @@ sap.ui.define([
 		});
 
 		parent.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
-		assert.equal(sut.getSortIndicator(), "None", "Default value for sorted is None");
+		assert.equal(oColumn.getSortIndicator(), "None", "Default value for sorted is None");
 
 		// sort ascending
-		sut.setSortIndicator("Ascending");
-		assert.equal(sut.getSortIndicator(), "Ascending", "Column is sorted");
-		var oSutDomRef = sut.getDomRef();
+		oColumn.setSortIndicator("Ascending");
+		assert.equal(oColumn.getSortIndicator(), "Ascending", "Column is sorted");
+		const oSutDomRef = oColumn.getDomRef();
 		assert.equal(oSutDomRef.getAttribute("aria-sort"), "ascending", "Column is sorted in ascending order");
 
 		// sort descending
-		sut.setSortIndicator("Descending");
-		assert.equal(sut.getSortIndicator(), "Descending", "Column is sorted");
+		oColumn.setSortIndicator("Descending");
+		assert.equal(oColumn.getSortIndicator(), "Descending", "Column is sorted");
 		assert.equal(oSutDomRef.getAttribute("aria-sort"), "descending", "Column is sorted in descending order");
 
 		// sorting removed
-		sut.setSortIndicator("None");
-		assert.equal(sut.getSortIndicator(), "None", "Sorting removed");
+		oColumn.setSortIndicator("None");
+		assert.equal(oColumn.getSortIndicator(), "None", "Sorting removed");
 		assert.equal(oSutDomRef.getAttribute("aria-sort"), "none", "Sorting removed");
 
 		parent.destroy();
 	});
 
 	QUnit.module("Column Menu Header", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oMenu = new ColumnMenu({
 				quickActions: [new QuickAction({label: "Quick Action A", content: new Button({text: "Execute"})})],
 				items: [new Item({label: "Item A", icon: "sap-icon://sort", content: new Button({text: "Execute"})})]
 			});
-			this.sut = new Column({
+			this.oColumn = new Column({
 				hAlign: "Center",
 				header: new Label({text: "Column"})
 			});
 			this.parent = new Table({
-				columns : this.sut,
+				columns : this.oColumn,
 				items: new ColumnListItem({
 					cells: new Text({text: "cell"})
 				})
 			});
-			this.sut.setHeaderMenu(this.oMenu);
+			this.oColumn.setHeaderMenu(this.oMenu);
 
 			this.parent.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oMenu.destroy();
-			this.sut.destroy();
+			this.oColumn.destroy();
 			this.parent.destroy();
 		}
 	});
 
 	QUnit.test("ARIA haspopup attribute set correctly column with menu", function (assert) {
-		assert.equal(this.sut.getFocusDomRef().getAttribute("aria-haspopup"), "dialog", "aria-haspopup value is dialog");
+		assert.equal(this.oColumn.getFocusDomRef().getAttribute("aria-haspopup"), "dialog", "aria-haspopup value is dialog");
 	});
 
-	QUnit.test("Open menu", function (assert) {
-		var oOpenSpy = this.spy(this.oMenu, "openBy");
-		var oColumnPressSpy = this.spy(this.sut.getTable(), "fireEvent");
-		var oFakeEvent = new jQuery.Event("contextmenu");
+	QUnit.test("Open menu", async function (assert) {
+		const oOpenSpy = this.spy(this.oMenu, "openBy");
+		const oColumnPressSpy = this.spy(this.oColumn.getTable(), "fireEvent");
+		const oFakeEvent = new jQuery.Event("contextmenu");
 
-		this.sut.$().trigger("tap");
-		Core.applyChanges();
+		this.oColumn.$().trigger("tap");
+		await nextUIUpdate();
 
 		assert.equal(oOpenSpy.callCount, 1, "openBy called exactly once when the tap event is triggered");
-		assert.ok(oOpenSpy.calledWith(this.sut), "openBy called with correct column");
+		assert.ok(oOpenSpy.calledWith(this.oColumn), "openBy called with correct column");
 		assert.notOk(oColumnPressSpy.calledWithExactly("columnPress"), "The columnPress event is not fired");
 
-		this.sut.$().trigger(oFakeEvent);
-		Core.applyChanges();
+		this.oColumn.$().trigger(oFakeEvent);
+		await nextUIUpdate();
 
 		assert.equal(oOpenSpy.callCount, 2, "openBy called exactly once when the contextmenu event is triggered");
-		assert.ok(oOpenSpy.calledWith(this.sut), "openBy called with correct column");
+		assert.ok(oOpenSpy.calledWith(this.oColumn), "openBy called with correct column");
 		assert.notOk(oColumnPressSpy.calledWithExactly("columnPress"), "The columnPress event is not fired");
 		assert.ok(oFakeEvent.isDefaultPrevented(), "Default action is prevented for event");
 	});
