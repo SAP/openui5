@@ -4594,7 +4594,6 @@ sap.ui.define([
 		const oTreeStateMock = this.mock(oCache.oTreeState);
 		oTreeStateMock.expects("isOutOfPlace").withExactArgs("('23')").returns(false);
 		oTreeStateMock.expects("isOutOfPlace").withExactArgs("('42')").returns(false);
-		oTreeStateMock.expects("deleteOutOfPlace").never();
 		const oGroupLock = {getUnlockedCopy : mustBeMocked};
 		const oRequestorMock = this.mock(this.oRequestor);
 		oRequestorMock.expects("request")
@@ -4604,6 +4603,8 @@ sap.ui.define([
 				}, {"myParent@odata.bind" : "Foo('42')"},
 				/*fnSubmit*/null, /*fnCancel*/sinon.match.func)
 			.returns("A");
+		oTreeStateMock.expects("deleteOutOfPlace").exactly(sSiblingPath ? 1 : 0)
+			.withExactArgs("('43')");
 		this.mock(_Helper).expects("getMetaPath").exactly(sSiblingPath ? 1 : 0)
 			.withExactArgs("/non/canonical/changeNextSibling/NextSibling/")
 			.returns("~metaPath~");

@@ -1336,6 +1336,8 @@ sap.ui.define([
 				const sSiblingPredicate = sSiblingPath?.slice(sSiblingPath.indexOf("("));
 				let oSiblingNode = this.aElements.$byPredicate[sSiblingPredicate];
 				if (oSiblingNode) {
+					// remove OOP for all descendants (incl. itself) of a next sibling
+					this.oTreeState.deleteOutOfPlace(sSiblingPredicate);
 					const oNextSiblingType = this.oAggregation.$fetchMetadata(
 						_Helper.getMetaPath("/" + sActionPath + "/NextSibling/")
 					).getResult();
