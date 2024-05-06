@@ -19,6 +19,7 @@ sap.ui.define([
 	"sap/ui/core/mvc/View",
 	"sap/ui/core/Rendering",
 	"sap/ui/model/BindingMode",
+	"sap/ui/model/FieldHelp",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/FilterType",
@@ -38,7 +39,7 @@ sap.ui.define([
 	// load Table resources upfront to avoid loading times > 1 second for the first test using Table
 	// "sap/ui/table/Table"
 ], function (Log, Localization, merge, uid, Input, Device, ManagedObjectObserver, SyncPromise,
-		Library, Messaging, UI5Date, Message, MessageType, Controller, View, Rendering, BindingMode, Filter,
+		Library, Messaging, UI5Date, Message, MessageType, Controller, View, Rendering, BindingMode, FieldHelp, Filter,
 		FilterOperator, FilterType, Model, Sorter, JSONModel, MessageModel, CountMode, MessageScope, Decimal,
 		Context, ODataModel, XMLModel, TestUtils, datajs, XMLHelper) {
 	/*global QUnit, sinon*/
@@ -23029,6 +23030,143 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			return this.waitForChanges(assert, "Scroll back up and see correct values");
 		}).then(() => {
 			assert.deepEqual(getTableContent(oTable), [["16.00\u00a0EUR"], ["29\u00a0JPY"]]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Activate field help and get the expected hotspots. Simulate filter bar fields which will set
+	// "sap-ui-DocumentationRef" custom data at the filter field. For ODataPropertyBindings, either standalone or
+	// embedded in a CompositeBinding, the field help is determined automatically by evaluating the
+	// "com.sap.vocabularies.Common.v1.DocumentationRef" annotation. ODataPropertyBindings embedded in a
+	// CompositeBinding for which no messages are displayed (see getPartsIgnoringMessages), are ignored.
+	// JIRA: CPOUI5MODELS-1696
+	QUnit.test("Field Help", function (assert) {
+		const oModel = createSalesOrdersModel({defaultBindingMode: BindingMode.TwoWay});
+		const oFilterModel = new JSONModel({filter: "42"});
+		const sView = `
+<Label labelFor="FilterSingleFieldHelp" text="Label for filter with single field help" />
+<Input id="FilterSingleFieldHelp" value="{filter>/filter}" />
+<Label labelFor="FilterMultipleFieldHelps" text="Label for filter with multiple field helps" />
+<Input id="FilterMultipleFieldHelps" value="Foo Bar" />
+<Label labelFor="FilterWithoutFieldHelp" text="Label for filter without any field help" />
+<Input id="FilterWithoutFieldHelp" value="Baz" />
+<FlexBox id="form" binding="{/SalesOrderSet('1')}">
+	<Label labelFor="Note" text="Label for Note" />
+	<Input id="Note" value="{Note}" />
+	<Label labelFor="DeliveryStatus" text="Label for DeliveryStatus without any field help" />
+	<Input id="DeliveryStatus" value="{DeliveryStatus}" />
+	<Label labelFor="Amount0" text="Label for both amount and currency" />
+	<Input id="Amount0" value="{
+		mode : 'TwoWay',
+		parts : [{
+			constraints : {precision : 16, scale : 3},
+			path : 'GrossAmount',
+			type : 'sap.ui.model.odata.type.Decimal'
+		}, {
+			constraints : {maxLength : 5},
+			path : 'CurrencyCode',
+			type : 'sap.ui.model.odata.type.String'
+		}],
+		type : 'sap.ui.model.type.Currency'
+	}" />
+	<Label labelFor="Amount1" text="Label for amount only" />
+	<Input id="Amount1" value="{
+		formatOptions : {showMeasure : false},
+		mode : 'TwoWay',
+		parts : [{
+			constraints : {precision : 16, scale : 3},
+			path : 'GrossAmount',
+			type : 'sap.ui.model.odata.type.Decimal'
+		}, {
+			constraints : {maxLength : 5},
+			path : 'CurrencyCode',
+			type : 'sap.ui.model.odata.type.String'
+		}],
+		type : 'sap.ui.model.type.Currency'
+	}" />
+</FlexBox>`;
+		function compare(a, b) {
+			if (a === b) {
+				return 0;
+			}
+			return a < b ? -1 : 1;
+		}
+		function sortHotspots(a, b) {
+			return compare(a.hotspotId, b.hotspotId) || compare(a.backendHelpKey.id, b.backendHelpKey.id);
+		}
+
+		this.expectHeadRequest()
+			.expectRequest("SalesOrderSet('1')", {
+				__metadata: {uri: "SalesOrderSet('1')"},
+				CurrencyCode: "EUR",
+				DeliveryStatus: "N",
+				GrossAmount: "1.23",
+				Note: "Sales Order Note",
+				SalesOrderID: "1"
+			})
+			.expectValue("Amount0", "1.23")
+			.expectValue("Amount0", "1.23\xa0EUR")
+			.expectValue("Amount1", "1.23")
+			.expectValue("DeliveryStatus", "N")
+			.expectValue("Note", "Sales Order Note");
+
+		return this.createView(assert, sView, {undefined: oModel, filter: oFilterModel}).then(() => {
+			const oView = this.oView;
+			// manually add documentation refs - simulate filter fields
+			const oFilterSingleFieldHelp = oView.byId("FilterSingleFieldHelp");
+			oFilterSingleFieldHelp.data("sap-ui-DocumentationRef",
+				"urn:sap-com:documentation:key?=type=DTEL&id=SALESORDERID");
+			const oFilterMultipleFieldHelps = oView.byId("FilterMultipleFieldHelps");
+			oFilterMultipleFieldHelps.data("sap-ui-DocumentationRef", [
+				"urn:sap-com:documentation:key?=type=DTEL&id=FOO",
+				"urn:sap-com:documentation:key?=type=DTEL&id=Bar&origin=Origin"
+			]);
+			let fnResolve;
+			const oPromise = new Promise((resolve) => {
+				fnResolve = resolve;
+			});
+			const oUtil = {fnUpdateCallback() {}};
+			this.mock(oUtil).expects("fnUpdateCallback").withExactArgs(sinon.match.array).callsFake((aHotspots) => {
+				const aExpectedHotspots = [{
+					"backendHelpKey": {id: "SALESORDERID", origin: null, type: "DTEL"},
+					"hotspotId": oFilterSingleFieldHelp.getId(),
+					"labelText": "Label for filter with single field help"
+				}, {
+					"backendHelpKey": {id: "FOO", origin: null, type: "DTEL"},
+					"hotspotId": oFilterMultipleFieldHelps.getId(),
+					"labelText": "Label for filter with multiple field helps"
+				}, {
+					"backendHelpKey": {id: "Bar", origin: "Origin", type: "DTEL"},
+					"hotspotId": oFilterMultipleFieldHelps.getId(),
+					"labelText": "Label for filter with multiple field helps"
+				}, { // documentation ref from OData annotation
+					"backendHelpKey": {id: "NOTE", origin: "MyOrigin", type: "DTEL"},
+					"hotspotId": oView.byId("Note").getId(),
+					"labelText": "Label for Note"
+				}, { // documentation ref from OData annotation - composite binding part 0
+					"backendHelpKey": {id: "GROSSAMOUNT", origin: null, type: "DTEL"},
+					"hotspotId": oView.byId("Amount0").getId(),
+					"labelText": "Label for both amount and currency"
+				}, { // documentation ref from OData annotation - composite binding part 1
+					"backendHelpKey": {id: "/FOO/CURRENCY", origin: null, type: "DTEL"},
+					"hotspotId": oView.byId("Amount0").getId(),
+					"labelText": "Label for both amount and currency"
+				}, { // documentation ref from OData annotation - composite binding showning only one part
+					"backendHelpKey": {id: "GROSSAMOUNT", origin: null, type: "DTEL"},
+					"hotspotId": oView.byId("Amount1").getId(),
+					"labelText": "Label for amount only"
+				}].sort(sortHotspots);
+
+				assert.deepEqual(aHotspots.sort(sortHotspots), aExpectedHotspots);
+				fnResolve();
+			});
+
+			// code under test
+			FieldHelp.getInstance().activate(oUtil.fnUpdateCallback);
+
+			return Promise.all([oPromise, this.waitForChanges(assert, "Initial activation")]);
+		}).finally(() => {
+			FieldHelp.getInstance().deactivate();
 		});
 	});
 });

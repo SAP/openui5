@@ -291,6 +291,9 @@ sap.ui.define(function() {
 			"model/ContextBinding": {
 				title: "sap.ui.model.ContextBinding"
 			},
+			"model/FieldHelp": {
+				title: "sap.ui.model.FieldHelp"
+			},
 			"model/Filter": {
 				title: "sap.ui.model.Filter"
 			},
