@@ -602,10 +602,10 @@ sap.ui.define([
 		let oOnAfterRenderingPromise;
 		sap.ui.define("my/Controller13.controller", ["sap/ui/core/mvc/Controller"], function(Controller) {
 			return Controller.extend("my.Controller13", {
-				onAfterRendering: async function() {
+				onAfterRendering: function() {
 					const oPromise = Promise.reject(new Error("async onAfterRendering returns rejected Promise."));
 					oOnAfterRenderingPromise =  oPromise;
-					await oPromise;
+					return oPromise;
 				}
 			});
 		});
