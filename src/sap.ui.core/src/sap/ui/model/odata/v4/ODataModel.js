@@ -2039,8 +2039,8 @@ sap.ui.define([
 	 * @returns {function(string)}
 	 *   The optimistic batch enabler callback function
 	 *
-	 * @experimental As of version 1.100.0
 	 * @private
+	 * @since 1.100.0
 	 * @ui5-restricted sap.fe
 	 */
 	ODataModel.prototype.getOptimisticBatchEnabler = function () {
@@ -2781,9 +2781,9 @@ sap.ui.define([
 	 *   <li> the setter is called more than once
 	 * </ul>
 	 *
-	 * @experimental As of version 1.100.0
 	 * @private
 	 * @see #cleanUpOptimisticBatch
+	 * @since 1.100.0
 	 * @ui5-restricted sap.fe
 	 */
 	ODataModel.prototype.setOptimisticBatchEnabler = function (fnOptimisticBatchEnabler) {
@@ -2914,9 +2914,9 @@ sap.ui.define([
 	 *   A promise which is resolved without a defined result, or rejected with an error if
 	 *   deletion fails.
 	 *
-	 * @experimental As of version 1.102.0
 	 * @private
 	 * @see #setOptimisticBatchEnabler
+	 * @since 1.102.0
 	 * @ui5-restricted sap.fe
 	 */
 	ODataModel.cleanUpOptimisticBatch = function (dOlderThan) {
