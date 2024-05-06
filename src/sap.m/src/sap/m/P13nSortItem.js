@@ -20,7 +20,7 @@ sap.ui.define([
 	 * @public
 	 * @since 1.26.0
 	 * @alias sap.m.P13nSortItem
-	 * @deprecated since 1.120
+     * @deprecated As of 1.120, replaced by the artifacts in {@link sap.m.p13n}.
 	 */
 	var P13nSortItem = Item.extend("sap.m.P13nSortItem", /** @lends sap.m.P13nSortItem.prototype */
 		{

@@ -20,6 +20,7 @@ sap.ui.define([
 	 * @public
 	 * @since 1.26.0
 	 * @alias sap.m.P13nItem
+	 * @deprecated As of version 1.124, replaced by the artifacts in {@link sap.m.p13n}.
 	 */
 	var P13nItem = Element.extend("sap.m.P13nItem", /** @lends sap.m.P13nItem.prototype */
 	{

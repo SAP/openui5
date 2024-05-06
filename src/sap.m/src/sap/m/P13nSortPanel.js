@@ -27,7 +27,7 @@ sap.ui.define([
 	 * @extends sap.m.P13nPanel
 	 * @version ${version}
 	 * @constructor
-	 * @deprecated as of version 1.98. Use the {@link sap.m.p13n.SortPanel} instead.
+	 * @deprecated As of version 1.98. Use the {@link sap.m.p13n.SortPanel} instead.
 	 * @public
 	 * @since 1.26.0
 	 * @alias sap.m.P13nSortPanel
