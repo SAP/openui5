@@ -3339,13 +3339,12 @@ sap.ui.define([
 
 		if (bRefresh) {
 			return SyncPromise.all([
-				oPromise.then(function ([,, iNewIndex]) {
-					if (oSiblingContext !== undefined) {
-						oChildContext.iIndex = iNewIndex;
-					}
-				}),
+				oPromise,
 				this.requestSideEffects(sUpdateGroupId, [""])
-			]);
+			]).then(([fnGetIndex]) => {
+				// Note: wait for side-effects refresh before getting index!
+				oChildContext.iIndex = fnGetIndex();
+			});
 		}
 
 		return oPromise.then(([iCount, iNewIndex, iCollapseCount]) => {

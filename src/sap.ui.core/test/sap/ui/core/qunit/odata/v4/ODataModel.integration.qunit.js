@@ -30483,6 +30483,18 @@ sap.ui.define([
 						"BestFriend@odata.bind" : "Artists(ArtistID='1',IsActiveEntity=false)"
 					}
 				}, null, {ETag : "n/a"}) // 204 No Content
+				.expectRequest({ // side-effects refresh
+					batchNo : 6,
+					url : sBaseUrl + "&$filter=ArtistID eq '2' and IsActiveEntity eq false"
+						+ "&$select=_/Limited_Rank"
+				}, {
+					value : [{
+						"@odata.etag" : "n/a",
+						_ : {
+							Limited_Rank : "2" // Edm.Int64
+						}
+					}]
+				})
 				.expectRequest({ // implicitly kept alive by selection
 					batchNo : 6,
 					url : sFriend.slice(1) + "?$filter=ArtistID eq '2' and IsActiveEntity eq false"
@@ -32058,6 +32070,16 @@ sap.ui.define([
 				batchNo : 3,
 				url : sBaseUrl.slice(0, -1) + ",ExpandLevels="
 					+ JSON.stringify([{NodeID : "8", Levels : 0}, {NodeID : "1", Levels : 1}])
+					+ ")&$filter=ID eq '3'&$select=LimitedRank"
+			}, {
+				value : [{
+					LimitedRank : "3" // Edm.Int64
+				}]
+			})
+			.expectRequest({
+				batchNo : 3,
+				url : sBaseUrl.slice(0, -1) + ",ExpandLevels="
+					+ JSON.stringify([{NodeID : "8", Levels : 0}, {NodeID : "1", Levels : 1}])
 					+ ")&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name"
 					+ "&$count=true&$skip=0&$top=10"
 			}, {
@@ -32115,6 +32137,7 @@ sap.ui.define([
 			this.waitForChanges(assert, "move 3 (Zeta) to 1 (Beta)")
 		]);
 
+		assert.strictEqual(oZeta.getIndex(), 3);
 		checkTable("after move 3 (Zeta) to 1 (Beta)", assert, oTable, [
 			"/EMPLOYEES('0')",
 			"/EMPLOYEES('1')",
@@ -32152,6 +32175,16 @@ sap.ui.define([
 					"EMPLOYEE_2_MANAGER@odata.bind" : "EMPLOYEES('8')"
 				}
 			}) // 204 No Content
+			.expectRequest({
+				batchNo : 4,
+				url : sBaseUrl.slice(0, -1) + ",ExpandLevels="
+					+ JSON.stringify([{NodeID : "1", Levels : 1}])
+					+ ")&$filter=ID eq '1'&$select=LimitedRank"
+			}, {
+				value : [{
+					LimitedRank : "4" // Edm.Int64
+				}]
+			})
 			.expectRequest({
 				batchNo : 4,
 				url : sBaseUrl.slice(0, -1) + ",ExpandLevels="
@@ -32219,6 +32252,7 @@ sap.ui.define([
 			this.waitForChanges(assert, "move 1 (Beta) to collapsed 8 (Eta)")
 		]);
 
+		assert.strictEqual(oBeta.getIndex(), 4);
 		checkTable("after move 1 (Beta) to collapsed 8 (Eta)", assert, oTable, [
 			"/EMPLOYEES('0')",
 			"/EMPLOYEES('2')",
@@ -32261,6 +32295,16 @@ sap.ui.define([
 					"EMPLOYEE_2_MANAGER@odata.bind" : "EMPLOYEES('9')"
 				}
 			}) // 204 No Content
+			.expectRequest({
+				batchNo : 5,
+				url : sBaseUrl.slice(0, -1) + ",ExpandLevels="
+					+ JSON.stringify([{NodeID : "1", Levels : 1}, {NodeID : "9", Levels : 1}])
+					+ ")&$filter=ID eq '1'&$select=LimitedRank"
+			}, {
+				value : [{
+					LimitedRank : "4" // Edm.Int64
+				}]
+			})
 			.expectRequest({
 				batchNo : 5,
 				// Note: Levels=2
@@ -32328,6 +32372,7 @@ sap.ui.define([
 			this.waitForChanges(assert, "move 1 (Beta) to leaf 9 (Theta)")
 		]);
 
+		assert.strictEqual(oBeta.getIndex(), 4);
 		checkTable("after move 1 (Beta) to leaf 9 (Theta)", assert, oTable, [
 			"/EMPLOYEES('0')",
 			"/EMPLOYEES('2')",
@@ -32457,8 +32502,10 @@ sap.ui.define([
 	//    others.
 	// 4. Move a created node to make it a root (JIRA: CPOUI5ODATAV4-2400).
 	// 5. Move a created node to another created node.
+	// 6. Move a created node to another created node. All previously out-of-place nodes do not
+	//    match an imaginary filter when becoming "in place". Check #getIndex for those contexts.
 	// JIRA: CPOUI5ODATAV4-2466
-[1, 2, 3, 4, 5].forEach(function (iScenario) {
+[1, 2, 3, 4, 5, 6].forEach(function (iScenario) {
 	const sTitle = `Recursive Hierarchy: nodes affected by a move; #${iScenario}`;
 
 	QUnit.test(sTitle, async function (assert) {
@@ -32487,7 +32534,7 @@ sap.ui.define([
 		//   3 Delta (created)
 		//     3.1 Epsilon (created) <-- 4. moved to make it a root
 		//       3.1.1 Zeta (created) <-- 1. Beta moved here
-		//     3.2 Eta (created) <-- 5. Epsilon moved here
+		//     3.2 Eta (created) <-- 5. Epsilon moved here; 6. dito
 		this.expectRequest(sReadUrl + "&$count=true&$skip=0&$top=10", {
 				"@odata.count" : "3",
 				value : [{
@@ -32591,6 +32638,7 @@ sap.ui.define([
 				//         1 Beta (moved here)
 				//     3.2 Eta
 				this.expectRequest({
+						batchNo : 10,
 						headers : {
 							Prefer : "return=minimal"
 						},
@@ -32600,7 +32648,18 @@ sap.ui.define([
 						},
 						url : "EMPLOYEES('1')"
 					}) // 204 No Content
-					.expectRequest(sReadUrl + "&$count=true&$skip=0&$top=10", {
+					.expectRequest({
+						batchNo : 10,
+						url : sBaseUrl + "&$filter=ID eq '1'&$select=LimitedRank"
+					}, {
+						value : [{
+							LimitedRank : "5" // Edm.Int64
+						}]
+					})
+					.expectRequest({
+						batchNo : 10,
+						url : sReadUrl + "&$count=true&$skip=0&$top=10"
+					}, {
 						"@odata.count" : "7",
 						value : [{
 							DescendantCount : "6",
@@ -32653,6 +32712,7 @@ sap.ui.define([
 					this.waitForChanges(assert, "move 1 (Beta) to 3.1.1 (Zeta)")
 				]);
 
+				assert.strictEqual(oBeta.getIndex(), 5);
 				checkTable("after move 1 (Beta) to 3.1.1 (Zeta)", assert, oTable, [
 					oAlpha, // "/EMPLOYEES('0')",
 					oGamma, // "/EMPLOYEES('2')",
@@ -32681,6 +32741,7 @@ sap.ui.define([
 				//       3.2 Eta
 				//   2 Gamma
 				this.expectRequest({
+						batchNo : 10,
 						headers : {
 							Prefer : "return=minimal"
 						},
@@ -32690,7 +32751,18 @@ sap.ui.define([
 						},
 						url : "EMPLOYEES('3')"
 					}) // 204 No Content
-					.expectRequest(sReadUrl + "&$count=true&$skip=0&$top=10", {
+					.expectRequest({
+						batchNo : 10,
+						url : sBaseUrl + "&$filter=ID eq '3'&$select=LimitedRank"
+					}, {
+						value : [{
+							LimitedRank : "2" // Edm.Int64
+						}]
+					})
+					.expectRequest({
+						batchNo : 10,
+						url : sReadUrl + "&$count=true&$skip=0&$top=10"
+					}, {
 						"@odata.count" : "7",
 						value : [{
 							DescendantCount : "6",
@@ -32743,6 +32815,7 @@ sap.ui.define([
 					this.waitForChanges(assert, "move 3 (Delta) to 1 (Beta)")
 				]);
 
+				assert.strictEqual(oDelta.getIndex(), 2);
 				checkTable("after move 3 (Delta) to 1 (Beta)", assert, oTable, [
 					oAlpha, // "/EMPLOYEES('0')",
 					oBeta, // "/EMPLOYEES('1')",
@@ -32781,6 +32854,14 @@ sap.ui.define([
 						},
 						url : "EMPLOYEES('3.1')"
 					}) // 204 No Content
+					.expectRequest({
+						batchNo : 10,
+						url : sBaseUrl + "&$filter=ID eq '3.1'&$select=LimitedRank"
+					}, {
+						value : [{
+							LimitedRank : "2" // Edm.Int64
+						}]
+					})
 					.expectRequest({
 						batchNo : 10,
 						url : sReadUrl + "&$count=true&$skip=0&$top=10"
@@ -32885,6 +32966,7 @@ sap.ui.define([
 					this.waitForChanges(assert, "move 3.1 (Epsilon) to 1 (Beta)")
 				]);
 
+				assert.strictEqual(oEpsilon.getIndex(), 4, "out-of-place nodes taken into account");
 				checkTable("after move 3.1 (Epsilon) to 1 (Beta)", assert, oTable, [
 					oAlpha, // "/EMPLOYEES('0')",
 					oDelta, // "/EMPLOYEES('3')", // still out-of-place
@@ -32923,6 +33005,14 @@ sap.ui.define([
 						},
 						url : "EMPLOYEES('3.1')"
 					}) // 204 No Content
+					.expectRequest({
+						batchNo : 10,
+						url : sBaseUrl + "&$filter=ID eq '3.1'&$select=LimitedRank"
+					}, {
+						value : [{
+							LimitedRank : "5" // Edm.Int64
+						}]
+					})
 					.expectRequest({
 						batchNo : 10,
 						url : sReadUrl + "&$count=true&$skip=0&$top=10"
@@ -33027,6 +33117,7 @@ sap.ui.define([
 					this.waitForChanges(assert, "move 3.1 (Epsilon) to make it a root")
 				]);
 
+				assert.strictEqual(oEpsilon.getIndex(), 5, "out-of-place nodes make no difference");
 				checkTable("after move 3.1 (Epsilon) to make it a root", assert, oTable, [
 					oAlpha, // "/EMPLOYEES('0')",
 					oDelta, // "/EMPLOYEES('3')", // still out-of-place
@@ -33065,6 +33156,14 @@ sap.ui.define([
 						},
 						url : "EMPLOYEES('3.1')"
 					}) // 204 No Content
+					.expectRequest({
+						batchNo : 10,
+						url : sBaseUrl + "&$filter=ID eq '3.1'&$select=LimitedRank"
+					}, {
+						value : [{
+							LimitedRank : "5" // Edm.Int64
+						}]
+					})
 					.expectRequest({
 						batchNo : 10,
 						url : sReadUrl + "&$count=true&$skip=0&$top=10"
@@ -33121,6 +33220,7 @@ sap.ui.define([
 					this.waitForChanges(assert, "move 3.1 (Epsilon) to 3.2 (Eta)")
 				]);
 
+				assert.strictEqual(oEpsilon.getIndex(), 5);
 				checkTable("after move 3.1 (Epsilon) to 3.2 (Eta)", assert, oTable, [
 					oAlpha, // "/EMPLOYEES('0')",
 					oBeta, // "/EMPLOYEES('1')",
@@ -33137,6 +33237,81 @@ sap.ui.define([
 					[undefined, true, 3, "3.2", "Eta"], // ...
 					[undefined, true, 4, "3.1", "Epsilon"], // ...
 					[undefined, undefined, 5, "3.1.1", "Zeta"] // ...and not created anymore
+				]);
+			break;
+
+			case 6: // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+				// 0 Alpha
+				//   1 Beta
+				//   2 Gamma
+				//   (3 Delta (filtered out))
+				//     (3.2 Eta)
+				//       (3.1 Epsilon (moved here))
+				//         (3.1.1 Zeta)
+				this.expectRequest({
+						batchNo : 10,
+						headers : {
+							Prefer : "return=minimal"
+						},
+						method : "PATCH",
+						payload : {
+							"EMPLOYEE_2_MANAGER@odata.bind" : "EMPLOYEES('3.2')"
+						},
+						url : "EMPLOYEES('3.1')"
+					}) // 204 No Content
+					.expectRequest({
+						batchNo : 10,
+						url : sBaseUrl + "&$filter=ID eq '3.1'&$select=LimitedRank"
+					}, {
+						value : [] // filtered out
+					})
+					.expectRequest({
+						batchNo : 10,
+						url : sReadUrl + "&$count=true&$skip=0&$top=10"
+					}, {
+						"@odata.count" : "3",
+						value : [{
+							DescendantCount : "2",
+							DistanceFromRoot : "0",
+							DrillState : "expanded",
+							ID : "0",
+							Name : "Alpha"
+						}, {
+							DescendantCount : "0",
+							DistanceFromRoot : "1",
+							DrillState : "leaf",
+							ID : "1",
+							Name : "Beta"
+						}, {
+							DescendantCount : "0",
+							DistanceFromRoot : "1",
+							DrillState : "leaf",
+							ID : "2",
+							Name : "Gamma"
+						}]
+					});
+
+				await Promise.all([
+					// code under test
+					oEpsilon.move({parent : oEta}),
+					this.waitForChanges(assert, "move 3.1 (Epsilon) to 3.2 (Eta)")
+				]);
+
+				assert.strictEqual(oDelta.getIndex(), 1);
+				assert.strictEqual(oEta.getIndex(), 2);
+				assert.strictEqual(oEpsilon.getIndex(), undefined);
+				assert.strictEqual(oZeta.getIndex(), 4);
+				[oDelta, oEta, oEpsilon, oZeta].forEach((oNode) => {
+					assert.strictEqual(oNode.getModel(), undefined, "destroyed");
+				});
+				checkTable("after move 3.1 (Epsilon) to 3.2 (Eta)", assert, oTable, [
+					oAlpha, // "/EMPLOYEES('0')",
+					oBeta, // "/EMPLOYEES('1')",
+					oGamma // "/EMPLOYEES('2')"
+				], [
+					[undefined, true, 1, "0", "Alpha"],
+					[undefined, undefined, 2, "1", "Beta"],
+					[undefined, undefined, 2, "2", "Gamma"]
 				]);
 			break;
 
@@ -37003,6 +37178,282 @@ make root = ${bMakeRoot}`;
 				[undefined, 1, "Delta"],
 				[undefined, 1, "Beta"]
 			]);
+	});
+
+	//*********************************************************************************************
+	// Scenario: Show some nodes, create a new root node which is shown out of place. Move one child
+	// to the last sibling position where it is no longer visible, but its index is properly
+	// updated, taking the out-of-place node into account. Move the child to another parent w/o a
+	// side-effects refresh - still the out-of-place node must be taken into account for its index.
+	// JIRA: CPOUI5ODATAV4-2573
+	QUnit.test("Recursive Hierarchy: move (to nextSibling) & OOP node", async function (assert) {
+		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
+		const sNextSiblingAction
+			= "/com.sap.gateway.default.iwbep.tea_busi.v0001.__FAKE__AcChangeNextSibling";
+		const sSelect = "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name";
+		const sUrl = "EMPLOYEES"
+			+ "?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root/EMPLOYEES"
+			+ ",HierarchyQualifier='OrgChart',NodeProperty='ID')";
+		const sView = `
+<t:Table id="table" rows="{path : '/EMPLOYEES',
+		parameters : {
+			$$aggregation : {
+				expandTo : 1E16,
+				hierarchyQualifier : 'OrgChart'
+			}
+		}}" threshold="0" visibleRowCount="3">
+	<Text text="{= %{@$ui5.node.isExpanded} }"/>
+	<Text text="{= %{@$ui5.node.level} }"/>
+	<Text text="{Name}"/>
+</t:Table>`;
+
+		// 1 Alpha
+		//   2 Beta (moved as last sibling)
+		//   3 Gamma
+		//   4 Delta (loaded later)
+		// 5 Epsilon (created)
+		this.expectRequest(sUrl + sSelect + "&$count=true&$skip=0&$top=3", {
+				"@odata.count" : "4",
+				value : [{
+					DescendantCount : "3",
+					DistanceFromRoot : "0",
+					DrillState : "expanded",
+					ID : "1",
+					Name : "Alpha"
+				}, {
+					DescendantCount : "0",
+					DistanceFromRoot : "1",
+					DrillState : "leaf",
+					ID : "2",
+					Name : "Beta"
+				}, {
+					DescendantCount : "0",
+					DistanceFromRoot : "1",
+					DrillState : "leaf",
+					ID : "3",
+					Name : "Gamma"
+				}]
+			});
+
+		await this.createView(assert, sView, oModel);
+
+		const oTable = this.oView.byId("table");
+		checkTable("initial page", assert, oTable, [
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('2')",
+			"/EMPLOYEES('3')"
+		], [
+			[true, 1, "Alpha"],
+			[undefined, 2, "Beta"],
+			[undefined, 2, "Gamma"]
+		], 4);
+
+		this.expectRequest({
+				batchNo : 2,
+				method : "POST",
+				payload : {
+					Name : "Epsilon"
+				},
+				url : "EMPLOYEES"
+			}, {
+				ID : "5",
+				Name : "Epsilon"
+			})
+			.expectRequest({
+				batchNo : 3,
+				url : sUrl + "&$filter=ID eq '5'&$select=LimitedRank"
+			}, {
+				value : [{
+					LimitedRank : "4"
+				}]
+			});
+
+		const oListBinding = oTable.getBinding("rows");
+		const oEpsilon = oListBinding.create({Name : "Epsilon"}, /*bSkipRefresh*/true);
+		const oEpsilonCreated = oEpsilon.created();
+
+		await Promise.all([
+			oEpsilonCreated,
+			this.waitForChanges(assert, "create new root")
+		]);
+
+		checkTable("after create new root", assert, oTable, [
+			"/EMPLOYEES('5')", // out of place
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('2')",
+			"/EMPLOYEES('3')"
+		], [
+			[undefined, 1, "Epsilon"],
+			[true, 1, "Alpha"],
+			[undefined, 2, "Beta"]
+		], 5);
+		const [, oAlpha, oBeta] = oListBinding.getCurrentContexts();
+
+		this.expectRequest({
+				batchNo : 4,
+				headers : {
+					Prefer : "return=minimal"
+				},
+				method : "PATCH",
+				payload : {
+					"EMPLOYEE_2_MANAGER@odata.bind" : "EMPLOYEES('1')"
+				},
+				url : "EMPLOYEES('2')"
+			}) // 204 No Content
+			.expectRequest({
+				batchNo : 4,
+				headers : {
+					Prefer : "return=minimal"
+				},
+				method : "POST",
+				payload : {
+					NextSibling : null
+				},
+				url : "EMPLOYEES('2')" + sNextSiblingAction
+			}) // 204 No Content
+			.expectRequest({
+				batchNo : 4,
+				url : sUrl + "&$filter=ID eq '2'&$select=LimitedRank"
+			}, {
+				value : [{
+					LimitedRank : "3"
+				}]
+			})
+			// 1 Alpha
+			//   3 Gamma
+			//   4 Delta (loaded now)
+			//   2 Beta (moved here)
+			// 5 Epsilon (created)
+			.expectRequest({
+				batchNo : 4,
+				url : sUrl + sSelect + "&$count=true&$skip=0&$top=3"
+			}, {
+				"@odata.count" : "5",
+				value : [{
+					DescendantCount : "3",
+					DistanceFromRoot : "0",
+					DrillState : "expanded",
+					ID : "1",
+					Name : "Alpha"
+				}, {
+					DescendantCount : "0",
+					DistanceFromRoot : "1",
+					DrillState : "leaf",
+					ID : "3",
+					Name : "Gamma"
+				}, {
+					DescendantCount : "0",
+					DistanceFromRoot : "1",
+					DrillState : "leaf",
+					ID : "4",
+					Name : "Delta"
+				}]
+			})
+			.expectRequest({
+				batchNo : 4,
+				url : sUrl + "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,LimitedRank"
+					+ "&$filter=ID eq '5'&$top=1"
+			}, {
+				value : [{
+					DescendantCount : "0",
+					DistanceFromRoot : "0",
+					DrillState : "leaf",
+					ID : "5",
+					LimitedRank : "4"
+				}]
+			})
+			.expectRequest({
+				batchNo : 4,
+				url : sUrl.slice(0, -1) + ",Levels=1)&$select=ID,Name&$filter=ID eq '5'&$top=1"
+			}, {
+				value : [{
+					ID : "5",
+					Name : "Epsilon"
+				}]
+			});
+
+		await Promise.all([
+			// code under test
+			oBeta.move({nextSibling : null, parent : oAlpha}),
+			this.waitForChanges(assert, "move Beta to last position of Alpha")
+		]);
+
+		assert.strictEqual(oBeta.getIndex(), 4, "out-of-place nodes taken into account");
+		assert.strictEqual(oBeta.getModel(), undefined, "already destroyed");
+
+		// 1 Alpha
+		//   3 Gamma
+		//   4 Delta
+		//   2 Beta
+		// 5 Epsilon
+		this.expectRequest(sUrl + sSelect + "&$skip=3&$top=1", {
+				value : [{
+					DescendantCount : "0",
+					DistanceFromRoot : "1",
+					DrillState : "leaf",
+					ID : "2",
+					Name : "Beta"
+				}]
+			});
+
+		await this.checkAllContexts("after move Beta to last position of Alpha", assert,
+			oListBinding, ["@$ui5.node.isExpanded", "@$ui5.node.level", "Name"], [
+			[undefined, 1, "Epsilon"], // out of place
+			[true, 1, "Alpha"],
+			[undefined, 2, "Gamma"],
+			[undefined, 2, "Delta"],
+			[undefined, 2, "Beta"]
+		]);
+
+		//TODO checkCreatedPersisted(assert, oEpsilon, oEpsilonCreated);
+		const oGamma = oListBinding.getAllCurrentContexts()[2];
+		assert.strictEqual(oGamma.getProperty("Name"), "Gamma",
+			"double check that index was right");
+		const oBeta0 = oListBinding.getAllCurrentContexts()[4];
+		assert.strictEqual(oBeta0.getProperty("Name"), "Beta",
+			"double check that index was right");
+
+		// 1 Alpha
+		//   3 Gamma
+		//     2 Beta (moved here)
+		//   4 Delta
+		// 5 Epsilon
+		this.expectRequest({
+				batchNo : 6,
+				headers : {
+					Prefer : "return=minimal"
+				},
+				method : "PATCH",
+				payload : {
+					"EMPLOYEE_2_MANAGER@odata.bind" : "EMPLOYEES('3')"
+				},
+				url : "EMPLOYEES('2')"
+			}) // 204 No Content
+			.expectRequest({
+				batchNo : 6,
+				url : sUrl + "&$filter=ID eq '2'&$select=LimitedRank"
+			}, {
+				value : [{
+					LimitedRank : "2"
+				}]
+			});
+
+		await Promise.all([
+			// code under test
+			oBeta0.move({parent : oGamma}),
+			this.waitForChanges(assert, "move Beta below Gamma")
+		]);
+
+		assert.strictEqual(oBeta0.getIndex(), 3, "out-of-place nodes taken into account");
+
+		await this.checkAllContexts("after move Beta below Gamma", assert,
+			oListBinding, ["@$ui5.node.isExpanded", "@$ui5.node.level", "Name"], [
+			[undefined, 1, "Epsilon"], // out of place
+			[true, 1, "Alpha"],
+			[true, 2, "Gamma"],
+			[undefined, 3, "Beta"],
+			[undefined, 2, "Delta"]
+		]);
 	});
 
 	//*********************************************************************************************

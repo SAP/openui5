@@ -11129,8 +11129,7 @@ sap.ui.define([
 	QUnit.test(sTitle, async function (assert) {
 		const oChildContext = {
 			getCanonicalPath : mustBeMocked,
-			getPath : mustBeMocked,
-			iIndex : 23
+			getPath : mustBeMocked
 		};
 		this.mock(oChildContext).expects("getCanonicalPath").withExactArgs().returns("/~child~");
 		const bHasSibling = oSiblingContext !== undefined;
@@ -11163,12 +11162,15 @@ sap.ui.define([
 			move : mustBeMocked
 		};
 		oBinding.oCache = oCache;
-		const oMoveExpectation = this.mock(oCache).expects("move")
+		const fnGetIndex = sinon.stub().returns("~index~");
+		this.mock(oCache).expects("move")
 			.withExactArgs("~oGroupLock~", "~child~", bMakeRoot ? null : "~parent~", sSiblingPath,
 				bHasSibling ? "~childNonCanonical~" : undefined)
-			.returns({promise : Promise.resolve([undefined, undefined, 42]), refresh : true});
-		const oRequestSideEffectsExpectation = this.mock(oBinding).expects("requestSideEffects")
-			.withExactArgs("~group~", [""]).returns(SyncPromise.resolve("~sideEffectsResult~"));
+			.returns({promise : "A", refresh : true});
+		this.mock(oBinding).expects("requestSideEffects").withExactArgs("~group~", [""])
+			.returns("B");
+		this.mock(SyncPromise).expects("all").withExactArgs(["A", "B"])
+			.returns(SyncPromise.resolve(Promise.resolve([fnGetIndex])));
 		this.mock(oBinding).expects("insertGap").never();
 		this.mock(oBinding).expects("_fireChange").never();
 
@@ -11177,12 +11179,11 @@ sap.ui.define([
 			oSiblingContext);
 
 		assert.strictEqual(oSyncPromise.isPending(), true);
-		sinon.assert.callOrder(oMoveExpectation, oRequestSideEffectsExpectation);
+		assert.notOk(fnGetIndex.called);
 
-		const [, vSideEffectsResult] = await oSyncPromise;
-		// iIndex===42 can only have been set after waiting for the move promise
-		assert.strictEqual(oChildContext.iIndex, oSiblingContext === undefined ? 23 : 42);
-		assert.strictEqual(vSideEffectsResult, "~sideEffectsResult~");
+		await oSyncPromise;
+
+		assert.strictEqual(oChildContext.iIndex, "~index~");
 	});
 	});
 });
