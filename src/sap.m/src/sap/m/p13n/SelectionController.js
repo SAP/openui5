@@ -195,19 +195,24 @@ sap.ui.define([
 
 		const oXConfig = xConfigAPI.readConfig(this.getAdaptationControl()) || {};
 		const oItemXConfig = oXConfig.hasOwnProperty("aggregations") ? oXConfig.aggregations[this._sTargetAggregation] : {};
+		const aItemXConfig = [];
+		Object.entries(oItemXConfig).forEach(([sKey, oConfig]) => {
+			aItemXConfig.push({key: sKey, position: oConfig.position, visible: oConfig.visible});
+		});
+		aItemXConfig.sort((a,b) => a.position - b.position);
 
-		for (const sKey in oItemXConfig) {
+		aItemXConfig.forEach(({key}) => {
 			const aStateKeys = aState.map((o) => {
 				return o.key;
 			});
-			let iCurrentIndex = aStateKeys.indexOf(sKey);
-			const iNewIndex = oItemXConfig[sKey].position;
-			const bVisible = oItemXConfig[sKey].visible !== false;
+			let iCurrentIndex = aStateKeys.indexOf(key);
+			const iNewIndex = oItemXConfig[key].position;
+			const bVisible = oItemXConfig[key].visible !== false;
 			const bReordered = iNewIndex !== undefined;
 
 			if (bVisible && iCurrentIndex === -1) {
 				aState.push({
-					key: sKey
+					key: key
 				});
 			}
 
@@ -216,11 +221,11 @@ sap.ui.define([
 				aState.splice(iNewIndex, 0, oItem);
 				iCurrentIndex = iNewIndex;
 			}
-			if (oItemXConfig[sKey].visible === false && iCurrentIndex > -1) {
+			if (oItemXConfig[key].visible === false && iCurrentIndex > -1) {
 				aState.splice(iCurrentIndex, 1);
 			}
 
-		}
+		});
 		return aState;
 	};
 
