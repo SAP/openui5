@@ -55,6 +55,8 @@ sap.ui.define([
 		rCountUrl = /\/\$count(?:\?|$)/, // URL for ".../$count?..."
 		sDefaultLanguage = Localization.getLanguage(),
 		fnFireEvent = EventProvider.prototype.fireEvent,
+		sNextSiblingAction
+			= "/com.sap.gateway.default.iwbep.tea_busi.v0001.__FAKE__AcChangeNextSibling",
 		sODCB = "sap.ui.model.odata.v4.ODataContextBinding",
 		sODLB = "sap.ui.model.odata.v4.ODataListBinding",
 		sODPrB = "sap.ui.model.odata.v4.ODataPropertyBinding",
@@ -32502,10 +32504,13 @@ sap.ui.define([
 	//    others.
 	// 4. Move a created node to make it a root (JIRA: CPOUI5ODATAV4-2400).
 	// 5. Move a created node to another created node.
-	// 6. Move a created node to another created node. All previously out-of-place nodes do not
-	//    match an imaginary filter when becoming "in place". Check #getIndex for those contexts.
+	// 6. Move a created node to another created node. All nodes that were previously out of place
+	//    do not match an imaginary filter when becoming "in place". Check #getIndex for those
+	//    contexts.
+	// 7. Move a node (Beta) before a next sibling which is a created node (Delta) makes that node
+	//    and all of its descendants "in place" (JIRA: CPOUI5ODATAV4-2581).
 	// JIRA: CPOUI5ODATAV4-2466
-[1, 2, 3, 4, 5, 6].forEach(function (iScenario) {
+[1, 2, 3, 4, 5, 6, 7].forEach(function (iScenario) {
 	const sTitle = `Recursive Hierarchy: nodes affected by a move; #${iScenario}`;
 
 	QUnit.test(sTitle, async function (assert) {
@@ -32531,7 +32536,7 @@ sap.ui.define([
 		// 0 Alpha
 		//   1 Beta <-- 2. Delta moved here; 3. Epsilon moved here
 		//   2 Gamma
-		//   3 Delta (created)
+		//   3 Delta (created) <-- 7. Beta moved before here
 		//     3.1 Epsilon (created) <-- 4. moved to make it a root
 		//       3.1.1 Zeta (created) <-- 1. Beta moved here
 		//     3.2 Eta (created) <-- 5. Epsilon moved here; 6. dito
@@ -32611,13 +32616,13 @@ sap.ui.define([
 		const oEta = await create(oDelta, "3.2", "Eta", 6);
 
 		checkTable("after creates", assert, oTable, [
-			"/EMPLOYEES('0')",
-			"/EMPLOYEES('3')",
-			"/EMPLOYEES('3.2')", // out-of-place at its best ;-)
-			"/EMPLOYEES('3.1')",
-			"/EMPLOYEES('3.1.1')",
-			"/EMPLOYEES('1')",
-			"/EMPLOYEES('2')"
+			oAlpha, // "/EMPLOYEES('0')",
+			oDelta, // "/EMPLOYEES('3')",
+			oEta, // "/EMPLOYEES('3.2')", // out-of-place at its best ;-)
+			oEpsilon, // "/EMPLOYEES('3.1')",
+			oZeta, // "/EMPLOYEES('3.1.1')",
+			oBeta, // "/EMPLOYEES('1')",
+			oGamma // "/EMPLOYEES('2')"
 		], [
 			[undefined, true, 1, "0", "Alpha"],
 			[false, true, 2, "3", "Delta"],
@@ -33312,6 +33317,121 @@ sap.ui.define([
 					[undefined, true, 1, "0", "Alpha"],
 					[undefined, undefined, 2, "1", "Beta"],
 					[undefined, undefined, 2, "2", "Gamma"]
+				]);
+			break;
+
+			case 7: // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+				// 0 Alpha
+				//   2 Gamma
+				//   1 Beta (moved here)
+				//   3 Delta
+				//     3.1 Epsilon
+				//       3.1.1 Zeta
+				//     3.2 Eta
+				this.expectRequest({
+						batchNo : 10,
+						headers : {
+							Prefer : "return=minimal"
+						},
+						method : "PATCH",
+						payload : {
+							"EMPLOYEE_2_MANAGER@odata.bind" : "EMPLOYEES('0')"
+						},
+						url : "EMPLOYEES('1')"
+					}) // 204 No Content
+					.expectRequest({
+						batchNo : 10,
+						headers : {
+							Prefer : "return=minimal"
+						},
+						method : "POST",
+						payload : {
+							NextSibling : {ID : "3"}
+						},
+						url : "EMPLOYEES('1')" + sNextSiblingAction
+					}) // 204 No Content
+					.expectRequest({
+						batchNo : 10,
+						url : sBaseUrl + "&$filter=ID eq '1'&$select=LimitedRank"
+					}, {
+						value : [{
+							LimitedRank : "2" // Edm.Int64
+						}]
+					})
+					.expectRequest({
+						batchNo : 10,
+						url : sReadUrl + "&$count=true&$skip=0&$top=10"
+					}, {
+						"@odata.count" : "7",
+						value : [{
+							DescendantCount : "6",
+							DistanceFromRoot : "0",
+							DrillState : "expanded",
+							ID : "0",
+							Name : "Alpha"
+						}, {
+							DescendantCount : "0",
+							DistanceFromRoot : "1",
+							DrillState : "leaf",
+							ID : "2",
+							Name : "Gamma"
+						}, {
+							DescendantCount : "0",
+							DistanceFromRoot : "1",
+							DrillState : "leaf",
+							ID : "1",
+							Name : "Beta"
+						}, {
+							DescendantCount : "3",
+							DistanceFromRoot : "1",
+							DrillState : "expanded",
+							ID : "3",
+							Name : "Delta"
+						}, {
+							DescendantCount : "1",
+							DistanceFromRoot : "2",
+							DrillState : "expanded",
+							ID : "3.1",
+							Name : "Epsilon"
+						}, {
+							DescendantCount : "0",
+							DistanceFromRoot : "3",
+							DrillState : "leaf",
+							ID : "3.1.1",
+							Name : "Zeta"
+						}, {
+							DescendantCount : "0",
+							DistanceFromRoot : "2",
+							DrillState : "leaf",
+							ID : "3.2",
+							Name : "Eta"
+						}]
+					});
+
+				await Promise.all([
+					// code under test
+					oBeta.move({nextSibling : oDelta, parent : oAlpha}),
+					this.waitForChanges(assert, "move 1 (Beta) before 3 (Delta)")
+				]);
+
+				assert.strictEqual(oBeta.getIndex(), 2);
+				assert.strictEqual(oDelta.getIndex(), 3);
+				checkTable("after move 1 (Beta) before 3 (Delta)", assert, oTable, [
+					oAlpha, // "/EMPLOYEES('0')",
+					oGamma, // "/EMPLOYEES('2')",
+					oBeta, // "/EMPLOYEES('1')",
+					oDelta, // "/EMPLOYEES('3')",
+					oEpsilon, // "/EMPLOYEES('3.1')",
+					oZeta, // "/EMPLOYEES('3.1.1')",
+					oEta // "/EMPLOYEES('3.2')",
+				], [
+					[undefined, true, 1, "0", "Alpha"],
+					[undefined, undefined, 2, "2", "Gamma"],
+					[undefined, undefined, 2, "1", "Beta"],
+					[undefined, true, 2, "3", "Delta"], // now "in place"...
+					[undefined, true, 3, "3.1", "Epsilon"], // ...
+					[undefined, undefined, 4, "3.1.1", "Zeta"], // ...
+					[undefined, undefined, 3, "3.2", "Eta"] // ...and not created anymore
 				]);
 			break;
 
@@ -36718,8 +36838,6 @@ make root = ${bMakeRoot}`;
 	// JIRA: CPOUI5ODATAV4-2228
 	QUnit.test("Recursive Hierarchy: move to nextSibling", async function (assert) {
 		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
-		const sNextSiblingAction
-			= "/com.sap.gateway.default.iwbep.tea_busi.v0001.__FAKE__AcChangeNextSibling";
 		const sSelect = "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name";
 		const sUrl = "EMPLOYEES"
 			+ "?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root/EMPLOYEES"
@@ -37001,8 +37119,6 @@ make root = ${bMakeRoot}`;
 	// JIRA: CPOUI5ODATAV4-2572
 	QUnit.test("Recursive Hierarchy: move nextSibling (from level cache)", async function (assert) {
 		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
-		const sNextSiblingAction
-			= "/com.sap.gateway.default.iwbep.tea_busi.v0001.__FAKE__AcChangeNextSibling";
 		const sFilterSearch = "ancestors($root/EMPLOYEES,OrgChart,ID,filter(Is_Manager)"
 			+ "/search(covfefe),keep start)";
 		const sSelect = "&$select=DrillState,ID,Name";
@@ -37188,8 +37304,6 @@ make root = ${bMakeRoot}`;
 	// JIRA: CPOUI5ODATAV4-2573
 	QUnit.test("Recursive Hierarchy: move (to nextSibling) & OOP node", async function (assert) {
 		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
-		const sNextSiblingAction
-			= "/com.sap.gateway.default.iwbep.tea_busi.v0001.__FAKE__AcChangeNextSibling";
 		const sSelect = "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name";
 		const sUrl = "EMPLOYEES"
 			+ "?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root/EMPLOYEES"
