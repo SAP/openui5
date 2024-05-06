@@ -167,6 +167,22 @@ sap.ui.define([
 
 		onAfterRendering() {
 			this._replaceIframeLocation(this.getUrl());
+
+			// The contentWindow might change without causing a rerender, e.g.
+			// when the parent element changes due to an appendChild call
+			// This will cause the iframe src to change and we need to replace the
+			// location again to ensure the correct content
+			this._oLastContentWindow = this.getDomRef().contentWindow;
+			this.getDomRef().addEventListener("load", () => {
+				if (!this.getDomRef()) {
+					// The iframe was removed before the load event was triggered
+					return;
+				}
+				if (this._oLastContentWindow !== this.getDomRef().contentWindow) {
+					this._oLastContentWindow = this.getDomRef().contentWindow;
+					this._replaceIframeLocation(this.getUrl());
+				}
+			});
 		},
 
 		applySettings(mSettings, ...aOtherArgs) {
