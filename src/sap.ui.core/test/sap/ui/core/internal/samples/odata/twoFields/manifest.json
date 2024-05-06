@@ -1,7 +1,7 @@
 {
 	"_version" : "1.32.0",
 	"sap.app" : {
-		"ach" : "CA-UI5-COR-MOD",
+		"ach" : "CA-UI5-COR",
 		"applicationVersion" : {
 			"version" : "${version}"
 		},
@@ -11,18 +11,9 @@
 		"type" : "application"
 	},
 	"sap.ui" : {
-		"deviceTypes" : {
-			"desktop" : true,
-			"phone" : true,
-			"tablet" : true
-		},
 		"technology" : "UI5"
 	},
 	"sap.ui5" : {
-		"contentDensities" : {
-			"compact" : true,
-			"cozy" : true
-		},
 		"dependencies" : {
 			"minUI5Version" : "1.90",
 			"libs" : {
@@ -33,7 +24,6 @@
 		},
 		"handleValidation" : true,
 		"rootView" : {
-			"async" : true,
 			"id" : "twoFieldsMain",
 			"type" : "XML",
 			"viewName" : "sap.ui.core.internal.samples.odata.twoFields.Main"
