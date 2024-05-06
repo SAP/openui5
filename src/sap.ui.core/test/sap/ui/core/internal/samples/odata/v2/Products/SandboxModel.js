@@ -12,7 +12,7 @@ sap.ui.define([
 
 	var oMockData = {
 			mFixture : {
-				"ProductSet?customAll='custom%2Fall'&customService='custom%2Fservice'&$skip=0&$top=5&$inlinecount=allpages" :
+				"ProductSet?customAll='custom%2Fall'&customService='custom%2Fservice'&$skip=0&$top=5&$select=ProductID%2cName%2cWeightMeasure%2cWeightUnit%2cPrice%2cCurrencyCode&$inlinecount=allpages" :
 				{
 					source : "ProductSet_0_5.json"
 				}

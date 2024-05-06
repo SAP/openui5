@@ -2,11 +2,12 @@
 	class="sapUiSizeCompact"
 	controllerName="sap.ui.core.internal.samples.odata.v2.Products.Main"
 	xmlns="sap.m"
-	xmlns:form="sap.ui.layout.form"
 	xmlns:mvc="sap.ui.core.mvc">
 	<App>
 	<Page id="page" showHeader="false">
-		<Table id="ProductSet" growing="true" growingThreshold="5" items="{/ProductSet}">
+		<Table id="ProductSet" growing="true" growingThreshold="5"
+			items="{path: '/ProductSet',
+				parameters: {select: 'ProductID,Name,WeightMeasure,WeightUnit,Price,CurrencyCode'}}">
 			<headerToolbar>
 				<Toolbar>
 					<Title level="H1" text="Products V2"/>
