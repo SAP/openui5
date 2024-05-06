@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexObjects/UIChange",
 	"sap/ui/fl/apply/_internal/flexState/changes/ExtensionPointState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
-	"sap/ui/fl/apply/_internal/flexState/changes/UIChangesState",
+	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
@@ -17,7 +17,7 @@ sap.ui.define([
 	UIChange,
 	ExtensionPointState,
 	FlexState,
-	UIChangesState,
+	FlexObjectState,
 	ChangePersistenceFactory,
 	sinon
 ) {
@@ -39,7 +39,7 @@ sap.ui.define([
 			addChangeAndUpdateDependencies: fnAddChangeAndUpdateDependencies || function() {}
 		};
 		sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForControl").returns(oChangePersistence);
-		sandbox.stub(UIChangesState, "getAllApplicableUIChanges").returns(aChanges);
+		sandbox.stub(FlexObjectState, "getAllApplicableUIChanges").returns(aChanges);
 		sandbox.stub(FlexState, "isInitialized").returns(bChangeMapCreated);
 		return oChangePersistence;
 	}

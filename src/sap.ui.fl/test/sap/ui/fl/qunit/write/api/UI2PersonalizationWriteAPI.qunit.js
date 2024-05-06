@@ -6,7 +6,6 @@ sap.ui.define([
 	"sap/ui/fl/write/api/UI2PersonalizationWriteAPI",
 	"sap/ui/core/Manifest",
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	ManifestUtils,
@@ -14,7 +13,6 @@ sap.ui.define([
 	UI2PersonalizationWriteAPI,
 	Manifest,
 	FlexUtils,
-	FlexState,
 	sinon
 ) {
 	"use strict";

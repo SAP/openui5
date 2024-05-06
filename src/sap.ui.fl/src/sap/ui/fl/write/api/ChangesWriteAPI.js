@@ -14,7 +14,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/Reverter",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
-	"sap/ui/fl/apply/_internal/flexState/changes/UIChangesState",
+	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/descriptorRelated/api/DescriptorChangeFactory",
 	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerStorage",
@@ -33,7 +33,7 @@ sap.ui.define([
 	Reverter,
 	FlexObjectFactory,
 	States,
-	UIChangesState,
+	FlexObjectState,
 	ManifestUtils,
 	DescriptorChangeFactory,
 	ChangeHandlerStorage,
@@ -187,7 +187,7 @@ sap.ui.define([
 		// TODO: Descriptor apply function
 		return Applier.applyChangeOnControl(mPropertyBag.change, mPropertyBag.element, _omit(mPropertyBag, ["element", "change"]))
 		.then(function(oResult) {
-			var aDependentChanges = UIChangesState.getOpenDependentChangesForControl(
+			var aDependentChanges = FlexObjectState.getOpenDependentChangesForControl(
 				JsControlTreeModifier.getControlIdBySelector(mPropertyBag.change.getSelector(), mPropertyBag.appComponent),
 				mPropertyBag.appComponent
 			);

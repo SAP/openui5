@@ -10,7 +10,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/FlexCustomData",
 	"sap/ui/fl/apply/_internal/changes/Utils",
 	"sap/ui/fl/apply/_internal/flexState/changes/DependencyHandler",
-	"sap/ui/fl/apply/_internal/flexState/changes/UIChangesState",
+	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/Utils"
 ], function(
 	Log,
@@ -20,7 +20,7 @@ sap.ui.define([
 	FlexCustomData,
 	Utils,
 	DependencyHandler,
-	UIChangesState,
+	FlexObjectState,
 	FlUtils
 ) {
 	"use strict";
@@ -97,7 +97,7 @@ sap.ui.define([
 			// if a change was already processed and is not applied anymore, then the control was destroyed and recreated.
 			// In this case we need to recreate/copy the dependencies if we are applying in JS
 			if (!bSkipDependencies) {
-				UIChangesState.copyDependenciesFromCompleteDependencyMap(oChange, mPropertyBag.appComponent);
+				FlexObjectState.copyDependenciesFromCompleteDependencyMap(oChange, mPropertyBag.appComponent);
 			}
 			oChange.setInitialApplyState();
 		} else if (!bChangeStatusAppliedFinished && bIsCurrentlyAppliedOnControl) {
@@ -401,7 +401,7 @@ sap.ui.define([
 					return Applier.applyChangeOnControl(oChange, oControl, mPropertyBag)
 					.then(function(oResult) {
 						if (oResult.success) {
-							const oLiveDependencyMap = UIChangesState.getLiveDependencyMap(mPropertyBag.reference);
+							const oLiveDependencyMap = FlexObjectState.getLiveDependencyMap(mPropertyBag.reference);
 							DependencyHandler.addRuntimeChangeToMap(oChange, mPropertyBag.appComponent, oLiveDependencyMap);
 						}
 					});
@@ -425,7 +425,7 @@ sap.ui.define([
 		// the changes have to be queued synchronously
 		// scenario 1: n controls get created, for all this function is called synchronously. Changes have to be queued synchronously
 		// scenario 2: control gets recreated, the changes for the new control have to be queued after the processing of the old control
-		const oDependencyMap = UIChangesState.getLiveDependencyMap(sReference);
+		const oDependencyMap = FlexObjectState.getLiveDependencyMap(sReference);
 		var sControlId = oControl.getId();
 		var aChangesForControl = oDependencyMap.mChanges[sControlId] || [];
 		var mPropertyBag = {

@@ -12,7 +12,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/Reverter",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
-	"sap/ui/fl/apply/_internal/flexState/changes/UIChangesState",
+	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/initial/api/Version",
 	"sap/ui/fl/write/_internal/Versions",
@@ -21,7 +21,6 @@ sap.ui.define([
 	"sap/base/util/deepClone",
 	"sap/ui/core/Component",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
-	"sap/ui/core/Manifest",
 	"sap/ui/core/UIComponent",
 	"sap/m/Label",
 	"sap/ui/thirdparty/sinon-4",
@@ -39,7 +38,7 @@ sap.ui.define([
 	Reverter,
 	FlexObjectFactory,
 	States,
-	UIChangesState,
+	FlexObjectState,
 	FlexState,
 	Version,
 	Versions,
@@ -48,7 +47,6 @@ sap.ui.define([
 	deepClone,
 	Component,
 	JsControlTreeModifier,
-	Manifest,
 	UIComponent,
 	Label,
 	sinon,
@@ -421,7 +419,7 @@ sap.ui.define([
 			mChangeOnOtherControl.fileName = "independentChange";
 			this.oChangeOnOtherControl = FlexObjectFactory.createFromFileContent(mChangeOnOtherControl);
 			this.mChanges = getInitialChangesMap();
-			sandbox.stub(UIChangesState, "getLiveDependencyMap").returns(this.mChanges);
+			sandbox.stub(FlexObjectState, "getLiveDependencyMap").returns(this.mChanges);
 			this.oFlexController = new FlexController("testScenarioComponent", "1.2.3");
 
 			this.oAddAppliedCustomDataSpy = sandbox.spy(FlexCustomData, "addAppliedCustomData");

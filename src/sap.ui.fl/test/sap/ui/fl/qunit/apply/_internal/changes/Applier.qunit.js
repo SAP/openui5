@@ -15,7 +15,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/FlexCustomData",
 	"sap/ui/fl/apply/_internal/changes/Utils",
 	"sap/ui/fl/apply/_internal/flexState/changes/DependencyHandler",
-	"sap/ui/fl/apply/_internal/flexState/changes/UIChangesState",
+	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
@@ -39,7 +39,7 @@ sap.ui.define([
 	FlexCustomData,
 	ChangeUtils,
 	DependencyHandler,
-	UIChangesState,
+	FlexObjectState,
 	FlexState,
 	ManifestUtils,
 	FlexObjectFactory,
@@ -104,7 +104,7 @@ sap.ui.define([
 		QUnit.test("applyAllChangesForControl does not call anything if there is no change for the control", function(assert) {
 			const oSomeOtherChange = {};
 
-			sandbox.stub(UIChangesState, "getLiveDependencyMap").returns(getInitialDependencyMap({
+			sandbox.stub(FlexObjectState, "getLiveDependencyMap").returns(getInitialDependencyMap({
 				mChanges: {
 					someOtherId: [oSomeOtherChange]
 				}
@@ -123,13 +123,13 @@ sap.ui.define([
 			const oChange1 = FlexObjectFactory.createFromFileContent(getLabelChangeContent("a"));
 			oChange1.markFinished();
 
-			sandbox.stub(UIChangesState, "getLiveDependencyMap").returns(getInitialDependencyMap({
+			sandbox.stub(FlexObjectState, "getLiveDependencyMap").returns(getInitialDependencyMap({
 				mChanges: {
 					someId: [oChange0, oChange1]
 				}
 			}));
 
-			const copyDependenciesFromCompleteDependencyMap = sandbox.spy(UIChangesState, "copyDependenciesFromCompleteDependencyMap");
+			const copyDependenciesFromCompleteDependencyMap = sandbox.spy(FlexObjectState, "copyDependenciesFromCompleteDependencyMap");
 
 			let fnResolve;
 			Applier.addPreConditionForInitialChangeApplying(new Promise(function(resolve) {
@@ -153,7 +153,7 @@ sap.ui.define([
 			this.oApplyChangeOnControlStub = sandbox.stub(Applier, "applyChangeOnControl").resolves({success: true});
 			const oChange0 = FlexObjectFactory.createFromFileContent(getLabelChangeContent("a"));
 			const oSetQueuedForApplySpy = sandbox.spy(oChange0, "setQueuedForApply");
-			sandbox.stub(UIChangesState, "getLiveDependencyMap").returns(getInitialDependencyMap({
+			sandbox.stub(FlexObjectState, "getLiveDependencyMap").returns(getInitialDependencyMap({
 				mChanges: {
 					someId: [oChange0]
 				}
@@ -171,7 +171,7 @@ sap.ui.define([
 			this.oApplyChangeOnControlStub = sandbox.stub(Applier, "applyChangeOnControl").resolves({success: true});
 			const oChange0 = FlexObjectFactory.createFromFileContent(getLabelChangeContent("a"));
 			oChange0._ignoreOnce = true;
-			sandbox.stub(UIChangesState, "getLiveDependencyMap").returns(getInitialDependencyMap({
+			sandbox.stub(FlexObjectState, "getLiveDependencyMap").returns(getInitialDependencyMap({
 				mChanges: {
 					someId: [oChange0]
 				}
@@ -188,13 +188,13 @@ sap.ui.define([
 			const oRevertData = {foo: "bar"};
 			const oChange0 = FlexObjectFactory.createFromFileContent(getLabelChangeContent("a"));
 			const oChange1 = FlexObjectFactory.createFromFileContent(getLabelChangeContent("a"));
-			sandbox.stub(UIChangesState, "getLiveDependencyMap").returns(getInitialDependencyMap({
+			sandbox.stub(FlexObjectState, "getLiveDependencyMap").returns(getInitialDependencyMap({
 				mChanges: {
 					someId: [oChange0, oChange1]
 				}
 			}));
 
-			const copyDependenciesFromCompleteDependencyMap = sandbox.spy(UIChangesState, "copyDependenciesFromCompleteDependencyMap");
+			const copyDependenciesFromCompleteDependencyMap = sandbox.spy(FlexObjectState, "copyDependenciesFromCompleteDependencyMap");
 			sandbox.stub(FlexCustomData, "getAppliedCustomDataValue").returns(true);
 			sandbox.stub(FlexCustomData, "hasChangeApplyFinishedCustomData").returns(true);
 			sandbox.stub(FlexCustomData, "getParsedRevertDataFromCustomData").returns(oRevertData);
@@ -219,12 +219,12 @@ sap.ui.define([
 			const oRevertData = {foo: "bar"};
 			const oChange0 = FlexObjectFactory.createFromFileContent(getLabelChangeContent("a"));
 			const oChange1 = FlexObjectFactory.createFromFileContent(getLabelChangeContent("a"));
-			sandbox.stub(UIChangesState, "getLiveDependencyMap").returns(getInitialDependencyMap({
+			sandbox.stub(FlexObjectState, "getLiveDependencyMap").returns(getInitialDependencyMap({
 				mChanges: {
 					someId: [oChange0, oChange1]
 				}
 			}));
-			const copyDependenciesFromCompleteDependencyMap = sandbox.spy(UIChangesState, "copyDependenciesFromCompleteDependencyMap");
+			const copyDependenciesFromCompleteDependencyMap = sandbox.spy(FlexObjectState, "copyDependenciesFromCompleteDependencyMap");
 			sandbox.stub(FlexCustomData, "getAppliedCustomDataValue")
 			.withArgs(this.oAnotherControl)
 			.returns(true);
@@ -265,7 +265,7 @@ sap.ui.define([
 			});
 			const oHasCustomDataSpy = sandbox.spy(FlexCustomData, "hasChangeApplyFinishedCustomData");
 			const oGetCustomDataSpy = sandbox.spy(FlexCustomData, "getAppliedCustomDataValue");
-			sandbox.stub(UIChangesState, "getLiveDependencyMap").returns(getInitialDependencyMap({
+			sandbox.stub(FlexObjectState, "getLiveDependencyMap").returns(getInitialDependencyMap({
 				mChanges: {
 					someId: [FlexObjectFactory.createFromFileContent(getLabelChangeContent("a"))]
 				}
@@ -281,7 +281,7 @@ sap.ui.define([
 
 		QUnit.test("updates change status if change is not applicable (viewCache)", function(assert) {
 			const oChange = FlexObjectFactory.createFromFileContent(getLabelChangeContent("a"));
-			sandbox.stub(UIChangesState, "getLiveDependencyMap").returns(getInitialDependencyMap({
+			sandbox.stub(FlexObjectState, "getLiveDependencyMap").returns(getInitialDependencyMap({
 				mChanges: {
 					someId: [oChange]
 				}
@@ -314,7 +314,7 @@ sap.ui.define([
 			const oChange3 = FlexObjectFactory.createFromFileContent(oChangeContent);
 			const oSomeOtherChange = FlexObjectFactory.createFromFileContent(oChangeContent);
 
-			sandbox.stub(UIChangesState, "getLiveDependencyMap").returns(getInitialDependencyMap({
+			sandbox.stub(FlexObjectState, "getLiveDependencyMap").returns(getInitialDependencyMap({
 				mChanges: {
 					someId: [oChange0, oChange1, oChange2, oChange3],
 					someOtherId: [oSomeOtherChange]
@@ -344,7 +344,7 @@ sap.ui.define([
 			const oChange1 = FlexObjectFactory.createFromFileContent(getLabelChangeContent("fileNameChange1"));
 			const oChange2 = FlexObjectFactory.createFromFileContent(getLabelChangeContent("fileNameChange2"));
 
-			sandbox.stub(UIChangesState, "getLiveDependencyMap").returns(getInitialDependencyMap({
+			sandbox.stub(FlexObjectState, "getLiveDependencyMap").returns(getInitialDependencyMap({
 				mChanges: {
 					"form1-1": [oChange2, oChange1],
 					"group1-1": [oChange0]
@@ -378,7 +378,7 @@ sap.ui.define([
 			const oChange2 = FlexObjectFactory.createFromFileContent(getLabelChangeContent("fileNameChange2"));
 			const oChange3 = FlexObjectFactory.createFromFileContent(getLabelChangeContent("fileNameChange3"));
 
-			sandbox.stub(UIChangesState, "getLiveDependencyMap").returns(getInitialDependencyMap({
+			sandbox.stub(FlexObjectState, "getLiveDependencyMap").returns(getInitialDependencyMap({
 				mChanges: {
 					"form2-1": [oChange2, oChange1],
 					"group2-1": [oChange3]
@@ -461,7 +461,7 @@ sap.ui.define([
 			oProcessedChange.markFinished();
 			oNotProcessedChange.markFinished();
 
-			sandbox.stub(UIChangesState, "getCompleteDependencyMap").returns(getInitialDependencyMap({
+			sandbox.stub(FlexObjectState, "getCompleteDependencyMap").returns(getInitialDependencyMap({
 				aChanges: [oAppliedChange, oProcessedChange, oNotProcessedChange],
 				mChanges: {
 					appliedControl: [oAppliedChange],
@@ -485,7 +485,7 @@ sap.ui.define([
 				}
 			}));
 
-			sandbox.stub(UIChangesState, "getLiveDependencyMap").returns(getInitialDependencyMap({
+			sandbox.stub(FlexObjectState, "getLiveDependencyMap").returns(getInitialDependencyMap({
 				aChanges: [oAppliedChange, oProcessedChange, oNotProcessedChange],
 				mChanges: {
 					appliedControl: [oAppliedChange],
@@ -526,8 +526,8 @@ sap.ui.define([
 			let oControlField2 = new Control("CompanyCode");
 
 			const oDependencySetup = fnDependencyTest3Setup();
-			sandbox.stub(UIChangesState, "getLiveDependencyMap").returns(oDependencySetup);
-			sandbox.stub(UIChangesState, "getCompleteDependencyMap").returns(merge({}, oDependencySetup));
+			sandbox.stub(FlexObjectState, "getLiveDependencyMap").returns(oDependencySetup);
+			sandbox.stub(FlexObjectState, "getCompleteDependencyMap").returns(merge({}, oDependencySetup));
 
 			sandbox.stub(FlexCustomData, "hasChangeApplyFinishedCustomData").returns(false);
 
@@ -627,7 +627,7 @@ sap.ui.define([
 			const oControlField2 = new Control("CompanyCode");
 
 			const oDependencySetup = fnDependencyTest3Setup();
-			sandbox.stub(UIChangesState, "getLiveDependencyMap").returns(oDependencySetup);
+			sandbox.stub(FlexObjectState, "getLiveDependencyMap").returns(oDependencySetup);
 
 			this.oApplyChangeOnControlStub.restore();
 			this.oApplyChangeOnControlStub = sandbox.stub(Applier, "applyChangeOnControl")
@@ -684,7 +684,7 @@ sap.ui.define([
 			const oControlField2 = new Control("CompanyCode");
 
 			const oDependencySetup = fnDependencyTest3Setup();
-			sandbox.stub(UIChangesState, "getLiveDependencyMap").returns(oDependencySetup);
+			sandbox.stub(FlexObjectState, "getLiveDependencyMap").returns(oDependencySetup);
 
 			this.oApplyChangeOnControlStub.restore();
 			this.oApplyChangeOnControlStub = sandbox.stub(Applier, "applyChangeOnControl")
@@ -752,7 +752,7 @@ sap.ui.define([
 				fileNameChange1: ["fileNameChange2"]
 			};
 
-			sandbox.stub(UIChangesState, "getLiveDependencyMap").returns(getInitialDependencyMap({
+			sandbox.stub(FlexObjectState, "getLiveDependencyMap").returns(getInitialDependencyMap({
 				mChanges,
 				mDependencies,
 				mDependentChangesOnMe
@@ -804,7 +804,7 @@ sap.ui.define([
 				}
 			});
 
-			sandbox.stub(UIChangesState, "getLiveDependencyMap").returns(mDependencyMap);
+			sandbox.stub(FlexObjectState, "getLiveDependencyMap").returns(mDependencyMap);
 
 			return Promise.resolve()
 			.then(Applier.applyAllChangesForControl.bind(Applier, this.oAppComponent, "DummyFlexReference", oControlGroup1))
@@ -861,7 +861,7 @@ sap.ui.define([
 			});
 
 			sandbox.restore();
-			sandbox.stub(UIChangesState, "getLiveDependencyMap").returns(mDependencyMap);
+			sandbox.stub(FlexObjectState, "getLiveDependencyMap").returns(mDependencyMap);
 			this.oApplyChangeOnControlStub = sandbox.stub(Applier, "applyChangeOnControl")
 			.onFirstCall().callsFake(function() {
 				return Promise.resolve({success: false, error: new Error("testError")});
@@ -904,7 +904,7 @@ sap.ui.define([
 				}
 			});
 
-			sandbox.stub(UIChangesState, "getLiveDependencyMap").returns(mDependencyMap);
+			sandbox.stub(FlexObjectState, "getLiveDependencyMap").returns(mDependencyMap);
 
 			return Applier.applyAllChangesForControl(this.oAppComponent, "DummyFlexReference", this.oControl)
 			.then(function() {
@@ -943,7 +943,7 @@ sap.ui.define([
 				idIsLocal: false
 			};
 
-			sandbox.stub(UIChangesState, "getLiveDependencyMap").returns(getInitialDependencyMap({
+			sandbox.stub(FlexObjectState, "getLiveDependencyMap").returns(getInitialDependencyMap({
 				mChanges: {
 					someId: [oChange0]
 				}
@@ -991,7 +991,7 @@ sap.ui.define([
 				id: oOriginalControlInTemplate.getId(),
 				idIsLocal: false
 			};
-			sandbox.stub(UIChangesState, "getLiveDependencyMap").returns(getInitialDependencyMap({
+			sandbox.stub(FlexObjectState, "getLiveDependencyMap").returns(getInitialDependencyMap({
 				mChanges: {
 					someId: [oChange0]
 				}
@@ -1268,7 +1268,7 @@ sap.ui.define([
 
 		QUnit.test("applyAllChangesForControl with control recreation and open processing", function(assert) {
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("testScenarioComponent");
-			sandbox.stub(UIChangesState, "getLiveDependencyMap").returns(getInitialDependencyMap({
+			sandbox.stub(FlexObjectState, "getLiveDependencyMap").returns(getInitialDependencyMap({
 				mChanges: {
 					label: [this.oChange]
 				},
