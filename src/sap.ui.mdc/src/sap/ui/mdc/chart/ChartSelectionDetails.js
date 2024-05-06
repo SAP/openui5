@@ -62,73 +62,40 @@ sap.ui.define([
 		 */
 		ChartSelectionDetails.prototype.init = function() {
 			SelectionDetails.prototype.init.apply(this, arguments);
-			this._registerTemplate();
-			this._attachEvents();
-		};
 
-		ChartSelectionDetails.prototype._registerTemplate = function() {
-			this.registerSelectionDetailsItemFactory([
+			this.registerSelectionDetailsItemFactory({
 				//TODO: Template might need to be handed in via delegate to support other libraries and non-odata services
-			], (aDisplayData, aData, oContext, oData) => {
+			}, (aDisplayData, mData, oContext) => {
 				const aLines = [];
+				const fnFormatValue = function(oValue) {
+					if (oValue) {
+						return oValue instanceof Object ? oValue : oValue.toString();
+					} else {
+						return oValue;
+					}
+				};
 
 				for (let i = 0; i < aDisplayData.length; i++) {
+					//const v = mData[aDisplayData[i].id + ".d"];
+
 					aLines.push(new SelectionDetailsItemLine({
 						label: aDisplayData[i].label,
-						value: this._formatValue(aDisplayData[i].value),
+						// value: this._formatValue(v || aDisplayData[i].value),
+						value: fnFormatValue(aDisplayData[i].value),
 						unit: aDisplayData[i].unit
 					}));
 				}
 				return new SelectionDetailsItem({
-					enableNav: this._hasNavigationTargets(aData),
+					enableNav: this._hasNavigationTargets(mData),
 					lines: aLines
 				}).setBindingContext(oContext);
 			});
 		};
 
-		ChartSelectionDetails.prototype._formatValue = function(oValue) {
-			if (oValue) {
-				return oValue instanceof Object ? oValue : oValue.toString();
-			} else {
-				return oValue;
-			}
-		};
+
 		//TODO: Navigation targets might be specific to oData and might need a handling via delegate?
-		ChartSelectionDetails.prototype._hasNavigationTargets = function(aData) {
+		ChartSelectionDetails.prototype._hasNavigationTargets = function(mData) {
 			return false;
-		};
-		//TODO: Consider implementation and handling within ChartToolbar like the update of actions as well
-		ChartSelectionDetails.prototype._attachEvents = function() {
-			// Attach to navigation event of selectionDetails
-			// for semantic object navigation
-			/*
-			 this.attachNavigate(function(oEvent) {
-			     // Destroy content on navBack of selectionDetails
-			     // This either is the semanticNavContainer or the semanticNavItemList
-			     if (oEvent.getParameter("direction") === "back") {
-			         oEvent.getParameter("content").destroy();
-			     } else {
-			         // Forward navigation to semantic objects
-			         oChart._navigateToSemanticObjectDetails(oEvent);
-			     }
-
-			 });*/
-
-			this.attachActionPress(function(oEvent) {
-				const oChart = this.getParent().getParent();
-				// extract binding information of each item
-				const aItemContexts = [];
-				oEvent.getParameter("items").forEach((oItem) => {
-					aItemContexts.push(oItem.getBindingContext());
-				});
-				// Re-arrange event object and navigate to outer press handler
-				oChart.fireSelectionDetailsActionPressed({
-					id: oEvent.getParameter("id"),
-					action: oEvent.getParameter("action"),
-					itemContexts: aItemContexts,
-					level: oEvent.getParameter("level")
-				});
-			});
 		};
 
 		return ChartSelectionDetails;

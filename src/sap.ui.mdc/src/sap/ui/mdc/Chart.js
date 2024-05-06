@@ -822,8 +822,42 @@ sap.ui.define([
 			}
 
 			if (bShowSelectionDetails) {
-				// const getSelectionDetailsActions = function() { return this.getSelectionDetailsActions(); }.bind(this);
-				this._oSelectionDetailsBtn = ToolbarControlFactory.createSelectionDetailsBtn(sId, this.getSelectionDetailsActions.bind(this));
+				const fnActionPress = function(oEvent) {
+					// extract binding information of each item
+					const aItemContexts = [];
+					oEvent.getParameter("items").forEach((oItem) => {
+						aItemContexts.push(oItem.getBindingContext());
+					});
+					// Re-arrange event object and navigate to outer press handler
+					this.fireSelectionDetailsActionPressed({
+						id: oEvent.getParameter("id"),
+						action: oEvent.getParameter("action"),
+						itemContexts: aItemContexts,
+						level: oEvent.getParameter("level")
+					});
+				}.bind(this);
+
+				//TODO Attach to navigation event of selectionDetails for semantic object navigation
+				/*
+				const fnNavigate = function(oEvent) {
+					// Destroy content on navBack of selectionDetails
+					// This either is the semanticNavContainer or the semanticNavItemList
+					if (oEvent.getParameter("direction") === "back") {
+						oEvent.getParameter("content").destroy();
+					} else {
+						// Forward navigation to semantic objects
+						oChart._navigateToSemanticObjectDetails(oEvent);
+					}
+
+				};*/
+
+
+				this._oSelectionDetailsBtn = ToolbarControlFactory.createSelectionDetailsBtn(sId, {
+					actionPress: fnActionPress,
+					// navigate: fnNavigate,
+					getSelectionDetailsActions: this.getSelectionDetailsActions.bind(this)
+				});
+
 				oToolbar.addEnd(this._oSelectionDetailsBtn);
 			}
 
