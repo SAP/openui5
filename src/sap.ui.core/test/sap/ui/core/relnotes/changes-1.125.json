@@ -1,0 +1,12 @@
+{
+  "1.125.0": {
+    "date": "May 2024",
+    "notes": [
+      {
+        "id": "f63b0d10da9a5d8ccd2eef60f2b9a6a86cf7e04f",
+        "type": "FIX",
+        "text": " Core: add documentation on the usage of the Core module"
+      }
+    ]
+  }
+}

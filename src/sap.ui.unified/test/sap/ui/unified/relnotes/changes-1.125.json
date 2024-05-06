@@ -1,0 +1,12 @@
+{
+  "1.125.0": {
+    "date": "May 2024",
+    "notes": [
+      {
+        "id": "0d786b1529b07d195ae94b5dc0fd89eb46f154e7",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarLegend: implement WCAG 2.2 compliance for focusable items"
+      }
+    ]
+  }
+}
