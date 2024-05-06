@@ -1,44 +1,66 @@
 /*global QUnit, sinon */
 sap.ui.define([
-	"sap/ui/core/Core",
-	"sap/ui/core/Lib",
-	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/core/util/MockServer",
-	"sap/m/List",
-	"sap/m/GrowingEnablement",
-	"sap/m/Table",
 	"sap/m/Column",
 	"sap/m/ColumnListItem",
+	"sap/m/CustomListItem",
+	"sap/m/GrowingEnablement",
+	"sap/m/library",
+	"sap/m/List",
+	"sap/m/Page",
+	"sap/m/StandardListItem",
+	"sap/m/Table",
 	"sap/m/Text",
+	"sap/ui/core/HTML",
+	"sap/ui/core/Lib",
+	"sap/ui/core/util/MockServer",
+	"sap/ui/events/KeyCodes",
+	"sap/ui/model/Sorter",
+	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/ODataModel",
 	"sap/ui/model/odata/v2/ODataModel",
-	"sap/ui/model/json/JSONModel",
-	"sap/ui/model/Sorter",
-	"sap/m/StandardListItem",
-	"sap/m/CustomListItem",
-	"sap/ui/core/HTML",
-	"sap/m/Page",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/events/KeyCodes"
-], function(Core, Library, createAndAppendDiv, MockServer, List, GrowingEnablement, Table, Column, ColumnListItem, Text, ODataV1Model, ODataModel, JSONModel, Sorter, StandardListItem, CustomListItem, HTML, Page, jQuery, qutils, KeyCodes) {
+	"sap/ui/qunit/utils/createAndAppendDiv",
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/thirdparty/jquery"
+], function(Column, ColumnListItem, CustomListItem, GrowingEnablement, mLibrary, List, Page, StandardListItem, Table, Text, HTML, Library, MockServer, KeyCodes, Sorter, JSONModel, ODataV1Model, ODataModel, qutils, createAndAppendDiv, nextUIUpdate, jQuery) {
 	"use strict";
 	createAndAppendDiv("growing1");
 	createAndAppendDiv("growing2");
 
+	async function timeout(iDuration) {
+		await new Promise(function(resolve) {
+			window.setTimeout(resolve, iDuration);
+		});
+	}
 
+	async function ui5Event(sEventName, oControl) {
+		return await new Promise((fnResolve) => {
+			oControl?.attachEventOnce(sEventName, fnResolve);
+		});
+	}
+
+	async function nextDOMAttributeUpdate(oDOMElement, aAttributeNames) {
+		await new Promise((fnResolve) => {
+			const oObserver = new MutationObserver(() => {
+				oObserver.disconnect();
+				fnResolve();
+			});
+			oObserver.observe(oDOMElement, {
+				attributes: true,
+				attributeFilter: aAttributeNames
+			});
+		});
+	}
 
 	QUnit.module("trigger");
-	QUnit.test("Should update the trigger state correctly", function(assert) {
-		var done = assert.async();
-		//Arrange
-		var data = { items: [ {},{}] };
+	QUnit.test("Should update the trigger state correctly", async function(assert) {
+		const data = { items: [ {},{}] };
 
-		var oModel = new JSONModel();
+		const oModel = new JSONModel();
 		oModel.setData(data);
 
 		//System under Test
-		var oList = new List({
+		const oList = new List({
 			growing : true,
 			growingThreshold: 1,
 			items : {
@@ -49,101 +71,95 @@ sap.ui.define([
 			}
 		}).setModel(oModel);
 
-		var oPage = new Page({
+		const oPage = new Page({
 			title: "List Page",
 			content : oList
 		});
 
 		oPage.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// sytem under test
-		var oGrowingDelegate = oList._oGrowingDelegate;
-		var oTrigger = oGrowingDelegate._oTrigger;
+		const oGrowingDelegate = oList._oGrowingDelegate;
+		const oTrigger = oGrowingDelegate._oTrigger;
 
 		assert.equal(document.getElementById(oList.$("trigger").attr("aria-describedby")).textContent, Library.getResourceBundleFor("sap.m").getText("LOAD_MORE_DATA_ACC_WITH_COUNT", [1, 2]));
+		await timeout();
 
-		// Act
-		setTimeout(function() {
-			assert.ok(oList.$("triggerList").is(":visible"), "Load more trigger is visible after initial rendering");
+		assert.ok(oList.$("triggerList").is(":visible"), "Load more trigger is visible after initial rendering");
 
-			// act + assert loading is started case
-			oGrowingDelegate._updateTrigger(true);
+		// act + assert loading is started case
+		oGrowingDelegate._updateTrigger(true);
 
-			assert.ok(oTrigger.getBusy(), "Trigger shows the busy indicator");
-			assert.ok(!oTrigger.$().hasClass("sapMLIBActive"), "Trigger is not active since it is busy");
-			assert.ok(oTrigger.$().hasClass("sapMGrowingListBusyIndicatorVisible"), "Busy indicator visible class is added");
-			assert.strictEqual(oList.$("triggerText").css("visibility"), "hidden", "Growing trigger text is hidden");
-			assert.strictEqual(oList.$("triggerInfo").css("visibility"), "hidden", "Growing infor text is hidden");
-			assert.ok(oList.$("triggerList").is(":visible"), "Load more trigger is visible");
+		assert.ok(oTrigger.getBusy(), "Trigger shows the busy indicator");
+		assert.ok(!oTrigger.$().hasClass("sapMLIBActive"), "Trigger is not active since it is busy");
+		assert.ok(oTrigger.$().hasClass("sapMGrowingListBusyIndicatorVisible"), "Busy indicator visible class is added");
+		assert.strictEqual(oList.$("triggerText").css("visibility"), "hidden", "Growing trigger text is hidden");
+		assert.strictEqual(oList.$("triggerInfo").css("visibility"), "hidden", "Growing infor text is hidden");
+		assert.ok(oList.$("triggerList").is(":visible"), "Load more trigger is visible");
 
-			// act + assert loading is finished case for growingScrollToLoad=false
-			oGrowingDelegate._updateTrigger(false);
-			assert.ok(!oTrigger.getBusy(), "Trigger does not show the busy indicator");
-			assert.ok(!oTrigger.$().hasClass("sapMGrowingListBusyIndicatorVisible"), "Busy indicator visible class is removed");
-			assert.strictEqual(oList.$("triggerText").css("visibility"), "visible", "Growing trigger text is visible");
-			assert.strictEqual(oList.$("triggerInfo").css("visibility"), "visible", "Growing info text is visible");
-			assert.ok(oList.$("triggerList").is(":visible"), "Load more trigger is visible");
+		// act + assert loading is finished case for growingScrollToLoad=false
+		oGrowingDelegate._updateTrigger(false);
+		assert.ok(!oTrigger.getBusy(), "Trigger does not show the busy indicator");
+		assert.ok(!oTrigger.$().hasClass("sapMGrowingListBusyIndicatorVisible"), "Busy indicator visible class is removed");
+		assert.strictEqual(oList.$("triggerText").css("visibility"), "visible", "Growing trigger text is visible");
+		assert.strictEqual(oList.$("triggerInfo").css("visibility"), "visible", "Growing info text is visible");
+		assert.ok(oList.$("triggerList").is(":visible"), "Load more trigger is visible");
 
-			// act + assert growingScrollToLoad=true
-			oList.setGrowingScrollToLoad(true);
-			Core.applyChanges();
-			assert.ok(oList.$("triggerList").is(":hidden"), "Load more trigger is not visible");
+		// act + assert growingScrollToLoad=true
+		oList.setGrowingScrollToLoad(true);
+		await nextUIUpdate();
 
-			// act + assert loading is started case for growingScrollToLoad=true
-			oGrowingDelegate._updateTrigger(true);
-			assert.ok(oTrigger.getBusy(), "Trigger shows the busy indicator");
-			assert.ok(!oTrigger.$().hasClass("sapMLIBActive"), "Trigger is not active since it is busy");
-			assert.ok(oTrigger.$().hasClass("sapMGrowingListBusyIndicatorVisible"), "Busy indicator visible class is added");
-			assert.strictEqual(oList.$("triggerText").css("visibility"), "hidden", "Growing trigger text is hidden");
-			assert.strictEqual(oList.$("triggerInfo").css("visibility"), "hidden", "Growing infor text is hidden");
-			assert.ok(oList.$("triggerList").is(":visible"), "Load more trigger is visible");
+		assert.ok(oList.$("triggerList").is(":hidden"), "Load more trigger is not visible");
 
-			// act + assert loading is finished case for growingScrollToLoad=true
-			oGrowingDelegate._updateTrigger(false);
-			assert.ok(!oTrigger.getBusy(), "Trigger does not show the busy indicator");
-			assert.ok(!oTrigger.$().hasClass("sapMGrowingListBusyIndicatorVisible"), "Busy indicator visible class is removed");
-			assert.ok(!oList.$("triggerText").is(":visible"), "Growing trigger text is not visible");
-			assert.ok(!oList.$("triggerInfo").is(":visible"), "Growing info text is not visible");
-			assert.ok(!oList.$("triggerList").is(":visible"), "Load more trigger is not visible");
+		// act + assert loading is started case for growingScrollToLoad=true
+		oGrowingDelegate._updateTrigger(true);
+		assert.ok(oTrigger.getBusy(), "Trigger shows the busy indicator");
+		assert.ok(!oTrigger.$().hasClass("sapMLIBActive"), "Trigger is not active since it is busy");
+		assert.ok(oTrigger.$().hasClass("sapMGrowingListBusyIndicatorVisible"), "Busy indicator visible class is added");
+		assert.strictEqual(oList.$("triggerText").css("visibility"), "hidden", "Growing trigger text is hidden");
+		assert.strictEqual(oList.$("triggerInfo").css("visibility"), "hidden", "Growing infor text is hidden");
+		assert.ok(oList.$("triggerList").is(":visible"), "Load more trigger is visible");
 
-			// check for Growing trigger DOM
-			assert.equal(oTrigger.TagName, "div", "Growing trigger has TagName as div");
-			assert.ok(oTrigger.$().is("div"), "Growing trigger rendered as div in DOM");
-			assert.ok(jQuery(".sapMSLITitle").is("span"), "More button rendered with span tag");
-			assert.strictEqual(oTrigger.$().attr("role"), "button", "role=button");
-			assert.strictEqual(oTrigger.$().attr("aria-selected"), undefined, "aria-selected attribute removed as role=button");
-			assert.notOk(oTrigger.$().attr("aria-roledescription"), "aria-roledescription remove from the growing trigger");
-			assert.notOk(oTrigger.$().attr("aria-posinset"), "aria-posinset remove from the growing trigger");
-			assert.notOk(oTrigger.$().attr("aria-setsize"), "aria-setsize remove from the growing trigger");
+		// act + assert loading is finished case for growingScrollToLoad=true
+		oGrowingDelegate._updateTrigger(false);
+		assert.ok(!oTrigger.getBusy(), "Trigger does not show the busy indicator");
+		assert.ok(!oTrigger.$().hasClass("sapMGrowingListBusyIndicatorVisible"), "Busy indicator visible class is removed");
+		assert.ok(!oList.$("triggerText").is(":visible"), "Growing trigger text is not visible");
+		assert.ok(!oList.$("triggerInfo").is(":visible"), "Growing info text is not visible");
+		assert.ok(!oList.$("triggerList").is(":visible"), "Load more trigger is not visible");
 
-			// act + assert growingScrollToLoad=true
-			oList.setGrowingScrollToLoad(false);
-			Core.applyChanges();
+		// check for Growing trigger DOM
+		assert.equal(oTrigger.TagName, "div", "Growing trigger has TagName as div");
+		assert.ok(oTrigger.$().is("div"), "Growing trigger rendered as div in DOM");
+		assert.ok(jQuery(".sapMSLITitle").is("span"), "More button rendered with span tag");
+		assert.strictEqual(oTrigger.$().attr("role"), "button", "role=button");
+		assert.strictEqual(oTrigger.$().attr("aria-selected"), undefined, "aria-selected attribute removed as role=button");
+		assert.notOk(oTrigger.$().attr("aria-roledescription"), "aria-roledescription remove from the growing trigger");
+		assert.notOk(oTrigger.$().attr("aria-posinset"), "aria-posinset remove from the growing trigger");
+		assert.notOk(oTrigger.$().attr("aria-setsize"), "aria-setsize remove from the growing trigger");
 
-			setTimeout(function() {
-				assert.ok(oList.$("triggerList").is(":visible"), "Load more trigger is  visible");
-				oGrowingDelegate.requestNewPage();
+		// act + assert growingScrollToLoad=true
+		oList.setGrowingScrollToLoad(false);
+		await nextUIUpdate();
+		await timeout();
 
-				setTimeout(function() {
-					assert.ok(!oList.$("triggerList").is(":visible"), "Load more trigger is not visible everything is loaded");
-					oPage.destroy();
-					oModel.destroy();
-					done();
-				}, 0);
+		assert.ok(oList.$("triggerList").is(":visible"), "Load more trigger is  visible");
+		oGrowingDelegate.requestNewPage();
 
-			}, 0);
+		await timeout();
 
-		}, 0);
+		assert.ok(!oList.$("triggerList").is(":visible"), "Load more trigger is not visible everything is loaded");
+
+		oPage.destroy();
+		oModel.destroy();
 	});
 
-	QUnit.test("Growing Trigger - ACC and Keyboard", function(assert) {
-		var done = assert.async();
-
-		var oModel = new JSONModel();
+	QUnit.test("Growing Trigger - ACC and Keyboard", async function(assert) {
+		const oModel = new JSONModel();
 		oModel.setData({items: [{},{}]});
 
-		var oList = new List({
+		const oList = new List({
 			growing : true,
 			growingThreshold: 1,
 			items : {
@@ -155,37 +171,29 @@ sap.ui.define([
 		new Page({
 			content: oList
 		}).placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
+		await timeout();
 
-		// sytem under test
-		//var oGrowingDelegate = oList._oGrowingDelegate;
-		//var oTrigger = oGrowingDelegate._oTrigger;
+		assert.ok(oList.$("triggerList").is(":visible"), "Load more trigger is visible");
+		assert.equal(oList.$("trigger").attr("aria-labelledby"), oList.$("triggerText").attr("id"), "aria-labelledby contains reference to the trigger text");
+		assert.equal(oList.$("trigger").attr("aria-describedby"), oList.$("triggerMessage").attr("id"), "aria-describedby contains reference to status info");
+		assert.ok(oList.$("triggerText").text(), "Status info is available");
 
-		setTimeout(function() {
-			assert.ok(oList.$("triggerList").is(":visible"), "Load more trigger is visible");
+		const aCountInfo = oList._oGrowingDelegate._getItemCounts();
+		assert.equal(aCountInfo[0], 1, "Current loaded items count known");
+		assert.equal(aCountInfo[1], 2, "Overall count known");
 
-			//Check ACC
-			assert.equal(oList.$("trigger").attr("aria-labelledby"), oList.$("triggerText").attr("id"), "aria-labelledby contains reference to the trigger text");
-			assert.equal(oList.$("trigger").attr("aria-describedby"), oList.$("triggerMessage").attr("id"), "aria-describedby contains reference to status info");
-			assert.ok(oList.$("triggerText").text(), "Status info is available");
-			var aCountInfo = oList._oGrowingDelegate._getItemCounts();
-			assert.equal(aCountInfo[0], 1, "Current loaded items count known");
-			assert.equal(aCountInfo[1], 2, "Overall count known");
-
-			// Test Navigation via Arrow Keys from / to Trigger
-			oList.getItems()[0].focus();
-			qutils.triggerKeydown(oList.getItems()[0].getDomRef(), KeyCodes.ARROW_DOWN);
-			assert.ok(oList.getDomRef("trigger") === document.activeElement, "Trigger has focus after navigation from last item via arrow key");
-			qutils.triggerKeydown(oList.getDomRef("trigger"), KeyCodes.ARROW_UP);
-			assert.ok(oList.getItems()[0].getDomRef() === document.activeElement, "Item has focus after navigation from trigger via arrow key");
-
-			done();
-		}, 0);
+		// Test Navigation via Arrow Keys from / to Trigger
+		oList.getItems()[0].focus();
+		qutils.triggerKeydown(oList.getItems()[0].getDomRef(), KeyCodes.ARROW_DOWN);
+		assert.ok(oList.getDomRef("trigger") === document.activeElement, "Trigger has focus after navigation from last item via arrow key");
+		qutils.triggerKeydown(oList.getDomRef("trigger"), KeyCodes.ARROW_UP);
+		assert.ok(oList.getItems()[0].getDomRef() === document.activeElement, "Item has focus after navigation from trigger via arrow key");
 
 	});
 
-	QUnit.test("Show noDataText and hide 'Load more' trigger when no item is visible", function(assert) {
-		var data = { // 3 items
+	QUnit.test("Show noDataText and hide 'Load more' trigger when no item is visible", async function(assert) {
+		const data = { // 3 items
 			items: [{
 				Title: "Title1",
 				Description: "Description1"
@@ -198,11 +206,10 @@ sap.ui.define([
 			}]
 		};
 
-		var oModel = new JSONModel();
+		const oModel = new JSONModel();
 		oModel.setData(data);
 
-		//System under Test
-		var oList = new List({
+		const oList = new List({
 			growing: true,
 			growingThreshold: 1,
 			items: {
@@ -214,21 +221,21 @@ sap.ui.define([
 			}
 		}).setModel(oModel);
 
-		var oPage = new Page({
+		const oPage = new Page({
 			title: "List Page",
 			content: oList
 		});
 
 		oPage.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
-		var aVisibleItems = oList.getVisibleItems();
+		let aVisibleItems = oList.getVisibleItems();
 
 		aVisibleItems.forEach(function(oItem) {
 			oItem.setVisible(false);
 		});
 
-		Core.applyChanges();
+		await nextUIUpdate();
 		aVisibleItems = oList.getVisibleItems();
 		assert.strictEqual(aVisibleItems.length, 0, "List has no visible items.");
 
@@ -240,14 +247,13 @@ sap.ui.define([
 	});
 
 	QUnit.module("Integration tests");
-	QUnit.test("Should determine if the list is scrollable", function(assert) {
-		//Arrange
-		var data = { items: [ {},{}] };
+	QUnit.test("Should determine if the list is scrollable", async function(assert) {
+		const data = { items: [ {},{}] };
 
-		var oModel = new JSONModel();
+		const oModel = new JSONModel();
 		oModel.setData(data);
 
-		var oList = new List({
+		const oList = new List({
 			growing : true,
 			growingScrollToLoad : true,
 			items : {
@@ -258,56 +264,51 @@ sap.ui.define([
 			}
 		}).setModel(oModel);
 
-		var page = new Page({
+		const page = new Page({
 			title: "List Page",
 			content : oList
 		});
 
-		//System under Test
-		var sut = new GrowingEnablement(oList);
+		const oGrowingEnablement = new GrowingEnablement(oList);
 
 		page.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
-		//Act + Assert
-		assert.ok(sut._getHasScrollbars(), "The list has scrollbars");
+		assert.ok(oGrowingEnablement._getHasScrollbars(), "The list has scrollbars");
 
 		page.destroy();
 		oModel.destroy();
-		sut.destroy();
+		oGrowingEnablement.destroy();
+		oList.destroy();
 	});
 
-	QUnit.test("Should determine if the list is not scrollable", function(assert) {
-		//Arrange
-		var oList = new List({
+	QUnit.test("Should determine if the list is not scrollable", async function(assert) {
+		const oList = new List({
 			growing : true,
 			growingScrollToLoad : true
 		});
 
-		//System under Test
-		var sut = new GrowingEnablement(oList);
+		const oGrowingEnablement = new GrowingEnablement(oList);
 
 		oList.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
-		//Act + Assert
-		assert.ok(!sut._getHasScrollbars(), "The list has no scrollbars");
+		assert.ok(!oGrowingEnablement._getHasScrollbars(), "The list has no scrollbars");
 
-		sut.destroy();
+		oGrowingEnablement.destroy();
 		oList.destroy();
 	});
 
-	QUnit.test("Should react overflow event of the scroll container", function(assert) {
-		//Arrange
-		var done = assert.async();
-		var data = { items: [ {}, {}] };
+	QUnit.test("Should react overflow event of the scroll container", async function(assert) {
+		const data = { items: [ {}, {}] };
+		const oModel = new JSONModel();
 
-		var oModel = new JSONModel();
 		oModel.setData(data);
 
-		//System under Test
-		var oHtml = new HTML({content:'<div style="height: 5000px"></div>'});
-		var oList = new List({
+		const oHtml = new HTML({
+			content:'<div style="height: 5000px"></div>'
+		});
+		const oList = new List({
 			growing : true,
 			growingScrollToLoad : true,
 			growingThreshold: 1,
@@ -318,35 +319,39 @@ sap.ui.define([
 				})
 			}
 		}).setModel(oModel);
-		var oPage = new Page({
+		const oPage = new Page({
 			title: "List Page",
 			content : [oHtml, oList]
 		});
 
 		oPage.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
+
+		/*
+		 * The following timeout is required to ensure that ScrollEnablement._checkOverflowChange
+		 * will detect the initial overflow correctly. Otherwise, the subsequent underflow
+		 * will not lead to an overflow change event and GrowingEnablement._updateTrigger is not called.
+		 */
+		await timeout(300);
 
 		assert.ok(!oList.$("triggerList").is(":visible"), "Load more trigger is not visible");
 
 		oHtml.setVisible(false);
-		setTimeout(function() {
-			assert.ok(oList.$("triggerList").is(":visible"), "Load more trigger is now visible");
+		await timeout(300);
 
-			oHtml.setVisible(true);
-			setTimeout(function() {
-				assert.ok(!oList.$("triggerList").is(":visible"), "Load more trigger is not visible again");
+		assert.ok(oList.$("triggerList").is(":visible"), "Load more trigger is now visible");
 
-				oPage.destroy();
-				oModel.destroy();
-				done();
-			}, 300);
-		}, 300);
+		oHtml.setVisible(true);
+		await timeout(300);
+
+		assert.ok(!oList.$("triggerList").is(":visible"), "Load more trigger is not visible again");
+
+		oPage.destroy();
+		oModel.destroy();
 	});
 
-	QUnit.test("List without model", function(assert) {
-		var done = assert.async();
-		//Arrange
-		var oList = new List({
+	QUnit.test("List without model", async function(assert) {
+		const oList = new List({
 			growing : true,
 			growingScrollToLoad : true,
 			items: {
@@ -356,25 +361,19 @@ sap.ui.define([
 		});
 
 		oList.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
-		//Act + Assert
 		assert.ok(!!oList.getDomRef(), "DomRef OK");
 
-		window.setTimeout(function() {
-			oList.destroy();
-			done();
-		}, 0);
+		oList.destroy();
 	});
 
 	QUnit.module("Odata");
 
-
 	function startMockServer() {
-
 		MockServer.config({ autoRespond : true });
 
-		var oMockServer = new MockServer({
+		const oMockServer = new MockServer({
 			rootUri: "http://sap.com/model/"
 		});
 
@@ -383,14 +382,14 @@ sap.ui.define([
 		return oMockServer;
 	}
 
-	var oModel;
+	let oModel;
 
 	function setODataModelAndBindItems (oList) {
 		oModel = new ODataModel("http://sap.com/model");
 
 		oList.setModel(oModel);
 
-		var oItemTemplate;
+		let oItemTemplate;
 		if (oList.isA("sap.m.Table")) {
 			oItemTemplate = new ColumnListItem({
 				cells: [
@@ -412,10 +411,10 @@ sap.ui.define([
 	}
 
 	function groupList (oList) {
-		var oBinding = oList.getBinding("items");
+		const oBinding = oList.getBinding("items");
 		oBinding.sort([
 			new Sorter("Category", false, function(oContext) {
-				var sCategory = oContext.getProperty("Category");
+				const sCategory = oContext.getProperty("Category");
 				return {
 					key : sCategory,
 					text : sCategory
@@ -424,127 +423,81 @@ sap.ui.define([
 		]);
 	}
 
-	QUnit.test("Should group and ungroup a List", function (assert) {
-		var done = assert.async();
-		//Arrange
-		var iInitialItemCount,
-			oMockServer = startMockServer(),
-			oInitialLoadDeferred = jQuery.Deferred(),
-			oAfterGroupingDeferred = jQuery.Deferred(),
-			oAfterUnGroupingDeferred = jQuery.Deferred(),
-			oInitialLoadDeferred = jQuery.Deferred(),
+	QUnit.test("Should group and ungroup a List", async function(assert) {
+		const oMockServer = startMockServer(),
 			oList = new List({
 				growing : true
 			});
 
 		oList.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
-		oList.attachEventOnce("updateFinished", oInitialLoadDeferred.resolve);
-
-		//Act part 2 - group the list
-		jQuery.when(oInitialLoadDeferred).then(function () {
-			iInitialItemCount = oList.getItems().length;
-
-			oList.setBusyIndicatorDelay(0);
-			oList.focus();
-			oList.setBusy(true);
-			groupList(oList);
-
-			oList.attachEventOnce("updateFinished", oAfterGroupingDeferred.resolve);
-		});
-
-		//Act part 3 - ungroup the list
-		jQuery.when(oAfterGroupingDeferred).then(function () {
-			assert.strictEqual(document.activeElement, oList.getItems()[0].getDomRef(), "The focus is set correctly");
-
-			//ungroup
-			oList.getBinding("items").sort([]);
-
-			oList.attachEventOnce("updateFinished", oAfterUnGroupingDeferred.resolve);
-		});
-
-		//Assert + Cleanup
-		jQuery.when(oAfterUnGroupingDeferred).then(function () {
-			assert.strictEqual(iInitialItemCount, oList.getItems().length, "The list did contain the same number of items");
-			done();
-
-			oList.destroy();
-			oMockServer.stop();
-		});
-
-		//Act
 		setODataModelAndBindItems(oList);
+		await ui5Event("updateFinished", oList);
+
+		const iInitialItemCount = oList.getItems().length;
+		oList.setBusyIndicatorDelay(0);
+		oList.focus();
+		oList.setBusy(true);
+		groupList(oList);
+		await ui5Event("updateFinished", oList);
+
+		assert.strictEqual(document.activeElement, oList.getItems()[0].getDomRef(), "The focus is set correctly");
+		oList.getBinding("items").sort([]);
+		await ui5Event("updateFinished", oList);
+
+		assert.strictEqual(iInitialItemCount, oList.getItems().length, "The list did contain the same number of items");
+
+		oList.destroy();
+		oMockServer.stop();
+
 	});
 
-	QUnit.test("Should grow by the treshold", function (assert) {
-		var done = assert.async();
-		//Arrange
-		var oMockServer = startMockServer(),
+	QUnit.test("Should grow by the treshold", async function(assert) {
+		const oMockServer = startMockServer(),
 			iInitialThreshold = 2,
 			oList = new List({
 				growing : true,
 				//small number that not all data gets loaded
 				growingThreshold : iInitialThreshold
-			}),
-			iTotalNumberOfItems,
-			oInitialLoadDeferred = jQuery.Deferred(),
-			oSecondPageDeferred = jQuery.Deferred(),
-			oAllPagesDeferred = jQuery.Deferred();
+			});
 
 		//System under test
 		oList.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
-		oList.attachEventOnce("updateFinished", oInitialLoadDeferred.resolve);
-
-		//Act part 2 - set growing treshold to half of the total items and load a second page
-		jQuery.when(oInitialLoadDeferred).then(function () {
-			assert.strictEqual(iInitialThreshold, oList.getItems().length, "The list did contain the same number of items as the initial treshold");
-			iTotalNumberOfItems = oList.getBinding("items").getLength();
-
-			oList.setGrowingThreshold(Math.floor(iTotalNumberOfItems / 2));
-			qutils.triggerKeydown(oList.getDomRef("trigger"), KeyCodes.ENTER);
-
-			oList.attachEventOnce("updateFinished", oSecondPageDeferred.resolve);
-		});
-
-		//Act part 3 - load another page - now we should have all items
-		jQuery.when(oSecondPageDeferred).then(function () {
-			//Assert
-			assert.strictEqual(oList.getGrowingThreshold() + iInitialThreshold, oList.getItems().length, "The list did contain the same number of items as twice the treshold");
-
-			var fnRequestNewPageSpy = sinon.spy(oList._oGrowingDelegate, "requestNewPage");
-			qutils.triggerKeydown(oList.getDomRef("trigger"), KeyCodes.SPACE);
-			qutils.triggerKeydown(oList.getDomRef("trigger"), KeyCodes.ESCAPE);
-			qutils.triggerKeyup(oList.getDomRef("trigger"), KeyCodes.SPACE);
-			assert.notOk(fnRequestNewPageSpy.calledOnce);
-
-			qutils.triggerKeydown(oList.getDomRef("trigger"), KeyCodes.SPACE);
-			qutils.triggerKeyup(oList.getDomRef("trigger"), KeyCodes.SPACE);
-			assert.ok(fnRequestNewPageSpy.calledOnce);
-			fnRequestNewPageSpy.restore();
-
-			oList.attachEventOnce("updateFinished", oAllPagesDeferred.resolve);
-		});
-
-		//Assert - check if all items where loaded
-		jQuery.when(oAllPagesDeferred).then(function () {
-			assert.strictEqual(iTotalNumberOfItems, oList.getItems().length, "The list did contain the max number of items");
-
-			//Cleanup
-			oList.destroy();
-			oMockServer.stop();
-			done();
-		});
-
-		//Act
-		//Loads the data
 		setODataModelAndBindItems(oList);
+		await ui5Event("updateFinished", oList);
+
+		assert.strictEqual(iInitialThreshold, oList.getItems().length, "The list did contain the same number of items as the initial treshold");
+		const iTotalNumberOfItems = oList.getBinding("items").getLength();
+
+		oList.setGrowingThreshold(Math.floor(iTotalNumberOfItems / 2));
+		qutils.triggerKeydown(oList.getDomRef("trigger"), KeyCodes.ENTER);
+		await ui5Event("updateFinished", oList);
+
+		assert.strictEqual(oList.getGrowingThreshold() + iInitialThreshold, oList.getItems().length, "The list did contain the same number of items as twice the treshold");
+
+		const fnRequestNewPageSpy = sinon.spy(oList._oGrowingDelegate, "requestNewPage");
+		qutils.triggerKeydown(oList.getDomRef("trigger"), KeyCodes.SPACE);
+		qutils.triggerKeydown(oList.getDomRef("trigger"), KeyCodes.ESCAPE);
+		qutils.triggerKeyup(oList.getDomRef("trigger"), KeyCodes.SPACE);
+		assert.notOk(fnRequestNewPageSpy.calledOnce);
+
+		qutils.triggerKeydown(oList.getDomRef("trigger"), KeyCodes.SPACE);
+		qutils.triggerKeyup(oList.getDomRef("trigger"), KeyCodes.SPACE);
+		assert.ok(fnRequestNewPageSpy.calledOnce);
+		fnRequestNewPageSpy.restore();
+		await ui5Event("updateFinished", oList);
+
+		assert.strictEqual(iTotalNumberOfItems, oList.getItems().length, "The list did contain the max number of items");
+
+		oList.destroy();
+		oMockServer.stop();
 	});
 
-	QUnit.test("Prevent DOM update when all columns are hidden (BCP - 2080250160)", function(assert) {
-		var oTable = new Table({
+	QUnit.test("Prevent DOM update when all columns are hidden (BCP - 2080250160)", async function(assert) {
+		const oTable = new Table({
 				growing: true,
 				growingThreshold: 2,
 				columns: [
@@ -582,21 +535,21 @@ sap.ui.define([
 		oTable.setModel(oModel);
 
 		oTable.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(document.getElementById(oTable.$("trigger").attr("aria-describedby")).textContent, Library.getResourceBundleFor("sap.m").getText("LOAD_MORE_ROWS_ACC_WITH_COUNT", [2, 3]));
 		assert.strictEqual(oTable.getItems().length, 2, "2 items are rendered");
-		var sItemIds = oTable.getItems().toString();
+		const sItemIds = oTable.getItems().toString();
 
 		oTable.setVisible(false);
-		Core.applyChanges();
+		await nextUIUpdate();
 		oTable.getModel().refresh(true);
 		assert.strictEqual(oTable.getItems().toString(), sItemIds, "During the binding udpate the items are not destroy even though the table is invisible");
 		oTable.setVisible(true);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// hide all columns
-		var oColumn = oTable.getColumns()[0];
+		const oColumn = oTable.getColumns()[0];
 		oColumn.setVisible(false);
 
 		assert.notOk(oTable._oGrowingDelegate._aChunk.length, "No chunk available since model did not change");
@@ -621,10 +574,8 @@ sap.ui.define([
 		oTable.destroy();
 	});
 
-	QUnit.test("Growing should invalidate Table, when autoPopinMode=true", function(assert) {
-		var done = assert.async();
-		//Arrange
-		var oMockServer = startMockServer(),
+	QUnit.test("Growing should invalidate Table, when autoPopinMode=true", async function(assert) {
+		const oMockServer = startMockServer(),
 			iInitialThreshold = 2,
 			oTable = new Table({
 				autoPopinMode: true,
@@ -638,35 +589,30 @@ sap.ui.define([
 						header: new Text({text: "Category"})
 					})
 				]
-			}),
-			oDeferred = jQuery.Deferred();
+			});
 
 		//System under test
 		oTable.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
-		oTable.attachEventOnce("updateFinished", oDeferred.resolve);
-		var fnGetInitialAccumulatedWidth = sinon.spy(oTable, "_getInitialAccumulatedWidth");
+		const fnGetInitialAccumulatedWidth = sinon.spy(oTable, "_getInitialAccumulatedWidth");
 
 		assert.notOk(oTable.getItems().length, "no items available");
 		assert.ok(fnGetInitialAccumulatedWidth.notCalled, "autoPopinMode calculation is not performed yet, since no items available");
 
-		jQuery.when(oDeferred).then(function() {
-			assert.ok(oTable.getItems().length, "items are available");
-			assert.ok(fnGetInitialAccumulatedWidth.calledOnce, "autoPopinMode calculation performed");
-
-			//Cleanup
-			oTable.destroy();
-			oMockServer.stop();
-			done();
-		});
-
 		setODataModelAndBindItems(oTable);
+		await ui5Event("updateFinished", oTable);
+
+		assert.ok(oTable.getItems().length, "items are available");
+		assert.ok(fnGetInitialAccumulatedWidth.calledOnce, "autoPopinMode calculation performed");
+
+		oTable.destroy();
+		oMockServer.stop();
 	});
 
 	QUnit.module("Dummy Column", {
-		beforeEach: function() {
-			var data = [
+		beforeEach: async function() {
+			const data = [
 				{firstName: "Peter", lastName: "Mueller"},
 				{firstName: "Petra", lastName: "Maier"},
 				{firstName: "Thomas", lastName: "Smith"},
@@ -674,7 +620,7 @@ sap.ui.define([
 				{firstName: "Maria", lastName: "Jones"}
 			];
 
-			var oModel = new JSONModel();
+			const oModel = new JSONModel();
 			oModel.setData(data);
 
 			this.oTable = new Table({
@@ -705,44 +651,41 @@ sap.ui.define([
 			});
 
 			this.oPage.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oPage.destroy();
 		}
 	});
 
-	QUnit.test("Trigger button size should be adapted with dummy column is rendered", function(assert) {
-		const done = assert.async();
-		window.setTimeout(() => {
-			var oTableDomRef = this.oTable.getDomRef(),
-			oTriggerDomRef = this.oTable.getDomRef("trigger"),
-			oDummyColDomRef = this.oTable.getDomRef("tblHeadDummyCell");
-			assert.ok(oTriggerDomRef.clientWidth - oTableDomRef.clientWidth - oDummyColDomRef.clientWidth < 2, "Trigger button width correctly adapted");
-			done();
-		});
+	QUnit.test("Trigger button size should be adapted with dummy column is rendered", async function(assert) {
+		const oTable = this.oTable;
+		await timeout();
+
+		const oTableDomRef = oTable.getDomRef(),
+		oTriggerDomRef = oTable.getDomRef("trigger"),
+		oDummyColDomRef = oTable.getDomRef("tblHeadDummyCell");
+		assert.ok(oTriggerDomRef.clientWidth - oTableDomRef.clientWidth - oDummyColDomRef.clientWidth < 2, "Trigger button width correctly adapted");
+
 	});
 
-	QUnit.test("Trigger button size should take the full table width when table has popins and dummy column", function(assert) {
-		var oColumn = this.oTable.getColumns()[1];
+	QUnit.test("Trigger button size should take the full table width when table has popins and dummy column", async function(assert) {
+		const oTable = this.oTable;
+		const oColumn = oTable.getColumns()[1];
 
 		oColumn.setMinScreenWidth("48000px");
 		oColumn.setDemandPopin(true);
-		Core.applyChanges();
+		await nextUIUpdate();
+		await timeout();
 
-		const done = assert.async();
-		window.setTimeout(() => {
-			var oTableDomRef = this.oTable.getDomRef(),
-				oTriggerDomRef = this.oTable.getDomRef("trigger");
-			assert.equal(oTableDomRef.clientWidth, oTriggerDomRef.clientWidth, "Table width === Trigger button width");
-			done();
-		});
+		const oTableDomRef = oTable.getDomRef(),
+			oTriggerDomRef = oTable.getDomRef("trigger");
+		assert.equal(oTableDomRef.clientWidth, oTriggerDomRef.clientWidth, "Table width === Trigger button width");
 	});
 
 	QUnit.module("Group item mapping", {
-		beforeEach: function() {
-			this.clock = sinon.useFakeTimers();
-			var oData = { // 10 items
+		beforeEach: async function() {
+			const oData = { // 10 items
 				items : [ {
 					Key: "Key1",
 					Title : "Title1",
@@ -785,7 +728,7 @@ sap.ui.define([
 					Description: "Description10"
 				} ]
 			};
-			var oModel = new JSONModel(oData);
+			const oModel = new JSONModel(oData);
 			this.oList = new List({
 				growing: true,
 				growingThreshold: 5
@@ -799,18 +742,17 @@ sap.ui.define([
 				})
 			});
 			this.oList.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oList.destroy();
-			this.clock.restore();
 		}
 	});
 
-	QUnit.test("GrowingDirection - Downwards", function(assert) {
-		var fnSetLastGroupHeaderSpy = sinon.spy(this.oList, "getGroupHeaderTemplate");
-		var oBinding = this.oList.getBinding("items");
-		var oSorter = new Sorter({
+	QUnit.test("GrowingDirection - Downwards", async function(assert) {
+		const fnSetLastGroupHeaderSpy = sinon.spy(this.oList, "getGroupHeaderTemplate");
+		const oBinding = this.oList.getBinding("items");
+		const oSorter = new Sorter({
 			path: "Key",
 			descending: false,
 			group: function(oContext) {
@@ -818,27 +760,29 @@ sap.ui.define([
 			}
 		});
 		oBinding.sort(oSorter);
-		Core.applyChanges();
+		await nextUIUpdate();
 
-		var aGroupHeaderListItems = this.oList.getVisibleItems().filter(function(oItem) {
+		let aGroupHeaderListItems = this.oList.getVisibleItems().filter(function(oItem) {
 			return oItem.isGroupHeader();
 		});
 
 		assert.strictEqual(fnSetLastGroupHeaderSpy.callCount, aGroupHeaderListItems.length, "default groupHeaderListItem template called twice");
 
 		aGroupHeaderListItems.forEach(function(oGroupItem) {
-			var $GroupItem = oGroupItem.$();
+			const $GroupItem = oGroupItem.$();
 			oGroupItem.getGroupedItems().forEach(function(sId) {
 				assert.ok($GroupItem.attr("aria-owns").indexOf(sId) > -1, "mapped items are set to aria-owns attribute");
 			});
 		});
 
-		var oSecondGroupItem = aGroupHeaderListItems[1];
+		const oSecondGroupItem = aGroupHeaderListItems[1];
 		assert.strictEqual(oSecondGroupItem.getGroupedItems().length, 2, "2 items mapped to group");
 		this.oList.$("trigger").trigger("tap");
-		this.clock.tick(10);
+
+		await nextDOMAttributeUpdate(oSecondGroupItem.$()[0], ["aria-owns"]);
+
 		assert.strictEqual(oSecondGroupItem.getGroupedItems().length, 3, "3 items mapped to group, due to growing");
-		var aAriaOwns = oSecondGroupItem.$().attr("aria-owns").split(" ");
+		const aAriaOwns = oSecondGroupItem.$().attr("aria-owns").split(" ");
 		assert.strictEqual(aAriaOwns.length, 3, "GroupHeader DOM updated");
 
 		aGroupHeaderListItems = this.oList.getVisibleItems().filter(function(oItem) {
@@ -850,10 +794,10 @@ sap.ui.define([
 		}, this);
 	});
 
-	QUnit.test("GrowingDirection - Upwards", function(assert) {
+	QUnit.test("GrowingDirection - Upwards", async function(assert) {
 		this.oList.setGrowingDirection("Upwards");
-		var oBinding = this.oList.getBinding("items");
-		var oSorter = new Sorter({
+		const oBinding = this.oList.getBinding("items");
+		const oSorter = new Sorter({
 			path: "Key",
 			descending: false,
 			group: function(oContext) {
@@ -861,25 +805,26 @@ sap.ui.define([
 			}
 		});
 		oBinding.sort(oSorter);
-		Core.applyChanges();
+		await nextUIUpdate();
 
-		var aVisibleItems = this.oList.getVisibleItems();
-		var aGroupHeaderListItems = aVisibleItems.filter(function(oItem) {
+		const aVisibleItems = this.oList.getVisibleItems();
+		let aGroupHeaderListItems = aVisibleItems.filter(function(oItem) {
 			return oItem.isGroupHeader();
 		});
 		aGroupHeaderListItems.forEach(function(oGroupItem) {
-			var $GroupItem = oGroupItem.$();
+			const $GroupItem = oGroupItem.$();
 			oGroupItem.getGroupedItems().forEach(function(sId) {
 				assert.ok($GroupItem.attr("aria-owns").indexOf(sId) > -1, "mapped items are set to aria-owns attribute");
 			});
 		});
 
-		var oSecondGroupItem = aGroupHeaderListItems[1];
+		const oSecondGroupItem = aGroupHeaderListItems[1];
 		assert.strictEqual(oSecondGroupItem.getGroupedItems().length, 2, "2 items mapped to group");
 		this.oList.$("trigger").trigger("tap");
-		this.clock.tick(10);
+		await timeout(10);
+
 		assert.strictEqual(oSecondGroupItem.getGroupedItems().length, 3, "3 items mapped to group, due to growing");
-		var aAriaOwns = oSecondGroupItem.$().attr("aria-owns").split(" ");
+		const aAriaOwns = oSecondGroupItem.$().attr("aria-owns").split(" ");
 		assert.strictEqual(aAriaOwns.length, 3, "GroupHeader DOM updated");
 
 		aGroupHeaderListItems = this.oList.getVisibleItems().filter(function(oItem) {
@@ -896,14 +841,13 @@ sap.ui.define([
 	/**
 	 * @deprecated as of 1.48. ODataModel V1 is deprecated.
 	 */
-	QUnit.test("should not be created for OData V1 model", function(assert) {
-		var done = assert.async();
-		var oMockServer = startMockServer();
-		var oList = new List({
+	QUnit.test("should not be created for OData V1 model", async function(assert) {
+		const oMockServer = startMockServer();
+		const oList = new List({
 			growing: true,
 			models: new ODataV1Model("http://sap.com/model", true) // true is use JSON
 		});
-		var fFillItemsPoolSpy = sinon.spy(oList._oGrowingDelegate, "fillItemsPool");
+		const fFillItemsPoolSpy = sinon.spy(oList._oGrowingDelegate, "fillItemsPool");
 		oList.bindItems({
 			path: "/Products",
 			template: new StandardListItem({
@@ -911,15 +855,16 @@ sap.ui.define([
 				description: "{Category}"
 			})
 		});
-		oList.attachEventOnce("updateFinished", function() {
-			var oBinding = oList.getBinding("items");
-			assert.ok(oBinding.isA("sap.ui.model.odata.ODataListBinding"), "OData V1 binding found");
-			assert.ok(fFillItemsPoolSpy.notCalled, "fillItemsPool method was not called for OData V1");
-			oMockServer.stop();
-			oList.destroy();
-			done();
-		});
+
 		oList.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
+		await ui5Event("updateFinished", oList);
+
+		const oBinding = oList.getBinding("items");
+		assert.ok(oBinding.isA("sap.ui.model.odata.ODataListBinding"), "OData V1 binding found");
+		assert.ok(fFillItemsPoolSpy.notCalled, "fillItemsPool method was not called for OData V1");
+
+		oMockServer.stop();
+		oList.destroy();
 	});
 });
