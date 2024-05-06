@@ -50,6 +50,7 @@ sap.ui.define([
 		const sSandboxAttributes = createsSandboxAttributesString(oFilteredAdvancedSettings);
 		const sCombinedSandboxAttributes = sAdditionalSandboxParameters ? `${sSandboxAttributes} ${sAdditionalSandboxParameters}` : sSandboxAttributes;
 		oRm.attr("sandbox", sCombinedSandboxAttributes);
+		// Always set the src to about:blank to avoid adding history entries when parameters are resolved
 		oRm.attr("src", "about:blank");
 
 		var sTitle = oIFrame.getTitle();
