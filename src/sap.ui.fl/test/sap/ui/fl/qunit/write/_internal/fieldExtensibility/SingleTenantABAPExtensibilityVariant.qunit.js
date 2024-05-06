@@ -28,16 +28,45 @@ sap.ui.define([
 	};
 	var mExpectedTexts = {
 		CustomFields: {
-			tooltip: "BTN_ADD_FIELD",
-			headerText: "BUSINESS_CONTEXT_TITLE"
+			tooltip: "BTN_CREATE_CUSTOM_FIELD",
+			headerText: "BUSINESS_CONTEXT_TITLE",
+			buttonText: "BTN_CREATE_CUSTOM_FIELD",
+			options: [
+				{
+					actionKey: "CUSTOM_FIELD",
+					text: "BTN_CREATE_CUSTOM_FIELD",
+					tooltip: "BTN_CREATE_CUSTOM_FIELD"
+				}
+			]
 		},
 		CustomLogic: {
-			tooltip: "BTN_ADD_LOGIC",
-			headerText: "BUSINESS_CONTEXT_TITLE"
+			tooltip: "BTN_CREATE_CUSTOM_LOGIC",
+			headerText: "BUSINESS_CONTEXT_TITLE",
+			buttonText: "BTN_CREATE_CUSTOM_LOGIC",
+			options: [
+				{
+					actionKey: "CUSTOM_LOGIC",
+					text: "BTN_CREATE_CUSTOM_LOGIC",
+					tooltip: "BTN_CREATE_CUSTOM_LOGIC"
+				}
+			]
 		},
 		CustomFieldsAndLogic: {
 			tooltip: "BTN_FREP_CCF",
-			headerText: "BUSINESS_CONTEXT_TITLE"
+			headerText: "BUSINESS_CONTEXT_TITLE",
+			buttonText: "BTN_CREATE",
+			options: [
+				{
+					actionKey: "CUSTOM_FIELD",
+					text: "BTN_MENU_CREATE_CUSTOM_FIELD",
+					tooltip: "BTN_MENU_CREATE_CUSTOM_FIELD"
+				},
+				{
+					actionKey: "CUSTOM_LOGIC",
+					text: "BTN_MENU_CREATE_CUSTOM_LOGIC",
+					tooltip: "BTN_MENU_CREATE_CUSTOM_LOGIC"
+				}
+			]
 		}
 	};
 	var mExpectedNavigationParams = {
@@ -90,13 +119,13 @@ sap.ui.define([
 		}]
 	};
 	var mGivenAuthorizationForIntents = {
-		All: [true, true, true],
-		CustomFields: [false, true, false],
-		CustomLogic: [false, false, true],
-		CustomFieldsAndLogic: [true, false, false],
-		NoFields: [true, false, true],
-		NoLogic: [true, true, false],
-		None: [false, false, false]
+		All: [true, true],
+		CustomFieldsAndLogic: [true, true],
+		CustomFields: [true, false],
+		CustomLogic: [false, true],
+		NoFields: [false, true],
+		NoLogic: [true, false],
+		None: [false, false]
 	};
 	var oSandbox = null;
 	var oServer = null;
@@ -124,47 +153,6 @@ sap.ui.define([
 			oServer.restore();
 		}
 	}, function() {
-		QUnit.test("Missing authorization", function(assert) {
-			var aPromises = [];
-			var done = assert.async();
-
-			oServer.respondWith("GET", /.*GetBusinessContextsByEntityType.*/, JSON.stringify({
-				d: {
-					results: [{
-						BusinessContext: "CFD_TSM_BUPA_ADR",
-						BusinessContextDescription: "Description for CFD_TSM_BUPA_ADR"
-					}]
-				}
-			}));
-			oSandbox.stub(Utils, "isNavigationSupportedForIntents").resolves(mGivenAuthorizationForIntents.None);
-
-			var oInstance = new SingleTenantABAPExtensibilityVariant(sServiceUri, mServiceInfo, mBindingInfo);
-
-			aPromises.push(oInstance.getExtensionData().then(function(mExtensionData) {
-				assert.equal(mExtensionData, null, "Extension data is correct");
-			}));
-
-			aPromises.push(oInstance.getNavigationUri().then(function(sNavigationUri) {
-				assert.equal(sNavigationUri, null, "Navigation Uri is correct");
-			}));
-
-			aPromises.push(oInstance.getTexts().then(function(mTexts) {
-				assert.equal(mTexts, null, "the correct texts were retrieved");
-			}));
-
-			aPromises.push(oInstance.isActive().then(function(bIsActive) {
-				assert.equal(bIsActive, false);
-			}));
-
-			Promise.allSettled(aPromises).then(function(aResults) {
-				aResults.forEach(function(oResult) {
-					assert.equal(oResult.status, "fulfilled", oResult.reason || "Ok");
-				});
-			}).finally(function() {
-				done();
-			});
-		});
-
 		QUnit.test("Server error", function(assert) {
 			var aPromises = [];
 			var done = assert.async();
@@ -188,11 +176,13 @@ sap.ui.define([
 
 			aPromises.push(oInstance.getExtensionData());
 			aPromises.push(oInstance.getNavigationUri());
+			aPromises.push(oInstance.getNavigationUri("CUSTOM_FIELD"));
+			aPromises.push(oInstance.getNavigationUri("CUSTOM_LOGIC"));
 			aPromises.push(oInstance.getTexts());
 			aPromises.push(oInstance.isActive());
 
 			Promise.allSettled(aPromises).then(function(aResults) {
-				aResults.forEach(function(oResult) {
+				for (var oResult of aResults) {
 					assert.equal(oResult.status, "rejected", "Error raised");
 					var oExpectedError = {
 						errorOccurred: true,
@@ -203,7 +193,7 @@ sap.ui.define([
 						statusCode: 400
 					};
 					assert.propEqual(oResult.reason, oExpectedError);
-				});
+				}
 			}).finally(function() {
 				done();
 			});
@@ -243,41 +233,11 @@ sap.ui.define([
 				assert.equal(sNavigationUri, null, "Navigation Uri is correct");
 			}));
 
-			aPromises.push(oInstance.getTexts().then(function(mTexts) {
-				assert.equal(mTexts, null, "the correct texts were retrieved");
+			aPromises.push(oInstance.getNavigationUri("CUSTOM_FIELD").then(function(sNavigationUri) {
+				assert.equal(sNavigationUri, null, "Navigation Uri is correct");
 			}));
 
-			aPromises.push(oInstance.isActive().then(function(bIsActive) {
-				assert.equal(bIsActive, false);
-			}));
-
-			Promise.allSettled(aPromises).then(function(aResults) {
-				aResults.forEach(function(oResult) {
-					assert.equal(oResult.status, "fulfilled", oResult.reason || "Ok");
-				});
-			}).finally(function() {
-				done();
-			});
-		});
-
-		QUnit.test("No business contexts", function(assert) {
-			var aPromises = [];
-			var done = assert.async();
-
-			oServer.respondWith("GET", /.*GetBusinessContextsByEntityType.*/, JSON.stringify({
-				d: {
-					results: []
-				}
-			}));
-			oSandbox.stub(Utils, "isNavigationSupportedForIntents").resolves(mGivenAuthorizationForIntents.CustomFieldsAndLogic);
-
-			var oInstance = new SingleTenantABAPExtensibilityVariant(sServiceUri, mServiceInfo, mBindingInfo);
-
-			aPromises.push(oInstance.getExtensionData().then(function(mExtensionData) {
-				assert.equal(mExtensionData, null, "Extension data is correct");
-			}));
-
-			aPromises.push(oInstance.getNavigationUri().then(function(sNavigationUri) {
+			aPromises.push(oInstance.getNavigationUri("CUSTOM_LOGIC").then(function(sNavigationUri) {
 				assert.equal(sNavigationUri, null, "Navigation Uri is correct");
 			}));
 
@@ -290,9 +250,9 @@ sap.ui.define([
 			}));
 
 			Promise.allSettled(aPromises).then(function(aResults) {
-				aResults.forEach(function(oResult) {
+				for (var oResult of aResults) {
 					assert.equal(oResult.status, "fulfilled", oResult.reason || "Ok");
-				});
+				}
 			}).finally(function() {
 				done();
 			});
@@ -319,7 +279,18 @@ sap.ui.define([
 			}));
 
 			aPromises.push(oInstance.getNavigationUri().then(function(sNavigationUri) {
-				assert.equal(sNavigationUri, JSON.stringify(mExpectedIntentWithParameter.CustomFieldsAndLogic), "Navigation Uri is correct");
+				var sExpected = JSON.stringify(mExpectedIntentWithParameter.CustomFields);
+				assert.equal(sNavigationUri, sExpected, "Navigation Uri is correct");
+			}));
+
+			aPromises.push(oInstance.getNavigationUri("CUSTOM_FIELD").then(function(sNavigationUri) {
+				var sExpected = JSON.stringify(mExpectedIntentWithParameter.CustomFields);
+				assert.equal(sNavigationUri, sExpected, "Navigation Uri is correct");
+			}));
+
+			aPromises.push(oInstance.getNavigationUri("CUSTOM_LOGIC").then(function(sNavigationUri) {
+				var sExpected = JSON.stringify(mExpectedIntentWithParameter.CustomLogic);
+				assert.equal(sNavigationUri, sExpected, "Navigation Uri is correct");
 			}));
 
 			aPromises.push(oInstance.getTexts().then(function(mTexts) {
@@ -331,15 +302,64 @@ sap.ui.define([
 			}));
 
 			Promise.allSettled(aPromises).then(function(aResults) {
-				aResults.forEach(function(oResult) {
+				for (var oResult of aResults) {
 					assert.equal(oResult.status, "fulfilled", oResult.reason || "Ok");
-				});
+				}
 			}).finally(function() {
 				done();
 			});
 		});
 
-		QUnit.test("Fields and Logic", function(assert) {
+		QUnit.test("Fields and Logic business context - all authorization", function(assert) {
+			var aPromises = [];
+			var done = assert.async();
+
+			oServer.respondWith("GET", /.*GetBusinessContextsByEntityType.*/, JSON.stringify({
+				d: {
+					results: mGivenBusinessContextResult.CustomFieldsAndLogic
+				}
+			}));
+			oSandbox.stub(Utils, "isNavigationSupportedForIntents").resolves(mGivenAuthorizationForIntents.All);
+
+			var oInstance = new SingleTenantABAPExtensibilityVariant(sServiceUri, mServiceInfo, mBindingInfo);
+
+			aPromises.push(oInstance.getExtensionData().then(function(mExtensionData) {
+				assert.propEqual(mExtensionData, mExpectedExtensionData, "Extension data is correct");
+			}));
+
+			aPromises.push(oInstance.getNavigationUri().then(function(sNavigationUri) {
+				var sExpected = JSON.stringify(mExpectedIntentWithParameter.CustomFields);
+				assert.equal(sNavigationUri, sExpected, "Navigation Uri is correct");
+			}));
+
+			aPromises.push(oInstance.getNavigationUri("CUSTOM_FIELD").then(function(sNavigationUri) {
+				var sExpected = JSON.stringify(mExpectedIntentWithParameter.CustomFields);
+				assert.equal(sNavigationUri, sExpected, "Navigation Uri is correct");
+			}));
+
+			aPromises.push(oInstance.getNavigationUri("CUSTOM_LOGIC").then(function(sNavigationUri) {
+				var sExpected = JSON.stringify(mExpectedIntentWithParameter.CustomLogic);
+				assert.equal(sNavigationUri, sExpected, "Navigation Uri is correct");
+			}));
+
+			aPromises.push(oInstance.getTexts().then(function(mTexts) {
+				assert.deepEqual(mTexts, mExpectedTexts.CustomFieldsAndLogic, "the correct texts were retrieved");
+			}));
+
+			aPromises.push(oInstance.isActive().then(function(bIsActive) {
+				assert.equal(bIsActive, true);
+			}));
+
+			Promise.allSettled(aPromises).then(function(aResults) {
+				for (var oResult of aResults) {
+					assert.equal(oResult.status, "fulfilled", oResult.reason || "Ok");
+				}
+			}).finally(function() {
+				done();
+			});
+		});
+
+		QUnit.test("Fields and Logic business context - fields and logic authorization", function(assert) {
 			var aPromises = [];
 			var done = assert.async();
 
@@ -357,7 +377,18 @@ sap.ui.define([
 			}));
 
 			aPromises.push(oInstance.getNavigationUri().then(function(sNavigationUri) {
-				assert.equal(sNavigationUri, JSON.stringify(mExpectedIntentWithParameter.CustomFieldsAndLogic), "Navigation Uri is correct");
+				var sExpected = JSON.stringify(mExpectedIntentWithParameter.CustomFields);
+				assert.equal(sNavigationUri, sExpected, "Navigation Uri is correct");
+			}));
+
+			aPromises.push(oInstance.getNavigationUri("CUSTOM_FIELD").then(function(sNavigationUri) {
+				var sExpected = JSON.stringify(mExpectedIntentWithParameter.CustomFields);
+				assert.equal(sNavigationUri, sExpected, "Navigation Uri is correct");
+			}));
+
+			aPromises.push(oInstance.getNavigationUri("CUSTOM_LOGIC").then(function(sNavigationUri) {
+				var sExpected = JSON.stringify(mExpectedIntentWithParameter.CustomLogic);
+				assert.equal(sNavigationUri, sExpected, "Navigation Uri is correct");
 			}));
 
 			aPromises.push(oInstance.getTexts().then(function(mTexts) {
@@ -369,15 +400,15 @@ sap.ui.define([
 			}));
 
 			Promise.allSettled(aPromises).then(function(aResults) {
-				aResults.forEach(function(oResult) {
+				for (var oResult of aResults) {
 					assert.equal(oResult.status, "fulfilled", oResult.reason || "Ok");
-				});
+				}
 			}).finally(function() {
 				done();
 			});
 		});
 
-		QUnit.test("Fields and Logic - Fields authorization only", function(assert) {
+		QUnit.test("Fields and Logic business context - fields authorization", function(assert) {
 			var aPromises = [];
 			var done = assert.async();
 
@@ -395,7 +426,17 @@ sap.ui.define([
 			}));
 
 			aPromises.push(oInstance.getNavigationUri().then(function(sNavigationUri) {
-				assert.equal(sNavigationUri, JSON.stringify(mExpectedIntentWithParameter.CustomFields), "Navigation Uri is correct");
+				var sExpected = JSON.stringify(mExpectedIntentWithParameter.CustomFields);
+				assert.equal(sNavigationUri, sExpected, "Navigation Uri is correct");
+			}));
+
+			aPromises.push(oInstance.getNavigationUri("CUSTOM_FIELD").then(function(sNavigationUri) {
+				var sExpected = JSON.stringify(mExpectedIntentWithParameter.CustomFields);
+				assert.equal(sNavigationUri, sExpected, "Navigation Uri is correct");
+			}));
+
+			aPromises.push(oInstance.getNavigationUri("CUSTOM_LOGIC").then(function(sNavigationUri) {
+				assert.equal(sNavigationUri, null, "Navigation Uri is correct");
 			}));
 
 			aPromises.push(oInstance.getTexts().then(function(mTexts) {
@@ -407,15 +448,63 @@ sap.ui.define([
 			}));
 
 			Promise.allSettled(aPromises).then(function(aResults) {
-				aResults.forEach(function(oResult) {
+				for (var oResult of aResults) {
 					assert.equal(oResult.status, "fulfilled", oResult.reason || "Ok");
-				});
+				}
 			}).finally(function() {
 				done();
 			});
 		});
 
-		QUnit.test("Fields and Logic - Logic authorization only", function(assert) {
+		QUnit.test("Fields and Logic business context - no logic authorization", function(assert) {
+			var aPromises = [];
+			var done = assert.async();
+
+			oServer.respondWith("GET", /.*GetBusinessContextsByEntityType.*/, JSON.stringify({
+				d: {
+					results: mGivenBusinessContextResult.CustomFieldsAndLogic
+				}
+			}));
+			oSandbox.stub(Utils, "isNavigationSupportedForIntents").resolves(mGivenAuthorizationForIntents.CustomFields);
+
+			var oInstance = new SingleTenantABAPExtensibilityVariant(sServiceUri, mServiceInfo, mBindingInfo);
+
+			aPromises.push(oInstance.getExtensionData().then(function(mExtensionData) {
+				assert.propEqual(mExtensionData, mExpectedExtensionData, "Extension data is correct");
+			}));
+
+			aPromises.push(oInstance.getNavigationUri().then(function(sNavigationUri) {
+				var sExpected = JSON.stringify(mExpectedIntentWithParameter.CustomFields);
+				assert.equal(sNavigationUri, sExpected, "Navigation Uri is correct");
+			}));
+
+			aPromises.push(oInstance.getNavigationUri("CUSTOM_FIELD").then(function(sNavigationUri) {
+				var sExpected = JSON.stringify(mExpectedIntentWithParameter.CustomFields);
+				assert.equal(sNavigationUri, sExpected, "Navigation Uri is correct");
+			}));
+
+			aPromises.push(oInstance.getNavigationUri("CUSTOM_LOGIC").then(function(sNavigationUri) {
+				assert.equal(sNavigationUri, null, "Navigation Uri is correct");
+			}));
+
+			aPromises.push(oInstance.getTexts().then(function(mTexts) {
+				assert.deepEqual(mTexts, mExpectedTexts.CustomFields, "the correct texts were retrieved");
+			}));
+
+			aPromises.push(oInstance.isActive().then(function(bIsActive) {
+				assert.equal(bIsActive, true);
+			}));
+
+			Promise.allSettled(aPromises).then(function(aResults) {
+				for (var oResult of aResults) {
+					assert.equal(oResult.status, "fulfilled", oResult.reason || "Ok");
+				}
+			}).finally(function() {
+				done();
+			});
+		});
+
+		QUnit.test("Fields and Logic business context - logic authorization", function(assert) {
 			var aPromises = [];
 			var done = assert.async();
 
@@ -433,7 +522,17 @@ sap.ui.define([
 			}));
 
 			aPromises.push(oInstance.getNavigationUri().then(function(sNavigationUri) {
-				assert.equal(sNavigationUri, JSON.stringify(mExpectedIntentWithParameter.CustomLogic), "Navigation Uri is correct");
+				var sExpected = JSON.stringify(mExpectedIntentWithParameter.CustomLogic);
+				assert.equal(sNavigationUri, sExpected, "Navigation Uri is correct");
+			}));
+
+			aPromises.push(oInstance.getNavigationUri("CUSTOM_FIELD").then(function(sNavigationUri) {
+				assert.equal(sNavigationUri, null, "Navigation Uri is correct");
+			}));
+
+			aPromises.push(oInstance.getNavigationUri("CUSTOM_LOGIC").then(function(sNavigationUri) {
+				var sExpected = JSON.stringify(mExpectedIntentWithParameter.CustomLogic);
+				assert.equal(sNavigationUri, sExpected, "Navigation Uri is correct");
 			}));
 
 			aPromises.push(oInstance.getTexts().then(function(mTexts) {
@@ -445,15 +544,256 @@ sap.ui.define([
 			}));
 
 			Promise.allSettled(aPromises).then(function(aResults) {
-				aResults.forEach(function(oResult) {
+				for (var oResult of aResults) {
 					assert.equal(oResult.status, "fulfilled", oResult.reason || "Ok");
-				});
+				}
 			}).finally(function() {
 				done();
 			});
 		});
 
-		QUnit.test("Fields only - all but logic", function(assert) {
+		QUnit.test("Fields and Logic business context - no fields authorization", function(assert) {
+			var aPromises = [];
+			var done = assert.async();
+
+			oServer.respondWith("GET", /.*GetBusinessContextsByEntityType.*/, JSON.stringify({
+				d: {
+					results: mGivenBusinessContextResult.CustomFieldsAndLogic
+				}
+			}));
+			oSandbox.stub(Utils, "isNavigationSupportedForIntents").resolves(mGivenAuthorizationForIntents.CustomLogic);
+
+			var oInstance = new SingleTenantABAPExtensibilityVariant(sServiceUri, mServiceInfo, mBindingInfo);
+
+			aPromises.push(oInstance.getExtensionData().then(function(mExtensionData) {
+				assert.propEqual(mExtensionData, mExpectedExtensionData, "Extension data is correct");
+			}));
+
+			aPromises.push(oInstance.getNavigationUri().then(function(sNavigationUri) {
+				var sExpected = JSON.stringify(mExpectedIntentWithParameter.CustomLogic);
+				assert.equal(sNavigationUri, sExpected, "Navigation Uri is correct");
+			}));
+
+			aPromises.push(oInstance.getNavigationUri("CUSTOM_FIELD").then(function(sNavigationUri) {
+				assert.equal(sNavigationUri, null, "Navigation Uri is correct");
+			}));
+
+			aPromises.push(oInstance.getNavigationUri("CUSTOM_LOGIC").then(function(sNavigationUri) {
+				var sExpected = JSON.stringify(mExpectedIntentWithParameter.CustomLogic);
+				assert.equal(sNavigationUri, sExpected, "Navigation Uri is correct");
+			}));
+
+			aPromises.push(oInstance.getTexts().then(function(mTexts) {
+				assert.deepEqual(mTexts, mExpectedTexts.CustomLogic, "the correct texts were retrieved");
+			}));
+
+			aPromises.push(oInstance.isActive().then(function(bIsActive) {
+				assert.equal(bIsActive, true);
+			}));
+
+			Promise.allSettled(aPromises).then(function(aResults) {
+				for (var oResult of aResults) {
+					assert.equal(oResult.status, "fulfilled", oResult.reason || "Ok");
+				}
+			}).finally(function() {
+				done();
+			});
+		});
+
+		QUnit.test("Fields and Logic business context - no authorization", function(assert) {
+			var aPromises = [];
+			var done = assert.async();
+
+			oServer.respondWith("GET", /.*GetBusinessContextsByEntityType.*/, JSON.stringify({
+				d: {
+					results: [{
+						BusinessContext: "CFD_TSM_BUPA_ADR",
+						BusinessContextDescription: "Description for CFD_TSM_BUPA_ADR"
+					}]
+				}
+			}));
+			oSandbox.stub(Utils, "isNavigationSupportedForIntents").resolves(mGivenAuthorizationForIntents.None);
+
+			var oInstance = new SingleTenantABAPExtensibilityVariant(sServiceUri, mServiceInfo, mBindingInfo);
+
+			aPromises.push(oInstance.getExtensionData().then(function(mExtensionData) {
+				assert.equal(mExtensionData, null, "Extension data is correct");
+			}));
+
+			aPromises.push(oInstance.getNavigationUri().then(function(sNavigationUri) {
+				assert.equal(sNavigationUri, null, "Navigation Uri is correct");
+			}));
+
+			aPromises.push(oInstance.getNavigationUri("CUSTOM_FIELD").then(function(sNavigationUri) {
+				assert.equal(sNavigationUri, null, "Navigation Uri is correct");
+			}));
+
+			aPromises.push(oInstance.getNavigationUri("CUSTOM_LOGIC").then(function(sNavigationUri) {
+				assert.equal(sNavigationUri, null, "Navigation Uri is correct");
+			}));
+
+			aPromises.push(oInstance.getTexts().then(function(mTexts) {
+				assert.equal(mTexts, null, "the correct texts were retrieved");
+			}));
+
+			aPromises.push(oInstance.isActive().then(function(bIsActive) {
+				assert.equal(bIsActive, false);
+			}));
+
+			Promise.allSettled(aPromises).then(function(aResults) {
+				for (var oResult of aResults) {
+					assert.equal(oResult.status, "fulfilled", oResult.reason || "Ok");
+				}
+			}).finally(function() {
+				done();
+			});
+		});
+
+		QUnit.test("Fields business context - all authorization", function(assert) {
+			var aPromises = [];
+			var done = assert.async();
+
+			oServer.respondWith("GET", /.*GetBusinessContextsByEntityType.*/, JSON.stringify({
+				d: {
+					results: mGivenBusinessContextResult.CustomFields
+				}
+			}));
+			oSandbox.stub(Utils, "isNavigationSupportedForIntents").resolves(mGivenAuthorizationForIntents.All);
+
+			var oInstance = new SingleTenantABAPExtensibilityVariant(sServiceUri, mServiceInfo, mBindingInfo);
+
+			aPromises.push(oInstance.getExtensionData().then(function(mExtensionData) {
+				assert.propEqual(mExtensionData, mExpectedExtensionData, "Extension data is correct");
+			}));
+
+			aPromises.push(oInstance.getNavigationUri().then(function(sNavigationUri) {
+				var sExpected = JSON.stringify(mExpectedIntentWithParameter.CustomFields);
+				assert.equal(sNavigationUri, sExpected, "Navigation Uri is correct");
+			}));
+
+			aPromises.push(oInstance.getNavigationUri("CUSTOM_FIELD").then(function(sNavigationUri) {
+				var sExpected = JSON.stringify(mExpectedIntentWithParameter.CustomFields);
+				assert.equal(sNavigationUri, sExpected, "Navigation Uri is correct");
+			}));
+
+			aPromises.push(oInstance.getNavigationUri("CUSTOM_LOGIC").then(function(sNavigationUri) {
+				assert.equal(sNavigationUri, null, "Navigation Uri is correct");
+			}));
+
+			aPromises.push(oInstance.getTexts().then(function(mTexts) {
+				assert.deepEqual(mTexts, mExpectedTexts.CustomFields, "the correct texts were retrieved");
+			}));
+
+			aPromises.push(oInstance.isActive().then(function(bIsActive) {
+				assert.equal(bIsActive, true);
+			}));
+
+			Promise.allSettled(aPromises).then(function(aResults) {
+				for (var oResult of aResults) {
+					assert.equal(oResult.status, "fulfilled", oResult.reason || "Ok");
+				}
+			}).finally(function() {
+				done();
+			});
+		});
+
+		QUnit.test("Fields business context - fields and logic authorization", function(assert) {
+			var aPromises = [];
+			var done = assert.async();
+
+			oServer.respondWith("GET", /.*GetBusinessContextsByEntityType.*/, JSON.stringify({
+				d: {
+					results: mGivenBusinessContextResult.CustomFields
+				}
+			}));
+			oSandbox.stub(Utils, "isNavigationSupportedForIntents").resolves(mGivenAuthorizationForIntents.CustomFieldsAndLogic);
+
+			var oInstance = new SingleTenantABAPExtensibilityVariant(sServiceUri, mServiceInfo, mBindingInfo);
+
+			aPromises.push(oInstance.getExtensionData().then(function(mExtensionData) {
+				assert.propEqual(mExtensionData, mExpectedExtensionData, "Extension data is correct");
+			}));
+
+			aPromises.push(oInstance.getNavigationUri().then(function(sNavigationUri) {
+				var sExpected = JSON.stringify(mExpectedIntentWithParameter.CustomFields);
+				assert.equal(sNavigationUri, sExpected, "Navigation Uri is correct");
+			}));
+
+			aPromises.push(oInstance.getNavigationUri("CUSTOM_FIELD").then(function(sNavigationUri) {
+				var sExpected = JSON.stringify(mExpectedIntentWithParameter.CustomFields);
+				assert.equal(sNavigationUri, sExpected, "Navigation Uri is correct");
+			}));
+
+			aPromises.push(oInstance.getNavigationUri("CUSTOM_LOGIC").then(function(sNavigationUri) {
+				assert.equal(sNavigationUri, null, "Navigation Uri is correct");
+			}));
+
+			aPromises.push(oInstance.getTexts().then(function(mTexts) {
+				assert.deepEqual(mTexts, mExpectedTexts.CustomFields, "the correct texts were retrieved");
+			}));
+
+			aPromises.push(oInstance.isActive().then(function(bIsActive) {
+				assert.equal(bIsActive, true);
+			}));
+
+			Promise.allSettled(aPromises).then(function(aResults) {
+				for (var oResult of aResults) {
+					assert.equal(oResult.status, "fulfilled", oResult.reason || "Ok");
+				}
+			}).finally(function() {
+				done();
+			});
+		});
+
+		QUnit.test("Fields business context - fields authorization", function(assert) {
+			var aPromises = [];
+			var done = assert.async();
+
+			oServer.respondWith("GET", /.*GetBusinessContextsByEntityType.*/, JSON.stringify({
+				d: {
+					results: mGivenBusinessContextResult.CustomFields
+				}
+			}));
+			oSandbox.stub(Utils, "isNavigationSupportedForIntents").resolves(mGivenAuthorizationForIntents.CustomFields);
+
+			var oInstance = new SingleTenantABAPExtensibilityVariant(sServiceUri, mServiceInfo, mBindingInfo);
+
+			aPromises.push(oInstance.getExtensionData().then(function(mExtensionData) {
+				assert.propEqual(mExtensionData, mExpectedExtensionData, "Extension data is correct");
+			}));
+
+			aPromises.push(oInstance.getNavigationUri().then(function(sNavigationUri) {
+				var sExpected = JSON.stringify(mExpectedIntentWithParameter.CustomFields);
+				assert.equal(sNavigationUri, sExpected, "Navigation Uri is correct");
+			}));
+
+			aPromises.push(oInstance.getNavigationUri("CUSTOM_FIELD").then(function(sNavigationUri) {
+				var sExpected = JSON.stringify(mExpectedIntentWithParameter.CustomFields);
+				assert.equal(sNavigationUri, sExpected, "Navigation Uri is correct");
+			}));
+
+			aPromises.push(oInstance.getNavigationUri("CUSTOM_LOGIC").then(function(sNavigationUri) {
+				assert.equal(sNavigationUri, null, "Navigation Uri is correct");
+			}));
+
+			aPromises.push(oInstance.getTexts().then(function(mTexts) {
+				assert.deepEqual(mTexts, mExpectedTexts.CustomFields, "the correct texts were retrieved");
+			}));
+
+			aPromises.push(oInstance.isActive().then(function(bIsActive) {
+				assert.equal(bIsActive, true);
+			}));
+
+			Promise.allSettled(aPromises).then(function(aResults) {
+				for (var oResult of aResults) {
+					assert.equal(oResult.status, "fulfilled", oResult.reason || "Ok");
+				}
+			}).finally(function() {
+				done();
+			});
+		});
+
+		QUnit.test("Fields business context - no logic authorization", function(assert) {
 			var aPromises = [];
 			var done = assert.async();
 
@@ -471,7 +811,17 @@ sap.ui.define([
 			}));
 
 			aPromises.push(oInstance.getNavigationUri().then(function(sNavigationUri) {
-				assert.equal(sNavigationUri, JSON.stringify(mExpectedIntentWithParameter.CustomFields), "Navigation Uri is correct");
+				var sExpected = JSON.stringify(mExpectedIntentWithParameter.CustomFields);
+				assert.equal(sNavigationUri, sExpected, "Navigation Uri is correct");
+			}));
+
+			aPromises.push(oInstance.getNavigationUri("CUSTOM_FIELD").then(function(sNavigationUri) {
+				var sExpected = JSON.stringify(mExpectedIntentWithParameter.CustomFields);
+				assert.equal(sNavigationUri, sExpected, "Navigation Uri is correct");
+			}));
+
+			aPromises.push(oInstance.getNavigationUri("CUSTOM_LOGIC").then(function(sNavigationUri) {
+				assert.equal(sNavigationUri, null, "Navigation Uri is correct");
 			}));
 
 			aPromises.push(oInstance.getTexts().then(function(mTexts) {
@@ -483,91 +833,15 @@ sap.ui.define([
 			}));
 
 			Promise.allSettled(aPromises).then(function(aResults) {
-				aResults.forEach(function(oResult) {
+				for (var oResult of aResults) {
 					assert.equal(oResult.status, "fulfilled", oResult.reason || "Ok");
-				});
-			}).finally(function() {
-				done();
-			});
-		});
-
-		QUnit.test("Fields only - only fields", function(assert) {
-			var aPromises = [];
-			var done = assert.async();
-
-			oServer.respondWith("GET", /.*GetBusinessContextsByEntityType.*/, JSON.stringify({
-				d: {
-					results: mGivenBusinessContextResult.CustomFields
 				}
-			}));
-			oSandbox.stub(Utils, "isNavigationSupportedForIntents").resolves(mGivenAuthorizationForIntents.CustomFields);
-
-			var oInstance = new SingleTenantABAPExtensibilityVariant(sServiceUri, mServiceInfo, mBindingInfo);
-
-			aPromises.push(oInstance.getExtensionData().then(function(mExtensionData) {
-				assert.propEqual(mExtensionData, mExpectedExtensionData, "Extension data is correct");
-			}));
-
-			aPromises.push(oInstance.getNavigationUri().then(function(sNavigationUri) {
-				assert.equal(sNavigationUri, JSON.stringify(mExpectedIntentWithParameter.CustomFields), "Navigation Uri is correct");
-			}));
-
-			aPromises.push(oInstance.getTexts().then(function(mTexts) {
-				assert.deepEqual(mTexts, mExpectedTexts.CustomFields, "the correct texts were retrieved");
-			}));
-
-			aPromises.push(oInstance.isActive().then(function(bIsActive) {
-				assert.equal(bIsActive, true);
-			}));
-
-			Promise.allSettled(aPromises).then(function(aResults) {
-				aResults.forEach(function(oResult) {
-					assert.equal(oResult.status, "fulfilled", oResult.reason || "Ok");
-				});
 			}).finally(function() {
 				done();
 			});
 		});
 
-		QUnit.test("Fields only - only fields and logic", function(assert) {
-			var aPromises = [];
-			var done = assert.async();
-
-			oServer.respondWith("GET", /.*GetBusinessContextsByEntityType.*/, JSON.stringify({
-				d: {
-					results: mGivenBusinessContextResult.CustomFields
-				}
-			}));
-			oSandbox.stub(Utils, "isNavigationSupportedForIntents").resolves(mGivenAuthorizationForIntents.CustomFieldsAndLogic);
-
-			var oInstance = new SingleTenantABAPExtensibilityVariant(sServiceUri, mServiceInfo, mBindingInfo);
-
-			aPromises.push(oInstance.getExtensionData().then(function(mExtensionData) {
-				assert.propEqual(mExtensionData, mExpectedExtensionData, "Extension data is correct");
-			}));
-
-			aPromises.push(oInstance.getNavigationUri().then(function(sNavigationUri) {
-				assert.equal(sNavigationUri, JSON.stringify(mExpectedIntentWithParameter.CustomFieldsAndLogic), "Navigation Uri is correct");
-			}));
-
-			aPromises.push(oInstance.getTexts().then(function(mTexts) {
-				assert.deepEqual(mTexts, mExpectedTexts.CustomFieldsAndLogic, "the correct texts were retrieved");
-			}));
-
-			aPromises.push(oInstance.isActive().then(function(bIsActive) {
-				assert.equal(bIsActive, true);
-			}));
-
-			Promise.allSettled(aPromises).then(function(aResults) {
-				aResults.forEach(function(oResult) {
-					assert.equal(oResult.status, "fulfilled", oResult.reason || "Ok");
-				});
-			}).finally(function() {
-				done();
-			});
-		});
-
-		QUnit.test("Fields only - Logic authorization only", function(assert) {
+		QUnit.test("Fields business context - logic authorization", function(assert) {
 			var aPromises = [];
 			var done = assert.async();
 
@@ -588,6 +862,14 @@ sap.ui.define([
 				assert.equal(sNavigationUri, null, "Navigation Uri is correct");
 			}));
 
+			aPromises.push(oInstance.getNavigationUri("CUSTOM_FIELD").then(function(sNavigationUri) {
+				assert.equal(sNavigationUri, null, "Navigation Uri is correct");
+			}));
+
+			aPromises.push(oInstance.getNavigationUri("CUSTOM_LOGIC").then(function(sNavigationUri) {
+				assert.equal(sNavigationUri, null, "Navigation Uri is correct");
+			}));
+
 			aPromises.push(oInstance.getTexts().then(function(mTexts) {
 				assert.deepEqual(mTexts, null, "the correct texts were retrieved");
 			}));
@@ -597,15 +879,107 @@ sap.ui.define([
 			}));
 
 			Promise.allSettled(aPromises).then(function(aResults) {
-				aResults.forEach(function(oResult) {
+				for (var oResult of aResults) {
 					assert.equal(oResult.status, "fulfilled", oResult.reason || "Ok");
-				});
+				}
 			}).finally(function() {
 				done();
 			});
 		});
 
-		QUnit.test("Logic only", function(assert) {
+		QUnit.test("Fields business context - no fields authorization", function(assert) {
+			var aPromises = [];
+			var done = assert.async();
+
+			oServer.respondWith("GET", /.*GetBusinessContextsByEntityType.*/, JSON.stringify({
+				d: {
+					results: mGivenBusinessContextResult.CustomFields
+				}
+			}));
+			oSandbox.stub(Utils, "isNavigationSupportedForIntents").resolves(mGivenAuthorizationForIntents.NoFields);
+
+			var oInstance = new SingleTenantABAPExtensibilityVariant(sServiceUri, mServiceInfo, mBindingInfo);
+
+			aPromises.push(oInstance.getExtensionData().then(function(mExtensionData) {
+				assert.propEqual(mExtensionData, null, "Extension data is correct");
+			}));
+
+			aPromises.push(oInstance.getNavigationUri().then(function(sNavigationUri) {
+				assert.equal(sNavigationUri, null, "Navigation Uri is correct");
+			}));
+
+			aPromises.push(oInstance.getNavigationUri("CUSTOM_FIELD").then(function(sNavigationUri) {
+				assert.equal(sNavigationUri, null, "Navigation Uri is correct");
+			}));
+
+			aPromises.push(oInstance.getNavigationUri("CUSTOM_LOGIC").then(function(sNavigationUri) {
+				assert.equal(sNavigationUri, null, "Navigation Uri is correct");
+			}));
+
+			aPromises.push(oInstance.getTexts().then(function(mTexts) {
+				assert.deepEqual(mTexts, null, "the correct texts were retrieved");
+			}));
+
+			aPromises.push(oInstance.isActive().then(function(bIsActive) {
+				assert.equal(bIsActive, false);
+			}));
+
+			Promise.allSettled(aPromises).then(function(aResults) {
+				for (var oResult of aResults) {
+					assert.equal(oResult.status, "fulfilled", oResult.reason || "Ok");
+				}
+			}).finally(function() {
+				done();
+			});
+		});
+
+		QUnit.test("Fields business context - no authorization", function(assert) {
+			var aPromises = [];
+			var done = assert.async();
+
+			oServer.respondWith("GET", /.*GetBusinessContextsByEntityType.*/, JSON.stringify({
+				d: {
+					results: mGivenBusinessContextResult.CustomFields
+				}
+			}));
+			oSandbox.stub(Utils, "isNavigationSupportedForIntents").resolves(mGivenAuthorizationForIntents.None);
+
+			var oInstance = new SingleTenantABAPExtensibilityVariant(sServiceUri, mServiceInfo, mBindingInfo);
+
+			aPromises.push(oInstance.getExtensionData().then(function(mExtensionData) {
+				assert.propEqual(mExtensionData, null, "Extension data is correct");
+			}));
+
+			aPromises.push(oInstance.getNavigationUri().then(function(sNavigationUri) {
+				assert.equal(sNavigationUri, null, "Navigation Uri is correct");
+			}));
+
+			aPromises.push(oInstance.getNavigationUri("CUSTOM_FIELD").then(function(sNavigationUri) {
+				assert.equal(sNavigationUri, null, "Navigation Uri is correct");
+			}));
+
+			aPromises.push(oInstance.getNavigationUri("CUSTOM_LOGIC").then(function(sNavigationUri) {
+				assert.equal(sNavigationUri, null, "Navigation Uri is correct");
+			}));
+
+			aPromises.push(oInstance.getTexts().then(function(mTexts) {
+				assert.deepEqual(mTexts, null, "the correct texts were retrieved");
+			}));
+
+			aPromises.push(oInstance.isActive().then(function(bIsActive) {
+				assert.equal(bIsActive, false);
+			}));
+
+			Promise.allSettled(aPromises).then(function(aResults) {
+				for (var oResult of aResults) {
+					assert.equal(oResult.status, "fulfilled", oResult.reason || "Ok");
+				}
+			}).finally(function() {
+				done();
+			});
+		});
+
+		QUnit.test("Logic business context - all authorization", function(assert) {
 			var aPromises = [];
 			var done = assert.async();
 
@@ -614,7 +988,7 @@ sap.ui.define([
 					results: mGivenBusinessContextResult.CustomLogic
 				}
 			}));
-			oSandbox.stub(Utils, "isNavigationSupportedForIntents").resolves(mGivenAuthorizationForIntents.NoFields);
+			oSandbox.stub(Utils, "isNavigationSupportedForIntents").resolves(mGivenAuthorizationForIntents.All);
 
 			var oInstance = new SingleTenantABAPExtensibilityVariant(sServiceUri, mServiceInfo, mBindingInfo);
 
@@ -623,7 +997,17 @@ sap.ui.define([
 			}));
 
 			aPromises.push(oInstance.getNavigationUri().then(function(sNavigationUri) {
-				assert.equal(sNavigationUri, JSON.stringify(mExpectedIntentWithParameter.CustomLogic), "Navigation Uri is correct");
+				var sExpected = JSON.stringify(mExpectedIntentWithParameter.CustomLogic);
+				assert.equal(sNavigationUri, sExpected, "Navigation Uri is correct");
+			}));
+
+			aPromises.push(oInstance.getNavigationUri("CUSTOM_FIELD").then(function(sNavigationUri) {
+				assert.equal(sNavigationUri, null, "Navigation Uri is correct");
+			}));
+
+			aPromises.push(oInstance.getNavigationUri("CUSTOM_LOGIC").then(function(sNavigationUri) {
+				var sExpected = JSON.stringify(mExpectedIntentWithParameter.CustomLogic);
+				assert.equal(sNavigationUri, sExpected, "Navigation Uri is correct");
 			}));
 
 			aPromises.push(oInstance.getTexts().then(function(mTexts) {
@@ -635,15 +1019,63 @@ sap.ui.define([
 			}));
 
 			Promise.allSettled(aPromises).then(function(aResults) {
-				aResults.forEach(function(oResult) {
+				for (var oResult of aResults) {
 					assert.equal(oResult.status, "fulfilled", oResult.reason || "Ok");
-				});
+				}
 			}).finally(function() {
 				done();
 			});
 		});
 
-		QUnit.test("Logic only - Fields authorization only", function(assert) {
+		QUnit.test("Logic business context - fields and logic authorization", function(assert) {
+			var aPromises = [];
+			var done = assert.async();
+
+			oServer.respondWith("GET", /.*GetBusinessContextsByEntityType.*/, JSON.stringify({
+				d: {
+					results: mGivenBusinessContextResult.CustomLogic
+				}
+			}));
+			oSandbox.stub(Utils, "isNavigationSupportedForIntents").resolves(mGivenAuthorizationForIntents.CustomFieldsAndLogic);
+
+			var oInstance = new SingleTenantABAPExtensibilityVariant(sServiceUri, mServiceInfo, mBindingInfo);
+
+			aPromises.push(oInstance.getExtensionData().then(function(mExtensionData) {
+				assert.propEqual(mExtensionData, mExpectedExtensionData, "Extension data is correct");
+			}));
+
+			aPromises.push(oInstance.getNavigationUri().then(function(sNavigationUri) {
+				var sExpected = JSON.stringify(mExpectedIntentWithParameter.CustomLogic);
+				assert.equal(sNavigationUri, sExpected, "Navigation Uri is correct");
+			}));
+
+			aPromises.push(oInstance.getNavigationUri("CUSTOM_FIELD").then(function(sNavigationUri) {
+				assert.equal(sNavigationUri, null, "Navigation Uri is correct");
+			}));
+
+			aPromises.push(oInstance.getNavigationUri("CUSTOM_LOGIC").then(function(sNavigationUri) {
+				var sExpected = JSON.stringify(mExpectedIntentWithParameter.CustomLogic);
+				assert.equal(sNavigationUri, sExpected, "Navigation Uri is correct");
+			}));
+
+			aPromises.push(oInstance.getTexts().then(function(mTexts) {
+				assert.deepEqual(mTexts, mExpectedTexts.CustomLogic, "the correct texts were retrieved");
+			}));
+
+			aPromises.push(oInstance.isActive().then(function(bIsActive) {
+				assert.equal(bIsActive, true);
+			}));
+
+			Promise.allSettled(aPromises).then(function(aResults) {
+				for (var oResult of aResults) {
+					assert.equal(oResult.status, "fulfilled", oResult.reason || "Ok");
+				}
+			}).finally(function() {
+				done();
+			});
+		});
+
+		QUnit.test("Logic business context - fields authorization", function(assert) {
 			var aPromises = [];
 			var done = assert.async();
 
@@ -664,6 +1096,14 @@ sap.ui.define([
 				assert.equal(sNavigationUri, null, "Navigation Uri is correct");
 			}));
 
+			aPromises.push(oInstance.getNavigationUri("CUSTOM_FIELD").then(function(sNavigationUri) {
+				assert.equal(sNavigationUri, null, "Navigation Uri is correct");
+			}));
+
+			aPromises.push(oInstance.getNavigationUri("CUSTOM_LOGIC").then(function(sNavigationUri) {
+				assert.equal(sNavigationUri, null, "Navigation Uri is correct");
+			}));
+
 			aPromises.push(oInstance.getTexts().then(function(mTexts) {
 				assert.deepEqual(mTexts, null, "the correct texts were retrieved");
 			}));
@@ -673,9 +1113,243 @@ sap.ui.define([
 			}));
 
 			Promise.allSettled(aPromises).then(function(aResults) {
-				aResults.forEach(function(oResult) {
+				for (var oResult of aResults) {
 					assert.equal(oResult.status, "fulfilled", oResult.reason || "Ok");
-				});
+				}
+			}).finally(function() {
+				done();
+			});
+		});
+
+		QUnit.test("Logic business context - no logic authorization", function(assert) {
+			var aPromises = [];
+			var done = assert.async();
+
+			oServer.respondWith("GET", /.*GetBusinessContextsByEntityType.*/, JSON.stringify({
+				d: {
+					results: mGivenBusinessContextResult.CustomLogic
+				}
+			}));
+			oSandbox.stub(Utils, "isNavigationSupportedForIntents").resolves(mGivenAuthorizationForIntents.NoLogic);
+
+			var oInstance = new SingleTenantABAPExtensibilityVariant(sServiceUri, mServiceInfo, mBindingInfo);
+
+			aPromises.push(oInstance.getExtensionData().then(function(mExtensionData) {
+				assert.propEqual(mExtensionData, null, "Extension data is correct");
+			}));
+
+			aPromises.push(oInstance.getNavigationUri().then(function(sNavigationUri) {
+				assert.equal(sNavigationUri, null, "Navigation Uri is correct");
+			}));
+
+			aPromises.push(oInstance.getNavigationUri("CUSTOM_FIELD").then(function(sNavigationUri) {
+				assert.equal(sNavigationUri, null, "Navigation Uri is correct");
+			}));
+
+			aPromises.push(oInstance.getNavigationUri("CUSTOM_LOGIC").then(function(sNavigationUri) {
+				assert.equal(sNavigationUri, null, "Navigation Uri is correct");
+			}));
+
+			aPromises.push(oInstance.getTexts().then(function(mTexts) {
+				assert.deepEqual(mTexts, null, "the correct texts were retrieved");
+			}));
+
+			aPromises.push(oInstance.isActive().then(function(bIsActive) {
+				assert.equal(bIsActive, false);
+			}));
+
+			Promise.allSettled(aPromises).then(function(aResults) {
+				for (var oResult of aResults) {
+					assert.equal(oResult.status, "fulfilled", oResult.reason || "Ok");
+				}
+			}).finally(function() {
+				done();
+			});
+		});
+
+		QUnit.test("Logic business context - logic authorization", function(assert) {
+			var aPromises = [];
+			var done = assert.async();
+
+			oServer.respondWith("GET", /.*GetBusinessContextsByEntityType.*/, JSON.stringify({
+				d: {
+					results: mGivenBusinessContextResult.CustomLogic
+				}
+			}));
+			oSandbox.stub(Utils, "isNavigationSupportedForIntents").resolves(mGivenAuthorizationForIntents.CustomLogic);
+
+			var oInstance = new SingleTenantABAPExtensibilityVariant(sServiceUri, mServiceInfo, mBindingInfo);
+
+			aPromises.push(oInstance.getExtensionData().then(function(mExtensionData) {
+				assert.propEqual(mExtensionData, mExpectedExtensionData, "Extension data is correct");
+			}));
+
+			aPromises.push(oInstance.getNavigationUri().then(function(sNavigationUri) {
+				var sExpected = JSON.stringify(mExpectedIntentWithParameter.CustomLogic);
+				assert.equal(sNavigationUri, sExpected, "Navigation Uri is correct");
+			}));
+
+			aPromises.push(oInstance.getNavigationUri("CUSTOM_FIELD").then(function(sNavigationUri) {
+				assert.equal(sNavigationUri, null, "Navigation Uri is correct");
+			}));
+
+			aPromises.push(oInstance.getNavigationUri("CUSTOM_LOGIC").then(function(sNavigationUri) {
+				var sExpected = JSON.stringify(mExpectedIntentWithParameter.CustomLogic);
+				assert.equal(sNavigationUri, sExpected, "Navigation Uri is correct");
+			}));
+
+			aPromises.push(oInstance.getTexts().then(function(mTexts) {
+				assert.deepEqual(mTexts, mExpectedTexts.CustomLogic, "the correct texts were retrieved");
+			}));
+
+			aPromises.push(oInstance.isActive().then(function(bIsActive) {
+				assert.equal(bIsActive, true);
+			}));
+
+			Promise.allSettled(aPromises).then(function(aResults) {
+				for (var oResult of aResults) {
+					assert.equal(oResult.status, "fulfilled", oResult.reason || "Ok");
+				}
+			}).finally(function() {
+				done();
+			});
+		});
+
+		QUnit.test("Logic business context - no fields authorization", function(assert) {
+			var aPromises = [];
+			var done = assert.async();
+
+			oServer.respondWith("GET", /.*GetBusinessContextsByEntityType.*/, JSON.stringify({
+				d: {
+					results: mGivenBusinessContextResult.CustomLogic
+				}
+			}));
+			oSandbox.stub(Utils, "isNavigationSupportedForIntents").resolves(mGivenAuthorizationForIntents.NoFields);
+
+			var oInstance = new SingleTenantABAPExtensibilityVariant(sServiceUri, mServiceInfo, mBindingInfo);
+
+			aPromises.push(oInstance.getExtensionData().then(function(mExtensionData) {
+				assert.propEqual(mExtensionData, mExpectedExtensionData, "Extension data is correct");
+			}));
+
+			aPromises.push(oInstance.getNavigationUri().then(function(sNavigationUri) {
+				var sExpected = JSON.stringify(mExpectedIntentWithParameter.CustomLogic);
+				assert.equal(sNavigationUri, sExpected, "Navigation Uri is correct");
+			}));
+
+			aPromises.push(oInstance.getNavigationUri("CUSTOM_FIELD").then(function(sNavigationUri) {
+				assert.equal(sNavigationUri, null, "Navigation Uri is correct");
+			}));
+
+			aPromises.push(oInstance.getNavigationUri("CUSTOM_LOGIC").then(function(sNavigationUri) {
+				var sExpected = JSON.stringify(mExpectedIntentWithParameter.CustomLogic);
+				assert.equal(sNavigationUri, sExpected, "Navigation Uri is correct");
+			}));
+
+			aPromises.push(oInstance.getTexts().then(function(mTexts) {
+				assert.deepEqual(mTexts, mExpectedTexts.CustomLogic, "the correct texts were retrieved");
+			}));
+
+			aPromises.push(oInstance.isActive().then(function(bIsActive) {
+				assert.equal(bIsActive, true);
+			}));
+
+			Promise.allSettled(aPromises).then(function(aResults) {
+				for (var oResult of aResults) {
+					assert.equal(oResult.status, "fulfilled", oResult.reason || "Ok");
+				}
+			}).finally(function() {
+				done();
+			});
+		});
+
+		QUnit.test("Logic business context - no authorization", function(assert) {
+			var aPromises = [];
+			var done = assert.async();
+
+			oServer.respondWith("GET", /.*GetBusinessContextsByEntityType.*/, JSON.stringify({
+				d: {
+					results: mGivenBusinessContextResult.CustomLogic
+				}
+			}));
+			oSandbox.stub(Utils, "isNavigationSupportedForIntents").resolves(mGivenAuthorizationForIntents.None);
+
+			var oInstance = new SingleTenantABAPExtensibilityVariant(sServiceUri, mServiceInfo, mBindingInfo);
+
+			aPromises.push(oInstance.getExtensionData().then(function(mExtensionData) {
+				assert.propEqual(mExtensionData, null, "Extension data is correct");
+			}));
+
+			aPromises.push(oInstance.getNavigationUri().then(function(sNavigationUri) {
+				assert.equal(sNavigationUri, null, "Navigation Uri is correct");
+			}));
+
+			aPromises.push(oInstance.getNavigationUri("CUSTOM_FIELD").then(function(sNavigationUri) {
+				assert.equal(sNavigationUri, null, "Navigation Uri is correct");
+			}));
+
+			aPromises.push(oInstance.getNavigationUri("CUSTOM_LOGIC").then(function(sNavigationUri) {
+				assert.equal(sNavigationUri, null, "Navigation Uri is correct");
+			}));
+
+			aPromises.push(oInstance.getTexts().then(function(mTexts) {
+				assert.deepEqual(mTexts, null, "the correct texts were retrieved");
+			}));
+
+			aPromises.push(oInstance.isActive().then(function(bIsActive) {
+				assert.equal(bIsActive, false);
+			}));
+
+			Promise.allSettled(aPromises).then(function(aResults) {
+				for (var oResult of aResults) {
+					assert.equal(oResult.status, "fulfilled", oResult.reason || "Ok");
+				}
+			}).finally(function() {
+				done();
+			});
+		});
+
+		QUnit.test("No business context - all authorization", function(assert) {
+			var aPromises = [];
+			var done = assert.async();
+
+			oServer.respondWith("GET", /.*GetBusinessContextsByEntityType.*/, JSON.stringify({
+				d: {
+					results: []
+				}
+			}));
+			oSandbox.stub(Utils, "isNavigationSupportedForIntents").resolves(mGivenAuthorizationForIntents.All);
+
+			var oInstance = new SingleTenantABAPExtensibilityVariant(sServiceUri, mServiceInfo, mBindingInfo);
+
+			aPromises.push(oInstance.getExtensionData().then(function(mExtensionData) {
+				assert.equal(mExtensionData, null, "Extension data is correct");
+			}));
+
+			aPromises.push(oInstance.getNavigationUri().then(function(sNavigationUri) {
+				assert.equal(sNavigationUri, null, "Navigation Uri is correct");
+			}));
+
+			aPromises.push(oInstance.getNavigationUri("CUSTOM_FIELD").then(function(sNavigationUri) {
+				assert.equal(sNavigationUri, null, "Navigation Uri is correct");
+			}));
+
+			aPromises.push(oInstance.getNavigationUri("CUSTOM_LOGIC").then(function(sNavigationUri) {
+				assert.equal(sNavigationUri, null, "Navigation Uri is correct");
+			}));
+
+			aPromises.push(oInstance.getTexts().then(function(mTexts) {
+				assert.equal(mTexts, null, "the correct texts were retrieved");
+			}));
+
+			aPromises.push(oInstance.isActive().then(function(bIsActive) {
+				assert.equal(bIsActive, false);
+			}));
+
+			Promise.allSettled(aPromises).then(function(aResults) {
+				for (var oResult of aResults) {
+					assert.equal(oResult.status, "fulfilled", oResult.reason || "Ok");
+				}
 			}).finally(function() {
 				done();
 			});
