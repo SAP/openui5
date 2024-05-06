@@ -13,6 +13,7 @@ sap.ui.define(["sap/ui/base/DataType"], (DataType) => {
 	 * @alias sap.ui.mdc.enums.ChartP13nMode
 	 * @since 1.115
 	 * @public
+	 * @experimental As of version 1.115
 	 */
 	const ChartP13nMode = {
 		/**

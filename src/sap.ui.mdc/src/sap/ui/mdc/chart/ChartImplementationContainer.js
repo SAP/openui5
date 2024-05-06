@@ -23,6 +23,7 @@ sap.ui.define([
 		 * @constructor
 		 *
 		 * @public
+		 * @experimental As of version 1.105
 		 * @since 1.105
 		 * @alias sap.ui.mdc.chart.ChartImplementationContainer
 		 */

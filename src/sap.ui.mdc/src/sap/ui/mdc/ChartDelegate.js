@@ -17,6 +17,7 @@ sap.ui.define([
 	 * @mixes module:sap/ui/mdc/mixin/delegate/FilterIntegrationDefault
 	 * @since 1.88
 	 * @public
+	 * @experimental As of version 1.88
 	 *
 	 */
 	const ChartDelegate = Object.assign({}, AggregationBaseDelegate, FilterIntegrationDefault);
@@ -57,7 +58,7 @@ sap.ui.define([
 	 * @typedef {object} sap.ui.mdc.chart.ZoomState
 	 * @property {boolean} enabled Zooming is enabled if set to <code>true</code>
 	 * @property {number} currentZoomLevel Current zoom level of the chart in percent (between 0 and 1)
-	 *
+	 * @experimental As of version 1.80
 	 * @public
 	 */
 
@@ -175,7 +176,7 @@ sap.ui.define([
 	 * @typedef {object} sap.ui.mdc.chart.SelectionDetails
 	 * @property {string} eventId  ID of the selection event
 	 * @property {sap.ui.core.Control} listener Reference to inner chart
-	 *
+	 * @experimental As of version 1.80
 	 * @public
 	 */
 
@@ -266,7 +267,7 @@ sap.ui.define([
 	 * @property {sap.ui.core.URI} icon URI for the icon for the current chart type
 	 * @property {string} text Name of the current chart type
 	 * @property {boolean} selected Whether the chart type is the one currently used
-	 *
+	 * @experimental As of version 1.80
 	 * @public
 	 */
 
@@ -298,7 +299,7 @@ sap.ui.define([
 	 * @typedef {object} sap.ui.mdc.chart.ChartTypeLayoutConfig
 	 * @property {string} key identifier for the chart type
 	 * @property {string[]} allowedLayoutOptions Layout configuration of chart type
-	 *
+	 * @experimental As of version 1.80
 	 * @public
 	 */
 
