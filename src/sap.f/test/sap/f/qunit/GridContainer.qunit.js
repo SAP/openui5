@@ -24,7 +24,9 @@ sap.ui.define([
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/model/json/JSONModel",
 	"sap/f/dnd/GridDragOver",
-	"sap/ui/core/ResizeHandler"
+	"sap/ui/core/ResizeHandler",
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"./testResources/nextCardReadyEvent"
 ],
 function(
 	Localization,
@@ -50,7 +52,9 @@ function(
 	IntegrationCard,
 	JSONModel,
 	GridDragOver,
-	ResizeHandler
+	ResizeHandler,
+	nextUIUpdate,
+	nextCardReadyEvent
 ) {
 	"use strict";
 
@@ -76,7 +80,8 @@ function(
 				},
 				"status": {
 					"text": "100 of 200"
-				}
+				},
+				"dataTimestamp": "2024-01-16T15:20:42Z"
 			},
 			"content": {
 				"data": {
@@ -1896,9 +1901,11 @@ function(
 		}
 	});
 
-	QUnit.test("Wrapper attributes", function (assert) {
-		var done = assert.async(),
-			oWrapper = this.oGrid.$("listUl").children().eq(0),
+	QUnit.test("Wrapper attributes", async function (assert) {
+		await nextCardReadyEvent(this.oGrid.getItems()[2]);
+		await nextUIUpdate();
+
+		var oWrapper = this.oGrid.$("listUl").children().eq(0),
 			oCard,
 			oHeader,
 			sAriaLabelledByIds;
@@ -1906,17 +1913,13 @@ function(
 		assert.notOk(oWrapper.attr("aria-keyshortcuts"), "there is not aria-keyshortcuts attribute");
 		assert.strictEqual(oWrapper.attr("tabindex"), "-1", "tabindex is set");
 
-		setTimeout(function () {
 			oCard = this.oGrid.getItems()[2];
 			oHeader = oCard.getCardHeader();
 			oWrapper = this.oGrid.$("listUl").children().eq(2);
-			sAriaLabelledByIds = oCard._ariaText.getId() + " " + oHeader._getTitle().getId() + " " + oHeader._getSubtitle().getId() + " " + oHeader.getId() + "-status" + " " + oHeader.getId() + "-ariaAvatarText";
+			sAriaLabelledByIds = oCard._ariaText.getId() + " " + oHeader._getTitle().getId() + " " + oHeader._getSubtitle().getId() + " " + oHeader.getId() + "-status" + " " + oHeader.getId() + "-dataTimestamp" + " " + oHeader.getId() + "-ariaAvatarText";
 
 			assert.notOk(oWrapper.attr("aria-roledescription"), "aria-roledescription attribute is not set");
-			assert.strictEqual(oWrapper.children()[0].getAttribute("aria-labelledby"), sAriaLabelledByIds, "Card header element should have aria-labelledby - pointing to the ID of an element describing the card type, title, subtitle, status text, or avatar, if there is such element");
-
-			done();
-		}.bind(this), 100);
+			assert.strictEqual(oWrapper.children()[0].getAttribute("aria-labelledby"), sAriaLabelledByIds, "Card header element should have aria-labelledby - pointing to the ID of an element describing the card type, title, subtitle, status text, dataTimestamp or avatar, if there is such element");
 	});
 
 	QUnit.module("2D Navigation", {

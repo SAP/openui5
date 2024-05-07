@@ -313,6 +313,7 @@ sap.ui.define([
 
 		if (!oDataTimestamp) {
 			oDataTimestamp = new Text({
+				id: this.getId() + "-dataTimestamp",
 				wrapping: false,
 				textAlign: "End"
 			});

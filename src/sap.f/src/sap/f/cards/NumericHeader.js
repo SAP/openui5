@@ -524,6 +524,10 @@ sap.ui.define([
 			aIds.push(this.getId() + "-status");
 		}
 
+		if (this.getDataTimestamp()) {
+			aIds.push(this.getId() + "-dataTimestamp");
+		}
+
 		aIds.push(this._getUnitOfMeasurement().getId());
 
 		if (this.getIconSrc() || this.getIconInitials()) {
