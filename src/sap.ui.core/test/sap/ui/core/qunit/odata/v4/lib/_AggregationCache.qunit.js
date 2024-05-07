@@ -5855,6 +5855,98 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("getSiblingIndex: group level", function (assert) {
+		const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, {
+			hierarchyQualifier : "X"
+		});
+		const oGroupLevel = {};
+		oCache.aElements = [/*first level*/, /*first level*/, {
+			"@$ui5._" : {
+				parent : oGroupLevel,
+				rank : 0
+			},
+			"@$ui5.node.level" : 1
+		}, /*third level*/, {
+			"@$ui5._" : {
+				parent : oGroupLevel,
+				rank : 1
+			},
+			"@$ui5.node.level" : 1
+		}];
+		oGroupLevel.aElements = [oCache.aElements[2], oCache.aElements[4]];
+
+		// code under test
+		assert.strictEqual(oCache.getSiblingIndex(2, -1), -1);
+
+		// code under test
+		assert.strictEqual(oCache.getSiblingIndex(2, +1), 4);
+
+		// code under test
+		assert.strictEqual(oCache.getSiblingIndex(4, -1), 2);
+
+		// code under test
+		assert.strictEqual(oCache.getSiblingIndex(4, +1), -1);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getSiblingIndex: 1st level", function (assert) {
+		const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, {
+			hierarchyQualifier : "X"
+		});
+		const oFirstLevel = {};
+		oCache.aElements = [{
+			"@$ui5._" : {
+				parent : oFirstLevel,
+				rank : 0
+			},
+			"@$ui5.node.level" : 0
+		}, {
+			"@$ui5._" : {
+				parent : oFirstLevel,
+				rank : 1
+			},
+			"@$ui5.node.level" : 0
+		}, {
+			"@$ui5._" : {
+				parent : oFirstLevel,
+				rank : 2
+			},
+			"@$ui5.node.level" : 1
+		}, {
+			"@$ui5._" : {
+				parent : oFirstLevel,
+				rank : 3
+			},
+			"@$ui5.node.level" : 0
+		}];
+		oFirstLevel.aElements = oCache.aElements.slice(); // two arrays, but same elements!
+
+		// code under test
+		assert.strictEqual(oCache.getSiblingIndex(0, -1), -1);
+
+		// code under test
+		assert.strictEqual(oCache.getSiblingIndex(0, +1), 1);
+
+		// code under test
+		assert.strictEqual(oCache.getSiblingIndex(1, -1), 0);
+
+		// code under test
+		assert.strictEqual(oCache.getSiblingIndex(1, +1), 3);
+
+		// code under test
+		assert.strictEqual(oCache.getSiblingIndex(2, -1), -1);
+
+		// code under test
+		assert.strictEqual(oCache.getSiblingIndex(2, +1), -1);
+
+		// code under test
+		assert.strictEqual(oCache.getSiblingIndex(3, -1), 1);
+
+		// code under test
+		assert.strictEqual(oCache.getSiblingIndex(3, +1), -1);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("moveOutOfPlaceNodes: below parent", function (assert) {
 		const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, {
 			hierarchyQualifier : "X"

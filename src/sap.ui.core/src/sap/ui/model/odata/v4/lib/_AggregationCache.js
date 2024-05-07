@@ -1082,6 +1082,41 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the index of the given node's sibling, either the next one (via offset +1) or the
+	 * previous one (via offset -1).
+	 *
+	 * @param {number} iIndex - The index of a node
+	 * @param {number} iOffset - An offset, either -1 or +1
+	 * @returns {number}
+	 *   The sibling node's index, or -1 if no such sibling exists
+	 *
+	 * @public
+	 */
+	_AggregationCache.prototype.getSiblingIndex = function (iIndex, iOffset) {
+		function findSibling(aElements, iRank, iLevel) {
+			for (;;) {
+				iRank += iOffset;
+				if (iRank < 0 || iRank >= aElements.length
+						|| aElements[iRank]["@$ui5.node.level"] < iLevel) {
+					return null; // no such sibling
+				}
+				if (aElements[iRank]["@$ui5.node.level"] === iLevel) {
+					return aElements[iRank];
+				}
+				// else: ignore descendants
+			}
+		}
+
+		const oNode = this.aElements[iIndex];
+		const oSibling = findSibling(
+			_Helper.getPrivateAnnotation(oNode, "parent").aElements,
+			_Helper.getPrivateAnnotation(oNode, "rank"),
+			oNode["@$ui5.node.level"]);
+
+		return oSibling ? this.aElements.indexOf(oSibling) : -1;
+	};
+
+	/**
 	 * @override
 	 * @see sap.ui.model.odata.v4.lib._Cache#getValue
 	 */

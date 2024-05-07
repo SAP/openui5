@@ -25449,6 +25449,7 @@ sap.ui.define([
 	//
 	// Selection on header and root context (JIRA: CPOUI5ODATAV4-1943).
 	// Data binding for selection (JIRA: CPOUI5ODATAV4-1944).
+	// Get previous or next sibling (JIRA: CPOUI5ODATAV4-2558)
 	//
 	// Use $count (JIRA: CPOUI5ODATAV4-1855).
 	// Old vs. new format of RecursiveHierarchy annotation (JIRA: CPOUI5ODATAV4-2401).
@@ -25532,7 +25533,7 @@ sap.ui.define([
 			})
 			.expectChange("count");
 
-		return this.createView(assert, sView, oModel).then(function () {
+		return this.createView(assert, sView, oModel).then(async function () {
 			oTable = that.oView.byId("table");
 			oRoot = oTable.getRows()[0].getBindingContext();
 			oListBinding = oRoot.getBinding();
@@ -25590,6 +25591,10 @@ sap.ui.define([
 						NodeID : "0,true"
 					}
 				}, "technical properties have been removed");
+
+			// code under test
+			assert.strictEqual(await oRoot.requestSibling(-1), null, "CPOUI5ODATAV4-2558");
+			assert.strictEqual(await oRoot.requestSibling(+1), null, "CPOUI5ODATAV4-2558");
 
 			// code under test
 			checkSelected(assert, oRoot, undefined);
@@ -26657,6 +26662,7 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-2355
 	//
 	// Use LimitedRank after #create (JIRA: CPOUI5ODATAV4-2430)
+	// Get previous or next sibling (JIRA: CPOUI5ODATAV4-2558)
 	QUnit.test("Recursive Hierarchy: expand to 2, collapse & expand root etc.", function (assert) {
 		var oCollapsed,
 			oListBinding,
@@ -26737,7 +26743,7 @@ sap.ui.define([
 			})
 			.expectChange("count");
 
-		return this.createView(assert, sView, oModel).then(function () {
+		return this.createView(assert, sView, oModel).then(async function () {
 			oTable = that.oView.byId("table");
 			oListBinding = oTable.getBinding("rows");
 
@@ -26766,6 +26772,12 @@ sap.ui.define([
 					MANAGER_ID : "0",
 					Name : "Kappa"
 				}, "technical properties have been removed");
+
+			const [oBeta, oKappa, oLambda] = oListBinding.getCurrentContexts();
+			// code under test
+			assert.strictEqual(await oKappa.requestSibling(-1), oBeta, "CPOUI5ODATAV4-2558");
+			assert.strictEqual(await oKappa.requestSibling(), oLambda, "CPOUI5ODATAV4-2558");
+			assert.strictEqual(await oKappa.requestSibling(+1), oLambda, "CPOUI5ODATAV4-2558");
 
 			// code under test
 			assert.strictEqual(oListBinding.getDownloadUrl(), sTeaBusi + "EMPLOYEES"
@@ -26798,7 +26810,7 @@ sap.ui.define([
 			oTable.setFirstVisibleRow(0);
 
 			return that.waitForChanges(assert, "scroll up");
-		}).then(function () {
+		}).then(async function () {
 			var oNameBinding;
 
 			oRoot = oTable.getRows()[0].getBindingContext();
@@ -26821,6 +26833,12 @@ sap.ui.define([
 					MANAGER_ID : null,
 					Name : "Alpha"
 				}, "technical properties have been removed");
+
+			const [oAlpha, oBeta, oKappa, oLambda] = oListBinding.getAllCurrentContexts();
+			// code under test
+			assert.strictEqual(await oAlpha.requestSibling(), null, "CPOUI5ODATAV4-2558");
+			assert.strictEqual(await oBeta.requestSibling(-1), null, "CPOUI5ODATAV4-2558");
+			assert.strictEqual(await oKappa.requestSibling(), oLambda, "CPOUI5ODATAV4-2558");
 
 			that.expectRequest({
 					batchNo : 3,
@@ -26863,9 +26881,15 @@ sap.ui.define([
 				[false, 2, "1", "0", "Beta", 55],
 				[undefined, 2, "2", "0", "Kappa: κ", 66]
 			], 6);
+			const [, oBeta] = oListBinding.getCurrentContexts();
 
 			// code under test
 			oRoot.collapse();
+
+			assert.throws(function () {
+				// code under test
+				oBeta.requestSibling();
+			}, new Error("Unsupported context: " + oBeta));
 
 			return that.waitForChanges(assert, "collapse root");
 		}).then(function () {
@@ -26919,7 +26943,12 @@ sap.ui.define([
 			oCollapsed.expand();
 
 			return that.waitForChanges(assert, "expand initially collapsed node");
-		}).then(function () {
+		}).then(async function () {
+			const [, oBeta, oGamma] = oListBinding.getCurrentContexts();
+			// code under test (JIRA: CPOUI5ODATAV4-2558)
+			const oZeta0 = await oGamma.requestSibling(); // Note: new context created here
+
+			// BEWARE: calls #getAllCurrentContexts!
 			checkTable("initially collapsed node expanded", assert, oTable, [
 				"/EMPLOYEES('0')",
 				"/EMPLOYEES('1')",
@@ -26941,6 +26970,16 @@ sap.ui.define([
 					MANAGER_ID : "0",
 					Name : "Beta"
 				}, "technical properties have been removed");
+
+			const [,,, oZeta, oKappa] = oListBinding.getAllCurrentContexts();
+			assert.strictEqual(oZeta0, oZeta);
+			// code under test
+			assert.strictEqual(await oBeta.requestSibling(+1), oKappa, "CPOUI5ODATAV4-2558");
+			assert.strictEqual(await oKappa.requestSibling(-1), oBeta, "CPOUI5ODATAV4-2558");
+			assert.strictEqual(await oGamma.requestSibling(-1), null, "CPOUI5ODATAV4-2558");
+			assert.strictEqual(await oGamma.requestSibling(+1), oZeta, "CPOUI5ODATAV4-2558");
+			assert.strictEqual(await oZeta.requestSibling(-1), oGamma, "CPOUI5ODATAV4-2558");
+			assert.strictEqual(await oZeta.requestSibling(+1), null, "CPOUI5ODATAV4-2558");
 
 			that.expectRequest(sTopLevelsSelectUrl + "&$skip=4&$top=2", {
 					value : [{
@@ -27041,7 +27080,7 @@ sap.ui.define([
 				oListBinding.getHeaderContext().requestSideEffects(["AGE"]),
 				that.waitForChanges(assert, "create new root, side effect: AGE for all rows")
 			]);
-		}).then(function () {
+		}).then(async function () {
 			checkTable("new root created, after side effect: AGE for all rows", assert, oTable, [
 				"/EMPLOYEES('9')",
 				"/EMPLOYEES('0')"
@@ -27050,6 +27089,13 @@ sap.ui.define([
 				[false, 1, "0", "", "Alpha", 160]
 			]);
 			checkCreatedPersisted(assert, oNewRoot);
+
+			const [oAleph, oAlpha] = oListBinding.getCurrentContexts();
+			// code under test
+			assert.strictEqual(await oAlpha.requestSibling(+1), oAleph,
+				"CPOUI5ODATAV4-2558 ignoring out-of-place nodes");
+			assert.strictEqual(await oAleph.requestSibling(-1), oAlpha,
+				"CPOUI5ODATAV4-2558 ignoring out-of-place nodes");
 
 			that.expectRequest(sTopLevelsSelectUrl + "&$skip=1&$top=1", {
 					value : [{
@@ -30267,6 +30313,10 @@ sap.ui.define([
 				// code under test
 				oRoot.move({parent : oListBinding.getHeaderContext()});
 			}, new Error("Cannot move to " + sFriend));
+			assert.throws(function () {
+				// code under test
+				oListBinding.getHeaderContext().requestSibling();
+			}, new Error("Unsupported context: " + sFriend));
 
 			checkTable("root is leaf", assert, oTable, [
 				sFriend + "(ArtistID='0',IsActiveEntity=false)"
@@ -30328,6 +30378,10 @@ sap.ui.define([
 				// code under test
 				oRoot.move({parent : oBeta});
 			}, new Error("Cannot move to " + oBeta), "too early");
+			assert.throws(function () {
+				// code under test
+				oBeta.requestSibling();
+			}, new Error("Unsupported context: " + oBeta), "too early");
 
 			return that.waitForChanges(assert, "create 1st child");
 		}).then(function () {
@@ -31534,6 +31588,10 @@ sap.ui.define([
 			// code under test
 			oNewChild.move({parent : oNewRoot});
 		}, new Error("Cannot move to " + oNewRoot), "too late");
+		assert.throws(function () {
+			// code under test
+			oNewRoot.requestSibling();
+		}, new Error("Unsupported context: " + oNewRoot), "too late");
 
 		await Promise.all([
 			oDeleteNewRootPromise,
