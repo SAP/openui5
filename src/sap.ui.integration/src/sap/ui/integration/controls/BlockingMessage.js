@@ -93,6 +93,10 @@ sap.ui.define([
 				httpResponse: {
 					type: "object",
 					defaultValue: null
+				},
+				imageSrc: {
+					type: "string",
+					defaultValue: ""
 				}
 			},
 			aggregations: {
@@ -146,6 +150,7 @@ sap.ui.define([
 	 * @param {string} [mSettings.title] Message title
 	 * @param {string} [mSettings.description] Message description
 	 * @param {string} [mSettings.details] Message details
+	 * @param {string} [mSettings.imageSrc] Source of the custom image
 	 * @param {Response} [mSettings.httpResponse] Response object
 	 * @param {sap.ui.integration.widgets.Card} oCard The card for which the message is created
 	 * @returns {sap.ui.integration.controls.BlockingMessage} The message
@@ -179,6 +184,10 @@ sap.ui.define([
 			details: sDetails,
 			additionalContent: BlockingMessage._createButtons(mSettings.additionalContent)
 		});
+
+		if (mSettings.imageSrc) {
+			oBlockingMessage.setImageSrc(oCard.getRuntimeUrl(mSettings.imageSrc));
+		}
 
 		if (sDetails && Supportability.isDebugModeEnabled()) {
 			oBlockingMessage.addAdditionalContent(BlockingMessage._createDetailsButton(sDetails));
@@ -288,10 +297,34 @@ sap.ui.define([
 				enableVerticalResponsiveness: true
 			});
 
+			oIllustratedMessage.addEventDelegate({
+				onAfterRendering: this._illustrationAfterRendering.bind(this)
+			});
+
 			this.setAggregation("_illustratedMessage", oIllustratedMessage);
 		}
 
 		return oIllustratedMessage;
+	};
+
+	BlockingMessage.prototype._illustrationAfterRendering = function () {
+		const sCustomImageSrc = this.getImageSrc();
+
+		if (!sCustomImageSrc ) {
+			return;
+		}
+
+		const oIllustration = this.getAggregation("_illustratedMessage").getDomRef().getElementsByClassName("sapMIllustratedMessageMainContent")[0];
+		const oIllustrationSvg = oIllustration.getElementsByTagName("svg")[0];
+		const oSvgRect = oIllustrationSvg.getBoundingClientRect();
+		const oCustomImageContainer = document.createElement("div");
+
+		oCustomImageContainer.classList.add("sapUiIntCardCustomImage");
+		oIllustration.append(oCustomImageContainer);
+
+		oCustomImageContainer.style.backgroundImage = "url(" + sCustomImageSrc + ")";
+		oCustomImageContainer.style.width = oSvgRect.width + "px";
+		oCustomImageContainer.style.height = oSvgRect.height + "px";
 	};
 
 	/**

@@ -1195,6 +1195,33 @@ sap.ui.define([
 								]
 							},
 							{
+								title: 'Custom Image Message',
+								key: 'customImage',
+								experimental: true,
+								files: [
+									{
+										url: '/samples/component/CustomImageMessage/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/component/CustomImageMessage/Component.js',
+										name: 'Component.js',
+										key: 'Component.js'
+									},
+									{
+										url: '/samples/component/CustomImageMessage/View.view.xml',
+										name: 'View.view.xml',
+										key: 'View.view.xml'
+									},
+									{
+										url: '/samples/component/CustomImageMessage/AuthRequired.jpg',
+										name: 'AuthRequired.jpg',
+										key: 'AuthRequired.jpg'
+									}
+								]
+							},
+							{
 								title: 'Request Data',
 								key: 'requestData',
 								mockServer: true,

@@ -1,0 +1,8 @@
+<mvc:View
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	width="100%"
+	displayBlock="true">
+	<Text text="This is a Component card"></Text>
+</mvc:View>
