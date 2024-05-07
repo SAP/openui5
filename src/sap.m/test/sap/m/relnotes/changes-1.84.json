@@ -2217,5 +2217,20 @@
         "text": " We've introduced the isTrustedSource property as a security enhancement for the PDFViewer control as detailed in the API reference"
       }
     ]
+  },
+  "1.84.45": {
+    "date": "May 2024",
+    "notes": [
+      {
+        "id": "a65aa75d59c0ce5b86ef474f1077ec2f738478da",
+        "type": "FIX",
+        "text": " sap.m.Input: Prevent value DOM update when password type is used"
+      },
+      {
+        "id": "3fef6c5202a666504c3901ae24bc26ab15c3119d",
+        "type": "FIX",
+        "text": " sap.m.RadioButtonGroup: There is no error when destroying and adding radio buttons on select"
+      }
+    ]
   }
 }
