@@ -11,32 +11,44 @@ sap.ui.define([
 	"sap/ui/mdc/enums/OperatorName",
 	"sap/base/Log",
 	"sap/ui/mdc/enums/ChartItemRoleType",
-	"delegates/util/DelegateCache"
-], function(ChartDelegate, ODataMetaModelUtil, BooksFBDelegate, GridTableDelegate, Element, FieldDisplay, OperatorName, Log, ChartItemRoleType, DelegateCache) {
+	"delegates/util/DelegateCache",
+	"sap/ui/mdc/Link"
+], function(
+	ChartDelegate,
+	ODataMetaModelUtil,
+	BooksFBDelegate,
+	GridTableDelegate,
+	Element,
+	FieldDisplay,
+	OperatorName,
+	Log,
+	ChartItemRoleType,
+	DelegateCache,
+	Link) {
 	"use strict";
 
 	var SampleChartDelegate = Object.assign({}, ChartDelegate);
 	//Store the fetched properties during pre-processing in here
 	var aCachedProps;
 
-	SampleChartDelegate.addItem = function(oMDCChart, sPropertyKey, mPropertyBag, sRole){
+	SampleChartDelegate.addItem = function(oChart, sPropertyKey, mPropertyBag, sRole) {
 		//Pre-Processing -> Cache the needed propertyInfos
 		if (mPropertyBag.modifier.targets === "xmlTree") {
-			return this.checkPropertyInfo(sPropertyKey, oMDCChart, mPropertyBag).then(function(){
+			return this.checkPropertyInfo(sPropertyKey, oChart, mPropertyBag).then(function() {
 
-					return this.fetchProperties(oMDCChart, mPropertyBag).then(function(aFetchedProps){
-						if (aFetchedProps) {
-							var oMDCItem = this.getMDCItemPrePos(sPropertyKey, oMDCChart, sRole, aFetchedProps, mPropertyBag);
-							return oMDCItem;
-						}
+				return this.fetchProperties(oChart, mPropertyBag).then(function(aFetchedProps) {
+					if (aFetchedProps) {
+						var oMDCItem = this.getMDCItemPrePos(sPropertyKey, oChart, sRole, aFetchedProps, mPropertyBag);
+						return oMDCItem;
+					}
 
-						return ChartDelegate.addItem.call(this, oMDCChart, sPropertyKey, mPropertyBag, sRole);
-					}.bind(this));
+					return ChartDelegate.addItem.call(this, oChart, sPropertyKey, mPropertyBag, sRole);
+				}.bind(this));
 			}.bind(this));
 
 		}
 
-		return ChartDelegate.addItem.call(this, oMDCChart, sPropertyKey, mPropertyBag, sRole);
+		return ChartDelegate.addItem.call(this, oChart, sPropertyKey, mPropertyBag, sRole);
 	};
 
 	var fnGetFetchedPropertiesObject = function() {
@@ -62,7 +74,7 @@ sap.ui.define([
 		}
 	};
 
-	SampleChartDelegate.getMDCItemPrePos = function(sPropertyName, oMDCChart, sRole, aProps, mPropertyBag){
+	SampleChartDelegate.getMDCItemPrePos = function(sPropertyName, oChart, sRole, aProps, mPropertyBag) {
 		var oModifier = mPropertyBag.modifier;
 		var oPropertyInfo = aProps.find(function(oEntry) {
 			return oEntry.name === sPropertyName;
@@ -72,10 +84,10 @@ sap.ui.define([
 			return null;
 		}
 
-		return oModifier.getProperty(oMDCChart, "id").then(function(sId){
+		return oModifier.getProperty(oChart, "id").then(function(sId) {
 			if (oPropertyInfo.groupable) {
 
-				return oModifier.createControl("sap.ui.mdc.chart.Item", mPropertyBag.appComponent, mPropertyBag.view, sId + "--GroupableItem--" + sPropertyName,{
+				return oModifier.createControl("sap.ui.mdc.chart.Item", mPropertyBag.appComponent, mPropertyBag.view, sId + "--GroupableItem--" + sPropertyName, {
 					propertyKey: oPropertyInfo.name,
 					label: oPropertyInfo.label,
 					type: "groupable",
@@ -85,7 +97,7 @@ sap.ui.define([
 
 			if (oPropertyInfo.aggregatable) {
 
-				return oModifier.createControl("sap.ui.mdc.chart.Item", mPropertyBag.appComponent, mPropertyBag.view, sId + "--AggregatableItem--" + sPropertyName,{
+				return oModifier.createControl("sap.ui.mdc.chart.Item", mPropertyBag.appComponent, mPropertyBag.view, sId + "--AggregatableItem--" + sPropertyName, {
 					propertyKey: oPropertyInfo.name,
 					label: oPropertyInfo.label,
 					type: "aggregatable",
@@ -98,60 +110,60 @@ sap.ui.define([
 
 	};
 
-	SampleChartDelegate.checkPropertyInfo = function(sPropertyName, oControl, mPropertyBag){
+	SampleChartDelegate.checkPropertyInfo = function(sPropertyName, oControl, mPropertyBag) {
 		var oModifier = mPropertyBag.modifier;
 		return oModifier.getProperty(oControl, "propertyInfo")
-		.then(function(aPropertyInfo) {
-			var nIdx = aPropertyInfo.findIndex(function(oEntry) {
-				return oEntry.name === sPropertyName;
-			});
+			.then(function(aPropertyInfo) {
+				var nIdx = aPropertyInfo.findIndex(function(oEntry) {
+					return oEntry.name === sPropertyName;
+				});
 
-			if (nIdx < 0) {
+				if (nIdx < 0) {
 
-				var aFetchedProperties = fnGetFetchedPropertiesObject();
-				if (aFetchedProperties) {
-					fnAddPropertyInfoEntry(oControl, sPropertyName, aPropertyInfo, aFetchedProperties, oModifier);
-				} else {
-					return this.fetchProperties(oControl, mPropertyBag)
-					.then(function(aProperties) {
-						fnSetFetchedPropertiesObject(aProperties);
-						fnAddPropertyInfoEntry(oControl, sPropertyName, aPropertyInfo, aProperties, oModifier);
-					});
+					var aFetchedProperties = fnGetFetchedPropertiesObject();
+					if (aFetchedProperties) {
+						fnAddPropertyInfoEntry(oControl, sPropertyName, aPropertyInfo, aFetchedProperties, oModifier);
+					} else {
+						return this.fetchProperties(oControl, mPropertyBag)
+							.then(function(aProperties) {
+								fnSetFetchedPropertiesObject(aProperties);
+								fnAddPropertyInfoEntry(oControl, sPropertyName, aPropertyInfo, aProperties, oModifier);
+							});
+					}
 				}
-			}
-		}.bind(this));
+			}.bind(this));
 	};
 
 	/**
 	 * Override for pre-processing case
 	 */
-	SampleChartDelegate.fetchProperties = function (oMDCChart, mPropertyBag) {
+	SampleChartDelegate.fetchProperties = function(oChart, mPropertyBag) {
 
 		//Custom handling for fetchProperties during pre-processing
 		if (mPropertyBag && mPropertyBag.modifier.targets === "xmlTree") {
 			var oModifier = mPropertyBag.modifier;
 
-			return oModifier.getProperty(oMDCChart, "delegate")
-					.then(function(oDelegate){
-						var sModelName =  oDelegate.payload.modelName === null ? undefined : oDelegate.payload.model;
-						var oModel = mPropertyBag.appComponent.getModel(sModelName);
+			return oModifier.getProperty(oChart, "delegate")
+				.then(function(oDelegate) {
+					var sModelName = oDelegate.payload.modelName === null ? undefined : oDelegate.payload.model;
+					var oModel = mPropertyBag.appComponent.getModel(sModelName);
 
-						return this._createPropertyInfos(oMDCChart, oModel);
-					}.bind(this));
+					return this._createPropertyInfos(oChart, oModel);
+				}.bind(this));
 		}
 
-		return ChartDelegate.fetchProperties.call(this, oMDCChart);
+		return ChartDelegate.fetchProperties.call(this, oChart);
 	};
 
-	SampleChartDelegate._createPropertyInfos = function (oMDCChart, oModel) {
-		var oDelegatePayload = oMDCChart.getDelegate().payload;
+	SampleChartDelegate._createPropertyInfos = function(oChart, oModel) {
+		var oDelegatePayload = oChart.getDelegate().payload;
 		var aProperties = [];
 		var sEntitySetPath = "/" + oDelegatePayload.collectionName;
 		var oMetaModel = oModel.getMetaModel();
 
 		return Promise.all([
 			oMetaModel.requestObject(sEntitySetPath + "/"), oMetaModel.requestObject(sEntitySetPath + "@")
-		]).then(function (aResults) {
+		]).then(function(aResults) {
 			var oEntityType = aResults[0], mEntitySetAnnotations = aResults[1];
 			var oSortRestrictions = mEntitySetAnnotations["@Org.OData.Capabilities.V1.SortRestrictions"] || {};
 			var oSortRestrictionsInfo = ODataMetaModelUtil.getSortRestrictionsInfo(oSortRestrictions);
@@ -188,13 +200,13 @@ sap.ui.define([
 						continue;
 					}
 
-					if (oPropertyAnnotations["@Org.OData.Aggregation.V1.Aggregatable"]){
+					if (oPropertyAnnotations["@Org.OData.Aggregation.V1.Aggregatable"]) {
 						aProperties = aProperties.concat(this._createPropertyInfosForAggregatable(sKey, oPropertyAnnotations, oObj, oFilterRestrictionsInfo, oSortRestrictionsInfo));
 					}
 
 					if (oPropertyAnnotations["@Org.OData.Aggregation.V1.Groupable"]) {
 
-						var sTextProperty = oPropertyAnnotations["@com.sap.vocabularies.Common.v1.Text"] ? oPropertyAnnotations["@com.sap.vocabularies.Common.v1.Text"].$Path  : null;
+						var sTextProperty = oPropertyAnnotations["@com.sap.vocabularies.Common.v1.Text"] ? oPropertyAnnotations["@com.sap.vocabularies.Common.v1.Text"].$Path : null;
 
 						if (sTextProperty && sTextProperty.indexOf("/") > -1) {
 							sTextProperty = null; //Expand is not supported
@@ -227,19 +239,19 @@ sap.ui.define([
 				}
 			}
 
-			DelegateCache.add(oMDCChart, {
-				"ID": {dataTypeFormatOptions: {groupingEnabled: false}},
-				"author_ID": {dataTypeFormatOptions: {groupingEnabled: false}, valueHelp: "FH1", display: FieldDisplay.Description},
-				"title": {valueHelp: "FH4"},
-				"published": {valueHelp: "FHPublished", operators: [OperatorName.EQ, OperatorName.GT, OperatorName.LT, OperatorName.BT, "MEDIEVAL", "RENAISSANCE", "MODERN", OperatorName.LASTYEAR]},
-				"language_code": {dataTypeConstraints: {nullable: false, maxLength: 3}, valueHelp: "FHLanguage", maxConditions: 1, display: FieldDisplay.Description},
-				"stock": {maxConditions: 1, operators: [OperatorName.BT]},
-				"classification_code": {valueHelp: "FHClassification", display: FieldDisplay.Description},
-				"genre_code": {valueHelp: "FHGenre", display: FieldDisplay.Description},
-				"subgenre_code": {valueHelp: "FHSubGenre", display: FieldDisplay.Description},
-				"detailgenre_code": {valueHelp: "FHDetailGenre", display: FieldDisplay.Description},
-				"currency_code": {valueHelp: "FH-Currency", display: FieldDisplay.Value, maxConditions: 1, operators: [OperatorName.EQ]},
-				"createdAt": {maxConditions: 1, operators: ["MYDATE", "MYDATERANGE", OperatorName.EQ, OperatorName.GE, OperatorName.LE, OperatorName.BT, OperatorName.LT, OperatorName.TODAY, OperatorName.YESTERDAY, OperatorName.TOMORROW, OperatorName.LASTDAYS, "MYNEXTDAYS", OperatorName.THISWEEK, OperatorName.THISMONTH, OperatorName.THISQUARTER, OperatorName.THISYEAR, OperatorName.NEXTHOURS, OperatorName.NEXTMINUTES, OperatorName.LASTHOURS]}
+			DelegateCache.add(oChart, {
+				"ID": { dataTypeFormatOptions: { groupingEnabled: false } },
+				"author_ID": { dataTypeFormatOptions: { groupingEnabled: false }, valueHelp: "FH1", display: FieldDisplay.Description },
+				"title": { valueHelp: "FH4" },
+				"published": { valueHelp: "FHPublished", operators: [OperatorName.EQ, OperatorName.GT, OperatorName.LT, OperatorName.BT, "MEDIEVAL", "RENAISSANCE", "MODERN", OperatorName.LASTYEAR] },
+				"language_code": { dataTypeConstraints: { nullable: false, maxLength: 3 }, valueHelp: "FHLanguage", maxConditions: 1, display: FieldDisplay.Description },
+				"stock": { maxConditions: 1, operators: [OperatorName.BT] },
+				"classification_code": { valueHelp: "FHClassification", display: FieldDisplay.Description },
+				"genre_code": { valueHelp: "FHGenre", display: FieldDisplay.Description },
+				"subgenre_code": { valueHelp: "FHSubGenre", display: FieldDisplay.Description },
+				"detailgenre_code": { valueHelp: "FHDetailGenre", display: FieldDisplay.Description },
+				"currency_code": { valueHelp: "FH-Currency", display: FieldDisplay.Value, maxConditions: 1, operators: [OperatorName.EQ] },
+				"createdAt": { maxConditions: 1, operators: ["MYDATE", "MYDATERANGE", OperatorName.EQ, OperatorName.GE, OperatorName.LE, OperatorName.BT, OperatorName.LT, OperatorName.TODAY, OperatorName.YESTERDAY, OperatorName.TOMORROW, OperatorName.LASTDAYS, "MYNEXTDAYS", OperatorName.THISWEEK, OperatorName.THISMONTH, OperatorName.THISQUARTER, OperatorName.THISYEAR, OperatorName.NEXTHOURS, OperatorName.NEXTMINUTES, OperatorName.LASTHOURS] }
 			}, "$Filters");
 
 			return aProperties;
@@ -274,25 +286,78 @@ sap.ui.define([
 
 	};
 
-    SampleChartDelegate.formatText = function(vValue, sDesc) {
+	SampleChartDelegate.formatText = function(vValue, sDesc) {
 		const sValue = this.typeConfig?.typeInstance?.formatValue(vValue, "string") || vValue;
 
-        if (sDesc) {
-            const oTextArrangementAnnotation = this.textFormatter;
-            if (
-                !oTextArrangementAnnotation ||
-                oTextArrangementAnnotation.$EnumMember === "com.sap.vocabularies.UI.v1.TextArrangementType/TextFirst"
-            ) {
-                return `${sDesc} (${sValue})`;
-            } else if (oTextArrangementAnnotation.$EnumMember === "com.sap.vocabularies.UI.v1.TextArrangementType/TextLast") {
-                return `${sValue} (${sDesc})`;
-            } else if (oTextArrangementAnnotation.$EnumMember === "com.sap.vocabularies.UI.v1.TextArrangementType/TextOnly") {
-                return sDesc;
-            }
-        }
-        return sDesc ? sDesc : sValue;
-    };
+		if (sDesc) {
+			const oTextArrangementAnnotation = this.textFormatter;
+			if (
+				!oTextArrangementAnnotation ||
+				oTextArrangementAnnotation.$EnumMember === "com.sap.vocabularies.UI.v1.TextArrangementType/TextFirst"
+			) {
+				return `${sDesc} (${sValue})`;
+			} else if (oTextArrangementAnnotation.$EnumMember === "com.sap.vocabularies.UI.v1.TextArrangementType/TextLast") {
+				return `${sValue} (${sDesc})`;
+			} else if (oTextArrangementAnnotation.$EnumMember === "com.sap.vocabularies.UI.v1.TextArrangementType/TextOnly") {
+				return sDesc;
+			}
+		}
+		return sDesc ? sDesc : sValue;
+	};
 
+	SampleChartDelegate.fetchFieldInfos = (oChart, oSelectionDetails, oBindingContext) => {
+		const oAuthorLink = new Link({
+			delegate: {
+				name: "sap/ui/mdc/ushell/LinkDelegate",
+				payload: {
+					semanticObjects: ["FakeFlpSemanticObject_author"]
+				}
+			},
+			sourceControl: oSelectionDetails
+		});
+		oAuthorLink.setBindingContext(oBindingContext);
+		oSelectionDetails.addDependent(oAuthorLink);
+
+		const oBookLink = new Link({
+			delegate: {
+				name: "sap/ui/mdc/ushell/LinkDelegate",
+				payload: {
+					semanticObjects: ["FakeFlpSemanticObject_book"]
+				}
+			},
+			sourceControl: oSelectionDetails
+		});
+		oBookLink.setBindingContext(oBindingContext);
+		oSelectionDetails.addDependent(oBookLink);
+
+		return Promise.resolve({
+			"Author": oAuthorLink,
+			"Book": oBookLink
+		});
+	};
+
+	SampleChartDelegate.determineEnableNavForDetailsItem = (oChart, mData, oContext) => {
+		return SampleChartDelegate._determineSemanticObjectsforDetailsPopover(oChart, mData, oContext).length > 0;
+	};
+
+	SampleChartDelegate._determineSemanticObjectsforDetailsPopover = function(oChart, mData, oContext) {
+		const mSemanticObjects = oChart.getDelegate().payload.semanticObjects;
+		const aSemanticObjects = [];
+
+		if (mSemanticObjects) {
+			Object.keys(mData).forEach((sKey) => {
+				if (mSemanticObjects[sKey]) {
+					mSemanticObjects[sKey].forEach((sSemanticObject) => {
+						if (!aSemanticObjects.some((sSemanticObjectInArray) => sSemanticObject === sSemanticObjectInArray)) {
+							aSemanticObjects.push(sSemanticObject);
+						}
+					});
+				}
+			});
+		}
+
+		return aSemanticObjects;
+	};
 
 	return SampleChartDelegate;
 }, /* bExport= */ true);

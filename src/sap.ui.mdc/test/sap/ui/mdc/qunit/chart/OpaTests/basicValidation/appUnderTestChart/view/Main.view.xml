@@ -10,26 +10,29 @@
 
 	<App>
 		<ScrollContainer height="100%" width="100%"
-						 horizontal="true"
-						 vertical="true">
-			<fl:VariantManagement id="IDVariantManagementOfAppUnderTestChart" for="IDChartOfAppUnderTestChart"/>
+			horizontal="true"
+			vertical="true">
+			<fl:VariantManagement id="IDVariantManagementOfAppUnderTestChart"
+				for="IDChartOfAppUnderTestChart" />
 			<VBox>
 				<items>
 					<mdc:Chart id="IDChartOfAppUnderTestChart"
-								delegate='\{
-									"name": "delegates/odata/v4/vizChart/ChartDelegate",
+						delegate='\{
+									"name": "appUnderTestChart/delegate/Chart.delegate",
 									"payload": \{
 									   		"collectionName": "Books"
 										\}
 									\}'
-								p13nMode="Item,Sort,Type"
-								autoBindOnInit="true"
-								header="MDC: Chart Sample"
-								height="400px"
-								width="1000px">
+						p13nMode="Item,Sort,Type"
+						autoBindOnInit="true"
+						header="MDC: Chart Sample"
+						height="400px"
+						width="1000px">
 						<mdc:items>
-							<chart:Item id="dim1" type="groupable" propertyKey="language_code" role="category" label="Languages"/>
-							<chart:Item id="meas1" type="aggregatable" propertyKey="averagemetricsWords" role="axis1" label="Words (average)"/>
+							<chart:Item id="dim1" type="groupable" propertyKey="language_code" role="category"
+								label="Languages" />
+							<chart:Item id="meas1" type="aggregatable" propertyKey="averagemetricsWords"
+								role="axis1" label="Words (average)" />
 						</mdc:items>
 					</mdc:Chart>
 				</items>

@@ -144,8 +144,7 @@
 											<mdc:Link
 												sourceControl="fTitle"
 												delegate='\{ "name": "sap/ui/mdc/ushell/LinkDelegate", "payload": \{
-													"semanticObjects": ["FakeFlpSemanticObject"],
-													"mainSemanticObject": "FakeFlpSemanticObject"
+													"semanticObjects": ["FakeFlpSemanticObject_book", "FakeFlpSemanticObject_author"]
 												\} \}'></mdc:Link>
 										</mdc:fieldInfo>
 									</mdc:Field>

@@ -64,9 +64,27 @@ sap.ui.define([
 	 * In case oLinkType.type is 2 the Link will get rendered as a Link and will open a Popover (default)
 	 */
 	LinkDelegate.fetchLinkType = function(oLink) {
+		const oPayload = oLink.getPayload();
+
+		if (oPayload && oPayload.semanticObjects) {
+			return LinkDelegate.hasDistinctSemanticObjects(oPayload.semanticObjects).then((bHasDisctinctSemanticObject) => {
+				return Promise.resolve({
+					type: bHasDisctinctSemanticObject ? LinkType.Popover : LinkType.Text,
+					directLink: undefined
+				});
+			});
+		} else {
+			throw new Error("no payload or semanticObjects found");
+		}
+	};
+
+	/**
+	 * @param {string[]} aSemanticObjects Names of the SemanticObjects to check
+	 * @returns {Promise<boolean>} Promise resolving to true if atleast one SemanticObject exists
+	 */
+	LinkDelegate.hasDistinctSemanticObjects = (aSemanticObjects) => {
 		const mSemanticObjects = {};
 		let oPromise = null;
-		const oPayload = oLink.getPayload();
 
 		const fnHaveBeenRetrievedAllSemanticObjects = function(aSemanticObjects) {
 			return aSemanticObjects.filter((sSemanticObject) => {
@@ -102,25 +120,13 @@ sap.ui.define([
 			}
 			return oPromise;
 		};
-		const fnHasDistinctSemanticObject = function(aSemanticObjects) {
-			if (fnHaveBeenRetrievedAllSemanticObjects(aSemanticObjects)) {
-				return Promise.resolve(fnAtLeastOneExistsSemanticObject(aSemanticObjects));
-			}
-			return fnRetrieveDistinctSemanticObjects().then(() => {
-				return fnAtLeastOneExistsSemanticObject(aSemanticObjects);
-			});
-		};
 
-		if (oPayload && oPayload.semanticObjects) {
-			return fnHasDistinctSemanticObject(oPayload.semanticObjects).then((bHasDisctinctSemanticObject) => {
-				return Promise.resolve({
-					type: bHasDisctinctSemanticObject ? LinkType.Popover : LinkType.Text,
-					directLink: undefined
-				});
-			});
-		} else {
-			throw new Error("no payload or semanticObjects found");
+		if (fnHaveBeenRetrievedAllSemanticObjects(aSemanticObjects)) {
+			return Promise.resolve(fnAtLeastOneExistsSemanticObject(aSemanticObjects));
 		}
+		return fnRetrieveDistinctSemanticObjects().then(() => {
+			return fnAtLeastOneExistsSemanticObject(aSemanticObjects);
+		});
 	};
 
 	/**
@@ -232,7 +238,7 @@ sap.ui.define([
 			ownNavigation: undefined,
 			availableActions: []
 		};
-		return Library.load({name: 'sap.ui.fl'}).then(() => {
+		return Library.load({ name: 'sap.ui.fl' }).then(() => {
 
 			const Utils = sap.ui.require('sap/ui/fl/Utils');
 			if (!Utils) {
