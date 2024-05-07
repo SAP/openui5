@@ -9,7 +9,10 @@
 			<CheckBox selected="{ui>/valueHelpDetails}" text="Value Help Details"
 				tooltip="Show value help details as tooltip for value help input fields"/>
 		</Toolbar>
-		<Table items="{/Items}">
+		<Table items="{
+				path: '/Items',
+				parameters: {select: 'GeneratedID, CompanyCode, Customer, AccountingDocument, AccountingDocumentItem' }
+			}">
 			<columns>
 				<Column width="20rem">
 					<Text text="Generated ID"/>
