@@ -2429,7 +2429,7 @@ sap.ui.define([
 		this.mock(this.oModel).expects("resolve").exactly(oFixture.newContext ? 1 : 0)
 			.withExactArgs(oBinding.sPath, sinon.match.same(oContext))
 			.returns("/bar/Suppliers");
-		this.mock(oOldHeaderContext).expects("setSelected").exactly(oFixture.newContext ? 1 : 0)
+		this.mock(oOldHeaderContext).expects("doSetSelected").exactly(oFixture.newContext ? 1 : 0)
 			.withExactArgs(false);
 		this.mock(Context).expects("create").exactly(oFixture.newContext ? 1 : 0)
 			.withExactArgs(sinon.match.same(this.oModel), sinon.match.same(oBinding),
@@ -3360,7 +3360,8 @@ sap.ui.define([
 			"DataStateChange",
 			"patchCompleted",
 			"patchSent",
-			"refresh"
+			"refresh",
+			"selectionChanged"
 		].forEach(function (sEvent) {
 			oBindingMock.expects("attachEvent")
 				.withExactArgs(sEvent, sinon.match.same(mEventParameters)).returns(oReturn);
@@ -4108,17 +4109,17 @@ sap.ui.define([
 			QUnit.test(sTitle, function (assert) {
 				var oBinding = this.bindList("/EMPLOYEES", {/*oContext*/}),
 					aContexts = [
-						{setSelected : mustBeMocked},
-						{setSelected : mustBeMocked},
-						{setSelected : mustBeMocked}
+						{doSetSelected : mustBeMocked},
+						{doSetSelected : mustBeMocked},
+						{doSetSelected : mustBeMocked}
 					],
 					oContextMock = this.mock(Context),
 					i,
 					sPath,
 					aResults = [
-						{setSelected : mustBeMocked},
-						{setSelected : mustBeMocked},
-						{setSelected : mustBeMocked}
+						{doSetSelected : mustBeMocked},
+						{doSetSelected : mustBeMocked},
+						{doSetSelected : mustBeMocked}
 					],
 					iServerIndex,
 					iStart = 2;
@@ -4143,7 +4144,7 @@ sap.ui.define([
 						.withExactArgs(sinon.match.same(this.oModel), sinon.match.same(oBinding),
 							sPath, iServerIndex)
 						.returns(aContexts[i - iStart]);
-					this.mock(aContexts[i - iStart]).expects("setSelected")
+					this.mock(aContexts[i - iStart]).expects("doSetSelected")
 						.withExactArgs("~selected~");
 				}
 				this.mock(oBinding.oHeaderContext).expects("isSelected").exactly(aContexts.length)
@@ -4303,7 +4304,7 @@ sap.ui.define([
 		var oBinding = this.bindList("/EMPLOYEES", {/*oContext*/}),
 			oContext1 = Context.create(this.oModel, oBinding, "/EMPLOYEES/1", 1),
 			oContext2 = Context.create(this.oModel, oBinding, "/EMPLOYEES/2", 2),
-			oContext3 = {setSelected : mustBeMocked},
+			oContext3 = {doSetSelected : mustBeMocked},
 			oContextMock = this.mock(Context);
 
 		oBinding.mPreviousContextsByPath = {
@@ -4319,7 +4320,7 @@ sap.ui.define([
 			.returns(oContext3);
 		this.mock(oBinding.oHeaderContext).expects("isSelected")
 			.withExactArgs().returns("~selected~");
-		this.mock(oContext3).expects("setSelected").withExactArgs("~selected~");
+		this.mock(oContext3).expects("doSetSelected").withExactArgs("~selected~");
 		this.mock(this.oModel).expects("addPrerenderingTask")
 			.withExactArgs(sinon.match.func).callsArg(0);
 		this.mock(oBinding).expects("destroyPreviousContexts").withExactArgs(["/EMPLOYEES/0"]);
@@ -4410,7 +4411,7 @@ sap.ui.define([
 		var oBinding = this.bindList("/EMPLOYEES"),
 			oCreatedContext = Context.create(this.oModel, oBinding, "/EMPLOYEES('1')", -1,
 				SyncPromise.resolve()),
-			oNewContext = {setSelected : mustBeMocked};
+			oNewContext = {doSetSelected : mustBeMocked};
 
 		oBinding.mPreviousContextsByPath = {
 			"/EMPLOYEES('1')" : oCreatedContext
@@ -4422,11 +4423,12 @@ sap.ui.define([
 			.returns(oNewContext);
 		this.mock(oBinding.oHeaderContext).expects("isSelected")
 			.withExactArgs().returns("~selected~");
-		this.mock(oNewContext).expects("setSelected").withExactArgs("~selected~");
+		this.mock(oNewContext).expects("doSetSelected").withExactArgs("~selected~");
 		this.mock(this.oModel).expects("addPrerenderingTask")
 			.withExactArgs(sinon.match.func).callsArg(0);
 		this.mock(oCreatedContext).expects("destroy").withExactArgs();
 
+		// code under test
 		oBinding.createContexts(0, [{
 			"@$ui5._" : {predicate : "('1')"}
 		}]);
@@ -4929,7 +4931,7 @@ sap.ui.define([
 		oCreateInCacheExpectation.args[0][6](oError);
 
 		oSetSelectedExpectation = this.mock(oContext0).expects("doSetSelected")
-			.withExactArgs(false);
+			.withExactArgs(false, true);
 		oRemoveCreatedExpectation = oBindingMock.expects("removeCreated")
 			.withExactArgs(sinon.match.same(oContext0));
 
@@ -5449,14 +5451,14 @@ sap.ui.define([
 					created : function () {},
 					fetchValue : function () {},
 					getPath : function () {},
-					setSelected : mustBeMocked,
+					doSetSelected : mustBeMocked,
 					updateAfterCreate : function () {}
 				},
 				oNewContext1 = {
 					created : function () {},
 					fetchValue : function () {},
 					getPath : function () {},
-					setSelected : mustBeMocked,
+					doSetSelected : mustBeMocked,
 					updateAfterCreate : function () {}
 				},
 				bNotAllowed = aAtEnd[0] && !aAtEnd[1],
@@ -5491,7 +5493,7 @@ sap.ui.define([
 				});
 			this.mock(oBinding.oHeaderContext).expects("isSelected").exactly(bNotAllowed ? 1 : 2)
 				.withExactArgs().returns("~selected~");
-			this.mock(oNewContext0).expects("setSelected").withExactArgs("~selected~");
+			this.mock(oNewContext0).expects("doSetSelected").withExactArgs("~selected~");
 			this.mock(oNewContext0).expects("created").exactly(bTransient ? 1 : 0)
 				.withExactArgs()
 				.callsFake(function () {
@@ -5544,7 +5546,7 @@ sap.ui.define([
 						oNewContext1.oCreatedPromise = Promise.resolve(arguments[4]);
 						return oNewContext1;
 					});
-				this.mock(oNewContext1).expects("setSelected").withExactArgs("~selected~");
+				this.mock(oNewContext1).expects("doSetSelected").withExactArgs("~selected~");
 				this.mock(oNewContext1).expects("created").exactly(bTransient ? 1 : 0)
 					.withExactArgs()
 					.callsFake(function () {
@@ -5612,7 +5614,7 @@ sap.ui.define([
 				created : function () {},
 				fetchValue : function () {},
 				getPath : function () { return ""; },
-				setSelected : mustBeMocked,
+				doSetSelected : mustBeMocked,
 				refreshDependentBindings : function () {}
 			};
 
@@ -5632,7 +5634,7 @@ sap.ui.define([
 			.returns(oNewContext);
 		this.mock(oBinding.oHeaderContext).expects("isSelected")
 			.withExactArgs().returns("~selected~");
-		this.mock(oNewContext).expects("setSelected").withExactArgs("~selected~");
+		this.mock(oNewContext).expects("doSetSelected").withExactArgs("~selected~");
 		this.mock(oNewContext).expects("fetchValue").withExactArgs().resolves(undefined);
 		this.mock(_Helper).expects("setPrivateAnnotation").never();
 
@@ -5801,7 +5803,7 @@ sap.ui.define([
 					.and(sinon.match({"@$ui5.node.parent" : "canonical/path"})),
 				false, sinon.match.func, sinon.match.func)
 			.returns(SyncPromise.resolve(Promise.resolve("~oCreatedEntity~")));
-		const oContext = {fetchValue : mustBeMocked, setSelected : mustBeMocked};
+		const oContext = {fetchValue : mustBeMocked, doSetSelected : mustBeMocked};
 		this.mock(Context).expects("create")
 			.withExactArgs(sinon.match.same(this.oModel), sinon.match.same(oBinding),
 				"~sResolvedPath~($uid=id-1-23)", /*iChildIndex*/3,
@@ -5809,7 +5811,7 @@ sap.ui.define([
 			.returns(oContext);
 		this.mock(oBinding.oHeaderContext).expects("isSelected")
 			.withExactArgs().returns("~selected~");
-		this.mock(oContext).expects("setSelected").withExactArgs("~selected~");
+		this.mock(oContext).expects("doSetSelected").withExactArgs("~selected~");
 		this.mock(oContext).expects("fetchValue").withExactArgs()
 			.returns(SyncPromise.resolve()); //TODO
 		this.mock(oBinding).expects("insertContext")
@@ -5853,7 +5855,7 @@ sap.ui.define([
 				sinon.match(rTransientPredicate), "~oEntityData~",
 				false, sinon.match.func, sinon.match.func)
 			.returns(SyncPromise.resolve(Promise.resolve("~oCreatedEntity~")));
-		const oContext = {fetchValue : mustBeMocked, setSelected : mustBeMocked};
+		const oContext = {fetchValue : mustBeMocked, doSetSelected : mustBeMocked};
 		this.mock(Context).expects("create")
 			.withExactArgs(sinon.match.same(this.oModel), sinon.match.same(oBinding),
 				"~sResolvedPath~($uid=id-1-23)", /*iChildIndex*/0,
@@ -5861,7 +5863,7 @@ sap.ui.define([
 			.returns(oContext);
 		this.mock(oBinding.oHeaderContext).expects("isSelected")
 			.withExactArgs().returns("~selected~");
-		this.mock(oContext).expects("setSelected").withExactArgs("~selected~");
+		this.mock(oContext).expects("doSetSelected").withExactArgs("~selected~");
 		this.mock(oContext).expects("fetchValue").withExactArgs()
 			.returns(SyncPromise.resolve()); //TODO
 		this.mock(oBinding).expects("insertContext")
@@ -5904,7 +5906,7 @@ sap.ui.define([
 		const oContext = {
 			destroy : mustBeMocked,
 			fetchValue : mustBeMocked,
-			setSelected : mustBeMocked,
+			doSetSelected : mustBeMocked,
 			updateAfterCreate : mustBeMocked
 		};
 		const oCreatePromise = new SyncPromise((resolve) => {
@@ -5949,7 +5951,7 @@ sap.ui.define([
 			.returns(oContext);
 		this.mock(oBinding.oHeaderContext).expects("isSelected")
 			.withExactArgs().returns("~selected~");
-		this.mock(oContext).expects("setSelected").withExactArgs("~selected~");
+		this.mock(oContext).expects("doSetSelected").withExactArgs("~selected~");
 		this.mock(oContext).expects("fetchValue").never();
 		this.mock(oBinding).expects("_fireChange").never();
 
@@ -6096,7 +6098,7 @@ sap.ui.define([
 		oContext.created().catch(function (oError) {
 			assert.ok(oError.canceled, "create promise rejected with 'canceled'");
 		});
-		this.mock(oContext).expects("doSetSelected").withExactArgs(false);
+		this.mock(oContext).expects("doSetSelected").withExactArgs(false, true);
 		this.mock(oBinding).expects("removeCreated").withExactArgs(sinon.match.same(oContext))
 			.callThrough();
 		oBindingMock.expects("deleteFromCache").callsFake(function () {
@@ -10466,6 +10468,17 @@ sap.ui.define([
 		oBinding.fireCreateActivate("~oContext~");
 
 		assert.strictEqual(oBinding.iActiveContexts, 41);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("fireSelectionChanged", function () {
+		const oBinding = this.bindList("/EMPLOYEES");
+
+		this.mock(oBinding).expects("fireEvent")
+			.withExactArgs("selectionChanged", {context : "~oContext~"});
+
+		// code under test
+		oBinding.fireSelectionChanged("~oContext~");
 	});
 
 	//*********************************************************************************************

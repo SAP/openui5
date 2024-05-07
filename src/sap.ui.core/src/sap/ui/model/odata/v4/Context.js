@@ -604,15 +604,32 @@ sap.ui.define([
 	 *
 	 * @param {boolean} bSelected
 	 *   Whether this context is to be selected
+	 * @param {boolean} [bDoNotUpdateAnnotation]
+	 *   Whether the client-side annotation "@$ui5.context.isSelected" should not be updated
+	 * @returns {boolean}
+	 *   Whether the selection state of the context has changed
 	 *
 	 * @private
 	 * @see #setSelected
 	 */
-	Context.prototype.doSetSelected = function (bSelected) {
-		this.bSelected = bSelected;
-		if (this.oBinding) {
-			this.oBinding.onKeepAliveChanged(this); // selected contexts are effectively kept alive
+	Context.prototype.doSetSelected = function (bSelected, bDoNotUpdateAnnotation) {
+		if (bSelected === this.bSelected) {
+			return false;
 		}
+
+		if (!bDoNotUpdateAnnotation) {
+			this.withCache((oCache, sPath) => {
+				if (this.oBinding) {
+					oCache.setProperty("@$ui5.context.isSelected", bSelected, sPath);
+				} // else: context already destroyed
+			}, "");
+		}
+
+		this.bSelected = bSelected;
+
+		this.oBinding?.onKeepAliveChanged(this); // selected contexts are effectively kept alive
+
+		return true;
 	};
 
 	/**
@@ -2236,17 +2253,24 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets whether this context is currently selected. While a context is currently
-	 * {@link #delete deleted} on the client, it does not appear as {@link #isSelected selected}. If
-	 * the preconditions of {@link #setKeepAlive} hold, a best effort is made to implicitly keep a
-	 * selected context alive in order to preserve the selection state. Once the selection is no
-	 * longer needed, for example because you perform an operation on this context which logically
-	 * removes it from its list, you need to reset the selection.
+	 * Sets whether this context is currently selected. If the selection state changes, a
+	 * {@link sap.ui.model.odata.v4.ODataListBinding#event:selectionChanged 'selectionChanged'}
+	 * event is fired on the list binding which this context belongs to. While a context is
+	 * currently {@link #delete deleted} on the client, it does not appear as
+	 * {@link #isSelected selected}. If the preconditions of {@link #setKeepAlive} hold, a best
+	 * effort is made to implicitly keep a selected context alive in order to preserve the selection
+	 * state. Once the selection is no longer needed, for example because you perform an operation
+	 * on this context which logically removes it from its list, you need to reset the selection.
 	 *
 	 * If this context is a header context of a list binding, the new selection state is propagated
-	 * to all row contexts. This method can be called repeatedly with the same value to again select
-	 * all row contexts. For example, if a row context was deselected explicitly, it is selected
-	 * again by selecting the header context (even if the header context is already selected).
+	 * to all row contexts. If the selection state of this header context changes, a
+	 * {@link sap.ui.model.odata.v4.ODataListBinding#event:selectionChanged 'selectionChanged'}
+	 * event is fired for this header context. This method can be called repeatedly with
+	 * the same value to again select all row contexts. For example, if a row context was deselected
+	 * explicitly, it is selected again by selecting the header context (even if the header context
+	 * is already selected). If the selection state of any row context changes in this way, then a
+	 * {@link sap.ui.model.odata.v4.ODataListBinding#event:selectionChanged 'selectionChanged'}
+	 * event is nevertheless fired for this header context, but not for the row context.
 	 *
 	 * <b>Note:</b> It is unsafe to keep a reference to a context instance which is not
 	 * {@link #isKeepAlive kept alive}.
@@ -2267,23 +2291,21 @@ sap.ui.define([
 		if (bSelected && this.isDeleted()) {
 			throw new Error("Must not select a deleted entity: " + this);
 		}
-		if (this.oBinding.getHeaderContext() === this) {
-			this.oBinding._getAllExistingContexts().forEach(function (oContext) {
-				oContext.setSelected(bSelected);
-			});
-		}
-		if (bSelected !== this.bSelected) {
-			if (this.mChangeListeners) { // header context: "select all"
-				_Helper.fireChange(this.mChangeListeners, "", bSelected);
-			}
-			this.withCache((oCache, sPath) => {
-				if (this.oBinding) {
-					oCache.setProperty("@$ui5.context.isSelected", bSelected, sPath);
-				} // else: context already destroyed
-			}, "");
+
+		const bRowsChanged = this.oBinding.getHeaderContext() === this
+			&& this.oBinding._getAllExistingContexts().reduce((bChanged, oContext) => {
+				return oContext.doSetSelected(bSelected) || bChanged;
+			}, false);
+
+		const bSelectionChanged = this.doSetSelected(bSelected);
+
+		if (bSelectionChanged && this.mChangeListeners) { // header context: "select all"
+			_Helper.fireChange(this.mChangeListeners, "", bSelected);
 		}
 
-		this.doSetSelected(bSelected);
+		if (bSelectionChanged || bRowsChanged) {
+			this.oBinding.fireSelectionChanged(this);
+		}
 	};
 
 	/**

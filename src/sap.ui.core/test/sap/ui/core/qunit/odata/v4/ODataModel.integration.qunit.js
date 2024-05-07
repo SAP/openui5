@@ -67260,6 +67260,8 @@ make root = ${bMakeRoot}`;
 	// inherit the selection from the header context. Swap the context of the "select all" property
 	// binding and check if change listeners are correctly removed.
 	// JIRA: CPOUI5ODATAV4-2493
+	//
+	// Check for selectionChanged events (JIRA: CPOUI5ODATAV4-2198)
 	QUnit.test("Selection on header context and row context", async function (assert) {
 		const oModel = this.createSalesOrdersModel({autoExpandSelect : true});
 		const sView = `
@@ -67283,10 +67285,22 @@ make root = ${bMakeRoot}`;
 		await this.createView(assert, sView, oModel);
 
 		const oTable = this.oView.byId("table");
+		const oListBinding = oTable.getBinding("items");
 		const oPropertyBinding = oTable.getItems()[0].getCells()[1].getBinding("value");
 		const oContext = oPropertyBinding.getContext();
+		const aEventHandlers = [];
+
+		oListBinding.attachEvent("selectionChanged", function (oEvent) {
+			aEventHandlers.shift()(oEvent.getParameters().context);
+			assert.strictEqual(aEventHandlers.length, 0, "selectionChanged event received");
+		});
 
 		this.expectChange("selected", [true]);
+
+		aEventHandlers.push((oContext0) => {
+			assert.strictEqual(oContext0.isSelected(), true);
+			assert.strictEqual(oContext, oContext0);
+		});
 
 		// code under test
 		oPropertyBinding.setValue(true);
@@ -67296,13 +67310,17 @@ make root = ${bMakeRoot}`;
 
 		this.expectChange("selected", [false]);
 
+		aEventHandlers.push((oContext0) => {
+			assert.strictEqual(oContext0.isSelected(), false);
+			assert.strictEqual(oContext, oContext0);
+		});
+
 		// code under test
 		oPropertyBinding.setValue(false);
 
 		checkSelected(assert, oContext, false);
 		await this.waitForChanges(assert, "rowContext deselected");
 
-		const oListBinding = oTable.getBinding("items");
 		const oHeaderContext = oListBinding.getHeaderContext();
 		const oSelectAllInput = this.oView.byId("selectAll");
 		oSelectAllInput.setBindingContext(oHeaderContext);
@@ -67310,6 +67328,11 @@ make root = ${bMakeRoot}`;
 
 		this.expectChange("selectAll", true)
 			.expectChange("selected", [true, true, true]);
+
+		aEventHandlers.push((oContext0) => {
+			assert.strictEqual(oContext0.isSelected(), true);
+			assert.strictEqual(oHeaderContext, oContext0);
+		});
 
 		// code under test
 		oSelectAllBinding.setValue(true);
@@ -67332,6 +67355,11 @@ make root = ${bMakeRoot}`;
 		this.expectChange("selectAll", false)
 			.expectChange("selected", [false, false, false]);
 
+		aEventHandlers.push((oContext0) => {
+			assert.strictEqual(oContext0.isSelected(), false);
+			assert.strictEqual(oHeaderContext, oContext0);
+		});
+
 		// code under test
 		oSelectAllBinding.setValue(false);
 
@@ -67340,6 +67368,11 @@ make root = ${bMakeRoot}`;
 
 		this.expectChange("selectAll", true)
 			.expectChange("selected", [true, true, true]);
+
+		aEventHandlers.push((oContext0) => {
+			assert.strictEqual(oContext0.isSelected(), true);
+			assert.strictEqual(oHeaderContext, oContext0);
+		});
 
 		// code under test
 		oHeaderContext.setProperty("@$ui5.context.isSelected", true);
@@ -67350,6 +67383,11 @@ make root = ${bMakeRoot}`;
 		this.expectChange("selectAll", false)
 			.expectChange("selected", [false, false, false]);
 
+		aEventHandlers.push((oContext0) => {
+			assert.strictEqual(oContext0.isSelected(), false);
+			assert.strictEqual(oHeaderContext, oContext0);
+		});
+
 		// code under test
 		oHeaderContext.setProperty("@$ui5.context.isSelected", false);
 
@@ -67358,6 +67396,11 @@ make root = ${bMakeRoot}`;
 
 		this.expectChange("selectAll", true)
 			.expectChange("selected", [true, true, true]);
+
+		aEventHandlers.push((oContext0) => {
+			assert.strictEqual(oContext0.isSelected(), true);
+			assert.strictEqual(oHeaderContext, oContext0);
+		});
 
 		// code under test
 		oHeaderContext.setSelected(true);
@@ -67382,6 +67425,11 @@ make root = ${bMakeRoot}`;
 		this.expectChange("selectAll", false)
 			.expectChange("selected", [false, false, false, false, false, false]);
 
+		aEventHandlers.push((oContext0) => {
+			assert.strictEqual(oContext0.isSelected(), false);
+			assert.strictEqual(oHeaderContext, oContext0);
+		});
+
 		// code under test
 		oHeaderContext.setSelected(false);
 
@@ -67397,6 +67445,7 @@ make root = ${bMakeRoot}`;
 		// code under test - no further change expected for "select all" binding
 		oHeaderContext.setSelected(false);
 
+		assert.strictEqual(aEventHandlers.length, 0); // all event handlers used
 		await this.waitForChanges(assert, "swap context of property binding");
 	});
 
@@ -67408,6 +67457,8 @@ make root = ${bMakeRoot}`;
 	// (3) : Select two row contexts (no "select all")
 	// JIRA: CPOUI5ODATAV4-2203
 	// SNOW: CS20240007001494
+	//
+	// Check for selectionChanged events (JIRA: CPOUI5ODATAV4-2198)
 [
 	{method : "filter", value : FilterType.Application, query : "GrossAmount ge 0"},
 	{method : "filter", value : FilterType.Control, query : "GrossAmount ge 0"},
@@ -67442,11 +67493,28 @@ make root = ${bMakeRoot}`;
 		const oListBinding = oTable.getBinding("items");
 		const oHeaderContext = oListBinding.getHeaderContext();
 		const oItems = oTable.getItems();
+		const aEventHandlers = [];
+
+		oListBinding.attachEvent("selectionChanged", function (oEvent) {
+			aEventHandlers.shift()(oEvent.getParameters().context);
+			assert.strictEqual(aEventHandlers.length, 0, "selectionChanged event received");
+		});
 
 		this.expectChange("selected", [true, true, true]);
 		this.expectChange("selected", [, false]);
 
+		aEventHandlers.push((oContext) => {
+			assert.strictEqual(oContext.isSelected(), true);
+			assert.strictEqual(oHeaderContext, oContext);
+		});
+
 		oHeaderContext.setSelected(true);
+
+		aEventHandlers.push((oContext) => {
+			assert.strictEqual(oContext.isSelected(), false);
+			assert.strictEqual(oItems[1].getBindingContext(), oContext);
+		});
+
 		oItems[1].getBindingContext().setSelected(false);
 
 		assert.strictEqual(oHeaderContext.isSelected(), true);
@@ -67463,6 +67531,11 @@ make root = ${bMakeRoot}`;
 			// #filter / #changeParameters resets the selection for "old" contexts
 			.expectChange("selected", [false, /*false*/, false])
 			.expectChange("selected", [undefined, undefined, undefined]);
+
+		aEventHandlers.push((oContext) => {
+			assert.strictEqual(oContext.isSelected(), false);
+			assert.strictEqual(oHeaderContext, oContext);
+		});
 
 		if (bSuspend) {
 			oListBinding.suspend();
@@ -67487,18 +67560,52 @@ make root = ${bMakeRoot}`;
 		this.expectChange("selected", [true]);
 		this.expectChange("selected", [false, false, false]); // preparation for test below
 
+		aEventHandlers.push((oContext) => {
+			assert.strictEqual(oContext.isSelected(), true);
+			assert.strictEqual(oHeaderContext, oContext);
+		});
+
 		oHeaderContext.setSelected(true);
+
+		aEventHandlers.push((oContext) => {
+			assert.strictEqual(oContext.isSelected(), false);
+			assert.strictEqual(oItems[0].getBindingContext(), oContext);
+		});
 		oItems[0].getBindingContext().setSelected(false);
+
+		// a row context selection was changed
+		aEventHandlers.push((oContext) => {
+			assert.strictEqual(oContext.isSelected(), true);
+			assert.strictEqual(oHeaderContext, oContext);
+		});
+
 		// code under test - "select all" again selects all row contexts, even if the header context
 		// is already selected
 		oHeaderContext.setSelected(true);
+
+		aEventHandlers.push((oContext) => {
+			assert.strictEqual(oContext.isSelected(), false);
+			assert.strictEqual(oHeaderContext, oContext);
+		});
+
 		oHeaderContext.setSelected(false); // preparation for test below
 
 		await this.waitForChanges(assert, "reselect all (2)");
 
 		this.expectChange("selected", [true, , true]);
 
+		aEventHandlers.push((oContext) => {
+			assert.strictEqual(oContext.isSelected(), true);
+			assert.strictEqual(oItems[0].getBindingContext(), oContext);
+		});
+
 		oItems[0].getBindingContext().setSelected(true);
+
+		aEventHandlers.push((oContext) => {
+			assert.strictEqual(oContext.isSelected(), true);
+			assert.strictEqual(oItems[2].getBindingContext(), oContext);
+		});
+
 		oItems[2].getBindingContext().setSelected(true);
 
 		// same filter/search value will do nothing
@@ -67516,6 +67623,13 @@ make root = ${bMakeRoot}`;
 			.expectChange("selected", [false, , false])
 			.expectChange("selected", [undefined, undefined, undefined]);
 
+		// selection state of header context did not change, but the selection state of row contexts
+		// was changed
+		aEventHandlers.push((oContext) => {
+			assert.strictEqual(oContext.isSelected(), false);
+			assert.strictEqual(oHeaderContext, oContext);
+		});
+
 		if (bSuspend) {
 			oListBinding.suspend();
 		}
@@ -67529,6 +67643,7 @@ make root = ${bMakeRoot}`;
 		if (bSuspend) {
 			oListBinding.resume();
 		}
+		assert.strictEqual(aEventHandlers.length, 0); // all event handlers used
 
 		await this.waitForChanges(assert, "after (2)");
 	});
