@@ -263,7 +263,11 @@ sap.ui.define([
 							 * The date as a UI5Date or JavaScript Date object of the cell with the
 							 * pressed more link.
 							 */
-							date: { type: "object" }
+							date: {type: "object"},
+							/**
+							 * The link that has been triggered
+							 */
+							sourceLink: {type: "sap.m.Link"}
 						}
 					},
 					/**
@@ -852,7 +856,7 @@ sap.ui.define([
 
 			oDate = UI5Date.getInstance(oDate.getUTCFullYear(), oDate.getUTCMonth(), oDate.getUTCDate());
 
-			this.fireEvent("moreLinkPress", { date: oDate });
+			this.fireEvent("moreLinkPress", { date: oDate, sourceLink: oEvent.getSource() });
 		};
 
 		SinglePlanningCalendarMonthGrid.prototype._getCoreLocaleData = function() {

@@ -136,7 +136,7 @@ sap.ui.define([
 			// assert
 			assert.strictEqual(oLink.getAccessibleRole(), LinkAccessibleRole.Button, "The link has proper accessible role");
 			assert.ok(oMorePressSpy.calledOnce, "an event is fired");
-			assert.ok(oMorePressSpy.calledWithMatch("moreLinkPress", { date: o2Aug2018_00_00 }), "its the right event + parameters");
+			assert.ok(oMorePressSpy.calledWithMatch("moreLinkPress", { date: o2Aug2018_00_00, sourceLink: oLink }), "it's the right event + parameters");
 		});
 
 		QUnit.module("Grid days", {
