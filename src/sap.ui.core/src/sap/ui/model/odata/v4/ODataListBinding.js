@@ -768,14 +768,14 @@ sap.ui.define([
 	 * the case if the complete collection has been read or if the system query option
 	 * <code>$count</code> is <code>true</code> and the binding has processed at least one request.
 	 *
-	 * Creating a new child beneath an existing and visible parent node (which must either be a leaf
-	 * or expanded, but not collapsed) is supported (@experimental as of version 1.117.0) in case of
-	 * a recursive hierarchy (see {@link #setAggregation}). The parent node must be identified via
-	 * an {@link sap.ui.model.odata.v4.Context} instance given as
+	 * Since 1.125.0, creating a new child beneath an existing and visible parent node (which must
+	 * either be a leaf or expanded, but not collapsed) is supported in case of a recursive
+	 * hierarchy (see {@link #setAggregation}). The parent node must be identified via an
+	 * {@link sap.ui.model.odata.v4.Context} instance given as
 	 * <code>oInitialData["@$ui5.node.parent"]</code> (which is immediately removed from the new
-	 * child's data). It can be <code>null</code> or absent when creating a new root node
-	 * (@experimental as of version 1.120.0). <code>bSkipRefresh</code> must be set, but both
-	 * <code>bAtEnd</code> and <code>bInactive</code> must not be set. No other creation or
+	 * child's data). It can be <code>null</code> or absent when creating a new root node.
+	 * <code>bSkipRefresh</code> must be set, but both <code>bAtEnd</code> and
+	 * <code>bInactive</code> must not be set. No other creation or
 	 * {@link sap.ui.model.odata.v4.Context#move move} must be pending, and no other modification
 	 * (including collapse of some ancestor node) must happen while this creation is pending!
 	 *
@@ -2185,8 +2185,8 @@ sap.ui.define([
 	 *
 	 * @param {boolean} [bVerbose]
 	 *   Whether to additionally return the "$"-prefixed values described below which obviously
-	 *   cannot be given back to the setter (@experimental as of version 1.111.0). They are
-	 *   retrieved from the pair of "Org.OData.Aggregation.V1.RecursiveHierarchy" and
+	 *   cannot be given back to the setter (since 1.125.0). They are retrieved from the pair of
+	 *   "Org.OData.Aggregation.V1.RecursiveHierarchy" and
 	 *   "com.sap.vocabularies.Hierarchy.v1.RecursiveHierarchy" annotations at this binding's
 	 *   entity type, identified via the <code>hierarchyQualifier</code> given to
 	 *   {@link #setAggregation}.
@@ -4253,11 +4253,10 @@ sap.ui.define([
 	 *   needed. Beware that methods like "average" or "countdistinct" are not compatible with this
 	 *   approach, and it cannot be combined with group levels.
 	 *   <br>
-	 *   Since 1.105.0, either a recursive hierarchy or pure data aggregation is supported, but no
-	 *   mix; <code>hierarchyQualifier</code> is the leading property that decides between those two
-	 *   use cases - this is an <b>experimental API</b> and is only supported if the model uses the
-	 *   <code>autoExpandSelect</code> parameter! Since 1.117.0, it is available for read-only
-	 *   hierarchies.
+	 *   Since 1.117.0, either a read-only recursive hierarchy or pure data aggregation is
+	 *   supported, but no mix; <code>hierarchyQualifier</code> is the leading property that decides
+	 *   between those two use cases. Since 1.125.0, maintenance of a recursive hierarchy is
+	 *   supported.
 	 * @param {object} [oAggregation.aggregate]
 	 *   A map from aggregatable property names or aliases to objects containing the following
 	 *   details:
@@ -4287,8 +4286,7 @@ sap.ui.define([
 	 *   </ul>
 	 * @param {number} [oAggregation.expandTo=1]
 	 *   The number (as a positive integer) of different levels initially available without calling
-	 *   {@link sap.ui.model.odata.v4.Context#expand} (@experimental as of version 1.105.0;
-	 *   available for read-only hierarchies since 1.117.0), supported only if a
+	 *   {@link sap.ui.model.odata.v4.Context#expand} (since 1.117.0), supported only if a
 	 *   <code>hierarchyQualifier</code> is given. Root nodes are on the first level. By default,
 	 *   only root nodes are available; they are not yet expanded. Since 1.120.0,
 	 *   <code>expandTo >= Number.MAX_SAFE_INTEGER</code> can be used to expand all levels
@@ -4318,14 +4316,13 @@ sap.ui.define([
 	 * @param {string} [oAggregation.hierarchyQualifier]
 	 *   The qualifier for the pair of "Org.OData.Aggregation.V1.RecursiveHierarchy" and
 	 *   "com.sap.vocabularies.Hierarchy.v1.RecursiveHierarchy" annotations at this binding's
-	 *   entity type (@experimental as of version 1.105.0; available for read-only hierarchies since
-	 *   1.117.0). If present, a recursive hierarchy without data aggregation is defined, and the
-	 *   only other supported properties are <code>expandTo</code> and <code>search</code>. A
-	 *   recursive hierarchy cannot be combined with:
+	 *   entity type (since 1.117.0). If present, a recursive hierarchy without data aggregation is
+	 *   defined, and the only other supported properties are <code>expandTo</code> and
+	 *   <code>search</code>. A recursive hierarchy cannot be combined with:
 	 *   <ul>
 	 *     <li> "$search",
-	 *     <li> the <code>vGroup</code> parameter of {@link sap.ui.model.Sorter} (since 1.107.0),
-	 *     <li> shared requests (since 1.108.0).
+	 *     <li> the <code>vGroup</code> parameter of {@link sap.ui.model.Sorter},
+	 *     <li> shared requests.
 	 *   </ul>
 	 * @param {string} [oAggregation.search]
 	 *   Like the <a href=

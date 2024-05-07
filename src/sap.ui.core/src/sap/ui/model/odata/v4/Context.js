@@ -242,12 +242,11 @@ sap.ui.define([
 	 * model itself ensures that all bindings depending on this context become unresolved, but no
 	 * attempt is made to restore these bindings in case of reset or failure.
 	 *
-	 * Deleting a node in a recursive hierarchy
-	 * (see {@link sap.ui.model.odata.v4.ODataListBinding#setAggregation}) is supported
-	 * (@experimental as of version 1.118.0). As a precondition, the context must not be
-	 * {@link #setKeepAlive kept-alive} and hidden (for example due to a filter), and the group ID
-	 * must not have {@link sap.ui.model.odata.v4.SubmitMode.API}. Such a deletion is not a pending
-	 * change.
+	 * Since 1.125.0, deleting a node in a recursive hierarchy (see
+	 * {@link sap.ui.model.odata.v4.ODataListBinding#setAggregation}) is supported. As a
+	 * precondition, the context must not be both {@link #setKeepAlive kept-alive} and hidden (for
+	 * example due to a filter), and the group ID must not have
+	 * {@link sap.ui.model.odata.v4.SubmitMode.API}. Such a deletion is not a pending change.
 	 *
 	 * @param {string} [sGroupId]
 	 *   The group ID to be used for the DELETE request; if not specified, the update group ID for
@@ -1304,12 +1303,10 @@ sap.ui.define([
 	 *
 	 * @param {object} oParameters - A parameter object
 	 * @param {sap.ui.model.odata.v4.Context|null} [oParameters.nextSibling]
-	 *   The next sibling's context, or <code>null</code> to turn this node into the last sibling
-	 *   (since 1.124.0). Omitting the sibling moves this node to a position determined by the
-	 *   server.
+	 *   The next sibling's context, or <code>null</code> to turn this node into the last sibling.
+	 *   Omitting the sibling moves this node to a position determined by the server.
 	 * @param {sap.ui.model.odata.v4.Context|null} oParameters.parent
-	 *   The new parent's context, or (since 1.121.0) <code>null</code> to turn this node into a
-	 *   root node
+	 *   The new parent's context, or <code>null</code> to turn this node into a root node
 	 * @returns {Promise<void>}
 	 *   A promise which is resolved without a defined result when the move is finished, or
 	 *   rejected in case of an error
@@ -1325,8 +1322,8 @@ sap.ui.define([
 	 *     </ul>
 	 *   </ul>
 	 *
-	 * @experimental As of version 1.119.0
 	 * @public
+	 * @since 1.125.0
 	 */
 	Context.prototype.move = function ({nextSibling : oNextSibling, parent : oParent} = {}) {
 		if (oNextSibling === undefined && oParent === undefined) {
