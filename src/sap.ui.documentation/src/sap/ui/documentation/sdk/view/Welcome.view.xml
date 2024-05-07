@@ -4,8 +4,7 @@
 		xmlns:l="sap.ui.layout"
 		xmlns:core="sap.ui.core"
 		xmlns:mvc="sap.ui.core.mvc"
-		xmlns:custom="sap.ui.documentation"
-		xmlns:html="http://www.w3.org/1999/xhtml">
+		xmlns:custom="sap.ui.documentation">
 
 	<Page showHeader="false" class="sapUiHomePage">
 		<landmarkInfo>
@@ -348,7 +347,7 @@
 							backgroundColorShade="ShadeA">
 						<l:VerticalLayout
 								width="100%">
-							<html:div class="sapUIDisclaimerLink sapUiSmallMarginBottom">
+							<custom:DivContainer class="sapUIDisclaimerLink sapUiSmallMarginBottom">
 								<custom:TitleLink
 										href="https://www.sap.com/developer/tutorials/hcp-create-trial-account.html"
 										text="{i18n>WELCOME_BLOCK_8_TITLE}"
@@ -359,7 +358,7 @@
 									tooltip="{i18n>LEGAL_DISCLAIMER_INTERNAL_TOOLTIP}"
 									width="1.25rem"
 									press="onDisclaimerLinkPress"/>
-							</html:div>
+							</custom:DivContainer>
 							<Text
 									text="{i18n>WELCOME_BLOCK_8_TEXT_1}"
 									class="sapUiSmallMarginBottom"/>
@@ -387,7 +386,7 @@
 							backgroundColorShade="ShadeB">
 						<l:VerticalLayout
 								width="100%">
-							<html:div class="sapUIDisclaimerLink sapUiSmallMarginBottom">
+							<custom:DivContainer class="sapUIDisclaimerLink sapUiSmallMarginBottom">
 								<custom:TitleLink
 										href="https://ui5.sap.com/#/topic/91f346786f4d1014b6dd926db0e91070"
 										target="_blank"
@@ -398,7 +397,7 @@
 									tooltip="{i18n>LEGAL_DISCLAIMER_INTERNAL_TOOLTIP}"
 									width="1.25rem"
 									press="onDisclaimerLinkPress"/>
-							</html:div>
+							</custom:DivContainer>
 							<Text
 									text="{i18n>WELCOME_BLOCK_9_TEXT_1}"
 									class="sapUiSmallMarginBottom"/>
@@ -428,7 +427,7 @@
 							backgroundColorShade="ShadeC">
 						<l:VerticalLayout
 								width="100%">
-							<html:div class="sapUIDisclaimerLink sapUiSmallMarginBottom">
+							<custom:DivContainer class="sapUIDisclaimerLink sapUiSmallMarginBottom">
 								<custom:TitleLink
 										href="http://openui5.org"
 										text="{i18n>WELCOME_BLOCK_10_TITLE}"
@@ -439,7 +438,7 @@
 									tooltip="{i18n>LEGAL_DISCLAIMER_INTERNAL_TOOLTIP}"
 									width="1.25rem"
 									press="onDisclaimerLinkPress"/>
-							</html:div>
+							</custom:DivContainer>
 							<Text
 									text="{i18n>WELCOME_BLOCK_10_TEXT_1}"
 									class="sapUiSmallMarginBottom"/>

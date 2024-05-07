@@ -6,7 +6,6 @@
         xmlns:mvc="sap.ui.core.mvc"
         xmlns:custom="sap.ui.documentation"
         xmlns:editor="sap.ui.codeeditor"
-        xmlns:html="http://www.w3.org/1999/xhtml"
         class="liveEditor">
         <Page
 		id="liveEditorPage"
@@ -16,8 +15,8 @@
         enableScrolling="false"
 		title="{i18n>LIVE_EDITOR_TITLE}"
 		navButtonPress="onNavButtonPress">
-        <html:div class="editorWrapper">
-            <html:div>
+        <custom:DivContainer class="editorWrapper">
+            <custom:DivContainer>
                 <IconTabHeader selectedKey="{viewModel>/selectedFileName}" select="onFileSwitch">
                     <items>
                         <IconTabFilter text="App.view.xml" key="App.view.xml"/>
@@ -26,14 +25,14 @@
                         <IconTabFilter text="index.html" key="index.html"/>
                     </items>
                 </IconTabHeader>
-                <html:div class="editorSrcWindow">
+                <custom:DivContainer class="editorSrcWindow">
                     <editor:CodeEditor id="srcEditor"
                                        editable="{= ${viewModel>/selectedFileType} !== 'text' }"
                                        value="{viewModel>/selectedFileContent}"
                                        type="{viewModel>/selectedFileType}"
                                        liveChange="onSrcLiveChange"/>
-                </html:div>
-            </html:div>
+                </custom:DivContainer>
+            </custom:DivContainer>
 
             <VBox id="resultBox" class="liveEditorResultBox" width="100%" height="100%">
                 <Toolbar style="Clear" class="editorToolbar">
@@ -49,7 +48,7 @@
                     </core:layoutData>
                 </core:HTML>
             </VBox>
-        </html:div>
+        </custom:DivContainer>
     </Page>
 
 </mvc:View>
