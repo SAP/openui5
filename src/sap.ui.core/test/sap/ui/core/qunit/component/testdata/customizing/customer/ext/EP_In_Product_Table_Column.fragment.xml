@@ -1,0 +1,5 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<Text text="Table Header Text from EP Fragment: EP_In_Product_Table_Column.fragment.xml" />
+</core:FragmentDefinition>

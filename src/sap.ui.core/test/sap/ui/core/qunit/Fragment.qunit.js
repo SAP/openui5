@@ -702,27 +702,27 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	QUnit.test("Load XML Fragment from file with nested fragments and a nested async view containing fragments of type 'JS' and 'XML'", function (assert) {
-		assert.expect(9);
-		return Fragment.load({
+	QUnit.test("Load XML Fragment from file with nested fragments and a nested async view containing fragments of type 'JS' and 'XML'", async function (assert) {
+		assert.expect(8);
+		const oView = await Fragment.load({
 			name: "testdata.fragments.nested.XMLFragment_Level0"
-		}).then(function (oView) {
-			assert.ok(oView, "Deepest nested View in Fragment chain should be created");
-			assert.equal(this.loadTemplatePromiseSpy.callCount, 3, "XMLTemplateProcessor.loadTemplatePromise should be called three times");
+		});
 
-			return oView.loaded();
-		}.bind(this)).then(function(oView) {
-			// expectations of template processor calls
-			assert.equal(this.parseTemplatePromiseSpy.callCount, 6, "XMLTemplateProcessor.loadTemplatePromise should be called six times");
-			assert.ok(this.parseTemplatePromiseSpy.getCall(0).args[2], "First call of XMLTemplateProcessor.parseTemplatePromise should be called with async=true");
-			assert.ok(this.parseTemplatePromiseSpy.getCall(1).args[2], "Second call of XMLTemplateProcessor.parseTemplatePromise should be called with async=true");
-			assert.ok(this.parseTemplatePromiseSpy.getCall(2).args[2], "Third call of XMLTemplateProcessor.parseTemplatePromise should be called with async=true");
-			assert.ok(this.parseTemplatePromiseSpy.getCall(3).args[2], "Fourth call of XMLTemplateProcessor.parseTemplatePromise should be called with async=true");
-			assert.ok(this.parseTemplatePromiseSpy.getCall(4).args[2], "Fifth call of XMLTemplateProcessor.parseTemplatePromise should be called with async=true");
-			assert.ok(this.parseTemplatePromiseSpy.getCall(5).args[2], "Sixth call of XMLTemplateProcessor.parseTemplatePromise should be called with async=true");
+		assert.ok(oView, "Deepest nested View in Fragment chain should be created");
 
-			oView.destroy();
-		}.bind(this));
+		// wait for nested view to finish
+		await oView.loaded();
+
+		// expectations of template processor calls
+		assert.equal(this.parseTemplatePromiseSpy.callCount, 6, "XMLTemplateProcessor.loadTemplatePromise should be called six times");
+		assert.ok(this.parseTemplatePromiseSpy.getCall(0).args[2], "First call of XMLTemplateProcessor.parseTemplatePromise should be called with async=true");
+		assert.ok(this.parseTemplatePromiseSpy.getCall(1).args[2], "Second call of XMLTemplateProcessor.parseTemplatePromise should be called with async=true");
+		assert.ok(this.parseTemplatePromiseSpy.getCall(2).args[2], "Third call of XMLTemplateProcessor.parseTemplatePromise should be called with async=true");
+		assert.ok(this.parseTemplatePromiseSpy.getCall(3).args[2], "Fourth call of XMLTemplateProcessor.parseTemplatePromise should be called with async=true");
+		assert.ok(this.parseTemplatePromiseSpy.getCall(4).args[2], "Fifth call of XMLTemplateProcessor.parseTemplatePromise should be called with async=true");
+		assert.ok(this.parseTemplatePromiseSpy.getCall(5).args[2], "Sixth call of XMLTemplateProcessor.parseTemplatePromise should be called with async=true");
+
+		oView.destroy();
 	});
 
 	QUnit.test("Load XML View from file with nested fragments of type 'JS' and 'XML'", function (assert) {

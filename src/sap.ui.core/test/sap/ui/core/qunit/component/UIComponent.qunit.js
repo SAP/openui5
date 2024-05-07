@@ -1658,7 +1658,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Nested component - no duplicate ID issue expected", function(assert) {
-		assert.expect(3);
+		assert.expect(4);
 		var oManifest = {
 			"sap.app" : {
 				"id" : "app"

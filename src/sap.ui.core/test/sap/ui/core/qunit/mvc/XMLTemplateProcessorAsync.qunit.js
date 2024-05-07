@@ -293,7 +293,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Async rootView & sync childView", function(assert) {
+	QUnit.test("Async rootView & (auto) async childView", function(assert) {
 		var done = assert.async();
 
 		sap.ui.define("test/XMLTemplateProcessor2/Component", function() {
@@ -321,7 +321,7 @@ sap.ui.define([
 
 				oView.getContent()[0].loaded().then(function(oChildView1) {
 					assert.ok(oChildView1, "View is loaded.");
-					assert.notOk(oChildView1.oAsyncState, "View is a sync view.");
+					assert.ok(oChildView1.oAsyncState, "View is an async view.");
 					assert.equal(oChildView1._sProcessingMode, XMLProcessingMode.Sequential, "ProcessingMode 'Sequential' is set on " + "View:" + oChildView1.getViewName());
 
 					oChildView1.getContent()[0].loaded().then(function(oChildView2) {
@@ -366,11 +366,11 @@ sap.ui.define([
 				assert.ok(oView, "View is loaded.");
 				assert.ok(oView.oAsyncState, "View is an async view.");
 				assert.equal(oView._sProcessingMode, XMLProcessingMode.Sequential, "ProcessingMode 'Sequential' is set on " + "View:" + oView.getViewName());
-				assert.equal(this.loadTemplatePromiseSpy.callCount, 1, "loadTemplatePromiseSpy should be called once");
+				assert.equal(this.loadTemplatePromiseSpy.callCount, 3, "loadTemplatePromiseSpy should be called once");
 
 				var oXMLView = oView.byId("xmlViewInsideFragment");
 				assert.ok(oXMLView, "View is loaded.");
-				assert.notOk(oXMLView.oAsyncState, "View is a sync view.");
+				assert.ok(oXMLView.oAsyncState, "View is an async view.");
 				assert.equal(oXMLView._sProcessingMode, XMLProcessingMode.Sequential, "ProcessingMode 'Sequential' is set on " + "View:" + oXMLView.getViewName());
 
 				assert.deepEqual(Component.getOwnerComponentFor(oXMLView), oComponent, "Should be the same owner component.");

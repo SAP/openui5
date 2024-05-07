@@ -1,0 +1,5 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<Input id="Input_From_EP" value="Input from EP Fragment: EP_In_Product_Table_Cell_Found.fragment.xml" />
+</core:FragmentDefinition>

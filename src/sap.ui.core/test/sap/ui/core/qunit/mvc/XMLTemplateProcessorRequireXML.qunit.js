@@ -461,20 +461,20 @@ sap.ui.define([
 			async: {
 				create: createView,
 				spies: {
-					_create: [View, "_create"],
+					create: [View, "create"],
 					warning: [Log, "warning"]
 				}
 			}
 		},
 		future: false,
-		runAssertions: function (oView, mSpies, assert, bAsync) {
-			var oCreateSpy = mSpies._create;
+		runAssertions: async function (oView, mSpies, assert, bAsync) {
+			var oCreateSpy = mSpies.create;
 			var oWarningSpy = mSpies.warning;
-			assert.ok(oCreateSpy.calledOnce, "generic create is called for the nested view");
+			assert.ok(oCreateSpy.calledTwice, "public create is called for the nested view");
 
-			return oCreateSpy.getCall(0).returnValue.loaded().then(function() {
-				return assert.ok(oWarningSpy.calledWith(sinon.match(/Event handler name 'Box.show\('MessageBox'\)' could not be resolved to an event handler function/)));
-			});
+			await oCreateSpy.getCall(0).returnValue;
+
+			assert.ok(oWarningSpy.calledWith(sinon.match(/Event handler name 'Box.show\('MessageBox'\)' could not be resolved to an event handler function/)));
 		}
 	}, {
 		testDescription: "Parsing core:require in XMLView with nested view and the require context isn't forwarded to nested view (future=true)",

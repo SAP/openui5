@@ -79,6 +79,11 @@
 		</ColumnListItem>
 	</core:ExtensionPoint>
 
+	<!-- Nested View in the middle -->
+	<Panel id="Panel_With_Nested_View">
+		<mvc:XMLView id="EPs_In_Nested_View" async="true" viewName="testdata.customizing.customer.ext.EPinNestedView" />
+	</Panel>
+
 	<!-- EP contains EP -->
 	<core:ExtensionPoint name="EPinEPRoot">
 		<Button id="ButtonInRootEP"></Button>

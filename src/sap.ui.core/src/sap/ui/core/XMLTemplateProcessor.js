@@ -1673,10 +1673,9 @@ function(
 
 					mSettings.type = oClass._sType || sType;
 
-					// If the view is owned by an async-component we can propagate the asynchronous creation behavior to the nested views
-					if (bIsAsyncComponent && bAsync) {
+					if (bAsync) {
 						// legacy check: async=false is not supported with an async-component
-						if (mSettings.async === false) {
+						if (bIsAsyncComponent && mSettings.async === false) {
 							throw new Error(
 								"A nested view contained in a Component implementing 'sap.ui.core.IAsyncContentCreation' is processed asynchronously by default and cannot be processed synchronously.\n" +
 								"Affected Component '" + oOwnerComponent.getMetadata().getComponentName() + "' and View '" + mSettings.viewName + "'."
@@ -1692,20 +1691,9 @@ function(
 							mSettings.processingMode = oView._sProcessingMode;
 						}
 
-						var sViewClass = View._getViewClassName(mSettings, true /* skip error log*/);
-						if (bAsync && sViewClass) {
-							pInstanceCreated = new Promise(function(resolve, reject) {
-								sap.ui.require([sViewClass], resolve, reject);
-							}).then(function() {
-								return scopedRunWithOwner(function() {
-									return View._create(mSettings);
-								});
-							});
-						} else {
-							vNewControlInstance = scopedRunWithOwner(function() {
-								return View._create(mSettings);
-							});
-						}
+						vNewControlInstance = scopedRunWithOwner(function() {
+							return View._create(mSettings);
+						});
 					}
 				} else if (oClass.getMetadata().isA("sap.ui.core.Fragment") && bAsync) {
 

@@ -43,12 +43,23 @@ sap.ui.define(['sap/ui/core/Fragment'],
 				}
 			};
 			var fnInsert = function(aControls) {
-				aControls.forEach(function(oControl, i) {
-				   oExtensionPoint.targetControl.insertAggregation(oExtensionPoint.aggregationName, oControl, oExtensionPoint.index + i);
-				});
+				const oAggregationInfo = oExtensionPoint.targetControl.getMetadata().getAggregation(oExtensionPoint.aggregationName);
+
+				// 0..1 Aggregations ("multiple: false") must be set via setAggregation()
+				// 0..n Aggergations must be changed with insertAggregation
+				if (oAggregationInfo.multiple) {
+					aControls.forEach(function(oControl, i) {
+						oExtensionPoint.targetControl.insertAggregation(oExtensionPoint.aggregationName, oControl, oExtensionPoint.index + i);
+					});
+				} else {
+					if (aControls.length > 1) {
+						throw new Error("Your test tries to add multiple Controls to an aggregation marked as 'multiple: false'.");
+					}
+					oExtensionPoint.targetControl.setAggregation(oExtensionPoint.aggregationName, aControls[0]);
+				}
 			};
 
-			if (["EP1", "EP99"].indexOf(oExtensionPoint.name) >= 0) {
+			if (["EP1", "EP99", "EP_In_Product_Table_Column", "EP_In_Product_Table_Cell_Found"].indexOf(oExtensionPoint.name) >= 0) {
 
 				if (oExtensionPoint.name == "EP1") {
 					pLoaded =  Fragment.load({
@@ -60,6 +71,18 @@ sap.ui.define(['sap/ui/core/Fragment'],
 						id: oExtensionPoint.view.createId("ep99"),
 						name: "testdata.customizing.customer.ext.EP99"
 					});
+				} else if (oExtensionPoint.name === "EP_In_Product_Table_Column") {
+					// resolves to a sap.m.Text control for the sap.m.Column's header aggregation
+					pLoaded = Fragment.load({
+						id: oExtensionPoint.view.createId("column_header_fragment"),
+						name: "testdata.customizing.customer.ext.EP_In_Product_Table_Column"
+					});
+				} else if (oExtensionPoint.name === "EP_In_Product_Table_Cell_Found") {
+					pLoaded =
+						Fragment.load({
+							id: oExtensionPoint.view.createId("column_list_item_fragment"),
+							name: "testdata.customizing.customer.ext.EP_In_Product_Table_Cell_Found"
+						});
 				}
 
 				/**
