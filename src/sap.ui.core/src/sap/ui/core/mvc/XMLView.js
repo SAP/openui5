@@ -63,6 +63,7 @@ sap.ui.define([
 	 * @extends sap.ui.core.Control
 	 * @alias sap.ui.core.mvc.XMLAfterRenderingNotifier
 	 * @private
+	 * @deprecated since 1.120 because the support of HTML and SVG tags is deprecated
 	 */
 	var XMLAfterRenderingNotifier = Control.extend("sap.ui.core.mvc.XMLAfterRenderingNotifier", {
 		metadata: {
@@ -375,6 +376,12 @@ sap.ui.define([
 		}
 	}
 
+	/**
+	 * Set the notifier for reacting to setAfterRendering
+	 *
+	 * @param {sap.ui.core.mvc.XMLView} oView The view itself
+	 * @deprecated since 1.120 because the support of HTML and SVG tags is deprecated
+	 */
 	function setAfterRenderingNotifier(oView) {
 		// Delegate for after rendering notification before onAfterRendering of child controls
 		oView.oAfterRenderingNotifier = new XMLAfterRenderingNotifier();
@@ -566,14 +573,24 @@ sap.ui.define([
 				// when used as fragment: prevent connection to controller, only top level XMLView must connect
 				delete mSettings.controller;
 			}
+			/**
+			 * @ui5-transform-hint replace-local false
+			 */
+			const bSupportHTMLAndSVG = true;
 			// vSetResourceModel is a promise if ResourceModel is created async
 			var vSetResourceModel = setResourceModel(that, mSettings);
 			if (vSetResourceModel instanceof Promise) {
-				return vSetResourceModel.then(function() {
-					setAfterRenderingNotifier(that);
-				});
+				if (bSupportHTMLAndSVG) {
+					return vSetResourceModel.then(function() {
+						setAfterRenderingNotifier(that);
+					});
+				} else {
+					return vSetResourceModel;
+				}
 			}
-			setAfterRenderingNotifier(that);
+			if (bSupportHTMLAndSVG) {
+				setAfterRenderingNotifier(that);
+			}
 		}
 
 		function runViewxmlPreprocessor(xContent, bAsync) {
@@ -743,6 +760,8 @@ sap.ui.define([
 	 * If the HTML doesn't contain own content, it tries to reproduce existing content
 	 * This is executed before the onAfterRendering of the child controls, to ensure that
 	 * the HTML is already at its final position, before additional operations are executed.
+	 *
+	 * @deprecated since 1.120 because the support of HTML and SVG tags is deprecated
 	 */
 	XMLView.prototype.onAfterRenderingBeforeChildren = function() {
 
