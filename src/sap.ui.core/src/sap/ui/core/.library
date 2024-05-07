@@ -272,7 +272,7 @@
             <copyright>Google Inc.</copyright>
             <pattern>sap/ui/thirdparty/caja-html-sanitizer.js</pattern>
         </lib>
-        <lib name="cldr" displayName="Unicode Common Locale Data Repository" npmName="cldr-core" version="44" hash="132467204ffa486e82a48a3a0e51f5b4" homepage="http://cldr.unicode.org/" id="73555000106100020909">
+        <lib name="cldr" displayName="Unicode Common Locale Data Repository" npmName="cldr-core" version="44" hash="06472d2307e74ae4abc124190d5d6e99" homepage="http://cldr.unicode.org/" id="73555000106100020909">
             <license url="http://www.unicode.org/copyright.html" type="Unicode-DFS-2015" />
             <copyright>1991-2023 Unicode, Inc.</copyright>
             <pattern>sap/ui/core/cldr/*</pattern>
