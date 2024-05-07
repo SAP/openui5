@@ -1939,5 +1939,15 @@
         "text": " sap.m.RadioButtonGroup: There is no error when destroying and adding radio buttons on select"
       }
     ]
+  },
+  "1.96.30": {
+    "date": "May 2024",
+    "notes": [
+      {
+        "id": "8fc927448a9d7ed47a87f3c4d8ed2261985eeca2",
+        "type": "FIX",
+        "text": " sap.m.Input: Prevent value DOM update when password type is used"
+      }
+    ]
   }
 }
