@@ -20,18 +20,59 @@ sap.ui.define([
 
 	let bFuture = bConfiguredFuture;
 
-	function throws(sLevel, sMessage, ...args) {
+	/**
+	 *
+	 * @param {string} sLevel The log level (e.g., 'info', 'warning', 'error').
+	 * @param {string} sMessage The main log message.
+	 * @param {object} [mOptions] An object containing further log message details.
+	 * @param {object} [mOptions.suffix] Additional details relevant for logging only, appended to the main log message.
+	 * @param {object} [mOptions.cause] The original error instance causing the error, used for rethrowing.
+	 * @param {...any} args Additional arguments to be logged.
+	 * @throws {Error} in 'future' mode
+	 * @returns {void}
+	 */
+	function throws(sLevel, sMessage, mOptions, ...args) {
 		if (bFuture) {
-			throw new Error(sMessage);
+			throw new Error(sMessage, { cause: mOptions?.cause });
 		}
+
+		if (mOptions) {
+			if (mOptions.suffix) {
+				sMessage += " " + mOptions.suffix;
+			} else {
+				args.unshift(mOptions);
+			}
+		}
+
 		Log[sLevel]("[FUTURE FATAL] " + sMessage, ...args);
 	}
 
-	function reject(resolve, reject, sLevel, sMessage, ...args) {
+	/**
+ 	 *
+ 	 * @param {function} resolve The resolve function of the Promise.
+ 	 * @param {function} reject The reject function of the Promise.
+ 	 * @param {string} sLevel The log level (e.g., 'info', 'warning', 'error').
+ 	 * @param {string} sMessage The main log message.
+ 	 * @param {object} [mOptions] An object containing further log message details.
+ 	 * @param {object} [mOptions.suffix] Additional details relevant for logging only, appended to the main log message.
+	 * @param {object} [mOptions.cause] The original error instance causing the error, used for rethrowing.
+ 	 * @param {...any} args Additional arguments to be logged.
+ 	 * @returns {void}
+ 	 */
+	function reject(resolve, reject, sLevel, sMessage, mOptions, ...args) {
 		if (bFuture) {
-			reject(new Error(sMessage));
+			reject(new Error(sMessage, { cause: mOptions?.cause }));
 			return;
 		}
+
+		if (mOptions) {
+			if (mOptions.suffix) {
+				sMessage += " " + mOptions.suffix;
+			} else {
+				args.unshift(mOptions);
+			}
+		}
+
 		resolve();
 		Log[sLevel]("[FUTURE FATAL] " + sMessage, ...args);
 	}
