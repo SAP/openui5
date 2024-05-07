@@ -2111,7 +2111,7 @@ function(
 	// this gets called when the focus is on the item or its content
 	ListBase.prototype.onItemFocusIn = function(oItem, oFocusedControl, oEvent) {
 		// focus and scroll handling for sticky elements
-		this._handleStickyItemFocus(oItem.getDomRef());
+		this._handleTargetItemFocus(oEvent.target);
 
 		if (oItem !== oFocusedControl || oEvent.isMarked("contentAnnouncementGenerated") ||
 			!ControlBehavior.isAccessibilityEnabled()) {
@@ -2705,8 +2705,8 @@ function(
 		return this._iStickyValue;
 	};
 
-	// gets the sticky header position and scrolls the page so that the item is completely visible when focused
-	ListBase.prototype._handleStickyItemFocus = function(oItemDomRef) {
+	// gets the sticky header position and scrolls the page so that the targeted item is completely visible when focused
+	ListBase.prototype._handleTargetItemFocus = function(oTargetItemDomRef) {
 		if (!this._iStickyValue) {
 			return;
 		}
@@ -2751,10 +2751,10 @@ function(
 			}
 		}
 
-		var iItemTop = Math.round(oItemDomRef.getBoundingClientRect().top);
+		var iItemTop = Math.round(oTargetItemDomRef.getBoundingClientRect().top);
 		if (iTHRectBottom > iItemTop || iInfoTBarContainerRectBottom > iItemTop || iHeaderToolbarRectBottom > iItemTop) {
 			window.requestAnimationFrame(function () {
-				oScrollDelegate.scrollToElement(oItemDomRef, 0, [0, -iTHRectHeight - iInfoTBarContainerRectHeight - iHeaderToolbarRectHeight - iStickyFocusOffset], true);
+				oScrollDelegate.scrollToElement(oTargetItemDomRef, 0, [0, -iTHRectHeight - iInfoTBarContainerRectHeight - iHeaderToolbarRectHeight - iStickyFocusOffset], true);
 			});
 		}
 	};
