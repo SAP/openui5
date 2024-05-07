@@ -114,10 +114,13 @@ sap.ui.define([
 			this.initMessagePopover(sTreeTable === "N" ? "table" : "treeTable");
 		},
 
-		onMakeRoot : async function (oEvent) {
+		onMakeRoot : async function (oEvent, vNextSibling) {
 			try {
 				this.getView().setBusy(true);
-				await oEvent.getSource().getBindingContext().move();
+				await oEvent.getSource().getBindingContext().move({
+					nextSibling : vNextSibling,
+					parent : null
+				});
 			} catch (oError) {
 				MessageBox.alert(oError.message, {icon : MessageBox.Icon.ERROR, title : "Error"});
 			} finally {
@@ -125,8 +128,9 @@ sap.ui.define([
 			}
 		},
 
-		onMove : function (oEvent) {
-			this._bInTreeTable = false;
+		onMove : function (oEvent, bInTreeTable, vNextSibling) {
+			this._bInTreeTable = bInTreeTable;
+			this._vNextSibling = vNextSibling;
 			this._oNode = oEvent.getSource().getBindingContext();
 			const oSelectDialog = this.byId("moveDialog");
 			oSelectDialog.setBindingContext(this._oNode);
@@ -150,7 +154,17 @@ sap.ui.define([
 					throw new Error(`Parent ${sParentId} not yet loaded`);
 				}
 
-				await this._oNode.move({parent : oParent});
+				if (this._vNextSibling === "?") {
+					await this._oNode.move({
+						nextSibling : oParent,
+						parent : oParent.getParent()
+					});
+				} else {
+					await this._oNode.move({
+						nextSibling : this._vNextSibling,
+						parent : oParent
+					});
+				}
 
 				const oTable = this.byId(this._bInTreeTable ? "treeTable" : "table");
 				const iParentIndex = oParent.getIndex();
@@ -165,11 +179,6 @@ sap.ui.define([
 			} finally {
 				this.getView().setBusy(false);
 			}
-		},
-
-		onMoveInTreeTable : function (oEvent) {
-			this.onMove(oEvent);
-			this._bInTreeTable = true;
 		},
 
 		onNameChanged : function (oEvent) {
