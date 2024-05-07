@@ -78,18 +78,36 @@
 		</Column>
 		<Column width="4em">
 			<template>
-				<m:Button icon="sap-icon://move" id="move" press=".onMove" tooltip="Move"/>
+				<m:Button icon="sap-icon://move" press=".onMove" tooltip="Move To Parent..."/>
 			</template>
 		</Column>
 		<Column width="4em">
 			<template>
-				<m:Button id="delete" icon="sap-icon://delete" press=".onDelete" tooltip="Delete"/>
+				<m:Button icon="sap-icon://map" press=".onMove($event, false, '?')"
+					tooltip="Move Just Before Sibling..."/>
+			</template>
+		</Column>
+		<Column width="4em">
+			<template>
+				<m:Button icon="sap-icon://arrow-bottom" press=".onMove($event, false, null)"
+					tooltip="Move As Last Child Of..."/>
 			</template>
 		</Column>
 		<Column width="4em">
 			<template>
 				<m:Button enabled="{= %{@$ui5.node.level} > 1}" icon="sap-icon://back-to-top"
 					press=".onMakeRoot" tooltip="Make Root"/>
+			</template>
+		</Column>
+		<Column width="4em">
+			<template>
+				<m:Button icon="sap-icon://pull-down" press=".onMakeRoot($event, null)"
+					tooltip="Make Last Root"/>
+			</template>
+		</Column>
+		<Column width="4em">
+			<template>
+				<m:Button icon="sap-icon://delete" press=".onDelete" tooltip="Delete"/>
 			</template>
 		</Column>
 	</Table>
@@ -152,20 +170,37 @@
 		</Column>
 		<Column width="4em">
 			<template>
-				<m:Button icon="sap-icon://move" id="moveInTreeTable" press=".onMoveInTreeTable"
-					tooltip="Move"/>
+				<m:Button icon="sap-icon://move" press=".onMove($event, true)"
+					tooltip="Move To Parent..."/>
 			</template>
 		</Column>
 		<Column width="4em">
 			<template>
-				<m:Button id="deleteInTreeTable" icon="sap-icon://delete" press=".onDelete"
-					tooltip="Delete"/>
+				<m:Button icon="sap-icon://map" press=".onMove($event, true, '?')"
+					tooltip="Move Just Before Sibling..."/>
+			</template>
+		</Column>
+		<Column width="4em">
+			<template>
+				<m:Button icon="sap-icon://arrow-bottom" press=".onMove($event, true, null)"
+					tooltip="Move As Last Child Of..."/>
 			</template>
 		</Column>
 		<Column width="4em">
 			<template>
 				<m:Button enabled="{= %{@$ui5.node.level} > 1}" icon="sap-icon://back-to-top"
 					press=".onMakeRoot" tooltip="Make Root"/>
+			</template>
+		</Column>
+		<Column width="4em">
+			<template>
+				<m:Button icon="sap-icon://pull-down" press=".onMakeRoot($event, null)"
+					tooltip="Make Last Root"/>
+			</template>
+		</Column>
+		<Column width="4em">
+			<template>
+				<m:Button icon="sap-icon://delete" press=".onDelete" tooltip="Delete"/>
 			</template>
 		</Column>
 	</TreeTable>
@@ -180,8 +215,8 @@
 
 	<m:FormattedText htmlText="&lt;em>Available URL parameters:&lt;/em>
 		&lt;ul>
-			&lt;li> &lt;code>expandTo&lt;/code> Either * for 'expand all' or a number; default 3
+			&lt;li> &lt;code>expandTo&lt;/code> Either * for &lt;em>expand all&lt;/em> or a number; default 3
+			&lt;li> &lt;code>threshold&lt;/code> A number; default 0
 			&lt;li> &lt;code>visibleRowCount&lt;/code> A number; default 5
-			&lt;li> &lt;code>TreeTable&lt;/code> 'Y' for yes, 'N' for no; default both tables
-			&lt;li> &lt;code>threshold&lt;/code> A number; default 0"/>
+			&lt;li> &lt;code>TreeTable&lt;/code> Y for yes, N for no; default is both tables"/>
 </mvc:View>

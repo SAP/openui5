@@ -33,6 +33,9 @@ sap.ui.define([
 					}, {
 						regExp : /^POST \/sap\/opu\/odata4\/IWBEP\/TEA\/default\/IWBEP\/TEA_BUSI\/0001\/EMPLOYEES$/,
 						response : {buildResponse : buildPostResponse}
+					}, {
+						regExp : /^POST \/sap\/opu\/odata4\/IWBEP\/TEA\/default\/IWBEP\/TEA_BUSI\/0001\/EMPLOYEES\('([^']*)'\)\/com\.sap\.gateway\.default\.iwbep\.tea_busi\.v0001\.__FAKE__AcChangeNextSibling$/,
+						response : {buildResponse : buildChangeNextSiblingResponse}
 					}],
 					sSourceBase : "sap/ui/core/sample/odata/v4/RecursiveHierarchy/data"
 				});
@@ -232,6 +235,52 @@ sap.ui.define([
 		if (sId) {
 			adjustDescendantCount(sId, iDiff);
 		}
+	}
+
+	/**
+	 * Builds a response for any POST request on the "ChangeNextSibling" action.
+	 *
+	 * @param {string[]} aMatches - The matches against the RegExp
+	 * @param {object} _oResponse - Response object to fill
+	 * @param {object} oRequest - Request object to get POST body from
+	 */
+	function buildChangeNextSiblingResponse(aMatches, _oResponse, oRequest) {
+		const oNode = mNodeById[aMatches[1]];
+		const sParentId = oNode.MANAGER_ID;
+
+		// {"NextSibling" : {"ID" : "1"}}
+		const oBody = JSON.parse(oRequest.requestBody);
+		if (oBody.NextSibling === null) { // node becomes *last*
+			if (sParentId) { // make last child
+				const aChildren = mChildrenByParentId[sParentId];
+				if (aChildren.length > 1) {
+					aChildren.splice(aChildren.indexOf(oNode), 1);
+					aChildren.push(oNode);
+					const aSpliced
+						= aAllNodes.splice(aAllNodes.indexOf(oNode), oNode.DescendantCount + 1);
+					aAllNodes.splice(aAllNodes.indexOf(aChildren.at(-2)) + 1, 0, ...aSpliced);
+				} // else: no change
+			} else { // make last root
+				const aSpliced
+					= aAllNodes.splice(aAllNodes.indexOf(oNode), oNode.DescendantCount + 1);
+				aAllNodes.push(...aSpliced);
+			}
+		} else { // next sibling is specified
+			const oNextSibling = mNodeById[oBody.NextSibling.ID];
+			if (oNextSibling.MANAGER_ID !== sParentId) {
+				throw new Error("Parent mismatch");
+			}
+			if (sParentId) { // move child inside mChildrenByParentId[...]
+				const aChildren = mChildrenByParentId[sParentId];
+				aChildren.splice(aChildren.indexOf(oNode), 1);
+				aChildren.splice(aChildren.indexOf(oNextSibling), 0, oNode);
+			}
+			// move root (or child inside aAllNodes)
+			const aSpliced = aAllNodes.splice(aAllNodes.indexOf(oNode), oNode.DescendantCount + 1);
+			aAllNodes.splice(aAllNodes.indexOf(oNextSibling), 0, ...aSpliced);
+		}
+
+		// no response required
 	}
 
 	/**
