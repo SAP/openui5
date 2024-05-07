@@ -35,11 +35,11 @@
 					</form:SimpleForm>
 				</content>
 			</Panel>
-			<t:TreeTable id="treetable" rowMode="Auto" selectionBehavior="Row"
+			<t:TreeTable ariaLabelledBy="treeTableTitle" id="treetable" rowMode="Auto" selectionBehavior="Row"
 				selectionMode="Single" rowSelectionChange="onRowSelection" threshold="10">
 				<t:extension>
 					<Toolbar>
-						<Title level="H1" text="Items" />
+						<Title id="treeTableTitle" level="H1" text="Items"/>
 						<ToolbarSpacer width="3em" />
 						<Button enabled="{ui>/rowSelected}" icon="sap-icon://add" press=".onCreate"
 							tooltip="Create Item" />
@@ -162,7 +162,8 @@
 							<Button press="onCloseMessageDetails" text="Close"
 								tooltip="Close the message details dialog" type="Emphasized" />
 						</buttons>
-						<form:SimpleForm editable="false" layout="ResponsiveGridLayout">
+						<form:SimpleForm ariaLabelledBy="messageDetails" editable="false"
+								layout="ResponsiveGridLayout">
 							<Label text="Message ID" />
 							<Text text="{messages>id}" />
 							<Label text="Type" />
