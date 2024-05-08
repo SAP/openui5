@@ -31,17 +31,6 @@
 	transform: rotate(90deg);
 }
 
-a.appTitle {
-	display: flex;
-	align-items: center;
-	margin: 0 0.25rem;
-	text-decoration: none;
-}
-
-a.appTitle.sapMTitle {
-	cursor: pointer;
-}
-
  .sapFGridContainer { /* in "Explore" section */
 	padding: 3rem;
 }
