@@ -51,6 +51,7 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer"], function
 		sAriaLabelledBy += ' ' + footerId;
 
 		rm.openStart('li', control)
+			.class('sapMLIBFocusable')
 			.class('sapMLIB')
 			.class('sapMNLIB')
 			.class('sapMNLI');

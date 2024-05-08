@@ -1,6 +1,7 @@
 /* global QUnit, sinon */
 
 sap.ui.define([
+	"sap/ui/qunit/QUnitUtils",
 	"sap/m/NotificationListItem",
 	"sap/m/NotificationListGroup",
 	"sap/m/OverflowToolbar",
@@ -14,6 +15,7 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/model/json/JSONModel"
 ], function(
+	QUnitUtils,
 	NotificationListItem,
 	NotificationListGroup,
 	OverflowToolbar,
@@ -411,6 +413,21 @@ sap.ui.define([
 			}
 		});
 		assert.strictEqual(item1.getDomRef(), document.activeElement, 'first item is focused');
+	});
+
+	QUnit.test('F2 navigation', function(assert) {
+		var item = this.notificationList.getItems()[0];
+
+		item.focus();
+		assert.strictEqual(item.getDomRef(), document.activeElement, 'first item is focused');
+
+		QUnitUtils.triggerEvent("keydown", document.activeElement, {code: "F2"});
+
+		assert.strictEqual(item._getOverflowToolbar().getContent()[0].getDomRef(), document.activeElement, 'button is focused');
+
+		QUnitUtils.triggerEvent("keydown", document.activeElement, {code: "F2"});
+
+		assert.strictEqual(item.getDomRef(), document.activeElement, 'first item is focused');
 	});
 
 	QUnit.test('navigation between the same elements on different rows - "show more"', function (assert) {

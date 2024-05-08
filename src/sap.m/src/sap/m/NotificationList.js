@@ -42,6 +42,8 @@ function(
 
 	NotificationList.prototype.onItemFocusIn = function() { };
 
+	NotificationList.prototype.onItemArrowUpDown = function(oListItem, oEvent) { };
+
 	NotificationList.prototype._startItemNavigation = function () {
 		ListBase.prototype._startItemNavigation.call(this);
 
@@ -51,18 +53,13 @@ function(
 	};
 
 	NotificationList.prototype.setNavigationItems = function(oItemNavigation, oNavigationRoot) {
-		var aItems = [],
-			aGroupItems = oNavigationRoot.querySelectorAll(":scope > .sapMNLGroup"),
-			aListItems = oNavigationRoot.querySelectorAll(":scope > .sapMNLI");
+		var aItems = oNavigationRoot.querySelectorAll(".sapMLIB");
 
-		aGroupItems.forEach(function (oGroupItem) {
-			aItems.push(oGroupItem);
-			aItems = aItems.concat(Array.from(oGroupItem.querySelectorAll(".sapMNLI")));
-		});
+		oItemNavigation.setItemDomRefs(Array.from(aItems));
 
-		aItems = aItems.concat(Array.from(aListItems));
-
-		oItemNavigation.setItemDomRefs(aItems);
+		if (oItemNavigation.getFocusedIndex() === -1) {
+			oItemNavigation.setFocusedIndex(0);
+		}
 	};
 
 	return NotificationList;
