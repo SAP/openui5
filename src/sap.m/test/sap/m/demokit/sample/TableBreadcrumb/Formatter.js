@@ -1,4 +1,4 @@
-sap.ui.define("sap.m.sample.TableBreadcrumb.Formatter", [], function() {
+sap.ui.define([], function() {
 	"use strict";
 
 	var Formatter = {
@@ -52,11 +52,6 @@ sap.ui.define("sap.m.sample.TableBreadcrumb.Formatter", [], function() {
 			return aProductsSelected.map(function(mProduct) {
 				return mProduct.ProductId;
 			}).indexOf(sProductId) != -1;
-		},
-
-		// Returns whether there are any products selected at all
-		isAnyProductSelected : function () {
-			return Formatter.listProductsSelected(this).length > 0;
 		},
 
 		// Returns a list item type depending on whether we're on

@@ -170,6 +170,11 @@ sap.ui.define([
 				var sNewPath = [sPath, this._nextCrumb(sCurrentCrumb)].join("/");
 				this._setAggregation(sNewPath);
 			}
+		},
+
+		// Returns whether there are any products selected at all
+		isAnyProductSelected : function () {
+			return Formatter.listProductsSelected(this.getView()).length > 0;
 		}
 
 	});
