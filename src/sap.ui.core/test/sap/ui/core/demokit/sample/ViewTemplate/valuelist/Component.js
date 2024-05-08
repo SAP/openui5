@@ -54,6 +54,7 @@ sap.ui.define([
 						oRequest.path = /\$metadata$/;
 						return true;
 					}
+					return false;
 				});
 				this.aMockServers[0].start();
 
@@ -75,8 +76,7 @@ sap.ui.define([
 					}].map(function (oMockData) {
 						return {
 							method : "GET",
-							//TODO: have MockServer fixed and pass just the URL!
-							path :  new RegExp(MockServer.prototype
+							path : new RegExp(MockServer.prototype
 								._escapeStringForRegExp(sServiceUri + "$metadata?sap-value-list="
 									+ oMockData.valueList)),
 							response : function (oXHR) {
