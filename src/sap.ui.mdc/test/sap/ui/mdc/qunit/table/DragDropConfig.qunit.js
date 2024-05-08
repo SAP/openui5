@@ -5,9 +5,8 @@ sap.ui.define([
 	"sap/ui/mdc/table/DragDropConfig",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/qunit/utils/nextUIUpdate",
-	"sap/ui/thirdparty/jquery",
 	"./QUnitUtils"
-], function(Text, MDCTable, MDCColumn, DragDropConfig, JSONModel, nextUIUpdate, jQuery, MDCTableQUnitUtils) {
+], function(Text, MDCTable, MDCColumn, DragDropConfig, JSONModel, nextUIUpdate, MDCTableQUnitUtils) {
 
 	"use strict";
 	/*global QUnit,sinon */
@@ -139,15 +138,15 @@ sap.ui.define([
 
 	QUnit.test("Events", function(assert) {
 
+		let oDragEvent;
 		const triggerEvent = (sEventType, oControl) => {
-			const oEvent = new Event(sEventType, {
+			oDragEvent = new Event(sEventType, {
 				bubbles: true,
 				cancelable: true
 			});
 
-			oEvent.dataTransfer = new window.DataTransfer();
-			oControl.getDomRef().dispatchEvent(oEvent);
-			return oEvent;
+			oDragEvent.dataTransfer = new window.DataTransfer();
+			oControl.getDomRef().dispatchEvent(oDragEvent);
 		};
 
 		const testEvents = (aRows) => {
@@ -158,6 +157,8 @@ sap.ui.define([
 			const fnPreventDefaultSpy = sinon.spy(window.Event.prototype, "preventDefault");
 			this.oDragDropConfig.attachEventOnce("dragStart", (oEvent) => {
 				assert.equal(oEvent.getParameter("bindingContext"), this.oDraggedRow.getBindingContext(), "dragStart event bindingContext parameter is correct");
+				assert.equal(oEvent.getParameter("browserEvent"), oDragEvent, "browserEvent parameter of dragStart event is provided");
+				assert.equal(oEvent.getParameter("browserEvent").type, oEvent.getId().toLowerCase(), "event types are matched");
 				oEvent.preventDefault();
 			});
 			triggerEvent("dragstart", this.oDraggedRow);
@@ -171,6 +172,8 @@ sap.ui.define([
 
 			this.oDragDropConfig.attachEventOnce("dragEnter", (oEvent) => {
 				assert.equal(oEvent.getParameter("bindingContext"), this.oInvalidDroppedRow.getBindingContext(), "dragEnter event bindingContext parameter is correct");
+				assert.equal(oEvent.getParameter("browserEvent"), oDragEvent, "browserEvent parameter of dragEnter event is provided");
+				assert.equal(oEvent.getParameter("browserEvent").type, oEvent.getId().toLowerCase(), "event types are matched");
 				oEvent.preventDefault();
 			});
 			triggerEvent("dragenter", this.oInvalidDroppedRow);
@@ -189,14 +192,20 @@ sap.ui.define([
 				assert.equal(oEvent.getParameter("bindingContext"), this.oDroppedRow.getBindingContext(), "dragOver event bindingContext parameter is correct");
 				assert.equal(oEvent.getParameter("dragSource"), this.oDraggedRow.getBindingContext(), "dragOver event dragSource parameter is correct");
 				assert.equal(oEvent.getParameter("dropPosition"), "On", "dragOver event dropPosition parameter is correct");
+				assert.equal(oEvent.getParameter("browserEvent"), oDragEvent, "browserEvent parameter of dragOver event is provided");
+				assert.equal(oEvent.getParameter("browserEvent").type, oEvent.getId().toLowerCase(), "event types are matched");
 			});
 			this.oDragDropConfig.attachDrop((oEvent) => {
 				assert.equal(oEvent.getParameter("bindingContext"), this.oDroppedRow.getBindingContext(), "drop event bindingContext parameter is correct");
 				assert.equal(oEvent.getParameter("dragSource"), this.oDraggedRow.getBindingContext(), "drop event dragSource parameter is correct");
 				assert.equal(oEvent.getParameter("dropPosition"), "On", "drop event dropPosition parameter is correct");
+				assert.equal(oEvent.getParameter("browserEvent"), oDragEvent, "browserEvent parameter of drop event is provided");
+				assert.equal(oEvent.getParameter("browserEvent").type, oEvent.getId().toLowerCase(), "event types are matched");
 			});
 			this.oDragDropConfig.attachDragEnd((oEvent) => {
 				assert.equal(oEvent.getParameter("bindingContext"), this.oDraggedRow.getBindingContext(), "dragEnd event bindingContext parameter is correct");
+				assert.equal(oEvent.getParameter("browserEvent"), oDragEvent, "browserEvent parameter of dragEnd event is provided");
+				assert.equal(oEvent.getParameter("browserEvent").type, oEvent.getId().toLowerCase(), "event types are matched");
 			});
 
 			this.oDragDropConfig.setDraggable(true);
