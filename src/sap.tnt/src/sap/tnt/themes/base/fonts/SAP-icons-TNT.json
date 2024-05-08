@@ -253,8 +253,8 @@
 	"any": "0xe101",
 	"integer": "0xe102",
 	"float": "0xe103",
-	"build-apps": "0xe104",
-	"build-work-zone": "0xe105",
+	"build-work-zone": "0xe104",
+	"build-apps": "0xe105",
 	"build-process-automation": "0xe106",
 	"indicator": "0xe107",
 	"indicator-active": "0xe108",
@@ -264,6 +264,9 @@
 	"ai-2": "0xe10C",
 	"bound-validation-rule": "0xe10D",
 	"fiori-application": "0xe10E",
-	"build-code": "0xe10F"
+	"build-code": "0xe10F",
+	"business-application-studio": "0xe110",
+	"clone-from-git": "0xe111",
+	"business-accelerator": "0xe112"
  }
 }

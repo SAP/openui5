@@ -620,5 +620,31 @@
 			"bas",
 			"code"
 		]
+	},
+	"business-application-studio": {
+		"tags": [
+			"bas",
+			"dev-space-manager",
+			"code",
+			"developer",
+			"pro-code",
+			"pro-developer",
+			"SAP-build"
+		]
+	},
+	"clone-from-git": {
+		"tags": [
+			"clone-project",
+			"clone",
+			"remote-repository",
+			"build-code",
+			"code",
+			"SAP-build",
+			"pro-developer",
+			"developer"
+		]
+	},
+	"business-accelerator": {
+		"tags": ["accelerator", "business-content", "business-accelerator"]
 	}
 }
