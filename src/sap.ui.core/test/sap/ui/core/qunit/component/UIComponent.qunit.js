@@ -1116,8 +1116,8 @@ sap.ui.define([
 					manifest: "json"
 				},
 				constructor: function() {
-					assert.ok(logWarningSpy.calledWith(sinon.match(/Cannot load module 'sap\/ui\/model\/odata\/ODataModelNotExists'. This will most probably cause an error once the module is used later on./)), "Model not found");
-					assert.ok(logWarningSpy.calledWith(sinon.match(/Cannot load module 'someRouterNotExists'. This will most probably cause an error once the module is used later on./)), "Router not found");
+					assert.ok(logWarningSpy.calledWith(sinon.match(/Cannot load module 'sap\/ui\/model\/odata\/ODataModelNotExists'./)), "Model not found");
+					assert.ok(logWarningSpy.calledWith(sinon.match(/Cannot load module 'someRouterNotExists'./)), "Router not found");
 					UIComponent.apply(this, arguments);
 				}
 			});
@@ -1165,7 +1165,7 @@ sap.ui.define([
 		}).catch((err) => {
 			assert.equal(
 				err.message,
-				"Cannot load module 'sap/ui/model/odata/ODataModelNotExists'. This will most probably cause an error once the module is used later on.",
+				"Cannot load module 'sap/ui/model/odata/ODataModelNotExists'.",
 				"Component creation rejects with correct error"
 			);
 			future.active = undefined;
@@ -1213,7 +1213,7 @@ sap.ui.define([
 		}).catch((err) => {
 			assert.equal(
 				err.message,
-				"Cannot load module 'someRouterNotExists'. This will most probably cause an error once the module is used later on.",
+				"Cannot load module 'someRouterNotExists'.",
 				"Component creation rejects with correct error"
 			);
 			future.active = undefined;

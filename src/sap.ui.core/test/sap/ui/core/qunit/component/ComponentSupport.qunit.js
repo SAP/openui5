@@ -157,7 +157,7 @@ sap.ui.define([
 		oElement.setAttribute("data-unknown", "foo");
 
 		const expectedMessage =
-			"Property or event \"unknown\" will be ignored as it does not exist in sap.ui.core.ComponentContainer";
+			"Property or event \"unknown\" does not exist in sap.ui.core.ComponentContainer. It will be ignored";
 
 		ComponentSupport._parse(oElement);
 		assert.ok(
@@ -174,7 +174,7 @@ sap.ui.define([
 		oElement.setAttribute("data-unknown", "foo");
 
 		const expectedMessage =
-			"Property or event \"unknown\" will be ignored as it does not exist in sap.ui.core.ComponentContainer";
+			"Property or event \"unknown\" does not exist in sap.ui.core.ComponentContainer.";
 
 		assert.throws(() => {
 			ComponentSupport._parse(oElement);
