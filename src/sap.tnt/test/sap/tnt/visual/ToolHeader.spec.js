@@ -11,9 +11,9 @@ describe("sap.tnt.ToolHeader", function () {
 		var toolHeader = element(by.id("horizonToolHeader"));
 		expect(takeScreenshot(toolHeader)).toLookAs("1_1_horizon");
 
-		element(by.id('toggleCompact')).click();
+		element(by.id('compactMode')).click();
 		expect(takeScreenshot(toolHeader)).toLookAs("1_1_horizon_compact");
-		element(by.id('toggleCompact')).click();
+		element(by.id('compactMode')).click();
 	});
 
 	it("should see shellLike toolHeader (Fiori 3 theme)", function () {
@@ -57,7 +57,7 @@ describe("sap.tnt.ToolHeader", function () {
 	});
 
 	it("should see shellLike toolHeader Compact", function () {
-		element(by.id("toggleCompact")).click();
+		element(by.id("compactMode")).click();
 		var toolHeader = element(by.id("shellLike"));
 		expect(takeScreenshot(toolHeader)).toLookAs("9_shell_like_compact");
 	});
