@@ -118,6 +118,7 @@ sap.ui.define([
 	}
 
 	function createVariantEntry(aFlexObjects, oVariantInstance) {
+		var aReferencedVariantIds = getAllReferencedVariantIds(aFlexObjects, oVariantInstance);
 		return {
 			instance: oVariantInstance,
 			variantChanges: aFlexObjects.filter(function(oFlexObject) {
@@ -132,7 +133,6 @@ sap.ui.define([
 					return false;
 				}
 				var bOwnControlChange = oFlexObject.getVariantReference() === oVariantInstance.getId();
-				var aReferencedVariantIds = getAllReferencedVariantIds(aFlexObjects, oVariantInstance);
 				var bControlChangeOfReferencedVariant = aReferencedVariantIds.indexOf(oFlexObject.getVariantReference()) > -1;
 				var bLowerLayerChange = LayerUtils.compareAgainstCurrentLayer(oFlexObject.getLayer(), oVariantInstance.getLayer()) === -1;
 				return bOwnControlChange || bControlChangeOfReferencedVariant && bLowerLayerChange;
