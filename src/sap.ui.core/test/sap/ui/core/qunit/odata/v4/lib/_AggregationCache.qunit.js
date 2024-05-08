@@ -4969,6 +4969,83 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+	QUnit.test("create: createInPlace", function (assert) {
+		var that = this;
+
+		const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, {
+				$ParentNavigationProperty : "myParent",
+				createInPlace : true,
+				hierarchyQualifier : "X"
+			});
+		assert.strictEqual(oCache.bUnifiedCache, false);
+		oCache.aElements.$count = 0;
+		this.mock(oCache).expects("createGroupLevelCache").never();
+		this.mock(oCache.oTreeState).expects("expand").never();
+		const oEntityData = {
+				bar : "~bar~",
+				foo : "~foo~"
+			};
+		this.mock(_Helper).expects("addByPath")
+			.withExactArgs(sinon.match.same(oCache.mPostRequests), "~sTransientPredicate~",
+				sinon.match.same(oEntityData));
+		const oPostBody = {};
+		this.mock(oCache.oFirstLevel).expects("create")
+			.withExactArgs("~oGroupLock~", "~oPostPathPromise~", "~sPath~",
+				"~sTransientPredicate~", {bar : "~bar~", foo : "~foo~"}, false, "~fnErrorCallback~",
+				"~fnSubmitCallback~", sinon.match.func)
+			.callsFake(function () {
+				_Helper.setPrivateAnnotation(oEntityData, "postBody", oPostBody);
+				return new SyncPromise(function (resolve) {
+					setTimeout(function () {
+						that.mock(oCache.oTreeState).expects("setOutOfPlace").never();
+						that.mock(_Helper).expects("removeByPath")
+							.withExactArgs(sinon.match.same(oCache.mPostRequests),
+								"~sTransientPredicate~", sinon.match.same(oEntityData));
+						that.mock(oCache).expects("requestRank")
+							.withExactArgs(sinon.match.same(oEntityData), "~oGroupLock~")
+							.resolves("~iRank~");
+						that.mock(oCache).expects("requestNodeProperty").never();
+						that.mock(oCache.oFirstLevel).expects("removeElement")
+							.withExactArgs(0, "~sTransientPredicate~");
+						that.mock(oCache.oFirstLevel).expects("restoreElement").never();
+						that.mock(oCache).expects("shiftRank").never();
+						resolve();
+					});
+				});
+			});
+		this.mock(oCache).expects("addElements").never();
+		this.mock(oCache).expects("adjustDescendantCount").never();
+
+		// code under test
+		const oResult = oCache.create("~oGroupLock~", "~oPostPathPromise~", "~sPath~",
+			"~sTransientPredicate~", oEntityData, /*bAtEndOfCreated*/false, "~fnErrorCallback~",
+			"~fnSubmitCallback~");
+
+		assert.deepEqual(oPostBody, {});
+		assert.deepEqual(oEntityData, {
+			"@$ui5._" : {postBody : oPostBody},
+			"@$ui5.node.level" : 1,
+			bar : "~bar~",
+			foo : "~foo~"
+		});
+		assert.strictEqual(oCache.aElements.$count, 0);
+		assert.strictEqual(oResult.isPending(), true);
+
+		return oResult.then(function (oEntityData0) {
+			assert.strictEqual(oEntityData0, oEntityData);
+			assert.deepEqual(oEntityData, {
+				"@$ui5._" : {postBody : oPostBody},
+				"@$ui5.node.level" : 1,
+				bar : "~bar~",
+				foo : "~foo~"
+			});
+			assert.deepEqual(oCache.aElements.$byPredicate, {});
+			assert.deepEqual(oCache.aElements, []);
+			assert.strictEqual(oCache.aElements.$count, 0);
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("create: bAtEndOfCreated, collapsed parent", function (assert) {
 		const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, {
 				hierarchyQualifier : "X"
@@ -5218,7 +5295,7 @@ sap.ui.define([
 			.returns(mQueryOptions);
 		const oHelperMock = this.mock(_Helper);
 		oHelperMock.expects("getPrivateAnnotation").exactly(bRefreshNeeded ? 0 : 1)
-			.withExactArgs("~oElement~", "parent")
+			.withExactArgs("~oElement~", "parent", sinon.match.same(oCache.oFirstLevel))
 			.returns(oParentCache);
 		this.mock(oParentCache).expects("getQueryOptions")
 			.exactly(bDropFilter || bRefreshNeeded ? 0 : 1)

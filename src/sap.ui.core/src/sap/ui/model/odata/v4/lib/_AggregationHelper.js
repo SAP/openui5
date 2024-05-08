@@ -42,6 +42,7 @@ sap.ui.define([
 			+ "(?:/" + _Parser.sODataIdentifier + ")*"
 			+ ")(?:" + _Parser.sWhitespace + "+(?:asc|desc))?$"),
 		mRecursiveHierarchyType = {
+			createInPlace : true,
 			expandTo : /^[1-9]\d*$/, // a positive integer
 			hierarchyQualifier : "string",
 			search : "string"
@@ -634,6 +635,10 @@ sap.ui.define([
 					_AggregationHelper.checkTypeof(vValue[sKey], vType[bIsMap ? "*" : sKey],
 						sPath + "/" + sKey);
 				});
+			} else if (vType === true) {
+				if (vValue !== true) {
+					throw new Error("Not a true value for '" + sPath + "'");
+				}
 			} else if (typeof vValue !== vType) { // eslint-disable-line valid-typeof
 				throw new Error("Not a " + vType + " value for '" + sPath + "'");
 			}

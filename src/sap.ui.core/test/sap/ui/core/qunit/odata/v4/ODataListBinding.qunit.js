@@ -5886,6 +5886,78 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+	QUnit.test("create: recursive hierarchy, createInPlace", function (assert) {
+		const oBinding = this.bindList("/EMPLOYEES");
+		// Note: autoExpandSelect at model would be required for hierarchyQualifier, but that leads
+		// too far :-(
+		oBinding.mParameters.$$aggregation = {createInPlace : true, hierarchyQualifier : "X"};
+		oBinding.iMaxLength = 42;
+		this.mock(oBinding).expects("fetchResourcePath").withExactArgs()
+			.returns("~oCreatePathPromise~");
+		this.mock(oBinding).expects("getUpdateGroupId").withExactArgs()
+			.returns("~sGroupId~");
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs()
+			.returns("~sResolvedPath~");
+		this.mock(_Helper).expects("uid").withExactArgs().returns("id-1-23");
+		this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		this.mock(_Helper).expects("isDataAggregation")
+			.withExactArgs(sinon.match.same(oBinding.mParameters)).returns(false);
+		this.mock(oBinding).expects("isTransient").twice().withExactArgs().returns(false);
+		this.mock(oBinding).expects("checkDeepCreate").never();
+		this.mock(oBinding).expects("isRelative").never();
+		this.mock(_Helper).expects("publicClone")
+			.withExactArgs(undefined, true).returns("~oEntityData~");
+		this.mock(oBinding).expects("lockGroup")
+			.withExactArgs("~sGroupId~", true, true, sinon.match.func).returns("~oGroupLock~");
+		const oContext = {
+			destroy : mustBeMocked,
+			fetchValue : mustBeMocked,
+			setSelected : mustBeMocked
+		};
+		const oCreatePromise = new SyncPromise((resolve) => {
+			setTimeout(() => {
+				this.mock(_Helper).expects("getPrivateAnnotation")
+					.withExactArgs("~oCreatedEntity~", "predicate")
+					.returns("~sPredicate~");
+				this.mock(oBinding).expects("adjustPredicate")
+					.withExactArgs("($uid=id-1-23)", "~sPredicate~", sinon.match.same(oContext));
+				this.mock(oBinding).expects("fireEvent")
+					.withExactArgs("createCompleted",
+						{context : sinon.match.same(oContext), success : true});
+				this.mock(oContext).expects("destroy").withExactArgs();
+
+				resolve("~oCreatedEntity~");
+			}, 0);
+		});
+		this.mock(oBinding).expects("createInCache")
+			.withExactArgs("~oGroupLock~", "~oCreatePathPromise~", "~sResolvedPath~",
+				sinon.match(rTransientPredicate), "~oEntityData~",
+				false, sinon.match.func, sinon.match.func)
+			.returns(oCreatePromise);
+		this.mock(Context).expects("create")
+			.withExactArgs(sinon.match.same(this.oModel), sinon.match.same(oBinding),
+				"~sResolvedPath~($uid=id-1-23)", /*iIndex*/undefined,
+				sinon.match.instanceOf(SyncPromise), undefined)
+			.returns(oContext);
+		this.mock(oBinding.oHeaderContext).expects("isSelected")
+			.withExactArgs().returns("~selected~");
+		this.mock(oContext).expects("setSelected").withExactArgs("~selected~");
+		this.mock(oContext).expects("fetchValue").never();
+		this.mock(oBinding).expects("_fireChange").never();
+
+		// code under test
+		assert.strictEqual(oBinding.create(/*oInitialData*/ undefined, true), oContext);
+
+		assert.strictEqual(oBinding.iActiveContexts, 0, "unchanged");
+		assert.strictEqual(oBinding.iCreatedContexts, 0, "unchanged");
+		assert.strictEqual(oBinding.iMaxLength, 42, "unchanged");
+		assert.strictEqual(oBinding.bFirstCreateAtEnd, false);
+		assert.deepEqual(oBinding.aContexts, []);
+
+		return oCreatePromise;
+	});
+
+	//*********************************************************************************************
 	QUnit.test("create and delete with bAtEnd varying", function () {
 		var oBinding = this.bindList("/EMPLOYEES"),
 			oBindingMock = this.mock(oBinding),

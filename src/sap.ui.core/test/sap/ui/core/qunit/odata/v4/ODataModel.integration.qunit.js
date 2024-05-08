@@ -37798,6 +37798,120 @@ make root = ${bMakeRoot}`;
 	});
 
 	//*********************************************************************************************
+	// Scenario: A hierarchy uses "$$aggregation.createInPlace". In this mode new nodes are not part
+	// of the hierarchy as long as they are transient.
+	// Create a node, but because of a filter this node doesn't become part of the hierarchy and is
+	// therefore not displayed.
+	// JIRA: CPOUI5ODATAV4-2560
+	QUnit.test("Recursive Hierarchy: createInPlace", async function (assert) {
+		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
+		const sSelect = "&$select=DrillState,ID,Name";
+		const sUrl = "EMPLOYEES"
+			+ "?$apply=ancestors($root/EMPLOYEES,OrgChart,ID,filter(Is_Manager),keep start)"
+			+ "/com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root/EMPLOYEES"
+			+ ",HierarchyQualifier='OrgChart',NodeProperty='ID',Levels=1)";
+		const sView = `
+<t:Table id="table" rows="{path : '/EMPLOYEES',
+		parameters : {
+			$$aggregation : {
+				createInPlace : true,
+				hierarchyQualifier : 'OrgChart'
+			},
+			$count : true,
+			$filter : 'Is_Manager'
+		}}" threshold="0" visibleRowCount="1">
+	<Text text="{= %{@$ui5.node.isExpanded} }"/>
+	<Text text="{= %{@$ui5.node.level} }"/>
+	<Text text="{ID}"/>
+	<Text text="{Name}"/>
+</t:Table>`;
+
+		// 1 Alpha
+		// 2 Beta
+		// (42 FilteredOut (created, but filtered out))
+		this.expectRequest("EMPLOYEES/$count?$filter=Is_Manager", 2)
+			.expectRequest(sUrl + sSelect + "&$count=true&$skip=0&$top=1", {
+				"@odata.count" : "2",
+				value : [{
+					DrillState : "leaf",
+					ID : "1",
+					Name : "Alpha"
+				}]
+			});
+
+		await this.createView(assert, sView, oModel);
+
+		const oTable = this.oView.byId("table");
+		checkTable("initial page", assert, oTable, [
+			"/EMPLOYEES('1')"
+		], [
+			[undefined, 1, "1", "Alpha"]
+		], 2);
+		const oListBinding = oTable.getBinding("rows");
+
+		this.expectRequest({
+				method : "POST",
+				url : "EMPLOYEES",
+				payload : {
+					Name : "FilteredOut"
+				}
+			}, {
+				ID : "42",
+				Name : "FilteredOut"
+			})
+			.expectRequest(sUrl + "&$filter=ID eq '42'&$select=LimitedRank", {
+				value : [] // filtered out
+			});
+
+		// code under test
+		const oFilteredOut = oListBinding.create({
+			Name : "FilteredOut"
+		}, /*bSkipRefresh*/true);
+
+		assert.strictEqual(oFilteredOut.getIndex(), undefined);
+		assert.strictEqual(oFilteredOut.isTransient(), true);
+		checkTable("while create FilteredOut is pending", assert, oTable, [
+			"/EMPLOYEES('1')"
+		], [
+			[undefined, 1, "1", "Alpha"]
+		], 2);
+		assert.strictEqual(oListBinding.getCount(), 2);
+
+		await Promise.all([
+			oFilteredOut.created(),
+			this.waitForChanges(assert, "create FilteredOut")
+		]);
+
+		assert.strictEqual(oFilteredOut.getIndex(), undefined, "not part of the hierarchy");
+		assert.strictEqual(oFilteredOut.isTransient(), undefined);
+		assert.strictEqual(oFilteredOut.getPath(), "/EMPLOYEES('42')");
+		assert.strictEqual(oFilteredOut.getBinding(), undefined, "FilteredOut is destroyed");
+		assert.throws(function () {
+			oFilteredOut.setKeepAlive(true);
+		}, "already destroyed");
+		checkTable("after create FilteredOut", assert, oTable, [
+			"/EMPLOYEES('1')"
+		], [
+			[undefined, 1, "1", "Alpha"]
+		], 2);
+		assert.strictEqual(oListBinding.getCount(), 2);
+
+		this.expectRequest(sUrl + sSelect + "&$skip=1&$top=1", {
+				value : [{
+					DrillState : "leaf",
+					ID : "2",
+					Name : "Beta"
+				}]
+			});
+
+		await this.checkAllContexts("after FilteredOut is destroyed", assert, oListBinding,
+			["@$ui5.node.isExpanded", "@$ui5.node.level", "ID", "Name"], [
+				[undefined, 1, "1", "Alpha"],
+				[undefined, 1, "2", "Beta"]
+			]);
+	});
+
+	//*********************************************************************************************
 	// Scenario: Show the first level of a recursive hierarchy ("Alpha", "Omega"), expand "Alpha".
 	// Scroll to "Delta". Request side effects for the list binding. The parent node will not
 	// anymore have a context in the list binding.

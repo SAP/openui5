@@ -777,7 +777,10 @@ sap.ui.define([
 	 * <code>bSkipRefresh</code> must be set, but both <code>bAtEnd</code> and
 	 * <code>bInactive</code> must not be set. No other creation or
 	 * {@link sap.ui.model.odata.v4.Context#move move} must be pending, and no other modification
-	 * (including collapse of some ancestor node) must happen while this creation is pending!
+	 * (including collapse of some ancestor node) must happen while this creation is pending! Since
+	 * 1.125.0, when using the <code>createInPlace</code> parameter (see {@link #setAggregation})
+	 * the new transient child is not shown. If the created child does not become part of the
+	 * hierarchy due to the search or filter criteria, the context is destroyed.
 	 *
 	 * @param {Object<any>} [oInitialData={}]
 	 *   The initial data for the created entity
@@ -842,6 +845,7 @@ sap.ui.define([
 		var oAggregation = this.mParameters.$$aggregation,
 			iChildIndex, // used only in case of recursive hierarchy
 			oContext,
+			bCreateInPlace = oAggregation?.createInPlace,
 			oCreatePathPromise = this.fetchResourcePath(),
 			oCreatePromise,
 			oEntityData,
@@ -954,6 +958,10 @@ sap.ui.define([
 				that.oModel.checkMessages();
 			}
 			that.fireEvent("createCompleted", {context : oContext, success : true});
+			if (bCreateInPlace) {
+				oContext.destroy();
+				return;
+			}
 			bDeepCreate = _Helper.getPrivateAnnotation(oCreatedEntity, "deepCreate");
 			_Helper.deletePrivateAnnotation(oCreatedEntity, "deepCreate");
 			sGroupId = that.getGroupId();
@@ -969,12 +977,17 @@ sap.ui.define([
 			throw oError;
 		});
 
-		oContext = Context.create(this.oModel, this, sTransientPath,
-			iChildIndex ?? -this.iCreatedContexts, oCreatePromise, bInactive);
+		const iIndex = bCreateInPlace ? undefined : iChildIndex ?? -this.iCreatedContexts;
+		oContext = Context.create(this.oModel, this, sTransientPath, iIndex, oCreatePromise,
+			bInactive);
 		oContext.setSelected(this.oHeaderContext.isSelected());
 		if (this.isTransient()) {
 			oContext.created().catch(this.oModel.getReporter());
 		}
+		if (bCreateInPlace) {
+			return oContext;
+		}
+
 		// to make sure that #fetchValue does not overtake #createInCache, avoid bCached flag!
 		oContext.fetchValue().then(function (oElement) {
 			if (oElement) {
@@ -4315,6 +4328,10 @@ sap.ui.define([
 	 *       there is only one, or <code>null</code> otherwise ("multi-unit situation"). (SQL
 	 *       suggestion: <code>CASE WHEN MIN(Unit) = MAX(Unit) THEN MIN(Unit) END</code>)
 	 *   </ul>
+	 * @param {boolean} [oAggregation.createInPlace]
+	 *   Since 1.125.0; whether created nodes are shown in place at the position specified by the
+	 *   service; only the value <code>true</code> is allowed. Otherwise, created nodes are
+	 *   displayed out of place as the first child of their parent.
 	 * @param {number} [oAggregation.expandTo=1]
 	 *   The number (as a positive integer) of different levels initially available without calling
 	 *   {@link sap.ui.model.odata.v4.Context#expand} (since 1.117.0), supported only if a
@@ -4348,8 +4365,9 @@ sap.ui.define([
 	 *   The qualifier for the pair of "Org.OData.Aggregation.V1.RecursiveHierarchy" and
 	 *   "com.sap.vocabularies.Hierarchy.v1.RecursiveHierarchy" annotations at this binding's
 	 *   entity type (since 1.117.0). If present, a recursive hierarchy without data aggregation is
-	 *   defined, and the only other supported properties are <code>expandTo</code> and
-	 *   <code>search</code>. A recursive hierarchy cannot be combined with:
+	 *   defined, and the only other supported properties are <code>createInPlace</code>,
+	 *   <code>expandTo</code>, and <code>search</code>. A recursive hierarchy cannot be combined
+	 *   with:
 	 *   <ul>
 	 *     <li> "$search",
 	 *     <li> the <code>vGroup</code> parameter of {@link sap.ui.model.Sorter},
