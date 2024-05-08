@@ -56,8 +56,7 @@
 		},
 		"rootView": {
 			"viewName": "sap.ui.core.sample.odata.types.v2.DateTimeOffset.DateTimeOffset",
-			"type": "XML",
-			"async": true
+			"type": "XML"
 		}
 	}
 }
