@@ -581,5 +581,21 @@
         "text": " sap.ui.model.analytics.AnalyticalBinding: handle properties of type Edm.time in grouping"
       }
     ]
+  },
+  "1.108.28": {
+    "date": "May 2024",
+    "notes": [
+      {
+        "id": "7822bd47a12b765270334a1311461ba653db70d6",
+        "type": "FIX",
+        "text": " sap.ui.model.analytics.AnalyticalBinding: sorting grouped columns when autoExpandMode = \"Sequential\"",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380000530"
+          }
+        ]
+      }
+    ]
   }
 }

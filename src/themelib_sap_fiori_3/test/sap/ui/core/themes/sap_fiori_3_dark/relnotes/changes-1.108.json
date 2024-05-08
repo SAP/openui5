@@ -191,5 +191,31 @@
         "text": " ColumnListItem: Adjust box-shadow in HCW theme"
       }
     ]
+  },
+  "1.108.28": {
+    "date": "May 2024",
+    "notes": [
+      {
+        "id": "fccf8185db274dbe00fec5bd6a63434c116ef6b2",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: Status with icon and text overflows correctly now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380122925"
+          }
+        ]
+      },
+      {
+        "id": "f6e2f11f439a63bebfcbe4aaf9aa1c83b308acaa",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: add styling for disabled calendar items"
+      },
+      {
+        "id": "584ba9f148bf013b8a9981899b1dd75a6079d998",
+        "type": "FIX",
+        "text": " @sapUiChartTargetColor correction for dark themes"
+      }
+    ]
   }
 }

@@ -268,5 +268,30 @@
         ]
       }
     ]
+  },
+  "1.108.28": {
+    "date": "May 2024",
+    "notes": [
+      {
+        "id": "55718a148cbc14a1b6fe82e4db92c5ace28f7879",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: add styling for disabled calendar items",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400004533342023"
+          },
+          {
+            "type": "BCP",
+            "reference": "2370019139"
+          }
+        ]
+      },
+      {
+        "id": "7552f8344489bb3320890f8c1c5c8a9365809572",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: adjust header buttons width"
+      }
+    ]
   }
 }

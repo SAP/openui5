@@ -489,5 +489,57 @@
         "text": " sap.m.CheckBox: Updated the line height"
       }
     ]
+  },
+  "1.108.28": {
+    "date": "May 2024",
+    "notes": [
+      {
+        "id": "fccf8185db274dbe00fec5bd6a63434c116ef6b2",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: Status with icon and text overflows correctly now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380122925"
+          }
+        ]
+      },
+      {
+        "id": "55718a148cbc14a1b6fe82e4db92c5ace28f7879",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: add styling for disabled calendar items",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400004533342023"
+          },
+          {
+            "type": "BCP",
+            "reference": "2370019139"
+          }
+        ]
+      },
+      {
+        "id": "584ba9f148bf013b8a9981899b1dd75a6079d998",
+        "type": "FIX",
+        "text": " @sapUiChartTargetColor correction for dark themes"
+      },
+      {
+        "id": "e55406f549512f5a7d686039ba380532b06bf249",
+        "type": "FIX",
+        "text": " sap.tnt.SideNavigation: Add proper bottom margin for all navigation list items"
+      },
+      {
+        "id": "6322d0385b0f376c7d04cfa9cff9732a11af3f50",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Align calendar header in horizon theme",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370070377"
+          }
+        ]
+      }
+    ]
   }
 }

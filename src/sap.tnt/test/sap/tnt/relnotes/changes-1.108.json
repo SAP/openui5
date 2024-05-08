@@ -111,5 +111,15 @@
         ]
       }
     ]
+  },
+  "1.108.28": {
+    "date": "May 2024",
+    "notes": [
+      {
+        "id": "e55406f549512f5a7d686039ba380532b06bf249",
+        "type": "FIX",
+        "text": " sap.tnt.SideNavigation: Add proper bottom margin for all navigation list items"
+      }
+    ]
   }
 }

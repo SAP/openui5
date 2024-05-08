@@ -1591,5 +1591,47 @@
         "text": " sap.m.Page: Focus element is scrolled into view"
       }
     ]
+  },
+  "1.108.28": {
+    "date": "May 2024",
+    "notes": [
+      {
+        "id": "23a2c44ac488bb51f5de9ceffb3cdaa4bf0e7cc5",
+        "type": "FIX",
+        "text": " sap.m.Input: Prevent value DOM update when password type is used"
+      },
+      {
+        "id": "fccf8185db274dbe00fec5bd6a63434c116ef6b2",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: Status with icon and text overflows correctly now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380122925"
+          }
+        ]
+      },
+      {
+        "id": "0fb370dfcbf5c3850d50f0653b424eefbe48c1d5",
+        "type": "FIX",
+        "text": " sap.m.SearchField: Suggestions are correctly visualized",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370120906"
+          }
+        ]
+      },
+      {
+        "id": "e5e56137c6f028502b937ef78d3892b604e4bbdb",
+        "type": "FIX",
+        "text": " sap.m.Select: Required label fixed"
+      },
+      {
+        "id": "ab5fd18994e1a0abe6dbc7b1c1023e10c7e26586",
+        "type": "FIX",
+        "text": " sap.m.RadioButtonGroup: There is no error when destroying and adding radio buttons on select"
+      }
+    ]
   }
 }
