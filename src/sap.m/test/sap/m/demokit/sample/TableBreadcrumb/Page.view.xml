@@ -54,7 +54,7 @@
 					text="Order"
 					enabled="{
 						path: 'Order>/',
-						formatter: 'sap.m.sample.TableBreadcrumb.Formatter.isAnyProductSelected'
+						formatter: '.isAnyProductSelected'
 					}"
 					press="handleOrderPress" />
 			</OverflowToolbar>
