@@ -14,7 +14,7 @@
 						</layoutData>
 					</Button>
 					<Image width="2rem" height="2rem" src="{home>/logoSrc}" densityAware="false" press="navToHome"/>
-					<Link href="../index.html" text="UI Integration Cards" class="appTitle sapMTitle"/>
+					<Title level="H1" text="UI Integration Cards" />
 					<IconTabHeader backgroundDesign="Transparent" id="iconTabHeader" select="onTabSelect">
 						<items>
 							<IconTabFilter key="overview" text="Overview" />
