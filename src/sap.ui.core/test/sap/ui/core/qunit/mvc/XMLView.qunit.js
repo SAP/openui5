@@ -133,6 +133,24 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("Using native HTML in XMLViews (future=false)", async function (assert) {
+		future.active = false;
+		const oView = await XMLView.create({
+			viewName: 'example.mvc.HtmlOnRoot'
+		});
+
+		assert.ok(oView, "XMLView containing native HTML content is created successfully.");
+		future.active = false;
+	});
+
+	QUnit.test("Using native HTML in XMLViews (future=true)", async function (assert) {
+		future.active = true;
+		await assert.rejects(XMLView.create({
+			viewName: 'example.mvc.HtmlOnRoot'
+		}), "View creation rejects because XMLView contains HTML content on root.");
+		future.active = false;
+	});
+
 	QUnit.test("async loading new Factory with resource bundle", function(assert) {
 		var oResourceBundleCreateSpy = sinon.spy(ResourceBundle, "create");
 		var oViewPromise = XMLView.create({definition: "" +
