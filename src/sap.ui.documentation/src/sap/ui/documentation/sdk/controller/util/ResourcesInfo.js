@@ -38,6 +38,11 @@ sap.ui.define([],
 				"href": "test-resources/sap/ui/integration/demokit/cardExplorer/index.html"
 			},
 			{
+				"id": "linter",
+				"text": "UI5 linter",
+				"href": "https://github.com/SAP/ui5-linter"
+			},
+			{
 				"id": "fpmExplorer",
 				"text": "Flexible Programming Model Explorer",
 				"href": "test-resources/sap/fe/core/fpmExplorer/index.html#/overview/introduction",

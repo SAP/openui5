@@ -247,6 +247,29 @@
 								</f:content>
 							</f:Card>
 
+							<!-- UI5 linter -->
+							<f:Card class="sapUiDemoKitResourcesRegularCard">
+								<f:header>
+									<card:Header title="{i18n>RESOURCES_CARD_TITLE_LINTER}" iconSrc="sap-icon://syntax" />
+								</f:header>
+								<f:content>
+									<VBox class="sapUiDemoKitResourcesCardContentSpacing" wrap="Wrap">
+										<Text text="{i18n>RESOURCES_CARD_DESC_LINTER}">
+											<layoutData>
+												<FlexItemData growFactor="1" />
+											</layoutData>
+										</Text>
+										<Link
+											class="sapUiDemoKitResourcesCardLink"
+											href="{resources>/linter/href}"
+											target="_blank"
+											text="{i18n>RESOURCES_CARD_LINK_LINTER}"
+											tooltip="{i18n>RESOURCES_CARD_LINK_TOOLTIP}"
+											wrapping="true" />
+									</VBox>
+								</f:content>
+							</f:Card>
+
 							<!-- Flexible Programming Model Explorer -->
 							<f:Card class="sapUiDemoKitResourcesRegularCard"
 								visible="{
