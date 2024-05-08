@@ -2,7 +2,7 @@
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns="sap.uxap"
 		xmlns:m="sap.m"
-		xmlns:html="http://www.w3.org/1999/xhtml"
+		xmlns:core="sap.ui.core"
 		height="100%">
 
 	<ObjectPageLayout id="ObjectPageLayout" enableLazyLoading="false" subSectionLayout="TitleOnLeft">
@@ -12,7 +12,7 @@
 		<sections>
 			<ObjectPageSection id="testSection" title="Anchor1">
 				<ObjectPageSubSection id="testSubSection" title="Anchor summary">
-					<html:div class="dummyBlockContentA"></html:div>
+					<core:HTML content="&lt;div class=&quot;dummyBlockContentA&quot; /&gt;" />
 				</ObjectPageSubSection>
 			</ObjectPageSection>
 		</sections>

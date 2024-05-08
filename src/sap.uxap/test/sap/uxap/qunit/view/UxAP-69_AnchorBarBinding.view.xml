@@ -18,10 +18,10 @@
 			<!-- simple binding -->
 			<ObjectPageSection id="section1" title="{/sections/0/title}">
 				<ObjectPageSubSection title="first subsection">
-					<html:div class="dummyBlockContent7"></html:div>
+					<core:HTML content="&lt;div class=&quot;dummyBlockContent7&quot; /&gt;" />
 				</ObjectPageSubSection>
 				<ObjectPageSubSection title="second subsection">
-					<html:div class="dummyBlockContent7"></html:div>
+					<core:HTML content="&lt;div class=&quot;dummyBlockContent7&quot; /&gt;" />
 				</ObjectPageSubSection>
 			</ObjectPageSection>
 
@@ -31,10 +31,10 @@
 				formatter : 'formatMessage'
 			}">
 				<ObjectPageSubSection title="second section first">
-					<html:div class="dummyBlockContentA"></html:div>
+					<core:HTML content="&lt;div class=&quot;dummyBlockContentA&quot; /&gt;" />
 				</ObjectPageSubSection>
 				<ObjectPageSubSection title="second section second">
-					<html:div class="dummyBlockContentA"></html:div>
+					<core:HTML content="&lt;div class=&quot;dummyBlockContentA&quot; /&gt;" />
 				</ObjectPageSubSection>
 			</ObjectPageSection>
 
@@ -44,17 +44,17 @@
 					<m:Button text="my third section"/>
 				</customAnchorBarButton>
 				<ObjectPageSubSection>
-					<html:div class="dummyBlockContentC"></html:div>
+					<core:HTML content="&lt;div class=&quot;dummyBlockContentC&quot; /&gt;" />
 				</ObjectPageSubSection>
 			</ObjectPageSection>
 
 			<!-- no title -->
 			<ObjectPageSection id="section4">
 				<ObjectPageSubSection>
-					<html:div class="dummyBlockContentF"></html:div>
+					<core:HTML content="&lt;div class=&quot;dummyBlockContentF&quot; /&gt;" />
 				</ObjectPageSubSection>
 				<ObjectPageSubSection>
-					<html:div class="dummyBlockContentF"></html:div>
+					<core:HTML content="&lt;div class=&quot;dummyBlockContentF&quot; /&gt;" />
 				</ObjectPageSubSection>
 			</ObjectPageSection>
 		</sections>

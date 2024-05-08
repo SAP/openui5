@@ -1,7 +1,6 @@
 <mvc:View controllerName="testdata.mvc.Async"
 	xmlns="sap.m" xmlns:form="sap.ui.layout.form"
-	xmlns:mvc="sap.ui.core.mvc" xmlns:html="http://www.w3.org/1999/xhtml">
-
+	xmlns:mvc="sap.ui.core.mvc">
 	<Image width="150px" height="110px" src="./testdata/images/screw.jpg"></Image>
 
 	<form:SimpleForm id="Layout" width="250px" class="myMatrixLayout" layout="ColumnLayout">

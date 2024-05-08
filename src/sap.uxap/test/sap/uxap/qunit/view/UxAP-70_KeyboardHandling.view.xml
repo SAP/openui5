@@ -3,7 +3,7 @@
 		xmlns="sap.uxap"
 		xmlns:m="sap.m"
 		xmlns:forms="sap.ui.layout.form"
-		xmlns:html="http://www.w3.org/1999/xhtml"
+		xmlns:core="sap.ui.core"
 		height="100%">
 
 	<ObjectPageLayout id="ObjectPageLayout" enableLazyLoading="false" subSectionLayout="TitleOnLeft">
@@ -16,56 +16,56 @@
 			<ObjectPageSection title="2014 Goals Plan">
 				<subSections>
 					<ObjectPageSubSection title="Goal summary">
-						<html:div class="dummyBlockContentA"></html:div>
+						<core:HTML content="&lt;div class=&quot;dummyBlockContentA&quot; /&gt;" />
 					</ObjectPageSubSection>
 				</subSections>
 			</ObjectPageSection>
 
 			<ObjectPageSection title="Anchor1">
 				<ObjectPageSubSection title="Anchor summary">
-					<html:div class="dummyBlockContentA"></html:div>
+					<core:HTML content="&lt;div class=&quot;dummyBlockContentA&quot; /&gt;" />
 				</ObjectPageSubSection>
 			</ObjectPageSection>
 
 			<ObjectPageSection title="Anchor2">
 				<ObjectPageSubSection title="Anchor summary">
-					<html:div class="dummyBlockContentA"></html:div>
+					<core:HTML content="&lt;div class=&quot;dummyBlockContentA&quot; /&gt;" />
 				</ObjectPageSubSection>
 			</ObjectPageSection>
 
 			<ObjectPageSection title="Anchor3">
 				<ObjectPageSubSection title="Anchor summary">
-					<html:div class="dummyBlockContentA"></html:div>
+					<core:HTML content="&lt;div class=&quot;dummyBlockContentA&quot; /&gt;" />
 				</ObjectPageSubSection>
 			</ObjectPageSection>
 
 
 			<ObjectPageSection title="Anchor4">
 				<ObjectPageSubSection title="Anchor summary">
-					<html:div class="dummyBlockContentA"></html:div>
+					<core:HTML content="&lt;div class=&quot;dummyBlockContentA&quot; /&gt;" />
 				</ObjectPageSubSection>
 			</ObjectPageSection>
 
 			<ObjectPageSection title="Anchor5">
 				<ObjectPageSubSection title="Anchor summary">
-					<html:div class="dummyBlockContentA"></html:div>
+					<core:HTML content="&lt;div class=&quot;dummyBlockContentA&quot; /&gt;" />
 				</ObjectPageSubSection>
 			</ObjectPageSection>
 
 			<ObjectPageSection title="Anchor6">
 				<ObjectPageSubSection title="Anchor summary">
-					<html:div class="dummyBlockContentA"></html:div>
+					<core:HTML content="&lt;div class=&quot;dummyBlockContentA&quot; /&gt;" />
 				</ObjectPageSubSection>
 			</ObjectPageSection>
 
 			<ObjectPageSection title="Personal">
 				<subSections>
 					<ObjectPageSubSection title="Connect">
-						<html:div class="dummyBlockContentA"></html:div>
+						<core:HTML content="&lt;div class=&quot;dummyBlockContentA&quot; /&gt;" />
 					</ObjectPageSubSection>
 
 					<ObjectPageSubSection title="Payment information">
-						<html:div class="dummyBlockContentA"></html:div>
+						<core:HTML content="&lt;div class=&quot;dummyBlockContentA&quot; /&gt;" />
 					</ObjectPageSubSection>
 				</subSections>
 			</ObjectPageSection>
@@ -107,43 +107,43 @@
 					</ObjectPageSubSection>
 
 					<ObjectPageSubSection title="Job information">
-						<html:div class="dummyBlockContentA"></html:div>
+						<core:HTML content="&lt;div class=&quot;dummyBlockContentA&quot; /&gt;" />
 					</ObjectPageSubSection>
 
 					<ObjectPageSubSection title="SubSection1">
-						<html:div class="dummyBlockContentA"></html:div>
+						<core:HTML content="&lt;div class=&quot;dummyBlockContentA&quot; /&gt;" />
 					</ObjectPageSubSection>
 
 					<ObjectPageSubSection title="SubSection2">
-						<html:div class="dummyBlockContentA"></html:div>
+						<core:HTML content="&lt;div class=&quot;dummyBlockContentA&quot; /&gt;" />
 					</ObjectPageSubSection>
 
 					<ObjectPageSubSection title="SubSection3">
-						<html:div class="dummyBlockContentA"></html:div>
+						<core:HTML content="&lt;div class=&quot;dummyBlockContentA&quot; /&gt;" />
 					</ObjectPageSubSection>
 
 					<ObjectPageSubSection title="SubSection4">
-						<html:div class="dummyBlockContentA"></html:div>
+						<core:HTML content="&lt;div class=&quot;dummyBlockContentA&quot; /&gt;" />
 					</ObjectPageSubSection>
 
 					<ObjectPageSubSection title="SubSection5">
-						<html:div class="dummyBlockContentA"></html:div>
+						<core:HTML content="&lt;div class=&quot;dummyBlockContentA&quot; /&gt;" />
 					</ObjectPageSubSection>
 
 					<ObjectPageSubSection title="SubSection6">
-						<html:div class="dummyBlockContentA"></html:div>
+						<core:HTML content="&lt;div class=&quot;dummyBlockContentA&quot; /&gt;" />
 					</ObjectPageSubSection>
 
 					<ObjectPageSubSection title="SubSection7">
-						<html:div class="dummyBlockContentA"></html:div>
+						<core:HTML content="&lt;div class=&quot;dummyBlockContentA&quot; /&gt;" />
 					</ObjectPageSubSection>
 
 					<ObjectPageSubSection title="Employee Details" mode="Collapsed">
-						<html:div class="dummyBlockContentA"></html:div>
+						<core:HTML content="&lt;div class=&quot;dummyBlockContentA&quot; /&gt;" />
 					</ObjectPageSubSection>
 
 					<ObjectPageSubSection title="Job Relationship" mode="Collapsed">
-						<html:div class="dummyBlockContentA"></html:div>
+						<core:HTML content="&lt;div class=&quot;dummyBlockContentA&quot; /&gt;" />
 					</ObjectPageSubSection>
 				</subSections>
 			</ObjectPageSection>

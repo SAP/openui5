@@ -574,48 +574,53 @@ function(
 		var aResult = [],
 			sInternalPrefix = findNamespacePrefix(xmlNode, UI5_INTERNAL_NAMESPACE, "__ui5"),
 			pResultChain = parseAndLoadRequireContext(xmlNode, bAsync) || SyncPromise.resolve(),
-			rm = {
-				openStart: function(tagName, sId) {
-					aResult.push(["openStart", [tagName, sId]]);
-				},
-				voidStart: function(tagName, sId) {
-					aResult.push(["voidStart", [tagName, sId]]);
-				},
-				style: function(name, value) {
-					aResult.push(["style", [name, value]]);
-				},
-				"class": function(clazz) {
-					aResult.push(["class", [clazz]]);
-				},
-				attr: function(name, value) {
-					aResult.push(["attr", [name, value]]);
-				},
-				openEnd: function() {
-					aResult.push(["openEnd"]);
-				},
-				voidEnd: function() {
-					aResult.push(["voidEnd"]);
-				},
-				text: function(str) {
-					aResult.push(["text", [str]]);
-				},
-				unsafeHtml: function(str) {
-					aResult.push(["unsafeHtml", [str]]);
-				},
-				close: function(tagName) {
-					aResult.push(["close", [tagName]]);
-				},
-				renderControl: function(pContent) {
-					aResult.push(pContent);
-				}
-			};
+			collectControl = (pContent) => aResult.push(pContent);
 
-		// We might have a set of already resolved "core:require" modules given from outside.
-		// This only happens when a new XMLView instance is used as a wrapper for HTML nodes, in this case
-		// the "core:require" modules need to be propagated down into the nested XMLView.
-		// We now need to merge the set of passed "core:require" modules with the ones defined on our root element,
-		// with our own modules having priority in case of duplicate aliases.
+		/**
+		 * @deprecated since version 1.120 because the support of HTML and SVG nodes is deprecated
+		 */
+		const rm = {
+			openStart: function(tagName, sId) {
+				aResult.push(["openStart", [tagName, sId]]);
+			},
+			voidStart: function(tagName, sId) {
+				aResult.push(["voidStart", [tagName, sId]]);
+			},
+			style: function(name, value) {
+				aResult.push(["style", [name, value]]);
+			},
+			"class": function(clazz) {
+				aResult.push(["class", [clazz]]);
+			},
+			attr: function(name, value) {
+				aResult.push(["attr", [name, value]]);
+			},
+			openEnd: function() {
+				aResult.push(["openEnd"]);
+			},
+			voidEnd: function() {
+				aResult.push(["voidEnd"]);
+			},
+			text: function(str) {
+				aResult.push(["text", [str]]);
+			},
+			unsafeHtml: function(str) {
+				aResult.push(["unsafeHtml", [str]]);
+			},
+			close: function(tagName) {
+				aResult.push(["close", [tagName]]);
+			}
+		};
+
+		/**
+		 * @deprecated since 1.120 because the support of HTML and SVG in XMLView is deprecated
+		 */
 		if (oParseConfig?.settings?.requireContext) {
+			// We might have a set of already resolved "core:require" modules given from outside.
+			// This only happens when a new XMLView instance is used as a wrapper for HTML nodes, in this case
+			// the "core:require" modules need to be propagated down into the nested XMLView.
+			// We now need to merge the set of passed "core:require" modules with the ones defined on our root element,
+			// with our own modules having priority in case of duplicate aliases.
 			pResultChain = pResultChain.then((mRequireContext) => {
 				return Object.assign({}, oParseConfig.settings.requireContext, mRequireContext);
 			});
@@ -709,7 +714,11 @@ function(
 
 			// Normalize the view content by wrapping it with either a "View" tag or a "FragmentDefinition" tag to
 			// simplify the parsing process
-			if (oView.isA("sap.ui.core.mvc.XMLView") && (node.namespaceURI === XHTML_NAMESPACE || node.namespaceURI === SVG_NAMESPACE)) {
+			/**
+			 * @ui5-transform-hint replace-local false
+			 */
+			const bCreateViewWrapper = oView.isA("sap.ui.core.mvc.XMLView") && (node.namespaceURI === XHTML_NAMESPACE || node.namespaceURI === SVG_NAMESPACE);
+			if (bCreateViewWrapper) {
 				// XHTML or SVG nodes are placed into a sub view without having "View" as root tag
 				// Wrap the content into a "View" node
 				oWrapper = node.ownerDocument.createElementNS(CORE_MVC_NAMESPACE, "View");
@@ -879,9 +888,22 @@ function(
 				bRenderingRelevant = bRootArea && (oView.isA("sap.ui.core.Fragment") || (oAggregation && oAggregation.name === "content")),
 				pResult, i;
 
+			/**
+			 * @ui5-transform-hint replace-local false
+			 */
+			const bRenderText = node.nodeType === 3 /* TEXT_NODE */ && bRenderingRelevant;
+
 			if ( node.nodeType === 1 /* ELEMENT_NODE */ ) {
-				// differentiate between SAPUI5 and plain-HTML children
-				if (node.namespaceURI === XHTML_NAMESPACE || node.namespaceURI === SVG_NAMESPACE ) {
+				// Using native HTML in future is not allowed. We need to check explicitely in order to throw
+				if (node.namespaceURI === XHTML_NAMESPACE || node.namespaceURI === SVG_NAMESPACE) {
+					future.warningThrows(`Using native HTML content in XMLViews is deprecated.`, oView.getId());
+				}
+				/**
+				 * Differentiate between SAPUI5 and plain-HTML children
+				 * @ui5-transform-hint replace-local false
+				 */
+				const isNativeContent = node.namespaceURI === XHTML_NAMESPACE || node.namespaceURI === SVG_NAMESPACE;
+				if (isNativeContent) {
 					if (bRootArea) {
 						if (oAggregation && oAggregation.name !== "content") {
 							Log.error(createErrorInfo(node, "XHTML nodes can only be added to the 'content' aggregation and not to the '" + oAggregation.name + "' aggregation."));
@@ -1046,14 +1068,14 @@ function(
 				} else  {
 					pResult = createControlOrExtension(node, pRequireContext, oClosestBinding);
 					if (bRenderingRelevant) {
-						rm.renderControl(pResult);
+						collectControl(pResult);
 					}
 					// non-HTML (SAPUI5) control
 					// we must return the result in either bRootArea=true or the bRootArea=false case because we use the result
 					// to add the control to the aggregation of its parent control
 					return pResult;
 				}
-			} else if (node.nodeType === 3 /* TEXT_NODE */ && bRenderingRelevant) {
+			} else if (bRenderText) {
 				if (!oConfig || !oConfig.contentBound) {
 					// content aggregation isn't bound
 					rm.text(node.textContent);
