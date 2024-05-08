@@ -4,12 +4,12 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/UIComponent",
 	"sap/ui/fl/apply/_internal/controlVariants/Utils",
+	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/fl/initial/_internal/FlexConfiguration",
 	"sap/ui/fl/initial/_internal/FlexInfoSession",
-	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/thirdparty/sinon-4",
@@ -19,12 +19,12 @@ sap.ui.define([
 	Control,
 	UIComponent,
 	VariantUtils,
+	FlexObjectState,
 	FlexState,
 	ManifestUtils,
 	FlexRuntimeInfoAPI,
 	FlexConfiguration,
 	FlexInfoSession,
-	FlexControllerFactory,
 	Layer,
 	Utils,
 	sinon,
@@ -34,12 +34,6 @@ sap.ui.define([
 	"use strict";
 
 	var sandbox = sinon.createSandbox();
-
-	function mockFlexController(oControl, oReturn) {
-		sandbox.stub(FlexControllerFactory, "createForSelector")
-		.withArgs(oControl)
-		.returns(oReturn);
-	}
 
 	QUnit.module("isPersonalized", {
 		beforeEach() {
@@ -220,53 +214,47 @@ sap.ui.define([
 	QUnit.module("waitForChanges", {
 		beforeEach() {
 			this.aObjectsToDestroy = [];
+			this.oWaitForChangesStub = sandbox.stub(FlexObjectState, "waitForFlexObjectsToBeApplied").resolves();
 		},
 		afterEach() {
 			sandbox.restore();
 			this.aObjectsToDestroy.forEach(function(oObject) {oObject.destroy();});
 		}
 	}, function() {
-		QUnit.test("FlexRuntimeInfoAPI.waitForChanges", function(assert) {
+		QUnit.test("FlexRuntimeInfoAPI.waitForChanges", async function(assert) {
 			var oControl = new Control();
 			this.aObjectsToDestroy.push(oControl);
-			var oWaitForChangesStub = sandbox.stub().resolves();
-			mockFlexController(oControl, {waitForChangesToBeApplied: oWaitForChangesStub});
 
-			return FlexRuntimeInfoAPI.waitForChanges({element: oControl}).then(function() {
-				assert.equal(oWaitForChangesStub.callCount, 1, "the waitForChanges method was called");
+			await FlexRuntimeInfoAPI.waitForChanges({element: oControl});
+			assert.equal(this.oWaitForChangesStub.callCount, 1, "the waitForChanges method was called");
 
-				var aPassedValue = [{
-					selector: oControl
-				}];
-				assert.ok(oWaitForChangesStub.alwaysCalledWithExactly(aPassedValue), "the controls are passed as parameter");
-			});
+			var aPassedValue = [{
+				selector: oControl
+			}];
+			assert.ok(this.oWaitForChangesStub.alwaysCalledWithExactly(aPassedValue), "the controls are passed as parameter");
 		});
 
-		QUnit.test("FlexRuntimeInfoAPI.waitForChanges on multiple controls", function(assert) {
+		QUnit.test("FlexRuntimeInfoAPI.waitForChanges on multiple controls", async function(assert) {
 			var oControl = new Control();
 			var oControl1 = new Control();
 			this.aObjectsToDestroy.push(oControl, oControl1);
 			var aControls = [oControl, oControl1];
-			var oWaitForChangesStub = sandbox.stub().resolves();
-			mockFlexController(oControl, {waitForChangesToBeApplied: oWaitForChangesStub});
 
-			return FlexRuntimeInfoAPI.waitForChanges({selectors: aControls}).then(function() {
-				assert.equal(oWaitForChangesStub.callCount, 1, "the waitForChanges method was called");
+			await FlexRuntimeInfoAPI.waitForChanges({selectors: aControls});
+			assert.equal(this.oWaitForChangesStub.callCount, 1, "the waitForChanges method was called");
 
-				var aPassedValue = [{
-					selector: oControl
-				}, {
-					selector: oControl1
-				}];
-				assert.ok(oWaitForChangesStub.alwaysCalledWithExactly(aPassedValue), "the controls are passed as parameter");
-			});
+			var aPassedValue = [{
+				selector: oControl
+			}, {
+				selector: oControl1
+			}];
+			assert.ok(this.oWaitForChangesStub.alwaysCalledWithExactly(aPassedValue), "the controls are passed as parameter");
 		});
 
-		QUnit.test("FlexRuntimeInfoAPI.waitForChanges with change types", function(assert) {
+		QUnit.test("FlexRuntimeInfoAPI.waitForChanges with change types", async function(assert) {
 			var oControl = new Control();
 			var oControl1 = new Control();
 			this.aObjectsToDestroy.push(oControl, oControl1);
-			var oWaitForChangesStub = sandbox.stub().resolves();
 			var aComplexSelectors = [
 				{
 					selector: oControl,
@@ -277,20 +265,18 @@ sap.ui.define([
 					changeTypes: ["changeType3", "changeType4"]
 				}
 			];
-			mockFlexController(oControl, {waitForChangesToBeApplied: oWaitForChangesStub});
 
-			return FlexRuntimeInfoAPI.waitForChanges({complexSelectors: aComplexSelectors}).then(function() {
-				assert.equal(oWaitForChangesStub.callCount, 1, "the waitForChanges method was called");
+			await FlexRuntimeInfoAPI.waitForChanges({complexSelectors: aComplexSelectors});
+			assert.equal(this.oWaitForChangesStub.callCount, 1, "the waitForChanges method was called");
 
-				var aPassedValue = [{
-					selector: oControl,
-					changeTypes: ["changeType1", "changeType2"]
-				}, {
-					selector: oControl1,
-					changeTypes: ["changeType3", "changeType4"]
-				}];
-				assert.ok(oWaitForChangesStub.alwaysCalledWithExactly(aPassedValue), "the controls are passed as parameter");
-			});
+			var aPassedValue = [{
+				selector: oControl,
+				changeTypes: ["changeType1", "changeType2"]
+			}, {
+				selector: oControl1,
+				changeTypes: ["changeType3", "changeType4"]
+			}];
+			assert.ok(this.oWaitForChangesStub.alwaysCalledWithExactly(aPassedValue), "the controls are passed as parameter");
 		});
 	});
 

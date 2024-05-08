@@ -6,22 +6,26 @@ sap.ui.define([
 	"sap/base/util/merge",
 	"sap/base/util/restricted/_omit",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/ui/core/Element",
 	"sap/ui/fl/apply/_internal/changes/Utils",
 	"sap/ui/fl/apply/_internal/flexState/changes/DependencyHandler",
 	"sap/ui/fl/apply/_internal/flexState/changes/UIChangesState",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
-	"sap/ui/fl/apply/_internal/flexState/ManifestUtils"
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
+	"sap/ui/fl/Utils"
 ], function(
 	merge,
 	_omit,
 	JsControlTreeModifier,
+	Element,
 	ChangesUtils,
 	DependencyHandler,
 	UIChangesState,
 	VariantManagementState,
 	FlexState,
-	ManifestUtils
+	ManifestUtils,
+	Utils
 ) {
 	"use strict";
 
@@ -44,7 +48,7 @@ sap.ui.define([
 		const aNewValidControlDependencies = [];
 		const oDependencyMap = FlexObjectState.getLiveDependencyMap(sReference);
 		const oModifiedDependency = Object.assign({}, oInitialDependency);
-		oInitialDependency.controlsDependencies.forEach(function(oDependentControlSelector) {
+		oInitialDependency.controlsDependencies.forEach((oDependentControlSelector) => {
 			// if the control is already available we don't need to add a dependency to it
 			if (!JsControlTreeModifier.bySelector(oDependentControlSelector, oAppComponent)) {
 				const sControlId = JsControlTreeModifier.getControlIdBySelector(oDependentControlSelector, oAppComponent);
@@ -62,6 +66,33 @@ sap.ui.define([
 			oDependencyMap.mDependencies[oChange.getId()] = oModifiedDependency;
 		}
 		return oModifiedDependency;
+	}
+
+	function areControlsAvailable(oChange, oAppComponent) {
+		// is control available
+		const aSelectors = oChange.getDependentControlSelectorList();
+		aSelectors.push(oChange.getSelector());
+		return !aSelectors.some((oSelector) => !JsControlTreeModifier.bySelector(oSelector, oAppComponent));
+	}
+
+	function checkDependencies(oChange, mDependencies, mChanges, oAppComponent, aRelevantChanges) {
+		let bResult = areControlsAvailable(oChange, oAppComponent);
+		if (!bResult) {
+			return [];
+		}
+		aRelevantChanges.push(oChange);
+		const sDependencyKey = oChange.getId();
+		const aDependentChanges = mDependencies[sDependencyKey] && mDependencies[sDependencyKey].dependencies || [];
+		for (let i = 0, n = aDependentChanges.length; i < n; i++) {
+			const oDependentChange = Utils.getChangeFromChangesMap(mChanges, aDependentChanges[i]);
+			bResult = checkDependencies(oDependentChange, mDependencies, mChanges, oAppComponent, aRelevantChanges);
+			if (bResult.length === 0) {
+				aRelevantChanges = [];
+				break;
+			}
+			delete mDependencies[sDependencyKey];
+		}
+		return aRelevantChanges;
 	}
 
 	/**
@@ -159,6 +190,57 @@ sap.ui.define([
 			});
 			oCompleteDependency = copyDependencies(oCompleteDependency, aNewValidDependencies, oAppComponent, oChange, sReference);
 		}
+	};
+
+	/**
+	 * Waits for all the changes for all controls that are passed to be processed and a variant switch to be done.
+	 *
+	 * @param {object[]} aSelectorInformation - An array containing an object with {@link sap.ui.fl.Selector} and further configuration
+	 * @param {sap.ui.fl.Selector} aSelectorInformation.selector - A {@link sap.ui.fl.Selector}
+	 * @param {string[]} [aSelectorInformation.changeTypes] - An array containing the change types that will be considered. If empty no filtering will be done
+	 * @returns {Promise} Resolves when a variant switch is done and all changes on controls have been processed
+	 */
+	FlexObjectState.waitForFlexObjectsToBeApplied = async function(aSelectorInformation) {
+		const oAppComponent = Utils.getAppComponentForSelector(aSelectorInformation[0].selector);
+		if (!oAppComponent) {
+			return;
+		}
+		const sFlexReference = ManifestUtils.getFlexReferenceForControl(oAppComponent);
+
+		await VariantManagementState.getVariantSwitchPromise(sFlexReference);
+		await Promise.all(aSelectorInformation.map((oSelector) => {
+			const oControl = oSelector.selector.id && Element.getElementById(oSelector.selector.id) || oSelector.selector;
+
+			oSelector.changeTypes ||= [];
+			const mChangesMap = FlexObjectState.getLiveDependencyMap(sFlexReference);
+			let aPromises = [];
+			const mDependencies = Object.assign({}, mChangesMap.mDependencies);
+			const {mChanges} = mChangesMap;
+			const aChangesForControl = mChanges[oControl.getId()] || [];
+
+			// filter out already applied changes and, if given, filter by change type
+			const aNotYetProcessedChanges = aChangesForControl.filter((oChange) => {
+				return !oChange.isCurrentProcessFinished()
+				&& (oSelector.changeTypes.length === 0 || oSelector.changeTypes.includes(oChange.getChangeType()));
+			});
+
+			const aRelevantChanges = [];
+			aNotYetProcessedChanges.forEach((oChange) => {
+				const aChanges = checkDependencies(oChange, mDependencies, mChangesMap.mChanges, oAppComponent, []);
+				aChanges.forEach((oDependentChange) => {
+					if (aRelevantChanges.indexOf(oDependentChange) === -1) {
+						aRelevantChanges.push(oDependentChange);
+					}
+				});
+			});
+
+			// attach promises to the relevant Changes and wait for them to be applied
+			aRelevantChanges.forEach((oChange) => {
+				aPromises = aPromises.concat(oChange.addChangeProcessingPromises());
+			});
+
+			return Promise.all(aPromises);
+		}));
 	};
 
 	return FlexObjectState;

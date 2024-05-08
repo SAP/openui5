@@ -3,31 +3,25 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/Utils",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/write/_internal/Versions",
 	"sap/ui/fl/apply/_internal/changes/Reverter",
 	"sap/ui/fl/apply/_internal/controlVariants/URLHandler",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
-	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
-	"sap/ui/core/util/reflection/JsControlTreeModifier",
-	"sap/ui/core/Element"
+	"sap/ui/core/util/reflection/JsControlTreeModifier"
 ], function(
-	Utils,
 	Layer,
 	ChangePersistenceFactory,
 	Versions,
 	Reverter,
 	URLHandler,
 	States,
-	FlexObjectState,
 	FlexState,
 	ControlVariantApplyAPI,
-	JsControlTreeModifier,
-	Element
+	JsControlTreeModifier
 ) {
 	"use strict";
 
@@ -83,121 +77,6 @@ sap.ui.define([
 		if (this._sComponentName) {
 			this._oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(this._sComponentName);
 		}
-	};
-
-	/**
-	 * Sets the variant switch promise
-	 *
-	 * @param {Promise} oPromise variant switch promise
-	 */
-	FlexController.prototype.setVariantSwitchPromise = function(oPromise) {
-		this._oVariantSwitchPromise = oPromise;
-	};
-
-	/**
-	 * Returns the variant switch promise. By default this is a resolved promise
-	 *
-	 * @returns {Promise} variant switch promise
-	 */
-	FlexController.prototype.waitForVariantSwitch = function() {
-		this._oVariantSwitchPromise ||= Promise.resolve();
-		return this._oVariantSwitchPromise;
-	};
-
-	function checkDependencies(oChange, mDependencies, mChanges, oAppComponent, aRelevantChanges) {
-		var bResult = canChangePotentiallyBeApplied(oChange, oAppComponent);
-		if (!bResult) {
-			return [];
-		}
-		aRelevantChanges.push(oChange);
-		var sDependencyKey = oChange.getId();
-		var aDependentChanges = mDependencies[sDependencyKey] && mDependencies[sDependencyKey].dependencies || [];
-		for (var i = 0, n = aDependentChanges.length; i < n; i++) {
-			var oDependentChange = Utils.getChangeFromChangesMap(mChanges, aDependentChanges[i]);
-			bResult = checkDependencies(oDependentChange, mDependencies, mChanges, oAppComponent, aRelevantChanges);
-			if (bResult.length === 0) {
-				aRelevantChanges = [];
-				break;
-			}
-			delete mDependencies[sDependencyKey];
-		}
-		return aRelevantChanges;
-	}
-
-	function canChangePotentiallyBeApplied(oChange, oAppComponent) {
-		// is control available
-		var aSelectors = oChange.getDependentControlSelectorList();
-		aSelectors.push(oChange.getSelector());
-		return !aSelectors.some(function(oSelector) {
-			return !JsControlTreeModifier.bySelector(oSelector, oAppComponent);
-		});
-	}
-
-	/**
-	 * Resolves with a promise after all the changes for all controls that are passed have been processed.
-	 *
-	 * @param {object[]} aSelectors - An array containing an object with {@link sap.ui.fl.Selector} and further configuration
-	 * @param {sap.ui.fl.Selector} aSelectors.selector - A {@link sap.ui.fl.Selector}
-	 * @param {string[]} [aSelectors.changeTypes] - An array containing the change types that will be considered. If empty no filtering will be done
-	 * @returns {Promise} Resolves when all changes on the controls have been processed
-	 */
-	FlexController.prototype.waitForChangesToBeApplied = function(aSelectors) {
-		var aPromises = aSelectors.map(function(mSelector) {
-			return this._waitForChangesToBeApplied(mSelector);
-		}.bind(this));
-		return Promise.all(aPromises)
-		.then(function() {
-			// the return value is not important in this function, only that it resolves
-			return undefined;
-		});
-	};
-
-	/**
-	 * Resolves with a Promise after all relevant changes for this control have been processed.
-	 *
-	 * @param {object} mPropertyBag - Object with control and list of change types
-	 * @param {sap.ui.fl.Selector} mPropertyBag.selector - A {@link sap.ui.fl.Selector}
-	 * @param {string[]} mPropertyBag.changeTypes - An array containing the change types that should be considered
-	 * @returns {Promise} Resolves when all changes on the control have been processed
-	 */
-	FlexController.prototype._waitForChangesToBeApplied = function(mPropertyBag) {
-		function filterChanges(oChange) {
-			return !oChange.isCurrentProcessFinished()
-			&& (mPropertyBag.changeTypes.length === 0 || mPropertyBag.changeTypes.includes(oChange.getChangeType()));
-		}
-
-		const oControl = mPropertyBag.selector.id && Element.getElementById(mPropertyBag.selector.id) || mPropertyBag.selector;
-		const oAppComponent = mPropertyBag.selector.appComponent || Utils.getAppComponentForControl(oControl);
-
-		mPropertyBag.changeTypes ||= [];
-		var mChangesMap = FlexObjectState.getLiveDependencyMap(this._sComponentName);
-		var aPromises = [];
-		var mDependencies = Object.assign({}, mChangesMap.mDependencies);
-		var {mChanges} = mChangesMap;
-		var aChangesForControl = mChanges[oControl.getId()] || [];
-
-		// filter out already applied changes and, if given, filter by change type
-		var aNotYetProcessedChanges = aChangesForControl.filter(filterChanges);
-
-		var aRelevantChanges = [];
-		aNotYetProcessedChanges.forEach(function(oChange) {
-			var aChanges = checkDependencies(oChange, mDependencies, mChangesMap.mChanges, oAppComponent, []);
-			aChanges.forEach(function(oDependentChange) {
-				if (aRelevantChanges.indexOf(oDependentChange) === -1) {
-					aRelevantChanges.push(oDependentChange);
-				}
-			});
-		});
-
-		// attach promises to the relevant Changes and wait for them to be applied
-		aRelevantChanges.forEach(function(oChange) {
-			aPromises = aPromises.concat(oChange.addChangeProcessingPromises());
-		}, this);
-
-		// also wait for a potential variant switch to be done
-		aPromises.push(this.waitForVariantSwitch());
-
-		return Promise.all(aPromises);
 	};
 
 	FlexController.prototype._removeOtherLayerChanges = function(oAppComponent, sLayer, bRemoveOtherLayerChanges) {

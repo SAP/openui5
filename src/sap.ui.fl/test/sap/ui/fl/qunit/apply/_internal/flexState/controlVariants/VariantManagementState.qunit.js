@@ -2,9 +2,9 @@
 
 sap.ui.define([
 	"rta/qunit/RtaQunitUtils",
+	"sap/base/util/Deferred",
 	"sap/base/util/isEmptyObject",
 	"sap/base/util/merge",
-	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/apply/_internal/controlVariants/Utils",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
@@ -16,9 +16,9 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	RtaQunitUtils,
+	Deferred,
 	isEmptyObject,
 	merge,
-	JsControlTreeModifier,
 	VariantUtil,
 	FlexObjectFactory,
 	States,
@@ -1471,63 +1471,6 @@ sap.ui.define([
 				"then no UI changes are returned"
 			);
 		});
-
-		function includesSelector(aArguments, sId) {
-			return aArguments.some((oArgument) => oArgument.selector === sId);
-		}
-
-		QUnit.test("when calling waitForInitialVariantChanges", function(assert) {
-			const oFlexControllerStub = {
-				waitForChangesToBeApplied: sandbox.stub().resolves("foo")
-			};
-			sandbox.stub(JsControlTreeModifier, "bySelector").callsFake(function(oSelector) {
-				return oSelector.id;
-			});
-
-			return VariantManagementState.waitForInitialVariantChanges({
-				vmReference: sVariantManagementReference,
-				reference: sReference,
-				appComponent: {},
-				flexController: oFlexControllerStub
-			})
-			.then(function(vReturn) {
-				assert.strictEqual(
-					vReturn,
-					"foo",
-					"then the function returns the return value of waitForChanges"
-				);
-				assert.ok(
-					oFlexControllerStub.waitForChangesToBeApplied.calledOnce,
-					"waitForChanges was called"
-				);
-				const aArguments = oFlexControllerStub.waitForChangesToBeApplied.lastCall.args[0];
-				assert.ok(
-					includesSelector(aArguments, "someId"),
-					"then the first selector was passed"
-				);
-				assert.ok(
-					includesSelector(aArguments, "someOtherId"),
-					"then the second selector was passed"
-				);
-			});
-		});
-
-		QUnit.test("when calling waitForInitialVariantChanges with unavailable controls", function(assert) {
-			const oFlexControllerStub = {
-				waitForChangesToBeApplied: sandbox.stub().resolves("foo")
-			};
-			sandbox.stub(JsControlTreeModifier, "bySelector").returns();
-
-			return VariantManagementState.waitForInitialVariantChanges({
-				vmReference: sVariantManagementReference,
-				reference: sReference,
-				appComponent: {},
-				flexController: oFlexControllerStub
-			})
-			.then(function() {
-				assert.ok(oFlexControllerStub.waitForChangesToBeApplied.notCalled, "then waitForChanges was not called");
-			});
-		});
 	});
 
 	QUnit.module("filterHiddenFlexObjects", {
@@ -1595,6 +1538,27 @@ sap.ui.define([
 			assert.strictEqual(aFilteredFlexObjects.length, 1, "only the visible variant is left");
 		});
 	});
+
+	QUnit.module("misc", {
+		afterEach() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("variantSwitchPromise", async function(assert) {
+			const done = assert.async();
+			await VariantManagementState.getVariantSwitchPromise(sReference);
+			assert.ok(true, "the function resolves");
+
+			const oDeferred = new Deferred();
+			VariantManagementState.setVariantSwitchPromise(sReference, oDeferred.promise);
+			VariantManagementState.getVariantSwitchPromise(sReference).then(() => {
+				assert.ok(true, "the promise is resolved");
+				done();
+			});
+			oDeferred.resolve();
+		});
+	});
+
 	QUnit.done(function() {
 		oComponent.destroy();
 		document.getElementById("qunit-fixture").style.display = "none";

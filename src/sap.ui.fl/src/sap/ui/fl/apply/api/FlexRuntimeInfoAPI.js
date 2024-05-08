@@ -6,11 +6,11 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/apply/_internal/controlVariants/Utils",
+	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/initial/_internal/FlexConfiguration",
 	"sap/ui/fl/initial/_internal/FlexInfoSession",
-	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/VersionInfo"
@@ -18,11 +18,11 @@ sap.ui.define([
 	Log,
 	JsControlTreeModifier,
 	VariantUtils,
+	FlexObjectState,
 	FlexState,
 	ManifestUtils,
 	FlexConfiguration,
 	FlexInfoSession,
-	FlexControllerFactory,
 	Layer,
 	Utils,
 	VersionInfo
@@ -115,25 +115,21 @@ sap.ui.define([
 		 * @ui5-restricted
 		 */
 		waitForChanges(mPropertyBag) {
-			var aComplexSelectors;
-			var oFirstElement;
+			let aComplexSelectors;
 			if (mPropertyBag.element) {
 				aComplexSelectors = [{
 					selector: mPropertyBag.element
 				}];
-				oFirstElement = mPropertyBag.element;
 			} else if (mPropertyBag.selectors) {
 				aComplexSelectors = mPropertyBag.selectors.map(function(oSelector) {
 					return {
 						selector: oSelector
 					};
 				});
-				[oFirstElement] = mPropertyBag.selectors;
 			} else if (mPropertyBag.complexSelectors) {
 				aComplexSelectors = mPropertyBag.complexSelectors;
-				oFirstElement = mPropertyBag.complexSelectors[0].selector;
 			}
-			return FlexControllerFactory.createForSelector(oFirstElement).waitForChangesToBeApplied(aComplexSelectors);
+			return FlexObjectState.waitForFlexObjectsToBeApplied(aComplexSelectors);
 		},
 
 		/**

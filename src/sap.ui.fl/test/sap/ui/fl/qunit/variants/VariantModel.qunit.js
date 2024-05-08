@@ -892,7 +892,7 @@ sap.ui.define([
 
 		QUnit.test("when calling 'updateCurrentVariant' with root app component", function(assert) {
 			sandbox.stub(Switcher, "switchVariant").resolves();
-			var oSetVariantSwitchPromiseStub = sandbox.stub(this.oFlexController, "setVariantSwitchPromise");
+			var oSetVariantSwitchPromiseStub = sandbox.stub(VariantManagementState, "setVariantSwitchPromise");
 			var oCallVariantSwitchListenersStub = sandbox.stub(this.oModel, "callVariantSwitchListeners");
 
 			assert.strictEqual(
@@ -926,7 +926,7 @@ sap.ui.define([
 
 		QUnit.test("when calling 'updateCurrentVariant' without a root app component", function(assert) {
 			sandbox.stub(Switcher, "switchVariant").resolves();
-			var oSetVariantSwitchPromiseStub = sandbox.stub(this.oFlexController, "setVariantSwitchPromise");
+			var oSetVariantSwitchPromiseStub = sandbox.stub(VariantManagementState, "setVariantSwitchPromise");
 
 			this.oModel.oData[sVMReference].updateVariantInURL = true;
 			return this.oModel.updateCurrentVariant({
@@ -956,7 +956,7 @@ sap.ui.define([
 				"then initially current variant was correct before updating"
 			);
 
-			var oSetVariantSwitchPromiseStub = sandbox.stub(this.oFlexController, "setVariantSwitchPromise");
+			var oSetVariantSwitchPromiseStub = sandbox.stub(VariantManagementState, "setVariantSwitchPromise");
 
 			var oSwitchVariantStub = sandbox.stub(Switcher, "switchVariant")
 			.onCall(0).returns(new Promise(function(resolve) {
@@ -998,7 +998,7 @@ sap.ui.define([
 				"then initially current variant was correct before updating"
 			);
 
-			var oSetVariantSwitchPromiseStub = sandbox.stub(this.oFlexController, "setVariantSwitchPromise");
+			var oSetVariantSwitchPromiseStub = sandbox.stub(VariantManagementState, "setVariantSwitchPromise");
 			var SwitchVariantStub = sandbox.stub(Switcher, "switchVariant")
 			.onCall(0).callsFake(function() {
 				return new Promise(function(resolve, reject) {
@@ -2254,8 +2254,11 @@ sap.ui.define([
 				this.oFlexController = FlexControllerFactory.createForControl(oComponent, oManifest);
 				this.fnApplyChangesStub = sandbox.stub(this.oFlexController, "saveSequenceOfDirtyChanges").resolves();
 				this.oRegisterControlStub = sandbox.stub(URLHandler, "registerControl");
-
-				sandbox.stub(VariantManagementState, "getInitialUIChanges").returns([]);
+				sandbox.stub(VariantManagementState, "getInitialUIChanges").returns([FlexObjectFactory.createUIChange({
+					changeType: "foo",
+					selector: {id: this.sVMReference}
+				})]);
+				sandbox.stub(FlexObjectState, "waitForFlexObjectsToBeApplied").resolves();
 
 				this.oModel = new VariantModel({}, {
 					flexController: this.oFlexController,
@@ -2280,9 +2283,8 @@ sap.ui.define([
 			assert.strictEqual(oInvalidationStub.callCount, 1, "the DataSelector was invalidated");
 		});
 
-		QUnit.test("when calling 'setModel' of VariantManagement control", function(assert) {
+		QUnit.test("when calling 'setModel' of VariantManagement control", async function(assert) {
 			var fnRegisterToModelSpy = sandbox.spy(this.oModel, "registerToModel");
-			sandbox.stub(VariantManagementState, "waitForInitialVariantChanges").resolves("foo");
 			sandbox.stub(this.oModel, "getVariantManagementReferenceForControl").returns(this.sVMReference);
 			this.oVariantManagement.setExecuteOnSelectionForStandardDefault(true);
 			this.oVariantManagement.setModel(this.oModel, ControlVariantApplyAPI.getVariantModelName());
@@ -2301,9 +2303,11 @@ sap.ui.define([
 				false,
 				"showExecuteOnSelection is set to false"
 			);
-			return this.oModel._oVariantSwitchPromise.then(function(sValue) {
-				assert.strictEqual(sValue, "foo", "the initial changes promise was added to the variant switch promise");
-			});
+			await this.oModel._oVariantSwitchPromise;
+			assert.strictEqual(
+				FlexObjectState.waitForFlexObjectsToBeApplied.callCount, 1,
+				"the initial changes promise was added to the variant switch promise"
+			);
 		});
 
 		QUnit.test("when waitForVMControlInit is called before the control is initialized", function(assert) {
@@ -2648,7 +2652,6 @@ sap.ui.define([
 				this.oComp = new MockComponent({id: "testComponent"});
 				this.oView = oView;
 				this.oFlexController = FlexControllerFactory.createForControl(this.oComp);
-				sandbox.stub(VariantManagementState, "waitForInitialVariantChanges").resolves();
 				this.oVariantModel = new VariantModel({}, {
 					flexController: this.oFlexController,
 					appComponent: this.oComp
@@ -2683,7 +2686,7 @@ sap.ui.define([
 				oData[this.sVMReference].variants.push(this.oVariant2);
 				this.oUpdateCurrentVariantStub = sandbox.stub(this.oVariantModel, "updateCurrentVariant").resolves();
 				sandbox.stub(VariantManagementState, "getCurrentVariantReference").returns("variant1");
-				sandbox.stub(VariantManagementState, "getControlChangesForVariant");
+				sandbox.stub(VariantManagementState, "getControlChangesForVariant").returns([]);
 				sandbox.stub(this.oVariantModel.oChangePersistence, "deleteChanges");
 				sandbox.stub(this.oVariantModel.oChangePersistence, "getDirtyChanges");
 				sandbox.stub(Switcher, "switchVariant").resolves();

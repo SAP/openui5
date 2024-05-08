@@ -6,26 +6,22 @@ sap.ui.define([
 	"sap/base/util/restricted/_omit",
 	"sap/base/util/restricted/_pick",
 	"sap/base/util/ObjectPath",
-	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/apply/_internal/controlVariants/Utils",
 	"sap/ui/fl/apply/_internal/flexState/changes/DependencyHandler",
 	"sap/ui/fl/apply/_internal/flexState/DataSelector",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
-	"sap/ui/fl/LayerUtils",
-	"sap/ui/fl/Utils"
+	"sap/ui/fl/LayerUtils"
 ], function(
 	_omit,
 	_pick,
 	ObjectPath,
-	JsControlTreeModifier,
 	VariantsApplyUtil,
 	DependencyHandler,
 	DataSelector,
 	States,
 	FlexState,
-	LayerUtils,
-	Utils
+	LayerUtils
 ) {
 	"use strict";
 
@@ -43,7 +39,8 @@ sap.ui.define([
 	// Map that contains the IDs of selected current variants per flex reference and variant management
 	// Might contain outdated entries if a different component with the same flex reference is loaded
 	// However these outdated entries will be invalidated when the variant management map is built
-	var mCurrentVariantReferences = {};
+	const mCurrentVariantReferences = {};
+	const mVariantSwitchPromises = {};
 
 	function getInitialCurrentVariant(sReference, aCtrlVariantManagementChanges, aVariants) {
 		var oComponentData = FlexState.getComponentData(sReference);
@@ -700,30 +697,23 @@ sap.ui.define([
 	};
 
 	/**
-	 * Calls <code>waitForChangesToBeApplied</code> with all the controls that have changes in the initial variant.
+	 * Sets the promise for the variant switch for the given reference.
 	 *
-	 * @param {object} mPropertyBag - Object with necessary parameters
-	 * @param {string} mPropertyBag.vmReference - Variant management reference
-	 * @param {string} mPropertyBag.reference - Component reference
-	 * @param {sap.ui.core.Component} mPropertyBag.appComponent - App component instance
-	 * @param {sap.ui.fl.FlexController} mPropertyBag.flexController - FlexController instance
-	 * @returns {Promise} Promise that resolves when all changes for the initial variant are applied
+	 * @param {string} sReference - Flex reference of the app
+	 * @param {Promise<undefined>} oPromise - Variant Switch Promise
 	 */
-	VariantManagementState.waitForInitialVariantChanges = function(mPropertyBag) {
-		var aCurrentVariantChanges = VariantManagementState.getInitialUIChanges({
-			vmReference: mPropertyBag.vmReference,
-			reference: mPropertyBag.reference
-		});
-		var aControls = aCurrentVariantChanges.reduce(function(aCurrentControls, oChange) {
-			var oSelector = oChange.getSelector();
-			var oControl = JsControlTreeModifier.bySelector(oSelector, mPropertyBag.appComponent);
-			if (oControl && Utils.indexOfObject(aCurrentControls, { selector: oControl }) === -1) {
-				aCurrentControls.push({ selector: oControl });
-			}
-			return aCurrentControls;
-		}, []);
+	VariantManagementState.setVariantSwitchPromise = function(sReference, oPromise) {
+		mVariantSwitchPromises[sReference] = oPromise;
+	};
 
-		return aControls.length ? mPropertyBag.flexController.waitForChangesToBeApplied(aControls) : Promise.resolve();
+	/**
+	 * Gets the promise for the variant switch for the given reference.
+	 *
+	 * @param {string} sReference - Flex reference of the app
+	 * @returns {Promise<undefined>} Variant Switch Promise
+	 */
+	VariantManagementState.getVariantSwitchPromise = function(sReference) {
+		return mVariantSwitchPromises[sReference];
 	};
 
 	return VariantManagementState;

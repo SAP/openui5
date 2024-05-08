@@ -75,9 +75,6 @@ sap.ui.define([
 			}));
 
 			this.oVariantManagement = new VariantManagement("One", {});
-			var oFlexController = {
-				setVariantSwitchPromise() {}
-			};
 			sinon.stub(ManifestUtils, "getFlexReferenceForControl").returns("mockComponentName");
 
 			this._oVM = this.oVariantManagement._getEmbeddedVM();
@@ -137,7 +134,7 @@ sap.ui.define([
 					]
 				}
 			}, {
-				flexController: oFlexController,
+				flexController: {},
 				appComponent: {
 					getId: () => {"foo";}
 				}

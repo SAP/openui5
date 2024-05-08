@@ -5,7 +5,6 @@ sap.ui.define([
 	"sap/ui/base/ManagedObjectObserver",
 	"sap/ui/core/Component",
 	"sap/ui/fl/apply/_internal/controlVariants/URLHandler",
-	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
 	"sap/ui/fl/variants/VariantManagement",
@@ -18,7 +17,6 @@ sap.ui.define([
 	ManagedObjectObserver,
 	Component,
 	URLHandler,
-	VariantManagementState,
 	ManifestUtils,
 	ControlVariantApplyAPI,
 	VariantManagement,
@@ -310,11 +308,6 @@ sap.ui.define([
 			this.oRegisterNavigationFilterStub = sandbox.stub();
 			this.oDeRegisterNavigationFilterStub = sandbox.stub();
 
-			// variant model
-			var oFlexController = {
-				setVariantSwitchPromise() {}
-			};
-
 			// mock ushell services
 			var sDefaultStatus = "Continue";
 
@@ -363,11 +356,10 @@ sap.ui.define([
 						]
 					}
 				}, {
-					flexController: oFlexController,
+					flexController: {},
 					appComponent: this.oAppComponent
 				}
 			);
-			sandbox.stub(VariantManagementState, "waitForInitialVariantChanges").resolves();
 			this.sDefaultStatus = sDefaultStatus;
 			this.oGetUShellServiceStub = sandbox.stub(this.oModel, "getUShellService");
 			this.oGetUShellServiceStub.withArgs("ShellNavigationInternal").returns({
@@ -772,9 +764,6 @@ sap.ui.define([
 	QUnit.module("Given URLHandler.updateVariantInURL() to update a new variant parameter in the URL", {
 		beforeEach() {
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("someComponentName");
-			var oFlexController = {
-				setVariantSwitchPromise() {}
-			};
 			this.oModel = new VariantModel({
 				variantMgmtId1: {
 					defaultVariant: "variant1",
@@ -834,7 +823,7 @@ sap.ui.define([
 				}
 			},
 			{
-				flexController: oFlexController,
+				flexController: {},
 				appComponent: { getId() { return "testid"; } }
 			});
 

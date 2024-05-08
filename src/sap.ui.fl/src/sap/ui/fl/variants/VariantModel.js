@@ -172,7 +172,7 @@ sap.ui.define([
 		oModel._oVariantSwitchPromise = oModel._oVariantSwitchPromise
 		.catch(function() {})
 		.then(fnCallback);
-		oModel.oFlexController.setVariantSwitchPromise(oModel._oVariantSwitchPromise);
+		VariantManagementState.setVariantSwitchPromise(oModel.sFlexReference, oModel._oVariantSwitchPromise);
 		return oModel._oVariantSwitchPromise;
 	}
 
@@ -281,6 +281,22 @@ sap.ui.define([
 		};
 		var bHasAdaptationsModel = ContextBasedAdaptationsAPI.hasAdaptationsModel(mContextBasedAdaptationBag);
 		return bHasAdaptationsModel && ContextBasedAdaptationsAPI.getDisplayedAdaptationId(mContextBasedAdaptationBag);
+	}
+
+	function waitForInitialVariantChanges(mPropertyBag) {
+		const aCurrentVariantChanges = VariantManagementState.getInitialUIChanges({
+			vmReference: mPropertyBag.vmReference,
+			reference: mPropertyBag.reference
+		});
+		const aSelectors = aCurrentVariantChanges.reduce((aCurrentControls, oChange) => {
+			const oSelector = oChange.getSelector();
+			const oControl = JsControlTreeModifier.bySelector(oSelector, mPropertyBag.appComponent);
+			if (oControl && Utils.indexOfObject(aCurrentControls, { selector: oControl }) === -1) {
+				aCurrentControls.push({ selector: oControl });
+			}
+			return aCurrentControls;
+		}, []);
+		return aSelectors.length ? FlexObjectState.waitForFlexObjectsToBeApplied(aSelectors) : Promise.resolve();
 	}
 
 	/**
@@ -512,10 +528,9 @@ sap.ui.define([
 				var mParameters = {
 					appComponent: this.oAppComponent,
 					reference: this.sFlexReference,
-					vmReference: sVMReference,
-					flexController: this.oFlexController
+					vmReference: sVMReference
 				};
-				VariantManagementState.waitForInitialVariantChanges(mParameters).then(function() {
+				waitForInitialVariantChanges(mParameters).then(function() {
 					var sCurrentVariantReference = this.oData[sVMReference].currentVariant;
 					this.callVariantSwitchListeners(sVMReference, sCurrentVariantReference, mPropertyBag.callback);
 				}.bind(this));
@@ -1444,10 +1459,9 @@ sap.ui.define([
 		var mParameters = {
 			appComponent: this.oAppComponent,
 			reference: this.sFlexReference,
-			vmReference: sVariantManagementReference,
-			flexController: this.oFlexController
+			vmReference: sVariantManagementReference
 		};
-		this._oVariantSwitchPromise = this._oVariantSwitchPromise.then(VariantManagementState.waitForInitialVariantChanges.bind(undefined, mParameters));
+		this._oVariantSwitchPromise = this._oVariantSwitchPromise.then(waitForInitialVariantChanges.bind(undefined, mParameters));
 	};
 
 	VariantModel.prototype.waitForVMControlInit = function(sVMReference) {
