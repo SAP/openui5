@@ -882,6 +882,7 @@ function(
 			if ( node.nodeType === 1 /* ELEMENT_NODE */ ) {
 				// differentiate between SAPUI5 and plain-HTML children
 				if (node.namespaceURI === XHTML_NAMESPACE || node.namespaceURI === SVG_NAMESPACE ) {
+					future.warningThrows(`Using native HTML content in XMLViews is deprecated.`, oView.getId());
 					if (bRootArea) {
 						if (oAggregation && oAggregation.name !== "content") {
 							Log.error(createErrorInfo(node, "XHTML nodes can only be added to the 'content' aggregation and not to the '" + oAggregation.name + "' aggregation."));

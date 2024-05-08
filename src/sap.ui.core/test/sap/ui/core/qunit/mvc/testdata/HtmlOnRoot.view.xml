@@ -1,0 +1,8 @@
+<mvc:View
+	xmlns:l="sap.ui.layout"
+	xmlns:html="http://www.w3.org/1999/xhtml"
+	xmlns:mvc="sap.ui.core.mvc">
+	<l:VerticalLayout>
+		<html:h2>This is some Header</html:h2>
+	</l:VerticalLayout>
+</mvc:View>
