@@ -2,7 +2,6 @@
 
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
-	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/table/Table",
 	"sap/ui/table/TreeTable",
@@ -13,7 +12,6 @@ sap.ui.define([
 	"sap/ui/Device"
 ], function(
 	TableQUnitUtils,
-	nextUIUpdate,
 	TableUtils,
 	Table,
 	TreeTable,
@@ -27,14 +25,7 @@ sap.ui.define([
 
 	const createTables = window.createTables;
 	const destroyTables = window.destroyTables;
-	const getCell = window.getCell;
-	const getColumnHeader = window.getColumnHeader;
-	const getRowHeader = window.getRowHeader;
-	const getRowAction = window.getRowAction;
-	const getSelectAll = window.getSelectAll;
 	const iNumberOfRows = window.iNumberOfRows;
-	const fakeSumRow = window.fakeSumRow;
-	const fakeGroupRow = window.fakeGroupRow;
 	const Grouping = TableUtils.Grouping;
 
 	QUnit.module("Misc");
@@ -45,56 +36,57 @@ sap.ui.define([
 	});
 
 	QUnit.module("Determine row type", {
-		beforeEach: function() {
-			createTables();
+		beforeEach: async function() {
+			this.oTable = TableQUnitUtils.createTable({
+				rows: "{/}",
+				models: TableQUnitUtils.createJSONModelWithEmptyRows(9),
+				columns: TableQUnitUtils.createTextColumn(),
+				rowActionTemplate: TableQUnitUtils.createRowAction(null),
+				rowActionCount: 1
+			});
+
+			await this.oTable.qunit.whenRenderingFinished();
 		},
 		afterEach: function() {
-			destroyTables();
+			this.oTable.destroy();
 		}
 	});
 
 	QUnit.test("isInSummaryRow", async function(assert) {
-		oTable.setRowActionTemplate(TableQUnitUtils.createRowAction(null));
-		oTable.setRowActionCount(1);
-		await nextUIUpdate();
+		await this.oTable.qunit.setRowStates([{type: Row.prototype.Type.Summary}]);
 
-		return fakeSumRow(0).then(function() {
-			assert.ok(TableUtils.Grouping.isInSummaryRow(getCell(0, 0)), "DATACELL in sum row");
-			assert.ok(!TableUtils.Grouping.isInSummaryRow(getCell(1, 0)), "DATACELL in normal row");
+		assert.ok(Grouping.isInSummaryRow(this.oTable.qunit.getDataCell(0, 0)), "DATACELL in sum row");
+		assert.ok(!Grouping.isInSummaryRow(this.oTable.qunit.getDataCell(1, 0)), "DATACELL in normal row");
 
-			assert.ok(TableUtils.Grouping.isInSummaryRow(getRowHeader(0)), "ROWHEADER in sum row");
-			assert.ok(!TableUtils.Grouping.isInSummaryRow(getRowHeader(1)), "ROWHEADER in normal row");
+		assert.ok(Grouping.isInSummaryRow(this.oTable.qunit.getRowHeaderCell(0)), "ROWHEADER in sum row");
+		assert.ok(!Grouping.isInSummaryRow(this.oTable.qunit.getRowHeaderCell(1)), "ROWHEADER in normal row");
 
-			assert.ok(TableUtils.Grouping.isInSummaryRow(getRowAction(0)), "ROWACTION in sum row");
-			assert.ok(!TableUtils.Grouping.isInSummaryRow(getRowAction(1)), "ROWACTION in normal row");
+		assert.ok(Grouping.isInSummaryRow(this.oTable.qunit.getRowActionCell(0)), "ROWACTION in sum row");
+		assert.ok(!Grouping.isInSummaryRow(this.oTable.qunit.getRowActionCell(1)), "ROWACTION in normal row");
 
-			assert.ok(!TableUtils.Grouping.isInSummaryRow(getColumnHeader(0)), "COLUMNHEADER");
-			assert.ok(!TableUtils.Grouping.isInSummaryRow(getSelectAll()), "COLUMNROWHEADER");
-			assert.ok(!TableUtils.Grouping.isInSummaryRow(null), "null");
-			assert.ok(!TableUtils.Grouping.isInSummaryRow(document.getElementById("outerelement")), "Foreign DOM");
-		});
+		assert.ok(!Grouping.isInSummaryRow(this.oTable.qunit.getColumnHeaderCell(0)), "COLUMNHEADER");
+		assert.ok(!Grouping.isInSummaryRow(this.oTable.qunit.getSelectAllCell()), "COLUMNROWHEADER");
+		assert.ok(!Grouping.isInSummaryRow(null), "null");
+		assert.ok(!Grouping.isInSummaryRow(document.getElementById("outerelement")), "Foreign DOM");
 	});
 
 	QUnit.test("isInGroupHeaderRow", async function(assert) {
-		oTable.setRowActionTemplate(TableQUnitUtils.createRowAction(null));
-		oTable.setRowActionCount(1);
-		await nextUIUpdate();
+		Grouping.setHierarchyMode(this.oTable, Grouping.HierarchyMode.Group);
+		await this.oTable.qunit.setRowStates([{type: Row.prototype.Type.GroupHeader, expandable: true}]);
 
-		return fakeGroupRow(0).then(function() {
-			assert.ok(TableUtils.Grouping.isInGroupHeaderRow(getCell(0, 0)), "DATACELL in group row");
-			assert.ok(!TableUtils.Grouping.isInGroupHeaderRow(getCell(1, 0)), "DATACELL in normal row");
+		assert.ok(Grouping.isInGroupHeaderRow(this.oTable.qunit.getDataCell(0, 0)), "DATACELL in group row");
+		assert.ok(!Grouping.isInGroupHeaderRow(this.oTable.qunit.getDataCell(1, 0)), "DATACELL in normal row");
 
-			assert.ok(TableUtils.Grouping.isInGroupHeaderRow(getRowHeader(0)), "ROWHEADER in group row");
-			assert.ok(!TableUtils.Grouping.isInGroupHeaderRow(getRowHeader(1)), "ROWHEADER in normal row");
+		assert.ok(Grouping.isInGroupHeaderRow(this.oTable.qunit.getRowHeaderCell(0)), "ROWHEADER in group row");
+		assert.ok(!Grouping.isInGroupHeaderRow(this.oTable.qunit.getRowHeaderCell(1)), "ROWHEADER in normal row");
 
-			assert.ok(TableUtils.Grouping.isInGroupHeaderRow(getRowAction(0)), "ROWACTION in group row");
-			assert.ok(!TableUtils.Grouping.isInGroupHeaderRow(getRowAction(1)), "ROWACTION in normal row");
+		assert.ok(Grouping.isInGroupHeaderRow(this.oTable.qunit.getRowActionCell(0)), "ROWACTION in group row");
+		assert.ok(!Grouping.isInGroupHeaderRow(this.oTable.qunit.getRowActionCell(1)), "ROWACTION in normal row");
 
-			assert.ok(!TableUtils.Grouping.isInGroupHeaderRow(getColumnHeader(0)), "COLUMNHEADER");
-			assert.ok(!TableUtils.Grouping.isInGroupHeaderRow(getSelectAll()), "COLUMNROWHEADER");
-			assert.ok(!TableUtils.Grouping.isInGroupHeaderRow(null), "null");
-			assert.ok(!TableUtils.Grouping.isInGroupHeaderRow(document.getElementById("outerelement")), "Foreign DOM");
-		});
+		assert.ok(!Grouping.isInGroupHeaderRow(this.oTable.qunit.getColumnHeaderCell(0)), "COLUMNHEADER");
+		assert.ok(!Grouping.isInGroupHeaderRow(this.oTable.qunit.getSelectAllCell()), "COLUMNROWHEADER");
+		assert.ok(!Grouping.isInGroupHeaderRow(null), "null");
+		assert.ok(!Grouping.isInGroupHeaderRow(document.getElementById("outerelement")), "Foreign DOM");
 	});
 
 	QUnit.module("Hierarchy modes", {
@@ -106,7 +98,7 @@ sap.ui.define([
 		},
 		assertMode: function(assert, sExpectedMode, sMessage) {
 			sMessage = "Table is in mode '" + sExpectedMode + "'" + (sMessage ? " - " + sMessage : "");
-			assert.strictEqual(TableUtils.Grouping.getHierarchyMode(this.oTable), sExpectedMode, sMessage);
+			assert.strictEqual(Grouping.getHierarchyMode(this.oTable), sExpectedMode, sMessage);
 		},
 		assertAccessors: function(assert, bFlat, bGroup, bTree) {
 			let sModeCSSClass = null;
@@ -453,7 +445,7 @@ sap.ui.define([
 			assert.ok(oGroupMenuButton != null, "Row Header " + oRow + " has GroupMenuButton");
 		}
 
-		TableUtils.Grouping.showGroupMenuButton.restore();
+		Grouping.showGroupMenuButton.restore();
 	});
 
 	/**

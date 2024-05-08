@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/table/utils/TableUtils",
+	"sap/ui/table/Row",
 	"sap/ui/core/dnd/DragDropInfo",
 	"sap/ui/core/library",
 	"sap/ui/core/Control",
@@ -13,6 +14,7 @@ sap.ui.define([
 	TableQUnitUtils,
 	nextUIUpdate,
 	TableUtils,
+	Row,
 	DragDropInfo,
 	CoreLibrary,
 	Control,
@@ -23,23 +25,18 @@ sap.ui.define([
 
 	const createTables = window.createTables;
 	const destroyTables = window.destroyTables;
-	const getRowHeader = window.getRowHeader;
-	const getCell = window.getCell;
-	const getRowAction = window.getRowAction;
-	const fakeGroupRow = window.fakeGroupRow;
-	const fakeSumRow = window.fakeSumRow;
 	const DropPosition = CoreLibrary.dnd.DropPosition;
 
 	function createDragEvent(sDragEventType) {
-		const oJQueryDragEvent = jQuery.Event(sDragEventType);
+		let oDragEvent;
 
 		if (Device.browser.safari) {
-			oJQueryDragEvent.originalEvent = new Event(sDragEventType, {
+			oDragEvent = new Event(sDragEventType, {
 				bubbles: true,
 				cancelable: true
 			});
 
-			oJQueryDragEvent.originalEvent.dataTransfer = {
+			oDragEvent.dataTransfer = {
 				dropEffect: "none",
 				effectAllowed: "none",
 				files: [],
@@ -50,14 +47,14 @@ sap.ui.define([
 				getData: function() {}
 			};
 		} else {
-			oJQueryDragEvent.originalEvent = new DragEvent(sDragEventType, {
+			oDragEvent = new DragEvent(sDragEventType, {
 				bubbles: true,
 				cancelable: true,
 				dataTransfer: new DataTransfer()
 			});
 		}
 
-		return oJQueryDragEvent;
+		return oDragEvent;
 	}
 
 	function triggerDragEvent(sType, oControl, mTestParameters) {
@@ -65,7 +62,7 @@ sap.ui.define([
 		oEvent._mTestParameters = mTestParameters;
 		const oDomRef = oControl.getDomRef ? oControl.getDomRef() : oControl;
 		if (oDomRef) {
-			jQuery(oDomRef).trigger(oEvent);
+			oDomRef.dispatchEvent(oEvent);
 		}
 	}
 
@@ -308,202 +305,187 @@ sap.ui.define([
 
 	QUnit.module("Rows", {
 		beforeEach: async function() {
-			createTables();
+			this.oTable = TableQUnitUtils.createTable({
+				rows: "{/}",
+				models: TableQUnitUtils.createJSONModelWithEmptyRows(9),
+				columns: [
+					TableQUnitUtils.createTextColumn(),
+					TableQUnitUtils.createTextColumn()
+				],
+				fixedColumnCount: 1,
+				dragDropConfig: new DragDropInfo({
+					sourceAggregation: "rows",
+					targetAggregation: "rows"
+				}),
+				rowActionTemplate: TableQUnitUtils.createRowAction(null),
+				rowActionCount: 1
+			});
 
-			this.oDragAndDropExtension = oTable._getDragAndDropExtension();
+			this.oDragAndDropExtension = this.oTable._getDragAndDropExtension();
 			this.oDragAndDropExtension._debug();
 
-			oTable.addDragDropConfig(new DragDropInfo({
-				sourceAggregation: "rows",
-				targetAggregation: "rows"
-			}));
-			oTable.setRowActionTemplate(TableQUnitUtils.createRowAction(null));
-			oTable.setRowActionCount(1);
-
-			oTreeTable.addDragDropConfig(new DragDropInfo({
-				sourceAggregation: "rows",
-				targetAggregation: "rows",
-				targetElement: oTable
-			}));
-
-			await nextUIUpdate();
+			await this.oTable.qunit.whenRenderingFinished();
 		},
 		afterEach: function() {
-			destroyTables();
+			this.oTable.destroy();
 		}
 	});
 
 	QUnit.test("draggable attribute of row with data", function(assert) {
-		assert.strictEqual(getRowHeader(0)[0].getAttribute("draggable"), null,
-			"Row header does not have a draggable attribute");
-		assert.strictEqual(getCell(0, 0).parent()[0].getAttribute("draggable"), "true",
-			"Row in the fixed column area does have a draggable attribute with value \"true\"");
-		assert.strictEqual(getCell(0, 0).parent()[0].getAttribute("data-sap-ui-draggable"), "true",
-			"Row in the fixed column area does have a data-sap-ui-draggable attribute with value \"true\"");
-		assert.strictEqual(getCell(0, 1).parent()[0].getAttribute("draggable"), "true",
-			"Row in the scrollable column area does have a draggable attribute with value \"true\"");
-		assert.strictEqual(getCell(0, 1).parent()[0].getAttribute("data-sap-ui-draggable"), "true",
-			"Row in the scrollable column area does have a data-sap-ui-draggable attribute with value \"true\"");
-		assert.strictEqual(getRowAction(0)[0].getAttribute("draggable"), null,
-			"Row action does not have a draggable attribute");
+		const oRowDomRefs = this.oTable.getRows()[0].getDomRefs();
+
+		assert.strictEqual(oRowDomRefs.rowScrollPart.getAttribute("draggable"), "true", "Scrollable part");
+		assert.strictEqual(oRowDomRefs.rowScrollPart.getAttribute("data-sap-ui-draggable"), "true", "Scrollable part");
+		assert.strictEqual(oRowDomRefs.rowFixedPart.getAttribute("draggable"), "true", "Fixed part");
+		assert.strictEqual(oRowDomRefs.rowFixedPart.getAttribute("data-sap-ui-draggable"), "true", "Fixed part");
+		assert.notOk(oRowDomRefs.rowHeaderPart.getAttribute("draggable"), "Row header part");
+		assert.notOk(oRowDomRefs.rowHeaderPart.getAttribute("data-sap-ui-draggable"), "Row header part");
+		assert.notOk(oRowDomRefs.rowActionPart.getAttribute("draggable"), "Row action part");
+		assert.notOk(oRowDomRefs.rowActionPart.getAttribute("data-sap-ui-draggable"), "Row action part");
 	});
 
-	QUnit.test("draggable attribute of empty row", async function(assert) {
-		oTable.setShowNoData(false);
-		oTable.unbindRows();
-		await nextUIUpdate();
+	QUnit.test("draggable attribute of empty row", function(assert) {
+		const oRowDomRefs = this.oTable.getRows()[9].getDomRefs();
 
-		assert.strictEqual(getRowHeader(0)[0].getAttribute("draggable"), null,
-			"Row header does not have a draggable attribute");
-		assert.strictEqual(getCell(0, 0).parent()[0].getAttribute("draggable"), "true",
-			"Row in the fixed column area does have a draggable attribute with value \"true\"");
-		assert.strictEqual(getCell(0, 0).parent()[0].getAttribute("data-sap-ui-draggable"), "true",
-			"Row in the fixed column area does have a data-sap-ui-draggable attribute with value \"true\"");
-		assert.strictEqual(getCell(0, 1).parent()[0].getAttribute("draggable"), "true",
-			"Row in the scrollable column area does have a draggable attribute with value \"true\"");
-		assert.strictEqual(getCell(0, 1).parent()[0].getAttribute("data-sap-ui-draggable"), "true",
-			"Row in the scrollable column area does have a data-sap-ui-draggable attribute with value \"true\"");
-		assert.strictEqual(getRowAction(0)[0].getAttribute("draggable"), null,
-			"Row action does not have a draggable attribute");
+		assert.strictEqual(oRowDomRefs.rowScrollPart.getAttribute("draggable"), "true", "Scrollable part");
+		assert.strictEqual(oRowDomRefs.rowScrollPart.getAttribute("data-sap-ui-draggable"), "true", "Scrollable part");
+		assert.strictEqual(oRowDomRefs.rowFixedPart.getAttribute("draggable"), "true", "Fixed part");
+		assert.strictEqual(oRowDomRefs.rowFixedPart.getAttribute("data-sap-ui-draggable"), "true", "Fixed part");
+		assert.notOk(oRowDomRefs.rowHeaderPart.getAttribute("draggable"), "Row header part");
+		assert.notOk(oRowDomRefs.rowHeaderPart.getAttribute("data-sap-ui-draggable"), "Row header part");
+		assert.notOk(oRowDomRefs.rowActionPart.getAttribute("draggable"), "Row action part");
+		assert.notOk(oRowDomRefs.rowActionPart.getAttribute("data-sap-ui-draggable"), "Row action part");
 	});
 
-	QUnit.test("Draggable", function(assert) {
-		const fnOriginalDragStartHandler = this.oDragAndDropExtension._ExtensionDelegate.ondragstart;
+	QUnit.test("Draggable", async function(assert) {
+		this.oTable.addEventDelegate({
+			ondragstart: (oEvent) => {
+				const mParams = oEvent.originalEvent._mTestParameters;
+				const sMessagePrefix = mParams.sRowType + " row - " + mParams.sRowAreaType + " area: ";
 
-		this.oDragAndDropExtension._ExtensionDelegate.ondragstart = function(oEvent) {
-			fnOriginalDragStartHandler.apply(oTable, arguments);
-
-			const mParams = oEvent._mTestParameters;
-			const sMessagePrefix = mParams.sRowType + " row - " + mParams.sRowAreaType + " area: ";
-
-			if (mParams.sRowType === "Standard") {
-				assert.ok(!oEvent.isDefaultPrevented(),
-					sMessagePrefix + "The default action was not prevented");
-				assert.deepEqual(oEvent.dragSession.getComplexData("sap.ui.table-" + oTable.getId()).draggedRowContext,
-					oTable.getContextByIndex(mParams.iRowIndex),
-					sMessagePrefix + "The dragged row context was stored in the drag session");
-			} else {
-				assert.ok(oEvent.isDefaultPrevented(),
-					sMessagePrefix + "The default action was prevented");
-				assert.equal(oEvent.dragSession.getComplexData("sap.ui.table-" + oTable.getId()), null,
-					sMessagePrefix + "No drag session data was stored in the drag session");
+				if (mParams.sRowType === "Standard") {
+					assert.ok(!oEvent.isDefaultPrevented(),
+						sMessagePrefix + "The default action was not prevented");
+					assert.deepEqual(oEvent.dragSession.getComplexData("sap.ui.table-" + this.oTable.getId()).draggedRowContext,
+						this.oTable.getContextByIndex(mParams.iRowIndex),
+						sMessagePrefix + "The dragged row context was stored in the drag session");
+				} else {
+					assert.ok(oEvent.isDefaultPrevented(),
+						sMessagePrefix + "The default action was prevented");
+					assert.equal(oEvent.dragSession.getComplexData("sap.ui.table-" + this.oTable.getId()), null,
+						sMessagePrefix + "No drag session data was stored in the drag session");
+				}
 			}
-		};
+		});
 
-		function test($Target, mTestParameters) {
+		const test = (oTarget, mTestParameters) => {
 			const oDragStartEvent = createDragEvent("dragstart");
 			oDragStartEvent._mTestParameters = mTestParameters;
-			$Target.trigger(oDragStartEvent);
-		}
+			oTarget.dispatchEvent(oDragStartEvent);
+		};
 
-		function testStandardRow() {
-			test(getCell(0, 0).parent(), {sRowType: "Standard", sRowAreaType: "Fixed", iRowIndex: 0});
-			test(getCell(0, 1).parent(), {sRowType: "Standard", sRowAreaType: "Scrollable", iRowIndex: 0});
-		}
+		const testStandardRow = () => {
+			test(this.oTable.qunit.getDataCell(0, 0).parentElement, {sRowType: "Standard", sRowAreaType: "Fixed", iRowIndex: 0});
+			test(this.oTable.qunit.getDataCell(0, 1).parentElement, {sRowType: "Standard", sRowAreaType: "Scrollable", iRowIndex: 0});
+		};
 
-		function testEmptyRow() {
-			sinon.stub(oTable.getRows()[0], "isEmpty").returns(true);
+		const testEmptyRow = () => {
+			test(this.oTable.qunit.getDataCell(-1, 0).parentElement, {sRowType: "Empty", sRowAreaType: "Fixed", iRowIndex: 9});
+			test(this.oTable.qunit.getDataCell(-1, 1).parentElement, {sRowType: "Empty", sRowAreaType: "Scrollable", iRowIndex: 9});
+		};
 
-			test(getCell(0, 0).parent(), {sRowType: "Empty", sRowAreaType: "Fixed", iRowIndex: 0});
-			test(getCell(0, 1).parent(), {sRowType: "Empty", sRowAreaType: "Scrollable", iRowIndex: 0});
+		const testGroupHeaderRow = async () => {
+			TableUtils.Grouping.setHierarchyMode(this.oTable, TableUtils.Grouping.HierarchyMode.Group);
+			await this.oTable.qunit.setRowStates([{type: Row.prototype.Type.GroupHeader, expandable: true}]);
 
-			oTable.getRows()[0].isEmpty.restore();
-		}
+			test(this.oTable.qunit.getDataCell(0, 0).parentElement, {sRowType: "Group header", sRowAreaType: "Fixed", iRowIndex: 0});
+			test(this.oTable.qunit.getDataCell(0, 1).parentElement, {sRowType: "Group header", sRowAreaType: "Scrollable", iRowIndex: 0});
 
-		function testGroupHeaderRow() {
-			return fakeGroupRow(0).then(function() {
-				test(getCell(0, 0).parent(), {sRowType: "Group header", sRowAreaType: "Fixed", iRowIndex: 0});
-				test(getCell(0, 1).parent(), {sRowType: "Group header", sRowAreaType: "Scrollable", iRowIndex: 0});
-			});
-		}
+			TableUtils.Grouping.setHierarchyMode(this.oTable, TableUtils.Grouping.HierarchyMode.Flat);
+			await this.oTable.qunit.whenRenderingFinished();
+		};
 
-		function testSumRow() {
-			return fakeSumRow(0).then(function() {
-				test(getCell(0, 0).parent(), {sRowType: "Sum", sRowAreaType: "Fixed", iRowIndex: 0});
-				test(getCell(0, 1).parent(), {sRowType: "Sum", sRowAreaType: "Scrollable", iRowIndex: 0});
-			});
-		}
+		const testSumRow = async () => {
+			await this.oTable.qunit.setRowStates([{type: Row.prototype.Type.Summary}]);
+			test(this.oTable.qunit.getDataCell(0, 0).parentElement, {sRowType: "Sum", sRowAreaType: "Fixed", iRowIndex: 0});
+			test(this.oTable.qunit.getDataCell(0, 1).parentElement, {sRowType: "Sum", sRowAreaType: "Scrollable", iRowIndex: 0});
+		};
 
-		testStandardRow();
-		testEmptyRow();
-		testGroupHeaderRow();
-		testSumRow();
-
-		// Restore
-		this.oDragAndDropExtension._ExtensionDelegate.ondragstart = fnOriginalDragStartHandler;
+		await testStandardRow();
+		await testEmptyRow();
+		await testGroupHeaderRow();
+		await testSumRow();
 	});
 
 	QUnit.test("Droppable & Drag session data", async function(assert) {
-		const fnOriginalDragEnterHandler = this.oDragAndDropExtension._ExtensionDelegate.ondragenter;
+		this.oTable.addEventDelegate({
+			ondragenter: (oEvent) => {
+				const mParams = oEvent.originalEvent._mTestParameters;
+				const bDraggingOverItself = oEvent.dragSession.getDragControl() === oEvent.dragSession.getDropControl();
+				const sDropPosition = this.oTable.getDragDropConfig()[0].getDropPosition();
+				let sMessagePrefix = "[DropPosition=" + sDropPosition + "] " + mParams.sRowType + " row - ";
 
-		this.oDragAndDropExtension._ExtensionDelegate.ondragenter = function(oEvent) {
-			fnOriginalDragEnterHandler.apply(oTable, arguments);
-
-			const mParams = oEvent._mTestParameters;
-			const bDraggingOverItself = oEvent.dragSession.getDragControl() === oEvent.dragSession.getDropControl();
-			const sDropPosition = oTable.getDragDropConfig()[0].getDropPosition();
-			let sMessagePrefix = "[DropPosition=" + sDropPosition + "] " + mParams.sRowType + " row - ";
-
-			if (bDraggingOverItself) {
-				sMessagePrefix += " Dragging the row over its own " + mParams.sRowAreaType + " area: ";
-			} else {
-				sMessagePrefix += mParams.sRowAreaType + " area: ";
-			}
-
-			if ((mParams.sRowType === "Standard" && !bDraggingOverItself)
-				|| (mParams.sRowType === "Empty" && sDropPosition !== DropPosition.On)) {
-
-				assert.ok(!oEvent.isDefaultPrevented(), sMessagePrefix + "The default action was be prevented");
-
-				const bVerticalScrollbarVisible = oTable._getScrollExtension().isVerticalScrollbarVisible();
-				const mTableCntRect = oTable.getDomRef("sapUiTableCnt").getBoundingClientRect();
-
-				if (mParams.sRowType === "Empty") {
-					const oLastNonEmptyRow = this.getRows()[TableUtils.getNonEmptyRowCount(this) - 1];
-					assert.strictEqual(oEvent.dragSession.getDropControl(), oLastNonEmptyRow,
-						sMessagePrefix + "The drop control was set to the last non-empty row");
+				if (bDraggingOverItself) {
+					sMessagePrefix += " Dragging the row over its own " + mParams.sRowAreaType + " area: ";
+				} else {
+					sMessagePrefix += mParams.sRowAreaType + " area: ";
 				}
 
-				assert.ok(!oEvent.isMarked("NonDroppable"), sMessagePrefix + "The event was not marked as \"NonDroppable\"");
-				assert.deepEqual(oEvent.dragSession.getIndicatorConfig(), {
-					width: mTableCntRect.width - (bVerticalScrollbarVisible ? 16 : 0),
-					left: mTableCntRect.left + (oTable._bRtlMode && bVerticalScrollbarVisible ? 16 : 0)
-				}, sMessagePrefix + "The correct indicator size was stored in the drag session");
-			} else {
-				assert.ok(oEvent.isMarked("NonDroppable"), sMessagePrefix + "The event was marked as \"NonDroppable\"");
-				assert.equal(oEvent.dragSession.getIndicatorConfig(), null,
-					sMessagePrefix + "The indicator size was not stored in the drag session");
-			}
-		};
+				if ((mParams.sRowType === "Standard" && !bDraggingOverItself)
+					|| (mParams.sRowType === "Empty" && sDropPosition !== DropPosition.On)) {
 
-		function test(mTestParameters, bTestDragOverItself) {
-			function getTarget(iRowIndex) {
+					assert.ok(!oEvent.isDefaultPrevented(), sMessagePrefix + "The default action was be prevented");
+
+					const bVerticalScrollbarVisible = this.oTable._getScrollExtension().isVerticalScrollbarVisible();
+					const mTableCntRect = this.oTable.getDomRef("sapUiTableCnt").getBoundingClientRect();
+
+					if (mParams.sRowType === "Empty") {
+						const oLastNonEmptyRow = this.oTable.getRows()[TableUtils.getNonEmptyRowCount(this.oTable) - 1];
+						assert.strictEqual(oEvent.dragSession.getDropControl(), oLastNonEmptyRow,
+							sMessagePrefix + "The drop control was set to the last non-empty row");
+					}
+
+					assert.ok(!oEvent.isMarked("NonDroppable"), sMessagePrefix + "The event was not marked as \"NonDroppable\"");
+					assert.deepEqual(oEvent.dragSession.getIndicatorConfig(), {
+						width: mTableCntRect.width - (bVerticalScrollbarVisible ? 16 : 0),
+						left: mTableCntRect.left + (this.oTable._bRtlMode && bVerticalScrollbarVisible ? 16 : 0)
+					}, sMessagePrefix + "The correct indicator size was stored in the drag session");
+				} else {
+					assert.ok(oEvent.isMarked("NonDroppable"), sMessagePrefix + "The event was marked as \"NonDroppable\"");
+					assert.equal(oEvent.dragSession.getIndicatorConfig(), null,
+						sMessagePrefix + "The indicator size was not stored in the drag session");
+				}
+			}
+		});
+
+		const test = (mTestParameters, bTestDragOverItself) => {
+			const getTarget = (iRowIndex) => {
 				switch (mTestParameters.sRowAreaType) {
 					case "Header":
-						return getRowHeader(iRowIndex);
+						return this.oTable.qunit.getRowHeaderCell(iRowIndex);
 					case "Fixed":
-						return oTable.getRows()[iRowIndex].getCells()[0].$();
+						return this.oTable.getRows()[iRowIndex].getCells()[0].getDomRef();
 					case "Scrollable":
-						return oTable.getRows()[iRowIndex].getCells()[1].$();
+						return this.oTable.getRows()[iRowIndex].getCells()[1].getDomRef();
 					case "Action":
-						return getRowAction(iRowIndex).find(".sapUiTableActionIcon").first();
+						return this.oTable.qunit.getRowActionCell(iRowIndex).querySelector(".sapUiTableActionIcon");
 					default:
 						return null;
 				}
-			}
+			};
 
-			oTable.getRows()[mTestParameters.iFromRowIndex].$().trigger(createDragEvent("dragstart"));
+			this.oTable.getRows()[mTestParameters.iFromRowIndex].getDomRef().dispatchEvent(createDragEvent("dragstart"));
 			let oDragEnterEvent = createDragEvent("dragenter");
 			oDragEnterEvent._mTestParameters = mTestParameters;
-			getTarget(mTestParameters.iToRowIndex).trigger(oDragEnterEvent);
+			getTarget(mTestParameters.iToRowIndex).dispatchEvent(oDragEnterEvent);
 
 			if (bTestDragOverItself) {
-				oTable.getRows()[mTestParameters.iFromRowIndex].$().trigger(createDragEvent("dragstart"));
+				this.oTable.getRows()[mTestParameters.iFromRowIndex].getDomRef().dispatchEvent(createDragEvent("dragstart"));
 				oDragEnterEvent = createDragEvent("dragenter");
 				oDragEnterEvent._mTestParameters = mTestParameters;
-				getTarget(mTestParameters.iFromRowIndex).trigger(oDragEnterEvent);
+				getTarget(mTestParameters.iFromRowIndex).dispatchEvent(oDragEnterEvent);
 			}
-		}
+		};
 
 		function testStandardRow() {
 			test({sRowType: "Standard", sRowAreaType: "Header", iFromRowIndex: 0, iToRowIndex: 1}, true);
@@ -512,134 +494,139 @@ sap.ui.define([
 			test({sRowType: "Standard", sRowAreaType: "Action", iFromRowIndex: 0, iToRowIndex: 1}, true);
 		}
 
-		async function testEmptyRow() {
-			const sOriginalDropPosition = oTable.getDragDropConfig()[0].getDropPosition();
-			const iOriginalRowCount = oTable.getRowMode().getRowCount();
+		const testEmptyRow = () => {
+			const sOriginalDropPosition = this.oTable.getDragDropConfig()[0].getDropPosition();
 
-			oTable.getRowMode().setRowCount(10);
-			await nextUIUpdate();
-
-			Object.getOwnPropertyNames(DropPosition).forEach(function(sPropertyName) {
-				oTable.getDragDropConfig()[0].setDropPosition(DropPosition[sPropertyName]);
+			Object.getOwnPropertyNames(DropPosition).forEach((sPropertyName) => {
+				this.oTable.getDragDropConfig()[0].setDropPosition(DropPosition[sPropertyName]);
 				test({sRowType: "Empty", sRowAreaType: "Header", iFromRowIndex: 0, iToRowIndex: 9});
 				test({sRowType: "Empty", sRowAreaType: "Fixed", iFromRowIndex: 0, iToRowIndex: 9});
 				test({sRowType: "Empty", sRowAreaType: "Scrollable", iFromRowIndex: 0, iToRowIndex: 9});
 				test({sRowType: "Empty", sRowAreaType: "Action", iFromRowIndex: 0, iToRowIndex: 9});
 			});
 
-			// Restore
-			oTable.getDragDropConfig()[0].setDropPosition(sOriginalDropPosition);
-			oTable.getRowMode().setRowCount(iOriginalRowCount);
-			await nextUIUpdate();
-		}
+			this.oTable.getDragDropConfig()[0].setDropPosition(sOriginalDropPosition);
+		};
 
-		function testGroupHeaderRow() {
-			return fakeGroupRow(1).then(function() {
-				test({sRowType: "Group header", sRowAreaType: "Header", iFromRowIndex: 0, iToRowIndex: 1});
-				test({sRowType: "Group header", sRowAreaType: "Fixed", iFromRowIndex: 0, iToRowIndex: 1});
-				test({sRowType: "Group header", sRowAreaType: "Scrollable", iFromRowIndex: 0, iToRowIndex: 1});
-				test({sRowType: "Group header", sRowAreaType: "Action", iFromRowIndex: 0, iToRowIndex: 1});
-			});
-		}
+		const testGroupHeaderRow = async () => {
+			TableUtils.Grouping.setHierarchyMode(this.oTable, TableUtils.Grouping.HierarchyMode.Group);
+			await this.oTable.qunit.setRowStates([undefined, {type: Row.prototype.Type.GroupHeader, expandable: true}]);
 
-		function testSumRow() {
-			return fakeSumRow(1).then(function() {
-				test({sRowType: "Sum", sRowAreaType: "Header", iFromRowIndex: 0, iToRowIndex: 1});
-				test({sRowType: "Sum", sRowAreaType: "Fixed", iFromRowIndex: 0, iToRowIndex: 1});
-				test({sRowType: "Sum", sRowAreaType: "Scrollable", iFromRowIndex: 0, iToRowIndex: 1});
-				test({sRowType: "Sum", sRowAreaType: "Action", iFromRowIndex: 0, iToRowIndex: 1});
-			});
-		}
+			test({sRowType: "Group header", sRowAreaType: "Header", iFromRowIndex: 0, iToRowIndex: 1});
+			test({sRowType: "Group header", sRowAreaType: "Fixed", iFromRowIndex: 0, iToRowIndex: 1});
+			test({sRowType: "Group header", sRowAreaType: "Scrollable", iFromRowIndex: 0, iToRowIndex: 1});
+			test({sRowType: "Group header", sRowAreaType: "Action", iFromRowIndex: 0, iToRowIndex: 1});
 
-		testStandardRow();
+			TableUtils.Grouping.setHierarchyMode(this.oTable, TableUtils.Grouping.HierarchyMode.Flat);
+			await this.oTable.qunit.whenRenderingFinished();
+		};
+
+		const testSumRow = async () => {
+			await this.oTable.qunit.setRowStates([undefined, {type: Row.prototype.Type.Summary}]);
+			test({sRowType: "Sum", sRowAreaType: "Header", iFromRowIndex: 0, iToRowIndex: 1});
+			test({sRowType: "Sum", sRowAreaType: "Fixed", iFromRowIndex: 0, iToRowIndex: 1});
+			test({sRowType: "Sum", sRowAreaType: "Scrollable", iFromRowIndex: 0, iToRowIndex: 1});
+			test({sRowType: "Sum", sRowAreaType: "Action", iFromRowIndex: 0, iToRowIndex: 1});
+		};
+
+		await testStandardRow();
 		await testEmptyRow();
-		testGroupHeaderRow();
-		testSumRow();
-
-		// Restore
-		this.oDragAndDropExtension._ExtensionDelegate.ondragenter = fnOriginalDragEnterHandler;
+		await testGroupHeaderRow();
+		await testSumRow();
 	});
 
 	QUnit.test("Droppable with empty rows aggregation (NoData not shown)", async function(assert) {
-		const oClock = sinon.useFakeTimers();
-		const fnOriginalDragEnterHandler = this.oDragAndDropExtension._ExtensionDelegate.ondragenter;
-
-		this.oDragAndDropExtension._ExtensionDelegate.ondragenter = function(oEvent) {
-			fnOriginalDragEnterHandler.apply(oTable, arguments);
-
-			const mParams = oEvent._mTestParameters;
-			const sDropPosition = oTreeTable.getDragDropConfig()[0].getDropPosition();
-			const sMessagePrefix = "[DropPosition=" + sDropPosition + "] " + mParams.sRowAreaType + " area: ";
-
-			assert.ok(!oEvent.isMarked("NonDroppable"), sMessagePrefix + "The event was not marked as \"NonDroppable\"");
-			assert.strictEqual(oEvent.dragSession.getDropControl(), oTable, sMessagePrefix + "The drop control was set to the table");
-			assert.equal(oEvent.dragSession.getIndicatorConfig(), null,
-				sMessagePrefix + "The indicator size was not stored in the drag session");
-		};
-
-		function test($Target, mTestParameters) {
-			oTreeTable.getRows()[0].$().trigger(createDragEvent("dragstart"));
-			const oDragEnterEvent = createDragEvent("dragenter");
-			oDragEnterEvent._mTestParameters = mTestParameters;
-			$Target.trigger(oDragEnterEvent);
-		}
-
-		oTable.unbindRows();
-		oTable.getRowMode().setRowCount(2);
-		oTable.setShowNoData(false);
-		await nextUIUpdate(oClock);
-		oClock.tick(50);
-
-		Object.getOwnPropertyNames(DropPosition).forEach(function(sPropertyName) {
-			oTreeTable.getDragDropConfig()[0].setDropPosition(DropPosition[sPropertyName]);
-			test(getRowHeader(1), {sRowAreaType: "Header"});
-			test(oTable.getRows()[1].getCells()[0].$(), {sRowAreaType: "Fixed"});
-			test(oTable.getRows()[1].getCells()[1].$(), {sRowAreaType: "Scrollable"});
-			test(getRowAction(1).find(".sapUiTableActionIcon").first(), {sRowAreaType: "Action"});
+		const oOtherTable = TableQUnitUtils.createTable({
+			rows: "{/}",
+			models: TableQUnitUtils.createJSONModelWithEmptyRows(9),
+			columns: TableQUnitUtils.createTextColumn(),
+			dragDropConfig: new DragDropInfo({
+				sourceAggregation: "rows",
+				targetElement: this.oTable
+			})
 		});
 
-		// Restore
-		oClock.restore();
-		this.oDragAndDropExtension._ExtensionDelegate.ondragenter = fnOriginalDragEnterHandler;
+		await oOtherTable.qunit.whenRenderingFinished();
+
+		this.oTable.addEventDelegate({
+			ondragenter: (oEvent) => {
+				const mParams = oEvent.originalEvent._mTestParameters;
+				const sDropPosition = oOtherTable.getDragDropConfig()[0].getDropPosition();
+				const sMessagePrefix = "[DropPosition=" + sDropPosition + "] " + mParams.sRowAreaType + " area: ";
+
+				assert.ok(!oEvent.isMarked("NonDroppable"), sMessagePrefix + "The event was not marked as \"NonDroppable\"");
+				assert.strictEqual(oEvent.dragSession.getDropControl(), this.oTable, sMessagePrefix + "The drop control was set to the table");
+				assert.equal(oEvent.dragSession.getIndicatorConfig(), null,
+					sMessagePrefix + "The indicator size was not stored in the drag session");
+				}
+		});
+
+		function test(oTarget, mTestParameters) {
+			oOtherTable.getRows()[0].getDomRef().dispatchEvent(createDragEvent("dragstart"));
+			const oDragEnterEvent = createDragEvent("dragenter");
+			oDragEnterEvent._mTestParameters = mTestParameters;
+			oTarget.dispatchEvent(oDragEnterEvent);
+		}
+
+		Object.getOwnPropertyNames(DropPosition).forEach((sPropertyName) => {
+			oOtherTable.getDragDropConfig()[0].setDropPosition(DropPosition[sPropertyName]);
+			test(this.oTable.qunit.getRowHeaderCell(1), {sRowAreaType: "Header"});
+			test(this.oTable.getRows()[1].getCells()[0].getDomRef(), {sRowAreaType: "Fixed"});
+			test(this.oTable.getRows()[1].getCells()[1].getDomRef(), {sRowAreaType: "Scrollable"});
+			test(this.oTable.qunit.getRowActionCell(1).querySelector(".sapUiTableActionIcon"), {sRowAreaType: "Action"});
+		});
+
+		oOtherTable.destroy();
 	});
 
-	QUnit.test("Expand rows - longdragover", function(assert) {
+	QUnit.test("Expand rows - longdragover", async function(assert) {
 		const oFakeEvent = {
 			dragSession: {
 				getDropControl: function() {}
 			},
 			target: null
 		};
-		const oRow1ExpandSpy = sinon.spy(oTable.getRows()[0], "expand");
-		const oRow2ExpandSpy = sinon.spy(oTable.getRows()[1], "expand");
-		const oRow3ExpandSpy = sinon.spy(oTable.getRows()[2], "expand");
+		const oRowExpandSpy = sinon.spy(this.oTable.getRows()[0], "expand");
+		const oRowCollapseSpy = sinon.spy(this.oTable.getRows()[1], "collapse");
 
-		oFakeEvent.target = getRowHeader(0)[0];
-		this.oDragAndDropExtension._ExtensionDelegate.onlongdragover.call(oTable, oFakeEvent);
-		assert.equal(oRow1ExpandSpy.callCount, 1, "Row header cell - Row#expand was called once on the correct row");
+		TableUtils.Grouping.setHierarchyMode(this.oTable, TableUtils.Grouping.HierarchyMode.Tree);
+		await this.oTable.qunit.setRowStates([
+			{expandable: true},
+			{expandable: true, expanded: true}
+		]);
 
-		oFakeEvent.target = oTable.getRows()[1].getCells()[0].getDomRef();
-		this.oDragAndDropExtension._ExtensionDelegate.onlongdragover.call(oTable, oFakeEvent);
-		assert.equal(oRow2ExpandSpy.callCount, 1, "Data cell in fixed column - Row#expand was called once on the correct row");
+		oFakeEvent.target = this.oTable.qunit.getRowHeaderCell(0);
+		this.oDragAndDropExtension._ExtensionDelegate.onlongdragover.call(this.oTable, oFakeEvent);
+		assert.equal(oRowExpandSpy.callCount, 1, "Row header cell - Row#expand was called once on the correct row");
 
-		oRow1ExpandSpy.resetHistory();
-		oFakeEvent.target = oTable.getRows()[0].getCells()[1].getDomRef();
-		this.oDragAndDropExtension._ExtensionDelegate.onlongdragover.call(oTable, oFakeEvent);
-		assert.equal(oRow1ExpandSpy.callCount, 1, "Data cell in scrollable column - Row#expand was called once on the correct row");
+		oRowExpandSpy.resetHistory();
+		oFakeEvent.target = this.oTable.getRows()[0].getCells()[0].getDomRef();
+		this.oDragAndDropExtension._ExtensionDelegate.onlongdragover.call(this.oTable, oFakeEvent);
+		assert.equal(oRowExpandSpy.callCount, 1, "Data cell in fixed column - Row#expand was called once on the correct row");
 
-		oFakeEvent.target = getRowAction(2)[0];
-		this.oDragAndDropExtension._ExtensionDelegate.onlongdragover.call(oTable, oFakeEvent);
-		assert.equal(oRow3ExpandSpy.callCount, 1, "Row action cell - Row#expand was called once on the correct row");
+		oRowExpandSpy.resetHistory();
+		oFakeEvent.target = this.oTable.getRows()[0].getCells()[1].getDomRef();
+		this.oDragAndDropExtension._ExtensionDelegate.onlongdragover.call(this.oTable, oFakeEvent);
+		assert.equal(oRowExpandSpy.callCount, 1, "Data cell in scrollable column - Row#expand was called once on the correct row");
+
+		oRowExpandSpy.resetHistory();
+		oFakeEvent.target = this.oTable.qunit.getRowActionCell(0);
+		this.oDragAndDropExtension._ExtensionDelegate.onlongdragover.call(this.oTable, oFakeEvent);
+		assert.equal(oRowExpandSpy.callCount, 1, "Row action cell - Row#expand was called once on the correct row");
+
+		oFakeEvent.target = this.oTable.getRows()[1].getCells()[0].getDomRef();
+		this.oDragAndDropExtension._ExtensionDelegate.onlongdragover.call(this.oTable, oFakeEvent);
+		assert.equal(oRowCollapseSpy.callCount, 0, "Row#collapse was not called");
 
 		oFakeEvent.dragSession = {
-			getDropControl: function() {
-				return oTable.getRows()[0].getCells()[1];
+			getDropControl: () => {
+				return this.oTable.getRows()[0].getCells()[1];
 			}
 		};
-		oRow1ExpandSpy.resetHistory();
-		oFakeEvent.target = oTable.getRows()[0].getCells()[1].getDomRef();
-		this.oDragAndDropExtension._ExtensionDelegate.onlongdragover.call(oTable, oFakeEvent);
-		assert.ok(oRow1ExpandSpy.notCalled, "If the cell content is the drop target, Row#expand is not called");
+		oRowExpandSpy.resetHistory();
+		oFakeEvent.target = this.oTable.getRows()[0].getCells()[1].getDomRef();
+		this.oDragAndDropExtension._ExtensionDelegate.onlongdragover.call(this.oTable, oFakeEvent);
+		assert.ok(oRowExpandSpy.notCalled, "If the cell content is the drop target, Row#expand is not called");
 	});
 
 	QUnit.module("Columns", {
@@ -674,8 +661,11 @@ sap.ui.define([
 
 	QUnit.test("Droppable", function(assert) {
 		const aColumns = oTable.getColumns();
-		const oDragEnterEvent = createDragEvent("dragenter");
-		oDragEnterEvent.target = aColumns[0].getDomRef();
+		const oDragEnterEvent = {
+			setMark: () => { },
+			target: aColumns[0].getDomRef()
+		};
+
 		assert.notOk(this.oDDI.isDroppable(aColumns[0], oDragEnterEvent), "Columns are not droppable by default");
 
 		this.oDDI.bIgnoreMetadataCheck = true;
@@ -731,7 +721,7 @@ sap.ui.define([
 		this.oDragAndDropExtension._ExtensionDelegate.ondragenter = function(oEvent) {
 			fnOriginalDragEnterHandler.apply(oTreeTable, arguments);
 
-			const mParams = oEvent._mTestParameters;
+			const mParams = oEvent.originalEvent._mTestParameters;
 
 			if (mParams.bShouldMove) {
 				assert.notOk(oEvent.isMarked("NonDroppable"), "Column movable: Event is not marked as NonDroppable");
@@ -769,7 +759,7 @@ sap.ui.define([
 		this.oDragAndDropExtension._ExtensionDelegate.ondragenter = function(oEvent) {
 			fnOriginalDragEnterHandler.apply(oTable, arguments);
 
-			const mParams = oEvent._mTestParameters;
+			const mParams = oEvent.originalEvent._mTestParameters;
 
 			if (mParams.bShouldMove) {
 				assert.notOk(oEvent.isMarked("NonDroppable"), "Column movable: Event is not marked as NonDroppable");

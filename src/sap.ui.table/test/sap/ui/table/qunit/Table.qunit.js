@@ -1455,12 +1455,13 @@ sap.ui.define([
 		assert.equal(invalidationSpy.callCount, 3, "value is being invalidated");
 		oTable.insertColumn(oCol, 1);
 		assert.equal(invalidationSpy.callCount, 4, "value is being invalidated");
-		oTable.removeAllColumns();
+		const aColumns = oTable.removeAllColumns();
 		assert.equal(invalidationSpy.callCount, 5, "value is being invalidated");
 		oTable.addColumn(oCol);
 		assert.equal(invalidationSpy.callCount, 6, "value is being invalidated");
 		oTable.destroyColumns();
 		assert.equal(invalidationSpy.callCount, 7, "value is being invalidated");
+		aColumns.forEach((oColumn) => oColumn.destroy());
 	});
 
 	QUnit.test("Fixed column count and table / column width", async function(assert) {
@@ -1489,7 +1490,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Fixed column count and column spans", async function(assert) {
-		oTable.removeAllColumns();
+		oTable.destroyColumns();
 		await nextUIUpdate();
 		oTable.setFixedColumnCount(1);
 
@@ -1666,7 +1667,7 @@ sap.ui.define([
 		checkFocus(oTable.getDomRef("overlay"), assert);
 
 		oTable.setShowOverlay(false);
-		oTable.removeAllColumns();
+		oTable.destroyColumns();
 		await nextUIUpdate();
 		oTable.focus(oFocusInfo);
 		assert.ok(fnFocusSpy.calledWith(oFocusInfo), "Focus event called with core:Message parameter");
@@ -4887,7 +4888,7 @@ sap.ui.define([
 		assert.strictEqual(Div.childElementCount, 0, "Nothing should be rendered without synchronization enabled");
 	});
 
-	QUnit.module("Selection plugin", {
+	QUnit.module("Selection plugin integration", {
 		beforeEach: function() {
 			this.oTable = new Table();
 			this.TestSelectionPlugin = SelectionPlugin.extend("sap.ui.table.test.SelectionPlugin");
@@ -5735,22 +5736,10 @@ sap.ui.define([
 				],
 				rowMode: new FixedRowMode({
 					rowCount: 12
-				})
+				}),
+				rows: "{/}"
 			});
-			this.iCurrentState = 0;
-
-			TableUtils.Hook.register(this.oTable, TableUtils.Hook.Keys.Row.UpdateState, function(oState) {
-				Object.assign(oState, this.aRowStates[this.iCurrentState]);
-				this.iCurrentState++;
-			}, this);
-
-			this.oTable.attachRowsUpdated(function() {
-				this.iCurrentState = 0;
-			}, this);
-
-			this.oTable.bindRows({
-				path: "/"
-			});
+			this.oTable.qunit.setRowStates(this.aRowStates);
 
 			return this.oTable.qunit.whenRenderingFinished();
 		},
@@ -6010,27 +5999,11 @@ sap.ui.define([
 		},
 		afterEach: function() {
 			this.oTable.destroy();
-		},
-		setRowStates: function(aStates) {
-			let i = 0;
-
-			function updateRowState(oState) {
-				Object.assign(oState, aStates[i]);
-				i++;
-			}
-
-			TableUtils.Hook.register(this.oTable, TableUtils.Hook.Keys.Row.UpdateState, updateRowState);
-			this.oTable.getBinding().refresh(true);
-
-			return this.oTable.qunit.whenRenderingFinished().then(function() {
-				TableUtils.Hook.deregister(this.oTable, TableUtils.Hook.Keys.Row.UpdateState, updateRowState);
-			}.bind(this));
 		}
 	});
 
-	QUnit.test("Row", function(assert) {
-		const oTable = this.oTable;
-		const oRow = oTable.getRows()[0];
+	QUnit.test("Row", async function(assert) {
+		const oRow = this.oTable.getRows()[0];
 		const aRowInfo = [{
 			title: "Standard row",
 			state: {type: oRow.Type.Standard},
@@ -6059,27 +6032,23 @@ sap.ui.define([
 			});
 		}
 
-		oTable.qunit.addTextColumn();
-		oTable.setFixedColumnCount(1);
-		oTable.setRowActionCount(1);
-		oTable.setRowActionTemplate(TableQUnitUtils.createRowAction(null));
+		this.oTable.qunit.addTextColumn();
+		this.oTable.setFixedColumnCount(1);
+		this.oTable.setRowActionCount(1);
+		this.oTable.setRowActionTemplate(TableQUnitUtils.createRowAction(null));
 
-		return oTable.qunit.whenRenderingFinished().then(function() {
-			aRowInfo.forEach(function(mRowInfo, iIndex) {
-				assert.ok(!isRowContentHidden(oTable.getRows()[iIndex]), "Default: " + mRowInfo.title);
-			});
+		await this.oTable.qunit.whenRenderingFinished();
+		aRowInfo.forEach((mRowInfo, iIndex) => {
+			assert.ok(!isRowContentHidden(this.oTable.getRows()[iIndex]), "Default: " + mRowInfo.title);
+		});
 
-			return this.setRowStates(aRowInfo.map(function(mTestConfig) {
-				return mTestConfig.state;
-			}));
-		}.bind(this)).then(function() {
-			aRowInfo.forEach(function(mRowInfo, iIndex) {
-				assert.equal(isRowContentHidden(oTable.getRows()[iIndex]), mRowInfo.expectContentHidden, mRowInfo.title);
-			});
+		await this.oTable.qunit.setRowStates(aRowInfo.map((mTestConfig) => mTestConfig.state));
+		aRowInfo.forEach((mRowInfo, iIndex) => {
+			assert.equal(isRowContentHidden(this.oTable.getRows()[iIndex]), mRowInfo.expectContentHidden, mRowInfo.title);
 		});
 	});
 
-	QUnit.test("Cell", function(assert) {
+	QUnit.test("Cell", async function(assert) {
 		const oTable = this.oTable;
 		const oRow = oTable.getRows()[0];
 		const aRowInfo = [{
@@ -6168,7 +6137,7 @@ sap.ui.define([
 			});
 		}
 
-		oTable.removeAllColumns();
+		oTable.destroyColumns();
 		aColumnInfo.forEach(function(mColumnInfo) {
 			const oColumn = new Column({
 				label: mColumnInfo.title,
@@ -6178,15 +6147,10 @@ sap.ui.define([
 			oTable.addColumn(oColumn);
 		});
 		oTable.setFixedColumnCount(2);
-
-		return oTable.qunit.whenRenderingFinished().then(function() {
-			return this.setRowStates(aRowInfo.map(function(mRowInfo) {
-				return mRowInfo.state;
-			}));
-		}.bind(this)).then(function() {
-			aColumnInfo.forEach(function(mColumnInfo, iIndex) {
-				assertCellContentVisibility(oTable.getColumns()[iIndex], mColumnInfo.title);
-			});
+		await oTable.qunit.setRowStates(aRowInfo.map((mRowInfo) => mRowInfo.state));
+		await oTable.qunit.whenRenderingFinished();
+		aColumnInfo.forEach(function(mColumnInfo, iIndex) {
+			assertCellContentVisibility(oTable.getColumns()[iIndex], mColumnInfo.title);
 		});
 	});
 

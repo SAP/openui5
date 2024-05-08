@@ -56,9 +56,9 @@ sap.ui.define([
 		init: function() {
 			this.aSelectedRows = [];
 		},
-
 		setSelected: function(oRow, bSelected, mConfig) {
 			let iIndex;
+
 			if (bSelected) {
 				iIndex = this.aSelectedRows.indexOf(oRow.getIndex());
 				if (iIndex === -1) {
@@ -68,16 +68,16 @@ sap.ui.define([
 				iIndex = this.aSelectedRows.indexOf(oRow.getIndex());
 				this.aSelectedRows.splice(iIndex, 1);
 			}
-		},
 
+			this.fireSelectionChange();
+		},
 		isSelected: function(oRow) {
 			return this.aSelectedRows.indexOf(oRow.getIndex()) > -1;
 		},
-
 		clearSelection: function() {
 			this.aSelectedRows = [];
+			this.fireSelectionChange();
 		}
-
 	});
 
 	const TestControl = Control.extend("sap.ui.table.test.TestControl", {
@@ -951,6 +951,41 @@ sap.ui.define([
 		oTable.qunit.preventFocusOnTouch = function() {
 			oTable._getKeyboardExtension().suspendItemNavigation();
 		};
+
+		/**
+		 * Sets the row states and invalidates the table. The row states are applied in the order in which they are provided. The row states are
+		 * reset if no row states are provided.
+		 *
+		 * @param {object[]} [aRowStates] The row states to set.
+		 * @returns {Promise} A promise that resolves after the rendering of the table is finished.
+		 */
+		oTable.qunit.setRowStates = function(aRowStates) {
+			if (aRowStates) {
+				if (!oTable.qunit._mSetRowStates) {
+					oTable.qunit._mSetRowStates = {
+						updateRowState: function(oState) {
+							const iIndex = oTable.getFirstVisibleRow() + oTable.qunit._mSetRowStates.currentIndex;
+							Object.assign(oState, oTable.qunit._mSetRowStates.rowStates[iIndex]);
+							oTable.qunit._mSetRowStates.currentIndex++;
+						},
+						onRowsUpdated: function() {
+							oTable.qunit._mSetRowStates.currentIndex = 0;
+						},
+						currentIndex: 0
+					};
+					oTable.attachRowsUpdated(oTable.qunit._mSetRowStates.onRowsUpdated);
+					TableUtils.Hook.register(oTable, TableUtils.Hook.Keys.Row.UpdateState, oTable.qunit._mSetRowStates.updateRowState);
+				}
+				oTable.qunit._mSetRowStates.rowStates = aRowStates;
+			} else if (oTable.qunit._mSetRowStates) {
+				oTable.detachRowsUpdated(oTable.qunit._mSetRowStates.onRowsUpdated);
+				TableUtils.Hook.deregister(oTable, TableUtils.Hook.Keys.Row.UpdateState, oTable.qunit._mSetRowStates.updateRowState);
+				delete oTable.qunit._mSetRowStates;
+			}
+
+			oTable.invalidate();
+			return oTable.qunit.whenRenderingFinished();
+		};
 	}
 
 	TableQUnitUtils.TestSelectionPlugin = TestSelectionPlugin;
@@ -1081,6 +1116,7 @@ sap.ui.define([
 	 * @param {boolean} [mConfig.tabbable=false] Whether the text is tabbable.
 	 * @param {string} [mConfig.label=undefined] The text of the label.
 	 * @param {boolean} [mConfig.interactiveLabel=false] Whether the label should be interactive (focusable & tabbable).
+	 * @param {boolean} [mConfig.templateHidden=false] Whether the <code>visible</code> property of the template should be set to <code>false</code>.
 	 * @returns {sap.ui.table.Column} The column.
 	 */
 	TableQUnitUtils.createTextColumn = function(mConfig) {
@@ -1095,7 +1131,8 @@ sap.ui.define([
 			template: new TestControl({
 				text: mConfig.bind === true ? "{" + mConfig.text + "}" : mConfig.text,
 				focusable: mConfig.focusable === true,
-				tabbable: mConfig.tabbable === true
+				tabbable: mConfig.tabbable === true,
+				visible: !mConfig.templateHidden
 			}),
 			width: "100px"
 		});
@@ -1441,7 +1478,6 @@ sap.ui.define([
 		if (bInputElement) {
 			oTemplate = new TestInputControl({
 				text: bBindText ? "{" + sText + "}" : sText,
-				visible: true,
 				tabbable: bTabbable,
 				type: sInputType
 			});
@@ -1662,7 +1698,8 @@ sap.ui.define([
 	 * Legacy utils                    *
 	 ***********************************/
 
-	let oTable; let oTreeTable;
+	let oTable;
+	let oTreeTable;
 	const oModel = new JSONModel();
 	const aFields = ["A", "B", "C", "D", "E"];
 
@@ -1756,10 +1793,6 @@ sap.ui.define([
 		oTreeTable.destroy();
 		oTreeTable = null;
 	};
-
-	//************************************************************************
-	// Helper Functions
-	//************************************************************************
 
 	window.getCell = function(iRow, iCol, bFocus, assert, oTableInstance) {
 		if (oTableInstance == null) {
@@ -1869,57 +1902,6 @@ sap.ui.define([
 		assert.deepEqual(document.activeElement, $Element[0], "Focus is on: " + $ActiveElement.attr("id") + ", should be on: " + $Element.attr("id"));
 
 		return $ActiveElement;
-	};
-
-	function getRowDomRefs(oTableInstance, iRow) {
-		return {
-			row: oTableInstance.$("rows-row" + iRow),
-			fixed: oTableInstance.$("rows-row" + iRow + "-fixed"),
-			hdr: oTableInstance.$("rowsel" + iRow).parent(),
-			act: oTableInstance.$("rowact" + iRow).parent()
-		};
-	}
-
-	window.fakeGroupRow = function(iRow, oTableInstance) {
-		if (!oTableInstance) {
-			oTableInstance = oTable;
-		}
-
-		const oRow = oTableInstance.getRows()[iRow];
-
-		TableUtils.Grouping.setToDefaultGroupMode(oTableInstance);
-		oRow.getType = function() { return oRow.Type.GroupHeader; };
-		oRow.getLevel = function() { return 1; };
-		oRow.isExpandable = function() { return true; };
-		oRow.isExpanded = function() { return true; };
-		oRow.isContentHidden = function() { return true; };
-
-		oTableInstance.invalidate();
-		oCore.applyChanges();
-		return new Promise(function(resolve) {
-			oTableInstance.attachEventOnce("rowsUpdated", function() {
-				resolve(getRowDomRefs(oTableInstance, iRow));
-			});
-		});
-	};
-
-	window.fakeSumRow = function(iRow, oTableInstance) {
-		if (!oTableInstance) {
-			oTableInstance = oTable;
-		}
-
-		const oRow = oTableInstance.getRows()[iRow];
-
-		oRow.getType = function() { return oRow.Type.Summary; };
-		oRow.getLevel = function() { return 1; };
-
-		oTableInstance.invalidate();
-		oCore.applyChanges();
-		return new Promise(function(resolve) {
-			oTableInstance.attachEventOnce("rowsUpdated", function() {
-				resolve(getRowDomRefs(oTableInstance, iRow));
-			});
-		});
 	};
 
 	return TableQUnitUtils;

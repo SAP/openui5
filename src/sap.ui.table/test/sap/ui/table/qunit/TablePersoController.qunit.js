@@ -14,7 +14,7 @@ sap.ui.define([
 	"use strict";
 
 	let oController = null;
-let oTable = null;
+	let oTable = null;
 
 	function createController(mControllerSettings, mTableSettings) {
 		// init settings

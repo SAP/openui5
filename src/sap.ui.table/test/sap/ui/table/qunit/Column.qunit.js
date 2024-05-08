@@ -530,8 +530,8 @@ sap.ui.define([
 	 */
 	QUnit.test("Filter on Column with ColumnMenu and UnifiedMenu", function(assert) {
 		const that = this;
-const done = assert.async();
-const oCellDomRef = this._oColumnWithColumnMenu.getDomRef();
+		const done = assert.async();
+		const oCellDomRef = this._oColumnWithColumnMenu.getDomRef();
 
 		this._oColumnWithColumnMenu.attachEventOnce("columnMenuOpen", function() {
 			TableQUnitUtils.wait(0).then(function() {
@@ -608,8 +608,8 @@ const oCellDomRef = this._oColumnWithColumnMenu.getDomRef();
 	 */
 	QUnit.test("Localization and Invalidation", function(assert) {
 		const done = assert.async();
-const that = this;
-const oCellDomRef = this._oColumnWithColumnMenu.getDomRef();
+		const that = this;
+		const oCellDomRef = this._oColumnWithColumnMenu.getDomRef();
 
 		this._oColumnWithColumnMenu.attachEventOnce("columnMenuOpen", function() {
 			TableQUnitUtils.wait(0).then(function() {
@@ -1231,8 +1231,8 @@ const oCellDomRef = this._oColumnWithColumnMenu.getDomRef();
 
 	QUnit.test("Visibility Submenu number of items", function(assert) {
 		const that = this;
-const done = assert.async();
-const oCellDomRef = that._oColumn1.getDomRef();
+		const done = assert.async();
+		const oCellDomRef = that._oColumn1.getDomRef();
 
 		this._oColumn1.attachEventOnce("columnMenuOpen", function() {
 			TableQUnitUtils.wait(0).then(function() {
@@ -1274,9 +1274,9 @@ const oCellDomRef = that._oColumn1.getDomRef();
 
 	QUnit.test("Set Visibility", function(assert) {
 		const that = this;
-const done = assert.async();
-const oCell1DomRef = this._oColumn1.getDomRef();
-const oCell2DomRef = this._oColumn2.getDomRef();
+		const done = assert.async();
+		const oCell1DomRef = this._oColumn1.getDomRef();
+		const oCell2DomRef = this._oColumn2.getDomRef();
 
 		this._oColumn1.attachEventOnce("columnMenuOpen", function() {
 			TableQUnitUtils.wait(0).then(function() {
