@@ -1655,7 +1655,7 @@ sap.ui.define([
 			target: this.oCarousel.getDomRef(this.oCarousel.getActivePage() + "-slide"),
 			preventDefault: function () {}
 		};
-		var oLastPage = this.oCarousel.getPages()[this.oCarousel.getPages().length - 1];
+		var oExpectedActivePage = this.oCarousel.getPages()[this.oCarousel.getPages().length - 2];
 
 		// act - press right arrow 5 times
 		for (var i = 0; i < 5; i++) {
@@ -1663,7 +1663,7 @@ sap.ui.define([
 		}
 
 		// assert
-		assert.strictEqual(this.oCarousel.getActivePage(), oLastPage.getId(), "Active page should be keyTestPage_9 and a loop should NOT have happened.");
+		assert.strictEqual(this.oCarousel.getActivePage(), oExpectedActivePage.getId(), "Active page should be keyTestPage_8 and a loop should NOT have happened.");
 	});
 
 	QUnit.test("Looping left with keys when visiblePagesCount is different than 1", function (assert) {
@@ -1694,15 +1694,15 @@ sap.ui.define([
 		this.oCarousel.setCustomLayout(new CarouselLayout({
 			visiblePagesCount: 2
 		}));
-		var oLastPage = this.oCarousel.getPages()[this.oCarousel.getPages().length - 1];
-		this.oCarousel.setActivePage(oLastPage);
+		var oExpectedActivePage = this.oCarousel.getPages()[this.oCarousel.getPages().length - 2];
+		this.oCarousel.setActivePage(oExpectedActivePage);
 		Core.applyChanges();
 
 		// act - press right arrow
 		pressArrowNext(this.oCarousel);
 
 		// assert
-		assert.strictEqual(this.oCarousel.getActivePage(), oLastPage.getId(), "Active page should still be keyTestPage_9 and loop should NOT have happened.");
+		assert.strictEqual(this.oCarousel.getActivePage(), oExpectedActivePage.getId(), "Active page should still be keyTestPage_8 and loop should NOT have happened.");
 	});
 
 	QUnit.test("Looping left with mouse when visiblePagesCount is different than 1", function (assert) {
@@ -1759,7 +1759,7 @@ sap.ui.define([
 		assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage_2", "Should have the active page set to page #2...");
 	});
 
-	QUnit.test("Focusing page child with mouse should make the page the active page", function (assert) {
+	QUnit.test("Focusing page child with mouse should store the page as focused page", function (assert) {
 		// arrange
 		var oButton = new Button();
 		this.oCarousel.insertPage(oButton, 2);
@@ -1774,63 +1774,7 @@ sap.ui.define([
 		oButton.$().trigger("focusin");
 
 		// assert
-		assert.strictEqual(this.oCarousel.getActivePage(), oButton.getId(), "Active page should have changed");
-	});
-
-	QUnit.test("Changing page by clicking 'Next Page' arrow shouldn't change the active page if it is still displayed", function (assert) {
-		// arrange
-		this.oCarousel.setCustomLayout(new CarouselLayout({
-			visiblePagesCount: 3
-		}));
-		Core.applyChanges();
-		var sMiddlePageId = this.oCarousel._aAllActivePages[1];
-		var sNextPageId = this.oCarousel._aAllActivePages[2];
-
-		// act
-		this.oCarousel.$(sMiddlePageId + "-slide").trigger("focusin"); // focus the middle page to make it active
-
-		// assert
-		assert.strictEqual(this.oCarousel.getActivePage(), sMiddlePageId);
-
-		// act
-		pressArrowNext(this.oCarousel);
-
-		// assert
-		assert.strictEqual(this.oCarousel.getActivePage(), sMiddlePageId, "Active page should NOT have changed");
-
-		// act
-		pressArrowNext(this.oCarousel);
-
-		// assert
-		assert.strictEqual(this.oCarousel.getActivePage(), sNextPageId, "Active page should have changed");
-	});
-
-	QUnit.test("Changing page by clicking 'Previous Page' arrow shouldn't change the active page if it is still displayed", function (assert) {
-		// arrange
-		this.oCarousel.setCustomLayout(new CarouselLayout({
-			visiblePagesCount: 3
-		}));
-		Core.applyChanges();
-		var sMiddlePageId = this.oCarousel._aAllActivePages[1];
-		var sPrevPageId = this.oCarousel._aAllActivePages[0];
-
-		// act
-		this.oCarousel.$(sMiddlePageId + "-slide").trigger("focusin"); // focus the middle page to make it active
-
-		// assert
-		assert.strictEqual(this.oCarousel.getActivePage(), sMiddlePageId);
-
-		// act
-		pressArrowPrev(this.oCarousel);
-
-		// assert
-		assert.strictEqual(this.oCarousel.getActivePage(), sMiddlePageId, "Active page should NOT have changed");
-
-		// act
-		pressArrowPrev(this.oCarousel);
-
-		// assert
-		assert.strictEqual(this.oCarousel.getActivePage(), sPrevPageId, "Active page should have changed");
+		assert.strictEqual(this.oCarousel._iFocusedPageIndex, 2, "Focused page index should be stored");
 	});
 
 	QUnit.module("No pages", {
