@@ -26,6 +26,7 @@ sap.ui.define([
 		 * @public
 		 * @since 1.92.0
 		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
+		 * @deprecated Since 1.126
 		 */
 		var thisLib = Library.init({
 			name: "sap.ui.webc.fiori",
