@@ -8,8 +8,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/table/Table",
 	"sap/ui/table/library",
-	"sap/ui/core/library",
-	"sap/ui/core/Core"
+	"sap/ui/core/library"
 ], function(
 	TableQUnitUtils,
 	nextUIUpdate,
@@ -18,8 +17,7 @@ sap.ui.define([
 	JSONModel,
 	Table,
 	tableLibrary,
-	coreLibrary,
-	oCore
+	coreLibrary
 ) {
 	"use strict";
 
@@ -34,7 +32,7 @@ sap.ui.define([
 	const oModel = new JSONModel();
 	oModel.setData({modelData: aData});
 
-	function createTable() {
+	async function createTable() {
 		function createColumns(oTable) {
 
 			// 1st column with multilabels
@@ -139,12 +137,12 @@ sap.ui.define([
 		oTable.bindRows("/modelData");
 
 		oTable.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 	}
 
 	QUnit.module("Rendering", {
-		beforeEach: function() {
-			createTable();
+		beforeEach: async function() {
+			await createTable();
 		},
 		afterEach: function() {
 		}
@@ -203,6 +201,7 @@ sap.ui.define([
 	QUnit.test("Fixed column count with multiheaders and hidden columns", async function(assert) {
 		oTable.getColumns()[1].setVisible(false);
 		await nextUIUpdate();
+
 		assert.strictEqual(oTable.getComputedFixedColumnCount(), 3, "Hidden columns do not influence fixed column count");
 	});
 });

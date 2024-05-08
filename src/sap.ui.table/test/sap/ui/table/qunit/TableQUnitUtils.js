@@ -1323,6 +1323,20 @@ sap.ui.define([
 	};
 
 	/**
+	 * Attachs an event handler for the next event with the given name to the given EventProvider instance.
+	 * Returns a Promise that resolves with the sap.ui.base.Event instance.
+	 *
+	 * @param {string} sEventName Name of the event
+	 * @param {sap.ui.base.EventProvider} oEventProvider EventProvider where the event handler is attached
+	 * @returns {Promise} Resolves with the sap.ui.base.Event instance
+	 */
+	TableQUnitUtils.nextEvent = async (sEventName, oEventProvider) => {
+		return await new Promise((fnResolve) => {
+			oEventProvider?.attachEventOnce(sEventName, fnResolve);
+		});
+	};
+
+	/**
 	 * Wrapper around {@link #wait} for easier promise chaining. Returns a function that returns a promise.
 	 *
 	 * @param {int} [iMilliseconds] The delay in milliseconds. If none is set, <code>requestAnimationFrame</code> is used.
