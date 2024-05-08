@@ -86,7 +86,7 @@
 	line-height: 0.875rem;
 }
 
-.sapMObjectStatusLarge {
+.sapMObjectStatusLarge:not(.sapMObjStatusInverted) {
 	.sapMObjStatusTitle,
 	.sapMObjStatusText,
 	.sapMObjStatusIcon {
@@ -97,6 +97,45 @@
 	}
 	.sapMObjStatusIcon > .sapUiIcon {
 		font-size: 1.5rem;
+	}
+}
+
+.sapMObjStatusInverted.sapMObjectStatusLarge .sapMObjStatusWrapper {
+	height: 1.625rem;
+}
+
+.sapMObjStatus.sapMObjectStatusLarge.sapMObjStatusInverted {
+	height: 1.75rem;
+	min-height: 1.75rem;
+
+	.sapMObjStatusTitle,
+	.sapMObjStatusText,
+	.sapMObjStatusIcon {
+		font-family: @sapUiFontSemiboldDuplexFamily;
+		font-size: 1.25rem;
+	}
+	.sapMObjStatusTitle {
+		line-height: 1.625rem;
+		height: 1.625rem;
+	}
+	.sapMObjStatusIcon,
+	.sapMObjStatusText {
+		padding: 0.125rem 0.25rem;
+		line-height: 1.25rem;
+		height: 1.25rem;
+	}
+	.sapMObjStatusIcon:not(.sapMObjStatusIconOnly) {
+		padding-left: 0;
+		padding-right: 0;
+	}
+	.sapMObjStatusIcon > .sapUiIcon {
+		font-size: 1.25rem;
+		line-height: 1.25rem;
+		padding-left: 0;
+		padding-right: 0;
+	}
+	.sapMObjStatusIconOnly {
+		width: 1.75rem;
 	}
 }
 
@@ -115,8 +154,8 @@
 	color: @sapUiContentContrastTextColor;
 }
 
-.sapMObjStatusInverted .sapMObjStatusIcon.sapMObjStatusIconOnly,
-.sapMObjStatusInverted .sapMObjStatusLink .sapMObjStatusIcon.sapMObjStatusIconOnly {
+.sapMObjStatusInverted:not(.sapMObjectStatusLarge) .sapMObjStatusIcon.sapMObjStatusIconOnly,
+.sapMObjStatusInverted:not(.sapMObjectStatusLarge) .sapMObjStatusLink .sapMObjStatusIcon.sapMObjStatusIconOnly {
 	padding: 0.1875rem 0.313rem;
 }
 
@@ -526,21 +565,8 @@ html.sap-desktop .sapMObjStatusActive:focus .sapMObjStatusLink::after {
 }
 
 .sapMListTbl .sapMObjStatusInverted .sapMObjStatusIcon > .sapUiIcon:not(.sapMLIBImgNav):not(.sapMBtnIcon),
-.sapMObjStatusInverted .sapMObjStatusIcon > .sapUiIcon {
+.sapMObjStatusInverted:not(.sapMObjectStatusLarge) .sapMObjStatusIcon > .sapUiIcon {
 	height: 0.875rem;
-}
-
-.sapMObjectStatusLarge.sapMObjStatusInverted {
-	.sapMObjStatusIcon > .sapUiIcon {
-		vertical-align: top;
-		font-size: 1.25rem;
-		padding-left: 0;
-		padding-right: 0;
-	}
-	.sapMObjStatusIcon:not(.sapMObjStatusIconOnly) {
-		padding-left: 0;
-		padding-right: 0;
-	}
 }
 
 html.sap-desktop .sapMObjStatusActive:focus {
@@ -579,7 +605,7 @@ html.sap-desktop .sapMObjStatusActive:focus {
 			bottom: 4px;
 			right: 4px;
 			outline: 2px dotted @sapContent_ContrastFocusColor;
-			height: 2rem;
+			height: 1.25rem;
 		}
 
 	}
