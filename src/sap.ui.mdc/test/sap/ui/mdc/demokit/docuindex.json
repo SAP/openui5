@@ -259,7 +259,7 @@
 			},
 			{
 				"id": "sap.ui.mdc.demokit.sample.TableFilterBarJson",
-				"name": "Table - with filter bar",
+				"name": "Overview - table with filter bar",
 				"description": "A table with a filter bar including variant management"
 			},
 			{
