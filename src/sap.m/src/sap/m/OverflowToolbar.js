@@ -166,7 +166,6 @@ sap.ui.define([
 	/**
 	 * STATIC MEMBERS
 	 */
-	OverflowToolbar.ARIA_ROLE_DESCRIPTION = "OVERFLOW_TOOLBAR_ROLE_DESCRIPTION";
 	OverflowToolbar.TOGGLE_BUTTON_TOOLTIP = "OVERFLOW_TOOLBAR_TOGGLE_BUTTON_TOOLTIP";
 
 	OverflowToolbar.CONTENT_SIZE_TOLERANCE = 1;
@@ -227,10 +226,6 @@ sap.ui.define([
 		this._aAllCollections = [this._aMovableControls, this._aToolbarOnlyControls, this._aPopoverOnlyControls];
 
 		this.addStyleClass("sapMOTB");
-
-		this._sAriaRoleDescription = Library
-			.getResourceBundleFor("sap.m")
-			.getText(OverflowToolbar.ARIA_ROLE_DESCRIPTION);
 
 		this._fnMediaChangeRef = this._fnMediaChange.bind(this);
 		Device.media.attachHandler(this._fnMediaChangeRef);

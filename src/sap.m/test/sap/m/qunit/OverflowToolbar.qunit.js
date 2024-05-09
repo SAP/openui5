@@ -3572,20 +3572,6 @@ sap.ui.define([
 
 	QUnit.module("Accessibility");
 
-	QUnit.test("Aria attributes", function (assert) {
-		// arrange
-		var oOverflowTB = createOverflowToolbar(),
-			sExpectedAriaRoleDescription = Library
-				.getResourceBundleFor("sap.m")
-				.getText(oOverflowTB.constructor.ARIA_ROLE_DESCRIPTION);
-
-		// assert
-		assert.strictEqual(oOverflowTB.$().attr("aria-roledescription"), sExpectedAriaRoleDescription,  "aria-roledescription value is as expected");
-
-		// clean
-		oOverflowTB.destroy();
-	});
-
 	QUnit.test("Role attribute and aria-labelledby with interactive Controls", function (assert) {
 		// arrange
 		var oTitle = new Title({text: "Text"}),
