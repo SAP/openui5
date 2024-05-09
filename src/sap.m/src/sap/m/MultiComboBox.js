@@ -1247,7 +1247,7 @@ function(
 			this._clearTokenizer();
 		}
 
-		if (this._getList()) {
+		if (this._getList() && !this.getPicker().isOpen()) {
 			this.syncPickerContent(true);
 		}
 
