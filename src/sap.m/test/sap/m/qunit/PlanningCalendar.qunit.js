@@ -23,6 +23,9 @@ sap.ui.define([
 	"sap/m/PlanningCalendarRow",
 	"sap/m/PlanningCalendar",
 	"sap/m/Title",
+	"sap/m/IllustratedMessage",
+	"sap/m/IllustratedMessageType",
+	"sap/m/IllustratedMessageSize",
 	"sap/ui/core/CustomData",
 	"sap/ui/Device",
 	"sap/m/PlanningCalendarView",
@@ -59,6 +62,9 @@ sap.ui.define([
 	PlanningCalendarRow,
 	PlanningCalendar,
 	Title,
+	IllustratedMessage,
+	IllustratedMessageType,
+	IllustratedMessageSize,
 	CustomData,
 	Device,
 	PlanningCalendarView,
@@ -1595,9 +1601,9 @@ sap.ui.define([
 
 	QUnit.test("noData: Illistrated Message", async function(assert) {
 		var oTable = Element.getElementById("PC1-Table"),
-			oIMNoData = new sap.m.IllustratedMessage({
-				illustrationType: sap.m.IllustratedMessageType.EmptyPlanningCalendar,
-				illustrationSize: sap.m.IllustratedMessageSize.Dialog
+			oIMNoData = new IllustratedMessage({
+				illustrationType: IllustratedMessageType.EmptyPlanningCalendar,
+				illustrationSize: IllustratedMessageSize.Dialog
 			});
 
 		oPC1.setNoData(oIMNoData);
