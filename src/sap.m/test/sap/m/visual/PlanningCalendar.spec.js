@@ -115,4 +115,11 @@ describe("sap.m.PlanningCalendar", function() {
 		element(by.id("PC1-Header-NavToolbar-TodayBtn")).click();
 		expect(takeScreenshot(element(by.id("PC1-Header-NavToolbar-TodayBtn")))).toLookAs("1month_today_button");
 	});
+
+	it("should display an Illustrated Message when noData is set and rows are removed", function() {
+		var oPage = element(by.id("PC1"));
+
+		element(by.id("B_DeleteAllRows")).click();
+		expect(takeScreenshot(oPage)).toLookAs('PC_with_illustrated_message');
+	});
 });

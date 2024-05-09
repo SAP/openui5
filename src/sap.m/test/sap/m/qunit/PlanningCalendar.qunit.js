@@ -1593,6 +1593,23 @@ sap.ui.define([
 			"If showRowHeaders is set to true, appointments column has minScreenWidth set to sap.m.ScreenSize.Desktop");
 	});
 
+	QUnit.test("noData: Illistrated Message", async function(assert) {
+		var oTable = Element.getElementById("PC1-Table"),
+			oIMNoData = new sap.m.IllustratedMessage({
+				illustrationType: sap.m.IllustratedMessageType.EmptyPlanningCalendar,
+				illustrationSize: sap.m.IllustratedMessageSize.Dialog
+			});
+
+		oPC1.setNoData(oIMNoData);
+		await nextUIUpdate();
+
+		assert.equal(oPC1.getNoData(), oIMNoData, "IllustratedMessage is set");
+		assert.equal(oTable.getAggregation("noData"), oIMNoData, "IllustratedMessage is set on table");
+
+		oPC1.setNoData();
+		await nextUIUpdate();
+	});
+
 	QUnit.test("noDataText", async function(assert) {
 		var oTable = Element.getElementById("PC1-Table");
 		assert.ok(!oPC1.getNoDataText(), "noDataText empty by default");
