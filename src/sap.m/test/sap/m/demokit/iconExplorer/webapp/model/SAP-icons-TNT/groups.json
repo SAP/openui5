@@ -213,7 +213,10 @@
 				{ "name": "ai-2" },
 				{ "name": "bound-validation-rule" },
 				{ "name": "fiori-application" },
-				{ "name": "build-code" }
+				{ "name": "build-code" },
+				{ "name": "business-application-studio" },
+				{ "name": "clone-from-git" },
+				{ "name": "business-accelerator" }
 			]
 		},
 		{
