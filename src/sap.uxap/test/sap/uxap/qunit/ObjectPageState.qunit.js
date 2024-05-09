@@ -49,7 +49,7 @@ function(
 	function createPage(key, useDynamicTitle) {
 		var oHeaderTitleType = useDynamicTitle ? ObjectPageDynamicHeaderTitle : ObjectPageHeader;
 		var oOPL = new ObjectPageLayout(key,{
-			headerTitle:new oHeaderTitleType({
+			headerTitle:new oHeaderTitleType(key + "-title",{
 				actions:[
 					new ObjectPageHeaderActionButton({
 						icon:'sap-icon://refresh'
@@ -766,6 +766,59 @@ function(
 		assert.strictEqual(oSpy.callCount, 1, "the event is fired");
 	});
 
+	QUnit.module("Async code execution after destroy method called", {
+		beforeEach: function () {
+			this.oObjectPage = createPage("page1", true);
+		},
+		afterEach: function (assert) {
+			this.oObjectPage.destroy();
+		}
+	});
+
+	QUnit.test("Async code execution after destroy method called", async function(assert) {
+
+		//Arrange
+		var oFakeEvent = {
+			size: {
+				width: 300,
+				height: 1000
+			},
+			oldSize: {
+				width: 1000,
+				height: 1000
+			}
+		},
+		oStub,
+		done = assert.async();
+		this.oObjectPage.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		oStub = sinon.stub(ObjectPageDynamicHeaderTitle.prototype, "_onResize");
+
+		//Act
+		this.oObjectPage._bDomReady = true;
+		this.oObjectPage._onUpdateScreenSize(oFakeEvent);
+
+		this.oObjectPage.destroy();
+		await nextUIUpdate();
+
+		//Act
+		this.oObjectPage = createPage("page-new", true);
+		this.oObjectPage.placeAt("qunit-fixture");
+		await nextUIUpdate();
+		this.oObjectPage._bDomReady = true;
+		this.oObjectPage._onUpdateScreenSize(oFakeEvent);
+
+		setTimeout(function() {
+
+			//Assert
+			assert.equal(oStub.callCount,1, "The async call of the method is called only from the newly created Object Page Instance, not being destroyed");
+			assert.equal(oStub.getCall(0).thisValue.sId, 'page-new-title', "the method called is the newly created Object Page Instance, not being destroyed");
+			oStub.restore();
+			done();
+		}, 1000);
+
+	});
 	var bUseIconTabBar = true;
 
 	runParameterizedTests(bUseIconTabBar);
