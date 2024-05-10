@@ -40,6 +40,9 @@ sap.ui.define([
 	"sap/ui/core/Icon",
 	"sap/m/ToolbarSeparator",
 	"sap/m/Page",
+	"sap/m/IllustratedMessage",
+	"sap/m/IllustratedMessageType",
+	"sap/m/IllustratedMessageSize",
 	"sap/base/Log",
 	"sap/ui/core/date/UI5Date"
 ], function(
@@ -84,6 +87,9 @@ sap.ui.define([
 	Icon,
 	ToolbarSeparator,
 	Page,
+	IllustratedMessage,
+	IllustratedMessageType,
+	IllustratedMessageSize,
 	Log,
 	UI5Date
 ) {
@@ -794,9 +800,9 @@ sap.ui.define([
 		intro: "{text}"
 	});
 
-	var oIMNoData = new sap.m.IllustratedMessage({
-		illustrationType: sap.m.IllustratedMessageType.EmptyPlanningCalendar,
-		illustrationSize: sap.m.IllustratedMessageSize.Dialog,
+	var oIMNoData = new IllustratedMessage({
+		illustrationType: IllustratedMessageType.EmptyPlanningCalendar,
+		illustrationSize: IllustratedMessageSize.Dialog,
 		title: "No Data",
 		description: "Try to add rows here"
 	});
