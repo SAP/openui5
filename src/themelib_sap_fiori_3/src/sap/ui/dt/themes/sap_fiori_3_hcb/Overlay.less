@@ -1,8 +1,39 @@
 /******************************************************************
 	Style of the DT Overlays - sap_fiori_3_hcb Theme
 *******************************************************************/
-@_sap_ui_dt_Overlay_FocusColor: fade(@sapUiNeutralBorder, 80%); //rgba(255, 255, 255, 0.8)
-@_sap_ui_dt_Overlay_TargetZoneColor: @sapUiContentHelpColor; //#03b803
-@_sap_ui_dt_Overlay_SelectionColor: @sapUiNeutralElement; //#ffffff
-@_sap_ui_dt_Overlay_CuttedColor: @sapUiFieldReadOnlyBackground; //#585858
-@_sap_ui_dt_Overlay_HighlightColor: @sapUiWarningBorder; // #ffab1d
+@_sap_ui_dt_Overlay_TargetZoneOutlineColor: @sapUiSuccessBorder; //#9c9
+@_sap_ui_dt_Overlay_CuttedBackgroundColor: @sapUiFieldPlaceholderTextColor; //#999
+@_sap_ui_dt_Overlay_HighlightOutlineColor: @sapUiWarningBorder; // #ffab1d
+@_sap_ui_dt_Overlay_HoverBackgroundColor: fade(lighten(@sapUiSelected, 10%), 30%); //rgba(20, 122, 194, 0.3)
+@_sap_ui_dt_Overlay_DropZoneBackgroundColor: fade(lighten(@sapUiSelected, 10%), 30%); //rgba(20, 122, 194, 0.3)
+@_sap_ui_dt_Overlay_SelectionOutlineColor: @sapUiSuccessBorder; //#9c9
+
+.sapUiDtOverlayHover {
+	background: transparent;
+	&:after {
+		box-shadow: none;
+		outline: 0.125rem dotted @_sap_ui_dt_Overlay_SelectionOutlineColor; //2px
+		outline-offset: -0.125rem; //2px
+	}
+}
+
+.sapUiDtOverlaySelected {
+	box-shadow: none!important;
+	&.sapUiDtOverlayHover {
+		&:after {
+			border: 0.125rem solid @_sap_ui_dt_Overlay_SelectionOutlineColor; //2px
+			outline-offset: -0.25rem; //4px
+			transition: none;
+		}
+	}
+}
+
+.sapUiDtOverlay {
+	&:focus {
+		&:before {
+			border: none;
+			outline: 0.125rem dotted @_sap_ui_dt_Overlay_FocusBorderColor; //2px
+			outline-offset: -0.25rem; //4px
+		}
+	}
+}

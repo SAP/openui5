@@ -1,5 +1,31 @@
 /******************************************************************
 	Style of the RTA Overlays - sap_fiori_3_dark Theme
 *******************************************************************/
-@_sap_ui_rta_Overlay_PlaceholderBG: lighten(saturate(@sapUiShellBackground, 15%), 2%); //#202f3e
-@_sap_ui_rta_Overlay_ShellBG: @sapUiShellBorderColor; //#354a5f
+@_sap_ui_rta_Overlay_PlaceholderBackgroundColor: darken(@sapUiContentImagePlaceholderBackground, 20%); //#3e4a58
+
+.sapUiRta {
+	.sapUiDtOverlayDropZone {
+		> .sapUiDtOverlayChildren {
+			> .sapUiRtaOverlayPlaceholder {
+				background: @_sap_ui_rta_Overlay_PlaceholderBackgroundColor !important;
+				// no "focus" border
+				&:focus {
+					&:before {
+						content: none;
+					}
+				}
+
+				// all descendants
+				* {
+					background: @_sap_ui_rta_Overlay_PlaceholderBackgroundColor;
+					// no "focus" border
+					&:focus {
+						&:before {
+							content: none;
+						}
+					}
+				}
+			}
+		}
+	}
+}

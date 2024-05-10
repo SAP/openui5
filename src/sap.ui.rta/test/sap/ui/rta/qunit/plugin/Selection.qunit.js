@@ -524,21 +524,21 @@ sap.ui.define([
 
 		QUnit.test("Invoking Mouse-Over and Mouse-Leave on an Overlay which is selectable", function(assert) {
 			var oOverlay = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn11"));
-			assert.ok(!oOverlay.hasStyleClass("sapUiRtaOverlayHover"), "initially the CSS class is not set");
+			assert.ok(!oOverlay.hasStyleClass("sapUiDtOverlayHover"), "initially the CSS class is not set");
 			oOverlay.getDomRef().dispatchEvent(new Event("mouseover"));
-			assert.ok(oOverlay.hasStyleClass("sapUiRtaOverlayHover"), "then the Overlay has the proper CSS class after mouse-over event");
+			assert.ok(oOverlay.hasStyleClass("sapUiDtOverlayHover"), "then the Overlay has the proper CSS class after mouse-over event");
 			oOverlay.getDomRef().dispatchEvent(new Event("mouseout"));
-			assert.ok(!oOverlay.hasStyleClass("sapUiRtaOverlayHover"), "then the CSS class is removed again after mouse-leave event");
+			assert.ok(!oOverlay.hasStyleClass("sapUiDtOverlayHover"), "then the CSS class is removed again after mouse-leave event");
 		});
 
 		QUnit.test("Invoking Mouse-Over and Mouse-Leave on an Overlay which is selectable and isActive is false", function(assert) {
 			this.oSelectionPlugin.setIsActive(false);
 			var oOverlay = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn11"));
-			assert.ok(!oOverlay.hasStyleClass("sapUiRtaOverlayHover"), "initially the CSS class is not set");
+			assert.ok(!oOverlay.hasStyleClass("sapUiDtOverlayHover"), "initially the CSS class is not set");
 			oOverlay.getDomRef().dispatchEvent(new Event("mouseover"));
-			assert.ok(!oOverlay.hasStyleClass("sapUiRtaOverlayHover"), "then the CSS class is still not not set after mouse-over event");
+			assert.ok(!oOverlay.hasStyleClass("sapUiDtOverlayHover"), "then the CSS class is still not not set after mouse-over event");
 			oOverlay.getDomRef().dispatchEvent(new Event("mouseout"));
-			assert.ok(!oOverlay.hasStyleClass("sapUiRtaOverlayHover"), "then the CSS class is still not not set after mouse-leave event");
+			assert.ok(!oOverlay.hasStyleClass("sapUiDtOverlayHover"), "then the CSS class is still not not set after mouse-leave event");
 		});
 
 		QUnit.test("Invoking Mouse-Over and Mouse-Leave on an Overlay which is selectable and has a movable parent", function(assert) {
@@ -554,26 +554,26 @@ sap.ui.define([
 		QUnit.test("Invoking Mouse-Over on an Overlay which is not selectable", function(assert) {
 			var oOverlay = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn11"));
 			oOverlay.setSelectable(false);
-			assert.ok(!oOverlay.hasStyleClass("sapUiRtaOverlayHover"), "initially the CSS class is not set");
+			assert.ok(!oOverlay.hasStyleClass("sapUiDtOverlayHover"), "initially the CSS class is not set");
 			oOverlay.getDomRef().dispatchEvent(new Event("mouseover"));
-			assert.ok(!oOverlay.hasStyleClass("sapUiRtaOverlayHover"), "then the CSS class is still not set after Mouse-over event");
+			assert.ok(!oOverlay.hasStyleClass("sapUiDtOverlayHover"), "then the CSS class is still not set after Mouse-over event");
 		});
 
 		QUnit.test("Invoking Mouse-Over on an Overlay when a plugin is busy", function(assert) {
 			var oOverlay = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn11"));
 			sandbox.stub(this.oDesignTime, "getBusyPlugins").returns(["busy-plugin"]);
-			assert.ok(!oOverlay.hasStyleClass("sapUiRtaOverlayHover"), "initially the CSS class is not set");
+			assert.ok(!oOverlay.hasStyleClass("sapUiDtOverlayHover"), "initially the CSS class is not set");
 			oOverlay.getDomRef().dispatchEvent(new Event("mouseover"));
-			assert.ok(!oOverlay.hasStyleClass("sapUiRtaOverlayHover"), "then the CSS class is still not set after Mouse-over event");
+			assert.ok(!oOverlay.hasStyleClass("sapUiDtOverlayHover"), "then the CSS class is still not set after Mouse-over event");
 		});
 
 		QUnit.test("When 'Editable' changes to false on an hovered Overlay", function(assert) {
 			var fnDone = assert.async();
 			var oOverlay = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn12"));
 			oOverlay.getDomRef().dispatchEvent(new Event("mouseover"));
-			assert.ok(oOverlay.hasStyleClass("sapUiRtaOverlayHover"), "then the Overlay has initaly the proper CSS class");
+			assert.ok(oOverlay.hasStyleClass("sapUiDtOverlayHover"), "then the Overlay has initaly the proper CSS class");
 			this.oSelectionPlugin.attachEventOnce("elementEditableChange", function() {
-				assert.ok(!oOverlay.hasStyleClass("sapUiRtaOverlayHover"), "then the CSS class is removed again after editable change");
+				assert.ok(!oOverlay.hasStyleClass("sapUiDtOverlayHover"), "then the CSS class is removed again after editable change");
 				fnDone();
 			});
 			oOverlay.setEditable(false);

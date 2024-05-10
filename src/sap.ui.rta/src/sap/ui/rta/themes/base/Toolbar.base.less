@@ -1,21 +1,21 @@
 /******************************************************************
 	Style of the RTA Toolbar (all types) - base Theme
 *******************************************************************/
-@_sap_ui_rta_Toolbar_Base_TextColor: @sapUiTextInverted; //#fff
-@_sap_ui_rta_Toolbar_Base_BaseColor: darken(desaturate(@sapUiChart1, 48%), 14%); //#435060
-@_sap_ui_rta_Toolbar_Base_BaseBG: darken(desaturate(@sapUiChart1, 48%), 14%); //#435060
-@_sap_ui_rta_Toolbar_Base_BoxShadow_DarkColor: @sapUiDarkShadowTint; // #000
-@_sap_ui_rta_Toolbar_Base_BoxShadow_LightColor: @sapUiLightShadowTint; // #fff
-@_sap_ui_rta_Toolbar_Border_Image: repeating-linear-gradient(-45deg,
-@_sap_ui_rta_Toolbar_Base_BaseColor,
-@_sap_ui_rta_Toolbar_Base_BaseColor 0.25rem,
-@_sap_ui_rta_Toolbar_Base_TextColor 0.25rem,
-@_sap_ui_rta_Toolbar_Base_TextColor 0.375rem) 4;
+@_sap_ui_rta_Toolbar_Base_BorderLiteColor: @sapUiButtonLiteBorderColor; //#fff
+@_sap_ui_rta_Toolbar_Base_BorderDarkColor: @sapUiButtonAcceptBorderColor; //#006362
+@_sap_ui_rta_Toolbar_Base_BackgroundColor: @sapUiToolbarBackground; //#fff
+@_sap_ui_rta_Toolbar_Base_BoxShadowDarkColor: @sapUiDarkShadowTint; // #000
+@_sap_ui_rta_Toolbar_Base_BoxShadowLightColor: @sapUiLightShadowTint; // #fff
+@_sap_ui_rta_Toolbar_Base_BorderImage: repeating-linear-gradient(-45deg,
+@_sap_ui_rta_Toolbar_Base_BorderDarkColor,
+@_sap_ui_rta_Toolbar_Base_BorderDarkColor 0.25rem,
+@_sap_ui_rta_Toolbar_Base_BorderLiteColor 0.25rem,
+@_sap_ui_rta_Toolbar_Base_BorderLiteColor 0.375rem) 4;
 
-@_sap_ui_rta_Toolbar_Box_Shadow: 0.375rem 0.625rem 2rem fade(@_sap_ui_rta_Toolbar_Base_BoxShadow_DarkColor, 30),
-0.125rem 0.375rem 1rem fade(@_sap_ui_rta_Toolbar_Base_BoxShadow_DarkColor, 60),
-0 0 0 0.0625rem fade(@_sap_ui_rta_Toolbar_Base_BoxShadow_LightColor, 20),
-0 0.0625rem 0 0 fade(@_sap_ui_rta_Toolbar_Base_BoxShadow_LightColor, 20);
+@_sap_ui_rta_Toolbar_Base_BoxShadow: 0.375rem 0.625rem 2rem fade(@_sap_ui_rta_Toolbar_Base_BoxShadowDarkColor, 30),
+0.125rem 0.375rem 1rem fade(@_sap_ui_rta_Toolbar_Base_BoxShadowDarkColor, 60),
+0 0 0 0.0625rem fade(@_sap_ui_rta_Toolbar_Base_BoxShadowLightColor, 20),
+0 0.0625rem 0 0 fade(@_sap_ui_rta_Toolbar_Base_BoxShadowLightColor, 20);
 
 .sapUiRtaMode {
 
@@ -24,16 +24,16 @@
 	}
 
 	.sapUiRtaToolbar {
-		border: 0.125rem solid @_sap_ui_rta_Toolbar_Base_TextColor; //2px
-		border-image: @_sap_ui_rta_Toolbar_Border_Image;
-		box-shadow: @_sap_ui_rta_Toolbar_Box_Shadow;
+		border: 0.125rem solid @_sap_ui_rta_Toolbar_Base_BorderLiteColor; //2px
+		border-image: @_sap_ui_rta_Toolbar_Base_BorderImage;
+		box-shadow: @_sap_ui_rta_Toolbar_Base_BoxShadow;
 		position: absolute;
 		top: 0;
 		left: 0;
 		right: 0;
 		padding-left: 1.25rem; //20px
 		height: 2.75rem; /* Overrider `.sapUiSizeCompact .sapMTB` */ //44px
-		background-color: @_sap_ui_rta_Toolbar_Base_BaseBG;
+		background-color: @_sap_ui_rta_Toolbar_Base_BackgroundColor;
 
 		&.sapUiRtaToolbar_scrolling {
 			position: fixed!important;

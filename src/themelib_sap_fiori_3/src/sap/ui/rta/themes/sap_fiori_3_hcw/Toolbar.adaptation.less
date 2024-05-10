@@ -1,30 +1,45 @@
 /***********************************************************************
 	Style of the RTA Toolbar (type: adaptation) - sap_fiori_3_hcw Theme
 ************************************************************************/
-@_sap_ui_rta_Toolbar_Adaptation_BaseColor: @sapUiNeutralBG; //#fff
-@_sap_ui_rta_Toolbar_Adaptation_TextColor: @sapUiNeutralElement; //#000
-@_sap_ui_rta_Toolbar_Adaptation_BtnFocusBorder: @sapUiNeutralElement; //#000
-@_sap_ui_rta_Toolbar_Adaptation_FocusOutlineCol: @sapUiNeutralBorder; //#000
-@_sap_ui_rta_Toolbar_Adaptation_SegBBtnHoverTextColor: @sapUiNeutralElement; //000
-@_sap_ui_rta_Toolbar_Adaptation_DraftVersionColor: darken(@sapUiActive, 19%); //#be5a13
-@_sap_ui_rta_Toolbar_Adaptation_ActiveVersionColor: @sapUiContentHelpColor; //#b7ffb7
-@_sap_ui_rta_Toolbar_Adaptation_BoxShadow_DarkColor: fade(@sapUiContentShadowColor, 60%); //rgba(0, 0, 0, 0.6)
-@_sap_ui_rta_Toolbar_Adaptation_BoxShadow_LightColor: @sapUiNeutralBorder; //#000
-@_sap_ui_rta_Toolbar_Adaptation_VersionHistoryHover: @sapUiSelected; //#ec8b46
-@_sap_ui_rta_Toolbar_Adaptation_BaseColorLight: @sapUiFieldReadOnlyBackground; //#b3b3b3
+@_sap_ui_rta_Toolbar_Adaptation_DraftVersionColor: darken(@sapUiContentSearchHighlightColor, 10%); //#e76e18
+@_sap_ui_rta_Toolbar_Adaptation_ActiveVersionColor: @sapUiContentHelpColor; //#006500
+@_sap_ui_rta_Toolbar_Adaptation_BoxShadowDarkColor: @sapUiShellBorderColor; // #000
+@_sap_ui_rta_Toolbar_Adaptation_BoxShadowLightColor: @sapUiShellBackground; //#fff
+@_sap_ui_rta_Toolbar_Adaptation_SegBBtnBackgroundColor: @sapUiShellBackground; //#fff
+@_sap_ui_rta_Toolbar_Adaptation_BtnHoverTextColor: @sapUiTextInverted; //#fff
+@_sap_ui_rta_Toolbar_Adaptation_VersionHistory_HoverBackgroundColor: @sapUiListSelectionBackgroundColor; //#8fb5ff
 
 .sapUiRtaMode {
 	.sapUiRtaToolbar.sapUiRtaToolbarAdaptation {
 		.sapMBtn {
 			&:focus .sapMFocusable {
-				outline: 0.125rem dotted @_sap_ui_rta_Toolbar_Adaptation_FocusOutlineCol;
+				outline: 0.125rem dotted @_sap_ui_rta_Toolbar_Adaptation_FocusOutlineColor;
 				outline-offset: -0.125rem; //2px
 				border-color: transparent;
+			}
+			&:hover {
+				&>.sapMBtnTransparent.sapMBtnHoverable:not(.sapMBtnActive):not(.sapMToggleBtnPressed) {
+					bdi {
+						color: @_sap_ui_rta_Toolbar_Adaptation_BtnHoverTextColor;
+					}
+				}
+			}
+		}
+		.sapMBtnTransparent.sapMBtnHoverable:hover {
+			.sapUiIcon:not(.sapMBtnDisabled):not(.sapMBtnActive):not(.sapMToggleBtnPressed):not(.sapMBtnEmphasized) {
+				color: @_sap_ui_rta_Toolbar_Adaptation_BtnHoverTextColor;
 			}
 		}
 
 		.sapMSegB {
 			.sapMSegBBtn {
+				&:not(:hover) {
+					&.sapMSegBBtnFocusable {
+						.sapMSegBBtnInner {
+							background-color: @_sap_ui_rta_Toolbar_Adaptation_SegBBtnBackgroundColor;
+						}
+					}
+				}
 				&.sapMSegBBtnFocusable {
 					&:focus .sapMSegBBtnInner {
 						outline-width: 0.125rem; //2px
@@ -33,12 +48,35 @@
 				}
 			}
 		}
+		// set text to white on hover for better accessibility
+		.sapUiRtaVersionButton {
+			&:hover {
+				> span > span > bdi {
+					color: @_sap_ui_rta_Toolbar_Adaptation_BtnHoverTextColor;
+				}
+			}
+		}
 	}
+	// set text to white on hover for better accessibility
 	.sapUiRtaVersionHistory {
-		.sapUiRtaVersionsList {
-			.sapMListUl .sapMLIB.sapMGHLI {
-				color: @sapUiNeutralBG;
-				box-shadow: none;
+		.sapMLIBHoverable:hover {
+			background: @_sap_ui_rta_Toolbar_Adaptation_VersionHistory_HoverBackgroundColor;
+			.sapMLIBContent {
+				.sapMFeedListItem {
+					.sapMFeedListItemText {
+						.sapMFeedListItemTextText {
+							.sapMFeedListItemTextString {
+								color: @_sap_ui_rta_Toolbar_Adaptation_BtnHoverTextColor;
+							}
+						}
+						.sapMFeedListItemFooter {
+							.sapMFeedListItemInfoText,
+							.sapMFeedListItemTimestampText {
+								color: @_sap_ui_rta_Toolbar_Adaptation_BtnHoverTextColor;
+							}
+						}
+					}
+				}
 			}
 		}
 	}

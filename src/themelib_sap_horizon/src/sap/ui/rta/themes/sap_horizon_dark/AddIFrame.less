@@ -1,9 +1,8 @@
 /******************************************************************
 	Style of the RTA Add IFrame Dialog  - Horizon Dark Theme
 *******************************************************************/
-@_sap_ui_rta_AddIFrame_DelimiterLineColor: @sapUiToolbarSeparatorColor; //#3c4957
-@_sap_ui_rta_AddIFrame_BorderRadius: @sapUiGroupBorderCornerRadius; //0.5rem
-@_sap_ui_rta_AddIFrame_PreviewTlbarHoverBG: @sapUiButtonHoverBackground; //	#1d232a
+@_sap_ui_rta_AddIFrame_BorderRadius: @sapUiFieldBorderCornerRadius; //0.25rem
+@_sap_ui_rta_AddIFrame_ButtonHoverBackgroundColor: @sapUiButtonHoverBackground; //#222b35
 
 .sapUiRtaMode {
 	.sapUiRtaAddIFrameDialog {
@@ -19,23 +18,11 @@
 				.sapUiRtaAddIFrameDialogEditUrl {
 					.sapMTextArea {
 						.sapMInputBaseContentWrapper {
-							border: 0.0625rem solid @_sap_ui_rta_AddIFrame_BorderColor; //1px
-							border-radius: @_sap_ui_rta_AddIFrame_BorderRadius;
 							background-image: none;
 						}
 
 						.sapMTextAreaInner {
 							border: none;
-						}
-
-						&.sapMFocus.sapMInputBase .sapMInputBaseContentWrapper:not(.sapMInputBaseDisabledWrapper)::before {
-							content: none;
-						}
-
-						&.sapMFocus {
-							.sapMInputBaseContentWrapper .sapMInputBaseInner {
-								outline: none;
-							}
 						}
 					}
 				}
@@ -53,9 +40,12 @@
 						padding-left: 0;
 						padding-right: 0.125rem;
 
-						&.sapMTB:hover,
-						&.sapMTB-Solid-CTX.sapMTB:hover {
-							background-color: @_sap_ui_rta_AddIFrame_PreviewTlbarHoverBG;
+						.sapUiRtaAddIFrameDialogPreviewButton {
+							&:not(.sapMBtnDisabled):hover {
+								.sapMBtnInner {
+									background-color: @_sap_ui_rta_AddIFrame_ButtonHoverBackgroundColor;
+								}
+							}
 						}
 					}
 				}
@@ -63,8 +53,6 @@
 
 			.sapUiRtaAddIFrameDialogPreviewGrid {
 				border-radius: @_sap_ui_rta_AddIFrame_BorderRadius;
-				padding-bottom: 0.5rem;
-				background: transparent;
 			}
 		}
 	}

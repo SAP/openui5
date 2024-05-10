@@ -4,13 +4,14 @@
 @_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorLight: lighten(@sapUiPositiveText, 10%); //#bbddbb
 @_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorMedium: @sapUiCriticalText; //#ffab1d
 @_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorDark: lighten(@sapUiChart8, 20%); //#dd8ec9
-@_sap_ui_rta_ChangeVisualization_OverlayOutline: @sapUiContentHelpColor; // #03b803
-@_sap_ui_rta_ChangeVisualization_BorderRadius: @sapUiButtonBorderCornerRadius;
+@_sap_ui_rta_ChangeVisualization_OverlayOutlineColor: darken(@sapUiSuccessBorder, 25%); //#4c994c
+@_sap_ui_rta_ChangeVisualization_BorderRadius: @sapUiButtonBorderCornerRadius; // 0.375rem
 
 .sapUiDtOverlay {
 	.sapUiRtaChangeIndicatorHovered {
 		&:after {
 			box-shadow: none;
+			border-radius: @_sap_ui_rta_ChangeVisualization_BorderRadius;
 		}
 	}
 
