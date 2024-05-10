@@ -71,6 +71,7 @@ sap.ui.define([
 		},
 
 		metadata : {
+			interfaces : ["sap.ui.core.IAsyncContentCreation"],
 			manifest : "json",
 			properties : {
 				inlineCreationRows : {type : "int", defaultValue : 0}

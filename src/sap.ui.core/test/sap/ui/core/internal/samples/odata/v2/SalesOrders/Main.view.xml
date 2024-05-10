@@ -193,7 +193,7 @@
 							type : 'sap.ui.model.odata.type.DateTime'
 						}" width="12em" />
 				</form:SimpleForm>
-				<t:Table id="ToLineItems" rowActionCount="1" rows="{
+				<t:Table ariaLabelledBy="salesOrderItemsTitle" id="ToLineItems" rowActionCount="1" rows="{
 						events : {
 							change : '.onUpdateSalesOrderItemsCount',
 							createActivate : '.onTriggerCreateActivateLineItem'
@@ -292,7 +292,7 @@
 								<Input editable="false" value="{SalesOrderID}" />
 							</t:template>
 						</t:Column>
-						<t:Column id="itemPositionColumn" sorted="true" sortOrder="Ascending"
+						<t:Column id="itemPositionColumn" sortOrder="Ascending"
 							sortProperty="ItemPosition" width="8em">
 							<Label text="Item Position" />
 							<t:template>
@@ -464,7 +464,8 @@
 							<Button press="onCloseProductDetails" text="Close"
 								tooltip="Close the product details dialog" type="Accept" />
 						</buttons>
-						<form:SimpleForm editable="true" layout="ResponsiveGridLayout">
+						<form:SimpleForm ariaLabelledBy="productDetailsDialog" editable="true"
+								layout="ResponsiveGridLayout">
 							<Label text="Product ID" />
 							<Input id="productID::productDetailsDialog" value="{ProductID}" />
 							<Label text="Name" />
@@ -476,7 +477,8 @@
 							<Button press="onCloseMessageDetails" text="Close"
 								tooltip="Close the message details dialog" type="Emphasized" />
 						</buttons>
-						<form:SimpleForm editable="false" layout="ResponsiveGridLayout">
+						<form:SimpleForm ariaLabelledBy="messageDetails" editable="false"
+								layout="ResponsiveGridLayout">
 							<Label text="Message ID" />
 							<Text text="{messages>id}" />
 							<Label text="Type" />
