@@ -49,6 +49,7 @@ sap.ui.define([
 	 * @public
 	 * @since 1.95.0
 	 * @experimental Since 1.95.0 This control is experimental and its API might change significantly.
+	 * @deprecated Since 1.126
 	 * @alias sap.ui.webc.main.Breadcrumbs
 	 */
 	var Breadcrumbs = WebComponent.extend("sap.ui.webc.main.Breadcrumbs", {

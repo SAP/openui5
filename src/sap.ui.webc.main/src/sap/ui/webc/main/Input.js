@@ -57,6 +57,7 @@ sap.ui.define([
 	 * @public
 	 * @since 1.92.0
 	 * @experimental Since 1.92.0 This control is experimental and its API might change significantly.
+	 * @deprecated Since 1.126
 	 * @alias sap.ui.webc.main.Input
 	 * @implements sap.ui.webc.main.IInput, sap.ui.core.IFormContent
 	 */

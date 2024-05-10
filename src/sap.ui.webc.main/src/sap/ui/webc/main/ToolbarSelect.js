@@ -33,6 +33,7 @@ sap.ui.define([
 	 * @public
 	 * @since 1.120.0
 	 * @experimental Since 1.120.0 This control is experimental and its API might change significantly.
+	 * @deprecated Since 1.126
 	 * @alias sap.ui.webc.main.ToolbarSelect
 	 * @implements sap.ui.webc.main.IToolbarItem
 	 */
