@@ -546,7 +546,11 @@ function(
 						 * The date as a UI5Date or JavaScript Date object of the cell with the
 						 * pressed more link.
 						 */
-						date: { type: "object" }
+						date: {type: "object"},
+						/**
+						 * The link that has been triggered
+						 */
+						sourceLink: {type: "sap.m.Link"}
 					}
 				},
 
@@ -1349,7 +1353,8 @@ function(
 		};
 		var fnHandleMoreLinkPress = function(oEvent) {
 			this.fireEvent("moreLinkPress", {
-				date: oEvent.getParameter("date")
+				date: oEvent.getParameter("date"),
+				sourceLink: oEvent.getParameter("sourceLink")
 			});
 		};
 		var fnHandleWeekNumberPress = function(oEvent) {
