@@ -183,7 +183,8 @@ sap.ui.define([
 		},
 
 		onInit : function () {
-			this.getView().getModel().attachPropertyChange(this.onCheckPendingChanges.bind(this));
+			this.getOwnerComponent().getModel()
+				.attachPropertyChange(this.onCheckPendingChanges.bind(this));
 		},
 
 		onInsertFromClipboard : function (oEvent) {
@@ -193,7 +194,6 @@ sap.ui.define([
 				oClipboardModel = oView.getModel("clipboard"),
 				oTable = oView.byId("treetable");
 
-			//TODO: support inserting multiple entries from clipboard
 			oNewParentContext = oTable.getContextByIndex(oTable.getSelectedIndices()[0]);
 			oTable.getBinding("rows").addContexts(oNewParentContext, oClipboardEntry.context);
 			oClipboardModel.setProperty("/nodes",

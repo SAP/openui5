@@ -16,6 +16,7 @@ sap.ui.define([
 
 	return UIComponent.extend("sap.ui.core.internal.samples.odata.v2.TreeTable.Component", {
 		metadata : {
+			interfaces : ["sap.ui.core.IAsyncContentCreation"],
 			manifest : "json"
 		},
 
