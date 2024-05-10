@@ -33,7 +33,6 @@ sap.ui.define([
 
 	var AttributesLayoutType = library.AttributesLayoutType;
 	var ValueState = coreLibrary.ValueState;
-	var EmptyIndicatorMode = mLibrary.EmptyIndicatorMode;
 	var AvatarImageFitType = mLibrary.AvatarImageFitType;
 
 	/**
@@ -118,6 +117,11 @@ sap.ui.define([
 				 * Defines whether the icon should be visible.
 				 */
 				iconVisible: { type: "boolean", defaultValue: true },
+
+				/**
+				 * Defines whether the info is specified.
+				 */
+				hasInfo: { type: "boolean", defaultValue: false },
 
 				/**
 				 * Defines an additional information text.
@@ -326,8 +330,7 @@ sap.ui.define([
 			.setText(this.getInfo())
 			.setState(this.getInfoState())
 			.setShowStateIcon(this.getShowInfoStateIcon())
-			.setIcon(this.getCustomInfoStatusIcon())
-			.setEmptyIndicatorMode(EmptyIndicatorMode.On);
+			.setIcon(this.getCustomInfoStatusIcon());
 
 		return oObjectStatus;
 	};

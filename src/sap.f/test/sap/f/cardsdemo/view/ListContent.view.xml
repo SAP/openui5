@@ -99,6 +99,11 @@
 					<f:GridContainerItemLayoutData columns="4" />
 				</w:layoutData>
 			</w:Card>
+			<w:Card baseUrl="{cardsPlayground>/playgroundBaseUrl}" manifest="{listContentManifests>/emptyIndicators}" id="CardEmptyIndicators">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="4" />
+				</w:layoutData>
+			</w:Card>
 		</f:GridContainer>
 	</Page>
 </mvc:View>

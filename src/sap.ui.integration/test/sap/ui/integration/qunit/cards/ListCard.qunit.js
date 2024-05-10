@@ -989,6 +989,44 @@ sap.ui.define([
 		assert.strictEqual(oListItem1.$().find(".sapUiIntLCIInfo").length, 0, "Info is not visible");
 	});
 
+	QUnit.test("Info without value", async function (assert) {
+		// Arrange
+		var oManifest = {
+			"sap.app": {
+				"id": "list.card.test.infoVisible"
+			},
+			"sap.card": {
+				"type": "List",
+				"content": {
+					"data": {
+						"json": [{
+							"Name": "Comfort Easy",
+							"Description": "32 GB Digital Assistant with high-resolution color screen",
+							"InfoText": ""
+						}]
+					},
+					"item": {
+						"title": "{Name}",
+						"description": "{Description}",
+						"info": {
+							"value": "{InfoText}"
+						}
+					}
+				}
+			}
+		};
+
+		// Act
+		this.oCard.setManifest(oManifest);
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		var oListItem1 = this.oCard.getCardContent().getAggregation("_content").getItems()[0];
+
+		assert.ok(oListItem1.$().find(".sapUiIntLCIInfo").length, "Info is displayed");
+	});
+
 	QUnit.test("Description visible property", async function (assert) {
 		// Act
 		this.oCard.setManifest(oManifest_ListCard);

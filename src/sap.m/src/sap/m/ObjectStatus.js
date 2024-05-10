@@ -289,6 +289,12 @@ sap.ui.define([
 		return !(this.getText().trim() || this.getIcon().trim() || this.getTitle().trim());
 	};
 
+	ObjectStatus.prototype._shouldRenderEmptyIndicator = function() {
+		return this.getEmptyIndicatorMode() !== EmptyIndicatorMode.Off &&
+			!this.getText() &&
+			!this.getIcon();
+	};
+
 	/**
 	 * Called when the control is touched.
 	 * @param {object} oEvent The fired event
