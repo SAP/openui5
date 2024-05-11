@@ -10,7 +10,7 @@
 	</script>
 	<script src="testdata/NorthwindData.js"></script>
 	<script>
-
+		/*global sinon, NorthwindData */
 		// Configuration
 		var iResponseDelay = 200;
 		var iMaxAge = 30000;
@@ -38,7 +38,7 @@
 				}
 
 
-
+				var sResponse;
 				if (request.url === "fakeservice://northwind/") {
 					sResponse = NorthwindData.root;
 				} else if (request.url === "fakeservice://northwind/$metadata") {
@@ -46,7 +46,7 @@
 					sResponse = NorthwindData.$metadata;
 				} else if (request.url === "fakeservice://northwind/Products/$count") {
 					mResponseHeaders["Content-Type"] = "text/plain";
-					sResponse = NorthwindData.Products.d.results.length;
+					sResponse = String(NorthwindData.Products.d.results.length);
 				} else if (request.url === "fakeservice://northwind/Products") {
 					mResponseHeaders["Age"] = Date.now();
 
@@ -79,7 +79,7 @@
 
 
 		// Display control
-		sap.ui.core.Control.extend("AgeDisplay", {
+		var AgeDisplay = sap.ui.core.Control.extend("AgeDisplay", {
 			metadata: {
 				properties: {
 					label: { type: "string" },

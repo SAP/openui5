@@ -55,7 +55,6 @@
 <script>
 	sap.ui.controller("managedobjectmodel.example.Controller", {
 		onInit: function(oEvent) {
-			"use strict";
 			jQuery.sap.require("sap.ui.model.base.ManagedObjectModel");
 			var oModel = new sap.ui.model.base.ManagedObjectModel(this.getView());
 			this.getView().setModel(oModel, "$ct");
@@ -74,7 +73,7 @@
 			var that = this;
 			var fn = function() {
 				that.getView().byId("button3").detachPress(fn);
-			}
+			};
 			this.getView().byId("button3").attachPress(fn);
 		}
 	});
@@ -100,15 +99,15 @@
 	input.setModel(oModel, "select");
 	input.placeAt('content');
 				
-		var button = new sap.m.Button("button", {
-		text: "{= 'Add item number ' + ${select>/items}.length + ' to list'}",press: function() {
-			 var i= select.getItems().length + 1;
-			
+	var button = new sap.m.Button("button", {
+		text: "{= 'Add item number ' + ${select>/items}.length + ' to list'}",
+		press: function() {
+			 var i = select.getItems().length + 1;
 			 select.addItem(new sap.ui.core.Item({key:"key" + i, text:"Text " + i}));
 		}
 	});
 	button.setModel(oModel, "select");
-	button.placeAt("content")
+	button.placeAt("content");
 </script>
 </head>
 <body class="sapUiBody">

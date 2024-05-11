@@ -3,40 +3,52 @@
 	<head>
 
 		<title>Theme Parameters - sap.ui.core</title>
-		<link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.ui.commons.ListBox.gif">
-
 		<script src="shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
 				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-libs="sap.m"
 				src="../../../../resources/sap-ui-core.js">
 		</script>
 
 		<script>
-			sap.ui.reuire(["sap/ui/core/Theming"], function(Theming) {
-				try{
-					sap.ui.getCore().loadLibrary("sap.ui.commons");
-				}catch(e){
-					alert("This test page requires the library 'sap.ui.commons' which is not available.");
-					throw(e);
-				}
+			sap.ui.require([
+				"sap/ui/core/Theming",
+				"sap/ui/core/theming/Parameters"
+			], function(Theming, Parameters) {
 
-				jQuery.sap.require("sap.ui.core.theming.Parameters");
-
-				var oListBox = new sap.ui.commons.ListBox({
-					height : "480px",
-					displaySecondaryValues: true
+				var oList = new sap.m.Table({
+					columns: [
+						new sap.m.Column({
+							header: new sap.m.Text({
+								text: "Parameter Name"
+							})
+						}),
+						new sap.m.Column({
+							width: "20em",
+							header: new sap.m.Text({
+								text: "Value" 
+							})
+						}),
+					]
 				}).placeAt("content");
 
 
 				function fetchParameters() {
-					var mAllParameters = sap.ui.core.theming.Parameters.get();
+					var mAllParameters = Parameters.get();
 
-					oListBox.destroyItems();
+					oList.destroyItems();
 					for (var name in mAllParameters) {
-						oItem = new sap.ui.core.ListItem();
-						oItem.setText(name);
-						oItem.setAdditionalText(mAllParameters[name]);
-						oListBox.addItem(oItem);
+						var oItem = new sap.m.ColumnListItem({
+							cells: [
+								new sap.m.Text({
+									text: name
+								}),
+								new sap.m.Text({
+									text: mAllParameters[name]
+								}),
+							]
+						});
+						oList.addItem(oItem);
 					}
 				}
 

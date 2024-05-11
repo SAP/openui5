@@ -7,7 +7,7 @@
 		<script src="shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
 				src="../../../../resources/sap-ui-core.js"
-				data-sap-ui-libs="sap.ui.commons"
+				data-sap-ui-libs="sap.m, sap.ui.layout"
 				data-sap-ui-theme="sap_bluecrystal">
 		</script>
 
@@ -21,48 +21,49 @@
 			) {
 				Core.ready().then(function() {
 					function scream() {
-						alert("Help! I'm blurred!");
+						alert("Help! I've lost focus!");
 					}
 					function scream2() {
-						alert("HEEEEEEELP! I'M BLURRED!");
+						alert("HEEEEEEELP! I'VE LOST FOCUS!");
 					}
 
-					var oTf1 = new sap.ui.commons.TextField("tf1").attachBrowserEvent("blur", function(){alert("Help! I'm blurred!");});
+					var oTf1 = new sap.m.Input("tf1").attachBrowserEvent("focusout", scream);
 					oTf1.placeAt("uiArea1");
 
-					var oLayout = new sap.ui.commons.layout.MatrixLayout().setWidth("auto");
-					var oBtn = new sap.ui.commons.Button("btn1", {text : "Bind blur event to TextField"});
+					var oBtn = new sap.m.Button("btn1", {text : "Bind focusout event"});
 					oBtn.attachPress(function(){
-						oTf2.attachBrowserEvent("blur", scream);
+						oTf2.attachBrowserEvent("focusout", scream);
 					});
 
-					var oBtn2 = new sap.ui.commons.Button("btn2", {text : "Bind another, more INTENSE, blur event to TextField"});
+					var oBtn2 = new sap.m.Button("btn2", {text : "Bind another, more INTENSE focusout event"});
 					oBtn2.attachPress(function(){
-						oTf2.attachBrowserEvent("blur", scream2);
+						oTf2.attachBrowserEvent("focusout", scream2);
 					});
 
-					var oBtn3 = new sap.ui.commons.Button("btn3", {text : "Unbind blur event from TextField"});
+					var oBtn3 = new sap.m.Button("btn3", {text : "Unbind focusout event"});
 					oBtn3.attachPress(function(){
-						oTf2.detachBrowserEvent("blur", scream);
+						oTf2.detachBrowserEvent("focusout", scream);
 					});
 
-					var oBtn4 = new sap.ui.commons.Button("btn4", {text : "Unbind INTENSE blur event from TextField"});
+					var oBtn4 = new sap.m.Button("btn4", {text : "Unbind INTENSE focusout event"});
 					oBtn4.attachPress(function(){
-						oTf2.detachBrowserEvent("blur", scream2);
+						oTf2.detachBrowserEvent("focusout", scream2);
 					});
 
-					oLayout.createRow(oBtn, oBtn2);
-					oLayout.createRow(oBtn3, oBtn4);
-					oLayout.placeAt("uiArea2");
+					var oLayout = new sap.ui.layout.HorizontalLayout({
+						content: [
+							oBtn, oBtn2, oBtn3, oBtn4
+						]
+					}).placeAt("uiArea2");
 
-					var oTf2 = new sap.ui.commons.TextField("tf2");
+					var oTf2 = new sap.m.Input("tf2");
 					oTf2.placeAt("uiArea3");
 
-					var oBtnR = new sap.ui.commons.Button("btnR", {text : "Re-Render the TextFields", press : function(){
+					var oBtnR = new sap.m.Button("btnR", {text : "Re-Render the Inputs", press : function(){
 						oTf1.invalidate();
 						oTf2.invalidate();
 					}});
-					oBtnR.placeAt("uiArea4")
+					oBtnR.placeAt("uiArea4");
 				});
 			});
 		</script>
@@ -70,19 +71,19 @@
 	<body class="sapUiBody">
 		<h1>Generic Event Binding Test</h1>
 
-		This TextField has a blur event bound initially:
+		This Input has a focusout event bound initially:
 		<div id="uiArea1"></div>
 
 		<br> <br>
-		Click the button to bind a blur event to the below TextField:
+		Click the button to bind a focusout event to the below Input:
 		<div id="uiArea2"></div>
 
 		<br>
-		This TextField only has a blur event once the Button is clicked:
+		This Input only has a focusout event once the Button is clicked:
 		<div id="uiArea3"></div>
 
 		<br> <br>
-		Click the button to force a re-rendering of the TextFields:
+		Click the button to force a re-rendering of the Inputs:
 		<div id="uiArea4"></div>
 
 	</body>
