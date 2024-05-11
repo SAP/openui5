@@ -22,12 +22,12 @@
 	jQuery.sap.require("sap.m.P13nGroupPanel");
 	jQuery.sap.require("sap.ui.layout.Grid");
 
- 	var aConditions= [];
+ 	var aConditions = [];
  	var oGroupPanel;
 	var oModel;
-	var iCount= 100;
+	var iCount = 100;
 
-	show= function(oPanel, sTitle) {
+	function show(oPanel, sTitle) {
 		if (theDialogMode.getSelected()) {
 			oPanel.setContainerQuery(true);
 			//oPanel.setLayoutMode("Desktop");
@@ -144,7 +144,7 @@
 	var btnValidate = new sap.m.Button({
 		text: "validate",
 		press: function() {
-			sap.m.MessageToast.show("validate= "+oGroupPanel.validateConditions());
+			sap.m.MessageToast.show("validate= " + oGroupPanel.validateConditions());
 		}
 	});
 
@@ -167,20 +167,20 @@
 		press: function() {
 			aConditions = oGroupPanel._getConditions();
 
-			var sConditions= "";
-			for (i = 0; i < aConditions.length; i++) {
+			var sConditions = "";
+			for (let i = 0; i < aConditions.length; i++) {
 				var oCondition = aConditions[i];
-				sConditions+= "'" + oCondition.text + "' ";
+				sConditions += "'" + oCondition.text + "' ";
 			}
 
-			sap.m.MessageToast.show("Conditions= "+sConditions);
+			sap.m.MessageToast.show("Conditions= " + sConditions);
 		}
 	});
 
 	var btnAddCondition = new sap.m.Button({
 		text: "add",
 		press: function() {
-			var oData= oModel.getData();
+			var oData = oModel.getData();
 			oData.groupItems.push({
 					"key" : "s" + iCount++,
 					"columnKey" : "c0",
@@ -196,7 +196,7 @@
 	var btnInsertCondition = new sap.m.Button({
 		text: "insert",
 		press: function() {
-			var oData= oModel.getData();
+			var oData = oModel.getData();
 			oData.groupItems.splice(0,0,{
 					"key" : "s" + iCount++,
 					"columnKey" : "c0",
@@ -212,11 +212,11 @@
 	var btnRemoveCondition = new sap.m.Button({
 		text: "remove",
 		press: function() {
-			var oData= oModel.getData();
+			var oData = oModel.getData();
 			oData.groupItems.splice(0, 1);
 			oModel.setData(oData, true);
 
-			sap.m.MessageToast.show("remove GroupItem from Model"+ " #" + oModel.getData().groupItems.length);
+			sap.m.MessageToast.show("remove GroupItem from Model" + " #" + oModel.getData().groupItems.length);
 		}
 	});
 
@@ -234,7 +234,7 @@
 		width: "100px"
 	});
 
-	var theCompactMode= new sap.m.CheckBox({
+	var theCompactMode = new sap.m.CheckBox({
 		selected: true,
 		text: "compactMode",
 		select : function() {
@@ -242,7 +242,7 @@
 		}
 	});
 
-	var theDialogMode= new sap.m.CheckBox({
+	var theDialogMode = new sap.m.CheckBox({
 		selected: false,
 		text: "show on dialog",
 		select : function() {

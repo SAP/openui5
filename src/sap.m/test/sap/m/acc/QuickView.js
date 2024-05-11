@@ -26,7 +26,7 @@ sap.ui.define([
 	app.placeAt("body");
 
 	var oQuickView1 = new QuickView("QV1", {
-		placement : PlacementType.VerticalPreferedBottom,
+		placement : PlacementType.VerticalPreferredBottom,
 		pages : [
 			new QuickViewPage({
 				header	: "Store",
@@ -65,7 +65,7 @@ sap.ui.define([
 	});
 
 	var oQuickView2 = new QuickView({
-		placement : PlacementType.VerticalPreferedBottom,
+		placement : PlacementType.VerticalPreferredBottom,
 		pages : [
 			new QuickViewPage({
 				header: "Financial Department",

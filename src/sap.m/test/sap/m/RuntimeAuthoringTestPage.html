@@ -4,8 +4,9 @@
 	<title>RuntimeAuthoring</title>
 
 	<script id="sap-ui-bootstrap"
+			data-sap-ui-async="true"
+			data-sap-ui-compat-version="edge"
 			data-sap-ui-theme="sap_bluecrystal"
-			type="text/javascript"
 			data-sap-ui-noConflict="true"
 			data-sap-ui-resourceroots='{"sap.m.test.rta": "./"}'
 			data-sap-ui-libs="sap.m, sap.ui.layout, sap.ui.dt, sap.ui.rta"
@@ -13,12 +14,13 @@
 	</script>
 
 	<script type="text/javascript">
-		jQuery.sap.require("sap.ui.rta.RuntimeAuthoring");
+	sap.ui.require([
+		"sap/ui/rta/RuntimeAuthoring",
+		"sap/ui/fl/FakeLrepConnectorLocalStorage"
+	], function(_RuntimeAuthoring, FakeLrepConnectorLocalStorage) {
 
 		// Create the FakeLrep with localStorage
-		sap.ui.require(["sap/ui/fl/FakeLrepConnectorLocalStorage"], function (FakeLrepConnectorLocalStorage) {
-		    FakeLrepConnectorLocalStorage.enableFakeConnector();
-		});
+		FakeLrepConnectorLocalStorage.enableFakeConnector();
 
 		var MyComponent = sap.ui.core.UIComponent.extend("MyComponent", {
 			createContent: function () {
@@ -284,7 +286,7 @@
 												cells: [
 													new sap.m.Text({id: "text59", text: "text21"}),
 													new sap.m.Text({id: "text60", text: "text22"}),
-													new sap.m.Text({id: "text61", text: "text23"}),
+													new sap.m.Text({id: "text61", text: "text23"})
 												]
 											})
 										]
@@ -319,7 +321,7 @@
 		new sap.ui.core.ComponentContainer({
 			component: new MyComponent({id: "Comp1"})
 		}).placeAt("content");
-
+	});
 	</script>
 </head>
 <body class="sapUiBody">

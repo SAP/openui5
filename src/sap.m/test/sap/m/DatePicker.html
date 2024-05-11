@@ -54,7 +54,7 @@
 					var oOldValue = oEvent.getParameter('oldValue');
 
 					var oInput = sap.ui.getCore().byId("I2");
-					oInput.setValue( "ParseError: Entered value: "+oValue);
+					oInput.setValue( "ParseError: Entered value: " + oValue);
 
 					if (oElement.setValueState) {
 						oElement.setValueState(sap.ui.core.ValueState.Error);
@@ -70,7 +70,7 @@
 					var oOldValue = oEvent.getParameter('oldValue');
 
 					var oInput = sap.ui.getCore().byId("I2");
-					oInput.setValue( "ValidationSuccess: Entered value: "+oValue);
+					oInput.setValue( "ValidationSuccess: Entered value: " + oValue);
 
 					if (oElement.setValueState) {
 						oElement.setValueState(sap.ui.core.ValueState.None);
@@ -100,7 +100,7 @@
 							new sap.ui.unified.CalendarLegendItem("T7", {type: sap.ui.unified.CalendarDayType.Type07, text: "Typ 7"}),
 							new sap.ui.unified.CalendarLegendItem("T8", {type: sap.ui.unified.CalendarDayType.Type08, text: "Typ 8"}),
 							new sap.ui.unified.CalendarLegendItem("T9", {type: sap.ui.unified.CalendarDayType.Type09, text: "Typ 9"}),
-							new sap.ui.unified.CalendarLegendItem("T10", {type: sap.ui.unified.CalendarDayType.Type10, text: "Typ 10"}),
+							new sap.ui.unified.CalendarLegendItem("T10", {type: sap.ui.unified.CalendarDayType.Type10, text: "Typ 10"})
 							]
 				});
 				oDP.setLegend(oLegend);
@@ -113,7 +113,7 @@
 					var oSpecialDate = new sap.ui.unified.DateTypeRange({startDate: oDate, type: sType});
 					oDP.addSpecialDate(oSpecialDate);
 				}
-			}else {
+			} else {
 				oDP.destroySpecialDates();
 			}
 		};

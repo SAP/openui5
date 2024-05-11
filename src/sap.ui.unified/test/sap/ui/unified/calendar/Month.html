@@ -66,7 +66,7 @@
 								["20160709",undefined,"Type09",9],
 								["20160710",undefined,"Type10",10]];
 
-			var oMonth = new sap.ui.unified.calendar.Month("Month1",
+			new sap.ui.unified.calendar.Month("Month1",
 					{
 						date: UI5Date.getInstance(2016, 0, 1) /* to make sure special dates are in visible range */,
 						focus: function (oEvent) {
@@ -119,10 +119,10 @@
 												for (var i = 0; i < aSpecialDays.length; i++) {
 													var aSpecialDay = aSpecialDays[i];
 													var sType = "";
-													if(aSpecialDay[3] < 10) {
-														sType = "Type0"+aSpecialDay[3];
-													}else {
-														sType = "Type"+aSpecialDay[3];
+													if (aSpecialDay[3] < 10) {
+														sType = "Type0" + aSpecialDay[3];
+													} else {
+														sType = "Type" + aSpecialDay[3];
 													}
 													sap.ui.getCore().byId("Month1").addSpecialDate(new sap.ui.unified.DateTypeRange({
 														startDate: oFormatYyyymmdd.parse(aSpecialDay[0]),
@@ -152,9 +152,9 @@
 												oMonth.addDisabledDate(new sap.ui.unified.DateRange({
 													startDate: oDate
 												}));
-												oStartDate = UI5Date.getInstance(oDate);
+												const oStartDate = UI5Date.getInstance(oDate);
 												oStartDate.setDate(10);
-												oEndDate = UI5Date.getInstance(oDate);
+												const oEndDate = UI5Date.getInstance(oDate);
 												oEndDate.setDate(20);
 												oMonth.addDisabledDate(new sap.ui.unified.DateRange({
 													startDate: oStartDate,
@@ -196,7 +196,7 @@
 											var oTF = oEvent.oSource;
 											var sValue = oEvent.getParameter('newValue');
 											var oMonth = sap.ui.getCore().byId("Month1");
-											if(sValue.length == 8 && !isNaN(sValue)){
+											if (sValue.length == 8 && !isNaN(sValue)) {
 												var oDate = oFormatYyyymmdd.parse(sValue);
 												var aSelectedDates = oMonth.getSelectedDates();
 												var oDateRange;
@@ -207,7 +207,7 @@
 													oDateRange = aSelectedDates[0];
 													oDateRange.setStartDate(oDate);
 												}
-											}else if(!sValue){
+											} else if (!sValue) {
 												oMonth.destroySelectedDates();
 											}
 										}
@@ -223,7 +223,7 @@
 										items: [
 														new sap.ui.core.ListItem({text: sap.ui.core.CalendarType.Gregorian, key: sap.ui.core.CalendarType.Gregorian}),
 														new sap.ui.core.ListItem({text: sap.ui.core.CalendarType.Islamic, key: sap.ui.core.CalendarType.Islamic}),
-														new sap.ui.core.ListItem({text: sap.ui.core.CalendarType.Japanese, key: sap.ui.core.CalendarType.Japanese}),
+														new sap.ui.core.ListItem({text: sap.ui.core.CalendarType.Japanese, key: sap.ui.core.CalendarType.Japanese})
 														],
 										change: function(oEvent){
 											var oCB = oEvent.oSource;
@@ -247,7 +247,7 @@
 										items: [
 														new sap.ui.core.ListItem({text: sap.ui.core.CalendarType.Gregorian, key: sap.ui.core.CalendarType.Gregorian}),
 														new sap.ui.core.ListItem({text: sap.ui.core.CalendarType.Islamic, key: sap.ui.core.CalendarType.Islamic}),
-														new sap.ui.core.ListItem({text: sap.ui.core.CalendarType.Japanese, key: sap.ui.core.CalendarType.Japanese}),
+														new sap.ui.core.ListItem({text: sap.ui.core.CalendarType.Japanese, key: sap.ui.core.CalendarType.Japanese})
 														],
 										change: function(oEvent){
 											var oCB = oEvent.oSource;
@@ -265,7 +265,7 @@
 			oFormContainer.addFormElement(oFormElement);
 
 			// single interval selection
-			oMonth = new sap.ui.unified.calendar.Month("Month2",{
+			new sap.ui.unified.calendar.Month("Month2",{
 				intervalSelection: true,
 				select: function(oEvent){
 					var oTF1 = sap.ui.getCore().byId("TF2-start");
@@ -293,16 +293,16 @@
 				}
 			}).placeAt("sample2");
 
-			oLabel = new sap.ui.commons.Label({text: "selected date from", labelFor: "TF2-start"}).placeAt("event2");
-			oInput = new sap.ui.commons.TextField("TF2-start",{
+			new sap.ui.commons.Label({text: "selected date from", labelFor: "TF2-start"}).placeAt("event2");
+			new sap.ui.commons.TextField("TF2-start",{
 				editable: false
 			}).placeAt("event2");
-			oLabel = new sap.ui.commons.Label({text: "to", labelFor: "TF2-end"}).placeAt("event2");
-			oInput = new sap.ui.commons.TextField("TF2-end",{
+			new sap.ui.commons.Label({text: "to", labelFor: "TF2-end"}).placeAt("event2");
+			new sap.ui.commons.TextField("TF2-end",{
 				editable: false
 			}).placeAt("event2");
 
-			oMonth = new sap.ui.unified.calendar.Month("Month3",{
+			new sap.ui.unified.calendar.Month("Month3",{
 				intervalSelection: false,
 				singleSelection: false,
 				showHeader: true,
@@ -316,11 +316,11 @@
 					if (aSelectedDates.length > 0 ) {
 						var aItems = oLB.getItems();
 						var oItem;
-						for(var i=0; i<aSelectedDates.length; i++){
+						for (var i = 0; i < aSelectedDates.length; i++){
 							oDate = aSelectedDates[i].getStartDate();
-							if(aItems[i]) {
+							if (aItems[i]) {
 								oItem = aItems[i];
-							}else {
+							} else {
 								oItem = new sap.ui.core.Item();
 								oLB.addItem(oItem);
 							}
@@ -330,8 +330,8 @@
 								oItem.setText("");
 							}
 						}
-						if(aItems.length > aSelectedDates.length) {
-							for(var i=aSelectedDates.length; i<aItems.length; i++){
+						if (aItems.length > aSelectedDates.length) {
+							for (var i = aSelectedDates.length; i < aItems.length; i++){
 								oLB.removeItem(i);
 								aItems[i].destroy();
 							}
@@ -342,7 +342,7 @@
 				}
 			}).placeAt("sample3");
 
-			oLabel = new sap.ui.commons.Label({text: "selected dates", labelFor: "LB"}).placeAt("event3");
+			new sap.ui.commons.Label({text: "selected dates", labelFor: "LB"}).placeAt("event3");
 			var oListBox = new sap.ui.commons.ListBox("LB",{
 				editable: false,
 				visibleItems: 10,

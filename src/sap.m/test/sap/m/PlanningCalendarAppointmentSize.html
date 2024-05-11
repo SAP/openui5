@@ -104,7 +104,7 @@
 							var sSelectedWidth = oEvent.getParameter('selectedItem').getKey();
 							sap.ui.getCore().byId('PC1').setWidth(sSelectedWidth);
 						}
-					}),
+					})
 				]
 			});
 		};
@@ -153,7 +153,7 @@
 											type: sap.ui.unified.CalendarDayType.Type03,
 											title: "1/2 hour meeting",
 											icon: "../ui/unified/images/m_01.png",
-											tooltip: "1/2 hour meeting",
+											tooltip: "1/2 hour meeting"
 										}),
 										new sap.ui.unified.CalendarAppointment("R1A12", {
 											startDate: UI5Date.getInstance("2015", "0", "1", "09", "45"),
@@ -161,7 +161,7 @@
 											type: sap.ui.unified.CalendarDayType.Type03,
 											title: "1 hour meeting",
 											icon: "../ui/unified/images/m_01.png",
-											tooltip: "1 hour meeting",
+											tooltip: "1 hour meeting"
 										}),
 										new sap.ui.unified.CalendarAppointment("R1A21", {
 											startDate: UI5Date.getInstance("2015", "0", "1", "10", "45"),
@@ -178,7 +178,7 @@
 											type: sap.ui.unified.CalendarDayType.Type03,
 											title: "1 hour meeting",
 											icon: "../ui/unified/images/m_01.png",
-											tooltip: "1 hour meeting",
+											tooltip: "1 hour meeting"
 										}),
 										new sap.ui.unified.CalendarAppointment("R1A3", {
 											startDate: UI5Date.getInstance("2014", "11", "31", "10", "45"),
@@ -267,7 +267,7 @@
 											type: sap.ui.unified.CalendarDayType.Type09,
 											title: "Meeting 4",
 											tooltip: "Tooltip 4"
-										}),
+										})
 									]
 							}),
 						new sap.m.PlanningCalendarRow("Row2", {
@@ -408,9 +408,9 @@
 											type: sap.ui.unified.CalendarDayType.Type09,
 											title: "Meeting 14",
 											tooltip: "Tooltip 14"
-							}),
+							})
 						]
-						}),
+						})
 						],
 			toolbarContent: [oTitle]
 		});

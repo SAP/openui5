@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv='Content-Type' content='text/html;charset=UTF-8'/>
+		<meta charset="utf-8">
 
 		<title>DesignTime with XMLView</title>
 
@@ -31,11 +31,12 @@
 		</style>
 
 		<script src="../shared-config.js"></script>
-		<script>
-			window['sap-ui-config'].libs = "sap.ui.dt";
-			document.write('<script src="' + document.location.pathname.match(/(.*)\/test-resources\//)[1] + '/resources/sap-ui-core.js"><' + '/script>');
-		</script>
-
+		<script id="sap-ui-bootstrap"
+				src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-async="true"
+				data-sap-ui-compat-version="edge"
+				data-sap-ui-libs="sap.ui.dt"
+		></script>
 		<script id="view1" type="sapui5/xmlview">
 			<sap.ui.core.mvc:View
 				height="100%"
@@ -65,9 +66,11 @@
 				XMLView,
 				Button
 			) {
-				XMLView.create({definition: jQuery('#view1').html()})
-					.then(function (oView) {
-						oView.placeAt('content');
+				"use strict";
+
+				XMLView.create({definition: jQuery("#view1").html()})
+					.then(function(oView) {
+						oView.placeAt("content");
 
 						var aMOVABLE_TYPES = ["sap.m.Button"];
 						var oSelectionPlugin = new MouseSelection();
@@ -85,23 +88,22 @@
 
 						var oDraggedOverlay;
 						jQuery("#pallete_button")
-							.on("dragstart", function () {
+							.on("dragstart", function() {
 								var oButton = new Button({text: "New button"});
 
 								oDesignTime.createOverlay({
 									element: oButton,
 									root: true,
-								}).then(function (oOverlay) {
+								}).then(function(oOverlay) {
 									oDraggedOverlay = oOverlay;
 									oDraggedOverlay.placeInOverlayContainer();
 									oDraggedOverlay.$().trigger("dragstart");
 								});
-
 							})
-							.on("dragend", function () {
+							.on("dragend", function() {
 								oDraggedOverlay.$().trigger("dragend");
 							});
-					}.bind(this));
+					});
 			});
 		</script>
 

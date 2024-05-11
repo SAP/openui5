@@ -90,7 +90,7 @@
 				statuses : [ new sap.m.ObjectStatus({
 					text : ""
 				}), new sap.m.ObjectStatus({}) ],
-				attributes : [ new sap.m.ObjectAttribute({}), new sap.m.ObjectAttribute({}), new sap.m.ObjectAttribute({}), new sap.m.ObjectAttribute({}), ]
+				attributes : [ new sap.m.ObjectAttribute({}), new sap.m.ObjectAttribute({}), new sap.m.ObjectAttribute({}), new sap.m.ObjectAttribute({}) ]
 			});
 
 	var oh3 = new sap.m.ObjectHeader(
@@ -152,7 +152,7 @@
 		} else {
 			oh4.setIcon(sap.ui.core.IconPool.getIconURI("attachment"));
 		}
-	}
+	};
 
 	var oh4 = new sap.m.ObjectHeader("oh4", {
 		intro : "On behalf of John Smith Ñagçyfox",
@@ -190,7 +190,7 @@
 		content: [oh1, oh2, oh3, oh4]
 	});
 
-	var gridOHeader = new sap.m.ObjectHeader ({
+	var gridOHeader = new sap.m.ObjectHeader({
 		title: "Create fictitious vendor and initiate payment to the vendor [Vendor Management]",
 		condensed: true });
 	gridOHeader.addAttribute(new sap.m.ObjectAttribute({ text: "P001" }));
@@ -206,7 +206,7 @@
 
 	var masterPage = new sap.m.Page({
 		content: [headerGrid, facetGrid],
-		showNavButton: true,
+		showNavButton: true
 	});
 
 

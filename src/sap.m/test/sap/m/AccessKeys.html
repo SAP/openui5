@@ -27,7 +27,7 @@
 											content: [
 												new sap.m.Button({
 													text: "Inner button"
-												}),
+												})
 											]
 										}).open();
 									}
@@ -40,7 +40,7 @@
 								}),
 								new sap.m.Button({
 									text: "Replace Order"
-								}),
+								})
 							]
 						}).open();
 					}
@@ -89,11 +89,8 @@
 								new sap.ui.layout.form.FormElement({
 									fields: [new sap.m.Label({ text: "Order: ", labelFor: "input1" }), new sap.m.Input("input1")]
 								})
-							],
-							layoutData: new sap.ui.core.VariantLayoutData({
-								multipleLayoutData: [new sap.ui.layout.form.GridContainerData({ halfGrid: true })]
-							})
-						}),
+							]
+						})
 					]
 				})
 			]

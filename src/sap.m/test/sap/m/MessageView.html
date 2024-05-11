@@ -13,6 +13,10 @@
 	</script>
 
 	<script>
+	sap.ui.require([
+		"sap/base/Log"
+	], function(Log) {
+		"use strict";
 
 		var mockMarkupDescription = "<h2>Heading h2</h2><script>alert('this JS will be sanitized')<\/script>" +
 				"<p>Paragraph. At vero eos et accusamus et iusto odio dignissimos ducimus qui ...</p>" +
@@ -118,7 +122,7 @@
 			asyncURLHandler: function (config) {
 				// put async validation here
 				setTimeout(function () {
-					console.log('validate this url', config.url);
+					Log.info('validate this url', config.url);
 
 					// simulated answer from URL validator service: relative URLs are fine
 					var allowed = config.url.lastIndexOf("http", 0) < 0;
@@ -150,7 +154,7 @@
 			asyncURLHandler: function (config) {
 				// put async validation here
 				setTimeout(function () {
-					console.log('validate this url', config.url);
+					Log.info('validate this url', config.url);
 
 					// simulated answer from URL validator service: relative URLs are fine
 					var allowed = config.url.lastIndexOf("http", 0) < 0;
@@ -172,7 +176,7 @@
 			asyncURLHandler: function (config) {
 				// put async validation here
 				setTimeout(function () {
-					console.log('validate this url', config.url);
+					Log.info('validate this url', config.url);
 
 					// simulated answer from URL validator service: relative URLs are fine
 					var allowed = config.url.lastIndexOf("http", 0) < 0;
@@ -230,7 +234,7 @@
 			headerButton: new sap.m.Button("CloseButton2", {
 
 				text: "Close"
-			}),
+			})
 		});
 
 		// Dialog will have no padding because of compatVersion setting on main script
@@ -307,7 +311,7 @@
 					press: function () {
 						oDialog2.open();
 					}
-				}),
+				})
 			]
 		});
 
@@ -329,7 +333,7 @@
 			asyncURLHandler: function (config) {
 				// put async validation here
 				setTimeout(function () {
-					console.log('validate this url', config.url);
+					Log.info('validate this url', config.url);
 
 					// simulated answer from URL validator service: relative URLs are fine
 					var allowed = config.url.lastIndexOf("http", 0) < 0;
@@ -450,7 +454,7 @@
 			icon: sap.ui.core.IconPool.getIconURI("message-popup"),
 			text: "MessagePopover",
 			layoutData: [new sap.m.OverflowToolbarLayoutData({
-				closeOverflowOnInteraction: false,
+				closeOverflowOnInteraction: false
 			})],
 			type: sap.m.ButtonType.Emphasized,
 			press: function () {
@@ -462,7 +466,7 @@
 			icon: sap.ui.core.IconPool.getIconURI("message-popup"),
 			text: "MV in Popover",
 			layoutData: [new sap.m.OverflowToolbarLayoutData({
-				closeOverflowOnInteraction: false,
+				closeOverflowOnInteraction: false
 			})],
 			type: sap.m.ButtonType.Emphasized,
 			press: function () {
@@ -474,7 +478,7 @@
 			icon: sap.ui.core.IconPool.getIconURI("message-popup"),
 			text: "MV - one item",
 			layoutData: [new sap.m.OverflowToolbarLayoutData({
-				closeOverflowOnInteraction: false,
+				closeOverflowOnInteraction: false
 			})],
 			type: sap.m.ButtonType.Emphasized,
 			press: function () {
@@ -486,7 +490,7 @@
 			icon: sap.ui.core.IconPool.getIconURI("message-popup"),
 			text: "MV - one type",
 			layoutData: [new sap.m.OverflowToolbarLayoutData({
-				closeOverflowOnInteraction: false,
+				closeOverflowOnInteraction: false
 			})],
 			type: sap.m.ButtonType.Emphasized,
 			press: function () {
@@ -499,7 +503,7 @@
 			text: "Custom button MV",
 			type: sap.m.ButtonType.Emphasized,
 			layoutData: [new sap.m.OverflowToolbarLayoutData({
-				closeOverflowOnInteraction: false,
+				closeOverflowOnInteraction: false
 			})],
 			press: function () {
 				oPopoverWithHeader.openBy(this);
@@ -511,7 +515,7 @@
 			text: "Collapsed MP",
 			type: sap.m.ButtonType.Emphasized,
 			layoutData: [new sap.m.OverflowToolbarLayoutData({
-				closeOverflowOnInteraction: false,
+				closeOverflowOnInteraction: false
 			})],
 			press: function () {
 				oCollapsedPopover.openBy(this);
@@ -567,6 +571,7 @@
 
 		oSplitApp.setModel(oModel);
 		oSplitApp.placeAt("content");
+	});
 	</script>
 </head>
 <body class="sapUiBody">

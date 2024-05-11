@@ -20,6 +20,10 @@
 		</script>
 
 		<script>
+		sap.ui.require([
+			"sap/base/Log"
+		], function(Log) {
+			"use strict";
 
 			var range = function (from, to) {
 
@@ -46,7 +50,7 @@
 					"</ol>";
 
 			var aMockMessages = {
-				count: 5,
+				count: 6,
 				messages: [{
 					type: "Error",
 					title: "Error message",
@@ -118,7 +122,7 @@
 				asyncURLHandler: function(config) {
 					// put async validation here
 					setTimeout(function() {
-						console.log('validate this url', config.url);
+						Log.info('validate this url', config.url);
 
 						// simulated answer from URL validator service: relative URLs are fine
 						var allowed = config.url.lastIndexOf("http", 0) < 0;
@@ -145,22 +149,22 @@
 				},
 				headerButton: headerButton,
 				beforeOpen: function (oEvt) {
-					console.log("beforeOpen", oEvt.getParameters());
+					Log.info("beforeOpen", oEvt.getParameters());
 				},
 				beforeClose: function (oEvt) {
-					console.log("beforeClose", oEvt.getParameters());
+					Log.info("beforeClose", oEvt.getParameters());
 				},
 				afterOpen: function (oEvt) {
-					console.log("afterOpen", oEvt.getParameters());
+					Log.info("afterOpen", oEvt.getParameters());
 				},
 				afterClose: function (oEvt) {
-					console.log("afterClose", oEvt.getParameters());
+					Log.info("afterClose", oEvt.getParameters());
 				},
 				itemSelect: function (oEvt) {
-					console.log("itemSelected", oEvt.getParameters());
+					Log.info("itemSelected", oEvt.getParameters());
 				},
 				listSelect: function (oEvt) {
-					console.log("listSelected", oEvt.getParameters());
+					Log.info("listSelected", oEvt.getParameters());
 				},
 				initiallyExpanded: true
 			});
@@ -176,22 +180,22 @@
 				groupItems: true,
 				headerButton: headerButton,
 				beforeOpen: function (oEvt) {
-					console.log("beforeOpen", oEvt.getParameters());
+					Log.info("beforeOpen", oEvt.getParameters());
 				},
 				beforeClose: function (oEvt) {
-					console.log("beforeClose", oEvt.getParameters());
+					Log.info("beforeClose", oEvt.getParameters());
 				},
 				afterOpen: function (oEvt) {
-					console.log("afterOpen", oEvt.getParameters());
+					Log.info("afterOpen", oEvt.getParameters());
 				},
 				afterClose: function (oEvt) {
-					console.log("afterClose", oEvt.getParameters());
+					Log.info("afterClose", oEvt.getParameters());
 				},
 				itemSelect: function (oEvt) {
-					console.log("itemSelected", oEvt.getParameters());
+					Log.info("itemSelected", oEvt.getParameters());
 				},
 				listSelect: function (oEvt) {
-					console.log("listSelected", oEvt.getParameters());
+					Log.info("listSelected", oEvt.getParameters());
 				},
 				initiallyExpanded: true
 			});
@@ -203,22 +207,22 @@
 				},
 				headerButton: headerButton,
 				beforeOpen: function (oEvt) {
-					console.log("beforeOpen", oEvt.getParameters());
+					Log.info("beforeOpen", oEvt.getParameters());
 				},
 				beforeClose: function (oEvt) {
-					console.log("beforeClose", oEvt.getParameters());
+					Log.info("beforeClose", oEvt.getParameters());
 				},
 				afterOpen: function (oEvt) {
-					console.log("afterOpen", oEvt.getParameters());
+					Log.info("afterOpen", oEvt.getParameters());
 				},
 				afterClose: function (oEvt) {
-					console.log("afterClose", oEvt.getParameters());
+					Log.info("afterClose", oEvt.getParameters());
 				},
 				itemSelect: function (oEvt) {
-					console.log("itemSelected", oEvt.getParameters());
+					Log.info("itemSelected", oEvt.getParameters());
 				},
 				listSelect: function (oEvt) {
-					console.log("listSelected", oEvt.getParameters());
+					Log.info("listSelected", oEvt.getParameters());
 				},
 				initiallyExpanded: false
 			});
@@ -254,26 +258,28 @@
 				}
 			});
 
-			var getPositions = function () {
-				return [{key: "Default", text: "Default"}]
-						.concat(range(0, oMessagePopover.getItems().length)
+			var getAddPositionItems = function () {
+				return ["Default", ...range(0, oMessagePopover.getItems().length)]
 								.map(function (item) {
-									return {key: item, text: item};
-								}));
+									return new sap.ui.core.Item({key: item, text: item});
+								});
 			};
 
-			var updateSelect = function (control) {
-				var oSelectedItem = control.getSelectedKey();
-				control.removeAllItems();
-				var oItems = getPositions();
+			var getRemovePositionItems = function () {
+				return range(0, oMessagePopover.getItems().length - 1)
+								.map(function (item) {
+									return new sap.ui.core.Item({key: item, text: item});
+								});
+			};
+
+			var updateSelect = function (control, oItems) {
+				var sSelectedKey = control.getSelectedKey();
+				control.destroyItems();
+				control.setSelectedItem(undefined);
 				for (var i = 0; i < oItems.length; i++) {
-					var oItem = new sap.ui.core.Item({
-						key: oItems[i].key,
-						text: oItems[i].text
-					});
-					control.insertItem(oItem, i);
-					if (oItems[i].key == oSelectedItem) {
-						control.setSelectedItem(oItem);
+					control.insertItem(oItems[i], i);
+					if (oItems[i].getKey() == sSelectedKey) {
+						control.setSelectedItem(oItems[i]);
 					}
 				}
 			};
@@ -295,7 +301,7 @@
 					new sap.m.Label({text: "Type"}),
 					new sap.m.Select("msg-type-select", {
 						items: ["Error", "Warning", "Information", "Success"].map(function (item) {
-							return {key: item, text: item};
+							return new sap.ui.core.Item({key: item, text: item});
 						}),
 						change: function () {
 							jQuery.sap.log.info("Event fired: \"change\" value property to " +
@@ -304,7 +310,7 @@
 					}),
 					new sap.m.Label({text: "Position"}),
 					new sap.m.Select("msg-position-select", {
-						items: getPositions()
+						items: getAddPositionItems()
 					}),
 					new sap.m.Label(),
 					new sap.m.Button({
@@ -335,19 +341,19 @@
 								oModelTemp.messages.splice(position, 0, oObjectMessage);
 							}
 
-							oModelTemp.count += 1;
+							oModelTemp.count = oModelTemp.messages.length;
 
 							oModel.setData(oModelTemp);
-							sap.ui.core.Element.getElementById("msg-model-input").setValue(JSON.stringify(oMessagePopover.getModel().getData(), null, 4));
+							// sap.ui.core.Element.getElementById("msg-model-input").setValue(JSON.stringify(oMessagePopover.getModel().getData(), null, 4));
 
-							updateSelect(sap.ui.core.Element.getElementById("msg-position-select"));
-							updateSelect(sap.ui.core.Element.getElementById("msg-position-remove-select"));
+							updateSelect(sap.ui.core.Element.getElementById("msg-position-select"), getAddPositionItems());
+							updateSelect(sap.ui.core.Element.getElementById("msg-position-remove-select"), getRemovePositionItems());
 						}
 					}),
 					new sap.m.Label(),
 					new sap.m.Label({text: "Position"}),
 					new sap.m.Select("msg-position-remove-select", {
-						items: getPositions()
+						items: getRemovePositionItems()
 					}),
 					new sap.m.Label(),
 					new sap.m.Button({
@@ -355,17 +361,21 @@
 						type: "Reject",
 						width: "230px",
 						press: function () {
-							var position = sap.ui.core.Element.getElementById("msg-position-remove-select").getSelectedKey();
+							var item = sap.ui.core.Element.getElementById("msg-position-remove-select").getSelectedItem();
+							if ( item == null ) {
+								return;
+							}
+							var position = item.getKey();
 							//oMessagePopover.removeAggregation("items", +position);
 							var oModelTemp = oMessagePopover.getModel().getData();
 							oModelTemp.messages.splice(position, 1);
-							oModelTemp.count -= 1;
+							oModelTemp.count = oModelTemp.messages.length;
 
 							oModel.setData(oModelTemp);
 
-							sap.ui.core.Element.getElementById("msg-model-input").setValue(JSON.stringify(oMessagePopover.getModel().getData(), null, 4));
-							updateSelect(sap.ui.core.Element.getElementById("msg-position-select"));
-							updateSelect(sap.ui.core.Element.getElementById("msg-position-remove-select"));
+							// sap.ui.core.Element.getElementById("msg-model-input").setValue(JSON.stringify(oMessagePopover.getModel().getData(), null, 4));
+							updateSelect(sap.ui.core.Element.getElementById("msg-position-select"), getAddPositionItems());
+							updateSelect(sap.ui.core.Element.getElementById("msg-position-remove-select"), getRemovePositionItems());
 						}
 					}),
 					new sap.m.Button({
@@ -376,16 +386,16 @@
 							//oMessagePopover.destroyAggregation("items",function(){});
 							oModel.setData({count: 0, messages: []});
 
-							sap.ui.core.Element.getElementById("msg-model-input").setValue("");
-							updateSelect(sap.ui.core.Element.getElementById("msg-position-select"));
-							updateSelect(sap.ui.core.Element.getElementById("msg-position-remove-select"));
+							// sap.ui.core.Element.getElementById("msg-model-input").setValue("");
+							updateSelect(sap.ui.core.Element.getElementById("msg-position-select"), getAddPositionItems());
+							updateSelect(sap.ui.core.Element.getElementById("msg-position-remove-select"), getRemovePositionItems());
 						}
 					})
 				]
 			});
 
 			// Add a CSS class to the body HTML element, in order to be used for caret stylization in visual tests run.
-			var oCustomCssButton = new sap.m.Button ("customCssButton",{
+			var oCustomCssButton = new sap.m.Button("customCssButton",{
 				text: "Toggle custom CSS for visual test",
 				press: function() {
 					var $body = jQuery("body");
@@ -398,7 +408,7 @@
 				headerContent: [
 					new sap.m.Title({text: "sap.m.MessagePopover Playground"}),
 					new sap.m.ToolbarSpacer({width: "400px"}),
-					oCustomCssButton,
+					oCustomCssButton
 				],
 				content: [oSimpleForm],
 				footer: new sap.m.Toolbar({
@@ -424,6 +434,7 @@
 			app.setModel(oModel);
 
 			app.addPage(oPage).placeAt("content");
+		});
 		</script>
 	</head>
 	<body class="sapUiBody">

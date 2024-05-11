@@ -22,18 +22,20 @@
         // DynamicDateRange control are relative to the current date. The case where there are no arguments passed to
         // the Date object returns a solid date in the past.
 
-        var oMockedDate = new Date(2015,0,1,6);
-        Date = class extends Date{
-            constructor(options) {
-                if (options) {
-                    super(options);
-                } else {
-                    super(oMockedDate);
-                }
-            }
-        };
+ 		sap.ui.getCore().attachInit(function() {
 
-		sap.ui.getCore().attachInit(function() {
+ 			var oMockedDate = new Date(2015,0,1,6);
+ 			/*global Date:true */
+	        Date = class extends Date {
+	            constructor(options) {
+	                if (options) {
+	                    super(options);
+	                } else {
+	                    super(oMockedDate);
+	                }
+	            }
+	        };
+
 			sap.ui.require([
 				"sap/m/App",
 				"sap/m/Page",
@@ -88,7 +90,7 @@
 										"SPECIFICMONTHINYEAR",
 										"FROM",
 										"TO"
-									],
+									]
 								}),
 								new Label("DDR3-label", {text: "Relative date and date range options with 'StepInput' based UI", labelFor: "DDR3"}),
 								new DynamicDateRange("DDR3", {
@@ -101,7 +103,7 @@
 										"LASTYEARS",
 										"NEXTDAYS",
 										"TODAYFROMTO"
-									],
+									]
 								}),
 								new Label("DDR4-label", {text: "DateTime options", labelFor: "DDR4"}),
 								new DynamicDateRange("DDR4", {
@@ -116,7 +118,7 @@
 										"DATETIME",
 										"FROMDATETIME",
 										"TODATETIME"
-									],
+									]
 								}),
 								new Label("DDR5-label", {text: "Special selection for visual tests", labelFor: "DDR5"}),
 								new DynamicDateRange("DDR5", {

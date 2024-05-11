@@ -57,7 +57,7 @@
 
 				var oQuickSort = new QuickSort({
 					items : [
-						new QuickSortItem ({
+						new QuickSortItem({
 							key: "propertyA",
 							label: "A",
 							sortOrder: "Ascending"
@@ -128,7 +128,7 @@
 							new sap.m.Button({ text: "Execute Custom Action 3" })
 						],
 						wrap: sap.m.FlexWrap.Wrap
-					}),
+					})
 				});
 
 				var oQuickMultiCustomActionLong = new QuickAction({
@@ -138,8 +138,8 @@
 						new sap.m.FlexBox({
 							items: [new sap.m.Button({ text: "Execute Custom Action 1" }), new sap.m.Button({ text: "Execute Custom Action 2" }), new sap.m.Button({ text: "Execute Custom Action 3" })],
 							wrap: sap.m.FlexWrap.Wrap
-						}),
-					],
+						})
+					]
 				});
 
 				var oBtnReset = new sap.m.Button({
@@ -191,8 +191,8 @@
 						}),
 						new sap.m.Column({
 							header: new sap.m.Text({text: "Column C"})
-						}),
-					],
+						})
+					]
 				});
 
 				var oTemplate = new sap.m.ColumnListItem({
@@ -202,7 +202,7 @@
 						new sap.m.Text({text : "{city}"})
 					]
 				});
-				oTable.setModel(new sap.ui.model.json.JSONModel(oData))
+				oTable.setModel(new sap.ui.model.json.JSONModel(oData));
 				oTable.bindItems({
 					path: "/items",
 					template : oTemplate,
@@ -231,7 +231,7 @@
 						showResetButton: i % 2 == 0,
 						showConfirmButton: i % 3 == 0,
 						showCancelButton: i % 5 == 0
-					}))
+					}));
 				}
 
 				// Test Menu

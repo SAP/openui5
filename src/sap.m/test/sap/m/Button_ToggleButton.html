@@ -23,7 +23,7 @@
 
 	function toggleCompact() {
 		jQuery("body").toggleClass("sapUiSizeCompact");
-	};
+	}
 
 	new sap.ui.core.HTML({content: "<div id='top'>&nbsp;</div>"}).placeAt("controlArea");
 
@@ -832,14 +832,14 @@
 	////////////////////////// Back //////////////////////////////////
 	var oToggleButton31 = new sap.m.ToggleButton({
 		type: sap.m.ButtonType.Back,
-		icon: "sap-icon://home",
+		icon: "sap-icon://home"
 	}).placeAt("standAloneBtn");
 
 	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
 
 	var oToggleButton32 = new sap.m.ToggleButton({
 		type: sap.m.ButtonType.Back,
-		text: "ToggleButton Type Back",
+		text: "ToggleButton Type Back"
 	}).placeAt("standAloneBtn");
 
 	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
@@ -847,7 +847,7 @@
 	var oToggleButton33 = new sap.m.ToggleButton({
 		type: sap.m.ButtonType.Back,
 		icon: "sap-icon://home",
-		text: "ToggleButton Type Back",
+		text: "ToggleButton Type Back"
 	}).placeAt("standAloneBtn");
 
 	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
@@ -1953,7 +1953,7 @@
 	}).placeAt("specialBtn");
 
 	// Buttons inside Table
-	var data = aButtonSettings = [{
+	var data = [{
 			text: "Button"
 	}];
 	var oModel = new sap.ui.model.json.JSONModel();
@@ -2022,7 +2022,7 @@
 		// Arrange the table columns according to the cells content width
 		oButtonsTable.setFixedLayout(false);
 
-		oTableRowTemplate = new sap.m.ColumnListItem({
+		var oTableRowTemplate = new sap.m.ColumnListItem({
 			type: "Active",
 			cells : [
 				new sap.m.Button({

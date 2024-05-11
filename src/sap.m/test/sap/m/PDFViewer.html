@@ -95,6 +95,7 @@
 			}
 		}
 
+		var oMainContainer;
 		var oApp = new sap.m.App("myApp", {
 				initialPage: "page1"
 			}),
@@ -274,9 +275,9 @@
 
 
 		// page
-		oPage1 = new sap.m.Page("page1", {
-			customHeader: oBar0 = new sap.m.Bar({
-				contentMiddle: oLabel0 = new sap.m.Label({
+		var oPage1 = new sap.m.Page("page1", {
+			customHeader: new sap.m.Bar({
+				contentMiddle: new sap.m.Label({
 					text: "PDFViewer demo page"
 				})
 			}),
@@ -288,7 +289,7 @@
 				items: [oSettingsList]
 			})
 		});
-		oPage1.setModel(oModel, "settingsData")
+		oPage1.setModel(oModel, "settingsData");
 		oSettingsList.setLayoutData(new sap.m.FlexItemData({
 			baseSize: "40%"
 		}));

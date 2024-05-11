@@ -37,7 +37,7 @@
 							items: [
 								new sap.m.MenuItem({
 									icon: "sap-icon://factory",
-									text: "factory",
+									text: "factory"
 								}),
 								new sap.m.MenuItem({
 									icon: "sap-icon://flag",
@@ -496,7 +496,7 @@
 						otherMode = oItem.getButtonMode() === sap.m.MenuButtonMode.Regular ? sap.m.MenuButtonMode.Split : sap.m.MenuButtonMode.Regular;
 						oItem.setButtonMode(otherMode);
 					}
-				})
+				});
 			}
 		});
 
@@ -906,7 +906,7 @@
 					text: "Test",
 					type: "Transparent",
 					buttonMode: "Regular"
-				}),
+				})
 			],
 			footer: new sap.m.Bar({
 				contentMiddle: [

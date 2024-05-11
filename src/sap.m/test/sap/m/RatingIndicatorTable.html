@@ -37,7 +37,7 @@
                 {lastName: "Turner", name: "Paige", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "employee", gender: "female", rating: 3, money: 5.67, birthday: "1968-03-01", currency: "EUR", type: "Inactive"}
             ];
 
-            var oApp = new sap.m.App;
+            var oApp = new sap.m.App();
 
             jQuery.sap.require("sap.m.MessageBox");
             jQuery.sap.require("sap.m.MessageToast");
@@ -122,7 +122,7 @@
                                 return {
                                     key : sStatus,
                                     text : sStatus
-                                }
+                                };
                             })
                         ]);
                     } else {
@@ -216,7 +216,7 @@
                     header : new sap.m.Label({
                         text : "Image"
                     }),
-                    minScreenWidth : "Phone",
+                    minScreenWidth : "Phone"
                 }),
                 new sap.m.Column({
                     header : new sap.m.Label({
@@ -241,7 +241,7 @@
                     minScreenWidth : "Desktop",
                     popinDisplay : "Inline",
                     demandPopin : true
-                }),
+                })
             ];
 
             var oTemplate = new sap.m.ColumnListItem({
@@ -279,8 +279,8 @@
                         displayFormat : "dd.MM.yyyy"
                     }),
                     new sap.m.Text({
-                        text : "{money} EUR",
-                    }),
+                        text : "{money} EUR"
+                    })
                 ]
             });
 

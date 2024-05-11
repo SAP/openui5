@@ -26,7 +26,7 @@
 				var oAppointment = oEvent.getParameter("appointment");
 				if (oAppointment) {
 					oTV.setText("Appointment selected - ID:" + oAppointment.getId() + " , key:" + oAppointment.getKey());
-				}else {
+				} else {
 					var aAppointments = oEvent.getParameter("appointments");
 					oTV.setText(aAppointments.length + " Appointments selected");
 				}
@@ -139,7 +139,7 @@
 			oRow1.addAppointment(oApp);
 
 			oStartDate = UI5Date.getInstance();
-			oStartDate.setMonth(oStartDate.getMonth() + 2)
+			oStartDate.setMonth(oStartDate.getMonth() + 2);
 			oStartDate.setDate(1);
 			oStartDate.setHours(0);
 			oStartDate.setMinutes(0);
@@ -297,8 +297,8 @@
 			});
 			oRow1.addIntervalHeader(oApp);
 
-			var oLabel = new sap.m.Label({text: "start date", labelFor: "TF1"}).placeAt("event1");
-			var oInput = new sap.m.Input("TF1",{
+			new sap.m.Label({text: "start date", labelFor: "TF1"}).placeAt("event1");
+			new sap.m.Input("TF1",{
 				width:"10rem",
 				value: oFormatYyyyMMddHHmm.format(oRow1.getStartDate()),
 				editable: true,
@@ -308,16 +308,16 @@
 					var sValue = oEvent.getParameter('newValue');
 					var oRow = sap.ui.getCore().byId("Row1");
 					var oDate = oFormatYyyyMMddHHmm.parse(sValue);
-					if(oDate) {
+					if (oDate) {
 						oRow.setStartDate(oDate);
 						oTF.setValueState(sap.ui.core.ValueState.None);
-					}else {
+					} else {
 						oTF.setValueState(sap.ui.core.ValueState.Error);
 					}
 				}
 			}).placeAt("event1");
 
-			var oLabel = new sap.m.Label({text: "Interval type", labelFor: "RG1"}).placeAt("event1");
+			new sap.m.Label({text: "Interval type", labelFor: "RG1"}).placeAt("event1");
 			new sap.m.RadioButtonGroup("RG1", {
 				columns: 3,
 				buttons: [new sap.m.RadioButton("I1",{text: sap.ui.unified.CalendarIntervalType.Hour}),
@@ -325,18 +325,18 @@
 						new sap.m.RadioButton("I3",{text: sap.ui.unified.CalendarIntervalType.Month})],
 				select: function(oEvent){
 					var oRow = sap.ui.getCore().byId("Row1");
-					if(oEvent.getParameter("selectedIndex") == 0){
+					if (oEvent.getParameter("selectedIndex") == 0) {
 						oRow.setIntervalType(sap.ui.unified.CalendarIntervalType.Hour);
-					}else if(oEvent.getParameter("selectedIndex") == 1){
+					} else if (oEvent.getParameter("selectedIndex") == 1) {
 						oRow.setIntervalType(sap.ui.unified.CalendarIntervalType.Day);
-					}else{
+					} else {
 						oRow.setIntervalType(sap.ui.unified.CalendarIntervalType.Month);
 					}
 				}
 			}).placeAt("event1");
 
-			var oLabel = new sap.m.Label({text: "intervals", labelFor: "TF2"}).placeAt("event1");
-			var oInput = new sap.m.Input("TF2",{
+			new sap.m.Label({text: "intervals", labelFor: "TF2"}).placeAt("event1");
+			new sap.m.Input("TF2",{
 				value: oRow1.getIntervals(),
 				width: "10rem",
 				editable: true,
@@ -345,16 +345,16 @@
 					var oTF = oEvent.oSource;
 					var sValue = oEvent.getParameter('newValue');
 					var oRow = sap.ui.getCore().byId("Row1");
-					if(isNaN(sValue)) {
+					if (isNaN(sValue)) {
 						oTF.setValueState(sap.ui.core.ValueState.Error);
-					}else {
+					} else {
 						oTF.setValueState(sap.ui.core.ValueState.None);
 						oRow.setIntervals(parseInt(sValue));
 					}
 				}
 			}).placeAt("event1");
 
-			oButton = new sap.m.ToggleButton({
+			new sap.m.ToggleButton({
 				text: "NonWorkingDays",
 				pressed: true,
 				press: function(oEvent){
@@ -367,7 +367,7 @@
 				}
 			}).placeAt("event1");
 
-			oButton = new sap.m.ToggleButton({
+			new sap.m.ToggleButton({
 				text: "NonWorkingHours",
 				pressed: false,
 				press: function(oEvent){
@@ -394,7 +394,7 @@
 				text: "This is a extra appointment!"
 			});
 
-			oButton = new sap.m.ToggleButton({
+			new sap.m.ToggleButton({
 				text: "extra appointment",
 				pressed: false,
 				press: function(oEvent){
@@ -407,7 +407,7 @@
 				}
 			}).placeAt("event1");
 
-			oButton = new sap.m.ToggleButton({
+			new sap.m.ToggleButton({
 				text: "Subintervals",
 				pressed: false,
 				press: function(oEvent){
@@ -416,7 +416,7 @@
 				}
 			}).placeAt("event1");
 
-			oButton = new sap.m.ToggleButton({
+			new sap.m.ToggleButton({
 				text: "IntervalHeaders",
 				pressed: true,
 				press: function(oEvent){
@@ -427,7 +427,7 @@
 				}
 			}).placeAt("event1");
 
-			oButton = new sap.m.ToggleButton("B-Empty", {
+			new sap.m.ToggleButton("B-Empty", {
 				text: "EmptyIntervalHeaders",
 				pressed: true,
 				press: function(oEvent){
@@ -436,7 +436,7 @@
 				}
 			}).placeAt("event1");
 
-			oButton = new sap.m.ToggleButton("B-OneLine", {
+			new sap.m.ToggleButton("B-OneLine", {
 				text: "Single line Appointments",
 				pressed: false,
 				press: function(oEvent){
@@ -540,11 +540,11 @@
 						new sap.ui.unified.CalendarLegendItem("T7", {type: sap.ui.unified.CalendarDayType.Type07, text: "Typ 7"}),
 						new sap.ui.unified.CalendarLegendItem("T8", {type: sap.ui.unified.CalendarDayType.Type08, text: "Typ 8"}),
 						new sap.ui.unified.CalendarLegendItem("T9", {type: sap.ui.unified.CalendarDayType.Type09, text: "Typ 9"}),
-						new sap.ui.unified.CalendarLegendItem("T10", {type: sap.ui.unified.CalendarDayType.Type10, text: "Typ 10"}),
+						new sap.ui.unified.CalendarLegendItem("T10", {type: sap.ui.unified.CalendarDayType.Type10, text: "Typ 10"})
 						]
 			}).placeAt("legend");
 			// exent text output
-			oEventText = new sap.m.Label("EventTV", {
+			new sap.m.Label("EventTV", {
 				text: "event text"
 			}).placeAt("eventText");
 

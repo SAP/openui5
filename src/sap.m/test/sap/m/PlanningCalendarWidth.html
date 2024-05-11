@@ -148,27 +148,27 @@
 						width: "230px",
 						placeholder: "Choose built-in views",
 						items: [
-							oItem20 = new sap.ui.core.Item({
+							new sap.ui.core.Item({
 								key: "Hour",
 								text: "Hour"
 							}),
 
-							oItem21 = new sap.ui.core.Item({
+							new sap.ui.core.Item({
 								key: "Day",
 								text: "Day"
 							}),
 
-							oItem22 = new sap.ui.core.Item({
+							new sap.ui.core.Item({
 								key: "Month",
 								text: "Month"
 							}),
 
-							oItem23 = new sap.ui.core.Item({
+							 new sap.ui.core.Item({
 								key: "Week",
 								text: "1 week"
 							}),
 
-							oItem24 = new sap.ui.core.Item({
+							new sap.ui.core.Item({
 								key: "One Month",
 								text: "1 month"
 							})
@@ -484,7 +484,7 @@
 						if (oSpecialDate.getType() === sap.ui.unified.CalendarDayType.NonWorking) {
 							oPC1.removeSpecialDate(oSpecialDate);
 						}
-					})
+					});
 				}
 			}
 		});
@@ -1217,7 +1217,7 @@
 					type: sap.ui.unified.CalendarDayType.Type03,
 					color:"#4b0082",
 					tooltip: "Test"
-				}),
+				})
 			],
 			toolbarContent: [
 				oTitle,

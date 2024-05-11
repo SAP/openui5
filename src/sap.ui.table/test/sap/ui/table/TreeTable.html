@@ -15,12 +15,13 @@
 <script src="Settings.js"></script>
 
 <script>
+	/*global TABLESETTINGS */
 
 	(new sap.m.Button({
 		text: "Just a Button before"
 	})).placeAt("content");
 
-	var oTable = new sap.ui.table.TreeTable({
+	const oTable = new sap.ui.table.TreeTable({
 		expandFirstLevel: true,
 		title: "Title of the TreeTable",
 		footer: "Footer of the Table",
@@ -75,7 +76,7 @@
 	});
 
 	// set Model and bind Table
-	var oModel = new sap.ui.model.json.JSONModel();
+	const oModel = new sap.ui.model.json.JSONModel();
 	oModel.setData(TABLESETTINGS.treeTestData);
 	oTable.setModel(oModel);
 	oTable.bindRows("/root");

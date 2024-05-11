@@ -21,44 +21,44 @@
 			var aMenus = [];
 			var bMenuEventingEnabled = false;
 
-			function createSetting(sLabel, oDefaultValue, aValues, fHandler){
-				var sDom, fHandle;
-				var sId = "setting"+(idCounter++);
-				if(!aValues || aValues.length == 0){
-					if(typeof oDefaultValue == "string"){
-						sDom = "<input id='"+sId+"' value='"+oDefaultValue+"'>";
-						fHandle = function(oEvent){
-							fHandler(oEvent, jQuery(oEvent.target).val());
+			function createSetting(sLabel, oDefaultValue, aValues, fnHandler){
+				var sDom, fnHandle;
+				var sId = "setting" + (idCounter++);
+				if (!aValues || aValues.length == 0) {
+					if (typeof oDefaultValue == "string") {
+						sDom = "<input id='" + sId + "' value='" + oDefaultValue + "'>";
+						fnHandle = function(oEvent) {
+							fnHandler(oEvent, jQuery(oEvent.target).val());
 						};
-					}else if(typeof oDefaultValue == "number"){
-						sDom = "<input id='"+sId+"' value='"+oDefaultValue+"'>";
-						fHandle = function(oEvent){
-							fHandler(oEvent, parseInt(jQuery(oEvent.target).val()));
+					} else if (typeof oDefaultValue == "number") {
+						sDom = "<input id='" + sId + "' value='" + oDefaultValue + "'>";
+						fnHandle = function(oEvent) {
+							fnHandler(oEvent, parseInt(jQuery(oEvent.target).val()));
 						};
-					}else if(typeof oDefaultValue == "boolean"){
-						sDom = "<input type='checkbox' id='"+sId+"'"+(oDefaultValue ? " checked='"+oDefaultValue+"'" : "")+">";
-						fHandle = function(oEvent){
-							fHandler(oEvent, jQuery(oEvent.target).is(":checked"));
-						}
+					} else if (typeof oDefaultValue == "boolean") {
+						sDom = "<input type='checkbox' id='" + sId + "'" + (oDefaultValue ? " checked='" + oDefaultValue + "'" : "") + ">";
+						fnHandle = function(oEvent) {
+							fnHandler(oEvent, jQuery(oEvent.target).is(":checked"));
+						};
 					}
-				}else{
-					sDom = "<select id='"+sId+"'>";
-					for(var i=0; i<aValues.length; i++){
-						sDom += "<option value='"+aValues[i]+"'" + (aValues[i] == oDefaultValue ? " selected='selected'" : "") + ">" + aValues[i] + "</option>";
+				} else {
+					sDom = "<select id='" + sId + "'>";
+					for (var i = 0; i < aValues.length; i++){
+						sDom += "<option value='" + aValues[i] + "'" + (aValues[i] == oDefaultValue ? " selected='selected'" : "") + ">" + aValues[i] + "</option>";
 					}
 					sDom += "</select>";
-					fHandle = function(oEvent){
-						fHandler(oEvent, jQuery(oEvent.target).find(":selected").attr("value"));
-					}
+					fnHandle = function(oEvent) {
+						fnHandler(oEvent, jQuery(oEvent.target).find(":selected").attr("value"));
+					};
 				}
 
-				if(!sDom){
+				if (!sDom) {
 					return null;
 				}
 
-				jQuery.sap.byId("settings").append("<div id='"+sId+"-frame' style='margin-top:5px;'><div style='display:inline-block;width:200px;'>" + sLabel + ":</div>" + sDom + "</div>");
+				jQuery.sap.byId("settings").append("<div id='" + sId + "-frame' style='margin-top:5px;'><div style='display:inline-block;width:200px;'>" + sLabel + ":</div>" + sDom + "</div>");
 
-				jQuery.sap.byId(sId).on("change", fHandle);
+				jQuery.sap.byId(sId).on("change", fnHandle);
 
 				return sId;
 			}
@@ -66,7 +66,7 @@
 			jQuery(function() {
 				//Cozy Mode
 				createSetting("Cozy Mode", false, null, function(oEvent, val){
-					for (var i=0; i<aMenus.length; i++) {
+					for (var i = 0; i < aMenus.length; i++) {
 						if (aMenus[i].getRootMenu() === aMenus[i]) {
 							aMenus[i].toggleStyleClass("sapUiSizeCozy", val);
 						}
@@ -75,7 +75,7 @@
 
 				//Dark Design
 				function setDarkDesign(bEnable) {
-					for (var i=0; i<aMenus.length; i++) {
+					for (var i = 0; i < aMenus.length; i++) {
 						if (aMenus[i].getRootMenu() === aMenus[i]) {
 							aMenus[i].setRootMenuTopStyle(bEnable);
 						}
@@ -96,9 +96,9 @@
 
 				//No Icons
 				createSetting("No Icons", false, null, function(oEvent, val){
-					for (var i=0; i<aMenus.length; i++) {
+					for (var i = 0; i < aMenus.length; i++) {
 						var aItems = aMenus[i].getItems();
-						for (var j=0; j<aItems.length; j++) {
+						for (var j = 0; j < aItems.length; j++) {
 							aItems[j].setIcon("");
 							if (!val && aItems[j].__appicon) {
 								aItems[j].setIcon(aItems[j].__appicon);
@@ -129,7 +129,7 @@
 
 						iLevel = iLevel ? iLevel : 1;
 						var aItems = oMenu.getItems();
-						for (var i=0; i<aItems.length; i++) {
+						for (var i = 0; i < aItems.length; i++) {
 							customize(aItems[i].getSubmenu(), bCreate, iLevel + 1);
 							if (!bCreate) {
 								if (aItems[i].__appcustom) {
@@ -140,7 +140,7 @@
 
 						if (bCreate) {
 							setTimeout(function(){
-								for(var i = 0; i < 5; i++){
+								for (var i = 0; i < 5; i++){
 									var oItem = new sap.ui.unified.MenuItem({text: "New Item " + i});
 									oItem.__appcustom = true;
 									oMenu.addItem(oItem);
@@ -161,15 +161,12 @@
 				});
 			});
 
-			try{
+			try {
 				sap.ui.getCore().loadLibrary("sap.ui.commons");
-			}catch(e){
+			} catch (e) {
 				alert("This test page requires the library 'sap.ui.commons' which is not available.");
-				throw(e);
+				throw e;
 			}
-		</script>
-
-		<script>
 
 			function createTest(sText, oMenuConfig) {
 				var iMessageClearTime = 3000;
@@ -185,7 +182,7 @@
 							sText = "You selected menu item '" + oItem.getText() + "'";
 						}
 
-						jQuery("#output").html(sText +" (" + (bOnItem ? "Item" : "Menu") + " Eventing).");
+						jQuery("#output").html(sText + " (" + (bOnItem ? "Item" : "Menu") + " Eventing).");
 
 						if (iMessageClearTime > 0) {
 							setTimeout(function(){
@@ -202,7 +199,7 @@
 					});
 					aMenus.push(oMenu);
 					var aItems = oConfig.items;
-					for(var i=0; i<aItems.length; i++){
+					for (var i = 0; i < aItems.length; i++){
 						var oMenuItem,
 							oItemConfig = aItems[i].config || {};
 
@@ -306,85 +303,85 @@
 			};
 
 			var oMenuStructure2 = {
-     			config: {ariaDescription: "Demo Menu"},
-     			items: [
-     				{
-     					config: {text: "Meat", tooltip: "Our offer of Meat"}
-     				},
-     				{
-     					config: {text: "Fish", tooltip: "Our offer of Fish"}
-     				},
-     				{
-     					config: {text: "Cheese", tooltip: "Our offer of Cheese"}
-     				},
-     				{
-     					config: {text: "Fruits", tooltip: "Our offer of Fruits", startsSection: true},
-     					submenu: {
-     						config: {},
-     						items: [
-     							{
-     								config: {text: "Strawberries", tooltip: "Our offer of Strawberries"}
-     							},
-     							{
-     								config: {text: "Bananas", tooltip: "Our offer of Bananas"}
-     							},
-     							{
-     								config: {text: "Kiwis", tooltip: "Our offer of Kiwis"}
-     							},
-     							{
-     								config: {text: "Grapes", tooltip: "Our offer of Grapes"},
-     								submenu: {
-     									config: {},
-     									items: [
-     										{
-     											config: {text: "red", tooltip: "Our offer of red Grapes"}
-     										},
-     										{
-     											config: {text: "white", tooltip: "Our offer of white Grapes"}
-     										}
-     									]
-     								}
-     							}
-     						]
-     					}
-     				},
-     				{
-     					config: {text: "Vegetables"}
-     				},
-     				{
-     					type: "text",
-     					config: {label: "Filter:", startsSection: true, icon: "images/filter.gif"}
-     				},
-     				{
-     					type: "text",
-     					config: {value: "FilterValue", label: "Another Filter:", icon: "sap-icon://filter", enabled: false}
-     				},
-     				{
-     					config: {text: "Clear Filter"}
-     				}
-     			]
-     		};
+				config: {ariaDescription: "Demo Menu"},
+				items: [
+					{
+						config: {text: "Meat", tooltip: "Our offer of Meat"}
+					},
+					{
+						config: {text: "Fish", tooltip: "Our offer of Fish"}
+					},
+					{
+						config: {text: "Cheese", tooltip: "Our offer of Cheese"}
+					},
+					{
+						config: {text: "Fruits", tooltip: "Our offer of Fruits", startsSection: true},
+						submenu: {
+							config: {},
+							items: [
+								{
+									config: {text: "Strawberries", tooltip: "Our offer of Strawberries"}
+								},
+								{
+									config: {text: "Bananas", tooltip: "Our offer of Bananas"}
+								},
+								{
+									config: {text: "Kiwis", tooltip: "Our offer of Kiwis"}
+								},
+								{
+									config: {text: "Grapes", tooltip: "Our offer of Grapes"},
+									submenu: {
+										config: {},
+										items: [
+											{
+												config: {text: "red", tooltip: "Our offer of red Grapes"}
+											},
+											{
+												config: {text: "white", tooltip: "Our offer of white Grapes"}
+											}
+										]
+									}
+								}
+							]
+						}
+					},
+					{
+						config: {text: "Vegetables"}
+					},
+					{
+						type: "text",
+						config: {label: "Filter:", startsSection: true, icon: "images/filter.gif"}
+					},
+					{
+						type: "text",
+						config: {value: "FilterValue", label: "Another Filter:", icon: "sap-icon://filter", enabled: false}
+					},
+					{
+						config: {text: "Clear Filter"}
+					}
+				]
+			};
 
 			function createRichTooltip(sTitle) {
 				return new sap.ui.commons.RichTooltip({
-	                text : "some tooltip text",
-	                title: sTitle
+					text : "some tooltip text",
+					title: sTitle
 				});
-			};
+			}
 
 			function createManyItems(bWithSubMenu, sPrefix) {
 				var aItems = [];
-				for(var i=0; i<100; i++){
+				for (var i = 0; i < 100; i++){
 					var oItem = {
-          				config: {text: "Item " + (sPrefix ? sPrefix : "") + i, icon: "sap-icon://search"}
-          			}
+						config: {text: "Item " + (sPrefix ? sPrefix : "") + i, icon: "sap-icon://search"}
+					};
 					aItems.push(oItem);
 
-					if(bWithSubMenu){
+					if (bWithSubMenu) {
 						oItem.submenu = {
 							config: {maxVisibleItems: 10},
-							items: createManyItems(false, i+"-")
-						}
+							items: createManyItems(false, i + "-")
+						};
 					}
 				}
 				return aItems;
@@ -393,44 +390,44 @@
 			createTest("Open Menu 1 (Basic)", oMenuStructure1).placeAt("target");
 			createTest("Open Menu 2 (TextField)", oMenuStructure2).placeAt("target");
 			createTest("Open Menu 3 (RichTooltip)", {
-          		config: {},
-          		items: [
-          			{
-          				config: {text: "Item 1", tooltip: createRichTooltip("Item 1")}
-          			},
-          			{
-          				config: {text: "Item 2", tooltip: createRichTooltip("Item 2")}
-          			},
-          			{
-          				config: {text: "Item 3", tooltip: createRichTooltip("Item 3")}
-          			},
-          			{
-          				type: "text",
-          				config: {label: "Item 4", tooltip: createRichTooltip("Item 4")}
-          			},
-          			{
-          				config: {text: "Item 5", tooltip: createRichTooltip("Item 5")}
-          			}
-          		]
+				config: {},
+				items: [
+					{
+						config: {text: "Item 1", tooltip: createRichTooltip("Item 1")}
+					},
+					{
+						config: {text: "Item 2", tooltip: createRichTooltip("Item 2")}
+					},
+					{
+						config: {text: "Item 3", tooltip: createRichTooltip("Item 3")}
+					},
+					{
+						type: "text",
+						config: {label: "Item 4", tooltip: createRichTooltip("Item 4")}
+					},
+					{
+						config: {text: "Item 5", tooltip: createRichTooltip("Item 5")}
+					}
+				]
 			}).placeAt("target");
 			createTest("Open Menu 4 (Large, No Sub Menus)", {
 				config: {},
 				items: createManyItems(false)
 			}).placeAt("target");
 			createTest("Open Menu 5 (Large, Sub Menus)", {
-      			config: {},
-      			items: createManyItems(true)
-      		}).placeAt("target");
+				config: {},
+				items: createManyItems(true)
+			}).placeAt("target");
 
 			var oRerenderingButton = createTest("Open Menu (Debug: Rerendering)", {
-            	config: {},
+				config: {},
 				items: [
 					{
 						config: {text: "Item 1"}
 					},
 					{
-              			config: {text: "Item 2"},
-              			submenu: {
+						config: {text: "Item 2"},
+						submenu: {
 							config: {},
 							items: [
 								{
@@ -441,9 +438,9 @@
 								}
 							]
 						}
-              		}
+					}
 				]
-      		});
+			});
 			oRerenderingButton.addStyleClass("SettingHidden").placeAt("target");
 
 			var oDialog = new sap.m.Dialog({
@@ -456,7 +453,7 @@
 					}
 				})
 			});
-			new sap.ui.commons.Button({
+			new sap.m.Button({
 				text: "Open Dialog",
 				press: function () {
 					oDialog.open();

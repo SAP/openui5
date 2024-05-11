@@ -65,7 +65,7 @@
 			                    ["20150709",undefined,"Type09",9],
 			                    ["20150710",undefined,"Type10",10]];
 
-			var oDatesRow = new sap.ui.unified.calendar.DatesRow("DR1",{
+			new sap.ui.unified.calendar.DatesRow("DR1",{
 				focus: function(oEvent){
 					var oTF = sap.ui.getCore().byId("TF2");
 					var oDatesRow = oEvent.oSource;
@@ -95,8 +95,8 @@
 				}
 			}).placeAt("sample1");
 
-			var oLabel = new sap.ui.commons.Label({text: "start date", labelFor: "TF1"}).placeAt("event1");
-			var oInput = new sap.ui.commons.TextField("TF1",{
+			new sap.ui.commons.Label({text: "start date", labelFor: "TF1"}).placeAt("event1");
+			new sap.ui.commons.TextField("TF1",{
 				editable: true,
 				placeholder: "yyyyMMdd",
 				change: function(oEvent){
@@ -108,8 +108,8 @@
 				}
 			}).placeAt("event1");
 
-			oLabel = new sap.ui.commons.Label({text: "focused date", labelFor: "TF2"}).placeAt("event1");
-			oInput = new sap.ui.commons.TextField("TF2",{
+			new sap.ui.commons.Label({text: "focused date", labelFor: "TF2"}).placeAt("event1");
+			new sap.ui.commons.TextField("TF2",{
 				editable: true,
 				placeholder: "yyyyMMdd",
 				change: function(oEvent){
@@ -122,15 +122,15 @@
 				}
 			}).placeAt("event1");
 
-			oLabel = new sap.ui.commons.Label({text: "selected date", labelFor: "TF3"}).placeAt("event1");
-			oInput = new sap.ui.commons.TextField("TF3",{
+			new sap.ui.commons.Label({text: "selected date", labelFor: "TF3"}).placeAt("event1");
+			new sap.ui.commons.TextField("TF3",{
 				editable: true,
 				placeholder: "yyyyMMdd",
 				change: function(oEvent){
 					var oTF = oEvent.oSource;
 					var sValue = oEvent.getParameter('newValue');
 					var oDatesRow = sap.ui.getCore().byId("DR1");
-					if(sValue.length == 8 && !isNaN(sValue)){
+					if (sValue.length == 8 && !isNaN(sValue)) {
 						var oDate = oFormatYyyymmdd.parse(sValue);
 						var aSelectedDates = oDatesRow.getSelectedDates();
 						var oDateRange;
@@ -141,7 +141,7 @@
 							oDateRange = aSelectedDates[0];
 							oDateRange.setStartDate(oDate);
 						}
-					}else if(!sValue){
+					} else if (!sValue) {
 						oDatesRow.destroySelectedDates();
 					}
 				}
@@ -155,10 +155,10 @@
 						for (var i = 0; i < aSpecialDays.length; i++) {
 							var aSpecialDay = aSpecialDays[i];
 							var sType = "";
-							if(aSpecialDay[3] < 10) {
-								sType = "Type0"+aSpecialDay[3];
-							}else {
-								sType = "Type"+aSpecialDay[3];
+							if (aSpecialDay[3] < 10) {
+								sType = "Type0" + aSpecialDay[3];
+							} else {
+								sType = "Type" + aSpecialDay[3];
 							}
 							sap.ui.getCore().byId("DR1").addSpecialDate(new sap.ui.unified.DateTypeRange({
 								startDate: oFormatYyyymmdd.parse(aSpecialDay[0]),
@@ -174,7 +174,7 @@
 			}).placeAt("event1");
 
 			// single interval selection
-			oDatesRow = new sap.ui.unified.calendar.DatesRow("DR2",{
+			new sap.ui.unified.calendar.DatesRow("DR2",{
 				intervalSelection: true,
 				days: 14,
 				select: function(oEvent){
@@ -203,16 +203,16 @@
 				}
 			}).placeAt("sample2");
 
-			oLabel = new sap.ui.commons.Label({text: "selected date from", labelFor: "TF2-start"}).placeAt("event2");
-			oInput = new sap.ui.commons.TextField("TF2-start",{
+			new sap.ui.commons.Label({text: "selected date from", labelFor: "TF2-start"}).placeAt("event2");
+			new sap.ui.commons.TextField("TF2-start",{
 				editable: false
 			}).placeAt("event2");
-			oLabel = new sap.ui.commons.Label({text: "to", labelFor: "TF2-end"}).placeAt("event2");
-			oInput = new sap.ui.commons.TextField("TF2-end",{
+			new sap.ui.commons.Label({text: "to", labelFor: "TF2-end"}).placeAt("event2");
+			new sap.ui.commons.TextField("TF2-end",{
 				editable: false
 			}).placeAt("event2");
 
-			oDatesRow = new sap.ui.unified.calendar.DatesRow("DR3",{
+			new sap.ui.unified.calendar.DatesRow("DR3",{
 				intervalSelection: false,
 				singleSelection: false,
 				showHeader: true,
@@ -225,11 +225,11 @@
 					if (aSelectedDates.length > 0 ) {
 						var aItems = oLB.getItems();
 						var oItem;
-						for(var i=0; i<aSelectedDates.length; i++){
+						for (var i = 0; i < aSelectedDates.length; i++){
 							oDate = aSelectedDates[i].getStartDate();
-							if(aItems[i]) {
+							if (aItems[i]) {
 								oItem = aItems[i];
-							}else {
+							} else {
 								oItem = new sap.ui.core.Item();
 								oLB.addItem(oItem);
 							}
@@ -239,8 +239,8 @@
 								oItem.setText("");
 							}
 						}
-						if(aItems.length > aSelectedDates.length) {
-							for(var i=aSelectedDates.length; i<aItems.length; i++){
+						if (aItems.length > aSelectedDates.length) {
+							for (var i = aSelectedDates.length; i < aItems.length; i++){
 								oLB.removeItem(i);
 								aItems[i].destroy();
 							}
@@ -251,7 +251,7 @@
 				}
 			}).placeAt("sample3");
 
-			oLabel = new sap.ui.commons.Label({text: "selected dates", labelFor: "LB"}).placeAt("event3");
+			new sap.ui.commons.Label({text: "selected dates", labelFor: "LB"}).placeAt("event3");
 			var oListBox = new sap.ui.commons.ListBox("LB",{
 				editable: false,
 				visibleItems: 10,
@@ -259,12 +259,12 @@
 			}).placeAt("event3");
 
 			// without day names line
-			oDatesRow = new sap.ui.unified.calendar.DatesRow("DR4",{
+			new sap.ui.unified.calendar.DatesRow("DR4",{
 				days: 14,
 				showDayNamesLine: false
 			}).placeAt("sample4");
 
-			oDatesRow = new sap.ui.unified.calendar.DatesRow("DR5",{
+			new sap.ui.unified.calendar.DatesRow("DR5",{
 				days: 14,
 				showDayNamesLine: false
 			}).placeAt("sample5");
