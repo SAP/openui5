@@ -12,8 +12,12 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/core/Item",
 	"sap/ui/core/Element",
-	"../helper"
-], function (Controller, UploadSetwithTable, MessageBox, Fragment, MockServer, MessageToast, Dialog, Button, mobileLibrary, Text, coreLibrary, CoreItem, Element, Helper) {
+	"../helper",
+	"sap/ui/model/type/Integer",
+	"sap/ui/model/type/String",
+	"sap/ui/model/type/Float",
+	"sap/ui/model/type/Boolean"
+], function (Controller, UploadSetwithTable, MessageBox, Fragment, MockServer, MessageToast, Dialog, Button, mobileLibrary, Text, coreLibrary, CoreItem, Element, Helper, Integer, String, Float, Boolean) {
 	"use strict";
 
 	return Controller.extend("mdc.sample.controller.Page", {
