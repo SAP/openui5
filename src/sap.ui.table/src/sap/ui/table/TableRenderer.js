@@ -434,8 +434,7 @@ sap.ui.define([
 			const bAllRowsSelected = mRenderConfig.headerSelector.selected;
 
 			if (mRenderConfig.headerSelector.type === "toggle") {
-				const sTitle = bAllRowsSelected ? "TBL_DESELECT_ALL" : "TBL_SELECT_ALL";
-				rm.attr("title", TableUtils.getResourceText(sTitle));
+				rm.attr("title", TableUtils.getResourceText("TBL_SELECT_ALL"));
 			} else if (mRenderConfig.headerSelector.type === "custom") {
 				const sTitle = mRenderConfig.headerSelector.tooltip;
 				rm.attr("title", sTitle);

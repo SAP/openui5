@@ -197,33 +197,35 @@ sap.ui.define([
 		let oRow = oTable.getRows()[0];
 		const oIcon = oODataV4Selection.getAggregation("icon");
 		const $SelectAll = oTable.$("selall");
+		const sDeselectAll = TableUtils.getResourceText("TBL_DESELECT_ALL");
+		const sSelectAll = TableUtils.getResourceText("TBL_SELECT_ALL");
 
 		oODataV4Selection.setSelected(oRow, true);
 		oRow = oTable.getRows()[1];
 		oODataV4Selection.setSelected(oRow, true);
 		assert.strictEqual(oODataV4Selection.getSelectedCount(), 2, '2 rows are selected');
 		assert.strictEqual(oIcon.getSrc(), IconPool.getIconURI(TableUtils.ThemeParameters.clearSelectionIcon), "DeselectAll icon is correct");
-		assert.strictEqual($SelectAll.attr("title"), TableUtils.getResourceText("TBL_DESELECT_ALL"), "DeselectAll tooltip is correct");
+		assert.strictEqual($SelectAll.attr("title"), sDeselectAll, "DeselectAll tooltip is correct");
 
 		oODataV4Selection.onHeaderSelectorPress();
 		assert.strictEqual(oODataV4Selection.getSelectedCount(), 0, 'all rows are deselected');
-		assert.strictEqual(oIcon.getSrc(), IconPool.getIconURI(TableUtils.ThemeParameters.checkboxIcon), "DeselectAll icon is correct");
-		assert.strictEqual($SelectAll.attr("title"), TableUtils.getResourceText("TBL_SELECT_ALL"), "DeselectAll tooltip is correct");
+		assert.strictEqual(oIcon.getSrc(), IconPool.getIconURI(TableUtils.ThemeParameters.checkboxIcon), "SelectAll icon is correct");
+		assert.strictEqual($SelectAll.attr("title"), sSelectAll, "SelectAll tooltip is correct");
 
 		oODataV4Selection.setLimit(0);
 		oODataV4Selection.setSelected(oRow, true);
-		assert.strictEqual(oIcon.getSrc(), IconPool.getIconURI(TableUtils.ThemeParameters.checkboxIcon), "DeselectAll icon is correct");
-		assert.strictEqual($SelectAll.attr("title"), TableUtils.getResourceText("TBL_SELECT_ALL"), "DeselectAll tooltip is correct");
+		assert.strictEqual(oIcon.getSrc(), IconPool.getIconURI(TableUtils.ThemeParameters.checkboxIcon), "SelectAll icon is correct");
+		assert.strictEqual($SelectAll.attr("title"), sSelectAll, "SelectAll tooltip is correct");
 
 		oODataV4Selection.onHeaderSelectorPress();
 		return this.whenSelectionChange(oODataV4Selection).then(function() {
 			assert.strictEqual(oODataV4Selection.getSelectedCount(), 400, 'all rows are selected');
-			assert.strictEqual(oIcon.getSrc(), IconPool.getIconURI(TableUtils.ThemeParameters.checkboxIcon), "DeselectAll icon is correct");
-			assert.strictEqual($SelectAll.attr("title"), TableUtils.getResourceText("TBL_DESELECT_ALL"), "DeselectAll tooltip is correct");
+			assert.strictEqual(oIcon.getSrc(), IconPool.getIconURI(TableUtils.ThemeParameters.checkboxIcon), "SelectAll icon is correct");
+			assert.strictEqual($SelectAll.attr("title"), sSelectAll, "SelectAll tooltip is correct");
 			oODataV4Selection.onHeaderSelectorPress();
 			assert.strictEqual(oODataV4Selection.getSelectedCount(), 0, 'all rows are deselected');
-			assert.strictEqual(oIcon.getSrc(), IconPool.getIconURI(TableUtils.ThemeParameters.checkboxIcon), "DeselectAll icon is correct");
-			assert.strictEqual($SelectAll.attr("title"), TableUtils.getResourceText("TBL_SELECT_ALL"), "DeselectAll tooltip is correct");
+			assert.strictEqual(oIcon.getSrc(), IconPool.getIconURI(TableUtils.ThemeParameters.checkboxIcon), "SelectAll icon is correct");
+			assert.strictEqual($SelectAll.attr("title"), sSelectAll, "SelectAll tooltip is correct");
 		});
 	});
 
@@ -233,33 +235,35 @@ sap.ui.define([
 		let oRow = oTable.getRows()[0];
 		const oIcon = oODataV4Selection.getAggregation("icon");
 		const $SelectAll = oTable.$("selall");
+		const sDeselectAll = TableUtils.getResourceText("TBL_DESELECT_ALL");
+		const sSelectAll = TableUtils.getResourceText("TBL_SELECT_ALL");
 
 		oODataV4Selection.setSelected(oRow, true);
 		oRow = oTable.getRows()[1];
 		oODataV4Selection.setSelected(oRow, true);
 		assert.strictEqual(oODataV4Selection.getSelectedCount(), 2, '2 rows are selected');
 		assert.strictEqual(oIcon.getSrc(), IconPool.getIconURI(TableUtils.ThemeParameters.clearSelectionIcon), "DeselectAll icon is correct");
-		assert.strictEqual($SelectAll.attr("title"), TableUtils.getResourceText("TBL_DESELECT_ALL"), "DeselectAll tooltip is correct");
+		assert.strictEqual($SelectAll.attr("title"), sDeselectAll, "DeselectAll tooltip is correct");
 
 		oODataV4Selection.onKeyboardShortcut("clear");
 		assert.strictEqual(oODataV4Selection.getSelectedCount(), 0, 'all rows are deselected');
-		assert.strictEqual(oIcon.getSrc(), IconPool.getIconURI(TableUtils.ThemeParameters.checkboxIcon), "DeselectAll icon is correct");
-		assert.strictEqual($SelectAll.attr("title"), TableUtils.getResourceText("TBL_SELECT_ALL"), "DeselectAll tooltip is correct");
+		assert.strictEqual(oIcon.getSrc(), IconPool.getIconURI(TableUtils.ThemeParameters.checkboxIcon), "SelectAll icon is correct");
+		assert.strictEqual($SelectAll.attr("title"), sSelectAll, "SelectAll tooltip is correct");
 
 		oODataV4Selection.setLimit(0);
 		oODataV4Selection.setSelected(oRow, true);
-		assert.strictEqual(oIcon.getSrc(), IconPool.getIconURI(TableUtils.ThemeParameters.checkboxIcon), "DeselectAll icon is correct");
-		assert.strictEqual($SelectAll.attr("title"), TableUtils.getResourceText("TBL_SELECT_ALL"), "DeselectAll tooltip is correct");
+		assert.strictEqual(oIcon.getSrc(), IconPool.getIconURI(TableUtils.ThemeParameters.checkboxIcon), "SelectAll icon is correct");
+		assert.strictEqual($SelectAll.attr("title"), sSelectAll, "SelectAll tooltip is correct");
 
 		oODataV4Selection.onKeyboardShortcut("toggle");
 		return this.whenSelectionChange(oODataV4Selection).then(function() {
 			assert.strictEqual(oODataV4Selection.getSelectedCount(), 400, 'all rows are selected');
-			assert.strictEqual(oIcon.getSrc(), IconPool.getIconURI(TableUtils.ThemeParameters.checkboxIcon), "DeselectAll icon is correct");
-			assert.strictEqual($SelectAll.attr("title"), TableUtils.getResourceText("TBL_DESELECT_ALL"), "DeselectAll tooltip is correct");
+			assert.strictEqual(oIcon.getSrc(), IconPool.getIconURI(TableUtils.ThemeParameters.checkboxIcon), "SelectAll icon is correct");
+			assert.strictEqual($SelectAll.attr("title"), sSelectAll, "SelectAll tooltip is correct");
 			oODataV4Selection.onKeyboardShortcut("toggle");
 			assert.strictEqual(oODataV4Selection.getSelectedCount(), 0, 'all rows are deselected');
-			assert.strictEqual(oIcon.getSrc(), IconPool.getIconURI(TableUtils.ThemeParameters.checkboxIcon), "DeselectAll icon is correct");
-			assert.strictEqual($SelectAll.attr("title"), TableUtils.getResourceText("TBL_SELECT_ALL"), "DeselectAll tooltip is correct");
+			assert.strictEqual(oIcon.getSrc(), IconPool.getIconURI(TableUtils.ThemeParameters.checkboxIcon), "SelectAll icon is correct");
+			assert.strictEqual($SelectAll.attr("title"), sSelectAll, "SelectAll tooltip is correct");
 		});
 	});
 
@@ -268,21 +272,22 @@ sap.ui.define([
 		const oODataV4Selection = oTable.getDependents()[0];
 		const oIcon = oODataV4Selection.getAggregation("icon");
 		const $SelectAll = oTable.$("selall");
+		const sDeselectAll = TableUtils.getResourceText("TBL_DESELECT_ALL");
 
 		assert.equal(oODataV4Selection.getLimit(), 200, "default limit is 200");
 		this.triggerRowSelectorClick(oTable, 0, false);
 		assert.strictEqual(oIcon.getSrc(), IconPool.getIconURI(TableUtils.ThemeParameters.clearSelectionIcon), "DeselectAll icon is correct");
-		assert.strictEqual($SelectAll.attr("title"), TableUtils.getResourceText("TBL_DESELECT_ALL"), "DeselectAll tooltip is correct");
+		assert.strictEqual($SelectAll.attr("title"), sDeselectAll, "DeselectAll tooltip is correct");
 		assert.strictEqual(oODataV4Selection.getSelectedCount(), 1, '1 rows are selected');
 
 		this.triggerRowSelectorClick(oTable, 5, true);
 		return this.whenSelectionChange(oODataV4Selection).then(function() {
 			assert.strictEqual(oIcon.getSrc(), IconPool.getIconURI(TableUtils.ThemeParameters.clearSelectionIcon), "DeselectAll icon is correct");
-			assert.strictEqual($SelectAll.attr("title"), TableUtils.getResourceText("TBL_DESELECT_ALL"), "DeselectAll tooltip is correct");
+			assert.strictEqual($SelectAll.attr("title"), sDeselectAll, "DeselectAll tooltip is correct");
 			assert.strictEqual(oODataV4Selection.getSelectedCount(), 6, 'range selected');
 			assert.ok(!oODataV4Selection.isLimitReached(), "limit is not reached");
 			assert.strictEqual(oIcon.getSrc(), IconPool.getIconURI(TableUtils.ThemeParameters.clearSelectionIcon), "DeselectAll icon is correct");
-			assert.strictEqual($SelectAll.attr("title"), TableUtils.getResourceText("TBL_DESELECT_ALL"), "DeselectAll tooltip is correct");
+			assert.strictEqual($SelectAll.attr("title"), sDeselectAll, "DeselectAll tooltip is correct");
 			oTable.setFirstVisibleRow(95);
 			return oTable.qunit.whenRenderingFinished();
 		}).then(function() {
@@ -328,12 +333,13 @@ sap.ui.define([
 		const oNotificationSpy = sinon.spy(TableUtils, "showNotificationPopoverAtIndex");
 		const oIcon = oODataV4Selection.getAggregation("icon");
 		const $SelectAll = oTable.$("selall");
+		const sDeselectAll = TableUtils.getResourceText("TBL_DESELECT_ALL");
 
 		oODataV4Selection.setLimit(100);
 		this.triggerRowSelectorClick(oTable, 0, false);
 		assert.strictEqual(oODataV4Selection.getSelectedCount(), 1, '1 rows are selected');
 		assert.strictEqual(oIcon.getSrc(), IconPool.getIconURI(TableUtils.ThemeParameters.clearSelectionIcon), "DeselectAll icon is correct");
-		assert.strictEqual($SelectAll.attr("title"), TableUtils.getResourceText("TBL_DESELECT_ALL"), "DeselectAll tooltip is correct");
+		assert.strictEqual($SelectAll.attr("title"), sDeselectAll, "DeselectAll tooltip is correct");
 
 		oTable.setFirstVisibleRow(200);
 		return oTable.qunit.whenRenderingFinished().then(function() {
@@ -342,7 +348,7 @@ sap.ui.define([
 		}.bind(this)).then(function() {
 			assert.strictEqual(oODataV4Selection.getSelectedCount(), 101, 'range selected');
 			assert.strictEqual(oIcon.getSrc(), IconPool.getIconURI(TableUtils.ThemeParameters.clearSelectionIcon), "DeselectAll icon is correct");
-			assert.strictEqual($SelectAll.attr("title"), TableUtils.getResourceText("TBL_DESELECT_ALL"), "DeselectAll tooltip is correct");
+			assert.strictEqual($SelectAll.attr("title"), sDeselectAll, "DeselectAll tooltip is correct");
 			assert.ok(oODataV4Selection.isLimitReached(), "limit is reached");
 			assert.ok(oScrollTableSpy.calledOnceWithExactly(oTable, 100, false), "table scrolled");
 			oScrollTableSpy.reset();
@@ -350,7 +356,7 @@ sap.ui.define([
 		}).then(function() {
 			assert.ok(oNotificationSpy.calledOnceWithExactly(oTable, 100, 100), "notification popover shown");
 			assert.strictEqual(oIcon.getSrc(), IconPool.getIconURI(TableUtils.ThemeParameters.clearSelectionIcon), "DeselectAll icon is correct");
-			assert.strictEqual($SelectAll.attr("title"), TableUtils.getResourceText("TBL_DESELECT_ALL"), "DeselectAll tooltip is correct");
+			assert.strictEqual($SelectAll.attr("title"), sDeselectAll, "DeselectAll tooltip is correct");
 			oNotificationSpy.reset();
 			oTable.setFirstVisibleRow(300);
 			return oTable.qunit.whenRenderingFinished();
@@ -360,7 +366,7 @@ sap.ui.define([
 		}.bind(this)).then(function() {
 			assert.strictEqual(oODataV4Selection.getSelectedCount(), 201, "range selection extended");
 			assert.strictEqual(oIcon.getSrc(), IconPool.getIconURI(TableUtils.ThemeParameters.clearSelectionIcon), "DeselectAll icon is correct");
-			assert.strictEqual($SelectAll.attr("title"), TableUtils.getResourceText("TBL_DESELECT_ALL"), "DeselectAll tooltip is correct");
+			assert.strictEqual($SelectAll.attr("title"), sDeselectAll, "DeselectAll tooltip is correct");
 			assert.ok(oODataV4Selection.isLimitReached(), "limit is reached");
 			assert.ok(oScrollTableSpy.calledOnceWithExactly(oTable, 200, false), "table scrolled");
 			oScrollTableSpy.restore();
@@ -378,16 +384,18 @@ sap.ui.define([
 		const oNotificationSpy = sinon.spy(TableUtils, "showNotificationPopoverAtIndex");
 		const oIcon = oODataV4Selection.getAggregation("icon");
 		const $SelectAll = oTable.$("selall");
+		const sSelectAll = TableUtils.getResourceText("TBL_SELECT_ALL");
+		const sDeselectAll = TableUtils.getResourceText("TBL_DESELECT_ALL");
 
 		oODataV4Selection.setLimit(100);
 		oTable.setFirstVisibleRow(300);
 		return oTable.qunit.whenRenderingFinished().then(function() {
 			assert.strictEqual(oIcon.getSrc(), IconPool.getIconURI(TableUtils.ThemeParameters.checkboxIcon), "DeselectAll icon is correct");
-			assert.strictEqual($SelectAll.attr("title"), TableUtils.getResourceText("TBL_SELECT_ALL"), "DeselectAll tooltip is correct");
+			assert.strictEqual($SelectAll.attr("title"), sSelectAll, "DeselectAll tooltip is correct");
 			this.triggerRowSelectorClick(oTable, 5, false);
 			assert.strictEqual(oODataV4Selection.getSelectedCount(), 1, '1 rows are selected');
 			assert.strictEqual(oIcon.getSrc(), IconPool.getIconURI(TableUtils.ThemeParameters.clearSelectionIcon), "DeselectAll icon is correct");
-			assert.strictEqual($SelectAll.attr("title"), TableUtils.getResourceText("TBL_DESELECT_ALL"), "DeselectAll tooltip is correct");
+			assert.strictEqual($SelectAll.attr("title"), sDeselectAll, "DeselectAll tooltip is correct");
 			oTable.setFirstVisibleRow(0);
 			return oTable.qunit.whenRenderingFinished();
 		}.bind(this)).then(function() {
@@ -396,7 +404,7 @@ sap.ui.define([
 		}.bind(this)).then(function() {
 			assert.strictEqual(oODataV4Selection.getSelectedCount(), 101, 'range selected');
 			assert.strictEqual(oIcon.getSrc(), IconPool.getIconURI(TableUtils.ThemeParameters.clearSelectionIcon), "DeselectAll icon is correct");
-			assert.strictEqual($SelectAll.attr("title"), TableUtils.getResourceText("TBL_DESELECT_ALL"), "DeselectAll tooltip is correct");
+			assert.strictEqual($SelectAll.attr("title"), sDeselectAll, "DeselectAll tooltip is correct");
 			assert.ok(oODataV4Selection.isLimitReached(), "limit is reached");
 			assert.ok(oScrollTableSpy.calledOnceWithExactly(oTable, 205, true), "table scrolled");
 			oScrollTableSpy.reset();
@@ -404,7 +412,7 @@ sap.ui.define([
 		}).then(function() {
 			assert.ok(oNotificationSpy.calledOnceWithExactly(oTable, 205, 100), "notification popover shown");
 			assert.strictEqual(oIcon.getSrc(), IconPool.getIconURI(TableUtils.ThemeParameters.clearSelectionIcon), "DeselectAll icon is correct");
-			assert.strictEqual($SelectAll.attr("title"), TableUtils.getResourceText("TBL_DESELECT_ALL"), "DeselectAll tooltip is correct");
+			assert.strictEqual($SelectAll.attr("title"), sDeselectAll, "DeselectAll tooltip is correct");
 			oNotificationSpy.reset();
 			oTable.setFirstVisibleRow(0);
 			return oTable.qunit.whenRenderingFinished();
@@ -414,7 +422,7 @@ sap.ui.define([
 		}.bind(this)).then(function() {
 			assert.strictEqual(oODataV4Selection.getSelectedCount(), 201, "range selection extended");
 			assert.strictEqual(oIcon.getSrc(), IconPool.getIconURI(TableUtils.ThemeParameters.clearSelectionIcon), "DeselectAll icon is correct");
-			assert.strictEqual($SelectAll.attr("title"), TableUtils.getResourceText("TBL_DESELECT_ALL"), "DeselectAll tooltip is correct");
+			assert.strictEqual($SelectAll.attr("title"), sDeselectAll, "DeselectAll tooltip is correct");
 			assert.ok(oODataV4Selection.isLimitReached(), "limit is reached");
 			assert.ok(oScrollTableSpy.calledOnceWithExactly(oTable, 105, true), "table scrolled");
 			oScrollTableSpy.restore();
@@ -422,7 +430,7 @@ sap.ui.define([
 		}).then(function() {
 			assert.ok(oNotificationSpy.calledOnceWithExactly(oTable, 105, 100), "notification popover shown");
 			assert.strictEqual(oIcon.getSrc(), IconPool.getIconURI(TableUtils.ThemeParameters.clearSelectionIcon), "DeselectAll icon is correct");
-			assert.strictEqual($SelectAll.attr("title"), TableUtils.getResourceText("TBL_DESELECT_ALL"), "DeselectAll tooltip is correct");
+			assert.strictEqual($SelectAll.attr("title"), sDeselectAll, "DeselectAll tooltip is correct");
 			oNotificationSpy.reset();
 		});
 	});
@@ -433,6 +441,8 @@ sap.ui.define([
 		let oRow = oTable.getRows()[0];
 		const oIcon = oODataV4Selection.getAggregation("icon");
 		const $SelectAll = oTable.$("selall");
+		const sSelectAll = TableUtils.getResourceText("TBL_SELECT_ALL");
+		const sDeselectAll = TableUtils.getResourceText("TBL_DESELECT_ALL");
 
 		oODataV4Selection.setLimit(10000);
 		oRow = oTable.getRows()[1];
@@ -440,26 +450,26 @@ sap.ui.define([
 		assert.strictEqual(oODataV4Selection.getSelectedCount(), 1, '2 rows are selected');
 		assert.strictEqual(oIcon.getSrc(), IconPool.getIconURI(TableUtils.ThemeParameters.clearSelectionIcon),
 			"DeselectAll icon is correct - clearSelectionIcon");
-		assert.strictEqual($SelectAll.attr("title"), TableUtils.getResourceText("TBL_DESELECT_ALL"), "DeselectAll tooltip is correct");
+		assert.strictEqual($SelectAll.attr("title"), sDeselectAll, "DeselectAll tooltip is correct");
 
 		oODataV4Selection.onHeaderSelectorPress();
 		assert.strictEqual(oODataV4Selection.getSelectedCount(), 0, '0 rows are selected');
 		assert.strictEqual(oIcon.getSrc(), IconPool.getIconURI(TableUtils.ThemeParameters.checkboxIcon),
 			"DeselectAll icon is correct - checkboxIcon");
-		assert.strictEqual($SelectAll.attr("title"), TableUtils.getResourceText("TBL_SELECT_ALL"), "DeselectAll tooltip is correct");
+		assert.strictEqual($SelectAll.attr("title"), sSelectAll, "DeselectAll tooltip is correct");
 
 		oODataV4Selection.onHeaderSelectorPress();
 		return this.whenSelectionChange(oODataV4Selection).then(function() {
 			assert.strictEqual(oODataV4Selection.getSelectedCount(), 400, 'all rows are selected');
 			assert.strictEqual(oIcon.getSrc(), IconPool.getIconURI(TableUtils.ThemeParameters.allSelectedIcon),
 				"DeselectAll icon is correct - allSelectedIcon");
-			assert.strictEqual($SelectAll.attr("title"), TableUtils.getResourceText("TBL_DESELECT_ALL"), "DeselectAll tooltip is correct");
+			assert.strictEqual($SelectAll.attr("title"), sDeselectAll, "DeselectAll tooltip is correct");
 
 			oODataV4Selection.setSelected(oRow, false);
 
 			assert.strictEqual(oODataV4Selection.getSelectedCount(), 399, '399 rows are selected');
 			assert.strictEqual(oIcon.getSrc(), IconPool.getIconURI(TableUtils.ThemeParameters.clearSelectionIcon), "DeselectAll icon is correct");
-			assert.strictEqual($SelectAll.attr("title"), TableUtils.getResourceText("TBL_DESELECT_ALL"), "DeselectAll tooltip is correct");
+			assert.strictEqual($SelectAll.attr("title"), sDeselectAll, "DeselectAll tooltip is correct");
 		});
 	});
 });

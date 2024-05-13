@@ -120,7 +120,7 @@ sap.ui.define([
 
 	QUnit.test("#getRenderConfig", function(assert) {
 		const oMultiSelectionPlugin = new MultiSelectionPlugin();
-		const sDeSelectAll = TableUtils.getResourceText("TBL_DESELECT_ALL");
+		const sDeselectAll = TableUtils.getResourceText("TBL_DESELECT_ALL");
 		const sSelectAll = TableUtils.getResourceText("TBL_SELECT_ALL");
 		const that = this;
 
@@ -189,7 +189,7 @@ sap.ui.define([
 					visible: true,
 					enabled: true,
 					selected: true,
-					tooltip: sDeSelectAll
+					tooltip: sDeselectAll
 				}
 			}, "MultiToggle; Limit disabled; All rows selected");
 
@@ -203,7 +203,7 @@ sap.ui.define([
 					visible: true,
 					enabled: true,
 					selected: false,
-					tooltip: sDeSelectAll
+					tooltip: sDeselectAll
 				}
 			}, "MultiToggle; One row selected");
 
@@ -217,7 +217,7 @@ sap.ui.define([
 					visible: false,
 					enabled: true,
 					selected: false,
-					tooltip: sDeSelectAll
+					tooltip: sDeselectAll
 				}
 			}, "Single; One row selected");
 

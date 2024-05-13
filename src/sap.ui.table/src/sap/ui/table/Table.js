@@ -3173,10 +3173,6 @@ sap.ui.define([
 
 			$SelectAll.toggleClass("sapUiTableSelAll", !bAllRowsSelected);
 			this._getAccExtension().setSelectAllState(bAllRowsSelected);
-
-			const sSelectAllResourceTextID = bAllRowsSelected ? "TBL_DESELECT_ALL" : "TBL_SELECT_ALL";
-			const sTitle = TableUtils.getResourceText(sSelectAllResourceTextID);
-			$SelectAll.attr('title', sTitle);
 		} else if (mRenderConfig.headerSelector.type === "custom") {
 			$SelectAll.toggleClass("sapUiTableSelAllDisabled", !mRenderConfig.headerSelector.enabled);
 
