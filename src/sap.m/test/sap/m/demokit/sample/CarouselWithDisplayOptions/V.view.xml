@@ -19,17 +19,20 @@
 				step="25"
 				max="100" />
 		</f:SimpleForm>
-
+		<Title id="carouselTitle"
+			   class="sapUiMediumMarginTop"
+			   text="Carousel with Display Options"></Title>
 		<HBox justifyContent="Center" renderType="Bare">
 			<Panel id="carouselContainer" height="650px" backgroundDesign="Transparent">
 				<Carousel
 					id="carouselSample"
+					ariaLabelledBy="carouselTitle"
 					loop="true"
 					class="sapUiContentPadding">
 					<customLayout>
 						<CarouselLayout/>
 					</customLayout>
-				</Carousel>	
+				</Carousel>
 			</Panel>
 		</HBox>
 
@@ -93,7 +96,7 @@
 			<Label text="Scroll mode - visible pages" />
 			<Switch state="false"
 				tooltip="Toggles the scrollMode property of the carousel"
-				change=".OnScrollModeChange" />	
+				change=".OnScrollModeChange" />
 		</f:SimpleForm>
 	</Page>
 </mvc:View>

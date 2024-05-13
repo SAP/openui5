@@ -4,7 +4,10 @@
 	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
 	height="100%">
-	<Carousel class="sapUiContentPadding" loop="true">
+	<Title id="carouselTitle"
+		   class="sapUiSmallMarginTop"
+		   text="Image Gallery Carousel"></Title>
+	<Carousel ariaLabelledBy="carouselTitle" class="sapUiContentPadding" loop="true">
 		<Image src="{img>/products/pic1}" alt="Example picture of speakers" />
 		<Image src="{img>/products/pic2}" alt="Example picture of USB flash drive" />
 		<Image src="{img>/products/pic3}" alt="Example picture of spotlight" />

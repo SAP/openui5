@@ -231,7 +231,15 @@ sap.ui.define([
 				 * Provides getter and setter for the currently displayed page. For the setter, argument may be the control itself, which must be member of the carousel's page list, or the control's id.
 				 * The getter will return the control id
 				 */
-				activePage : {type : "sap.ui.core.Control", multiple : false}
+				activePage : {type : "sap.ui.core.Control", multiple : false},
+
+				/**
+				 * Association to controls / IDs which label this control (see WAI-ARIA attribute <code>aria-labelledby</code>).
+				 * @since 1.125
+				 */
+				ariaLabelledBy: {
+					type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy"
+				}
 			},
 			events : {
 

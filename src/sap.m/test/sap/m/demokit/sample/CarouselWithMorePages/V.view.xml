@@ -25,8 +25,12 @@
 				tooltip="Toggles the scrollMode property of the carousel"
 				change=".OnScrollModeChange" />
 		</lf:SimpleForm>
+		<Title id="carouselTitle"
+			   class="sapUiMediumMarginTop"
+			   text="10 Matching Results"></Title>
 		<Carousel
 			id="carouselSample"
+			ariaLabelledBy="carouselTitle"
 			height="auto"
 			pages="{
 				path: 'products>/ProductCollection'
@@ -34,9 +38,9 @@
 			<customLayout>
 				<CarouselLayout visiblePagesCount="{settings>/pagesCount}"/>
 			</customLayout>
-			<ScrollContainer 
-				vertical="false" 
-				horizontal="false" 
+			<ScrollContainer
+				vertical="false"
+				horizontal="false"
 				class="sapUiContentPadding">
 
 				<f:Card>

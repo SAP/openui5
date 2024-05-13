@@ -4,7 +4,10 @@
 	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
 	height="100%">
-	<Carousel class="sapUiContentPadding">
+	<Title id="carouselTitle"
+		   class="sapUiSmallMarginTop"
+		   text="Carousel with Different Controls"></Title>
+	<Carousel ariaLabelledBy="carouselTitle" class="sapUiContentPadding">
 		<l:VerticalLayout>
 			<Image src="{img>/products/pic1}" alt="Example picture of speakers" />
 		</l:VerticalLayout>
