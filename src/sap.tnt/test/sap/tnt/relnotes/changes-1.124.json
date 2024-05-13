@@ -1,0 +1,12 @@
+{
+  "1.124.0": {
+    "date": "May 2024",
+    "notes": [
+      {
+        "id": "85b273f66293c2aeb5ed54cbc2fb28566792e545",
+        "type": "FIX",
+        "text": " sap-icons-tnt: Fixed wrong icon names"
+      }
+    ]
+  }
+}
