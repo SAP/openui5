@@ -197,7 +197,7 @@
         .sapMGTHdrIconImage.None {
             color: @sapUiTileIconColor
         }
-        .sapMGTHdrIconImage.sapUiIcon:not(.sapMATIconFrame) {
+        .sapMGTHdrIconImage.sapUiIcon {
             &::before {
                 height: 2.75rem;
                 font-weight: 400;
@@ -208,17 +208,8 @@
                 text-align: center;
             }
         }
-        .sapMGTHdrIconImage.sapUiIcon.sapMATIconFrame {
-            height: 3.25rem;
-            width: 3.25rem;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: @sapAvatar_10_Background;
-            border-radius: @sapElement_BorderCornerRadius;
-            &::before {
-                font-size: 1.125rem;
-            }
+        .sapMATIconFrame {
+            flex-shrink: 0;
         }
     }
 }
