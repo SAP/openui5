@@ -8,10 +8,11 @@ sap.ui.define([
 	"sap/m/Input",
 	"sap/m/FlexItemData",
 	"sap/m/Text",
+	"sap/m/MessageToast",
 	"sap/ui/core/Element",
 	"sap/ui/core/HTML",
 	"sap/base/Log"
-], function(App, Page, Button, HBox, mobileLibrary, Label, Input, FlexItemData, MText, Element, HTML, Log) {
+], function(App, Page, Button, HBox, mobileLibrary, Label, Input, FlexItemData, MText, MessageToast, Element, HTML, Log) {
 	"use strict";
 
 	// shortcut for sap.m.FlexAlignItems
@@ -35,36 +36,42 @@ sap.ui.define([
 			text : "[default] to Page 2",
 			press : function() {
 				app.to("page2");
+				MessageToast.show("Navigate to Page 2");
 			}
 		}),
 			new Button({
 				text : "SLIDE to Page 2",
 				press : function() {
 					app.to("page2", "slide");
+					MessageToast.show("SLIDE to Page 2");
 				}
 			}),
 			new Button({
 				text : "FADE to Page 2",
 				press : function() {
 					app.to("page2", "fade");
+					MessageToast.show("FADE to Page 2");
 				}
 			}),
 			new Button({
 				text : "FLIP to Page 2",
 				press : function() {
 					app.to("page2", "flip");
+					MessageToast.show("FLIP to Page 2");
 				}
 			}),
 			new Button({
 				text : "DOOR to Page 2",
 				press : function() {
 					app.to("page2", "door");
+					MessageToast.show("DOOR to Page 2");
 				}
 			}),
 			new Button({
 				text : "SHOW to Page 2",
 				press : function() {
 					app.to("page2", "show");
+					MessageToast.show("SHOW to Page 2");
 				}
 			}),
 			new Button({
@@ -72,6 +79,7 @@ sap.ui.define([
 				press : function() {
 					var value = Element.getElementById("p1input").getValue();
 					app.to("page2", {payloadInfo:value});
+					MessageToast.show("SLIDE to Page 2 ");
 				}
 			}),
 			new HBox({
@@ -104,25 +112,31 @@ sap.ui.define([
 		titleLevel: "H1",
 		showNavButton: true,
 		navButtonText: "Page 1",
-		navButtonPress: function(){ app.back(); },
+		navButtonPress: function() {
+			app.back();
+			MessageToast.show("Navigate to Page 1");
+		},
 		icon: "images/SAPUI5.jpg",
 		enableScrolling: false,
 		content : [ new Button({
 			text : "SLIDE to Page 3",
 			press : function() {
 				app.to("page3", "slide");
+				MessageToast.show("SLIDE to Page 3");
 			}
 		}),
 			new Button({
 				text : "FADE to Page 3",
 				press : function() {
 					app.to("page3", "fade");
+					MessageToast.show("FADE to Page 3");
 				}
 			}),
 			new Button({
 				text : "SHOW to Page 3",
 				press : function() {
 					app.to("page3", "show");
+					MessageToast.show("SHOW to Page 3");
 				}
 			}),
 			new HBox({
@@ -166,11 +180,15 @@ sap.ui.define([
 		titleLevel: "H1",
 		showNavButton: true,
 		navButtonText: "Home",
-		navButtonPress: function(){ app.backToTop(); },
+		navButtonPress: function() {
+			app.backToTop();
+			MessageToast.show("Navigate to Page 1");
+		},
 		icon: "images/SAPUI5.jpg",
 		content : [
 			new Button({text : "Back to Page 2", press:function(){
 				app.back({myBackPayload:Element.getElementById("p3input").getValue()});
+				MessageToast.show("Navigate to Page 2");
 			}}),
 			new HBox({
 				alignItems: FlexAlignItems.Center,

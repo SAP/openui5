@@ -1116,15 +1116,24 @@ sap.ui.define([
 				items: [
 					new Button("size_btn", {
 						text : "Change page width to 480px",
-						press : function() { Element.getElementById("toolbar-page").setWidth("480px"); }
+						press : function() {
+							Element.getElementById("toolbar-page").setWidth("480px");
+							MessageToast.show("Page width changed to 480px.");
+						}
 					}).addStyleClass("sapUiSmallMargin"),
 					new Button("size_btn2", {
 						text : "Change page width to 700px",
-						press : function() { Element.getElementById("toolbar-page").setWidth("700px"); }
+						press : function() {
+							Element.getElementById("toolbar-page").setWidth("700px");
+							MessageToast.show("Page width changed to 700px.");
+						}
 					}).addStyleClass("sapUiSmallMargin"),
 					new Button("size_btn3", {
 						text : "Change page width to 100%",
-						press : function() { Element.getElementById("toolbar-page").setWidth("100%"); }
+						press : function() {
+							Element.getElementById("toolbar-page").setWidth("100%");
+							MessageToast.show("Page width changed to 100%.");
+						}
 					}).addStyleClass("sapUiSmallMargin")
 				]
 			})

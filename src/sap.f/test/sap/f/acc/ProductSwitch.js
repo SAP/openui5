@@ -102,6 +102,7 @@ sap.ui.define([
 
 	var oPage = new Page("page", {
 		title: "Test Page for sap.f.ProductSwitch",
+		titleLevel: "H1",
 		content: [ productSwitch ]
 	}).addStyleClass("sapUiContentPadding");
 
