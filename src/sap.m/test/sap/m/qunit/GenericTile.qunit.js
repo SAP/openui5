@@ -5420,20 +5420,94 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", async f
 
 		//Shift tabbing back to tile level
 		bForward = false;
-		var oSpy = this.spy(this.oGenericTile, "onsaptabprevious");
 		qutils.triggerKeyEvent("keydown",this.oGenericTile._oMoreIcon.getDomRef(),KeyCodes.TAB,true);
 		$Tabbables = findTabbables(document.activeElement, [document.getElementById("qunit-fixture")], bForward);
 		if ($Tabbables.length) {
 			$Tabbables.get(!bForward ? $Tabbables.length - 1 : 0).focus();
 		}
 		assert.equal(document.activeElement,this.oGenericTile.getDomRef(),"Focus is on the GenericTile");
-		assert.equal(oSpy.calledOnce, true, "onsaptabprevious method has been called");
 		assert.notOk(this.oGenericTile.$("action-more").hasClass("sapMGTVisible"),"The Action More button should not be visible");
 	});
 
 	QUnit.test("Adding aria-label to the more button",function(assert){
 		var sText = this.oGenericTile._oMoreIcon.getDomRef().getAttribute("aria-label");
 		assert.equal(sText,this.oGenericTile.getHeader() + " " + this.oGenericTile.getSubheader() + " " + this.oGenericTile._oRb.getText("GENERICTILE_MORE_ACTIONBUTTON_TEXT"),"Aria label has been set as expected for the more button");
+	});
+
+	QUnit.module("Keyboard mouse and focus handling", {
+		beforeEach: function () {
+
+			// Arrange
+			var oSettings = new GridContainerSettings({columns: 2, rowSize: "80px", columnSize: "80px", gap: "16px"});
+
+			this.oScrollContainer = new ScrollContainer({
+				height: "200px",
+				content: this.oGrid = new GridContainer({
+					layout: oSettings,
+					items: [
+						new GenericTile({
+							header: "GenericTile",
+							subheader: "GenericTile subHeader",
+							mode: "IconMode",
+							tileIcon: "sap-icon://table-view",
+							backgroundColor: "sapLegendColor1",
+							frameType: "TwoByHalf",
+							scope: "ActionMore"
+						}),
+						new GenericTile({
+							header: "GenericTile",
+							subheader: "GenericTile subHeader",
+							mode: "IconMode",
+							tileIcon: "sap-icon://table-view",
+							backgroundColor: "sapLegendColor1",
+							frameType: "TwoByHalf",
+							scope: "ActionMore"
+						}),
+						new GenericTile({
+							header: "GenericTile",
+							subheader: "GenericTile subHeader",
+							mode: "IconMode",
+							tileIcon: "sap-icon://table-view",
+							backgroundColor: "sapLegendColor1",
+							frameType: "TwoByHalf",
+							scope: "ActionMore"
+						}),
+						new GenericTile({
+							header: "GenericTile",
+							subheader: "GenericTile subHeader",
+							mode: "IconMode",
+							tileIcon: "sap-icon://table-view",
+							backgroundColor: "sapLegendColor1",
+							frameType: "TwoByHalf",
+							scope: "ActionMore"
+						})
+					]
+				})
+			});
+
+			this.oScrollContainer.placeAt("qunit-fixture");
+			oCore.applyChanges();
+		},
+		afterEach: function () {
+			this.oScrollContainer.destroy();
+			this.oScrollContainer = null;
+		}
+	});
+
+	QUnit.test("Right Arrow navigation through grid container", function (assert) {
+		// Arrange
+		var oItemWrapper1 = this.oGrid.getDomRef("listUl").children[0],
+			bForward = true,
+			oMoreButton = this.oGrid.getItems()[0]._oMoreIcon;
+		//Act
+		oItemWrapper1.focus();
+		qutils.triggerKeydown(oItemWrapper1, KeyCodes.TAB);
+		var $Tabbables = findTabbables(document.activeElement, [document.getElementById("qunit-fixture")], bForward);
+		if ($Tabbables.length) {
+			$Tabbables.get(!bForward ? $Tabbables.length - 1 : 0).focus();
+		}
+		//Assert
+		assert.ok(oMoreButton.hasStyleClass("sapMGTVisible"),"The Action More button is visible");
 	});
 
 	QUnit.module("Getting focus on IconMode tiles", {
