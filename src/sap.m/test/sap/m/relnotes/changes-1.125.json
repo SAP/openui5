@@ -1,0 +1,42 @@
+{
+  "1.125.0": {
+    "date": "May 2024",
+    "notes": [
+      {
+        "id": "16ba37161fd450effab289e1dd0c685a97aa2d5e",
+        "type": "FEATURE",
+        "text": " sap.m.SinglePlanningCalendar: add additional detail to moreLinkPress event"
+      },
+      {
+        "id": "11152c5329dc281a6f43b1057a46ad11892e157a",
+        "type": "FIX",
+        "text": " sap.m.SplitContainer: Addapted control after deprecated property"
+      },
+      {
+        "id": "7d77ac43d3b65e5bc27672893d45b0d4567044ac",
+        "type": "FEATURE",
+        "text": " sap.m.PlanningCalendar: new noData aggregation"
+      },
+      {
+        "id": "fc04220cff912d64e0f1152626e1d5d37137eaf3",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Displayed pages are preserved after invalidation"
+      },
+      {
+        "id": "e840fc52d2475481c8b28c98b23a08e13b8c8aa0",
+        "type": "FIX",
+        "text": " sap.m.DateRangeSelection: adding an accessibility test page"
+      },
+      {
+        "id": "c175518863acaec25be1257291d9dac9b3b61cfe",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: adding an accessibility test page"
+      },
+      {
+        "id": "49aab3bfd5445c8aedf78e17294cd060adc6bd0a",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Aria-roledescription is removed"
+      }
+    ]
+  }
+}

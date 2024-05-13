@@ -3,6 +3,11 @@
     "date": "May 2024",
     "notes": [
       {
+        "id": "55e9851a700947ff9ad03aa26148482277b51106",
+        "type": "FIX",
+        "text": " sap\\ui\\core\\format\\DateFormat.fnCreateDate: set UTCFullYear must be set with all components"
+      },
+      {
         "id": "f63b0d10da9a5d8ccd2eef60f2b9a6a86cf7e04f",
         "type": "FIX",
         "text": " Core: add documentation on the usage of the Core module"

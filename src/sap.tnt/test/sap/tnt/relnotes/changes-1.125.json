@@ -1,0 +1,12 @@
+{
+  "1.125.0": {
+    "date": "May 2024",
+    "notes": [
+      {
+        "id": "de56ce90547d225e6d3a916956edf5fa0cc25414",
+        "type": "FIX",
+        "text": " sap.tnt.ToolHeader: Fixed non image comparison failure"
+      }
+    ]
+  }
+}
