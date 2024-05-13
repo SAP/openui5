@@ -59,6 +59,7 @@ sap.ui.define([
 	 */
 	ABAPAccess.isExtensibilityEnabled = function(oControl) {
 		return getExtensibilityVariant(oControl).then(function(oExtensibilityVariant) {
+			// Can any extensibility app be navigated to (uses fallback mechanism of getNavigationUri)?
 			return oExtensibilityVariant.getNavigationUri().then(function(sNavigationUri) {
 				return Boolean(sNavigationUri);
 			});
@@ -89,9 +90,9 @@ sap.ui.define([
 	/**
 	 * @inheritDoc
 	 */
-	ABAPAccess.onTriggerCreateExtensionData = function() {
+	ABAPAccess.onTriggerCreateExtensionData = function(oExtensibilityInfo, sRtaStyleClassName, sActionKey) {
 		return getExtensibilityVariant().then(function(oExtensibilityVariant) {
-			return oExtensibilityVariant.getNavigationUri().then(function(sNavigationUri) {
+			return oExtensibilityVariant.getNavigationUri(sActionKey).then(function(sNavigationUri) {
 				if (sNavigationUri) {
 					openWindow(sNavigationUri, "_blank");
 				}

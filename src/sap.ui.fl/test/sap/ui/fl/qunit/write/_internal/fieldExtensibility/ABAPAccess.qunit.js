@@ -125,8 +125,16 @@ sap.ui.define([
 
 			return ABAPAccess.getTexts().then(function(mTexts) {
 				var mExpectedTexts = {
-					tooltip: "BTN_FREP_CCF",
-					headerText: "BUSINESS_CONTEXT_TITLE"
+					tooltip: "BTN_CREATE_CUSTOM_FIELD",
+					headerText: "BUSINESS_CONTEXT_TITLE",
+					buttonText: "BTN_CREATE_CUSTOM_FIELD",
+					options: [
+						{
+							actionKey: "CUSTOM_FIELD",
+							text: "BTN_CREATE_CUSTOM_FIELD",
+							tooltip: "BTN_CREATE_CUSTOM_FIELD"
+						}
+					]
 				};
 
 				assert.deepEqual(mTexts, mExpectedTexts, "the correct texts were retrieved");
@@ -175,7 +183,7 @@ sap.ui.define([
 			var oExpectedParams = {
 				target: {
 					semanticObject: "CustomField",
-					action: "develop"
+					action: "manage"
 				},
 				params: {
 					businessContexts: ["CFD_TSM_BUPA_ADR", "CFD_TSM_BUPA"],
@@ -188,7 +196,8 @@ sap.ui.define([
 			ABAPAccess.onControlSelected(this.oControl);
 
 			return ABAPAccess.onTriggerCreateExtensionData().then(function() {
-				assert.propEqual(JSON.parse(oOpenNewWindowStub.lastCall.args[0]), oExpectedParams, "the function was called with the correct parameters");
+				var oActualParams = JSON.parse(oOpenNewWindowStub.lastCall.args[0]);
+				assert.propEqual(oActualParams, oExpectedParams, "the function was called with the correct parameters");
 				done();
 			});
 		});
@@ -332,13 +341,14 @@ sap.ui.define([
 			}));
 
 			aPromises.push(ABAPAccess.onTriggerCreateExtensionData().then(function() {
-				assert.equal("EntityType01", JSON.parse(oOpenNewWindowStub.lastCall.args[0]).params.entityType, "correct entity type returned");
+				var oActualEntityType = JSON.parse(oOpenNewWindowStub.lastCall.args[0]).params.entityType;
+				assert.equal("EntityType01", oActualEntityType, "correct entity type returned");
 			}));
 
 			Promise.allSettled(aPromises).then(function(aResults) {
-				aResults.forEach(function(oResult) {
+				for (var oResult of aResults) {
 					assert.equal(oResult.status, "fulfilled", oResult.reason || "Ok");
-				});
+				}
 			}).finally(function() {
 				done();
 			});
@@ -350,22 +360,27 @@ sap.ui.define([
 
 			this.oServer = sinon.fakeServer.create();
 			this.oServer.autoRespond = true;
-			this.oServer.respondWith("GET", /.*GetBusinessContextsByEntityType.*/, [400, { "Content-Type": "application/json" }, JSON.stringify({
-				error: {
-					code: "005056A509B11EE1B9A8FEC11C21578E",
-					message: {
-						lang: "en",
-						value: "Invalid Function Import Parameter"
-					},
-					innererror: {
-						transactionid: "54E429A74593458DE10000000A420908",
-						timestamp: "20150219074515.1395610",
-						Error_Resolution: {
-							SAP_Transaction: "Run transaction /IWFND/ERROR_LOG on SAP NW Gateway hub system and search for entries with the timestamp above for more details", SAP_Note: "See SAP Note 1797736 for error analysis (https://service.sap.com/sap/support/notes/1797736)"
+			this.oServer.respondWith("GET", /.*GetBusinessContextsByEntityType.*/, [
+				400,
+				{ "Content-Type": "application/json" },
+				JSON.stringify({
+					error: {
+						code: "005056A509B11EE1B9A8FEC11C21578E",
+						message: {
+							lang: "en",
+							value: "Invalid Function Import Parameter"
+						},
+						innererror: {
+							transactionid: "54E429A74593458DE10000000A420908",
+							timestamp: "20150219074515.1395610",
+							// eslint-disable-next-line camelcase
+							Error_Resolution: {
+								// eslint-disable-next-line camelcase
+								SAP_Transaction: "Run transaction /IWFND/ERROR_LOG on SAP NW Gateway hub system and search for entries with the timestamp above for more details", SAP_Note: "See SAP Note 1797736 for error analysis (https://service.sap.com/sap/support/notes/1797736)"
+							}
 						}
 					}
-				}
-			})]);
+				})]);
 
 			ABAPAccess.onControlSelected(this.oView.byId("EntityType01.Prop1"));
 

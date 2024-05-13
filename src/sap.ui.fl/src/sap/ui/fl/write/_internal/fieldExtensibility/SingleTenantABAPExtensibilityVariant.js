@@ -13,28 +13,33 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var sExtensionDataServiceUri = "/sap/opu/odata/SAP/APS_CUSTOM_FIELD_MAINTENANCE_SRV/";
-	var mExtensibilityType = {
-		None: -1,
-		Both: 0,
-		Fields: 1,
-		Logic: 2
+	const sExtensionDataServiceUri = "/sap/opu/odata/SAP/APS_CUSTOM_FIELD_MAINTENANCE_SRV/";
+	const sNamespace = "sap.ui.fl.write._internal.fieldExtensibility.SingleTenantABAPExtensibilityVariant";
+
+	const oKeyOfAction = {
+		CustomField: "CUSTOM_FIELD",
+		CustomLogic: "CUSTOM_LOGIC"
 	};
-	var aNavigationIntents = [{
-		semanticObject: "CustomField",
-		action: "develop"
-	}, {
-		semanticObject: "CustomField",
-		action: "manage"
-	}, {
-		semanticObject: "CustomLogic",
-		action: "develop"
-	}];
-	var aTextKeys = [
-		"BTN_FREP_CCF",
-		"BTN_ADD_FIELD",
-		"BTN_ADD_LOGIC"
-	];
+	const oNavigationIntents = {
+		[oKeyOfAction.CustomField]: {
+			semanticObject: "CustomField",
+			action: "manage"
+		},
+		[oKeyOfAction.CustomLogic]: {
+			semanticObject: "CustomLogic",
+			action: "develop"
+		}
+	};
+
+	const oTextKeys = {
+		BusinessContextTitle: "BUSINESS_CONTEXT_TITLE",
+		MenuButtonLabel: "BTN_CREATE",
+		MenuButtonTooltip: "BTN_FREP_CCF",
+		MenuCreateCustomField: "BTN_MENU_CREATE_CUSTOM_FIELD",
+		StandaloneCreateCustomField: "BTN_CREATE_CUSTOM_FIELD",
+		MenuCreateCustomLogic: "BTN_MENU_CREATE_CUSTOM_LOGIC",
+		StandaloneCreateCustomLogic: "BTN_CREATE_CUSTOM_LOGIC"
+	};
 
 	/**
 	 * Extension variant for ABAP single tenant environnments (via so called Custom Fields)
@@ -44,93 +49,121 @@ sap.ui.define([
 	 * @version ${version}
 	 * @public
 	 */
-
-	var SingleTenantABAPExtensibilityVariant = ABAPExtensibilityVariant.extend("sap.ui.fl.write._internal.fieldExtensibility.SingleTenantABAPExtensibilityVariant", {
-		_iExtensibilityType: mExtensibilityType.None,
-
+	const SingleTenantABAPExtensibilityVariant = ABAPExtensibilityVariant.extend(sNamespace, {
 		/**
 		 * @inheritDoc
 		 */
-		getExtensionData() {
-			return this._oExtensionDataPromise.then(function(aBusinessContexts) {
-				if (this._containsData(aBusinessContexts)) {
-					return this._convertBusinessContextsToExtensionData(aBusinessContexts);
-				}
+		async getExtensionData() {
+			const oExtensionData = await this._oExtensionDataPromise;
 
+			if (oExtensionData === null) {
 				return null;
-			}.bind(this));
-		},
-
-		/**
-		 * @inheritDoc
-		 */
-		getNavigationUri() {
-			return this._oExtensionDataPromise.then(function(aBusinessContexts) {
-				if (this._containsData(aBusinessContexts) && this._iExtensibilityType !== mExtensibilityType.None) {
-					return Utils.getNavigationUriForIntent({
-						target: aNavigationIntents[this._iExtensibilityType],
-						params: {
-							businessContexts: aBusinessContexts.map(function(oBusinessContext) {
-								return oBusinessContext.BusinessContext;
-							}),
-							serviceVersion: this._mServiceInfo.serviceVersion,
-							serviceName: this._mServiceInfo.serviceName,
-							entityType: this._mBindingInfo.entityTypeName
-						}
-					});
-				}
-
-				return Promise.resolve(null);
-			}.bind(this));
-		},
-
-		/**
-		 * @inheritDoc
-		 */
-		getTexts() {
-			return this._oExtensionDataPromise.then(function(aBusinessContexts) {
-				if (this._containsData(aBusinessContexts)) {
-					return {
-						tooltip: Utils.getText(aTextKeys[this._iExtensibilityType]),
-						headerText: Utils.getText("BUSINESS_CONTEXT_TITLE")
-					};
-				}
-
-				return null;
-			}.bind(this));
-		},
-
-		/**
-		 * @inheritDoc
-		 */
-		isActive() {
-			return this._oExtensionDataPromise.then(function(aBusinessContexts) {
-				return this._containsData(aBusinessContexts);
-			}.bind(this));
-		},
-
-		_adjustExtensibilityTypeByAuthorizations(aNavigationSupportedForIntents, iExtensibilityType) {
-			if (aNavigationSupportedForIntents[iExtensibilityType]) {
-				return iExtensibilityType; // authorization matches Business Context features
-			} else if (aNavigationSupportedForIntents[mExtensibilityType.Both]) {
-				return mExtensibilityType.Both; // user has authorization for CFL app
-			} else if (iExtensibilityType === mExtensibilityType.Both) {
-				if (aNavigationSupportedForIntents[mExtensibilityType.Fields]) {
-					return mExtensibilityType.Fields; // user has authorization for CF app only
-				} else if (aNavigationSupportedForIntents[mExtensibilityType.Logic]) {
-					return mExtensibilityType.Logic; // user has authorization for CL app only
-				}
 			}
 
-			return mExtensibilityType.None; // authorizations contradict Business Context features
+			const aBusinessContexts = oExtensionData.businessContexts;
+
+			if (!this._containsData(aBusinessContexts)) {
+				return null;
+			}
+
+			return this._convertBusinessContextsToExtensionData(aBusinessContexts);
+		},
+
+		/**
+		 * @inheritDoc
+		 */
+		async getNavigationUri(sActionKey) {
+			// Fallback mechanism for users of scenario one (implicit navigation targets).
+			const sResolvedActionKey = sActionKey ?? await this._getFallbackNavigationActionKey();
+
+			if (sResolvedActionKey === null) {
+				// No fallback action key for navigation was found.
+				return null;
+			}
+
+			// Implements scenario two (explicit navigation targets).
+			const oExtensionData = await this._oExtensionDataPromise;
+			if (oExtensionData === null) {
+				return null;
+			}
+
+			const aBusinessContexts = oExtensionData.businessContexts;
+			const oNavigationSupported = oExtensionData.navigationSupported;
+
+			if (!this._containsData(aBusinessContexts)) {
+				return null;
+			}
+
+			if (!oNavigationSupported[sResolvedActionKey]) {
+				return null;
+			}
+
+			const aMappedBusinessContexts = aBusinessContexts.map(function(oBusinessContext) {
+				return oBusinessContext.BusinessContext;
+			});
+			return Utils.getNavigationUriForIntent({
+				target: oNavigationIntents[sResolvedActionKey],
+				params: {
+					businessContexts: aMappedBusinessContexts,
+					serviceVersion: this._mServiceInfo.serviceVersion,
+					serviceName: this._mServiceInfo.serviceName,
+					entityType: this._mBindingInfo.entityTypeName
+				}
+			});
+		},
+
+		/**
+		 * @inheritDoc
+		 */
+		async getTexts() {
+			const oExtensionData = await this._oExtensionDataPromise;
+			if (oExtensionData === null) {
+				return null;
+			}
+
+			const aBusinessContexts = oExtensionData.businessContexts;
+
+			if (!this._containsData(aBusinessContexts)) {
+				return null;
+			}
+
+			const sButtonText = await this._getMenuButtonLabel();
+			const sTooltip = await this._getMenuButtonTooltip();
+			const oOptions = await this._getMenuButtonOptions();
+
+			if (oOptions.length === 1) {
+				oOptions[0].text = sButtonText;
+				oOptions[0].tooltip = sTooltip;
+			}
+
+			return {
+				headerText: Utils.getText(oTextKeys.BusinessContextTitle),
+				buttonText: sButtonText,
+				tooltip: sTooltip,
+				options: oOptions
+			};
+		},
+
+		/**
+		 * @inheritDoc
+		 */
+		async isActive() {
+			const oExtensionData = await this._oExtensionDataPromise;
+			if (oExtensionData === null) {
+				return false;
+			}
+
+			const aBusinessContexts = oExtensionData.businessContexts;
+
+			return this._containsData(aBusinessContexts);
 		},
 
 		_containsData(aBusinessContexts) {
-			return Boolean(aBusinessContexts && aBusinessContexts.length > 0);
+			return Array.isArray(aBusinessContexts) && aBusinessContexts.length > 0;
 		},
 
 		_convertBusinessContextsToExtensionData(aBusinessContexts) {
-			var aExtensionData = aBusinessContexts.map(function(oBusinessContext) {
+			const aExtensionData = aBusinessContexts.map((oBusinessContext) => {
 				return {
 					description: oBusinessContext.BusinessContextDescription,
 					businessContext: oBusinessContext.BusinessContext
@@ -142,68 +175,73 @@ sap.ui.define([
 			};
 		},
 
-		_determineExtensionData() {
-			return new Promise(function(fResolve, fReject) {
-				Utils.isNavigationSupportedForIntents(aNavigationIntents).then(function(aNavigationSupportedForIntents) {
-					var bIsSupported = aNavigationSupportedForIntents.some(function(bResult) {
-						return bResult === true;
-					});
+		async _determineExtensionData() {
+			let [
+				bNavigationSupportedForCustomField,
+				bNavigationSupportedForCustomLogic
+			] = await Utils.isNavigationSupportedForIntents([
+				oNavigationIntents[oKeyOfAction.CustomField],
+				oNavigationIntents[oKeyOfAction.CustomLogic]
+			]);
 
-					if (bIsSupported) {
-						Utils.executeRequest(this._getExtensionDataServiceUri(), this._getExtensionDataServiceParameters()).then(function(oResponse) {
-							if (oResponse.errorOccurred === false) {
-								var aBusinessContexts = this._extractBusinessContextsFromResponse(oResponse.result);
-								this._iExtensibilityType = this._determineExtensibilityType(aNavigationSupportedForIntents, aBusinessContexts);
-								if (this._iExtensibilityType !== mExtensibilityType.None) {
-									fResolve(aBusinessContexts);
-								} else {
-									fResolve(null);
-								}
-							} else if (oResponse.statusCode === 404 && this._mServiceInfo.serviceType === UriParser.mServiceType.v4) {
-								// in this case we assume that the backend system is just too old to support v4 based services
-								fResolve(null);
-							} else {
-								fReject(oResponse);
-							}
-						}.bind(this));
-					} else {
-						fResolve(null);
-					}
-				}.bind(this));
-			}.bind(this));
-		},
-
-		_determineExtensibilityType(aNavigationSupportedForIntents, aBusinessContexts) {
-			var iExtensibilityType = this._determineExtensibilityTypeFromBusinessContexts(aBusinessContexts);
-			if (iExtensibilityType !== mExtensibilityType.None) {
-				return this._adjustExtensibilityTypeByAuthorizations(aNavigationSupportedForIntents, iExtensibilityType);
+			if (!(bNavigationSupportedForCustomField || bNavigationSupportedForCustomLogic)) {
+				return null;
 			}
 
-			return iExtensibilityType;
+			const sServiceUri = this._getExtensionDataServiceUri();
+			const oServiceParameters = this._getExtensionDataServiceParameters();
+			const oResponse = await Utils.executeRequest(sServiceUri, oServiceParameters);
+
+			if (oResponse.errorOccurred === false) {
+				const aBusinessContexts = this._extractBusinessContextsFromResponse(oResponse.result);
+
+				const {
+					supportsStructuralEnhancements: bSupportsStructuralEnhancements,
+					supportsLogicEnhancements: bSupportsLogicEnhancements
+				} = this._determineSupportedExtensibilityTypes(aBusinessContexts);
+
+				bNavigationSupportedForCustomField &&= bSupportsStructuralEnhancements;
+				bNavigationSupportedForCustomLogic &&= bSupportsLogicEnhancements;
+
+				if (!(bNavigationSupportedForCustomField || bNavigationSupportedForCustomLogic)) {
+					return null;
+				}
+
+				return {
+					businessContexts: aBusinessContexts,
+					navigationSupported: {
+						[oKeyOfAction.CustomField]: bNavigationSupportedForCustomField,
+						[oKeyOfAction.CustomLogic]: bNavigationSupportedForCustomLogic
+					}
+				};
+			} else if (oResponse.statusCode === 404 && this._mServiceInfo.serviceType === UriParser.mServiceType.v4) {
+				// in this case we assume that the backend system is just too old to support v4 based services
+				return null;
+			}
+
+			throw oResponse;
 		},
 
-		_determineExtensibilityTypeFromBusinessContexts(aBusinessContexts) {
-			var bSupportsLogicEnhancements = false;
-			var bSupportsStructuralEnhancements = false;
+		_determineSupportedExtensibilityTypes(aBusinessContexts) {
+			let bSupportsLogicEnhancements = false;
+			let bSupportsStructuralEnhancements = false;
 
-			aBusinessContexts.forEach(function(oBusinessContext) {
-				if (oBusinessContext.hasOwnProperty("SupportsLogicEnhancements") === false || oBusinessContext.SupportsLogicEnhancements === true) {
+			for (const oBusinessContext of aBusinessContexts) {
+				const bHasSupportsLogicEnhancements = oBusinessContext.hasOwnProperty("SupportsLogicEnhancements");
+				if (!bHasSupportsLogicEnhancements || oBusinessContext.SupportsLogicEnhancements === true) {
 					bSupportsLogicEnhancements = true;
 				}
-				if (oBusinessContext.hasOwnProperty("SupportsStructuralEnhancements") === false || oBusinessContext.SupportsStructuralEnhancements === true) {
+
+				const bHasSupportsStructuralEnhancements = oBusinessContext.hasOwnProperty("SupportsStructuralEnhancements");
+				if (!bHasSupportsStructuralEnhancements || oBusinessContext.SupportsStructuralEnhancements === true) {
 					bSupportsStructuralEnhancements = true;
 				}
-			});
-
-			if (bSupportsLogicEnhancements && bSupportsStructuralEnhancements) {
-				return mExtensibilityType.Both;
-			} else if (!bSupportsLogicEnhancements && bSupportsStructuralEnhancements) {
-				return mExtensibilityType.Fields;
-			} else if (bSupportsLogicEnhancements && !bSupportsStructuralEnhancements) {
-				return mExtensibilityType.Logic;
 			}
 
-			return null;
+			return {
+				supportsLogicEnhancements: bSupportsLogicEnhancements,
+				supportsStructuralEnhancements: bSupportsStructuralEnhancements
+			};
 		},
 
 		_extractBusinessContextsFromResponse(oResponse) {
@@ -211,16 +249,21 @@ sap.ui.define([
 		},
 
 		_getExtensionDataServiceParameters() {
-			var oParameters = {
+			const oParameters = {
 				EntitySetName: "", // required by backend
 				EntityTypeName: this._mBindingInfo.entityTypeName
 			};
 
 			if (this._mServiceInfo.serviceType === UriParser.mServiceType.v4) {
-				// ResourcePath='/sap/opu/odata4/sap/aps_integration_test/sadl/sap/i_cfd_tsm_so_core/0001/'&EntitySetName=''&EntityTypeName='BusinessPartner'
+				// ResourcePath='/sap/opu/odata4/sap/aps_integration_test/sadl/sap/i_cfd_tsm_so_core/0001/'
+				// EntitySetName=''
+				// EntityTypeName='BusinessPartner'
 				oParameters.ResourcePath = `${UriParser.sODataV4ResourcePathPrefix + this._mServiceInfo.serviceName}/${this._mServiceInfo.serviceVersion}`;
 			} else {
-				// ServiceName='CFD_TSM_BUPA_MAINT_SRV'&ServiceVersion='0001'&EntitySetName=''&EntityTypeName='BusinessPartner'
+				// ServiceName='CFD_TSM_BUPA_MAINT_SRV'
+				// ServiceVersion='0001'
+				// EntitySetName=''
+				// EntityTypeName='BusinessPartner'
 				oParameters.ServiceName = this._mServiceInfo.serviceName;
 				oParameters.ServiceVersion = this._mServiceInfo.serviceVersion;
 			}
@@ -236,6 +279,122 @@ sap.ui.define([
 
 			// sap/opu/odata/SAP/APS_CUSTOM_FIELD_MAINTENANCE_SRV/GetBusinessContextsByEntityType
 			return `${sExtensionDataServiceUri}GetBusinessContextsByEntityType`;
+		},
+
+		async _getMenuButtonText(sTextKeyForExplicitNavigation) {
+			const oExtensionData = await this._oExtensionDataPromise;
+
+			if (oExtensionData === null) {
+				return undefined;
+			}
+
+			const oNavigationSupported = oExtensionData.navigationSupported;
+
+			let iNumberOfAvailableExtensibilityTypes = 0;
+			for (const sExtensibilityType in oNavigationSupported) {
+				if (!oNavigationSupported[sExtensibilityType]) {
+					continue;
+				}
+
+				iNumberOfAvailableExtensibilityTypes++;
+			}
+
+			// Explicit navigation through menu button
+			if (iNumberOfAvailableExtensibilityTypes > 1) {
+				return Utils.getText(sTextKeyForExplicitNavigation);
+			}
+
+			// No navigation target
+			if (iNumberOfAvailableExtensibilityTypes === 0) {
+				return undefined;
+			}
+
+			if (oNavigationSupported[oKeyOfAction.CustomField]) {
+				// Implicit navigation to custom fields
+				return Utils.getText(oTextKeys.StandaloneCreateCustomField);
+			}
+
+			if (oNavigationSupported[oKeyOfAction.CustomLogic]) {
+				// Implicit navigation to custom logic
+				return Utils.getText(oTextKeys.StandaloneCreateCustomLogic);
+			}
+
+			// Reaching this point is essentially an error condition
+			return undefined;
+		},
+
+		_getMenuButtonLabel() {
+			return this._getMenuButtonText(oTextKeys.MenuButtonLabel);
+		},
+
+		_getMenuButtonTooltip() {
+			return this._getMenuButtonText(oTextKeys.MenuButtonTooltip);
+		},
+
+		async _getMenuButtonOptions() {
+			const oExtensionData = await this._oExtensionDataPromise;
+
+			if (oExtensionData === null) {
+				return [];
+			}
+
+			const oNavigationSupported = oExtensionData.navigationSupported;
+
+			const aOptions = [];
+
+			if (oNavigationSupported[oKeyOfAction.CustomField]) {
+				aOptions.push(this._getFieldsMenuButtonOption());
+			}
+
+			if (oNavigationSupported[oKeyOfAction.CustomLogic]) {
+				aOptions.push(this._getLogicMenuButtonOption());
+			}
+
+			return aOptions;
+		},
+
+		_getFieldsMenuButtonOption() {
+			const sButtonText = Utils.getText(oTextKeys.MenuCreateCustomField);
+
+			return {
+				actionKey: oKeyOfAction.CustomField,
+				text: sButtonText,
+				tooltip: sButtonText
+			};
+		},
+
+		_getLogicMenuButtonOption() {
+			const sButtonText = Utils.getText(oTextKeys.MenuCreateCustomLogic);
+
+			return {
+				actionKey: oKeyOfAction.CustomLogic,
+				text: sButtonText,
+				tooltip: sButtonText
+			};
+		},
+
+		async _getFallbackNavigationActionKey() {
+			const oExtensionData = await this._oExtensionDataPromise;
+			if (oExtensionData === null) {
+				return null;
+			}
+
+			const aBusinessContexts = oExtensionData.businessContexts;
+			const oNavigationSupported = oExtensionData.navigationSupported;
+
+			if (!this._containsData(aBusinessContexts)) {
+				return null;
+			}
+
+			for (const sActionKey in oNavigationSupported) {
+				if (!oNavigationSupported[sActionKey]) {
+					continue;
+				}
+
+				return sActionKey;
+			}
+
+			return null;
 		}
 	});
 
