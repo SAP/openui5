@@ -11,7 +11,7 @@
 	xmlns:mdcv="sap.ui.mdc.valuehelp"
 	xmlns:mdcvc="sap.ui.mdc.valuehelp.content"
 	xmlns:ce="sap.ui.codeeditor"
-	controllerName="mdc.sample.controller.Mountains"
+	controllerName="mdc.sample.controller.FilterbarTypes"
 	>
 
 	<f:DynamicPage id="page">

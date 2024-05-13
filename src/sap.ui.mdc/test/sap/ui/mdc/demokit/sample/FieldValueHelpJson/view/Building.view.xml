@@ -140,7 +140,7 @@
                                             width="100%"
                                             p13nMode="Sort"
                                             selectionMode="SingleMaster"
-                                            delegate="{name: 'mdc/sample/delegate/JSONTableDelegate', payload: {collectionPath: 'facilities>/buildings'}}"
+                                            delegate="{name: 'mdc/sample/delegate/JSONTableDelegate', payload: {collectionPath: 'facilities>/buildings', searchKeys: ['name', 'city'] }}"
                                             threshold="50"
                                             filter="fbSelectBuildingDialog"
                                             enableAutoColumnWidth="true">

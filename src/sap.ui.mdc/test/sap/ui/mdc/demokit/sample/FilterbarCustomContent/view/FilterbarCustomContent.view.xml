@@ -9,7 +9,7 @@
 	xmlns:custom="mdc.sample.controls"
 	xmlns:mdcValueHelp="sap.ui.mdc.valuehelp"
 	xmlns:mdcValueHelpContent="sap.ui.mdc.valuehelp.content"
-	controllerName="mdc.sample.controller.Controller"
+	controllerName="mdc.sample.controller.FilterbarCustomContent"
 	>
 
 	<f:DynamicPage id="page">

@@ -13,8 +13,10 @@ sap.ui.define([
 	"sap/ui/core/Lib",
 	"test-resources/sap/ui/mdc/testutils/opa/table/waitForTable",
 	"test-resources/sap/ui/mdc/testutils/opa/p13n/waitForP13nDialog",
-	"sap/ui/events/KeyCodes"
-], function(Opa5, PropertyStrictEquals, Ancestor, Descendant, Sibling, Press, EnterText, TriggerEvent, Library, waitForTable, waitForP13nDialog, KeyCodes) {
+	"sap/ui/events/KeyCodes",
+	"test-resources/sap/ui/mdc/testutils/opa/field/waitForField",
+	"test-resources/sap/ui/mdc/testutils/opa/Utils"
+], function(Opa5, PropertyStrictEquals, Ancestor, Descendant, Sibling, Press, EnterText, TriggerEvent, Library, waitForTable, waitForP13nDialog, KeyCodes, waitForField, Utils) {
 	"use strict";
 
 
@@ -488,6 +490,97 @@ sap.ui.define([
 							});
 						}
 					});
+				},
+				iEnterTextOnTheFieldWithFocus: function(vIdentifier, sValue, bPressEnter) {
+					return waitForField.call(this, Utils.enhanceWaitFor(vIdentifier, {
+						actions: new EnterText({
+							text: sValue,
+							pressEnterKey: bPressEnter ?? undefined,
+							keepFocus: true
+						}),
+						success: function() {
+							Opa5.assert.ok(true, 'The text "' + sValue + '" was entered into the field');
+						},
+						errorMessage: 'The text "' + sValue + '" could not be entered into the field'
+					}));
+				},
+				/**
+				 * Checks whether a valuehelp Typeahead is visible
+				 * @param {string} sId ID of <code>sap.ui.mdc</code> control
+				 * @param {string} sValue Array of values
+				 * @returns {Promise} OPA waitFor
+				 */
+				iClickEntryInValueHelpPopover: function(sId, sValue) {
+					return this.waitFor({
+						id: sId,
+						controlType: "sap.ui.mdc.valuehelp.Popover",
+						success: function (oPopover) {
+							Opa5.assert.ok(oPopover, "ValueHelp Popover is visible");
+							this.waitFor({
+								controlType: "sap.m.Table",
+								matchers: new Ancestor(oPopover),
+								success: function(aTables){
+									Opa5.assert.ok(aTables.length === 1, "Exactly one Table found");
+									this.waitFor({
+										controlType: "sap.m.ColumnListItem",
+										matchers: new Ancestor(aTables[0]),
+										success: function(aListItem){
+											Opa5.assert.ok(aListItem.length === 1, "Exactly one ColumnListItem found");
+											this.waitFor({
+												controlType: "sap.m.Text",
+												matchers: [
+													new PropertyStrictEquals({
+														name: "text",
+														value: sValue
+													}),
+													new Ancestor(aListItem[0])
+												],
+												actions: new Press(),
+												success: function(aTexts){
+													Opa5.assert.ok(aTexts.length === 1, "Exactly one Text with value found");
+												}
+											});
+										}
+									});
+								}
+							});
+						},
+						errorMessage: "No ValueHelp Popover found"
+					});
+				},
+				/**
+				 * Search on valuehelp dialog
+				 * @param {string} sValueHelpId ID of <code>sap.ui.mdc.ValueHelp</code> control
+				 * @param {string} sValue Array of values
+				 * @returns {Promise} OPA waitFor
+				 */
+				iSearchOnValueHelpDialog: function(sValueHelpId, sValue) {
+					return this.waitFor({
+						id: sValueHelpId,
+						controlType: "sap.ui.mdc.ValueHelp",
+						success: function (oValueHelp) {
+							Opa5.assert.ok(oValueHelp, "ValueHelp found");
+							return this.waitFor({
+								controlType: "sap.ui.mdc.valuehelp.Dialog",
+								matchers: new Ancestor(oValueHelp),
+								success: function (aValueHelpDialog) {
+									Opa5.assert.ok(aValueHelpDialog.length, "Dialog on ValueHelp found");
+									return this.waitFor({
+										controlType: "sap.m.SearchField",
+										matchers: [
+											new Ancestor(aValueHelpDialog[0])
+										],
+										success: function (aSearchField) {
+											Opa5.assert.ok(aSearchField.length === 1, `Found exactly one SearchField`);
+										},
+										actions: new EnterText({ text: sValue })
+									});
+								},
+								errorMessage: `No Dialog on ValueHelp was found`
+							});
+						},
+						errorMessage: `No ValueHelp with ID "${sValueHelpId}" was found`
+					});
 				}
 			},
 			assertions: {
@@ -657,7 +750,7 @@ sap.ui.define([
 				},
 				/**
 				 * Checks whether a Download button is visible
-				 * @param {string} sDownloadButtonId ID of <code>sap.ui.mdc</code> control
+				 * @param {string} sDownloadButtonId ID of <code>sap.ui.mdc.actiontoolbar.ActionToolbarAction</code> control
 				 * @returns {Promise} OPA waitFor
 				 */
 				iShouldseeDownloadButton: function(sDownloadButtonId) {

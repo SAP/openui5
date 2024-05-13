@@ -26,7 +26,7 @@
 		"config": {
 			"sample": {
 				"files": [
-					"view/Mountains.view.xml",
+					"view/TableFilterBarJson.view.xml",
 					"delegate/JSONFilterBarDelegate.js",
 					"delegate/JSONTableDelegate.js",
 					"delegate/JSONValueHelpDelegate.js",
@@ -68,7 +68,7 @@
 			}
 		},
 		"rootView": {
-			"viewName": "mdc.sample.view.Mountains",
+			"viewName": "mdc.sample.view.TableFilterBarJson",
 			"type": "XML",
 			"async": true,
 			"id": "sample"

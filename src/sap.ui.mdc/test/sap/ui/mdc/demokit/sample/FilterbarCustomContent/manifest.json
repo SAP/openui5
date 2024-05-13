@@ -21,12 +21,12 @@
 		"config": {
 			"sample": {
 				"files": [
-					"controller/Controller.controller.js",
+					"controller/FilterbarCustomContent.controller.js",
 					"controls/CustomMultiInput.js",
 					"controls/CustomSegmentedButton.js",
 					"delegate/FilterBarDelegate.js",
 					"model/metadata/JSONPropertyInfo.js",
-					"view/View.view.xml",
+					"view/FilterbarCustomContent.view.xml",
 					"manifest.json"
 				]
 			}
@@ -52,7 +52,7 @@
 		"handleValidation": true,
 		"models": {},
 		"rootView": {
-			"viewName": "mdc.sample.view.View",
+			"viewName": "mdc.sample.view.FilterbarCustomContent",
 			"type": "XML",
 			"async": true,
 			"id": "sample"

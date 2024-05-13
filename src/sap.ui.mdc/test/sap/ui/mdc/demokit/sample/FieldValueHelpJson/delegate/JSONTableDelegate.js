@@ -22,5 +22,21 @@ sap.ui.define([
 		oBindingInfo.model = oMetadataInfo.model || oBindingInfo.model;
 	};
 
+	JSONTableDelegate.getFilters = function (oTable) {
+		const aFilters = TableDelegate.getFilters.call(this, oTable);
+		const sSearch = Element.getElementById(oTable.getFilter()).getSearch();
+		const oPayload = oTable.getPayload();
+
+		if (oPayload.searchKeys) {
+			const aSearchFilters = oPayload.searchKeys.map((sPath) => new Filter({ path: sPath, operator: FilterOperator.Contains, value1: sSearch }));
+			const oSearchFilter = aSearchFilters && aSearchFilters.length && new Filter(aSearchFilters, false);
+			if (oSearchFilter) {
+				aFilters.push(oSearchFilter);
+			}
+		}
+
+		return aFilters;
+	};
+
 	return JSONTableDelegate;
 });

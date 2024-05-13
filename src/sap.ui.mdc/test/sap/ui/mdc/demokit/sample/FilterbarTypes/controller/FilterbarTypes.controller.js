@@ -15,7 +15,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	return Controller.extend("mdc.sample.controller.Mountains", {
+	return Controller.extend("mdc.sample.controller.FilterbarTypes", {
 		formatter: formatter,
 		onInit: function() {
 			const oModel = new JSONModel({

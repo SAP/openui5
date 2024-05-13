@@ -21,10 +21,10 @@
 		"config": {
 			"sample": {
 				"files": [
-					"controller/Mountains.controller.js",
+					"controller/FilterbarCustomOperators.controller.js",
 					"delegate/JSONFilterBarDelegate.js",
 					"model/metadata/JSONPropertyInfo.js",
-					"view/Mountains.view.xml",
+					"view/FilterbarCustomOperators.view.xml",
 					"Operators.js",
 					"manifest.json"
 				]
@@ -52,7 +52,7 @@
 		"handleValidation": true,
 		"models": {},
 		"rootView": {
-			"viewName": "mdc.sample.view.Mountains",
+			"viewName": "mdc.sample.view.FilterbarCustomOperators",
 			"type": "XML",
 			"async": true,
 			"id": "sample"

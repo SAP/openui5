@@ -7,7 +7,7 @@
 		xmlns:core="sap.ui.core"
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns:form="sap.ui.layout.form"
-		controllerName="mdc.sample.Controller">
+		controllerName="mdc.sample.controller.MultiValueField">
 
 	<form:SimpleForm layout="ColumnLayout" editable="{path: 'view>/editMode'}">
 		<form:toolbar>
@@ -19,10 +19,10 @@
 		</form:toolbar>
 
 		<Label text="MultiValueField with ValueHelp"/>
-		<mdc:MultiValueField id="F-VH" 
+		<mdc:MultiValueField id="F-VH"
 			items="{path: 'data>/items'}"
-			delegate='\{"name": "mdc/sample/MultiValueFieldDelegate", "payload": \{\}\}'
- 			display="Description"
+			delegate='\{"name": "mdc/sample/delegate/MultiValueFieldDelegate", "payload": \{\}\}'
+			display="Description"
 			editMode="{= ${view>/editMode} ? 'Editable' : 'Display'}"
 			showEmptyIndicator="true"
 			valueHelp="VH-Countries">
@@ -40,7 +40,7 @@
 
 		<form:dependents>
 			<mdc:ValueHelp id="VH-Countries"
-				delegate='\{"name": "mdc/sample/ValueHelpDelegate", "payload": \{"searchKeys": ["key", "name"]\}\}'>
+				delegate='\{"name": "mdc/sample/delegate/ValueHelpDelegate", "payload": \{"searchKeys": ["key", "name"]\}\}'>
 				<mdc:typeahead>
 					<mdcValueHelp:Popover id="VH-Countries-Pop">
 						<mdcValueHelpContent:MTable id="VH-Countries-Pop-MTable"

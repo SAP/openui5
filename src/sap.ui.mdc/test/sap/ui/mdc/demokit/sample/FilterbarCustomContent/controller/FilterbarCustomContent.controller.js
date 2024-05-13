@@ -14,7 +14,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	return Controller.extend("mdc.sample.controller.Controller", {
+	return Controller.extend("mdc.sample.controller.FilterbarCustomContent", {
 		formatter: formatter,
 		mConditions: new Map(),
 		onInit: function() {

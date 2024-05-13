@@ -51,6 +51,13 @@ sap.ui.define([
           label: "Region",
           dataType: "sap.ui.model.type.String",
           sortable: false
+        },
+        {
+          key: "$search",
+          label: "Search",
+          visible: true,
+          maxConditions: 1,
+          dataType: "sap.ui.model.type.String"
         }
       ];
 
