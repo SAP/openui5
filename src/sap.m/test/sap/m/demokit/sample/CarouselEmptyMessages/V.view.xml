@@ -9,7 +9,12 @@
 			<Slider
 					value="100"
 					liveChange=".onResizeCarouselContainer" />
-			<Carousel class="sapUiContentPadding" id="carouselEmpty" height="50%">
+			<Title id="carouselTitle"
+				   text="Image Gallery"></Title>
+			<Carousel class="sapUiContentPadding"
+					  id="carouselEmpty"
+					  ariaLabelledBy="carouselTitle"
+					  height="50%">
 			</Carousel>
 		</Panel>
 	</HBox>
