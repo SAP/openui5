@@ -336,8 +336,14 @@ sap.ui.define([
 		getText: function() { // Used by tests in MDC and FE.
 			return this.getLabel().getText();
 		},
+		getRequired: function() { // Used by ui.Table to handle ACC correctly
+			return this.getLabel().getRequired();
+		},
 		clone: function() { // For ResponsiveTable popin.
 			return this.getLabel().clone();
+		},
+		getAccessibilityInfo: function() {
+			return this.getLabel().getAccessibilityInfo();
 		}
 	});
 
