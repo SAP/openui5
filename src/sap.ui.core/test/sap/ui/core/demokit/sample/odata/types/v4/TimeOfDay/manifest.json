@@ -58,8 +58,7 @@
 		},
 		"rootView": {
 			"viewName": "sap.ui.core.sample.odata.types.v4.TimeOfDay.TimeOfDay",
-			"type": "XML",
-			"async": true
+			"type": "XML"
 		}
 	}
 }
