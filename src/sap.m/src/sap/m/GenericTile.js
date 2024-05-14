@@ -1332,6 +1332,9 @@ sap.ui.define([
 	var preventPress = false;
 	GenericTile.prototype.onkeydown = function (event) {
 		if (!_isInnerTileButtonPressed(event, this) && !this._isLinkPressed(event)) {
+			var bIsShiftKeyPressed = event.shiftKey;
+			var bIsTabKeyPressed = event.key === "Tab";
+			var bIsMoreButton = event.srcControl.getId() == this._oMoreIcon.getId();
 			preventPress = (event.keyCode === 16 || event.keyCode === 27) ? true : false;
 			var currentKey = keyPressed[event.keyCode];
 			if (!currentKey) {
@@ -1347,8 +1350,19 @@ sap.ui.define([
 				}
 				event.preventDefault();
 			}
-		}
-	};
+			//Below logic is for the visibility of the more button inside the iconMode tile
+			if (this._isIconModeOfTypeTwoByHalf() && bIsTabKeyPressed) {
+				//Remove the visibility on the more button when user presses on "Shift Tab" or "Tab" on the more button
+				//Make the more button visible when user clicks tab key on the tile
+				//We don't have to take care of the scenario when the focus comes/goes off on the tile because its already taken care from the CSS side
+				if (bIsMoreButton) {
+					this._oMoreIcon.removeStyleClass("sapMGTVisible");
+				} else if (!bIsMoreButton && !bIsShiftKeyPressed) {
+					this._oMoreIcon.addStyleClass("sapMGTVisible");
+				}
+			}
+	}
+};
 
 	/*--- update Aria Label when Generic Tile change. Used while navigate using Tab Key and focus is on Generic Tile  ---*/
 
@@ -1364,20 +1378,6 @@ sap.ui.define([
 		return bIsAriaUpd;
 	};
 
-	GenericTile.prototype.onsaptabnext = function(oEvt) {
-		if (this._isIconModeOfTypeTwoByHalf() && oEvt && oEvt.keyCode) {
-			if (oEvt.keyCode === 9 && oEvt.srcControl.getId() == this._oMoreIcon.getId()) {
-					this._oMoreIcon.removeStyleClass("sapMGTVisible");
-			} else if (oEvt.keyCode === 9) {
-				this._oMoreIcon.addStyleClass("sapMGTVisible");
-			}
-		}
-    };
-	GenericTile.prototype.onsaptabprevious = function() {
-		if (this._isIconModeOfTypeTwoByHalf()) {
-			this._oMoreIcon.removeStyleClass("sapMGTVisible");
-		}
-	};
 	GenericTile.prototype.onkeyup = function (event) {
 		if (!_isInnerTileButtonPressed(event, this) && !this._isLinkPressed(event)) {
 			var currentKey = keyPressed[event.keyCode];    //disable navigation to other tiles when one tile is selected
