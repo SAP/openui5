@@ -1583,6 +1583,7 @@ sap.ui.define([
 	 * @property {sap.m.IllustratedMessageSize} [illustrationSize=sap.m.IllustratedMessageSize.Auto] Illustration size
 	 * @property {string} title Title
 	 * @property {string} [description] Description
+	 * @property {string} [imageSrc] Path to a custom image to be shown on the place of the regular illustration. Relative to the card base URL.
 	 * @property {Response} [httpResponse] Response object in case of a network error
 	 * @property {array} [additionalContent] A list of buttons placed below the description as additional content. Experimental since 1.121
 	 * @public
@@ -1702,6 +1703,7 @@ sap.ui.define([
 	 * @returns {string} The resolved URL.
 	 */
 	Card.prototype.getRuntimeUrl = function (sUrl) {
+
 		var sAppId = this._oCardManifest ? this._oCardManifest.get("/sap.app/id") : null,
 			sAppName,
 			sSanitizedUrl = sUrl && sUrl.trim().replace(/^\//, "");
