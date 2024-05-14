@@ -483,11 +483,10 @@ sap.ui.define([
 			assert.notOk(oContext.mChangeListeners);
 
 			this.mock(oBinding).expects("fetchValue").never();
-			this.mock(_Helper).expects("addByPath")
-				.withExactArgs(sinon.match.object, "", "~listener~")
-				.callsFake((mChangeListeners) => {
-					assert.strictEqual(mChangeListeners, oContext.mChangeListeners);
-					assert.deepEqual(mChangeListeners, {});
+			this.mock(_Helper).expects("registerChangeListener")
+				.withExactArgs(sinon.match.same(oContext), "", "~listener~")
+				.callsFake(() => {
+					assert.deepEqual(oContext.mChangeListeners, {});
 				});
 		}
 
@@ -5018,32 +5017,6 @@ sap.ui.define([
 		assert.strictEqual(oContext.requestSibling(oFixture.in), "~result~");
 	});
 });
-
-	//*********************************************************************************************
-	QUnit.test("deregisterChangeListener", function (assert) {
-		const oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/path");
-		let oListener = {
-			getPath : () => "foo"
-		};
-
-		// code under test
-		assert.strictEqual(oContext.deregisterChangeListener(), false, "no mChangeListeners");
-
-		oContext.mChangeListeners = {};
-
-		// code under test
-		assert.strictEqual(oContext.deregisterChangeListener(oListener), false, "wrong path");
-
-		oListener = {
-			getPath : () => "@$ui5.context.isSelected"
-		};
-		this.mock(_Helper).expects("removeByPath")
-			.withExactArgs(sinon.match.same(oContext.mChangeListeners), "",
-				sinon.match.same(oListener));
-
-		// code under test
-		assert.strictEqual(oContext.deregisterChangeListener(oListener), true);
-	});
 
 	//*********************************************************************************************
 [0, 1].forEach(function (iFailureIndex) {

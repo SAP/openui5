@@ -682,23 +682,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Deregisters the given change listener. Note: shared caches only have listeners for the empty
-	 * path.
-	 *
-	 * @param {string} sPath
-	 *   The path
-	 * @param {object} oListener
-	 *   The change listener
-	 *
-	 * @public
-	 */
-	_Cache.prototype.deregisterChangeListener = function (sPath, oListener) {
-		if (!(this.bSharedRequest && sPath)) {
-			_Helper.removeByPath(this.mChangeListeners, sPath, oListener);
-		}
-	};
-
-	/**
 	 * Drills down into the given object according to <code>sPath</code>. Logs an error if the path
 	 * leads into void. Paths may contain key predicates like "TEAM_2_EMPLOYEES('42')/Name". The
 	 * initial segment in a collection cache may even start with a key predicate, for example a path
@@ -1342,7 +1325,6 @@ sap.ui.define([
 	 *   Whether there are any registered change listeners
 	 *
 	 * @public
-	 * @see #deregisterChangeListener
 	 * @see #registerChangeListener
 	 */
 	_Cache.prototype.hasChangeListeners = function () {
@@ -1659,7 +1641,7 @@ sap.ui.define([
 	 */
 	_Cache.prototype.registerChangeListener = function (sPath, oListener) {
 		if (!(this.bSharedRequest && sPath)) {
-			_Helper.addByPath(this.mChangeListeners, sPath, oListener);
+			_Helper.registerChangeListener(this, sPath, oListener);
 		}
 	};
 

@@ -2348,6 +2348,24 @@ sap.ui.define([
 		},
 
 		/**
+		 * Registers the listener for the given owner. Passes a deregister function to the listener.
+		 *
+		 * @param {object} oOwner - The owner with a map mChangeListeners (which may change)
+		 * @param {string} sPath - The path
+		 * @param {object} [oListener] - The listener
+		 *
+		 * @public
+		 */
+		registerChangeListener : function (oOwner, sPath, oListener) {
+			if (oListener) {
+				_Helper.addByPath(oOwner.mChangeListeners, sPath, oListener);
+				oListener.setDeregisterChangeListener(function () {
+					_Helper.removeByPath(oOwner.mChangeListeners, sPath, oListener);
+				});
+			}
+		},
+
+		/**
 		 * Removes an item from the given map by path.
 		 *
 		 * @param {object} mMap
