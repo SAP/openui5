@@ -220,8 +220,9 @@ sap.ui.define([
 							if (!this._sNormalIconColor) {
 								this._sNormalIconColor = Element.closestTo(oRoot.$().find(".sapUiIcon")[0]).getColor();
 							}
-							oRoot.$().find(".sapMFlexItem > .sapUiIcon").control().forEach(function (oIcon) {
-								oIcon.setColor(Parameters.get("sapUiTextInverted"));
+							oRoot.$().find(".sapMFlexItem > .sapUiIcon").get().forEach(function (oDomRef) {
+								const oIcon = Element.closestTo(oDomRef);
+								oIcon?.setColor(Parameters.get("sapUiTextInverted"));
 							});
 						}.bind(this),
 						// touchend: remove active class, reset icon color
@@ -229,8 +230,9 @@ sap.ui.define([
 							var oRoot = getRootControl(oEvent);
 
 							oRoot.removeStyleClass("sapMLIBActive");
-							oRoot.$().find(".sapMFlexItem > .sapUiIcon").control().forEach(function (oIcon) {
-								oIcon.setColor(this._sNormalIconColor);
+							oRoot.$().find(".sapMFlexItem > .sapUiIcon").get().forEach(function (oDomRef) {
+								const oIcon = Element.closestTo(oDomRef);
+								oIcon?.setColor(this._sNormalIconColor);
 							}.bind(this));
 						}.bind(this)
 					};
