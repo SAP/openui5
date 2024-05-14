@@ -728,6 +728,8 @@ sap.ui.define([
 			that = this;
 
 		function invalidSegment(sSegment, bAsInfo) {
+			// no error for a key predicate, it's most probably due to a deleted entity
+			bAsInfo ||= sSegment[0] === "(" && sSegment.at(-1) === ")";
 			Log[bAsInfo ? "info" : "error"]("Failed to drill-down into " + sPath
 				+ ", invalid segment: " + sSegment, that.toString(), sClassName);
 			return undefined;

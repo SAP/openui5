@@ -5053,10 +5053,6 @@ sap.ui.define([
 			var oListBindingWithoutUI = oModel.bindList("/SalesOrderList"),
 				oCreatedPromise = oListBindingWithoutUI.create({}, true).created();
 
-			that.oLogMock.expects("error")
-				.withArgs(sinon.match("Failed to drill-down into ($uid="),
-					sSalesOrderService + "SalesOrderList", "sap.ui.model.odata.v4.lib._Cache");
-
 			assert.ok(oModel.hasPendingChanges());
 			assert.ok(oListBindingWithoutUI.hasPendingChanges());
 			assert.strictEqual(oListBindingWithoutUI.getLength(), 1 + 10/*length is not final*/);
@@ -23176,12 +23172,6 @@ sap.ui.define([
 			oTable.getRows()[1].getBindingContext().collapse();
 
 			assert.strictEqual(oTable.getBinding("rows").getContexts().length, 2);
-
-			that.oLogMock.expects("error").withExactArgs("Failed to drill-down into"
-				+ " (Country='UK',Region='Z')/Region, invalid segment: (Country='UK',Region='Z')",
-				"/aggregation/BusinessPartners"
-				+ "?$apply=groupby((Country,Region),aggregate(SalesAmount))",
-				"sap.ui.model.odata.v4.lib._Cache");
 
 			// code under test
 			assert.strictEqual(oThirdRow.getProperty("Region"), undefined,

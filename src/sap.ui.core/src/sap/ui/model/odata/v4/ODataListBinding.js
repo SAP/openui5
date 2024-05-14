@@ -3523,7 +3523,8 @@ sap.ui.define([
 			).then(function () {
 				// Update after refresh event, otherwise $count is fetched before the request.
 				// Avoid update in case bKeepCacheOnError needs to roll back.
-				return that.oHeaderContext.checkUpdateInternal(); // this is NOT done by refreshAll!
+				// Note: The binding may already have been destroyed
+				return that.oHeaderContext?.checkUpdateInternal(); // NOT done by refreshAll!
 			});
 		});
 	};
