@@ -297,6 +297,8 @@ function(
 
 		Page.FOOTER_ANIMATION_DURATION = 350;
 
+		Page.SHELLBAR_IN_HEADER_CLASS = "sapFShellBar-CTX";
+
 		Page.prototype.init = function () {
 			this._initTitlePropagationSupport();
 			this._initResponsivePaddingsEnablement();
@@ -709,7 +711,7 @@ function(
 
 			this.setAggregation("customHeader", oHeader);
 
-			this.toggleStyleClass("sapFShellBar-CTX", !!oHeader && oHeader.isA("sap.f.ShellBar"));
+			this.toggleStyleClass(Page.SHELLBAR_IN_HEADER_CLASS, oHeader?.isA("sap.f.ShellBar"));
 
 			/*
 			 * Runs Fiori 2.0 adaptation for the header
@@ -720,6 +722,33 @@ function(
 					"adaptableContent": oHeader
 				});
 			}
+
+			return this;
+		};
+
+		Page.prototype.setSubHeader = function(oHeader) {
+
+			this.setAggregation("subHeader", oHeader);
+
+			this.toggleStyleClass(Page.SHELLBAR_IN_HEADER_CLASS, oHeader?.isA("sap.f.ShellBar"));
+
+			return this;
+		};
+
+		Page.prototype.destroyCustomHeader = function() {
+
+			this.destroyAggregation("customHeader");
+
+			this.removeStyleClass(Page.SHELLBAR_IN_HEADER_CLASS);
+
+			return this;
+		};
+
+		Page.prototype.destroySubHeader = function() {
+
+			this.destroyAggregation("subHeader");
+
+			this.removeStyleClass(Page.SHELLBAR_IN_HEADER_CLASS);
 
 			return this;
 		};

@@ -129,7 +129,7 @@ sap.ui.define(["sap/m/library", "sap/ui/Device"],
 			.class("sapMPageSubHeader")
 			.accessibilityState(oPage, oPage._formatLandmarkInfo(oLandmarkInfo, "SubHeader"));
 
-		if (oSubHeader.getDesign() == library.ToolbarDesign.Info) {
+		if (oSubHeader.getDesign?.() == library.ToolbarDesign.Info) {
 			oRm.class("sapMPageSubHeaderInfoBar");
 		}
 
