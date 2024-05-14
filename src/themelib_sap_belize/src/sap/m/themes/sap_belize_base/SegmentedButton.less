@@ -1,0 +1,245 @@
+/* ====================================== */
+/* CSS for control sap.m/SegmentedButton  */
+/* Base theme                             */
+/* ====================================== */
+
+.sapMSegB {
+	margin: 0; /*To override the native browser margin*/
+	padding: 0;
+	-webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+	border: none;
+	white-space: nowrap;
+	display: inline-block;
+	box-sizing: border-box;
+	height: 3rem;
+	vertical-align: top;
+	position: relative;
+}
+
+.sapMSegB:focus {
+	outline: none;
+}
+
+.sapMSegB .sapMSegBBtn {
+	list-style: none;
+	cursor: pointer;
+	display: inline-block;
+	padding: 0.250rem 0;
+	outline: none;
+}
+
+.sapMSegB .sapMSegBBtn {
+	.sapMSegBBtnInner {
+		text-overflow: ellipsis;
+		overflow: hidden;
+		-webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+		text-align: center;
+		vertical-align: text-bottom;
+		box-sizing: border-box;
+		font-size: 0.875rem;
+		height: 2.5rem;
+		line-height: 2.375rem;
+		padding-left: 0.75rem;
+		padding-right: 0.75rem;
+		text-shadow: none;
+		color: @sapUiSegmentedButtonTextColor;
+		border: 1px solid @sapUiSegmentedButtonBorderColor;
+		background-color: @sapUiSegmentedButtonBackground;
+	}
+	&:not(.sapMSegBBtnMixed) .sapMImg {
+		padding-left: 0.75rem;
+		padding-right: 0.75rem;
+	}
+	&:not(.sapMSegBBtnMixed) .sapMBtnIcon {
+		margin-right: 0;
+	}
+}
+
+// Adding margin to be displayed correct in sap.m.Bar
+.sapMBar .sapMSegB {
+	margin-left: 0.250rem;
+}
+
+html.sap-desktop .sapMSegBBtnFocusable:hover .sapMSegBBtnInner {
+	background: @sapUiSegmentedButtonHoverBackground;
+}
+
+.sapMSegBBtn:focus .sapMSegBBtnInner {
+	outline: none;
+}
+
+.sapMSegBBtn .sapUiIcon:focus {
+	outline: none;
+}
+
+.sapMSegBBtn .sapMBtnIconLeft {
+	position: relative;
+}
+
+/* style for icon and text usage */
+.sapMSegB.sapMSegBIcons {
+	.sapMSegBBtn:not(.sapMSegBBtnMixed) .sapMSegBBtnInner {
+		padding: 0; /*BCP: 1580200804*/
+		margin-right: 0;
+	}
+	.sapMSegBBtn.sapMSegBBtnMixed .sapMImg,
+	.sapMSegBBtn.sapMSegBBtnMixed .sapUiIcon {
+		padding-left: 0;
+		padding-right: 0.5rem;
+	}
+}
+
+.sapMSegB img {
+	margin: 0;
+	pointer-events: none; /*To disable the save image menu on ios*/
+	line-height: 2.375rem;
+	max-height:  2.375rem;
+	vertical-align: middle;
+}
+
+.sapMSegBBtn.sapMSegBBtnDis {
+	cursor: default;
+}
+
+.sapMSegBBtn.sapMSegBBtnDis .sapMSegBBtnInner {
+	text-shadow: none;
+	opacity: @sapUiContentDisabledOpacity;
+}
+
+.sapMSegBBtn:not(.sapMSegBBtnDis) .sapUiIcon {
+  cursor: pointer;
+}
+
+.sapMSegBBtn.sapMSegBBtnSel .sapMSegBBtnInner {
+	background: @sapUiSegmentedButtonSelectedBackground;
+	color: @sapUiSegmentedButtonSelectedTextColor;
+	border-color: @sapUiSegmentedButtonSelectedHoverBorderColor;
+	.sapUiIcon{
+		color: @sapUiButtonSelectedTextColor;
+	}
+}
+
+.sapMSegBBtnSel:active .sapMSegBBtnInner,
+.sapMSegBBtnFocusable.sapMBtnActive .sapMSegBBtnInner {
+	background: @sapUiSegmentedButtonActiveBackground;
+	color: @sapUiSegmentedButtonActiveTextColor;
+	.sapUiIcon{
+		color: @sapUiSegmentedButtonActiveIconColor;
+	}
+}
+
+html.sap-desktop .sapMSegBBtn.sapMSegBBtnFocusable.sapMSegBBtnSel:hover .sapMSegBBtnInner,
+html.sap-desktop .sapMSegBBtnFocusable.sapMBtnActive:hover .sapMSegBBtnInner {
+	background: @sapUiSegmentedButtonSelectedHoverBackground;
+}
+
+.sapMSegBBtn.sapMSegBBtnFocusable.sapMSegBBtnSel .sapMSegBBtnInner {
+	border-right: 1px solid @sapUiSegmentedButtonSelectedHoverBorderColor;
+}
+
+.sapMSegBBtn .sapUiIcon {
+	font-size: 1.375rem;
+	line-height: 2.375rem;
+	width: 2.375rem;
+	color: @sapUiSegmentedButtonIconColor;
+	vertical-align: middle;
+	text-align: center;
+}
+
+.sapMSegBFit {
+	width: 100%;
+}
+
+.sapMFlexItem .sapMSegBFit,
+.sapMOTB > .sapMSegBFit {
+	width: auto;
+}
+
+html[data-sap-ui-os^="iOS"] {
+	header,
+	footer,
+	.sapMBar {
+		.sapMSegB {
+			line-height: 1.5rem;
+			display: inline-block;
+		}
+	}
+}
+
+/* Compact size */
+.sapUiSizeCompact {
+	.sapMSegB {
+		height: 2rem;
+		padding: 0;
+	}
+
+	.sapMSegB .sapMSegBBtn {
+		padding: 0.1875rem 0;
+	}
+
+	.sapMSegB img {
+		line-height: 1.5rem;
+		height: 1.3rem;
+		width: 1.3rem;
+	}
+
+	.sapMSegBBtn .sapUiIcon {
+		font-size: 1rem;
+		line-height: 1.5rem;
+		width: 1rem;
+		vertical-align: top;
+	}
+
+	.sapMSegBIcons:not(.sapMSegBBtnMixed) {
+		.sapMImg,
+		.sapUiIcon {
+			padding-left: 0.4375rem;
+			padding-right: 0.4375rem;
+		}
+	}
+
+	.sapMSegBIcons {
+		.sapMSegBBtn.sapMSegBBtnMixed {
+			.sapMImg,
+			.sapUiIcon {
+				padding-left: 0;
+				padding-right: 0;
+			}
+		}
+	}
+
+	.sapMSegBBtn .sapMSegBBtnInner {
+		height: 1.625rem;
+		line-height: 1.5rem;
+		padding-left: 0.4375rem;
+		padding-right: 0.4375rem;
+	}
+
+	.sapMSegBBtn:first-child .sapMSegBBtnInner {
+		border-top-left-radius: 0.2rem;
+		border-bottom-left-radius: 0.2rem;
+	}
+
+	.sapMSegBBtn:last-child .sapMSegBBtnInner {
+		border-top-right-radius: 0.2rem;
+		border-bottom-right-radius: 0.2rem;
+	}
+
+	.sapMSegB {
+		.sapMBtnIconLeft {
+			margin-left: 0;
+		}
+		&.sapMSegBIcons .sapMSegBBtnMixed {
+			img {
+				padding: 0;
+			}
+		}
+	}
+}
+
+/* Android size compact fix */
+html[data-sap-ui-os^="Android"] {
+	.sapUiSizeCompact .sapMSegBBtn .sapUiIcon {
+		line-height: 1.6rem;
+	}
+}

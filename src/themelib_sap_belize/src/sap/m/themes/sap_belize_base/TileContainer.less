@@ -1,0 +1,263 @@
+/* ==================================== */
+/* CSS for control sap.m/TileContainer  */
+/* Base theme                           */
+/* ==================================== */
+
+.sapMTC {
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	position: relative;
+	overflow: hidden;
+}
+
+.sapMTC .sapMTCScrl {
+	padding: 0;
+	position: absolute;
+	left: 0;
+	top: 0;
+	overflow: visible;
+}
+
+.sapMTC:focus,
+.sapMTC .sapMTCScroller:focus {
+	outline: none;
+}
+
+.sapMTC .sapMTCCnt {
+	height: 100%;
+	width: 100%;
+	overflow: visible;
+	position: absolute;
+	left: 0;
+	top: 0;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+}
+
+html.sap-tablet .sapMTC .sapMTCScrl,
+html.sap-phone .sapMTC .sapMTCScrl {
+	padding: 0;
+}
+
+.sapMTC.sapMTCEditable .sapMTCCnt {
+	opacity : 1;
+}
+
+.sapMTC .sapMTCCnt.sapMTCAnim {
+	-webkit-transition-property: -webkit-transform3d;
+	-webkit-transition-duration: 0.4s;
+	transition-property: transform3d;
+	transition-duration: 0.4s;
+}
+
+.sapMTC .sapMTCPager {
+	position: absolute;
+	bottom: 0;
+	box-sizing: border-box;
+	width: 100%;
+	height: 1.875rem;
+	padding: 0.313rem;
+	text-align: center;
+}
+
+.sapMTC .sapMTCPager SPAN {
+	display: inline-block;
+	background-color : @sapUiContentForegroundColor;
+	border-radius: 0.25rem;
+	height: 0.5rem;
+	width: 0.5rem;
+	margin-right: 0.5rem;
+	margin-bottom: 1px;
+	cursor: default;
+}
+
+.sapMTC .sapMTCBlind {
+	background-color: @sapUiGroupContentBackground;
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+	display:none;
+	box-shadow: @sapUiShadowLevel1;
+}
+
+.sapMTC .sapMTCPager SPAN.sapMTCActive {
+	background-color: @sapUiContentNonInteractiveIconColor;
+}
+
+.sapMTC .sapMTCScroller {
+	position: absolute;
+	display: none;
+	top: 41%;
+	border-radius: 50%;
+	background-color: @sapUiButtonBackground;
+	height: 3rem;
+	width: 3rem;
+	opacity: 0;
+	cursor: default;
+	-webkit-transition-property: opacity, left, right;
+	-webkit-transition-duration: 0.4s;
+	transition-property: opacity, left, right;
+	transition-duration: 0.4s;
+	box-shadow: @sapUiShadowLevel1;
+	padding: 0.25rem;
+	box-sizing: border-box;
+}
+
+.sapMTC .sapMTCScroller .sapMTCInner {
+	background-color: @sapUiButtonBackground;
+	height: 100%;
+	width: 100%;
+	border-radius: 50%;
+	font-family: "SAP-icons";
+	font-size: 1.313rem;
+	vertical-align: middle;
+	color: @sapUiButtonIconColor;
+	padding-top: 0.5rem;
+	box-sizing: border-box;
+}
+
+.sapMTC:hover .sapMTCScroller {
+	opacity: 0.1;
+}
+
+.sapMTC:hover .sapMTCScroller:hover {
+	opacity: 1;
+}
+
+.sapMTC .sapMTCScroller.sapMTCLeft {
+	left: -100px;
+}
+
+.sapMTC .sapMTCScroller.sapMTCLeft .sapMTCInner::before {
+	content: "\e067";
+	padding-left: 0.813rem;
+}
+
+.sapMTC:hover .sapMTCScroller.sapMTCLeft {
+	left: 1rem;
+}
+
+.sapMTC .sapMTCScroller.sapMTCRight {
+	right: -100px;
+}
+
+.sapMTC:hover .sapMTCScroller.sapMTCRight {
+	right: 1rem;
+}
+
+.sapMTC .sapMTCScroller.sapMTCRight .sapMTCInner::before {
+	content: "\e066";
+	padding-left: 1rem;
+}
+
+.sapMTC .sapMTile, .sapMTC .sapMCustomTile {
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
+html[dir=rtl] .sapMTC .sapMTile,
+html[dir=rtl] .sapMTC .sapMCustomTile{
+	left: auto;
+	right: 0px;
+}
+
+html.sap-tablet .sapMTC .sapMTCScroller,
+html.sap-phone .sapMTC .sapMTCScroller {
+	display : none;
+}
+
+.sapMTC .sapMTCRemove {
+	display: none;
+}
+
+.sapMTC.sapMTCEditable .sapMTile {
+	cursor: move;
+	box-shadow: @sapUiShadowLevel0;
+}
+
+.sapMTC.sapMTCEditable .sapMTCRemove {
+	position: absolute;
+	display: block;
+	height: 2rem;
+	width: 2rem;
+	border-radius: 50%;
+	font-family: "SAP-icons";
+	font-size: 1rem;
+	line-height: 2rem;
+	text-align: center;
+	box-sizing: border-box;
+	margin-top : -0.5rem;
+	margin-left : -0.5rem;
+	z-index: 1;
+	cursor: default;
+	background-color: @sapUiButtonBackground;
+	border: 1px solid @sapUiButtonBorderColor;
+	color: @sapUiButtonIconColor;
+}
+
+html[data-sap-ui-browser^="ff"] .sapMTC.sapMTCEditable .sapMTile .sapMTCRemove {
+	width: 2rem;
+}
+
+.sapMTC.sapMTCEditable .sapMTile .sapMTCNoRemove {
+	height: 1.5rem;
+	width: 1.563rem;
+	margin-top : -0.5em;
+	margin-left : -0.5em;
+	z-index: 1;
+	visibility: hidden;
+}
+
+.sapMTC.sapMTCEditable .sapMTCRemove:hover {
+	background-color: @sapUiButtonHoverBackground;
+}
+
+.sapMTC.sapMTCEditable .sapMTCRemove:active {
+	background-color: @sapUiButtonActiveBackground;
+	color: @sapUiButtonActiveTextColor;
+}
+
+.sapMTC.sapMTCEditable .sapMTCRemove::before {
+	content: "\e03e";
+}
+
+/* use dir-specific rules to prevent mirroring in dir=rtl mode */
+.sapMTC .sapMTCEdgeRight,
+html[dir=rtl] .sapMTC .sapMTCEdgeLeft {
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: 2.5rem;
+	height: 100%;
+	border-right: 0.125rem solid fade(lighten(@sapUiHighlight,20),60);
+	opacity: 0.01;
+	background: -webkit-gradient(linear, left top, right top, color-stop(0%,rgba(255,255,255,0)), color-stop(76%,rgba(255,255,255,1)), color-stop(100%,rgba(255,255,255,1))); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(left, rgba(255,255,255,0) 0%,rgba(255,255,255,1) 76%,rgba(255,255,255,1) 100%); /* Chrome10+,Safari5.1+ */
+	background: linear-gradient(to right, rgba(255,255,255,0) 0%,rgba(255,255,255,1) 76%,rgba(255,255,255,1) 100%); /* W3C */
+}
+
+/* use dir-specific rules to prevent mirroring in dir=rtl mode */
+.sapMTC .sapMTCEdgeLeft,
+html[dir=rtl] .sapMTC .sapMTCEdgeRight {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 2.5rem;
+	height: 100%;
+	border-left: 0.125rem solid fade(lighten(@sapUiHighlight,20),60);
+	opacity: 0.01;
+	background: -webkit-gradient(linear, left top, right top, color-stop(0%,rgba(255,255,255,1)), color-stop(24%,rgba(255,255,255,1)), color-stop(100%,rgba(255,255,255,0))); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(left, rgba(255,255,255,1) 0%,rgba(255,255,255,1) 24%,rgba(255,255,255,0) 100%); /* Chrome10+,Safari5.1+ */
+	background: linear-gradient(to right, rgba(255,255,255,1) 0%,rgba(255,255,255,1) 24%,rgba(255,255,255,0) 100%); /* W3C */
+}
+
+html.sap-phone .sapMTC .sapMTCEdgeLeft,
+html.sap-phone .sapMTC .sapMTCEdgeRight {
+	width: 1.25rem;
+}

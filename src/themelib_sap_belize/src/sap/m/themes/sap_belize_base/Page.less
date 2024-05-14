@@ -1,0 +1,365 @@
+/* =========================== */
+/* CSS for control sap.m/Page  */
+/* Base theme                  */
+/* =========================== */
+
+@_sap_m_Page_AppHeight: 3333px; // Ux decision: never show the header, so make this value large enough even for zoom-out cases
+@_sap_m_Page_HeaderHeight: 68px; // should be 4.25rem
+@_sap_m_Page_MinHeightForHeader: (@_sap_m_Page_AppHeight + @_sap_m_Page_HeaderHeight);
+@_sap_m_Page_FloatinFooterHeight: 2.75rem;
+@_sap_m_Page_FloatinFooterHeight_Compact: 2.5rem;
+@_sap_m_Page_FloatingFooterMarginBottom: 0.5rem;
+
+.sapMPage,
+.sapMPage > section {
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.sapMPage {
+  height: 100%;
+  position: relative;
+  isolation: isolate; /* makes sure the z-index stuff for headers/footer has no effect outside the Page; only works in the very newest browsers as of 03/2015 */
+  z-index: 0; /* workaround for missing "isolation" support in most browsers; TODO: check when this can be removed */
+}
+
+.sapMPage > section {
+  position: absolute;
+  overflow-y: hidden;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.sapMPage > section.sapMPageEnableScrolling {
+	overflow-y: auto;
+	will-change: scroll-position;
+}
+
+// If there are subpages with disabled scrolling, then its content should overflow. I.e. reset overflow-y to defaults.
+.sapMPage > section.sapMPageEnableScrolling .sapMPage > section {
+	overflow-y: visible;
+}
+
+html[data-sap-ui-os^="iOS"] {
+  .sapMPage > section.sapMPageEnableScrolling {
+    overflow-y: scroll;
+  }
+}
+
+/* Fix for a ToolBar set as headerContent */
+html[data-sap-ui-browser^="ff"].sap-desktop {
+  .sapMPage > .sapMBar.sapMPageHeader .sapMBarContainer {
+    display: initial;
+  }
+
+  .sapUiSizeCompact .sapMPage > .sapMBar.sapMPageHeader .sapMBarContainer {
+    vertical-align: -moz-middle-with-baseline;
+  }
+
+  .sapMPage > .sapMTitle {
+    font-size: 1rem;
+  }
+}
+
+/*
+	* Workaround for IOS 7 - on orientation change to lanscape mode:
+	* on the Ipad the footer is cut off.
+	* on the phone, the header is cut off and if you open the nav Bar(clicking in the footer), the header will be cut off even more.
+	* setting the body to fixed seems to work. We also tried it with absolute, but it does not work (tested only on ipad).
+ */
+@media (orientation: landscape) {
+  html[data-sap-ui-os^="iOS7"][data-sap-ui-browser^="msf"] {
+    padding: 0;
+    margin: 0;
+    bottom: 0;
+  }
+
+  html[data-sap-ui-os^="iOS7"][data-sap-ui-browser^="msf"] body {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+  }
+}
+
+/* ============================================= */
+/* CSS for displaying the Footer/Header controls at the correct position */
+/* ============================================= */
+
+.sapMPageFooter {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  /* footer has to overlap the header if the page is very small (phone with open keyboard)*/
+  z-index: 2;
+  width: 100%;
+}
+
+.sapMPageFooter.sapMPageFloatingFooter {
+  left: 0;
+  right: 0;
+}
+
+.sapMPageFooter.sapUiHidden {
+  bottom: auto;
+}
+
+.sapMPageFooter .sapMTB.sapMIBar {
+  right: 0;
+  border-bottom-width: 0;
+}
+
+.sapMPageWithFloatingFooter .sapMPageFooter .sapMIBar-CTX.sapMFooter-CTX.sapMTB {
+  border-top-width: 0;
+}
+
+.sapMPageSubHeader,
+.sapMPageHeader {
+  /* header has to be on top of the Scroll container */
+  z-index: 1;
+}
+
+.sapMPage.sapMPageBusyCoversAll > .sapUiLocalBusyIndicator {
+  /* busyIndicator within page needs a z-index to render on top of header/footer */
+  z-index: 3;
+}
+
+/* mixin call for creating container content padding classes (arguments: rootContainer, contentSelector) */
+.sapUiContainerContentPadding(~".sapMPage", ~"> section");
+
+/* Fiori 2.0 adaptation */
+
+.sapF2CollapsedHeader > .sapMPageHeader {
+  display: none;
+}
+
+.sapMPage.sapF2CollapsedHeader > .sapMPageHeader + section, .sapMPage.sapF2CollapsedHeader > .sapMPageHeader + .sapUiHiddenPlaceholder + section {
+  top: 0em;
+}
+
+.sapMPage.sapF2CollapsedHeader > .sapMPageHeader + .sapMPageSubHeader + section {
+  top: 3rem;
+}
+
+.sapUiSizeCompact .sapF2CollapsedHeader.sapMPageWithHeader > section {
+  top: 0rem;
+}
+
+.sapUiSizeCompact .sapF2CollapsedHeader.sapMPageWithHeader.sapMPageWithSubHeader > section {
+  top: 2rem;
+}
+
+.sapUiSizeCompact .sapF2CollapsedHeader > .sapMPageHeader .sapMIBar {
+  height: 0rem;
+}
+
+.sapMIBar .sapF2AdaptedTitle,
+.sapMIBar .sapF2AdaptedNavigation {
+  display: none;
+}
+
+/* page with footer */
+.sapMPageWithFooter > section {
+  bottom: 3rem;
+}
+
+.sapMPageWithFloatingFooter {
+  > .sapMPageFooter {
+    border-radius: 0.25rem;
+    margin: 0.5rem;
+    width: ~"calc(100% - 1rem)";
+    opacity: 0.9;
+
+    .sapMIBar {
+      border-radius: 0.25rem;
+    }
+  }
+}
+
+.sapMPageWithFloatingFooter.sapMPageWithFooter > section {
+    bottom: 0;
+	scroll-padding-bottom: ~"calc(@{_sap_m_Page_FloatinFooterHeight} +  @{_sap_m_Page_FloatingFooterMarginBottom} + 2px)";
+
+    &:after {
+        content: "";
+        display: block;
+        height: 0;
+        width: 100%;
+        margin-bottom: 4rem;
+    }
+}
+
+.sapUiSizeCompact .sapMPageWithFooter.sapMPageWithFloatingFooter > section {
+  bottom: 0;
+  scroll-padding-bottom: ~"calc(@{_sap_m_Page_FloatinFooterHeight_Compact} +  @{_sap_m_Page_FloatingFooterMarginBottom} + 2px)";
+  padding-bottom: 3.5rem;
+}
+
+html[data-sap-ui-animation='on'] .sapMPageWithFloatingFooter {
+  .sapMPageFooterControlShow {
+    -webkit-animation: bounceShow 0.35s forwards ease-in-out;
+    animation: bounceShow 0.35s forwards ease-in-out;
+  }
+  .sapMPageFooterControlHide {
+    -webkit-animation: bounceHide 0.35s forwards ease-in-out;
+    animation: bounceHide 0.35s forwards ease-in-out;
+  }
+
+  @-webkit-keyframes bounceShow {
+    0% {
+      -webkit-transform: translateY(100%);
+      transform: translateY(100%);
+      opacity: 0;
+    }
+    100% {
+      opacity: 0.9;
+    }
+  }
+  @keyframes bounceShow {
+    0% {
+      transform: translateY(100%);
+      opacity: 0;
+    }
+    100% {
+      opacity: 0.9;
+    }
+  }
+  @-webkit-keyframes bounceHide {
+    0% {
+      -webkit-transform: translateY(-5%);
+      transform: translateY(-5%);
+      opacity: 1;
+    }
+    100% {
+      -webkit-transform: translateY(100%);
+      transform: translateY(100%);
+      opacity: 0;
+    }
+  }
+  @keyframes bounceHide {
+    0% {
+      transform: translateY(-5%);
+      opacity: 0.9;
+    }
+    100% {
+      transform: translateY(100%);
+      opacity: 0;
+    }
+  }
+}
+
+.sapMPageBgSolid {
+	background-color: @sapUiBaseBG;
+}
+
+/* page with header and subHeader */
+.sapMPage > .sapMPageHeader + .sapMPageSubHeader + section {
+	top: 6rem;
+}
+
+.sapMPage > .sapMPageHeader + .sapMPageSubHeader.sapMPageSubHeaderInfoBar + section {
+	top: 5rem;
+}
+
+/* page with header */
+.sapMPage > .sapMPageHeader + section,
+/* page with subheader */
+.sapMPage > .sapMPageSubHeader + section,
+/* page with header and invisible subheader */
+.sapMPage > .sapMPageHeader + .sapUiHiddenPlaceholder + section {
+	top: 3rem;
+}
+
+/* page app icon */
+
+.sapMBar-CTX .sapMBarLeft > .sapMImg.sapMPageAppIcon {
+	max-height: 1.375rem;
+	max-width: 1.375rem;
+	margin: 0.8125rem;
+}
+
+/* vertical scroll bar */
+
+.sapMPage .sapMScrollbarV > div {
+	background-color: @sapUiScrollBarFaceColor;
+	border-color: @sapUiScrollBarBorderColor;
+}
+
+/* sap.m.Shell + Tiles Page specific style */
+
+@media (min-height: @_sap_m_Page_MinHeightForHeader) {
+	.sap-desktop .sapMShell .sapMPage.sapMPageHideHeaderWhenShellHeader header.sapMIBar {
+		display: none;
+	}
+}
+
+html.sap-tablet .sapUiFioriObjectPage > section,
+html.sap-desktop .sapUiFioriObjectPage > section {
+	padding-bottom: 1rem;
+}
+
+/* Compact size */
+.sapUiSizeCompact {
+	/* Header and footer have 2.5 rem */
+	.sapMPageWithHeader > section {
+		top: 2.5rem;
+	}
+
+	.sapMPageHeader .sapMIBar,
+	.sapMPageFooter .sapMIBar {
+		height : 2.5rem;
+
+		.sapMBarLeft,
+		.sapMBarRight,
+		.sapMBarPH {
+			height: 2.5rem;
+			padding-top: 0.25rem;
+			padding-bottom: 0.25rem;
+		}
+	}
+
+	.sapMPageWithFooter > section {
+		bottom: 2.5rem;
+	}
+
+	/* Subheader only 2 rem */
+	.sapMPageWithSubHeader > section {
+		top: 2rem;
+	}
+
+	.sapMPageWithHeader {
+		&.sapFShellBar-CTX > section {
+			top: 3rem;
+		}
+		&.sapMPageWithSubHeader.sapFShellBar-CTX > section {
+			top: 5rem;
+		}
+	}
+
+	&.sapMPage.sapMPageWithHeader.sapMPageWithSubHeader,
+  .sapMPage.sapMPageWithHeader.sapMPageWithSubHeader {
+		> section {
+			top: 4.5rem;
+		}
+
+		.sapMPageSubHeader.sapMPageSubHeaderInfoBar + section {
+			top: 4.5rem;
+		}
+	}
+
+	.sapMBar-CTX .sapMBarLeft > .sapMImg.sapMPageAppIcon {
+		max-height: 1rem;
+		max-width: 1rem;
+		margin: 0.5rem;
+	}
+}
+
+/*
+	In order to skip adding that to each control we decided to move that on Popup level
+	will-change property has been aded for performance improvements when having a huge scroll of the page (painting improvement)
+	Usually the Popover/Dialog does not have that much of a content and the scrolling performance is good
+*/
+.sapMPopup-CTX .sapMPage > section.sapMPageEnableScrolling {
+	will-change: unset; // fixes iOS and OS X issue - the content and the header sometimes get misplaced
+}

@@ -1,0 +1,133 @@
+/* ================================== */
+/* CSS for control sap.m/Breadcrumbs  */
+/* Base theme                         */
+/* ================================== */
+@_sap_m_Breadcrumbs_MinWidth_OFT: 1px;
+
+.sapMBreadcrumbs {
+	white-space: nowrap;
+	outline: none;
+	margin: 0 0 0.5rem 0;
+
+	> ol {
+		display: -webkit-box; /* OLD - iOS 6-, Safari 3.1-6 */
+		display: -webkit-flex; /* NEW - Chrome */
+		display: flex;
+		margin: 0;
+		padding: 0;
+		list-style-type: none;
+	}
+
+	.sapMSlt {
+		border: 0;
+		margin: 0;
+		height: 1.2rem;
+		padding-right: 0.125rem;
+
+		.sapMSltIcon {
+			margin: 0 -0.4rem 0 -0.3rem;
+			vertical-align: top;
+			position: relative;
+			background-color: transparent;
+			line-height: inherit;
+			border: none;
+		}
+	}
+
+	.sapMBreadcrumbsItem.sapMBreadcrumbsSelectItem >
+	.sapMSlt.sapMSltIconOnly.sapMSltWithIcon.sapMSltHoverable.sapMSltWithArrow {
+		background: transparent;
+		border: none;
+
+		&.sapMSltFocused,
+		&:hover {
+			.sapMSltIcon:before {
+				color: @sapUiLinkHover;
+				border-bottom: 0.0625rem solid @sapUiLinkHover;
+			}
+		}
+	}
+
+	.sapMSltIcon:before {
+		font-family: SAP-icons;
+		vertical-align: super;
+		color: @sapUiLink;
+		speak: none;
+		content: "...\e1ef";
+		font-size: @sapMFontMediumSize;
+		padding-bottom: 0.0625rem;
+	}
+
+	.sapMLnk, .sapMBreadcrumbsCurrentLocation, .sapMSlt, .sapMBreadcrumbsSeparator {
+		vertical-align: middle;
+	}
+
+	.sapMBreadcrumbsItem  {
+		-webkit-flex-shrink: 0;
+		flex-shrink: 0;
+	}
+
+	/* set the flex to 1 for the breadcrumbsItem in order for the last item's text to truncate properly, but only if
+	there's two items (the select and the last item in the breadcrumbs) or if there's only one item in the breadcrumbs
+	and no select. In all other cases the texts should not truncate thus leaving the responsiveness to the breadcrumbs
+	mechanism (moving items from the breadcrumbs into the select)*/
+	.sapMBreadcrumbsSelectItem + .sapMBreadcrumbsItem:last-child:nth-child(2),
+	.sapMBreadcrumbsItem:last-child:nth-child(1) {
+		min-width: 1%;
+		-webkit-flex: 1;
+		-webkit-box-flex: 1;
+		flex: 1 1 auto;
+	}
+
+	.sapMBreadcrumbsCurrentLocation {
+		font-weight: bold;
+
+		&:focus {
+			outline: 1px dotted @sapUiContentFocusColor;
+			outline-offset: -1px;
+		}
+	}
+
+	.sapMBreadcrumbsItem {
+		display: inline;
+		padding: 0;
+		margin: 0;
+		vertical-align: middle;
+		white-space: nowrap;
+	}
+
+	.sapMBreadcrumbsSeparator {
+		padding: 0 0.25rem;
+		font-size: @sapMFontMediumSize;
+	}
+
+	.sapMBreadcrumbsItem, .sapMBreadcrumbsSeparator {
+		color: @sapUiContentLabelColor;
+	}
+}
+
+.sapMTB .sapMBreadcrumbs {
+	flex-grow: 1; /* needed when Breadcrumbs is placed in a container with display: flex */
+}
+
+.sapUiSizeCompact .sapMBreadcrumbs .sapMSlt {
+	margin: 0;
+	height: 1.2rem;
+}
+
+/* make Breadcrumbs shrinkable when used in OTB */
+.sapMOTB .sapMBreadcrumbs {
+	min-width: @_sap_m_Breadcrumbs_MinWidth_OFT; /* needed for width calculations on initial render */
+	max-width: 100%;
+}
+
+.sapMOTB .sapMBreadcrumbs .sapMBreadcrumbsItem:last-child {
+	flex-basis: 2.5rem;
+	flex-grow: 1;
+	overflow: hidden;
+}
+
+/* prevent Breadcrumbs with long text from causing a horizontal scrollbar in OTB Menu */
+.sapMOverflowToolbarMenu-CTX .sapMBreadcrumbs {
+	max-width: 90vw;
+}

@@ -1,0 +1,343 @@
+/* =================================== */
+/* CSS for control sap.m/ListItemBase  */
+/* Base theme                          */
+/* =================================== */
+
+@_sap_m_ListItemBase_DeleteIcon: sys-cancel;
+@_sap_m_ListItemBase_ButtonMarginTop: auto;
+@_sap_m_ListItemBase_Highlight_InformationColor: @sapUiInformationBorder;
+@_sap_m_ListItemBase_Navigated: @sapUiListSelectionBorderColor;
+@_sap_m_ListItemBase_Detail_Delete_MarginLeft: 0.125rem;
+@_sap_m_ListItemBase_Focus_Outline: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+@_sap_m_ListItemBase_Focus_OffsetWithGap: calc(-@sapUiContentFocusWidth ~"- 0.0625rem");
+
+.sapMLIB,
+.sapMLIBImgNav {
+	box-sizing: border-box;
+}
+
+.sapMLIB {
+	display: -webkit-box;
+	display: flex;
+	-webkit-box-align: center;
+	align-items: center;
+	position: relative;
+	background: @sapUiListBackground;
+	border-bottom: 1px solid @sapUiListBorderColor;
+	padding: 0 1rem 0 1rem;
+}
+
+.sapMLIBIconDet,
+.sapMLIBIconDel {
+	margin-left: @_sap_m_ListItemBase_Detail_Delete_MarginLeft;
+}
+
+.sapMLIBContent {
+	-webkit-box-flex: 1;
+	flex: 1 1 auto;
+	max-width: 100%;
+	overflow: hidden;
+}
+
+.sapMLIBFocusable:focus,
+.sapMTblCellFocusable:focus {
+	outline: @_sap_m_ListItemBase_Focus_Outline;
+	outline-offset: @_sap_m_ListItemBase_Focus_OffsetWithGap;
+}
+
+/* makes the focus outline visible when hightlight is used */
+.sapMLIBFocusable:focus .sapMLIBHighlight,
+.sapMLIBFocusable:focus + .sapMListTblSubRow .sapMLIBHighlight {
+	width: 0.25rem;
+	left: 2px;
+	bottom: 2px;
+	top: 2px;
+}
+
+.sapMListTblRow:not(.sapMLIBFocusable):focus,
+.sapMLIB:not(.sapMLIBFocusable):focus,
+.sapMListTblSubRow:focus {
+	outline: none;
+}
+
+.sapMLIBActionable,
+.sapMLIBActionable > .sapMLIBImgNav,
+.sapMListTblNavCol > .sapMLIBImgNav,
+.sapMLIBActionable .sapMSLIThumbnail,
+.sapMLIBActionable .sapMSLIImgIcon {
+	cursor: pointer;
+}
+
+.sapMLIBImgNav,
+.sapMLIBImgDet,
+.sapMLIBImgDel,
+.sapMLIBIconDet,
+.sapMLIBSelectS,
+.sapMLIBSelectM,
+.sapMLIBSelectD,
+.sapMLIBCounter {
+	-webkit-box-flex: 0;
+	flex: none;
+}
+
+.sapMLIBHighlight {
+	position: absolute;
+	width: 0.375rem;
+	bottom: 0;
+	left: 0;
+	top: 0;
+	border-right: 0.0625rem solid @sapUiListBackground;
+	box-sizing: border-box;
+}
+
+.sapMLIBHighlight + .sapMLIBContent,
+.sapMListHighlight .sapMLIBContent:first-child {
+	margin-left: 0.375rem;
+}
+
+.sapMLIBSelectS,
+.sapMLIBSelectM {
+	margin-right: 0.75rem;
+}
+
+.sapMLIBHighlight + .sapMLIBSelectS,
+.sapMLIBHighlight + .sapMLIBSelectM,
+.sapMListHighlight > .sapMLIB > .sapMLIBSelectS:first-child,
+.sapMListHighlight > .sapMLIB > .sapMLIBSelectM:first-child {
+	margin-left: -0.625rem;
+}
+
+.sapMLIB > .sapMLIBSelectS:first-child,
+.sapMLIB > .sapMLIBSelectM:first-child {
+	margin-left: -0.8125rem;
+}
+
+.sapMLIBHighlightInformation {
+	background: @_sap_m_ListItemBase_Highlight_InformationColor;
+}
+.sapMLIBHighlightSuccess {
+	background: @sapUiSuccessBorder;
+}
+.sapMLIBHighlightWarning {
+	background: @sapUiWarningBorder;
+}
+.sapMLIBHighlightError {
+	background: @sapUiErrorBorder;
+}
+
+.sapMLIBHighlightIndication01 {
+	background: @sapUiIndication1;
+}
+.sapMLIBHighlightIndication02 {
+	background: @sapUiIndication2;
+}
+.sapMLIBHighlightIndication03 {
+	background: @sapUiIndication3;
+}
+.sapMLIBHighlightIndication04 {
+	background: @sapUiIndication4;
+}
+.sapMLIBHighlightIndication05 {
+	background: @sapUiIndication5;
+}
+.sapMLIBHighlightIndication06 {
+	background: @sapUiIndication6;
+}
+.sapMLIBHighlightIndication07 {
+	background: @sapUiIndication7;
+}
+.sapMLIBHighlightIndication08 {
+	background: @sapUiIndication8;
+}
+
+:not(.sapMListModeDelete) > .sapMLIB.sapMLIBTypeNavigation {
+	padding-right: 0;
+}
+
+.sapMListShowSeparatorsNone .sapMLIBShowSeparator {
+	border-bottom: 1px solid transparent;
+}
+
+.sapMListShowSeparatorsInner .sapMLIBShowSeparator:last-child {
+	border-bottom-color: transparent;
+}
+
+.sapMLIB.sapMListTblSupRow {
+	border-bottom: 0;
+}
+
+.sapMLIBSelectAnimation {
+	-webkit-animation-duration: 0.25s;
+	-webkit-animation-timing-function: ease-in;
+	-webkit-animation-name: resize;
+	animation-duration: 0.25s;
+	animation-timing-function: ease-in;
+	animation-name: resize;
+}
+
+@-webkit-keyframes resize {
+	0% {
+		width: 0;
+		opacity: 0;
+	}
+	100% {
+		width: 2.5rem;
+		opacity: 1;
+	}
+}
+
+@keyframes resize {
+	0% {
+		width: 0;
+		opacity: 0;
+	}
+	100% {
+		width: 2.5rem;
+		opacity: 1;
+	}
+}
+
+.sapUiSizeCompact .sapMLIBSelectAnimation {
+	-webkit-animation-duration: 0.25s;
+	-webkit-animation-timing-function: ease-in;
+	-webkit-animation-name: resizeCompact;
+	animation-duration: 0.25s;
+	animation-timing-function: ease-in;
+	animation-name: resizeCompact;
+}
+
+@-webkit-keyframes resizeCompact {
+	0% {
+		width: 0;
+		opacity: 0;
+	}
+	100% {
+		width: 2rem;
+		opacity: 1;
+	}
+}
+
+@keyframes resizeCompact {
+	0% {
+		width: 0;
+		opacity: 0;
+	}
+	100% {
+		width: 2rem;
+		opacity: 1;
+	}
+}
+
+.sapMLIBUnselectAnimation {
+	-webkit-animation-duration: 0.25s;
+	-webkit-animation-timing-function: ease-in;
+	-webkit-animation-name: close;
+	animation-duration: 0.25s;
+	animation-timing-function: ease-in;
+	animation-name: close;
+}
+
+@-webkit-keyframes close {
+	0% {
+		width: 3rem;
+	}
+	100% {
+		width: 0;
+	}
+}
+
+@keyframes close {
+	0% {
+		width: 3rem;
+	}
+	100% {
+		width: 0;
+	}
+}
+
+.sapMLIBUnread,
+.sapMLIBUnread > .sapMListTblCell,
+.sapMLIBUnread + .sapMListTblSubRow {
+	font-family: @sapUiFontFamily;
+	font-weight: bold;
+}
+
+.sapMLIBCounter {
+	font-size: 0.875rem;
+	color: @sapUiContentMarkerTextColor;
+	padding-left: 1rem;
+}
+
+.sapMLIBImgNav {
+	width: @sapUiElementLineHeight;
+	font-size: 0.75rem;
+	color: @sapUiContentLabelColor;
+}
+
+.sapMLIBActive .sapMLIBImgNav,
+.sapMLIBActive .sapMLIBIconDet .sapMBtnIcon,
+.sapMLIBActive .sapMLIBIconDel .sapMBtnIcon {
+	color: @sapUiListActiveTextColor;
+}
+
+
+.sapMListBGTransparent .sapMLIB {
+	background: fade(@sapUiListBackground, 0);
+}
+
+.sapMLIBHoverable:hover {
+	background : @sapUiListHoverBackground;
+}
+
+.sapMLIB.sapMLIBSelected {
+	background: @sapUiListSelectionBackgroundColor;
+}
+
+.sapMLIB.sapMLIBActive {
+	color: @sapUiListActiveTextColor;
+	background: @sapUiListActiveBackground;
+}
+
+.sapMLIBHoverable.sapMLIBSelected:hover {
+	background : @sapUiListSelectionHoverBackground;
+}
+
+.sapMLIBHoverable.sapMLIBSelected.sapMLIBActive:hover {
+	background: @sapUiListActiveBackground;
+}
+
+.sapMLIBActive div,
+.sapMLIBActive .sapMLIBCounter {
+	color: @sapUiListActiveTextColor;
+}
+
+.sapMLIBNavigated {
+	width: 0.1875rem;
+	position: absolute;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	background-color: @_sap_m_ListItemBase_Navigated;
+}
+
+// to make the focus outline visible when navigated=true
+.sapMLIBFocusable:focus .sapMLIBNavigated,
+.sapMLIBFocusable:focus + .sapMListTblSubRow .sapMLIBNavigated {
+	width: 0.125rem;
+	right: 2px;
+	bottom: 2px;
+	top: 2px;
+}
+
+/* Compact size */
+.sapUiSizeCompact .sapMLIB > .sapMLIBSelectS:first-child,
+.sapUiSizeCompact .sapMLIB > .sapMLIBSelectM:first-child {
+	margin-left: -0.5rem;
+}
+
+// Correct alignment of the selection control according to the specs.
+// 1rem padding-left (.sapMLIB) - 0.5rem margin-left (.sapMLIBSelectM) + 3rem width (.sapMLIBSelectM) - 0.5rem margin-left (.sapMLIBSelectM + .sapMLIBContent) = 3rem
+.sapUiSizeCompact .sapMLIB > .sapMLIBSelectM + .sapMLIBContent,
+.sapUiSizeCompact .sapMLIB > .sapMLIBSelectS + .sapMLIBContent {
+	margin-left: -0.5rem;
+}

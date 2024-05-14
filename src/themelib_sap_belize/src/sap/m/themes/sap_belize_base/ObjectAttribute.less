@@ -1,0 +1,181 @@
+/* ====================================== */
+/* CSS for control sap.m/ObjectAttribute  */
+/* Base theme                             */
+/* ====================================== */
+
+.sapMObjectAttributeDiv .sapMText,
+.sapMObjectAttributeDiv .sapMObjectAttributeTitle,
+.sapMObjectAttributeDiv .sapMObjectAttributeColon,
+.sapMObjectAttributeDiv .sapMObjectAttributeText {
+	font-size: .875rem;
+	color: @sapUiContentLabelColor;
+}
+
+.sapMObjectAttributeDiv .sapMText {
+	vertical-align: top;
+}
+
+.sapMObjectAttributeActive {
+	pointer-events: none;
+	.sapMObjectAttributeColon {
+		vertical-align: top;
+	}
+}
+
+.sapMListTbl .sapMObjectAttributeActive .sapMText,
+.sapMObjectAttributeActive .sapMText,
+.sapMObjectAttributeActive .sapMObjectAttributeText {
+	color: @sapUiLink;
+	cursor: pointer;
+	pointer-events: auto;
+}
+
+.sapMObjectAttributeActive .sapMObjectAttributeTitle,
+.sapMObjectAttributeActive .sapMObjectAttributeText {
+	pointer-events: auto;
+}
+
+.sapMObjectAttributeActive .sapMObjectAttributeText:active,
+.sapMObjectAttributeActive .sapMObjectAttributeText:hover,
+.sapMObjectAttributeActive .sapMObjectAttributeText:focus,
+.sapMObjectAttributeActive .sapMText:active,
+.sapMObjectAttributeActive .sapMText:focus,
+.sapMObjectAttributeActive .sapMText:hover {
+	text-decoration: underline;
+	outline: none;
+}
+
+.sapMObjectAttributeActive {
+	display: block;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.sapMObjectAttributeActive{
+	white-space: normal;
+	word-break: break-word;
+	.sapMObjectAttributeTitle,
+	.sapMObjectAttributeText {
+		white-space: normal;
+		vertical-align: top;
+		/* we need this otherwise the focus get broken when the link is on more lines */
+		display: inline-block;
+	}
+}
+
+.sapMObjectAttributeText > .sapMLnk {
+	display: inline;
+}
+
+.sapMOHR .sapMObjectAttributeText > .sapMText {
+	display: inline;
+}
+
+.sapMOH .sapMObjectAttributeText > .sapMText {
+	vertical-align: top;
+}
+
+.sapMObjectAttributeDiv{
+	font-size: @sapMFontMediumSize;
+}
+
+.sapMLIBActive .sapMObjectAttributeText,
+.sapMLIBActive .sapMObjectAttributeDiv{
+	color: @sapUiListActiveTextColor;
+}
+
+.sapMObjectAttributeActive > span:only-of-type {
+	max-width: 100%;
+}
+
+/*=========================================== */
+/* Custom design for Responsive Object Header */
+/*=========================================== */
+
+.sapMOHR .sapMOHRAttr .sapMObjectAttributeTitle,
+.sapMOHR .sapMOHRAttr .sapMObjectAttributeText {
+	display: inline-block;
+	font-family: @sapUiFontFamily;
+	font-size: @sapMFontMediumSize;
+	font-weight: normal;
+	color: @sapUiContentLabelColor;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	max-width: 50%;
+	vertical-align: top;
+}
+
+.sapMOHR .sapMOHRAttr .sapMObjectAttributeTitle {
+	padding-right: 0.5rem;
+	max-width: 50%;
+	box-sizing: border-box;
+}
+
+.sapMOHR .sapMOHRAttr .sapMObjectAttributeDiv > span:only-of-type {
+	max-width: 100%;
+}
+
+.sapMOHR .sapMOHRAttr .sapMObjectAttributeColon {
+	display: inline-block;
+	font-family: @sapUiFontFamily;
+	font-size: @sapMFontMediumSize;
+	font-weight: normal;
+	color: @sapUiContentLabelColor;
+	white-space: pre;
+	margin-left: -0.5rem;
+	overflow: auto;
+	vertical-align: top;
+}
+
+.sapMOHR .sapMObjectAttributeActive .sapMObjectAttributeText {
+	color: @sapLinkColor;
+	cursor: pointer;
+}
+
+.sapMOHR .sapMObjectAttributeActive .sapMObjectAttributeText:active,
+.sapMOHR .sapMObjectAttributeActive .sapMObjectAttributeText:hover,
+.sapMOHR .sapMObjectAttributeActive .sapMObjectAttributeText:focus {
+	text-decoration: none;
+}
+
+.sapMOHR .sapMOHRAttr .sapMObjectAttributeDiv {
+	display: block;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+/*=========================================== */
+/* Custom design for Static Object Header     */
+/*=========================================== */
+
+.sapMOH .sapMOHAttr .sapMObjectAttributeDiv {
+	max-height: 2rem;
+	overflow: hidden;
+}
+
+.sapMOH .sapMOHAttr .sapMObjectAttributeTitle,
+.sapMOH .sapMOHAttr .sapMObjectAttributeText,
+.sapMOH .sapMOHAttr .sapMObjectAttributeColon {
+	font-family: @sapUiFontFamily;
+	font-size: @sapMFontMediumSize;
+	font-weight: normal;
+	color: @sapUiContentLabelColor;
+}
+
+.sapMOH .sapMObjectAttributeActive .sapMObjectAttributeText {
+	color: @sapLinkColor;
+	cursor: pointer;
+}
+
+.sapMOH .sapMOHAttr .sapMObjectAttributeDiv > span:only-of-type {
+	max-width: 100%;
+}
+
+.sapMOH .sapMObjectAttributeActive .sapMObjectAttributeText:active,
+.sapMOH .sapMObjectAttributeActive .sapMObjectAttributeText:hover,
+.sapMOH .sapMObjectAttributeActive .sapMObjectAttributeText:focus {
+	text-decoration: none;
+}

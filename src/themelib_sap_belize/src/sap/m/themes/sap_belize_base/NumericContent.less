@@ -1,0 +1,355 @@
+/* ============================= */
+/* CSS for sap.m/NumericContent  */
+/* Base theme                    */
+/* ============================= */
+
+.sapMNC {
+	position: relative;
+	box-sizing: border-box;
+	outline: none;
+
+	height: 3.875rem;
+	width: 9rem;
+
+	&.WithoutMargin {
+		width: 100%;
+	}
+}
+
+.sapMNCAnimation {
+	animation-name: sapMCOpacityAnimation;
+	animation-duration: 1s;
+}
+
+@keyframes sapMCOpacityAnimation {
+	0% {
+		opacity: 0.25;
+	}
+
+	100% {
+		opacity: 1;
+	}
+}
+
+.sapMNCInner {
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+
+	&.WithoutMargin {
+		overflow: visible;
+		white-space: nowrap;
+		display: flex;
+	}
+}
+
+td .sapMNCValue.WithoutMargin {
+    justify-content: flex-end;
+}
+
+.sapMNCIconImage {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	padding-right: 0.375rem;
+	font-family: @sapUiFontHeaderFamily;
+	font-size: 1.75rem;
+	font-weight: @sapUiFontHeaderWeight;
+	color: @sapTile_IconColor;
+
+	&.sapMNCLargeFontSize:before {
+		padding-bottom: 0.25rem;
+	}
+
+	&.sapMNCMediumFontSize:before {
+		padding-bottom: 0.25rem;
+	}
+
+	&.sapMNCSmallFontSize:before {
+		padding-bottom: 0.25rem;
+	}
+}
+
+.sapMNCValue {
+	display: inline-flex;
+	justify-content: center;
+	position: relative;
+	width: 100%;
+	white-space: nowrap;
+	text-align: right;
+	text-overflow: ellipsis;
+	font-size: 2.25rem;
+	font-family: @sapFontLightFamily;
+	font-weight: @sapUiFontHeaderWeight;
+
+	&.WithoutMargin {
+		justify-content: center;
+	}
+}
+
+.sapMNCLargeFontSize {
+	height: 2.875rem;
+	padding-top: 0.125rem;
+
+	&:not(.sapMNCIconImage) {
+		font-size: 2.25rem;
+	}
+}
+
+.sapMNCMediumFontSize {
+	height: 2.5rem;
+	padding-top: 0;
+
+	&:not(.sapMNCIconImage) {
+		font-size: 2rem;
+	}
+}
+
+.sapMNCSmallFontSize {
+	height: 2.25rem;
+	padding-top: 0;
+
+	&:not(.sapMNCIconImage) {
+		font-size: 1.75rem;
+	}
+}
+
+html[dir=rtl] .sapMNCValue {
+	text-align: left;
+}
+
+.sapMNCIndIcon {
+	grid-column: 1;
+	grid-row: 1;
+}
+
+.sapMNCIndScale {
+	display: grid;
+	text-overflow: ellipsis;
+	text-align: center;
+
+	&.sapMNCLargeFontSize {
+		height: 2.125rem;
+		padding: 0.5rem 0 0.375rem 0.375rem;
+
+		.sapMNCScale {
+			margin-top: 0.9375rem;
+		}
+	}
+
+	&.sapMNCMediumFontSize {
+		height: 1.938rem;
+		padding: 0.25rem 0 0.5rem 0.5rem;
+
+		.sapMNCScale {
+			margin-top: 0.875rem;
+		}
+	}
+
+	&.sapMNCSmallFontSize {
+		height: 1.938rem;
+		padding: 0 0 0.313rem 0.5rem;
+
+		.sapMNCScale {
+			margin-top: 0.875rem;
+		}
+	}
+
+	&.WithoutMargin {
+		float: left;
+	}
+}
+
+.sapMNCScale {
+	font-size: 0.875rem;
+	font-family: @sapUiFontHeaderFamily;
+	font-weight: @sapUiFontHeaderWeight;
+	grid-column: 1;
+	grid-row: 1;
+}
+
+.sapMListTblSubRowCell .sapMNCValue {
+	display: contents;
+}
+
+.sapMNCValue.Neutral,
+.sapMNCIndScale.Neutral,
+.sapMNCScale.Neutral {
+	color: @sapUiNeutralText;
+}
+
+.sapMNCValue.Good,
+.sapMNCIndScale.Good,
+.sapMNCScale.Good {
+	color: @sapUiPositiveText;
+}
+
+.sapMNCValue.Error,
+.sapMNCIndScale.Error,
+.sapMNCScale.Error {
+	color: @sapUiNegativeText;
+}
+
+.sapMNCValue.Critical,
+.sapMNCIndScale.Critical,
+.sapMNCScale.Critical {
+	color: @sapUiCriticalText;
+}
+
+.sapMNCIndScale.Loading,
+.sapMNCScale.Loading,
+.sapMNCIconImage.Loading,
+.sapMNCValue.Failed {
+	color: @sapUiContentLabelColor;
+	opacity: 0.25;
+}
+
+.sapMNC:focus {
+	outline: 1px dotted @sapUiContentFocusColor;
+}
+
+.sapMNC:focus:not([tabindex]) {
+	outline: none;
+}
+
+.sapMTileSmallPhone {
+	.sapMNC {
+		height: 3.438rem;
+		width: 8rem;
+	}
+
+	.sapMNCLargeFontSize {
+		font-size: 1.5rem;
+		height: 1.875rem;
+		padding-top: 0.5rem;
+	}
+
+	.sapMNCMediumFontSize {
+		font-size: 1.5rem;
+		height: 1.875rem;
+		padding-top: 0.5rem;
+	}
+
+	.sapMNCSmallFontSize {
+		font-size: 1.5rem;
+		height: 1.875rem;
+		padding-top: 0.5rem;
+	}
+
+	.sapMNCIndScale {
+		padding: 0.25rem 0 0.25rem 0.375rem;
+
+		&.sapMNCSmallFontSize {
+			height: 2.25rem;
+			padding-bottom: 0;
+			padding-top: 0;
+
+			.sapMNCIndIcon {
+				padding-top: 0.3125rem;
+			}
+
+			.sapMNCScale {
+				margin-top: 1.0625rem;
+			}
+		}
+
+		.sapMNCIndIcon:only-child { // when there's no scale
+			margin-top: 0.5rem;
+		}
+
+		.sapMNCScale {
+			margin-top: 0.8125rem;
+		}
+	}
+
+	.sapMGTHdrTxt > .sapMText {
+		font-size: @sapMFontHeader6Size;
+	}
+}
+
+.sapMNCContentPlaceholder {
+	outline: none;
+	width: 300px;
+    height: 100px;
+    box-shadow: 0 2px 8px 0 rgba(0,0,0,0.10), 0 0 0 1px rgba(0,0,0,0.10);
+    border-radius: 4px;
+}
+
+.sapMNCContentPlaceholder:focus::before {
+	content: '';
+	display: block;
+	position: absolute;
+	left: 1px;
+	bottom: 1px;
+	right: 1px;
+	top: 1px;
+	border: 1px dotted @sapUiContentFocusColor;
+	pointer-events: none;
+}
+
+.sapMNCContentShimmerPlaceholderItem {
+	padding: 1rem 1rem 0 1rem;
+	box-sizing: border-box;
+	display: flex;
+	position: relative;
+	align-items: center;
+	flex: 1 1 auto;
+
+	.sapMNCContentShimmerPlaceholderRows {
+		flex-grow: 1;
+		.sapMNCContentShimmerPlaceholderItemHeader {
+			height: 1rem;
+			margin-bottom: 0.5rem;
+			margin-top: 0.5rem;
+		}
+	}
+}
+
+.sapMNCLoadingShimmer {
+	.sapMNCLoadingShimmerMixin();
+}
+
+.sapMNCLoadingShimmerMixin() {
+	background-color: @sapUiContentPlaceholderloadingBackground;
+	background-image: @sapUiContentPlaceholderloadingGradient;
+	background-repeat: no-repeat;
+	background-size: 800px 144px;
+	position: relative;
+	border-radius: 0.25rem;
+
+	[data-sap-ui-animation-mode="full"] & {
+		animation-duration: 2.5s;
+		animation-fill-mode: forwards;
+		animation-iteration-count: infinite;
+		animation-name: placeHolderShimmer;
+		animation-timing-function: linear;
+	}
+
+	[data-sap-ui-animation-mode="basic"] &,
+	[data-sap-ui-animation-mode="minimal"] & {
+		animation-duration: 8s;
+		animation-fill-mode: forwards;
+		animation-iteration-count: infinite;
+		animation-name: placeHolderShimmer;
+		animation-timing-function: linear;
+	}
+}
+
+@keyframes placeHolderShimmer {
+	0% {
+		background-position: -468px 0;
+	}
+
+	100% {
+		background-position: 468px 0;
+	}
+}
+
+@keyframes placeHolderShimmer{
+    0% {
+      background-position: -468px 0;
+    }
+    100% {
+      background-position: 468px 0;
+    }
+}

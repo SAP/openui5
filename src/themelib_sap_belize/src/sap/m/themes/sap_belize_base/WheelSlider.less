@@ -1,0 +1,344 @@
+/* =========================================== */
+/* CSS for control sap.m/WheelSlider           */
+/* Base Styles                                 */
+/* =========================================== */
+
+.sapMWS {
+	display: inline-block;
+	overflow: hidden;
+	height: 3rem;
+	vertical-align: middle;
+	text-align: center;
+	box-sizing: border-box;
+	cursor: pointer;
+	margin-top: 2rem;
+	.sapMWSLabel {
+		display: none;
+		box-sizing: border-box;
+		height: 2rem;
+		line-height: 2rem;
+		width: 4.5rem;
+		text-align: center;
+		font-size: @sapMFontSmallSize;
+		color: @sapUiContentLabelColor;
+		text-align: center;
+		vertical-align: middle;
+	}
+	.sapMWSArrows {
+		display: none;
+		box-sizing: border-box;
+	}
+	.sapMWSInner {
+		overflow: hidden;
+		height: 100%;
+		box-sizing: border-box;
+		-webkit-user-select: none;
+		-moz-user-select: none;
+		user-select: none;
+		.sapMWSItem {
+			height: 3rem;
+			line-height: 3rem;
+			width: 4.5rem;
+			box-sizing: border-box;
+			background: @sapUiSelected;
+			border: 1px solid @sapUiListBorderColor;
+			font-size: @sapMFontMediumSize;
+			color: @sapUiContentContrastTextColor;
+			text-align: center;
+			&:hover {
+				background: @sapUiHighlight;
+				color: @sapUiContentContrastTextColor;
+			}
+			&:active {
+				background: @sapUiHighlight;
+				color: @sapUiContentContrastTextColor;
+			}
+			&:focus {
+				outline: 1px dotted @sapUiContentContrastFocusColor;
+				outline-offset: -3px;
+			}
+		}
+		.sapMWSSelectionFrame {
+			width: 4.5rem;
+			height: 3rem;
+			position: absolute;
+			box-sizing: border-box;
+			display: none;
+		}
+		& > ul {
+			list-style: none;
+			margin: 0;
+			padding: 0;
+		}
+	}
+	&.sapMWSExpanded {
+		height: 100%;
+		cursor: default;
+		margin: 0;
+		.sapMWSLabel {
+			display: block;
+		}
+		.sapMWSArrows {
+			display: none;
+		}
+		.sapMWSInner {
+			height: calc(100% - 2rem);
+			max-height: 100%; //because of the SliderValuesN classes below
+			.sapMWSItem {
+				background: @sapUiListBackground;
+				color: @sapUiBaseText;
+				border: 1px solid @sapUiListBorderColor;
+				&:hover {
+					background: @sapUiHighlight;
+				}
+				&:active {
+					background: @sapUiHighlight;
+					color: @sapUiContentContrastTextColor;
+				}
+				&:focus {
+					outline: 1px dotted @sapUiContentFocusColor;
+					outline-offset: -3px;
+				}
+			}
+			.sapMWSSelectionFrame {
+				display: block;
+				outline: 0.125rem solid @sapUiContentForegroundBorderColor;
+				outline-offset: -0.313rem;
+				&:hover {
+					& + ul > li.sapMWSItem.sapMWSItemSelected {
+						background: @sapUiHighlight;
+					}
+				}
+				&:active {
+					& + ul > li.sapMWSItem.sapMWSItemSelected {
+						background: @sapUiSelected;
+						color: @sapUiContentContrastTextColor;
+					}
+				}
+			}
+		}
+		.sapMWSInner.SliderValues3 {
+			height: 9rem;
+		}
+		.sapMWSInner.SliderValues4 {
+			height: 12rem;
+		}
+		.sapMWSInner.SliderValues5 {
+			height: 15rem;
+		}
+		.sapMWSInner.SliderValues6 {
+			height: 18rem;
+		}
+		.sapMWSInner.SliderValues7 {
+			height: 21rem;
+		}
+		.sapMWSInner.SliderValues8 {
+			height: 24rem;
+		}
+		.sapMWSInner.SliderValues9 {
+			height: 27rem;
+		}
+		.sapMWSInner.SliderValues10 {
+			height: 30rem;
+		}
+		.sapMWSInner.SliderValues11 {
+			height: 33rem;
+		}
+		.sapMWSInner.SliderValues12 {
+			height: 36rem;
+		}
+	}
+	&:focus {
+		outline: none;
+	}
+}
+
+.sapUiSizeCompact {
+	.sapMWS {
+		height: 2rem;
+		.sapMWSLabel {
+			width: 4rem;
+		}
+		.sapMWSInner {
+			.sapMWSItem {
+				height: 2rem;
+				line-height: 2rem;
+				width: 4rem;
+				box-sizing: border-box;
+			}
+			.sapMWSSelectionFrame {
+				width: 4rem;
+				height: 2rem;
+			}
+		}
+		&.sapMWSExpanded {
+			height: 100%;
+			cursor: default;
+			margin: 0;
+			.sapMWSArrows {
+				display: block;
+			}
+			.sapMWSInner {
+				height: ~"calc(100% - 6rem)";
+				max-height: ~"calc(100% - 6rem)";
+			}
+			.sapMWSInner.SliderValues3 {
+				height: 6rem;
+			}
+			.sapMWSInner.SliderValues4 {
+				height: 8rem;
+			}
+			.sapMWSInner.SliderValues5 {
+				height: 10rem;
+			}
+			.sapMWSInner.SliderValues6 {
+				height: 12rem;
+			}
+			.sapMWSInner.SliderValues7 {
+				height: 14rem;
+			}
+			.sapMWSInner.SliderValues8 {
+				height: 16rem;
+			}
+			.sapMWSInner.SliderValues9 {
+				height: 18rem;
+			}
+			.sapMWSInner.SliderValues10 {
+				height: 20rem;
+			}
+			.sapMWSInner.SliderValues11 {
+				height: 22rem;
+			}
+			.sapMWSInner.SliderValues12 {
+				height: 24rem;
+			}
+		}
+	}
+}
+
+.sap-phone {
+	.sapMWS {
+		display: inline-block;
+		height: 3rem;
+		text-align: center;
+		overflow: hidden;
+		cursor: pointer;
+		vertical-align: middle;
+		box-sizing: border-box;
+		.sapMWSLabel {
+			height: 2rem;
+			width: 4.5rem;
+			display: none;
+			font-size: @sapMFontSmallSize;
+			color: @sapUiContentLabelColor;
+			text-align: center;
+			vertical-align: middle;
+		}
+		.sapMWSArrows {
+			display: none;
+		}
+		.sapMWSInner {
+			height: 100%;
+			//for Android 4.1 - 4.3 calc is not supported, so use 100% instead
+			max-height: 100%;
+			overflow: hidden;
+			.sapMWSItem {
+				height: 3rem;
+				line-height: 3rem;
+				width: 4.5rem;
+				box-sizing: border-box;
+				background: @sapUiSelected;
+				border: 1px solid @sapUiListBorderColor;
+				font-size: @sapMFontMediumSize;
+				color: @sapUiContentContrastTextColor;
+				text-align: center;
+				&:active {
+					background: @sapUiHighlight;
+					color: @sapUiContentContrastTextColor;
+				}
+				&:focus {
+					outline: 1px dotted @sapUiContentContrastFocusColor;
+					outline-offset: -3px;
+				}
+			}
+			.sapMWSSelectionFrame {
+				width: 4.5rem;
+				height: 3rem;
+				position: absolute;
+				display: none;
+				box-sizing: border-box;
+			}
+		}
+		&.sapMWSExpanded {
+			height: 100%;
+			cursor: default;
+			.sapMWSLabel {
+				display: block;
+			}
+			.sapMWSArrows {
+				display: none;
+			}
+			.sapMWSInner {
+				height: calc(100% - 2rem);
+				//for Android 4.1 - 4.3 calc is not supported, so use 100% instead
+				max-height: 100%;
+				overflow: hidden;
+				.sapMWSItem {
+					height: 3rem;
+					line-height: 3rem;
+					width: 4.5rem;
+					box-sizing: border-box;
+					background: @sapUiListBackground;
+					color: @sapUiBaseText;
+					border: 1px solid @sapUiListBorderColor;
+					&:active {
+						background: @sapUiHighlight;
+						color: @sapUiContentContrastTextColor;
+					}
+					&:focus {
+						outline: 1px dotted @sapUiContentFocusColor;
+						outline-offset: -3px;
+					}
+				}
+				.sapMWSSelectionFrame {
+					display: block;
+					outline: 0.125rem solid @sapUiContentForegroundBorderColor;
+					outline-offset: -0.313rem;
+				}
+			}
+			.sapMWSInner.SliderValues3 {
+				height: 9rem;
+			}
+			.sapMWSInner.SliderValues4 {
+				height: 12rem;
+			}
+			.sapMWSInner.SliderValues5 {
+				height: 15rem;
+			}
+			.sapMWSInner.SliderValues6 {
+				height: 18rem;
+			}
+			.sapMWSInner.SliderValues7 {
+				height: 21rem;
+			}
+			.sapMWSInner.SliderValues8 {
+				height: 24rem;
+			}
+			.sapMWSInner.SliderValues9 {
+				height: 27rem;
+			}
+			.sapMWSInner.SliderValues10 {
+				height: 30rem;
+			}
+			.sapMWSInner.SliderValues11 {
+				height: 33rem;
+			}
+			.sapMWSInner.SliderValues12 {
+				height: 36rem;
+			}
+		}
+		&:focus {
+			outline: none;
+		}
+	}
+}

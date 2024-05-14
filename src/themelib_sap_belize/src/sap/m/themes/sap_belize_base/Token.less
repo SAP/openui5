@@ -1,0 +1,122 @@
+/* ============================ */
+/* CSS for control sap.m/Token  */
+/* Base theme                   */
+/* ============================ */
+
+@_sap_m_Token_TokenPadding: 0.5rem;
+@_sap_m_Token_TokenCompactPadding: 0.25rem;
+@_sap_m_Token_LeftPadding: 0.375rem;
+@_sap_m_Token_TokenSize: @sapMFontMediumSize + (2 * @_sap_m_Token_TokenPadding) - @_sap_m_Token_LeftPadding;
+@_sap_m_Token_TokenCompactSize: @sapMFontSmallSize + @_sap_m_Token_TokenCompactPadding;
+
+.sapMToken {
+	display: inline-block;
+	position: relative;
+	overflow: hidden;
+	box-sizing: border-box;
+	font-size: @sapMFontMediumSize;
+	padding-left: @_sap_m_Token_LeftPadding;
+	height: 1.625rem;
+	background: @sapUiButtonTokenBackground;
+	border: @sapUiButtonBorderWidth solid @sapUiButtonTokenBorderColor;
+	border-radius: @sapUiButtonBorderCornerRadius;
+	color: @sapUiButtonTextColor;
+}
+
+.sapMToken.sapMHiddenToken {
+	display: none;
+}
+
+.sapMToken.sapMTokenReadOnly {
+	padding: 0 0.375rem;
+	color: @sapUiContentForegroundTextColor;
+}
+
+html.sap-desktop .sapMToken:not(.sapMTokenReadOnly):hover {
+	background: @sapUiButtonHoverBackground;
+	border: @sapUiButtonBorderWidth solid @sapUiButtonHoverBorderColor;
+}
+
+.sapMTokenText {
+	display: inline-block;
+	overflow: hidden;
+	white-space: nowrap;
+
+	// at least for Microsoft Surface Tablet we experienced problems when not setting these properties - touches on the Token seemed to be propageted to the Span inside the Token-Div and thereby (part of) the text contained in the Span would appear selected
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	user-select: none;
+
+	pointer-events: none;
+
+	line-height: 1.5rem;
+	max-width: calc(~"100% - " @_sap_m_Token_TokenSize);
+	box-sizing: border-box;
+}
+
+.sapMToken.sapMTokenTruncated .sapMTokenText {
+	text-overflow: ellipsis;
+}
+
+.sapUiSizeCompact .sapMTokenText {
+	max-width: calc(~"100%  - " @_sap_m_Token_TokenCompactSize);
+	font-size: @sapMFontMediumSize;
+}
+
+.sapMTokenReadOnly .sapMTokenText,
+.sapMTokenizerReadonly .sapMTokenText {
+	max-width: 100%;
+}
+
+.sapMTokenIcon {
+	vertical-align: top;
+	display: inline-block;
+	line-height: 1.5625rem;
+	padding: 0 0.5rem;
+	color: @sapUiContentIconColor;
+	font-size: 0.75rem;
+	box-sizing: border-box;
+	touch-action: none;
+}
+
+.sapUiSizeCompact .sapMToken {
+	font-size: @sapMFontSmallSize;
+	padding-left: @_sap_m_Token_TokenCompactPadding;
+	height: 1.25rem;
+}
+
+.sapUiSizeCompact .sapMToken.sapMTokenReadOnly {
+	padding: 0 0.25rem;
+}
+
+.sapUiSizeCompact .sapMTokenText {
+	line-height: 1.125rem;
+}
+
+.sapUiSizeCompact .sapMToken .sapMTokenIcon {
+	font-size: @sapMFontSmallSize;
+	padding: 0 0.25rem;
+	line-height: 1.1875rem;
+}
+
+html.sap-desktop .sapMToken.sapMTokenSelected:not(.sapMTokenReadOnly):hover {
+	background: @sapUiToggleButtonPressedHoverBackground;
+	border: 1px solid @sapUiToggleButtonPressedHoverBorderColor;
+}
+
+.sapMTokenSelected,
+.sapMToken.sapMTokenReadOnly.sapMTokenSelected {
+	color: @sapUiButtonSelectedTextColor;
+	background: @sapUiButtonSelectedBackground;
+	border: @sapUiButtonBorderWidth solid @sapUiButtonSelectedBorderColor;
+}
+
+.sapMTokenSelected .sapMTokenIcon,
+.sapMTokenSelected .sapMTokenText {
+	color: @sapUiButtonSelectedTextColor;
+}
+
+.sapUiSizeCompact .sapMListTbl .sapMToken .sapUiIcon:not(.sapMLIBImgNav) {
+	font-size: 0.75rem;
+}

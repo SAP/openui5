@@ -1,0 +1,119 @@
+/* ================================== */
+/* CSS for control sap.m/FeedContent  */
+/* Base theme                         */
+/* ================================== */
+
+.sapMFC {
+	outline: none;
+	position: relative;
+	width: 100%;
+	height: 3.875rem;
+	display: inline-block;
+}
+
+.sapMFCCTxt {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	height: 2.126rem;
+	max-width: 20.5rem;
+	margin-top: 0.3rem;
+
+	.sapMText {
+		display: inline;
+		line-height: 1.063rem;
+	}
+}
+
+.sapMFCSbh {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	max-width: 20.5rem;
+	line-height: 1.063rem;
+	font-size: @sapMFontSmallSize;
+	color: @sapUiTileTextColor;
+}
+
+.sapMFCValue {
+	position: relative;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	padding-left: 1rem;
+	padding-top: 0.875rem;
+	font-size: 2.25rem;
+	line-height: 3rem;
+	max-width: 10.25rem;
+	min-width: 3rem;
+	float: right;
+	font-family: @sapUiFontHeaderFamily;
+	font-weight: @sapUiFontHeaderWeight;
+}
+
+.sapMFCCTxt > .sapMText {
+	cursor:inherit;
+}
+
+.sapMFC:focus:not([tabindex]) {
+	outline: none;
+}
+
+.sapMFCCTxt .sapMText {
+	font-size: @sapFontSize;
+	color: @sapUiTileTitleTextColor;
+}
+
+.sapMGT.TwoByOne.sapMTileSmallPhone{
+	.sapMFCCTxt .sapMText {
+		font-size: @sapFontSmallSize;
+	}
+}
+
+.sapMFCValue.Neutral {
+	color: @sapUiNeutralText;
+}
+
+.sapMFCValue.Good {
+	color: @sapUiPositiveText;
+}
+
+.sapMFCValue.Critical {
+	color: @sapUiCriticalText;
+}
+
+.sapMFCValue.Error {
+	color: @sapUiNegativeText;
+}
+
+html.sap-desktop .sapMFC:focus {
+	outline: 1px dotted @sapUiContentFocusColor;
+}
+
+html.sap-desktop .sapMFC:focus:not([tabindex]) {
+	outline: none;
+}
+
+.sapMTileSmallPhone {
+	.sapMFC {
+		width: 17.75rem;
+		height: 3.438rem;
+	}
+
+	.sapMFCCTxt {
+		max-width: 17.75rem;
+		margin-top: 0.1rem;
+	}
+
+	.sapMFCSbh {
+		max-width: 17.75rem;
+	}
+
+	.sapMFCValue {
+		padding-top: 1.188rem;
+		padding-left: 0.4rem;
+		font-size: 2rem;
+		line-height: 2.25rem;
+		max-width: 8.25rem;
+		min-width: 2.5rem
+	}
+}

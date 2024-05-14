@@ -1,0 +1,257 @@
+/* ===================================== */
+/* CSS for control sap.m/MessagePopover  */
+/* Base theme                            */
+/* ===================================== */
+@_sap_m_MessageView_DescIcon_Width: 3rem;
+
+.sapMMsgView {
+	height: 100%;
+
+	.sapMSegBBtnMixed .sapMSegBBtnInner {
+		padding-left: 0;
+		padding-right: 0;
+	}
+
+	.sapMDialogScrollCont {
+		padding: 0;
+	}
+
+	.sapMIBar .sapMBarChild {
+		margin-left: .25rem;
+		margin-right: .25rem;
+	}
+
+	.sapMMsgViewTitleText,
+	.sapMMsgViewDescriptionText {
+		margin: 1rem 1rem 0 3rem;
+		a.sapMLnkMaxWidth,
+		&.sapMLnkMaxWidth {
+			white-space: normal;
+		}
+	}
+
+	.sapMMsgViewDescriptionText {
+		padding-bottom: 1rem;
+		font-size: @sapMFontMediumSize;
+		display: block;
+	}
+
+	.sapMMsgViewDescriptionLink {
+		display: block;
+		margin: 1rem 0 0 3rem;
+	}
+
+	.sapMMsgViewDescriptionText:empty {
+		display: none;
+	}
+
+	.sapMMsgViewTitleText {
+		vertical-align: middle;
+		font-size: @sapMFontHeader5Size;
+	}
+
+	.sapMMsgViewItem {
+		padding-left: 0;
+
+		&.sapMSLIWithDescription {
+			height: 3.3125rem;
+		}
+		&:not(.sapMSLIWithDescription) {
+			height: 2.75rem;
+		}
+
+		.sapMSLIImgIcon {
+			margin-left: 0;
+		}
+	}
+
+	.sapMSLIDescription {
+		margin-top: 0.125rem;
+		font-family: @sapUiFontFamily;
+		font-size:  @sapMFontMediumSize;
+		color: @sapUiContentLabelColor;
+	}
+
+	.sapMSLITitle {
+		font-family: @sapUiFontHeaderFamily;
+		font-size: @sapMFontHeader5Size;
+		font-weight: @sapUiFontHeaderWeight;
+		color: @sapUiGroupTitleTextColor;
+
+		.sapMLnk {
+			display: block;
+		}
+	}
+
+	.sapMSLITitleOnly {
+		font-size: @sapMFontHeader5Size;
+	}
+
+	.sapMLIB.sapMLIBActive {
+		.sapMSLIImgIcon {
+			color: @sapUiListActiveTextColor;
+		}
+	}
+
+	.sapMSLIDescIcon .sapMSLIDescription {
+		margin-top: 0.125rem;
+	}
+
+	.sapMSLIInfo {
+		margin: 0;
+	}
+
+	.sapMTextMaxWidth {
+		max-width: ~"calc(100% - @{_sap_m_MessageView_DescIcon_Width})";
+	}
+
+	.sapMSLITitle, .sapMSLITitleOnly,
+	.sapMSLIWithDescription > .sapMLIBContent > .sapMSLIDiv > .sapMSLIDescription {
+		padding: 0;
+	}
+
+	.sapMMsgViewHiddenContainer {
+		display: none;
+	}
+
+	// remove the truncation behavior, when a list item does not need it
+	// (if it needs to have a truncation we change the item type to navigation)
+	.sapMMsgViewItem:not(.sapMLIBTypeNavigation) .sapMSLITitleOnly {
+		text-overflow: clip;
+	}
+}
+
+.sapMMsgViewDescIcon {
+	position: absolute;
+	left: 0;
+	width: @_sap_m_MessageView_DescIcon_Width;
+	top: .7rem;
+	font-size: 1.35rem;
+}
+
+.sapMMsgViewItemActive {
+
+	& .sapMLnk {
+		font-size: @sapMFontHeader5Size;
+	}
+
+	& .sapMSLITitleOnly {
+		display: flex;
+		align-items: center;
+	}
+}
+
+/* Compact size */
+.sapUiSizeCompact .sapMMsgView {
+	&.sapMPopoverArrUp:after,
+	&.sapMPopoverWithoutBar.sapMPopoverNav.sapMPopoverWithHeaderCont > .sapMPopoverArrUp:after,
+	&.sapMPopoverWithoutBar.sapMPopoverPage.sapMPopoverWithHeaderCont > .sapMPopoverArrUp:after {
+		bottom: -9px;
+		left: -8px;
+	}
+
+	.sapMMsgViewItem {
+		padding-left: 0;
+
+		&.sapMSLIWithDescription {
+			height: 3.25rem;
+		}
+	}
+
+	.sapMMsgViewItemActive .sapMLnk {
+		font-size: @sapMFontHeader6Size;
+	}
+
+	.sapMMsgViewItem:not(.sapMSLIWithDescription) {
+		height: 2rem;
+	}
+
+	.sapMMsgViewItem:not(.sapMSLIWithDescription) .sapMLIBImgNav.sapUiIcon {
+		height: 2rem;
+		line-height: 2rem;
+	}
+
+	.sapMMsgViewItem .sapMLIBImgNav.sapUiIcon {
+		height: 3.4375rem;
+		line-height: 3.4375rem;
+	}
+
+	.sapMMsgViewCloseBtn .sapMBtnIcon {
+		width: 1.626rem;
+		height: 1.626rem;
+		font-size: 0.75rem;
+	}
+
+	.sapMList .sapMLIBContent .sapUiIcon {
+		font-size: 1rem;
+	}
+
+	.sapMBtnInner {
+		padding: 0;
+	}
+
+	.sapMMsgViewBackBtn .sapMBtnIcon {
+		margin-right: 0;
+	}
+
+	.sapMBtnCustomIcon  {
+		margin-left: 0;
+	}
+
+	.sapMMsgViewDescIcon {
+		width: @_sap_m_MessageView_DescIcon_Width;
+		height: 1.626rem;
+		line-height: 1.626rem;
+		font-size: 1rem;
+	}
+
+	.sapMSLIDescription {
+		margin-top: 0;
+	}
+
+	.sapMSLITitle, .sapMSLITitleOnly {
+		font-size: @sapMFontHeader6Size;
+	}
+
+	.sapMSLIDescIcon .sapMSLITitle,
+	.sapMSLIDescIcon .sapMSLIDescription {
+		margin-top: 0.125rem;
+		margin-bottom: 0.125rem;
+	}
+}
+
+.sapMMsgViewCloseBtn .sapMBtnIcon {
+	color: @sapUiButtonIconColor;
+}
+
+.sapMMsgViewItemSuccess .sapMSLIImgIcon,
+.sapMMsgViewBtnSuccess.sapMSegBBtn .sapUiIcon,
+.sapMMsgViewDescIconSuccess {
+	color: @sapUiPositiveElement;
+}
+
+.sapMMsgViewItemWarning .sapMSLIImgIcon,
+.sapMMsgViewBtnWarning.sapMSegBBtn .sapUiIcon,
+.sapMMsgViewDescIconWarning {
+	color: @sapUiCriticalElement;
+}
+
+.sapMMsgViewItemError .sapMSLIImgIcon,
+.sapMMsgViewBtnError.sapMSegBBtn .sapUiIcon,
+.sapMMsgViewDescIconError {
+	color: @sapUiNegativeElement;
+}
+
+.sapMMsgViewItemInformation .sapMSLIImgIcon,
+.sapMMsgViewBtnInformation.sapMSegBBtn .sapUiIcon,
+.sapMMsgViewDescIconInformation {
+	color: @sapInformativeElementColor;
+}
+
+.sapMMsgViewItem .sapMSLIIconActive {
+	color: @sapUiContentContrastIconColor;
+}
+
+.sapMMsgViewDescriptionText a.sapMLnk {
+	overflow: visible;
+}

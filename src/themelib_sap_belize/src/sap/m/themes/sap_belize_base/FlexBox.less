@@ -1,0 +1,148 @@
+/* ============================== */
+/* CSS for control sap.m/FlexBox  */
+/* Base theme                     */
+/* ============================== */
+
+/* mixin call for creating container content padding classes (arguments: rootContainer, contentSelector) */
+.sapUiContainerContentPadding(~".sapMFlexItem", ~"");
+
+.sapMFlexBoxBGSolid,
+.sapMFlexBoxBGTranslucent {
+	background-color: @sapUiGroupContentBackground;
+}
+
+.sapMFlexBoxBGTransparent {
+	background-color: transparent;
+}
+
+.sapMFlexBox {
+	display: flex;
+	box-sizing: border-box;
+}
+
+.sapMFlexBoxInline:not(.sapMFlexBoxFit) {
+	display: inline-flex;
+}
+
+.sapMFlexBoxFit,
+.sapMFlexBoxScroll {
+	height: 100%;
+}
+
+/* Nested FlexBox should have auto-height because of the wrappers */
+.sapMFlexBox > .sapMFlexBoxFit {
+	height: auto;
+}
+
+.sapMFlexItem {
+	position: relative;
+}
+
+/*** flex-direction ***/
+.sapMHBox {
+	flex-direction: row;
+}
+.sapMVBox {
+	flex-direction: column;
+}
+.sapMHBox.sapMFlexBoxReverse {
+	flex-direction: row-reverse;
+}
+.sapMVBox.sapMFlexBoxReverse {
+	flex-direction: column-reverse;
+}
+
+
+/*** justify-content ***/
+.sapMFlexBoxJustifyStart {
+	justify-content: flex-start;
+}
+.sapMFlexBoxJustifyEnd {
+	justify-content: flex-end;
+}
+.sapMFlexBoxJustifyCenter {
+	justify-content: center;
+}
+.sapMFlexBoxJustifySpaceBetween {
+	justify-content: space-between;
+}
+.sapMFlexBoxJustifySpaceAround {
+	justify-content: space-around;
+}
+.sapMFlexBoxJustifyInherit {
+	justify-content: inherit;
+}
+
+/*** align-items ***/
+.sapMFlexBoxAlignItemsStart {
+	align-items: flex-start;
+}
+.sapMFlexBoxAlignItemsEnd {
+	align-items: flex-end;
+}
+.sapMFlexBoxAlignItemsCenter {
+	align-items: center;
+}
+.sapMFlexBoxAlignItemsBaseline {
+	align-items: baseline;
+}
+.sapMFlexBoxAlignItemsStretch {
+	align-items: stretch;
+}
+.sapMFlexBoxAlignItemsInherit {
+	align-items: inherit;
+}
+
+/*** wrap ***/
+.sapMFlexBoxWrapNoWrap {
+	flex-wrap: nowrap;
+}
+.sapMFlexBoxWrapWrap {
+	flex-wrap: wrap;
+}
+.sapMFlexBoxWrapWrapReverse {
+	flex-wrap: wrap-reverse;
+}
+
+/*** align-content ***/
+.sapMFlexBoxAlignContentStart {
+	align-content: flex-start;
+}
+.sapMFlexBoxAlignContentEnd {
+	align-content: flex-end;
+}
+.sapMFlexBoxAlignContentCenter {
+	align-content: center;
+}
+.sapMFlexBoxAlignContentSpaceBetween {
+	align-content: space-between;
+}
+.sapMFlexBoxAlignContentSpaceAround {
+	align-content: space-around;
+}
+.sapMFlexBoxAlignContentStretch {
+	align-content: stretch;
+}
+
+/*** align-self ***/
+.sapMFlexItemAlignAuto {
+	align-self: auto;
+}
+.sapMFlexItemAlignStart {
+	align-self: flex-start;
+}
+.sapMFlexItemAlignEnd {
+	align-self: flex-end;
+}
+.sapMFlexItemAlignCenter {
+	align-self: center;
+}
+.sapMFlexItemAlignBaseline {
+	align-self: baseline;
+}
+.sapMFlexItemAlignStretch {
+	align-self: stretch;
+}
+.sapMFlexItemAlignInherit {
+	align-self: inherit;
+}

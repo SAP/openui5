@@ -1,0 +1,29 @@
+.sapMPluginsPasteProviderMessage {
+	outline: 0;
+	padding: 2rem;
+	font-size: @sapFontSize;
+	font-family: @sapFontFamily;
+	color: @sapTextColor;
+}
+
+.sapMPluginsPasteProviderShortCut {
+	font-size: @sapFontLargeSize;
+	font-family: @sapFontBoldFamily;
+}
+
+.sapMPluginsPasteProviderHighlight {
+	position: relative;
+}
+
+.sapMPluginsPasteProviderHighlight::after {
+	content: "";
+	background: @sapUiDragAndDropActiveBackground;
+	border: 0.125rem solid @sapUiDragAndDropActiveBorderColor;
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 99;
+	pointer-events: none;
+}
