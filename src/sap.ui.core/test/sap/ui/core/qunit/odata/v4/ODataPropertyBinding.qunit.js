@@ -2246,7 +2246,6 @@ sap.ui.define([
 
 		oPropertyBinding.oCheckUpdateCallToken = {};
 		oPropertyBinding.vValue = "foo";
-		this.mock(oPropertyBinding).expects("deregisterChangeListener").withExactArgs();
 		this.mock(this.oModel).expects("bindingDestroyed")
 			.withExactArgs(sinon.match.same(oPropertyBinding));
 		this.mock(asODataBinding.prototype).expects("destroy").on(oPropertyBinding).withExactArgs();
@@ -2359,23 +2358,6 @@ sap.ui.define([
 
 		// code under test
 		oBinding.resetInvalidDataState();
-	});
-
-	//*********************************************************************************************
-	QUnit.test("deregisterChangeListener", function () {
-		var oBinding = this.oModel.bindProperty("/EMPLOYEES('1')/AGE");
-
-		oBinding.sReducedPath = "/reduced/path";
-		this.mock(oBinding).expects("doDeregisterChangeListener")
-			.withExactArgs("/reduced/path", sinon.match.same(oBinding));
-
-		// code under test
-		oBinding.deregisterChangeListener();
-
-		oBinding.sReducedPath = undefined;
-
-		// code under test - no further doDeregisterChangeListener
-		oBinding.deregisterChangeListener();
 	});
 
 	//*********************************************************************************************

@@ -61394,4 +61394,34 @@ make root = ${bMakeRoot}`;
 			]);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: setBindingContext of a table w/o cache below a context binding w/o own properties.
+	// See that this context binding can refresh properly afterwards.
+	// SNOW: DINC0117588
+	QUnit.test("DINC0117588", async function (assert) {
+		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
+		const sView = `
+<FlexBox id="root" binding="{/TEAMS('0')}">
+	<Table id="table" items="{TEAM_2_EMPLOYEES}">
+		<Text id="id" text="{ID}"/>
+	</Table>
+</FlexBox>`;
+
+		this.expectRequest("TEAMS('0')?$select=Team_Id&$expand=TEAM_2_EMPLOYEES($select=ID)", {
+				TeamId : "0",
+				TEAM_2_EMPLOYEES : [
+					{ID : "1"}
+				]
+			})
+			.expectChange("id", ["1"]);
+
+		await this.createView(assert, sView, oModel);
+
+		this.oView.byId("table").setBindingContext(null);
+
+		await this.waitForChanges(assert);
+
+		await this.oView.byId("root").getBindingContext().requestRefresh();
+	});
 });
