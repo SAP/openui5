@@ -180,7 +180,7 @@ sap.ui.define([
 		if (HeaderAdapter._isAdaptableHeader(this._oHeader)) {
 			aBeginContent = this._oHeader.getContentLeft();
 			if (aBeginContent.length > 0 && isInstanceOf(aBeginContent[0], "sap/m/Button") &&
-				(aBeginContent[0].getType() === "Back" || aBeginContent[0].getType() === "Up" || aBeginContent[0].getIcon() === "sap-icon://nav-back")) {
+				(aBeginContent[0].getId().includes("-navButton") || aBeginContent[0].getIcon() === "sap-icon://nav-back")) {
 				oBackButton = aBeginContent[0];
 				return {
 					id: oBackButton.getId(),
