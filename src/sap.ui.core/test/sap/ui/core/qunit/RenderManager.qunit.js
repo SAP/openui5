@@ -8,7 +8,6 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/core/HTML",
 	"sap/ui/core/IconPool",
-	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/UIArea",
 	"sap/ui/thirdparty/jquery",
 	"sap/base/security/encodeXML",
@@ -16,7 +15,22 @@ sap.ui.define([
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/base/Log",
 	"sap/ui/core/Configuration"
-], function(Device, Control, Core, RenderManager, Element, HTML, IconPool, XMLView, UIArea, jQuery, encodeXML, createAndAppendDiv, nextUIUpdate, Log, Configuration) {
+], function(
+	Device,
+	Control,
+	Core,
+	RenderManager,
+	Element,
+	HTML,
+	IconPool,
+	UIArea,
+	jQuery,
+	encodeXML,
+	createAndAppendDiv,
+	nextUIUpdate,
+	Log,
+	Configuration
+) {
 	"use strict";
 
 	// prepare DOM
@@ -1810,9 +1824,8 @@ sap.ui.define([
 
 	QUnit.module("cleanupControlWithoutRendering and DOM preservation", {
 		beforeEach: function() {
-			var sViewXML = '<mvc:View xmlns:mvc="sap.ui.core.mvc"/>';
-			this.oView1 = new XMLView({viewContent: sViewXML});
-			this.oView2 = new XMLView({viewContent: sViewXML});
+			this.oView1 = new HTML({ content: "<span>view1</span>" });
+			this.oView2 = new HTML({ content: "<span>view2</span>" });
 			this.oContainer = new TestContainer({
 				theLuckyOne: 0,
 				content: [ this.oView1, this.oView2 ]
