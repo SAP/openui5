@@ -2,7 +2,16 @@
  * ${copyright}
  */
 
-@import "../base/library.source.less";
+/***********************************************************************************
+/* Due to deprecation of the Belize theme family with SAPUI5 version 1.120 the
+/* inheritance of the base theme is now updated to an inheritance of a static
+/* copy of the base theme named sap_belize_base. The respective
+/* control css files of base are copied to the sap_belize_base theme folder.
+/* This decoupling of the base theme is introduced with SAPUI5 version 1.125.
+***********************************************************************************/
+
+
+@import "../sap_belize_base/library.source.less";
 @import "../../../../sap/ui/core/themes/sap_belize/base.less";
 @import "../../../../sap/ui/core/themes/sap_belize/global.less";
 

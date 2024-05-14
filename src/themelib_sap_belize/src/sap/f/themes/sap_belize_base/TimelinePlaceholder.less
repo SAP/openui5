@@ -1,0 +1,79 @@
+/* ==================================================== */
+/* CSS for control sap.f.cards.loading/TimelinePlaceholder  */
+/* Base theme                                           */
+/* ==================================================== */
+
+
+.sapFCardContentTimelinePlaceholder {
+	padding-block-start: 0.5rem;
+	flex: 1;
+}
+
+.sapFCardTimelinePlaceholderItem {
+	height: 2.75rem;
+	padding-inline: 1rem;
+	box-sizing: border-box;
+	display: flex;
+	position: relative;
+	align-items: flex-start;
+	flex: 1 1 auto;
+
+	.sapFCardTimelineNavGroup {
+		display: flex;
+		flex-direction: column;
+		height: 100%;
+		align-items: center;
+	}
+
+	.sapFCardTimelinePlaceholderImg {
+		height: 2rem;
+		width: 2rem;
+		display: inline-block;
+	}
+
+	.sapFCardTimelinePlaceholderLine {
+		flex: 1;
+		min-height: 0;
+		width: 2px;
+	}
+
+	.sapFCardTimelinePlaceholderRows {
+		flex-grow: 1;
+		padding-inline-start: 0.75rem;
+
+		.sapFCardTimelinePlaceholderRow {
+			height: 1rem;
+			margin-block-end: 0.25rem;
+			display: flex;
+
+			&.sapFCardTimelinePlaceholderRowCombined {
+				height: 1.5rem;
+				max-width: 35%;
+			}
+
+			.sapFCardTimelinePlaceholderAttr {
+				flex-grow: 1;
+
+				&:first-of-type {
+					margin-inline-end: 1rem;
+				}
+
+				&:only-child {
+					max-width: 25%;
+				}
+			}
+		}
+
+		.sapFCardTimelinePlaceholderRow60 {
+			width: 60%;
+		}
+
+		.sapFCardTimelinePlaceholderRow40 {
+			width: 40%;
+		}
+	}
+}
+
+.sapUiSizeCompact .sapFCardTimelinePlaceholderItem {
+	height: 2rem;
+}

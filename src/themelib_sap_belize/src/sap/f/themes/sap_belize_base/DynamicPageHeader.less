@@ -1,0 +1,66 @@
+/* ======================================== */
+/* CSS for control sap.f/DynamicPageHeader  */
+/* Base theme                               */
+/* ======================================== */
+
+// Synced with ObjectPageLayout.HEADER_CONTENT_PADDING_BOTTOM and DynamicPage.HEADER_CONTENT_PADDING_BOTTOM
+@_sap_f_DynamicPageHeader_PaddingBottom: 1rem;
+
+// Default base icon for the pin button
+@_sap_f_DynamicPageHeader_PinButton_Icon: pushpin-off;
+
+.sapFDynamicPageHeader {
+	z-index: 3;
+	position: relative;
+
+	-webkit-flex-shrink: 0;
+	flex-shrink: 0;
+	box-sizing: border-box;
+	background: @sapUiObjectHeaderBackground;
+}
+
+.sapFDynamicPageHeader.sapFDynamicPageHeaderWithContent {
+	padding: 1rem 3rem @_sap_f_DynamicPageHeader_PaddingBottom 3rem;
+	box-shadow: @sapUiContentHeaderShadow;
+}
+
+.sapFDynamicPageHeader.sapFDynamicPageHeaderPinnable {
+	min-height: 2rem;
+}
+
+.sapFDynamicPageHeader:focus {
+	outline: none;
+}
+
+.sapFDynamicPageHeaderHidden {
+	display: none;
+}
+
+.sapFDynamicPage-Std-Tablet {
+	.sapFDynamicPageHeaderWithContent {
+		padding: 1rem 2rem @_sap_f_DynamicPageHeader_PaddingBottom 2rem;
+	}
+
+	.sapFDynamicPageHeader.sapFDynamicPageHeaderPinnable {
+		min-height: 3rem;
+	}
+}
+
+.sapFDynamicPage-Std-Phone {
+	.sapFDynamicPageHeaderWithContent {
+		padding: 0.5rem 1rem @_sap_f_DynamicPageHeader_PaddingBottom 1rem;
+	}
+}
+
+.sapFDynamicPageHeader.sapFDynamicPageHeaderWithContent {
+	.sapMObjectAttributeDiv .sapMText,
+	.sapMObjectAttributeDiv .sapMObjectAttributeTitle,
+	.sapMObjectAttributeDiv .sapMObjectAttributeColon,
+	.sapMObjectAttributeDiv .sapMObjectAttributeText {
+		vertical-align: middle;
+	}
+
+	.sapMFFResetSpacer {
+		margin-left: 0;
+	}
+}

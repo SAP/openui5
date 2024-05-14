@@ -1,0 +1,53 @@
+/* ==================================================== */
+/* CSS for control sap.f.cards.loading/ListPlaceholder  */
+/* Base theme                                           */
+/* ==================================================== */
+
+.sapFCardListPlaceholderItem {
+	height: 2.75rem;
+	padding: 0 1rem 0 1rem;
+	box-sizing: border-box;
+	display: flex;
+	position: relative;
+	align-items: center;
+	flex: 1 1 auto;
+
+	.sapFCardListPlaceholderImg {
+		margin: 0rem 0.75rem 0rem 0rem;
+		height: 2rem;
+		width: 2rem;
+		display: inline-block;
+	}
+
+	.sapFCardListPlaceholderRows {
+		flex-grow: 1;
+
+		.sapFCardListPlaceholderRow {
+			height: 0.75rem;
+			margin-bottom: 0.5rem;
+			margin-top: 0.5rem;
+			display: flex;
+
+			&.sapFCardListPlaceholderRowCombined {
+				height: 1.5rem;
+				max-width: 35%;
+			}
+
+			.sapFCardListPlaceholderAttr {
+				flex-grow: 1;
+
+				&:first-of-type {
+					margin-right: 1rem;
+				}
+
+				&:only-child {
+					max-width: 25%;
+				}
+			}
+		}
+	}
+}
+
+.sapUiSizeCompact .sapFCardListPlaceholderItem {
+	height: 2rem;
+}
