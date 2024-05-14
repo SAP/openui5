@@ -1595,7 +1595,6 @@ sap.ui.define([
 	[
 		"adjustPredicate",
 		"destroy",
-		"doDeregisterChangeListener",
 		"getGeneration",
 		"hasPendingChangesForPath",
 		"isUnchangedParameter",

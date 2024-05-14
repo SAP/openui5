@@ -32,8 +32,6 @@ sap.ui.define([
 			refreshDataState : function () {}
 		});
 
-	function mustBeMocked() { throw new Error("Must be mocked"); }
-
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.ODataPropertyBinding", {
 		beforeEach : function () {
@@ -2260,7 +2258,6 @@ sap.ui.define([
 
 		oPropertyBinding.oCheckUpdateCallToken = {};
 		oPropertyBinding.vValue = "foo";
-		this.mock(oPropertyBinding).expects("deregisterChangeListener").withExactArgs();
 		this.mock(this.oModel).expects("bindingDestroyed")
 			.withExactArgs(sinon.match.same(oPropertyBinding));
 		this.mock(asODataBinding.prototype).expects("destroy").on(oPropertyBinding).withExactArgs();
@@ -2373,52 +2370,6 @@ sap.ui.define([
 
 		// code under test
 		oBinding.resetInvalidDataState();
-	});
-
-	//*********************************************************************************************
-[false, true].forEach(function (bRelative) {
-	[false, true].forEach(function (bHasContext) {
-		[false, true].forEach(function (bHasMethod) {
-		const sTitle = `deregisterChangeListener: relative=${bRelative}, w/ context=${bHasContext},
-			w/ method=${bHasMethod}`;
-
-	QUnit.test(sTitle, function () {
-		const oBinding = this.oModel.bindProperty((bRelative ? "" : "/") + "EMPLOYEES('1')/AGE");
-		if (bRelative && bHasContext) {
-			oBinding.oContext = {};
-			if (bHasMethod) {
-				oBinding.oContext.deregisterChangeListener = mustBeMocked;
-				this.mock(oBinding.oContext).expects("deregisterChangeListener").twice()
-					.withExactArgs(sinon.match.same(oBinding)).returns(false);
-			}
-		}
-		oBinding.sReducedPath = "/reduced/path";
-		this.mock(oBinding).expects("doDeregisterChangeListener")
-			.withExactArgs("/reduced/path", sinon.match.same(oBinding));
-
-		// code under test
-		oBinding.deregisterChangeListener();
-
-		oBinding.sReducedPath = undefined;
-
-		// code under test - no further doDeregisterChangeListener
-		oBinding.deregisterChangeListener();
-	});
-		});
-	});
-});
-
-	//*********************************************************************************************
-	QUnit.test("deregisterChangeListener: ask context; answers true", function () {
-		const oBinding = this.oModel.bindProperty("EMPLOYEES('1')/AGE");
-		oBinding.oContext = {deregisterChangeListener : mustBeMocked};
-		oBinding.sReducedPath = "/reduced/path";
-
-		this.mock(oBinding.oContext).expects("deregisterChangeListener")
-			.withExactArgs(sinon.match.same(oBinding)).returns(true);
-
-		// code under test
-		oBinding.deregisterChangeListener();
 	});
 
 	//*********************************************************************************************
