@@ -4966,6 +4966,60 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+[-2, +2, -3, +3, 0].forEach((iOffset) => {
+	QUnit.test(`requestSibling: unsupported offset ${iOffset}`, function (assert) {
+		const oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/EMPLOYEES('42')", 42);
+
+		assert.throws(function () {
+			// code under test
+			oContext.requestSibling(iOffset);
+		}, new Error("Unsupported offset: " + iOffset));
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("requestSibling: deleted/transient", function (assert) {
+		const oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/EMPLOYEES('42')", 42);
+		// also called by SinonJS, would call #isDeleted etc. :-(
+		oContext.toString = function () { return "~toString~"; };
+		const oContextMock = this.mock(oContext);
+		oContextMock.expects("isDeleted").withExactArgs().returns(true);
+		oContextMock.expects("isTransient").never();
+
+		assert.throws(function () {
+			// code under test
+			oContext.requestSibling();
+		}, new Error("Unsupported context: ~toString~"));
+
+		oContextMock.expects("isDeleted").withExactArgs().returns(false);
+		oContextMock.expects("isTransient").withExactArgs().returns(true);
+
+		assert.throws(function () {
+			// code under test
+			oContext.requestSibling();
+		}, new Error("Unsupported context: ~toString~"));
+	});
+
+	//*********************************************************************************************
+[{in : undefined, out : +1}, {in : +1, out : +1}, {in : -1, out : -1}].forEach((oFixture, i) => {
+	QUnit.test("requestSibling: #" + i, function (assert) {
+		const oBinding = {
+			requestSibling : mustBeMocked
+		};
+		const oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES('42')", 42);
+		// also called by SinonJS, would call #isDeleted etc. :-(
+		oContext.toString = function () { return "n/a"; };
+		this.mock(oContext).expects("isDeleted").withExactArgs().returns(false);
+		this.mock(oContext).expects("isTransient").withExactArgs().returns(false);
+		this.mock(oBinding).expects("requestSibling")
+			.withExactArgs(sinon.match.same(oContext), oFixture.out).returns("~result~");
+
+		// code under test
+		assert.strictEqual(oContext.requestSibling(oFixture.in), "~result~");
+	});
+});
+
+	//*********************************************************************************************
 	QUnit.test("deregisterChangeListener", function (assert) {
 		const oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/path");
 		let oListener = {

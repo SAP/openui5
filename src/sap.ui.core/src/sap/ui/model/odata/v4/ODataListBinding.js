@@ -1946,9 +1946,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataListBinding.prototype.fetchOrGetParent = function (oNode, bAllowRequest) {
-		const oAggregation = this.mParameters.$$aggregation;
-
-		if (!oAggregation || !oAggregation.hierarchyQualifier) {
+		if (!this.mParameters.$$aggregation?.hierarchyQualifier) {
 			throw new Error("Missing recursive hierarchy");
 		}
 		if (this.aContexts[oNode.iIndex] !== oNode) {
@@ -3134,7 +3132,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataListBinding.prototype.isAncestorOf = function (oAncestor, oDescendant) {
-		if (!this.mParameters.$$aggregation || !this.mParameters.$$aggregation.hierarchyQualifier) {
+		if (!this.mParameters.$$aggregation?.hierarchyQualifier) {
 			throw new Error("Missing recursive hierarchy");
 		}
 		if (!oDescendant) {
@@ -3317,8 +3315,7 @@ sap.ui.define([
 			}
 		};
 
-		const oAggregation = this.mParameters.$$aggregation;
-		if (!oAggregation || !oAggregation.hierarchyQualifier) {
+		if (!this.mParameters.$$aggregation?.hierarchyQualifier) {
 			throw new Error("Missing recursive hierarchy");
 		}
 
@@ -3982,6 +3979,39 @@ sap.ui.define([
 
 			return aFilters.length === 1 ? aFilters[0] : new Filter({filters : aFilters});
 		});
+	};
+
+	/**
+	 * Requests the given node's sibling, either the next one (via offset +1) or the previous one
+	 * (via offset -1).
+	 *
+	 * @param {sap.ui.model.odata.v4.Context} oNode - A node
+	 * @param {number} iOffset - An offset, either -1 or +1
+	 * @returns {Promise<sap.ui.model.odata.v4.Context|null>}
+	 *   A promise which is resolved with the sibling's context (or <code>null</code> if no such
+	 *   sibling exists) in case of success, or is rejected with an instance of <code>Error</code>
+	 *   in case of failure
+	 * @throws {Error} If
+	 *   <ul>
+	 *     <li> this binding's root binding is suspended,
+	 *     <li> the given node is not part of a recursive hierarchy.
+	 *   </ul>
+	 *
+	 *  @private
+	 */
+	ODataListBinding.prototype.requestSibling = function (oNode, iOffset) {
+		if (!this.mParameters.$$aggregation?.hierarchyQualifier) {
+			throw new Error("Missing recursive hierarchy");
+		}
+		if (this.aContexts[oNode.iIndex] !== oNode) {
+			throw new Error("Unsupported context: " + oNode);
+		}
+		this.checkSuspended();
+		const iIndex = this.oCache.getSiblingIndex(oNode.iIndex, iOffset);
+
+		return iIndex < 0
+			? Promise.resolve(null)
+			: this.requestContexts(iIndex, 1).then((aResult) => aResult[0]);
 	};
 
 	/**

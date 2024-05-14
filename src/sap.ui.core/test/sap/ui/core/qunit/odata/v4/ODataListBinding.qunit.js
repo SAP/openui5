@@ -11850,6 +11850,95 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("requestSibling: Missing recursive hierarchy", function (assert) {
+		const oBinding = this.bindList("/EMPLOYEES");
+		this.mock(oBinding).expects("checkSuspended").never();
+
+		assert.throws(function () {
+			// code under test
+			oBinding.requestSibling();
+		}, new Error("Missing recursive hierarchy"));
+
+		oBinding.mParameters = {$$aggregation : {}};
+
+		assert.throws(function () {
+			// code under test
+			oBinding.requestSibling();
+		}, new Error("Missing recursive hierarchy"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestSibling: Unsupported context", function (assert) {
+		const oBinding = this.bindList("/EMPLOYEES");
+		// Note: autoExpandSelect at model would be required for hierarchyQualifier, but that leads
+		// too far :-(
+		oBinding.mParameters.$$aggregation = {hierarchyQualifier : "X"};
+		const oNode = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES('42')", 42);
+		oBinding.aContexts[41] = oNode; // wrong index
+		this.mock(oBinding).expects("checkSuspended").never();
+
+		assert.throws(function () {
+			// code under test
+			oBinding.requestSibling(oNode);
+		}, new Error("Unsupported context: " + oNode));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestSibling: null", async function (assert) {
+		const oBinding = this.bindList("/EMPLOYEES");
+		// Note: autoExpandSelect at model would be required for hierarchyQualifier, but that leads
+		// too far :-(
+		oBinding.mParameters.$$aggregation = {hierarchyQualifier : "X"};
+		const oNode = {iIndex : "~iIndex~"};
+		oBinding.aContexts["~iIndex~"] = oNode;
+		const oCheckSuspendedExpectation
+			= this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		const oCache = {
+			getSiblingIndex : mustBeMocked
+		};
+		oBinding.oCache = oCache;
+		const oGetSiblingIndexExpectation = this.mock(oCache).expects("getSiblingIndex")
+			.withExactArgs("~iIndex~", "~iOffset~").returns(-1);
+		this.mock(oBinding).expects("requestContexts").never();
+
+		// code under test
+		const oPromise = oBinding.requestSibling(oNode, "~iOffset~");
+
+		sinon.assert.callOrder(oCheckSuspendedExpectation, oGetSiblingIndexExpectation);
+		assert.ok(oPromise instanceof Promise);
+		assert.strictEqual(await oPromise, null);
+	});
+
+	//*********************************************************************************************
+[0, 1, 42].forEach((iIndex) => {
+	QUnit.test(`requestSibling: non-null, index = ${iIndex}`, async function (assert) {
+		const oBinding = this.bindList("/EMPLOYEES");
+		// Note: autoExpandSelect at model would be required for hierarchyQualifier, but that leads
+		// too far :-(
+		oBinding.mParameters.$$aggregation = {hierarchyQualifier : "X"};
+		const oNode = {iIndex : "~iIndex~"};
+		oBinding.aContexts["~iIndex~"] = oNode;
+		const oCheckSuspendedExpectation
+			= this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		const oCache = {
+			getSiblingIndex : mustBeMocked
+		};
+		oBinding.oCache = oCache;
+		const oGetSiblingIndexExpectation = this.mock(oCache).expects("getSiblingIndex")
+			.withExactArgs("~iIndex~", "~iOffset~").returns(iIndex);
+		this.mock(oBinding).expects("requestContexts").withExactArgs(iIndex, 1)
+			.resolves(["~oSiblingContext~"]);
+
+		// code under test
+		const oPromise = oBinding.requestSibling(oNode, "~iOffset~");
+
+		sinon.assert.callOrder(oCheckSuspendedExpectation, oGetSiblingIndexExpectation);
+		assert.ok(oPromise instanceof Promise);
+		assert.strictEqual(await oPromise, "~oSiblingContext~");
+	});
+});
+
+	//*********************************************************************************************
 	QUnit.test("setResetViaSideEffects ", function (assert) {
 		const oBinding = this.bindList("/SalesOrderList");
 

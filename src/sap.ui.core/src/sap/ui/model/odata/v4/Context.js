@@ -1645,6 +1645,40 @@ sap.ui.define([
 	};
 
 	/**
+	 * Requests this node's sibling; either the next one (via offset +1) or the previous one (via
+	 * offset -1). Resolves with <code>null</code> if no such sibling exists (because this node is
+	 * the last or first sibling, respectively). If it's not known whether the requested sibling
+	 * exists, a request is sent to the server.
+	 *
+	 * @param {number} [iOffset=+1] - An offset, either -1 or +1
+	 * @returns {Promise<sap.ui.model.odata.v4.Context|null>}
+	 *   A promise which is either resolved with the sibling's context (or <code>null</code> if no
+	 *   such sibling exists) in case of success, or rejected with an instance of <code>Error</code>
+	 *   in case of failure
+	 * @throws {Error} If
+	 *   <ul>
+	 *     <li> the given offset is unsupported,
+	 *     <li> this context's root binding is suspended,
+	 *     <li> this context is {@link #isDeleted deleted}, {@link #isTransient transient}, or not
+	 *       part of a recursive hierarchy.
+	 *   </ul>
+	 *
+	 * @private
+	 * @since 1.125.0
+	 * @ui5-restricted sap.fe
+	 */
+	Context.prototype.requestSibling = function (iOffset = +1) {
+		if (iOffset !== -1 && iOffset !== +1) {
+			throw new Error("Unsupported offset: " + iOffset);
+		}
+		if (this.isDeleted() || this.isTransient()) {
+			throw new Error("Unsupported context: " + this);
+		}
+
+		return this.oBinding.requestSibling(this, iOffset);
+	};
+
+	/**
 	 * Loads side effects for this context using the given
 	 * "14.5.11 Expression edm:NavigationPropertyPath" or "14.5.13 Expression edm:PropertyPath"
 	 * objects. Use this method to explicitly load side effects in case implicit loading is switched
