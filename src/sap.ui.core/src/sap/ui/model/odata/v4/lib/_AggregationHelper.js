@@ -797,6 +797,44 @@ sap.ui.define([
 		},
 
 		/**
+		 * Finds the index of the previous sibling within the given list of elements (which is meant
+		 * to contain different levels), starting from an original node at the given index.
+		 *
+		 * @param {object[]} aElements - A list of elements with possible holes
+		 * @param {number} iIndex - The original node's index within list of elements
+		 * @returns {number}
+		 *   The previous sibling's index, or -1 if there is no previous sibling for sure, or
+		 *   <code>undefined</code> if we cannot tell
+		 *
+		 * @public
+		 */
+		findPreviousSiblingIndex : function (aElements, iIndex) {
+			let bHole;
+			const iLevel = aElements[iIndex]["@$ui5.node.level"];
+			for (let iSibling = iIndex - 1; iSibling >= 0; iSibling -= 1) {
+				const oCandidate = aElements[iSibling];
+				if (!oCandidate) {
+					bHole = true;
+					continue; // skip holes
+				}
+				if (oCandidate["@$ui5.node.level"] < iLevel) {
+					break; // sibling missed or no such sibling
+				}
+				if (oCandidate["@$ui5.node.level"] > iLevel) {
+					continue; // ignore descendants
+				}
+				// else: same level
+				if (iSibling + _Helper.getPrivateAnnotation(oCandidate, "descendants", 0)
+						=== iIndex - 1) {
+					return iSibling; // sibling found
+				}
+				break; // sibling missed (implies bHole)
+			}
+
+			return bHole ? undefined : -1;
+		},
+
+		/**
 		 * Returns an unsorted list of all aggregatable or groupable properties, including units.
 		 *
 		 * @param {object} oAggregation

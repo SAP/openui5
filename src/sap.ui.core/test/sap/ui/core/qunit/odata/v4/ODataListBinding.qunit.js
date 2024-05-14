@@ -11976,12 +11976,13 @@ sap.ui.define([
 		oBinding.aContexts["~iIndex~"] = oNode;
 		const oCheckSuspendedExpectation
 			= this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		this.mock(oBinding).expects("lockGroup").withExactArgs().returns("~oGroupLock~");
 		const oCache = {
-			getSiblingIndex : mustBeMocked
+			requestSiblingIndex : mustBeMocked
 		};
 		oBinding.oCache = oCache;
-		const oGetSiblingIndexExpectation = this.mock(oCache).expects("getSiblingIndex")
-			.withExactArgs("~iIndex~", "~iOffset~").returns(-1);
+		const oGetSiblingIndexExpectation = this.mock(oCache).expects("requestSiblingIndex")
+			.withExactArgs("~iIndex~", "~iOffset~", "~oGroupLock~").resolves(-1);
 		this.mock(oBinding).expects("requestContexts").never();
 
 		// code under test
@@ -12003,12 +12004,13 @@ sap.ui.define([
 		oBinding.aContexts["~iIndex~"] = oNode;
 		const oCheckSuspendedExpectation
 			= this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		this.mock(oBinding).expects("lockGroup").withExactArgs().returns("~oGroupLock~");
 		const oCache = {
-			getSiblingIndex : mustBeMocked
+			requestSiblingIndex : mustBeMocked
 		};
 		oBinding.oCache = oCache;
-		const oGetSiblingIndexExpectation = this.mock(oCache).expects("getSiblingIndex")
-			.withExactArgs("~iIndex~", "~iOffset~").returns(iIndex);
+		const oGetSiblingIndexExpectation = this.mock(oCache).expects("requestSiblingIndex")
+			.withExactArgs("~iIndex~", "~iOffset~", "~oGroupLock~").resolves(iIndex);
 		this.mock(oBinding).expects("requestContexts").withExactArgs(iIndex, 1)
 			.resolves(["~oSiblingContext~"]);
 

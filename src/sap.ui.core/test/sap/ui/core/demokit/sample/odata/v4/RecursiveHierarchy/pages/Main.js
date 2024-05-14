@@ -31,9 +31,10 @@ sap.ui.define([
 		aCells = aRows[iRowIndex].getCells();
 		if (oExpected === null) {
 			aCells.forEach(function (oCell, i) {
-				// Note: don't care about invisible icon in 2nd column here
-				strictEqual(oCell.getText ? oCell.getText() : oCell.getValue(), "",
-					"Row " + iRowIndex + ", cell " + i + " is empty");
+				if (oCell.getText || oCell.getValue) {
+					strictEqual(oCell.getText?.() ?? oCell.getValue(), "",
+						"Row " + iRowIndex + ", cell " + i + " is empty");
+				} // else: don't care about invisible icon in 2nd column here (or button column)
 			});
 			return;
 		}

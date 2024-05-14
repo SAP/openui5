@@ -3714,11 +3714,14 @@ sap.ui.define([
 				.withExactArgs(sMetaPath, sinon.match.same(oQueryParams), true, bSortExpandSelect)
 				.returns(oConvertedQueryParams);
 			this.mock(_Helper).expects("buildQuery")
-				.withExactArgs(sinon.match.same(oConvertedQueryParams)).returns("?query");
+				.withExactArgs(sinon.match.same(oConvertedQueryParams), "~bSortSystemQueryOptions~")
+				.returns("?query");
 
 			// code under test
 			assert.strictEqual(
-				oRequestor.buildQueryString(sMetaPath, oQueryParams, true, bSortExpandSelect),
+				oRequestor.buildQueryString(sMetaPath, oQueryParams, true, bSortExpandSelect,
+					"~bSortSystemQueryOptions~"
+				),
 				"?query");
 		});
 	});

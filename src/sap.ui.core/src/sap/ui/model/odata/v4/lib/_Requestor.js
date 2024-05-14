@@ -300,6 +300,8 @@ sap.ui.define([
 	 *   Whether all system query options are dropped (useful for non-GET requests)
 	 * @param {boolean} [bSortExpandSelect]
 	 *   Whether the paths in $expand and $select shall be sorted in the query string
+	 * @param {boolean} [bSortSystemQueryOptions]
+	 *   Whether system query options are sorted alphabetically and moved to the query string's end
 	 * @returns {string}
 	 *   The query string; it is empty if there are no options; it starts with "?" otherwise
 	 * @example
@@ -325,10 +327,11 @@ sap.ui.define([
 	 * @public
 	 */
 	_Requestor.prototype.buildQueryString = function (sMetaPath, mQueryOptions,
-			bDropSystemQueryOptions, bSortExpandSelect) {
+			bDropSystemQueryOptions, bSortExpandSelect, bSortSystemQueryOptions) {
 		return _Helper.buildQuery(
 			this.convertQueryOptions(sMetaPath, mQueryOptions, bDropSystemQueryOptions,
-				bSortExpandSelect));
+				bSortExpandSelect),
+			bSortSystemQueryOptions);
 	};
 
 	/**

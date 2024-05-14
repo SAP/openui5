@@ -2442,6 +2442,80 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("findPreviousSiblingIndex: no request needed", function (assert) {
+		const aElements = [{
+			"@$ui5._" : {
+				descendants : 2
+			},
+			"@$ui5.node.level" : 1
+		}, {
+			"@$ui5._" : {
+				// descendants : 0
+			},
+			"@$ui5.node.level" : 2
+		}, undefined, {
+			"@$ui5._" : {
+				// descendants : 0
+			},
+			"@$ui5.node.level" : 1
+		}];
+
+		assert.strictEqual(
+			// code under test
+			_AggregationHelper.findPreviousSiblingIndex(aElements, 0),
+			-1, "already first");
+
+		assert.strictEqual(
+			// code under test
+			_AggregationHelper.findPreviousSiblingIndex(aElements, 3),
+			0, "sibling found beyond hole");
+
+		assert.strictEqual(
+			// code under test
+			_AggregationHelper.findPreviousSiblingIndex(aElements, 1),
+			-1, "no such sibling");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("findPreviousSiblingIndex: request needed", function (assert) {
+		const aElements = [undefined, {
+			"@$ui5._" : {
+				// descendants : 0
+			},
+			"@$ui5.node.level" : 1
+		}, undefined, {
+			"@$ui5._" : {
+				// descendants : 0
+			},
+			"@$ui5.node.level" : 1
+		}, undefined, {
+			"@$ui5._" : {
+				// descendants : 0
+			},
+			"@$ui5.node.level" : 1
+		}];
+
+		assert.strictEqual(
+			// code under test
+			_AggregationHelper.findPreviousSiblingIndex(aElements, 1),
+			undefined, "sibling not available");
+
+		assert.strictEqual(
+			// code under test
+			_AggregationHelper.findPreviousSiblingIndex(aElements, 3),
+			undefined, "sibling not available");
+
+		this.mock(_Helper).expects("getPrivateAnnotation")
+			.withExactArgs(sinon.match.same(aElements[3]), "descendants", 0).returns(0);
+		// Note: no further calls!
+
+		assert.strictEqual(
+			// code under test
+			_AggregationHelper.findPreviousSiblingIndex(aElements, 5),
+			undefined, "sibling not available");
+	});
+
+	//*********************************************************************************************
 	QUnit.test("getQueryOptionsForOutOfPlaceNodesData: below parent", function (assert) {
 		const oOutOfPlace = {
 			nodeFilters : ["~node2Filter~", "~node1Filter~", "~node3Filter~"],

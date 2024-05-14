@@ -65,7 +65,7 @@ sap.ui.define([
 				const sVisibleRowCount = TestUtils.retrieveData( // controlled by OPA
 						"sap.ui.core.sample.odata.v4.RecursiveHierarchy.visibleRowCount")
 					|| oUriParameters.get("visibleRowCount");
-				const sThreshold = oUriParameters.get("threshold");
+				const sThreshold = oUriParameters.get("threshold") || "0";
 
 				const oTable = this.byId("table");
 				if (sTreeTable === "Y") {
@@ -100,7 +100,7 @@ sap.ui.define([
 						oTreeTable.getRowMode().setRowCount(parseInt(sVisibleRowCount));
 					}
 					if (sThreshold) {
-						oTable.setThreshold(parseInt(sThreshold));
+						oTreeTable.setThreshold(parseInt(sThreshold));
 					}
 					const oTreeRowsBinding = oTreeTable.getBinding("rows");
 					oTreeRowsBinding.setAggregation(this._oAggregation);
@@ -176,6 +176,65 @@ sap.ui.define([
 						>= oTable.getFirstVisibleRow() + oTable.getRowMode().getRowCount()) {
 					// make sure parent & child are visible
 					oTable.setFirstVisibleRow(iParentIndex);
+				}
+			} catch (oError) {
+				MessageBox.alert(oError.message, {icon : MessageBox.Icon.ERROR, title : "Error"});
+			} finally {
+				this.getView().setBusy(false);
+			}
+		},
+
+		onMoveDown : async function (oEvent) {
+			try {
+				this.getView().setBusy(true);
+				const oNode = oEvent.getSource().getBindingContext();
+				const oTable = oEvent.getSource().getParent().getParent();
+
+				const [oParent, oSibling] = await Promise.all([
+					oNode.requestParent(),
+					oNode.requestSibling(+1)
+				]);
+
+				if (oSibling) {
+					await oSibling.move({nextSibling : oNode, parent : oParent});
+				} else {
+					MessageBox.alert("Cannot move down",
+						{icon : MessageBox.Icon.INFORMATION, title : "Already last sibling"});
+				}
+
+				if (oNode.getIndex()
+						>= oTable.getFirstVisibleRow() + oTable.getRowMode().getRowCount()) {
+					// make sure moved node is visible
+					oTable.setFirstVisibleRow(
+						oNode.getIndex() - oTable.getRowMode().getRowCount() + 1);
+				}
+			} catch (oError) {
+				MessageBox.alert(oError.message, {icon : MessageBox.Icon.ERROR, title : "Error"});
+			} finally {
+				this.getView().setBusy(false);
+			}
+		},
+
+		onMoveUp : async function (oEvent) {
+			try {
+				this.getView().setBusy(true);
+				const oNode = oEvent.getSource().getBindingContext();
+				const oTable = oEvent.getSource().getParent().getParent();
+
+				const [oParent, oSibling] = await Promise.all([
+					oNode.requestParent(),
+					oNode.requestSibling(-1)
+				]);
+				if (oSibling) {
+					await oNode.move({nextSibling : oSibling, parent : oParent});
+				} else {
+					MessageBox.alert("Cannot move up",
+						{icon : MessageBox.Icon.INFORMATION, title : "Already first sibling"});
+				}
+
+				if (oNode.getIndex() < oTable.getFirstVisibleRow()) {
+					// make sure moved node is visible
+					oTable.setFirstVisibleRow(oNode.getIndex());
 				}
 			} catch (oError) {
 				MessageBox.alert(oError.message, {icon : MessageBox.Icon.ERROR, title : "Error"});

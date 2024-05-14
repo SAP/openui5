@@ -4050,11 +4050,13 @@ sap.ui.define([
 			throw new Error("Unsupported context: " + oNode);
 		}
 		this.checkSuspended();
-		const iIndex = this.oCache.getSiblingIndex(oNode.iIndex, iOffset);
 
-		return iIndex < 0
-			? Promise.resolve(null)
-			: this.requestContexts(iIndex, 1).then((aResult) => aResult[0]);
+		return this.oCache.requestSiblingIndex(oNode.iIndex, iOffset, this.lockGroup())
+			.then((iIndex) => {
+				return iIndex < 0
+					? null
+					: this.requestContexts(iIndex, 1).then((aResult) => aResult[0]);
+			});
 	};
 
 	/**
