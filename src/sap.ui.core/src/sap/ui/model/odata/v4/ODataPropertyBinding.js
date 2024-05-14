@@ -362,17 +362,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Deregisters the binding as change listener from its cache or operation binding ($Parameter).
-	 *
-	 * @private
-	 */
-	ODataPropertyBinding.prototype.deregisterChangeListener = function () {
-		if (this.sReducedPath) {
-			this.doDeregisterChangeListener(this.sReducedPath, this);
-		}
-	};
-
-	/**
 	 * Destroys the object. The object must not be used anymore after this function was called.
 	 *
 	 * @public
@@ -381,7 +370,6 @@ sap.ui.define([
 	 */
 	// @override sap.ui.model.Binding#destroy
 	ODataPropertyBinding.prototype.destroy = function () {
-		this.deregisterChangeListener();
 		this.oModel.bindingDestroyed(this);
 		this.oCheckUpdateCallToken = undefined;
 		this.mQueryOptions = undefined;
