@@ -1777,6 +1777,20 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+	QUnit.test("_Cache#drillDown: unexpected missing predicate", function (assert) {
+		const oCache = new _Cache(this.oRequestor, "Products");
+
+		this.oLogMock.expects("info").withExactArgs(
+			"Failed to drill-down into ('42')/entity/foo/bar/baz, invalid segment: ('42')",
+			"/~/Products", sClassName);
+
+		return oCache.drillDown([], "('42')/entity/foo/bar/baz")
+			.then(function (vValue) {
+				assert.strictEqual(vValue, undefined);
+			});
+	});
+
+	//*********************************************************************************************
 [0, "None"].forEach(function (vPermissions) {
 	QUnit.test("_Cache#drillDown: @Core.Permissions: " + vPermissions, function (assert) {
 		var oCache = new _Cache(this.oRequestor, "Products"),
