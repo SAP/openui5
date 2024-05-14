@@ -1,0 +1,21 @@
+/*!
+ * ${copyright}
+ */
+
+@import "../../../../../sap/ui/core/themes/base/base.less";
+@import "../../../../../sap/ui/core/themes/base/global.less";
+
+.sapCEd[data-sap-ui-syntaxhints='false'] .ace_gutter-cell {
+	background-image: none !important;
+}
+.sapCEd[data-sap-ui-syntaxhints='false'] .ace_tooltip {
+	display: none !important;
+}
+
+/*
+* Fixes an issue in the ace editor. Where focusing the textarea causes a scroll to the top.
+* Incident 1780370870
+*/
+.ace_text-input {
+	position: absolute !important;
+}
