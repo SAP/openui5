@@ -48,7 +48,7 @@ function (library, SinglePlanningCalendarView, Formatting, LocaleData, CalendarD
 	 * Returns after how much entities is the next/previous startDate of the <code>sap.m.SinglePlanningCalendar</code> after
 	 * navigating forward or backwards.
 	 *
-	 * @return {int} the number of entities to be skipped by scrolling
+	 * @returns {int} the number of entities to be skipped by scrolling
 	 * @override
 	 * @public
 	 */
@@ -60,7 +60,7 @@ function (library, SinglePlanningCalendarView, Formatting, LocaleData, CalendarD
 	 * Should return a number of entities until the next/previous startDate of the
 	 * <code>sap.m.SinglePlanningCalendar</code> after navigating forward or backwards.
 	 *
-	 * @return {int} the number of entities to be skipped by scrolling
+	 * @returns {int} the number of entities to be skipped by scrolling
 	 */
 	SinglePlanningCalendarWeekView.prototype.getScrollEntityCount = function () {
 		return 7;
@@ -70,12 +70,12 @@ function (library, SinglePlanningCalendarView, Formatting, LocaleData, CalendarD
 	 * Calculates the startDate which will be displayed in the <code>sap.m.SinglePlanningCalendar</code> based
 	 * on a given date.
 	 *
-	 * @param {object} oStartDate the given date
-	 * @return {object} the startDate of the view
+	 * @param {Date|module:sap/ui/core/date/UI5Date} oDate The given date
+	 * @returns {Date|module:sap/ui/core/date/UI5Date} The startDate of the view
 	 * @override
 	 * @public
 	 */
-	SinglePlanningCalendarWeekView.prototype.calculateStartDate = function (oStartDate) {
+	SinglePlanningCalendarWeekView.prototype.calculateStartDate = function (oDate) {
 
 		var sLocale = new Locale(Formatting.getLanguageTag()).toString();
 
@@ -92,9 +92,9 @@ function (library, SinglePlanningCalendarView, Formatting, LocaleData, CalendarD
 				}
 			}
 
-		oStartDate.setDate(oStartDate.getDate() - oStartDate.getDay() + iFirstDayOfWeek);
+			oDate.setDate(oDate.getDate() - oDate.getDay() + iFirstDayOfWeek);
 		return CalendarUtils
-			._getFirstDateOfWeek(CalendarDate.fromLocalJSDate(oStartDate), {
+			._getFirstDateOfWeek(CalendarDate.fromLocalJSDate(oDate), {
 				firstDayOfWeek: iFirstDayOfWeek,
 				minimalDaysInFirstWeek: oLocaleData.getMinimalDaysInFirstWeek()
 			})

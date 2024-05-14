@@ -47,7 +47,7 @@ function(library, SinglePlanningCalendarView, Formatting, Locale, CalendarDate, 
 	/**
 	 * Returns the number of columns to be displayed in the grid of the <code>sap.m.SinglePlanningCalendar</code>.
 	 *
-	 * @return {int} the number of columns to be displayed
+	 * @returns {int} the number of columns to be displayed
 	 * @override
 	 * @public
 	 */
@@ -59,7 +59,7 @@ function(library, SinglePlanningCalendarView, Formatting, Locale, CalendarDate, 
 	 * Should return a number of entities until the next/previous startDate of the
 	 * <code>sap.m.SinglePlanningCalendar</code> after navigating forward or backwards.
 	 *
-	 * @return {int} the number of entities to be skipped by scrolling
+	 * @returns {int} the number of entities to be skipped by scrolling
 	 * @override
 	 * @public
 	 */
@@ -71,13 +71,13 @@ function(library, SinglePlanningCalendarView, Formatting, Locale, CalendarDate, 
 	 * Calculates the startDate which will be displayed in the <code>sap.m.SinglePlanningCalendar</code> based
 	 * on a given date.
 	 *
-	 * @param {object} oStartDate the given date
-	 * @return {object} the startDate of the view
+	 * @param {Date|module:sap/ui/core/date/UI5Date} oDate The given date
+	 * @returns {Date|module:sap/ui/core/date/UI5Date} The startDate of the view
 	 * @override
 	 * @public
 	 */
-	SinglePlanningCalendarWorkWeekView.prototype.calculateStartDate = function (oStartDate) {
-		var oCalDate = CalendarDate.fromLocalJSDate(oStartDate),
+	SinglePlanningCalendarWorkWeekView.prototype.calculateStartDate = function (oDate) {
+		var oCalDate = CalendarDate.fromLocalJSDate(oDate),
 			oCalFirstDateOfWeek = CalendarUtils._getFirstDateOfWeek(oCalDate),
 			oLocaleData = this._getFormatSettingsLocaleData();
 
@@ -91,7 +91,7 @@ function(library, SinglePlanningCalendarView, Formatting, Locale, CalendarDate, 
 	/**
 	 * Returns local data about the current locale.
 	 *
-	 * @return {LocaleData} the local data
+	 * @returns {LocaleData} the local data
 	 * @private
 	 */
 	SinglePlanningCalendarWorkWeekView.prototype._getFormatSettingsLocaleData = function () {
