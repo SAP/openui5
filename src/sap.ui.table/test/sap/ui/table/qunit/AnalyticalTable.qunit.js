@@ -16,7 +16,6 @@ sap.ui.define([
 	"sap/ui/table/Row",
 	"sap/ui/table/library",
 	"sap/ui/core/Element",
-	"sap/ui/core/Core",
 	"sap/m/table/columnmenu/Menu",
 	// provides mock data
 	"sap/ui/core/qunit/analytics/TBA_ServiceDocument",
@@ -38,7 +37,6 @@ sap.ui.define([
 	Row,
 	library,
 	Element,
-	Core,
 	ColumnMenu
 ) {
 	"use strict";
@@ -190,6 +188,7 @@ sap.ui.define([
 		content: createResponse(0, 10)
 	});
 
+	// eslint-disable-next-line consistent-this
 	function attachEventHandler(oControl, iSkipCalls, fnHandler, that) {
 		let iCalled = 0;
 		const fnEventHandler = function() {
@@ -464,34 +463,30 @@ sap.ui.define([
 	QUnit.test("BindRows - Update columns", function(assert) {
 		const oBindingInfo = {path: "/ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',P_CostCenterTo='999-9999')/Results"};
 
-		function testRun(mTestSettings) {
-			return new Promise(function(resolve) {
-				const oTable = new AnalyticalTable({
-					columns: [new AnalyticalColumn()]
-				});
+		async function testRun(mTestSettings) {
+			const oTable = new AnalyticalTable({
+				columns: [new AnalyticalColumn()]
+			});
 
-				if (mTestSettings.renderTable) {
-					oTable.placeAt("qunit-fixture");
-					Core.applyChanges();
-				}
+			if (mTestSettings.renderTable) {
+				oTable.placeAt("qunit-fixture");
+				await nextUIUpdate();
+			}
 
-				const oUpdateColumnsSpy = sinon.spy(oTable, "_updateColumns");
-				const oInvalidateSpy = sinon.spy(oTable, "invalidate");
+			const oUpdateColumnsSpy = sinon.spy(oTable, "_updateColumns");
+			const oInvalidateSpy = sinon.spy(oTable, "invalidate");
 
-				oTable.setModel(mTestSettings.model);
-				if (mTestSettings.bindingInfo != null) {
-					oTable.bindRows(mTestSettings.bindingInfo);
-				}
+			oTable.setModel(mTestSettings.model);
+			if (mTestSettings.bindingInfo != null) {
+				oTable.bindRows(mTestSettings.bindingInfo);
+			}
 
-				TableUtils.Binding.metadataLoaded(oTable).then(function() {
-					mTestSettings.metadataLoaded(oUpdateColumnsSpy, oInvalidateSpy, mTestSettings.renderTable);
-					oTable.destroy();
-					resolve();
-				}).catch(function() {
-					mTestSettings.metadataLoaded(oUpdateColumnsSpy, oInvalidateSpy, mTestSettings.renderTable);
-					oTable.destroy();
-					resolve();
-				});
+			return TableUtils.Binding.metadataLoaded(oTable).then(function() {
+				mTestSettings.metadataLoaded(oUpdateColumnsSpy, oInvalidateSpy, mTestSettings.renderTable);
+				oTable.destroy();
+			}).catch(function() {
+				mTestSettings.metadataLoaded(oUpdateColumnsSpy, oInvalidateSpy, mTestSettings.renderTable);
+				oTable.destroy();
 			});
 		}
 
@@ -547,34 +542,30 @@ sap.ui.define([
 	QUnit.test("BindRows - Update columns with ODataModel V1 (legacy)", function(assert) {
 		const oBindingInfo = {path: "/ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',P_CostCenterTo='999-9999')/Results"};
 
-		function testRun(mTestSettings) {
-			return new Promise(function(resolve) {
-				const oTable = new AnalyticalTable({
-					columns: [new AnalyticalColumn()]
-				});
+		async function testRun(mTestSettings) {
+			const oTable = new AnalyticalTable({
+				columns: [new AnalyticalColumn()]
+			});
 
-				if (mTestSettings.renderTable) {
-					oTable.placeAt("qunit-fixture");
-					Core.applyChanges();
-				}
+			if (mTestSettings.renderTable) {
+				oTable.placeAt("qunit-fixture");
+				await nextUIUpdate();
+			}
 
-				const oUpdateColumnsSpy = sinon.spy(oTable, "_updateColumns");
-				const oInvalidateSpy = sinon.spy(oTable, "invalidate");
+			const oUpdateColumnsSpy = sinon.spy(oTable, "_updateColumns");
+			const oInvalidateSpy = sinon.spy(oTable, "invalidate");
 
-				oTable.setModel(mTestSettings.model);
-				if (mTestSettings.bindingInfo != null) {
-					oTable.bindRows(mTestSettings.bindingInfo);
-				}
+			oTable.setModel(mTestSettings.model);
+			if (mTestSettings.bindingInfo != null) {
+				oTable.bindRows(mTestSettings.bindingInfo);
+			}
 
-				TableUtils.Binding.metadataLoaded(oTable).then(function() {
-					mTestSettings.metadataLoaded(oUpdateColumnsSpy, oInvalidateSpy, mTestSettings.renderTable);
-					oTable.destroy();
-					resolve();
-				}).catch(function() {
-					mTestSettings.metadataLoaded(oUpdateColumnsSpy, oInvalidateSpy, mTestSettings.renderTable);
-					oTable.destroy();
-					resolve();
-				});
+			return TableUtils.Binding.metadataLoaded(oTable).then(function() {
+				mTestSettings.metadataLoaded(oUpdateColumnsSpy, oInvalidateSpy, mTestSettings.renderTable);
+				oTable.destroy();
+			}).catch(function() {
+				mTestSettings.metadataLoaded(oUpdateColumnsSpy, oInvalidateSpy, mTestSettings.renderTable);
+				oTable.destroy();
 			});
 		}
 
@@ -722,22 +713,23 @@ sap.ui.define([
 			};
 			this.oTable = createTable.call(this, mSettings);
 
-			const fnHandler1 = function() {
+			const fnHandler1 = async function() {
 				const oColumn = this.oTable.getColumns()[0];
-				oColumn.attachEventOnce("columnMenuOpen", () => {
-					TableQUnitUtils.wait(0).then(() => {
-						this.oTable.getBinding().attachChange(() => {
-							this.oTable.attachEventOnce("rowsUpdated", () => {
-								assert.deepEqual(document.activeElement, this.oTable.getDomRef("rowsel0"));
-								done();
-							});
-						});
+				const nextColumnMenuOpen = TableQUnitUtils.nextEvent("columnMenuOpen", oColumn);
 
-						oColumn.getMenu().getItems()[3].fireSelect();
+				oColumn._openHeaderMenu(oColumn.getDomRef());
+				await nextColumnMenuOpen;
+
+				await TableQUnitUtils.wait(0);
+
+				this.oTable.getBinding().attachChange(() => {
+					this.oTable.attachEventOnce("rowsUpdated", () => {
+						assert.deepEqual(document.activeElement, this.oTable.getDomRef("rowsel0"));
+						done();
 					});
 				});
 
-				oColumn._openHeaderMenu(oColumn.getDomRef());
+				oColumn.getMenu().getItems()[3].fireSelect();
 			};
 
 			attachEventHandler(this.oTable, 0, fnHandler1, this);
@@ -758,26 +750,27 @@ sap.ui.define([
 			};
 			this.oTable = createTable.call(this, mSettings);
 
-			const fnHandler1 = function() {
+			const fnHandler1 = async function() {
 				const oColumn = this.oTable.getColumns()[0];
 				const oColumnMenu = new ColumnMenu();
 				oColumn.setHeaderMenu(oColumnMenu);
 
-				oColumnMenu.attachEventOnce("beforeOpen", () => {
-					TableQUnitUtils.wait(0).then(() => {
-						const oGroupButton = oColumnMenu._getAllEffectiveQuickActions()[2].getContent()[0];
-						oGroupButton.$().trigger("tap");
-
-						this.oTable.getBinding().attachChange(() => {
-							this.oTable.attachEventOnce("rowsUpdated", () => {
-								assert.deepEqual(document.activeElement, this.oTable.getDomRef("rowsel0"));
-								done();
-							});
-						});
-					});
-				});
+				const nextBeforeOpen = TableQUnitUtils.nextEvent("beforeOpen", oColumnMenu);
 
 				oColumn._openHeaderMenu(oColumn.getDomRef());
+				await nextBeforeOpen;
+
+				await TableQUnitUtils.wait(0);
+
+				const oGroupButton = oColumnMenu._getAllEffectiveQuickActions()[2].getContent()[0];
+				oGroupButton.$().trigger("tap");
+
+				this.oTable.getBinding().attachChange(() => {
+					this.oTable.attachEventOnce("rowsUpdated", () => {
+						assert.deepEqual(document.activeElement, this.oTable.getDomRef("rowsel0"));
+						done();
+					});
+				});
 			};
 
 			attachEventHandler(this.oTable, 0, fnHandler1, this);
