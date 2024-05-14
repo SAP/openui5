@@ -1,0 +1,93 @@
+/* =================================== */
+/* CSS for control sap.tnt/ToolHeader  */
+/* Base theme                          */
+/* =================================== */
+
+@_sap_tnt_ToolHeader_Height: 3rem;
+@_sap_tnt_ToolHeader_BorderRadius: 0;
+@_sap_tnt_ToolHeader_BoxShadow: none;
+@_sap_tnt_ToolHeader_AvatarBackground: lighten(saturate(spin(@sapUiAccent6, 348), 36), 28);
+@_sap_tnt_ToolHeader_AvatarColor: @sapUiBaseText;
+@_sap_tnt_ToolHeader_BorderColor: contrast(@sapUiShellColor, @sapUiContentFocusColor, @sapUiContentContrastFocusColor, @sapUiContentContrastTextThreshold);
+@_sap_tnt_ToolHeader_ArrowHeight: 0.1875rem;
+@_sap_tnt_ToolHeader_ArrowMargin: 0;
+@_sap_tnt_ToolHeader_Padding: 0 0.5rem;
+@_sap_tnt_ToolHeader_ArrowMarginBottom: 0.188rem;
+@_sap_tnt_ToolHeader_IconTabHeader_Height: @_sap_tnt_ToolHeader_Height;
+
+.sapTntToolHeader.sapMTB {
+	height: @_sap_tnt_ToolHeader_Height;
+	border-radius: @_sap_tnt_ToolHeader_BorderRadius;
+	box-shadow: @_sap_tnt_ToolHeader_BoxShadow;
+}
+
+// ==========================================================================
+// sap.m.IconTabHeader overriding
+// ==========================================================================
+
+.sapMIBar.sapTntToolHeader .sapMBarChild.sapMITH {
+	flex: 1;
+	min-width: 0; // fixes Chrome flex issue
+}
+
+.sapMIBar.sapTntToolHeader:not(.sapUshellShellToolHeader) .sapMBarChild.sapMITH {
+	box-shadow: none;
+	height: @_sap_tnt_ToolHeader_IconTabHeader_Height;
+	padding: @_sap_tnt_ToolHeader_Padding;
+
+	.sapMITBHead {
+		padding-top: 0;
+		padding-bottom: 0;
+
+		.sapMITBFilter .sapMITBText + .sapMITBContentArrow  {
+			&:after {
+				border-radius: 0.125rem;
+				box-shadow: none;
+				margin-bottom: @_sap_tnt_ToolHeader_ArrowMarginBottom;
+				height: @_sap_tnt_ToolHeader_ArrowHeight;
+			}
+		}
+	}
+}
+
+.sapMITBFilterPopover.sapMITBFilterPopoverInToolHeader {
+	.sapUiIcon {
+		color: @sapUiContentNonInteractiveIconColor;
+	}
+}
+
+.sapTntToolHeader:not(.sapUshellShellToolHeader) .sapMITH .sapMITBContentArrow {
+	margin: @_sap_tnt_ToolHeader_ArrowMargin;
+}
+
+// ==========================================================================
+// sap.m.MenuButton overriding
+// ==========================================================================
+
+.sapTntToolHeader {
+	.sapMMenuBtn.sapMMenuBtnRegular .sapMBtnEmphasized.sapMBtnInner::after {
+		content: '\e287';
+	}
+}
+
+/* ------------------------------------------------ */
+/* Shell overrides                        */
+/* ------------------------------------------------ */
+
+.sapTntToolHeader.sapUshellShellToolHeader {
+	background-color: @sapUiShellNavigationBackground;
+	height: 2.75rem;
+	box-shadow: @sapUiShellShadow;
+	border: none;
+	z-index: 1;
+	position: relative;
+
+	&.sapMTB {
+		border-radius: 0;
+	}
+
+	.sapMITH {
+		background: transparent;
+		box-shadow: none;
+	}
+}
