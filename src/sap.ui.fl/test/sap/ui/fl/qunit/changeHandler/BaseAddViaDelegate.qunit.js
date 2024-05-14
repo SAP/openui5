@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/Component",
+	"sap/ui/core/Control",
 	"sap/ui/fl/apply/_internal/flexObjects/UIChange",
 	"sap/ui/fl/apply/api/DelegateMediatorAPI",
 	"sap/ui/fl/changeHandler/BaseAddViaDelegate",
@@ -14,6 +15,7 @@ sap.ui.define([
 	Button,
 	JsControlTreeModifier,
 	Component,
+	Control,
 	UIChange,
 	DelegateMediatorAPI,
 	BaseAddViaDelegate,
@@ -157,7 +159,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("when a change handler tries to add a control that already available", async function(assert) {
+	QUnit.test("when a change handler tries to add a control that already exists", async function(assert) {
 		const oAddPropertyStub = sandbox.stub();
 		const oGetRevertDataStub = sandbox.stub(this.oChange, "getRevertData").returns({});
 		const oChangeHandler = createChangeHandler(false, oAddPropertyStub);
@@ -224,7 +226,10 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("when a change handler applies change sucessfully", async function(assert) {
+	QUnit.test("when a change handler applies and reverts change sucessfully with layout", async function(assert) {
+		const oNewControl = new Control("newControl");
+		const oRemoveAggregationSpy = sandbox.spy(JsControlTreeModifier, "removeAggregation");
+		const oDestroySpy = sandbox.spy(JsControlTreeModifier, "destroy");
 		const oChangeHandler = createChangeHandler(false, function(mAddPropertySettings) {
 			assert.strictEqual(
 				mAddPropertySettings.control.getId(),
@@ -233,7 +238,7 @@ sap.ui.define([
 			);
 			assert.strictEqual(
 				mAddPropertySettings.innerControls.control.getId(),
-				"someControlId",
+				"newControl",
 				"then the control is created correctly"
 			);
 			assert.strictEqual(
@@ -260,9 +265,7 @@ sap.ui.define([
 		this.oDelegate = {
 			createLayout: () => {
 				return {
-					control: {
-						getId: () => "someControlId"
-					}
+					control: oNewControl
 				};
 			}
 		};
@@ -272,22 +275,29 @@ sap.ui.define([
 			this.oGetWriteDelegateForControlStub.calledOnce,
 			"then the getWriteDelegateForControl method is called once"
 		);
+		await oChangeHandler.revertChange(this.oChange, this.oForm, this.mPropertyBag);
+		assert.ok(
+			oRemoveAggregationSpy.calledWith(this.oForm, "formElements", oNewControl),
+			"then the removeAggregation method is called on the parent for the layout control"
+		);
+		assert.ok(
+			oDestroySpy.calledWith(oNewControl),
+			"then the destroy method is called for the layout control"
+		);
 	});
 
-	// with valueHelp available
-
-	QUnit.test("when a change handler applies change sucessfully with valueHelp", async function(assert) {
+	QUnit.test("when a change handler applies change sucessfully with layout and valueHelp", async function(assert) {
 		const oAddPropertyStub = sandbox.stub();
+		const oRemoveAggregationSpy = sandbox.spy(JsControlTreeModifier, "removeAggregation");
+		const oDestroySpy = sandbox.spy(JsControlTreeModifier, "destroy");
+		const oNewControl = new Control("newControl");
+		const oValueHelp = new Control("valueHelp");
 		const oChangeHandler = createChangeHandler(false, oAddPropertyStub);
 		this.oDelegate = {
 			createLayout: () => {
 				return {
-					control: {
-						getId: () => "someControlId"
-					},
-					valueHelp: {
-						getId: () => "valueHelpId"
-					}
+					control: oNewControl,
+					valueHelp: oValueHelp
 				};
 			}
 		};
@@ -304,13 +314,30 @@ sap.ui.define([
 		const oRevertData = this.oChange.getRevertData();
 		assert.strictEqual(
 			oRevertData.newFieldSelector.id,
-			"someControlId",
+			"newControl",
 			"then the field selector is passed correctly"
 		);
 		assert.strictEqual(
 			oRevertData.valueHelpSelector.id,
-			"valueHelpId",
+			"valueHelp",
 			"then the field selector is passed correctly"
+		);
+		await oChangeHandler.revertChange(this.oChange, this.oForm, this.mPropertyBag);
+		assert.ok(
+			oRemoveAggregationSpy.calledWith(this.oForm, "formElements", oNewControl),
+			"then the removeAggregation method is called on the parent for the layout control"
+		);
+		assert.ok(
+			oDestroySpy.calledWith(oNewControl),
+			"then the destroy method is called for the layout control"
+		);
+		assert.ok(
+			oRemoveAggregationSpy.calledWith(this.oForm, "dependents", oValueHelp),
+			"then the removeAggregation method is called on the parent for value help"
+		);
+		assert.ok(
+			oDestroySpy.calledWith(oValueHelp),
+			"then the destroy method is called for the value help control"
 		);
 	});
 

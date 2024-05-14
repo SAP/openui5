@@ -204,6 +204,15 @@ sap.ui.define([
 						oRevertData.valueHelpSelector = oValueHelpSelector;
 						oChange.setRevertData(oRevertData);
 					}
+					// If the control is a layoutControl it should be destroyed in the revert, which will also destroy the field
+					if (mInnerControls.layoutControl) {
+						const oRevertData = oChange.getRevertData();
+						oRevertData.newFieldSelector = mPropertyBag.modifier.getSelector(
+							mPropertyBag.modifier.getId(mInnerControls.control),
+							oAppComponent
+						);
+						oChange.setRevertData(oRevertData);
+					}
 				},
 
 				/**
