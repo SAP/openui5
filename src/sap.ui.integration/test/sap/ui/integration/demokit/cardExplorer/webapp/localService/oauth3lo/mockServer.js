@@ -104,9 +104,11 @@ sap.ui.define([
 		_create3LOHeaders: function () {
 			let sConsentUrl = sap.ui.require.toUrl("sap/ui/demo/cardExplorer/localService/oauth3lo/consentApp/index.html");
 			let sHostAppUrl = sap.ui.require.toUrl("sap/ui/demo/cardExplorer/localService/oauth3lo/hostApp/index.html");
+			let sImageUrl = sap.ui.require.toUrl("sap/ui/demo/cardExplorer/localService/oauth3lo/hostApp/images/PrivateBlue.svg");
 
 			sConsentUrl = new URL(sConsentUrl, window.location.href).href;
 			sHostAppUrl = new URL(sHostAppUrl, window.location.href).href;
+			sImageUrl = new URL(sImageUrl, window.location.href).href;
 
 			sConsentUrl += "?redirect="	+ encodeURIComponent(sHostAppUrl);
 
@@ -126,7 +128,8 @@ sap.ui.define([
 				},
 				"buttonText": "Authorize and Connect",
 				"title": "Authorization Required",
-				"description": "This application requires access to data from a third-party provider."
+				"description": "This application requires access to data from a third-party provider.",
+				"imageSrc": sImageUrl
 			};
 
 			return {

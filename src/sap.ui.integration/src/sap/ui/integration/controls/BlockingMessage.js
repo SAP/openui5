@@ -339,6 +339,7 @@ sap.ui.define([
 			illustrationSize: this.getIllustrationSize(),
 			title: this.getTitle(),
 			description: this.getDescription() ? this.getDescription() : undefined,
+			imageSrc: this.getImageSrc() ? this.getImageSrc() : undefined,
 			details: this.getDetails() ? this.getDetails() : undefined
 		};
 	};
