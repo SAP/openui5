@@ -395,6 +395,133 @@ sap.ui.define([
 	 */
 
 	/**
+	 *  Method for checking if the header title is <code>{@link sap.uxap.ObjectPageDynamicHeaderTitle}</code>.
+	 *
+	 * @function
+	 * @name sap.uxap.IHeaderTitle.isDynamic
+	 * @ui5-restricted
+	 * @private
+	 * @returns {boolean} Whether or not the header title is dynamic.
+	*/
+
+	/**
+	 * Getter method for getting the compatible header title class (being <code>{@link sap.uxap.ObjectPageDynamicHeaderTitle}</code> or <code>{@link sap.uxap.ObjectPageHeader}</code>).
+	 *
+	 * @function
+	 * @name sap.uxap.IHeaderTitle.getCompatibleHeaderContentClass
+	 * @ui5-restricted
+	 * @private
+	 * @returns {sap.uxap.ObjectPageHeaderContent} The header content.
+	*/
+
+	/**
+	 * Method for checking if the header title can be toggled on click.
+	 *
+	 * @function
+	 * @name sap.uxap.IHeaderTitle.supportsToggleHeaderOnTitleClick
+	 * @ui5-restricted
+	 * @private
+	 * @returns {boolean} Whether or not the header title can be toggled on click.
+	*/
+
+	/**
+	 * Method for checking if header title is supported in header content.
+	 *
+	 * @function
+	 * @name sap.uxap.IHeaderTitle.supportsTitleInHeaderContent
+	 * @ui5-restricted
+	 * @private
+	 * @returns {boolean} Whether or not header title is supported in header content.
+	*/
+
+	/**
+	 * Method for checking if header title supports adapt layout for DOM element.
+	 *
+	 * @function
+	 * @name sap.uxap.IHeaderTitle.supportsAdaptLayoutForDomElement
+	 * @ui5-restricted
+	 * @param {boolean} bToggle Whether or not header title supports adapt layout for DOM element.
+	 * @private
+	*/
+
+	/**
+	 * Method for checking if header title supports background design.
+	 *
+	 * @function
+	 * @name sap.uxap.IHeaderTitle.supportsBackgroundDesign
+	 * @ui5-restricted
+	 * @param {boolean} bToggle Whether or not header title supports background design.
+	 * @private
+	*/
+
+	/**
+	 * Getter method for getting the header title text.
+	 *
+	 * @function
+	 * @name sap.uxap.IHeaderTitle.getTitleText
+	 * @ui5-restricted
+	 * @private
+	 * @returns {string} The header title text.
+	*/
+
+	/**
+	 * Method for snapping/collapsing the header title.
+	 *
+	 * @function
+	 * @name sap.uxap.IHeaderTitle.snap
+	 * @ui5-restricted
+	 * @private
+	*/
+
+	/**
+	 * Method for unsnapping/expanding the header title.
+	 *
+	 * @function
+	 * @name sap.uxap.IHeaderTitle.unSnap
+	 * @ui5-restricted
+	 * @private
+	*/
+
+	/**
+	 * Method toggling .the visibility of the expand button of the header title
+	 *
+	 * @function
+	 * @name sap.uxap.IHeaderTitle._toggleExpandButton
+	 * @ui5-restricted
+	 * @param {boolean} bToggle Whether or not header title expand button should be shown.
+	 * @private
+	*/
+
+	/**
+	 * Setter method for toggling .the visibility of the expand button of the header title
+	 *
+	 * @function
+	 * @name sap.uxap.IHeaderTitle._setShowExpandButton
+	 * @ui5-restricted
+	 * @param {boolean} bVisible Whether or not header title expand button should be shown.
+	 * @private
+	*/
+
+	/**
+	 * Method for focusing the expand button of the header title.
+	 *
+	 * @function
+	 * @name sap.uxap.IHeaderTitle._focusExpandButton
+	 * @ui5-restricted
+	 * @private
+	*/
+
+	/**
+	 * Method for toggling the focusing ability of the header title.
+	 *
+	 * @function
+	 * @name sap.uxap.IHeaderTitle._toggleFocusableState
+	 * @ui5-restricted
+	 * @param {boolean} bFocusable Whether or not header title should be focusable.
+	 * @private
+	*/
+
+	/**
 	 *
 	 * Interface for controls that are eligible for the <code>headerContent</code> aggregation
 	 * of the <code>{@link sap.uxap.ObjectPageLayout}</code>.
