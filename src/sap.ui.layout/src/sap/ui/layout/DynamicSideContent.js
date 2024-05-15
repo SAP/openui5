@@ -402,7 +402,6 @@ sap.ui.define([
 		 * @override
 		 */
 		DynamicSideContent.prototype.onBeforeRendering = function () {
-			this._bSuppressInitialFireBreakPointChange = true;
 			this._detachContainerResizeListener();
 
 			this._SCVisible = (this._SCVisible === undefined) ? this.getProperty("showSideContent") : this._SCVisible;
@@ -610,18 +609,19 @@ sap.ui.define([
 			return this._currentBreakpoint;
 		};
 
-
 		/**
 		 * Sets the current breakpoint, related to the width, which is passed to the method.
 		 * @private
 		 * @param {int} iWidth is the parent container width
 		 */
 		DynamicSideContent.prototype._setBreakpointFromWidth = function (iWidth) {
-			this._currentBreakpoint = this._getBreakPointFromWidth(iWidth);
-			if (this._bSuppressInitialFireBreakPointChange) {
-				this._bSuppressInitialFireBreakPointChange = false;
-			} else {
-				this.fireBreakpointChanged({currentBreakpoint : this._currentBreakpoint});
+			var sNewBreakpoint = this._getBreakPointFromWidth(iWidth),
+				sCurrentBreakpoint = this.getCurrentBreakpoint();
+
+			this._currentBreakpoint = sNewBreakpoint;
+
+			if (sCurrentBreakpoint !== undefined) {
+				sNewBreakpoint !== sCurrentBreakpoint && this.fireBreakpointChanged({currentBreakpoint : this._currentBreakpoint});
 			}
 		};
 
@@ -636,9 +636,7 @@ sap.ui.define([
 				this._iWindowWidth = jQuery(window).width();
 			}
 
-			this._currentBreakpoint = this._getBreakPointFromWidth(this._iWindowWidth);
-
-			this._setResizeData(this._currentBreakpoint, this.getEqualSplit());
+			this._setResizeData(this._getBreakPointFromWidth(this._iWindowWidth), this.getEqualSplit());
 			this._changeGridState();
 			this._setBreakpointFromWidth(this._iWindowWidth);
 		};
