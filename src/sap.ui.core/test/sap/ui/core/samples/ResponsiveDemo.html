@@ -6,7 +6,10 @@
 
 <title>ResponsiveDemo</title>
 
-<script src="../../../../../resources/sap-ui-core.js" id="sap-ui-bootstrap"></script>
+<script src="../../../../../resources/sap-ui-core.js" 
+		id="sap-ui-bootstrap"
+		data-sap-ui-libs="sap.ui.ux3, sap.m, sap.ui.layout, sap.ui.table"
+		></script>
 
 <style>
 .CustomItemLayout {
@@ -116,13 +119,19 @@ var aTitles = ["Notebook Basic", "UMTS PDA", "Easy Hand", "Deskjet Super Highspe
 			   "Gaming Monster Pro", "ITelO FlexTop I4000", "ITelO FlexTop I6300c",
 			   "Goldberry Cellphone", "ITelO FlexTop I9100", "Notebook Professional",
 			   "Smart Office", "Deskjet Super Highspeed", "Notebook Basic XS"];
-for(var i=0; i<aTitles.length; i++){
+for (var i = 0; i < aTitles.length; i++){
 	var sTitle = aTitles[i];
-	var oProduct = {id: ""+i, price: Math.floor((Math.random()*1000))+1+" $", category: "PC",
-			title: sTitle, rating: Math.floor((Math.random()*5))+1, selected: false};
-	if(sTitle.indexOf("Notebook") >= 0){
+	var oProduct = {
+			id: "" + i,
+			price: Math.floor(Math.random() * 1000) + 1 + " $",
+			category: "PC",
+			title: sTitle,
+			rating: Math.floor(Math.random() * 5) + 1,
+			selected: false
+		};
+	if (sTitle.indexOf("Notebook") >= 0){
 		oProduct.category = "Notebook";
-	}else if(sTitle.indexOf("Cellphone") >= 0 || sTitle.indexOf("PDA") >= 0){
+	} else if (sTitle.indexOf("Cellphone") >= 0 || sTitle.indexOf("PDA") >= 0) {
 		oProduct.category = "Mobile";
 	}
 	oProduct.image = "../images/"+oProduct.category+".png";
@@ -134,26 +143,17 @@ oModel.setData(data);
 
 //Some helper functions
 function select(idx){
-	for(var i=0; i<data.products.length; i++){
+	for (var i = 0; i < data.products.length; i++){
 		data.products[i].selected = false;
 	}
 	data.selectionIdx = -1;
 
-	if(idx >=0 && idx < data.products.length){
+	if (idx >=0 && idx < data.products.length) {
 		data.products[idx].selected = true;
 		data.selectionIdx = idx;
 	}
 
 	oModel.setData(data);
-};
-
-function loadLib(sLib){
-	try{
-		sap.ui.getCore().loadLibrary(sLib);
-	}catch(e){
-		alert("This test page requires the library '"+sLib+"' which is not available.");
-		throw(e);
-	}
 };
 
 function doFilter(oEvent){
@@ -178,62 +178,63 @@ var currentMobile = null;
 
 var aPoints = [420, 750, 1130];
 
-function initialize(from){
+function initialize(from) {
 	var aInfo;
-	if(from >= aPoints[2]){
+	if (from >= aPoints[2]) {
 		aInfo = initializeTable();
-	}else if(from >= aPoints[1]){
+	} else if (from >= aPoints[1]) {
 		aInfo = initializeDataset(false);
-	}else if(from >= aPoints[0]){
+	} else if (from >= aPoints[0]) {
 		aInfo = initializeDataset(true);
-	}else{
+	} else {
 		aInfo = initializeList();
 	}
 
 	var mobile = aInfo[1];
 
 	function init(){
-		Theming.detachApplied(init);
 		currentControl = aInfo[0];
 		var ctrl;
-		if(!currentMobile){
+		if (!currentMobile) {
 			ctrl = initializeShell();
 			ctrl.removeAllContent();
 			ctrl.addContent(currentControl);
-		}else{
+		} else {
 			ctrl = oApp;
 		}
 
 		var uiArea = sap.ui.getCore().getUIArea("root");
-		if(!uiArea || uiArea.getContent()[0] != ctrl){
+		if (!uiArea || uiArea.getContent()[0] != ctrl) {
 			ctrl.placeAt("root", "only");
 		}
 	};
 
-	if(currentMobile === null || currentMobile != mobile){
-		Theming.attachApplied(init);
-
-		if(!currentMobile && oShell){
-			oShell._getSearchTool().close();
-		}
-
-		currentMobile = mobile;
-		jQuery("#root").html("");
-		Theming.setTheme(mobile ? "sap_belize" : "sap_bluecrystal");
-	}else{
+	if (currentMobile === null || currentMobile != mobile) {
+		sap.ui.require(["sap/ui/core/Theming"], function(Theming) {
+			if (!currentMobile && oShell) {
+				oShell._getSearchTool().close();
+			}
+	
+			currentMobile = mobile;
+			jQuery("#root").html("");
+			Theming.setTheme(mobile ? "sap_belize" : "sap_bluecrystal");
+			function initOnThemeApplied() {
+				Theming.detachApplied(initOnThemeApplied);
+				init();
+			} 
+			Theming.attachApplied(initOnThemeApplied);
+		});
+	} else {
 		init();
 	}
 };
 
 
 function initializeTable(){
-	if(oTable){
+	if (oTable) {
 		oTable.__refresh();
 		return [oTable, false];
 	}
-
-	loadLib("sap.ui.commons");
-	loadLib("sap.ui.table");
 
 	oTable = new sap.ui.table.Table({
 		selectionMode: "Single",
@@ -244,20 +245,20 @@ function initializeTable(){
 		},
 		columns: [
 			new sap.ui.table.Column({
-				label: new sap.ui.commons.Label({text: "Product Name"}),
-				template: new sap.ui.commons.TextView().bindProperty("text", "title")
+				label: new sap.m.Label({text: "Product Name"}),
+				template: new sap.m.Text().bindProperty("text", "title")
 			}),
 			new sap.ui.table.Column({
-				label: new sap.ui.commons.Label({text: "Category"}),
-				template: new sap.ui.commons.TextView().bindProperty("text", "category")
+				label: new sap.m.Label({text: "Category"}),
+				template: new sap.m.Text().bindProperty("text", "category")
 			}),
 			new sap.ui.table.Column({
-				label: new sap.ui.commons.Label({text: "Price"}),
-				template: new sap.ui.commons.TextView().bindProperty("text", "price")
+				label: new sap.m.Label({text: "Price"}),
+				template: new sap.m.Text().bindProperty("text", "price")
 			}),
 			new sap.ui.table.Column({
-				label: new sap.ui.commons.Label({text: "Rating"}),
-				template: new sap.ui.commons.RatingIndicator({editable: false}).bindProperty("value", "rating")
+				label: new sap.m.Label({text: "Rating"}),
+				template: new sap.m.RatingIndicator({editable: false}).bindProperty("value", "rating")
 			})
 		],
 		rows: {path: "/products"}
@@ -278,20 +279,17 @@ function initializeTable(){
 
 
 function initializeDataset(bSingleRow){
-	if(oDataSet){
+	if (oDataSet) {
 		oDataSet.__refresh(true, bSingleRow);
 		return [oDataSet, false];
 	}
 
-	loadLib("sap.ui.commons");
-	loadLib("sap.ui.ux3");
-
 	sap.ui.core.Control.extend("ItemLayout", {
 		metadata : {
 			aggregations : {
-				"link" : {type : "sap.ui.commons.Link", multiple : false},
-				"image" : {type : "sap.ui.commons.Image", multiple : false},
-				"form" : {type : "sap.ui.commons.form.Form", multiple : false},
+				"link" : {type : "sap.m.Link", multiple : false},
+				"image" : {type : "sap.m.Image", multiple : false},
+				"form" : {type : "sap.ui.layout.form.Form", multiple : false},
 			}
 		},
 
@@ -323,7 +321,7 @@ function initializeDataset(bSingleRow){
 		},
 
 		onBeforeRendering : function(){
-			if(this.resizeTimer){
+			if (this.resizeTimer) {
 				clearTimeout(this.resizeTimer);
 				this.resizeTimer = null;
 			}
@@ -331,49 +329,48 @@ function initializeDataset(bSingleRow){
 
 		onAfterRendering : function(){
 			var $This = this.$();
-			if($This.parent().parent().hasClass("sapUiUx3DSSVSingleRow")){
+			if ($This.parent().parent().hasClass("sapUiUx3DSSVSingleRow")) {
 				this._resize();
-			}else{
+			} else {
 				$This.addClass("CustomItemLayoutSmall");
 			}
 		},
 
 		_resize: function(){
-			if(!this.getDomRef()){
+			if (!this.getDomRef()) {
 				return;
 			}
 			var $This = this.$();
-			if($This.outerWidth() >= 440){
+			if ($This.outerWidth() >= 440) {
 				$This.removeClass("CustomItemLayoutSmall").addClass("CustomItemLayoutLarge");
-			}else{
+			} else {
 				$This.removeClass("CustomItemLayoutLarge").addClass("CustomItemLayoutSmall");
 			}
-			setTimeout(jQuery.proxy(this._resize, this), 300);
+			setTimeout(this._resize.bind(this), 300);
 		}
 	});
 
 	function createTemplate(){
-		var c = sap.ui.commons;
 		return new ItemLayout({
-			link: new c.Link({text: "{title}"}),
-			image: new c.Image({src: "{image}"}),
-			form: new c.form.Form({
+			link: new sap.m.Link({text: "{title}"}),
+			image: new sap.m.Image({src: "{image}"}),
+			form: new sap.ui.layout.form.Form({
 				width: "100%",
-				layout: new c.form.GridLayout(),
+				layout: new sap.ui.layout.form.GridLayout(),
 				formContainers: [
-					new c.form.FormContainer({
+					new sap.ui.layout.form.FormContainer({
 						formElements: [
-							new c.form.FormElement({
-								label: new c.Label({text: "Category", layoutData: new c.form.GridElementData({hCells: "5"})}),
-								fields: [new c.TextField({value: "{category}", editable: false})]
+							new sap.ui.layout.form.FormElement({
+								label: new sap.m.Label({text: "Category", layoutData: new sap.ui.layout.form.GridElementData({hCells: "5"})}),
+								fields: [new sap.m.Input({value: "{category}", editable: false})]
 							}),
-							new c.form.FormElement({
-								label: new c.Label({text: "Price", layoutData: new c.form.GridElementData({hCells: "5"})}),
-								fields: [new c.TextField({value: "{price}", editable: false})]
+							new sap.ui.layout.form.FormElement({
+								label: new sap.m.Label({text: "Price", layoutData: new sap.ui.layout.form.GridElementData({hCells: "5"})}),
+								fields: [new sap.m.Input({value: "{price}", editable: false})]
 							}),
-							new c.form.FormElement({
-								label: new c.Label({text: "Rating", layoutData: new c.form.GridElementData({hCells: "5"})}),
-								fields: [new c.RatingIndicator({value: "{rating}", editable: false})]
+							new sap.ui.layout.form.FormElement({
+								label: new sap.m.Label({text: "Rating", layoutData: new sap.ui.layout.form.GridElementData({hCells: "5"})}),
+								fields: [new sap.m.RatingIndicator({value: "{rating}", editable: false})]
 							})
 						]
 					})
@@ -426,12 +423,10 @@ function initializeDataset(bSingleRow){
 
 
 function initializeList(){
-	if(oApp){
+	if (oApp) {
 		oApp.__refresh();
 		return [oApp, true];
 	}
-
-	loadLib("sap.m");
 
 	var oList = new sap.m.List({
 		inset : true,
@@ -482,11 +477,9 @@ function initializeList(){
 
 
 function initializeShell(){
-	if(oShell){
+	if (oShell) {
 		return oShell;
 	}
-
-	loadLib("sap.ui.ux3");
 
 	oShell = new sap.ui.ux3.Shell({
 		appTitle: "Products",

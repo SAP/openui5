@@ -13,28 +13,27 @@
 		<button id="readall">Read Bundles</button>
 		<script>
 		sap.ui.require([
-			"jquery.sap.global",
-			"jquery.sap.script",
-			"jquery.sap.properties",
-			"jquery.sap.resources"
-		], function(jQuery) {
+			"sap/base/i18n/ResourceBundle"
+		], function(ResourceBundle) {
 			var data = [];
-			var sLocale = jQuery.sap.getUriParameters().get("sap-ui-language") || "";
+			var sLocale = new URLSearchParams(window.location.search).get("sap-language") ?? "en";
 
 			function loadi18n(lib) {
-				var sUri = jQuery.sap.getModulePath(lib + '.messagebundle', '.properties');
-				return jQuery.sap.resources({
-					url: sUri,
+				return ResourceBundle.create({
+					bundleName: lib + ".messagebundle",
 					locale: sLocale
 				});
 			}
 
 			// try to enforce code compilation
 			for ( var i = 0; i < 10; i++ ) {
-				loadi18n('sap.ui.commons');
+				ResourceBundle._getPropertiesCache().clear();
+				loadi18n('sap.m');
 			}
 
-			jQuery('#readall').on("click", function() {
+			document.getElementById("readall").addEventListener("click", function() {
+
+				ResourceBundle._getPropertiesCache().clear();
 
 				// the following libs represents a typical set of libraries used in a Fiori environment
 
@@ -42,7 +41,7 @@
 				data.push( loadi18n('sap.ui.core') ) ;
 				data.push( loadi18n('sap.ui.layout') ) ;
 				data.push( loadi18n('sap.ui.unified') ) ;
-				//data.push( loadi18n('sap.f') ) ; // no texts currently
+				data.push( loadi18n('sap.f') ) ;
 				data.push( loadi18n('sap.m') ) ;
 				data.push( loadi18n('sap.ui.table') ) ;
 				data.push( loadi18n('sap.uxap') ) ;

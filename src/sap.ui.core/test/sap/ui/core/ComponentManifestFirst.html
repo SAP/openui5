@@ -6,7 +6,7 @@
 	<script src="shared-config.js"></script>
 	<script id="sap-ui-bootstrap" src="../../../../resources/sap-ui-core.js"
 	data-sap-ui-bindingSyntax="complex"
-	data-sap-ui-libs="sap.ui.commons,sap.m"
+	data-sap-ui-libs="sap.m"
 	data-sap-ui-xx-componentPreload="async"></script>
 	<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 	<style type="text/css">
@@ -15,7 +15,7 @@
 	}
 	</style>
 	<script id="viewSource" type="xml/text">
-		<mvc:View xmlns:l="sap.ui.layout" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns:lf="sap.ui.layout.form" xmlns="sap.m" xmlns:c="sap.ui.commons">
+		<mvc:View xmlns:l="sap.ui.layout" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">
 			<l:Splitter height="100%">
 				<Panel width="auto" height="100%" headerText="Configuration Area">
 					<content>
@@ -47,6 +47,7 @@
 		</mvc:View>
 	</script>
 	<script>
+	/*global sinon */
 	sap.ui.localResources("samples");
 
 
@@ -159,7 +160,7 @@
 			oCompCont.destroy();
 		};
 		initComponents();
-	};
+	}
 
 
 	function selectChange(oEvent) {
@@ -229,7 +230,7 @@
 
 		oComp = sap.ui.component(oConfig);
 
-		if (oComp instanceof Promise){
+		if (oComp instanceof Promise) {
 			oComp.then(function(oComponent){
 				placeComponent(oComponent);
 				oComp = oComponent;
@@ -240,7 +241,7 @@
 		} else {
 			placeComponent(oComp);
 		}
-	};
+	}
 
 	function placeComponent(oComponentForPlacement) {
 		oCompCont = new sap.ui.core.ComponentContainer({

@@ -5,56 +5,81 @@
 		<script src="shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
 				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-libs="sap.m, sap.ui.layout"
 				src="../../../../resources/sap-ui-core.js"
 				>
 		</script>
 		<script>
-			try{
-				sap.ui.getCore().loadLibrary("sap.ui.commons");
-			}catch(e){
-				alert("This test page requires the library 'sap.ui.commons' which is not available.");
-				throw(e);
-			}
+			var oTextArea, oHTML, oResultView;
 
-		    // create the controls in the head
-			var oLayout = new sap.ui.commons.layout.MatrixLayout({
-				layoutFixed: false
-			});
-		    oLayout.createRow(
-		    	new sap.ui.commons.TextView({design:'H4', text:"Input (unsafe)"}),
-		    	"",
-		    	new sap.ui.commons.TextView({design:'H4', text:"Output (sanitized)"}),
-		    	new sap.ui.commons.TextView({design:'H4', text:"HTML Control"})
-		    );
-		    var oTextArea = new sap.ui.commons.TextArea({
-		    	width: '400px',
-		    	height: '300px',
-		    	value: '<div><br>\n<span>some <b>bold</b> or <i>italic</i> or <font size="+2">taller</font>Text</span><br>\n<a href="http://anonymous.org">Some Link</a><br>\n<script>alert("XSS attack");</' + 'script><br>\n</div>'
-		    });
-		    var oControls = new sap.ui.layout.VerticalLayout();
-		    oControls.addContent(
-			    	new sap.ui.commons.Button({
-			    		text: "Set as content ->",
-			    		press: function() {
-			    			oHTML.setContent(oTextArea.getValue());
-			    			oResultView.setValue(oHTML.getContent());
-			    		}
-			    	}));
-		    oControls.addContent(
-			    	new sap.ui.commons.CheckBox({
-			    		text: "Sanitize",
-			    		change: function() {
-			    			oHTML.setSanitizeContent(this.getChecked());
-			    		}
-			    	}));
-		    var oHTML = new sap.ui.core.HTML({});
-		    var oResultView = new sap.ui.commons.TextArea({
-		    	width: '400px',
-		    	height: '300px',
-		    	value: ''
-		    });
-			oLayout.createRow(oTextArea, oControls, oResultView, oHTML);
-			oLayout.placeAt("content");
+			// create the controls in the head
+			var oLayout = new sap.ui.layout.Grid({
+				content: [
+					new sap.m.Title({
+						titleStyle: 'H2',
+						text:"Input (unsafe)",
+						layoutData: new sap.ui.layout.GridData({
+							span: "L5 M5 S5"
+						})
+					}),
+					new sap.m.Title({
+						titleStyle: 'H2',
+						text:"Output (sanitized)",
+						layoutData: new sap.ui.layout.GridData({
+							span: "L3 M3 S3"
+						})
+					}),
+					new sap.m.Title({
+						titleStyle: 'H2',
+						text:"HTML Control",
+						layoutData: new sap.ui.layout.GridData({
+							span: "L3 M3 S3"
+						})
+					}),
+					oTextArea = new sap.m.TextArea({
+						width: '100%',
+						height: '300px',
+						value: '<div><br>\n<span>some <b>bold</b> or <i>italic</i> or <font size="+2">taller</font>Text</span><br>\n<a href="http://anonymous.org">Some Link</a><br>\n<script>alert("XSS attack");</' + 'script><br>\n</div>',
+						layoutData: new sap.ui.layout.GridData({
+							span: "L3 M3 S3",
+							linebreak: true
+						})
+					}),
+					new sap.ui.layout.VerticalLayout({
+						content: [
+							new sap.m.Button({
+								text: "Set as content ->",
+								press: function() {
+									oHTML.setContent(oTextArea.getValue());
+									oResultView.setValue(oHTML.getContent());
+								}
+							}),
+							new sap.m.CheckBox({
+								text: "Sanitize",
+								select: function() {
+									oHTML.setSanitizeContent(this.getSelected());
+								}
+							})
+						],
+						layoutData: new sap.ui.layout.GridData({
+							span: "L2 M2 S2"
+						})
+					}),
+					oResultView = new sap.m.TextArea({
+						width: '100%',
+						height: '300px',
+						value: '',
+						layoutData: new sap.ui.layout.GridData({
+							span: "L3 M3 S3"
+						})
+					}),
+					oHTML = new sap.ui.core.HTML({
+						layoutData: new sap.ui.layout.GridData({
+							span: "L3 M3 S3"
+						})
+					})
+				]
+			}).placeAt("content");
 		</script>
 	</head>
 	<body class="sapUiBody">

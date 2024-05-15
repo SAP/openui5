@@ -60,7 +60,7 @@
 			new sap.m.MenuItem({ text: "Action one" }),
 			new sap.m.MenuItem({ text: "Second action", enabled: false }),
 			new sap.m.MenuItem({ text: "Action three more ..."}),
-			new sap.m.MenuItem({ text: "Fourth option" }),
+			new sap.m.MenuItem({ text: "Fourth option" })
 		]
 	});
 
@@ -68,8 +68,7 @@
 		items: [
 			new sap.ui.unified.MenuItem( { text: "Example with Unified Menu" } ),
 			new sap.ui.unified.MenuItem( { text: "Example" } ),
-			new sap.ui.unified.MenuItem( { text: "Example" } ),
-
+			new sap.ui.unified.MenuItem( { text: "Example" } )
 		]
 	});
 
@@ -80,34 +79,34 @@
 				id: "firstItem",
 				title: "Monitor Locking Cable",
 				description: "P1239123",
-				icon: "sap-icon://laptop",
+				icon: "sap-icon://laptop"
 			}),
 			new sap.m.StandardListItem({
 				title: "Laptop Case",
 				description: "123-3123-111",
-				icon: "sap-icon://it-host",
+				icon: "sap-icon://it-host"
 			}),
 			new sap.m.StandardListItem({
 				title: "USB Stick 16Gbyte",
 				description: "XKT-2342432432",
-				icon: "sap-icon://it-system",
+				icon: "sap-icon://it-system"
 			}),
 			new sap.m.StandardListItem({
 				title: "Deskjet Super Highspeed",
 				description: "KTZ-23432423",
-				icon: "sap-icon://e-learning",
+				icon: "sap-icon://e-learning"
 			}),
 			new sap.m.StandardListItem({
 				id: "lastItem",
 				title: "Laser Allround Pro",
 				description: "554325-423",
-				icon: "sap-icon://it-instance",
+				icon: "sap-icon://it-instance"
 			})
 		]
 	});
 
 	var oBasicButton = new sap.m.Button({
-		text: "Buton without a ContextMenu"
+		text: "Button without a ContextMenu"
 	});
 
 	var oLeftDownButton = new sap.m.Button({
@@ -133,7 +132,7 @@
 			oLeftDownButton,
 			oRightDownButton
 		]
-	})
+	});
 	oApp.addPage(oPage);
 
 	oPage.setContextMenu(oPageContextMenu);

@@ -81,7 +81,7 @@
 						oXhr.respond = function (status, headers, content) {
 
 							var oObject = sap.ui.getCore().getModel("bMessages").getObject("/");
-							if(oObject){
+							if (oObject) {
 								headers["sap-message"] = JSON.stringify(oObject);
 							}
 

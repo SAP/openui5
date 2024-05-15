@@ -5,8 +5,9 @@
 		<title>MVC Async XMLView - sap.ui.core</title>
 
 		<script id="sap-ui-bootstrap"
-				src="../../../../../../resources/sap-ui-core.js">
-		</script>
+				src="../../../../../../resources/sap-ui-core.js"
+				data-sap-ui-libs="sap.m"
+		></script>
 
 		<script>
 			window._setTimeout = window.setTimeout;
@@ -16,12 +17,6 @@
 
 		<script>
 			sap.ui.require(["sap/ui/core/Element"], function(Element) {
-				try{
-					sap.ui.getCore().loadLibrary("sap.ui.commons");
-				}catch(e){
-					alert("This test page requires the library 'sap.ui.commons' which is not available.");
-					throw(e);
-				}
 
 				// this test page is not below "resources", but "test-resources"
 				// usually this redirect is NOT needed - but possible if useful
@@ -55,10 +50,10 @@
 				/*
 				* define ASYNC View and place it onto the page
 				*/
-				var oInput = new sap.ui.commons.TextField("timeout", {
+				var oInput = new sap.m.Input("timeout", {
 					value : "1000"
 				}).placeAt("asyncInput");
-				var oButton = new sap.ui.commons.Button("showButton", {
+				var oButton = new sap.m.Button("showButton", {
 					text : "Show / rerender View",
 					press : function(oEvent) {
 						var oView = Element.getElementById("asyncView");

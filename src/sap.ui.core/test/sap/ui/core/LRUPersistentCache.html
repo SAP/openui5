@@ -11,14 +11,12 @@
 	<script src="resources/large_cache_content.js"></script>
 
 	<script>
-		var oCache;
-		sap.ui.require(["sap/ui/core/cache/CacheManager"], function (classCacheManager) {
-			oCache = classCacheManager;
-		});
-		function addEntry(key, idValue) {
+	sap.ui.require(["sap/ui/core/cache/CacheManager"], function (oCache) {
+
+		globalThis.addEntry = function(key, idValue) {
 			var oValue = document.getElementById(idValue).value,
-					output = document.getElementById("output").innerHTML;
-			key = "key" + Date.now();
+				output = document.getElementById("output").innerHTML,
+				key = "key" + Date.now();
 			oCache.set(key, oValue).then(function () {
 				output += "<br/> Added new entry with key " + key;
 			}, function (eMsg) {
@@ -28,9 +26,9 @@
 			});
 		}
 
-		function getEntry(idKey) {
+		globalThis.getEntry = function(idKey) {
 			var key = document.getElementById(idKey).value,
-					output = document.getElementById("output").innerHTML;
+				output = document.getElementById("output").innerHTML;
 			oCache.get(key).then(function (v) {
 				output += "<br/> Got entry of type [" + typeof v + "] for key [" + key + "]";
 			}, function (eMsg) {
@@ -40,10 +38,10 @@
 			});
 		}
 
-		function addLargeEntry() {
+		globalThis.addLargeEntry = function() {
 			var oValue = m1;//came from the large script
-			output = document.getElementById("output").innerHTML;
-			key = "key" + Date.now();
+			var output = document.getElementById("output").innerHTML;
+			var key = "key" + Date.now();
 			oCache.set(key, oValue).then(function () {
 				output += "<br/> Added new entry with key " + key;
 			}, function (eMsg) {
@@ -53,7 +51,7 @@
 			});
 		}
 
-		function delFilters() {
+		globalThis.delFilters = function() {
 			var oOptions = {};
 			var oInputTimestamp = document.getElementById("timestamp");
 			var iTimestamp;
@@ -70,6 +68,7 @@
 
 			oCache.delWithFilters(oOptions);
 		}
+	});
 	</script>
 </head>
 <body>
