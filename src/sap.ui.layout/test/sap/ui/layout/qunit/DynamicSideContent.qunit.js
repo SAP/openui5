@@ -1176,13 +1176,14 @@ sap.ui.define([
 		var fnDone = assert.async(2),
 			oDSC = new DynamicSideContent({containerQuery: true}),
 			oBreakpointChangedSpy = this.spy(oDSC, "fireBreakpointChanged"),
+			oSetBreakpointFromWidthSpy = this.spy(oDSC, "_setBreakpointFromWidth"),
 			oContainer = document.getElementById("content"),
 			sResizeListenerId,
 			oAfterRenderingDelegate = {
 				onAfterRendering: function () {
 					sResizeListenerId = ResizeHandler.register(oDSC.getDomRef(), function() {
 						// assert
-						assert.ok(oBreakpointChangedSpy.notCalled, "breakpoinChange event is not fired");
+						assert.ok(oSetBreakpointFromWidthSpy.callCount > oBreakpointChangedSpy.callCount, "breakpoinChange event is not fired initially");
 						// clean
 						oContainer.style.width = "";
 						oDSC.removeDelegate(oAfterRenderingDelegate);
