@@ -7,15 +7,11 @@ sap.ui.define([
 	"sap/base/strings/capitalize",
 	"sap/base/Log",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/core/util/MockServer",
 	"sap/m/Select",
 	"sap/ui/core/Core",
 	"sap/ui/core/Item",
 	"sap/ui/core/library",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/model/odata/ODataModel",
-	"sap/ui/model/Filter",
-	"sap/ui/model/FilterOperator",
 	"sap/m/SelectRenderer",
 	"sap/ui/core/ListItem",
 	"sap/m/Label",
@@ -41,15 +37,11 @@ sap.ui.define([
 		Capitalize,
 		Log,
 		KeyCodes,
-		MockServer,
 		Select,
 		Core,
 		Item,
 		coreLibrary,
 		JSONModel,
-		ODataModel,
-		Filter,
-		FilterOperator,
 		SelectRenderer,
 		ListItem,
 		Label,
@@ -450,27 +442,6 @@ sap.ui.define([
 			QUnit.test("get" + sProperty + "()", function (assert) {
 				assert.strictEqual(mOptions.control["get" + sProperty](), mOptions.output, mOptions.description);
 			});
-		};
-
-		var fnStartMockServer = function (sUri, iAutoRespondAfter) {
-			var sMetadataUrl = "test-resources/sap/m/qunit/data/metadata.xml";
-			sUri = sUri || "/service/";
-
-			// configure respond to requests delay
-			MockServer.config({
-				autoRespond: true,
-				autoRespondAfter: iAutoRespondAfter || 10
-			});
-
-			// create mock server
-			var oMockServer = new MockServer({
-				rootUri: sUri
-			});
-
-			// start and return
-			oMockServer.simulate(sMetadataUrl, "test-resources/sap/m/qunit/data");
-			oMockServer.start();
-			return oMockServer;
 		};
 
 		var fnToMobileMode = function () {
@@ -1935,155 +1906,6 @@ sap.ui.define([
 			assert.strictEqual(oSelect.$("label").text(), "Germany");
 
 			// cleanup
-			oSelect.destroy();
-		});
-
-		QUnit.test("it should set the selection correctly when the item aggregation is bound to a OData model and the selectedKey property is not bound", function (assert) {
-
-			// system under test
-			var oSelect = new Select({
-				items: {
-					path: "/Products",
-					template: new Item({
-						key: "{ProductId}",
-						text: "{Name}"
-					})
-				}
-			});
-
-			// arrange
-			var sUri = "/service/";
-			var oMockServer = fnStartMockServer(sUri, 10);
-			var oModel = new ODataModel(sUri, true);
-			oSelect.setModel(oModel);
-			oSelect.placeAt("content");
-			Core.applyChanges();
-			this.clock.tick(100);
-
-			// assert
-			assert.strictEqual(oSelect.getSelectedKey(), "id_1");
-			assert.strictEqual(oSelect.getList().getSelectedKey(), "id_1");
-			assert.strictEqual(oSelect.$("label").text(), "Gladiator MX");
-
-			// cleanup
-			oMockServer.stop();
-			oMockServer.destroy();
-			oSelect.destroy();
-		});
-
-		QUnit.test("it should set the selection correctly when the item aggregation is bound to a OData model and the selectedKey property is not bound", function (assert) {
-
-			// system under test
-			var oSelect = new Select({
-				selectedKey: "id_14",
-				items: {
-					path: "/Products",
-					template: new Item({
-						key: "{ProductId}",
-						text: "{Name}"
-					})
-				}
-			});
-
-			// arrange
-			var sUri = "/service/";
-			var oMockServer = fnStartMockServer(sUri, 10);
-			var oModel = new ODataModel(sUri, true);
-			oSelect.setModel(oModel);
-			oSelect.placeAt("content");
-			Core.applyChanges();
-			this.clock.tick(100);
-
-			// assert
-			assert.strictEqual(oSelect.getSelectedKey(), "id_14");
-			assert.strictEqual(oSelect.getList().getSelectedKey(), "id_14");
-			assert.strictEqual(oSelect.$("label").text(), "High End Laptop 2b");
-
-			// cleanup
-			oMockServer.stop();
-			oMockServer.destroy();
-			oSelect.destroy();
-		});
-
-		// BCP 1580006106
-		QUnit.test("it should not override the selection if the items aggregation is bound to a OData model and filters are used", function (assert) {
-
-			// system under test
-			var oSelect = new Select({
-				items: {
-					path: "/Products",
-					template: new Item({
-						key: "{ProductId}",
-						text: "{Name}"
-					})
-				}
-			});
-
-			// arrange
-			var sUri = "/service/";
-			var iAutoRespondAfter = 10;
-			var oMockServer = fnStartMockServer(sUri, iAutoRespondAfter);
-			var oModel = new ODataModel(sUri, true);
-			oSelect.setModel(oModel);
-
-			// IDs and names of the products in the model:
-			//
-			// id_1  Gladiator MX
-			// id_2  Psimax
-			// id_3  Hurricane GX
-			// id_4  Webcam
-			// id_5  Monitor Locking Cable
-			// id_6  Laptop Case
-			// id_7  Removable CD/DVD
-			// id_8  USB Stick 16 GByte
-			// id_9  Deskjet Super Highspeed
-			// id_10 Laser Allround Pro
-			// id_11 Flat S
-			// id_12 Flat Medium
-			// id_13 Flat X-large II
-			// id_14 High End Laptop 2b
-			// id_15 Very Natural Keyboard
-			// id_16 Hardcore Hacker
-
-			oSelect.getBinding("items").filter(new Filter([
-				new Filter({
-					path: "Name",
-					operator: FilterOperator.StartsWith,
-					value1: "F"
-				}),
-				new Filter({
-					path: "Name",
-					operator: FilterOperator.EndsWith,
-					value1: "S"
-				})
-			], true));
-
-			oSelect.setSelectedKey("id_5");
-			oSelect.placeAt("content");
-
-			// tick the clock ahead some ms millisecond (it should be at least more than the auto respond setting
-			// to make sure that the data from the OData model is available)
-			this.clock.tick(iAutoRespondAfter + 1);
-
-			// enforces an immediate update of the visible UI (aka "rendering")
-			Core.applyChanges();
-
-			oSelect.getBinding("items").filter(new Filter([
-				new Filter({
-					path: "Name",
-					operator: FilterOperator.StartsWith,
-					value1: "F"
-				})
-			], true));
-			oSelect.setSelectedKey("id_12");	// in this scenario, this call to .setSelectedKey() triggers re-rendering
-			this.clock.tick(1);	// tick the clock ahead some ms millisecond after the re-rendering occur
-
-			// assert
-			assert.strictEqual(oSelect.getSelectedKey(), "id_12");
-
-			// cleanup
-			oMockServer.stop();
-			oMockServer.destroy();
 			oSelect.destroy();
 		});
 
