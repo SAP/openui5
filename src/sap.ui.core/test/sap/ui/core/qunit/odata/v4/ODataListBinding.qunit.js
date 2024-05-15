@@ -2593,10 +2593,10 @@ sap.ui.define([
 [
 	{success : true},
 	{success : true, refreshKeptElementsFails : true},
+	{success : true, destroyedWhileRefreshing : true},
 	{success : false}
 ].forEach(function (oFixture) {
-	var sTitle = "refreshInternal: relative with own cache, success=" + oFixture.success
-			+ ", refreshKeptElements fails = " + oFixture.refreshKeptElementsFails;
+	var sTitle = "refreshInternal: relative with own cache, " + JSON.stringify(oFixture);
 
 	QUnit.test(sTitle, function (assert) {
 		var oBinding,
@@ -2639,12 +2639,18 @@ sap.ui.define([
 		this.mock(oBinding).expects("fetchCache")
 			.withExactArgs(sinon.match.same(oContext), false, /*bKeepQueryOptions*/true, undefined);
 		this.mock(oBinding).expects("refreshKeptElements").withExactArgs("myGroup", undefined)
-			.returns(oRefreshKeptElementsPromise);
+			.callsFake(function () {
+				if (oFixture.destroyedWhileRefreshing) {
+					oBinding.oHeaderContext = undefined;
+				}
+				return oRefreshKeptElementsPromise;
+			});
 		this.mock(oBinding).expects("createRefreshPromise").withExactArgs(undefined).callThrough();
 		this.mock(oBinding).expects("reset")
 			.withExactArgs(ChangeReason.Refresh, undefined, "myGroup");
 		this.mock(oBinding.oHeaderContext).expects("checkUpdateInternal")
-			.exactly(oFixture.success && !oFixture.refreshKeptElementsFails ? 1 : 0)
+			.exactly(oFixture.success && !oFixture.refreshKeptElementsFails
+				&& !oFixture.destroyedWhileRefreshing ? 1 : 0)
 			.withExactArgs()
 			.returns(oHeaderContextCheckUpdatePromise);
 
@@ -2657,7 +2663,9 @@ sap.ui.define([
 		return oRefreshResult.then(function (oResult) {
 			assert.ok(oFixture.success);
 			assert.notOk(oFixture.refreshKeptElementsFails);
-			assert.strictEqual(oResult, oHeaderContextCheckUpdatePromise.getResult());
+			if (!oFixture.destroyedWhileRefreshing) {
+				assert.strictEqual(oResult, oHeaderContextCheckUpdatePromise.getResult());
+			}
 		}, function (oError0) {
 			assert.strictEqual(oError0, oError);
 			assert.ok(!oFixture.success || oFixture.refreshKeptElementsFails);
