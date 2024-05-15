@@ -21,13 +21,6 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var URLHelper = mLibrary.URLHelper;
-	var LEGAL_LINKS = {
-		"legal": "https://www.sap.com/corporate/en/legal/impressum.html",
-		"privacy": "https://www.sap.com/corporate/en/legal/privacy.html",
-		"terms_of_use": "https://www.sap.com/corporate/en/legal/terms-of-use.html"
-	};
-
 	return BaseController.extend("sap.ui.demo.accessibilityGuide.controller.App", {
 
 		/**
@@ -256,12 +249,6 @@ sap.ui.define([
 			}
 
 			this.setModel(oModel);
-		},
-
-		onSideNavigationFixedItemPress: function (oEvent) {
-			var sTargetText = oEvent.getParameter("item").getKey(),
-				sTarget = LEGAL_LINKS[sTargetText];
-			URLHelper.redirect(sTarget, true);
 		}
 	});
 });

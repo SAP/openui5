@@ -43,14 +43,27 @@
 						</tnt:NavigationListItem>
 					</tnt:NavigationList>
 					<tnt:fixedItem>
-						<tnt:NavigationList itemSelect="onSideNavigationFixedItemPress">
-							<tnt:NavigationListItem icon="sap-icon://compare" key="legal"
-								text="{i18n>APP_INFORMATION_BTN_LEGAL}" />
-							<tnt:NavigationListItem icon="sap-icon://locked" key="privacy"
-								text="{i18n>APP_INFORMATION_BTN_PRIVACY}" />
-							<tnt:NavigationListItem icon="sap-icon://document-text"
-								key="terms_of_use" text="{i18n>APP_INFORMATION_BTN_TERMS_OF_USE}"
-								visible="{=!${versionData>/isOpenUI5}}" />
+						<tnt:NavigationList>
+							<tnt:NavigationListItem
+								text="{i18n>APP_INFORMATION_BTN_LEGAL_INFORMATION}" expanded="false"
+								icon="sap-icon://official-service" selectable="fase">
+								<tnt:NavigationListItem
+									selectable="false" href="https://www.sap.com/corporate/en/legal/impressum.html" target="_blank"
+									text="{i18n>APP_INFORMATION_BTN_LEGAL_DISCLOSURE}" />
+								<tnt:NavigationListItem
+									selectable="false" href="https://www.sap.com/corporate/en/legal/privacy.html" target="_blank"
+									text="{i18n>APP_INFORMATION_BTN_PRIVACY}" />
+								<tnt:NavigationListItem
+									selectable="false" href="https://www.sap.com/corporate/en/legal/terms-of-use.html" target="_blank"
+									text="{i18n>APP_INFORMATION_BTN_TERMS_OF_USE}"
+									visible="{=!${versionData>/isOpenUI5}}" />
+								<tnt:NavigationListItem
+									selectable="false" href="https://www.sap.com/trademark" target="_blank"
+									text="{i18n>APP_INFORMATION_BTN_TRADEMARK}" />
+								<tnt:NavigationListItem
+									selectable="false" href="https://www.sap.com/copyright" target="_blank"
+									text="{i18n>APP_INFORMATION_BTN_COPYRIGHT}" />
+							</tnt:NavigationListItem>
 						</tnt:NavigationList>
 					</tnt:fixedItem>
 				</tnt:SideNavigation>
