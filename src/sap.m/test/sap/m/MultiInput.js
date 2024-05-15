@@ -566,6 +566,7 @@ sap.ui.define([
 	var oTable = new Table("tableTamplate", { columns: aColumns });
 
 	oTable.bindItems("/modelData", oItemTemplate);
+	oTable.setModel(oModel);
 	//******************************************
 
 	// MultiInput - max three tokens could be set
@@ -774,6 +775,7 @@ sap.ui.define([
 		]
 	}));
 	oCondensedTable.addStyleClass("sapUiSizeCondensed");
+	oCondensedTable.setModel(oModel);
 
 	// MultiInput with suggestions
 	var aData = [
