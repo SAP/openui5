@@ -12,7 +12,8 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/ToolbarSpacer",
 	"sap/m/Bar",
-	"sap/m/BusyDialog"
+	"sap/m/BusyDialog",
+	"sap/m/MessageToast"
 ], function(
 	App,
 	Select,
@@ -27,7 +28,8 @@ sap.ui.define([
 	Button,
 	ToolbarSpacer,
 	Bar,
-	BusyDialog
+	BusyDialog,
+	MessageToast
 ) {
 	"use strict";
 
@@ -165,6 +167,7 @@ sap.ui.define([
 				text : "Clear List",
 				press : function() {
 					standardList.removeAllAggregation("items");
+					MessageToast.show("List cleared");
 				}
 			}),
 			new ToolbarSpacer()
@@ -233,6 +236,7 @@ sap.ui.define([
 					text: "Clear list",
 					press : function() {
 						simpleList.removeAllAggregation("items");
+						MessageToast.show("List cleared");
 					}
 			}), new ToolbarSpacer(), createSelect(pullToHide, 1)]
 		})
@@ -297,6 +301,7 @@ sap.ui.define([
 					text: "Clear list",
 					press : function() {
 						busyList.removeAllAggregation("items");
+						MessageToast.show("List cleared");
 					}
 			}), new ToolbarSpacer(), createSelect(pullToBusy, 2)]
 		})

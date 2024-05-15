@@ -450,15 +450,24 @@ sap.ui.define([
 		]
 	});
 
-	var oApp = new App();
 	oApp.addPage(oPage).placeAt("body");
 
 	var oB = new Button("size_btn", {
-		text : "Change page size",
+		text : "Change page size to 300px",
 		press : function() {
 			oPage.$().width("300px");
+			MessageToast.show("Page size changed to 300px");
+		}
+	});
+
+	var oB2 = new Button("size_btn2", {
+		text : "Change page size to 100%",
+		press : function() {
+			oPage.$().width("100%");
+			MessageToast.show("Page size changed to 100%");
 		}
 	});
 
 	oB.placeAt("body");
+	oB2.placeAt("body");
 });
