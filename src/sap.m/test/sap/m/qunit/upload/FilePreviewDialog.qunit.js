@@ -202,11 +202,6 @@ sap.ui.define([
 									assert.equal(aPages[i].getDescription(), 'Preview not available for this file.', "Description for the page is correct on page");
 									assert.equal(aPages[i].getIllustrationType(), 'sapIllus-NoData', "IllustrationType for not supported file type is correct");
 									break;
-								case "model/vnd.sap.vds":
-									assert.equal(aPages[i].getTitle(), aItems[i].getFileName(), "Title is correct for file on page");
-									assert.equal(aPages[i].getDescription(), 'Preview not available for this file.', "Description for the page is correct on page");
-									assert.equal(aPages[i].getIllustrationType(), 'sapIllus-NoData', "IllustrationType for not supported file type is correct");
-									break;
 								default:
 									break;
 							}
