@@ -919,4 +919,25 @@ sap.ui.define([
 		assert.equal(aSetChanges.length, 1, "One change created as the value is changed");
 	});
 
+	QUnit.test("Check 'getKeyForItem' execution", function(assert){
+		const oSelectionController = new SelectionController({
+			control: new Control({
+				dependents: [
+					new Control("TestControl_1"),
+					new Control("TestControl_2")
+				]
+			}),
+			targetAggregation: "dependents",
+			getKeyForItem: function(oItem) {
+				return oItem.getId() + "_test";
+			}
+		});
+
+		const aCurrentState = oSelectionController.getCurrentState();
+
+		assert.equal(aCurrentState.length, 2, "Two items are returned");
+		assert.equal(aCurrentState[0].key, "TestControl_1_test", "Correct key is returned");
+		assert.equal(aCurrentState[1].key, "TestControl_2_test", "Correct key is returned");
+	});
+
 });
