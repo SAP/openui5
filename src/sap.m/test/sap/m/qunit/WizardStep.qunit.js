@@ -35,7 +35,7 @@ sap.ui.define(["sap/m/WizardStep", "sap/ui/qunit/utils/nextUIUpdate", "sap/ui/co
 		await nextUIUpdate();
 		assert.strictEqual(this.wizardStep.$().attr("role"), "region", "Role should be region");
 		assert.strictEqual(this.wizardStep.$().attr("aria-labelledby"),
-			this.wizardStep.getId() + "-Title", "Region should be labelled by the title and position");
+			this.wizardStep.getId() + "-NumberedTitle", "Region should be labelled by the title and position");
 	});
 
 	QUnit.test("_isLeaf() should return TRUE WHEN NO SUBSEQUENT step are defined", function (assert) {
