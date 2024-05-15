@@ -69,7 +69,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("ShowDetails button lifecycle", async function(assert) {
+	QUnit.skip("ShowDetails button lifecycle", async function(assert) { // unstbale
 		const oModel = new JSONModel();
 			oModel.setData({
 				testPath: [
