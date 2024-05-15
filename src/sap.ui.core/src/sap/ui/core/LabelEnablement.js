@@ -265,6 +265,71 @@ sap.ui.define(['../base/ManagedObject', "sap/base/assert"],
 	};
 
 	/**
+	 * Collect the label texts for the given UI5 Element from the following sources:
+	 *  * The label returned from the function "getFieldHelpInfo"
+	 *  * The ids of label controls from labelling controls in LabelEnablement
+	 *  * The ids of label controls from "ariaLabelledBy" Association
+	 *  * The label and ids of label controls is enhanced by calling "enhanceAccessibilityState" of the parent control
+	 *
+	 * @param {sap.ui.core.Element} oElement The UI5 element for which the label texts are collected
+	 * @return {string[]} An array of label texts for the given UI5 element
+	 * @ui5-restricted sap.ui.core
+	 */
+	LabelEnablement._getLabelTexts = function(oElement) {
+		// gather labels and labelledby ids
+		const mLabelInfo = {};
+
+		const oInfo = oElement.getFieldHelpInfo?.();
+		if (oInfo?.label) {
+			mLabelInfo.label = oInfo.label;
+		}
+
+		let aLabelIds = LabelEnablement.getReferencingLabels(oElement);
+		if (aLabelIds.length) {
+			mLabelInfo.labelledby = aLabelIds;
+		}
+
+		if (oElement.getMetadata().getAssociation("ariaLabelledBy")) {
+			aLabelIds = oElement.getAriaLabelledBy();
+
+			if (aLabelIds.length) {
+				mLabelInfo.labelledby ??= [];
+
+				aLabelIds.forEach((sLabelId) => {
+					if (!mLabelInfo.labelledby.includes(sLabelId)) {
+						mLabelInfo.labelledby.push(sLabelId);
+					}
+				});
+			}
+		}
+
+		if (mLabelInfo.labelledby?.length) {
+			mLabelInfo.labelledby = mLabelInfo.labelledby.join(" ");
+		}
+
+		// enhance it with parent control
+		oElement.getParent()?.enhanceAccessibilityState?.(oElement, mLabelInfo);
+
+		// merge the labels
+		const aLabels = mLabelInfo.label ? [mLabelInfo.label] : [];
+
+		if (mLabelInfo.labelledby) {
+			mLabelInfo.labelledby.split(" ")
+				.forEach((sLabelId) => {
+					const oLabelControl = Element.getElementById(sLabelId);
+					if (oLabelControl) {
+						const sLabelText = oLabelControl.getText?.() || oLabelControl.getDomRef()?.innerText;
+						if (sLabelText) {
+							aLabels.push(sLabelText);
+						}
+					}
+				});
+		}
+
+		return aLabels;
+	};
+
+	/**
 	 * Returns <code>true</code> when the given control is required (property 'required') or one of its referencing labels, <code>false</code> otherwise.
 	 *
 	 * @param {sap.ui.core.Element} oElement The element which should be checked for its required state

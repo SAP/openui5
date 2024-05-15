@@ -66,6 +66,7 @@ sap.ui.define([
 				"sap.ui.core.Label"
 			],
 			properties : {
+				text : {type: "string", defaultValue: ""},
 				required : {type : "boolean", defaultValue : false}
 			},
 			associations : {
@@ -78,7 +79,14 @@ sap.ui.define([
 			render: function(oRm, oCtrl) {
 				oRm.openStart("label", oCtrl);
 				LabelEnablement.writeLabelForAttribute(oRm, oCtrl);
-				oRm.openEnd().close("label");
+				oRm.openEnd();
+
+				const sText = oCtrl.getText();
+				if (sText) {
+					oRm.text(sText);
+				}
+
+				oRm.close("label");
 			}
 		}
 	});
@@ -217,6 +225,44 @@ sap.ui.define([
 		assert.ok(!this.oLabel.$().attr("for"), "Label has no for attribute");
 		assert.strictEqual(this.oControl1.$().attr("aria-labelledby"), "someLabelFromApplication testControl1-additionalLabel", "No aria-labelledby reference to label in control 1");
 		assert.strictEqual(this.oControl2.$().attr("aria-labelledby"), "testControl2-additionalLabel", "No aria-labelledby reference to label in control 1");
+	});
+
+	QUnit.test("_getLabelTexts with different sources", function(assert) {
+		const aExpected = ["fieldHelpText", "labelEnablementText", "ariaLabelledByText"];
+		this.oControl1.getFieldHelpInfo = function() {
+			return { label: aExpected[0] };
+		};
+
+		this.oLabel.setText(aExpected[1]);
+		this.oLabel.setLabelFor(this.oControl1);
+
+		const oLabel1 = new TestLabel({
+			text: aExpected[2]
+		});
+
+		this.oControl1.addAriaLabelledBy(oLabel1);
+
+		const aTexts = LabelEnablement._getLabelTexts(this.oControl1);
+		assert.equal(aTexts.length, 3, "3 Texts are returned");
+
+		aTexts.forEach((sText) => {
+			assert.ok(aExpected.includes(sText), `"${sText}" is expected to be returned`);
+		});
+
+		oLabel1.destroy();
+	});
+
+	QUnit.test("_getLabelTexts should filter out repeated labels", function(assert) {
+		const sText = "labelText";
+		this.oLabel.setText(sText);
+		this.oLabel.setLabelFor(this.oControl1);
+
+		this.oControl1.addAriaLabelledBy(this.oLabel);
+
+		const aTexts = LabelEnablement._getLabelTexts(this.oControl1);
+		assert.equal(aTexts.length, 1, "only one text is returned");
+
+		assert.equal(aTexts[0], sText, `The returned text "${aTexts[0]}" is expected`);
 	});
 
 	QUnit.module("Required Propagation", {
