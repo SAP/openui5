@@ -4,7 +4,9 @@ sap.ui.define([
 	"sap/ui/core/Theming",
 	"sap/m/List",
 	"sap/m/table/Util",
+	"sap/m/Table",
 	"sap/ui/core/theming/Parameters",
+	"sap/ui/model/Filter",
 	"sap/ui/model/json/JSONListBinding",
 	"sap/ui/model/odata/type/Boolean",
 	"sap/ui/model/odata/type/Byte",
@@ -24,7 +26,7 @@ sap.ui.define([
 	"sap/ui/model/odata/type/TimeOfDay",
 	"sap/ui/model/odata/v2/ODataListBinding",
 	"sap/ui/core/InvisibleMessage"
-], function(nextUIUpdate, Library, Theming, List, Util, ThemeParameters, JSONListBinding, BooleanType, Byte, DateType, DateTime, DateTimeWithTimezone, Decimal, Double, Single, Guid, Int16, Int32, Int64, SByte, StringType, Time, TimeOfDay, ODataListBinding, InvisibleMessage) {
+], function(nextUIUpdate, Library, Theming, List, Util, Table, ThemeParameters, Filter, JSONListBinding, BooleanType, Byte, DateType, DateTime, DateTimeWithTimezone, Decimal, Double, Single, Guid, Int16, Int32, Int64, SByte, StringType, Time, TimeOfDay, ODataListBinding, InvisibleMessage) {
 	"use strict";
 	/* global QUnit,sinon */
 
@@ -417,5 +419,140 @@ sap.ui.define([
 		};
 
 		Theming.attachApplied(fnThemeChanged);
+	});
+
+	QUnit.test("createOrUpdateMultiUnitPopover - use table with id", async function(assert) {
+		var oTable = new Table("TestTable");
+		oTable.addStyleClass("sapUiSizeCompact");
+		oTable.placeAt("qunit-fixture");
+
+		await nextUIUpdate();
+
+		var oItemsBindingInfo = {
+			path: "/names",
+			filters: [
+				new Filter("SomeFilterPath", "EQ", "SomeValue"),
+				new Filter("Customer", "EQ", "test")
+			],
+			parameters: {
+				select: "foo,bar",
+				custom: {
+					search: "searchText",
+					"search-focus": "FocusedField4Search"
+				}
+			}
+		};
+
+		var oAmountBindingInfo = {
+			parts: [
+				{
+					mode: "OneWay",
+					path: "PathToAmount"
+				},
+				{
+					mode: "OneWay",
+					path: "PathToCurrency"
+				}
+			]
+		};
+
+		var oUnitBindingInfo = {
+			parts: [
+				{
+					path: "PathToCurrency"
+				}
+			]
+		};
+
+		var mSettings = {
+			control: oTable,
+			itemsBindingInfo: oItemsBindingInfo,
+			amountBindingInfo: oAmountBindingInfo,
+			unitBindingInfo: oUnitBindingInfo
+		};
+
+		var oPopover = await Util.createOrUpdateMultiUnitPopover(oTable.getId() + "-multiUnitPopover", mSettings);
+		var oDetailsList = oPopover.getContent()[0];
+		var oDetailsListBindingInfo = oDetailsList.getBindingInfo("items");
+		var oDetailsListTemplateItems = oDetailsListBindingInfo.template.getContent()[0].getItems();
+
+		assert.ok(oPopover, "Popover was created");
+		assert.ok(oDetailsList, "List was created");
+
+		const oResourceBundle = Library.getResourceBundleFor("sap.m.table");
+		var sTitle = oResourceBundle.getText("TABLE_MULTI_GROUP_TITLE");
+		var sPlacement = "VerticalPreferredBottom";
+
+		assert.equal(oPopover.getTitle(), sTitle, "Popover title is correct");
+		assert.equal(oPopover.getPlacement(), sPlacement, "Popover placement is correct");
+		assert.equal(oPopover.getId(), oTable.getId() + "-multiUnitPopover", "Popover created with table id");
+
+		assert.deepEqual(oDetailsListBindingInfo.filters, oItemsBindingInfo.filters, "Filter values as expected");
+		assert.equal(oDetailsListBindingInfo.path, oItemsBindingInfo.path, "Binding path as expected");
+		assert.deepEqual(oDetailsListBindingInfo.parameters, oItemsBindingInfo.parameters, "Parameters as expected");
+
+		assert.deepEqual(oDetailsListTemplateItems[0].mBindingInfos.text.parts, oAmountBindingInfo.parts, "template text property correctly set to amountBindingInfo");
+		assert.deepEqual(oDetailsListTemplateItems[1].mBindingInfos.text.parts, oUnitBindingInfo.parts, "template text property correctly set to unitBindingInfo");
+
+		assert.ok(oPopover.hasStyleClass("sapMResponsivePopover"), "Correct styleClass popover (sapMResponsivePopover)");
+		assert.ok(oPopover.hasStyleClass("sapMMultiUnitPopover"), "Correct styleClass popover (sapMMultiUnitPopover)");
+		assert.ok(oPopover.hasStyleClass("sapUiSizeCompact"), "Correct styleClass popover (sapUiSizeCompact)");
+		assert.ok(oDetailsList.hasStyleClass("sapUiContentPadding"), "Correct styleClass detailsList (sapUiContentPadding)");
+
+		//update binding infos
+		oItemsBindingInfo = {
+			path: "/names",
+			filters: [
+				new Filter("SomeOtherFilterPath", "EQ", "SomeOtherValue"),
+				new Filter("Status", "EQ", "Expired")
+			]
+		};
+
+		oAmountBindingInfo = {
+			parts: [
+				{
+					mode: "OneWay",
+					path: "AlternativePathToAmount"
+				},
+				{
+					mode: "OneWay",
+					path: "AlternativePathToCurrency"
+				}
+			]
+		};
+
+		oUnitBindingInfo = {
+			parts: [
+				{
+					path: "AlternativePathToCurrency"
+				}
+			]
+		};
+
+		oTable.removeStyleClass("sapUiSizeCompact");
+		mSettings.itemsBindingInfo = oItemsBindingInfo;
+		mSettings.amountBindingInfo = oAmountBindingInfo;
+		mSettings.unitBindingInfo = oUnitBindingInfo;
+		mSettings.grandTotal = true;
+		oPopover.setTitle("someTestId");
+
+		//update popover
+		oPopover = await Util.createOrUpdateMultiUnitPopover(oPopover, mSettings);
+
+		sTitle = oResourceBundle.getText("TABLE_MULTI_TOTAL_TITLE");
+		sPlacement = "VerticalPreferredTop";
+		oDetailsListBindingInfo = oDetailsList.getBindingInfo("items");
+		oDetailsListTemplateItems = oDetailsListBindingInfo.template.getContent()[0].getItems();
+
+		assert.equal(oPopover.getTitle(), sTitle, "Popover title changed correctly");
+		assert.equal(oPopover.getPlacement(), sPlacement, "Popover placement is correct");
+		assert.notOk(oPopover.hasStyleClass("sapUiSizeCompact"), "styleClass removed from popover (sapUiSizeCompact)");
+
+		assert.deepEqual(oDetailsListBindingInfo.filters, oItemsBindingInfo.filters, "Filter values as expected");
+		assert.equal(oDetailsListBindingInfo.path, oItemsBindingInfo.path, "Binding path as expected");
+		assert.deepEqual(oDetailsListBindingInfo.parameters, oItemsBindingInfo.parameters, "Parameters as expected");
+
+		assert.deepEqual(oDetailsListTemplateItems[0].mBindingInfos.text.parts, oAmountBindingInfo.parts, "template amountBindingInfo updated");
+		assert.deepEqual(oDetailsListTemplateItems[1].mBindingInfos.text.parts, oUnitBindingInfo.parts, "template unitBindingInfo updated");
 	});
 });
