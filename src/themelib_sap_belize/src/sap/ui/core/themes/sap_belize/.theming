@@ -1,8 +1,9 @@
 {
   "sEntity": "Theme",
   "sId": "sap_belize",
-  "oExtends": "base",
+  "oExtends": "sap_belize_base",
   "sVendor": "SAP",
+  "sDeprecated" : "since version 1.120.0",
   "aBundled": ["sap_belize_plus"],
   "mCssScopes": {
     "library": {

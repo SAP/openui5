@@ -3,6 +3,7 @@
   "sId": "sap_belize_plus",
   "oExtends": "sap_belize",
   "sVendor": "SAP",
+  "sDeprecated" : "since version 1.120.0",
   "aBundled": ["sap_belize"],
   "mCssScopes": {
     "library": {
