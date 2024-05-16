@@ -36869,6 +36869,7 @@ make root = ${bMakeRoot}`;
 					ID : "3",
 					Name : "Gamma"
 				}, {
+					"@odata.etag" : "Delta's ETag",
 					DescendantCount : "0",
 					DistanceFromRoot : "0",
 					DrillState : "leaf",
@@ -36900,6 +36901,7 @@ make root = ${bMakeRoot}`;
 		this.expectRequest({
 				batchNo : 2,
 				headers : {
+					"If-Match" : "Delta's ETag",
 					Prefer : "return=minimal"
 				},
 				method : "PATCH",
@@ -36911,6 +36913,7 @@ make root = ${bMakeRoot}`;
 			.expectRequest({
 				batchNo : 2,
 				headers : {
+					"If-Match" : "Delta's ETag",
 					Prefer : "return=minimal"
 				},
 				method : "POST",
