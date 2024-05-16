@@ -540,19 +540,40 @@ sap.ui.define([
 		}
 		oEntityData["@$ui5.node.level"] = iLevel; // do not send via POST!
 
+		const addElement = (iIndex0, iRank) => {
+			aElements.splice(iIndex0, 0, null); // create a gap
+			this.addElements(oEntityData, iIndex0, oCache, iRank);
+			aElements.$count += 1;
+		};
+		const completeCreation = (iIndex0, iRank) => {
+			oCache.removeElement(0, sTransientPredicate);
+			_Helper.deletePrivateAnnotation(oEntityData, "transientPredicate");
+			oCache.restoreElement(iRank, oEntityData);
+
+			delete aElements.$byPredicate[sTransientPredicate];
+			_Helper.setPrivateAnnotation(oEntityData, "rank", iRank);
+			this.shiftRank(iIndex0, +1);
+		};
+
 		if (this.oAggregation.createInPlace) {
 			return oPromise.then(async () => {
 				_Helper.removeByPath(this.mPostRequests, sTransientPredicate, oEntityData);
-				await this.requestRank(oEntityData, oGroupLock);
-				oCache.removeElement(0, sTransientPredicate);
+				const [iRank] = await Promise.all([
+					this.requestRank(oEntityData, oGroupLock),
+					this.requestNodeProperty(oEntityData, oGroupLock)
+				]);
+				if (iRank === undefined) {
+					oCache.removeElement(0, sTransientPredicate);
+				} else {
+					addElement(iRank, iRank);
+					completeCreation(iRank, iRank);
+				}
 
 				return oEntityData;
 			});
 		}
 
-		aElements.splice(iIndex, 0, null); // create a gap
-		this.addElements(oEntityData, iIndex, oCache); // rank is undefined!
-		aElements.$count += 1;
+		addElement(iIndex, /*iRank*/undefined);
 		if (oCache === this.oFirstLevel) {
 			this.adjustDescendantCount(oEntityData, iIndex, +1);
 		}
@@ -572,13 +593,7 @@ sap.ui.define([
 					this.requestNodeProperty(oEntityData, oGroupLock, /*bDropFilter*/true)
 				]);
 
-				oCache.removeElement(0, sTransientPredicate);
-				_Helper.deletePrivateAnnotation(oEntityData, "transientPredicate");
-				oCache.restoreElement(iRank, oEntityData);
-
-				delete this.aElements.$byPredicate[sTransientPredicate];
-				_Helper.setPrivateAnnotation(oEntityData, "rank", iRank);
-				this.shiftRank(iIndex, +1);
+				completeCreation(iIndex, iRank);
 			} else {
 				await this.requestNodeProperty(oEntityData, oGroupLock, /*bDropFilter*/true);
 			}
@@ -1159,7 +1174,7 @@ sap.ui.define([
 		const getPredicate
 			= (oNode) => _Helper.getKeyPredicate(oNode, this.sMetaPath, this.getTypes());
 		const getRank
-			= (oNode) => Number.parseInt(_Helper.drillDown(oNode, this.oAggregation.$LimitedRank));
+			= (oNode) => parseInt(_Helper.drillDown(oNode, this.oAggregation.$LimitedRank));
 		const mPredicate2RankResult = {};
 		oRankResult.value.forEach((oNode) => {
 			mPredicate2RankResult[getPredicate(oNode)] = oNode;
