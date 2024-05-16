@@ -4,6 +4,7 @@ sap.ui.define([
 	"use strict";
 	return UIComponent.extend("sap.ui.core.tutorial.odatav4.03.Component", {
 		metadata : {
+			interfaces : ["sap.ui.core.IAsyncContentCreation"],
 			manifest : "json"
 		}
 	});

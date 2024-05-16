@@ -27,31 +27,20 @@
 		}
 	},
 	"sap.ui": {
-		"technology": "UI5",
-		"deviceTypes": {
-			"desktop": true,
-			"tablet": true,
-			"phone": true
-		}
+		"technology": "UI5"
 	},
 	"sap.ui5": {
 		"rootView": {
 			"viewName": "sap.ui.core.tutorial.odatav4.view.App",
 			"type": "XML",
-			"async": true,
 			"id": "appView"
 		},
 		"dependencies": {
 			"minUI5Version": "1.96.0",
 			"libs": {
 				"sap.m": {},
-				"sap.ui.core": {},
-				"sap.ui.layout": {}
+				"sap.ui.core": {}
 			}
-		},
-		"contentDensities": {
-			"compact": true,
-			"cozy": true
 		},
 		"handleValidation": true,
 		"models": {
