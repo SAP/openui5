@@ -882,6 +882,10 @@ html.sapUiTheme-sap_belize_plus .sapUiDemokit .sapUiDocumentationSplitApp > .sap
 	border-right: 1px solid #4f667a;
 }
 
+.sapUiDemokit .sapUiDocumentationMasterPage .sapUiFixFlex .sapUiFixFlexFlexible .sapUiFixFlexFlexibleContainer {
+	overflow-y: auto;
+}
+
 .sapUiDemokit .sapUiDocumentationMasterPage .sapUiFixFlexFixed::after {
 	content: "";
 	display: block;
