@@ -299,6 +299,7 @@ sap.ui.define([
 		assert.ok(oFeedList.getItems()[0].oAvatar.getDisplaySize(), "Avatar should have DisplaySize properties");
 		assert.ok(oFeedList.getItems()[0].oAvatar.getAriaLabelledBy(), "Avatar should have ariaLabelledBy set");
 		assert.ok(oFeedList.getItems()[0]._oLinkControl.getEnabled(), "Sender link enabled (senderActive = true)");
+		assert.ok(oFeedList.getItems()[0].getAriaLabelledBy(), "aria-labelledby property has been added on focus");
 		assert.ok(!!oFeedList.getItems()[0]._oLinkControl.$(), "Name Link rendered");
 		assert.ok(jQuery('#__item1-oFeedItemList-0 .sapMFeedListItemFooter').length === 1, "Footer displayed");
 		assert.ok(oFeedList.getItems()[0].$("timestamp").length === 1, "timestamp should be rendered");
@@ -541,12 +542,6 @@ sap.ui.define([
 		oSpy.restore();
 	});
 	QUnit.module("Events");
-
-	QUnit.test("Focus on the FeedListItem", function(assert) {
-		var oFeedListItem = oFeedList.getItems()[0];
-		oFeedListItem.$().trigger("tap");
-		assert.ok(oFeedListItem.$()[0].attributes["aria-labelledby"], "aria-labelledby property has been added on focus");
-	});
 
 	QUnit.test("Press Icon", function (assert) {
 		// Arrange

@@ -363,6 +363,7 @@ function(
 	};
 
 	FeedListItem.prototype.onBeforeRendering = function() {
+		this.addAssociation("ariaLabelledBy", this._oInvisibleText, true);
 		this.$("realtext").find('a[target="_blank"]').off("click");
 
 		var oFormattedText = this.getAggregation("_text");
@@ -457,13 +458,8 @@ function(
         if ( oItem instanceof FeedListItem ) {
             oItemDomRef.setAttribute("aria-posinset", mPosition.posInset);
             oItemDomRef.setAttribute("aria-setsize", mPosition.setSize);
-			this.addAriaLabelledBy(this._oInvisibleText.getId());
 		}
 	};
-
-	FeedListItem.prototype.onfocusout = function(oEvent){
-			this.removeAriaLabelledBy(this._oInvisibleText.getId());
-		};
 
 	/**
 	 * Lazy load feed icon image.
