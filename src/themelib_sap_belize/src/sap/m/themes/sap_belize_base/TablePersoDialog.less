@@ -1,0 +1,102 @@
+/* ======================================= */
+/* CSS for control sap.m/TablePersoDialog  */
+/* Base theme                              */
+/* ======================================= */
+
+.sapMPersoDialogFixedBar {
+	position: relative;
+
+	.sapMPersoDialogResetBtn {
+		position: absolute;
+		top: 0;
+		right: 0;
+	}
+}
+
+.sapMPersoDialog{
+	color: @sapUiBaseText;
+  }
+
+.sapMPersoDialog .sapMLIB.sapMLIBSelected,
+.sapMPersoDialog .sapMLIB.sapMLIBSelected > td {
+background-color: transparent;
+}
+
+.sapMPersoDialog .sapMTableTBody:not(.sapMListTblHasPopin) > .sapMLIBSelected,
+.sapMPersoDialog .sapMTableTBody.sapMListTblHasPopin > .sapMLIBSelected + .sapMListTblSubRow,
+.sapMPersoDialog .sapMTableTBody:not(.sapMListTblHasPopin) > .sapMLIBSelected:last-child {
+	//Commented as of 1.119 --> causes issues in hcb theme, rather stick to the Table's default styling
+	//box-shadow: inset 0px -0.0625rem @sapUiListHoverBackground;
+}
+
+
+.sapMPersoDialog .sapMListBGTranslucent .sapMLIB.sapMListTblRow.sapMPersoDialogItemSelected,
+.sapMPersoDialog .sapMListBGTranslucent .sapMLIB.sapMListTblRow.sapMPersoDialogItemSelected:focus,
+.sapMPersoDialog .sapMListBGTranslucent .sapMLIB:not(.sapMLIBActive):not(.sapMLIBSelected):not(:hover).sapMListTblRow.sapMPersoDialogItemSelected,
+.sapMPersoDialog .sapMListBGTranslucent .sapMLIB:not(.sapMLIBActive):not(.sapMLIBSelected):not(:hover).sapMListTblRow.sapMPersoDialogItemSelected:focus
+{
+	background-color: @sapUiListSelectionHoverBackground;
+	//Commented as of 1.119 --> causes issues in hcb theme, rather stick to the Table's default styling
+	//box-shadow: inset 0px -0.0625rem @sapUiListSelectionBorderColor;
+}
+
+.sapMPersoDialog .sapMLIBActive .sapMText,
+.sapMPersoDialog .sapMLIBActive .sapMListTblCell .sapMText {
+	color: @sapUiListTextColor;
+}
+
+.sapMPersoDialog .sapMLIBActive .sapMCbBg,
+.sapMPersoDialog .sapMLIBActive.sapMLIB,
+.sapMPersoDialog .sapMLIBActive.sapMLIB > td {
+	background-color: transparent;
+}
+
+.sapMPersoDialog .sapMLIBActive .sapMCbBg.sapMCbMarkChecked::before {
+	color: @sapUiSelected;
+}
+
+html.sap-desktop .sapMPersoDialog .sapMLIBSelected:not(.sapMLIBActive):not(.sapMALI):hover,
+html.sap-desktop .sapMPersoDialog .sapMLIBSelected:not(.sapMLIBActive):not(.sapMALI):hover > td {
+	background-color: @sapUiListSelectionHoverBackground;
+}
+
+.sapMPersoDialogFixedBar {
+	.sapMPersoDialogSelectAllCb > .sapMCbLabel {
+		font-size: 1.125rem;
+	}
+}
+.sapUiSizeCompact .sapMPersoDialogFixedBar {
+	.sapMPersoDialogSelectAllCb > .sapMCbLabel {
+		font-size: 0.975rem;
+	}
+}
+
+.sapUiSizeCompact .sapMTB-Transparent-CTX.sapMTB.sapMPersoDialogFixedBar > :first-child {
+    margin-left: 1rem;
+}
+
+.sapMPersoDialogLI .sapMILILabel {
+	max-width: none;
+}
+
+.sapMPersoDialogLI .sapMILIDiv {
+	min-width: 5.875rem;
+}
+
+.sapMTB-Transparent-CTX.sapMTB.sapMPersoDialogFixedBar{
+	padding-left: 0;
+	border-bottom: 2px solid @sapUiListHeaderBorderColor;
+}
+
+.sapMTB-Transparent-CTX.sapMTB.sapMPersoDialogFixedBar > :first-child{
+	margin-left: 1rem;
+}
+
+.sapMPersoDialogLIHeader{
+	border-bottom: 0;
+}
+
+
+html.sap-tablet:not(.sap-combi) .sapMPersoDialog{
+	min-width: 20rem;
+}

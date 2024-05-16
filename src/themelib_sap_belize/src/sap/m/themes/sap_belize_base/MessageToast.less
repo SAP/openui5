@@ -1,0 +1,31 @@
+/* =================================== */
+/* CSS for control sap.m/MessageToast  */
+/* Base theme                          */
+/* =================================== */
+
+.sapMMessageToast {
+	box-sizing: border-box;
+	position: absolute;
+	max-width: 15rem;
+	word-wrap: break-word;
+	text-align: center;
+	text-decoration: none;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: pre-line;
+	font-size: @sapFontSize;
+	font-family: @sapUiFontFamily;
+	font-weight: normal;
+	padding: 1rem;
+	background: @sapUiListBackground;
+	color: @sapUiListTextColor;
+	box-shadow: @sapUiContentShadow2;
+	border-radius: @sapUiElementBorderCornerRadius;
+}
+
+.sapMMessageToast.sapMFocus {
+	outline-width: @sapUiContentFocusWidth;
+	outline-style: @sapUiContentFocusStyle;
+	outline-color: @sapUiContentFocusColor;
+	outline-offset: -@sapUiContentFocusWidth;
+}

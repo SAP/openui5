@@ -1,0 +1,61 @@
+/* ================================= */
+/* CSS for control sap.m/TimePicker  */
+/* Base theme                        */
+/* ================================= */
+
+/* ======================================== */
+/* TimePicker Input Field                   */
+/* ======================================== */
+
+.sapMInputBase.sapMTimePickerHiddenInput {
+	display: none;
+}
+
+/* ======================================== */
+/* TimePicker Dropdown                      */
+/* ======================================== */
+
+.sapMTimePickerDropDown {
+	overflow: hidden !important;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	user-select: none;
+	box-shadow: @sapUiShadowLevel1 !important; //Need to override this with important because of popover stronger selectors
+}
+
+/* ======================================== */
+/* COMPACT MODE STYLES                      */
+/* ======================================== */
+
+.sapUiSizeCompact {
+
+	/* ======================================== */
+	/* TimePicker Dropdown                      */
+	/* ======================================== */
+
+	.sapMTimePickerDropDown {
+		box-shadow: @sapUiShadowLevel1 !important; //Need to override this with important because of popover stronger selectors
+	}
+}
+
+/* PHONE STYLES */
+html.sap-phone {
+
+	/* ======================================== */
+	/* TimePicker Dropdown                      */
+	/* ======================================== */
+
+	.sapMTimePickerDropDown {
+		/* This centers content in landscape & portrait mode */
+		.sapMDialogScrollCont {
+			height: 100%;
+			padding: 0;
+		}
+	}
+}
+
+/* DESKTOP STYLES */
+html.sap-desktop .sapMValueStateHeaderRoot {
+	margin-right: -12px; // fixing a right margin set from popover
+	max-width: 100%;
+}

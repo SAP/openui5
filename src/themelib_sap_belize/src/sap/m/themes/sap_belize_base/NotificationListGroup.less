@@ -1,0 +1,110 @@
+/* ============================================ */
+/* CSS for control sap.m/NotificationListGroup  */
+/* Base theme                                   */
+/* ============================================ */
+
+@_sap_m_NotificationListGroup_Background: @sapUiListGroupHeaderBackground;
+@_sap_m_NotificationListGroup_HeaderColor: @sapUiListTableGroupHeaderTextColor;
+
+.sapMNLGroup {
+	&.sapMLIB {
+		display: block;
+		padding: 0;
+		margin: 0;
+		overflow: hidden;
+		border-bottom: none;
+	}
+
+	&.sapMNLGroupCollapsed .sapMNLGroupChildren {
+		display: none;
+	}
+
+	.sapMNLGroupHeader {
+		position: relative;
+		min-height: 2.75rem;
+		background: @_sap_m_NotificationListGroup_Background;
+		border-bottom: 0.0625rem solid @sapUiListGroupHeaderBorderColor;
+		box-sizing: border-box;
+		padding: 0.75rem 0.5rem 0 1rem;
+		display: flex;
+		align-items: flex-start;
+		outline: none;
+
+		.sapMNLIBPriority {
+			padding-top: 0.75rem;
+		}
+
+		.sapMNLGroupTitle {
+			padding: 0.75rem 0;
+			color: @_sap_m_NotificationListGroup_HeaderColor;
+			font-size: @sapMFontHeader6Size;
+			font-family: @sapUiFontHeaderFamily;
+			font-weight: bold;
+			overflow-wrap: break-word;
+			flex: 1;
+			min-width: 0;
+		}
+	}
+
+	&:focus .sapMNLGroupHeader::before {
+		content: " ";
+		border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+		position: absolute;
+		top: 1px;
+		right: 1px;
+		bottom: 1px;
+		left: 1px;
+		z-index: 2;
+		pointer-events: none;
+	}
+
+	.sapMNLGroupChildren {
+		margin: 0;
+		padding: 0;
+	}
+
+	.sapMNLGroupCollapseButton {
+		margin-right: 0.75rem;
+		width: 2.25rem;
+	}
+
+	.sapMNLGroupMaxNotifications {
+		padding: 1rem;
+		background: @sapUiListBackground;
+		text-align: center;
+
+		.sapMNLGroupMNTitle {
+			font-family: @sapUiFontHeaderFamily;
+			font-size: @sapMFontHeader5Size;
+			font-weight: @sapUiFontHeaderWeight;
+			color: @sapUiGroupTitleTextColor;
+			margin-bottom: 0.5rem;
+		}
+
+		.sapMNLGroupMNDescription {
+			font-family: @sapUiFontFamily;
+			font-size: @sapMFontMediumSize;
+			color: @sapUiContentLabelColor;
+		}
+	}
+}
+
+.sapMNLIActionsHidden {
+	display: none;
+}
+
+.sapUiSizeCompact {
+	.sapMNLGroup {
+		.sapMNLGroupHeader {
+			padding: 0.5rem 0.5rem 0 0.75rem;
+
+			.sapMNLIBPriority {
+				padding-top: 0.5rem;
+			}
+
+			.sapMNLGroupTitle {
+				padding: 0.5rem 0;
+			}
+		}
+	}
+}

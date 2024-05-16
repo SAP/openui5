@@ -1,0 +1,224 @@
+/* ======================================== */
+/* CSS for control sap.m/ProgressIndicator  */
+/* Base theme                               */
+/* ======================================== */
+
+@sapMPIPopoverCloseIconWidth: 1.4375rem;
+@sapMPIPopoverCloseIconHeight: 1.375rem;
+@sapMPIPopoverCloseIconMargin: 0.125rem;
+@sapMPITextLeftTextThreshold: @sapUiContentContrastTextThreshold;
+
+.sapMPI {
+	&.sapMPIHoverable:hover {
+		cursor: pointer;
+	}
+
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: flex;
+
+	-webkit-flex-direction: row;
+	box-sizing: border-box;
+	outline: none;
+	background: @sapUiFieldBackground;
+	width: 100%;
+	height: 1.5rem;
+	min-width: 6rem;
+	min-height: 1rem;
+	padding: 0;
+	margin: 0.75rem 0;
+	border: none;
+	border-radius: 0.5rem;
+	overflow: hidden;
+}
+
+.sapMPIPopover {
+	min-height: @sapMPIPopoverCloseIconHeight;
+
+	.sapMPopoverScroll {
+		padding-left: 0.5rem;
+		display: flex !important;
+		justify-content: space-between;
+	}
+
+	.sapMText {
+		align-self: center;
+		margin: 0.25rem 0;
+		word-break: break-all;
+	}
+
+	.sapUiIcon {
+		width: @sapMPIPopoverCloseIconWidth;
+		height: @sapMPIPopoverCloseIconHeight;
+		line-height: @sapMPIPopoverCloseIconHeight;
+		font-size: @sapFontSmallSize;
+		color: @sapContent_IconColor;
+		flex-shrink: 0;
+		margin: @sapMPIPopoverCloseIconMargin;
+	}
+
+	/* Additional touch area for the close icon/button required by ACC standards*/
+	.sapUiIcon:after {
+		content: "";
+		position: absolute;
+		right: (@sapMPIPopoverCloseIconMargin * -1);
+		top: (@sapMPIPopoverCloseIconMargin * -1);
+		width: @sapMPIPopoverCloseIconWidth + (@sapMPIPopoverCloseIconMargin * 2);
+		height: @sapMPIPopoverCloseIconHeight + (@sapMPIPopoverCloseIconMargin * 2);
+	}
+}
+
+.sapMPIBar,
+.sapMPIBarRemaining {
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: flex;
+	min-width: 0;
+
+	-webkit-align-items: center;
+	align-items: center;
+}
+
+.sapMPIBar {
+	height: 100%;
+	-webkit-justify-content: flex-end;
+	justify-content: flex-end;
+	flex-shrink: 0;
+	border-top-left-radius: 0.5rem;
+	border-bottom-left-radius: 0.5rem;
+}
+
+.sapMPIValueMax .sapMPIBarRemaining {
+	display: none;
+}
+
+.sapMPIBarRemaining {
+	-webkit-flex-grow: 1;
+	flex-grow: 1;
+	border-top-right-radius: 0.5rem;
+	border-bottom-right-radius: 0.5rem;
+	border-top: 1px solid @sapUiFieldBorderColor;
+	border-right: 1px solid @sapUiFieldBorderColor;
+	border-bottom: 1px solid @sapUiFieldBorderColor;
+}
+
+.sapMPIBarDisabled {
+	opacity: 0.5;
+}
+
+.sapMPI.sapMPIDisplayOnly {
+	height: 1rem;
+	min-width: 4rem;
+	margin: 0;
+}
+
+.sapMPIText {
+	font-family: @sapUiFontFamily;
+	font-size: @sapMFontSmallSize;
+	font-weight: normal;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
+	color: @sapUiContentForegroundTextColor;
+}
+
+.sapMPIDisplayOnly .sapMPIText {
+	color: @sapUiBaseText;
+	font-size: 0.6875rem;
+}
+
+.sapMPITextLeft {
+	color: @sapUiContentContrastTextColor;
+	padding-right: 0.5rem;
+	display: none;
+}
+
+.sapMPITextRight {
+	padding-left: 0.5rem;
+}
+
+.sapMPIValueGreaterHalf .sapMPITextRight {
+	display: none;
+}
+
+.sapMPIValueGreaterHalf .sapMPITextLeft {
+	display: inline-block;
+}
+
+/* Progress Indicator Bar */
+.sapMPIValueMax .sapMPIBar {
+	border-top-right-radius: 0.5rem;
+	border-bottom-right-radius: 0.5rem;
+}
+
+.sapMPIValueNormal .sapMPIBar {
+	max-width: calc(~"100% - 0.5rem");
+	min-width: 0.5rem;
+}
+
+.sapMPIBarNeutral {
+	background: @sapUiNeutralElement;
+}
+
+.sapMPIBarPositive {
+	background: @sapUiPositiveElement;
+}
+
+.sapMPIBarNegative {
+	background: @sapUiNegativeElement;
+}
+
+.sapMPIBarCritical {
+	background: @sapUiCriticalElement;
+}
+
+.sapMPIBarInformation {
+	background: @sapUiInformativeElement;
+}
+
+.sapMPIDisplayOnly:not(.sapMPIBarDisabled) .sapMPIBarNeutral {
+	background: @sapUiBaseText;
+}
+
+/* Progress Indicator Remaining Bar */
+.sapMPIValueMin .sapMPIBarRemaining {
+	border-radius: 0.5rem;
+	border: 1px solid @sapUiFieldBorderColor;
+}
+
+/* Progress Indicator Value Text */
+.sapMPIBarNeutral .sapMPIText.sapMPITextLeft {
+	color: contrast(@sapUiNeutralElement, @sapUiContentContrastTextColor, @sapUiBaseText, @sapMPITextLeftTextThreshold);
+}
+
+.sapMPIBarPositive .sapMPIText.sapMPITextLeft {
+	color: contrast(@sapUiPositiveElement, @sapUiContentContrastTextColor, @sapUiBaseText, @sapMPITextLeftTextThreshold);
+}
+
+.sapMPIBarNegative .sapMPIText.sapMPITextLeft {
+	color: contrast(@sapUiNegativeElement, @sapUiContentContrastTextColor, @sapUiBaseText, @sapMPITextLeftTextThreshold);
+}
+
+.sapMPIBarCritical .sapMPIText.sapMPITextLeft {
+	color: contrast(@sapUiCriticalElement, @sapUiContentContrastTextColor, @sapUiBaseText, @sapMPITextLeftTextThreshold);
+}
+
+.sapMPIBarInformation .sapMPIText.sapMPITextLeft {
+	color: contrast(@sapUiHighlight, @sapUiContentContrastTextColor, @sapUiBaseText, @sapMPITextLeftTextThreshold);
+}
+
+.sapMPIBarInformation.sapMPIDisplayOnly .sapMPIText.sapMPITextLeft {
+	color: contrast(@sapUiBaseText, @sapUiContentContrastTextColor, @sapUiBaseText, @sapMPITextLeftTextThreshold);
+}
+
+/* Compact */
+.sapUiSizeCompact .sapMPI:not(.sapMPIDisplayOnly) {
+	height: 1.125rem;
+	margin: 0.4375rem 0;
+}
+
+/* Condensed */
+.sapUiSizeCondensed .sapUiTableDataCell .sapMPI:not(.sapMPIDisplayOnly) {
+	height: 1.125rem;
+	margin: 0;
+}

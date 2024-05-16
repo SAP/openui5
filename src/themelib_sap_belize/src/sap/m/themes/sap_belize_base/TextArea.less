@@ -1,0 +1,192 @@
+/* =============================== */
+/* CSS for control sap.m/TextArea  */
+/* Base theme                      */
+/* =============================== */
+
+@_sapMTextAreaPadding: 0.4375rem 0.5625rem;
+@_sapMTextAreaPadding_Compact: 0.125rem 0.4375rem;
+@_sapMTextAreaReadonlyPadding: 0.4375rem 0.5625rem;
+@_sapMTextAreaReadonlyPadding_Compact: 0.125rem 0.4375rem;
+@_sapMTextAreaValueStateSuccessPadding: 0.4375rem 0.5625rem;
+@_sapMTextAreaValueStateSuccessPadding_Compact: 0.125rem 0.4375rem;
+@_sapMTextAreaValueStateInformationPadding: 0.375rem 0.5rem;
+@_sapMTextAreaValueStateInformationPadding_Compact: 0.0625rem 0.375rem;
+@_sapMTextAreaValueStateErrorWarningPadding: 0.375rem 0.5rem;
+@_sapMTextAreaValueStateErrorWarningPadding_Compact: 0.0625rem 0.375rem;
+@_sapMTextAreaContentWrapperPadding: 0;
+@_sapMTextAreaContentWrapperValueStateSuccessPadding: 0;
+@_sapMTextAreaContentWrapperValueStateInformationPadding: 0;
+@_sapMTextAreaContentWrapperValueStateErrorWarningPadding: 0;
+
+/* uses sapMInputBase styles */
+
+.sapMTextAreaInner {
+	overflow: auto; /* remove scrollbars if not needed */
+	-webkit-transform: none; /* transform is blocking scroll */
+	resize: none;
+	margin: 0;
+}
+
+.sapMTextArea .sapMInputBaseContentWrapper {
+	-webkit-overflow-scrolling: touch;
+	height: 100%;
+	width: 100%;
+	line-height: 0;
+	display: block;
+	padding: @_sapMTextAreaContentWrapperPadding;
+}
+
+.sapMTextArea .sapMTextAreaInner {
+	-webkit-overflow-scrolling: touch;
+	line-height: 1.4;
+	height: 100%;
+	width: 100%;
+}
+
+.sapMTextAreaWithCounter {
+	& .sapMTextAreaCounter {
+		float:right;
+		overflow: hidden;
+		font-family: @sapUiFontFamily;
+		font-size: @sapMFontSmallSize;
+		color: @sapUiContentLabelColor;
+		padding: 0.3725rem 0.125rem 0.5rem;
+	}
+
+	& .sapMInputBaseContentWrapper {
+		height: calc(~"100% - 1.5rem");
+	}
+}
+
+.sapMTextAreaGrow {
+	overflow: hidden;
+	position: absolute;
+	height: 100%;
+	top: 0;
+}
+
+/* ensure that the mirror div has the same styles like the inner text area */
+.sapMTextAreaMirror {
+	/* should not grow more than screen size */
+	max-height: calc(100vh - 6rem);
+	white-space: pre-wrap;
+	border: none;
+	overflow: hidden;
+	line-height: 1.4;
+	visibility: hidden;
+	word-break: break-word;
+	font-size: @sapFontSize;
+}
+
+.sapMInputBase.sapMTextArea {
+	height: auto;
+	min-height: 2.5rem;
+	min-width: 6rem;
+
+	.sapMTextAreaInner {
+		line-height: 1.4;
+		-webkit-overflow-scrolling: touch; /* IOS only */
+	}
+
+	&.sapMInputBaseReadonly .sapMInputBaseReadonlyWrapper {
+		background-image: none;
+	}
+}
+
+.sapMInputBase.sapMTextArea {
+	.sapMTextAreaInner, .sapMTextAreaMirror {
+		padding: @_sapMTextAreaPadding;
+	}
+	.sapMInputBaseContentWrapperState.sapMInputBaseContentWrapperError,
+	.sapMInputBaseContentWrapperState.sapMInputBaseContentWrapperWarning {
+		padding: @_sapMTextAreaContentWrapperValueStateErrorWarningPadding;
+
+		.sapMTextAreaInner, .sapMTextAreaMirror {
+			padding: @_sapMTextAreaValueStateErrorWarningPadding;
+		}
+	}
+	.sapMInputBaseContentWrapperState.sapMInputBaseContentWrapperSuccess {
+		padding: @_sapMTextAreaContentWrapperValueStateSuccessPadding;
+
+		.sapMTextAreaInner, .sapMTextAreaMirror {
+			padding: @_sapMTextAreaValueStateSuccessPadding;
+		}
+	}
+	.sapMInputBaseContentWrapperState.sapMInputBaseContentWrapperInformation {
+		padding: @_sapMTextAreaContentWrapperValueStateInformationPadding;
+
+		.sapMTextAreaInner, .sapMTextAreaMirror {
+			padding: @_sapMTextAreaValueStateInformationPadding;
+		}
+	}
+}
+
+.sapMInputBase.sapMTextArea.sapMInputBaseReadonly:not(.sapMInputBaseDisabled) {
+	.sapMTextAreaInner, .sapMTextAreaMirror {
+		padding: @_sapMTextAreaReadonlyPadding;
+	}
+}
+
+.sapMFocus.sapMTextArea {
+	& .sapMInputBaseContentWrapper {
+		outline: none;
+
+		.sapMInputBaseInner {
+			outline: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+			outline-offset: -2px;
+		}
+	}
+}
+
+/**** Compact Size ****/
+.sapUiSizeCompact {
+	.sapMInputBase.sapMTextArea {
+		min-height: 1.625rem;
+		margin: 0.1875rem 0;
+	}
+
+	.sapMTextAreaWithCounter {
+		& .sapMTextAreaCounter {
+			padding-top: 0.3125rem;
+		}
+	}
+	.sapMInputBase.sapMTextArea.sapMInputBaseReadonly:not(.sapMInputBaseDisabled) {
+		.sapMTextAreaInner, .sapMTextAreaMirror {
+			padding: @_sapMTextAreaReadonlyPadding_Compact;
+		}
+	}
+}
+
+.sapUiSizeCompact .sapMInputBase.sapMTextArea {
+	.sapMTextAreaInner, .sapMTextAreaMirror {
+		padding: @_sapMTextAreaPadding_Compact;
+	}
+	.sapMInputBaseContentWrapperState.sapMInputBaseContentWrapperError,
+	.sapMInputBaseContentWrapperState.sapMInputBaseContentWrapperWarning {
+		.sapMTextAreaInner, .sapMTextAreaMirror {
+			padding: @_sapMTextAreaValueStateErrorWarningPadding_Compact;
+		}
+	}
+	.sapMInputBaseContentWrapperState.sapMInputBaseContentWrapperSuccess {
+		.sapMTextAreaInner, .sapMTextAreaMirror {
+			padding: @_sapMTextAreaValueStateSuccessPadding_Compact;
+		}
+	}
+	.sapMInputBaseContentWrapperState.sapMInputBaseContentWrapperInformation {
+		.sapMTextAreaInner, .sapMTextAreaMirror {
+			padding: @_sapMTextAreaValueStateInformationPadding_Compact;
+		}
+	}
+}
+
+/**
+	Fix for iOS. When growing is enabled, the mirrored, hidden content should have pixel perfect proportions
+	as the textarea. Otherwise, words could break differently and this would lead to inconsistent height.
+	For some reason iOS devices need wider padding on left & right in order to have this consistency.
+ */
+html.sap-tablet, html.sap-phone {
+	&[data-sap-ui-os*="iOS"] .sapMInputBase.sapMTextArea .sapMTextAreaMirror {
+		padding-left: 15px;
+		padding-right: 15px;
+	}
+}

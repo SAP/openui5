@@ -1,0 +1,321 @@
+/* ======================================= */
+/* CSS for control sap.m/StandardListItem  */
+/* Base theme                              */
+/* ======================================= */
+
+.sapMSLI {
+	height: 3rem;
+}
+
+.sapMSLI.sapMSLIThumbnail,
+.sapMSLI.sapMSLINoIconInset,
+.sapMSLI.sapMSLIWithDescription,
+.sapMSLI.sapMSLINoTitleAdapt {
+	height: 5rem;
+}
+
+.sapMSLI > .sapMLIBContent {
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	display: flex;
+	align-items: center;
+}
+
+.sapMSLIDescriptionAndInfo {
+	display: flex;
+	overflow: hidden;
+}
+
+.sapMSLIDiv {
+	display: flex;
+	flex: auto;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.sapMSLIWithDescription > .sapMLIBContent > .sapMSLIDiv {
+	flex-direction: column;
+}
+
+.sapMSLINoTitleAdapt:not(.sapMSLIWithDescription) .sapMSLIDiv {
+	height: 2.5625rem;
+}
+
+.sapMSLITitle,
+.sapMSLITitleOnly,
+.sapMSLIDescription,
+.sapMSLIDescriptionText {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	flex: 1 1 auto;
+}
+
+.sapMSLIThumbnail:not(.sapMSLIWrapping) > .sapMLIBContent > .sapMSLIDiv,
+.sapMSLIDescriptionText {
+	padding-bottom: 0.125rem;
+}
+
+.sapMSLITitle,
+.sapMSLITitleOnly {
+	font-size: @sapMFontLargeSize;
+	color: @sapUiListTextColor;
+}
+
+.sapMSLIDescription,
+.sapMSLIDescriptionText {
+	font-size: @sapMFontMediumSize;
+	color: @sapUiContentLabelColor;
+}
+
+.sapMSLIWithDescription .sapMSLIDescription {
+	padding-top: 0.5rem;
+}
+
+.sapMSLIImgIcon,
+.sapMSLIImg,
+.sapMSLIImgNoInsetIcon,
+.sapMSLIImgNoInset {
+	width: 3rem;
+	height: 3rem;
+	line-height: 3rem;
+	flex: none;
+}
+
+.sapMSLIImgIcon,
+.sapMSLIImgNoInsetIcon {
+	font-family: "SAP-icons";
+	font-size: 1.375rem;
+	color: @sapUiContentNonInteractiveIconColor;
+}
+
+.sapMSLIImgNoInsetIcon,
+.sapMSLIImgNoInset,
+.sapMSLIImg {
+	font-size: 2.5rem;
+	margin-right: 0.75rem;
+}
+
+.sapMLIBActive .sapMSLIImgNoInsetIcon,
+.sapMLIBActive .sapMSLIImgIcon,
+.sapMLIBActive .sapMSLIExpandCollapse {
+	color: @sapUiListActiveTextColor;
+	text-shadow: none;
+}
+
+.sapMLIBActive .sapMSLIInfo:not(.sapMSLIInfoStateInverted) {
+	text-shadow: none;
+}
+
+.sapMSLIDiv.sapMSLIInfoMiddle {
+	flex-direction: row;
+}
+
+.sapMSLIInfo {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	text-align: right;
+	margin: 0 0 0 1rem;
+	font-size: @sapMFontMediumSize;
+	min-width: 2rem;
+}
+
+.sapMSLIWrapping .sapMSLIInfo {
+	white-space: normal;
+	word-break: break-word;
+}
+
+.sapMSLIInfo:not(.sapMSLIInfoStateInverted) {
+	text-shadow: @sapUiContentTextShadow;
+}
+
+.sapMSLIInfoMiddle > .sapMSLIInfo {
+	padding: 0;
+}
+
+/* The info is aligned right and therefore in RTL mode should be aligned on the left */
+html[dir=rtl] .sapMSLIInfo {
+	text-align: left;
+}
+
+.sapMSLIInfoNone {
+	color: @sapUiContentLabelColor;
+}
+
+.sapMSLIInfoError {
+	color: @sapUiNegativeText;
+}
+
+.sapMSLIInfoWarning {
+	color: @sapUiCriticalText;
+}
+
+.sapMSLIInfoSuccess {
+	color: @sapUiPositiveText;
+}
+
+.sapMSLIInfoInformation {
+	color: @sapUiInformativeText;
+}
+
+/* inverted info text */
+.sapMSLIInfoStateInverted {
+	font-size: @sapMFontSmallSize;
+	font-weight: bold;
+	color: @sapUiContentContrastTextColor;
+	border-radius: 0.25rem;
+	box-sizing: border-box;
+	height: 0.875rem;
+	line-height: calc(@sapMFontSmallSize - 0.0625rem);
+}
+
+.sapMSLIInfo.sapMSLIInfoStateInverted {
+	padding: 0.0625rem 0.25rem;
+	text-align: center;
+	text-shadow: @sapContent_ContrastTextShadow;
+}
+
+.sapMSLIInfoStateInverted.sapMSLIInfoNone {
+	background: @sapUiNeutralElement;
+}
+
+.sapMSLIInfoStateInverted.sapMSLIInfoError {
+	background: @sapUiNegativeElement;
+}
+
+.sapMSLIInfoStateInverted.sapMSLIInfoWarning {
+	background: @sapUiCriticalElement;
+}
+
+.sapMSLIInfoStateInverted.sapMSLIInfoSuccess {
+	background: @sapUiPositiveElement;
+}
+
+.sapMSLIInfoStateInverted.sapMSLIInfoInformation {
+	background: @sapUiInformativeElement;
+}
+
+/* Wrapping */
+.sapMSLI.sapMSLIWrapping {
+	height: auto;
+	min-height: 3rem;
+}
+
+.sapMSLIWithDescription.sapMSLIWrapping,
+.sapMSLINoIconInset.sapMSLIWrapping,
+.sapMSLINoTitleAdapt.sapMSLIWrapping {
+	min-height: 5rem;
+}
+
+.sapMSLIWrapping .sapMSLITitle,
+.sapMSLIWrapping .sapMSLITitleOnly,
+.sapMSLIWrapping .sapMSLIDescription,
+.sapMSLIWrapping .sapMSLIDescriptionText {
+	white-space: normal;
+	word-wrap: break-word;
+}
+
+.sapMSLINoTitleAdapt > .sapMLIBSelectS,
+.sapMSLINoTitleAdapt > .sapMLIBSelectM,
+.sapMSLIWithDescription > .sapMLIBSelectS,
+.sapMSLIWithDescription > .sapMLIBSelectM,
+.sapMSLIWrapping > .sapMLIBSelectS,
+.sapMSLIWrapping > .sapMLIBSelectM,
+.sapMSLIWrapping > .sapMLIBContent > .sapMSLIImgIcon,
+.sapMSLIWrapping > .sapMLIBContent > .sapMSLIImg,
+.sapMSLIWrapping > .sapMLIBContent > .sapMSLIImgNoInsetIcon,
+.sapMSLIWrapping > .sapMLIBContent > .sapMSLIImgNoInset {
+	align-self: flex-start;
+	margin-top: 0.275rem;
+}
+
+.sapMSLIWrapping.sapMSLINoIconInset > .sapMLIBContent > .sapMSLIImgNoInsetIcon,
+.sapMSLIWrapping.sapMSLINoIconInset > .sapMLIBContent > .sapMSLIImgNoInset,
+.sapMSLIWrapping > .sapMLIBContent > .sapMSLIImg {
+	margin-top: 0.725rem;
+}
+
+.sapMSLIWrapping > .sapMLIBContent > .sapMSLIDiv {
+	padding: 1rem 0;
+}
+
+.sapMSLINoTitleAdapt.sapMSLIWrapping > .sapMLIBContent > .sapMSLIDiv > .sapMSLITitleOnly {
+	padding: 0
+}
+
+.sapMSLIWrapping .sapMSLITitleOnly > .sapMSLIInfo,
+.sapMSLIWrapping .sapMSLIDescriptionText > .sapMSLIInfo {
+	float: right;
+}
+
+.sapMSLIExpandCollapse {
+	color: @sapUiLink;
+	cursor: pointer;
+	padding: 0 1px;
+}
+
+.sapMSLIExpandCollapse:hover {
+	color: @sapUiLinkHover;
+	text-decoration: underline;
+}
+
+.sapMSLIExpandCollapse:focus {
+	outline: @_sap_m_ListItemBase_Focus_Outline;
+}
+
+.sapMSLIImgIcon {
+	margin-inline-start: -0.75rem;
+}
+
+.sapMSLIAvatar {
+	margin: 0.25rem;
+	margin-right: 0.75rem;
+}
+
+/* Compact size */
+.sapUiSizeCompact .sapMSLI {
+	height: 2rem;
+}
+
+.sapUiSizeCompact .sapMSLI.sapMSLIThumbnail,
+.sapUiSizeCompact .sapMSLI.sapMSLINoIconInset,
+.sapUiSizeCompact .sapMSLI.sapMSLIWithDescription,
+.sapUiSizeCompact .sapMSLI.sapMSLINoTitleAdapt {
+	height: 5rem;
+}
+
+.sapUiSizeCompact .sapMSLI.sapMSLIWrapping {
+	height: auto;
+	min-height: 2rem;
+}
+
+.sapUiSizeCompact .sapMSLI.sapMSLIWithDescription.sapMSLIWrapping,
+.sapUiSizeCompact .sapMSLI.sapMSLINoIconInset.sapMSLIWrapping,
+.sapUiSizeCompact .sapMSLI.sapMSLINoTitleAdapt.sapMSLIWrapping {
+	min-height: 5rem;
+}
+
+.sapUiSizeCompact .sapMSLIThumbnail:not(.sapMSLIWrapping) > .sapMLIBContent > .sapMSLIDiv {
+	padding: 0.25rem 0;
+}
+
+.sapUiSizeCompact .sapMSLITitle,
+.sapUiSizeCompact .sapMSLITitleOnly {
+	font-size: @sapMFontMediumSize;
+}
+
+.sapUiSizeCompact .sapMSLIImgIcon {
+	height: 2rem;
+	line-height: 2rem;
+	font-size: 1rem;
+}
+
+.sapUiSizeCompact .sapMSLI.sapMSLIWrapping > .sapMLIBSelectS,
+.sapUiSizeCompact .sapMSLI.sapMSLIWrapping > .sapMLIBSelectM,
+.sapUiSizeCompact .sapMSLI.sapMSLIWithDescription > .sapMLIBSelectS,
+.sapUiSizeCompact .sapMSLI.sapMSLIWithDescription > .sapMLIBSelectM,
+.sapUiSizeCompact .sapMSLI.sapMSLIWrapping > .sapMLIBContent > .sapMSLIImgIcon {
+	margin-top: 0.725rem;
+}

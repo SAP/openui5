@@ -1,0 +1,58 @@
+:root {
+	--sapIllus_BrandColorPrimary: @sapContent_Illustrative_Color1;
+	--sapIllus_BrandColorSecondary: @sapContent_Illustrative_Color2;
+	--sapIllus_StrokeDetailColor: @sapContent_Illustrative_Color4;
+	--sapIllus_Layering1: @sapContent_Illustrative_Color5;
+	--sapIllus_Layering2: @sapContent_Illustrative_Color6;
+	--sapIllus_BackgroundColor: @sapContent_Illustrative_Color7;
+	--sapIllus_ObjectFillColor: @sapContent_Illustrative_Color8;
+	--sapIllus_AccentColor: @sapContent_Illustrative_Color3;
+	--sapIllus_NoColor: none;
+	--sapIllus_PatternShadow: ~"url(#sapIllus_PatternShadow)";
+	--sapIllus_PatternHighlight: ~"url(#sapIllus_PatternHighlight)";
+
+	.generate-illustrative-colors (20);
+}
+
+.generate-illustrative-colors (@colorsCount, @i: 1) when (@i =< @colorsCount) {
+	@illusColorLESSvar: 'sapContent_Illustrative_Color@{i}';
+	--sapContent_Illustrative_Color@{i}: @@illusColorLESSvar;
+	.generate-illustrative-colors(@colorsCount, (@i + 1));
+}
+
+.sapIllus_MaskTypeAlpha {
+	mask-type:alpha;
+}
+.sapIllus_BrandColorPrimary {
+	fill: var(--sapIllus_BrandColorPrimary);
+}
+.sapIllus_BrandColorSecondary {
+	fill: var(--sapIllus_BrandColorSecondary);
+}
+.sapIllus_StrokeDetailColor {
+	fill: var(--sapIllus_StrokeDetailColor);
+}
+.sapIllus_Layering1 {
+	fill: var(--sapIllus_Layering1);
+}
+.sapIllus_Layering2 {
+	fill: var(--sapIllus_Layering2);
+}
+.sapIllus_BackgroundColor {
+	fill: var(--sapIllus_BackgroundColor);
+}
+.sapIllus_ObjectFillColor {
+	fill: var(--sapIllus_ObjectFillColor);
+}
+.sapIllus_AccentColor {
+	fill: var(--sapIllus_AccentColor);
+}
+.sapIllus_NoColor {
+	fill: var(--sapIllus_NoColor);
+}
+.sapIllus_PatternShadow {
+	fill: var(--sapIllus_PatternShadow);
+}
+.sapIllus_PatternHighlight {
+	fill: var(--sapIllus_PatternHighlight);
+}

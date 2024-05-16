@@ -1,0 +1,67 @@
+/* =================================== */
+/* CSS for control sap.m/TreeItemBase  */
+/* Base theme                          */
+/* =================================== */
+
+.sapMTreeItemBase {
+	min-height: @sapUiElementHeight;
+	font-family: @sapUiFontFamily;
+	font-size: @sapMFontMediumSize;
+	padding-left: 0;
+	color: @sapUiListTextColor;
+	padding-top: 0.25rem;
+	padding-bottom: 0.25rem;
+}
+
+.sapMTreeItemBaseExpander {
+	width: @sapUiElementLineHeight;
+	height: @sapUiElementHeight;
+	line-height: @sapUiElementHeight;
+	font-size: 1rem;
+	color: @sapUiContentIconColor;
+	flex-shrink: 0;
+}
+
+.sapMTreeItemBaseLeaf > .sapMTreeItemBaseExpander {
+	opacity: 0;
+	pointer-events: none;
+}
+
+.sapMLIBActive .sapMTreeItemBaseExpander {
+	color: @sapUiListActiveTextColor;
+}
+
+.sapMListHighlight .sapMTreeItemBaseExpander {
+	margin-left: 0.375rem;
+}
+
+.sapMTreeItemBaseChildren {
+	background-color: @sapUiListAlternatingBackground;
+	border-bottom-color: transparent;
+}
+
+.sapMTIBWrapTitle {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.sapMTreeItemBase > .sapMLIBContent {
+	display: flex;
+	align-items: center;
+}
+
+.sapUiSizeCompact .sapMTreeItemBase {
+	min-height: 1.5rem;
+}
+
+.sapUiSizeCompact .sapMTreeItemBaseWrapping {
+	min-height: 1.5rem;
+}
+
+.sapUiSizeCompact .sapMTreeItemBaseExpander {
+	font-size: 0.75rem;
+	width: 2rem;
+	height: 1.5rem;
+	line-height: 1.5rem;
+}

@@ -1,0 +1,495 @@
+/* ======================================= */
+/* CSS for control sap.m/UploadCollection  */
+/* Base theme                              */
+/* ======================================= */
+
+/* until the central focus concept is implemented, a workaround is built in sap.m.UploadCollection so that all focus frames are visible */
+/* to remove the workaround the changes below are necessary: */
+/* for .sapMLIB.sapMUCItem.sapMUCListSingleItem, .sapMLIB.sapMUCItem.sapMUCListFirstItem,.sapMLIB.sapMUCItem.sapMUCListLastItem, .sapMLIB.sapMUCItem.sapMUCListItem change padding-left from 0.9rem to 1rem    */
+/* for .sapMUCFileName.sapMLnk delete margin-left:	0.1rem */
+/* for .sapMUCItemIcon, .sapMUCItemImage change margin-right from 0.65rem to 0.75rem, delete margin-top: 0.1rem; margin-bottom:	0.1rem; margin-left: 0.1rem; */
+/* for .sapMUCAttrContainer, .sapMUCStatusContainer delete margin-left: 0.1rem*/
+
+/* List Header */
+.sapMTB.sapMUCListHeader {
+	width:				100%;
+	height:				3rem;
+	padding-left:		1rem;
+	padding-right:		1rem;
+	border-bottom-width: 0.0625rem;
+	border-bottom-style: solid;
+	white-space:		nowrap;
+	overflow:			hidden;
+	text-overflow:		ellipsis;
+	vertical-align:		middle;
+}
+
+.sapMTB.sapMUCListHeader > .sapMBarChild:first-child {
+	margin-left: 0;
+}
+
+/* List with borders*/
+.sapMLIB.sapMUCItem.sapMUCListSingleItem,
+.sapMLIB.sapMUCItem.sapMUCListFirstItem,
+.sapMLIB.sapMUCItem.sapMUCListLastItem,
+.sapMLIB.sapMUCItem.sapMUCListItem {
+	padding-left:			0.9rem;       /* a workaround until the central focus concept is implemented( after that make it 1rem); 0.1rem gets the image/icon so that the left side of the keyboard frame is displayed */
+	padding-top:			1rem;
+	padding-bottom: 		1rem;
+	border-bottom-width: 	0.0625rem;
+	border-bottom-style: 	solid;
+	padding-right:			1rem;
+}
+
+/* List containing no borders */
+.sapMListShowSeparatorsNone {
+	.sapMLIB.sapMUCListFirstItem,
+	.sapMLIB.sapMUCListLastItem,
+	.sapMLIB.sapMUCListItem {
+		border-bottom-color: 	transparent; /* this is the central switch to have inner separators or not */
+	}
+}
+
+/* List containing no borders */
+.sapMListShowSeparatorsNone {
+	.sapMLIB.sapMUCListLastItem,
+	.sapMLIB.sapMUCListItem {
+		padding-top: 0.5rem;
+	}
+}
+
+/* List containing no borders */
+.sapMListShowSeparatorsNone {
+	.sapMLIB.sapMUCListFirstItem,
+	.sapMLIB.sapMUCListItem {
+		padding-bottom: 0.5rem;
+	}
+}
+
+/* List with a single item containing no borders */
+.sapMListShowSeparatorsNone .sapMLIB.sapMUCListSingleItem {
+	padding-top: 1rem;
+	padding-bottom: 1rem;
+}
+
+/* Item icon */
+.sapMUCItemIconInactive,
+.sapMUCItemIcon {
+	font-size: 2.5rem;
+}
+
+.sapMImg.sapMUCItemImage{
+	background-size:	cover;
+}
+
+.sapMUCItemIconInactive,
+.sapMUCItemIcon,
+.sapMUCItemImage {
+	height:				3rem;
+	width:				3rem;
+	margin-right:		0.75rem; /* because of the keyboard frame it should be margin and not padding */
+	margin-top:			0.1rem; /* is needed so that keyboard frame is visible; after the central focus concept is implemented delete the margin */
+	margin-bottom:		0.1rem; /* is needed so that keyboard frame is visible; after the central focus concept is implemented delete the margin */
+	margin-left:		0.1rem; /* is needed so that keyboard frame is visible; after the central focus concept is implemented delete the margin */
+	flex:				none;
+}
+
+/*if no image is provided a standard placeholder is displayed */
+.sapMUCItemPlaceholderInactive,
+.sapMUCItemPlaceholder {
+	line-height: 3rem;
+}
+
+/* Text: File name */
+.sapMUCFileName.sapMLnk {
+	font-family:		@sapUiFontFamily;
+	font-weight:		normal;
+	padding-top:		0.25rem; /* Padding top instead of padding bottom due to in-line placement with Objectmarker */
+	overflow:			hidden;
+	text-overflow:		ellipsis;
+	opacity:			100;
+	margin-left:		0.1rem;
+}
+
+.sapMUCObjectMarker {
+	margin-left: 0.5rem;
+}
+
+.sapMUCObjectMarker.sapMObjectMarkerText:not(.sapMObjectMarkerIcon) {
+	padding-top: 0.25rem;
+}
+
+.sapMUCObjectMarker.sapMObjectMarkerText,
+.sapMUCObjectMarker.sapMObjectMarkerIcon.sapMObjectMarkerText .sapUiIcon {
+	vertical-align: bottom;
+}
+
+.sapMUCObjectMarkerContainer {
+	display: inline-block;
+	position: absolute;
+}
+
+/*positioning of the Progress label */
+.sapMLabel.sapMUCProgress {
+	display: block;
+	padding-top: 0.5rem;
+}
+
+/* Busy Indicator */
+.sapMBusyIndicator.sapMUCloadingIcon {
+	padding-top:		1.25rem;
+	padding-bottom:		1.25rem;
+	padding-right:		1.3rem;
+	padding-left:		0.5rem;
+	margin-top:			0rem;
+}
+
+.sapMBusyIndicator.sapMUCloadingIcon .sapMBusySvg {
+	height:				2rem;
+	width:				2rem;
+}
+
+/* No data indicator */
+.sapMUCNoDataPage {
+	padding: 1rem;
+	text-align: center;
+	background: @sapUiGroupContentBackground;
+	display: block;
+
+	.sapUiIcon {
+		color: fade(@sapUiContentNonInteractiveIconColor, 50);
+	}
+
+	.sapMUCNoDataText {
+		padding: 1rem 0rem;
+		line-height: 2rem;
+		font-size: @sapMFontHeader2Size;
+		color: @sapUiGroupTitleTextColor;
+	}
+
+	.sapMUCNoDataDescription {
+		padding: 0rem 0rem 2rem 0rem;
+		font-size: @sapMFontHeader5Size;
+		color: @sapUiContentLabelColor;
+	}
+}
+
+/* Drag && Drop */
+.sapMUC {
+	position: relative;
+
+	.sapMUCDragDropOverlay:not(.sapMUCDragDropOverlayHide) ~ .sapMList {
+		.sapMUCNoDataPage {
+			visibility: hidden;
+		}
+	}
+
+	.sapMUCDragDropOverlay {
+		position: absolute;
+		top: 3rem;
+		right: 0rem;
+		left: 0rem;
+		bottom: 0rem;
+		background-color: fade(@sapUiDragAndDropBackground, 80);
+		z-index: 1;
+
+		&.sapMUCDragDropOverlayHide {
+			display: none;
+		}
+
+		&:after {
+			display: block;
+			content: "";
+			position: absolute;
+			top: 0rem;
+			left: 0rem;
+			bottom: 0rem;
+			right: 0rem;
+			margin: 0.5rem;
+			border: 0.125rem dashed @sapUiDragAndDropBorderColor;
+		}
+
+		.sapMUCDragDropIndicator {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+
+			.sapUiIcon {
+				position: relative;
+				display: block;
+				color: @sapUiDragAndDropColor;
+				padding-bottom: 1rem;
+			}
+
+			.sapMText {
+				position: relative;
+				font-size: @sapMFontHeader4Size;
+				color: @sapUiDragAndDropColor;
+			}
+		}
+
+		&.sapMUCDropIndicator:after {
+			background-color: @sapUiDragAndDropActiveBackground;
+			border: 0.125rem solid @sapUiDragAndDropActiveBorderColor;
+		}
+
+		&.sapMUCDropIndicator {
+			.sapMUCDragDropIndicator {
+				.sapMText {
+					color: @sapUiDragAndDropActiveColor;
+				}
+				.sapUiIcon {
+					color: @sapUiDragAndDropActiveColor;
+				}
+			}
+		}
+	}
+}
+
+/* ************************************************************************************* */
+/* local fixes: should be done by used simple controls                                   */
+/* ************************************************************************************* */
+.sapMTB.sapMUCListHeader .sapMBtnPaddingLeft {
+	padding-left:		0rem;
+}
+
+.sapMUC .sapUiIcon:focus {
+	outline-style: @sapUiContentFocusStyle;
+	outline-width: @sapUiContentFocusWidth;
+}
+/* ************************************************************************************* */
+
+
+.sapMUCListFirstItem > .sapMLIBContent,
+.sapMUCListLastItem > .sapMLIBContent,
+.sapMUCListSingleItem > .sapMLIBContent,
+.sapMUCListItem > .sapMLIBContent {
+	display:		flex;
+	padding:		0;
+}
+
+/*Container for a textContainer and a button container */
+@media(min-width: 30rem) {
+	.sapMUCTextButtonContainer {
+		display:		flex;
+		width: 			100%;
+		min-width: 		0; /* to avoid FF bug with flex*/
+	}
+}
+
+.sapMUCTextButtonContainer {
+	min-width: 		0; /* to avoid FF bug with truncation */
+	width: 			100%; /* it is necessary for the file name truncation in IE10 */
+}
+
+/*text container holding the file name, a container for attributes and a container for statuses */
+@media(min-width: 30rem) {
+	.sapMUCTextContainer {
+		flex:	 			10 10 auto;
+		padding-top: 		0.125rem;
+		padding-bottom: 	0.125rem;
+		display: 			block;
+	}
+}
+
+.sapMUCTextContainer.sapMUCEditMode {
+	padding-top: 0rem;
+}
+
+.sapMUCTextContainer {
+	width: 100%;
+	white-space: nowrap; /* necessary for text ellipsis of the file name in FF */
+	overflow: hidden;
+}
+
+/*display the attributes inline */
+.sapMUCAttrContainer .sapMObjectAttributeDiv {
+	display: inline;
+}
+
+/* display the statuses inline */
+.sapMUCStatusContainer .sapMObjStatus {
+	display: inline;
+}
+
+/* overwrite display: -webkit-box so that the text does not get truncated */
+.sapMUCAttr .sapMTextMaxLine {
+	display: initial;
+	overflow: visible;
+}
+
+.sapMUCAttrContainer, .sapMUCStatusContainer {
+	padding-top: 0.375rem;
+	font-weight: normal;
+	line-height: normal;
+	white-space: pre-line;
+	margin-left: 0.1rem;
+	margin-right: 0.1rem;
+}
+
+@media(min-width: 30rem) {
+	/* !important is necessary here for overriding inline style of sap.m.input */
+	.sapMUCEditBox >.sapMInputBaseInner {
+		width: 60% !important;
+	}
+}
+
+.sapMInputBase.sapMUCEditBox {
+	margin-bottom: 0.1875rem;
+}
+
+@media(min-width: 30rem) {
+	.sapMUCButtonContainer {
+		white-space: nowrap; /* so that buttons are displayed in a row */
+		padding-left: 1rem;
+		padding-top: 0rem;
+		align-self: center; /* for buttons alignment at the center */
+		flex: none;
+	}
+}
+
+@media(max-width: 30rem) {
+	.sapMUCButtonContainer {
+		padding-top: 0.75rem;
+	}
+}
+
+/* this padding is only needed if both buttons are displayed */
+/* for the width less than 30 rem */
+.sapMBtn.sapMUCFirstButton {
+	padding-right: 0.5rem;
+}
+
+/* this padding is only needed if both buttons are displayed */
+/* for the width >=30rem */
+@media(min-width: 30rem) {
+	.sapMBtn.sapMUCFirstButton {
+		padding-right: 0.125rem;
+	}
+}
+
+/* for compact form: for the width less than 30rem */
+.sapUiSizeCompact .sapMBtn.sapMUCFirstButton {
+	padding-right: 0.5rem;
+}
+
+/* for compact form: this padding is only needed if both buttons are displayed */
+@media(min-width: 30rem) {
+	.sapUiSizeCompact .sapMBtn.sapMUCFirstButton {
+		padding-right: 0.125rem;
+	}
+}
+
+.sapMUCButtonContainer > .sapMBtn {
+	padding-top: 0rem; /* the padding of the sap.m.Button should be removed */
+	padding-bottom: 0rem; /* the padding of the sap.m.Button should be removed */
+	height:			2.5rem;
+}
+
+
+/*compact form */
+.sapUiSizeCompact .sapMUCButtonContainer > .sapMBtn {
+	height: 1.625rem;
+}
+
+.sapMUCSeparator {
+	display:inline-block;
+}
+
+.sapMUCList .sapMLIB {
+	align-items: center;
+}
+
+.sapMUCItem.sapMCLI>.sapMLIBSelectM {
+	margin-top: -0.8125rem;
+	margin-left: -0.875rem;
+	margin-right: -0.125rem;
+}
+
+.sapUiSizeCompact .sapMUCItem>.sapMLIBSelectM {
+	margin-left: -0.9rem;
+	padding-top: 0.3rem;
+	margin-right: -0.1rem;
+}
+
+.sapUiSizeCompact .sapMUCItem .sapMLIBSelectM {
+	padding-left: 0.3rem;
+	width: 2.75rem;
+}
+
+.sapUiSizeCozy .sapMUCItem .sapMLIBSelectM {
+	padding-left: 0;
+	width: 2.75rem;
+}
+
+/* Item Icon */
+.sapMUCItemIcon {
+	color: @sapUiContentIconColor;
+}
+/* Item Icon Inactive */
+.sapMUCItemIconInactive {
+	color: @sapUiContentNonInteractiveIconColor;
+}
+
+/*if no image is provided a standard placeholder is displayed */
+.sapMUCItemPlaceholder {
+	color: @sapUiContentIconColor;
+}
+
+.sapMUCItemPlaceholderInactive {
+	color: @sapUiContentNonInteractiveIconColor;
+}
+
+/*if no link is provided the file name is displayed as an disabled link */
+.sapMLnkDsbl.sapMUCFileName {
+	color: @sapUiListTextColor;
+	text-decoration: none;
+}
+
+/* disabled state */
+.sapMBtnDisabled.sapMUCDeleteBtn > .sapMBtnInner > .sapMBtnIcon {
+	color: @sapUiContentIconColor;
+}
+
+.sapMUCAttrContainer {
+	color: @sapUiContentLabelColor;
+}
+
+/* Text: Filename */
+.sapMUCFileName.sapMLnk {
+	font-size: @sapMFontLargeSize; /* it cannot be moved to base as the LESS constant is not known there */
+}
+
+.sapMUCAttrContainer, .sapMUCStatusContainer {
+	font-size: @sapMFontMediumSize; /* it cannot be moved to base as the LESS constant is not known there */
+}
+
+/*for width > 30rem the buttons should be displayed as buttons of type transparent */
+@media(min-width: 30rem) {
+	.sapMUCButtonContainer >.sapMBtn >.sapMBtnInner {
+		background-image: none;
+		background-color: @sapUiButtonLiteBackground;
+		border-color: @sapUiButtonLiteBorderColor;
+		text-shadow: none;
+	}
+}
+
+/* an edit and delete button in a hover state; it should look like a transparent button in a hover state */
+@media(min-width: 30rem) {
+	.sapMUCEditBtn:hover >.sapMBtnHoverable, .sapMUCDeleteBtn:hover >.sapMBtnHoverable {
+		background-color: @sapUiButtonLiteHoverBackground;
+		border-color: @sapUiButtonLiteHoverBorderColor;
+	}
+}
+
+/*an edit and delete button in a pressed state; it should look like a transparent button in a pressed state */
+@media(min-width: 30rem) {
+	:not(.sapMBtnDisabled).sapMUCEditBtn > .sapMBtnActive,
+	:not(.sapMBtnDisabled).sapMUCEditBtn:hover > .sapMBtnActive,
+	:not(.sapMBtnDisabled).sapMUCDeleteBtn > .sapMBtnActive,
+	:not(.sapMBtnDisabled).sapMUCDeleteBtn:hover > .sapMBtnActive {
+		background-color: @sapUiButtonLiteActiveBackground;
+		border-color: @sapUiButtonLiteActiveBorderColor;
+	}
+}

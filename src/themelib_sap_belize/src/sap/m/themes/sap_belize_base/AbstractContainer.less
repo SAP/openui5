@@ -1,0 +1,31 @@
+.sapUiMAbstractContainerContent {
+
+}
+
+//Change background color for the container control
+.sapUiMAbstractContainerContent .sapMITB {
+    padding-top: 1.75rem;
+}
+
+//Remove padding to align the ITB with the rest of the p13n related controls (left aligned)
+.sapUiMAbstractContainerContent .sapMITH {
+    padding: 0
+}
+
+.sapUiMAbstractContainerContent .wrapperDefaultList .sapMLIB{
+    padding: 1.5rem;
+}
+
+.sapMAbstractContainer .sapMPage {
+	display: flex;
+	flex-direction: column;
+
+	&>section {
+		position: relative;
+		top: 0 !important; // we need to overwrite the top argument for a section when using the AbstractContainer, otherwise top is overriden by other styles
+	}
+
+	>footer:not(.sapUiHidden) {
+		position: relative;
+	}
+}

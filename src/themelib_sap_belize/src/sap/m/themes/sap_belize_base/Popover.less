@@ -1,0 +1,377 @@
+/* ============================== */
+/* CSS for control sap.m/Popover  */
+/* Base theme                     */
+/* ============================== */
+
+/* Forces the usage of compact arrow offset, because belize uses a compact arrow for all content densities. */
+@_sap_m_Popover_ForceCompactArrowOffset: true;
+
+ /* Buffer width for the scroll bar */
+@_sap_m_Popover_Scroll_Width_Buffer: 20px;
+
+/* Arrow offset from the Popover's corners */
+@_sap_m_Popover_ArrowOffset: 8;
+
+/* shared mixin for arrow shadow*/
+.sapMPopoverArrAfterShadow(@horizontalShadow, @verticalShadow) {
+	box-shadow: @horizontalShadow @verticalShadow 0.750rem 0 fade(@sapUiContentShadowColor, 30), 0 0 0.125rem 0 fade(@sapUiContentShadowColor, 30);
+}
+
+.sapMPopover {
+	.sapContrastPlus.sapMBar, .sapContrastPlus .sapMBar,
+	.sapContrast.sapMBar, .sapContrast .sapMBar{
+		box-shadow: none;
+	}
+}
+
+.sapMPopover.sapMPopoverVerticalScrollIncluded {
+	.sapMPopoverScroll {
+		width: calc(~'100% + 20px');
+	}
+
+	html[data-sap-ui-browser^="sf"] & .sapMDialogSection {
+		/* For Safari - allow the vertical scroll bar to overlap the right padding which we use to compensate for its width. This happens by default for other browsers. */
+		overflow-y: overlay !important;
+	}
+}
+
+.sapMPopoverCont::-webkit-scrollbar {
+	border-bottom-right-radius:  @sapUiPopoverBorderCornerRadius;
+	border-top-right-radius:  @sapUiPopoverBorderCornerRadius;
+}
+
+.sapMPopover .sapMIBar.sapMFooter-CTX ,
+.sapMPopover.sapMPopoverWithoutFooter .sapMPopoverCont {
+	border-bottom-right-radius: 0.25rem;
+	border-bottom-left-radius: 0.25rem;
+}
+
+.sapMPopover .sapMPopoverCont {
+	box-sizing: border-box;
+}
+
+.sapMPopover .sapMIBar.sapMHeader-CTX {
+	background-color: @sapUiGroupContentBackground;
+	box-shadow: inset 0 -1px @sapUiGroupContentBorderColor;
+}
+
+.sapMPopover .sapMIBar.sapMSubHeader-CTX {
+	background-color: @sapUiGroupContentBackground;
+}
+
+.sapMPopover.sapMPopoverWithoutBar .sapMPopoverCont,
+.sapMPopover .sapMIBar.sapMHeader-CTX {
+	border-top-right-radius: 0.25rem;
+	border-top-left-radius: 0.25rem;
+}
+
+.sapMPopover {
+	position: absolute;
+	color: @sapUiContentForegroundTextColor;
+	min-width: 6.25rem;
+	box-sizing: border-box;
+	outline: none;
+	max-width: 100%;
+	max-height: 100%;
+	overflow: hidden;
+	background: @sapUiGroupContentBackground;
+	border: none;
+	box-shadow: @sapUiContentShadow2;
+	border-radius: 0.25rem;
+	min-height: 2rem;
+}
+
+html[data-sap-ui-animation='on'] .sapMPopover {
+	-webkit-transition: opacity 0.2s linear;
+	transition: opacity 0.2s linear;
+}
+
+
+.sapMPopoverHeader .sapMTitle {
+	font-size: @sapMFontHeader5Size;
+}
+
+.sapMPopover .sapMPopoverCont {
+	overflow: hidden;
+	position: relative;
+	/* set margin to every side */
+	margin: 0.4375em;
+	background-color: @sapUiGroupContentBackground;
+}
+
+.sapMPopover .sapMPopoverScroll {
+	/* 	width: 100%;  when set width to 100%, the horizontal scrolling will be disabled and this is done in the end of setArrowPosition method*/
+	display: inline-block;
+	vertical-align: middle;
+	min-width: 100%;
+	box-sizing: border-box;
+}
+
+.sapMPopover.sapUiPopupWithPadding .sapMPopoverScroll {
+	padding: 1rem;
+}
+
+/* disable scrolling automatically for sap.m.Page sap.m.NavContainer sap.m.ScrollingContainer inside Popover */
+.sapMPopoverVerScrollDisabled .sapMPopoverScroll {
+	max-height: inherit;
+	height: 100%;
+}
+
+/* disable scrolling automatically for sap.m.Page sap.m.NavContainer sap.m.ScrollingContainer inside Popover */
+.sapMPopoverHorScrollDisabled .sapMPopoverScroll {
+	display: block;
+}
+
+.sapMPopoverCont:focus {
+	outline: none;
+}
+
+.sapMPopover.sapMPopoverTransparent {
+	opacity: 0;
+}
+
+.sapMPopover.sapMPopoverOpaque {
+	opacity: 1;
+}
+
+/* disable margin according to the header and footer availability */
+.sapMPopoverWithBar.sapMPopoverWithFooter > .sapMPopoverCont {
+	margin-bottom: 0;
+	margin-top: 0;
+}
+
+/* disable margin according to the header and footer availability */
+.sapMPopoverWithoutBar.sapMPopoverWithFooter > .sapMPopoverCont {
+	margin-bottom: 0;
+}
+
+/* disable margin according to the header and footer availability */
+.sapMPopoverWithBar.sapMPopoverWithoutFooter > .sapMPopoverCont {
+	margin-top: 0;
+}
+
+.sapMPopoverWithoutBar.sapMPopoverNav > .sapMPopoverCont,
+.sapMPopoverWithoutBar.sapMPopoverPage > .sapMPopoverCont,
+.sapMActionSheetPopover > .sapMPopoverCont {
+	margin: 0;
+	background-color: transparent;
+}
+
+.sapMPopoverHeader > .sapMBar,
+.sapMPopoverSubHeader > .sapMBar,
+.sapMPopoverFooter > .sapMBar {
+	width: auto;
+}
+
+.sapMPopoverWithoutBar.sapMPopoverNav .sapMPopoverCont .sapMPage {
+	background-color: transparent;
+}
+
+.sapMPopover > .sapMPopoverCont .sapMPage > section {
+	box-sizing: border-box;
+	width: auto;
+}
+
+.sapMPopoverWithoutBar .sapMPage .sapMPopoverHeader,
+.sapMPopoverWithoutBar .sapMPage .sapMPopoverSubHeader,
+.sapMPopoverWithoutBar .sapMPage .sapMPopoverFooter {
+	position: absolute;
+}
+
+.sapMPopoverHiddenFocusable {
+	width: 0;
+	height: 0;
+	font-size: 0;
+	line-height: 0;
+}
+
+// Adds a hidden layer below the Popover arrow to prevent closing the Popover when clicking on the arrow. In the past
+// it was working but the area was bigger you could not click near to the arrow
+.sapMPopoverArr {
+	pointer-events: none;
+	display: block;
+	width: 1rem;
+	height: 1rem;
+	position: absolute;
+	overflow: hidden;
+
+	&:after {
+		content: " ";
+		display: block;
+		width: 0.7rem;
+		height: 0.7rem;
+		background-color: @sapUiGroupContentBackground;
+		transform: rotate(-45deg);
+	}
+}
+
+html[data-sap-ui-browser^="sf"] .sapMPopover {
+	// scale(1) - Chrome does not clip children when transform is not applied resulting in non-visible border-radius
+	// translateZ(0px) - Safari Problem with z-index - After dialog was opened it was inserted behind the dark overlay
+	-webkit-transform: scale(1) translateZ(0px);
+}
+
+.sapMPopoverWithFooter .sapMPopoverArrDown:after {
+	background-color: @sapUiPageFooterBackground;
+}
+
+/* pointing upward arrow */
+.sapMPopoverArrUp {
+	/* offset */
+	left: 20px;
+	/* position */
+	top: -0.5rem;
+	height: 0.5rem;
+
+	&:after {
+		margin: 0.1875rem 0 0 0.1875rem;
+		.sapMPopoverArrAfterShadow(-0.375rem, 0.375rem);
+	}
+}
+
+/* pointing right arrow */
+.sapMPopoverArrRight {
+	/* offset */
+	top: 1rem;
+	/* position */
+	right: -0.5rem;
+	width: 0.5rem;
+
+	&:after {
+		margin: 0.1875rem 0 0 -0.375rem;
+		.sapMPopoverArrAfterShadow(-0.375rem, -0.375rem);
+	}
+}
+
+/* pointing downward arrow */
+.sapMPopoverArrDown {
+	/* offset */
+	left: 1rem;
+	/* position */
+	height: 0.5rem;
+
+	&:after {
+		margin: -0.375rem 0 0 0.125rem;
+		.sapMPopoverArrAfterShadow(0.375rem, -0.375rem);
+	}
+
+}
+
+/* pointing left arrow */
+.sapMPopoverArrLeft {
+	/* position */
+	left: -0.5rem;
+	top: -2rem;
+	width: 0.5rem;
+	height: 1rem;
+
+	&:after {
+		margin: 0.125rem 0 0 0.25rem;
+		.sapMPopoverArrAfterShadow(0.375rem, 0.375rem);
+	}
+}
+
+.sapMPopover.sapUiSizeCompact {
+	.sapMPopoverArrLeft:before,
+	.sapMPopoverArrRight:before {
+		margin-top: -.5rem;
+		margin-left: .25rem;
+		width: 1rem;
+		height: 1rem;
+	}
+
+	.sapMPopoverArrRight:before {
+		margin-left: -1.25rem;
+	}
+
+	.sapMPopoverArrUp:before,
+	.sapMPopoverArrDown:before {
+		width: 1rem;
+		height: 1rem;
+		margin-left: -.5rem;
+	}
+
+	.sapMPopoverArrDown:before {
+		margin-top: -1.25rem;
+	}
+}
+
+.sapMPopover .sapUiRespGrid {
+	width: 100%;
+}
+
+/* mixin call for creating container content padding classes (arguments: rootContainer, contentSelector) */
+.sapUiContainerContentPadding(~".sapMPopover", ~"> .sapMPopoverCont > .sapMPopoverScroll");
+
+.sapMPopoverResizeHandle {
+	transform: rotate(270deg);
+	position: absolute;
+	top: -10px;
+	right: -2px;
+	cursor: ne-resize;
+	z-index: 10;
+	border-top: 6px solid transparent;
+	border-bottom: 6px solid transparent;
+	border-right: 6px solid transparent;
+	border-left: 6px solid transparent;
+}
+
+.sapMPopoverResizing,
+.sapMPopoverResizing * {
+	-moz-user-select: none !important;
+	-webkit-user-select: none !important;
+	user-select: none !important;
+}
+
+.sapMPopover .sapMPopoverCont {
+	background-color: @sapUiGroupContentBackground;
+	margin: 0;
+}
+
+/* padding for title in header is removed because of ticket 0120031469 0004432742 2013*/
+.sapMPopoverHeader .sapMBarMiddle > .sapMBarPH {
+	box-sizing: border-box;
+}
+
+.sapMPopoverHeader .sapMBarMiddle > .sapMBarPH > .sapMLabel {
+	display: inline-block;
+}
+
+/*for only two buttons in footer's contentMiddle aggregation*/
+.sapMPopoverSpecialFooter .sapMBarMiddle {
+	display: block;
+	height: 100%;
+	//padding: 0 0.25rem;
+	box-sizing: border-box;
+}
+
+.sapMPopoverSpecialFooter .sapMBarMiddle > .sapMBarPH {
+	display: block;
+	padding: 0;
+}
+
+.sapMPopoverSpecialFooter .sapMBarLeft,
+.sapMPopoverSpecialFooter .sapMBarRight {
+	display: none;
+}
+
+.sapMPopoverSpecialFooter .sapMBarMiddle > .sapMBarPH > .sapMBtn {
+	width: 50%;
+	padding-left: 0.25rem;
+}
+
+.sapMPopoverSpecialFooter .sapMBarMiddle > .sapMBarPH {
+
+	.sapMBtn:last-child {
+		margin-left: 0;
+	}
+
+	.sapMBtn:first-child {
+		padding-right: 0.25rem;
+		padding-left: 0;
+	}
+}
+
+.sapMPopover.sapMPopoverVerticalScrollIncluded .sapMPopoverCont {
+	padding-right: @_sap_m_Popover_Scroll_Width_Buffer;
+}
