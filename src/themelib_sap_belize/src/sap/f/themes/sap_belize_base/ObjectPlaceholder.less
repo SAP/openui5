@@ -1,0 +1,43 @@
+/* ====================================================== */
+/* CSS for control sap.f.cards.loading/ObjectPlaceholder  */
+/* Base theme                                             */
+/* ====================================================== */
+
+.sapFCardContentObjectPlaceholder {
+	display: flex;
+	column-gap: 2rem;
+	padding: 0 1rem 1rem 1rem;
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+	z-index: 1;
+
+	.sapFCardObjectPlaceholderColumn {
+		flex: 1;
+
+		.sapFCardObjectPlaceholderGroupFirstRow {
+			height: 1rem;
+			width: 100%;
+			margin-bottom: 0.25rem;
+			margin-top: 1rem;
+		}
+
+		.sapFCardObjectPlaceholderGroupSecondRow {
+			width: 65%;
+			height: 1rem;
+		}
+	}
+
+}
+
+.sapFCardObjectContent.sapFCardContentLoading {
+	> div:not(.sapFCardContentObjectPlaceholder) {
+		visibility: hidden;
+	}
+}
+
+.sapUiIntCardWithFooter .sapFCardContentObjectPlaceholder {
+	padding-bottom: 0;
+}

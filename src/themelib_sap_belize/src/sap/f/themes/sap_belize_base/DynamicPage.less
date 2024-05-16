@@ -1,0 +1,418 @@
+/* ================================== */
+/* CSS for control sap.f/DynamicPage  */
+/* Base theme                         */
+/* ================================== */
+
+@_sap_f_DynamicPage_FooterHeight: 3rem;
+@_sap_f_DynamicPage_FooterHeight_Compact: 2.5rem;
+@_sap_f_DynamicPage_FooterMarginBottom: 0.5rem;
+
+.sapFDynamicPage {
+	width: 100%;
+	height: 100%;
+	position: relative;
+	isolation: isolate;
+	z-index: 0;
+
+	.sapFDynamicPageContentWrapperStandard,
+	.sapFDynamicPageContentWrapperSolid {
+		&>.sapFDynamicPageContent {
+			background: @sapUiBaseBG;
+		}
+	}
+
+	.sapFDynamicPageHeaderSolid {
+		background: @sapUiBaseBG;
+	}
+
+	.sapFDynamicPageContentWrapperTransparent>.sapFDynamicPageContent {
+		background: transparent;
+	}
+
+	.sapFDynamicPageContentWrapperList>.sapFDynamicPageContent {
+		background: @sapUiGroupContentBackground;
+	}
+}
+
+.sapFDynamicPageTitleWrapper {
+	position: absolute;
+	padding-right: 0;
+	top: 0;
+	right: 0;
+	left: 0;
+	z-index: 3;
+}
+
+html[data-sap-ui-browser^="ff"].sap-desktop .sapFDynamicPage.sapFDynamicPageWithScroll,
+html[data-sap-ui-os^="win"][data-sap-ui-browser^="cr"].sap-desktop .sapFDynamicPage.sapFDynamicPageWithScroll {
+	 .sapFDynamicPageTitleWrapper {
+		right: 17px;
+	}
+
+	.sapFDynamicPageFooter .sapFDynamicPageActualFooterControl {
+		right: 17px;
+	}
+}
+
+.sapFDynamicPageContent {
+	flex-grow: 1;
+	-webkit-flex-grow: 1;
+	z-index: 0;
+
+	.sapFDynamicPageAlignContent {
+		margin-left: -@sapUiMarginSmall;
+		margin-right: -@sapUiMarginSmall;
+	}
+}
+
+/* TODO remove after the end of support for Internet Explorer */
+html[data-sap-ui-browser^="ie"] {
+	.sapFDynamicPageContent {
+		flex-shrink: 0;
+	}
+}
+
+.sapFDynamicPageContent,
+.sapFDynamicPageContentFitContainer {
+	position: relative;
+	padding: 1rem 3rem 0 3rem;
+	box-sizing: border-box;
+}
+
+.sapFDynamicPageContent > .sapFDynamicPageContentFitContainer {
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+}
+
+// adds space underneath the footer (when page in scrollable mode)
+.sapFDynamicPageContentFitContainerFooterVisible:not(.sapFDynamicPageContentFitContainer) {
+	padding-bottom: ~"calc(@{_sap_f_DynamicPage_FooterHeight} + ( @{_sap_f_DynamicPage_FooterMarginBottom} * 2 ) )";
+}
+
+.sapUiSizeCompact {
+	.sapFDynamicPageContentFitContainerFooterVisible:not(.sapFDynamicPageContentFitContainer) {
+		padding-bottom: ~"calc(@{_sap_f_DynamicPage_FooterHeight_Compact} + ( @{_sap_f_DynamicPage_FooterMarginBottom} * 2 ) )";
+	}
+}
+
+// adds space underneath the footer (when page in non-scrollable mode)
+.sapFDynamicPageContentFitContainerFooterVisible.sapFDynamicPageContentFitContainer {
+	max-height: ~"calc(100% - (@{_sap_f_DynamicPage_FooterHeight} + ( @{_sap_f_DynamicPage_FooterMarginBottom} * 2 ) ))";
+}
+
+.sapUiSizeCompact {
+	.sapFDynamicPageContentFitContainerFooterVisible.sapFDynamicPageContentFitContainer {
+		max-height: ~"calc(100% - (@{_sap_f_DynamicPage_FooterHeight_Compact} + ( @{_sap_f_DynamicPage_FooterMarginBottom} * 2 ) ))";
+	}
+}
+
+.sapFDynamicPage-Std-Tablet {
+	.sapFDynamicPageContent,
+	.sapFDynamicPageContentFitContainer {
+		padding: 2rem 2rem 0 2rem;
+	}
+}
+
+.sapFDynamicPage-Std-Phone {
+	.sapFDynamicPageContent,
+	.sapFDynamicPageContentFitContainer {
+		padding: 2rem 1rem 0 1rem;
+	}
+}
+
+.sapUiContainerContentPadding(~".sapFDynamicPage", ~".sapFDynamicPageContent");
+.sapUiContainerContentPadding(~".sapFDynamicPage", ~".sapFDynamicPageContentFitContainer");
+
+.sapFDynamicPage.sapUiContentPadding,
+.sapFDynamicPage.sapUiNoContentPadding,
+.sapFDynamicPage.sapUiResponsiveContentPadding {
+	.sapFDynamicPageAlignContent {
+		margin: 0;
+	}
+}
+
+.sapFDynamicPage.sapUiContentPadding {
+	.sapFDynamicPage-Std-Phone {
+		.sapFDynamicPageAlignContent {
+			margin: 0 -1rem;
+		}
+	}
+}
+
+.sapFDynamicPage.sapUiResponsiveContentPadding {
+	&.sapFDynamicPage-Std-Phone {
+		.sapFDynamicPageContent,
+		.sapFDynamicPageContentFitContainer {
+			padding: 0;
+			padding-top: 1rem;
+		}
+	}
+
+	&.sapFDynamicPage-Std-Tablet {
+		.sapFDynamicPageContent,
+		.sapFDynamicPageContentFitContainer {
+			padding: 1rem;
+		}
+	}
+
+	&.sapFDynamicPage-Std-Desktop {
+		.sapFDynamicPageContent,
+		.sapFDynamicPageContentFitContainer {
+			padding: 1rem 2rem;
+		}
+	}
+}
+
+.sapFDynamicPageFooterVisible .sapFDynamicPageContentWrapper,
+.sapFDynamicPageFooterVisible .sapFDynamicPageContentFitContainer *[style*="overflow: hidden auto;"] {
+	scroll-padding-bottom: ~"calc(@{_sap_f_DynamicPage_FooterHeight} +  @{_sap_f_DynamicPage_FooterMarginBottom} + 2px)";
+}
+
+.sapUiSizeCompact {
+	.sapFDynamicPageFooterVisible .sapFDynamicPageContentWrapper,
+	.sapFDynamicPageFooterVisible .sapFDynamicPageContentFitContainer *[style*="overflow: hidden auto;"] {
+		scroll-padding-bottom: ~"calc(@{_sap_f_DynamicPage_FooterHeight_Compact} +  @{_sap_f_DynamicPage_FooterMarginBottom} + 2px)";
+	}
+}
+
+.sapFDynamicPageContentWrapper {
+	width: 100%;
+	height: 100%;
+	position: relative;
+	will-change: scroll-position;
+	-webkit-overflow-scrolling: auto;
+
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: flex;
+
+	-webkit-flex-direction: column;
+	flex-direction: column;
+
+	// Scroll anchoring adjusts the scroll position to prevent visible jumps (or "reflows"),
+	// when content changes above the viewport.
+	// See: https://github.com/WICG/ScrollAnchoring/blob/master/explainer.md
+	overflow-anchor: none;
+
+	overflow-y: auto;
+}
+
+.sapFDynamicPageSupressScroll {
+	.sapFDynamicPageContentWrapper {
+		overflow: hidden;
+	}
+}
+
+.sapFDynamicPage .sapFDynamicPageTitleWrapper {
+	display: flex;
+	display: -webkit-flex;
+	flex-direction: column;
+	-webkit-flex-direction: column;
+	flex-shrink: 0;
+	-webkit-flex-shrink: 0;
+}
+
+html.sap-desktop .sapFDynamicPage.sapFDynamicPageWithScroll {
+	.sapFDynamicPageTitleWrapper {
+		right: 12px;
+	}
+
+	.sapFDynamicPageFooter .sapFDynamicPageActualFooterControl {
+		right: 12px;
+	}
+}
+
+.sapFDynamicPageContentWrapper {
+	-webkit-flex-grow: 1;
+	flex-grow: 1;
+}
+
+.sapFDynamicPage,
+.sapFDynamicPage.sapFNavItem {
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: flex;
+	-webkit-flex-direction: column;
+	flex-direction: column;
+}
+
+// DynamicPageTitle hover
+.sapFDynamicPage.sapFDynamicPageTitleClickEnabled {
+	.sapFDynamicPageTitle:hover,
+	&.sapFDynamicPageTitleForceHovered .sapFDynamicPageTitle {
+		cursor: pointer;
+
+		.sapMFlexBox {
+			cursor: default;
+		}
+	}
+}
+
+// Overstyle for Comparison Pattern
+.sapFDynamicPage.sapFDynamicPageTitleClickEnabled.sapUiComparisonContainer {
+	.sapFDynamicPageTitleMainInner:hover {
+		cursor: pointer;
+	}
+
+	.sapFDynamicPageTitle:hover,
+	&.sapFDynamicPageTitleForceHovered .sapFDynamicPageTitle {
+		cursor: default;
+	}
+}
+
+// Reflection: Overwritten styles
+.sapFDynamicPageTitleMainHeading,
+.sapFDynamicPageTitleMainContent,
+.sapFDynamicPageTitleMainActions {
+	// BCP: 1870261908 - CSS cursor reset is needed here to prevent showing pointer for not clickable control types
+	cursor: default;
+}
+
+.sapFDynamicPage {
+	.sapFDynamicPageFooter {
+		position: relative;
+
+		.sapFDynamicPageActualFooterControl {
+			position: absolute;
+			height: @_sap_f_DynamicPage_FooterHeight;
+			width: auto;
+			bottom: 0;
+			right: 0;
+			left: 0;
+			border-radius: 0.25rem;
+			margin-left: 0.5rem;
+			margin-right: 0.5rem;
+			margin-bottom: @_sap_f_DynamicPage_FooterMarginBottom;
+		}
+	}
+}
+
+.sapUiSizeCompact .sapFDynamicPage .sapFDynamicPageFooter .sapFDynamicPageActualFooterControl {
+	height: @_sap_f_DynamicPage_FooterHeight_Compact;
+}
+
+/* ============================== */
+/* Toggle Header Visual Indicator */
+/* ============================== */
+.sapFDynamicPageToggleHeaderIndicator.sapMBtn,
+.sapFDynamicPageHeaderPinButton.sapMBtn {
+	position: absolute;
+	left: 50%;
+	padding: 0;
+
+	// Reflection: Overwritten styles
+	.sapMBtnInner {
+		position: absolute !important;
+		border-radius: 0.1875rem;
+	}
+}
+
+/* Tablet and Desktop */
+.sapFDynamicPageToggleHeaderIndicator,
+.sapFDynamicPageHeaderPinButton {
+	bottom: -1.375rem;
+}
+
+.sapFDynamicPageToggleHeaderIndicator,
+.sapFDynamicPageToggleHeaderIndicator.sapUiHidden ~ .sapFDynamicPageHeaderPinButton {
+	margin-left: -1.25rem;
+}
+
+.sapFDynamicPageHeaderPinnable .sapFDynamicPageToggleHeaderIndicator {
+	margin-left: -2.5rem;
+}
+
+.sapFDynamicPageHeaderPinButton {
+	margin-left: 0.25rem;
+}
+
+/* Compact */
+.sapUiSizeCompact {
+	.sapFDynamicPageToggleHeaderIndicator,
+	.sapFDynamicPageHeaderPinButton {
+		bottom: -0.875rem;
+
+		// Reflection: Overwritten styles
+		.sapMBtnInner.sapMBtnIconFirst:not(.sapMBtnBack) {
+			padding-left: 0;
+			padding-right: 0;
+		}
+	}
+}
+
+/* ============= */
+/* Animations    */
+/* ============= */
+
+html[data-sap-ui-animation='on'] .sapFDynamicPage {
+	.sapFDynamicPageActualFooterControlShow {
+		-webkit-animation: bounceShow 0.35s forwards ease-in-out;
+		animation: bounceShow 0.35s forwards ease-in-out;
+	}
+	.sapFDynamicPageActualFooterControlHide {
+		-webkit-animation: bounceHide 0.35s forwards ease-in-out;
+		animation: bounceHide 0.35s forwards ease-in-out;
+	}
+
+	@-webkit-keyframes bounceShow {
+		0% {
+			-webkit-transform: translateY(100%);
+			transform: translateY(100%);
+			opacity: 0;
+		}
+		100% {
+			opacity: 1;
+		}
+	}
+	@keyframes bounceShow {
+		0% {
+			transform: translateY(100%);
+			opacity: 0;
+		}
+		100% {
+			opacity: 1;
+		}
+	}
+	@-webkit-keyframes bounceHide {
+		0% {
+			-webkit-transform: translateY(-5%);
+			transform: translateY(-5%);
+			opacity: 1;
+		}
+		100% {
+			-webkit-transform: translateY(100%);
+			transform: translateY(100%);
+			opacity: 0;
+		}
+	}
+	@keyframes bounceHide {
+		0% {
+			transform: translateY(-5%);
+			opacity: 1;
+		}
+		100% {
+			transform: translateY(100%);
+			opacity: 0;
+		}
+	}
+}
+
+
+/* Vertically align items in the table-like view with the items in the sap.m.Carousel control,
+part of DynamicPageTitle snapped content and DynamicPageHeader content.
+To be used in Comparison pattern scenario. */
+.sapUiComparisonContent .sapUiComparisonItem  {
+	padding-left: 2.25rem;
+	padding-right: 1rem;
+}
+
+.sapUiComparisonContent :first-child.sapUiComparisonItem {
+	padding-left: 1rem;
+}
+
+.sapUiComparisonContainer .sapFDynamicPageTitleSnapped + .sapFDynamicPageContentWrapper .sapUiComparisonContent  {
+	margin-right: -1rem;
+}
