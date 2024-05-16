@@ -1,0 +1,49 @@
+/* ============================================= */
+/* CSS for control sap.ui.layout/BlockLayoutRow  */
+/* Base theme                                    */
+/* ============================================= */
+
+.sapUiBlockScrollingRow {
+	display: flex;
+	flex-wrap: nowrap;
+	overflow-x: auto;
+	overflow-y: hidden;
+
+	.sapUiBlockScrollableCell {
+		flex-shrink: 0;
+		width: 40%;
+	}
+}
+
+.sapUiBlockLayoutSizeL,
+.sapUiBlockLayoutSizeXL {
+	.sapUiBlockScrollingNarrowCells {
+		.sapUiBlockScrollableCell {
+			width: 25%;
+		}
+	}
+}
+
+.sapUiBlockLayoutSizeS {
+	.sapUiBlockSmallCell {
+		width: 100%;
+	}
+
+	.sapUiBlockMediumCell {
+		width: 100%;
+	}
+
+	.sapUiBlockScrollingRow {
+		.sapUiBlockScrollableCell:first-child .sapUiBlockCellContent {
+			padding-left: 2rem;
+		}
+
+		.sapUiBlockScrollableCell:last-child .sapUiBlockCellContent {
+			padding-right: 2rem;
+		}
+
+		.sapUiBlockScrollableCell {
+			min-width: 90%;
+		}
+	}
+}

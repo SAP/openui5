@@ -1,0 +1,280 @@
+/* ======================================= */
+/* CSS for control sap.ui.layout/Splitter  */
+/* Base theme                              */
+/* ======================================= */
+
+/**
+ * The main Splitter element can have the following classes in addition to its main class
+ * "sapUiLoSplitter":
+ *   sapUiLoSplitterH        - It's a horizontal splitter
+ *   sapUiLoSplitterV        - It's a vertical splitter
+ * The splitter bars "sapUiLoSplitterBar" and "sapUiLoSplitterOverlayBar" can have the following
+ * additional classes:
+ *   sapUiLoSplitterNoResize
+ *
+**/
+
+@_sap_ui_layout_Splitter_BarActiveDecorationColors: @sapUiHighlight, @sapUiHighlight;
+@_sap_ui_layout_Splitter_BarDecorationColors: @sapUiHighlight, fade(@sapUiHighlight, 0);
+@_sap_ui_layout_Splitter_BarBorder: 0.0625rem solid @sapUiGroupContentBorderColor;
+@_sap_ui_layout_Splitter_BarHoverIconBorderColor: @sapUiButtonLiteBorderColor;
+@_sap_ui_layout_Splitter_BarHoverIconBackground: @sapUiButtonLiteBackground;
+@_sap_ui_layout_Splitter_GripButtonColor: @sapUiContentIconColor;
+
+/********************************************* General ********************************************/
+
+.sapUiLoSplitter {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	display: block;
+	box-sizing: border-box;
+
+	.sapUiLoSplitterContent {
+		overflow: auto;
+	}
+}
+
+.sapUiLoSplitter > .sapUiLoSplitterBar,
+.sapUiLoSplitterOverlay > .sapUiLoSplitterOverlayBar {
+	color: @_sap_ui_layout_Splitter_GripButtonColor;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	user-select: none;
+	background-color: @sapUiShellBackground;
+	box-sizing: border-box;
+}
+
+.sapUiLoSplitter.sapUiLoSplitterH > .sapUiLoSplitterBar.sapUiLoSplitterNoResize,
+.sapUiLoSplitter.sapUiLoSplitterV > .sapUiLoSplitterBar.sapUiLoSplitterNoResize {
+	cursor: default;
+	visibility: hidden;
+}
+
+.sapUiLoSplitter > .sapUiLoSplitterBar.sapUiLoSplitterNoResize > *,
+.sapUiLoSplitterOverlay > .sapUiLoSplitterOverlayBar.sapUiLoSplitterNoResize > * {
+	display: none;
+}
+
+.sapUiLoSplitterOverlay {
+	display: none;
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+}
+
+.sapUiLoSplitterOverlay > .sapUiLoSplitterOverlayBar {
+	position: absolute;
+}
+
+/******************************************* Horizontal *******************************************/
+
+.sapUiLoSplitterH.sapUiLoSplitter {
+	white-space: nowrap;
+
+	> .sapUiLoSplitterContent {
+		white-space: normal;
+		display: inline-block;
+		vertical-align: top;
+		height: 100%;
+	}
+}
+
+/* Animated resizing is deprecated since version 1.21 */
+.sapUiLoSplitterAnimated.sapUiLoSplitterH > .sapUiLoSplitterContent {
+	transition: width 200ms ease 0ms;
+}
+
+.sapUiLoSplitter.sapUiLoSplitterH > .sapUiLoSplitterBar,
+.sapUiLoSplitter.sapUiLoSplitterH > .sapUiLoSplitterOverlay .sapUiLoSplitterOverlayBar {
+	cursor: col-resize;
+	width: 1rem;
+	height: 100%;
+	display: inline-flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	border-left: @_sap_ui_layout_Splitter_BarBorder;
+	border-right: @_sap_ui_layout_Splitter_BarBorder;
+	vertical-align: top;
+
+	.sapUiLoSplitterBarDecorationBefore {
+		width: 1rem;
+		height: 4rem;
+		background-image: linear-gradient(to top, @_sap_ui_layout_Splitter_BarDecorationColors);
+		background-size: 0.0625rem 100%;
+		background-repeat: no-repeat;
+		background-position: center;
+	}
+
+	.sapUiLoSplitterBarDecorationAfter {
+		width: 1rem;
+		height: 4rem;
+		height: 4rem;
+		background-image: linear-gradient(to bottom, @_sap_ui_layout_Splitter_BarDecorationColors);
+		background-size: 0.0625rem 100%;
+		background-repeat: no-repeat;
+		background-position: center;
+	}
+
+	.sapUiLoSplitterBarGrip {
+		cursor: col-resize;
+		width: 1.5rem;
+		height: 2rem;
+		line-height: 2rem;
+		position: relative;
+		z-index: 1;
+
+		.sapUiLoSplitterBarGripIcon {
+			cursor: col-resize;
+			line-height: 1.625rem - @sapUiButtonBorderWidth - @sapUiButtonBorderWidth; // center the icon vertically
+			box-sizing: border-box;
+			height: 1.625rem;
+			width: 1.5rem;
+			margin-top: 3px;
+			border: @sapUiButtonBorderWidth solid @sapUiButtonLiteBorderColor;
+			border-radius: @sapUiButtonBorderCornerRadius;
+			background: @sapUiButtonLiteBackground;
+		}
+	}
+
+	&:hover {
+		.sapUiLoSplitterBarDecorationBefore,
+		.sapUiLoSplitterBarDecorationAfter {
+			flex-grow: 1;
+			transition: all 0.1s ease-in;
+		}
+
+		.sapUiLoSplitterBarGripIcon {
+			background: @_sap_ui_layout_Splitter_BarHoverIconBackground;
+			border-color: @_sap_ui_layout_Splitter_BarHoverIconBorderColor;
+		}
+	}
+}
+
+.sapUiLoSplitter.sapUiLoSplitterH > .sapUiLoSplitterOverlay .sapUiLoSplitterOverlayBar {
+	.sapUiLoSplitterBarDecorationBefore {
+		flex-grow: 1;
+		background-image: linear-gradient(to top, @_sap_ui_layout_Splitter_BarActiveDecorationColors);
+	}
+
+	.sapUiLoSplitterBarDecorationAfter {
+		flex-grow: 1;
+		background-image: linear-gradient(to bottom ,@_sap_ui_layout_Splitter_BarActiveDecorationColors);
+	}
+}
+
+/******************************************** Vertical ********************************************/
+
+.sapUiLoSplitterV > .sapUiLoSplitterBar,
+.sapUiLoSplitterV > .sapUiLoSplitterContent,
+.sapUiLoSplitterV > .sapUiLoSplitterOverlay > .sapUiLoSplitterOverlayBar {
+	display: block;
+	width: 100%;
+}
+
+/* Animated resizing is deprecated since version 1.21 */
+.sapUiLoSplitterAnimated.sapUiLoSplitterV > .sapUiLoSplitterContent {
+	transition: height 200ms ease 0ms;
+}
+
+.sapUiLoSplitter.sapUiLoSplitterV > .sapUiLoSplitterBar,
+.sapUiLoSplitter.sapUiLoSplitterV > .sapUiLoSplitterOverlay .sapUiLoSplitterOverlayBar {
+	cursor: row-resize;
+	height: 1rem;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	border-top: @_sap_ui_layout_Splitter_BarBorder;
+	border-bottom: @_sap_ui_layout_Splitter_BarBorder;
+
+	.sapUiLoSplitterBarDecorationBefore {
+		width: 4rem;
+		height: 1rem;
+		background-image: linear-gradient(to left, @_sap_ui_layout_Splitter_BarDecorationColors);
+		background-size: 100% 0.0625rem;
+		background-repeat: no-repeat;
+		background-position: center;
+	}
+
+	.sapUiLoSplitterBarDecorationAfter {
+		width: 4rem;
+		height: 1rem;
+		background-image: linear-gradient(to right, @_sap_ui_layout_Splitter_BarDecorationColors);
+		background-size: 100% 0.0625rem;
+		background-repeat: no-repeat;
+		background-position: center;
+	}
+
+	.sapUiLoSplitterBarGrip {
+		cursor: row-resize;
+		height: 1.5rem;
+		line-height: 1.5rem;
+		width: 2rem;
+		position: relative;
+		z-index: 1;
+
+		.sapUiLoSplitterBarGripIcon {
+			cursor: row-resize;
+			box-sizing: border-box;
+			width: 1.625rem;
+			height: 1.5rem;
+			line-height: 1.5rem - @sapUiButtonBorderWidth - @sapUiButtonBorderWidth; // center the icon vertically
+			margin-left: 3px;
+			border: @sapUiButtonBorderWidth solid @sapUiButtonLiteBorderColor;
+			border-radius: @sapUiButtonBorderCornerRadius;
+			background: @sapUiButtonLiteBackground;
+		}
+	}
+
+	&:hover {
+		.sapUiLoSplitterBarDecorationBefore,
+		.sapUiLoSplitterBarDecorationAfter {
+			flex-grow: 1;
+			transition: all 0.1s ease-in;
+		}
+
+		.sapUiLoSplitterBarGripIcon {
+			background: @_sap_ui_layout_Splitter_BarHoverIconBackground;
+			border-color: @_sap_ui_layout_Splitter_BarHoverIconBorderColor;
+		}
+	}
+}
+
+.sapUiLoSplitter.sapUiLoSplitterV > .sapUiLoSplitterOverlay .sapUiLoSplitterOverlayBar {
+	.sapUiLoSplitterBarDecorationBefore {
+		flex-grow: 1;
+		background-image: linear-gradient(to left, @_sap_ui_layout_Splitter_BarActiveDecorationColors);
+	}
+
+	.sapUiLoSplitterBarDecorationAfter {
+		flex-grow: 1;
+		background-image: linear-gradient(to right, @_sap_ui_layout_Splitter_BarActiveDecorationColors);
+	}
+}
+
+/*********************************** Focus outline**********************************/
+
+.sapUiLoSplitter > .sapUiLoSplitterBar,
+.sapUiLoSplitter > .sapUiLoSplitterOverlay .sapUiLoSplitterOverlayBar {
+	position: relative;
+
+	&:focus {
+		outline: none;
+	}
+
+	&:focus::after {
+		content: "";
+		display: block;
+		position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+	}
+}
