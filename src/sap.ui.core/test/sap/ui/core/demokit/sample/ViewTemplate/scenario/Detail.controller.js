@@ -14,7 +14,6 @@ sap.ui.define([
 			var oSelectedListItem = oEvent.getParameter("listItem");
 
 			this.getView().bindElement(oSelectedListItem.getBindingContext().getPath());
-			//TODO keep drop-down selection in sync!
 		},
 
 		// show identification details
