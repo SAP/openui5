@@ -1,0 +1,38 @@
+/* ============================================= */
+/* CSS for control sap.ui.table/AnalyticalTable  */
+/* Base theme                                    */
+/* ============================================= */
+
+// sapUiAnalyticalTableGroupCellHidden and sapUiAnalyticalTableSumCellHidden provides the possibility for applications to hide
+// the cell content of a column on group headers and / or sums by using addStyleClass of the column template
+.sapUiAnalyticalTable .sapUiTableGroupHeaderRow .sapUiTableCellInner > .sapUiAnalyticalTableGroupCellHidden,
+.sapUiAnalyticalTable .sapUiTableSummaryRow .sapUiTableCellInner > .sapUiAnalyticalTableSumCellHidden {
+	visibility: hidden; /* hidden cell content*/
+}
+
+.sapUiAnalyticalTable .sapUiTableGroupMenuButton {
+	display: none;
+}
+
+.sapUiAnalyticalTable .sapUiTableGroupHeaderRow > .sapUiTableRowSelectionCell .sapUiTableGroupMenuButton {
+	position: absolute;
+	width: 2.5rem;
+	text-align: center;
+	z-index: 5;
+	right: 0;
+	top: 50%;
+	-webkit-transform: translatey(-50%);
+	transform: translatey(-50%);
+	background-color: @_sap_ui_table_Grouping_GroupHeaderBackground;
+	font-family: 'SAP-icons';
+	font-size: 1.375rem;
+	color: @sapUiContentIconColor;
+	display: block;
+}
+
+// Shift last cell content to left. On the right edge, the touch group menu button is placed.
+html.sap-tablet:not(.sap-desktop), html.sap-phone {
+	.sapUiAnalyticalTable .sapUiTableGroupMode:not(.sapUiTableRAct):not(.sapUiTableRActS) .sapUiTableCtrlScroll .sapUiTableGroupHeaderRow .sapUiTableCellLast {
+		padding-right: 3rem; // The group menu button has a width of 2.5rem. Let the padding be slightly bigger.
+	}
+}

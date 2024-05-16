@@ -1,0 +1,95 @@
+/* ================================= */
+/* CSS for control sap.ui.table/Row  */
+/* Base theme                        */
+/* ================================= */
+
+@_sap_ui_table_Row_Color: @sapUiListTextColor;
+@_sap_ui_table_Row_ColorHovered: @_sap_ui_table_Row_Color;
+@_sap_ui_table_Row_AlternateBackground: darken(@sapUiListBackground, 2);
+@_sap_ui_table_Row_AlternateBackgroundHovered: darken(@sapUiListHoverBackground, 3);
+@_sap_ui_table_Row_AlternateBackgroundSelected: darken(@sapUiListSelectionBackgroundColor, 2);
+@_sap_ui_table_Row_AlternateBackgroundSelectedHovered: darken(@sapUiListSelectionHoverBackground, 2);
+@_sap_ui_table_Row_NavigationIndicatorColor: @sapUiListSelectionBorderColor;
+
+.sapUiTableHeaderRow {
+	background-color: @sapUiListHeaderBackground;
+}
+
+.sapUiTableContentRow {
+	position: relative;
+	background-color: @sapUiListBackground;
+
+	&.sapUiTableRowAlternate {
+		background-color: @_sap_ui_table_Row_AlternateBackground;
+
+		&.sapUiTableRowHvr {
+			background-color: @_sap_ui_table_Row_AlternateBackgroundHovered;
+		}
+
+		&.sapUiTableRowSel {
+			background-color: @_sap_ui_table_Row_AlternateBackgroundSelected;
+
+			&.sapUiTableRowHvr {
+				background-color: @_sap_ui_table_Row_AlternateBackgroundSelectedHovered;
+			}
+		}
+	}
+
+	&.sapUiTableRowSel {
+		background-color: @sapUiListSelectionBackgroundColor;
+	}
+
+	&.sapUiTableRowHvr {
+		background-color: @sapUiListHoverBackground;
+		color: @_sap_ui_table_Row_ColorHovered;
+		cursor: pointer;
+
+		[data-sap-ui] {
+			cursor: pointer;
+		}
+	}
+
+	&.sapUiTableRowSel.sapUiTableRowHvr {
+		background-color: @sapUiListSelectionHoverBackground;
+	}
+
+	.sapUiTableRowActionScr & {
+		background-color: transparent !important;
+	}
+}
+
+.sapUiTableColHdrTr,
+.sapUiTableTr {
+	color: @_sap_ui_table_Row_Color;
+	height: @_sap_ui_table_RowHeight;
+
+	.sapUiSizeCozy & {
+		height: @_sap_ui_table_RowHeightCozy;
+	}
+}
+
+.sapUiTableTr {
+	font-weight: normal;
+	box-sizing: border-box;
+
+	.sapUiSizeCondensed & {
+		height: @_sap_ui_table_RowHeightCondensed;
+	}
+
+	.sapUiTableResizing .sapUiTableCtrlCnt & {
+		pointer-events: none;
+	}
+
+	&.sapUiTableSummaryRow * {
+		font-weight: bold !important;
+	}
+}
+
+.sapUiTableRowNavigated {
+	height: 100%;
+	width: 0.1875rem;
+	position: absolute;
+	top: 0;
+	right: 0;
+	background-color: @_sap_ui_table_Row_NavigationIndicatorColor;
+}
