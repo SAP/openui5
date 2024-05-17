@@ -14,6 +14,7 @@ sap.ui.define([
 
 	return UIComponent.extend("sap.ui.core.sample.odata.v4.ConsumeV2Service.Component", {
 		metadata : {
+			interfaces : ["sap.ui.core.IAsyncContentCreation"],
 			manifest : "json"
 		}
 	});
