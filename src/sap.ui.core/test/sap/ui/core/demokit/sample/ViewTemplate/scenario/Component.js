@@ -89,8 +89,7 @@ sap.ui.define([
 
 			if (!bRealOData) {
 				this.aMockServers.push(new MockServer({rootUri : sServiceUri}));
-				this.aMockServers[0].simulate(/*TODO sServiceUri?!*/sMockServerBaseUri
-					+ "metadata.xml", {
+				this.aMockServers[0].simulate(sMockServerBaseUri + "metadata.xml", {
 					sMockdataBaseUrl : sMockServerBaseUri,
 					bGenerateMissingMockData : true
 				});
@@ -101,14 +100,12 @@ sap.ui.define([
 			this.aMockServers.push(new MockServer({
 				requests : [{
 					method : "GET",
-					//TODO have MockServer fixed and pass just the URL!
 					path : new RegExp(MockServer.prototype._escapeStringForRegExp(sAnnotationUri)),
 					response : function(oXHR) {
 						oXHR.respondFile(200, {}, sMockServerBaseUri + "annotations.xml");
 					}
 				}, {
 					method : "GET",
-					//TODO have MockServer fixed and pass just the URL!
 					path : new RegExp(MockServer.prototype._escapeStringForRegExp(sAnnotationUri2)),
 					response : function(oXHR) {
 						oXHR.respondFile(200, {}, sMockServerBaseUri + "annotations2.xml");

@@ -29,11 +29,7 @@ sap.ui.define([
 								"AnnotationPath.fragment.xml",
 								"Component.js",
 								"HeaderInfo.fragment.xml",
-								"ReferenceFacet.fragment.xml",
-								// TODO remove the line below if file list handling is fixed
-								// List of files inherited from parent component; overwrite list
-								// entries to avoid links to files that cannot be accessed
-								" ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " "
+								"ReferenceFacet.fragment.xml"
 							]
 						}
 					},
