@@ -24,7 +24,7 @@ sap.ui.define([], function() {
 	 * @type {object}
 	 * @private
 	 */
-	var defaultRootContext = window;
+	var defaultRootContext = globalThis;
 
 	/**
 	 * If the provided object path is a string, it will be split and returned as an array.
@@ -50,7 +50,7 @@ sap.ui.define([], function() {
 	 * @public
 	 * @static
 	 * @param {string|string[]} vObjectPath Path as string where each name is separated by '.'. Can also be an array of names.
-	 * @param {Object} [oRootContext=window] Root context where the path starts
+	 * @param {Object} [oRootContext=globalThis] Root context where the path starts
 	 * @returns {Object} The newly created context object, e.g. base.my.test.module
 	 * @throws {Error} Will throw an error if a value already exists within the path and the object path cannot be set.
 	 */
@@ -81,17 +81,17 @@ sap.ui.define([], function() {
 	 * If the provided path cannot be resolved completely, <code>undefined</code> is returned.
 	 *
 	 * The provided object path is used to navigate through the nested objects, starting with the root context.
-	 * If no root context is provided, the object path begins with <code>window</code>.
+	 * If no root context is provided, the object path begins with <code>globalThis</code>.
 	 *
 	 * @public
 	 * @static
 	 * @param {string|string[]} vObjectPath Path as string where each name is separated by '.'. Can also be an array of names.
-	 * @param {Object} [oRootContext=window] Root context where the path starts
+	 * @param {Object} [oRootContext=globalThis] Root context where the path starts
 	 * @returns {any|undefined} Returns the value located in the provided path, or <code>undefined</code> if the path does not exist completely.
 	 * @example
 	 * ObjectPath.get("my.test.module", root) === root.my.test.module
 	 * ObjectPath.get(["my", "test", "otherModule"], root) === root.my.test.otherModule
-	 * ObjectPath.get("globalVar") === window["globalVar"];
+	 * ObjectPath.get("globalVar") === globalThis["globalVar"];
 	 */
 	ObjectPath.get = function(vObjectPath, oRootContext) {
 		var oObject = oRootContext || defaultRootContext;
@@ -116,7 +116,7 @@ sap.ui.define([], function() {
 	 * @static
 	 * @param {string|string[]} vObjectPath vObjectPath Path as string where each name is separated by '.'. Can also be an array of names.
 	 * @param {any} vValue The value to be set in the root context's object path
-	 * @param {Object} [oRootContext=window] Root context where the path starts
+	 * @param {Object} [oRootContext=globalThis] Root context where the path starts
 	 * @throws {Error} Will throw an error if a value already exists within the object path and the path cannot be set.
 	 * @example
 	 * var root = {};

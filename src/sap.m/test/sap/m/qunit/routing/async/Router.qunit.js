@@ -188,16 +188,16 @@ sap.ui.define([
 					null,
 					{
 						first: {
-							path: "sap.ui.test.views",
+							path: "m.test.views",
 							viewName: "first"
 						},
 						second: {
-							path: "sap.ui.test.views",
+							path: "m.test.views",
 							viewName: "second",
 							viewLevel: 0
 						},
 						initial: {
-							path: "sap.ui.test.views",
+							path: "m.test.views",
 							viewName: "initial",
 							viewLevel: 1
 						}
@@ -215,7 +215,7 @@ sap.ui.define([
 			return oRouter.getTargets().display("initial").then(async function () {
 					// Act
 					oRouter.parse("anyPattern");
-					var oView = await fnGetView(oRouter, {viewName: "sap.ui.test.views.second", viewType: "XML"});
+					var oView = await fnGetView(oRouter, {viewName: "m.test.views.second", viewType: "XML"});
 
 					return oRouteMatchedSpy.returnValues[0].then(function () {
 						// Assert
@@ -238,35 +238,35 @@ sap.ui.define([
 				{
 					"route": {
 						pattern: "anyPattern",
-						path: "sap.ui.test.views",
+						path: "m.test.views",
 						target: ["third"]
 					}
 				},
 				{
 					viewType: "XML",
-					path: "sap.ui.test.views",
+					path: "m.test.views",
 					controlAggregation:"pages",
 					controlId: oNavContainer.getId()
 				},
 				null,
 				{
 					first: {
-						path: "sap.ui.test.views",
+						path: "m.test.views",
 						viewName: "first",
 						viewLevel: 1
 					},
 					second: {
-						path: "sap.ui.test.views",
+						path: "m.test.views",
 						parent: "first",
 						viewName: "second"
 					},
 					third: {
-						path: "sap.ui.test.views",
+						path: "m.test.views",
 						parent: "second",
 						viewName: "third"
 					},
 					initial: {
-						path: "sap.ui.test.views",
+						path: "m.test.views",
 						viewName: "initial",
 						viewLevel: 2
 					}
@@ -282,7 +282,7 @@ sap.ui.define([
 			helpers.createViewAndController("third"),
 			helpers.createViewAndController("initial")
 		]).then(async function() {
-			oView = await fnGetView(oRouter, { viewName: "sap.ui.test.views.third", type: "XML" });
+			oView = await fnGetView(oRouter, { viewName: "m.test.views.third", type: "XML" });
 			oRouter.getTargets().display("initial").then(function () {
 				// Act
 				oRouter.parse("anyPattern");
@@ -312,7 +312,7 @@ sap.ui.define([
 				"Master": {
 					targetControl: oSplitContainer.getId(),
 					pattern: "{id}",
-					path: "sap.ui.test.views",
+					path: "m.test.views",
 					view: "Master",
 					viewType: "XML",
 					targetAggregation: "masterPages"
@@ -325,7 +325,7 @@ sap.ui.define([
 
 			// views
 			helpers.createViewAndController("Master").then(async function () {
-				oMasterView = await fnGetView(oRouter, { viewName: "sap.ui.test.views.Master", type: "XML" });
+				oMasterView = await fnGetView(oRouter, { viewName: "m.test.views.Master", type: "XML" });
 				oMasterView.addEventDelegate({
 					onBeforeShow: function (oEvent) {
 						data = oEvent.data.id;
@@ -354,7 +354,7 @@ sap.ui.define([
 				route1: {
 					targetControl: oNavContainer.getId(),
 					pattern: "{id}",
-					path: "sap.ui.test.views",
+					path: "m.test.views",
 					view: "view1",
 					viewType: "XML",
 					targetAggregation: "pages"
@@ -366,7 +366,7 @@ sap.ui.define([
 
 		// views
 		helpers.createViewAndController("view1").then(async function () {
-			oView = await fnGetView(oRouter, { viewName: "sap.ui.test.views.view1", type: "XML" });
+			oView = await fnGetView(oRouter, { viewName: "m.test.views.view1", type: "XML" });
 			oView.addEventDelegate({
 				onBeforeShow: function(oEvent) {
 					data = oEvent.data.id;
@@ -398,7 +398,7 @@ sap.ui.define([
 			oRouter = fnCreateRouter({
 				route1: {
 					pattern: "{id}",
-					path: "sap.ui.test.views",
+					path: "m.test.views",
 					target: ["master", "detail"]
 				}
 			}, {
@@ -407,12 +407,12 @@ sap.ui.define([
 			}, null, {
 				master: {
 					controlAggregation: "masterPages",
-					path: "sap.ui.test.views",
+					path: "m.test.views",
 					viewName: "Master"
 				},
 				detail: {
 					controlAggregation: "detailPages",
-					path: "sap.ui.test.views",
+					path: "m.test.views",
 					viewName: "Detail"
 				}
 			}),
@@ -427,8 +427,8 @@ sap.ui.define([
 			helpers.createViewAndController("Master"),
 			helpers.createViewAndController("Detail")
 		]).then(async function() {
-			oMasterView = await fnGetView(oRouter, { viewName: "sap.ui.test.views.Master", type: "XML" });
-			oDetailView = await fnGetView(oRouter, { viewName: "sap.ui.test.views.Detail", type: "XML" });
+			oMasterView = await fnGetView(oRouter, { viewName: "m.test.views.Master", type: "XML" });
+			oDetailView = await fnGetView(oRouter, { viewName: "m.test.views.Detail", type: "XML" });
 			oMasterView.addEventDelegate({
 				onBeforeShow: function(oEvent) {
 					oMasterData = oEvent.data.id;
@@ -480,13 +480,13 @@ sap.ui.define([
 			this.oRouter = fnCreateRouter({
 						myMasterRoute: {
 							targetAggregation: "masterPages",
-							path: "sap.ui.test.views",
+							path: "m.test.views",
 							view: "Master",
 							subroutes: [
 								{
 									name: "detailRoute",
 									pattern: this.sPattern,
-									path: "sap.ui.test.views",
+									path: "m.test.views",
 									target: "detailTarget"
 								}
 							]
@@ -497,7 +497,7 @@ sap.ui.define([
 						viewLevel: 5,
 						transitionParameters: { some: "parameter"},
 						controlId: this.oSplitContainer.getId(),
-						path: "sap.ui.test.views",
+						path: "m.test.views",
 						targetControl: this.oSplitContainer.getId(),
 						targetAggregation: "detailPages",
 						controlAggregation: "detailPages",
@@ -506,14 +506,14 @@ sap.ui.define([
 					null,
 					{
 						detailTarget: {
-							path: "sap.ui.test.views",
+							path: "m.test.views",
 							viewName: "Detail"
 						}
 					});
 				var oRouteMatchedSpy = sinon.spy(this.oRouter.getRoute("detailRoute"), "_routeMatched");
 
-				this.oRouter.getViews().setView("sap.ui.test.views.Detail", this.oDetailView);
-				this.oRouter.getViews().setView("sap.ui.test.views.Master", this.oMasterView);
+				this.oRouter.getViews().setView("m.test.views.Detail", this.oDetailView);
+				this.oRouter.getViews().setView("m.test.views.Master", this.oMasterView);
 				this.oRouter.parse(this.sPattern);
 
 				return oRouteMatchedSpy.returnValues[0].then(function () {
@@ -573,11 +573,11 @@ sap.ui.define([
 			null,
 			{
 				first: {
-					path: "sap.ui.test.views",
+					path: "m.test.views",
 					viewName: "first"
 				},
 				second: {
-					path: "sap.ui.test.views",
+					path: "m.test.views",
 					viewName: "second",
 					viewLevel: 0
 				}

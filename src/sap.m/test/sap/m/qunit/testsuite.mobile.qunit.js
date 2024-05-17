@@ -2426,7 +2426,7 @@ sap.ui.define([
 				title: "QUnit Page for RouteMatchedHandler",
 				ui5: {
 					resourceroots: {
-						"sap.ui.test": "test-resources/sap/m/qunit/"
+						"m.test": "test-resources/sap/m/qunit/"
 					}
 				}
 			},
@@ -2434,7 +2434,7 @@ sap.ui.define([
 				title: "QUnit Page for sap.m.routing.Router",
 				ui5: {
 					resourceroots: {
-						"sap.ui.test": "test-resources/sap/m/qunit/"
+						"m.test": "test-resources/sap/m/qunit/"
 					}
 				}
 			},
@@ -2442,7 +2442,7 @@ sap.ui.define([
 				title: "QUnit Page for sap.m.routing.Targets",
 				ui5: {
 					resourceroots: {
-						"sap.ui.test": "test-resources/sap/m/qunit/"
+						"m.test": "test-resources/sap/m/qunit/"
 					}
 				}
 			},
@@ -2453,7 +2453,7 @@ sap.ui.define([
 				title: "QUnit Page for RouteMatchedHandler",
 				ui5: {
 					resourceroots: {
-						"sap.ui.test": "test-resources/sap/m/qunit/"
+						"m.test": "test-resources/sap/m/qunit/"
 					}
 				}
 			},
@@ -2461,7 +2461,7 @@ sap.ui.define([
 				title: "QUnit Page for sap.m.routing.TargetHandler",
 				ui5: {
 					resourceroots: {
-						"sap.ui.test": "test-resources/sap/m/qunit/"
+						"m.test": "test-resources/sap/m/qunit/"
 					}
 				}
 			},

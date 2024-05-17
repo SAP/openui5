@@ -7,11 +7,11 @@
  * Code other than the Core tests must not yet introduce dependencies to this module.
  */
 
-/*global sap */
 sap.ui.define([
+	"sap/base/util/isPlainObject",
 	"sap/base/util/merge",
 	"sap/ui/thirdparty/URI"
-], function(merge, URI) {
+], function(isPlainObject, merge, URI) {
 	"use strict";
 
 	// ---- helpers ----
@@ -213,7 +213,22 @@ sap.ui.define([
 				oTestDefaults = {
 					name: name
 				};
-			oTestConfig = merge({}, oSuiteDefaults, oTestDefaults, oTestConfig);
+
+			const mergeConfigObjects = (...aConfigs) => {
+				const oResult = merge({}, aConfigs.shift());
+
+				while (aConfigs.length) {
+					const oTmp = aConfigs.shift();
+					for (const sKey in oTmp) {
+						oResult[sKey] = isPlainObject(oResult[sKey]) ? mergeConfigObjects(oResult[sKey], oTmp[sKey]) : oTmp[sKey];
+					}
+				}
+
+				return oResult;
+			};
+
+			oTestConfig = mergeConfigObjects(oSuiteDefaults, oTestDefaults, oTestConfig);
+
 			if ( Array.isArray(oTestConfig.module) ) {
 				oTestConfig.module  = oTestConfig.module.map(function(sModule) {
 					return resolvePackage(resolvePlaceholders(sModule, name));

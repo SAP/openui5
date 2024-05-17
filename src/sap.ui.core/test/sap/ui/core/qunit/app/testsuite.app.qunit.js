@@ -7,7 +7,8 @@ sap.ui.define(function () {
 			ui5: {
 				resourceroots: {
 					"test": "test-resources/sap/ui/core/qunit/app/fixture/"
-				}
+				},
+				libs: ["sap.ui.core"]
 			}
 		},
 		tests: {

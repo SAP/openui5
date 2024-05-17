@@ -360,12 +360,12 @@ sap.ui.define([
 				null,
 				{
 					master: {
-						path: "sap.ui.test.views",
+						path: "m.test.views",
 						viewName: "Master",
 						controlAggregation: "masterPages"
 					},
 					detail: {
-						path: "sap.ui.test.views",
+						path: "m.test.views",
 						viewName: "Detail",
 						controlAggregation: "detailPages"
 					}
@@ -414,7 +414,7 @@ sap.ui.define([
 			var sPattern = "anything",
 			oRouter =  new Router({
 				master: {
-					path: "sap.ui.test.views",
+					path: "m.test.views",
 					view: "Master",
 					targetControl: this.oSplitContainer.getId(),
 					targetAggregation: "masterPages",
@@ -433,7 +433,7 @@ sap.ui.define([
 			null,
 			{
 				detail: {
-					path: "sap.ui.test.views",
+					path: "m.test.views",
 					viewName: "Detail",
 					controlAggregation: "detailPages",
 					controlId: this.oSplitContainer.getId()
@@ -482,7 +482,7 @@ sap.ui.define([
 			}),
 			oRouter = new Router({
 				"Master": {
-					path: "sap.ui.test.views",
+					path: "m.test.views",
 					targetControl: oSplitContainer.getId(),
 					pattern: "{id}",
 					view: "Master",
@@ -499,7 +499,7 @@ sap.ui.define([
 
 			// views
 			helpers.createViewAndController("Master").then(function (oMasterView) {
-				oRouter.getView("sap.ui.test.views.Master", "XML").addEventDelegate({
+				oRouter.getView("m.test.views.Master", "XML").addEventDelegate({
 					onBeforeShow: function (oEvent) {
 						data = oEvent.data.id;
 

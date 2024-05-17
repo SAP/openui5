@@ -29,7 +29,7 @@ sap.ui.define(function () {
 			ui5 : {
 				language : "en-US",
 				rtl : false,
-				libs : null,
+				libs : [],
 				"xx-waitForTheme" : "init"
 			},
 			coverage : {

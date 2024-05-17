@@ -15,7 +15,10 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 				instrumenter: "istanbul",
 				only: ["sap/ui/core/Theming", "sap/ui/core/theming"]
 			},
-			module: "test-resources/sap/ui/core/qunit/{name}.qunit"
+			module: "test-resources/sap/ui/core/qunit/{name}.qunit",
+			ui5: {
+				libs: ["sap.ui.core"]
+			}
 		},
 		tests: {
 			CustomThemeFallback: {

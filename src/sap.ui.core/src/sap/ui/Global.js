@@ -33,7 +33,7 @@ sap.ui.define([
 	"use strict";
 
 	// Register to the OpenAjax Hub if it exists
-	if (window.OpenAjax && window.OpenAjax.hub) {
+	if (globalThis.OpenAjax && globalThis.OpenAjax.hub) {
 		OpenAjax.hub.registerLibrary("sap", "http://www.sap.com/", "0.1", {});
 	}
 
@@ -122,7 +122,7 @@ sap.ui.define([
 
 	/**
 	 * Ensures that a given a namespace or hierarchy of nested namespaces exists in the
-	 * current <code>window</code>.
+	 * current <code>globalThis</code>.
 	 *
 	 * @param {string} sNamespace
 	 * @return {object} the innermost namespace of the hierarchy

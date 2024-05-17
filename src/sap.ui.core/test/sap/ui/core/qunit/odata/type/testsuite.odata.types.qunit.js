@@ -13,6 +13,7 @@ sap.ui.define(function () {
 				version : "edge"
 			},
 			ui5 : {
+				libs: ["sap.ui.core"],
 				language : "en-US",
 				rtl : false,
 				"xx-waitForTheme" : true

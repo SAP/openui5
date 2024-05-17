@@ -138,27 +138,27 @@ sap.ui.define([
 			oTargetConfig = {
 				first: {
 					controlId: oFirstNavContainer.getId(),
-					path: "sap.ui.test.views",
+					path: "m.test.views",
 					viewName: "FirstView",
 					viewLevel: 2
 				},
 				second: {
 					controlId: oFirstNavContainer.getId(),
-					path: "sap.ui.test.views",
+					path: "m.test.views",
 					viewName: "SecondView",
 					parent: "first",
 					viewLevel: 0
 				},
 				third: {
 					controlId: oSecondNavContainer.getId(),
-					path: "sap.ui.test.views",
+					path: "m.test.views",
 					viewName: "ThirdView",
 					parent: "second",
 					viewLevel: 2
 				},
 				fourth: {
 					controlId: oSecondNavContainer.getId(),
-					path: "sap.ui.test.views",
+					path: "m.test.views",
 					viewName: "FourthView",
 					parent: "third",
 					viewLevel: 1
@@ -209,26 +209,26 @@ sap.ui.define([
 			oTargetConfig = {
 				first: {
 					controlId: oNavContainer.getId(),
-					path: "sap.ui.test.views",
+					path: "m.test.views",
 					viewName: "FirstView",
 					viewLevel: 2
 				},
 				second: {
 					controlId: oNavContainer.getId(),
-					path: "sap.ui.test.views",
+					path: "m.test.views",
 					viewName: "SecondView",
 					parent: "first",
 					viewLevel: 1
 				},
 				third: {
 					controlId: oNavContainer.getId(),
-					path: "sap.ui.test.views",
+					path: "m.test.views",
 					viewName: "ThirdView",
 					parent: "second"
 				},
 				fourth: {
 					controlId: oNavContainer.getId(),
-					path: "sap.ui.test.views",
+					path: "m.test.views",
 					viewName: "FourthView",
 					parent: "third"
 				}
@@ -277,13 +277,13 @@ sap.ui.define([
 			oTargetConfig = {
 				first: {
 					controlId: oFirstNavContainer.getId(),
-					path: "sap.ui.test.views",
+					path: "m.test.views",
 					// the viewname here determines the order of loading, this one loads second
 					viewName: "FirstView"
 				},
 				second: {
 					controlId: oFirstNavContainer.getId(),
-					path: "sap.ui.test.views",
+					path: "m.test.views",
 					// the viewname here determines the order of loading, this one loads first
 					viewName: "SecondView"
 				}
@@ -301,8 +301,8 @@ sap.ui.define([
 
 
 		helpers.setViewDelays({
-			"sap.ui.test.views.FirstView": 100,
-			"sap.ui.test.views.SecondView": 0
+			"m.test.views.FirstView": 100,
+			"m.test.views.SecondView": 0
 		});
 		this.stub(oViews, "_getView").callsFake(helpers.createViewMock);
 

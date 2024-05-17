@@ -44,23 +44,23 @@ sap.ui.define(
 					fnSetup.call(this, {
 						"dummyMaster": {
 							targetControl: oSplitContainer.getId(),
-							view: "sap.ui.test.views.MasterDummy",
+							view: "m.test.views.MasterDummy",
 							viewType: "XML",
 							targetAggregation: "masterPages",
 							subroutes: {
 								"dummyDetail": {
 									targetAggregation: "detailPages",
-									view: "sap.ui.test.views.DetailDummy",
+									view: "m.test.views.DetailDummy",
 									viewType: "XML",
 									subroutes: {
 										"master": {
 											targetAggregation: "masterPages",
-											view: "sap.ui.test.views.Master",
+											view: "m.test.views.Master",
 											viewType: "XML",
 											subroutes: {
 												"detail": {
 													pattern: "detail",
-													view: "sap.ui.test.views.Detail",
+													view: "m.test.views.Detail",
 													viewType: "XML",
 													targetAggregation: "detailPages"
 												}
@@ -110,7 +110,7 @@ sap.ui.define(
 					fnSetup.call(this, {
 						"firstMaster": {
 							targetControl: oSplitContainer.getId(),
-							view: "sap.ui.test.views.FirstMaster",
+							view: "m.test.views.FirstMaster",
 							viewType: "XML",
 							targetAggregation: "masterPages",
 							preservePageInSplitContainer: true,
@@ -118,7 +118,7 @@ sap.ui.define(
 								"detail": {
 									pattern: "detail",
 									targetAggregation: "detailPages",
-									view: "sap.ui.test.views.Detail",
+									view: "m.test.views.Detail",
 									viewType: "XML"
 								}
 							}
@@ -126,7 +126,7 @@ sap.ui.define(
 						"secondMaster": {
 							targetControl: oSplitContainer.getId(),
 							pattern: "secondMaster",
-							view: "sap.ui.test.views.SecondMaster",
+							view: "m.test.views.SecondMaster",
 							viewType: "XML",
 							targetAggregation: "masterPages"
 						}
@@ -164,7 +164,7 @@ sap.ui.define(
 						"firstMaster": {
 							targetControl: oSplitContainer.getId(),
 							pattern: "firstMaster",
-							view: "sap.ui.test.views.FirstMaster",
+							view: "m.test.views.FirstMaster",
 							viewType: "XML",
 							targetAggregation: "masterPages",
 							preservePageInSplitContainer: true
@@ -172,7 +172,7 @@ sap.ui.define(
 						"secondMaster": {
 							targetControl: oSplitContainer.getId(),
 							pattern: "secondMaster",
-							view: "sap.ui.test.views.SecondMaster",
+							view: "m.test.views.SecondMaster",
 							viewType: "XML",
 							targetAggregation: "masterPages"
 						}
@@ -204,17 +204,17 @@ sap.ui.define(
 					fnSetup.call(this, {
 						"firstMaster": {
 							targetControl: oSplitContainer.getId(),
-							view: "sap.ui.test.views.FirstMaster",
+							view: "m.test.views.FirstMaster",
 							targetAggregation: "masterPages",
 							viewType: "XML",
 							subroutes: {
 								"secondMaster": {
-									view: "sap.ui.test.views.SecondMaster",
+									view: "m.test.views.SecondMaster",
 									targetAggregation: "masterPages",
 									viewType: "XML",
 									subroutes: {
 										"thirdMaster": {
-											view: "sap.ui.test.views.ThirdMaster",
+											view: "m.test.views.ThirdMaster",
 											targetAggregation: "masterPages",
 											preservePageInSplitContainer: true,
 											viewType: "XML",
@@ -222,7 +222,7 @@ sap.ui.define(
 												"detail": {
 													pattern: "detail",
 													targetAggregation: "detailPages",
-													view: "sap.ui.test.views.Detail",
+													view: "m.test.views.Detail",
 													viewType: "XML"
 												}
 											}
@@ -261,7 +261,7 @@ sap.ui.define(
 					fnSetup.call(this, {
 						"first": {
 							targetControl: oNavContainer.getId(),
-							path: "sap.ui.test.views",
+							path: "m.test.views",
 							pattern: "first",
 							view: "first",
 							viewType: "XML",
@@ -269,7 +269,7 @@ sap.ui.define(
 						},
 						"second": {
 							targetControl: oNavContainer.getId(),
-							path: "sap.ui.test.views",
+							path: "m.test.views",
 							pattern: "second",
 							view: "second",
 							viewType: "XML",
@@ -277,7 +277,7 @@ sap.ui.define(
 						},
 						"third": {
 							targetControl: oNavContainer.getId(),
-							path: "sap.ui.test.views",
+							path: "m.test.views",
 							pattern: "third",
 							view: "third",
 							viewType: "XML",
@@ -285,7 +285,7 @@ sap.ui.define(
 						},
 						"fourth": {
 							targetControl: oNavContainer.getId(),
-							path: "sap.ui.test.views",
+							path: "m.test.views",
 							pattern: "fourth",
 							view: "fourth",
 							viewType: "XML",
