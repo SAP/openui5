@@ -1,0 +1,102 @@
+{
+
+	"_version": "1.0.0",
+
+	"sap.app": {
+		"_version": "1.0.0",
+		"id": "sap.ui.test.v4models.sapSystem",
+		"type": "application",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"i18n": "i18n.properties",
+		"title": "{{title}}",
+		"description": "{{description}}",
+		"dataSources": {
+
+			"dataSourceODataV4": {
+				"uri": "/path/to/odata/service/with/trailing/slash/",
+				"type": "OData",
+				"settings": {
+					"annotations": ["originAnnotations", "annotations2"]
+				}
+			},
+
+			"originAnnotations" : {
+				"uri": "/path/to/odata/service/with/trailing/slash/annotations.xml",
+				"type": "ODataAnnotation"
+			},
+
+			"annotations2": {
+				"uri": "path/to/local/odata/annotations/2",
+				"type": "ODataAnnotation"
+			},
+
+
+
+			"ODataWithMultiOriginAnnotations": {
+				"uri": "/path/to/odata/service/with/multi/origin/annotations/",
+				"type": "OData",
+				"settings": {
+					"annotations": ["annotationWithOtherOrigin1", "annotationWithOtherOrigin2", "annotationWithOtherOrigin3", "annotationWithOtherOrigin4"]
+				}
+			},
+
+			"annotationWithOtherOrigin1": {
+				"uri": "/path/to/other/odata/service/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/$value",
+				"type":"ODataAnnotation"
+			},
+
+			"annotationWithOtherOrigin2": {
+				"uri": "path/to/other/odata/service/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/$value",
+				"type":"ODataAnnotation"
+			},
+
+			"annotationWithOtherOrigin3": {
+				"uri": "/path/to/other/odata/service/other2/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/",
+				"type":"ODataAnnotation"
+			},
+
+			"annotationWithOtherOrigin4": {
+				"uri": "/path/to/other3/odata/service/;o=sid(G1Y.400)/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/$value",
+				"type":"ODataAnnotation"
+			}
+		}
+	},
+
+	"sap.ui": {
+		"_version": "1.0.0",
+		"technology": "UI5"
+	},
+
+	"sap.ui5": {
+
+		"dependencies": {
+			"minUI5Version": "1.120.0",
+			"libs": {
+				"sap.ui.core": {
+					"minVersion": "1.120.0"
+				}
+			}
+		},
+
+		"models": {
+			"v4-ODataModel": {
+				"type": "sap.ui.model.odata.v4.ODataModel",
+				"settings": {
+					"serviceUrl": "/path/to/odata/service/"
+				}
+			},
+
+			"v4-ODataModel-ServiceOrigin": {
+				"type": "sap.ui.model.odata.v4.ODataModel",
+				"dataSource": "dataSourceODataV4"
+			},
+
+			"v4-ODataModel-OtherOrigins": {
+				"type": "sap.ui.model.odata.v4.ODataModel",
+				"dataSource": "ODataWithMultiOriginAnnotations"
+			}
+		}
+	}
+}
