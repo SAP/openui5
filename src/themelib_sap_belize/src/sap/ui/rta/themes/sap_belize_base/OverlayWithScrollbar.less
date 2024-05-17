@@ -1,0 +1,61 @@
+/******************************************************************
+	Style of the RTA OverlayWithScrollBar - base Theme
+*******************************************************************/
+
+.sapUiRta .sapUiDtOverlayWithScrollBar {
+	&.sapUiDtOverlaySelected {
+		&.sapUiDtOverlayWithScrollBarVertical {
+			&:after {
+				inset-inline-end: var(--sap-ui-rta-scrollbar-scrollWidth) !important;
+			}
+		}
+
+		&.sapUiDtOverlayWithScrollBarHorizontal {
+			&:after {
+				inset-block-end: var(--sap-ui-rta-scrollbar-scrollWidth) !important;
+			}
+		}
+
+		&.sapUiDtOverlayFocusable {
+			&.sapUiDtOverlayWithScrollBarVertical {
+				&:focus:before {
+					inset-inline-end: var(--sap-ui-rta-scrollbar-scrollWidthPlusTwo) !important;
+				}
+			}
+
+			&.sapUiDtOverlayWithScrollBarHorizontal {
+				&:focus:before {
+					inset-block-end: var(--sap-ui-rta-scrollbar-scrollWidthPlusTwo) !important;
+				}
+			}
+		}
+	}
+
+	&.sapUiDtOverlayFocusable {
+		&.sapUiDtOverlayWithScrollBarHorizontal {
+			&:focus:before {
+				inset-block-end: var(--sap-ui-rta-scrollbar-scrollWidth) !important;
+			}
+		}
+
+		&.sapUiDtOverlayWithScrollBarVertical {
+			&:focus:before {
+				inset-inline-end: var(--sap-ui-rta-scrollbar-scrollWidth) !important;
+			}
+		}
+	}
+
+	&.sapUiRtaOverlayHover {
+		&.sapUiDtOverlayWithScrollBarHorizontal {
+			&:after {
+				inset-block-end: var(--sap-ui-rta-scrollbar-scrollWidth) !important;
+			}
+		}
+
+		&.sapUiDtOverlayWithScrollBarVertical {
+			&:after {
+				inset-inline-end: var(--sap-ui-rta-scrollbar-scrollWidth) !important;
+			}
+		}
+	}
+}
