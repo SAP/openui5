@@ -1,0 +1,76 @@
+{
+	"_version": "1.15.0",
+	"sap.app": {
+		"id": "sap.f.cardsDemo.pagination.timeline.serverSide",
+		"type": "card",
+		"title": "Cards with Client-Side Pagination",
+		"subTitle": "",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Action",
+				"Host",
+				"Card",
+				"Sample"
+			]
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://action"
+		}
+	},
+	"sap.card": {
+		"type": "Timeline",
+		"data": {
+			"request": {
+				"url": "https://services.odata.org/V4/Northwind/Northwind.svc/Orders",
+				"parameters": {
+					"$count": true,
+					"$skip": "{paginator>/skip}",
+					"$top": 5
+				}
+			},
+			"path": "/value"
+		},
+		"header": {
+			"title": "Server-Side Pagination",
+			"status": {
+				"text": {
+					"format": {
+						"translationKey": "i18n>CARD.COUNT_X_OF_Y",
+						"parts": [
+							"parameters>/visibleItems",
+							"/@odata.count"
+						]
+					}
+				}
+			}
+		},
+		"content": {
+			"item": {
+				"dateTime": {
+					"value": "{OrderDate}"
+				},
+				"description": {
+					"value": "{ShipAddress}"
+				},
+				"title": {
+					"value": "{ShipName}"
+				}
+			}
+		},
+		"footer": {
+			"paginator": {
+				"totalCount": "{/@odata.count}",
+				"pageSize": 5
+			}
+		}
+	}
+}

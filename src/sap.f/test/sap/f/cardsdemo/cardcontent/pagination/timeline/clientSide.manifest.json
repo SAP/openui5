@@ -1,0 +1,151 @@
+{
+	"_version": "1.15.0",
+	"sap.app": {
+		"id": "sap.f.cardsDemo.pagination.timeline.clientSide",
+		"type": "card",
+		"title": "Cards with Client-Side Pagination",
+		"subTitle": "",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Action",
+				"Host",
+				"Card",
+				"Sample"
+			]
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://action"
+		}
+	},
+	"sap.card": {
+		"type": "Timeline",
+		"data": {
+			"json": [
+				{
+					"Title": "1 Weekly sync: Marketplace / Design Stream",
+					"Description": "MRR WDF18 C3.2(GLASSBOX)",
+					"Icon": "sap-icon://appointment-2",
+					"Time": "2021-10-25T16:00:00.000Z"
+				},
+				{
+					"Title": "2 Video Conference for FLP@SF, S4,Hybris",
+					"Icon": "sap-icon://my-view",
+					"Time": "2021-10-25T16:00:00.000Z"
+				},
+				{
+					"Title": "3 Call 'Project Nimbus'",
+					"Icon": "sap-icon://outgoing-call",
+					"Time": "2021-10-25T16:00:00.000Z"
+				},
+				{
+					"Title": "4 Call 'Project Nimbus'",
+					"Icon": "sap-icon://outgoing-call",
+					"Time": "2021-10-25T16:00:00.000Z"
+				},
+				{
+					"Title": "5 Call 'Project Nimbus'",
+					"Icon": "sap-icon://outgoing-call",
+					"Time": "2021-10-25T16:00:00.000Z"
+				},
+				{
+					"Title": "6 Call 'Project Nimbus'",
+					"Icon": "sap-icon://outgoing-call",
+					"Time": "2021-10-25T16:00:00.000Z"
+				},
+				{
+					"Title": "7 Call 'Project Nimbus'",
+					"Icon": "sap-icon://outgoing-call",
+					"Time": "2021-10-25T16:00:00.000Z"
+				},
+				{
+					"Title": "8 Call 'Project Nimbus'",
+					"Icon": "sap-icon://outgoing-call",
+					"Time": "2021-10-25T16:00:00.000Z"
+				},
+				{
+					"Title": "9 Call 'Project Nimbus'",
+					"Icon": "sap-icon://outgoing-call",
+					"Time": "2021-10-25T16:00:00.000Z"
+				},
+				{
+					"Title": "10 Call 'Project Nimbus'",
+					"Icon": "sap-icon://outgoing-call",
+					"Time": "2021-10-25T16:00:00.000Z"
+				},
+				{
+					"Title": "11 Call 'Project Nimbus'",
+					"Icon": "sap-icon://outgoing-call",
+					"Time": "2021-10-25T16:00:00.000Z"
+				},
+				{
+					"Title": "12 Call 'Project Nimbus'",
+					"Icon": "sap-icon://outgoing-call",
+					"Time": "2021-10-25T16:00:00.000Z"
+				},
+				{
+					"Title": "13 Call 'Project Nimbus'",
+					"Icon": "sap-icon://outgoing-call",
+					"Time": "2021-10-25T16:00:00.000Z"
+				},
+				{
+					"Title": "14 Call 'Project Nimbus'",
+					"Icon": "sap-icon://outgoing-call",
+					"Time": "2021-10-25T16:00:00.000Z"
+				},
+				{
+					"Title": "15 Call 'Project Nimbus'",
+					"Icon": "sap-icon://outgoing-call",
+					"Time": "2021-10-25T16:00:00.000Z"
+				},
+				{
+					"Title": "16 Call 'Project Nimbus'",
+					"Icon": "sap-icon://outgoing-call",
+					"Time": "2021-10-25T16:00:00.000Z"
+				},
+				{
+					"Title": "17 Call 'Project Nimbus'",
+					"Icon": "sap-icon://outgoing-call",
+					"Time": "2021-10-25T16:00:00.000Z"
+				},
+				{
+					"Title": "18 Call 'Project Nimbus'",
+					"Icon": "sap-icon://outgoing-call",
+					"Time": "2021-10-25T16:00:00.000Z"
+				}
+			]
+		},
+		"header": {
+			"title": "Client-Side Pagination"
+		},
+		"content": {
+			"item": {
+				"dateTime": {
+					"value": "{Time}"
+				},
+				"description": {
+					"value": "{Description}"
+				},
+				"title": {
+					"value": "{Title}"
+				},
+				"icon": {
+					"src": "{Icon}"
+				}
+			}
+		},
+		"footer": {
+			"paginator": {
+				"pageSize": 4
+			}
+		}
+	}
+}

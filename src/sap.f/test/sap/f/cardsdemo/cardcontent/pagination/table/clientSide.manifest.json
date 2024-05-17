@@ -1,0 +1,97 @@
+{
+	"_version": "1.15.0",
+	"sap.app": {
+		"id": "sap.f.cardsDemo.pagination.table.clientSide",
+		"type": "card",
+		"title": "Cards with Client-Side Pagination",
+		"subTitle": "",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Action",
+				"Host",
+				"Card",
+				"Sample"
+			]
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://action"
+		}
+	},
+	"sap.card": {
+		"type": "Table",
+		"data": {
+			"json": [
+				{
+					"Name": "Name 1"
+				},
+				{
+					"Name": "Name 2"
+				},
+				{
+					"Name": "Name 3"
+				},
+				{
+					"Name": "Name 4"
+				},
+				{
+					"Name": "Name 5"
+				},
+				{
+					"Name": "Name 6"
+				},
+				{
+					"Name": "Name 7"
+				},
+				{
+					"Name": "Name 8"
+				},
+				{
+					"Name": "Name 9"
+				},
+				{
+					"Name": "Name 10"
+				},
+				{
+					"Name": "Name 11"
+				},
+				{
+					"Name": "Name 12"
+				},
+				{
+					"Name": "Name 13"
+				}
+			]
+		},
+		"header": {
+			"title": "Client-Side Pagination"
+		},
+		"content": {
+			"row": {
+				"columns": [
+					{
+						"title": "Name",
+						"value": "{Name}"
+					},
+					{
+						"title": "Name 2",
+						"value": "{Name}"
+					}
+				]
+			}
+		},
+		"footer": {
+			"paginator": {
+				"pageSize": 4
+			}
+		}
+	}
+}
