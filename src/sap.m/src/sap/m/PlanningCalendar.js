@@ -1536,6 +1536,33 @@ sap.ui.define([
 	};
 
 	/**
+	 * Gets current value of property <code>startDate</code>.
+	 *
+	 * @method
+	 * @public
+	 * @name sap.m.PlanningCalendar#getStartDate
+	 * @returns {Date|module:sap/ui/core/date/UI5Date} The startDate as a UI5Date or JavaScript Date object
+	 */
+
+	/**
+	 * Gets current value of property <code>minDate</code>.
+	 *
+	 * @method
+	 * @public
+	 * @name sap.m.PlanningCalendar#getMinDate
+	 * @returns {Date|module:sap/ui/core/date/UI5Date} The minDate as a UI5Date or JavaScript Date object
+	 */
+
+	/**
+	 * Gets current value of property <code>maxDate</code>.
+	 *
+	 * @method
+	 * @public
+	 * @name sap.m.PlanningCalendar#getMaxDate
+	 * @returns {Date|module:sap/ui/core/date/UI5Date} The maxDate as a UI5Date or JavaScript Date object
+	 */
+
+	/**
 	 * Sets the given date as start date. The current date is used as default.
 	 * Depending on the current view the start date may be adjusted (for example, the week view shows always the first weekday
 	 * of the same week as the given date).
