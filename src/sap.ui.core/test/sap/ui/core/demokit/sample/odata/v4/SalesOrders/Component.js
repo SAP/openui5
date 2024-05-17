@@ -24,6 +24,7 @@ sap.ui.define([
 
 	return UIComponent.extend("sap.ui.core.sample.odata.v4.SalesOrders.Component", {
 		metadata : {
+			interfaces : ["sap.ui.core.IAsyncContentCreation"],
 			manifest : "json"
 		},
 
@@ -112,8 +113,6 @@ sap.ui.define([
 				});
 			}.bind(this));
 			return oLayout;
-			// TODO: enhance sample application after features are supported
-			// - Error Handling; not yet implemented in model
 		}
 	});
 });
