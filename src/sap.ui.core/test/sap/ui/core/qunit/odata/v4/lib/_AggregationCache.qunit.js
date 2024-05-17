@@ -4613,9 +4613,10 @@ sap.ui.define([
 			.returns(SyncPromise.resolve({foo : "n/a", $bar : "n/a", baz : "n/a"}));
 		this.mock(oGroupLock).expects("getUnlockedCopy").withExactArgs().returns("~groupLockCopy~");
 		oRequestorMock.expects("request")
-			.withExactArgs("POST", "non/canonical/changeNextSibling", "~groupLockCopy~",
-				{Prefer : "return=minimal"},
-				{NextSibling : sSiblingPath ? {foo : "A", baz : "C"} : null})
+			.withExactArgs("POST", "non/canonical/changeNextSibling", "~groupLockCopy~", {
+					"If-Match" : "~oChildNode~",
+					Prefer : "return=minimal"
+				}, {NextSibling : sSiblingPath ? {foo : "A", baz : "C"} : null})
 			.returns("B");
 		this.mock(oCache).expects("requestRank")
 			.withExactArgs("~oChildNode~", sinon.match.same(oGroupLock), true)
