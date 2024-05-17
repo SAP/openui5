@@ -26,7 +26,7 @@ sap.ui.define([
 	 * <h3>Initial Rendering</h3>
 	 *
 	 * The XMLView parses its XML representation into a sequence of strings and controls, where the strings
-	 * represent any static HTML/SVG. The individual strings in the sequence are not wellformed HTML/SVG but usually
+	 * represent any static HTML/SVG. The individual strings in the sequence are not well-formed HTML/SVG but usually
 	 * only represent a prefix or postfix of a bigger DOM tree.
 	 *
 	 * During string based rendering, the sequence is rendered into the RenderManager's buffer step by step.
@@ -35,6 +35,9 @@ sap.ui.define([
 	 * the <code>data-sap-ui-preserve</code> attribute.
 	 *
 	 * The resulting string is converted to a tree of DOM elements as usual and injected into the desired location.
+	 *
+	 * <b>Note:</b> The support of using HTML and SVG tags in XML Views is deprecated since version 1.120. There
+	 * will be no preserved content anymore without HTML and SVG tags.
 	 *
 	 * <h3>Re-rendering</h3>
 	 * Before the DOM of any UI5 control is removed from the page, it will be scanned for 'to-be-preserved' subtrees.
@@ -68,6 +71,12 @@ sap.ui.define([
 	 * @param {sap.ui.core.mvc.XMLView} oControl an object representation of the control that should be rendered
 	 */
 	XMLViewRenderer.render = function(rm, oControl) {
+		/**
+		 * Create the root open tag.
+		 *
+		 * @param {boolean} bPreserve Whether the DOM should be preserved
+		 * @ui5-transform-hint replace-param bPreserve false
+		 */
 		function writeRootOpenTag(bPreserve) {
 			rm.openStart("div", oControl);
 			rm.class("sapUiView");
@@ -98,26 +107,50 @@ sap.ui.define([
 
 			writeRootCloseTag();
 		} else {
-			var $oldContent = oControl._$oldContent = RenderManager.findPreservedContent(oControl.getId());
-			if ($oldContent.length === 0) {
+			/**
+			 * Because HTML and SVG support is deprecated, this line of code can also be deprecated
+			 * @deprecated since 1.120
+			 */
+			oControl._$oldContent = RenderManager.findPreservedContent(oControl.getId());
+			/**
+			 * @ui5-transform-hint replace-local true
+			 */
+			const bNoPreserveContent = (oControl._$oldContent.length === 0);
+			if (bNoPreserveContent) {
 				// Log.debug("rendering " + oControl + " anew");
 				var bSubView = oControl.isSubView();
 				if (!bSubView) {
-					// do not preserve when rendering initially in async mode
-					writeRootOpenTag(!oControl.oAsyncState || !oControl.oAsyncState.suppressPreserve /* bPreserve */);
+					/**
+					 * @ui5-transform-hint replace-local false
+					 */
+					const bUsePreserveParam = true;
+					if (bUsePreserveParam) {
+						// do not preserve when rendering initially in async mode
+						writeRootOpenTag(!oControl.oAsyncState || !oControl.oAsyncState.suppressPreserve /* bPreserve */);
+					} else {
+						writeRootOpenTag();
+					}
 				}
 				if (aParsedContent) {
 					for (i = 0; i < aParsedContent.length; i++) {
 						var vRmInfo = aParsedContent[i];
+						/**
+						 * @ui5-transform-hint replace-local false
+						 */
+						const bRenderManagerAPICall = Array.isArray(vRmInfo);
 						// apply RenderManagerAPI calls which might have been recorded during XML processing for all encountered HTML elements in an XMLView
-						if (Array.isArray(vRmInfo)) {
+						if (bRenderManagerAPICall) {
 							rm[vRmInfo[0]].apply(rm, vRmInfo[1]);
 						} else if (!vRmInfo._isExtensionPoint) {
 							// XMLView ExtensionPoint placeholder
 							// we need to ignore these placeholders during rendering, they will be resolved asynchronously later by the flexibility provider
 							// plain UI5 Control
 							rm.renderControl(vRmInfo);
-							// when the child control did not render anything, we add a placeholder to know where to render the child later
+							/**
+							 * @deprecated because it's not needed anymore after the HTML and SVG support is deprecated
+							 *
+							 * when the child control did not render anything, we add a placeholder to know where to render the child later
+							 */
 							if ( !vRmInfo.bOutput ) {
 								rm.openStart("div", PREFIX_DUMMY + vRmInfo.getId());
 								rm.class("sapUiHidden");
