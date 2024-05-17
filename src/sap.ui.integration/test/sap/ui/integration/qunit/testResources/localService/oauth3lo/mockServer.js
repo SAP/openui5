@@ -98,7 +98,8 @@ sap.ui.define([
 				},
 				"buttonText": "Authorize and Connect",
 				"title": "Authorization Required",
-				"description": "This application requires access to data from a third-party provider."
+				"description": "This application requires access to data from a third-party provider.",
+				"imageSrc": "test.svg"
 			};
 
 			return {

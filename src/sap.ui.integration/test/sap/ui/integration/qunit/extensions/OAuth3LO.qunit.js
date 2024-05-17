@@ -98,6 +98,7 @@ function (
 
 		assert.strictEqual(oMessage.title, "Authorization Required");
 		assert.strictEqual(oMessage.description, "This application requires access to data from a third-party provider.");
+		assert.strictEqual(oMessage.imageSrc, oCard.getBaseUrl() + "/test.svg");
 		assert.strictEqual(oMessage.additionalContent.length, 1, "There is one item in additional content.");
 
 		const oButton = oMessage.additionalContent[0];

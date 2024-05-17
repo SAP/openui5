@@ -1625,7 +1625,8 @@ sap.ui.define([
 				illustrationType: oContent.getIllustrationType(),
 				illustrationSize: oContent.getIllustrationSize(),
 				title: oContent.getTitle(),
-				description: oContent.getDescription()
+				description: oContent.getDescription(),
+				imageSrc: oContent.getImageSrc()
 			};
 		}
 

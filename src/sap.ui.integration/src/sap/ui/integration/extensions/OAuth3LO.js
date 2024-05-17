@@ -96,6 +96,7 @@ sap.ui.define([
 		return {
 			type: CardBlockingMessageType.Information,
 			illustrationType: IllustratedMessageType.Connection,
+			imageSrc: oHeader.imageSrc,
 			title: oHeader.title || oCard.getTranslatedText("CARD_OAUTH3LO_FALLBACK_TITLE"),
 			description: oHeader.description || oCard.getTranslatedText("CARD_OAUTH3LO_FALLBACK_DESCRIPTION", [oUrl.origin]),
 			additionalContent: [
