@@ -58,6 +58,21 @@
 			enableVerticalResponsiveness="{/sSelectedEVS}">
 			<additionalContent>
 				<Button text="Action (optional)" />
+				<MenuButton text="File">
+					<menu>
+						<Menu>
+							<MenuItem text="Edit" icon="sap-icon://edit" press="onPress">
+								<customData>
+									<core:CustomData
+										key="target"
+										value="p1" />
+								</customData>
+							</MenuItem>
+							<MenuItem text="Save" icon="sap-icon://save" press="onPress" />
+							<MenuItem text="Open" icon="sap-icon://open-folder" press="onPress" />
+						</Menu>
+					</menu>
+				</MenuButton>
 			</additionalContent>
 		</IllustratedMessage>
 	</Page>
