@@ -1,0 +1,135 @@
+/* =========================================== */
+/* CSS for control sap.uxap/ObjectPageSection  */
+/* Base theme                                  */
+/* =========================================== */
+
+.sapUxAPObjectPageSection {
+	margin-left: 0;
+	margin-bottom: 0;
+	position: relative;
+}
+
+.sapUxAPObjectPageSectionTitleUppercase {
+	text-transform: uppercase;
+}
+
+.sapUxAPObjectPageSectionHeader {
+	box-sizing: border-box;
+	height: 3rem;
+	line-height: 3rem;
+	padding: 0 3rem 0 3rem;
+}
+
+.sapUxAPObjectPageSectionHeading {
+	padding: 0.5rem 3rem;
+}
+
+/* header height is involved in calculation of the scroll position
+so we reset it when the section header is hidden */
+.sapUxAPObjectPageSectionHeaderHidden {
+	overflow: hidden;
+	height: 0 !important;
+	padding: 0 !important;
+	border: none !important;
+}
+
+.sapUxAPObjectPageLayout-Std-Tablet .sapUxAPObjectPageSectionHeader,
+html .sapUiContainer-Medium .sapUxAPObjectPageSectionHeader {
+	padding: 0 0 0.5rem 2rem;
+}
+
+.sapUxAPObjectPageLayout-Std-Tablet .sapUxAPObjectPageSectionHeading {
+	padding: 0.5rem 0 0.5rem 2rem;
+}
+
+.sapUxAPObjectPageLayout-Std-Phone .sapUxAPObjectPageSectionHeader,
+html .sapUiContainer-Narrow .sapUxAPObjectPageSectionHeader {
+	padding: 0 0 0.5rem 1rem;
+}
+
+.sapUxAPObjectPageLayout-Std-Phone .sapUxAPObjectPageSectionHeading {
+	padding: 0.5rem 0 0.5rem 1rem;
+}
+
+.sapUxAPObjectPageSectionTitle {
+	box-sizing: border-box;
+	display: inline-block;
+	height: 3rem;
+	max-width: 100%;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.sapUxAPSectionShowHideButton {
+	float: right;
+}
+
+.sapUxAPSectionShowHideButton:not(:last-child) {
+	float: right;
+	margin-left: 0.5rem;
+}
+
+.sapUxAPObjectPageSection .sapUxAPObjectPageSectionContainer > .sapUiRespGrid,
+.sapUxAPObjectPageSection .sapUxAPObjectPageSectionContainer > .sapUiRespGrid > .sapUiRespGridSpanXL12.sapUiRespGridSpanL12.sapUiRespGridSpanM12.sapUiRespGridSpanS12  {
+	padding: 0;
+	margin: 0;
+	width: 100%;
+}
+
+.sapUiSizeCompact .sapUxAPSectionShowHideButton {
+	margin-top: 0.5rem;
+}
+
+.sapUiSizeCompact .sapUxAPObjectPageSectionTitle {
+	height: 2.5rem;
+	line-height: 2rem;
+	padding-bottom:0.5rem;
+}
+
+.sapUiSizeCompact .sapUxAPObjectPageSectionHeader {
+	height: 2.5rem;
+	line-height: 2rem;
+}
+
+html[data-sap-ui-browser^="ed"].sap-desktop .sapUxAPObjectPageSection:focus {
+	outline-style: dashed;
+}
+
+/* IE ignores outline-offset. Use an overlay: */
+/* TODO remove after the end of support for Internet Explorer */
+html[data-sap-ui-browser^="ie"].sap-desktop {
+	.sapUxAPObjectPageSection:focus {
+		outline: none;
+		position: relative;
+	}
+	.sapUxAPObjectPageSection:focus:before {
+		content: " ";
+		box-sizing: border-box;
+		width: 100%;
+		height: 100%;
+		position: absolute;
+		left: 0;
+		top: 0;
+		border: 0.0625rem dashed @sapUiContentFocusColor;
+		pointer-events: none;
+	}
+}
+
+// Styles needed for wrapTitle property
+.sapUxAPObjectPageSection.sapUxAPObjectPageSectionWrapTitle
+.sapUxAPObjectPageSectionHeader
+.sapUxAPObjectPageSectionTitle  {
+	height: auto;
+	word-break: break-word;
+	white-space: break-spaces;
+	overflow: auto;
+	line-height: inherit;
+	border-bottom: none;
+	vertical-align: bottom;
+}
+
+.sapUxAPObjectPageSection.sapUxAPObjectPageSectionWrapTitle
+.sapUxAPObjectPageSectionHeader {
+	height: auto;
+}
