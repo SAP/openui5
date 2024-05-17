@@ -1,0 +1,62 @@
+/* ============================================== */
+/* CSS for control sap.ui.layout/BlockLayoutCell  */
+/* Base theme                                     */
+/* ============================================== */
+
+@_sap_ui_layout_BlockLayoutCell_background: transparent;
+
+.sapUiBlockLayoutCell {
+	display: flex;
+	overflow: hidden;
+}
+
+.sapUiBlockCellCenteredContent > .sapUiBlockCellTitle {
+	align-self: center;
+	text-align: center;
+	width: 100%;
+}
+
+.sapUiBlockCellLeft,
+.sapUiBlockCellBegin {
+	text-align: left;
+}
+
+.sapUiBlockCellRight,
+.sapUiBlockCellEnd {
+	text-align: right;
+}
+
+[dir=rtl] .sapUiBlockCellEnd {
+	text-align: left;
+}
+
+[dir=rtl] .sapUiBlockCellBegin {
+	text-align: right;
+}
+
+.sapUiBlockCellContent {
+	width: 100%;
+	padding: 1rem;
+	overflow: hidden;
+	box-sizing: border-box;
+	background-color: @_sap_ui_layout_BlockLayoutCell_background;
+}
+
+.sapUiBlockCellTitle {
+    font-weight: normal;
+	font-size: @sapUiFontHeader2Size;
+	margin-top: 0;
+	margin-bottom: 1rem;
+}
+
+.sapUiBlockCellTitleNoContent {
+	margin-bottom: 0;
+}
+
+/* mixin call for creating container content padding classes (arguments: rootContainer, contentSelector) */
+.sapUiContainerContentPadding(~".sapUiBlockLayoutCell", ~"> .sapUiBlockCellContent");
+
+/* override for standard padding: 2rem for BlockLayoutCell */
+.sapUiBlockLayoutCell.sapUiContentPadding > .sapUiBlockCellContent {
+	padding: 2rem;
+}

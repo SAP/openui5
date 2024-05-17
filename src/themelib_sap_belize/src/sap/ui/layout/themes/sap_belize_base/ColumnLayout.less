@@ -1,0 +1,289 @@
+/* ================================================ */
+/* CSS for control sap.ui.layout/form/ColumnLayout  */
+/* Base theme                                       */
+/* ================================================ */
+
+@_sap_ui_layout_ColumnLayout_formColumnMaxXL: 6;
+@_sap_ui_layout_ColumnLayout_formColumnMaxL: 4;
+@_sap_ui_layout_ColumnLayout_formColumnMaxM: 3;
+@_sap_ui_layout_ColumnLayout_formColumnMaxS: 1;
+@_sap_ui_layout_ColumnLayout_formColumnElementCols: 12;
+@_sap_ui_layout_ColumnLayout_formColumnElementOneCol: 100% / @_sap_ui_layout_ColumnLayout_formColumnElementCols;
+
+.sapUiFormCL{
+	white-space: initial; /* eg, if in Splitter where whit-space is set to nowrap */
+}
+
+/* Title */
+.sapUiFormCL > .sapUiFormTitle{
+	box-sizing: border-box;
+	padding: 0 1rem;
+}
+
+.sapUiFormCLContainer > .sapUiFormTitle{
+	padding: 0 0.25rem;
+}
+
+.sapUiFormCL > .sapUiFormTitle > img,
+.sapUiFormCLContainer > .sapUiFormTitle > img,
+.sapUiFormCL > .sapUiFormTitle > span,
+.sapUiFormCLContainer > .sapUiFormTitle > span{
+	margin-right: 0.5rem;
+}
+
+/* Toolbar */
+.sapUiFormCL.sapUiFormToolbar > div:first-child {
+	height: 3rem; /* to have always 3rem on Form header */
+	line-height: 3rem;
+	padding: 0 0.75rem;
+}
+
+/* Containers */
+.sapUiFormCLContainer{
+	min-height: 1px;
+	overflow: hidden;
+	padding: 1rem 0.75rem;
+	box-sizing: border-box;
+}
+
+/* on real phones use smaller space between containers */
+html.sap-phone .sapUiFormCL > .sapUiFormCLContent > .sapUiFormCLContainer:not(:first-child){
+	padding-top: 0.5rem;
+}
+
+html.sap-phone .sapUiFormCL > .sapUiFormCLContent > .sapUiFormCLContainer:not(:last-child){
+	padding-bottom: 0.5rem;
+}
+
+/* In Cozy mode put first FormContainers with title or toolbar 0.5rem on top  otherwise 1rem*/
+.sapUiFormCL > .sapUiFormContainerTitle,
+.sapUiFormCL > .sapUiFormContainerToolbar,
+.sapUiFormCLMedia-Std-Phone > .sapUiFormCLContent > .sapUiFormCLContainerSFirstRow.sapUiFormContainerTitle,
+.sapUiFormCLMedia-Std-Phone > .sapUiFormCLContent > .sapUiFormCLContainerSFirstRow.sapUiFormContainerToolbar,
+.sapUiFormCLMedia-Std-Tablet > .sapUiFormCLContent > .sapUiFormCLContainerMFirstRow.sapUiFormContainerTitle,
+.sapUiFormCLMedia-Std-Tablet > .sapUiFormCLContent > .sapUiFormCLContainerMFirstRow.sapUiFormContainerToolbar,
+.sapUiFormCLMedia-Std-Desktop > .sapUiFormCLContent > .sapUiFormCLContainerLFirstRow.sapUiFormContainerTitle,
+.sapUiFormCLMedia-Std-Desktop > .sapUiFormCLContent > .sapUiFormCLContainerLFirstRow.sapUiFormContainerToolbar,
+.sapUiFormCLMedia-Std-LargeDesktop > .sapUiFormCLContent > .sapUiFormCLContainerXLFirstRow.sapUiFormContainerTitle,
+.sapUiFormCLMedia-Std-LargeDesktop > .sapUiFormCLContent > .sapUiFormCLContainerXLFirstRow.sapUiFormContainerToolbar{
+	padding-top: 0.5rem;
+}
+
+.sapUiSizeCompact .sapUiFormCL > .sapUiFormContainerTitle,
+.sapUiSizeCompact .sapUiFormCL > .sapUiFormContainerToolbar,
+.sapUiSizeCompact .sapUiFormCLMedia-Std-Phone > .sapUiFormCLContent > .sapUiFormCLContainerSFirstRow.sapUiFormContainerTitle,
+.sapUiSizeCompact .sapUiFormCLMedia-Std-Phone > .sapUiFormCLContent > .sapUiFormCLContainerSFirstRow.sapUiFormContainerToolbar,
+.sapUiSizeCompact .sapUiFormCLMedia-Std-Tablet > .sapUiFormCLContent > .sapUiFormCLContainerMFirstRow.sapUiFormContainerTitle,
+.sapUiSizeCompact .sapUiFormCLMedia-Std-Tablet > .sapUiFormCLContent > .sapUiFormCLContainerMFirstRow.sapUiFormContainerToolbar,
+.sapUiSizeCompact .sapUiFormCLMedia-Std-Desktop > .sapUiFormCLContent > .sapUiFormCLContainerLFirstRow.sapUiFormContainerTitle,
+.sapUiSizeCompact .sapUiFormCLMedia-Std-Desktop > .sapUiFormCLContent > .sapUiFormCLContainerLFirstRow.sapUiFormContainerToolbar,
+.sapUiSizeCompact .sapUiFormCLMedia-Std-LargeDesktop > .sapUiFormCLContent > .sapUiFormCLContainerXLFirstRow.sapUiFormContainerTitle,
+.sapUiSizeCompact .sapUiFormCLMedia-Std-LargeDesktop > .sapUiFormCLContent > .sapUiFormCLContainerXLFirstRow.sapUiFormContainerToolbar{
+	padding-top: 1rem;
+}
+
+/* Container content */
+.sapUiFormCLContainer > .sapUiFormCLContainerCont{
+	column-gap: 1.5rem;
+	font-size: 0; /* otherwise there will be a spacing between elements */
+}
+
+.sapUiFormCLContainerColl > .sapUiFormCLContainerCont{
+	display: none;
+}
+
+/* Stand Alone Container */
+.sapUiFormCL > .sapUiFormCLContainer{
+	width: 100%;
+}
+
+/* More containers */
+.sapUiFormCLContent > .sapUiFormCLContainer{
+	width: 100%; /* default, overwritten by precise width*/
+	float: left;
+}
+
+/* do not set width to 100% and column-count to 1 as this is default */
+.createContainerWidth(@used, @max, @size, @name)  when (@used > 0) {
+	.createContainerWidth((@used - 1), @max, @size, @name);
+	.sapUiFormCLMedia-Std-@{size} > .sapUiFormCLContent.sapUiFormCLColumns@{name}@{max} > .sapUiFormCLContainer@{name}@{used}{
+		width: 100% / @max * @used;
+	}
+}
+
+.createContainerRules(@max, @size, @name)  when (@max > 1) {
+	.createContainerRules((@max - 1), @size, @name);
+	.createContainerWidth((@max - 1), @max, @size, @name);
+
+	.sapUiFormCLMedia-Std-@{size} > .sapUiFormCLContainer@{name}@{max} > .sapUiFormCLContainerCont,
+	.sapUiFormCLMedia-Std-@{size} > .sapUiFormCLContent > .sapUiFormCLContainer@{name}@{max} > .sapUiFormCLContainerCont{
+		column-count: @max;
+	}
+}
+
+/* XL */
+.sapUiFormCLMedia-Std-LargeDesktop > .sapUiFormCLContent > .sapUiFormCLContainerXLBreak{
+	clear: both;
+}
+
+.createContainerRules(@_sap_ui_layout_ColumnLayout_formColumnMaxXL, LargeDesktop, XL);
+
+/* L */
+.sapUiFormCLMedia-Std-Desktop > .sapUiFormCLContent > .sapUiFormCLContainerLBreak{
+	clear: both;
+}
+
+.createContainerRules(@_sap_ui_layout_ColumnLayout_formColumnMaxL, Desktop, L);
+
+/* M */
+.sapUiFormCLMedia-Std-Tablet > .sapUiFormCLContent > .sapUiFormCLContainerMBreak{
+	clear: both;
+}
+.createContainerRules(@_sap_ui_layout_ColumnLayout_formColumnMaxM, Tablet, M);
+
+/* S */
+
+/* Elements */
+.sapUiFormCLElement{
+	width: 100%; /* to use the whole column */
+	display: inline-block; /* otherwise it wraps inside element -> label in one column, field in another */
+	font-size: @sapUiFontSize; /* restore default font size */
+}
+
+.sapUiFormCLContent:after,
+.sapUiFormCLElement:after {
+/* CLEAR FIX */
+	clear: both;
+	content: " ";
+	display: block;
+	font-size: 0;
+	height: 0;
+	visibility: hidden;
+}
+
+.sapUiFormCLElement > div {
+	float: left;
+	padding: 0 0.25rem;
+	box-sizing: border-box;
+	overflow: hidden;
+}
+
+.createColumnRules(@counter, @size, @name)  when (@counter > 0) {
+	.createColumnRules((@counter - 1), @size, @name);
+	.sapUiFormCL@{size}Columns .sapUiFormCLElement > .sapUiFormCLCells@{name}@{counter}{
+		width: @_sap_ui_layout_ColumnLayout_formColumnElementOneCol * @counter;
+	}
+	.sapUiFormCL@{size}Columns .sapUiFormCLElement > .sapUiFormCLCell@{name}Space@{counter}{
+		margin-left: @_sap_ui_layout_ColumnLayout_formColumnElementOneCol * @counter;
+	}
+}
+
+/* small columns */
+.createColumnRules(@_sap_ui_layout_ColumnLayout_formColumnElementCols, Small, S);
+
+.sapUiFormCLSmallColumns .sapUiFormCLElement > .sapUiFormCLCellSBreak{
+	clear: both;
+}
+
+/* wide columns - Labels next to field */
+.createColumnRules(@_sap_ui_layout_ColumnLayout_formColumnElementCols, Wide, L);
+
+.sapUiFormCLWideColumns .sapUiFormCLElement > .sapUiFormCLCellLBreak{
+	clear: both;
+}
+
+/* edit mode */
+/* labels next to field */
+.sapUiFormEdit > .sapUiFormCLSmallColumns .sapUiFormElementLbl:not(.sapUiFormCLCellsS12),
+.sapUiFormEdit > .sapUiFormCLWideColumns .sapUiFormElementLbl:not(.sapUiFormCLCellsL12){
+	padding-top: 1rem;
+}
+
+.sapUiSizeCompact .sapUiFormEdit > .sapUiFormCLSmallColumns .sapUiFormElementLbl:not(.sapUiFormCLCellsS12),
+.sapUiSizeCompact .sapUiFormEdit > .sapUiFormCLWideColumns .sapUiFormElementLbl:not(.sapUiFormCLCellsL12){
+	padding-top: 0.5rem;
+}
+
+/* labels above field */
+/* As is is not clear what FormElement will be on top of a column we can not use only rules for first label or field */
+.sapUiFormEdit .sapUiFormCLSmallColumns .sapUiFormCLElement{
+	padding-top: 0.625rem;
+}
+
+.sapUiFormEdit .sapUiFormCLSmallColumns .sapUiFormElementLbl.sapUiFormCLCellsS12,
+.sapUiFormEdit .sapUiFormCLWideColumns .sapUiFormElementLbl.sapUiFormCLCellsL12{
+	padding-bottom: 0.125rem;
+}
+
+.sapUiFormEdit .sapUiFormCLSmallColumns .sapUiFormCLContainer > .sapUiFormTitle,
+.sapUiFormEdit .sapUiFormCLSmallColumns .sapUiFormContainerToolbar > div:first-child  {
+	margin-bottom: -0.125rem;
+}
+
+.sapUiSizeCompact .sapUiFormEdit .sapUiFormCLSmallColumns .sapUiFormCLContainer > .sapUiFormTitle,
+.sapUiSizeCompact .sapUiFormEdit .sapUiFormCLSmallColumns .sapUiFormContainerToolbar > div:first-child  {
+	margin-bottom: 0.375rem;
+}
+
+.sapUiFormEdit .sapUiFormCLSmallColumns .sapUiFormCLContainer:not(.sapUiFormContainerTitle):not(.sapUiFormContainerToolbar) {
+	padding-top: 0.375rem;
+}
+
+html.sap-phone .sapUiFormEdit .sapUiFormCLSmallColumns .sapUiFormCLContainer:not(.sapUiFormContainerTitle):not(.sapUiFormContainerToolbar){
+	padding-top: 0;
+	margin-top: -0.125rem;
+}
+
+/* Additional styling to prevent rendering issues in Safari in combination with column-count and overflow:hidden */
+html[data-sap-ui-browser^="sf"] .sapUiFormEdit .sapUiFormCLElement {
+	transform: translateX(0);
+}
+
+/* display mode */
+/* in display only mode add padding to controls as they don't have one */
+.sapUiForm:not(.sapUiFormEdit) .sapUiFormCLElement > div{
+	padding-top: 0.25rem;
+	padding-bottom: 0.25rem;
+	font-size: 1px; /* as browser adds some px to text to meet font-size */
+}
+
+.sapUiForm:not(.sapUiFormEdit) .sapUiFormCLElement > div .sapUiIcon:not(.sapMBtnIcon),
+.sapUiForm:not(.sapUiFormEdit) .sapUiFormCLElement > div .sapMCbBg{
+	font-size: @sapUiFontSize; /* to set default font size on icons */
+}
+
+/* labels above field */
+.sapUiForm:not(.sapUiFormEdit) .sapUiFormCLSmallColumns .sapUiFormCLElement{
+	padding-top: 0.5rem;
+}
+
+.sapUiForm:not(.sapUiFormEdit) .sapUiFormCLSmallColumns .sapUiFormElementLbl.sapUiFormCLCellsS12,
+.sapUiForm:not(.sapUiFormEdit) .sapUiFormCLWideColumns .sapUiFormElementLbl.sapUiFormCLCellsL12{
+	padding-bottom: 0;
+}
+
+.sapUiForm:not(.sapUiFormEdit) .sapUiFormCLSmallColumns .sapUiFormCLContainer > .sapUiFormTitle,
+.sapUiForm:not(.sapUiFormEdit) .sapUiFormCLSmallColumns .sapUiFormContainerToolbar > div:first-child  {
+	margin-bottom: -0.25rem;
+}
+
+.sapUiSizeCompact .sapUiForm:not(.sapUiFormEdit) .sapUiFormCLSmallColumns .sapUiFormCLContainer > .sapUiFormTitle,
+.sapUiSizeCompact .sapUiForm:not(.sapUiFormEdit) .sapUiFormCLSmallColumns .sapUiFormContainerToolbar > div:first-child  {
+	margin-bottom: 0.25rem;
+}
+
+.sapUiForm:not(.sapUiFormEdit) .sapUiFormCLSmallColumns .sapUiFormCLContainer:not(.sapUiFormContainerTitle):not(.sapUiFormContainerToolbar) {
+	padding-top: 0.25rem;
+}
+
+html.sap-phone .sapUiForm:not(.sapUiFormEdit) .sapUiFormCLSmallColumns .sapUiFormCLContainer:not(.sapUiFormContainerTitle):not(.sapUiFormContainerToolbar){
+	padding-top: 0;
+	margin-top: -0.25rem;
+}
+
+/* CHROME Dummy */
+.sapUiFormCLElementDummy {
+	visibility: hidden;
+	width: 100%;
+	display: inline-block;
+}
