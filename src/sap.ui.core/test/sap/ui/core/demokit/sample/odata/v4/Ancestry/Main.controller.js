@@ -2,12 +2,13 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/ui/core/Core",
 	"sap/ui/core/sample/common/Controller",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/Sorter",
 	"sap/ui/model/json/JSONModel"
-], function (Controller, Filter, FilterOperator, Sorter, JSONModel) {
+], function (Core, Controller, Filter, FilterOperator, Sorter, JSONModel) {
 	"use strict";
 
 	return Controller.extend("sap.ui.core.sample.odata.v4.Ancestry.Main", {
@@ -55,7 +56,7 @@ sap.ui.define([
 					}
 				};
 
-			sap.ui.getCore().loadLibrary("sap.ui.export", true).then(function () {
+			Core.loadLibrary("sap.ui.export", true).then(function () {
 				sap.ui.require(["sap/ui/export/Spreadsheet"], function (Spreadsheet) {
 					var oSheet = new Spreadsheet(oSettings);
 
@@ -82,37 +83,40 @@ sap.ui.define([
 		},
 
 		onInit : function () {
-			var oTreeTable = this.byId("table"),
-				oRowsBinding = oTreeTable.getBinding("rows"),
-				oUriParameters = new URLSearchParams(window.location.search),
-				oView = this.getView();
+			// initialization has to wait for view model/context propagation
+			this.getView().attachEventOnce("modelContextChange", function () {
+				var oTreeTable = this.byId("table"),
+					oRowsBinding = oTreeTable.getBinding("rows"),
+					oUriParameters = new URLSearchParams(window.location.search),
+					oView = this.getView();
 
-			oView.setModel(new JSONModel({
-				sFilter : "",
-				sIcon : ""
-			}), "ui");
-			this.bDescending = undefined;
+				oView.setModel(new JSONModel({
+					sFilter : "",
+					sIcon : ""
+				}), "ui");
+				this.bDescending = undefined;
 
-			oTreeTable._oProxy._bEnableV4 = true; // enable V4 tree table flag
-			const sVisibleRowCount = oUriParameters.get("visibleRowCount");
-			if (sVisibleRowCount) {
-				oTreeTable.getRowMode().setRowCount(parseInt(sVisibleRowCount));
-			}
+				oTreeTable._oProxy._bEnableV4 = true; // enable V4 tree table flag
+				const sVisibleRowCount = oUriParameters.get("visibleRowCount");
+				if (sVisibleRowCount) {
+					oTreeTable.getRowMode().setRowCount(parseInt(sVisibleRowCount));
+				}
 
-			const sExpandTo = oUriParameters.get("expandTo");
-			this._oAggregation = {
-				expandTo : sExpandTo === "*"
-					? Number.MAX_SAFE_INTEGER
-					: parseFloat(sExpandTo || "2"), // Note: parseInt("1E16") === 1
-				hierarchyQualifier : "SADL_V_RS_Ancestry_Hier"
-			};
-			oRowsBinding.setAggregation(this._oAggregation);
-			oRowsBinding.resume();
+				const sExpandTo = oUriParameters.get("expandTo");
+				this._oAggregation = {
+					expandTo : sExpandTo === "*"
+						? Number.MAX_SAFE_INTEGER
+						: parseFloat(sExpandTo || "2"), // Note: parseInt("1E16") === 1
+					hierarchyQualifier : "SADL_V_RS_Ancestry_Hier"
+				};
+				oRowsBinding.setAggregation(this._oAggregation);
+				oRowsBinding.resume();
 
-			oView.setModel(oView.getModel(), "header");
-			oView.setBindingContext(oRowsBinding.getHeaderContext(), "header");
+				oView.setModel(oView.getModel(), "header");
+				oView.setBindingContext(oRowsBinding.getHeaderContext(), "header");
 
-			this.initMessagePopover("table");
+				this.initMessagePopover("table");
+			}, this);
 		},
 
 		onRefresh : function () {
