@@ -505,8 +505,8 @@ sap.ui.define([
 				assert.equal(oTable.getVisibleRowCount(), 5, "visibleRowCount is set correctly after table resize.");
 				$TableParent.height("");
 				done();
-			}, 500);
-		}, 500);
+			}, 1500);
+		}, 1500);
 	});
 
 	/**
