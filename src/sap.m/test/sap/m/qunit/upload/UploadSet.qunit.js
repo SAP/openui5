@@ -663,7 +663,7 @@ sap.ui.define([
 		var noDataTemplate = document.querySelector(".sapMUCNoDataPage");
 		assert.ok(noDataTemplate, "No Data template is visible");
 
-		assert.equal(window.getComputedStyle(noDataTemplate).getPropertyValue('min-height'), '500px', 'No Data template has min height of 500px');
+		assert.equal(window.getComputedStyle(noDataTemplate).getPropertyValue('height'), '500px', 'No Data template has height of 500px');
 	});
 
 	QUnit.test("Upload url of Uploader updated with UploadSet uploadurl", function (assert) {
