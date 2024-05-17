@@ -1425,7 +1425,9 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("check roles inside managed views", function (assert) {
+	QUnit.test("check roles inside managed views", async function (assert) {
+		var done = assert.async();
+
 		this.oVM.addItem(new VariantItem({key: "1", title:"One", rename: false, sharing: "public", executeOnSelect: true, author: "A"}));
 		this.oVM.addItem(new VariantItem({key: "2", title:"Two", contexts: {role: ["test"]}, remove: true, sharing: "private", author: "B"}));
 		this.oVM.addItem(new VariantItem({key: "3", title:"Three", favorite: true, remove: true, sharing: "private", executeOnSelect: true, oauthor: "A"}));
@@ -1433,7 +1435,7 @@ sap.ui.define([
 
 		this.oVM.setDefaultKey("3");
 
-		var done = assert.async();
+		await nextUIUpdate();
 
 		this.oVM.attachManage(function(oEvent) {
 			var mParameters = oEvent.getParameters();
@@ -1451,7 +1453,7 @@ sap.ui.define([
 		this.oVM._createManagementDialog();
 		assert.ok(this.oVM.oManagementDialog, "manage dialog should exists.");
 
-		this.oVM.oManagementDialog.attachAfterOpen(function() {
+		this.oVM.oManagementDialog.attachAfterOpen(async function() {
 			var oIcon = null;
 			var oRb = this.oVM._oRb;
 
@@ -1487,6 +1489,8 @@ sap.ui.define([
 				srcControl: null
 			});
 
+			await nextUIUpdate();
+
 		}.bind(this));
 
 
@@ -1503,7 +1507,7 @@ sap.ui.define([
 		this.oVM._createRolesDialog();
 		assert.ok(this.oVM._oRolesDialog, "roles dialog exisis");
 
-		this.oVM._oRolesDialog.attachAfterClose(function() {
+		this.oVM._oRolesDialog.attachAfterClose(async function() {
 
 			var oTarget = this.oVM.oManagementSave.getFocusDomRef();
 			assert.ok(oTarget, "dom ref of save button of manage dialog ob tained");
@@ -1511,9 +1515,11 @@ sap.ui.define([
 				srcControl: null
 			});
 
+			await nextUIUpdate();
+
 		}.bind(this));
 
-		this.oVM._oRolesDialog.attachAfterOpen(function() {
+		this.oVM._oRolesDialog.attachAfterOpen(async function() {
 
 			var oCancelButton = Element.getElementById(this.oVM.getId() + "-rolecancel");
 			assert.ok(oCancelButton, "cancel button of roles dialog existst");
@@ -1523,6 +1529,8 @@ sap.ui.define([
 			QUnitUtils.triggerTouchEvent("tap", oTarget, {
 				srcControl: null
 			});
+
+			await nextUIUpdate();
 
 		}.bind(this));
 
