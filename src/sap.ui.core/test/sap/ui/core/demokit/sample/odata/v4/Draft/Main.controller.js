@@ -17,7 +17,7 @@ sap.ui.define([
 
 		onInit : function () {
 			var oUIModel,
-				oView = this.getView(),
+				oComponent = this.getOwnerComponent(),
 				that = this;
 
 			this.oUIModel = oUIModel = new JSONModel({
@@ -28,9 +28,9 @@ sap.ui.define([
 				sShowListIcon : "sap-icon://close-command-field",
 				sShowListTooltip : "Hide List"
 			});
-			oView.setModel(this.oUIModel, "ui");
+			oComponent.setModel(this.oUIModel, "ui");
 
-			oView.getModel().attachDataReceived(function (oEvent) {
+			oComponent.getModel().attachDataReceived(function (oEvent) {
 				var oError = oEvent.getParameter("error");
 
 				if (oError) {
