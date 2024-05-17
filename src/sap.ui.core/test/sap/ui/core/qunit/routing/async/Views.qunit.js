@@ -60,6 +60,9 @@ sap.ui.define([
 		}.bind(this));
 	});
 
+	/**
+	 * @deprecated because it tests the legacy API
+	 */
 	QUnit.test("Should create a view synchronously", function (assert) {
 		// Configure view as synchronous
 		this.oViewOptions.async = false;
