@@ -15,6 +15,8 @@ sap.ui.define([
 
 	var sClassName = "sap.ui.model.odata.v4.lib._Helper";
 
+	function mustBeMocked() { throw new Error("Must be mocked"); }
+
 	/**
 	 * Checks the given cloned error according to the given expectations.
 	 *
@@ -5515,5 +5517,33 @@ sap.ui.define([
 					"City@$ui5.updating" : true
 				}
 			});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("registerChangeListener", function () {
+		const oOwner = {
+			mChangeListeners : "~listeners1~"
+		};
+		const oListener = {
+			setDeregisterChangeListener : mustBeMocked
+		};
+
+		this.mock(_Helper).expects("addByPath")
+			.withExactArgs("~listeners1~", "~path~", sinon.match.same(oListener));
+		const oCallbackExpectation = this.mock(oListener).expects("setDeregisterChangeListener")
+			.withExactArgs(sinon.match.func);
+
+		// code under test
+		_Helper.registerChangeListener(oOwner, "~path~", oListener);
+
+		oOwner.mChangeListeners = "~listeners2~";
+		this.mock(_Helper).expects("removeByPath")
+			.withExactArgs("~listeners2~", "~path~", sinon.match.same(oListener));
+
+		// code under test
+		oCallbackExpectation.args[0][0]();
+
+		// code under test
+		_Helper.registerChangeListener(oOwner, "~path~");
 	});
 });

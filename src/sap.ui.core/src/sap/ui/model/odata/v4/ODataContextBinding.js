@@ -798,21 +798,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * @override
-	 * @see sap.ui.model.odata.v4.ODataBinding#doDeregisterChangeListener
-	 */
-	ODataContextBinding.prototype.doDeregisterChangeListener = function (sPath, oListener) {
-		if (this.oOperation) {
-			const sRelativePath = _Helper.getRelativePath(sPath, this.oParameterContext.getPath());
-			if (sRelativePath !== undefined) {
-				_Helper.removeByPath(this.oOperation.mChangeListeners, sRelativePath, oListener);
-				return;
-			}
-		}
-		asODataParentBinding.prototype.doDeregisterChangeListener.apply(this, arguments);
-	};
-
-	/**
 	 * Fetches all properties described in $expand and $select of the binding parameters, unless
 	 * the binding already has fetched it. This is only done if the model uses autoExpandSelect. The
 	 * goal is that these properties are also requested as late properties.
@@ -930,7 +915,7 @@ sap.ui.define([
 					if (aSegments.length === 1) {
 						return undefined;
 					}
-					_Helper.addByPath(that.oOperation.mChangeListeners,
+					_Helper.registerChangeListener(that.oOperation,
 						sRelativePath.slice(/*"$Parameter/".length*/11), oListener);
 
 					vValue = _Helper.drillDown(that.oOperation.mParameters, aSegments.slice(1));
@@ -1580,9 +1565,12 @@ sap.ui.define([
 					bKeepCacheOnError ? sGroupId : undefined);
 				// Do not fire a change event, or else ManagedObject destroys and recreates the
 				// binding hierarchy causing a flood of events.
-				oPromise = bHasChangeListeners
-					? that.createRefreshPromise(/*bPreventBubbling*/bKeepCacheOnError)
-					: undefined;
+				if (bHasChangeListeners) {
+					oPromise = that.createRefreshPromise(/*bPreventBubbling*/bKeepCacheOnError);
+				} else {
+					oReadGroupLock.unlock();
+					that.oReadGroupLock = undefined;
+				}
 				if (bKeepCacheOnError && oPromise) {
 					oPromise = oPromise.catch(function (oError) {
 						return that.fetchResourcePath(that.oContext).then(function (sResourcePath) {
