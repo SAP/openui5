@@ -540,6 +540,16 @@ sap.ui.define([
 		}
 		oEntityData["@$ui5.node.level"] = iLevel; // do not send via POST!
 
+		if (this.oAggregation.createInPlace) {
+			return oPromise.then(async () => {
+				_Helper.removeByPath(this.mPostRequests, sTransientPredicate, oEntityData);
+				await this.requestRank(oEntityData, oGroupLock);
+				oCache.removeElement(0, sTransientPredicate);
+
+				return oEntityData;
+			});
+		}
+
 		aElements.splice(iIndex, 0, null); // create a gap
 		this.addElements(oEntityData, iIndex, oCache); // rank is undefined!
 		aElements.$count += 1;
@@ -1983,7 +1993,7 @@ sap.ui.define([
 			mQueryOptions = getApply(
 				_AggregationHelper.buildApply4Hierarchy(oAggregation, this.mQueryOptions));
 		} else {
-			const oCache = _Helper.getPrivateAnnotation(oElement, "parent");
+			const oCache = _Helper.getPrivateAnnotation(oElement, "parent", this.oFirstLevel);
 			mQueryOptions = bDropFilter
 				? _AggregationHelper
 					.dropFilter(this.oAggregation, this.mQueryOptions, oCache.$parentFilter)
