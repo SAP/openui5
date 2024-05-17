@@ -1351,6 +1351,103 @@ sap.ui.define([
 		}.bind(this));
 	});
 
+	QUnit.test("metadata v4 with sap-system URL parameter", async function(assert) {
+		this.stubGetUriParameters({ sapSystem: "URL_123" });
+
+		this.oComponent = await Component.create({
+			name: "sap.ui.test.v4models.sapSystem"
+		});
+
+		this.assertModelInstances({
+			"v4-ODataModel": this.modelSpy.odataV4,
+			"v4-ODataModel-ServiceOrigin": this.modelSpy.odataV4,
+			"v4-ODataModel-OtherOrigins": this.modelSpy.odataV4
+		});
+
+		// model: "v4-ODataModel"
+		sinon.assert.calledWithExactly(this.modelSpy.odataV4, {
+			serviceUrl: '/path/to/odata/service;o=URL_123/'
+		});
+
+		// model: "v4-ODataModel-ServiceOrigin" with a trailing slash and URL Parameters
+		sinon.assert.calledWithExactly(this.modelSpy.odataV4, {
+			serviceUrl: '/path/to/odata/service/with/trailing/slash;o=URL_123/?sap-client=foo&sap-server=bar',
+			annotationURI: [
+				'/path/to/odata/service/with/trailing/slash;o=URL_123/annotations.xml?sap-language=EN&sap-client=foo',
+				'test-resources/sap/ui/core/qunit/component/testdata/v4models/sapSystem/path/to/local/odata/annotations/2?sap-language=EN&sap-client=foo'
+			],
+			metadataUrlParams: { "sap-language": "EN" }
+		});
+
+		// model: "v4-ODataModel-OtherOrigins" with multi origin annotations
+		sinon.assert.calledWithExactly(this.modelSpy.odataV4, {
+			serviceUrl: '/path/to/odata/service/with/multi/origin/annotations;o=URL_123/?sap-client=foo&sap-server=bar',
+			annotationURI: ["/path/to/other/odata/service;o=URL_123/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/$value?sap-language=EN&sap-client=foo",
+							"test-resources/sap/ui/core/qunit/component/testdata/v4models/sapSystem/path/to/other/odata/service;o=URL_123/Annotations%28TechnicalName=%27%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE%27,Version=%270001%27%29/$value?sap-language=EN&sap-client=foo",
+							"/path/to/other/odata/service/other2/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/?sap-language=EN&sap-client=foo",
+							"/path/to/other3/odata/service/;o=sid(G1Y.400)/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/$value?sap-language=EN&sap-client=foo"
+							],
+			metadataUrlParams: { "sap-language": "EN" }
+		});
+
+		// destroy the component
+		this.oComponent.destroy();
+
+		// check if all models got destroyed (uses the models from #assertModelInstances)
+		this.assertModelsDestroyed();
+	});
+
+	QUnit.test("metadata v4 with sap-system startup parameter", async function(assert) {
+		this.stubGetUriParameters();
+
+		this.oComponent = await Component.create({
+			name: "sap.ui.test.v4models.sapSystem",
+			componentData: {
+				startupParameters: {
+					"sap-system": "STARTUP123"
+				}
+			}
+		});
+
+		this.assertModelInstances({
+			"v4-ODataModel": this.modelSpy.odataV4,
+			"v4-ODataModel-ServiceOrigin": this.modelSpy.odataV4,
+			"v4-ODataModel-OtherOrigins": this.modelSpy.odataV4
+		});
+
+		// model: "v4-ODataModel"
+		sinon.assert.calledWithExactly(this.modelSpy.odataV4, {
+			serviceUrl: '/path/to/odata/service;o=STARTUP123/'
+		});
+
+		// model: "v4-ODataModel-ServiceOrigin" with a trailing slash and URL Parameters
+		sinon.assert.calledWithExactly(this.modelSpy.odataV4, {
+			serviceUrl: '/path/to/odata/service/with/trailing/slash;o=STARTUP123/?sap-client=foo&sap-server=bar',
+			annotationURI: [
+				'/path/to/odata/service/with/trailing/slash;o=STARTUP123/annotations.xml?sap-language=EN&sap-client=foo',
+				'test-resources/sap/ui/core/qunit/component/testdata/v4models/sapSystem/path/to/local/odata/annotations/2?sap-language=EN&sap-client=foo'
+			],
+			metadataUrlParams: { "sap-language": "EN" }
+		});
+
+		// model: "v4-ODataModel-OtherOrigins" with multi origin annotations
+		sinon.assert.calledWithExactly(this.modelSpy.odataV4, {
+			serviceUrl: '/path/to/odata/service/with/multi/origin/annotations;o=STARTUP123/?sap-client=foo&sap-server=bar',
+			annotationURI: ["/path/to/other/odata/service;o=STARTUP123/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/$value?sap-language=EN&sap-client=foo",
+							"test-resources/sap/ui/core/qunit/component/testdata/v4models/sapSystem/path/to/other/odata/service;o=STARTUP123/Annotations%28TechnicalName=%27%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE%27,Version=%270001%27%29/$value?sap-language=EN&sap-client=foo",
+							"/path/to/other/odata/service/other2/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/?sap-language=EN&sap-client=foo",
+							"/path/to/other3/odata/service/;o=sid(G1Y.400)/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/$value?sap-language=EN&sap-client=foo"
+							],
+			metadataUrlParams: { "sap-language": "EN" }
+		});
+
+		// destroy the component
+		this.oComponent.destroy();
+
+		// check if all models got destroyed (uses the models from #assertModelInstances)
+		this.assertModelsDestroyed();
+	});
+
 	QUnit.test("metadata v2 with dataSources (extension inheritance)", function(assert) {
 		this.stubGetUriParameters();
 
