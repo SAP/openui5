@@ -434,14 +434,14 @@ sap.ui.define([
 			this.oAddIFrameDialog.attachOpened(() => {
 				const oAllowFormsSwitch = Element.getElementById("sapUiRtaAddIFrameDialog_allowFormsSwitch");
 				assert.strictEqual(oAllowFormsSwitch.getState(), true, "then the allow forms switch is enabled by default");
-				const oAllowPopupsSwitch = Element.getElementById("sapUiRtaAddIFrameDialog_allowPopupsSwitch");
-				assert.strictEqual(oAllowPopupsSwitch.getState(), true, "then the allow popups switch is enabled by default");
 				const oAllowScriptsSwitch = Element.getElementById("sapUiRtaAddIFrameDialog_allowScriptsSwitch");
 				assert.strictEqual(oAllowScriptsSwitch.getState(), true, "then the allow scripts switch is enabled by default");
-				const oAllowModalsSwitch = Element.getElementById("sapUiRtaAddIFrameDialog_allowModalsSwitch");
-				assert.strictEqual(oAllowModalsSwitch.getState(), true, "then the allow modals switch is enabled by default");
 				const oAllowSameOriginSwitch = Element.getElementById("sapUiRtaAddIFrameDialog_allowSameOriginSwitch");
 				assert.strictEqual(oAllowSameOriginSwitch.getState(), true, "then the allow same origin switch is disabled by default");
+				const oAllowPopupsSwitch = Element.getElementById("sapUiRtaAddIFrameDialog_allowPopupsSwitch");
+				assert.strictEqual(oAllowPopupsSwitch.getState(), false, "then the allow popups switch is disabled by default");
+				const oAllowModalsSwitch = Element.getElementById("sapUiRtaAddIFrameDialog_allowModalsSwitch");
+				assert.strictEqual(oAllowModalsSwitch.getState(), false, "then the allow modals switch is disabled by default");
 				const oAllowTopNavigationSwitch = Element.getElementById("sapUiRtaAddIFrameDialog_allowTopNavigationSwitch");
 				assert.strictEqual(
 					oAllowTopNavigationSwitch.getState(),
