@@ -465,7 +465,6 @@ sap.ui.define([
 		oTypeConfigs["sap.m.semantic.MessagesIndicator"] = {
 			position: SemanticConfiguration.prototype._PositionInPage.footerLeft,
 			getSettings: function() {
-				var sTooltipId = InvisibleText.getStaticId("sap.m", "SEMANTIC_CONTROL_MESSAGES_INDICATOR");
 				return {
 					icon: IconPool.getIconURI("message-popup"),
 					text: {
@@ -474,7 +473,12 @@ sap.ui.define([
 							return aMessages.length || 0;
 						}
 					},
-					ariaDescribedBy: sTooltipId,
+					tooltip: {
+						path: "message>/",
+						formatter: function (aMessages) {
+							return oBundle.getText("SEMANTIC_CONTROL_MESSAGES_INDICATOR", [aMessages?.length || 0]);
+						}
+					},
 					type: ButtonType.Emphasized,
 					visible: {
 						path: "message>/",

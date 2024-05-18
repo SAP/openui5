@@ -23,6 +23,8 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/ui/core/InvisibleText",
 	"sap/ui/core/Core",
+	"sap/ui/core/Lib",
+	"sap/ui/core/Messaging",
 	"sap/ui/thirdparty/jquery"
 ], function(
 	qutils,
@@ -48,6 +50,8 @@ sap.ui.define([
 	Label,
 	InvisibleText,
 	oCore,
+	Library,
+	Messaging,
 	$
 ) {
 	"use strict";
@@ -1531,12 +1535,21 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("MessagesIndicator aria-describedby is correct", function (assert) {
-		var oMessagesIndicator = new MessagesIndicator(),
-			sAriaDescribedBy = oMessagesIndicator._getControl().getAriaDescribedBy()[0],
-			sTextId = InvisibleText.getStaticId("sap.m", "SEMANTIC_CONTROL_MESSAGES_INDICATOR");
+	QUnit.test("MessagesIndicator tooltip is correct", function (assert) {
+		var oBundle = Library.getResourceBundleFor("sap.m"),
+			oMessagesIndicator = new MessagesIndicator(),
+			sKey = "SEMANTIC_CONTROL_MESSAGES_INDICATOR",
+			oSpy = this.spy(oBundle, "getText"),
+			oMessageModel = Messaging.getMessageModel(),
+			iCountMessages = oMessageModel.getData().length;
 
-		assert.strictEqual(sAriaDescribedBy, sTextId, "MessagesIndicator button aria-describedbyis set correctly.");
+		//act
+		var oControl = oMessagesIndicator._getControl(), // creates the control
+			oTooltip = oControl.getTooltip();
+
+		//asert
+		assert.ok(oSpy.calledOnceWithExactly(sKey, [iCountMessages]), "MessagesIndicator proper label is obtained.");
+		assert.ok(oTooltip.includes("Messages"), "messages labels is included in the tooltip");
 	});
 
 	QUnit.test("AriaLabelledBy attribute on header toolbar is set correctly", function(assert) {
