@@ -1,5 +1,5 @@
-<core:FragmentDefinition xmlns="sap.ui.commons" xmlns:core="sap.ui.core">
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
 
-	<Button text="Fragment" press=""/>
+	<Button text="Fragment"/>
 
 </core:FragmentDefinition>

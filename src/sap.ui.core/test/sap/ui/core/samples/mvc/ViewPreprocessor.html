@@ -39,14 +39,13 @@
 						resolve(/*return value is irrelevant for 'controls'*/);
 					}, 500); // Timeout just for the effect :)
 				});
-			}
+			};
 
 			// Xml sample view as string
-			var xml = '<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m"    '
-			+ '              xmlns:html="http://www.w3.org/1999/xhtml">                                '
-			+ '       <Panel>                                                                          '
-			+ '          <Label id="label" text="I am an apple view."></Label>                         '
-			+ '       </Panel>                                                                         '
+			var xml = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" >'
+			+ '       <Panel>'
+			+ '          <Label id="label" text="I am an apple view."></Label>'
+			+ '       </Panel>'
 			+ '    </mvc:View>  ';
 
 			// Create a normal view

@@ -8,19 +8,18 @@
 				src="../../../../../../resources/sap-ui-core.js"
 				data-sap-ui-libs="sap.m"
 		></script>
-
 		<script>
-			window._setTimeout = window.setTimeout;
-		</script>
-
-		<script src="../../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
-
-		<script>
-			sap.ui.require(["sap/ui/core/Element"], function(Element) {
+			sap.ui.require([
+				"sap/ui/core/Element",
+				"sap/ui/thirdparty/sinon"
+			], function(Element, sinon) {
+				"use strict";
 
 				// this test page is not below "resources", but "test-resources"
 				// usually this redirect is NOT needed - but possible if useful
 				sap.ui.loader.config({paths: {"sap/ui/core/mvctest": "../../../../../../test-resources/sap/ui/core/samples/mvc/"}});
+
+				const _setTimeout = globalThis.setTimeout;
 
 				var sXml;
 				jQuery.ajax({
@@ -39,7 +38,7 @@
 				xhr.onCreate = function(request) {
 					request.onSend = function() {
 						var iDelay = Element.getElementById("timeout").getValue();
-						iDelay = parseInt(iDelay, 10);
+						iDelay = parseInt(iDelay);
 
 						_setTimeout(function() {
 							request.respond(200,  { "Content-Type" : "application/xml" }, sXml);
