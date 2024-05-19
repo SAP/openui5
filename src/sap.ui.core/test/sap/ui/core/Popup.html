@@ -59,7 +59,11 @@
 		</style>
 
 		<script>
-		sap.ui.require(["sap/ui/core/Popup"], function(Popup) {
+		sap.ui.require([
+			"sap/ui/core/Popup"
+		], function(Popup) {
+			"use strict" 
+
 			globalThis.openAnim = function($Ref, iDuration, fnCallback) {
 			  $Ref.slideDown(iDuration, fnCallback);
 			};
@@ -78,10 +82,12 @@
 					if (oWithinArea !== window) {
 						oOf = oWithinArea;
 					}
+					//eslint-disable-next-line no-alert -- use alert to avoid conflict with UI5 popups
 					alert("Click the green rectangle to close the popup!");
 				}
 
 				if (popup) {
+					//eslint-disable-next-line no-alert -- use alert to avoid conflict with UI5 popups
 					alert("This test page only allows one open popup at a time");
 					return;
 				}
@@ -91,7 +97,7 @@
 				popup = new Popup(element, bModal, true, bAutoClose);
 				popup.attachClosed(popupClosed);
 				if (fnOpenAnim || fnCloseAnim) {
-					popup.setAnimations(openAnim, fnCloseAnim);
+					popup.setAnimations(fnOpenAnim, fnCloseAnim);
 				}
 
 				if (bNotCenter) {

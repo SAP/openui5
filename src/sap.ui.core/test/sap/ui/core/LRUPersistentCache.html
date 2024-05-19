@@ -24,7 +24,7 @@
 			}).then(function () {
 				document.getElementById("output").innerHTML = output;
 			});
-		}
+		};
 
 		globalThis.getEntry = function(idKey) {
 			var key = document.getElementById(idKey).value,
@@ -36,7 +36,7 @@
 			}).then(function () {
 				document.getElementById("output").innerHTML = output;
 			});
-		}
+		};
 
 		globalThis.addLargeEntry = function() {
 			var oValue = m1;//came from the large script
@@ -49,7 +49,7 @@
 			}).then(function () {
 				document.getElementById("output").innerHTML = output;
 			});
-		}
+		};
 
 		globalThis.delFilters = function() {
 			var oOptions = {};
@@ -57,7 +57,7 @@
 			var iTimestamp;
 
 			if (oInputTimestamp.value) {
-				iTimestamp = parseInt(oInputTimestamp.value, 10);
+				iTimestamp = parseInt(oInputTimestamp.value);
 
 				if (!isNaN(iTimestamp)) {
 					oOptions.olderThan = new Date(iTimestamp);
@@ -67,7 +67,7 @@
 			oOptions.prefix = document.getElementById("prefix").value;
 
 			oCache.delWithFilters(oOptions);
-		}
+		};
 	});
 	</script>
 </head>

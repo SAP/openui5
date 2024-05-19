@@ -9,7 +9,6 @@ sap.ui.define(["sap/ui/core/mvc/Controller"], function (Controller) {
 			this.showDetailsLink = this.byId("showMore");
 			this.hideDetailsLink = this.byId("hideMore");
 
-			this.myLayout.setWidths(["100px","150px"]);
 			this.hideMore();
 		},
 

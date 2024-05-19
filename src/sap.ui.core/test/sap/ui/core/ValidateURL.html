@@ -23,9 +23,9 @@
 						var sUrl = oInput.getValue();
 						var sValid = URLListValidator.validate(sUrl);
 
-						if (sValid){
+						if (sValid) {
 							oInput.setValueState(sap.ui.core.ValueState.Success);
-						}else{
+						} else {
 							oInput.setValueState(sap.ui.core.ValueState.Error);
 						}
 					}
@@ -96,7 +96,7 @@
 					var oInput = new sap.m.Input('Input1',{
 						width: "50em",
 						change: onChange,
-						liveChange: onLiveChange,
+						liveChange: onLiveChange
 					});
 					var oLabel = new sap.m.Label({ text: "URL: ", labelFor: oInput});
 					oLabel.placeAt("target0");
