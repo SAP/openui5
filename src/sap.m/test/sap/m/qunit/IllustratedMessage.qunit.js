@@ -69,7 +69,7 @@ function(
 		assert.strictEqual(aPublicProperties["illustrationSize"].type, "sap.m.IllustratedMessageSize", "The type of the illustrationSize property is sap.m.IllustratedMessageSize");
 		assert.strictEqual(aPublicProperties["illustrationType"].type, "string", "The type of the illustrationType property is string");
 		assert.ok(this.oIllustratedMessage.getAdditionalContent(), "The IllustratedMessage additional content has instantiated successfully");
-		assert.strictEqual(aPublicAggregations["additionalContent"].type, "sap.m.Button", "The type of the additionalContent aggregation is sap.m.Button");
+		assert.strictEqual(aPublicAggregations["additionalContent"].type, "sap.ui.core.Control", "The type of the additionalContent aggregation is sap.ui.core.Control");
 		assert.notOk(this.oIllustratedMessage.getAggregation("_formattedText"), "The IllustratedMessage _formattedText is not instantiated by default");
 		assert.strictEqual(aPrivateAggregations["_formattedText"].type, "sap.m.FormattedText", "The type of the _formattedText aggregation is sap.m.FormattedText");
 		assert.ok(this.oIllustratedMessage.getAggregation("_illustration"), "The IllustratedMessage _illustration has instantiated successfully");
