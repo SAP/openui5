@@ -664,7 +664,7 @@ sap.ui.define([
 			fnFireAppointmentSelectSpy = this.spy(oSPC, "fireAppointmentSelect");
 
 		//act
-		oSPC.getAggregation("_grid").ontap(oFakeEvent);
+		oSPC.getAggregation("_grid").onmouseup(oFakeEvent);
 
 		//assert
 		assert.ok(fnFireAppointmentSelectSpy.calledOnce, "Event was fired");
@@ -703,7 +703,7 @@ sap.ui.define([
 			fnFireAppointmentSelectSpy = this.spy(oSPC, "fireAppointmentSelect");
 
 		//act
-		oSPC.getAggregation("_grid").ontap(oFakeEvent);
+		oSPC.getAggregation("_grid").onmouseup(oFakeEvent);
 
 		//assert
 		assert.ok(fnFireAppointmentSelectSpy.calledOnce, "Event was fired");
@@ -741,7 +741,7 @@ sap.ui.define([
 			fnFireAppointmentSelectSpy = this.spy(oSPC, "fireAppointmentSelect");
 
 		//act
-		oSPC.getAggregation("_mvgrid").ontap(oFakeEvent);
+		oSPC.getAggregation("_mvgrid").onmouseup(oFakeEvent);
 
 		//assert
 		assert.ok(fnFireAppointmentSelectSpy.calledOnce, "Event was fired");

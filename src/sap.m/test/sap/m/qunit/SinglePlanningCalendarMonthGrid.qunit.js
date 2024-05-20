@@ -411,7 +411,7 @@ sap.ui.define([
 			sap.ui.getCore().applyChanges();
 
 			// act
-			oGrid.ontap({ target: oGrid.$().find('.sapMSPCMonthDay')[14], srcControl: oGrid, metaKey: true, originalEvent: {type: "click"}});
+			oGrid.onmouseup({ target: oGrid.$().find('.sapMSPCMonthDay')[14], srcControl: oGrid, metaKey: true, originalEvent: {type: "click"}});
 			sap.ui.getCore().applyChanges();
 
 			// assert
@@ -419,7 +419,7 @@ sap.ui.define([
 			assert.strictEqual(oGrid.getSelectedDates().length, 1, "selectedDates is added");
 
 			// act
-			oGrid.ontap({ target: oGrid.$().find('.sapMSPCMonthDay')[17], srcControl: oGrid, metaKey: true, originalEvent: {type: "click"}});
+			oGrid.onmouseup({ target: oGrid.$().find('.sapMSPCMonthDay')[17], srcControl: oGrid, metaKey: true, originalEvent: {type: "click"}});
 			sap.ui.getCore().applyChanges();
 
 			// assert
@@ -429,7 +429,7 @@ sap.ui.define([
 
 			// act
 			oGrid.setDateSelectionMode(SinglePlanningCalendarSelectionMode.SingleSelection);
-			oGrid.ontap({ target: oGrid.$().find('.sapMSPCMonthDay')[3], srcControl: oGrid, metaKey: true, originalEvent: {type: "click"}});
+			oGrid.onmouseup({ target: oGrid.$().find('.sapMSPCMonthDay')[3], srcControl: oGrid, metaKey: true, originalEvent: {type: "click"}});
 			sap.ui.getCore().applyChanges();
 
 			//clean up
@@ -454,7 +454,7 @@ sap.ui.define([
 			assert.strictEqual(oGrid.getSelectedDates().length, 2, "two days were initially added");
 
 			// act
-			oGrid.ontap({ target: oGrid.$().find('.sapMSPCMonthDay')[14], srcControl: oGrid, metaKey: true, originalEvent: {type: "click"}});
+			oGrid.onmouseup({ target: oGrid.$().find('.sapMSPCMonthDay')[14], srcControl: oGrid, metaKey: true, originalEvent: {type: "click"}});
 			sap.ui.getCore().applyChanges();
 
 			// assert
@@ -462,7 +462,7 @@ sap.ui.define([
 			assert.strictEqual(oGrid.getSelectedDates().length, 1, "one day is removed");
 
 			// act
-			oGrid.ontap({ target: oGrid.$().find('.sapMSPCMonthDay')[17], srcControl: oGrid, metaKey: true, originalEvent: {type: "click"}});
+			oGrid.onmouseup({ target: oGrid.$().find('.sapMSPCMonthDay')[17], srcControl: oGrid, metaKey: true, originalEvent: {type: "click"}});
 			sap.ui.getCore().applyChanges();
 
 			// assert
@@ -583,7 +583,8 @@ sap.ui.define([
 			assert.strictEqual(oGrid.getSelectedDates().length, 0, "no days initially added");
 
 			//act
-			oGrid.ontap(oFakeEvent);
+			oGrid.onmousedown(oFakeEvent);
+			oGrid.onmouseup(oFakeEvent);
 			sap.ui.getCore().applyChanges();
 
 			//assert
@@ -591,6 +592,7 @@ sap.ui.define([
 			for (i = iCellIndexStartWeek; i < iCellIndexEndWeek; i++) {
 				assert.ok(oGrid.$().find('.sapMSPCMonthDay')[i].classList.contains("sapMSPCMonthDaySelected"), i + " cell is selected");
 			}
+			assert.strictEqual(oGrid._oItemNavigation.getFocusedIndex(), iCellIndexStartWeek, "The first day of the selected week should receive focus");
 
 			//clean up
 			oGrid.destroy();
@@ -639,7 +641,7 @@ sap.ui.define([
 			assert.strictEqual(oGrid.getSelectedDates().length, 9, "nine days were originally added");
 
 			//act
-			oGrid.ontap(oFakeEvent);
+			oGrid.onmouseup(oFakeEvent);
 			sap.ui.getCore().applyChanges();
 
 			//assert
