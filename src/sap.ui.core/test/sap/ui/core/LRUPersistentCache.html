@@ -11,7 +11,9 @@
 	<script src="resources/large_cache_content.js"></script>
 
 	<script>
+	/*global m1 -- was defined on the (now missing) large_cache_content.js */
 	sap.ui.require(["sap/ui/core/cache/CacheManager"], function (oCache) {
+		"use strict";
 
 		globalThis.addEntry = function(key, idValue) {
 			var oValue = document.getElementById(idValue).value,

@@ -9,12 +9,21 @@
 				src="../../../../../../resources/sap-ui-core.js">
 		</script>
 		<script>
+			jQuery.sap.require("sap.m.MessageBox");
+
+			function ui5Alert(text) {
+				return new Promise((resolve) => {
+					sap.m.MessageBox.show(text, {
+						onClose: resolve
+					});
+				});
+			}
 
 			// Define sample preprocessor functions
 			var fnXmlPreprocessor = function(xml, info, settings) {
 				return new Promise(function(resolve) {
-					setTimeout(function() {
-						alert(info.id + ": " + settings.message);
+					setTimeout(async function() {
+						await ui5Alert(info.id + ": " + settings.message);
 						// Convert apples to oranges
 						var sXml = new XMLSerializer().serializeToString(xml);
 						sXml = sXml.replace("apple", "orange");
@@ -24,16 +33,16 @@
 			},
 			fnControlPreprocessor = function(controls, info, settings) {
 				return new Promise(function(resolve) {
-					setTimeout(function() {
-						alert(info.id + ": " + settings.message);
+					setTimeout(async function() {
+						await ui5Alert(info.id + ": " + settings.message);
 						// Some manipulation of the control tree
 						var oPanel = controls.getContent()[0];
 						oPanel.removeAllContent();
 						oPanel.addContent(new sap.m.Button({
 							text: "Apple View",
 							icon: "sap-icon://nutrition-activity",
-							press: function() {
-								alert("Fruit alert!");
+							press: async function() {
+								await ui5Alert("Fruit alert!");
 							}
 						}));
 						resolve(/*return value is irrelevant for 'controls'*/);

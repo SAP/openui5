@@ -9,13 +9,14 @@
 	<script src="shared-config.js"></script>
 	<script id="sap-ui-bootstrap"
 			src="../../../../resources/sap-ui-core.js"
-			data-sap-ui-libs="sap.ui.commons, sap.m, sap.ui.layout"
+			data-sap-ui-libs="sap.m, sap.ui.layout"
 			data-sap-ui-theme="sap_bluecrystal"
 			data-sap-ui-originInfo="true"
 			>
 	</script>
 
 	<script>
+		jQuery.sap.require("sap.m.MessageBox");
 		function showInfo() {
 			var mInfo = this.getOriginInfo("text"),
 				sText = "Info:\n";
@@ -27,7 +28,7 @@
 			} else {
 				sText += "Not available!";
 			}
-			alert(sText);
+			sap.m.MessageBox.show(sText);
 		}
 
 		jQuery.sap.require("jquery.sap.resources");
