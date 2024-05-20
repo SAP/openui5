@@ -4,36 +4,74 @@
 	xmlns:f="sap.f"
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc">
-	<Page>
-		<mvc:View viewName="sap.f.cardsdemo.view.common.CommonCardSettings" type="XML" async="true"></mvc:View>
-		<f:GridContainer>
-			<w:Card id="card2"
-					manifest="{cardsPlayground>/playgroundBaseUrl}cardcontent/pagination/oDataManifest.json"
-					action=".onAction">
-				<w:layoutData>
-					<f:GridContainerItemLayoutData columns="4" />
-				</w:layoutData>
-			</w:Card>
-			<w:Card id="card3" manifest="{cardsPlayground>/playgroundBaseUrl}cardcontent/pagination/oDataManifestGlobalData.json">
-				<w:layoutData>
-					<f:GridContainerItemLayoutData columns="4" />
-				</w:layoutData>
-			</w:Card>
-			<w:Card manifest="{cardsPlayground>/playgroundBaseUrl}cardcontent/pagination/cardWithFilters.json">
-				<w:layoutData>
-					<f:GridContainerItemLayoutData columns="4" />
-				</w:layoutData>
-			</w:Card>
-			<w:Card id="card1" manifest="{cardsPlayground>/playgroundBaseUrl}cardcontent/pagination/cardManifest.json">
-				<w:layoutData>
-					<f:GridContainerItemLayoutData columns="4" />
-				</w:layoutData>
-			</w:Card>
-			<w:Card manifest="{cardsPlayground>/playgroundBaseUrl}cardcontent/pagination/clientSideWithDynamicData.json">
-				<w:layoutData>
-					<f:GridContainerItemLayoutData columns="4" />
-				</w:layoutData>
-			</w:Card>
-		</f:GridContainer>
+	<Page title="Pagination">
+		<IconTabBar >
+			<items>
+				<IconTabFilter text="List">
+					<mvc:View viewName="sap.f.cardsdemo.view.common.CommonCardSettings" type="XML" async="true"></mvc:View>
+					<f:GridContainer>
+						<w:Card id="card2"
+								manifest="{cardsPlayground>/playgroundBaseUrl}cardcontent/pagination/oDataManifest.json"
+								action=".onAction">
+							<w:layoutData>
+								<f:GridContainerItemLayoutData columns="4" />
+							</w:layoutData>
+						</w:Card>
+						<w:Card id="card3" manifest="{cardsPlayground>/playgroundBaseUrl}cardcontent/pagination/oDataManifestGlobalData.json">
+							<w:layoutData>
+								<f:GridContainerItemLayoutData columns="4" />
+							</w:layoutData>
+						</w:Card>
+						<w:Card manifest="{cardsPlayground>/playgroundBaseUrl}cardcontent/pagination/cardWithFilters.json">
+							<w:layoutData>
+								<f:GridContainerItemLayoutData columns="4" />
+							</w:layoutData>
+						</w:Card>
+						<w:Card id="card1" manifest="{cardsPlayground>/playgroundBaseUrl}cardcontent/pagination/cardManifest.json">
+							<w:layoutData>
+								<f:GridContainerItemLayoutData columns="4" />
+							</w:layoutData>
+						</w:Card>
+						<w:Card manifest="{cardsPlayground>/playgroundBaseUrl}cardcontent/pagination/clientSideWithDynamicData.json">
+							<w:layoutData>
+								<f:GridContainerItemLayoutData columns="4" />
+							</w:layoutData>
+						</w:Card>
+					</f:GridContainer>
+				</IconTabFilter>
+				<IconTabFilter text="Table">
+					<f:GridContainer>
+						<w:Card manifest="{cardsPlayground>/playgroundBaseUrl}cardcontent/pagination/table/clientSide.manifest.json"
+								action=".onAction">
+							<w:layoutData>
+								<f:GridContainerItemLayoutData columns="4" />
+							</w:layoutData>
+						</w:Card>
+						<w:Card manifest="{cardsPlayground>/playgroundBaseUrl}cardcontent/pagination/table/serverSide.manifest.json"
+								action=".onAction">
+							<w:layoutData>
+								<f:GridContainerItemLayoutData columns="4" />
+							</w:layoutData>
+						</w:Card>
+					</f:GridContainer>
+				</IconTabFilter>
+				<IconTabFilter text="Timeline">
+					<f:GridContainer>
+						<w:Card manifest="{cardsPlayground>/playgroundBaseUrl}cardcontent/pagination/timeline/clientSide.manifest.json"
+								action=".onAction">
+							<w:layoutData>
+								<f:GridContainerItemLayoutData columns="4" />
+							</w:layoutData>
+						</w:Card>
+						<w:Card manifest="{cardsPlayground>/playgroundBaseUrl}cardcontent/pagination/timeline/serverSide.manifest.json"
+								action=".onAction">
+							<w:layoutData>
+								<f:GridContainerItemLayoutData columns="4" />
+							</w:layoutData>
+						</w:Card>
+					</f:GridContainer>
+				</IconTabFilter>
+			</items>
+		</IconTabBar>
 	</Page>
 </mvc:View>

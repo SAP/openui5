@@ -1,0 +1,71 @@
+{
+	"_version": "1.14.0",
+	"sap.app": {
+		"id": "sap.f.cardsDemo.pagination.table.serverSide",
+		"type": "card",
+		"title": "Cards with Server-Side Pagination",
+		"subTitle": "",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Data",
+				"Pagination",
+				"Card",
+				"Sample"
+			]
+		}
+	},
+	"sap.card": {
+		"type": "Table",
+		"header": {
+			"title": "Server-Side Pagination",
+			"status": {
+				"text": {
+					"format": {
+						"translationKey": "i18n>CARD.COUNT_X_OF_Y",
+						"parts": [
+							"parameters>/visibleItems",
+							"/@odata.count"
+						]
+					}
+				}
+			}
+		},
+		"content": {
+			"row": {
+				"columns": [
+					{
+						"title": "Product",
+						"value": "{ProductName}"
+					},
+					{
+						"title": "Units in Stock",
+						"value": "{UnitsInStock}"
+					}
+				]
+			}
+		},
+		"footer": {
+			"paginator": {
+				"totalCount": "{/@odata.count}",
+				"pageSize": 5
+			}
+		},
+		"data": {
+			"request": {
+				"url": "https://services.odata.org/V4/Northwind/Northwind.svc/Products",
+				"parameters": {
+					"$count": true,
+					"$skip": "{paginator>/skip}",
+					"$top": 5
+				}
+			},
+			"path": "/value"
+		}
+	}
+}
