@@ -13,8 +13,8 @@ sap.ui.define([
 	// shortcut for sap.m.CarouselArrowsPlacement
 	var CarouselArrowsPlacement = library.CarouselArrowsPlacement;
 
-	// shortcut for sap.m.PlacementType
-	var PlacementType = library.PlacementType;
+	// shortcut for sap.m.CarouselPageIndicatorPlacementType
+	var CarouselPageIndicatorPlacementType = library.CarouselPageIndicatorPlacementType;
 
 	var oResourceBundle = Library.getResourceBundleFor("sap.m");
 
@@ -46,12 +46,13 @@ sap.ui.define([
 		this._renderDummyArea(oRM, oCarousel, "before");
 
 		//visual indicator
-		if (sPageIndicatorPlacement === PlacementType.Top) {
+		if (sPageIndicatorPlacement === CarouselPageIndicatorPlacementType.Top ||
+			sPageIndicatorPlacement === CarouselPageIndicatorPlacementType.OverContentTop) {
 			this._renderPageIndicatorAndArrows(oRM, oCarousel, {
 				iPageCount: iPageCount,
 				iIndex: iIndex,
 				sArrowsPlacement : sArrowsPlacement,
-				bBottom: false,
+				sPlacement: sPageIndicatorPlacement,
 				bShowPageIndicator: oCarousel.getShowPageIndicator()
 			});
 		}
@@ -63,12 +64,13 @@ sap.ui.define([
 		}
 
 		//visual indicator
-		if (sPageIndicatorPlacement === PlacementType.Bottom) {
+		if (sPageIndicatorPlacement === CarouselPageIndicatorPlacementType.OverContentBottom
+			|| sPageIndicatorPlacement === CarouselPageIndicatorPlacementType.Bottom) {
 			this._renderPageIndicatorAndArrows(oRM, oCarousel, {
 				iPageCount: iPageCount,
 				iIndex: iIndex,
 				sArrowsPlacement : sArrowsPlacement,
-				bBottom: true,
+				sPlacement: sPageIndicatorPlacement,
 				bShowPageIndicator: oCarousel.getShowPageIndicator()
 			});
 		}
@@ -110,13 +112,13 @@ sap.ui.define([
 
 		if (aPages.length > 1 && (oCarousel.getShowPageIndicator() || oCarousel.getArrowsPlacement() === CarouselArrowsPlacement.PageIndicator)) {
 
-			if (sPageIndicatorPlacement === PlacementType.Bottom) {
+			if (sPageIndicatorPlacement === CarouselPageIndicatorPlacementType.Bottom) {
 				oRM.class("sapMCrslBottomOffset");
 
 				if (oCarousel.getArrowsPlacement() === CarouselArrowsPlacement.PageIndicator) {
 					oRM.class("sapMCrslBottomArrowsOffset");
 				}
-			} else {
+			} else if (sPageIndicatorPlacement === CarouselPageIndicatorPlacementType.Top) {
 				oRM.class("sapMCrslTopOffset");
 
 				if (oCarousel.getArrowsPlacement() === CarouselArrowsPlacement.PageIndicator) {
@@ -185,7 +187,7 @@ sap.ui.define([
 	 * @param {object} mSettings
 	 * @param {int} mSettings.iPageCount
 	 * @param {int} mSettings.iIndex
-	 * @param {boolean} mSettings.bBottom
+	 * @param {string} mSettings.sPlacement
 	 * @param {sap.m.CarouselArrowsPlacement} mSettings.sArrowsPlacement
 	 * @param {boolean} mSettings.bShowPageIndicator
 	 * @private
@@ -208,11 +210,7 @@ sap.ui.define([
 			return;
 		}
 
-		if (mSettings.bBottom) {
-			aOffsetClasses.push("sapMCrslControlsBottom");
-		} else {
-			aOffsetClasses.push("sapMCrslControlsTop");
-		}
+		aOffsetClasses.push("sapMCrslControls" + mSettings.sPlacement);
 
 		if (bShowIndicatorArrows) {
 			oRM.openStart("div").class("sapMCrslControls");
@@ -290,13 +288,7 @@ sap.ui.define([
 		var sArrowPositionHudClass;
 
 		if (oCarousel.getShowPageIndicator()) {
-
-			if (oCarousel.getPageIndicatorPlacement() === PlacementType.Top) {
-				sArrowPositionHudClass = "sapMCrslHudTop";
-			} else if (oCarousel.getPageIndicatorPlacement() === PlacementType.Bottom) {
-				sArrowPositionHudClass = "sapMCrslHudBottom";
-			}
-
+			sArrowPositionHudClass = "sapMCrslHud" + oCarousel.getPageIndicatorPlacement();
 		} else {
 			sArrowPositionHudClass = "sapMCrslHudMiddle";
 		}

@@ -53,8 +53,8 @@ sap.ui.define([
 	// shortcut for sap.m.CarouselArrowsPlacement
 	var CarouselArrowsPlacement = library.CarouselArrowsPlacement;
 
-	// shortcut for sap.m.PlacementType
-	var PlacementType = library.PlacementType;
+	//shortcut for sap.m.CarouselPageIndicatorPlacementType
+	var CarouselPageIndicatorPlacementType = library.CarouselPageIndicatorPlacementType;
 
 	//shortcut for sap.m.BackgroundDesign
 	var BackgroundDesign = library.BackgroundDesign;
@@ -105,7 +105,7 @@ sap.ui.define([
 	 * <li><code>showPageIndicator</code> - determines if the indicator is displayed.</li>
 	 * <li>If the pages are less than 9, the page indicator is represented with bullets.</li>
 	 * <li>If the pages are 9 or more, the page indicator is numeric.</li>
-	 * <li><code>pageIndicatorPlacement</code> - determines where the indicator is located. Default (<code>sap.m.PlacementType.Bottom</code>) - below the content.</li>
+	 * <li><code>pageIndicatorPlacement</code> - determines where the indicator is located. Default (<code>sap.m.CarouselPageIndicatorPlacementType.Bottom</code>) - below the content.</li>
 	 *</ul>
 	 * Additionally, you can also change the location of the navigation arrows.
 	 * By setting <code>arrowsPlacement</code> to <code>sap.m.CarouselArrowsPlacement.PageIndicator</code>, the arrows will be located at the bottom by the paging indicator.
@@ -165,9 +165,17 @@ sap.ui.define([
 				showPageIndicator : {type : "boolean", group : "Appearance", defaultValue : true},
 
 				/**
-				 * Defines where the carousel's page indicator is displayed. Possible values are sap.m.PlacementType.Top, sap.m.PlacementType.Bottom. Other values are ignored and the default value will be applied. The default value is sap.m.PlacementType.Bottom.
+				 * Defines where the carousel's page indicator is displayed.
+				 * Possible values are sap.m.CarouselPageIndicatorPlacementType.Top, sap.m.CarouselPageIndicatorPlacementType.Bottom,
+				 * CarouselPageIndicatorPlacementType.OverContentTop and CarouselPageIndicatorPlacementType.OverContentBottom.
+				 *
+				 * <b>Note:</b> when the page indicator is placed over the carousel's content (values "OverContentBottom" and "OverContentTop"),
+				 * the properties <code>pageIndicatorBackgroundDesign</code> and <code>pageIndicatorBorderDesign</code> will not take effect.
+				 *
+				 * <b>Note:</b> We recommend using a page indicator placed over the carousel's content (values "OverContentBottom" and "OverContentTop")
+				 * only if the content consists of images.
 				 */
-				pageIndicatorPlacement : {type : "sap.m.PlacementType", group : "Appearance", defaultValue : PlacementType.Bottom},
+				pageIndicatorPlacement : {type : "sap.m.CarouselPageIndicatorPlacementType", group : "Appearance", defaultValue : CarouselPageIndicatorPlacementType.Bottom},
 
 				/**
 				 * Show or hide busy indicator in the carousel when loading pages after swipe.

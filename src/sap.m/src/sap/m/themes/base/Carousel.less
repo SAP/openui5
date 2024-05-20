@@ -253,12 +253,18 @@ html[data-sap-ui-animation='off'] .sapMCrsl .sapMCrslInner {
 	top:  calc(~"50% - 1rem");
 }
 
-.sapMCrslHudTop .sapMCrslArrow {
-	top: 50%;
+.sapMCrslHudTop,
+.sapMCrslHudOverContentTop {
+	.sapMCrslArrow {
+		top: 50%;
+	}
 }
 
-.sapMCrslHudBottom .sapMCrslArrow {
-	top: calc(~"50% - 2rem");
+.sapMCrslHudBottom,
+.sapMCrslHudOverContentBottom {
+	.sapMCrslArrow {
+		top: calc(~"50% - 2rem");
+	}
 }
 
 .sapMCrslBulleted > span {
@@ -339,7 +345,8 @@ html[data-sap-ui-animation='off'] .sapMCrsl .sapMCrslInner {
 }
 
 .sapMCrslControls.sapMCrslControlsTop,
-.sapMCrslControlsNoArrows.sapMCrslControlsTop {
+.sapMCrslControlsNoArrows.sapMCrslControlsTop,
+.sapMCrslControlsOverContentTop {
 	position: absolute;
 	top: 0;
 	width: 100%;
@@ -348,10 +355,36 @@ html[data-sap-ui-animation='off'] .sapMCrsl .sapMCrslInner {
 }
 
 .sapMCrslControls.sapMCrslControlsBottom,
-.sapMCrslControlsNoArrows.sapMCrslControlsBottom {
+.sapMCrslControlsNoArrows.sapMCrslControlsBottom,
+.sapMCrslControlsOverContentBottom {
 	position: absolute;
 	bottom: 0;
 	width: 100%;
+}
+
+.sapMCrslControlsOverContentTop,
+.sapMCrslControlsOverContentBottom {
+	.sapMCrslBulleted,
+	.sapMCrslNumeric {
+		background-color: @sapUiPageFooterBackground;
+		height: 1rem;
+		border-radius: @sapUiElementBorderCornerRadius;
+		border: 1px solid @sapUiPageFooterBorderColor;
+		margin: 0 0.5rem;
+	}
+}
+
+.sapMCrslControlsOverContentTop,
+.sapMCrslControlsOverContentBottom {
+	&.sapMCrslControlsNoArrows .sapMCrslBulleted,
+	&.sapMCrslControlsNoArrows .sapMCrslNumeric {
+		width: 9rem;
+	}
+}
+
+.sapMCrsl .sapMCrslControlsOverContentTop,
+.sapMCrsl .sapMCrslControlsOverContentBottom {
+	background-color: transparent; // the background should always be transparent since it is over the carousel's content
 }
 
 .sapMCrslControlsNoArrowsTop {
@@ -385,7 +418,7 @@ html[data-sap-ui-animation='off'] .sapMCrsl .sapMCrslInner {
 	text-align: center;
 	outline: none;
 	position: relative;
-	top: 4px;
+	top: 3px;
 }
 
 .sapMCrslArrowInner {
@@ -431,6 +464,20 @@ html[data-sap-ui-animation='off'] .sapMCrsl .sapMCrslInner {
 	position: relative;
 	bottom: 0;
 	align-self: center;
+}
+
+.sapMCrslControlsOverContentTop {
+	&.sapMCrslControlsNoArrows .sapMCrslBulleted,
+	&.sapMCrslControlsNoArrows .sapMCrslNumeric {
+		bottom: 2px;
+	}
+}
+
+.sapMCrslControlsOverContentBottom {
+	&.sapMCrslControlsNoArrows .sapMCrslBulleted,
+	&.sapMCrslControlsNoArrows .sapMCrslNumeric {
+		bottom: -2px;
+	}
 }
 
 /* Styles for carousel dots on different screens */
