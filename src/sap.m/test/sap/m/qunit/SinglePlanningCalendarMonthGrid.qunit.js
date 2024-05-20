@@ -411,6 +411,32 @@ sap.ui.define([
 			assert.equal(sLabels[5], "36", "last label is ok");
 		});
 
+		QUnit.test("getFocusDomRef returns correct items", async function(assert) {
+			// arrange
+			const oAppointment = new CalendarAppointment("may_appointment",{
+				startDate: UI5Date.getInstance(2018, 7, 12),
+				endDate: UI5Date.getInstance(2018, 7, 12)
+			});
+
+			this.oSPCMG.addAppointment(oAppointment);
+			await nextUIUpdate(this.clock);
+
+			const oDateToFocus = this.oSPCMG.getDomRef().getElementsByClassName("sapMSPCMonthDay")[7];
+
+			// act - focus date
+			oDateToFocus.focus();
+
+			// assert
+			assert.equal(this.oSPCMG.getFocusDomRef().getAttribute("sap-ui-date"), oDateToFocus.getAttribute("sap-ui-date"), "getFocusDomRef returns correct grid day when no appointment is selected");
+
+			// act - focus appointment
+			oAppointment.focus();
+			qutils.triggerKeydown(document.activeElement, KeyCodes.SPACE, true);
+
+			// assert
+			assert.equal(this.oSPCMG.getFocusDomRef().getAttribute("sap-ui-date"), oAppointment.getDomRef().getAttribute("sap-ui-date"), "getFocusDomRef returns correct appointment when it has been selected");
+		});
+
 		QUnit.test("cellPress", function(assert) {
 			// arrange
 			var oCellPressSpy = this.spy(this.oSPCMG, "fireEvent");

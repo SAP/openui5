@@ -5,7 +5,6 @@
 // Provides control sap.m.SinglePlanningCalendarMonthGrid.
 sap.ui.define([
 	'sap/base/i18n/Formatting',
-	'sap/ui/core/Element',
 	'sap/ui/core/Control',
 	'sap/ui/core/format/DateFormat',
 	'sap/ui/unified/calendar/CalendarDate',
@@ -33,7 +32,6 @@ sap.ui.define([
 	],
 	function (
 		Formatting,
-		Element,
 		Control,
 		DateFormat,
 		CalendarDate,
@@ -1466,9 +1464,7 @@ sap.ui.define([
 		};
 
 		SinglePlanningCalendarMonthGrid.prototype.getFocusDomRef = function() {
-			return this._sSelectedAppointment
-				? this._sSelectedAppointment.getDomRef()
-				: Element.prototype.getFocusDomRef.apply(this, arguments);
+			return this._sSelectedAppointment ? this._sSelectedAppointment.getDomRef() : this._oItemNavigation.getFocusedDomRef();
 		};
 
 		return SinglePlanningCalendarMonthGrid;
