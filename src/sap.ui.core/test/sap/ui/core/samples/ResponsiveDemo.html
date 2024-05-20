@@ -134,7 +134,7 @@ for (var i = 0; i < aTitles.length; i++){
 	} else if (sTitle.indexOf("Cellphone") >= 0 || sTitle.indexOf("PDA") >= 0) {
 		oProduct.category = "Mobile";
 	}
-	oProduct.image = "../images/"+oProduct.category+".png";
+	oProduct.image = "../images/" + oProduct.category + ".png";
 	data.products.push(oProduct);
 }
 
@@ -148,20 +148,20 @@ function select(idx){
 	}
 	data.selectionIdx = -1;
 
-	if (idx >=0 && idx < data.products.length) {
+	if (idx >= 0 && idx < data.products.length) {
 		data.products[idx].selected = true;
 		data.selectionIdx = idx;
 	}
 
 	oModel.setData(data);
-};
+}
 
 function doFilter(oEvent){
 	var sQuery = oEvent.getParameter("query");
 	currentFilter = !sQuery ? [] : [new sap.ui.model.Filter("title", sap.ui.model.FilterOperator.Contains, sQuery)];
 	select(-1);
 	currentControl.__refresh();
-};
+}
 
 //Attach Media-Handler
 sap.ui.Device.media.attachHandler(function(mParams){
@@ -192,7 +192,7 @@ function initialize(from) {
 
 	var mobile = aInfo[1];
 
-	function init(){
+	function init() {
 		currentControl = aInfo[0];
 		var ctrl;
 		if (!currentMobile) {
@@ -207,14 +207,14 @@ function initialize(from) {
 		if (!uiArea || uiArea.getContent()[0] != ctrl) {
 			ctrl.placeAt("root", "only");
 		}
-	};
+	}
 
 	if (currentMobile === null || currentMobile != mobile) {
 		sap.ui.require(["sap/ui/core/Theming"], function(Theming) {
 			if (!currentMobile && oShell) {
 				oShell._getSearchTool().close();
 			}
-	
+
 			currentMobile = mobile;
 			jQuery("#root").html("");
 			Theming.setTheme(mobile ? "sap_belize" : "sap_bluecrystal");
@@ -227,10 +227,10 @@ function initialize(from) {
 	} else {
 		init();
 	}
-};
+}
 
 
-function initializeTable(){
+function initializeTable() {
 	if (oTable) {
 		oTable.__refresh();
 		return [oTable, false];
@@ -238,8 +238,8 @@ function initializeTable(){
 
 	oTable = new sap.ui.table.Table({
 		selectionMode: "Single",
-		rowSelectionChange: function(oEvent){
-			if(!oTable.__ignoreSelectionChange){
+		rowSelectionChange: function(oEvent) {
+			if (!oTable.__ignoreSelectionChange) {
 				select(oEvent.getParameter("rowIndex"));
 			}
 		},
@@ -275,21 +275,21 @@ function initializeTable(){
 	oTable.__refresh();
 
 	return [oTable, false];
-};
+}
 
 
-function initializeDataset(bSingleRow){
+function initializeDataset(bSingleRow) {
 	if (oDataSet) {
 		oDataSet.__refresh(true, bSingleRow);
 		return [oDataSet, false];
 	}
 
-	sap.ui.core.Control.extend("ItemLayout", {
+	const ItemLayout = sap.ui.core.Control.extend("ItemLayout", {
 		metadata : {
 			aggregations : {
 				"link" : {type : "sap.m.Link", multiple : false},
 				"image" : {type : "sap.m.Image", multiple : false},
-				"form" : {type : "sap.ui.layout.form.Form", multiple : false},
+				"form" : {type : "sap.ui.layout.form.Form", multiple : false}
 			}
 		},
 
@@ -377,7 +377,7 @@ function initializeDataset(bSingleRow){
 				]
 			})
 		});
-	};
+	}
 
 	var oResponsiveView = new sap.ui.ux3.DataSetSimpleView({
 		floating: true,
@@ -409,7 +409,7 @@ function initializeDataset(bSingleRow){
 	oDataSet.setModel(oModel);
 
 	oDataSet.__refresh = function(bChangeCurrentView, bSingleRow){
-		if(bChangeCurrentView){
+		if (bChangeCurrentView) {
 			this.setSelectedView(bSingleRow ? oDataSet.getViews()[1] : oDataSet.getViews()[0]);
 		}
 		this.getBinding("items").filter(currentFilter);
@@ -419,10 +419,10 @@ function initializeDataset(bSingleRow){
 	oDataSet.__refresh(true, bSingleRow);
 
 	return [oDataSet, false];
-};
+}
 
 
-function initializeList(){
+function initializeList() {
 	if (oApp) {
 		oApp.__refresh();
 		return [oApp, true];
@@ -473,10 +473,10 @@ function initializeList(){
 	oApp.__refresh();
 
 	return [oApp, true];
-};
+}
 
 
-function initializeShell(){
+function initializeShell() {
 	if (oShell) {
 		return oShell;
 	}
@@ -502,7 +502,8 @@ function initializeShell(){
 	});
 
 	return oShell;
-};
+}
+
 sap.ui.Device.media.initRangeSet('myPoints', aPoints);
 
 </script>

@@ -143,7 +143,7 @@
 			if (oComp && oComp instanceof sap.ui.core.Component) {
 				oComp.destroy();
 				oCompCont.destroy();
-			};
+			}
 			initComponents();
 		},
 		selectChange(oEvent) {
@@ -221,7 +221,7 @@
 				break;
 			default:
 				manifirst = false;
-		};
+		}
 
 		var oConfig = {
 			manifestUrl: manifirst ? undefined : "anylocation/manifest.json",
