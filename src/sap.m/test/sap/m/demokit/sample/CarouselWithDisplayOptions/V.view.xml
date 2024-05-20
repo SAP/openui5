@@ -23,12 +23,11 @@
 			   class="sapUiMediumMarginTop"
 			   text="Carousel with Display Options"></Title>
 		<HBox justifyContent="Center" renderType="Bare">
-			<Panel id="carouselContainer" height="650px" backgroundDesign="Transparent">
+			<Panel id="carouselContainer" height="500px" backgroundDesign="Transparent">
 				<Carousel
 					id="carouselSample"
 					ariaLabelledBy="carouselTitle"
-					loop="true"
-					class="sapUiContentPadding">
+					loop="true">
 					<customLayout>
 						<CarouselLayout/>
 					</customLayout>
@@ -51,6 +50,8 @@
 			<RadioButtonGroup columns="2" select=".onPageIndicatorPlacementSelect">
 				<RadioButton text="Bottom" tooltip="Places the page indicator on the bottom of the carousel" />
 				<RadioButton text="Top" tooltip="Places the page indicator on the top of the carousel" />
+				<RadioButton text="OverContentBottom" tooltip="Places the page indicator over the carousel's content, aligned bottom" />
+				<RadioButton text="OverContentTop" tooltip="Places the page indicator over the carousel's content, aligned top" />
 			</RadioButtonGroup>
 
 			<Label text="Carousel background design" />

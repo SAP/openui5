@@ -53,6 +53,9 @@ sap.ui.define([
 	// shortcut for sap.m.PlacementType
 	var PlacementType = mobileLibrary.PlacementType;
 
+	// shortcut for sap.m.CarouselPageIndicatorPlacementType
+	var CarouselPageIndicatorPlacementType = mobileLibrary.CarouselPageIndicatorPlacementType;
+
 	var DOM_RENDER_LOCATION = "qunit-fixture";
 	var sinonClockTickValue = 1000;
 
@@ -137,6 +140,7 @@ sap.ui.define([
 		assert.strictEqual(this.oCarousel.getDomRef().getElementsByClassName("sapMCrslInnerNoPages").length, 1, "When there are no pages set initially there is 'sapMCrslInnerNoPages' class applied");
 		assert.strictEqual(this.oCarousel.getShowPageIndicator(), true, "Default 'showPageIndicator' value is true");
 		assert.strictEqual(this.oCarousel.getPageIndicatorPlacement(), PlacementType.Bottom, "Default 'pageIndicatorPlacement' value is Bottom");
+		assert.strictEqual(this.oCarousel.getPageIndicatorPlacement(), CarouselPageIndicatorPlacementType.Bottom, "Default 'pageIndicatorPlacement' value is Bottom");
 		assert.strictEqual(this.oCarousel.getArrowsPlacement(), CarouselArrowsPlacement.Content, "Default 'arrowsPlacement' value is 'Content'");
 		assert.strictEqual(this.oCarousel.$("a").attr("href"), undefined, "Arrow's attribute href is not a link.");
 		assert.strictEqual(this.oCarousel.getBackgroundDesign(), BackgroundDesign.Translucent, "Default value for Background Design is 'Translucent'");
@@ -288,7 +292,7 @@ sap.ui.define([
 		assert.strictEqual(this.oCarousel.$().find(".sapMCrslBulleted").css('opacity'), '1', "Page Indicator should be visible");
 	});
 
-	QUnit.test("#setPageIndicatorPlacement() to 'top' position", function (assert) {
+	QUnit.test("#setPageIndicatorPlacement() to 'top' position - old 'PlacementType' enum", function (assert) {
 		// Act
 		this.oCarousel.setPageIndicatorPlacement(PlacementType.Top);
 		Core.applyChanges();
@@ -297,12 +301,47 @@ sap.ui.define([
 		assert.ok(this.oCarousel.$().children().eq(1).hasClass('sapMCrslControlsTop'), "Page Indicator should be on top");
 	});
 
-	QUnit.test("#setPageIndicatorPlacement() to 'bottom' position", function (assert) {
+	QUnit.test("#setPageIndicatorPlacement() to 'top' position", function (assert) {
+		// Act
+		this.oCarousel.setPageIndicatorPlacement(CarouselPageIndicatorPlacementType.Top);
+		Core.applyChanges();
+
+		// Assert
+		assert.ok(this.oCarousel.$().children().eq(1).hasClass('sapMCrslControlsTop'), "Page Indicator should be on top");
+	});
+
+	QUnit.test("#setPageIndicatorPlacement() to 'bottom' position - old 'PlacementType' enum", function (assert) {
 		// Act
 		this.oCarousel.setPageIndicatorPlacement(PlacementType.Bottom);
 
 		// Assert
 		assert.ok(this.oCarousel.$().children().eq(-2).hasClass('sapMCrslControlsBottom'), "Page Indicator should be at bottom");
+	});
+
+	QUnit.test("#setPageIndicatorPlacement() to 'bottom' position", function (assert) {
+		// Act
+		this.oCarousel.setPageIndicatorPlacement(CarouselPageIndicatorPlacementType.Bottom);
+
+		// Assert
+		assert.ok(this.oCarousel.$().children().eq(-2).hasClass('sapMCrslControlsBottom'), "Page Indicator should be at bottom");
+	});
+
+	QUnit.test("#setPageIndicatorPlacement() to 'OverContentBottom' position", function (assert) {
+		// Act
+		this.oCarousel.setPageIndicatorPlacement(CarouselPageIndicatorPlacementType.OverContentBottom);
+		Core.applyChanges();
+
+		// Assert
+		assert.ok(this.oCarousel.$().children().eq(-2).hasClass('sapMCrslControlsOverContentBottom'), "Page Indicator should be at bottom, over the content");
+	});
+
+	QUnit.test("#setPageIndicatorPlacement() to 'OverContentTop' position", function (assert) {
+		// Act
+		this.oCarousel.setPageIndicatorPlacement(CarouselPageIndicatorPlacementType.OverContentTop);
+		Core.applyChanges();
+
+		// Assert
+		assert.ok(this.oCarousel.$().children().eq(1).hasClass('sapMCrslControlsOverContentTop'), "Page Indicator should be at top, over the content");
 	});
 
 	QUnit.test("#setArrowsPlacement() to 'Content' position", function (assert) {

@@ -47,6 +47,7 @@ sap.ui.define([
 		//shortcuts
 		const ButtonType = mLibrary.ButtonType,
 			PlacementType = mLibrary.PlacementType,
+			CarouselPageIndicatorPlacementType = mLibrary.CarouselPageIndicatorPlacementType,
 			BackgroundDesign = mLibrary.BackgroundDesign,
 			BorderDesign = mLibrary.BorderDesign,
 			CarouselArrowsPlacement = mLibrary.CarouselArrowsPlacement;
@@ -105,7 +106,7 @@ sap.ui.define([
 					press : 'detailPage'
 				}, {
 					title : "Travel Settings",
-					description : "Change your travel worflow settings",
+					description : "Change your travel workflow settings",
 					icon : "images/settings.png",
 					iconInset : false,
 					type : "Navigation",
@@ -337,9 +338,9 @@ sap.ui.define([
 		});
 
 		// Create Images
-		var imgDesert = new Image("desert", {
-			src: "images/demo/nature/desert.jpg",
-			alt: "Majestic Desert",
+		var imgDesert = new Image("elephants", {
+			src: "images/demo/nature/ALotOfElephants.jpg",
+			alt: "A lot of elephants",
 			densityAware: false,
 			decorative: false
 		});
@@ -429,8 +430,8 @@ sap.ui.define([
 		//Please uncomment any of the following lines to test the corresponding
 		//carousel attribute
 		var carousel = new Carousel("myCarousel", {
-			//pageIndicatorPlacement: PlacementType.Top,
-			//pageIndicatorPlacement: PlacementType.Bottom,
+			//pageIndicatorPlacement: CarouselPageIndicatorPlacementType.Top,
+			//pageIndicatorPlacement: CarouselPageIndicatorPlacementType.Bottom,
 			activePage: carouselImages[2],
 			//width: "50%",
 			//height: "50%",
@@ -471,25 +472,36 @@ sap.ui.define([
 		// Radio button group pageIndicatorPlacement
 
 		var oRBGroupPageIndicatorPlacement = new RadioButtonGroup("RBPageIndicatorPlacement");
-		oRBGroupPageIndicatorPlacement.setColumns(2);
-
-		var oButtonBottom = new RadioButton("RB-Bottom");
-		oButtonBottom.setText("Bottom");
-		oButtonBottom.setTooltip("Places the page indicator on the bottom of the carousel");
-		oRBGroupPageIndicatorPlacement.addButton(oButtonBottom);
+		oRBGroupPageIndicatorPlacement.setColumns(4);
 
 		var oButtonTop = new RadioButton("RB-Top");
 		oButtonTop.setText("Top");
 		oButtonTop.setTooltip("Places the page indicator on the top of the carousel");
 		oRBGroupPageIndicatorPlacement.addButton(oButtonTop);
 
+		var oButtonOverContentTop = new RadioButton("RB-Over-Top");
+		oButtonOverContentTop.setText("OverContentTop");
+		oButtonOverContentTop.setTooltip("Places the page indicator over the carousel's content, aligned top");
+		oRBGroupPageIndicatorPlacement.addButton(oButtonOverContentTop);
+
+		var oButtonOverContentBottom = new RadioButton("RB-Over-Bottom");
+		oButtonOverContentBottom.setText("OverContentBottom");
+		oButtonOverContentBottom.setTooltip("Places the page indicator over the carousel's content, aligned bottom");
+		oRBGroupPageIndicatorPlacement.addButton(oButtonOverContentBottom);
+
+		var oButtonBottom = new RadioButton("RB-Bottom");
+		oButtonBottom.setText("Bottom");
+		oButtonBottom.setTooltip("Places the page indicator on the bottom of the carousel");
+		oButtonBottom.setSelected(true);
+		oRBGroupPageIndicatorPlacement.addButton(oButtonBottom);
+
 		var oRBGroupPageIndicatorPlacementLabel = new Label({ text: "Page indicator placement", labelFor: oRBGroupPageIndicatorPlacement });
+
 		oRBGroupPageIndicatorPlacement.attachSelect(function () {
 			var sSelectedValue = oRBGroupPageIndicatorPlacement.getSelectedButton().getText();
-			if (sSelectedValue === "Bottom") {
-				carousel.setPageIndicatorPlacement(PlacementType.Bottom);
-			} else if (sSelectedValue === "Top") {
-				carousel.setPageIndicatorPlacement(PlacementType.Top);
+
+			if (sSelectedValue in CarouselPageIndicatorPlacementType) {
+				carousel.setPageIndicatorPlacement(sSelectedValue);
 			}
 		});
 
