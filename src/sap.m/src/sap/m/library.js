@@ -2457,6 +2457,17 @@ sap.ui.define([
 	 */
 
 	/**
+	 * Returns the <code>sap.m.OverflowToolbar</code> configuration object.
+	 *
+	 * @returns {sap.m.OverflowToolbarConfig} Configuration object
+	 *
+	 * @function
+	 * @name sap.m.IOverflowToolbarContent.getOverflowToolbarConfig
+	 * @ui5-restricted
+	 * @private
+	 */
+
+	/**
 	 * Marker interface for flexible controls that have a special behavior inside <code>sap.m.OverflowToolbar</code>.
 	 *
 	 * @since 1.67
