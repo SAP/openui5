@@ -471,6 +471,14 @@ sap.ui.define([
 			return fetch(sResource, mOptions);
 		};
 
+		/**
+		 * Override this method to change the source for the analytics cloud widget script.
+		 * @private
+		 * @ui5-restricted
+		 * @experimental Since 1.125. The API might change.
+		 */
+		Host.prototype.getAnalyticsCloudWidgetSrc = function () { };
+
 		Host.prototype._addStatisticsParameter = function (sUrl) {
 			var oUrl = new URL(sUrl, window.location.href);
 

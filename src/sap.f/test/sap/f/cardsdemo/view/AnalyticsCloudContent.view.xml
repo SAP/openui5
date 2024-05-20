@@ -1,4 +1,5 @@
 <mvc:View
+	controllerName="sap.f.cardsdemo.controller.AnalyticsCloudContent"
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:f="sap.f"
@@ -12,34 +13,16 @@
 				<ToolbarSpacer/>
 			</Toolbar>
 		</subHeader>
-		<mvc:View viewName="sap.f.cardsdemo.view.common.CommonCardSettings" type="XML" async="true"></mvc:View>
+		<VBox class="sapUiSmallMargin">
+			<FormattedText htmlText="To run this sample:"></FormattedText>
+			<FormattedText htmlText="1. You need to run the browser with disabled CORS checks."></FormattedText>
+			<FormattedText htmlText="&#160;&#160;&#160;&#160;For Windows: [chrome dir]./chrome.exe --user-data-dir=&#x22;C://chrome-dev-disabled-security&#x22; --disable-web-security"></FormattedText>
+			<FormattedText htmlText="2. There will be a popup with login which is required, see related Jira item for credentials."></FormattedText>
+		</VBox>
 
-		<f:GridContainer class="sapUiSmallMargin">
-			<w:Card id="card1" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/analyticsCloud/manifestLine1.json">
-				<w:layoutData>
-					<f:GridContainerItemLayoutData columns="4" />
-				</w:layoutData>
-			</w:Card>
-			<w:Card id="card2" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/analyticsCloud/manifestLine2.json">
-				<w:layoutData>
-					<f:GridContainerItemLayoutData columns="6" />
-				</w:layoutData>
-			</w:Card>
-			<w:Card id="card3" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/analyticsCloud/manifestArea.json">
-				<w:layoutData>
-					<f:GridContainerItemLayoutData columns="6" />
-				</w:layoutData>
-			</w:Card>
-			<w:Card id="card4" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/analyticsCloud/manifestColumn.json">
-				<w:layoutData>
-					<f:GridContainerItemLayoutData columns="6" />
-				</w:layoutData>
-			</w:Card>
-			<w:Card  id="card5" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/analyticsCloud/manifestBar.json">
-				<w:layoutData>
-					<f:GridContainerItemLayoutData columns="6" />
-				</w:layoutData>
-			</w:Card>
-		</f:GridContainer>
+		<w:Card id="card1" width="25rem" class="sapUiSmallMargin" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/analyticsCloud/sample1.json">
+		</w:Card>
+		<w:Card id="card2" width="25rem" class="sapUiSmallMargin" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/analyticsCloud/sample1.json">
+		</w:Card>
 	</Page>
 </mvc:View>

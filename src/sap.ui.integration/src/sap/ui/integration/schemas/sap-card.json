@@ -1273,33 +1273,7 @@
     "ContentType.AnalyticsCloud": {
       "description": "Represents SAP Analytics Cloud content attributes",
       "type": "object",
-      "additionalProperties": false,
-      "properties": {
-        "data": {
-          "$ref": "#/definitions/data"
-        },
-        "minHeight": {
-          "$ref": "#/definitions/minHeight"
-        },
-        "actions": {
-          "description": "Defines actions that can be applied on the content",
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/action"
-          }
-        },
-        "options": {
-          "description": "Options of the chart",
-          "oneOf": [
-            {
-              "type": "object"
-            },
-            {
-              "$ref": "#/definitions/simpleBinding"
-            }
-          ]
-        }
-      }
+      "additionalProperties": true
     },
     "ContentType.Timeline": {
       "description": "Represents time related content",

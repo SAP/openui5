@@ -1,0 +1,58 @@
+{
+	"sap.app": {
+		"id": "sap.cardsdemo.ui.integration.samples.cards.sac",
+		"type": "card",
+		"title": "SAC Integration Card",
+		"subTitle": "Add a SAC Story to pages",
+		"applicationVersion": {
+			"version": "1.0.4"
+		},
+		"shortTitle": "SAC Integration Card",
+		"info": "SAC Integration Card",
+		"description": "SAC Integration Card",
+		"tags": {
+			"keywords": [
+				"Analytics Cloud",
+				"SAC",
+				"Story"
+			]
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://business-objects-experience"
+		}
+	},
+	"sap.card": {
+		"type": "AnalyticsCloud",
+		"configuration": {
+			"parameters": {
+				"storyId": {
+					"value": "ABD0990112D81FBF4C936C30444FA3B7"
+				},
+				"widgetId": {
+					"value": "36486725-0138-4231-8435-538015664163"
+				}
+			},
+			"destinations": {
+				"SAC": {
+					"name": "SAC",
+					"defaultUrl": "https://master-fpa135.master.canary.eu10.projectorca.cloud"
+				}
+			}
+		},
+		"header": {
+			"title": "Demonstration SAC Card",
+			"subTitle": "Shows a widget from story"
+		},
+		"content": {
+			"minHeight": "25rem",
+			"widget": {
+				"storyId": "{parameters>/storyId/value}",
+				"widgetId": "{parameters>/widgetId/value}",
+				"destination": "{{destinations.SAC}}"
+			}
+		}
+	}
+}
