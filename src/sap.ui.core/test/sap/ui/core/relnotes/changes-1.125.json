@@ -3,6 +3,11 @@
     "date": "May 2024",
     "notes": [
       {
+        "id": "57defe66181aed78cdb99b86d56478864c12e7c7",
+        "type": "FIX",
+        "text": " core/Icon: fix keyboard support for keys \"Space\" and \"Enter\""
+      },
+      {
         "id": "55e9851a700947ff9ad03aa26148482277b51106",
         "type": "FIX",
         "text": " sap\\ui\\core\\format\\DateFormat.fnCreateDate: set UTCFullYear must be set with all components"

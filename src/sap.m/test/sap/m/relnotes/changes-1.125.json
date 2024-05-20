@@ -3,6 +3,46 @@
     "date": "May 2024",
     "notes": [
       {
+        "id": "57defe66181aed78cdb99b86d56478864c12e7c7",
+        "type": "FIX",
+        "text": " core/Icon: fix keyboard support for keys \"Space\" and \"Enter\""
+      },
+      {
+        "id": "6307d8d0e6d3967d165cc65c44b9c648b5f26011",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: The cellPress event is fired correctly"
+      },
+      {
+        "id": "9d7db54c4ed1bb2936034076b176e61021cdeb28",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendarMonthGrid: remove unnecessary scrolling"
+      },
+      {
+        "id": "b72e06c0fd41e4b65479486a7991e0c9a2f42df8",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Samples adjustment"
+      },
+      {
+        "id": "1522384b9650b517e22e14e1cd46f14055aad7f5",
+        "type": "FEATURE",
+        "text": " sap.m.SinglePlanningCalendar: Accessible Improvement for More Link"
+      },
+      {
+        "id": "898fb9fb64402fd1fdfe02c14dee7c4ea73b1252",
+        "type": "FIX",
+        "text": " sap.m.Wizard: Step number is read out"
+      },
+      {
+        "id": "4e2506afd02946fd6160d69e032e0ff5c9f89bd1",
+        "type": "FIX",
+        "text": " GenericTile: Handling the visbility of the more button inside the IconMode tile when inscribed inside the GridContainer"
+      },
+      {
+        "id": "ed6028c58ebafce60d9ed4ce18297b1a0b400bf5",
+        "type": "FEATURE",
+        "text": " sap.m.Carousel: Added \"ariaLabelledBy\" association"
+      },
+      {
         "id": "16ba37161fd450effab289e1dd0c685a97aa2d5e",
         "type": "FEATURE",
         "text": " sap.m.SinglePlanningCalendar: add additional detail to moreLinkPress event"
@@ -16,6 +56,11 @@
         "id": "7d77ac43d3b65e5bc27672893d45b0d4567044ac",
         "type": "FEATURE",
         "text": " sap.m.PlanningCalendar: new noData aggregation"
+      },
+      {
+        "id": "ebddfb809fba0cb4a6ffe1492dcf13771de6fc0f",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: center icon in month view"
       },
       {
         "id": "fc04220cff912d64e0f1152626e1d5d37137eaf3",

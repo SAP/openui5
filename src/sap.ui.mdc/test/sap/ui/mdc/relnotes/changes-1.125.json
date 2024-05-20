@@ -1,0 +1,12 @@
+{
+  "1.125.0": {
+    "date": "May 2024",
+    "notes": [
+      {
+        "id": "e5edecab2edacd98bd4614059edfa4281d8f10f3",
+        "type": "FIX",
+        "text": " UploadSetwithTable: Set correct path definition for sap.m.Link"
+      }
+    ]
+  }
+}
