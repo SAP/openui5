@@ -186,9 +186,9 @@ sap.ui.define([
 	 *   Service in the backend.
 	 * @param {boolean} [mParameters.useBatch=true]
 	 *   Whether all requests should be sent in batch requests
-	 * @param {boolean} [mParameters.withCredentials]
-	 *   Experimental - <code>true</code> when user credentials are to be included in a cross-origin
-	 *   request; please note that this only works if all requests are asynchronous
+	 * @param {boolean} [mParameters.withCredentials=false]
+	 *   If set to <code>true</code>, the user credentials are included in a cross-origin request. <b>Note:</b> This
+	 *   only works if all requests are asynchronous.
 	 * @param {string} [mParameters.password]
 	 *   <b>Deprecated</b> for security reasons. Use strong server side authentication instead.
 	 *   Password for the service.
