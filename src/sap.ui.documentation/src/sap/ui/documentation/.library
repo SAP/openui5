@@ -39,7 +39,7 @@
     </packaging>
     <!-- Thirdparty references -->
     <thirdparty xmlns="http://www.sap.com/ui5/buildext/thirdparty" >
-      <lib name="highlight.js" displayName="highlight.js" npmName="highlight.js" hash="ad04c8737a21411588b021733d622c49" version="11.9.0" homepage="https://highlightjs.org/" id="73555000106100051976">
+      <lib name="highlight.js" displayName="highlight.js" npmName="highlight.js" hash="ad04c8737a21411588b021733d622c49" version="11.9.0" homepage="https://highlightjs.org/" id="73554900106100266829">
         <license url="https://github.com/highlightjs/highlight.js/blob/11.9.0/LICENSE" type="BSD-3-Clause" />
         <copyright>2006-2020, Ivan Sagalaev</copyright>
         <pattern>sap/ui/documentation/sdk/thirdparty/highlight.js/*</pattern>
