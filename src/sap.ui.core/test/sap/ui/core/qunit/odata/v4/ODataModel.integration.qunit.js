@@ -37920,6 +37920,7 @@ make root = ${bMakeRoot}`;
 	// Scenario: A hierarchy uses "$$aggregation.createInPlace". Create a root node which is created
 	// and shown in-place between two existing nodes. Use the special cases model to ensure the node
 	// property is properly requested.
+	// Expand a node to see that createInPlace activated a unified cache (side-effects expand).
 	// JIRA: CPOUI5ODATAV4-2560
 	QUnit.test("Recursive Hierarchy: createInPlace, root", async function (assert) {
 		const sUrl = "Artists?$apply=ancestors($root/Artists,OrgChart,_/NodeID"
@@ -37948,8 +37949,9 @@ make root = ${bMakeRoot}`;
 		// 1 Alpha
 		// 3 Gamma (created)
 		// 2 Beta
+		//   4 Delta
 
-		this.expectRequest("Artists/$count?$filter=sendsAutographs", 2)
+		this.expectRequest("Artists/$count?$filter=sendsAutographs", 3)
 			.expectRequest(sUrl + sSelect + "&$count=true&$skip=0&$top=10", {
 				"@odata.count" : "2",
 				value : [{
@@ -37965,7 +37967,7 @@ make root = ${bMakeRoot}`;
 					IsActiveEntity : false,
 					Name : "Beta",
 					_ : {
-						DrillState : "leaf",
+						DrillState : "collapsed",
 						NodeID : "2,false"
 					}
 				}]
@@ -37979,7 +37981,7 @@ make root = ${bMakeRoot}`;
 			"/Artists(ArtistID='2',IsActiveEntity=false)"
 		], [
 			[undefined, 1, "1", "Alpha", "1,false"],
-			[undefined, 1, "2", "Beta", "2,false"]
+			[false, 1, "2", "Beta", "2,false"]
 		]);
 		const oListBinding = oTable.getBinding("rows");
 
@@ -38018,9 +38020,9 @@ make root = ${bMakeRoot}`;
 			"/Artists(ArtistID='2',IsActiveEntity=false)"
 		], [
 			[undefined, 1, "1", "Alpha", "1,false"],
-			[undefined, 1, "2", "Beta", "2,false"]
+			[false, 1, "2", "Beta", "2,false"]
 		]);
-		assert.strictEqual(oListBinding.getCount(), 2);
+		assert.strictEqual(oListBinding.getCount(), 3);
 
 		await Promise.all([
 			oGammaCreated,
@@ -38037,9 +38039,77 @@ make root = ${bMakeRoot}`;
 		], [
 			[undefined, 1, "1", "Alpha", "1,false"],
 			[undefined, 1, "3", "Gamma", "3,false"],
-			[undefined, 1, "2", "Beta", "2,false"]
+			[false, 1, "2", "Beta", "2,false"]
 		]);
-		assert.strictEqual(oListBinding.getCount(), 2); // TODO: update $count; CPOUI5ODATAV4-2245
+		assert.strictEqual(oListBinding.getCount(), 3); // TODO: update $count; CPOUI5ODATAV4-2245
+		const oBeta = oListBinding.getCurrentContexts()[2];
+
+		this.expectRequest("Artists/$count?$filter=sendsAutographs", 4)
+			.expectRequest(sUrl.slice(0, -1)
+				+ ",ExpandLevels=" + JSON.stringify([{NodeID : "2,false", Levels : 1}]) + ")"
+				+ sSelect.replace(",Name,", ",Name,_/DescendantCount,_/DistanceFromRoot,")
+				+ "&$count=true&$skip=0&$top=10", {
+				"@odata.count" : "4",
+				value : [{
+					ArtistID : "1",
+					IsActiveEntity : false,
+					Name : "Alpha",
+					_ : {
+						DescendantCount : "0",
+						DistanceFromRoot : "0",
+						DrillState : "leaf",
+						NodeID : "1,false"
+					}
+				}, {
+					ArtistID : "3",
+					IsActiveEntity : false,
+					Name : "Gamma",
+					_ : {
+						DescendantCount : "0",
+						DistanceFromRoot : "0",
+						DrillState : "leaf",
+						NodeID : "3,false"
+					}
+				}, {
+					ArtistID : "2",
+					IsActiveEntity : false,
+					Name : "Beta",
+					_ : {
+						DescendantCount : "1",
+						DistanceFromRoot : "0",
+						DrillState : "expanded",
+						NodeID : "2,false"
+					}
+				}, {
+					ArtistID : "4",
+					IsActiveEntity : false,
+					Name : "Delta",
+					_ : {
+						DescendantCount : "0",
+						DistanceFromRoot : "1",
+						DrillState : "leaf",
+						NodeID : "4,false"
+					}
+				}]
+			});
+
+		// code under test
+		oBeta.expand();
+
+		await this.waitForChanges(assert, "expand Beta");
+
+		checkTable("after expand Beta", assert, oTable, [
+			"/Artists(ArtistID='1',IsActiveEntity=false)",
+			"/Artists(ArtistID='3',IsActiveEntity=false)",
+			"/Artists(ArtistID='2',IsActiveEntity=false)",
+			"/Artists(ArtistID='4',IsActiveEntity=false)"
+		], [
+			[undefined, 1, "1", "Alpha", "1,false"],
+			[undefined, 1, "3", "Gamma", "3,false"],
+			[true, 1, "2", "Beta", "2,false"],
+			[undefined, 2, "4", "Delta", "4,false"]
+		]);
+		assert.strictEqual(oListBinding.getCount(), 4);
 	});
 
 	//*********************************************************************************************

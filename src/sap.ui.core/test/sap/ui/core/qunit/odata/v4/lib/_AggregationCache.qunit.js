@@ -4981,7 +4981,7 @@ sap.ui.define([
 				createInPlace : true,
 				hierarchyQualifier : "X"
 			});
-		assert.strictEqual(oCache.bUnifiedCache, false);
+		assert.strictEqual(oCache.bUnifiedCache, true, "activated by createInPlace");
 		oCache.aElements = ["0", "1"];
 		oCache.aElements.$byPredicate = {};
 		oCache.aElements.$count = 2;

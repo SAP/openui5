@@ -119,7 +119,8 @@ sap.ui.define([
 			(oNode) => _Helper.getKeyFilter(oNode, this.sMetaPath, this.getTypes()));
 		// Whether this cache is a unified cache, using oFirstLevel with ExpandLevels instead of
 		// separate group level caches
-		this.bUnifiedCache = this.oAggregation.expandTo >= Number.MAX_SAFE_INTEGER;
+		this.bUnifiedCache = this.oAggregation.expandTo >= Number.MAX_SAFE_INTEGER
+			|| !!this.oAggregation.createInPlace;
 	}
 
 	// make _AggregationCache a _Cache, but actively disinherit some critical methods
