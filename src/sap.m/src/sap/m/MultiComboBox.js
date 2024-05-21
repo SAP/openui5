@@ -2368,7 +2368,13 @@ function(
 		var sOriginalText;
 		var bItemSelected = false;
 		var aSelectedItems = this.getSelectedItems();
+		var aSelectableItems = ListHelpers.getSelectableItems(this.getItems());
 
+		if (!aSelectableItems.length) {
+			this.syncPickerContent(true);
+		}
+
+		aSelectableItems = ListHelpers.getSelectableItems(this.getItems());
 
 		sOriginalText = oEvent.originalEvent.clipboardData.getData('text/plain');
 
@@ -2379,7 +2385,7 @@ function(
 		var aSeparatedText = sOriginalText.split(/\r\n|\r|\n|\t/g);
 
 		if (aSeparatedText && aSeparatedText.length > 1) {
-			ListHelpers.getSelectableItems(this.getItems())
+			aSelectableItems
 				.filter(function (oItem) {
 					return aSelectedItems.indexOf(oItem) === -1;
 				})
