@@ -314,10 +314,13 @@ sap.ui.define([
 	 *
 	 * @override sap.ui.model.CompositeType#processPartTypes
 	 * @protected
-	 * @since 1.122.0
+	 * @since 1.120.0
 	 */
 	Unit.prototype.processPartTypes = function (aPartTypes) {
-		this.iScale = aPartTypes[0]?.oConstraints?.scale;
+		const oQuantityType = aPartTypes[0];
+		if (oQuantityType?.isA("sap.ui.model.odata.type.Decimal")) {
+			this.iScale = oQuantityType.oConstraints?.scale || 0;
+		}
 	};
 
 	Unit.prototype.validateValue = function(vValue) {
