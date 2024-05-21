@@ -34,16 +34,16 @@ sap.ui.define([
 					},
 					{
 						key: "person4",
-						firstName: "John",
-						lastName: "Williams",
-						size: "1.65",
+						firstName: "Maria",
+						lastName: "Jones",
+						size: "1.55",
 						city: "Walldorf"
 					},
 					{
 						key: "person5",
-						firstName: "Maria",
-						lastName: "Jones",
-						size: "1.55",
+						firstName: "John",
+						lastName: "Williams",
+						size: "1.65",
 						city: "Walldorf"
 					}
 				]
@@ -57,7 +57,7 @@ sap.ui.define([
 		},
 
 		_registerForP13n: function() {
-			const oTable = this.byId("persoList");
+			const oGridList = this.byId("persoList");
 
 			this.oMetadataHelper = new MetadataHelper([{
 					key: "person1",
@@ -81,15 +81,15 @@ sap.ui.define([
 				}
 			]);
 
-			Engine.getInstance().register(oTable, {
+			Engine.getInstance().register(oGridList, {
 				helper: this.oMetadataHelper,
 				controller: {
-					Columns: new SelectionController({
+					Items: new SelectionController({
 						targetAggregation: "items",
 						getKeyForItem: function(oListItem) {
 							return oListItem.getBindingContext().getProperty("key");
 						},
-						control: oTable
+						control: oGridList
 					})
 				}
 			});
@@ -98,9 +98,9 @@ sap.ui.define([
 		},
 
 		openPersoDialog: function(oEvt) {
-			const oTable = this.byId("persoList");
+			const oGridList = this.byId("persoList");
 
-			Engine.getInstance().show(oTable, ["Columns"], {
+			Engine.getInstance().show(oGridList, ["Items"], {
 				contentHeight: "35rem",
 				contentWidth: "32rem",
 				source: oEvt.getSource()
@@ -108,27 +108,19 @@ sap.ui.define([
 		},
 
 		handleStateChange: function(oEvt) {
-			const oTable = this.byId("persoList");
 			const oState = oEvt.getParameter("state");
 
 			const aPersonData = this.getView().getModel().getProperty("/items");
 
-			oTable.getItems().forEach(function(oListItem) {
-				const oStateItem = oState.Columns.find(function(oColState) {
-					return oColState.key === oListItem.getBindingContext().getProperty("key");
-				});
-				oListItem.setVisible(!!oStateItem);
-			});
-
-			oState.Columns.forEach(function(oStateItem, iIndex) {
+			const aUpdatedPersonData = [];
+			oState.Items.forEach(function(oStateItem, iIndex) {
 				const oModelItem = aPersonData.find(function(oModelItem) {
 					return oModelItem.key === oStateItem.key;
 				});
-
-				aPersonData.splice(iIndex, 0, aPersonData.splice(aPersonData.indexOf(oModelItem), 1)[0]);
+				aUpdatedPersonData.push(oModelItem);
 			});
 
-			this.getView().getModel().setProperty("/items", aPersonData);
+			this.getView().getModel().setProperty("/items", aUpdatedPersonData);
 		}
 	});
 });

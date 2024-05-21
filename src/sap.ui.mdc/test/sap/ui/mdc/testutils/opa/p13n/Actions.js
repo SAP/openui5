@@ -136,6 +136,7 @@ sap.ui.define([
 	var iPressTheOKButtonOnTheDialog = function(oDialog, oSettings) {
 		return iPressAButtonOnTheDialog.call(this, oDialog, Util.texts.ok, oSettings);
 	};
+
 	var iPressTheCancelButtonOnTheDialog = function(oDialog, oSettings) {
 		return iPressAButtonOnTheDialog.call(this, oDialog, Util.texts.cancel, oSettings);
 	};
@@ -414,7 +415,7 @@ sap.ui.define([
 
 	var iPersonalizeListViewItems = function(oP13nDialog, aItems) {
 		this.waitFor({
-			controlType: oP13nDialog.getContent()[0].getView("columns") && oP13nDialog.getContent()[0].getView("columns").getContent().isA("sap.m.p13n.SelectionPanel") ? "sap.m.p13n.SelectionPanel" : "sap.m.p13n.SelectionPanel",
+			controlType: "sap.m.p13n.SelectionPanel",
 			matchers: new Ancestor(oP13nDialog, false),
 			success: function(aListViews) {
 				var oListView = aListViews[0];
@@ -861,6 +862,24 @@ sap.ui.define([
 				}
 			});
 		},
+		/**
+		 * OPA5 test action
+		 * 1. Opens the personalization dialog of a given table.
+		 * 2. Selects all columns determined by the given labels. Also deselects all other columns that are selected but not included in the given labels.
+		 * 3. Closes the personalization dialog.
+		 * @param {sap.ui.core.Control | string} oControl Instance / ID of the control which is to be personalized
+		 * @param {string[]} aColumns Array containing the labels of the columns that are the result of the personalization
+		 * @param {function} fnOpenThePersonalizationDialog a function which opens the personalization dialog of the given control
+		 * @returns {Promise} Opa waitFor
+		 */
+		iPersonalizeFields: function(oControl, aColumns, fnOpenThePersonalizationDialog) {
+			fnOpenThePersonalizationDialog = fnOpenThePersonalizationDialog ? fnOpenThePersonalizationDialog : iOpenThePersonalizationDialog;
+			return iPersonalize.call(this, oControl, Util.texts.fields, fnOpenThePersonalizationDialog, {
+				success: function(oP13nDialog) {
+					iPersonalizeListViewItems.call(this, oP13nDialog, aColumns);
+				}
+			});
+		},
 		iPersonalizeFilterBar: function(oControl, mSettings, fnOpenThePersonalizationDialog) {
 			fnOpenThePersonalizationDialog = fnOpenThePersonalizationDialog ? fnOpenThePersonalizationDialog : iOpenThePersonalizationDialog;
 			var sIcon = Util.icons.group;
@@ -1135,6 +1154,9 @@ sap.ui.define([
 					});
 				}
 			});
+		},
+		iPersonalizeListViewItems: function(oDialog, aItems) {
+			return iPersonalizeListViewItems.call(this, oDialog, aItems);
 		}
 	};
 });
