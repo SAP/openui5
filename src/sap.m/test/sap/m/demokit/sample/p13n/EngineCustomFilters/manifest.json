@@ -10,7 +10,8 @@
 		"rootView": {
 			"viewName": "sap.m.sample.p13n.EngineCustomFilters.Engine",
 			"type": "XML",
-			"async": true
+			"async": true,
+			"id": "app"
 		},
 		"dependencies": {
 			"libs": {

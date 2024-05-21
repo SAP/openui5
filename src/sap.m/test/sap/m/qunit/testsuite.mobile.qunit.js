@@ -1122,6 +1122,10 @@ sap.ui.define([
 					language: "en-US"
 				}
 			},
+			"p13n.Smoke": {
+				title: "Test Page for sap.m.p13n Demokit samples",
+				page: "test-resources/sap/m/qunit/p13n/smoke/testsuite.qunit.html"
+			},
 			/**
 			 * @deprecated as of version 1.98
 			 */

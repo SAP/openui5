@@ -21,7 +21,8 @@ sap.ui.define([
 			column: oMDCBundle.getText("p13nDialog.TAB_Column"),
 			filter: oMDCBundle.getText("p13nDialog.TAB_Filter"),
 			group: oMDCBundle.getText("p13nDialog.TAB_Group"),
-			sort: oMDCBundle.getText("p13nDialog.TAB_Sort")
+			sort: oMDCBundle.getText("p13nDialog.TAB_Sort"),
+			fields: oMBundle.getText("p13n.DEFAULT_TITLE_SELECTION")
 		},
 
 		icons: {

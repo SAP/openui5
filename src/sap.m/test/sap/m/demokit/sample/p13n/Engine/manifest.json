@@ -10,7 +10,8 @@
 		"rootView": {
 			"viewName": "sap.m.sample.p13n.Engine.Engine",
 			"type": "XML",
-			"async": true
+			"async": true,
+			"id": "app"
 		},
 		"dependencies": {
 			"libs": {
