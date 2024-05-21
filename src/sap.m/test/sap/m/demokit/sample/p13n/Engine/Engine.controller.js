@@ -17,13 +17,42 @@ sap.ui.define([
 	return Controller.extend("sap.m.sample.p13n.Engine.Page", {
 
 		onInit: function() {
-			var oData = {
-				items: [
-					{firstName: "Peter", lastName: "Mueller", size: "1.75", city: "Walldorf"},
-					{firstName: "Petra", lastName: "Maier", size: "1.85", city: "Walldorf"},
-					{firstName: "Thomas", lastName: "Smith", size: "1.95", city: "Walldorf"},
-					{firstName: "John", lastName: "Williams", size: "1.65", city: "Walldorf"},
-					{firstName: "Maria", lastName: "Jones", size: "1.55", city: "Walldorf"}
+			const oData = {
+				items: [{
+						key: "P1",
+						firstName: "Peter",
+						lastName: "Mueller",
+						size: "1.75",
+						city: "Walldorf"
+					},
+					{
+						key: "P2",
+						firstName: "Petra",
+						lastName: "Maier",
+						size: "1.85",
+						city: "Walldorf"
+					},
+					{
+						key: "P3",
+						firstName: "Thomas",
+						lastName: "Smith",
+						size: "1.95",
+						city: "Heidelberg"
+					},
+					{
+						key: "P4",
+						firstName: "John",
+						lastName: "Williams",
+						size: "1.65",
+						city: "Walldorf"
+					},
+					{
+						key: "P5",
+						firstName: "Maria",
+						lastName: "Jones",
+						size: "1.55",
+						city: "Walldorf"
+					}
 				]
 			};
 

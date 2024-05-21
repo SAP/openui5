@@ -17,7 +17,7 @@
 			<content>
 			<Title id="title" text="Persons"/>
 			<ToolbarSeparator/>
-			<vm:VariantManagement for="persoList"/>
+			<vm:VariantManagement id="p13nVm" for="persoList"/>
 			<ToolbarSpacer/>
 			<Button icon="sap-icon://action-settings" press="openPersoDialog"/>
 			</content>
