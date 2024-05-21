@@ -39,32 +39,35 @@ sap.ui.define([
 			}).catch();
 		},
 		onInit : function () {
-			var bOptimisticBatch,
-				that = this;
+			// initialization has to wait for view model/context propagation
+			this.getView().attachEventOnce("modelContextChange", function () {
+				var bOptimisticBatch,
+					that = this;
 
-			if (sOptimisticBatch === null) {
-				// optimistic batch enabled via OPA
-				bOptimisticBatch = TestUtils.retrieveData("optimisticBatch");
-				if (TestUtils.retrieveData("addSorter")) {
-					// this changes the payload for the current 1st batch
-					this.byId("SalesOrderList").getBinding("items").sort(
-						new Sorter("SalesOrderID", true));
+				if (sOptimisticBatch === null) {
+					// optimistic batch enabled via OPA
+					bOptimisticBatch = TestUtils.retrieveData("optimisticBatch");
+					if (TestUtils.retrieveData("addSorter")) {
+						// this changes the payload for the current 1st batch
+						this.byId("SalesOrderList").getBinding("items").sort(
+							new Sorter("SalesOrderID", true));
+					}
+				} else {
+					bOptimisticBatch = sOptimisticBatch === "true";
 				}
-			} else {
-				bOptimisticBatch = sOptimisticBatch === "true";
-			}
 
-			if (bOptimisticBatch !== undefined) {
-				this.oView.getModel().setOptimisticBatchEnabler(function () {
-					return Promise.resolve(bOptimisticBatch);
-				});
-			}
+				if (bOptimisticBatch !== undefined) {
+					this.oView.getModel().setOptimisticBatchEnabler(function () {
+						return Promise.resolve(bOptimisticBatch);
+					});
+				}
 
-			// simulate some UI initialization work in order to prevent failing OPA because of
-			// error log: "#sendBatch called before optimistic batch payload could be read"
-			setTimeout(function () {
-				that.oView.byId("SalesOrderList").getBinding("items").resume();
-			}, 20);
+				// simulate some UI initialization work in order to prevent failing OPA because of
+				// error log: "#sendBatch called before optimistic batch payload could be read"
+				setTimeout(function () {
+					that.oView.byId("SalesOrderList").getBinding("items").resume();
+				}, 20);
+			}, this);
 		},
 		onOpenEditDeliveryDate : function (oEvent) {
 			var oDialog = new Dialog({
