@@ -1,9 +1,12 @@
-
 /*!
  * ${copyright}
  */
 
 /* global sinon */
+/**
+ * @fileoverview
+ * @deprecated As of version 1.120
+ */
 sap.ui.define([
 	"sap/ui/test/generic/TestBase"
 ], function(TestBase) {

@@ -1,4 +1,8 @@
 /*global QUnit */
+/**
+ * @fileoverview
+ * @deprecated As of version 1.120
+ */
 sap.ui.define([
 	"sap/ui/qunit/utils/ControlIterator",
 	"sap/ui/Device"
