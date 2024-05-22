@@ -1644,6 +1644,49 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("Do not rerender on calendarWeekSelection in multi months scenario", function (assert) {
+		// Prepare
+		var oCal = new Calendar({
+				months: 2,
+				intervalSelection: true
+			}),
+			oMockedEvent = {
+				getParameter: function(sParam) {
+					if (sParam === "weekDays") {
+						return new DateRange({
+							startDate: new Date(2024, 2, 25),
+							endDate: new Date(2024, 2, 31)
+						});
+					} else if (sParam === "weekNumber"){
+						return 13;
+					}
+				},
+				getSource: function() {
+					return {
+						getDate: function () {
+							return new Date(2024, 2, 1);
+						}
+					};
+				}
+			},
+			oRenderMonthSpy = this.spy(oCal, "_renderMonth");
+
+		oCal.focusDate(new Date(2024, 1, 24));
+		// initial setup
+		oCal.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		oCal._handleWeekNumberSelect(oMockedEvent);
+		oCore.applyChanges();
+
+		// assert
+		assert.strictEqual(oRenderMonthSpy.callCount, 0, "Rerendering is not triggered");
+
+		// cleanup
+		oCal.destroy();
+
+	});
+
 	/** helper function that simulates selection of an year */
 	function setYearWithButton(oCal, sYear, oButton) {
 		var oYearPickerButton,
@@ -2517,6 +2560,13 @@ sap.ui.define([
 						new DateRange({
 							startDate: oDate
 						}) : 1;
+				},
+				getSource: function() {
+					return {
+						getDate: function() {
+							return false;
+						}
+					};
 				}
 			},
 			oFocusDateSpy = this.spy(oCal, "_focusDate");
