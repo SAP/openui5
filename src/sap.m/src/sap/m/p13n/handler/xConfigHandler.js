@@ -130,10 +130,12 @@ sap.ui.define([
 
 								if (!oPriorAggregationConfig) {
 									const aCurrentState = await xConfigAPI.getCurrentItemState(oControl, {propertyBag: mPropertyBag, changeType: oChange.getChangeType()}, oPriorAggregationConfig, sAffectedAggregation);
-									const oStateItem = aCurrentState.find((oItem, iIndex) => {
-										return oItem.key === oChange.getContent().key;
-									});
-									oRevertData.index = aCurrentState.indexOf(oStateItem);
+									if (aCurrentState) {
+										const oStateItem = aCurrentState?.find((oItem, iIndex) => {
+											return oItem.key === oChange.getContent().key;
+										});
+										oRevertData.index = aCurrentState.indexOf(oStateItem);
+									}
 								}
 
 								oRevertData.targetAggregation = oChange.getContent().targetAggregation;
