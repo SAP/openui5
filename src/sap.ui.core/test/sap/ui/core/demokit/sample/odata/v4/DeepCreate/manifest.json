@@ -17,11 +17,6 @@
 		"type" : "application"
 	},
 	"sap.ui" : {
-		"deviceTypes" : {
-			"desktop" : true,
-			"phone" : true,
-			"tablet" : true
-		},
 		"technology" : "UI5"
 	},
 	"sap.ui5" : {
@@ -56,14 +51,11 @@
 				]
 			}
 		},
-		"contentDensities" : {
-			"compact" : true,
-			"cozy" : true
-		},
 		"dependencies" : {
 			"minUI5Version" : "1.115.0",
 			"libs" : {
 				"sap.m" : {},
+				"sap.ui.core" : {},
 				"sap.ui.layout" : {}
 			}
 		},
@@ -82,15 +74,14 @@
 			}
 		},
 		"rootView" : {
-			"async" : true,
 			"type" : "XML",
 			"viewName" : "sap.ui.core.sample.odata.v4.DeepCreate.Main"
 		},
 		"routing" : {
 			"config" : {
 				"async" : true,
-				"bypassed": {
-					"target": "notFound"
+				"bypassed" : {
+					"target" : "notFound"
 				},
 				"controlAggregation" : "pages",
 				"controlId" : "app",
@@ -123,10 +114,10 @@
 					"level" : 1,
 					"name" : "ObjectPage"
 				},
-				"notFound": {
-					"id": "notFound",
-					"name": "NotFound",
-					"transition": "show"
+				"notFound" : {
+					"id" : "notFound",
+					"name" : "NotFound",
+					"transition" : "show"
 				}
 			}
 		}
