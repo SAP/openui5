@@ -10,14 +10,15 @@
 		"type" : "application"
 	},
 	"sap.ui" : {
-		"deviceTypes" : {
-			"desktop" : true,
-			"phone" : true,
-			"tablet" : true
-		},
 		"technology" : "UI5"
 	},
 	"sap.ui5" : {
+		"dependencies" : {
+			"libs" : {
+				"sap.m" : {},
+				"sap.ui.core" : {}
+			}
+		},
 		"extends" : {
 			"component" : "sap.ui.core.sample.odata.v4.SalesOrders",
 			"extensions" : {
