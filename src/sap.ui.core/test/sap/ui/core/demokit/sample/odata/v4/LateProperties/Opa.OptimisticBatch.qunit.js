@@ -5,6 +5,7 @@ QUnit.config.autostart = false;
 
 sap.ui.require([
 	"sap/base/Log",
+	"sap/base/i18n/Localization",
 	"sap/ui/core/Core",
 	"sap/ui/core/cache/CacheManager",
 	"sap/ui/core/sample/common/pages/Any",
@@ -12,11 +13,11 @@ sap.ui.require([
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/test/opaQunit",
 	"sap/ui/core/sample/odata/v4/LateProperties/SandboxModel" // preload only
-], function (Log, Core, CacheManager, Any, Main, ODataModel, opaTest) {
+], function (Log, Localization, Core, CacheManager, Any, Main, ODataModel, opaTest) {
 	"use strict";
 
 	Core.ready().then(function () {
-		var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
+		var sDefaultLanguage = Localization.getLanguage(),
 			oSkipPromise = new Promise(function (fnResolve) {
 				var sKey = "sap.ui.model.odata.v4.optimisticBatch:smokeTest";
 
@@ -30,11 +31,11 @@ sap.ui.require([
 
 		QUnit.module("sap.ui.core.sample.odata.v4.LateProperties.optimisticBatch", {
 			before : function () {
-				sap.ui.getCore().getConfiguration().setLanguage("en-US");
+				Localization.setLanguage("en-US");
 				ODataModel.cleanUpOptimisticBatch();
 			},
 			after : function () {
-				sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+				Localization.setLanguage(sDefaultLanguage);
 				ODataModel.cleanUpOptimisticBatch();
 			}
 		});
