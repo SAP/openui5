@@ -1345,6 +1345,47 @@ sap.ui.define([
 			}.bind(this));
 		});
 
+		QUnit.test("when calling FlexState.update twice in a row", async function(assert) {
+			assert.expect(1);
+			this.oLoadFlexDataStub
+			.resolves(mEmptyResponse);
+
+			await FlexState.initialize({
+				reference: sReference,
+				componentId: this.sComponentId
+			});
+			this.oLoadFlexDataStub.resetHistory();
+
+			this.oLoadFlexDataStub
+			.onFirstCall()
+			.callsFake(async () => {
+				// Simulate some async stuff happening during load
+				await Promise.resolve();
+
+				assert.strictEqual(
+					this.oLoadFlexDataStub.callCount,
+					1,
+					"then the second update doesn't call loadFlexData before the first one finished"
+				);
+				return mEmptyResponse;
+			});
+
+			await Promise.all([
+				FlexState.update({
+					reference: sReference,
+					componentId: this.sComponentId,
+					manifest: {},
+					componentData: {}
+				}),
+				FlexState.update({
+					reference: sReference,
+					componentId: this.sComponentId,
+					manifest: {},
+					componentData: {}
+				})
+			]);
+		});
+
 		QUnit.test("An unknown object is returned from storage", function(assert) {
 			var fnDone = assert.async();
 			FlexState.initialize({
