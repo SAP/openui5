@@ -3,15 +3,15 @@
  */
 
 sap.ui.define([
+	"sap/ui/core/Component",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
-	"sap/ui/fl/variants/context/Component",
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/registry/Settings"
 ], function(
+	Component,
 	ManifestUtils,
-	ContextSharingComponent,
 	ContextBasedAdaptationsAPI,
 	ComponentContainer,
 	Layer,
@@ -50,12 +50,13 @@ sap.ui.define([
 			var sReference = ManifestUtils.getFlexReferenceForControl(mPropertyBag.variantManagementControl);
 			return Settings.getInstance().then(function(oSettings) {
 				return oSettings.isContextSharingEnabled() && !ContextBasedAdaptationsAPI.adaptationExists({reference: sReference, layer: Layer.CUSTOMER});
-			}).then(function(bIsEnabled) {
+			}).then(async function(bIsEnabled) {
 				if (bIsEnabled) {
 					if (!oComponentContainer || oComponentContainer.bIsDestroyed) {
-						var oComponent = new ContextSharingComponent("contextSharing");
+						const oComponent = await Component.create({name: "sap.ui.fl.variants.context", id: "contextSharing"});
 						oComponent.showMessageStrip(true);
 						oComponent.setSelectedContexts({role: []});
+						// eslint-disable-next-line require-atomic-updates
 						oComponentContainer = new ComponentContainer("contextSharingContainer", {component: oComponent});
 						// Ensure view is fully loaded
 						return oComponent.getRootControl().oAsyncState.promise.then(function() {
