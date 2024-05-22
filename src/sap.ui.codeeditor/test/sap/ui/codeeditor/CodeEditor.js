@@ -37,7 +37,9 @@ sap.ui.require([
 		"css": document.getElementById("cssSample").textContent,
 		"xquery": document.getElementById("xquerySample").textContent,
 		"coffee": document.getElementById("coffeeSample").textContent,
-		"plain_text": document.getElementById("plainText").textContent
+		"plain_text": document.getElementById("plainText").textContent,
+		"json": document.getElementById("json").textContent,
+		"properties": document.getElementById("i18n.properties").textContent
 	};
 
 	var oCodeEditor = new CodeEditor({
@@ -63,7 +65,9 @@ sap.ui.require([
 							new Item({ key: "css", text: "css"}),
 							new Item({ key: "xquery", text: "xquery"}),
 							new Item({ key: "coffee", text: "coffee"}),
-							new Item({ key: "plain_text", text: "plain text"})
+							new Item({ key: "plain_text", text: "plain text"}),
+							new Item({ key: "json", text: "json"}),
+							new Item({ key: "properties", text: "i18n.properties"})
 						],
 						change: function (e) {
 							var sKey = e.getSource().getSelectedKey();
@@ -73,7 +77,9 @@ sap.ui.require([
 					new Label({ text: "theme:"}),
 					new Select({
 						selectedKey: oCodeEditor.getColorTheme(),
-						items: ace.require("ace/ext/themelist").themes.map(function (mTheme) {
+						items: [{
+								name: "default"
+							}].concat(ace.require("ace/ext/themelist").themes).map(function (mTheme) {
 							return new Item({ key: mTheme.name, text: mTheme.name });
 						}),
 						change: function (e) {

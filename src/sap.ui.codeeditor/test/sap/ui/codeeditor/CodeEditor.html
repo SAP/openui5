@@ -22,7 +22,7 @@
 	<head>
 		<title>Hello World App</title>
 	</head>
-		
+
 	<body>
 		<form>
 			<label for="fname">First name:</label><br>
@@ -30,20 +30,33 @@
 			<label for="lname">Last name:</label><br>
 			<input id="lname" value="Doe"><br><br>
 			<input value="Submit">
-		  </form> 
+		  </form>
 	</body>
 </html>
 </script>
 <script id="javascriptSample" type="text/plain">
-function myFunction () {
-	var myVar = 5;
-	var myVarNoSemicolon = 6
+class SomeClass {
+	constructor() {
+		this.name = 'SomeName';
+		this.array = []
+	}
+	someMethod() {
+		this.array.push(5);
+	}
 }
+function myFunction () {
+	let myLet = 5;
+	const myConst= 6;
+}
+const world = "World";
+const templateLiteral = `Hello {world}`;
 </script>
 <script id="cssSample" type="text/plain">
 .someClass {
 	box-sizing: border-box;
 	border: "invalid";
+	margin-right: 0.3rem !important;
+	color: var(--sapField_TextColor);
 }
 </script>
 <script id="xquerySample" type="text/plain">
@@ -73,7 +86,34 @@ math =
 <script id="plainText" type="text/plain">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis elementum purus vel pretium mattis. Donec accumsan nisi at quam accumsan, ut porta tortor faucibus. Etiam rutrum odio luctus, feugiat elit vel, sagittis sem. Pellentesque viverra semper justo a lacinia. Fusce eu lacus est. Sed et bibendum magna. Maecenas id convallis magna. Nulla cursus quam eros, eget egestas ligula laoreet vitae. Aenean interdum enim tellus, bibendum porttitor odio auctor a. Fusce nec tristique turpis. Nullam quis sagittis justo. Nam elementum nunc nisi, sed tempor lorem hendrerit non. Phasellus placerat viverra felis, sit amet dictum neque sodales at. Proin ut risus ut magna auctor sollicitudin. Nullam tempus massa diam, in scelerisque justo aliquam ut.
 
 Aliquam finibus vestibulum orci. In egestas aliquam sodales. Nulla convallis imperdiet pharetra. Cras convallis convallis sem. Phasellus ex orci, lacinia sed turpis et, porta consectetur urna. Suspendisse id purus massa. Nullam gravida, neque vel condimentum mollis, est purus interdum augue, at placerat augue erat ac magna. Nam mattis diam lectus, a aliquam sem eleifend quis. Morbi eu tincidunt tellus. Praesent fermentum est sit amet consequat tempus.</script>
+</script>
+<script  id="json" type="json">
+{
+	"variable1" : "string",
+	"variable2" : "${keyword.operator.function()}",
+	"variable4": normal-text,
+	"variable5": "constant-character + constant-other",
+	"variable6": "support-class + comment",
+	"variable7": true,
+	"actions": [
+		{
+			"type": "Navigation",
+			"parameters": {
+				"url": "https://myurl.com"
+			}
+		}
+	]
+}
+</script>
+<script id="i18n.properties" type="text/plain">
+simpleLabel=This is a label
 
+#XTIT: Application name
+appTitle=Demo Apps - Overview
+
+#YDES: Application description
+appDescription=Each block shows a demo application with related documentation, tutorials, and tests.
+</script>
 </head>
 <body id="body" class="sapUiBody">
 </body>

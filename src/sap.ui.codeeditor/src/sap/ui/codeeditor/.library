@@ -31,7 +31,7 @@
 		</packaging>
 		<!-- Thirdparty references -->
 		<thirdparty xmlns="http://www.sap.com/ui5/buildext/thirdparty" >
-			<lib name="ace" displayName="Ace (Ajax.org Cloud9 Editor)" npmName="ace-builds" version="1.31.1" hash="1fb1ddc16d88085acc01180f1f86a647" homepage="https://ace.c9.io/" id="73554900106100278574">
+			<lib name="ace" displayName="Ace (Ajax.org Cloud9 Editor)" npmName="ace-builds" version="1.31.1" hash="b05c1e4be81136474e81f1af7ea116d0" homepage="https://ace.c9.io/" id="73554900106100278574">
 				<license url="https://github.com/ajaxorg/ace/blob/master/LICENSE" type="BSD-3-Clause" />
 				<copyright>2010, Ajax.org B.V.</copyright>
 				<pattern>sap/ui/codeeditor/js/ace/*</pattern>
