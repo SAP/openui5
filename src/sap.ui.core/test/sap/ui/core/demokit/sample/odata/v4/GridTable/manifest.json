@@ -20,11 +20,6 @@
 		"type" : "application"
 	},
 	"sap.ui" : {
-		"deviceTypes" : {
-			"desktop" : true,
-			"phone" : true,
-			"tablet" : true
-		},
 		"technology" : "UI5"
 	},
 	"sap.ui5" : {
@@ -40,13 +35,10 @@
 				]
 			}
 		},
-		"contentDensities" : {
-			"compact" : true,
-			"cozy" : true
-		},
 		"dependencies" : {
 			"libs" : {
 				"sap.m" : {},
+				"sap.ui.core" : {},
 				"sap.ui.table" : {}
 			},
 			"minUI5Version" : "1.105"
@@ -66,7 +58,6 @@
 			}
 		},
 		"rootView" : {
-			"async" : true,
 			"type" : "XML",
 			"viewName" : "sap.ui.core.sample.odata.v4.GridTable.GridTable"
 		}
