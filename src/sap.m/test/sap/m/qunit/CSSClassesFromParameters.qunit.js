@@ -2,7 +2,7 @@
 sap.ui.define([], function() {
 	"use strict";
 
-	QUnit.test("Check Blue Crystal theme", function(assert) {
+	QUnit.test("Check Horizon theme", function(assert) {
 		var done = assert.async();
 		setTimeout(function(){
 			var cell = document.getElementById("cell1");
