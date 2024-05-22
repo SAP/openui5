@@ -129,7 +129,7 @@
 		var fnXhrOpenOrig = XMLHttpRequest.prototype.open;
 		XMLHttpRequest.prototype.open = function(sMethod, sUrl) {
 			if (
-				typeof sap !== "undefined" && sap.ui && sap.ui.loader &&
+				globalThis.sap?.ui?.loader &&
 				sUrl && sUrl.endsWith(".js") && shouldBeInstrumented(sap.ui.loader._.guessResourceName(sUrl) || "")
 			) {
 				arguments[1] = appendUrlParameter(sUrl);
