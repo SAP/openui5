@@ -52,7 +52,7 @@ sap.ui.define([
 		 *
 		 * @param {object} oStartDate The current start date
 		 * @param {int} iOffset The number of pages to scroll, negative means backwards
-		 * @return {int} The number of entities to be skipped by scrolling
+		 * @returns {int} The number of entities to be skipped by scrolling
 		 * @override
 		 * @public
 		 */
@@ -74,13 +74,13 @@ sap.ui.define([
 		 * Calculates the <code>startDate</code> displayed in the <code>sap.m.SinglePlanningCalendar</code> based
 		 * on a given date.
 		 *
-		 * @param {object} oStartDate The given date
-		 * @return {object} The startDate of the view
+		 * @param {Date|module:sap/ui/core/date/UI5Date} oDate The given date
+		 * @returns {Date|module:sap/ui/core/date/UI5Date} The startDate of the view
 		 * @override
 		 * @public
 		 */
-		SinglePlanningCalendarMonthView.prototype.calculateStartDate = function(oStartDate) {
-			var oReturnDate = CalendarUtils.getFirstDateOfMonth(CalendarUtils._createUTCDate(oStartDate, true)).getJSDate();
+		SinglePlanningCalendarMonthView.prototype.calculateStartDate = function(oDate) {
+			var oReturnDate = CalendarUtils.getFirstDateOfMonth(CalendarUtils._createUTCDate(oDate, true)).getJSDate();
 			return CalendarUtils._createLocalDate(oReturnDate, true);
 		};
 
