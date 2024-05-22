@@ -20,22 +20,15 @@
 		"type" : "application"
 	},
 	"sap.ui" : {
-		"deviceTypes" : {
-			"desktop" : true,
-			"phone" : true,
-			"tablet" : true
-		},
 		"technology" : "UI5"
 	},
 	"sap.ui5" : {
-		"contentDensities" : {
-			"compact" : true,
-			"cozy" : true
-		},
 		"dependencies" : {
 			"minUI5Version" : "1.71",
 			"libs" : {
-				"sap.m" : {}
+				"sap.m" : {},
+				"sap.ui.core" : {},
+				"sap.ui.table" : {}
 			}
 		},
 		"models" : {
