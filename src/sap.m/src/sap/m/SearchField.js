@@ -900,7 +900,7 @@ sap.ui.define([
 		if (iNumItems === 1) {
 			sAriaText = oRb.getText("INPUT_SUGGESTIONS_ONE_HIT");
 		} else if (iNumItems > 1) {
-			sAriaText = oRb.getText("INPUT_SUGGESTIONS_MORE_HITS", iNumItems);
+			sAriaText = oRb.getText("INPUT_SUGGESTIONS_MORE_HITS", [iNumItems]);
 		} else {
 			sAriaText = oRb.getText("INPUT_SUGGESTIONS_NO_HIT");
 		}
