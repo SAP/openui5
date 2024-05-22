@@ -30,7 +30,7 @@ sap.ui.define([
 	 *
 	 * @constructor
 	 * @public
-	 * @deprecated as of version 1.88
+	 * @deprecated as of version 1.88, replaced by {@link sap.m.upload.UploadSetItem}.
 	 * @since 1.26.0
 	 * @alias sap.m.UploadCollectionItem
 	 */
