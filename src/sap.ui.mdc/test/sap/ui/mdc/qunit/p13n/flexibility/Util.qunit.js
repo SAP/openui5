@@ -238,4 +238,47 @@ sap.ui.define([
 
     });
 
+    QUnit.test("Resume invalidation on error", function(assert){
+
+        const done = assert.async();
+        const oControl = new Control();
+        oControl.placeAt("qunit-fixture");
+
+        const suppressSpy = sinon.stub(oControl.getUIArea(), "suppressInvalidationFor").callsFake(function() {
+            assert.step("suppressInvalidation");
+            return suppressSpy.wrappedMethod.apply(this, arguments);
+        });
+        const resumeSpy = sinon.stub(oControl.getUIArea(), "resumeInvalidationFor").callsFake(function() {
+            assert.step("resumeInvalidation");
+            resumeSpy.wrappedMethod.apply(this, arguments);
+            assert.ok(suppressSpy.calledOnceWithExactly(oControl), "Suspend has been called once with the correct agruments");
+            assert.ok(resumeSpy.calledOnceWithExactly(oControl), "Resume has been called once with the correct agruments");
+            assert.verifySteps(["suppressInvalidation", "resumeInvalidation"], "Execution order");
+            done();
+            oControl.getUIArea().suppressInvalidationFor.restore();
+            oControl.getUIArea().resumeInvalidationFor.restore();
+        });
+
+        oControl._onModifications = function() {
+            Engine.getInstance().waitForChanges.restore();
+            return Promise.reject();
+        };
+
+        sinon.stub(Engine.getInstance(), "waitForChanges").resolves();
+
+        const oChangeHandler = Util.createChangeHandler({
+            apply: function() {
+                return Promise.resolve();
+            },
+            revert: function() {
+                return Promise.resolve();
+            }
+        });
+
+        oChangeHandler.changeHandler.applyChange({
+            getChangeType: function() {},
+            getContent: function() {}
+        }, oControl);
+    });
+
 });
