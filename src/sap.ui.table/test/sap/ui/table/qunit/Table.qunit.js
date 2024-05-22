@@ -123,6 +123,7 @@ sap.ui.define([
 
 	// TABLE TEST DATA
 	let aData = [
+		/* eslint-disable max-len */
 		{lastName: "Dente", name: "Al", checked: true, linkText: "www.sap.com", href: "http://www.sap.com", src: personImg, gender: "male", rating: 4, money: 3.45},
 		{lastName: "Friese", name: "Andy", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: jobPosImg, gender: "male", rating: 2, money: 4.64},
 		{lastName: "Mann", name: "Anita", checked: false, linkText: "www.kicker.de", href: "http://www.kicker.de", src: personImg, gender: "female", rating: 3, money: 7.34},
@@ -143,6 +144,7 @@ sap.ui.define([
 		{lastName: "O'Lantern", name: "Jack", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: personImg, gender: "male", rating: 2, money: 76.34},
 		{lastName: "Tress", name: "Matt", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: jobPosImg, gender: "male", rating: 4, money: 234.23},
 		{lastName: "Turner", name: "Paige", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: personImg, gender: "female", rating: 3, money: 953.3}
+		/* eslint-enable max-len */
 	];
 
 	const aOrgData = jQuery.extend(true, [], aData);
@@ -156,7 +158,7 @@ sap.ui.define([
 
 	const HeightTestControl = TableQUnitUtils.HeightTestControl;
 
-	function createTable(oConfig, fnCreateColumns, sModelName) {
+	async function createTable(oConfig, fnCreateColumns, sModelName) {
 		const sBindingPrefix = (sModelName ? sModelName + ">" : "");
 		let sTitle;
 
@@ -246,7 +248,7 @@ sap.ui.define([
 		oTable.bindRows(sBindingPrefix + "/modelData");
 
 		oTable.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 	}
 
 	function destroyTable() {
@@ -257,8 +259,8 @@ sap.ui.define([
 	}
 
 	QUnit.module("Basic checks", {
-		beforeEach: function() {
-			createTable({
+		beforeEach: async function() {
+			await createTable({
 				firstVisibleRow: 5,
 				rowMode: new FixedRowMode({
 					rowCount: 7
@@ -668,25 +670,27 @@ sap.ui.define([
 	});
 
 	/** @deprecated As of version 1.117 */
-	QUnit.test("Column headers active state styling (legacy)", function(assert) {
+	QUnit.test("Column headers active state styling (legacy)", async function(assert) {
 		const oColumn = oTable.getColumns()[3];
 
 		oTable.setEnableColumnReordering(false);
-		oCore.applyChanges();
+		await nextUIUpdate();
+
 		assert.ok(oColumn.$().hasClass("sapUiTableHeaderCellActive"), "Column has active state styling because of the column header popup");
 
 		oTable.attachColumnSelect(function(oEvent) {
 			oEvent.preventDefault();
 		});
 		oTable.setEnableColumnReordering(false);
-		oCore.applyChanges();
+		await nextUIUpdate();
+
 		assert.ok(oColumn.$().hasClass("sapUiTableHeaderCellActive"), "Column has active state styling");
 	});
 
 	/**
 	 * @deprecated As of version 1.119
 	 */
-	QUnit.test("Row height; After binding context update", function(assert) {
+	QUnit.test("Row height; After binding context update", async function(assert) {
 		oTable.destroyRowMode();
 		oTable.removeAllColumns();
 		oTable.addColumn(new Column({template: new HeightTestControl()}));
@@ -694,7 +698,7 @@ sap.ui.define([
 		oTable.setFixedColumnCount(1);
 		oTable.setRowActionCount(1);
 		oTable.setRowActionTemplate(TableQUnitUtils.createRowAction(null));
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		return new Promise(function(resolve) {
 			oTable.attachEventOnce("rowsUpdated", resolve);
@@ -868,14 +872,14 @@ sap.ui.define([
 	/**
 	 * @deprecated As of version 1.117
 	 */
-	QUnit.test("ColumnMenu invalidation when localization changes", function(assert) {
+	QUnit.test("ColumnMenu invalidation when localization changes", async function(assert) {
 		let pAdaptLocalization;
 		const done = assert.async();
 
 		oTable.getColumns().slice(1).forEach(function(oColumn) {
 			oTable.removeColumn(oColumn);
 		});
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oTable._adaptLocalization = function(bRtlChanged, bLangChanged) {
 			pAdaptLocalization = Table.prototype._adaptLocalization.apply(this, arguments);
@@ -1082,8 +1086,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Column operations", {
-		beforeEach: function() {
-			createTable();
+		beforeEach: async function() {
+			await createTable();
 		},
 		afterEach: function() {
 			destroyTable();
@@ -1116,54 +1120,53 @@ sap.ui.define([
 	/**
 	 * @deprecated As of version 1.117
 	 */
-	QUnit.test("ColumnMenu", function(assert) {
-		const done = assert.async();
+	QUnit.test("ColumnMenu", async function(assert) {
 		let oColumn = oTable.getColumns()[1];
 		const oCellDomRef = oColumn.getDomRef();
 
-		oColumn.attachEventOnce("columnMenuOpen", function() {
-			TableQUnitUtils.wait(0).then(function() {
-				let oMenu = oColumn.getMenu();
-				assert.ok(oMenu !== null, "Column menu is not null");
-				assert.ok(oMenu instanceof ColumnMenu, "Column menu is instance of sap.ui.table.ColumnMenu");
-				assert.ok(oMenu.getItems().length > 0, "Column menu has more than one item");
-				oMenu.close();
-
-				//Check column without sort
-				oColumn = oTable.getColumns()[5];
-				oColumn._openHeaderMenu(oCellDomRef);
-				oMenu = oColumn.getMenu();
-				assert.equal(oMenu.getItems().length, 1, "Column menu without sort has only one filter item");
-				oMenu.close();
-
-				//Check column without filter
-				oColumn = oTable.getColumns()[6];
-				oColumn._openHeaderMenu(oCellDomRef);
-				oMenu = oColumn.getMenu();
-				assert.equal(oMenu.getItems().length, 2, "Column menu without filter has only two sort items");
-				oMenu.close();
-
-				const oRemoveAggregationSpy = sinon.spy(ColumnMenu.prototype, "removeAggregation");
-				oTable.setShowColumnVisibilityMenu(true);
-				oCore.applyChanges();
-				oColumn = oTable.getColumns()[5];
-				oColumn._openHeaderMenu(oCellDomRef);
-				oMenu = oColumn.getMenu();
-				assert.equal(oMenu.getItems().length, 2, "Column menu has one filter item and one column visibility item");
-				assert.ok(oRemoveAggregationSpy.notCalled, "Initial creation of the column visibility submenu");
-				oMenu.close();
-
-				oColumn = oTable.getColumns()[6];
-				oColumn._openHeaderMenu(oCellDomRef);
-				oMenu = oColumn.getMenu();
-				assert.ok(oRemoveAggregationSpy.withArgs("items", oTable._oColumnVisibilityMenuItem, true).notCalled,
-					"The items aggregation is not removed, the visibility submenu is only updated");
-				oMenu.close();
-				done();
-			});
-		});
-
+		const nextColumnMenuOpen = TableQUnitUtils.nextEvent("columnMenuOpen", oColumn);
 		oColumn._openHeaderMenu(oCellDomRef);
+		await nextColumnMenuOpen;
+
+		await TableQUnitUtils.wait(0);
+
+		let oMenu = oColumn.getMenu();
+		assert.ok(oMenu !== null, "Column menu is not null");
+		assert.ok(oMenu instanceof ColumnMenu, "Column menu is instance of sap.ui.table.ColumnMenu");
+		assert.ok(oMenu.getItems().length > 0, "Column menu has more than one item");
+		oMenu.close();
+
+		//Check column without sort
+		oColumn = oTable.getColumns()[5];
+		oColumn._openHeaderMenu(oCellDomRef);
+		oMenu = oColumn.getMenu();
+		assert.equal(oMenu.getItems().length, 1, "Column menu without sort has only one filter item");
+		oMenu.close();
+
+		//Check column without filter
+		oColumn = oTable.getColumns()[6];
+		oColumn._openHeaderMenu(oCellDomRef);
+		oMenu = oColumn.getMenu();
+		assert.equal(oMenu.getItems().length, 2, "Column menu without filter has only two sort items");
+		oMenu.close();
+
+		const oRemoveAggregationSpy = sinon.spy(ColumnMenu.prototype, "removeAggregation");
+		oTable.setShowColumnVisibilityMenu(true);
+		await nextUIUpdate();
+
+		oColumn = oTable.getColumns()[5];
+		oColumn._openHeaderMenu(oCellDomRef);
+		oMenu = oColumn.getMenu();
+		assert.equal(oMenu.getItems().length, 2, "Column menu has one filter item and one column visibility item");
+		assert.ok(oRemoveAggregationSpy.notCalled, "Initial creation of the column visibility submenu");
+		oMenu.close();
+
+		oColumn = oTable.getColumns()[6];
+		oColumn._openHeaderMenu(oCellDomRef);
+		oMenu = oColumn.getMenu();
+		assert.ok(oRemoveAggregationSpy.withArgs("items", oTable._oColumnVisibilityMenuItem, true).notCalled,
+			"The items aggregation is not removed, the visibility submenu is only updated");
+		oMenu.close();
 	});
 
 	/**
@@ -1275,14 +1278,16 @@ sap.ui.define([
 				oMenu.open();
 				checkSubmenuIcons(oTable, assert);
 
-				assert.ok(aSubmenuItems[0].getEnabled() && aSubmenuItems[1].getEnabled(), "Two visible columns left: both visibility menu items are enabled");
+				assert.ok(aSubmenuItems[0].getEnabled() && aSubmenuItems[1].getEnabled(),
+					"Two visible columns left: both visibility menu items are enabled");
 				aColumns[1].setVisible(false);
 				oMenu.open();
 				aSubmenuItems = oSubmenu.getItems();
 				assert.notOk(aSubmenuItems[0].getEnabled(), "One visible column left: the corresponding menu item is disabled");
 				aColumns[1].setVisible(true);
 				oMenu.open();
-				assert.ok(aSubmenuItems[0].getEnabled() && aSubmenuItems[1].getEnabled(), "One more column made visible: both menu items are enabled");
+				assert.ok(aSubmenuItems[0].getEnabled() && aSubmenuItems[1].getEnabled(),
+					"One more column made visible: both menu items are enabled");
 				oMenu.close();
 				done();
 			});
@@ -1361,8 +1366,8 @@ sap.ui.define([
 	 * @deprecated As of version 1.117
 	 */
 	QUnit.module("Column filtering", {
-		beforeEach: function() {
-			createTable({
+		beforeEach: async function() {
+			await createTable({
 				rowMode: new FixedRowMode({
 					rowCount: 5
 				})
@@ -1415,8 +1420,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Fixed columns", {
-		beforeEach: function() {
-			createTable({
+		beforeEach: async function() {
+			await createTable({
 				fixedColumnCount: 2,
 				width: "500px"
 			});
@@ -1437,8 +1442,10 @@ sap.ui.define([
 		assert.equal($table.find(".sapUiTableCCnt .sapUiTableCtrlFixed .sapUiTableCtrlCol th").length, 2, "Fixed table has 3 Columns");
 		assert.equal($table.find(".sapUiTableCCnt .sapUiTableCtrlScroll .sapUiTableCtrlCol th").length, 6, "Scroll table has 7 Columns");
 		assert.equal($table.find(".sapUiTableFirstVisibleColumnTH").length, 2, "Table has two sapUiTableFirstVisibleColumnTH class");
-		assert.equal($table.find(".sapUiTableFirstVisibleColumnTH")[0], $table.find(".sapUiTableCHA th")[0], "sapUiTableFirstVisibleColumnTH class is set on the first th element of header table");
-		assert.equal($table.find(".sapUiTableFirstVisibleColumnTH")[1], $table.find(".sapUiTableCCnt th")[0], "sapUiTableFirstVisibleColumnTH class is set on the first th element of content table");
+		assert.equal($table.find(".sapUiTableFirstVisibleColumnTH")[0], $table.find(".sapUiTableCHA th")[0],
+			"sapUiTableFirstVisibleColumnTH class is set on the first th element of header table");
+		assert.equal($table.find(".sapUiTableFirstVisibleColumnTH")[1], $table.find(".sapUiTableCCnt th")[0],
+			"sapUiTableFirstVisibleColumnTH class is set on the first th element of content table");
 		assert.equal(jQuery(oTable._getScrollExtension().getHorizontalScrollbar()).css("margin-left"), getExpectedHScrollLeftMargin(3),
 			"Horizontal scrollbar has correct left margin");
 	});
@@ -1546,6 +1553,7 @@ sap.ui.define([
 
 		oTable.getColumns()[1].setVisible(false);
 		await nextUIUpdate();
+
 		const $table = oTable.$();
 		assert.equal(oTable.getFixedColumnCount(), 2, "Fixed column count correct");
 		assert.equal(oTable.getComputedFixedColumnCount(), 2, "Computed Fixed column count correct");
@@ -1554,12 +1562,15 @@ sap.ui.define([
 		assert.equal(jQuery(oTable._getScrollExtension().getHorizontalScrollbar()).css("margin-left"), getExpectedHScrollLeftMargin(2),
 			"Horizontal scrollbar has correct left margin");
 
-		checkCellsFixedBorder(oTable, 0, "When the last fixed column is not visible, the fixed border is displayed on the last visible column in fixed area");
+		checkCellsFixedBorder(oTable, 0,
+			"When the last fixed column is not visible, the fixed border is displayed on the last visible column in fixed area");
 
 		oTable.getColumns()[0].setVisible(false);
 		oTable.getColumns()[1].setVisible(true);
 		await nextUIUpdate();
-		checkCellsFixedBorder(oTable, 0, "When one of the fixed columns is not visible, the fixed border is displayed on the last visible column in fixed area");
+
+		checkCellsFixedBorder(oTable, 0,
+			"When one of the fixed columns is not visible, the fixed border is displayed on the last visible column in fixed area");
 	});
 
 	QUnit.test("Hide one column in scroll area", async function(assert) {
@@ -1592,8 +1603,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("API", {
-		beforeEach: function() {
-			createTable({
+		beforeEach: async function() {
+			await createTable({
 				rowMode: new FixedRowMode({
 					rowCount: 10
 				}),
@@ -1809,8 +1820,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Fixed rows and columns", {
-		beforeEach: function() {
-			createTable({
+		beforeEach: async function() {
+			await createTable({
 				rowMode: new FixedRowMode({
 					rowCount: 8,
 					fixedTopRowCount: 2
@@ -1846,10 +1857,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("Fixed top and bottom rows and columns", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			const TestControl = TableQUnitUtils.TestControl;
 
-			createTable({
+			await createTable({
 				rowMode: new FixedRowMode({
 					rowCount: 8,
 					fixedTopRowCount: 2,
@@ -2281,8 +2292,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Table with extension", {
-		beforeEach: function() {
-			createTable({
+		beforeEach: async function() {
+			await createTable({
 				extension: [
 					new Button("extensionButton", {
 						text: "Click me!"
@@ -2304,8 +2315,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Invisible table", {
-		beforeEach: function() {
-			createTable({
+		beforeEach: async function() {
+			await createTable({
 				visible: false
 			});
 		},
@@ -2325,8 +2336,8 @@ sap.ui.define([
 	 * @deprecated As of version 1.56
 	 */
 	QUnit.module("Data export", {
-		beforeEach: function() {
-			createTable({}, null, "myModel");
+		beforeEach: async function() {
+			await createTable({}, null, "myModel");
 			oTable.filter(oTable.getColumns()[1], "Al");
 		},
 		afterEach: function() {
@@ -2380,12 +2391,12 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Table toolbar should have the transparent design by default without changing the design property", function(assert) {
+	QUnit.test("Table toolbar should have the transparent design by default without changing the design property", async function(assert) {
 		const oToolbar = new Toolbar();
 		const oTable = new Table({
 			toolbar: oToolbar
 		}).placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.strictEqual(ToolbarDesign.Auto, oToolbar.getDesign(), "Design property of the Toolbar is Auto");
 		assert.strictEqual(ToolbarDesign.Transparent, oToolbar.getActiveDesign(), "Active design of the Toolbar is Transparent");
@@ -2393,7 +2404,7 @@ sap.ui.define([
 		oTable.destroy();
 	});
 
-	QUnit.test("Table toolbar design and style properties are set", function(assert) {
+	QUnit.test("Table toolbar design and style properties are set", async function(assert) {
 		const oToolbar = new Toolbar({
 			design: "Solid",
 			style: "Standard"
@@ -2401,7 +2412,7 @@ sap.ui.define([
 		const oTable = new Table({
 			toolbar: oToolbar
 		}).placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.strictEqual(ToolbarDesign.Solid, oToolbar.getDesign(), "Design property of the Toolbar is Solid");
 		assert.strictEqual(ToolbarDesign.Solid, oToolbar.getActiveDesign(), "Active design of the Toolbar is Solid as well");
@@ -2411,12 +2422,12 @@ sap.ui.define([
 		oTable.destroy();
 	});
 
-	QUnit.test("Toolbar has style class sapMTBHeader-CTX", function(assert) {
+	QUnit.test("Toolbar has style class sapMTBHeader-CTX", async function(assert) {
 		const oToolbar = new Toolbar();
 		const oTable = new Table({
 			toolbar: oToolbar
 		}).placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(oToolbar.hasStyleClass("sapMTBHeader-CTX"), "Toolbar has style class sapMTBHeader-CTX");
 
@@ -3166,8 +3177,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Performance improvements", {
-		beforeEach: function() {
-			createTable();
+		beforeEach: async function() {
+			await createTable();
 		},
 		afterEach: function() {
 			destroyTable();
@@ -3188,8 +3199,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Binding", {
-		beforeEach: function() {
-			createTable();
+		beforeEach: async function() {
+			await createTable();
 		},
 		afterEach: function() {
 			destroyTable();
@@ -3595,8 +3606,8 @@ sap.ui.define([
 	});
 
 	/** @deprecated As of version 1.64 */
-	QUnit.test("_updateTableCell callback", function(assert) {
-	// This callback was provided for an implementation in GanttChart that was deprecated in version 1.64
+	QUnit.test("_updateTableCell callback", async function(assert) {
+		// This callback was provided for an implementation in GanttChart that was deprecated in version 1.64
 		const done = assert.async();
 		let iCallCountUpdateTableCellOnTable = 0;
 		let iCallCountUpdateTableCell = 0;
@@ -3632,15 +3643,15 @@ sap.ui.define([
 		const oModel = new JSONModel();
 		oModel.setData({modelData: aData});
 		oTable.setModel(oModel);
-		oTable.bindRows("/modelData");
-
 		oTable.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
+
+		oTable.bindRows("/modelData");
 	});
 
 	QUnit.module("Events", {
-		beforeEach: function() {
-			createTable();
+		beforeEach: async function() {
+			await createTable();
 		},
 		afterEach: function() {
 			destroyTable();
@@ -3651,6 +3662,7 @@ sap.ui.define([
 		assert.expect(42);
 		let sTestCase = "";
 		const fnHandler = function(oEvent) {
+			// eslint-disable-next-line default-case
 			switch (sTestCase) {
 				case "userSelectAll":
 					assert.equal(oEvent.getParameter("selectAll"), true, sTestCase + ": Parameter selectAll correct");
@@ -3737,32 +3749,28 @@ sap.ui.define([
 		oTable.setSelectedIndex(0);
 	});
 
-	QUnit.test("Select All on Binding Change", function(assert) {
-		const done = assert.async();
-		let oModel;
-
-		oTable.attachEventOnce("rowSelectionChange", function() {
-			assert.ok(!oTable.$("selall").hasClass("sapUiTableSelAll"), "Select all icon is checked.");
-
-			oTable.attachEventOnce("rowsUpdated", function() {
-				assert.ok(oTable.$("selall").hasClass("sapUiTableSelAll"), "Select all icon is not checked.");
-
-				oTable.attachEventOnce("rowsUpdated", function() {
-					assert.ok(oTable.$("selall").hasClass("sapUiTableSelAll"), "Select all icon is not checked.");
-					done();
-				});
-
-				oModel.setData({modelData: aData});
-			});
-
-			oModel = new JSONModel();
-			oModel.setData({modelData: []});
-			oTable.setModel(oModel);
-			oTable.bindRows("/modelData");
-		});
-
+	QUnit.test("Select All on Binding Change", async function(assert) {
+		const nextRowSelectionChange = TableQUnitUtils.nextEvent("rowSelectionChange", oTable);
 		assert.ok(oTable.$("selall").hasClass("sapUiTableSelAll"), "Select all icon is not checked.");
 		oTable.$("selall").trigger("tap");
+		await nextRowSelectionChange;
+
+		assert.ok(!oTable.$("selall").hasClass("sapUiTableSelAll"), "Select all icon is checked.");
+
+		let nextRowsUpdated = TableQUnitUtils.nextEvent("rowsUpdated", oTable);
+		const oModel = new JSONModel();
+		oModel.setData({modelData: []});
+		oTable.setModel(oModel);
+		oTable.bindRows("/modelData");
+		await nextRowsUpdated;
+
+		assert.ok(oTable.$("selall").hasClass("sapUiTableSelAll"), "Select all icon is not checked.");
+
+		nextRowsUpdated = TableQUnitUtils.nextEvent("rowsUpdated", oTable);
+		oModel.setData({modelData: aData});
+		await nextRowsUpdated;
+
+		assert.ok(oTable.$("selall").hasClass("sapUiTableSelAll"), "Select all icon is not checked.");
 	});
 
 	QUnit.module("Event: _rowsUpdated", {
@@ -3942,9 +3950,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("Paste", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			const PasteTestControl = this.PasteTestControl;
-			createTable({
+			await createTable({
 				rowMode: new FixedRowMode({
 					rowCount: 1
 				}),
@@ -4077,7 +4085,8 @@ sap.ui.define([
 		this.test(assert, "Content cell in fixed column", getCell(0, 0, null, null, oTable)[0], true);
 		this.test(assert, "Content cell in scrollable column", getCell(0, 1, null, null, oTable)[0], true);
 		this.test(assert, "Row action cell", getRowAction(0, null, null, oTable)[0], true);
-		this.test(assert, "Content cell when paste event target is inner input", getCell(0, 2, null, null, oTable)[0], true, oTable.getRows()[0].getCells()[2].getDomRef());
+		this.test(assert, "Content cell when paste event target is inner input",
+			getCell(0, 2, null, null, oTable)[0], true, oTable.getRows()[0].getCells()[2].getDomRef());
 	});
 
 	QUnit.test("Cell content", function(assert) {
@@ -4143,7 +4152,7 @@ sap.ui.define([
 	/**
 	 * @deprecated As of version 1.119
 	 */
-	QUnit.test("Check for Fixed Rows and Fixed Bottom Rows", function(assert) {
+	QUnit.test("Check for Fixed Rows and Fixed Bottom Rows", async function(assert) {
 		const fnError = sinon.spy(Log, "error");
 
 		assert.equal(this.oTable._getFixedTopRowContexts().length, 0, "fixedRowContexts returned an empty array");
@@ -4165,9 +4174,11 @@ sap.ui.define([
 			this.oTable._updateFixedBottomRows();
 		assert.equal(this.oTable.getFirstVisibleRow(), 0, "_updateFixedBottomRows() called with the updated fixedBottomRowCount");
 		this.oTable.setVisibleRowCount(250);
-		oCore.applyChanges();
+		await this.oTable.qunit.whenRenderingFinished();
+
 		this.oTable._updateFixedBottomRows();
-		assert.ok(this.oTable._getTotalRowCount() < this.oTable.getVisibleRowCount(), "_updateFixedBottomRows() called where bindingLength < visibleRowCount");
+		assert.ok(this.oTable._getTotalRowCount() < this.oTable.getVisibleRowCount(),
+			"_updateFixedBottomRows() called where bindingLength < visibleRowCount");
 		this.oTable.setVisibleRowCount(7);
 		assert.equal(this.oTable.getVisibleRowCount(), 7, "resetting visibleRowCount to 7");
 		this.oTable.setFixedBottomRowCount(-1);
@@ -4194,11 +4205,13 @@ sap.ui.define([
 		assert.equal(fnError.args[2][0], "The control manages the rows aggregation. The method \"removeRow\" cannot be used programmatically!",
 			"Error message logged");
 		this.oTable.removeAllRows();
-		assert.equal(this.oTable.getRows().length, 10, "removeAllRows() called, but it cannot be programmatically be used. None of the rows are removed");
+		assert.equal(this.oTable.getRows().length, 10,
+			"removeAllRows() called, but it cannot be programmatically be used. None of the rows are removed");
 		assert.equal(fnError.args[3][0], "The control manages the rows aggregation. The method \"removeAllRows\" cannot be used programmatically!",
 			"Error message logged");
 		this.oTable.destroyRows();
-		assert.equal(this.oTable.getRows().length, 10, "destroyRows() called, but it cannot be programmatically be used. None of the rows are destoryed");
+		assert.equal(this.oTable.getRows().length, 10,
+			"destroyRows() called, but it cannot be programmatically be used. None of the rows are destoryed");
 		assert.equal(fnError.args[4][0], "The control manages the rows aggregation. The method \"destroyRows\" cannot be used programmatically!",
 			"Error message logged");
 		fnError.restore();
@@ -4319,10 +4332,10 @@ sap.ui.define([
 	/**
 	 * @deprecated As of version 1.119
 	 */
-	QUnit.test("Table Resize", function(assert) {
+	QUnit.test("Table Resize", async function(assert) {
 		const oTable = this.oTable;
 		oTable.setVisibleRowCountMode("Auto");
-		oCore.applyChanges();
+		await this.oTable.qunit.whenRenderingFinished();
 
 		const done = assert.async();
 		const $TableParent = oTable.$().parent();
@@ -4496,8 +4509,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Performance", {
-		beforeEach: function() {
-			createTable({
+		beforeEach: async function() {
+			await createTable({
 				rowMode: new FixedRowMode()
 			});
 		},
@@ -4699,8 +4712,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Avoid DOM modification in onBeforeRendering", {
-		beforeEach: function() {
-			createTable(null, function() {
+		beforeEach: async function() {
+			await createTable(null, function() {
 				oTable.addColumn(new Column({
 					label: "Label",
 					template: "Text"
@@ -4766,8 +4779,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Extensions", {
-		beforeEach: function() {
-			createTable();
+		beforeEach: async function() {
+			await createTable();
 			this.aExpectedExtensions = [
 				"sap.ui.table.extensions.Pointer",
 				"sap.ui.table.extensions.Scrolling",
@@ -4797,9 +4810,7 @@ sap.ui.define([
 		const bOriginalDeviceOsIos = Device.os.ios;
 		Device.os.ios = true;
 		oTable.destroy();
-		createTable();
-		await nextUIUpdate();
-		this.testAppliedExtensions(assert);
+		await createTable();
 
 		return new Promise(function(resolve) {
 			sap.ui.require(["sap/ui/table/extensions/ScrollingIOS"], function() {
@@ -4859,8 +4870,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Renderer Methods", {
-		beforeEach: function() {
-			createTable();
+		beforeEach: async function() {
+			await createTable();
 		},
 		afterEach: function() {
 			destroyTable();
