@@ -92,6 +92,7 @@ sap.ui.require([
 		"sap/ui/core/qunit/model/CompositeDataState.qunit",
 		"sap/ui/core/qunit/model/Context.qunit",
 		"sap/ui/core/qunit/model/ContextBinding.qunit",
+		"sap/ui/core/qunit/model/FieldHelp.qunit",
 		"sap/ui/core/qunit/model/Filter.qunit",
 		"sap/ui/core/qunit/model/FilterProcessor.qunit",
 		"sap/ui/core/qunit/model/ListBinding.qunit",

@@ -1678,6 +1678,20 @@
 				</Annotation>
 				<Annotation Term="SAP__common.ValueListWithFixedValues" />
 			</Annotations>
+			<Annotations Target="GWSAMPLE_BASIC.SalesOrder/Note" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<!-- Note: parameters are URI encoded, e.g.
+					urn:sap-com:documentation:key?=type=DTEL&id=%2fiwbep%2faccount&origin=G1Y_000-->
+				<Annotation Term="SAP__common.DocumentationRef"
+					String="urn:sap-com:documentation:key?=type=DTEL&amp;id=NOTE&amp;origin=MyOrigin"/>
+			</Annotations>
+			<Annotations Target="GWSAMPLE_BASIC.SalesOrder/GrossAmount" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="SAP__common.DocumentationRef"
+					String="urn:sap-com:documentation:key?=type=DTEL&amp;id=GROSSAMOUNT"/>
+			</Annotations>
+			<Annotations Target="GWSAMPLE_BASIC.SalesOrder/CurrencyCode" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="SAP__common.DocumentationRef"
+					String="urn:sap-com:documentation:key?=type=DTEL&amp;id=%2fFOO%2fCURRENCY"/>
+			</Annotations>
 			<atom:link rel="self"
 				href="/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/$metadata"
 				xmlns:atom="http://www.w3.org/2005/Atom" />
