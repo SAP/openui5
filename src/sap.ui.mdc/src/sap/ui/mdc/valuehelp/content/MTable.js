@@ -421,9 +421,18 @@ sap.ui.define([
 
 	MTable.prototype.getItemForValue = function(oConfig) {
 
-		if (!oConfig.checkKey && oConfig.parsedValue && !oConfig.checkDescription) {
+		if (!oConfig.checkKey && !oConfig.checkDescription) {
 			return null;
 		}
+
+		if (oConfig.checkKey && !oConfig.hasOwnProperty("parsedValue")) {
+			throw new Error("MTable: Cannot check key without a given parsedValue! " + this.getId());
+		}
+
+		if (oConfig.checkDescription && !oConfig.hasOwnProperty("parsedDescription")) {
+			throw new Error("MTable: Cannot check description without a given parsedDescription! " + this.getId());
+		}
+
 		if (oConfig.checkKey && !this.getKeyPath()) {
 			throw new Error("MTable: KeyPath missing! " + this.getId());
 		}
@@ -517,7 +526,7 @@ sap.ui.define([
 
 		let oFilter = aFilters.length > 1 ? new Filter({ filters: aFilters, and: false }) : aFilters[0];
 
-		if (oConditions) {
+		if (oFilter && oConditions) {
 			const oConditionTypes = this._getTypesForConditions(oConditions);
 			const oConditionsFilter = FilterConverter.createFilters(oConditions, oConditionTypes, undefined, this.getCaseSensitive());
 			if (oConditionsFilter) {
