@@ -49,69 +49,72 @@ sap.ui.define([
 		},
 
 		onInit : function () {
-			const oUriParameters = new URLSearchParams(window.location.search);
-			const sExpandTo = TestUtils.retrieveData( // controlled by OPA
-					"sap.ui.core.sample.odata.v4.RecursiveHierarchy.expandTo")
-				|| oUriParameters.get("expandTo");
-			this._oAggregation = {
-				expandTo : sExpandTo === "*"
-					? Number.MAX_SAFE_INTEGER
-					: parseFloat(sExpandTo || "3"), // Note: parseInt("1E16") === 1
-				hierarchyQualifier : "OrgChart"
-			};
-			const sTreeTable = oUriParameters.get("TreeTable");
-			const sVisibleRowCount = TestUtils.retrieveData( // controlled by OPA
-					"sap.ui.core.sample.odata.v4.RecursiveHierarchy.visibleRowCount")
-				|| oUriParameters.get("visibleRowCount");
-			const sThreshold = oUriParameters.get("threshold");
+			// initialization has to wait for view model/context propagation
+			this.getView().attachEventOnce("modelContextChange", function () {
+				const oUriParameters = new URLSearchParams(window.location.search);
+				const sExpandTo = TestUtils.retrieveData( // controlled by OPA
+						"sap.ui.core.sample.odata.v4.RecursiveHierarchy.expandTo")
+					|| oUriParameters.get("expandTo");
+				this._oAggregation = {
+					expandTo : sExpandTo === "*"
+						? Number.MAX_SAFE_INTEGER
+						: parseFloat(sExpandTo || "3"), // Note: parseInt("1E16") === 1
+					hierarchyQualifier : "OrgChart"
+				};
+				const sTreeTable = oUriParameters.get("TreeTable");
+				const sVisibleRowCount = TestUtils.retrieveData( // controlled by OPA
+						"sap.ui.core.sample.odata.v4.RecursiveHierarchy.visibleRowCount")
+					|| oUriParameters.get("visibleRowCount");
+				const sThreshold = oUriParameters.get("threshold");
 
-			const oTable = this.byId("table");
-			if (sTreeTable === "Y") {
-				oTable.unbindRows();
-				oTable.setVisible(false);
-			} else {
-				if (sVisibleRowCount) {
-					oTable.getRowMode().setRowCount(parseInt(sVisibleRowCount));
+				const oTable = this.byId("table");
+				if (sTreeTable === "Y") {
+					oTable.unbindRows();
+					oTable.setVisible(false);
+				} else {
+					if (sVisibleRowCount) {
+						oTable.getRowMode().setRowCount(parseInt(sVisibleRowCount));
+					}
+					if (sThreshold) {
+						oTable.setThreshold(parseInt(sThreshold));
+					}
+					const oRowsBinding = oTable.getBinding("rows");
+					oRowsBinding.setAggregation(this._oAggregation);
+					oRowsBinding.resume();
+					oRowsBinding.attachCreateSent(() => {
+						oTable.setBusy(true);
+					});
+					oRowsBinding.attachCreateCompleted(() => {
+						oTable.setBusy(false);
+					});
 				}
-				if (sThreshold) {
-					oTable.setThreshold(parseInt(sThreshold));
-				}
-				const oRowsBinding = oTable.getBinding("rows");
-				oRowsBinding.setAggregation(this._oAggregation);
-				oRowsBinding.resume();
-				oRowsBinding.attachCreateSent(() => {
-					oTable.setBusy(true);
-				});
-				oRowsBinding.attachCreateCompleted(() => {
-					oTable.setBusy(false);
-				});
-			}
 
-			const oTreeTable = this.byId("treeTable");
-			if (sTreeTable === "N") {
-				oTreeTable.unbindRows();
-				oTreeTable.setVisible(false);
-			} else {
-				// enable V4 tree table flag
-				oTreeTable._oProxy._bEnableV4 = true;
-				if (sVisibleRowCount) {
-					oTreeTable.getRowMode().setRowCount(parseInt(sVisibleRowCount));
+				const oTreeTable = this.byId("treeTable");
+				if (sTreeTable === "N") {
+					oTreeTable.unbindRows();
+					oTreeTable.setVisible(false);
+				} else {
+					// enable V4 tree table flag
+					oTreeTable._oProxy._bEnableV4 = true;
+					if (sVisibleRowCount) {
+						oTreeTable.getRowMode().setRowCount(parseInt(sVisibleRowCount));
+					}
+					if (sThreshold) {
+						oTable.setThreshold(parseInt(sThreshold));
+					}
+					const oTreeRowsBinding = oTreeTable.getBinding("rows");
+					oTreeRowsBinding.setAggregation(this._oAggregation);
+					oTreeRowsBinding.resume();
+					oTreeRowsBinding.attachCreateSent(() => {
+						oTreeTable.setBusy(true);
+					});
+					oTreeRowsBinding.attachCreateCompleted(() => {
+						oTreeTable.setBusy(false);
+					});
 				}
-				if (sThreshold) {
-					oTable.setThreshold(parseInt(sThreshold));
-				}
-				const oTreeRowsBinding = oTreeTable.getBinding("rows");
-				oTreeRowsBinding.setAggregation(this._oAggregation);
-				oTreeRowsBinding.resume();
-				oTreeRowsBinding.attachCreateSent(() => {
-					oTreeTable.setBusy(true);
-				});
-				oTreeRowsBinding.attachCreateCompleted(() => {
-					oTreeTable.setBusy(false);
-				});
-			}
 
-			this.initMessagePopover(sTreeTable === "N" ? "table" : "treeTable");
+				this.initMessagePopover(sTreeTable === "N" ? "table" : "treeTable");
+			}, this);
 		},
 
 		onMakeRoot : async function (oEvent, vNextSibling) {
