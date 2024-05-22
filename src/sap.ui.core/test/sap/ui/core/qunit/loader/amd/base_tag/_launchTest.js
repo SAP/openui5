@@ -1,11 +1,9 @@
-/*global QUnit, require, sap */
+/*global QUnit, require */
 (function() {
 	"use strict";
 
 	// if ui5loader is present, make it expose AMD APIs
-	if ( window.sap && sap.ui && sap.ui.loader ) {
-		sap.ui.loader.config({ amd: true });
-	}
+	globalThis.sap?.ui?.loader?.config({ amd: true });
 
 	QUnit.config.autostart = false;
 

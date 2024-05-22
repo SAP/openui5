@@ -9,6 +9,9 @@
 
 	QUnit.module("amd=true mode");
 
+	/**
+	 * @deprecated As of version 1.120, the ui5loader no longer implements bExport
+	 */
 	QUnit.test("amd - bExport - error message", function(assert) {
 		var done = assert.async();
 
