@@ -622,7 +622,7 @@ sap.ui.define(["./PluginBase", "sap/base/Log", "sap/base/strings/formatMessage",
 	PluginBase.setConfigs({
 		"sap.m.Table": {
 			_oWM: new WeakMap(),
-			allowForCopySelector: ".sapMLIBFocusable,.sapMLIBSelectM,.sapMLIBSelectS",
+			allowForCopySelector: ".sapMLIBFocusable,.sapMLIBSelectM,.sapMLIBSelectS,.sapMListTblCell",
 			selectedContexts: function(oTable, bSparse) {
 				const aSelectedContexts = [];
 				const oBindingInfo = oTable.getBindingInfo("items");
