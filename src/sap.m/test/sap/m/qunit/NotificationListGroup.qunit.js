@@ -1,6 +1,7 @@
 /*global QUnit, sinon */
 
 sap.ui.define([
+	"sap/ui/qunit/QUnitUtils",
 	"sap/m/ScrollContainer",
 	"sap/m/NotificationList",
 	"sap/m/NotificationListGroup",
@@ -13,6 +14,7 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/m/library"
 ], function(
+	QUnitUtils,
 	ScrollContainer,
 	NotificationList,
 	NotificationListGroup,
@@ -400,6 +402,21 @@ sap.ui.define([
 			}
 		});
 		assert.strictEqual(groupItems[0].getDomRef(), document.activeElement, 'first item is focused');
+	});
+
+	QUnit.test('F2 navigation', function(assert) {
+		var groupItem1 = this.notificationList.getItems()[0];
+
+		groupItem1.focus();
+		assert.strictEqual(groupItem1.getDomRef(), document.activeElement, 'first item is focused');
+
+		QUnitUtils.triggerEvent("keydown", document.activeElement, {code: "F2"});
+
+		assert.strictEqual(groupItem1._getCollapseButton().getDomRef(), document.activeElement, 'collapse button is focused');
+
+		QUnitUtils.triggerEvent("keydown", document.activeElement, {code: "F2"});
+
+		assert.strictEqual(groupItem1.getDomRef(), document.activeElement, 'first item is focused');
 	});
 
 	QUnit.test('navigation between "collapse" buttons', function(assert) {
