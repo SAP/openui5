@@ -19,7 +19,9 @@
 	},
 	"sap.ui" : {
 		"deviceTypes" : {
-			"desktop" : true
+			"desktop" : true,
+			"phone" : false,
+			"table" : false
 		},
 		"technology" : "UI5"
 	},
@@ -35,15 +37,12 @@
 				]
 			}
 		},
-		"contentDensities" : {
-			"compact" : true,
-			"cozy" : true
-		},
 		"dependencies" : {
 			"minUI5Version" : "1.97",
 			"libs" : {
 				"sap.f" : {},
 				"sap.m" : {},
+				"sap.ui.core" : {},
 				"sap.ui.table" : {}
 			}
 		},
@@ -62,7 +61,6 @@
 			}
 		},
 		"rootView" : {
-			"async" : true,
 			"type" : "XML",
 			"viewName" : "sap.ui.core.sample.odata.v4.MultipleInlineCreationRowsGrid.Main"
 		}

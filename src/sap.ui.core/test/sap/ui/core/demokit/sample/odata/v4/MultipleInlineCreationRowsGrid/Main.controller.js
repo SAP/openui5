@@ -196,65 +196,68 @@ sap.ui.define([
 		},
 
 		onInit : function () {
-			var oPartsBinding,
-				oProductsBinding,
-				oView = this.getView(),
-				oModel = oView.getModel(),
-				oSelectRowCount = oView.byId("rowCount_select"),
-				that = this;
+			// initialization has to wait for view model/context propagation
+			this.getView().attachEventOnce("modelContextChange", function () {
+				var oPartsBinding,
+					oProductsBinding,
+					oView = this.getView(),
+					oModel = oView.getModel(),
+					oSelectRowCount = oView.byId("rowCount_select"),
+					that = this;
 
-			bLegacy = TestUtils.retrieveData( // controlled by OPA
-				"sap.ui.core.sample.odata.v4.MultipleInlineCreationRowsGrid.legacy")
-				|| oSearchParams.get("legacy");
+				bLegacy = TestUtils.retrieveData( // controlled by OPA
+						"sap.ui.core.sample.odata.v4.MultipleInlineCreationRowsGrid.legacy")
+					|| oSearchParams.get("legacy");
 
-			this.mCreateActivateMessages = [];
-			this.initMessagePopover("showMessages");
-			this.oUIModel = new JSONModel({
-				sActivity : "",
-				bAPI : oModel.getGroupProperty(oModel.getUpdateGroupId(), "submit")
-					=== SubmitMode.API,
-				sLayout : LayoutType.OneColumn,
-				iMessages : 0,
-				bSortPartsQuantity : true,
-				sSortPartsQuantityIcon : ""
-			});
+				this.mCreateActivateMessages = [];
+				this.initMessagePopover("showMessages");
+				this.oUIModel = new JSONModel({
+					sActivity : "",
+					bAPI : oModel.getGroupProperty(oModel.getUpdateGroupId(), "submit")
+						=== SubmitMode.API,
+					sLayout : LayoutType.OneColumn,
+					iMessages : 0,
+					bSortPartsQuantity : true,
+					sSortPartsQuantityIcon : ""
+				});
 
-			oSelectRowCount.setSelectedKey("" + iEmptyRowCount);
+				oSelectRowCount.setSelectedKey("" + iEmptyRowCount);
 
-			oView.setModel(this.oUIModel, "ui");
-			oView.setModel(oModel, "headerContext0");
-			oView.setModel(oModel, "headerContext1");
-			oProductsBinding = oView.byId("products").getBinding("items");
-			oProductsBinding.attachCreateActivate(this.onActivate, this);
-			oProductsBinding.attachCreateSent(this.showSaving, this);
-			oProductsBinding.attachCreateCompleted(this.showNothing, this);
-			oProductsBinding.attachDataRequested(this.showLoading, this);
-			oProductsBinding.attachDataReceived(this.showNothing, this);
-			oProductsBinding.attachEventOnce("dataReceived",
-				this.createInactiveProducts.bind(this, iEmptyRowCount)
-			);
-			oPartsBinding = oView.byId("parts").getBinding("rows");
-			oPartsBinding.attachDataRequested(this.showLoading, this);
-			oPartsBinding.attachDataReceived(this.showNothing, this);
-			oPartsBinding.attachCreateActivate(this.onActivate, this);
-			oPartsBinding.attachCreateSent(this.showSaving, this);
-			oPartsBinding.attachCreateCompleted(this.showNothing, this);
+				oView.setModel(this.oUIModel, "ui");
+				oView.setModel(oModel, "headerContext0");
+				oView.setModel(oModel, "headerContext1");
+				oProductsBinding = oView.byId("products").getBinding("items");
+				oProductsBinding.attachCreateActivate(this.onActivate, this);
+				oProductsBinding.attachCreateSent(this.showSaving, this);
+				oProductsBinding.attachCreateCompleted(this.showNothing, this);
+				oProductsBinding.attachDataRequested(this.showLoading, this);
+				oProductsBinding.attachDataReceived(this.showNothing, this);
+				oProductsBinding.attachEventOnce("dataReceived",
+					this.createInactiveProducts.bind(this, iEmptyRowCount)
+				);
+				oPartsBinding = oView.byId("parts").getBinding("rows");
+				oPartsBinding.attachDataRequested(this.showLoading, this);
+				oPartsBinding.attachDataReceived(this.showNothing, this);
+				oPartsBinding.attachCreateActivate(this.onActivate, this);
+				oPartsBinding.attachCreateSent(this.showSaving, this);
+				oPartsBinding.attachCreateCompleted(this.showNothing, this);
 
-			// attach an event handler to the data received event and create inactive rows inside
-			oPartsBinding.attachDataReceived(function () {
-				if (oPartsBinding.isFirstCreateAtEnd() === undefined) {
-					that.createInactiveParts(iEmptyRowCount);
-				}
-			});
+				// attach event handler to the data received event and create inactive rows inside
+				oPartsBinding.attachDataReceived(function () {
+					if (oPartsBinding.isFirstCreateAtEnd() === undefined) {
+						that.createInactiveParts(iEmptyRowCount);
+					}
+				});
 
-			this.byId("productsTitle").setBindingContext(
-				oProductsBinding ? oProductsBinding.getHeaderContext() : null,
-				"headerContext0"
-			);
-			this.byId("productsSelectAll").setBindingContext(
-				oProductsBinding ? oProductsBinding.getHeaderContext() : null,
-				"headerContext0"
-			);
+				this.byId("productsTitle").setBindingContext(
+					oProductsBinding ? oProductsBinding.getHeaderContext() : null,
+					"headerContext0"
+				);
+				this.byId("productsSelectAll").setBindingContext(
+					oProductsBinding ? oProductsBinding.getHeaderContext() : null,
+					"headerContext0"
+				);
+			}, this);
 		},
 
 		onRefresh : function () {
