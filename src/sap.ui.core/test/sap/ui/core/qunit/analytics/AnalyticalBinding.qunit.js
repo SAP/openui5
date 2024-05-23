@@ -2483,20 +2483,12 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("constructor: unsupported model", function (assert) {
-		/** @deprecated As of version 1.120, because sap.ui.model.odata.Filter is deprecated since 1.22 */
-		this.mock(AnalyticalBinding.prototype).expects("_convertDeprecatedFilterObjects").withExactArgs(undefined);
-		const oModel = {createCustomParams() {}};
-		this.mock(oModel).expects("createCustomParams").withExactArgs({custom: undefined});
-		this.mock(AnalyticalBinding).expects("_getModelVersion").withExactArgs(sinon.match.same(oModel)).returns(null);
-		this.oLogMock.expects("error").withExactArgs("The AnalyticalBinding does not support the given model");
+		this.mock(AnalyticalBinding).expects("_getModelVersion").withExactArgs("~oModel").returns(null);
 
-		// code under test
-		const oBinding = new AnalyticalBinding(oModel, "path",/*oContext*/undefined, /*aSorter*/undefined,
-			/*aFilters*/undefined, /*mParameters*/{});
-
-		assert.strictEqual(oBinding.aAllDimensionSortedByName, undefined);
-		assert.strictEqual(oBinding.aInitialAnalyticalInfo, undefined);
-		assert.strictEqual(oBinding.aAllDimensionSortedByName, undefined);
+		assert.throws(() => {
+			// code under test
+			new AnalyticalBinding("~oModel", "~path"); // eslint-disable-line no-new
+		}, new Error("The AnalyticalBinding does not support the given model"));
 	});
 
 	//*********************************************************************************************
