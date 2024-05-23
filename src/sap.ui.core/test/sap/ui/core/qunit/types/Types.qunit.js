@@ -765,19 +765,22 @@ sap.ui.define([
 	//*********************************************************************************************
 [
 	{aTypes:[]}, // no types
-	{aTypes:[{}]}, // no constraints
-	{aTypes:[{oConstraints:{}}]}, // no scale
+	{aTypes:[{}], expScale:0, oldScale:0}, // no constraints
+	{aTypes:[{oConstraints:{}}], expScale:0, oldScale:0}, // no scale
 	{aTypes:[{oConstraints:{scale:24}}], expScale:24, expCreateFormats:1}, // consider scale
 	// only the first type is considered
 	{aTypes:[{oConstraints:{scale:24}}, {oConstraints:{scale:42}}], expScale:24, expCreateFormats:1},
 	// scale unchanged, no new formats
 	{aTypes:[{oConstraints:{scale:24}}], oldScale:24, expScale:24},
 	// scale reset, recreate formats
-	{aTypes:[{oConstraints:{}}], oldScale:24, expScale:undefined, expCreateFormats:1}
+	{aTypes:[{oConstraints:{}}], oldScale:24, expScale:0, expCreateFormats:1}
 ].forEach(({aTypes, expScale, expCreateFormats, oldScale}, i) => {
 	QUnit.test("Currency: processPartTypes, i=" + i, function (assert) {
 		const oCurrencyType = {iScale: oldScale, _createFormats() {}};
-
+		if (aTypes[0]) {
+			aTypes[0].isA = () => {};
+			this.mock(aTypes[0]).expects("isA").withExactArgs("sap.ui.model.odata.type.Decimal").returns(true);
+		}
 		this.mock(oCurrencyType).expects("_createFormats").withExactArgs().exactly(expCreateFormats || 0);
 
 		// code under test
@@ -786,6 +789,16 @@ sap.ui.define([
 		assert.strictEqual(oCurrencyType.iScale, expScale);
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("Currency: processPartTypes, first part has non-Decimal type", function (assert) {
+		const oCurrencyType = {};
+		const oNonDecimalType = {isA() {}};
+		this.mock(oNonDecimalType).expects("isA").withExactArgs("sap.ui.model.odata.type.Decimal").returns(false);
+
+		// code under test
+		CurrencyType.prototype.processPartTypes.call(oCurrencyType, [oNonDecimalType]);
+	});
 
 	//*********************************************************************************************
 [
@@ -2906,13 +2919,17 @@ sap.ui.define([
 	//*********************************************************************************************
 [
 	{aTypes : []},
-	{aTypes : [{}]},
-	{aTypes : [{oConstraints : {}}]},
+	{aTypes : [{}], iScale : 0},
+	{aTypes : [{oConstraints : {}}], iScale : 0},
 	{aTypes : [{oConstraints : {scale : 24}}], iScale : 24},
 	{aTypes : [{oConstraints : {scale : 24}}, {oConstraints : {scale : 42}}], iScale : 24}
 ].forEach(({aTypes, iScale}, i) => {
 	QUnit.test("Unit: processPartTypes, i=" + i, function (assert) {
 		const oUnitType = {};
+		if (aTypes[0]) {
+			aTypes[0].isA = () => {};
+			this.mock(aTypes[0]).expects("isA").withExactArgs("sap.ui.model.odata.type.Decimal").returns(true);
+		}
 
 		// code under test
 		UnitType.prototype.processPartTypes.call(oUnitType, aTypes);
@@ -2920,4 +2937,16 @@ sap.ui.define([
 		assert.strictEqual(oUnitType.iScale, iScale);
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("Unit: processPartTypes, first part has non-Decimal type", function (assert) {
+		const oUnitType = {iScale : 42};
+		const oNonDecimalType = {isA() {}};
+		this.mock(oNonDecimalType).expects("isA").withExactArgs("sap.ui.model.odata.type.Decimal").returns(false);
+
+		// code under test
+		UnitType.prototype.processPartTypes.call(oUnitType, [oNonDecimalType]);
+
+		assert.strictEqual(oUnitType.iScale, 42);
+	});
 });

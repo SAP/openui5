@@ -11373,12 +11373,12 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 			return this.waitForChanges(assert, "change scale to 2 -> amount type's scale wins");
 		}).then(() => {
-			this.expectValue("weight", "12.3410000 KWH");
+			this.expectValue("weight", "12 KWH");
 
 			// code under test
 			oBindingPart.setType(new Decimal(undefined, {precision : 13}));
 
-			return this.waitForChanges(assert, "change scale to undefined -> unit's decimals wins");
+			return this.waitForChanges(assert, "change scale to undefined -> type Decimal default scale 0 wins");
 		});
 	});
 
@@ -11389,15 +11389,17 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	// b) the amount part data type's scale and
 	// with a fix unit decimal places of 7 for the used unit code
 	// JIRA: CPOUI5MODELS-1600
+	// SNOW: DINC0152691 => consider scale default value 0 for sap.ui.model.odata.type.Decimal
 [
 	{iMaxFractionDigits: 1, iScale: 3, sExpected: "12.3 KWH"},  // maxFractionDigits wins
 	{iMaxFractionDigits: 9, iScale: 3, sExpected: "12.3410000 KWH"}, // unit's decimal places wins
 	{iMaxFractionDigits: undefined, iScale: 3, sExpected: "12.341 KWH"}, // scale wins
 	{iMaxFractionDigits: undefined, iScale: "'variable'", sExpected: "12.3410000 KWH"}, // unit's decimal places wins
-	{iMaxFractionDigits: undefined, iScale: undefined, sExpected: "12.3410000 KWH"} // unit's decimal places wins
+	// DINC0152691: Decimal type scale defaults to 0 => scale wins
+	{iMaxFractionDigits: undefined, iScale: undefined, sExpected: "12 KWH"}
 ].forEach(({iMaxFractionDigits, iScale, sExpected}, i) => {
 	QUnit.test(`CPOUI5MODELS-1600: UnitType with unit maxFractionDigits, ${i}`, function (assert) {
-		const sURLParameter = "CPOUI5MODELS-1600=true" + i; // unqiue URL for each test needed
+		const sURLParameter = "CPOUI5MODELS-1600=true" + i; // unique URL for each test needed
 		const oModel = createModel(`/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/?${sURLParameter}`,
 			{defaultBindingMode : "TwoWay", tokenHandling : false});
 		const sScaleConstraint = iScale ? `, scale : ${iScale}` : "";
@@ -11501,12 +11503,12 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 			return this.waitForChanges(assert, "change scale to 2 -> amount type's scale wins");
 		}).then(() => {
-			this.expectValue("price", "12.3410000\u00a0FOO");
+			this.expectValue("price", "12\u00a0FOO");
 
 			// code under test
 			oBindingPart.setType(new Decimal(undefined, {precision : 13}));
 
-			return this.waitForChanges(assert, "change scale to undefined -> currency's decimals wins");
+			return this.waitForChanges(assert, "change scale to undefined ->  type Decimal default scale 0 wins");
 		});
 	});
 
@@ -11517,12 +11519,14 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	// b) the amount part data type's scale and
 	// with a fix currency decimal places of 7 for the used currency
 	// JIRA: CPOUI5MODELS-1600
+	// SNOW: DINC0152691 => consider scale default value 0 for sap.ui.model.odata.type.Decimal
 [
 	{iMaxFractionDigits: 1, iScale: 3, sExpected: "12.3\u00a0FOO"},  // maxFractionDigits wins
 	{iMaxFractionDigits: 9, iScale: 3, sExpected: "12.3410000\u00a0FOO"}, // currency's decimal places wins
 	{iMaxFractionDigits: undefined, iScale: 3, sExpected: "12.341\u00a0FOO"}, // scale wins
 	{iMaxFractionDigits: undefined, iScale: "'variable'", sExpected: "12.3410000\u00a0FOO"}, // currency's decimal places wins
-	{iMaxFractionDigits: undefined, iScale: undefined, sExpected: "12.3410000\u00a0FOO"} // currency's decimal places wins
+	// DINC0152691: Decimal type scale defaults to 0 => scale wins
+	{iMaxFractionDigits: undefined, iScale: undefined, sExpected: "12\u00a0FOO"}
 ].forEach(({iMaxFractionDigits, iScale, sExpected}, i) => {
 	QUnit.test(`CPOUI5MODELS-1619: CurrencyType with unit maxFractionDigits: ${i}`, function (assert) {
 		const sURLParameter = "CPOUI5MODELS-1619=" + i; // unqiue URL for each test needed
