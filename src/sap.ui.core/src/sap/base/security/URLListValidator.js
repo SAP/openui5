@@ -272,7 +272,7 @@ sap.ui.define([], function() {
 		var result = rBlobURLs.exec(sUrl);
 		if (result && result.groups) {
 			// Blob URLs are only valid if from the same origin
-			if (result.groups.origin !== window.location.origin){
+			if (result.groups.origin !== window.location.origin) {
 				return false;
 			}
 
