@@ -107,6 +107,7 @@ sap.ui.define(["sap/ui/core/dnd/DragDropBase",
 					 * @param {object} oControlEvent.getParameters
 					 * @param {sap.ui.model.Context} oControlEvent.getParameters.bindingContext The binding context of the row on which the dragged element will be dropped
 					 * @param {sap.ui.mdc.table.DragDropConfig.DragSource} oControlEvent.getParameters.dragSource The binding context of the dragged row or the dragged control itself
+					 * @param {sap.ui.core.dnd.RelativeDropPosition} oControlEvent.getParameters.dropPosition The calculated position of the drop action relative to the row being dropped
 					 * @param {DragEvent} oControlEvent.getParameters.browserEvent The underlying browser event
 					 * @public
 					 */
@@ -128,7 +129,9 @@ sap.ui.define(["sap/ui/core/dnd/DragDropBase",
 					 * @param {DragEvent} oControlEvent.getParameters.browserEvent The underlying browser event
 					 * @public
 					 */
-					dragOver: {},
+					dragOver: {
+						allowPreventDefault: true
+					},
 
 					/**
 					 * This event is fired when an element is dropped on a table row, if the <code>droppable</code> property is set to <code>true<code>.
@@ -335,7 +338,7 @@ sap.ui.define(["sap/ui/core/dnd/DragDropBase",
 			const oDragSession = oEvent.getParameter("dragSession");
 			const oDropControl = oDragSession.getDropControl();
 			const sDropPosition = oEvent.getParameter("dropPosition");
-			const bAllowPreventDefault = (oEvent.getId() == "dragEnter");
+			const bAllowPreventDefault = oEvent.getId().startsWith("drag");
 			const mEventParameters = {
 				bindingContext: getBindingContext(oDropControl),
 				dragSource: getDragSource(oDragSession),
