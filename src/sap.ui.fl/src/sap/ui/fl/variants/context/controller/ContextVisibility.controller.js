@@ -198,11 +198,11 @@ sap.ui.define([
 		},
 
 		isRemoveAllEnabled(aSelectedRoleIds) {
-			return aSelectedRoleIds && aSelectedRoleIds.length !== 0;
+			return aSelectedRoleIds && aSelectedRoleIds?.length !== 0;
 		},
 
 		isMessageStripVisible(aSelectedRoles, bShowMessageStrip) {
-			return bShowMessageStrip && aSelectedRoles.length === 0;
+			return bShowMessageStrip && aSelectedRoles?.length === 0;
 		}
 	});
 });
