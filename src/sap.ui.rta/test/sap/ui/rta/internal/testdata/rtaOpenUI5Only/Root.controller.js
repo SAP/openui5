@@ -58,6 +58,16 @@ sap.ui.define([
 			oStateModel.setData(oData);
 			oView.setModel(oStateModel, "state");
 
+			const oExtraData = {
+				data: {
+					value1: "value1",
+					value2: "value2"
+				}
+			};
+
+			const oExtraModel = new JSONModel(oExtraData);
+			oView.setModel(oExtraModel, "extraModel");
+
 			this._aData.push(
 				new Promise(function(resolve) {
 					oView.byId("MainForm").bindElement({

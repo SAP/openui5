@@ -107,11 +107,14 @@
 								<form:FormElement label="IncorrectNavigationProperty" id="EntityType02.IncorrectNavigationProperty" visible="false">
 									<Input value="{to_NonexistentEntity/NavProperty}"/>
 								</form:FormElement>
-								<form:FormElement label="Field with absolute binding" id="EntityType02.AbsoluteBinding" visible="false">
-									<Input value="{/ModelName/PropertyName}"/>
+								<form:FormElement label="Field with absolute binding (non-existing path)" id="EntityType02.AbsoluteBinding" visible="false">
+									<Input value="{/non/existing/path}"/>
 								</form:FormElement>
 								<form:FormElement label="Field with binding to non-existent model" id="NonExistentModel" visible="false">
 									<Input value="{NonExistentModel>PropertyName}"/>
+								</form:FormElement>
+								<form:FormElement label="Field with absolute binding (extra model)" id="EntityType02.AbsoluteBindingExtraModel" visible="false">
+									<Input value="{extraModel>/data/value1}"/>
 								</form:FormElement>
 							</form:FormContainer>
 						</form:formContainers>
