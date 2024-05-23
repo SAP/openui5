@@ -1756,6 +1756,17 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("checkTypeof: true", function (assert) {
+		// code under test
+		_AggregationHelper.checkTypeof(true, true, "some/path");
+
+		assert.throws(function () {
+			// code under test
+			_AggregationHelper.checkTypeof(false, true, "some/path");
+		}, new Error("Not a true value for 'some/path'"));
+	});
+
+	//*********************************************************************************************
 	QUnit.test("hasGrandTotal", function (assert) {
 		// code under test
 		assert.strictEqual(_AggregationHelper.hasGrandTotal(), undefined);
