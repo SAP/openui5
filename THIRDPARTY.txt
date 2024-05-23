@@ -12,6 +12,13 @@ License: Apache-2.0
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/Apache-2.0.txt
 Contained in: src/sap.m/src/sap/m/_thirdparty/purify.js
 
+Component: QUnit Composite 2.0.0, version: 2.0.0
+Copyright: jQuery Foundation and other contributors, https://jquery.org/
+License: MIT
+License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
+Contained in: src/sap.m/test/sap/m/qunit/_thirdparty/qunit-composite.css
+	src/sap.m/test/sap/m/qunit/_thirdparty/qunit-composite.js
+
 
 Library: sap.ui.codeeditor:
 
