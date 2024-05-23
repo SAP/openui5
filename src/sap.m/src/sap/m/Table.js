@@ -1006,7 +1006,7 @@ sap.ui.define([
 		var oBundle = Library.getResourceBundleFor("sap.m"),
 			sAnnouncement = oBundle.getText("ACC_CTR_TYPE_HEADER_ROW") + " ";
 
-		if (this.isAllSelectableSelected()) {
+		if (this.getMultiSelectMode() !== "ClearAll" && this.isAllSelectableSelected()) {
 			sAnnouncement += oBundle.getText("LIST_ALL_SELECTED");
 		}
 
