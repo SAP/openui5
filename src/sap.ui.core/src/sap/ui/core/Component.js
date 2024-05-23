@@ -214,8 +214,10 @@ sap.ui.define([
 	}
 
 	/**
-	 * Creates and initializes a new Component with the given <code>sId</code> and
-	 * settings.
+	 * As <code>Component</code> is an abstract base class for components, applications should not call the constructor.
+	 * For many use cases the static {@link #.create Component.create} factory can be used to instantiate a <code>Component</code>.
+	 * Depending on the requirements, the framework also provides other ways to instantiate a <code>Component</code>, documented under the
+	 * {@link topic:958ead51e2e94ab8bcdc90fb7e9d53d0 "Component"} chapter.
 	 *
 	 * The set of allowed entries in the <code>mSettings</code> object depends on
 	 * the concrete subclass and is described there. See {@link sap.ui.core.Component}
