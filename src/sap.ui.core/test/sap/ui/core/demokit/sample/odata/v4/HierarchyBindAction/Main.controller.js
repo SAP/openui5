@@ -59,27 +59,30 @@ sap.ui.define([
 		},
 
 		onInit : function () {
-			var oTreeTable = this.byId("table"),
-				oUriParameters = new URLSearchParams(window.location.search);
+			// initialization has to wait for view model/context propagation
+			this.getView().attachEventOnce("modelContextChange", function () {
+				var oTreeTable = this.byId("table"),
+					oUriParameters = new URLSearchParams(window.location.search);
 
-			oTreeTable._oProxy._bEnableV4 = true; // enable V4 tree table flag
-			const sVisibleRowCount = oUriParameters.get("visibleRowCount");
-			if (sVisibleRowCount) {
-				oTreeTable.getRowMode().setRowCount(parseInt(sVisibleRowCount));
-			}
+				oTreeTable._oProxy._bEnableV4 = true; // enable V4 tree table flag
+				const sVisibleRowCount = oUriParameters.get("visibleRowCount");
+				if (sVisibleRowCount) {
+					oTreeTable.getRowMode().setRowCount(parseInt(sVisibleRowCount));
+				}
 
-			const sExpandTo = oUriParameters.get("expandTo");
-			this._oAggregation = {
-				expandTo : sExpandTo === "*"
-					? Number.MAX_SAFE_INTEGER
-					: parseFloat(sExpandTo || "1"), // Note: parseInt("1E16") === 1
-				hierarchyQualifier : "I_SADL_BHV_BIND_DIR_HIERVIEW"
-			};
+				const sExpandTo = oUriParameters.get("expandTo");
+				this._oAggregation = {
+					expandTo : sExpandTo === "*"
+						? Number.MAX_SAFE_INTEGER
+						: parseFloat(sExpandTo || "1"), // Note: parseInt("1E16") === 1
+					hierarchyQualifier : "I_SADL_BHV_BIND_DIR_HIERVIEW"
+				};
 
-			this.byId("selectHierarchy").getBinding("items")
-				.attachEventOnce("dataReceived", this.onChangeHierarchy.bind(this));
+				this.byId("selectHierarchy").getBinding("items")
+					.attachEventOnce("dataReceived", this.onChangeHierarchy.bind(this));
 
-			this.initMessagePopover("table");
+				this.initMessagePopover("table");
+			}, this);
 		},
 
 		onMakeRoot : async function (oEvent, vNextSibling) {
