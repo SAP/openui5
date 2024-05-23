@@ -15,7 +15,7 @@
 	}
 
 	// do nothing if UI5 is already loaded
-	if (window.sap && window.sap.ui) {
+	if (globalThis.sap?.ui) {
 		return;
 	}
 
