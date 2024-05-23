@@ -294,4 +294,17 @@ sap.ui.define([
 		// code under test
 		oBinding._checkDataStateMessages(oDataState, undefined);
 	});
+
+	//*********************************************************************************************
+	QUnit.test("isDestroyed", function (assert) {
+		const oBinding = new Binding(/*oModel*/null, "/~sPath");
+
+		// code under test
+		assert.strictEqual(oBinding.isDestroyed(), false);
+
+		oBinding.destroy();
+
+		// code under test
+		assert.strictEqual(oBinding.isDestroyed(), true);
+	});
 });

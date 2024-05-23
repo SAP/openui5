@@ -552,6 +552,38 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("_getFieldHelpHotspots: destroyed control", function (assert) {
+		const oFieldHelp = new FieldHelp();
+		const oElement0 = {getId() {}};
+		this.mock(oElement0).expects("getId").withExactArgs().returns("~element0");
+		const oUpdateHotspotsPromise = {catch() {}};
+		this.mock(oFieldHelp).expects("_updateHotspots").withExactArgs().returns(oUpdateHotspotsPromise);
+		this.mock(oUpdateHotspotsPromise).expects("catch").withExactArgs(sinon.match.func);
+		oFieldHelp._setFieldHelpDocumentationRefs(oElement0, undefined, [
+			"urn:sap-com:documentation:key?=type=~customType0&id=~customId0"
+		]);
+
+		const oElementMock = this.mock(Element);
+		oElementMock.expects("getElementById").withExactArgs("~element0").returns(oElement0);
+		this.mock(LabelEnablement).expects("_getLabelTexts").withExactArgs(sinon.match.same(oElement0))
+			.returns(["~sLabel0"]);
+		assert.deepEqual(oFieldHelp._getFieldHelpHotspots(), [{
+			backendHelpKey: {id: "~customId0", origin: null, type: "~customType0"},
+			hotspotId: "~element0",
+			labelText: "~sLabel0"
+		}]);
+
+		// simulate that the control has been destroyed
+		oElementMock.expects("getElementById").withExactArgs("~element0").returns(undefined);
+
+		// code under test - control was destroyed in between
+		assert.deepEqual(oFieldHelp._getFieldHelpHotspots(), []);
+
+		// code under test - the destroyed control has been removed from internal data structure -> no getElementById
+		assert.deepEqual(oFieldHelp._getFieldHelpHotspots(), []);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("_setFieldHelpDocumentationRefs: _updateHotspots rejects", function (assert) {
 		const oFieldHelp = new FieldHelp();
 		const oElement0 = {getId() {}};
@@ -598,13 +630,26 @@ sap.ui.define([
 	//*********************************************************************************************
 [undefined, "/foo#meta", "/bar@annotation"].forEach((sResolvedPath) => {
 	QUnit.test("_requestDocumentationRef: unsupported binding path: " + sResolvedPath, function (assert) {
-		const oBinding = {getResolvedPath() {}};
+		const oBinding = {
+			getResolvedPath() {},
+			isDestroyed() {}
+		};
+		this.mock(oBinding).expects("isDestroyed").withExactArgs().returns(false);
 		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns(sResolvedPath);
 
 		// code under test
 		assert.strictEqual(FieldHelp._requestDocumentationRef(oBinding), undefined);
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("_requestDocumentationRef: binding is being destroyed", function (assert) {
+		const oBinding = {isDestroyed() {}};
+		this.mock(oBinding).expects("isDestroyed").withExactArgs().returns(true);
+
+		// code under test - binding is being destroyed
+		assert.strictEqual(FieldHelp._requestDocumentationRef(oBinding), undefined);
+	});
 
 	//*********************************************************************************************
 [
@@ -615,8 +660,10 @@ sap.ui.define([
 	QUnit.test("_requestDocumentationRef: no meta model with getMetaContext, #" + i, function (assert) {
 		const oBinding = {
 			getModel() {},
-			getResolvedPath() {}
+			getResolvedPath() {},
+			isDestroyed() {}
 		};
+		this.mock(oBinding).expects("isDestroyed").withExactArgs().returns(false);
 		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("/resolved/data/path");
 		const oModel = {getMetaModel() {}};
 		this.mock(oModel).expects("getMetaModel").withExactArgs().exactly(bHasModel ? 1 : 0). returns(oMetaModel);
@@ -641,8 +688,10 @@ sap.ui.define([
 	QUnit.test("_requestDocumentationRef: V2 binding, #" + i, function (assert) {
 		const oBinding = {
 			getModel() {},
-			getResolvedPath() {}
+			getResolvedPath() {},
+			isDestroyed() {}
 		};
+		this.mock(oBinding).expects("isDestroyed").withExactArgs().returns(false);
 		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("/resolved/data/path");
 		const oModel = {getMetaModel() {}};
 		const oMetaModel = {
@@ -673,8 +722,10 @@ sap.ui.define([
 	QUnit.test("_requestDocumentationRef: V2 binding, loaded promise rejects", function (assert) {
 		const oBinding = {
 			getModel() {},
-			getResolvedPath() {}
+			getResolvedPath() {},
+			isDestroyed() {}
 		};
+		this.mock(oBinding).expects("isDestroyed").withExactArgs().returns(false);
 		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("/resolved/data/path");
 		const oModel = {getMetaModel() {}};
 		const oMetaModel = {
@@ -706,8 +757,10 @@ sap.ui.define([
 	QUnit.test("_requestDocumentationRef: V2 binding, error while fetching metadata", function (assert) {
 		const oBinding = {
 			getModel() {},
-			getResolvedPath() {}
+			getResolvedPath() {},
+			isDestroyed() {}
 		};
+		this.mock(oBinding).expects("isDestroyed").withExactArgs().returns(false);
 		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("/resolved/data/path");
 		const oModel = {getMetaModel() {}};
 		const oMetaModel = {
@@ -742,8 +795,10 @@ sap.ui.define([
 	QUnit.test("_requestDocumentationRef: V4 binding, has annotation=" + bHasAnnotation, function (assert) {
 		const oBinding = {
 			getModel() {},
-			getResolvedPath() {}
+			getResolvedPath() {},
+			isDestroyed() {}
 		};
+		this.mock(oBinding).expects("isDestroyed").withExactArgs().returns(false);
 		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("/resolved/data/path");
 		const oModel = {getMetaModel() {}};
 		const oMetaModel = {
@@ -774,8 +829,10 @@ sap.ui.define([
 	QUnit.test("_requestDocumentationRef: V4 binding, requestObject rejects", function (assert) {
 		const oBinding = {
 			getModel() {},
-			getResolvedPath() {}
+			getResolvedPath() {},
+			isDestroyed() {}
 		};
+		this.mock(oBinding).expects("isDestroyed").withExactArgs().returns(false);
 		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("/resolved/data/path");
 		const oModel = {getMetaModel() {}};
 		const oMetaModel = {
