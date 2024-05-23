@@ -1686,6 +1686,8 @@ sap.ui.define([
 	 *   cannot be determined.
 	 *
 	 * @private
+	 * @since 1.125.0
+	 * @ui5-restricted sap.fe
 	 */
 	ODataMetaModel.prototype.fetchUpdateData = function (sPropertyPath, oContext, bNoEditUrl) {
 		var oModel = oContext.getModel(),
