@@ -1002,23 +1002,15 @@ function(
 		ControlBehavior.setAnimationMode(sOriginalMode);
 	});
 
-	QUnit.test("Changing 'showFooter' property invalidates control", function (assert) {
+	QUnit.test("Changing 'showFooter' property does not invalidate control", function (assert) {
 		// Arrange
-		var oSpy = this.spy(this.oDynamicPage, "invalidate"),
-			fnDone = assert.async();
-
-		assert.expect(1);
-
-		this.oDynamicPage.addEventDelegate({
-			"onAfterRendering": function() {
-				// Assert
-				assert.ok(oSpy.called, "DynamicPage is invalidated when 'showFooter' property is changed");
-				fnDone();
-			}
-		});
+		var oSpy = this.spy(this.oDynamicPage, "invalidate");
 
 		// Act
 		this.oDynamicPage.setShowFooter(false);
+
+		// Assert
+		assert.notOk(oSpy.called, "DynamicPage is not invalidated when 'showFooter' property is changed");
 	});
 
 	QUnit.test("When footer is visible, CSS class is applied to the DynamicPage", function (assert) {
