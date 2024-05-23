@@ -94,7 +94,7 @@ sap.ui.define([
 				return mDelegateInfo.instance.getPropertyInfo({
 					element: oElement,
 					aggregationName: sAggregationName,
-					payload: mDelegateInfo.payload
+					payload: mDelegateInfo.payload || {}
 				});
 			}
 			return [];
