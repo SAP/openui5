@@ -541,16 +541,17 @@ sap.ui.define([
 		});
 
 		QUnit.test("when an invisible element has a feature control binding", async function(assert) {
-			var oGroup = this.oView.byId("GroupEntityType01");
-			var oGroupElement = this.oView.byId("EntityType01.Prop11");
+			const oGroup = this.oView.byId("GroupEntityType01");
+			const oGroupElement = this.oView.byId("EntityType01.Prop11");
 
 			// Simulate that the field control property is returned after the regular value property
-			var oDelegateMediatorStub = this.sandbox.stub(DelegateMediatorAPI, "getReadDelegateForControl");
+			const oDelegateMediatorStub = this.sandbox.stub(DelegateMediatorAPI, "getReadDelegateForControl");
 			function getDelegateForControl(...aArgs) {
 				return oDelegateMediatorStub.wrappedMethod.apply(this, aArgs)
 				.then(function(oDelegateInfo) {
-					var fnGetPropertyInfo = oDelegateInfo.instance.getPropertyInfo;
+					const fnGetPropertyInfo = oDelegateInfo.instance.getPropertyInfo;
 					oDelegateInfo.instance.getPropertyInfo = function(...aArgs) {
+						assert.deepEqual(aArgs[0].payload, {}, "the fallback payload is passed to the delegate");
 						return fnGetPropertyInfo.apply(this, aArgs)
 						.then(function(aProperties) {
 							return aProperties.concat({
@@ -572,7 +573,7 @@ sap.ui.define([
 			oGroupElement.setVisible(false);
 			await nextUIUpdate();
 
-			var oActionsObject = {
+			const oActionsObject = {
 				aggregation: "formElements",
 				reveal: {
 					elements: [{
