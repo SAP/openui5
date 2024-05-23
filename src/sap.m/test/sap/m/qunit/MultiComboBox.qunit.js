@@ -2962,7 +2962,6 @@ sap.ui.define([
 		});
 
 		// arrange
-		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBoxContent");
 		await nextUIUpdate();
 
@@ -3001,7 +3000,6 @@ sap.ui.define([
 				new Item({key : "4",text : "4"})
 			]
 		});
-		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBoxContent");
 		await nextUIUpdate();
 
@@ -3076,9 +3074,6 @@ sap.ui.define([
 		}).placeAt("MultiComboBoxContent");
 		await nextUIUpdate();
 
-		oMultiComboBox.syncPickerContent();
-		await nextUIUpdate();
-
 		var oEventStub = this.stub({
 			stopPropagation: function () {
 			},
@@ -3142,7 +3137,6 @@ sap.ui.define([
 		});
 
 		// arrange
-		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBoxContent");
 		await nextUIUpdate();
 
