@@ -1195,8 +1195,10 @@ sap.ui.define([
 				_Helper.merge(oNode, mPredicate2RankResult[sPredicate]);
 				// Note: overridden by _AggregationCache.calculateKeyPredicateRH
 				this.oFirstLevel.calculateKeyPredicate(oNode, this.getTypes(), this.sMetaPath);
+				const iRank = getRank(oNode);
+				_Helper.deleteProperty(oNode, this.oAggregation.$LimitedRank);
 				// insert at rank position to ensure correct placeholder is replaced
-				this.insertNode(oNode, getRank(oNode));
+				this.insertNode(oNode, iRank);
 			});
 		});
 
