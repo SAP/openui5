@@ -178,24 +178,27 @@ sap.ui.define([
 		},
 
 		onInit : function () {
-			this.mChangedSalesOrders = {};
-			this.initMessagePopover("showMessages");
-			this.oUIModel = new JSONModel({
-					iMessages : 0,
-					bRealOData : TestUtils.isRealOData(),
-					bSortGrossAmountDescending : true,
-					sSortGrossAmountIcon : "",
-					bSortSalesOrderIDDescending : undefined,
-					sSortSalesOrderIDIcon : ""
-				}
-			);
-			this.getView().setModel(this.oUIModel, "ui");
-			this.getView().setModel(this.getView().getModel(), "headerContext");
-			// TODO initMessagePopover should expose its "messages" model to the complete view
-			this.getView().setModel(Messaging.getMessageModel(), "messages");
-			this.byId("salesOrderListTitle").setBindingContext(
-				this.byId("SalesOrderList").getBinding("items").getHeaderContext(),
-				"headerContext");
+			// initialization has to wait for view model/context propagation
+			this.getView().attachEventOnce("modelContextChange", function () {
+				this.mChangedSalesOrders = {};
+				this.initMessagePopover("showMessages");
+				this.oUIModel = new JSONModel({
+						iMessages : 0,
+						bRealOData : TestUtils.isRealOData(),
+						bSortGrossAmountDescending : true,
+						sSortGrossAmountIcon : "",
+						bSortSalesOrderIDDescending : undefined,
+						sSortSalesOrderIDIcon : ""
+					}
+				);
+				this.getView().setModel(this.oUIModel, "ui");
+				this.getView().setModel(this.getView().getModel(), "headerContext");
+				// TODO initMessagePopover should expose its "messages" model to the complete view
+				this.getView().setModel(Messaging.getMessageModel(), "messages");
+				this.byId("salesOrderListTitle").setBindingContext(
+					this.byId("SalesOrderList").getBinding("items").getHeaderContext(),
+					"headerContext");
+			}, this);
 		},
 
 		onRefreshSalesOrder : function () {

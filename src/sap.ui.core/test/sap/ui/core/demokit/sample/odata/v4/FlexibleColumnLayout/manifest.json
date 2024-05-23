@@ -20,8 +20,8 @@
 	"sap.ui" : {
 		"deviceTypes" : {
 			"desktop" : true,
-			"phone" : true,
-			"tablet" : true
+			"phone" : false,
+			"tablet" : false
 		},
 		"technology" : "UI5"
 	},
@@ -39,14 +39,12 @@
 				]
 			}
 		},
-		"contentDensities" : {
-			"compact" : true,
-			"cozy" : true
-		},
 		"dependencies" : {
 			"minUI5Version" : "1.81",
 			"libs" : {
+				"sap.f" : {},
 				"sap.m" : {},
+				"sap.ui.core" : {},
 				"sap.ui.layout" : {}
 			}
 		},
@@ -66,7 +64,6 @@
 			}
 		},
 		"rootView" : {
-			"async" : true,
 			"type" : "XML",
 			"viewName" : "sap.ui.core.sample.odata.v4.FlexibleColumnLayout.Main"
 		}
