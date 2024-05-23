@@ -15,6 +15,7 @@ src/sap.m/test/sap/m/demokit/master-detail/webapp/test/testsuite.qunit.js
 src/sap.m/test/sap/m/demokit/worklist/webapp/Component.js
 src/sap.m/test/sap/m/demokit/worklist/webapp/controller/Worklist.controller.js
 src/sap.m/test/sap/m/demokit/worklist/webapp/test/testsuite.qunit.js
+src/sap.m/test/sap/m/qunit/_thirdparty
 src/sap.ui.documentation/src/sap/ui/documentation/sdk/model/data/guide
 src/sap.ui.documentation/src/sap/ui/documentation/sdk/thirdparty
 src/sap.ui.codeeditor/src/sap/ui/codeeditor/js

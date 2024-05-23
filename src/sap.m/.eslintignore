@@ -11,3 +11,4 @@ test/sap/m/demokit/master-detail/webapp/test/testsuite.qunit.js
 test/sap/m/demokit/worklist/webapp/Component.js
 test/sap/m/demokit/worklist/webapp/controller/Worklist.controller.js
 test/sap/m/demokit/worklist/webapp/test/testsuite.qunit.js
+test/sap/m/qunit/_thirdparty

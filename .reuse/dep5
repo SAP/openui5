@@ -50,6 +50,11 @@ Copyright: Mario Heiderich
 License: Apache-2.0
 Comment: these files belong to: purify.js
 
+Files: src/sap.m/test/sap/m/qunit/_thirdparty/qunit-composite.css src/sap.m/test/sap/m/qunit/_thirdparty/qunit-composite.js
+Copyright: jQuery Foundation and other contributors, https://jquery.org/
+License: MIT
+Comment: these files belong to: QUnit Composite 2.0.0
+
 
 # Library: sap.ui.codeeditor:
 

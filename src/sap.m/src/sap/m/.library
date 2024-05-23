@@ -48,6 +48,20 @@
             <copyright>Mario Heiderich</copyright>
             <pattern>sap/m/_thirdparty/purify.js</pattern>
         </lib>
+        <lib  id="73555000106100004191"
+              name="qunit-composite-2"
+              displayName="QUnit Composite 2.0.0"
+              version="2.0.0"
+              npmName="qunit-composite"
+              npmVersion="2.0.0"
+              hash="cf42dd8c3b1e980237f14df37487c808"
+              homepage="https://github.com/JamesMGreene/qunit-composite"
+            >
+            <license url="https://github.com/JamesMGreene/qunit-composite/blob/master/LICENSE.txt" type="MIT" />
+            <copyright>jQuery Foundation and other contributors, https://jquery.org/</copyright>
+            <pattern>../test/sap/m/qunit/_thirdparty/qunit-composite.css</pattern>
+            <pattern>../test/sap/m/qunit/_thirdparty/qunit-composite.js</pattern>
+        </lib>
     </thirdparty>
     <documentation xmlns="http://www.sap.com/ui5/buildext/documentation"
         indexUrl="../../../test-resources/sap/m/demokit/docuindex.json"
