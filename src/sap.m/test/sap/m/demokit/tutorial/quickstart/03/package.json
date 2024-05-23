@@ -5,7 +5,7 @@
   "author": "SAP SE",
   "description": "UI5 Demo App - Quickstart Tutorial",
   "scripts": {
-    "start": "ui5 serve",
+    "start": "ui5 serve -o index.html",
     "build": "ui5 build"
   },
   "devDependencies": {
