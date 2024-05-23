@@ -1511,12 +1511,14 @@ sap.ui.define([
 			var sVMReference = "variantMgmtId1";
 			var oChange1 = new Change({
 				fileName: "change1",
+				layer: Layer.USER,
 				selector: {
 					id: "abc123"
 				}
 			});
 			var oChange2 = new Change({
 				fileName: "change2",
+				layer: Layer.USER,
 				selector: {
 					id: "abc123"
 				}
@@ -1538,10 +1540,19 @@ sap.ui.define([
 			this.oModel.getData()[sVMReference].modified = true;
 
 			sandbox.stub(this.oModel, "getLocalId").returns(sVMReference);
+			var mArgs = {
+				reference: "MyComponent",
+				vmReference: sVMReference,
+				vReference: this.oModel.oData[sVMReference].currentVariant
+			};
 			sandbox.stub(VariantManagementState, "getControlChangesForVariant")
 				.callThrough()
-				.withArgs(sVMReference, this.oModel.oData[sVMReference].currentVariant, true)
+				.withArgs(mArgs)
 				.returns([oChange1, oChange2]);
+			sandbox.stub(VariantManagementState, "getVariant")
+				.callThrough()
+				.withArgs(mArgs)
+				.returns({layer: Layer.PUBLIC});
 			var fnCopyVariantStub = sandbox.stub(this.oModel, "copyVariant");
 			var fnSetVariantPropertiesStub = sandbox.stub(this.oModel, "setVariantProperties");
 			var fnSaveDirtyChangesStub = sandbox.stub(this.oModel.oChangePersistence, "saveDirtyChanges").resolves();
@@ -1554,6 +1565,9 @@ sap.ui.define([
 				assert.equal(fnCopyVariantStub.callCount, 0, "CopyVariant is not called");
 				assert.equal(fnSetVariantPropertiesStub.callCount, 0, "SetVariantProperties is not called");
 				assert.ok(fnSaveDirtyChangesStub.calledOnce, "SaveAll is called");
+				fnSaveDirtyChangesStub.getCall(0).args[2].forEach(function(oChange) {
+					assert.equal(oChange.getLayer(), Layer.PUBLIC, "layer of dirty change is PUBLIC layer when source variant is PUBLIC");
+				});
 				assert.notOk(this.oModel.getData()[sVMReference].modified, "finally the model property 'modified' is set to false");
 				oVariantManagement.destroy();
 			}.bind(this));
