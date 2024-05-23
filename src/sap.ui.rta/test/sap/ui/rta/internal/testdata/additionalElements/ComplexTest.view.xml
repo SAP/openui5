@@ -155,8 +155,8 @@
 									<smartForm:GroupElement label="IncorrectNavigationProperty" id="EntityType02.IncorrectNavigationProperty" visible="false">
 										<smartField:SmartField value="{to_NonexistentEntity/NavProperty}"/>
 									</smartForm:GroupElement>
-									<smartForm:GroupElement label="Field with absolute binding" id="EntityType02.AbsoluteBinding" visible="false">
-										<smartField:SmartField value="{/ModelName/PropertyName}"/>
+									<smartForm:GroupElement label="Field with absolute binding (non-existing path)" id="EntityType02.AbsoluteBinding" visible="false">
+										<smartField:SmartField value="{/non/existing/path}"/>
 									</smartForm:GroupElement>
 									<smartForm:GroupElement label="Field with binding to non-existent model" id="NonExistentModel" visible="false">
 										<smartField:SmartField value="{NonExistentModel>PropertyName}"/>
@@ -166,6 +166,9 @@
 									</smartForm:GroupElement>
 									<smartForm:GroupElement label="Field with property bound to control field" id="PropertyBoundToControlField">
 										<TextArea id="BoundPropertyHiddenByAnnotationTextArea" value="{EntityType02_Property03}" visible="{EntityType02_Property03f}"/>
+									</smartForm:GroupElement>
+									<smartForm:GroupElement label="Field with absolute binding (extra model)" id="EntityType02.AbsoluteBindingExtraModel" visible="false">
+										<smartField:SmartField value="{extraModel>/data/value1}"/>
 									</smartForm:GroupElement>
 								</smartForm:Group>
 							</smartForm:SmartForm>
@@ -284,11 +287,14 @@
 										<form:FormElement label="IncorrectNavigationProperty" id="DelegateEntityType02.IncorrectNavigationProperty" visible="false">
 											<Input value="{to_NonexistentEntity/NavProperty}"/>
 										</form:FormElement>
-										<form:FormElement label="Field with absolute binding" id="DelegateEntityType02.AbsoluteBinding" visible="false">
-											<Input value="{/ModelName/PropertyName}"/>
+										<form:FormElement label="Field with absolute binding (non-existing path)" id="DelegateEntityType02.AbsoluteBinding" visible="false">
+											<Input value="{/non/existing/path}"/>
 										</form:FormElement>
 										<form:FormElement label="Field with binding to non-existent model" id="DelegateNonExistentModel" visible="false">
 											<Input value="{NonExistentModel>PropertyName}"/>
+										</form:FormElement>
+										<form:FormElement label="Field with absolute binding (extra model)" id="DelegateEntityType02.AbsoluteBindingExtraModel" visible="false">
+											<Input value="{extraModel>/data/value1}"/>
 										</form:FormElement>
 									</form:FormContainer>
 								</form:formContainers>

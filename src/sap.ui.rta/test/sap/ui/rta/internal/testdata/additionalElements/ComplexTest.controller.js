@@ -64,6 +64,16 @@ sap.ui.define([
 			oStateModel.setData(data);
 			oView.setModel(oStateModel, "state");
 
+			const oExtraData = {
+				data: {
+					value1: "value1",
+					value2: "value2"
+				}
+			};
+
+			const oExtraModel = new JSONModel(oExtraData);
+			oView.setModel(oExtraModel, "extraModel");
+
 			var oActivationModel = new JSONModel({
 				activation: [
 					{
