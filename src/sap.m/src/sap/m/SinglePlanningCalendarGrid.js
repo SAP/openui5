@@ -1265,15 +1265,6 @@ sap.ui.define([
 			this._fireSelectionEvent(oEvent);
 		};
 
-		/**
-		 * Handles the <code>tap</code> event on the grid.
-		 *
-		 * @param {jQuery.Event} oEvent The event object
-		 */
-		SinglePlanningCalendarGrid.prototype.ontap = function (oEvent) {
-			this._fireSelectionEvent(oEvent);
-		};
-
 		SinglePlanningCalendarGrid.prototype.removeAllSelectedDates = function(oEvent) {
 			this.removeAllAggregation("selectedDates");
 		};
