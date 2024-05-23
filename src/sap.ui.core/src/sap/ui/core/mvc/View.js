@@ -1093,8 +1093,12 @@ sap.ui.define([
 			 }, reject);
 		})
 		.then(function(ViewClass) {
-			// Activate the asynchronous processing for XMLViews
+			/**
+			 * @deprecated because the 'Sequential' Mode is used by default and it's the only mode that will be supported
+			 * in the next major release
+			 */
 			if (ViewClass.getMetadata().isA("sap.ui.core.mvc.XMLView")) {
+				// Activate the asynchronous processing for XMLViews
 				mParameters.processingMode = XMLProcessingMode.Sequential;
 			}
 
@@ -1224,6 +1228,10 @@ sap.ui.define([
 			oView.type = sType;
 		}
 
+		/**
+		 * @deprecated because the 'Sequential' Mode is used by default and it's the only mode that will be supported
+		 * in the next major release
+		 */
 		if (oView.type === ViewType.XML && oView.async) {
 			// the processingMode might be already set by the asnychronous View.create factory
 			// "SequentialLegacy" is only used if the sap.ui.view factory with async=true was called
