@@ -1,3 +1,4 @@
+
 /*!
  * ${copyright}
  */
@@ -8,7 +9,6 @@ sap.ui.define([
 	"sap/base/Eventing",
 	"sap/base/future",
 	"sap/base/Log",
-	"sap/base/config",
 	"sap/base/i18n/Localization",
 	"sap/base/util/each",
 	"sap/base/util/LoaderExtensions",
@@ -23,7 +23,6 @@ sap.ui.define([
 	Eventing,
 	future,
 	Log,
-	BaseConfig,
 	Localization,
 	each,
 	LoaderExtensions,
@@ -132,10 +131,15 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.ui.core
 		 */
-		includeLibraryTheme: function(sLibName, sVariant, vQueryOrLibInfo) {
+		includeLibraryTheme: async (sLibName, sVariant, vQueryOrLibInfo) => {
 			assert(typeof sLibName === "string", "sLibName must be a string");
 			assert(sVariant === undefined || typeof sVariant === "string", "sVariant must be a string or undefined");
 			var sQuery = vQueryOrLibInfo;
+
+			if (Library.getVersionedLibCss()) {
+				ThemeManager.reset();
+				await VersionInfo.load();
+			}
 
 			if (typeof sQuery === "object") {
 				// check for configured query parameters and use them
@@ -149,7 +153,6 @@ sap.ui.define([
 
 			// determine RTL
 			var sRtl = (Localization.getRTL() ? "-RTL" : "");
-
 
 			/*
 			 * Create the library file name.
@@ -269,7 +272,6 @@ sap.ui.define([
 			});
 		}
 	};
-
 
 	function checkTheme() {
 		var sThemeName = Theming.getTheme();
@@ -547,7 +549,6 @@ sap.ui.define([
 		ThemeManager.checkThemeApplied();
 	}
 
-
 	/**
 	 * Makes sure to register the correct module path for the given library and theme
 	 * in case a themeRoot has been defined.
@@ -568,13 +569,13 @@ sap.ui.define([
 	// this function is also used by "sap.ui.core.theming.ThemeManager" to load a fallback theme for a single library
 	function updateThemeUrl(oLink, sThemeName, bSuppressFOUC) {
 		var sLibName,
-		    iQueryIndex = oLink.href.search(/[?#]/),
-		    sLibFileName,
-		    sQuery,
-		    sStandardLibFilePrefix = "library",
-		    sRTL = Localization.getRTL() ? "-RTL" : "",
-		    sHref,
-		    pos;
+			iQueryIndex = oLink.href.search(/[?#]/),
+			sLibFileName,
+			sQuery,
+			sStandardLibFilePrefix = "library",
+			sRTL = Localization.getRTL() ? "-RTL" : "",
+			sHref,
+			pos;
 
 		// derive lib name from id via regex
 		var mLinkId = /^sap-ui-theme-(.*)$/i.exec(oLink.id);
@@ -642,7 +643,7 @@ sap.ui.define([
 		if (Library.getVersionedLibCss() && oLibInfo) {
 			sQuery = "?version=" + oLibInfo.version;
 
-			// distribution version may not be available (will be loaded in Core constructor syncpoint2)
+			// distribution version may not be available
 			if (VersionInfo._content) {
 				sQuery += "&sap-ui-dist-version=" + VersionInfo._content.version;
 			}

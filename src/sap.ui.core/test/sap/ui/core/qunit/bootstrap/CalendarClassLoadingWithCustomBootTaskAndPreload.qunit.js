@@ -20,7 +20,7 @@ sap.ui.define([
 			var GregorianClass = sap.ui.require("sap/ui/core/date/Gregorian");
 			var JapaneseClass = sap.ui.require("sap/ui/core/date/Japanese");
 
-			assert.notOk(GregorianClass, "The calendar class shouldn't be loaded");
+			assert.ok(GregorianClass, "The calendar class is loaded");
 			assert.ok(JapaneseClass, "The calendar class is loaded");
 
 			const japaneseCalendarIsIncludedAsSingleRequest = isScriptIncluded("sap/ui/core/date/Japanese.js");

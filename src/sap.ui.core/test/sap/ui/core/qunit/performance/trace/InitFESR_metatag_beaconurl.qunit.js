@@ -1,5 +1,5 @@
 /* global QUnit */
-sap.ui.define(["sap/ui/performance/trace/initTraces"], function (initTraces) {
+sap.ui.define([], function () {
 	"use strict";
 
 	QUnit.module("FESR");

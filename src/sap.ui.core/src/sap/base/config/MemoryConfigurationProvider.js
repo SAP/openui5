@@ -2,28 +2,28 @@
  * ${copyright}
  */
 sap.ui.define([
-    "sap/base/util/uid"
+	"sap/base/util/uid"
 ], function(
-    uid
+	uid
 ) {
-    "use strict";
+	"use strict";
 
-    var MemoryConfigurationProvider = function() {
-        this.oConfig = Object.create(null);
-        this.id = uid();
-    };
+	var MemoryConfigurationProvider = function() {
+		this.oConfig = Object.create(null);
+		this.id = uid();
+	};
 
-    MemoryConfigurationProvider.prototype.getId = function() {
-        return this.id;
-    };
+	MemoryConfigurationProvider.prototype.getId = function() {
+		return this.id;
+	};
 
-    MemoryConfigurationProvider.prototype.get = function(sName) {
-        return this.oConfig[sName];
-    };
+	MemoryConfigurationProvider.prototype.get = function(sName) {
+		return this.oConfig[sName];
+	};
 
-    MemoryConfigurationProvider.prototype.set = function(sName, vValue) {
-        this.oConfig[sName] = vValue;
-    };
+	MemoryConfigurationProvider.prototype.set = function(sName, vValue) {
+		this.oConfig[sName] = vValue;
+	};
 
-    return MemoryConfigurationProvider;
+	return MemoryConfigurationProvider;
 });

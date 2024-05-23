@@ -7,7 +7,8 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/Theming",
 	"sap/ui/core/theming/ThemeHelper",
-	"sap/ui/test/utils/waitForThemeApplied"
+	"sap/ui/test/utils/waitForThemeApplied",
+	"sap/ui/test/starter/QUnitConfigurationProvider"
 ], function (
 	BaseConfig,
 	BaseEvent,
@@ -15,11 +16,13 @@ sap.ui.define([
 	Control,
 	Theming,
 	ThemeHelper,
-	themeApplied
+	themeApplied,
+	QUnitConfigurationProvider
 ) {
 	"use strict";
 
 	var oURLConfigurationProviderStub,
+		oQUnitConfigurationProviderStub,
 		mConfigStubValues,
 		mEventCalls,
 		bThemeManagerNotActive = !!globalThis["sap-ui-test-config"].themeManagerNotActive;
@@ -61,6 +64,11 @@ sap.ui.define([
 		oURLConfigurationProviderStub.callsFake(function(sKey) {
 				return mConfigStubValues.hasOwnProperty(sKey) ? mConfigStubValues[sKey] : oURLConfigurationProviderStub.wrappedMethod.call(this, sKey);
 		});
+		//testsuite config is now alive and "" is defaulted...
+		oQUnitConfigurationProviderStub = sinon.stub(QUnitConfigurationProvider, "get");
+		oQUnitConfigurationProviderStub.callsFake(function(sKey) {
+				return mConfigStubValues.hasOwnProperty(sKey) ? mConfigStubValues[sKey] : oURLConfigurationProviderStub.wrappedMethod.call(this, sKey);
+		});
 		mEventCalls = {
 			aChange: [],
 			aApplied: []
@@ -81,6 +89,7 @@ sap.ui.define([
 		Theming.detachChange(checkChange);
 		Theming.detachApplied(checkApplied);
 		oURLConfigurationProviderStub.restore();
+		oQUnitConfigurationProviderStub.restore();
 	}
 
 	QUnit.module("Initial Configuration", {

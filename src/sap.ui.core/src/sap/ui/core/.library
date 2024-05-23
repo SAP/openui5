@@ -148,7 +148,7 @@
     </jscoverage>
     <!-- Thirdparty references -->
     <thirdparty xmlns="http://www.sap.com/ui5/buildext/thirdparty" >
-        <lib name="jquery-3" displayName="jQuery 3" npmName="jquery" version="3.6.0" hash="df1ce1846e11e773d850061aa04da88a" homepage="https://jquery.com" id="73554900106100068050">
+        <lib name="jquery-3" displayName="jQuery 3" npmName="jquery" version="3.6.0" hash="03f8df79ef3b456f5dd812034310de46" homepage="https://jquery.com" id="73554900106100068050">
             <license url="http://jQuery.org/license" type="MIT"/>
             <copyright>OpenJS Foundation and other contributors</copyright>
             <pattern>sap/ui/thirdparty/jquery.js</pattern>
@@ -166,7 +166,7 @@
             <copyright>2014 jQuery Foundation and other contributors</copyright>
             <pattern partial="true" otherContent="SAP" explanation="Selectors.js is overall written by SAP, but contains code taken from jQuery UI (see the respective comments)">sap/ui/dom/jquery/Selectors.js</pattern>
         </lib>
-        <lib name="jquery_UI-1-10-4" displayName="jQuery UI 1.10" npmName="jquery-ui" version="1.10.4" hash="498bcb26a8bc6c4681158baf9623c368" homepage="https://jqueryui.com" id="73554900106100000044">
+        <lib name="jquery_UI-1-10-4" displayName="jQuery UI 1.10" npmName="jquery-ui" version="1.10.4" hash="6b39fa1906e5d38b116b0734aaa5932a" homepage="https://jqueryui.com" id="73554900106100000044">
             <license url="http://jQuery.org/license" type="MIT" />
             <copyright>2014 jQuery Foundation and other contributors</copyright>
             <pattern>sap/ui/thirdparty/jqueryui/*</pattern>
@@ -195,12 +195,12 @@
             <pattern>../test/sap/ui/core/qunit/thirdparty/qunit-2.18.css</pattern>
             <pattern>../test/sap/ui/core/qunit/thirdparty/qunit-2.18.js</pattern>
         </lib>
-        <lib name="jquery-migrate" displayName="jQuery-Migrate" npmName="jquery-migrate" version="3.3.1" hash="5421254af7837b366e32343522b87ef2" homepage="https://github.com/jquery/jquery-migrate/" id="73555000106100043843">
+        <lib name="jquery-migrate" displayName="jQuery-Migrate" npmName="jquery-migrate" version="3.3.1" hash="2656d4014714d160c8f3739771365587" homepage="https://github.com/jquery/jquery-migrate/" id="73555000106100043843">
             <license url="https://github.com/jquery/jquery-migrate/blob/3.3.1/LICENSE.txt" type="MIT" />
             <copyright>OpenJS Foundation and other contributors</copyright>
             <pattern>sap/ui/thirdparty/jquery-compat.js</pattern>
         </lib>
-        <lib name="jquery_mobile" displayName="jQuery Mobile" npmName="n/a" version="1.3.1" hash="353b22bfd4f4c0fabb02c05a36b93efb" homepage="http://jquerymobile.com" id="73554900106100002438">
+        <lib name="jquery_mobile" displayName="jQuery Mobile" npmName="n/a" version="1.3.1" hash="e65666f12fbebc2b84ec2c56bde90ce5" homepage="http://jquerymobile.com" id="73554900106100002438">
             <license url="http://jQuery.org/license" type="MIT" />
             <copyright>2010, 2013 jQuery Foundation, Inc. and other contributors</copyright>
             <pattern>sap/ui/thirdparty/jquery-mobile-custom.js</pattern>

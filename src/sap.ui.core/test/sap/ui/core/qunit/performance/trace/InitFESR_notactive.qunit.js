@@ -5,7 +5,6 @@ sap.ui.define(function () {
 
 	QUnit.test("not active", function(assert) {
 		var FESR = sap.ui.require("sap/ui/performance/trace/FESR");
-		assert.ok(FESR, "FESR module has been loaded");
-		assert.notOk(FESR.getActive(), "FESR is not active");
+		assert.notOk(FESR, "FESR module has not been loaded");
 	});
 });

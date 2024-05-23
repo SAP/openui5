@@ -11,20 +11,27 @@
  * Depends:
  *	jquery.ui.effect.js
  */
-(function( $, undefined ) {
+// ##### BEGIN: MODIFIED BY SAP
+sap.ui.define(["sap/ui/thirdparty/jquery"], (jQuery) => {
+	// ##### END: MODIFIED BY SAP
+	(function( $, undefined ) {
 
-$.effects.effect.fade = function( o, done ) {
-	var el = $( this ),
-		mode = $.effects.setMode( el, o.mode || "toggle" );
+	$.effects.effect.fade = function( o, done ) {
+		var el = $( this ),
+			mode = $.effects.setMode( el, o.mode || "toggle" );
 
-	el.animate({
-		opacity: mode
-	}, {
-		queue: false,
-		duration: o.duration,
-		easing: o.easing,
-		complete: done
-	});
-};
+		el.animate({
+			opacity: mode
+		}, {
+			queue: false,
+			duration: o.duration,
+			easing: o.easing,
+			complete: done
+		});
+	};
 
-})( jQuery );
+	})( jQuery );
+	// ##### BEGIN: MODIFIED BY SAP
+	return jQuery;
+});
+// ##### END: MODIFIED BY SAP

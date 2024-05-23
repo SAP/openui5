@@ -23,7 +23,7 @@ sap.ui.define([
 			return new (window.sap.ui.require("sap/ui/test/OpaPlugin"))("sap.ui.test.Opa5");
 		},
 		getJQuery: function (window) {
-			return window.jQuery;
+			return window.sap.ui.require("sap/ui/thirdparty/jquery");
 		},
 		getWindow: function (window) {
 			return window;

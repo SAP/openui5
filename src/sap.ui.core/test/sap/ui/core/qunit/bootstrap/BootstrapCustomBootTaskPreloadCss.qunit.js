@@ -1,9 +1,8 @@
 /*global QUnit */
 sap.ui.define([
-	"sap/ui/core/Core",
 	"sap/ui/core/Theming",
 	"sap/ui/core/theming/Parameters"
-], function(Core, Theming, Parameters) {
+], function(Theming, Parameters) {
 	"use strict";
 
 	/**

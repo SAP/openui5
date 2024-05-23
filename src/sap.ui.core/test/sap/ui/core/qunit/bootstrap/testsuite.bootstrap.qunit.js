@@ -70,11 +70,19 @@ sap.ui.define(function() {
 					version: 2,
 					reorder: false
 				},
+				ui5: {
+					preloadLibCss: [ "!sap.ui.core", "sap.ui.testlib" ],
+					// Define theme root for current theme for testing purposes
+					themeRoots: {
+						"sap_horizon": "foo/bar"
+					}
+				},
 				loader: {
 					paths: {
 						"fantasyLib": "test-resources/sap/ui/core/qunit/bootstrap/preloadedCss"
 					}
 				},
+				bootManifest: "boot/customboot.json@/test-resources/sap/ui/core/qunit/bootstrap",
 				beforeBootstrap: "./BootstrapCustomBootTaskPreloadCss.beforeBootstrap.qunit"
 			},
 
@@ -129,7 +137,7 @@ sap.ui.define(function() {
 					theme: "SapSampleTheme1",
 					libs: "sap.ui.core"
 				},
-				beforeBootstrap: "./BootstrapWithCustomBootTask.beforeBootstrap.qunit"
+				bootManifest: "boot/anothercustomboot.json@/test-resources/sap/ui/core/qunit/bootstrap"
 			},
 
 			"BootstrapWithNoJQuery-without-jquery-ui-position": {
@@ -185,7 +193,7 @@ sap.ui.define(function() {
 				ui5: {
 					libs: "sap.ui.core"
 				},
-				beforeBootstrap: "./CalendarClassLoadingWithCustomBootTask.beforeBootstrap.qunit"
+				bootManifest: "boot/calendarcustomboot.json@/test-resources/sap/ui/core/qunit/bootstrap"
 			},
 
 			"CalendarClassLoadingWithCustomBootTaskAndPreload": {
@@ -195,7 +203,7 @@ sap.ui.define(function() {
 					libs: "sap.ui.core",
 					preload: "async"
 				},
-				beforeBootstrap: "./CalendarClassLoadingWithCustomBootTask.beforeBootstrap.qunit"
+				bootManifest: "boot/calendarcustomboot.json@/test-resources/sap/ui/core/qunit/bootstrap"
 			},
 
 			"ControlBehavior": {

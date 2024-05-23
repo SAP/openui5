@@ -7,2180 +7,2188 @@
 * http://jquery.org/license
 *
 */
+// ##### BEGIN: MODIFIED BY SAP
+sap.ui.define(["sap/ui/thirdparty/jquery", 'sap/ui/Device'], (jQuery) => {
+// ##### END: MODIFIED BY SAP
+	(function ( root, jQuery, doc, factory ) {
+		if ( typeof define === "function" && define.amd ) {
+			// AMD. Register as an anonymous module.
+			// ##### BEGIN: MODIFIED BY SAP
+			define("jquery-mobile-custom", [], function () {
+				factory( jQuery, root, doc );
+				return jQuery.mobile;
+			});
+			// ##### END: MODIFIED BY SAP
+		} else {
+			// Browser globals
+			factory( jQuery, root, doc );
+		}
+	}( this, jQuery, document, function ( jQuery, window, document, undefined ) {
+	// Script: jQuery hashchange event
+	//
+	// *Version: 1.3, Last updated: 7/21/2010*
+	//
+	// Project Home - http://benalman.com/projects/jquery-hashchange-plugin/
+	// GitHub       - http://github.com/cowboy/jquery-hashchange/
+	// Source       - http://github.com/cowboy/jquery-hashchange/raw/master/jquery.ba-hashchange.js
+	// (Minified)   - http://github.com/cowboy/jquery-hashchange/raw/master/jquery.ba-hashchange.min.js (0.8kb gzipped)
+	//
+	// About: License
+	//
+	// Copyright (c) 2010 "Cowboy" Ben Alman,
+	// Dual licensed under the MIT and GPL licenses.
+	// http://benalman.com/about/license/
+	//
+	// About: Examples
+	//
+	// These working examples, complete with fully commented code, illustrate a few
+	// ways in which this plugin can be used.
+	//
+	// hashchange event - http://benalman.com/code/projects/jquery-hashchange/examples/hashchange/
+	// document.domain - http://benalman.com/code/projects/jquery-hashchange/examples/document_domain/
+	//
+	// About: Support and Testing
+	//
+	// Information about what version or versions of jQuery this plugin has been
+	// tested with, what browsers it has been tested in, and where the unit tests
+	// reside (so you can test it yourself).
+	//
+	// jQuery Versions - 1.2.6, 1.3.2, 1.4.1, 1.4.2
+	// Browsers Tested - Internet Explorer 6-8, Firefox 2-4, Chrome 5-6, Safari 3.2-5,
+	//                   Opera 9.6-10.60, iPhone 3.1, Android 1.6-2.2, BlackBerry 4.6-5.
+	// Unit Tests      - http://benalman.com/code/projects/jquery-hashchange/unit/
+	//
+	// About: Known issues
+	//
+	// While this jQuery hashchange event implementation is quite stable and
+	// robust, there are a few unfortunate browser bugs surrounding expected
+	// hashchange event-based behaviors, independent of any JavaScript
+	// window.onhashchange abstraction. See the following examples for more
+	// information:
+	//
+	// Chrome: Back Button - http://benalman.com/code/projects/jquery-hashchange/examples/bug-chrome-back-button/
+	// Firefox: Remote XMLHttpRequest - http://benalman.com/code/projects/jquery-hashchange/examples/bug-firefox-remote-xhr/
+	// WebKit: Back Button in an Iframe - http://benalman.com/code/projects/jquery-hashchange/examples/bug-webkit-hash-iframe/
+	// Safari: Back Button from a different domain - http://benalman.com/code/projects/jquery-hashchange/examples/bug-safari-back-from-diff-domain/
+	//
+	// Also note that should a browser natively support the window.onhashchange
+	// event, but not report that it does, the fallback polling loop will be used.
+	//
+	// About: Release History
+	//
+	// 1.3   - (7/21/2010) Reorganized IE6/7 Iframe code to make it more
+	//         "removable" for mobile-only development. Added IE6/7 document.title
+	//         support. Attempted to make Iframe as hidden as possible by using
+	//         techniques from http://www.paciellogroup.com/blog/?p=604. Added
+	//         support for the "shortcut" format $(window).hashchange( fn ) and
+	//         $(window).hashchange() like jQuery provides for built-in events.
+	//         Renamed jQuery.hashchangeDelay to <jQuery.fn.hashchange.delay> and
+	//         lowered its default value to 50. Added <jQuery.fn.hashchange.domain>
+	//         and <jQuery.fn.hashchange.src> properties plus document-domain.html
+	//         file to address access denied issues when setting document.domain in
+	//         IE6/7.
+	// 1.2   - (2/11/2010) Fixed a bug where coming back to a page using this plugin
+	//         from a page on another domain would cause an error in Safari 4. Also,
+	//         IE6/7 Iframe is now inserted after the body (this actually works),
+	//         which prevents the page from scrolling when the event is first bound.
+	//         Event can also now be bound before DOM ready, but it won't be usable
+	//         before then in IE6/7.
+	// 1.1   - (1/21/2010) Incorporated document.documentMode test to fix IE8 bug
+	//         where browser version is incorrectly reported as 8.0, despite
+	//         inclusion of the X-UA-Compatible IE=EmulateIE7 meta tag.
+	// 1.0   - (1/9/2010) Initial Release. Broke out the jQuery BBQ event.special
+	//         window.onhashchange functionality into a separate plugin for users
+	//         who want just the basic event & back button support, without all the
+	//         extra awesomeness that BBQ provides. This plugin will be included as
+	//         part of jQuery BBQ, but also be available separately.
 
-(function ( root, doc, factory ) {
-	if ( typeof define === "function" && define.amd ) {
-		// AMD. Register as an anonymous module.
-		define( [ "jquery" ], function ( $ ) {
-			factory( $, root, doc );
-			return $.mobile;
-		});
-	} else {
-		// Browser globals
-		factory( root.jQuery, root, doc );
-	}
-}( this, document, function ( jQuery, window, document, undefined ) {
-// Script: jQuery hashchange event
-//
-// *Version: 1.3, Last updated: 7/21/2010*
-//
-// Project Home - http://benalman.com/projects/jquery-hashchange-plugin/
-// GitHub       - http://github.com/cowboy/jquery-hashchange/
-// Source       - http://github.com/cowboy/jquery-hashchange/raw/master/jquery.ba-hashchange.js
-// (Minified)   - http://github.com/cowboy/jquery-hashchange/raw/master/jquery.ba-hashchange.min.js (0.8kb gzipped)
-//
-// About: License
-//
-// Copyright (c) 2010 "Cowboy" Ben Alman,
-// Dual licensed under the MIT and GPL licenses.
-// http://benalman.com/about/license/
-//
-// About: Examples
-//
-// These working examples, complete with fully commented code, illustrate a few
-// ways in which this plugin can be used.
-//
-// hashchange event - http://benalman.com/code/projects/jquery-hashchange/examples/hashchange/
-// document.domain - http://benalman.com/code/projects/jquery-hashchange/examples/document_domain/
-//
-// About: Support and Testing
-//
-// Information about what version or versions of jQuery this plugin has been
-// tested with, what browsers it has been tested in, and where the unit tests
-// reside (so you can test it yourself).
-//
-// jQuery Versions - 1.2.6, 1.3.2, 1.4.1, 1.4.2
-// Browsers Tested - Internet Explorer 6-8, Firefox 2-4, Chrome 5-6, Safari 3.2-5,
-//                   Opera 9.6-10.60, iPhone 3.1, Android 1.6-2.2, BlackBerry 4.6-5.
-// Unit Tests      - http://benalman.com/code/projects/jquery-hashchange/unit/
-//
-// About: Known issues
-//
-// While this jQuery hashchange event implementation is quite stable and
-// robust, there are a few unfortunate browser bugs surrounding expected
-// hashchange event-based behaviors, independent of any JavaScript
-// window.onhashchange abstraction. See the following examples for more
-// information:
-//
-// Chrome: Back Button - http://benalman.com/code/projects/jquery-hashchange/examples/bug-chrome-back-button/
-// Firefox: Remote XMLHttpRequest - http://benalman.com/code/projects/jquery-hashchange/examples/bug-firefox-remote-xhr/
-// WebKit: Back Button in an Iframe - http://benalman.com/code/projects/jquery-hashchange/examples/bug-webkit-hash-iframe/
-// Safari: Back Button from a different domain - http://benalman.com/code/projects/jquery-hashchange/examples/bug-safari-back-from-diff-domain/
-//
-// Also note that should a browser natively support the window.onhashchange
-// event, but not report that it does, the fallback polling loop will be used.
-//
-// About: Release History
-//
-// 1.3   - (7/21/2010) Reorganized IE6/7 Iframe code to make it more
-//         "removable" for mobile-only development. Added IE6/7 document.title
-//         support. Attempted to make Iframe as hidden as possible by using
-//         techniques from http://www.paciellogroup.com/blog/?p=604. Added
-//         support for the "shortcut" format $(window).hashchange( fn ) and
-//         $(window).hashchange() like jQuery provides for built-in events.
-//         Renamed jQuery.hashchangeDelay to <jQuery.fn.hashchange.delay> and
-//         lowered its default value to 50. Added <jQuery.fn.hashchange.domain>
-//         and <jQuery.fn.hashchange.src> properties plus document-domain.html
-//         file to address access denied issues when setting document.domain in
-//         IE6/7.
-// 1.2   - (2/11/2010) Fixed a bug where coming back to a page using this plugin
-//         from a page on another domain would cause an error in Safari 4. Also,
-//         IE6/7 Iframe is now inserted after the body (this actually works),
-//         which prevents the page from scrolling when the event is first bound.
-//         Event can also now be bound before DOM ready, but it won't be usable
-//         before then in IE6/7.
-// 1.1   - (1/21/2010) Incorporated document.documentMode test to fix IE8 bug
-//         where browser version is incorrectly reported as 8.0, despite
-//         inclusion of the X-UA-Compatible IE=EmulateIE7 meta tag.
-// 1.0   - (1/9/2010) Initial Release. Broke out the jQuery BBQ event.special
-//         window.onhashchange functionality into a separate plugin for users
-//         who want just the basic event & back button support, without all the
-//         extra awesomeness that BBQ provides. This plugin will be included as
-//         part of jQuery BBQ, but also be available separately.
+	(function( $, window, undefined ) {
+	// Reused string.
+	var str_hashchange = 'hashchange',
 
-(function( $, window, undefined ) {
-  // Reused string.
-  var str_hashchange = 'hashchange',
+		// Method / object references.
+		doc = document,
+		fake_onhashchange,
+		special = $.event.special,
 
-    // Method / object references.
-    doc = document,
-    fake_onhashchange,
-    special = $.event.special,
+		// Does the browser support window.onhashchange? Note that IE8 running in
+		// IE7 compatibility mode reports true for 'onhashchange' in window, even
+		// though the event isn't supported, so also test document.documentMode.
+		doc_mode = doc.documentMode,
+		supports_onhashchange = 'on' + str_hashchange in window && ( doc_mode === undefined || doc_mode > 7 );
 
-    // Does the browser support window.onhashchange? Note that IE8 running in
-    // IE7 compatibility mode reports true for 'onhashchange' in window, even
-    // though the event isn't supported, so also test document.documentMode.
-    doc_mode = doc.documentMode,
-    supports_onhashchange = 'on' + str_hashchange in window && ( doc_mode === undefined || doc_mode > 7 );
+	// Get location.hash (or what you'd expect location.hash to be) sans any
+	// leading #. Thanks for making this necessary, Firefox!
+	function get_fragment( url ) {
+		url = url || location.href;
+		return '#' + url.replace( /^[^#]*#?(.*)$/, '$1' );
+	};
 
-  // Get location.hash (or what you'd expect location.hash to be) sans any
-  // leading #. Thanks for making this necessary, Firefox!
-  function get_fragment( url ) {
-    url = url || location.href;
-    return '#' + url.replace( /^[^#]*#?(.*)$/, '$1' );
-  };
+	// Method: jQuery.fn.hashchange
+	//
+	// Bind a handler to the window.onhashchange event or trigger all bound
+	// window.onhashchange event handlers. This behavior is consistent with
+	// jQuery's built-in event handlers.
+	//
+	// Usage:
+	//
+	// > jQuery(window).hashchange( [ handler ] );
+	//
+	// Arguments:
+	//
+	//  handler - (Function) Optional handler to be bound to the hashchange
+	//    event. This is a "shortcut" for the more verbose form:
+	//    jQuery(window).bind( 'hashchange', handler ). If handler is omitted,
+	//    all bound window.onhashchange event handlers will be triggered. This
+	//    is a shortcut for the more verbose
+	//    jQuery(window).trigger( 'hashchange' ). These forms are described in
+	//    the <hashchange event> section.
+	//
+	// Returns:
+	//
+	//  (jQuery) The initial jQuery collection of elements.
 
-  // Method: jQuery.fn.hashchange
-  //
-  // Bind a handler to the window.onhashchange event or trigger all bound
-  // window.onhashchange event handlers. This behavior is consistent with
-  // jQuery's built-in event handlers.
-  //
-  // Usage:
-  //
-  // > jQuery(window).hashchange( [ handler ] );
-  //
-  // Arguments:
-  //
-  //  handler - (Function) Optional handler to be bound to the hashchange
-  //    event. This is a "shortcut" for the more verbose form:
-  //    jQuery(window).bind( 'hashchange', handler ). If handler is omitted,
-  //    all bound window.onhashchange event handlers will be triggered. This
-  //    is a shortcut for the more verbose
-  //    jQuery(window).trigger( 'hashchange' ). These forms are described in
-  //    the <hashchange event> section.
-  //
-  // Returns:
-  //
-  //  (jQuery) The initial jQuery collection of elements.
+	// Allow the "shortcut" format $(elem).hashchange( fn ) for binding and
+	// $(elem).hashchange() for triggering, like jQuery does for built-in events.
+	$.fn[ str_hashchange ] = function( fn ) {
+		// MODIFIED BY SAP: replace deprecated API .bind -> .on
+		return fn ? this.on( str_hashchange, fn ) : this.trigger( str_hashchange );
+	};
 
-  // Allow the "shortcut" format $(elem).hashchange( fn ) for binding and
-  // $(elem).hashchange() for triggering, like jQuery does for built-in events.
-  $.fn[ str_hashchange ] = function( fn ) {
-	// MODIFIED BY SAP: replace deprecated API .bind -> .on
-    return fn ? this.on( str_hashchange, fn ) : this.trigger( str_hashchange );
-  };
+	// Property: jQuery.fn.hashchange.delay
+	//
+	// The numeric interval (in milliseconds) at which the <hashchange event>
+	// polling loop executes. Defaults to 50.
 
-  // Property: jQuery.fn.hashchange.delay
-  //
-  // The numeric interval (in milliseconds) at which the <hashchange event>
-  // polling loop executes. Defaults to 50.
+	// Property: jQuery.fn.hashchange.domain
+	//
+	// If you're setting document.domain in your JavaScript, and you want hash
+	// history to work in IE6/7, not only must this property be set, but you must
+	// also set document.domain BEFORE jQuery is loaded into the page. This
+	// property is only applicable if you are supporting IE6/7 (or IE8 operating
+	// in "IE7 compatibility" mode).
+	//
+	// In addition, the <jQuery.fn.hashchange.src> property must be set to the
+	// path of the included "document-domain.html" file, which can be renamed or
+	// modified if necessary (note that the document.domain specified must be the
+	// same in both your main JavaScript as well as in this file).
+	//
+	// Usage:
+	//
+	// jQuery.fn.hashchange.domain = document.domain;
 
-  // Property: jQuery.fn.hashchange.domain
-  //
-  // If you're setting document.domain in your JavaScript, and you want hash
-  // history to work in IE6/7, not only must this property be set, but you must
-  // also set document.domain BEFORE jQuery is loaded into the page. This
-  // property is only applicable if you are supporting IE6/7 (or IE8 operating
-  // in "IE7 compatibility" mode).
-  //
-  // In addition, the <jQuery.fn.hashchange.src> property must be set to the
-  // path of the included "document-domain.html" file, which can be renamed or
-  // modified if necessary (note that the document.domain specified must be the
-  // same in both your main JavaScript as well as in this file).
-  //
-  // Usage:
-  //
-  // jQuery.fn.hashchange.domain = document.domain;
+	// Property: jQuery.fn.hashchange.src
+	//
+	// If, for some reason, you need to specify an Iframe src file (for example,
+	// when setting document.domain as in <jQuery.fn.hashchange.domain>), you can
+	// do so using this property. Note that when using this property, history
+	// won't be recorded in IE6/7 until the Iframe src file loads. This property
+	// is only applicable if you are supporting IE6/7 (or IE8 operating in "IE7
+	// compatibility" mode).
+	//
+	// Usage:
+	//
+	// jQuery.fn.hashchange.src = 'path/to/file.html';
 
-  // Property: jQuery.fn.hashchange.src
-  //
-  // If, for some reason, you need to specify an Iframe src file (for example,
-  // when setting document.domain as in <jQuery.fn.hashchange.domain>), you can
-  // do so using this property. Note that when using this property, history
-  // won't be recorded in IE6/7 until the Iframe src file loads. This property
-  // is only applicable if you are supporting IE6/7 (or IE8 operating in "IE7
-  // compatibility" mode).
-  //
-  // Usage:
-  //
-  // jQuery.fn.hashchange.src = 'path/to/file.html';
+	$.fn[ str_hashchange ].delay = 50;
+	/*
+	$.fn[ str_hashchange ].domain = null;
+	$.fn[ str_hashchange ].src = null;
+	*/
 
-  $.fn[ str_hashchange ].delay = 50;
-  /*
-  $.fn[ str_hashchange ].domain = null;
-  $.fn[ str_hashchange ].src = null;
-  */
+	// Event: hashchange event
+	//
+	// Fired when location.hash changes. In browsers that support it, the native
+	// HTML5 window.onhashchange event is used, otherwise a polling loop is
+	// initialized, running every <jQuery.fn.hashchange.delay> milliseconds to
+	// see if the hash has changed.
+	//
+	// Usage as described in <jQuery.fn.hashchange>:
+	//
+	// > // Bind an event handler.
+	// > jQuery(window).hashchange( function(e) {
+	// >   var hash = location.hash;
+	// >   ...
+	// > });
+	// >
+	// > // Manually trigger the event handler.
+	// > jQuery(window).hashchange();
+	//
+	// A more verbose usage that allows for event namespacing:
+	//
+	// > // Bind an event handler.
+	// > jQuery(window).bind( 'hashchange', function(e) {
+	// >   var hash = location.hash;
+	// >   ...
+	// > });
+	// >
+	// > // Manually trigger the event handler.
+	// > jQuery(window).trigger( 'hashchange' );
+	//
+	// Additional Notes:
+	//
+	// * The polling loop and Iframe are not created until at least one handler
+	//   is actually bound to the 'hashchange' event.
+	// * If you need the bound handler(s) to execute immediately, in cases where
+	//   a location.hash exists on page load, via bookmark or page refresh for
+	//   example, use jQuery(window).hashchange() or the more verbose
+	//   jQuery(window).trigger( 'hashchange' ).
+	// * The event can be bound before DOM ready, but since it won't be usable
+	//   before then in IE6/7 (due to the necessary Iframe), recommended usage is
+	//   to bind it inside a DOM ready handler.
 
-  // Event: hashchange event
-  //
-  // Fired when location.hash changes. In browsers that support it, the native
-  // HTML5 window.onhashchange event is used, otherwise a polling loop is
-  // initialized, running every <jQuery.fn.hashchange.delay> milliseconds to
-  // see if the hash has changed.
-  //
-  // Usage as described in <jQuery.fn.hashchange>:
-  //
-  // > // Bind an event handler.
-  // > jQuery(window).hashchange( function(e) {
-  // >   var hash = location.hash;
-  // >   ...
-  // > });
-  // >
-  // > // Manually trigger the event handler.
-  // > jQuery(window).hashchange();
-  //
-  // A more verbose usage that allows for event namespacing:
-  //
-  // > // Bind an event handler.
-  // > jQuery(window).bind( 'hashchange', function(e) {
-  // >   var hash = location.hash;
-  // >   ...
-  // > });
-  // >
-  // > // Manually trigger the event handler.
-  // > jQuery(window).trigger( 'hashchange' );
-  //
-  // Additional Notes:
-  //
-  // * The polling loop and Iframe are not created until at least one handler
-  //   is actually bound to the 'hashchange' event.
-  // * If you need the bound handler(s) to execute immediately, in cases where
-  //   a location.hash exists on page load, via bookmark or page refresh for
-  //   example, use jQuery(window).hashchange() or the more verbose
-  //   jQuery(window).trigger( 'hashchange' ).
-  // * The event can be bound before DOM ready, but since it won't be usable
-  //   before then in IE6/7 (due to the necessary Iframe), recommended usage is
-  //   to bind it inside a DOM ready handler.
+	// Override existing $.event.special.hashchange methods (allowing this plugin
+	// to be defined after jQuery BBQ in BBQ's source code).
+	special[ str_hashchange ] = $.extend( special[ str_hashchange ], {
 
-  // Override existing $.event.special.hashchange methods (allowing this plugin
-  // to be defined after jQuery BBQ in BBQ's source code).
-  special[ str_hashchange ] = $.extend( special[ str_hashchange ], {
+		// Called only when the first 'hashchange' event is bound to window.
+		setup: function() {
+		// If window.onhashchange is supported natively, there's nothing to do..
+		if ( supports_onhashchange ) { return false; }
 
-    // Called only when the first 'hashchange' event is bound to window.
-    setup: function() {
-      // If window.onhashchange is supported natively, there's nothing to do..
-      if ( supports_onhashchange ) { return false; }
-
-      // Otherwise, we need to create our own. And we don't want to call this
-      // until the user binds to the event, just in case they never do, since it
-      // will create a polling loop and possibly even a hidden Iframe.
-      $( fake_onhashchange.start );
-    },
-
-    // Called only when the last 'hashchange' event is unbound from window.
-    teardown: function() {
-      // If window.onhashchange is supported natively, there's nothing to do..
-      if ( supports_onhashchange ) { return false; }
-
-      // Otherwise, we need to stop ours (if possible).
-      $( fake_onhashchange.stop );
-    }
-
-  });
-
-  // fake_onhashchange does all the work of triggering the window.onhashchange
-  // event for browsers that don't natively support it, including creating a
-  // polling loop to watch for hash changes.
-  fake_onhashchange = (function() {
-    var self = {},
-      timeout_id,
-
-      // Remember the initial hash so it doesn't get triggered immediately.
-      last_hash = get_fragment(),
-
-      fn_retval = function( val ) { return val; },
-      history_set = fn_retval,
-      history_get = fn_retval;
-
-    // Start the polling loop.
-    self.start = function() {
-      timeout_id || poll();
-    };
-
-    // Stop the polling loop.
-    self.stop = function() {
-      timeout_id && clearTimeout( timeout_id );
-      timeout_id = undefined;
-    };
-
-    // This polling loop checks every $.fn.hashchange.delay milliseconds to see
-    // if location.hash has changed, and triggers the 'hashchange' event on
-    // window when necessary.
-    function poll() {
-      var hash = get_fragment(),
-        history_hash = history_get( last_hash );
-
-      if ( hash !== last_hash ) {
-        history_set( last_hash = hash, history_hash );
-
-        $(window).trigger( str_hashchange );
-
-      } else if ( history_hash !== last_hash ) {
-        location.href = location.href.replace( /#.*/, '' ) + history_hash;
-      }
-
-      timeout_id = setTimeout( poll, $.fn[ str_hashchange ].delay );
-    };
-
-	// MODIFIED BY SAP - IE 6/7/8compat support was removed.
-
-    return self;
-  })();
-
-})(jQuery,this);
-
-(function( $ ) {
-	$.mobile = {};
-// MODIFIED BY SAP
-// To enable using the native orientation change event instead of faking the event by jQuery mobile
-jQuery.mobile.orientationChangeEnabled = true;
-}( jQuery ));
-(function( $, window, undefined ) {
-	var nsNormalizeDict = {};
-
-	// jQuery.mobile configurable options
-	$.mobile = $.extend($.mobile, {
-
-		// Version of the jQuery Mobile Framework
-		version: "1.3.1",
-
-		// Namespace used framework-wide for data-attrs. Default is no namespace
-		ns: "",
-
-		// Define the url parameter used for referencing widget-generated sub-pages.
-		// Translates to to example.html&ui-page=subpageIdentifier
-		// hash segment before &ui-page= is used to make Ajax request
-		subPageUrlKey: "ui-page",
-
-		// Class assigned to page currently in view, and during transitions
-		activePageClass: "ui-page-active",
-
-		// Class used for "active" button state, from CSS framework
-		activeBtnClass: "ui-btn-active",
-
-		// Class used for "focus" form element state, from CSS framework
-		focusClass: "ui-focus",
-
-		// Automatically handle clicks and form submissions through Ajax, when same-domain
-		ajaxEnabled: true,
-
-		// Automatically load and show pages based on location.hash
-		hashListeningEnabled: true,
-
-		// disable to prevent jquery from bothering with links
-		linkBindingEnabled: true,
-
-		// Set default page transition - 'none' for no transitions
-		defaultPageTransition: "fade",
-
-		// Set maximum window width for transitions to apply - 'false' for no limit
-		maxTransitionWidth: false,
-
-		// Minimum scroll distance that will be remembered when returning to a page
-		minScrollBack: 250,
-
-		// DEPRECATED: the following property is no longer in use, but defined until 2.0 to prevent conflicts
-		touchOverflowEnabled: false,
-
-		// Set default dialog transition - 'none' for no transitions
-		defaultDialogTransition: "pop",
-
-		// Error response message - appears when an Ajax page request fails
-		pageLoadErrorMessage: "Error Loading Page",
-
-		// For error messages, which theme does the box uses?
-		pageLoadErrorMessageTheme: "e",
-
-		// replace calls to window.history.back with phonegaps navigation helper
-		// where it is provided on the window object
-		phonegapNavigationEnabled: false,
-
-		//automatically initialize the DOM when it's ready
-		autoInitializePage: true,
-
-		pushStateEnabled: true,
-
-		// allows users to opt in to ignoring content by marking a parent element as
-		// data-ignored
-		ignoreContentEnabled: false,
-
-		// turn of binding to the native orientationchange due to android orientation behavior
-		orientationChangeEnabled: true,
-
-		buttonMarkup: {
-			hoverDelay: 200
+		// Otherwise, we need to create our own. And we don't want to call this
+		// until the user binds to the event, just in case they never do, since it
+		// will create a polling loop and possibly even a hidden Iframe.
+		$( fake_onhashchange.start );
 		},
 
-		// define the window and the document objects
-		window: $( window ),
-		document: $( document ),
+		// Called only when the last 'hashchange' event is unbound from window.
+		teardown: function() {
+		// If window.onhashchange is supported natively, there's nothing to do..
+		if ( supports_onhashchange ) { return false; }
 
-		// TODO might be useful upstream in jquery itself ?
-		keyCode: {
-			ALT: 18,
-			BACKSPACE: 8,
-			CAPS_LOCK: 20,
-			COMMA: 188,
-			COMMAND: 91,
-			COMMAND_LEFT: 91, // COMMAND
-			COMMAND_RIGHT: 93,
-			CONTROL: 17,
-			DELETE: 46,
-			DOWN: 40,
-			END: 35,
-			ENTER: 13,
-			ESCAPE: 27,
-			HOME: 36,
-			INSERT: 45,
-			LEFT: 37,
-			MENU: 93, // COMMAND_RIGHT
-			NUMPAD_ADD: 107,
-			NUMPAD_DECIMAL: 110,
-			NUMPAD_DIVIDE: 111,
-			NUMPAD_ENTER: 108,
-			NUMPAD_MULTIPLY: 106,
-			NUMPAD_SUBTRACT: 109,
-			PAGE_DOWN: 34,
-			PAGE_UP: 33,
-			PERIOD: 190,
-			RIGHT: 39,
-			SHIFT: 16,
-			SPACE: 32,
-			TAB: 9,
-			UP: 38,
-			WINDOWS: 91 // COMMAND
-		},
+		// Otherwise, we need to stop ours (if possible).
+		$( fake_onhashchange.stop );
+		}
 
-		// Place to store various widget extensions
-		behaviors: {},
+	});
 
-		// Scroll page vertically: scroll to 0 to hide iOS address bar, or pass a Y value
-		silentScroll: function( ypos ) {
-			// MODIFIED BY SAP: replace deprecated API
-			if ( typeof ypos !== "number" ) {
-				ypos = $.mobile.defaultHomeScroll;
-			}
+	// fake_onhashchange does all the work of triggering the window.onhashchange
+	// event for browsers that don't natively support it, including creating a
+	// polling loop to watch for hash changes.
+	fake_onhashchange = (function() {
+		var self = {},
+		timeout_id,
 
-			// prevent scrollstart and scrollstop events
-			$.event.special.scrollstart.enabled = false;
+		// Remember the initial hash so it doesn't get triggered immediately.
+		last_hash = get_fragment(),
 
-			setTimeout( function() {
-				window.scrollTo( 0, ypos );
-				$.mobile.document.trigger( "silentscroll", { x: 0, y: ypos });
-			}, 20 );
+		fn_retval = function( val ) { return val; },
+		history_set = fn_retval,
+		history_get = fn_retval;
 
-			setTimeout( function() {
-				$.event.special.scrollstart.enabled = true;
-			}, 150 );
-		},
+		// Start the polling loop.
+		self.start = function() {
+		timeout_id || poll();
+		};
 
-		// Expose our cache for testing purposes.
-		nsNormalizeDict: nsNormalizeDict,
+		// Stop the polling loop.
+		self.stop = function() {
+		timeout_id && clearTimeout( timeout_id );
+		timeout_id = undefined;
+		};
 
-		// Take a data attribute property, prepend the namespace
-		// and then camel case the attribute string. Add the result
-		// to our nsNormalizeDict so we don't have to do this again.
-		nsNormalize: function( prop ) {
-			if ( !prop ) {
-				return;
-			}
+		// This polling loop checks every $.fn.hashchange.delay milliseconds to see
+		// if location.hash has changed, and triggers the 'hashchange' event on
+		// window when necessary.
+		function poll() {
+		var hash = get_fragment(),
+			history_hash = history_get( last_hash );
 
-			return nsNormalizeDict[ prop ] || ( nsNormalizeDict[ prop ] = $.camelCase( $.mobile.ns + prop ) );
-		},
+		if ( hash !== last_hash ) {
+			history_set( last_hash = hash, history_hash );
 
-		// Find the closest parent with a theme class on it. Note that
-		// we are not using $.fn.closest() on purpose here because this
-		// method gets called quite a bit and we need it to be as fast
-		// as possible.
-		getInheritedTheme: function( el, defaultTheme ) {
-			var e = el[ 0 ],
-				ltr = "",
-				re = /ui-(bar|body|overlay)-([a-z])\b/,
-				c, m;
+			$(window).trigger( str_hashchange );
 
-			while ( e ) {
-				c = e.className || "";
-				if ( c && ( m = re.exec( c ) ) && ( ltr = m[ 2 ] ) ) {
-					// We found a parent with a theme class
-					// on it so bail from this loop.
-					break;
+		} else if ( history_hash !== last_hash ) {
+			location.href = location.href.replace( /#.*/, '' ) + history_hash;
+		}
+
+		timeout_id = setTimeout( poll, $.fn[ str_hashchange ].delay );
+		};
+
+		// MODIFIED BY SAP - IE 6/7/8compat support was removed.
+
+		return self;
+	})();
+
+	})(jQuery,this);
+
+	(function( $ ) {
+		$.mobile = {};
+	// MODIFIED BY SAP
+	// To enable using the native orientation change event instead of faking the event by jQuery mobile
+	jQuery.mobile.orientationChangeEnabled = true;
+	}( jQuery ));
+	(function( $, window, undefined ) {
+		var nsNormalizeDict = {};
+
+		// jQuery.mobile configurable options
+		$.mobile = $.extend($.mobile, {
+
+			// Version of the jQuery Mobile Framework
+			version: "1.3.1",
+
+			// Namespace used framework-wide for data-attrs. Default is no namespace
+			ns: "",
+
+			// Define the url parameter used for referencing widget-generated sub-pages.
+			// Translates to to example.html&ui-page=subpageIdentifier
+			// hash segment before &ui-page= is used to make Ajax request
+			subPageUrlKey: "ui-page",
+
+			// Class assigned to page currently in view, and during transitions
+			activePageClass: "ui-page-active",
+
+			// Class used for "active" button state, from CSS framework
+			activeBtnClass: "ui-btn-active",
+
+			// Class used for "focus" form element state, from CSS framework
+			focusClass: "ui-focus",
+
+			// Automatically handle clicks and form submissions through Ajax, when same-domain
+			ajaxEnabled: true,
+
+			// Automatically load and show pages based on location.hash
+			hashListeningEnabled: true,
+
+			// disable to prevent jquery from bothering with links
+			linkBindingEnabled: true,
+
+			// Set default page transition - 'none' for no transitions
+			defaultPageTransition: "fade",
+
+			// Set maximum window width for transitions to apply - 'false' for no limit
+			maxTransitionWidth: false,
+
+			// Minimum scroll distance that will be remembered when returning to a page
+			minScrollBack: 250,
+
+			// DEPRECATED: the following property is no longer in use, but defined until 2.0 to prevent conflicts
+			touchOverflowEnabled: false,
+
+			// Set default dialog transition - 'none' for no transitions
+			defaultDialogTransition: "pop",
+
+			// Error response message - appears when an Ajax page request fails
+			pageLoadErrorMessage: "Error Loading Page",
+
+			// For error messages, which theme does the box uses?
+			pageLoadErrorMessageTheme: "e",
+
+			// replace calls to window.history.back with phonegaps navigation helper
+			// where it is provided on the window object
+			phonegapNavigationEnabled: false,
+
+			//automatically initialize the DOM when it's ready
+			autoInitializePage: true,
+
+			pushStateEnabled: true,
+
+			// allows users to opt in to ignoring content by marking a parent element as
+			// data-ignored
+			ignoreContentEnabled: false,
+
+			// turn of binding to the native orientationchange due to android orientation behavior
+			orientationChangeEnabled: true,
+
+			buttonMarkup: {
+				hoverDelay: 200
+			},
+
+			// define the window and the document objects
+			window: $( window ),
+			document: $( document ),
+
+			// TODO might be useful upstream in jquery itself ?
+			keyCode: {
+				ALT: 18,
+				BACKSPACE: 8,
+				CAPS_LOCK: 20,
+				COMMA: 188,
+				COMMAND: 91,
+				COMMAND_LEFT: 91, // COMMAND
+				COMMAND_RIGHT: 93,
+				CONTROL: 17,
+				DELETE: 46,
+				DOWN: 40,
+				END: 35,
+				ENTER: 13,
+				ESCAPE: 27,
+				HOME: 36,
+				INSERT: 45,
+				LEFT: 37,
+				MENU: 93, // COMMAND_RIGHT
+				NUMPAD_ADD: 107,
+				NUMPAD_DECIMAL: 110,
+				NUMPAD_DIVIDE: 111,
+				NUMPAD_ENTER: 108,
+				NUMPAD_MULTIPLY: 106,
+				NUMPAD_SUBTRACT: 109,
+				PAGE_DOWN: 34,
+				PAGE_UP: 33,
+				PERIOD: 190,
+				RIGHT: 39,
+				SHIFT: 16,
+				SPACE: 32,
+				TAB: 9,
+				UP: 38,
+				WINDOWS: 91 // COMMAND
+			},
+
+			// Place to store various widget extensions
+			behaviors: {},
+
+			// Scroll page vertically: scroll to 0 to hide iOS address bar, or pass a Y value
+			silentScroll: function( ypos ) {
+				// MODIFIED BY SAP: replace deprecated API
+				if ( typeof ypos !== "number" ) {
+					ypos = $.mobile.defaultHomeScroll;
 				}
 
-				e = e.parentNode;
-			}
+				// prevent scrollstart and scrollstop events
+				$.event.special.scrollstart.enabled = false;
 
-			// Return the theme letter we found, if none, return the
-			// specified default.
+				setTimeout( function() {
+					window.scrollTo( 0, ypos );
+					$.mobile.document.trigger( "silentscroll", { x: 0, y: ypos });
+				}, 20 );
 
-			return ltr || defaultTheme || "a";
-		},
+				setTimeout( function() {
+					$.event.special.scrollstart.enabled = true;
+				}, 150 );
+			},
 
-		// TODO the following $ and $.fn extensions can/probably should be moved into jquery.mobile.core.helpers
-		//
-		// Find the closest javascript page element to gather settings data jsperf test
-		// http://jsperf.com/single-complex-selector-vs-many-complex-selectors/edit
-		// possibly naive, but it shows that the parsing overhead for *just* the page selector vs
-		// the page and dialog selector is negligable. This could probably be speed up by
-		// doing a similar parent node traversal to the one found in the inherited theme code above
-		closestPageData: function( $target ) {
-			return $target
-				.closest( ':jqmData(role="page"), :jqmData(role="dialog")' )
-				.data( "mobile-page" );
-		},
+			// Expose our cache for testing purposes.
+			nsNormalizeDict: nsNormalizeDict,
 
-		enhanceable: function( $set ) {
-			return this.haveParents( $set, "enhance" );
-		},
+			// Take a data attribute property, prepend the namespace
+			// and then camel case the attribute string. Add the result
+			// to our nsNormalizeDict so we don't have to do this again.
+			nsNormalize: function( prop ) {
+				if ( !prop ) {
+					return;
+				}
 
-		hijackable: function( $set ) {
-			return this.haveParents( $set, "ajax" );
-		},
+				return nsNormalizeDict[ prop ] || ( nsNormalizeDict[ prop ] = $.camelCase( $.mobile.ns + prop ) );
+			},
 
-		haveParents: function( $set, attr ) {
-			if ( !$.mobile.ignoreContentEnabled ) {
-				return $set;
-			}
-
-			var count = $set.length,
-				$newSet = $(),
-				e, $element, excluded;
-
-			for ( var i = 0; i < count; i++ ) {
-				$element = $set.eq( i );
-				excluded = false;
-				e = $set[ i ];
+			// Find the closest parent with a theme class on it. Note that
+			// we are not using $.fn.closest() on purpose here because this
+			// method gets called quite a bit and we need it to be as fast
+			// as possible.
+			getInheritedTheme: function( el, defaultTheme ) {
+				var e = el[ 0 ],
+					ltr = "",
+					re = /ui-(bar|body|overlay)-([a-z])\b/,
+					c, m;
 
 				while ( e ) {
-					var c = e.getAttribute ? e.getAttribute( "data-" + $.mobile.ns + attr ) : "";
-
-					if ( c === "false" ) {
-						excluded = true;
+					c = e.className || "";
+					if ( c && ( m = re.exec( c ) ) && ( ltr = m[ 2 ] ) ) {
+						// We found a parent with a theme class
+						// on it so bail from this loop.
 						break;
 					}
 
 					e = e.parentNode;
 				}
 
-				if ( !excluded ) {
-					$newSet = $newSet.add( $element );
+				// Return the theme letter we found, if none, return the
+				// specified default.
+
+				return ltr || defaultTheme || "a";
+			},
+
+			// TODO the following $ and $.fn extensions can/probably should be moved into jquery.mobile.core.helpers
+			//
+			// Find the closest javascript page element to gather settings data jsperf test
+			// http://jsperf.com/single-complex-selector-vs-many-complex-selectors/edit
+			// possibly naive, but it shows that the parsing overhead for *just* the page selector vs
+			// the page and dialog selector is negligable. This could probably be speed up by
+			// doing a similar parent node traversal to the one found in the inherited theme code above
+			closestPageData: function( $target ) {
+				return $target
+					.closest( ':jqmData(role="page"), :jqmData(role="dialog")' )
+					.data( "mobile-page" );
+			},
+
+			enhanceable: function( $set ) {
+				return this.haveParents( $set, "enhance" );
+			},
+
+			hijackable: function( $set ) {
+				return this.haveParents( $set, "ajax" );
+			},
+
+			haveParents: function( $set, attr ) {
+				if ( !$.mobile.ignoreContentEnabled ) {
+					return $set;
+				}
+
+				var count = $set.length,
+					$newSet = $(),
+					e, $element, excluded;
+
+				for ( var i = 0; i < count; i++ ) {
+					$element = $set.eq( i );
+					excluded = false;
+					e = $set[ i ];
+
+					while ( e ) {
+						var c = e.getAttribute ? e.getAttribute( "data-" + $.mobile.ns + attr ) : "";
+
+						if ( c === "false" ) {
+							excluded = true;
+							break;
+						}
+
+						e = e.parentNode;
+					}
+
+					if ( !excluded ) {
+						$newSet = $newSet.add( $element );
+					}
+				}
+
+				return $newSet;
+			},
+
+			getScreenHeight: function() {
+				// Native innerHeight returns more accurate value for this across platforms,
+				// jQuery version is here as a normalized fallback for platforms like Symbian
+				return window.innerHeight || $.mobile.window.height();
+			}
+		}, $.mobile );
+
+		// Mobile version of data and removeData and hasData methods
+		// ensures all data is set and retrieved using jQuery Mobile's data namespace
+		$.fn.jqmData = function( prop, value ) {
+			var result;
+			if ( typeof prop !== "undefined" ) {
+				if ( prop ) {
+					prop = $.mobile.nsNormalize( prop );
+				}
+
+				// undefined is permitted as an explicit input for the second param
+				// in this case it returns the value and does not set it to undefined
+				if( arguments.length < 2 || value === undefined ){
+					result = this.data( prop );
+				} else {
+					result = this.data( prop, value );
 				}
 			}
+			return result;
+		};
 
-			return $newSet;
-		},
-
-		getScreenHeight: function() {
-			// Native innerHeight returns more accurate value for this across platforms,
-			// jQuery version is here as a normalized fallback for platforms like Symbian
-			return window.innerHeight || $.mobile.window.height();
-		}
-	}, $.mobile );
-
-	// Mobile version of data and removeData and hasData methods
-	// ensures all data is set and retrieved using jQuery Mobile's data namespace
-	$.fn.jqmData = function( prop, value ) {
-		var result;
-		if ( typeof prop !== "undefined" ) {
-			if ( prop ) {
-				prop = $.mobile.nsNormalize( prop );
+		$.jqmData = function( elem, prop, value ) {
+			var result;
+			if ( typeof prop !== "undefined" ) {
+				result = $.data( elem, prop ? $.mobile.nsNormalize( prop ) : prop, value );
 			}
+			return result;
+		};
 
-			// undefined is permitted as an explicit input for the second param
-			// in this case it returns the value and does not set it to undefined
-			if( arguments.length < 2 || value === undefined ){
-				result = this.data( prop );
-			} else {
-				result = this.data( prop, value );
-			}
-		}
-		return result;
-	};
+		$.fn.jqmRemoveData = function( prop ) {
+			return this.removeData( $.mobile.nsNormalize( prop ) );
+		};
 
-	$.jqmData = function( elem, prop, value ) {
-		var result;
-		if ( typeof prop !== "undefined" ) {
-			result = $.data( elem, prop ? $.mobile.nsNormalize( prop ) : prop, value );
-		}
-		return result;
-	};
+		$.jqmRemoveData = function( elem, prop ) {
+			return $.removeData( elem, $.mobile.nsNormalize( prop ) );
+		};
 
-	$.fn.jqmRemoveData = function( prop ) {
-		return this.removeData( $.mobile.nsNormalize( prop ) );
-	};
+		$.fn.removeWithDependents = function() {
+			$.removeWithDependents( this );
+		};
 
-	$.jqmRemoveData = function( elem, prop ) {
-		return $.removeData( elem, $.mobile.nsNormalize( prop ) );
-	};
+		$.removeWithDependents = function( elem ) {
+			var $elem = $( elem );
 
-	$.fn.removeWithDependents = function() {
-		$.removeWithDependents( this );
-	};
+			( $elem.jqmData( 'dependents' ) || $() ).remove();
+			$elem.remove();
+		};
 
-	$.removeWithDependents = function( elem ) {
-		var $elem = $( elem );
+		$.fn.addDependents = function( newDependents ) {
+			$.addDependents( $( this ), newDependents );
+		};
 
-		( $elem.jqmData( 'dependents' ) || $() ).remove();
-		$elem.remove();
-	};
+		$.addDependents = function( elem, newDependents ) {
+			var dependents = $( elem ).jqmData( 'dependents' ) || $();
 
-	$.fn.addDependents = function( newDependents ) {
-		$.addDependents( $( this ), newDependents );
-	};
+			$( elem ).jqmData( 'dependents', $.merge( dependents, newDependents ) );
+		};
 
-	$.addDependents = function( elem, newDependents ) {
-		var dependents = $( elem ).jqmData( 'dependents' ) || $();
+		// note that this helper doesn't attempt to handle the callback
+		// or setting of an html element's text, its only purpose is
+		// to return the html encoded version of the text in all cases. (thus the name)
+		$.fn.getEncodedText = function() {
+			return $( "<div/>" ).text( $( this ).text() ).html();
+		};
 
-		$( elem ).jqmData( 'dependents', $.merge( dependents, newDependents ) );
-	};
+		// fluent helper function for the mobile namespaced equivalent
+		$.fn.jqmEnhanceable = function() {
+			return $.mobile.enhanceable( this );
+		};
 
-	// note that this helper doesn't attempt to handle the callback
-	// or setting of an html element's text, its only purpose is
-	// to return the html encoded version of the text in all cases. (thus the name)
-	$.fn.getEncodedText = function() {
-		return $( "<div/>" ).text( $( this ).text() ).html();
-	};
+		$.fn.jqmHijackable = function() {
+			return $.mobile.hijackable( this );
+		};
 
-	// fluent helper function for the mobile namespaced equivalent
-	$.fn.jqmEnhanceable = function() {
-		return $.mobile.enhanceable( this );
-	};
+		// Monkey-patching Sizzle to filter the :jqmData selector
+		var oldFind = $.find,
+			jqmDataRE = /:jqmData\(([^)]*)\)/g;
 
-	$.fn.jqmHijackable = function() {
-		return $.mobile.hijackable( this );
-	};
+		$.find = function( selector, context, ret, extra ) {
+			selector = selector.replace( jqmDataRE, "[data-" + ( $.mobile.ns || "" ) + "$1]" );
 
-	// Monkey-patching Sizzle to filter the :jqmData selector
-	var oldFind = $.find,
-		jqmDataRE = /:jqmData\(([^)]*)\)/g;
+			return oldFind.call( this, selector, context, ret, extra );
+		};
 
-	$.find = function( selector, context, ret, extra ) {
-		selector = selector.replace( jqmDataRE, "[data-" + ( $.mobile.ns || "" ) + "$1]" );
+		$.extend( $.find, oldFind );
 
-		return oldFind.call( this, selector, context, ret, extra );
-	};
-
-	$.extend( $.find, oldFind );
-
-	// MODIFIED BY SAP: the following two functions "$.find.matches" and "$.find.matchesSelector" are commented out
-	// because they are not compatible with the existing version before overwritten when a focused DIV element is
-	// checked by using jQuery(oneDIVElement).is(":focus"). it returns false instead of true. We use the check in
-	// sap.ui.core.FocusHandler to store the previous focused control before it gets rerendered. Therefore they are
-	// commented out in order to make the restoring of focus after rerendering still work.
-	//
-	// $.find.matches = function( expr, set ) {
-	// 	return $.find( expr, null, null, set );
-	// };
-	//
-	// $.find.matchesSelector = function( node, expr ) {
-	// 	return $.find( expr, null, null, [ node ] ).length > 0;
-	// };
-})( jQuery, this );
+		// MODIFIED BY SAP: the following two functions "$.find.matches" and "$.find.matchesSelector" are commented out
+		// because they are not compatible with the existing version before overwritten when a focused DIV element is
+		// checked by using jQuery(oneDIVElement).is(":focus"). it returns false instead of true. We use the check in
+		// sap.ui.core.FocusHandler to store the previous focused control before it gets rerendered. Therefore they are
+		// commented out in order to make the restoring of focus after rerendering still work.
+		//
+		// $.find.matches = function( expr, set ) {
+		// 	return $.find( expr, null, null, set );
+		// };
+		//
+		// $.find.matchesSelector = function( node, expr ) {
+		// 	return $.find( expr, null, null, [ node ] ).length > 0;
+		// };
+	})( jQuery, this );
 
 
-(function( $, undefined ) {
+	(function( $, undefined ) {
 
-	/*! matchMedia() polyfill - Test a CSS media type/query in JS. Authors & copyright (c) 2012: Scott Jehl, Paul Irish, Nicholas Zakas. Dual MIT/BSD license */
-	window.matchMedia = window.matchMedia || (function( doc, undefined ) {
+		/*! matchMedia() polyfill - Test a CSS media type/query in JS. Authors & copyright (c) 2012: Scott Jehl, Paul Irish, Nicholas Zakas. Dual MIT/BSD license */
+		window.matchMedia = window.matchMedia || (function( doc, undefined ) {
 
 
 
-		var bool,
-			docElem = doc.documentElement,
-			refNode = docElem.firstElementChild || docElem.firstChild,
-			// fakeBody required for <FF4 when executed in <head>
-			fakeBody = doc.createElement( "body" ),
-			div = doc.createElement( "div" );
+			var bool,
+				docElem = doc.documentElement,
+				refNode = docElem.firstElementChild || docElem.firstChild,
+				// fakeBody required for <FF4 when executed in <head>
+				fakeBody = doc.createElement( "body" ),
+				div = doc.createElement( "div" );
 
-		div.id = "mq-test-1";
-		div.style.cssText = "position:absolute;top:-100em";
-		fakeBody.style.background = "none";
-		fakeBody.appendChild(div);
+			div.id = "mq-test-1";
+			div.style.cssText = "position:absolute;top:-100em";
+			fakeBody.style.background = "none";
+			fakeBody.appendChild(div);
 
-		return function(q){
+			return function(q){
 
-			div.innerHTML = "&shy;<style media=\"" + q + "\"> #mq-test-1 { width: 42px; }</style>";
+				div.innerHTML = "&shy;<style media=\"" + q + "\"> #mq-test-1 { width: 42px; }</style>";
 
-			docElem.insertBefore( fakeBody, refNode );
-			bool = div.offsetWidth === 42;
-			docElem.removeChild( fakeBody );
+				docElem.insertBefore( fakeBody, refNode );
+				bool = div.offsetWidth === 42;
+				docElem.removeChild( fakeBody );
 
-			return {
-				matches: bool,
-				media: q
+				return {
+					matches: bool,
+					media: q
+				};
+
 			};
 
+		}( document ));
+
+		// $.mobile.media uses matchMedia to return a boolean.
+		$.mobile.media = function( q ) {
+			return window.matchMedia( q ).matches;
 		};
 
-	}( document ));
+	})(jQuery);
 
-	// $.mobile.media uses matchMedia to return a boolean.
-	$.mobile.media = function( q ) {
-		return window.matchMedia( q ).matches;
-	};
+		(function( $, undefined ) {
+			var support = {
+				touch: "ontouchend" in document
+			};
+			// MODIFIED BY SAP
+			// => if the device API is loaded we override the touch detection
+			// MS Internet Explorer and MS Edge do not fire 'touchstart' and 'touchend' events
+			// Therefore $.mobile.support should not be overriden with the actual device screen capability
+			if (window.sap && sap.ui && sap.ui.Device && sap.ui.Device.support && !(sap.ui.Device.browser.msie || sap.ui.Device.browser.edge)) {
+				support.touch = sap.ui.Device.support.touch
+			}
 
-})(jQuery);
+			$.mobile.support = $.mobile.support || {};
+			$.extend( $.support, support );
+			$.extend( $.mobile.support, support );
+		}( jQuery ));
+
+		(function( $, undefined ) {
+			$.extend( $.support, {
+				orientation: "orientation" in window && "onorientationchange" in window
+			});
+		}( jQuery ));
 
 	(function( $, undefined ) {
-		var support = {
-			touch: "ontouchend" in document
-		};
-		// MODIFIED BY SAP
-		// => if the device API is loaded we override the touch detection
-		// MS Internet Explorer and MS Edge do not fire 'touchstart' and 'touchend' events
-		// Therefore $.mobile.support should not be overriden with the actual device screen capability
-		if (window.sap && sap.ui && sap.ui.Device && sap.ui.Device.support && !(sap.ui.Device.browser.msie || sap.ui.Device.browser.edge)) {
-			support.touch = sap.ui.Device.support.touch
-		}
 
-		$.mobile.support = $.mobile.support || {};
-		$.extend( $.support, support );
-		$.extend( $.mobile.support, support );
-	}( jQuery ));
+	// thx Modernizr
+	function propExists( prop ) {
+		var uc_prop = prop.charAt( 0 ).toUpperCase() + prop.substr( 1 ),
+			props = ( prop + " " + vendors.join( uc_prop + " " ) + uc_prop ).split( " " );
 
-	(function( $, undefined ) {
-		$.extend( $.support, {
-			orientation: "orientation" in window && "onorientationchange" in window
-		});
-	}( jQuery ));
-
-(function( $, undefined ) {
-
-// thx Modernizr
-function propExists( prop ) {
-	var uc_prop = prop.charAt( 0 ).toUpperCase() + prop.substr( 1 ),
-		props = ( prop + " " + vendors.join( uc_prop + " " ) + uc_prop ).split( " " );
-
-	for ( var v in props ) {
-		if ( fbCSS[ props[ v ] ] !== undefined ) {
-			return true;
+		for ( var v in props ) {
+			if ( fbCSS[ props[ v ] ] !== undefined ) {
+				return true;
+			}
 		}
 	}
-}
 
-var fakeBody = $( "<body>" ).prependTo( "html" ),
-	fbCSS = fakeBody[ 0 ].style,
-	vendors = [ "Webkit", "Moz", "O" ],
-	webos = "palmGetResource" in window, //only used to rule out scrollTop
-	opera = window.opera,
-	operamini = window.operamini && ({}).toString.call( window.operamini ) === "[object OperaMini]",
-	bb = window.blackberry && !propExists( "-webkit-transform" ); //only used to rule out box shadow, as it's filled opaque on BB 5 and lower
+	var fakeBody = $( "<body>" ).prependTo( "html" ),
+		fbCSS = fakeBody[ 0 ].style,
+		vendors = [ "Webkit", "Moz", "O" ],
+		webos = "palmGetResource" in window, //only used to rule out scrollTop
+		opera = window.opera,
+		operamini = window.operamini && ({}).toString.call( window.operamini ) === "[object OperaMini]",
+		bb = window.blackberry && !propExists( "-webkit-transform" ); //only used to rule out box shadow, as it's filled opaque on BB 5 and lower
 
 
-function validStyle( prop, value, check_vend ) {
-	var div = document.createElement( 'div' ),
-		uc = function( txt ) {
-			return txt.charAt( 0 ).toUpperCase() + txt.substr( 1 );
-		},
-		vend_pref = function( vend ) {
-			if( vend === "" ) {
-				return "";
-			} else {
-				return  "-" + vend.charAt( 0 ).toLowerCase() + vend.substr( 1 ) + "-";
-			}
-		},
-		check_style = function( vend ) {
-			var vend_prop = vend_pref( vend ) + prop + ": " + value + ";",
-				uc_vend = uc( vend ),
-				propStyle = uc_vend + ( uc_vend === "" ? prop : uc( prop ) );
+	function validStyle( prop, value, check_vend ) {
+		var div = document.createElement( 'div' ),
+			uc = function( txt ) {
+				return txt.charAt( 0 ).toUpperCase() + txt.substr( 1 );
+			},
+			vend_pref = function( vend ) {
+				if( vend === "" ) {
+					return "";
+				} else {
+					return  "-" + vend.charAt( 0 ).toLowerCase() + vend.substr( 1 ) + "-";
+				}
+			},
+			check_style = function( vend ) {
+				var vend_prop = vend_pref( vend ) + prop + ": " + value + ";",
+					uc_vend = uc( vend ),
+					propStyle = uc_vend + ( uc_vend === "" ? prop : uc( prop ) );
 
-			// ##### BEGIN: MODIFIED BY SAP
-			// CSP Modification - remove inline style
-			// div.setAttribute( "style", vend_prop );
-			div.style = vend_prop;
-			// ##### END: MODIFIED BY SAP
+				// ##### BEGIN: MODIFIED BY SAP
+				// CSP Modification - remove inline style
+				// div.setAttribute( "style", vend_prop );
+				div.style = vend_prop;
+				// ##### END: MODIFIED BY SAP
 
-			if ( !!div.style[ propStyle ] ) {
-				ret = true;
-			}
-		},
-		check_vends = check_vend ? check_vend : vendors,
-		ret;
+				if ( !!div.style[ propStyle ] ) {
+					ret = true;
+				}
+			},
+			check_vends = check_vend ? check_vend : vendors,
+			ret;
 
-	for( var i = 0; i < check_vends.length; i++ ) {
-		check_style( check_vends[i] );
-	}
-	return !!ret;
-}
-
-function transform3dTest() {
-	var mqProp = "transform-3d",
-		// Because the `translate3d` test below throws false positives in Android:
-		ret = $.mobile.media( "(-" + vendors.join( "-" + mqProp + "),(-" ) + "-" + mqProp + "),(" + mqProp + ")" );
-
-	if( ret ) {
+		for( var i = 0; i < check_vends.length; i++ ) {
+			check_style( check_vends[i] );
+		}
 		return !!ret;
 	}
 
-	var el = document.createElement( "div" ),
-		transforms = {
-			// We’re omitting Opera for the time being; MS uses unprefixed.
-			'MozTransform':'-moz-transform',
-			'transform':'transform'
-		};
+	function transform3dTest() {
+		var mqProp = "transform-3d",
+			// Because the `translate3d` test below throws false positives in Android:
+			ret = $.mobile.media( "(-" + vendors.join( "-" + mqProp + "),(-" ) + "-" + mqProp + "),(" + mqProp + ")" );
 
-	fakeBody.append( el );
-
-	for ( var t in transforms ) {
-		if( el.style[ t ] !== undefined ){
-			el.style[ t ] = 'translate3d( 100px, 1px, 1px )';
-			ret = window.getComputedStyle( el ).getPropertyValue( transforms[ t ] );
+		if( ret ) {
+			return !!ret;
 		}
+
+		var el = document.createElement( "div" ),
+			transforms = {
+				// We’re omitting Opera for the time being; MS uses unprefixed.
+				'MozTransform':'-moz-transform',
+				'transform':'transform'
+			};
+
+		fakeBody.append( el );
+
+		for ( var t in transforms ) {
+			if( el.style[ t ] !== undefined ){
+				el.style[ t ] = 'translate3d( 100px, 1px, 1px )';
+				ret = window.getComputedStyle( el ).getPropertyValue( transforms[ t ] );
+			}
+		}
+		return ( !!ret && ret !== "none" );
 	}
-	return ( !!ret && ret !== "none" );
-}
 
-// ##### MODIFIED BY SAP - Removed base tag support check function, because this function leads to CSP violations in some browsers.
+	// ##### MODIFIED BY SAP - Removed base tag support check function, because this function leads to CSP violations in some browsers.
 
-// Thanks Modernizr
-function cssPointerEventsTest() {
-	var element = document.createElement( 'x' ),
-		documentElement = document.documentElement,
-		getComputedStyle = window.getComputedStyle,
+	// Thanks Modernizr
+	function cssPointerEventsTest() {
+		var element = document.createElement( 'x' ),
+			documentElement = document.documentElement,
+			getComputedStyle = window.getComputedStyle,
+			// ##### BEGIN: MODIFIED BY SAP
+			computed = getComputedStyle && getComputedStyle(element, ''),
+			// ##### END: MODIFIED BY SAP
+			supports;
+
+		if ( !( 'pointerEvents' in element.style ) ) {
+			return false;
+		}
+
+		element.style.pointerEvents = 'auto';
+		element.style.pointerEvents = 'x';
+		documentElement.appendChild( element );
 		// ##### BEGIN: MODIFIED BY SAP
-		computed = getComputedStyle && getComputedStyle(element, ''),
+		//supports = getComputedStyle &&
+		//getComputedStyle( element, '' ).pointerEvents === 'auto';
+		supports = computed && computed.pointerEvents === 'auto';
 		// ##### END: MODIFIED BY SAP
-		supports;
-
-	if ( !( 'pointerEvents' in element.style ) ) {
-		return false;
+		documentElement.removeChild( element );
+		return !!supports;
 	}
 
-	element.style.pointerEvents = 'auto';
-	element.style.pointerEvents = 'x';
-	documentElement.appendChild( element );
-	// ##### BEGIN: MODIFIED BY SAP
-	//supports = getComputedStyle &&
-	//getComputedStyle( element, '' ).pointerEvents === 'auto';
-	supports = computed && computed.pointerEvents === 'auto';
-	// ##### END: MODIFIED BY SAP
-	documentElement.removeChild( element );
-	return !!supports;
-}
-
-function boundingRect() {
-	var div = document.createElement( "div" );
-	return typeof div.getBoundingClientRect !== "undefined";
-}
-
-// non-UA-based IE version check by James Padolsey, modified by jdalton - from http://gist.github.com/527683
-// allows for inclusion of IE 6+, including Windows Mobile 7
-$.extend( $.mobile, { browser: {} } );
-$.mobile.browser.oldIE = (function() {
-	var v = 3,
-		div = document.createElement( "div" ),
-		a = div.all || [];
-
-	do {
-		div.innerHTML = "<!--[if gt IE " + ( ++v ) + "]><br><![endif]-->";
-	} while( a[0] );
-
-	return v > 4 ? v : !v;
-})();
-
-function fixedPosition() {
-	var w = window,
-		ua = navigator.userAgent,
-		platform = navigator.platform,
-		// Rendering engine is Webkit, and capture major version
-		wkmatch = ua.match( /AppleWebKit\/([0-9]+)/ ),
-		wkversion = !!wkmatch && wkmatch[ 1 ],
-		ffmatch = ua.match( /Fennec\/([0-9]+)/ ),
-		ffversion = !!ffmatch && ffmatch[ 1 ],
-		operammobilematch = ua.match( /Opera Mobi\/([0-9]+)/ ),
-		omversion = !!operammobilematch && operammobilematch[ 1 ];
-
-	if(
-		// iOS 4.3 and older : Platform is iPhone/Pad/Touch and Webkit version is less than 534 (ios5)
-		( ( platform.indexOf( "iPhone" ) > -1 || platform.indexOf( "iPad" ) > -1  || platform.indexOf( "iPod" ) > -1 ) && wkversion && wkversion < 534 ) ||
-		// Opera Mini
-		( w.operamini && ({}).toString.call( w.operamini ) === "[object OperaMini]" ) ||
-		( operammobilematch && omversion < 7458 )	||
-		//Android lte 2.1: Platform is Android and Webkit version is less than 533 (Android 2.2)
-		( ua.indexOf( "Android" ) > -1 && wkversion && wkversion < 533 ) ||
-		// Firefox Mobile before 6.0 -
-		( ffversion && ffversion < 6 ) ||
-		// WebOS less than 3
-		( "palmGetResource" in window && wkversion && wkversion < 534 )	||
-		// MeeGo
-		( ua.indexOf( "MeeGo" ) > -1 && ua.indexOf( "NokiaBrowser/8.5.0" ) > -1 ) ) {
-		return false;
+	function boundingRect() {
+		var div = document.createElement( "div" );
+		return typeof div.getBoundingClientRect !== "undefined";
 	}
 
-	return true;
-}
+	// non-UA-based IE version check by James Padolsey, modified by jdalton - from http://gist.github.com/527683
+	// allows for inclusion of IE 6+, including Windows Mobile 7
+	$.extend( $.mobile, { browser: {} } );
+	$.mobile.browser.oldIE = (function() {
+		var v = 3,
+			div = document.createElement( "div" ),
+			a = div.all || [];
 
-$.extend( $.support, {
-	cssTransitions: "WebKitTransitionEvent" in window ||
-		validStyle( 'transition', 'height 100ms linear', [ "Webkit", "Moz", "" ] ) &&
-		!$.mobile.browser.oldIE && !opera,
+		do {
+			div.innerHTML = "<!--[if gt IE " + ( ++v ) + "]><br><![endif]-->";
+		} while( a[0] );
 
-	// Note, Chrome for iOS has an extremely quirky implementation of popstate.
-	// We've chosen to take the shortest path to a bug fix here for issue #5426
-	// See the following link for information about the regex chosen
-	// https://developers.google.com/chrome/mobile/docs/user-agent#chrome_for_ios_user-agent
-	pushState: "pushState" in history &&
-		"replaceState" in history &&
-		// When running inside a FF iframe, calling replaceState causes an error
-		!( window.navigator.userAgent.indexOf( "Firefox" ) >= 0 && window.top !== window ) &&
-		( window.navigator.userAgent.search(/CriOS/) === -1 ),
+		return v > 4 ? v : !v;
+	})();
 
-	mediaquery: $.mobile.media( "only all" ),
-	cssPseudoElement: !!propExists( "content" ),
-	touchOverflow: !!propExists( "overflowScrolling" ),
-	cssTransform3d: transform3dTest(),
-	boxShadow: !!propExists( "boxShadow" ) && !bb,
-	fixedPosition: fixedPosition(),
-	scrollTop: ("pageXOffset" in window ||
-		"scrollTop" in document.documentElement ||
-		"scrollTop" in fakeBody[ 0 ]) && !webos && !operamini,
+	function fixedPosition() {
+		var w = window,
+			ua = navigator.userAgent,
+			platform = navigator.platform,
+			// Rendering engine is Webkit, and capture major version
+			wkmatch = ua.match( /AppleWebKit\/([0-9]+)/ ),
+			wkversion = !!wkmatch && wkmatch[ 1 ],
+			ffmatch = ua.match( /Fennec\/([0-9]+)/ ),
+			ffversion = !!ffmatch && ffmatch[ 1 ],
+			operammobilematch = ua.match( /Opera Mobi\/([0-9]+)/ ),
+			omversion = !!operammobilematch && operammobilematch[ 1 ];
 
-	dynamicBaseTag: true, // ##### MODIFIED BY SAP - Removed base tag support check function, because this function leads to CSP violations in some browsers.
-	cssPointerEvents: cssPointerEventsTest(),
-	boundingRect: boundingRect()
-});
-
-fakeBody.remove();
-
-
-// $.mobile.ajaxBlacklist is used to override ajaxEnabled on platforms that have known conflicts with hash history updates (BB5, Symbian)
-// or that generally work better browsing in regular http for full page refreshes (Opera Mini)
-// Note: This detection below is used as a last resort.
-// We recommend only using these detection methods when all other more reliable/forward-looking approaches are not possible
-var nokiaLTE7_3 = (function() {
-
-	var ua = window.navigator.userAgent;
-
-	//The following is an attempt to match Nokia browsers that are running Symbian/s60, with webkit, version 7.3 or older
-	return ua.indexOf( "Nokia" ) > -1 &&
-			( ua.indexOf( "Symbian/3" ) > -1 || ua.indexOf( "Series60/5" ) > -1 ) &&
-			ua.indexOf( "AppleWebKit" ) > -1 &&
-			ua.match( /(BrowserNG|NokiaBrowser)\/7\.[0-3]/ );
-})();
-
-// Support conditions that must be met in order to proceed
-// default enhanced qualifications are media query support OR IE 7+
-
-$.mobile.gradeA = function() {
-	return ( $.support.mediaquery || $.mobile.browser.oldIE && $.mobile.browser.oldIE >= 7 ) && ( $.support.boundingRect || $.fn.jquery.match(/1\.[0-7+]\.[0-9+]?/) !== null );
-};
-
-$.mobile.ajaxBlacklist =
-			// BlackBerry browsers, pre-webkit
-			window.blackberry && !window.WebKitPoint ||
+		if(
+			// iOS 4.3 and older : Platform is iPhone/Pad/Touch and Webkit version is less than 534 (ios5)
+			( ( platform.indexOf( "iPhone" ) > -1 || platform.indexOf( "iPad" ) > -1  || platform.indexOf( "iPod" ) > -1 ) && wkversion && wkversion < 534 ) ||
 			// Opera Mini
-			operamini ||
-			// Symbian webkits pre 7.3
-			nokiaLTE7_3;
-
-// Lastly, this workaround is the only way we've found so far to get pre 7.3 Symbian webkit devices
-// to render the stylesheets when they're referenced before this script, as we'd recommend doing.
-// This simply reappends the CSS in place, which for some reason makes it apply
-if ( nokiaLTE7_3 ) {
-	$(function() {
-		$( "head link[rel='stylesheet']" ).attr( "rel", "alternate stylesheet" ).attr( "rel", "stylesheet" );
-	});
-}
-
-// For ruling out shadows via css
-if ( !$.support.boxShadow ) {
-	$( "html" ).addClass( "ui-mobile-nosupport-boxshadow" );
-}
-
-})( jQuery );
-
-
-(function( $, undefined ) {
-	var $win = $.mobile.window, self, history;
-
-	$.event.special.navigate = self = {
-		bound: false,
-
-		pushStateEnabled: true,
-
-		originalEventName: undefined,
-
-		// If pushstate support is present and push state support is defined to
-		// be true on the mobile namespace.
-		isPushStateEnabled: function() {
-			return $.support.pushState &&
-				$.mobile.pushStateEnabled === true &&
-				this.isHashChangeEnabled();
-		},
-
-		// !! assumes mobile namespace is present
-		isHashChangeEnabled: function() {
-			return $.mobile.hashListeningEnabled === true;
-		},
-
-		// TODO a lot of duplication between popstate and hashchange
-		popstate: function( event ) {
-			var newEvent = new $.Event( "navigate" ),
-				beforeNavigate = new $.Event( "beforenavigate" ),
-				state = event.originalEvent.state || {},
-				href = location.href;
-
-			$win.trigger( beforeNavigate );
-
-			if( beforeNavigate.isDefaultPrevented() ){
-				return;
-			}
-
-			if( event.historyState ){
-				$.extend(state, event.historyState);
-			}
-
-			// Make sure the original event is tracked for the end
-			// user to inspect incase they want to do something special
-			newEvent.originalEvent = event;
-
-			// NOTE we let the current stack unwind because any assignment to
-			//      location.hash will stop the world and run this event handler. By
-			//      doing this we create a similar behavior to hashchange on hash
-			//      assignment
-			setTimeout(function() {
-				$win.trigger( newEvent, {
-					state: state
-				});
-			}, 0);
-		},
-
-		hashchange: function( event, data ) {
-			var newEvent = new $.Event( "navigate" ),
-				beforeNavigate = new $.Event( "beforenavigate" );
-
-			$win.trigger( beforeNavigate );
-
-			if( beforeNavigate.isDefaultPrevented() ){
-				return;
-			}
-
-			// Make sure the original event is tracked for the end
-			// user to inspect incase they want to do something special
-			newEvent.originalEvent = event;
-
-			// Trigger the hashchange with state provided by the user
-			// that altered the hash
-			$win.trigger( newEvent, {
-				// Users that want to fully normalize the two events
-				// will need to do history management down the stack and
-				// add the state to the event before this binding is fired
-				// TODO consider allowing for the explicit addition of callbacks
-				//      to be fired before this value is set to avoid event timing issues
-				state: event.hashchangeState || {}
-			});
-		},
-
-		// TODO We really only want to set this up once
-		//      but I'm not clear if there's a beter way to achieve
-		//      this with the jQuery special event structure
-		setup: function( data, namespaces ) {
-			if( self.bound ) {
-				return;
-			}
-
-			self.bound = true;
-
-			if( self.isPushStateEnabled() ) {
-				self.originalEventName = "popstate";
-				// MODIFIED BY SAP: replace deprecated API .bind -> .on
-				$win.on( "popstate.navigate", self.popstate );
-			} else if ( self.isHashChangeEnabled() ){
-				self.originalEventName = "hashchange";
-				// MODIFIED BY SAP: replace deprecated API .bind -> .on
-				$win.on( "hashchange.navigate", self.hashchange );
-			}
+			( w.operamini && ({}).toString.call( w.operamini ) === "[object OperaMini]" ) ||
+			( operammobilematch && omversion < 7458 )	||
+			//Android lte 2.1: Platform is Android and Webkit version is less than 533 (Android 2.2)
+			( ua.indexOf( "Android" ) > -1 && wkversion && wkversion < 533 ) ||
+			// Firefox Mobile before 6.0 -
+			( ffversion && ffversion < 6 ) ||
+			// WebOS less than 3
+			( "palmGetResource" in window && wkversion && wkversion < 534 )	||
+			// MeeGo
+			( ua.indexOf( "MeeGo" ) > -1 && ua.indexOf( "NokiaBrowser/8.5.0" ) > -1 ) ) {
+			return false;
 		}
+
+		return true;
+	}
+
+	$.extend( $.support, {
+		cssTransitions: "WebKitTransitionEvent" in window ||
+			validStyle( 'transition', 'height 100ms linear', [ "Webkit", "Moz", "" ] ) &&
+			!$.mobile.browser.oldIE && !opera,
+
+		// Note, Chrome for iOS has an extremely quirky implementation of popstate.
+		// We've chosen to take the shortest path to a bug fix here for issue #5426
+		// See the following link for information about the regex chosen
+		// https://developers.google.com/chrome/mobile/docs/user-agent#chrome_for_ios_user-agent
+		pushState: "pushState" in history &&
+			"replaceState" in history &&
+			// When running inside a FF iframe, calling replaceState causes an error
+			!( window.navigator.userAgent.indexOf( "Firefox" ) >= 0 && window.top !== window ) &&
+			( window.navigator.userAgent.search(/CriOS/) === -1 ),
+
+		mediaquery: $.mobile.media( "only all" ),
+		cssPseudoElement: !!propExists( "content" ),
+		touchOverflow: !!propExists( "overflowScrolling" ),
+		cssTransform3d: transform3dTest(),
+		boxShadow: !!propExists( "boxShadow" ) && !bb,
+		fixedPosition: fixedPosition(),
+		scrollTop: ("pageXOffset" in window ||
+			"scrollTop" in document.documentElement ||
+			"scrollTop" in fakeBody[ 0 ]) && !webos && !operamini,
+
+		dynamicBaseTag: true, // ##### MODIFIED BY SAP - Removed base tag support check function, because this function leads to CSP violations in some browsers.
+		cssPointerEvents: cssPointerEventsTest(),
+		boundingRect: boundingRect()
+	});
+
+	fakeBody.remove();
+
+
+	// $.mobile.ajaxBlacklist is used to override ajaxEnabled on platforms that have known conflicts with hash history updates (BB5, Symbian)
+	// or that generally work better browsing in regular http for full page refreshes (Opera Mini)
+	// Note: This detection below is used as a last resort.
+	// We recommend only using these detection methods when all other more reliable/forward-looking approaches are not possible
+	var nokiaLTE7_3 = (function() {
+
+		var ua = window.navigator.userAgent;
+
+		//The following is an attempt to match Nokia browsers that are running Symbian/s60, with webkit, version 7.3 or older
+		return ua.indexOf( "Nokia" ) > -1 &&
+				( ua.indexOf( "Symbian/3" ) > -1 || ua.indexOf( "Series60/5" ) > -1 ) &&
+				ua.indexOf( "AppleWebKit" ) > -1 &&
+				ua.match( /(BrowserNG|NokiaBrowser)\/7\.[0-3]/ );
+	})();
+
+	// Support conditions that must be met in order to proceed
+	// default enhanced qualifications are media query support OR IE 7+
+
+	$.mobile.gradeA = function() {
+		return ( $.support.mediaquery || $.mobile.browser.oldIE && $.mobile.browser.oldIE >= 7 ) && ( $.support.boundingRect || $.fn.jquery.match(/1\.[0-7+]\.[0-9+]?/) !== null );
 	};
-})( jQuery );
 
+	$.mobile.ajaxBlacklist =
+				// BlackBerry browsers, pre-webkit
+				window.blackberry && !window.WebKitPoint ||
+				// Opera Mini
+				operamini ||
+				// Symbian webkits pre 7.3
+				nokiaLTE7_3;
 
+	// Lastly, this workaround is the only way we've found so far to get pre 7.3 Symbian webkit devices
+	// to render the stylesheets when they're referenced before this script, as we'd recommend doing.
+	// This simply reappends the CSS in place, which for some reason makes it apply
+	if ( nokiaLTE7_3 ) {
+		$(function() {
+			$( "head link[rel='stylesheet']" ).attr( "rel", "alternate stylesheet" ).attr( "rel", "stylesheet" );
+		});
+	}
 
-	// throttled resize event
-	(function( $ ) {
-		$.event.special.throttledresize = {
-			setup: function() {
-				// MODIFIED BY SAP: replace deprecated API .bind -> .on
-				$( this ).on( "resize", handler );
-			},
-			teardown: function() {
-				// MODIFIED BY SAP: replace deprecated API .unbind -> .off
-				$( this ).off( "resize", handler );
-			}
-		};
+	// For ruling out shadows via css
+	if ( !$.support.boxShadow ) {
+		$( "html" ).addClass( "ui-mobile-nosupport-boxshadow" );
+	}
 
-		var throttle = 250,
-			handler = function() {
-				curr = ( new Date() ).getTime();
-				diff = curr - lastCall;
-
-				if ( diff >= throttle ) {
-
-					lastCall = curr;
-					$( this ).trigger( "throttledresize" );
-
-				} else {
-
-					if ( heldCall ) {
-						clearTimeout( heldCall );
-					}
-
-					// Promise a held call will still execute
-					heldCall = setTimeout( handler, throttle - diff );
-				}
-			},
-			lastCall = 0,
-			heldCall,
-			curr,
-			diff;
 	})( jQuery );
 
-(function( $, window ) {
-	var win = $( window ),
-		event_name = "orientationchange",
-		special_event,
-		get_orientation,
-		last_orientation,
-		initial_orientation_is_landscape,
-		initial_orientation_is_default,
-		portrait_map = { "0": true, "180": true };
 
-	// It seems that some device/browser vendors use window.orientation values 0 and 180 to
-	// denote the "default" orientation. For iOS devices, and most other smart-phones tested,
-	// the default orientation is always "portrait", but in some Android and RIM based tablets,
-	// the default orientation is "landscape". The following code attempts to use the window
-	// dimensions to figure out what the current orientation is, and then makes adjustments
-	// to the to the portrait_map if necessary, so that we can properly decode the
-	// window.orientation value whenever get_orientation() is called.
-	//
-	// Note that we used to use a media query to figure out what the orientation the browser
-	// thinks it is in:
-	//
-	//     initial_orientation_is_landscape = $.mobile.media("all and (orientation: landscape)");
-	//
-	// but there was an iPhone/iPod Touch bug beginning with iOS 4.2, up through iOS 5.1,
-	// where the browser *ALWAYS* applied the landscape media query. This bug does not
-	// happen on iPad.
+	(function( $, undefined ) {
+		var $win = $.mobile.window, self, history;
 
-	if ( $.support.orientation ) {
+		$.event.special.navigate = self = {
+			bound: false,
 
-		// Check the window width and height to figure out what the current orientation
-		// of the device is at this moment. Note that we've initialized the portrait map
-		// values to 0 and 180, *AND* we purposely check for landscape so that if we guess
-		// wrong, , we default to the assumption that portrait is the default orientation.
-		// We use a threshold check below because on some platforms like iOS, the iPhone
-		// form-factor can report a larger width than height if the user turns on the
-		// developer console. The actual threshold value is somewhat arbitrary, we just
-		// need to make sure it is large enough to exclude the developer console case.
+			pushStateEnabled: true,
 
-		var ww = window.innerWidth || win.width(),
-			wh = window.innerHeight || win.height(),
-			landscape_threshold = 50;
+			originalEventName: undefined,
 
-		initial_orientation_is_landscape = ww > wh && ( ww - wh ) > landscape_threshold;
+			// If pushstate support is present and push state support is defined to
+			// be true on the mobile namespace.
+			isPushStateEnabled: function() {
+				return $.support.pushState &&
+					$.mobile.pushStateEnabled === true &&
+					this.isHashChangeEnabled();
+			},
 
+			// !! assumes mobile namespace is present
+			isHashChangeEnabled: function() {
+				return $.mobile.hashListeningEnabled === true;
+			},
 
-		// Now check to see if the current window.orientation is 0 or 180.
-		initial_orientation_is_default = portrait_map[ window.orientation ];
+			// TODO a lot of duplication between popstate and hashchange
+			popstate: function( event ) {
+				var newEvent = new $.Event( "navigate" ),
+					beforeNavigate = new $.Event( "beforenavigate" ),
+					state = event.originalEvent.state || {},
+					href = location.href;
 
-		// If the initial orientation is landscape, but window.orientation reports 0 or 180, *OR*
-		// if the initial orientation is portrait, but window.orientation reports 90 or -90, we
-		// need to flip our portrait_map values because landscape is the default orientation for
-		// this device/browser.
-		if ( ( initial_orientation_is_landscape && initial_orientation_is_default ) || ( !initial_orientation_is_landscape && !initial_orientation_is_default ) ) {
-			portrait_map = { "-90": true, "90": true };
-		}
-	}
+				$win.trigger( beforeNavigate );
 
-	$.event.special.orientationchange = $.extend( {}, $.event.special.orientationchange, {
-		setup: function() {
-			// If the event is supported natively, return false so that jQuery
-			// will bind to the event using DOM methods.
-			if ( $.support.orientation && !$.event.special.orientationchange.disabled ) {
-				return false;
+				if( beforeNavigate.isDefaultPrevented() ){
+					return;
+				}
+
+				if( event.historyState ){
+					$.extend(state, event.historyState);
+				}
+
+				// Make sure the original event is tracked for the end
+				// user to inspect incase they want to do something special
+				newEvent.originalEvent = event;
+
+				// NOTE we let the current stack unwind because any assignment to
+				//      location.hash will stop the world and run this event handler. By
+				//      doing this we create a similar behavior to hashchange on hash
+				//      assignment
+				setTimeout(function() {
+					$win.trigger( newEvent, {
+						state: state
+					});
+				}, 0);
+			},
+
+			hashchange: function( event, data ) {
+				var newEvent = new $.Event( "navigate" ),
+					beforeNavigate = new $.Event( "beforenavigate" );
+
+				$win.trigger( beforeNavigate );
+
+				if( beforeNavigate.isDefaultPrevented() ){
+					return;
+				}
+
+				// Make sure the original event is tracked for the end
+				// user to inspect incase they want to do something special
+				newEvent.originalEvent = event;
+
+				// Trigger the hashchange with state provided by the user
+				// that altered the hash
+				$win.trigger( newEvent, {
+					// Users that want to fully normalize the two events
+					// will need to do history management down the stack and
+					// add the state to the event before this binding is fired
+					// TODO consider allowing for the explicit addition of callbacks
+					//      to be fired before this value is set to avoid event timing issues
+					state: event.hashchangeState || {}
+				});
+			},
+
+			// TODO We really only want to set this up once
+			//      but I'm not clear if there's a beter way to achieve
+			//      this with the jQuery special event structure
+			setup: function( data, namespaces ) {
+				if( self.bound ) {
+					return;
+				}
+
+				self.bound = true;
+
+				if( self.isPushStateEnabled() ) {
+					self.originalEventName = "popstate";
+					// MODIFIED BY SAP: replace deprecated API .bind -> .on
+					$win.on( "popstate.navigate", self.popstate );
+				} else if ( self.isHashChangeEnabled() ){
+					self.originalEventName = "hashchange";
+					// MODIFIED BY SAP: replace deprecated API .bind -> .on
+					$win.on( "hashchange.navigate", self.hashchange );
+				}
 			}
-
-			// Get the current orientation to avoid initial double-triggering.
-			last_orientation = get_orientation();
-
-			// Because the orientationchange event doesn't exist, simulate the
-			// event by testing window dimensions on resize.
-			// MODIFIED BY SAP: replace deprecated API .bind -> .on
-			win.on( "throttledresize", handler );
-		},
-		teardown: function() {
-			// If the event is not supported natively, return false so that
-			// jQuery will unbind the event using DOM methods.
-			if ( $.support.orientation && !$.event.special.orientationchange.disabled ) {
-				return false;
-			}
-
-			// Because the orientationchange event doesn't exist, unbind the
-			// resize event handler.
-			// MODIFIED BY SAP: replace deprecated API .unbind -> .off
-			win.off( "throttledresize", handler );
-		},
-		add: function( handleObj ) {
-			// Save a reference to the bound event handler.
-			var old_handler = handleObj.handler;
+		};
+	})( jQuery );
 
 
-			handleObj.handler = function( event ) {
-				// Modify event object, adding the .orientation property.
-				event.orientation = get_orientation();
 
-				// Call the originally-bound event handler and return its result.
-				return old_handler.apply( this, arguments );
+		// throttled resize event
+		(function( $ ) {
+			$.event.special.throttledresize = {
+				setup: function() {
+					// MODIFIED BY SAP: replace deprecated API .bind -> .on
+					$( this ).on( "resize", handler );
+				},
+				teardown: function() {
+					// MODIFIED BY SAP: replace deprecated API .unbind -> .off
+					$( this ).off( "resize", handler );
+				}
 			};
-		}
-	});
 
-	// If the event is not supported natively, this handler will be bound to
-	// the window resize event to simulate the orientationchange event.
-	function handler() {
-		// Get the current orientation.
-		var orientation = get_orientation();
+			var throttle = 250,
+				handler = function() {
+					curr = ( new Date() ).getTime();
+					diff = curr - lastCall;
 
-		if ( orientation !== last_orientation ) {
-			// The orientation has changed, so trigger the orientationchange event.
-			last_orientation = orientation;
-			win.trigger( event_name );
-		}
-	}
+					if ( diff >= throttle ) {
 
-	// Get the current page orientation. This method is exposed publicly, should it
-	// be needed, as jQuery.event.special.orientationchange.orientation()
-	$.event.special.orientationchange.orientation = get_orientation = function() {
-		var isPortrait = true, elem = document.documentElement;
+						lastCall = curr;
+						$( this ).trigger( "throttledresize" );
 
-		// prefer window orientation to the calculation based on screensize as
-		// the actual screen resize takes place before or after the orientation change event
-		// has been fired depending on implementation (eg android 2.3 is before, iphone after).
-		// More testing is required to determine if a more reliable method of determining the new screensize
-		// is possible when orientationchange is fired. (eg, use media queries + element + opacity)
+					} else {
+
+						if ( heldCall ) {
+							clearTimeout( heldCall );
+						}
+
+						// Promise a held call will still execute
+						heldCall = setTimeout( handler, throttle - diff );
+					}
+				},
+				lastCall = 0,
+				heldCall,
+				curr,
+				diff;
+		})( jQuery );
+
+	(function( $, window ) {
+		var win = $( window ),
+			event_name = "orientationchange",
+			special_event,
+			get_orientation,
+			last_orientation,
+			initial_orientation_is_landscape,
+			initial_orientation_is_default,
+			portrait_map = { "0": true, "180": true };
+
+		// It seems that some device/browser vendors use window.orientation values 0 and 180 to
+		// denote the "default" orientation. For iOS devices, and most other smart-phones tested,
+		// the default orientation is always "portrait", but in some Android and RIM based tablets,
+		// the default orientation is "landscape". The following code attempts to use the window
+		// dimensions to figure out what the current orientation is, and then makes adjustments
+		// to the to the portrait_map if necessary, so that we can properly decode the
+		// window.orientation value whenever get_orientation() is called.
+		//
+		// Note that we used to use a media query to figure out what the orientation the browser
+		// thinks it is in:
+		//
+		//     initial_orientation_is_landscape = $.mobile.media("all and (orientation: landscape)");
+		//
+		// but there was an iPhone/iPod Touch bug beginning with iOS 4.2, up through iOS 5.1,
+		// where the browser *ALWAYS* applied the landscape media query. This bug does not
+		// happen on iPad.
+
 		if ( $.support.orientation ) {
-			// if the window orientation registers as 0 or 180 degrees report
-			// portrait, otherwise landscape
-			isPortrait = portrait_map[ window.orientation ];
-		} else {
-			isPortrait = elem && elem.clientWidth / elem.clientHeight < 1.1;
+
+			// Check the window width and height to figure out what the current orientation
+			// of the device is at this moment. Note that we've initialized the portrait map
+			// values to 0 and 180, *AND* we purposely check for landscape so that if we guess
+			// wrong, , we default to the assumption that portrait is the default orientation.
+			// We use a threshold check below because on some platforms like iOS, the iPhone
+			// form-factor can report a larger width than height if the user turns on the
+			// developer console. The actual threshold value is somewhat arbitrary, we just
+			// need to make sure it is large enough to exclude the developer console case.
+
+			var ww = window.innerWidth || win.width(),
+				wh = window.innerHeight || win.height(),
+				landscape_threshold = 50;
+
+			initial_orientation_is_landscape = ww > wh && ( ww - wh ) > landscape_threshold;
+
+
+			// Now check to see if the current window.orientation is 0 or 180.
+			initial_orientation_is_default = portrait_map[ window.orientation ];
+
+			// If the initial orientation is landscape, but window.orientation reports 0 or 180, *OR*
+			// if the initial orientation is portrait, but window.orientation reports 90 or -90, we
+			// need to flip our portrait_map values because landscape is the default orientation for
+			// this device/browser.
+			if ( ( initial_orientation_is_landscape && initial_orientation_is_default ) || ( !initial_orientation_is_landscape && !initial_orientation_is_default ) ) {
+				portrait_map = { "-90": true, "90": true };
+			}
 		}
 
-		return isPortrait ? "portrait" : "landscape";
+		$.event.special.orientationchange = $.extend( {}, $.event.special.orientationchange, {
+			setup: function() {
+				// If the event is supported natively, return false so that jQuery
+				// will bind to the event using DOM methods.
+				if ( $.support.orientation && !$.event.special.orientationchange.disabled ) {
+					return false;
+				}
+
+				// Get the current orientation to avoid initial double-triggering.
+				last_orientation = get_orientation();
+
+				// Because the orientationchange event doesn't exist, simulate the
+				// event by testing window dimensions on resize.
+				// MODIFIED BY SAP: replace deprecated API .bind -> .on
+				win.on( "throttledresize", handler );
+			},
+			teardown: function() {
+				// If the event is not supported natively, return false so that
+				// jQuery will unbind the event using DOM methods.
+				if ( $.support.orientation && !$.event.special.orientationchange.disabled ) {
+					return false;
+				}
+
+				// Because the orientationchange event doesn't exist, unbind the
+				// resize event handler.
+				// MODIFIED BY SAP: replace deprecated API .unbind -> .off
+				win.off( "throttledresize", handler );
+			},
+			add: function( handleObj ) {
+				// Save a reference to the bound event handler.
+				var old_handler = handleObj.handler;
+
+
+				handleObj.handler = function( event ) {
+					// Modify event object, adding the .orientation property.
+					event.orientation = get_orientation();
+
+					// Call the originally-bound event handler and return its result.
+					return old_handler.apply( this, arguments );
+				};
+			}
+		});
+
+		// If the event is not supported natively, this handler will be bound to
+		// the window resize event to simulate the orientationchange event.
+		function handler() {
+			// Get the current orientation.
+			var orientation = get_orientation();
+
+			if ( orientation !== last_orientation ) {
+				// The orientation has changed, so trigger the orientationchange event.
+				last_orientation = orientation;
+				win.trigger( event_name );
+			}
+		}
+
+		// Get the current page orientation. This method is exposed publicly, should it
+		// be needed, as jQuery.event.special.orientationchange.orientation()
+		$.event.special.orientationchange.orientation = get_orientation = function() {
+			var isPortrait = true, elem = document.documentElement;
+
+			// prefer window orientation to the calculation based on screensize as
+			// the actual screen resize takes place before or after the orientation change event
+			// has been fired depending on implementation (eg android 2.3 is before, iphone after).
+			// More testing is required to determine if a more reliable method of determining the new screensize
+			// is possible when orientationchange is fired. (eg, use media queries + element + opacity)
+			if ( $.support.orientation ) {
+				// if the window orientation registers as 0 or 180 degrees report
+				// portrait, otherwise landscape
+				isPortrait = portrait_map[ window.orientation ];
+			} else {
+				isPortrait = elem && elem.clientWidth / elem.clientHeight < 1.1;
+			}
+
+			return isPortrait ? "portrait" : "landscape";
+		};
+
+		$.fn[ event_name ] = function( fn ) {
+			// MODIFIED BY SAP: replace deprecated API .bind -> .on
+			return fn ? this.on( event_name, fn ) : this.trigger( event_name );
+		};
+
+		// jQuery < 1.8
+		if ( $.attrFn ) {
+			$.attrFn[ event_name ] = true;
+		}
+
+	}( jQuery, this ));
+
+
+	// This plugin is an experiment for abstracting away the touch and mouse
+	// events so that developers don't have to worry about which method of input
+	// the device their document is loaded on supports.
+	//
+	// The idea here is to allow the developer to register listeners for the
+	// basic mouse events, such as mousedown, mousemove, mouseup, and click,
+	// and the plugin will take care of registering the correct listeners
+	// behind the scenes to invoke the listener at the fastest possible time
+	// for that device, while still retaining the order of event firing in
+	// the traditional mouse environment, should multiple handlers be registered
+	// on the same element for different events.
+	//
+	// The current version exposes the following virtual events to jQuery bind methods:
+	// "vmouseover vmousedown vmousemove vmouseup vclick vmouseout vmousecancel"
+
+	(function( $, window, document, undefined ) {
+
+	var dataPropertyName = "virtualMouseBindings",
+		touchTargetPropertyName = "virtualTouchID",
+		virtualEventNames = "vmouseover vmousedown vmousemove vmouseup vclick vmouseout vmousecancel".split( " " ),
+		touchEventProps = "clientX clientY pageX pageY screenX screenY".split( " " ),
+		mouseHookProps = $.event.mouseHooks ? $.event.mouseHooks.props : [],
+		// ##### BEGIN: MODIFIED BY SAP
+		// Replace the usage of $.event.props because it's removed since jQuery version 3.x.x
+		// Code is partically taken from jquery.mobile/js/vmouse.js version 1.4.5
+		generalProps = ( "altKey bubbles cancelable ctrlKey currentTarget detail eventPhase " +
+			"metaKey relatedTarget shiftKey target timeStamp view which" ).split( " " ),
+		mouseEventProps = generalProps.concat( mouseHookProps ),
+		// ##### END: MODIFIED BY SAP
+		activeDocHandlers = {},
+		resetTimerID = 0,
+		startX = 0,
+		startY = 0,
+		didScroll = false,
+		clickBlockList = [],
+		blockMouseTriggers = false,
+		blockTouchTriggers = false,
+		eventCaptureSupported = "addEventListener" in document,
+		$document = $( document ),
+		nextTouchID = 1,
+		lastTouchID = 0, threshold;
+
+	$.vmouse = {
+		moveDistanceThreshold: 10,
+		clickDistanceThreshold: 10,
+		resetTimerDuration: 1500
 	};
 
-	$.fn[ event_name ] = function( fn ) {
-		// MODIFIED BY SAP: replace deprecated API .bind -> .on
-		return fn ? this.on( event_name, fn ) : this.trigger( event_name );
-	};
+	function getNativeEvent( event ) {
 
-	// jQuery < 1.8
-	if ( $.attrFn ) {
-		$.attrFn[ event_name ] = true;
+		while ( event && typeof event.originalEvent !== "undefined" ) {
+			event = event.originalEvent;
+		}
+		return event;
 	}
 
-}( jQuery, this ));
+	function createVirtualEvent( event, eventType ) {
 
+		var t = event.type,
+			oe, props, ne, prop, ct, touch, i, j, len;
 
-// This plugin is an experiment for abstracting away the touch and mouse
-// events so that developers don't have to worry about which method of input
-// the device their document is loaded on supports.
-//
-// The idea here is to allow the developer to register listeners for the
-// basic mouse events, such as mousedown, mousemove, mouseup, and click,
-// and the plugin will take care of registering the correct listeners
-// behind the scenes to invoke the listener at the fastest possible time
-// for that device, while still retaining the order of event firing in
-// the traditional mouse environment, should multiple handlers be registered
-// on the same element for different events.
-//
-// The current version exposes the following virtual events to jQuery bind methods:
-// "vmouseover vmousedown vmousemove vmouseup vclick vmouseout vmousecancel"
+		event = $.Event( event );
+		event.type = eventType;
 
-(function( $, window, document, undefined ) {
+		oe = event.originalEvent;
+		// ##### BEGIN: MODIFIED BY SAP
+		// Replace the usage of $.event.props because it's removed since jQuery version 3.x.x
+		// Code is partically taken from jquery.mobile/js/vmouse.js version 1.4.5
+		props = generalProps;
+		// ##### END: MODIFIED BY SAP
 
-var dataPropertyName = "virtualMouseBindings",
-	touchTargetPropertyName = "virtualTouchID",
-	virtualEventNames = "vmouseover vmousedown vmousemove vmouseup vclick vmouseout vmousecancel".split( " " ),
-	touchEventProps = "clientX clientY pageX pageY screenX screenY".split( " " ),
-	mouseHookProps = $.event.mouseHooks ? $.event.mouseHooks.props : [],
-	// ##### BEGIN: MODIFIED BY SAP
-	// Replace the usage of $.event.props because it's removed since jQuery version 3.x.x
-	// Code is partically taken from jquery.mobile/js/vmouse.js version 1.4.5
-	generalProps = ( "altKey bubbles cancelable ctrlKey currentTarget detail eventPhase " +
-		"metaKey relatedTarget shiftKey target timeStamp view which" ).split( " " ),
-	mouseEventProps = generalProps.concat( mouseHookProps ),
-	// ##### END: MODIFIED BY SAP
-	activeDocHandlers = {},
-	resetTimerID = 0,
-	startX = 0,
-	startY = 0,
-	didScroll = false,
-	clickBlockList = [],
-	blockMouseTriggers = false,
-	blockTouchTriggers = false,
-	eventCaptureSupported = "addEventListener" in document,
-	$document = $( document ),
-	nextTouchID = 1,
-	lastTouchID = 0, threshold;
+		// addresses separation of $.event.props in to $.event.mouseHook.props and Issue 3280
+		// https://github.com/jquery/jquery-mobile/issues/3280
+		if ( t.search( /^(mouse|click)/ ) > -1 ) {
+			props = mouseEventProps;
+		}
 
-$.vmouse = {
-	moveDistanceThreshold: 10,
-	clickDistanceThreshold: 10,
-	resetTimerDuration: 1500
-};
+		// copy original event properties over to the new event
+		// this would happen if we could call $.event.fix instead of $.Event
+		// but we don't have a way to force an event to be fixed multiple times
+		if ( oe ) {
+			for ( i = props.length, prop; i; ) {
+				prop = props[ --i ];
+				event[ prop ] = oe[ prop ];
+			}
+		}
 
-function getNativeEvent( event ) {
+		// make sure that if the mouse and click virtual events are generated
+		// without a .which one is defined
+		if ( t.search(/mouse(down|up)|click/) > -1 && !event.which ) {
+			event.which = 1;
+		}
 
-	while ( event && typeof event.originalEvent !== "undefined" ) {
-		event = event.originalEvent;
-	}
-	return event;
-}
+		if ( t.search(/^touch/) !== -1 ) {
+			ne = getNativeEvent( oe );
+			t = ne.touches;
+			ct = ne.changedTouches;
+			touch = ( t && t.length ) ? t[0] : ( ( ct && ct.length ) ? ct[ 0 ] : undefined );
 
-function createVirtualEvent( event, eventType ) {
+			if ( touch ) {
+				for ( j = 0, len = touchEventProps.length; j < len; j++) {
+					prop = touchEventProps[ j ];
+					event[ prop ] = touch[ prop ];
+				}
+			}
+		}
 
-	var t = event.type,
-		oe, props, ne, prop, ct, touch, i, j, len;
-
-	event = $.Event( event );
-	event.type = eventType;
-
-	oe = event.originalEvent;
-	// ##### BEGIN: MODIFIED BY SAP
-	// Replace the usage of $.event.props because it's removed since jQuery version 3.x.x
-	// Code is partically taken from jquery.mobile/js/vmouse.js version 1.4.5
-	props = generalProps;
-	// ##### END: MODIFIED BY SAP
-
-	// addresses separation of $.event.props in to $.event.mouseHook.props and Issue 3280
-	// https://github.com/jquery/jquery-mobile/issues/3280
-	if ( t.search( /^(mouse|click)/ ) > -1 ) {
-		props = mouseEventProps;
+		return event;
 	}
 
-	// copy original event properties over to the new event
-	// this would happen if we could call $.event.fix instead of $.Event
-	// but we don't have a way to force an event to be fixed multiple times
-	if ( oe ) {
-		for ( i = props.length, prop; i; ) {
-			prop = props[ --i ];
-			event[ prop ] = oe[ prop ];
+	function getVirtualBindingFlags( element ) {
+
+		var flags = {},
+			b, k;
+
+		while ( element ) {
+
+			b = $.data( element, dataPropertyName );
+
+			for (  k in b ) {
+				if ( b[ k ] ) {
+					flags[ k ] = flags.hasVirtualBinding = true;
+				}
+			}
+			element = element.parentNode;
+		}
+		return flags;
+	}
+
+	function getClosestElementWithVirtualBinding( element, eventType ) {
+		var b;
+		while ( element ) {
+
+			b = $.data( element, dataPropertyName );
+
+			if ( b && ( !eventType || b[ eventType ] ) ) {
+				return element;
+			}
+			element = element.parentNode;
+		}
+		return null;
+	}
+
+	function enableTouchBindings() {
+		blockTouchTriggers = false;
+	}
+
+	function disableTouchBindings() {
+		blockTouchTriggers = true;
+	}
+
+	function enableMouseBindings() {
+		lastTouchID = 0;
+		clickBlockList.length = 0;
+		blockMouseTriggers = false;
+
+		// When mouse bindings are enabled, our
+		// touch bindings are disabled.
+		disableTouchBindings();
+	}
+
+	function disableMouseBindings() {
+		// When mouse bindings are disabled, our
+		// touch bindings are enabled.
+		enableTouchBindings();
+	}
+
+	function startResetTimer() {
+		clearResetTimer();
+		resetTimerID = setTimeout( function() {
+			resetTimerID = 0;
+			enableMouseBindings();
+		}, $.vmouse.resetTimerDuration );
+	}
+
+	function clearResetTimer() {
+		if ( resetTimerID ) {
+			clearTimeout( resetTimerID );
+			resetTimerID = 0;
 		}
 	}
 
-	// make sure that if the mouse and click virtual events are generated
-	// without a .which one is defined
-	if ( t.search(/mouse(down|up)|click/) > -1 && !event.which ) {
-		event.which = 1;
+	function triggerVirtualEvent( eventType, event, flags ) {
+		var ve;
+
+		if ( ( flags && flags[ eventType ] ) ||
+					( !flags && getClosestElementWithVirtualBinding( event.target, eventType ) ) ) {
+
+			ve = createVirtualEvent( event, eventType );
+
+			$( event.target).trigger( ve );
+		}
+
+		return ve;
 	}
 
-	if ( t.search(/^touch/) !== -1 ) {
-		ne = getNativeEvent( oe );
-		t = ne.touches;
-		ct = ne.changedTouches;
-		touch = ( t && t.length ) ? t[0] : ( ( ct && ct.length ) ? ct[ 0 ] : undefined );
+	function mouseEventCallback( event ) {
+		var touchID = $.data( event.target, touchTargetPropertyName );
 
-		if ( touch ) {
-			for ( j = 0, len = touchEventProps.length; j < len; j++) {
-				prop = touchEventProps[ j ];
-				event[ prop ] = touch[ prop ];
+		if ( !blockMouseTriggers && ( !lastTouchID || lastTouchID !== touchID ) ){
+			var ve = triggerVirtualEvent( "v" + event.type, event );
+			if ( ve ) {
+				if ( ve.isDefaultPrevented() ) {
+					event.preventDefault();
+				}
+				if ( ve.isPropagationStopped() ) {
+					event.stopPropagation();
+				}
+				if ( ve.isImmediatePropagationStopped() ) {
+					event.stopImmediatePropagation();
+				}
 			}
 		}
 	}
 
-	return event;
-}
+	function handleTouchStart( event ) {
 
-function getVirtualBindingFlags( element ) {
+		var touches = getNativeEvent( event ).touches,
+			target, flags;
 
-	var flags = {},
-		b, k;
+		if ( touches && touches.length === 1 ) {
 
-	while ( element ) {
+			target = event.target;
+			flags = getVirtualBindingFlags( target );
 
-		b = $.data( element, dataPropertyName );
+			if ( flags.hasVirtualBinding ) {
 
-		for (  k in b ) {
-			if ( b[ k ] ) {
-				flags[ k ] = flags.hasVirtualBinding = true;
-			}
-		}
-		element = element.parentNode;
-	}
-	return flags;
-}
+				lastTouchID = nextTouchID++;
+				$.data( target, touchTargetPropertyName, lastTouchID );
 
-function getClosestElementWithVirtualBinding( element, eventType ) {
-	var b;
-	while ( element ) {
+				clearResetTimer();
 
-		b = $.data( element, dataPropertyName );
+				disableMouseBindings();
+				didScroll = false;
 
-		if ( b && ( !eventType || b[ eventType ] ) ) {
-			return element;
-		}
-		element = element.parentNode;
-	}
-	return null;
-}
+				var t = getNativeEvent( event ).touches[ 0 ];
+				startX = t.pageX;
+				startY = t.pageY;
 
-function enableTouchBindings() {
-	blockTouchTriggers = false;
-}
-
-function disableTouchBindings() {
-	blockTouchTriggers = true;
-}
-
-function enableMouseBindings() {
-	lastTouchID = 0;
-	clickBlockList.length = 0;
-	blockMouseTriggers = false;
-
-	// When mouse bindings are enabled, our
-	// touch bindings are disabled.
-	disableTouchBindings();
-}
-
-function disableMouseBindings() {
-	// When mouse bindings are disabled, our
-	// touch bindings are enabled.
-	enableTouchBindings();
-}
-
-function startResetTimer() {
-	clearResetTimer();
-	resetTimerID = setTimeout( function() {
-		resetTimerID = 0;
-		enableMouseBindings();
-	}, $.vmouse.resetTimerDuration );
-}
-
-function clearResetTimer() {
-	if ( resetTimerID ) {
-		clearTimeout( resetTimerID );
-		resetTimerID = 0;
-	}
-}
-
-function triggerVirtualEvent( eventType, event, flags ) {
-	var ve;
-
-	if ( ( flags && flags[ eventType ] ) ||
-				( !flags && getClosestElementWithVirtualBinding( event.target, eventType ) ) ) {
-
-		ve = createVirtualEvent( event, eventType );
-
-		$( event.target).trigger( ve );
-	}
-
-	return ve;
-}
-
-function mouseEventCallback( event ) {
-	var touchID = $.data( event.target, touchTargetPropertyName );
-
-	if ( !blockMouseTriggers && ( !lastTouchID || lastTouchID !== touchID ) ){
-		var ve = triggerVirtualEvent( "v" + event.type, event );
-		if ( ve ) {
-			if ( ve.isDefaultPrevented() ) {
-				event.preventDefault();
-			}
-			if ( ve.isPropagationStopped() ) {
-				event.stopPropagation();
-			}
-			if ( ve.isImmediatePropagationStopped() ) {
-				event.stopImmediatePropagation();
+				triggerVirtualEvent( "vmouseover", event, flags );
+				triggerVirtualEvent( "vmousedown", event, flags );
 			}
 		}
 	}
-}
 
-function handleTouchStart( event ) {
-
-	var touches = getNativeEvent( event ).touches,
-		target, flags;
-
-	if ( touches && touches.length === 1 ) {
-
-		target = event.target;
-		flags = getVirtualBindingFlags( target );
-
-		if ( flags.hasVirtualBinding ) {
-
-			lastTouchID = nextTouchID++;
-			$.data( target, touchTargetPropertyName, lastTouchID );
-
-			clearResetTimer();
-
-			disableMouseBindings();
-			didScroll = false;
-
-			var t = getNativeEvent( event ).touches[ 0 ];
-			startX = t.pageX;
-			startY = t.pageY;
-
-			triggerVirtualEvent( "vmouseover", event, flags );
-			triggerVirtualEvent( "vmousedown", event, flags );
+	function handleScroll( event ) {
+		if ( blockTouchTriggers ) {
+			return;
 		}
-	}
-}
 
-function handleScroll( event ) {
-	if ( blockTouchTriggers ) {
-		return;
-	}
+		if ( !didScroll ) {
+			triggerVirtualEvent( "vmousecancel", event, getVirtualBindingFlags( event.target ) );
+		}
 
-	if ( !didScroll ) {
-		triggerVirtualEvent( "vmousecancel", event, getVirtualBindingFlags( event.target ) );
+		didScroll = true;
+		startResetTimer();
 	}
 
-	didScroll = true;
-	startResetTimer();
-}
+	function handleTouchMove( event ) {
+		if ( blockTouchTriggers ) {
+			return;
+		}
 
-function handleTouchMove( event ) {
-	if ( blockTouchTriggers ) {
-		return;
+		var t = getNativeEvent( event ).touches[ 0 ],
+			didCancel = didScroll,
+			moveThreshold = $.vmouse.moveDistanceThreshold,
+			flags = getVirtualBindingFlags( event.target );
+
+			didScroll = didScroll ||
+				( Math.abs( t.pageX - startX ) > moveThreshold ||
+					Math.abs( t.pageY - startY ) > moveThreshold );
+
+
+		if ( didScroll && !didCancel ) {
+			triggerVirtualEvent( "vmousecancel", event, flags );
+		}
+
+		triggerVirtualEvent( "vmousemove", event, flags );
+		startResetTimer();
 	}
 
-	var t = getNativeEvent( event ).touches[ 0 ],
-		didCancel = didScroll,
-		moveThreshold = $.vmouse.moveDistanceThreshold,
-		flags = getVirtualBindingFlags( event.target );
+	function handleTouchEnd( event ) {
+		if ( blockTouchTriggers ) {
+			return;
+		}
 
-		didScroll = didScroll ||
-			( Math.abs( t.pageX - startX ) > moveThreshold ||
-				Math.abs( t.pageY - startY ) > moveThreshold );
+		disableTouchBindings();
 
+		var flags = getVirtualBindingFlags( event.target ),
+			t;
+		triggerVirtualEvent( "vmouseup", event, flags );
 
-	if ( didScroll && !didCancel ) {
-		triggerVirtualEvent( "vmousecancel", event, flags );
+		if ( !didScroll ) {
+			// MODIFIED BY SAP
+			// The ve variable is removed because the next if expression is changed
+			triggerVirtualEvent( "vclick", event, flags );
+
+			// MODIFIED BY SAP
+			// The next line was written as: if (ve && ve.isDefaultPrevented) originally from jQuery mobile
+			// We have done following changes to this line.
+			//
+			// 1. ve.isDefaultPrevented() replaced by $.support.touch: because calling prevent default breaks
+			// some native features from the browser, for example:
+			// 		On screen keyboard can't be opened on touch enabled device
+			//		Focused input can't get blurred by tapping outside the input
+			// Therefore we make the code within the if executed on mobile device where delayed mouse events
+			// are fired.
+			//
+			// 2. "ve" is removed: because when event.target is detached from DOM tree, "ve" is undefined and
+			// the following logic isn't executed on mobile device. If a DOM node is removed by listening to
+			// "touchend" or "tap" event, the click event is still dispatched to the DOM element which appears
+			// at the same position after the DOM deletion. For example, pressing the delete button in one
+			// ListItem deletes two list items at the end. Therefore we need to activate the code no matter if
+			// the event.target is currently detached from the DOM tree or not.
+			if ($.support.touch) {
+				// The target of the mouse events that follow the touchend
+				// event don't necessarily match the target used during the
+				// touch. This means we need to rely on coordinates for blocking
+				// any click that is generated.
+				t = getNativeEvent( event ).changedTouches[ 0 ];
+				clickBlockList.push({
+					touchID: lastTouchID,
+					x: t.clientX,
+					// MODIFIED BY SAP
+					// On mobile device, the entire UI may be shifted up after the on screen keyboard
+					// is open. The Y-axis value may be different between the touch event and the delayed
+					// mouse event. Therefore it's needed to take the window.scrollY which represents how
+					// far the window is shifted up into the calculation of y-axis value to make sure that
+					// the delayed mouse event can be correctly marked.
+					y: t.clientY + window.scrollY,
+					// MODIFIED BY SAP
+					// the touchend event target is needed by suppressing mousedown, mouseup, click event
+					target: event.target
+				});
+
+				// Prevent any mouse events that follow from triggering
+				// virtual event notifications.
+				blockMouseTriggers = true;
+			}
+		}
+		triggerVirtualEvent( "vmouseout", event, flags);
+		didScroll = false;
+
+		startResetTimer();
 	}
 
-	triggerVirtualEvent( "vmousemove", event, flags );
-	startResetTimer();
-}
+	function hasVirtualBindings( ele ) {
+		var bindings = $.data( ele, dataPropertyName ),
+			k;
 
-function handleTouchEnd( event ) {
-	if ( blockTouchTriggers ) {
-		return;
+		if ( bindings ) {
+			for ( k in bindings ) {
+				if ( bindings[ k ] ) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
-	disableTouchBindings();
+	function dummyMouseHandler() {}
 
-	var flags = getVirtualBindingFlags( event.target ),
-		t;
-	triggerVirtualEvent( "vmouseup", event, flags );
+	function getSpecialEventObject( eventType ) {
+		var realType = eventType.substr( 1 );
 
-	if ( !didScroll ) {
-		// MODIFIED BY SAP
-		// The ve variable is removed because the next if expression is changed
-		triggerVirtualEvent( "vclick", event, flags );
+		return {
+			setup: function( data, namespace ) {
+				// If this is the first virtual mouse binding for this element,
+				// add a bindings object to its data.
 
-		// MODIFIED BY SAP
-		// The next line was written as: if (ve && ve.isDefaultPrevented) originally from jQuery mobile
-		// We have done following changes to this line.
-		//
-		// 1. ve.isDefaultPrevented() replaced by $.support.touch: because calling prevent default breaks
-		// some native features from the browser, for example:
-		// 		On screen keyboard can't be opened on touch enabled device
-		//		Focused input can't get blurred by tapping outside the input
-		// Therefore we make the code within the if executed on mobile device where delayed mouse events
-		// are fired.
-		//
-		// 2. "ve" is removed: because when event.target is detached from DOM tree, "ve" is undefined and
-		// the following logic isn't executed on mobile device. If a DOM node is removed by listening to
-		// "touchend" or "tap" event, the click event is still dispatched to the DOM element which appears
-		// at the same position after the DOM deletion. For example, pressing the delete button in one
-		// ListItem deletes two list items at the end. Therefore we need to activate the code no matter if
-		// the event.target is currently detached from the DOM tree or not.
-		if ($.support.touch) {
-			// The target of the mouse events that follow the touchend
-			// event don't necessarily match the target used during the
-			// touch. This means we need to rely on coordinates for blocking
-			// any click that is generated.
-			t = getNativeEvent( event ).changedTouches[ 0 ];
-			clickBlockList.push({
-				touchID: lastTouchID,
-				x: t.clientX,
+				if ( !hasVirtualBindings( this ) ) {
+					$.data( this, dataPropertyName, {} );
+				}
+
+				// If setup is called, we know it is the first binding for this
+				// eventType, so initialize the count for the eventType to zero.
+				var bindings = $.data( this, dataPropertyName );
+				bindings[ eventType ] = true;
+
+				// If this is the first virtual mouse event for this type,
+				// register a global handler on the document.
+
+				activeDocHandlers[ eventType ] = ( activeDocHandlers[ eventType ] || 0 ) + 1;
+
+				if ( activeDocHandlers[ eventType ] === 1 ) {
+					// MODIFIED BY SAP: replace deprecated API .bind -> .on
+					$document.on( realType, mouseEventCallback );
+				}
+
+				// Some browsers, like Opera Mini, won't dispatch mouse/click events
+				// for elements unless they actually have handlers registered on them.
+				// To get around this, we register dummy handlers on the elements.
+
+				// MODIFIED BY SAP: replace deprecated API .bind -> .on
+				$( this ).on( realType, dummyMouseHandler );
+
+				// For now, if event capture is not supported, we rely on mouse handlers.
+				if ( eventCaptureSupported ) {
+					// If this is the first virtual mouse binding for the document,
+					// register our touchstart handler on the document.
+
+					activeDocHandlers[ "touchstart" ] = ( activeDocHandlers[ "touchstart" ] || 0) + 1;
+
+					if ( activeDocHandlers[ "touchstart" ] === 1 ) {
+						// MODIFIED BY SAP: replace deprecated API .bind -> .on
+						$document.on( "touchstart", handleTouchStart )
+							.on( "touchend", handleTouchEnd )
+
+							// On touch platforms, touching the screen and then dragging your finger
+							// causes the window content to scroll after some distance threshold is
+							// exceeded. On these platforms, a scroll prevents a click event from being
+							// dispatched, and on some platforms, even the touchend is suppressed. To
+							// mimic the suppression of the click event, we need to watch for a scroll
+							// event. Unfortunately, some platforms like iOS don't dispatch scroll
+							// events until *AFTER* the user lifts their finger (touchend). This means
+							// we need to watch both scroll and touchmove events to figure out whether
+							// or not a scroll happenens before the touchend event is fired.
+
+							// MODIFIED BY SAP: replace deprecated API .bind -> .on
+							.on( "touchmove", handleTouchMove );
+						//TODO: investigate and find out why tapping on listitem triggers a scroll event
+						// which prevents the tap event from being fired.
+						// MODIFIED BY SAP: replace deprecated API .bind -> .on
+	//						.on( "scroll", handleScroll );
+					}
+				}
+			},
+
+			teardown: function( data, namespace ) {
+				// If this is the last virtual binding for this eventType,
+				// remove its global handler from the document.
+
+				--activeDocHandlers[ eventType ];
+
+				if ( !activeDocHandlers[ eventType ] ) {
+					// MODIFIED BY SAP: replace deprecated API .unbind -> .off
+					$document.off( realType, mouseEventCallback );
+				}
+
+				if ( eventCaptureSupported ) {
+					// If this is the last virtual mouse binding in existence,
+					// remove our document touchstart listener.
+
+					--activeDocHandlers[ "touchstart" ];
+
+					if ( !activeDocHandlers[ "touchstart" ] ) {
+						// MODIFIED BY SAP: replace deprecated API .unbind -> .off
+						$document.off( "touchstart", handleTouchStart )
+							.off( "touchmove", handleTouchMove )
+							.off( "touchend", handleTouchEnd )
+							.off( "scroll", handleScroll );
+					}
+				}
+
+				var $this = $( this ),
+					bindings = $.data( this, dataPropertyName );
+
+				// teardown may be called when an element was
+				// removed from the DOM. If this is the case,
+				// jQuery core may have already stripped the element
+				// of any data bindings so we need to check it before
+				// using it.
+				if ( bindings ) {
+					bindings[ eventType ] = false;
+				}
+
+				// Unregister the dummy event handler.
+
+				// MODIFIED BY SAP: replace deprecated API .unbind -> .off
+				$this.off( realType, dummyMouseHandler );
+
+				// If this is the last virtual mouse binding on the
+				// element, remove the binding data from the element.
+
+				if ( !hasVirtualBindings( this ) ) {
+					$this.removeData( dataPropertyName );
+				}
+			}
+		};
+	}
+
+	// Expose our custom events to the jQuery bind/unbind mechanism.
+
+	for ( var i = 0; i < virtualEventNames.length; i++ ) {
+		$.event.special[ virtualEventNames[ i ] ] = getSpecialEventObject( virtualEventNames[ i ] );
+	}
+
+	// Add a capture click handler to block clicks.
+	// Note that we require event capture support for this so if the device
+	// doesn't support it, we punt for now and rely solely on mouse events.
+	if ( eventCaptureSupported ) {
+		function suppressEvent ( e ) {
+			var cnt = clickBlockList.length,
+				target = e.target,
+				x, y, ele, i, o, touchID;
+
+			if ( cnt ) {
+				x = e.clientX;
 				// MODIFIED BY SAP
 				// On mobile device, the entire UI may be shifted up after the on screen keyboard
 				// is open. The Y-axis value may be different between the touch event and the delayed
 				// mouse event. Therefore it's needed to take the window.scrollY which represents how
 				// far the window is shifted up into the calculation of y-axis value to make sure that
 				// the delayed mouse event can be correctly marked.
-				y: t.clientY + window.scrollY,
-				// MODIFIED BY SAP
-				// the touchend event target is needed by suppressing mousedown, mouseup, click event
-				target: event.target
-			});
+				y = e.clientY + window.scrollY;
+				threshold = $.vmouse.clickDistanceThreshold;
 
-			// Prevent any mouse events that follow from triggering
-			// virtual event notifications.
-			blockMouseTriggers = true;
-		}
-	}
-	triggerVirtualEvent( "vmouseout", event, flags);
-	didScroll = false;
+				// The idea here is to run through the clickBlockList to see if
+				// the current click event is in the proximity of one of our
+				// vclick events that had preventDefault() called on it. If we find
+				// one, then we block the click.
+				//
+				// Why do we have to rely on proximity?
+				//
+				// Because the target of the touch event that triggered the vclick
+				// can be different from the target of the click event synthesized
+				// by the browser. The target of a mouse/click event that is syntehsized
+				// from a touch event seems to be implementation specific. For example,
+				// some browsers will fire mouse/click events for a link that is near
+				// a touch event, even though the target of the touchstart/touchend event
+				// says the user touched outside the link. Also, it seems that with most
+				// browsers, the target of the mouse/click event is not calculated until the
+				// time it is dispatched, so if you replace an element that you touched
+				// with another element, the target of the mouse/click will be the new
+				// element underneath that point.
+				//
+				// Aside from proximity, we also check to see if the target and any
+				// of its ancestors were the ones that blocked a click. This is necessary
+				// because of the strange mouse/click target calculation done in the
+				// Android 2.1 browser, where if you click on an element, and there is a
+				// mouse/click handler on one of its ancestors, the target will be the
+				// innermost child of the touched element, even if that child is no where
+				// near the point of touch.
 
-	startResetTimer();
-}
+				ele = target;
 
-function hasVirtualBindings( ele ) {
-	var bindings = $.data( ele, dataPropertyName ),
-		k;
+				while ( ele ) {
+					for ( i = 0; i < cnt; i++ ) {
+						o = clickBlockList[ i ];
+						touchID = 0;
 
-	if ( bindings ) {
-		for ( k in bindings ) {
-			if ( bindings[ k ] ) {
-				return true;
-			}
-		}
-	}
-	return false;
-}
+						if ( ( ele === target && Math.abs( o.x - x ) < threshold && Math.abs( o.y - y ) < threshold ) ||
+									$.data( ele, touchTargetPropertyName ) === o.touchID ) {
+							// XXX: We may want to consider removing matches from the block list
+							//      instead of waiting for the reset timer to fire.
 
-function dummyMouseHandler() {}
+							// MODIFIED BY SAP
+							// The simulated mouse events from mobile browser which are fired with 300ms delay are marked here.
+							//
+							// Those marked events can be suppressed in event handler to avoid handling the semantic identical
+							// events twice (like touchstart and mousedown).
+							//
+							// One exception is made for event marked with isSynthetic which is fired from the event simulation
+							if ( !e.isSynthetic ) {
+								e._sapui_delayedMouseEvent = true;
+							}
 
-function getSpecialEventObject( eventType ) {
-	var realType = eventType.substr( 1 );
+							// MODIFIED BY SAP
+							// The event is suppressed only when its target is different than the touchend event's target.
+							// This ensures that only the unnecessary events are suppressed.
+							if ( target !== o.target ) {
+								e.preventDefault();
+								e.stopPropagation();
+							}
 
-	return {
-		setup: function( data, namespace ) {
-			// If this is the first virtual mouse binding for this element,
-			// add a bindings object to its data.
+							// MODIFIED BY SAP
+							// Clear the block list after processing the click event
+							// When an 'input[type=checkbox]' is placed within a 'label' tag, the browser fires 2 click
+							// events, one on the 'label' element and the other on the 'input' element. The block list
+							// should be cleared after processing the first click event to allow the second click event to
+							// come through.
+							if ( e.type === "click" ) {
+								clickBlockList.length = 0;
+							}
 
-			if ( !hasVirtualBindings( this ) ) {
-				$.data( this, dataPropertyName, {} );
-			}
-
-			// If setup is called, we know it is the first binding for this
-			// eventType, so initialize the count for the eventType to zero.
-			var bindings = $.data( this, dataPropertyName );
-			bindings[ eventType ] = true;
-
-			// If this is the first virtual mouse event for this type,
-			// register a global handler on the document.
-
-			activeDocHandlers[ eventType ] = ( activeDocHandlers[ eventType ] || 0 ) + 1;
-
-			if ( activeDocHandlers[ eventType ] === 1 ) {
-				// MODIFIED BY SAP: replace deprecated API .bind -> .on
-				$document.on( realType, mouseEventCallback );
-			}
-
-			// Some browsers, like Opera Mini, won't dispatch mouse/click events
-			// for elements unless they actually have handlers registered on them.
-			// To get around this, we register dummy handlers on the elements.
-
-			// MODIFIED BY SAP: replace deprecated API .bind -> .on
-			$( this ).on( realType, dummyMouseHandler );
-
-			// For now, if event capture is not supported, we rely on mouse handlers.
-			if ( eventCaptureSupported ) {
-				// If this is the first virtual mouse binding for the document,
-				// register our touchstart handler on the document.
-
-				activeDocHandlers[ "touchstart" ] = ( activeDocHandlers[ "touchstart" ] || 0) + 1;
-
-				if ( activeDocHandlers[ "touchstart" ] === 1 ) {
-					// MODIFIED BY SAP: replace deprecated API .bind -> .on
-					$document.on( "touchstart", handleTouchStart )
-						.on( "touchend", handleTouchEnd )
-
-						// On touch platforms, touching the screen and then dragging your finger
-						// causes the window content to scroll after some distance threshold is
-						// exceeded. On these platforms, a scroll prevents a click event from being
-						// dispatched, and on some platforms, even the touchend is suppressed. To
-						// mimic the suppression of the click event, we need to watch for a scroll
-						// event. Unfortunately, some platforms like iOS don't dispatch scroll
-						// events until *AFTER* the user lifts their finger (touchend). This means
-						// we need to watch both scroll and touchmove events to figure out whether
-						// or not a scroll happenens before the touchend event is fired.
-
-						// MODIFIED BY SAP: replace deprecated API .bind -> .on
-						.on( "touchmove", handleTouchMove );
-					//TODO: investigate and find out why tapping on listitem triggers a scroll event
-					// which prevents the tap event from being fired.
-					// MODIFIED BY SAP: replace deprecated API .bind -> .on
-//						.on( "scroll", handleScroll );
-				}
-			}
-		},
-
-		teardown: function( data, namespace ) {
-			// If this is the last virtual binding for this eventType,
-			// remove its global handler from the document.
-
-			--activeDocHandlers[ eventType ];
-
-			if ( !activeDocHandlers[ eventType ] ) {
-				// MODIFIED BY SAP: replace deprecated API .unbind -> .off
-				$document.off( realType, mouseEventCallback );
-			}
-
-			if ( eventCaptureSupported ) {
-				// If this is the last virtual mouse binding in existence,
-				// remove our document touchstart listener.
-
-				--activeDocHandlers[ "touchstart" ];
-
-				if ( !activeDocHandlers[ "touchstart" ] ) {
-					// MODIFIED BY SAP: replace deprecated API .unbind -> .off
-					$document.off( "touchstart", handleTouchStart )
-						.off( "touchmove", handleTouchMove )
-						.off( "touchend", handleTouchEnd )
-						.off( "scroll", handleScroll );
-				}
-			}
-
-			var $this = $( this ),
-				bindings = $.data( this, dataPropertyName );
-
-			// teardown may be called when an element was
-			// removed from the DOM. If this is the case,
-			// jQuery core may have already stripped the element
-			// of any data bindings so we need to check it before
-			// using it.
-			if ( bindings ) {
-				bindings[ eventType ] = false;
-			}
-
-			// Unregister the dummy event handler.
-
-			// MODIFIED BY SAP: replace deprecated API .unbind -> .off
-			$this.off( realType, dummyMouseHandler );
-
-			// If this is the last virtual mouse binding on the
-			// element, remove the binding data from the element.
-
-			if ( !hasVirtualBindings( this ) ) {
-				$this.removeData( dataPropertyName );
-			}
-		}
-	};
-}
-
-// Expose our custom events to the jQuery bind/unbind mechanism.
-
-for ( var i = 0; i < virtualEventNames.length; i++ ) {
-	$.event.special[ virtualEventNames[ i ] ] = getSpecialEventObject( virtualEventNames[ i ] );
-}
-
-// Add a capture click handler to block clicks.
-// Note that we require event capture support for this so if the device
-// doesn't support it, we punt for now and rely solely on mouse events.
-if ( eventCaptureSupported ) {
-	function suppressEvent ( e ) {
-		var cnt = clickBlockList.length,
-			target = e.target,
-			x, y, ele, i, o, touchID;
-
-		if ( cnt ) {
-			x = e.clientX;
-			// MODIFIED BY SAP
-			// On mobile device, the entire UI may be shifted up after the on screen keyboard
-			// is open. The Y-axis value may be different between the touch event and the delayed
-			// mouse event. Therefore it's needed to take the window.scrollY which represents how
-			// far the window is shifted up into the calculation of y-axis value to make sure that
-			// the delayed mouse event can be correctly marked.
-			y = e.clientY + window.scrollY;
-			threshold = $.vmouse.clickDistanceThreshold;
-
-			// The idea here is to run through the clickBlockList to see if
-			// the current click event is in the proximity of one of our
-			// vclick events that had preventDefault() called on it. If we find
-			// one, then we block the click.
-			//
-			// Why do we have to rely on proximity?
-			//
-			// Because the target of the touch event that triggered the vclick
-			// can be different from the target of the click event synthesized
-			// by the browser. The target of a mouse/click event that is syntehsized
-			// from a touch event seems to be implementation specific. For example,
-			// some browsers will fire mouse/click events for a link that is near
-			// a touch event, even though the target of the touchstart/touchend event
-			// says the user touched outside the link. Also, it seems that with most
-			// browsers, the target of the mouse/click event is not calculated until the
-			// time it is dispatched, so if you replace an element that you touched
-			// with another element, the target of the mouse/click will be the new
-			// element underneath that point.
-			//
-			// Aside from proximity, we also check to see if the target and any
-			// of its ancestors were the ones that blocked a click. This is necessary
-			// because of the strange mouse/click target calculation done in the
-			// Android 2.1 browser, where if you click on an element, and there is a
-			// mouse/click handler on one of its ancestors, the target will be the
-			// innermost child of the touched element, even if that child is no where
-			// near the point of touch.
-
-			ele = target;
-
-			while ( ele ) {
-				for ( i = 0; i < cnt; i++ ) {
-					o = clickBlockList[ i ];
-					touchID = 0;
-
-					if ( ( ele === target && Math.abs( o.x - x ) < threshold && Math.abs( o.y - y ) < threshold ) ||
-								$.data( ele, touchTargetPropertyName ) === o.touchID ) {
-						// XXX: We may want to consider removing matches from the block list
-						//      instead of waiting for the reset timer to fire.
-
-						// MODIFIED BY SAP
-						// The simulated mouse events from mobile browser which are fired with 300ms delay are marked here.
-						//
-						// Those marked events can be suppressed in event handler to avoid handling the semantic identical
-						// events twice (like touchstart and mousedown).
-						//
-						// One exception is made for event marked with isSynthetic which is fired from the event simulation
-						if ( !e.isSynthetic ) {
-							e._sapui_delayedMouseEvent = true;
+							return;
 						}
-
-						// MODIFIED BY SAP
-						// The event is suppressed only when its target is different than the touchend event's target.
-						// This ensures that only the unnecessary events are suppressed.
-						if ( target !== o.target ) {
-							e.preventDefault();
-							e.stopPropagation();
-						}
-
-						// MODIFIED BY SAP
-						// Clear the block list after processing the click event
-						// When an 'input[type=checkbox]' is placed within a 'label' tag, the browser fires 2 click
-						// events, one on the 'label' element and the other on the 'input' element. The block list
-						// should be cleared after processing the first click event to allow the second click event to
-						// come through.
-						if ( e.type === "click" ) {
-							clickBlockList.length = 0;
-						}
-
-						return;
 					}
+					ele = ele.parentNode;
 				}
-				ele = ele.parentNode;
 			}
 		}
-	}
 
-	// MODIFIED BY SAP
-	// In the original version, only the click event is suppressed.
-	// But this can't solve the issue that on screen keyboard is opened
-	// when clicking on the current page switches to an input DOM element
-	// on the same position. This keyboard opening is caused by mousedown
-	// and mouseup event which have delay reach on the underneath input.
-	// Thus the mousedown and mouseup events should also be suppressed.
-	//
-	// Moreover, mobile browsers, such as mobile Safari fires mouseover
-	// event with delay as well. This event may also be dispatched wrongly
-	// to the underneath element when the top element is removed in one of
-	// the touch* event handler.
-	//
-	// The mousedown, mouseup, mouseover and click events are suppressed
-	// only when their coordinate is proximately the same as the coordinate
-	// of recorded touch events and the mouse event's target is different
-	// than the target of the touch event.
-	document.addEventListener( "mousedown", suppressEvent, true );
-	document.addEventListener( "mouseup", suppressEvent, true );
-	document.addEventListener( "mouseover", suppressEvent, true );
-	document.addEventListener( "click", suppressEvent, true );
-}
-})( jQuery, window, document );
-
-
-(function( $, window, undefined ) {
-	var $document = $( document );
-
-	// add new event shortcuts
-	$.each( ( "touchstart touchmove touchend " +
-		"tap taphold " +
-		"swipe swipeleft swiperight " +
-		"scrollstart scrollstop" ).split( " " ), function( i, name ) {
-
-		$.fn[ name ] = function( fn ) {
-			// MODIFIED BY SAP: replace deprecated API .bind -> .on
-			return fn ? this.on( name, fn ) : this.trigger( name );
-		};
-
-		// jQuery < 1.8
-		if ( $.attrFn ) {
-			$.attrFn[ name ] = true;
-		}
-	});
-
-	var supportTouch = $.mobile.support.touch,
-		scrollEvent = "touchmove scroll",
-		touchStartEvent = supportTouch ? "touchstart" : "mousedown",
 		// MODIFIED BY SAP
-		// touchcancel has to be used because touchcancel is fired under some condition instead of
-		// touchend when runs on Windows 8 device.
+		// In the original version, only the click event is suppressed.
+		// But this can't solve the issue that on screen keyboard is opened
+		// when clicking on the current page switches to an input DOM element
+		// on the same position. This keyboard opening is caused by mousedown
+		// and mouseup event which have delay reach on the underneath input.
+		// Thus the mousedown and mouseup events should also be suppressed.
 		//
-		// dragstart is added because "mouseup" event isn't fired anymore once dragstart is fired
-		touchStopEvent = supportTouch ? "touchend touchcancel" : "mouseup dragstart",
-		touchMoveEvent = supportTouch ? "touchmove" : "mousemove";
-
-	function triggerCustomEvent( obj, eventType, event ) {
-		var originalType = event.type;
-		event.type = eventType;
-		$.event.dispatch.call( obj, event );
-		event.type = originalType;
+		// Moreover, mobile browsers, such as mobile Safari fires mouseover
+		// event with delay as well. This event may also be dispatched wrongly
+		// to the underneath element when the top element is removed in one of
+		// the touch* event handler.
+		//
+		// The mousedown, mouseup, mouseover and click events are suppressed
+		// only when their coordinate is proximately the same as the coordinate
+		// of recorded touch events and the mouse event's target is different
+		// than the target of the touch event.
+		document.addEventListener( "mousedown", suppressEvent, true );
+		document.addEventListener( "mouseup", suppressEvent, true );
+		document.addEventListener( "mouseover", suppressEvent, true );
+		document.addEventListener( "click", suppressEvent, true );
 	}
-
-	// also handles scrollstop
-	$.event.special.scrollstart = {
-
-		enabled: true,
-
-		setup: function() {
-
-			var thisObject = this,
-				$this = $( thisObject ),
-				scrolling,
-				timer;
-
-			function trigger( event, state ) {
-				scrolling = state;
-				triggerCustomEvent( thisObject, scrolling ? "scrollstart" : "scrollstop", event );
-			}
-
-			// iPhone triggers scroll after a small delay; use touchmove instead
-			// MODIFIED BY SAP: replace deprecated API .bind -> .on
-			$this.on( scrollEvent, function( event ) {
-
-				if ( !$.event.special.scrollstart.enabled ) {
-					return;
-				}
-
-				if ( !scrolling ) {
-					trigger( event, true );
-				}
-
-				clearTimeout( timer );
-				timer = setTimeout( function() {
-					trigger( event, false );
-				}, 50 );
-			});
-		}
-	};
-
-	// also handles taphold
-	$.event.special.tap = {
-		tapholdThreshold: 750,
-
-		setup: function() {
-			var thisObject = this,
-				$this = $( thisObject ),
-				// MODIFIED BY SAP: the variable declarations are moved out of the "mousedown" event handler because
-				// the handlers where the variables are used are moved out
-				mouseDownTarget,
-				mouseDownEvent,
-				timer;
-
-			// MODIFIED BY SAP: Workaround for an Edge browser issue which occurs with EdgeHTML 14 and higher.
-			// The root cause are inconsistent event targets of fired events, when a button is tapped.
-
-			/**
-			 * Detects whether edge browser special tap handling is necessary.
-			 *
-			 * Inconsistent event targets for the sap.m.Button control:
-			 * EdgeHTML v.| 14 | 15 | 16 | 17 |
-			 * ----------------------------------
-			 * mousedown  |   S|   S|   B|   S|
-			 * mouseup    |   B|   B|   B|   B|
-			 * click      |   S| S/B|   S| S/B|
-			 * ----------------------------------
-			 * S = SPAN, B = BUTTON
-			 *
-			 * @param {object} event either mouseup or click event.
-			 * @returns {boolean} Returns true, when a button was pressed in edge browser with inconsistent event targets.
-			 */
-			function buttonTappedInEdgeBrowser( event ) {
-				var eventTarget = event.target;
-				var browser = sap.ui.Device.browser;
-
-				return browser.edge && browser.version >= 14 &&
-					(eventTarget.tagName.toLowerCase() === "button" &&
-						eventTarget.contains(mouseDownTarget) ||
-						mouseDownTarget.tagName.toLowerCase() === "button" &&
-						mouseDownTarget.contains(eventTarget));
-			}
-
-			// MODIFIED BY SAP: the following event handlers are moved out of the "mousedown" event handler to make it
-			// possible to be deregistered in a later time point
-			function clearTapTimer() {
-				clearTimeout( timer );
-			}
-
-			function clearTapHandlers() {
-				clearTapTimer();
-
-				// MODIFIED BY SAP: remove the mark because the tap event runs to the end
-				$this.removeData("__tap_event_in_progress");
-
-				// MODIFIED BY SAP: replace deprecated API .unbind -> .off
-				$this.off( "vclick", clickHandler )
-					.off( "vmouseup", clearTapTimer );
-				$document.off( "vmousecancel", clearTapHandlers )
-				// MODIFIED BY SAP: deregister the function of clearing handlers from 'dragstart' event
-				// on document
-					.off( "dragstart", clearTapHandlers )
-				// MODIFIED BY SAP: deregister the function of clearing handlers from 'mouseup' event
-				// on document
-					.off( "vmouseup", checkAndClearTapHandlers );
-			}
-
-			// MODIFIED BY SAP: terminate the firing of 'tap' event if 'mouseup' event occurs
-			// out of the 'mousedown' target
-			function checkAndClearTapHandlers( mouseUpEvent ) {
-				// if the mouseup event occurs out of the origin target of the mousedown event,
-				// unbind all of the listeners
-				if (mouseUpEvent.target !== mouseDownTarget && !$.contains(mouseDownTarget, mouseUpEvent.target) && !buttonTappedInEdgeBrowser( mouseUpEvent )) {
-					clearTapHandlers();
-				}
-			}
-
-			function clickHandler( event ) {
-				clearTapHandlers();
-
-				// ONLY trigger a 'tap' event if the start target is
-				// the same as the stop target.
-				if ( mouseDownTarget === event.target || buttonTappedInEdgeBrowser( event )) {
-					triggerCustomEvent( thisObject, "tap", event );
-				}
-			}
+	})( jQuery, window, document );
 
 
-			// MODIFIED BY SAP: replace deprecated API .bind -> .on
-			$this.on( "vmousedown", function( event ) {
-				if ( event.which && event.which !== 1 ) {
-					// MODIFIED BY SAP: 'return false' is changed with 'return' to let the event
-					// still propagate to the parent DOMs.
-					return;
-				}
+	(function( $, window, undefined ) {
+		var $document = $( document );
 
-				mouseDownTarget = event.target;
-				mouseDownEvent = event.originalEvent;
+		// add new event shortcuts
+		$.each( ( "touchstart touchmove touchend " +
+			"tap taphold " +
+			"swipe swipeleft swiperight " +
+			"scrollstart scrollstop" ).split( " " ), function( i, name ) {
 
-				// MODIFIED BY SAP: if the previous event handlers aren't cleared due to missing "mouseup" event, first
-				// clear the event handlers
-				if ($this.data("__tap_event_in_progress")) {
-					clearTapHandlers();
-				}
-				// MODIFIED BY SAP: set the mark that the tap event is in progress
-				$this.data("__tap_event_in_progress", "X");
-
+			$.fn[ name ] = function( fn ) {
 				// MODIFIED BY SAP: replace deprecated API .bind -> .on
-				$this.on( "vmouseup", clearTapTimer )
-					.on( "vclick", clickHandler );
-				$document.on( "vmousecancel", clearTapHandlers )
-				// MODIFIED BY SAP: register the function of clearing handlers to 'dragstart' event
-				// on document, because no 'mouseup' and 'click' event is fired after 'dragstart'
-					.on( "dragstart", clearTapHandlers )
-				// MODIFIED BY SAP: register the function of clearing handlers to 'mouseup' event
-				// on document
-				// MODIFIED BY SAP: replace deprecated API .bind -> .on
-					.on( "vmouseup", checkAndClearTapHandlers );
+				return fn ? this.on( name, fn ) : this.trigger( name );
+			};
 
-				timer = setTimeout( function() {
-					// MODIFIED BY SAP: create the custom taphold event from the original event in order to preserve the properties
-					var oTapholdEvent = $.event.fix(mouseDownEvent);
-					oTapholdEvent.type = "taphold";
-					triggerCustomEvent( thisObject, "taphold", oTapholdEvent );
-				}, $.event.special.tap.tapholdThreshold );
-			});
-		}
-	};
-
-	// also handles swipeleft, swiperight
-	$.event.special.swipe = {
-		scrollSupressionThreshold: 30, // More than this horizontal displacement, and we will suppress scrolling.
-
-		durationThreshold: 1000, // More time than this, and it isn't a swipe.
-
-		horizontalDistanceThreshold: 30,  // Swipe horizontal displacement must be more than this.
-
-		verticalDistanceThreshold: 75,  // Swipe vertical displacement must be less than this.
-
-		start: function( event ) {
-			// MODIFIED BY SAP: if jQuery event is created programatically there's no originalEvent property. Therefore the existence of event.originalEvent needs to be checked.
-			var data = event.originalEvent && event.originalEvent.touches ?
-					event.originalEvent.touches[ 0 ] : event;
-			return {
-						time: ( new Date() ).getTime(),
-						coords: [ data.pageX, data.pageY ],
-						origin: $( event.target )
-					};
-		},
-
-		stop: function( event ) {
-			// MODIFIED BY SAP: if jQuery event is created programatically there's no originalEvent property. Therefore the existence of event.originalEvent needs to be checked.
-			var data = event.originalEvent && event.originalEvent.touches ?
-					event.originalEvent.touches[ 0 ] : event;
-			return {
-						time: ( new Date() ).getTime(),
-						coords: [ data.pageX, data.pageY ]
-					};
-		},
-
-		handleSwipe: function( start, stop ) {
-			if ( stop.time - start.time < $.event.special.swipe.durationThreshold &&
-				Math.abs( start.coords[ 0 ] - stop.coords[ 0 ] ) > $.event.special.swipe.horizontalDistanceThreshold &&
-				Math.abs( start.coords[ 1 ] - stop.coords[ 1 ] ) < $.event.special.swipe.verticalDistanceThreshold ) {
-
-				start.origin.trigger( "swipe" )
-					.trigger( start.coords[0] > stop.coords[ 0 ] ? "swipeleft" : "swiperight" );
+			// jQuery < 1.8
+			if ( $.attrFn ) {
+				$.attrFn[ name ] = true;
 			}
-		},
+		});
 
-		setup: function() {
-			var thisObject = this,
-				$this = $( thisObject );
+		var supportTouch = $.mobile.support.touch,
+			scrollEvent = "touchmove scroll",
+			touchStartEvent = supportTouch ? "touchstart" : "mousedown",
+			// MODIFIED BY SAP
+			// touchcancel has to be used because touchcancel is fired under some condition instead of
+			// touchend when runs on Windows 8 device.
+			//
+			// dragstart is added because "mouseup" event isn't fired anymore once dragstart is fired
+			touchStopEvent = supportTouch ? "touchend touchcancel" : "mouseup dragstart",
+			touchMoveEvent = supportTouch ? "touchmove" : "mousemove";
 
-			// MODIFIED BY SAP: replace deprecated API .bind -> .on
-			$this.on( touchStartEvent, function( event ) {
-				// MODIFIED BY SAP: mark touch events, so only the lowest UIArea within the hierarchy will create a swipe event
-				if (event.isMarked("swipestartHandled")) {
-					return;
+		function triggerCustomEvent( obj, eventType, event ) {
+			var originalType = event.type;
+			event.type = eventType;
+			$.event.dispatch.call( obj, event );
+			event.type = originalType;
+		}
+
+		// also handles scrollstop
+		$.event.special.scrollstart = {
+
+			enabled: true,
+
+			setup: function() {
+
+				var thisObject = this,
+					$this = $( thisObject ),
+					scrolling,
+					timer;
+
+				function trigger( event, state ) {
+					scrolling = state;
+					triggerCustomEvent( thisObject, scrolling ? "scrollstart" : "scrollstop", event );
 				}
-				event.setMarked("swipestartHandled");
 
-				var start = $.event.special.swipe.start( event ),
-					stop;
+				// iPhone triggers scroll after a small delay; use touchmove instead
+				// MODIFIED BY SAP: replace deprecated API .bind -> .on
+				$this.on( scrollEvent, function( event ) {
 
-				function moveHandler( event ) {
-					if ( !start ) {
+					if ( !$.event.special.scrollstart.enabled ) {
 						return;
 					}
 
-					stop = $.event.special.swipe.stop( event );
-
-					// prevent scrolling
-					// MODIFIED BY SAP: because calling 'preventDefault' breaks the text selection in all browsers, it's
-					// now checked whether there's text selected and 'preventDefault' is called only when no text is
-					// currently being selected.
-					if (event.cancelable && !window.getSelection().toString() && Math.abs( start.coords[ 0 ] - stop.coords[ 0 ] ) > $.event.special.swipe.scrollSupressionThreshold) {
-						event.preventDefault();
+					if ( !scrolling ) {
+						trigger( event, true );
 					}
-				}
 
-				// MODIFIED BY SAP
-				// Because touchcancel is used together with touchend, jQuery.fn.bind is used to replace
-				// jQuery.fn.one due to the fact that jQuery.fn.one doesn't work for multiple events.
-				function stopHandler( event ) {
-					// MODIFIED BY SAP: replace deprecated API .unbind -> .off
-					$this.off( touchMoveEvent, moveHandler )
-						.off( touchStopEvent, stopHandler );
-
-					if ( start && stop ) {
-						$.event.special.swipe.handleSwipe( start, stop );
-					}
-					start = stop = undefined;
-				}
-
-				// MODIFIED BY SAP: replace deprecated API .bind -> .on
-				$this.on( touchMoveEvent, moveHandler )
-					.on( touchStopEvent, stopHandler );
-			});
-		}
-	};
-	$.each({
-		scrollstop: "scrollstart",
-		taphold: "tap",
-		swipeleft: "swipe",
-		swiperight: "swipe"
-	}, function( event, sourceEvent ) {
-
-		$.event.special[ event ] = {
-			setup: function() {
-				// MODIFIED BY SAP: replace deprecated API .bind -> .on
-				$( this ).on( sourceEvent, $.noop );
+					clearTimeout( timer );
+					timer = setTimeout( function() {
+						trigger( event, false );
+					}, 50 );
+				});
 			}
 		};
-	});
 
-})( jQuery, this );
+		// also handles taphold
+		$.event.special.tap = {
+			tapholdThreshold: 750,
+
+			setup: function() {
+				var thisObject = this,
+					$this = $( thisObject ),
+					// MODIFIED BY SAP: the variable declarations are moved out of the "mousedown" event handler because
+					// the handlers where the variables are used are moved out
+					mouseDownTarget,
+					mouseDownEvent,
+					timer;
+
+				// MODIFIED BY SAP: Workaround for an Edge browser issue which occurs with EdgeHTML 14 and higher.
+				// The root cause are inconsistent event targets of fired events, when a button is tapped.
+
+				/**
+				 * Detects whether edge browser special tap handling is necessary.
+				 *
+				 * Inconsistent event targets for the sap.m.Button control:
+				 * EdgeHTML v.| 14 | 15 | 16 | 17 |
+				 * ----------------------------------
+				 * mousedown  |   S|   S|   B|   S|
+				 * mouseup    |   B|   B|   B|   B|
+				 * click      |   S| S/B|   S| S/B|
+				 * ----------------------------------
+				 * S = SPAN, B = BUTTON
+				 *
+				 * @param {object} event either mouseup or click event.
+				 * @returns {boolean} Returns true, when a button was pressed in edge browser with inconsistent event targets.
+				 */
+				function buttonTappedInEdgeBrowser( event ) {
+					var eventTarget = event.target;
+					var browser = sap.ui.Device.browser;
+
+					return browser.edge && browser.version >= 14 &&
+						(eventTarget.tagName.toLowerCase() === "button" &&
+							eventTarget.contains(mouseDownTarget) ||
+							mouseDownTarget.tagName.toLowerCase() === "button" &&
+							mouseDownTarget.contains(eventTarget));
+				}
+
+				// MODIFIED BY SAP: the following event handlers are moved out of the "mousedown" event handler to make it
+				// possible to be deregistered in a later time point
+				function clearTapTimer() {
+					clearTimeout( timer );
+				}
+
+				function clearTapHandlers() {
+					clearTapTimer();
+
+					// MODIFIED BY SAP: remove the mark because the tap event runs to the end
+					$this.removeData("__tap_event_in_progress");
+
+					// MODIFIED BY SAP: replace deprecated API .unbind -> .off
+					$this.off( "vclick", clickHandler )
+						.off( "vmouseup", clearTapTimer );
+					$document.off( "vmousecancel", clearTapHandlers )
+					// MODIFIED BY SAP: deregister the function of clearing handlers from 'dragstart' event
+					// on document
+						.off( "dragstart", clearTapHandlers )
+					// MODIFIED BY SAP: deregister the function of clearing handlers from 'mouseup' event
+					// on document
+						.off( "vmouseup", checkAndClearTapHandlers );
+				}
+
+				// MODIFIED BY SAP: terminate the firing of 'tap' event if 'mouseup' event occurs
+				// out of the 'mousedown' target
+				function checkAndClearTapHandlers( mouseUpEvent ) {
+					// if the mouseup event occurs out of the origin target of the mousedown event,
+					// unbind all of the listeners
+					if (mouseUpEvent.target !== mouseDownTarget && !$.contains(mouseDownTarget, mouseUpEvent.target) && !buttonTappedInEdgeBrowser( mouseUpEvent )) {
+						clearTapHandlers();
+					}
+				}
+
+				function clickHandler( event ) {
+					clearTapHandlers();
+
+					// ONLY trigger a 'tap' event if the start target is
+					// the same as the stop target.
+					if ( mouseDownTarget === event.target || buttonTappedInEdgeBrowser( event )) {
+						triggerCustomEvent( thisObject, "tap", event );
+					}
+				}
 
 
-}));
+				// MODIFIED BY SAP: replace deprecated API .bind -> .on
+				$this.on( "vmousedown", function( event ) {
+					if ( event.which && event.which !== 1 ) {
+						// MODIFIED BY SAP: 'return false' is changed with 'return' to let the event
+						// still propagate to the parent DOMs.
+						return;
+					}
+
+					mouseDownTarget = event.target;
+					mouseDownEvent = event.originalEvent;
+
+					// MODIFIED BY SAP: if the previous event handlers aren't cleared due to missing "mouseup" event, first
+					// clear the event handlers
+					if ($this.data("__tap_event_in_progress")) {
+						clearTapHandlers();
+					}
+					// MODIFIED BY SAP: set the mark that the tap event is in progress
+					$this.data("__tap_event_in_progress", "X");
+
+					// MODIFIED BY SAP: replace deprecated API .bind -> .on
+					$this.on( "vmouseup", clearTapTimer )
+						.on( "vclick", clickHandler );
+					$document.on( "vmousecancel", clearTapHandlers )
+					// MODIFIED BY SAP: register the function of clearing handlers to 'dragstart' event
+					// on document, because no 'mouseup' and 'click' event is fired after 'dragstart'
+						.on( "dragstart", clearTapHandlers )
+					// MODIFIED BY SAP: register the function of clearing handlers to 'mouseup' event
+					// on document
+					// MODIFIED BY SAP: replace deprecated API .bind -> .on
+						.on( "vmouseup", checkAndClearTapHandlers );
+
+					timer = setTimeout( function() {
+						// MODIFIED BY SAP: create the custom taphold event from the original event in order to preserve the properties
+						var oTapholdEvent = $.event.fix(mouseDownEvent);
+						oTapholdEvent.type = "taphold";
+						triggerCustomEvent( thisObject, "taphold", oTapholdEvent );
+					}, $.event.special.tap.tapholdThreshold );
+				});
+			}
+		};
+
+		// also handles swipeleft, swiperight
+		$.event.special.swipe = {
+			scrollSupressionThreshold: 30, // More than this horizontal displacement, and we will suppress scrolling.
+
+			durationThreshold: 1000, // More time than this, and it isn't a swipe.
+
+			horizontalDistanceThreshold: 30,  // Swipe horizontal displacement must be more than this.
+
+			verticalDistanceThreshold: 75,  // Swipe vertical displacement must be less than this.
+
+			start: function( event ) {
+				// MODIFIED BY SAP: if jQuery event is created programatically there's no originalEvent property. Therefore the existence of event.originalEvent needs to be checked.
+				var data = event.originalEvent && event.originalEvent.touches ?
+						event.originalEvent.touches[ 0 ] : event;
+				return {
+							time: ( new Date() ).getTime(),
+							coords: [ data.pageX, data.pageY ],
+							origin: $( event.target )
+						};
+			},
+
+			stop: function( event ) {
+				// MODIFIED BY SAP: if jQuery event is created programatically there's no originalEvent property. Therefore the existence of event.originalEvent needs to be checked.
+				var data = event.originalEvent && event.originalEvent.touches ?
+						event.originalEvent.touches[ 0 ] : event;
+				return {
+							time: ( new Date() ).getTime(),
+							coords: [ data.pageX, data.pageY ]
+						};
+			},
+
+			handleSwipe: function( start, stop ) {
+				if ( stop.time - start.time < $.event.special.swipe.durationThreshold &&
+					Math.abs( start.coords[ 0 ] - stop.coords[ 0 ] ) > $.event.special.swipe.horizontalDistanceThreshold &&
+					Math.abs( start.coords[ 1 ] - stop.coords[ 1 ] ) < $.event.special.swipe.verticalDistanceThreshold ) {
+
+					start.origin.trigger( "swipe" )
+						.trigger( start.coords[0] > stop.coords[ 0 ] ? "swipeleft" : "swiperight" );
+				}
+			},
+
+			setup: function() {
+				var thisObject = this,
+					$this = $( thisObject );
+
+				// MODIFIED BY SAP: replace deprecated API .bind -> .on
+				$this.on( touchStartEvent, function( event ) {
+					// MODIFIED BY SAP: mark touch events, so only the lowest UIArea within the hierarchy will create a swipe event
+					if (event.isMarked("swipestartHandled")) {
+						return;
+					}
+					event.setMarked("swipestartHandled");
+
+					var start = $.event.special.swipe.start( event ),
+						stop;
+
+					function moveHandler( event ) {
+						if ( !start ) {
+							return;
+						}
+
+						stop = $.event.special.swipe.stop( event );
+
+						// prevent scrolling
+						// MODIFIED BY SAP: because calling 'preventDefault' breaks the text selection in all browsers, it's
+						// now checked whether there's text selected and 'preventDefault' is called only when no text is
+						// currently being selected.
+						if (event.cancelable && !window.getSelection().toString() && Math.abs( start.coords[ 0 ] - stop.coords[ 0 ] ) > $.event.special.swipe.scrollSupressionThreshold) {
+							event.preventDefault();
+						}
+					}
+
+					// MODIFIED BY SAP
+					// Because touchcancel is used together with touchend, jQuery.fn.bind is used to replace
+					// jQuery.fn.one due to the fact that jQuery.fn.one doesn't work for multiple events.
+					function stopHandler( event ) {
+						// MODIFIED BY SAP: replace deprecated API .unbind -> .off
+						$this.off( touchMoveEvent, moveHandler )
+							.off( touchStopEvent, stopHandler );
+
+						if ( start && stop ) {
+							$.event.special.swipe.handleSwipe( start, stop );
+						}
+						start = stop = undefined;
+					}
+
+					// MODIFIED BY SAP: replace deprecated API .bind -> .on
+					$this.on( touchMoveEvent, moveHandler )
+						.on( touchStopEvent, stopHandler );
+				});
+			}
+		};
+		$.each({
+			scrollstop: "scrollstart",
+			taphold: "tap",
+			swipeleft: "swipe",
+			swiperight: "swipe"
+		}, function( event, sourceEvent ) {
+
+			$.event.special[ event ] = {
+				setup: function() {
+					// MODIFIED BY SAP: replace deprecated API .bind -> .on
+					$( this ).on( sourceEvent, $.noop );
+				}
+			};
+		});
+
+	})( jQuery, this );
+
+
+	}));
+	// ##### BEGIN: MODIFIED BY SAP
+	return jQuery;
+});
+// ##### END: MODIFIED BY SAP

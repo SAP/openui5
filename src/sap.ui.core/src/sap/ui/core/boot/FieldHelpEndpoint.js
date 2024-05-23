@@ -26,11 +26,11 @@ sap.ui.define([], function() {
 	}
 
 	const mActions = {
-		"sap.companion.services.StartCompanion": async function() {
+		"sap.companion.services.StartCompanion": async () => {
 			const FieldHelp = await loadFieldHelp();
 			FieldHelp.getInstance().activate(sendHotSpotUpdates);
 		},
-		"sap.companion.services.StopCompanion": async function() {
+		"sap.companion.services.StopCompanion": async () => {
 			const FieldHelp = await loadFieldHelp();
 			FieldHelp.getInstance().deactivate();
 		}
@@ -61,7 +61,7 @@ sap.ui.define([], function() {
 	});
 
 	return {
-		run: function() {
+		run: () => {
 			return Promise.resolve();
 		}
 	};

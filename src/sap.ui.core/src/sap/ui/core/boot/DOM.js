@@ -10,23 +10,53 @@
  */
 sap.ui.define([
 	"sap/base/Log",
-	'sap/ui/Device',
 	"sap/base/i18n/Localization",
+	"sap/ui/Device",
+	"sap/ui/core/AnimationMode",
+	"sap/ui/core/ControlBehavior",
 	"sap/ui/dom/_ready"
-], function(
+], (
 	Log,
-	Device,
 	Localization,
+	Device,
+	AnimationMode,
+	ControlBehavior,
 	_ready
-) {
+) => {
 	"use strict";
+
+	const pLoaded = new Promise((resolve, reject) => {
+		sap.ui.require(["sap/ui/core/util/_LocalizationHelper"], (_LocalizationHelper) => {
+			_LocalizationHelper.init();
+			resolve();
+		}, reject);
+	});
+
+	function _setupAnimation() {
+		function adaptAnimationMode() {
+			var html = document.documentElement;
+			var sAnimationMode = ControlBehavior.getAnimationMode();
+			html.dataset.sapUiAnimationMode = sAnimationMode;
+			var bAnimation = (sAnimationMode !== AnimationMode.minimal && sAnimationMode !== AnimationMode.none);
+			html.dataset.sapUiAnimation = bAnimation ? "on" : "off";
+			if (typeof jQuery !== "undefined") {
+				jQuery.fx.off = !bAnimation;
+			}
+		}
+		ControlBehavior.attachChange((oEvent) => {
+			if (oEvent.animationMode) {
+				adaptAnimationMode();
+			}
+		});
+		adaptAnimationMode();
+	}
 
 	/**
 	 * Set the document's dir property
 	 * @private
 	 */
 	function _setupContentDirection() {
-		var sDir = Localization.getRTL() ? "rtl" : "ltr";
+		const sDir = Localization.getRTL() ? "rtl" : "ltr";
 		document.documentElement.setAttribute("dir", sDir); // webkit does not allow setting document.dir before the body exists
 		Log.info("Content direction set to '" + sDir + "'", null, "sap.ui.core.boot");
 	}
@@ -37,9 +67,9 @@ sap.ui.define([
 	function _setupBrowser() {
 		//set the browser for CSS attribute selectors. do not move this to the onload function because Safari does not
 		//use the classes
-		var html = document.documentElement;
-		var b = Device.browser;
-		var id = b.name;
+		const html = document.documentElement;
+		const b = Device.browser;
+		let id = b.name;
 		if (id) {
 			if (id === b.BROWSER.SAFARI && b.mobile) {
 				id = "m" + id;
@@ -54,9 +84,9 @@ sap.ui.define([
 	 * @private
 	 */
 	function _setupOS() {
-		var html = document.documentElement;
+		const html = document.documentElement;
 		html.dataset.sapUiOs = Device.os.name + Device.os.versionStr;
-		var osCSS = null;
+		let osCSS = null;
 		if (Device.os.name === Device.os.OS.IOS) {
 			osCSS = "sap-ios";
 		} else if (Device.os.name === Device.os.OS.ANDROID) {
@@ -66,29 +96,19 @@ sap.ui.define([
 			html.classList.add(osCSS);
 		}
 	}
-	/**
-	 * Paint splash
-	 * @param {sap.ui.core.boot} boot The boot facade
-	 * @private
-	 */
-	function _splash(boot) {
-		var splash = document.createElement("div");
-        splash.textContent = "bootstrapping UI5...";
-        splash.style.color = "transparent";
-        document.body.append(splash);
-		boot.ready().then(function() {
-			document.body.removeChild(splash);
-		});
-	}
-	// adapt DOM when ready
+
+	// adapt DOM when document is ready
 	return {
-		run: function(boot) {
-			return _ready().then(function() {
-				_setupContentDirection();
-				_setupBrowser();
-				_setupOS();
-				_splash(boot);
-			});
+		run: () => {
+			return Promise.all([
+				_ready().then(() => {
+					_setupContentDirection();
+					_setupBrowser();
+					_setupOS();
+					_setupAnimation();
+				}),
+				pLoaded
+			]);
 		}
 	};
 });

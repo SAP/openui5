@@ -20,9 +20,10 @@ sap.ui.define([
 	"sap/base/util/isEmptyObject",
 	"sap/ui/core/Rendering",
 	"sap/ui/core/util/_LocalizationHelper",
-	'sap/ui/events/jquery/EventExtension',
 	"sap/ui/events/ControlEvents",
 	"sap/ui/events/F6Navigation",
+	"sap/ui/events/jquery/EventExtension",
+	"sap/ui/events/jquery/EventSimulation",
 	"sap/ui/thirdparty/jquery"
 ],
 	function(
@@ -42,12 +43,15 @@ sap.ui.define([
 		isEmptyObject,
 		Rendering,
 		_LocalizationHelper,
-		EventExtension,
 		ControlEvents,
 		F6Navigation,
+		EventExtension,
+		EventSimulation,
 		jQuery
 	) {
 		"use strict";
+
+		EventExtension.apply();
 
 		var oRenderLog = Rendering.getLogger();
 
@@ -55,8 +59,6 @@ sap.ui.define([
 		var oRenderManager = new RenderManager();
 
 		var oCore;
-
-		EventExtension.apply();
 
 		// Activate F6Navigation
 		jQuery(document).on("keydown", function(oEvent) {

@@ -14,6 +14,8 @@ sap.ui.define([
 ], function(isPlainObject, merge, URI) {
 	"use strict";
 
+	const mConfigLoaded = {};
+
 	// ---- helpers ----
 	/**
 	 * Searches for the first occurrence of an attribute with
@@ -295,8 +297,7 @@ sap.ui.define([
 	 * @returns {Promise<object>} A promise on the normalized configuration object.
 	 */
 	function getSuiteConfig(sTestSuite) {
-
-		return new Promise(function(resolve, reject) {
+		const pLoaded = mConfigLoaded[sTestSuite] || new Promise(function(resolve, reject) {
 			if ( !sTestSuite ) {
 				throw new TypeError("No test suite specified");
 			}
@@ -305,12 +306,13 @@ sap.ui.define([
 			}
 
 			sap.ui.require([sTestSuite], function(oSuiteConfig) {
+				mConfigLoaded[sTestSuite] = pLoaded;
 				resolve( mergeWithDefaults(oSuiteConfig, sTestSuite) );
 			}, function(oErr) {
 				reject(oErr);
 			});
 		});
-
+		return pLoaded;
 	}
 
 	function registerResourceRoots(oScriptTag) {

@@ -193,15 +193,10 @@ sap.ui.define([
 			}
 		});
 
-		// setTimeout is only relevant in single test execution
-		// Core is not attached to Applied event of ThemeManager in case the core did not call _getThemeManager yet
-		// but the ThemeManager was already loaded from somewhere else. Because attachEvent("Applied") by core is done within
-		// an (immediately resolved) promise, the handler will be attached async within the next stack execution
-		// Because the library loaded by includeLibraryTheme does not exist the Applied event is fired sync
-		setTimeout(function () {
-			assert.notOk(document.getElementById("sap-ui-theme-sap.ui.fakeLib"), "FakeLib should not be available because library theme was not included yet");
-			ThemeManager.includeLibraryTheme("sap.ui.fakeLib");
+		assert.notOk(document.getElementById("sap-ui-theme-sap.ui.fakeLib"), "FakeLib should not be available because library theme was not included yet");
+		ThemeManager.includeLibraryTheme("sap.ui.fakeLib");
 
+		themeApplied().then(function () {
 			assert.ok(oCheckThemeSpy.calledOnce, "checkThemeApplied was called once because a link tag was modified by '-qunit' suffix.");
 			assert.ok(document.getElementById("sap-ui-theme-sap.ui.fakeLib").href.endsWith("-qunit"), "Library CSS for 'sap.ui.fakeLib' should be added and end with '-qunit'");
 			oCheckThemeSpy.reset();
@@ -216,6 +211,7 @@ sap.ui.define([
 				done();
 			});
 		});
+
 	});
 
 

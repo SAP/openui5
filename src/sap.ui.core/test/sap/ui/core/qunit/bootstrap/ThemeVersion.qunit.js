@@ -9,7 +9,6 @@ sap.ui.define([
 
 	// use options and version info as determined by ThemeVersion.beforeBootstrap.qunit.js
 	var mOptions = window.oTestOptions;
-	var oVersionInfo = window.oVersionInfo;
 
 	// restore global fakeServer (for initial sap-ui-version.json request)
 	// QUnit test itself should use a fakeServer for each test
@@ -26,9 +25,9 @@ sap.ui.define([
 
 	QUnit.test("Implicit loading of the VersionInfo", function(assert) {
 		if (mOptions.versionedLibCss) {
-			assert.ok(oVersionInfo, "VersionInfo should have been loaded.");
+			assert.ok(window.oVersionInfo, "VersionInfo should have been loaded.");
 		} else {
-			assert.notOk(oVersionInfo, "VersionInfo should not have been loaded.");
+			assert.notOk(window.oVersionInfo, "VersionInfo should not have been loaded.");
 		}
 	});
 
@@ -49,7 +48,7 @@ sap.ui.define([
 		if (mOptions.versionedLibCss) {
 			assert.equal(
 				sHref,
-				sExpectedHref + "?version=" + sCoreVersion + "&sap-ui-dist-version=" + oVersionInfo.version,
+				sExpectedHref + "?version=" + sCoreVersion + "&sap-ui-dist-version=" + window.oVersionInfo.version,
 				"'sap.ui.core' library.css URL should contain version parameters."
 			);
 		} else {
@@ -76,7 +75,7 @@ sap.ui.define([
 
 		assert.equal(
 			sHref,
-			sExpectedHref + "?version=" + sCoreVersion + "&sap-ui-dist-version=" + oVersionInfo.version,
+			sExpectedHref + "?version=" + sCoreVersion + "&sap-ui-dist-version=" + window.oVersionInfo.version,
 			"'sap.ui.core' library.css URL should contain version parameters."
 		);
 	});
@@ -97,7 +96,7 @@ sap.ui.define([
 				if (mOptions.versionedLibCss) {
 					assert.equal(
 						sHref,
-						sExpectedHref + "?version=" + sCoreVersion + "&sap-ui-dist-version=" + oVersionInfo.version,
+						sExpectedHref + "?version=" + sCoreVersion + "&sap-ui-dist-version=" + window.oVersionInfo.version,
 						"'sap.ui.core' library.css URL should contain version parameters."
 					);
 				} else {
@@ -127,7 +126,7 @@ sap.ui.define([
 		if (mOptions.versionedLibCss) {
 			assert.equal(
 				sHref,
-				sExpectedHref + "?version=" + sCoreVersion + "&sap-ui-dist-version=" + oVersionInfo.version,
+				sExpectedHref + "?version=" + sCoreVersion + "&sap-ui-dist-version=" + window.oVersionInfo.version,
 				"'sap.ui.core' library-RTL.css URL should contain version parameters."
 			);
 		} else {

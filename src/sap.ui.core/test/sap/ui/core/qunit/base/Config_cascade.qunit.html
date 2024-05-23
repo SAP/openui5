@@ -8,15 +8,15 @@
 
 	<!-- Initialization -->
 	<script src="./config/GlobalConfigForCascade.js"></script>
-	<script src="../../../../../../resources/ui5loader.js"></script>
 	<script id="sap-ui-bootstrap"
-			src="../../../../../../resources/ui5loader-autoconfig.js"
-			data-sap-ui-async="true"
-			data-sap-ui-compat-version="edge"
+			src="../../../../../../resources/sap-ui-core.js"
 			data-sap-ui-param-a="bootstrap"
 			data-sap-ui-param-b="bootstrap"
 			data-sap-ui-param-c="bootstrap"
 			data-sap-ui-param-merged-object='{ "objectKeyBootstrap": "bootstrapObject" }'
+			data-sap-ui-async="true"
+			data-sap-ui-compat-version="edge"
+			data-sap-ui-on-init="fnInit"
 	></script>
 
 	<link href="../../../../../../resources/sap/ui/thirdparty/qunit-2.css" rel="stylesheet" media="screen">
@@ -26,7 +26,6 @@
 
 	<!-- Test functions -->
 	<script src="Config_cascade.qunit.js"></script>
-
 </head>
 <body>
 	<div id="qunit"></div>

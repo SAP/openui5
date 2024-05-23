@@ -1,0 +1,9 @@
+{
+	"extends": "sap/ui/core/boot/boot.json",
+	"config": [
+		"sap/ui/test/starter/QUnitConfigurationProvider"
+	],
+	"preBoot": [
+		"sap/ui/test/starter/startQUnit"
+	]
+}

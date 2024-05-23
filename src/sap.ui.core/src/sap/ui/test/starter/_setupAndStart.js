@@ -10,9 +10,14 @@
 /*global QUnit, sinon, */
 
 sap.ui.define([
+	"sap/base/config",
 	"sap/base/util/fetch",
 	"./_utils"
-], function(fetch, utils) {
+], (
+	config,
+	fetch,
+	utils
+) => {
 	"use strict";
 
 	function makeArray(arg) {
@@ -404,18 +409,14 @@ sap.ui.define([
 		// can be read by specific tests, e.g. tests in the generic test collection
 		window["sap-ui-test-config"] = oConfig.testConfig || {};
 
-		if ( oConfig.bootCore ) {
-			pTestEnv = pTestEnv.then(function() {
-				return new Promise(function(resolve, reject) {
-					sap.ui.require(["sap/ui/core/Core"], function(core) {
-						core.boot?.(); // method no longer exists with new bootstrap
-						core.ready(resolve);
-					}, reject);
-				});
-			});
-		}
+		const pReady = new Promise(function(resolve, reject) {
+			sap.ui.require(["sap/ui/core/Core"], function(Core) {
+				Core.boot?.(); // method no longer exists with new bootstrap
+				Core.ready(resolve);
+			}, reject);
+		});
 
-		return pTestEnv.then(function() {
+		pReady.then(function() {
 			if (oConfig.autostart) {
 				// first load the tests, then ensure DOM then start tests
 				return requireP( oConfig.module ). // Note: accepts single module or array
@@ -428,7 +429,11 @@ sap.ui.define([
 						// takes care of waiting for additional stylesheets e.g. caused by
 						// implicit loading of libs via test module dependencies.
 						// Note: config option is internally converted to lowercase
-						if (oConfig.ui5["xx-waitfortheme"] === "init") {
+						if (config.get({
+							name: 'sapUiXxWaitForTheme',
+							type: config.Type.String,
+							external: true
+						}).toLowerCase() === "init") {
 							return new Promise(function(resolve, reject) {
 								sap.ui.require(["sap/ui/qunit/utils/waitForThemeApplied"], resolve, reject);
 							}).then(function(waitForThemeApplied) {
@@ -448,22 +453,23 @@ sap.ui.define([
 				});
 			}
 		});
-
+		return pTestEnv;
 	}
 
-	utils.registerResourceRoots();
-
 	var oParams = new URLSearchParams(window.location.search),
-		sSuiteName = utils.getAttribute('data-sap-ui-testsuite') || oParams.get("testsuite"),
 		sTestName = utils.getAttribute('data-sap-ui-test') || oParams.get("test");
 
-	utils.getSuiteConfig(sSuiteName).then(function(oSuiteConfig) {
-		var oTestConfig = oSuiteConfig.tests[sTestName];
+	const pInit = Promise.resolve().then(() => {
+		const oTestConfig = config.get({
+			name: 'sapUiTestSuiteConfig',
+			type: config.Type.Object,
+			defaultValue: null
+		});
 		if (!oTestConfig) {
 			throw new TypeError("Invalid test name");
 		}
 
-		return initTestModule(oTestConfig);
+		return initTestModule(oTestConfig[sTestName]);
 	}).catch(function(oErr) {
 		console.error(oErr.stack || oErr); // eslint-disable-line no-console
 		if ( typeof QUnit !== "undefined" ) {
@@ -478,5 +484,10 @@ sap.ui.define([
 			});
 		}
 	});
+	return {
+		init: () => {
+			return pInit;
+		}
+	};
 
 });

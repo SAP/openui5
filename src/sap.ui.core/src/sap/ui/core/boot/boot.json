@@ -1,0 +1,25 @@
+{
+	"extends": "",
+	"config": [
+		"sap/ui/base/config/BootstrapConfigurationProvider",
+		"sap/ui/base/config/MetaConfigurationProvider",
+		"sap/ui/base/config/URLConfigurationProvider"
+	],
+	"preBoot": [
+		"sap/ui/core/boot/Polyfills",
+		"sap/ui/core/boot/Log",
+		"sap/ui/core/boot/Splash"
+	],
+	"boot": [
+		"sap/ui/core/boot/DOM",
+		"sap/ui/core/boot/FrameOptions",
+		"sap/ui/core/boot/AppCacheBuster",
+		"sap/ui/core/boot/Calendar",
+		"sap/ui/core/boot/Modules",
+		"sap/ui/core/boot/FieldHelpEndpoint",
+		"sap/ui/core/boot/Supportability",
+		"sap/ui/core/boot/Traces"
+	],
+	"postBoot": [
+	]
+}

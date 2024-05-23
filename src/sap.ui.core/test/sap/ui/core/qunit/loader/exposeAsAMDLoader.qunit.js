@@ -1,8 +1,8 @@
 /*global QUnit, requirejs */
-(function() {
-	"use strict";
+QUnit.config.autostart = false;
 
-	QUnit.config.autostart = false;
+globalThis.fnInit = () => {
+	"use strict";
 
 	QUnit.module("UI5loader expose AMD APIs while in debug mode");
 
@@ -42,4 +42,4 @@
 
 	QUnit.start();
 
-}());
+};

@@ -6,9 +6,7 @@ sap.ui.define([], function () {
 
 	QUnit.test("meta tag", function(assert) {
 		var FESR = sap.ui.require("sap/ui/performance/trace/FESR");
-		assert.ok(FESR, "FESR module has been loaded");
-		assert.notOk(FESR.getActive(), "FESR is not active");
-		assert.strictEqual(FESR.getBeaconURL(), undefined,  "Beacon URL has not been set");
+		assert.notOk(FESR, "FESR module has not been loaded");
 	});
 
 });

@@ -1242,11 +1242,13 @@ sap.ui.define([
 				version: oLib.version,
 				preloadedCss: getPreloadLibCss().indexOf(oLib.name) !== -1
 			};
-			aAllLibrariesRequiringCss.push(oLibThemingInfo);
-			// Don't reset ThemeManager in case CSS for current library is already preloaded
-			_getThemeManager(/* bClear = */ !oLibThemingInfo.preloadedCss).then(function(ThemeManager) {
-				ThemeManager._includeLibraryThemeAndEnsureThemeRoot(oLibThemingInfo);
+
+			// Don't reset ThemeManager in case CSS for current library is already preloadeds
+			oLibThemingInfo.started = _getThemeManager(/* bClear = */ !oLibThemingInfo.preloadedCss).then(function(ThemeManager) {
+				return ThemeManager._includeLibraryThemeAndEnsureThemeRoot(oLibThemingInfo);
 			});
+
+			aAllLibrariesRequiringCss.push(oLibThemingInfo);
 		}
 
 		// expose some legacy names

@@ -71,9 +71,7 @@
 			"ui5loader-autoconfig.js"
 		], function() {
 			// cascade 3: bootstrap (old) Core
-			sap.ui.require(["sap/ui/core/Core"], function(Core) {
-				Core.boot();
-			});
+			sap.ui.require(["sap/ui/core/Core"], function(Core) {});
 		});
 	});
 

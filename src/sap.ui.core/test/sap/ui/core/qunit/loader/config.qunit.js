@@ -22,15 +22,17 @@
 		aScripts.push(oScript);
 	}
 
-	function startUi5Loader(callback, mTagAttributes) {
-		appendScript("../../../../../../resources/ui5loader.js", function() {
-			appendScript("../../../../../../resources/ui5loader-autoconfig.js", function() {
+	function bootMinimalCore(callback, mTagAttributes) {
+		globalThis["sap-ui-config"] = Object.assign({}, globalThis["sap-ui-config"]);
+		globalThis["sap-ui-config"].bootManifest = "boot/minimalboot.json@/test-resources/sap/ui/core/qunit/loader/fixture/boot";
+		appendScript("../../../../../../resources/sap-ui-core.js", function() {
+			sap.ui.require("sap/ui/core/Core").ready(() => {
 				sap.ui.loader.config({
 					baseUrl: "./"
 				});
 				callback();
-			}, "sap-ui-bootstrap", mTagAttributes);
-		});
+			});
+		}, "sap-ui-bootstrap", mTagAttributes);
 	}
 
 	function removeUi5Loader() {
@@ -57,7 +59,7 @@
 
 	QUnit.test("read", function(assert){
 		var done = assert.async();
-		startUi5Loader(function() {
+		bootMinimalCore(function() {
 
 			assert.deepEqual(sap.ui.loader.config(), {async: true, amd: false, noConflict: true}, "Async, amdMode and noConflict flags should be returned with the expected values");
 
@@ -79,7 +81,7 @@
 
 	QUnit.test("Make sure 'baseUrl' config option gets processed before 'paths' config option", function(assert){
 		var done = assert.async();
-		startUi5Loader(function() {
+		bootMinimalCore(function() {
 
 			assert.deepEqual(sap.ui.loader.config(), {async: true, amd: false, noConflict: true}, "Async, amdMode and noConflict flags should be returned with the expected values");
 
@@ -104,7 +106,7 @@
 
 	QUnit.test("read (after setting noConflict)", function(assert){
 		var done = assert.async();
-		startUi5Loader(function() {
+		bootMinimalCore(function() {
 
 			assert.deepEqual(sap.ui.loader.config(), {async: true, amd: false, noConflict: true}, "Async, amdMode and noConflict flags should be returned with the expected values");
 
@@ -120,7 +122,7 @@
 
 	QUnit.test("async should be enabled after switching to amd mode", function(assert){
 		var done = assert.async();
-		startUi5Loader(function() {
+		bootMinimalCore(function() {
 
 			assert.deepEqual(sap.ui.loader.config(), {async: true, amd: false, noConflict: true}, "Async, amdMode and noConflict flags should be returned with the expected values");
 
@@ -136,7 +138,7 @@
 
 	QUnit.test("async should be still enabled after switching from amd mode back to non-amd mode", function(assert){
 		var done = assert.async();
-		startUi5Loader(function() {
+		bootMinimalCore(function() {
 
 			assert.deepEqual(sap.ui.loader.config(), {async: true, amd: false, noConflict: true}, "Async, amdMode and noConflict flags should be returned with the expected values");
 
@@ -159,7 +161,7 @@
 
 	QUnit.test("changing the ui5loader config from async to sync should throw an error", function(assert){
 		var done = assert.async();
-		startUi5Loader(function() {
+		bootMinimalCore(function() {
 
 			assert.deepEqual(sap.ui.loader.config(), {async: true, amd: false, noConflict: true}, "Async, amdMode and noConflict flags should be returned with the expected values");
 
@@ -183,7 +185,7 @@
 
 	QUnit.test("xx-async=true", function(assert){
 		var done = assert.async();
-		startUi5Loader(function() {
+		bootMinimalCore(function() {
 
 			assert.strictEqual(sap.ui.loader.config().async, true, "Async mode should have been activated by data-sap-ui-xx-async attribute");
 			done();
@@ -193,7 +195,7 @@
 
 	QUnit.test("async=true", function(assert){
 		var done = assert.async();
-		startUi5Loader(function() {
+		bootMinimalCore(function() {
 
 			assert.strictEqual(sap.ui.loader.config().async, true, "Async mode should have been activated by data-sap-ui-async attribute");
 			done();
@@ -214,7 +216,7 @@
 
 		assert.equal(typeof otherRequire, 'function', "[precondition] global require should be a function (other than UI5)");
 		assert.equal(typeof otherDefine, 'function', "[precondition] global define should be a function (other than UI5)");
-		startUi5Loader(function() {
+		bootMinimalCore(function() {
 			assert.strictEqual(window.require, otherRequire, "global require still should be the same function after starting the ui5loader");
 			assert.strictEqual(window.define, otherDefine, "global define still should be the same function after starting the ui5loader");
 			done();
@@ -229,7 +231,7 @@
 
 			requirejsLoadedModule = amdModule;
 
-			startUi5Loader(function useUi5Loader() {
+			bootMinimalCore(function useUi5Loader() {
 				var privateLoaderAPI = sap.ui.loader._;
 
 				// make ui5loader act as an AMD loader
@@ -274,12 +276,14 @@
 	QUnit.test("Expose loader via bootstrap attribute", function(assert) {
 		const done = assert.async(),
 			startCore = (callback, mTagAttributes) => {
-			appendScript("../../../../../../resources/sap-ui-core.js", function() {
-				sap.ui.loader.config({
-					baseUrl: "./"
-				});
-				callback();
-			}, "sap-ui-bootstrap", mTagAttributes);
+				appendScript("../../../../../../resources/sap-ui-core.js", function() {
+					sap.ui.require("sap/ui/core/Core").ready(() => {
+						sap.ui.loader.config({
+							baseUrl: "./"
+						});
+						callback();
+					});
+				}, "sap-ui-bootstrap", mTagAttributes);
 		};
 
 		assert.strictEqual(window.require, otherRequire, "global require should be the 'other' loader's implementation again");

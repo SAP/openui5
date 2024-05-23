@@ -97,7 +97,10 @@ sap.ui.define([
 				// use the more modern Core.ready, if available
 				const oFrameCore = oFrameWindow.sap.ui.require("sap/ui/core/Core");
 				if (typeof oFrameCore?.ready === "function") {
-					oFrameCore.ready(handleUi5Loaded);
+					//in debug mode the Promise rejects and we need a retry to get the new promise
+					oFrameCore.ready(handleUi5Loaded).catch(() => {
+						bRegisteredToUI5Init = false;
+					});
 					bRegisteredToUI5Init = true;
 					return bUi5Loaded;
 				}

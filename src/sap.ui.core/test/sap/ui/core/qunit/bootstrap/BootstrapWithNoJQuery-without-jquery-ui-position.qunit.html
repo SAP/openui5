@@ -6,10 +6,11 @@
 		<script src="../../shared-config.js"></script>
 
 		<!-- nojQuery bootstrap code starts here -->
-		<script src="../../../../../../resources/sap/ui/thirdparty/jquery.js"></script>
+		<script src="fixture/jquery-fake.js"></script>
 		<script src="BootstrapWithNoJQuery.beforeBootstrap.qunit.js"></script>
 		<script id="sap-ui-bootstrap"
 				src="../../../../../../resources/sap-ui-core-nojQuery.js"
+				data-sap-ui-libs="sap.ui.core"
 				data-sap-ui-async="true"
 				data-sap-ui-compat-version="edge"
 				data-sap-ui-libs="sap.m,sap.ui.layout"
@@ -22,7 +23,7 @@
 		<script src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script src="../../../../../../resources/sap/ui/qunit/qunit-coverage-istanbul.js" data-cover-flags="branchTracking">
 		</script>
-		<script src="BootstrapWithNoJQuery.qunit.js"></script>
+		<script src="BootstrapWithNoJQuery-without-jquery-ui-position.qunit.js"></script>
 	</head>
 	<body>
 		<div id="qunit"></div>

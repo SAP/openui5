@@ -77,7 +77,7 @@
 				"ui5loader-autoconfig.js"
 			], function() {
 				// cascade 4: bootstrap the test
-				sap.ui.require(["sap/ui/test/starter/_setupAndStart"]);
+				sap.ui.require(["sap/ui/test/starter/_runQUnit"]);
 			});
 		});
 	});

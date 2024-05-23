@@ -100,8 +100,8 @@ sap.ui.define([
 		return sUrl;
 	};
 
-	// internal registration function (with SyncPoint usage)
-	var fnRegister = function(sBaseUrl, oSyncPoint) {
+	// internal registration function (with Deferred usage)
+	var fnRegister = function(sBaseUrl, pDeferred) {
 
 		// determine the index
 		var mIndex = oSession.index;
@@ -117,7 +117,7 @@ sap.ui.define([
 		if (Array.isArray(sBaseUrl) && !bBatch) {
 
 			sBaseUrl.forEach(function(sBaseUrlEntry) {
-				fnRegister(sBaseUrlEntry, oSyncPoint);
+				fnRegister(sBaseUrlEntry, pDeferred);
 			});
 
 		} else if (Array.isArray(sBaseUrl) && bBatch) {
@@ -234,22 +234,22 @@ sap.ui.define([
 				Log.info("AppCacheBuster index file injected for: \"" + sUrl + "\".");
 				fnSuccessCallback(mIndexInfo);
 			} else {
-				var bAsync = !bSync && !!oSyncPoint;
+				var bAsync = !bSync && !!pDeferred;
 
-				// use the syncpoint only during boot => otherwise the syncpoint
+				// use the Deferred only during boot => otherwise the Deferred
 				// is not given because during runtime the registration needs to
 				// be done synchronously.
 				if (bAsync) {
-					var iSyncPoint = oSyncPoint.startTask("load " + sUrl);
 					var fnSuccess = fnSuccessCallback, fnError = fnErrorCallback;
 					fnSuccessCallback = function(data) {
 						fnSuccess.apply(this, arguments);
-						oSyncPoint.finishTask(iSyncPoint);
+						pDeferred.
+						pDeferred.resolve();
 					};
 
 					fnErrorCallback = function() {
 						fnError.apply(this, arguments);
-						oSyncPoint.finishTask(iSyncPoint, false);
+						pDeferred.reject();
 					};
 				}
 
@@ -289,12 +289,12 @@ sap.ui.define([
 			 * Boots the AppCacheBuster by initializing and registering the
 			 * base URLs configured in the UI5 bootstrap.
 			 *
-			 * @param {Object} [oSyncPoint] the sync point which is used to chain the execution of the AppCacheBuster
 			 * @param {Object} [oConfig] the AppCacheBuster configuration
+			 * @param {sap.base.utils.Deferred} [pDeferred] the deferred which is used to chain the execution of the AppCacheBuster
 			 *
 			 * @private
 			 */
-			boot: function(oSyncPoint, oConfig) {
+			boot: function(oConfig, pDeferred) {
 				if (oConfig && oConfig.length > 0) {
 
 					// flag to activate the cachebuster
@@ -323,7 +323,7 @@ sap.ui.define([
 						AppCacheBuster.init();
 
 						// register the components
-						fnRegister(oConfig, oSyncPoint);
+						fnRegister(oConfig, pDeferred);
 
 					}
 

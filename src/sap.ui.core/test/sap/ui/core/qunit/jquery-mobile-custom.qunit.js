@@ -9,13 +9,14 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 		var done = assert.async();
 
 		// load and boot the core
-		sap.ui.require(["sap/ui/core/Core", "sap/ui/thirdparty/jquery"], function (Core, jQuery) {
+		sap.ui.require(["sap/ui/core/Core", "sap/ui/core/UIArea"], function (Core, UIArea) {
 			Core.ready().then(function () {
 				assert.ok(true, "Core should initialize after loading and booting it");
 
 				// its a touch device (tablet, hybrid)
 				assert.ok(Device.support.touch, "Device is recognized correctly as touch screen");
 
+				const jQuery = sap.ui.require("sap/ui/thirdparty/jquery");
 				// jQuery.mobile.support.touch should be overridden by Device.support.touch
 				assert.ok(jQuery.mobile.support.touch, "The 'ontouchend' event is available on the browser");
 

@@ -1,0 +1,5 @@
+{
+    "config": [
+		"sap/ui/base/config/BootstrapConfigurationProvider"
+	]
+}
