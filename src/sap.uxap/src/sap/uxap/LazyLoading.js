@@ -106,7 +106,7 @@ sap.ui.define([
 					clearTimeout(this._sLazyLoadingTimer);
 				}
 				this._sLazyLoadingTimer = null;
-				this.doLazyLoading();
+				this.doLazyLoading(iScrollTop);
 				return;
 			}
 
@@ -130,11 +130,11 @@ sap.ui.define([
 
 			//If there's no delayed lazy loading call, create a new one.
 			if (!this._sLazyLoadingTimer) {
-				this._sLazyLoadingTimer = setTimeout(this.doLazyLoading.bind(this), iDelay);
+				this._sLazyLoadingTimer = setTimeout(this.doLazyLoading.bind(this, iScrollTop), iDelay);
 			}
 		};
 
-		LazyLoading.prototype.doLazyLoading = function () {
+		LazyLoading.prototype.doLazyLoading = function (iScrollTopPosition) {
 			var oHeightParams = this._oObjectPageLayout._getHeightRelatedParameters(),
 				bIconTabBar = this._oObjectPageLayout.getUseIconTabBar(),
 				oSelectedSection = Element.getElementById(this._oObjectPageLayout.getSelectedSection()),
@@ -158,7 +158,7 @@ sap.ui.define([
 				- oHeightParams.iAnchorBarHeight              /* minus the part taken by the anchor bar */
 				- oHeightParams.iHeaderTitleHeightStickied    /* minus the part taken by the header title (mandatory) */
 			);
-			iScrollTop = oHeightParams.iScrollTop;
+			iScrollTop = iScrollTopPosition || oHeightParams.iScrollTop;
 
 			//we consider that the scroll is still ongoing if:
 			//   - a scroll event has been received for less than half of the LAZY_LOADING_DELAY (100 ms)
