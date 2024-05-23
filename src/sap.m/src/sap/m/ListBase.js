@@ -1061,7 +1061,7 @@ function(
 		var iSelectableItemCount = this.getItems().filter(function(oListItem) {
 			return oListItem.isSelectable();
 		}).length;
-		if (bFireEvent && this.getGrowing() && this.getMultiSelectMode() === "SelectAll" && this.getBinding("items").getLength() > iSelectableItemCount) {
+		if (bFireEvent && this.getGrowing() && this.getMultiSelectMode() === "SelectAll" && this.getBinding("items")?.getLength() > iSelectableItemCount) {
 			var oSelectAllDomRef = this._getSelectAllCheckbox ? this._getSelectAllCheckbox() : undefined;
 			if (oSelectAllDomRef) {
 				Util.showSelectionLimitPopover(iSelectableItemCount, oSelectAllDomRef);
