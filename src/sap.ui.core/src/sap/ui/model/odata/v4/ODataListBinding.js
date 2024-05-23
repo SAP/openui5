@@ -2733,7 +2733,9 @@ sap.ui.define([
 	 *   from which the tree has been created
 	 * @returns {object} The AST of the filter tree including the static filter as string or null if
 	 *   no filters are set
+	 *
 	 * @private
+	 * @since 1.57.0
 	 * @ui5-restricted sap.ui.table, sap.ui.export
 	 */
 	// @override sap.ui.model.ListBinding#getFilterInfo
