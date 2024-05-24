@@ -53,10 +53,11 @@
 
 	<!-- Note: for $$aggregation, see controller's onInit! -->
 	<table:Table id="tTable" rows="{path : '/BusinessPartners', suspended : true}"
-			selectionMode="None" threshold="0">
+			selectionMode="None" threshold="0" ariaLabelledBy="tableTitle">
 		<table:extension>
 			<Toolbar class="sapMTBHeader-CTX">
-				<Title text="Sales Number by Region ({headerContext>$count})" titleStyle="H2"/>
+				<Title id="tableTitle" text="Sales Number by Region ({headerContext>$count})"
+					titleStyle="H2"/>
 				<Button icon="sap-icon://refresh" press="onRefreshGrid" tooltip="Refresh"/>
 				<Button enabled="{ui>/bRealOData}" icon="sap-icon://sort-ascending"
 					press="onSortGrid" tooltip="Sort Ascending"/>
@@ -72,50 +73,51 @@
 		<table:Column>
 			<Label text="Region"/>
 			<table:template>
-				<Text text="{Region}"/>
+				<Text text="{Region}" wrapping="false"/>
 			</table:template>
 		</table:Column>
 		<table:Column hAlign="End">
 			<Label text="Amount Per Sale"/>
 			<table:template>
-				<Text text="{AmountPerSale}"/>
+				<Text text="{AmountPerSale}" wrapping="false"/>
 			</table:template>
 		</table:Column>
 		<table:Column>
 			<Label text="Currency"/>
 			<table:template>
-				<Text text="{Currency}"/>
+				<Text text="{Currency}" wrapping="false"/>
 			</table:template>
 		</table:Column>
 		<table:Column hAlign="End">
 			<Label text="Sales Amount"/>
 			<table:template>
-				<Text text="{SalesAmount}"/>
+				<Text text="{SalesAmount}" wrapping="false"/>
 			</table:template>
 		</table:Column>
 		<table:Column>
 			<Label text="Currency"/>
 			<table:template>
-				<Text text="{Currency}"/>
+				<Text text="{Currency}" wrapping="false"/>
 			</table:template>
 		</table:Column>
 		<table:Column hAlign="End">
 			<Label text="Local Sales Amount"/>
 			<table:template>
-				<Text text="{SalesAmountLocalCurrency}"/>
+				<Text text="{SalesAmountLocalCurrency}" wrapping="false"/>
 			</table:template>
 		</table:Column>
 		<table:Column>
 			<Label text="Local Currency"/>
 			<table:template>
-				<Text text="{LocalCurrency}"/>
+				<Text text="{LocalCurrency}" wrapping="false"/>
 			</table:template>
 		</table:Column>
 		<table:Column hAlign="End">
 			<Label text="Sales Number"/>
 			<table:template>
 				<!-- TODO derive type from "SalesNumberSum@odata.type" : "#Decimal" -->
-				<Text text="{path : 'SalesNumberSum', type : 'sap.ui.model.odata.type.Decimal'}"/>
+				<Text text="{path : 'SalesNumberSum', type : 'sap.ui.model.odata.type.Decimal'}"
+					wrapping="false"/>
 			</table:template>
 		</table:Column>
 	</table:Table>

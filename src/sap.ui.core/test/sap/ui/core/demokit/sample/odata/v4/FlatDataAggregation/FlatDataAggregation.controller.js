@@ -131,50 +131,53 @@ sap.ui.define([
 		},
 
 		onInit : function () {
-			var oUriParameters = new URLSearchParams(window.location.search),
-				sGrandTotalAtBottomOnly = oUriParameters.get("grandTotalAtBottomOnly"),
-				bGrandTotalAtBottomOnly = sGrandTotalAtBottomOnly === "true",
-				sGrandTotalLike184 = oUriParameters.get("grandTotalLike1.84"),
-				oMTable = this.byId("mTable"),
-				oItemsBinding = oMTable.getBinding("items"),
-				oTTable = this.byId("tTable"),
-				oRowsBinding = oTTable.getBinding("rows");
+			// initialization has to wait for view model/context propagation
+			this.getView().attachEventOnce("modelContextChange", function () {
+				var oUriParameters = new URLSearchParams(window.location.search),
+					sGrandTotalAtBottomOnly = oUriParameters.get("grandTotalAtBottomOnly"),
+					bGrandTotalAtBottomOnly = sGrandTotalAtBottomOnly === "true",
+					sGrandTotalLike184 = oUriParameters.get("grandTotalLike1.84"),
+					oMTable = this.byId("mTable"),
+					oItemsBinding = oMTable.getBinding("items"),
+					oTTable = this.byId("tTable"),
+					oRowsBinding = oTTable.getBinding("rows");
 
-			this.getView().setModel(new JSONModel({
-				sFilterGrid : "",
-				sFilterResponsive : "",
-				bRealOData : TestUtils.isRealOData()
-			}), "ui");
+				this.getView().setModel(new JSONModel({
+					sFilterGrid : "",
+					sFilterResponsive : "",
+					bRealOData : TestUtils.isRealOData()
+				}), "ui");
 
-			if (sGrandTotalLike184) {
-				this._oAggregation4Grid["grandTotal like 1.84"] = true;
-				this._oAggregation4Responsive["grandTotal like 1.84"] = true;
-			}
+				if (sGrandTotalLike184) {
+					this._oAggregation4Grid["grandTotal like 1.84"] = true;
+					this._oAggregation4Responsive["grandTotal like 1.84"] = true;
+				}
 
-			oItemsBinding.setAggregation(this._oAggregation4Responsive);
-			oItemsBinding.resume();
-			this.byId("title").setBindingContext(oMTable.getBinding("items").getHeaderContext(),
-				"headerContext");
-			oMTable.setModel(oMTable.getModel(), "headerContext");
+				oItemsBinding.setAggregation(this._oAggregation4Responsive);
+				oItemsBinding.resume();
+				this.byId("title").setBindingContext(oMTable.getBinding("items").getHeaderContext(),
+					"headerContext");
+				oMTable.setModel(oMTable.getModel(), "headerContext");
 
-			oRowsBinding.changeParameters({
-				$count : true,
-				$orderby : "Region desc"
-			});
-			if (sGrandTotalAtBottomOnly) {
-				this._oAggregation4Grid.grandTotalAtBottomOnly = bGrandTotalAtBottomOnly;
-				oTTable.getRowMode().setFixedBottomRowCount(1);
-			}
-			// Note: this invokes a "refresh" event with reason "filter" which resets
-			// firstVisibleRow to 0
-			oRowsBinding.setAggregation(this._oAggregation4Grid);
-			oTTable.setFirstVisibleRow(1); //TODO does not help?
-			if (sGrandTotalAtBottomOnly !== "true") {
-				oTTable.getRowMode().setFixedTopRowCount(1);
-			}
-			oRowsBinding.resume();
-			oTTable.setBindingContext(oRowsBinding.getHeaderContext(), "headerContext");
-			oTTable.setModel(oTTable.getModel(), "headerContext");
+				oRowsBinding.changeParameters({
+					$count : true,
+					$orderby : "Region desc"
+				});
+				if (sGrandTotalAtBottomOnly) {
+					this._oAggregation4Grid.grandTotalAtBottomOnly = bGrandTotalAtBottomOnly;
+					oTTable.getRowMode().setFixedBottomRowCount(1);
+				}
+				// Note: this invokes a "refresh" event with reason "filter" which resets
+				// firstVisibleRow to 0
+				oRowsBinding.setAggregation(this._oAggregation4Grid);
+				oTTable.setFirstVisibleRow(1); //TODO does not help?
+				if (sGrandTotalAtBottomOnly !== "true") {
+					oTTable.getRowMode().setFixedTopRowCount(1);
+				}
+				oRowsBinding.resume();
+				oTTable.setBindingContext(oRowsBinding.getHeaderContext(), "headerContext");
+				oTTable.setModel(oTTable.getModel(), "headerContext");
+			}, this);
 		},
 
 		onRefreshGrid : function () {
