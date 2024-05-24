@@ -1257,9 +1257,14 @@ sap.ui.define([
 			});
 
 			if (mParameters.overwrite) {
-				// handle triggered "Save" button
+				// handle triggered "Save" button.
+				// Include special handling for PUBLIC variant which requires changing of all the dirty changes to PUBLIC layer before saving.
+				aNewVariantDirtyChanges = this._getDirtyChangesFromVariantChanges(aSourceVariantChanges);
+				if (this.getVariant(sSourceVariantReference, sVariantManagementReference).layer === Layer.PUBLIC) {
+					aNewVariantDirtyChanges.forEach((oChange) => oChange.setLayer(Layer.PUBLIC));
+				}
 				return this.oFlexController.saveSequenceOfDirtyChanges(
-					this._getDirtyChangesFromVariantChanges(aSourceVariantChanges),
+					aNewVariantDirtyChanges,
 					oAppComponent
 				)
 				.then(function(oResponse) {

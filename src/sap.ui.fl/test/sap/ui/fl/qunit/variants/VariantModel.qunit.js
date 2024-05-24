@@ -1670,6 +1670,7 @@ sap.ui.define([
 				assert.ok(oCopyVariantSpy.notCalled, "CopyVariant is not called");
 				assert.ok(oSetVariantPropertiesSpy.notCalled, "SetVariantProperties is not called");
 				assert.ok(oSaveDirtyChangesStub.calledOnce, "SaveAll is called");
+				oSaveDirtyChangesStub.getCall(0).args[2].forEach((oChange) => assert.equal(oChange.getLayer(), Layer.PUBLIC, "layer of dirty change is PUBLIC layer when source variant is PUBLIC"));
 				oVariantManagement.destroy();
 				assert.notOk(
 					this.oModel.getData()[sVMReference].modified,
