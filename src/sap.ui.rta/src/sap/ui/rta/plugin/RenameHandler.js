@@ -369,8 +369,7 @@ sap.ui.define([
 			return RenameHandler._handlePostRename.call(this, false, oEvent);
 		},
 
-		async _handlePostRename(bRestoreFocus, oEvent) {
-			let fnErrorHandler;
+		_handlePostRename(bRestoreFocus, oEvent) {
 			if (!this._bBlurOrKeyDownStarted) {
 				this._oEditedOverlay.removeStyleClass(RenameHandler.errorStyleClass);
 				this._bBlurOrKeyDownStarted = true;
@@ -378,24 +377,27 @@ sap.ui.define([
 					RenameHandler._preventDefault.call(this, oEvent);
 					RenameHandler._stopPropagation.call(this, oEvent);
 				}
-				try {
-					try {
-						RenameHandler._validateNewText.call(this);
-						fnErrorHandler = await this._emitLabelChangeEvent();
-					} catch (oError) {
-						if (oError.message !== "sameTextError") {
-							throw oError;
-						}
+				return Promise.resolve()
+				.then(RenameHandler._validateNewText.bind(this))
+				.then(this._emitLabelChangeEvent.bind(this))
+				.catch(function(oError) {
+					if (oError.message === "sameTextError") {
+						return;
 					}
+					throw oError;
+				})
+				.then(function(fnErrorHandler) {
 					this.stopEdit(bRestoreFocus);
 					// ControlVariant rename handles the validation itself
 					if (typeof fnErrorHandler === "function") {
 						fnErrorHandler(); // contains startEdit()
 					}
-				} catch (oError) {
-					await RenameHandler._handleInvalidRename.call(this, oError.message, bRestoreFocus);
-				}
+				}.bind(this))
+				.catch(function(oError) {
+					return RenameHandler._handleInvalidRename.call(this, oError.message, bRestoreFocus);
+				}.bind(this));
 			}
+			return Promise.resolve();
 		},
 
 		_handleInvalidRename(sErrorMessage, bRestoreFocus) {
@@ -415,6 +417,7 @@ sap.ui.define([
 			var oResponsibleOverlay = this.getResponsibleElementOverlay(this._oEditedOverlay);
 			var oRenameAction = this.getAction(oResponsibleOverlay);
 			var sNewText = RenameHandler._getCurrentEditableFieldText.call(this);
+
 			validateText(sNewText, this.getOldValue(), oRenameAction);
 		},
 
