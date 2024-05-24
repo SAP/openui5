@@ -1295,6 +1295,7 @@ sap.ui.define([
 	 * @throws {Error} If
 	 *   <ul>
 	 *     <li> there is no recursive hierarchy,
+	 *     <li> this context's root binding is suspended,
 	 *     <li> the new parent is (a descendant of) this node,
 	 *     <li> this node or the new parent is
 	 *       <ul>
