@@ -401,10 +401,11 @@ sap.ui.define([
 
 		const oElementMock = this.mock(Element);
 		oElementMock.expects("getElementById").withExactArgs("~element0").returns(oElement0);
-		const oFieldHelpModuleMock = this.mock(FieldHelp);
-		oFieldHelpModuleMock.expects("_getLabelText").withExactArgs(sinon.match.same(oElement0)).returns("~sLabel0");
+		const oLabelEnablementMock = this.mock(LabelEnablement);
+		oLabelEnablementMock.expects("_getLabelTexts").withExactArgs(sinon.match.same(oElement0))
+			.returns(["~sLabel0", "foo"]);
 		oElementMock.expects("getElementById").withExactArgs("~element1").returns(oElement1);
-		oFieldHelpModuleMock.expects("_getLabelText").withExactArgs(sinon.match.same(oElement1)).returns("~sLabel1");
+		oLabelEnablementMock.expects("_getLabelTexts").withExactArgs(sinon.match.same(oElement1)).returns(["~sLabel1"]);
 
 		// code under test
 		assert.deepEqual(oFieldHelp._getFieldHelpHotspots(), [{
@@ -435,9 +436,9 @@ sap.ui.define([
 		]);
 
 		oElementMock.expects("getElementById").withExactArgs("~element0").returns(oElement0);
-		oFieldHelpModuleMock.expects("_getLabelText").withExactArgs(sinon.match.same(oElement0)).returns("~sLabel0");
+		oLabelEnablementMock.expects("_getLabelTexts").withExactArgs(sinon.match.same(oElement0)).returns(["~sLabel0"]);
 		oElementMock.expects("getElementById").withExactArgs("~element1").returns(oElement1);
-		oFieldHelpModuleMock.expects("_getLabelText").withExactArgs(sinon.match.same(oElement1)).returns("~sLabel1");
+		oLabelEnablementMock.expects("_getLabelTexts").withExactArgs(sinon.match.same(oElement1)).returns(["~sLabel1"]);
 
 		// code under test
 		assert.deepEqual(oFieldHelp._getFieldHelpHotspots(), [{
@@ -469,9 +470,9 @@ sap.ui.define([
 		oFieldHelp._setFieldHelpDocumentationRefs(oElement1, "~property0", []);
 
 		oElementMock.expects("getElementById").withExactArgs("~element0").returns(oElement0);
-		oFieldHelpModuleMock.expects("_getLabelText").withExactArgs(sinon.match.same(oElement0)).returns("~sLabel0");
+		oLabelEnablementMock.expects("_getLabelTexts").withExactArgs(sinon.match.same(oElement0)).returns(["~sLabel0"]);
 		oElementMock.expects("getElementById").withExactArgs("~element1").returns(oElement1);
-		oFieldHelpModuleMock.expects("_getLabelText").withExactArgs(sinon.match.same(oElement1)).returns("~sLabel1");
+		oLabelEnablementMock.expects("_getLabelTexts").withExactArgs(sinon.match.same(oElement1)).returns(["~sLabel1"]);
 
 		// code under test
 		assert.deepEqual(oFieldHelp._getFieldHelpHotspots(), [{
@@ -492,7 +493,7 @@ sap.ui.define([
 		oFieldHelp._setFieldHelpDocumentationRefs(oElement1, "~property1", []);
 
 		oElementMock.expects("getElementById").withExactArgs("~element0").returns(oElement0);
-		oFieldHelpModuleMock.expects("_getLabelText").withExactArgs(sinon.match.same(oElement0)).returns("~sLabel0");
+		oLabelEnablementMock.expects("_getLabelTexts").withExactArgs(sinon.match.same(oElement0)).returns(["~sLabel0"]);
 
 		// code under test
 		assert.deepEqual(oFieldHelp._getFieldHelpHotspots(), [{
@@ -510,6 +511,44 @@ sap.ui.define([
 
 		// code under test
 		assert.deepEqual(oFieldHelp._getFieldHelpHotspots(), []);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_getFieldHelpHotspots: no label found", function (assert) {
+		const oFieldHelp = new FieldHelp();
+		const oFieldHelpMock = this.mock(oFieldHelp);
+		const oElement0 = {getId() {}};
+		this.mock(oElement0).expects("getId").withExactArgs().returns("~element0");
+		const oUpdateHotspotsPromise = Promise.resolve();
+		oFieldHelpMock.expects("_updateHotspots").withExactArgs().returns(oUpdateHotspotsPromise);
+		const sURNElement0 = "urn:sap-com:documentation:key?=type=~customType0&id=~customId0";
+		oFieldHelp._setFieldHelpDocumentationRefs(oElement0, undefined, [sURNElement0]);
+		const oElement1 = {getId() {}};
+		this.mock(oElement1).expects("getId").withExactArgs().returns("~element1");
+		const oUpdateHotspotsPromise1 = Promise.resolve();
+		oFieldHelpMock.expects("_updateHotspots").withExactArgs().returns(oUpdateHotspotsPromise1);
+		oFieldHelp._setFieldHelpDocumentationRefs(oElement1, undefined, [
+			"urn:sap-com:documentation:key?=type=~customType1&id=~customId1"
+		]);
+
+		const oElementMock = this.mock(Element);
+		oElementMock.expects("getElementById").withExactArgs("~element0").returns(oElement0);
+		const oLabelEnablementMock = this.mock(LabelEnablement);
+		oLabelEnablementMock.expects("_getLabelTexts").withExactArgs(sinon.match.same(oElement0)).returns([]);
+		this.oLogMock.expects("error")
+			.withExactArgs("Cannot find a label for control '~element0'; ignoring field help",
+				`{"undefined":["${sURNElement0}"]}`, sClassName);
+		oElementMock.expects("getElementById").withExactArgs("~element1").returns(oElement1);
+		oLabelEnablementMock.expects("_getLabelTexts").withExactArgs(sinon.match.same(oElement1)).returns(["~sLabel"]);
+
+		// code under test - only the control which has a label is added to the internal data structure
+		assert.deepEqual(oFieldHelp._getFieldHelpHotspots(), [{
+			backendHelpKey: {id: "~customId1", origin: null, type: "~customType1"},
+			hotspotId: "~element1",
+			labelText: "~sLabel"
+		}]);
+
+		return Promise.all([oUpdateHotspotsPromise, oUpdateHotspotsPromise1]);
 	});
 
 	//*********************************************************************************************
@@ -541,7 +580,8 @@ sap.ui.define([
 			"urn:sap-com:documentation:key?=type=~customType&id=~customId"
 		]);
 		this.mock(Element).expects("getElementById").withExactArgs("~element").returns(oElement);
-		this.mock(FieldHelp).expects("_getLabelText").withExactArgs(sinon.match.same(oElement)).returns("~sLabelText");
+		this.mock(LabelEnablement).expects("_getLabelTexts").withExactArgs(sinon.match.same(oElement))
+			.returns(["~sLabelText"]);
 
 		assert.deepEqual(oFieldHelp._getFieldHelpHotspots(), [{
 			backendHelpKey: {id: "~customId", origin: null, type: "~customType"},
@@ -553,61 +593,6 @@ sap.ui.define([
 		oFieldHelp.deactivate();
 
 		assert.deepEqual(oFieldHelp._getFieldHelpHotspots(), []);
-	});
-
-	//*********************************************************************************************
-	QUnit.test("_getLabelText: no label text found", function (assert) {
-		const oLabelEnablementMock = this.mock(LabelEnablement);
-		oLabelEnablementMock.expects("getReferencingLabels").withExactArgs("~oElement").returns([]);
-		const oElementMock = this.mock(Element);
-		oElementMock.expects("getElementById").never();
-
-		// code under test
-		assert.strictEqual(FieldHelp._getLabelText("~oElement"), "");
-
-		oLabelEnablementMock.expects("getReferencingLabels").withExactArgs("~oElement").returns(["~LabelID", "unused"]);
-		oElementMock.expects("getElementById").withExactArgs("~LabelID").returns(undefined);
-
-		// code under test - label element does not exist
-		assert.strictEqual(FieldHelp._getLabelText("~oElement"), "");
-
-		oLabelEnablementMock.expects("getReferencingLabels").withExactArgs("~oElement").returns(["~LabelID", "unused"]);
-		const oLabel = {getMetadata() {}};
-		oElementMock.expects("getElementById").withExactArgs("~LabelID").returns(oLabel);
-		const oMetadata = {isInstanceOf() {}};
-		const oLabelMock = this.mock(oLabel);
-		oLabelMock.expects("getMetadata").withExactArgs().returns(oMetadata);
-		const oMetadataMock = this.mock(oMetadata);
-		oMetadataMock.expects("isInstanceOf").withExactArgs("sap.ui.core.Label").returns(false);
-
-		// code under test - label does not implement sap.ui.core.Label interface
-		assert.strictEqual(FieldHelp._getLabelText("~oElement"), "");
-
-		oLabelEnablementMock.expects("getReferencingLabels").withExactArgs("~oElement").returns(["~LabelID", "unused"]);
-		oElementMock.expects("getElementById").withExactArgs("~LabelID").returns(oLabel);
-		oLabelMock.expects("getMetadata").withExactArgs().returns(oMetadata);
-		oMetadataMock.expects("isInstanceOf").withExactArgs("sap.ui.core.Label").returns(true);
-
-		// code under test - label implements sap.ui.core.Label interface but does not have a getText function
-		assert.strictEqual(FieldHelp._getLabelText("~oElement"), "");
-	});
-
-	//*********************************************************************************************
-	QUnit.test("_getLabelText: label text found", function (assert) {
-		this.mock(LabelEnablement).expects("getReferencingLabels").withExactArgs("~oElement").returns(["~LabelID"]);
-		const oLabel = {
-			getMetadata() {},
-			getText() {}
-		};
-		this.mock(Element).expects("getElementById").withExactArgs("~LabelID").returns(oLabel);
-		const oMetadata = {isInstanceOf() {}};
-		const oLabelMock = this.mock(oLabel);
-		oLabelMock.expects("getMetadata").withExactArgs().returns(oMetadata);
-		this.mock(oMetadata).expects("isInstanceOf").withExactArgs("sap.ui.core.Label").returns(true);
-		oLabelMock.expects("getText").withExactArgs().returns("~LabelText");
-
-		// code under test
-		assert.strictEqual(FieldHelp._getLabelText("~oElement"), "~LabelText");
 	});
 
 	//*********************************************************************************************
