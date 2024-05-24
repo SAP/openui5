@@ -539,12 +539,15 @@ sap.ui.define([
 				[this.oAggregation.$ParentNavigationProperty + "@odata.bind"]
 					= _Helper.makeRelativeUrl("/" + sParentPath, "/" + this.sResourcePath);
 		}
-		oEntityData["@$ui5.node.level"] = iLevel; // do not send via POST!
 
 		const addElement = (iIndex0, iRank) => {
+			oEntityData["@$ui5.node.level"] = iLevel; // do not send via POST!
 			aElements.splice(iIndex0, 0, null); // create a gap
 			this.addElements(oEntityData, iIndex0, oCache, iRank);
 			aElements.$count += 1;
+			if (oCache === this.oFirstLevel) {
+				this.adjustDescendantCount(oEntityData, iIndex0, +1);
+			}
 		};
 		const completeCreation = (iIndex0, iRank) => {
 			oCache.removeElement(0, sTransientPredicate);
@@ -575,9 +578,6 @@ sap.ui.define([
 		}
 
 		addElement(iIndex, /*iRank*/undefined);
-		if (oCache === this.oFirstLevel) {
-			this.adjustDescendantCount(oEntityData, iIndex, +1);
-		}
 
 		return oPromise.then(async () => {
 			_Helper.removeByPath(this.mPostRequests, sTransientPredicate, oEntityData);
