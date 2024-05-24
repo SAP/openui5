@@ -575,9 +575,10 @@ sap.ui.define([
 			_oChangePersistenceFactory._instanceCache[sReference].removeDirtyChanges();
 		}
 
-		await _mInitPromises[sReference].promise;
+		const oOldInitPromise = _mInitPromises[sReference].promise;
 		const oNewInitPromise = new Deferred();
 		_mInitPromises[sReference] = oNewInitPromise;
+		await oOldInitPromise;
 		await loadFlexData(mPropertyBag);
 		_mInstances[sReference].storageResponse = filterByMaxLayer(sReference, _mInstances[sReference].unfilteredStorageResponse);
 		_mInstances[sReference].maxLayer = FlexInfoSession.getByReference(sReference).maxLayer;
