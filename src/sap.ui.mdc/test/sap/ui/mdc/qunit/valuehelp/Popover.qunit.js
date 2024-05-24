@@ -745,6 +745,36 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("_disableFollowOfTemporarily", function(assert) {
+		const fnDone = assert.async();
+		sinon.spy(oPopover, "_disableFollowOfTemporarily");
+
+		return oPopover.open(Promise.resolve()).then(function() {
+			setTimeout(function() { // wait until open
+				const oMPopover = oPopover.getAggregation("_container");
+				sinon.spy(oMPopover, "setFollowOf");
+
+				oContent.fireConfirm();
+				assert.ok(oPopover._disableFollowOfTemporarily.called, "Popover disables the followOf feature temporarily on selection");
+				assert.ok(oMPopover.setFollowOf.calledWith(false), "MPopover followOf was disabled");
+
+				oContent.fireConfirm({close: true});
+				assert.notOk(oPopover._disableFollowOfTemporarily.calledTwice, "Popover does not disable the followOf feature temporarily");
+
+				setTimeout(function () {
+					assert.ok(oMPopover.setFollowOf.calledWith(true), "MPopover followOf was enabled again");
+					oPopover.close();
+					setTimeout(function() { // wait until closed
+						fnDone();
+					}, iPopoverDuration);
+				},300);
+			}, iPopoverDuration);
+		}).catch(function(oError) {
+			assert.notOk(true, "Promise Catch called");
+			fnDone();
+		});
+	});
+
 	// TODO: Test Operator determination on Content
 	// TODO: Test condition creation on Content
 

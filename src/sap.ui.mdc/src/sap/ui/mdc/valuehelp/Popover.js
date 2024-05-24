@@ -213,8 +213,6 @@ sap.ui.define([
 			this._oInvisibleText = new InvisibleText({ text: Library.getResourceBundleFor("sap.ui.mdc").getText("valuehelp.POPOVER_AVALIABLE_VALUES") }).toStatic();
 			oPopover.addAriaLabelledBy(this._oInvisibleText);
 
-			oPopover.setFollowOf(false);
-
 			if (oValueStateHeader) {
 				oValueStateHeader.setPopup(oPopover);
 			}
@@ -631,8 +629,23 @@ sap.ui.define([
 		const bSingleSelect = this.isSingleSelect();
 		const bClose = oEvent.getParameter("close");
 		if (!Device.system.phone || bSingleSelect || bClose) {
+			if (!bClose) {
+				this._disableFollowOfTemporarily();
+			}
 			this.fireConfirm({ close: bClose || bSingleSelect });
 		}
+	};
+
+	// Workaround to prevent the popup from closing unexpectedly should formatting lead to field size adjustments
+	Popover.prototype._disableFollowOfTemporarily = function () {
+		if (this._followOfTimer) {
+			clearTimeout(this._followOfTimer);
+		}
+		const oPopover = this.getAggregation("_container");
+		oPopover.setFollowOf(false);
+		this._followOfTimer = setTimeout(() => {
+			oPopover.setFollowOf(true);
+		}, 300);
 	};
 
 	Popover.prototype.handleCanceled = function(oEvent) {
@@ -793,6 +806,11 @@ sap.ui.define([
 		if (this._oTokenConditionType) {
 			this._oTokenConditionType.destroy();
 			this._oTokenConditionType = undefined;
+		}
+
+		if (this._followOfTimer) {
+			clearTimeout(this._followOfTimer);
+			this._followOfTimer = null;
 		}
 
 		Container.prototype.exit.apply(this, arguments);
