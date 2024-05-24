@@ -162,10 +162,12 @@ sap.ui.define([
 	};
 
 	Container.prototype._updateToolbarArialLabelledBy = function () {
-		const oTitle = this._getHeaderText();
-		const oBar = this.getHeader();
-		if (oTitle && oBar?.getAriaLabelledBy().indexOf(oTitle.getId()) == -1) {
-			oBar.addAriaLabelledBy(oTitle);
+		if (this.getListLayout()) {
+			const oTitle = this._getHeaderText();
+			const oBar = this.getHeader();
+			if (oTitle && oBar?.getAriaLabelledBy().indexOf(oTitle.getId()) == -1) {
+				oBar.addAriaLabelledBy(oTitle);
+			}
 		}
 	};
 
