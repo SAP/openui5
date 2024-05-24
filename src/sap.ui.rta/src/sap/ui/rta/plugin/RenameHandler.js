@@ -366,10 +366,15 @@ sap.ui.define([
 		},
 
 		_onEditableFieldBlur(oEvent) {
-			return RenameHandler._handlePostRename.call(this, false, oEvent);
+			// Destroying the overlay (or removing it from a parent) also triggers a "blur" event
+			// coming from the remove() call, but we should not react on it
+			if (!this._oEditedOverlay.isDestroyStarted() && this._oEditedOverlay.getParentElementOverlay()) {
+				RenameHandler._handlePostRename.call(this, false, oEvent);
+			}
 		},
 
-		_handlePostRename(bRestoreFocus, oEvent) {
+		async _handlePostRename(bRestoreFocus, oEvent) {
+			let fnErrorHandler;
 			if (!this._bBlurOrKeyDownStarted) {
 				this._oEditedOverlay.removeStyleClass(RenameHandler.errorStyleClass);
 				this._bBlurOrKeyDownStarted = true;
@@ -377,27 +382,24 @@ sap.ui.define([
 					RenameHandler._preventDefault.call(this, oEvent);
 					RenameHandler._stopPropagation.call(this, oEvent);
 				}
-				return Promise.resolve()
-				.then(RenameHandler._validateNewText.bind(this))
-				.then(this._emitLabelChangeEvent.bind(this))
-				.catch(function(oError) {
-					if (oError.message === "sameTextError") {
-						return;
+				try {
+					try {
+						RenameHandler._validateNewText.call(this);
+						fnErrorHandler = await this._emitLabelChangeEvent();
+					} catch (oError) {
+						if (oError.message !== "sameTextError") {
+							throw oError;
+						}
 					}
-					throw oError;
-				})
-				.then(function(fnErrorHandler) {
 					this.stopEdit(bRestoreFocus);
 					// ControlVariant rename handles the validation itself
 					if (typeof fnErrorHandler === "function") {
 						fnErrorHandler(); // contains startEdit()
 					}
-				}.bind(this))
-				.catch(function(oError) {
-					return RenameHandler._handleInvalidRename.call(this, oError.message, bRestoreFocus);
-				}.bind(this));
+				} catch (oError) {
+					await RenameHandler._handleInvalidRename.call(this, oError.message, bRestoreFocus);
+				}
 			}
-			return Promise.resolve();
 		},
 
 		_handleInvalidRename(sErrorMessage, bRestoreFocus) {
@@ -417,7 +419,6 @@ sap.ui.define([
 			var oResponsibleOverlay = this.getResponsibleElementOverlay(this._oEditedOverlay);
 			var oRenameAction = this.getAction(oResponsibleOverlay);
 			var sNewText = RenameHandler._getCurrentEditableFieldText.call(this);
-
 			validateText(sNewText, this.getOldValue(), oRenameAction);
 		},
 
