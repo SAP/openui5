@@ -158,6 +158,31 @@ sap.ui.define([
 		assert.strictEqual(oSpy.callCount, 1, "setPointerOnIcon was called.");
 	});
 
+	QUnit.test("setIndicatorIcon check via setIndicator function", function (assert) {
+		var fnAssert = function (sExpectedIcon, sExpectedIndicator) {
+			if (sExpectedIndicator !== "None") {
+				assert.strictEqual(this.oNumericContent._oIndicatorIcon.getSrc(), sExpectedIcon, "Indicator icon src should be correct.");
+				assert.ok(this.oNumericContent._oIndicatorIcon.hasStyleClass("sapMNCIndIcon"), "Indicator icon should have correct style class.");
+				assert.strictEqual(this.oNumericContent.getIndicator(), sExpectedIndicator, "Indicator property should be set correctly.");
+			}
+			if (sExpectedIndicator === DeviationIndicator.None) {
+				assert.strictEqual(this.oNumericContent._oIndicatorIcon.getSrc(), '', "There is no valid Indicator icon for DeviationIndicator.None, Hence there will be no indicator.");
+			}
+		}.bind(this);
+		// Act
+		this.oNumericContent.setIndicator(DeviationIndicator.Down);
+		// Assert
+		fnAssert("sap-icon://down", DeviationIndicator.Down);
+		// Act
+		this.oNumericContent.setIndicator(DeviationIndicator.Up);
+		// Assert
+		fnAssert("sap-icon://up", DeviationIndicator.Up);
+		//Act
+		this.oNumericContent.setIndicator(DeviationIndicator.None);
+		// Assert
+		fnAssert(null, DeviationIndicator.None);
+	});
+
 	/**
 	 * @deprecated Since version 1.38.0.
 	 */
