@@ -2004,7 +2004,7 @@ sap.ui.define([
 			// lazy load the ODataUtils if systemParameter is given
 			var bAddOrigin = false;
 			var ODataUtils;
-			if (sSystemParameter && (bIsV1Model || bIsV2Model)) {
+			if (sSystemParameter && (bIsV1Model || bIsV2Model || bIsV4Model)) {
 				bAddOrigin = true;
 				ODataUtils = sap.ui.require("sap/ui/model/odata/ODataUtils");
 			}
