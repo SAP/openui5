@@ -202,6 +202,7 @@ sap.ui.define([
 	Rename.prototype._emitLabelChangeEvent = function() {
 		var sText = RenameHandler._getCurrentEditableFieldText.call(this);
 		this._fnSetControlText(sText);
+
 		return this.createRenameCommand(this._oEditedOverlay, sText);
 	};
 
