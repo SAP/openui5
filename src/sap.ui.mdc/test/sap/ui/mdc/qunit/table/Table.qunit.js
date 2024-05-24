@@ -130,6 +130,7 @@ sap.ui.define([
 	const sDelegatePath = "test-resources/sap/ui/mdc/delegates/TableDelegate";
 	const ButtonType = MLibrary.ButtonType;
 	const ToolbarDesign = MLibrary.ToolbarDesign;
+	const TitleLevel = CoreLibrary.TitleLevel;
 
 	const CustomFilterControl = Control.extend("sap.ui.mdc.table.qunit.CustomFilterControl", {
 		metadata: {
@@ -1324,7 +1325,7 @@ sap.ui.define([
 			const oTitle = this.oTable._oTitle;
 			assert.ok(oTitle, "Title is available");
 			assert.ok(!oTitle.getWidth(), "Title is shown");
-			assert.equal(this.oTable._oTitle.getTitleStyle(), "H4", "Title style Property added");
+			assert.equal(this.oTable._oTitle.getTitleStyle(), "H5", "Title style Property added");
 			this.oTable.setHeaderVisible(false);
 			assert.equal(oTitle.getWidth(), "0px", "Title is hidden due to width");
 
@@ -5815,12 +5816,12 @@ sap.ui.define([
 		this.oTable.setType("ResponsiveTable");
 
 		this.oTable.initialized().then(function() {
-			assert.strictEqual(this.oTable._oTable.getHeaderToolbar().getContent()[0].getTitleStyle(), "H4", "Header style set to the header");
+			assert.strictEqual(this.oTable._oTable.getHeaderToolbar().getContent()[0].getTitleStyle(), "H5", "Header style set to the header");
 			this.oTable.setHeaderStyle("H2");
 			this.oTable.setHeader("Test Table");
 			assert.strictEqual(this.oTable._oTable.getHeaderToolbar().getContent()[0].getTitleStyle(), "H2", "Header style changed");
 			this.oTable.setHeaderStyle(null);
-			assert.strictEqual(this.oTable._oTable.getHeaderToolbar().getContent()[0].getTitleStyle(), "H4", "Header style set to the header");
+			assert.strictEqual(this.oTable._oTable.getHeaderToolbar().getContent()[0].getTitleStyle(), "H5", "Header style set to the header");
 			done();
 		}.bind(this));
 	});
@@ -6295,6 +6296,23 @@ sap.ui.define([
 		QUnit.test(sTheme + "; Toolbar", async function(assert) {
 			await this.applyTheme(sTheme);
 			assert.deepEqual(this.oTable._oToolbar.getDesign(), ToolbarDesign.Transparent, "design property");
+		});
+
+		QUnit.test(sTheme + "; Title", async function(assert) {
+			let sExpectedTitleLevel;
+
+			switch (sTheme) {
+				case "sap_horizon":
+				case "sap_horizon_dark":
+				case "sap_horizon_hcw":
+				case "sap_horizon_hcb":
+					sExpectedTitleLevel = TitleLevel.H5;
+					break;
+				default:
+					sExpectedTitleLevel = TitleLevel.H4;
+			}
+			await this.applyTheme(sTheme);
+			assert.deepEqual(this.oTable._oTitle.getTitleStyle(), sExpectedTitleLevel, "titleStyle property");
 		});
 	}
 });
