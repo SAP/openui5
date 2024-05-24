@@ -268,11 +268,10 @@ sap.ui.define([
 	 *   <code>select</code> parameter is ignored.
 	 *
 	 * @throws {Error}
-	 *   If no analytic query result object could be determined from the bound OData entity set,
-	 *   either from an explicitly given EntitySet (via optional mParameters.entitySet argument), or
-	 *   by default implicitly from the binding path (see mandatory sPath argument), or if the
-	 *   {@link sap.ui.model.Filter.NONE} filter instance is contained in <code>aFilters</code> together with other
-	 *   filters
+	 *   If no analytic query result object could be determined from the bound OData entity set, either from an
+	 *   explicitly given EntitySet (via optional mParameters.entitySet argument), or by default implicitly from the
+	 *   binding path (see mandatory sPath argument), or if the {@link sap.ui.model.Filter.NONE} filter instance is
+	 *   contained in <code>aFilters</code> together with other filters, or if the given model is not supported.
 	 *
 	 * @alias sap.ui.model.analytics.AnalyticalBinding
 	 * @extends sap.ui.model.TreeBinding
@@ -284,6 +283,10 @@ sap.ui.define([
 		constructor : function(oModel, sPath, oContext, aSorter, aFilters, mParameters) {
 			TreeBinding.call(this, oModel, sPath, oContext, aFilters, mParameters);
 
+			this.iModelVersion = AnalyticalBinding._getModelVersion(this.oModel);
+			if (this.iModelVersion === null) {
+				throw new Error("The AnalyticalBinding does not support the given model");
+			}
 			this.aAdditionalSelects = [];
 			// attribute members for addressing the requested entity set
 			this.sEntitySetName = mParameters.entitySet ? mParameters.entitySet : undefined;
@@ -356,13 +359,6 @@ sap.ui.define([
 			} else if (this.oModel.sDefaultCountMode == CountMode.Request) {
 				oLogger.warning("default count mode is ignored; OData requests will include"
 					+ " $inlinecount options");
-			}
-
-			// detect ODataModel version
-			this.iModelVersion = AnalyticalBinding._getModelVersion(this.oModel);
-			if (this.iModelVersion === null) {
-				oLogger.error("The AnalyticalBinding does not support the given model");
-				return;
 			}
 
 			// list of sorted dimension names as basis for later calculations, initialized via "initialize" function
