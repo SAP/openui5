@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/base/i18n/ResourceBundle",
 	"sap/ui/base/Event",
 	"sap/m/Menu",
+	"sap/m/MessageBox",
 	"sap/m/MenuItem",
 	"sap/m/MessageToast",
 	"sap/base/Log",
@@ -26,6 +27,7 @@ sap.ui.define([
 	ResourceBundle,
 	Event,
 	Menu,
+	MessageBox,
 	MenuItem,
 	MessageToast,
 	Log,
@@ -231,7 +233,10 @@ sap.ui.define([
 
 			var fnOnDeleteFromOverviewDialogStub = sandbox.stub(RtaAppVariantFeature, "onDeleteFromOverviewDialog").resolves();
 
-			var fnShowRelevantDialogStub = sandbox.stub(AppVariantUtils, "showRelevantDialog").resolves();
+			const fnShowRelevantDialogStub = sandbox.stub(MessageBox, "show").callsFake(function(sText, mParameters) {
+				assert.equal(mParameters.icon, MessageBox.Icon.INFORMATION, "then the correct icon is shown");
+				mParameters.onClose("Ok");
+			});
 
 			return oManageAppsController.deleteAppVariant(oEmptyEvent).then(function() {
 				assert.ok(fnOnDeleteFromOverviewDialogStub.calledOnce, "then onDeleteFromOverviewDialogStub is called once");

@@ -426,6 +426,20 @@ sap.ui.define([
 		return sErrorMessage;
 	};
 
+	AppVariantUtils.buildWarningInfo = function(sMessageKey, sAppVariantId) {
+		let sMessage = `${AppVariantUtils.getText(sMessageKey)}\n\n`;
+
+		if (sAppVariantId) {
+			sMessage += `${AppVariantUtils.getText("MSG_APP_VARIANT_ID", sAppVariantId)}\n`;
+		}
+
+		return {
+			text: sMessage,
+			appVariantId: sAppVariantId,
+			warning: true
+		};
+	};
+
 	AppVariantUtils.buildErrorInfo = function(sMessageKey, oError, sAppVariantId) {
 		var sErrorMessage = this._getErrorMessageText(oError);
 		var sMessage = `${AppVariantUtils.getText(sMessageKey)}\n\n`;
@@ -520,16 +534,23 @@ sap.ui.define([
 				} else if (oInfo.deleteAppVariant && sAction === sRightButtonText) {
 					// Do you really want to delete this app? => Close
 					reject(oInfo.deleteAppVariant);
-				} else if (oInfo.error) {
+				} else if (oInfo.error || oInfo.warning) {
 					// Error: Deletion/Creation failed => Close or CopyID & Close
-					reject(oInfo.error);
+					reject(oInfo.error || oInfo.warning);
 				} else {
 					resolve();
 				}
 			};
-
+			let oIcon = MessageBox.Icon.NONE;
+			if (bSuccessful || oInfo.deleteAppVariant) {
+				oIcon = MessageBox.Icon.INFORMATION;
+			} else if (oInfo.warning) {
+				oIcon = MessageBox.Icon.WARNING;
+			} else {
+				oIcon = MessageBox.Icon.ERROR;
+			}
 			MessageBox.show(oInfo.text, {
-				icon: (bSuccessful || oInfo.deleteAppVariant) ? MessageBox.Icon.INFORMATION : MessageBox.Icon.ERROR,
+				icon: oIcon,
 				onClose: fnCallback,
 				title: sTitle,
 				actions: aActions,

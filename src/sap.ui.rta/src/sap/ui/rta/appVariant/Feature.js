@@ -5,6 +5,7 @@
 sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/rta/appVariant/AppVariantUtils",
+	"sap/ui/rta/util/showMessageBox",
 	"sap/ui/core/BusyIndicator",
 	"sap/ui/core/EventBus",
 	"sap/ui/fl/registry/Settings",
@@ -14,6 +15,7 @@ sap.ui.define([
 ], function(
 	FlexUtils,
 	AppVariantUtils,
+	showMessageBox,
 	BusyIndicator,
 	EventBus,
 	Settings,
@@ -75,6 +77,12 @@ sap.ui.define([
 	var fnTriggerPollingTileCreation = function(oResult, sAppVariantId) {
 		// In case of S/4HANA Cloud, oResult is filled from catalog assignment call
 		if (oResult && oResult.response && oResult.response.IAMId) {
+			if (!Array.isArray(oResult.response.CatalogIds) || oResult.response.CatalogIds.length === 0) {
+				const sMessage = AppVariantUtils.getText("MSG_BASE_APP_CATALOGS_NOT_FOUND", sAppVariantId);
+				const sTitle = AppVariantUtils.getText("HEADER_SAVE_APP_VARIANT_FAILED");
+				showMessageBox(sMessage, {title: sTitle}, "error");
+				return Promise.reject();
+			}
 			return oAppVariantManager.notifyKeyUserWhenPublishingIsReady(oResult.response.IAMId, sAppVariantId, true);
 		}
 		return Promise.resolve();
