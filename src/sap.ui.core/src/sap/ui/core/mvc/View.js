@@ -1164,7 +1164,6 @@ sap.ui.define([
 	*
 	* @since 1.30
 	* @public
-	* @deprecated since 1.66: Use {@link sap.ui.core.mvc.View.create View.create} instead
 	* @return {Promise} resolves with the complete view instance, reject with any thrown error
 	*/
 	View.prototype.loaded = function() {
