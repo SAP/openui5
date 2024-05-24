@@ -394,6 +394,18 @@ sap.ui.define([
 				}
 			};
 
+			const oManifestTypedViewAsString = {
+				"sap.ui5" : {
+					"rootView" : "module:my/own/TypedView"
+				}
+			};
+
+			const oManifestViewAsString = {
+				"sap.ui5" : {
+					"rootView" : "my.own.View"
+				}
+			};
+
 			var oManifestMissingViewType = {
 				"sap.app" : {
 					"id" : "my.own.missingViewType"
@@ -439,6 +451,8 @@ sap.ui.define([
 						!/^\/anylocation\/missingViewType\/manifest\.json/.test(url) &&
 						!/^\/anylocation\/missingViewTypeForTypedView\/manifest\.json/.test(url) &&
 						!/^\/anylocation\/prefixid\/manifest\.json/.test(url) &&
+						!/^\/anylocation\/typedViewAsString\/manifest\.json/.test(url) &&
+						!/^\/anylocation\/viewAsString\/manifest\.json/.test(url) &&
 						!/^\/anylocation\/mf1st\/autoid\/manifest\.json/.test(url) &&
 						!/^\/anylocation\/mf1st\/prefixid\/manifest\.json/.test(url) &&
 						!/\/test-resources\/sap\/ui\/core\/qunit\/component\/testdata\/view\/manifest\.json/.test(url) &&
@@ -467,6 +481,20 @@ sap.ui.define([
 					"Content-Type": "application/json"
 				},
 				JSON.stringify(oManifestMissingViewType)
+			]);
+			oServer.respondWith("GET", /^\/anylocation\/typedViewAsString\/manifest\.json/, [
+				200,
+				{
+					"Content-Type": "application/json"
+				},
+				JSON.stringify(oManifestTypedViewAsString)
+			]);
+			oServer.respondWith("GET", /^\/anylocation\/viewAsString\/manifest\.json/, [
+				200,
+				{
+					"Content-Type": "application/json"
+				},
+				JSON.stringify(oManifestViewAsString)
 			]);
 			oServer.respondWith("GET", /^\/anylocation\/missingViewTypeForTypedView\/manifest\.json/, [
 				200,
@@ -553,7 +581,30 @@ sap.ui.define([
 				});
 
 			});
+			sap.ui.define("my/own/typedViewAsString/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
 
+				return UIComponent.extend("my.own.typedViewAsString.Component", {
+					metadata: {
+						manifest: "json",
+						interfaces: [
+							"sap.ui.core.IAsyncContentCreation"
+						]
+					}
+				});
+
+			});
+			sap.ui.define("my/own/viewAsString/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
+
+				return UIComponent.extend("my.own.viewAsString.Component", {
+					metadata: {
+						manifest: "json",
+						interfaces: [
+							"sap.ui.core.IAsyncContentCreation"
+						]
+					}
+				});
+
+			});
 			sap.ui.define("error/test/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
 
 				return UIComponent.extend("error.test.Component", {
@@ -711,6 +762,40 @@ sap.ui.define([
 		}).then(function(oComponent) {
 			// a missing type in the root-view definition should be defaulted to XML
 			assert.ok(oComponent.getRootControl().isA("sap.ui.core.mvc.XMLView"));
+			oComponent.destroy();
+		}, function() {
+			assert.ok(false, "Error handler must not be called");
+		});
+	});
+
+	QUnit.test("UIComponent (IAsyncContentCreation) check when rootView is set with string and the defaulting of view type", function(assert) {
+		assert.expect(2);
+
+		const oCreateSpy = this.spy(View, "create");
+
+		return Component.create({
+			name: "my.own.viewAsString"
+		}).then(function(oComponent) {
+			// a missing type in the root-view definition should be defaulted to XML
+			assert.ok(oComponent.getRootControl().isA("sap.ui.core.mvc.XMLView"));
+			assert.equal(oCreateSpy.callCount, 1, "Modern view factory View.create is called");
+			oComponent.destroy();
+		}, function() {
+			assert.ok(false, "Error handler must not be called");
+		});
+	});
+
+	QUnit.test("UIComponent (IAsyncContentCreation) check when rootView is set with string and it's a typed view", function(assert) {
+		assert.expect(2);
+
+		const oCreateSpy = this.spy(View, "create");
+
+		return Component.create({
+			name: "my.own.typedViewAsString"
+		}).then(function(oComponent) {
+			// root control must be of the typed view class
+			assert.ok(oComponent.getRootControl().isA("my.own.TypedView"));
+			assert.equal(oCreateSpy.callCount, 1, "Modern view factory View.create is called");
 			oComponent.destroy();
 		}, function() {
 			assert.ok(false, "Error handler must not be called");
