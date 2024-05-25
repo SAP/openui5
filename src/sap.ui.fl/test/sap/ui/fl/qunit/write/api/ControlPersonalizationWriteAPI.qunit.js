@@ -641,7 +641,7 @@ sap.ui.define([
 					var oRootView;
 					oViewPromise = XMLView.create({
 						id: this.createId("root-mockview"),
-						definition: '<mvc:View id="mockview" xmlns:mvc="sap.ui.core.mvc"/>'
+						definition: '<mvc:View xmlns:mvc="sap.ui.core.mvc"/>'
 					}).then(function(oView) {
 						oRootView = oView;
 						oApp.addPage(oView);
