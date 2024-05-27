@@ -162,11 +162,9 @@ sap.ui.define([
 		mPropertyBag.manifest ||= mPropertyBag.rawManifest || (oComponent && oComponent.getManifestObject()) || {};
 		mPropertyBag.reference ||= ManifestUtils.getFlexReference(mPropertyBag);
 		const oFlexInfoSession = FlexInfoSession.getByReference(mPropertyBag.reference);
-		if (oFlexInfoSession.reloadFlexData) {
-			mPropertyBag.version ||= oFlexInfoSession.version;
-			mPropertyBag.adaptationId ||= oFlexInfoSession.displayedAdaptationId;
-			mPropertyBag.allContextsProvided ||= oFlexInfoSession.allContextsProvided;
-		}
+		mPropertyBag.version ||= oFlexInfoSession.version;
+		mPropertyBag.adaptationId ||= oFlexInfoSession.displayedAdaptationId;
+		mPropertyBag.allContextsProvided ||= oFlexInfoSession.allContextsProvided;
 	}
 
 	function createFlexObjects(oStorageResponse) {
@@ -401,7 +399,6 @@ sap.ui.define([
 		if (oResponse.info !== undefined) {
 			oFlexInfoSession = Object.assign(oFlexInfoSession, oResponse.info);
 		}
-		oFlexInfoSession.reloadFlexData = false;
 		FlexInfoSession.setByReference(oFlexInfoSession, sReference);
 	}
 
