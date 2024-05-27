@@ -2141,13 +2141,11 @@ sap.ui.define([
 
 	QUnit.module("Focus on element", {
 		beforeEach: function () {
-
 			this.oCarousel = new Carousel("myCrsl", {
-				customLayout: new CarouselLayout({
-					visiblePagesCount: 3
-				}),
 				pages: [
-					new Page("page1")
+					new Page("page1"),
+					new Page("page2"),
+					new Page("page3")
 				]
 			});
 			this.oCarousel.placeAt(DOM_RENDER_LOCATION);
@@ -2159,8 +2157,59 @@ sap.ui.define([
 	});
 
 	QUnit.test("Focus on multiInput element", function (assert) {
-		var oCarousel = this.oCarousel;
+		this.oCarousel.setCustomLayout(new CarouselLayout({
+			visiblePagesCount: 3
+		}));
 
-		assert.strictEqual(oCarousel._getPageIndex(), 0, "Page indexing does not return undefined");
+		assert.strictEqual(this.oCarousel._getPageIndex(), 0, "Page indexing does not return undefined");
+	});
+
+	QUnit.test("Focused element when focus enters the carousel via page indicator arrow press", function (assert) {
+		assert.notStrictEqual(document.activeElement, this.oCarousel, "Focus is not in the carousel");
+
+		// act
+		pressArrowNext(this.oCarousel);
+		assert.strictEqual(document.activeElement, this.oCarousel.getFocusDomRef(), "Focused element should be correct");
+	});
+
+	QUnit.test("Focus carousel that is not rendered", function (assert) {
+		const carousel = new Carousel({
+			pages: [
+				new Page()
+			]
+		});
+
+		try {
+			carousel.focus();
+			assert.ok(true, "Exception is not thrown");
+		} catch (e) {
+			assert.ok(false, "Exception is not thrown");
+		}
+
+		carousel.destroy();
+	});
+
+	QUnit.test("Focus carousel that has no pages initially", function (assert) {
+		const carousel = new Carousel({
+			pages: []
+		});
+		carousel.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
+
+		// act
+		carousel.focus();
+		assert.strictEqual(document.activeElement, carousel.getDomRef("noData"), "'No data' element should be focused");
+
+		carousel.addPage(new Page());
+		Core.applyChanges();
+
+		try {
+			carousel.focus();
+			assert.ok(true, "Exception is not thrown");
+		} catch (e) {
+			assert.ok(false, "Exception is not thrown");
+		}
+
+		carousel.destroy();
 	});
 });
