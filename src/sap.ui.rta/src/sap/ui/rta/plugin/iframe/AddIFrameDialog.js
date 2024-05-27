@@ -138,9 +138,7 @@ sap.ui.define([
 			advancedSettings: {
 				value: {
 					allowForms: true,
-					allowPopups: true,
 					allowScripts: true,
-					allowModals: true,
 					allowSameOrigin: true,
 					additionalSandboxParameters: [],
 					...oAdvancedSettings

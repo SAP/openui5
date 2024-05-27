@@ -308,14 +308,6 @@
 													customTextOff=" "
 													state="{dialogInfo>/advancedSettings/value/allowForms}" />
 											</form:FormElement>
-											<form:FormElement label="allow-popups">
-												<Switch
-													change="onSwitchChange"
-													id="sapUiRtaAddIFrameDialog_allowPopupsSwitch"
-													customTextOn=" "
-													customTextOff=" "
-													state="{dialogInfo>/advancedSettings/value/allowPopups}" />
-											</form:FormElement>
 											<form:FormElement label="allow-scripts">
 												<Switch
 													change="onSwitchChange"
@@ -324,14 +316,6 @@
 													customTextOff=" "
 													state="{dialogInfo>/advancedSettings/value/allowScripts}" />
 											</form:FormElement>
-											<form:FormElement label="allow-modals">
-												<Switch
-													change="onSwitchChange"
-													id="sapUiRtaAddIFrameDialog_allowModalsSwitch"
-													customTextOn=" "
-													customTextOff=" "
-													state="{dialogInfo>/advancedSettings/value/allowModals}" />
-											</form:FormElement>
 											<form:FormElement label="allow-same-origin">
 												<Switch
 													change="onSwitchChange"
@@ -339,6 +323,22 @@
 													customTextOn=" "
 													customTextOff=" "
 													state="{dialogInfo>/advancedSettings/value/allowSameOrigin}" />
+											</form:FormElement>
+											<form:FormElement label="allow-popups">
+												<Switch
+													change="onSwitchChange"
+													id="sapUiRtaAddIFrameDialog_allowPopupsSwitch"
+													customTextOn=" "
+													customTextOff=" "
+													state="{dialogInfo>/advancedSettings/value/allowPopups}" />
+											</form:FormElement>
+											<form:FormElement label="allow-modals">
+												<Switch
+													change="onSwitchChange"
+													id="sapUiRtaAddIFrameDialog_allowModalsSwitch"
+													customTextOn=" "
+													customTextOff=" "
+													state="{dialogInfo>/advancedSettings/value/allowModals}" />
 											</form:FormElement>
 										</form:FormContainer>
 										<form:FormContainer>
