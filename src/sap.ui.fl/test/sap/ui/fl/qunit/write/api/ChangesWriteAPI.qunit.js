@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/appVariant/DescriptorChangeTypes",
 	"sap/ui/fl/apply/_internal/changes/Applier",
 	"sap/ui/fl/apply/_internal/changes/Reverter",
+	"sap/ui/fl/apply/_internal/controlVariants/Utils",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/descriptorRelated/api/DescriptorChangeFactory",
@@ -33,6 +34,7 @@ sap.ui.define([
 	DescriptorChangeTypes,
 	Applier,
 	Reverter,
+	ControlVariantUtils,
 	States,
 	FlexObjectState,
 	DescriptorChangeFactory,
@@ -464,6 +466,44 @@ sap.ui.define([
 			var oReturn = ChangesWriteAPI.getChangeHandler(mPropertyBag);
 
 			assert.strictEqual(oReturn, "myFancyChangeHandler", "the function returns the value of the ChangeHandlerStorage function");
+		});
+
+		QUnit.test("when createVariant is called", function(assert) {
+			const oGetFlexRefStub = sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("flexReference");
+			sandbox.stub(FlexUtils, "getAppComponentForSelector").returns("appComponent");
+			const oUserVariant = ChangesWriteAPI.createVariant({
+				selector: {id: "selector"},
+				variantManagementReference: "vmReference",
+				title: "foo",
+				layer: Layer.USER,
+				author: "myAuthor",
+				variantReference: "myFancyVariantReference"
+			});
+			assert.ok(oUserVariant.isA("sap.ui.fl.apply._internal.flexObjects.FlVariant"), "then a variant object is created");
+			assert.strictEqual(oUserVariant.getLayer(), Layer.USER, "then the layer is USER");
+			assert.strictEqual(oUserVariant.getVariantReference(), "myFancyVariantReference", "then the variant reference is correct");
+			assert.strictEqual(oUserVariant.getName(), "foo", "then the layer is USER");
+			assert.strictEqual(oUserVariant.getFlexObjectMetadata().reference, "flexReference", "then the flex reference is correct");
+			assert.strictEqual(
+				oUserVariant.getSupportInformation().generator, "ChangesWriteAPI.createVariant",
+				"then the default generator is set"
+			);
+			assert.strictEqual(oUserVariant.getSupportInformation().user, "myAuthor", "then the user is set");
+			assert.ok(oGetFlexRefStub.calledWith("appComponent"), "then the flex reference is retrieved correctly");
+
+			const oKeyUserVariant = ChangesWriteAPI.createVariant({
+				selector: {id: "selector"},
+				variantManagementReference: "vmReference",
+				title: "foobar",
+				generator: "myGenerator"
+			});
+			assert.ok(oKeyUserVariant.isA("sap.ui.fl.apply._internal.flexObjects.FlVariant"), "then a variant object is created");
+			assert.strictEqual(oKeyUserVariant.getVariantReference(), "vmReference", "then the variant reference is correct");
+			assert.strictEqual(oKeyUserVariant.getLayer(), Layer.CUSTOMER, "then the layer is USER");
+			assert.strictEqual(oKeyUserVariant.getName(), "foobar", "then the layer is USER");
+			assert.strictEqual(oKeyUserVariant.getFlexObjectMetadata().reference, "flexReference", "then the flex reference is set");
+			assert.strictEqual(oKeyUserVariant.getSupportInformation().generator, "myGenerator", "then the generator is set");
+			assert.strictEqual(oKeyUserVariant.getSupportInformation().user, ControlVariantUtils.DEFAULT_AUTHOR, "then the user is set");
 		});
 	});
 
