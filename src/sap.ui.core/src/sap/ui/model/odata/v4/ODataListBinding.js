@@ -777,10 +777,15 @@ sap.ui.define([
 	 * <code>bSkipRefresh</code> must be set, but both <code>bAtEnd</code> and
 	 * <code>bInactive</code> must not be set. No other creation or
 	 * {@link sap.ui.model.odata.v4.Context#move move} must be pending, and no other modification
-	 * (including collapse of some ancestor node) must happen while this creation is pending! Since
-	 * 1.125.0, when using the <code>createInPlace</code> parameter (see {@link #setAggregation})
-	 * the new transient child is not shown. If the created child does not become part of the
-	 * hierarchy due to the search or filter criteria, the context is destroyed.
+	 * (including collapse of some ancestor node) must happen while this creation is pending! When
+	 * using the <code>createInPlace</code> parameter (see {@link #setAggregation}, @experimental as
+	 * of version 1.125.0), the new {@link sap.ui.model.odata.v4.Context#isTransient transient}
+	 * child is hidden until it becomes {@link sap.ui.model.odata.v4.Context#created created}, and
+	 * then it is shown at a position determined by the back end and the current sort order. The
+	 * position of the new child can be retrieved by using its
+	 * {@link sap.ui.model.odata.v4.Context#getIndex index}. If the created child does not become
+	 * part of the hierarchy due to the search or filter criteria, the context will be destroyed and
+	 * its {@link sap.ui.model.odata.v4.Context#getIndex index} is set to <code>undefined</code>.
 	 *
 	 * @param {Object<any>} [oInitialData={}]
 	 *   The initial data for the created entity
@@ -4354,9 +4359,9 @@ sap.ui.define([
 	 *       suggestion: <code>CASE WHEN MIN(Unit) = MAX(Unit) THEN MIN(Unit) END</code>)
 	 *   </ul>
 	 * @param {boolean} [oAggregation.createInPlace]
-	 *   Since 1.125.0; whether created nodes are shown in place at the position specified by the
-	 *   service; only the value <code>true</code> is allowed. Otherwise, created nodes are
-	 *   displayed out of place as the first child of their parent.
+	 *   Whether created nodes are shown in place at the position specified by the service
+	 *   (@experimental as of version 1.125.0); only the value <code>true</code> is allowed.
+	 *   Otherwise, created nodes are displayed out of place as the first child of their parent.
 	 * @param {number} [oAggregation.expandTo=1]
 	 *   The number (as a positive integer) of different levels initially available without calling
 	 *   {@link sap.ui.model.odata.v4.Context#expand} (since 1.117.0), supported only if a
