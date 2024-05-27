@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/mdc/valuehelp/content/MTable",
 	"sap/ui/mdc/valuehelp/content/MDCTable",
 	"sap/ui/mdc/valuehelp/content/Conditions",
-	"sap/ui/mdc/filterbar/vh/FilterBar",
+	"sap/ui/mdc/valuehelp/FilterBar",
 	"sap/ui/mdc/FilterField",
 	"sap/ui/mdc/Table",
 	"sap/ui/mdc/table/Column",
