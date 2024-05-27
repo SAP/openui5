@@ -1,0 +1,50 @@
+.sapDemokitTreeItem > .sapMLIBContent {
+	display: block;
+	word-break: break-word;
+}
+
+.sapDemokitTreeItemTitle {
+	color: @sapUiListTextColor;
+}
+
+.sapDemokitTreeItemLabel,
+.sapDemokitTreeItemTitle {
+	display: inline-block;
+}
+
+.sapDemokitTreeItemLabel {
+	font-size: 0.75rem;
+	color: #d3d7d9;
+}
+
+.sapUiTheme-sap_horizon .sapDemokitTreeItemLabel {
+	color: #556b82;
+}
+
+.sapUiTheme-sap_belize_hcw .sapDemokitTreeItemLabel {
+	color: #000;
+}
+
+.sapUiTheme-sap_belize_hcb .sapDemokitTreeItemLabel {
+	color: #fff;
+}
+
+.sap-desktop:not(.sap-combi) .sapUiSizeCompact {
+	.sapUiDemoKitApiMasterPage.sapMPage.sapMPageWithHeader.sapMPageWithSubHeader > section {
+		top: 6.1rem;
+	}
+}
+
+.sap-tablet {
+	.sapUiDemoKitApiMasterPage.sapMPage.sapMPageWithHeader.sapMPageWithSubHeader > section {
+		top: 8.4rem;
+	}
+}
+
+@media screen and (max-width: 22.625em) { // 362px
+	.sap-phone {
+		.sapUiDemoKitApiMasterPage.sapMPage.sapMPageWithHeader.sapMPageWithSubHeader > section {
+			top: 8.4rem;
+		}
+	}
+}
