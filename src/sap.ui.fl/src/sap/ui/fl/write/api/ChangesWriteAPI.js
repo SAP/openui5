@@ -174,9 +174,9 @@ sap.ui.define([
 	 *
 	 * @param {object} mPropertyBag - Object with parameters as properties
 	 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Selector to retrieve the app component
-	 * @param {object} mPropertyBag.variantReference - Reference to the variant the new one should be based on
 	 * @param {object} mPropertyBag.variantManagementReference - Reference to the variant management control
 	 * @param {object} mPropertyBag.title - Name of the new variant
+	 * @param {object} [mPropertyBag.variantReference] - Reference to the variant the new one should be based on
 	 * @param {object} [mPropertyBag.layer] - Layer of the new variant
 	 * @param {object} [mPropertyBag.generator] - Generator of the new variant
 	 * @param {object} [mPropertyBag.author] - Author of the variant
