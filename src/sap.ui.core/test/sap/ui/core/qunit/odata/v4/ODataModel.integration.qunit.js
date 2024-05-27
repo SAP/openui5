@@ -35947,6 +35947,11 @@ sap.ui.define([
 			[true, 1, "Alpha*"],
 			[undefined, 2, "Theta*"]
 		], 7);
+		assert.deepEqual(oBinding.getAllCurrentContexts()[0].getObject(), {
+			"@$ui5.node.level" : 1,
+			ID : "7",
+			Name : "Eta*"
+		}, "no LimitedRank");
 
 		this.expectRequest(sUrlWithExpandLevels
 				+ "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name"

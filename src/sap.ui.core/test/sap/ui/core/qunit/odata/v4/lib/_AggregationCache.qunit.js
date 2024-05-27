@@ -5852,6 +5852,7 @@ sap.ui.define([
 		oHelperMock.expects("drillDown").withExactArgs("~node1Data~", "~LimitedRank~").returns("4");
 		oFirstLevelMock.expects("calculateKeyPredicate")
 			.withExactArgs("~node1Data~", "~types~", "/Foo");
+		oHelperMock.expects("deleteProperty").withExactArgs("~node1Data~", "~LimitedRank~");
 		oCacheMock.expects("insertNode").withExactArgs("~node1Data~", 4)
 			.callsFake(function () {
 				oCache.aElements.$byPredicate["~predicate1~"] = "~node1Data~";
@@ -5868,6 +5869,7 @@ sap.ui.define([
 		oHelperMock.expects("drillDown").withExactArgs("~node3Data~", "~LimitedRank~").returns("5");
 		oFirstLevelMock.expects("calculateKeyPredicate")
 			.withExactArgs("~node3Data~", "~types~", "/Foo");
+		oHelperMock.expects("deleteProperty").withExactArgs("~node3Data~", "~LimitedRank~");
 		oCacheMock.expects("insertNode").withExactArgs("~node3Data~", 5)
 			.callsFake(function () {
 				oCache.aElements.$byPredicate["~predicate3~"] = "~node3Data~";
