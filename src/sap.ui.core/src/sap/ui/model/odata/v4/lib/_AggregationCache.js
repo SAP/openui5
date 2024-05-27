@@ -526,6 +526,9 @@ sap.ui.define([
 		const oPromise = oCache.create(oGroupLock, oPostPathPromise, sPath, sTransientPredicate,
 			oEntityData, bAtEndOfCreated, fnErrorCallback, fnSubmitCallback, /*onCancel*/() => {
 				_Helper.removeByPath(this.mPostRequests, sTransientPredicate, oEntityData);
+				if (this.oAggregation.createInPlace) {
+					return;
+				}
 				if (oCache === this.oFirstLevel) {
 					this.adjustDescendantCount(oEntityData, iIndex, -1);
 				}

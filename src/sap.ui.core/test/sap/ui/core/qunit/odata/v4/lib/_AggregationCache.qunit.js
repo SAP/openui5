@@ -5006,20 +5006,23 @@ sap.ui.define([
 			bar : "~bar~",
 			foo : "~foo~"
 		};
-		this.mock(_Helper).expects("addByPath")
+		const oHelperMock = this.mock(_Helper);
+		oHelperMock.expects("addByPath")
 			.withExactArgs(sinon.match.same(oCache.mPostRequests), "~sTransientPredicate~",
 				sinon.match.same(oEntityData));
 		const oPostBody = {};
+		let fnCancelCallback;
 		this.mock(oCache.oFirstLevel).expects("create")
 			.withExactArgs("~oGroupLock~", "~oPostPathPromise~", "~sPath~",
 				"~sTransientPredicate~", {bar : "~bar~", foo : "~foo~"}, false, "~fnErrorCallback~",
 				"~fnSubmitCallback~", sinon.match.func)
 			.callsFake(function () {
+				fnCancelCallback = arguments[8];
 				_Helper.setPrivateAnnotation(oEntityData, "postBody", oPostBody);
 				return new SyncPromise(function (resolve) {
 					setTimeout(function () {
 						that.mock(oCache.oTreeState).expects("setOutOfPlace").never();
-						that.mock(_Helper).expects("removeByPath")
+						oHelperMock.expects("removeByPath")
 							.withExactArgs(sinon.match.same(oCache.mPostRequests),
 								"~sTransientPredicate~", sinon.match.same(oEntityData));
 						that.mock(oCache).expects("requestRank")
@@ -5037,7 +5040,7 @@ sap.ui.define([
 							.withExactArgs(sinon.match.same(oEntityData), iRank, 1);
 						that.mock(oCache.oFirstLevel).expects("removeElement")
 							.withExactArgs(0, "~sTransientPredicate~");
-						that.mock(_Helper).expects("deletePrivateAnnotation").exactly(iRank ? 1 : 0)
+						oHelperMock.expects("deletePrivateAnnotation").exactly(iRank ? 1 : 0)
 							.withExactArgs(sinon.match.same(oEntityData), "transientPredicate");
 						that.mock(oCache.oFirstLevel).expects("restoreElement")
 							.exactly(iRank ? 1 : 0)
@@ -5048,7 +5051,7 @@ sap.ui.define([
 					});
 				});
 			});
-		this.mock(_Helper).expects("makeRelativeUrl").exactly(bCreateRoot ? 0 : 1)
+		oHelperMock.expects("makeRelativeUrl").exactly(bCreateRoot ? 0 : 1)
 			.withExactArgs("/Foo('42')", "/Foo").returns("~relativeUrl~");
 
 		// code under test
@@ -5088,6 +5091,18 @@ sap.ui.define([
 				assert.deepEqual(oCache.aElements, ["0", oParentNode, "2"]);
 				assert.strictEqual(oCache.aElements.$count, 3);
 			}
+
+			oHelperMock.expects("removeByPath")
+				.withExactArgs(sinon.match.same(oCache.mPostRequests),
+					"~sTransientPredicate~", sinon.match.same(oEntityData));
+
+			// code under test
+			fnCancelCallback();
+
+			assert.deepEqual(oCache.aElements,
+				iRank ? ["0", oParentNode, null, "2"] : ["0", oParentNode, "2"],
+				"unchanged");
+			assert.strictEqual(oCache.aElements.$count, iRank ? 4 : 3, "unchanged");
 		});
 	});
 		});
