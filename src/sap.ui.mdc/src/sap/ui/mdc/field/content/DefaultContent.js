@@ -175,7 +175,7 @@ sap.ui.define([
 				valueHelpRequest: oContentFactory.getHandleValueHelpRequest()
 			});
 
-			oInput._setPreferUserInteraction(true);
+			oInput.setPreferUserInteraction(true);
 			oContentFactory.setAriaLabelledBy(oInput);
 
 			return [oInput];
@@ -225,7 +225,7 @@ sap.ui.define([
 				valueHelpRequest: oContentFactory.getHandleValueHelpRequest()
 			});
 
-			oMultiInput._setPreferUserInteraction(true);
+			oMultiInput.setPreferUserInteraction(true);
 			oContentFactory.setAriaLabelledBy(oMultiInput);
 
 			return [oMultiInput];
@@ -258,7 +258,7 @@ sap.ui.define([
 				liveChange: oContentFactory.getHandleContentLiveChange()
 			});
 
-			oTextArea._setPreferUserInteraction(true);
+			oTextArea.setPreferUserInteraction(true);
 			oContentFactory.setAriaLabelledBy(oTextArea);
 
 			return [oTextArea];

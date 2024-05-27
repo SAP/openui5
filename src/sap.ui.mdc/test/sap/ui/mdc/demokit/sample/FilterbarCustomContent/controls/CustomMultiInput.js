@@ -232,7 +232,7 @@ sap.ui.define([
 			tokenUpdate: _handleTokenUpdate.bind(this)
 		});
 
-		oMultiInput._setPreferUserInteraction(true);
+		oMultiInput.setPreferUserInteraction(true);
 		oMultiInput.setModel(this._oManagedObjectModel, "$this");
 		this.setAggregation("_multiInput", oMultiInput);
 

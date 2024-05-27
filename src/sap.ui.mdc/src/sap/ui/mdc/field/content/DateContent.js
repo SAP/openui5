@@ -97,7 +97,7 @@ sap.ui.define([
 				oDatePicker.setSecondaryCalendarType(oContentFactory.getSecondaryCalendarType());
 			}
 
-			oDatePicker._setPreferUserInteraction(true);
+			oDatePicker.setPreferUserInteraction(true);
 			oContentFactory.setAriaLabelledBy(oDatePicker);
 
 			return [oDatePicker];
@@ -128,7 +128,7 @@ sap.ui.define([
 				change: oContentFactory.getHandleContentChange()
 			});
 
-			oDateRangeSelection._setPreferUserInteraction(true);
+			oDateRangeSelection.setPreferUserInteraction(true);
 			oContentFactory.setAriaLabelledBy(oDateRangeSelection);
 
 			return [oDateRangeSelection];

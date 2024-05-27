@@ -74,7 +74,7 @@ sap.ui.define([
 				change: oContentFactory.getHandleContentChange(),
 				liveChange: oContentFactory.getHandleContentLiveChange()
 			});
-			oInput1._setPreferUserInteraction(true);
+			oInput1.setPreferUserInteraction(true);
 			oContentFactory.setAriaLabelledBy(oInput1);
 			aControls.push(oInput1);
 			aControls = this._addUnitControl(oContentFactory, aControls, sId, Input, InvisibleText);
@@ -134,7 +134,7 @@ sap.ui.define([
 				liveChange: oContentFactory.getHandleContentLiveChange(),
 				tokenUpdate: oContentFactory.getHandleTokenUpdate()
 			});
-			oMultiInput._setPreferUserInteraction(true);
+			oMultiInput.setPreferUserInteraction(true);
 			oContentFactory.setAriaLabelledBy(oMultiInput);
 			aControls.push(oMultiInput);
 			aControls = this._addUnitControl(oContentFactory, aControls, sId, Input, InvisibleText);
@@ -184,7 +184,7 @@ sap.ui.define([
 					valueHelpRequest: oContentFactory.getHandleValueHelpRequest()
 				});
 
-				oInput._setPreferUserInteraction(true);
+				oInput.setPreferUserInteraction(true);
 				oContentFactory.setAriaLabelledBy(oInput);
 				aControls.push(oInput);
 			}

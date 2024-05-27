@@ -2428,7 +2428,7 @@ sap.ui.define([
 			this.oInput = new InputBase();
 			this.oModel = new JSONModel();
 
-			this.oInput._setPreferUserInteraction(true);
+			this.oInput.setPreferUserInteraction(true);
 			this.oInput.bindProperty("value", {path: "/value"});
 			this.oModel.setData({"value": 'Initial Value'});
 			this.oInput.setModel(this.oModel);
@@ -2474,7 +2474,7 @@ sap.ui.define([
 
 	QUnit.test("Value concurrency scenario - model update on a focused non-empty input with _bPreferUserInteraction = false", function(assert) {
 		// act
-		this.oInput._setPreferUserInteraction(false);
+		this.oInput.setPreferUserInteraction(false);
 		this.oInput.focus();
 		this.oInputFocusDomRef.value = "User Value 2";
 		this.oModel.setProperty('/value', "Model Value");
