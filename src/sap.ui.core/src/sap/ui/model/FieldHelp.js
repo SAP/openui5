@@ -94,24 +94,6 @@ sap.ui.define([
 		#oUpdateHotspotsPromise = null;
 
 		/**
-		 * Returns the label text for the given control.
-		 *
-		 * @param {sap.ui.core.Element} oElement The control
-		 * @returns {string} The label text for the given control; empty string if no label text was found
-		 */
-		static _getLabelText(oElement) {
-			const sLabelId = LabelEnablement.getReferencingLabels(oElement)[0];
-			if (sLabelId) {
-				const oLabel = Element.getElementById(sLabelId);
-				if (oLabel?.getMetadata().isInstanceOf("sap.ui.core.Label") && oLabel.getText) {
-					return oLabel.getText();
-				}
-			}
-
-			return "";
-		}
-
-		/**
 		 * Requests the <code>String</code> value of the <code>com.sap.vocabularies.Common.v1.DocumentationRef</code>
 		 * annotation for the given binding.
 		 *
@@ -163,7 +145,13 @@ sap.ui.define([
 			const aFieldHelpHotspots = [];
 			Object.keys(this.#mDocuRefControlToFieldHelp).forEach((sControlID) => {
 				const oControl = Element.getElementById(sControlID);
-				const sLabel = FieldHelp._getLabelText(oControl);
+				const sLabel = LabelEnablement._getLabelTexts(oControl)[0];
+				if (!sLabel) {
+					Log.error(`Cannot find a label for control '${sControlID}'; ignoring field help`,
+						JSON.stringify(this.#mDocuRefControlToFieldHelp[sControlID]), sClassName);
+
+					return;
+				}
 				const oURNSet = new Set();
 				Object.values(this.#mDocuRefControlToFieldHelp[sControlID]).forEach((aURNs) => {
 					// filter duplicates
