@@ -2,8 +2,8 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/mdc/util/loadModules", "sap/m/p13n/Engine"
-], (loadModules, Engine) => {
+	"sap/ui/mdc/util/loadModules", "sap/m/p13n/Engine", "sap/base/Log"
+], (loadModules, Engine, SAPLog) => {
 	"use strict";
 
 	/**
@@ -72,6 +72,9 @@ sap.ui.define([
 					delete oControl._pPendingModification;
 					Engine.getInstance().fireStateChange(oControl);
 					await oControl._onModifications(aAffectedControllerKeys);
+					resumeInvalidation(oControl);
+				}).catch((oError) => {
+					SAPLog.error(`Error during mdc flex handling: ${oError}`);
 					resumeInvalidation(oControl);
 				});
 			}
