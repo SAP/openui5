@@ -347,7 +347,7 @@ sap.ui.define([
 	Carousel.prototype.init = function() {
 		this._aAllActivePages = [];
 		this._aAllActivePagesIndexes = [];
-		this._iFocusedPageIndex = 0;
+		this._iFocusedPageIndex = -1;
 		this._bShouldFireEvent = true;
 		this._handleThemeAppliedBound = this._handleThemeApplied.bind(this);
 
@@ -396,6 +396,10 @@ sap.ui.define([
 
 		if (sActivePage) {
 			this._updateActivePages(sActivePage);
+
+			if (this._iFocusedPageIndex === -1) {
+				this._iFocusedPageIndex = this._aAllActivePagesIndexes[0];
+			}
 		}
 
 		if (this._sResizeListenerId) {
@@ -483,9 +487,17 @@ sap.ui.define([
 	};
 
 	Carousel.prototype.getFocusDomRef = function () {
-		const sPageId = this.getPages().length && this.getPages()[this._iFocusedPageIndex].getId();
+		if (!this.getPages().length) {
+			return this.getDomRef("noData");
+		}
 
-		return this.getDomRef(sPageId + "-slide") || this.getDomRef("noData");
+		if (this._iFocusedPageIndex === -1) {
+			return null;
+		}
+
+		const sPageId = this.getPages()[this._iFocusedPageIndex].getId();
+
+		return this.getDomRef(sPageId + "-slide");
 	};
 
 	/**
@@ -625,8 +637,10 @@ sap.ui.define([
 			this._changeActivePage(this._aAllActivePagesIndexes[0]);
 		}
 
-		if (bIsCarouselActive) {
+		// focus the new page after transition if the focus was in the carousel
+		if (bIsCarouselActive || this._bPageIndicatorArrowPress) {
 			this._focusPage(iFocusPageIndex);
+			this._bPageIndicatorArrowPress = false;
 		}
 	};
 
@@ -670,10 +684,9 @@ sap.ui.define([
 	Carousel.prototype._focusPage = function(sPageIndex) {
 		this._iFocusedPageIndex = sPageIndex;
 
-		// focus the new page if the focus was in the carousel and is not on some of the page children
-		// !this.getFocusDomRef().contains(document.activeElement)
 		const oPageDomRef = this.getDomRef(this.getPages()[sPageIndex].getId() + "-slide");
 
+		// focus the new page if the is not on some of the page children
 		if (!oPageDomRef.contains(document.activeElement)) {
 			oPageDomRef.focus({ preventScroll: true });
 		}
@@ -911,6 +924,7 @@ sap.ui.define([
 
 		if (this._isPageIndicatorArrow(oEvent.target)) {
 			// prevent upcoming focusin event on the arrow and focusout on the active page
+			this._bPageIndicatorArrowPress = true;
 			oEvent.preventDefault();
 			return;
 		}
