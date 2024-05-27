@@ -577,7 +577,11 @@ sap.ui.define([
 			return aCurrentControls;
 		}, []);
 
-		return aControls.length ? mPropertyBag.flexController.waitForChangesToBeApplied(aControls) : Promise.resolve();
+		return aControls.length
+			// When waiting for the initial changes, no variant switch could have happened yet
+			// that needs to be waited for, thus skip waiting for the variant switch promise
+			? mPropertyBag.flexController.waitForChangesToBeApplied(aControls, true)
+			: Promise.resolve();
 	};
 
 	return VariantManagementState;
