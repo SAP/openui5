@@ -140,8 +140,10 @@ sap.ui.define([
 				// Note: "@$ui5.node.level" is outdated after #move!
 				const iLevel = oElement["@$ui5.node.level"] + iLevelOffset;
 
-				// every "created" element needs to know its context, no others must do so
-				strictEqual(oElement["@$ui5.context.isTransient"] !== undefined,
+				// every "created" element needs to know its context (if not using createInPlace!),
+				// no others must do so
+				strictEqual(oElement["@$ui5.context.isTransient"] !== undefined
+						&& !oListBinding.getAggregation().createInPlace,
 					 _Helper.hasPrivateAnnotation(oElement, "context"),
 					`"context" @ level ${iLevel}`, oElement);
 				if (_Helper.hasPrivateAnnotation(oElement, "context")) {
@@ -37912,6 +37914,132 @@ make root = ${bMakeRoot}`;
 				[undefined, 1, "1", "Alpha"],
 				[undefined, 1, "2", "Beta"]
 			]);
+	});
+
+	//*********************************************************************************************
+	// Scenario: A hierarchy uses "$$aggregation.createInPlace". Create a root node which is created
+	// and shown in-place between two existing nodes. Use the special cases model to ensure the node
+	// property is properly requested.
+	// JIRA: CPOUI5ODATAV4-2560
+	QUnit.test("Recursive Hierarchy: createInPlace, root", async function (assert) {
+		const sUrl = "Artists?$apply=ancestors($root/Artists,OrgChart,_/NodeID"
+				+ ",filter(sendsAutographs),keep start)"
+				+ "/com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root/Artists"
+				+ ",HierarchyQualifier='OrgChart',NodeProperty='_/NodeID',Levels=1)";
+		const sSelect = "&$select=ArtistID,IsActiveEntity,Name,_/DrillState,_/NodeID";
+		const oModel = this.createSpecialCasesModel({autoExpandSelect : true});
+		const sView = `
+<t:Table id="table" rows="{path : '/Artists',
+		parameters : {
+			$$aggregation : {
+				createInPlace : true,
+				hierarchyQualifier : 'OrgChart'
+			},
+			$count : true,
+			$filter : 'sendsAutographs'
+		}}" threshold="0">
+	<Text text="{= %{@$ui5.node.isExpanded} }"/>
+	<Text text="{= %{@$ui5.node.level} }"/>
+	<Text text="{ArtistID}"/>
+	<Text text="{Name}"/>
+	<Text text="{_/NodeID}"/>
+</t:Table>`;
+
+		// 1 Alpha
+		// 3 Gamma (created)
+		// 2 Beta
+
+		this.expectRequest("Artists/$count?$filter=sendsAutographs", 2)
+			.expectRequest(sUrl + sSelect + "&$count=true&$skip=0&$top=10", {
+				"@odata.count" : "2",
+				value : [{
+					ArtistID : "1",
+					IsActiveEntity : false,
+					Name : "Alpha",
+					_ : {
+						DrillState : "leaf",
+						NodeID : "1,false"
+					}
+				}, {
+					ArtistID : "2",
+					IsActiveEntity : false,
+					Name : "Beta",
+					_ : {
+						DrillState : "leaf",
+						NodeID : "2,false"
+					}
+				}]
+			});
+
+		await this.createView(assert, sView, oModel);
+
+		const oTable = this.oView.byId("table");
+		checkTable("initial page", assert, oTable, [
+			"/Artists(ArtistID='1',IsActiveEntity=false)",
+			"/Artists(ArtistID='2',IsActiveEntity=false)"
+		], [
+			[undefined, 1, "1", "Alpha", "1,false"],
+			[undefined, 1, "2", "Beta", "2,false"]
+		]);
+		const oListBinding = oTable.getBinding("rows");
+
+		this.expectRequest({
+				method : "POST",
+				url : "Artists",
+				payload : {
+					Name : "Gamma"
+				}
+			}, {
+				ArtistID : "3",
+				IsActiveEntity : false,
+				Name : "Gamma",
+				_ : null // not available w/ RAP for a non-hierarchical request
+			})
+			.expectRequest(sUrl + "&$filter=ArtistID eq '3' and IsActiveEntity eq false"
+				+ "&$select=_/Limited_Rank,_/NodeID", {
+				value : [{
+					_ : {
+						Limited_Rank : "1",
+						NodeID : "3,false"
+					}
+				}]
+			});
+
+		// code under test
+		const oGamma = oListBinding.create({
+			Name : "Gamma"
+		}, /*bSkipRefresh*/true);
+		const oGammaCreated = oGamma.created();
+
+		assert.strictEqual(oGamma.getIndex(), undefined);
+		assert.strictEqual(oGamma.isTransient(), true);
+		checkTable("while create Gamma is pending", assert, oTable, [
+			"/Artists(ArtistID='1',IsActiveEntity=false)",
+			"/Artists(ArtistID='2',IsActiveEntity=false)"
+		], [
+			[undefined, 1, "1", "Alpha", "1,false"],
+			[undefined, 1, "2", "Beta", "2,false"]
+		]);
+		assert.strictEqual(oListBinding.getCount(), 2);
+
+		await Promise.all([
+			oGammaCreated,
+			this.waitForChanges(assert, "create Gamma")
+		]);
+
+		assert.strictEqual(oGamma.getIndex(), 1);
+		assert.strictEqual(oGamma.isTransient(), false);
+		checkCreatedPersisted(assert, oGamma, oGammaCreated);
+		checkTable("after create Gamma", assert, oTable, [
+			"/Artists(ArtistID='1',IsActiveEntity=false)",
+			"/Artists(ArtistID='3',IsActiveEntity=false)",
+			"/Artists(ArtistID='2',IsActiveEntity=false)"
+		], [
+			[undefined, 1, "1", "Alpha", "1,false"],
+			[undefined, 1, "3", "Gamma", "3,false"],
+			[undefined, 1, "2", "Beta", "2,false"]
+		]);
+		assert.strictEqual(oListBinding.getCount(), 2); // TODO: update $count; CPOUI5ODATAV4-2245
 	});
 
 	//*********************************************************************************************

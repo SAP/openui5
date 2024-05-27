@@ -4906,7 +4906,7 @@ sap.ui.define([
 			.withExactArgs("/Foo('42')", "/Foo").returns("~relativeUrl~");
 		oCacheMock.expects("addElements")
 			.withExactArgs(sinon.match.same(oEntityData), bCreateRoot ? 0 : 3,
-				sinon.match.same(oCollectionCache))
+				sinon.match.same(oCollectionCache), undefined)
 			.callsFake(function () {
 				assert.deepEqual(oCache.aElements, bCreateRoot
 					? [null, "0", "1", "2", "3", "4"]
@@ -4972,7 +4972,8 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("create: createInPlace", function (assert) {
+[undefined, 1].forEach(function (iRank) {
+	QUnit.test("create: createInPlace, rank=" + iRank, function (assert) {
 		var that = this;
 
 		const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, {
@@ -4981,7 +4982,9 @@ sap.ui.define([
 				hierarchyQualifier : "X"
 			});
 		assert.strictEqual(oCache.bUnifiedCache, false);
-		oCache.aElements.$count = 0;
+		oCache.aElements = ["0", "1"];
+		oCache.aElements.$byPredicate = {};
+		oCache.aElements.$count = 2;
 		this.mock(oCache).expects("createGroupLevelCache").never();
 		this.mock(oCache.oTreeState).expects("expand").never();
 		const oEntityData = {
@@ -5006,17 +5009,28 @@ sap.ui.define([
 								"~sTransientPredicate~", sinon.match.same(oEntityData));
 						that.mock(oCache).expects("requestRank")
 							.withExactArgs(sinon.match.same(oEntityData), "~oGroupLock~")
-							.resolves("~iRank~");
-						that.mock(oCache).expects("requestNodeProperty").never();
+							.resolves(iRank);
+						that.mock(oCache).expects("requestNodeProperty")
+							.withExactArgs(sinon.match.same(oEntityData), "~oGroupLock~");
+						that.mock(oCache).expects("addElements").exactly(iRank ? 1 : 0)
+							.withExactArgs(sinon.match.same(oEntityData), iRank,
+								sinon.match.same(oCache.oFirstLevel), iRank)
+							.callsFake(function () {
+								assert.deepEqual(oCache.aElements, ["0", null, "1"]);
+							});
 						that.mock(oCache.oFirstLevel).expects("removeElement")
 							.withExactArgs(0, "~sTransientPredicate~");
-						that.mock(oCache.oFirstLevel).expects("restoreElement").never();
-						that.mock(oCache).expects("shiftRank").never();
+						that.mock(_Helper).expects("deletePrivateAnnotation").exactly(iRank ? 1 : 0)
+							.withExactArgs(sinon.match.same(oEntityData), "transientPredicate");
+						that.mock(oCache.oFirstLevel).expects("restoreElement")
+							.exactly(iRank ? 1 : 0)
+							.withExactArgs(iRank, sinon.match.same(oEntityData));
+						that.mock(oCache).expects("shiftRank").exactly(iRank ? 1 : 0)
+							.withExactArgs(iRank, +1);
 						resolve();
 					});
 				});
 			});
-		this.mock(oCache).expects("addElements").never();
 		this.mock(oCache).expects("adjustDescendantCount").never();
 
 		// code under test
@@ -5031,22 +5045,36 @@ sap.ui.define([
 			bar : "~bar~",
 			foo : "~foo~"
 		});
-		assert.strictEqual(oCache.aElements.$count, 0);
+		assert.strictEqual(oCache.aElements.$count, 2);
+		assert.deepEqual(oCache.aElements.$byPredicate, {});
+		assert.deepEqual(oCache.aElements, ["0", "1"]);
 		assert.strictEqual(oResult.isPending(), true);
 
 		return oResult.then(function (oEntityData0) {
 			assert.strictEqual(oEntityData0, oEntityData);
-			assert.deepEqual(oEntityData, {
-				"@$ui5._" : {postBody : oPostBody},
-				"@$ui5.node.level" : 1,
-				bar : "~bar~",
-				foo : "~foo~"
-			});
-			assert.deepEqual(oCache.aElements.$byPredicate, {});
-			assert.deepEqual(oCache.aElements, []);
-			assert.strictEqual(oCache.aElements.$count, 0);
+			if (iRank) {
+				assert.deepEqual(oEntityData, {
+					"@$ui5._" : {postBody : oPostBody, rank : iRank},
+					"@$ui5.node.level" : 1,
+					bar : "~bar~",
+					foo : "~foo~"
+				});
+				assert.strictEqual(oCache.aElements.$count, 3);
+			} else {
+				assert.deepEqual(oEntityData, {
+					"@$ui5._" : {
+						postBody : oPostBody
+					},
+					"@$ui5.node.level" : 1,
+					bar : "~bar~",
+					foo : "~foo~"
+				});
+				assert.deepEqual(oCache.aElements, ["0", "1"]);
+				assert.strictEqual(oCache.aElements.$count, 2);
+			}
 		});
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("create: bAtEndOfCreated, collapsed parent", function (assert) {

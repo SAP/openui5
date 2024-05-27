@@ -854,7 +854,6 @@ sap.ui.define([
 			sResolvedPath = this.getResolvedPath(),
 			sTransientPredicate = "($uid=" + _Helper.uid() + ")",
 			sTransientPath = sResolvedPath + sTransientPredicate,
-			i,
 			that = this;
 
 		if (!sResolvedPath) {
@@ -959,8 +958,13 @@ sap.ui.define([
 			}
 			that.fireEvent("createCompleted", {context : oContext, success : true});
 			if (bCreateInPlace) {
-				oContext.destroy();
-				return;
+				const iRank = _Helper.getPrivateAnnotation(oCreatedEntity, "rank");
+				if (iRank === undefined) {
+					oContext.destroy();
+					return;
+				}
+				oContext.iIndex = iRank;
+				that.insertContext(oContext, iRank);
 			}
 			bDeepCreate = _Helper.getPrivateAnnotation(oCreatedEntity, "deepCreate");
 			_Helper.deletePrivateAnnotation(oCreatedEntity, "deepCreate");
@@ -996,23 +1000,7 @@ sap.ui.define([
 			} // else: context already destroyed
 		});
 
-		if (iChildIndex !== undefined) {
-			this.aContexts.splice(iChildIndex, 0, oContext);
-			for (i = this.aContexts.length - 1; i > iChildIndex; i -= 1) {
-				if (this.aContexts[i]) {
-					this.aContexts[i].iIndex += 1;
-				}
-			}
-			this.iMaxLength += 1;
-		} else if (this.bFirstCreateAtEnd !== bAtEnd) {
-			this.aContexts.splice(this.iCreatedContexts - 1, 0, oContext);
-			for (i = this.iCreatedContexts - 1; i >= 0; i -= 1) {
-				this.aContexts[i].iIndex = i - this.iCreatedContexts;
-			}
-		} else {
-			this.aContexts.unshift(oContext);
-		}
-		this._fireChange({reason : ChangeReason.Add});
+		this.insertContext(oContext, iChildIndex, bAtEnd);
 
 		return oContext;
 	};
@@ -3100,6 +3088,39 @@ sap.ui.define([
 				this._fireRefresh({reason : ChangeReason.Refresh});
 			}
 		}
+	};
+
+	/**
+	 * Inserts the given context at the given position into <code>this.aContexts</code>. The
+	 * position can be described either via a specific <code>iIndex</code>, or the relative position
+	 * in the creation area according to <code>bAtEnd</code>. Fires a change event with
+	 * <code>ChangeReason.Add</code>.
+	 *
+	 * @param {sap.ui.model.odata.v4.Context} oContext
+	 *   The context to be inserted
+	 * @param {number} [iIndex]
+	 *   The insertion index
+	 * @param {boolean} [bAtEnd]
+	 *   The relative position in the creation area
+	 */
+	ODataListBinding.prototype.insertContext = function (oContext, iIndex, bAtEnd) {
+		if (iIndex !== undefined) {
+			_Helper.insert(this.aContexts, iIndex, oContext);
+			for (let i = this.aContexts.length - 1; i > iIndex; i -= 1) {
+				if (this.aContexts[i]) {
+					this.aContexts[i].iIndex += 1;
+				}
+			}
+			this.iMaxLength += 1;
+		} else if (this.bFirstCreateAtEnd !== bAtEnd) {
+			this.aContexts.splice(this.iCreatedContexts - 1, 0, oContext);
+			for (let i = this.iCreatedContexts - 1; i >= 0; i -= 1) {
+				this.aContexts[i].iIndex = i - this.iCreatedContexts;
+			}
+		} else {
+			this.aContexts.unshift(oContext);
+		}
+		this._fireChange({reason : ChangeReason.Add});
 	};
 
 	/**
