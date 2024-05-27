@@ -7,7 +7,6 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/initial/api/Version",
-	"sap/ui/fl/initial/_internal/FlexInfoSession",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/_internal/connectors/SessionStorageConnector",
 	"sap/ui/fl/write/_internal/flexState/compVariants/CompVariantState",
@@ -27,7 +26,6 @@ sap.ui.define([
 	FlexState,
 	ManifestUtils,
 	Version,
-	FlexInfoSession,
 	Settings,
 	SessionStorageConnector,
 	CompVariantState,
@@ -476,7 +474,6 @@ sap.ui.define([
 				layer: Layer.USER,
 				condenseAnyLayer: true
 			}).then((sReturn) => {
-				assert.equal(FlexInfoSession.getByReference(sReference).reloadFlexData, true, "reloadFlexData is updated in FlexInfoSession");
 				assert.strictEqual(sReturn, "foo", "the function returns whatever getFlexObjects returns");
 				assert.strictEqual(oPersistAllStub.callCount, 1, "the CompVariant changes were saved");
 

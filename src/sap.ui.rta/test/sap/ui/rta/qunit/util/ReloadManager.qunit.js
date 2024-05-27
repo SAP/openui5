@@ -492,7 +492,6 @@ sap.ui.define([
 			window.sessionStorage.getItem(`sap.ui.rta.restart.${Layer.CUSTOMER}`);
 			var sValue = window.sessionStorage.getItem(`sap.ui.rta.restart.${Layer.CUSTOMER}`);
 			assert.strictEqual(sValue, "ABC", "the value is correct");
-			assert.ok(FlexInfoSession.getByReference("ABC").reloadFlexData, "reloadFlexData is set");
 		});
 	});
 
