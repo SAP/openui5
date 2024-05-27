@@ -19,8 +19,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var oComponentContainer;
-
+	let oComponentPromise = Promise.resolve();
 	/**
 	 * Provides an API for creating and managing the component for variant management context sharing.
 	 *
@@ -31,6 +30,16 @@ sap.ui.define([
 	 */
 	var ContextSharingAPI = /** @lends sap.ui.fl.write.api.ContextSharingAPI */{
 
+		async isContextSharingEnabled(mPropertyBag) {
+			if (mPropertyBag.layer !== Layer.CUSTOMER) {
+				return false;
+			}
+			const sReference = ManifestUtils.getFlexReferenceForControl(mPropertyBag.variantManagementControl);
+			const oSettings = await Settings.getInstance();
+			const bIsEnabled = oSettings.isContextSharingEnabled()
+				&& !ContextBasedAdaptationsAPI.adaptationExists({reference: sReference, layer: Layer.CUSTOMER});
+			return bIsEnabled;
+		},
 		/**
 		 * Creates component for sharing contexts in variant management.
 		 * In case the component already exists, it will not be created again to avoid duplicate IDs.
@@ -43,31 +52,26 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.ui.comp, sap.ui.fl
 		 */
-		createComponent(mPropertyBag) {
-			if (mPropertyBag.layer !== Layer.CUSTOMER) {
-				return Promise.resolve();
-			}
-			var sReference = ManifestUtils.getFlexReferenceForControl(mPropertyBag.variantManagementControl);
-			return Settings.getInstance().then(function(oSettings) {
-				return oSettings.isContextSharingEnabled() && !ContextBasedAdaptationsAPI.adaptationExists({reference: sReference, layer: Layer.CUSTOMER});
-			}).then(async function(bIsEnabled) {
-				if (bIsEnabled) {
-					if (!oComponentContainer || oComponentContainer.bIsDestroyed) {
-						const oComponent = await Component.create({name: "sap.ui.fl.variants.context", id: "contextSharing"});
-						oComponent.showMessageStrip(true);
-						oComponent.setSelectedContexts({role: []});
-						// eslint-disable-next-line require-atomic-updates
-						oComponentContainer = new ComponentContainer("contextSharingContainer", {component: oComponent});
-						// Ensure view is fully loaded
-						return oComponent.getRootControl().oAsyncState.promise.then(function() {
-							return oComponentContainer;
-						});
+		async createComponent(mPropertyBag) {
+			if (await this.isContextSharingEnabled(mPropertyBag)) {
+				oComponentPromise = oComponentPromise.then(async (oComponentContainer) => {
+					if (oComponentContainer && !oComponentContainer.isDestroyed()) {
+						return oComponentContainer;
 					}
+					const oComponent = await Component.create({
+						name: "sap.ui.fl.variants.context", id: "contextSharing"
+					});
+					oComponent.showMessageStrip(true);
+					oComponent.setSelectedContexts({role: []});
+					// Ensure view is fully loaded
+					oComponentContainer = new ComponentContainer("contextSharingContainer", {component: oComponent});
+					await oComponent.getRootControl().oAsyncState.promise;
 					return oComponentContainer;
-				}
-			});
+				});
+				return oComponentPromise;
+			}
+			return undefined;
 		}
-
 	};
 
 	return ContextSharingAPI;
