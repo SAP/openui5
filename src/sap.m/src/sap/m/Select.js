@@ -1451,7 +1451,7 @@ function(
 			this._setHiddenSelectValue();
 			this._attachHiddenSelectHandlers();
 			this.getLabels().forEach(function(oLabel) {
-				if (oLabel && typeof oLabel.setRequired === "function") {
+				if (oLabel && typeof oLabel.setRequired === "function" && this.bRequiredSet) {
 					oLabel.setRequired(this.getRequired());
 				}
 			}.bind(this));
@@ -2549,6 +2549,11 @@ function(
 					return { exception: e };
 				});
 			}
+
+			if (sPropertyName === "required") {
+				this.bRequiredSet = true;
+			}
+
 
 			return this;
 		};
