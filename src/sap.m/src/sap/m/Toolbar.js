@@ -335,10 +335,110 @@ function(
 		this._oContentDelegate = {
 			onAfterRendering: this._onAfterContentRendering
 		};
+
+		this._handleKeyNavigationBound =  this._handleKeyNavigation.bind(this);
+
 	};
 
 	Toolbar.prototype.onAfterRendering = function() {
 		this._checkContents();
+
+		//Attach event listened needed for the arrow key navigation
+		if (this.getDomRef()) {
+			this.getDomRef().removeEventListener("keydown", this._handleKeyNavigationBound);
+			this.getDomRef().addEventListener("keydown", this._handleKeyNavigationBound);
+		}
+	};
+
+	Toolbar.prototype._handleKeyNavigation = function(oEvent) {
+		const focusedElement = document.activeElement;
+		const toolbarDom = this.getDomRef();
+		if (toolbarDom.contains(focusedElement)) {
+			if (oEvent.keyCode === KeyCodes.ARROW_RIGHT || oEvent.keyCode === KeyCodes.ARROW_DOWN) {
+				this._moveFocus("forward", oEvent);
+			} else if (oEvent.keyCode === KeyCodes.ARROW_LEFT || oEvent.keyCode === KeyCodes.ARROW_UP) {
+				this._moveFocus("backward", oEvent);
+			}
+		}
+	};
+
+	Toolbar.prototype._moveFocus = function(sDirection, oEvent) {
+		var aFocusableElements = this._getToolbarInteractiveControls(),
+			oActiveElement = Element.getActiveElement(),
+			oActiveDomElement = document.activeElement;
+
+		while (oActiveElement && oActiveElement.getParent() !== this) {
+			oActiveElement = oActiveElement.getParent();
+		}
+
+		var iCurrentIndex = aFocusableElements.indexOf(oActiveElement),
+			iNextIndex = this._calculateNextIndex(sDirection, iCurrentIndex, aFocusableElements.length),
+			bIsFirst = this._isFirst(sDirection, iCurrentIndex),
+			bIsLast = this._isLast(sDirection, iCurrentIndex, aFocusableElements);
+
+			if (this._shouldAllowDefaultBehavior(oActiveElement, oEvent)) {
+				return;
+			}
+
+		// Handle specific behaviour for the input based controls
+		if (this._isInputBasedControl(oActiveDomElement, oActiveElement, oEvent)) {
+            var bIsAtStart = oActiveDomElement.selectionStart === 0,
+                bIsAtEnd = oActiveDomElement.selectionStart === oActiveDomElement.value.length,
+                bTextSelected = oActiveDomElement.selectionStart !== oActiveDomElement.selectionEnd;
+
+            if (bTextSelected || (sDirection === "forward" && !bIsAtEnd) || (sDirection === "backward" && !bIsAtStart)) {
+                return;
+            }
+		}
+
+		if (aFocusableElements[iNextIndex] && !bIsFirst && !bIsLast) {
+			this._focusElement(aFocusableElements[iNextIndex], oEvent);
+		}
+	};
+
+	Toolbar.prototype._isInputBasedControl = function(oActiveDomElement) {
+		return oActiveDomElement.tagName === "INPUT" && !oActiveDomElement.readOnly;
+	};
+
+	Toolbar.prototype._isFirst = function(sDirection, iCurrentIndex) {
+		return (iCurrentIndex === 0) && (sDirection === "backward" || sDirection === "up");
+	};
+
+	Toolbar.prototype._isLast = function(sDirection, iCurrentIndex, aFocusableElements) {
+		return (iCurrentIndex === aFocusableElements.length - 1) && (sDirection === "forward" || sDirection === "down");
+	};
+
+	Toolbar.prototype._shouldAllowDefaultBehavior = function(oActiveElement, oEvent) {
+		var sActiveElementName = oActiveElement.getMetadata().getName(),
+			bIsSelectOrCombobox = ["sap.m.Select", "sap.m.ComboBox"].includes(sActiveElementName),
+			bIsUpOrDownArrowKey = [KeyCodes.ARROW_UP, KeyCodes.ARROW_DOWN].includes(oEvent.keyCode),
+			bIsBreadcrumbs = sActiveElementName === "sap.m.Breadcrumbs";
+
+		if (bIsUpOrDownArrowKey && bIsSelectOrCombobox || bIsBreadcrumbs) {
+			return true;
+		}
+
+		// If the control does not have its own navigation or the conditions are not met, return false
+		return false;
+	};
+
+	Toolbar.prototype._calculateNextIndex = function(sDirection, iCurrentIndex, length) {
+		if (sDirection === "forward") {
+			return (iCurrentIndex + 1) % length;
+		}
+
+		return (iCurrentIndex - 1 + length) % length;
+	};
+
+	Toolbar.prototype._focusElement = function(element, oEvent) {
+		element.focus();
+
+		if (document.activeElement.tagName === 'INPUT') {
+			document.activeElement.select(); // Optionally select text in input field
+		}
+
+		// Prevent the default behavior to avoid any further automatic focus movement
+		oEvent.preventDefault();
 	};
 
 	Toolbar.prototype.onLayoutDataChange = function() {
@@ -505,11 +605,21 @@ function(
 	 * @private
 	 */
 	Toolbar.prototype._getToolbarInteractiveControlsCount = function () {
+		return this._getToolbarInteractiveControls().length;
+	};
+
+	/**
+	 *
+	 * @returns {Array} Toolbar interactive Controls
+	 * @private
+	 */
+
+	Toolbar.prototype._getToolbarInteractiveControls = function () {
 		return this.getContent().filter(function (oControl) {
 			return oControl.getVisible()
 				&& oControl.isA("sap.m.IToolbarInteractiveControl")
 				&& typeof (oControl._getToolbarInteractive) === "function" && oControl._getToolbarInteractive();
-		}).length;
+		});
 	};
 
 	Toolbar.prototype._getActiveButton = function() {
