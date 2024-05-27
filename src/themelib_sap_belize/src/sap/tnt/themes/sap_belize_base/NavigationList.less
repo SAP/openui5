@@ -31,7 +31,6 @@
 @_sap_tnt_NavigationList_SelectedAndFocusedBorderStyleColor: @_sap_tnt_NavigationList_SelectedBorderStyleColor;
 @_sap_tnt_NavigationList_Collapsed_SelectedItemBorderStyleColor: solid @_sap_tnt_NavigationList_SelectedItemBorderColor;
 @_sap_tnt_NavigationList_Collapsed_SelectedGroupBorderColor: @_sap_tnt_NavigationList_SelectedItemBorderColor;
-@_sap_tnt_NavigationList_Collapsed_GroupBorderWidth: @sapUiListBorderColor;
 @_sap_tnt_NavigationList_GroupExpandedBorderWidth: @_sap_tnt_NavigationList_GroupBorderWidth;
 @_sap_tnt_NavigationList_GroupIconWidth: @_sap_tnt_NavigationList_CollapsedWidth;
 @_sap_tnt_NavigationList_GroupTextWeight: unset;
@@ -182,10 +181,6 @@
 .sapTntNLIFirstLevel::before {
 	border: @_sap_tnt_NavigationList_GroupBorderStyleColor;
 	border-width: @_sap_tnt_NavigationList_GroupBorderWidth;
-
-	.sapTntNLCollapsed & {
-		border-width: @_sap_tnt_NavigationList_Collapsed_GroupBorderWidth;
-	}
 }
 
 // When a group is expanded, defines the border of the group and of its last item
