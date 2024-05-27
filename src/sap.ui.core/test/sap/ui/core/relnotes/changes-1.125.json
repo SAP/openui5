@@ -3,6 +3,11 @@
     "date": "May 2024",
     "notes": [
       {
+        "id": "86ef554a744acd04b60779392c8091619d44bcb6",
+        "type": "FIX",
+        "text": " sap.ui.model.type.(Currency|Unit): use amount scale default 0 instead of currency's or unit's decimal places"
+      },
+      {
         "id": "57defe66181aed78cdb99b86d56478864c12e7c7",
         "type": "FIX",
         "text": " core/Icon: fix keyboard support for keys \"Space\" and \"Enter\""

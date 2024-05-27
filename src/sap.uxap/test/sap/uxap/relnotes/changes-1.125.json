@@ -1,0 +1,12 @@
+{
+  "1.125.0": {
+    "date": "May 2024",
+    "notes": [
+      {
+        "id": "c3a8e28b7f1c173bd7ff6ea405aa1d8e0755b980",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Prevent errors"
+      }
+    ]
+  }
+}
