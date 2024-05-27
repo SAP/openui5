@@ -196,9 +196,12 @@ sap.ui.define([
 		const oXConfig = xConfigAPI.readConfig(this.getAdaptationControl()) || {};
 		const oItemXConfig = oXConfig.hasOwnProperty("aggregations") ? oXConfig.aggregations[this._sTargetAggregation] : {};
 		const aItemXConfig = [];
-		Object.entries(oItemXConfig).forEach(([sKey, oConfig]) => {
-			aItemXConfig.push({key: sKey, position: oConfig.position, visible: oConfig.visible});
-		});
+		if (oItemXConfig) {
+			Object.entries(oItemXConfig).forEach(([sKey, oConfig]) => {
+				aItemXConfig.push({key: sKey, position: oConfig.position, visible: oConfig.visible});
+			});
+			aItemXConfig.sort((a, b) => a.position - b.position);
+		}
 		aItemXConfig.sort((a,b) => a.position - b.position);
 
 		aItemXConfig.forEach(({key}) => {

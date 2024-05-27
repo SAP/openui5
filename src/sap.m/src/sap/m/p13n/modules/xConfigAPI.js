@@ -116,7 +116,7 @@ sap.ui.define([
 				const pCurrentAccum = await pAccum; //synchronize async loop
 				const sId = appComponent ? appComponent.getRootControl()?.getLocalId(modifier.getId(oItem)) : modifier.getId(oItem);
 				const vRelevant = await modifier.getProperty(oItem, "visible");
-				if (vRelevant) {
+				if (vRelevant && sId) {
 					aCurrentState.push({key: sId});
 				}
 				return pCurrentAccum;
