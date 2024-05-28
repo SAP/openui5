@@ -3,11 +3,15 @@
  */
 sap.ui.define([
 	"sap/base/Log",
+	"sap/ui/base/ManagedObject",
 	"sap/ui/core/Element",
 	"sap/ui/core/ElementRegistry",
 	"sap/ui/core/LabelEnablement",
-	"sap/ui/core/fieldhelp/FieldHelp"
-], function (Log, Element, ElementRegistry, LabelEnablement, FieldHelp) {
+	"sap/ui/core/fieldhelp/FieldHelp",
+	"sap/ui/model/CompositeBinding",
+	"sap/ui/model/ManagedObjectBindingSupport"
+], function (Log, ManagedObject, Element, ElementRegistry, LabelEnablement, FieldHelp, CompositeBinding,
+		ManagedObjectBindingSupport) {
 	/*global sinon, QUnit*/
 	"use strict";
 	const sClassName = "sap/ui/core/fieldhelp/FieldHelp";
@@ -81,8 +85,8 @@ sap.ui.define([
 		this.mock(oElement1MetaData).expects("getAllProperties")
 			.withExactArgs()
 			.returns({"~sPropertyName1": {}, "~sPropertyName2": {}});
-		oFieldHelpMock.expects("update").withExactArgs(sinon.match.same(oElement1), "~sPropertyName1");
-		oFieldHelpMock.expects("update").withExactArgs(sinon.match.same(oElement1), "~sPropertyName2");
+		oFieldHelpMock.expects("_updateProperty").withExactArgs(sinon.match.same(oElement1), "~sPropertyName1");
+		oFieldHelpMock.expects("_updateProperty").withExactArgs(sinon.match.same(oElement1), "~sPropertyName2");
 
 		const oElement2Mock = this.mock(oElement2);
 		oElement2Mock.expects("data").withExactArgs("sap-ui-DocumentationRef").returns("~vValue");
@@ -112,16 +116,26 @@ sap.ui.define([
 	QUnit.test("activate, deactivate and isActive", function (assert) {
 		const oFieldHelp = FieldHelp.getInstance();
 		assert.strictEqual(oFieldHelp.isActive(), false);
+		assert.strictEqual(ManagedObject.prototype.updateFieldHelp, undefined);
 
 		// code under test - use empty element registry to avoid calculating any field help
 		oFieldHelp.activate(() => {/* any callback function */});
 
 		assert.strictEqual(oFieldHelp.isActive(), true);
+		const fnUpdateFieldHelp = ManagedObject.prototype.updateFieldHelp;
+		assert.ok(typeof fnUpdateFieldHelp === "function");
+
+		const oElement = {};
+		this.mock(oFieldHelp).expects("_updateProperty").withExactArgs(sinon.match.same(oElement), "~propertyName");
+
+		// code under test
+		fnUpdateFieldHelp.call(oElement, "~propertyName");
 
 		// code under test
 		oFieldHelp.deactivate();
 
 		assert.strictEqual(oFieldHelp.isActive(), false);
+		assert.strictEqual(ManagedObject.prototype.updateFieldHelp, undefined);
 
 		// code under test - can be called multiple times without throwing an error
 		oFieldHelp.deactivate();
@@ -132,14 +146,16 @@ sap.ui.define([
 		oFieldHelp.activate(() => {/* another callback function */});
 
 		assert.strictEqual(oFieldHelp.isActive(), true);
+		assert.strictEqual(ManagedObject.prototype.updateFieldHelp, fnUpdateFieldHelp, "Implementation is reused");
+
+		// cleanup
+		oFieldHelp.deactivate();
 	});
 
 	//*********************************************************************************************
-	QUnit.test("update: nothing to do cases", function (assert) {
+	QUnit.test("_updateProperty: nothing to do cases", function (assert) {
 		const oFieldHelp = FieldHelp.getInstance();
 
-		// code under test - if field help is not active, update is ignored
-		oFieldHelp.update("~element", "~property");
 		this.mock(oFieldHelp).expects("_setFieldHelpDocumentationRefs").never();
 		const oElement = {
 			getBinding() {},
@@ -154,7 +170,7 @@ sap.ui.define([
 		oFieldHelp.activate("~fnCallback");
 
 		// code under test - property is not in "Data" group
-		oFieldHelp.update(oElement, "~property");
+		oFieldHelp._updateProperty(oElement, "~property");
 
 		oElementMock.expects("getMetadata").withExactArgs().returns(oMetadata);
 		oElementMock.expects("getBinding").never();
@@ -162,18 +178,18 @@ sap.ui.define([
 		oFieldHelp.activate("~fnCallback");
 
 		// code under test - update is called for an association (e.g. "tooltip") which does not have property metadata
-		oFieldHelp.update(oElement, "tooltip");
+		oFieldHelp._updateProperty(oElement, "tooltip");
 
 		oElementMock.expects("getMetadata").withExactArgs().returns(oMetadata);
 		oMetadataMock.expects("getProperty").withExactArgs("~property").returns({group: "Data"});
 		oElementMock.expects("getBinding").withExactArgs("~property").returns(undefined);
 
 		// code under test - property is in "Data" group but has no binding
-		oFieldHelp.update(oElement, "~property");
+		oFieldHelp._updateProperty(oElement, "~property");
 	});
 
 	//*********************************************************************************************
-	QUnit.test("update: PropertyBinding without DocumentationRef", function (assert) {
+	QUnit.test("_updateProperty: PropertyBinding without DocumentationRef", function (assert) {
 		const oElement = {
 			getBinding() {},
 			getMetadata() {}
@@ -196,13 +212,13 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oElement), "~property", []);
 
 		// code under test - property is in "Data" group, has a binding and it is not a CompositeBinding
-		oFieldHelp.update(oElement, "~property");
+		oFieldHelp._updateProperty(oElement, "~property");
 
 		return oPromise;
 	});
 
 	//*********************************************************************************************
-	QUnit.test("update: PropertyBinding with DocumenatationRef", function (assert) {
+	QUnit.test("_updateProperty: PropertyBinding with DocumenatationRef", function (assert) {
 		const oElement = {
 			getBinding() {},
 			getMetadata() {}
@@ -224,7 +240,7 @@ sap.ui.define([
 		oFieldHelpMock.expects("_setFieldHelpDocumentationRefs").never();
 
 		// code under test - property is in "Data" group, has a binding and it is not a CompositeBinding
-		oFieldHelp.update(oElement, "~property");
+		oFieldHelp._updateProperty(oElement, "~property");
 
 		// is called asynchronously
 		oFieldHelpMock.expects("_setFieldHelpDocumentationRefs")
@@ -235,7 +251,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [false, true].forEach((bHasType) => {
-	QUnit.test(`update: composite binding, has type: ${bHasType}`, function (assert) {
+	QUnit.test(`_updateProperty: composite binding, has type: ${bHasType}`, function (assert) {
 		const oElement = {
 			getBinding() {},
 			getMetadata() {}
@@ -283,7 +299,7 @@ sap.ui.define([
 		oFieldHelp.activate("~fnCallback");
 
 		// code under test - property is in "Data" group, has a CompositeBinding without a type
-		oFieldHelp.update(oElement, "~property");
+		oFieldHelp._updateProperty(oElement, "~property");
 
 		oFieldHelpMock.expects("_setFieldHelpDocumentationRefs")
 			.withExactArgs(sinon.match.same(oElement), "~property",
@@ -861,4 +877,188 @@ sap.ui.define([
 			assert.strictEqual(sDocumentationRefValue, undefined);
 		});
 	});
+
+	//*********************************************************************************************
+[true, false].forEach((bFieldHelpActive) => {
+	const sTitle = "updateFieldHelp: ManagedObjectBindingSupport#_unbindProperty: field help is active: "
+		+ bFieldHelpActive;
+	QUnit.test(sTitle, function () {
+		const oBindingInfo = {
+			binding: {destroy() {}}
+		};
+		const oManagedObject = {_detachPropertyBindingHandlers() {}};
+		this.mock(oManagedObject).expects("_detachPropertyBindingHandlers").withExactArgs("~sControlProperty");
+		this.mock(oBindingInfo.binding).expects("destroy").withExactArgs();
+		if (bFieldHelpActive) {
+			oManagedObject.updateFieldHelp = () => {};
+			this.mock(oManagedObject).expects("updateFieldHelp").withExactArgs("~sControlProperty");
+		}
+
+		// code under test
+		ManagedObjectBindingSupport._unbindProperty.call(oManagedObject, oBindingInfo, "~sControlProperty");
+	});
+});
+
+	//*********************************************************************************************
+[true, false].forEach((bFieldHelpActive) => {
+	[true, false].forEach((bFactory) => {
+	const sTitle = "updateFieldHelp: ManagedObjectBindingSupport#updateBindingContext: "
+		+ (bFactory ? "binding with factory" : "simple binding for the given model")
+		+ "; field help is active: " + bFieldHelpActive;
+	QUnit.test(sTitle, function () {
+		const oBinding = {setContext() {}};
+		const oManagedObject = {
+			mObjectBindingInfos: {},
+			mBindingInfos: {
+				"~sControlProperty": {
+					binding: oBinding,
+					factory: bFactory,
+					model: undefined,
+					parts: [{model: undefined}]
+				}
+			},
+			getModel() {},
+			getBindingContext() {}
+		};
+		this.mock(oManagedObject).expects("getModel").withExactArgs(undefined).returns("~oModel");
+		this.mock(oManagedObject).expects("getBindingContext").withExactArgs(undefined).returns("~oContext");
+		this.mock(oBinding).expects("setContext").withExactArgs("~oContext");
+		if (bFieldHelpActive) {
+			oManagedObject.updateFieldHelp = () => {};
+			this.mock(oManagedObject).expects("updateFieldHelp").withExactArgs("~sControlProperty");
+		}
+
+		// code under test
+		ManagedObjectBindingSupport.updateBindingContext.call(oManagedObject, /*bSkipLocal*/true,
+			/*sFixedModelName*/undefined, /*bUpdateAll*/false);
+	});
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("updateFieldHelp: ManagedObjectBindingSupport#updateBindingContext: factory for a different model",
+			function () {
+		const oBinding = {setContext() {}};
+		const oManagedObject = {
+			mObjectBindingInfos: {},
+			mBindingInfos: {
+				"~sControlProperty": {
+					binding: oBinding,
+					factory: true,
+					model: "~otherModel"
+				}
+			},
+			getModel() {},
+			getBindingContext() {},
+			updateFieldHelp() {}
+		};
+		this.mock(oManagedObject).expects("getModel").withExactArgs(undefined).returns("~oModel");
+		this.mock(oManagedObject).expects("getBindingContext").withExactArgs(undefined).returns("~oContext");
+		this.mock(oManagedObject).expects("updateFieldHelp").never();
+
+		// code under test
+		ManagedObjectBindingSupport.updateBindingContext.call(oManagedObject, /*bSkipLocal*/true,
+			/*sFixedModelName*/undefined, /*bUpdateAll*/false);
+	});
+
+	//*********************************************************************************************
+[true, false].forEach((bFieldHelpActive) => {
+	const sTitle = "updateFieldHelp: ManagedObjectBindingSupport#updateBindingContext: composite binding;"
+		+ " field help is active: " + bFieldHelpActive;
+	QUnit.test(sTitle, function () {
+		const oBinding = new CompositeBinding([]);
+		const oManagedObject = {
+			mObjectBindingInfos: {},
+			mBindingInfos: {
+				"~sControlProperty": {
+					binding: oBinding,
+					parts: [{model: undefined}]
+				}
+			},
+			getModel() {},
+			getBindingContext() {}
+		};
+		this.mock(oManagedObject).expects("getModel").withExactArgs(undefined).returns("~oModel");
+		this.mock(oManagedObject).expects("getBindingContext").withExactArgs(undefined).returns("~oContext");
+		this.mock(oBinding).expects("setContext").withExactArgs("~oContext", {fnIsBindingRelevant: sinon.match.func});
+		if (bFieldHelpActive) {
+			oManagedObject.updateFieldHelp = () => {};
+			this.mock(oManagedObject).expects("updateFieldHelp").withExactArgs("~sControlProperty");
+		}
+
+		// code under test
+		ManagedObjectBindingSupport.updateBindingContext.call(oManagedObject, /*bSkipLocal*/true,
+			/*sFixedModelName*/undefined, /*bUpdateAll*/false);
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("updateFieldHelp: ManagedObjectBindingSupport#updateBindingContext: binding not relevant", function () {
+		const oManagedObject = {
+			mObjectBindingInfos: {},
+			mBindingInfos: {
+				"~sControlProperty": {
+					binding: {},
+					parts: [{model: "~otherModel"}]
+				}
+			},
+			getModel() {},
+			getBindingContext() {},
+			updateFieldHelp() {}
+		};
+		this.mock(oManagedObject).expects("getModel").withExactArgs(undefined).returns("~oModel");
+		this.mock(oManagedObject).expects("getBindingContext").withExactArgs(undefined).returns("~oContext");
+		this.mock(oManagedObject).expects("updateFieldHelp").never();
+
+		// code under test
+		ManagedObjectBindingSupport.updateBindingContext.call(oManagedObject, /*bSkipLocal*/true,
+			/*sFixedModelName*/undefined, /*bUpdateAll*/false);
+	});
+
+	//*********************************************************************************************
+[true, false].forEach((bFieldHelpActive) => {
+	const sTitle = "updateFieldHelp: ManagedObjectBindingSupport#_bindProperty: field help is active: "
+		+ bFieldHelpActive;
+	QUnit.test(sTitle, function () {
+		const oBindingInfo = {
+			parts: [{mode: "~mode", model: "~model", path: "~path"}]
+		};
+		const oManagedObject = {
+			getBindingContext() {},
+			getMetadata() {},
+			getModel() {}
+		};
+		const oMetadata = {getPropertyLikeSetting() {}};
+		this.mock(oManagedObject).expects("getMetadata").withExactArgs().returns(oMetadata);
+		const oPropertyInfo = {_iKind: /* PROPERTY */ 0, type: "~propertyType"};
+		this.mock(oMetadata).expects("getPropertyLikeSetting").withExactArgs("~sProperty").returns(oPropertyInfo);
+		this.mock(oManagedObject).expects("getBindingContext").withExactArgs("~model").returns("~oContext");
+		const oModel = {bindProperty() {}};
+		this.mock(oManagedObject).expects("getModel").withExactArgs("~model").returns(oModel);
+		const oBinding = {
+			attachChange() {},
+			attachEvents() {},
+			initialize() {},
+			setBindingMode() {},
+			setFormatter() {},
+			setType() {}
+		};
+		const oBindingMock = this.mock(oBinding);
+		this.mock(oModel).expects("bindProperty").withExactArgs("~path", "~oContext", undefined).returns(oBinding);
+		oBindingMock.expects("setType").withExactArgs(undefined, "~propertyType");
+		oBindingMock.expects("setFormatter").withExactArgs(undefined);
+		oBindingMock.expects("setBindingMode").withExactArgs("~mode");
+		oBindingMock.expects("attachEvents").withExactArgs(undefined);
+		oBindingMock.expects("attachChange").withExactArgs(sinon.match.func);
+		oBindingMock.expects("attachEvents").withExactArgs(undefined);
+		oBindingMock.expects("initialize").withExactArgs();
+		if (bFieldHelpActive) {
+			oManagedObject.updateFieldHelp = () => {};
+			this.mock(oManagedObject).expects("updateFieldHelp").withExactArgs("~sProperty");
+		}
+
+		// code under test
+		ManagedObjectBindingSupport._bindProperty.call(oManagedObject, "~sProperty", oBindingInfo);
+	});
+});
 });
