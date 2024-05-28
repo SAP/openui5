@@ -25,15 +25,7 @@ describe("sap.ui.integration.CardVariantsVisualTests", function () {
 		utils.navigateBack();
 	});
 
-	it("TilesVariants", function () {
-		utils.navigateTo("Tiles Variants");
-
-		var aCardIds = [
-			"card1", "card2", "card3", "card4", "card5", "card6", "card7", "card8", "card9", "card10",
-			"card11", "card12", "card13", "card14", "card15", "card16", "card17", "card18", "card19", "card20",
-			"card21", "card22", "card23", "card24", "card31", "card32", "card33", "card34", "card35", "card36", "card37", "card38", "card41"
-		];
-
+	function testTileVariant(aCardIds) {
 		aCardIds.forEach(function (sId) {
 			utils.takePictureOfElement({
 				control: {
@@ -44,6 +36,24 @@ describe("sap.ui.integration.CardVariantsVisualTests", function () {
 				}
 			}, "11_TilesVariants_" + sId);
 		});
+	}
+
+	it("TilesVariants - 2x2", function () {
+		utils.navigateTo("Tiles Variants");
+
+		testTileVariant(["card1", "card2", "card3", "card7", "card9", "card21", "card31", "card35", "card41"]);
+	});
+
+	it("TilesVariants - 4x2", function () {
+		testTileVariant(["card4", "card5",  "card6", "card8", "card10", "card22", "card32", "card36"]);
+	});
+
+	it("TilesVariants - 2x1", function () {
+		testTileVariant(["card11", "card12", "card13", "card17", "card19", "card23", "card33", "card37"]);
+	});
+
+	it("TilesVariants - 4x1", function () {
+		testTileVariant(["card14", "card15", "card16",  "card18", "card20", "card24", "card34", "card38"]);
 
 		utils.navigateBack();
 	});

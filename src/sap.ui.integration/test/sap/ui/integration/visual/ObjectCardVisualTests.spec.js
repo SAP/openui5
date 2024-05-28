@@ -7,26 +7,39 @@ describe("sap.ui.integration.ObjectCardVisualTests", function () {
 	"use strict";
 	browser.testrunner.currentSuite.meta.controlName = "sap.ui.integration.widgets.Card";
 
-	var aCardIds = [
+	const aCardIds = [
 		"cardDataHandling",
 		"cardSnackAndObjectStatus",
 		"cardStaticData",
 		"cardForm",
-		"cardLongLabelAvatar",
+		"cardLongLabelAvatar"
+	];
+
+	const aCardWithImageIds1 = [
 		"cardImageNoHeader",
 		"cardImage",
 		"cardImageOnlyInGroup",
 		"cardImageSmall",
+		"cardImageOnly"
+	];
+
+	const aCardWithImageIds2 = [
 		"cardImageOnly",
 		"cardJustImage",
 		"cardImageOnlyWithFooter",
-		"cardImgOvWithFooter2",
 		"cardImageWithFooter",
+		"cardImageNoHeaderNoFooter"
+	];
+
+	const aCardWithImageOverlayIds1 = [
+		"cardImgOvWithFooter2",
 		"cardImgOvWithFooter",
-		"cardImageNoHeaderNoFooter",
 		"cardImgOvNoHeaderNoFooter",
 		"cardJustImageWithOverlay",
-		"cardImgOvTextPosition",
+		"cardImgOvTextPosition"
+	];
+
+	const aCardWithImageOverlayIds2 = [
 		"cardImgOverlayGradient",
 		"cardImgOvImagePosition",
 		"cardImgOvNotFullWidth",
@@ -34,33 +47,60 @@ describe("sap.ui.integration.ObjectCardVisualTests", function () {
 		"cardImgOvImgHeight"
 	];
 
+	function testObjectCard(sPrefix, aCardIds) {
+		aCardIds.forEach(function (sId) {
+			utils.takePictureOfElement({
+				control: {
+					viewNamespace: "sap.f.cardsdemo.view.",
+					viewName: "ObjectContent",
+					interaction: "root",
+					id: sId
+				}
+			}, sPrefix + sId);
+		});
+	}
+
 	it("Object Card", function () {
 		utils.navigateTo("Object Card");
 
-		aCardIds.forEach(function (sId) {
-			utils.takePictureOfElement({
-				control: {
-					viewNamespace: "sap.f.cardsdemo.view.",
-					viewName: "ObjectContent",
-					interaction: "root",
-					id: sId
-				}
-			}, "Object_" + sId);
-		});
+		testObjectCard("Object_", aCardIds);
 	});
 
-	it("Object Card Compact", function () {
+	it("Object Card with Image", function () {
+		testObjectCard("Object_", aCardWithImageIds1);
+	});
+
+	it("Object Card with Image", function () {
+		testObjectCard("Object_", aCardWithImageIds2);
+	});
+
+	it("Object Card with Overlay Image", function () {
+		testObjectCard("Object_", aCardWithImageOverlayIds1);
+	});
+
+	it("Object Card with Overlay Image", function () {
+		testObjectCard("Object_", aCardWithImageOverlayIds2);
+	});
+
+	it("Object Card - Compact", function () {
 		utils.switchToCompactDensity();
 
-		aCardIds.forEach(function (sId) {
-			utils.takePictureOfElement({
-				control: {
-					viewNamespace: "sap.f.cardsdemo.view.",
-					viewName: "ObjectContent",
-					interaction: "root",
-					id: sId
-				}
-			}, "Compact_Object_" + sId);
-		});
+		testObjectCard("Compact_Object_", aCardIds);
+	});
+
+	it("Object Card with Image - Compact", function () {
+		testObjectCard("Compact_Object_", aCardWithImageIds1);
+	});
+
+	it("Object Card with Image - Compact", function () {
+		testObjectCard("Compact_Object_", aCardWithImageIds2);
+	});
+
+	it("Object Card with Overlay Image - Compact", function () {
+		testObjectCard("Compact_Object_", aCardWithImageOverlayIds1);
+	});
+
+	it("Object Card with Overlay Image - Compact", function () {
+		testObjectCard("Compact_Object_", aCardWithImageOverlayIds2);
 	});
 });
