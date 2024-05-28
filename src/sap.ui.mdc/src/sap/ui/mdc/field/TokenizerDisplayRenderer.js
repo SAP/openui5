@@ -33,6 +33,7 @@ sap.ui.define(["sap/ui/core/Lib",
 
 		TokenizerDisplayRenderer._renderIndicatorTabIndex = function(oRm, oControl) {
 			oRm.attr("tabindex", "0");
+			oRm.attr("role", "button");
 		};
 
 
