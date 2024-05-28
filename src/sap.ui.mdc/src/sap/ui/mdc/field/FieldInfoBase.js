@@ -172,7 +172,7 @@ sap.ui.define([
 	 * @private
 	 */
 	FieldInfoBase.prototype._createPopover = function(oPanel) {
-		const oPopover = new ResponsivePopover(this.getId() + "-popover", {
+		const oPopover = new ResponsivePopover(this.getPopoverId(), {
 			contentWidth: "380px",
 			horizontalScrolling: false,
 			showHeader: Device.system.phone,
@@ -213,8 +213,17 @@ sap.ui.define([
 	 */
 	FieldInfoBase.prototype.getPopover = function() {
 		return this.getDependents().find((oDependent) => {
-			return oDependent.isA("sap.m.ResponsivePopover");
+			return oDependent.isA("sap.m.ResponsivePopover") && oDependent.getId() === this.getPopoverId();
 		});
+	};
+
+	/**
+	 * Gets the ID for the <code>Popover/code> by adding "-popover" to the ID of the <code>FieldInfo</code>
+	 * @returns {string} ID for the <code>Popover/code>
+	 * @private
+	 */
+	FieldInfoBase.prototype.getPopoverId = function() {
+		return this.getId() + "-popover";
 	};
 
 	return FieldInfoBase;
