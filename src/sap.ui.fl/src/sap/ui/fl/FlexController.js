@@ -141,11 +141,12 @@ sap.ui.define([
 	 * @param {object[]} aSelectors - An array containing an object with {@link sap.ui.fl.Selector} and further configuration
 	 * @param {sap.ui.fl.Selector} aSelectors.selector - A {@link sap.ui.fl.Selector}
 	 * @param {string[]} [aSelectors.changeTypes] - An array containing the change types that will be considered. If empty no filtering will be done
+	 * @param {boolean} [bSkipWaitForVariantSwitch] - Whether to skip waiting for the variant switch promise
 	 * @returns {Promise} Resolves when all changes on the controls have been processed
 	 */
-	FlexController.prototype.waitForChangesToBeApplied = function(aSelectors) {
+	FlexController.prototype.waitForChangesToBeApplied = function(aSelectors, bSkipWaitForVariantSwitch) {
 		var aPromises = aSelectors.map(function(mSelector) {
-			return this._waitForChangesToBeApplied(mSelector);
+			return this._waitForChangesToBeApplied(mSelector, bSkipWaitForVariantSwitch);
 		}.bind(this));
 		return Promise.all(aPromises)
 		.then(function() {
@@ -160,9 +161,10 @@ sap.ui.define([
 	 * @param {object} mPropertyBag - Object with control and list of change types
 	 * @param {sap.ui.fl.Selector} mPropertyBag.selector - A {@link sap.ui.fl.Selector}
 	 * @param {string[]} mPropertyBag.changeTypes - An array containing the change types that should be considered
+	 * @param {boolean} [bSkipWaitForVariantSwitch] - Whether to skip waiting for the variant switch promise
 	 * @returns {Promise} Resolves when all changes on the control have been processed
 	 */
-	FlexController.prototype._waitForChangesToBeApplied = async function(mPropertyBag) {
+	FlexController.prototype._waitForChangesToBeApplied = async function(mPropertyBag, bSkipWaitForVariantSwitch) {
 		function filterChanges(oChange) {
 			return !oChange.isCurrentProcessFinished()
 			&& (mPropertyBag.changeTypes.length === 0 || mPropertyBag.changeTypes.includes(oChange.getChangeType()));
@@ -199,8 +201,10 @@ sap.ui.define([
 			aPromises = aPromises.concat(oChange.addChangeProcessingPromises());
 		}, this);
 
-		// also wait for a potential variant switch to be done
-		aPromises.push(this.waitForVariantSwitch());
+		if (!bSkipWaitForVariantSwitch) {
+			// also wait for a potential variant switch to be done
+			aPromises.push(this.waitForVariantSwitch());
+		}
 
 		return Promise.all(aPromises);
 	};
