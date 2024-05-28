@@ -117,6 +117,11 @@ sap.ui.define([
 			}
 			strictEqual(oCache.aElements.$count === oCache.iLimit + oCache.iActiveElements, true,
 				`${oCache.aElements.$count} === ${oCache.iLimit} + ${oCache.iActiveElements}`);
+			for (const sPredicate in oCache.aElements.$byPredicate) {
+				const oElement = oCache.aElements.$byPredicate[sPredicate];
+				strictEqual(oCache.aElements.includes(oElement), true,
+					`$byPredicate[${sPredicate}] in aElements`, oElement);
+			}
 		}
 
 		function isKeepAlive(sPredicate) {

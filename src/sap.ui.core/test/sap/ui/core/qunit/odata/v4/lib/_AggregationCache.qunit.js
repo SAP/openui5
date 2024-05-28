@@ -5018,6 +5018,7 @@ sap.ui.define([
 				_Helper.setPrivateAnnotation(oEntityData, "postBody", oPostBody);
 				return new SyncPromise(function (resolve) {
 					setTimeout(function () {
+						_Helper.setPrivateAnnotation(oEntityData, "predicate", "('ABC')");
 						that.mock(oCache.oTreeState).expects("setOutOfPlace").never();
 						oHelperMock.expects("removeByPath")
 							.withExactArgs(sinon.match.same(oCache.mPostRequests),
@@ -5036,7 +5037,7 @@ sap.ui.define([
 						that.mock(oCache).expects("adjustDescendantCount").exactly(iRank ? 1 : 0)
 							.withExactArgs(sinon.match.same(oEntityData), iRank, 1);
 						that.mock(oCache.oFirstLevel).expects("removeElement")
-							.withExactArgs(0, "~sTransientPredicate~");
+							.withExactArgs(0, iRank ? "~sTransientPredicate~" : "('ABC')");
 						oHelperMock.expects("deletePrivateAnnotation").exactly(iRank ? 1 : 0)
 							.withExactArgs(sinon.match.same(oEntityData), "transientPredicate");
 						that.mock(oCache.oFirstLevel).expects("restoreElement")
@@ -5071,7 +5072,7 @@ sap.ui.define([
 			assert.strictEqual(oEntityData0, oEntityData);
 			if (iRank) {
 				assert.deepEqual(oEntityData, {
-					"@$ui5._" : {postBody : oPostBody, rank : iRank},
+					"@$ui5._" : {postBody : oPostBody, rank : iRank, predicate : "('ABC')"},
 					"@$ui5.node.level" : bCreateRoot ? 1 : 24,
 					bar : "~bar~",
 					foo : "~foo~"
@@ -5079,9 +5080,7 @@ sap.ui.define([
 				assert.strictEqual(oCache.aElements.$count, 4);
 			} else {
 				assert.deepEqual(oEntityData, {
-					"@$ui5._" : {
-						postBody : oPostBody
-					},
+					"@$ui5._" : {postBody : oPostBody, predicate : "('ABC')"},
 					bar : "~bar~",
 					foo : "~foo~"
 				});
