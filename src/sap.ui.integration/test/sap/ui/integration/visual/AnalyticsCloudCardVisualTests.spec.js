@@ -7,7 +7,7 @@ describe("sap.ui.integration.AnalyticsCloudCardVisualTests", function () {
 	"use strict";
 	browser.testrunner.currentSuite.meta.controlName = "sap.ui.integration.widgets.Card";
 
-	var aCardIds = ["card1", "card2", "card3", "card4", "card5"];
+	var aCardIds = ["card1", "card2"];
 
 	it("AnalyticsCloud Card", function () {
 		utils.navigateTo("AnalyticsCloud Card");

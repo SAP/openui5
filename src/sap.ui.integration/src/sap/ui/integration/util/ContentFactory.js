@@ -3,6 +3,7 @@
  */
 sap.ui.define([
 	"./BaseFactory",
+	"sap/base/Log",
 	"sap/m/IllustratedMessageType",
 	"sap/ui/integration/cards/actions/CardActions",
 	"sap/ui/integration/cards/AdaptiveContent",
@@ -17,6 +18,7 @@ sap.ui.define([
 	"sap/ui/integration/cards/WebPageContent"
 ], function (
 	BaseFactory,
+	Log,
 	IllustratedMessageType,
 	CardActions,
 	AdaptiveContent,
@@ -88,6 +90,7 @@ sap.ui.define([
 				return true;
 			}).catch(function (sError) {
 				if (sError) {
+					Log.error(sError, "sap.ui.integration.util.ContentFactory");
 					oCard._handleError({
 						type: IllustratedMessageType.ErrorScreen,
 						title: oCard.getTranslatedText("CARD_DATA_LOAD_DEPENDENCIES_ERROR"),

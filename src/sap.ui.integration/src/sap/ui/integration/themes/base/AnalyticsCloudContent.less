@@ -3,92 +3,19 @@
 /* Base theme                                                  */
 /* =========================================================== */
 
-@_sap_ui_integration_AnalyticsCloud_ScrollBorder: transparent;
-
-.sapFCardContent {
+.sapFCard {
+	.sapFCardContent:has(.sapFCardAnalyticsCloudContent),
 	.sapFCardAnalyticsCloudContent {
-		svg {
-			text {
-				font-family: @sapUiFontFamily !important;
-				font-size: @sapMFontSmallSize !important;
-				fill: @sapUiTileTextColor !important;
-			}
+		overflow: visible;
+	}
 
-			.highcharts-text-outline[stroke-width="2px"] {
-				fill: @sapUiContentFocusColor !important;
-				stroke: @sapUiBaseColor !important;
-			}
+	.sapUiIntAnalyticsCloudContentContainer {
+		height: 100%;
+		width: 100%;
 
-			.highcharts-text-outline[stroke-width="2px"] + tspan {
-				fill: @sapUiContentFocusColor !important;
-			}
-
-			.highcharts-title {
-				font-family: @sapUiFontHeaderFamily !important;
-				font-size: @sapMFontHeader5Size !important;
-				font-weight: @sapUiFontHeaderWeight !important;
-				fill: @sapUiTileTitleTextColor !important;
-			}
-
-			.highcharts-subtitle {
-				font-family: @sapUiFontFamily !important;
-				font-size: @sapMFontMediumSize !important;
-				font-weight: normal !important;
-				fill: @sapUiTileTextColor !important;
-			}
-
-			.highcharts-axis {
-				path[stroke] {
-					stroke: @sapUiText !important;
-				}
-			}
-
-			.highcharts-legend {
-				> rect[fill] {
-					fill: @sapUiTileBackground !important;
-				}
-
-				> rect[stroke] {
-					stroke: @sapUiTileBorderColor !important;
-				}
-			}
-
-			.highcharts-tooltip-box {
-				color: @sapUiTileTitleTextColor !important;
-				fill: @sapUiTileBackground;
-			}
-
-			.highcharts-background {
-				fill: @sapUiTileBackground;
-			}
-
-			.highcharts-scrollbar * {
-				fill: transparent;
-				stroke: transparent;
-			}
-
-			&:hover .highcharts-scrollbar {
-				.highcharts-scrollbar-thumb {
-					fill: @sapUiScrollBarFaceColor;
-					width: 6px;
-				}
-
-				.highcharts-scrollbar-arrow {
-					fill: @sapUiScrollBarFaceColor;
-					transform: translate(-3.1px, 2px) scale(0.8);
-				}
-
-				.highcharts-scrollbar-track {
-					fill: @sapUiBaseBG;
-					stroke: @_sap_ui_integration_AnalyticsCloud_ScrollBorder;
-					width: 6px;
-					transform: translateX(-0.5px);
-				}
-			}
-		}
-		.sapFCardAnalyticsCloudContentHCC {
-			height: 100%;
-			width: 100%;
+		&>div {
+			border-bottom-left-radius: 0.95rem;
+			border-bottom-right-radius: 0.95rem;
 		}
 	}
 }
