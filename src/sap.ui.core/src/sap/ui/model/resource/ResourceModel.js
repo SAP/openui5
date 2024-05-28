@@ -132,7 +132,7 @@ sap.ui.define([
 	 *   <code>bundle</code> is set. Will cause an error if <code>enhanceWith</code> contains
 	 *   instances of <code>ResourceBundle</code>. Supported since 1.77.0.
 	 * @param {boolean} [oData.async=false]
-	 *   Whether the language bundle should be loaded asynchronously
+	 *   <b>Deprecated as of Version 1.125</b>; always use asynchronous loading for performance reasons
 	 * @param {module:sap/base/i18n/ResourceBundle} [oData.bundle]
 	 *   A resource bundle instance; when given, this bundle is used instead of creating a bundle
 	 *   from the provided <code>bundleUrl</code>, <code>bundleName</code> and
@@ -239,6 +239,11 @@ sap.ui.define([
 			this.bReenhance = false;
 
 			this.bAsync = !!(oData && oData.async);
+
+			if (!this.bAsync) {
+				Log.warning("Usage of synchronous loading is deprecated. For performance reasons, asynchronous loading"
+					+ " is strongly recommended.", undefined, sClassname);
+			}
 
 			this.sDefaultBindingMode = oData.defaultBindingMode || BindingMode.OneWay;
 

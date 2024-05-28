@@ -18,11 +18,6 @@ sap.ui.define([
 			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
-
-			// create ResourceModel
-			this.oModel = new ResourceModel({bundleName : "testdata.messages"});
-		},
-		afterEach : function () {
 		},
 		after : function () {
 			Localization.setLanguage(sDefaultLanguage);
@@ -30,24 +25,28 @@ sap.ui.define([
 	});
 
 	QUnit.test("Binding getPath", function(assert) {
-		var oBinding = this.oModel.bindProperty("TEST_TEXT");
+		const oModel = new ResourceModel({async : true, bundleName : "testdata.messages"});
+		const oBinding = oModel.bindProperty("TEST_TEXT");
+
 		// model stores the binding first when attach change was called
 		assert.ok(oBinding, "binding instantiated");
 		assert.equal(oBinding.getPath(), "TEST_TEXT", "Binding Path set properly");
 	});
 
 	QUnit.test("Binding getModel", function(assert) {
-		var oBinding = this.oModel.bindProperty("TEST_TEXT");
+		const oModel = new ResourceModel({async : true, bundleName : "testdata.messages"});
+		const oBinding = oModel.bindProperty("TEST_TEXT");
+
 		// check model of each binding...should be the same
-		assert.equal(oBinding.getModel(), this.oModel, "Binding model");
+		assert.equal(oBinding.getModel(), oModel, "Binding model");
 	});
 
 	QUnit.test("Binding changeEvent", function(assert) {
+		const oModel = new ResourceModel({async : true, bundleName : "testdata.messages"});
+		const oBinding = oModel.bindProperty("TEST_TEXT");
 		var attach = false,
-			oBinding = this.oModel.bindProperty("TEST_TEXT"),
 			detach = true,
-			done = assert.async(),
-			that = this;
+			done = assert.async();
 
 		function callBackOnChange(){
 			attach = true;
@@ -58,7 +57,7 @@ sap.ui.define([
 		oBinding.attachChange(callBackOnChange);
 
 		// model stores the binding first when attach change was called
-		assert.equal(this.oModel.getBindings().length, 1, "model bindings");
+		assert.equal(oModel.getBindings().length, 1, "model bindings");
 
 		// fire change event
 		oBinding._fireChange();
@@ -76,13 +75,17 @@ sap.ui.define([
 		detach = true;
 
 		setTimeout(function() {
-			assert.equal(that.oModel.getBindings().length, 0, "model bindings");
+			assert.equal(oModel.getBindings().length, 0, "model bindings");
 			done();
 		}, 0);
 	});
 
 	QUnit.test("PropertyBinding getValue", function(assert) {
-		var oBinding = this.oModel.bindProperty("TEST_TEXT");
+		this.oLogMock.expects("warning")
+			.withExactArgs("Usage of synchronous loading is deprecated. For performance reasons, asynchronous loading"
+				+ " is strongly recommended.", undefined, "sap.ui.model.resource.ResourceModel");
+		const oModel = new ResourceModel({bundleName : "testdata.messages"});
+		const oBinding = oModel.bindProperty("TEST_TEXT");
 
 		assert.equal(oBinding.getValue(), "A text en", "Property binding value");
 	});
