@@ -25,6 +25,7 @@ sap.ui.define([
 		 * @public
 		 * @since 1.92.0
 		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
+		 * @deprecated As of version 1.120, this Web Components consumption model has been discarded. An alternative consumption model is planned for the future.
 		 */
 		var thisLib = Library.init({
 			name: "sap.ui.webc.fiori",
