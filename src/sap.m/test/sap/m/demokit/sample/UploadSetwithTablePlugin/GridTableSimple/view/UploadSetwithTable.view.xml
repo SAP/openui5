@@ -110,6 +110,7 @@
 								urlPath="url"
 								previewablePath="previewable"
 								fileSizePath="fileSize"
+								isTrustedSourcePath="trustedSource"
 							/>
 						</m:plugins.UploadSetwithTable>
 				</dependents>

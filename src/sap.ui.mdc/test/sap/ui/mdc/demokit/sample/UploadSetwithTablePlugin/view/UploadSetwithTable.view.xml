@@ -112,6 +112,7 @@
 								urlPath="url"
 								previewablePath="previewable"
 								fileSizePath="fileSize"
+                                isTrustedSourcePath="trustedSource"
 								/>
 							</rowConfiguration>
 						</plugins.UploadSetwithTable>
