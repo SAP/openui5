@@ -5,7 +5,6 @@
 sap.ui.define([
 	"sap/base/util/merge",
 	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
-	"sap/ui/fl/initial/_internal/FlexInfoSession",
 	"sap/ui/fl/write/api/ReloadInfoAPI",
 	"sap/ui/fl/write/api/VersionsAPI",
 	"sap/ui/fl/Layer",
@@ -14,7 +13,6 @@ sap.ui.define([
 ], function(
 	merge,
 	FlexRuntimeInfoAPI,
-	FlexInfoSession,
 	ReloadInfoAPI,
 	VersionsAPI,
 	Layer,
@@ -159,9 +157,6 @@ sap.ui.define([
 	ReloadManager.enableAutomaticStart = function(sLayer, oRootControl) {
 		var sFlexReference = FlexRuntimeInfoAPI.getFlexReference({element: oRootControl});
 		var vParameter = sFlexReference || true;
-		const oFlexInfo = FlexInfoSession.getByReference(sFlexReference);
-		oFlexInfo.reloadFlexData = true;
-		FlexInfoSession.setByReference(oFlexInfo, sFlexReference);
 		window.sessionStorage.setItem(`sap.ui.rta.restart.${sLayer}`, vParameter);
 	};
 
