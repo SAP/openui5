@@ -15,7 +15,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	TableQUnitUtils.setDefaultSettings({
+	const oDefaultSettings = {
 		dependents: [new ODataV4Selection({enableNotification: true})],
 		rows: {
 			path: "/Products",
@@ -25,6 +25,63 @@ sap.ui.define([
 		},
 		columns: TableQUnitUtils.createTextColumn({text: "Name", bind: true}),
 		models: TableQUnitUtils.createModelForListDataService()
+	};
+
+	async function ui5Event(sEventName, oControl) {
+		return await new Promise((fnResolve) => {
+			oControl?.attachEventOnce(sEventName, fnResolve);
+		});
+	}
+
+	QUnit.module("Before Binding Checks", {
+		before: function() {
+			TableQUnitUtils.setDefaultSettings({
+				dependents: [new ODataV4Selection({enableNotification: true})],
+				rows: undefined,
+				columns: undefined,
+				models: undefined
+			});
+		},
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable();
+			return this.oTable.qunit.whenRenderingFinished();
+		},
+		afterEach: function() {
+			this.oTable.destroy();
+		},
+		after: function() {
+			TableQUnitUtils.setDefaultSettings(oDefaultSettings);
+		}
+	});
+
+	QUnit.test("Checks before and after Binding", async function(assert) {
+		const oTable = this.oTable;
+		const oODataV4Selection = oTable.getDependents()[0];
+		const oIcon = oODataV4Selection.getAggregation("icon");
+		const $SelectAll = oTable.$("selall");
+
+		assert.ok(!oIcon.getUseIconTooltip(), "DeselectAll icon has no tooltip");
+		assert.strictEqual(oIcon.getSrc(), IconPool.getIconURI(TableUtils.ThemeParameters.allSelectedIcon), "allSelectedIcon icon is correct");
+		assert.strictEqual($SelectAll.attr("title"), TableUtils.getResourceText("TBL_SELECT_ALL"), "AllSelected tooltip is correct");
+		assert.strictEqual($SelectAll.attr("aria-disabled"), "true", "Aria-Disabled set to true");
+		assert.ok(oIcon.hasStyleClass("sapUiTableSelectClear"), "DeselectAll icon has the correct css class applied");
+		assert.ok(!oODataV4Selection._isLimitDisabled(), "limit is not disabled by default");
+
+		const oOnBindingChangeSpy = sinon.spy(oODataV4Selection, "_onBindingChange");
+
+		oTable.addColumn(TableQUnitUtils.createTextColumn({text: "Name", bind: true}));
+		const oModel = TableQUnitUtils.createModelForListDataService();
+		oTable.setModel(oModel);
+		oTable.bindRows("/Products");
+
+		await ui5Event("_rowsUpdated", oTable);
+
+		assert.ok(!oIcon.getUseIconTooltip(), "SelectAll icon has no tooltip");
+		assert.strictEqual(oIcon.getSrc(), IconPool.getIconURI(TableUtils.ThemeParameters.checkboxIcon), "checkboxIcon icon is correct");
+		assert.ok(oOnBindingChangeSpy.called, "_onBindingChange has been called");
+		assert.strictEqual($SelectAll.attr("title"), TableUtils.getResourceText("TBL_SELECT_ALL"), "AllSelected tooltip is correct");
+		assert.strictEqual($SelectAll.attr("aria-disabled"), undefined, "Aria-Disabled is undefined");
+		assert.ok(oIcon.hasStyleClass("sapUiTableSelectClear"), "AllSelected icon has the correct css class applied");
 	});
 
 	QUnit.module("Basic checks", {
