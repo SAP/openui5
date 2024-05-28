@@ -1,0 +1,190 @@
+/* =========================================== */
+/* Demo Kit: Resources Page styles             */
+/* =========================================== */
+@resourcesCardHeaderTextColor: #FFFFFF;
+
+@resourcesIntroCardBgColor: #A00875;
+@resourcesIntroCardBgColorDark: #223548;
+@resourcesIntroCardMinHeight: 12.25rem; // 196px
+@resourcesIntroCardSubtitleMaxWidth: 37.5rem; // 600px
+
+@resourcesAsideCardMarginTop: 2.7rem; // 43px
+
+@resourcesFeaturedCardHeaderBgColor: #A00875;
+@resourcesRegularCardHeaderBgColor: #223546;
+
+.sapUiDemokit {
+
+	.sapUiDemoKitResourcesPage {
+
+		// Utilities
+		.sapUiDemoKitResourcesLayoutSpacing {
+			padding: 0 2rem 3rem 2rem;
+		}
+
+		.sapUiDemoKitResourcesIntroCardSpacing {
+			margin: 2rem 2rem 3rem 2rem;
+		}
+
+		.sapUiDemoKitResourcesCardContentSpacing {
+			padding: 1rem 1rem .5rem 1rem;
+			row-gap: .5rem;
+		}
+
+		.sapUiDemoKitResourcesCardLink {
+			&:before {
+				content: "\e05a";
+				font-family: "SAP-icons";
+				vertical-align: bottom;
+				margin-right: .25rem;
+			}
+		}
+
+		// Intro Card
+		.sapUiDemoKitResourcesIntroCard.sapFCard {
+			background: url("../../sdk/images/intro_card_stripe.svg") no-repeat center center,
+				linear-gradient(to right, @resourcesIntroCardBgColor, @resourcesIntroCardBgColorDark);
+			background-size: cover;
+			background-clip: content-box;
+
+			min-height: @resourcesIntroCardMinHeight;
+
+			.sapFCardHeader {
+				background-color: unset;
+
+				.sapFCardHeaderText {
+
+					.sapFCardTitle,
+					.sapFCardSubtitle {
+						color: @resourcesCardHeaderTextColor;
+					}
+
+					.sapFCardTitle {
+						font-size: @sapMFontLargeSize * 2;
+					}
+
+					.sapFCardSubtitle {
+						font-size: @sapMFontLargeSize;
+					}
+
+					.sapFCardHeaderTextFirstLine,
+					.sapFCardHeaderTextSecondLine {
+						box-sizing: border-box;
+					}
+
+					.sapFCardHeaderTextFirstLine {
+						padding: .5rem 1rem 0 1rem;
+					}
+
+					.sapFCardHeaderTextSecondLine {
+						max-width: @resourcesIntroCardSubtitleMaxWidth;
+						padding: .5rem 1rem;
+					}
+				}
+			}
+
+			.sapFCardContent {
+				padding: 1rem 2rem;
+			}
+		}
+
+		// Main
+		.sapUiDemoKitResourcesMain {
+			.sapUiDemoKitResourcesCategoryTitle {
+				justify-self: start;
+			}
+
+			.sapUiDemoKitResourcesRegularCard.sapFCard {
+				.sapFCardHeader {
+					background-color: @resourcesRegularCardHeaderBgColor;
+
+					.sapFCardHeaderText {
+						.sapFCardTitle {
+							font-size: @sapMFontLargeSize;
+							color: @resourcesCardHeaderTextColor;
+						}
+					}
+
+					.sapFCardHeaderImage .sapFCardIcon.sapFAvatar .sapUiIcon {
+						color: @resourcesCardHeaderTextColor;
+					}
+				}
+			}
+
+			.sapUiDemoKitResourcesCategoryFeatured {
+				.sapUiDemoKitResourcesRegularCard.sapFCard {
+					.sapFCardHeader {
+						background-color: @resourcesFeaturedCardHeaderBgColor;
+					}
+				}
+			}
+		}
+
+		// Aside
+		.sapUiDemoKitResourcesAside {
+			margin-top: @resourcesAsideCardMarginTop;
+
+			.sapUiDemoKitResourcesAsideDekstop {
+				.sapUiDemoKitResourcesAsideCard {
+					.sapFCardHeader {
+						padding: 1.5rem;
+
+						.sapFCardHeaderText .sapFCardTitle {
+							font-size: @sapMFontLargeSize;
+						}
+					}
+
+					.sapFCardContent {
+						padding-bottom: .5rem;
+
+						.sapMListItems .sapMLIB {
+							padding: 1.5rem;
+
+							.sapMILILabel {
+								font-size: @sapMFontMediumSize;
+								white-space: normal;
+							}
+						}
+					}
+				}
+			}
+
+			.sapUiDemoKitResourcesAsideMobile {
+				display: none;
+
+				.sapUiDemoKitResourcesAsidePanel {
+					.sapMList {
+						.sapMILILabel {
+							font-size: @sapMFontMediumSize;
+							white-space: normal;
+						}
+					}
+				}
+			}
+		}
+
+		@media screen and (max-width: 63.9375em) {
+			.sapUiDemoKitResourcesLayoutSpacing {
+				padding: 0 1rem 2rem 1rem;
+			}
+
+			.sapUiDemoKitResourcesIntroCardSpacing {
+				margin: 1rem 1rem 2rem 1rem;
+			}
+
+			.sapUiDemoKitResourcesAside {
+				order: -1;
+				margin-top: 0;
+				margin-bottom: 2rem;
+
+				.sapUiDemoKitResourcesAsideDekstop {
+					display: none;
+				}
+
+				.sapUiDemoKitResourcesAsideMobile {
+					display: initial;
+				}
+			}
+		}
+	}
+}
