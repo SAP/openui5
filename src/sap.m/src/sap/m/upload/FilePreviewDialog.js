@@ -292,7 +292,8 @@ sap.ui.define([
 						case PreviewableMediaType.ChromePdf: {
 							oPage = new PDFViewer({
 								source: oItem.getUrl(),
-								showDownloadButton: false
+								showDownloadButton: false,
+								isTrustedSource: oItem?.getIsTrustedSource()
 							});
 							oPage.setBusy(true);
 							break;

@@ -1523,6 +1523,14 @@ sap.ui.define([
 					value: oBindingContext?.getProperty(oRowConfiguration.getFileSizePath())
 				}, createStaticBinding);
 			}
+			if (oRowConfiguration?._isTrustedSourcePathValidator(oBindingContext)) {
+				await this.bindItemProperty(oUploadSetItem, {
+					property: "isTrustedSource",
+					propertyPath: oRowConfiguration.getIsTrustedSourcePath(),
+					modelName: sModelName,
+					value: oBindingContext?.getProperty(oRowConfiguration?.getIsTrustedSourcePath())
+				}, createStaticBinding);
+			}
 			return oUploadSetItem;
 	};
 
