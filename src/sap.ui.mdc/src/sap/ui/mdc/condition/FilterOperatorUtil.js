@@ -169,24 +169,32 @@ sap.ui.define([
 
 							if (iKeyIndex >= 0 && iDescriptionIndex >= 0) {
 								// split string
-								if (sValue.lastIndexOf("(") > 0 && (sValue.lastIndexOf(")") === sValue.length - 1 || sValue.lastIndexOf(")") === -1)) {
+								// nested brackets are hard to parse as while typing they might be incomplete. So we assume that the key don't contains brackets, only the description.
+								const bKeyFirst = iKeyIndex < iDescriptionIndex;
+								let sStart = bKeyFirst ? sTokenText.substring(iKeyIndex + 3, iDescriptionIndex) : sTokenText.substring(iDescriptionIndex + 3, iKeyIndex);
+								const sEnd = bKeyFirst ? sTokenText.slice(iDescriptionIndex + 3) : sTokenText.slice(iKeyIndex + 3);
+								let iStart = bKeyFirst ? sValue.indexOf(sStart) : sValue.lastIndexOf(sStart); // we assume key will not contain a bracket
+
+								if (iStart === -1) { // maybe space missing
+									sStart = "(";
+									iStart = bKeyFirst ? sValue.indexOf(sStart) : sValue.lastIndexOf(sStart);
+								}
+
+								if (iStart > 0 && (sValue.lastIndexOf(sEnd) === sValue.length - sEnd.length || sValue.lastIndexOf(sEnd) < iStart)) { // if closing bracket missing just take everything starting from opening bracket
 									let iEnd = sValue.length;
-									if (sValue[iEnd - 1] === ")") {
-										iEnd--;
+									if (sValue.slice(iEnd - sEnd.length) === sEnd) {
+										iEnd = iEnd - sEnd.length;
 									}
-									let sValue1 = sValue.substring(0, sValue.lastIndexOf("("));
-									if (sValue1[sValue1.length - 1] === " ") {
-										sValue1 = sValue1.substring(0, sValue1.length - 1);
-									}
-									const sValue2 = sValue.substring(sValue.lastIndexOf("(") + 1, iEnd);
-									if (iKeyIndex < iDescriptionIndex) {
+									const sValue1 = sValue.substring(0, iStart);
+									const sValue2 = sValue.substring(iStart + sStart.length, iEnd);
+									if (bKeyFirst) {
 										sKey = sValue1;
 										sDescription = sValue2;
 									} else {
 										sKey = sValue2;
 										sDescription = sValue1;
 									}
-								} else if (iKeyIndex < iDescriptionIndex) {
+								} else if (bKeyFirst) {
 									sKey = sValue;
 								} else {
 									sDescription = sValue;

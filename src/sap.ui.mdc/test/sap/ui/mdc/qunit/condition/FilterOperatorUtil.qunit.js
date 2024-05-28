@@ -492,6 +492,24 @@ sap.ui.define([
 						isEmpty: false,
 						valid: true
 					},
+					{
+						formatArgs: [Condition.createCondition(OperatorName.EQ, ["a", "b (c)"])],
+						formatValue: "b (c) (a)",
+						parseArgs: ["b (c) (a)", undefined, undefined, true],
+						parsedValue: "ab (c)",
+						condition: Condition.createCondition(OperatorName.EQ, ["a", "b (c)"], undefined, undefined, ConditionValidated.Validated),
+						isEmpty: false,
+						valid: true
+					},
+					{
+						formatArgs: [Condition.createCondition(OperatorName.EQ, ["a", "b (c)"]), undefined, FieldDisplay.ValueDescription],
+						formatValue: "a (b (c))",
+						parseArgs: ["a (b (c))", undefined, FieldDisplay.ValueDescription, true],
+						parsedValue: "ab (c)",
+						condition: Condition.createCondition(OperatorName.EQ, ["a", "b (c)"], undefined, undefined, ConditionValidated.Validated),
+						isEmpty: false,
+						valid: true
+					},
 					{ // DateTime with Timezone
 						formatArgs: [Condition.createCondition(OperatorName.EQ, [["2022-02-24T12:15:30Z", "Europe/Berlin"]]), oDateTimeWithTimezoneType1, FieldDisplay.Value, true, [oDateTimeOffsetType, oStringType]],
 						formatValue: "2022-02-24T13:15:30",
