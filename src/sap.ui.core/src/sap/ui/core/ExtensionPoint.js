@@ -110,7 +110,12 @@ sap.ui.define(["sap/base/future", "sap/base/Log", "sap/ui/core/mvc/View", "sap/u
 					type: oExtensionConfig.type
 				};
 
-				// processingMode must not be set for sync path
+				/**
+				 * @deprecated because the 'Sequential' Mode is used by default and it's the only mode that will be supported
+				 * in the next major release
+				 *
+				 * processingMode must not be set for sync path
+				 */
 				if (bAsync && oView._sProcessingMode) {
 					oFactoryConfig.processingMode = oView._sProcessingMode;
 				}

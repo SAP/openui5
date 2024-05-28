@@ -249,7 +249,9 @@ sap.ui.define([
 	});
 
 
-
+	/**
+	 * @deprecated because the mode 'Sequential' will be the only mode that is supported in the next major release
+	 */
 	QUnit.module("Propagation of processingMode: 'Sequential'", {
 		beforeEach: function() {
 			this.loadTemplatePromiseSpy = sinon.spy(XMLTemplateProcessor, "loadTemplatePromise");

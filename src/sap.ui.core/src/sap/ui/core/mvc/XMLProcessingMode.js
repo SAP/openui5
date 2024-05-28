@@ -2,7 +2,10 @@
  * ${copyright}
  */
 
- // Provides type sap.ui.core.mvc.XMLProcessingMode
+/**
+ * @fileoverview
+ * @deprecated
+ */
  sap.ui.define([], function () {
 	"use strict";
 

@@ -755,8 +755,12 @@ sap.ui.define([
 			if (oRootView.id) {
 				oRootView.id = this.createId(oRootView.id);
 			}
-			// for now the processing mode is always set to <code>XMLProcessingMode.Sequential</code> for XMLViews
+			/**
+			 * @deprecated because the 'Sequential' Mode is used by default and it's the only mode that will be supported
+			 * in the next major release
+			 */
 			if (oRootView.async && oRootView.type === ViewType.XML) {
+				// for now the processing mode is always set to <code>XMLProcessingMode.Sequential</code> for XMLViews
 				oRootView.processingMode = XMLProcessingMode.Sequential;
 			}
 			/**

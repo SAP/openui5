@@ -626,8 +626,14 @@ function(
 			});
 		}
 
-		bAsync = bAsync && !!oView._sProcessingMode;
-		Log.debug("XML processing mode is " + (oView._sProcessingMode || "default") + ".", "", "XMLTemplateProcessor");
+		/**
+		 * @deprecated because the 'Sequential' Mode is used by default and it's the only mode that will be supported
+		 * in the next major release
+		 */
+		(() => {
+			bAsync = bAsync && !!oView._sProcessingMode;
+			Log.debug("XML processing mode is " + (oView._sProcessingMode || "default") + ".", "", "XMLTemplateProcessor");
+		})();
 		Log.debug("XML will be processed " + (bAsync ? "asynchronously" : "synchronously") + ".", "", "XMLTemplateProcessor");
 
 		var bDesignMode = DesignTime.isDesignModeEnabled();
@@ -1040,9 +1046,16 @@ function(
 									id: id ? getId(oView, node, id) : undefined,
 									xmlNode: node,
 									requireContext: oRequireContext,
-									containingView: oView._oContainingView,
-									processingMode: oView._sProcessingMode // add processing mode, so it can be propagated to subviews inside the HTML block
+									containingView: oView._oContainingView
 								};
+
+								/**
+								 * @deprecated because the 'Sequential' Mode is used by default and it's the only mode that will be supported
+								 * in the next major release
+								 *
+								 * add processing mode, so it can be propagated to subviews inside the HTML block
+								 */
+								mViewParameters.processingMode = oView._sProcessingMode;
 
 								// running with owner component
 								return scopedRunWithOwner(function() {
@@ -1450,10 +1463,15 @@ function(
 					Log.error(oError);
 				}
 
+				/**
+				 * @ui5-transform-hint replace-local false
+				 */
+				const bSequentialLegacyMode = oView._sProcessingMode === XMLProcessingMode.SequentialLegacy;
+
 				// [COMPATIBILITY]
 				// sync: we just log the error and keep on processing
 				// asnyc: throw the error, so the parseTemplate Promise will reject
-				if (bAsync && oView._sProcessingMode !== XMLProcessingMode.SequentialLegacy) {
+				if (bAsync && !bSequentialLegacyMode) {
 					throw oError;
 				}
 			});
@@ -1686,7 +1704,12 @@ function(
 							return View.create(mSettings);
 						});
 					} else {
-						// Pass processingMode to nested XMLViews
+						/**
+						 * @deprecated because the 'Sequential' Mode is used by default and it's the only mode that will be supported
+						 * in the next major release
+						 *
+						 * Pass processingMode to nested XMLViews
+						 */
 						if (oClass.getMetadata().isA("sap.ui.core.mvc.XMLView") && oView._sProcessingMode) {
 							mSettings.processingMode = oView._sProcessingMode;
 						}
@@ -1696,12 +1719,16 @@ function(
 						});
 					}
 				} else if (oClass.getMetadata().isA("sap.ui.core.Fragment") && bAsync) {
-
-					// Pass processingMode to any fragments except JS
-					// XML / HTML fragments: might include nested views / fragments,
-					//  which are processed asynchronously. Therefore the processingMode is needed
-					// JS fragments: might include synchronously or asynchronously created content. Nevertheless, the execution of the
-					//  content creation is not in the scope of the xml template processor, therefore the processing mode is not needed
+					/**
+					 * @deprecated because the 'Sequential' Mode is used by default and it's the only mode that will be supported
+					 * in the next major release
+					 *
+					 * Pass processingMode to any fragments except JS
+					 * XML / HTML fragments: might include nested views / fragments,
+					 *  which are processed asynchronously. Therefore the processingMode is needed
+					 * JS fragments: might include synchronously or asynchronously created content. Nevertheless, the execution of the
+					 *  content creation is not in the scope of the xml template processor, therefore the processing mode is not needed
+					 */
 					if (sType !== ViewType.JS) {
 						mSettings.processingMode = oView._sProcessingMode;
 					}

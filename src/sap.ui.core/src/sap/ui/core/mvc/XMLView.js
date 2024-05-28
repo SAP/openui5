@@ -142,6 +142,9 @@ sap.ui.define([
 				cache : 'Object',
 
 				/**
+				 * @deprecated because the 'Sequential' Mode is used by default and it's the only mode that will be supported
+				 * in the next major release
+				 *
 				 * The processing mode of the XMLView.
 				 */
 				processingMode: { type: "sap.ui.core.mvc.XMLProcessingMode", visibility: "hidden" },
@@ -650,6 +653,10 @@ sap.ui.define([
 
 		this._oContainingView = mSettings.containingView || this;
 
+		/**
+		 * @deprecated because the 'Sequential' Mode is used by default and it's the only mode that will be supported
+		 * in the next major release
+		 */
 		this._sProcessingMode = mSettings.processingMode;
 
 		if (this.oAsyncState) {
