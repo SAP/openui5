@@ -104,6 +104,7 @@ sap.ui.define([
 	ODataV4Selection.prototype.onDeactivate = function(oTable) {
 		SelectionPlugin.prototype.onDeactivate.apply(this, arguments);
 		oTable.setProperty("selectionMode", TableSelectionMode.None);
+		detachFromBinding(this, this.getTableBinding());
 		this.clearSelection();
 	};
 
@@ -314,8 +315,23 @@ sap.ui.define([
 		// TODO: Same as V4Aggregation plugin, check comment there!
 		if (!oBinding.getModel().isA("sap.ui.model.odata.v4.ODataModel")) {
 			this.deactivate();
+		} else {
+			SelectionPlugin.prototype.onTableRowsBound.apply(this, arguments);
+			attachToBinding(this, oBinding);
 		}
 	};
+
+	function attachToBinding(oPlugin, oBinding) {
+		if (oBinding) {
+			oBinding.attachChange(oPlugin._onBindingChange, oPlugin);
+		}
+	}
+
+	function detachFromBinding(oPlugin, oBinding) {
+		if (oBinding) {
+			oBinding.detachChange(oPlugin._onBindingChange, oPlugin);
+		}
+	}
 
 	/**
 	 * Checks whether the limit is disabled.
@@ -426,6 +442,14 @@ sap.ui.define([
 	};
 
 	ODataV4Selection.prototype.onThemeChanged = function() {
+		updateHeaderSelectorIcon(this);
+	};
+
+	/**
+	 * Handler for change events of the binding.
+	 * @private
+	 */
+	ODataV4Selection.prototype._onBindingChange = function() {
 		updateHeaderSelectorIcon(this);
 	};
 

@@ -311,10 +311,18 @@ sap.ui.define([
 		const oTable = this.oTable;
 		const $SelectAll = oTable.$("selall");
 		const oSelectionPlugin = oTable._getSelectionPlugin();
+		const oIcon = oSelectionPlugin.getAggregation("icon");
+		const oOnBindingChangeSpy = sinon.spy(oSelectionPlugin, "_onBindingChange");
 
 		return oTable.qunit.whenRenderingFinished().then(function() {
 			assert.ok($SelectAll.attr("aria-disabled"), "Before bindRows: aria-disabled is set to true");
 			assert.ok($SelectAll.hasClass("sapUiTableSelAllDisabled"), "Before bindRows: Deselect All is disabled");
+
+			assert.ok(!oIcon.getUseIconTooltip(), "DeselectAll icon has no tooltip");
+			assert.strictEqual(oIcon.getSrc(), IconPool.getIconURI(TableUtils.ThemeParameters.allSelectedIcon), "allSelectedIcon icon is correct");
+			assert.strictEqual($SelectAll.attr("title"), TableUtils.getResourceText("TBL_SELECT_ALL"), "AllSelected tooltip is correct");
+			assert.strictEqual($SelectAll.attr("aria-disabled"), "true", "Aria-Disabled set to true");
+			assert.ok(oIcon.hasStyleClass("sapUiTableSelectClear"), "DeselectAll icon has the correct css class applied");
 
 			oTable.bindRows({path: "/Products"});
 			oTable.setModel(new ODataModel(sServiceURI, {
@@ -326,6 +334,13 @@ sap.ui.define([
 			assert.notOk($SelectAll.attr("aria-disabled"), "After bindRows: aria-disabled is undefined");
 			assert.notOk($SelectAll.hasClass("sapUiTableSelAllDisabled"), "After bindRows: Select All is enabled");
 			assert.ok($SelectAll.hasClass("sapUiTableSelAllVisible"), "After bindRows: Select All is visible");
+
+			assert.ok(!oIcon.getUseIconTooltip(), "SelectAll icon has no tooltip");
+			assert.strictEqual(oIcon.getSrc(), IconPool.getIconURI(TableUtils.ThemeParameters.checkboxIcon), "checkboxIcon icon is correct");
+			assert.ok(oOnBindingChangeSpy.called, "_onBindingChange has been called");
+			assert.strictEqual($SelectAll.attr("title"), TableUtils.getResourceText("TBL_SELECT_ALL"), "AllSelected tooltip is correct");
+			assert.strictEqual($SelectAll.attr("aria-disabled"), undefined, "Aria-Disabled is undefined");
+			assert.ok(oIcon.hasStyleClass("sapUiTableSelectClear"), "AllSelected icon has the correct css class applied");
 		}).then(function() {
 			return new Promise(function(resolve) {
 				oSelectionPlugin.attachEventOnce("selectionChange", function(oEvent) {
