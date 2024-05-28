@@ -952,7 +952,7 @@ sap.ui.define([
 				mRoutingClasses["routerClass"] = vRouterClass;
 			} else if (oRouting.targets) {
 				// Same as with "routes", see comment above.
-				let vTargetClass = oRouting.config.targetsClass || "sap.ui.core.routing.Targets";
+				let vTargetClass = oRouting.config?.targetsClass || "sap.ui.core.routing.Targets";
 				if (typeof vTargetClass === "string") {
 					vTargetClass = vTargetClass.replace(/\./g, "/");
 				}
