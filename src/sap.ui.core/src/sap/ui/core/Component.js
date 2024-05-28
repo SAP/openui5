@@ -626,6 +626,7 @@ sap.ui.define([
 	 * @return {any|null} Value of the manifest section or the key (could be any kind of value)
 	 * @see {@link #getManifestEntry}
 	 * @private
+	 * @ui5-restricted sap.ushell
 	 * @since 1.34.2
 	 */
 	Component.prototype._getManifestEntry = function(sKey, bMerged) {
