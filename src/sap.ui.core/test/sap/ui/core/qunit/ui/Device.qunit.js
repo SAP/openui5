@@ -82,6 +82,9 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 				chrome: undefined,
 				safari: true,
 				fullscreen: false,
+				/**
+				 * @deprecated as of version 1.98
+				 */
 				webview: false,
 				firefox: undefined,
 				version: 14,
@@ -101,6 +104,9 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 				chrome: undefined,
 				safari: true,
 				fullscreen: false,
+				/**
+				 * @deprecated as of version 1.98
+				 */
 				webview: false,
 				firefox: undefined,
 				version: 100.1,
@@ -121,6 +127,9 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 				chrome: undefined,
 				safari: true,
 				fullscreen: false,
+				/**
+				 * @deprecated as of version 1.98
+				 */
 				webview: false,
 				firefox: undefined,
 				version: 6,
@@ -141,6 +150,9 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 				chrome: undefined,
 				safari: true,
 				fullscreen: false,
+				/**
+				 * @deprecated as of version 1.98
+				 */
 				webview: true,
 				firefox: undefined,
 				version: -1,
@@ -161,6 +173,9 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 				chrome: undefined,
 				safari: true,
 				fullscreen: true,
+				/**
+				 * @deprecated as of version 1.98
+				 */
 				webview: false,
 				firefox: undefined,
 				version: -1,
@@ -488,6 +503,9 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 				version: -1,
 				versionStr: undefined,
 				fullscreen: false,
+				/**
+				 * @deprecated as of version 1.98
+				 */
 				webview: true,
 				mobile: true,
 				webkitVersion: "605.1.15"
@@ -517,6 +535,9 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 				version: 15.1,
 				versionStr: "15.1",
 				fullscreen: true,
+				/**
+				 * @deprecated as of version 1.98
+				 */
 				webview: false,
 				mobile: true,
 				webkitVersion: "605.1.15"
@@ -546,6 +567,9 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 				version: 15.1,
 				versionStr: "15.1",
 				fullscreen: false,
+				/**
+				 * @deprecated as of version 1.98
+				 */
 				webview: false,
 				mobile: true,
 				webkitVersion: "605.1.15"
