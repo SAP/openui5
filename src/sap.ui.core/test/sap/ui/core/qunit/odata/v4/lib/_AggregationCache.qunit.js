@@ -6231,11 +6231,17 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [-1, +1].forEach((iOffset) => {
-	QUnit.test(`requestSiblingIndex: request via 1st level, ${iOffset}`, async function (assert) {
+	[false, true].forEach((bHasExpandLevels) => {
+		[false, true].forEach((bWrongLevel) => {
+			const sTitle = `requestSiblingIndex: request via 1st level, offset ${iOffset}`
+				+ `, has $ExpandLevels: ${bHasExpandLevels}, wrong level: ${bWrongLevel}`;
+
+	QUnit.test(sTitle, async function (assert) {
 		const oCache = _AggregationCache.create(this.oRequestor, "Foo('42')", "", {}, {
 			$DistanceFromRoot : "DistFromRoot",
+			$ExpandLevels : bHasExpandLevels ? "..." : undefined,
 			$LimitedRank : "Ltd_Rank",
-			// Note: expandTo > 1, but not really used here
+			expandTo : bHasExpandLevels ? 1 : 2,
 			hierarchyQualifier : "X"
 		});
 		const oFirstLevel = {
@@ -6286,21 +6292,30 @@ sap.ui.define([
 		}
 		this.mock(this.oRequestor).expects("buildQueryString")
 			.withExactArgs("", mExpectedQueryOptions, false, true, true).returns("?~sQuery~");
+		const oSibling = {
+			// Note: actually set by calculateKeyPredicate from DistanceFromRoot, but never mind
+			"@$ui5.node.level" : bWrongLevel ? 8 : 7
+		};
 		this.mock(this.oRequestor).expects("request")
 			.withExactArgs("GET", "Foo('42')?~sQuery~", "~oGroupLock~")
 			.resolves({
-				value : ["~oSibling~", "n/a"]
+				value : [oSibling, "n/a"]
 			});
 		this.mock(oCache).expects("getTypes").withExactArgs().returns("~Types~");
 		this.mock(oFirstLevel).expects("calculateKeyPredicate")
-			.withExactArgs("~oSibling~", "~Types~", "/Foo");
-		this.mock(_Helper).expects("drillDown").withExactArgs("~oSibling~", "Ltd_Rank")
-			.returns("42");
-		this.mock(_Helper).expects("deleteProperty").withExactArgs("~oSibling~", "Ltd_Rank");
-		this.mock(oCache).expects("insertNode").withExactArgs("~oSibling~", 42);
+			.withExactArgs(sinon.match.same(oSibling), "~Types~", "/Foo");
+		this.mock(_Helper).expects("drillDown")
+			.withExactArgs(sinon.match.same(oSibling), "Ltd_Rank").returns("42");
+		this.mock(_Helper).expects("deleteProperty")
+			.withExactArgs(sinon.match.same(oSibling), "Ltd_Rank");
+		this.mock(oCache).expects("insertNode").withExactArgs(sinon.match.same(oSibling), 42);
 
-		// code under test
-		assert.strictEqual(await oCache.requestSiblingIndex(2, iOffset, "~oGroupLock~"), 42);
+		assert.strictEqual(
+			// code under test
+			await oCache.requestSiblingIndex(2, iOffset, "~oGroupLock~"),
+			bWrongLevel ? -1 : 42);
+	});
+		});
 	});
 });
 

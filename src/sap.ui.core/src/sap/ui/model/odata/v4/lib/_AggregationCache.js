@@ -2036,7 +2036,8 @@ sap.ui.define([
 	_AggregationCache.prototype.requestSiblingIndex = async function (iIndex, iOffset, oGroupLock) {
 		const oNode = this.aElements[iIndex];
 		const oCache = _Helper.getPrivateAnnotation(oNode, "parent");
-		const bSingleLevelCache = oCache !== this.oFirstLevel || this.oAggregation.expandTo === 1;
+		const bSingleLevelCache = oCache !== this.oFirstLevel
+			|| this.oAggregation.expandTo === 1 && !this.oAggregation.$ExpandLevels;
 		const iRank = _Helper.getPrivateAnnotation(oNode, "rank");
 		let iSiblingRank = iRank + iOffset;
 		if (iOffset < 0) { // previous sibling
@@ -2089,7 +2090,9 @@ sap.ui.define([
 		_Helper.deleteProperty(oSibling, this.oAggregation.$LimitedRank);
 		this.insertNode(oSibling, iSiblingRank);
 
-		return iSiblingRank;
+		return oSibling["@$ui5.node.level"] === oNode["@$ui5.node.level"]
+			? iSiblingRank
+			: -1; // no such sibling
 	};
 
 	/**
