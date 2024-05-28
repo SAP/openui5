@@ -798,6 +798,16 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns whether the binding is destroyed.
+	 *
+	 * @returns {boolean} Whether the binding is destroyed
+	 * @private
+	 */
+	Binding.prototype.isDestroyed = function () {
+		return !!this.bIsBeingDestroyed;
+	};
+
+	/**
 	 * Checks whether an update of the data state of this binding is required.
 	 *
 	 * @param {map} [mPaths] A Map of paths to check if update needed

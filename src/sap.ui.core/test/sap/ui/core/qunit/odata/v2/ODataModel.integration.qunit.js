@@ -23043,6 +23043,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	// embedded in a CompositeBinding, the field help is determined automatically by evaluating the
 	// "com.sap.vocabularies.Common.v1.DocumentationRef" annotation. ODataPropertyBindings embedded in a
 	// CompositeBinding for which no messages are displayed (see getPartsIgnoringMessages), are ignored.
+	// Controls which have been destroyed do neither produce a field help nor log messages.
 	// JIRA: CPOUI5MODELS-1696
 	QUnit.test("Field Help", function (assert) {
 		const oModel = createSalesOrdersModel({defaultBindingMode: BindingMode.TwoWay});
@@ -23054,6 +23055,8 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 <Input id="FilterMultipleFieldHelps" value="Foo Bar" />
 <Label labelFor="FilterWithoutFieldHelp" text="Label for filter without any field help" />
 <Input id="FilterWithoutFieldHelp" value="Baz" />
+<Label labelFor="FilterDynamicallyDestroyed" text="Label for filter which is dynamically destroyed" />
+<Input id="FilterDynamicallyDestroyed" value="{filter>/filter}" />
 <FlexBox id="form" binding="{/SalesOrderSet('1')}">
 	<Label labelFor="Note" text="Label for Note" />
 	<Input id="Note" value="{Note}" />
@@ -23125,6 +23128,9 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				"urn:sap-com:documentation:key?=type=DTEL&id=FOO",
 				"urn:sap-com:documentation:key?=type=DTEL&id=Bar&origin=Origin"
 			]);
+			const oFilterDynamicallyDestroyed = oView.byId("FilterDynamicallyDestroyed");
+			oFilterDynamicallyDestroyed.data("sap-ui-DocumentationRef",
+				"urn:sap-com:documentation:key?=type=DTEL&id=SALESORDERID");
 			let fnResolve;
 			const oPromise = new Promise((resolve) => {
 				fnResolve = resolve;
@@ -23167,6 +23173,9 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 			// code under test
 			FieldHelp.getInstance().activate(oUtil.fnUpdateCallback);
+
+			// code under test - destroy a field with field help - async callback does not consider that control
+			oFilterDynamicallyDestroyed.destroy();
 
 			return Promise.all([oPromise, this.waitForChanges(assert, "Initial activation")]);
 		}).finally(() => {

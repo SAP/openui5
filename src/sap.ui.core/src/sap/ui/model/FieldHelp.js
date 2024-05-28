@@ -99,14 +99,17 @@ sap.ui.define([
 		 *
 		 * @param {sap.ui.model.Binding} oBinding The binding
 		 * @return {Promise<string>|undefined}
-		 *   If the binding does not belong to an OData model or the resolved path of the binding is a meta model path
-		 *   or a path referencing an annoation, then <code>undefined</code> is returned; if the binding belongs to an
-		 *   OData model the <code>com.sap.vocabularies.Common.v1.DocumentationRef</code> annotation value for the
-		 *   binding is asynchronously requested via the OData meta model and the resulting <code>Promise</code> either
-		 *   resolves with the <code>String</code> value of that annotation or with <code>undefined</code> if the
+		 *   If the binding is destroyed, or does not belong to an OData model, or the resolved path of the binding is a
+		 *   meta model path or referencing an annotation, then <code>undefined</code> is returned; if the binding
+		 *   belongs to an OData model the <code>com.sap.vocabularies.Common.v1.DocumentationRef</code> annotation value
+		 *   for the binding is asynchronously requested via the OData meta model and the resulting <code>Promise</code>
+		 *   either resolves with the <code>String</code> value of that annotation or with <code>undefined</code> if the
 		 *   annotation is not available; the <code>Promise</code> never rejects
 		 */
 		static _requestDocumentationRef(oBinding) {
+			if (oBinding.isDestroyed()) {
+				return undefined;
+			}
 			const sResolvedPath = oBinding.getResolvedPath();
 			if (!sResolvedPath || sResolvedPath.includes("#") /*meta model path*/
 					|| sResolvedPath.includes("@") /*annotation path*/) {
@@ -145,6 +148,10 @@ sap.ui.define([
 			const aFieldHelpHotspots = [];
 			Object.keys(this.#mDocuRefControlToFieldHelp).forEach((sControlID) => {
 				const oControl = Element.getElementById(sControlID);
+				if (!oControl) { // control has been destroyed, cleanup internal data structure
+					delete this.#mDocuRefControlToFieldHelp[sControlID];
+					return;
+				}
 				const sLabel = LabelEnablement._getLabelTexts(oControl)[0];
 				if (!sLabel) {
 					Log.error(`Cannot find a label for control '${sControlID}'; ignoring field help`,
