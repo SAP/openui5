@@ -4972,8 +4972,18 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-[undefined, 1].forEach(function (iRank) {
-	QUnit.test("create: createInPlace, rank=" + iRank, function (assert) {
+[undefined, 2].forEach(function (iRank) {
+	[undefined, true].forEach(function (bParentExpanded) {
+		[false, true].forEach(function (bCreateRoot) {
+			const sTitle = "create: createInPlace, rank: " + iRank
+				+ ", parent's @$ui5.node.isExpanded: " + bParentExpanded
+				+ ", create root node: " + bCreateRoot;
+
+			if (bParentExpanded && bCreateRoot) {
+				return;
+			}
+
+	QUnit.test(sTitle, function (assert) {
 		var that = this;
 
 		const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, {
@@ -4982,15 +4992,20 @@ sap.ui.define([
 				hierarchyQualifier : "X"
 			});
 		assert.strictEqual(oCache.bUnifiedCache, true, "activated by createInPlace");
-		oCache.aElements = ["0", "1"];
-		oCache.aElements.$byPredicate = {};
-		oCache.aElements.$count = 2;
+		const oParentNode = bCreateRoot ? "1" : {"@$ui5.node.level" : 23};
+		if (bParentExpanded !== undefined) {
+			oParentNode["@$ui5.node.isExpanded"] = bParentExpanded;
+		}
+		oCache.aElements = ["0", oParentNode, "2"];
+		oCache.aElements.$byPredicate = {"('42')" : oParentNode};
+		oCache.aElements.$count = 3;
 		this.mock(oCache).expects("createGroupLevelCache").never();
 		this.mock(oCache.oTreeState).expects("expand").never();
 		const oEntityData = {
-				bar : "~bar~",
-				foo : "~foo~"
-			};
+			"@$ui5.node.parent" : (bCreateRoot ? undefined : "Foo('42')"),
+			bar : "~bar~",
+			foo : "~foo~"
+		};
 		this.mock(_Helper).expects("addByPath")
 			.withExactArgs(sinon.match.same(oCache.mPostRequests), "~sTransientPredicate~",
 				sinon.match.same(oEntityData));
@@ -5016,8 +5031,10 @@ sap.ui.define([
 							.withExactArgs(sinon.match.same(oEntityData), iRank,
 								sinon.match.same(oCache.oFirstLevel), iRank)
 							.callsFake(function () {
-								assert.deepEqual(oCache.aElements, ["0", null, "1"]);
+								assert.deepEqual(oCache.aElements, ["0", oParentNode, null, "2"]);
 							});
+						that.mock(oCache).expects("adjustDescendantCount").exactly(iRank ? 1 : 0)
+							.withExactArgs(sinon.match.same(oEntityData), iRank, 1);
 						that.mock(oCache.oFirstLevel).expects("removeElement")
 							.withExactArgs(0, "~sTransientPredicate~");
 						that.mock(_Helper).expects("deletePrivateAnnotation").exactly(iRank ? 1 : 0)
@@ -5031,23 +5048,23 @@ sap.ui.define([
 					});
 				});
 			});
-		this.mock(oCache).expects("adjustDescendantCount").never();
+		this.mock(_Helper).expects("makeRelativeUrl").exactly(bCreateRoot ? 0 : 1)
+			.withExactArgs("/Foo('42')", "/Foo").returns("~relativeUrl~");
 
 		// code under test
 		const oResult = oCache.create("~oGroupLock~", "~oPostPathPromise~", "~sPath~",
 			"~sTransientPredicate~", oEntityData, /*bAtEndOfCreated*/false, "~fnErrorCallback~",
 			"~fnSubmitCallback~");
 
-		assert.deepEqual(oPostBody, {});
+		assert.deepEqual(oPostBody, bCreateRoot ? {} : {"myParent@odata.bind" : "~relativeUrl~"});
 		assert.deepEqual(oEntityData, {
 			"@$ui5._" : {postBody : oPostBody},
-			"@$ui5.node.level" : 1,
 			bar : "~bar~",
 			foo : "~foo~"
 		});
-		assert.strictEqual(oCache.aElements.$count, 2);
-		assert.deepEqual(oCache.aElements.$byPredicate, {});
-		assert.deepEqual(oCache.aElements, ["0", "1"]);
+		assert.strictEqual(oCache.aElements.$count, 3);
+		assert.deepEqual(oCache.aElements.$byPredicate, {"('42')" : oParentNode});
+		assert.deepEqual(oCache.aElements, ["0", oParentNode, "2"]);
 		assert.strictEqual(oResult.isPending(), true);
 
 		return oResult.then(function (oEntityData0) {
@@ -5055,23 +5072,24 @@ sap.ui.define([
 			if (iRank) {
 				assert.deepEqual(oEntityData, {
 					"@$ui5._" : {postBody : oPostBody, rank : iRank},
-					"@$ui5.node.level" : 1,
+					"@$ui5.node.level" : bCreateRoot ? 1 : 24,
 					bar : "~bar~",
 					foo : "~foo~"
 				});
-				assert.strictEqual(oCache.aElements.$count, 3);
+				assert.strictEqual(oCache.aElements.$count, 4);
 			} else {
 				assert.deepEqual(oEntityData, {
 					"@$ui5._" : {
 						postBody : oPostBody
 					},
-					"@$ui5.node.level" : 1,
 					bar : "~bar~",
 					foo : "~foo~"
 				});
-				assert.deepEqual(oCache.aElements, ["0", "1"]);
-				assert.strictEqual(oCache.aElements.$count, 2);
+				assert.deepEqual(oCache.aElements, ["0", oParentNode, "2"]);
+				assert.strictEqual(oCache.aElements.$count, 3);
 			}
+		});
+	});
 		});
 	});
 });

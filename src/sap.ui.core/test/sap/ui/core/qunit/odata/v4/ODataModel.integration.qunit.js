@@ -37812,19 +37812,23 @@ make root = ${bMakeRoot}`;
 	// of the hierarchy as long as they are transient.
 	// Create a node, but because of a filter this node doesn't become part of the hierarchy and is
 	// therefore not displayed.
+	// Create a child below an expanded parent on a level within the given expandTo range, it is
+	// inserted "in place" at the last sibling position.
+	// Create a child below a leaf, also on a level within the given expandTo range.
 	// JIRA: CPOUI5ODATAV4-2560
 	QUnit.test("Recursive Hierarchy: createInPlace", async function (assert) {
 		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
-		const sSelect = "&$select=DrillState,ID,Name";
+		const sSelect = "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name";
 		const sUrl = "EMPLOYEES"
 			+ "?$apply=ancestors($root/EMPLOYEES,OrgChart,ID,filter(Is_Manager),keep start)"
 			+ "/com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root/EMPLOYEES"
-			+ ",HierarchyQualifier='OrgChart',NodeProperty='ID',Levels=1)";
+			+ ",HierarchyQualifier='OrgChart',NodeProperty='ID',Levels=2)";
 		const sView = `
 <t:Table id="table" rows="{path : '/EMPLOYEES',
 		parameters : {
 			$$aggregation : {
 				createInPlace : true,
+				expandTo : 2,
 				hierarchyQualifier : 'OrgChart'
 			},
 			$count : true,
@@ -37837,13 +37841,18 @@ make root = ${bMakeRoot}`;
 </t:Table>`;
 
 		// 1 Alpha
+		//   3 Gamma
+		//   4 Delta (created)
 		// 2 Beta
+		//   5 Epsilon (created)
 		// (42 FilteredOut (created, but filtered out))
-		this.expectRequest("EMPLOYEES/$count?$filter=Is_Manager", 2)
+		this.expectRequest("EMPLOYEES/$count?$filter=Is_Manager", 3)
 			.expectRequest(sUrl + sSelect + "&$count=true&$skip=0&$top=1", {
-				"@odata.count" : "2",
+				"@odata.count" : "3",
 				value : [{
-					DrillState : "leaf",
+					DescendantCount : "1",
+					DistanceFromRoot : "0",
+					DrillState : "expanded",
 					ID : "1",
 					Name : "Alpha"
 				}]
@@ -37855,8 +37864,8 @@ make root = ${bMakeRoot}`;
 		checkTable("initial page", assert, oTable, [
 			"/EMPLOYEES('1')"
 		], [
-			[undefined, 1, "1", "Alpha"]
-		], 2);
+			[true, 1, "1", "Alpha"]
+		], 3);
 		const oListBinding = oTable.getBinding("rows");
 
 		this.expectRequest({
@@ -37883,9 +37892,9 @@ make root = ${bMakeRoot}`;
 		checkTable("while create FilteredOut is pending", assert, oTable, [
 			"/EMPLOYEES('1')"
 		], [
-			[undefined, 1, "1", "Alpha"]
-		], 2);
-		assert.strictEqual(oListBinding.getCount(), 2);
+			[true, 1, "1", "Alpha"]
+		], 3);
+		assert.strictEqual(oListBinding.getCount(), 3);
 
 		await Promise.all([
 			oFilteredOut.created(),
@@ -37902,12 +37911,20 @@ make root = ${bMakeRoot}`;
 		checkTable("after create FilteredOut", assert, oTable, [
 			"/EMPLOYEES('1')"
 		], [
-			[undefined, 1, "1", "Alpha"]
-		], 2);
-		assert.strictEqual(oListBinding.getCount(), 2);
+			[true, 1, "1", "Alpha"]
+		], 3);
+		assert.strictEqual(oListBinding.getCount(), 3);
 
-		this.expectRequest(sUrl + sSelect + "&$skip=1&$top=1", {
+		this.expectRequest(sUrl + sSelect + "&$skip=1&$top=2", {
 				value : [{
+					DescendantCount : "0",
+					DistanceFromRoot : "1",
+					DrillState : "leaf",
+					ID : "3",
+					Name : "Gamma"
+				}, {
+					DescendantCount : "0",
+					DistanceFromRoot : "0",
 					DrillState : "leaf",
 					ID : "2",
 					Name : "Beta"
@@ -37916,9 +37933,114 @@ make root = ${bMakeRoot}`;
 
 		await this.checkAllContexts("after FilteredOut is destroyed", assert, oListBinding,
 			["@$ui5.node.isExpanded", "@$ui5.node.level", "ID", "Name"], [
-				[undefined, 1, "1", "Alpha"],
+				[true, 1, "1", "Alpha"],
+				[undefined, 2, "3", "Gamma"],
 				[undefined, 1, "2", "Beta"]
 			]);
+		const oAlpha = oListBinding.getAllCurrentContexts()[0];
+
+		this.expectRequest({
+				method : "POST",
+				url : "EMPLOYEES",
+				payload : {
+					"EMPLOYEE_2_MANAGER@odata.bind" : "EMPLOYEES('1')",
+					Name : "Delta"
+				}
+			}, {
+				ID : "4",
+				Name : "Delta"
+			})
+			.expectRequest(sUrl + "&$filter=ID eq '4'&$select=LimitedRank", {
+				value : [{LimitedRank : "2"}]
+			});
+
+		// code under test
+		const oDelta = oListBinding.create({
+			"@$ui5.node.parent" : oAlpha,
+			Name : "Delta"
+		}, /*bSkipRefresh*/true);
+		const oDeltaCreated = oDelta.created();
+
+		assert.strictEqual(oDelta.getIndex(), undefined);
+		assert.strictEqual(oDelta.isTransient(), true);
+		checkTable("while create Delta is pending", assert, oTable, [
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('3')",
+			"/EMPLOYEES('2')"
+		], [
+			[true, 1, "1", "Alpha"]
+		]);
+		assert.strictEqual(oListBinding.getCount(), 3);
+
+		await Promise.all([
+			oDeltaCreated,
+			this.waitForChanges(assert, "create Delta")
+		]);
+
+		assert.strictEqual(oDelta.getIndex(), 2);
+		assert.strictEqual(oDelta.isTransient(), false);
+		checkCreatedPersisted(assert, oDelta, oDeltaCreated);
+		await this.checkAllContexts("after create Delta", assert, oListBinding,
+			["@$ui5.node.isExpanded", "@$ui5.node.level", "ID", "Name"], [
+				[true, 1, "1", "Alpha"],
+				[undefined, 2, "3", "Gamma"],
+				[undefined, 2, "4", "Delta"],
+				[undefined, 1, "2", "Beta"]
+			]);
+		assert.strictEqual(oListBinding.getCount(), 3); // TODO: update $count; CPOUI5ODATAV4-2245
+		const oBeta = oListBinding.getAllCurrentContexts()[3];
+
+		this.expectRequest({
+				method : "POST",
+				url : "EMPLOYEES",
+				payload : {
+					"EMPLOYEE_2_MANAGER@odata.bind" : "EMPLOYEES('2')",
+					Name : "Epsilon"
+				}
+			}, {
+				ID : "5",
+				Name : "Epsilon"
+			})
+			.expectRequest(sUrl + "&$filter=ID eq '5'&$select=LimitedRank", {
+				value : [{LimitedRank : "4"}]
+			});
+
+		// code under test
+		const oEpsilon = oListBinding.create({
+			"@$ui5.node.parent" : oBeta,
+			Name : "Epsilon"
+		}, /*bSkipRefresh*/true);
+		const oEpsilonCreated = oEpsilon.created();
+
+		assert.strictEqual(oEpsilon.getIndex(), undefined);
+		assert.strictEqual(oEpsilon.isTransient(), true);
+		checkTable("while create Epsilon is pending", assert, oTable, [
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('3')",
+			"/EMPLOYEES('4')",
+			"/EMPLOYEES('2')"
+		], [
+			[true, 1, "1", "Alpha"]
+		]);
+		assert.strictEqual(oListBinding.getCount(), 3);
+
+		await Promise.all([
+			oEpsilonCreated,
+			this.waitForChanges(assert, "create Epsilon")
+		]);
+
+		assert.strictEqual(oEpsilon.getIndex(), 4);
+		assert.strictEqual(oEpsilon.isTransient(), false);
+		checkCreatedPersisted(assert, oEpsilon, oEpsilonCreated);
+		await this.checkAllContexts("after create Epsilon", assert, oListBinding,
+			["@$ui5.node.isExpanded", "@$ui5.node.level", "ID", "Name"], [
+				[true, 1, "1", "Alpha"],
+				[undefined, 2, "3", "Gamma"],
+				[undefined, 2, "4", "Delta"],
+				[true, 1, "2", "Beta"],
+				[undefined, 2, "5", "Epsilon"]
+			]);
+		assert.strictEqual(oListBinding.getCount(), 3); // TODO: update $count; CPOUI5ODATAV4-2245
 	});
 
 	//*********************************************************************************************
