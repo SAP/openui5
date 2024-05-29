@@ -4,12 +4,16 @@ sap.ui.define([
 	"sap/ui/integration/util/Utils",
 	"sap/ui/integration/util/BindingHelper",
 	"sap/base/util/deepEqual",
-	"sap/base/i18n/Localization"
+	"sap/base/i18n/Localization",
+	"sap/base/util/merge",
+	"sap/base/util/deepClone"
 ], function (
 	Utils,
 	BindingHelper,
 	deepEqual,
-	Localization
+	Localization,
+	merge,
+	deepClone
 ) {
 	"use strict";
 	QUnit.config.reorder = false;
@@ -280,6 +284,332 @@ sap.ui.define([
 			pPromise.then(function () {
 				done();
 			});
+		});
+	});
+
+	QUnit.test("mapLanguagesInManifestChanges - BC trans only", function (assert) {
+		// Arrange
+		var done = assert.async();
+
+		var _oTextsOfString1 = {
+			"cy-GB": {
+				"/sap.card/configuration/parameters/stringParameter/value": "String1 cy-GB"
+			},
+			"da-DK": {
+				"/sap.card/configuration/parameters/stringParameter/value": "String1 da-DK"
+			},
+			"hi-IN": {
+				"/sap.card/configuration/parameters/stringParameter/value": "String1 hi-IN"
+			},
+			"hu-HU": {
+				"/sap.card/configuration/parameters/stringParameter/value": "String1 hu-HU"
+			},
+			"id-ID": {
+				"/sap.card/configuration/parameters/stringParameter/value": "String1 id-ID"
+			},
+			"ms-MY": {
+				"/sap.card/configuration/parameters/stringParameter/value": "String1 ms-MY"
+			},
+			"th-TH": {
+				"/sap.card/configuration/parameters/stringParameter/value": "String1 th-TH"
+			}
+		};
+		var _oTextsOfString2 = {
+			"ms-MY": {
+				"/sap.card/configuration/parameters/stringParameter/value": "String2 ms-MY"
+			},
+			"nl-NL": {
+				"/sap.card/configuration/parameters/stringParameter/value": "String2 nl-NL"
+			},
+			"nb-NO": {
+				"/sap.card/configuration/parameters/stringParameter/value": "String2 nb-NO"
+			},
+			"pl-PL": {
+				"/sap.card/configuration/parameters/stringParameter/value": "String2 pl-PL"
+			},
+			"ro-RO": {
+				"/sap.card/configuration/parameters/stringParameter/value": "String2 ro-RO"
+			},
+			"sr-RS": {
+				"/sap.card/configuration/parameters/stringParameter/value": "String2 sr-RS"
+			},
+			"th-TH": {
+				"/sap.card/configuration/parameters/stringParameter/value": "String2 th-TH"
+			}
+		};
+		var _oAdminChangeBase = {
+			":layer": 0,
+			":errors": false
+		};
+		var _oContentChangeBase = {
+			":layer": 5,
+			":errors": false
+		};
+		var _oTranslationChangeBase = {
+			":layer": 10,
+			":errors": false
+		};
+		var _sManifestPath = "/sap.card/configuration/parameters/stringParameter/value";
+
+		var oAdminChanges = deepClone(_oAdminChangeBase, 500);
+		oAdminChanges.texts = _oTextsOfString1;
+		var oContentChanges = deepClone(_oContentChangeBase, 500);
+		oContentChanges.texts = _oTextsOfString2;
+		var oTranslationChanges = deepClone(_oTranslationChangeBase, 500);
+		oTranslationChanges[_sManifestPath] = "string3";
+
+		var aChanges = [oAdminChanges, oContentChanges, oTranslationChanges];
+
+		var aExpectedChanges = [
+			{
+				":layer": 0,
+				":errors": false,
+				"texts": {
+					"cy-GB": {
+						"/sap.card/configuration/parameters/stringParameter/value": "String1 cy-GB"
+					},
+					"da": {
+						"/sap.card/configuration/parameters/stringParameter/value": "String1 da-DK"
+					},
+					"hi": {
+						"/sap.card/configuration/parameters/stringParameter/value": "String1 hi-IN"
+					},
+					"hu": {
+						"/sap.card/configuration/parameters/stringParameter/value": "String1 hu-HU"
+					},
+					"id": {
+						"/sap.card/configuration/parameters/stringParameter/value": "String1 id-ID"
+					},
+					"ms": {
+						"/sap.card/configuration/parameters/stringParameter/value": "String1 ms-MY"
+					},
+					"th": {
+						"/sap.card/configuration/parameters/stringParameter/value": "String1 th-TH"
+					}
+				}
+			},
+			{
+				":layer": 5,
+				":errors": false,
+				"texts": {
+					"ms": {
+						"/sap.card/configuration/parameters/stringParameter/value": "String2 ms-MY"
+					},
+					"nl": {
+						"/sap.card/configuration/parameters/stringParameter/value": "String2 nl-NL"
+					},
+					"nb-NO": {
+						"/sap.card/configuration/parameters/stringParameter/value": "String2 nb-NO"
+					},
+					"pl": {
+						"/sap.card/configuration/parameters/stringParameter/value": "String2 pl-PL"
+					},
+					"ro": {
+						"/sap.card/configuration/parameters/stringParameter/value": "String2 ro-RO"
+					},
+					"sr-RS": {
+						"/sap.card/configuration/parameters/stringParameter/value": "String2 sr-RS"
+					},
+					"th": {
+						"/sap.card/configuration/parameters/stringParameter/value": "String2 th-TH"
+					}
+				}
+			},
+			oTranslationChanges
+		];
+
+		var pPromise = new Promise(function (resolve, reject) {
+			setTimeout(function () {
+				Utils.mapLanguagesInManifestChanges(aChanges);
+				assert.deepEqual(aChanges, aExpectedChanges, "translation remapping correct");
+				resolve();
+			}, 1000);
+		});
+
+		// Act
+		this.clock.tick(2000);
+
+		// Assert
+		pPromise.then(function () {
+			done();
+		});
+	});
+
+	QUnit.test("mapLanguagesInManifestChanges - BC and New trans", function (assert) {
+		// Arrange
+		var done = assert.async();
+
+		var _oTextsOfString1 = {
+			"cy-GB": {
+				"/sap.card/configuration/parameters/stringParameter/value": "String1 cy-GB"
+			},
+			"da": {
+				"/sap.card/configuration/parameters/stringParameter/value": "String1 da"
+			},
+			"da-DK": {
+				"/sap.card/configuration/parameters/stringParameter/value": "String1 da-DK"
+			},
+			"hi-IN": {
+				"/sap.card/configuration/parameters/stringParameter/value": "String1 hi-IN"
+			},
+			"hu-HU": {
+				"/sap.card/configuration/parameters/stringParameter/value": "String1 hu-HU"
+			},
+			"id": {
+				"/sap.card/configuration/parameters/stringParameter/value": "String1 id"
+			},
+			"id-ID": {
+				"/sap.card/configuration/parameters/stringParameter/value": "String1 id-ID"
+			},
+			"ms-MY": {
+				"/sap.card/configuration/parameters/stringParameter/value": "String1 ms-MY"
+			},
+			"th": {
+				"/sap.card/configuration/parameters/stringParameter/value": "String1 th"
+			},
+			"th-TH": {
+				"/sap.card/configuration/parameters/stringParameter/value": "String1 th-TH"
+			},
+			"zh-CN": {
+				"/sap.card/configuration/parameters/stringParameter/value": "String1 zh-CN"
+			}
+		};
+		var _oTextsOfString2 = {
+			"ms-MY": {
+				"/sap.card/configuration/parameters/stringParameter/value": "String2 ms-MY"
+			},
+			"nl": {
+				"/sap.card/configuration/parameters/stringParameter/value": "String2 nl"
+			},
+			"nl-NL": {
+				"/sap.card/configuration/parameters/stringParameter/value": "String2 nl-NL"
+			},
+			"nb-NO": {
+				"/sap.card/configuration/parameters/stringParameter/value": "String2 nb-NO"
+			},
+			"pl": {
+				"/sap.card/configuration/parameters/stringParameter/value": "String2 pl"
+			},
+			"pl-PL": {
+				"/sap.card/configuration/parameters/stringParameter/value": "String2 pl-PL"
+			},
+			"ro-RO": {
+				"/sap.card/configuration/parameters/stringParameter/value": "String2 ro-RO"
+			},
+			"sr-RS": {
+				"/sap.card/configuration/parameters/stringParameter/value": "String2 sr-RS"
+			},
+			"th": {
+				"/sap.card/configuration/parameters/stringParameter/value": "String2 th"
+			},
+			"th-TH": {
+				"/sap.card/configuration/parameters/stringParameter/value": "String2 th-TH"
+			},
+			"zh-CN": {
+				"/sap.card/configuration/parameters/stringParameter/value": "String2 zh-CN"
+			}
+		};
+		var _oAdminChangeBase = {
+			":layer": 0,
+			":errors": false
+		};
+		var _oContentChangeBase = {
+			":layer": 5,
+			":errors": false
+		};
+		var _oTranslationChangeBase = {
+			":layer": 10,
+			":errors": false
+		};
+		var _sManifestPath = "/sap.card/configuration/parameters/stringParameter/value";
+
+		var oAdminChanges = deepClone(_oAdminChangeBase, 500);
+		oAdminChanges.texts = _oTextsOfString1;
+		var oContentChanges = deepClone(_oContentChangeBase, 500);
+		oContentChanges.texts = _oTextsOfString2;
+		var oTranslationChanges = deepClone(_oTranslationChangeBase, 500);
+		oTranslationChanges[_sManifestPath] = "string3";
+
+		var aChanges = [oAdminChanges, oContentChanges, oTranslationChanges];
+
+		var aExpectedChanges = [
+			{
+				":layer": 0,
+				":errors": false,
+				"texts": {
+					"cy-GB": {
+						"/sap.card/configuration/parameters/stringParameter/value": "String1 cy-GB"
+					},
+					"da": {
+						"/sap.card/configuration/parameters/stringParameter/value": "String1 da"
+					},
+					"hi": {
+						"/sap.card/configuration/parameters/stringParameter/value": "String1 hi-IN"
+					},
+					"hu": {
+						"/sap.card/configuration/parameters/stringParameter/value": "String1 hu-HU"
+					},
+					"id": {
+						"/sap.card/configuration/parameters/stringParameter/value": "String1 id"
+					},
+					"ms": {
+						"/sap.card/configuration/parameters/stringParameter/value": "String1 ms-MY"
+					},
+					"th": {
+						"/sap.card/configuration/parameters/stringParameter/value": "String1 th"
+					},
+					"zh-CN": {
+						"/sap.card/configuration/parameters/stringParameter/value": "String1 zh-CN"
+					}
+				}
+			},
+			{
+				":layer": 5,
+				":errors": false,
+				"texts": {
+					"ms": {
+						"/sap.card/configuration/parameters/stringParameter/value": "String2 ms-MY"
+					},
+					"nl": {
+						"/sap.card/configuration/parameters/stringParameter/value": "String2 nl"
+					},
+					"nb-NO": {
+						"/sap.card/configuration/parameters/stringParameter/value": "String2 nb-NO"
+					},
+					"pl": {
+						"/sap.card/configuration/parameters/stringParameter/value": "String2 pl"
+					},
+					"ro": {
+						"/sap.card/configuration/parameters/stringParameter/value": "String2 ro-RO"
+					},
+					"sr-RS": {
+						"/sap.card/configuration/parameters/stringParameter/value": "String2 sr-RS"
+					},
+					"th": {
+						"/sap.card/configuration/parameters/stringParameter/value": "String2 th"
+					},
+					"zh-CN": {
+						"/sap.card/configuration/parameters/stringParameter/value": "String2 zh-CN"
+					}
+				}
+			},
+			oTranslationChanges
+		];
+
+		var pPromise = new Promise(function (resolve, reject) {
+			setTimeout(function () {
+				Utils.mapLanguagesInManifestChanges(aChanges);
+				assert.deepEqual(aChanges, aExpectedChanges, "translation remapping correct");
+				resolve();
+			}, 1000);
+		});
+
+		// Act
+		this.clock.tick(2000);
+
+		// Assert
+		pPromise.then(function () {
+			done();
 		});
 	});
 
