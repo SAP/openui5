@@ -1,5 +1,5 @@
 <mvc:View
-        controllerName="sap.ui.documentation.sdk.blocks.IndexEntry"
+        controllerName="sap.ui.documentation.sdk.blocks.IndexEntryController"
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns="sap.uxap"
 		xmlns:m="sap.m"

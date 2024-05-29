@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['sap/uxap/BlockBase', "sap/ui/documentation/sdk/model/formatter"],
+sap.ui.define(['sap/uxap/BlockBase'],
 	function (BlockBase, formatter) {
 		"use strict";
 
@@ -17,9 +17,6 @@ sap.ui.define(['sap/uxap/BlockBase', "sap/ui/documentation/sdk/model/formatter"]
 						type: "XML"
 					}
 				}
-			},
-			formatText: function() {
-				return formatter.formatIndexByVersionEntry.apply(formatter, arguments);
 			}
 		});
 
