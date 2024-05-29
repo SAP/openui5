@@ -211,6 +211,30 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
+	QUnit.test("Type password - value not cleared on invalidation", async function(assert) {
+		// Arrange
+		var oInput = new sap.m.Input({
+			type: "Password",
+			value: "Aaa"
+		});
+
+		oInput.placeAt("content");
+		await nextUIUpdate();
+
+		oInput.setType("Text");
+		await nextUIUpdate();
+
+		assert.strictEqual(oInput.getValue(), "Aaa", "Value is not changed");
+
+		oInput.setType("Password");
+		await nextUIUpdate();
+
+		assert.strictEqual(oInput.getValue(), "Aaa", "Value is not changed");
+
+		// Clean
+		oInput.destroy();
+	});
+
 
 	QUnit.test("InputEnabled", function(assert) {
 		var enabled = false;
