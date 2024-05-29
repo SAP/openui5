@@ -39,7 +39,7 @@ sap.ui.define([
 	 * <li>In edit mode, usually an {@link sap.m.Input Input} control is rendered.</li>
 	 * <li>If multiple values are allowed, a {@link sap.m.MultiInput MultiInput} control is rendered.</li>
 	 * <li>If <code>multipleLines</code> is set, a {@link sap.m.TextArea TextArea} control is rendered.</li>
-	 * <li>If a date type or a date/time type is used, a {@link sap.m.DateRangeSelection DateRangeSelection} control is rendered.</li>
+	 * <li>If a date type or a date/time type is used and only one condition is supported, a {@link sap.m.DynamicDateRange DynamicDateRange} control is rendered.</li>
 	 * <li>If a date type is used and only single values are allowed, a {@link sap.m.DatePicker DatePicker} control is rendered.</li>
 	 * <li>If a date type is used and only single ranges are allowed, a {@link sap.m.DateRangeSelection DateRangeSelection} control is rendered.</li>
 	 * <li>If a date/time type is used and only single values are allowed, a {@link sap.m.DateTimePicker DateTimePicker} control is rendered.</li>
