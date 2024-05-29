@@ -907,6 +907,18 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("Given a maxLayer set for VENDOR", async function(assert) {
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
+				{connector: "JsObjectConnector", layers: []}
+			]);
+			sandbox.stub(JsObjectConnector, "loadFlexData").resolves();
+			FlexInfoSession.setByReference({maxLayer: Layer.VENDOR}, "app.id");
+			window.sessionStorage.setItem("sap.ui.rta.restart.VENDOR", true);
+			const oSetInfoSessionSpy = sandbox.spy(FlexInfoSession, "setByReference");
+			await Storage.loadFlexData({reference: "app.id"});
+			assert.equal(oSetInfoSessionSpy.callCount, 0, "then the FlexInfoSession is not updated");
+		});
+
 		QUnit.test("Given two connectors are provided and one is in charge of a draft layer provided by flex info session", function(assert) {
 			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
 				{connector: "KeyUserConnector", layers: [Layer.CUSTOMER]},
