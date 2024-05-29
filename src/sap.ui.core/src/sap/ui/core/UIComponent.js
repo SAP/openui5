@@ -763,9 +763,7 @@ sap.ui.define([
 				// for now the processing mode is always set to <code>XMLProcessingMode.Sequential</code> for XMLViews
 				oRootView.processingMode = XMLProcessingMode.Sequential;
 			}
-			/**
-			 * @ui5-transform-hint replace-local true
-			 */
+
 			const bModernFactory = this.isA("sap.ui.core.IAsyncContentCreation");
 			if (bModernFactory) {
 				return View.create(oRootView);
