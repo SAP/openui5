@@ -3,6 +3,16 @@
     "date": "May 2024",
     "notes": [
       {
+        "id": "e278a5a59332df4222d671d1ec2bba06040a6f2f",
+        "type": "FEATURE",
+        "text": " We've now introduced isTrustedSource property within sap.m.upload.UploadItem, specifically to preview the pdf type files"
+      },
+      {
+        "id": "2d9a85ef1d5f18b0fff925b2a4acd67600fce423",
+        "type": "FIX",
+        "text": " sap.m.SearchField: Parameter type is passed correctly to ResourceBundle"
+      },
+      {
         "id": "4577b77cb8bdcb67cd100f0d1be4565a306eee95",
         "type": "FIX",
         "text": " sap.m.MultiComboBox: Tokens creation on paste"
@@ -47,6 +57,11 @@
         "id": "9d7db54c4ed1bb2936034076b176e61021cdeb28",
         "type": "FIX",
         "text": " sap.m.SinglePlanningCalendarMonthGrid: remove unnecessary scrolling"
+      },
+      {
+        "id": "d95b0392aedbd0263c6a94de04261a9e6118e965",
+        "type": "FIX",
+        "text": " sap.m.Button: Back type button has correct hover colour"
       },
       {
         "id": "b72e06c0fd41e4b65479486a7991e0c9a2f42df8",

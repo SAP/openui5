@@ -3,6 +3,11 @@
     "date": "May 2024",
     "notes": [
       {
+        "id": "637feb169c395683ce6139083fae4c855e1dab2e",
+        "type": "FIX",
+        "text": " core/UIComponent: Fix access to routing config"
+      },
+      {
         "id": "86ef554a744acd04b60779392c8091619d44bcb6",
         "type": "FIX",
         "text": " sap.ui.model.type.(Currency|Unit): use amount scale default 0 instead of currency's or unit's decimal places"
