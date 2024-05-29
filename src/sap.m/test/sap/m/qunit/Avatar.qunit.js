@@ -1034,13 +1034,13 @@ sap.ui.define([
 			"Badge Tooltip is predefined");
 	});
 
-	QUnit.test("Affordance is not attached, when press event is missing", async function(assert) {
+	QUnit.test("Affordance is attached, even when press event is missing", async function(assert) {
 		//setup
 		this.oAvatar.setBadgeIcon("sap-icon://zoom-in");
 		await nextUIUpdate();
 
 		//assert
-		assert.equal(this.oAvatar._badgeRef === null, true, "Badge is attached to Avatar");
+		assert.equal(this.oAvatar._badgeRef !== null, true, "Badge is attached to Avatar");
 	});
 
 	QUnit.test("Affordance with detailBox aggregation", async function(assert) {
