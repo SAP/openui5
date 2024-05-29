@@ -112,6 +112,48 @@ describe("sap.m.Carousel", function() {
 		expect(takeScreenshot(myCarousel)).toLookAs("7_page_indicator_visibility");
 	});
 
+	// change page indicator position
+	it("should change page indicator placement to OverContentTop", function() {
+		element(by.id("RB-Over-Top")).click();
+		_moveToCarousel();
+
+		// go back to third page
+		element(by.id("myCarousel-arrow-previous")).click();
+		element(by.id("myCarousel-arrow-previous")).click();
+
+		expect(takeScreenshot(myCarousel)).toLookAs("7_2_page_indicator_over_top");
+
+		// move the arrows to the content
+		element(by.id("RB-Content")).click();
+		_moveToCarousel();
+
+		expect(takeScreenshot(myCarousel)).toLookAs("7_3_page_indicator_over_top_no_arrow");
+
+		// move the arrows back to the page indicator area
+		element(by.id("RB-Indicator")).click();
+	});
+
+	it("should change page indicator placement to OverContentBottom", function() {
+		element(by.id("RB-Over-Bottom")).click();
+		_moveToCarousel();
+
+		expect(takeScreenshot(myCarousel)).toLookAs("7_4_page_indicator_over_bottom");
+
+		// move the arrows to the content
+		element(by.id("RB-Content")).click();
+		_moveToCarousel();
+
+		expect(takeScreenshot(myCarousel)).toLookAs("7_5_page_indicator_over_bottom_no_arrow");
+
+		// move the arrows back to the page indicator area
+		element(by.id("RB-Indicator")).click();
+		// move the page indicator on top of the carousel's content
+		element(by.id("RB-Top")).click();
+		// go back to third page
+		element(by.id("myCarousel-arrow-next")).click();
+		element(by.id("myCarousel-arrow-next")).click();
+	});
+
 	it("should show focus border all around the carousel", function() {
 		myCarousel.click();
 		element(by.control({
