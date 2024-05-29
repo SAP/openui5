@@ -1,0 +1,44 @@
+<mvc:View
+	controllerName="sap.m.sample.TableIColumnHeaderMenu.Page"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<Table id="productsTable"
+		inset="false"
+		items="{
+			path: '/ProductCollection'
+		}">
+		<headerToolbar>
+			<OverflowToolbar>
+				<Title text="Products" level="H2"/>
+			</OverflowToolbar>
+		</headerToolbar>
+		<columns>
+			<Column id="product" width="12em"><Text text="Product" /></Column>
+			<Column minScreenWidth="Tablet" demandPopin="true"><Text text="Supplier" /></Column>
+			<Column minScreenWidth="Tablet" demandPopin="true" hAlign="End"><Text text="Dimensions" /></Column>
+			<Column minScreenWidth="Tablet" demandPopin="true" hAlign="Center"><Text text="Weight" /></Column>
+			<Column hAlign="End"><Text text="Price" /></Column>
+		</columns>
+		<items>
+			<ColumnListItem vAlign="Middle">
+				<cells>
+					<ObjectIdentifier
+						title="{Name}"
+						text="{ProductId}"/>
+					<Text
+						text="{SupplierName}" />
+					<Text
+						text="{Width} x {Depth} x {Height} {DimUnit}" />
+					<ObjectNumber number="{WeightMeasure}" unit="{WeightUnit}" />
+					<ObjectNumber
+						number="{
+							parts:[{path:'Price'},{path:'CurrencyCode'}],
+							type: 'sap.ui.model.type.Currency',
+								formatOptions: {showMeasure: false}
+							}"
+						unit="{CurrencyCode}" />
+				</cells>
+			</ColumnListItem>
+		</items>
+	</Table>
+</mvc:View>

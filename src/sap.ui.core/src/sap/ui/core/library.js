@@ -1842,12 +1842,14 @@ sap.ui.define([
 	/**
 	 * Marker interface for controls that can serve as a menu for a table column header.
 	 *
-	 * Implementation of this interface implements the <code>openBy</code> and <code>getAriaHasPopupType</code> methods.
+	 * Implementation of this interface should include the <code>openBy</code>, <code>close</code>, <code>isOpen</code> and
+	 * <code>getAriaHasPopupType</code> methods and fire the <code>beforeOpen</code> and <code>afterClose</code> events.
+	 *
+	 * Refer to the base class {@link sap.m.table.columnmenu.MenuBase} for a detailed API description.
 	 *
 	 * @name sap.ui.core.IColumnHeaderMenu
 	 * @interface
 	 * @public
-	 * @experimental As of version 1.98
 	 * @since 1.98
 	 *
 	 */
@@ -1858,21 +1860,59 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @function
-	 * @experimental As of version 1.98
 	 * @since 1.98
 	 * @name sap.ui.core.IColumnHeaderMenu.openBy
 	 */
 
 	/**
-	 * Returns the <code>sap.ui.core.aria.HasPopup<\code> type of the menu.
-	 *
-	 * @returns {sap.ui.core.aria.HasPopup} <code>sap.ui.core.aria.HasPopup<\code> type of the menu
+	 * Closes the menu.
 	 *
 	 * @public
 	 * @function
-	 * @experimental As of version 1.98
+	 * @since 1.126
+	 * @name sap.ui.core.IColumnHeaderMenu.close
+	 */
+
+	/**
+	 * Determines whether the menu is open.
+	 *
+	 * @param {sap.ui.core.Element} openBy The element for which the menu is opened. If it is an <code>HTMLElement</code>,
+	 * the closest control is passed for this event (if it exists).
+	 * @returns {boolean} <code>true</code> if the menu is open, <code>false</code> otherwise
+	 *
+	 * @public
+	 * @function
+	 * @since 1.126
+	 * @name sap.ui.core.IColumnHeaderMenu.isOpen
+	 */
+
+	/**
+	 * Returns the <code>sap.ui.core.aria.HasPopup</code> type of the menu.
+	 *
+	 * @returns {sap.ui.core.aria.HasPopup} <code>sap.ui.core.aria.HasPopup</code> type of the menu
+	 *
+	 * @public
+	 * @function
 	 * @since 1.98.0
 	 * @name sap.ui.core.IColumnHeaderMenu.getAriaHasPopupType
+	 */
+
+	/**
+	 * Fires before the menu is opened.
+	 *
+	 * @public
+	 * @event
+	 * @since 1.126
+	 * @name sap.ui.core.IColumnHeaderMenu.beforeOpen
+	 */
+
+	/**
+	 * Fires after the menu is closed.
+	 *
+	 * @public
+	 * @event
+	 * @since 1.126
+	 * @name sap.ui.core.IColumnHeaderMenu.afterClose
 	 */
 
 	/**
