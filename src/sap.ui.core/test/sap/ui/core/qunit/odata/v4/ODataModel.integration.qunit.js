@@ -21742,6 +21742,10 @@ sap.ui.define([
 				// code under test (JIRA: CPOUI5ODATAV4-2337)
 				oListBinding.getHeaderContext().isAncestorOf(/*don't care*/);
 			}, new Error("Missing recursive hierarchy"));
+			assert.throws(function () {
+				// code under test (JIRA: CPOUI5ODATAV4-2558)
+				oListBinding.getHeaderContext().getSibling(/*don't care*/);
+			}, new Error("Missing recursive hierarchy"));
 		});
 	});
 
@@ -25574,7 +25578,7 @@ sap.ui.define([
 			})
 			.expectChange("count");
 
-		return this.createView(assert, sView, oModel).then(async function () {
+		return this.createView(assert, sView, oModel).then(function () {
 			oTable = that.oView.byId("table");
 			oRoot = oTable.getRows()[0].getBindingContext();
 			oListBinding = oRoot.getBinding();
@@ -25634,8 +25638,12 @@ sap.ui.define([
 				}, "technical properties have been removed");
 
 			// code under test
-			assert.strictEqual(await oRoot.requestSibling(-1), null, "CPOUI5ODATAV4-2558");
-			assert.strictEqual(await oRoot.requestSibling(+1), null, "CPOUI5ODATAV4-2558");
+			assert.strictEqual(oRoot.getSibling(-1), null, "CPOUI5ODATAV4-2558");
+			assert.strictEqual(oRoot.getSibling(+1), null, "CPOUI5ODATAV4-2558");
+			assert.throws(function () {
+				// code under test (JIRA: CPOUI5ODATAV4-2558)
+				oRoot.getSibling(0);
+			}, new Error("Unsupported offset: 0"));
 
 			// code under test
 			checkSelected(assert, oRoot, undefined);
@@ -26784,7 +26792,7 @@ sap.ui.define([
 			})
 			.expectChange("count");
 
-		return this.createView(assert, sView, oModel).then(async function () {
+		return this.createView(assert, sView, oModel).then(function () {
 			oTable = that.oView.byId("table");
 			oListBinding = oTable.getBinding("rows");
 
@@ -26816,9 +26824,9 @@ sap.ui.define([
 
 			const [oBeta, oKappa, oLambda] = oListBinding.getCurrentContexts();
 			// code under test
-			assert.strictEqual(await oKappa.requestSibling(-1), oBeta, "CPOUI5ODATAV4-2558");
-			assert.strictEqual(await oKappa.requestSibling(), oLambda, "CPOUI5ODATAV4-2558");
-			assert.strictEqual(await oKappa.requestSibling(+1), oLambda, "CPOUI5ODATAV4-2558");
+			assert.strictEqual(oKappa.getSibling(-1), oBeta, "CPOUI5ODATAV4-2558");
+			assert.strictEqual(oKappa.getSibling(), oLambda, "CPOUI5ODATAV4-2558");
+			assert.strictEqual(oKappa.getSibling(+1), oLambda, "CPOUI5ODATAV4-2558");
 
 			// code under test
 			assert.strictEqual(oListBinding.getDownloadUrl(), sTeaBusi + "EMPLOYEES"
@@ -26851,7 +26859,7 @@ sap.ui.define([
 			oTable.setFirstVisibleRow(0);
 
 			return that.waitForChanges(assert, "scroll up");
-		}).then(async function () {
+		}).then(function () {
 			var oNameBinding;
 
 			oRoot = oTable.getRows()[0].getBindingContext();
@@ -26877,9 +26885,9 @@ sap.ui.define([
 
 			const [oAlpha, oBeta, oKappa, oLambda] = oListBinding.getAllCurrentContexts();
 			// code under test
-			assert.strictEqual(await oAlpha.requestSibling(), null, "CPOUI5ODATAV4-2558");
-			assert.strictEqual(await oBeta.requestSibling(-1), null, "CPOUI5ODATAV4-2558");
-			assert.strictEqual(await oKappa.requestSibling(), oLambda, "CPOUI5ODATAV4-2558");
+			assert.strictEqual(oAlpha.getSibling(), null, "CPOUI5ODATAV4-2558");
+			assert.strictEqual(oBeta.getSibling(-1), null, "CPOUI5ODATAV4-2558");
+			assert.strictEqual(oKappa.getSibling(), oLambda, "CPOUI5ODATAV4-2558");
 
 			that.expectRequest({
 					batchNo : 3,
@@ -26929,7 +26937,7 @@ sap.ui.define([
 
 			assert.throws(function () {
 				// code under test
-				oBeta.requestSibling();
+				oBeta.getSibling();
 			}, new Error("Unsupported context: " + oBeta));
 
 			return that.waitForChanges(assert, "collapse root");
@@ -26984,10 +26992,10 @@ sap.ui.define([
 			oCollapsed.expand();
 
 			return that.waitForChanges(assert, "expand initially collapsed node");
-		}).then(async function () {
+		}).then(function () {
 			const [, oBeta, oGamma] = oListBinding.getCurrentContexts();
 			// code under test (JIRA: CPOUI5ODATAV4-2558)
-			const oZeta0 = await oGamma.requestSibling(); // Note: new context created here
+			const oZeta0 = oGamma.getSibling(); // Note: new context created here
 
 			// BEWARE: calls #getAllCurrentContexts!
 			checkTable("initially collapsed node expanded", assert, oTable, [
@@ -27015,12 +27023,12 @@ sap.ui.define([
 			const [,,, oZeta, oKappa] = oListBinding.getAllCurrentContexts();
 			assert.strictEqual(oZeta0, oZeta);
 			// code under test
-			assert.strictEqual(await oBeta.requestSibling(+1), oKappa, "CPOUI5ODATAV4-2558");
-			assert.strictEqual(await oKappa.requestSibling(-1), oBeta, "CPOUI5ODATAV4-2558");
-			assert.strictEqual(await oGamma.requestSibling(-1), null, "CPOUI5ODATAV4-2558");
-			assert.strictEqual(await oGamma.requestSibling(+1), oZeta, "CPOUI5ODATAV4-2558");
-			assert.strictEqual(await oZeta.requestSibling(-1), oGamma, "CPOUI5ODATAV4-2558");
-			assert.strictEqual(await oZeta.requestSibling(+1), null, "CPOUI5ODATAV4-2558");
+			assert.strictEqual(oBeta.getSibling(+1), oKappa, "CPOUI5ODATAV4-2558");
+			assert.strictEqual(oKappa.getSibling(-1), oBeta, "CPOUI5ODATAV4-2558");
+			assert.strictEqual(oGamma.getSibling(-1), null, "CPOUI5ODATAV4-2558");
+			assert.strictEqual(oGamma.getSibling(+1), oZeta, "CPOUI5ODATAV4-2558");
+			assert.strictEqual(oZeta.getSibling(-1), oGamma, "CPOUI5ODATAV4-2558");
+			assert.strictEqual(oZeta.getSibling(+1), null, "CPOUI5ODATAV4-2558");
 
 			that.expectRequest(sTopLevelsSelectUrl + "&$skip=4&$top=2", {
 					value : [{
@@ -27127,7 +27135,7 @@ sap.ui.define([
 				oListBinding.getHeaderContext().requestSideEffects(["AGE"]),
 				that.waitForChanges(assert, "create new root, side effect: AGE for all rows")
 			]);
-		}).then(async function () {
+		}).then(function () {
 			checkTable("new root created, after side effect: AGE for all rows", assert, oTable, [
 				"/EMPLOYEES('9')",
 				"/EMPLOYEES('0')"
@@ -27139,9 +27147,9 @@ sap.ui.define([
 
 			const [oAleph, oAlpha] = oListBinding.getCurrentContexts();
 			// code under test
-			assert.strictEqual(await oAlpha.requestSibling(+1), oAleph,
+			assert.strictEqual(oAlpha.getSibling(+1), oAleph,
 				"CPOUI5ODATAV4-2558 ignoring out-of-place nodes");
-			assert.strictEqual(await oAleph.requestSibling(-1), oAlpha,
+			assert.strictEqual(oAleph.getSibling(-1), oAlpha,
 				"CPOUI5ODATAV4-2558 ignoring out-of-place nodes");
 
 			that.expectRequest(sTopLevelsSelectUrl + "&$skip=1&$top=1", {
@@ -30362,7 +30370,7 @@ sap.ui.define([
 			}, new Error("Cannot move to " + sFriend));
 			assert.throws(function () {
 				// code under test
-				oListBinding.getHeaderContext().requestSibling();
+				oListBinding.getHeaderContext().getSibling();
 			}, new Error("Unsupported context: " + sFriend));
 
 			checkTable("root is leaf", assert, oTable, [
@@ -30427,7 +30435,7 @@ sap.ui.define([
 			}, new Error("Cannot move to " + oBeta), "too early");
 			assert.throws(function () {
 				// code under test
-				oBeta.requestSibling();
+				oBeta.getSibling();
 			}, new Error("Unsupported context: " + oBeta), "too early");
 
 			return that.waitForChanges(assert, "create 1st child");
@@ -31637,7 +31645,7 @@ sap.ui.define([
 		}, new Error("Cannot move to " + oNewRoot), "too late");
 		assert.throws(function () {
 			// code under test
-			oNewRoot.requestSibling();
+			oNewRoot.getSibling();
 		}, new Error("Unsupported context: " + oNewRoot), "too late");
 
 		await Promise.all([
@@ -38368,7 +38376,8 @@ make root = ${bMakeRoot}`;
 			"double check that index was right");
 
 		// code under test
-		assert.strictEqual(await oGamma.requestSibling(-1), oBeta, "CPOUI5ODATAV4-2558");
+		assert.strictEqual(oGamma.getSibling(-1), oBeta, "CPOUI5ODATAV4-2558");
+		assert.strictEqual(oGamma.getSibling(+1), undefined, "CPOUI5ODATAV4-2558");
 
 		this.expectRequest("EMPLOYEES?$apply=descendants($root/EMPLOYEES,OrgChart,ID"
 					+ ",filter(ID eq '0'),1)"
@@ -38387,6 +38396,8 @@ make root = ${bMakeRoot}`;
 		]);
 
 		assert.strictEqual(oDelta.getProperty("Name"), "Delta", "CPOUI5ODATAV4-2558");
+		// code under test
+		assert.strictEqual(oGamma.getSibling(+1), oDelta, "CPOUI5ODATAV4-2558");
 
 		this.expectRequest("EMPLOYEES?$apply=descendants($root/EMPLOYEES,OrgChart,ID"
 					+ ",filter(ID eq '0'),1)"
@@ -39504,6 +39515,8 @@ make root = ${bMakeRoot}`;
 		], 7);
 		const oListBinding = oTable.getBinding("rows");
 		const [oDelta, oEpsilon] = oListBinding.getCurrentContexts();
+		// code under test
+		assert.strictEqual(oDelta.getSibling(-1), undefined, "CPOUI5ODATAV4-2558");
 
 		// 0 Alpha (not loaded)
 		//   1 Beta (loaded now)
@@ -39569,6 +39582,8 @@ make root = ${bMakeRoot}`;
 				NodeID : "1,false"
 			}
 		}, "no Limited_Rank");
+		// code under test
+		assert.strictEqual(oDelta.getSibling(-1), oBeta, "CPOUI5ODATAV4-2558");
 
 		// 0 Alpha (not loaded)
 		//   1 Beta
@@ -39811,7 +39826,7 @@ make root = ${bMakeRoot}`;
 		[, oBeta] = oListBinding.getCurrentContexts();
 
 		// code under test
-		assert.strictEqual(await oDelta.requestSibling(-1), oBeta);
+		assert.strictEqual(oDelta.getSibling(-1), oBeta);
 	});
 
 	//*********************************************************************************************
@@ -39944,8 +39959,9 @@ make root = ${bMakeRoot}`;
 
 		assert.strictEqual(oSibling, null);
 
-		// code under test (no request needed!)
-		const oOmega = await oAlpha.requestSibling();
+		// code under test
+		const oOmega = oAlpha.getSibling();
+		assert.strictEqual(await oAlpha.requestSibling(), oOmega, "no request needed");
 
 		assert.strictEqual(oOmega.getIndex(), 2);
 		assert.deepEqual(oOmega.getObject(), {
@@ -39960,6 +39976,10 @@ make root = ${bMakeRoot}`;
 		], [
 			[undefined, 2, "1", "Beta"]
 		]);
+
+		// code under test
+		assert.strictEqual(oAlpha.getSibling(-1), null, "CPOUI5ODATAV4-2558");
+		assert.strictEqual(await oAlpha.requestSibling(-1), null, "CPOUI5ODATAV4-2558");
 	});
 
 	//*********************************************************************************************
