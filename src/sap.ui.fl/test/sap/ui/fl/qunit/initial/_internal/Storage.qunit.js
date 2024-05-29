@@ -320,10 +320,19 @@ sap.ui.define([
 			var oObjectStorageStub = sandbox.stub(ObjectPathConnector, "loadFlexData").resolves(StorageUtils.getEmptyFlexDataResponse());
 			var oPersoStub = sandbox.stub(PersonalizationConnector, "loadFlexData").resolves(StorageUtils.getEmptyFlexDataResponse());
 
-			return Storage.loadFlexData({reference: "app.id"}).then(function() {
+			return Storage.loadFlexData({reference: "app.id", cacheKey: "cache"}).then(function() {
 				assert.equal(oObjectStorageStub.lastCall.args[0].path, "path/to/data", "the path parameter was passed");
 				assert.equal(oPersoStub.lastCall.args[0].url, "url/to/something", "the url parameter was passed");
 				FlexConfiguration.getFlexibilityServices.restore();
+			});
+		});
+
+		QUnit.test("Given LrepConnector when loading data with cacheKey and version together", function(assert) {
+			sandbox.stub(StaticFileConnector, "loadFlexData").resolves(StorageUtils.getEmptyFlexDataResponse());
+			const oLrepStub = sandbox.stub(LrepConnector, "loadFlexData").resolves(StorageUtils.getEmptyFlexDataResponse());
+
+			return Storage.loadFlexData({reference: "app.id", cacheKey: "cache", version: "version"}).then(function() {
+				assert.notOk(oLrepStub.lastCall.args[0].cacheKey, "the cache key was removed");
 			});
 		});
 
