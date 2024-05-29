@@ -193,7 +193,7 @@ sap.ui.define([
 
 	ResponsiveTableType.prototype._onItemPress = function(oEvent) {
 		this.callHook("RowPress", this.getTable(), {
-			bindingContext: oEvent.getParameter("listItem").getBindingContext()
+			bindingContext: oEvent.getParameter("listItem").getBindingContext(this.getInnerTable().getBindingInfo("items").model)
 		});
 		this._onRowActionPress(oEvent);
 	};
@@ -254,7 +254,7 @@ sap.ui.define([
 				return oRowAction.getType() == "Navigation";
 			});
 			if (!_oRowActionItem && oRowActionsInfo.items.length > 0) {
-				throw new Error("No TableRowAction of type 'Navigation' found. sap.m.Table only accepts TableRowAction of type 'Navigation'.");
+				throw new Error("No row action of type 'Navigation' found. ResponsiveTableType only accepts row actions of type 'Navigation'.");
 			}
 
 			// Associate RowActionItem<Navigation> to template for reference
@@ -267,11 +267,10 @@ sap.ui.define([
 			fnVisibleFormatter = vRowType.formatter;
 		}
 
-		// If a custom formatter exists, apply it before converting it to row type, otherwise just convert
-		if (fnVisibleFormatter) {
+		if (bVisibleBound) {
 			vRowType.formatter = function(sValue) {
-				const bVisible = fnVisibleFormatter(sValue);
-				return bVisible ? RowActionType.Navigation : sType;
+				const vVisible = fnVisibleFormatter ? fnVisibleFormatter(sValue) : sValue;
+				return vVisible === true ? RowActionType.Navigation : sType;
 			};
 		} else {
 			vRowType = vRowType ? RowActionType.Navigation : sType;
@@ -486,7 +485,7 @@ sap.ui.define([
 		// Binding Context cannot be determined for ResponsiveTable, which is why we always assume to have a RowActionItem<Navigation> no matter what
 		this._oRowActionItem.setType("Navigation");
 		this.callHook("Press", this._oRowActionItem, {
-			bindingContext: oInnerRow.getBindingContext()
+			bindingContext: oInnerRow.getBindingContext(this.getInnerTable().getBindingInfo("items").model)
 		});
 	};
 

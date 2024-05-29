@@ -367,7 +367,7 @@ sap.ui.define([
 		}
 
 		this.callHook("Press", this._oRowActionItem, {
-			bindingContext: oEvent.getParameter("row").getBindingContext()
+			bindingContext: oEvent.getParameter("row").getBindingContext(this.getInnerTable().getBindingInfo("rows").model)
 		});
 	};
 

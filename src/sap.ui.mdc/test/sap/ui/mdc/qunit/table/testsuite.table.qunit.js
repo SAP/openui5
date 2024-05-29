@@ -48,9 +48,6 @@ sap.ui.define(function() {
 			"Menu": {
 				group: "Controls"
 			},
-			"RowActionItem": {
-				group: "Controls"
-			},
 			"TableTypeBase": {
 				group: "Table types"
 			},
