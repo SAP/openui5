@@ -543,6 +543,10 @@ function(
 
 		InputBase.prototype.onAfterRendering.call(this);
 
+		if (this.getType() === InputType.Password) {
+			this.getDomRef("inner").value = this.getProperty("value");
+		}
+
 		if (this._oSuggPopover) {
 			this._oSuggPopover._resetTypeAhead();
 		}
