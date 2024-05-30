@@ -32,6 +32,7 @@ sap.ui.define([
 	"sap/ui/dom/includeStylesheet",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/codeeditor/js/ace/ace",
+	"sap/base/strings/capitalize",
 	"sap/ui/codeeditor/js/ace/ext-language_tools",
 	"sap/ui/codeeditor/js/ace/ext-beautify",
 	"sap/ui/codeeditor/js/ace/mode-javascript",
@@ -45,7 +46,8 @@ sap.ui.define([
 	Theming,
 	includeStylesheet,
 	jQuery,
-	ace
+	ace,
+	capitalize
 ) {
 	"use strict";
 
@@ -180,8 +182,13 @@ sap.ui.define([
 		renderer: {
 			apiVersion: 2,
 			render: function (oRM, oControl) {
-				oRM.openStart("div", oControl).class("sapCEd")
-					.style("width", oControl.getWidth())
+				const sColorTheme = oControl.getColorTheme();
+
+				oRM.openStart("div", oControl).class("sapCEd");
+				if (sColorTheme === "default") {
+					oRM.class("sapCEdTheme" + capitalize(sColorTheme));
+				}
+				oRM.style("width", oControl.getWidth())
 					.style("height", oControl.getHeight())
 					.attr("data-sap-ui-syntaxhints", oControl.getSyntaxHints())
 					.attr("role", "application")
@@ -233,8 +240,6 @@ sap.ui.define([
 			sap.ui.require.toUrl("sap/ui/codeeditor/js/ace/css/ace.css"),
 			"sap-ui-codeeditor-ace"
 		);
-
-		this._applyTheme();
 
 		this._oEditor.setOptions({
 			enableBasicAutocompletion: true,
@@ -296,33 +301,6 @@ sap.ui.define([
 		jQuery(this._oEditorDomRef).remove(); // remove DOM node together with all event listeners
 		this._oEditorDomRef = null;
 		this._oEditor = null;
-	};
-
-	/**
-	 * @private
-	 */
-	CodeEditor.prototype.onThemeChanged = function() {
-		this._applyTheme();
-	};
-
-	/**
-	 * @private
-	 */
-	CodeEditor.prototype._applyTheme = function() {
-		var sUiTheme = Theming.getTheme().toLowerCase();
-		var sEditorTheme = "tomorrow";
-		if (sUiTheme.indexOf("hcb") > -1) {
-			sEditorTheme = "chaos";
-		} else if (sUiTheme.indexOf("hcw") > -1) {
-			sEditorTheme = "github";
-		} else if (sUiTheme === "sap_fiori_3") {
-			sEditorTheme = "crimson_editor";
-		} else if (sUiTheme === "sap_fiori_3_dark") {
-			sEditorTheme = "clouds_midnight";
-		} else if (sUiTheme === "sap_horizon_dark") {
-			sEditorTheme = "nord_dark";
-		}
-		this.setColorTheme(sEditorTheme);
 	};
 
 	/**
@@ -419,11 +397,9 @@ sap.ui.define([
 	 * @public
 	 */
 	CodeEditor.prototype.setColorTheme = function(sTheme) {
-		this.setProperty("colorTheme", sTheme, true);
+		this.setProperty("colorTheme", sTheme);
 
-		if (sTheme === "default") {
-			sTheme = "tomorrow";
-		} else if (sTheme === "hcb") {
+		if (sTheme === "hcb") {
 			sTheme = "tomorrow_night";
 		} else if (sTheme === "hcb_bright") {
 			sTheme = "tomorrow_night_bright";
@@ -432,10 +408,13 @@ sap.ui.define([
 		}
 
 		this._oEditor.setTheme("ace/theme/" + sTheme);
-		includeStylesheet(
-			sap.ui.require.toUrl("sap/ui/codeeditor/js/ace/css/theme/" + sTheme + ".css"),
-			"sap-ui-codeeditor-theme-" + sTheme
-		);
+
+		if (sTheme !== "default") {
+			includeStylesheet(
+				sap.ui.require.toUrl("sap/ui/codeeditor/js/ace/css/theme/" + sTheme + ".css"),
+				"sap-ui-codeeditor-theme-" + sTheme
+			);
+		}
 
 		return this;
 	};

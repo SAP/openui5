@@ -282,25 +282,23 @@ sap.ui.define([
 	});
 
 	QUnit.test("Initial rendering", function (assert) {
-		this.stub(Theming, "getTheme").returns("sap_fiori_3");
-
 		var oCodeEditor = new CodeEditor();
-		assert.strictEqual(oCodeEditor._oEditor.getTheme(), "ace/theme/crimson_editor", "Initial theme is set correctly");
+		assert.strictEqual(oCodeEditor.getColorTheme(), "default", "Initial theme is set correctly");
 
 		oCodeEditor.destroy();
 	});
 
 	QUnit.test("Theme change", function (assert) {
 		const done = assert.async(2);
-		const initialTheme = Theming.getTheme();
+		const initialTheme = "default";
 		let callCount = 0;
 		const handleThemeApplied = (oEvent) => {
 			callCount++;
 
 			if (oEvent.theme === "sap_fiori_3") {
-				assert.strictEqual(this.oCodeEditor._oEditor.getTheme(), "ace/theme/crimson_editor", "theme is correct");
+				assert.strictEqual(this.oCodeEditor.getColorTheme(), "default", "theme is correct");
 			} else if (oEvent.theme === "sap_fiori_3_hcb") {
-				assert.strictEqual(this.oCodeEditor._oEditor.getTheme(), "ace/theme/chaos", "theme is correct");
+				assert.strictEqual(this.oCodeEditor.getColorTheme(), "default", "theme is correct");
 			}
 
 			Theming.setTheme("sap_fiori_3_hcb");
