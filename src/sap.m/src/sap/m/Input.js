@@ -581,8 +581,6 @@ function(
 		// phase of the life cycle. Without this line, initially the condition fails and fires liveChange event
 		// even though there is no user input (check Input.prototype.onsapright).
 		this._setTypedInValue("");
-		this._isValueInitial = false;
-
 
 		// indicates whether input is clicked (on mobile) or the clear button
 		// used for identifying whether dialog should be open.
@@ -641,10 +639,6 @@ function(
 			sValueStateHeaderValueState = bSuggestionsPopoverIsOpen ?  oSuggestionsPopover._getValueStateHeader().getValueState() : "";
 
 		InputBase.prototype.onBeforeRendering.call(this);
-
-		if (!this.getDomRef() && this.getValue()) {
-			this._isValueInitial = true;
-		}
 
 		if (this.getShowClearIcon()) {
 			this._getClearIcon().setProperty("visible", bShowClearIcon);
@@ -708,9 +702,8 @@ function(
 	Input.prototype.onAfterRendering = function() {
 		InputBase.prototype.onAfterRendering.call(this);
 
-		if (this._isValueInitial && this.getType() === InputType.Password) {
+		if (this.getType() === InputType.Password) {
 			this.getDomRef("inner").value = this.getProperty("value");
-			this._isValueInitial = false;
 		}
 	};
 
