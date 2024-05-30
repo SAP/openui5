@@ -1317,6 +1317,66 @@ sap.ui.define([
 				]
 			},
 			{
+				title: 'Progressive Disclosure',
+				icon: 'sap-icon://dimension',
+				key: 'progressiveDisclosure',
+				target: 'exploreOverview',
+				hasExpander: false,
+				items: [
+					{
+						key: 'progressive',
+						target: 'exploreSamples',
+						title: 'Samples',
+						useIFrame: true,
+						experimental: true,
+						isApplication: false,
+						files: [
+							{
+								url: '/samples/progressive/index.html',
+								name: 'index.html',
+								key: 'index.html'
+							},
+							{
+								url: '/samples/progressive/cardDefaultManifest.json',
+								name: 'cardDefaultManifest.json',
+								key: 'cardDefaultManifest.json'
+							},
+							{
+								url: '/samples/progressive/cardNumericManifest.json',
+								name: 'cardNumericManifest.json',
+								key: 'cardNumericManifest.json'
+							},
+							{
+								url: '/samples/progressive/cardWithUnsupportedVariants.json',
+								name: 'cardWithUnsupportedVariants.json',
+								key: 'cardWithUnsupportedVariants.json'
+							},
+							{
+								url: '/samples/progressive/Preview.view.xml',
+								name: 'Preview.view.xml',
+								key: 'Preview.view.xml'
+							},
+							{
+								url: '/samples/progressive/Preview.controller.js',
+								name: 'Preview.controller.js',
+								key: 'Preview.controller.js'
+							},
+							{
+								url: '/samples/progressive/manifest.json',
+								name: 'manifest.json',
+								key: 'manifest.json',
+								isApplicationManifest: true
+							},
+							{
+								url: '/samples/progressive/Component.js',
+								name: 'Component.js',
+								key: 'Component.js'
+							}
+						]
+					}
+				]
+			},
+			{
 				title: 'Card Footer',
 				key: 'footer',
 				target: 'exploreSamples',

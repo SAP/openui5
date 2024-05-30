@@ -187,10 +187,35 @@ sap.ui.define([
 	 */
 	thisLib.CardDisplayVariant = {
 		/**
+		 * The CompactHeader card variant.
+		 * @public
+		 */
+		CompactHeader: "CompactHeader",
+		/**
+		 * The SmallHeader card variant.
+		 * @public
+		 */
+		SmallHeader: "SmallHeader",
+		/**
+		 * The SmallHeader card variant.
+		 * @public
+		 */
+		StandardHeader: "StandardHeader",
+		/**
+		 * The small card variant.
+		 * @public
+		 */
+		Small: "Small",
+		/**
 		 * The standard card variant.
 		 * @public
 		 */
 		Standard: "Standard",
+		/**
+		 * The large card variant.
+		 * @public
+		 */
+		Large: "Large",
 		/**
 		 * Card renders and behaves like a tile of size 2x2.
 		 * @public

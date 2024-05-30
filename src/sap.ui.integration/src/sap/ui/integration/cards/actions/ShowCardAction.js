@@ -51,6 +51,9 @@ sap.ui.define([
 	 * @param {sap.ui.integration.widgets.Card} oParentCard The opener card.
 	 */
 	ShowCardAction.prototype._openDialog = function (oChildCard, oParentCard) {
+
+		oChildCard.setDisplayVariant("Large"); // always use large variant for dialog, scrolling content is possible
+
 		const oDialog = new Dialog({
 				content: [
 					oChildCard

@@ -145,9 +145,87 @@
 	.sapFCardHeader .sapFCardNumericIndicatorsSide {
 		display: none;
 	}
+	.sapFCardHeader .sapUiIntMicrochartChartWrapper {
+		display: none;
+	}
+}
+.sapFCard.sapUiIntCardSmallHeader,
+.sapFCard.sapUiIntCardTileFlatWide {
+
+	.sapFCardHeader .sapFCardNumericIndicatorsSide {
+		flex-wrap: nowrap;
+	}
+	.sapFCardHeader.sapFCardNumericHeaderSIMC .sapFCardNumericIndicatorsSide {
+		display: none;
+	}
+	.sapFCardHeader .sapUiIntMicrochartChartWrapper .sapUiIntMicrochartChart {
+		max-height: 2.2rem;
+		min-height: 2rem;
+	}
+	.sapFCardHeader .sapUiIntMicrochartChartWrapper .sapUiIntMicrochartChart .sapUiIntMicrochartChartInner {
+		height: 2rem;
+	}
+	.sapMNCValue.WithoutMargin {
+		justify-content: start;
+	}
+}
+
+.sapFCard.sapUiIntCardTileStandardWide .sapFCardNumericHeader {
+	&.sapFCardHeader .sapFCardNumericIndicatorsSide {
+		flex-wrap: nowrap;
+	}
+	&.sapFCardNumericHeaderSIMC .sapUiIntMicrochartChartWrapper {
+		position: absolute;
+    	top: 2.5rem;
+   		right: 1rem;
+		width: 38%;
+	}
+	&.sapFCardNumericHeaderSIMC .sapFCardHeaderText {
+		max-width: 58%;
+	}
+
+	&.sapFCardNumericHeaderMC .sapFCardAvatarAndIndicatorsLine .sapUiIntMicrochartChartWrapper {
+    	margin-top: -0.5rem;
+	}
 }
 
 .sapFCard.sapUiIntCardTileFlat .sapFCardHeaderBanner {
 	/* there is no space for banner in 2x1 tile */
 	display: none;
+}
+
+.sapFCard.sapUiIntCardStandard .sapFCardHeaderBanner {
+	/* the banner feature is not yet available for standard card variant */
+	display: none!important;
+}
+
+.sapFCard.sapUiIntCardCompactHeader {
+	height: 3rem;
+	min-height: 3rem;
+
+	.sapFCardHeader {
+		padding: 0.5rem 0.75rem;
+
+		.sapFCardIcon.sapFAvatar {
+			height: 1.9rem;
+			width: 1.9rem;
+			font-size: 0.9rem;
+			letter-spacing: -1px;
+			&.sapFAvatarColorTransparent .sapUiIcon {
+				font-size: 1.25rem;
+			}
+		}
+		.sapFCardHeaderText {
+			height: 2rem;
+		}
+		.sapFCardHeaderTextSecondLine {
+			display: inline-block;
+			margin-top: 0;
+		}
+	}
+}
+.sapUiSizeCompact .sapFCard.sapUiIntCardCompactHeader {
+	.sapFCardHeaderToolbarCont {
+		padding-top: 0.25rem;
+	}
 }

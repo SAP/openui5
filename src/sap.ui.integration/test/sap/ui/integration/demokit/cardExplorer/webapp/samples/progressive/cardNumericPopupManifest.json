@@ -1,0 +1,241 @@
+{
+	"_version": "1.14.0",
+	"sap.app": {
+		"id": "sap.ui.integration.sample.Progressive.NumericPopupCard",
+		"type": "card"
+	},
+	"sap.card": {
+		"type": "List",
+		"extension": "extension",
+		"root": {
+		},
+		"header": {
+			"type": "Numeric",
+			"title": "Numeric Header Title with a slightly long text",
+			"subTitle": "Numeric Header Subtitle with an even longer longer text",
+			"icon": {
+				"src": "sap-icon://desktop-mobile"
+			},
+			"status": {
+				"text": "5 of 10"
+			},
+			"unitOfMeasurement": "EUR",
+			"mainIndicator": {
+				"number": "{/kpiInfos/kpi/number}",
+				"unit": "{/kpiInfos/kpi/unit}",
+				"trend": "{/kpiInfos/kpi/trend}",
+				"state": "{/kpiInfos/kpi/state}"
+			},
+			"sideIndicators": [
+				{
+					"title": "Target",
+					"number": "{/kpiInfos/kpi/target/number}",
+					"unit": "{/kpiInfos/kpi/target/unit}",
+					"visible": "{size>/regular}"
+				},
+				{
+					"title": "Deviation",
+					"number": "{/kpiInfos/kpi/deviation/number}",
+					"unit": "%",
+					"visible": "{size>/regular}"
+				}
+			],
+			"chart": {
+				"type": "Line",
+				"leftTopLabel": "0",
+				"rightTopLabel": "30",
+				"maxXValue": 30,
+				"maxYValue": 400,
+				"minXValue": 0,
+				"minYValue": 0,
+				"leftBottomLabel": "June 1",
+				"rightBottomLabel": "June 30",
+				"lines": {
+					"path": "/chart/4/Lines",
+					"template": {
+						"color": "{color}",
+						"lineType": "{type}",
+						"showPoints": true,
+						"points": {
+							"path": "Points",
+							"template": {
+								"x": "{X}",
+								"y": "{Y}"
+							}
+						}
+					}
+				}
+			},
+			"details": "{details}",
+
+			"data": {
+				"request": {
+					"url": "data.json"
+				}
+			}
+		},
+		"content": {
+			"maxItems": "{= ${size>/large} ? 10 : ${size>/standard} ? 5 : 2}",
+			"item": {
+				"title": "{Name}",
+				"description": "{Description}",
+				"icon": {
+					"visible": "{size>/regular}",
+					"src": "sap-icon://desktop-mobile"
+				},
+				"info": {
+					"visible": "{size>/wide}",
+					"value": "{Sales} K",
+					"state": "{State}",
+					"showStateIcon": "{ShowStateIcon}",
+					"customStateIcon": "{CustomStateIcon}"
+				}
+			},
+
+
+			"data": {
+				"json": [{
+					"Name": "Comfort Easy",
+					"Description": "32 GB Digital Assistant with high-resolution color screen",
+					"Sales": "150",
+					"State": "Warning",
+					"ShowStateIcon": true
+				},
+				{
+					"Name": "ITelO Vault",
+					"Description": "Digital Organizer with State-of-the-Art Storage Encryption",
+					"Sales": "540",
+					"State": "Success",
+					"ShowStateIcon": true
+				},
+				{
+					"Name": "Notebook Professional 15",
+					"Description": "Notebook Professional 15 with 2,80 GHz quad core, 15\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
+					"Sales": "350",
+					"State": "Success",
+					"ShowStateIcon": true
+				},
+				{
+					"Name": "Ergo Screen E-I",
+					"Description": "Optimum Hi-Resolution max. 1920 x 1080 @ 85Hz, Dot Pitch: 0.27mm",
+					"Sales": "100",
+					"State": "Error",
+					"ShowStateIcon": true,
+					"CustomStateIcon": "sap-icon://warning2"
+				},
+				{
+					"Name": "Laser Professional Eco",
+					"Description": "Print 2400 dpi image quality color documents at speeds of up to 32 ppm (color) or 36 ppm (monochrome), letter/A4. Powerful 500 MHz processor, 512MB of memory",
+					"Sales": "200",
+					"State": "Warning",
+					"ShowStateIcon": true
+				},
+				{
+					"Name": "Laser Professional Eco",
+					"Description": "Print 2400 dpi image quality color documents at speeds of up to 32 ppm (color) or 36 ppm (monochrome), letter/A4. Powerful 500 MHz processor, 512MB of memory",
+					"Sales": "200",
+					"State": "Warning",
+					"ShowStateIcon": true
+				},
+				{
+					"Name": "Laser Professional Eco",
+					"Description": "Print 2400 dpi image quality color documents at speeds of up to 32 ppm (color) or 36 ppm (monochrome), letter/A4. Powerful 500 MHz processor, 512MB of memory",
+					"Sales": "200",
+					"State": "Warning",
+					"ShowStateIcon": true
+				},
+				{
+					"Name": "Laser Professional Eco",
+					"Description": "Print 2400 dpi image quality color documents at speeds of up to 32 ppm (color) or 36 ppm (monochrome), letter/A4. Powerful 500 MHz processor, 512MB of memory",
+					"Sales": "200",
+					"State": "Warning",
+					"ShowStateIcon": true
+				},
+				{
+					"Name": "Laser Professional Eco",
+					"Description": "Print 2400 dpi image quality color documents at speeds of up to 32 ppm (color) or 36 ppm (monochrome), letter/A4. Powerful 500 MHz processor, 512MB of memory",
+					"Sales": "200",
+					"State": "Warning",
+					"ShowStateIcon": true
+				},
+				{
+					"Name": "Laser Professional Eco",
+					"Description": "Print 2400 dpi image quality color documents at speeds of up to 32 ppm (color) or 36 ppm (monochrome), letter/A4. Powerful 500 MHz processor, 512MB of memory",
+					"Sales": "200",
+					"State": "Warning",
+					"ShowStateIcon": true
+				},
+				{
+					"Name": "Laser Professional Eco",
+					"Description": "Print 2400 dpi image quality color documents at speeds of up to 32 ppm (color) or 36 ppm (monochrome), letter/A4. Powerful 500 MHz processor, 512MB of memory",
+					"Sales": "200",
+					"State": "Warning",
+					"ShowStateIcon": true
+				},
+				{
+					"Name": "Laser Professional Eco",
+					"Description": "Print 2400 dpi image quality color documents at speeds of up to 32 ppm (color) or 36 ppm (monochrome), letter/A4. Powerful 500 MHz processor, 512MB of memory",
+					"Sales": "200",
+					"State": "Warning",
+					"ShowStateIcon": true
+				},
+				{
+					"Name": "Laser Professional Eco",
+					"Description": "Print 2400 dpi image quality color documents at speeds of up to 32 ppm (color) or 36 ppm (monochrome), letter/A4. Powerful 500 MHz processor, 512MB of memory",
+					"Sales": "200",
+					"State": "Warning",
+					"ShowStateIcon": true
+				},
+				{
+					"Name": "Laser Professional Eco",
+					"Description": "Print 2400 dpi image quality color documents at speeds of up to 32 ppm (color) or 36 ppm (monochrome), letter/A4. Powerful 500 MHz processor, 512MB of memory",
+					"Sales": "200",
+					"State": "Warning",
+					"ShowStateIcon": true
+				},
+				{
+					"Name": "Laser Professional Eco",
+					"Description": "Print 2400 dpi image quality color documents at speeds of up to 32 ppm (color) or 36 ppm (monochrome), letter/A4. Powerful 500 MHz processor, 512MB of memory",
+					"Sales": "200",
+					"State": "Warning",
+					"ShowStateIcon": true
+				},
+				{
+					"Name": "Laser Professional Eco",
+					"Description": "Print 2400 dpi image quality color documents at speeds of up to 32 ppm (color) or 36 ppm (monochrome), letter/A4. Powerful 500 MHz processor, 512MB of memory",
+					"Sales": "200",
+					"State": "Warning",
+					"ShowStateIcon": true
+				},
+				{
+					"Name": "Laser Professional Eco",
+					"Description": "Print 2400 dpi image quality color documents at speeds of up to 32 ppm (color) or 36 ppm (monochrome), letter/A4. Powerful 500 MHz processor, 512MB of memory",
+					"Sales": "200",
+					"State": "Warning",
+					"ShowStateIcon": true
+				},
+				{
+					"Name": "Laser Professional Eco",
+					"Description": "Print 2400 dpi image quality color documents at speeds of up to 32 ppm (color) or 36 ppm (monochrome), letter/A4. Powerful 500 MHz processor, 512MB of memory",
+					"Sales": "200",
+					"State": "Warning",
+					"ShowStateIcon": true
+				}
+				]
+			}
+		},
+		"footer": {
+			"actionsStrip": [
+				{
+			    "buttonType": "Emphasized",
+					"text": "Close",
+					"actions": [
+						{
+							"type": "HideCard"
+						}
+					]
+				}
+			]
+		}
+	}
+}

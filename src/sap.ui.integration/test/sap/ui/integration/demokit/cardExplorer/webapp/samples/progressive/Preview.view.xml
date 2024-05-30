@@ -1,0 +1,78 @@
+<mvc:View
+	controllerName="sap.ui.integration.sample.Progressive.Preview"
+	xmlns:w="sap.ui.integration.widgets"
+	xmlns:f="sap.f"
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	class="progressiveView">
+	<FlexBox id="outer" direction="Column" class="OuterContainer">
+		<OverflowToolbar design="Transparent" style="Clear" id="toolbar">
+			<Button text="Back" press="clear" visible="false" type="Emphasized"/>
+			<Label text="Size Mode" />
+			<Select id="sizeModeSelect" change="updateSizeMode" selectedKey="Compact">
+				<core:Item key="Compact" text="Compact" />
+				<core:Item key="Cozy" text="Cozy" />
+			</Select>
+			<Label text="Header Type" />
+			<Select id="typeSelect" change="update" selectedKey="{settings>/type}">
+				<core:Item key="Default" text="Default" />
+				<core:Item key="Numeric" text="Numeric" />
+			</Select>
+			<Label text="Display" />
+			<Select id="displaySelect" change="update" selectedKey="{settings>/display}">
+				<core:Item key="Default" text="Header and Content" />
+				<core:Item key="Header" text="Header only" />
+			</Select>
+			<Label text="Variant"/>
+			<Select id="variantSelect" selectedKey="{settings>/variant}" change="update" items="{path:'settings>/possibleVariants', filters : [{ path : 'visible', operator : 'EQ', value1 : true}]}">
+				<core:Item key="{settings>key}" text="{settings>text}"/>
+			</Select>
+			<Label text="Icon" />
+			<Select id="iconSelect" change="update" selectedKey="{settings>/icon}">
+				<core:Item key="ColorSquare" text="ColorSquare"/>
+				<core:Item key="ColorCircle" text="ColorCircle"/>
+				<core:Item key="Transparent" text="Transparent"/>
+				<core:Item key="None" text="None"/>
+			</Select>
+			<Label text="Action/Status" />
+			<Select id="actionStatus" change="update" selectedKey="{settings>/actionStatus}">
+				<core:Item key="None" text="None"/>
+				<core:Item key="Status" text="Status"/>
+				<core:Item key="Action" text="Action"/>
+				<core:Item key="Both" text="Both"/>
+			</Select>
+			<Label text="Microchart" />
+			<Select id="microChartSelect" change="update" selectedKey="{settings>/microChart}" enabled="{= ${settings>/type} === 'Numeric'}">
+				<core:Item key="None" text="None"/>
+				<core:Item key="Line" text="Line"/>
+				<core:Item key="Bullet" text="Bullet"/>
+				<core:Item key="StackedBar" text="StackedBar"/>
+				<core:Item key="Column" text="Column"/>
+				<core:Item key="Radial" text="Radial"/>
+				<core:Item key="HarveyBall" text="HarveyBall"/>
+			</Select>
+			<Label text="Side Indicators" />
+			<Select id="SideIndicatorSelect" change="update" selectedKey="{settings>/sideIndicator}" enabled="{= ${settings>/type} === 'Numeric'}">
+				<core:Item key="None" text="None"/>
+				<core:Item key="One" text="One"/>
+				<core:Item key="Two" text="Two"/>
+			</Select>
+			<ToolbarSpacer />
+			<Button text="Show All Header Variants" press="generateAllHeaders" />
+		</OverflowToolbar>
+		<Slider value="30" width="100%" id="widthSlider"
+			min="0" max="200"
+			liveChange="updateSlider"
+			showAdvancedTooltip="true"
+			showHandleTooltip="false"
+			inputsAsTooltips="true"
+			class="sapUiSmallMarginTop" />
+		<core:HTML id="widthLine" content='&lt;div class=&quot;WidthBar&quot;&gt;&lt;span&gt;&lt;/span&gt;&lt;span&gt;&lt;/span&gt;&lt;span&gt;&lt;/span&gt;&lt;span&gt;&lt;/span&gt;&lt;/div&gt;'>
+		</core:HTML>
+		<Text id="widthText" text="" class="sapUiSmallMarginBottom WidthText sapUiTinyMarginBegin"/>
+		<FlexBox id="layout" direction="Column" class="Layout">
+		</FlexBox>
+
+	</FlexBox>
+</mvc:View>

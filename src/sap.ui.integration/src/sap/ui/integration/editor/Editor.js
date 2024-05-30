@@ -1146,8 +1146,10 @@ sap.ui.define([
 		return new Promise(function (resolve, reject) {
 			sap.ui.require([sFullExtensionPath], function (ExtensionSubclass) {
 				var oExtension = new ExtensionSubclass();
-				oExtension._setEditor(this, this._oLimitedInterface);
-				this.setAggregation("_extension", oExtension); // the framework validates that the subclass extends "sap.ui.integration.Extension"
+				if (oExtension._setEditor) {
+					oExtension._setEditor(this, this._oLimitedInterface);
+					this.setAggregation("_extension", oExtension); // the framework validates that the subclass extends "sap.ui.integration.Extension"
+				}
 				resolve();
 			}.bind(this), function (vErr) {
 				Log.error("Failed to load " + sExtensionPath + ". Check if the path is correct. Reason: " + vErr);

@@ -293,6 +293,40 @@ sap.ui.define([
 		this._oCardPreview.setManifestChanges(aChanges);
 		this._oCardPreview.setManifest(this.getCard()._oCardManifest._oManifest.getRawJson());
 		this._oCardPreview.setHost(this.getCard().getHost());
+		this._oCardPreview.attachManifestApplied(function () {
+			var sShow = this._oCardPreview.getManifestEntry("/sap.card/root/show");
+			if (sShow && !this._oCardPreview._refreshedByVariant) {
+				var cardVariant = "";
+				switch (sShow) {
+					case "tile":
+						cardVariant = this._oCardPreview.getManifestEntry("/sap.card/root/tileSize");
+						break;
+					case "header":
+						cardVariant = this._oCardPreview.getManifestEntry("/sap.card/root/headerSize");
+						break;
+					default:
+						cardVariant = this._oCardPreview.getManifestEntry("/sap.card/root/contentSize");
+				}
+				this._oCardPreview.setDisplayVariant(cardVariant);
+
+				document.body.style.removeProperty("--sapUiIntegrationEditorPreviewCardHeight");
+				this._oCardPreview.removeStyleClass("sapUiIntegrationDTPreviewCard");
+
+				this._oCardPreview.removeStyleClass("sapUiIntDTPreviewCardTileStandard");
+				this._oCardPreview.removeStyleClass("sapUiIntDTPreviewCardTileFlat");
+				this._oCardPreview.removeStyleClass("sapUiIntDTPreviewCardTileFlatWide");
+				this._oCardPreview.removeStyleClass("sapUiIntDTPreviewCardTileStandardWide");
+				this._oCardPreview.removeStyleClass("sapUiIntDTPreviewCardCompactHeader");
+				this._oCardPreview.removeStyleClass("sapUiIntDTPreviewCardSmallHeader");
+				this._oCardPreview.removeStyleClass("sapUiIntDTPreviewCardStandardHeader");
+
+				this._oCardPreview.addStyleClass("sapUiIntDTPreviewCard" + cardVariant);
+
+				this._oCardPreview._refreshedByVariant = true;
+				this._oCardPreview.refresh();
+			}
+		}.bind(this));
+		this._oCardPreview._refreshedByVariant = false;
 		this._oCardPreview.refresh();
 		this._oCardPreview.editor = this._oCardPreview.editor || {};
 		this._oCardPreview.preview = this._oCardPreview.editor.preview = this;
