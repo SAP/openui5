@@ -42,6 +42,7 @@ sap.ui.define([
 	 * @public
 	 * @since 1.92.0
 	 * @experimental Since 1.92.0 This control is experimental and its API might change significantly.
+	 * @deprecated As of version 1.120, this Web Components consumption model has been discarded. Until an alternative Web Components consumption model is available in the future, use sap.m and sap.f controls with similar functionality.
 	 * @alias sap.ui.webc.main.MultiInput
 	 * @implements sap.ui.core.IFormContent, sap.ui.core.ISemanticFormContent
 	 */
