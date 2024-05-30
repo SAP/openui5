@@ -420,6 +420,49 @@ function(nextUIUpdate, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 		});
 	});
 
+	QUnit.test("Header expanded in title-area remains expanded upon switching tabs", async function(assert) {
+		// Arrange
+		var oObjectPage = helpers.generateObjectPageWithDynamicHeaderTitle(),
+			aSections = oObjectPage.getSections(),
+			oFirstSection = aSections[0],
+			oSecondSection = aSections[1],
+			oExpandButton,
+			done = assert.async();
+
+		oSecondSection.addSubSection(oFactory.getSubSection(1, oFactory.getBlocks()));
+		oObjectPage.setUseIconTabBar(true);
+
+		assert.expect(3);
+
+		oObjectPage.placeAt('qunit-fixture');
+		await nextUIUpdate();
+
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+
+			// step 1 of setup: Scroll to a non-first section to snap the header
+			oObjectPage.scrollToSection(oSecondSection.getSubSections()[1].getId(), 0);
+			// call the scroll handler synchronously to save a timeout
+			oObjectPage._onScroll({target: {scrollTop: oObjectPage._computeScrollPosition(oSecondSection.getSubSections()[1])}});
+			// Assert precondition
+			assert.strictEqual(oObjectPage._bHeaderExpanded, false, "Header is snapped after scroll");
+
+			// step 2 of setup: Expand the header by pressing the expand button
+			oExpandButton = oObjectPage.getHeaderTitle()._getExpandButton();
+			oExpandButton.firePress();
+			// Assert precondition
+			assert.strictEqual(oObjectPage._bHeaderExpanded, true, "Header is expanded after pressing expand button");
+
+			// step 3 of setup: Select a new tab
+			oObjectPage.scrollToSection(oFirstSection.getId(), 0);
+			// call the scroll handler synchronously to save a timeout
+			oObjectPage._onScroll({target: {scrollTop: oObjectPage._computeScrollPosition(oFirstSection)}});
+
+			// Check
+			assert.strictEqual(oObjectPage._bHeaderExpanded, true, "Header remains expanded");
+			done();
+		});
+	});
+
 	QUnit.module("ObjectPage Content scrolling", {
 		beforeEach: function (assert) {
 			var done = assert.async();
