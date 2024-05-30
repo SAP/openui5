@@ -994,6 +994,8 @@ sap.ui.define([
 		}
 		if (typeof vIdOrSettings === "object") {
 			if (vIdOrSettings.manifestChanges) {
+				//map translations of unmatch languages
+				Utils.mapLanguagesInManifestChanges(vIdOrSettings.manifestChanges);
 				//remove the changes from the current layer
 				this._filterManifestChangesByLayer(vIdOrSettings);
 			}

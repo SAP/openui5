@@ -54,6 +54,8 @@ sap.ui.define([
 			}
 			if (Array.isArray(aChanges) && aChanges.length > 0) {
 				var oModel, oTexts, oDesigntime;
+				//map translations of unmatch languages
+				Utils.mapLanguagesInManifestChanges(aChanges);
 				aChanges.forEach(function (oChange) {
 					if (oChange.content) {
 						//merge old changes
