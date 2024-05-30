@@ -8,6 +8,10 @@
 
 	<documentation>UI5 Web Components Retrofit Common</documentation>
 
+	<deprecation since="1.120">
+This Web Components consumption model has been discarded. An alternative consumption model is planned for the future.
+	</deprecation>
+
 	<dependencies>
 		<dependency>
 			<libraryName>sap.ui.core</libraryName>
