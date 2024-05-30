@@ -3,6 +3,9 @@
 # @openui5/sap.ui.webc.fiori
 Runtime resources of the [OpenUI5](https://github.com/SAP/openui5) UI Library **sap.ui.webc.fiori**.
 
+## Deprecation
+**This library is deprecated and should not be used for new projects.**
+
 ## Usage Restrictions
 The components of this library are under development. Their APIs are subject to change and should not be used in productive scenarios.
 
