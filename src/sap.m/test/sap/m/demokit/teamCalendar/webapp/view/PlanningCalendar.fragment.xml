@@ -15,6 +15,7 @@
 			startDateChange=".startDateChangeHandler"
 			viewChange=".viewChangeHandler">
 			<toolbarContent>
+				<Label labelFor="PlanningCalendarTeamSelector" text="Calendar for: "/>
 				<Select id="PlanningCalendarTeamSelector"
 					change=".selectChangeHandler">
 					<core:Item

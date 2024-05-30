@@ -9,6 +9,7 @@
 			viewChange=".viewChangeHandler"
 			appointments="{path: 'calendar>appointments'}">
 			<actions>
+				<Label labelFor="SinglePlanningCalendarTeamSelector" text="Calendar for: "/>
 				<Select id="SinglePlanningCalendarTeamSelector"
 					change=".selectChangeHandler">
 					<core:Item
