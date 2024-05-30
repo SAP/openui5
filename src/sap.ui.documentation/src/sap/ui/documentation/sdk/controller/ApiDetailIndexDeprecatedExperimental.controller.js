@@ -45,13 +45,14 @@ sap.ui.define([
 				}
 				this._hasMatched = true;
 
-				// Cache allowed members for the filtering
-				this._aAllowedMembers = this.getModel("versionData").getProperty("/allowedMembers");
+				this.getOwnerComponent().loadVersionInfo().then(function () {
+					// Cache allowed members for the filtering
+					this._aAllowedMembers = this.getModel("versionData").getProperty("/allowedMembers");
 
-				fnDataGetterRef().then(function (oData) {
-					oData = this._filterVisibleElements(oData);
-					this._oModel.setData(oData);
-
+					fnDataGetterRef().then(function (oData) {
+						oData = this._filterVisibleElements(oData);
+						this._oModel.setData(oData);
+					}.bind(this));
 				}.bind(this));
 			},
 
