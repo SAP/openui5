@@ -523,8 +523,6 @@ function(
 		// Counter for concurrent issues with setValue:
 		this._iSetCount = 0;
 
-		this._isValueInitial = false;
-
 		this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 	};
 
@@ -589,10 +587,6 @@ function(
 
 		InputBase.prototype.onBeforeRendering.call(this);
 
-		if (!this.getDomRef() && this.getValue()) {
-			this._isValueInitial = true;
-		}
-
 		this._deregisterEvents();
 
 		if (sSelectedKey) {
@@ -647,9 +641,8 @@ function(
 	Input.prototype.onAfterRendering = function() {
 		InputBase.prototype.onAfterRendering.call(this);
 
-		if (this._isValueInitial && this.getType() === InputType.Password) {
+		if (this.getType() === InputType.Password) {
 			this.getDomRef("inner").value = this.getProperty("value");
-			this._isValueInitial = false;
 		}
 	};
 
