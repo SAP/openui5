@@ -18,9 +18,10 @@ sap.ui.define([
 	 * @param {sap.f.cards.NumericHeader} oNumericHeader An object representation of the control that should be rendered
 	 */
 	NumericHeaderRenderer.render = function (oRm, oNumericHeader) {
-		var bLoading = oNumericHeader.isLoading(),
+		const bLoading = oNumericHeader.isLoading(),
 			oError = oNumericHeader.getAggregation("_error"),
-			bRenderAsLink = oNumericHeader.isLink();
+			bRenderAsLink = oNumericHeader.isLink(),
+			oToolbar = oNumericHeader.getToolbar();
 
 		oRm.openStart("div", oNumericHeader)
 			.class("sapFCardHeader")
@@ -40,6 +41,10 @@ sap.ui.define([
 
 		if (oNumericHeader.getNumber() && oNumericHeader.getNumberVisible()) {
 			oRm.class("sapFCardHeaderHasNumber");
+		}
+
+		if (oToolbar?.getVisible()) {
+			oRm.class("sapFCardHeaderHasToolbar");
 		}
 
 		oRm.openEnd();

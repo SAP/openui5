@@ -194,8 +194,17 @@ ui-integration-card.sapFCardTransparent > [data-sap-ui-area] > .sapFCard {
 		margin-right: 1rem;
 	}
 
-	.sapFCardHeaderToolbarCont .sapFCardHeaderToolbar {
-		margin: -0.25rem 0 -0.25rem 0.5rem;
+	.sapFCardHeaderToolbarCont {
+		position: absolute;
+		right: 0.65rem;
+		top: 0.45rem;
+	}
+
+	&.sapFCardHeaderHasToolbar {
+		.sapFCardHeaderText {
+			margin-right: 2rem;
+			width: unset;
+		}
 	}
 
 	.sapFCardHeaderBanner {

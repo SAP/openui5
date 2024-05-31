@@ -273,6 +273,14 @@ sap.ui.define([
 		this.setVisible(bVisible);
 	};
 
+	/**
+	 * @private
+	 * @ui5-restricted sap.f.BaseHeader
+	 */
+	ActionsToolbar.prototype.updateVisibility = function () {
+		this._updateVisibility();
+	};
+
 	ActionsToolbar.prototype._getActionConfig = function (oActionDefinition) {
 		var mSettings = ["visible", "enabled", "icon", "text", "tooltip", "parameters", "buttonType", "type"].reduce(function (mAcc, sKey) {
 			mAcc[sKey] = oActionDefinition["get" + capitalize(sKey)]();
