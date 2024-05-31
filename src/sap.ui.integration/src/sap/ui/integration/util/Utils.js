@@ -9,7 +9,8 @@ sap.ui.define([
 	'sap/base/util/isPlainObject',
 	"sap/base/Log",
 	"sap/ui/core/date/UI5Date",
-	"sap/base/i18n/Localization"
+	"sap/base/i18n/Localization",
+	"sap/base/util/deepClone"
 ], function (
 	getCompatibilityVersion,
 	Locale,
@@ -17,7 +18,8 @@ sap.ui.define([
 	isPlainObject,
 	Log,
 	UI5Date,
-	Localization
+	Localization,
+	deepClone
 ) {
 	"use strict";
 
@@ -60,6 +62,23 @@ sap.ui.define([
 	Utils.getLocalizationLanguage = function() {
 		var language = Localization.getLanguage().replaceAll('_', '-');
 		return Utils.languageMapping[language] || language;
+	};
+
+	Utils.mapLanguagesInManifestChanges = function(oManifestChanges) {
+		if (typeof oManifestChanges === "object") {
+			oManifestChanges.forEach(function (oChange) {
+				if (oChange.texts) {
+					for (var [sLanguage, sMappingLanguage] of Object.entries(Utils.languageMapping)) {
+						if (oChange.texts[sLanguage]) {
+							var oTranslations = deepClone(oChange.texts[sLanguage], 500);
+							delete oChange.texts[sLanguage];
+							oTranslations = Object.assign(oTranslations, oChange.texts[sMappingLanguage]);
+							oChange.texts[sMappingLanguage] = oTranslations;
+						}
+					}
+				}
+			});
+		}
 	};
 
 	Utils._language = Utils.getLocalizationLanguage();
