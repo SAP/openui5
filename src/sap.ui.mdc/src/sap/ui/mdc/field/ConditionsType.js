@@ -195,11 +195,15 @@ sap.ui.define([
 				});
 			};
 
-			for (let i = 0; i < aConditions.length; i++) {
-				aSyncPromises.push(fnCreateSyncPromise.call(this, aConditions[i], sTargetType));
+			if (aConditions.length === 0) { // call ConditionType with no condition to let it initialize types and so on (To have same behavior as ConditionType would be used in binding)
+				aSyncPromises.push(fnCreateSyncPromise.call(this, null, sTargetType));
+			} else {
+				for (let i = 0; i < aConditions.length; i++) {
+					aSyncPromises.push(fnCreateSyncPromise.call(this, aConditions[i], sTargetType));
 
-				if (iMaxConditions > 0 && i >= iMaxConditions - 1) {
-					break;
+					if (iMaxConditions > 0 && i >= iMaxConditions - 1) {
+						break;
+					}
 				}
 			}
 
@@ -214,7 +218,7 @@ sap.ui.define([
 			for (let i = 0; i < aFormattedValues.length; i++) {
 				if (vValue) {
 					vValue = vValue + this._oResourceBundle.getText("field.SEPARATOR") + aFormattedValues[i];
-				} else {
+				} else if (aFormattedValues[i]) {
 					vValue = aFormattedValues[i];
 				}
 			}

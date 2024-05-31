@@ -685,6 +685,17 @@ sap.ui.define([
 		assert.equal(sResult, sValue1 + oResourceBundle.getText("field.SEPARATOR") + sValue2 + "..." + sValue3, "Result of number formatting");
 		sResult = oUnitConditionsType.formatValue([oCondition1, oCondition2]);
 		assert.equal(sResult, "EUR", "Result of unit formatting");
+		assert.deepEqual(oUnitType._aCurrentValue, [1.23, "EUR"], "CurrentValue stored in unit type");
+		assert.deepEqual(oValueType._aCurrentValue, [1.23, "EUR"], "CurrentValue stored in value type");
+		assert.deepEqual(oOriginalType._aCurrentValue, [1.23, "EUR"], "CurrentValue stored in original type");
+
+		sResult = oConditionsType.formatValue([]); // after initialization no old value must be shown
+		assert.equal(sResult, "", "Result of number formatting");
+		sResult = oUnitConditionsType.formatValue([]);
+		assert.equal(sResult, "", "Result of unit formatting");
+		assert.deepEqual(oUnitType._aCurrentValue, [], "CurrentValue initialized in unit type");
+		assert.deepEqual(oValueType._aCurrentValue, [], "CurrentValue initialized in value type");
+		assert.deepEqual(oOriginalType._aCurrentValue, [], "CurrentValue initialized in original type");
 
 	});
 

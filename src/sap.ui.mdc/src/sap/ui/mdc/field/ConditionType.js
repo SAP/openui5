@@ -135,7 +135,9 @@ sap.ui.define([
 		 */
 		ConditionType.prototype.formatValue = function(oCondition, sTargetType) {
 
+			let oType = this._getValueType();
 			if (oCondition == undefined || oCondition == null || this._bDestroyed) { // if destroyed do nothing
+				_attachCurrentValueAtType.call(this, oCondition, oType); // initialize current value
 				return null;
 			}
 
@@ -148,7 +150,6 @@ sap.ui.define([
 				sTargetType = "string";
 			}
 
-			let oType = this._getValueType();
 			const oAdditionalType = this._getAdditionalValueType();
 			const bIsUnit = this._isUnit(oType);
 			const bPreventGetDescription = this.oFormatOptions.preventGetDescription;
@@ -902,17 +903,24 @@ sap.ui.define([
 
 		function _attachCurrentValueAtType(oCondition, oType) {
 
-			if (this._isCompositeType(oType) && oCondition && oCondition.values[0]) {
-				oType._aCurrentValue = merge([], oCondition.values[0]); // use copy to prevent changes on original arry change aCurrentValue too
+			if (this._isCompositeType(oType)) {
+				let aCurrentValue;
+
+				if (oCondition && oCondition.values[0]) {
+					aCurrentValue = oCondition.values[0];
+				} else {
+					aCurrentValue = []; // need to have an array to process it in Operator._parseValue
+				}
+				oType._aCurrentValue = merge([], aCurrentValue); // use copy to prevent changes on original arry change aCurrentValue too
 
 				const oAdditionalType = this._getAdditionalType();
 				if (this._isCompositeType(oAdditionalType)) { // store in corresponding unit or measure type too
-					oAdditionalType._aCurrentValue = merge([], oCondition.values[0]);
+					oAdditionalType._aCurrentValue = merge([], aCurrentValue);
 				}
 
 				const oOriginalType = this._getOriginalType();
 				if (this._isCompositeType(oOriginalType)) { // store in original type too (Currently not used in Unit/Currency type, but basically in CompositeType for parsing)
-					oOriginalType._aCurrentValue = merge([], oCondition.values[0]);
+					oOriginalType._aCurrentValue = merge([], aCurrentValue);
 				}
 			}
 
