@@ -236,10 +236,58 @@ sap.ui.define([
 					}.bind(this)
 				})
 				.then((oPopup) => {
+					this._aAddedFilterFields = [];
+					this._aRemovedFilterFields = [];
+					oPopup.attachEventOnce("afterClose", this._determineFilterFieldOnFocus.bind(this));
 					return oPopup;
 				});
 		});
 
+	};
+
+	FilterBar.prototype._determineFilterFieldOnFocus = function() {
+
+		let oFilterField = null;
+		const aFilterFields = this.getFilterItems();
+		if (this._aAddedFilterFields && this._aAddedFilterFields.length > 0) {
+			[oFilterField] = this._aAddedFilterFields;
+			for (let i = 1; i < this._aAddedFilterFields.length; i++) {
+				if (aFilterFields.indexOf(oFilterField) > aFilterFields.indexOf(this._aAddedFilterFields[i])) {
+					oFilterField = this._aAddedFilterFields[i];
+				}
+			}
+		} else if (this._aRemovedFilterFields && this._aRemovedFilterFields.length > 0) {
+			[oFilterField] = aFilterFields;
+		}
+
+		if (oFilterField) {
+			this._setFocusOnFilterField(oFilterField);
+		}
+
+		this._aAddedFilterFields = undefined;
+		this._aRemovedFilterFields = undefined;
+	};
+
+	FilterBar.prototype._handleAddedFilterField = function(oFilterField) {
+		if (this._aAddedFilterFields && this._aRemovedFilterFields) {
+			const nDelIdx = this._aRemovedFilterFields.indexOf(oFilterField);
+			if (nDelIdx < 0) {
+				this._aAddedFilterFields.push(oFilterField);
+			} else {
+				this._aRemovedFilterFields.splice(nDelIdx, 1);
+			}
+		}
+	};
+	FilterBar.prototype._handleRemovedFilterField = function(oFilterField) {
+		if (this._aRemovedFilterFields) {
+			this._aRemovedFilterFields.push(oFilterField);
+		}
+	};
+
+	FilterBar.prototype._setFocusOnFilterField = function(oFilterField) {
+		if (oFilterField) {
+			oFilterField.focus();
+		}
 	};
 
 	/**

@@ -854,6 +854,7 @@ sap.ui.define([
 		sinon.stub(oFilterBar, "getPropertyInfoSet").returns([oProperty1, oProperty2]);
 		sinon.spy(oFilterBar, "_applyFilterItemInserted");
 		sinon.spy(oFilterBar, "_applyFilterItemRemoved");
+		sinon.spy(oFilterBar, "_setFocusOnFilterField");
 
 
 		oFilterBar._waitForMetadata().then(function () {
@@ -867,6 +868,72 @@ sap.ui.define([
 
 				oFilterBar.addFilterItem(aFilterFields[0]);
 				oFilterBar.addFilterItem(aFilterFields[1]);
+
+				assert.ok(!oFilterBar._aAddedFilterFields);
+
+				oFilterBar._determineFilterFieldOnFocus();
+				assert.ok(!oFilterBar._setFocusOnFilterField.called);
+
+				oFilterBar.removeAggregation("filterItems", aFilterFields[0]);
+
+				assert.ok(oFilterBar._applyFilterItemInserted.calledTwice);
+				assert.ok(oFilterBar._applyFilterItemRemoved.calledOnce);
+
+				oFilterBar.getControlDelegate().fetchProperties.restore();
+
+				done();
+			});
+		});
+	});
+
+	QUnit.test("check filterItems observer with simulated adapation filterbar", function (assert) {
+
+		const oProperty1 = {
+			name: "key1",
+			label: "label 1",
+			dataType: "Edm.String",
+			constraints: { maxLength: 40 },
+			visible: true
+		};
+		const oProperty2 = {
+			name: "key2",
+			label: "label 2",
+			dataType: "Edm.String",
+			constraints: { maxLength: 40 },
+			visible: true
+		};
+
+		const aPromise = [];
+
+		const done = assert.async();
+
+		sinon.stub(oFilterBar, "getPropertyInfoSet").returns([oProperty1, oProperty2]);
+		sinon.spy(oFilterBar, "_applyFilterItemInserted");
+		sinon.spy(oFilterBar, "_applyFilterItemRemoved");
+		sinon.spy(oFilterBar, "_setFocusOnFilterField");
+
+
+		oFilterBar._waitForMetadata().then(function () {
+			assert.ok(oFilterBar.getControlDelegate());
+			sinon.stub(oFilterBar.getControlDelegate(), "fetchProperties").returns(Promise.resolve([oProperty1, oProperty2]));
+
+			oFilterBar._aAddedFilterFields = [];
+			oFilterBar._aRemovedFilterFields = [];
+
+			aPromise.push(oFilterBar.getControlDelegate().addItem(oFilterBar, oProperty1.name));
+			aPromise.push(oFilterBar.getControlDelegate().addItem(oFilterBar, oProperty2.name));
+
+			Promise.all(aPromise).then(function (aFilterFields) {
+
+				oFilterBar.addFilterItem(aFilterFields[0]);
+				oFilterBar.addFilterItem(aFilterFields[1]);
+
+				assert.ok(oFilterBar._aAddedFilterFields);
+				assert.equal(oFilterBar._aAddedFilterFields.length, 2);
+
+				oFilterBar._determineFilterFieldOnFocus();
+				assert.ok(oFilterBar._setFocusOnFilterField.calledOnce);
+				assert.ok(!oFilterBar._aAddedFilterFields);
 
 				oFilterBar.removeAggregation("filterItems", aFilterFields[0]);
 

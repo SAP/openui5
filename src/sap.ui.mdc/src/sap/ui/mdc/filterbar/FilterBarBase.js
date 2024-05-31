@@ -1529,6 +1529,8 @@ sap.ui.define([
 				}
 			}
 
+			this._handleAddedFilterField(oFilterField);
+
 			this._insertFilterFieldtoContent(oFilterField, iIndex);
 
 			if (!this._oObserver.isObserved(oFilterField, { properties: ["visible"] })) {
@@ -1537,6 +1539,9 @@ sap.ui.define([
 		};
 
 		FilterBarBase.prototype._filterItemRemoved = function(oFilterItem) {
+
+			this._handleRemovedFilterField(oFilterItem);
+
 			this._applyFilterItemRemoved(oFilterItem.getPropertyKey());
 
 			this._handleAssignedFilterNames(true);
@@ -1557,6 +1562,13 @@ sap.ui.define([
 				this._oFilterBarLayout.removeFilterField(oLayoutItem);
 				oLayoutItem.destroy();
 			}
+		};
+
+		FilterBarBase.prototype._handleAddedFilterField = function(oFilterField) {
+			// only relevant for the mdc.FB
+		};
+		FilterBarBase.prototype._handleRemovedFilterField = function(oFilterField) {
+			// only relevant for the mdc.FB
 		};
 
 		FilterBarBase.prototype._observeChanges = function(oChanges) {
