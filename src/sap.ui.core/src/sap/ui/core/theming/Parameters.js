@@ -620,7 +620,7 @@ sap.ui.define([
 			 */
 			if (arguments.length === 0) {
 				Log.warning(
-					"Legacy variant usage of sap.ui.core.theming.Parameters.get API detected. Do not use the Parameters.get() API to retrieve ALL theming parameters, " +
+					"[FUTURE FATAL] Legacy variant usage of sap.ui.core.theming.Parameters.get API detected. Do not use the Parameters.get() API to retrieve ALL theming parameters, " +
 					"as this will lead to unwanted synchronous requests. " +
 					"Use the asynchronous API variant instead and retrieve a fixed set of parameters.",
 					"LegacyParametersGet",
@@ -665,7 +665,7 @@ sap.ui.define([
 				}
 
 				Log.warning(
-					"Legacy variant usage of sap.ui.core.theming.Parameters.get API detected for parameter(s): '" + aNames.join(", ") +
+					"[FUTURE FATAL] Legacy variant usage of sap.ui.core.theming.Parameters.get API detected for parameter(s): '" + aNames.join(", ") +
 					"'. This could lead to bad performance and additional synchronous XHRs, as parameters might not be available yet. Use asynchronous variant instead.",
 					"LegacyParametersGet",
 					"sap.ui.support",
