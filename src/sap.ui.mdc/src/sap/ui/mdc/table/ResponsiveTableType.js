@@ -178,17 +178,22 @@ sap.ui.define([
 	ResponsiveTableType.prototype.getTableSettings = function() {
 		const oTable = this.getTable();
 
-		return Object.assign({}, TableTypeBase.prototype.getTableSettings.apply(this, arguments), {
+		const mSettings = {
 			autoPopinMode: true,
 			contextualWidth: "Auto",
 			growing: true,
 			sticky: ["ColumnHeaders", "HeaderToolbar", "InfoToolbar"],
-			itemPress: [this._onItemPress, this],
 			growingThreshold: this.getThreshold(),
 			noData: oTable._getNoDataText(),
 			headerToolbar: oTable._oToolbar,
 			ariaLabelledBy: [oTable._oTitle]
-		});
+		};
+
+		if (oTable.hasListeners("rowPress")) {
+			mSettings.itemPress = [this._onItemPress, this];
+		}
+
+		return  Object.assign({}, TableTypeBase.prototype.getTableSettings.apply(this, arguments), mSettings);
 	};
 
 	ResponsiveTableType.prototype._onItemPress = function(oEvent) {
@@ -204,6 +209,18 @@ sap.ui.define([
 
 	ResponsiveTableType.prototype.createRowTemplate = function(sId) {
 		return new InnerRow(sId, this.getRowSettingsConfig());
+	};
+
+	ResponsiveTableType.prototype.prepareRowPress = function() {
+		if (this._attachItemPress()) {
+			this.updateRowActions();
+		}
+	};
+
+	ResponsiveTableType.prototype.cleanupRowPress = function() {
+		if (this._detachItemPress()) {
+			this.updateRowActions();
+		}
 	};
 
 	ResponsiveTableType.prototype.updateRowSettings = function() {
@@ -232,6 +249,11 @@ sap.ui.define([
 		if (!oTable.getRowSettings()) {
 			oTable._oRowTemplate.setType(sType);
 			return;
+		}
+
+		if (sType === "Inactive") {
+			// Cleans up itemPress event, if it was attached previously
+			this._detachItemPress();
 		}
 
 		let vRowType, bVisibleBound, fnVisibleFormatter;
@@ -263,24 +285,26 @@ sap.ui.define([
 			// Check if visible property is bound
 			bVisibleBound = _oRowActionItem.isBound("visible");
 			// Based on whether visible property is bound, either get binding info or the actual property
-			vRowType = bVisibleBound ? _oRowActionItem.getBindingInfo("visible") : _oRowActionItem.getVisible();
+			vRowType = bVisibleBound ? Object.assign({}, _oRowActionItem.getBindingInfo("visible")) : _oRowActionItem.getVisible();
 			fnVisibleFormatter = vRowType.formatter;
 		}
 
 		if (bVisibleBound) {
-			vRowType.formatter = function(sValue) {
+			vRowType.formatter = (sValue) => {
 				const vVisible = fnVisibleFormatter ? fnVisibleFormatter(sValue) : sValue;
-				return vVisible === true ? RowActionType.Navigation : sType;
+				const vRowType =  vVisible === true ? RowActionType.Navigation : sType;
+				if (vRowType === RowActionType.Navigation) {
+					this._attachItemPress();
+				}
+				return vRowType;
 			};
-		} else {
-			vRowType = vRowType ? RowActionType.Navigation : sType;
-		}
-
-		// Depending on whether the property is bound, either bind or set
-		if (bVisibleBound) {
 			oTable._oRowTemplate.bindProperty("type", vRowType);
 		} else {
+			vRowType = vRowType ? RowActionType.Navigation : sType;
 			oTable._oRowTemplate.setProperty("type", vRowType);
+			if (vRowType === RowActionType.Navigation) {
+				this._attachItemPress();
+			}
 		}
 	};
 
@@ -349,6 +373,37 @@ sap.ui.define([
 		} else {
 			return oColumnResizer.getColumnResizeButton(oColumn.getInnerColumn());
 		}
+	};
+
+	/**
+	 * Tries to attach the itemPress event to the inner table. If a listener is already attached, this function does nothing.
+	 *
+	 * @returns whether event was attached or not
+	 * @private
+	 */
+	ResponsiveTableType.prototype._attachItemPress = function() {
+		const oResponsiveTable = this.getInnerTable();
+		if (oResponsiveTable && !oResponsiveTable.hasListeners("itemPress")) {
+			oResponsiveTable.attachEvent("itemPress", this._onItemPress, this);
+			return true;
+		}
+		return false;
+	};
+
+	/**
+	 * Tries to detach the itemPress listener on the inner table. If there is no listener, this function does nothing.
+	 *
+	 * @returns whether event was detached or not
+	 * @private
+	 */
+	ResponsiveTableType.prototype._detachItemPress = function() {
+		const oTable = this.getTable();
+		const oResponsiveTable = this.getInnerTable();
+		if (!oTable.hasListeners("rowPress") && oResponsiveTable) {
+			oResponsiveTable.detachEvent("itemPress", this._onItemPress, this);
+			return true;
+		}
+		return false;
 	};
 
 	/**
