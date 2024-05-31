@@ -512,7 +512,7 @@
 		"tags": [
 			"map",
 			"pin",
-			"loaction",
+			"location",
 			"place",
 			"area"
 		]
@@ -3095,7 +3095,7 @@
 		"tags": [
 			"globe",
 			"world",
-			"goegraphical",
+			"geographical",
 			"earth",
 			"planet",
 			"share",
@@ -3601,7 +3601,7 @@
 			"checklist"
 		]
 	},
-	"clinical-tast-tracker": {
+	"clinical-task-tracker": {
 		"tags": [
 			"clinical",
 			"task",
@@ -6768,6 +6768,197 @@
 			"solid",
 			"fill",
 			"filled"
+		]
+	},
+	"biometric-face": {
+		"tags": [
+			"face",
+			"faceid",
+			"viewfinder",
+			"id",
+			"recognition"
+		]
+	},
+	"biometric-thumb": {
+		"tags": [
+			"fingerprint",
+			"finger",
+			"thumb",
+			"id",
+			"recognition"
+		]
+	},
+	"dark-mode": {
+		"tags": [
+			"dark",
+			"moon",
+			"night",
+			"mode"
+		]
+	},
+	"light-mode": {
+		"tags": [
+			"light",
+			"sun",
+			"sunny",
+			"mode",
+			"day"
+		]
+	},
+	"people-connected": {
+		"tags": [
+			"people",
+			"connection",
+			"connected",
+			"collaboration",
+			"task-center",
+			"team",
+			"collaborate",
+			"work"
+		]
+	},
+	"select-appointments": {
+		"tags": [
+			"date picker",
+			"calendar",
+			"month",
+			"week",
+			"day",
+			"appointment",
+			"check",
+			"select",
+			"choose"
+		]
+	},
+	"accessibility": {
+		"tags": [
+			"user",
+			"person",
+			"accessible",
+			"accessibility",
+			"inclusive",
+			"inclusion",
+			"people"
+		]
+	},
+	"add-calendar": {
+		"tags": [
+			"appointment",
+			"vacation",
+			"leave",
+			"request",
+			"add",
+			"plus",
+			"calendar"
+		]
+	},
+	"bell-2": {
+		"tags": [
+			"bell",
+			"alarm",
+			"notify",
+			"alerts",
+			"full",
+			"filled"
+		]
+	},
+	"currency": {
+		"tags": [
+			"money",
+			"bills",
+			"currency",
+			"payment",
+			"cash"
+		]
+	},
+	"high-priority": {
+		"tags": [
+			"warning",
+			"critical",
+			"message",
+			"alert",
+			"status",
+			"!",
+			"notification",
+			"exclamation"
+		]
+	},
+	"time-off": {
+		"tags": [
+			"holiday",
+			"vacation",
+			"leave",
+			"request",
+			"out-of-office",
+			"out",
+			"appointment",
+			"calendar"
+		]
+	},
+	"da": {
+		"tags": [
+			"artificial intelligence",
+			"voice recognition",
+			"npl",
+			"NPL",
+			"assistant",
+			"chatbot",
+			"machine learning",
+			"ai",
+			"digital",
+			"assistance",
+			"virtual",
+			"intelligence",
+			"conversational ai",
+			"contextual understanding",
+			"artificial",
+			"machine"
+		]
+	},
+	"da-2": {
+		"tags": [
+			"artificial intelligence",
+			"voice recognition",
+			"npl",
+			"NPL",
+			"assistant",
+			"chatbot",
+			"machine learning",
+			"ai",
+			"digital",
+			"assistance",
+			"virtual",
+			"intelligence",
+			"conversational ai",
+			"contextual understanding",
+			"artificial",
+			"machine",
+			"filled",
+			"full"
+		]
+	},
+	"ai": {
+		"tags": [
+			"artificial intelligence",
+			"star",
+			"information",
+			"sparkle",
+			"magic",
+			"generate",
+			"automate",
+			"automation",
+			"generic",
+			"situation",
+			"machine learning",
+			"ai",
+			"digital",
+			"assistance",
+			"virtual",
+			"intelligence",
+			"contextual understanding",
+			"artificial",
+			"robot",
+			"machine"
 		]
 	}
 }

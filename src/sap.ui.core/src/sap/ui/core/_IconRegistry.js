@@ -334,6 +334,7 @@ sap.ui.define([
 				'commission-check': 0x1e116,
 				'collections-insight': 0x1e117,
 				'clinical-tast-tracker': 0xe118,
+				'clinical-task-tracker': 0xe118,
 				'citizen-connect': 0xe119,
 				'cart-approval': 0x1e11a,
 				'capital-projects': 0x1e11b,
@@ -729,12 +730,27 @@ sap.ui.define([
 				'non-binary': 0xe29d,
 				'female': 0xe29e,
 				'male': 0x1e29f,
+				'bell-2': 0xe2a0,
+				'accessibility': 0xe2a1,
+				'high-priority': 0xe2a2,
+				'da': 0xe2a3,
+				'da-2': 0xe2a4,
+				'ai': 0xe2a5,
 				'gender-male-and-female': 0x1e300,
 				'rotate': 0xe301,
 				'locate-me-2': 0xe302,
 				'map-fill': 0xe303,
 				'cloud-check': 0x1e304,
-				'enablement': 0x1e305
+				'enablement': 0x1e305,
+				'biometric-thumb': 0xe306,
+				'biometric-face': 0xe307,
+				'people-connected': 0xe308,
+				'light-mode': 0xe309,
+				'dark-mode': 0xe30a,
+				'select-appointments': 0xe30b,
+				'time-off': 0xe30c,
+				'add-calendar': 0xe30d,
+				'currency': 0xe30e
 			}
 		};
 

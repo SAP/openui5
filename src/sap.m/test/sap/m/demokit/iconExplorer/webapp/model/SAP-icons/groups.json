@@ -130,7 +130,11 @@
 				{ "name" : "non-binary" },
 				{ "name" : "female" },
 				{ "name" : "gender-male-and-female" },
-				{ "name" : "male" }
+				{ "name" : "male" },
+				{ "name" : "biometric-face" },
+				{ "name" : "biometric-thumb" },
+				{ "name" : "people-connected" },
+				{ "name" : "accessibility" }
 			]
 		},
 		{
@@ -207,7 +211,7 @@
 				{ "name" : "mri-scan" },
 				{ "name" : "physical-activity" },
 				{ "name" : "nutrition-activity" },
-				{ "name" : "clinical-tast-tracker" },
+				{ "name" : "clinical-task-tracker" },
 				{ "name" : "temperature" }
 			]
 		},
@@ -242,7 +246,8 @@
 				{ "name" : "lead" },
 				{ "name" : "batch-payments" },
 				{ "name" : "wallet" },
-				{ "name" : "receipt" }
+				{ "name" : "receipt" },
+				{ "name" : "currency" }
 			]
 		},
 		{
@@ -743,7 +748,8 @@
 				{ "name" : "pixelate" },
 				{ "name" : "validate" },
 				{ "name" : "keyboard-and-mouse" },
-				{ "name" : "touch" }
+				{ "name" : "touch" },
+				{ "name" : "ai" }
 			]
 		},
 		{
@@ -872,7 +878,8 @@
 				{ "name" : "appear-offline" },
 				{ "name" : "validate" },
 				{ "name" : "information" },
-				{ "name" : "in-progress" }
+				{ "name" : "in-progress" },
+				{ "name" : "high-priority" }
 			]
 		},
 		{
@@ -882,7 +889,7 @@
 				{ "name" : "task" },
 				{ "name" : "workflow-tasks" },
 				{ "name" : "crm-service-manager" },
-				{ "name" : "clinical-tast-tracker" },
+				{ "name" : "clinical-task-tracker" },
 				{ "name" : "activity-individual" },
 				{ "name" : "activity-2" },
 				{ "name" : "add-activity-2" },
@@ -905,7 +912,10 @@
 				{ "name" : "date-time" },
 				{ "name" : "check-availability" },
 				{ "name" : "accelerated" },
-				{ "name" : "workflow-tasks" }
+				{ "name" : "workflow-tasks" },
+				{ "name" : "select-appointments" },
+				{ "name" : "add-calendar" },
+				{ "name" : "time-off" }
 			]
 		},
 		{
@@ -1036,7 +1046,7 @@
 				{ "name" : "offsite-work" },
 				{ "name" : "energy-saving-lightbulb" },
 				{ "name" : "palette" },
-				{ "name" : "soccor" },
+				{ "name" : "soccer" },
 				{ "name" : "goalseek" },
 				{ "name" : "sap-ui5" },
 				{ "name" : "study-leave" },
@@ -1196,7 +1206,10 @@
 				{ "name" : "qr-code" },
 				{ "name" : "cloud-check" },
 				{ "name" : "enablement" },
-				{ "name" : "map-fill" }
+				{ "name" : "map-fill" },
+				{ "name" : "bell-2" },
+				{ "name" : "da" },
+				{ "name" : "da-2" }
 			]
 		},
 		{
