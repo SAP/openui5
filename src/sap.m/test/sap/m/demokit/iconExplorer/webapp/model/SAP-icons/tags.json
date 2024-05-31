@@ -512,7 +512,7 @@
 		"tags": [
 			"map",
 			"pin",
-			"loaction",
+			"location",
 			"place",
 			"area"
 		]
@@ -3095,7 +3095,7 @@
 		"tags": [
 			"globe",
 			"world",
-			"goegraphical",
+			"geographical",
 			"earth",
 			"planet",
 			"share",
@@ -3601,7 +3601,7 @@
 			"checklist"
 		]
 	},
-	"clinical-tast-tracker": {
+	"clinical-task-tracker": {
 		"tags": [
 			"clinical",
 			"task",
@@ -6542,6 +6542,423 @@
 			"status",
 			"editable false",
 			"crossed-out"
+		]
+	},
+	"bookmark-2": {
+		"tags": [
+			"bookmark",
+			"later",
+			"marker",
+			"save",
+			"remove selection",
+			"choose me",
+			"not selected",
+			"unfilled"
+		]
+	},
+	"detail-less": {
+		"tags": [
+			"detail",
+			"hide detail",
+			"popin",
+			"table",
+			"less",
+			"information",
+			"data",
+			"hide",
+			"reduce"
+		]
+	},
+	"detail-more": {
+		"tags": [
+			"detail",
+			"show detail",
+			"popin",
+			"table",
+			"more",
+			"information",
+			"data",
+			"show",
+			"extend",
+			"grow"
+		]
+	},
+	"flag-2": {
+		"tags": [
+			"unflag",
+			"flag",
+			"unmark",
+			"mark",
+			"remove marker",
+			"important",
+			"remove selection",
+			"choose me",
+			"not selected",
+			"unfilled"
+		]
+	},
+	"folder-2": {
+		"tags": [
+			"folder",
+			"full",
+			"content",
+			"detail",
+			"choose",
+			"selected",
+			"filled"
+		]
+	},
+	"heart": {
+		"tags": [
+			"heart",
+			"full",
+			"love",
+			"feeling",
+			"emotion",
+			"care",
+			"favorite",
+			"choose",
+			"selected",
+			"filled",
+			"content"
+		]
+	},
+	"heart-2": {
+		"tags": [
+			"heart",
+			"empty",
+			"unfulfilled",
+			"love",
+			"unloved",
+			"not loved",
+			"feeling",
+			"emotion",
+			"care",
+			"unfavorite",
+			"choose me",
+			"not selected",
+			"unfilled"
+		]
+	},
+	"paint-bucket": {
+		"tags": [
+			"filled",
+			"color",
+			"colour",
+			"bucket",
+			"spill",
+			"drop",
+			"fill"
+		]
+	},
+	"tri-state": {
+		"tags": [
+			"third",
+			"state",
+			"parial",
+			"selected",
+			"square",
+			"box",
+			"table",
+			"tree",
+			"list",
+			"selection",
+			"tri",
+			"tri-state"
+		]
+	},
+	"non-binary": {
+		"tags": [
+			"non-binary",
+			"shapes",
+			"symbol",
+			"gender"
+		]
+	},
+	"direction-arrows": {
+		"tags": [
+			"arrow",
+			"slider",
+			"direction",
+			"left",
+			"right"
+		]
+	},
+	"female": {
+		"tags": [
+			"female",
+			"woman",
+			"girl",
+			"shapes",
+			"symbol",
+			"gender"
+		]
+	},
+	"gender-male-and-female": {
+		"tags": [
+			"male",
+			"man",
+			"boy",
+			"female",
+			"woman",
+			"girl",
+			"shapes",
+			"symbol",
+			"gender"
+		]
+	},
+	"male": {
+		"tags": [
+			"male",
+			"man",
+			"boy",
+			"shapes",
+			"symbol",
+			"gender"
+		]
+	},
+	"rotate": {
+		"tags": [
+			"arrow",
+			"square",
+			"object",
+			"rotate",
+			"around",
+			"direction"
+		]
+	},
+	"cloud-check": {
+		"tags": [
+			"cloud",
+			"check",
+			"data"
+		]
+	},
+	"enablement": {
+		"tags": [
+			"people",
+			"person",
+			"setting",
+			"chart",
+			"enable",
+			"tool",
+			"wrench",
+			"widgets"
+		]
+	},
+	"locate-me-2": {
+		"tags": [
+			"arrow",
+			"locate",
+			"me",
+			"map",
+			"location",
+			"pointer",
+			"navigation",
+			"filled"
+		]
+	},
+	"map-fill": {
+		"tags": [
+			"map",
+			"pin",
+			"location",
+			"place",
+			"area",
+			"solid",
+			"fill",
+			"filled"
+		]
+	},
+	"biometric-face": {
+		"tags": [
+			"face",
+			"faceid",
+			"viewfinder",
+			"id",
+			"recognition"
+		]
+	},
+	"biometric-thumb": {
+		"tags": [
+			"fingerprint",
+			"finger",
+			"thumb",
+			"id",
+			"recognition"
+		]
+	},
+	"dark-mode": {
+		"tags": [
+			"dark",
+			"moon",
+			"night",
+			"mode"
+		]
+	},
+	"light-mode": {
+		"tags": [
+			"light",
+			"sun",
+			"sunny",
+			"mode",
+			"day"
+		]
+	},
+	"people-connected": {
+		"tags": [
+			"people",
+			"connection",
+			"connected",
+			"collaboration",
+			"task-center",
+			"team",
+			"collaborate",
+			"work"
+		]
+	},
+	"select-appointments": {
+		"tags": [
+			"date picker",
+			"calendar",
+			"month",
+			"week",
+			"day",
+			"appointment",
+			"check",
+			"select",
+			"choose"
+		]
+	},
+	"accessibility": {
+		"tags": [
+			"user",
+			"person",
+			"accessible",
+			"accessibility",
+			"inclusive",
+			"inclusion",
+			"people"
+		]
+	},
+	"add-calendar": {
+		"tags": [
+			"appointment",
+			"vacation",
+			"leave",
+			"request",
+			"add",
+			"plus",
+			"calendar"
+		]
+	},
+	"bell-2": {
+		"tags": [
+			"bell",
+			"alarm",
+			"notify",
+			"alerts",
+			"full",
+			"filled"
+		]
+	},
+	"currency": {
+		"tags": [
+			"money",
+			"bills",
+			"currency",
+			"payment",
+			"cash"
+		]
+	},
+	"high-priority": {
+		"tags": [
+			"warning",
+			"critical",
+			"message",
+			"alert",
+			"status",
+			"!",
+			"notification",
+			"exclamation"
+		]
+	},
+	"time-off": {
+		"tags": [
+			"holiday",
+			"vacation",
+			"leave",
+			"request",
+			"out-of-office",
+			"out",
+			"appointment",
+			"calendar"
+		]
+	},
+	"da": {
+		"tags": [
+			"artificial intelligence",
+			"voice recognition",
+			"npl",
+			"NPL",
+			"assistant",
+			"chatbot",
+			"machine learning",
+			"ai",
+			"digital",
+			"assistance",
+			"virtual",
+			"intelligence",
+			"conversational ai",
+			"contextual understanding",
+			"artificial",
+			"machine"
+		]
+	},
+	"da-2": {
+		"tags": [
+			"artificial intelligence",
+			"voice recognition",
+			"npl",
+			"NPL",
+			"assistant",
+			"chatbot",
+			"machine learning",
+			"ai",
+			"digital",
+			"assistance",
+			"virtual",
+			"intelligence",
+			"conversational ai",
+			"contextual understanding",
+			"artificial",
+			"machine",
+			"filled",
+			"full"
+		]
+	},
+	"ai": {
+		"tags": [
+			"artificial intelligence",
+			"star",
+			"information",
+			"sparkle",
+			"magic",
+			"generate",
+			"automate",
+			"automation",
+			"generic",
+			"situation",
+			"machine learning",
+			"ai",
+			"digital",
+			"assistance",
+			"virtual",
+			"intelligence",
+			"contextual understanding",
+			"artificial",
+			"robot",
+			"machine"
 		]
 	}
 }
