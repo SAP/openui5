@@ -457,6 +457,23 @@ sap.ui.define([
 		oInnerBindRows.restore();
 	});
 
+	QUnit.test("BindRows - Named model", function(assert) {
+		const oInnerBindRows = this.spy(AnalyticalTable.prototype, "_bindRows");
+		const oTable = new AnalyticalTable({
+			rows: {path: "myNamedModel>/ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',P_CostCenterTo='999-9999')/Results"},
+			models: {
+				myNamedModel: new ODataModelV2(sServiceURI)
+			},
+			columns: [new AnalyticalColumn()]
+		});
+
+		// DINC0118223: Binding the table to a named model should not throw an error.
+		assert.ok(oInnerBindRows.calledOnce, "bindRows was called");
+		assert.ok(!!oTable.getBindingInfo("rows"), "BindingInfo available");
+
+		oInnerBindRows.restore();
+	});
+
 	QUnit.test("BindRows - Update columns", function(assert) {
 		var oBindingInfo = {path: "/ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',P_CostCenterTo='999-9999')/Results"};
 		var done = assert.async();
