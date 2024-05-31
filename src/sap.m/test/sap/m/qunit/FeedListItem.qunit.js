@@ -336,6 +336,10 @@ sap.ui.define([
 		assert.ok(oFeedList.getItems()[4].oAvatar.$().hasClass("sapFAvatarS"), "Avatar has class sapAvatarS applied");
 		assert.equal(oFeedList.getItems()[4].oAvatar.$().css("font-size"), "32px", "Avatar icon font size is 2 rem");
 	});
+	QUnit.test("Default feedListItem div size", function (assert) {
+		assert.ok(oFeedList.getItems()[4].oParent.$().hasClass("sapMList"), "FeedListItem has class sapMList applied");
+		assert.equal(oFeedList.getItems()[4].oParent.$().css("font-size"), "16px", "FeedListItem font size is 1 rem");
+	});
 	/**
 	 * @deprecated Since version 1.120
 	 */
