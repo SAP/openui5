@@ -13,5 +13,15 @@
         "text": " MDCTable: Reset via p13n/settings dialog"
       }
     ]
+  },
+  "1.124.1": {
+    "date": "June 2024",
+    "notes": [
+      {
+        "id": "dab9fd68364b949ecbba26bfa384a449f9efd61d",
+        "type": "FIX",
+        "text": " UploadSetwithTable: Set correct path definition for sap.m.Link"
+      }
+    ]
   }
 }

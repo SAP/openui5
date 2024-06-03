@@ -13,5 +13,15 @@
         "text": " Integration cards: Fixed pagination with microcharts"
       }
     ]
+  },
+  "1.124.1": {
+    "date": "June 2024",
+    "notes": [
+      {
+        "id": "3a24f171d3ed14814588985a5f9b49924a0a68e8",
+        "type": "FIX",
+        "text": " Integration Card: dataTimestamp added to ariaLabbeledby"
+      }
+    ]
   }
 }

@@ -28,5 +28,25 @@
         "text": " sap.ui.model.odata.type.Unit/Currency#formatValue: document precedence of maxFractionDigits,scale and decimal places"
       }
     ]
+  },
+  "1.124.1": {
+    "date": "June 2024",
+    "notes": [
+      {
+        "id": "43fb6faa1ca10c8e6cdfdfc965bb9e26717ffa61",
+        "type": "FIX",
+        "text": " core/UIComponent: Fix access to routing config"
+      },
+      {
+        "id": "5f9c0c49b91dd25b03837f99a733af031e75fbb9",
+        "type": "FIX",
+        "text": " sap.ui.model.type.(Currency|Unit): use amount scale default 0 instead of currency's or unit's decimal places"
+      },
+      {
+        "id": "d0fbb75fb61d9ec8cc09359d7459b493357987ee",
+        "type": "FIX",
+        "text": " Add sap-system to OData V4 service URLs"
+      }
+    ]
   }
 }

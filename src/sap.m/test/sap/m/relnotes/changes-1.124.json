@@ -133,5 +133,20 @@
         "text": " sap.m.DynamicDateRange: fix popup rendering"
       }
     ]
+  },
+  "1.124.1": {
+    "date": "June 2024",
+    "notes": [
+      {
+        "id": "a2e73f32a270298ec36c780f2698ca5ef5eb5058",
+        "type": "FIX",
+        "text": " sap.m.Input: Value is not cleared on invalidation when type password is used"
+      },
+      {
+        "id": "1fee8c43b3e97d1ff555aef12d60d0110abb95a0",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: The cellPress event is fired correctly"
+      }
+    ]
   }
 }
