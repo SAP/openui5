@@ -1260,10 +1260,10 @@ sap.ui.define([
 			 * @returns {boolean}
 			 *   Whether the filter must be applied after aggregating
 			 */
-			function isAfter(oFilter) {
-				return oFilter.aFilters
-					? oFilter.aFilters.some(isAfter)
-					: oFilter.sPath in oAggregation.aggregate;
+			function isAfter(oFilter0) {
+				return oFilter0.aFilters
+					? oFilter0.aFilters.some(isAfter)
+					: oFilter0.sPath in oAggregation.aggregate;
 			}
 
 			/*
@@ -1273,12 +1273,12 @@ sap.ui.define([
 			 * @param {sap.ui.model.Filter} oFilter
 			 *   A filter
 			 */
-			function split(oFilter) {
-				if (oFilter.aFilters && oFilter.bAnd) {
-					oFilter.aFilters.forEach(split);
+			function split(oFilter0) {
+				if (oFilter0.aFilters && oFilter0.bAnd) {
+					oFilter0.aFilters.forEach(split);
 				} else {
-					(isAfter(oFilter) ? aFiltersAfterAggregate : aFiltersBeforeAggregate)
-						.push(oFilter);
+					(isAfter(oFilter0) ? aFiltersAfterAggregate : aFiltersBeforeAggregate)
+						.push(oFilter0);
 				}
 			}
 

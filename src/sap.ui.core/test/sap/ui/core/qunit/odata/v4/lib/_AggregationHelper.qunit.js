@@ -2587,8 +2587,8 @@ sap.ui.define([
 			.returns(SyncPromise.resolve("~$metadata~"));
 		this.mock(_Helper).expects("selectKeyProperties")
 			.withExactArgs(sinon.match.object, "~$metadata~")
-			.callsFake(function (mQueryOptions) {
-				mQueryOptions.$select.push("~key~");
+			.callsFake(function (mQueryOptions0) {
+				mQueryOptions0.$select.push("~key~");
 			});
 
 		// code under test

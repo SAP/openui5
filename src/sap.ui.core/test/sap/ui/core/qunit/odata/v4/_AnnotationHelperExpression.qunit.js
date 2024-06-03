@@ -72,7 +72,7 @@ sap.ui.define([
 		oFixture.values.forEach(function (vConstantValue) {
 			var oValue = {};
 
-			function testIt(oRawValue, sProperty, vConstantValue) {
+			function testIt(oRawValue, sProperty, vConstantValue0) {
 				QUnit.test("14.4.x Constant Expression: " + JSON.stringify(oRawValue),
 					function (assert) {
 						var oBasics = this.mock(Basics),
@@ -93,14 +93,14 @@ sap.ui.define([
 								.withExactArgs({
 										model : sinon.match.same(oModel),
 										path : "/my/path/" + sProperty,
-										value : vConstantValue
+										value : vConstantValue0
 									}, oFixture.expectType);
 						}
 
 						oExpectedResult = {
 							result : "constant",
 							type : oFixture.type,
-							value : vConstantValue
+							value : vConstantValue0
 						};
 
 						// code under test

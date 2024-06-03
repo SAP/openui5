@@ -63,6 +63,7 @@
 				"no-multi-spaces": "error",
 				"no-new": "error", // override "warn"
 				"no-redeclare": "error", // override "warn"
+				"no-shadow": "error",
 				"no-tabs": ["error", {"allowIndentationTabs": true}],
 				"no-unneeded-ternary": ["error", {"defaultAssignment": false}],
 				"no-unused-expressions": "error", // override "warn"

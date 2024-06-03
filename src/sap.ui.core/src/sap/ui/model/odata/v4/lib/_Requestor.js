@@ -464,8 +464,8 @@ sap.ui.define([
 			return iChangeSetNo !== i && aChangeSet.some(isUsingStrictHandling);
 		}
 
-		function isUsingStrictHandling(oRequest) {
-			return oRequest.headers.Prefer === "handling=strict";
+		function isUsingStrictHandling(oRequest0) {
+			return oRequest0.headers.Prefer === "handling=strict";
 		}
 
 		// do not look past aRequests.iChangeSet because these cannot be change sets
@@ -984,7 +984,6 @@ sap.ui.define([
 		var aArguments = [],
 			sName,
 			mName2Parameter = {}, // maps valid names to parameter metadata
-			oParameter,
 			that = this;
 
 		sPath = sPath.slice(1, -5);
@@ -995,7 +994,7 @@ sap.ui.define([
 		}
 		if (oOperationMetadata.$kind === "Function") {
 			for (sName in mParameters) {
-				oParameter = mName2Parameter[sName];
+				const oParameter = mName2Parameter[sName];
 				if (oParameter) {
 					if (oParameter.$isCollection) {
 						throw new Error("Unsupported collection-valued parameter: " + sName);
@@ -1332,22 +1331,21 @@ sap.ui.define([
 		 * Visits the given request/response pairs, rejecting or resolving the corresponding
 		 * promises accordingly.
 		 *
-		 * @param {object[]} aRequests
+		 * @param {object[]} aRequests0
 		 * @param {object[]} aResponses
 		 */
-		function visit(aRequests, aResponses) {
+		function visit(aRequests0, aResponses) {
 			var oCause;
 
-			aRequests.forEach(function (vRequest, index) {
-				var oError,
-					sETag,
+			aRequests0.forEach(function (vRequest, index) {
+				var sETag,
 					oResponse,
 					vResponse = aResponses[index];
 
 				if (Array.isArray(vResponse)) {
 					visit(vRequest, vResponse);
 				} else if (!vResponse) {
-					oError = new Error(
+					const oError = new Error(
 						"HTTP request was not processed because the previous request failed");
 					oError.cause = oCause;
 					oError.$reported = true; // do not create a message for this error

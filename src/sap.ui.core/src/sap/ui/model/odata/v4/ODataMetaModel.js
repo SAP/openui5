@@ -583,8 +583,8 @@ sap.ui.define([
 			if (oPromise.isFulfilled()) {
 				aContexts = oPromise.getResult();
 			} else {
-				oPromise.then(function (aContexts) {
-					that.setContexts(aContexts);
+				oPromise.then(function (aContexts0) {
+					that.setContexts(aContexts0);
 					that._fireChange({reason : ChangeReason.Change});
 				});
 				aContexts.dataRequested = true;
@@ -1121,12 +1121,12 @@ sap.ui.define([
 			 *
 			 * @param {string} sSegment
 			 *   Contains the name of the computed annotation as "@@..."
-			 * @param {string} sPath
+			 * @param {string} sPath0
 			 *   Path where the segment was found
 			 * @returns {boolean}
 			 *   <code>true</code>
 			 */
-			function computedAnnotation(sSegment, sPath) {
+			function computedAnnotation(sSegment, sPath0) {
 				var fnAnnotation,
 					aArguments,
 					iLeftParenthesis,
@@ -1171,7 +1171,7 @@ sap.ui.define([
 					vResult = fnAnnotation(vResult, {
 						$$valueAsPromise : mParameters && mParameters.$$valueAsPromise,
 						arguments : aArguments,
-						context : new BaseContext(that, sPath),
+						context : new BaseContext(that, sPath0),
 						schemaChildName : sSchemaChildName,
 						// Note: length === 1 implies Array.isArray(oSchemaChild)
 						overload : oSchemaChild.length === 1 ? oSchemaChild[0] : undefined
@@ -3300,14 +3300,14 @@ sap.ui.define([
 							$model : oValueListModel
 						};
 					});
-				})).then(function (aResults) {
+				})).then(function (aResults0) {
 					// insert the returned mappings into oValueListInfo in the order of aMappingUrls
 					aMappingUrls.forEach(function (sMappingUrl, i) {
-						var mValueListMappingByQualifier = aResults[i].valueListMappingByQualifier;
+						var mValueListMappingByQualifier = aResults0[i].valueListMappingByQualifier;
 
 						Object.keys(mValueListMappingByQualifier).forEach(function (sQualifier) {
 							addMapping(mValueListMappingByQualifier[sQualifier], sQualifier,
-								sMappingUrl, aResults[i].$model);
+								sMappingUrl, aResults0[i].$model);
 						});
 					});
 				});

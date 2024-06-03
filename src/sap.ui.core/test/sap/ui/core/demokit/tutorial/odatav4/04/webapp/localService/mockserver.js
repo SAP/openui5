@@ -735,11 +735,11 @@ sap.ui.define([
 		aParts.forEach(function (sPart, iIndex) {
 			// Construct the batch response body out of the single batch request parts. The RegExp
 			// looks for a request body at the end of the string, framed by two line breaks.
-			var aMatches = sPart.match(/(GET|DELETE|PATCH|POST) (\S+)(?:.|\r?\n)+\r?\n(.*)\r?\n$/),
+			var aMatches0 = sPart.match(/(GET|DELETE|PATCH|POST) (\S+)(?:.|\r?\n)+\r?\n(.*)\r?\n$/),
 				aPartResponse = handleDirectRequest({
-					method : aMatches[1],
-					url : getBaseUrl(oXhr.url) + aMatches[2],
-					requestBody : aMatches[3]
+					method : aMatches0[1],
+					url : getBaseUrl(oXhr.url) + aMatches0[2],
+					requestBody : aMatches0[3]
 				});
 
 			sResponseBody += sPartBoundary + "\r\n"

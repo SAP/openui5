@@ -463,8 +463,8 @@ sap.ui.define([
 		 * @see .clone
 		 */
 		cloneNo$ : function cloneNo$(vValue) {
-			return _Helper.clone(vValue, function (sKey, vValue) {
-				return sKey[0] === "$" ? undefined : vValue;
+			return _Helper.clone(vValue, function (sKey, vValue0) {
+				return sKey[0] === "$" ? undefined : vValue0;
 			});
 		},
 
@@ -2339,9 +2339,9 @@ sap.ui.define([
 		 * @see sap.ui.model.odata.v4.lib._Helper.clone
 		 */
 		publicClone : function (vValue, bRemoveClientAnnotations, bAsString) {
-			return _Helper.clone(vValue, function (sKey, vValue) {
+			return _Helper.clone(vValue, function (sKey, vValue0) {
 				if (bRemoveClientAnnotations ? !sKey.startsWith("@$ui5.") : sKey !== "@$ui5._") {
-					return vValue;
+					return vValue0;
 				}
 				// return undefined;
 			}, bAsString);

@@ -1114,7 +1114,7 @@ sap.ui.define([
 		message : "Failure\n_Helper.createError@_Helper.js"
 	}].forEach(function (oFixture, i) {
 		QUnit.test("reportError, i:" + i, function () {
-			var sClassName = "sap.ui.model.odata.v4.ODataPropertyBinding",
+			var sClassName0 = "sap.ui.model.odata.v4.ODataPropertyBinding",
 				oError = new Error("Failure"),
 				oHelperMock = this.mock(_Helper),
 				sLogMessage = "Failed to read path /Product('1')/Unknown",
@@ -1126,7 +1126,7 @@ sap.ui.define([
 
 			oHelperMock.expects("extractMessages").withExactArgs(sinon.match.same(oError))
 				.returns("~extractedMessages~");
-			this.oLogMock.expects("error").withExactArgs(sLogMessage, oFixture.message, sClassName)
+			this.oLogMock.expects("error").withExactArgs(sLogMessage, oFixture.message, sClassName0)
 				.twice();
 			oModelMock.expects("reportStateMessages").never();
 			oModelMock.expects("reportTransitionMessages")
@@ -1134,8 +1134,8 @@ sap.ui.define([
 				.withExactArgs("~extractedMessages~", "resource/path");
 
 			// code under test
-			oModel.reportError(sLogMessage, sClassName, oError);
-			oModel.reportError(sLogMessage, sClassName, oError); // oError.$reported is now true
+			oModel.reportError(sLogMessage, sClassName0, oError);
+			oModel.reportError(sLogMessage, sClassName0, oError); // oError.$reported is now true
 		});
 	});
 

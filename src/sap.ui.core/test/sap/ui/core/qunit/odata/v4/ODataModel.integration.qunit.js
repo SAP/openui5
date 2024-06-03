@@ -233,17 +233,17 @@ sap.ui.define([
 		visitElements(aElements);
 
 		if (iExpandTo > 1) {
-			const aElements = oListBinding.oCache.oFirstLevel.aElements;
-			if (!aElements.$created && aElements.$count === aElements.length) {
-				aElements.forEach((oElement, i) => {
+			const aElements0 = oListBinding.oCache.oFirstLevel.aElements;
+			if (!aElements0.$created && aElements0.$count === aElements0.length) {
+				aElements0.forEach((oElement, i) => {
 					if (oElement["@$ui5.node.isExpanded"]) {
 						const iLevel = oElement["@$ui5.node.level"];
 						let iDescendants = 0;
-						for (let j = i + 1; j < aElements.length; j += 1) {
-							if (!aElements[j]) {
+						for (let j = i + 1; j < aElements0.length; j += 1) {
+							if (!aElements0[j]) {
 								return; // cannot count "descendants" for this oElement
 							}
-							if (iLevel >= aElements[j]["@$ui5.node.level"]) {
+							if (iLevel >= aElements0[j]["@$ui5.node.level"]) {
 								break; // end of "descendants"
 							}
 							iDescendants += 1;
@@ -553,9 +553,9 @@ sap.ui.define([
 			var sControlId, sRequest,
 				that = this;
 
-			function expectChanges(mValueByControl) {
-				for (sControlId in mValueByControl) {
-					that.expectChange(sControlId, mValueByControl[sControlId]);
+			function expectChanges(mValueByControl0) {
+				for (sControlId in mValueByControl0) {
+					that.expectChange(sControlId, mValueByControl0[sControlId]);
 				}
 			}
 
@@ -1750,8 +1750,8 @@ sap.ui.define([
 					}
 				}
 
-				function readableUrl(sUrl) {
-					return sUrl.replaceAll(/%([0-9a-fA-F]{2})/g,
+				function readableUrl(sUrl0) {
+					return sUrl0.replaceAll(/%([0-9a-fA-F]{2})/g,
 						(_s, n) => String.fromCharCode(Number.parseInt(n, 16)));
 				}
 
@@ -16407,10 +16407,9 @@ sap.ui.define([
 	QUnit.test("read all data w/o a control on top", function (assert) {
 		var aIDs = [],
 			aValues = [],
-			i,
 			that = this;
 
-		for (i = 0; i < 10000; i += 1) {
+		for (let i = 0; i < 10000; i += 1) {
 			aIDs[i] = "TEAM_" + i;
 			aValues[i] = {Team_Id : aIDs[i]};
 		}
@@ -20049,8 +20048,8 @@ sap.ui.define([
 			that = this;
 
 		function assertIDs(aExpectedIDs) {
-			assert.deepEqual(oBinding.getCurrentContexts().map(function (oContext) {
-				return oContext.getValue("SalesOrderID");
+			assert.deepEqual(oBinding.getCurrentContexts().map(function (oContext0) {
+				return oContext0.getValue("SalesOrderID");
 			}), aExpectedIDs);
 		}
 
@@ -29284,8 +29283,8 @@ sap.ui.define([
 	<Text id="name" text="{Name}"/>
 </Table>`;
 
-		function expectTable(sTitle, bExpanded) {
-			if (bExpanded) {
+		function expectTable(sTitle, bExpanded0) {
+			if (bExpanded0) {
 				checkTable(sTitle, assert, oTable, [
 					"/EMPLOYEES('0')",
 					"/EMPLOYEES('1')",
@@ -41126,7 +41125,6 @@ make root = ${bMakeRoot}`;
 				"42" : "9.99"
 			},
 			oObjectPage,
-			oRowContext,
 			sView = '\
 <Table id="table" items="{path : \'/Artists\', \
 		parameters : {$filter : \'IsActiveEntity\', $$patchWithoutSideEffects : true}}">\
@@ -41286,7 +41284,7 @@ make root = ${bMakeRoot}`;
 			expectPublicationRequest("42", true);
 
 			// first start with the list
-			oRowContext = that.oView.byId("table").getItems()[0].getBindingContext();
+			const oRowContext = that.oView.byId("table").getItems()[0].getBindingContext();
 			oRowContext.setKeepAlive(oFixture.keepAlive);
 			return bindObjectPage(oRowContext, oFixture.hiddenBinding);
 		}).then(function () {
@@ -41344,8 +41342,6 @@ make root = ${bMakeRoot}`;
 		}).then(function () {
 			return action("EditAction", "23");
 		}).then(function () {
-			var oRowContext;
-
 			that.expectChange("id", "42")
 				.expectChange("isActive", "Yes")
 				.expectChange("name",
@@ -41354,7 +41350,7 @@ make root = ${bMakeRoot}`;
 
 			// Now return to the artist from the list.
 			// There is no request; the caches are reused.
-			oRowContext = that.oView.byId("table").getItems()[0].getBindingContext();
+			const oRowContext = that.oView.byId("table").getItems()[0].getBindingContext();
 			return bindObjectPage(oRowContext, oFixture.hiddenBinding);
 		}).then(function () {
 			// clear the object page
@@ -52940,8 +52936,7 @@ make root = ${bMakeRoot}`;
 			that = this;
 
 		return this.createView(assert, "", oModel).then(function () {
-			var oModel = that.oModel,
-				oContextBinding = oModel.bindContext("Manager_to_Team"),
+			var oContextBinding = oModel.bindContext("Manager_to_Team"),
 				fnRespond;
 
 			oContextBinding.setContext(
@@ -54004,24 +53999,24 @@ make root = ${bMakeRoot}`;
 			return Promise.all([
 				oAction0Promise.then(function () {
 					assert.ok(bConfirm);
-				}, function (oError) {
+				}, function (oError0) {
 					assert.notOk(bConfirm);
-					assert.strictEqual(oError.message, "Action canceled due to strict handling");
-					assert.strictEqual(oError.canceled, true);
+					assert.strictEqual(oError0.message, "Action canceled due to strict handling");
+					assert.strictEqual(oError0.canceled, true);
 				}),
 				oAction1Promise.then(function () {
 					assert.ok(bConfirm);
-				}, function (oError) {
+				}, function (oError0) {
 					assert.notOk(bConfirm);
-					assert.strictEqual(oError.message, "Action canceled due to strict handling");
-					assert.strictEqual(oError.canceled, true);
+					assert.strictEqual(oError0.message, "Action canceled due to strict handling");
+					assert.strictEqual(oError0.canceled, true);
 				}),
 				oAction2Promise.then(function () {
 					assert.ok(bConfirm);
-				}, function (oError) {
+				}, function (oError0) {
 					assert.notOk(bConfirm);
-					assert.strictEqual(oError.message, "Action canceled due to strict handling");
-					assert.strictEqual(oError.canceled, true);
+					assert.strictEqual(oError0.message, "Action canceled due to strict handling");
+					assert.strictEqual(oError0.canceled, true);
 				}),
 				that.waitForChanges(assert)
 			]);

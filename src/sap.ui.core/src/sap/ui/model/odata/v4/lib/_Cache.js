@@ -132,7 +132,6 @@ sap.ui.define([
 				oEntity = sDeleteProperty
 					? vCacheData[sDeleteProperty] || vCacheData.$byPredicate[sDeleteProperty]
 					: vCacheData, // deleting at root level
-				oError,
 				sGroupId,
 				aMessages,
 				mHeaders,
@@ -183,7 +182,7 @@ sap.ui.define([
 					vCacheData.$postBodyCollection.splice(iIndex, 1);
 					that.removeElement(iIndex, sTransientPredicate, vCacheData, sParentPath);
 					fnCallback(iIndex, -1);
-					oError = new Error("Deleted from deep create");
+					const oError = new Error("Deleted from deep create");
 					oError.canceled = true;
 					_Helper.getPrivateAnnotation(oEntity, "reject")(oError);
 					_Helper.cancelNestedCreates(oEntity, "Deleted from deep create");
@@ -1603,9 +1602,9 @@ sap.ui.define([
 					undefined, fnDataRequested));
 			}
 
-			return SyncPromise.all(aRequests).then(function (aResults) {
-				var aReadResult = aResults[0].value,
-					bRemoveFromCollection = aResults[1] && aResults[1]["@odata.count"] === "0";
+			return SyncPromise.all(aRequests).then(function (aResults0) {
+				var aReadResult = aResults0[0].value,
+					bRemoveFromCollection = aResults0[1] && aResults0[1]["@odata.count"] === "0";
 
 				if (aReadResult.length > 1) {
 					throw new Error(
@@ -2778,8 +2777,7 @@ sap.ui.define([
 	 * @private
 	 */
 	_CollectionCache.prototype.getExclusiveFilter = function () {
-		var oElement,
-			aKeyFilters = [],
+		var aKeyFilters = [],
 			mTypeForMetaPath,
 			i,
 			that = this;
@@ -2795,7 +2793,7 @@ sap.ui.define([
 		}
 
 		for (i = 0; i < this.aElements.$created; i += 1) {
-			oElement = this.aElements[i];
+			const oElement = this.aElements[i];
 			if (!oElement["@$ui5.context.isTransient"]) {
 				addKeyFilter(oElement);
 			}

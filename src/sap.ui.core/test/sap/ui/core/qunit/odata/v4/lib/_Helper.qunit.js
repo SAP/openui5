@@ -3448,8 +3448,9 @@ sap.ui.define([
 				mWrappedQueryOptions,
 				oMetaModelMock = this.mock(oMetaModel);
 
-			aMetaPathSegments.forEach(function (sSegment, j, aMetaPathSegments) {
-				var sPropertyMetaPath = "/EMPLOYEES/" + aMetaPathSegments.slice(0, j + 1).join("/"),
+			aMetaPathSegments.forEach(function (sSegment, j, aMetaPathSegments0) {
+				var sPropertyMetaPath = "/EMPLOYEES/"
+						+ aMetaPathSegments0.slice(0, j + 1).join("/"),
 					sKind = sSegment.split("_")[0];
 
 				if (sSegment.endsWith("*")) {

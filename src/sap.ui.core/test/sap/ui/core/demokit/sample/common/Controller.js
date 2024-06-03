@@ -140,8 +140,8 @@ sap.ui.define([
 				var aMessageContexts = oEvent.getSource().getCurrentContexts(),
 					oView = this.getView();
 
-				function isWorthy(aMessageContexts) {
-					return aMessageContexts.some(function (oContext) {
+				function isWorthy(aMessageContexts0) {
+					return aMessageContexts0.some(function (oContext) {
 						return oContext.getObject().technical === true;
 					});
 				}

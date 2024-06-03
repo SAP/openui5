@@ -605,7 +605,6 @@ sap.ui.define([
 				bCallerLoggedForWarnings = bDebug, // debug output already contains caller
 				sCurrentName = oViewInfo.name, // current view or fragment name
 				mFragmentCache = {},
-				sName,
 				iNestingLevel = 0,
 				oScope = {}, // for BindingParser.complexParser()
 				fnSupportInfo = oViewInfo._supportInfo,
@@ -1524,11 +1523,11 @@ sap.ui.define([
 				if (!oPromise) {
 					return oSyncPromiseResolved;
 				}
-				return oPromise.then(function (sFragmentName) {
+				return oPromise.then(function (sFragmentName0) {
 					var oOldScope = oScope;
 
 					oScope = Object.create(oScope);
-					return insertFragment(sFragmentName, oElement, oWithControl).then(function () {
+					return insertFragment(sFragmentName0, oElement, oWithControl).then(function () {
 						oScope = oOldScope;
 					});
 				}, function (ex) {
@@ -1641,9 +1640,9 @@ sap.ui.define([
 				// the actual loop
 				iNestingLevel++;
 				debug(oElement, "Starting");
-				return oPromise.then(function (aContexts) {
-					return stopAndGo(aContexts, function (oContext, i) {
-						var oSourceNode = (i === aContexts.length - 1)
+				return oPromise.then(function (aContexts0) {
+					return stopAndGo(aContexts0, function (oContext, i) {
+						var oSourceNode = (i === aContexts0.length - 1)
 								? oElement
 								: oElement.cloneNode(true);
 
@@ -1721,16 +1720,16 @@ sap.ui.define([
 					if (oViewInfo.sync && oPromise.isPending()) {
 						error("Async helper in sync view in ", oElement);
 					}
-					oPromise = oPromise.then(function (vHelperResult) {
-						if (vHelperResult instanceof Context) {
-							oModel = vHelperResult.getModel();
-							sResolvedPath = vHelperResult.getPath();
-						} else if (vHelperResult !== undefined) {
-							if (typeof vHelperResult !== "string" || vHelperResult === "") {
-								error("Illegal helper result '" + vHelperResult + "' in ",
+					oPromise = oPromise.then(function (vHelperResult0) {
+						if (vHelperResult0 instanceof Context) {
+							oModel = vHelperResult0.getModel();
+							sResolvedPath = vHelperResult0.getPath();
+						} else if (vHelperResult0 !== undefined) {
+							if (typeof vHelperResult0 !== "string" || vHelperResult0 === "") {
+								error("Illegal helper result '" + vHelperResult0 + "' in ",
 									oElement);
 							}
-							sResolvedPath = vHelperResult;
+							sResolvedPath = vHelperResult0;
 						}
 						oNewWithControl.setModel(oModel, sVar);
 						oNewWithControl.bindObject({
@@ -1968,7 +1967,7 @@ sap.ui.define([
 				if (mSettings.bindingContexts instanceof Context) {
 					debug(undefined, "undefined =", mSettings.bindingContexts);
 				} else {
-					for (sName in mSettings.bindingContexts) {
+					for (const sName in mSettings.bindingContexts) {
 						debug(undefined, sName, "=", mSettings.bindingContexts[sName]);
 					}
 				}

@@ -5599,9 +5599,9 @@ sap.ui.define([
 		return oCache.requestCount(oGroupLock).then(function () {
 			assert.notOk(bRetryFailed);
 			assert.strictEqual(oCache.iLimit, 42);
-		}, function (oError) {
+		}, function (oError0) {
 			assert.ok(bRetryFailed);
-			assert.strictEqual(oError, oRetryError);
+			assert.strictEqual(oError0, oRetryError);
 		});
 	});
 });
@@ -5647,8 +5647,8 @@ sap.ui.define([
 			oCache.iLimit = 42;
 
 			// code under test
-			return oCache.requestCount({}, "", undefined).then(function (iCount) {
-				assert.strictEqual(iCount, 42);
+			return oCache.requestCount({}, "", undefined).then(function (iCount0) {
+				assert.strictEqual(iCount0, 42);
 			});
 		});
 	});
@@ -6063,9 +6063,9 @@ sap.ui.define([
 				// ensure that the same read does not invoke another request, but unlocks
 				oPromise2 = oCache.read(oFixture.index, oFixture.length, 0, oReadGroupLock1);
 
-				return oPromise2.then(function (oResult) {
-					assert.deepEqual(oResult, oExpectedResult);
-					assert.strictEqual(oResult.value.$count, oFixture.count);
+				return oPromise2.then(function (oResult0) {
+					assert.deepEqual(oResult0, oExpectedResult);
+					assert.strictEqual(oResult0.value.$count, oFixture.count);
 				});
 			});
 		});
@@ -7813,8 +7813,8 @@ sap.ui.define([
 				.resolves(createResult(10, 7));
 
 			// code under test
-			return oCache.read(7, 3, Infinity, oReadGroupLock).then(function (oResult) {
-				assert.deepEqual(oResult, createResult(7, 3, undefined, true));
+			return oCache.read(7, 3, Infinity, oReadGroupLock).then(function (oResult0) {
+				assert.deepEqual(oResult0, createResult(7, 3, undefined, true));
 			});
 		});
 	});
@@ -8257,10 +8257,10 @@ sap.ui.define([
 					assert.strictEqual(oCache.aElements.$count, bCount ? 26 : undefined);
 
 					return that.mockRequestAndRead(oCache, 0, "Employees", 5, 3, 0)
-						.then(function (oResult) {
-							var oExpectedResult = createResult(5, 0);
+						.then(function (oResult0) {
+							var oExpectedResult0 = createResult(5, 0);
 
-							assert.deepEqual(oResult, oExpectedResult);
+							assert.deepEqual(oResult0, oExpectedResult0);
 							assert.strictEqual(oCache.aElements.$count, undefined);
 						});
 				});
@@ -9191,7 +9191,6 @@ sap.ui.define([
 			oCallbacksMock = this.mock(oCallbacks),
 			oCreateGroupLock0 = {getGroupId : function () {}},
 			oCreatePromise,
-			oError = new Error(),
 			oFailedPostPromise,
 			oFetchTypesPromise = SyncPromise.resolve(Promise.resolve({
 				"/Employees" : {
@@ -9299,6 +9298,7 @@ sap.ui.define([
 
 			checkUpdateAndDeleteFailure();
 
+			const oError = new Error();
 			oCallbacksMock.expects("fnError").withExactArgs(sinon.match.same(oError));
 			// ... leading to a failed POST
 			fnRejectPost(oError);
@@ -9809,12 +9809,12 @@ sap.ui.define([
 				.withExactArgs(3, 13, sinon.match.same(oUnlockedCopy), 0, undefined);
 
 			// code under test
-			return oCache.read(0, 3, 10, oGroupLock0).then(function (oResult) {
-				assert.strictEqual(oResult.value.length, 3);
-				assert.ok(_Helper.getPrivateAnnotation(oResult.value[0], "transient"));
-				assert.strictEqual(oResult.value[0].name, "John Doe");
-				assert.strictEqual(oResult.value[1], oReadResult.value[0]);
-				assert.strictEqual(oResult.value[2], oReadResult.value[1]);
+			return oCache.read(0, 3, 10, oGroupLock0).then(function (oResult0) {
+				assert.strictEqual(oResult0.value.length, 3);
+				assert.ok(_Helper.getPrivateAnnotation(oResult0.value[0], "transient"));
+				assert.strictEqual(oResult0.value[0].name, "John Doe");
+				assert.strictEqual(oResult0.value[1], oReadResult.value[0]);
+				assert.strictEqual(oResult0.value[2], oReadResult.value[1]);
 
 				that.mock(oGroupLock1).expects("unlock").withExactArgs();
 
@@ -10055,8 +10055,7 @@ sap.ui.define([
 				sResourcePath = "TEAMS('42')/Foo",
 				oCache = this.createCache(sResourcePath),
 				oCacheMock = this.mock(oCache),
-				that = this,
-				i;
+				that = this;
 
 			//TODO this.fetchValue(_GroupLock.$cached, "").then(...) would be needed in _Cache in
 			// case we do not wait for read() to finish here!
@@ -10079,7 +10078,6 @@ sap.ui.define([
 							"sap-client" : "123"
 						},
 						aPaths = ["ROOM_ID"],
-						sPredicate,
 						aPredicates,
 						mQueryOptions = {},
 						mQueryOptions0 = {
@@ -10161,8 +10159,8 @@ sap.ui.define([
 					// Note: fetchTypes() would have been invoked by read() already
 					oCacheMock.expects("getTypes").withExactArgs().returns(mTypeForMetaPath);
 					oCache.beforeUpdateSelected = function () {};
-					for (i = 0; i < iReceivedLength; i += 1) { // prepare request/response
-						sPredicate = "('" + oFixture.aValues[i].key + "')";
+					for (let i = 0; i < iReceivedLength; i += 1) { // prepare request/response
+						const sPredicate = "('" + oFixture.aValues[i].key + "')";
 						oHelperMock.expects("getKeyFilter").withExactArgs(
 								sinon.match.same(oCache.aElements.$byPredicate[sPredicate]),
 								"/TEAMS/Foo", sinon.match.same(mTypeForMetaPath))
@@ -10196,7 +10194,7 @@ sap.ui.define([
 								sinon.match.same(oResult), sinon.match.same(mTypeForMetaPath),
 								undefined, "", NaN, true)
 							.callsFake(function () {
-								for (i = 0; i < iReceivedLength; i += 1) {
+								for (let i = 0; i < iReceivedLength; i += 1) {
 									_Helper.setPrivateAnnotation(oFixture.aValues[i], "predicate",
 										"('" + oFixture.aValues[i].key + "')");
 								}
@@ -10208,8 +10206,7 @@ sap.ui.define([
 							"~bWithMessages~")
 						.then(function () {
 							var oElement,
-								sKeys = "",
-								i;
+								sKeys = "";
 
 							if (oCreatedElement) {
 								// transient elements are neither discarded nor updated
@@ -10224,7 +10221,7 @@ sap.ui.define([
 								assert.strictEqual(oCache.aElements.$created, 0);
 							}
 							// compute condensed representation of all keys, "." is a gap
-							for (i = 0; i < oCache.aElements.length; i += 1) {
+							for (let i = 0; i < oCache.aElements.length; i += 1) {
 								sKeys += oCache.aElements[i] && oCache.aElements[i].key || ".";
 							}
 							assert.strictEqual(sKeys, oFixture.sExpectedKeys);
@@ -10233,7 +10230,7 @@ sap.ui.define([
 							assert.strictEqual(oCache.aElements.$count, 26, "$count is preserved");
 							assert.strictEqual(Object.keys(oCache.aElements.$byPredicate).length,
 								iExpectedByPredicateLength, "$byPredicate up-to-date");
-							for (i = 0; i < oCache.aElements.length; i += 1) {
+							for (let i = 0; i < oCache.aElements.length; i += 1) {
 								oElement = oCache.aElements[i];
 								if (oElement && oElement !== oTransient) {
 									assert.strictEqual(
@@ -11252,7 +11249,7 @@ sap.ui.define([
 			var fnDataRequested = that.spy(),
 				oGroupLock1 = {},
 				oGroupLock2 = {unlock : function () {}},
-				oPromise,
+				oPromise0,
 				aPromises = [];
 
 			assert.strictEqual(oPostResult1, oResult1);
@@ -11260,10 +11257,10 @@ sap.ui.define([
 			that.mock(oGroupLock2).expects("unlock").withExactArgs();
 
 			// code under test
-			oPromise = oCache.fetchValue(oGroupLock2, "", fnDataRequested);
+			oPromise0 = oCache.fetchValue(oGroupLock2, "", fnDataRequested);
 
 			aPromises.push(
-				oPromise.then(function (oReadResult) {
+				oPromise0.then(function (oReadResult) {
 					assert.strictEqual(oReadResult, oResult1);
 					assert.strictEqual(fnDataRequested.callCount, 0);
 				})
@@ -11275,11 +11272,11 @@ sap.ui.define([
 				.resolves(oResult2);
 
 			// code under test
-			oPromise = oCache.post(oGroupLock1, oPostData);
+			oPromise0 = oCache.post(oGroupLock1, oPostData);
 
-			assert.strictEqual(oCache.oPromise, oPromise);
+			assert.strictEqual(oCache.oPromise, oPromise0);
 			aPromises.push(
-				oPromise.then(function (oPostResult2) {
+				oPromise0.then(function (oPostResult2) {
 					assert.strictEqual(oPostResult2, oResult2);
 				})
 			);
@@ -11430,8 +11427,8 @@ sap.ui.define([
 			oUnlockExpectation = this.mock(oRequestLock).expects("unlock").withExactArgs();
 		}
 
-		return oResult.then(function (oResult) {
-				assert.strictEqual(oResult, oReturnValue);
+		return oResult.then(function (oResult0) {
+				assert.strictEqual(oResult0, oReturnValue);
 				if (oUnlockExpectation) {
 					assert.ok(oUnlockExpectation.calledAfter(oResponseExpectation));
 				}
@@ -11475,8 +11472,8 @@ sap.ui.define([
 			// code under test
 			return oCache.post(oGroupLock1, oPostData).then(function () {
 				assert.ok(false);
-			}, function (oError) {
-				assert.strictEqual(oError.message, sMessage);
+			}, function (oError0) {
+				assert.strictEqual(oError0.message, sMessage);
 			});
 		});
 		assert.throws(function () {
@@ -11572,10 +11569,10 @@ sap.ui.define([
 			oUnlockExpectation = this.mock(oRequestLock).expects("unlock").withExactArgs();
 		}
 
-		return oResult.then(function (oResult) {
+		return oResult.then(function (oResult0) {
 				assert.ok(bConfirm);
 				assert.strictEqual(oCache.bPosting, false);
-				assert.strictEqual(oResult, oResponse);
+				assert.strictEqual(oResult0, oResponse);
 			}, function (oCanceledError) {
 				assert.notOk(bConfirm);
 				assert.strictEqual(oCache.bPosting, false);
@@ -11704,8 +11701,8 @@ sap.ui.define([
 			assert.ok(false);
 		}
 
-		function rejected(oError) {
-			assert.strictEqual(oError.canceled, true);
+		function rejected(oError0) {
+			assert.strictEqual(oError0.canceled, true);
 		}
 
 		oError.canceled = true;
@@ -11857,8 +11854,8 @@ sap.ui.define([
 
 				oCache.fetchValue(oGroupLock).then(function () {
 					assert.ok(false);
-				}, function (oError) {
-					assert.strictEqual(oError.message, "Cannot read a deleted entity");
+				}, function (oError0) {
+					assert.strictEqual(oError0.message, "Cannot read a deleted entity");
 				});
 			}, function (oError0) {
 				assert.ok(oFixture.error);

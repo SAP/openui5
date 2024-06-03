@@ -885,12 +885,11 @@ sap.ui.define([
 		var oCachePromise = bCached && this.oCache !== undefined
 				? SyncPromise.resolve(this.oCache)
 				: this.oCachePromise,
-			oError,
 			that = this;
 
 		// dependent binding will update its value when the suspended binding is resumed
 		if (this.isRootBindingSuspended()) {
-			oError = new Error("Suspended binding provides no value");
+			const oError = new Error("Suspended binding provides no value");
 			oError.canceled = "noDebugLog";
 			throw oError;
 		}
@@ -902,8 +901,7 @@ sap.ui.define([
 				sRelativePath = oCache || that.oOperation
 					? that.getRelativePath(sPath)
 					: undefined,
-				aSegments,
-				vValue;
+				aSegments;
 
 			if (that.oOperation) {
 				if (sRelativePath === undefined) {
@@ -918,7 +916,8 @@ sap.ui.define([
 					_Helper.registerChangeListener(that.oOperation,
 						sRelativePath.slice(/*"$Parameter/".length*/11), oListener);
 
-					vValue = _Helper.drillDown(that.oOperation.mParameters, aSegments.slice(1));
+					const vValue = _Helper.drillDown(that.oOperation.mParameters,
+						aSegments.slice(1));
 
 					return vValue === undefined ? null : vValue;
 				}
