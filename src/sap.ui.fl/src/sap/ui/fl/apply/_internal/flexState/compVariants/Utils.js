@@ -28,6 +28,10 @@ sap.ui.define([], function() {
 	Utils.getDefaultVariantId = (mCompVariantsMap) => {
 		const aDefaultVariantChanges = mCompVariantsMap.defaultVariants;
 		const oChange = [...aDefaultVariantChanges].reverse().find((oChange) => {
+			// Default variant is set to standard variant
+			if (oChange?.getContent().defaultVariantName === "*standard*") {
+				return true;
+			}
 			return mCompVariantsMap.variants.some((oVariant) => {
 				return oChange?.getContent().defaultVariantName === oVariant.getId();
 			});
