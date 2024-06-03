@@ -80,11 +80,15 @@
 			padding-left: @_sap_m_RadioButtonGroup_PaddingLeftLabel_Form;
 		}
 
-		.sapMRbGCol{
+		.sapMRbBLabel:not(.sapMLabelNoText) {
+			padding-right: 0.125rem;
+		}
+
+		> .sapMRbGCol{
 			padding-left: 0.5rem; // to align to spaced between Form cells
 		}
 
-		.sapMRbGCol:first-child{
+		> .sapMRbGCol:first-child{
 			padding-left: 0;
 		}
 	}
