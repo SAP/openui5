@@ -1,0 +1,12 @@
+{
+  "1.126.0": {
+    "date": "June 2024",
+    "notes": [
+      {
+        "id": "1669cebde04de02a15037f2fd133fe5df5436dcb",
+        "type": "FEATURE",
+        "text": " sap.ui.codeeditor.CodeEditor: Default color theme now uses UI5 theme parameters"
+      }
+    ]
+  }
+}

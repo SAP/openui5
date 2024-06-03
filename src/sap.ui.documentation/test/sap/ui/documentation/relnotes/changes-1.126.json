@@ -1,0 +1,12 @@
+{
+  "1.126.0": {
+    "date": "June 2024",
+    "notes": [
+      {
+        "id": "d61e6e5879697d72f0f84799d90e1ad4c5eb81a2",
+        "type": "FIX",
+        "text": " Demokit: IndexEntry controller definition corrected"
+      }
+    ]
+  }
+}

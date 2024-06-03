@@ -1,0 +1,27 @@
+{
+  "1.126.0": {
+    "date": "June 2024",
+    "notes": [
+      {
+        "id": "2fcceaccc53ca91d24c877230d0de016996661ca",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Apply focus if page indicator arrow is pressed"
+      },
+      {
+        "id": "9276a4de4e0cc8189716007d50f4f1dff6c8bb3b",
+        "type": "FIX",
+        "text": " sap.m.Input: Value is not cleared on invalidation when type password is used"
+      },
+      {
+        "id": "f40a8e6f4a44f7ee49effe25b6a58b68cc979848",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: improve demo app sample reagarding accessibility"
+      },
+      {
+        "id": "91759e559667177347c68f714d19a26a9429c886",
+        "type": "FEATURE",
+        "text": " sap.m.Carousel: the page indicator can be placed over the content of the Carousel"
+      }
+    ]
+  }
+}
