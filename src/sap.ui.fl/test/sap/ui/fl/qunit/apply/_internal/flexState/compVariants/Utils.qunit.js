@@ -157,7 +157,7 @@ sap.ui.define([
 			assert.strictEqual(
 				Utils.getDefaultVariantId(this.mCompVariantsMap),
 				sFirstVariantName,
-				"the last defaultVariant change is returned"
+				"the last defaultVariant ID is returned"
 			);
 		});
 
@@ -261,6 +261,36 @@ sap.ui.define([
 				Utils.getDefaultVariantId(this.mCompVariantsMap),
 				"",
 				"the function returns an empty string"
+			);
+		});
+
+		QUnit.test("Two defaultVariant changes - the most recent one sets the standard variant as default", (assert) => {
+			const sDefaultVariantName = "*standard*";
+			const sFirstVariantName = "FirstVariant";
+			this.mCompVariantsMap.defaultVariants[0] = {
+				getContent: () => {
+					return {
+						defaultVariantName: sFirstVariantName
+					};
+				}
+			};
+			this.mCompVariantsMap.defaultVariants[1] = {
+				getContent: () => {
+					return {
+						defaultVariantName: sDefaultVariantName
+					};
+				}
+			};
+			this.mCompVariantsMap.variants = [{
+				getId: () => {
+					return sFirstVariantName;
+				}
+			}];
+
+			assert.strictEqual(
+				Utils.getDefaultVariantId(this.mCompVariantsMap),
+				sDefaultVariantName,
+				"the default variant ID is returned"
 			);
 		});
 	});
