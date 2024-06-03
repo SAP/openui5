@@ -792,5 +792,20 @@
         "text": " sap.ui.model.type.Unit: amount scale is used instead of unit's decimal places"
       }
     ]
+  },
+  "1.120.16": {
+    "date": "June 2024",
+    "notes": [
+      {
+        "id": "0e7afe27301dd56a4bced7914808d8e76a38689a",
+        "type": "FIX",
+        "text": " sap.ui.model.type.(Currency|Unit): use amount scale default 0 instead of currency's or unit's decimal places"
+      },
+      {
+        "id": "e887f65b49f41e7af7ff0bf515bce1d30f0b066b",
+        "type": "FIX",
+        "text": " Add sap-system to OData V4 service URLs"
+      }
+    ]
   }
 }

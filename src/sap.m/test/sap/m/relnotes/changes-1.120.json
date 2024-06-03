@@ -774,5 +774,20 @@
         "text": " sap.m.MessageToast: Fix permanent display"
       }
     ]
+  },
+  "1.120.16": {
+    "date": "June 2024",
+    "notes": [
+      {
+        "id": "f33731fcfed84101057a0cc2f59325e8c6a03f08",
+        "type": "FIX",
+        "text": "sap.m.SinglePlanningCalendar: Selection event is fired only once"
+      },
+      {
+        "id": "c5b3e099f8569f2cc41bfb0ab8c6d39cc5e1d8fd",
+        "type": "FIX",
+        "text": " sap.m.ObjectMarker: focus visible in sap.ui.table.Table"
+      }
+    ]
   }
 }
