@@ -3,23 +3,23 @@
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/core/Core",
 	"sap/ui/Device",
 	"sap/ui/table/Table",
 	"sap/ui/table/Column",
 	"sap/ui/table/ColumnMenu",
 	"sap/m/Label",
-	"sap/ui/core/Popup"
+	"sap/ui/core/Popup",
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	TableQUnitUtils,
 	qutils,
-	oCore,
 	Device,
 	Table,
 	Column,
 	ColumnMenu,
 	Label,
-	Popup
+	Popup,
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -169,7 +169,7 @@ sap.ui.define([
 	 * @deprecated As of Version 1.117
 	 */
 	QUnit.module("MutliHeaders", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oTable = new Table({
 				enableColumnFreeze: true,
 				visibleRowCount: 3,
@@ -191,7 +191,7 @@ sap.ui.define([
 				]
 			});
 			this.oTable.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oTable.destroy();

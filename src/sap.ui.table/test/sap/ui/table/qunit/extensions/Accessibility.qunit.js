@@ -12,7 +12,6 @@ sap.ui.define([
 	"sap/m/IllustratedMessage",
 	"sap/m/Label",
 	"sap/ui/core/Control",
-	"sap/ui/core/Core",
 	"sap/ui/core/ControlBehavior",
 	"sap/ui/core/library",
 	"sap/ui/core/message/MessageType",
@@ -32,7 +31,6 @@ sap.ui.define([
 	IllustratedMessage,
 	Label,
 	Control,
-	oCore,
 	ControlBehavior,
 	coreLibrary,
 	MessageType,
@@ -169,6 +167,7 @@ sap.ui.define([
 		assert.ok(!oExtension.getTable(), "Reference to table removed");
 	});
 
+	// eslint-disable-next-line complexity
 	function testAriaLabelsForFocusedDataCell(oTable, oCellElement, iRow, iCol, assert, mParams = {}) {
 		const bFirstTime = !!mParams.firstTime;
 		const bRowChange = !!mParams.rowChange;
@@ -729,6 +728,7 @@ sap.ui.define([
 		}
 	});
 
+	// eslint-disable-next-line complexity
 	function testAriaLabelsForColumnHeader($Cell, iCol, assert, mParams = {}) {
 		const bFirstTime = !!mParams.firstTime;
 		const bFocus = !!mParams.focus;
@@ -870,7 +870,7 @@ sap.ui.define([
 	});
 
 	/** @deprecated As of Version 1.117 */
-	QUnit.test("aria-haspopup (legacy)", function(assert) {
+	QUnit.test("aria-haspopup (legacy)", async function(assert) {
 		const oColumn = oTable.getColumns()[1];
 		const oDomRef = oColumn.getDomRef();
 
@@ -878,7 +878,8 @@ sap.ui.define([
 
 		oColumn.setSortProperty();
 		oColumn.setFilterProperty();
-		oCore.applyChanges();
+		await nextUIUpdate();
+
 		assert.notOk(oDomRef.hasAttribute("aria-haspopup"), "aria-haspopup");
 	});
 
@@ -985,6 +986,7 @@ sap.ui.define([
 		afterEach: function() {
 			this.oTable.destroy();
 		},
+		// eslint-disable-next-line complexity
 		testAriaLabels: function(oCellElement, iRow, assert, mParams = {}) {
 			const bFirstTime = !!mParams.firstTime;
 			const bFocus = !!mParams.focus;
@@ -1237,6 +1239,7 @@ sap.ui.define([
 		afterEach: function() {
 			this.oTable.destroy();
 		},
+		// eslint-disable-next-line complexity
 		testAriaLabels: function(oCellElement, iRow, assert, mParams = {}) {
 			const bFirstTime = !!mParams.firstTime;
 			const bFocus = !!mParams.focus;
@@ -1546,7 +1549,8 @@ sap.ui.define([
 			assert.strictEqual($Elem.attr("role"), "button", "Expanded Tree icon role of expandable row");
 			assert.strictEqual($Elem.attr("aria-expanded"), "true", "Expanded Tree icon aria-expanded property");
 			assert.strictEqual($Elem.attr("aria-hidden"), "false", "Expanded Tree icon aria-hidden property");
-			assert.strictEqual($Elem.attr("title"), TableUtils.getResourceBundle().getText("TBL_COLLAPSE_EXPAND"), "Expanded Tree icon title property");
+			assert.strictEqual($Elem.attr("title"), TableUtils.getResourceBundle().getText("TBL_COLLAPSE_EXPAND"),
+				"Expanded Tree icon title property");
 
 			$Elem = oTreeTable.$("rows-row1-col0").find(".sapUiTableTreeIcon");
 			assert.strictEqual($Elem.attr("role"), "", "Tree icon role of leaf row");
@@ -1568,9 +1572,9 @@ sap.ui.define([
 	/**
 	 * @deprecated As of version 1.38
 	 */
-	QUnit.test("ARIA attributes of table header", function(assert) {
+	QUnit.test("ARIA attributes of table header", async function(assert) {
 		oTable.setTitle(new Label());
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		const $Elem = oTable.$().find(".sapUiTableHdr");
 		assert.strictEqual($Elem.attr("role"), "heading", "role");
@@ -1643,14 +1647,16 @@ sap.ui.define([
 	});
 
 	/** @deprecated As of version 1.72 */
-	QUnit.test("ARIA attributes of content element with title (legacy)", function(assert) {
+	QUnit.test("ARIA attributes of content element with title (legacy)", async function(assert) {
 		oTable.setTitle(new Label());
-		oCore.applyChanges();
+		await nextUIUpdate();
+
 		assert.strictEqual(oTable.$("sapUiTableGridCnt").attr("aria-labelledby"), oTable.getAriaLabelledBy() + " " + oTable.getTitle().getId(),
 			"aria-labelledby");
 
 		oTable.removeAriaLabelledBy(oTable.getAriaLabelledBy()[0]);
-		oCore.applyChanges();
+		await nextUIUpdate();
+
 		assert.strictEqual(oTable.$("sapUiTableGridCnt").attr("aria-labelledby"), oTable.getTitle().getId(),
 			"aria-labelledby when ariaLabelledBy association is empty array");
 	});
@@ -1860,12 +1866,12 @@ sap.ui.define([
 	});
 
 	/** @deprecated As of version 1.72 */
-	QUnit.test("ARIA for Overlay with title (legacy)", function(assert) {
+	QUnit.test("ARIA for Overlay with title (legacy)", async function(assert) {
 		let $OverlayCoveredElements = oTable.$().find("[data-sap-ui-table-acc-covered*='overlay']");
 		const sTableId = oTable.getId();
 
 		oTable.setTitle(new Label());
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		//Heading + Extension + Footer + 2xTable + Row Selector + 2xColumn Headers + NoData Container = 8
 		assert.strictEqual($OverlayCoveredElements.length, 9, "Number of potentionally covered elements");
@@ -1881,7 +1887,8 @@ sap.ui.define([
 		assert.strictEqual($Elem.attr("aria-labelledby"),
 			oTable.getAriaLabelledBy() + " " + oTable.getTitle().getId() + " " + sTableId + "-ariainvalid", "aria-labelledby");
 		oTable.invalidate();
-		oCore.applyChanges();
+		await nextUIUpdate();
+
 		$OverlayCoveredElements = oTable.$().find("[data-sap-ui-table-acc-covered*='overlay']");
 		$OverlayCoveredElements.each(function() {
 			assert.ok(jQuery(this).attr("aria-hidden") === "true", "aria-hidden");
@@ -1893,7 +1900,8 @@ sap.ui.define([
 		});
 
 		oTable.removeAriaLabelledBy(oTable.getAriaLabelledBy()[0]);
-		oCore.applyChanges();
+		await nextUIUpdate();
+
 		$Elem = jQuery(document.getElementById(sTableId + "-overlay"));
 		assert.strictEqual($Elem.attr("aria-labelledby"),
 			oTable.getTitle().getId() + " " + sTableId + "-ariainvalid", "aria-labelledby when ariaLabelledBy association is empty array");

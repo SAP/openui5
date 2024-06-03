@@ -1,58 +1,60 @@
 /*global QUnit, sinon*/
 sap.ui.define([
-	"sap/ui/core/Element",
-	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/m/table/columnmenu/Menu",
-	"sap/m/table/columnmenu/QuickAction",
-	"sap/m/table/columnmenu/QuickActionContainer",
-	"sap/m/table/columnmenu/Item",
-	"sap/m/table/columnmenu/ActionItem",
 	"sap/m/Button",
 	"sap/m/ComboBox",
 	"sap/m/Dialog",
 	"sap/m/library",
-	"sap/ui/base/Event",
-	"sap/ui/core/Item",
-	"sap/ui/core/Core",
-	"sap/ui/core/StaticArea",
-	"sap/ui/layout/GridData",
+	"sap/m/table/columnmenu/ActionItem",
+	"sap/m/table/columnmenu/Item",
+	"sap/m/table/columnmenu/Menu",
+	"sap/m/table/columnmenu/QuickAction",
+	"sap/m/table/columnmenu/QuickActionContainer",
 	"sap/ui/Device",
-	"sap/ui/dom/containsOrEquals"
+	"sap/ui/core/Element",
+	"sap/ui/core/Item",
+	"sap/ui/core/StaticArea",
+	"sap/ui/dom/containsOrEquals",
+	"sap/ui/layout/GridData",
+	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/qunit/utils/createAndAppendDiv",
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
-	Element,
-	QUnitUtils,
-	createAndAppendDiv,
-	Menu,
-	QuickAction,
-	QuickActionContainer,
-	Item,
-	ActionItem,
 	Button,
 	ComboBox,
 	Dialog,
 	library,
-	Event,
-	CoreItem,
-	oCore,
-	StaticArea,
-	GridData,
+	ActionItem,
+	Item,
+	Menu,
+	QuickAction,
+	QuickActionContainer,
 	Device,
-	containsOrEquals
+	Element,
+	CoreItem,
+	StaticArea,
+	containsOrEquals,
+	GridData,
+	QUnitUtils,
+	createAndAppendDiv,
+	nextUIUpdate
 ) {
 	"use strict";
-	// Test setup
 
 	createAndAppendDiv("content");
 
-	var sText = "Test";
+	const sText = "Test";
 
 	QUnit.module("Initialization", {
-		createMenu: function (bMultiple) {
-			var aQuickActions = [];
-			var aPQuickActions = [];
-			var aItems = [];
-			var aPItems = [];
+		beforeEach: async function() {
+			this.oButton = new Button();
+			this.oButton.placeAt("qunit-fixture");
+			await nextUIUpdate();
+		},
+		createMenu: function(bMultiple) {
+			const aQuickActions = [];
+			const aPQuickActions = [];
+			const aItems = [];
+			const aPItems = [];
 
 			aQuickActions.push(new QuickAction({label: sText})); //quick action without content
 			aPQuickActions.push(new QuickAction({label: sText, content: new Button({text: sText})}));
@@ -60,7 +62,7 @@ sap.ui.define([
 			aPItems.push(new Item({label: sText, content: new Button({text: sText})}));
 
 			if (bMultiple) {
-				for (var i = 0; i < 2; i++) {
+				for (let i = 0; i < 2; i++) {
 					aQuickActions.push(new QuickAction({label: sText, content: new Button({text: sText})}));
 					aPQuickActions.push(new QuickAction({label: sText, content: new Button({text: sText})}));
 					aItems.push(new Item({label: sText, content: new Button({text: sText})}));
@@ -76,18 +78,13 @@ sap.ui.define([
 			aPQuickActions.forEach((oQuickAction) => this.oColumnMenu.addAggregation("_quickActions", oQuickAction));
 			aPItems.forEach((oItem) => this.oColumnMenu.addAggregation("_items", oItem));
 		},
-		beforeEach: function () {
-			this.oButton = new Button();
-			this.oButton.placeAt("qunit-fixture");
-			oCore.applyChanges();
-		},
-		afterEach: function () {
+		afterEach: function() {
 			this.oColumnMenu.destroy();
 			this.oButton.destroy();
 		}
 	});
 
-	QUnit.test("Internal instances", function (assert) {
+	QUnit.test("Internal instances", function(assert) {
 		this.createMenu(false);
 		assert.notOk(this.oColumnMenu._oPopover, "sap.m.ResponsivePopover not created before opening");
 		assert.notOk(this.oColumnMenu._oItemsContainer, "sap.m.p13n.Container not created before opening");
@@ -97,7 +94,7 @@ sap.ui.define([
 		assert.ok(this.oColumnMenu._oItemsContainer, "sap.m.p13n.Container created on opening");
 	});
 
-	QUnit.test("Initialize ColumnMenu with singular content", function (assert) {
+	QUnit.test("Initialize ColumnMenu with singular content", function(assert) {
 		this.createMenu(false);
 		this.oColumnMenu.openBy(this.oButton);
 
@@ -112,7 +109,7 @@ sap.ui.define([
 		assert.ok(this.oColumnMenu.getAggregation("_items").length === 1);
 	});
 
-	QUnit.test("Initialize ColumnMenu with multiple content", function (assert) {
+	QUnit.test("Initialize ColumnMenu with multiple content", function(assert) {
 		this.createMenu(true);
 		this.oColumnMenu.openBy(this.oButton);
 
@@ -147,14 +144,14 @@ sap.ui.define([
 	});
 
 	QUnit.module("Destruction", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oColumnMenu = new Menu({
 				quickActions: [new QuickAction({label: sText, content: new Button({text: sText})})],
 				items: [new Item({label: sText, content: new Button({text: sText})})]
 			});
 			this.oButton = new Button();
 			this.oButton.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oColumnMenu.destroy();
@@ -164,8 +161,8 @@ sap.ui.define([
 
 	QUnit.test("Internal instances", function(assert) {
 		this.oColumnMenu.openBy(this.oButton);
-		var oResponsivePopover = this.oColumnMenu._oPopover;
-		var oItemsContainer = this.oColumnMenu._oItemsContainer;
+		const oResponsivePopover = this.oColumnMenu._oPopover;
+		const oItemsContainer = this.oColumnMenu._oItemsContainer;
 
 		this.oColumnMenu.destroy();
 		assert.ok(oResponsivePopover.isDestroyed(), "sap.m.ResponsivePopover destroyed");
@@ -175,14 +172,21 @@ sap.ui.define([
 	});
 
 	QUnit.module("Rendering", {
-		createMenu: function (bQuickActions, bItems, bPQuickActions, bPItems) {
-			var aQuickActions = bQuickActions ? [new QuickAction({label: sText, content: new Button({text: sText})})] : [];
-			var aPQuickActions = bPQuickActions ? [new QuickAction({label: sText, content: new Button({text: sText})})] : [];
-			var aItems = bItems ? [
+		beforeEach: async function() {
+			this.oButton = new Button();
+			this.oButton.placeAt("content");
+			this.oButton1 = new Button();
+			this.oButton1.placeAt("content");
+			await nextUIUpdate();
+		},
+		createMenu: function(bQuickActions, bItems, bPQuickActions, bPItems) {
+			const aQuickActions = bQuickActions ? [new QuickAction({label: sText, content: new Button({text: sText})})] : [];
+			const aPQuickActions = bPQuickActions ? [new QuickAction({label: sText, content: new Button({text: sText})})] : [];
+			const aItems = bItems ? [
 				new ActionItem({label: sText, press: function() {}}),
 				new Item({label: sText, content: new Button({text: sText})})
 			] : [];
-			var aPItems = bPItems ? [new Item({label: sText, content: new Button({text: sText})})] : [];
+			const aPItems = bPItems ? [new Item({label: sText, content: new Button({text: sText})})] : [];
 
 			this.oColumnMenu = new Menu({
 				quickActions: aQuickActions,
@@ -192,14 +196,7 @@ sap.ui.define([
 			aPQuickActions.forEach((oQuickAction) => this.oColumnMenu.addAggregation("_quickActions", oQuickAction));
 			aPItems.forEach((oItem) => this.oColumnMenu.addAggregation("_items", oItem));
 		},
-		beforeEach: function () {
-			this.oButton = new Button();
-			this.oButton.placeAt("content");
-			this.oButton1 = new Button();
-			this.oButton1.placeAt("content");
-			oCore.applyChanges();
-		},
-		afterEach: function () {
+		afterEach: function() {
 			if (this.oColumnMenu) {
 				this.oColumnMenu.destroy();
 			}
@@ -210,7 +207,7 @@ sap.ui.define([
 
 	QUnit.test("_getAllEffectiveQuickActions", function(assert) {
 		this.createMenu(true, true, false, false);
-		var aQuickActions = this.oColumnMenu._getAllEffectiveQuickActions();
+		let aQuickActions = this.oColumnMenu._getAllEffectiveQuickActions();
 		assert.equal(aQuickActions.length, 1, "QuickAction is returned as effective action");
 
 		this.oColumnMenu.getQuickActions()[0].setVisible(false);
@@ -221,7 +218,7 @@ sap.ui.define([
 	QUnit.test("_getAllEffectiveItems", function(assert) {
 		this.createMenu(true, true, false, false);
 		this.oColumnMenu.openBy(this.oButton);
-		var aItems = this.oColumnMenu._getAllEffectiveItems();
+		let aItems = this.oColumnMenu._getAllEffectiveItems();
 		assert.equal(aItems.length, 2, "2 Items are returned as effective items");
 
 		this.oColumnMenu.getItems()[0].setVisible(false);
@@ -232,12 +229,12 @@ sap.ui.define([
 	QUnit.test("isOpen", function(assert) {
 		this.createMenu(true, true, true, true);
 		this.oColumnMenu.openBy(this.oButton);
-		var oIsOpenSpy = sinon.spy(this.oColumnMenu._oPopover, "isOpen");
+		const oIsOpenSpy = sinon.spy(this.oColumnMenu._oPopover, "isOpen");
 		this.oColumnMenu.isOpen();
 		assert.ok(oIsOpenSpy.calledOnce, "isOpen method of the popover is called");
 	});
 
-	QUnit.test("Open popup on mobile", function (assert) {
+	QUnit.test("Open popup on mobile", function(assert) {
 		this.stub(Device.system, "phone").value(true);
 		this.createMenu(true, true, true, true);
 
@@ -246,7 +243,7 @@ sap.ui.define([
 		assert.ok(this.oColumnMenu._oPopover.getShowHeader(), "Header is shown on mobile");
 	});
 
-	QUnit.test("Add menu to/remove from StaticArea", function (assert) {
+	QUnit.test("Add menu to/remove from StaticArea", function(assert) {
 		this.createMenu(true, true, true, true);
 
 		this.oColumnMenu.openBy(this.oButton);
@@ -262,8 +259,8 @@ sap.ui.define([
 		assert.ok(this.oColumnMenu._oQuickActionContainer.getFormContainers()[0].getFormElements().length);
 		assert.ok(this.oColumnMenu._oItemsContainer);
 
-		var oDestroyFormElementsSpy = sinon.spy(this.oColumnMenu._oQuickActionContainer, "destroyFormContainers");
-		var oDestroyItemContainerSpy = sinon.spy(this.oColumnMenu._oItemsContainer, "destroy");
+		const oDestroyFormElementsSpy = sinon.spy(this.oColumnMenu._oQuickActionContainer, "destroyFormContainers");
+		const oDestroyItemContainerSpy = sinon.spy(this.oColumnMenu._oItemsContainer, "destroy");
 		this.oColumnMenu.close();
 		assert.ok(oDestroyFormElementsSpy.calledOnce);
 		assert.ok(oDestroyItemContainerSpy.calledOnce);
@@ -275,139 +272,156 @@ sap.ui.define([
 		assert.ok(this.oColumnMenu._oQuickActionContainer);
 		assert.ok(this.oColumnMenu._oItemsContainer);
 
-		var oDestroyQuickActionContainerSpy = sinon.spy(this.oColumnMenu._oQuickActionContainer, "destroy");
-		var oDestroyItemContainerSpy = sinon.spy(this.oColumnMenu._oItemsContainer, "destroy");
+		const oDestroyQuickActionContainerSpy = sinon.spy(this.oColumnMenu._oQuickActionContainer, "destroy");
+		const oDestroyItemContainerSpy = sinon.spy(this.oColumnMenu._oItemsContainer, "destroy");
+		const clock = sinon.useFakeTimers();
 		this.oColumnMenu._oPopover.close();
 
 		assert.ok(oDestroyQuickActionContainerSpy.notCalled);
 		assert.ok(oDestroyItemContainerSpy.notCalled);
+		clock.tick(500);
+		clock.restore();
 
-		this.clock.tick(500);
 		this.oColumnMenu.openBy(this.oButton);
 		assert.ok(oDestroyQuickActionContainerSpy.calledOnce);
 		assert.ok(oDestroyItemContainerSpy.calledOnce);
 	});
 
-	QUnit.test("Check hidden header and footer in default view", function (assert) {
+	QUnit.test("Check hidden header and footer in default view", async function(assert) {
 		this.createMenu(false);
 		this.oColumnMenu.openBy(this.oButton);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.notOk(this.oColumnMenu._oItemsContainer.oLayout.getShowHeader());
 		assert.notOk(this.oColumnMenu._oItemsContainer.oLayout.getShowFooter());
 	});
 
-	QUnit.test("View switch event", function (assert) {
+	QUnit.test("View switch event", async function(assert) {
 		this.createMenu(false, false, true, true);
 		this.oColumnMenu.openBy(this.oButton);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
-		var aCalls = [],
-			fnViewSwitch = function (oEvt) {
+		const aCalls = [],
+			fnViewSwitch = function(oEvt) {
 				aCalls.push({source: oEvt.getParameter("source"), target: oEvt.getParameter("target")});
 			},
 			oSpy = this.spy(fnViewSwitch);
 		this.oColumnMenu._oItemsContainer.attachEvent("afterViewSwitch", oSpy);
 
-		var sId = this.oColumnMenu.getAggregation("_items")[0].getId();
+		const clock = sinon.useFakeTimers();
+		const sId = this.oColumnMenu.getAggregation("_items")[0].getId();
 		this.oColumnMenu._oItemsContainer.switchView(sId);
-		this.clock.tick(500);
+		clock.tick(500);
+		clock.restore();
 
 		assert.equal(oSpy.callCount, 1);
 		assert.equal(aCalls[0].source, "$default");
 		assert.equal(aCalls[0].target, sId);
 	});
 
-	QUnit.test("ScrollDelegate", function(assert) {
+	QUnit.test("ScrollDelegate", async function(assert) {
 		this.createMenu(false, true, false, true);
 		this.oColumnMenu.openBy(this.oButton);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
-		var sId = this.oColumnMenu.getAggregation("_items")[0].getId();
+		const clock = sinon.useFakeTimers();
+		const sId = this.oColumnMenu.getAggregation("_items")[0].getId();
 		this.oColumnMenu._oItemsContainer.switchView(sId);
-		this.clock.tick(500);
+		clock.tick(500);
+		clock.restore();
 
-		var oScrollDelegate = library.getScrollDelegate(this.oColumnMenu._getAllEffectiveItems()[0].getContent());
+		const oScrollDelegate = library.getScrollDelegate(this.oColumnMenu._getAllEffectiveItems()[0].getContent());
 		assert.ok(oScrollDelegate, "ScrollDelegate is set");
-		var oControl = oScrollDelegate._oControl;
+		const oControl = oScrollDelegate._oControl;
 		assert.ok(oControl.isA("sap.m.Page"), "the control is of class sap.m.Page");
 		assert.ok(oControl.getParent().isA("sap.m.p13n.AbstractContainer"), "the parent control is of class sap.m.p13n.AbstractContainer");
 	});
 
-	QUnit.test("Check focus when control specific items are given", function (assert) {
+	QUnit.test("Check focus when control specific items are given", async function(assert) {
+		const clock = sinon.useFakeTimers();
 		this.createMenu(true, true, true, true);
 		this.oColumnMenu.openBy(this.oButton);
-		this.clock.tick(500);
-		oCore.applyChanges();
+		clock.tick(500);
+		clock.restore();
+		await nextUIUpdate();
 
-		var sId = this.oColumnMenu._getAllEffectiveQuickActions()[0].getContent()[0].sId;
+		const sId = this.oColumnMenu._getAllEffectiveQuickActions()[0].getContent()[0].sId;
 		assert.equal(document.activeElement.id, sId);
 	});
 
-	QUnit.test("Check focus when only application specific items are given", function (assert) {
+	QUnit.test("Check focus when only application specific items are given", async function(assert) {
+		const clock = sinon.useFakeTimers();
 		this.createMenu(true, true, true, false);
 		this.oColumnMenu.openBy(this.oButton);
-		this.clock.tick(500);
-		oCore.applyChanges();
+		clock.tick(500);
+		clock.restore();
+		await nextUIUpdate();
 
-		var sId = this.oColumnMenu._getAllEffectiveQuickActions()[0].getContent()[0].sId;
+		const sId = this.oColumnMenu._getAllEffectiveQuickActions()[0].getContent()[0].sId;
 		assert.equal(document.activeElement.id, sId);
 	});
 
-	QUnit.test("Check focus when only quick actions are given", function (assert) {
+	QUnit.test("Check focus when only quick actions are given", async function(assert) {
+		const clock = sinon.useFakeTimers();
 		this.createMenu(true, false, true, false);
 		this.oColumnMenu.openBy(this.oButton);
-		this.clock.tick(500);
-		oCore.applyChanges();
+		clock.tick(500);
+		clock.restore();
+		await nextUIUpdate();
 
-		var sId = this.oColumnMenu.getAggregation("_quickActions")[0].getContent()[0].getId();
+		const sId = this.oColumnMenu.getAggregation("_quickActions")[0].getContent()[0].getId();
 		assert.equal(document.activeElement.id, sId);
 	});
 
-	QUnit.test("Check focus when only application specific quick actions are given", function (assert) {
+	QUnit.test("Check focus when only application specific quick actions are given", async function(assert) {
+		const clock = sinon.useFakeTimers();
 		this.createMenu(true, false, false, false);
 		this.oColumnMenu.openBy(this.oButton);
-		this.clock.tick(500);
-		oCore.applyChanges();
+		clock.tick(500);
+		clock.restore();
+		await nextUIUpdate();
 
-		var sId = this.oColumnMenu.getQuickActions()[0].getContent()[0].getId();
+		const sId = this.oColumnMenu.getQuickActions()[0].getContent()[0].getId();
 		assert.equal(document.activeElement.id, sId);
 	});
 
-	QUnit.test("Check focus when view is switched", function (assert) {
+	QUnit.test("Check focus when view is switched", async function(assert) {
 		this.createMenu(false, false, true, true);
 		this.oColumnMenu.openBy(this.oButton);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Navigate to item
-		var sId = this.oColumnMenu.getAggregation("_items")[0].getId();
+		const clock = sinon.useFakeTimers();
+		const sId = this.oColumnMenu.getAggregation("_items")[0].getId();
+
 		this.oColumnMenu._oItemsContainer.switchView(sId);
-		this.clock.tick(500);
-		oCore.applyChanges();
+		clock.tick(500);
+		clock.restore();
+
+		await nextUIUpdate();
 
 		assert.equal(document.activeElement.id, this.oColumnMenu._oItemsContainer._getNavBackBtn().getId());
 	});
 
-	QUnit.test("Check focus when view is switched back", function (assert) {
+	QUnit.test("Check focus when view is switched back", async function(assert) {
 		this.createMenu(true, true, true, true);
 		this.oColumnMenu.openBy(this.oButton);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Navigate to item
-		var sId = this.oColumnMenu.getItems()[1].getId(); // Third item (Control Item, App Item, *App Item*)
+		const sId = this.oColumnMenu.getItems()[1].getId(); // Third item (Control Item, App Item, *App Item*)
 		this.oColumnMenu._oItemsContainer.switchView(sId);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Navigate to item
 		this.oColumnMenu._oItemsContainer.switchView("$default");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(document.activeElement.id, this.oColumnMenu._oItemsContainer._getNavigationList().getItems()[2].getId());
 	});
 
-	QUnit.test("Check focus when quick actions are reused in menus", function(assert) {
-		var clock = sinon.useFakeTimers();
-		var oMenu = new Menu({
+	QUnit.test("Check focus when quick actions are reused in menus", async function(assert) {
+		const oMenu = new Menu({
 			quickActions: [
 				new QuickAction({
 					label: "A",
@@ -415,7 +429,7 @@ sap.ui.define([
 				})
 			]
 		});
-		var oMenu1 = new Menu({
+		const oMenu1 = new Menu({
 			quickActions: [
 				new QuickAction({
 					label: "B",
@@ -423,8 +437,8 @@ sap.ui.define([
 				})
 			]
 		});
-		var oReuseQuickAction = new QuickAction({label: sText, content: new Button({text: sText})});
-		var oReuseQuickActionContainer = new QuickActionContainer();
+		const oReuseQuickAction = new QuickAction({label: sText, content: new Button({text: sText})});
+		const oReuseQuickActionContainer = new QuickActionContainer();
 
 		this.oButton.attachPress(function() {
 			oMenu.removeAllAggregation("_quickActions");
@@ -434,15 +448,16 @@ sap.ui.define([
 		});
 		this.oButton.addDependent(oMenu);
 
-		this.oButton1.attachPress(function () {
+		this.oButton1.attachPress(function() {
 			oMenu1.removeAllAggregation("_quickActions");
 			oReuseQuickActionContainer.addQuickAction(oReuseQuickAction);
 			oMenu1.addAggregation("_quickActions", oReuseQuickActionContainer);
 			oMenu1.openBy(this);
 		});
 		this.oButton1.addDependent(oMenu1);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
+		const clock = sinon.useFakeTimers();
 		this.oButton.firePress();
 		clock.tick(1000);
 		assert.ok(containsOrEquals(oMenu.getDomRef(), document.activeElement));
@@ -450,12 +465,12 @@ sap.ui.define([
 		this.oButton1.firePress();
 		clock.tick(1000);
 		assert.ok(containsOrEquals(oMenu1.getDomRef(), document.activeElement));
+		clock.restore();
 	});
 
-	QUnit.test("Check visibility", function (assert) {
-		var clock = sinon.useFakeTimers();
+	QUnit.test("Check visibility", async function(assert) {
 		function getActiveItems(oColumnMenu) {
-			return oColumnMenu._oItemsContainer._getNavigationList().getItems().filter(function (oItem) {
+			return oColumnMenu._oItemsContainer._getNavigationList().getItems().filter(function(oItem) {
 				return oItem.getVisible();
 			});
 		}
@@ -491,18 +506,20 @@ sap.ui.define([
 		assert.equal(this.oColumnMenu._oQuickActionContainer.getFormContainers()[0].getFormElements().length, 1, "One quick action is visible");
 		assert.equal(getActiveItems(this.oColumnMenu).length, 1, "One item is visible");
 
+		const clock = sinon.useFakeTimers();
 		this.oColumnMenu.close();
 		clock.tick(500);
+		clock.restore();
 
 		// Check Visibility when using a QuickActionContainer
-		var oQuickAction1 = new QuickAction({label: sText, content: new Button({text: sText})});
-		var oQuickAction2 = new QuickAction({label: sText, content: new Button({text: sText})});
-		var oQuickActionContainer = new QuickActionContainer({quickActions: [oQuickAction1, oQuickAction2]});
+		const oQuickAction1 = new QuickAction({label: sText, content: new Button({text: sText})});
+		const oQuickAction2 = new QuickAction({label: sText, content: new Button({text: sText})});
+		const oQuickActionContainer = new QuickActionContainer({quickActions: [oQuickAction1, oQuickAction2]});
 		this.oColumnMenu.addQuickAction(oQuickActionContainer);
 
 		// Case A: Both QuickActions in the container should be visible
 		this.oColumnMenu.openBy(this.oButton);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(this.oColumnMenu._oQuickActionContainer.getFormContainers()[0].getFormElements().length, 3, "Three quick actions are visible");
 
@@ -511,7 +528,7 @@ sap.ui.define([
 		// Case B: Container should not be visible
 		oQuickActionContainer.setVisible(false);
 		this.oColumnMenu.openBy(this.oButton);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(this.oColumnMenu._oQuickActionContainer.getFormContainers()[0].getFormElements().length, 1, "One quick actions is visible");
 
@@ -521,26 +538,27 @@ sap.ui.define([
 		oQuickActionContainer.setVisible(true);
 		oQuickAction1.setVisible(false);
 		this.oColumnMenu.openBy(this.oButton);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(this.oColumnMenu._oQuickActionContainer.getFormContainers()[0].getFormElements().length, 2, "Two quick actions are visible");
 	});
 
-	QUnit.test("Add menu item", function (assert) {
-		var clock = sinon.useFakeTimers();
+	QUnit.test("Add menu item", async function(assert) {
 		this.createMenu(true, true, true, true);
 		this.oColumnMenu.openBy(this.oButton);
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 
-		var aItems = this.oColumnMenu._oItemsContainer._getNavigationList().getItems();
+		let aItems = this.oColumnMenu._oItemsContainer._getNavigationList().getItems();
 		assert.equal(aItems.length, 3, "Menu has exactly 3 items");
 
+		const clock = sinon.useFakeTimers();
 		this.oColumnMenu.close();
 		clock.tick(500);
+		clock.restore();
 
-		var oItem = new Item({label: "Added Item", content: new Button({text: "Added Button"})});
+		const oItem = new Item({label: "Added Item", content: new Button({text: "Added Button"})});
 		this.oColumnMenu.addItem(oItem);
-		oCore.applyChanges();
+		await nextUIUpdate(this.clock);
 		this.oColumnMenu.openBy(this.oButton);
 
 		aItems = this.oColumnMenu._oItemsContainer._getNavigationList().getItems();
@@ -549,8 +567,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Order of quick actions", function(assert) {
-		var Category = library.table.columnmenu.Category;
-		var oMenu = new Menu({
+		const Category = library.table.columnmenu.Category;
+		const oMenu = new Menu({
 			quickActions: [
 				new QuickAction({label: "Custom generic action", content: new Button()}),
 				new QuickAction({label: "Custom aggregate action", content: new Button(), category: Category.Aggregate}),
@@ -572,7 +590,7 @@ sap.ui.define([
 			]})
 		].forEach((oQuickAction) => oMenu.addAggregation("_quickActions", oQuickAction));
 
-		var aLabelsInExpectedOrder = [
+		const aLabelsInExpectedOrder = [
 			"Control sort action",
 			"Custom sort action",
 			"Control filter action",
@@ -593,12 +611,12 @@ sap.ui.define([
 		oMenu.destroy();
 	});
 
-	QUnit.test("Accessibility", function(assert) {
+	QUnit.test("Accessibility", async function(assert) {
 		this.createMenu(true, true, true, true);
 		this.oColumnMenu.openBy(this.oButton);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
-		var oMenu = this.oColumnMenu;
+		const oMenu = this.oColumnMenu;
 
 		assert.equal(oMenu._oPopover.getAriaLabelledBy(), oMenu.getId() + "-menuDescription",
 			"The popover is associated to the Menu description via aria-labelledby");
@@ -615,9 +633,9 @@ sap.ui.define([
 		assert.equal(document.getElementById(oMenu.getId() + "-itemContainerDescription").innerText,
 			oMenu._getResourceText("table.COLUMNMENU_ITEM_CONTAINER_DESC"), "Item container description text is correct");
 
-		var oFormElements = oMenu._oQuickActionContainer.getFormContainers()[0].getFormElements();
-		var sControlId, oControl;
-		for (var i = 0; i < oFormElements.length; i++) {
+		const oFormElements = oMenu._oQuickActionContainer.getFormContainers()[0].getFormElements();
+		let sControlId, oControl;
+		for (let i = 0; i < oFormElements.length; i++) {
 			sControlId = oFormElements[i].getFields()[0].getControl();
 			oControl = document.getElementById(sControlId);
 			assert.ok(oControl.getAttribute("aria-labelledby").includes(oFormElements[i].getLabelControl().getId()),
@@ -626,7 +644,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Button states", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oItem = new Item({label: sText, content: new Button({text: sText})});
 			this.oColumnMenu = new Menu({
 				quickActions: [new QuickAction({label: sText, content: new Button({text: sText})})],
@@ -634,23 +652,23 @@ sap.ui.define([
 			});
 			this.oButton = new Button();
 			this.oButton.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
-		afterEach: function () {
+		afterEach: function() {
 			this.oColumnMenu.destroy();
 			this.oButton.destroy();
 			this.oItem.destroy();
 		}
 	});
 
-	QUnit.test("Check default button settings", function (assert) {
+	QUnit.test("Check default button settings", async function(assert) {
 		this.oColumnMenu.openBy(this.oButton);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Navigate to first item
-		var sId = this.oColumnMenu.getItems()[0].getId();
+		const sId = this.oColumnMenu.getItems()[0].getId();
 		this.oColumnMenu._oItemsContainer.switchView(sId);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(this.oColumnMenu._oBtnOk.getVisible());
 		assert.ok(this.oColumnMenu._oBtnCancel.getVisible());
@@ -661,19 +679,19 @@ sap.ui.define([
 		assert.ok(this.oColumnMenu._oItemsContainer.getHeader().getContentRight()[0].getEnabled());
 	});
 
-	QUnit.test("Switch reset button states", function (assert) {
+	QUnit.test("Switch reset button states", async function(assert) {
 		this.oColumnMenu.openBy(this.oButton);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Navigate to first item
-		var sId = this.oColumnMenu.getItems()[0].getId();
+		const sId = this.oColumnMenu.getItems()[0].getId();
 		this.oColumnMenu._oItemsContainer.switchView(sId);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		this.oItem.changeButtonSettings({
 			reset: {visible: false}
 		});
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.notOk(this.oColumnMenu._oItemsContainer.getHeader().getContentRight()[0].getVisible());
 		assert.notOk(this.oItem.getButtonSettings()["reset"]["visible"]);
@@ -681,7 +699,7 @@ sap.ui.define([
 		this.oItem.changeButtonSettings({
 			reset: {visible: true, enabled: false}
 		});
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(this.oColumnMenu._oItemsContainer.getHeader().getContentRight()[0].getVisible());
 		assert.notOk(this.oColumnMenu._oItemsContainer.getHeader().getContentRight()[0].getEnabled());
@@ -689,77 +707,79 @@ sap.ui.define([
 		assert.notOk(this.oItem.getButtonSettings()["reset"]["enabled"]);
 	});
 
-	QUnit.test("Switch cancel button states", function (assert) {
+	QUnit.test("Switch cancel button states", async function(assert) {
 		this.oColumnMenu.openBy(this.oButton);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Navigate to first item
-		var sId = this.oColumnMenu.getItems()[0].getId();
+		const sId = this.oColumnMenu.getItems()[0].getId();
 		this.oColumnMenu._oItemsContainer.switchView(sId);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		this.oItem.changeButtonSettings({
 			cancel: {visible: false}
 		});
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.notOk(this.oColumnMenu._oBtnCancel.getVisible());
 		assert.notOk(this.oItem.getButtonSettings()["cancel"]["visible"]);
 	});
 
-	QUnit.test("Switch confirm button states", function (assert) {
+	QUnit.test("Switch confirm button states", async function(assert) {
 		this.oColumnMenu.openBy(this.oButton);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Navigate to first item
-		var sId = this.oColumnMenu.getItems()[0].getId();
+		const sId = this.oColumnMenu.getItems()[0].getId();
 		this.oColumnMenu._oItemsContainer.switchView(sId);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		this.oItem.changeButtonSettings({
 			confirm: {visible: false}
 		});
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		assert.notOk(this.oColumnMenu._oBtnOk.getVisible());
 		assert.notOk(this.oItem.getButtonSettings()["confirm"]["visible"]);
 	});
 
 	QUnit.module("Control tree", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oColumnMenu = new Menu({
 				quickActions: [new QuickAction({label: sText, content: new Button({text: sText})})],
 				items: [new Item({label: sText, content: new Button({text: sText})})]
 			});
 			this.oButton = new Button();
 			this.oButton.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
-		afterEach: function () {
+		afterEach: function() {
 			this.oColumnMenu.destroy();
 			this.oButton.destroy();
 		}
 	});
 
-	QUnit.test("Without parent", function (assert) {
-		var oStaticArea = StaticArea.getUIArea();
-		var oInvalidateSpy = sinon.spy(oStaticArea, "invalidate");
+	QUnit.test("Without parent", function(assert) {
+		const oStaticArea = StaticArea.getUIArea();
+		const oInvalidateSpy = sinon.spy(oStaticArea, "invalidate");
 		assert.notOk(this.oColumnMenu.getUIArea(), "Before opening, the menu has no connection to the UIArea");
 
 		this.oColumnMenu.openBy(this.oButton);
-		var oMenuUIArea = this.oColumnMenu.getUIArea();
+		const oMenuUIArea = this.oColumnMenu.getUIArea();
 		assert.ok(oMenuUIArea, "After opening, the menu has a connection to the UIArea");
 		assert.equal(oMenuUIArea, this.oColumnMenu.getParent(), "After opening, the UIArea is the parent");
 		assert.equal(oMenuUIArea, oStaticArea, "The menu is in the static area");
 
+		const clock = sinon.useFakeTimers();
 		this.oColumnMenu.close();
-		this.clock.tick(500);
+		clock.tick(500);
+		clock.restore();
 
 		this.oColumnMenu.openBy(this.oButton);
 		assert.ok(oInvalidateSpy.notCalled, "The UIArea is not invalidated when the Menu opens");
 	});
 
-	QUnit.test("With parent", function (assert) {
+	QUnit.test("With parent", function(assert) {
 		this.oButton.addDependent(this.oColumnMenu);
 		assert.equal(this.oColumnMenu.getUIArea(), this.oButton.getUIArea(), "Before opening, the UIArea is inherited from the parent");
 
@@ -769,7 +789,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Quick Action Container", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oColumnMenu = new Menu({
 				quickActions: [
 					new QuickAction({
@@ -804,21 +824,20 @@ sap.ui.define([
 
 			this.oButton = new Button();
 			this.oButton.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
-		afterEach: function () {
+		afterEach: function() {
 			this.oColumnMenu.destroy();
 			this.oButton.destroy();
 		}
 	});
 
-	QUnit.test("Check form content", function (assert) {
-		var clock = sinon.useFakeTimers();
-		var oControl;
+	QUnit.test("Check form content", async function(assert) {
+		let oControl;
 		this.oColumnMenu.openBy(this.oButton);
 
-		var oContainer = this.oColumnMenu._oQuickActionContainer.getFormContainers()[0];
-		var aFormElements = oContainer.getFormElements();
+		let oContainer = this.oColumnMenu._oQuickActionContainer.getFormContainers()[0];
+		let aFormElements = oContainer.getFormElements();
 
 		assert.equal(aFormElements.length, 4, "Form has only four Quick Action elements, as the last one is not visible");
 
@@ -866,10 +885,13 @@ sap.ui.define([
 		assert.ok(oControl.isA("sap.m.Button"), "Control is a button");
 		assert.equal(oControl.getText(), sText, "Correct button with correct button text");
 
+		const clock = sinon.useFakeTimers();
 		this.oColumnMenu.close();
 		clock.tick(500);
+		clock.restore();
+
 		this.oColumnMenu.addQuickAction(new QuickAction({label: "Added Action", content: [new Button({text: "Button Added"})]}));
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		this.oColumnMenu.openBy(this.oButton);
 
@@ -885,7 +907,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Events", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oColumnMenu = new Menu({
 				items: [
 					new ActionItem({
@@ -898,39 +920,41 @@ sap.ui.define([
 			});
 			this.oButton = new Button();
 			this.oButton.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
-		afterEach: function () {
+		afterEach: function() {
 			this.oColumnMenu.destroy();
 			this.oButton.destroy();
 		}
 	});
 
 	QUnit.test("beforeOpen", function(assert) {
-		var clock = sinon.useFakeTimers();
 		assert.expect(4);
 
 		this.oColumnMenu.attachBeforeOpen(function(oEvent) {
 			assert.deepEqual(oEvent.getParameter("openBy"), this.oButton, "Fired with correct parameters");
 		}, this);
 
+		const clock = sinon.useFakeTimers();
 		this.oColumnMenu.openBy(this.oButton);
 		this.oColumnMenu.close();
 		clock.tick(500);
+		clock.restore();
 
 		this.oColumnMenu.openBy(this.oButton.getDomRef());
-		var oOpenSpy = sinon.spy(this.oColumnMenu._oPopover, "openBy");
+		const oOpenSpy = sinon.spy(this.oColumnMenu._oPopover, "openBy");
 		this.oColumnMenu.openBy(this.oButton.getDomRef());
 		assert.ok(this.oColumnMenu.isOpen(), "The column menu is already open");
-		assert.ok(!oOpenSpy.called, "Popover.openBy is not called");
+		assert.ok(oOpenSpy.notCalled, "Popover.openBy is not called");
 	});
 
 	QUnit.test("afterClose", function(assert) {
-		var clock = sinon.useFakeTimers();
-		var done = assert.async();
+		const clock = sinon.useFakeTimers();
+		const done = assert.async();
 
 		this.oColumnMenu.attachAfterClose(function(oEvent) {
 			assert.ok(oEvent.getParameters(), "Event Fired after the menu was closed");
+			clock.restore();
 			done();
 		}, this);
 
@@ -940,13 +964,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("ActionItem press", function(assert) {
-		var clock = sinon.useFakeTimers();
 		assert.expect(4);
 
 		this.oColumnMenu.openBy(this.oButton);
 		assert.ok(this.oColumnMenu.isOpen(), "The column menu is open");
 
-		var sId = this.oColumnMenu._oItemsContainer._getNavigationList().getItems()[0].getId();
+		const sId = this.oColumnMenu._oItemsContainer._getNavigationList().getItems()[0].getId();
+		const clock = sinon.useFakeTimers();
+
 		QUnitUtils.triggerEvent("mousedown", sId);
 		QUnitUtils.triggerEvent("mouseup", sId);
 		QUnitUtils.triggerEvent("click", sId);
@@ -966,21 +991,22 @@ sap.ui.define([
 		QUnitUtils.triggerEvent("click", sId);
 
 		clock.tick(1000);
+		clock.restore();
 		assert.ok(this.oColumnMenu.isOpen(), "The column menu is still open because preventDefault was called in the event handler");
 	});
 
-	QUnit.test("Item buttons", function (assert) {
-		var clock = sinon.useFakeTimers();
-		var oMenu = this.oColumnMenu;
-		var oButton = this.oButton;
+	QUnit.test("Item buttons", async function(assert) {
+		const clock = sinon.useFakeTimers();
+		const oMenu = this.oColumnMenu;
+		const oButton = this.oButton;
 		oMenu.openBy(oButton);
-		oCore.applyChanges();
+		await nextUIUpdate(clock);
 
 		// Navigate to first item
-		var oItem = oMenu.getItems()[1];
-		var sId = oItem.getId();
+		const oItem = oMenu.getItems()[1];
+		const sId = oItem.getId();
 		oMenu._oItemsContainer.switchView(sId);
-		oCore.applyChanges();
+		await nextUIUpdate(clock);
 
 		return new Promise(function(resolve) {
 			oItem.attachEventOnce("confirm", function(oEvent) {
@@ -993,20 +1019,20 @@ sap.ui.define([
 			clock.tick(500);
 			assert.ok(oMenu.isOpen(), "default prevented");
 
-			return new Promise(function (resolve) {
-				oItem.attachEventOnce("confirm", function () {
+			return new Promise(function(resolve) {
+				oItem.attachEventOnce("confirm", function() {
 					assert.ok("confirm event fired");
 					resolve();
 				});
 				oMenu._oBtnOk.firePress();
 			});
-		}).then(function() {
+		}).then(async function() {
 			clock.tick(500);
 			assert.notOk(oMenu.isOpen(), "menu is closed");
 
 			oMenu.openBy(oButton);
 			oMenu._oItemsContainer.switchView(sId);
-			oCore.applyChanges();
+			await nextUIUpdate(clock);
 
 			return new Promise(function(resolve) {
 				oItem.attachEventOnce("cancel", function(oEvent) {
@@ -1020,20 +1046,21 @@ sap.ui.define([
 			clock.tick(500);
 			assert.ok(oMenu.isOpen(), "default prevented");
 
-			return new Promise(function (resolve) {
-				oItem.attachEventOnce("cancel", function () {
+			return new Promise(function(resolve) {
+				oItem.attachEventOnce("cancel", function() {
 					assert.ok("cancel event fired");
 					resolve();
 				});
 				oMenu._oBtnCancel.firePress();
 			});
-		}).then(function () {
+		}).then(async function() {
 			clock.tick(500);
+			clock.restore();
 			assert.notOk(oMenu.isOpen(), "menu is closed");
 
 			oMenu.openBy(oButton);
 			oMenu._oItemsContainer.switchView(sId);
-			oCore.applyChanges();
+			await nextUIUpdate(clock);
 
 			return new Promise(function(resolve) {
 				oItem.attachEventOnce("reset", function() {
@@ -1046,7 +1073,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Auto close behavior", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oColumnMenu = new Menu({
 				quickActions: [
 					new QuickAction({label: "test", content: new Button({text: "button"})})
@@ -1056,9 +1083,9 @@ sap.ui.define([
 			this.oButton.placeAt("qunit-fixture");
 			this.oButton1 = new Button();
 			this.oButton1.placeAt("content");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
-		afterEach: function () {
+		afterEach: function() {
 			this.oColumnMenu.destroy();
 			this.oButton.destroy();
 			this.oButton1.destroy();
@@ -1066,47 +1093,54 @@ sap.ui.define([
 	});
 
 	QUnit.test("Open popover by a control/Close when another control is clicked", function(assert) {
+		const clock = sinon.useFakeTimers();
 		this.oColumnMenu.openBy(this.oButton);
 		assert.ok(this.oColumnMenu.isOpen());
 		assert.notOk(this.oColumnMenu._oPopover.getShowHeader());
 
 		QUnitUtils.triggerEvent("mousedown", this.oButton1.getId());
-		this.clock.tick(1000);
+		clock.tick(1000);
+		clock.restore();
 		assert.notOk(this.oColumnMenu.isOpen());
 	});
 
 	QUnit.test("Open popover by a control/Close when the same control is clicked", function(assert) {
+		const clock = sinon.useFakeTimers();
 		this.oColumnMenu.openBy(this.oButton);
 		assert.ok(this.oColumnMenu.isOpen());
 
 		QUnitUtils.triggerEvent("mousedown", this.oButton.getId());
-		this.clock.tick(1000);
+		clock.tick(1000);
+		clock.restore();
 		assert.notOk(this.oColumnMenu.isOpen());
 	});
 
 	QUnit.test("Open popover by an HTMLElement/Close when another element is clicked", function(assert) {
+		const clock = sinon.useFakeTimers();
 		this.oColumnMenu.openBy(this.oButton.getDomRef());
 		assert.ok(this.oColumnMenu.isOpen());
 		assert.notOk(this.oColumnMenu._oPopover.getShowHeader());
 
 		QUnitUtils.triggerEvent("mousedown", "content");
-		this.clock.tick(1000);
+		clock.tick(1000);
+		clock.restore();
 		assert.notOk(this.oColumnMenu.isOpen());
 	});
 
-	QUnit.test("Auto close behavior when the menu is open within a dialog", function(assert) {
-		var oButton1 = new Button();
-		var oButton2 = new Button();
-		var oDialog = new Dialog({
+	QUnit.test("Auto close behavior when the menu is open within a dialog", async function(assert) {
+		const oButton1 = new Button();
+		const oButton2 = new Button();
+		const oDialog = new Dialog({
 			content: [oButton1, oButton2]
 		});
 
 		oDialog.placeAt("content");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
+		const clock = sinon.useFakeTimers();
 		oDialog.open();
 		this.oColumnMenu.openBy(oButton1);
-		this.clock.tick(1000);
+		clock.tick(1000);
 		assert.ok(this.oColumnMenu.isOpen());
 
 		this.oColumnMenu._oPopover._oControl.focus();
@@ -1114,7 +1148,8 @@ sap.ui.define([
 		assert.ok(this.oColumnMenu.isOpen());
 
 		oButton2.focus();
-		this.clock.tick(1000);
+		clock.tick(1000);
+		clock.restore();
 		assert.notOk(this.oColumnMenu.isOpen());
 
 		oDialog.destroy();
@@ -1123,7 +1158,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Auto close behavior when the Menu contains a control that opens a popup", function(assert) {
-		var oComboBox = new ComboBox({
+		const clock = sinon.useFakeTimers();
+		const oComboBox = new ComboBox({
 			items: [
 				new CoreItem({key: "v1", text: "Value 1"}),
 				new CoreItem({key: "v2", text: "Value 2"})
@@ -1140,23 +1176,23 @@ sap.ui.define([
 		this.oColumnMenu.openBy(this.oButton);
 		assert.ok(this.oColumnMenu.isOpen());
 
-		var sId = this.oColumnMenu.getItems()[0].getId();
+		const sId = this.oColumnMenu.getItems()[0].getId();
 		this.oColumnMenu._oItemsContainer.switchView(sId);
-		this.clock.tick(1000);
-
+		clock.tick(1000);
 		oComboBox.open();
 		QUnitUtils.triggerEvent("mousedown", oComboBox._getList().getItems()[0].$()[0].firstChild);
-		this.clock.tick(1000);
+		clock.tick(1000);
+		clock.restore();
 		assert.ok(this.oColumnMenu.isOpen());
 	});
 
 	QUnit.test("Auto close behavior when the Menu item opens a dialog", function(assert) {
-		var oButtonInsideDialog = new Button();
-		var oDialog = new Dialog({
+		const oButtonInsideDialog = new Button();
+		const oDialog = new Dialog({
 			content: [oButtonInsideDialog]
 		});
 
-		var oButtonOpenDialog = new Button({
+		const oButtonOpenDialog = new Button({
 			press: function() {
 				oDialog.open();
 			}
@@ -1173,15 +1209,17 @@ sap.ui.define([
 		this.oColumnMenu.openBy(this.oButton);
 		assert.ok(this.oColumnMenu.isOpen());
 
-		var sId = this.oColumnMenu.getItems()[0].getId();
+		const clock = sinon.useFakeTimers();
+		const sId = this.oColumnMenu.getItems()[0].getId();
 		this.oColumnMenu._oItemsContainer.switchView(sId);
-		this.clock.tick(1000);
+		clock.tick(1000);
 
 		oButtonOpenDialog.firePress();
-		this.clock.tick(1000);
+		clock.tick(1000);
 		assert.ok(this.oColumnMenu.isOpen());
 		oButtonInsideDialog.firePress();
-		this.clock.tick(1000);
+		clock.tick(1000);
+		clock.restore();
 		assert.ok(this.oColumnMenu.isOpen());
 		this.oColumnMenu.close();
 	});

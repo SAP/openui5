@@ -18,7 +18,6 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/Element",
-	"sap/ui/core/Core",
 	"sap/base/i18n/Localization",
 	"sap/base/util/Deferred",
 	"sap/ui/thirdparty/jquery",
@@ -42,7 +41,6 @@ sap.ui.define([
 	KeyCodes,
 	JSONModel,
 	Element,
-	oCore,
 	Localization,
 	Deferred,
 	jQuery
@@ -1302,6 +1300,7 @@ sap.ui.define([
 		 * @param {Object} assert QUnit assert object.
 		 * @private
 		 */
+		// eslint-disable-next-line complexity
 		testArrowKeys: function(assert) {
 			const mRowCounts = this.oTable._getRowCounts();
 			const bHasColumnHeaders = this.oTable.getColumnHeaderVisible();
@@ -3261,6 +3260,7 @@ sap.ui.define([
 		 * @param {Object} assert QUnit assert object.
 		 * @private
 		 */
+		// eslint-disable-next-line complexity
 		testPageKeys: async function(assert) {
 			const mRowCounts = this.oTable._getRowCounts();
 			const iTotalRowCount = this.oTable._getTotalRowCount();
@@ -5509,11 +5509,11 @@ sap.ui.define([
 	/**
 	 * @deprecated As of version 1.115
 	 */
-	QUnit.test("On SelectAll - legacyMultiSelection", function(assert) {
+	QUnit.test("On SelectAll - legacyMultiSelection", async function(assert) {
 		const oTable = this.oTable;
 
 		oTable.clearSelection();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		const oElem = this.oTable.qunit.getSelectAllCell();
 
@@ -5540,11 +5540,11 @@ sap.ui.define([
 	/**
 	 * @deprecated As of version 1.115
 	 */
-	QUnit.test("On a Row Header - legacyMultiSelection", function(assert) {
+	QUnit.test("On a Row Header - legacyMultiSelection", async function(assert) {
 		const oTable = this.oTable;
 
 		oTable.clearSelection();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		const oElem1 = this.oTable.qunit.getRowHeaderCell(0);
 		const oElem2 = this.oTable.qunit.getRowHeaderCell(1);
@@ -5638,7 +5638,7 @@ sap.ui.define([
 	/**
 	 * @deprecated As of version 1.115
 	 */
-	QUnit.test("On a Data Cell - SelectionBehavior = Row - legacyMultiSelection", function(assert) {
+	QUnit.test("On a Data Cell - SelectionBehavior = Row - legacyMultiSelection", async function(assert) {
 		const oTable = this.oTable;
 		let iCallCount = 0;
 		let bPreventDefault = false;
@@ -5651,7 +5651,7 @@ sap.ui.define([
 				oEvent.preventDefault();
 			}
 		});
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		const oElem1 = this.oTable.qunit.getDataCell(0, 0);
 		const oElem2 = this.oTable.qunit.getDataCell(1, 0);
@@ -5725,13 +5725,13 @@ sap.ui.define([
 	/**
 	 * @deprecated As of version 1.115
 	 */
-	QUnit.test("On a Data Cell - SelectionBehavior = RowSelector - legacyMultiSelection", function(assert) {
+	QUnit.test("On a Data Cell - SelectionBehavior = RowSelector - legacyMultiSelection", async function(assert) {
 		const oTable = this.oTable;
 		const cellClickEventHandler = this.spy();
 
 		oTable.clearSelection();
 		oTable.attachCellClick(cellClickEventHandler);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		const oElem2 = this.oTable.qunit.getDataCell(1, 0);
 		const oElem1 = this.oTable.qunit.getDataCell(0, 0);
@@ -7166,6 +7166,7 @@ sap.ui.define([
 		 * @param {boolean} [bShowInfo=false] If <code>true</code>, additional information will be printed in the QUnit output.
 		 * @private
 		 */
+		// eslint-disable-next-line complexity
 		testActionModeTabNavigation: async function(assert, bShowInfo = false) {
 			const mRowCounts = this.oTable._getRowCounts();
 			const iVisibleRowCount = mRowCounts.count;

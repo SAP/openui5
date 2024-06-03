@@ -2,6 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/table/Row",
 	"sap/ui/table/RowAction",
@@ -9,10 +10,10 @@ sap.ui.define([
 	"sap/ui/table/rowmodes/Fixed",
 	"sap/ui/unified/MenuItem",
 	"sap/ui/Device",
-	"sap/ui/core/Control",
-	"sap/ui/core/Core"
+	"sap/ui/core/Control"
 ], function(
 	TableQUnitUtils,
+	nextUIUpdate,
 	TableUtils,
 	Row,
 	RowAction,
@@ -20,8 +21,7 @@ sap.ui.define([
 	FixedRowMode,
 	MenuItem,
 	Device,
-	Control,
-	oCore
+	Control
 ) {
 	"use strict";
 
@@ -618,7 +618,7 @@ sap.ui.define([
 	/**
 	 * @deprecated As of version 1.54
 	 */
-	QUnit.test("openContextMenu - Header cells", function(assert) {
+	QUnit.test("openContextMenu - Header cells", async function(assert) {
 		const oColumnA = oTable.getColumns()[0];
 		const oColumnB = oTable.getColumns()[1];
 		const bOriginalDeviceSystemDesktop = Device.system.desktop;
@@ -650,7 +650,7 @@ sap.ui.define([
 
 		// Make the first column invisible and open the menu of column 2 (which is not the first visible column).
 		oColumnA.setVisible(false);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		oEvent = createFakeEventObject(oColumnB.getDomRef());
 		TableUtils.Menu.openContextMenu(oTable, oEvent);
@@ -658,7 +658,7 @@ sap.ui.define([
 		this.assertEventCalled(assert, this.oCellContextMenuEventInfo, false);
 
 		oColumnA.setVisible(true);
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		Device.system.desktop = false;
 
