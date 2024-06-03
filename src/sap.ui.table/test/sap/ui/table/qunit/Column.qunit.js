@@ -21,7 +21,6 @@ sap.ui.define([
 	"sap/m/Link",
 	"sap/m/CheckBox",
 	"sap/ui/core/Element",
-	"sap/ui/core/Core",
 	"sap/ui/core/dnd/DragDropInfo"
 ], function(
 	TableQUnitUtils,
@@ -44,7 +43,6 @@ sap.ui.define([
 	Link,
 	CheckBox,
 	Element,
-	oCore,
 	DragDropInfo
 ) {
 	"use strict";
@@ -776,7 +774,7 @@ sap.ui.define([
 	 * @deprecated As of version 1.117
 	 */
 	QUnit.module("Column Menu", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			const oModel = new JSONModel();
 			oModel.setData([{myProp: "someValue", myOtherProp: "someOtherValue"}]);
 			this._oTable = new Table();
@@ -801,7 +799,7 @@ sap.ui.define([
 			this._oTable.addColumn(this._oColumnWithUnifiedMenu);
 
 			this._oTable.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this._oColumnWithColumnMenu.destroy();
@@ -1483,7 +1481,7 @@ sap.ui.define([
 	 * @deprecated As of version 1.117
 	 */
 	QUnit.module("Column Visibility Submenu", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			const oModel = new JSONModel();
 			oModel.setData([{myProp: "someValue", myOtherProp: "someOtherValue"}]);
 			this._oTable = new Table();
@@ -1505,7 +1503,7 @@ sap.ui.define([
 			this._oTable.addColumn(this._oColumn2);
 
 			this._oTable.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this._oColumn1.destroy();
@@ -1622,7 +1620,7 @@ sap.ui.define([
 		this._oColumn1._openHeaderMenu(oCellDomRef);
 	});
 
-	QUnit.test("Multiple tables", function(assert) {
+	QUnit.test("Multiple tables", async function(assert) {
 		const done = assert.async();
 		const that = this;
 		const oModel = new JSONModel();
@@ -1652,7 +1650,7 @@ sap.ui.define([
 		this._oTable2.addColumn(this._oColumn23);
 
 		this._oTable2.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		this._oColumn2.setVisible(false);
 
@@ -1667,9 +1665,10 @@ sap.ui.define([
 				const oColumnMenuTable2 = that._oColumn21.getMenu();
 				const oVisibilitySubmenuTable2 = oColumnMenuTable2.getItems()[0].getSubmenu();
 				assert.strictEqual(oVisibilitySubmenuTable2.getItems()[0].getIcon(), "sap-icon://accept", "The visibility submenu item is checked");
+				// eslint-disable-next-line max-len
 				assert.strictEqual(oVisibilitySubmenuTable2.getItems()[1].getIcon(), "sap-icon://accept", "The visibility submenu item is checked. Changing the column visibility in the first table hasn't affected the column visibility in the second table");
-
-				assert.notEqual(oVisibilitySubmenuTable1, oVisibilitySubmenuTable2, "The visibility submenu instances for both tables are not the same instance");
+				assert.notEqual(oVisibilitySubmenuTable1, oVisibilitySubmenuTable2,
+						"The visibility submenu instances for both tables are not the same instance");
 				assert.equal(oVisibilitySubmenuTable1.getItems().length, 2, "The visibility submenu of the first table has 2 items");
 				assert.equal(oVisibilitySubmenuTable2.getItems().length, 3, "The visibility submenu of the second table has 3 items");
 

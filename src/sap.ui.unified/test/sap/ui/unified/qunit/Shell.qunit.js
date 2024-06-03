@@ -10,8 +10,9 @@ sap.ui.define([
 	"sap/ui/unified/ShellHeadUserItem",
 	"sap/base/util/ObjectPath",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core"
-], function(Element, qutils, containsOrEquals, Control, Shell, ShellHeadItem, ShellHeadUserItem, ObjectPath, jQuery, oCore) {
+	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(Element, qutils, containsOrEquals, Control, Shell, ShellHeadItem, ShellHeadUserItem, ObjectPath, jQuery, oCore, nextUIUpdate) {
 	"use strict";
 
 	// Control initialization
@@ -154,8 +155,9 @@ sap.ui.define([
 
 	QUnit.module("Rendering");
 
-	QUnit.test("Content", function(assert) {
-		oCore.applyChanges();
+	QUnit.test("Content", async function(assert) {
+		await nextUIUpdate();
+
 		assert.ok(containsOrEquals(document.getElementById("shell-header-hdr-center"), document.getElementById("search")), "Search rendered correctly");
 		assert.ok(containsOrEquals(document.getElementById("shell-header-hdr-begin"), document.getElementById("_itm")), "Header Items rendered correctly");
 		assert.ok(containsOrEquals(document.getElementById("shell-header-hdr-end"), document.getElementById("_end_itm")), "Header End Items rendered correctly");

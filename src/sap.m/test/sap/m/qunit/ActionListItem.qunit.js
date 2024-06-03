@@ -1,107 +1,91 @@
 /*global QUnit */
 sap.ui.define([
-	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/events/KeyCodes",
-	"sap/m/List",
 	"sap/m/ActionListItem",
-	"sap/ui/core/Core",
+	"sap/m/List",
+	"sap/ui/events/KeyCodes",
+	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery"
-], function(qutils, KeyCodes, List, ActionListItem, oCore, jQuery) {
+], function(ActionListItem, List, KeyCodes, qutils, nextUIUpdate, jQuery) {
 	"use strict";
 
+	async function timeout(iDuration) {
+		await new Promise(function(resolve) {
+			window.setTimeout(resolve, iDuration);
+		});
+	}
 
-
-	var setup = function(sListItemId, oMetadata) {
-		var oList = new List({
+	async function setup(sListItemId, oMetadata) {
+		const oList = new List({
 			items : [ new ActionListItem(sListItemId, oMetadata) ]
 		});
 		oList.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
+
 		return oList;
-	};
+	}
 
-	var testSelection = function(data) {
-		var sListMode = data.mode;
-		var bIncludeItemInSelection = data.includeItemInSelection;
-		var sKey = data.key;
+	function testSelection(data) {
+		const sListMode = data.mode;
+		const bIncludeItemInSelection = data.includeItemInSelection;
+		const sKey = data.key;
 
-		var testTitle = "Selection on key=" + sKey + ", includeItemInSelection=" + bIncludeItemInSelection + ", mode=" + sListMode;
+		const testTitle = "Selection on key=" + sKey + ", includeItemInSelection=" + bIncludeItemInSelection + ", mode=" + sListMode;
 
-		QUnit.test(testTitle, function(assert) {
-			var oSpy = this.spy();
-			var oList = new List("list1", {
-				items : [ new ActionListItem("item1", {
-					text : "Action1",
-					press : oSpy
-				}) ],
-				mode : sListMode,
-				includeItemInSelection : bIncludeItemInSelection
-			});
-			oList.placeAt("qunit-fixture");
-			oCore.applyChanges();
+		QUnit.test(testTitle, async function(assert) {
+			const oSpy = this.oSpy;
+			const oList = this.oList;
+
+			oList.setMode(sListMode);
+			oList.setIncludeItemInSelection(bIncludeItemInSelection);
+			await nextUIUpdate();
 
 			qutils.triggerKeydown("item1", KeyCodes.SPACE);
-
-			this.clock.tick(50);
+			await timeout();
 
 			assert.strictEqual(oSpy.callCount, 1, "Event 'press' should be fired");
 			assert.ok(!oList.getItems()[0].getSelected(), "never selected");
-			oList.destroy();// Clean up
 		});
-	};
+	}
 
-
-	QUnit.module("Events");
-
-	QUnit.test("tap", function(assert) {
-
-		var oSpy = this.spy();
-
-		var oList = setup("item1", {
-			text : "Action1",
-			press : oSpy
-		});
-
-		jQuery("#item1").trigger('tap');
-
-		this.clock.tick(50);
-
-		assert.strictEqual(oSpy.callCount, 1, "Event 'press' should have been fired");
-		oList.destroy();// Clean up
+	QUnit.module("Events", {
+		beforeEach: async function() {
+			this.oSpy = this.spy();
+			this.oList = await setup("item1", {
+				text : "Action1",
+				press : this.oSpy
+			});
+		},
+		afterEach: function() {
+			this.oList?.destroy();
+		}
 	});
 
-	QUnit.test("Press event on [ENTER]", function(assert) {
+	QUnit.test("tap", async function(assert) {
+		const oSpy = this.oSpy;
 
-		var oSpy = this.spy();
+		jQuery("#item1").trigger("tap");
+		await timeout();
 
-		var oList = setup("item1", {
-			text : "Action1",
-			press : oSpy
-		});
+		assert.strictEqual(oSpy.callCount, 1, "Event 'press' should have been fired");
+	});
+
+	QUnit.test("Press event on [ENTER]", async function(assert) {
+		const oSpy = this.oSpy;
 
 		qutils.triggerKeydown("item1", KeyCodes.ENTER);
-
-		this.clock.tick(50);
+		await timeout();
 
 		assert.strictEqual(oSpy.callCount, 1, "Event 'press' should have been fired");
-		oList.destroy();// Clean up
 	});
 
-	QUnit.test("Press event on [SPACE]", function(assert) {
-
-		var oSpy = this.spy();
-
-		var oList = setup("item1", {
-			text : "Action1",
-			press : oSpy
-		});
+	QUnit.test("Press event on [SPACE]", async function(assert) {
+		const oSpy = this.oSpy;
 
 		qutils.triggerKeydown("item1", KeyCodes.SPACE);
-
-		this.clock.tick(50);
+		await timeout();
 
 		assert.strictEqual(oSpy.callCount, 1, "Event 'press' should have been fired");
-		oList.destroy();// Clean up
 	});
 
 	/* should never be selected */

@@ -9,14 +9,14 @@ sap.ui.define([
 	"sap/ui/table/Column",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core"
-], function(Element, TableQUnitUtils, TablePersoController, qutils, Table, Column, JSONModel, jQuery, oCore) {
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(Element, TableQUnitUtils, TablePersoController, qutils, Table, Column, JSONModel, jQuery, nextUIUpdate) {
 	"use strict";
 
 	let oController = null;
 	let oTable = null;
 
-	function createController(mControllerSettings, mTableSettings) {
+	async function createController(mControllerSettings, mTableSettings) {
 		// init settings
 		mControllerSettings = mControllerSettings || {};
 		mTableSettings = mTableSettings || {};
@@ -60,7 +60,8 @@ sap.ui.define([
 		oTable.setModel(new JSONModel(oData));
 		oTable.bindRows("/items");
 		oTable.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
+
 		mControllerSettings.table = oTable;
 
 		oController = new TablePersoController(mControllerSettings);
@@ -83,12 +84,12 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("autoSave", function(assert) {
+	QUnit.test("autoSave", async function(assert) {
 		assert.expect(5);
 		let getPersDataCalls = 0;
 		let setPersDataCalls = 0;
 
-		createController({
+		await createController({
 			persoService: {
 				getPersData: function() {
 					getPersDataCalls++;
@@ -119,9 +120,9 @@ sap.ui.define([
 		assert.equal(setPersDataCalls, 1, "setPersData of service should be called 1 time.");
 	});
 
-	QUnit.test("persoService unsupported value", function(assert) {
+	QUnit.test("persoService unsupported value", async function(assert) {
 		assert.expect(3);
-		createController();
+		await createController();
 
 		try {
 			oController.setPersoService(123);
@@ -154,11 +155,11 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("persoService / table", function(assert) {
+	QUnit.test("persoService / table", async function(assert) {
 		assert.expect(1);
 		let getPersDataCalls = 0;
 
-		createController({
+		await createController({
 			persoService: {
 				getPersData: function() {
 					getPersDataCalls++;
@@ -198,12 +199,12 @@ sap.ui.define([
 	/**
 	 * @deprecated As of version 1.117
 	 */
-	QUnit.test("Column visibility (autoSave)", function(assert) {
+	QUnit.test("Column visibility (autoSave)", async function(assert) {
 		assert.expect(16);
 		const done = assert.async();
 		let getPersDataCalls = 0;
 
-		createController({
+		await createController({
 			persoService: {
 				getPersData: function() {
 					getPersDataCalls++;
@@ -311,12 +312,12 @@ sap.ui.define([
 	/**
 	 * @deprecated As of version 1.117
 	 */
-	QUnit.test("Column visibility (no autoSave)", function(assert) {
+	QUnit.test("Column visibility (no autoSave)", async function(assert) {
 		assert.expect(19);
 		const done = assert.async();
 		let getPersDataCalls = 0;
 
-		createController({
+		await createController({
 			autoSave: false,
 			persoService: {
 				getPersData: function() {
@@ -431,11 +432,11 @@ sap.ui.define([
 		oNameColumn._openHeaderMenu(oNameColumn.getDomRef());
 	});
 
-	QUnit.test("Manual table changes via API", function(assert) {
+	QUnit.test("Manual table changes via API", async function(assert) {
 		assert.expect(11);
 		let getPersDataCalls = 0;
 
-		createController({
+		await createController({
 			persoService: {
 				getPersData: function() {
 					getPersDataCalls++;
@@ -524,8 +525,8 @@ sap.ui.define([
 		assert.equal(oTable.indexOfColumn(oColorColumn), 2, "Color column should be on index 2.");
 	});
 
-	QUnit.test("Column multiLabels", function(assert) {
-		createController();
+	QUnit.test("Column multiLabels", async function(assert) {
+		await createController();
 
 		const oTablePersoData = oController._getCurrentTablePersoData(true);
 		assert.equal(oTablePersoData.aColumns[0].text, "Name - Second level header", "Name column has the correct label in TablePersoDialog");
@@ -539,11 +540,11 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("CustomDataKey", function(assert) {
+	QUnit.test("CustomDataKey", async function(assert) {
 		assert.expect(11);
 		let getPersDataCalls = 0;
 
-		createController({
+		await createController({
 			persoService: {
 				getPersData: function() {
 					getPersDataCalls++;

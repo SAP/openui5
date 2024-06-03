@@ -2,23 +2,23 @@
 
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/table/Table",
 	"sap/ui/table/TreeTable",
 	"sap/ui/table/AnalyticalTable",
 	"sap/ui/table/Row",
 	"sap/ui/table/rowmodes/Fixed",
-	"sap/ui/core/Core",
 	"sap/ui/Device"
 ], function(
 	TableQUnitUtils,
+	nextUIUpdate,
 	TableUtils,
 	Table,
 	TreeTable,
 	AnalyticalTable,
 	Row,
 	FixedRowMode,
-	oCore,
 	Device
 ) {
 	"use strict";
@@ -377,6 +377,7 @@ sap.ui.define([
 		}
 	});
 
+	// eslint-disable-next-line complexity
 	QUnit.test("Group Mode; After expand", async function(assert) {
 		this.oTreeTable.setUseGroupMode(true);
 		this.oTreeTable.getRows()[0].expand();
@@ -452,7 +453,7 @@ sap.ui.define([
 	 * @deprecated As of version 1.28
 	 */
 	QUnit.module("sap.ui.table.Table: Experimental Grouping", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			createTables();
 			const oData = window.oModel.getData();
 			for (let i = 0; i < iNumberOfRows; i++) {
@@ -463,7 +464,7 @@ sap.ui.define([
 			oTable.getRowMode().setRowCount(12);
 			oTable.setFixedColumnCount(0);
 			oTable.setEnableGrouping(true);
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			destroyTables();
