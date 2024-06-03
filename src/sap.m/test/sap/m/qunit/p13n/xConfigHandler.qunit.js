@@ -5,8 +5,9 @@ sap.ui.define([
 	"sap/m/p13n/handler/xConfigHandler",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
-	"sap/m/p13n/modules/xConfigAPI"
-], function (MDCControl, Table, xConfigHandler, FlexObjectFactory, JsControlTreeModifier, xConfigAPI) {
+	"sap/m/p13n/modules/xConfigAPI",
+	"sap/ui/core/CustomData"
+], function (MDCControl, Table, xConfigHandler, FlexObjectFactory, JsControlTreeModifier, xConfigAPI, CustomData) {
 	"use strict";
 
 	this.oControl = null;
@@ -15,13 +16,9 @@ sap.ui.define([
 
 	QUnit.module("API Tests", {
 		createChangeObject: function(mChangeConfig) {
+			mChangeConfig = mChangeConfig || {};
 			const oChangeProperties = {
 				...mChangeConfig,
-				"content": {
-					// "key": "P5",
-					// "value": false,
-					// "targetAggregation": "items"
-				},
 				"variantReference": "__management0",
 				"developerMode": false,
 				"layer": "USER",
@@ -188,6 +185,54 @@ sap.ui.define([
 			const revertOperation = xConfigSpy.args[0][1].operation;
 			assert.equal(revertOperation, "add", "The 'remove' reverted results in a add");
 			xConfigAPI.enhanceConfig.restore();
+		});
+	});
+
+	QUnit.test("Check correct revert object creation (no existing state, item based change)", function (assert) {
+
+		const oHandler = xConfigHandler.createHandler({
+			aggregationBased: true,
+			property: "visible",
+			operation: "add"
+		});
+
+		this.createChangeObject({
+			changeType: "addItem",
+			content: {
+				key: "string"
+			}
+		});
+
+		return oHandler.changeHandler.applyChange(this.oUIChange, this.oControl, this.oPropertyBag)
+		.then((result) => {
+			const oRevertData = this.oUIChange.getRevertData();
+
+			assert.equal(oRevertData.key, "string", "The revert data key was created correctly");
+			assert.equal(oRevertData.index, -1, "The revert data index was created correctly");
+		});
+	});
+
+	QUnit.test("Check correct revert object creation (no existing state, non item related change)", function (assert) {
+
+		const oHandler = xConfigHandler.createHandler({
+			aggregationBased: true,
+			property: "visible",
+			operation: "add"
+		});
+
+		this.createChangeObject({
+			changeType: "unknownChangeType",
+			content: {
+				key: "string"
+			}
+		});
+
+		return oHandler.changeHandler.applyChange(this.oUIChange, this.oControl, this.oPropertyBag)
+		.then((result) => {
+			const oRevertData = this.oUIChange.getRevertData();
+
+			assert.equal(oRevertData.key, "string", "The revert data key was created correctly");
+			assert.equal(oRevertData.index, undefined, "The revert data index was created correctly");
 		});
 	});
 
