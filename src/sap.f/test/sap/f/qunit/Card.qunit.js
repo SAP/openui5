@@ -486,6 +486,40 @@ function (
 		oCard.destroy();
 	});
 
+	QUnit.module("Header toolbar", {
+		afterEach
+	});
+
+	QUnit.test("sapFCardHeaderToolbarFocused CSS class", async function (assert) {
+		const oToolbar = new Button(),
+			oHeader = new CardHeader({
+				title: "Title",
+				toolbar: oToolbar
+			}),
+			oCard = new Card({
+				header: oHeader
+			});
+
+		oCard.placeAt(DOM_RENDER_LOCATION);
+		await nextUIUpdate(this.clock);
+
+		// Act
+		QUnitUtils.triggerEvent("focusin", oToolbar.getDomRef());
+
+		// Assert
+		assert.ok(oHeader.getDomRef().classList.contains("sapFCardHeaderToolbarFocused"), "When toolbar is focused, header should have CSS class set");
+
+		// Act
+		oHeader.invalidate();
+		await nextUIUpdate(this.clock);
+
+		// Assert
+		assert.ok(oHeader.getDomRef().classList.contains("sapFCardHeaderToolbarFocused"), "After rendering CSS class should remain");
+
+		// Clean up
+		oCard.destroy();
+	});
+
 	QUnit.module("Accessibility", {
 		afterEach
 	});

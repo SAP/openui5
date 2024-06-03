@@ -248,10 +248,7 @@ sap.ui.define([
 	 * @private
 	 */
 	BaseHeader.prototype._onToolbarFocusin = function () {
-		var oDomRef = this.getDomRef();
-		if (oDomRef) {
-			this.getDomRef().classList.add("sapFCardHeaderToolbarFocused");
-		}
+		this.addStyleClass("sapFCardHeaderToolbarFocused");
 	};
 
 	/**
@@ -259,10 +256,7 @@ sap.ui.define([
 	 * @private
 	 */
 	BaseHeader.prototype._onToolbarFocusout = function () {
-		var oDomRef = this.getDomRef();
-		if (oDomRef) {
-			this.getDomRef().classList.remove("sapFCardHeaderToolbarFocused");
-		}
+		this.removeStyleClass("sapFCardHeaderToolbarFocused");
 	};
 
 	/*
