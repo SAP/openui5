@@ -1949,5 +1949,20 @@
         "text": " sap.m.Input: Prevent value DOM update when password type is used"
       }
     ]
+  },
+  "1.96.31": {
+    "date": "June 2024",
+    "notes": [
+      {
+        "id": "fe20aa6a909b51ed4de27227de7bfeac279f8e03",
+        "type": "FIX",
+        "text": " sap.m.Input: Value is not cleared on invalidation when type password is used"
+      },
+      {
+        "id": "2670346ec16445ee3b934859177ff7c3cd222b12",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: List remains filtered after selection"
+      }
+    ]
   }
 }

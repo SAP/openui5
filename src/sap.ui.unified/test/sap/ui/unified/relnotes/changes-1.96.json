@@ -286,5 +286,21 @@
         ]
       }
     ]
+  },
+  "1.96.31": {
+    "date": "June 2024",
+    "notes": [
+      {
+        "id": "325afac8f115894c14c6daf9910a6e638dc15b5d",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: recache elements on setter usage",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280039646"
+          }
+        ]
+      }
+    ]
   }
 }
