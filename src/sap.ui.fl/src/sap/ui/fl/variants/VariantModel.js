@@ -1104,6 +1104,9 @@ sap.ui.define([
 			});
 
 			VariantManagementState.addRuntimeSteadyObject(this.sFlexReference, this.oAppComponent.getId(), oStandardVariantInstance);
+			// save all VariantManagement references for which a standard variant is created
+			this._aCreatedStandardVariantsFor ||= [];
+			this._aCreatedStandardVariantsFor.push(sVariantManagementReference);
 		}
 	};
 
@@ -1553,6 +1556,23 @@ sap.ui.define([
 		});
 
 		this.oDataSelector.removeUpdateListener(this.fnUpdateListener);
+
+		// as soon as there is a change / variant referencing a standard variant, the model is not in charge of creating the standard
+		// variant anymore and it needs to be available already at an earlier point in time. Therefore the standard variant needs to
+		// be added to the runtime persistence, mirroring the behavior of the InitialPrepareFunction.
+		const aFakeVariantsToBeAdded = [];
+		(this._aCreatedStandardVariantsFor || []).forEach((sVariantManagementReference) => {
+			if (
+				oVariantsMap[sVariantManagementReference]?.variants.length > 1
+				|| oVariantsMap[sVariantManagementReference]?.variants[0].controlChanges.length
+			) {
+				aFakeVariantsToBeAdded.push(oVariantsMap[sVariantManagementReference].variants[0].instance);
+			}
+		});
+		if (aFakeVariantsToBeAdded.length) {
+			VariantManagementState.addRuntimeOnlyFlexObjects(this.sFlexReference, aFakeVariantsToBeAdded);
+		}
+
 		VariantManagementState.clearRuntimeSteadyObjects(this.sFlexReference, this.oAppComponent.getId());
 		VariantManagementState.resetCurrentVariantReference(this.sFlexReference);
 		JSONModel.prototype.destroy.apply(this);
