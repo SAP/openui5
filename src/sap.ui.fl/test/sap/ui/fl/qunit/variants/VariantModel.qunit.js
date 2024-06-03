@@ -2316,7 +2316,7 @@ sap.ui.define([
 				var oManifest = new Manifest(oManifestObj);
 				this.sVMReference = "varMgmtRef1";
 				this.oVariantManagement = new VariantManagement(this.sVMReference);
-				var oComponent = {
+				this.oComponent = {
 					name: sReference,
 					getId() {
 						return "RTADemoAppMD";
@@ -2333,8 +2333,8 @@ sap.ui.define([
 				};
 
 				sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
-				this.fnGetAppComponentForControlStub = sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
-				this.oFlexController = FlexControllerFactory.createForControl(oComponent, oManifest);
+				this.fnGetAppComponentForControlStub = sandbox.stub(Utils, "getAppComponentForControl").returns(this.oComponent);
+				this.oFlexController = FlexControllerFactory.createForControl(this.oComponent, oManifest);
 				this.fnApplyChangesStub = sandbox.stub(this.oFlexController, "saveSequenceOfDirtyChanges").resolves();
 				this.oRegisterControlStub = sandbox.stub(URLHandler, "registerControl");
 
@@ -2342,7 +2342,7 @@ sap.ui.define([
 
 				this.oModel = new VariantModel({}, {
 					flexController: this.oFlexController,
-					appComponent: oComponent
+					appComponent: this.oComponent
 				});
 
 				return this.oModel.initialize();
@@ -2387,6 +2387,51 @@ sap.ui.define([
 			return this.oModel._oVariantSwitchPromise.then(function(sValue) {
 				assert.strictEqual(sValue, "foo", "the initial changes promise was added to the variant switch promise");
 			});
+		});
+
+		QUnit.test("when creating a new variant based on a faked standard variant, and the Model gets destroyed", async function(assert) {
+			const oAddRuntimeOnlySpy = sandbox.spy(VariantManagementState, "addRuntimeOnlyFlexObjects");
+			this.oVariantManagement.setModel(this.oModel, ControlVariantApplyAPI.getVariantModelName());
+			const oVariant = FlexObjectFactory.createFlVariant({
+				id: "newVariant",
+				layer: Layer.USER,
+				variantReference: this.sVMReference,
+				variantManagementReference: this.sVMReference
+			});
+			this.oModel.oChangePersistence.addDirtyChange(oVariant);
+			this.oModel.destroy();
+			assert.strictEqual(oAddRuntimeOnlySpy.callCount, 1, "then the fake Standard variant is added to the runtimeOnlyData");
+
+			this.oModel = new VariantModel({}, {
+				flexController: this.oFlexController,
+				appComponent: this.oComponent
+			});
+
+			await this.oModel.initialize();
+			assert.strictEqual(this.oModel.oData[this.sVMReference].variants.length, 2, "then the fake and the new variant are available");
+		});
+
+		QUnit.test("when creating a new UIChange based on a faked standard variant, and the Model gets destroyed", async function(assert) {
+			const oAddRuntimeOnlySpy = sandbox.spy(VariantManagementState, "addRuntimeOnlyFlexObjects");
+			this.oVariantManagement.setModel(this.oModel, ControlVariantApplyAPI.getVariantModelName());
+			const oUIChange = FlexObjectFactory.createUIChange({
+				id: "newUIChange",
+				layer: Layer.CUSTOMER,
+				variantReference: this.sVMReference
+			});
+			this.oModel.oChangePersistence.addDirtyChange(oUIChange);
+			this.oModel.destroy();
+			assert.strictEqual(oAddRuntimeOnlySpy.callCount, 1, "then the fake Standard variant is added to the runtimeOnlyData");
+
+			stubFlexObjectsSelector([oUIChange]);
+			this.oModel = new VariantModel({}, {
+				flexController: this.oFlexController,
+				appComponent: this.oComponent
+			});
+
+			await this.oModel.initialize();
+			assert.strictEqual(this.oModel.oData[this.sVMReference].variants.length, 1, "then the fake variant is available");
+			assert.strictEqual(this.oModel.oData[this.sVMReference].variants[0].controlChanges.length, 1, "then the UIChange is available");
 		});
 
 		QUnit.test("when waitForVMControlInit is called before the control is initialized", function(assert) {
