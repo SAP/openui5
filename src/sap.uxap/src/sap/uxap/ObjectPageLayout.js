@@ -1252,7 +1252,7 @@ sap.ui.define([
 	};
 
 	ObjectPageLayout.prototype._onAfterRenderingDomReady = function () {
-		var sSectionToSelectID, oSectionToSelect, bAppendHeaderToContent,
+		var sSectionToSelectID, oSectionToSelect, bAppendHeaderToContent, sSubSectionToSelectId,
 			iWidth = this._getWidth(this);
 
 		if (this._bIsBeingDestroyed) {
@@ -1279,7 +1279,8 @@ sap.ui.define([
 				this._bAllContentFitsContainer = this._hasSingleVisibleFullscreenSubSection(oSectionToSelect);
 				this._checkSubSectionVisibilityChange();
 			} else {
-				this.scrollToSection(sSectionToSelectID, 0);
+				sSubSectionToSelectId = oSectionToSelect?.getSelectedSubSection();
+				this.scrollToSection(sSubSectionToSelectId || sSectionToSelectID, 0);
 			}
 		}
 		// enable scrolling in non-fullscreen-mode only
@@ -2052,6 +2053,7 @@ sap.ui.define([
 	ObjectPageLayout.prototype._adjustLayoutAndUxRules = function () {
 
 		var sSelectedSectionId,
+			sSelectedSubSectionId,
 			oSelectedSection,
 			sSectionBaseIdToScrollTo;
 
@@ -2066,6 +2068,7 @@ sap.ui.define([
 		this._adjustSelectedSectionByUXRules();
 		sSelectedSectionId = this.getSelectedSection();
 		oSelectedSection = Element.getElementById(sSelectedSectionId);
+		sSelectedSubSectionId = oSelectedSection?.getSelectedSubSection();
 
 		if (oSelectedSection) {
 			this._setSelectedSectionId(sSelectedSectionId); //reselect the current section in the navBar (because the anchorBar was freshly rebuilt from scratch)
@@ -2086,6 +2089,8 @@ sap.ui.define([
 				if (oSelectedSection.indexOfSubSection(Element.getElementById(this.getOngoingScrollToSectionBaseId())) > -1) {
 					// keep the target section of the ongoing scroll only if it is within the selectedSection
 					sSectionBaseIdToScrollTo = this.getOngoingScrollToSectionBaseId();
+				} else if (sSelectedSubSectionId) {
+					sSectionBaseIdToScrollTo = sSelectedSubSectionId;
 				}
 				// then change the selection to match the correct section
 				this.scrollToSection(sSectionBaseIdToScrollTo, null, 0, false, true /* redirect scroll */);
@@ -2337,7 +2342,7 @@ sap.ui.define([
 		}
 
 		oSection = bIsSubSection ? oSectionBase.getParent() : oSectionBase;
-		oSubSection = bIsSubSection ? oSectionBase : this._getFirstVisibleSubSection(oSectionBase);
+		oSubSection = bIsSubSection ? oSectionBase : null;
 
 		var bExecuteDefault = this.fireBeforeNavigate({
 			section: oSection,
@@ -3042,11 +3047,13 @@ sap.ui.define([
 	ObjectPageLayout.prototype._initAnchorBarScroll = function () {
 
 		var oSelectedSection = Element.getElementById(this.getSelectedSection()),
+			sSelectedSubSectionId = oSelectedSection?.getSelectedSubSection(),
+			oSelectedSubSection = Element.getElementById(sSelectedSubSectionId),
 			iScrollTop;
 
 		this._requestAdjustLayout(true);
 
-		iScrollTop = oSelectedSection ? this._computeScrollPosition(oSelectedSection) : 0;
+		iScrollTop = oSelectedSection ? this._computeScrollPosition(oSelectedSubSection || oSelectedSection) : 0;
 
 		//reset the scroll for anchorbar & scrolling management
 		this._sScrolledSectionId = "";
@@ -4466,7 +4473,9 @@ sap.ui.define([
 	ObjectPageLayout.prototype._restoreScrollPosition = function () {
 
 		var bValidStoredSubSection = this._isValidStoredSubSectionInfo(),
-			iRestoredScrollPosition;
+			iRestoredScrollPosition,
+			oSelectedSection =  Element.getElementById(this.getSelectedSection()),
+			sSelectedSubSectionId = oSelectedSection?.getSelectedSubSection();
 
 		if (bValidStoredSubSection) {
 			iRestoredScrollPosition =
@@ -4474,7 +4483,7 @@ sap.ui.define([
 				this._oStoredScrolledSubSectionInfo.iOffset;
 			this._scrollTo(iRestoredScrollPosition, 0);
 		} else {
-			this.scrollToSection(this.getSelectedSection(), 0);
+			this.scrollToSection(sSelectedSubSectionId || oSelectedSection?.getId(), 0);
 		}
 	};
 

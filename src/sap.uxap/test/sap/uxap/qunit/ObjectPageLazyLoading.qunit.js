@@ -144,6 +144,40 @@ function(nextUIUpdate, jQuery, Core, JSONModel, Button, Title, ObjectPageDynamic
 			}, iLoadingDelay);
 	});
 
+	QUnit.test("subSectionEnteredViewPort event is fired only for visible SubSections after rerendering", function (assert) {
+
+		var oObjectPageLayout = this.oComponentContainer.getObjectPageLayoutInstance(),
+			oThirdSection = oObjectPageLayout.getSections()[3],
+			oThirdSubSection = oThirdSection.getSubSections()[1],
+			done = assert.async(),
+			iCallCounts = 0,
+			aSubSectionsEnteredViewPortIds = [];
+
+
+		var oData = oConfigModel.getData();
+		_loadBlocksData(oData);
+		oConfigModel.setData(oData);
+
+		//act
+		oObjectPageLayout.setSelectedSection(oThirdSection, 0);
+		oThirdSection.setSelectedSubSection(oThirdSubSection.getId());
+		oObjectPageLayout.getSections()[5].setVisible(false);
+		Core.applyChanges();
+
+		oObjectPageLayout.attachEvent("subSectionEnteredViewPort", function (oEvent) {
+			iCallCounts++;
+			aSubSectionsEnteredViewPortIds.push(oEvent.getParameter("subSection").getId());
+
+			if (iCallCounts === 6) {
+				assert.strictEqual(aSubSectionsEnteredViewPortIds
+					.indexOf("__xmlview0--ObjectPageSubSection-__xmlview0--ObjectPageLayout-3-__xmlview0--ObjectPageSection-__xmlview0--ObjectPageLayout-3-0"),
+				-1, "subSectionEnteredViewPort event not called with first SubSection of the third Section");
+				done();
+			}
+		});
+
+	});
+
 	/**
 	 * @deprecated Since version 1.120
 	 */
