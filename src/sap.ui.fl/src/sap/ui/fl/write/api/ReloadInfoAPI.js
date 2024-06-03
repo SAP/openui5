@@ -349,6 +349,7 @@ sap.ui.define([
 					oReloadInfo.reloadMethod = oRELOAD.VIA_HASH;
 				}
 			}
+			FlexInfoSession.removeByReference(sReference);
 			return oReloadInfo;
 		}
 	};

@@ -14,7 +14,6 @@ sap.ui.define([
 	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
-	"sap/ui/fl/write/api/ReloadInfoAPI",
 	"sap/ui/fl/write/api/VersionsAPI",
 	"sap/ui/fl/write/_internal/Versions",
 	"sap/ui/fl/Layer",
@@ -42,7 +41,6 @@ sap.ui.define([
 	FlexRuntimeInfoAPI,
 	PersistenceWriteAPI,
 	ChangesWriteAPI,
-	ReloadInfoAPI,
 	VersionsAPI,
 	Versions,
 	Layer,
@@ -546,13 +544,11 @@ sap.ui.define([
 			var oSaveSpy = sandbox.spy(PersistenceWriteAPI, "save");
 			var oVersionsClearInstances = sandbox.spy(VersionsAPI, "clearInstances");
 			var oSerializeToLrepSpy = sandbox.spy(this.oRta, "_serializeToLrep");
-			var oRemoveInfoSessionStub = sandbox.stub(ReloadInfoAPI, "removeInfoSessionStorage");
 			var oMessageBoxStub = sandbox.stub(RtaUtils, "showMessageBox")
 			.resolves(this.oRta._getTextResources().getText("BTN_UNSAVED_CHANGES_ON_CLOSE_SAVE"));
 
 			return this.oRta.stop()
 			.then(function() {
-				assert.strictEqual(oRemoveInfoSessionStub.callCount, 1, "then the info session storage is removed");
 				var oSavePropertyBag = oSaveSpy.getCall(0).args[0];
 				assert.ok(oSavePropertyBag.removeOtherLayerChanges, "then removeOtherLayerChanges is set to true");
 				assert.strictEqual(oSavePropertyBag.layer, this.oRta.getLayer(), "then the layer is properly passed along");
