@@ -26,8 +26,8 @@ sap.ui.define([
 			}
 		};
 
-		var oDateTime = new Date("Tue Sep 23 06:46:13 2000 GMT+0000"),
-			oTZDateTime = new Date("Tue Sep 23 03:46:13 2000 GMT+0530"),
+		var oDateTime = new Date("2000-09-23T06:46:13Z"),
+			oTZDateTime = new Date("2000-09-23T03:46:13+05:30"),
 			oDefaultDate = DateFormat.getInstance(),
 			oDefaultDateTime = DateFormat.getDateTimeInstance(),
 			oDefaultTime = DateFormat.getTimeInstance();
@@ -531,7 +531,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("format custom date timezone UTC+2 (EET)", function (assert) {
-			var oDate = new Date("Tue Oct 9 11:37:56 2018 GMT+0000"),
+			var oDate = new Date("2018-10-09T11:37:56Z"),
 				oCustomDateFormat, oFormatted;
 			oDate.setMilliseconds(235);
 
@@ -1432,7 +1432,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("parse short format without delimiter", function (assert) {
-			var oDate = new Date("Mon Apr 7 00:00:00 2014"),
+			var oDate = new Date("2014-04-07T00:00:00"),
 				oFormat = DateFormat.getDateInstance(),
 				sDateIn = "040714", oDateOut = oFormat.parse(sDateIn);
 			assert.strictEqual(oDateOut.toString(), oDate.toString(), "6 digit fallback: " + sDateIn + " to " + oDateOut);
@@ -1491,7 +1491,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("parse and format quarters", function (assert) {
-			var oDate = new Date("Wed Jul 4 2001"),
+			var oDate = new Date(2001, 6, 4),
 				oQuarter1 = DateFormat.getDateInstance({ pattern: "qq" }),
 				oQuarter2 = DateFormat.getDateInstance({ pattern: "qqq" }),
 				oQuarter3 = DateFormat.getDateInstance({ pattern: "qqqq" }),
@@ -2458,12 +2458,11 @@ sap.ui.define([
 
 		QUnit.module("Islamic Date in locale en");
 
-		var oDate = new Date("Wed Jul 4 2001");
-
 		QUnit.test("format date to Islamic type with locale en", function (assert) {
-			var oDateFormat = DateFormat.getDateInstance({
-				calendarType: CalendarType.Islamic
-			});
+			var oDate = new Date(2001, 6, 4),
+				oDateFormat = DateFormat.getDateInstance({
+					calendarType: CalendarType.Islamic
+				});
 
 			assert.equal(oDateFormat.format(oDate), "Rab. II 12, 1422 AH", "Date is formatted in Islamic calendar");
 		});
@@ -2536,7 +2535,9 @@ sap.ui.define([
 
 		["ar", "ar_EG", "ar_SA", "he"].forEach(function (sLocale, index) {
 			QUnit.test("format Islamic date " + sLocale, function (assert) {
-				var oDateFormat = DateFormat.getDateInstance(new Locale(sLocale));
+				var oDate = new Date(2001, 6, 4),
+					oDateFormat = DateFormat.getDateInstance(new Locale(sLocale));
+
 				assert.equal(oDateFormat.format(oDate), aResultLocal[index], "Date is formatted to Islamic Date in " + sLocale + " locale");
 			});
 
@@ -2564,7 +2565,7 @@ sap.ui.define([
 		});
 
 		QUnit.module("Japanese Date", {
-			oDate: new Date("Wed Jul 4 2001")
+			oDate: new Date(2001, 6, 4)
 		});
 
 		QUnit.test("format date to Japanese type", function (assert) {
@@ -2602,7 +2603,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("format/parse date with Gannen instead of Ichinen", function (assert) {
-			var oDate = new Date("May 1 2019"),
+			var oDate = new Date(2019, 4, 1),
 				sDate = "令和元年5月1日",
 				oDateFormat = DateFormat.getDateInstance({
 					calendarType: CalendarType.Japanese
@@ -2613,7 +2614,7 @@ sap.ui.define([
 			assert.equal(sFormatted, sDate, "Date is formatted correctly with Gannen year");
 			assert.deepEqual(oParsed, oDate, "Date with Gannen year is parsed correctly");
 
-			oDate = new Date("Apr 1 2019");
+			oDate = new Date(2019, 3, 1);
 			sDate = "平成31年4月1日";
 			sFormatted = oDateFormat.format(oDate);
 			oParsed = oDateFormat.parse(sDate);
@@ -2621,7 +2622,7 @@ sap.ui.define([
 			assert.equal(sFormatted, sDate, "Year ending with 1 is formatted as a number");
 			assert.deepEqual(oParsed, oDate, "Date with numeric year is parsed correctly");
 
-			oDate = new Date("May 1 2019");
+			oDate = new Date(2019, 4, 1);
 			sDate = "R1/5/1";
 			oDateFormat = DateFormat.getDateInstance({
 				calendarType: CalendarType.Japanese,
@@ -2633,7 +2634,7 @@ sap.ui.define([
 			assert.equal(sFormatted, sDate, "Date is formatted correctly with numeric year");
 			assert.deepEqual(oParsed, oDate, "Date with numeric year is parsed correctly");
 
-			oDate = [new Date("May 1 2019"), new Date("May 10 2019")];
+			oDate = [new Date(2019, 4, 1), new Date(2019, 4, 10)];
 			sDate = "令和元年5月1日～10日";
 			oDateFormat = DateFormat.getDateInstance({
 				calendarType: CalendarType.Japanese,
@@ -2646,7 +2647,7 @@ sap.ui.define([
 			assert.equal(sFormatted, sDate, "Date interval is formatted correctly with Gannen year");
 			assert.deepEqual(oParsed, oDate, "Date interval with Gannen year is parsed correctly");
 
-			oDate = [new Date("Apr 1 2019"), new Date("May 1 2019")];
+			oDate = [new Date(2019, 3, 1), new Date(2019, 4, 1)];
 			sDate = "平成31年4月1日～令和元年5月1日";
 			sFormatted = oDateFormat.format(oDate);
 			oParsed = oDateFormat.parse(sDate);
@@ -2681,7 +2682,7 @@ sap.ui.define([
 		});
 
 		QUnit.module("Japanese Date in locale en", {
-			oDate: new Date("Wed Jul 4 2001")
+			oDate: new Date(2001, 6, 4)
 		});
 
 		QUnit.test("format date to Japanese type with locale en", function (assert) {
@@ -2717,7 +2718,7 @@ sap.ui.define([
 		});
 
 		QUnit.module("Persian Date", {
-			oDate: new Date("Wed Jul 4 2001")
+			oDate: new Date(2001, 6, 4)
 		});
 
 		QUnit.test("format date to Persian type", function (assert) {
@@ -2753,7 +2754,7 @@ sap.ui.define([
 		});
 
 		QUnit.module("Persian Date in locale en", {
-			oDate: new Date("Wed Jul 4 2001")
+			oDate: new Date(2001, 6, 4)
 		});
 
 		QUnit.test("format date to Persian type with locale en", function (assert) {
@@ -2761,7 +2762,7 @@ sap.ui.define([
 				calendarType: CalendarType.Persian
 			});
 
-			assert.equal(oDateFormat.format(oDate), "Tir 13, 1380 AP", "Date is formatted in Persian calendar");
+			assert.equal(oDateFormat.format(this.oDate), "Tir 13, 1380 AP", "Date is formatted in Persian calendar");
 		});
 
 		QUnit.test("format date to Persian type with relative and locale en", function (assert) {
@@ -2789,7 +2790,7 @@ sap.ui.define([
 		});
 
 		QUnit.module("Buddhist Date", {
-			oDate: new Date("Wed Jul 4 2001")
+			oDate: new Date(2001, 6, 4)
 		});
 
 		QUnit.test("format date to Buddhist type", function (assert) {
@@ -2852,7 +2853,7 @@ sap.ui.define([
 		});
 
 		QUnit.module("Buddhist Date in locale en", {
-			oDate: new Date("Wed Jul 4 2001")
+			oDate: new Date(2001, 6, 4)
 		});
 
 		QUnit.test("format date to Buddhist type with locale en", function (assert) {
