@@ -64,7 +64,10 @@ sap.ui.define([
 				delete oFlexInfoSession.adaptationLayer;
 				FlexInfoSession.setByReference(oFlexInfoSession, mPropertyBag.reference);
 			}
-
+			// Disable cacheKey when request data for a specific version
+			if (oConnectorSpecificPropertyBag.version) {
+				delete oConnectorSpecificPropertyBag.cacheKey;
+			}
 			return oConnectorConfig.loadConnectorModule.loadFlexData(oConnectorSpecificPropertyBag)
 			.then(function(oResponse) {
 				// ensure an object with the corresponding properties
