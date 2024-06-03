@@ -270,7 +270,7 @@ sap.ui.define([
 		var oDTP = new DateTimePicker(),
 			oHandleInputValueConcurrencySpy = this.spy(oDTP, "handleInputValueConcurrency");
 
-		oDTP._setPreferUserInteraction(true);
+		oDTP.setPreferUserInteraction(true);
 		oDTP.placeAt("qunit-fixture");
 		await nextUIUpdate();
 

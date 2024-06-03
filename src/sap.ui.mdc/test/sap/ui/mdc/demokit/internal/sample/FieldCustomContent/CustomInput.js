@@ -191,7 +191,7 @@ sap.ui.define([
 			liveChange: _handleLiveChange.bind(this)
 		});
 
-		oInput._setPreferUserInteraction(true);
+		oInput.setPreferUserInteraction(true);
 		oInput.setModel(this._oManagedObjectModel, "$this");
 		this.setAggregation("_input", oInput);
 

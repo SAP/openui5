@@ -864,7 +864,7 @@ function(
 		// if set to true, handle the user input and data
 		// model updates concurrency in order to not overwrite
 		// values coming from the user
-		if (this._bPreferUserInteraction) {
+		if (this._getPreferUserInteraction()) {
 			this.handleInputValueConcurrency(sValue);
 		} else {
 			oInnerDomRef.value = sValue;
@@ -933,7 +933,7 @@ function(
 			sInputDOMValue = oInnerDomRef && this._getInputValue(),
 			sInputPropertyValue = this.getProperty("value"),
 			bInputFocused = document.activeElement === oInnerDomRef,
-			bBindingUpdate = this.isBound("value") && this.getBindingInfo("value").skipModelUpdate;
+			bBindingUpdate = this.isBound("value") && this.isPropertyBeingUpdated("value");
 
 		// if the user is currently in the field and he has typed a value,
 		// the changes from the model should not overwrite the user input
@@ -955,14 +955,34 @@ function(
 	 * Sets the preferred user interaction. If set to true, overwriting the
 	 * user input with model updates will be prevented.
 	 *
-	 * @param {boolean} bPrefer True, if the user interaction is prefered
+	 * @param {boolean} bPrefer True, if the user interaction is preferred
 	 *
+	 * @public
+	 */
+	InputBase.prototype.setPreferUserInteraction = function(bPrefer) {
+		this._setPreferUserInteraction(bPrefer);
+	};
+
+	/** This  method is left temporary for backward compatibility. The public setPreferUserInteraction() should be used.
+	 * @param {boolean} bPrefer True, if the user interaction is preferred
 	 * @private
-	 * @ui5-restricted sap.ui.mdc, sap.ui.comp.smartfield.SmartField
 	 */
 	InputBase.prototype._setPreferUserInteraction = function(bPrefer) {
 		this._bPreferUserInteraction = bPrefer;
 	};
+
+	/**
+	 * Gets the preferred interaction.
+	 *
+	 * @param {boolean} bPrefer True, if the user interaction is preferred
+	 *
+	 * @private
+	 */
+
+	InputBase.prototype._getPreferUserInteraction = function() {
+		return this._bPreferUserInteraction;
+	};
+
 
 	/**
 	 * Close value state message popup.

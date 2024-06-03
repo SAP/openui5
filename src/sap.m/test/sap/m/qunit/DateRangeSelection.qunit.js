@@ -1647,7 +1647,7 @@ sap.ui.define([
 		var oDDR = new DateRangeSelection(),
 			oHandleInputValueConcurrencySpy = this.spy(oDDR, "handleInputValueConcurrency");
 
-		oDDR._setPreferUserInteraction(true);
+		oDDR.setPreferUserInteraction(true);
 		oDDR.placeAt("qunit-fixture");
 		await nextUIUpdate();
 
