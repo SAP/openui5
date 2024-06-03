@@ -2,6 +2,7 @@
 specVersion: "3.0"
 type: library
 metadata:
+  deprecated: true
   name: sap.ui.webc.fiori
   copyright: |-
     OpenUI5
