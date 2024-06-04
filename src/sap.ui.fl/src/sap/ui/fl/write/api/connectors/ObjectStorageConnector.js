@@ -431,12 +431,16 @@ sap.ui.define([
 
 				const aVersions = await this.versions.load.call(this, mPropertyBag);
 				let oDraftVersion = aVersions.find((oVersion) => oVersion.isDraft);
-				if (oDraftVersion) {
+				if (oDraftVersion && mPropertyBag.parentVersion === Version.Number.Draft) {
 					if (mPropertyBag.condensedChanges) {
 						oDraftVersion.filenames = [];
 					}
 					oDraftVersion.filenames = aDraftFilenames.concat(oDraftVersion.filenames);
 				} else {
+					// discard draft, when draft based on another parentVersion
+					if (oDraftVersion && mPropertyBag.parentVersion !== Version.Number.Draft) {
+						await this.versions.discardDraft.call(this, mPropertyBag);
+					}
 					// create new a draft version
 					oDraftVersion = {
 						version: Version.Number.Draft,
