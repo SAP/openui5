@@ -271,7 +271,8 @@ sap.ui.define([
 		return new StackedBarMicroChart({
 			size: prepareSize(oChartSettings.size),
 			bars: aBars,
-			maxValue: oChartSettings.maxValue
+			maxValue: oChartSettings.maxValue,
+			displayZeroValue: oChartSettings.displayZeroValue
 		});
 	};
 
