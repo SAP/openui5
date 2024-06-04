@@ -37824,6 +37824,7 @@ make root = ${bMakeRoot}`;
 	// of the hierarchy as long as they are transient.
 	// Create a node, but because of a filter this node doesn't become part of the hierarchy and is
 	// therefore not displayed.
+	// Create a node and immediately cancel it, nothing happens.
 	// Create a child below an expanded parent on a level within the given expandTo range, it is
 	// inserted "in place" at the last sibling position.
 	// Create a child below a leaf, also on a level within the given expandTo range.
@@ -37950,6 +37951,29 @@ make root = ${bMakeRoot}`;
 				[undefined, 1, "2", "Beta"]
 			]);
 		const oAlpha = oListBinding.getAllCurrentContexts()[0];
+
+		// code under test
+		const oLostChild = oListBinding.create({
+			"@$ui5.node.parent" : oAlpha,
+			Name : "n/a"
+		}, /*bSkipRefresh*/true);
+
+		// code under test
+		oModel.resetChanges();
+
+		await Promise.all([
+			checkCanceled(assert, oLostChild.created()),
+			this.waitForChanges(assert, "cancel creation")
+		]);
+
+		checkTable("after cancel creation", assert, oTable, [
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('3')",
+			"/EMPLOYEES('2')"
+		], [
+			[true, 1, "1", "Alpha"]
+		]);
+		assert.strictEqual(oListBinding.getCount(), 3);
 
 		this.expectRequest({
 				method : "POST",
