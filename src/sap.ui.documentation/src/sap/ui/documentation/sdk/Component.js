@@ -66,7 +66,7 @@ sap.ui.define([
 				UIComponent.prototype.init.apply(this, arguments);
 
 				// Load VersionInfo model promise
-				this.loadVersionInfo().then(this._bindVersionModel.bind(this));
+				this.loadVersionInfo();
 
 				// create the views based on the url/hash
 				this.getRouter().initialize();
@@ -129,19 +129,23 @@ sap.ui.define([
 
 			// MODELS
 			loadVersionInfo: function () {
-				return new Promise(function (resolve, reject) {
-					jQuery.ajax({
-						async: true,
-						url : ResourcesUtil.getResourceOriginPath("resources/sap-ui-version.json"),
-						dataType : 'json',
-						success : function(oResponse) {
-							resolve(oResponse);
-						},
-						error : function (err) {
-							reject(err);
-						}
-					});
-				});
+				if (!this._oVersionInfoPromise) {
+					this._oVersionInfoPromise = new Promise(function (resolve, reject) {
+						jQuery.ajax({
+							async: true,
+							url : ResourcesUtil.getResourceOriginPath("resources/sap-ui-version.json"),
+							dataType : 'json',
+							success : function(oResponse) {
+								this._bindVersionModel(oResponse);
+								resolve(oResponse);
+							}.bind(this),
+							error : function (err) {
+								reject(err);
+							}
+						});
+					}.bind(this));
+				}
+				return this._oVersionInfoPromise;
 			},
 
 			_bindVersionModel : function (oVersionInfo) {
