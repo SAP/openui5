@@ -40,7 +40,8 @@ sap.ui.define([
 			DataStateChange : true,
 			patchCompleted : true,
 			patchSent : true,
-			refresh : true
+			refresh : true,
+			selectionChanged : true
 		},
 		/**
 		 * @alias sap.ui.model.odata.v4.ODataListBinding
@@ -48,8 +49,8 @@ sap.ui.define([
 		 * @class List binding for an OData V4 model.
 		 *   An event handler can only be attached to this binding for the following events:
 		 *   'AggregatedDataStateChange', 'change', 'createActivate', 'createCompleted',
-		 *   'createSent', 'dataReceived', 'dataRequested', 'DataStateChange', 'patchCompleted',
-		 *   'patchSent', and 'refresh'. For other events, an error is thrown.
+		 *   'createSent', 'dataReceived', 'dataRequested', 'DataStateChange', 'selectionChanged',
+		 *   'patchCompleted', 'patchSent', and 'refresh'. For other events, an error is thrown.
 		 * @extends sap.ui.model.ListBinding
 		 * @hideconstructor
 		 * @mixes sap.ui.model.odata.v4.ODataParentBinding
@@ -546,6 +547,22 @@ sap.ui.define([
 	 */
 
 	/**
+	 * The 'selectionChanged' event is fired if the selection state of a context changes; for more
+	 * information see {@link sap.ui.model.odata.v4.Context#setSelected}.
+	 *
+	 * @param {sap.ui.base.Event} oEvent The event object
+	 * @param {sap.ui.model.odata.v4.ODataListBinding} oEvent.getSource() This binding
+	 * @param {function():Object<any>} oEvent.getParameters
+	 *   Function which returns an object containing all event parameters
+	 * @param {boolean} oEvent.getParameters.context
+	 *   The context for which {@link sap.ui.model.odata.v4.Context#setSelected} was called
+	 *
+	 * @event sap.ui.model.odata.v4.ODataListBinding#selectionChanged
+	 * @experimental As of version 1.126.0
+	 * @public
+	 */
+
+	/**
 	 * Attach event handler <code>fnFunction</code> to the 'createActivate' event of this binding.
 	 *
 	 * @param {function} fnFunction The function to call when the event occurs
@@ -931,7 +948,7 @@ sap.ui.define([
 				return;
 			}
 
-			oContext.doSetSelected(false);
+			oContext.doSetSelected(false, true);
 			that.removeCreated(oContext);
 			return Promise.resolve().then(function () {
 				// Fire the change asynchronously so that Cache#delete is finished and #getContexts
@@ -989,7 +1006,7 @@ sap.ui.define([
 		const iIndex = bCreateInPlace ? undefined : iChildIndex ?? -this.iCreatedContexts;
 		oContext = Context.create(this.oModel, this, sTransientPath, iIndex, oCreatePromise,
 			bInactive);
-		oContext.setSelected(this.oHeaderContext.isSelected());
+		oContext.doSetSelected(this.oHeaderContext.isSelected());
 		if (this.isTransient()) {
 			oContext.created().catch(this.oModel.getReporter());
 		}
@@ -1092,7 +1109,7 @@ sap.ui.define([
 					}
 				} else {
 					oContext = Context.create(oModel, this, sContextPath, i$skipIndex);
-					oContext.setSelected(this.oHeaderContext.isSelected());
+					oContext.doSetSelected(this.oHeaderContext.isSelected());
 				}
 				this.aContexts[iStart + i] = oContext;
 			}
@@ -2181,6 +2198,18 @@ sap.ui.define([
 		}
 
 		return false;
+	};
+
+	/**
+	 * Fires the 'selectionChanged' event.
+	 *
+	 * @param {sap.ui.model.odata.v4.Context} oContext
+	 *   The context whose selection has changed
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype.fireSelectionChanged = function (oContext) {
+		this.fireEvent("selectionChanged", {context : oContext});
 	};
 
 	/**
@@ -4526,10 +4555,10 @@ sap.ui.define([
 					sResolvedPath = this.oModel.resolve(this.sPath, oContext);
 					// Note: oHeaderContext is missing only if called from c'tor
 					if (this.oHeaderContext && this.oHeaderContext.getPath() !== sResolvedPath) {
+						this.oHeaderContext.doSetSelected(false);
 						// Do not destroy the context immediately to avoid timing issues with
 						// dependent bindings, keep it in mPreviousContextsByPath to destroy it
 						// later
-						this.oHeaderContext.setSelected(false);
 						this.mPreviousContextsByPath[this.oHeaderContext.getPath()]
 							= this.oHeaderContext;
 						this.oHeaderContext = null;
