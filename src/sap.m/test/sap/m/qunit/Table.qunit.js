@@ -34,9 +34,36 @@ sap.ui.define([
 	"sap/m/CheckBox",
 	"sap/m/RatingIndicator",
 	"sap/ui/core/Item",
-	"sap/m/TextArea"
-], function(Localization, Element, Library, qutils, nextUIUpdate, KeyCodes, JSONModel, Device, Filter, Sorter, InvisibleText, DragDropInfo, ListBase, Table, Column, Label, Link, Toolbar, ToolbarSpacer, Button, Input, ColumnListItem, Text, Title, ScrollContainer, library, VerticalLayout, Message, jQuery, IllustratedMessage, ComboBox, CheckBox, RatingIndicator, Item, TextArea) {
+	"sap/m/TextArea",
+	"sap/ui/core/Control"
+], function(Localization, Element, Library, qutils, nextUIUpdate, KeyCodes, JSONModel, Device, Filter, Sorter, InvisibleText, DragDropInfo, ListBase, Table, Column, Label, Link, Toolbar, ToolbarSpacer, Button, Input, ColumnListItem, Text, Title, ScrollContainer, library, VerticalLayout, Message, jQuery, IllustratedMessage, ComboBox, CheckBox, RatingIndicator, Item, TextArea, Control) {
 	"use strict";
+
+	const TestControl = Control.extend("sap.m.test.TestControl", {
+		metadata: {
+			"final": true,
+			aggregations: {
+				label: { type: "sap.m.Label", multiple: false }
+			}
+		},
+		renderer: {
+			apiVersion: 2,
+			render: function(oRm, oColumnHeaderLabel) {
+				oRm.openStart("div", oColumnHeaderLabel);
+				oRm.style("width", "100%");
+				oRm.openEnd();
+				oRm.renderControl(oColumnHeaderLabel.getLabel());
+				oRm.close("div");
+			}
+		},
+		getRequired: function() {
+			return this.getLabel().getRequired();
+		},
+		// Controls need to have required in their accessibility info to have it announced!
+		getAccessibilityInfo: function() {
+			return this.getLabel().getAccessibilityInfo();
+		}
+	});
 
 	function createSUT(bCreateColumns, bCreateHeader, sMode, bNoDataIllustrated) {
 		const oData = {
@@ -1125,6 +1152,28 @@ sap.ui.define([
 		await nextUIUpdate();
 		sut.$("nodata").trigger("focus");
 		assert.equal(oInvisibleText.innerHTML, oResourceBundle.getText("LIST_NO_DATA"), "Text correctly assinged for screen reader announcement");
+
+		sut.destroy();
+	});
+
+	// Test Case for general controls, but specifically MDC Table with its mdc.table.ColumnHeaderLabel
+	QUnit.test("Test for required ACC with 'custom control'", async function(assert) {
+		const sut = createSUT();
+		sut.bActiveHeaders = true;
+		const oColumn = new Column({
+			header: new TestControl({label: new Label({text: "Column A", required: true})})
+		});
+		sut.addColumn(oColumn);
+		sut.placeAt("qunit-fixture");
+		await nextUIUpdate();
+		const oResourceBundle = Library.getResourceBundleFor("sap.m");
+
+		const $tblHeader = sut.$("tblHeader").trigger("focus");
+		const oInvisibleText = document.getElementById($tblHeader.attr("aria-labelledby"));
+		assert.equal(oInvisibleText.innerHTML, oResourceBundle.getText("ACC_CTR_TYPE_HEADER_ROW") + " Column A " + oResourceBundle.getText("CONTROL_IN_COLUMN_REQUIRED") + " .", "Text correctly assigned for screen reader announcement");
+
+		// This is currently a gap, that is not covered yet, as the logic only handles sap.m.Label
+		// assert.equal(oColumn.$().attr("aria-describedby"), InvisibleText.getStaticId("sap.m", "CONTROL_IN_COLUMN_REQUIRED"), "Required state added as aria-describedby");
 
 		sut.destroy();
 	});

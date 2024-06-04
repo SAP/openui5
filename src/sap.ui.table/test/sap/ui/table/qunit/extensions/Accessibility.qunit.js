@@ -66,6 +66,32 @@ sap.ui.define([
 		}
 	});
 
+	const CustomLabelControl = Control.extend("sap.ui.table.test.CustomLabelControl", {
+		metadata: {
+			"final": true,
+			aggregations: {
+				label: {type: "sap.m.Label", multiple: false}
+			}
+		},
+		renderer: {
+			apiVersion: 2,
+			render: function(oRm, oColumnHeaderLabel) {
+				oRm.openStart("div", oColumnHeaderLabel);
+				oRm.style("width", "100%");
+				oRm.openEnd();
+				oRm.renderControl(oColumnHeaderLabel.getLabel());
+				oRm.close("div");
+			}
+		},
+		getRequired: function() {
+			return this.getLabel().getRequired();
+		},
+		// Controls need to have required in their accessibility info to have it announced!
+		getAccessibilityInfo: function() {
+			return this.getLabel().getAccessibilityInfo();
+		}
+	});
+
 	const TestControl = TableQUnitUtils.TestControl;
 	const TestInputControl = TableQUnitUtils.TestInputControl;
 
@@ -845,6 +871,21 @@ sap.ui.define([
 		oTable.getColumns()[1].addMultiLabel(new TestControl());
 		oTable.getColumns()[1].addMultiLabel(new Label({required: true, text: "Test Text"}));
 		oTable.getColumns()[1].setHeaderSpan([3, 2, 1]);
+		await nextUIUpdate();
+
+		oCell.focus();
+
+		assert.ok($Cell.attr("aria-labelledby").includes(sTableId + "-ariarequired"), "aria-required");
+	});
+
+	// This use case applies for the MDC Table
+	QUnit.test("required state of custom column headers", async function(assert) {
+		const sTableId = oTable.getId();
+		const oCell = oTable._getVisibleColumns()[1].getDomRef();
+		const $Cell = jQuery(oCell);
+		oTable.getColumns()[1].setLabel(new CustomLabelControl({
+			label: new Label({required: true})
+		}));
 		await nextUIUpdate();
 
 		oCell.focus();
