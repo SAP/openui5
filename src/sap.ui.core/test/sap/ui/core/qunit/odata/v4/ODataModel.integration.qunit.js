@@ -26875,9 +26875,9 @@ sap.ui.define([
 					Name : "Alpha"
 				}, "technical properties have been removed");
 
-			const [/*oAlpha*/, oBeta, oKappa, oLambda] = oListBinding.getAllCurrentContexts();
+			const [oAlpha, oBeta, oKappa, oLambda] = oListBinding.getAllCurrentContexts();
 			// code under test
-			//TODO assert.strictEqual(await oAlpha.requestSibling(), null, "CPOUI5ODATAV4-2558");
+			assert.strictEqual(await oAlpha.requestSibling(), null, "CPOUI5ODATAV4-2558");
 			assert.strictEqual(await oBeta.requestSibling(-1), null, "CPOUI5ODATAV4-2558");
 			assert.strictEqual(await oKappa.requestSibling(), oLambda, "CPOUI5ODATAV4-2558");
 
@@ -38380,8 +38380,11 @@ make root = ${bMakeRoot}`;
 				}]
 			});
 
-		// code under test
-		const oDelta = await oGamma.requestSibling(+1);
+		const [oDelta] = await Promise.all([
+			// code under test
+			oGamma.requestSibling(+1),
+			this.waitForChanges(assert, "request Gamma's next sibling")
+		]);
 
 		assert.strictEqual(oDelta.getProperty("Name"), "Delta", "CPOUI5ODATAV4-2558");
 
@@ -38413,6 +38416,10 @@ make root = ${bMakeRoot}`;
 		]);
 		assert.strictEqual(oDelta, oTable.getRows()[0].getBindingContext());
 
+		// code under test
+		assert.strictEqual(oAlpha.getParent(), null);
+		assert.strictEqual(await oAlpha.requestParent(), null);
+
 		this.expectRequest("EMPLOYEES?$select=ID,Name&$filter=ID eq '3' or ID eq '4'"
 				+ "&$top=2", {
 				value : [{
@@ -38425,10 +38432,6 @@ make root = ${bMakeRoot}`;
 					Name : "Epsilon"
 				}]
 			});
-
-		// code under test
-		assert.strictEqual(oAlpha.getParent(), null);
-		assert.strictEqual(await oAlpha.requestParent(), null);
 
 		await Promise.all([
 			oDelta.getBinding().getHeaderContext().requestSideEffects(["Name"]),
@@ -38452,11 +38455,13 @@ make root = ${bMakeRoot}`;
 					ID : "0",
 					Name : "Alpha"
 				}]
-			})
-			.expectChange("id", ["0", "9"]);
+			});
 
-		// code under test
-		const oResult = await oDelta.requestParent();
+		const [oResult] = await Promise.all([
+			// code under test
+			oDelta.requestParent(),
+			this.waitForChanges(assert, "request Delta's parent")
+		]);
 
 		assert.strictEqual(oAlpha.getModel(), undefined, "Alpha is destroyed");
 		assert.notStrictEqual(oResult, oAlpha);
@@ -38482,8 +38487,11 @@ make root = ${bMakeRoot}`;
 				}]
 			});
 
-		// code under test
-		const oOmega = await oResult.requestSibling();
+		const [oOmega] = await Promise.all([
+			// code under test
+			oResult.requestSibling(),
+			this.waitForChanges(assert, "request Alpha's next sibling")
+		]);
 
 		assert.strictEqual(oOmega.getIndex(), 5, "CPOUI5ODATAV4-2558");
 		assert.strictEqual(oOmega.getPath(), "/EMPLOYEES('9')");
@@ -39594,7 +39602,6 @@ make root = ${bMakeRoot}`;
 				}]
 			});
 
-		// code under test
 		const [oEta] = await Promise.all([
 			// code under test
 			oEpsilon.requestSibling(+1),
@@ -39805,6 +39812,154 @@ make root = ${bMakeRoot}`;
 
 		// code under test
 		assert.strictEqual(await oDelta.requestSibling(-1), oBeta);
+	});
+
+	//*********************************************************************************************
+	// Scenario: Request sibling via unified cache with ExpandLevels. Handle case where request
+	// shows that there's no such sibling. Store that node inside the cache nevertheless and thus
+	// avoid further requests.
+	// JIRA: CPOUI5ODATAV4-2610
+	QUnit.test("Recursive Hierarchy: requestSibling w/ ExpandLevels", async function (assert) {
+		const sBaseUrl = "EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
+				+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart'"
+				+ ",NodeProperty='ID',Levels=1)";
+		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
+		const sView = `
+<t:Table id="table" rows="{path : '/EMPLOYEES',
+		parameters : {
+			$$aggregation : {
+				createInPlace : true,
+				expandTo : 1,
+				hierarchyQualifier : 'OrgChart'
+			}
+		}}" threshold="0" visibleRowCount="1">
+	<Text text="{= %{@$ui5.node.isExpanded} }"/>
+	<Text text="{= %{@$ui5.node.level} }"/>
+	<Text id="id" text="{ID}"/>
+	<Text text="{Name}"/>
+</t:Table>`;
+
+		// 0 Alpha (later expanded)
+		//   1 Beta
+		// 9 Omega (not loaded)
+		this.expectRequest(sBaseUrl + "&$select=DrillState,ID,Name&$count=true&$skip=0&$top=1", {
+				"@odata.count" : "2",
+				value : [{
+					DrillState : "collapsed",
+					ID : "0",
+					Name : "Alpha"
+				}]
+			})
+			.expectChange("id", ["0"]);
+
+		await this.createView(assert, sView, oModel);
+
+		const oTable = this.oView.byId("table");
+		checkTable("initial page", assert, oTable, [
+			"/EMPLOYEES('0')"
+		], [
+			[false, 1, "0", "Alpha"]
+		], 2);
+		const oListBinding = oTable.getBinding("rows");
+		const [oAlpha] = oListBinding.getCurrentContexts();
+
+		// 0 Alpha (expanded)
+		//   1 Beta
+		// 9 Omega (not loaded)
+		this.expectRequest(sBaseUrl.slice(0, -1)
+				+ ",ExpandLevels=" + JSON.stringify([{NodeID : "0", Levels : 1}])
+				+ ")&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name"
+				+ "&$count=true&$skip=0&$top=1", {
+				"@odata.count" : "3",
+				value : [{
+					DescendantCount : "1",
+					DistanceFromRoot : "0",
+					DrillState : "expanded",
+					ID : "0",
+					Name : "Alpha"
+				}]
+			});
+
+		// code under test
+		oAlpha.expand();
+
+		await this.waitForChanges(assert, "expand 0 (Alpha)");
+
+		checkTable("after expand 0 (Alpha)", assert, oTable, [
+			"/EMPLOYEES('0')"
+		], [
+			[true, 1, "0", "Alpha"]
+		], 3);
+
+		this.expectRequest(sBaseUrl.slice(0, -1)
+				+ ",ExpandLevels=" + JSON.stringify([{NodeID : "0", Levels : 1}])
+				+ ")&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name"
+				+ "&$skip=1&$top=1", {
+				value : [{
+					DescendantCount : "0",
+					DistanceFromRoot : "1",
+					DrillState : "leaf",
+					ID : "1",
+					Name : "Beta"
+				}]
+			})
+			.expectChange("id", [, "1"]);
+
+		// code under test
+		oTable.setFirstVisibleRow(1);
+
+		await this.waitForChanges(assert, "scroll down");
+
+		checkTable("after scroll down", assert, oTable, [
+			"/EMPLOYEES('0')",
+			"/EMPLOYEES('1')"
+		], [
+			[undefined, 2, "1", "Beta"]
+		], 3);
+		const [oBeta] = oListBinding.getCurrentContexts();
+
+		// 0 Alpha (expanded)
+		//   1 Beta
+		// 9 Omega (not Beta's sibling)
+		this.expectRequest(sBaseUrl.slice(0, -1)
+				+ ",ExpandLevels=" + JSON.stringify([{NodeID : "0", Levels : 1}])
+				+ ")&$filter=LimitedRank gt '1' and DistanceFromRoot lt '2'"
+				+ "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,LimitedRank,Name"
+				+ "&$top=1", {
+				value : [{
+					DescendantCount : "0",
+					DistanceFromRoot : "0",
+					DrillState : "leaf",
+					ID : "9",
+					LimitedRank : "2",
+					Name : "Omega"
+				}]
+			});
+
+		const [oSibling] = await Promise.all([
+			// code under test
+			oBeta.requestSibling(+1),
+			this.waitForChanges(assert, "request Beta's next sibling")
+		]);
+
+		assert.strictEqual(oSibling, null);
+
+		// code under test (no request needed!)
+		const oOmega = await oAlpha.requestSibling();
+
+		assert.strictEqual(oOmega.getIndex(), 2);
+		assert.deepEqual(oOmega.getObject(), {
+			"@$ui5.node.level" : 1,
+			ID : "9",
+			Name : "Omega"
+		});
+		checkTable("after request Beta's next sibling", assert, oTable, [
+			oAlpha, // "/EMPLOYEES('0')",
+			oBeta, // "/EMPLOYEES('1')",
+			oOmega // "/EMPLOYEES('2')"
+		], [
+			[undefined, 2, "1", "Beta"]
+		]);
 	});
 
 	//*********************************************************************************************
