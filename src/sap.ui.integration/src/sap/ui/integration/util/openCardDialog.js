@@ -6,14 +6,18 @@ sap.ui.define([
 	"sap/m/Dialog",
 	"sap/ui/Device",
 	"sap/ui/core/Element",
+	"sap/ui/integration/library",
 	// jQuery Plugin "firstFocusableDomRef", "lastFocusableDomRef"
 	"sap/ui/dom/jquery/Focusable"
 ], (
 	Dialog,
 	Device,
-	Element
+	Element,
+	library
 ) => {
 	"use strict";
+
+	const CardDataMode = library.CardDataMode;
 
 	function _addDimensionsDelegate(oDialog, oParentCard) {
 		const oChildCard = oDialog.getContent()[0];
@@ -47,24 +51,46 @@ sap.ui.define([
 		});
 	}
 
-	function _openDialog(oChildCard, oParentCard, oParameters) {
-		oChildCard.setDisplayVariant("Large"); // always use large variant for dialog, scrolling content is possible
+	function _addAnimationDelegate(oDialog, oParentCard) {
+		const oParentRect = oParentCard.getDomRef().getBoundingClientRect();
+		const oParentPos = {
+			top: Math.round(oParentRect.top) + window.scrollX,
+			left: Math.round(oParentRect.left) + window.scrollX,
+			width: Math.round(oParentRect.width),
+			height: Math.round(oParentRect.height)
+		};
 
-		const oDialog = new Dialog({
-				content: [
-					oChildCard
-				],
-				contentWidth: oParameters.width,
-				verticalScrolling: false,
-				showHeader: false,
-				ariaLabelledBy: oChildCard.getId(),
-				escapeHandler: function (oPromise) {
-					oChildCard.hide();
-					oPromise.resolve();
-				},
-				resizable: oParameters.resizable
-			});
+		oDialog.attachBeforeClose(() => {
+			const oDialogRef = oDialog.getDomRef();
 
+			oDialogRef.classList.add("sapUiIntCardDialogAnimate");
+			oDialogRef.style.top = oParentPos.top + "px";
+			oDialogRef.style.left = oParentPos.left + "px";
+		});
+
+		oDialog.addEventDelegate({
+			onAfterRendering: () => {
+				const oDialogRef = oDialog.getDomRef();
+
+				if (!oDialog.isOpen()) {
+					oDialogRef.classList.add("sapUiIntCardDialogAnimate");
+					oDialogRef.style.top = oParentPos.top + "px";
+					oDialogRef.style.left = oParentPos.left + "px";
+				}
+
+				const fnTransitionEnd = (oEvent) => {
+					if (["left", "right"].includes(oEvent.propertyName)) {
+						oDialogRef.classList.remove("sapUiIntCardDialogAnimate");
+						oDialogRef.removeEventListener("transitionend", fnTransitionEnd);
+					}
+				};
+
+				oDialogRef.addEventListener("transitionend", fnTransitionEnd);
+			}
+		});
+	}
+
+	function _addResizeDelegate(oDialog, oChildCard) {
 		const oDelegate = {
 			onmousedown: (e) => {
 				if (e.target.closest(".sapMDialogResizeHandle")) {
@@ -76,27 +102,51 @@ sap.ui.define([
 			}
 		};
 
-		oDialog.addStyleClass("sapUiIntCardDialog");
 		oDialog.addEventDelegate(oDelegate);
-		oDialog.attachAfterClose(() => {
-			oDialog.destroy();
-		});
+	}
+
+	function _openDialog(oChildCard, oParentCard, oParameters, oOpener) {
+		oChildCard.setDisplayVariant("Large"); // always use large variant for dialog, scrolling content is possible
+		oOpener.setBusy(true).setBusyIndicatorDelay(750);
+
+		const oDialog = new Dialog({
+				content: [
+					oChildCard
+				],
+				contentWidth: oParameters.width,
+				verticalScrolling: false,
+				horizontalScrolling: false,
+				draggable: true,
+				showHeader: false,
+				ariaLabelledBy: oChildCard.getId(),
+				escapeHandler: function (oPromise) {
+					oChildCard.hide();
+					oPromise.resolve();
+				},
+				resizable: oParameters.resizable,
+				afterOpen: () => {
+					oOpener.setBusy(false);
+				},
+				afterClose: () => {
+					oDialog.destroy();
+				}
+			});
+
+		oDialog.addStyleClass("sapUiIntCardDialog");
 
 		oParentCard.addDependent(oDialog);
-
-		oChildCard.startManifestProcessing();
-		oChildCard.attachManifestApplied(() => {
+		oChildCard.attachEventOnce("_ready", () => {
 			oDialog.open();
-		});
-		oChildCard.attachEvent("_ready", () => {
-			setTimeout(() => {
-				_setFocus(oChildCard, oDialog);
-			}, 0); // wait for loading animation to stop
+			_setFocus(oChildCard, oDialog);
 		});
 
 		if (!Device.system.phone) {
 			_addDimensionsDelegate(oDialog, oParentCard);
+			_addAnimationDelegate(oDialog, oParentCard);
+			_addResizeDelegate(oDialog, oChildCard);
 		}
+
+		oChildCard.startManifestProcessing();
 
 		return oDialog;
 	}
@@ -117,16 +167,19 @@ sap.ui.define([
 		}
 	}
 
-	function openCardDialog(oParentCard, oParameters) {
+	function openCardDialog(oParentCard, oParameters, oOpener) {
 		let oChildCard;
 
 		if (oParameters._cardId) {
 			oChildCard = Element.getElementById(oParameters._cardId);
 		} else {
-			oChildCard = oParentCard._createChildCard(oParameters);
+			oChildCard = oParentCard._createChildCard({
+				dataMode: CardDataMode.Active,
+				...oParameters
+			});
 		}
 
-		return _openDialog(oChildCard, oParentCard, oParameters);
+		return _openDialog(oChildCard, oParentCard, oParameters, oOpener);
 	}
 
 	return openCardDialog;

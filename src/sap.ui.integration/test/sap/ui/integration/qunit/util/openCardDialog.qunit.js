@@ -45,29 +45,32 @@ sap.ui.define([
 
 	QUnit.test("min and max dimensions", async function (assert) {
 		// Act
-		const oDialog = openCardDialog(this.oCard, {
-			manifest: {
-				"sap.app": {
-					id: "test.card"
-				},
-				"sap.card": {
-					type: "Table",
-					data: {
-						json: []
+		const oDialog = openCardDialog(
+			this.oCard, {
+				manifest: {
+					"sap.app": {
+						id: "test.card"
 					},
-					content: {
-						row: {
-							columns: [
-								{
-									title: "Sales Order",
-									value: "{product}"
-								}
-							]
+					"sap.card": {
+						type: "Table",
+						data: {
+							json: []
+						},
+						content: {
+							row: {
+								columns: [
+									{
+										title: "Sales Order",
+										value: "{product}"
+									}
+								]
+							}
 						}
 					}
 				}
-			}
-		});
+			},
+			this.oCard
+		);
 
 		const oCard = oDialog.getContent()[0];
 

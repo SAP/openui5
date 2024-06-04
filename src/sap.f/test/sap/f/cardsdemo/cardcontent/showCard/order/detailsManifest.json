@@ -65,7 +65,7 @@
 					"items": [
 						{
 							"label": "Name",
-							"value": "{ShipName}"
+							"value": "{ShipName}{ShipName}{ShipName}{ShipName}{ShipName}{ShipName}{ShipName}{ShipName}{ShipName}{ShipName}{ShipName}{ShipName}{ShipName}{ShipName}{ShipName}{ShipName}{ShipName}{ShipName}{ShipName}{ShipName}{ShipName}{ShipName}{ShipName}{ShipName}{ShipName}{ShipName}{ShipName}{ShipName}{ShipName}{ShipName}{ShipName}{ShipName}{ShipName}{ShipName}{ShipName}{ShipName}{ShipName}{ShipName}{ShipName}"
 						},
 						{
 							"label": "Address",

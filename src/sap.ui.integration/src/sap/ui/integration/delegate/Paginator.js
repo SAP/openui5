@@ -5,7 +5,6 @@
 sap.ui.define([
 	"sap/base/util/uid",
 	"sap/ui/base/ManagedObject",
-	"sap/ui/integration/library",
 	"sap/ui/integration/util/BindingResolver",
 	"sap/ui/integration/util/openCardDialog",
 	"sap/ui/integration/util/Utils",
@@ -13,15 +12,12 @@ sap.ui.define([
 ], (
 	uid,
 	ManagedObject,
-	library,
 	BindingResolver,
 	openCardDialog,
 	Utils,
 	BusyIndicator
 ) => {
 	"use strict";
-
-	const CardDataMode = library.CardDataMode;
 
 	/**
 	 * Constructor for a new Paginator.
@@ -99,16 +95,19 @@ sap.ui.define([
 		this._oBusyIndicator?.destroy();
 	};
 
-	Paginator.prototype.openDialog = function() {
+	Paginator.prototype.openDialog = function(oOpener) {
 		const oCard = this.getCard();
 
-		openCardDialog(oCard, {
-			manifest: this._createManifest(),
-			baseUrl: oCard.getBaseUrl(),
-			resizable: true,
-			showCloseButton: true,
-			dataMode: CardDataMode.Active
-		});
+		openCardDialog(
+			oCard,
+			{
+				manifest: this._createManifest(),
+				baseUrl: oCard.getBaseUrl(),
+				resizable: true,
+				showCloseButton: true
+			},
+			oOpener
+		);
 	};
 
 	Paginator.prototype.isServerSide = function() {
@@ -123,8 +122,6 @@ sap.ui.define([
 		}
 
 		this._applySettings();
-
-		const oList = oContent.getInnerList();
 		const iTotalCount = this._iTotalCount || oContent.getDataLength();
 		this._iPageCount = Math.ceil(iTotalCount / this._iPageSize);
 		this._iPageNumber = Math.min(Math.max(0, this._iPageNumber), this._getLastPageNumber());
@@ -135,39 +132,11 @@ sap.ui.define([
 		}
 
 		if (this.isServerSide()) {
-			this._oBusyIndicator = this._oBusyIndicator || new BusyIndicator().addStyleClass("sapUiIntPaginatorBusyIndicator");
+			this._onDataChangedServerSidePagination(oContent, iTotalCount);
 
-			const onScroll = (e) => {
-				if (this.isLoadingMore()) {
-					return;
-				}
-
-				const LOAD_MORE_THRESHOLD = 300;
-				// approaching the end of the list
-				if (e.target.scrollHeight - e.target.scrollTop - e.target.clientHeight < LOAD_MORE_THRESHOLD && this.getCard().getCardContent().getDataLength() < iTotalCount) {
-					this._loadMore();
-				}
-			};
-
-			const oDelegate = {
-				onAfterRendering: () => {
-					oList.removeEventDelegate(oDelegate);
-
-					const oScrollContainer = oList.getDomRef().closest(".sapFCardContent");
-
-					oScrollContainer.removeEventListener("scroll", onScroll);
-					oScrollContainer.addEventListener("scroll", onScroll);
-
-					// show items until scrollbar appears
-					if (oContent.hasData() && oScrollContainer.clientHeight >= oScrollContainer.scrollHeight && oContent.getDataLength() < iTotalCount) {
-						this._loadMore();
-					} else {
-						this.fireEvent("_ready");
-					}
-				}
-			};
-
-			oList.addEventDelegate(oDelegate);
+			if (this._bInitialLoadComplete) {
+				this.fireEvent("_ready");
+			}
 		} else {
 			this.fireEvent("_ready");
 		}
@@ -186,6 +155,7 @@ sap.ui.define([
 		}
 
 		this._loadingMore = false;
+		this.fireEvent("_loadMoreComplete");
 	};
 
 	Paginator.prototype.isLoadingMore = function() {
@@ -228,6 +198,51 @@ sap.ui.define([
 
 	Paginator.prototype.getPageSize = function() {
 		return this._iPageSize;
+	};
+
+	Paginator.prototype._onDataChangedServerSidePagination = function(oContent, iTotalCount) {
+		const oList = oContent.getInnerList();
+		this._oBusyIndicator = this._oBusyIndicator || new BusyIndicator().addStyleClass("sapUiIntPaginatorBusyIndicator");
+
+		// attempt to load 1 more page initially
+		if (!this._bInitialLoadComplete && oContent.getDataLength() < iTotalCount) {
+			this._loadMore();
+			this.attachEventOnce("_loadMoreComplete", () => {
+				this._bInitialLoadComplete = true;
+			});
+		} else {
+			this._bInitialLoadComplete = true;
+		}
+
+		const onScroll = (e) => {
+			if (this.isLoadingMore()) {
+				return;
+			}
+
+			const LOAD_MORE_THRESHOLD = 300;
+			// approaching the end of the list
+			if (e.target.scrollHeight - e.target.scrollTop - e.target.clientHeight < LOAD_MORE_THRESHOLD && this.getCard().getCardContent().getDataLength() < iTotalCount) {
+				this._loadMore();
+			}
+		};
+
+		const oDelegate = {
+			onAfterRendering: () => {
+				oList.removeEventDelegate(oDelegate);
+
+				const oScrollContainer = oList.getDomRef().closest(".sapFCardContent");
+
+				oScrollContainer.removeEventListener("scroll", onScroll);
+				oScrollContainer.addEventListener("scroll", onScroll);
+
+				// load more items until scrollbar appears
+				if (!this.isLoadingMore() && oContent.hasData() && oScrollContainer.clientHeight >= oScrollContainer.scrollHeight && oContent.getDataLength() < iTotalCount) {
+					this._loadMore();
+				}
+			}
+		};
+
+		oList.addEventDelegate(oDelegate);
 	};
 
 	Paginator.prototype._loadMore = function() {
