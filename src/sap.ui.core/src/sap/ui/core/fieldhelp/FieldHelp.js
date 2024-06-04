@@ -9,12 +9,12 @@ sap.ui.define([
 ], function (Log, Element, ElementRegistry, LabelEnablement) {
 	"use strict";
 
-	const sClassName = "sap/ui/model/FieldHelp";
+	const sClassName = "sap/ui/core/fieldhelp/FieldHelp";
 	const sDocumentationRef = "com.sap.vocabularies.Common.v1.DocumentationRef";
 	const sURNPrefix = "urn:sap-com:documentation:key?=";
 
 	/**
-	 * @typedef {object} module:sap/ui/model/BackendHelpKey
+	 * @typedef {object} module:sap/ui/core/fieldhelp/BackendHelpKey
 	 * @description The back-end help key as used by the SAP Companion to retrieve the field help.
 	 * @property {string} id The ID of the back-end help key
 	 * @property {string} [origin] The origin of the back end
@@ -25,10 +25,10 @@ sap.ui.define([
 	 */
 
 	/**
-	 * @typedef {object} module:sap/ui/model/FieldHelpInfo
+	 * @typedef {object} module:sap/ui/core/fieldhelp/FieldHelpInfo
 	 * @description The label, the control ID and the back-end help key as required by the SAP Companion to display
 	 *   the field help for the control with the given ID.
-	 * @property {module:sap/ui/model/BackendHelpKey} backendHelpKey The back-end help key
+	 * @property {module:sap/ui/core/fieldhelp/BackendHelpKey} backendHelpKey The back-end help key
 	 * @property {string} hotspotId The ID of the control
 	 * @property {string} labelText The label text of the control
 	 *
@@ -37,14 +37,8 @@ sap.ui.define([
 	 */
 
 	/**
-	 * @typedef {Object<string, module:sap/ui/model/BackendHelpKey[]>} module:sap/ui/model/PropertyBackendHelpKeys
-	 * @description
-	 *   Maps the control property to the array of back-end help keys.
-	 */
-
-	/**
 	 * The singleton instance.
-	 * @type {module:sap/ui/model/FieldHelp}
+	 * @type {module:sap/ui/core/fieldhelp/FieldHelp}
 	 */
 	let oFieldHelp;
 
@@ -52,7 +46,7 @@ sap.ui.define([
 	 * DO NOT call this private constructor for <code>FieldHelp</code>; use <code>FieldHelp.getInstance</code> instead.
 	 * Singleton class to provide field help support for controls as used by the SAP Companion.
 	 *
-	 * @alias module:sap/ui/model/FieldHelp
+	 * @alias module:sap/ui/core/fieldhelp/FieldHelp
 	 * @author SAP SE
 	 * @class
 	 *
@@ -73,7 +67,7 @@ sap.ui.define([
 		 * The callback function that is called if the field help hotspots have changed.
 		 *
 		 * @default null
-		 * @type {function(module:sap/ui/model/FieldHelpInfo[])}
+		 * @type {function(module:sap/ui/core/fieldhelp/FieldHelpInfo[])}
 		 */
 		#fnUpdateHotspotsCallback = null;
 
@@ -142,7 +136,7 @@ sap.ui.define([
 		/**
 		 * Gets an array of field help hotspots as required by the SAP Companion.
 		 *
-		 * @returns {module:sap/ui/model/FieldHelpInfo[]} The array of field help hotspots
+		 * @returns {module:sap/ui/core/fieldhelp/FieldHelpInfo[]} The array of field help hotspots
 		 */
 		_getFieldHelpHotspots() {
 			const aFieldHelpHotspots = [];
@@ -243,7 +237,7 @@ sap.ui.define([
 		/**
 		 * Gets the singleton instance of <code>FieldHelp</code>.
 		 *
-		 * @returns {module:sap/ui/model/FieldHelp} The singleton instance
+		 * @returns {module:sap/ui/core/fieldhelp/FieldHelp} The singleton instance
 		 *
 		 * @private
 		 * @ui5-restricted sap.ui.core
@@ -258,7 +252,7 @@ sap.ui.define([
 		 * Activates the field help support. Determines the field help for all controls and calls the given update
 		 * callback with the currently available field help.
 		 *
-		 * @param {function(module:sap/ui/model/FieldHelpInfo[])} fnUpdateHotspotsCallback
+		 * @param {function(module:sap/ui/core/fieldhelp/FieldHelpInfo[])} fnUpdateHotspotsCallback
 		 *   The callback function that is called with the currently available field help information if the hotspots
 		 *   for the field help have changed
 		 * @throws {Error}

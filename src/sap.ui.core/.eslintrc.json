@@ -6,7 +6,9 @@
 				"src/sap/ui/model/odata/v4/**/*.js"
 			],
 			"files": [
-				"src/sap/ui/model/**/*.js"
+				"src/sap/ui/core/fieldhelp/**/*.js",
+				"src/sap/ui/model/**/*.js",
+				"test/sap/ui/core/qunit/fieldhelp/**/*.js"
 			],
 			"rules": {
 				"max-len": ["error", {"code": 120, "ignoreUrls": true}]

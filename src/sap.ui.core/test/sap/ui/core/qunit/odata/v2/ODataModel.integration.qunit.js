@@ -13,13 +13,13 @@ sap.ui.define([
 	"sap/ui/core/Lib",
 	"sap/ui/core/Messaging",
 	"sap/ui/core/date/UI5Date",
+	"sap/ui/core/fieldhelp/FieldHelp",
 	"sap/ui/core/message/Message",
 	"sap/ui/core/message/MessageType",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/mvc/View",
 	"sap/ui/core/Rendering",
 	"sap/ui/model/BindingMode",
-	"sap/ui/model/FieldHelp",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/FilterType",
@@ -39,7 +39,7 @@ sap.ui.define([
 	// load Table resources upfront to avoid loading times > 1 second for the first test using Table
 	// "sap/ui/table/Table"
 ], function (Log, Localization, merge, uid, Input, Device, ManagedObjectObserver, SyncPromise,
-		Library, Messaging, UI5Date, Message, MessageType, Controller, View, Rendering, BindingMode, FieldHelp, Filter,
+		Library, Messaging, UI5Date, FieldHelp, Message, MessageType, Controller, View, Rendering, BindingMode, Filter,
 		FilterOperator, FilterType, Model, Sorter, JSONModel, MessageModel, CountMode, MessageScope, Decimal,
 		Context, ODataModel, XMLModel, TestUtils, datajs, XMLHelper) {
 	/*global QUnit, sinon*/

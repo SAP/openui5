@@ -45,6 +45,11 @@ sap.ui.require([
 		"sap/ui/core/qunit/i18n/UniversalDateUtils.qunit",
 
 		// ***************************************************************************************
+		// sap.ui.core.fieldhelp.* - tests are contained in testsuite.fieldhelp.qunit.js
+		// ***************************************************************************************
+		"sap/ui/core/qunit/fieldhelp/FieldHelp.qunit",
+
+		// ***************************************************************************************
 		// sap.ui.core.format.* - tests are contained in testsuite.types.qunit.js
 		// ***************************************************************************************
 		"sap/ui/core/qunit/format/FormatUtils.qunit",
@@ -92,7 +97,6 @@ sap.ui.require([
 		"sap/ui/core/qunit/model/CompositeDataState.qunit",
 		"sap/ui/core/qunit/model/Context.qunit",
 		"sap/ui/core/qunit/model/ContextBinding.qunit",
-		"sap/ui/core/qunit/model/FieldHelp.qunit",
 		"sap/ui/core/qunit/model/Filter.qunit",
 		"sap/ui/core/qunit/model/FilterProcessor.qunit",
 		"sap/ui/core/qunit/model/ListBinding.qunit",
