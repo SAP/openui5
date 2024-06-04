@@ -302,14 +302,14 @@ sap.ui.define([
 				.returns(oExpectedJson);
 
 			// code under test
-			return oMetadataRequestor.read(sUrl, false, false).then(function (oResult) {
+			return oMetadataRequestor.read(sUrl, false, false).then(function (oResult0) {
 				var oNewExpectedJson = {
 						$Version : "4.0",
 						$EntityContainer : "NEW!"
 					},
 					oNewExpectedXml = {};
 
-				assert.deepEqual(oResult, {
+				assert.deepEqual(oResult0, {
 					$Date : sDate,
 					$EntityContainer : "<5.1.1 Schema Namespace>.<13.1.1 EntityContainer Name>",
 					$ETag : sETag,

@@ -1497,8 +1497,8 @@ sap.ui.define([
 		this.oAnnotatable = oAnnotatable;
 		if (fnProcessV2Annotatable) {
 			fnProcessV2Annotatable = fnProcessV2Annotatable.bind(this);
-			Object.keys(this.mSapAnnotations).forEach(function (sName) {
-				fnProcessV2Annotatable(oAnnotatable, sName);
+			Object.keys(this.mSapAnnotations).forEach(function (sName0) {
+				fnProcessV2Annotatable(oAnnotatable, sName0);
 			});
 		}
 		return oAnnotatable;

@@ -2470,7 +2470,7 @@ sap.ui.define([
 			oContext = {
 				getBinding : function () {}
 			},
-			oParentBinding = {
+			oParentBinding0 = {
 				isRootBindingSuspended : function () {}
 			};
 
@@ -2486,8 +2486,8 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(this.oModel), sinon.match.same(oBinding),
 				"/resolved/path")
 			.returns("~headerContext~");
-		this.mock(oContext).expects("getBinding").withExactArgs().returns(oParentBinding);
-		this.mock(oParentBinding).expects("isRootBindingSuspended").withExactArgs().returns(true);
+		this.mock(oContext).expects("getBinding").withExactArgs().returns(oParentBinding0);
+		this.mock(oParentBinding0).expects("isRootBindingSuspended").withExactArgs().returns(true);
 		this.mock(Binding.prototype).expects("setContext").never();
 		this.mock(oBinding).expects("setResumeChangeReason").withExactArgs(ChangeReason.Context);
 
@@ -2707,8 +2707,7 @@ sap.ui.define([
 			aCreatedContexts,
 			aPromises = [],
 			oReadPromise = Promise.reject(oError),
-			that = this,
-			i;
+			that = this;
 
 		function getPath(i) {
 			return "/EMPLOYEES/" + i;
@@ -2721,7 +2720,7 @@ sap.ui.define([
 		oBinding.mPreviousContextsByPath = {
 			"/EMPLOYEES/99" : 99 // not parked by #reset
 		};
-		for (i = 0; i < oBinding.iCreatedContexts; i += 1) {
+		for (let i = 0; i < oBinding.iCreatedContexts; i += 1) {
 			oBinding.aContexts[i] = { // dummy for a created context
 				// for simplicity, ignore bRelative here
 				getPath : getPath.bind(null, i)
@@ -2792,7 +2791,7 @@ sap.ui.define([
 				oBinding.iCreatedContexts = 0;
 				oBinding.aContexts = ["a", "b", "c"];
 				if (bKeepCacheOnError) {
-					for (i = 0; i < oBinding.iCreatedContexts; i += 1) {
+					for (let i = 0; i < oBinding.iCreatedContexts; i += 1) {
 						oBinding.mPreviousContextsByPath[getPath(i)] = i;
 					}
 				}
@@ -4114,7 +4113,6 @@ sap.ui.define([
 						{doSetSelected : mustBeMocked}
 					],
 					oContextMock = this.mock(Context),
-					i,
 					sPath,
 					aResults = [
 						{doSetSelected : mustBeMocked},
@@ -4135,7 +4133,7 @@ sap.ui.define([
 				}
 				this.mock(oBinding).expects("getResolvedPath").twice().withExactArgs()
 					.returns("~resolved~");
-				for (i = iStart; i < iStart + aResults.length; i += 1) {
+				for (let i = iStart; i < iStart + aResults.length; i += 1) {
 					iServerIndex = bCreated ? i - 1 : i;
 					sPath = "~resolved~" + (bUsePredicates
 						? _Helper.getPrivateAnnotation(aResults[i - iStart], "predicate")
@@ -4153,7 +4151,7 @@ sap.ui.define([
 				// code under test
 				assert.strictEqual(oBinding.createContexts(iStart, aResults), true);
 
-				for (i = iStart; i < iStart + aResults.length; i += 1) {
+				for (let i = iStart; i < iStart + aResults.length; i += 1) {
 					assert.strictEqual(oBinding.aContexts[i], aContexts[i - iStart]);
 				}
 
@@ -8528,11 +8526,11 @@ sap.ui.define([
 		function expectVisitAndRefresh(aPromises) {
 			that.mock(oBinding).expects("visitSideEffects").withExactArgs(sGroupId,
 					sinon.match.same(aPaths), bHeader ? undefined : oContext, aPromises)
-				.callsFake(function (_sGroupId, _aPaths, _oContext, aPromises) {
-					aPromises.push(Promise.resolve());
-					aPromises.push(Promise.reject(oCanceledError));
+				.callsFake(function (_sGroupId, _aPaths, _oContext, aPromises0) {
+					aPromises0.push(Promise.resolve());
+					aPromises0.push(Promise.reject(oCanceledError));
 					if (bRecursionRejects) {
-						aPromises.push(Promise.reject(oError));
+						aPromises0.push(Promise.reject(oError));
 					}
 				});
 			that.mock(oBinding).expects("refreshDependentListBindingsWithoutCache")
@@ -9757,8 +9755,7 @@ sap.ui.define([
 				getPath : function () {}
 			},
 			aContextsBefore,
-			oFireChangeExpectation,
-			i;
+			oFireChangeExpectation;
 
 		// create a context dummy object with index i
 		function createContextDummy(i) {
@@ -9776,7 +9773,7 @@ sap.ui.define([
 		oBinding.oCache = { // simulate an aggregation cache
 			collapse : function () {}
 		};
-		for (i = 0; i < 8; i += 1) {
+		for (let i = 0; i < 8; i += 1) {
 			// with gap at 6
 			oBinding.aContexts.push(i === 6 ? undefined : createContextDummy(i));
 		}
@@ -9810,9 +9807,9 @@ sap.ui.define([
 			assert.strictEqual(oBinding.aContexts[4], aContextsBefore[7], "4");
 			assert.strictEqual(oBinding.aContexts.length, 5);
 			assert.strictEqual(oBinding.iMaxLength, 5);
-			oBinding.aContexts.forEach(function (oContext, iIndex) {
+			oBinding.aContexts.forEach(function (oContext0, iIndex) {
 				if (iIndex !== 3) { // 6 - iCount
-					assert.strictEqual(oContext.iIndex, iIndex);
+					assert.strictEqual(oContext0.iIndex, iIndex);
 				}
 			});
 			assert.deepEqual(oBinding.mPreviousContextsByPath, {
@@ -9823,10 +9820,10 @@ sap.ui.define([
 		} else {
 			assert.strictEqual(oBinding.iMaxLength, 8);
 			assert.strictEqual(oBinding.aContexts.length, 8);
-			oBinding.aContexts.forEach(function (oContext, iIndex) {
+			oBinding.aContexts.forEach(function (oContext0, iIndex) {
 				if (iIndex !== 6) {
-					assert.strictEqual(oContext.iIndex, iIndex);
-					assert.strictEqual(oContext.getPath(), "/EMPLOYEES/" + iIndex);
+					assert.strictEqual(oContext0.iIndex, iIndex);
+					assert.strictEqual(oContext0.getPath(), "/EMPLOYEES/" + iIndex);
 				}
 			});
 			assert.deepEqual(oBinding.mPreviousContextsByPath, {});

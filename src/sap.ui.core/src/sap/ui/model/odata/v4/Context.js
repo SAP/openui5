@@ -433,8 +433,8 @@ sap.ui.define([
 
 			// Messages have been updated via _Cache#_delete; "that" is already destroyed; remove
 			// all dependent caches in all bindings
-			oModel.getAllBindings().forEach(function (oBinding) {
-				oBinding.removeCachesAndMessages(sResourcePathPrefix, true);
+			oModel.getAllBindings().forEach(function (oBinding0) {
+				oBinding0.removeCachesAndMessages(sResourcePathPrefix, true);
 			});
 		}).catch(function (oError) {
 			oModel.reportError("Failed to delete " + that.getPath(), sClassName, oError);

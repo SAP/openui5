@@ -868,9 +868,9 @@ sap.ui.define([
 			}
 			// Note: $metadata is already available because oOperationMetadata has been read!
 			oTypeMetadata = this.getTypeForName(oOperationMetadata.$Parameter[0].$Type);
-			oTypeMetadata.$Key.forEach(function (sName) {
-				mQueryOptions[sName]
-					= that.formatPropertyAsLiteral(vEntity[sName], oTypeMetadata[sName]);
+			oTypeMetadata.$Key.forEach(function (sName0) {
+				mQueryOptions[sName0]
+					= that.formatPropertyAsLiteral(vEntity[sName0], oTypeMetadata[sName0]);
 			});
 		}
 

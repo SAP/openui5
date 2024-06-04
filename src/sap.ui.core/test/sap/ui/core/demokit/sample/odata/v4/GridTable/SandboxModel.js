@@ -159,7 +159,7 @@ sap.ui.define([
 			+ "([^&]+)(?:&\\$top=(\\d+))?$"), // Note: just ignore $top
 		response : {
 			buildResponse : function (aMatches, oResponse) {
-				var aNodes = [],
+				var aNodes0 = [],
 					// ID%20eq%20'0'%20or%20ID%20eq%20'1'%20or%20ID%20eq%20'1.1'
 					sKeyFilterList = aMatches[1];
 
@@ -167,12 +167,12 @@ sap.ui.define([
 					var sId = sKeyFilter.split("%20eq%20")[1].slice(1, -1),
 						oNode = mNodeById[sId];
 
-					aNodes.push(oNode);
+					aNodes0.push(oNode);
 				});
 
 				iRevision += 1;
 				oResponse.message = JSON.stringify({
-					value : SandboxModel.update(aNodes)
+					value : SandboxModel.update(aNodes0)
 				});
 			}
 		}
@@ -215,13 +215,13 @@ sap.ui.define([
 	/**
 	 * Returns a copy of the given nodes, updated to the current revision.
 	 *
-	 * @param {object[]} aNodes
+	 * @param {object[]} aNodes0
 	 *  A list of (original or updated) nodes, might include <code>null</code> values
 	 * @returns {object[]}
 	 *   An updated copy
 	 */
-	SandboxModel.update = function (aNodes) {
-		return aNodes.map(function (oNode) {
+	SandboxModel.update = function (aNodes0) {
+		return aNodes0.map(function (oNode) {
 			if (oNode && (iRevision || mRevisionOfAgeById[oNode.ID])) {
 				oNode = Object.assign({}, oNode);
 				if ("Name" in oNode) {

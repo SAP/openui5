@@ -273,8 +273,8 @@ sap.ui.define([
 				that = this;
 
 			if (oField) {
-				oField.getBinding = function (sName) {
-					return that.getBinding(sName);
+				oField.getBinding = function (sName0) {
+					return that.getBinding(sName0);
 				};
 				oField.refreshDataState.call(oField, sName, oDataState);
 				oField.getBinding = fnOriginalGetBinding;

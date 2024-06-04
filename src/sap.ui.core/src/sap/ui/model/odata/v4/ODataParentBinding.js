@@ -782,12 +782,12 @@ sap.ui.define([
 		 * @returns {string} The meta path with its annotation part stripped off
 		 */
 		function getStrippedMetaPath(sPath) {
-			var iIndex;
+			var iIndex0;
 
 			sPath = _Helper.getMetaPath(sPath);
-			iIndex = sPath.indexOf("@"); // Note: sPath[0] !== "@"
+			iIndex0 = sPath.indexOf("@"); // Note: sPath[0] !== "@"
 
-			return iIndex > 0 ? sPath.slice(0, iIndex) : sPath;
+			return iIndex0 > 0 ? sPath.slice(0, iIndex0) : sPath;
 		}
 
 		if (bDependsOnOperation && !sResolvedChildPath.includes("/$Parameter/")

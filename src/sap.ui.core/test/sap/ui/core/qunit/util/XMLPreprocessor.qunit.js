@@ -1603,7 +1603,7 @@ sap.ui.define([
 			 */
 			function checkInterfaceForPart(oInterface, i) {
 				var oInterface2Part,
-					oModel = oInterface.getModel(i);
+					oModel0 = oInterface.getModel(i);
 
 				// interface to ith part
 				oInterface2Part = oInterface.getInterface(i);
@@ -1611,8 +1611,8 @@ sap.ui.define([
 				// Note: methods of oInterface2Part will ignore a further index like 42
 				// just like they always did except for the root formatter of a
 				// composite binding
-				assert.strictEqual(oInterface2Part.getModel(), oModel);
-				assert.strictEqual(oInterface2Part.getModel(42), oModel);
+				assert.strictEqual(oInterface2Part.getModel(), oModel0);
+				assert.strictEqual(oInterface2Part.getModel(42), oModel0);
 				assert.strictEqual(oInterface2Part.getPath(), oInterface.getPath(i));
 				assert.strictEqual(oInterface2Part.getPath(42), oInterface.getPath(i));
 
@@ -1646,35 +1646,35 @@ sap.ui.define([
 				// drill-down into ith part relatively
 				oInterface2Part = oInterface.getInterface(i, `String`);
 
-				assert.strictEqual(oInterface2Part.getModel(), oModel);
+				assert.strictEqual(oInterface2Part.getModel(), oModel0);
 				assert.strictEqual(oInterface2Part.getPath(), oInterface.getPath(i) + `/String`);
 				assert.strictEqual(oInterface2Part.getSetting(`bindTexts`), true, `settings`);
 
 				try {
-					that.mock(oModel).expects(`createBindingContext`).callThrough();
+					that.mock(oModel0).expects(`createBindingContext`).callThrough();
 
 					// "drill-down" into ith part with absolute path
 					oInterface2Part = oInterface.getInterface(i, `/absolute/path`);
 
-					assert.strictEqual(oInterface2Part.getModel(), oModel);
+					assert.strictEqual(oInterface2Part.getModel(), oModel0);
 					assert.strictEqual(oInterface2Part.getPath(), `/absolute/path`);
 					assert.strictEqual(oInterface2Part.getSetting(`bindTexts`), true, `settings`);
 				} finally {
-					oModel.createBindingContext.restore();
+					oModel0.createBindingContext.restore();
 				}
 
 				try {
 					// simulate a model which creates the context asynchronously
-					that.mock(oModel).expects(`createBindingContext`).twice();
+					that.mock(oModel0).expects(`createBindingContext`).twice();
 
 					oInterface2Part = oInterface.getInterface(i, `String`);
 
 					assert.ok(false, `getInterface() MUST throw error for async contexts`);
 				} catch (e) {
 					assert.strictEqual(e.message,
-						`Model could not create binding context synchronously: ` + oModel);
+						`Model could not create binding context synchronously: ` + oModel0);
 				} finally {
-					oModel.createBindingContext.restore();
+					oModel0.createBindingContext.restore();
 				}
 			}
 
@@ -1913,7 +1913,7 @@ sap.ui.define([
 			 */
 			function checkInterfaceForPart(oInterface, i) {
 				var oInterface2Part,
-					oModel = oInterface.getModel(i);
+					oModel0 = oInterface.getModel(i);
 
 				// interface to ith part
 				oInterface2Part = oInterface.getInterface(i);
@@ -1921,8 +1921,8 @@ sap.ui.define([
 				// Note: methods of oInterface2Part will ignore a further index like 42
 				// just like they always did except for the root formatter of a
 				// composite binding
-				assert.strictEqual(oInterface2Part.getModel(), oModel);
-				assert.strictEqual(oInterface2Part.getModel(42), oModel);
+				assert.strictEqual(oInterface2Part.getModel(), oModel0);
+				assert.strictEqual(oInterface2Part.getModel(42), oModel0);
 				assert.strictEqual(oInterface2Part.getPath(), oInterface.getPath(i));
 				assert.strictEqual(oInterface2Part.getPath(42), oInterface.getPath(i));
 
@@ -1956,35 +1956,35 @@ sap.ui.define([
 				// drill-down into ith part relatively
 				oInterface2Part = oInterface.getInterface(i, `String`);
 
-				assert.strictEqual(oInterface2Part.getModel(), oModel);
+				assert.strictEqual(oInterface2Part.getModel(), oModel0);
 				assert.strictEqual(oInterface2Part.getPath(), oInterface.getPath(i) + `/String`);
 				assert.strictEqual(oInterface2Part.getSetting(`bindTexts`), true, `settings`);
 
 				try {
-					that.mock(oModel).expects(`createBindingContext`).callThrough();
+					that.mock(oModel0).expects(`createBindingContext`).callThrough();
 
 					// "drill-down" into ith part with absolute path
 					oInterface2Part = oInterface.getInterface(i, `/absolute/path`);
 
-					assert.strictEqual(oInterface2Part.getModel(), oModel);
+					assert.strictEqual(oInterface2Part.getModel(), oModel0);
 					assert.strictEqual(oInterface2Part.getPath(), `/absolute/path`);
 					assert.strictEqual(oInterface2Part.getSetting(`bindTexts`), true, `settings`);
 				} finally {
-					oModel.createBindingContext.restore();
+					oModel0.createBindingContext.restore();
 				}
 
 				try {
 					// simulate a model which creates the context asynchronously
-					that.mock(oModel).expects(`createBindingContext`).twice();
+					that.mock(oModel0).expects(`createBindingContext`).twice();
 
 					oInterface2Part = oInterface.getInterface(i, `String`);
 
 					assert.ok(false, `getInterface() MUST throw error for async contexts`);
 				} catch (e) {
 					assert.strictEqual(e.message,
-						`Model could not create binding context synchronously: ` + oModel);
+						`Model could not create binding context synchronously: ` + oModel0);
 				} finally {
-					oModel.createBindingContext.restore();
+					oModel0.createBindingContext.restore();
 				}
 			}
 

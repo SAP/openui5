@@ -1472,12 +1472,10 @@ sap.ui.define([
 			that = this;
 
 		function checkResult(oResult) {
-			var i;
-
 			assert.strictEqual(oResult.value.length, iLength);
 			assert.strictEqual(oResult.value.$count, 42);
-			for (i = 0; i < iLength; i += 1) {
-				assert.strictEqual(oResult.value[i], "element#" + (oFixture.iIndex + i));
+			for (let j = 0; j < iLength; j += 1) {
+				assert.strictEqual(oResult.value[j], "element#" + (oFixture.iIndex + j));
 			}
 		}
 
@@ -1809,8 +1807,7 @@ sap.ui.define([
 			iOffset = oFixture.bHasGrandTotal && oFixture.grandTotalAtBottomOnly !== true ? 1 : 0,
 			oReadResult = {
 				value : []
-			},
-			i;
+			};
 
 		if (oFixture.iExpandTo) { // unrealistic combination, but never mind
 			oAggregation.expandTo = oFixture.iExpandTo;
@@ -1826,7 +1823,7 @@ sap.ui.define([
 			_Helper.setPrivateAnnotation(oGrandTotal, "copy", oGrandTotalCopy);
 		}
 		oCache.oFirstLevel.bSentRequest = oFixture.bHasRequestedData;
-		for (i = 0; i < Math.min(iExpectedLength, 42); i += 1) {
+		for (let j = 0; j < Math.min(iExpectedLength, 42); j += 1) {
 			oReadResult.value.push({});
 		}
 		oReadResult.value.$count = 42;
@@ -1870,15 +1867,15 @@ sap.ui.define([
 				sinon.match.same(oCache.oFirstLevel), iExpectedStart)
 			.callsFake(addElements); // so that oCache.aElements is actually filled
 		// expect placeholders before and after real read results
-		for (i = 0; i < iExpectedStart; i += 1) {
+		for (let j = 0; j < iExpectedStart; j += 1) {
 			oAggregationHelperMock.expects("createPlaceholder")
-				.withExactArgs(iExpectedLevel, i, sinon.match.same(oCache.oFirstLevel))
-				.returns("~placeholder~" + i);
+				.withExactArgs(iExpectedLevel, j, sinon.match.same(oCache.oFirstLevel))
+				.returns("~placeholder~" + j);
 		}
-		for (i = iExpectedStart + iExpectedLength; i < 42; i += 1) {
+		for (let j = iExpectedStart + iExpectedLength; j < 42; j += 1) {
 			oAggregationHelperMock.expects("createPlaceholder")
-				.withExactArgs(iExpectedLevel, i, sinon.match.same(oCache.oFirstLevel))
-				.returns("~placeholder~" + i);
+				.withExactArgs(iExpectedLevel, j, sinon.match.same(oCache.oFirstLevel))
+				.returns("~placeholder~" + j);
 		}
 		const oHandleOutOfPlaceNodesExpectation = this.mock(oCache).expects("handleOutOfPlaceNodes")
 			.withExactArgs(oFixture.bHasRequestedData
@@ -1891,11 +1888,11 @@ sap.ui.define([
 				oFixture.iPrefetchLength ?? 20, "~oGroupLock~", "~fnDataRequested~")
 			.then(function () {
 				// check placeholders before and after real read results
-				for (i = 0; i < iExpectedStart; i += 1) {
-					assert.strictEqual(oCache.aElements[iOffset + i], "~placeholder~" + i);
+				for (let j = 0; j < iExpectedStart; j += 1) {
+					assert.strictEqual(oCache.aElements[iOffset + j], "~placeholder~" + j);
 				}
-				for (i = iExpectedStart + iExpectedLength; i < 42; i += 1) {
-					assert.strictEqual(oCache.aElements[iOffset + i], "~placeholder~" + i);
+				for (let j = iExpectedStart + iExpectedLength; j < 42; j += 1) {
+					assert.strictEqual(oCache.aElements[iOffset + j], "~placeholder~" + j);
 				}
 
 				if (oFixture.bHasGrandTotal) {

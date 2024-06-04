@@ -1180,13 +1180,13 @@ sap.ui.define([
 		 * Expects "fetchEntityContainer" to be called at least once on the current meta model,
 		 * returning a clone of the given scope.
 		 *
-		 * @param {object} mScope
+		 * @param {object} mScope0
 		 */
-		expectFetchEntityContainer : function (mScope) {
-			mScope = clone(mScope);
-			this.oMetaModel.validate("n/a", mScope); // fill mSchema2MetadataUrl!
+		expectFetchEntityContainer : function (mScope0) {
+			mScope0 = clone(mScope0);
+			this.oMetaModel.validate("n/a", mScope0); // fill mSchema2MetadataUrl!
 			this.oMetaModelMock.expects("fetchEntityContainer").atLeast(1)
-				.returns(SyncPromise.resolve(mScope));
+				.returns(SyncPromise.resolve(mScope0));
 		},
 
 		/**
@@ -2796,13 +2796,13 @@ sap.ui.define([
 
 				// code under test - we must not overwrite our "$ui5.read" promise!
 				return that.oMetaModel.fetchObject("/A.")
-					.then(function (vResult) {
-						assert.strictEqual(vResult, mScopeA["A."]);
+					.then(function (vResult0) {
+						assert.strictEqual(vResult0, mScopeA["A."]);
 
 						// Note: must not invoke read() again!
 						return that.oMetaModel.fetchObject("/B.B.")
-							.then(function (vResult) {
-								assert.strictEqual(vResult, mScopeB["B.B."]);
+							.then(function (vResult1) {
+								assert.strictEqual(vResult1, mScopeB["B.B."]);
 							});
 					});
 			});
@@ -3559,8 +3559,8 @@ sap.ui.define([
 				.returns(SyncPromise.resolve(Promise.resolve()).then(function () {
 					that.oMetaModelMock.expects("fetchEntityContainer")
 						.returns(SyncPromise.resolve(mScope));
-					Object.keys(oFixture.fetchPredicates || {}).forEach(function (sPath, i) {
-						var oEntityInstance = {"@$ui5._" : {predicate : "(~" + i + ")"}};
+					Object.keys(oFixture.fetchPredicates || {}).forEach(function (sPath, j) {
+						var oEntityInstance = {"@$ui5._" : {predicate : "(~" + j + ")"}};
 
 						// Note: the entity instance is delivered asynchronously
 						oContextMock.expects("fetchValue")
@@ -4177,8 +4177,8 @@ sap.ui.define([
 		oBindingMock = this.mock(oBinding);
 
 		oBindingMock.expects("fetchContexts").withExactArgs().returns(oFetchPromise);
-		oBindingMock.expects("setContexts").withExactArgs(sinon.match(function (aContexts) {
-			return aContexts.length === 0 && aContexts.dataRequested === true;
+		oBindingMock.expects("setContexts").withExactArgs(sinon.match(function (aContexts0) {
+			return aContexts0.length === 0 && aContexts0.dataRequested === true;
 		})).callThrough();
 		oBindingMock.expects("_fireChange").never(); // initially
 
@@ -4238,9 +4238,9 @@ sap.ui.define([
 
 		function assertContextPaths(aContexts, aPaths) {
 			assert.notOk("diff" in aContexts, "extended change detection is ignored");
-			assert.deepEqual(aContexts.map(function (oContext) {
-				assert.strictEqual(oContext.getModel(), oMetaModel);
-				return oContext.getPath().replace("/EMPLOYEES/", "");
+			assert.deepEqual(aContexts.map(function (oContext0) {
+				assert.strictEqual(oContext0.getModel(), oMetaModel);
+				return oContext0.getPath().replace("/EMPLOYEES/", "");
 			}), aPaths);
 			assert.deepEqual(oBinding.getCurrentContexts(), aContexts);
 		}
@@ -4409,9 +4409,9 @@ sap.ui.define([
 			oBinding = this.oMetaModel.bindList(oFixture.metaPath, oContext);
 
 			// code under test
-			assert.deepEqual(oBinding.fetchContexts().getResult().map(function (oContext) {
-				assert.strictEqual(oContext.getModel(), oMetaModel);
-				return oContext.getPath();
+			assert.deepEqual(oBinding.fetchContexts().getResult().map(function (oContext0) {
+				assert.strictEqual(oContext0.getModel(), oMetaModel);
+				return oContext0.getPath();
 			}), oFixture.result);
 		});
 	});
@@ -4466,7 +4466,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("validate: mSchema2MetadataUrl", function (assert) {
-		var mScope = {
+		var mScope0 = {
 				$Version : "4.0",
 				$Reference : {
 					"/A/$metadata" : {
@@ -4502,7 +4502,7 @@ sap.ui.define([
 		this.oMetaModel.mSchema2MetadataUrl["C."] = {"/C/$metadata" : true};
 
 		// code under test
-		assert.strictEqual(this.oMetaModel.validate(sUrl, mScope), mScope);
+		assert.strictEqual(this.oMetaModel.validate(sUrl, mScope0), mScope0);
 
 		assert.deepEqual(this.oMetaModel.mSchema2MetadataUrl, {
 			"A." : {"/A/$metadata" : false},
@@ -4575,12 +4575,12 @@ sap.ui.define([
 			mETags,
 			that = this;
 
-		function codeUnderTest(sUrl, mScope) {
+		function codeUnderTest(sUrl, mScope0) {
 			// code under test
-			assert.strictEqual(that.oMetaModel.validate(sUrl, mScope), mScope);
+			assert.strictEqual(that.oMetaModel.validate(sUrl, mScope0), mScope0);
 
-			assert.notOk("$ETag" in mScope);
-			assert.notOk("$LastModified" in mScope);
+			assert.notOk("$ETag" in mScope0);
+			assert.notOk("$LastModified" in mScope0);
 		}
 
 		// code under test (together with c'tor)
@@ -4723,7 +4723,7 @@ sap.ui.define([
 					"@Common.Label" : ""
 				}
 			},
-			mScope = {
+			mScope0 = {
 				"A." : {
 					$kind : "Schema",
 					$Annotations : {
@@ -4753,16 +4753,16 @@ sap.ui.define([
 			};
 
 		this.oMetaModelMock.expects("validate")
-			.withExactArgs(this.oMetaModel.sUrl, mScope);
+			.withExactArgs(this.oMetaModel.sUrl, mScope0);
 		assert.deepEqual(this.oMetaModel.mSchema2MetadataUrl, {});
 
 		// code under test
-		this.oMetaModel._mergeAnnotations(mScope, []);
+		this.oMetaModel._mergeAnnotations(mScope0, []);
 
-		assert.deepEqual(mScope.$Annotations, mExpectedAnnotations,
+		assert.deepEqual(mScope0.$Annotations, mExpectedAnnotations,
 			"$Annotations have been shifted and merged from schemas to root");
-		assert.notOk("$Annotations" in mScope["A."], "$Annotations removed from schema");
-		assert.notOk("$Annotations" in mScope["B."], "$Annotations removed from schema");
+		assert.notOk("$Annotations" in mScope0["A."], "$Annotations removed from schema");
+		assert.notOk("$Annotations" in mScope0["B."], "$Annotations removed from schema");
 		assert.deepEqual(this.oMetaModel.mSchema2MetadataUrl, {
 			"A." : {"/a/b/c/d/e/$metadata" : false},
 			"B." : {"/a/b/c/d/e/$metadata" : false}
@@ -4772,28 +4772,28 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("_mergeAnnotations: validation failure for $metadata", function (assert) {
 		var oError = new Error(),
-			mScope = {};
+			mScope0 = {};
 
 		this.oMetaModelMock.expects("validate")
-			.withExactArgs(this.oMetaModel.sUrl, mScope)
+			.withExactArgs(this.oMetaModel.sUrl, mScope0)
 			.throws(oError);
 
 		assert.throws(function () {
 			// code under test
-			this.oMetaModel._mergeAnnotations(mScope, []);
+			this.oMetaModel._mergeAnnotations(mScope0, []);
 		}, oError);
 	});
 
 	//*********************************************************************************************
 	QUnit.test("_mergeAnnotations: validation failure in annotation file", function (assert) {
 		var oError = new Error(),
-			mScope = {},
+			mScope0 = {},
 			mAnnotationScope1 = {},
 			mAnnotationScope2 = {};
 
 		this.oMetaModel.aAnnotationUris = ["n/a", "/my/annotation.xml"];
 		this.oMetaModelMock.expects("validate")
-			.withExactArgs(this.oMetaModel.sUrl, mScope);
+			.withExactArgs(this.oMetaModel.sUrl, mScope0);
 		this.oMetaModelMock.expects("validate")
 			.withExactArgs("n/a", mAnnotationScope1);
 		this.oMetaModelMock.expects("validate")
@@ -4802,7 +4802,7 @@ sap.ui.define([
 
 		assert.throws(function () {
 			// code under test
-			this.oMetaModel._mergeAnnotations(mScope, [mAnnotationScope1, mAnnotationScope2]);
+			this.oMetaModel._mergeAnnotations(mScope0, [mAnnotationScope1, mAnnotationScope2]);
 		}, oError);
 	});
 
@@ -6553,8 +6553,8 @@ sap.ui.define([
 					 * @param {object[]} aData - some data rows
 					 * @returns {object[]} mock context instances
 					 */
-					function mock(aData) {
-						return aData.map(function (oData) {
+					function mock(aData0) {
+						return aData0.map(function (oData) {
 							var oContext = {getProperty : function () {}},
 								oContextMock = that.mock(oContext);
 

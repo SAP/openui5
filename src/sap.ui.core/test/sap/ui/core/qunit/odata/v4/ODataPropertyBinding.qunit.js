@@ -1256,8 +1256,7 @@ sap.ui.define([
 		// e.g. {"type" : "point", "coordinates" : [142.1, 64.1]}
 	].forEach(function (oValue) {
 		QUnit.test("bindProperty with non-primitive " + JSON.stringify(oValue), function (assert) {
-			var oBinding,
-				oCache = {
+			var oCache = {
 					fetchValue : function (_sGroupId, _sPath, fnDataRequested) {
 						fnDataRequested();
 						return Promise.resolve(oValue);
@@ -1298,7 +1297,7 @@ sap.ui.define([
 				}
 			}});
 
-			oBinding = oControl.getBinding("text");
+			const oBinding = oControl.getBinding("text");
 			return Promise.all([
 				oDataReceivedPromise,
 				fnSpy.returnValues[0].then(function () {
@@ -1324,8 +1323,8 @@ sap.ui.define([
 		this.mock(_Cache).expects("createProperty").returns(oCache);
 		this.mock(this.oModel).expects("reportError")
 			.withExactArgs("Failed to read path /path", sClassName, sinon.match.same(oError))
-			.callsFake(function (_sLogMessage, _sReportingClassName, oError) {
-				oError.$reported = true; // important for #getReporter
+			.callsFake(function (_sLogMessage, _sReportingClassName, oError0) {
+				oError0.$reported = true; // important for #getReporter
 			});
 
 		//code under test

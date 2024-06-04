@@ -1515,7 +1515,6 @@ sap.ui.define([
 	_AggregationCache.prototype.read = function (iIndex, iLength, iPrefetchLength, oGroupLock,
 			fnDataRequested) {
 		var oCurrentParent,
-			oElement,
 			iFirstLevelIndex = iIndex,
 			iFirstLevelLength = iLength,
 			oGapParent,
@@ -1533,9 +1532,9 @@ sap.ui.define([
 		 * @param {number} iGapStart start of gap, inclusive
 		 * @param {number} iGapEnd end of gap, exclusive
 		 */
-		function readGap(iGapStart, iGapEnd) {
+		function readGap(iGapStart0, iGapEnd) {
 			aReadPromises.push(
-				that.readGap(oGapParent, iGapStart, iGapEnd, oGroupLock.getUnlockedCopy(),
+				that.readGap(oGapParent, iGapStart0, iGapEnd, oGroupLock.getUnlockedCopy(),
 					fnDataRequested));
 		}
 
@@ -1581,7 +1580,7 @@ sap.ui.define([
 				});
 			const n = Math.min(oReadRange.start + oReadRange.length, this.aElements.length);
 			for (i = oReadRange.start; i < n; i += 1) {
-				oElement = this.aElements[i];
+				const oElement = this.aElements[i];
 				oCurrentParent = _Helper.hasPrivateAnnotation(oElement, "placeholder")
 					? _Helper.getPrivateAnnotation(oElement, "parent")
 					: undefined;

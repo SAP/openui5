@@ -869,9 +869,9 @@ sap.ui.define([
 				assert.strictEqual(JSON.stringify(oFixture.queryOptions), sJSON, "unchanged");
 				assert.strictEqual(fnResultHandlerSpy.callCount,
 					aExpectedResultHandlerCalls.length);
-				aExpectedResultHandlerCalls.forEach(function (oResult, i) {
-					var sCurrentKey = fnResultHandlerSpy.args[i][0],
-						sCurrentValue = fnResultHandlerSpy.args[i][1];
+				aExpectedResultHandlerCalls.forEach(function (oResult, j) {
+					var sCurrentKey = fnResultHandlerSpy.args[j][0],
+						sCurrentValue = fnResultHandlerSpy.args[j][1];
 
 					assert.strictEqual(sCurrentKey + "=" + sCurrentValue,
 							oResult.key + "=" + oResult.value);
