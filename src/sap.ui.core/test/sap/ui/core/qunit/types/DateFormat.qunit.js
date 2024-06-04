@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/core/format/FormatUtils",
 	"sap/ui/core/Locale",
 	"sap/ui/core/LocaleData",
+	"sap/ui/core/date/Buddhist",
 	"sap/ui/core/date/UniversalDate",
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/library",
@@ -14,13 +15,12 @@ sap.ui.define([
 	"sap/ui/core/date/CalendarWeekNumbering",
 	"sap/ui/test/TestUtils",
 	// load all required calendars in advance
-	"sap/ui/core/date/Buddhist",
 	"sap/ui/core/date/Gregorian",
 	"sap/ui/core/date/Islamic",
 	"sap/ui/core/date/Japanese",
 	"sap/ui/core/date/Persian"
-], function(Log, Formatting, Localization, extend, DateFormat, FormatUtils, Locale, LocaleData,
-		UniversalDate, UI5Date, library, Supportability, CalendarWeekNumbering, TestUtils) {
+], function(Log, Formatting, Localization, extend, DateFormat, FormatUtils, Locale, LocaleData, Buddhist, UniversalDate,
+		UI5Date, library, Supportability, CalendarWeekNumbering, TestUtils) {
 	"use strict";
 	/* eslint-disable max-nested-callbacks */
 	/*global QUnit, sinon */
@@ -3420,6 +3420,35 @@ sap.ui.define([
 			doTestRelative(assert, false, { style: "long", relativeRange: [1, 5], calendarType: CalendarType.Buddhist }, "en", "style long, range [1, 5], en with calendar type Buddhist");
 		});
 
+	// DINC0133323
+	[
+		{buddhistYear : 2465, date : "May 1, 2465 BE", expected : {day : 1, month : 4, year : 1922}},
+		{buddhistYear : 2482, date : "Mar 1, 2482 BE", expected : {day : 1, month : 2, year : 1940}},
+		{buddhistYear : 2483, date : "Apr 1, 2483 BE", expected : {day : 1, month : 3, year : 1940}},
+		{buddhistYear : 2484, date : "Jan 1, 2484 BE", expected : {day : 1, month : 0, year : 1941}},
+		{buddhistYear : 2484, date : "Apr 1, 2484 BE", expected : {day : 1, month : 3, year : 1941}}
+	].forEach(function (oFixture, i) {
+		QUnit.test("parse and format dates with Buddhist calendar around era change " + i, function (assert) {
+			const oDateFormat = DateFormat.getDateInstance({
+				calendarType: CalendarType.Buddhist
+			});
+			const oFullYearSpy = this.spy(Buddhist.prototype, "setUTCFullYear");
+			const oMonthSpy = this.spy(Buddhist.prototype, "setUTCMonth");
+
+			// code under test
+			const oDate = oDateFormat.parse(oFixture.date);
+
+			assert.ok(oFullYearSpy.calledOnceWithExactly(oFixture.buddhistYear, oFixture.expected.month,
+				oFixture.expected.day));
+			assert.ok(oMonthSpy.notCalled, "setMonth is not called");
+			assert.strictEqual(oDate.getFullYear(), oFixture.expected.year);
+			assert.strictEqual(oDate.getMonth(), oFixture.expected.month);
+			assert.strictEqual(oDate.getDate(), 1, oFixture.expected.day);
+
+			// code under test
+			assert.strictEqual(oDateFormat.format(oDate), oFixture.date);
+		});
+	});
 
 		QUnit.module("interval options validation", {
 			beforeEach: function (assert) {
