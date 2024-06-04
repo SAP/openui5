@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/DOMUtil",
 	"sap/ui/events/KeyCodes",
+	"sap/ui/fl/apply/_internal/flexState/Loader",
 	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
@@ -38,6 +39,7 @@ sap.ui.define([
 	OverlayRegistry,
 	DOMUtil,
 	KeyCodes,
+	Loader,
 	FlexRuntimeInfoAPI,
 	PersistenceWriteAPI,
 	ChangesWriteAPI,
@@ -581,17 +583,42 @@ sap.ui.define([
 						"then the change keeps its revert data"
 					);
 					assert.strictEqual(
-						oSerializeToLrepSpy.args[0][0],
+						oSerializeToLrepSpy.getCall(1).args[0],
 						false,
 						"then '_serializeToLrep' was called with 'bCondenseAnyLayer' parameter equal to false"
 					);
 					assert.strictEqual(
-						oSerializeToLrepSpy.args[0][1],
+						oSerializeToLrepSpy.getCall(1).args[1],
 						true,
 						"then '_serializeToLrep' was called with 'bIsExit' parameter equal to true"
 					);
 				});
 			}.bind(this));
+		});
+
+		QUnit.test("when stopping rta with saving draft changes", function(assert) {
+			var oLoadSpy = sandbox.spy(Loader, "loadFlexData");
+			sandbox.stub(ReloadManager, "triggerReload");
+			var oSerializeToLrepSpy = sandbox.spy(this.oRta, "_serializeToLrep");
+			this.oRta._oVersionsModel.setProperty("/versioningEnabled", true);
+			sandbox.stub(RtaUtils, "showMessageBox")
+			.resolves(this.oRta._getTextResources().getText("BTN_UNSAVED_CHANGES_ON_CLOSE_SAVE"));
+
+			return this.oRta.stop()
+			.then(function() {
+				assert.strictEqual(oSerializeToLrepSpy.callCount, 2, "then '_serializeToLrep' was called twice");
+				assert.strictEqual(
+					oSerializeToLrepSpy.getCall(1).args[0], false,
+					"then '_serializeToLrep' was called with 'bCondenseAnyLayer' parameter equal to false"
+				);
+				assert.strictEqual(
+					oSerializeToLrepSpy.getCall(1).args[1], true,
+					"then '_serializeToLrep' was called with 'bIsExit' parameter equal to true"
+				);
+				assert.strictEqual(oLoadSpy.callCount, 2, "then the flex data is loaded twice");
+				assert.strictEqual(oLoadSpy.getCall(0).args[0].version, "0", "the first request includes the version information");
+				assert.strictEqual(oLoadSpy.getCall(1).args[0].version, undefined, "the version was removed before the second request");
+			});
 		});
 
 		QUnit.test("when saving changes and versioning and cba is disabled", function(assert) {
