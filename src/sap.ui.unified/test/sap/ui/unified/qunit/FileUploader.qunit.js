@@ -1721,6 +1721,14 @@ sap.ui.define([
 		oFileUploader.destroy();
 	});
 
+	QUnit.test("External label reference", function(assert) {
+		// setup
+		var oFileUploader = new FileUploader("fu");
+
+		// assert
+		assert.strictEqual(oFileUploader.getIdForLabel(), "fu", "The file uploader id is used for external label references");
+	});
+
 	//IE has no Event constructor
 	function createNewEvent(eventName) {
 		var oEvent;
