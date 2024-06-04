@@ -27,7 +27,7 @@
 		"header": {
 			"title": "Products",
 			"icon": {
-				"src": "sap-icon://products"
+				"src": "sap-icon://flag-2"
 			}
 		},
 		"content": {

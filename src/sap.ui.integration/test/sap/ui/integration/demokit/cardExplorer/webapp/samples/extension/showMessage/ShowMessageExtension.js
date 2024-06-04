@@ -1,13 +1,14 @@
 sap.ui.define([
 	"sap/ui/integration/Extension",
-	"sap/ui/integration/library",
-	"sap/ui/core/message/MessageType"
-], function (Extension, integrationLibrary, MessageType) {
+	"sap/ui/integration/library"
+], function (Extension, integrationLibrary) {
 	"use strict";
 
-	var CardActionType = integrationLibrary.CardActionType;
+	const CardActionType = integrationLibrary.CardActionType;
 
-	var ShowMessageExtension = Extension.extend("card.explorer.extension.showMessage.ShowMessageExtension");
+	const CardMessageType = integrationLibrary.CardMessageType;
+
+	const ShowMessageExtension = Extension.extend("card.explorer.extension.showMessage.ShowMessageExtension");
 
 	ShowMessageExtension.prototype.init = function () {
 		Extension.prototype.init.apply(this, arguments);
@@ -19,8 +20,8 @@ sap.ui.define([
 			return;
 		}
 
-		var oActionParams = oEvent.getParameter("parameters");
-		var pExecuteAction;
+		const oActionParams = oEvent.getParameter("parameters");
+		let pExecuteAction;
 
 		if (oActionParams.method === "addToFavorites") {
 			pExecuteAction = this._addItemToFavorites(oActionParams.id);
@@ -30,14 +31,14 @@ sap.ui.define([
 			return;
 		}
 
-		var oActionSource = oEvent.getParameter("actionSource");
-		var oCard = this.getCard();
+		const oActionSource = oEvent.getParameter("actionSource");
+		const oCard = this.getCard();
 		oActionSource.setEnabled(false); // temporary disable the button
 
 		// Send request to the backend and show the result to the user
 		pExecuteAction
 			.then(function(sResponseText) {
-				oCard.showMessage(sResponseText, MessageType.Success);
+				oCard.showMessage(sResponseText, CardMessageType.Success);
 
 				if (oActionParams.method === "addToFavorites") {
 					oActionSource.setVisible(false);
@@ -46,10 +47,10 @@ sap.ui.define([
 				}
 			})
 			.catch(function (aResponse) {
-				var oResponse = aResponse[1];
+				const oResponse = aResponse[1];
 
 				oResponse.text().then(function (sText) {
-					oCard.showMessage(sText,  MessageType.Error);
+					oCard.showMessage(sText,  CardMessageType.Error);
 				});
 
 				oActionSource.setEnabled(true);
