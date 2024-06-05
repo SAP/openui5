@@ -99,9 +99,7 @@ sap.ui.define([
 			 * @param {sap.ui.base.Event} oEvent - The event object.
 			 */
 			onTreeFilter: function (oEvent) {
-				// Update filter value
-				var newValue = oEvent.getParameter("newValue").trim();
-				this._sFilter = newValue.replace(/\//g, '.');
+				this._sFilter = oEvent.getParameter("newValue").trim();
 
 				if (this._filterTimeout) {
 					clearTimeout(this._filterTimeout);

@@ -213,39 +213,47 @@ sap.ui.define([
 			 */
 			buildAndApplyFilters: function () {
 				var aFilters = [];
+				var noWhitespaceFilter = this._sFilter ? this._sFilter.replace(/\s/g, '') : '';
+				var dotToSlashFilter = noWhitespaceFilter.replace(/\./g, '/');
+				var slashesToDotFilter = noWhitespaceFilter.replace(/\//g, '.');
 
 				if (!this._bIncludeDeprecated) {
-					aFilters.push(new Filter({
+					var deprecatedFilter = new Filter({
 						filters: [
 							new Filter({ path: "preserveInTreeList", operator: FilterOperator.EQ, value1: true }),
 							new Filter({ path: "bAllContentDeprecated", operator: FilterOperator.EQ, value1: false })
 						],
 						and: false
-					}));
+					});
+					aFilters.push(deprecatedFilter);
 				}
 
 				if (!this._bIncludeExperimental) {
-					aFilters.push(new Filter({
+					var experimentalFilter = new Filter({
 						filters: [
 							new Filter({ path: "preserveInTreeList", operator: FilterOperator.EQ, value1: true }),
-							new Filter({path: "experimental", operator: FilterOperator.EQ, value1: false })
+							new Filter({ path: "experimental", operator: FilterOperator.EQ, value1: false })
 						],
 						and: false
-					}));
+					});
+					aFilters.push(experimentalFilter);
 				}
 
 				if (this._sFilter) {
-					aFilters.push(new Filter({
+					var stringFilter = new Filter({
 						filters: [
 							new Filter({ path: "name", operator: FilterOperator.Contains, value1: this._sFilter }),
-							new Filter({ path: "name", operator: FilterOperator.Contains, value1: this._sFilter.replace(/\s/g, '') })
+							new Filter({ path: "name", operator: FilterOperator.Contains, value1: noWhitespaceFilter }),
+							new Filter({ path: "name", operator: FilterOperator.Contains, value1: dotToSlashFilter }),
+							new Filter({ path: "name", operator: FilterOperator.Contains, value1: slashesToDotFilter })
 						],
 						and: false
-					}));
+					});
+					aFilters.push(stringFilter);
 				}
 
 				this._oTree.getBinding("items").filter(new Filter({ and: true, filters: aFilters }));
-				// Should the tree items be expanded or collapsed - in this case we take into account only the filter string
+
 				return !!this._sFilter;
 			},
 
