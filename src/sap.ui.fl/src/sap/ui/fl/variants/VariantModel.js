@@ -1219,16 +1219,17 @@ sap.ui.define([
 		if (!this._bDesignTimeMode) {
 			return oFlexController.saveSequenceOfDirtyChanges(aCopiedVariantDirtyChanges, oAppComponent)
 			.then(function(oResponse) {
+				if (oResponse) {
+					const oResponseData = oResponse.response[0];
+					const oAffectedVariant = this.oData[sVariantManagementReference].variants
+					.find((oVariant) => oVariant.key === oResponseData.fileName);
+					const oSupportInformation = oAffectedVariant.instance.getSupportInformation();
+					oSupportInformation.user = oResponseData.support.user;
+					oAffectedVariant.instance.setSupportInformation(oSupportInformation);
+				}
+
 				// TODO: as soon as the invalidation is done automatically this can be removed
 				this.invalidateMap();
-				if (oResponse) {
-					var oResponseData = oResponse.response[0];
-					this.oData[sVariantManagementReference].variants.forEach(function(oVariant) {
-						if (oVariant.key === oResponseData.fileName) {
-							oVariant.author = oResponseData.support.user;
-						}
-					});
-				}
 			}.bind(this));
 		}
 		return Promise.resolve();

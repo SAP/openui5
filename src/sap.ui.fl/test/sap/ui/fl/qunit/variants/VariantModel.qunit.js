@@ -1544,11 +1544,17 @@ sap.ui.define([
 					oDeleteChangesSpy.calledWith(aChanges.reverse()), // the last change is reverted first
 					"then dirty changes from source variant were deleted from the persistence (in the right order)"
 				);
-				this.oModel.getData()[sVMReference].variants.forEach(function(oVariant) {
-					if (oVariant.key === sCopyVariantName) {
-						assert.strictEqual(oVariant.author, sUserName, "then 'testUser' is add as author");
-					}
+
+				const oAffectedVariant = this.oModel.getData()[sVMReference].variants.find((oVariant) => {
+					return oVariant.key === sCopyVariantName;
 				});
+				// Only check the support user, the author is handled independently
+				assert.strictEqual(
+					oAffectedVariant.instance.getSupportInformation().user,
+					sUserName,
+					"then 'testUser' is set as support user"
+				);
+
 				oVariantManagement.destroy();
 			}.bind(this));
 		});
@@ -1637,7 +1643,11 @@ sap.ui.define([
 				);
 				this.oModel.getData()[sVMReference].variants.forEach(function(oVariant) {
 					if (oVariant.key === sCopyVariantName) {
-						assert.strictEqual(oVariant.author, sUserName, "then 'testUser' is add as author");
+						assert.strictEqual(
+							oVariant.instance.getSupportInformation().user,
+							sUserName,
+							"then 'testUser' is set as support user"
+						);
 					}
 				});
 				oVariantManagement.destroy();
@@ -1788,7 +1798,11 @@ sap.ui.define([
 				);
 				this.oModel.getData()[sVMReference].variants.forEach(function(oVariant) {
 					if (oVariant.key === sCopyVariantName) {
-						assert.strictEqual(oVariant.author, sUserName, "then 'testUser' is add as author");
+						assert.strictEqual(
+							oVariant.instance.getSupportInformation().user,
+							sUserName,
+							"then 'testUser' is set as support user"
+						);
 					}
 				});
 				oVariantManagement.destroy();
