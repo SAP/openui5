@@ -570,7 +570,7 @@ sap.ui.define([
 					this.requestNodeProperty(oEntityData, oGroupLock)
 				]);
 				if (iRank === undefined) {
-					oCache.removeElement(0, sTransientPredicate);
+					oCache.removeElement(0, _Helper.getPrivateAnnotation(oEntityData, "predicate"));
 				} else {
 					addElement(iRank, iRank);
 					completeCreation(iRank, iRank);
