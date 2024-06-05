@@ -3251,11 +3251,11 @@ sap.ui.define([
 				oContentFactory.updateConditionType();
 				_setAriaAttributes.call(this, true, sItemId); // TODO: check if still open?
 			}
-		}
 
-		if (sItemId) {
-			// in Typeahead we don't have to wait for onOpened as we know that something is found
-			oContent.removeStyleClass("sapMFocus"); // to have focus outline on selected item in valueHelp only
+			if (sItemId) {
+				// in Typeahead we don't have to wait for onOpened as we know that something is found
+				oContent.removeStyleClass("sapMFocus"); // to have focus outline on selected item in valueHelp only
+			}
 		}
 
 	}
