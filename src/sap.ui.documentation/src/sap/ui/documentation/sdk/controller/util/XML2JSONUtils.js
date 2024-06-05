@@ -137,7 +137,7 @@ sap.ui.define(["sap/ui/thirdparty/jquery"],
 			}
 
 			return txt.replace(/<\/?([^>]+)>/g, function (match, tag) {
-				if (preservedTags.indexOf(tag) === -1) {
+				if (preservedTags.indexOf(tag.split(" ")[0]) === -1) {
 					return '';
 				}
 				return match;

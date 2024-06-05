@@ -82,7 +82,7 @@
 			"preservedContent": [
 				{
 					"className": "shortdesc",
-					"preservedTags": ["code"]
+					"preservedTags": ["code", "span"]
 				}
 			]
 		},
