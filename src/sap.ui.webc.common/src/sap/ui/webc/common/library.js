@@ -31,7 +31,7 @@ sap.ui.define([
 	 * @public
 	 * @since 1.92.0
 	 * @experimental Since 1.92.0
-	 * @deprecated  Since 1.126
+	 * @deprecated As of version 1.120, this Web Components consumption model has been discarded. An alternative consumption model is planned for the future.
 	 */
 
 	/**
