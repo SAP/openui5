@@ -3,7 +3,31 @@
 		autoFocus="false"
 		id="fcl"
 		stateChange="onStateChanged"
+		columnsDistributionChange="onColumnsDistributionChange"
 		restoreFocusOnBackNavigation="true"
 		layout="{/layout}"
-		backgroundDesign="Translucent"/>
+		backgroundDesign="Translucent">
+		<layoutData>
+			<FlexibleColumnLayoutData>
+				<desktopLayoutData>
+					<FlexibleColumnLayoutDataForDesktop
+						twoColumnsBeginExpanded="{columnsDistribution>/desktop/TwoColumnsBeginExpanded}"
+						twoColumnsMidExpanded="{columnsDistribution>/desktop/TwoColumnsMidExpanded}"
+						threeColumnsBeginExpandedEndHidden="{columnsDistribution>/desktop/ThreeColumnsBeginExpandedEndHidden}"
+						threeColumnsEndExpanded="{columnsDistribution>/desktop/ThreeColumnsEndExpanded}"
+						threeColumnsMidExpanded="{columnsDistribution>/desktop/ThreeColumnsMidExpanded}"
+						threeColumnsMidExpandedEndHidden="{columnsDistribution>/desktop/ThreeColumnsMidExpandedEndHidden}"/>
+				</desktopLayoutData>
+				<tabletLayoutData>
+					<FlexibleColumnLayoutDataForTablet
+						twoColumnsBeginExpanded="{columnsDistribution>/tablet/TwoColumnsBeginExpanded}"
+						twoColumnsMidExpanded="{columnsDistribution>/tablet/TwoColumnsMidExpanded}"
+						threeColumnsBeginExpandedEndHidden="{columnsDistribution>/tablet/ThreeColumnsBeginExpandedEndHidden}"
+						threeColumnsEndExpanded="{columnsDistribution>/tablet/ThreeColumnsEndExpanded}"
+						threeColumnsMidExpanded="{columnsDistribution>/tablet/ThreeColumnsMidExpanded}"
+						threeColumnsMidExpandedEndHidden="{columnsDistribution>/tablet/ThreeColumnsMidExpandedEndHidden}" />
+				</tabletLayoutData>
+			</FlexibleColumnLayoutData>
+		</layoutData>
+		</FlexibleColumnLayout>
 </mvc:View>

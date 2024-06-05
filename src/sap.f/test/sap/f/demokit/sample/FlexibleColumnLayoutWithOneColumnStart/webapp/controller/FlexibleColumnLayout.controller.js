@@ -6,9 +6,25 @@ sap.ui.define([
 
 	return Controller.extend("sap.f.FlexibleColumnLayoutWithOneColumnStart.controller.FlexibleColumnLayout", {
 		onInit: function () {
+
 			this.oRouter = this.getOwnerComponent().getRouter();
 			this.oRouter.attachRouteMatched(this.onRouteMatched, this);
 			this.oRouter.attachBeforeRouteMatched(this.onBeforeRouteMatched, this);
+
+			// Already saved values, if any
+			this.oFCLColumnSizes = {
+				desktop: {
+					TwoColumnsMidExpanded: "25/75/0"
+				},
+				tablet: {
+					TwoColumnsMidExpanded: "40/60/0",
+					ThreeColumnsMidExpanded: "20/60/20"
+				}
+			};
+
+			this.oFCL = this.getView().byId("fcl");
+			var oModel = new JSONModel(this.oFCLColumnSizes);
+			this.getView().setModel(oModel, "columnsDistribution");
 		},
 
 		onBeforeRouteMatched: function(oEvent) {
@@ -39,6 +55,16 @@ sap.ui.define([
 			this.currentRouteName = sRouteName;
 			this.currentProduct = oArguments.product;
 			this.currentSupplier = oArguments.supplier;
+		},
+
+		onColumnsDistributionChange: function (oEvent) {
+			var sMedia = oEvent.getParameter("media"),
+				sLayout = oEvent.getParameter("layout"),
+				sColumnsSizes = oEvent.getParameter("columnsSizes"),
+				oModel =  this.getView().getModel("columnsDistribution"),
+				sPath = `/${sMedia}/${sLayout}`;
+
+				oModel.setProperty(sPath, sColumnsSizes);
 		},
 
 		onStateChanged: function (oEvent) {
