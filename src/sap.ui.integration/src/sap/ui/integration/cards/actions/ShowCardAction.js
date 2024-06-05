@@ -56,6 +56,7 @@ sap.ui.define([
 					oChildCard
 				],
 				contentWidth: this.getParameters().width,
+				verticalScrolling: false,
 				showHeader: false,
 				ariaLabelledBy: oChildCard.getId(),
 				escapeHandler: function (oPromise) {

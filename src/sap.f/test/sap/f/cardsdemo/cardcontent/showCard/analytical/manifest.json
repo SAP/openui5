@@ -1,0 +1,77 @@
+{
+	"sap.app": {
+		"id": "sap.f.cardsdemo.showCard.analytical",
+		"type": "card",
+		"title": "Sample of an Snack Card",
+		"subTitle": "Sample of an Snack Card",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Object",
+				"Card",
+				"Sample",
+				"Snack"
+			]
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://switch-classes"
+		}
+	},
+	"sap.card": {
+		"type": "Object",
+		"header": {
+			"icon": {
+				"src": "sap-icon://end-user-experience-monitoring"
+			},
+			"title": "Running distance",
+			"subTitle": "Data from last competition"
+		},
+		"content": {
+			"groups": [
+				{
+					"alignment": "Stretch",
+					"items": [
+						{
+							"type": "NumericData",
+							"mainIndicator": {
+								"number": "21",
+								"unit": "km",
+								"state": "Good",
+								"size": "S"
+							},
+							"details": "Yearly half marathon."
+						}
+					]
+				}
+			]
+		},
+		"footer": {
+			"actionsStrip": [
+				{
+					"text": "Show Chart",
+					"buttonType": "Transparent",
+					"actions": [
+						{
+							"type": "ShowCard",
+							"parameters": {
+								"manifest": "./chartManifest.json",
+								"parameters": {
+									"competitionId": 2
+								},
+								"resizable": true
+							}
+						}
+					]
+				}
+			]
+		}
+	}
+}

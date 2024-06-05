@@ -1,0 +1,149 @@
+{
+	"_version": "1.14.0",
+	"sap.app": {
+		"id": "card.explorer.analytical.bubble.card",
+		"type": "card",
+		"title": "Sample of a Bubble Chart",
+		"subTitle": "Sample of a Bubble Chart",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Analytical",
+				"Card",
+				"Bubble",
+				"Sample"
+			]
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5"
+	},
+	"sap.card": {
+		"type": "Analytical",
+		"header": {
+			"title": "Milk Stores - Revenue, Cost and Consumption"
+		},
+		"content": {
+			"data": {
+				"json": {
+					"milk": [
+						{
+							"Store Name": "24-Seven",
+							"Revenue": 428214.13,
+							"Cost": 94383.52,
+							"Consumption": 76855.15368
+						},
+						{
+							"Store Name": "A&A",
+							"Revenue": 1722148.36,
+							"Cost": 274735.17,
+							"Consumption": 310292.22
+						},
+						{
+							"Store Name": "Alexei's Specialities",
+							"Revenue": 1331176.706884,
+							"Cost": 233160.58,
+							"Consumption": 143432.18
+						},
+						{
+							"Store Name": "24-Seven",
+							"Revenue": 1878466.82,
+							"Cost": 235072.19,
+							"Consumption": 487910.26
+						},
+						{
+							"Store Name": "Choices Franchise 3",
+							"Revenue": 2090030.97,
+							"Cost": 397952.77,
+							"Consumption": 304964.8856125
+						},
+						{
+							"Store Name": "Choices Franchise 6",
+							"Revenue": 1932991.59,
+							"Cost": 343427.25,
+							"Consumption": 291191.83
+						},
+						{
+							"Store Name": "Dairy World",
+							"Revenue": 752565.16,
+							"Cost": 115844.26,
+							"Consumption": 98268.9597904
+						}
+					]
+				},
+				"path": "/milk"
+			},
+			"chartType": "bubble",
+			"chartProperties": {
+				"title": {
+					"visible": false
+				},
+				"legendGroup": {
+					"layout": {
+						"position": "right",
+						"alignment": "topLeft"
+					}
+				}
+			},
+			"minHeight": "20rem",
+			"dimensions": [
+				{
+					"name": "Store Name",
+					"value": "{Store Name}"
+				}
+			],
+			"measures": [
+				{
+					"name": "Cost",
+					"value": "{Cost}"
+				},
+				{
+					"name": "Revenue",
+					"value": "{Revenue}"
+				},
+				{
+					"name": "Consumption",
+					"value": "{Consumption}"
+				}
+			],
+			"feeds": [
+				{
+					"uid": "valueAxis",
+					"type": "Measure",
+					"values": [
+						"Revenue"
+					]
+				},
+				{
+					"uid": "valueAxis2",
+					"type": "Measure",
+					"values": [
+						"Cost"
+					]
+				},
+				{
+					"uid": "bubbleWidth",
+					"type": "Measure",
+					"values": [
+						"Consumption"
+					]
+				},
+				{
+					"uid": "color",
+					"type": "Dimension",
+					"values": [
+						"Store Name"
+					]
+				}
+			],
+			"popover": {
+				"active": true
+			}
+		}
+	}
+}

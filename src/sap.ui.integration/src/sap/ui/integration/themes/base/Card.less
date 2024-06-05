@@ -8,11 +8,42 @@
 }
 
 .sapUiIntCardDialog {
+	.sapMDialogSection,
+	.sapMDialogScroll,
+	.sapMDialogScrollCont,
+	.sapUiIntCard {
+		/* allows scrolling inside the card content instead of dialog content */
+		max-height: inherit;
+	}
+
 	.sapUiIntCard {
 		border-radius: @sapUiElementBorderCornerRadius;
 
+		.sapFCardHeader {
+			box-shadow: @sapUiContentHeaderShadow;
+		}
+
+		&:has(.sapFCardFilterBar) .sapFCardHeader {
+			box-shadow: unset;
+		}
+
+		.sapFCardFilterBar {
+			border-bottom: none;
+			box-shadow: @sapUiContentHeaderShadow;
+		}
+
 		.sapFCardContent {
 			overflow: auto;
+		}
+
+		.sapFCardObjectContent>.sapMVBox {
+			padding-bottom: 1rem;
+		}
+
+		.sapFCardFooter {
+			border-top: 1px solid @sapUiPageFooterBorderColor;
+			padding-top: 0.25rem;
+   			padding-bottom: 0.25rem;
 		}
 	}
 
