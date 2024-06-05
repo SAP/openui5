@@ -50,6 +50,9 @@ sap.ui.define([
 	// shortcut for sap.ui.core.OpenState
 	var OpenState = coreLibrary.OpenState;
 
+	// shortcut for sap.ui.core.ItemSelectionMode
+	var ItemSelectionMode = coreLibrary.ItemSelectionMode;
+
 	/**
 	 * Constructor for a new Menu control.
 	 *
@@ -105,6 +108,7 @@ sap.ui.define([
 				 * @since 1.25.0
 				 */
 				pageSize : {type : "int", group : "Behavior", defaultValue : 5}
+
 			},
 			defaultAggregation : "items",
 			aggregations : {
@@ -112,7 +116,8 @@ sap.ui.define([
 				/**
 				 * The available actions to be displayed as items of the menu.
 				 */
-				items : {type : "sap.ui.unified.MenuItemBase", multiple : true, singularName : "item"}
+				items : {type : "sap.ui.unified.IMenuItem", multiple : true, singularName : "item"}
+
 			},
 			associations : {
 
@@ -122,6 +127,7 @@ sap.ui.define([
 				 * @since 1.26.3
 				 */
 				ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
+
 			},
 			events : {
 
@@ -138,17 +144,12 @@ sap.ui.define([
 						item : {type : "sap.ui.unified.MenuItemBase"}
 					}
 				}
+
 			}
 		},
 
 		renderer: MenuRenderer
 	});
-
-
-
-
-
-
 
 	(function(window) {
 
@@ -265,7 +266,7 @@ sap.ui.define([
 			this.$().remove();
 		}
 
-		var aItems = this.getItems();
+		var aItems = this._getItems();
 
 		for (var i = 0; i < aItems.length; i++) {
 			if (aItems[i].onAfterRendering && aItems[i].getDomRef()) {
@@ -660,7 +661,7 @@ sap.ui.define([
 		}
 
 		//Go to the next selectable item
-		iIdx = this.oHoveredItem ? this.indexOfAggregation("items", this.oHoveredItem) : -1;
+		iIdx = this.oHoveredItem ? this._getItems().indexOf(this.oHoveredItem) : -1;
 		oNextSelectableItem = this.getNextSelectableItem(iIdx);
 		this.setHoveredItem(oNextSelectableItem);
 		oNextSelectableItem && oNextSelectableItem.focus(this);
@@ -674,7 +675,7 @@ sap.ui.define([
 	Menu.prototype.onsapnextmodifiers = Menu.prototype.onsapnext;
 
 	Menu.prototype.onsapprevious = function(oEvent){
-		var iIdx = this.oHoveredItem ? this.indexOfAggregation("items", this.oHoveredItem) : -1,
+		var iIdx = this.oHoveredItem ? this._getItems().indexOf(this.oHoveredItem) : -1,
 			oPrevSelectableItem = this.getPreviousSelectableItem(iIdx),
 			oSubMenu = this.oHoveredItem ? this.oHoveredItem.getSubmenu() : null;
 
@@ -716,7 +717,7 @@ sap.ui.define([
 	};
 
 	Menu.prototype.onsapend = function(oEvent){
-		var oPrevSelectableItem = this.getPreviousSelectableItem(this.getItems().length);
+		var oPrevSelectableItem = this.getPreviousSelectableItem(this._getItems().length);
 
 		//Go to the last selectable item
 		this.setHoveredItem(oPrevSelectableItem);
@@ -727,7 +728,8 @@ sap.ui.define([
 	};
 
 	Menu.prototype.onsappagedown = function(oEvent) {
-		var iIdx = this.oHoveredItem ? this.indexOfAggregation("items", this.oHoveredItem) : -1,
+		var aItems = this._getItems(),
+			iIdx = this.oHoveredItem ? aItems.indexOf(this.oHoveredItem) : -1,
 			oNextSelectableItem;
 
 		if (this.getPageSize() < 1) {
@@ -735,7 +737,7 @@ sap.ui.define([
 			return;
 		}
 		iIdx += this.getPageSize();
-		if (iIdx >= this.getItems().length) {
+		if (iIdx >= aItems.length) {
 			this.onsapend(oEvent);
 			return;
 		}
@@ -748,7 +750,7 @@ sap.ui.define([
 	};
 
 	Menu.prototype.onsappageup = function(oEvent) {
-		var iIdx = this.oHoveredItem ? this.indexOfAggregation("items", this.oHoveredItem) : -1,
+		var iIdx = this.oHoveredItem ? this._getItems().indexOf(this.oHoveredItem) : -1,
 			oPrevSelectableItem;
 
 		if (this.getPageSize() < 1) {
@@ -831,14 +833,17 @@ sap.ui.define([
 		if (!oItem) {
 			return;
 		}
+		var oSubmenu = oItem.getSubmenu(),
+			bHasSubmenu = oSubmenu && oSubmenu._getItems().length;
+
 		this._discardOpenSubMenuDelayed();
 		this._delayedSubMenuTimer = setTimeout(function(){
-			if (oItem.getSubmenu()) {
+			if (bHasSubmenu) {
 				this.setHoveredItem(oItem);
 				oItem && oItem.focus(this);
 				this.openSubmenu(oItem, false, true);
 			}
-		}.bind(this), oItem.getSubmenu() ? Menu._DELAY_SUBMENU_TIMER : Menu._DELAY_SUBMENU_TIMER_EXT);
+		}.bind(this), bHasSubmenu ? Menu._DELAY_SUBMENU_TIMER : Menu._DELAY_SUBMENU_TIMER_EXT);
 	};
 
 	Menu.prototype._discardOpenSubMenuDelayed = function(oItem){
@@ -881,7 +886,7 @@ sap.ui.define([
 				oRelatedControl = sControlId ? oCore.byId(sControlId) : null,
 				bMenuItem = oRelatedControl && oRelatedControl instanceof MenuItemBase;
 			if (oRelatedControl && !bMenuItem) {
-				this.getItems()[0].focus();
+				this._getItems()[0].focus();
 				return;
 			}
 		}
@@ -942,7 +947,7 @@ sap.ui.define([
 	};
 
 	Menu.prototype.getItemByDomRef = function(oDomRef){
-		var oItems = this.getItems(),
+		var oItems = this._getItems(),
 			iLength = oItems.length;
 		for (var i = 0;i < iLength;i++) {
 			var oItem = oItems[i],
@@ -960,11 +965,15 @@ sap.ui.define([
 		}
 
 		var oSubMenu = oItem.getSubmenu();
-		if (!oSubMenu) {
+		if (!oSubMenu || !oSubMenu._getItems().length) {
 			// This is a normal item -> Close all menus and fire event.
 			// Call Menu.prototype.close with argument value equal to "true"
 			// in order not to ignore the opener DOM reference
 			this.getRootMenu().close(true);
+
+			if (oItem._getItemSelectionMode && oItem._getItemSelectionMode() !== ItemSelectionMode.None) {
+				oItem.setSelected(!oItem.getSelected());
+			}
 		} else {
 			if (!Device.system.desktop && this.oOpenedSubMenu === oSubMenu) {
 				this.closeSubmenu();
@@ -1060,7 +1069,7 @@ sap.ui.define([
 				|| (!bWithHover && !this.oOpenedSubMenu._bFixed);
 
 			this.oOpenedSubMenu._bringToFront();
-		} else {
+		} else if (oSubMenu._getItems().length) {
 			// Open the sub menu
 			this.oOpenedSubMenu = oSubMenu;
 			var eDock = Popup.Dock;
@@ -1133,7 +1142,7 @@ sap.ui.define([
 	};
 
 	Menu.prototype.getNextSelectableItem = function(iIdx){
-		var aItems = this.getItems();
+		var aItems = this._getItems();
 		var oItem = aItems[iIdx];
 
 		// At first, start with the next index
@@ -1147,7 +1156,7 @@ sap.ui.define([
 	};
 
 	Menu.prototype.getPreviousSelectableItem = function(iIdx){
-		var aItems = this.getItems();
+		var aItems = this._getItems();
 		var oItem = aItems[iIdx];
 
 		// At first, start with the previous index
@@ -1167,7 +1176,7 @@ sap.ui.define([
 
 
 	Menu.rerenderMenu = function(oMenu){
-		var aItems = oMenu.getItems();
+		var aItems = oMenu._getItems();
 		for (var i = 0; i < aItems.length; i++) {
 			var oSubMenu = aItems[i].getSubmenu();
 			if (oSubMenu) {
@@ -1211,6 +1220,44 @@ sap.ui.define([
 		return false;
 	};
 
+	/**
+	 * Returns all items that have <code>selected</code> properties set to <code>true</code>.
+	 * <b>Note:</b> Only items with <code>selected</code> property set that are members of <code>MenuItemGroup</code> with <code>ItemSelectionMode</code> property
+	 * set to {@link sap.ui.core.ItemSelectionMode.SingleSelect} or {@link sap.ui.unified.ItemSelectionMode.MultiSelect}> are taken into account.
+	 * @since 1.127.0
+	 * @public
+	 * @returns {Array} Array of all selected items
+	 */
+	Menu.prototype.getSelectedItems = function() {
+		return this._getItems().filter((oItem) => oItem.getSelected && oItem.getSelected() && oItem._getItemSelectionMode() !== ItemSelectionMode.None);
+	};
+
+	/**
+	 * Returns list of items stored in <code>items</code> aggregation. If there are group items,
+	 * the items of the group are returned instead of their group item.
+	 *
+	 * @returns {sap.ui.unified.MenuItem} List of all menu items
+	 * @private
+	 */
+	Menu.prototype._getItems = function(){
+		var aItems = this.getItems(),
+			aItemList = [],
+			aGroupItems,
+			i;
+
+		for (i = 0; i < aItems.length; i++) {
+			if (aItems[i].getItems) {
+				aGroupItems = aItems[i].getItems();
+				for (var j = 0; j < aGroupItems.length; j++) {
+					aItemList.push(aGroupItems[j]);
+				}
+			} else {
+				aItemList.push(aItems[i]);
+			}
+		}
+
+		return aItemList;
+	};
 
 	///////////////////////////////////////// Hidden Functions /////////////////////////////////////////
 
@@ -1235,7 +1282,7 @@ sap.ui.define([
 			$Menu = oMenu.$();
 
 		if (iMaxVisibleItems > 0) {
-			var aItems = oMenu.getItems();
+			var aItems = oMenu._getItems();
 			for (var i = 0; i < aItems.length; i++) {
 				if (aItems[i].getDomRef()) {
 					iMaxHeight = Math.min(iMaxHeight, aItems[i].$().outerHeight(true) * iMaxVisibleItems);

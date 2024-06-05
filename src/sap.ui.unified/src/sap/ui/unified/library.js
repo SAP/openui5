@@ -54,6 +54,7 @@ sap.ui.define([
 			"sap.ui.unified.StandardCalendarLegendItem"
 		],
 		interfaces: [
+			"sap.ui.unified.IMenuItem",
 			"sap.ui.unified.IProcessableBlobs"
 		],
 		controls: [
@@ -92,6 +93,7 @@ sap.ui.define([
 			"sap.ui.unified.FileUploaderXHRSettings",
 			"sap.ui.unified.MenuItem",
 			"sap.ui.unified.MenuItemBase",
+			"sap.ui.unified.MenuItemGroup",
 			"sap.ui.unified.MenuTextFieldItem",
 			"sap.ui.unified.ShellHeadItem",
 			"sap.ui.unified.ShellHeadUserItem"
@@ -550,6 +552,17 @@ sap.ui.define([
 
 	// expose imported enum as property of library namespace, for documentation see ColorPickerDisplayMode.js
 	thisLib.ColorPickerDisplayMode = ColorPickerDisplayMode;
+
+	/**
+	 *
+	 * Interface for controls which are suitable to add as items of sap.m.Menu.
+	 *
+	 *
+	 * @since 1.127.0
+	 * @name sap.ui.unified.IMenuItem
+	 * @interface
+	 * @public
+	 */
 
 	/**
 	 * Marker interface for controls that process instances of <code>window.Blob</code>, such as <code>window.File</code>.

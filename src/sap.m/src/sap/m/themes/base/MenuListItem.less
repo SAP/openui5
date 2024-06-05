@@ -41,6 +41,11 @@
 
 .sapMRespMenuDialog .sapUiMnuDiv {
 	height: 1px;
+	width: 100%;
+	position: absolute;
+	left: 0;
+	top: 0;
+	display: block;
 }
 
 .sapMRespMenuDialog .sapUiMnuDiv > hr {
@@ -58,6 +63,23 @@
 html.sap-phone .sapMMLIDisabled .sapMMenuLIImgThumbIcon,
 html.sap-tablet .sapMMLIDisabled .sapMMenuLIImgThumbIcon {
 	color: @sapUiContentDisabledTextColor;
+}
+
+.sapMMenuLISel {
+	padding-inline-start: 0.5rem;
+	padding-inline-end: 0;
+	font-weight: normal;
+	text-align: center;
+	&::after {
+		color: @sapSelectedColor;
+		content: "\e05b";
+		font-family: 'SAP-icons';
+		outline: none;
+		line-height: inherit;
+		padding-inline-end: 0.125rem;
+		width: 2rem;
+		height: 2rem;
+	}
 }
 
 /* end phone */
