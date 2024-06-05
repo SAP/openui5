@@ -134,6 +134,26 @@ sap.ui.define([
 			editable: false
 		});
 
+		var oRadioButton14 = new RadioButton("rb14", {
+			groupName: "Gruppe4",
+			text: 'Long text with "wrapping" set to "true" and "wrappingType" set to "Normal"',
+			selected: true,
+			enabled: true,
+			wrapping: true,
+			wrappingType: "Normal",
+			width: "80px"
+		});
+
+		var oRadioButton15 = new RadioButton("rb15", {
+			groupName: "Gruppe4",
+			text: 'Long text with "wrapping" set to "true" and "wrappingType" set to "Hyphenated"',
+			selected: true,
+			enabled: true,
+			wrapping: true,
+			wrappingType: "Hyphenated",
+			width: "80px"
+		});
+
 		var randomControl = new Label({text: "A label to rerender the whole page"});
 		var anotherRandomControl = new Label({text: "A second label to rerender the whole page"});
 
@@ -175,8 +195,15 @@ sap.ui.define([
 				oRadioButton13
 			]
 		});
+		var hbox5 = new HBox("hbox5", {
+			wrap: "Wrap",
+			items: [
+				oRadioButton14,
+				oRadioButton15
+			]
+		});
 		var oFBox2 = new FlexBox("flexbox2", {
-			items: [hbox1, hbox2, hbox3, hbox4
+			items: [hbox1, hbox2, hbox3, hbox4, hbox5
 			]
 		});
 		oFBox2.setDirection('Column');
