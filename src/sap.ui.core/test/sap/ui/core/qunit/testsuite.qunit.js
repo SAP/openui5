@@ -85,6 +85,7 @@ sap.ui.define(function() {
 			tmpl: {},
 			designtime: {},
 			dnd: {},
+			fieldhelp: {},
 			generic: {},
 			/**
 			 * Generic testsuite exists in modern variant per library with its own "testsuite.generic.qunit.html".

@@ -6,14 +6,14 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/core/ElementRegistry",
 	"sap/ui/core/LabelEnablement",
-	"sap/ui/model/FieldHelp"
+	"sap/ui/core/fieldhelp/FieldHelp"
 ], function (Log, Element, ElementRegistry, LabelEnablement, FieldHelp) {
 	/*global sinon, QUnit*/
 	"use strict";
-	const sClassName = "sap/ui/model/FieldHelp";
+	const sClassName = "sap/ui/core/fieldhelp/FieldHelp";
 
 	//*********************************************************************************************
-	QUnit.module("sap/ui/model/FieldHelp", {
+	QUnit.module("sap/ui/core/fieldhelp/FieldHelp", {
 		beforeEach : function () {
 			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("error").never();
