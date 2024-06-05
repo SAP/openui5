@@ -128,7 +128,7 @@ sap.ui.define([
 	}
 
 	var ManagedObjectModelAggregationBinding = JSONListBinding.extend("sap.ui.model.base.ManagedObjectModelAggregationBinding", {
-		constructor: function() {
+		constructor: function(oModel, sPath, oContext, aSorters, aFilters, mParameters) {
 			JSONListBinding.apply(this, arguments);
 			this._getOriginOfManagedObjectModelBinding();
 		},
@@ -197,6 +197,16 @@ sap.ui.define([
 		 */
 		_getContexts: function(iStartIndex, iLength) {
 			var iSizeLimit;
+
+			if (iStartIndex < 0) {
+				// set StartIndex to fetch last items
+				var iCurrentLength = this.getLength();
+				iStartIndex = iCurrentLength + iStartIndex;
+				if (iStartIndex < 0) {
+					iStartIndex = 0;
+				}
+			}
+
 			if (this._oAggregation) {
 				var oInnerListBinding = this._oOriginMO.getBinding(this._sMember);
 
@@ -229,7 +239,7 @@ sap.ui.define([
 				}
 			}
 
-			return JSONListBinding.prototype._getContexts.apply(this, arguments);
+			return JSONListBinding.prototype._getContexts.apply(this, [iStartIndex, iLength]);
 		},
 		/**
 		 * Determines the managed object that is responsible resp. triggering the list binding.

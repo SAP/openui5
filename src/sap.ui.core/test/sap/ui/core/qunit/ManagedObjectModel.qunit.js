@@ -719,6 +719,30 @@ sap.ui.define([
 		oLengthBinding.detachChange(fHandler2);
 	});
 
+	QUnit.test("ManagedObject Model  - List Binding (length & startIndex)", function (assert) {
+		const oBinding = this.oManagedObjectModel.bindList("/subObjects");
+		const fHandler = function() {}; // just a dummy handler
+		oBinding.attachChange(fHandler);
+
+		this.obj.addSubObj(this.subObj);
+		this.obj.addSubObj(this.subObj2);
+		this.obj.addSubObj(this.subObj3);
+
+		let aContexts = oBinding.getContexts(0, 2);
+		assert.equal(aContexts.length, 2, "Contexts length");
+		assert.equal(this.oManagedObjectModel.getProperty("", aContexts[0]) === this.subObj, true, "Contexts[0] are correctly applied");
+		assert.equal(this.oManagedObjectModel.getProperty("", aContexts[1]) === this.subObj2, true, "Contexts[1] are correctly applied");
+
+		aContexts = oBinding.getContexts(1, 2);
+		assert.equal(aContexts.length, 2, "Contexts length");
+		assert.equal(this.oManagedObjectModel.getProperty("", aContexts[0]) === this.subObj2, true, "Contexts[0] are correctly applied");
+		assert.equal(this.oManagedObjectModel.getProperty("", aContexts[1]) === this.subObj3, true, "Contexts[1] are correctly applied");
+
+		aContexts = oBinding.getContexts(-1, 1);
+		assert.equal(aContexts.length, 1, "Contexts length");
+		assert.equal(this.oManagedObjectModel.getProperty("", aContexts[0]) === this.subObj3, true, "Contexts[0] are correctly applied");
+	});
+
 	QUnit.test("ManagedObject Model - getManagedObject", function (assert) {
 		var oModel = this.oManagedObjectModel;
 

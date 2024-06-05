@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/test/matchers/PropertyStrictEquals",
 	"sap/ui/test/actions/Press",
 	"sap/ui/test/actions/EnterText",
+    "../actions/TriggerEvent",
 	"./Util",
 	"../Utils",
 	"../p13n/Actions",
@@ -25,6 +26,7 @@ sap.ui.define([
 	PropertyStrictEquals,
 	Press,
 	EnterText,
+	TriggerEvent,
 	FilterBarUtil,
 	Utils,
 	p13nActions,
@@ -296,7 +298,11 @@ sap.ui.define([
 												value: FilterBarUtil.icons.decline
 											})
 										],
-										actions: new Press()
+										actions: function(oIcon) {
+											// as OPA Press-event focuses the not-focusable Icon what leads to an unexpected behaviour we focus the Token and then simulate the Click (like it happens in real live)
+											oToken.focus();
+											new TriggerEvent({event: "click", payload: {target: oIcon.getDomRef()}}).executeOn(oIcon);
+										}
 									});
 								}.bind(this)
 							});

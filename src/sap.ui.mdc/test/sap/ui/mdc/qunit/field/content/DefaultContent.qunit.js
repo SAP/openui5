@@ -25,11 +25,11 @@ sap.ui.define([
 			createFunction: "createDisplay",
 			bindings: [
 				{
-					text: "$field>/conditions",
-					textAlign: "$field>/textAlign",
-					textDirection: "$field>/textDirection",
-					wrapping: "$field>/multipleLines",
-					tooltip: "$field>/tooltip"
+					text: {path: "$field>/conditions"},
+					textAlign: {path: "$field>/textAlign"},
+					textDirection: {path: "$field>/textDirection"},
+					wrapping: {path: "$field>/multipleLines"},
+					tooltip: {path: "$field>/tooltip"}
 				},
 				{}
 			],
@@ -48,9 +48,9 @@ sap.ui.define([
 			createFunction: "createDisplayMultiValue",
 			bindings: [
 				{
-					tokens: "$field>/conditions",
-					//textAlign: "$field>/textAlign",
-					tooltip: "$field>/tooltip"
+					tokens: {path: "$field>/conditions"},
+					//textAlign: {path: "$field>/textAlign",
+					tooltip: {path: "$field>/tooltip"}
 				},
 				{}
 			],
@@ -68,10 +68,10 @@ sap.ui.define([
 			createFunction: "createDisplayMultiLine",
 			bindings: [
 				{
-					text: "$field>/conditions",
-					textAlign: "$field>/textAlign",
-					textDirection: "$field>/textDirection",
-					tooltip: "$field>/tooltip"
+					text: {path: "$field>/conditions"},
+					textAlign: {path: "$field>/textAlign"},
+					textDirection: {path: "$field>/textDirection"},
+					tooltip: {path: "$field>/tooltip"}
 				},
 				{}
 			],
@@ -89,18 +89,18 @@ sap.ui.define([
 			createFunction: "createEdit",
 			bindings: [
 				{
-					value: "$field>/conditions",
-					placeholder: "$field>/placeholder",
-					textAlign: "$field>/textAlign",
-					textDirection: "$field>/textDirection",
-					required: "$field>/required",
-					editable: "$field>/editMode",
-					enabled: "$field>/editMode",
-					valueState: "$field>/valueState",
-					valueStateText: "$field>/valueStateText",
-					showValueHelp: "$field>/_valueHelpEnabled",
-					ariaAttributes: "$field>/_ariaAttributes",
-					tooltip: "$field>/tooltip"
+					value: {path: "$field>/conditions"},
+					placeholder: {path: "$field>/placeholder"},
+					textAlign: {path: "$field>/textAlign"},
+					textDirection: {path: "$field>/textDirection"},
+					required: {path: "$field>/required"},
+					editable: {path: "$field>/editMode"},
+					enabled: {path: "$field>/editMode"},
+					valueState: {path: "$field>/valueState"},
+					valueStateText: {path: "$field>/valueStateText"},
+					showValueHelp: {path: "$field>/_valueHelpEnabled"},
+					ariaAttributes: {path: "$field>/_ariaAttributes"},
+					tooltip: {path: "$field>/tooltip"}
 				},
 				{}
 			],
@@ -120,22 +120,22 @@ sap.ui.define([
 			createFunction: "createEditMultiValue",
 			bindings: [
 				{
-					value: "$field>/conditions",
-					placeholder: "$field>/placeholder",
-					textAlign: "$field>/textAlign",
-					textDirection: "$field>/textDirection",
-					required: "$field>/required",
-					editable: "$field>/editMode",
-					enabled: "$field>/editMode",
-					valueState: "$field>/valueState",
-					valueStateText: "$field>/valueStateText",
-					showValueHelp: "$field>/_valueHelpEnabled",
-					ariaAttributes: "$field>/_ariaAttributes",
-					tooltip: "$field>/tooltip",
-					tokens: "$field>/conditions"
+					value: {path: "$field>/conditions"},
+					placeholder: {path: "$field>/placeholder"},
+					textAlign: {path: "$field>/textAlign"},
+					textDirection: {path: "$field>/textDirection"},
+					required: {path: "$field>/required"},
+					editable: {path: "$field>/editMode"},
+					enabled: {path: "$field>/editMode"},
+					valueState: {path: "$field>/valueState"},
+					valueStateText: {path: "$field>/valueStateText"},
+					showValueHelp: {path: "$field>/_valueHelpEnabled"},
+					ariaAttributes: {path: "$field>/_ariaAttributes"},
+					tooltip: {path: "$field>/tooltip"},
+					tokens: {path: "$field>/conditions", length: 10, startIndex: -10}
 				},
 				{
-					text: "$field>"
+					text: {path: "$field>"}
 				}
 			],
 			properties: [
@@ -154,16 +154,16 @@ sap.ui.define([
 			createFunction: "createEditMultiLine",
 			bindings: [
 				{
-					value: "$field>/conditions",
-					placeholder: "$field>/placeholder",
-					textAlign: "$field>/textAlign",
-					textDirection: "$field>/textDirection",
-					required: "$field>/required",
-					editable: "$field>/editMode",
-					enabled: "$field>/editMode",
-					valueState: "$field>/valueState",
-					valueStateText: "$field>/valueStateText",
-					tooltip: "$field>/tooltip"
+					value: {path: "$field>/conditions"},
+					placeholder: {path: "$field>/placeholder"},
+					textAlign: {path: "$field>/textAlign"},
+					textDirection: {path: "$field>/textDirection"},
+					required: {path: "$field>/required"},
+					editable: {path: "$field>/editMode"},
+					enabled: {path: "$field>/editMode"},
+					valueState: {path: "$field>/valueState"},
+					valueStateText: {path: "$field>/valueStateText"},
+					tooltip: {path: "$field>/tooltip"}
 				},
 				{}
 			],
@@ -182,18 +182,18 @@ sap.ui.define([
 			createFunction: "createEditForHelp",
 			bindings: [
 				{
-					value: "$field>/conditions",
-					placeholder: "$field>/placeholder",
-					textAlign: "$field>/textAlign",
-					textDirection: "$field>/textDirection",
-					required: "$field>/required",
-					editable: "$field>/editMode",
-					enabled: "$field>/editMode",
-					valueState: "$field>/valueState",
-					valueStateText: "$field>/valueStateText",
-					showValueHelp: "$field>/_valueHelpEnabled",
-					ariaAttributes: "$field>/_ariaAttributes",
-					tooltip: "$field>/tooltip"
+					value: {path: "$field>/conditions"},
+					placeholder: {path: "$field>/placeholder"},
+					textAlign: {path: "$field>/textAlign"},
+					textDirection: {path: "$field>/textDirection"},
+					required: {path: "$field>/required"},
+					editable: {path: "$field>/editMode"},
+					enabled: {path: "$field>/editMode"},
+					valueState: {path: "$field>/valueState"},
+					valueStateText: {path: "$field>/valueStateText"},
+					showValueHelp: {path: "$field>/_valueHelpEnabled"},
+					ariaAttributes: {path: "$field>/_ariaAttributes"},
+					tooltip: {path: "$field>/tooltip"}
 				},
 				{}
 			],
@@ -358,7 +358,13 @@ sap.ui.define([
 						const oBindingInfo = aControls[0].getBindingInfo(sName);
 						const sPath = oBindingInfo && oBindingInfo.parts ? oBindingInfo.parts[0].path : oBindingInfo.path;
 						const sModel = oBindingInfo && oBindingInfo.parts ? oBindingInfo.parts[0].model : oBindingInfo.model;
-						assert.equal(sModel + ">" + sPath, oValue.bindings[0][sName], "Binding path for " + sName);
+						assert.equal(sModel + ">" + sPath, oValue.bindings[0][sName].path, "Binding path for " + sName);
+						if (oValue.bindings[0][sName].hasOwnProperty("length")) {
+							assert.equal(oBindingInfo && oBindingInfo.length, oValue.bindings[0][sName].length, "Binding length for " + sName);
+						}
+						if (oValue.bindings[0][sName].hasOwnProperty("startIndex")) {
+							assert.equal(oBindingInfo && oBindingInfo.startIndex, oValue.bindings[0][sName].startIndex, "Binding startIndex for " + sName);
+						}
 					}
 					for (const sProperty in oValue.properties[0]) {
 						assert.equal(aControls[0].getProperty(sProperty), oValue.properties[0][sProperty], "Value for " + sProperty);

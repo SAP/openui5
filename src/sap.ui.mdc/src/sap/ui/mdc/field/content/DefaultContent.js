@@ -215,7 +215,7 @@ sap.ui.define([
 				width: "100%",
 				// fieldGroupIds: are taken from parent if not automatically set (see Element.prototype._getFieldGroupIds) -> so no binding needed
 				tooltip: "{$field>/tooltip}",
-				tokens: { path: "$field>/conditions", template: oToken },
+				tokens: { path: "$field>/conditions", template: oToken, length: 10, startIndex: -10 },
 				dependents: [oToken], // to destroy it if MultiInput is destroyed
 				autocomplete: false,
 				showSuggestion: false, // as true by default

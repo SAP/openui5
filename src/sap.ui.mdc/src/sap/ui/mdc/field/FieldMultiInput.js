@@ -3,11 +3,12 @@
  */
 
 sap.ui.define([
-	'sap/m/MultiInput', 'sap/ui/mdc/field/FieldMultiInputRenderer', "sap/ui/Device"
+	'sap/m/MultiInput', 'sap/ui/mdc/field/FieldMultiInputRenderer', "sap/ui/Device", 'sap/m/Tokenizer'
 ], (
 	MultiInput,
 	FieldMultiInputRenderer,
-	Device
+	Device,
+	Tokenizer
 ) => {
 	"use strict";
 
@@ -53,8 +54,79 @@ sap.ui.define([
 		MultiInput.prototype.init.apply(this, arguments);
 
 		const oTokenizer = this.getAggregation("tokenizer");
-
 		oTokenizer._fillClipboard = _fillClipboard;
+
+		oTokenizer._handleNMoreIndicator = function (iHiddenTokensCount) {
+
+			const oBinding = this.getBinding("tokens");
+			const iLength = oBinding.getLength(); // tokens available in binding
+			const iTokensLength = this.getTokens().length;
+			const iMissingTokens = iLength - iTokensLength;
+
+			return Tokenizer.prototype._handleNMoreIndicator.apply(this, [iHiddenTokensCount + iMissingTokens]);
+
+		};
+
+		oTokenizer._handleNMoreIndicatorPress = function () {
+
+			const oMultiInput = this.getParent();
+			_bindAllTokens.call(oMultiInput); // get all tokens as list has no paging
+
+			return Tokenizer.prototype._handleNMoreIndicatorPress.apply(this, arguments);
+
+		};
+
+	};
+
+	FieldMultiInput.prototype.onfocusin = function(oEvent) {
+
+		if (oEvent.srcControl.isA("sap.m.Token")) { // let first finish the focus on Token or Delete of Token
+			const iIndex = this.indexOfToken(oEvent.srcControl);
+			if (iIndex >= 0) {
+				this._iRestoreTokenFocus = this.getTokens().length - iIndex; // to always have the current one, independent of multiple calls
+			}
+
+			if (this._oUpdateBindingTimer || this._bUpdateBinding) { // if update is running handle multiple token focus while update (programmatically set in MultiInput or Tokenizer)
+				this.bDeletePressed = false; // initialize (only set on detete token)
+				this.iFocusedIndexBeforeUpdate = 0; // initialize (only set on detete token)
+			}
+			_bindAllTokens.call(this, true); // get all tokens as paging would need support from Tokenizer
+		} else {
+			_bindAllTokens.call(this, false); // get all tokens as paging would need support from Tokenizer
+		}
+
+		MultiInput.prototype.onfocusin.apply(this, arguments);
+
+	};
+
+	FieldMultiInput.prototype.onAfterRendering = function () {
+
+		const {bDeletePressed, bTokensUpdated} = this;
+		const iIndex = this.iFocusedIndexBeforeUpdate;
+
+		if (this._oUpdateBindingTimer) {
+			// update still pending -> don't set the focus
+			this.bTokensUpdated = false;
+			this.bDeletePressed = false;
+		} else if (this._bUpdateBinding && this._iRestoreTokenFocus !== undefined) {
+			this.iFocusedIndexBeforeUpdate = this.getTokens().length - this._iRestoreTokenFocus; // reuse existing focus logic
+			delete this._iRestoreTokenFocus;
+			delete this._bUpdateBinding;
+			this.bDeletePressed = true; // to run into setting focus
+			const oTokenizer = this.getAggregation("tokenizer");
+			if (oTokenizer._oSelectionOrigin) {
+				// set to new token (for shift-tap)
+				oTokenizer._oSelectionOrigin = oTokenizer.getTokens()[this.iFocusedIndexBeforeUpdate];
+			}
+		}
+
+		MultiInput.prototype.onAfterRendering.apply(this, arguments);
+
+		if (this._oUpdateBindingTimer || this._bUpdateBinding) {
+			this.bDeletePressed = bDeletePressed; // restore
+			this.iFocusedIndexBeforeUpdate = iIndex; // restore
+			this.bTokensUpdated = bTokensUpdated; // restore
+		}
 
 	};
 
@@ -112,6 +184,38 @@ sap.ui.define([
 
 	function _isHtmlMimeTypeAllowed() {
 		return Boolean(Device.system.desktop && window.ClipboardItem && navigator.clipboard?.write);
+	}
+
+	function _bindAllTokens(bAsync) {
+
+		const oBindingInfo = this.getBindingInfo("tokens");
+		if (!this._oUpdateBindingTimer && (oBindingInfo.length || oBindingInfo.startIndex)) {
+			const fnUpdate = () => {
+				let oToken = oBindingInfo.template;
+				if (oBindingInfo.hasOwnProperty("templateShareable") && !oBindingInfo.templateShareable) {
+					oToken = oToken.clone();
+				}
+
+				this._bUpdateBinding = true;
+				this.bindAggregation("tokens", { path: oBindingInfo.path, model: oBindingInfo.model, template: oToken });
+			};
+
+			if (bAsync) {
+				// in Token-focus case keep binding stable if there are less Tokens that length. In this case a rebind is not needed (What leads to a re-creation of the Tokens)
+				const oBinding = this.getBinding("tokens");
+				const iLength = oBinding.getLength(); // tokens available in binding
+				if (iLength >= oBindingInfo.length) {
+					this._oUpdateBindingTimer = setTimeout(() => {
+						delete this._oUpdateBindingTimer;
+						fnUpdate();
+					}, 200); // as press event on delete-icon is somehow async
+				}
+			} else {
+				fnUpdate();
+			}
+
+		}
+
 	}
 
 	return FieldMultiInput;

@@ -250,9 +250,13 @@ sap.ui.define([
                                     src: "sap-icon://decline"
                                 },
                                 success: function (aResults) {
-                                   Opa5.assert.ok(aResults[0], "Pressed icon on token " + aTokens[0].getId());
+                                    Opa5.assert.ok(aResults[0], "Pressed icon on token " + aTokens[0].getId());
                                 },
-                                actions: new Press()
+                                actions: function(oIcon) {
+                                    // as OPA Press-event focuses the not-focusable Icon what leads to an unexpected behaviour we focus the Token and then simulate the Click (like it happens in real live)
+                                    aTokens[0].focus();
+                                    new TriggerEvent({event: "click", payload: {target: oIcon.getDomRef()}}).executeOn(oIcon);
+                                }
                             });
                         }
                     });
