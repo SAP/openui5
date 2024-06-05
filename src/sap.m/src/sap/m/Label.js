@@ -139,7 +139,7 @@ function(
 
 				/**
 				 * Determines the wrapping of the text within the <code>Label</code>.
-				 * If set to true the <code>Label</code> will wrap, when set to false the <code>Label</code> will be truncated and replaced with ellipsis which is the default behavior.
+				 * When set to <code>false</code> (default), the label text will be truncated and and an ellipsis will be added at the end. If set to <code>true</code>, the label text will wrap.
 				 *
 				 * @since 1.50
 				 */

@@ -40,4 +40,18 @@ describe("sap.m.RadioButton", function() {
 		});
 	});
 
+	// check radio button wrapping
+	it('should show the wrapping of the radio buttons label text', function() {
+		browser.executeScript('document.getElementById("rb14").scrollIntoView()').then(function() {
+			expect(takeScreenshot(element(by.id("rb14")))).toLookAs("wrapped-buttons-text");
+		});
+	});
+
+	// check radio button wrapping when focused
+	it('should show the wrapping of the radio buttons label text', function() {
+		browser.executeScript('document.getElementById("rb14").scrollIntoView()').then(function() {
+			element(by.id('rb14')).click();
+			expect(takeScreenshot(element(by.id("rb14")))).toLookAs("wrapped-buttons-text-focus");
+		});
+	});
 });

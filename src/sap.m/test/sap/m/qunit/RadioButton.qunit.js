@@ -1157,4 +1157,35 @@ sap.ui.define([
 			assert.notOk(this.oRB.$().hasClass(sClass), sClass + " class is not added when radio button isn't editable");
 		}
 	});
+
+	QUnit.module("Wrapping", {
+		beforeEach: function () {
+			this.oRB = new RadioButton({
+				text: "This is a radio button to test wrapping behavior"
+			});
+			this.oRB.placeAt(DOM_RENDER_LOCATION);
+		},
+		afterEach: function () {
+			this.oRB.destroy();
+		}
+	});
+
+	QUnit.test("Wrapping type", function (assert) {
+		assert.strictEqual(this.oRB.getWrapping(), false, "Radio Button default wrapping is false");
+		assert.strictEqual(this.oRB._getLabel().getWrapping(), false, "Label wrapping is false");
+
+		this.oRB.setWrapping(true);
+		Core.applyChanges();
+
+		assert.strictEqual(this.oRB.getWrappingType(), "Normal", "Radio Button default wrapping type is normal ");
+		assert.strictEqual(this.oRB._getLabel().getWrapping(), true, "Label wrapping is changed when radio button wrapping is changed");
+		assert.strictEqual(this.oRB._getLabel().getWrappingType(), "Normal", "Label wrapping is changed when radio button wrapping is changed");
+
+		this.oRB.setWrappingType("Hyphenated");
+		Core.applyChanges();
+
+		assert.strictEqual(this.oRB.getWrappingType(), "Hyphenated", "Radio Button wrapping type is changed ");
+		assert.strictEqual(this.oRB._getLabel().getWrappingType(), "Hyphenated", "Label wrapping is changed to 'Hyphenated' when radio button wrapping is changed");
+	});
+
 });

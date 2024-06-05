@@ -53,6 +53,10 @@ sap.ui.define([
 		oRM.openStart("div", oRadioButton)
 			.class("sapMRb");
 
+		if (oRadioButton.getWrapping()) {
+			oRM.class("sapMRbWrapped");
+		}
+
 		if (oRadioButton.getUseEntireWidth()) {
 			oRM.style("width", oRadioButton.getWidth());
 		}
