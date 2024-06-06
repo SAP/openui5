@@ -665,7 +665,7 @@ sap.ui.define([
         var done = assert.async();
 
 		var oStub = sinon.stub(this.oFilterBarBase, "_getPropertyByName");
-		oStub.withArgs("key1").returns({name: "key1", required: true, typeConfig: TypeUtil.getTypeConfig("sap.ui.model.type.String")});
+		oStub.withArgs("key1").returns({name: "key1", required: true, typeConfig: TypeUtil.getTypeConfig("sap.ui.model.type.String"), constraints: {maxLength: 4}});
 		oStub.withArgs("key2").returns({name: "key2", required: true, typeConfig: TypeUtil.getTypeConfig("sap.ui.model.type.String")});
 
 		sinon.stub(this.oFilterBarBase, "_getRequiredPropertyNames").returns(["key1", "key2"]);
@@ -696,23 +696,45 @@ sap.ui.define([
 		this.oFilterBarBase.initialized().then(function () {
             // --> this would happen during runtime through a change
             this.oFilterBarBase.setFilterConditions({
-                "key1": [
-                    {
-                    "operator": "EQ",
-                    "values": [
-                        "test"
-                    ],
-                    "validated": "Validated"
-                    }
-                ]
+				"key1": [
+					{
+						"operator": "EQ",
+						"values": [
+							"test"
+						]
+					}
+				]
             });
 
             //trigger the handling after changes have been applied
             this.oFilterBarBase._onModifications().then(function() {
                 assert.equal(oFilterField1.getValueState(), "None");
                 assert.equal(oFilterField2.getValueState(), "Error");
-                done();
-            });
+                assert.equal(oFilterField2.getValueStateText(), this.oFilterBarBase._oRb.getText("filterbar.REQUIRED_FILTER_VALUE_MISSING"));
+
+
+                //Check required field in error state
+                oFilterField1.setValueState("Error");
+                oFilterField1.setValueStateText("Some Error Text");
+                this.oFilterBarBase.setFilterConditions({
+                    "key1": [
+                        {
+                        "operator": "EQ",
+                        "values": [
+                           "too long"
+                        ],
+                        "validated": "Validated"
+                        }
+                    ]
+                });
+                this.oFilterBarBase._onModifications().then(function() {
+                    assert.equal(oFilterField1.getValueState(), "Error");
+                    assert.equal(oFilterField1.getValueStateText(), "Some Error Text");
+                    assert.equal(oFilterField2.getValueState(), "Error");
+                    assert.equal(oFilterField2.getValueStateText(), this.oFilterBarBase._oRb.getText("filterbar.REQUIRED_FILTER_VALUE_MISSING"));
+                    done();
+                }.bind(this));
+            }.bind(this));
         }.bind(this));
 
     });

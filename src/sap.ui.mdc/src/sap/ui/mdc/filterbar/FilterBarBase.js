@@ -996,10 +996,11 @@ sap.ui.define([
 	FilterBarBase.prototype._checkFieldsInErrorState = function() {
 		var vRetErrorState = ErrorState.NoError;
 
-		this._getNonRequiredPropertyNames().some(function(sName) {
-			var oFilterField = this._getFilterField(sName);
+		this.getFilterItems().some(function(oFilterField) {
 			if (oFilterField && (oFilterField.getValueState() !== ValueState.None)) {
-				vRetErrorState = ErrorState.FieldInErrorState;
+				if (oFilterField.getValueStateText() !== this._oRb.getText("filterbar.REQUIRED_FILTER_VALUE_MISSING")) {
+					vRetErrorState = ErrorState.FieldInErrorState;
+				}
 			}
 
 			return vRetErrorState !== ErrorState.NoError;
