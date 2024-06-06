@@ -137,6 +137,30 @@ sap.ui.define([
 	 */
 
 	/**
+	 * Depending on the model implementation, the <code>refresh</code> event can be fired by list or tree bindings
+	 * when the binding's data has been invalidated, for example by refreshing, sorting, or filtering. The optional
+	 * <code>reason</code> parameter of the event provides a hint what caused the event.
+	 *
+	 * Note: Subclasses might add additional parameters to the event.
+	 *
+	 * @name sap.ui.model.Binding#refresh
+	 * @event
+	 * @param {sap.ui.base.Event} oEvent
+	 *   The event object
+	 * @param {sap.ui.base.EventProvider} oEvent.getSource
+	 *   The object which initially triggered the event
+	 * @param {object} oEvent.getParameters
+	 *   Object containing all event parameters
+	 * @param {string} [oEvent.getParameters.reason]
+	 *   A string stating the reason for the data change; some change reasons can be found in
+	 *   {@link sap.ui.model.ChangeReason}, but there may be additional reasons specified by a
+	 *   specific model implementation
+	 * @private
+	 * @since 1.105.0
+	 * @ui5-restricted sap.suite.ui.generic.template
+	 */
+
+	/**
 	 * The <code>DataStateChange</code> event is fired when the <code>DataState</code> of the
 	 * binding has changed.
 	 *
@@ -700,6 +724,8 @@ sap.ui.define([
 	 *   Context object to call the event handler with; defaults to this
 	 *   <code>sap.ui.model.Binding</code> itself
 	 * @protected
+	 * @since 1.105.0
+	 * @ui5-restricted sap.suite.ui.generic.template
 	 */
 	Binding.prototype.attachRefresh = function(fnFunction, oListener) {
 		this.attachEvent("refresh", fnFunction, oListener);
@@ -712,6 +738,8 @@ sap.ui.define([
 	 * @param {function} fnFunction The function to be called when the event occurs
 	 * @param {object} [oListener] Object on which to call the given function.
 	 * @protected
+	 * @since 1.105.0
+	 * @ui5-restricted sap.suite.ui.generic.template
 	 */
 	Binding.prototype.detachRefresh = function(fnFunction, oListener) {
 		this.detachEvent("refresh", fnFunction, oListener);
