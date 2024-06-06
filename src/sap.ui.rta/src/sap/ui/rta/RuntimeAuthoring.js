@@ -574,6 +574,15 @@ sap.ui.define([
 					await this._oSerializer.clearCommandStack(/* bRemoveChanges = */true);
 				}
 			}
+
+			// Workaround for 1.121, newer releases work differently and the issue does not occur.
+			// The save has to happen before the version and maxLayer information are cleared from the FlexInfoSession (triggered by
+			// ReloadManager.checkReloadOnExit), otherwise the FlexState.update does not work correctly. The second save afterwards
+			// is necessary to invalidate the cache.
+			if (!bSkipSave) {
+				await this._serializeToLrep();
+			}
+
 			const oReloadInfo = bSkipRestart ? {} : await ReloadManager.checkReloadOnExit({
 				layer: this.getLayer(),
 				selector: this.getRootControlInstance(),
