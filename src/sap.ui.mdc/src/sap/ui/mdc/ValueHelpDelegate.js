@@ -16,6 +16,7 @@ sap.ui.define([
 	'sap/ui/model/FilterOperator',
 	'sap/ui/model/FilterProcessor',
 	"sap/ui/mdc/condition/FilterConverter",
+	'sap/ui/mdc/condition/FilterOperatorUtil',
 	"sap/ui/Device",
 	"sap/ui/mdc/enums/FieldDisplay"
 ], (
@@ -28,6 +29,7 @@ sap.ui.define([
 	FilterOperator,
 	FilterProcessor,
 	FilterConverter,
+	FilterOperatorUtil,
 	Device,
 	FieldDisplay
 ) => {
@@ -284,15 +286,36 @@ sap.ui.define([
 	 * @param {sap.ui.model.Context} oContext Entry of a given list
 	 * @param {sap.ui.mdc.condition.ConditionObject[]} aConditions current conditions
 	 * @returns {sap.ui.mdc.condition.ConditionObject[]} Conditions represented by the given context
-	 * @private
 	 * @public
 	 * @since 1.118.0
 	 */
 	ValueHelpDelegate.findConditionsForContext = function (oValueHelp, oContent, oContext, aConditions) {
-		const vKey = oContext.getObject(oContent.getKeyPath());
+		const oValues = oContent.getItemFromContext(oContext);
+		const oContextCondition = oValues && oContent.createCondition(oValues.key, oValues.description, oValues.payload);
 		return aConditions.filter((oCondition) => {
-			return oCondition.validated === ConditionValidated.Validated && vKey === oCondition.values[0];
+			return this.compareConditions(oValueHelp, oContextCondition, oCondition);
 		});
+	};
+
+	/**
+	 * Allows control to customize selection behavior in valuelist scenarios
+	 *
+	 * @param {sap.ui.mdc.ValueHelp} oValueHelp The <code>ValueHelp</code> control instance
+	 * @param {sap.ui.mdc.condition.ConditionObject} oConditionA Condition to compare
+	 * @param {sap.ui.mdc.condition.ConditionObject} oConditionB Condition to compare
+	 * @returns {boolean} <code>true</code> if conditions are considered equal
+	 *
+	 * @protected
+	 * @since 1.124.2
+	 */
+	ValueHelpDelegate.compareConditions = function (oValueHelp, oConditionA, oConditionB) {
+		if (oConditionA.operator === oConditionB.operator) {
+			if (oConditionA.validated === ConditionValidated.Validated && oConditionA.validated === oConditionB.validated) {
+				return oConditionA.values[0] === oConditionB.values[0];
+			}
+			return FilterOperatorUtil.getOperator(oConditionA.operator)?.compareConditions(oConditionA, oConditionB);
+		}
+		return false;
 	};
 
 	/**
