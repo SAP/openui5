@@ -329,6 +329,8 @@ sap.ui.define([
 		assert.equal($Container.parent().attr("id"), "CL1", "not content DOM element rendered");
 		assert.equal($Container.children().length, 1, "only one DOM node in Container");
 		assert.equal($Container.children()[0].id, "FC1-content", "content node for Container rendered");
+		assert.notOk($Container.attr("role"), "no role set");
+		assert.equal(jQuery("#F1").attr("role"), "form", "role \"form\" set on Form");
 
 		oDomRef = window.document.getElementById("FE1");
 		assert.ok(oDomRef, "Element rendered");
@@ -354,6 +356,8 @@ sap.ui.define([
 		assert.equal($Container.children().length, 2, "two DOM nodes in Container");
 		assert.equal($Container.children()[0].id, "Title1", "Title rendered");
 		assert.equal($Container.children()[1].id, "FC1-content", "content node for Container rendered");
+		assert.equal($Container.attr("role"), "form", "role \"form\" set on Container");
+		assert.equal(jQuery("#F1").attr("role"), "region", "role \"region\" set on Form");
 	});
 
 	QUnit.test("Toolbar", async function(assert) {
@@ -367,6 +371,8 @@ sap.ui.define([
 		assert.equal($Container.children().length, 2, "two DOM nodes in Container");
 		assert.equal($Container.children()[0].id, "TB1", "Title rendered");
 		assert.equal($Container.children()[1].id, "FC1-content", "content node for Container rendered");
+		assert.equal($Container.attr("role"), "form", "role \"form\" set on Container");
+		assert.equal(jQuery("#F1").attr("role"), "region", "role \"region\" set on Form");
 	});
 
 	QUnit.test("Expand", async function(assert) {
@@ -406,11 +412,14 @@ sap.ui.define([
 		assert.ok($Container.parent().hasClass("sapUiFormCLColumnsM1"), "M: Layout has 1 column");
 		assert.ok($Container.parent().hasClass("sapUiFormCLColumnsL2"), "L: Layout has 2 columns");
 		assert.ok($Container.parent().hasClass("sapUiFormCLColumnsXL2"), "XL: Layout has 2 columns");
+		assert.equal($Container.attr("role"), "form", "role \"form\" set on Container");
+		assert.equal(jQuery("#F1").attr("role"), "region", "role \"region\" set on Form");
 		checkContainerClasses(assert, $Container, 1, 1, true, false, 1, true, false, 1, true, false, 1, true, false);
 
 		oDomRef = window.document.getElementById("FC2");
 		assert.ok(oDomRef, "Container2 rendered");
 		$Container = jQuery("#FC2");
+		assert.equal($Container.attr("role"), "form", "role \"form\" set on Container");
 		checkContainerClasses(assert, $Container, 2, 1, false, false, 1, false, false, 1, true, false, 1, true, false);
 	});
 
