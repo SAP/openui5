@@ -8,13 +8,12 @@ sap.ui.define([
 	"./ValueHelp.delegate",
 	'sap/ui/mdc/p13n/StateUtil',
 	'sap/ui/mdc/condition/Condition',
-	'sap/ui/mdc/condition/FilterOperatorUtil',
 	'sap/ui/mdc/enums/ConditionValidated',
 	'sap/ui/mdc/enums/OperatorName',
 	'sap/ui/mdc/util/IdentifierUtil',
 	'sap/ui/model/ParseException'
 ], function(
-	BaseValueHelpDelegate, StateUtil, Condition, FilterOperatorUtil, ConditionValidated, OperatorName, IdentifierUtil, ParseException
+	BaseValueHelpDelegate, StateUtil, Condition, ConditionValidated, OperatorName, IdentifierUtil, ParseException
 ) {
 	"use strict";
 
@@ -124,7 +123,7 @@ sap.ui.define([
 							}
 							Promise.all([oNewCondition]).then(function(aResult) {
 								var oNewCondition = aResult[0];
-								var iIndex = FilterOperatorUtil.indexOfCondition(oNewCondition, aFilters); // check if already exist
+								var iIndex = aFilters.findIndex(oNewCondition, (oFiltersCondition) => this.compareConditions(oNewCondition, oFiltersCondition)); // check if already exist
 								if (iIndex < 0) {
 									oState.filter[sTarget] = oState.filter && oState.filter[sTarget] || [];
 									oState.filter[sTarget].push(oNewCondition);

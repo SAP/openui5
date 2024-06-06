@@ -6,10 +6,16 @@
 
 sap.ui.define([
 	"sap/ui/mdc/ValueHelpDelegate",
-	"sap/ui/mdc/enums/FieldDisplay"
+	"sap/ui/mdc/enums/FieldDisplay",
+	"sap/ui/mdc/condition/Condition",
+	"sap/ui/mdc/enums/ConditionValidated",
+	"sap/ui/mdc/enums/OperatorName"
 ], function (
 		ValueHelpDelegate,
-		FieldDisplay
+		FieldDisplay,
+		Condition,
+		ConditionValidated,
+		OperatorName
 	) {
 	"use strict";
 
@@ -174,6 +180,27 @@ sap.ui.define([
 
 		_testIndex(assert, [1, 2, 3, 4], {caseSensitive: true});
 
+	});
+
+	QUnit.test("compareConditions", function(assert) {
+
+		let oConditionA, oConditionB;
+
+		oConditionA = Condition.createCondition(OperatorName.EQ, [1], undefined, undefined, ConditionValidated.Validated);
+		oConditionB = Condition.createCondition(OperatorName.Contains, [1], undefined, undefined, ConditionValidated.Validated);
+		assert.notOk(ValueHelpDelegate.compareConditions(oFakeValueHelp, oConditionA, oConditionB), "Failure with mismatching operators on validated conditions");
+
+		oConditionA = Condition.createCondition(OperatorName.EQ, [1], undefined, undefined, ConditionValidated.NotValidated);
+		oConditionB = Condition.createCondition(OperatorName.Contains, [1], undefined, undefined, ConditionValidated.NotValidated);
+		assert.notOk(ValueHelpDelegate.compareConditions(oFakeValueHelp, oConditionA, oConditionB), "Failure with mismatching operators on non-validated conditions");
+
+		oConditionA = Condition.createCondition(OperatorName.EQ, [1], undefined, undefined, ConditionValidated.Validated);
+		oConditionB = Condition.createCondition(OperatorName.EQ, [1], undefined, undefined, ConditionValidated.Validated, {payload: true});
+		assert.ok(ValueHelpDelegate.compareConditions(oFakeValueHelp, oConditionA, oConditionB), "Success with matching operators, but mismatching payloads on validated conditions");
+
+		oConditionA = Condition.createCondition(OperatorName.EQ, [1], undefined, undefined, ConditionValidated.NotValidated);
+		oConditionB = Condition.createCondition(OperatorName.EQ, [1], undefined, undefined, ConditionValidated.NotValidated, {payload: true});
+		assert.notOk(ValueHelpDelegate.compareConditions(oFakeValueHelp, oConditionA, oConditionB), "Failure with matching operators, but mismatching payloads on non-validated conditions");
 	});
 
 });
