@@ -1450,7 +1450,7 @@ sap.ui.define([
 		}
 
 		QUnit.test("when calling '_handleSaveEvent' with parameter from SaveAs button and default/execute box checked", function(assert) {
-			assert.expect(9);
+			assert.expect(10);
 			var aChanges = createChanges(this.oModel.oChangePersistence);
 			var oVariantManagement = new VariantManagement(sVMReference);
 			var sCopyVariantName = "variant1";
@@ -1519,11 +1519,25 @@ sap.ui.define([
 					oDeleteChangesSpy.calledWith(aChanges.reverse()), // the last change is reverted first
 					"then dirty changes from source variant were deleted from the persistence (in the right order)"
 				);
-				this.oModel.getData()[sVMReference].variants.forEach(function(oVariant) {
-					if (oVariant.key === sCopyVariantName) {
-						assert.strictEqual(oVariant.author, sUserName, "then 'testUser' is add as author");
-					}
-				});
+
+				const fnGetAffectedVariantData = () => {
+					return this.oModel.getData()[sVMReference].variants.find((oVariant) => {
+						return oVariant.key === sCopyVariantName;
+					});
+				};
+
+				assert.strictEqual(
+					fnGetAffectedVariantData().author,
+					sUserName,
+					"then 'testUser' is set as author"
+				);
+				this.oModel.updateData();
+				assert.strictEqual(
+					fnGetAffectedVariantData().author,
+					sUserName,
+					"then the updated author doesn't get lost after updating the model data"
+				);
+
 				oVariantManagement.destroy();
 			}.bind(this));
 		});
