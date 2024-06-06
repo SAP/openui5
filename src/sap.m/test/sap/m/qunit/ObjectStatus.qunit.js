@@ -1025,6 +1025,12 @@ sap.ui.define([
 				emptyIndicatorMode: EmptyIndicatorMode.Auto
 			});
 
+			this.oIconEmptyIndicatorOn = new ObjectStatus({
+				text: "",
+				icon: "sap-icon://information",
+				emptyIndicatorMode: EmptyIndicatorMode.On
+			});
+
 			this.oPanel = new Panel({
 				content: this.oTextEmptyAuto
 			}).addStyleClass("sapMShowEmpty-CTX");
@@ -1034,6 +1040,7 @@ sap.ui.define([
 			});
 
 			this.oText.placeAt("qunit-fixture");
+			this.oIconEmptyIndicatorOn.placeAt("qunit-fixture");
 			this.oPanel.placeAt("qunit-fixture");
 			this.oPanel1.placeAt("qunit-fixture");
 			await nextUIUpdate();
@@ -1042,6 +1049,7 @@ sap.ui.define([
 			this.oText.destroy();
 			this.oTextEmptyAuto.destroy();
 			this.oTextEmptyAutoNoClass.destroy();
+			this.oIconEmptyIndicatorOn.destroy();
 			this.oPanel.destroy();
 			this.oPanel1.destroy();
 		}
@@ -1061,6 +1069,15 @@ sap.ui.define([
 
 		//Assert
 		assert.strictEqual(this.oText.getDomRef().childNodes[0].textContent, "test", "Empty indicator is not rendered");
+	});
+
+	QUnit.test("Indicator should not be rendered when text is empty but there is an icon", function(assert) {
+		var oSpan = this.oIconEmptyIndicatorOn.getDomRef().childNodes[0];
+
+		//Assert
+		assert.strictEqual(oSpan.firstElementChild.textContent, "", "Empty indicator is not rendered");
+		assert.ok(oSpan.firstElementChild.classList.contains("sapMObjStatusIcon"), "Icon is rendered");
+
 	});
 
 	QUnit.test("Indicator should not be rendered when property is set to off", async function(assert) {

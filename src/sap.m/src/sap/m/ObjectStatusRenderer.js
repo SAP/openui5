@@ -145,7 +145,7 @@ sap.ui.define(["sap/base/i18n/Localization", "sap/ui/core/Lib", 'sap/ui/core/lib
 				oRm.openEnd();
 				oRm.text(oObjStatus.getText());
 				oRm.close("span");
-			} else if (oObjStatus.getEmptyIndicatorMode() !== EmptyIndicatorMode.Off && !oObjStatus.getText()) {
+			} else if (oObjStatus.getEmptyIndicatorMode() !== EmptyIndicatorMode.Off && !oObjStatus.getText() && !oObjStatus.getIcon()) {
 				this.renderEmptyIndicator(oRm, oObjStatus);
 			}
 
