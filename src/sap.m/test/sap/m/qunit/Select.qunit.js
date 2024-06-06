@@ -26,8 +26,10 @@ sap.ui.define([
 	"sap/ui/core/ValueStateSupport",
 	"sap/ui/dom/getFirstEditableInput",
 	"sap/uxap/HierarchicalSelect",
+	"sap/ui/base/Event",
 	// side effect: provides jQuery.Event.prototype.isMarked
 	"sap/ui/events/jquery/EventExtension"
+
 ],
 	function(
 		Library,
@@ -55,7 +57,8 @@ sap.ui.define([
 		SeparatorItem,
 		ValueStateSupport,
 		getFirstEditableInput,
-		HierarchicalSelect
+		HierarchicalSelect,
+		Event
 	) {
 		"use strict";
 
@@ -8498,6 +8501,44 @@ sap.ui.define([
 			assert.strictEqual(jQuery(oSelect.getFocusDomRef()).attr("aria-activedescendant"), oExpectedItem.getId(), 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
 			// cleanup
+			oSelect.destroy();
+		});
+
+		QUnit.test("it should be scrolled the the newly selected item using arrow navigation", function (assert) {
+
+			// Arrange
+			var oSelect = new Select({autoAdjustWidth: true}),
+				oEvent = new Event("", oSelect, {which: "ARROW_DOWN"});
+
+			oEvent.setMarked = function(){return true;};
+
+			for (let i = 0; i < 50; i++) {
+				//we want to make sure we trigger change of Select`s width, applying the option text
+				if (i % 2) {
+					oSelect.addItem(new Item({text: "VeryLongTextField", id: `id-${i}`}));
+				} else {
+					oSelect.addItem(new Item({text: "Short", id: `id-${i}`}));
+				}
+			}
+
+			oSelect.placeAt("content");
+			Core.applyChanges();
+			oSelect.focus();
+			oSelect.open();
+			this.clock.tick(1000);
+
+			// Act
+			//Make sure we tab-navigated low enough to get scrollbar
+			for (let j = 0; j < 31; j++) {
+				oSelect.onsapdown(oEvent);
+			}
+
+			Core.applyChanges();
+			this.clock.tick(3000);
+
+			// assert
+			assert.ok(oSelect.getPicker().getDomRef().querySelector('.sapUiSimpleFixFlexFlexContent').scrollTop != 0, "Scrolled corectly to the selected element");
+			oSelect.close();
 			oSelect.destroy();
 		});
 

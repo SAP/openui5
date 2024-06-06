@@ -30,7 +30,8 @@ sap.ui.define([
 	'sap/base/Log',
 	'sap/ui/core/ValueStateSupport',
 	"sap/ui/core/InvisibleMessage",
-	"sap/ui/core/Lib"
+	"sap/ui/core/Lib",
+	"sap/ui/core/ResizeHandler"
 ],
 function(
 	Element,
@@ -60,7 +61,8 @@ function(
 	Log,
 	ValueStateSupport,
 	InvisibleMessage,
-	Library
+	Library,
+	ResizeHandler
 ) {
 		"use strict";
 
@@ -1442,6 +1444,34 @@ function(
 			this._referencingLabelsHandlers = [];
 		};
 
+		/**
+		 * Called after rendering.
+		 *
+		 * @private
+		 */
+		Select.prototype._attachResizeHandlers = function () {
+			if (this.getAutoAdjustWidth() && this.getPicker() && this.getPickerType() === "Popover") {
+				this._iResizeHandlerId = ResizeHandler.register(this, this._onResizeRef.bind(this));
+			}
+		};
+
+		/**
+		 * Called after rendering.
+		 *
+		 * @private
+		 */
+		Select.prototype._detachResizeHandlers = function () {
+			if (this._iResizeHandlerId) {
+				ResizeHandler.deregister(this._iResizeHandlerId);
+				this._iResizeHandlerId = null;
+			}
+		};
+
+		Select.prototype._onResizeRef = function() {
+			//we make sure the repositioning of the popup, due to its openBy parent`s eidth change, is supressed
+			this.getPicker().oPopup.setFollowOf(true);
+		};
+
 		Select.prototype.onBeforeRendering = function() {
 			if (!this._oInvisibleMessage) {
 				this._oInvisibleMessage = InvisibleMessage.getInstance();
@@ -1465,6 +1495,8 @@ function(
 		};
 
 		Select.prototype.onAfterRendering = function() {
+			this._detachResizeHandlers();
+			this._attachResizeHandlers();
 
 			// rendering phase is finished
 			this.bRenderingPhase = false;
