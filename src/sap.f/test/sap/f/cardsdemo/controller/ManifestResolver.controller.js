@@ -61,6 +61,10 @@ sap.ui.define([
 			path: "sap/f/cardsdemo/cardcontent/tablecontent/noData.json",
 			baseUrl: "sap/f/cardsdemo/cardcontent/tableContent/"
 		},
+		"timelineCard": {
+			path: "sap/f/cardsdemo/bundles/timelinebundle/manifest.json",
+			baseUrl: "sap/f/cardsdemo/bundles/timelinebundle/"
+		},
 		"filtersCard": {
 			path: "sap/f/cardsdemo/cardcontent/cardFilters/manifest.json",
 			baseUrl: "sap/f/cardsdemo/cardcontent/cardFilters/"

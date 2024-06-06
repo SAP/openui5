@@ -7,14 +7,16 @@ sap.ui.define([
 	"sap/f/cards/loading/TimelinePlaceholder",
 	"sap/ui/core/Lib",
 	"sap/ui/integration/library",
-	"sap/ui/integration/util/BindingHelper"
+	"sap/ui/integration/util/BindingHelper",
+	"sap/ui/integration/util/BindingResolver"
 ], function (
 	BaseListContent,
 	TimelineContentRenderer,
 	TimelinePlaceholder,
 	Library,
 	library,
-	BindingHelper
+	BindingHelper,
+	BindingResolver
 ) {
 	"use strict";
 
@@ -241,6 +243,34 @@ sap.ui.define([
 	 */
 	TimelineContent.prototype.getInnerList = function () {
 		return this._getTimeline();
+	};
+
+	/**
+	* @override
+	*/
+	TimelineContent.prototype.getStaticConfiguration = function () {
+		var aItems = this.getInnerList().getContent(),
+		oConfiguration = this.getParsedConfiguration(),
+		aResolvedItems = [];
+
+		aItems.forEach(function (oItem) {
+			var oResolvedItem = BindingResolver.resolveValue(oConfiguration.item, this, oItem.getBindingContext().getPath());
+
+			if (oResolvedItem.icon && oResolvedItem.icon.src) {
+				oResolvedItem.icon.src = this._oIconFormatter.formatSrc(oResolvedItem.icon.src);
+			}
+
+			if (oResolvedItem.ownerImage && oResolvedItem.ownerImage.value) {
+				oResolvedItem.ownerImage.value = this._oIconFormatter.formatSrc(oResolvedItem.ownerImage.value);
+			}
+
+			aResolvedItems.push(oResolvedItem);
+		}.bind(this));
+		var oStaticConfiguration = {
+			items: aResolvedItems
+		};
+
+		return oStaticConfiguration;
 	};
 
 	return TimelineContent;

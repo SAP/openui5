@@ -5,6 +5,7 @@
 	  "JobTitle": "Configuration Expert",
 	  "Photo": "./icons/Elena_Petrova.png",
 	  "Icon": "sap-icon://settings",
+	  "Url": "/activity1",
 	  "JobResponsibilities": "I am Elena. And can't wait to get to know the team.",
 	  "HireDate": "Date(1376290800000)"
 	},
@@ -13,6 +14,7 @@
 	  "JobTitle": "Credit Analyst",
 	  "Photo": "./icons/John_Miller.png",
 	  "Icon": "sap-icon://manager-insight",
+	  "Url": "/activity2",
 	  "JobResponsibilities": "I am John. I put great attention to detail.",
 	  "HireDate": "Date(1332403200000)"
 	},
@@ -20,6 +22,7 @@
 	  "Name": "Julie Armstrong",
 	  "JobTitle": "Accountant Manager",
 	  "Photo": "./icons/Julie_Armstrong.png",
+	  "Url": "/activity3",
 	  "JobResponsibilities": "I am Julie. And i am the new head of Accounting.",
 	  "Icon": "sap-icon://account",
 	  "HireDate": "Date(1422777600000)"

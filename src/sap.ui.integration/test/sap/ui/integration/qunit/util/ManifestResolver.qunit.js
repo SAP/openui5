@@ -1663,10 +1663,184 @@ sap.ui.define([
 				};
 
 				// Assert
-				assert.deepEqual(oRes["sap.card"].content, oExpectedResult, "list template is resolved correctly");
+				assert.deepEqual(oRes["sap.card"].content, oExpectedResult, "table template is resolved correctly");
 
 				oCard.destroy();
 			});
+	});
+
+	QUnit.test("Timeline item template", function (assert) {
+		return Library.load("sap.suite.ui.commons").then(function () {
+			var oManifest = {
+				"sap.app": {
+					"id": "manifestResolver.test.card",
+					"type": "card"
+				},
+				"sap.card": {
+					"type": "Timeline",
+					"content": {
+						"data": {
+							"json": [
+								{
+									"Title": "Weekly sync: Marketplace / Design Stream",
+									"Description": "MRR WDF18 C3.2(GLASSBOX)",
+									"Icon": "sap-icon://appointment-2",
+									"Name": "Laurent Dubois",
+									"Photo": "./images/Laurent_Dubois.png",
+									"Time": "2021-10-25T10:00:00.000Z",
+									"Url": "/activity1"
+								},
+								{
+									"Title": "Video Conference for FLP@SF, S4,Hybris",
+									"Icon": "sap-icon://my-view",
+									"Name": "Sabine Mayer",
+									"Photo": "./images/Sabine_Mayer.png",
+									"Time": "2021-10-25T14:00:00.000Z",
+									"Url": "/activity2"
+								},
+								{
+									"Title": "Call 'Project Nimbus'",
+									"Icon": "sap-icon://outgoing-call",
+									"Name": "Alain Chevalier",
+									"Photo": "./images/Alain_Chevalier.png",
+									"Time": "2021-10-25T16:00:00.000Z",
+									"Url": "/activity3"
+								}
+							]
+						},
+						"item": {
+							"dateTime": {
+								"value": "{Time}"
+							},
+							"description": {
+								"value": "{Description}"
+							},
+							"title": {
+								"value": "{Title}"
+							},
+							"icon": {
+								"src": "{Icon}"
+							},
+							"owner": {
+								"value": "{Name}"
+							},
+							"ownerImage": {
+								"value": "{Photo}"
+							},
+							"actions": [
+								{
+									"type": "Navigation",
+									"parameters": {
+										"url": "{Url}"
+									}
+								}
+							]
+						}
+					}
+				}
+			};
+
+			var oCard = new SkeletonCard({
+				manifest: oManifest,
+				baseUrl: "test-resources/sap/ui/integration/qunit/testResources/manifestResolver/"
+			});
+
+			// Act
+			return ManifestResolver.resolveCard(oCard)
+				.then(function (oRes) {
+					var oExpectedResult = {
+						"items": [
+							{
+								"actions": [
+									{
+										"parameters": {
+											"url": "/activity3"
+										},
+										"type": "Navigation"
+									}
+								],
+								"dateTime": {
+									"value": "2021-10-25T16:00:00.000Z"
+								},
+								"description": {},
+								"icon": {
+									"src": "sap-icon://outgoing-call"
+								},
+								"owner": {
+									"value": "Alain Chevalier"
+								},
+								"ownerImage": {
+									"value": "test-resources/sap/ui/integration/qunit/testResources/manifestResolver/./images/Alain_Chevalier.png"
+								},
+								"title": {
+									"value": "Call 'Project Nimbus'"
+								}
+							},
+							{
+								"actions": [
+									{
+										"parameters": {
+											"url": "/activity2"
+										},
+										"type": "Navigation"
+									}
+								],
+								"dateTime": {
+									"value": "2021-10-25T14:00:00.000Z"
+								},
+								"description": {},
+								"icon": {
+									"src": "sap-icon://my-view"
+								},
+								"owner": {
+									"value": "Sabine Mayer"
+								},
+								"ownerImage": {
+									"value": "test-resources/sap/ui/integration/qunit/testResources/manifestResolver/./images/Sabine_Mayer.png"
+								},
+								"title": {
+									"value": "Video Conference for FLP@SF, S4,Hybris"
+								}
+							},
+							{
+								"actions": [
+									{
+										"parameters": {
+											"url": "/activity1"
+										},
+										"type": "Navigation"
+									}
+								],
+								"dateTime": {
+									"value": "2021-10-25T10:00:00.000Z"
+								},
+								"description": {
+									"value": "MRR WDF18 C3.2(GLASSBOX)"
+								},
+								"icon": {
+									"src": "sap-icon://appointment-2"
+								},
+								"owner": {
+									"value": "Laurent Dubois"
+								},
+								"ownerImage": {
+									"value": "test-resources/sap/ui/integration/qunit/testResources/manifestResolver/./images/Laurent_Dubois.png"
+								},
+								"title": {
+									"value": "Weekly sync: Marketplace / Design Stream"
+								}
+							}
+						]
+					};
+
+					// Assert
+					assert.deepEqual(oRes["sap.card"].content, oExpectedResult, "timeline template is resolved correctly");
+
+					oCard.destroy();
+			});
+		}).catch(function () {
+			assert.ok(true, "Timeline content type is not available with this distribution.");
+		});
 	});
 
 	QUnit.module("Filters");
