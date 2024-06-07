@@ -177,7 +177,7 @@ sap.ui.define([
 					} else if (bPlaceholder) {
 						strictEqual(oParent.aElements.indexOf(oElement), -1,
 							`placeholder @ level ${iLevel}`, oElement);
-					} else {
+					} else if (iRank !== undefined) {
 						strictEqual(iRank,
 							oParent.aElements.indexOf(oElement) - oParent.aElements.$created,
 							`$skip index @ level ${iLevel}`, oElement);
@@ -31666,6 +31666,135 @@ sap.ui.define([
 			]);
 	});
 });
+
+	//*********************************************************************************************
+	// Scenario: Create root nodes w/ and w/o rank in a recursive hierarchy.
+	// JIRA: CPOUI5ODATAV4-2524
+	QUnit.test("Recursive Hierarchy: create w/o rank, root", async function (assert) {
+		const sBaseUrl = "EMPLOYEES?$apply=ancestors($root/EMPLOYEES,OrgChart,ID"
+			+ ",filter(not startswith(Name, 'Out')),keep start)"
+			+ "/com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root/EMPLOYEES"
+			+ ",HierarchyQualifier='OrgChart',NodeProperty='ID')";
+		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
+		const sView = `
+<t:Table id="table" rows="{path : '/EMPLOYEES',
+		parameters : {
+			$$aggregation : {
+				expandTo : 1E16,
+				hierarchyQualifier : 'OrgChart'
+			},
+			$filter : 'not startswith(Name, \\'Out\\')'
+		}}" threshold="0" visibleRowCount="4">
+	<Text text="{= %{@$ui5.node.isExpanded} }"/>
+	<Text text="{= %{@$ui5.node.level} }"/>
+	<Text text="{Name}"/>
+</t:Table>`;
+
+		// UI:                              Server:
+		// Out2 Out2 (created, no rank)     0    Alpha
+		// In1  In1 (created)               In1  In1
+		// Out1 Out1 (created, no rank)     1    Beta
+		// 0    Alpha
+		// 1    Beta
+		this.expectRequest(sBaseUrl + "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name"
+			+ "&$count=true&$skip=0&$top=4", {
+			"@odata.count" : "2",
+			value : [{
+				DescendantCount : "0",
+				DistanceFromRoot : "0",
+				DrillState : "leaf",
+				ID : "0",
+				Name : "Alpha"
+			}, {
+				DescendantCount : "0",
+				DistanceFromRoot : "0",
+				DrillState : "leaf",
+				ID : "1",
+				Name : "Beta"
+			}]
+		});
+
+		await this.createView(assert, sView, oModel);
+
+		const oTable = this.oView.byId("table");
+		checkTable("initial page", assert, oTable, [
+			"/EMPLOYEES('0')",
+			"/EMPLOYEES('1')"
+		], [
+			[undefined, 1, "Alpha"],
+			[undefined, 1, "Beta"]
+		]);
+		const oListBinding = oTable.getBinding("rows");
+
+		const create = async (sName, iRank) => {
+			this.expectRequest({
+					method : "POST",
+					url : "EMPLOYEES",
+					payload : {
+						Name : sName
+					}
+				}, {
+					ID : sName,
+					Name : sName
+				})
+				.expectRequest(sBaseUrl + `&$filter=ID eq '${sName}'&$select=LimitedRank`, {
+					value : iRank === undefined ? [] : [{LimitedRank : `${iRank}`}]
+				});
+
+			// code under test
+			const oNode = oListBinding.create({
+				Name : sName
+			}, /*bSkipRefresh*/true);
+
+			await Promise.all([
+				oNode.created(),
+				this.waitForChanges(assert, `create ${sName}`)
+			]);
+
+			return oNode;
+		};
+
+		await create("Out1");
+
+		checkTable("after create Out1", assert, oTable, [
+			"/EMPLOYEES('Out1')",
+			"/EMPLOYEES('0')",
+			"/EMPLOYEES('1')"
+		], [
+			[undefined, 1, "Out1"],
+			[undefined, 1, "Alpha"],
+			[undefined, 1, "Beta"]
+		]);
+
+		await create("In1", 1);
+
+		checkTable("after create In1", assert, oTable, [
+			"/EMPLOYEES('In1')",
+			"/EMPLOYEES('Out1')",
+			"/EMPLOYEES('0')",
+			"/EMPLOYEES('1')"
+		], [
+			[undefined, 1, "In1"],
+			[undefined, 1, "Out1"],
+			[undefined, 1, "Alpha"],
+			[undefined, 1, "Beta"]
+		]);
+
+		await create("Out2");
+
+		checkTable("after create Out2", assert, oTable, [
+			"/EMPLOYEES('Out2')",
+			"/EMPLOYEES('In1')",
+			"/EMPLOYEES('Out1')",
+			"/EMPLOYEES('0')",
+			"/EMPLOYEES('1')"
+		], [
+			[undefined, 1, "Out2"],
+			[undefined, 1, "In1"],
+			[undefined, 1, "Out1"],
+			[undefined, 1, "Alpha"]
+		]);
+	});
 
 	//*********************************************************************************************
 	// Scenario: Expand all levels of a recursive hierarchy with two roots ("Alpha", "Omega").
