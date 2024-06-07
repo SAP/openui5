@@ -632,9 +632,18 @@
 					"type": "string",
 					"enum": [
 						"public",
+						"protected",
+						"restricted",
 						"hidden"
 					],
 					"defaultValue": "public"
+				},
+				"allowedFor": {
+					"$comment": "Only present if visibility is 'restricted'",
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
 				},
 				"description": {
 					"type": "string"
@@ -670,6 +679,10 @@
 					"type": "string",
 					"defaultValue": "string"
 				},
+				"dataType": {
+					"type": "string",
+					"defaultValue": "string"
+				},
 				"defaultValue": {
 				},
 				"group": {
@@ -679,9 +692,18 @@
 					"type": "string",
 					"enum": [
 						"public",
+						"protected",
+						"restricted",
 						"hidden"
 					],
 					"defaultValue": "public"
+				},
+				"allowedFor": {
+					"$comment": "Only present if visibility is 'restricted'",
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
 				},
 				"description": {
 					"type": "string"
@@ -742,9 +764,18 @@
 					"type": "string",
 					"enum": [
 						"public",
+						"protected",
+						"restricted",
 						"hidden"
 					],
 					"defaultValue": "public"
+				},
+				"allowedFor": {
+					"$comment": "Only present if visibility is 'restricted'",
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
 				},
 				"bindable": {
 					"type": "boolean",
@@ -825,9 +856,18 @@
 					"type": "string",
 					"enum": [
 						"public",
+						"protected",
+						"restricted",
 						"hidden"
 					],
 					"defaultValue": "public"
+				},
+				"allowedFor": {
+					"$comment": "Only present if visibility is 'restricted'",
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
 				},
 				"description": {
 					"type": "string"
@@ -863,9 +903,18 @@
 					"type": "string",
 					"enum": [
 						"public",
+						"protected",
+						"restricted",
 						"hidden"
 					],
 					"defaultValue": "public"
+				},
+				"allowedFor": {
+					"$comment": "Only present if visibility is 'restricted'",
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
 				},
 				"description": {
 					"type": "string"
