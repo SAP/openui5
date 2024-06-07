@@ -2684,6 +2684,7 @@ sap.ui.define([
 
 		Core.applyChanges();
 		assert.ok(oGHLI.getDomRef().classList.contains("sapMTableRowCustomFocus"), "GroupHeaderListItem contains sapMTableRowCustomFocus class");
+		assert.ok(oGHLI.getDomRef().querySelector(".sapMListTblHighlightCell"), "GroupHeaderListItem contains sapMListTblHighlightCell class");
 	});
 
 	QUnit.test("Column width should not be larger than table", function(assert) {
@@ -3091,6 +3092,9 @@ sap.ui.define([
 		var $noData = sut.$().find("#" + sut.getId() + "-nodata");
 		var $noDataText = sut.$().find("#" + sut.getId() + "-nodata-text");
 		assert.strictEqual($noDataText.text(), "No data", "Table's standard nodata-text contains correct string");
+
+		assert.ok($noData.find(".sapMListTblHighlightCell")[0], "Highlight cell is rendered for no-data row");
+		assert.ok($noData.find(".sapMListTblNavigatedCell")[0], "Navigated cell is rendered for no-data row");
 
 		$noData.trigger("focus");
 		var sLabelledBy = $noData.attr("aria-labelledby");
@@ -3799,6 +3803,9 @@ sap.ui.define([
 
 		qutils.triggerKeydown(document.activeElement, "PAGE_DOWN");
 		assert.equal(document.activeElement, oTable.getDomRef("tblFooter"), "Focus is on the footer row");
+
+		qutils.triggerKeydown(document.activeElement, "ARROW_UP");
+		assert.equal(document.activeElement, this.o3rdItem.getFocusDomRef(), "Focus is on the third row");
 
 		qutils.triggerKeydown(document.activeElement, "PAGE_UP");
 		assert.equal(document.activeElement, this.o1stItem.getFocusDomRef(), "Focus is on the first row");
