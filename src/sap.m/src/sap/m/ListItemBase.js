@@ -523,7 +523,7 @@ function(
 			this._oDeleteControl, {
 				messageBundleKey: "LIST_ITEM_DELETE_SHORTCUT"
 			},
-		this);
+		this._oDeleteControl);
 
 		this._oDeleteControl.useEnabledPropagator(false);
 
