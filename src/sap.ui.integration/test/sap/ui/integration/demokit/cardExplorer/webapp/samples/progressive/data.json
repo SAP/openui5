@@ -1,0 +1,429 @@
+{
+	"kpiInfos": {
+		"kpi": {
+			"number": "200",
+			"unit": "K",
+			"trend": "Up",
+			"state": "Critical",
+			"target": {
+				"number": 250,
+				"unit": "K"
+			},
+			"deviation": {
+				"number": 25
+			},
+			"details": "Q1, 2019"
+		}
+	},
+	"legend": {
+		"items": {
+			"Notebook13": "Notebook 13",
+			"Notebook17": "Notebook 17"
+		}
+	},
+	"maxOverYears": 700,
+	"chart": [
+		{
+			"Name": "Comfort Easy",
+			"Description": "32 GB Digital Assistant",
+			"Highlight": "Success",
+			"Expected": 300000,
+			"Actual": 330000,
+			"Target": 280000,
+			"TopLeft": "",
+			"TopRight": "",
+			"BottomLeft": "",
+			"BottomRight": "",
+			"color": "Good",
+			"total": 100,
+			"percentage": 75,
+			"fraction": 75,
+			"Year": 2017,
+			"Category": "Computer system accessories",
+			"Notebook13": 200,
+			"Notebook17": 500,
+			"Columns": [
+				{
+					"color": "Error",
+					"value": 100
+				},
+				{
+					"color": "Critical",
+					"value": 250
+				},
+				{
+					"color": "Good",
+					"value": 400
+				},
+				{
+					"color": "Error",
+					"value": 100
+				}
+			],
+			"Lines": [
+				{
+					"color": "Good",
+					"lineType": "Solid",
+					"Points": [
+						{
+							"X": 0,
+							"Y": 200
+						},
+						{
+							"X": 10,
+							"Y": 210
+						},
+						{
+							"X": 20,
+							"Y": 250
+						},
+						{
+							"X": 30,
+							"Y": 180
+						}
+					]
+				},
+				{
+					"color": "Critical",
+					"lineType": "Dotted",
+					"Points": [
+						{
+							"X": 0,
+							"Y": 170
+						},
+						{
+							"X": 10,
+							"Y": 300
+						},
+						{
+							"X": 20,
+							"Y": 10
+						},
+						{
+							"X": 30,
+							"Y": 195
+						}
+					]
+				}
+			]
+		},
+		{
+			"Name": "ITelO Vault",
+			"Description": "Digital Organizer",
+			"Highlight": "Success",
+			"Expected": 300000,
+			"Actual": 330000,
+			"Target": 280000,
+			"TopLeft": "",
+			"TopRight": "",
+			"BottomLeft": "",
+			"BottomRight": "",
+			"color": "Good",
+			"total": 100,
+			"percentage": 75,
+			"fraction": 75,
+			"Year": 2017,
+			"Category": "Computer system accessories",
+			"Notebook13": 200,
+			"Notebook17": 500,
+			"Columns": [
+				{
+					"color": "Error",
+					"value": 100
+				},
+				{
+					"color": "Critical",
+					"value": 250
+				},
+				{
+					"color": "Good",
+					"value": 400
+				},
+				{
+					"color": "Error",
+					"value": 100
+				}
+			],
+			"Lines": [
+				{
+					"color": "#1c74d1",
+					"lineType": "Solid",
+					"Points": [
+						{
+							"X": 0,
+							"Y": 190
+						},
+						{
+							"X": 10,
+							"Y": 130
+						},
+						{
+							"X": 20,
+							"Y": 80
+						},
+						{
+							"X": 30,
+							"Y": 190
+						}
+					]
+				},
+				{
+					"color": "Critical",
+					"lineType": "Dotted",
+					"Points": [
+						{
+							"X": 0,
+							"Y": 250
+						},
+						{
+							"X": 10,
+							"Y": 300
+						},
+						{
+							"X": 20,
+							"Y": 220
+						},
+						{
+							"X": 30,
+							"Y": 225
+						}
+					]
+				}
+			]
+		},
+		{
+			"Name": "Notebook Professional 15",
+			"Description": "Multitouch LCD",
+			"Highlight": "Success",
+			"Expected": 300000,
+			"Actual": 330000,
+			"Target": 280000,
+			"TopLeft": "",
+			"TopRight": "",
+			"BottomLeft": "",
+			"BottomRight": "",
+			"color": "Good",
+			"total": 100,
+			"percentage": 75,
+			"fraction": 75,
+			"Year": 2017,
+			"Category": "Computer system accessories",
+			"Notebook13": 200,
+			"Notebook17": 500,
+			"Columns": [
+				{
+					"color": "Error",
+					"value": 100
+				},
+				{
+					"color": "Critical",
+					"value": 250
+				},
+				{
+					"color": "Good",
+					"value": 400
+				},
+				{
+					"color": "Error",
+					"value": 100
+				}
+			],
+			"Lines": [
+				{
+					"color": "#1c74d1",
+					"lineType": "Dotted",
+					"Points": [
+						{
+							"X": 0,
+							"Y": 100
+						},
+						{
+							"X": 10,
+							"Y": 110
+						},
+						{
+							"X": 20,
+							"Y": 80
+						},
+						{
+							"X": 30,
+							"Y": 70
+						}
+					]
+				},
+				{
+					"color": "Good",
+					"lineType": "Dashed",
+					"Points": [
+						{
+							"X": 0,
+							"Y": 250
+						},
+						{
+							"X": 10,
+							"Y": 300
+						},
+						{
+							"X": 20,
+							"Y": 220
+						},
+						{
+							"X": 30,
+							"Y": 230
+						}
+					]
+				}
+			]
+		},
+		{
+			"Name": "Ergo Screen E-I",
+			"Description": "Optimum Hi-Resolution max.",
+			"Highlight": "Warning",
+			"Expected": 300000,
+			"Actual": 330000,
+			"Target": 280000,
+			"TopLeft": "",
+			"TopRight": "",
+			"BottomLeft": "",
+			"BottomRight": "",
+			"color": "Good",
+			"total": 100,
+			"percentage": 75,
+			"fraction": 75,
+			"Year": 2017,
+			"Category": "Computer system accessories",
+			"Notebook13": 200,
+			"Notebook17": 500,
+			"Lines": [
+				{
+					"color": "Error",
+					"lineType": "Solid",
+					"Points": [
+						{
+							"X": 0,
+							"Y": 100
+						},
+						{
+							"X": 10,
+							"Y": 110
+						},
+						{
+							"X": 20,
+							"Y": 80
+						},
+						{
+							"X": 30,
+							"Y": 70
+						}
+					]
+				},
+				{
+					"color": "Critical",
+					"lineType": "Dotted",
+					"Points": [
+						{
+							"X": 0,
+							"Y": 0
+						},
+						{
+							"X": 10,
+							"Y": 200
+						},
+						{
+							"X": 20,
+							"Y": 220
+						},
+						{
+							"X": 30,
+							"Y": 100
+						}
+					]
+				}
+			]
+		},
+		{
+			"Name": "Laser Professional Eco",
+			"Description": "Powerful 500 MHz processor",
+			"Highlight": "Error",
+			"TopLeft": "",
+			"TopRight": "",
+			"BottomLeft": "",
+			"BottomRight": "",
+			"Expected": 300000,
+			"Actual": 330000,
+			"Target": 280000,
+			"color": "Good",
+			"total": 100,
+			"percentage": 75,
+			"fraction": 75,
+			"Year": 2017,
+			"Category": "Computer system accessories",
+			"Notebook13": 200,
+			"Notebook17": 500,
+			"Columns": [
+				{
+					"color": "Error",
+					"value": 100
+				},
+				{
+					"color": "Critical",
+					"value": 250
+				},
+				{
+					"color": "Good",
+					"value": 400
+				},
+				{
+					"color": "Error",
+					"value": 100
+				}
+			],
+			"Lines": [
+				{
+					"color": "Good",
+					"lineType": "Dashed",
+					"Points": [
+						{
+							"X": 0,
+							"Y": 100
+						},
+						{
+							"X": 10,
+							"Y": 110
+						},
+						{
+							"X": 20,
+							"Y": 80
+						},
+						{
+							"X": 30,
+							"Y": 70
+						}
+					]
+				},
+				{
+					"color": "#1c74d1",
+					"lineType": "Dotted",
+					"Points": [
+						{
+							"X": 0,
+							"Y": 250
+						},
+						{
+							"X": 10,
+							"Y": 380
+						},
+						{
+							"X": 20,
+							"Y": 120
+						},
+						{
+							"X": 30,
+							"Y": 130
+						}
+					]
+				}
+			]
+		}
+	]
+}

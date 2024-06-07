@@ -1,0 +1,125 @@
+{
+	"_version": "1.14.0",
+	"sap.app": {
+		"id": "sap.ui.integration.sample.Progressive.DefaultCard",
+		"type": "card"
+	},
+	"sap.card": {
+		"type": "List",
+		"extension": "extension",
+		"root": {
+			"show": "all",
+			"contentSize": "Standard"
+		},
+		"configuration": {
+			"editor": "./configuration"
+		},
+		"header": {
+			"type": "Standard",
+			"title": "Standard Header Title with a slightly long text",
+			"subTitle": "Standard Header Subtitle with an even longer longer text",
+			"icon": {
+				"src": "sap-icon://desktop-mobile",
+				"backgroundColor": "Accent6"
+			},
+			"status": {
+				"text": "5 of 10"
+			},
+			"data": {
+				"request": {
+					"url": "data.json"
+				}
+			}
+		},
+		"content": {
+			"maxItems": "{= ${size>/large} ? 10 : ${size>/standard} ? 5 : 2}",
+			"item": {
+				"title": "{Name}",
+				"description": "{Description}",
+				"icon": {
+					"visible": "{size>/regular}",
+					"src": "sap-icon://desktop-mobile"
+				},
+				"info": {
+					"visible": "{size>/wide}",
+					"value": "{Sales} K",
+					"state": "{State}",
+					"showStateIcon": "{ShowStateIcon}",
+					"customStateIcon": "{CustomStateIcon}"
+				}
+			},
+
+
+			"data": {
+				"json": [{
+					"Name": "Comfort Easy",
+					"Description": "32 GB Digital Assistant with high-resolution color screen",
+					"Sales": "150",
+					"State": "Warning",
+					"ShowStateIcon": true
+				},
+				{
+					"Name": "ITelO Vault",
+					"Description": "Digital Organizer with State-of-the-Art Storage Encryption",
+					"Sales": "540",
+					"State": "Success",
+					"ShowStateIcon": true
+				},
+				{
+					"Name": "Notebook Professional 15",
+					"Description": "Notebook Professional 15 with 2,80 GHz quad core, 15\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
+					"Sales": "350",
+					"State": "Success",
+					"ShowStateIcon": true
+				},
+				{
+					"Name": "Ergo Screen E-I",
+					"Description": "Optimum Hi-Resolution max. 1920 x 1080 @ 85Hz, Dot Pitch: 0.27mm",
+					"Sales": "100",
+					"State": "Error",
+					"ShowStateIcon": true,
+					"CustomStateIcon": "sap-icon://warning2"
+				},
+				{
+					"Name": "Ergo Screen E-I",
+					"Description": "Optimum Hi-Resolution max. 1920 x 1080 @ 85Hz, Dot Pitch: 0.27mm",
+					"Sales": "100",
+					"State": "Error",
+					"ShowStateIcon": true,
+					"CustomStateIcon": "sap-icon://warning2"
+				},
+				{
+					"Name": "Ergo Screen E-I",
+					"Description": "Optimum Hi-Resolution max. 1920 x 1080 @ 85Hz, Dot Pitch: 0.27mm",
+					"Sales": "100",
+					"State": "Error",
+					"ShowStateIcon": true,
+					"CustomStateIcon": "sap-icon://warning2"
+				}
+				]
+			}
+		},
+		"footer": {
+			"actionsStrip": [
+				{
+					"text": "View More",
+					"actions": [
+						{
+							"type": "ShowCard",
+							"parameters": {
+								"manifest": "./cardDefaultPopupManifest.json",
+								"parameters": {
+									"orderId": "{parameters>/orderId/value}"
+								},
+								"data": {
+									"orderData": "{/value/0}"
+								},
+								"resizable": true
+							}
+						}
+					]
+				}
+			]
+		}
+	}
+}

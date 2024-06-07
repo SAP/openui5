@@ -433,7 +433,7 @@ sap.ui.define([
 	 */
 	FileEditor.prototype._isFileEditable = function (oFile) {
 		return !oFile.isApplicationManifest
-			&& (oFile.name.endsWith("manifest.json") || oFile.name.toLowerCase().endsWith("cardmanifest.json") || oFile.key === "designtime.js" || oFile.key === "manifestChanges.json");
+			&& (oFile.name.toLowerCase().endsWith("manifest.json") || oFile.key === "designtime.js" || oFile.key === "manifestChanges.json");
 	};
 
 	FileEditor.prototype._findIndex = function (sName) {

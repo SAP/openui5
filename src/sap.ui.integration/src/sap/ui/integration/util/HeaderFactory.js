@@ -74,6 +74,10 @@ sap.ui.define([
 			oToolbar = this._createCloseButton(mConfiguration);
 		}
 
+		if (oCard.isCompactHeader()) {
+			mConfiguration.type = "";
+		}
+
 		switch (mConfiguration.type) {
 			case "Numeric":
 				oHeader = new NumericHeader(sId, mConfiguration, oToolbar, oCard._oIconFormatter);
@@ -100,7 +104,9 @@ sap.ui.define([
 		oHeader._setDataConfiguration(mConfiguration.data);
 
 		if (oCard.isTileDisplayVariant()) {
-			this._setTileDefaults(oHeader, mConfiguration);
+			this._setTileDisplayDefaults(oHeader, mConfiguration);
+		} else if (oCard.isHeaderDisplayVariant()) {
+			this._setHeaderDisplayDefaults(oHeader, mConfiguration);
 		}
 
 		var oActions = new CardActions({
@@ -144,7 +150,7 @@ sap.ui.define([
 		return oButton;
 	};
 
-	HeaderFactory.prototype._setTileDefaults = function (oHeader, mConfiguration) {
+	HeaderFactory.prototype._setTileDisplayDefaults = function (oHeader, mConfiguration) {
 		oHeader.setProperty("useTileLayout", true);
 		oHeader.setProperty("useTooltips", true);
 
@@ -182,6 +188,43 @@ sap.ui.define([
 				href: vHref,
 				target: vTarget || NavigationAction.DEFAULT_TARGET,
 				interactive: true
+			});
+		}
+	};
+
+	HeaderFactory.prototype._setHeaderDisplayDefaults = function (oHeader, mConfiguration) {
+		const oCard = this._oCard;
+		oHeader.setProperty("useTooltips", true);
+
+		if (oCard.isCompactHeader()) {
+			oHeader.setProperty("useTooltips", true);
+			oHeader.setIconSize("XS");
+			oHeader.setTitleMaxLines(1);
+			oHeader.setSubtitleMaxLines(1);
+			oHeader.setStatusVisible(false);
+			return;
+		}
+
+		const bIsSmall = oCard.isSmallHeader();
+
+		if (!mConfiguration.titleMaxLines) {
+			oHeader.setTitleMaxLines(bIsSmall ? 1 : 2);
+		}
+
+		if (bIsSmall) {
+			if (oHeader.isA("sap.f.cards.NumericHeader")) {
+				oHeader.setIconSize("XS");
+				oHeader.setNumberSize("S");
+			}
+
+			if (!mConfiguration.subtitleMaxLines) {
+				oHeader.setSubtitleMaxLines(1);
+			}
+		}
+
+		if (oHeader.isA("sap.f.cards.NumericHeader")) {
+			oHeader.getSideIndicators().forEach((oSideIndicator) => {
+				oSideIndicator.setProperty("useTooltips", true);
 			});
 		}
 	};

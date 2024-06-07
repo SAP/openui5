@@ -1,0 +1,24 @@
+{
+	"sap.app": {
+		"id": "sap.ui.integration.sample.Progressive.Preview",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.ui.integration.sample.Progressive.Preview",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.f": {},
+				"sap.ui.core": {},
+				"sap.ui.integration": {}
+			}
+		},
+		"config": {
+		}
+	}
+}

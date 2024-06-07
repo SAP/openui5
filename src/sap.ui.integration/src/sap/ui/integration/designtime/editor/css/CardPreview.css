@@ -98,6 +98,32 @@
 	min-height: calc((350px - 4rem) / 0.45) !important;
 }
 
+.sapUiIntegrationDTPreview .sapUiIntDTPreviewCardTileStandard {
+	width: 176px !important;
+	height: 176px !important;
+}
+.sapUiIntegrationDTPreview .sapUiIntDTPreviewCardTileFlat {
+	width: 176px !important;
+	height: 88px !important;
+}
+.sapUiIntegrationDTPreview .sapUiIntDTPreviewCardTileFlatWide {
+	width: 352px !important;
+	height: 88px !important;
+}
+.sapUiIntegrationDTPreview .sapUiIntDTPreviewCardTileStandardWide {
+	width: 352px !important;
+	height: 176px !important;
+}
+.sapUiIntegrationDTPreview .sapUiIntDTPreviewCardCompactHeader {
+	width: 300px;
+}
+.sapUiIntegrationDTPreview .sapUiIntDTPreviewCardSmallHeader {
+	width: 400px;
+}
+.sapUiIntegrationDTPreview .sapUiIntDTPreviewCardStandardHeader {
+	width: 500px;
+}
+
 .sapUiIntegrationDTPreview .sapUiIntegrationDTPreviewModeButton {
 	position: absolute !important;
 	margin: calc(min(var(--sapUiIntegrationEditorPreviewCardHeight, calc(350px - 4rem)), calc(var(--sapUiIntegrationEditorPreviewHeight, 350px) - 4rem)) + 0.5rem) 0 0 calc(var(--sapUiIntegrationEditorPreviewWidth, calc(190px + 15.5rem))/2 - 8rem) !important
