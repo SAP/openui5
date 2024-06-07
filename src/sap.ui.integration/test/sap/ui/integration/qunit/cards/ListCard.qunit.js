@@ -441,6 +441,7 @@ sap.ui.define([
 				"data": {
 					"json": {
 						"maxOverYears": 700,
+						"displayZeroValue": false,
 						"Notebooks": [
 							{
 								"Year": 2017,
@@ -471,6 +472,7 @@ sap.ui.define([
 						"type": "StackedBar",
 						"displayValue": "{= ${Notebook13} + ${Notebook17}}K",
 						"maxValue": "{/maxOverYears}",
+						"displayZeroValue": "{/displayZeroValue}",
 						"bars": [
 							{
 								"value": "{Notebook13}",
@@ -1837,6 +1839,7 @@ sap.ui.define([
 			// Assert
 			assert.strictEqual(aBars.length, oExpectedSettings["Notebooks"].length, "Should have created 2 bars.");
 			assert.strictEqual(oChart.getMaxValue(), oExpectedSettings.maxOverYears, "'maxValue' property from the manifest should be set to the chart.");
+			assert.strictEqual(oChart.getDisplayZeroValue(), oExpectedSettings.displayZeroValue, "'displayZeroValue' property from the manifest should be set to the chart.");
 			assert.strictEqual(aBars[0].getValue(), oExpectedSettings["Notebooks"][0]["Notebook13"], "'value' property from the bar in the manifest should be set to the chart.");
 			assert.strictEqual(aBars[0].getDisplayValue(), oExpectedSettings["Notebooks"][0]["Notebook13Title"], "'displayValue' property from the bar in the manifest should be set to the chart.");
 			assert.strictEqual(aBars[0].getValueColor(), oExpectedSettings["Notebooks"][0]["Notebook13Color"], "'color' property from the bar in the manifest should be set to the chart.");

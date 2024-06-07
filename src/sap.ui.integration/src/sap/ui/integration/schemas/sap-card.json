@@ -3871,6 +3871,18 @@
           "description": "The value, which will be displayed as a text next to the bar",
           "type": "string"
         },
+        "displayZeroValue": {
+          "description": "Defines whether bars with zero values are displayed",
+          "oneOf": [
+            {
+              "type": "boolean",
+              "default": true
+            },
+            {
+              "$ref": "#/definitions/simpleBinding"
+            }
+          ]
+        },
         "bars": {
           "description": "The bars of the chart",
           "type": "array",

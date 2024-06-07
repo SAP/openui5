@@ -2178,6 +2178,23 @@ sap.ui.define([
 										key: 'data.json'
 									}
 								]
+							},
+							{
+								title: 'Stacked Bar Chart with Zero Values',
+								key: 'stackedBarZeroValues',
+								experimental: true,
+								files: [
+									{
+										url: '/samples/microCharts/stackedBarZeroValues/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/microCharts/stackedBarZeroValues/data.json',
+										name: 'data.json',
+										key: 'data.json'
+									}
+								]
 							}
 						]
 					},
