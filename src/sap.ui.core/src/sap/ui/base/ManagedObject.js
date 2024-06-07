@@ -4818,10 +4818,12 @@ sap.ui.define([
 
 	/**
 	 * If the field help is active ({@link module:sap/ui/core/fieldhelp/FieldHelp#activate}) the <code>FieldHelp</code>
-	 * module provides an implementation for this abstract function to update the field help information for the
-	 * given property. {@link module:sap/ui/core/fieldhelp/FieldHelp#deactivate} removes the implementation.
+	 * module provides an implementation for this abstract function to update the field help information for this
+	 * managed object instance and for the given property. {@link module:sap/ui/core/fieldhelp/FieldHelp#deactivate}
+	 * removes the implementation again.
 	 *
-	 * @param {string} sName The property name for which the field help has to be updated
+	 * @param {string} [sName]
+	 *   The property name; if no property name is given the field help for this object is updated
 	 * @abstract
 	 * @function
 	 * @private
