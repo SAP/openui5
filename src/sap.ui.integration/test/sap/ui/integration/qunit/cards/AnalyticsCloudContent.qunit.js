@@ -1,14 +1,18 @@
 /* global QUnit, sinon */
 
 sap.ui.define([
-	"sap/ui/integration/cards/AnalyticsCloudContent",
+	"sap/base/i18n/Localization",
+	"sap/ui/core/Locale",
+	"sap/ui/core/Theming",
 	"sap/ui/integration/util/AnalyticsCloudHelper",
 	"sap/ui/integration/Host",
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"qunit/testResources/nextCardReadyEvent"
 ], function (
-	AnalyticsCloudContent,
+	Localization,
+	Locale,
+	Theming,
 	AnalyticsCloudHelper,
 	Host,
 	Card,
@@ -47,10 +51,15 @@ sap.ui.define([
 			},
 			"content": {
 				"minHeight": "25rem",
+				"sacTenantDestination": "{{destinations.SAC}}",
 				"widget": {
 					"storyId": "{parameters>/storyId/value}",
-					"widgetId": "{parameters>/widgetId/value}",
-					"destination": "{{destinations.SAC}}"
+					"widgetId": "{parameters>/widgetId/value}"
+				},
+				"options": {
+					"attributes": {
+						"enableInteraction": true
+					}
 				}
 			}
 		}
@@ -81,6 +90,7 @@ sap.ui.define([
 
 	QUnit.test("Creating a card", async function (assert) {
 		// Arrange
+		const oLocale = new Locale(Localization.getLanguageTag());
 		const oCard = new Card({
 			manifest: oExample1,
 			baseUrl: "test-resources/sap/ui/integration/qunit/testResources"
@@ -92,9 +102,41 @@ sap.ui.define([
 		await nextUIUpdate();
 
 		// Assert
-		assert.ok(sap.sac.api.widget.setup.calledOnce, "sap.sac.api.widget.setup was called only once.");
+		const fnSetup = sap.sac.api.widget.setup;
+		assert.ok(fnSetup.calledOnce, "sap.sac.api.widget.setup was called only once.");
+		assert.deepEqual(
+			fnSetup.firstCall.args[0],
+			{
+				language: oLocale.toString(),
+				dataAccessLanguage: oLocale.toString(),
+				theme: Theming.getTheme()
+			},
+			"sap.sac.api.widget.setup was called with correct arguments."
+		);
 
-		assert.ok(sap.sac.api.widget.renderWidget.calledOnce, "sap.sac.api.widget.renderWidget was called only once.");
+		const fnRenderWidget = sap.sac.api.widget.renderWidget;
+		assert.ok(fnRenderWidget.calledOnce, "sap.sac.api.widget.renderWidget was called only once.");
+
+		const oArgs = fnRenderWidget.firstCall.args;
+		assert.strictEqual(oArgs[0], oCard.getCardContent().getId() + "-widgetContainer", "Container id is correct.");
+		assert.strictEqual(oArgs[1].proxy, "https://master-fpa135.master.canary.eu10.projectorca.cloud", "Destination is correct.");
+		assert.strictEqual(oArgs[2], "ABD0990112D81FBF4C936C30444FA3B7", "Story ID is correct.");
+		assert.strictEqual(oArgs[3], "36486725-0138-4231-8435-538015664163", "Widget ID is correct.");
+
+		const oOptions = oArgs[4];
+		assert.strictEqual(typeof oOptions.renderComplete.onSuccess, "function", "options.renderComplete.onSuccess is a function");
+		assert.strictEqual(typeof oOptions.renderComplete.onFailure, "function", "options.renderComplete.onFailure is a function");
+		assert.deepEqual(
+			oOptions.attributes,
+			{
+				enableInteraction: true,
+				enableUndoRedo: false,
+				enableMenus: false,
+				showHeader: false,
+				showFooter: false
+			},
+			"options.attributes is correct."
+		);
 
 		// Clean up
 		oCard.destroy();
