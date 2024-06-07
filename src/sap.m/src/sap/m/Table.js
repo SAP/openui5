@@ -712,6 +712,9 @@ sap.ui.define([
 			} else if (oEvent.target.classList.contains("sapMLIBFocusable")) {
 				if (oEvent.type.startsWith("sappage")) {
 					iForwardIndex = iIndex - iIndex % iColumnCount;
+					if (oEvent.type == "sappageup" && iForwardIndex == 0 && oItemNavigation.getFocusedIndex() > iColumnCount) {
+						iForwardIndex = iColumnCount;
+					}
 				} else if (oEvent.type == "saphome") {
 					iForwardIndex = 0;
 				} else if (oEvent.type == "sapend") {
