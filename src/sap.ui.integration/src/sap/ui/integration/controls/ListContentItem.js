@@ -261,7 +261,9 @@ sap.ui.define([
 			sDescription = this.getDescription(),
 			aOutput = [],
 			sInfo = this.getInfo(),
-			oMBundle = Library.getResourceBundleFor("sap.m");
+			oMBundle = Library.getResourceBundleFor("sap.m"),
+			aAttributes = this._getVisibleAttributes(),
+			oChart = this.getMicrochart()?.getChart();
 
 		if (sTitle) {
 			aOutput.push(sTitle);
@@ -277,6 +279,16 @@ sap.ui.define([
 
 		if (sInfoState != ValueState.None && sInfoState !== this.getHighlight()) {
 			aOutput.push(oMBundle.getText("LIST_ITEM_STATE_" + sInfoState.toUpperCase()));
+		}
+
+		if (aAttributes.length > 0 ) {
+			aAttributes.forEach(function(oAttribute) {
+				aOutput.push(oAttribute.getAccessibilityInfo().description);
+			});
+		}
+
+		if (oChart) {
+			aOutput.push(oChart.getTooltip_AsString());
 		}
 
 		return aOutput.join(" . ").trim();

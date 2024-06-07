@@ -253,7 +253,23 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("getContentAnnouncement", function (assert) {
+	QUnit.test("getContentAnnouncement with attributes", function (assert) {
+		// arrange
+		var sTitle = "Item title";
+
+		var oLCI = new ListContentItem({
+			title: sTitle,
+			attributes: [
+				new ObjectStatus({text: "test 1", state: "Error"}),
+				new ObjectStatus({text: "test 2", visible: false})
+			]
+		});
+
+		// assert
+		assert.strictEqual(oLCI.getContentAnnouncement(), "Item title . test 1 Invalid entry", "Content announcement should be correct");
+	});
+
+	QUnit.test("getContentAnnouncement all elements set on a listContent", function (assert) {
 		// arrange
 		var sTitle = "Item title",
 			sDescription = "Item description",
