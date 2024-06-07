@@ -284,6 +284,7 @@ sap.ui.define([
 	QUnit.test("Initial rendering", function (assert) {
 		var oCodeEditor = new CodeEditor();
 		assert.strictEqual(oCodeEditor.getColorTheme(), "default", "Initial theme is set correctly");
+		assert.strictEqual(oCodeEditor._oEditor.getTheme(), "ace/theme/default", "Initial theme is set correctly to the internal editor");
 
 		oCodeEditor.destroy();
 	});

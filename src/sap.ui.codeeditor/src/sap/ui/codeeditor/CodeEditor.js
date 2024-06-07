@@ -225,6 +225,8 @@ sap.ui.define([
 		this._oEditorDomRef.style.width = "100%";
 
 		this._oEditor = ace.edit(this._oEditorDomRef);
+		this._oEditor.setTheme("ace/theme/default");
+
 		var oSession = this._oEditor.getSession();
 
 		// Ensure worker is used only when the CodeEditor has focus.
@@ -316,13 +318,13 @@ sap.ui.define([
 		}
 
 		this._deregisterResizeListener();
+
 	};
 
 	/**
 	 * @private
 	 */
 	CodeEditor.prototype.onAfterRendering = function() {
-
 		this._bIsRenderingPhase = false;
 
 		var oDomRef = this.getDomRef(),
