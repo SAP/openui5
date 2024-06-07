@@ -1,0 +1,88 @@
+{
+	"sap.app": {
+		"id": "sap.f.cardsdemo.showCard.filter",
+		"type": "card",
+		"title": "Sample of an Snack Card",
+		"subTitle": "Sample of an Snack Card",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"List",
+				"Card",
+				"Sample",
+				"Snack"
+			]
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://switch-classes"
+		}
+	},
+	"sap.card": {
+		"type": "List",
+		"data": {
+			"request": {
+				"url": "{{destinations.myDestination}}/Products",
+				"parameters": {
+					"$format": "json"
+				}
+			},
+			"path": "/value"
+		},
+		"configuration": {
+			"destinations": {
+				"myDestination": {
+					"name": "Northwind_V4"
+				}
+			}
+		},
+		"header": {
+			"icon": {
+				"src": "sap-icon://sap-ui5"
+			},
+			"title": "Details card with filter",
+			"actions": [
+				{
+					"type": "ShowCard",
+					"parameters": {
+						"manifest": "./detailsManifest.json"
+					}
+				}
+			]
+		},
+		"content": {
+			"data": {
+				"path": "/value"
+			},
+			"item": {
+				"title": "{ProductName}",
+				"description": "{UnitsInStock} units in stock"
+			},
+			"maxItems": 3
+		},
+		"footer": {
+			"actionsStrip": [
+				{
+					"text": "Show More",
+					"buttonType": "Accept",
+					"actions": [
+						{
+							"type": "ShowCard",
+							"parameters": {
+								"manifest": "./detailsManifest.json",
+								"width": "480px"
+							}
+						}
+					]
+				}
+			]
+		}
+	}
+}

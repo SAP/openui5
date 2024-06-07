@@ -20,6 +20,7 @@ sap.ui.define([
 
 			this.getView().byId("showCard1").setHost(oHost);
 			this.getView().byId("showCard2").setHost(oHost);
+			this.getView().byId("showCard6").setHost(oHost);
 		}
 
 	});

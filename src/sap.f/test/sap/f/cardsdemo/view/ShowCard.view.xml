@@ -23,6 +23,13 @@
 				</w:layoutData>
 			</w:Card>
 			<w:Card
+				id="showCard6"
+				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/showCard/filter/manifest.json">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="4" />
+				</w:layoutData>
+			</w:Card>
+			<w:Card
 				id="showCard3"
 				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/showCard/task/manifest.json">
 				<w:layoutData>
@@ -32,6 +39,13 @@
 			<w:Card
 				id="showCard4"
 				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/showCard/approve/biteManifest.json">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="4" />
+				</w:layoutData>
+			</w:Card>
+			<w:Card
+				id="showCard5"
+				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/showCard/analytical/manifest.json">
 				<w:layoutData>
 					<f:GridContainerItemLayoutData columns="4" />
 				</w:layoutData>
