@@ -1692,6 +1692,10 @@
 				<Annotation Term="SAP__common.DocumentationRef"
 					String="urn:sap-com:documentation:key?=type=DTEL&amp;id=%2fFOO%2fCURRENCY"/>
 			</Annotations>
+			<Annotations Target="GWSAMPLE_BASIC.SalesOrderLineItem/Note" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="SAP__common.DocumentationRef"
+					String="urn:sap-com:documentation:key?=type=DTEL&amp;id=ITEMNOTE"/>
+			</Annotations>
 			<atom:link rel="self"
 				href="/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/$metadata"
 				xmlns:atom="http://www.w3.org/2005/Atom" />

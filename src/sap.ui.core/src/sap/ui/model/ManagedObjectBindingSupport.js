@@ -545,15 +545,18 @@ sap.ui.define([
 						}
 						if (oBinding instanceof CompositeBinding) {
 							oBinding.setContext(oContext, {fnIsBindingRelevant : isPartForModel});
+							this.updateFieldHelp?.(sName);
 						} else if (oBindingInfo.factory) {
 							// list binding: update required when the model has the same name (or updateall)
 							if ( oBindingInfo.model == sModelName) {
 								oBinding.setContext(oContext);
+								this.updateFieldHelp?.(sName);
 							}
 
 						} else if (isPartForModel(0)) {
 							// simple property binding: update required when the model has the same name
 							oBinding.setContext(oContext);
+							this.updateFieldHelp?.(sName);
 						}
 					}
 				}
@@ -734,6 +737,7 @@ sap.ui.define([
 			oBinding.attachEvents(oBindingInfo.events);
 
 			oBinding.initialize();
+			this.updateFieldHelp?.(sName);
 
 			if (this._observer) {
 				this._observer.bindingChange(this, sName, "ready", oBindingInfo, "property");
@@ -754,6 +758,7 @@ sap.ui.define([
 				if (this.refreshDataState && !this._bIsBeingDestroyed) {
 					oBinding.detachAggregatedDataStateChange(oBindingInfo.dataStateChangeHandler);
 				}
+				this.updateFieldHelp?.(sName);
 			}
 		},
 

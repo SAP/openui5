@@ -3,15 +3,33 @@
  */
 sap.ui.define([
 	"sap/base/Log",
+	"sap/ui/base/ManagedObject",
 	"sap/ui/core/Element",
 	"sap/ui/core/ElementRegistry",
 	"sap/ui/core/LabelEnablement"
-], function (Log, Element, ElementRegistry, LabelEnablement) {
+], function (Log, ManagedObject, Element, ElementRegistry, LabelEnablement) {
 	"use strict";
 
 	const sClassName = "sap/ui/core/fieldhelp/FieldHelp";
 	const sDocumentationRef = "com.sap.vocabularies.Common.v1.DocumentationRef";
+	/**
+	 * The singleton instance.
+	 * @type {module:sap/ui/core/fieldhelp/FieldHelp}
+	 */
+	let oFieldHelp;
 	const sURNPrefix = "urn:sap-com:documentation:key?=";
+
+	/**
+	 * Replacement for <code>ManagedObject.prototype.updateFieldHelp</code> to update the field help information
+	 * for the given control property name of <code>this</code> control instance, if the corresponding binding has been
+	 * created or destroyed, or its context has been changed.
+	 *
+	 * @param {string} sPropertyName
+	 *   The name of the control property for which the field help information has to be updated
+	 */
+	function updateFieldHelp(sPropertyName) {
+		oFieldHelp._updateProperty(/*the managed object*/this, sPropertyName);
+	}
 
 	/**
 	 * @typedef {object} module:sap/ui/core/fieldhelp/BackendHelpKey
@@ -35,12 +53,6 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.core
 	 */
-
-	/**
-	 * The singleton instance.
-	 * @type {module:sap/ui/core/fieldhelp/FieldHelp}
-	 */
-	let oFieldHelp;
 
 	/**
 	 * DO NOT call this private constructor for <code>FieldHelp</code>; use <code>FieldHelp.getInstance</code> instead.
@@ -235,6 +247,41 @@ sap.ui.define([
 		}
 
 		/**
+		 * Updates the field help information for the given property of the given control if the control property
+		 * belongs to the {@link sap.ui.base.ManagedObject.MetadataOptions.Property "Data" group} and is bound to an
+		 * OData model.
+		 *
+		 * @param {sap.ui.core.Element} oElement The control
+		 * @param {string} sControlProperty The name of the control property
+		 *
+		 * @private
+		 */
+		_updateProperty(oElement, sControlProperty) {
+			if (oElement.getMetadata().getProperty(sControlProperty)?.group !== "Data") {
+				return;
+			}
+
+			const oBinding = oElement.getBinding(sControlProperty);
+			if (!oBinding) {
+				return;
+			}
+
+			let aBindings;
+			if (oBinding.isA("sap.ui.model.CompositeBinding")) {
+				const aPartsToIgnore = oBinding.getType()?.getPartsIgnoringMessages() || [];
+				aBindings = oBinding.getBindings().filter((oPart, i) => !aPartsToIgnore.includes(i));
+			} else {
+				aBindings = [oBinding];
+			}
+			Promise.all(
+				aBindings.map((oBinding) => FieldHelp._requestDocumentationRef(oBinding))
+			).then((aDocumentationRefs) => {
+				aDocumentationRefs = aDocumentationRefs.filter((sDocumentationRef) => sDocumentationRef);
+				this._setFieldHelpDocumentationRefs(oElement, sControlProperty, aDocumentationRefs);
+			});
+		}
+
+		/**
 		 * Gets the singleton instance of <code>FieldHelp</code>.
 		 *
 		 * @returns {module:sap/ui/core/fieldhelp/FieldHelp} The singleton instance
@@ -280,10 +327,11 @@ sap.ui.define([
 						: [vDocumentationRef]);
 				} else {
 					Object.keys(oElement.getMetadata().getAllProperties()).forEach((sPropertyName) => {
-						this.update(oElement, sPropertyName);
+						this._updateProperty(oElement, sPropertyName);
 					});
 				}
 			});
+			ManagedObject.prototype.updateFieldHelp = updateFieldHelp;
 		}
 
 		/**
@@ -297,6 +345,7 @@ sap.ui.define([
 			this.#bActive = false;
 			this.#mDocuRefControlToFieldHelp = {};
 			this.#fnUpdateHotspotsCallback = null;
+			ManagedObject.prototype.updateFieldHelp = undefined; // restore the default
 		}
 
 		/**
@@ -310,43 +359,6 @@ sap.ui.define([
 		 */
 		isActive() {
 			return this.#bActive;
-		}
-
-		/**
-		 * Updates the field help information for the given property of the given control if the control property
-		 * belongs to the {@link sap.ui.base.ManagedObject.MetadataOptions.Property "Data" group} and is bound to an
-		 * OData model.
-		 *
-		 * @param {sap.ui.core.Element} oElement The control
-		 * @param {string} sControlProperty The name of the control property
-		 *
-		 * @private
-		 * @ui5-restricted sap.ui.core
-		 * @since 1.125.0
-		 */
-		update(oElement, sControlProperty) {
-			if (!this.#bActive || oElement.getMetadata().getProperty(sControlProperty)?.group !== "Data") {
-				return;
-			}
-
-			const oBinding = oElement.getBinding(sControlProperty);
-			if (!oBinding) {
-				return;
-			}
-
-			let aBindings;
-			if (oBinding.isA("sap.ui.model.CompositeBinding")) {
-				const aPartsToIgnore = oBinding.getType()?.getPartsIgnoringMessages() || [];
-				aBindings = oBinding.getBindings().filter((oPart, i) => !aPartsToIgnore.includes(i));
-			} else {
-				aBindings = [oBinding];
-			}
-			Promise.all(
-				aBindings.map((oBinding) => FieldHelp._requestDocumentationRef(oBinding))
-			).then((aDocumentationRefs) => {
-				aDocumentationRefs = aDocumentationRefs.filter((sDocumentationRef) => sDocumentationRef);
-				this._setFieldHelpDocumentationRefs(oElement, sControlProperty, aDocumentationRefs);
-			});
 		}
 	}
 

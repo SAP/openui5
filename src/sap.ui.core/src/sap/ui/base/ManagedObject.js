@@ -4816,6 +4816,19 @@ sap.ui.define([
 		return !!this.bIsDestroyed;
 	};
 
+	/**
+	 * If the field help is active ({@link module:sap/ui/core/fieldhelp/FieldHelp#activate}) the <code>FieldHelp</code>
+	 * module provides an implementation for this abstract function to update the field help information for the
+	 * given property. {@link module:sap/ui/core/fieldhelp/FieldHelp#deactivate} removes the implementation.
+	 *
+	 * @param {string} sName The property name for which the field help has to be updated
+	 * @abstract
+	 * @function
+	 * @private
+	 * @ui5-restricted module:sap/ui/core/fieldhelp/FieldHelp
+	 */
+	ManagedObject.prototype.updateFieldHelp = undefined;
+
 	ManagedObject._defaultContextualSettings = {};
 
 	return ManagedObject;

@@ -23038,13 +23038,16 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	});
 
 	//*********************************************************************************************
-	// Scenario: Activate field help and get the expected hotspots. Simulate filter bar fields which will set
+	// Scenario 1: Activate field help and get the expected hotspots. Simulate filter bar fields which will set
 	// "sap-ui-DocumentationRef" custom data at the filter field. For ODataPropertyBindings, either standalone or
 	// embedded in a CompositeBinding, the field help is determined automatically by evaluating the
 	// "com.sap.vocabularies.Common.v1.DocumentationRef" annotation. ODataPropertyBindings embedded in a
 	// CompositeBinding for which no messages are displayed (see getPartsIgnoringMessages), are ignored.
 	// Controls which have been destroyed do neither produce a field help nor log messages.
 	// JIRA: CPOUI5MODELS-1696
+	// Scenario 2: If bindings are created, updated (that means got a new context) or deleted after the field
+	// help had been activated, the field help information is updated accordingly
+	// JIRA: CPOUI5MODELS-1726
 	QUnit.test("Field Help", function (assert) {
 		const oModel = createSalesOrdersModel({defaultBindingMode: BindingMode.TwoWay});
 		const oFilterModel = new JSONModel({filter: "42"});
@@ -23091,6 +23094,12 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		}],
 		type : 'sap.ui.model.type.Currency'
 	}" />
+	<Label labelFor="Amount2" text="Label for both amount and currency, lazy bound" />
+	<Input id="Amount2" />
+</FlexBox>
+<FlexBox id="form0">
+	<Label labelFor="Note0" text="Label for Item or Sales Order Note" />
+	<Input id="Note0" value="{Note}" />
 </FlexBox>`;
 		function compare(a, b) {
 			if (a === b) {
@@ -23100,6 +23109,19 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		}
 		function sortHotspots(a, b) {
 			return compare(a.hotspotId, b.hotspotId) || compare(a.backendHelpKey.id, b.backendHelpKey.id);
+		}
+		let fnResolve;
+		function updateCallback(aCurrentHotspots) {
+			fnResolve(aCurrentHotspots);
+		}
+		function waitForUpdate(aHotspots, sTestTitle) {
+			const aExpectedHotspots = aHotspots;
+			return new Promise((resolve) => {
+				fnResolve = resolve;
+			}).then((aCurrentHotspots) => {
+				assert.deepEqual(aCurrentHotspots.sort(sortHotspots), aExpectedHotspots.sort(sortHotspots),
+					"Update called: " + sTestTitle);
+			});
 		}
 
 		this.expectHeadRequest()
@@ -23131,53 +23153,135 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			const oFilterDynamicallyDestroyed = oView.byId("FilterDynamicallyDestroyed");
 			oFilterDynamicallyDestroyed.data("sap-ui-DocumentationRef",
 				"urn:sap-com:documentation:key?=type=DTEL&id=SALESORDERID");
-			let fnResolve;
-			const oPromise = new Promise((resolve) => {
-				fnResolve = resolve;
-			});
-			const oUtil = {fnUpdateCallback() {}};
-			this.mock(oUtil).expects("fnUpdateCallback").withExactArgs(sinon.match.array).callsFake((aHotspots) => {
-				const aExpectedHotspots = [{
-					"backendHelpKey": {id: "SALESORDERID", origin: null, type: "DTEL"},
-					"hotspotId": oFilterSingleFieldHelp.getId(),
-					"labelText": "Label for filter with single field help"
-				}, {
-					"backendHelpKey": {id: "FOO", origin: null, type: "DTEL"},
-					"hotspotId": oFilterMultipleFieldHelps.getId(),
-					"labelText": "Label for filter with multiple field helps"
-				}, {
-					"backendHelpKey": {id: "Bar", origin: "Origin", type: "DTEL"},
-					"hotspotId": oFilterMultipleFieldHelps.getId(),
-					"labelText": "Label for filter with multiple field helps"
-				}, { // documentation ref from OData annotation
-					"backendHelpKey": {id: "NOTE", origin: "MyOrigin", type: "DTEL"},
-					"hotspotId": oView.byId("Note").getId(),
-					"labelText": "Label for Note"
-				}, { // documentation ref from OData annotation - composite binding part 0
-					"backendHelpKey": {id: "GROSSAMOUNT", origin: null, type: "DTEL"},
-					"hotspotId": oView.byId("Amount0").getId(),
-					"labelText": "Label for both amount and currency"
-				}, { // documentation ref from OData annotation - composite binding part 1
-					"backendHelpKey": {id: "/FOO/CURRENCY", origin: null, type: "DTEL"},
-					"hotspotId": oView.byId("Amount0").getId(),
-					"labelText": "Label for both amount and currency"
-				}, { // documentation ref from OData annotation - composite binding showning only one part
-					"backendHelpKey": {id: "GROSSAMOUNT", origin: null, type: "DTEL"},
-					"hotspotId": oView.byId("Amount1").getId(),
-					"labelText": "Label for amount only"
-				}].sort(sortHotspots);
-
-				assert.deepEqual(aHotspots.sort(sortHotspots), aExpectedHotspots);
-				fnResolve();
-			});
+			const aExpectedHotspots = [{
+				"backendHelpKey": {id: "SALESORDERID", origin: null, type: "DTEL"},
+				"hotspotId": oFilterSingleFieldHelp.getId(),
+				"labelText": "Label for filter with single field help"
+			}, {
+				"backendHelpKey": {id: "FOO", origin: null, type: "DTEL"},
+				"hotspotId": oFilterMultipleFieldHelps.getId(),
+				"labelText": "Label for filter with multiple field helps"
+			}, {
+				"backendHelpKey": {id: "Bar", origin: "Origin", type: "DTEL"},
+				"hotspotId": oFilterMultipleFieldHelps.getId(),
+				"labelText": "Label for filter with multiple field helps"
+			}, { // documentation ref from OData annotation
+				"backendHelpKey": {id: "NOTE", origin: "MyOrigin", type: "DTEL"},
+				"hotspotId": oView.byId("Note").getId(),
+				"labelText": "Label for Note"
+			}, { // documentation ref from OData annotation - composite binding part 0
+				"backendHelpKey": {id: "GROSSAMOUNT", origin: null, type: "DTEL"},
+				"hotspotId": oView.byId("Amount0").getId(),
+				"labelText": "Label for both amount and currency"
+			}, { // documentation ref from OData annotation - composite binding part 1
+				"backendHelpKey": {id: "/FOO/CURRENCY", origin: null, type: "DTEL"},
+				"hotspotId": oView.byId("Amount0").getId(),
+				"labelText": "Label for both amount and currency"
+			}, { // documentation ref from OData annotation - composite binding showning only one part
+				"backendHelpKey": {id: "GROSSAMOUNT", origin: null, type: "DTEL"},
+				"hotspotId": oView.byId("Amount1").getId(),
+				"labelText": "Label for amount only"
+			}];
+			const oUpdateCalledPromise = waitForUpdate(aExpectedHotspots, "initial activation");
 
 			// code under test
-			FieldHelp.getInstance().activate(oUtil.fnUpdateCallback);
+			FieldHelp.getInstance().activate(updateCallback);
 
 			// code under test - destroy a field with field help - async callback does not consider that control
 			oFilterDynamicallyDestroyed.destroy();
 
-			return Promise.all([oPromise, this.waitForChanges(assert, "Initial activation")]);
+			return Promise.all([
+				oUpdateCalledPromise,
+				this.waitForChanges(assert, "Initial activation")
+			]).then(() => {
+				const oUpdateCalledPromise = waitForUpdate([
+					...aExpectedHotspots,
+					{
+						"backendHelpKey": {id: "GROSSAMOUNT", origin: null, type: "DTEL"},
+						"hotspotId": oView.byId("Amount2").getId(),
+						"labelText": "Label for both amount and currency, lazy bound"
+					}, {
+						"backendHelpKey": {id: "/FOO/CURRENCY", origin: null, type: "DTEL"},
+						"hotspotId": oView.byId("Amount2").getId(),
+						"labelText": "Label for both amount and currency, lazy bound"
+					}], "late composite binding");
+
+				// code under test - field help is active; create new composite binding with field help afterwards
+				oView.byId("Amount2").bindProperty("value", {
+					parts: [{
+						constraints: {precision: 16, scale: 3},
+						path: 'GrossAmount',
+						type: 'sap.ui.model.odata.type.Decimal'
+					}, {
+						constraints: {maxLength: 5},
+						path: 'CurrencyCode',
+						type: 'sap.ui.model.odata.type.String'
+					}],
+					type: 'sap.ui.model.type.Currency'
+				});
+
+				return oUpdateCalledPromise;
+			}).then(() => {
+				const oUpdateCalledPromise = waitForUpdate(aExpectedHotspots, "late destroying a binding");
+
+				// code under test - field help is active; destroy a binding with field help afterwards
+				oView.byId("Amount2").unbindProperty("value");
+
+				return oUpdateCalledPromise;
+			}).then(() => {
+				this.expectRequest("SalesOrderLineItemSet(SalesOrderID='1', ItemPosition='1')", {
+						__metadata: {uri: "SalesOrderLineItemSet(SalesOrderID='1', ItemPosition='1')"},
+						ItemPosition: "1",
+						Note: "Sales Order Item Note",
+						SalesOrderID: "1"
+					})
+					.expectValue("Note0", "Sales Order Item Note");
+				const oUpdateCalledPromise = waitForUpdate([
+					...aExpectedHotspots,
+					{
+						"backendHelpKey": {id: "ITEMNOTE", origin: null, type: "DTEL"},
+						"hotspotId": oView.byId("Note0").getId(),
+						"labelText": "Label for Item or Sales Order Note"
+					}], "late initially setting a binding context");
+
+				// code under test - field help is active; initially set a context for a binding with field help
+				// afterwards
+				oView.byId("form0").bindObject({path: "/SalesOrderLineItemSet(SalesOrderID='1', ItemPosition='1')"});
+
+				return Promise.all([
+					oUpdateCalledPromise,
+					this.waitForChanges(assert, "Bind SalesOrderLineItem to form0")
+				]);
+			}).then(() => {
+				const oUpdateCalledPromise = waitForUpdate([
+					...aExpectedHotspots,
+					{
+						"backendHelpKey": {id: "NOTE", origin: "MyOrigin", type: "DTEL"},
+						"hotspotId": oView.byId("Note0").getId(),
+						"labelText": "Label for Item or Sales Order Note"
+					}], "late changing a binding context to different entity");
+				this.expectValue("Note0", "Sales Order Note");
+
+				// code under test - field help is active; set a context of a different entity for a binding with field
+				// help afterwards
+				oView.byId("form0").bindObject({path: "/SalesOrderSet('1')", parameters: {select: 'Note'}});
+
+				return Promise.all([
+					oUpdateCalledPromise,
+					this.waitForChanges(assert, "Bind SalesOrder to form0")
+				]);
+			}).then(() => {
+				const oUpdateCalledPromise = waitForUpdate(aExpectedHotspots, "late removing a binding context");
+				this.expectValue("Note0", "");
+
+				// code under test - field help is active; remove the context for a binding with field help afterwards
+				oView.byId("form0").unbindObject();
+
+				return Promise.all([
+					oUpdateCalledPromise,
+					this.waitForChanges(assert, "Unbind form0")
+				]);
+			});
 		}).finally(() => {
 			FieldHelp.getInstance().deactivate();
 		});
