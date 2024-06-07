@@ -93,6 +93,10 @@
 	.sapUiCalHeadPrev,
 	.sapUiCalHeadNext,
 	 .sapUiCalHeadToday {
+		&:not(.sapUiCalDsbl) .sapUiIcon {
+			cursor: pointer;
+		}
+
 		position: absolute;
 		width: 2.5rem;
 	}
@@ -242,7 +246,7 @@ html.sap-desktop .sapUiCalHead > button.sapUiCalDsbl:focus,
 }
 
 .sapUiCalWH,
-.sapUiCalItem{
+.sapUiCalItem {
 	display: block;
 	float: left;
 	-webkit-user-select: none;
@@ -284,7 +288,7 @@ html.sap-desktop .sapUiCalHead > button.sapUiCalDsbl:focus,
 	width: 12.5%;
 	color: @sapUiBaseText;
 	font-size: @sapMFontSmallSize;
-	cursor: default;
+	cursor: pointer;
 }
 
 .sapUiCalWH {
@@ -298,6 +302,7 @@ html.sap-desktop .sapUiCalHead > button.sapUiCalDsbl:focus,
 .sapUiCalItem {
 	color: @sapUiBaseText;
 	background-color: lighten(@sapUiContentForegroundColor,7);
+	cursor: pointer;
 }
 
 .sapUiCalItemDsbl {
