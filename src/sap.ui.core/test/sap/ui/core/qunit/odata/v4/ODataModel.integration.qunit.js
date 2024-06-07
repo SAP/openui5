@@ -38296,6 +38296,7 @@ make root = ${bMakeRoot}`;
 	// JIRA: CPOUI5ODATAV4-2342
 	//
 	// Request next sibling via group level cache (JIRA: CPOUI5ODATAV4-2558)
+	// Duplicate calls to #requestSibling (JIRA: CPOUI5ODATAV4-2618)
 	QUnit.test("Recursive Hierarchy: getParent/requestParent after requestSideEffects",
 			async function (assert) {
 		const sBaseUrl = "EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
@@ -38393,12 +38394,14 @@ make root = ${bMakeRoot}`;
 				}]
 			});
 
-		const [oDelta] = await Promise.all([
+		const [oDelta, oDelta0] = await Promise.all([
 			// code under test
+			oGamma.requestSibling(+1),
 			oGamma.requestSibling(+1),
 			this.waitForChanges(assert, "request Gamma's next sibling")
 		]);
 
+		assert.strictEqual(oDelta, oDelta0, "CPOUI5ODATAV4-2618");
 		assert.strictEqual(oDelta.getProperty("Name"), "Delta", "CPOUI5ODATAV4-2558");
 		// code under test
 		assert.strictEqual(oGamma.getSibling(+1), oDelta, "CPOUI5ODATAV4-2558");
@@ -38502,12 +38505,14 @@ make root = ${bMakeRoot}`;
 				}]
 			});
 
-		const [oOmega] = await Promise.all([
+		const [oOmega, oOmega0] = await Promise.all([
 			// code under test
+			oResult.requestSibling(),
 			oResult.requestSibling(),
 			this.waitForChanges(assert, "request Alpha's next sibling")
 		]);
 
+		assert.strictEqual(oOmega, oOmega0, "CPOUI5ODATAV4-2618");
 		assert.strictEqual(oOmega.getIndex(), 5, "CPOUI5ODATAV4-2558");
 		assert.strictEqual(oOmega.getPath(), "/EMPLOYEES('9')");
 		assert.deepEqual(oOmega.getObject(), {
@@ -39429,6 +39434,8 @@ make root = ${bMakeRoot}`;
 	// works together with paging. Turn siblings into placeholders again and request a previous
 	// sibling which is known, but there are children in between which have not yet been loaded.
 	// JIRA: CPOUI5ODATAV4-2558
+	//
+	// Duplicate calls to #requestSibling (JIRA: CPOUI5ODATAV4-2618)
 	QUnit.test("Recursive Hierarchy: requestSibling via 1st level cache", async function (assert) {
 		const sFriend = "/Artists(ArtistID='99',IsActiveEntity=false)/_Friend";
 		const sBaseUrl = sFriend.slice(1) + "?custom=foo&$apply=ancestors($root" + sFriend
@@ -39449,6 +39456,7 @@ make root = ${bMakeRoot}`;
 					hierarchyQualifier : 'OrgChart',
 					search : 'covfefe'
 				},
+				$$ownRequest : true,
 				$filter : 'sendsAutographs',
 				$orderby : 'defaultChannel desc',
 				custom : 'foo'
@@ -39529,33 +39537,37 @@ make root = ${bMakeRoot}`;
 		//   4 Epsilon
 		//     5 Zeta (not loaded)
 		//   6 Eta (loaded later)
-		this.expectRequest(sBaseUrl + sExpand
-				+ "&$filter=_/Limited_Rank lt '3' and _/DistanceFromRoot lt '2'"
-				+ "&$orderby=_/Limited_Rank desc&$select=ArtistID,IsActiveEntity,Name"
+		for (let i = 0; i < 2; i += 1) {
+			this.expectRequest(sBaseUrl + sExpand
+					+ "&$filter=_/Limited_Rank lt '3' and _/DistanceFromRoot lt '2'"
+					+ "&$orderby=_/Limited_Rank desc&$select=ArtistID,IsActiveEntity,Name"
 					+ ",_/DescendantCount,_/DistanceFromRoot,_/DrillState,_/Limited_Rank,_/NodeID"
-				+ "&$top=1", {
-				value : [{
-					"@odata.etag" : "etag1.0",
-					ArtistID : "1",
-					BestFriend : {
-						ArtistID : "1*",
+					+ "&$top=1", {
+					value : [{
+						"@odata.etag" : "etag1.0",
+						ArtistID : "1",
+						BestFriend : {
+							ArtistID : "1*",
+							IsActiveEntity : false,
+							Name : "Beta's Friend"
+						},
 						IsActiveEntity : false,
-						Name : "Beta's Friend"
-					},
-					IsActiveEntity : false,
-					Name : "Beta",
-					_ : {
-						DescendantCount : "1",
-						DistanceFromRoot : "1",
-						DrillState : "expanded",
-						Limited_Rank : "1",
-						NodeID : "1,false"
-					}
-				}]
-			});
+						Name : "Beta",
+						_ : {
+							DescendantCount : "1",
+							DistanceFromRoot : "1",
+							DrillState : "expanded",
+							Limited_Rank : "1",
+							NodeID : "1,false"
+						}
+					}]
+				});
+		}
 
-		let [oBeta] = await Promise.all([
+		// eslint-disable-next-line prefer-const
+		let [oBeta, oBeta0] = await Promise.all([
 			// code under test
+			oDelta.requestSibling(-1),
 			oDelta.requestSibling(-1),
 			this.waitForChanges(assert, "request Delta's previous sibling")
 		]);
@@ -39568,6 +39580,7 @@ make root = ${bMakeRoot}`;
 			[undefined, 2, "etag3.0", "3", "Delta", "3,false", "Delta's Friend"],
 			[true, 2, "etag4.0", "4", "Epsilon", "4,false", "Epsilon's Friend"]
 		], 7);
+		assert.strictEqual(oBeta, oBeta0, "CPOUI5ODATAV4-2618");
 		assert.strictEqual(oBeta.getIndex(), 1, "CPOUI5ODATAV4-2558");
 		assert.strictEqual(oBeta.getPath(), sFriend + "(ArtistID='1',IsActiveEntity=false)");
 		assert.deepEqual(oBeta.getObject(), {
@@ -39588,6 +39601,18 @@ make root = ${bMakeRoot}`;
 		}, "no Limited_Rank");
 		// code under test
 		assert.strictEqual(oDelta.getSibling(-1), oBeta, "CPOUI5ODATAV4-2558");
+
+		//TODO what a stupid request :-(
+		this.expectRequest(sFriend.slice(1) + "(ArtistID='6',IsActiveEntity=false)"
+				+ "?custom=foo&$select=ArtistID,IsActiveEntity", {
+					ArtistID : "6",
+					IsActiveEntity : false
+				});
+
+		const oEta0
+			= oListBinding.getKeepAliveContext(sFriend + "(ArtistID='6',IsActiveEntity=false)");
+
+		await this.waitForChanges(assert, "request Eta as keep alive outside the collection");
 
 		// 0 Alpha (not loaded)
 		//   1 Beta
@@ -39653,6 +39678,8 @@ make root = ${bMakeRoot}`;
 				NodeID : "6,false"
 			}
 		}, "no Limited_Rank");
+		assert.strictEqual(oEta, oEta0, "keep alive context reused");
+		oEta0.setKeepAlive(false); // not needed anymore...
 
 		this.expectRequest(sBaseUrl + sSelect + sExpand + "&$skip=0&$top=1", {
 				value : [{

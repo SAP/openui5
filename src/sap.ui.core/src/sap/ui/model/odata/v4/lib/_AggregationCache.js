@@ -896,7 +896,7 @@ sap.ui.define([
 				this.oFirstLevel.calculateKeyPredicate(oParent, this.getTypes(), this.sMetaPath);
 
 				const iParentIndex = this.findIndex(iRank);
-				if (_Helper.getPrivateAnnotation(this.aElements[iParentIndex], "placeholder")) {
+				if (_Helper.hasPrivateAnnotation(this.aElements[iParentIndex], "placeholder")) {
 					this.insertNode(oParent, iRank, iParentIndex);
 				} // else: parent already inside collection
 
@@ -2112,7 +2112,9 @@ sap.ui.define([
 		this.oFirstLevel.calculateKeyPredicate(oSibling, this.getTypes(), this.sMetaPath);
 		const iSiblingRank = parseInt(_Helper.drillDown(oSibling, this.oAggregation.$LimitedRank));
 		_Helper.deleteProperty(oSibling, this.oAggregation.$LimitedRank);
-		this.insertNode(oSibling, iSiblingRank);
+		if (_Helper.hasPrivateAnnotation(this.aElements[iSiblingRank], "placeholder")) {
+			this.insertNode(oSibling, iSiblingRank);
+		} // else: sibling already inside collection
 
 		return oSibling["@$ui5.node.level"] === oNode["@$ui5.node.level"]
 			? iSiblingRank
