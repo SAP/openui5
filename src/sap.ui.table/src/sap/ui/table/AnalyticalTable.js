@@ -349,7 +349,6 @@ sap.ui.define([
 			 * sap.ui.table.ColumnMenu is deprecated.
 			 */
 			this._invalidateColumnMenus(); // Metadata might change.
-			this._applyODataModelAnalyticalAdapter(oBindingInfo.model);
 
 			// make sure to reset the first visible row (currently needed for the analytical binding)
 			// TODO: think about a boundary check to reset the firstvisiblerow if out of bounds
@@ -402,12 +401,6 @@ sap.ui.define([
 				sExpandMode = "Bundled";
 			}
 			oBindingInfo.parameters.autoExpandMode = sExpandMode;
-		}
-	};
-
-	AnalyticalTable.prototype._applyODataModelAnalyticalAdapter = function(oModel) {
-		if (oModel) {
-			ODataModelAdapter.apply(oModel);
 		}
 	};
 
