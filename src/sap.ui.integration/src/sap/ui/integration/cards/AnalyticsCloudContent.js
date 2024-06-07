@@ -90,7 +90,7 @@ sap.ui.define([
 	/**
 	 * @override
 	 */
-	BaseContent.prototype.getStaticConfiguration = function () {
+	AnalyticsCloudContent.prototype.getStaticConfiguration = function () {
 		return this._getResolvedConfiguration();
 	};
 
