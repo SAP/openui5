@@ -1079,5 +1079,20 @@
         "text": " sap.m.Input: Prevent value DOM update when password type is used"
       }
     ]
+  },
+  "1.121.5": {
+    "date": "June 2024",
+    "notes": [
+      {
+        "id": "d6a3ad7761e640c92fdbee8455855d56dfbc9795",
+        "type": "FIX",
+        "text": " sap.m.Button: Back type button has correct hover colour"
+      },
+      {
+        "id": "18286a617d423382d47f450b75543a8fb19ec827",
+        "type": "FIX",
+        "text": " sap.m.Input: Value is not cleared on invalidation when type password is used"
+      }
+    ]
   }
 }

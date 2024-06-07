@@ -106,5 +106,15 @@
         ]
       }
     ]
+  },
+  "1.121.5": {
+    "date": "June 2024",
+    "notes": [
+      {
+        "id": "bf8788c3ec0e66aa5e6c8386c6170bfbf249b396",
+        "type": "FIX",
+        "text": " sap-icons-tnt: Fixed wrong icon names"
+      }
+    ]
   }
 }

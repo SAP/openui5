@@ -620,5 +620,25 @@
         "text": " sap.ui.model.type.Unit: amount scale is used instead of unit's decimal places"
       }
     ]
+  },
+  "1.121.5": {
+    "date": "June 2024",
+    "notes": [
+      {
+        "id": "0eaf7c45cd103d1b2f03f3de58116642ad8c78be",
+        "type": "FIX",
+        "text": " sap.ui.core.format.DateFormat.qunit: Fix flaky tests"
+      },
+      {
+        "id": "936e6b506dee4b441230173af6448bfeed760c90",
+        "type": "FIX",
+        "text": " sap\\ui\\core\\format\\DateFormat.fnCreateDate: set UTCFullYear must be set with all components"
+      },
+      {
+        "id": "d5a91ba0ebb618479047c0dc2a35a4b6307b44de",
+        "type": "FIX",
+        "text": " sap.ui.model.type.(Currency|Unit): use amount scale default 0 instead of currency's or unit's decimal places"
+      }
+    ]
   }
 }
