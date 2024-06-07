@@ -38084,9 +38084,11 @@ make root = ${bMakeRoot}`;
 	});
 
 	//*********************************************************************************************
-	// Scenario: A hierarchy uses "$$aggregation.createInPlace". Create a root node which is created
-	// and shown in-place between two existing nodes. Use the special cases model to ensure the node
-	// property is properly requested.
+	// Scenario: A hierarchy uses "$$aggregation.createInPlace".
+	// Create a node, but because of a filter this node doesn't become part of the hierarchy and is
+	// therefore not displayed.
+	// Create a root node which is created and shown in-place between two existing nodes. Use the
+	// special cases model to ensure the node property is properly requested.
 	// Expand a node to see that createInPlace activated a unified cache (side-effects expand).
 	// JIRA: CPOUI5ODATAV4-2560
 	QUnit.test("Recursive Hierarchy: createInPlace, root", async function (assert) {
@@ -38151,6 +38153,47 @@ make root = ${bMakeRoot}`;
 			[false, 1, "2", "Beta", "2,false"]
 		]);
 		const oListBinding = oTable.getBinding("rows");
+
+		this.expectRequest({
+				method : "POST",
+				url : "Artists",
+				payload : {
+					Name : "FilteredOut"
+				}
+			}, {
+				ArtistID : "42",
+				IsActiveEntity : false,
+				Name : "FilteredOut",
+				_ : null // not available w/ RAP for a non-hierarchical request
+			})
+			.expectRequest(sUrl
+				+ "&$filter=ArtistID eq '42' and IsActiveEntity eq false"
+				+ "&$select=_/Limited_Rank,_/NodeID", {
+				value : [] // filtered out
+			});
+
+		// code under test
+		const oFilteredOut = oListBinding.create({
+			Name : "FilteredOut"
+		}, /*bSkipRefresh*/true);
+
+		await Promise.all([
+			oFilteredOut.created(),
+			this.waitForChanges(assert, "create FilteredOut")
+		]);
+
+		assert.strictEqual(oFilteredOut.getIndex(), undefined, "not part of the hierarchy");
+		assert.strictEqual(oFilteredOut.isTransient(), undefined);
+		assert.strictEqual(oFilteredOut.getPath(), "/Artists(ArtistID='42',IsActiveEntity=false)");
+		assert.strictEqual(oFilteredOut.getBinding(), undefined, "FilteredOut is destroyed");
+		checkTable("after create FilteredOut", assert, oTable, [
+			"/Artists(ArtistID='1',IsActiveEntity=false)",
+			"/Artists(ArtistID='2',IsActiveEntity=false)"
+		], [
+			[undefined, 1, "1", "Alpha", "1,false"],
+			[false, 1, "2", "Beta", "2,false"]
+		]);
+		assert.strictEqual(oListBinding.getCount(), 3);
 
 		this.expectRequest({
 				method : "POST",

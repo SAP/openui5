@@ -1988,7 +1988,7 @@ sap.ui.define([
 			this.sMetaPath, undefined, false, {$select : aSelect}, this);
 		const oRequestedProperties = oResult.value[0];
 
-		if (bInheritResult) {
+		if (bInheritResult && oRequestedProperties) {
 			aSelect.forEach((sPath) => {
 				_Helper.inheritPathValue(sPath.split("/"), oRequestedProperties, oElement, true);
 			});
