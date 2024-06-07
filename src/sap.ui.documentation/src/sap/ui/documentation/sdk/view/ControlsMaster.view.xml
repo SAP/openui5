@@ -22,7 +22,7 @@
 
 		<!-- Navigation List -->
 		<content>
-			<l:FixFlex fixFirst="false">
+			<l:FixFlex id="treeContainer" fixFirst="false" minFlexSize="100">
 				<l:flexContent>
 					<List id="exploredMasterList"
 							mode="{viewModel>/listMode}"
