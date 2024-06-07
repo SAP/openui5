@@ -43,4 +43,21 @@
 			</VBox>
 		</HBox>
 	</VBox>
+
+	<VBox class="sapUiSmallMargin">
+		<Label text="RadioButton Wrapping" labelFor="groupF" />
+		<RadioButtonGroup id="groupF">
+			<RadioButton
+				width="240px"
+				wrapping="true"
+				wrappingType="Normal"
+				text='Long text with "wrapping" set to "true" and "wrappingType" set to "Normal"'
+				selected="true" />
+			<RadioButton
+				width="120px"
+				wrapping="true"
+				wrappingType="Hyphenated"
+				text='Long text with "wrapping" set to "true" and "wrappingType" set to "Hyphenated"' />
+		</RadioButtonGroup>
+	</VBox>
 </mvc:View>

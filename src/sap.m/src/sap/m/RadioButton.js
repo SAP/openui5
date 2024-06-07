@@ -36,6 +36,9 @@ function(
 	// shortcut for sap.ui.core.TextDirection
 	var TextDirection = coreLibrary.TextDirection;
 
+	// shortcut for sap.m.WrappingType
+	var WrappingType = library.WrappingType;
+
 	var getNextSelectionNumber = (function () {
 		var i = 0;
 		return function () {
@@ -183,8 +186,20 @@ function(
 				 * Defines the text that appears in the tooltip of the <code>RadioButton</code>. If this is not specified, a default text is shown from the resource bundle.
 				 * @private
 				 */
-				valueStateText: { type: "string", group: "Misc", defaultValue: null, visibility: "hidden" }
+				valueStateText: { type: "string", group: "Misc", defaultValue: null, visibility: "hidden" },
 
+				/**
+				 * Determines the wrapping of the text within the <code>Radio Button</code> label.
+				 * When set to <code>false</code> (default), the label text will be truncated and an ellipsis will be added at the end. If set to <code>true</code>, the label text will wrap.
+				 * @since 1.126
+				 */
+				wrapping: {type : "boolean", group : "Appearance", defaultValue : false},
+
+				/**
+				 * Defines the type of wrapping to be used for the label text (hyphenated or normal).
+				 * @since 1.126
+				 */
+				wrappingType : {type: "sap.m.WrappingType", group : "Appearance", defaultValue : WrappingType.Normal}
 			},
 			events : {
 				/**
@@ -565,7 +580,9 @@ function(
 		oLabel.setText(sText)
 			.setWidth(!bUseEntireWidth ? this.getWidth() : "auto")
 			.setTextDirection(this.getTextDirection())
-			.setTextAlign(this.getTextAlign());
+			.setTextAlign(this.getTextAlign())
+			.setWrappingType(this.getWrappingType())
+			.setWrapping(this.getWrapping());
 	};
 
 	/**
