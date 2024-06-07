@@ -131,6 +131,30 @@ sap.ui.define([
 		},
 
 		/**
+		 * Gets the list of all features that the current user has already set to 'Don't show again'.
+		 *
+		 * @param {object} mPropertyBag - Property bag
+		 * @param {string} mPropertyBag.layer - Layer to get the correct connector
+		 * @returns {Promise<object>} Resolves with a list of viewed features
+		 */
+		getSeenFeatureIds(/* mPropertyBag */) {
+			return Promise.reject("getSeenFeatureIds is not implemented");
+		},
+
+		/**
+		 * Sets the list of all features that the current user has already set to 'Don't show again'.
+		 * The whole list has to be passed, not only the new entries.
+		 *
+		 * @param {object} mPropertyBag - Property bag
+		 * @param {string} mPropertyBag.layer - Layer to get the correct connector
+		 * @param {string} mPropertyBag.seenFeatureIds - List of feature IDs
+		 * @returns {Promise<object>} Resolves with a list of viewed features
+		 */
+		setSeenFeatureIds(/* mPropertyBag */) {
+			return Promise.reject("setSeenFeatureIds is not implemented");
+		},
+
+		/**
 		 * Interface to retrieve the variant management context information.
 		 * The context information is a JSON object that has boolean property 'lasthitreached'
 		 * indicating that the result is paginated and whether there are more contexts that can be fetched from the backend.
