@@ -3,11 +3,26 @@
  */
 sap.ui.define([
 	"sap/m/MessageBox",
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator",
+	"sap/ui/model/FilterType",
 	"sap/ui/core/sample/common/Controller"
-], function (MessageBox, Controller) {
+], function (MessageBox, Filter, FilterOperator, FilterType, Controller) {
 	"use strict";
 
 	return Controller.extend("sap.ui.core.sample.odata.v4.HierarchyBindAction.Main", {
+		create : async function (oParentContext, bFilteredOut) {
+			try {
+				const oContext = this.byId("table").getBinding("rows").create({
+					"@$ui5.node.parent" : oParentContext,
+					Description : bFilteredOut ? "Out" : ""
+				}, /*bSkipRefresh*/true);
+				await oContext.created();
+			} catch (oError) {
+				MessageBox.alert(oError.message, {icon : MessageBox.Icon.ERROR, title : "Error"});
+			}
+		},
+
 		onChangeHierarchy : function (oEvent) {
 			const oSource = oEvent.getSource();
 			const oContext = oSource.toString().includes("ODataListBinding")
@@ -24,23 +39,12 @@ sap.ui.define([
 			oView.setBindingContext(oRowsBinding.getHeaderContext(), "header");
 		},
 
-		onCreate : async function (oEvent) {
-			try {
-				const oParentContext = oEvent.getSource().getBindingContext();
-				await oParentContext.getBinding().create({
-					"@$ui5.node.parent" : oParentContext
-				}, /*bSkipRefresh*/true);
-			} catch (oError) {
-				MessageBox.alert(oError.message, {icon : MessageBox.Icon.ERROR, title : "Error"});
-			}
+		onCreate : function (oEvent, bFilteredOut) {
+			this.create(oEvent.getSource().getBindingContext(), bFilteredOut);
 		},
 
-		onCreateRoot : async function () {
-			try {
-				await this.byId("table").getBinding("rows").create({}, /*bSkipRefresh*/true);
-			} catch (oError) {
-				MessageBox.alert(oError.message, {icon : MessageBox.Icon.ERROR, title : "Error"});
-			}
+		onCreateRoot : function (_oEvent, bFilteredOut) {
+			this.create(null, bFilteredOut);
 		},
 
 		onDelete : async function (oEvent) {
@@ -80,6 +84,10 @@ sap.ui.define([
 
 				this.byId("selectHierarchy").getBinding("items")
 					.attachEventOnce("dataReceived", this.onChangeHierarchy.bind(this));
+
+				this.byId("table").getBinding("rows").filter(
+					new Filter("Description", FilterOperator.NotStartsWith, "Out"),
+					FilterType.Control);
 
 				this.initMessagePopover("table");
 			}, this);
@@ -226,12 +234,14 @@ sap.ui.define([
 			}
 		},
 
-		onRefresh : function () {
-			this.byId("table").getBindingContext().refresh();
-		},
+		onRefresh : function (_oEvent, bKeepTreeState) {
+			var oTable = this.byId("table");
 
-		onSynchronize : function () {
-			this.byId("table").getBinding("rows").getHeaderContext().requestSideEffects([""]);
+			if (bKeepTreeState) {
+				oTable.getBinding("rows").getHeaderContext().requestSideEffects([""]);
+			} else {
+				oTable.getBindingContext().refresh();
+			}
 		}
 	});
 });

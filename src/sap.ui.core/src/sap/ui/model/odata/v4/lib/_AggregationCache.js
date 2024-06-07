@@ -430,7 +430,10 @@ sap.ui.define([
 	_AggregationCache.prototype.countDescendants = function (oGroupNode, iIndex) {
 		var i;
 
-		let iGroupNodeLevel = oGroupNode["@$ui5.node.level"];
+		let iGroupNodeLevel = oGroupNode["@$ui5.node.level"]; // max level of oGroupNode's cache
+		// We have to check a candidate's rank if oGroupNode is in oFirstLevel
+		// Note: expandTo may be undefined (when using data aggregation)
+		let bCheckRank = iGroupNodeLevel <= this.oAggregation.expandTo;
 		let iDescendants = _Helper.getPrivateAnnotation(oGroupNode, "descendants");
 		if (iDescendants) { // => this.oAggregation.expandTo > 1
 			// Note: "descendants" refers to LimitedDescendantCount and counts descendants within
@@ -439,10 +442,14 @@ sap.ui.define([
 		}
 		if (this.bUnifiedCache) {
 			iGroupNodeLevel = Infinity;
+			bCheckRank = true;
 		}
 		const aElements = this.aElements;
 		for (i = iIndex + 1; i < aElements.length; i += 1) {
-			if (aElements[i]["@$ui5.node.level"] <= iGroupNodeLevel) {
+			// If the candidate is not in a nested level cache and (in oFirstLevel) it has a rank,
+			// it counts as descendant. Or it is a sibling if oGroupNode did not have descendants.
+			if (aElements[i]["@$ui5.node.level"] <= iGroupNodeLevel
+					&& (!bCheckRank || _Helper.hasPrivateAnnotation(aElements[i], "rank"))) {
 				// Note: level 0 or 1 is used for initial placeholders of 1st level cache!
 				if (!iDescendants) {
 					break; // we've reached a sibling of the collapsed node
@@ -527,9 +534,6 @@ sap.ui.define([
 				if (this.oAggregation.createInPlace) {
 					return;
 				}
-				if (oCache === this.oFirstLevel) {
-					this.adjustDescendantCount(oEntityData, iIndex, -1);
-				}
 				aElements.$count -= 1;
 				delete aElements.$byPredicate[sTransientPredicate];
 				aElements.splice(iIndex, 1);
@@ -553,15 +557,13 @@ sap.ui.define([
 			aElements.splice(iIndex0, 0, null); // create a gap
 			this.addElements(oEntityData, iIndex0, oCache, iRank);
 			aElements.$count += 1;
-			if (oCache === this.oFirstLevel) {
-				this.adjustDescendantCount(oEntityData, iIndex0, +1);
-			}
 		};
 		const completeCreation = (iIndex0, iRank) => {
 			oCache.removeElement(0);
 			_Helper.deletePrivateAnnotation(oEntityData, "transientPredicate");
 			delete aElements.$byPredicate[sTransientPredicate];
 			if (iRank !== undefined) {
+				this.adjustDescendantCount(oEntityData, iIndex0, +1);
 				oCache.restoreElement(iRank, oEntityData);
 				_Helper.setPrivateAnnotation(oEntityData, "rank", iRank);
 				this.shiftRank(iIndex0, +1);
