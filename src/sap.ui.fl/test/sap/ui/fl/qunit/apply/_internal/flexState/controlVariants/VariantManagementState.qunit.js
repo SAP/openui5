@@ -533,10 +533,12 @@ sap.ui.define([
 			stubFlexObjectsSelector([
 				oVariantManagementChange,
 				createVariant({
+					title: "variant1",
 					variantReference: sVariantManagementReference,
 					fileName: "variant1"
 				}),
 				createVariant({
+					title: "variant2",
 					variantReference: sVariantManagementReference,
 					fileName: "variant2"
 				}),
