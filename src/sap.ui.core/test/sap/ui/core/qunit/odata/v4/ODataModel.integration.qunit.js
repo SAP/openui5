@@ -99,6 +99,7 @@ sap.ui.define([
 	 */
 	function checkAggregationCache(sTitle, assert, oListBinding) {
 		const aParentByLevel = [];
+		const bCreateInPlace = oListBinding.getAggregation().createInPlace;
 
 		function checkCache(oCache) {
 			for (let i = 0, n = oCache.aElements.$created; i < n; i += 1) {
@@ -148,7 +149,7 @@ sap.ui.define([
 				// every "created" element needs to know its context (if not using createInPlace!),
 				// no others must do so
 				strictEqual(oElement["@$ui5.context.isTransient"] !== undefined
-						&& !oListBinding.getAggregation().createInPlace,
+						&& !bCreateInPlace,
 					 _Helper.hasPrivateAnnotation(oElement, "context"),
 					`"context" @ level ${iLevel}`, oElement);
 				if (_Helper.hasPrivateAnnotation(oElement, "context")) {
@@ -202,6 +203,7 @@ sap.ui.define([
 
 				const oCache = _Helper.getPrivateAnnotation(oElement, "cache");
 				if (oCache) {
+					strictEqual(bCreateInPlace, undefined, "must not have a level cache", oElement);
 					checkCache(oCache);
 					aParentByLevel[iLevel + 1] = oCache;
 				}
@@ -37841,6 +37843,10 @@ make root = ${bMakeRoot}`;
 	// inserted "in place" at the last sibling position.
 	// Create a child below a leaf, also on a level within the given expandTo range.
 	// JIRA: CPOUI5ODATAV4-2560
+	//
+	// If a created node is filtered out, check that its parent doesn't become expanded, neither
+	// during the pending creation nor after the creation is completed.
+	// JIRA: CPOUI5ODATAV4-2623
 	QUnit.test("Recursive Hierarchy: createInPlace", async function (assert) {
 		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
 		const sSelect = "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name";
@@ -37858,7 +37864,7 @@ make root = ${bMakeRoot}`;
 			},
 			$count : true,
 			$filter : 'Is_Manager'
-		}}" threshold="0" visibleRowCount="1">
+		}}" threshold="0" visibleRowCount="2">
 	<Text text="{= %{@$ui5.node.isExpanded} }"/>
 	<Text text="{= %{@$ui5.node.level} }"/>
 	<Text text="{ID}"/>
@@ -37872,7 +37878,7 @@ make root = ${bMakeRoot}`;
 		//   5 Epsilon (created)
 		// (42 FilteredOut (created, but filtered out))
 		this.expectRequest("EMPLOYEES/$count?$filter=Is_Manager", 3)
-			.expectRequest(sUrl + sSelect + "&$count=true&$skip=0&$top=1", {
+			.expectRequest(sUrl + sSelect + "&$count=true&$skip=0&$top=2", {
 				"@odata.count" : "3",
 				value : [{
 					DescendantCount : "1",
@@ -37880,6 +37886,12 @@ make root = ${bMakeRoot}`;
 					DrillState : "expanded",
 					ID : "1",
 					Name : "Alpha"
+				}, {
+					DescendantCount : "0",
+					DistanceFromRoot : "1",
+					DrillState : "leaf",
+					ID : "3",
+					Name : "Gamma"
 				}]
 			});
 
@@ -37887,16 +37899,20 @@ make root = ${bMakeRoot}`;
 
 		const oTable = this.oView.byId("table");
 		checkTable("initial page", assert, oTable, [
-			"/EMPLOYEES('1')"
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('3')"
 		], [
-			[true, 1, "1", "Alpha"]
+			[true, 1, "1", "Alpha"],
+			[undefined, 2, "3", "Gamma"]
 		], 3);
 		const oListBinding = oTable.getBinding("rows");
+		const [oAlpha, oGamma] = oListBinding.getAllCurrentContexts();
 
 		this.expectRequest({
 				method : "POST",
 				url : "EMPLOYEES",
 				payload : {
+					"EMPLOYEE_2_MANAGER@odata.bind" : "EMPLOYEES('3')",
 					Name : "FilteredOut"
 				}
 			}, {
@@ -37909,15 +37925,19 @@ make root = ${bMakeRoot}`;
 
 		// code under test
 		const oFilteredOut = oListBinding.create({
+			"@$ui5.node.parent" : oGamma,
 			Name : "FilteredOut"
 		}, /*bSkipRefresh*/true);
 
 		assert.strictEqual(oFilteredOut.getIndex(), undefined);
 		assert.strictEqual(oFilteredOut.isTransient(), true);
+		assert.strictEqual(oFilteredOut.isExpanded(), undefined, "CPOUI5ODATAV4-2623");
 		checkTable("while create FilteredOut is pending", assert, oTable, [
-			"/EMPLOYEES('1')"
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('3')"
 		], [
-			[true, 1, "1", "Alpha"]
+			[true, 1, "1", "Alpha"],
+			[undefined, 2, "3", "Gamma"]
 		], 3);
 		assert.strictEqual(oListBinding.getCount(), 3);
 
@@ -37934,20 +37954,16 @@ make root = ${bMakeRoot}`;
 			oFilteredOut.setKeepAlive(true);
 		}, "already destroyed");
 		checkTable("after create FilteredOut", assert, oTable, [
-			"/EMPLOYEES('1')"
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('3')"
 		], [
-			[true, 1, "1", "Alpha"]
+			[true, 1, "1", "Alpha"],
+			[undefined, 2, "3", "Gamma"]
 		], 3);
 		assert.strictEqual(oListBinding.getCount(), 3);
 
-		this.expectRequest(sUrl + sSelect + "&$skip=1&$top=2", {
+		this.expectRequest(sUrl + sSelect + "&$skip=2&$top=1", {
 				value : [{
-					DescendantCount : "0",
-					DistanceFromRoot : "1",
-					DrillState : "leaf",
-					ID : "3",
-					Name : "Gamma"
-				}, {
 					DescendantCount : "0",
 					DistanceFromRoot : "0",
 					DrillState : "leaf",
@@ -37962,7 +37978,6 @@ make root = ${bMakeRoot}`;
 				[undefined, 2, "3", "Gamma"],
 				[undefined, 1, "2", "Beta"]
 			]);
-		const oAlpha = oListBinding.getAllCurrentContexts()[0];
 
 		// code under test
 		const oLostChild = oListBinding.create({
@@ -37983,7 +37998,8 @@ make root = ${bMakeRoot}`;
 			"/EMPLOYEES('3')",
 			"/EMPLOYEES('2')"
 		], [
-			[true, 1, "1", "Alpha"]
+			[true, 1, "1", "Alpha"],
+			[undefined, 2, "3", "Gamma"]
 		]);
 		assert.strictEqual(oListBinding.getCount(), 3);
 
@@ -38016,7 +38032,8 @@ make root = ${bMakeRoot}`;
 			"/EMPLOYEES('3')",
 			"/EMPLOYEES('2')"
 		], [
-			[true, 1, "1", "Alpha"]
+			[true, 1, "1", "Alpha"],
+			[undefined, 2, "3", "Gamma"]
 		]);
 		assert.strictEqual(oListBinding.getCount(), 3);
 
@@ -38068,7 +38085,8 @@ make root = ${bMakeRoot}`;
 			"/EMPLOYEES('4')",
 			"/EMPLOYEES('2')"
 		], [
-			[true, 1, "1", "Alpha"]
+			[true, 1, "1", "Alpha"],
+			[undefined, 2, "3", "Gamma"]
 		]);
 		assert.strictEqual(oListBinding.getCount(), 3);
 

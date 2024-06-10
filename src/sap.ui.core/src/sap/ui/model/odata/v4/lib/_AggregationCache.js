@@ -501,18 +501,11 @@ sap.ui.define([
 		if (oParentNode?.["@$ui5.node.isExpanded"] === false) {
 			throw new Error("Unsupported collapsed parent: " + sParentPath);
 		}
-		if (oParentNode && oParentNode["@$ui5.node.isExpanded"] === undefined) {
-			_Helper.updateAll(this.mChangeListeners, sParentPredicate, oParentNode,
-				{"@$ui5.node.isExpanded" : true}); // not a leaf anymore
-			if (oParentNode["@$ui5.node.level"] >= this.oAggregation.expandTo) {
-				this.oTreeState.expand(oParentNode);
-			} // else: already expanded automatically
-		}
 
 		const iLevel = oParentNode
 			? oParentNode["@$ui5.node.level"] + 1
 			: 1;
-		let oCache = iLevel > this.oAggregation.expandTo
+		let oCache = iLevel > this.oAggregation.expandTo && !this.oAggregation.createInPlace
 			? _Helper.getPrivateAnnotation(oParentNode, "cache")
 			: this.oFirstLevel;
 		if (!oCache) {
@@ -544,6 +537,13 @@ sap.ui.define([
 		}
 
 		const addElement = (iIndex0, iRank) => {
+			if (oParentNode && oParentNode["@$ui5.node.isExpanded"] === undefined) {
+				_Helper.updateAll(this.mChangeListeners, sParentPredicate, oParentNode,
+					{"@$ui5.node.isExpanded" : true}); // not a leaf anymore
+				if (oParentNode["@$ui5.node.level"] >= this.oAggregation.expandTo) {
+					this.oTreeState.expand(oParentNode);
+				} // else: already expanded automatically
+			}
 			oEntityData["@$ui5.node.level"] = iLevel; // do not send via POST!
 			aElements.splice(iIndex0, 0, null); // create a gap
 			this.addElements(oEntityData, iIndex0, oCache, iRank);
