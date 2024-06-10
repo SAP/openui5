@@ -122,26 +122,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Throws an error that the response is being ignored if the current cache is not the expected
-	 * one. The error has the property <code>canceled : true</code>
-	 *
-	 * @param {sap.ui.model.odata.v4.lib._Cache} oExpectedCache - The expected cache
-	 * @throws {Error} If the current cache is not the expected one
-	 *
-	 * @private
-	 */
-	ODataBinding.prototype.assertSameCache = function (oExpectedCache) {
-		var oError;
-
-		if (this.oCache !== oExpectedCache) {
-			oError = new Error(this + " is ignoring response from inactive cache: "
-				+ oExpectedCache);
-			oError.canceled = true;
-			throw oError;
-		}
-	};
-
-	/**
 	 * Checks binding-specific parameters from the given map. "Binding-specific" parameters are
 	 * those with a key starting with '$$', i.e. OData query options provided as binding parameters
 	 * are ignored. The following parameters are supported, if the parameter name is contained in
@@ -246,6 +226,26 @@ sap.ui.define([
 					throw new Error("Unknown binding-specific parameter: " + sKey);
 			}
 		});
+	};
+
+	/**
+	 * Throws an error that the response is being ignored if the current cache is not the expected
+	 * one. The error has the property <code>canceled : true</code>
+	 *
+	 * @param {sap.ui.model.odata.v4.lib._Cache} oExpectedCache - The expected cache
+	 * @throws {Error} If the current cache is not the expected one
+	 *
+	 * @private
+	 */
+	ODataBinding.prototype.checkSameCache = function (oExpectedCache) {
+		var oError;
+
+		if (this.oCache !== oExpectedCache) {
+			oError = new Error(this + " is ignoring response from inactive cache: "
+				+ oExpectedCache);
+			oError.canceled = true;
+			throw oError;
+		}
 	};
 
 	/**
