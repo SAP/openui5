@@ -157,7 +157,6 @@ sap.ui.define([
 
 				/**
 				 * Fires when new child is added
-				 * @private
 				 */
 				childAdded: {},
 
