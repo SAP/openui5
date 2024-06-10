@@ -186,7 +186,7 @@ sap.ui.define(["sap/ui/performance/XHRInterceptor", "sap/ui/thirdparty/URI"], fu
 	};
 
 	function isCORSRequest(sUrl) {
-		var sHost = new URI(sUrl).host();
+		var sHost = new URI(sUrl.toString()).host();
 		// url is relative or with same host
 		return sHost && sHost !== HOST;
 	}

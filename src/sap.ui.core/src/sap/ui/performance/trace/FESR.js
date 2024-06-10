@@ -55,7 +55,7 @@ sap.ui.define([
 	}
 
 	function isCORSRequest(sUrl) {
-		var sHost = new URI(sUrl).host();
+		var sHost = new URI(sUrl.toString()).host();
 		// url is relative or with same host
 		return sHost && sHost !== HOST;
 	}
