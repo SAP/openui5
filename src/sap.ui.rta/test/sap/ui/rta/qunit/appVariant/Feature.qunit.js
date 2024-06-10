@@ -76,7 +76,7 @@ sap.ui.define([
 		);
 	}
 
-	function handleWarningDialog() {
+	function handleShowMessageDialog() {
 		return sandbox.stub(MessageBox, "show").callsFake(function(_, mParameters) {
 			mParameters.onClose("Close");
 		});
@@ -93,6 +93,47 @@ sap.ui.define([
 
 		assert.equal(aCalls[2].args[1].title, "Error", "then the correct dialog title is shown");
 		assert.ok(aCalls[2].args[0].getContent()[0].getText().includes("Please assign the app variant"), "then the correct dialog message is shown");
+	}
+
+	function sleep() {
+		return new Promise((resolve) => {
+			setTimeout(resolve, 200);
+		});
+	}
+
+	function getAppVariantOverviewAttributesData() {
+		return [
+			{
+				appId: "id1",
+				title: "title1",
+				subTitle: "subTitle1",
+				description: "description1",
+				icon: "sap-icon://history",
+				isOriginal: true,
+				typeOfApp: "Original App",
+				descriptorUrl: "url1"
+			},
+			{
+				appId: "id2",
+				title: "title2",
+				subTitle: "subTitle2",
+				description: "description2",
+				icon: "sap-icon://history",
+				isOriginal: false,
+				typeOfApp: "App Variant",
+				descriptorUrl: "url2"
+			},
+			{
+				appId: "id3",
+				title: "title3",
+				subTitle: "subTitle3",
+				description: "description3",
+				icon: "sap-icon://history",
+				isOriginal: false,
+				typeOfApp: "App Variant",
+				descriptorUrl: "url3"
+			}
+		];
 	}
 
 	QUnit.module("Given that a RtaAppVariantFeature is instantiated", {
@@ -189,40 +230,7 @@ sap.ui.define([
 
 			sandbox.stub(FlUtils, "getAppDescriptor").returns(oMockedDescriptorData);
 
-			var aAppVariantOverviewAttributes = [
-				{
-					appId: "id1",
-					title: "title1",
-					subTitle: "subTitle1",
-					description: "description1",
-					icon: "sap-icon://history",
-					isOriginal: true,
-					typeOfApp: "Original App",
-					descriptorUrl: "url1"
-				},
-				{
-					appId: "id2",
-					title: "title2",
-					subTitle: "subTitle2",
-					description: "description2",
-					icon: "sap-icon://history",
-					isOriginal: false,
-					typeOfApp: "App Variant",
-					descriptorUrl: "url2"
-				},
-				{
-					appId: "id3",
-					title: "title3",
-					subTitle: "subTitle3",
-					description: "description3",
-					icon: "sap-icon://history",
-					isOriginal: false,
-					typeOfApp: "App Variant",
-					descriptorUrl: "url3"
-				}
-			];
-
-			sandbox.stub(AppVariantOverviewUtils, "getAppVariantOverview").resolves(aAppVariantOverviewAttributes);
+			sandbox.stub(AppVariantOverviewUtils, "getAppVariantOverview").resolves(getAppVariantOverviewAttributesData());
 
 			return RtaAppVariantFeature.onGetOverview(true, Layer.CUSTOMER).then(function(oAppVariantOverviewDialog) {
 				assert.ok(true, "the the promise got resolved and AppVariant Overview Dialog is opened");
@@ -406,6 +414,54 @@ sap.ui.define([
 
 			assert.throws(function() {
 				fnTriggerSaveAs();
+			});
+		});
+
+		QUnit.test("when onGetOverview() is called while deletion of key user app variant triggered closeOverviewDialog", function(assert) {
+			simulateSystemConfig(true, true);
+
+			const oMockedDescriptorData = {
+				"sap.app": {
+					id: "id1"
+				}
+			};
+
+			const clock = sandbox.useFakeTimers();
+			clock.restore();
+			const aAppVariantOverviewAttributes = getAppVariantOverviewAttributesData();
+
+			const oPublishingResponse = {
+				response: {
+					IAMId: "IAMId",
+					inProgress: true
+				}
+			};
+
+			var oMessageBoxShowStub = handleShowMessageDialog();
+			sandbox.stub(FlUtils, "getAppDescriptor").returns(oMockedDescriptorData);
+			sandbox.stub(AppVariantManager.prototype, "triggerCatalogPublishing").resolves(oPublishingResponse);
+			sandbox.stub(AppVariantManager.prototype, "notifyKeyUserWhenPublishingIsReady").resolves();
+
+			const deleteAppVariantStub = sandbox.stub(AppVariantManager.prototype, "deleteAppVariant");
+			const getAppVariantOverviewStub = sandbox.stub(AppVariantOverviewUtils, "getAppVariantOverview");
+
+			// initial loading of overview dialog
+			getAppVariantOverviewStub.onCall(0).resolves(aAppVariantOverviewAttributes);
+
+			// load overview to show progress
+			getAppVariantOverviewStub.onCall(1).callsFake(async () => {
+				await sleep(200);
+				deleteAppVariantStub.resolves();
+				await sleep(200);
+				return Promise.resolve(aAppVariantOverviewAttributes);
+			});
+
+			return RtaAppVariantFeature.onGetOverview(true, Layer.CUSTOMER).then(() => {
+				assert.ok(true, "the the promise got resolved and AppVariant Overview Dialog is opened");
+				return RtaAppVariantFeature.onDeleteFromOverviewDialog("id3", false, Layer.CUSTOMER);
+			}).then(async () => {
+				await sleep(200);
+				assert.equal(oMessageBoxShowStub.callCount, 2, "no error dialog is called");
 			});
 		});
 
@@ -757,7 +813,7 @@ sap.ui.define([
 			});
 			var oClearRTACommandStack = sandbox.stub(AppVariantManager.prototype, "clearRTACommandStack").resolves();
 			var oShowSuccessMessage = sandbox.spy(AppVariantManager.prototype, "showSuccessMessage");
-			var oMessageBoxShowStub = handleWarningDialog();
+			var oMessageBoxShowStub = handleShowMessageDialog();
 			var oGetOverviewStub = sandbox.stub(RtaAppVariantFeature, "onGetOverview");
 			oGetOverviewStub.onCall(0).resolves(RtaAppVariantFeature.onGetOverview.call(true, Layer.CUSTOMER));
 			oGetOverviewStub.onCall(1).resolves();
@@ -869,7 +925,7 @@ sap.ui.define([
 			var oClearRTACommandStack = sandbox.stub(AppVariantManager.prototype, "clearRTACommandStack").resolves();
 			var oShowSuccessMessage = sandbox.spy(AppVariantManager.prototype, "showSuccessMessage");
 			var oGetOverviewStub = sandbox.stub(RtaAppVariantFeature, "onGetOverview").resolves();
-			var oMessageBoxShowStub = handleWarningDialog();
+			var oMessageBoxShowStub = handleShowMessageDialog();
 
 			var oTriggerCatalogPublishing = sandbox.stub(AppVariantManager.prototype, "triggerCatalogPublishing").resolves({
 				response: {IAMId: "IAMId", CatalogIds: []}
@@ -1038,7 +1094,7 @@ sap.ui.define([
 
 			var oClearRTACommandStack = sandbox.stub(AppVariantManager.prototype, "clearRTACommandStack").resolves();
 			var oShowSuccessMessageStub = sandbox.spy(AppVariantManager.prototype, "showSuccessMessage");
-			var oMessageBoxShowStub = handleWarningDialog();
+			var oMessageBoxShowStub = handleShowMessageDialog();
 
 			var oTriggerCatalogPublishing = sandbox.stub(AppVariantManager.prototype, "triggerCatalogPublishing").resolves({
 				response: {IAMId: "IAMId", CatalogIds: []}
