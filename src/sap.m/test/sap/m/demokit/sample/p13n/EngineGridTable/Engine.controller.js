@@ -32,7 +32,7 @@ sap.ui.define([
 						firstName: "Thomas",
 						lastName: "Smith",
 						size: "1.95",
-						city: "Walldorf"
+						city: "Heidelberg"
 					},
 					{
 						firstName: "John",
