@@ -917,6 +917,7 @@ sap.ui.define([
 			const oSetInfoSessionSpy = sandbox.spy(FlexInfoSession, "setByReference");
 			await Storage.loadFlexData({reference: "app.id"});
 			assert.equal(oSetInfoSessionSpy.callCount, 0, "then the FlexInfoSession is not updated");
+			window.sessionStorage.removeItem("sap.ui.rta.restart.VENDOR");
 		});
 
 		QUnit.test("Given two connectors are provided and one is in charge of a draft layer provided by flex info session", function(assert) {
