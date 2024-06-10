@@ -952,8 +952,12 @@ function(
 	};
 
 	/**
-	 * Sets the preferred user interaction. If set to true, overwriting the
-	 * user input with model updates will be prevented.
+	 * Sets the behavior of the control to prioritize user interaction over later model updates. When set to <code>true</code>, it prevents the model from overwriting user input.
+	 * Example:
+	 * Input's value property is bound to a model
+	 * The user starts typing and due to this action, the model receives update from the backend, thus forwarding it to the bound control property
+	 * Result when <code>false</code>: User input is overwritten by the incoming model update.
+	 * Result when <code>true</code>: User input is not overwritten by the incoming model update - the model update is skipped and the value remains unchanged.
 	 *
 	 * @param {boolean} bPrefer True, if the user interaction is preferred
 	 *
