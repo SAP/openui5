@@ -899,17 +899,13 @@
 
 	QUnit.module("Complex Scenario");
 
-	QUnit.test("Boot UI5 Core", function(assert) {
+	QUnit.test("Test jQuery shim", function(assert) {
 		var done = assert.async();
-		assert.equal(sap.ui.require('sap/ui/core/Core'), null, "Core must not have been loaded");
 
 		// Act
-		sap.ui.require(['sap/ui/core/Core'], function(Core) {
-			// loading succeeded, that's a good news on its own
-			assert.ok(!!Core, "Core has been loaded");
+		sap.ui.require(['sap/ui/thirdparty/jquery'], function(jQ1) {
 
 			// the duplicate registration of jQuery should have worked
-			var jQ1 = sap.ui.require('sap/ui/thirdparty/jquery');
 			var jQ2 = sap.ui.require('jquery');
 			assert.ok(jQ1, "...thirdparty/jquery has been loaded");
 			assert.ok(jQ2, "jquery should have registered itself as 'jquery'");

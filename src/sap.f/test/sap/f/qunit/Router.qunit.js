@@ -37,7 +37,7 @@ function (
 	QUnit.module("Integration tests");
 
 	function createViewAndController(sName, oContent) {
-		var oView = View.create({viewName: "sap.ui.test.views." + sName, type: "XML"
+		var oView = View.create({viewName: "f.test.views." + sName, type: "XML"
 		});
 
 		return oView;
@@ -65,12 +65,12 @@ function (
 						null,
 						{
 							first: {
-								viewName: "sap.ui.test.views.first",
+								viewName: "f.test.views.first",
 								viewLevel: 1
 							},
 							second: {
 								parent: "first",
-								viewName: "sap.ui.test.views.second",
+								viewName: "f.test.views.second",
 								controlId: "innerPage",
 								controlAggregation: "content"
 							}

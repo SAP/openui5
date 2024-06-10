@@ -139,7 +139,8 @@ sap.ui.define(function() {
 						"sap/ui/test/qunitPause": "resources/sap/ui/test/qunitPause",
 						"sap/ui/test/RecorderHotkeyListener": "resources/sap/ui/test/RecorderHotkeyListener"
 					}
-				}
+				},
+				beforeBootstrap: "./BootstrapMainModule.beforeBootstrap"
 			},
 			"BootstrapMinimal": {
 				group: "Bootstrap",
@@ -546,6 +547,7 @@ sap.ui.define(function() {
 				group: "Theme Versioning",
 				title: "QUnit Page for Theme Version Parameter - off - async",
 				ui5: {
+					libs: ["sap.ui.core"],
 					language: "en",
 					preload: "async",
 					theme: "base",
@@ -575,6 +577,7 @@ sap.ui.define(function() {
 				group: "Theme Versioning",
 				title: "QUnit Page for Theme Version Parameter - on - async (with custom.css)",
 				ui5: {
+					libs: ["sap.ui.core"],
 					language: "en",
 					preload: "async",
 					theme: "customcss",
@@ -596,6 +599,7 @@ sap.ui.define(function() {
 				group: "Theme Versioning",
 				title: "QUnit Page for Theme Version Parameter - on - async",
 				ui5: {
+					libs: ["sap.ui.core"],
 					language: "en",
 					theme: "base",
 					preload: "async",

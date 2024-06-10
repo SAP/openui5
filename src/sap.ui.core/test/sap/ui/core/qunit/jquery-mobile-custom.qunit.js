@@ -8,9 +8,6 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 		// Preparation
 		var done = assert.async();
 
-		// Stub touch support
-		this.stub(Device, "support").value({ touch: true });
-
 		// load and boot the core
 		sap.ui.require(["sap/ui/core/Core", "sap/ui/thirdparty/jquery"], function (Core, jQuery) {
 			Core.ready().then(function () {
@@ -24,6 +21,7 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 
 				done();
 			});
+			// @deprecated
 			Core.boot();
 		}, function (oErr) {
 			assert.strictEqual(oErr, {}, "Requiring the Core must not fail");

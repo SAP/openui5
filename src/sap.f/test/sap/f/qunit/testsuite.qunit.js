@@ -187,7 +187,7 @@ sap.ui.define(function () {
 				},
 				ui5: {
 					resourceroots: {
-						"sap.ui.test": "test-resources/sap/f/qunit/"
+						"f.test": "test-resources/sap/f/qunit/"
 					}
 				}
 			},

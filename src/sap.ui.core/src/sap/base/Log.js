@@ -2,10 +2,8 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/base/config",
 	"sap/base/util/now"
 ], function(
-	BaseConfig,
 	now
 ) {
 	"use strict";
@@ -718,20 +716,6 @@ sap.ui.define([
 		}
 		return new Logger(sComponent);
 	};
-
-	// set LogLevel
-	const sLogLevel = BaseConfig.get({
-		name: "sapUiLogLevel",
-		type: BaseConfig.Type.String,
-		defaultValue: undefined,
-		external: true
-	});
-
-	if (sLogLevel) {
-		Log.setLevel(Log.Level[sLogLevel.toUpperCase()] || parseInt(sLogLevel));
-	} else if (!globalThis["sap-ui-optimized"]) {
-		Log.setLevel(Log.Level.DEBUG);
-	}
 
 	return Log;
 });

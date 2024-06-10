@@ -5,7 +5,7 @@ sap.ui.define([
 		var _mViewDelays;
 
 		function createViewAndController (sName) {
-			var oView = View.create({viewName: "sap.ui.test.views." + sName, type: "XML"});
+			var oView = View.create({viewName: "m.test.views." + sName, type: "XML"});
 
 			return oView;
 		}

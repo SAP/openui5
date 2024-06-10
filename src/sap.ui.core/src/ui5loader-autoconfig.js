@@ -700,33 +700,8 @@
 			mCache = Object.create(null);
 		}
 
-		/**
-		 * Returns a writable base configuration instance
-		 * @returns {module:sap/base/config/_Configuration} The writable base configuration
-		 */
-		function getWritableBootInstance() {
-			var oProvider = aProvider[0];
-
-			return {
-				set: function(sName, vValue) {
-					var rValidKey = /^[a-z][A-Za-z0-9]*$/;
-					if (rValidKey.test(sName)) {
-						oProvider.set(sName, vValue);
-						invalidate();
-					} else {
-						throw new TypeError(
-							"Invalid configuration key '" + sName + "'!"
-						);
-					}
-				},
-				get: get,
-				Type: TypeEnum
-			};
-		}
-
 		var Configuration = {
 			get: get,
-			getWritableBootInstance: getWritableBootInstance,
 			registerProvider: registerProvider,
 			Type: TypeEnum,
 			_: {
