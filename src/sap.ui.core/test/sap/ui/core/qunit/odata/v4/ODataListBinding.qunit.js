@@ -1406,9 +1406,11 @@ sap.ui.define([
 			this.oCachePromise = SyncPromise.resolve(Promise.resolve(oCache));
 		});
 		oBinding.setContext(oContext);
+		const oBindingMock = that.mock(oBinding);
+		oBindingMock.expects("checkSameCache").never();
 
 		this.mock(oCache).expects("hasSentRequest").withExactArgs().returns(oFixture.hasSent);
-		this.mock(oBinding).expects("isRelative").exactly(oFixture.hasSent ? 0 : 1)
+		oBindingMock.expects("isRelative").exactly(oFixture.hasSent ? 0 : 1)
 			.withExactArgs().returns(!oFixture.isAbsolute);
 		this.mock(ODataListBinding).expects("isBelowCreated")
 			.exactly(oFixture.hasSent || oFixture.isAbsolute ? 0 : 1)
@@ -1423,11 +1425,7 @@ sap.ui.define([
 		oReadMock = this.mock(oCache).expects("read")
 			.withExactArgs(1, 2, 3, sinon.match.same(oGroupLock),
 				sinon.match.same(fnDataRequested))
-			.returns(SyncPromise.resolve(Promise.resolve().then(function () {
-				that.mock(oBinding).expects("assertSameCache")
-					.withExactArgs(sinon.match.same(oCache));
-				return oData;
-			})));
+			.returns(SyncPromise.resolve(Promise.resolve(oData)));
 
 		// code under test
 		oPromise = oBinding.fetchData(1, 2, 3, oGroupLock, fnDataRequested);
@@ -1435,7 +1433,7 @@ sap.ui.define([
 		oBinding.sChangeReason = "sChangeReason";
 		oBinding.bHasPathReductionToParent = true;
 		this.oModel.bAutoExpandSelect = true;
-		this.mock(oBinding).expects("checkSuspended").never();
+		oBindingMock.expects("checkSuspended").never();
 
 		assert.strictEqual(oBinding.sChangeReason, "sChangeReason");
 
@@ -1444,6 +1442,12 @@ sap.ui.define([
 			if (oFixture.elements) {
 				assert.ok(oSetCollectionMock.calledBefore(oReadMock));
 			}
+
+			oBindingMock.expects("checkSameCache").on(oBinding)
+				.withExactArgs(sinon.match.same(oCache));
+
+			// code under test
+			oResult.$checkStillValid();
 		});
 	});
 });
@@ -1564,13 +1568,16 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [false, true].forEach(function (bFirstCreateAtEnd) {
-	QUnit.test("fetchContexts: created, atEnd=" + bFirstCreateAtEnd, function () {
+	QUnit.test("fetchContexts: created, atEnd=" + bFirstCreateAtEnd, function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES"),
 			bChanged = {/*boolean*/},
 			fnDataRequested = {/*function*/},
 			oGroupLock = {},
 			iReadStart = bFirstCreateAtEnd ? 3 : 1,
-			oResult = {value : {}};
+			oResult = {
+				$checkStillValid : mustBeMocked,
+				value : {}
+			};
 
 		oBinding.bFirstCreateAtEnd = bFirstCreateAtEnd;
 		oBinding.iCreatedContexts = 2;
@@ -1578,14 +1585,45 @@ sap.ui.define([
 			.withExactArgs(iReadStart, 2, 3, sinon.match.same(oGroupLock),
 				sinon.match.same(fnDataRequested))
 			.returns(SyncPromise.resolve(oResult));
-		this.mock(oBinding).expects("createContexts")
+		const oCheckStillValidExpectation
+			= this.mock(oResult).expects("$checkStillValid").withExactArgs();
+		const oCreateContextsExpectation = this.mock(oBinding).expects("createContexts")
 			.withExactArgs(iReadStart, sinon.match.same(oResult.value))
 			.returns(SyncPromise.resolve(bChanged));
 
 		// code under test
-		return oBinding.fetchContexts(1, 2, 3, oGroupLock, false, fnDataRequested);
+		return oBinding.fetchContexts(1, 2, 3, oGroupLock, false, fnDataRequested)
+			.then(function () {
+				assert.ok(oCheckStillValidExpectation.calledBefore(oCreateContextsExpectation));
+			});
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("fetchContexts: invalid cache", function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES"),
+			fnDataRequested = {/*function*/},
+			oError = new Error(),
+			oGroupLock = "~oGroupLock~",
+			oResponse = {
+				$checkStillValid : mustBeMocked,
+				value : {}
+			};
+
+		this.mock(oBinding).expects("fetchData")
+			.withExactArgs(1, 2, 3, sinon.match.same(oGroupLock),
+				sinon.match.same(fnDataRequested))
+			.returns(SyncPromise.resolve(oResponse));
+		this.mock(oResponse).expects("$checkStillValid").withExactArgs().throws(oError);
+
+		// code under test
+		return oBinding.fetchContexts(1, 2, 3, oGroupLock, false, fnDataRequested)
+			.then(function () {
+				assert.ok(false);
+			}, function (oResultError) {
+				assert.strictEqual(oResultError, oError);
+			});
+	});
 
 	//*********************************************************************************************
 	QUnit.test("fetchContexts: fetchData returns undefined", function (assert) {
@@ -7519,7 +7557,7 @@ sap.ui.define([
 			oRefreshSingleExpectation,
 			oRefreshSinglePromise = SyncPromise.resolve(Promise.resolve({})),
 			oRootBinding = {
-				assertSameCache : function () {},
+				checkSameCache : function () {},
 				getGroupId : function () {}
 			},
 			that = this;
@@ -7553,7 +7591,7 @@ sap.ui.define([
 
 			// these must only be called when the cache's refreshSingle is finished
 			that.mock(oBinding).expects("fireDataReceived").withExactArgs({data : {}});
-			that.mock(oRootBinding).expects("assertSameCache")
+			that.mock(oRootBinding).expects("checkSameCache")
 				.withExactArgs(sinon.match.same(oCache))
 				.callsFake(function () {
 					if (!bSameCache) {
@@ -7631,7 +7669,7 @@ sap.ui.define([
 					oRemoveCreatedExpectation,
 					oResetKeepAliveExpectation,
 					oRootBinding = {
-						assertSameCache : function () {},
+						checkSameCache : function () {},
 						getGroupId : function () {}
 					},
 					that = this;
@@ -7763,7 +7801,7 @@ sap.ui.define([
 			oExpectation,
 			oGroupLock = {getGroupId : function () {}},
 			oRootBinding = {
-				assertSameCache : function () {},
+				checkSameCache : function () {},
 				getGroupId : function () {}
 			},
 			that = this;

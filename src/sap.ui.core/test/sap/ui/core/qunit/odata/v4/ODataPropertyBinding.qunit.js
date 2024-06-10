@@ -690,7 +690,7 @@ sap.ui.define([
 					.withExactArgs(sinon.match.same(oGroupLock), undefined, sinon.match.func,
 						sinon.match.same(oBinding))
 					.returns(SyncPromise.resolve(Promise.resolve().then(function () {
-						that.mock(oBinding).expects("assertSameCache")
+						that.mock(oBinding).expects("checkSameCache")
 							.withExactArgs(sinon.match.same(oCache));
 						return vValue;
 					})));
