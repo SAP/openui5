@@ -62,20 +62,34 @@ sap.ui.define([
 			return checkUrl(assert, this.oIFrame, sOpenUI5Url, "then the value is rejected");
 		});
 
-		QUnit.test("when changing a navigation parameter", async function(assert) {
-			var sNewUrl = `${sOpenUI5Url}#someNavParameter`;
+		QUnit.test("when changing a navigation parameter only", async function(assert) {
+			const sNewUrl = `${sOpenUI5Url}#someNavParameter`;
 			const oReplaceLocationSpy = sandbox.spy(this.oIFrame, "_replaceIframeLocation");
 			this.oIFrame.setUrl(sNewUrl);
-			const sTestUrlRegex = new RegExp(`${sOpenUI5Url}\\?sap-ui-xx-fl-forceEmbeddedContentRefresh=\\d+#someNavParameter`);
+			const sTestUrlRegex = new RegExp(`${sOpenUI5Url}\\?sap-ui-xx-fl-forceEmbeddedContentRefresh=([\\d-]+)#someNavParameter`);
 			assert.ok(
 				sTestUrlRegex.test(this.oIFrame.getUrl()),
 				"then the url is properly updated"
 			);
+			const [, sFrameRefreshSearchParameter] = sTestUrlRegex.exec(this.oIFrame.getUrl());
 			await nextUIUpdate();
 			assert.strictEqual(oReplaceLocationSpy.callCount, 1, "then the iframe location is properly replaced");
 			assert.ok(
 				sTestUrlRegex.test(oReplaceLocationSpy.lastCall.args[0]),
-				"then the proper url is loaded and a frame buster search parameter is added"
+				"then the proper url is loaded and a frame refresh search parameter is added"
+			);
+
+			// Change the navigation parameter again
+			this.oIFrame.setUrl(`${sOpenUI5Url}#someNavParameter,someOtherNavParameter`);
+			assert.ok(
+				sTestUrlRegex.test(this.oIFrame.getUrl()),
+				"then the url still contains a frame refresh search parameter"
+			);
+			const [, sNewFrameRefreshSearchParameter] = sTestUrlRegex.exec(this.oIFrame.getUrl());
+			assert.notStrictEqual(
+				sFrameRefreshSearchParameter,
+				sNewFrameRefreshSearchParameter,
+				"then the frame refresh search parameter is updated"
 			);
 		});
 
