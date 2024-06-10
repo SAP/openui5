@@ -28,8 +28,10 @@ sap.ui.define([
 	 *
 	 * @class Implements a plugin to enable a special multi-selection behavior:
 	 * <ul>
-	 *   <li>No Select All checkbox, select all can only be done via range selection</li>
-	 *   <li>Dedicated Deselect All button to clear the selection</li>
+	 *   <li>Select All checkbox for selecting rows up to the set limit.<br>If the number of selected rows is smaller than the limit,
+	 *       all these rows can be selected at once with a single operation. If there are more rows than the limit,
+	 *       the first x rows are selected until the limit x has been reached.</li>
+	 *   <li>Dedicated Deselect All button for removing the selection</li>
 	 *   <li>The number of indices which can be selected in a range is defined by the <code>limit</code> property.
 	 *       If the user tries to select more indices, the selection is automatically limited, and the table scrolls to the last selected index.</li>
 	 *   <li>The plugin makes sure that the corresponding binding contexts up to the given limit are available, by requesting them from the
@@ -141,6 +143,7 @@ sap.ui.define([
 	MultiSelectionPlugin.prototype.onDeactivate = function(oTable) {
 		SelectionPlugin.prototype.onDeactivate.apply(this, arguments);
 		oTable.setProperty("selectionMode", SelectionMode.None);
+		detachFromBinding(this, this.getTableBinding());
 
 		if (this.oInnerSelectionPlugin) {
 			this.oInnerSelectionPlugin.destroy();
@@ -653,7 +656,32 @@ sap.ui.define([
 		return 0;
 	};
 
+	MultiSelectionPlugin.prototype.onTableRowsBound = function(oBinding) {
+			SelectionPlugin.prototype.onTableRowsBound.apply(this, arguments);
+			attachToBinding(this, oBinding);
+	};
+
+	function attachToBinding(oPlugin, oBinding) {
+		if (oBinding) {
+			oBinding.attachChange(oPlugin._onBindingChange, oPlugin);
+		}
+	}
+
+	function detachFromBinding(oPlugin, oBinding) {
+		if (oBinding) {
+			oBinding.detachChange(oPlugin._onBindingChange, oPlugin);
+		}
+	}
+
 	MultiSelectionPlugin.prototype.onThemeChanged = function() {
+		updateHeaderSelectorIcon(this);
+	};
+
+	/**
+	 * Handler for change events of the binding.
+	 * @private
+	 */
+	MultiSelectionPlugin.prototype._onBindingChange = function() {
 		updateHeaderSelectorIcon(this);
 	};
 
