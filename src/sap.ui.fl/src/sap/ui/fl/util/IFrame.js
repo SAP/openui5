@@ -4,6 +4,7 @@
 
 // Provides control sap.ui.fl.util.IFrame
 sap.ui.define([
+	"sap/base/util/uid",
 	"sap/ui/core/Control",
 	"sap/ui/model/json/JSONModel",
 	"./getContainerUserInfo",
@@ -13,6 +14,7 @@ sap.ui.define([
 	"../library",
 	"sap/ui/core/library"
 ], function(
+	uid,
 	Control,
 	JSONModel,
 	getContainerUserInfo,
@@ -142,15 +144,19 @@ sap.ui.define([
 				// Set by replacing the last entry
 				const oNewUrl = IFrame._toUrl(sEncodedUrl);
 				const oOldUrl = IFrame._toUrl(this.getUrl() || "about:blank");
-				if (
+				if (oOldUrl.searchParams.has("sap-ui-xx-fl-forceEmbeddedContentRefresh")) {
+					// Always keep the refresh parameter and update it to avoid false negatives
+					// when the URL doesn't change except for the refresh parameter itself + hash
+					oNewUrl.searchParams.set("sap-ui-xx-fl-forceEmbeddedContentRefresh", uid().substring(3));
+				} else if (
 					oOldUrl.origin === oNewUrl.origin
 					&& oOldUrl.pathname === oNewUrl.pathname
 					&& oOldUrl.search === oNewUrl.search
 					&& oOldUrl.hash !== oNewUrl.hash
 				) {
 					// Only the hash changed, site is not going to reload automatically
-					// Set an artificial frame buster search parameter to force a refresh
-					oNewUrl.searchParams.append("sap-ui-xx-fl-forceEmbeddedContentRefresh", Date.now());
+					// Set an artificial search parameter to force a refresh
+					oNewUrl.searchParams.append("sap-ui-xx-fl-forceEmbeddedContentRefresh", uid().substring(3));
 				}
 				this.setProperty("url", oNewUrl.toString());
 			} else {
