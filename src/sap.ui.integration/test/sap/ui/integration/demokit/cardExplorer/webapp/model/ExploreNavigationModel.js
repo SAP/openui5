@@ -227,6 +227,32 @@ sap.ui.define([
 										key: 'manifest.json'
 									}
 								]
+							},
+							{
+								title: 'My Campaigns',
+								key: 'myCampaigns',
+								files: [
+									{
+										url: '/samples/list/myCampaigns/myCampaigns.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/list/myCampaigns/images/example3.jpg',
+										name: 'images/example3.jpg',
+										key: 'images/example3.jpg'
+									},
+									{
+										url: '/samples/list/myCampaigns/images/example2.jpg',
+										name: 'images/example2.jpg',
+										key: 'images/example2.jpg'
+									},
+									{
+										url: '/samples/list/myCampaigns/images/example4.jpg',
+										name: 'images/example4.jpg',
+										key: 'images/example4.jpg'
+									}
+								]
 							}
 						]
 					},

@@ -1250,7 +1250,8 @@ sap.ui.define([
 								"src": "{avatar}",
 								"shape": "Circle",
 								"alt": "human image",
-								"initials": "IT"
+								"initials": "IT",
+								"fitType": "Contain"
 							}
 						}
 					}
@@ -1268,6 +1269,7 @@ sap.ui.define([
 		assert.strictEqual(oAvatar.getDisplayShape(), oManifest["sap.card"].content.item.icon.shape, "Should have 'Circle' shape");
 		assert.strictEqual(oAvatar.getTooltip_AsString(), oManifest["sap.card"].content.item.icon.alt, "Should have tooltip set");
 		assert.strictEqual(oAvatar.getInitials(), oManifest["sap.card"].content.item.icon.initials, "Should have initials set");
+		assert.strictEqual(oAvatar.getImageFitType(), oManifest["sap.card"].content.item.icon.fitType, "Should have 'Contain' fitType ");
 		assert.ok(oAvatar.hasStyleClass("sapFCardIcon"), "'sapFCardIcon' class is added");
 	});
 

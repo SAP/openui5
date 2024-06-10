@@ -103,6 +103,12 @@ sap.ui.define([
 				iconSize: { type: "sap.m.AvatarSize", defaultValue: AvatarSize.XS },
 
 				/**
+				 * Defines how the image fits in the icon area.
+				 * @since 1.126
+				 */
+				iconFitType: { type: "sap.m.AvatarImageFitType", defaultValue: AvatarImageFitType.Cover },
+
+				/**
 				 * Defines the background color of the icon.
 				 * @since 1.83
 				 */
@@ -280,9 +286,7 @@ sap.ui.define([
 		var oAvatar = this.getAggregation("_avatar");
 
 		if (!oAvatar) {
-			oAvatar = new Avatar({
-				imageFitType: AvatarImageFitType.Contain
-			}).addStyleClass("sapFCardIcon");
+			oAvatar = new Avatar().addStyleClass("sapFCardIcon");
 			this.setAggregation("_avatar", oAvatar);
 		}
 
@@ -292,7 +296,8 @@ sap.ui.define([
 			.setTooltip(this.getIconAlt())
 			.setInitials(this.getIconInitials())
 			.setBackgroundColor(this.getIconBackgroundColor())
-			.setVisible(this.getIconVisible());
+			.setVisible(this.getIconVisible())
+			.setImageFitType(this.getIconFitType());
 
 		return oAvatar;
 	};

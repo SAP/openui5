@@ -1,0 +1,142 @@
+{
+	"_version": "1.14.0",
+	"sap.app": {
+		"id": "card.explorer.icon.list.card",
+		"type": "card",
+		"title": "Sample of a List with Icon",
+		"subTitle": "Sample of a List with Icon",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"List",
+				"Icon",
+				"Card",
+				"Sample"
+			]
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://lightbulb"
+		}
+	},
+	"sap.card": {
+		"type": "List",
+		"header": {
+			"title": "My Campaigns",
+			"subTitle": "For Submitters of Ideas",
+			"status": {
+				"text": "4 of 5"
+			},
+			"dataTimestamp": "2024-03-15T07:54:42Z"
+		},
+		"content": {
+			"data": {
+				"json": [
+					{
+						"CampaignName": "My great Campaign",
+						"DurationDays": 10,
+						"RemainingDays": 4,
+						"DaysTillBegin": 0,
+						"DaysSinceEnd": 0,
+						"groupIndex": 10,
+						"Phase": "Preparing",
+						"Ideas": "0",
+						"lifecycleStatus": "Published",
+						"img": "./images/example3.jpg",
+						"fit": "Contain"
+					},
+					{
+						"CampaignName": "Extraction of resources",
+						"DurationDays": 30,
+						"RemainingDays": 5,
+						"DaysTillBegin": 0,
+						"DaysSinceEnd": 0,
+						"groupIndex": 10,
+						"Phase": "Idea Selection",
+						"Ideas": "43",
+						"lifecycleStatus": "Published",
+						"img": "./images/example4.jpg"
+					},
+					{
+						"CampaignName": "My fantastic Campaign",
+						"DurationDays": 24,
+						"RemainingDays": 24,
+						"DaysTillBegin": 30,
+						"DaysSinceEnd": 0,
+						"groupIndex": 20,
+						"Phase": "Preparing",
+						"Ideas": "0",
+						"lifecycleStatus": "Draft",
+						"img": "sap-icon://activity-items"
+					},
+					{
+						"CampaignName": "Campaign for more milk with longer name that might break into the next row",
+						"DurationDays": 100,
+						"RemainingDays": 70,
+						"DaysTillBegin": 0,
+						"DaysSinceEnd": 0,
+						"groupIndex": 10,
+						"Phase": "Collecting",
+						"Ideas": "3",
+						"lifecycleStatus": "Published",
+						"img": "./images/example2.jpg"
+					}
+				]
+			},
+			"maxItems": 5,
+			"item": {
+				"title": "{CampaignName}",
+				"icon": {
+					"src": "{img}",
+					"shape": "Square",
+					"backgroundColor": "Accent6",
+					"size": "M",
+					"fitType": "{fit}"
+				},
+				"info": {
+					"value": "{Phase}"
+				},
+				"attributesLayoutType": "OneColumn",
+				"attributes": [
+					{
+						"value": "Ideas: {Ideas}",
+						"showStateIcon": true,
+						"customStateIcon": "sap-icon://lightbulb"
+					},
+					{
+						"value": "{= ${DaysTillBegin} > 0 ? ${DaysTillBegin} + ' days until start' : ( ${DaysSinceEnd} > 0 ? ${DaysSinceEnd} + ' days since expiry' : ${RemainingDays} + ' days left' ) }",
+						"state": "{= ${DaysTillBegin} === 0 && ${DaysSinceEnd} === 0 ? ( ${RemainingDays}/${DurationDays} >= 0.5 ? 'Success' : ( ${RemainingDays}/${DurationDays} < 0.25 ? 'Error' : 'Warning' ) ) : 'None'}"
+					}
+				],
+				"actions": [
+					{
+						"type": "Navigation",
+						"enabled": true,
+						"parameters": {
+							"url": "sap.com"
+						}
+					}
+				]
+			},
+			"group": {
+				"title": "{= ${DaysTillBegin} > 0 ? 'Not Started' : (${DaysSinceEnd} > 0 ? 'Expired' : 'Ongoing') }",
+				"order": {
+					"path": "groupIndex",
+					"dir": "ASC"
+				}
+			}
+		},
+		"footer": {
+			"paginator": {
+				"pageSize": 4
+			}
+		}
+	}
+}
