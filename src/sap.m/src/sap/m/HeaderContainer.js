@@ -94,6 +94,7 @@ sap.ui.define([
 					oRM.openStart("div", oControl);
 					oRM.class("sapMHdrCntrItemCntr");
 					oRM.class("sapMHrdrCntrInner");
+					oRM.attr("tabindex", -1);
 					oRM.attr("aria-setsize", oControl.getSetSize());
 					oRM.attr("aria-posinset", oControl.getPosition());
 					oRM.attr("role", "listitem");
