@@ -1,0 +1,28 @@
+{
+  "1.126.0": {
+    "date": "June 2024",
+    "notes": [
+      {
+        "id": "0f07961951d052aa0b630a48be010f356cf5ebca",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: change cursor for header buttons"
+      },
+      {
+        "id": "549a10f1d6664237540133793d6a5f755bf5edfd",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: remove redundant required announcement"
+      },
+      {
+        "id": "5c07892f2fdbf2a5e05505c3d4c6dea3c3130c86",
+        "type": "FIX",
+        "text": " sap.ui.unified.Currency: the currency is not truncating now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370011691"
+          }
+        ]
+      }
+    ]
+  }
+}

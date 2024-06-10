@@ -1,0 +1,12 @@
+{
+  "1.126.0": {
+    "date": "June 2024",
+    "notes": [
+      {
+        "id": "d070e6228c916e4ef59460a7f3d3ac1aede88ae2",
+        "type": "FEATURE",
+        "text": " Integration Cards: Introduce displayZeroValue option for StackedBar micro chart"
+      }
+    ]
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "1.126.0": {
+    "date": "June 2024",
+    "notes": [
+      {
+        "id": "1caacd8e33502d453412d10c0d4dc0c2da51c7aa",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: lazy loading with selected SubSection"
+      }
+    ]
+  }
+}

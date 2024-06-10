@@ -3,6 +3,41 @@
     "date": "June 2024",
     "notes": [
       {
+        "id": "d8e824a33c3b0df5d1675b45f97e78a99d9d169a",
+        "type": "FEATURE",
+        "text": " sap.m.RadioButton: Added wrapping and wrapping type"
+      },
+      {
+        "id": "9c128be78b206ed622fdfa6ebe90e100e29b1547",
+        "type": "FEATURE",
+        "text": " sap.m.ObjectStatus: remove empty indicator when rendering icon"
+      },
+      {
+        "id": "431f35aa929b61f2eda63c2cf4b630c757f02c6e",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendarMonthGrid: enable mouse selection for More link"
+      },
+      {
+        "id": "16f480225b07c3f12ad14c5b3ebe14b62b865fe8",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: Text is not cut off by focus when text spacing is applied"
+      },
+      {
+        "id": "1de13821ae1f0c6ee75ce9e404de9f3716903cde",
+        "type": "FIX",
+        "text": " sap.m.SplitContainer: Fine tuned code control after deprecated property"
+      },
+      {
+        "id": "0dbee1d310825ad9aa12de3710fdf79fcf54a333",
+        "type": "FEATURE",
+        "text": " sap.m.InputBase: Expose public methods for preferred interaction type"
+      },
+      {
+        "id": "57e39a297223ec45a1bd93261cd6f3160f00747b",
+        "type": "FIX",
+        "text": " Form: RadioButton - focus overlaps text"
+      },
+      {
         "id": "2fcceaccc53ca91d24c877230d0de016996661ca",
         "type": "FIX",
         "text": " sap.m.Carousel: Apply focus if page indicator arrow is pressed"
@@ -21,6 +56,11 @@
         "id": "91759e559667177347c68f714d19a26a9429c886",
         "type": "FEATURE",
         "text": " sap.m.Carousel: the page indicator can be placed over the content of the Carousel"
+      },
+      {
+        "id": "ee367af2c5ae4a06620c19a7ff1fcc1d3060dde6",
+        "type": "FIX",
+        "text": " Tables: Announce required state of columns with 'custom' label controls"
       }
     ]
   }
