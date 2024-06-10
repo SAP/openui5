@@ -815,5 +815,15 @@
         "text": " sap/ui/model/odata/ODataMetadata#_getPropertyMetadata: fix for complex type property"
       }
     ]
+  },
+  "1.84.46": {
+    "date": "June 2024",
+    "notes": [
+      {
+        "id": "de7b7aac32531e79d25c507d6d083bf6d18062b6",
+        "type": "FIX",
+        "text": " sap.ui.core.format.DateFormat.qunit: Fix flaky tests"
+      }
+    ]
   }
 }

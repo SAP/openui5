@@ -2232,5 +2232,15 @@
         "text": " sap.m.RadioButtonGroup: There is no error when destroying and adding radio buttons on select"
       }
     ]
+  },
+  "1.84.46": {
+    "date": "June 2024",
+    "notes": [
+      {
+        "id": "5a4a11227480dfd160ab1a5635ddc5641fef0cb0",
+        "type": "FIX",
+        "text": " sap.m.Input: Value is not cleared on invalidation when type password is used"
+      }
+    ]
   }
 }
