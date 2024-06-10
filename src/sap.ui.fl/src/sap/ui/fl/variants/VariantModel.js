@@ -1033,7 +1033,7 @@ sap.ui.define([
 						// if default variant is changed from the current variant, then add the current variant id as a variant URI parameter
 						URLHandler.update({
 							parameters: aHashParameters.concat(oData[sVariantManagementReference].currentVariant),
-							updateURL: !this._bDesignTimeMode,
+							updateURL: !this._bDesignTimeMode && this.oData[sVariantManagementReference].updateVariantInURL,
 							updateHashEntry: true,
 							model: this
 						});
@@ -1045,7 +1045,7 @@ sap.ui.define([
 						aHashParameters.splice(aHashParameters.indexOf(oData[sVariantManagementReference].currentVariant), 1);
 						URLHandler.update({
 							parameters: aHashParameters,
-							updateURL: !this._bDesignTimeMode,
+							updateURL: !this._bDesignTimeMode && this.oData[sVariantManagementReference].updateVariantInURL,
 							updateHashEntry: true,
 							model: this
 						});
@@ -1093,7 +1093,7 @@ sap.ui.define([
 				// use case: switch from end user -> key user with a restart; the initial hash data is empty
 				URLHandler.update({
 					parameters: URLHandler.getStoredHashParams({model: this}),
-					updateURL: true,
+					updateURL: this.oData[sVariantManagementReference].updateVariantInURL,
 					updateHashEntry: false,
 					model: this
 				});
