@@ -652,17 +652,27 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Check 'restoreDefaults' to reset the searchfield text", function(assert){
+	QUnit.test("Check 'restoreDefaults' to reset to initial values", function(assert){
 
-		this.oAFPanel._getSearchField().setValue("Test");
+		this.oAFPanel.setDefaultView("list");
+
+		this.oAFPanel._getSearchField().setValue("Test"); //Set a search value
+		this.oAFPanel.switchView("list"); //Switch to group view
+		this.oAFPanel._getQuickFilter().setSelectedKey("visible");//Only show visible filters in the quick filter
+		this.oAFPanel.getView("list").getContent().showFactory(true);//Show the factory
+
 		const oFilterSpy = sinon.spy(this.oAFPanel, "_filterByModeAndSearch");
-
 		assert.equal(this.oAFPanel._getSearchField().getValue(), "Test", "Value 'Test' is present on the SearchField");
-
 		this.oAFPanel.restoreDefaults();
-		assert.ok(oFilterSpy.calledOnce, "Filter logic executed again after defaults have been restored");
-		assert.equal(this.oAFPanel._getSearchField().getValue(), "", "SearchField is empty after defaults have been restored");
 
+		//assert that defaults have been restored
+		assert.ok(oFilterSpy.called, "Filter logic executed again after defaults have been restored");
+		assert.equal(this.oAFPanel._getSearchField().getValue(), "", "SearchField is empty after defaults have been restored");
+		assert.equal(this.oAFPanel._getQuickFilter().getSelectedKey(), "all", "Quickfilter is set to 'all' after defaults have been restored");
+		//assert.equal(this.oAFPanel.getCurrentViewKey(), "list", "The list view has been set as default view");
+		assert.equal(this.oAFPanel.getView("list").getContent()._getShowFactory(), false, "The factory is no longer displayed");
+
+		//cleanups
 		this.oAFPanel._filterByModeAndSearch.restore();
 
 	});
