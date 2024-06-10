@@ -5994,7 +5994,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("requestSiblingIndex: group level", async function (assert) {
+	QUnit.test("getSiblingIndex: group level", function (assert) {
 		const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, {
 			hierarchyQualifier : "X"
 		});
@@ -6027,42 +6027,43 @@ sap.ui.define([
 		oCacheMock.expects("findIndex").never();
 
 		// code under test
-		assert.strictEqual(await oCache.requestSiblingIndex(2, -1), -1);
+		assert.strictEqual(oCache.getSiblingIndex(2, -1), -1);
 
 		// code under test
-		assert.strictEqual(await oCache.requestSiblingIndex(5, +1), -1);
+		assert.strictEqual(oCache.getSiblingIndex(5, +1), -1);
 
 		oCacheMock.expects("findIndex").withExactArgs(1, sinon.match.same(oGroupLevel))
 			.returns("A");
 		oCache.aElements.A = {"@$ui5._" : {parent : oGroupLevel}};
 
 		// code under test
-		assert.strictEqual(await oCache.requestSiblingIndex(2, +1), "A");
+		assert.strictEqual(oCache.getSiblingIndex(2, +1), "A");
 
 		oCacheMock.expects("findIndex").withExactArgs(0, sinon.match.same(oGroupLevel))
 			.returns("B");
 		oCache.aElements.B = {"@$ui5._" : {parent : oGroupLevel}};
 
 		// code under test
-		assert.strictEqual(await oCache.requestSiblingIndex(4, -1), "B");
+		assert.strictEqual(oCache.getSiblingIndex(4, -1), "B");
 
-		oCacheMock.expects("findIndex").withExactArgs(2, sinon.match.same(oGroupLevel))
-			.returns("C");
-		oCache.aElements.C = {"@$ui5._" : {parent : oGroupLevel/*, placeholder : true*/}};
+		oCacheMock.expects("findIndex").twice()
+			.withExactArgs(2, sinon.match.same(oGroupLevel)).returns("C");
+		oCache.aElements.C = {"@$ui5._" : {parent : oGroupLevel, placeholder : true}};
 
 		// code under test
-		assert.strictEqual(await oCache.requestSiblingIndex(4, +1), "C");
+		assert.strictEqual(oCache.getSiblingIndex(4, +1), undefined, "placeholder not allowed");
+		assert.strictEqual(oCache.getSiblingIndex(4, +1, true), "C");
 
 		oCacheMock.expects("findIndex").withExactArgs(1, sinon.match.same(oGroupLevel))
 			.returns("D");
 		oCache.aElements.D = {"@$ui5._" : {parent : oGroupLevel}};
 
 		// code under test
-		assert.strictEqual(await oCache.requestSiblingIndex(5, -1), "D");
+		assert.strictEqual(oCache.getSiblingIndex(5, -1), "D");
 	});
 
 	//*********************************************************************************************
-	QUnit.test("requestSiblingIndex: 1st level, expandTo : 1", async function (assert) {
+	QUnit.test("getSiblingIndex: 1st level, expandTo : 1", function (assert) {
 		const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, {
 			expandTo : 1, // @see _AggregationHlper.buildApply4Hierarchy
 			hierarchyQualifier : "X"
@@ -6092,25 +6093,32 @@ sap.ui.define([
 		oCacheMock.expects("findIndex").never();
 
 		// code under test
-		assert.strictEqual(await oCache.requestSiblingIndex(0, -1), -1);
+		assert.strictEqual(oCache.getSiblingIndex(0, -1), -1);
 
-		oCacheMock.expects("findIndex").withExactArgs(1, sinon.match.same(oFirstLevel))
-			.returns(1);
-
-		// code under test
-		assert.strictEqual(await oCache.requestSiblingIndex(0, +1), 1);
-
-		oCacheMock.expects("findIndex").withExactArgs(0, sinon.match.same(oFirstLevel))
-			.returns(0);
+		oCacheMock.expects("findIndex").twice()
+			.withExactArgs(1, sinon.match.same(oFirstLevel)).returns(1);
 
 		// code under test
-		assert.strictEqual(await oCache.requestSiblingIndex(1, -1), 0);
+		assert.strictEqual(oCache.getSiblingIndex(0, +1), undefined, "placeholder not allowed");
+		assert.strictEqual(oCache.getSiblingIndex(0, +1, true), 1);
+
+		oCacheMock.expects("findIndex").twice()
+			.withExactArgs(0, sinon.match.same(oFirstLevel)).returns(0);
+
+		// code under test
+		assert.strictEqual(oCache.getSiblingIndex(1, -1), undefined, "placeholder not allowed");
+		assert.strictEqual(oCache.getSiblingIndex(1, -1, true), 0);
 	});
 
 	//*********************************************************************************************
-	QUnit.test("requestSiblingIndex: 1st level, expandTo > 1, next", async function (assert) {
+[false, true].forEach((bHasExpandLevels) => {
+	const sTitle = "getSiblingIndex: 1st level, not a single level, next, has $ExpandLevels: "
+		+ bHasExpandLevels;
+
+	QUnit.test(sTitle, function (assert) {
 		const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, {
-			expandTo : 2,
+			$ExpandLevels : bHasExpandLevels ? "..." : undefined,
+			expandTo : bHasExpandLevels ? 1 : 2,
 			hierarchyQualifier : "X"
 		});
 		const oCacheMock = this.mock(oCache);
@@ -6149,29 +6157,37 @@ sap.ui.define([
 		oCacheMock.expects("findIndex").never();
 
 		// code under test
-		assert.strictEqual(await oCache.requestSiblingIndex(2, +1), -1);
+		assert.strictEqual(oCache.getSiblingIndex(2, +1), -1);
 
 		// code under test
-		assert.strictEqual(await oCache.requestSiblingIndex(3, +1), -1);
+		assert.strictEqual(oCache.getSiblingIndex(3, +1), -1);
 
 		oCacheMock.expects("findIndex").withExactArgs(1, sinon.match.same(oFirstLevel))
 			.returns("A");
 		oCache.aElements.A = {"@$ui5._" : {parent : oFirstLevel}};
 
 		// code under test
-		assert.strictEqual(await oCache.requestSiblingIndex(0, +1), "A");
+		assert.strictEqual(oCache.getSiblingIndex(0, +1), "A");
 
 		oCacheMock.expects("findIndex").withExactArgs(3, sinon.match.same(oFirstLevel))
 			.returns("B");
 		oCache.aElements.B = {"@$ui5._" : {parent : oFirstLevel}};
 
 		// code under test
-		assert.strictEqual(await oCache.requestSiblingIndex(1, +1), "B");
+		assert.strictEqual(oCache.getSiblingIndex(1, +1), "B");
+
+		oCacheMock.expects("findIndex").withExactArgs(3, sinon.match.same(oFirstLevel))
+			.returns("C");
+		oCache.aElements.C = {"@$ui5._" : {parent : oFirstLevel, placeholder : true}};
+
+		// code under test
+		assert.strictEqual(oCache.getSiblingIndex(1, +1), undefined, "placeholder => cannot tell");
 	});
+});
 
 	//*********************************************************************************************
-[-1, 0, 1, 12].forEach((iResult) => {
-	QUnit.test(`requestSiblingIndex: findPreviousSiblingIndex=${iResult}`, async function (assert) {
+[undefined, -1, 0, 1, 12].forEach((iResult) => {
+	QUnit.test(`getSiblingIndex: findPreviousSiblingIndex=${iResult}`, function (assert) {
 		const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, {
 			expandTo : 2,
 			hierarchyQualifier : "X"
@@ -6192,14 +6208,14 @@ sap.ui.define([
 
 		assert.strictEqual(
 			// code under test
-			await oCache.requestSiblingIndex(42, -1),
-			iResult >= 0 ? 17 : -1
+			oCache.getSiblingIndex(42, -1),
+			iResult >= 0 ? 17 : iResult
 		);
 	});
 });
 
 	//*********************************************************************************************
-	QUnit.test("requestSiblingIndex: no request for last", async function (assert) {
+	QUnit.test("getSiblingIndex: no request for last", function (assert) {
 		const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, {
 			// Note: expandTo > 1, but not really used here
 			hierarchyQualifier : "X"
@@ -6237,22 +6253,38 @@ sap.ui.define([
 		this.mock(oCache).expects("findIndex").never();
 
 		// code under test
-		assert.strictEqual(await oCache.requestSiblingIndex(1, +1), -1);
+		assert.strictEqual(oCache.getSiblingIndex(1, +1), -1);
 	});
 
 	//*********************************************************************************************
+[-1, 0, 1, 42].forEach((iSiblingIndex) => {
+	QUnit.test(`requestSiblingIndex: no request for ${iSiblingIndex}`, async function (assert) {
+		const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, {
+			// Note: expandTo not really used here
+			hierarchyQualifier : "X"
+		});
+
+		this.mock(oCache).expects("getSiblingIndex").withExactArgs("~iIndex~", "~iOffset~", true)
+			.returns(iSiblingIndex);
+
+		assert.strictEqual(
+			// code under test
+			await oCache.requestSiblingIndex("~iIndex~", "~iOffset~", "~oGroupLock~"),
+			iSiblingIndex);
+	});
+});
+
+	//*********************************************************************************************
 [-1, +1].forEach((iOffset) => {
-	[false, true].forEach((bHasExpandLevels) => {
-		[false, true].forEach((bWrongLevel) => {
-			const sTitle = `requestSiblingIndex: request via 1st level, offset ${iOffset}`
-				+ `, has $ExpandLevels: ${bHasExpandLevels}, wrong level: ${bWrongLevel}`;
+	[false, true].forEach((bWrongLevel) => {
+		const sTitle = `requestSiblingIndex: request via 1st level, offset ${iOffset}`
+			+ `, wrong level: ${bWrongLevel}`;
 
 	QUnit.test(sTitle, async function (assert) {
 		const oCache = _AggregationCache.create(this.oRequestor, "Foo('42')", "", {}, {
 			$DistanceFromRoot : "DistFromRoot",
-			$ExpandLevels : bHasExpandLevels ? "..." : undefined,
 			$LimitedRank : "Ltd_Rank",
-			expandTo : bHasExpandLevels ? 1 : 2,
+			// Note: expandTo > 1, but not really used here
 			hierarchyQualifier : "X"
 		});
 		const oFirstLevel = {
@@ -6271,23 +6303,10 @@ sap.ui.define([
 				rank : 2
 			},
 			"@$ui5.node.level" : 7 // unrealistic, but more illustrative
-		}, {/*unused*/}, {
-			// oCandidate (for next sibling only)
-			"@$ui5._" : {
-				parent : oFirstLevel,
-				placeholder : true,
-				rank : 3
-			},
-			"@$ui5.node.level" : 0
 		}];
-		oFirstLevel.aElements = [,, oCache.aElements[1]];
-		oFirstLevel.aElements.$count = oCache.aElements.length;
 		oCache.oFirstLevel = oFirstLevel;
-		this.mock(_AggregationHelper).expects("findPreviousSiblingIndex")
-			.exactly(iOffset < 0 ? 1 : 0)
-			.withExactArgs(sinon.match.same(oFirstLevel.aElements), 2).returns(undefined);
-		this.mock(oCache).expects("findIndex").exactly(iOffset > 0 ? 1 : 0)
-			.withExactArgs(3, sinon.match.same(oFirstLevel)).returns(4);
+		this.mock(oCache).expects("getSiblingIndex").withExactArgs(2, iOffset, true)
+			.returns(undefined);
 		const mExpectedQueryOptions = {
 			foo : "~foo~",
 			bar : "~bar~",
@@ -6326,7 +6345,6 @@ sap.ui.define([
 			await oCache.requestSiblingIndex(2, iOffset, "~oGroupLock~"),
 			bWrongLevel ? -1 : 42);
 	});
-		});
 	});
 });
 

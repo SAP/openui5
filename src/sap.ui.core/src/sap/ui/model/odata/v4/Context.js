@@ -1031,6 +1031,32 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns this node's sibling; either the next one (via offset +1) or the previous one (via
+	 * offset -1). Returns <code>null</code> if no such sibling exists (because this node is the
+	 * last or first sibling, respectively). If it's not known whether the requested sibling
+	 * exists, <code>undefined</code> is returned and {@link #requestSibling} can be used instead.
+	 *
+	 * @param {number} [iOffset=+1] - An offset, either -1 or +1
+	 * @returns {sap.ui.model.odata.v4.Context|null|undefined}
+	 *   The sibling's context, or <code>null</code> if no such sibling exists for sure, or
+	 *   <code>undefined</code> if we cannot tell
+	 * @throws {Error} If
+	 *   <ul>
+	 *     <li> the given offset is unsupported,
+	 *     <li> this context's root binding is suspended,
+	 *     <li> this context is {@link #isDeleted deleted}, {@link #isTransient transient}, or not
+	 *       part of a recursive hierarchy.
+	 *   </ul>
+	 *
+	 * @private
+	 * @since 1.126.0
+	 * @ui5-restricted sap.fe
+	 */
+	Context.prototype.getSibling = function (iOffset) {
+		return this.oBinding.fetchOrGetSibling(this, iOffset);
+	};
+
+	/**
 	 * Returns the group ID of the context's binding that is used for update requests. See
 	 * {@link sap.ui.model.odata.v4.ODataListBinding#getUpdateGroupId} and
 	 * {@link sap.ui.model.odata.v4.ODataContextBinding#getUpdateGroupId}.
@@ -1664,18 +1690,12 @@ sap.ui.define([
 	 *   </ul>
 	 *
 	 * @private
+	 * @see #getSibling
 	 * @since 1.125.0
 	 * @ui5-restricted sap.fe
 	 */
-	Context.prototype.requestSibling = function (iOffset = +1) {
-		if (iOffset !== -1 && iOffset !== +1) {
-			throw new Error("Unsupported offset: " + iOffset);
-		}
-		if (this.isDeleted() || this.isTransient()) {
-			throw new Error("Unsupported context: " + this);
-		}
-
-		return this.oBinding.requestSibling(this, iOffset);
+	Context.prototype.requestSibling = function (iOffset) {
+		return Promise.resolve(this.oBinding.fetchOrGetSibling(this, iOffset, true));
 	};
 
 	/**

@@ -1950,7 +1950,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.model.odata.v4.Context} oNode
 	 *   Some node which could have a parent
-	  * @param {boolean} [bAllowRequest]
+	 * @param {boolean} [bAllowRequest]
 	 *   Whether it is allowed to send a GET request to fetch the parent node's data
 	 * @returns {sap.ui.model.odata.v4.Context|null|undefined|
 	 *     Promise<sap.ui.model.odata.v4.Context>|sap.ui.base.SyncPromise}
@@ -1990,6 +1990,64 @@ sap.ui.define([
 			return requestContext(iParentIndex);
 		}
 		return this.aContexts[iParentIndex];
+	};
+
+	/**
+	 * Fetches (if <code>bAllowRequest</code> is set) or gets the given node's sibling, either the
+	 * next one (via offset +1) or the previous one (via offset -1).
+	 *
+	 * @param {sap.ui.model.odata.v4.Context} oNode - A node
+	 * @param {number} iOffset - An offset, either -1 or +1
+	 * @param {boolean} [bAllowRequest]
+	 *   Whether it is allowed to send a GET request to fetch the sibling
+	 * @returns {sap.ui.model.odata.v4.Context|null|undefined
+	 * |Promise<sap.ui.model.odata.v4.Context|null>}
+	 *   The sibling's context, or <code>null</code> if no such sibling exists for sure, or
+	 *   <code>undefined</code> if we cannot tell and it is not allowed to send a request (see
+	 *   <code>bAllowRequest</code>). Or a promise (if a request was sent) which resolves with the
+	 *   sibling's context (or <code>null</code> if no such sibling exists) in case of success, or
+	 *   rejects with an instance of <code>Error</code> in case of failure.
+	 * @throws {Error} If
+	 *   <ul>
+	 *     <li> the given offset is unsupported,
+	 *     <li> this binding's root binding is suspended,
+	 *     <li> the given context is {@link #isDeleted deleted}, {@link #isTransient transient}, or
+	 *       not part of a recursive hierarchy.
+	 *   </ul>
+	 *
+	 *  @private
+	 */
+	ODataListBinding.prototype.fetchOrGetSibling = function (oNode, iOffset = +1,
+			bAllowRequest = false) {
+		if (!this.mParameters.$$aggregation?.hierarchyQualifier) {
+			throw new Error("Missing recursive hierarchy");
+		}
+		if (iOffset !== -1 && iOffset !== +1) {
+			throw new Error("Unsupported offset: " + iOffset);
+		}
+		if (oNode.isDeleted() || oNode.isTransient() || this.aContexts[oNode.iIndex] !== oNode) {
+			throw new Error("Unsupported context: " + oNode);
+		}
+		this.checkSuspended();
+
+		const iSibling = this.oCache.getSiblingIndex(oNode.iIndex, iOffset);
+		if (iSibling < 0) {
+			return null;
+		}
+		if (iSibling !== undefined) {
+			this.fetchContexts(iSibling, 1, 0, _GroupLock.$cached);
+			return this.aContexts[iSibling];
+		}
+		if (!bAllowRequest) {
+			return undefined;
+		}
+
+		return this.oCache.requestSiblingIndex(oNode.iIndex, iOffset, this.lockGroup())
+			.then((iIndex) => {
+				return iIndex < 0
+					? null
+					: this.requestContexts(iIndex, 1).then((aResult) => aResult[0]);
+			});
 	};
 
 	/**
@@ -4049,41 +4107,6 @@ sap.ui.define([
 
 			return aFilters.length === 1 ? aFilters[0] : new Filter({filters : aFilters});
 		});
-	};
-
-	/**
-	 * Requests the given node's sibling, either the next one (via offset +1) or the previous one
-	 * (via offset -1).
-	 *
-	 * @param {sap.ui.model.odata.v4.Context} oNode - A node
-	 * @param {number} iOffset - An offset, either -1 or +1
-	 * @returns {Promise<sap.ui.model.odata.v4.Context|null>}
-	 *   A promise which is resolved with the sibling's context (or <code>null</code> if no such
-	 *   sibling exists) in case of success, or is rejected with an instance of <code>Error</code>
-	 *   in case of failure
-	 * @throws {Error} If
-	 *   <ul>
-	 *     <li> this binding's root binding is suspended,
-	 *     <li> the given node is not part of a recursive hierarchy.
-	 *   </ul>
-	 *
-	 *  @private
-	 */
-	ODataListBinding.prototype.requestSibling = function (oNode, iOffset) {
-		if (!this.mParameters.$$aggregation?.hierarchyQualifier) {
-			throw new Error("Missing recursive hierarchy");
-		}
-		if (this.aContexts[oNode.iIndex] !== oNode) {
-			throw new Error("Unsupported context: " + oNode);
-		}
-		this.checkSuspended();
-
-		return this.oCache.requestSiblingIndex(oNode.iIndex, iOffset, this.lockGroup())
-			.then((iIndex) => {
-				return iIndex < 0
-					? null
-					: this.requestContexts(iIndex, 1).then((aResult) => aResult[0]);
-			});
 	};
 
 	/**

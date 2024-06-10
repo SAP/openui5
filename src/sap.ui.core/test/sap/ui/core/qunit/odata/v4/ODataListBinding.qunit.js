@@ -11943,93 +11943,216 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("requestSibling: Missing recursive hierarchy", function (assert) {
+	QUnit.test("fetchOrGetSibling: Missing recursive hierarchy", function (assert) {
 		const oBinding = this.bindList("/EMPLOYEES");
 		this.mock(oBinding).expects("checkSuspended").never();
 
 		assert.throws(function () {
 			// code under test
-			oBinding.requestSibling();
+			oBinding.fetchOrGetSibling();
 		}, new Error("Missing recursive hierarchy"));
 
 		oBinding.mParameters = {$$aggregation : {}};
 
 		assert.throws(function () {
 			// code under test
-			oBinding.requestSibling();
+			oBinding.fetchOrGetSibling();
 		}, new Error("Missing recursive hierarchy"));
 	});
 
 	//*********************************************************************************************
-	QUnit.test("requestSibling: Unsupported context", function (assert) {
+[-2, +2, -3, +3, 0].forEach((iOffset) => {
+	QUnit.test(`fetchOrGetSibling: unsupported offset ${iOffset}`, function (assert) {
 		const oBinding = this.bindList("/EMPLOYEES");
 		// Note: autoExpandSelect at model would be required for hierarchyQualifier, but that leads
 		// too far :-(
 		oBinding.mParameters.$$aggregation = {hierarchyQualifier : "X"};
-		const oNode = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES('42')", 42);
-		oBinding.aContexts[41] = oNode; // wrong index
 		this.mock(oBinding).expects("checkSuspended").never();
 
 		assert.throws(function () {
 			// code under test
-			oBinding.requestSibling(oNode);
+			oBinding.fetchOrGetSibling(/*oNode*/null, iOffset);
+		}, new Error("Unsupported offset: " + iOffset));
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("fetchOrGetSibling: Unsupported context (deleted)", function (assert) {
+		const oBinding = this.bindList("/EMPLOYEES");
+		// Note: autoExpandSelect at model would be required for hierarchyQualifier, but that leads
+		// too far :-(
+		oBinding.mParameters.$$aggregation = {hierarchyQualifier : "X"};
+		const oNode = {
+			iIndex : "~iIndex~",
+			isDeleted : mustBeMocked
+			// NO: isTransient
+		};
+		this.mock(oNode).expects("isDeleted").withExactArgs().returns(true);
+		oBinding.aContexts["~iIndex~"] = oNode;
+		this.mock(oBinding).expects("checkSuspended").never();
+
+		assert.throws(function () {
+			// code under test
+			oBinding.fetchOrGetSibling(oNode, -1);
 		}, new Error("Unsupported context: " + oNode));
 	});
 
 	//*********************************************************************************************
-	QUnit.test("requestSibling: null", async function (assert) {
+	QUnit.test("fetchOrGetSibling: Unsupported context (transient)", function (assert) {
 		const oBinding = this.bindList("/EMPLOYEES");
 		// Note: autoExpandSelect at model would be required for hierarchyQualifier, but that leads
 		// too far :-(
 		oBinding.mParameters.$$aggregation = {hierarchyQualifier : "X"};
-		const oNode = {iIndex : "~iIndex~"};
-		oBinding.aContexts["~iIndex~"] = oNode;
-		const oCheckSuspendedExpectation
-			= this.mock(oBinding).expects("checkSuspended").withExactArgs();
-		this.mock(oBinding).expects("lockGroup").withExactArgs().returns("~oGroupLock~");
-		const oCache = {
-			requestSiblingIndex : mustBeMocked
+		const oNode = {
+			iIndex : "~iIndex~",
+			isDeleted : mustBeMocked,
+			isTransient : mustBeMocked
 		};
-		oBinding.oCache = oCache;
-		const oGetSiblingIndexExpectation = this.mock(oCache).expects("requestSiblingIndex")
-			.withExactArgs("~iIndex~", "~iOffset~", "~oGroupLock~").resolves(-1);
-		this.mock(oBinding).expects("requestContexts").never();
+		this.mock(oNode).expects("isDeleted").withExactArgs().returns(false);
+		this.mock(oNode).expects("isTransient").withExactArgs().returns(true);
+		oBinding.aContexts["~iIndex~"] = oNode;
+		this.mock(oBinding).expects("checkSuspended").never();
 
-		// code under test
-		const oPromise = oBinding.requestSibling(oNode, "~iOffset~");
-
-		sinon.assert.callOrder(oCheckSuspendedExpectation, oGetSiblingIndexExpectation);
-		assert.ok(oPromise instanceof Promise);
-		assert.strictEqual(await oPromise, null);
+		assert.throws(function () {
+			// code under test
+			oBinding.fetchOrGetSibling(oNode, -1);
+		}, new Error("Unsupported context: " + oNode));
 	});
 
 	//*********************************************************************************************
-[0, 1, 42].forEach((iIndex) => {
-	QUnit.test(`requestSibling: non-null, index = ${iIndex}`, async function (assert) {
+	QUnit.test("fetchOrGetSibling: Unsupported context (index)", function (assert) {
 		const oBinding = this.bindList("/EMPLOYEES");
 		// Note: autoExpandSelect at model would be required for hierarchyQualifier, but that leads
 		// too far :-(
 		oBinding.mParameters.$$aggregation = {hierarchyQualifier : "X"};
-		const oNode = {iIndex : "~iIndex~"};
+		const oNode = {
+			iIndex : "~iIndex~",
+			isDeleted : mustBeMocked,
+			isTransient : mustBeMocked
+		};
+		this.mock(oNode).expects("isDeleted").withExactArgs().returns(false);
+		this.mock(oNode).expects("isTransient").withExactArgs().returns(false);
+		oBinding.aContexts["wrong index"] = oNode;
+		this.mock(oBinding).expects("checkSuspended").never();
+
+		assert.throws(function () {
+			// code under test
+			oBinding.fetchOrGetSibling(oNode, -1);
+		}, new Error("Unsupported context: " + oNode));
+	});
+
+	//*********************************************************************************************
+[{in : undefined, out : +1}, {in : +1, out : +1}, {in : -1, out : -1}].forEach((oOffset, i) => {
+	[{in : -1, out : null}, {in : undefined, out : undefined}].forEach((oResult, j) => {
+	QUnit.test(`fetchOrGetSibling: null/undefined #${i},${j}`, function (assert) {
+		const oBinding = this.bindList("/EMPLOYEES");
+		// Note: autoExpandSelect at model would be required for hierarchyQualifier, but that leads
+		// too far :-(
+		oBinding.mParameters.$$aggregation = {hierarchyQualifier : "X"};
+		const oNode = {
+			iIndex : "~iIndex~",
+			isDeleted : mustBeMocked,
+			isTransient : mustBeMocked
+		};
+		this.mock(oNode).expects("isDeleted").withExactArgs().returns(false);
+		this.mock(oNode).expects("isTransient").withExactArgs().returns(false);
+		oBinding.aContexts["~iIndex~"] = oNode;
+		const oCheckSuspendedExpectation
+			= this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		this.mock(oBinding).expects("lockGroup").never();
+		const oCache = {
+			getSiblingIndex : mustBeMocked
+		};
+		oBinding.oCache = oCache;
+		const oGetSiblingIndexExpectation = this.mock(oCache).expects("getSiblingIndex")
+			.withExactArgs("~iIndex~", oOffset.out).returns(oResult.in);
+		this.mock(oBinding).expects("fetchContexts").never();
+		this.mock(oBinding).expects("requestContexts").never();
+
+		// code under test
+		assert.strictEqual(oBinding.fetchOrGetSibling(oNode, oOffset.in), oResult.out);
+
+		sinon.assert.callOrder(oCheckSuspendedExpectation, oGetSiblingIndexExpectation);
+	});
+	});
+});
+
+	//*********************************************************************************************
+[0, 1, 42].forEach((iIndex) => {
+	QUnit.test(`fetchOrGetSibling: no request, index = ${iIndex}`, function (assert) {
+		const oBinding = this.bindList("/EMPLOYEES");
+		// Note: autoExpandSelect at model would be required for hierarchyQualifier, but that leads
+		// too far :-(
+		oBinding.mParameters.$$aggregation = {hierarchyQualifier : "X"};
+		const oNode = {
+			iIndex : "~iIndex~",
+			isDeleted : mustBeMocked,
+			isTransient : mustBeMocked
+		};
+		this.mock(oNode).expects("isDeleted").withExactArgs().returns(false);
+		this.mock(oNode).expects("isTransient").withExactArgs().returns(false);
+		oBinding.aContexts["~iIndex~"] = oNode;
+		const oCheckSuspendedExpectation
+			= this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		this.mock(oBinding).expects("lockGroup").never();
+		const oCache = {
+			getSiblingIndex : mustBeMocked
+		};
+		oBinding.oCache = oCache;
+		const oGetSiblingIndexExpectation = this.mock(oCache).expects("getSiblingIndex")
+			.withExactArgs("~iIndex~", +1).returns(iIndex);
+		this.mock(oBinding).expects("fetchContexts")
+			.withExactArgs(iIndex, 1, 0, sinon.match.same(_GroupLock.$cached))
+			.callsFake(function () {
+				oBinding.aContexts[iIndex] = "~oSiblingContext~";
+				return "n/a";
+			});
+		this.mock(oBinding).expects("requestContexts").never();
+
+		// code under test
+		assert.strictEqual(oBinding.fetchOrGetSibling(oNode), "~oSiblingContext~");
+
+		sinon.assert.callOrder(oCheckSuspendedExpectation, oGetSiblingIndexExpectation);
+	});
+});
+
+	//*********************************************************************************************
+[false, true].forEach((bNull) => {
+	QUnit.test(`fetchOrGetSibling: request, null=${bNull}`, async function (assert) {
+		const oBinding = this.bindList("/EMPLOYEES");
+		// Note: autoExpandSelect at model would be required for hierarchyQualifier, but that leads
+		// too far :-(
+		oBinding.mParameters.$$aggregation = {hierarchyQualifier : "X"};
+		const oNode = {
+			iIndex : "~iIndex~",
+			isDeleted : mustBeMocked,
+			isTransient : mustBeMocked
+		};
+		this.mock(oNode).expects("isDeleted").withExactArgs().returns(false);
+		this.mock(oNode).expects("isTransient").withExactArgs().returns(false);
 		oBinding.aContexts["~iIndex~"] = oNode;
 		const oCheckSuspendedExpectation
 			= this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oBinding).expects("lockGroup").withExactArgs().returns("~oGroupLock~");
 		const oCache = {
+			getSiblingIndex : mustBeMocked,
 			requestSiblingIndex : mustBeMocked
 		};
 		oBinding.oCache = oCache;
-		const oGetSiblingIndexExpectation = this.mock(oCache).expects("requestSiblingIndex")
-			.withExactArgs("~iIndex~", "~iOffset~", "~oGroupLock~").resolves(iIndex);
-		this.mock(oBinding).expects("requestContexts").withExactArgs(iIndex, 1)
-			.resolves(["~oSiblingContext~"]);
+		const oGetSiblingIndexExpectation = this.mock(oCache).expects("getSiblingIndex")
+			.withExactArgs("~iIndex~", -1).returns(undefined);
+		this.mock(oBinding).expects("fetchContexts").never();
+		this.mock(oCache).expects("requestSiblingIndex")
+			.withExactArgs("~iIndex~", -1, "~oGroupLock~").resolves(bNull ? -1 : 42);
+		this.mock(oBinding).expects("requestContexts").exactly(bNull ? 0 : 1)
+			.withExactArgs(42, 1).resolves(["~oSiblingContext~"]);
 
 		// code under test
-		const oPromise = oBinding.requestSibling(oNode, "~iOffset~");
+		const oPromise = oBinding.fetchOrGetSibling(oNode, -1, true);
 
 		sinon.assert.callOrder(oCheckSuspendedExpectation, oGetSiblingIndexExpectation);
 		assert.ok(oPromise instanceof Promise);
-		assert.strictEqual(await oPromise, "~oSiblingContext~");
+		assert.strictEqual(await oPromise, bNull ? null : "~oSiblingContext~");
 	});
 });
 
