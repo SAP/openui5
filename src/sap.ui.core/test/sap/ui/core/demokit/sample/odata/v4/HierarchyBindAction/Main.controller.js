@@ -103,13 +103,13 @@ sap.ui.define([
 			this._vNextSibling = vNextSibling;
 			this._oNode = oEvent.getSource().getBindingContext();
 			const oSelectDialog = this.byId("moveDialog");
+			oSelectDialog.setBindingContext(this._oNode);
 			const oListBinding = oSelectDialog.getBinding("items");
 			if (oListBinding.isSuspended()) {
 				oListBinding.resume();
 			} else {
 				oListBinding.refresh();
 			}
-			oSelectDialog.setBindingContext(this._oNode);
 			oSelectDialog.open();
 		},
 
@@ -151,22 +151,26 @@ sap.ui.define([
 		},
 
 		onMoveDown : async function (oEvent) {
+			var oNode;
+
 			try {
 				this.getView().setBusy(true);
-				const oNode = oEvent.getSource().getBindingContext();
-				const oTable = oEvent.getSource().getParent().getParent();
+				oNode = oEvent.getSource().getBindingContext();
+				const oTable = oEvent.getSource().getParent().getParent().getParent();
+				oNode.setKeepAlive(true);
 
 				const [oParent, oSibling] = await Promise.all([
 					oNode.requestParent(),
 					oNode.requestSibling(+1)
 				]);
 
-				if (oSibling) {
-					await oSibling.move({nextSibling : oNode, parent : oParent});
-				} else {
+				if (!oSibling) {
 					MessageBox.alert("Cannot move down",
 						{icon : MessageBox.Icon.INFORMATION, title : "Already last sibling"});
+					return;
 				}
+
+				await oSibling.move({nextSibling : oNode, parent : oParent});
 
 				if (oNode.getIndex()
 						>= oTable.getFirstVisibleRow() + oTable.getRowMode().getRowCount()) {
@@ -177,6 +181,7 @@ sap.ui.define([
 			} catch (oError) {
 				MessageBox.alert(oError.message, {icon : MessageBox.Icon.ERROR, title : "Error"});
 			} finally {
+				oNode.setKeepAlive(false);
 				this.getView().setBusy(false);
 			}
 		},
@@ -185,23 +190,31 @@ sap.ui.define([
 			try {
 				this.getView().setBusy(true);
 				const oNode = oEvent.getSource().getBindingContext();
-				const oTable = oEvent.getSource().getParent().getParent();
+				const oTable = oEvent.getSource().getParent().getParent().getParent();
+
+				// eslint-disable-next-line no-inner-declarations
+				function scrollTo(iIndex) {
+					if (iIndex < oTable.getFirstVisibleRow()) {
+						oTable.setFirstVisibleRow(iIndex);
+					}
+				}
 
 				const [oParent, oSibling] = await Promise.all([
 					oNode.requestParent(),
 					oNode.requestSibling(-1)
 				]);
-				if (oSibling) {
-					await oNode.move({nextSibling : oSibling, parent : oParent});
-				} else {
+
+				if (!oSibling) {
+					scrollTo(oParent.getIndex());
 					MessageBox.alert("Cannot move up",
 						{icon : MessageBox.Icon.INFORMATION, title : "Already first sibling"});
+					return;
 				}
 
-				if (oNode.getIndex() < oTable.getFirstVisibleRow()) {
-					// make sure moved node is visible
-					oTable.setFirstVisibleRow(oNode.getIndex());
-				}
+				await oNode.move({nextSibling : oSibling, parent : oParent});
+
+				// make sure moved node is visible
+				scrollTo(oNode.getIndex());
 			} catch (oError) {
 				MessageBox.alert(oError.message, {icon : MessageBox.Icon.ERROR, title : "Error"});
 			} finally {
