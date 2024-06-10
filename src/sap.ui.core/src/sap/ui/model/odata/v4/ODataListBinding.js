@@ -1619,7 +1619,11 @@ sap.ui.define([
 				throw oError;
 			}
 
-			return oResult && that.createContexts(iStart, oResult.value);
+			if (oResult) {
+				oResult.$checkStillValid?.();
+				return that.createContexts(iStart, oResult.value);
+			}
+			// return undefined;
 		}, function (oError) {
 			oGroupLock.unlock(true);
 			throw oError;
@@ -1673,7 +1677,7 @@ sap.ui.define([
 				return oCache.read(iIndex, iLength, iMaximumPrefetchSize, oGroupLock,
 					fnDataRequested
 				).then(function (oResult) {
-					that.assertSameCache(oCache);
+					oResult.$checkStillValid = that.checkSameCache.bind(that, oCache);
 
 					return oResult;
 				});
@@ -3739,7 +3743,7 @@ sap.ui.define([
 					var aUpdatePromises = [];
 
 					fireDataReceived({data : {}});
-					oBinding.assertSameCache(oCache);
+					oBinding.checkSameCache(oCache);
 					if (!bDestroyed) { // do not update destroyed context
 						aUpdatePromises.push(oContext.checkUpdateInternal());
 						if (bAllowRemoval) {

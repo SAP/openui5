@@ -862,7 +862,7 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oGroupLock), "foo", sinon.match.func, undefined)
 			.callsArg(2)
 			.returns(SyncPromise.resolve(Promise.resolve()).then(function () {
-				that.mock(oBinding).expects("assertSameCache")
+				that.mock(oBinding).expects("checkSameCache")
 					.withExactArgs(sinon.match.same(oCache))
 					.throws(oError);
 				return {};
@@ -1102,7 +1102,7 @@ sap.ui.define([
 		this.mock(oCache).expects("fetchValue")
 			.withExactArgs(sinon.match.same(_GroupLock.$cached), "bar", sinon.match.func, null)
 			.returns(SyncPromise.resolve(42));
-		this.mock(oBinding).expects("assertSameCache").withExactArgs(oCache);
+		this.mock(oBinding).expects("checkSameCache").withExactArgs(oCache);
 
 		// code under test
 		return oBinding.fetchValue("/absolute/bar", null, true).then(function (vResult) {
@@ -1141,7 +1141,7 @@ sap.ui.define([
 		this.mock(oCache).expects("fetchValue")
 			.withExactArgs(sinon.match.same(oGroupLock), "bar", sinon.match.func, undefined)
 			.returns(SyncPromise.resolve(42));
-		this.mock(oBinding).expects("assertSameCache").withExactArgs(oCache);
+		this.mock(oBinding).expects("checkSameCache").withExactArgs(oCache);
 
 		// code under test
 		return oBinding.fetchValue("/absolute/bar").then(function (vResult) {
