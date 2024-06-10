@@ -5316,8 +5316,10 @@ sap.ui.define([
 [true, false].forEach((bInheritResult) => {
 	[true, false].forEach((bDropFilter) => {
 		[true, false].forEach((bRefreshNeeded) => {
-			const sTitle = "requestProperties: bInheritResult = " + bInheritResult
-				+ ", bDropFilter = " + bDropFilter + ", bRefreshNeeded = " + bRefreshNeeded;
+			[true, false].forEach((bEntityFound) => {
+				const sTitle = "requestProperties: bInheritResult = " + bInheritResult
+					+ ", bDropFilter = " + bDropFilter + ", bRefreshNeeded = " + bRefreshNeeded
+					+ ", entity was found: " + bEntityFound;
 
 	QUnit.test(sTitle, async function (assert) {
 		const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, {
@@ -5391,24 +5393,23 @@ sap.ui.define([
 			.resolves({
 				"@odata.context" : "n/a",
 				"@odata.metadataEtag" : "W/...",
-				value : ["~oResult~"]
+				value : bEntityFound ? ["~oResult~"] : []
 			});
 
-		if (bInheritResult) {
-			oHelperMock.expects("inheritPathValue")
-				.withExactArgs(["path", "to", "property0"], "~oResult~", "~oElement~", true);
-			oHelperMock.expects("inheritPathValue")
-				.withExactArgs(["path", "to", "property1"], "~oResult~", "~oElement~", true);
-		}
+		oHelperMock.expects("inheritPathValue").exactly(bInheritResult && bEntityFound ? 1 : 0)
+			.withExactArgs(["path", "to", "property0"], "~oResult~", "~oElement~", true);
+		oHelperMock.expects("inheritPathValue").exactly(bInheritResult && bEntityFound ? 1 : 0)
+			.withExactArgs(["path", "to", "property1"], "~oResult~", "~oElement~", true);
 
 		assert.strictEqual(
 			// code under test
 			await oCache.requestProperties("~oElement~", aSelect, oGroupLock, bInheritResult,
 				bDropFilter, bRefreshNeeded),
-			bInheritResult ? undefined : "~oResult~");
+			bInheritResult || !bEntityFound ? undefined : "~oResult~");
 
 		assert.strictEqual(oCache.oAggregation.$ExpandLevels, "~ExpandLevels~", "not overwritten");
 	});
+			});
 		});
 	});
 });
