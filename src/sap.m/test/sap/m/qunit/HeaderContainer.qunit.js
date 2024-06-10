@@ -1022,6 +1022,7 @@ sap.ui.define([
 			assert.equal($items.eq(i).attr("aria-posinset"), i + 1);
 			assert.equal($items.eq(i).attr("aria-setsize"), iCount);
 		}
+		assert.equal(this.oHeaderContainer.mAggregations._scrollContainer.mAggregations.content[1].getDomRef().tabIndex, "-1", "-1 is the tabIndex for the content of HeaderContainer");
 	});
 
 	QUnit.test("aria-ariaLabelledBy", async function (assert) {
