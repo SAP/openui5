@@ -83,6 +83,9 @@ sap.ui.define([
 				 * belongs to, not by the application.
 				 *
 				 * <b>Note:</b> A condition must have the structure of {@link sap.ui.mdc.condition.ConditionObject ConditionObject}.
+				 *
+				 * @private
+				 * @ui5-restricted sap.ui.mdc.field.FieldBase
 				 */
 				conditions: {
 					type: "object[]",
@@ -121,6 +124,9 @@ sap.ui.define([
 				 *
 				 * <b>Note:</b> This property must only be set by the control the <code>ValueHelp</code> element
 				 * belongs to, not by the application.
+				 *
+				 * @private
+				 * @ui5-restricted sap.ui.mdc.field.FieldBase
 				 */
 				filterValue: {
 					type: "string",
@@ -179,6 +185,9 @@ sap.ui.define([
 				 *
 				 * <b>Note:</b> This event must only be handled by the control the <code>ValueHelp</code> element
 				 * belongs to, not by the application.
+				 *
+				 * @private
+				 * @ui5-restricted sap.ui.mdc.field.FieldBase
 				 */
 				select: {
 					parameters: {
@@ -207,6 +216,9 @@ sap.ui.define([
 				 *
 				 * <b>Note:</b> This event must only be handled by the control the <code>ValueHelp</code> element
 				 * belongs to, not by the application.
+				 *
+				 * @private
+				 * @ui5-restricted sap.ui.mdc.field.FieldBase
 				 */
 				disconnect: {},
 
@@ -245,6 +257,9 @@ sap.ui.define([
 
 				/**
 				 * This event is fired after the user navigated, using the arrow keys, in the value help.
+				 *
+				 * @private
+				 * @ui5-restricted sap.ui.mdc.field.FieldBase
 				 */
 				navigated: {
 					parameters: {
@@ -266,10 +281,16 @@ sap.ui.define([
 				},
 				/**
 				 * This event is fired if the user wants to switch from typeahead to value help.
+				 *
+				 * @private
+				 * @ui5-restricted sap.ui.mdc.field.FieldBase
 				 */
 				switchToValueHelp: {},
 				/**
 				 * This event is fired after a suggested item has been found for a type-ahead.
+				 *
+				 * @private
+				 * @ui5-restricted sap.ui.mdc.field.FieldBase
 				 * @since 1.120.0
 				 */
 				typeaheadSuggested: {
