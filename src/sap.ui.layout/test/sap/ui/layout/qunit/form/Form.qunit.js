@@ -378,13 +378,15 @@ sap.ui.define([
 		assert.equal(jQuery("#FC1--title").text(), "Test", "Title rendered");
 		assert.ok(jQuery("#FC1--title").is("h5"), "Title is rendered as H5 as default");
 		assert.ok(!jQuery("#FC1--title").hasClass("sapUiFormTitleEmph"), "Title rendered not emphasized");
-		assert.equal(jQuery("#FC1").attr("role"), "form", "role \"form\" set");
+		assert.equal(jQuery("#F1").attr("role"), "region", "role \"region\" set on Form");
+		assert.equal(jQuery("#FC1").attr("role"), "form", "role \"form\" set on Container");
 		assert.equal(jQuery("#FC1").attr("aria-labelledby"), "FC1--title", "aria-labelledby points to Title");
 
 		oFormContainer1.destroyTitle();
 		await nextUIUpdate();
 		assert.notOk(window.document.getElementById("FC1--title"), "no Title rendered");
-		assert.notOk(jQuery("#FC1").attr("role"), "role \"form\" not set");
+		assert.equal(jQuery("#F1").attr("role"), "form", "role \"form\" set on Form");
+		assert.notOk(jQuery("#FC1").attr("role"), "no role set on Container");
 		assert.notOk(jQuery("#FC1").attr("aria-labelledby"), "no aria-labelledby");
 	});
 
@@ -401,7 +403,8 @@ sap.ui.define([
 		assert.notOk(jQuery("#T1").hasClass("sapUiFormTitleEmph"), "Title rendered not emphasized");
 		assert.notOk(jQuery("#T1").attr("title"), "Title: no tooltip rendered per default");
 		assert.notOk(window.document.getElementById("T1-ico"), "Title no image is rendered");
-		assert.equal(jQuery("#FC1").attr("role"), "form", "role \"form\" set");
+		assert.equal(jQuery("#F1").attr("role"), "region", "role \"region\" set on Form");
+		assert.equal(jQuery("#FC1").attr("role"), "form", "role \"form\" set on Container");
 		assert.equal(jQuery("#FC1").attr("aria-labelledby"), "T1", "aria-labelledby points to Title");
 
 		oTitle.setIcon("sap-icon://sap-ui5");
@@ -418,7 +421,8 @@ sap.ui.define([
 		oFormContainer1.destroyTitle();
 		await nextUIUpdate();
 		assert.notOk(window.document.getElementById("T1"), "no Title rendered");
-		assert.notOk(jQuery("#FC1").attr("role"), "role \"form\" not set");
+		assert.equal(jQuery("#F1").attr("role"), "form", "role \"form\" set on Form");
+		assert.notOk(jQuery("#FC1").attr("role"), "no role set on Container");
 		assert.notOk(jQuery("#FC1").attr("aria-labelledby"), "no aria-labelledby");
 	});
 
@@ -433,16 +437,22 @@ sap.ui.define([
 		assert.equal(oToolbar.getDesign(), mLibrary.ToolbarDesign.Auto, "Toolbar design not changed");
 		assert.ok(window.document.getElementById("TB1"), "Toolbar rendered");
 		assert.equal(jQuery("#FC1").attr("aria-labelledby"), "TB1", "aria-labelledby points to Toolbar");
+		assert.equal(jQuery("#F1").attr("role"), "region", "role \"region\" set on Form");
+		assert.equal(jQuery("#FC1").attr("role"), "form", "role \"form\" set on Container");
 
 		oFormContainer1.destroyToolbar();
 		await nextUIUpdate();
 		assert.notOk(window.document.getElementById("TB1"), "no Toolbar rendered");
 		assert.notOk(jQuery("#FC1").attr("aria-labelledby"), "no aria-labelledby");
+		assert.equal(jQuery("#F1").attr("role"), "form", "role \"form\" set on Form");
+		assert.notOk(jQuery("#FC1").attr("role"), "no role set on Container");
 
 		oToolbar = new Toolbar("TB1", {content: [new mTitle("T1", {text: "Test"})]});
 		oFormContainer1.setToolbar(oToolbar);
 		await nextUIUpdate();
 		assert.equal(jQuery("#FC1").attr("aria-labelledby"), "T1", "aria-labelledby points to Title");
+		assert.equal(jQuery("#F1").attr("role"), "region", "role \"region\" set on Form");
+		assert.equal(jQuery("#FC1").attr("role"), "form", "role \"form\" set on Container");
 	});
 
 	QUnit.test("Title and Toolbar", async function(assert) {

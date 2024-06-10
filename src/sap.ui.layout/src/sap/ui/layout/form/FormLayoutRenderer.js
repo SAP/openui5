@@ -95,7 +95,7 @@ sap.ui.define([
 		var oToolbar = oContainer.getToolbar();
 		var oTitle = oContainer.getTitle();
 
-		rm.openStart("section", oContainer);
+		rm.openStart("div", oContainer);
 		rm.class("sapUiFormContainer");
 
 		if (oToolbar) {
@@ -108,7 +108,7 @@ sap.ui.define([
 			rm.attr('title', oContainer.getTooltip_AsString());
 		}
 
-		this.writeAccessibilityStateContainer(rm, oContainer);
+		this.writeAccessibilityStateContainer(rm, oContainer, !oLayout.isContainerLabelled(oContainer));
 
 		rm.openEnd();
 
@@ -278,8 +278,9 @@ sap.ui.define([
 	 * Writes the accessibility attributes for FormContainers.
 	 * @param {sap.ui.core.RenderManager} rm
 	 * @param {sap.ui.layout.form.FormContainer} oContainer
+	 * @param {boolean} bNoRole if set the DOM node needs no role (e.g. Container has no title)
 	 */
-	FormLayoutRenderer.writeAccessibilityStateContainer = function(rm, oContainer){
+	FormLayoutRenderer.writeAccessibilityStateContainer = function(rm, oContainer, bNoRole){
 
 		var mAriaProps = {};
 		var oTitle = oContainer.getTitle();
@@ -300,8 +301,7 @@ sap.ui.define([
 			mAriaProps["labelledby"] = {value: sId, append: true};
 		}
 
-		if (mAriaProps["labelledby"] || oContainer.getAriaLabelledBy().length > 0) {
-			// if no title or label do not set role because of JAWS 18 issues
+		if (!bNoRole) {
 			mAriaProps["role"] = "form";
 		}
 

@@ -48,7 +48,7 @@ function(Element, nextUIUpdate, jQuery, XMLView) {
 
 		// Arrange
 		oFormBlock = this.oObjectPageFormView.byId("personalFormBlock");
-		aGridCells = oFormBlock.$().find(".sapUiForm .sapUiFormCLContent>section");
+		aGridCells = oFormBlock.$().find(".sapUiForm .sapUiFormCLContent>*");
 		$GridCellsOuter = oFormBlock.$().find(".sapUiForm .sapUiFormCL>div").first();
 
 		// Assert
@@ -120,7 +120,7 @@ function(Element, nextUIUpdate, jQuery, XMLView) {
 			$GridCellsOuter;
 
 		oFormBlock = this.oObjectPageFormView.byId("personalSimpleFormBlock");
-		aGridCells = oFormBlock.$().find(".sapUiForm .sapUiFormCLContent>section");
+		aGridCells = oFormBlock.$().find(".sapUiForm .sapUiFormCLContent>*");
 		oTestInput = Element.getElementById("__input0");
 		iTestInputTop = parseInt(oTestInput.$().offset().top);
 		$GridCellsOuter = oFormBlock.$().find(".sapUiForm .sapUiFormCL>div").first();

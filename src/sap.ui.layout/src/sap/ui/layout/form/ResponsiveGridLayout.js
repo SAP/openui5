@@ -287,7 +287,7 @@ sap.ui.define([
 					oRm.attr('title', sTooltip);
 				}
 
-				oLayout.getRenderer().writeAccessibilityStateContainer(oRm, oContainer);
+				oLayout.getRenderer().writeAccessibilityStateContainer(oRm, oContainer, false); // if Container-Panel used render always a role
 
 				oRm.openEnd();
 

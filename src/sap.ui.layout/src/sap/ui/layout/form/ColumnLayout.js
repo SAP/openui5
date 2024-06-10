@@ -685,6 +685,16 @@ sap.ui.define([
 
 	};
 
+	ColumnLayout.prototype.hasLabelledContainers = function(oForm) {
+
+		const aContainers = oForm.getFormContainers();
+
+		// Let Form render role="region" also if FormContainer has no title.
+		// If only one FormContainer exist and it has no title let Form render role "form".
+		return aContainers.length !== 1 || this.isContainerLabelled(aContainers[0]);
+
+	};
+
 	return ColumnLayout;
 
 });
