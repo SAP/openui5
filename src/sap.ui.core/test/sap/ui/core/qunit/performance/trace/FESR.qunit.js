@@ -34,9 +34,10 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 		afterEach: function(assert) {
 			assert.notOk(FESR.getActive(), "FESR is deactivated");
 		},
-		dummyRequest: function() {
+		dummyRequest: function(bUseUrlObject) {
 			var xhr = new XMLHttpRequest();
-			xhr.open("GET", "resources/ui5loader.js?noCache=" + Date.now() + "-" + (++requestCounter), false);
+			const sUrl = "resources/ui5loader.js?noCache=" + Date.now() + "-" + (++requestCounter);
+			xhr.open("GET", bUseUrlObject ?  new URL(sUrl, document.baseURI) : sUrl, false);
 			xhr.send();
 			return xhr;
 		}
@@ -94,8 +95,8 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 		Interaction.end(true);
 		oXhrHandle.abort();
 
-		// trigger another request to send FESR
-		oXhrHandle = this.dummyRequest();
+		// trigger another request to send FESR using URL object to ensure isCORSRequest can handle URL objects as well
+		oXhrHandle = this.dummyRequest(/* bUseUrlObject */ true);
 
 		assert.ok(oHeaderSpy.args.some(function(args) {
 			if (args[0] === "SAP-Perf-FESRec") {
@@ -167,8 +168,8 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 		Interaction.end(true);
 		oXhrHandle.abort();
 
-		// trigger another request to send FESR
-		oXhrHandle = this.dummyRequest();
+		// trigger another request to send FESR using URL object to ensure isCORSRequest can handle URL objects as well
+		oXhrHandle = this.dummyRequest(/* bUseUrlObject */ true);
 
 		assert.ok(oHeaderSpy.args.some(function(args) {
 			if (args[0] === "SAP-Perf-FESRec") {
@@ -215,7 +216,8 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 		Interaction.end(true);
 		oXhrHandle.abort();
 		// trigger initial FESR header creation (which should include the actual "action")
-		oXhrHandle = this.dummyRequest();
+		// using URL object to ensure isCORSRequest can handle URL objects as well
+		oXhrHandle = this.dummyRequest(/* bUseUrlObject */ true);
 
 		assert.ok(oHeaderSpy.args.some(function(args) {
 			if (args[0] === "SAP-Perf-FESRec") {
