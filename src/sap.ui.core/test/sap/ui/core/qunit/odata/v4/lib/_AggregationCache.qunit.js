@@ -1130,7 +1130,7 @@ sap.ui.define([
 							.withExactArgs("~Parent~", "~Types~", "/Foo");
 						this.mock(oCache).expects("findIndex").withExactArgs("~iRank~")
 							.returns(17);
-						oHelperMock.expects("getPrivateAnnotation")
+						oHelperMock.expects("hasPrivateAnnotation")
 							.withExactArgs("~ParentInsideCollection~", "placeholder")
 							.returns(bParentIsPlaceholder);
 						this.mock(oCache).expects("insertNode")
@@ -1164,6 +1164,7 @@ sap.ui.define([
 		assert.ok(oPromise instanceof SyncPromise);
 		assert.strictEqual(await oPromise, 17);
 		assert.strictEqual(JSON.stringify(oCache.mQueryOptions), sQueryOptions, "unchanged");
+		oHelperMock.restore();
 		assert.notOk(_Helper.hasPrivateAnnotation(oNode, "parentIndexPromise"), "gone");
 	});
 	});
@@ -6278,8 +6279,9 @@ sap.ui.define([
 	//*********************************************************************************************
 [-1, +1].forEach((iOffset) => {
 	[false, true].forEach((bWrongLevel) => {
-		const sTitle = `requestSiblingIndex: request via 1st level, offset ${iOffset}`
-			+ `, wrong level: ${bWrongLevel}`;
+		[false, true].forEach((bAlreadyIn) => {
+			const sTitle = `requestSiblingIndex: request via 1st level, offset ${iOffset}`
+				+ `, wrong level: ${bWrongLevel}, already inside collection: ${bAlreadyIn}`;
 
 	QUnit.test(sTitle, async function (assert) {
 		const oCache = _AggregationCache.create(this.oRequestor, "Foo('42')", "", {}, {
@@ -6305,6 +6307,12 @@ sap.ui.define([
 			},
 			"@$ui5.node.level" : 7 // unrealistic, but more illustrative
 		}];
+		oCache.aElements[42] = {};
+		if (!bAlreadyIn) {
+			oCache.aElements[42]["@$ui5._"] = {
+				placeholder : true
+			};
+		}
 		oCache.oFirstLevel = oFirstLevel;
 		this.mock(oCache).expects("getSiblingIndex").withExactArgs(2, iOffset, true)
 			.returns(undefined);
@@ -6339,13 +6347,15 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oSibling), "Ltd_Rank").returns("42");
 		this.mock(_Helper).expects("deleteProperty")
 			.withExactArgs(sinon.match.same(oSibling), "Ltd_Rank");
-		this.mock(oCache).expects("insertNode").withExactArgs(sinon.match.same(oSibling), 42);
+		this.mock(oCache).expects("insertNode").exactly(bAlreadyIn ? 0 : 1)
+			.withExactArgs(sinon.match.same(oSibling), 42);
 
 		assert.strictEqual(
 			// code under test
 			await oCache.requestSiblingIndex(2, iOffset, "~oGroupLock~"),
 			bWrongLevel ? -1 : 42);
 	});
+		});
 	});
 });
 
