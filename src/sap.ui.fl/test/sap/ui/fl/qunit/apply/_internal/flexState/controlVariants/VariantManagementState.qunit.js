@@ -1559,6 +1559,17 @@ sap.ui.define([
 			});
 			oDeferred.resolve();
 		});
+
+		QUnit.test("addRuntimeOnlyFlexObjects", function(assert) {
+			assert.strictEqual(FlexState.getRuntimeOnlyData(sReference).flexObjects.length, 0, "then initially no flex objects are there");
+			const oUIChange = "foo";
+			const oClearCacheSpy = sandbox.spy(FlexState.getFlexObjectsDataSelector(), "clearCachedResult");
+			VariantManagementState.addRuntimeOnlyFlexObjects(sReference, [oUIChange]);
+			assert.strictEqual(FlexState.getRuntimeOnlyData(sReference).flexObjects.length, 1, "the new UIChange is added");
+			assert.strictEqual(FlexState.getRuntimeOnlyData(sReference).flexObjects[0], "foo", "the correct UIChange is added");
+			assert.deepEqual(FlexState.getFlexObjectsDataSelector().get({ reference: sReference }), ["foo"], "the selector is updated");
+			assert.strictEqual(oClearCacheSpy.callCount, 1, "then the cache is invalidated");
+		});
 	});
 
 	QUnit.done(function() {

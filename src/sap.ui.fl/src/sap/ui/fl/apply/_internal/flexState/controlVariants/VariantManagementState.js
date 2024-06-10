@@ -442,6 +442,18 @@ sap.ui.define([
 	};
 
 	/**
+	 * Adds all passed flex objects to the runtime-only data of the FlexState.
+	 *
+	 * @param {string} sReference - Flex reference of the app
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} aFlexObjects - Flex objects to be added as runtime-only
+	 */
+	VariantManagementState.addRuntimeOnlyFlexObjects = function(sReference, aFlexObjects) {
+		aFlexObjects.forEach((oFlexObject) => FlexState.getRuntimeOnlyData(sReference).flexObjects.push(oFlexObject));
+		// Only called during destruction, no need to recalculate new state immediately
+		FlexState.getFlexObjectsDataSelector().clearCachedResult({ reference: sReference });
+	};
+
+	/**
 	 * Returns control changes for a given variant reference.
 	 *
 	 * @param {object} mPropertyBag Object with the necessary properties
