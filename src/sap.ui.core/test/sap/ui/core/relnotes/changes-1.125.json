@@ -1,7 +1,12 @@
 {
   "1.125.0": {
-    "date": "May 2024",
+    "date": "June 2024",
     "notes": [
+      {
+        "id": "62faa2785d314271daf2747269809dfaa5842175",
+        "type": "FIX",
+        "text": " sap.ui.core.format.DateFormat.qunit: Fix flaky tests"
+      },
       {
         "id": "637feb169c395683ce6139083fae4c855e1dab2e",
         "type": "FIX",

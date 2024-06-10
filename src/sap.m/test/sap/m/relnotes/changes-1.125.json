@@ -1,7 +1,28 @@
 {
   "1.125.0": {
-    "date": "May 2024",
+    "date": "June 2024",
     "notes": [
+      {
+        "id": "ebd88ff87d7403a5584dcc771899330edb53293e",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Apply focus if page indicator arrow is pressed"
+      },
+      {
+        "id": "286106383ecf7bb29087db93725abb08ce413bfc",
+        "type": "FEATURE",
+        "text": " sap.m.Carousel: the page indicator can be placed over the content of the Carousel",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "f3fd2b9477efd1b43db92307ce3c1eee8e2d9307",
+        "type": "FIX",
+        "text": " sap.m.Input: Value is not cleared on invalidation when type password is used"
+      },
       {
         "id": "e278a5a59332df4222d671d1ec2bba06040a6f2f",
         "type": "FEATURE",
