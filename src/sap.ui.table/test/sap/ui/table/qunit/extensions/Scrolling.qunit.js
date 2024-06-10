@@ -2955,6 +2955,75 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("Scroll with mouse wheel when the table is inside a scrollable container", function(assert) {
+		const that = this;
+		const iBindingLength = 20;
+		const oTable = this.createTable({
+			bindingLength: iBindingLength
+		});
+
+		const iMaxFirstVisibleRow = this.getMaxFirstVisibleRow(iBindingLength);
+		const iMaxScrollTop = this.getMaxScrollTop(iBindingLength);
+
+		function scrollWithMouseWheel(iScrollDelta, iDeltaMode, bTableScrolls, bContainerScrolls) {
+			return new Promise(function(resolve) {
+				const oEvent = TableQUnitUtils.createMouseWheelEvent(iScrollDelta, iDeltaMode, false);
+				const oPreventDefaultSpy = sinon.spy(oEvent, "preventDefault");
+				oTable.qunit.getDataCell(0, 0).dispatchEvent(oEvent);
+				if (bTableScrolls) {
+					Promise.race([
+						that.oTable.qunit.whenVSbScrolled().then(oTable.qunit.whenRenderingFinished),
+						that.oTable.qunit.whenNextRenderingFinished()
+					]).then(function() {
+						assert.ok(oPreventDefaultSpy.calledOnce, "Page scrolling is prevented");
+						resolve();
+					});
+				} else {
+					wait(600).then(function() {
+						if (bContainerScrolls) {
+							assert.ok(oPreventDefaultSpy.notCalled, "Page scrolling is not prevented");
+						} else {
+							assert.ok(oPreventDefaultSpy.calledOnce, "Page scrolling is prevented");
+						}
+						resolve();
+					});
+				}
+			});
+		}
+
+		function wait(iMilliseconds) {
+			return new Promise(function(resolve) {
+				setTimeout(resolve, iMilliseconds);
+			});
+		}
+
+		return oTable.qunit.whenRenderingFinished().then(function() {
+			return scrollWithMouseWheel(9999999, MouseWheelDeltaMode.PIXEL, true, false);
+		}).then(function() {
+			that.assertPosition(assert, iMaxFirstVisibleRow, iMaxScrollTop, 0, "Scrolled to the bottom");
+		}).then(function() {
+			return scrollWithMouseWheel(20, MouseWheelDeltaMode.PIXEL, false, false);
+		}).then(function() {
+			that.assertPosition(assert, iMaxFirstVisibleRow, iMaxScrollTop, 0, "The table is already scrolled to the bottom");
+		}).then(function() {
+			return scrollWithMouseWheel(20, MouseWheelDeltaMode.PIXEL, false, true);
+		}).then(function() {
+			that.assertPosition(assert, iMaxFirstVisibleRow, iMaxScrollTop, 0, "The table is already scrolled to the bottom");
+		}).then(function() {
+			return scrollWithMouseWheel(-9999999, MouseWheelDeltaMode.PIXEL, true, false);
+		}).then(function() {
+			that.assertPosition(assert, 0, 0, 0, "Scrolled to the top");
+		}).then(function() {
+			return scrollWithMouseWheel(-20, MouseWheelDeltaMode.PIXEL, false, false);
+		}).then(function() {
+			that.assertPosition(assert, 0, 0, 0, "The table is already scrolled to the top");
+		}).then(function() {
+			return scrollWithMouseWheel(-20, MouseWheelDeltaMode.PIXEL, false, true);
+		}).then(function() {
+			that.assertPosition(assert, 0, 0, 0, "The table is already scrolled to the top");
+		});
+	});
+
 	QUnit.test("Scroll with mouse wheel; Large data; Variable row heights", function(assert) {
 		const that = this;
 		const iBindingLength = 1000000000;

@@ -47,6 +47,14 @@ sap.ui.define([
 	const VERTICAL_OVERFLOW_BUFFER_LENGTH = 2; // Must be >= 1! A buffer is always required, because at least one row is always in the buffer.
 
 	/**
+	 * The timeout for blocking scroll events when the table is scrolled to the beginning or the end (milliseconds).
+	 *
+	 * @constant
+	 * @type {int}
+	 */
+	const SCROLL_BLOCK_TIMEOUT = 500;
+
+	/**
 	 * Scroll directions.
 	 *
 	 * @enum {string}
@@ -1333,6 +1341,7 @@ sap.ui.define([
 			}
 
 			const oVSb = oTable._getScrollExtension().getVerticalScrollbar();
+			const bScrollingForward = iScrollTop > oVSb.scrollTop;
 
 			if (oVSb) {
 				log("VerticalScrollingHelper.scrollScrollbar: Scroll from " + oVSb.scrollTop + " to " + iScrollTop, oTable);
@@ -1340,6 +1349,24 @@ sap.ui.define([
 				oVSb._scrollTop = oVSb.scrollTop;
 			} else {
 				log("VerticalScrollingHelper.scrollScrollbar: Not scrolled - No scrollbar available", oTable);
+			}
+
+			let bScrolledToEnd = false;
+			if (bScrollingForward) {
+				bScrolledToEnd = oVSb.scrollTop === oVSb.scrollHeight - oVSb.offsetHeight;
+			} else {
+				bScrolledToEnd = oVSb.scrollTop === 0;
+			}
+
+			if (bScrolledToEnd && !oVSb._unblockScrolling) {
+				if (!oVSb._timeoutBlock) {
+					oVSb._timeoutBlock = setTimeout(function() {
+						oVSb._unblockScrolling = true;
+						oVSb._timeoutBlock = null;
+					}, SCROLL_BLOCK_TIMEOUT);
+				}
+			} else {
+				oVSb._unblockScrolling = false;
 			}
 
 			return Promise.resolve();
@@ -1853,7 +1880,7 @@ sap.ui.define([
 					bScrolledToEnd = oVSb.scrollTop === 0;
 				}
 
-				if (!oScrollExtension.isVerticalScrollbarVisible() || bScrolledToEnd) {
+				if (!oScrollExtension.isVerticalScrollbarVisible() || bScrolledToEnd && oVSb._unblockScrolling) {
 					return;
 				}
 				oEvent.preventDefault();
