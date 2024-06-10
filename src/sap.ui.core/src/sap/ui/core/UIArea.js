@@ -866,7 +866,7 @@ sap.ui.define([
 		} else {
 			var oUIArea = oControl.getUIArea();
 			oUIArea && oUIArea._onControlRendered(oControl);
-			oRenderLog.warning("Couldn't rerender '" + oControl.getId() + "', as its DOM location couldn't be determined");
+			oRenderLog.info("Couldn't rerender '" + oControl.getId() + "', as its DOM location couldn't be determined");
 		}
 	};
 	var rEvents = /^(mousedown|mouseup|click|keydown|keyup|keypress|touchstart|touchend|tap)$/;
