@@ -101,6 +101,9 @@ sap.ui.define([
 
 		assert.strictEqual(oElement["@$ui5.node.isExpanded"], "~new~", "unchanged");
 
+		oHelperMock.expects("copySelected")
+			.withExactArgs(sinon.match.same(oPlaceholder), sinon.match.same(oElement));
+
 		// Note: an initial placeholder cannot know "@$ui5.node.isExpanded"!
 		_Helper.setPrivateAnnotation(oPlaceholder, "placeholder", 1);
 		oPlaceholder["@$ui5.node.isExpanded"] = "~old~";
@@ -109,6 +112,9 @@ sap.ui.define([
 		_AggregationHelper.beforeOverwritePlaceholder(oPlaceholder, oElement, oCache, 42);
 
 		assert.strictEqual(oElement["@$ui5.node.isExpanded"], "~old~");
+
+		oHelperMock.expects("copySelected")
+			.withExactArgs(sinon.match.same(oPlaceholder), sinon.match.same(oElement));
 
 		delete oElement["@$ui5.node.isExpanded"];
 		delete oPlaceholder["@$ui5.node.isExpanded"];
