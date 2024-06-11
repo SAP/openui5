@@ -18,17 +18,27 @@
 .sapUiFormTitle {
 	border-bottom: 1px solid @sapUiGroupTitleBorderColor;
 	overflow: hidden;
+	width: 100%;
+}
+
+/* Text part */
+.sapUiFormTitleH1,
+.sapUiFormTitleH2,
+.sapUiFormTitleH3,
+.sapUiFormTitleH4,
+.sapUiFormTitleH5,
+.sapUiFormTitleH6 {
+	overflow: hidden;
 	white-space: nowrap;
 	text-overflow: ellipsis;
 	display: block;
 	width: 100%;
+	font-weight: @sapUiFontHeaderWeight;
 	color: @sapUiGroupTitleTextColor;
 	margin: 0;
 }
 
 .sapUiForm .sapUiFormTitle {
-	font-weight: @sapUiFontHeaderWeight;
-	color: @sapUiGroupTitleTextColor;
 	height: 3rem;
 	line-height: 3rem;
 }

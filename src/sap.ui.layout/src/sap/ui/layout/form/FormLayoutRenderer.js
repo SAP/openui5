@@ -195,7 +195,18 @@ sap.ui.define([
 				sLevel = "H5";
 			}
 
-			// just reuse TextView class because there font size & co. is already defined
+			const bRenderExpander = bExpander && oExpandButton;
+
+			if (bRenderExpander) {
+				// if expander is renders put a DIV around expander an d title. (If expander inside title the screenreader announcement is somehow strange.)
+				rm.openStart("div", sContentId + "--head");
+				rm.class("sapUiFormTitle");
+				// rm.class("sapUiFormTitle" + sLevel);
+				rm.class("sapUiFormTitleExpandable");
+				rm.openEnd();
+				rm.renderControl(oExpandButton);
+			}
+
 			if ( typeof oTitle !== "string" ) {
 				rm.openStart(sLevel.toLowerCase(), oTitle);
 				if (oTitle.getTooltip_AsString()) {
@@ -207,16 +218,12 @@ sap.ui.define([
 			} else {
 				rm.openStart(sLevel.toLowerCase(), sContentId + "--title");
 			}
-			rm.class("sapUiFormTitle");
-			rm.class("sapUiFormTitle" + sLevel);
-			if (bExpander && oExpandButton) {
-				rm.class("sapUiFormTitleExpandable");
+			if (!bRenderExpander) {
+				rm.class("sapUiFormTitle");
 			}
+			rm.class("sapUiFormTitle" + sLevel);
 			rm.openEnd();
 
-			if (bExpander && oExpandButton) {
-				rm.renderControl(oExpandButton);
-			}
 			if (typeof oTitle === "string") {
 				// Title is just a string
 				oTitle.split(/\n/).forEach(function(sLine, iIndex) {
@@ -247,6 +254,9 @@ sap.ui.define([
 			}
 
 			rm.close(sLevel.toLowerCase());
+			if (bRenderExpander) {
+				rm.close("div");
+			}
 		}
 
 	};

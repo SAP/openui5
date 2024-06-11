@@ -24,7 +24,6 @@
 .sapUiFormM .sapUiFormContainerTitle > .sapUiFormTitle {
 	height: 2.75rem;
 	line-height: 2.75rem;
-	font-weight: bold;
 }
 
 .sapUiSizeCompact .sapUiFormContainerTitle > .sapUiFormTitle {
@@ -48,14 +47,15 @@
 }
 
 /* FormContainer Titles are rendered using H5 level, but H6 size*/
-.sapUiFormContainerTitle > .sapUiFormTitleH1,
-.sapUiFormContainerTitle > .sapUiFormTitleH2,
-.sapUiFormContainerTitle > .sapUiFormTitleH3,
-.sapUiFormContainerTitle > .sapUiFormTitleH4,
-.sapUiFormContainerTitle > .sapUiFormTitleH5,
-.sapUiFormContainerTitle > .sapUiFormTitleH6 {
+.sapUiFormContainerTitle .sapUiFormTitleH1,
+.sapUiFormContainerTitle .sapUiFormTitleH2,
+.sapUiFormContainerTitle .sapUiFormTitleH3,
+.sapUiFormContainerTitle .sapUiFormTitleH4,
+.sapUiFormContainerTitle .sapUiFormTitleH5,
+.sapUiFormContainerTitle .sapUiFormTitleH6 {
 	font-size: @sapMFontHeader6Size;
 	color: @sapUiGroupTitleTextColor;
+	font-weight: bold;
 }
 
 /* Toolbar */
