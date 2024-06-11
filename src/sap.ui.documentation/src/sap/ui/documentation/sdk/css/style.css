@@ -74,6 +74,10 @@ pre.sapUiDocumentationAPICode,
 	padding: .5rem 1rem 0.25rem 1rem;
 }
 
+.sapUiDocumentationFooterLink {
+	line-height: 1rem;
+}
+
 .sap-phone .sapMTB.sapUiDocumentationFooter {
 	padding: 1rem;
 	padding-top: 1.25rem;

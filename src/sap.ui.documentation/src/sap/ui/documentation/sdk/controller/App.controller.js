@@ -127,6 +127,7 @@ sap.ui.define([
 			BaseController.prototype.onInit.call(this);
 
 			var oViewModel = new JSONModel({
+				bCNICPShow: window.location.href.includes("sapui5.platform.sapcloud.cn"),
 				busy: false,
 				delay: 0,
 				device: Device,
