@@ -148,10 +148,13 @@ sap.ui.define(['sap/ui/Device', 'sap/base/Log', 'sap/base/util/extend', 'sap/ui/
 					content: sMeta
 				});
 
-				// Update Device API resize info, which is necessary in some scenarios after setting the viewport info
-				if ((iInnerHeightBefore !== window.innerHeight || iInnerWidthBefore !== window.innerWidth) && Device.resize._update){
-					Device.resize._update();
-				}
+				// Mobile browsers update the window dimension with a delay after the 'viewport' meta tag is set
+				setTimeout(() => {
+					// Update Device API resize info, which is necessary in some scenarios after setting the viewport info
+					if ((iInnerHeightBefore !== window.innerHeight || iInnerWidthBefore !== window.innerWidth) && Device.resize._update){
+						Device.resize._update();
+					}
+				}, 50);
 			}
 
 			if (options.useFullScreenHeight) {
