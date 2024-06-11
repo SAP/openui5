@@ -5506,7 +5506,7 @@ sap.ui.define([
 		let oTarget = {"@$ui5.context.isSelected" : false};
 
 		// code under test
-		_Helper.copySelected({foo : true, "@$ui5.context.isSelected" : true}, oTarget);
+		_Helper.copySelected({foo : true, "@$ui5.context.isSelected" : "~"}, oTarget);
 
 		assert.deepEqual(oTarget, {"@$ui5.context.isSelected" : true});
 

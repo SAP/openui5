@@ -30358,6 +30358,10 @@ sap.ui.define([
 	//
 	// Nodes affected by a move are "in place"; use "expand all" to avoid side-effects refresh
 	// JIRA: CPOUI5ODATAV4-2466
+	//
+	// A selected (effectively kept alive) node which is not part of the hierarchy after the parent
+	// is collapsed still holds its data
+	// JIRA: CPOUI5ODATAV4-2539
 [false, true].forEach(function (bResetViaModel) {
 	const sTitle = `Recursive Hierarchy: create new children, move 'em, model=${bResetViaModel}`;
 	QUnit.test(sTitle, function (assert) {
@@ -30834,7 +30838,6 @@ sap.ui.define([
 				}
 			});
 			checkPersisted(assert, oGamma);
-			oGamma.setSelected(false); //TODO does not work together with collapse...
 
 			assert.strictEqual(oBeta.getIndex(), 2);
 			assert.deepEqual(oBeta.getObject(), {
@@ -30855,15 +30858,34 @@ sap.ui.define([
 			return that.waitForChanges(assert, "collapse root");
 		}).then(function () {
 			checkTable("after collapse", assert, oTable, [
-				sFriend + "(ArtistID='0',IsActiveEntity=false)"
+				sFriend + "(ArtistID='0',IsActiveEntity=false)",
+				sFriend + "(ArtistID='2',IsActiveEntity=false)"
 			], [
 				[undefined, false, 1, "etag0.1", "Alpha: Αα", "0,false"]
 			], 1);
-			// Note: this holds only for "created (persisted)"!
 			assert.strictEqual(oBeta.getModel(), undefined, "destroyed by collapse");
-			assert.strictEqual(oGamma.getModel(), undefined, "destroyed by collapse");
+			assert.deepEqual(oGamma.getObject(), {
+				"@$ui5.context.isSelected" : true,
+				"@$ui5.node.level" : 2,
+				"@odata.etag" : "etag2.2",
+				ArtistID : "2",
+				IsActiveEntity : false,
+				Name : "Gamma: Γγ",
+				_ : {
+					NodeID : "2,false"
+				}
+			}, "effectively kept alive");
+
+			assert.throws(function () {
+				// code under test (JIRA: CPOUI5ODATAV4-2539)
+				oGamma.requestParent();
+			}, new Error("Not currently part of a recursive hierarchy: " + oGamma));
+			assert.throws(function () {
+				// code under test (JIRA: CPOUI5ODATAV4-2539)
+				oGamma.requestSibling();
+			}, new Error("Unsupported context: " + oGamma));
+
 			oBeta = null;
-			oGamma = null;
 
 			that.expectRequest(sFriend.slice(1)
 					+ "?$filter=ArtistID eq '0' and IsActiveEntity eq false"
@@ -30934,8 +30956,8 @@ sap.ui.define([
 			]);
 			const aCurrentContexts = oListBinding.getCurrentContexts();
 			assert.strictEqual(oRoot, aCurrentContexts[0]);
-			//TODO assert.strictEqual(oGamma, aCurrentContexts[1]);
-			oGamma = aCurrentContexts[1];
+			assert.strictEqual(oGamma, aCurrentContexts[1]);
+
 			oBeta = aCurrentContexts[2];
 
 			assert.strictEqual(oGamma.getIndex(), 1);
@@ -31273,6 +31295,10 @@ sap.ui.define([
 	// At first, create a new root node with a LimitedRank beyond all currently loaded nodes.
 	// Finally, it is also deleted.
 	// JIRA: CPOUI5ODATAV4-2412
+	//
+	// A selected (effectively kept alive) node which is not part of the hierarchy is neither
+	// collapsible nor expandable
+	// JIRA: CPOUI5ODATAV4-2539
 ["OldChart", "OrgChart"].forEach((sHierarchyQualifier) => {
 	const sTitle = `Recursive Hierarchy: expand all and create for ${sHierarchyQualifier}`;
 	const sLimitedRank = sHierarchyQualifier === "OldChart" ? "LimitedRank" : "Limited_Rank";
@@ -31592,9 +31618,28 @@ sap.ui.define([
 		], 10);
 		assert.deepEqual(oNewChild.getObject("_"), {NodeID : "9,false"});
 
+		oZeta.setSelected(true);
+		oAlpha.collapse();
+
+		assert.throws(function () {
+			// code under test (JIRA: CPOUI5ODATAV4-2539)
+			oZeta.expand();
+		}, new Error("Not currently part of the hierarchy: " + oZeta));
+
+		oAlpha.expand();
+		// reinsert oZeta into aContexts
+		oAlpha.getBinding().getAllCurrentContexts();
+
 		// code under test
 		oZeta.expand();
+
 		oAlpha.collapse();
+
+		assert.throws(function () {
+			// code under test (JIRA: CPOUI5ODATAV4-2539)
+			oZeta.collapse();
+		}, new Error("Not currently part of the hierarchy: " + oZeta));
+
 		oAlpha.expand();
 
 		// 0 Alpha

@@ -3202,14 +3202,24 @@ sap.ui.define([
 	//*********************************************************************************************
 [false, true].forEach(function (bUntilEnd) { // whether the collapsed children span until the end
 	[undefined, false, true].forEach(function (bSubtotalsAtBottomOnly) {
-		var bSubtotalsAtBottom = bSubtotalsAtBottomOnly !== undefined,
-			sTitle = "collapse: until end = " + bUntilEnd
-				+ ", subtotalsAtBottomOnly = " + bSubtotalsAtBottomOnly;
+		[false, true].forEach(function (bRecursiveHierarchy) {
+			const bSubtotalsAtBottom = bSubtotalsAtBottomOnly !== undefined;
+			const sTitle = `collapse: until end = ${bUntilEnd},
+				subtotalsAtBottomOnly = ${bSubtotalsAtBottomOnly},
+				recursiveHierarchy = ${bRecursiveHierarchy}`;
+
+			if (bSubtotalsAtBottom && bRecursiveHierarchy) {
+				return;
+			}
 
 	QUnit.test(sTitle, function (assert) {
-		var oAggregation = {
-				hierarchyQualifier : "X"
-			},
+		var oAggregation = bRecursiveHierarchy
+				? {hierarchyQualifier : "X"}
+				: { // filled before by buildApply
+					aggregate : {},
+					group : {},
+					groupLevels : ["foo"]
+				},
 			oCache = _AggregationCache.create(this.oRequestor, "~", "", {}, oAggregation),
 			bCollapseBottom = bUntilEnd || bSubtotalsAtBottom, // whether bottom line is affected
 			oCollapsed = {
@@ -3230,7 +3240,11 @@ sap.ui.define([
 			}, {
 				"@$ui5._" : {predicate : "('3')"}
 			}, {
-				"@$ui5._" : {predicate : "('4')"}
+				// element kept in $byPredicate if recursive hierarchy
+				"@$ui5._" : {predicate : "('4')", transientPredicate : "($uid=1-234)"},
+				"@$ui5.context.isSelected" : true
+			}, {
+				"@$ui5._" : {predicate : "('5')"}
 				// Note: for bSubtotalsAtBottom, this represents the extra row for subtotals
 			}],
 			aExpectedElements = [{
@@ -3239,14 +3253,14 @@ sap.ui.define([
 				"@$ui5._" : {
 					collapsed : oCollapsed,
 					predicate : "('1')",
-					spliced : [aElements[2], aElements[3], aElements[4]],
+					spliced : [aElements[2], aElements[3], aElements[4], aElements[5]],
 					rank : "~rank~"
 				},
 				"@$ui5.node.isExpanded" : false,
 				"@$ui5.node.level" : "~level~",
 				A : "10" // placeholder for an aggregate with subtotals
 			}, {
-				"@$ui5._" : {predicate : "('4')"}
+				"@$ui5._" : {predicate : "('5')"}
 			}];
 
 		if (bSubtotalsAtBottom) {
@@ -3265,7 +3279,9 @@ sap.ui.define([
 			"('2')" : aElements[2],
 			"($uid=1-23)" : aElements[2],
 			"('3')" : aElements[3],
-			"('4')" : aElements[4]
+			"('4')" : aElements[4],
+			"($uid=1-234)" : aElements[4],
+			"('5')" : aElements[5]
 		};
 		this.mock(oCache).expects("getValue").withExactArgs("~path~").returns(aElements[1]);
 		this.mock(_Helper).expects("updateAll")
@@ -3273,12 +3289,12 @@ sap.ui.define([
 				sinon.match.same(aElements[1]), sinon.match.same(oCollapsed))
 			.callThrough();
 		this.mock(oCache).expects("countDescendants")
-			.withExactArgs(sinon.match.same(aElements[1]), 1).returns(bUntilEnd ? 3 : 2);
+			.withExactArgs(sinon.match.same(aElements[1]), 1).returns(bUntilEnd ? 4 : 3);
 		this.mock(oCache.oTreeState).expects("collapse")
 			.withExactArgs(sinon.match.same(aElements[1]));
 
 		// code under test
-		assert.strictEqual(oCache.collapse("~path~"), bCollapseBottom ? 3 : 2,
+		assert.strictEqual(oCache.collapse("~path~"), bCollapseBottom ? 4 : 3,
 			"number of removed elements");
 
 		if (bCollapseBottom) { // last element was also a child, not a sibling
@@ -3289,20 +3305,37 @@ sap.ui.define([
 		assert.deepEqual(oCache.aElements, aExpectedElements);
 		assert.strictEqual(oCache.aElements[0], aElements[0]);
 		assert.strictEqual(oCache.aElements[1], aElements[1]);
-		assert.strictEqual(oCache.aElements[2], bCollapseBottom ? undefined : aElements[4]);
+		assert.strictEqual(oCache.aElements[2], bCollapseBottom ? undefined : aElements[5]);
 		assert.strictEqual(oCache.aElements.$count, aExpectedElements.length);
-		assert.deepEqual(oCache.aElements.$byPredicate, bCollapseBottom
-			? {
-				"('0')" : aElements[0],
-				"('1')" : aElements[1]
-			} : {
-				"('0')" : aElements[0],
-				"('1')" : aElements[1],
-				"('4')" : aElements[4]
-			});
+		if (bRecursiveHierarchy) {
+			assert.deepEqual(oCache.aElements.$byPredicate, bCollapseBottom
+				? {
+					"('0')" : aElements[0],
+					"('1')" : aElements[1],
+					"('4')" : aElements[4],
+					"($uid=1-234)" : aElements[4]
+				} : {
+					"('0')" : aElements[0],
+					"('1')" : aElements[1],
+					"('4')" : aElements[4],
+					"($uid=1-234)" : aElements[4],
+					"('5')" : aElements[5]
+				});
+		} else {
+			assert.deepEqual(oCache.aElements.$byPredicate, bCollapseBottom
+				? {
+					"('0')" : aElements[0],
+					"('1')" : aElements[1]
+				} : {
+					"('0')" : aElements[0],
+					"('1')" : aElements[1],
+					"('5')" : aElements[5]
+				});
+		}
 		assert.strictEqual(aElements[1]["@$ui5._"].spliced.$level, "~level~");
 		assert.strictEqual(aElements[1]["@$ui5._"].spliced.$rank, "~rank~");
 	});
+		});
 	});
 });
 

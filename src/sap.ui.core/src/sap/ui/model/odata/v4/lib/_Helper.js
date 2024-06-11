@@ -539,7 +539,7 @@ sap.ui.define([
 		},
 
 		/**
-		 * Sets "@$ui5.context.isSelected" in <code>oTarget</code> to true if it is true in
+		 * Sets "@$ui5.context.isSelected" in <code>oTarget</code> to true if it is truthy in
 		 * <code>oSource</code>.
 		 *
 		 * @param {object} oSource - The source object
@@ -548,7 +548,7 @@ sap.ui.define([
 		 * @public
 		 */
 		copySelected : function (oSource, oTarget) {
-			if (oSource["@$ui5.context.isSelected"] === true) {
+			if (oSource["@$ui5.context.isSelected"]) {
 				oTarget["@$ui5.context.isSelected"] = true;
 			}
 		},

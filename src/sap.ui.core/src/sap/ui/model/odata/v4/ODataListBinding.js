@@ -683,12 +683,17 @@ sap.ui.define([
 	 * @param {number} [iCount]
 	 *   The count of nodes affected by the collapse, in case the cache already performed it
 	 * @throws {Error}
-	 *   If the binding's root binding is suspended
+	 *   If the binding's root binding is suspended or if the given context is not part of a
+	 *   recursive hierarchy
 	 *
 	 * @private
 	 * @see #expand
 	 */
 	ODataListBinding.prototype.collapse = function (oContext, bSilent, iCount) {
+		if (this.aContexts[oContext.iIndex] !== oContext) {
+			throw new Error("Not currently part of the hierarchy: " + oContext);
+		}
+
 		iCount ??= this.oCache.collapse(
 			_Helper.getRelativePath(oContext.getPath(), this.oHeaderContext.getPath()));
 
@@ -1563,13 +1568,18 @@ sap.ui.define([
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise that is resolved when the expand is successful and rejected when it fails
 	 * @throws {Error}
-	 *   If the binding's root binding is suspended
+	 *   If the binding's root binding is suspended or if the given context is not part of a
+	 *   recursive hierarchy
 	 *
 	 * @private
 	 * @see #collapse
 	 */
 	ODataListBinding.prototype.expand = function (oContext, bSilent) {
 		this.checkSuspended();
+		if (this.aContexts[oContext.iIndex] !== oContext) {
+			throw new Error("Not currently part of the hierarchy: " + oContext);
+		}
+
 		let bDataRequested = false;
 
 		return this.oCache.expand(this.lockGroup(),
