@@ -1098,6 +1098,42 @@ sap.ui.define([
 		assert.equal(Log.warning.withArgs(sWarnArgs).callCount, 2, "then an error was logged");
 	});
 
+	QUnit.test("Check aria-label of avatar with badgeTooltip", function(assert) {
+		var $oAvatar = this.oAvatar.$(),
+			sDefaultBadgeTooltip = this.oAvatar._getDefaultTooltip();
+
+		//assert
+		assert.strictEqual($oAvatar.attr("aria-label"), sDefaultBadgeTooltip, "Default badgeTooltip value is set as aria-label");
+	});
+
+	QUnit.test("Check aria-label of avatar with badgeTooltip", async function(assert) {
+		var $oAvatar = this.oAvatar.$(),
+			sDefaultBadgeTooltip = this.oAvatar._getDefaultTooltip(),
+			sCustomBadgeTooltip = "Custom Tooltip";
+
+		// Act
+		this.oAvatar.setBadgeTooltip(sCustomBadgeTooltip);
+		await nextUIUpdate();
+
+		//assert
+		assert.strictEqual($oAvatar.attr("aria-label"), sDefaultBadgeTooltip + " " + sCustomBadgeTooltip, "Custom badgeTooltip value is set as aria-label");
+	});
+
+	QUnit.test("Check aria-label of avatar with badgeTooltip and initials", async function(assert) {
+		var $oAvatar = this.oAvatar.$(),
+			sDefaultBadgeTooltip = this.oAvatar._getDefaultTooltip(),
+			sCustomBadgeTooltip = "Custom Tooltip",
+			sInitials = "AA";
+
+		// Act
+		this.oAvatar.setBadgeTooltip(sCustomBadgeTooltip);
+		this.oAvatar.setInitials(sInitials);
+		await nextUIUpdate();
+
+		//assert
+		assert.strictEqual($oAvatar.attr("aria-label"), sDefaultBadgeTooltip + " " + sCustomBadgeTooltip + " " + sInitials, "Both custom badgeTooltip and initials value are set as aria-label");
+	});
+
 	QUnit.module("Keyboard handling", {
 		beforeEach: setupFunction,
 		afterEach: teardownFunction
