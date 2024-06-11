@@ -30,7 +30,7 @@
 					"delegate/JSONTableFilterDelegate.js",
 					"model/metadata/JSONPropertyInfo.js",
 					"model/mountains.json",
-					"view/Mountains.view.xml",
+					"view/TableJson.view.xml",
 					"manifest.json"
 				]
 			}
@@ -62,7 +62,7 @@
 			}
 		},
 		"rootView": {
-			"viewName": "mdc.sample.view.Mountains",
+			"viewName": "mdc.sample.view.TableJson",
 			"type": "XML",
 			"async": true,
 			"id": "sample"

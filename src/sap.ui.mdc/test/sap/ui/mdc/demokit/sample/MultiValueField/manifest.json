@@ -26,10 +26,10 @@
         "config": {
             "sample": {
                 "files": [
-                    "View.view.xml",
-                    "Controller.controller.js",
-					"MultiValueFieldDelegate.js",
-					"ValueHelpDelegate.js"
+                    "view/MultiValueField.view.xml",
+                    "controller/Controller.controller.js",
+					"delegate/MultiValueFieldDelegate.js",
+					"delegate/ValueHelpDelegate.js"
                 ]
             }
         },
@@ -37,7 +37,7 @@
             "mdc.sample": "./"
         },
 		"rootView": {
-			"viewName": "mdc.sample.View",
+			"viewName": "mdc.sample.view.MultiValueField",
 			"type": "XML",
 			"async": true,
 			"id": "sample"

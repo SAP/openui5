@@ -26,10 +26,10 @@
 		"config": {
 			"sample": {
 				"files": [
-					"controller/Mountains.controller.js",
+					"controller/FilterbarTypes.controller.js",
 					"delegate/JSONFilterBarDelegate.js",
 					"model/metadata/JSONPropertyInfo.js",
-					"view/Mountains.view.xml",
+					"view/FilterbarTypes.view.xml",
 					"model/mountains.json",
 					"model/formatter.js",
 					"manifest.json"
@@ -63,7 +63,7 @@
 			}
 		},
 		"rootView": {
-			"viewName": "mdc.sample.view.Mountains",
+			"viewName": "mdc.sample.view.FilterbarTypes",
 			"type": "XML",
 			"async": true,
 			"id": "sample"

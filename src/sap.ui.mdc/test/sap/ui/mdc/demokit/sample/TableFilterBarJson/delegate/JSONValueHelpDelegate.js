@@ -13,18 +13,12 @@ sap.ui.define([
 
 	const JSONValueHelpDelegate = Object.assign({}, ValueHelpDelegate, JSONBaseDelegate);
 
-	JSONValueHelpDelegate.updateBindingInfo = function(oValueHelp, oContent, oBindingInfo) {
-		ValueHelpDelegate.updateBindingInfo(oValueHelp, oContent, oBindingInfo);
-
+	JSONValueHelpDelegate.getFilters = function (oValueHelp, oContent) {
 		// create search filters
 		const oPayload = oValueHelp.getPayload();
-		if (oPayload.searchKeys) { // TODO: Move filter generation in separate method?
-			const aFilters = oPayload.searchKeys.map((sPath) => new Filter({path: sPath, operator: FilterOperator.Contains, value1: oContent.getSearch()}));
-			const oSearchFilter = aFilters && aFilters.length && new Filter(aFilters, false);
-			if (oSearchFilter) {
-				oBindingInfo.filters = oBindingInfo.filters.concat(oSearchFilter);
-			}
-		}
+		const aFilters = oPayload.searchKeys?.map((sPath) => new Filter({path: sPath, operator: FilterOperator.Contains, value1: oContent.getSearch()}));
+		const oSearchFilter = aFilters?.length && new Filter(aFilters, false);
+		return oSearchFilter ? [oSearchFilter] : [];
 	};
 
 	// enable typeahead

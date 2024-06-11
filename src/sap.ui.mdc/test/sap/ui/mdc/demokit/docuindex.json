@@ -84,7 +84,15 @@
 				"since": "1.116",
 				"samples": [
 					"sap.ui.mdc.demokit.sample.FieldTypes",
-					"sap.ui.mdc.demokit.sample.FieldCustomContent",
+					"sap.ui.mdc.demokit.sample.FieldCustomContent"
+				]
+			},
+			{
+				"id": "sap.ui.mdc.ValueHelp",
+				"name": "ValueHelp",
+				"category": "Metadata-Driven Controls (sap.ui.mdc)",
+				"since": "1.116",
+				"samples": [
 					"sap.ui.mdc.demokit.sample.FieldValueHelpJson",
 					"sap.ui.mdc.demokit.sample.FieldValueHelpTypes"
 				]
@@ -224,12 +232,12 @@
 			},
 			{
 				"id": "sap.ui.mdc.demokit.sample.FieldValueHelpJson",
-				"name": "Field - with value help dialog",
+				"name": "ValueHelp - with value help dialog",
 				"description": "A field with a more complex value help dialog including filter and search features"
 			},
 			{
 				"id": "sap.ui.mdc.demokit.sample.FieldValueHelpTypes",
-				"name": "Field - with various types of value help",
+				"name": "ValueHelp - with various types of value help",
 				"description": "Fields with multiple value helps including typeahead, dropdowns, or dialog"
 			},
 			{

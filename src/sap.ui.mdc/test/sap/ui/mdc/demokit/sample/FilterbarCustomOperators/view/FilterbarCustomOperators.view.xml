@@ -6,7 +6,7 @@
 	xmlns:f="sap.f"
 	xmlns:mdc="sap.ui.mdc"
 	xmlns:ce="sap.ui.codeeditor"
-	controllerName="mdc.sample.controller.Mountains"
+	controllerName="mdc.sample.controller.FilterbarCustomOperators"
 	>
 
 	<f:DynamicPage id="page">
