@@ -57,7 +57,7 @@ sap.ui.define(['jquery.sap.global', 'sap/base/util/Properties'],
 	/**
 	 * @namespace jQuery.sap.util
 	 * @public
-	 * @deprecated as of version 1.120
+	 * @deprecated as of version 1.120. Use {@link module:sap/base/util/Properties} instead
 	 */
 
 	/**
