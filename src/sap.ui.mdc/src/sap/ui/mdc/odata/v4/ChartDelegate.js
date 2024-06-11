@@ -19,7 +19,9 @@ sap.ui.define([
 	 * @extends module:sap/ui/mdc/ChartDelegate
 	 * @since 1.88
 	 *
-	 * @public
+	 * @experimental
+	 * @private
+	 * @ui5-restricted sap.fe, sap.ui.mdc
 	 *
 	 */
 	const Delegate = Object.assign({}, ChartDelegate);

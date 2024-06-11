@@ -316,7 +316,7 @@ sap.ui.define([
 	 * Returns the event handler for SelectionDetails as an object:
 	 *
 	 * @param {sap.ui.mdc.Chart} oChart Reference to the MDC chart
-	 * @returns {sap.ui.mdc.SelectionDetails} Event handler for SelectionDetails
+	 * @returns {sap.ui.mdc.chart.SelectionDetails} Event handler for SelectionDetails
 	 *
 	 * @experimental
 	 * @private
