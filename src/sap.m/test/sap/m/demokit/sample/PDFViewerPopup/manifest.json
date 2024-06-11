@@ -22,7 +22,9 @@
 				"files": [
 					"Page.view.xml",
 					"Page.controller.js",
-					"manifest.json"
+					"manifest.json",
+					"sample1.pdf",
+					"sample2.pdf"
 				]
 			}
 		}
