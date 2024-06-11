@@ -440,6 +440,21 @@ sap.ui.define([
 
 		assert.ok(document.getElementById("action-tile-icon-frame"), "icon frame is rendered");
 		assert.ok(Element.getElementById("action-tile-icon-frame").isA("sap.m.Avatar"), "icon frame is an avatar control");
+		assert.ok(document.getElementsByClassName("sapMGTIconFrameBadge").length === 0, "badge icon not rendered");
+
+		//should render badge icon if badgeIcon and badgeValueState are specified
+		oActionTile.setEnableIconFrame(true);
+		oActionTile.setBadgeIcon("sap-icon://high-priority");
+		oActionTile.setBadgeValueState("Error");
+		await nextUIUpdate();
+
+		assert.ok(document.getElementsByClassName("sapMGTIconFrameBadge").length === 1, "badge icon is rendered");
+
+		//should not render badge icon if badgeIcon is not specified
+		oActionTile.setBadgeIcon("");
+		await nextUIUpdate();
+
+		assert.ok(document.getElementsByClassName("sapMGTIconFrameBadge").length === 0, "badge icon not rendered");
 
 		//Cleanup
 		oActionTile.destroy();

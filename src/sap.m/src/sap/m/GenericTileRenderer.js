@@ -340,7 +340,14 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/core/Them
 					oControl._oImage.addStyleClass(this._sPreviousStyleClass);
 					oRm.renderControl(oControl._oImage);
 				} else {
-					oRm.renderControl(oControl._getIconFrame());
+					var oIconFrame = oControl._getIconFrame();
+					var bRenderFrameBadge = oControl.isA("sap.m.ActionTile") && oControl.getProperty("badgeIcon") && oControl.getProperty("badgeValueState") ? true : false;
+					if (bRenderFrameBadge) {
+						oIconFrame.setCustomDisplaySize("3rem");
+					}
+
+					oIconFrame.toggleStyleClass("sapMGTIconFrameBadge", bRenderFrameBadge);
+					oRm.renderControl(oIconFrame);
 				}
 			}
 
