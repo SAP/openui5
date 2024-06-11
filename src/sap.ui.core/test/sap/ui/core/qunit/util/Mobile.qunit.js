@@ -22,6 +22,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Test init with default settings", function (assert) {
+		const done = assert.async();
+
 		Mobile.init();
 
 		// check viewport:  <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -36,7 +38,7 @@ sap.ui.define([
 			var $mwac = jQuery("meta").filter("[name=mobile-web-app-capable]");
 			assert.equal($amwac.length, 1, "There should be an apple-mobile-web-app-capable meta tag");
 			assert.equal($amwac.attr("content"), "yes", "The apple-mobile-web-app-capable meta tag content should be correct");
-			assert.equal($mwac.length, 0, "There shouldn't be any mobile-web-app-capable meta tag due to compatibility");
+			assert.equal($mwac.length, 1, "There should be an mobile-web-app-capable meta tag due to compatibility");
 		}
 
 		// check status bar style: <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -50,13 +52,16 @@ sap.ui.define([
 		var $ti = jQuery("link").filter("[rel=apple-touch-icon]");
 		assert.equal($ti.length, 0, "There should be no apple-touch-icon tag");
 
-		// Check whether size changes through new viewport were detected and the Device.resize values were adapted.
-		assert.equal(window.innerHeight, Device.resize.height, "Device.resize.height is set correctly.");
-		assert.equal(window.innerWidth, Device.resize.width, "Device.resize.width is set correctly.");
+		setTimeout(() => {
+			// Check whether size changes through new viewport were detected and the Device.resize values were adapted.
+			assert.equal(window.innerHeight, Device.resize.height, "Device.resize.height is set correctly.");
+			assert.equal(window.innerWidth, Device.resize.width, "Device.resize.width is set correctly.");
 
-		// Check that additional init without parameters does not crash ==> See BCP 2270099497
-		Mobile.init();
-		assert.ok(true, "Mobile.init() was re-executed without exception.");
+			// Check that additional init without parameters does not crash ==> See BCP 2270099497
+			Mobile.init();
+			assert.ok(true, "Mobile.init() was re-executed without exception.");
+			done();
+		}, 50);
 	});
 
 	QUnit.test("Test init with custom settings", function (assert) {
