@@ -55,7 +55,8 @@
         "1.42.0",
         "1.43.0",
         "1.44.0",
-        "1.45.0"
+        "1.45.0",
+        "1.46.0"
       ]
     },
     "designtime": {
@@ -2614,6 +2615,21 @@
                 "S",
                 "M"
               ]
+            },
+            {
+              "$ref": "#/definitions/simpleBinding"
+            }
+          ]
+        },
+        "fitType": {
+          "description": "Defines how the image fits in the icon area",
+          "oneOf": [
+            {
+              "enum": [
+                "Cover",
+                "Contain"
+              ],
+              "default": "Cover"
             },
             {
               "$ref": "#/definitions/simpleBinding"

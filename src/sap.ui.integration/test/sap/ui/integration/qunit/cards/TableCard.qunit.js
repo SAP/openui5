@@ -783,7 +783,8 @@ sap.ui.define([
 									"src": "{avatar}",
 									"shape": "Circle",
 									"alt": "human image",
-									"initials": "IT"
+									"initials": "IT",
+									"fitType": "Contain"
 								}
 							}]
 						}
@@ -803,6 +804,7 @@ sap.ui.define([
 		assert.strictEqual(oAvatar.getTooltip_AsString(), oManifest["sap.card"].content.row.columns[0].icon.alt, "Should have tooltip set");
 		assert.strictEqual(oAvatar.getInitials(), oManifest["sap.card"].content.row.columns[0].icon.initials, "Should have initials set");
 		assert.strictEqual(oAvatar.getDisplaySize(), AvatarSize.XS, "The default size of the avatar is 'XS'");
+		assert.strictEqual(oAvatar.getImageFitType(), oManifest["sap.card"].content.row.columns[0].icon.fitType, "Should have 'Contain' fitType ");
 		assert.ok(oAvatar.hasStyleClass("sapFCardIcon"), "'sapFCardIcon' class is added");
 	});
 
