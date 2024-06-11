@@ -523,6 +523,36 @@ sap.ui.define([
 
 		//clean up
 		oGrid.destroy();
+		await nextUIUpdate(this.clock);
+	});
+
+	QUnit.test("selectedDates: single select via keyboard (Enter)", async function (assert){
+		// arrange
+		var iCellIndexInMiddleInWeek = 3,
+			oGrid = new SinglePlanningCalendarGrid({
+				startDate: UI5Date.getInstance(2022,0,1),
+				firstDayOfWeek: 1,
+				dateSelectionMode: SinglePlanningCalendarSelectionMode.SingleSelect
+			});
+
+		oGrid.placeAt("qunit-fixture");
+		await nextUIUpdate(this.clock);
+
+		// assert
+		assert.strictEqual(oGrid.getSelectedDates().length, 0, "no days initially added");
+
+		// act
+		oGrid.$().find('.sapUiCalItem')[iCellIndexInMiddleInWeek].focus();
+
+		qutils.triggerKeyup(document.activeElement, KeyCodes.ENTER, false);
+		await nextUIUpdate(this.clock);
+
+		// assert
+		assert.ok(oGrid.$().find('.sapUiCalItem')[iCellIndexInMiddleInWeek].classList.contains("sapUiCalItemSel"), iCellIndexInMiddleInWeek + " cell is selected");
+
+		//clean up
+		oGrid.destroy();
+		await nextUIUpdate(this.clock);
 	});
 
 	QUnit.module("Events");
