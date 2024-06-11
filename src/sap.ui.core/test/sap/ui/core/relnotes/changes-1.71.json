@@ -1557,5 +1557,15 @@
         "text": " core.Popup: always assign the content with a valid UIArea"
       }
     ]
+  },
+  "1.71.66": {
+    "date": "June 2024",
+    "notes": [
+      {
+        "id": "304c71893bd332371214cb3aa1577fc7639d0902",
+        "type": "FIX",
+        "text": " sap.ui.core.format.DateFormat.qunit: Fix flaky tests"
+      }
+    ]
   }
 }

@@ -99,5 +99,21 @@
         "text": " sap.m.Page: Focus element is scrolled into view"
       }
     ]
+  },
+  "1.71.66": {
+    "date": "June 2024",
+    "notes": [
+      {
+        "id": "e1449b70dca24358c17a67223d6253a77273a858",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: headers are now displayed correctly for belize theme",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380126426"
+          }
+        ]
+      }
+    ]
   }
 }
