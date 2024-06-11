@@ -157,7 +157,7 @@ sap.ui.define([
 				this.getView().setBusy(true);
 				oNode = oEvent.getSource().getBindingContext();
 				const oTable = oEvent.getSource().getParent().getParent().getParent();
-				oNode.setKeepAlive(true);
+				oNode.setKeepAlive(true); // opt-in to update nextSibling's index
 
 				const [oParent, oSibling] = await Promise.all([
 					oNode.requestParent(),
@@ -187,10 +187,13 @@ sap.ui.define([
 		},
 
 		onMoveUp : async function (oEvent) {
+			var oNode;
+
 			try {
 				this.getView().setBusy(true);
-				const oNode = oEvent.getSource().getBindingContext();
+				oNode = oEvent.getSource().getBindingContext();
 				const oTable = oEvent.getSource().getParent().getParent().getParent();
+				oNode.setSelected(true); // MUST NOT make any difference here
 
 				// eslint-disable-next-line no-inner-declarations
 				function scrollTo(iIndex) {
@@ -218,6 +221,7 @@ sap.ui.define([
 			} catch (oError) {
 				MessageBox.alert(oError.message, {icon : MessageBox.Icon.ERROR, title : "Error"});
 			} finally {
+				oNode.setSelected(false);
 				this.getView().setBusy(false);
 			}
 		},

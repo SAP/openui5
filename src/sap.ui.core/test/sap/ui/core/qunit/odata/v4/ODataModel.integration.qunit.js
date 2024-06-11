@@ -3226,7 +3226,7 @@ sap.ui.define([
 				oTypeKeepsEmptyString,
 				"parseKeepsEmptyString ignored, type is cached and used on UI already");
 
-			// code under test (CPOUI5ODATAV4-1402)
+			// code under test (JIRA: CPOUI5ODATAV4-1402)
 			assert.deepEqual(oTable.getBinding("items").getAllCurrentContexts().map(getPath), [
 				"/TEAMS('1')/TEAM_2_EMPLOYEES('2')"
 			]);
@@ -9336,7 +9336,7 @@ sap.ui.define([
 		return this.createView(assert, sView, oModel).then(function () {
 			oBinding = that.oView.byId("table").getBinding("items");
 
-			// code under test (CPOUI5MODELS-741)
+			// code under test (JIRA: CPOUI5MODELS-741)
 			assert.deepEqual(oBinding.getAllCurrentContexts().map(getPath), [
 				"/SalesOrderList('42')"
 			]);
@@ -9357,7 +9357,7 @@ sap.ui.define([
 
 			assert.strictEqual(oBinding.getLength(), 2);
 
-			// code under test (CPOUI5MODELS-741)
+			// code under test (JIRA: CPOUI5MODELS-741)
 			assert.deepEqual(oBinding.getAllCurrentContexts().map(getPath), [
 				oCreatedContext0.getPath(),
 				"/SalesOrderList('42')"
@@ -9373,7 +9373,7 @@ sap.ui.define([
 
 			assert.strictEqual(oBinding.getLength(), 3);
 
-			// code under test (CPOUI5MODELS-741)
+			// code under test (JIRA: CPOUI5MODELS-741)
 			assert.deepEqual(oBinding.getAllCurrentContexts().map(getPath), [
 				oCreatedContext1.getPath(),
 				oCreatedContext0.getPath(),
@@ -18661,7 +18661,7 @@ sap.ui.define([
 			// code under test
 			oBinding.resume();
 
-			// code under test (CPOUI5ODATAV4-102)
+			// code under test (JIRA: CPOUI5ODATAV4-102)
 			oContext = oBinding.create({BusinessPartnerID : "0100000099"});
 
 			assert.strictEqual(oContext.getProperty("BusinessPartnerID"), undefined, "not now :-(");
@@ -19313,7 +19313,7 @@ sap.ui.define([
 						"Request canceled: PATCH SalesOrderList('0500000000'); group: update");
 				}
 
-				// code under test (CPOUI5ODATAV4-1884)
+				// code under test (JIRA: CPOUI5ODATAV4-1884)
 				oModel.resetChanges();
 
 				assert.notOk(oDeletedContext.isDeleted()); // nevertheless it is destroyed!
@@ -22215,7 +22215,7 @@ sap.ui.define([
 				.expectChange("salesAmount", [,,, "30", "40", "200"])
 				.expectChange("salesNumber", [,,, "3", "4", null]);
 
-			// code under test (CPOUI5ODATAV4-177)
+			// code under test (JIRA: CPOUI5ODATAV4-177)
 			oTable.requestItems();
 
 			return that.waitForChanges(assert);
@@ -25910,6 +25910,7 @@ sap.ui.define([
 				"still kept alive");
 			assert.deepEqual(oKeptAliveNode.getObject(), {
 					"@$ui5.context.isSelected" : true,
+					// NO! "@$ui5.node.level" : 1,
 					"@odata.etag" : "etag0.4",
 					ArtistID : "0",
 					BestFriend : {
@@ -39497,6 +39498,7 @@ make root = ${bMakeRoot}`;
 	// JIRA: CPOUI5ODATAV4-2558
 	//
 	// Duplicate calls to #requestSibling (JIRA: CPOUI5ODATAV4-2618)
+	// Update next sibling's index when selected (JIRA: CPOUI5ODATAV4-2619)
 	QUnit.test("Recursive Hierarchy: requestSibling via 1st level cache", async function (assert) {
 		const sFriend = "/Artists(ArtistID='99',IsActiveEntity=false)/_Friend";
 		const sBaseUrl = sFriend.slice(1) + "?custom=foo&$apply=ancestors($root" + sFriend
@@ -39915,10 +39917,290 @@ make root = ${bMakeRoot}`;
 			[true, 2, "etag1.1", "1", "Beta #1", "1,false", "Beta's Friend"]
 		], 7);
 		assert.strictEqual(oBeta.getBinding(), undefined, "destroyed by side effect");
-		[, oBeta] = oListBinding.getCurrentContexts();
+		const [oAlpha, oBeta1] = oListBinding.getCurrentContexts();
+		oBeta = oBeta1;
 
 		// code under test
 		assert.strictEqual(oDelta.getSibling(-1), oBeta);
+
+		oDelta.setSelected(true); // #move, please update nextSibling's index (CPOUI5ODATAV4-2619)
+		assert.deepEqual(oDelta.getObject(), {
+			"@$ui5.context.isSelected" : true,
+			"@$ui5.node.level" : 2,
+			"@odata.etag" : "etag3.1",
+			ArtistID : "3",
+			BestFriend : {
+				ArtistID : "3*",
+				IsActiveEntity : false,
+				Name : "Delta's Friend"
+			},
+			IsActiveEntity : false,
+			Name : "Delta #1",
+			_ : {
+				NodeID : "3,false"
+			}
+		});
+
+		// 0 Alpha
+		//   1 Beta
+		//     2 Gamma (not loaded)
+		//   4 Epsilon
+		//     5 Zeta (not loaded)
+		//   3 Delta
+		//   6 Eta (not loaded)
+		this.expectRequest({
+				batchNo : 8,
+				headers : {
+					"If-Match" : "etag4.1",
+					Prefer : "return=minimal"
+				},
+				method : "PATCH",
+				payload : {
+					"BestFriend@odata.bind" : "Artists(ArtistID='0',IsActiveEntity=false)"
+				},
+				url : "Artists(ArtistID='4',IsActiveEntity=false)"
+			}) // 204 No Content
+			.expectRequest({
+				batchNo : 8,
+				headers : {
+					"If-Match" : "etag4.1",
+					Prefer : "return=minimal"
+				},
+				method : "POST",
+				payload : {
+					// Note: add a non-key property for demonstrating the multi key scenario
+					NextSibling : {ArtistID : "3", Name : "Delta #1"}
+				},
+				url : sFriend.slice(1)
+					+ "(ArtistID='4',IsActiveEntity=false)/special.cases.ChangeNextSibling"
+			}) // 204 No Content
+			.expectRequest({
+				batchNo : 8,
+				url : sBaseUrl + "&$filter=ArtistID eq '4' and IsActiveEntity eq false"
+					+ "&$select=_/Limited_Rank"
+			}, {
+				value : [{
+					_ : {Limited_Rank : "3"}
+				}]
+			})
+			.expectRequest({
+				batchNo : 8,
+				url : sBaseUrl + "&$filter=ArtistID eq '3' and IsActiveEntity eq false"
+					+ "&$select=_/Limited_Rank"
+			}, {
+				value : [{
+					_ : {Limited_Rank : "5"}
+				}]
+			})
+			.expectRequest({
+				batchNo : 8,
+				url : sFriend.slice(1) + "?$filter=ArtistID eq '3' and IsActiveEntity eq false"
+					+ "&custom=foo&$select=ArtistID,IsActiveEntity,Name,_/NodeID" + sExpand
+			}, {
+				value : [{
+					"@odata.etag" : "etag3.2",
+					ArtistID : "3",
+					BestFriend : {
+						ArtistID : "3*",
+						IsActiveEntity : false,
+						Name : "Delta's Friend"
+					},
+					IsActiveEntity : false,
+					Name : "Delta #2",
+					_ : null // not available w/ RAP for a non-hierarchical request
+				}]
+			})
+			.expectRequest({
+				batchNo : 8,
+				url : sBaseUrl + sSelect + sExpand + "&$count=true&$skip=0&$top=2"
+			}, {
+				"@odata.count" : "7",
+				value : [{
+					"@odata.etag" : "etag0.2",
+					ArtistID : "0",
+					BestFriend : {
+						ArtistID : "0*",
+						IsActiveEntity : false,
+						Name : "Alpha's Friend"
+					},
+					IsActiveEntity : false,
+					Name : "Alpha #2",
+					_ : {
+						DescendantCount : "6",
+						DistanceFromRoot : "0",
+						DrillState : "expanded",
+						NodeID : "0,false"
+					}
+				}, {
+					"@odata.etag" : "etag1.2",
+					ArtistID : "1",
+					BestFriend : {
+						ArtistID : "1*",
+						IsActiveEntity : false,
+						Name : "Beta's Friend"
+					},
+					IsActiveEntity : false,
+					Name : "Beta #2",
+					_ : {
+						DescendantCount : "1",
+						DistanceFromRoot : "1",
+						DrillState : "expanded",
+						Limited_Rank : "1",
+						NodeID : "1,false"
+					}
+				}]
+			});
+
+		// code under test (JIRA: CPOUI5ODATAV4-2619)
+		await oEpsilon.move({nextSibling : oDelta, parent : oAlpha});
+
+		// Note: index needs to be retrieved as soon as possible!
+		assert.strictEqual(oDelta.getIndex(), 5, "CPOUI5ODATAV4-2619");
+
+		await this.waitForChanges(assert, "move down 3 (Delta) after 4 (Epsilon)");
+
+		assert.strictEqual(oEpsilon.getIndex(), 3, "CPOUI5ODATAV4-2619");
+		assert.strictEqual(oEpsilon.getBinding(), undefined, "destroyed by side-effects refresh");
+		assert.strictEqual(oDelta.getIndex(), undefined, "not in the collection anymore");
+		assert.strictEqual(oDelta.getBinding(), oListBinding);
+		assert.deepEqual(oDelta.getObject(), {
+			"@$ui5.context.isSelected" : true,
+			// "@$ui5.node.level" : 2, // not currently part of the hierarchy
+			"@odata.etag" : "etag3.2",
+			ArtistID : "3",
+			BestFriend : {
+				ArtistID : "3*",
+				IsActiveEntity : false,
+				Name : "Delta's Friend"
+			},
+			IsActiveEntity : false,
+			Name : "Delta #2",
+			_ : null // not currently part of the hierarchy
+		});
+		checkTable("after move down 3 (Delta) after 4 (Epsilon)", assert, oTable, [
+			oAlpha,
+			oBeta,
+			oDelta
+		], [
+			[true, 1, "etag0.2", "0", "Alpha #2", "0,false", "Alpha's Friend"],
+			[true, 2, "etag1.2", "1", "Beta #2", "1,false", "Beta's Friend"]
+		], 7);
+
+		// 0 Alpha
+		//   1 Beta
+		//     2 Gamma (now loaded)
+		//   4 Epsilon (now loaded)
+		//     5 Zeta (now loaded)
+		//   3 Delta (now loaded)
+		//   6 Eta (now loaded)
+		this.expectRequest(sBaseUrl + sSelect + sExpand + "&$skip=2&$top=5", {
+				value : [{
+					"@odata.etag" : "etag2.2",
+					ArtistID : "2",
+					BestFriend : {
+						ArtistID : "2*",
+						IsActiveEntity : false,
+						Name : "Gamma's Friend"
+					},
+					IsActiveEntity : false,
+					Name : "Gamma #2",
+					_ : {
+						DescendantCount : "0",
+						DistanceFromRoot : "2",
+						DrillState : "leaf",
+						NodeID : "2,false"
+					}
+				}, {
+					"@odata.etag" : "etag4.2",
+					ArtistID : "4",
+					BestFriend : {
+						ArtistID : "4*",
+						IsActiveEntity : false,
+						Name : "Epsilon's Friend"
+					},
+					IsActiveEntity : false,
+					Name : "Epsilon #2",
+					_ : {
+						DescendantCount : "1",
+						DistanceFromRoot : "1",
+						DrillState : "expanded",
+						NodeID : "4,false"
+					}
+				}, {
+					"@odata.etag" : "etag5.2",
+					ArtistID : "5",
+					BestFriend : {
+						ArtistID : "5*",
+						IsActiveEntity : false,
+						Name : "Zeta's Friend"
+					},
+					IsActiveEntity : false,
+					Name : "Zeta #2",
+					_ : {
+						DescendantCount : "0",
+						DistanceFromRoot : "2",
+						DrillState : "leaf",
+						NodeID : "5,false"
+					}
+				}, {
+					"@odata.etag" : "etag3.2",
+					ArtistID : "3",
+					BestFriend : {
+						ArtistID : "3*",
+						IsActiveEntity : false,
+						Name : "Delta's Friend"
+					},
+					IsActiveEntity : false,
+					Name : "Delta #2",
+					_ : {
+						DescendantCount : "0",
+						DistanceFromRoot : "1",
+						DrillState : "leaf",
+						NodeID : "3,false"
+					}
+				}, {
+					"@odata.etag" : "etag6.2",
+					ArtistID : "6",
+					BestFriend : {
+						ArtistID : "6*",
+						IsActiveEntity : false,
+						Name : "Eta's Friend"
+					},
+					IsActiveEntity : false,
+					Name : "Eta #2",
+					_ : {
+						DescendantCount : "0",
+						DistanceFromRoot : "1",
+						DrillState : "leaf",
+						NodeID : "6,false"
+					}
+				}]
+			});
+
+		await this.checkAllContexts("after move down 3 (Delta) after 4 (Epsilon)", assert,
+			oListBinding, ["@$ui5.node.isExpanded", "@$ui5.node.level", "@odata.etag", "ArtistID",
+				"Name", "_/NodeID", "BestFriend/Name"], [
+				[true, 1, "etag0.2", "0", "Alpha #2", "0,false", "Alpha's Friend"],
+				[true, 2, "etag1.2", "1", "Beta #2", "1,false", "Beta's Friend"],
+				[undefined, 3, "etag2.2", "2", "Gamma #2", "2,false", "Gamma's Friend"],
+				[true, 2, "etag4.2", "4", "Epsilon #2", "4,false", "Epsilon's Friend"],
+				[undefined, 3, "etag5.2", "5", "Zeta #2", "5,false", "Zeta's Friend"],
+				[undefined, 2, "etag3.2", "3", "Delta #2", "3,false", "Delta's Friend"],
+				[undefined, 2, "etag6.2", "6", "Eta #2", "6,false", "Eta's Friend"]
+			]);
+
+		checkTable("final page", assert, oTable, [
+			oAlpha, // sFriend + "(ArtistID='0',IsActiveEntity=false)",
+			oBeta, // sFriend + "(ArtistID='1',IsActiveEntity=false)",
+			sFriend + "(ArtistID='2',IsActiveEntity=false)",
+			sFriend + "(ArtistID='4',IsActiveEntity=false)", // Note: oEpsilon already destroyed
+			sFriend + "(ArtistID='5',IsActiveEntity=false)",
+			oDelta, // sFriend + "(ArtistID='3',IsActiveEntity=false)",
+			sFriend + "(ArtistID='6',IsActiveEntity=false)"
+		], [
+			[true, 1, "etag0.2", "0", "Alpha #2", "0,false", "Alpha's Friend"],
+			[true, 2, "etag1.2", "1", "Beta #2", "1,false", "Beta's Friend"]
+		]);
 	});
 
 	//*********************************************************************************************
@@ -43356,7 +43638,7 @@ make root = ${bMakeRoot}`;
 			oParentContext,
 			that = this;
 
-		 // code under test (CPOUI5ODATAV4-1580)
+		 // code under test (JIRA: CPOUI5ODATAV4-1580)
 		return oModel.requestKeyPredicate("/Artists", oEntity).then(function (sKeyPredicate) {
 			oParentContext = oModel.bindContext("/Artists" + sKeyPredicate).getBoundContext();
 
@@ -43381,7 +43663,7 @@ make root = ${bMakeRoot}`;
 
 			assert.strictEqual(oInactiveArtistContext.getProperty("IsActiveEntity"), false);
 			assert.strictEqual(
-				// code under test (CPOUI5ODATAV4-1580)
+				// code under test (JIRA: CPOUI5ODATAV4-1580)
 				oModel.getKeyPredicate("/Artists",
 					oInactiveArtistContext.getObject()), // use back-end key odering
 				"(ArtistID='4%2F2',IsActiveEntity=false)"
@@ -51826,13 +52108,13 @@ make root = ${bMakeRoot}`;
 			}, true);
 
 			return Promise.all([
-				// code under test (CPOUI5ODATAV4-14)
+				// code under test (JIRA: CPOUI5ODATAV4-14)
 				oCreatedContext.setProperty("Address/City", "St. Ingbert", "$direct")
 					.then(mustFail(assert), function (oError) {
 						assert.strictEqual(oError.message, "The entity will be created via group"
 							+ " 'update'. Cannot patch via group '$direct'");
 					}),
-				// code under test (CPOUI5ODATAV4-114)
+				// code under test (JIRA: CPOUI5ODATAV4-114)
 				oCreatedContext.setProperty("Address/AddressType", "42", null),
 				oCreatedContext.setProperty("CompanyName", "Nestle", null),
 				that.waitForChanges(assert)
@@ -53277,7 +53559,7 @@ make root = ${bMakeRoot}`;
 			oTable = that.oView.byId("table");
 			oListBinding = oTable.getBinding("rows");
 
-			// code under test (CPOUI5MODELS-741)
+			// code under test (JIRA: CPOUI5MODELS-741)
 			assert.deepEqual(oListBinding.getAllCurrentContexts().map(getPath), [
 				"/EMPLOYEES('1')",
 				"/EMPLOYEES('2')",
@@ -53302,7 +53584,7 @@ make root = ${bMakeRoot}`;
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			// code under test (CPOUI5MODELS-741)
+			// code under test (JIRA: CPOUI5MODELS-741)
 			assert.deepEqual(oListBinding.getAllCurrentContexts().map(getPath), [
 				"/EMPLOYEES('1')",
 				"/EMPLOYEES('2')",
@@ -57191,7 +57473,7 @@ make root = ${bMakeRoot}`;
 			oKeptContext.setKeepAlive(true);
 			that.oView.byId("objectPage").setBindingContext(oKeptContext);
 
-			// code under test (CPOUI5MODELS-782)
+			// code under test (JIRA: CPOUI5MODELS-782)
 			assert.deepEqual(oTableBinding.getAllCurrentContexts().map(getPath),
 				["/SalesOrderList('1')"]);
 
@@ -57207,7 +57489,7 @@ make root = ${bMakeRoot}`;
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			// code under test (CPOUI5MODELS-782)
+			// code under test (JIRA: CPOUI5MODELS-782)
 			assert.deepEqual(oTableBinding.getAllCurrentContexts().map(getPath),
 				["/SalesOrderList('2')", "/SalesOrderList('1')"]);
 

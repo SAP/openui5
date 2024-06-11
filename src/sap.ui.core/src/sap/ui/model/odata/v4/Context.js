@@ -1301,7 +1301,13 @@ sap.ui.define([
 	 *
 	 * The move potentially changes the {@link #getIndex index} of this context, of all of its
 	 * descendants, and of all other nodes affected by the move. Any index change can, however, only
-	 * be observed reliably for this context itself.
+	 * be observed reliably for this context itself or (since 1.126.0) the next sibling's context
+	 * if that is {@link #isKeepAlive kept alive} or {@link #isSelected selected} (and the
+	 * preconditions of {@link #setKeepAlive} hold). For a kept-alive or selected next sibling, the
+	 * index must be retrieved as soon as the returned promise resolves. If such a next sibling is
+	 * not one of the binding's {@link sap.ui.model.odata.v4.ODataListBinding#getCurrentContexts
+	 * current contexts} after the move, it is not in the collection anymore and thus loses its
+	 * index pretty soon.
 	 *
 	 * The move changes the
 	 * {@link topic:c9723f8265f644af91c0ed941e114d46/section_CST context states} of the nodes as
