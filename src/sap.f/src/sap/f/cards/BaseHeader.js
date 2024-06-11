@@ -186,8 +186,10 @@ sap.ui.define([
 		if (oToolbar) {
 			oToolbar.addStyleClass("sapFCardHeaderToolbar");
 			oToolbar.removeEventDelegate(this._oToolbarDelegate, this);
+			if (oToolbar.updateVisibility) {
+				oToolbar.updateVisibility();
+			}
 		}
-
 		if (aBannerLines) {
 			aBannerLines.forEach((oText) => {
 				oText.setTextAlign(TextAlign.End);
