@@ -466,7 +466,7 @@ sap.ui.define([
 				this._fireEvent(Element.getElementById(this._oItemsContainer.getCurrentViewKey()), "reset", false);
 			}, this]
 		}));
-		this._oItemsContainer._getNavigationList().addAriaLabelledBy(this.getId() + "-itemContainerDescription");
+		this._oItemsContainer?._getNavigationList().addAriaLabelledBy(this.getId() + "-itemContainerDescription");
 		this._oPopover.addDependent(this._oItemsContainer);
 		this.addDependent(this._oItemsContainer);
 	};
@@ -552,7 +552,7 @@ sap.ui.define([
 		if (this._previousView == DEFAULT_KEY) {
 			this._oItemsContainer._getNavBackBtn().focus();
 		} else {
-			var oItem = this._oItemsContainer._getNavigationList().getItems().find(function (oItem) {
+			var oItem = this._oItemsContainer?._getNavigationList().getItems().find(function (oItem) {
 				return oItem.getVisible() && oItem._key === this._previousView;
 			}.bind(this));
 			oItem && oItem.focus();
@@ -564,7 +564,7 @@ sap.ui.define([
 			return;
 		}
 
-		var oList = this._oItemsContainer._getNavigationList().getItems();
+		var oList = this._oItemsContainer?._getNavigationList().getItems();
 		var oListItem = oList.find(function (oListItem) {
 			return oListItem._key == oItem.getId();
 		});
