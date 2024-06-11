@@ -186,7 +186,9 @@
 	});
 
 
-	// @deprecated
+	/**
+	 * @deprecated
+	 */
 	QUnit.module("Config variants for async", {
 		afterEach: function() {
 			removeUi5Loader();
@@ -294,7 +296,9 @@
 		});
 	});
 
-	// @deprecated
+	/**
+	 * @deprecated
+	 */
 	QUnit.test("Expose loader via bootstrap attribute", function(assert) {
 		var done = assert.async();
 

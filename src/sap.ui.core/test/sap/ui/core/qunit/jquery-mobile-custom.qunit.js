@@ -21,7 +21,9 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 
 				done();
 			});
-			// @deprecated
+			/**
+			 * @deprecated
+			 */
 			Core.boot();
 		}, function (oErr) {
 			assert.strictEqual(oErr, {}, "Requiring the Core must not fail");

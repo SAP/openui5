@@ -1,14 +1,19 @@
 /*global QUnit */
 sap.ui.define([
-	// @deprecated
+	/**
+	 * @deprecated
+	 */
 	"sap/ui/core/Core"
 ], function(
-	// @deprecated
+	/**
+	 * @deprecated
+	 */
 	Core
 ) {
 	"use strict";
-
-	// @deprecated
+	/**
+	 * @deprecated
+	 */
 	Core.boot();
 
 	QUnit.test("Check Main Module Functionality", function(assert) {

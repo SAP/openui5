@@ -9,11 +9,15 @@
 	});
 
 	QUnit.test("When sap/ui/core/Core has been required...", function(assert) {
-		// @deprecated
+		/**
+		 * @deprecated
+		 */
 		var coreInitFired = false;
 		var done = assert.async();
 		sap.ui.require(['sap/ui/core/Core'], function(Core) {
-			// @deprecated
+			/**
+			 * @deprecated
+			 */
 			(() => {
 				const jQuery = globalThis.jQuery; // unavoidable global access
 				assert.strictEqual(typeof jQuery, "function", "...function jQuery should exist");
@@ -32,11 +36,15 @@
 				assert.strictEqual(sap.ui.require('sap/ui/thirdparty/jqueryui/jquery-ui-position'), jQuery,
 						"...loader should know module 'sap/ui/thirdparty/jqueryui/jquery-ui-position' and its export");
 
-				// @deprecated
+				/**
+				 * @deprecated
+				 */
 				assert.ok(true, "...init event should be fired after boot");
 				done();
 			});
-			// @deprecated
+			/**
+			 * @deprecated
+			 */
 			setTimeout(function() {
 				assert.notOk(coreInitFired, "...but Core should not have fired init event before boot");
 				Core.boot();

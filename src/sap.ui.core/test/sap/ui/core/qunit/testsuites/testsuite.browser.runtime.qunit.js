@@ -68,7 +68,9 @@ sap.ui.define(function() {
 				sinon: {
 					qunitBridge: true
 				},
-				// @deprecated
+				/**
+				 * @deprecated
+				 */
 				bootCore: false,
 				beforeBootstrap: "test-resources/sap/ui/core/qunit/jquery-mobile-custom.beforeBootstrap"
 			},
