@@ -99,6 +99,9 @@ sap.ui.define([
 
 		_highlightNewCreatedAppVariant(aAppVariantOverviewAttributes) {
 			var oTable = this.byId("Table1");
+			if (!oTable) {
+				return Promise.resolve();
+			}
 			oTable.focus();
 
 			aAppVariantOverviewAttributes.forEach(function(oAppVariantDescriptor, index) {
