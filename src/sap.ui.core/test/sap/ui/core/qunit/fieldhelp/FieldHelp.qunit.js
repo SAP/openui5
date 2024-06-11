@@ -68,12 +68,14 @@ sap.ui.define([
 
 		assert.strictEqual(ElementRegistry.size, 3);
 		const oElement0Mock = this.mock(oElement0);
-		oElement0Mock.expects("data").withExactArgs("sap-ui-DocumentationRef").returns(["~vValue0", "~vValue1"]);
+		const aDocumentationRefs = ["~vValue0", "~vValue1"];
+		oElement0Mock.expects("data").withExactArgs("sap-ui-DocumentationRef").returns(aDocumentationRefs);
 		oElement0Mock.expects("getMetadata").withExactArgs().returns({
 			getName() { return "oElement0"; } // required by oElement.toString called by sinon
 		});
-		oFieldHelpMock.expects("_setFieldHelpDocumentationRefs")
-			.withExactArgs(sinon.match.same(oElement0), undefined, ["~vValue0", "~vValue1"]);
+		oFieldHelpMock.expects("_updateElement")
+			.withExactArgs(sinon.match.same(oElement0),
+				sinon.match.same(aDocumentationRefs).and(sinon.match(["~vValue0", "~vValue1"])));
 
 		const oElement1Mock = this.mock(oElement1);
 		oElement1Mock.expects("data").withExactArgs("sap-ui-DocumentationRef").returns(null);
@@ -89,12 +91,14 @@ sap.ui.define([
 		oFieldHelpMock.expects("_updateProperty").withExactArgs(sinon.match.same(oElement1), "~sPropertyName2");
 
 		const oElement2Mock = this.mock(oElement2);
-		oElement2Mock.expects("data").withExactArgs("sap-ui-DocumentationRef").returns("~vValue");
+		const aDocumentationRefs2 = ["~vValue"];
+		oElement2Mock.expects("data").withExactArgs("sap-ui-DocumentationRef").returns(aDocumentationRefs2);
 		oElement2Mock.expects("getMetadata").withExactArgs().returns({
 			getName() { return "oElement2"; } // required by oElement.toString called by sinon
 		});
-		oFieldHelpMock.expects("_setFieldHelpDocumentationRefs")
-			.withExactArgs(sinon.match.same(oElement2), undefined, ["~vValue"]);
+		oFieldHelpMock.expects("_updateElement")
+			.withExactArgs(sinon.match.same(oElement2),
+				sinon.match.same(aDocumentationRefs2).and(sinon.match(["~vValue"])));
 
 		const fnUpdateHotspotsCallback = () => {};
 
@@ -308,6 +312,73 @@ sap.ui.define([
 		return Promise.all([oDocumentationRefPromise0, oDocumentationRefPromise2, oDocumentationRefPromise3]);
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("_updateElement: elements that are destroyed or are beeing destroyed", function (assert) {
+		const oFieldHelp = new FieldHelp();
+		const oFieldHelpMock = this.mock(oFieldHelp);
+		const oElement = {
+			isDestroyed() {},
+			isDestroyStarted() {}
+		};
+		const oElementMock = this.mock(oElement);
+		oElementMock.expects("isDestroyed").withExactArgs().returns(true);
+		oElementMock.expects("isDestroyStarted").never();
+		oFieldHelpMock.expects("_setFieldHelpDocumentationRefs")
+			.withExactArgs(sinon.match.same(oElement), undefined, []);
+
+		// code under test - already destroyed
+		oFieldHelp._updateElement(oElement, ["~documentationRef"]);
+
+		oElementMock.expects("isDestroyed").withExactArgs().returns(false);
+		oElementMock.expects("isDestroyStarted").withExactArgs().returns(true);
+		oFieldHelpMock.expects("_setFieldHelpDocumentationRefs")
+			.withExactArgs(sinon.match.same(oElement), undefined, []);
+
+		// code under test - is beeing destroyed
+		oFieldHelp._updateElement(oElement, ["~documentationRef"]);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_updateElement: active control", function (assert) {
+		const oFieldHelp = new FieldHelp();
+		const oFieldHelpMock = this.mock(oFieldHelp);
+		const oElement = {
+			data() {},
+			isDestroyed() {},
+			isDestroyStarted() {}
+		};
+		const oElementMock = this.mock(oElement);
+		oElementMock.expects("data").never();
+		oElementMock.expects("isDestroyed").withExactArgs().returns(false);
+		oElementMock.expects("isDestroyStarted").withExactArgs().returns(false);
+		const aDocumentationRefs = ["~documentationRef"];
+		oFieldHelpMock.expects("_setFieldHelpDocumentationRefs")
+			.withExactArgs(sinon.match.same(oElement), undefined,
+				sinon.match.same(aDocumentationRefs).and(sinon.match(["~documentationRef"])));
+
+		// code under test - documentation refs already given
+		oFieldHelp._updateElement(oElement, aDocumentationRefs);
+
+		oElementMock.expects("isDestroyed").withExactArgs().returns(false);
+		oElementMock.expects("isDestroyStarted").withExactArgs().returns(false);
+		oElementMock.expects("data").withExactArgs("sap-ui-DocumentationRef").returns(aDocumentationRefs);
+		oFieldHelpMock.expects("_setFieldHelpDocumentationRefs")
+			.withExactArgs(sinon.match.same(oElement), undefined,
+				sinon.match.same(aDocumentationRefs).and(sinon.match(["~documentationRef"])));
+
+		// code under test - documentation refs have to be determined
+		oFieldHelp._updateElement(oElement);
+
+		oElementMock.expects("isDestroyed").withExactArgs().returns(false);
+		oElementMock.expects("isDestroyStarted").withExactArgs().returns(false);
+		oElementMock.expects("data").withExactArgs("sap-ui-DocumentationRef").returns(undefined);
+		oFieldHelpMock.expects("_setFieldHelpDocumentationRefs")
+			.withExactArgs(sinon.match.same(oElement), undefined, []);
+
+		// code under test - documentation refs have to be determined, but may be deleted in between
+		oFieldHelp._updateElement(oElement);
+	});
 
 	//*********************************************************************************************
 	QUnit.test("_updateHotspots", function (assert) {
@@ -1061,4 +1132,15 @@ sap.ui.define([
 		ManagedObjectBindingSupport._bindProperty.call(oManagedObject, "~sProperty", oBindingInfo);
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("updateFieldHelp: update element if no property name is given (e.g. filter fields)", function () {
+		const oFieldHelp = FieldHelp.getInstance();
+		oFieldHelp.activate();
+		const oElement = {};
+		this.mock(oFieldHelp).expects("_updateElement").withExactArgs(sinon.match.same(oElement));
+
+		// code under test
+		ManagedObject.prototype.updateFieldHelp.call(oElement);
+	});
 });

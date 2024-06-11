@@ -48,6 +48,7 @@ sap.ui.require([
 		// sap.ui.core.fieldhelp.* - tests are contained in testsuite.fieldhelp.qunit.js
 		// ***************************************************************************************
 		"sap/ui/core/qunit/fieldhelp/FieldHelp.qunit",
+		"sap/ui/core/qunit/fieldhelp/FieldHelpUtil.qunit",
 
 		// ***************************************************************************************
 		// sap.ui.core.format.* - tests are contained in testsuite.types.qunit.js

@@ -43,7 +43,8 @@ sap.ui.define(function () {
 			autostart : true
 		},
 		tests : {
-			FieldHelp : {}
+			FieldHelp : {},
+			FieldHelpUtil : {}
 		}
 	};
 });

@@ -28,7 +28,12 @@ sap.ui.define([
 	 *   The name of the control property for which the field help information has to be updated
 	 */
 	function updateFieldHelp(sPropertyName) {
-		oFieldHelp._updateProperty(/*the managed object*/this, sPropertyName);
+		// "this" is the managed object on which this function is called
+		if (sPropertyName) {
+			oFieldHelp._updateProperty(this, sPropertyName);
+		} else {
+			oFieldHelp._updateElement(this);
+		}
 	}
 
 	/**
@@ -215,6 +220,24 @@ sap.ui.define([
 		}
 
 		/**
+		 * Updates the field help information for the given element.
+		 *
+		 * @param {sap.ui.core.Element} oElement
+		 *   The element for which to set the field help information
+		 * @param {string[]} [aDocumentationRefs]
+		 *   The string values of <code>com.sap.vocabularies.Common.v1.DocumentationRef</code> annotations; if not given
+		 *   the custom data <code>sap-ui-DocumentationRef</code> of the given element is used
+		 */
+		_updateElement(oElement, aDocumentationRefs) {
+			if (oElement.isDestroyed() || oElement.isDestroyStarted()) {
+				aDocumentationRefs = [];
+			} else {
+				aDocumentationRefs ||= oElement.data("sap-ui-DocumentationRef") || [];
+			}
+			this._setFieldHelpDocumentationRefs(oElement, undefined, aDocumentationRefs);
+		}
+
+		/**
 		 * Calls the <code>fnUpdateHotspotsCallback</code> as given in {@link #activate} asynchronously with the latest
 		 * field help hotspots.
 		 *
@@ -320,11 +343,9 @@ sap.ui.define([
 			this.#bActive = true;
 			this.#fnUpdateHotspotsCallback = fnUpdateHotspotsCallback;
 			ElementRegistry.forEach((oElement) => {
-				const vDocumentationRef = oElement.data("sap-ui-DocumentationRef");
-				if (vDocumentationRef) {
-					this._setFieldHelpDocumentationRefs(oElement, undefined, Array.isArray(vDocumentationRef)
-						? vDocumentationRef
-						: [vDocumentationRef]);
+				const aDocumentationRefs = oElement.data("sap-ui-DocumentationRef");
+				if (aDocumentationRefs) {
+					this._updateElement(oElement, aDocumentationRefs);
 				} else {
 					Object.keys(oElement.getMetadata().getAllProperties()).forEach((sPropertyName) => {
 						this._updateProperty(oElement, sPropertyName);

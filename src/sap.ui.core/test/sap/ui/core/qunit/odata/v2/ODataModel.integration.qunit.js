@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/base/util/merge",
 	"sap/base/util/uid",
 	"sap/m/Input",
+	"sap/m/Label",
 	"sap/ui/Device",
 	"sap/ui/base/ManagedObjectObserver",
 	"sap/ui/base/SyncPromise",
@@ -14,6 +15,7 @@ sap.ui.define([
 	"sap/ui/core/Messaging",
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/fieldhelp/FieldHelp",
+	"sap/ui/core/fieldhelp/FieldHelpUtil",
 	"sap/ui/core/message/Message",
 	"sap/ui/core/message/MessageType",
 	"sap/ui/core/mvc/Controller",
@@ -38,10 +40,10 @@ sap.ui.define([
 	"sap/ui/util/XMLHelper"
 	// load Table resources upfront to avoid loading times > 1 second for the first test using Table
 	// "sap/ui/table/Table"
-], function (Log, Localization, merge, uid, Input, Device, ManagedObjectObserver, SyncPromise,
-		Library, Messaging, UI5Date, FieldHelp, Message, MessageType, Controller, View, Rendering, BindingMode, Filter,
-		FilterOperator, FilterType, Model, Sorter, JSONModel, MessageModel, CountMode, MessageScope, Decimal,
-		Context, ODataModel, XMLModel, TestUtils, datajs, XMLHelper) {
+], function (Log, Localization, merge, uid, Input, Label, Device, ManagedObjectObserver, SyncPromise,
+		Library, Messaging, UI5Date, FieldHelp, FieldHelpUtil, Message, MessageType, Controller, View, Rendering,
+		BindingMode, Filter, FilterOperator, FilterType, Model, Sorter, JSONModel, MessageModel, CountMode,
+		MessageScope, Decimal, Context, ODataModel, XMLModel, TestUtils, datajs, XMLHelper) {
 	/*global QUnit, sinon*/
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0, quote-props: 0*/
 	"use strict";
@@ -23038,24 +23040,26 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	});
 
 	//*********************************************************************************************
-	// Scenario 1: Activate field help and get the expected hotspots. Simulate filter bar fields which will set
-	// "sap-ui-DocumentationRef" custom data at the filter field. For ODataPropertyBindings, either standalone or
-	// embedded in a CompositeBinding, the field help is determined automatically by evaluating the
-	// "com.sap.vocabularies.Common.v1.DocumentationRef" annotation. ODataPropertyBindings embedded in a
-	// CompositeBinding for which no messages are displayed (see getPartsIgnoringMessages), are ignored.
-	// Controls which have been destroyed do neither produce a field help nor log messages.
+	// Scenario 1: Activate field help and get the expected hotspots. Simulate filter bar fields which will call
+	// <code>module:sap/ui/core/fieldhelp/FieldHelpUtil.setDocumentationRef</code> to set a field help.
+	// For ODataPropertyBindings, either standalone or embedded in a CompositeBinding, the field help is determined
+	// automatically by evaluating the "com.sap.vocabularies.Common.v1.DocumentationRef" annotation.
+	// ODataPropertyBindings embedded in a CompositeBinding for which no messages are displayed (see
+	// <code>sap.ui.model.CompositeType#getPartsIgnoringMessages</code>), are ignored.
+	// Controls which have been destroyed do neither produce a field help nor log messages while activation.
 	// JIRA: CPOUI5MODELS-1696
 	// Scenario 2: If bindings are created, updated (that means got a new context) or deleted after the field
 	// help had been activated, the field help information is updated accordingly
 	// JIRA: CPOUI5MODELS-1726
+	// Scenario 3: If filter field are created or destroyed after the field help had been activated, the field help
+	// information is updated accordingly.
+	// JIRA: CPOUI5MODELS-1740
 	QUnit.test("Field Help", function (assert) {
 		const oModel = createSalesOrdersModel({defaultBindingMode: BindingMode.TwoWay});
 		const oFilterModel = new JSONModel({filter: "42"});
 		const sView = `
-<Label labelFor="FilterSingleFieldHelp" text="Label for filter with single field help" />
-<Input id="FilterSingleFieldHelp" value="{filter>/filter}" />
-<Label labelFor="FilterMultipleFieldHelps" text="Label for filter with multiple field helps" />
-<Input id="FilterMultipleFieldHelps" value="Foo Bar" />
+<Label labelFor="FilterWithFieldHelp" text="Label for filter with field help" />
+<Input id="FilterWithFieldHelp" value="Foo Bar" />
 <Label labelFor="FilterWithoutFieldHelp" text="Label for filter without any field help" />
 <Input id="FilterWithoutFieldHelp" value="Baz" />
 <Label labelFor="FilterDynamicallyDestroyed" text="Label for filter which is dynamically destroyed" />
@@ -23142,29 +23146,22 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		return this.createView(assert, sView, {undefined: oModel, filter: oFilterModel}).then(() => {
 			const oView = this.oView;
 			// manually add documentation refs - simulate filter fields
-			const oFilterSingleFieldHelp = oView.byId("FilterSingleFieldHelp");
-			oFilterSingleFieldHelp.data("sap-ui-DocumentationRef",
-				"urn:sap-com:documentation:key?=type=DTEL&id=SALESORDERID");
-			const oFilterMultipleFieldHelps = oView.byId("FilterMultipleFieldHelps");
-			oFilterMultipleFieldHelps.data("sap-ui-DocumentationRef", [
+			const oFilterWithFieldHelp = oView.byId("FilterWithFieldHelp");
+			FieldHelpUtil.setDocumentationRef(oFilterWithFieldHelp, [
 				"urn:sap-com:documentation:key?=type=DTEL&id=FOO",
 				"urn:sap-com:documentation:key?=type=DTEL&id=Bar&origin=Origin"
 			]);
 			const oFilterDynamicallyDestroyed = oView.byId("FilterDynamicallyDestroyed");
-			oFilterDynamicallyDestroyed.data("sap-ui-DocumentationRef",
+			FieldHelpUtil.setDocumentationRef(oFilterDynamicallyDestroyed,
 				"urn:sap-com:documentation:key?=type=DTEL&id=SALESORDERID");
 			const aExpectedHotspots = [{
-				"backendHelpKey": {id: "SALESORDERID", origin: null, type: "DTEL"},
-				"hotspotId": oFilterSingleFieldHelp.getId(),
-				"labelText": "Label for filter with single field help"
-			}, {
 				"backendHelpKey": {id: "FOO", origin: null, type: "DTEL"},
-				"hotspotId": oFilterMultipleFieldHelps.getId(),
-				"labelText": "Label for filter with multiple field helps"
+				"hotspotId": oFilterWithFieldHelp.getId(),
+				"labelText": "Label for filter with field help"
 			}, {
 				"backendHelpKey": {id: "Bar", origin: "Origin", type: "DTEL"},
-				"hotspotId": oFilterMultipleFieldHelps.getId(),
-				"labelText": "Label for filter with multiple field helps"
+				"hotspotId": oFilterWithFieldHelp.getId(),
+				"labelText": "Label for filter with field help"
 			}, { // documentation ref from OData annotation
 				"backendHelpKey": {id: "NOTE", origin: "MyOrigin", type: "DTEL"},
 				"hotspotId": oView.byId("Note").getId(),
@@ -23194,6 +23191,31 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				oUpdateCalledPromise,
 				this.waitForChanges(assert, "Initial activation")
 			]).then(() => {
+				const oLateFilterField = new Input();
+				const oUpdateCalledPromise = waitForUpdate([
+					...aExpectedHotspots,
+					{
+						"backendHelpKey": {id: "BAZ", origin: null, type: "DTEL"},
+						"hotspotId": oLateFilterField.getId(),
+						"labelText": "Label for late filter field"
+					}], "late creation of a filter field");
+
+				// code under test - field help is active; add a filter field with field help afterwards
+				FieldHelpUtil.setDocumentationRef(oLateFilterField, "urn:sap-com:documentation:key?=type=DTEL&id=BAZ");
+
+				const oForm = oView.byId("form");
+				oForm.addItem(new Label({labelFor: oLateFilterField.getId(), text: "Label for late filter field"}));
+				oForm.addItem(oLateFilterField);
+
+				return oUpdateCalledPromise.then(() => {
+					const oUpdateCalledPromise = waitForUpdate(aExpectedHotspots, "late destroying a filter field");
+
+					// code under test - destroy late filter field again
+					oLateFilterField.destroy();
+
+					return oUpdateCalledPromise;
+				});
+			}).then(() => {
 				const oUpdateCalledPromise = waitForUpdate([
 					...aExpectedHotspots,
 					{
