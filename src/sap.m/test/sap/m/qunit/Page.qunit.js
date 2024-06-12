@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/m/PageAccessibleLandmarkInfo",
 	"sap/m/Bar",
 	"sap/m/SearchField",
+	"sap/f/ShellBar",
 	"sap/m/library",
 	"sap/ui/core/library",
 	"sap/ui/model/json/JSONModel",
@@ -26,6 +27,7 @@ sap.ui.define([
 	PageAccessibleLandmarkInfo,
 	Bar,
 	SearchField,
+	ShellBar,
 	mobileLibrary,
 	coreLibrary,
 	JSONModel,
@@ -212,6 +214,57 @@ sap.ui.define([
 		oPage.destroy();
 		oPage = null;
 	});
+
+	QUnit.test("Page with ShellBar in 'subHeader' aggregation", async function (assert) {
+		// Setup
+		var oPage = new Page("my.Page.Shellbar", {
+			subHeader: new ShellBar({
+				title: "Title"
+			}),
+			content: new Button({
+				text: "Button"
+			})
+		}).placeAt("content");
+		await nextUIUpdate();
+
+		// Assert
+		assert.ok(oPage.hasStyleClass(Page.SHELLBAR_IN_HEADER_CLASS), "Page has 'sapFShellBar-CTX' class");
+
+		// Act
+		oPage.destroySubHeader();
+
+		// Assert
+		assert.notOk(oPage.hasStyleClass(Page.SHELLBAR_IN_HEADER_CLASS), "Page does not have 'sapFShellBar-CTX' class");
+
+		// Cleanup
+		oPage.destroy();
+	});
+
+	QUnit.test("Page with ShellBar in 'customHeader' aggregation", async function (assert) {
+		// Setup
+		var oPage = new Page("my.Page.Shellbar", {
+			customHeader: new ShellBar({
+				title: "Title"
+			}),
+			content: new Button({
+				text: "Button"
+			})
+		}).placeAt("content");
+		await nextUIUpdate();
+
+		// Assert
+		assert.ok(oPage.hasStyleClass(Page.SHELLBAR_IN_HEADER_CLASS), "Page has 'sapFShellBar-CTX' class");
+
+		// Act
+		oPage.destroyCustomHeader();
+
+		// Assert
+		assert.notOk(oPage.hasStyleClass(Page.SHELLBAR_IN_HEADER_CLASS), "Page does not have 'sapFShellBar-CTX' class");
+
+		// Cleanup
+		oPage.destroy();
+	});
+
 
 	QUnit.module("Properties Check");
 
