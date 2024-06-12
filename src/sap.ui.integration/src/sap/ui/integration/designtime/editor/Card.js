@@ -37,6 +37,7 @@ sap.ui.define([
 				 * Defines if the card is readonly.
 				 * @experimental Since 1.112
 				 * @private
+				 * @ui5-restricted sap.ui.integration.designtime.editor.Card
 				 * @since 1.112
 				 */
 				readonly: {type: "boolean", group: "Behavior", defaultValue: false},
@@ -45,6 +46,7 @@ sap.ui.define([
 				 * Defines the z-index of the readonly dom.
 				 * @experimental Since 1.112
 				 * @private
+				 * @ui5-restricted sap.ui.integration.designtime.editor.Card
 				 * @since 1.112
 				 */
 				readonlyZIndex: {type: "int", group: "Behavior", defaultValue: 1}

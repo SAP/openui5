@@ -84,6 +84,7 @@ sap.ui.define([
 				/**
 				 * The toolbar.
 				 * @private
+				 * @ui5-restricted sap.ui.integration.controls.ActionsStrip
 				 */
 				_toolbar: {
 					type: "sap.m.OverflowToolbar",

@@ -51,6 +51,7 @@ sap.ui.define(['./ViewSettingsItem', './library'],
 			/**
 			 * Let the outside world know that the filter detail aggregation was changed.
 			 * @private
+			 * @ui5-restricted sap.m.ViewSettingsFilterItem
 			 */
 			filterDetailItemsAggregationChange: {}
 		}

@@ -88,6 +88,7 @@ sap.ui.define(["./library", "sap/ui/core/Item", "sap/ui/base/ManagedObject", "sa
 					/**
 					 * Sends information that some of the properties have changed.
 					 * @private
+					 * @ui5-restricted sap.m.TabStripItem
 					 */
 					itemPropertyChanged: {
 						parameters: {

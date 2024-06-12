@@ -113,7 +113,7 @@ sap.ui.define([
 				 * Determines whether the panel has a fixed width.
 				 *
 				 * @private
-				 * @ui5-restricted sap.ui.mdc
+				 * @ui5-private sap.ui.mdc
 				 */
 				_useFixedWidth: {
 					type: "boolean",
