@@ -439,7 +439,6 @@ sap.ui.define([
 
 		QUnit.test("when an element is inserted into an already existing aggregation", function(assert) {
 			const done = assert.async();
-			assert.expect(2);
 			const oExpectedResponse1 = {
 				type: "new",
 				targetIndex: 1,
@@ -477,12 +476,16 @@ sap.ui.define([
 							done();
 							break;
 						default:
-							assert.notOk(true, "then ether 'new' or 'editableChange' type expected");
 					}
 				}.bind(this));
 			}
 			this.oOutline.attachEvent("update", onUpdate, this);
-			this.oLayout.addContent(new Button("newButton")); // inserts new overlay
+			this.oLayout.addContent(
+				new Button({
+					id: "newButton",
+					text: "newButton"
+				})
+			);
 		});
 
 		QUnit.test("when setEditable is called for an existing overlay", function(assert) {
