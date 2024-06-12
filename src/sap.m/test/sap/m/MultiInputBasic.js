@@ -14,9 +14,10 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/m/Token",
 	"sap/ui/core/library",
+	"sap/ui/core/Theming",
 	"sap/ui/table/Table",
 	"sap/ui/table/Column"
-], function (JSONModel, App, Button, Column, ColumnListItem, Label, List, MessageBox, MultiInput, Page, StandardListItem, Table, Text, Token, coreLibrary, GridTable, GridTableColumn){
+], function (JSONModel, App, Button, Column, ColumnListItem, Label, List, MessageBox, MultiInput, Page, StandardListItem, Table, Text, Token, coreLibrary, Theming, GridTable, GridTableColumn){
 	"use strict";
 
 	// var TextDirection = coreLibrary.TextDirection;
@@ -306,7 +307,7 @@ sap.ui.define([
 		selected: false,
 		select : function() {
 			document.getElementById("body").classList.toggle("sapUiSizeCompact");
-			sap.ui.core.Theming.notifyContentDensityChanged();
+			Theming.notifyContentDensityChanged();
 		}
 	});
 
