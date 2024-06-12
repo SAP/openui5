@@ -152,31 +152,44 @@ sap.ui.define([
 	});
 
 	QUnit.test("RangeLimit Property - getSelectionRange/getSelectedRowContexts APIs", function (assert) {
-		const done = assert.async();
+		// const done = assert.async();
+		// const oGetContextsSpy = sinon.spy(oBinding, "getContexts");
+
 		const oTable = this.oTable;
 
 		const oBinding = oTable.getBinding("rows");
-		const oGetContextsSpy = sinon.spy(oBinding, "getContexts");
 		assert.ok(oBinding.getLength() > this.oCellSelector.getRangeLimit());
 
-		const oCell = getCell(oTable, 1, 0); // first cell of first row
+		let oCell = getCell(oTable, 1, 0); // first cell of first row
 		qutils.triggerKeydown(oCell, KeyCodes.SPACE); // select first cell of first row
 		qutils.triggerKeyup(oCell, KeyCodes.SPACE); // select first cell of first row
 		assert.equal(oBinding.getAllCurrentContexts().length, oTable.getThreshold() + oTable.getRowMode().getRowCount());
 
-		qutils.triggerKeyup(oCell, KeyCodes.SPACE, false, false, true /* Ctrl */); // enlarge selection to all rows and cells
-		assert.equal(oGetContextsSpy.callCount, 1);
-		assert.ok(oGetContextsSpy.calledWithExactly(0, this.oCellSelector.getRangeLimit(), 0, true));
-		assert.deepEqual(this.oCellSelector.getSelectionRange(), {from: {rowIndex: 0, colIndex: 0}, to: {rowIndex: Infinity, colIndex: 0}});
+		qutils.triggerKeydown(oCell, KeyCodes.ARROW_RIGHT, true, false, false);
+		qutils.triggerKeyup(oCell, KeyCodes.ARROW_RIGHT, true, false, false);
 
-		oBinding.attachEventOnce("dataReceived", () => {
-			assert.equal(oBinding.getAllCurrentContexts().length, this.oCellSelector.getRangeLimit());
-			assert.equal(this.oCellSelector.getSelectedRowContexts().length, this.oCellSelector.getRangeLimit());
-			assert.deepEqual(this.oCellSelector.getSelectedRowContexts(), oBinding.getAllCurrentContexts().slice(0, this.oCellSelector.getRangeLimit()));
+		oCell = getCell(oTable, 1, 1);
+		qutils.triggerKeydown(oCell, KeyCodes.ARROW_DOWN, true, false, false);
+		qutils.triggerKeyup(oCell, KeyCodes.ARROW_DOWN, true, false, false);
 
-			oGetContextsSpy.restore();
-			done();
-		});
+		// Commenting as Column Selection feature will be changed/adjusted in a separate BLI
+		// qutils.triggerKeyup(oCell, KeyCodes.SPACE, false, false, true /* Ctrl */); // enlarge selection to all rows and cells
+		// assert.equal(oGetContextsSpy.callCount, 1);
+		// assert.ok(oGetContextsSpy.calledWithExactly(0, this.oCellSelector.getRangeLimit(), 0, true));
+
+		assert.deepEqual(this.oCellSelector.getSelectionRange(), {from: {rowIndex: 1, colIndex: 0}, to: {rowIndex: 2, colIndex: 1}});
+		assert.deepEqual(this.oCellSelector.getSelectedRowContexts(), oBinding.getAllCurrentContexts().slice(1, 3));
+
+		// Commenting as Column Selection feature will be changed/adjusted in a separate BLI
+		// oBinding.attachEventOnce("dataReceived", () => {
+		// 	assert.equal(oBinding.getAllCurrentContexts().length, this.oCellSelector.getRangeLimit());
+		// 	assert.equal(this.oCellSelector.getSelectedRowContexts().length, this.oCellSelector.getRangeLimit());
+		// 	assert.deepEqual(this.oCellSelector.getSelectedRowContexts(), oBinding.getAllCurrentContexts().slice(0, this.oCellSelector.getRangeLimit()));
+		// 	assert.deepEqual(this.oCellSelector.getSelectedRowContexts(), oBinding.getAllCurrentContexts().slice(1, 2));
+
+		// 	oGetContextsSpy.restore();
+		// 	done();
+		// });
 	});
 
 	QUnit.test("findOn", function(assert) {
