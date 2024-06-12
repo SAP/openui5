@@ -372,23 +372,16 @@ sap.ui.define([
 		return new Promise((resolve) => {
 			const oParent = this.getParent();
 			// In case of mobile oParent isA sap.m.Dialog
+			this.fireBeforeSelectionDialogOpen();
 			if (oParent.isA("sap.m.Popover")) {
 				oParent.setModal(true);
 			}
 			Engine.getInstance().show(this, "LinkItems", {
 				contentWidth: "28rem",
 				contentHeight: "35rem",
-				close: () => {
-					if (oParent.isA("sap.m.Popover")) {
-						oParent.setModal(false);
-					}
-				}
+				close: () => this.fireAfterSelectionDialogClose()
 			}).then((oDialog) => {
-				oDialog.attachAfterClose(() => {
-					if (oParent.isA("sap.m.Popover")) {
-						oParent.setModal(false);
-					}
-				});
+				oDialog.attachAfterClose(() => this.fireAfterSelectionDialogClose());
 				resolve(oDialog);
 			});
 		});

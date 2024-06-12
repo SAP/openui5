@@ -16,7 +16,7 @@ sap.ui.define([
 	"sap/base/util/LoaderExtensions",
 	"sap/m/routing/Router", // make sure Router is loaded
 	"sap/ui/Device"
-], function (
+], function(
 	ManagedObject,
 	UIComponent,
 	JSONModel,
@@ -51,7 +51,7 @@ sap.ui.define([
 			manifest: fnLoadManifest()
 		},
 
-		init : function () {
+		init: function() {
 			// call the init function of the parent
 			UIComponent.prototype.init.apply(this, arguments);
 
@@ -65,7 +65,7 @@ sap.ui.define([
 		},
 		__initFakeUShellConnector: function() {
 			FakeUShellConnector.enableFakeConnector({
-				'FakeFlpSemanticObject': {
+				'FakeFlpSemanticObject_book': {
 					links: [
 						{
 							action: "action_01",
@@ -76,12 +76,19 @@ sap.ui.define([
 							tags: [
 								"superiorAction"
 							]
-						},
+						}
+					]
+				},
+				'FakeFlpSemanticObject_author': {
+					links: [
 						{
 							action: "action_02",
 							intent: self.location.pathname + (self.location.search && self.location.search) + "#/Authors/{path: 'author_ID', targetType: 'raw'}",
 							text: "Manage author",
-							description: "{author/name}"
+							description: "{author/name}",
+							tags: [
+								"superiorAction"
+							]
 						}
 					]
 				}

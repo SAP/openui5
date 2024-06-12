@@ -3,31 +3,31 @@
 */
 
 sap.ui.define([
-		"sap/ui/core/Lib",
-		"sap/ui/mdc/Control",
-		"./ChartRenderer",
-		"sap/base/Log",
-		"./chart/ToolbarControlFactory",
-		"sap/ui/mdc/ActionToolbar",
-		"./chart/PropertyHelper",
-		"sap/ui/mdc/mixin/FilterIntegrationMixin",
-		"sap/ui/model/base/ManagedObjectModel",
-		"sap/ui/mdc/p13n/subcontroller/ChartItemController",
-		"sap/ui/mdc/p13n/subcontroller/FilterController",
-		"sap/ui/mdc/p13n/subcontroller/SortController",
-		"sap/ui/mdc/p13n/subcontroller/ChartTypeController",
-		"sap/ui/base/ManagedObjectObserver",
-		"sap/ui/mdc/actiontoolbar/ActionToolbarAction",
-		"sap/ui/core/library",
-		"sap/ui/events/KeyCodes",
-		"sap/ui/mdc/util/InfoBar",
-		"sap/ui/core/format/ListFormat",
-		"sap/ui/mdc/enums/ProcessingStrategy",
-		"sap/ui/mdc/enums/ChartP13nMode",
-		"sap/ui/mdc/enums/ChartToolbarActionType",
-		"sap/ui/mdc/chart/SelectionButtonItem",
-		"sap/ui/core/InvisibleMessage"
-	],
+	"sap/ui/core/Lib",
+	"sap/ui/mdc/Control",
+	"./ChartRenderer",
+	"sap/base/Log",
+	"./chart/ToolbarControlFactory",
+	"sap/ui/mdc/ActionToolbar",
+	"./chart/PropertyHelper",
+	"sap/ui/mdc/mixin/FilterIntegrationMixin",
+	"sap/ui/model/base/ManagedObjectModel",
+	"sap/ui/mdc/p13n/subcontroller/ChartItemController",
+	"sap/ui/mdc/p13n/subcontroller/FilterController",
+	"sap/ui/mdc/p13n/subcontroller/SortController",
+	"sap/ui/mdc/p13n/subcontroller/ChartTypeController",
+	"sap/ui/base/ManagedObjectObserver",
+	"sap/ui/mdc/actiontoolbar/ActionToolbarAction",
+	"sap/ui/core/library",
+	"sap/ui/events/KeyCodes",
+	"sap/ui/mdc/util/InfoBar",
+	"sap/ui/core/format/ListFormat",
+	"sap/ui/mdc/enums/ProcessingStrategy",
+	"sap/ui/mdc/enums/ChartP13nMode",
+	"sap/ui/mdc/enums/ChartToolbarActionType",
+	"sap/ui/mdc/chart/SelectionButtonItem",
+	"sap/ui/core/InvisibleMessage"
+],
 	(
 		Library,
 		Control,
@@ -716,7 +716,7 @@ sap.ui.define([
 
 					aSortedDimensions.forEach((oDimension) => {
 						// oData.items.push({ text: oDimension.label, id: oDimension.name });
-						oViewByBtn.addItem(new SelectionButtonItem({key: oDimension.name, text: oDimension.label}));
+						oViewByBtn.addItem(new SelectionButtonItem({ key: oDimension.name, text: oDimension.label }));
 					});
 					oViewByBtn.setSearchEnabled(aSortedDimensions.length >= 7);
 					oViewByBtn._openPopover(); // in this case the beforeOpen is not able to provide all item syncron
@@ -763,7 +763,7 @@ sap.ui.define([
 				oChartTypeBtn.removeAllItems();
 				aAvailableChartTypes.forEach((oChartType) => {
 					oChartTypeBtn.addItem(
-						new SelectionButtonItem({key: oChartType.key, text: oChartType.text, icon: oChartType.icon})
+						new SelectionButtonItem({ key: oChartType.key, text: oChartType.text, icon: oChartType.icon })
 					);
 				});
 				oChartTypeBtn.setSearchEnabled(aAvailableChartTypes.length >= 7);
@@ -775,7 +775,7 @@ sap.ui.define([
 
 				const oChartTypeInfo = this.getChartTypeInfo();
 				const aAvailableChartTypes = this.getAvailableChartTypes();
-				const [oChartType] = aAvailableChartTypes.filter((o) => {return o.key === sChartType; });
+				const [oChartType] = aAvailableChartTypes.filter((o) => { return o.key === sChartType; });
 
 				oChartTypeBtn.setText(oChartType.text);
 				oChartTypeBtn.setTooltip(oChartTypeInfo.text);
@@ -807,7 +807,7 @@ sap.ui.define([
 			const oToolbar = this._getToolbar();
 
 			/** add beginning **/
-			this._oTitle = ToolbarControlFactory.createTitle(sId, {header: header, headerStyle: headerStyle, headerLevel: headerLevel, headerVisible: headerVisible}, oToolbar);
+			this._oTitle = ToolbarControlFactory.createTitle(sId, { header: header, headerStyle: headerStyle, headerLevel: headerLevel, headerVisible: headerVisible }, oToolbar);
 			oToolbar.addBegin(this._oTitle);
 
 			/** variant management **/
@@ -822,77 +822,72 @@ sap.ui.define([
 			}
 
 			if (bShowSelectionDetails) {
-				const fnActionPress = function(oEvent) {
-					// extract binding information of each item
-					const aItemContexts = [];
-					oEvent.getParameter("items").forEach((oItem) => {
-						aItemContexts.push(oItem.getBindingContext());
-					});
-					// Re-arrange event object and navigate to outer press handler
-					this.fireSelectionDetailsActionPressed({
-						id: oEvent.getParameter("id"),
-						action: oEvent.getParameter("action"),
-						itemContexts: aItemContexts,
-						level: oEvent.getParameter("level")
-					});
-				}.bind(this);
-
-				//TODO Attach to navigation event of selectionDetails for semantic object navigation
-				/*
-				const fnNavigate = function(oEvent) {
-					// Destroy content on navBack of selectionDetails
-					// This either is the semanticNavContainer or the semanticNavItemList
-					if (oEvent.getParameter("direction") === "back") {
-						oEvent.getParameter("content").destroy();
-					} else {
-						// Forward navigation to semantic objects
-						oChart._navigateToSemanticObjectDetails(oEvent);
-					}
-
-				};*/
-
-
-				this._oSelectionDetailsBtn = ToolbarControlFactory.createSelectionDetailsBtn(sId, {
-					actionPress: fnActionPress,
-					// navigate: fnNavigate,
-					getSelectionDetailsActions: this.getSelectionDetailsActions.bind(this)
-				});
-
+				this._oSelectionDetailsBtn = this._createSelectionDetails(sId);
 				oToolbar.addEnd(this._oSelectionDetailsBtn);
 			}
 
 			if (bShowDrillDown) {
-				this._oDrillDownBtn = ToolbarControlFactory.createDrillDownBtn(sId, {beforeOpen: beforeOpenDrillDown, itemSelected: itemSelectedDrillDown});
+				this._oDrillDownBtn = ToolbarControlFactory.createDrillDownBtn(sId, { beforeOpen: beforeOpenDrillDown, itemSelected: itemSelectedDrillDown });
 				// this._oDrillDownBtn.attachBeforeOpen(beforeOpenDrillDown);
 				// this._oDrillDownBtn.attachItemSelected(itemSelectedDrillDown);
 				oToolbar.addEnd(this._oDrillDownBtn);
 			}
 
 			if (bShowLegend) {
-				this._oLegendBtn = ToolbarControlFactory.createLegendBtn(sId, {pressed: "{$mdcChart>/legendVisible}"});
+				this._oLegendBtn = ToolbarControlFactory.createLegendBtn(sId, { pressed: "{$mdcChart>/legendVisible}" });
 				// this._oLegendBtn.bindProperty("pressed", {path: "$mdcChart>/legendVisible"});
 				oToolbar.addEnd(this._oLegendBtn);
 			}
 
 			if (bShowZoom) {
-				this._oZoomInBtn = ToolbarControlFactory.createZoomInBtn(sId, {press: this.zoomIn.bind(this)});
+				this._oZoomInBtn = ToolbarControlFactory.createZoomInBtn(sId, { press: this.zoomIn.bind(this) });
 				oToolbar.addEnd(this._oZoomInBtn);
 
-				this._oZoomOutBtn = ToolbarControlFactory.createZoomOutBtn(sId, {press: this.zoomOut.bind(this)});
+				this._oZoomOutBtn = ToolbarControlFactory.createZoomOutBtn(sId, { press: this.zoomOut.bind(this) });
 				oToolbar.addEnd(this._oZoomOutBtn);
 			}
 
 			if (bShowSettings) {
-				this._oSettingsBtn = ToolbarControlFactory.createSettingsBtn(sId, {press: pressSettings});
+				this._oSettingsBtn = ToolbarControlFactory.createSettingsBtn(sId, { press: pressSettings });
 				oToolbar.addEnd(this._oSettingsBtn);
 			}
 
 			if (bShowChartType) {
-				this._oChartTypeBtn = ToolbarControlFactory.createChartTypeBtn(sId, { selectedItemKey: chartType, beforeOpen: beforeOpenChartType, itemSelected: itemSelectedChartType});
+				this._oChartTypeBtn = ToolbarControlFactory.createChartTypeBtn(sId, { selectedItemKey: chartType, beforeOpen: beforeOpenChartType, itemSelected: itemSelectedChartType });
 				oToolbar.addEnd(this._oChartTypeBtn);
 			}
 
 			this._updateVariantManagementStyle();
+		};
+
+		Chart.prototype._createSelectionDetails = function(sId) {
+			const fnActionPress = function(oEvent) {
+				// extract binding information of each item
+				const aItemContexts = [];
+				oEvent.getParameter("items").forEach((oItem) => {
+					aItemContexts.push(oItem.getBindingContext());
+				});
+				// Re-arrange event object and navigate to outer press handler
+				this.fireSelectionDetailsActionPressed({
+					id: oEvent.getParameter("id"),
+					action: oEvent.getParameter("action"),
+					itemContexts: aItemContexts,
+					level: oEvent.getParameter("level")
+				});
+			}.bind(this);
+
+			const oSelectionDetailsBtn = ToolbarControlFactory.createSelectionDetailsBtn(sId, {
+				actionPress: fnActionPress,
+				getSelectionDetailsActions: this.getSelectionDetailsActions.bind(this),
+				enableNavCallback: (mData, oContext) => {
+					return this.getControlDelegate().determineEnableNavForDetailsItem(this, mData, oContext);
+				},
+				fetchFieldInfosCallback: (oSelectionDetails, oBindingContext) => {
+					return this.getControlDelegate().fetchFieldInfos(this, oSelectionDetails, oBindingContext);
+				}
+			});
+
+			return oSelectionDetailsBtn;
 		};
 
 		Chart.prototype._initInfoToolbar = function() {
@@ -1169,9 +1164,9 @@ sap.ui.define([
 			const oInvisibleMessage = InvisibleMessage.getInstance();
 
 			if (oInvisibleMessage) {
-				const oResourceBundle =  MDCRb;
+				const oResourceBundle = MDCRb;
 				const aAvailableChartTypes = this.getAvailableChartTypes();
-				const [oChartType] = aAvailableChartTypes.filter((o) => {return o.key === sChartType; });
+				const [oChartType] = aAvailableChartTypes.filter((o) => { return o.key === sChartType; });
 				sChartType = oChartType?.text || sChartType;
 
 				let sMsg = oResourceBundle.getText("chart.ANNOUNCEMENT_UPDATED", [sHeader, sChartType]);

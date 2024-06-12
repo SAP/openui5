@@ -41,7 +41,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	ChartDelegate.zoomIn = function(oChart) {};
+	ChartDelegate.zoomIn = function(oChart) { };
 
 	/**
 	 * Notifies the inner chart to zoom out.
@@ -50,7 +50,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	ChartDelegate.zoomOut = function(oChart) {};
+	ChartDelegate.zoomOut = function(oChart) { };
 
 	/**
 	 * Chart <code>ZoomState</code> type.
@@ -70,7 +70,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	ChartDelegate.getZoomState = function(oChart) {};
+	ChartDelegate.getZoomState = function(oChart) { };
 
 	/**
 	 * Returns the filter delegate of the chart that provides basic filter functionality, such as adding filter fields.
@@ -188,7 +188,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	ChartDelegate.getInnerChartSelectionHandler = function(oChart) {};
+	ChartDelegate.getInnerChartSelectionHandler = function(oChart) { };
 
 	/**
 	 * Sets the visibility of the legend.
@@ -199,7 +199,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	ChartDelegate.setLegendVisible = function(oChart, bVisible) {};
+	ChartDelegate.setLegendVisible = function(oChart, bVisible) { };
 
 	/**
 	 * Inserts a chart item (measure / dimension for <code>sap.chart.Chart</code>) into the inner chart.<br>
@@ -212,7 +212,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	ChartDelegate.insertItemToInnerChart = function(oChart, oChartItem, iIndex) {};
+	ChartDelegate.insertItemToInnerChart = function(oChart, oChartItem, iIndex) { };
 
 	/**
 	 * Removes a chart item (measure / dimension for <code>sap.chart.Chart</code>) from the inner chart.<br>
@@ -224,7 +224,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	ChartDelegate.removeItemFromInnerChart = function(oChart, oChartItem) {};
+	ChartDelegate.removeItemFromInnerChart = function(oChart, oChartItem) { };
 
 	/**
 	 * Loads the required libraries and creates the inner chart.<br>
@@ -247,7 +247,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	ChartDelegate.createInitialChartContent = function(oChart) {};
+	ChartDelegate.createInitialChartContent = function(oChart) { };
 
 	/**
 	 * Returns the instance of the inner chart.
@@ -257,7 +257,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	ChartDelegate.getInnerChart = function(oChart) {};
+	ChartDelegate.getInnerChart = function(oChart) { };
 
 	/**
 	 * Chart <code>ChartTypeObject</code> type.
@@ -280,7 +280,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	ChartDelegate.getChartTypeInfo = function(oChart) {};
+	ChartDelegate.getChartTypeInfo = function(oChart) { };
 
 	/**
 	 * Gets the available chart types for the current state of the inner chart.
@@ -290,7 +290,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	ChartDelegate.getAvailableChartTypes = function(oChart) {};
+	ChartDelegate.getAvailableChartTypes = function(oChart) { };
 
 
 	/**
@@ -311,7 +311,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	ChartDelegate.getChartTypeLayoutConfig = function() {};
+	ChartDelegate.getChartTypeLayoutConfig = function() { };
 
 	/**
 	 * Returns the current drilling stack of the inner chart.<br>
@@ -323,7 +323,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	ChartDelegate.getDrillStack = function(oChart) {};
+	ChartDelegate.getDrillStack = function(oChart) { };
 
 	/**
 	 * Returns all sorted dimensions of an inner chart.
@@ -334,7 +334,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	ChartDelegate.getSortedDimensions = function(oChart) {};
+	ChartDelegate.getSortedDimensions = function(oChart) { };
 
 	/**
 	 * Determines which MDC items are drillable and returns them.
@@ -345,7 +345,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	ChartDelegate.getDrillableItems = function(oChart) {};
+	ChartDelegate.getDrillableItems = function(oChart) { };
 
 	/**
 	 * Sets the chart type of the inner chart.
@@ -356,7 +356,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	ChartDelegate.setChartType = function(sChartType) {};
+	ChartDelegate.setChartType = function(sChartType) { };
 
 	/**
 	 * This method is called to update the no data structure.
@@ -365,7 +365,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	ChartDelegate.changedNoDataStruct = function(oChart) {};
+	ChartDelegate.changedNoDataStruct = function(oChart) { };
 
 	/**
 	 * Sets a "No Data" text for the inner chart.
@@ -375,7 +375,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	ChartDelegate.setNoDataText = function(oChart, sText) {};
+	ChartDelegate.setNoDataText = function(oChart, sText) { };
 
 	/**
 	 * Binds the inner chart to the back-end data and creates the inner chart content.
@@ -385,7 +385,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	ChartDelegate.createInnerChartContent = function(oChart, fnCallbackDataLoaded) {};
+	ChartDelegate.createInnerChartContent = function(oChart, fnCallbackDataLoaded) { };
 
 
 	/**
@@ -396,7 +396,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	ChartDelegate.rebind = function(oChart, oBindingInfo) {};
+	ChartDelegate.rebind = function(oChart, oBindingInfo) { };
 
 	/**
 	 * Returns the information whether the inner chart is currently bound.
@@ -406,7 +406,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	ChartDelegate.getInnerChartBound = function(oChart) {};
+	ChartDelegate.getInnerChartBound = function(oChart) { };
 
 
 	/**
@@ -417,7 +417,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	ChartDelegate.getBindingInfo = function(oChart) {};
+	ChartDelegate.getBindingInfo = function(oChart) { };
 
 	/**
 	 * Updates the binding info with the relevant filters.<br>
@@ -441,7 +441,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	ChartDelegate.setChartTooltipVisibility = function(oChart, bVisible) {};
+	ChartDelegate.setChartTooltipVisibility = function(oChart, bVisible) { };
 
 	/**
 	 * This function returns an ID that should be used in the internal chart for the Measure/Dimension.<br>
@@ -456,7 +456,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	ChartDelegate.getInternalChartNameFromPropertyNameAndKind = function(sName, sKind, oChart) {};
+	ChartDelegate.getInternalChartNameFromPropertyNameAndKind = function(sName, sKind, oChart) { };
 
 	/**
 	 * Maps an ID of an internal chart dimension/measure and type of a property to its corresponding property entry.
@@ -468,7 +468,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	ChartDelegate.getPropertyFromNameAndKind = function(sName, sKind, oChart) {};
+	ChartDelegate.getPropertyFromNameAndKind = function(sName, sKind, oChart) { };
 
 	/**
 	 * Returns the relevant property info based on the metadata used with the chart instance.
@@ -494,7 +494,31 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	ChartDelegate.showOverlay = function(oChart, bShow) {};
+	ChartDelegate.showOverlay = function(oChart, bShow) { };
+
+	/**
+	 * Determines if a given <code>SelectionDetailsItem</code> is enabled.
+	 * @param {sap.ui.mdc.Chart} oChart Reference to the chart
+	 * @param {array} mData The data array of the selected item
+	 * @param {sap.ui.model.Context | undefined} oContext Binding context of the item in the selection. This is undefined if no binding is used
+	 * @returns {boolean} Boolean value that is forwarded to the enableNav property of the <code>SelectionDetailsItem</code>
+	*/
+	ChartDelegate.determineEnableNavForDetailsItem = (oChart, mData, oContext) => {
+		return false;
+	};
+
+	/**
+	 * The provided map is used to determine the navigation behavior of the {@link sap.ui.mdc.chart.ChartSelectionDetails}.
+	 * The navigation shows a list of all entries if more than 1 entry of {@link sap.ui.mdc.field.FieldInfoBase} is given in the map.
+	 * If there is only one entry, the navigation goes directly to the content of the given {@link sap.ui.mdc.field.FieldInfoBase}.
+	 * @param {sap.ui.mdc.Chart} oChart Reference to the chart
+	 * @param {sap.ui.mdc.chart.ChartSelectionDetails} oSelectionDetails Instance of the {@link sap.ui.mdc.chart.ChartSelectionDetails}
+	 * @param {sap.ui.model.Context} oBindingContext Binding context of the <code>SelectionDetailsItem</code> to which is navigated
+	 * @returns {Promise<Map<string, sap.ui.mdc.field.FieldInfoBase>>} Promise resolving in a <code>Map</code> containing a Name as key and a {@link sap.ui.mdc.field.FieldInfoBase} as value
+	 */
+	ChartDelegate.fetchFieldInfos = (oChart, oSelectionDetails, oBindingContext) => {
+		return {};
+	};
 
 	return ChartDelegate;
 });

@@ -18,31 +18,40 @@
 	xmlns:mdcv="sap.ui.mdc.valuehelp"
 	xmlns:mdcvc="sap.ui.mdc.valuehelp.content"
 	xmlns:demo="sap.ui.v4demo.controls" controllerName="sap.ui.v4demo.controller.Books">
-		<f2:DynamicPage id="dynamicPage">
-			<f2:title>
-				<f2:DynamicPageTitle stateChange="onStateChanged">
-					<f2:actions>
-					</f2:actions>
-					<f2:heading>
-						<variants:VariantManagement id="IDVariantManagementOfTable" for="dynamicPage" class="sapUiTinyMarginBottom"/>
-					</f2:heading>
+	<f2:DynamicPage id="dynamicPage">
+		<f2:title>
+			<f2:DynamicPageTitle stateChange="onStateChanged">
+				<f2:actions>
+				</f2:actions>
+				<f2:heading>
+					<variants:VariantManagement id="IDVariantManagementOfTable" for="dynamicPage"
+						class="sapUiTinyMarginBottom" />
+				</f2:heading>
 
-					<f2:snappedContent>
-						<HBox><Text id="statusTextCollapsed" /><Text id="errorTextCollapsed" /></HBox>
-					</f2:snappedContent>
-					<f2:expandedContent>
-						<HBox><Text id="statusTextExpanded" /><Text id="errorTextExpanded" /></HBox>
-					</f2:expandedContent>
-				</f2:DynamicPageTitle>
-			</f2:title>
-			<f2:header>
-				<f2:DynamicPageHeader>
-					<f2:content>
-						<mdc:FilterBar id="booksFilterBar" variantBackreference="IDVariantManagementOfTable"
+				<f2:snappedContent>
+					<HBox>
+						<Text id="statusTextCollapsed" />
+						<Text id="errorTextCollapsed" />
+					</HBox>
+				</f2:snappedContent>
+				<f2:expandedContent>
+					<HBox>
+						<Text id="statusTextExpanded" />
+						<Text id="errorTextExpanded" />
+					</HBox>
+				</f2:expandedContent>
+			</f2:DynamicPageTitle>
+		</f2:title>
+		<f2:header>
+			<f2:DynamicPageHeader>
+				<f2:content>
+					<mdc:FilterBar id="booksFilterBar" variantBackreference="IDVariantManagementOfTable"
 						filtersChanged="onFiltersChanged" search="onSearch"
-						filterConditions = '\{"stock" : [\{"operator":"BT","values":[100,50000]}]\}'
-						propertyInfo = '[\{"name": "stock", "dataType":"Edm.Int32", "maxConditions":-1, "required":false, "label":"foo"\}]'
-						liveMode="false" delegate='\{"name": "sap/ui/v4demo/delegate/Books.FB.delegate", "payload": \{"collectionName": "Books"\}\}' p13nMode="Item,Value">
+						filterConditions='\{"stock" : [\{"operator":"BT","values":[100,50000]}]\}'
+						propertyInfo='[\{"name": "stock", "dataType":"Edm.Int32", "maxConditions":-1, "required":false, "label":"foo"\}]'
+						liveMode="false"
+						delegate='\{"name": "sap/ui/v4demo/delegate/Books.FB.delegate", "payload": \{"collectionName": "Books"\}\}'
+						p13nMode="Item,Value">
 						<mdc:dependents>
 							<mdc:ValueHelp
 								id="fhAdob"
@@ -90,7 +99,8 @@
 								<mdc:typeahead>
 									<mdcv:Popover title="Title">
 										<mdcvc:MTable keyPath="title" descriptionPath="title" useAsValueHelp="false">
-											<Table id="mTable1_title" items='{path : "/Books", length: 10}' width="{= ${device>/system/phone} ? '100%' : '30rem'}" mode="MultiSelect">
+											<Table id="mTable1_title" items='{path : "/Books", length: 10}'
+												width="{= ${device>/system/phone} ? '100%' : '30rem'}" mode="MultiSelect">
 												<columns>
 													<Column>
 														<header>
@@ -111,21 +121,25 @@
 								</mdc:typeahead>
 								<mdc:dialog>
 									<mdcv:Dialog title="Title">
-										<mdcvc:MDCTable keyPath="title" descriptionPath="title"  forceBind="true">
+										<mdcvc:MDCTable keyPath="title" descriptionPath="title" forceBind="true">
 											<mdcvc:filterBar>
-												<vhfb:FilterBar id="titleVHFB" liveMode="false" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{\}\}'>
+												<vhfb:FilterBar id="titleVHFB" liveMode="false"
+													delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{\}\}'>
 													<vhfb:basicSearchField>
 														<mdc:FilterField
 															delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
-															dataType= "Edm.String"
-															conditions= "{$filters>/conditions/$search}"
+															dataType="Edm.String"
+															conditions="{$filters>/conditions/$search}"
 															propertyKey="$search"
 															width="50%"
 															maxConditions="1"
 															placeholder="Search" />
 													</vhfb:basicSearchField>
 													<vhfb:filterItems>
-														<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="Title" conditions="{$filters>/conditions/title}" propertyKey="$title"/>
+														<mdc:FilterField
+															delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
+															label="Title" conditions="{$filters>/conditions/title}"
+															propertyKey="$title" />
 													</vhfb:filterItems>
 												</vhfb:FilterBar>
 											</mdcvc:filterBar>
@@ -138,20 +152,41 @@
 												threshold="50"
 												enableAutoColumnWidth="true">
 												<mdc:columns>
-													<mdc:table.Column id="FH4--mdc--gridtable--id" header="ID" propertyKey="ID">
-														<mdc:Field delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{path: 'ID', type:'sap.ui.model.odata.type.Int32', formatOptions: {groupingEnabled: false}}" editMode="Display" width="100%" multipleLines="false"/>
+													<mdc:table.Column id="FH4--mdc--gridtable--id" header="ID"
+														propertyKey="ID">
+														<mdc:Field
+															delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
+															value="{path: 'ID', type:'sap.ui.model.odata.type.Int32', formatOptions: {groupingEnabled: false}}"
+															editMode="Display" width="100%" multipleLines="false" />
 													</mdc:table.Column>
-													<mdc:table.Column id="FH4--mdc--gridtable--title" header="Title" propertyKey="title">
-														<mdc:Field delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{path: 'title', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 1111}}" editMode="Display" width="100%" multipleLines="false"/>
+													<mdc:table.Column id="FH4--mdc--gridtable--title" header="Title"
+														propertyKey="title">
+														<mdc:Field
+															delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
+															value="{path: 'title', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 1111}}"
+															editMode="Display" width="100%" multipleLines="false" />
 													</mdc:table.Column>
-													<mdc:table.Column id="FH4--mdc--gridtable--descr" header="Description" propertyKey="descr">
-														<mdc:Field delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{path: 'descr', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 1111}}" editMode="Display" width="100%" multipleLines="false"/>
+													<mdc:table.Column id="FH4--mdc--gridtable--descr" header="Description"
+														propertyKey="descr">
+														<mdc:Field
+															delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
+															value="{path: 'descr', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 1111}}"
+															editMode="Display" width="100%" multipleLines="false" />
 													</mdc:table.Column>
-													<mdc:table.Column id="FH4--mdc--gridtable--pub" header="Published" propertyKey="published">
-														<mdc:Field delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{path: 'published', type: 'sap.ui.model.odata.type.Date'}" editMode="Display" width="100%" multipleLines="false"/>
+													<mdc:table.Column id="FH4--mdc--gridtable--pub" header="Published"
+														propertyKey="published">
+														<mdc:Field
+															delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
+															value="{path: 'published', type: 'sap.ui.model.odata.type.Date'}"
+															editMode="Display" width="100%" multipleLines="false" />
 													</mdc:table.Column>
-													<mdc:table.Column id="FH4--mdc--gridtable--genre" header="Genre" propertyKey="genre_code">
-														<mdc:Field delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{path: 'genre_code', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 1111}}" additionalValue="{genre/label}" editMode="Display" width="100%" valueHelp="FHGenre" display="Description" multipleLines="false"/>
+													<mdc:table.Column id="FH4--mdc--gridtable--genre" header="Genre"
+														propertyKey="genre_code">
+														<mdc:Field
+															delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
+															value="{path: 'genre_code', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 1111}}"
+															additionalValue="{genre/label}" editMode="Display" width="100%"
+															valueHelp="FHGenre" display="Description" multipleLines="false" />
 													</mdc:table.Column>
 												</mdc:columns>
 												<mdc:type>
@@ -160,7 +195,7 @@
 												</mdc:type>
 											</mdc:Table>
 										</mdcvc:MDCTable>
-										<mdcvc:Conditions label="Title" valueHelp="FH4_DEFCOND"/>
+										<mdcvc:Conditions label="Title" valueHelp="FH4_DEFCOND" />
 									</mdcv:Dialog>
 								</mdc:dialog>
 							</mdc:ValueHelp>
@@ -170,8 +205,11 @@
 								delegate='\{"name": "sap/ui/v4demo/delegate/ValueHelp.delegate", "payload": \{\}\}'>
 								<mdc:typeahead>
 									<mdcv:Popover title="Title">
-										<mdcvc:MTable keyPath="title" descriptionPath="title" useFirstMatch="false" useAsValueHelp="false">
-											<Table id="mTable1_2_title" items='{path : "/Books"}' growing="true" growingScrollToLoad="true" growingThreshold="20" width="50rem" mode="SingleSelectMaster">
+										<mdcvc:MTable keyPath="title" descriptionPath="title" useFirstMatch="false"
+											useAsValueHelp="false">
+											<Table id="mTable1_2_title" items='{path : "/Books"}' growing="true"
+												growingScrollToLoad="true" growingThreshold="20" width="50rem"
+												mode="SingleSelectMaster">
 												<columns>
 													<Column>
 														<header>
@@ -196,8 +234,10 @@
 								delegate='\{"name": "sap/ui/v4demo/delegate/Books.AuthorVH.delegate", "payload": \{\}\}'>
 								<mdc:typeahead>
 									<mdcv:Popover id="FH1-Popover" title="Author ID">
-										<mdcvc:MTable id="FH1-Popover-MTable" keyPath="ID" descriptionPath="name"  useAsValueHelp="false">
-											<Table id="mTable1" items='{path : "/Authors", length: 10, suspended: true}' width="{= ${device>/system/phone} ? '100%' : '30rem'}" mode="MultiSelect">
+										<mdcvc:MTable id="FH1-Popover-MTable" keyPath="ID" descriptionPath="name"
+											useAsValueHelp="false">
+											<Table id="mTable1" items='{path : "/Authors", length: 10, suspended: true}'
+												width="{= ${device>/system/phone} ? '100%' : '30rem'}" mode="MultiSelect">
 												<columns>
 													<Column width="5rem">
 														<header>
@@ -213,7 +253,8 @@
 												<items>
 													<ColumnListItem type="Active">
 														<cells>
-															<Text text="{path: 'ID', type:'sap.ui.model.odata.type.Int32', formatOptions: {groupingEnabled: false}}" />
+															<Text
+																text="{path: 'ID', type:'sap.ui.model.odata.type.Int32', formatOptions: {groupingEnabled: false}}" />
 															<Text text="{name}" />
 														</cells>
 													</ColumnListItem>
@@ -224,9 +265,11 @@
 								</mdc:typeahead>
 								<mdc:dialog>
 									<mdcv:Dialog id="FH1-Dialog" title="Author ID">
-										<mdcvc:MDCTable id="FH1-Dialog-MDCTable_default" title="Default" keyPath="ID" descriptionPath="name"  group="colsearch" forceBind="true"/>
-										<mdcvc:MDCTable id="FH1-Dialog-MDCTable_withCountry" title="with Country" keyPath="ID" descriptionPath="name"  group="colsearch" forceBind="true"/>
-										<mdcvc:Conditions label="Author ID" valueHelp="FH1_DEFCOND"/>
+										<mdcvc:MDCTable id="FH1-Dialog-MDCTable_default" title="Default" keyPath="ID"
+											descriptionPath="name" group="colsearch" forceBind="true" />
+										<mdcvc:MDCTable id="FH1-Dialog-MDCTable_withCountry" title="with Country"
+											keyPath="ID" descriptionPath="name" group="colsearch" forceBind="true" />
+										<mdcvc:Conditions label="Author ID" valueHelp="FH1_DEFCOND" />
 									</mdcv:Dialog>
 								</mdc:dialog>
 							</mdc:ValueHelp>
@@ -236,8 +279,10 @@
 								delegate='\{"name": "sap/ui/v4demo/delegate/ValueHelp.delegate", "payload": \{\}\}'>
 								<mdc:typeahead>
 									<mdcv:Popover title="Author ID">
-										<mdcvc:MTable id="FH1-Popover-MTable_defcond" keyPath="ID" descriptionPath="name" useFirstMatch="false" useAsValueHelp="false" >
-											<Table id="mTable1_defcond" items='{path : "/Authors", length: 10}' width="50rem" mode="SingleSelectMaster">
+										<mdcvc:MTable id="FH1-Popover-MTable_defcond" keyPath="ID"
+											descriptionPath="name" useFirstMatch="false" useAsValueHelp="false">
+											<Table id="mTable1_defcond" items='{path : "/Authors", length: 10}'
+												width="50rem" mode="SingleSelectMaster">
 												<columns>
 													<Column width="5rem">
 														<header>
@@ -253,7 +298,8 @@
 												<items>
 													<ColumnListItem type="Active">
 														<cells>
-															<Text text="{path: 'ID', type:'sap.ui.model.odata.type.Int32', formatOptions: {groupingEnabled: false}}" />
+															<Text
+																text="{path: 'ID', type:'sap.ui.model.odata.type.Int32', formatOptions: {groupingEnabled: false}}" />
 															<Text text="{name}" />
 														</cells>
 													</ColumnListItem>
@@ -268,7 +314,7 @@
 								delegate='\{"name": "sap/ui/v4demo/delegate/ValueHelp.delegate", "payload": \{\}\}'>
 								<mdc:dialog>
 									<mdcv:Dialog title="Published">
-										<mdcvc:Conditions label="Published"/>
+										<mdcvc:Conditions label="Published" />
 									</mdcv:Dialog>
 								</mdc:dialog>
 							</mdc:ValueHelp>
@@ -277,8 +323,10 @@
 								delegate='\{"name": "sap/ui/v4demo/delegate/ValueHelp.delegate", "payload": \{"firstMatch": "CaseInsensitiveStartsWith"\}\}'>
 								<mdc:typeahead>
 									<mdcv:Popover title="Langugages">
-										<mdcvc:MTable keyPath="code" descriptionPath="name"  useAsValueHelp="false">
-											<Table id="mTable1_languages" items='{path : "/Languages", length: 10}' width="{= ${device>/system/phone} ? '100%' : '30rem'}" mode="SingleSelectMaster">
+										<mdcvc:MTable keyPath="code" descriptionPath="name" useAsValueHelp="false">
+											<Table id="mTable1_languages" items='{path : "/Languages", length: 10}'
+												width="{= ${device>/system/phone} ? '100%' : '30rem'}"
+												mode="SingleSelectMaster">
 												<columns>
 													<Column width="5rem">
 														<header>
@@ -305,7 +353,8 @@
 								</mdc:typeahead>
 								<mdc:dialog>
 									<mdcv:Dialog title="Languages">
-										<mdcvc:MDCTable id="languageTable" keyPath="code" descriptionPath="name"  forceBind="true">
+										<mdcvc:MDCTable id="languageTable" keyPath="code" descriptionPath="name"
+											forceBind="true">
 											<mdc:Table id="FHLanguage-mdcTable"
 												autoBindOnInit="false"
 												width="100%"
@@ -315,24 +364,27 @@
 												threshold="50"
 												enableAutoColumnWidth="true">
 												<mdc:columns>
-													<mdc:table.Column id="FHLanguage-mdcTable--code" header="Code" propertyKey="code">
-														<Text text="{code}"/>
+													<mdc:table.Column id="FHLanguage-mdcTable--code" header="Code"
+														propertyKey="code">
+														<Text text="{code}" />
 													</mdc:table.Column>
-													<mdc:table.Column id="FHLanguage-mdcTable--name" header="Name" propertyKey="name">
-														<Text text="{name}"/>
+													<mdc:table.Column id="FHLanguage-mdcTable--name" header="Name"
+														propertyKey="name">
+														<Text text="{name}" />
 													</mdc:table.Column>
-													<mdc:table.Column id="HLanguage-mdcTable--nativeName" header="native Name" propertyKey="nativeName">
-														<Text text="{nativeName}"/>
+													<mdc:table.Column id="HLanguage-mdcTable--nativeName" header="native Name"
+														propertyKey="nativeName">
+														<Text text="{nativeName}" />
 													</mdc:table.Column>
 												</mdc:columns>
 												<mdc:type>
-													<mdc:table.GridTableType rowCountMode="Auto"/>
+													<mdc:table.GridTableType rowCountMode="Auto" />
 												</mdc:type>
 												<mdc:cellSelector>
-													<plugins:CellSelector/>
+													<plugins:CellSelector />
 												</mdc:cellSelector>
 												<mdc:copyProvider>
-													<plugins:CopyProvider/>
+													<plugins:CopyProvider />
 												</mdc:copyProvider>
 											</mdc:Table>
 										</mdcvc:MDCTable>
@@ -347,8 +399,10 @@
 								<mdc:typeahead>
 									<mdcv:Popover title="Languages">
 										<mdcvc:MTable keyPath="code" descriptionPath="name" useFirstMatch="false">
-										<!-- useAsValueHelp="true"> -->
-											<Table id="mTable1_languages_defcond" items='{path : "/Languages"}' growing="true" growingScrollToLoad="true" growingThreshold="20" width="30rem" mode="SingleSelectMaster">
+											<!-- useAsValueHelp="true"> -->
+											<Table id="mTable1_languages_defcond" items='{path : "/Languages"}'
+												growing="true" growingScrollToLoad="true" growingThreshold="20"
+												width="30rem" mode="SingleSelectMaster">
 												<columns>
 													<Column>
 														<header>
@@ -379,8 +433,10 @@
 								delegate='\{"name": "sap/ui/v4demo/delegate/ValueHelp.delegate", "payload": \{\}\}'>
 								<mdc:typeahead>
 									<mdcv:Popover title="Classification">
-										<mdcvc:MTable keyPath="code" descriptionPath="title"  useAsValueHelp="false">
-											<Table id="mTable1_classification" items='{path : "/Classification"}' width="{= ${device>/system/phone} ? '100%' : '30rem'}" mode="SingleSelectMaster">
+										<mdcvc:MTable keyPath="code" descriptionPath="title" useAsValueHelp="false">
+											<Table id="mTable1_classification" items='{path : "/Classification"}'
+												width="{= ${device>/system/phone} ? '100%' : '30rem'}"
+												mode="SingleSelectMaster">
 												<columns>
 													<Column width="10rem">
 														<header>
@@ -423,8 +479,11 @@
 								\}\}'>
 								<mdc:typeahead>
 									<mdcv:Popover title="Sub Genre">
-										<mdcvc:MTable id="subGenreTypeAhead" keyPath="code" descriptionPath="title"  useAsValueHelp="false">
-											<Table id="mTable1_subgenre" items='{path: "/SubGenres", length: 10, parameters: {$select: ["classification_code", "genre_code"]}}' width="{= ${device>/system/phone} ? '100%' : '30rem'}" mode="MultiSelect">
+										<mdcvc:MTable id="subGenreTypeAhead" keyPath="code" descriptionPath="title"
+											useAsValueHelp="false">
+											<Table id="mTable1_subgenre"
+												items='{path: "/SubGenres", length: 10, parameters: {$select: ["classification_code", "genre_code"]}}'
+												width="{= ${device>/system/phone} ? '100%' : '30rem'}" mode="MultiSelect">
 												<columns>
 													<Column width="10rem">
 														<header>
@@ -450,10 +509,10 @@
 												<items>
 													<ColumnListItem type="Active">
 														<cells>
-															<Text text="{code}"/>
-															<Text text="{title}"/>
-															<Text text="{genre/title}"/>
-															<Text text="{classification/title}"/>
+															<Text text="{code}" />
+															<Text text="{title}" />
+															<Text text="{genre/title}" />
+															<Text text="{classification/title}" />
 														</cells>
 													</ColumnListItem>
 												</items>
@@ -463,24 +522,41 @@
 								</mdc:typeahead>
 								<mdc:dialog>
 									<mdcv:Dialog title="Sub Genre">
-										<mdcvc:MDCTable id="subGenre" keyPath="code" descriptionPath="title"  forceBind="true">
+										<mdcvc:MDCTable id="subGenre" keyPath="code" descriptionPath="title"
+											forceBind="true">
 											<mdcvc:filterBar>
-												<vhfb:FilterBar id="subgenreVHFB" liveMode="false" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{"collectionName": ""\}\}' >
+												<vhfb:FilterBar id="subgenreVHFB" liveMode="false"
+													delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{"collectionName": ""\}\}'>
 													<vhfb:basicSearchField>
 														<mdc:FilterField
 															delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
-															dataType= "Edm.String"
-															conditions= "{$filters>/conditions/$search}"
+															dataType="Edm.String"
+															conditions="{$filters>/conditions/$search}"
 															propertyKey="$search"
 															width="50%"
 															maxConditions="1"
 															placeholder="Search" />
 													</vhfb:basicSearchField>
 													<vhfb:filterItems>
-														<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="Code" dataType= "Edm.String" conditions= "{$filters>/conditions/code}" propertyKey="code"/>
-														<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="Title" conditions= "{$filters>/conditions/title}" propertyKey="title"/>
-														<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="Classification" dataType= "Edm.String" conditions= "{$filters>/conditions/classification_code}" propertyKey="classification_code" display="Description" valueHelp="FHClassification"/>
-														<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="Genre" dataType= "Edm.String" conditions= "{$filters>/conditions/genre_code}" propertyKey="genre_code" display="Description" valueHelp="FHGenre"/>
+														<mdc:FilterField
+															delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
+															label="Code" dataType="Edm.String"
+															conditions="{$filters>/conditions/code}" propertyKey="code" />
+														<mdc:FilterField
+															delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
+															label="Title" conditions="{$filters>/conditions/title}"
+															propertyKey="title" />
+														<mdc:FilterField
+															delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
+															label="Classification" dataType="Edm.String"
+															conditions="{$filters>/conditions/classification_code}"
+															propertyKey="classification_code" display="Description"
+															valueHelp="FHClassification" />
+														<mdc:FilterField
+															delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
+															label="Genre" dataType="Edm.String"
+															conditions="{$filters>/conditions/genre_code}"
+															propertyKey="genre_code" display="Description" valueHelp="FHGenre" />
 													</vhfb:filterItems>
 												</vhfb:FilterBar>
 											</mdcvc:filterBar>
@@ -493,31 +569,35 @@
 												threshold="50"
 												enableAutoColumnWidth="true">
 												<mdc:columns>
-													<mdc:table.Column id="FHSubGenre-MDCTable--code" header="Code" propertyKey="code">
-														<Text text="{code}"/>
+													<mdc:table.Column id="FHSubGenre-MDCTable--code" header="Code"
+														propertyKey="code">
+														<Text text="{code}" />
 													</mdc:table.Column>
-													<mdc:table.Column id="FHSubGenre-MDCTable--title" header="Title" propertyKey="title">
-														<Text text="{title}"/>
+													<mdc:table.Column id="FHSubGenre-MDCTable--title" header="Title"
+														propertyKey="title">
+														<Text text="{title}" />
 													</mdc:table.Column>
-													<mdc:table.Column id="FHSubGenre-MDCTable--genre" header="Genre" propertyKey="genre/title">
-														<Text text="{genre/title}"/>
+													<mdc:table.Column id="FHSubGenre-MDCTable--genre" header="Genre"
+														propertyKey="genre/title">
+														<Text text="{genre/title}" />
 													</mdc:table.Column>
-													<mdc:table.Column id="FHSubGenre-MDCTable--classification" header="Classification" propertyKey="classification/title">
-														<Text text="{classification/title}"/>
+													<mdc:table.Column id="FHSubGenre-MDCTable--classification"
+														header="Classification" propertyKey="classification/title">
+														<Text text="{classification/title}" />
 													</mdc:table.Column>
 												</mdc:columns>
 												<mdc:type>
-													<mdc:table.GridTableType rowCountMode="Auto"/>
+													<mdc:table.GridTableType rowCountMode="Auto" />
 												</mdc:type>
 												<mdc:cellSelector>
-													<plugins:CellSelector/>
+													<plugins:CellSelector />
 												</mdc:cellSelector>
 												<mdc:copyProvider>
-													<plugins:CopyProvider/>
+													<plugins:CopyProvider />
 												</mdc:copyProvider>
 											</mdc:Table>
 										</mdcvc:MDCTable>
-										<mdcvc:Conditions label="Sub Genre"/>
+										<mdcvc:Conditions label="Sub Genre" />
 									</mdcv:Dialog>
 								</mdc:dialog>
 							</mdc:ValueHelp>
@@ -542,8 +622,11 @@
 								\}\}'>
 								<mdc:typeahead>
 									<mdcv:Popover title="Detail Genre">
-										<mdcvc:MTable id="detailGenreTypeAhead" keyPath="code" descriptionPath="title"  useAsValueHelp="false">
-											<Table id="mTable1_detailgenre" items='{path: "/DetailGenres", length: 10, parameters: {$select: ["classification_code", "genre_code", "subgenre_code"]}}' width="{= ${device>/system/phone} ? '100%' : '30rem'}" mode="MultiSelect">
+										<mdcvc:MTable id="detailGenreTypeAhead" keyPath="code" descriptionPath="title"
+											useAsValueHelp="false">
+											<Table id="mTable1_detailgenre"
+												items='{path: "/DetailGenres", length: 10, parameters: {$select: ["classification_code", "genre_code", "subgenre_code"]}}'
+												width="{= ${device>/system/phone} ? '100%' : '30rem'}" mode="MultiSelect">
 												<columns>
 													<Column width="10rem">
 														<header>
@@ -574,11 +657,11 @@
 												<items>
 													<ColumnListItem type="Active">
 														<cells>
-															<Text text="{code}"/>
-															<Text text="{title}"/>
-															<Text text="{classification/title}"/>
-															<Text text="{genre/title}"/>
-															<Text text="{subgenre/title}"/>
+															<Text text="{code}" />
+															<Text text="{title}" />
+															<Text text="{classification/title}" />
+															<Text text="{genre/title}" />
+															<Text text="{subgenre/title}" />
 														</cells>
 													</ColumnListItem>
 												</items>
@@ -588,25 +671,47 @@
 								</mdc:typeahead>
 								<mdc:dialog>
 									<mdcv:Dialog title="Detail Genre">
-										<mdcvc:MDCTable id="detailGenre" keyPath="code" descriptionPath="title"  forceBind="true">
+										<mdcvc:MDCTable id="detailGenre" keyPath="code" descriptionPath="title"
+											forceBind="true">
 											<mdcvc:filterBar>
-												<vhfb:FilterBar id="detailgenreVHFB" liveMode="false" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{"collectionName": ""\}\}' >
+												<vhfb:FilterBar id="detailgenreVHFB" liveMode="false"
+													delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{"collectionName": ""\}\}'>
 													<vhfb:basicSearchField>
 														<mdc:FilterField
 															delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
-															dataType= "Edm.String"
-															conditions= "{$filters>/conditions/$search}"
+															dataType="Edm.String"
+															conditions="{$filters>/conditions/$search}"
 															propertyKey="$search"
 															width="50%"
 															maxConditions="1"
 															placeholder="Search" />
 													</vhfb:basicSearchField>
 													<vhfb:filterItems>
-														<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="Code" dataType= "Edm.String" conditions= "{$filters>/conditions/code}" propertyKey="code"/>
-														<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="Title" conditions= "{$filters>/conditions/title}" propertyKey="title"/>
-														<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="Classification" dataType= "Edm.String" conditions= "{$filters>/conditions/classification_code}" propertyKey="classification_code" display="Description" valueHelp="FHClassification"/>
-														<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="Genre" dataType= "Edm.String" conditions= "{$filters>/conditions/genre_code}" propertyKey="genre_code" display="Description" valueHelp="FHGenre"/>
-														<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="Sub Genre" dataType= "Edm.String" conditions= "{$filters>/conditions/subgenre_code}" propertyKey="subgenre_code" display="Description" valueHelp="FHSubGenre"/>
+														<mdc:FilterField
+															delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
+															label="Code" dataType="Edm.String"
+															conditions="{$filters>/conditions/code}" propertyKey="code" />
+														<mdc:FilterField
+															delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
+															label="Title" conditions="{$filters>/conditions/title}"
+															propertyKey="title" />
+														<mdc:FilterField
+															delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
+															label="Classification" dataType="Edm.String"
+															conditions="{$filters>/conditions/classification_code}"
+															propertyKey="classification_code" display="Description"
+															valueHelp="FHClassification" />
+														<mdc:FilterField
+															delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
+															label="Genre" dataType="Edm.String"
+															conditions="{$filters>/conditions/genre_code}"
+															propertyKey="genre_code" display="Description" valueHelp="FHGenre" />
+														<mdc:FilterField
+															delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
+															label="Sub Genre" dataType="Edm.String"
+															conditions="{$filters>/conditions/subgenre_code}"
+															propertyKey="subgenre_code" display="Description"
+															valueHelp="FHSubGenre" />
 													</vhfb:filterItems>
 												</vhfb:FilterBar>
 											</mdcvc:filterBar>
@@ -619,34 +724,39 @@
 												threshold="50"
 												enableAutoColumnWidth="true">
 												<mdc:columns>
-													<mdc:table.Column id="FHDetailGenre-MDCTable--code" header="Code" propertyKey="code">
-														<Text text="{code}"/>
+													<mdc:table.Column id="FHDetailGenre-MDCTable--code" header="Code"
+														propertyKey="code">
+														<Text text="{code}" />
 													</mdc:table.Column>
-													<mdc:table.Column id="FHDetailGenre-MDCTable--title" header="Title" propertyKey="title">
-														<Text text="{title}"/>
+													<mdc:table.Column id="FHDetailGenre-MDCTable--title" header="Title"
+														propertyKey="title">
+														<Text text="{title}" />
 													</mdc:table.Column>
-													<mdc:table.Column id="FHDetailGenre-MDCTable--classification" header="Classification" propertyKey="classification/title">
-														<Text text="{classification/title}"/>
+													<mdc:table.Column id="FHDetailGenre-MDCTable--classification"
+														header="Classification" propertyKey="classification/title">
+														<Text text="{classification/title}" />
 													</mdc:table.Column>
-													<mdc:table.Column id="FHDetailGenre-MDCTable--genre" header="Genre" propertyKey="genre/title">
-														<Text text="{genre/title}"/>
+													<mdc:table.Column id="FHDetailGenre-MDCTable--genre" header="Genre"
+														propertyKey="genre/title">
+														<Text text="{genre/title}" />
 													</mdc:table.Column>
-													<mdc:table.Column id="FHDetailGenre-MDCTable--subgenre" header="Sub Genre" propertyKey="subgenre/title">
-														<Text text="{subgenre/title}"/>
+													<mdc:table.Column id="FHDetailGenre-MDCTable--subgenre" header="Sub Genre"
+														propertyKey="subgenre/title">
+														<Text text="{subgenre/title}" />
 													</mdc:table.Column>
 												</mdc:columns>
 												<mdc:type>
-													<mdc:table.GridTableType rowCountMode="Auto"/>
+													<mdc:table.GridTableType rowCountMode="Auto" />
 												</mdc:type>
 												<mdc:cellSelector>
-													<plugins:CellSelector/>
+													<plugins:CellSelector />
 												</mdc:cellSelector>
 												<mdc:copyProvider>
-													<plugins:CopyProvider/>
+													<plugins:CopyProvider />
 												</mdc:copyProvider>
 											</mdc:Table>
 										</mdcvc:MDCTable>
-										<mdcvc:Conditions label="Detail Genre"/>
+										<mdcvc:Conditions label="Detail Genre" />
 									</mdcv:Dialog>
 								</mdc:dialog>
 							</mdc:ValueHelp>
@@ -656,7 +766,7 @@
 								<mdc:typeahead>
 									<mdcv:Popover id="FH-Currency-Pop" title="Currencies">
 										<mdcvc:FixedList items="{/Currencies}" useAsValueHelp="true">
-											<mdcvc:FixedListItem key="{code}" text="{descr}" additionalText="{code}"/>
+											<mdcvc:FixedListItem key="{code}" text="{descr}" additionalText="{code}" />
 										</mdcvc:FixedList>
 									</mdcv:Popover>
 								</mdc:typeahead>
@@ -664,97 +774,114 @@
 						</mdc:dependents>
 
 						<mdc:basicSearchField>
-							<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' id="field0"
-							dataType="Edm.String"
-							placeholder= "Search Books"
-							conditions="{$filters>/conditions/$search}"
-							propertyKey="$search"
-							maxConditions="1"/>
+							<mdc:FilterField
+								delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
+								id="field0"
+								dataType="Edm.String"
+								placeholder="Search Books"
+								conditions="{$filters>/conditions/$search}"
+								propertyKey="$search"
+								maxConditions="1" />
 						</mdc:basicSearchField>
 
 						<mdc:filterItems>
-							<mdc:FilterField delegate='\{"name": "sap/ui/v4demo/delegate/FieldBase.delegate", "payload": \{\}\}'
+							<mdc:FilterField
+								delegate='\{"name": "sap/ui/v4demo/delegate/FieldBase.delegate", "payload": \{\}\}'
 								id="ff1" label="Author ID"
 								conditions="{$filters>/conditions/author_ID}"
 								propertyKey="author_ID"
 								dataType="Edm.Int32"
 								dataTypeFormatOptions='\{"groupingEnabled": false\}'
-								required="false" valueHelp="FH1" display="Description"/>
+								required="false" valueHelp="FH1" display="Description" />
 
-							<mdc:FilterField delegate='\{"name": "sap/ui/v4demo/delegate/FieldBase.delegate", "payload": \{\}\}'
+							<mdc:FilterField
+								delegate='\{"name": "sap/ui/v4demo/delegate/FieldBase.delegate", "payload": \{\}\}'
 								id="ff2" label="Title"
 								conditions="{$filters>/conditions/title}"
 								propertyKey="title"
-								valueHelp="FH4"/>
+								valueHelp="FH4" />
 
-							<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
+							<mdc:FilterField
+								delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
 								id="ff3" label="Stock range"
 								conditions="{$filters>/conditions/stock}"
 								propertyKey="stock"
 								maxConditions="1"
 								operators="BT">
 								<mdc:contentEdit>
-									<demo:CustomRangeSlider value="{path: '$field>/conditions', type: 'sap.ui.mdc.field.ConditionsType'}" max="99999" width="100%" class="sapUiMediumMarginBottom" />
+									<demo:CustomRangeSlider
+										value="{path: '$field>/conditions', type: 'sap.ui.mdc.field.ConditionsType'}"
+										max="99999" width="100%" class="sapUiMediumMarginBottom" />
 								</mdc:contentEdit>
 							</mdc:FilterField>
 
-							<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
+							<mdc:FilterField
+								delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
 								id="ff4" label="Published"
 								dataType="Edm.Date" dataTypeConstraints='\{"V4": true\}'
 								conditions="{$filters>/conditions/published}"
 								propertyKey="published"
 								maxConditions="-1" valueHelp="FHPublished"
 								operators="EQ,GT,LT,BT,MEDIEVAL,RENAISSANCE,MODERN,LASTYEAR"
-								defaultOperator="RENAISSANCE"/>
+								defaultOperator="RENAISSANCE" />
 
-							<mdc:FilterField delegate='\{"name": "sap/ui/v4demo/delegate/FieldBase.delegate", "payload": \{"autoCompleteCaseSensitive": "key"\}\}'
+							<mdc:FilterField
+								delegate='\{"name": "sap/ui/v4demo/delegate/FieldBase.delegate", "payload": \{"autoCompleteCaseSensitive": "key"\}\}'
 								id="ff5" label="Language" display="Description"
 								dataType="Edm.String"
-								dataTypeConstraints= "{nullable: false, maxLength: 3}"
+								dataTypeConstraints="{nullable: false, maxLength: 3}"
 								conditions="{$filters>/conditions/language_code}"
 								propertyKey="language_code"
-								maxConditions="1" valueHelp="FHLanguage"/>
+								maxConditions="1" valueHelp="FHLanguage" />
 
-							<mdc:FilterField delegate='\{"name": "sap/ui/v4demo/delegate/FieldBase.delegate", "payload": \{"acceptAnySuggestions": "true"\}\}'
+							<mdc:FilterField
+								delegate='\{"name": "sap/ui/v4demo/delegate/FieldBase.delegate", "payload": \{"acceptAnySuggestions": "true"\}\}'
 								id="ff7" label="Genre"
 								conditions="{$filters>/conditions/genre_code}"
 								propertyKey="genre_code"
 								dataType="Edm.String"
 								required="false" valueHelp="FHGenre"
-								display="Description"/>
+								display="Description" />
 
-							<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
+							<mdc:FilterField
+								delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
 								id="ff8" label="Sub Genre"
 								conditions="{$filters>/conditions/subgenre_code}"
 								propertyKey="subgenre_code"
 								dataType="Edm.String"
 								required="false" valueHelp="FHSubGenre"
-								display="Description"/>
+								display="Description" />
 						</mdc:filterItems>
-						</mdc:FilterBar>
-					</f2:content>
-				</f2:DynamicPageHeader>
-			</f2:header>
-			<f2:content>
-				<VBox id="idContainer" height="100%">
-					<mdc:Chart
-						id="bookChart"
-						filter="booksFilterBar"
-						autoBindOnInit="true"
-						noDataText="This is a test noData text"
-						p13nMode="Item,Sort,Type,Filter"
-						delegate='\{
+					</mdc:FilterBar>
+				</f2:content>
+			</f2:DynamicPageHeader>
+		</f2:header>
+		<f2:content>
+			<VBox id="idContainer" height="100%">
+				<mdc:Chart
+					id="bookChart"
+					filter="booksFilterBar"
+					autoBindOnInit="true"
+					noDataText="This is a test noData text"
+					p13nMode="Item,Sort,Type,Filter"
+					delegate='\{
 							"name": "sap/ui/v4demo/delegate/Books.Chart.delegate",
 							"payload": \{
-								"collectionName": "Books"
+								"collectionName": "Books",
+								"semanticObjects": \{
+									"author_ID": [
+										"FakeFlpSemanticObject_author",
+										"FakeFlpSemanticObject_book"
+									]
+								\}
 							\}
 						\}'
-						chartType="column"
-						header="Books Chart"
-						headerStyle="H4"
-						height="400px"
-						width="100%"
-						propertyInfo='[
+					chartType="column"
+					header="Books Chart"
+					headerStyle="H4"
+					height="400px"
+					width="100%"
+					propertyInfo='[
 						\{
                     		"name": "language_code",
                     		"path": "language_code",
@@ -791,222 +918,260 @@
 							"groupLabel": "",
 							"caseSensitive": true
 						\}]'
-						>
-						<mdc:selectionDetailsActions>
-							<mdcc:SelectionDetailsActions>
-								<mdcc:detailsItemActions>
-									<core:Item key="ItemAction1" text="ItemAction 1"></core:Item>
-									<core:Item key="ItemAction2" text="ItemAction 2"></core:Item>
-								</mdcc:detailsItemActions>
+				>
+					<mdc:selectionDetailsActions>
+						<mdcc:SelectionDetailsActions>
+							<mdcc:detailsItemActions>
+								<core:Item key="ItemAction1" text="ItemAction 1"></core:Item>
+								<core:Item key="ItemAction2" text="ItemAction 2"></core:Item>
+							</mdcc:detailsItemActions>
 
-								<mdcc:detailsActions>
-									<core:Item key="Action1" text="Action 1"></core:Item>
-									<core:Item key="Action2" text="Action 2"></core:Item>
-								</mdcc:detailsActions>
+							<mdcc:detailsActions>
+								<core:Item key="Action1" text="Action 1"></core:Item>
+								<core:Item key="Action2" text="Action 2"></core:Item>
+							</mdcc:detailsActions>
 
-								<mdcc:actionGroups>
-									<core:Item key="GroupAction1" text="GroupAction 1"></core:Item>
-									<core:Item key="GroupAction2" text="GroupAction 2"></core:Item>
-								</mdcc:actionGroups>
-							</mdcc:SelectionDetailsActions>
-						</mdc:selectionDetailsActions>
-						<mdc:actions>
-							<mdcat:ActionToolbarAction id="chartAction1">
-								<Button type="Emphasized" text="Dummy Action 1" id="chartButton1" />
-							</mdcat:ActionToolbarAction>
-							<mdcat:ActionToolbarAction id="chartAction2">
-								<SegmentedButton id="SB1" >
-									<items>
-										<SegmentedButtonItem text="Dummy Act 2" />
-										<SegmentedButtonItem text="Dummy Act 3" />
-									</items>
-								</SegmentedButton>
-							</mdcat:ActionToolbarAction>
-							<!-- <mdcat:ActionToolbarAction id="chartAction3">
+							<mdcc:actionGroups>
+								<core:Item key="GroupAction1" text="GroupAction 1"></core:Item>
+								<core:Item key="GroupAction2" text="GroupAction 2"></core:Item>
+							</mdcc:actionGroups>
+						</mdcc:SelectionDetailsActions>
+					</mdc:selectionDetailsActions>
+					<mdc:actions>
+						<mdcat:ActionToolbarAction id="chartAction1">
+							<Button type="Emphasized" text="Dummy Action 1" id="chartButton1" />
+						</mdcat:ActionToolbarAction>
+						<mdcat:ActionToolbarAction id="chartAction2">
+							<SegmentedButton id="SB1">
+								<items>
+									<SegmentedButtonItem text="Dummy Act 2" />
+									<SegmentedButtonItem text="Dummy Act 3" />
+								</items>
+							</SegmentedButton>
+						</mdcat:ActionToolbarAction>
+						<!-- <mdcat:ActionToolbarAction id="chartAction3">
 								<SearchField id="mySearchAction" placeholder="Search" width="200px"/>
 							</mdcat:ActionToolbarAction> -->
-						</mdc:actions>
+					</mdc:actions>
 
-						<mdc:variant>
-							<variants:VariantManagement id="IDVariantManagementOfChart" for="bookChart"/>
-						</mdc:variant>
+					<mdc:variant>
+						<variants:VariantManagement id="IDVariantManagementOfChart" for="bookChart" />
+					</mdc:variant>
 
-						<mdc:items>
-							<mdcc:Item id="dim1" type="groupable" propertyKey="language_code" role="category" label="Languages"/>
-							<mdcc:Item id="meas1" type="aggregatable" propertyKey="averagemetricsWords" role="axis1" label="Words (avg)"/>
-						</mdc:items>
-					</mdc:Chart>
+					<mdc:items>
+						<mdcc:Item id="dim1" type="groupable" propertyKey="language_code" role="category"
+							label="Languages" />
+						<mdcc:Item id="meas1" type="aggregatable" propertyKey="averagemetricsWords" role="axis1"
+							label="Words (avg)" />
+					</mdc:items>
+				</mdc:Chart>
 
-					<mdc:Table id="booksTable" header="Books" filter="booksFilterBar" enableExport="true" p13nMode="{=['Sort', 'Column', 'Filter', 'Group']}" delegate='\{"name": "sap/ui/v4demo/delegate/Books.Table.delegate", "payload": \{"collectionName": "Books"\}\}' showRowCount="true" threshold="50" width="100%" enableAutoColumnWidth="true">
-						<!-- <mdc:variant>
+				<mdc:Table id="booksTable" header="Books" filter="booksFilterBar" enableExport="true"
+					p13nMode="{=['Sort', 'Column', 'Filter', 'Group']}"
+					delegate='\{"name": "sap/ui/v4demo/delegate/Books.Table.delegate", "payload": \{"collectionName": "Books"\}\}'
+					showRowCount="true" threshold="50" width="100%" enableAutoColumnWidth="true">
+					<!-- <mdc:variant>
 							<variants:VariantManagement id="IDVariantManagementOfLocalTable" for="booksTable"/>
 						</mdc:variant> -->
 
-						<mdc:actions>
-							<mdcat:ActionToolbarAction id="tableAction1">
-								<Button type="Emphasized" text="Dummy Action" id="tableButton1" />
-							</mdcat:ActionToolbarAction>
-							<mdcat:ActionToolbarAction id="tableAction2">
-								<Button type="Emphasized" text="Add Book" press="onAddButtonPress" id="tableButton2" />
-							</mdcat:ActionToolbarAction>
-						</mdc:actions>
-						<mdc:columns>
-							<mdc:table.Column id="id2" header="Title" propertyKey="title">
-								<mdc:Field id="F_title" delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{path: 'title', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 1111}}" editMode="Display" multipleLines="true" width="100%">
-									<mdc:fieldInfo>
-										<mdc:Link sourceControl="fTitle" delegate='\{ "name": "sap/ui/mdc/ushell/LinkDelegate", "payload": \{
-												"semanticObjects": ["FakeFlpSemanticObject"],
-												"mainSemanticObject": "FakeFlpSemanticObject"
+					<mdc:actions>
+						<mdcat:ActionToolbarAction id="tableAction1">
+							<Button type="Emphasized" text="Dummy Action" id="tableButton1" />
+						</mdcat:ActionToolbarAction>
+						<mdcat:ActionToolbarAction id="tableAction2">
+							<Button type="Emphasized" text="Add Book" press="onAddButtonPress" id="tableButton2" />
+						</mdcat:ActionToolbarAction>
+					</mdc:actions>
+					<mdc:columns>
+						<mdc:table.Column id="id2" header="Title" propertyKey="title">
+							<mdc:Field id="F_title"
+								delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
+								value="{path: 'title', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 1111}}"
+								editMode="Display" multipleLines="true" width="100%">
+								<mdc:fieldInfo>
+									<mdc:Link sourceControl="fTitle"
+										delegate='\{ "name": "sap/ui/mdc/ushell/LinkDelegate", "payload": \{
+												"semanticObjects": ["FakeFlpSemanticObject_book", "FakeFlpSemanticObject_author"]
 											\} \}'></mdc:Link>
-									</mdc:fieldInfo>
-								</mdc:Field>
-							</mdc:table.Column>
-							<mdc:table.Column id="id3" header="Description" propertyKey="descr">
-								<mdc:Field id="F_descr" delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{path: 'descr', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 1111}}" multipleLines="true" editMode="Display" width="100%"/>
-							</mdc:table.Column>
-							<mdc:table.Column id="id1" header="Author ID + Text" propertyKey="author_ID_ComplexWithText">
-								<mdc:Field id="F_author_ID_ComplexWithText" delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{path: 'author_ID', type:'sap.ui.model.odata.type.Int32', formatOptions: {groupingEnabled: false}}" display="DescriptionValue" additionalValue="{path: 'author/name', type: 'sap.ui.model.odata.type.String'}"  editMode="Display" multipleLines="true" width="100%">
-									<mdc:fieldInfo>
-										<mdc:Link delegate='\{"name": "sap/ui/v4demo/delegate/Books.Link.delegate"\}'></mdc:Link>
-									</mdc:fieldInfo>
-								</mdc:Field>
-							</mdc:table.Column>
-							<mdc:table.Column id="id4" header="Price" propertyKey="price">
-								<mdc:Field id="F_price" delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{parts: [{path:'price', type:'sap.ui.model.odata.type.Decimal', constraints: {precision: 9, scale: 2}}, {path:'currency_code', type:'sap.ui.model.odata.type.String', constraints: {maxLength: 3}}, {mode:'OneTime', path:'/##@@requestCurrencyCodes', targetType:'any'}], type:'sap.ui.model.odata.type.Currency', mode:'TwoWay'}" editMode="Display" width="100%" multipleLines="false"/>
-							</mdc:table.Column>
-							<mdc:table.Column id="id5" header="Stock" propertyKey="stock">
-								<mdc:extendedSettings>
-									<mdc:table.ResponsiveColumnSettings importance="High"/>
-								</mdc:extendedSettings>
-								<mdc:Field id="F_stock" delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{path: 'stock', type:'sap.ui.model.odata.type.Int32'}" editMode="Display" width="100%" multipleLines="false"/>
-							</mdc:table.Column>
-							<mdc:table.Column id="id6" header="Genre" propertyKey="genre_code">
-								<mdc:extendedSettings>
-									<mdc:table.ResponsiveColumnSettings importance="High"/>
-								</mdc:extendedSettings>
-								<mdc:Field id="F_genre_code" delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{path: 'genre_code', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 1111}}" editMode="Display" width="100%" valueHelp="FHGenreSingle" display="Description" multipleLines="false"/>
-							</mdc:table.Column>
-							<mdc:table.Column id="id7" header="SubGenre" propertyKey="subgenre_code">
-								<mdc:extendedSettings>
-									<mdc:table.ResponsiveColumnSettings importance="High"/>
-								</mdc:extendedSettings>
-								<mdc:Field id="F_subgenre_code" delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{path: 'subgenre_code', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 1111}}" editMode="Display" width="100%" valueHelp="FHSubGenreSingle" display="Description" multipleLines="false"/>
-							</mdc:table.Column>
-						</mdc:columns>
-						<mdc:rowSettings>
-							<mdc:table.RowSettings >
-								<mdc:rowActions >
-									<mdc:table.RowActionItem type="Navigation" press="onRowPress"/>
-								</mdc:rowActions >
-							</mdc:table.RowSettings>
-						</mdc:rowSettings>
-						<mdc:type>
-							<mdc:table.ResponsiveTableType growingMode="Scroll" />
-						</mdc:type>
-						<mdc:copyProvider>
-							<plugins:CopyProvider/>
-						</mdc:copyProvider>
-						<mdc:cellSelector>
-							<plugins:CellSelector/>
-						</mdc:cellSelector>
-						<mdc:dependents>
-							<mdc:ValueHelp id="FHSubGenreSingle"
-								delegate='\{"name": "sap/ui/v4demo/delegate/FieldInOutValueHelp.delegate", "payload": \{
+								</mdc:fieldInfo>
+							</mdc:Field>
+						</mdc:table.Column>
+						<mdc:table.Column id="id3" header="Description" propertyKey="descr">
+							<mdc:Field id="F_descr"
+								delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
+								value="{path: 'descr', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 1111}}"
+								multipleLines="true" editMode="Display" width="100%" />
+						</mdc:table.Column>
+						<mdc:table.Column id="id1" header="Author ID + Text"
+							propertyKey="author_ID_ComplexWithText">
+							<mdc:Field id="F_author_ID_ComplexWithText"
+								delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
+								value="{path: 'author_ID', type:'sap.ui.model.odata.type.Int32', formatOptions: {groupingEnabled: false}}"
+								display="DescriptionValue"
+								additionalValue="{path: 'author/name', type: 'sap.ui.model.odata.type.String'}"
+								editMode="Display" multipleLines="true" width="100%">
+								<mdc:fieldInfo>
+									<mdc:Link delegate='\{"name": "sap/ui/v4demo/delegate/Books.Link.delegate"\}'></mdc:Link>
+								</mdc:fieldInfo>
+							</mdc:Field>
+						</mdc:table.Column>
+						<mdc:table.Column id="id4" header="Price" propertyKey="price">
+							<mdc:Field id="F_price"
+								delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
+								value="{parts: [{path:'price', type:'sap.ui.model.odata.type.Decimal', constraints: {precision: 9, scale: 2}}, {path:'currency_code', type:'sap.ui.model.odata.type.String', constraints: {maxLength: 3}}, {mode:'OneTime', path:'/##@@requestCurrencyCodes', targetType:'any'}], type:'sap.ui.model.odata.type.Currency', mode:'TwoWay'}"
+								editMode="Display" width="100%" multipleLines="false" />
+						</mdc:table.Column>
+						<mdc:table.Column id="id5" header="Stock" propertyKey="stock">
+							<mdc:extendedSettings>
+								<mdc:table.ResponsiveColumnSettings importance="High" />
+							</mdc:extendedSettings>
+							<mdc:Field id="F_stock"
+								delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
+								value="{path: 'stock', type:'sap.ui.model.odata.type.Int32'}" editMode="Display"
+								width="100%" multipleLines="false" />
+						</mdc:table.Column>
+						<mdc:table.Column id="id6" header="Genre" propertyKey="genre_code">
+							<mdc:extendedSettings>
+								<mdc:table.ResponsiveColumnSettings importance="High" />
+							</mdc:extendedSettings>
+							<mdc:Field id="F_genre_code"
+								delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
+								value="{path: 'genre_code', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 1111}}"
+								editMode="Display" width="100%" valueHelp="FHGenreSingle" display="Description"
+								multipleLines="false" />
+						</mdc:table.Column>
+						<mdc:table.Column id="id7" header="SubGenre" propertyKey="subgenre_code">
+							<mdc:extendedSettings>
+								<mdc:table.ResponsiveColumnSettings importance="High" />
+							</mdc:extendedSettings>
+							<mdc:Field id="F_subgenre_code"
+								delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
+								value="{path: 'subgenre_code', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 1111}}"
+								editMode="Display" width="100%" valueHelp="FHSubGenreSingle" display="Description"
+								multipleLines="false" />
+						</mdc:table.Column>
+					</mdc:columns>
+					<mdc:rowSettings>
+						<mdc:table.RowSettings>
+							<mdc:rowActions>
+								<mdc:table.RowActionItem type="Navigation" press="onRowPress" />
+							</mdc:rowActions>
+						</mdc:table.RowSettings>
+					</mdc:rowSettings>
+					<mdc:type>
+						<mdc:table.ResponsiveTableType growingMode="Scroll" />
+					</mdc:type>
+					<mdc:copyProvider>
+						<plugins:CopyProvider />
+					</mdc:copyProvider>
+					<mdc:cellSelector>
+						<plugins:CellSelector />
+					</mdc:cellSelector>
+					<mdc:dependents>
+						<mdc:ValueHelp id="FHSubGenreSingle"
+							delegate='\{"name": "sap/ui/v4demo/delegate/FieldInOutValueHelp.delegate", "payload": \{
 									"inParameters": [
 													\{"contentId":"container-v4demo---books--FHSubGenreSingle-MTable", "source":"genre_code", "target":"genre_code"\},
 													\{"contentId":"container-v4demo---books--FHSubGenreSingle-MTable", "source":"classification_code", "target":"classification_code"\}
 												  ]
 								\}\}'>
-								<mdc:typeahead>
-									<mdcv:Popover id="FHSubGenreSingle-Popover" title="Sub Genre">
-										<mdcvc:MTable id="FHSubGenreSingle-MTable" keyPath="code" descriptionPath="title"  useAsValueHelp="true">
-											<Table items='{path : "/SubGenres", parameters: {$select: ["classification_code", "genre_code"]}}' width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20" mode="SingleSelectMaster">
-												<columns>
-													<Column>
-														<header>
-															<Text text="Code" />
-														</header>
-													</Column>
-													<Column>
-														<header>
-															<Text text="Title" />
-														</header>
-													</Column>
-													<Column>
-														<header>
-															<Text text="Classification" />
-														</header>
-													</Column>
-													<Column>
-														<header>
-															<Text text="Genre" />
-														</header>
-													</Column>
-												</columns>
-												<items>
-													<ColumnListItem type="Active">
-														<cells>
-															<Text text="{code}"/>
-															<Text text="{title}"/>
-															<Text text="{classification/title}"/>
-															<Text text="{genre/title}"/>
-														</cells>
-													</ColumnListItem>
-												</items>
-											</Table>
-										</mdcvc:MTable>
-									</mdcv:Popover>
-								</mdc:typeahead>
-							</mdc:ValueHelp>
-							<mdc:ValueHelp id="FHGenreSingle"
-								delegate='\{"name": "sap/ui/v4demo/delegate/FieldInOutValueHelp.delegate", "payload": \{
+							<mdc:typeahead>
+								<mdcv:Popover id="FHSubGenreSingle-Popover" title="Sub Genre">
+									<mdcvc:MTable id="FHSubGenreSingle-MTable" keyPath="code" descriptionPath="title"
+										useAsValueHelp="true">
+										<Table
+											items='{path : "/SubGenres", parameters: {$select: ["classification_code", "genre_code"]}}'
+											width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20"
+											mode="SingleSelectMaster">
+											<columns>
+												<Column>
+													<header>
+														<Text text="Code" />
+													</header>
+												</Column>
+												<Column>
+													<header>
+														<Text text="Title" />
+													</header>
+												</Column>
+												<Column>
+													<header>
+														<Text text="Classification" />
+													</header>
+												</Column>
+												<Column>
+													<header>
+														<Text text="Genre" />
+													</header>
+												</Column>
+											</columns>
+											<items>
+												<ColumnListItem type="Active">
+													<cells>
+														<Text text="{code}" />
+														<Text text="{title}" />
+														<Text text="{classification/title}" />
+														<Text text="{genre/title}" />
+													</cells>
+												</ColumnListItem>
+											</items>
+										</Table>
+									</mdcvc:MTable>
+								</mdcv:Popover>
+							</mdc:typeahead>
+						</mdc:ValueHelp>
+						<mdc:ValueHelp id="FHGenreSingle"
+							delegate='\{"name": "sap/ui/v4demo/delegate/FieldInOutValueHelp.delegate", "payload": \{
 									"inParameters": [
 													\{"contentId":"container-v4demo---books--FHSubGenreSingle-MTable", "source":"classification_code", "target":"classification_code"\}
   												  ]
 								\}\}'>
-								<mdc:typeahead>
-									<mdcv:Popover id="FHGenreSingle-Popover" title="Genre">
-										<mdcvc:MTable id="FHGenreSingle-MTable" keyPath="code" descriptionPath="title"  useAsValueHelp="true">
-											<Table items='{path : "/Genres", parameters: {$select: "classification_code"}}' width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20" mode="SingleSelectMaster">
-												<columns>
-													<Column>
-														<header>
-															<Text text="Code" />
-														</header>
-													</Column>
-													<Column>
-														<header>
-															<Text text="Title" />
-														</header>
-													</Column>
-													<Column>
-														<header>
-															<Text text="Classification" />
-														</header>
-													</Column>
-												</columns>
-												<items>
-													<ColumnListItem type="Active">
-														<cells>
-															<Text text="{code}"/>
-															<Text text="{title}"/>
-															<Text text="{classification/title}"/>
-														</cells>
-													</ColumnListItem>
-												</items>
-											</Table>
-										</mdcvc:MTable>
-									</mdcv:Popover>
-								</mdc:typeahead>
-							</mdc:ValueHelp>
-						</mdc:dependents>
-					</mdc:Table>
-				</VBox>
-			</f2:content>
-			<f2:dependents>
+							<mdc:typeahead>
+								<mdcv:Popover id="FHGenreSingle-Popover" title="Genre">
+									<mdcvc:MTable id="FHGenreSingle-MTable" keyPath="code" descriptionPath="title"
+										useAsValueHelp="true">
+										<Table items='{path : "/Genres", parameters: {$select: "classification_code"}}'
+											width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20"
+											mode="SingleSelectMaster">
+											<columns>
+												<Column>
+													<header>
+														<Text text="Code" />
+													</header>
+												</Column>
+												<Column>
+													<header>
+														<Text text="Title" />
+													</header>
+												</Column>
+												<Column>
+													<header>
+														<Text text="Classification" />
+													</header>
+												</Column>
+											</columns>
+											<items>
+												<ColumnListItem type="Active">
+													<cells>
+														<Text text="{code}" />
+														<Text text="{title}" />
+														<Text text="{classification/title}" />
+													</cells>
+												</ColumnListItem>
+											</items>
+										</Table>
+									</mdcvc:MTable>
+								</mdcv:Popover>
+							</mdc:typeahead>
+						</mdc:ValueHelp>
+					</mdc:dependents>
+				</mdc:Table>
+			</VBox>
+		</f2:content>
+		<f2:dependents>
 
-				<mdc:ValueHelp id="FHGenre"
-					delegate='\{"name": "sap/ui/v4demo/delegate/FilterbarInOutValueHelp.delegate", "payload": \{
+			<mdc:ValueHelp id="FHGenre"
+				delegate='\{"name": "sap/ui/v4demo/delegate/FilterbarInOutValueHelp.delegate", "payload": \{
 							"firstMatch": "CaseInsensitiveContains",
 							"inParameters": [\{"contentId":"container-v4demo---books--genre", "source":"classification_code", "target":"classification_code"\},
 											\{"contentId":"container-v4demo---books--genreTypeAhead", "source":"classification_code", "target":"classification_code"\}],
@@ -1014,104 +1179,115 @@
 							"payloadInfos": [\{"contentId":"container-v4demo---books--genre", "path":"classification_code"\},
 										   \{"contentId":"container-v4demo---books--genreTypeAhead", "path":"classification_code"\}]
 					\}\}'>
-					<mdc:typeahead>
-						<mdcv:Popover title="Genre">
-							<mdcvc:MTable id="genreTypeAhead" keyPath="code" descriptionPath="title"  useAsValueHelp="false">
-								<Table id="mTable1_genre" items='{path : "/Genres", length: 10, parameters: {$select: "classification_code"}}' width="{= ${device>/system/phone} ? '100%' : '30rem'}" mode="MultiSelect">
-									<columns>
-										<Column width="10rem">
-											<header>
-												<Text text="Code" />
-											</header>
-										</Column>
-										<Column>
-											<header>
-												<Text text="Title" />
-											</header>
-										</Column>
-										<Column>
-											<header>
-												<Text text="Classification" />
-											</header>
-										</Column>
-									</columns>
-									<items>
-										<ColumnListItem type="Active">
-											<cells>
-												<Text text="{code}"/>
-												<Text text="{title}"/>
-												<Text text="{classification/title}"/>
-											</cells>
-										</ColumnListItem>
-									</items>
-								</Table>
-							</mdcvc:MTable>
-						</mdcv:Popover>
-					</mdc:typeahead>
-					<mdc:dialog>
-						<mdcv:Dialog title="Genre">
-							<mdcvc:MDCTable id="genre" keyPath="code" descriptionPath="title"  forceBind="true">
-								<mdcvc:filterBar>
-									<vhfb:FilterBar id="genreVHFB" liveMode="false" expandFilterFields="true" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{"collectionName": ""\}\}' >
-										<vhfb:basicSearchField>
-											<mdc:FilterField
-												delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
-												dataType= "Edm.String"
-												conditions= "{$filters>/conditions/$search}"
-												propertyKey="$search"
-												width="50%"
-												maxConditions="1"
-												placeholder="Search" />
-										</vhfb:basicSearchField>
-										<vhfb:filterItems>
-											<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="Code" dataType= "Edm.String"
-											conditions= "{$filters>/conditions/code}"
-											propertyKey="code"/>
-											<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="Title"
-											conditions= "{$filters>/conditions/title}"
-											propertyKey="title"/>
-											<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' label="Classification" dataType= "Edm.String"
-											conditions= "{$filters>/conditions/classification_code}"
+				<mdc:typeahead>
+					<mdcv:Popover title="Genre">
+						<mdcvc:MTable id="genreTypeAhead" keyPath="code" descriptionPath="title"
+							useAsValueHelp="false">
+							<Table id="mTable1_genre"
+								items='{path : "/Genres", length: 10, parameters: {$select: "classification_code"}}'
+								width="{= ${device>/system/phone} ? '100%' : '30rem'}" mode="MultiSelect">
+								<columns>
+									<Column width="10rem">
+										<header>
+											<Text text="Code" />
+										</header>
+									</Column>
+									<Column>
+										<header>
+											<Text text="Title" />
+										</header>
+									</Column>
+									<Column>
+										<header>
+											<Text text="Classification" />
+										</header>
+									</Column>
+								</columns>
+								<items>
+									<ColumnListItem type="Active">
+										<cells>
+											<Text text="{code}" />
+											<Text text="{title}" />
+											<Text text="{classification/title}" />
+										</cells>
+									</ColumnListItem>
+								</items>
+							</Table>
+						</mdcvc:MTable>
+					</mdcv:Popover>
+				</mdc:typeahead>
+				<mdc:dialog>
+					<mdcv:Dialog title="Genre">
+						<mdcvc:MDCTable id="genre" keyPath="code" descriptionPath="title" forceBind="true">
+							<mdcvc:filterBar>
+								<vhfb:FilterBar id="genreVHFB" liveMode="false" expandFilterFields="true"
+									delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{"collectionName": ""\}\}'>
+									<vhfb:basicSearchField>
+										<mdc:FilterField
+											delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
+											dataType="Edm.String"
+											conditions="{$filters>/conditions/$search}"
+											propertyKey="$search"
+											width="50%"
+											maxConditions="1"
+											placeholder="Search" />
+									</vhfb:basicSearchField>
+									<vhfb:filterItems>
+										<mdc:FilterField
+											delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
+											label="Code" dataType="Edm.String"
+											conditions="{$filters>/conditions/code}"
+											propertyKey="code" />
+										<mdc:FilterField
+											delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
+											label="Title"
+											conditions="{$filters>/conditions/title}"
+											propertyKey="title" />
+										<mdc:FilterField
+											delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
+											label="Classification" dataType="Edm.String"
+											conditions="{$filters>/conditions/classification_code}"
 											propertyKey="classification_code"
-											display="Description" valueHelp="FHClassification"/>
-										</vhfb:filterItems>
-									</vhfb:FilterBar>
-								</mdcvc:filterBar>
-								<mdc:Table id="FHGenre-MDCTable"
-									autoBindOnInit="false"
-									width="100%"
-									selectionMode="Multi"
-									p13nMode="Sort"
-									delegate='\{"name": "sap/ui/v4demo/delegate/GridTable.delegate", "payload": \{"collectionName": "Genres", "$select": ["classification_code"]\}\}'
-									threshold="50"
-									enableAutoColumnWidth="true">
-									<mdc:columns>
-										<mdc:table.Column id="FHGenre-MDCTable--code" header="Code" propertyKey="code">
-											<Text text="{code}"/>
-										</mdc:table.Column>
-										<mdc:table.Column id="FHGenre-MDCTable--title" header="Title" propertyKey="title">
-											<Text text="{title}"/>
-										</mdc:table.Column>
-										<mdc:table.Column id="FHGenre-MDCTable--classification" header="Classification" propertyKey="classification/title">
-											<Text text="{classification/title}"/>
-										</mdc:table.Column>
-									</mdc:columns>
-									<mdc:type>
-										<mdc:table.GridTableType rowCountMode="Auto"/>
-									</mdc:type>
-									<mdc:copyProvider>
-										<plugins:CopyProvider/>
-									</mdc:copyProvider>
-									<mdc:cellSelector>
-										<plugins:CellSelector/>
-									</mdc:cellSelector>
-								</mdc:Table>
-							</mdcvc:MDCTable>
-							<mdcvc:Conditions label="Genre"/>
-						</mdcv:Dialog>
-					</mdc:dialog>
-				</mdc:ValueHelp>
+											display="Description" valueHelp="FHClassification" />
+									</vhfb:filterItems>
+								</vhfb:FilterBar>
+							</mdcvc:filterBar>
+							<mdc:Table id="FHGenre-MDCTable"
+								autoBindOnInit="false"
+								width="100%"
+								selectionMode="Multi"
+								p13nMode="Sort"
+								delegate='\{"name": "sap/ui/v4demo/delegate/GridTable.delegate", "payload": \{"collectionName": "Genres", "$select": ["classification_code"]\}\}'
+								threshold="50"
+								enableAutoColumnWidth="true">
+								<mdc:columns>
+									<mdc:table.Column id="FHGenre-MDCTable--code" header="Code" propertyKey="code">
+										<Text text="{code}" />
+									</mdc:table.Column>
+									<mdc:table.Column id="FHGenre-MDCTable--title" header="Title" propertyKey="title">
+										<Text text="{title}" />
+									</mdc:table.Column>
+									<mdc:table.Column id="FHGenre-MDCTable--classification" header="Classification"
+										propertyKey="classification/title">
+										<Text text="{classification/title}" />
+									</mdc:table.Column>
+								</mdc:columns>
+								<mdc:type>
+									<mdc:table.GridTableType rowCountMode="Auto" />
+								</mdc:type>
+								<mdc:copyProvider>
+									<plugins:CopyProvider />
+								</mdc:copyProvider>
+								<mdc:cellSelector>
+									<plugins:CellSelector />
+								</mdc:cellSelector>
+							</mdc:Table>
+						</mdcvc:MDCTable>
+						<mdcvc:Conditions label="Genre" />
+					</mdcv:Dialog>
+				</mdc:dialog>
+			</mdc:ValueHelp>
 
-			</f2:dependents>
-		</f2:DynamicPage>
+		</f2:dependents>
+	</f2:DynamicPage>
 </mvc:View>
