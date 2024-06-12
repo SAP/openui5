@@ -5,20 +5,29 @@
 sap.ui.define([
 	"./library",
 	"sap/m/GenericTile",
+	"sap/m/Avatar",
 	"sap/m/ToDoCardRenderer",
-	"sap/m/GenericTileRenderer"
+	"sap/m/GenericTileRenderer",
+	"sap/ui/core/library"
 ], function (
 	library,
 	GenericTile,
+	Avatar,
 	ToDoCardRenderer,
-	GenericTileRenderer
-	) {
+	GenericTileRenderer,
+	coreLibrary
+) {
 		"use strict";
 
-		var FrameType = library.FrameType,
-			GenericTileMode = library.GenericTileMode,
-			LoadState = library.LoadState,
-			Priority = library.Priority;
+	var FrameType = library.FrameType,
+		GenericTileMode = library.GenericTileMode,
+		LoadState = library.LoadState,
+		Priority = library.Priority,
+		AvatarSize = library.AvatarSize,
+		AvatarShape = library.AvatarShape,
+		AvatarColor = library.AvatarColor,
+		ValueState = coreLibrary.ValueState;
+
 	/**
 	* Constructor for a new sap.m.ActionTile control.
 	*
@@ -59,13 +68,30 @@ sap.ui.define([
 				 *
 				 * @experimental Since 1.124
 				 */
-				"priority": { type: "sap.m.Priority", group: "Data", defaultValue: Priority.None },
+				priority: { type: "sap.m.Priority", group: "Data", defaultValue: Priority.None },
 				/**
 				 * Sets the text inside the priority indicator for the Action Tile.
 				 *
 				 * @experimental Since 1.124
 				 */
-				"priorityText": { type: "string", group: "Data", defaultValue: null }
+				priorityText: { type: "string", group: "Data", defaultValue: null },
+				/**
+				 * Defines what type of icon is displayed as visual affordance for the icon frame badge.
+				 *
+				 * @experimental Since 1.124
+				 */
+				badgeIcon: { type: "sap.ui.core.URI", group: "Appearance", defaultValue: "" },
+				/**
+				 * Visualizes the validation state of the icon frame badge, e.g. <code>Error</code>, <code>Warning</code>,
+				 * <code>Success</code>, <code>Information</code>.
+				 *
+				 * @experimental Since 1.124
+				 */
+				badgeValueState: {
+					type: "sap.ui.core.ValueState",
+					group: "Appearance",
+					defaultValue: ValueState.None
+				}
 			}
 		},
 		renderer: {
@@ -130,6 +156,86 @@ sap.ui.define([
 	 */
 
 	ActionTile.prototype._setupResizeClassHandler = function() {};
+
+	/**
+	 * Sets the enableIconFrame property of the ActionTile.
+	 *
+	 * @public
+	 * @param {boolean} bValue - Determines whether the icon frame should be enabled or not.
+	 * @returns {sap.m.ActionTile} The reference to the ActionTile instance.
+	 */
+	ActionTile.prototype.setEnableIconFrame = function(bValue) {
+		if (!this._oAvatar && bValue) {
+			this._oAvatar = new Avatar(this.getId() + "-icon-frame", {
+				displaySize: AvatarSize.Custom,
+				customDisplaySize: "3.25rem",
+				displayShape: AvatarShape.Square,
+				backgroundColor: AvatarColor.Placeholder
+			}).addStyleClass("sapMATIconFrame");
+			this.addDependent(this._oAvatar);
+
+			var sHeaderImage = this.getHeaderImage();
+			if (sHeaderImage) {
+				this._oAvatar.setSrc(sHeaderImage);
+			}
+		}
+
+		this.setProperty("enableIconFrame", bValue);
+		return this;
+	};
+
+	/**
+	 * Sets the badgeIcon property of the ActionTile.
+	 *
+	 * @public
+	 * @param {string} sIcon - The URI of the icon to be displayed as a badge.
+	 * @returns	{sap.m.ActionTile} The reference to the ActionTile instance.
+	 */
+	ActionTile.prototype.setBadgeIcon = function(sIcon) {
+		if (this._oAvatar) {
+			this._oAvatar.setBadgeIcon(sIcon);
+		}
+
+		this.setProperty("badgeIcon", sIcon);
+		return this;
+	};
+
+	/**
+	 * Sets the badgeValueState property of the ActionTile.
+	 *
+	 * @public
+	 * @param {sap.ui.core.ValueState} sValueState The value state of the badge.
+	 * @returns {sap.m.ActionTile} The reference to the ActionTile instance.
+	 */
+	ActionTile.prototype.setBadgeValueState = function(sValueState) {
+		if (this._oAvatar) {
+			this._oAvatar.setBadgeValueState(sValueState);
+		}
+
+		this.setProperty("badgeValueState", sValueState);
+		return this;
+	};
+
+	/**
+	 * Returns the icon frame (Avatar) instance associated with the ActionTile.
+	 *
+	 * @return {sap.m.Avatar} The Avatar instance representing the icon frame.
+	 */
+	ActionTile.prototype._getIconFrame = function() {
+		return this._oAvatar;
+	};
+
+	/**
+	 * Exit lifecycle method for the ActionTile.
+	 *
+	 */
+	ActionTile.prototype.exit = function() {
+		GenericTile.prototype.exit.apply(this, arguments);
+
+		if (this._oAvatar) {
+			this._oAvatar.destroy();
+		}
+	};
 
 	return ActionTile;
 });
