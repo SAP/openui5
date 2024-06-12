@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/initial/_internal/FlexConfiguration",
+	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/thirdparty/sinon-4"
@@ -11,6 +12,7 @@ sap.ui.define([
 	FeaturesAPI,
 	Settings,
 	FlexConfiguration,
+	Storage,
 	Layer,
 	Utils,
 	sinon
@@ -163,6 +165,46 @@ sap.ui.define([
 				});
 			});
 
+			QUnit.test(`when getSeenFeatureIds is called with the feature ${bValueToBeSet ? "enabled" : "disabled"}`, async function(assert) {
+				sandbox.stub(Settings, "getInstance").resolves({
+					isSeenFeaturesAvailable() {
+						return bValueToBeSet;
+					}
+				});
+				const oStorageStub = sandbox.stub(Storage, "getSeenFeatureIds").resolves(["feature1"]);
+				const oSeenFeatures = await FeaturesAPI.getSeenFeatureIds({layer: Layer.CUSTOMER});
+				assert.deepEqual(oSeenFeatures, bValueToBeSet ? ["feature1"] : [], "then the correct seen features are returned");
+				if (bValueToBeSet) {
+					assert.strictEqual(oStorageStub.getCall(0).args[0].layer, Layer.CUSTOMER, "the correct layer is passed");
+				}
+			});
+
+			QUnit.test(`when setSeenFeatureIds is called with the feature ${bValueToBeSet ? "enabled" : "disabled"}`, async function(assert) {
+				sandbox.stub(Settings, "getInstance").resolves({
+					isSeenFeaturesAvailable() {
+						return bValueToBeSet;
+					}
+				});
+				const oStorageStub = sandbox.stub(Storage, "setSeenFeatureIds").resolves(["feature1"]);
+				let oResult;
+				try {
+					oResult = await FeaturesAPI.setSeenFeatureIds({
+						layer: Layer.CUSTOMER,
+						seenFeatureIds: ["feature1"]
+					});
+				} catch (oError) {
+					oResult = oError;
+				}
+				assert.deepEqual(oResult,
+					bValueToBeSet ? ["feature1"] : "The backend does not support saving seen features.",
+					"then the correct seen features are returned"
+				);
+				if (bValueToBeSet) {
+					assert.strictEqual(oStorageStub.getCall(0).args[0].layer, Layer.CUSTOMER, "the correct layer is passed");
+					assert.deepEqual(oStorageStub.getCall(0).args[0].seenFeatureIds, ["feature1"], "the correct list is passed");
+				}
+			});
+
 			/**
 			 * @deprecated Since version 1.108
 			 */
@@ -191,5 +233,9 @@ sap.ui.define([
 				}));
 			});
 		});
+	});
+
+	QUnit.done(function() {
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

@@ -29,6 +29,7 @@ sap.ui.define([
 				isContextBasedAdaptationEnabled: false,
 				isCondensingEnabled: false,
 				isVariantAuthorNameAvailable: false,
+				isSeenFeaturesAvailable: false,
 				features: {
 					addField: [Layer.CUSTOMER, Layer.VENDOR],
 					changeTypeOnlyForUser: [Layer.USER],
@@ -152,6 +153,17 @@ sap.ui.define([
 			assert.equal(this.cut._oSettings.isPublicLayerAvailable, false);
 			var bIsPublicLayerAvailable = this.cut.isPublicLayerAvailable();
 			assert.equal(bIsPublicLayerAvailable, false);
+		});
+
+		QUnit.test("isSeenFeaturesAvailable is false by default", function(assert) {
+			const bIsSeenFeaturesAvailable = this.cut.isSeenFeaturesAvailable();
+			assert.equal(bIsSeenFeaturesAvailable, false);
+		});
+
+		QUnit.test("isSeenFeaturesAvailable is true", function(assert) {
+			this.cut._oSettings.isSeenFeaturesAvailable = true;
+			const bIsSeenFeaturesAvailable = this.cut.isSeenFeaturesAvailable();
+			assert.equal(bIsSeenFeaturesAvailable, true);
 		});
 
 		QUnit.test("isPublicLayerAvailable is set to true", function(assert) {

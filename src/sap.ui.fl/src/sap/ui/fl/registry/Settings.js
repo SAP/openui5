@@ -115,6 +115,7 @@ sap.ui.define([
 					isLocalResetEnabled: false,
 					isVariantAdaptationEnabled: false,
 					isVariantAuthorNameAvailable: false,
+					isSeenFeaturesAvailable: false,
 					versioning: {},
 					_bFlexChangeMode: false,
 					_bFlexibilityAdaptationButtonAllowed: false
@@ -390,6 +391,15 @@ sap.ui.define([
 	 */
 	 Settings.prototype.isLocalResetEnabled = function() {
 		return this._getBooleanProperty("isLocalResetEnabled");
+	};
+
+	/**
+	 * Returns the information if a backend supports to save viewed features for Whats New.
+	 *
+	 * @returns {boolean} <code>true</code> if viewed features is supported
+	 */
+	 Settings.prototype.isSeenFeaturesAvailable = function() {
+		return this._getBooleanProperty("isSeenFeaturesAvailable");
 	};
 
 	/**

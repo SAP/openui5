@@ -4,10 +4,12 @@
 
 sap.ui.define([
 	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils"
 ], function(
 	Settings,
+	Storage,
 	Layer,
 	Utils
 ) {
@@ -159,6 +161,49 @@ sap.ui.define([
 			.then(function(oSettings) {
 				return oSettings.isContextSharingEnabled({layer: sLayer});
 			});
+		},
+
+		/**
+		 * Checks if the backend supports to save already viewed features via What's New.
+		 *
+		 * @returns {Promise<boolean>} Resolves to a boolean indicating if the feature is available
+		 * @ui5-restricted sap.ui.rta
+		 */
+		async isSeenFeaturesAvailable() {
+			const oSettings = await Settings.getInstance();
+			return oSettings.isSeenFeaturesAvailable();
+		},
+
+		/**
+		 * Gets the list of all features that the current user has already set to 'Don't show again'.
+		 *
+		 * @param {object} mPropertyBag - Property bag
+		 * @param {string} mPropertyBag.layer - Layer to get the correct connector
+		 * @returns {Promise<string[]>} Resolves with a list of viewed features
+		 * @ui5-restricted sap.ui.rta
+		 */
+		async getSeenFeatureIds(mPropertyBag) {
+			if (!await this.isSeenFeaturesAvailable()) {
+				return [];
+			}
+			return Storage.getSeenFeatureIds(mPropertyBag);
+		},
+
+		/**
+		 * Sets the list of all features that the current user has already set to 'Don't show again'.
+		 * The whole list has to be passed, not only the new entries.
+		 *
+		 * @param {object} mPropertyBag - Property bag
+		 * @param {string} mPropertyBag.layer - Layer to get the correct connector
+		 * @param {string[]} mPropertyBag.seenFeatureIds - List of feature IDs
+		 * @returns {Promise<string[]>} Resolves with a list of viewed features
+		 * @ui5-restricted sap.ui.rta
+		 */
+		async setSeenFeatureIds(mPropertyBag) {
+			if (!await this.isSeenFeaturesAvailable()) {
+				return Promise.reject("The backend does not support saving seen features.");
+			}
+			return Storage.setSeenFeatureIds(mPropertyBag);
 		}
 	};
 

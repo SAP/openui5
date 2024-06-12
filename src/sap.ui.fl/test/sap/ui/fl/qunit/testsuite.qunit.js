@@ -728,6 +728,14 @@ sap.ui.define([
 					]
 				}
 			},
+			"write/_internal/connectors/BtpServiceConnector": {
+				group: "Write Internal",
+				coverage: {
+					only: [
+						"sap/ui/fl/write/_internal/connectors/BtpServiceConnector"
+					]
+				}
+			},
 			"write/_internal/connectors/Utils": {
 				group: "Write Internal",
 				coverage: {

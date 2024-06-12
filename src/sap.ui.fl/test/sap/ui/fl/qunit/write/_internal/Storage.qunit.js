@@ -14,7 +14,6 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/connectors/JsObjectConnector",
 	"sap/ui/fl/write/_internal/connectors/KeyUserConnector",
 	"sap/ui/fl/write/_internal/connectors/LrepConnector",
-	"sap/ui/fl/write/_internal/connectors/PersonalizationConnector",
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/initial/_internal/FlexConfiguration",
@@ -35,7 +34,6 @@ sap.ui.define([
 	JsObjectConnector,
 	WriteKeyUserConnector,
 	WriteLrepConnector,
-	WritePersonalizationConnector,
 	Storage,
 	FeaturesAPI,
 	FlexConfiguration,
@@ -1767,6 +1765,39 @@ sap.ui.define([
 			return Storage.translation.postTranslationTexts(mPropertyBag).catch(function(sRejectionMessage) {
 				assert.strictEqual(sRejectionMessage, "translation.postTranslationTexts is not implemented", "then the rejection message is passed");
 			});
+		});
+	});
+
+	QUnit.module("Given a storage and a connector is correctly configured", {
+		beforeEach() {
+			this.oConnector = {};
+			sandbox.stub(StorageUtils, "getConnectors").resolves([{
+				connector: "JsObjectConnector",
+				layers: ["ALL"],
+				writeConnectorModule: this.oConnector
+			}]);
+		},
+		afterEach() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("getSeenFeatureIds", function(assert) {
+			const done = assert.async();
+			this.oConnector.getSeenFeatureIds = (mPropertyBag) => {
+				assert.strictEqual(mPropertyBag.layer, Layer.CUSTOMER, "the layer is passed");
+				done();
+			};
+			Storage.getSeenFeatureIds({layer: Layer.CUSTOMER});
+		});
+
+		QUnit.test("setSeenFeatureIds", function(assert) {
+			const done = assert.async();
+			this.oConnector.setSeenFeatureIds = (mPropertyBag) => {
+				assert.strictEqual(mPropertyBag.layer, Layer.CUSTOMER, "the layer is passed");
+				assert.deepEqual(mPropertyBag.seenFeatureIds, ["feature1"], "the seenFeatureIds is passed");
+				done();
+			};
+			Storage.setSeenFeatureIds({layer: Layer.CUSTOMER, seenFeatureIds: ["feature1"]});
 		});
 	});
 

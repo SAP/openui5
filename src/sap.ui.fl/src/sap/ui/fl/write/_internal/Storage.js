@@ -327,6 +327,14 @@ sap.ui.define([
 		return _executeActionByName("getFlexInfo", mPropertyBag);
 	};
 
+	Storage.getSeenFeatureIds = function(mPropertyBag) {
+		return _executeActionByName("getSeenFeatureIds", mPropertyBag);
+	};
+
+	Storage.setSeenFeatureIds = function(mPropertyBag) {
+		return _executeActionByName("setSeenFeatureIds", mPropertyBag);
+	};
+
 	/**
 	 * Gets the variant management context information.
 	 * The context information is a JSON object that has boolean property 'lastHitReached'
