@@ -481,6 +481,26 @@ sap.ui.define([
 				},
 				errorMessage: "Could not find VariantManagement"
 			});
+		},
+		/*
+		 * This is copied from branch 1.126 rta Adaptation opa page object, since this method has been
+		 * introduced in sap.ui.fl in later releases before the RTA tests have been added in sap.ui.mdc
+		 */
+		iExitRtaMode: function(bDontSaveOnExit, bNoChanges, bActivateVersion) {
+			if (bActivateVersion && !bDontSaveOnExit && !bNoChanges) {
+				this.iActivateAVersion();
+			}
+
+			return this.waitFor({
+				controlType: "sap.m.Button",
+				matchers: function(oButton) {
+					return oButton.getId().includes("sapUiRta_exit");
+				},
+				actions: new Press(),
+				success: function(aButtons) {
+					Opa5.assert.equal(aButtons.length, 1, "'Exit' button found");
+				}
+			});
 		}
 	});
 
