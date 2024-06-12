@@ -133,6 +133,8 @@ sap.ui.define([
 				url: "https://www.sap.com/",
                 headerImage: "sap-icon://alert",
                 valueColor:"Critical",
+				priority: Priority.VeryHigh,
+				priorityText: "Very High",
 				tileContent: new TileContent("tileCont2", {
 					content: new FormattedText("frmt-txt2", {
 						htmlText : "<span>This would be a situation long text description. it would have 3 lines of space, as a maximum else get truncated</span><p>Supplier<br>Domestic US Supplier 1</p><p>Due On:<br>28.09.2022</p> <p>Created On: <br>01.09.2022</p>"
@@ -461,4 +463,9 @@ sap.ui.define([
 		oActionTileContent.destroy();
 	});
 
+	QUnit.test("The text and priority are centered aligned with the icon", function (assert) {
+		//setup action tile content
+		var oHeaderContainer = this.oSituation.getDomRef("header-container");
+		assert.equal(getComputedStyle(oHeaderContainer).justifyContent,"center","Text aligned to the center");
+	});
 });
