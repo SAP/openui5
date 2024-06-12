@@ -1001,7 +1001,11 @@ sap.ui.define([
 		var oPressSpy = sinon.spy(ObjectStatus.prototype, "firePress");
 		qutils.triggerKeydown(oObjectStatus.getFocusDomRef(), KeyCodes.SPACE);
 
-		assert.strictEqual(oPressSpy.callCount, 1, "Space is pressed, press event was fired");
+		assert.ok(oPressSpy.notCalled, "Press event not fired onkeydown");
+
+		qutils.triggerKeyup(oObjectStatus.getFocusDomRef(), KeyCodes.SPACE);
+
+		assert.ok(oPressSpy.calledOnce, "Press event is fired onkeyup");
 
 		// Clean up
 		ObjectStatus.prototype.firePress.restore();

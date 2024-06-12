@@ -13,9 +13,10 @@ sap.ui.define([
 	'sap/ui/base/DataType',
 	'./ObjectStatusRenderer',
 	'sap/m/ImageHelper',
-	'sap/ui/core/LabelEnablement'
+	'sap/ui/core/LabelEnablement',
+	"sap/ui/events/KeyCodes"
 ],
-	function(library, Control, Library, ValueStateSupport, IndicationColorSupport, coreLibrary, DataType, ObjectStatusRenderer, ImageHelper, LabelEnablement) {
+	function(library, Control, Library, ValueStateSupport, IndicationColorSupport, coreLibrary, DataType, ObjectStatusRenderer, ImageHelper, LabelEnablement, KeyCodes) {
 	"use strict";
 
 
@@ -256,8 +257,10 @@ sap.ui.define([
 	 * @private
 	 * @param {object} oEvent The fired event
 	 */
-	ObjectStatus.prototype.onsapspace = function(oEvent) {
-		this.onsapenter(oEvent);
+	ObjectStatus.prototype.onkeyup = function(oEvent) {
+		if (oEvent.which === KeyCodes.SPACE) {
+			this.onsapenter(oEvent);
+		}
 	};
 
 	/**
