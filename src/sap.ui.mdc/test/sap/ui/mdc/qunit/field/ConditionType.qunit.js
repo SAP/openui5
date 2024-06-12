@@ -2012,6 +2012,20 @@ sap.ui.define([
 		sResult = oUnitConditionType.formatValue(oCondition);
 		assert.equal(sResult, "USD", "Result of unit formatting");
 
+		assert.deepEqual(oUnitType._aCurrentValue, [123.45, "USD"], "CurrentValue stored in unit type");
+		assert.deepEqual(oValueType._aCurrentValue, [123.45, "USD"], "CurrentValue stored in value type");
+		assert.deepEqual(oOriginalType._aCurrentValue, [123.45, "USD"], "CurrentValue stored in original type");
+
+		sResult = oConditionType.formatValue(null); // after initialization no old value must be shown
+		assert.equal(sResult, null, "Result of number formatting");
+
+		sResult = oUnitConditionType.formatValue(null);
+		assert.equal(sResult, null, "Result of unit formatting");
+
+		assert.deepEqual(oUnitType._aCurrentValue, [], "CurrentValue initialized in unit type");
+		assert.deepEqual(oValueType._aCurrentValue, [], "CurrentValue initialized in value type");
+		assert.deepEqual(oOriginalType._aCurrentValue, [], "CurrentValue initialized in original type");
+
 		oType = new CurrencyType();
 		sValue = oType.formatValue([123.45, "USD"], "string"); // because of special whitspace and local dependend
 		sResult = oOneFieldConditionType.formatValue(oCondition); // formatting in display case
