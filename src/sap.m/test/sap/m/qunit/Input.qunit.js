@@ -7450,6 +7450,31 @@ sap.ui.define([
 		assert.strictEqual(document.querySelectorAll("#" + this.oInput.getId() + "-message a").length, 2, "Value state message links are displayed");
 	});
 
+	QUnit.test("Value state with formatted text containing HTML markup with links", async function (assert) {
+		// Arrange
+		this.oInput.setValueState("Warning");
+		var oFormattedValueStateText = new FormattedText({
+			htmlText: "Learn more about the new integration platform Click <a href='#'>here<a/>"
+		});
+
+		// Act
+		this.oInput.setFormattedValueStateText(oFormattedValueStateText);
+		await nextUIUpdate(this.clock);
+		var fnClickOnValueStateLinkSpy = this.spy(this.oInput, "_bClickOnValueStateLink");
+
+		const oFakeEvent = {
+			relatedTarget: document.querySelector(".sapMLnk")
+		};
+
+
+		this.oInput.onfocusin();
+		this.clock.tick();
+		this.oInput.onfocusout(oFakeEvent);
+
+		// Assert
+		assert.ok(fnClickOnValueStateLinkSpy.returned(true), "Value state link has been clicked successfully");
+	});
+
 	QUnit.test("Value state popup should be closed on focusout", async function (assert) {
 		// Arrange
 		this.oInput.setValueState("Warning");
