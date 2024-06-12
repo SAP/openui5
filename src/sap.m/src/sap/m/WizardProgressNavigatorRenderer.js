@@ -193,7 +193,7 @@ sap.ui.define([
 			oRm.openStart("span")
 				.class(CLASSES.STEP_TITLE_OPTIONAL_LABEL)
 				.openEnd()
-				.text("(" + sOptionalLabel + ")")
+				.text(sOptionalLabel)
 				.close("span");
 		}
 
