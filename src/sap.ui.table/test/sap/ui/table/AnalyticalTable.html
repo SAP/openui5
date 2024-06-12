@@ -14,6 +14,10 @@
 
 <script src="Settings.js"></script>
 <script>
+sap.ui.require([
+	"sap/ui/core/message/MessageType"
+], function(MessageType) {
+	"use strict";
 
 	(new sap.m.Button({
 		text: "Just a Button before"
@@ -134,11 +138,11 @@
 					action: function(oTable, bValue) {
 						if (bValue) {
 							oTable.setRowSettingsTemplate(new sap.ui.table.RowSettings({
-								highlight: sap.ui.core.message.MessageType.Success
+								highlight: MessageType.Success
 							}));
 						} else {
 							oTable.setRowSettingsTemplate(new sap.ui.table.RowSettings({
-								highlight: sap.ui.core.message.MessageType.None
+								highlight: MessageType.None
 							}));
 						}
 					}
@@ -149,7 +153,7 @@
 			disabled: true
 		}
 	});
-
+});
 </script>
 </head>
 <body class="sapUiBody sapUiSizeCozy" style="height:100%">
