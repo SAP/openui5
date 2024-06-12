@@ -949,11 +949,16 @@ sap.ui.define([
 		this.fireTypeaheadSuggested({ condition: oCondition, filterValue: sFilterValue, itemId: sItemId, caseSensitive: bCaseSensitive });
 	}
 
+
 	function _handleSelect(oEvent) {
 
 
 		const sType = oEvent.getParameter("type");
 		const aEventConditions = oEvent.getParameter("conditions") || [];
+		const oDelegate = this.getControlDelegate();
+
+		const _findIndex = (oSearchCondition, aConditions) => aConditions.findIndex((oCondition) => oDelegate.compareConditions(this, oSearchCondition, oCondition));
+
 		let aNextConditions;
 
 		const bSingleSelect = this.getMaxConditions() === 1;
@@ -973,7 +978,9 @@ sap.ui.define([
 			} else {
 				aNextConditions = this.getConditions();
 				for (let i = 0; i < aEventConditions.length; i++) {
-					aNextConditions.push(aEventConditions[i]);
+					if (_findIndex(aEventConditions[i], aNextConditions) === -1) {
+						aNextConditions.push(aEventConditions[i]);
+					}
 				}
 			}
 		}
@@ -984,8 +991,8 @@ sap.ui.define([
 			} else {
 				aNextConditions = this.getConditions();
 				for (let j = 0; j < aEventConditions.length; j++) {
-					const iIndex = FilterOperatorUtil.indexOfCondition(aEventConditions[j], aNextConditions);
-					if (iIndex >= 0) {
+					const iIndex = _findIndex(aEventConditions[j], aNextConditions);
+					if (iIndex !== -1) {
 						aNextConditions.splice(iIndex, 1);
 					}
 				}
