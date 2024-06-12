@@ -11,7 +11,7 @@ sap.ui.define([
 				iSelectItem: function (sText) {
 					this.waitFor({
 						matchers: function () {
-							return Opa5.getContext().recorderWindow.jQuery("tag:contains(" + sText + ")");
+							return Opa5.getContext().recorderWindow.sap.ui.require("sap/ui/thirdparty/jquery")("tag:contains(" + sText + ")");
 						},
 						actions: function ($item) {
 							$item.trigger("click");
@@ -27,7 +27,7 @@ sap.ui.define([
 					this.waitFor({
 						matchers: [
 							function () {
-								return Opa5.getContext().recorderWindow.jQuery("tag:contains(" + sText + ")");
+								return Opa5.getContext().recorderWindow.sap.ui.require("sap/ui/thirdparty/jquery")("tag:contains(" + sText + ")");
 							}
 						],
 						success: function ($item) {
@@ -61,7 +61,7 @@ sap.ui.define([
 					this.waitFor({
 						matchers: [
 							function () {
-								return Opa5.getContext().recorderWindow.jQuery("div:contains(" + sAction + "):last");
+								return Opa5.getContext().recorderWindow.sap.ui.require("sap/ui/thirdparty/jquery")("div:contains(" + sAction + "):last");
 							}
 						],
 						actions: function ($item) {
@@ -76,7 +76,7 @@ sap.ui.define([
 				iShouldSeeTheHighlightedItem: function (sText) {
 					this.waitFor({
 						matchers: function () {
-							var oTag = Opa5.getContext().recorderWindow.jQuery("tag:contains(" + sText + ")");
+							var oTag = Opa5.getContext().recorderWindow.sap.ui.require("sap/ui/thirdparty/jquery")("tag:contains(" + sText + ")");
 							return oTag.parent().attr("selected");
 						},
 						success: function (bSelected) {

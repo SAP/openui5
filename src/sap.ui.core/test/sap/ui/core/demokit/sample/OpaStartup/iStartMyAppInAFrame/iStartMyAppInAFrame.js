@@ -1,15 +1,8 @@
 /* global QUnit */
-
 QUnit.config.autostart = false;
 
-sap.ui.require(
-  [
-    "sap/ui/core/Core"
-  ],
-  async function(Core) {
+globalThis.fnInit = () => {
 	"use strict";
-
-    await Core.ready();
 
 	sap.ui.require([
 		"sap/ui/test/opaQunit",
@@ -17,7 +10,6 @@ sap.ui.require(
 		"sap/ui/test/matchers/AggregationFilled",
 		"sap/ui/test/matchers/Ancestor"
 	], function (opaTest, Opa5, AggregationFilled, Ancestor) {
-
 		QUnit.module("iStartMyAppInAFrame");
 
 		var sTestNameExt = "";
@@ -112,8 +104,6 @@ sap.ui.require(
 
 			Then.iTeardownMyApp();
 		});
-
 		QUnit.start();
-
 	});
-});
+};

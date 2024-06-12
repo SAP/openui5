@@ -48,7 +48,7 @@ sap.ui.define([
 							function (oRecorderWindow) {
 								Opa5.getContext().recorderWindow = oRecorderWindow;
 								// wait for jquery to load inside the frame
-								var oRecorderJQuery = oRecorderWindow.jQuery;
+								var oRecorderJQuery = oRecorderWindow.sap.ui.require("sap/ui/thirdparty/jquery");
 								return oRecorderJQuery;
 							},
 							function (oRecorderJQuery) {
