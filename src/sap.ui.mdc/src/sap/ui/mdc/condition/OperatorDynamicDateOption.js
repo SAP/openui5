@@ -361,7 +361,7 @@ sap.ui.define([
 		const sControlId = oControl.getId();
 
 		for (let i = 0; i < oOperator.valueTypes.length; i++) {
-			if (!oOperator.valueTypes[i]) {
+			if (!oOperator.valueTypes[i] || oOperator.valueTypes[i] === OperatorValueType.Static) {
 				continue;
 			}
 			const oInputControl = oControl.aControlsByParameters[sKey][i];

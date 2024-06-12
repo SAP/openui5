@@ -31,6 +31,7 @@ sap.ui.define([
 			oFilterField.removeOperator(OperatorName.Empty);
 
 			oFilterField.addOperator("CustomDateEmpty");
+			oFilterField.addOperator("TOTODAY");
 
 			// var aDateOperators = FilterOperatorUtil.getOperatorsForType("Date");
 			// var aNewDateOperators = aDateOperators.filter(function(val) {

@@ -1487,6 +1487,18 @@ sap.ui.define([
 
 	QUnit.test("Checks for Range Configuration", function(assert) {
 
+		FilterOperatorUtil.addOperator(new RangeOperator({
+			name: "MyToToday",
+			longText: "to Today",
+			tokenText: "to Today ({0})",
+			valueTypes: [OperatorValueType.Static],
+			filterOperator: FilterOperator.LE,
+			calcRange: function() {
+				// the second entry in the returned is the end of the dsy (for time containing data types)
+				return [UniversalDateUtils.ranges.today()[1]];
+			}
+		}));
+
 		// get all standard Operators
 		const aOperators = [];
 		for (const sName in FilterOperatorUtil._mOperators) {
@@ -2112,6 +2124,19 @@ sap.ui.define([
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true
+			}],
+			"MyToToday": [{
+				formatArgs: [Condition.createCondition("MyToToday", [undefined]), oDateTimeOffsetType],
+				formatValue: "to Today (" + oDateTimeOffsetType.formatValue(sTodayEnd, "string") + ")",
+				parseArgs: ["to Today"],
+				parsedValue: "",
+				condition: Condition.createCondition("MyToToday", [], undefined, undefined, ConditionValidated.NotValidated),
+				isEmpty: false,
+				valid: true,
+				isSingleValue: true,
+				oType: oDateTimeOffsetType,
+				baseType: BaseType.DateTime,
+				filter: {path: "test", operator: FilterOperator.LE, value1 : sTodayEnd}
 			}]
 
 		};
@@ -2393,7 +2418,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("testing placeholder", function(assert) {
-		let operatorWithSpecialCharacters = new RangeOperator({
+		let operatorWithPlaceholder = new RangeOperator({
 			name: "OPT",
 			tokenText: "foo $0 operator",
 			valueTypes: [{name: "sap.ui.model.type.Integer", formatOptions: {emptyString: null}}],
@@ -2404,11 +2429,11 @@ sap.ui.define([
 			}
 		});
 
-		assert.equal(operatorWithSpecialCharacters.tokenTest, "^foo (\\d+) operator$", "tokenTest has the expected format for the placeholder");
-		assert.equal(operatorWithSpecialCharacters.tokenParse, "^foo (\\d+) operator$|^(.+)?$", "tokenParse has the expected format for the placeholder");
-		assert.equal(operatorWithSpecialCharacters.tokenFormat, "foo $0 operator", "tokenFormat has the expected format for the placeholder");
+		assert.equal(operatorWithPlaceholder.tokenTest, "^foo (\\d+) operator$", "tokenTest has the expected format for the placeholder");
+		assert.equal(operatorWithPlaceholder.tokenParse, "^foo (\\d+) operator$|^(.+)?$", "tokenParse has the expected format for the placeholder");
+		assert.equal(operatorWithPlaceholder.tokenFormat, "foo $0 operator", "tokenFormat has the expected format for the placeholder");
 
-		operatorWithSpecialCharacters = new RangeOperator({
+		operatorWithPlaceholder = new RangeOperator({
 			name: "OPT",
 			tokenText: "foo 0$ operator",
 			valueTypes: [{name: "sap.ui.model.type.Integer", formatOptions: {emptyString: null}}],
@@ -2419,11 +2444,11 @@ sap.ui.define([
 			}
 		});
 
-		assert.equal(operatorWithSpecialCharacters.tokenTest, "^foo (\\d+) operator$", "tokenTest has the expected format for the placeholder");
-		assert.equal(operatorWithSpecialCharacters.tokenParse, "^foo (\\d+) operator$|^(.+)?$", "tokenParse has the expected format for the placeholder");
-		assert.equal(operatorWithSpecialCharacters.tokenFormat, "foo 0$ operator", "tokenFormat has the expected format for the placeholder");
+		assert.equal(operatorWithPlaceholder.tokenTest, "^foo (\\d+) operator$", "tokenTest has the expected format for the placeholder");
+		assert.equal(operatorWithPlaceholder.tokenParse, "^foo (\\d+) operator$|^(.+)?$", "tokenParse has the expected format for the placeholder");
+		assert.equal(operatorWithPlaceholder.tokenFormat, "foo 0$ operator", "tokenFormat has the expected format for the placeholder");
 
-		operatorWithSpecialCharacters = new RangeOperator({
+		operatorWithPlaceholder = new RangeOperator({
 			name: "OPT",
 			tokenText: "foo {0} operator",
 			valueTypes: [{name: "sap.ui.model.type.Integer", formatOptions: {emptyString: null}}],
@@ -2434,9 +2459,9 @@ sap.ui.define([
 			}
 		});
 
-		assert.equal(operatorWithSpecialCharacters.tokenTest, "^foo (\\d+) operator$", "tokenTest has the expected format for the placeholder");
-		assert.equal(operatorWithSpecialCharacters.tokenParse, "^foo (\\d+) operator$|^(.+)?$", "tokenParse has the expected format for the placeholder");
-		assert.equal(operatorWithSpecialCharacters.tokenFormat, "foo {0} operator", "tokenFormat has the expected format for the placeholder");
+		assert.equal(operatorWithPlaceholder.tokenTest, "^foo (\\d+) operator$", "tokenTest has the expected format for the placeholder");
+		assert.equal(operatorWithPlaceholder.tokenParse, "^foo (\\d+) operator$|^(.+)?$", "tokenParse has the expected format for the placeholder");
+		assert.equal(operatorWithPlaceholder.tokenFormat, "foo {0} operator", "tokenFormat has the expected format for the placeholder");
 	});
 
 	QUnit.test("testing OperatorsForType", function(assert) {

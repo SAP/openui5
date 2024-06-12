@@ -189,7 +189,7 @@ sap.ui.define([
 
 					this.tokenParse = oConfiguration.tokenParse.replace(/#tokenText#/g, sTokenText);
 					for (let i = 0; i < this.valueTypes.length; i++) {
-						const sReplace = this.paramTypes ? this.paramTypes[i] : this.valueTypes[i];
+						const sReplace = this.paramTypes ? this.paramTypes[i] : "(.+)";
 						// the regexp will replace placeholder like $0, 0$ and {0}
 						// the four \ are required, because the excapeRegExp will escape existing \\
 						this.tokenParse = this.tokenParse.replace(new RegExp("\\\\\\$" + i + "|" + i + "\\\\\\$" + "|" + "\\\\\\{" + i + "\\\\\\}", "g"), sReplace);
@@ -204,7 +204,7 @@ sap.ui.define([
 
 					this.tokenTest = oConfiguration.tokenTest.replace(/#tokenText#/g, sTokenText);
 					for (let i = 0; i < this.valueTypes.length; i++) {
-						const sReplace = this.paramTypes ? this.paramTypes[i] : this.valueTypes[i];
+						const sReplace = this.paramTypes ? this.paramTypes[i] : "(.+)";
 						// the regexp will replace placeholder like $0, 0$ and {0}
 						// the four \ are required, because the excapeRegExp will escape existing \\
 						this.tokenTest = this.tokenTest.replace(new RegExp("\\\\\\$" + i + "|" + i + "\\\\\\$" + "|" + "\\\\\\{" + i + "\\\\\\}", "g"), sReplace);

@@ -11,8 +11,9 @@ sap.ui.define([
 	'sap/ui/mdc/enums/BaseType',
 	'sap/ui/mdc/enums/OperatorOverwrite',
 	'sap/ui/mdc/enums/OperatorValueType',
-	'sap/ui/mdc/enums/OperatorName'
-], function (FilterOperatorUtil, Operator, RangeOperator, Filter, ModelOperator, UniversalDate, UniversalDateUtils, DatePicker, Slider, BaseType, OperatorOverwrite, OperatorValueType, OperatorName) {
+	'sap/ui/mdc/enums/OperatorName',
+	'sap/ui/mdc/util/DateUtil'
+], function (FilterOperatorUtil, Operator, RangeOperator, Filter, ModelOperator, UniversalDate, UniversalDateUtils, DatePicker, Slider, BaseType, OperatorOverwrite, OperatorValueType, OperatorName, DateUtil) {
 	"use strict";
 
 	var getCustomYearFormat = function (date) {
@@ -242,6 +243,32 @@ sap.ui.define([
 		}
 	});
 
+	var ToToday = new RangeOperator({
+		name: "TOTODAY",
+		longText: "to Today",
+		tokenText: "to Today ({0})",
+		valueTypes: [OperatorValueType.Static],
+		filterOperator: "LE",
+		/*
+		DynamicDateRangeGroups https://sapui5untested.int.sap.eu2.hana.ondemand.com/demokit/?sap-ui-xx-columnmenu=true#/api/sap.m.DynamicDateRangeGroups
+		* 1 - Single Dates
+		* 2 - Date Ranges
+		* 3 - Weeks
+		* 4 - Months
+		* 5 - Quarters
+		* 6 - Years
+		*/
+		// group: undefined, // when group is not specified; default behavior include/exclude group with id 1 and 2 will be created
+		// group: {id : 2}, // place operator into existing group 2 'Date Range'
+		// group: {id : 2, text: "new Group"},  // insert a new group with id 2. existing group 2 will be shifted to 3, 4....
+		group: {id : 10, text: "new Group at the end"},  // adds a new group with id 10 and text "new Group as the end" to the end
+		// this only works for FilterFields with custom operators when maxConditions=1 and no valueHelp is assigned to the FilterField.
+		calcRange: function() {
+			// the first entry in the returned array should be the one which will be used for single value filter Operators like EQ, LE....
+			return [UniversalDateUtils.ranges.today()[0]];
+		}
+	});
+
 	var customDateEmpty = new Operator({
 		name: "CustomDateEmpty",
 		longText: "Empty",
@@ -263,7 +290,7 @@ sap.ui.define([
 		group: {id : 1}, // place operator into existing group 1 'Single Dates'
 		// group: {id : 2, text: "new Group"},  // insert a new group with id 2. existing group 2 will be shifted to 3, 4....
 		// group: {id : 10, text: "new Group at the end"},  // adds a new group with id 10 and text "new Group as the end" to the end
-		// this only works for FilterFields with custom operators when maxConditions=1 and not NONE valueHelp is assigned to the FilterField.
+		// this only works for FilterFields with custom operators when maxConditions=1 and no valueHelp is assigned to the FilterField.
 
 		getModelFilter: function(oCondition, sFieldPath, oType, bCaseSensitive, sBaseType) {
 			var isNullable = false;
@@ -314,7 +341,7 @@ sap.ui.define([
 		}
 	});
 
-	[customDateEmpty, customDateNotEmpty, oRenaissanceOperator, oMediEvalOperator, oModernOperator, oCustomRangeOperator, oNotInRangeOperator, oLastYearOperator, oEuropeOperator, oMyDateOperator, oMyDateRangeOperator, oMyNextDays].forEach(function (oOperator) {
+	[ToToday, customDateEmpty, customDateNotEmpty, oRenaissanceOperator, oMediEvalOperator, oModernOperator, oCustomRangeOperator, oNotInRangeOperator, oLastYearOperator, oEuropeOperator, oMyDateOperator, oMyDateRangeOperator, oMyNextDays].forEach(function (oOperator) {
 		FilterOperatorUtil.addOperator(oOperator);
 	});
 
