@@ -503,10 +503,10 @@ sap.ui.define([
 		assert.ok(window.document.getElementById("T2"), "Title is rendered");
 		assert.ok(jQuery("#T2").is("h5"), "Title is rendered as H5");
 		assert.ok(window.document.getElementById("FC2--Exp"), "Expander is rendered");
-		assert.notOk(jQuery("#T2").parent().hasClass("sapUiFormContainerToolbar"), "Toolbar class not rendered");
-		assert.ok(jQuery("#T2").parent().hasClass("sapUiFormContainerTitle"), "Title class rendered");
-		assert.ok(jQuery("#T2").parent().prev().prev().is("td"), "title row rendered for Container1");
-		assert.equal(jQuery("#T2").parent().prev().prev().children().length, 0, "title row for Container1 is empty");
+		assert.notOk(jQuery("#T2").parent().parent().hasClass("sapUiFormContainerToolbar"), "Toolbar class not rendered");
+		assert.ok(jQuery("#T2").parent().parent().hasClass("sapUiFormContainerTitle"), "Title class rendered");
+		assert.ok(jQuery("#T2").parent().parent().prev().prev().is("td"), "title row rendered for Container1");
+		assert.equal(jQuery("#T2").parent().parent().prev().prev().children().length, 0, "title row for Container1 is empty");
 	});
 
 	QUnit.test("FormContainer Toolbar", async function(assert) {
@@ -591,9 +591,9 @@ sap.ui.define([
 		assert.equal(jQuery("#I5").parent().attr("colspan"), "2", "Field3 rendered using 2 grid cells");
 		assert.equal(jQuery("#I6").parent().attr("colspan"), "2", "Field3 rendered using 2 grid cells");
 		assert.equal(jQuery("#I7").parent().attr("colspan"), "4", "Field3 rendered using 4 grid cells");
-		assert.equal(jQuery("#T2").parent().attr("colspan"), "8", "Title rendered using 8 grid cells");
-		assert.notOk(jQuery("#T2").parent().hasClass("sapUiFormContainerToolbar"), "Toolbar class not rendered");
-		assert.ok(jQuery("#T2").parent().hasClass("sapUiFormContainerTitle"), "Title class rendered");
+		assert.equal(jQuery("#T2").parent().parent().attr("colspan"), "8", "Title rendered using 8 grid cells");
+		assert.notOk(jQuery("#T2").parent().parent().hasClass("sapUiFormContainerToolbar"), "Toolbar class not rendered");
+		assert.ok(jQuery("#T2").parent().parent().hasClass("sapUiFormContainerTitle"), "Title class rendered");
 		assert.notOk(jQuery(jQuery("#L1").parent().parent().prev().children()[0]).is("td"), "No empty title row for container1 renderd");
 
 		var oToolbar = new Toolbar("TB1");
@@ -631,7 +631,7 @@ sap.ui.define([
 		assert.equal(jQuery("#I5").parent().attr("colspan"), "5", "Field3 rendered using 5 grid cells");
 		assert.equal(jQuery("#I6").parent().attr("colspan"), "6", "Field3 rendered using 6 grid cells");
 		assert.equal(jQuery("#I7").parent().attr("colspan"), "6", "Field3 rendered using 6 grid cells");
-		assert.equal(jQuery("#T2").parent().attr("colspan"), "17", "Title rendered using 17 grid cells");
+		assert.equal(jQuery("#T2").parent().parent().attr("colspan"), "17", "Title rendered using 17 grid cells");
 	});
 
 	QUnit.test("GridElementData hCells", async function(assert) {
