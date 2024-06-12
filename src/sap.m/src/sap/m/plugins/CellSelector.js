@@ -173,7 +173,10 @@ sap.ui.define([
 				}
 
 				oEvent.preventDefault();
-			} else if (this._bSelecting && isKeyCombination(oEvent, KeyCodes.SPACE, false, true)) {
+			}
+			/*
+			Deactivate as feature did not work anyways and will be handled in separate BLI
+			else if (this._bSelecting && isKeyCombination(oEvent, KeyCodes.SPACE, false, true)) {
 				if (!this._inSelection(oEvent.target)) {
 					// If focus is on cell outside of selection, select focused column
 					var oInfo = this.getConfig("getCellInfo", this.getControl(), oEvent.target);
@@ -185,6 +188,7 @@ sap.ui.define([
 
 				oEvent.preventDefault();
 			}
+			*/
 		},
 		onmousedown: function(oEvent) {
 			if (oEvent.isMarked?.() || oEvent.button != 0) {
@@ -224,8 +228,7 @@ sap.ui.define([
 				if (!this._oSession.mSource || !this._oSession.mTarget) {
 					return;
 				}
-				const mBounds = this._getNormalizedBounds(this._oSession.mSource, this._oSession.mTarget);
-				this._drawSelection(mBounds);
+				this._drawSelection(this._oSession.mSource, this._oSession.mTarget);
 			}
 		}.bind(this);
 		this._fnOnMouseEnter = this._onmouseenter.bind(this);
@@ -340,7 +343,7 @@ sap.ui.define([
 			return null;
 		}
 
-		var mSelectionRange = this._getNormalizedBounds(this._oSession.mSource, this._oSession.mTarget, true);
+		var mSelectionRange = this._getNormalizedBounds(this._oSession.mSource, this._oSession.mTarget);
 		if (isNaN(mSelectionRange.from.rowIndex) || isNaN(mSelectionRange.to.rowIndex)) {
 			return null;
 		}
@@ -692,13 +695,12 @@ sap.ui.define([
 
 		mFrom = mFrom ? mFrom : this._oSession.mSource;
 		mTo = mTo ? mTo : this._oSession.mTarget;
-		var mBounds = this._getNormalizedBounds(mFrom, mTo);
 
 		if (mTo.rowIndex == Infinity || mFrom.rowIndex == Infinity) {
-			this.getConfig("loadContexts", this.getControl(), mBounds.from.rowIndex, this.getRangeLimit());
+			this.getConfig("loadContexts", this.getControl(), Math.max(Math.min(mFrom, mTo), 0), this.getRangeLimit());
 		}
 
-		this._drawSelection(mBounds);
+		this._drawSelection(mFrom, mTo);
 
 		if (!deepEqual(this._oSession.mSource, mFrom) || !deepEqual(this._oSession.mTarget, mTo)) {
 			this._oSession.mSource = mFrom;
@@ -707,14 +709,10 @@ sap.ui.define([
 		}
 	};
 
-	/**
-	 * Draws the selection for the given bounds.
-	 * @param {Object} mBounds object containing the bounds information (from, to)
-	 * @param {Object} mBounds.from from position
-	 * @param {Object} mBounds.to to position
-	 * @private
-	 */
-	CellSelector.prototype._drawSelection = function (mBounds) {
+	CellSelector.prototype._drawSelection = function (mFrom, mTo) {
+		const bAdjustBounds = !isFinite(mFrom.rowIndex) || !isFinite(mTo.rowIndex);
+		const mBounds = this._getNormalizedBounds(mFrom, mTo, bAdjustBounds);
+
 		if (!mBounds.from || !mBounds.to) {
 			return;
 		}
@@ -866,23 +864,20 @@ sap.ui.define([
 
 	/**
 	 * Returns an object containing normalized coordinates for the given bounding area.
-	 * <code>from</code> will contain the coordinates for the upper left corner of the bounding area,
-	 * while <code>to</code> contains the coordinates of the lower right corner of the bounding area.
-	 * @param {Object} mFrom
-	 * @param {int} mFrom.rowIndex row index
-	 * @param {int} mFrom.colIndex column index
-	 * @param {Object} mTo
-	 * @param {int} mTo.rowIndex row index
-	 * @param {int} mTo.colIndex column index
-	 * @returns object containing coordinates for from and to
+	 * <code>from</code> contains the coordinates for the upper left corner of the bounding area,
+	 * <code>to</code> contains the coordinates of the lower right corner of the bounding area.
+	 * @param {Object} mFrom Source cell coordinates
+	 * @param {Object} mTo Target cell coordinates
+	 * @param {boolean} bAdjustBounds bounds are adjusted to fit into limit/table boundaries (e.g. range selection)
+	 * @returns {object} Object containing coordinates for the bounding area
 	 */
-	CellSelector.prototype._getNormalizedBounds = function(mFrom, mTo, bKeepBounds) {
-		const iMaxColumns = this.getConfig("getVisibleColumns", this.getControl()).length;
+	CellSelector.prototype._getNormalizedBounds = function(mFrom, mTo, bAdjustBounds) {
+		const iMaxColumns = this.getConfig("numberOfColumns", this.getControl());
 		const iMaxRows = this.getRangeLimit() == 0 ? this.getConfig("getRowCount", this.getControl()) : this.getRangeLimit();
 
 		let toRowIndex = Math.max(mFrom.rowIndex, mTo.rowIndex), toColIndex = Math.max(mFrom.colIndex, mTo.colIndex);
-		if (!bKeepBounds) {
-			toRowIndex = Math.min(iMaxRows - 1, toRowIndex);
+		if (bAdjustBounds) {
+			toRowIndex = Math.min(iMaxRows, toRowIndex);
 			toColIndex = Math.min(iMaxColumns, toColIndex);
 		}
 
