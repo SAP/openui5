@@ -10135,6 +10135,15 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
+	QUnit.test("Aria-haspopup dialog should be set on the wrapper div of the input", async function (assert) {
+		var oComboBox = new ComboBox();
+		oComboBox.placeAt("content");
+		await nextUIUpdate();
+
+		assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-haspopup"), "dialog", "aria-haspopup should equal to dialog");
+		oComboBox.destroy();
+	});
+
 	QUnit.test("Arrow down button should be a span with a role button", async function (assert) {
 		var oComboBox = new ComboBox(),
 			oArrowSpan;
