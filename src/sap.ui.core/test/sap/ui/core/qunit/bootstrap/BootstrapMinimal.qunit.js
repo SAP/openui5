@@ -35,19 +35,18 @@
 						"...loader should know module 'sap/ui/thirdparty/jquery' and its export");
 				assert.strictEqual(sap.ui.require('sap/ui/thirdparty/jqueryui/jquery-ui-position'), jQuery,
 						"...loader should know module 'sap/ui/thirdparty/jqueryui/jquery-ui-position' and its export");
-
 				/**
 				 * @deprecated
 				 */
 				assert.ok(true, "...init event should be fired after boot");
 				done();
 			});
-			/**
-			 * @deprecated
-			 */
 			setTimeout(function() {
+				/**
+				 * @deprecated
+				 */
 				assert.notOk(coreInitFired, "...but Core should not have fired init event before boot");
-				Core.boot();
+				Core.boot?.();
 			}, 500);
 		});
 	});
