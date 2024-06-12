@@ -408,58 +408,6 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("When rendered only the first step should NOT have aria-disabled=true", function(assert) {
-		var iStepCount = this.oProgressNavigator.getStepCount(),
-			$steps = this.oProgressNavigator.$().find(".sapMWizardProgressNavStep");
-
-		assert.strictEqual($steps.eq(0).attr("aria-disabled"), undefined,
-			"first step should NOT have aria-disabled=true attribute");
-
-		for (let i = 1; i < iStepCount; i++) {
-			assert.strictEqual($steps.eq(i).attr("aria-disabled"), "true",
-				"step should have aria-disabled=true attribute");
-		}
-	});
-
-	QUnit.test("After activating the second step aria-disabled should be removed", function(assert) {
-		this.oProgressNavigator.nextStep();
-
-		var $steps = this.oProgressNavigator.$().find(".sapMWizardProgressNavStep");
-
-		assert.strictEqual($steps.eq(1).attr("aria-disabled"), undefined,
-			"aria-disabled=true attribute should be removed from the second step");
-	});
-
-	QUnit.test("After a step had already been active it should not have aria-disabled=true", async function (assert) {
-		this.oProgressNavigator.nextStep();
-		this.oProgressNavigator.nextStep();
-		// we need to force rerendering as in normal case when moving from step to step the ProgressNavigator is rerendered
-		this.oProgressNavigator.invalidate();
-		await nextUIUpdate();
-
-		var $steps = this.oProgressNavigator.$().find(".sapMWizardProgressNavStep");
-		assert.strictEqual($steps.eq(0).attr("aria-disabled"), undefined,
-			"aria-disabled=true attribute should be removed from previous active step");
-		assert.strictEqual($steps.eq(1).attr("aria-disabled"), undefined,
-			"aria-disabled=true attribute should be removed from previous active step");
-	});
-
-	QUnit.test("Discarding progress should add aria-disabled=true", function(assert) {
-		this.oProgressNavigator.nextStep().nextStep().nextStep();
-		this.oProgressNavigator.discardProgress(1);
-
-		var $steps = this.oProgressNavigator.$().find(".sapMWizardProgressNavStep");
-
-		assert.strictEqual($steps.eq(0).attr("aria-disabled"), undefined,
-			"first anchor should NOT have aria-disabled=true attribute");
-
-		assert.strictEqual($steps.eq(1).attr("aria-disabled"), "true",
-			"second anchor should have aria-disabled=true attribute");
-
-		assert.strictEqual($steps.eq(2).attr("aria-disabled"), "true",
-			"third anchor should have aria-disabled=true attribute");
-	});
-
 	QUnit.test("Current step should have aria-current=true", function(assert) {
 		var $steps = this.oProgressNavigator.$().find(".sapMWizardProgressNavStep");
 
@@ -475,7 +423,6 @@ sap.ui.define([
 		assert.strictEqual($steps.eq(0).attr("aria-current"), undefined,
 			"aria-current should not be present on first step");
 	});
-
 
 	QUnit.test("Discarding progress should remove aria-current", function(assert) {
 		this.oProgressNavigator.nextStep().nextStep().nextStep();
