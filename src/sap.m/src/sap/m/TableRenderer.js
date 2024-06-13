@@ -375,9 +375,11 @@ sap.ui.define(["sap/base/i18n/Localization", "sap/ui/core/Renderer", "sap/ui/cor
 		}
 		rm.openEnd();
 
+		rm.openStart("td").attr("role", "presentation").class("sapMListTblHighlightCell").openEnd().close("td");
+
 		var bRenderDummyColumn = oControl.shouldRenderDummyColumn();
 		rm.openStart("td", oControl.getId("nodata-text"));
-		rm.attr("colspan", oControl.getColCount() - bRenderDummyColumn);
+		rm.attr("colspan", oControl.getColCount() - bRenderDummyColumn - 2 /* Highlight and Navigated cells are rendered always */);
 		rm.class("sapMListTblCell").class("sapMListTblCellNoData");
 		rm.openEnd();
 
@@ -393,6 +395,8 @@ sap.ui.define(["sap/base/i18n/Localization", "sap/ui/core/Renderer", "sap/ui/cor
 		}
 
 		rm.close("td");
+
+		rm.openStart("td").attr("role", "presentation").class("sapMListTblNavigatedCell").openEnd().close("td");
 
 		if (bRenderDummyColumn) {
 			ColumnListItemRenderer.renderDummyCell(rm, oControl);
