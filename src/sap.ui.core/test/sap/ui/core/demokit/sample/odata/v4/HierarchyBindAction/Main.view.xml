@@ -8,7 +8,8 @@
 	xmlns:rm="sap.ui.table.rowmodes">
 
 	<TreeTable id="table" ariaLabelledBy="title"
-		rows="{path : '_Hierarchy', parameters : {$count : true, $$patchWithoutSideEffects : true}}"
+		rows="{path : '_Hierarchy',
+			parameters : {$count : true, $$ownRequest : true, $$patchWithoutSideEffects : true}}"
 		selectionMode="None" threshold="0">
 		<extension>
 			<m:Toolbar design="Transparent" class="sapMTBHeader-CTX">

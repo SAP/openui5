@@ -309,6 +309,9 @@ sap.ui.define([
 		if (oNode.MANAGER_ID) {
 			const aChildren = mChildrenByParentId[oNode.MANAGER_ID];
 			aChildren.splice(aChildren.indexOf(oNode), 1);
+			if (!aChildren.length) {
+				delete mChildrenByParentId[oNode.MANAGER_ID];
+			}
 			adjustDescendantCount(oNode.MANAGER_ID, -(oNode.DescendantCount + 1));
 		}
 	}
@@ -340,34 +343,58 @@ sap.ui.define([
 					: Infinity;
 				let aRows = topLevels(iLevels - 1, getExpandLevels()); // Note: already cloned
 				if ("$filter" in mQueryOptions) {
-					// ID%20eq%20'1'
-					const aIDs = mQueryOptions.$filter.split("%20or%20")
-						.map((sID_Predicate) => sID_Predicate.split("%20eq%20")[1].slice(1, -1));
-					if (aIDs.length !== 1) {
-						throw new Error("Unexpected ID filter length");
-					}
-					aRows = aRows.filter((oNode, i) => {
-						if (oNode.ID === aIDs[0]) {
+					if (mQueryOptions.$filter.includes("LimitedRank")) {
+						// e.g. LimitedRank lt 5 and DistanceFromRoot lt 2
+						// e.g. LimitedRank gt 4 and DistanceFromRoot lt 2
+						const aFilterMatches = mQueryOptions.$filter.match(
+							/LimitedRank%20(gt|lt)%20(\d+)%20and%20DistanceFromRoot%20lt%20(\d+)/);
+						const bGreater = aFilterMatches[1] === "gt";
+						const iLimitedRank = parseInt(aFilterMatches[2]);
+						const iDistanceFromRoot = parseInt(aFilterMatches[3]);
+						aRows = aRows.filter((oNode, i) => {
 							oNode.LimitedRank = "" + i; // Edm.Int64
-							return true;
+							return (bGreater ? i > iLimitedRank : i < iLimitedRank)
+								&& oNode.DistanceFromRoot < iDistanceFromRoot;
+						});
+						if (mQueryOptions.$orderby === "LimitedRank%20desc") {
+							aRows = aRows.reverse();
 						}
-						return false;
-					});
+					} else { // ID%20eq%20'1'
+						const aIDs = mQueryOptions.$filter.split("%20or%20").map(
+							(sID_Predicate) => sID_Predicate.split("%20eq%20")[1].slice(1, -1));
+						aRows = aRows.filter((oNode, i) => {
+							oNode.LimitedRank = "" + i; // Edm.Int64
+							return aIDs.includes(oNode.ID);
+						});
+					}
 				}
 				selectCountSkipTop(aRows, mQueryOptions, oResponse);
 				return;
 			}
+
+			if (mQueryOptions.$apply.startsWith("ancestors(")) {
+				// "$orderby=AGE&$select=ID,MANAGER_ID,Name,AGE"
+				// + "&$apply=ancestors($root/EMPLOYEES,OrgChart,ID,filter(ID%20eq%20'3'),1)"
+				const sChildId = mQueryOptions.$apply.match(/,filter\(ID%20eq%20'([^']*)'\)/)[1];
+				const sParentId = mNodeById[sChildId].MANAGER_ID;
+				selectCountSkipTop([mNodeById[sParentId]], mQueryOptions, oResponse);
+				return;
+			}
+
 			// "EMPLOYEES?$apply=descendants($root/EMPLOYEES,OrgChart,ID"
 			// + ",filter(ID%20eq%20'" + sParentId + "'),1)/orderby(AGE)"
 			const sParentId = mQueryOptions.$apply.match(/,filter\(ID%20eq%20'([^']*)'\)/)[1];
 			let aChildren = mChildrenByParentId[sParentId];
 			if ("$filter" in mQueryOptions) {
-				// not%20(ID%20eq%20'5.1.10'%20or%20ID%20eq%20'5.1.11')
+				const bNot = mQueryOptions.$filter.startsWith("not%20(");
+				if (bNot) {
+					// not%20(ID%20eq%20'5.1.10'%20or%20ID%20eq%20'5.1.11')
+					mQueryOptions.$filter = mQueryOptions.$filter.slice("not%20(".length, -")".length);
+				}
 				const aIDs = mQueryOptions.$filter
-					.slice("not%20(".length, -")".length)
 					.split("%20or%20")
 					.map((sID_Predicate) => sID_Predicate.split("%20eq%20")[1].slice(1, -1));
-				aChildren = aChildren.filter((oChild) => !aIDs.includes(oChild.ID));
+				aChildren = aChildren.filter((oChild) => aIDs.includes(oChild.ID) !== bNot);
 			}
 			selectCountSkipTop(aChildren, mQueryOptions, oResponse);
 			return;
@@ -545,7 +572,7 @@ sap.ui.define([
 		function isChildID(sChildID, sParentId) {
 			return sChildID !== sParentId
 				&& (sParentId === "0"
-					? !sChildID.includes(".")
+					? /^\d+$/.test(sChildID) // Note: letters denote other roots!
 					: sChildID.startsWith(sParentId)
 						&& !sChildID.slice(sParentId.length + 1).includes("."));
 		}
@@ -594,19 +621,21 @@ sap.ui.define([
 		} else { // new root
 			const iRootCount = aAllNodes.filter((oNode) => oNode.MANAGER_ID === null).length;
 			oNewChild.AGE = 60 + iRootCount;
-			oNewChild.ID = "0ABCDEFGHIJKLMNOPQRSTUVWXYZ"[iRootCount];
+			oNewChild.ID = "0ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"[iRootCount];
 		}
 
 		if (oNewChild.ID in mNodeById) {
 			throw new Error("Illegal state: duplicate node ID " + oNewChild.ID);
 		}
-		aAllNodes.push(oNewChild); //TODO not good enough once we need "refresh"
 		mNodeById[oNewChild.ID] = oNewChild;
 		mRevisionOfAgeById[oNewChild.ID] = 0;
 		if (sParentId) {
 			// Note: server's insert position must not affect UI (until refresh!)
 			mChildrenByParentId[sParentId].push(oNewChild);
 			adjustDescendantCount(sParentId, +1);
+			aAllNodes.splice(aAllNodes.indexOf(oParent) + oParent.DescendantCount, 0, oNewChild);
+		} else {
+			aAllNodes.push(oNewChild);
 		}
 
 		oResponse.message = JSON.stringify(SandboxModel.update([oNewChild])[0]);
