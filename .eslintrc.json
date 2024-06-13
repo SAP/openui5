@@ -2,10 +2,10 @@
 	"root": true,
 	"env": {
 		"browser": true,
-		"es2022": true
+		"es2023": true
 	},
 	"parserOptions": {
-		"ecmaVersion": 2022,
+		"ecmaVersion": 2023,
 		"sourceType": "script"
 	},
 	"globals": {
