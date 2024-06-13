@@ -830,64 +830,103 @@ sap.ui.define([
 			assert.ok(oSetPropertiesStub.calledWith(sVMReference, mPropertyBag), "the correct properties were passed");
 		});
 
-		QUnit.test("when calling 'setVariantProperties' for 'setDefault' with different current and default variants, in UI adaptation mode", function(assert) {
-			sandbox.stub(this.oModel, "getVariant").returns({instance: createVariant(this.oModel.oData[sVMReference].variants[2])});
-			var mPropertyBag = {
-				changeType: "setDefault",
-				defaultVariant: "variant1",
-				layer: Layer.CUSTOMER,
-				variantManagementReference: sVMReference,
-				appComponent: this.oComponent,
-				change: {
-					convertToFileContent() {}
-				}
-			};
-			sandbox.stub(URLHandler, "getStoredHashParams").returns([]);
-			sandbox.stub(this.oModel.oChangePersistence, "addDirtyChange");
-			sandbox.stub(URLHandler, "update");
+		[true, false].forEach(function(bUpdateVariantInURL) {
+			const sTitle = `when calling 'setVariantProperties' for 'setDefault' with different current and default variants, in UI adaptation mode ${bUpdateVariantInURL ? "with" : "without"} updateVariantInURL`;
+			QUnit.test(sTitle, function(assert) {
+				sandbox.stub(this.oModel, "getVariant").returns({instance: createVariant(this.oModel.oData[sVMReference].variants[2])});
+				var mPropertyBag = {
+					changeType: "setDefault",
+					defaultVariant: "variant1",
+					layer: Layer.CUSTOMER,
+					variantManagementReference: sVMReference,
+					appComponent: this.oComponent,
+					change: {
+						convertToFileContent() {}
+					}
+				};
+				sandbox.stub(URLHandler, "getStoredHashParams").returns([]);
+				sandbox.stub(this.oModel.oChangePersistence, "addDirtyChange");
+				sandbox.stub(URLHandler, "update");
 
-			// set adaptation mode true
-			this.oModel._bDesignTimeMode = true;
+				// set adaptation mode true
+				this.oModel._bDesignTimeMode = true;
 
-			// mock current variant id to make it different
-			this.oModel.oData[sVMReference].currentVariant = "variantCurrent";
+				// mock current variant id to make it different
+				this.oModel.oData[sVMReference].currentVariant = "variantCurrent";
+				this.oModel.getData()[sVMReference].updateVariantInURL = bUpdateVariantInURL;
 
-			this.oModel.setVariantProperties(sVMReference, mPropertyBag);
-			assert.ok(URLHandler.update.calledWithExactly({
-				parameters: [this.oModel.oData[sVMReference].currentVariant],
-				updateURL: !this.oModel._bDesignTimeMode,
-				updateHashEntry: true,
-				model: this.oModel
-			}), "then the URLHandler.update() called with the current variant id as a parameter in UI adaptation mode");
-		});
+				this.oModel.setVariantProperties(sVMReference, mPropertyBag);
+				assert.ok(URLHandler.update.calledWithExactly({
+					parameters: [this.oModel.oData[sVMReference].currentVariant],
+					updateURL: false,
+					updateHashEntry: true,
+					model: this.oModel
+				}), "then the URLHandler.update() called with the current variant id as a parameter in UI adaptation mode");
+			});
 
-		QUnit.test("when calling 'setVariantProperties' for 'setDefault' with same current and default variants, in personalization mode", function(assert) {
-			sandbox.stub(this.oModel, "getVariant").returns({instance: createVariant(this.oModel.oData[sVMReference].variants[2])});
-			var mPropertyBag = {
-				changeType: "setDefault",
-				defaultVariant: "variant1",
-				layer: Layer.CUSTOMER,
-				variantManagementReference: sVMReference,
-				appComponent: this.oComponent,
-				change: {
-					convertToFileContent() {}
-				}
-			};
-			// current variant already exists in hash parameters
-			sandbox.stub(URLHandler, "getStoredHashParams").returns([this.oModel.oData[sVMReference].currentVariant]);
-			sandbox.stub(this.oModel.oChangePersistence, "addDirtyChange");
-			sandbox.stub(URLHandler, "update");
+			const sTitle1 = `when calling 'setVariantProperties' for 'setDefault' with same current and default variants, in personalization mode ${bUpdateVariantInURL ? "with" : "without"} updateVariantInURL`;
+			QUnit.test(sTitle1, function(assert) {
+				sandbox.stub(this.oModel, "getVariant").returns({instance: createVariant(this.oModel.oData[sVMReference].variants[2])});
+				var mPropertyBag = {
+					changeType: "setDefault",
+					defaultVariant: "variant1",
+					layer: Layer.CUSTOMER,
+					variantManagementReference: sVMReference,
+					appComponent: this.oComponent,
+					change: {
+						convertToFileContent() {}
+					}
+				};
+				// current variant already exists in hash parameters
+				sandbox.stub(URLHandler, "getStoredHashParams").returns([this.oModel.oData[sVMReference].currentVariant]);
+				sandbox.stub(this.oModel.oChangePersistence, "addDirtyChange");
+				sandbox.stub(URLHandler, "update");
 
-			// set adaptation mode false
-			this.oModel._bDesignTimeMode = false;
+				// set adaptation mode false
+				this.oModel._bDesignTimeMode = false;
+				this.oModel.getData()[sVMReference].updateVariantInURL = bUpdateVariantInURL;
 
-			this.oModel.setVariantProperties(sVMReference, mPropertyBag);
-			assert.ok(URLHandler.update.calledWithExactly({
-				parameters: [],
-				updateURL: !this.oModel._bDesignTimeMode,
-				updateHashEntry: true,
-				model: this.oModel
-			}), "then the URLHandler.update() called without the current variant id as a parameter in personalization mode");
+				this.oModel.setVariantProperties(sVMReference, mPropertyBag);
+				assert.ok(URLHandler.update.calledWithExactly({
+					parameters: [],
+					updateURL: bUpdateVariantInURL,
+					updateHashEntry: true,
+					model: this.oModel
+				}), "then the URLHandler.update() called without the current variant id as a parameter in personalization mode");
+			});
+
+			const sTitle2 = `when calling 'setVariantProperties' for 'setDefault' with different current and default variants, in personalization mode ${bUpdateVariantInURL ? "with" : "without"} updateVariantInURL`;
+			QUnit.test(sTitle2, function(assert) {
+				sandbox.stub(this.oModel, "getVariant").returns({instance: createVariant(this.oModel.oData[sVMReference].variants[2])});
+				var mPropertyBag = {
+					changeType: "setDefault",
+					defaultVariant: "variant1",
+					layer: Layer.CUSTOMER,
+					variantManagementReference: sVMReference,
+					appComponent: this.oComponent,
+					change: {
+						convertToFileContent() {}
+					}
+				};
+				sandbox.stub(URLHandler, "getStoredHashParams").returns([]);
+				sandbox.stub(this.oModel.oChangePersistence, "addDirtyChange");
+				sandbox.stub(URLHandler, "update");
+
+				// set adaptation mode false
+				this.oModel._bDesignTimeMode = false;
+
+				// mock current variant id to make it different
+				this.oModel.oData[sVMReference].currentVariant = "variantCurrent";
+				this.oModel.getData()[sVMReference].updateVariantInURL = bUpdateVariantInURL;
+
+				this.oModel.setVariantProperties(sVMReference, mPropertyBag);
+				assert.ok(URLHandler.update.calledWithExactly({
+					parameters: [this.oModel.oData[sVMReference].currentVariant],
+					updateURL: bUpdateVariantInURL,
+					updateHashEntry: true,
+					model: this.oModel
+				}), "then the URLHandler.update() called with the current variant id as a parameter in personalization mode");
+			});
 		});
 
 		QUnit.test("when calling 'updateCurrentVariant' with root app component", function(assert) {
