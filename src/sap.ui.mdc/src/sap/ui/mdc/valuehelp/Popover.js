@@ -671,11 +671,14 @@ sap.ui.define([
 		Container.prototype.handleClosed.apply(this, arguments);
 	};
 
-	Popover.prototype.removeFocus = function() {
+	Popover.prototype.removeVisualFocus = function() {
 		const oContent = this._getContent();
-		if (oContent) {
-			oContent.removeFocus();
-		}
+		oContent?.removeVisualFocus();
+	};
+
+	Popover.prototype.setVisualFocus = function() {
+		const oContent = this._getContent();
+		oContent?.setVisualFocus();
 	};
 
 	Popover.prototype.navigateInContent = function(iStep) {

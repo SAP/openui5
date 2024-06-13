@@ -263,7 +263,7 @@ sap.ui.define([
 			return 100;
 		};
 
-		const oPromise = oPopover.open(Promise.resolve());
+		const oPromise = oPopover.open(Promise.resolve(), true, true);
 		assert.ok(oPromise instanceof Promise, "open returns promise");
 
 		if (oPromise) {
@@ -424,11 +424,19 @@ sap.ui.define([
 		}, iPopoverDuration);
 	});
 
-	QUnit.test("removeFocus", function(assert) {
+	QUnit.test("removeVisualFocus", function(assert) {
 
-		sinon.spy(oContent, "removeFocus");
-		oPopover.removeFocus();
-		assert.ok(oContent.removeFocus.called, "removeFocus of Content called");
+		sinon.spy(oContent, "removeVisualFocus");
+		oPopover.removeVisualFocus();
+		assert.ok(oContent.removeVisualFocus.called, "removeVisualFocus of Content called");
+
+	});
+
+	QUnit.test("setVisualFocus", function(assert) {
+
+		sinon.spy(oContent, "setVisualFocus");
+		oPopover.setVisualFocus();
+		assert.ok(oContent.setVisualFocus.called, "setVisualFocus of Content called");
 
 	});
 

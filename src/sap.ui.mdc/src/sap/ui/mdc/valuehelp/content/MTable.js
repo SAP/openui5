@@ -126,24 +126,30 @@ sap.ui.define([
 
 			aItems.forEach((oItem) => {
 				const oItemContext = this._getListItemBindingContext(oItem);
-				if (bHideSelection) {
+				if (bHideSelection && oTable.indexOfItem(oItem) !== this._iNavigateIndex) { // let navigated item be selected
 					oItem.setSelected(false);
 				} else {
 					oItem.setSelected(this._isContextSelected(oItemContext, aConditions));
 				}
-				if (oItem.getSelected() && this.isTypeahead() && this.isSingleSelect()) { // show selected item as focused if open in single-selection
-					oItem.addStyleClass("sapMLIBFocused");
-				} else if (oTable.indexOfItem(oItem) === this._iNavigateIndex || (oItem.getId() === this._sHighlightId)) { // show navigated item or first match as selected
-					oItem.addStyleClass("sapMLIBFocused")
-						.addStyleClass("sapMLIBSelected");
-				} else {
-					oItem.removeStyleClass("sapMLIBFocused")
-						.removeStyleClass("sapMLIBSelected");
+
+				// special focus handling for dropdown boxes - in some cases visual (not real) focus must be in item
+				if (this.isTypeahead()) { // only happens in typeahead dropdown (on Dialog real focus must stay there)
+					if (this.isSingleSelect()) {
+						if (oTable.indexOfItem(oItem) === this._iNavigateIndex) { // navigated item is shown selected and focused
+							oItem.addStyleClass("sapMLIBFocused");
+						} else if (oItem.getId() === this._sHighlightId) { // matching item of typeahead is shown selected, but focus stays in field
+							oItem.addStyleClass("sapMLIBSelected").updateSelectedDOM(true, oItem.$()); // as StyleClassSupport don't recognizes DOM changes
+						} else {
+							oItem.removeStyleClass("sapMLIBFocused");
+							if (!oItem.getSelected() && oItem.hasStyleClass("sapMLIBSelected")) {
+								oItem.removeStyleClass("sapMLIBSelected").updateSelectedDOM(false, oItem.$()); // as StyleClassSupport don't recognizes DOM changes
+							}
+						}
+					// } else { // multi-select
+						// in multi-select case focus is on table and first match is not highlighted
+					}
 				}
 			});
-			if (this.isTypeahead() && this.isSingleSelect()) {
-				oTable.addStyleClass("sapMListFocus"); // to show focus outline on selected item
-			}
 		}
 	}
 
@@ -168,8 +174,9 @@ sap.ui.define([
 	MTable.prototype.applyFilters = function() {
 
 		if (this._iNavigateIndex >= 0) { // initialize navigation
-			this.setProperty("conditions", [], true);
 			this._iNavigateIndex = -1;
+			this.removeVisualFocus(); // on new items it needs to be determined if there is a focusable item
+			this.setProperty("conditions", [], true);
 		}
 
 		this._sHighlightId = undefined;
@@ -325,7 +332,8 @@ sap.ui.define([
 
 		FilterableListContent.prototype.onShow.apply(this, arguments);
 
-		if (oTable && this.isTypeahead() && this.isSingleSelect()) { // if Typeahed and SingleSelect (ComboBox case) scroll to selected item
+		const bSingleSelect = this.isSingleSelect();
+		if (oTable && this.isTypeahead() && bSingleSelect) { // if Typeahed and SingleSelect (ComboBox case) scroll to selected item
 			let oSelectedItem;
 			if (this._iNavigateIndex >= 0) {
 				oSelectedItem = oTable.getItems()[this._iNavigateIndex];
@@ -347,7 +355,7 @@ sap.ui.define([
 		FilterableListContent.prototype.onHide.apply(this, arguments);
 		const oTable = this.getTable();
 		if (oTable) {
-			this.removeFocus();
+			this.removeVisualFocus();
 			if (oTable.hasStyleClass("sapMComboBoxList")) {
 				oTable.removeStyleClass("sapMComboBoxList");
 			}
@@ -641,7 +649,7 @@ sap.ui.define([
 		const bIsOpen = this.getParent().isOpen();
 
 		if (!bIsOpen && this._iNavigateIndex < 0) {
-			this.onShow(true); // to force loading of data
+			this.onShow(true, false); // to force loading of data
 		}
 
 		const oListBinding = this.getListBinding();
@@ -734,20 +742,18 @@ sap.ui.define([
 			return;
 		}
 
-		oTable.addStyleClass("sapMListFocus"); // to show focus outline on navigated item
-
 		const oItem = aItems[iSelectedIndex];
 		if (oItem) {
 
 			let oCondition;
-			if (oItem !== oSelectedItem) {
+			if (oItem !== oSelectedItem || iStep === 0) { // new item or already shown item is navigated again (focus set on dropdown)
 				this._iNavigateIndex = iSelectedIndex;
 				oItem.setSelected(true);
 
-				// in case of a single value field trigger the focusin on the new selected item to update the screenreader invisible text
+				// in case of a single value field fake the focus on the new selected item to update the screenreader invisible text
 				if (bIsOpen) {
 					this._handleScrolling(oItem);
-					oItem.$().trigger("focusin");
+					oTable.setFakeFocus(oItem);
 				}
 
 				if (oItem.isA("sap.m.GroupHeaderListItem")) {
@@ -756,9 +762,15 @@ sap.ui.define([
 				} else {
 					const oItemContext = this._getListItemBindingContext(oItem);
 					const oValues = this.getItemFromContext(oItemContext);
+					const oValueHelpDelegate = this.getValueHelpDelegate();
+					const bCaseSensitive = oValueHelpDelegate.isFilteringCaseSensitive(this.getValueHelpInstance(), this);
 					oCondition = oValues && this.createCondition(oValues.key, oValues.description, oValues.payload);
 					this.setProperty("conditions", [oCondition], true);
-					this.fireNavigated({ condition: oCondition, itemId: oItem.getId(), leaveFocus: false });
+					this.fireNavigated({ condition: oCondition, itemId: oItem.getId(), leaveFocus: false, caseSensitive: bCaseSensitive });
+				}
+				if (bIsOpen) {
+					this.setVisualFocus(); // to show focus outline on navigated item
+					this.fireVisualFocusSet();
 				}
 
 			} else if (bLeaveFocus) {
@@ -799,11 +811,24 @@ sap.ui.define([
 	};
 
 
-	MTable.prototype.removeFocus = function() {
+	MTable.prototype.removeVisualFocus = function() {
 
 		const oTable = this.getTable();
-		if (oTable) {
-			oTable.removeStyleClass("sapMListFocus");
+		oTable?.removeStyleClass("sapMListFocus");
+
+	};
+
+	MTable.prototype.setVisualFocus = function() {
+
+		const oTable = this.getTable();
+		if (oTable && this.isTypeahead()) { // Opened via F4 should set the focus to table
+			if (this.isSingleSelect()) {
+				if (!oTable.hasStyleClass("sapMListFocus")) {
+					oTable.addStyleClass("sapMListFocus");
+				}
+			} else { // in multi-select real focus is needed
+				oTable.focus();
+			}
 		}
 
 	};
@@ -920,9 +945,7 @@ sap.ui.define([
 												if (oTable.getMode() === ListMode.MultiSelect) {
 													// go back to field (to break out of the focus-cycle on popover)
 													if (!this._bFocusTable) { // not focused via arrow-up
-														const oContainer = this.getParent();
-														const oControl = oContainer?.getControl();
-														oControl?.focus();
+														this.fireNavigated({ condition: undefined, itemId: undefined, leaveFocus: true }); // to restore autocomplete
 													}
 													delete this._bFocusTable;
 												} else {

@@ -411,6 +411,7 @@ sap.ui.define([
 				if (vOutput === vValue) {
 					oCondition = merge({}, oNavigateCondition); // use copy
 					delete oCondition.output;
+					delete oCondition.itemId;
 					return oCondition;
 				}
 			}

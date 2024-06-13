@@ -248,6 +248,7 @@ sap.ui.define([
 	 * @param {boolean} oControlEvent.getParameters.leaveFocus Indicates that the source control should be focused again
 	 * @param {object} oControlEvent.getParameters.condition Provides the target condition of the navigation
 	 * @param {string} oControlEvent.getParameters.itemId Provides the navigated item's ID (used for ARIA attributes)
+	 * @param {boolean} oControlEvent.getParameters.caseSensitive If <code>true</code> the filtering was executed case sensitive
 	 */
 
 	/**
@@ -261,6 +262,7 @@ sap.ui.define([
 	 * @param {object} oControlEvent.getParameters.condition Provides the target condition of the navigation
 	 * @param {string} oControlEvent.getParameters.filterValue Provides the used filter value. (as the event might be fired asynchronously, and the current user input might have changed.)
 	 * @param {string} oControlEvent.getParameters.itemId Provides the navigated item's ID (used for ARIA attributes)
+	 * @param {boolean} oControlEvent.getParameters.caseSensitive If <code>true</code> the filtering was executed case sensitive
 	 * @since 1.120.0
 	 */
 
@@ -269,6 +271,16 @@ sap.ui.define([
 	 *
 	 * @name sap.ui.mdc.valuehelp.ITypeaheadContent#requestSwitchToDialog
 	 * @event
+	 */
+
+	/**
+	 * This optional event is fired if the visual focus is set to the value help.
+	 *
+	 * In this case the visual focus needs to be removed from the opening field, but the real focus must stay there.
+	 *
+	 * @name sap.ui.mdc.valuehelp.ITypeaheadContent#visualFocusSet
+	 * @event
+	 * @since 1.127.0
 	 */
 
 	/**
@@ -313,10 +325,19 @@ sap.ui.define([
 
 	/**
 	 * The focus visualization of the field help needs to be removed as the user starts typing into the source control.
-	 * @name sap.ui.mdc.valuehelp.ITypeaheadContent.removeFocus
+	 * @name sap.ui.mdc.valuehelp.ITypeaheadContent.removeVisualFocus
 	 * @method
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.valuehelp.ITypeaheadContainer
+	 */
+
+	/**
+	 * The focus visualization of the field help needs to be set as the user starts naigation into the value help items.
+	 * @name sap.ui.mdc.valuehelp.ITypeaheadContent.setVisualFocus
+	 * @method
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.ValueHelp
+	 * @since 1.127.0
 	 */
 
 
@@ -475,6 +496,16 @@ sap.ui.define([
 	 */
 
 	/**
+	 * This optional event is fired if the visual focus is set to the value help.
+	 *
+	 * In this case the visual focus needs to be removed from the opening field, but the real focus must stay there.
+	 *
+	 * @name sap.ui.mdc.valuehelp.ITypeaheadContainer#visualFocusSet
+	 * @event
+	 * @since 1.127.0
+	 */
+
+	/**
 	 If the container is used for type-ahead it might be wanted that the same content should also be shown as valuehelp. If not, the field should not show a valuehelp icon.
 	 *
 	 * @name sap.ui.mdc.valuehelp.ITypeaheadContainer.getUseAsValueHelp
@@ -526,10 +557,19 @@ sap.ui.define([
 
 	/**
 	 * The focus visualization of the field help needs to be removed as the user starts typing into the source control.
-	 * @name sap.ui.mdc.valuehelp.ITypeaheadContainer.removeFocus
+	 * @name sap.ui.mdc.valuehelp.ITypeaheadContainer.removeVisualFocus
 	 * @method
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.ValueHelp
+	 */
+
+	/**
+	 * The focus visualization of the field help needs to be set as the user starts naigation into the value help items.
+	 * @name sap.ui.mdc.valuehelp.ITypeaheadContainer.setVisualFocus
+	 * @method
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.ValueHelp
+	 * @since 1.127.0
 	 */
 
 
