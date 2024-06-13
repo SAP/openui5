@@ -6321,8 +6321,8 @@ sap.ui.define([
 			bar : "~bar~",
 			$apply : "A.P.P.L.E.",
 			$filter : iOffset < 0
-				? "Ltd_Rank lt '2' and DistFromRoot lt '7'"
-				: "Ltd_Rank gt '2' and DistFromRoot lt '7'",
+				? "Ltd_Rank lt 2 and DistFromRoot lt 7"
+				: "Ltd_Rank gt 2 and DistFromRoot lt 7",
 			$select : ["a", "b", "c", "Ltd_Rank"],
 			$top : 1
 		};

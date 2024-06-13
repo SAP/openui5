@@ -2091,10 +2091,9 @@ sap.ui.define([
 		const oNode = this.aElements[iIndex];
 		const mQueryOptions = {
 			...this.oFirstLevel.mQueryOptions,
-			$filter : this.oAggregation.$LimitedRank + (iOffset < 0 ? " lt '" : " gt '")
-				+ _Helper.getPrivateAnnotation(oNode, "rank") + "' and "
-				+ this.oAggregation.$DistanceFromRoot + " lt '" + oNode["@$ui5.node.level"]
-				+ "'",
+			$filter : this.oAggregation.$LimitedRank + (iOffset < 0 ? " lt " : " gt ")
+				+ _Helper.getPrivateAnnotation(oNode, "rank") + " and "
+				+ this.oAggregation.$DistanceFromRoot + " lt " + oNode["@$ui5.node.level"],
 			$top : 1
 		};
 		if (iOffset < 0) {

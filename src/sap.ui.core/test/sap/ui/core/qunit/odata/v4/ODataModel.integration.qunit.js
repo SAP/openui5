@@ -39582,7 +39582,7 @@ make root = ${bMakeRoot}`;
 		//   6 Eta (loaded later)
 		for (let i = 0; i < 2; i += 1) {
 			this.expectRequest(sBaseUrl + sExpand
-					+ "&$filter=_/Limited_Rank lt '3' and _/DistanceFromRoot lt '2'"
+					+ "&$filter=_/Limited_Rank lt 3 and _/DistanceFromRoot lt 2"
 					+ "&$orderby=_/Limited_Rank desc&$select=ArtistID,IsActiveEntity,Name"
 					+ ",_/DescendantCount,_/DistanceFromRoot,_/DrillState,_/Limited_Rank,_/NodeID"
 					+ "&$top=1", {
@@ -39665,7 +39665,7 @@ make root = ${bMakeRoot}`;
 		//     5 Zeta (not loaded)
 		//   6 Eta (loaded now)
 		this.expectRequest(sBaseUrl + sExpand
-				+ "&$filter=_/Limited_Rank gt '4' and _/DistanceFromRoot lt '2'"
+				+ "&$filter=_/Limited_Rank gt 4 and _/DistanceFromRoot lt 2"
 				+ "&$select=ArtistID,IsActiveEntity,Name"
 					+ ",_/DescendantCount,_/DistanceFromRoot,_/DrillState,_/Limited_Rank,_/NodeID"
 				+ "&$top=1", {
@@ -40012,7 +40012,7 @@ make root = ${bMakeRoot}`;
 		// 9 Omega (not Beta's sibling)
 		this.expectRequest(sBaseUrl.slice(0, -1)
 				+ ",ExpandLevels=" + JSON.stringify([{NodeID : "0", Levels : 1}])
-				+ ")&$filter=LimitedRank gt '1' and DistanceFromRoot lt '2'"
+				+ ")&$filter=LimitedRank gt 1 and DistanceFromRoot lt 2"
 				+ "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,LimitedRank,Name"
 				+ "&$top=1", {
 				value : [{
