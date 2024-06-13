@@ -54,6 +54,30 @@
 						<td>1.33.0</td>
 						<td>1.90</td>
 					</tr>
+					<tr>
+						<td>allow</td>
+						<td>string</td>
+						<td>No</td>
+						<td>
+							Determines what permissions-policy features are available to the content of the embedded page.
+							No features are added by default. This is the recommended behavior when the page origin is not trusted.
+							For more detailed documentation read about <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/iframe#allow">iframe property 'allow'</a> and for list of options see <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Permissions-Policy">Permissions Policy</a>.
+							Note: The option "fullscreen" is not supported on all browsers, consider using the option "allowfullscreen" instead.
+						</td>
+						<td>1.65.0</td>
+						<td>1.126</td>
+					</tr>
+					<tr>
+						<td>allowfullscreen</td>
+						<td>boolean</td>
+						<td>No</td>
+						<td>
+							Determines if the web page can activate fullscreen mode by calling requestFullscreen() method.
+							For more information, read the <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/iframe#allowfullscreen" target="_blank">iframe allowfullscreen attribute documentation</a>.
+						</td>
+						<td>1.65.0</td>
+						<td>1.126</td>
+					</tr>
 				</table>
 			</div>
 
