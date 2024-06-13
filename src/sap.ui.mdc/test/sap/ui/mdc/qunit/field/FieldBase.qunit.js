@@ -5406,16 +5406,18 @@ sap.ui.define([
 		oField.focus(); // as ValueHelp is connected with focus
 		let aContent = oField.getAggregation("_content");
 		let oContent = aContent && aContent.length > 0 && aContent[0];
+		sinon.spy(oContent, "_applySuggestionAcc");
 		oContent._$input.val("I");
 		oContent.fireLiveChange({ value: "I" });
 
 		setTimeout(async function() { // to wait for Promises and opening
 			let oCondition = Condition.createItemCondition("I1", "Item1");
-			oValueHelp.fireTypeaheadSuggested({condition: oCondition, filterValue: "I", itemId: "myItem", caseSensitive: true});
+			oValueHelp.fireTypeaheadSuggested({condition: oCondition, filterValue: "I", itemId: "myItem", items: 1, caseSensitive: true});
 			assert.equal(oContent._$input.val(), "Item1", "Output text");
 			assert.equal(oContent._$input.cursorPos(), 1, "CursorPosition");
 			assert.equal(oContent.getFocusDomRef().selectionStart, 1, "Selection start");
 			assert.equal(oContent.getFocusDomRef().selectionEnd, 5, "Selection end");
+			assert.ok(oContent._applySuggestionAcc.calledWith(1), "_applySuggestionAcc called");
 			const oAriaAttributes = oField.getProperty("_ariaAttributes");
 			assert.equal(oAriaAttributes.aria.activedescendant, "myItem", "Aria-activedescendant");
 
@@ -5424,105 +5426,126 @@ sap.ui.define([
 			aContent = oField.getAggregation("_content");
 			// eslint-disable-next-line require-atomic-updates
 			oContent = aContent && aContent.length > 0 && aContent[0];
+			sinon.spy(oContent, "_applySuggestionAcc");
 			oContent.focus();
 			oContent._$input.val("i");
 			oContent.fireLiveChange({ value: "i" });
 
 			setTimeout(async function() { // to wait for Promises and opening
-				oValueHelp.fireTypeaheadSuggested({condition: oCondition, filterValue: "i", itemId: "myItem", caseSensitive: true});
+				oValueHelp.fireTypeaheadSuggested({condition: oCondition, filterValue: "i", itemId: "myItem", items: 2, caseSensitive: true});
 				assert.equal(oContent._$input.val(), "i", "Output text");
 				assert.equal(oContent._$input.cursorPos(), 1, "CursorPosition");
 				assert.equal(oContent.getFocusDomRef().selectionStart, 1, "Selection start");
 				assert.equal(oContent.getFocusDomRef().selectionEnd, 1, "Selection end");
+				assert.ok(oContent._applySuggestionAcc.calledWith(2), "_applySuggestionAcc called");
 
 				oVHContent.setCaseSensitive(false);
-				oValueHelp.fireTypeaheadSuggested({condition: oCondition, filterValue: "i", itemId: "myItem", caseSensitive: false});
+				oValueHelp.fireTypeaheadSuggested({condition: oCondition, filterValue: "i", itemId: "myItem", items: 3, caseSensitive: false});
 				assert.equal(oContent._$input.val(), "i1", "Output text");
 				assert.equal(oContent._$input.cursorPos(), 1, "CursorPosition");
 				assert.equal(oContent.getFocusDomRef().selectionStart, 1, "Selection start");
 				assert.equal(oContent.getFocusDomRef().selectionEnd, 2, "Selection end");
+				assert.ok(oContent._applySuggestionAcc.calledWith(3), "_applySuggestionAcc called");
 
 				oField.setDisplay(FieldDisplay.DescriptionValue); // destroys and creates new content
 				await nextUIUpdate();
 				aContent = oField.getAggregation("_content");
 				// eslint-disable-next-line require-atomic-updates
 				oContent = aContent && aContent.length > 0 && aContent[0];
+				sinon.spy(oContent, "_applySuggestionAcc");
 				oContent.focus();
 				oContent._$input.val("I");
 				oContent.fireLiveChange({ value: "I" });
 
 				setTimeout(async function() { // to wait for Promises and opening
-					oValueHelp.fireTypeaheadSuggested({condition: oCondition, filterValue: "I", itemId: "myItem", caseSensitive: false});
+					oValueHelp.fireTypeaheadSuggested({condition: oCondition, filterValue: "I", itemId: "myItem", items: 4, caseSensitive: false});
 					assert.equal(oContent._$input.val(), "Item1", "Output text");
 					assert.equal(oContent._$input.cursorPos(), 1, "CursorPosition");
 					assert.equal(oContent.getFocusDomRef().selectionStart, 1, "Selection start");
 					assert.equal(oContent.getFocusDomRef().selectionEnd, 5, "Selection end");
+					assert.ok(oContent._applySuggestionAcc.calledWith(4), "_applySuggestionAcc called");
 
 					oCondition = Condition.createItemCondition("I1", "myItem1");
-					oValueHelp.fireTypeaheadSuggested({condition: oCondition, filterValue: "I", itemId: "myItem", caseSensitive: false});
+					oValueHelp.fireTypeaheadSuggested({condition: oCondition, filterValue: "I", itemId: "myItem", items: 5, caseSensitive: false});
 					assert.equal(oContent._$input.val(), "I1", "Output text");
 					assert.equal(oContent._$input.cursorPos(), 1, "CursorPosition");
 					assert.equal(oContent.getFocusDomRef().selectionStart, 1, "Selection start");
 					assert.equal(oContent.getFocusDomRef().selectionEnd, 2, "Selection end");
+					assert.ok(oContent._applySuggestionAcc.calledWith(5), "_applySuggestionAcc called");
 
 					oField.setDisplay(FieldDisplay.ValueDescription); // destroys and creates new content
 					await nextUIUpdate();
 					aContent = oField.getAggregation("_content");
 					// eslint-disable-next-line require-atomic-updates
 					oContent = aContent && aContent.length > 0 && aContent[0];
+					sinon.spy(oContent, "_applySuggestionAcc");
 					oContent.focus();
 					oContent._$input.val("I");
 					oContent.fireLiveChange({ value: "I" });
 
 					setTimeout(function() { // to wait for Promises and opening
 						oCondition = Condition.createItemCondition("I1", "Item1");
-						oValueHelp.fireTypeaheadSuggested({condition: oCondition, filterValue: "I", itemId: "myItem", caseSensitive: false});
+						oValueHelp.fireTypeaheadSuggested({condition: oCondition, filterValue: "I", itemId: "myItem", items: 6, caseSensitive: false});
 						assert.equal(oContent._$input.val(), "I1", "Output text");
 						assert.equal(oContent._$input.cursorPos(), 1, "CursorPosition");
 						assert.equal(oContent.getFocusDomRef().selectionStart, 1, "Selection start");
 						assert.equal(oContent.getFocusDomRef().selectionEnd, 2, "Selection end");
+						assert.ok(oContent._applySuggestionAcc.calledWith(6), "_applySuggestionAcc called");
 
 						oContent._$input.val("It");
 						oContent.fireLiveChange({ value: "It" });
 
 						setTimeout(function() { // to wait for Promises and opening
-							oValueHelp.fireTypeaheadSuggested({condition: oCondition, filterValue: "I", itemId: "myItem", caseSensitive: false}); // outdated FilterValue
+							oValueHelp.fireTypeaheadSuggested({condition: oCondition, filterValue: "I", itemId: "myItem", items: 7, caseSensitive: false}); // outdated FilterValue
 							assert.equal(oContent._$input.val(), "It", "Output text");
 							assert.equal(oContent._$input.cursorPos(), 2, "CursorPosition");
 							assert.equal(oContent.getFocusDomRef().selectionStart, 2, "Selection start");
 							assert.equal(oContent.getFocusDomRef().selectionEnd, 2, "Selection end");
+							assert.ok(oContent._applySuggestionAcc.calledWith(7), "_applySuggestionAcc called");
 
-							oValueHelp.fireTypeaheadSuggested({condition: oCondition, filterValue: "It", itemId: "myItem", caseSensitive: false}); // now description must be used
+							oValueHelp.fireTypeaheadSuggested({condition: oCondition, filterValue: "It", itemId: "myItem", items: 8, caseSensitive: false}); // now description must be used
 							assert.equal(oContent._$input.val(), "Item1", "Output text");
 							assert.equal(oContent._$input.cursorPos(), 2, "CursorPosition");
 							assert.equal(oContent.getFocusDomRef().selectionStart, 2, "Selection start");
 							assert.equal(oContent.getFocusDomRef().selectionEnd, 5, "Selection end");
+							assert.ok(oContent._applySuggestionAcc.calledWith(8), "_applySuggestionAcc called");
 
 							oContent._$input.val("Ite");
 							oContent.fireLiveChange({ value: "Ite" }); // don't wait for debounce
-							oValueHelp.fireTypeaheadSuggested({condition: oCondition, filterValue: "It", itemId: "myItem", caseSensitive: false}); // outdated
+							oValueHelp.fireTypeaheadSuggested({condition: oCondition, filterValue: "It", itemId: "myItem", items: 9, caseSensitive: false}); // outdated
 							assert.equal(oContent._$input.val(), "Ite", "Output text");
 							assert.equal(oContent._$input.cursorPos(), 3, "CursorPosition");
 							assert.equal(oContent.getFocusDomRef().selectionStart, 3, "Selection start");
 							assert.equal(oContent.getFocusDomRef().selectionEnd, 3, "Selection end");
-
-							oValueHelp.close(); // to be sure
-							oIconContent.destroy();
+							assert.ok(oContent._applySuggestionAcc.calledWith(9), "_applySuggestionAcc called");
 
 							oContent._$input.val("=I");
 							oContent.fireLiveChange({ value: "=I" }); // with operator symbol autocomplete should be deactivated
 
 							setTimeout(function() { // to wait for Promises and opening
 								oCondition = Condition.createItemCondition("I1", "Item1");
-								oValueHelp.fireTypeaheadSuggested({condition: oCondition, filterValue: "I", itemId: "myItem", caseSensitive: false});
+								oValueHelp.fireTypeaheadSuggested({condition: oCondition, filterValue: "I", itemId: "myItem", items: 10, caseSensitive: false});
 								assert.equal(oContent._$input.val(), "=I", "Output text");
 								assert.equal(oContent._$input.cursorPos(), 2, "CursorPosition");
 								assert.equal(oContent.getFocusDomRef().selectionStart, 2, "Selection start");
 								assert.equal(oContent.getFocusDomRef().selectionEnd, 2, "Selection end");
+								assert.ok(oContent._applySuggestionAcc.calledWith(10), "_applySuggestionAcc called");
 
-								oValueHelp.close(); // to be sure
-								oIconContent.destroy();
-								fnDone();
+								oContent._$input.val("XYZ");
+								oContent.fireLiveChange({ value: "XYZ" }); // with operator symbol autocomplete should be deactivated
+
+								setTimeout(function() { // to wait for Promises and opening
+									oValueHelp.fireTypeaheadSuggested({condition: null, filterValue: "XYZ", itemId: null, items: 0, caseSensitive: false});
+									assert.equal(oContent._$input.val(), "XYZ", "Output text");
+									assert.equal(oContent._$input.cursorPos(), 3, "CursorPosition");
+									assert.equal(oContent.getFocusDomRef().selectionStart, 3, "Selection start");
+									assert.equal(oContent.getFocusDomRef().selectionEnd, 3, "Selection end");
+									assert.ok(oContent._applySuggestionAcc.calledWith(0), "_applySuggestionAcc called");
+
+									oValueHelp.close(); // to be sure
+									oIconContent.destroy();
+									fnDone();
+								}, 400);
 							}, 400);
 						}, 400);
 					}, 400);

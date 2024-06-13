@@ -274,12 +274,14 @@ sap.ui.define([
 		let oCondition;
 		let sFilterValue;
 		let sItemId;
+		let iItems;
 		let bTypeaheadCaseSensitive;
 		oFixedList.attachEvent("typeaheadSuggested", function(oEvent) {
 			iTypeaheadSuggested++;
 			oCondition = oEvent.getParameter("condition");
 			sFilterValue = oEvent.getParameter("filterValue");
 			sItemId = oEvent.getParameter("itemId");
+			iItems = oEvent.getParameter("items");
 			bTypeaheadCaseSensitive = oEvent.getParameter("caseSensitive");
 		});
 
@@ -314,6 +316,7 @@ sap.ui.define([
 				assert.deepEqual(oCondition, Condition.createItemCondition("I2", "My Item   2"), "typeaheadSuggested event condition");
 				assert.equal(sFilterValue, "M", "typeaheadSuggested event filterValue");
 				assert.equal(sItemId, oItem.getId(), "typeaheadSuggested event itemId");
+				assert.equal(iItems, 3, "typeaheadSuggested event items");
 				assert.equal(bTypeaheadCaseSensitive, true, "typeaheadSuggested event caseSensitive");
 
 				fnDone();

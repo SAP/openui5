@@ -74,12 +74,14 @@ sap.ui.define([
 	let oTypeaheadCondition;
 	let sTypeaheadFilterValue;
 	let sTypeaheadItemId;
+	let iTypeaheadItems;
 	let bTypeaheadCaseSensitive;
 	const _myTypeaheadHandler = function(oEvent) {
 		iTypeaheadSuggested++;
 		oTypeaheadCondition = oEvent.getParameter("condition");
 		sTypeaheadFilterValue = oEvent.getParameter("filterValue");
 		sTypeaheadItemId = oEvent.getParameter("itemId");
+		iTypeaheadItems = oEvent.getParameter("items");
 		bTypeaheadCaseSensitive = oEvent.getParameter("caseSensitive");
 	};
 
@@ -129,6 +131,7 @@ sap.ui.define([
 		oTypeaheadCondition = undefined;
 		sTypeaheadFilterValue = undefined;
 		sTypeaheadItemId = undefined;
+		iTypeaheadItems = undefined;
 		bTypeaheadCaseSensitive = undefined;
 		iClosed = 0;
 		if (oModel) {
@@ -653,12 +656,13 @@ sap.ui.define([
 	QUnit.test("typeahedSuggested event", function(assert) {
 
 		const oCondition = Condition.createItemCondition("kéy", "Description");
-		oContainer.fireTypeaheadSuggested({condition: oCondition, filterValue: "k", itemId: "I1", caseSensitive: true});
+		oContainer.fireTypeaheadSuggested({condition: oCondition, filterValue: "k", itemId: "I1", items: 3, caseSensitive: true});
 
 		assert.equal(iTypeaheadSuggested, 1, "TypeahedSuggested Event fired");
 		assert.deepEqual(oTypeaheadCondition, oCondition, "Typeahead condition");
 		assert.equal(sTypeaheadFilterValue, "k", "Typeahead filterValue");
 		assert.equal(sTypeaheadItemId, "I1", "Typeahead itemId");
+		assert.equal(iTypeaheadItems, 3, "Typeahead items");
 		assert.equal(bTypeaheadCaseSensitive, true, "Typeahead caseSensitive");
 
 	});

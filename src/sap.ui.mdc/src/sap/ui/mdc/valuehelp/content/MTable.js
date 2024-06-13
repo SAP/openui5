@@ -835,21 +835,30 @@ sap.ui.define([
 		const sFilterValue = this.getFilterValue();
 		const bUseFirstMatch = this.getUseFirstMatch();
 
-		if (bTypeahead && bUseFirstMatch && aItems?.length && sFilterValue) {
+		if (bTypeahead && bUseFirstMatch && sFilterValue) {
 			const oValueHelpDelegate = this.getValueHelpDelegate();
-			const oFirstMatchContext = oValueHelpDelegate.getFirstMatch(this.getValueHelpInstance(), this, {
-				value: this.getFilterValue(),
-				checkDescription: !!this.getDescriptionPath(),
-				control: this.getControl(),
-				caseSensitive: this.getCaseSensitive()
-			});
+			const bCaseSensitive = oValueHelpDelegate.isFilteringCaseSensitive(this.getValueHelpInstance(), this);
+			let oFirstMatchContext;
+			let iItems = 0;
+
+			if (aItems?.length) {
+				oFirstMatchContext = oValueHelpDelegate.getFirstMatch(this.getValueHelpInstance(), this, {
+					value: this.getFilterValue(),
+					checkDescription: !!this.getDescriptionPath(),
+					control: this.getControl(),
+					caseSensitive: this.getCaseSensitive()
+				});
+				const aRelevantContexts = this.getListBinding()?.getCurrentContexts();
+				iItems = aRelevantContexts?.length;
+			}
 
 			if (oFirstMatchContext) {
 				const oValueHelpItem = this.getItemFromContext(oFirstMatchContext);
-				const bCaseSensitive = oValueHelpDelegate.isFilteringCaseSensitive(this.getValueHelpInstance(), this);
 				const oCondition = this.createCondition(oValueHelpItem.key, oValueHelpItem.description, oValueHelpItem.payload);
 				const oListItem = aItems.find((oItem) => this._getListItemBindingContext(oItem) === oFirstMatchContext);
-				this.fireTypeaheadSuggested({ condition: oCondition, filterValue: sFilterValue, itemId: oListItem?.getId(), caseSensitive: bCaseSensitive });
+				this.fireTypeaheadSuggested({ condition: oCondition, filterValue: sFilterValue, itemId: oListItem?.getId(), items: iItems, caseSensitive: bCaseSensitive });
+			} else { // nothing found for autocomplete
+				this.fireTypeaheadSuggested({ condition: null, filterValue: sFilterValue, itemId: null, items: iItems, caseSensitive: bCaseSensitive });
 			}
 		}
 	};

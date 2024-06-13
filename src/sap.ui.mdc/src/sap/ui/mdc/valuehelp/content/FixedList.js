@@ -188,7 +188,9 @@ sap.ui.define([
 				const oListItem = aItems.find((oItem) => oItem.getBindingContext("$help") === oFirstMatchContext);
 				const oOriginalItem = _getOriginalItem.call(this, oListItem);
 				const oCondition = this.createCondition(_getKey.call(this, oOriginalItem), _getText.call(this, oOriginalItem));
-				this.fireTypeaheadSuggested({ condition: oCondition, filterValue: sFilterValue, itemId: oListItem?.getId(), caseSensitive: bCaseSensitive });
+				const aRelevantContexts = this.getListBinding()?.getCurrentContexts();
+				const iItems = aRelevantContexts?.length;
+				this.fireTypeaheadSuggested({ condition: oCondition, filterValue: sFilterValue, itemId: oListItem?.getId(), items: iItems, caseSensitive: bCaseSensitive });
 			}
 		}
 	};

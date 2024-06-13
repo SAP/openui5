@@ -443,12 +443,14 @@ sap.ui.define([
 		let oCondition;
 		let sFilterValue;
 		let sItemId;
+		let iItems;
 		let bTypeaheadCaseSensitive;
 		oMTable.attachEvent("typeaheadSuggested", function(oEvent) {
 			iTypeaheadSuggested++;
 			oCondition = oEvent.getParameter("condition");
 			sFilterValue = oEvent.getParameter("filterValue");
 			sItemId = oEvent.getParameter("itemId");
+			iItems = oEvent.getParameter("items");
 			bTypeaheadCaseSensitive = oEvent.getParameter("caseSensitive");
 		});
 
@@ -478,11 +480,26 @@ sap.ui.define([
 			assert.deepEqual(oCondition, Condition.createItemCondition("I3", "X-Item 3"), "typeaheadSuggested event condition");
 			assert.equal(sFilterValue, "X", "typeaheadSuggested event filterValue");
 			assert.equal(sItemId, aItems[2].getId(), "typeaheadSuggested event itemId");
+			assert.equal(iItems, 3, "typeaheadSuggested event items");
 			assert.equal(bTypeaheadCaseSensitive, false, "typeaheadSuggested event caseSensitive");
 
-			oContainer.getValueHelpDelegate.restore();
-			ValueHelpDelegateV4.updateBinding.restore();
-			fnDone();
+			oMTable.setFilterValue("ABC");
+			assert.ok(oListBinding.changeParameters.calledWith({$search: "ABC"}), "ListBinding.changeParameters called with search string");
+
+			iTypeaheadSuggested = 0;
+			setTimeout( function(){ // as waiting for Promise
+				// as JSOM-Model does not support $search all items are returned, but test for first of result
+				assert.equal(iTypeaheadSuggested, 1, "typeaheadSuggested event fired");
+				assert.notOk(oCondition, "typeaheadSuggested event no condition");
+				assert.equal(sFilterValue, "ABC", "typeaheadSuggested event filterValue");
+				assert.notOk(sItemId, "typeaheadSuggested event no itemId");
+				assert.equal(iItems, 3, "typeaheadSuggested event items");
+				assert.equal(bTypeaheadCaseSensitive, false, "typeaheadSuggested event caseSensitive");
+
+				oContainer.getValueHelpDelegate.restore();
+				ValueHelpDelegateV4.updateBinding.restore();
+				fnDone();
+			}, 0);
 		}, 0);
 
 	});
