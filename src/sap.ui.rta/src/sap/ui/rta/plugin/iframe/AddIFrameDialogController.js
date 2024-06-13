@@ -343,6 +343,10 @@ sap.ui.define([
 				Object.keys(mSettings).forEach(function(sFieldName) {
 					if (sFieldName === "frameWidth" || sFieldName === "frameHeight") {
 						this._importIFrameSize(sFieldName, mSettings[sFieldName]);
+					// legacy iframes do not have advancedSettings properties so we need to skip the setProperty
+					// on the json model to not overwrite the default values with undefined
+					} else if (sFieldName === "advancedSettings" && !mSettings[sFieldName]) {
+						return;
 					} else {
 						this._oJSONModel.setProperty(`/${sFieldName}/value`, mSettings[sFieldName]);
 					}
