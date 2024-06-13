@@ -51,22 +51,22 @@ sap.ui.define([
 	const ValueState = CoreLibrary.ValueState;
 
 	QUnit.module("FilterBar", {
-		beforeEach: function () {
+		beforeEach: function() {
 			oFilterBar = new FilterBar({
 				delegate: { name: "test-resources/sap/ui/mdc/qunit/filterbar/UnitTestMetadataDelegate", payload: { modelName: undefined, collectionName: "test" } }
 			});
 
-			if (FlexUtil.handleChanges.restore){
+			if (FlexUtil.handleChanges.restore) {
 				FlexUtil.handleChanges.restore();
 			}
 		},
-		afterEach: function () {
+		afterEach: function() {
 			oFilterBar.destroy();
 			oFilterBar = undefined;
 		}
 	});
 
-	QUnit.test("instanciable", function (assert) {
+	QUnit.test("instanciable", function(assert) {
 		assert.ok(oFilterBar);
 	});
 
@@ -80,11 +80,11 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("getConditionModelName ", function (assert) {
+	QUnit.test("getConditionModelName ", function(assert) {
 		assert.equal(oFilterBar.getConditionModelName(), FilterBarBase.CONDITION_MODEL_NAME);
 	});
 
-	QUnit.test("get GO button", function (assert) {
+	QUnit.test("get GO button", function(assert) {
 		const oButton = oFilterBar._btnSearch;
 		assert.ok(oButton);
 		assert.ok(oButton.getVisible());
@@ -104,11 +104,11 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("get ADAPT button", function (assert) {
+	QUnit.test("get ADAPT button", function(assert) {
 		const oButton = oFilterBar._btnAdapt;
 		assert.ok(oButton);
 		assert.ok(!oButton.getVisible());
-		assert.equal(oButton.getAriaHasPopup(), HasPopup.ListBox, "button has correct ariaHasPopup value");
+		assert.equal(oButton.getAriaHasPopup(), HasPopup.Dialog, "button has correct ariaHasPopup value");
 
 		oFilterBar.setP13nMode(["Value"]);
 		assert.ok(!oButton.getVisible());
@@ -124,7 +124,7 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("check liveMode property", function (assert) {
+	QUnit.test("check liveMode property", function(assert) {
 		const oButton = oFilterBar._btnSearch;
 		assert.ok(oButton);
 
@@ -141,7 +141,7 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("check Clear button visibility", function (assert) {
+	QUnit.test("check Clear button visibility", function(assert) {
 		const oButton = oFilterBar._btnClear;
 		assert.ok(oButton);
 		assert.ok(!oButton.getVisible(), "Clear by default not visible");
@@ -150,12 +150,12 @@ sap.ui.define([
 		assert.ok(oButton.getVisible(), "Clear is now visible");
 	});
 
-	QUnit.test("check Clear delegate call", async function (assert) {
+	QUnit.test("check Clear delegate call", async function(assert) {
 		const done = assert.async();
-		sinon.spy(oFilterBar,"onClear");
+		sinon.spy(oFilterBar, "onClear");
 
 		oFilterBar.initControlDelegate().then(function(oDelegate) {
-			sinon.stub(oDelegate, "clearFilters" ).callsFake(function() {
+			sinon.stub(oDelegate, "clearFilters").callsFake(function() {
 				assert.ok(oFilterBar.onClear.called, "onClear called");
 				assert.ok(true, "'clearFilters' on delegate called");
 				done();
@@ -177,7 +177,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("check p13nMode property", function (assert) {
+	QUnit.test("check p13nMode property", function(assert) {
 
 		assert.ok(!oFilterBar.getP13nMode());
 		assert.ok(!oFilterBar._getP13nModeItem());
@@ -190,7 +190,7 @@ sap.ui.define([
 		assert.ok(oFilterBar._getP13nModeItem());
 	});
 
-	QUnit.test("add Filter", function (assert) {
+	QUnit.test("add Filter", function(assert) {
 		const oFilterField = new FilterField({ conditions: "{cm>/conditions/filter}" });
 
 		assert.equal(oFilterBar.getFilterItems().length, 0);
@@ -203,7 +203,7 @@ sap.ui.define([
 		oFilterField.destroy();
 	});
 
-	QUnit.test("remove Filter", function (assert) {
+	QUnit.test("remove Filter", function(assert) {
 		const oFilterField = new FilterField();
 		oFilterBar.addFilterItem(oFilterField);
 
@@ -218,20 +218,20 @@ sap.ui.define([
 		oFilterField.destroy();
 	});
 
-	QUnit.test("check condition model", function (assert) {
-        sinon.stub(oFilterBar, "awaitPropertyHelper").returns(Promise.resolve());
+	QUnit.test("check condition model", function(assert) {
+		sinon.stub(oFilterBar, "awaitPropertyHelper").returns(Promise.resolve());
 		sinon.spy(oFilterBar, "_applyInitialFilterConditions");
 
 		const oModel = oFilterBar.getModel("$filters");
 		assert.ok(oModel);
 		assert.ok(oModel.isA("sap.ui.mdc.condition.ConditionModel"));
 
-		return oFilterBar.initialized().then(function () {
+		return oFilterBar.initialized().then(function() {
 			assert.ok(oFilterBar._applyInitialFilterConditions.called);
 		});
 	});
 
-	QUnit.test("check condition model with prefilled conditions", function (assert) {
+	QUnit.test("check condition model with prefilled conditions", function(assert) {
 
 		const oFB = new FilterBar({
 			delegate: {
@@ -245,11 +245,11 @@ sap.ui.define([
 			}
 		});
 
-		sinon.stub(oFB, "_getPropertyByName").returns({name: "fieldPath1", typeConfig: ODataTypeMap.getTypeConfig("sap.ui.model.type.String")});
+		sinon.stub(oFB, "_getPropertyByName").returns({ name: "fieldPath1", typeConfig: ODataTypeMap.getTypeConfig("sap.ui.model.type.String") });
 		sinon.spy(oFB, "_applyInitialFilterConditions");
-        sinon.stub(oFB, "awaitPropertyHelper").returns(Promise.resolve());
+		sinon.stub(oFB, "awaitPropertyHelper").returns(Promise.resolve());
 
-		return oFB.initialized().then(function () {
+		return oFB.initialized().then(function() {
 
 			const oModel = oFilterBar.getModel("$filters");
 			assert.ok(oModel);
@@ -261,7 +261,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("check api setFocusOnFirstErroneousField", function (assert) {
+	QUnit.test("check api setFocusOnFirstErroneousField", function(assert) {
 		const oFilterField0 = new FilterField({ conditions: "{cm>/conditions/filter0}" });
 		const oFilterField1 = new FilterField({ conditions: "{cm>/conditions/filter1}" });
 		const oFilterField2 = new FilterField({ conditions: "{cm>/conditions/filter2}" });
@@ -290,10 +290,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("FilterBar adaptation", {
-		beforeEach: function () {
+		beforeEach: function() {
 			return this.createTestObjects();
 		},
-		afterEach: function () {
+		afterEach: function() {
 			this.destroyTestObjects();
 		},
 		createTestObjects: function(aPropertyInfo) {
@@ -305,7 +305,7 @@ sap.ui.define([
 				delegate: { name: "test-resources/sap/ui/mdc/qunit/filterbar/UnitTestMetadataDelegate", payload: { modelName: undefined, collectionName: "test" } }
 			});
 
-			if (FlexUtil.handleChanges.restore){
+			if (FlexUtil.handleChanges.restore) {
 				FlexUtil.handleChanges.restore();
 			}
 		},
@@ -315,7 +315,7 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("check _handleConditionModelPropertyChange", function (assert) {
+	QUnit.test("check _handleConditionModelPropertyChange", function(assert) {
 		const oCM = oFilterBar.getModel("$filters");
 
 		let fResolve;
@@ -340,7 +340,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("check getAssignedFiltersText", function (assert) {
+	QUnit.test("check getAssignedFiltersText", function(assert) {
 
 		const sLanguage = Localization.getLanguage();
 		Localization.setLanguage("EN");
@@ -376,9 +376,9 @@ sap.ui.define([
 		assert.equal(mText.filtersTextExpanded, "No filters active");
 
 
-		oFilterBar.initializedWithMetadata().then(function () {
+		oFilterBar.initializedWithMetadata().then(function() {
 
-		sinon.stub(oFilterBar, "_stringifyConditions").returns([Condition.createCondition(OperatorName.EQ, ["foo"])]);
+			sinon.stub(oFilterBar, "_stringifyConditions").returns([Condition.createCondition(OperatorName.EQ, ["foo"])]);
 
 
 			const oCM = oFilterBar._getConditionModel();
@@ -445,15 +445,15 @@ sap.ui.define([
 			});
 		});
 	});
-	QUnit.test("check fetchProperties", function (assert) {
+	QUnit.test("check fetchProperties", function(assert) {
 		const done = assert.async();
 
-		oFilterBar._waitForMetadata().then(function () {
+		oFilterBar._waitForMetadata().then(function() {
 			assert.ok(oFilterBar.getControlDelegate());
 			sinon.stub(oFilterBar.getControlDelegate(), "fetchProperties").returns(Promise.resolve([{}, {}]));
 
 
-			oFilterBar.getControlDelegate().fetchProperties(oFilterBar).then(function (aProperties) {
+			oFilterBar.getControlDelegate().fetchProperties(oFilterBar).then(function(aProperties) {
 				assert.ok(aProperties);
 				assert.equal(aProperties.length, 2);
 
@@ -463,17 +463,17 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("check delegate", function (assert) {
+	QUnit.test("check delegate", function(assert) {
 		const done = assert.async();
 
-		oFilterBar._waitForMetadata().then(function () {
+		oFilterBar._waitForMetadata().then(function() {
 			assert.ok(oFilterBar.getDelegate());
 			assert.equal(oFilterBar.getDelegate().name, "test-resources/sap/ui/mdc/qunit/filterbar/UnitTestMetadataDelegate");
 			done();
 		});
 	});
 
-	QUnit.test("check _getNonHiddenPropertyByName ", function (assert) {
+	QUnit.test("check _getNonHiddenPropertyByName ", function(assert) {
 		const oProperty1 = {
 			name: "key1",
 			label: "Key1",
@@ -495,7 +495,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("check setBasicSearchField", function (assert) {
+	QUnit.test("check setBasicSearchField", function(assert) {
 
 		const oBasicSearchField = new FilterField({ conditions: "{cm>/conditions/$search}" });
 		oFilterBar.setBasicSearchField(oBasicSearchField);
@@ -509,7 +509,7 @@ sap.ui.define([
 		oBasicSearchField.destroy();
 	});
 
-	QUnit.test("check _getFilterItemLayout", function (assert) {
+	QUnit.test("check _getFilterItemLayout", function(assert) {
 		const oFilterField = new FilterField();
 		oFilterBar.addFilterItem(oFilterField);
 
@@ -520,7 +520,7 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("create single valued change", function (assert) {
+	QUnit.test("create single valued change", function(assert) {
 		const done = assert.async();
 		this.destroyTestObjects();
 
@@ -534,7 +534,7 @@ sap.ui.define([
 
 		let aResultingChanges = [];
 
-		const fnStoreChanges = function (aChanges) {
+		const fnStoreChanges = function(aChanges) {
 			aResultingChanges = aResultingChanges.concat(aChanges);
 		};
 
@@ -542,18 +542,18 @@ sap.ui.define([
 
 		oFilterBar.setP13nMode(["Value"]);
 
-		oFilterBar._waitForMetadata().then(function () {
+		oFilterBar._waitForMetadata().then(function() {
 			sinon.stub(oFilterBar.getPropertyHelper(), "getProperties").returns(aPropertyInfo);
 			assert.ok(oFilterBar.getControlDelegate());
 			const oPromise = oFilterBar.getControlDelegate().addItem(oFilterBar, "key");
 
-			oPromise.then(function (oFilterField) {
+			oPromise.then(function(oFilterField) {
 
 				let iCount = 0;
 
 				const oTestHandler = TestModificationHandler.getInstance();
 
-				oTestHandler.processChanges = function(aChanges){
+				oTestHandler.processChanges = function(aChanges) {
 					iCount++;
 					FlexUtil.handleChanges(aChanges);
 
@@ -578,7 +578,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("create single valued change with inParameters", function (assert) {
+	QUnit.test("create single valued change with inParameters", function(assert) {
 		const done = assert.async();
 
 		const aPropertyInfo = [{
@@ -601,16 +601,16 @@ sap.ui.define([
 
 		oFilterBar.setP13nMode(["Value"]);
 
-		oFilterBar._retrieveMetadata().then(function () {
+		oFilterBar._retrieveMetadata().then(function() {
 			sinon.stub(oFilterBar.getPropertyHelper(), "getProperties").returns(aPropertyInfo);
 			assert.ok(oFilterBar.getControlDelegate());
 			const oPromise = oFilterBar.getControlDelegate().addItem(oFilterBar, "key");
 
-			oPromise.then(function (oFilterField) {
+			oPromise.then(function(oFilterField) {
 
 				const oTestHandler = TestModificationHandler.getInstance();
 
-				oTestHandler.processChanges = function(aChanges){
+				oTestHandler.processChanges = function(aChanges) {
 					assert.ok(aChanges);
 					assert.equal(aChanges.length, 1); // condition model does not know about filterExpression="Single"...
 
@@ -630,7 +630,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("create multi valued change", function (assert) {
+	QUnit.test("create multi valued change", function(assert) {
 
 		const aPropertyInfo = [{
 			name: "key",
@@ -643,7 +643,7 @@ sap.ui.define([
 		this.createTestObjects(aPropertyInfo);
 
 		let aResultingChanges = [];
-		const fnStoreChanges = function (aChanges) {
+		const fnStoreChanges = function(aChanges) {
 			aResultingChanges = aChanges;
 		};
 
@@ -658,20 +658,20 @@ sap.ui.define([
 
 		oFilterBar.setP13nMode(["Value"]);
 
-		oFilterBar._retrieveMetadata().then(function () {
+		oFilterBar._retrieveMetadata().then(function() {
 			sinon.stub(oFilterBar.getPropertyHelper(), "getProperties").returns(aPropertyInfo);
 
 			assert.ok(oFilterBar.getControlDelegate());
 
 			const oPromise = oFilterBar.getControlDelegate().addItem(oFilterBar, "key");
 
-			oPromise.then(function (oFilterField) {
+			oPromise.then(function(oFilterField) {
 
 				let iCount = 0;
 
 				const oTestHandler = TestModificationHandler.getInstance();
 
-				oTestHandler.processChanges = function(aChanges){
+				oTestHandler.processChanges = function(aChanges) {
 					iCount++;
 					FlexUtil.handleChanges(aChanges);
 					if (iCount === 2) {
@@ -695,7 +695,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("create multi valued change with 'filterConditions'", function (assert) {
+	QUnit.test("create multi valued change with 'filterConditions'", function(assert) {
 		const done = assert.async();
 
 		const aPropertyInfo = [{
@@ -712,7 +712,7 @@ sap.ui.define([
 		oFilterBar.setP13nMode(["Value"]);
 
 		let aResultingChanges = [];
-		const fnStoreChanges = function (aChanges) {
+		const fnStoreChanges = function(aChanges) {
 			aResultingChanges = aChanges;
 		};
 
@@ -724,13 +724,13 @@ sap.ui.define([
 		});
 		sinon.stub(FlexUtil, 'handleChanges').callsFake(fnStoreChanges);
 
-		oFilterBar._waitForMetadata().then(function () {
+		oFilterBar._waitForMetadata().then(function() {
 			sinon.stub(oFilterBar.getPropertyHelper(), "getProperties").returns(aPropertyInfo);
-				oFilterBar._oInitialFiltersAppliedPromise.then(function () {
+			oFilterBar._oInitialFiltersAppliedPromise.then(function() {
 
 				const oTestHandler = TestModificationHandler.getInstance();
 
-				oTestHandler.processChanges = function(aChanges){
+				oTestHandler.processChanges = function(aChanges) {
 
 					FlexUtil.handleChanges(aChanges);
 
@@ -739,7 +739,7 @@ sap.ui.define([
 					assert.equal(aResultingChanges[0].selectorElement, oFilterBar);
 					assert.equal(aResultingChanges[0].changeSpecificData.changeType, "addCondition");
 					assert.equal(aResultingChanges[0].changeSpecificData.content.name, "key");
-					assert.deepEqual(aResultingChanges[0].changeSpecificData.content.condition, { operator: OperatorName.EQ, values: ["foo"], validated: undefined});
+					assert.deepEqual(aResultingChanges[0].changeSpecificData.content.condition, { operator: OperatorName.EQ, values: ["foo"], validated: undefined });
 					done();
 					return Promise.resolve(aChanges);
 				};
@@ -752,7 +752,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("create multi valued change with inParameters", function (assert) {
+	QUnit.test("create multi valued change with inParameters", function(assert) {
 
 		const aPropertyInfo = [{
 			name: "key",
@@ -773,7 +773,7 @@ sap.ui.define([
 		this.createTestObjects(aPropertyInfo);
 
 		let aResultingChanges = [];
-		const fnStoreChanges = function (aChanges) {
+		const fnStoreChanges = function(aChanges) {
 			aResultingChanges = aResultingChanges.concat(aChanges);
 		};
 
@@ -786,18 +786,18 @@ sap.ui.define([
 
 		oFilterBar.setP13nMode(["Value"]);
 
-		oFilterBar._waitForMetadata().then(function () {
+		oFilterBar._waitForMetadata().then(function() {
 			sinon.stub(oFilterBar.getPropertyHelper(), "getProperties").returns(aPropertyInfo);
 			assert.ok(oFilterBar.getControlDelegate());
 			const oPromise = oFilterBar.getControlDelegate().addItem(oFilterBar, "key");
 
-			oPromise.then(function (oFilterField) {
+			oPromise.then(function(oFilterField) {
 				oFilterBar.getEngine().createChanges({
 					control: oFilterBar,
 					suppressAppliance: true,
 					key: "Filter",
-					state: {"key": [Condition.createCondition(OperatorName.EQ, ["foo"], { "in1": "IN1_TEST", "in2": "IN2_TEST" })]}
-				}).then(function(aChanges){
+					state: { "key": [Condition.createCondition(OperatorName.EQ, ["foo"], { "in1": "IN1_TEST", "in2": "IN2_TEST" })] }
+				}).then(function(aChanges) {
 
 					assert.equal(aChanges.length, 1);
 
@@ -810,7 +810,7 @@ sap.ui.define([
 
 					const oTestHandler = TestModificationHandler.getInstance();
 
-					oTestHandler.processChanges = function(aCallbackChanges){
+					oTestHandler.processChanges = function(aCallbackChanges) {
 
 						assert.equal(aChanges.length, 1);
 						assert.equal(aCallbackChanges.length, 1);
@@ -830,7 +830,7 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("check filterItems observer", function (assert) {
+	QUnit.test("check filterItems observer", function(assert) {
 
 		const oProperty1 = {
 			name: "key1",
@@ -857,14 +857,14 @@ sap.ui.define([
 		sinon.spy(oFilterBar, "_setFocusOnFilterField");
 
 
-		oFilterBar._waitForMetadata().then(function () {
+		oFilterBar._waitForMetadata().then(function() {
 			assert.ok(oFilterBar.getControlDelegate());
 			sinon.stub(oFilterBar.getControlDelegate(), "fetchProperties").returns(Promise.resolve([oProperty1, oProperty2]));
 
 			aPromise.push(oFilterBar.getControlDelegate().addItem(oFilterBar, oProperty1.name));
 			aPromise.push(oFilterBar.getControlDelegate().addItem(oFilterBar, oProperty2.name));
 
-			Promise.all(aPromise).then(function (aFilterFields) {
+			Promise.all(aPromise).then(function(aFilterFields) {
 
 				oFilterBar.addFilterItem(aFilterFields[0]);
 				oFilterBar.addFilterItem(aFilterFields[1]);
@@ -886,7 +886,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("check filterItems observer with simulated adapation filterbar", function (assert) {
+	QUnit.test("check filterItems observer with simulated adapation filterbar", function(assert) {
 
 		const oProperty1 = {
 			name: "key1",
@@ -913,7 +913,7 @@ sap.ui.define([
 		sinon.spy(oFilterBar, "_setFocusOnFilterField");
 
 
-		oFilterBar._waitForMetadata().then(function () {
+		oFilterBar._waitForMetadata().then(function() {
 			assert.ok(oFilterBar.getControlDelegate());
 			sinon.stub(oFilterBar.getControlDelegate(), "fetchProperties").returns(Promise.resolve([oProperty1, oProperty2]));
 
@@ -923,7 +923,7 @@ sap.ui.define([
 			aPromise.push(oFilterBar.getControlDelegate().addItem(oFilterBar, oProperty1.name));
 			aPromise.push(oFilterBar.getControlDelegate().addItem(oFilterBar, oProperty2.name));
 
-			Promise.all(aPromise).then(function (aFilterFields) {
+			Promise.all(aPromise).then(function(aFilterFields) {
 
 				oFilterBar.addFilterItem(aFilterFields[0]);
 				oFilterBar.addFilterItem(aFilterFields[1]);
@@ -947,30 +947,30 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("check _onModifications (e.g. change appliance)", function (assert) {
+	QUnit.test("check _onModifications (e.g. change appliance)", function(assert) {
 
 		let fResolve;
-		const oPromise = new Promise(function (resolve) {
+		const oPromise = new Promise(function(resolve) {
 			fResolve = resolve;
 		});
 
 		sinon.stub(oFilterBar.getEngine(), "_processChanges").returns(oPromise);
-        sinon.stub(oFilterBar, "awaitPropertyHelper").returns(Promise.resolve());
+		sinon.stub(oFilterBar, "awaitPropertyHelper").returns(Promise.resolve());
 
 		//--> add a personalization change
 		oFilterBar._addConditionChange({
 			key1: [
-				{operator: OperatorName.EQ, values: ["Test"]}
+				{ operator: OperatorName.EQ, values: ["Test"] }
 			]
 		});
 
 		const done = assert.async();
 		sinon.spy(oFilterBar, "_reportModelChange");
 
-		oFilterBar.initialized().then(function () {
+		oFilterBar.initialized().then(function() {
 			fResolve();
-			oPromise.then(function () {
-				setTimeout(function () { // required for condition model....
+			oPromise.then(function() {
+				setTimeout(function() { // required for condition model....
 					assert.ok(oFilterBar._reportModelChange.calledOnce);
 					oFilterBar.getEngine()._processChanges.restore();
 					done();
@@ -979,7 +979,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("check properties based on filterItems", function (assert) {
+	QUnit.test("check properties based on filterItems", function(assert) {
 		const oProperty1 = {
 			name: "key1",
 			label: "Key1",
@@ -993,8 +993,8 @@ sap.ui.define([
 		};
 
 		const oDelegate = {
-			fetchProperties: function () { return Promise.resolve([oProperty1, oProperty2]); },
-			getTypeMap: function() {return ODataTypeMap;}
+			fetchProperties: function() { return Promise.resolve([oProperty1, oProperty2]); },
+			getTypeMap: function() { return ODataTypeMap; }
 		};
 
 		const oMyModel = new JSONModel();
@@ -1015,7 +1015,7 @@ sap.ui.define([
 
 		oFB.setModel(oMyModel, "Model");
 
-		oFB.initializedWithMetadata().then(function () {
+		oFB.initializedWithMetadata().then(function() {
 			const aProperties = oFB.getPropertyInfoSet();
 			assert.ok(aProperties);
 			assert.equal(aProperties.length, 2);
@@ -1026,12 +1026,12 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("check getConditions", function (assert) {
+	QUnit.test("check getConditions", function(assert) {
 
 		sinon.stub(oFilterBar, "_applyFilterConditionsChanges");
 		sinon.stub(oFilterBar, "_getPropertyByName").returns(true);
 		const mCondition = { "fieldPath1": [Condition.createCondition(OperatorName.EQ, ["foo"])] };
-		oFilterBar.setP13nMode(["Item","Value"]);
+		oFilterBar.setP13nMode(["Item", "Value"]);
 		oFilterBar.setFilterConditions(mCondition);
 
 		const oConditions = oFilterBar.getConditions();
@@ -1041,7 +1041,7 @@ sap.ui.define([
 		assert.equal(oConditions["fieldPath1"][0].values[0], "foo");
 	});
 
-	QUnit.test("check getCurrentState corresponding to p13nMode", function (assert) {
+	QUnit.test("check getCurrentState corresponding to p13nMode", function(assert) {
 
 		oFilterBar.setP13nMode(undefined);
 		let oCurrentState = oFilterBar.getCurrentState();
@@ -1064,9 +1064,9 @@ sap.ui.define([
 		assert.ok(oCurrentState.items, "current state should react on every p13nMode");
 	});
 
-	QUnit.test("check getCurrentState should return a copy", function (assert) {
+	QUnit.test("check getCurrentState should return a copy", function(assert) {
 
-		const oContent = { "name": [{operator: OperatorName.Contains, values: ["value"], validated: ConditionValidated.NotValidated}]};
+		const oContent = { "name": [{ operator: OperatorName.Contains, values: ["value"], validated: ConditionValidated.NotValidated }] };
 
 		oFilterBar.setFilterConditions(merge({}, oContent));
 		let oCurrentState = oFilterBar.getCurrentState();
@@ -1078,7 +1078,7 @@ sap.ui.define([
 		assert.deepEqual(oCurrentState.filter, oContent, "current state should not change");
 	});
 
-	QUnit.test("check getSearch", function (assert) {
+	QUnit.test("check getSearch", function(assert) {
 		assert.strictEqual(oFilterBar.getSearch(), "", "No search text initially");
 
 		oFilterBar.setInternalConditions({ "$search": [{ values: ["foo"] }] }); // simulate typed in text on basic search
@@ -1090,7 +1090,7 @@ sap.ui.define([
 		assert.strictEqual(oFilterBar.getSearch(), "", "No search text present in CM");
 	});
 
-	QUnit.test("prepare the AdaptFiltersDialog", function (assert) {
+	QUnit.test("prepare the AdaptFiltersDialog", function(assert) {
 
 		const done = assert.async();
 
@@ -1120,9 +1120,9 @@ sap.ui.define([
 		oFilterBar.awaitControlDelegate().then(function(oDelegate) {
 			sinon.stub(oDelegate, "fetchProperties").returns(Promise.resolve([oProperty1, oProperty2, oProperty3]));
 
-			oFilterBar.initialized().then(function () {
+			oFilterBar.initialized().then(function() {
 
-				oFilterBar.onAdaptFilters().then(function (oP13nContainer) {
+				oFilterBar.onAdaptFilters().then(function(oP13nContainer) {
 					assert.ok(oP13nContainer, "panel has been created");
 					const oAdaptFiltersPanel = oP13nContainer.getContent()[0];
 					const aPanelItems = oAdaptFiltersPanel.getP13nData().items;
@@ -1143,7 +1143,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("check filter operators", function (assert) {
+	QUnit.test("check filter operators", function(assert) {
 
 		const oProperty1 = {
 			name: "key1",
@@ -1163,7 +1163,7 @@ sap.ui.define([
 
 		sinon.stub(oFilterBar, "getPropertyInfoSet").returns([oProperty1, oProperty2]);
 
-		oFilterBar._waitForMetadata().then(function () {
+		oFilterBar._waitForMetadata().then(function() {
 			const aPromises = [];
 
 			assert.ok(oFilterBar.getControlDelegate());
@@ -1172,7 +1172,7 @@ sap.ui.define([
 			aPromises.push(oFilterBar.getControlDelegate().addItem(oFilterBar, oProperty1.name));
 			aPromises.push(oFilterBar.getControlDelegate().addItem(oFilterBar, oProperty2.name));
 
-			Promise.all(aPromises).then(function (aFilterFields) {
+			Promise.all(aPromises).then(function(aFilterFields) {
 
 				assert.ok(aFilterFields[0]);
 				const aOp1 = aFilterFields[0].getOperators();
@@ -1191,7 +1191,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("check getAssignedFilterNames", function (assert) {
+	QUnit.test("check getAssignedFilterNames", function(assert) {
 
 		const oProperty1 = {
 			name: "key1",
@@ -1256,7 +1256,7 @@ sap.ui.define([
 		Localization.setLanguage(sLanguage);
 	});
 
-	QUnit.test("check _handleConditionModelPropertyChange with navigation paths", function (assert) {
+	QUnit.test("check _handleConditionModelPropertyChange with navigation paths", function(assert) {
 
 		const oEvent1 = {
 			getParameter: function(s) {
@@ -1295,7 +1295,7 @@ sap.ui.define([
 		oFilterBar.getEngine().createChanges.restore();
 	});
 
-	QUnit.test("PropertyInfo with display property", function (assert) {
+	QUnit.test("PropertyInfo with display property", function(assert) {
 
 		const oProperty = {
 			name: "key",
@@ -1304,7 +1304,7 @@ sap.ui.define([
 		};
 
 		let aResultingChanges = [];
-		const fnStoreChanges = function (aChanges) {
+		const fnStoreChanges = function(aChanges) {
 			aResultingChanges = aResultingChanges.concat(aChanges);
 		};
 
@@ -1315,14 +1315,14 @@ sap.ui.define([
 
 		oFilterBar.setP13nMode(["Value"]);
 
-		oFilterBar._waitForMetadata().then(function () {
+		oFilterBar._waitForMetadata().then(function() {
 
 			assert.ok(oFilterBar.getControlDelegate());
 			sinon.stub(oFilterBar.getControlDelegate(), "fetchProperties").returns(Promise.resolve([oProperty]));
 
 			const oPromise = oFilterBar.getControlDelegate().addItem(oFilterBar, oProperty.name);
 
-			oPromise.then(function (oFilterField) {
+			oPromise.then(function(oFilterField) {
 				assert.ok(oFilterField.getDisplay(), oProperty.display);
 
 				oFilterBar.getControlDelegate().fetchProperties.restore();
@@ -1333,7 +1333,7 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("check validate with not yet complete change appliance", function (assert) {
+	QUnit.test("check validate with not yet complete change appliance", function(assert) {
 
 		let fnFunction = null;
 		const oPromise = new Promise(function(resolve) {
@@ -1346,7 +1346,7 @@ sap.ui.define([
 		sinon.spy(oFilterBar, "_handleOngoingChangeAppliance");
 
 		oFilterBar._aOngoingChangeAppliance = [oPromise];
-		setTimeout(function() {fnFunction();}, 200);
+		setTimeout(function() { fnFunction(); }, 200);
 
 		return oFilterBar.triggerSearch().then(function() {
 			assert.ok(oFilterBar._handleOngoingChangeAppliance.calledOnce);
@@ -1364,7 +1364,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("check suspendSelection", function (assert) {
+	QUnit.test("check suspendSelection", function(assert) {
 
 		let fResolvePromise, oWaitPromise = new Promise(function(resolve) {
 			fResolvePromise = resolve;
@@ -1418,7 +1418,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("check suspendSelection with ignoreQueuing", function (assert) {
+	QUnit.test("check suspendSelection with ignoreQueuing", function(assert) {
 
 		const done = assert.async();
 
@@ -1470,35 +1470,35 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("check _stringifyConditions", function (assert) {
+	QUnit.test("check _stringifyConditions", function(assert) {
 		const oProperty = {
-		   name: "test",
-		   typeConfig: ODataTypeMap.getTypeConfig("sap.ui.model.type.String")
+			name: "test",
+			typeConfig: ODataTypeMap.getTypeConfig("sap.ui.model.type.String")
 		};
 		sinon.stub(oFilterBar, "getTypeMap").returns(ODataTypeMap);
 		sinon.stub(oFilterBar, "_getPropertyByName").returns(oProperty);
 
-		let aConditions = [{operator: OperatorName.EQ, values: ["string"], isEmpty: false, validated: ConditionValidated.NotValidated}];
+		let aConditions = [{ operator: OperatorName.EQ, values: ["string"], isEmpty: false, validated: ConditionValidated.NotValidated }];
 
 		let aStringifiedConditions = oFilterBar._stringifyConditions("test", aConditions);
 		assert.ok(aStringifiedConditions.length, 1);
-		assert.deepEqual(aStringifiedConditions, [{operator: OperatorName.EQ, values: ["string"], validated: ConditionValidated.NotValidated}]);
+		assert.deepEqual(aStringifiedConditions, [{ operator: OperatorName.EQ, values: ["string"], validated: ConditionValidated.NotValidated }]);
 
-		aConditions = [{operator: OperatorName.TODAY, values: [], isEmpty: false, validated: ConditionValidated.NotValidated}];
+		aConditions = [{ operator: OperatorName.TODAY, values: [], isEmpty: false, validated: ConditionValidated.NotValidated }];
 		aStringifiedConditions = oFilterBar._stringifyConditions("test", aConditions);
 		assert.ok(aStringifiedConditions.length, 1);
-		assert.deepEqual(aStringifiedConditions, [{operator: OperatorName.TODAY, values: [], validated: ConditionValidated.NotValidated}]);
+		assert.deepEqual(aStringifiedConditions, [{ operator: OperatorName.TODAY, values: [], validated: ConditionValidated.NotValidated }]);
 
 	});
 
-	QUnit.test("check filtersChange with variants", function (assert) {
+	QUnit.test("check filtersChange with variants", function(assert) {
 		const done = assert.async();
 		sinon.stub(oFilterBar, "getAssignedFilterNames").returns([]);
 
-		oFilterBar.initialized().then(function () {
+		oFilterBar.initialized().then(function() {
 
 			let nCount = 0;
-			oFilterBar.attachFiltersChanged(function (oEvent) {
+			oFilterBar.attachFiltersChanged(function(oEvent) {
 				nCount++; // once triggered from initial handling
 				const bConditionBased = oEvent.getParameter("conditionsBased");
 				if (!bConditionBased) {
@@ -1515,15 +1515,15 @@ sap.ui.define([
 
 			// conditionBase = true; usual variantSwitch
 			oFilterBar._handleVariantSwitch({});
-			oFilterBar._reportModelChange({triggerFilterUpdate: true}); //usually this would happen through an according flex change in _onModifications
+			oFilterBar._reportModelChange({ triggerFilterUpdate: true }); //usually this would happen through an according flex change in _onModifications
 
 			// conditionBase = false; variantSwitch after SaveAs; changes not from FB
-			oFilterBar._handleVariantSwitch({createScenario: "saveAs"});
-			oFilterBar._reportModelChange({triggerFilterUpdate: true}); //usually this would happen through an according flex change in _onModifications
+			oFilterBar._handleVariantSwitch({ createScenario: "saveAs" });
+			oFilterBar._reportModelChange({ triggerFilterUpdate: true }); //usually this would happen through an according flex change in _onModifications
 
 			// conditionBased = false; variantSwitch after SaveAs; changes from FB
-			oFilterBar._handleVariantSwitch({createScenario: "saveAs"});
-			oFilterBar._reportModelChange({triggerFilterUpdate: true}); //usually this would happen through an according flex change in _onModifications
+			oFilterBar._handleVariantSwitch({ createScenario: "saveAs" });
+			oFilterBar._reportModelChange({ triggerFilterUpdate: true }); //usually this would happen through an according flex change in _onModifications
 		});
 
 	});

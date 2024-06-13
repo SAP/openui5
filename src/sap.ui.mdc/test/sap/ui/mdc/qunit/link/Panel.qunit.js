@@ -14,9 +14,12 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/base/Event",
 	"sap/m/Link",
-	"sap/ui/core/Lib"
-], function(layoutLibrary, Panel, PanelItem, Icon, Engine, nextUIUpdate, Text, Link, LinkItem, JSONModel, jQuery, Event, MLink, Library) {
+	"sap/ui/core/Lib",
+	"sap/ui/core/library"
+], function(layoutLibrary, Panel, PanelItem, Icon, Engine, nextUIUpdate, Text, Link, LinkItem, JSONModel, jQuery, Event, MLink, Library, CoreLibrary) {
 	"use strict";
+
+	const { HasPopup } = CoreLibrary.aria;
 
 	QUnit.module("sap.ui.mdc.link.Panel: API", {
 		beforeEach: function() {
@@ -630,6 +633,7 @@ sap.ui.define([
 		});
 
 		assert.equal(oPanel._getPersonalizationButton().getVisible(), false, "personalization buttons visibility set to false");
+		assert.equal(oPanel._getPersonalizationButton().getAriaHasPopup(), HasPopup.Dialog, "personalization button has correct ariaHasPopup value");
 	});
 
 	QUnit.test("check if seperator is visible", async function(assert) {
