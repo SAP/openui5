@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define([], function () {
+sap.ui.define(["sap/ui/base/DataType"], function (DataType) {
 	"use strict";
 
 	/**
@@ -285,6 +285,8 @@ sap.ui.define([], function () {
 		 */
 		User2: "tnt-User2"
 	};
+
+	DataType.registerEnum("sap.tnt.IllustratedMessageType", IllustratedMessageType);
 
 	return IllustratedMessageType;
 });
