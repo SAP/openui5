@@ -2253,13 +2253,6 @@ sap.ui.define([
 
 		oTargetSubSection = oSection instanceof ObjectPageSubSection ? oSection : this._getFirstVisibleSubSection(oSection);
 
-		if (this._bHeaderInTitleArea && !this._shouldPreserveHeaderInTitleArea() && !this._bAllContentFitsContainer) {
-			this._moveHeaderToContentArea();
-			this._toggleHeaderTitle(false /* snap */);
-			this._bHeaderExpanded = false;
-			this._updateToggleHeaderVisualIndicators();
-		}
-
 		iOffset = iOffset || 0;
 
 		oSection._expandSection();
@@ -2270,6 +2263,13 @@ sap.ui.define([
 		bAnimatedScroll = bAnimationsEnabled && iDuration > 0;
 
 		var iScrollTo = this._computeScrollPosition(oSection);
+
+		if (iScrollTo > this._getSnapPosition() && this._bHeaderInTitleArea && !this._shouldPreserveHeaderInTitleArea() && !this._bAllContentFitsContainer) {
+			this._moveHeaderToContentArea();
+			this._toggleHeaderTitle(false /* snap */);
+			this._bHeaderExpanded = false;
+			this._updateToggleHeaderVisualIndicators();
+		}
 
 		if (this._sCurrentScrollId != sId || bRedirectScroll) {
 			this._sCurrentScrollId = sId;
@@ -2386,7 +2386,7 @@ sap.ui.define([
 	ObjectPageLayout.prototype._computeScrollPosition = function (oTargetSection) {
 
 		var iScrollTo = this._oSectionInfo[oTargetSection.getId()].positionTop,
-			bExpandedMode = !this._bStickyAnchorBar;
+			bExpandedMode = this._bHeaderExpanded;
 
 		if (bExpandedMode && this._isFirstVisibleSectionBase(oTargetSection)) { // preserve expanded header if no need to stick
 			iScrollTo = 0;
@@ -3586,7 +3586,9 @@ sap.ui.define([
 		// [i.e. offset by the same amount of pixels as the value of <code>this._iHeaderContentPaddingBottom</code>.
 		// Or both (1) and (2):
 		// => we snap earlier to respect both offsets
-		iSnapPosition -= Math.max(iTitleHeightDelta, this._iHeaderContentPaddingBottom);
+		if (iSnapPosition) {
+			iSnapPosition -= Math.max(iTitleHeightDelta, this._iHeaderContentPaddingBottom);
+		}
 
 		return iSnapPosition;
 	};
