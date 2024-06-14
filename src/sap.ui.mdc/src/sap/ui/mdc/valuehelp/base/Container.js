@@ -74,6 +74,9 @@ sap.ui.define([
 			events: {
 				/**
 				 * This event is fired if the selected condition has changed.
+				 *
+				 * @private
+				 * @ui5-restricted sap.ui.mdc.ValueHelp
 				 */
 				select: {
 					parameters: {
@@ -91,6 +94,9 @@ sap.ui.define([
 				},
 				/**
 				 * This event is fired if a change of the value help is confirmed.
+				 *
+				 * @private
+				 * @ui5-restricted sap.ui.mdc.ValueHelp
 				 */
 				confirm: {
 					parameters: {
@@ -102,6 +108,9 @@ sap.ui.define([
 				},
 				/**
 				 * This event is fired if the value help is opened.
+				 *
+				 * @private
+				 * @ui5-restricted sap.ui.mdc.ValueHelp
 				 */
 				opened: {
 					parameters: {
@@ -113,14 +122,23 @@ sap.ui.define([
 				},
 				/**
 				 * This event is fired if the value help is closed.
+				 *
+				 * @private
+				 * @ui5-restricted sap.ui.mdc.ValueHelp
 				 */
 				closed: {},
 				/**
 				 * This event is fired if the change is cancelled.
+				 *
+				 * @private
+				 * @ui5-restricted sap.ui.mdc.ValueHelp
 				 */
 				cancel: {},
 				/**
 				 * This event is fired if the container requests the delegate content.
+				 *
+				 * @private
+				 * @ui5-restricted sap.ui.mdc.ValueHelp
 				 */
 				requestDelegateContent: {
 					parameters: {
@@ -132,10 +150,16 @@ sap.ui.define([
 				},
 				/**
 				 * This event is fired if the value help should switch to dialog mode.
+				 *
+				 * @private
+				 * @ui5-restricted sap.ui.mdc.ValueHelp
 				 */
 				requestSwitchToDialog: {},
 				/**
 				 * This event is fired if a navigation has been executed in the content of the container.
+				 *
+				 * @private
+				 * @ui5-restricted sap.ui.mdc.ValueHelp
 				 */
 				navigated: {
 					parameters: {
@@ -157,6 +181,9 @@ sap.ui.define([
 				},
 				/**
 				 * This event is fired after a suggested item has been found for a type-ahead.
+				 *
+				 * @private
+				 * @ui5-restricted sap.ui.mdc.ValueHelp
 				 * @since 1.120.0
 				 */
 				typeaheadSuggested: {
