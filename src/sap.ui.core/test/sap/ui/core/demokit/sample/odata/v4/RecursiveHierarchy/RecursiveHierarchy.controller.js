@@ -10,20 +10,23 @@ sap.ui.define([
 
 	return Controller.extend("sap.ui.core.sample.odata.v4.RecursiveHierarchy.RecursiveHierarchy", {
 		create : async function (sId, oParentContext, bFilteredOut) {
-			const oBinding = oParentContext?.getBinding() ?? this.byId(sId).getBinding("rows");
+			const oTable = this.byId(sId);
+			const oBinding = oParentContext?.getBinding() ?? oTable.getBinding("rows");
 			try {
 				const oContext = oBinding.create({
 					"@$ui5.node.parent" : oParentContext,
 					STATUS : bFilteredOut ? "Out" : ""
 				}, /*bSkipRefresh*/true);
 				await oContext.created();
+				this.scrollTo(oContext, oTable);
 			} catch (oError) {
 				MessageBox.alert(oError.message, {icon : MessageBox.Icon.ERROR, title : "Error"});
 			}
 		},
 
 		onCreate : function (oEvent, bFilteredOut) {
-			this.create("n/a", oEvent.getSource().getBindingContext(), bFilteredOut);
+			const sId = oEvent.getSource().getParent().getParent().getParent().getId();
+			this.create(sId, oEvent.getSource().getBindingContext(), bFilteredOut);
 		},
 
 		onCreateRoot : function (_oEvent, bFilteredOut) {
@@ -55,6 +58,9 @@ sap.ui.define([
 						: parseFloat(sExpandTo || "3"), // Note: parseInt("1E16") === 1
 					hierarchyQualifier : "OrgChart"
 				};
+				if (oUriParameters.has("createInPlace")) {
+					this._oAggregation.createInPlace = true;
+				}
 				const sTreeTable = oUriParameters.get("TreeTable");
 				const sVisibleRowCount = TestUtils.retrieveData( // controlled by OPA
 						"sap.ui.core.sample.odata.v4.RecursiveHierarchy.visibleRowCount")
@@ -207,12 +213,7 @@ sap.ui.define([
 
 				await oSibling.move({nextSibling : oNode, parent : oParent});
 
-				if (oNode.getIndex()
-						>= oTable.getFirstVisibleRow() + oTable.getRowMode().getRowCount()) {
-					// make sure moved node is visible
-					oTable.setFirstVisibleRow(
-						oNode.getIndex() - oTable.getRowMode().getRowCount() + 1);
-				}
+				this.scrollTo(oNode, oTable);
 			} catch (oError) {
 				MessageBox.alert(oError.message, {icon : MessageBox.Icon.ERROR, title : "Error"});
 			} finally {
@@ -230,20 +231,13 @@ sap.ui.define([
 				const oTable = oEvent.getSource().getParent().getParent().getParent();
 				oNode.setSelected(true); // MUST NOT make any difference here
 
-				// eslint-disable-next-line no-inner-declarations
-				function scrollTo(iIndex) {
-					if (iIndex < oTable.getFirstVisibleRow()) {
-						oTable.setFirstVisibleRow(iIndex);
-					}
-				}
-
 				const [oParent, oSibling] = await Promise.all([
 					oNode.requestParent(),
 					oNode.requestSibling(-1)
 				]);
 
 				if (!oSibling) {
-					scrollTo(oParent.getIndex());
+					this.scrollTo(oParent, oTable);
 					MessageBox.alert("Cannot move up",
 						{icon : MessageBox.Icon.INFORMATION, title : "Already first sibling"});
 					return;
@@ -252,7 +246,7 @@ sap.ui.define([
 				await oNode.move({nextSibling : oSibling, parent : oParent});
 
 				// make sure moved node is visible
-				scrollTo(oNode.getIndex());
+				this.scrollTo(oNode, oTable);
 			} catch (oError) {
 				MessageBox.alert(oError.message, {icon : MessageBox.Icon.ERROR, title : "Error"});
 			} finally {
@@ -302,6 +296,18 @@ sap.ui.define([
 			} else {
 				oBinding.refresh();
 			}
+		},
+
+		scrollTo : function (oNode, oTable) {
+			const iIndex = oNode.getIndex();
+			const iFirstVisibleRow = oTable.getFirstVisibleRow();
+			const iRowCount = oTable.getRowMode().getRowCount();
+
+			if (iIndex < iFirstVisibleRow) {
+				oTable.setFirstVisibleRow(iIndex);
+			} else if (iIndex >= iFirstVisibleRow + iRowCount) {
+				oTable.setFirstVisibleRow(iIndex - iRowCount + 1);
+			} // else: node is already visible
 		}
 	});
 });
