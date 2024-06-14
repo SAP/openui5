@@ -359,6 +359,17 @@ sap.ui.define([
 
 	};
 
+	FormContainer.prototype.onThemeChanged = function() {
+		_setExpanderIcon.call(this);
+	};
+
+	function _getIconUrl(sParamName) {
+		return Parameters.get({
+			name: [sParamName],
+			_restrictedParseUrls: true
+		});
+	}
+
 	function _setExpanderIcon(){
 
 		if (!this._oExpandButton) {
@@ -368,13 +379,13 @@ sap.ui.define([
 		var sIcon, sIconHovered, sText, sTooltip;
 
 		if (this.getExpanded()) {
-			sIcon = Parameters._getThemeImage('_sap_ui_layout_Form_FormContainerColImageURL');
-			sIconHovered = Parameters._getThemeImage('_sap_ui_layout_Form_FormContainerColImageDownURL');
+			sIcon = _getIconUrl('_sap_ui_layout_Form_FormContainerColImageURL');
+			sIconHovered = _getIconUrl('_sap_ui_layout_Form_FormContainerColImageDownURL');
 			sText = "-";
 			sTooltip = this._rb.getText("FORM_COLLAPSE");
 		} else {
-			sIcon = Parameters._getThemeImage('_sap_ui_layout_Form_FormContainerExpImageURL');
-			sIconHovered = Parameters._getThemeImage('_sap_ui_layout_Form_FormContainerExpImageDownURL');
+			sIcon = _getIconUrl('_sap_ui_layout_Form_FormContainerExpImageURL');
+			sIconHovered = _getIconUrl('_sap_ui_layout_Form_FormContainerExpImageDownURL');
 			sText = "+";
 			sTooltip = this._rb.getText("FORM_EXPAND");
 		}

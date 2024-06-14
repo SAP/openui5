@@ -47,6 +47,17 @@ sap.ui.define([
 		/**
 		 * Resolves relative URLs in parameter values.
 		 * Only for inline-parameters.
+		 *
+		 * Parameters containing CSS URLs will automatically be resolved to the theme-specific location they originate from.
+		 *
+		 * Example:
+		 * A parameter for the "sap_horizon" theme will be resolved to a libraries "[library path...]/themes/sap_horizon" folder.
+		 * Relative URLs can resolve backwards, too, so given the sample above, a parameter value of <code>url('../my_logo.jpeg')</code>
+		 * will resolve to the "[library path...]/themes" folder.
+		 *
+		 * @param {string} sUrl the relative URL to resolve
+		 * @param {string} sThemeBaseUrl the theme base URL, pointing to the library that contains the parameter
+		 * @returns {string} the resolved URL in CSS URL notation
 		 */
 		function checkAndResolveRelativeUrl(sUrl, sThemeBaseUrl) {
 			var aMatch = rCssUrl.exec(sUrl);
@@ -606,7 +617,13 @@ sap.ui.define([
 		 * @public
 		 */
 		Parameters.get = function(vName, oElement) {
-			var sParamName, fnAsyncCallback, bAsync, aNames, iIndex;
+			let sParamName, fnAsyncCallback, bAsync, aNames, iIndex;
+
+			// Whether parameters containing CSS URLs should be parsed into regular URL strings,
+			// e.g. a parameter value of url('https://myapp.sample/image.jpeg') will be returned as "https://myapp.sample/image.jpeg".
+			// Empty strings as well as the special CSS value 'none' will be parsed to null.
+			let bParseUrls;
+
 			var findRegisteredCallback = function (oCallbackInfo) { return oCallbackInfo.callback === fnAsyncCallback; };
 
 			if (!sTheme) {
@@ -649,6 +666,7 @@ sap.ui.define([
 				}
 				oElement = vName.scopeElement;
 				fnAsyncCallback = vName.callback;
+				bParseUrls = vName._restrictedParseUrls || false;
 				aNames = typeof vName.name === "string" ? [vName.name] : vName.name;
 				bAsync = true;
 			}
@@ -673,7 +691,7 @@ sap.ui.define([
 				);
 			}
 
-			var resolveWithParameter, vResult;
+			var resolveWithParameter;
 			var lookForParameter = function (sName) {
 				if (oElement instanceof Element) {
 					return getParamForActiveScope(sName, oElement, bAsync);
@@ -689,17 +707,17 @@ sap.ui.define([
 				}
 			};
 
-			vResult = {};
+			const mResult = {};
 
 			for (var i = 0; i < aNames.length; i++) {
 				sParamName = aNames[i];
 				var sParamValue = lookForParameter(sParamName);
 				if (!bAsync || sParamValue) {
-					vResult[sParamName] = sParamValue;
+					mResult[sParamName] = sParamValue;
 				}
 			}
 
-			if (bAsync && fnAsyncCallback && Object.keys(vResult).length !== aNames.length) {
+			if (bAsync && fnAsyncCallback && Object.keys(mResult).length !== aNames.length) {
 				resolveWithParameter = function () {
 					Theming.detachApplied(resolveWithParameter);
 					var vParams = this.get({ // Don't pass callback again
@@ -727,8 +745,49 @@ sap.ui.define([
 				return undefined; // Don't return partial result in case we expect applied event.
 			}
 
-			return aNames.length === 1 ? vResult[aNames[0]] : vResult;
+			// parse CSS URL strings
+			// The URLs itself have been resolved at this point
+			if (bParseUrls) {
+				parseUrls(mResult);
+			}
+
+			// if only 1 parameter is requests we unwrap the results array
+			return aNames.length === 1 ? mResult[aNames[0]] : mResult;
 		};
+
+		/**
+		 * Checks the given map of parameters for CSS URLs and parses them to a regular string.
+		 * Modifies the mParams argument in place.
+		 *
+		 * In order to only retrieve resolved URL strings and not the CSS URL strings, we expose a restricted Parameters.get() option <code>_restrictedParseUrls</code>.
+		 *
+		 * A URL parameter value of '' (empty string) or "none" (standard CSS value) will result in <code>null</code>.
+		 * As with any other <code>Parameters.get()</code> call, a non-existent parameter will result in <code>undefined</code>.
+		 *
+		 * Usage in controls:
+		 *
+		 * @example <caption>Scenario 4: Parsing CSS URLs</caption>
+		 *   const sUrl = Parameters.get({
+		 *      name: ["sapUiUrlParam"],
+		 *      _restrictedParseUrls: true
+		 *   }) ?? "https://my.bootstrap.url/resource/my/lib/images/fallback.jpeg"; // fallback via nullish coalescing operator
+		 *
+		 * @param {object<string,string|undefined>} mParams a set of parameters that should be parsed for CSS URLs
+		 */
+		function parseUrls(mParams) {
+			for (const sKey in mParams) {
+				if (Object.hasOwn(mParams, sKey)) {
+					let sValue = mParams[sKey];
+					const match = rCssUrl.exec(sValue);
+					if (match) {
+						sValue = match[1];
+					} else if (sValue === "''" || sValue === "none") {
+						sValue = null;
+					}
+					mParams[sKey] = sValue;
+				}
+			}
+		}
 
 		/**
 		 *
@@ -796,6 +855,7 @@ sap.ui.define([
 		 * @private
 		 * @param {string} sParamName the theme parameter which contains the logo definition. If nothing is defined the parameter 'sapUiGlobalLogo' is used.
 		 * @param {boolean} bForce whether a valid URL should be returned even if there is no logo defined.
+		 * @deprecated
 		 */
 		Parameters._getThemeImage = function(sParamName, bForce) {
 			sParamName = sParamName || "sapUiGlobalLogo";
