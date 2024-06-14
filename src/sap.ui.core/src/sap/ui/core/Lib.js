@@ -293,8 +293,8 @@ sap.ui.define([
 		constructor: function(mSettings) {
 			BaseObject.call(this);
 
-			assert(typeof mSettings === "object", "A settings object must be given to the constructor of sap/ui/base/Library");
-			assert(typeof mSettings.name === "string" && mSettings.name, "The settings object that is given to the constructor of sap/ui/base/Library must contain a 'name' property which is a non-empty string");
+			assert(typeof mSettings === "object", "A settings object must be given to the constructor of sap/ui/core/Lib");
+			assert(typeof mSettings.name === "string" && mSettings.name, "The settings object that is given to the constructor of sap/ui/core/Lib must contain a 'name' property which is a non-empty string");
 
 			if (mSettings._key !== oConstructorKey) {
 				throw new Error("The constructor of sap/ui/core/Lib is restricted to the internal usage. To get an instance of Library with name '" + mSettings.name + "', use the static method 'get' from sap/ui/core/Lib instead.");
