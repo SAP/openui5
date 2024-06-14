@@ -3,6 +3,7 @@
 sap.ui.define([
 	"sap/base/util/restricted/_omit",
 	"sap/base/Log",
+	"sap/base/util/Deferred",
 	"sap/m/App",
 	"sap/m/Button",
 	"sap/ui/base/Event",
@@ -10,6 +11,7 @@ sap.ui.define([
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/BusyIndicator",
 	"sap/ui/core/ComponentContainer",
+	"sap/ui/core/Control",
 	"sap/ui/core/Lib",
 	"sap/ui/core/Manifest",
 	"sap/ui/core/UIComponent",
@@ -19,6 +21,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/controlVariants/URLHandler",
 	"sap/ui/fl/apply/_internal/controlVariants/Utils",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
+	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/Switcher",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
@@ -38,6 +41,7 @@ sap.ui.define([
 ], function(
 	_omit,
 	Log,
+	Deferred,
 	App,
 	Button,
 	Event,
@@ -45,6 +49,7 @@ sap.ui.define([
 	XMLView,
 	BusyIndicator,
 	ComponentContainer,
+	Control,
 	Lib,
 	Manifest,
 	UIComponent,
@@ -54,6 +59,7 @@ sap.ui.define([
 	URLHandler,
 	VariantUtil,
 	FlexObjectFactory,
+	States,
 	Switcher,
 	VariantManagementState,
 	FlexState,
@@ -143,6 +149,15 @@ sap.ui.define([
 				sandbox.spy(URLHandler, "initialize");
 				this.oDataSelectorUpdateSpy = sandbox.spy(VariantManagementState.getVariantManagementMap(), "addUpdateListener");
 
+				this.oPersistedUIChange = FlexObjectFactory.createUIChange({
+					id: "someUIChange",
+					selector: {
+						id: "someControlId"
+					},
+					layer: Layer.CUSTOMER,
+					variantReference: "variant1"
+				});
+				this.oPersistedUIChange.setProperty("state", States.LifecycleState.PERSISTED);
 				stubFlexObjectsSelector([
 					createVariant({
 						author: VariantUtil.DEFAULT_AUTHOR,
@@ -223,13 +238,15 @@ sap.ui.define([
 						content: {
 							executeOnSelect: true
 						}
-					})
+					}),
+					this.oPersistedUIChange
 				]);
 
 				this.oModel = new VariantModel({}, {
 					flexController: this.oFlexController,
 					appComponent: this.oComponent
 				});
+				this.oModel.oChangePersistence.addChangeAndUpdateDependencies(this.oModel.appComponent, this.oPersistedUIChange);
 				return this.oModel.initialize();
 			}.bind(this));
 		},
@@ -238,6 +255,8 @@ sap.ui.define([
 			FlexState.clearRuntimeSteadyObjects("MyComponent", "RTADemoAppMD");
 			VariantManagementState.getVariantManagementMap().clearCachedResult();
 			VariantManagementState.resetCurrentVariantReference();
+			this.oModel.oChangePersistence.removeDirtyChanges();
+			this.oModel.oChangePersistence.removeChange(this.oPersistedUIChange);
 			sandbox.restore();
 			this.oModel.destroy();
 			delete this.oFlexController;
@@ -2019,6 +2038,45 @@ sap.ui.define([
 				assert.strictEqual(oAddChangesStub.lastCall.args[0].length, 2, "then every change in the array was added");
 				assert.ok(oApplyChangeStub.calledTwice, "then every change in the array was applied");
 			});
+		});
+
+		QUnit.test("when calling switchVariant before registerToModel finished", async function(assert) {
+			assert.expect(2);
+			const oControl = new Control({id: "someControlId"});
+			this.oVariantManagement = new VariantManagement(sVMReference);
+
+			sandbox.stub(Reverter, "revertMultipleChanges").resolves();
+			const oChangeProcessingStub = sandbox.stub(this.oPersistedUIChange, "addChangeProcessingPromises");
+			const oInitializeDeferred = new Deferred();
+			// Simulate a delay during _waitForChangesToBeApplied
+			oChangeProcessingStub.callsFake(async () => {
+				// If the method is refactored and doesn't wait for change processing promises anymore,
+				// make sure to refactor this test accordingly
+				assert.ok(true, "then UIChange.addChangeProcessingPromises is called");
+
+				await oInitializeDeferred.promise;
+			});
+
+			// Leads to registerToModel
+			this.oVariantManagement.setModel(this.oModel, ControlVariantApplyAPI.getVariantModelName());
+			// Leads to switchVariant
+			this.oModel.updateCurrentVariant({
+				variantManagementReference: sVMReference,
+				newVariantReference: "variant0",
+				appComponent: this.oModel.appComponent
+			});
+
+			oInitializeDeferred.resolve();
+
+			await this.oModel._oVariantSwitchPromise;
+			assert.strictEqual(
+				this.oModel.oData[sVMReference].currentVariant,
+				"variant0",
+				"then the variant switch was successful"
+			);
+
+			this.oVariantManagement.destroy();
+			oControl.destroy();
 		});
 	});
 
