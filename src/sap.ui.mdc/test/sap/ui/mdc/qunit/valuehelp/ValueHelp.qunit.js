@@ -684,62 +684,61 @@ sap.ui.define([
 
 	QUnit.test("Selection handling", function(assert) {
 
-		// set
-		let aSelectConditions = [
-								 Condition.createCondition(OperatorName.EQ, ["X"]),
-								 Condition.createCondition(OperatorName.BT, ["A", "C"])
-								 ];
-		oContainer.fireSelect({type: ValueHelpSelectionType.Set, conditions: aSelectConditions});
-		let aConditions = oValueHelp.getConditions();
-		assert.deepEqual(aConditions, aSelectConditions, "Set: Selected condtions set on ValueHelp");
+		return oValueHelp.initControlDelegate().then(function () {
+			// set
+			let aSelectConditions = [
+				Condition.createCondition(OperatorName.EQ, ["X"]),
+				Condition.createCondition(OperatorName.BT, ["A", "C"])
+			];
+			oContainer.fireSelect({type: ValueHelpSelectionType.Set, conditions: aSelectConditions});
+			let aConditions = oValueHelp.getConditions();
+			assert.deepEqual(aConditions, aSelectConditions, "Set: Selected condtions set on ValueHelp");
 
-		// add
-		aSelectConditions = [
-							 Condition.createCondition(OperatorName.EQ, ["X"]),
-							 Condition.createCondition(OperatorName.EQ, ["Y"])
-							 ];
-		oContainer.fireSelect({type: ValueHelpSelectionType.Add, conditions: aSelectConditions});
-		let aCheckConditions = [
-								Condition.createCondition(OperatorName.EQ, ["X"]),
-								Condition.createCondition(OperatorName.BT, ["A", "C"]),
-								Condition.createCondition(OperatorName.EQ, ["X"]),
-								Condition.createCondition(OperatorName.EQ, ["Y"])
-								];
-		aConditions = oValueHelp.getConditions();
-		assert.deepEqual(aConditions, aCheckConditions, "Add: Conditions added");
+			// add
+			aSelectConditions = [
+					Condition.createCondition(OperatorName.EQ, ["X"]),
+					Condition.createCondition(OperatorName.EQ, ["Y"])
+					];
+			oContainer.fireSelect({type: ValueHelpSelectionType.Add, conditions: aSelectConditions});
+			let aCheckConditions = [
+					Condition.createCondition(OperatorName.EQ, ["X"]),
+					Condition.createCondition(OperatorName.BT, ["A", "C"]),
+					Condition.createCondition(OperatorName.EQ, ["Y"])
+					];
+			aConditions = oValueHelp.getConditions();
+			assert.deepEqual(aConditions, aCheckConditions, "Add: Conditions added");
 
-		// remove
-		aSelectConditions = [
-							 Condition.createCondition(OperatorName.EQ, ["X"])
-							 ];
-		oContainer.fireSelect({type: ValueHelpSelectionType.Remove, conditions: aSelectConditions});
-		aCheckConditions = [
-								Condition.createCondition(OperatorName.BT, ["A", "C"]),
-								Condition.createCondition(OperatorName.EQ, ["X"]),
-								Condition.createCondition(OperatorName.EQ, ["Y"])
-								];
-		aConditions = oValueHelp.getConditions();
-		assert.deepEqual(aConditions, aCheckConditions, "Remove: Condition removed");
+			// remove
+			aSelectConditions = [
+					Condition.createCondition(OperatorName.EQ, ["X"])
+					];
+			oContainer.fireSelect({type: ValueHelpSelectionType.Remove, conditions: aSelectConditions});
+			aCheckConditions = [
+					Condition.createCondition(OperatorName.BT, ["A", "C"]),
+					Condition.createCondition(OperatorName.EQ, ["Y"])
+					];
+			aConditions = oValueHelp.getConditions();
+			assert.deepEqual(aConditions, aCheckConditions, "Remove: Condition removed");
 
-		// singleSelection
-		oValueHelp.setConditions([]);
-		oValueHelp.setProperty("_config", {maxConditions: 1});
+			// singleSelection
+			oValueHelp.setConditions([]);
+			oValueHelp.setProperty("_config", {maxConditions: 1});
 
-		aSelectConditions = [
-							 Condition.createCondition(OperatorName.EQ, ["X"]),
-							 Condition.createCondition(OperatorName.EQ, ["Y"])
-							 ];
-		oContainer.fireSelect({type: ValueHelpSelectionType.Add, conditions: aSelectConditions});
-		aCheckConditions = [
-								Condition.createCondition(OperatorName.EQ, ["X"])
-								];
-		aConditions = oValueHelp.getConditions();
-		assert.deepEqual(aConditions, aCheckConditions, "SingleSelect - Add: Only first condition taken");
+			aSelectConditions = [
+					Condition.createCondition(OperatorName.EQ, ["X"]),
+					Condition.createCondition(OperatorName.EQ, ["Y"])
+					];
+			oContainer.fireSelect({type: ValueHelpSelectionType.Add, conditions: aSelectConditions});
+			aCheckConditions = [
+					Condition.createCondition(OperatorName.EQ, ["X"])
+					];
+			aConditions = oValueHelp.getConditions();
+			assert.deepEqual(aConditions, aCheckConditions, "SingleSelect - Add: Only first condition taken");
 
-		oContainer.fireSelect({type: ValueHelpSelectionType.Remove, conditions: []});
-		aConditions = oValueHelp.getConditions();
-		assert.deepEqual(aConditions, [], "SingleSelect - Remove: Condition removed");
-
+			oContainer.fireSelect({type: ValueHelpSelectionType.Remove, conditions: []});
+			aConditions = oValueHelp.getConditions();
+			assert.deepEqual(aConditions, [], "SingleSelect - Remove: Condition removed");
+		});
 	});
 
 	QUnit.test("Confirmation handling", function(assert) {
@@ -1138,15 +1137,17 @@ sap.ui.define([
 
 	QUnit.test("Selection handling", function(assert) {
 
-		// Just test event is processed, Details are tested in TypeAhead (there is no check for kind of content)
-		const aSelectConditions = [
-								 Condition.createCondition(OperatorName.EQ, ["X"]),
-								 Condition.createCondition(OperatorName.BT, ["A", "C"])
-								 ];
-		oContainer.fireSelect({type: ValueHelpSelectionType.Set, conditions: aSelectConditions});
-		const aConditions = oValueHelp.getConditions();
-		assert.deepEqual(aConditions, aSelectConditions, "Set: Selected condtions set on ValueHelp");
 
+		return oValueHelp.initControlDelegate().then(function () {
+			// Just test event is processed, Details are tested in TypeAhead (there is no check for kind of content)
+			const aSelectConditions = [
+				Condition.createCondition(OperatorName.EQ, ["X"]),
+				Condition.createCondition(OperatorName.BT, ["A", "C"])
+			];
+			oContainer.fireSelect({type: ValueHelpSelectionType.Set, conditions: aSelectConditions});
+			const aConditions = oValueHelp.getConditions();
+			assert.deepEqual(aConditions, aSelectConditions, "Set: Selected condtions set on ValueHelp");
+		});
 	});
 
 	QUnit.test("Confirmation handling", function(assert) {
