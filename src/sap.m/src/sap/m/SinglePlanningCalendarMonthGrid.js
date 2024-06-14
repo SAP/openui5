@@ -565,9 +565,9 @@ sap.ui.define([
 			}
 
 			if (oEvent.which === KeyCodes.SPACE || oEvent.which === KeyCodes.ENTER || bArrowNavigation) {
-				if (oEvent.which === KeyCodes.SPACE && !oEvent.shiftKey) {
+				if ((oEvent.which === KeyCodes.SPACE || oEvent.which === KeyCodes.ENTER) && !oEvent.shiftKey) {
 					this._fireSelectionEvent(oEvent);
-				} else if (oEvent.which === KeyCodes.SPACE && oEvent.shiftKey && bMultiDateSelection) {
+				} else if ((oEvent.which === KeyCodes.SPACE || oEvent.which === KeyCodes.ENTER) && oEvent.shiftKey && bMultiDateSelection) {
 					this._bCurrentWeekSelection = true;
 					this._fireSelectionEvent(oEvent);
 				} else if (bArrowNavigation && oEvent.shiftKey && bMultiDateSelection) {
@@ -577,9 +577,6 @@ sap.ui.define([
 
 				var oControl = this._findSrcControl(oEvent);
 				if (oControl && oControl.isA("sap.ui.unified.CalendarAppointment")) {
-					const oTarget = oEvent.target;
-					const bCtrlKeyOrMetaKey = oEvent.ctrlKey || oEvent.metaKey;
-					this._fireAppointmentSelection(oTarget, oControl, bCtrlKeyOrMetaKey);
 					var sBundleKey = oControl.getSelected() ? "APPOINTMENT_SELECTED" : "APPOINTMENT_UNSELECTED";
 					this._oInvisibleMessage.announce(this._oUnifiedRB.getText(sBundleKey), InvisibleMessageMode.Polite);
 				}
@@ -640,7 +637,7 @@ sap.ui.define([
 			const bMultiDateSelection = SinglePlanningCalendarSelectionMode.MultiSelect === this.getDateSelectionMode();
 			const bSingleDateSelect = !this._bMultiDateSelectWithArrow && !this._bCurrentWeekSelection;
 
-			if ((oEvent.which === KeyCodes.SPACE && !oEvent.shiftKey) || (!bMultiDateSelection && !(oEvent.metaKey || oEvent.ctrlKey))) {
+			if (((oEvent.which === KeyCodes.SPACE || oEvent.which === KeyCodes.ENTER) && !oEvent.shiftKey) || (!bMultiDateSelection && !(oEvent.metaKey || oEvent.ctrlKey))) {
 				this.removeAllAggregation("selectedDates");
 			}
 
@@ -720,6 +717,7 @@ sap.ui.define([
 				bWeekNumberSelect = oTarget && oTarget.classList.contains("sapMSPCMonthWeekNumber");
 
 			if ((oSrcControl && oSrcControl.isA("sap.m.SinglePlanningCalendarMonthGrid") && bIsCell && !bIsLink) || bWeekNumberSelect) {
+				this._lastPressedAppointment = undefined;
 				this._fireGridCellSelectionEvent(oEvent, bWeekNumberSelect);
 				// deselect all appointments
 				this.fireAppointmentSelect({
@@ -727,6 +725,7 @@ sap.ui.define([
 					appointments: this._toggleAppointmentSelection(undefined, true)
 				});
 			} else if (oSrcControl && oSrcControl.isA("sap.ui.unified.CalendarAppointment")) {
+				this._lastPressedAppointment = oSrcControl;
 				const bCtrlKeyOrMetaKey = oEvent.ctrlKey || oEvent.metaKey;
 				this._fireAppointmentSelection(oTarget, oSrcControl, bCtrlKeyOrMetaKey);
 			}
@@ -800,7 +799,6 @@ sap.ui.define([
 		 */
 		SinglePlanningCalendarMonthGrid.prototype._toggleAppointmentSelection = function (oAppointment, bRemoveOldSelection) {
 			var aChangedApps = [],
-				oAppointmentDomRef = oAppointment && oAppointment.getDomRef(),
 				aAppointments,
 				iAppointmentsLength,
 				i;
@@ -820,9 +818,6 @@ sap.ui.define([
 			if (oAppointment) {
 				oAppointment.setProperty("selected", !oAppointment.getSelected());
 				aChangedApps.push(oAppointment);
-				this._sSelectedAppointment = oAppointment.getSelected() && oAppointmentDomRef ? oAppointment : undefined;
-			} else {
-				this._sSelectedAppointment = undefined;
 			}
 
 			return aChangedApps;
@@ -1464,7 +1459,7 @@ sap.ui.define([
 		};
 
 		SinglePlanningCalendarMonthGrid.prototype.getFocusDomRef = function() {
-			return this._sSelectedAppointment ? this._sSelectedAppointment.getDomRef() : this._oItemNavigation.getFocusedDomRef();
+			return this._lastPressedAppointment ? this._lastPressedAppointment.getDomRef() : this._oItemNavigation.getFocusedDomRef();
 		};
 
 		return SinglePlanningCalendarMonthGrid;
