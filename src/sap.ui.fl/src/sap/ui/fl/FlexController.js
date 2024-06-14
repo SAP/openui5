@@ -7,56 +7,31 @@ sap.ui.define([
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/write/_internal/Versions",
 	"sap/ui/fl/apply/_internal/changes/Reverter",
-	"sap/ui/fl/apply/_internal/controlVariants/URLHandler",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
-	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
 	"sap/ui/core/util/reflection/JsControlTreeModifier"
 ], function(
 	Layer,
 	ChangePersistenceFactory,
 	Versions,
 	Reverter,
-	URLHandler,
 	States,
 	FlexState,
-	ControlVariantApplyAPI,
 	JsControlTreeModifier
 ) {
 	"use strict";
 
-	function revertChangesAndUpdateVariantModel(oComponent, bSkipUrlUpdate, aChanges) {
-		return Promise.resolve()
-		.then(function() {
-			if (aChanges.length !== 0) {
-				// Always revert changes in reverse order
-				aChanges.reverse();
-				return Reverter.revertMultipleChanges(aChanges, {
-					appComponent: oComponent,
-					modifier: JsControlTreeModifier,
-					reference: this._sComponentName
-				});
-			}
-			return undefined;
-		}.bind(this))
-		.then(function() {
-			if (oComponent) {
-				var oModel = oComponent.getModel(ControlVariantApplyAPI.getVariantModelName());
-				if (oModel) {
-					// Temporary fix, parameters generally should not be removed
-					if (!bSkipUrlUpdate) {
-						URLHandler.update({
-							parameters: [],
-							updateURL: true,
-							updateHashEntry: true,
-							model: oModel
-						});
-					}
-				}
-			}
-
-			return aChanges;
-		});
+	async function revertChangesAndUpdateVariantModel(oComponent, aChanges) {
+		if (aChanges.length !== 0) {
+			// Always revert changes in reverse order
+			aChanges.reverse();
+			await Reverter.revertMultipleChanges(aChanges, {
+				appComponent: oComponent,
+				modifier: JsControlTreeModifier,
+				reference: this._sComponentName
+			});
+		}
+		return aChanges;
 	}
 
 	/**
@@ -84,7 +59,7 @@ sap.ui.define([
 			var aLayersToReset = Object.values(Layer).filter(function(sLayerToCheck) {
 				return sLayerToCheck !== sLayer;
 			});
-			return this.removeDirtyChanges(aLayersToReset, oAppComponent, undefined, undefined, undefined, true);
+			return this.removeDirtyChanges(aLayersToReset, oAppComponent);
 		}
 		return Promise.resolve();
 	};
@@ -169,7 +144,7 @@ sap.ui.define([
 	 */
 	FlexController.prototype.resetChanges = function(sLayer, sGenerator, oComponent, aSelectorIds, aChangeTypes) {
 		return this._oChangePersistence.resetChanges(sLayer, sGenerator, aSelectorIds, aChangeTypes)
-		.then(revertChangesAndUpdateVariantModel.bind(this, oComponent, undefined));
+		.then(revertChangesAndUpdateVariantModel.bind(this, oComponent));
 	};
 
 	/**
@@ -180,13 +155,12 @@ sap.ui.define([
 	 * @param {sap.ui.core.Control} [oControl] - Control for which the changes should be removed
 	 * @param {string} [sGenerator] - Generator of changes (optional)
 	 * @param {string[]} [aChangeTypes] - Types of changes (optional)
-	 * @param {boolean} [bSkipUrlUpdate] - Whether to skip soft reload during variant model update
 	 *
 	 * @returns {Promise} Promise that resolves after the deletion took place
 	 */
-	FlexController.prototype.removeDirtyChanges = function(vLayer, oComponent, oControl, sGenerator, aChangeTypes, bSkipUrlUpdate) {
+	FlexController.prototype.removeDirtyChanges = function(vLayer, oComponent, oControl, sGenerator, aChangeTypes) {
 		return this._oChangePersistence.removeDirtyChanges(vLayer, oComponent, oControl, sGenerator, aChangeTypes)
-		.then(revertChangesAndUpdateVariantModel.bind(this, oComponent, bSkipUrlUpdate));
+		.then(revertChangesAndUpdateVariantModel.bind(this, oComponent));
 	};
 
 	/**
