@@ -149,7 +149,7 @@
 	oModel.setData({
 		timeValue: UI5Date.getInstance()
 	});
-	sap.ui.getCore().setModel(oModel);
+	oApp.setModel(oModel);
 
 	oApp.addPage(oPage);
 	oApp.placeAt("body");

@@ -38,7 +38,7 @@
 			}
 			var oModel = new sap.ui.model.json.JSONModel(oData);
 			oModel.setSizeLimit(iLength);
-			sap.ui.getCore().setModel(oModel);
+			sap.ui.getCore().byId("page").setModel(oModel);
 
 			// get item template
 			var oItemTemplate;

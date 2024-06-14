@@ -76,14 +76,16 @@
 
 	<script>
 		sap.ui.getCore().attachInit(function () {
+			function toAbsolute(relativeUrl) {
+				return new URL(relativeUrl, document.baseURI).toString();
+			}
 			var oModel = new sap.ui.model.json.JSONModel({
 				srcWithModificationsRelative: "images/Woman_avatar_01.png",
-				srcWithModificationsAbsolute: "https://sapui5.hana.ondemand.com/test-resources/sap/m/images/Woman_avatar_02.png",
-				srcWithoutModifications: "https://sapui5.hana.ondemand.com/test-resources/sap/m/images/Woman_04.png",
+				srcWithModificationsAbsolute: toAbsolute("images/Woman_avatar_02.png"),
+				srcWithoutModifications: toAbsolute("images/Woman_04.png"),
 			});
 
-			sap.ui.getCore().setModel(oModel);
-			sap.ui.xmlview({ viewContent: $('#myView').html() }).placeAt("content");
+			sap.ui.xmlview({ viewContent: $('#myView').html() }).setModel(oModel).placeAt("content");
 		});
 	</script>
 </head>

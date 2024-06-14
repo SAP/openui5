@@ -30,9 +30,6 @@
 	// set the data for the model
 	oModel.setData(data);
 
-	// set the model to the core
-	sap.ui.getCore().setModel(oModel);
-
 
 	// define the row template
 	var oItemTemplate = new sap.m.ColumnListItem({
@@ -445,7 +442,8 @@
 	});
 
 	var oApp = new sap.m.App({
-		pages : [page]
+		pages : [page],
+		models: oModel
 	}).placeAt("content");
 
 </script>

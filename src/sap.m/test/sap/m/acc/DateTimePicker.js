@@ -79,7 +79,7 @@ sap.ui.define([
 		}
 	}
 
-	oCore.attachParseError(
+	app.attachParseError(
 			function(oEvent) {
 				var oElement = oEvent.getParameter("element");
 				var oValue = oEvent.getParameter('newValue');
@@ -92,7 +92,7 @@ sap.ui.define([
 				}
 			});
 
-	oCore.attachValidationSuccess(
+	app.attachValidationSuccess(
 			function(oEvent) {
 				var oElement = oEvent.getParameter("element");
 				var oValue = oEvent.getParameter('newValue');
@@ -150,7 +150,7 @@ sap.ui.define([
 	oModel.setData({
 		dateValue: UI5Date.getInstance()
 	});
-	oCore.setModel(oModel);
+	app.setModel(oModel);
 
 	var page1 = new Page("page1", {
 		title:"Mobile DateTimePicker",

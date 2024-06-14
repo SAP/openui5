@@ -102,7 +102,7 @@
 				text: "headerContent aggregation with binding"
 			}]
 		});
-		sap.ui.getCore().setModel(oModel);
+		app.setModel(oModel);
 
 		function createFooter() {
 			return new sap.m.Bar({
@@ -1190,8 +1190,8 @@
 			],
 			specialDates: [
 				new sap.ui.unified.DateTypeRange({
-					startDate: UI5Date.getInstance(2015, 0, 1, 12, 00),
-					endDate: UI5Date.getInstance(2015, 0, 1, 14, 00),
+					startDate: UI5Date.getInstance(2015, 0, 1, 12, 0),
+					endDate: UI5Date.getInstance(2015, 0, 1, 14, 0),
 					type: sap.ui.unified.CalendarDayType.Type01,
 					tooltip: "Lunch"
 				}),
@@ -1276,7 +1276,6 @@
 		});
 
 		app.addPage(page1);
-
 		app.placeAt("body");
 
 	</script>

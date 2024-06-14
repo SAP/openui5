@@ -45,7 +45,7 @@
 			}
 		};
 
-		sap.ui.getCore().attachParseError(
+		app.attachParseError(
 				function(oEvent) {
 					var oElement = oEvent.getParameter("element");
 					var sProperty = oEvent.getParameter('property');
@@ -61,7 +61,7 @@
 					}
 				});
 
-		sap.ui.getCore().attachValidationSuccess(
+		app.attachValidationSuccess(
 				function(oEvent) {
 					var oElement = oEvent.getParameter("element");
 					var sProperty = oEvent.getParameter('property');
@@ -126,7 +126,7 @@
 		oModel.setData({
 			dateValue: UI5Date.getInstance()
 		});
-		sap.ui.getCore().setModel(oModel);
+		app.setModel(oModel);
 
 		var page1 = new sap.m.Page("page1", {
 			title:"Mobile DatePicker",

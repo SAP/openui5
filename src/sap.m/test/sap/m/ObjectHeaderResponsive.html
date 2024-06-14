@@ -39,10 +39,10 @@
 					{id: 4572, name:"Magna Aliqua", amount: 5, price: 23.45, status: "Open"}
 				]
 			});
-			sap.ui.getCore().setModel(model);
 
 			// create and add app
 			var app = new sap.m.SplitApp("myApp");
+			app.setModel(model);
 			app.placeAt("body");
 
 			var toDetailBtn = new sap.m.Button({

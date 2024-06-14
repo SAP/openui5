@@ -328,7 +328,6 @@
 				];
 				var oModel = new JSONModel();
 				oModel.setData({modelData: aAppointments});
-				sap.ui.getCore().setModel(oModel);
 
 				var oDayView = new SinglePlanningCalendarDayView({
 							key: "DayView",
@@ -434,7 +433,8 @@
 					pages: new Page("test-page", {
 						title: "SinglePlanningCalendarStickyHeader test page",
 						content: oSPC
-					})
+					}),
+					models: oModel
 				}).placeAt("body");
 			});
 		});

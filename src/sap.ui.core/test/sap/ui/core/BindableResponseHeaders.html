@@ -189,12 +189,11 @@
 			json: true,
 			useBatch: false
 		});
-		sap.ui.getCore().setModel(oModel);
-
 
 		var oLayout = new sap.ui.layout.VerticalLayout({
 			width: "100%"
 		});
+		oLayout.setModel(oModel);
 		oLayout.placeAt("content");
 		oLayout.bindAggregation("content", {
 			path: "/Products",

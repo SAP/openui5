@@ -75,23 +75,20 @@
 		};
 
 		/* column data and model */
-		var model = new sap.ui.model.json.JSONModel();
-		model.setData({
+		var i18nModel = new sap.ui.model.json.JSONModel();
+		i18nModel.setData({
 			Name: "Name",
 			Status: "Status",
 			Value: "Value",
 			Price: "Price"
 		});
-		sap.ui.getCore().setModel(model, "i18n");
 
 		/* table definition */
 
 		var table = new sap.m.Table("items", {
-			threshold: 2,
 			inset: false,
 			mode: "MultiSelect",
 			showUnread: true,
-			scrollToLoad: true,
 			infoToolbar:
 				new sap.m.Toolbar({
 				visible: false,
@@ -209,6 +206,7 @@
 		var oModel = new sap.ui.model.json.JSONModel();
 		oModel.setData(data);
 		table.setModel(oModel);
+		table.setModel(i18nModel, "i18n");
 		table.bindAggregation("items", "/navigation", template);
 
 		/* sort item text model (CSN issue)*/
@@ -1535,7 +1533,6 @@
 
 		var panel = new sap.m.Panel({
 			headerText: "Debug Area",
-			headerLevel: "H4",
 			content: debug
 		}).addStyleClass("debugPanel");
 

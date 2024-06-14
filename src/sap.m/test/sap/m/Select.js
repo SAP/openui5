@@ -422,7 +422,6 @@ sap.ui.define([
 	};
 
 	oModel.setData(mData);
-	sap.ui.getCore().setModel(oModel);
 
 	var oItemTemplate = new Item({
 		key: "{key}",
@@ -1195,5 +1194,5 @@ sap.ui.define([
 			contentLeft: oSelect8,
 			contentRight: [oSelect11, oSelect13]
 		})
-	})).placeAt("body");
+	})).setModel(oModel).placeAt("body");
 });

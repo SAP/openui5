@@ -14,6 +14,7 @@
 	<script>
 
 		sap.ui.require([
+			'sap/ui/core/Core',
 			'sap/ui/core/Messaging',
 			'sap/ui/core/util/MockServer',
 			'sap/ui/model/odata/v2/ODataModel',
@@ -33,8 +34,9 @@
 			'sap/m/Label',
 			'sap/m/Table',
 			'sap/ui/model/json/JSONModel'
-		], function (Messaging, MockServer, ODataModel, Filter, ResponsiveSplitter, SplitPane, PaneContainer, VerticalLayout,
-			HorizontalLayout, Column, ColumnListItem, Text, SimpleForm, Button, Panel, Input, Label, Table, JSONModel) {
+		], function (Core, Messaging, MockServer, ODataModel, Filter, ResponsiveSplitter, SplitPane, PaneContainer,
+			VerticalLayout, HorizontalLayout, Column, ColumnListItem, Text, SimpleForm, Button, Panel, Input, Label,
+			Table, JSONModel) {
 
 				var sServiceUri = "/SalesOrderSrv/";
 				var sDataRootPath = "qunit/testdata/SalesOrder/";
@@ -205,9 +207,6 @@
 					defaultCountMode: "None",
 					canonicalRequests: true
 				});
-				sap.ui.getCore().setModel(oModel);
-
-				sap.ui.getCore().setModel(Messaging.getMessageModel(), "message");
 				var oTableMM = new Table({
 					items: {
 						path: 'message>/',
@@ -473,6 +472,10 @@
 				oPanel2.placeAt("content");
 				oPanel3.placeAt("content");
 				oPanel4.placeAt("content");
+				Core.ready(() => {
+					oPanel.getUIArea().setModel(oModel);
+					oPanel.getUIArea().setModel(Messaging.getMessageModel(), "message");
+				});
 			});
 	</script>
 

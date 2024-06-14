@@ -19,8 +19,9 @@
 			'sap/ui/model/json/JSONModel',
 			'sap/ui/model/odata/ODataPropertyBinding',
 			'sap/ui/table/Table',
-			'sap/m/Text',
 			'sap/m/Button',
+			'sap/m/Label',
+			'sap/m/Text',
 			'sap/base/util/merge',
 			'sap/ui/performance/Measurement'
 		], function(
@@ -29,8 +30,9 @@
 			JSONModel,
 			ODataPropertyBinding,
 			Table,
-			Text,
 			Button,
+			Label,
+			Text,
 			merge,
 			Measurement
 		) {
@@ -82,10 +84,8 @@
 			// create an ODataModel from URL
 			var oModel = new ODataModel(sServiceUri, {defaultOperationMode: 'Client'});
 			oModel.setSizeLimit(9999999);
-			sap.ui.getCore().setModel(oModel);
 
 			var oMeasureModel = new JSONModel();
-			sap.ui.getCore().setModel(oMeasureModel, "measure");
 
 			var i = 0, j = 0;
 			var fnCheckUpdateOrig = ODataModel.prototype.checkUpdate;
@@ -94,7 +94,7 @@
 				Measurement.start("cu" + i, "checkupdate model", ["cu"]);
 				fnCheckUpdateOrig.apply(this, arguments);
 				Measurement.end("cu" + i);
-				sap.ui.getCore().getModel("measure").setData(Measurement.getAllMeasurements());
+				oMeasureModel.setData(Measurement.getAllMeasurements());
 			};
 			var fnCheckDataState = ODataModel.prototype.checkDataState;
 			ODataModel.prototype.checkDataState = function() {
@@ -102,13 +102,34 @@
 				Measurement.start("cd" + j, "checkDataState model", ["cd"]);
 				fnCheckDataState.apply(this, arguments);
 				Measurement.end("cd" + j);
-				sap.ui.getCore().getModel("measure").setData(Measurement.getAllMeasurements());
+				oMeasureModel.setData(Measurement.getAllMeasurements());
 			};
 			var oTable = new Table({ // create Table UI
 				columns : [
-					{label: "Measure Id", template: new Text({text:"{measure>id}"})},
-					{label: "Info", template: new Text({text:"{measure>info}"})},
-					{label: "Time", template: new Text({text:"{measure>time}"})}
+					{
+						label: new sap.m.Label({
+							text: "Measure Id"
+						}),
+						template: new Text({
+							text:"{measure>id}"
+						})
+					},
+					{
+						label: new sap.m.Label({
+							text: "Info"
+						}),
+						template: new Text({
+							text:"{measure>info}"
+						})
+					},
+					{
+						label: new sap.m.Label({
+							text: "Time"
+						}),
+						template: new Text({
+							text:"{measure>time}"
+						})
+					}
 				]
 			});
 
@@ -163,6 +184,10 @@
 					]
 				})
 			});
+
+			oTable.setModel(oModel);
+			oTable.setModel(oMeasureModel, "measure");
+
 			oTable.placeAt("content");
 		});
 	</script>
