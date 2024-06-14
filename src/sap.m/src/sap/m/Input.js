@@ -524,6 +524,9 @@ function(
 		this._iSetCount = 0;
 
 		this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+
+		this._isValueInitial = false;
+		this._previousInputType = this.getType();
 	};
 
 	/**
@@ -587,6 +590,10 @@ function(
 
 		InputBase.prototype.onBeforeRendering.call(this);
 
+		if (!this.getDomRef() && this.getValue()) {
+			this._isValueInitial = true;
+		}
+
 		this._deregisterEvents();
 
 		if (sSelectedKey) {
@@ -641,9 +648,12 @@ function(
 	Input.prototype.onAfterRendering = function() {
 		InputBase.prototype.onAfterRendering.call(this);
 
-		if (this.getType() === InputType.Password) {
+		if ((this._isValueInitial || this.getType() !== this._previousInputType ) && this.getType() === InputType.Password ) {
 			this.getDomRef("inner").value = this.getProperty("value");
+			this._isValueInitial = false;
 		}
+
+		this._previousInputType = this.getType();
 	};
 
 	/**
