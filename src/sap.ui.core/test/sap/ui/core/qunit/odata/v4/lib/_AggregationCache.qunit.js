@@ -4971,15 +4971,17 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [undefined, 2].forEach(function (iRank) {
-	[undefined, true].forEach(function (bParentExpanded) {
-		[false, true].forEach(function (bCreateRoot) {
-			const sTitle = "create: createInPlace, rank: " + iRank
-				+ ", parent's @$ui5.node.isExpanded: " + bParentExpanded
-				+ ", create root node: " + bCreateRoot;
+	[2, 25].forEach(function (iExpandTo) {
+		[undefined, true].forEach(function (bParentExpanded) {
+			[false, true].forEach(function (bCreateRoot) {
+				const sTitle = "create: createInPlace, rank: " + iRank
+					+ ", expandTo: " + iExpandTo
+					+ ", parent's @$ui5.node.isExpanded: " + bParentExpanded
+					+ ", create root node: " + bCreateRoot;
 
-			if (bParentExpanded && bCreateRoot) {
-				return;
-			}
+				if (bParentExpanded && bCreateRoot) {
+					return;
+				}
 
 	QUnit.test(sTitle, function (assert) {
 		var that = this;
@@ -4987,6 +4989,7 @@ sap.ui.define([
 		const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, {
 				$ParentNavigationProperty : "myParent",
 				createInPlace : true,
+				expandTo : iExpandTo,
 				hierarchyQualifier : "X"
 			});
 		assert.strictEqual(oCache.bUnifiedCache, true, "activated by createInPlace");
@@ -4998,7 +5001,7 @@ sap.ui.define([
 		oCache.aElements.$byPredicate = {"('42')" : oParentNode};
 		oCache.aElements.$count = 3;
 		this.mock(oCache).expects("createGroupLevelCache").never();
-		this.mock(oCache.oTreeState).expects("expand").never();
+		this.mock(oCache.oTreeState).expects("setOutOfPlace").never();
 		const oEntityData = {
 			"@$ui5.node.parent" : (bCreateRoot ? undefined : "Foo('42')"),
 			bar : "~bar~",
@@ -5020,15 +5023,25 @@ sap.ui.define([
 				return new SyncPromise(function (resolve) {
 					setTimeout(function () {
 						_Helper.setPrivateAnnotation(oEntityData, "predicate", "('ABC')");
-						that.mock(oCache.oTreeState).expects("setOutOfPlace").never();
 						oHelperMock.expects("removeByPath")
 							.withExactArgs(sinon.match.same(oCache.mPostRequests),
 								"~sTransientPredicate~", sinon.match.same(oEntityData));
-						that.mock(oCache).expects("requestRank")
+						const oRequestRankExpectation = that.mock(oCache).expects("requestRank")
 							.withExactArgs(sinon.match.same(oEntityData), "~oGroupLock~")
 							.resolves(iRank);
 						that.mock(oCache).expects("requestNodeProperty")
 							.withExactArgs(sinon.match.same(oEntityData), "~oGroupLock~");
+						oHelperMock.expects("updateAll")
+							.exactly(bParentExpanded || bCreateRoot || !iRank ? 0 : 1)
+							.withExactArgs(sinon.match.same(oCache.mChangeListeners), "('42')",
+								sinon.match.same(oParentNode), {"@$ui5.node.isExpanded" : true})
+							.callsFake(function () {
+								assert.ok(oRequestRankExpectation.called);
+							});
+						that.mock(oCache.oTreeState).expects("expand")
+							.exactly(iRank && !bParentExpanded && !bCreateRoot && iExpandTo < 23
+								? 1 : 0)
+							.withExactArgs(oParentNode);
 						that.mock(oCache).expects("addElements").exactly(iRank ? 1 : 0)
 							.withExactArgs(sinon.match.same(oEntityData), iRank,
 								sinon.match.same(oCache.oFirstLevel), iRank)
@@ -5102,6 +5115,7 @@ sap.ui.define([
 			assert.strictEqual(oCache.aElements.$count, iRank ? 4 : 3, "unchanged");
 		});
 	});
+			});
 		});
 	});
 });
