@@ -10,7 +10,7 @@
 	<script src="../../../resources/sap-ui-core.js"
 			id="sap-ui-bootstrap"
 			data-sap-ui-language="en_US"
-			data-sap-ui-libs="sap.m, sap.ui.unified"
+			data-sap-ui-libs="sap.m, sap.ui.unified, sap.ui.layout"
 			data-sap-ui-resourceroots='{
 				"qunit.internal.acc": "../../../test-resources/sap/ui/core/qunit/internal/acc"
 			}'>
@@ -541,8 +541,6 @@
 			type: sap.m.ButtonType.Transparent,
 			press: function () {
 				if (!oDialog2) {
-					sap.ui.getCore().loadLibrary("sap.ui.layout");
-					jQuery.sap.require("sap.ui.layout.library");
 					var oForm = new sap.ui.layout.form.SimpleForm("SimpleForm1", {
 						layout: sap.ui.layout.form.SimpleFormLayout.ResponsiveGridLayout,
 						content: [
