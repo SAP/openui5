@@ -8,7 +8,7 @@
 		<script src="shared-config.js"></script>
 		<script src="../../../resources/sap-ui-core.js"
 			id="sap-ui-bootstrap"
-			data-sap-ui-libs="sap.m"
+			data-sap-ui-libs="sap.m, sap.ui.unified"
 			data-sap-ui-language="en-US">
 		</script>
 
@@ -88,10 +88,6 @@
 		function toggleSpecialDates(oEvent) {
 			var bPressed = oEvent.getParameter("pressed");
 			var oDP = sap.ui.getCore().byId("DP2");
-			if (!sap.ui.unified.DateTypeRange) {
-				sap.ui.getCore().loadLibrary("sap.ui.unified");
-				jQuery.sap.require("sap.ui.unified.library");
-			}
 			if (!oLegend) {
 				oLegend = new sap.ui.unified.CalendarLegend("Legend1", {
 					items: [

@@ -9,94 +9,94 @@
 			data-sap-ui-libs="sap.uxap,sap.ui.layout,sap.tnt">
 	</script>
 	<script id="view1" type="sapui5/xmlview">
-	<m:View xmlns="sap.uxap" xmlns:m="sap.m" xmlns:layout="sap.ui.layout" xmlns:form="sap.ui.layout.form" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:forms="sap.ui.layout.form" displayBlock="true" height="100%">
+	<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.uxap" xmlns:m="sap.m" xmlns:layout="sap.ui.layout" xmlns:form="sap.ui.layout.form" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:forms="sap.ui.layout.form" displayBlock="true" height="100%">
 
 		<ObjectPageLayout id="ObjectPageLayout"
-			preserveHeaderStateOnScroll="true">
-				<headerTitle>
+				preserveHeaderStateOnScroll="true">
+			<headerTitle>
 				<ObjectPageDynamicHeaderTitle>
 					<heading>
 						<m:MessageStrip type="Warning" text="Toggle the checkboxes to switch between ALL (default) and AUTO columnSpan"/>
 					</heading>
 				</ObjectPageDynamicHeaderTitle>
-				</headerTitle>
-				<headerContent>
-					<form:SimpleForm id="selectionForm">
-					</form:SimpleForm>
-				</headerContent>
+			</headerTitle>
+			<headerContent>
+				<form:SimpleForm id="selectionForm">
+				</form:SimpleForm>
+			</headerContent>
 
-				<sections>
-					<ObjectPageSection id="section1" title="Object Page section">
-						<subSections>
-							<ObjectPageSubSection id="section1SS1" title="SubSection1 (single block inside)">
-								<blocks>
-									<html:div style="height:4em; background-color: red ;">I am a block with columnSpan = <html:span style="background: white">&quot;all&quot;</html:span></html:div>
-								</blocks>
-							</ObjectPageSubSection>
-							<ObjectPageSubSection id="section1SS2" title="SubSection2 (2 blocks inside)">
-								<blocks>
-									<html:div style="height:4em; background-color: orange ;">I am a block with columnSpan = <html:span style="background: white">&quot;all&quot;</html:span></html:div>
-									<html:div style="height:4em; background-color: orange ;">I am a block with columnSpan = <html:span style="background: white">&quot;all&quot;</html:span></html:div>
-								</blocks>
-							</ObjectPageSubSection>
-							<ObjectPageSubSection id="section1SS3" title="SubSection3 (single block inside)">
-								<blocks>
-									<html:div style="height:4em; background-color: yellow ;">I am a block with columnSpan = <html:span style="background: white">&quot;all&quot;</html:span></html:div>
-								</blocks>
-							</ObjectPageSubSection>
-							<ObjectPageSubSection id="section1SS4" title="SubSection4 (single block inside)">
-								<blocks>
-									<html:div style="height:4em; background-color: green ;">I am a block with columnSpan = <html:span style="background: white">&quot;all&quot;</html:span></html:div>
-								</blocks>
-							</ObjectPageSubSection>
-							<ObjectPageSubSection id="section1SS5" title="SubSection5 (3 blocks inside)">
-								<blocks>
-									<html:div style="height:4em; background-color: blue ;">I am a block with columnSpan = <html:span style="background: white">&quot;all&quot;</html:span></html:div>
-									<html:div style="height:4em; background-color: blue ;">I am a block with columnSpan = <html:span style="background: white">&quot;all&quot;</html:span></html:div>
-									<html:div style="height:4em; background-color: blue ;">I am a block with columnSpan = <html:span style="background: white">&quot;all&quot;</html:span></html:div>
-								</blocks>
-							</ObjectPageSubSection>
-							<ObjectPageSubSection id="section1SS6" title="SubSection6 (single block inside)">
-								<blocks>
-									<html:div style="height:4em; background-color: purple ;">I am a block with columnSpan = <html:span style="background: white">&quot;all&quot;</html:span></html:div>
-								</blocks>
-							</ObjectPageSubSection>
-							<ObjectPageSubSection id="section1SS7" title="SubSection7 (4 blocks inside)">
-								<blocks>
-									<html:div style="height:4em; background-color: violet ;">I am a block with columnSpan = <html:span style="background: white">&quot;all&quot;</html:span></html:div>
-									<html:div style="height:4em; background-color: violet ;">I am a block with columnSpan = <html:span style="background: white">&quot;all&quot;</html:span></html:div>
-									<html:div style="height:4em; background-color: violet ;">I am a block with columnSpan = <html:span style="background: white">&quot;all&quot;</html:span></html:div>
-									<html:div style="height:4em; background-color: violet ;">I am a block with columnSpan = <html:span style="background: white">&quot;all&quot;</html:span></html:div>
-								</blocks>
-							</ObjectPageSubSection>
-						</subSections>
-					</ObjectPageSection>
+			<sections>
+				<ObjectPageSection id="section1" title="Object Page section">
+					<subSections>
+						<ObjectPageSubSection id="section1SS1" title="SubSection1 (single block inside)">
+							<blocks>
+								<html:div style="height:4em; background-color: red ;">I am a block with columnSpan = <html:span style="background: white">&quot;all&quot;</html:span></html:div>
+							</blocks>
+						</ObjectPageSubSection>
+						<ObjectPageSubSection id="section1SS2" title="SubSection2 (2 blocks inside)">
+							<blocks>
+								<html:div style="height:4em; background-color: orange ;">I am a block with columnSpan = <html:span style="background: white">&quot;all&quot;</html:span></html:div>
+								<html:div style="height:4em; background-color: orange ;">I am a block with columnSpan = <html:span style="background: white">&quot;all&quot;</html:span></html:div>
+							</blocks>
+						</ObjectPageSubSection>
+						<ObjectPageSubSection id="section1SS3" title="SubSection3 (single block inside)">
+							<blocks>
+								<html:div style="height:4em; background-color: yellow ;">I am a block with columnSpan = <html:span style="background: white">&quot;all&quot;</html:span></html:div>
+							</blocks>
+						</ObjectPageSubSection>
+						<ObjectPageSubSection id="section1SS4" title="SubSection4 (single block inside)">
+							<blocks>
+								<html:div style="height:4em; background-color: green ;">I am a block with columnSpan = <html:span style="background: white">&quot;all&quot;</html:span></html:div>
+							</blocks>
+						</ObjectPageSubSection>
+						<ObjectPageSubSection id="section1SS5" title="SubSection5 (3 blocks inside)">
+							<blocks>
+								<html:div style="height:4em; background-color: blue ;">I am a block with columnSpan = <html:span style="background: white">&quot;all&quot;</html:span></html:div>
+								<html:div style="height:4em; background-color: blue ;">I am a block with columnSpan = <html:span style="background: white">&quot;all&quot;</html:span></html:div>
+								<html:div style="height:4em; background-color: blue ;">I am a block with columnSpan = <html:span style="background: white">&quot;all&quot;</html:span></html:div>
+							</blocks>
+						</ObjectPageSubSection>
+						<ObjectPageSubSection id="section1SS6" title="SubSection6 (single block inside)">
+							<blocks>
+								<html:div style="height:4em; background-color: purple ;">I am a block with columnSpan = <html:span style="background: white">&quot;all&quot;</html:span></html:div>
+							</blocks>
+						</ObjectPageSubSection>
+						<ObjectPageSubSection id="section1SS7" title="SubSection7 (4 blocks inside)">
+							<blocks>
+								<html:div style="height:4em; background-color: violet ;">I am a block with columnSpan = <html:span style="background: white">&quot;all&quot;</html:span></html:div>
+								<html:div style="height:4em; background-color: violet ;">I am a block with columnSpan = <html:span style="background: white">&quot;all&quot;</html:span></html:div>
+								<html:div style="height:4em; background-color: violet ;">I am a block with columnSpan = <html:span style="background: white">&quot;all&quot;</html:span></html:div>
+								<html:div style="height:4em; background-color: violet ;">I am a block with columnSpan = <html:span style="background: white">&quot;all&quot;</html:span></html:div>
+							</blocks>
+						</ObjectPageSubSection>
+					</subSections>
+				</ObjectPageSection>
 
-				</sections>
-				<footer>
-					<m:OverflowToolbar>
-						<m:ToolbarSpacer />
-						<m:Button type="Accept" text="Accept"/>
-						<m:Button type="Reject" text="Reject"/>
-					</m:OverflowToolbar>
-				</footer>
-			</ObjectPageLayout>
-		</m:View>
+			</sections>
+			<footer>
+				<m:OverflowToolbar>
+					<m:ToolbarSpacer />
+					<m:Button type="Accept" text="Accept"/>
+					<m:Button type="Reject" text="Reject"/>
+				</m:OverflowToolbar>
+			</footer>
+		</ObjectPageLayout>
+	</mvc:View>
 	</script>
 </head>
 
 
 <body id="body" class="sapUiBody">
 <script>
-	sap.ui.require([
-		"sap/m/App",
-		"sap/m/Page",
-		"sap/m/CheckBox",
-		"sap/m/ToggleButton",
-		"sap/uxap/ObjectPageSubSection"], 
-	function(App, Page, CheckBox, ToggleButton, ObjectPageSubSection) {
+	sap.ui.getCore().attachInit(function() {
+		sap.ui.require([
+			"sap/m/App",
+			"sap/m/Page",
+			"sap/m/CheckBox",
+			"sap/m/ToggleButton",
+			"sap/uxap/ObjectPageSubSection"], 
+		function(App, Page, CheckBox, ToggleButton, ObjectPageSubSection) {
 
-		sap.ui.getCore().attachInit(function() {
 			var oApp = new App(),
 				myView = sap.ui.xmlview({viewContent:jQuery('#view1').html()}),
 				oSelectionForm = myView.byId("selectionForm"),

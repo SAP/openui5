@@ -82,7 +82,7 @@
 				oApp = new sap.m.App("myApp", {initialPage: "page1", pages: [oPage1]}).placeAt("body");
 
 
-		var oCustomScale = sap.ui.core.Element.extend("sap.xx.custom.CustomScale",{
+		var CustomScale = sap.ui.core.Element.extend("sap.xx.custom.CustomScale",{
 					metadata: {
 						interfaces: [
 							"sap.m.IScale"
@@ -91,13 +91,13 @@
 					}
 				});
 
-		oCustomScale.prototype.getTickmarksBetweenLabels = function () {
+		CustomScale.prototype.getTickmarksBetweenLabels = function () {
 			return 2;
 		};
-		oCustomScale.prototype.calcNumberOfTickmarks = function() {
+		CustomScale.prototype.calcNumberOfTickmarks = function() {
 			return 31;
 		};
-		oCustomScale.prototype.getLabel = function (fValue) {
+		CustomScale.prototype.getLabel = function (fValue) {
 			return fValue + " May";
 		};
 
@@ -110,7 +110,7 @@
 			value: 1,
 			step: 1,
 			enableTickmarks: true,
-			scale: new sap.xx.custom.CustomScale(),
+			scale: new CustomScale(),
 			progress : true,
 			visible: true,
 			enabled: true,
@@ -124,7 +124,7 @@
 
 		jQuery.sap.require("sap.m.SliderTooltipBase");
 
-		var oCustomTooltip = sap.m.SliderTooltipBase.extend("sap.xx.custom.CustomTooltip", {
+		var CustomTooltip = sap.m.SliderTooltipBase.extend("sap.xx.custom.CustomTooltip", {
 			library: "sap.xx.custom",
 			metadata: {
 				properties: {
@@ -181,19 +181,19 @@
 			}
 		});
 
-		oCustomTooltip.prototype.init = function () {
+		CustomTooltip.prototype.init = function () {
 			this.aDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 		};
 
-		oCustomTooltip.prototype.sliderValueChanged = function (fValue) {
+		CustomTooltip.prototype.sliderValueChanged = function (fValue) {
 			this.setDateValue(fValue);
 		};
 
-		oCustomTooltip.prototype.getLabel = function (fValue) {
+		CustomTooltip.prototype.getLabel = function (fValue) {
 			return this.aDays[fValue % 7] + " " + fValue + " May";
 		};
 
-		oCustomTooltip.prototype.ontap = function (oEvent) {
+		CustomTooltip.prototype.ontap = function (oEvent) {
 			var bButtonPressed = $(oEvent.target).hasClass("sapCustomTooltipButton"),
 					bUp = $(oEvent.target).hasClass("sapCustomTooltipButtonUp"),
 					bDown = $(oEvent.target).hasClass("sapCustomTooltipButtonDown");
@@ -219,7 +219,7 @@
 					value: 1,
 					step: 1,
 					showAdvancedTooltip: true,
-					customTooltips: [new sap.xx.custom.CustomTooltip()],
+					customTooltips: [new CustomTooltip()],
 					enableTickmarks: true,
 					progress : true,
 					visible: true,
@@ -237,9 +237,9 @@
 					max: 31,
 					value: 2,
 					step: 1,
-					scale: new sap.xx.custom.CustomScale(),
+					scale: new CustomScale(),
 					showAdvancedTooltip: true,
-					customTooltips: [new sap.xx.custom.CustomTooltip()],
+					customTooltips: [new CustomTooltip()],
 					enableTickmarks: true,
 					progress : true,
 					visible: true,
