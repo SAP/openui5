@@ -1,13 +1,7 @@
 /*global QUnit */
 sap.ui.define([
-	/**
-	 * @deprecated
-	 */
 	"sap/ui/core/Core"
 ], function(
-	/**
-	 * @deprecated
-	 */
 	Core
 ) {
 	"use strict";
