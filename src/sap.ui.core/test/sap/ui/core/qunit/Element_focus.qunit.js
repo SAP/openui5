@@ -3,11 +3,12 @@ sap.ui.define([
 	"sap/ui/core/BusyIndicator",
 	"sap/m/Button",
 	"sap/m/Dialog",
+	"sap/m/Popover",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/m/Input",
 	"sap/m/Panel"
-], function(BusyIndicator, Button, Dialog, createAndAppendDiv, nextUIUpdate, Input, Panel) {
+], function(BusyIndicator, Button, Dialog, Popover, createAndAppendDiv, nextUIUpdate, Input, Panel) {
 	"use strict";
 
 	QUnit.module("Focus Issue");
@@ -288,5 +289,157 @@ sap.ui.define([
 		});
 
 		oDialog.open();
+	});
+
+	QUnit.module("Focus handling");
+
+	QUnit.test("Focus correct when current element get's disabled", async function(assert) {
+		createAndAppendDiv("uiarea_focus");
+
+		const oButton1 = new Button();
+		const oButton2 = new Button({
+			id: "btn_2"
+		});
+		const oButton3 = new Button({
+			press: function() {
+				this.setEnabled(false);
+				oButton2.focus();
+			}
+		});
+		const oButton4 = new Button();
+
+		const oPanel = new Panel({
+			content: [oButton1, oButton2, oButton3, oButton4]
+		});
+
+		oPanel.placeAt("uiarea_focus");
+		await nextUIUpdate();
+
+		oButton1.focus();
+		assert.ok(oButton1.getDomRef() === document.activeElement, "Initially, oButton1 should be focused");
+
+		oButton1.setEnabled(false);
+		await nextUIUpdate();
+
+		assert.ok(oButton2.getDomRef() === document.activeElement, "After oButton1 has been disabled, the focus should be moved correctly on oButton2");
+
+		oButton3.firePress();
+		await nextUIUpdate();
+		assert.ok(oButton2.getDomRef() === document.activeElement, "After oButton3 has been pressed, the focus should be moved correctly on oButton2 by the focus call of the press handler");
+
+		oButton2.setEnabled(false);
+		await nextUIUpdate();
+
+		assert.ok(oButton4.getDomRef().contains(document.activeElement), "After oButton2 has been disabled, the focus is moved to oButton4 since it is the only left.");
+
+		oButton4.setEnabled(false);
+		await nextUIUpdate();
+
+		assert.ok(document.activeElement === document.body, "After all buttons have been disabled, the focus is moved to the document.body.");
+		oPanel.destroy();
+	});
+
+
+	QUnit.test("Focus correct when current element get's invisible", async function(assert) {
+		createAndAppendDiv("uiarea_focus");
+
+		const oButton1 = new Button();
+		const oButton2 = new Button();
+		const oPanel = new Panel({
+			content: [oButton1, oButton2]
+		});
+
+		oPanel.placeAt("uiarea_focus");
+		await nextUIUpdate();
+
+		oButton1.focus();
+		assert.ok(oButton1.getDomRef() === document.activeElement, "Initially, oButton1 should be focused");
+
+		oButton1.setVisible(false);
+		await nextUIUpdate();
+
+		assert.ok(oButton2.getDomRef() === document.activeElement, "After oButton1 has been hidden, the focus should be moved correctly on oButton2");
+
+		oButton2.setVisible(false);
+		await nextUIUpdate();
+
+		assert.ok(document.activeElement === document.body, "After both buttons have been hidden, the focus is moved to the document.body");
+		oPanel.destroy();
+	});
+
+	QUnit.test("Popover, Dialog", async function(assert) {
+		const done = assert.async();
+
+		createAndAppendDiv("uiarea_focus");
+
+		const oBtn_inside_dialog = new Button({
+			text: "Close Dialog",
+			id: "btn_inside_dialog",
+			press: function() {
+				oDialog.close(0);
+			}
+		});
+
+		const oBtn_inside_popover = new Button({
+			id: "btn_inside_popover",
+			text: "Open Dialog",
+			press: function() {
+				oDialog ??= new Dialog({
+					content: oBtn_inside_dialog
+				});
+
+				oPanel.addDependent(oDialog);
+
+				oDialog.attachAfterOpen(function() {
+					assert.ok(oDialog.getDomRef().contains(document.activeElement), "After the dialog opens, the focus should be moved inside.");
+					oBtn_inside_dialog.firePress();
+				});
+
+				oDialog.attachAfterClose(function() {
+					setTimeout(() => {
+						// Explanation:
+						// After the dialog closes, it attempts to restore focus to the button inside the popover that was focused previously.
+						// However, since the popover is already closed, the focus is expected to shift to the next element in the parent’s content hierarchy, which is the initial button.
+						assert.ok(oBtn_openPopover.getDomRef().contains(document.activeElement), "After the dialog closes, the focus should be moved onto oBtn_openPopover.");
+						oPanel.destroy();
+						done();
+					}, 100);
+				});
+
+				oDialog.open();
+			}
+		});
+
+		const oBtn_openPopover = new Button({
+			id: "btn_to_open_popover",
+			text: "Open popver",
+			press: function() {
+				const oPopover = new Popover({
+					placement: "Bottom",
+					initialFocus: "btn_inside_popover",
+					footer: [oBtn_inside_popover]
+
+				});
+
+				oPanel.addDependent(oPopover);
+
+				oPopover.attachAfterOpen(function() {
+					assert.ok(oPopover.getDomRef().contains(document.activeElement), "After the popover opens, the focus should be moved inside.");
+					oBtn_inside_popover.firePress();
+				});
+
+				oPopover.openBy(oBtn_openPopover);
+			}
+		});
+
+		let oDialog;
+		const oPanel = new Panel({
+			content: [oBtn_openPopover]
+		}).placeAt("uiarea_focus");
+
+		await nextUIUpdate();
+
+		// test start, open popover
+		oBtn_openPopover.firePress();
 	});
 });

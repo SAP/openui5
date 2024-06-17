@@ -3,10 +3,10 @@
  */
 
 // Provides mixin sap.ui.core.EnabledPropagator
-sap.ui.define([
-	"sap/ui/dom/jquery/Selectors"// jQuery custom selectors ":focusable"
-], function() {
+sap.ui.define([], function() {
 	"use strict";
+
+	let Element;
 
 	/**
 	 * Mixin for enhancement of a control prototype with propagation of the <code>enabled</code> property.
@@ -79,10 +79,15 @@ sap.ui.define([
 			};
 		}
 
+
 		if (this.setEnabled === undefined) {
 			this.setEnabled = function(bEnabled) {
-				checkAndMoveFocus(this, bEnabled);
-				return this.setProperty("enabled", bEnabled);
+				this.setProperty("enabled", bEnabled);
+				if (!bEnabled && this.getDomRef()?.contains(document.activeElement)) {
+					Element ??= sap.ui.require("sap/ui/core/Element");
+					Element?.fireFocusFail.call(this, /*bRenderingPending=*/true);
+				}
+				return this;
 			};
 
 			this.getMetadata().addPublicMethods("setEnabled");
@@ -90,8 +95,12 @@ sap.ui.define([
 			var fnOrigSet = this.setEnabled;
 
 			this.setEnabled = function(bEnabled) {
-				checkAndMoveFocus(this, bEnabled);
-				return fnOrigSet.apply(this, arguments);
+				fnOrigSet.apply(this, arguments);
+				if (!bEnabled && this.getDomRef()?.contains(document.activeElement)) {
+					Element ??= sap.ui.require("sap/ui/core/Element");
+					Element?.fireFocusFail.call(this, /*bRenderingPending=*/true);
+				}
+				return this;
 			};
 		}
 
@@ -129,29 +138,6 @@ sap.ui.define([
 		let oParent;
 		for (oParent = oControl.getParent(); oParent && !oParent.getEnabled && oParent.getParent; oParent = oParent.getParent()) {/* empty */}
 		return oParent && oParent.getEnabled && !oParent.getEnabled();
-	}
-
-	/**
-	 * Moves the focus to the nearest ancestor that is focusable when the control that is going to be disabled
-	 * (bEnabled === false) currently has the focus. This is done to prevent the focus from being set to the body
-	 * tag
-	 *
-	 * @param {sap.ui.core.Control} oControl the control that is going to be enabled/disalbed
-	 * @param {boolean} bEnabled whether the control is going to be enabled
-	 * @private
-	 */
-	function checkAndMoveFocus(oControl, bEnabled) {
-		var oDomRef = oControl.getDomRef();
-
-		if (!bEnabled && oDomRef && oDomRef.contains(document.activeElement)) {
-			var oFocusableAncestor = oControl.$().parent().closest(":focusable")[0];
-
-			if (oFocusableAncestor) {
-				oFocusableAncestor.focus({
-					preventScroll: true
-				});
-			}
-		}
 	}
 
 	return EnabledPropagator;

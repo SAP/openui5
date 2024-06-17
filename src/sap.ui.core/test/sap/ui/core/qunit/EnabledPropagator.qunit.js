@@ -1,5 +1,4 @@
 /*global QUnit */
-
 sap.ui.define([
 	'sap/ui/core/Control',
 	'sap/ui/core/EnabledPropagator',
@@ -50,7 +49,7 @@ sap.ui.define([
 		},
 		renderer: function(oRM, oControl) {
 			oRM.openStart("div", oControl);
-			oRM.attr("tabindex", "-1");
+			oRM.attr("tabindex", "0");
 			oRM.openEnd();
 			oRM.renderControl(oControl.getContent());
 			oRM.close("div");

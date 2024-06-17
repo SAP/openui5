@@ -577,7 +577,7 @@ sap.ui.define([
 			// autoclose.
 			this.oPopup.close = function (bBeforeCloseFired) {
 				var bBooleanParam = typeof bBeforeCloseFired === "boolean";
-				var eOpenState = that.oPopup.getOpenState();
+				var eOpenState = this.getOpenState();
 				var bIsOpenerExisting = that._oOpenBy && that._oOpenBy.getDomRef && !!that._oOpenBy.getDomRef();
 
 				/* Only when the given parameter is "true", the beforeClose event isn't fired here.
