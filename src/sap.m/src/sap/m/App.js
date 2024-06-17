@@ -225,7 +225,7 @@ sap.ui.define([
 	 */
 	App.prototype.exit = function() {
 		/**
-		 * <code>orientationChange</code> event is @deprecated As of version 1.20.0
+		 * @deprecated As of version 1.20.0, <code>orientationChange</code> event is deprecated
 		 */
 		jQuery(window).off("resize", this._handleOrientationChange);
 
@@ -233,9 +233,10 @@ sap.ui.define([
 			clearTimeout(this._sInitTimer);
 		}
 	};
-		/**
-		 * <code>orientationChange</code> event is @deprecated As of version 1.20.0
-		 */
+
+	/**
+	 * @deprecated As of version 1.20.0, <code>orientationChange</code> event is deprecated
+	 */
 	App.prototype._handleOrientationChange = function() {
 		var $window = jQuery(window);
 		var isLandscape = $window.width() > $window.height();
