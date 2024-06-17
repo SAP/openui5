@@ -171,24 +171,28 @@ sap.ui.define([
 	};
 
 	/**
-	 * Load JSON-encoded data from the server using a GET HTTP request and store the resulting JSON data in the model.
+	 * Loads JSON-encoded data from the server and stores the resulting JSON data in the model.
 	 * Note: Due to browser security restrictions, most "Ajax" requests are subject to the same origin policy,
 	 * the request can not successfully retrieve data from a different domain, subdomain, or protocol.
 	 *
-	 * @param {string} sURL A string containing the URL to which the request is sent.
+	 * Note: To send a JSON object in the body of a "POST" request to load the model data, <code>oParameters</code> has
+	 * to be the JSON-stringified value of the object to be sent, and <code>mHeaders</code> has to contain a
+	 * <code>"Content-Type"</code> property with the value <code>"application/json;charset=utf-8"</code>.
+	 *
+	 * @param {string} sURL A string containing the URL to which the request is sent
 	 * @param {object | string} [oParameters]
-	 *   A map or string that is sent to the server with the request. If the value of this parameter is a string, it
-	 *   must already be url-encoded.
-	 *   If the value of this parameter is an object (map), it is converted to a string and then url-encoded.
-	 *   The resulting string is appended to the URL if the HTTP request method cannot have a request body,
-	 *   e.g. for a GET request. Otherwise, the resulting string is added to the request body.
+	 *   The data to be sent to the server with the data-loading request. If <code>oParameters</code> is a string, it
+	 *   has to be encoded based on the used content type. The default encoding is
+	 *   <code>'application/x-www-form-urlencoded; charset=UTF-8'</code> but it may be overwritten via the
+	 *   <code>"Content-Type"</code> property given in <code>mHeaders</code>. If <code>oParameters</code> is an object,
+	 *   a string is generated and the keys and values are URL-encoded. The resulting string is appended to the URL if
+	 *   the HTTP request method cannot have a request body, e.g. for a "GET" request. Otherwise, the resulting string
+	 *   is added to the request body.
 	 * @param {boolean} [bAsync=true] <b>Deprecated as of Version 1.107</b>; always use asynchronous
 	 * loading for performance reasons. By default, all requests are sent asynchronously.
 	 * Synchronous requests may temporarily lock the browser, disabling any actions while
 	 * the request is active. Cross-domain requests do not support synchronous operations.
-	 * @param {string} [sType=GET] The type of request to make ("POST" or "GET"), default is "GET".
-	 * Note: Other HTTP request methods, such as PUT and DELETE, can also be used here, but
-	 * they are not supported by all browsers.
+	 * @param {string} [sType="GET"] The HTTP verb to use for the request ("GET" or "POST")
 	 * @param {boolean} [bMerge=false] Whether the data should be merged instead of replaced
 	 * @param {boolean} [bCache=true] <b>Deprecated as of Version 1.107</b>; always use the cache
 	 * headers from the back-end system for performance reasons. Disables caching if set to
@@ -253,6 +257,7 @@ sap.ui.define([
 				cache: bCache,
 				data: oParameters,
 				headers: mHeaders,
+				jsonp: false,
 				type: sType,
 				success: fnSuccess,
 				error: fnError
