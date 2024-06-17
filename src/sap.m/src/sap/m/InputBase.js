@@ -311,6 +311,8 @@ function(
 		this.bRenderingPhase = false;
 
 		this._oValueStateMessage = new ValueStateMessage(this);
+		this._aValueStateLinks = [];
+
 		// handle composition events & validation of composition symbols
 		this._bIsComposingCharacter = false;
 
@@ -873,20 +875,25 @@ function(
 		return this;
 	};
 
+	InputBase.prototype._setValueStateLinks = function(aLinks) {
+		if (this.getFormattedValueStateText() && this.getFormattedValueStateText().getHtmlText() && this.getFormattedValueStateText().getControls().length) {
+			this._aValueStateLinks = this.getFormattedValueStateText().getControls();
+			return;
+		}
+
+		this._aValueStateLinks = aLinks;
+	};
+
 	/**
 	 * If there is <code>sap.m.FormattedText</code> aggregation for value state message
 	 * return the links in it, if any.
 	 *
-	 * @returns {sap.m.Link[]} Links in a value state message containing <code>sap.m.FormattedText</code>
+	 * @returns {sap.m.Link[]|HTMLAnchorElement[]|Array} Links in a value state message containing <code>sap.m.FormattedText</code>
 	 * @private
 	 */
-	InputBase.prototype._aValueStateLinks = function() {
-		if (this.getFormattedValueStateText() && this.getFormattedValueStateText().getHtmlText() && this.getFormattedValueStateText().getControls().length) {
-			return this.getFormattedValueStateText().getControls();
-		} else {
-			return [];
-		}
-	};
+		InputBase.prototype._getValueStateLinks = function() {
+			return this._aValueStateLinks;
+		};
 
 	/**
 	 * @param {jQuery.Event} oEvent The event object.
@@ -894,11 +901,25 @@ function(
 	 * @private
 	 */
 	InputBase.prototype._bClickOnValueStateLink = function(oEvent) {
-		var aValueStateLinks = this._aValueStateLinks();
+		const aValueStateLinks = this._getValueStateLinks();
+		const oRelTarget = oEvent && oEvent.relatedTarget;
 
-		return aValueStateLinks.some(function(oLink) {
-			return oEvent.relatedTarget === oLink.getDomRef();
-		});
+		// if the links are declared as aggregation of the sap.m.FormattedText
+		if (aValueStateLinks.length) {
+			return aValueStateLinks.some(function(oLink) {
+				return !!oLink.getDomRef && oRelTarget === oLink.getDomRef();
+			});
+		}
+
+		// links can be passed directly to a sap.m.FormattedText control as part of a HTML message (not as an aggregation)
+		if (oRelTarget && oRelTarget.tagName === "A" && oRelTarget.parentElement.classList.contains("sapMFT")) {
+			this._setValueStateLinks([oRelTarget]);
+			this._attachValueStateLinkPress();
+
+			return true;
+		}
+
+		return false;
 	};
 
 	/**
@@ -908,16 +929,22 @@ function(
 	 * @private
 	 */
 	InputBase.prototype._attachValueStateLinkPress = function() {
-		this._aValueStateLinks().forEach(
+		this._getValueStateLinks().forEach(
 			function(oLink) {
-				oLink.attachPress(this.fnCloseValueStateOnClick, this);
+				if (oLink.attachPress) {
+					oLink.attachPress(this.fnCloseValueStateOnClick, this);
+				} else {
+					oLink.addEventListener("click", this.fnCloseValueStateOnClick.bind(this));
+				}
 			}, this);
 	};
 
 	InputBase.prototype._detachValueStateLinkPress = function() {
-		this._aValueStateLinks().forEach(
+		this._getValueStateLinks().forEach(
 			function(oLink) {
-				oLink.detachPress(this.fnCloseValueStateOnClick, this);
+				if (oLink.detachPress) {
+					oLink.detachPress(this.fnCloseValueStateOnClick, this);
+				}
 			}, this);
 	};
 
@@ -995,9 +1022,6 @@ function(
 	 * @protected
 	 */
 	InputBase.prototype.closeValueStateMessage = function() {
-		// To avoid execution of the opening logic after the closing one,
-		// when closing the suggestions dialog on mobile devices, due to race condition,
-		// the value state message should be closed with timeout because it's opened that way
 		if (this._oValueStateMessage) {
 			this._detachValueStateLinkPress();
 			this._oValueStateMessage.close();
@@ -1112,7 +1136,7 @@ function(
 			// in IE we should wait until the scroll ends
 			setTimeout(function () {
 				if (!this.bIsDestroyed) {
-					this._detachValueStateLinkPress();
+					this._setValueStateLinks([]);
 					this._attachValueStateLinkPress();
 					this._oValueStateMessage.open();
 				}
