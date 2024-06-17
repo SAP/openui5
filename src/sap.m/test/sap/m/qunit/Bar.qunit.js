@@ -1005,21 +1005,30 @@ sap.ui.define([
 				contentMiddle: [ new Label("myLabel", {text: "my Bar"})]
 			});
 			this.Bar.placeAt("qunit-fixture");
+			this.InterctiveControlsBar = new Bar({
+				contentMiddle: [ new Button("myButton", {text: "my Button"})],
+				contentLeft: [ new Button("myButton2", {text: "my Button2"})]
+			});
+			this.InterctiveControlsBar.placeAt("qunit-fixture");
 			await nextUIUpdate(this.clock);
 		},
 		afterEach: async function() {
 			this.Bar.destroy();
 			this.Bar = null;
+			this.InterctiveControlsBar.destroy();
+			this.InterctiveControlsBar = null;
 			await nextUIUpdate(this.clock);
 		}
 	});
 
 	QUnit.test("Accessibility role should be set correctly", function(assert) {
-		assert.strictEqual(this.Bar.$().attr("role"), "toolbar", "Default role is set correctly");
+		assert.strictEqual(this.Bar.$().attr("role"), undefined, "Default role shouldn't be set if there are no interactive controls in the Bar content");
+		assert.strictEqual(this.InterctiveControlsBar.$().attr("role"), "toolbar", "Default role is set correctly for Bar with 2 or more interactive controls");
 	});
 
 	QUnit.test("aria-level should not be set", function(assert) {
 		assert.strictEqual(this.Bar.$().attr("aria-level"), undefined, "aria-level is not set");
+		assert.strictEqual(this.InterctiveControlsBar.$().attr("aria-level"), undefined, "aria-level is not set");
 	});
 
 	QUnit.module("Title Alignment");
