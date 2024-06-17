@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/integration/util/BindingResolver",
 	"sap/m/IllustratedMessageType",
 	"sap/base/Log",
+	"sap/base/util/deepClone",
 	"sap/ui/integration/util/AnalyticsCloudHelper"
 ], function (
 	AnalyticsCloudContentRenderer,
@@ -17,6 +18,7 @@ sap.ui.define([
 	BindingResolver,
 	IllustratedMessageType,
 	Log,
+	deepClone,
 	AnalyticsCloudHelper
 ) {
 	"use strict";
@@ -117,42 +119,35 @@ sap.ui.define([
 		const oCard = this.getCardInstance();
 		if (!oCard.isReady()) {
 			oCard.attachEventOnce("_ready", () => {
+				// Makes sure that it goes through onAfterRendering when card is ready
 				this.invalidate();
 			});
 			return;
 		}
 
 		if (!sap?.sac?.api?.widget) {
-			this._widgetError("Object sap.sac.api.widget not found on the page.");
+			this._showError("Object sap.sac.api.widget not found on the page.");
 			return;
 		}
 
-		const oWidget = this._getResolvedConfiguration()?.widget;
+		const oConfig = this._getResolvedConfiguration();
+		if (!oConfig.sacTenantDestination) {
+			this._showError("Required configuration /sap.card/content/sacTenantDestination was not found or is empty.");
+			return;
+		}
+
+		const oWidget = oConfig?.widget;
 		if (!oWidget) {
-			this._widgetError("Required widget configuration not found.");
+			this._showError("Required configuration /sap.card/content/widget was not found or is empty.");
 			return;
 		}
-
-		const fnSuccess = () => {
-			Log.info(`Widget rendered successfully: ${oWidget.widgetId}`, this);
-		};
-
-		const fnFailure = () => {
-			this._widgetError(`Widget rendering failed: ${oWidget.widgetId}`);
-		};
 
 		sap.sac.api.widget.renderWidget(
 			this._oWidgetContainer.getId(),
-			{ proxy: oWidget["destination"] },
-			oWidget["storyId"],
-			oWidget["widgetId"],
-			{
-				...oWidget["options"],
-				renderComplete: {
-					onSuccess: fnSuccess,
-					onFailure: fnFailure
-				}
-			}
+			{ proxy: oConfig.sacTenantDestination },
+			oWidget.storyId,
+			oWidget.widgetId,
+			this._getOptions(oConfig)
 		);
 	};
 
@@ -169,18 +164,85 @@ sap.ui.define([
 	};
 
 	/**
-	 * Gets the content configuration, with resolved binding.
-	 * @returns {Object} The resolved configuration.
+	 * Gets the options from manifest merged with default options.
+	 * @param {Object} oConfig The content config.
+	 * @returns {Object} The options.
 	 */
-	AnalyticsCloudContent.prototype._getResolvedConfiguration = function () {
-		return BindingResolver.resolveValue(
-			this.getParsedConfiguration(),
-			this,
-			this.getBindingContext()?.getPath() || "/"
-		);
+	AnalyticsCloudContent.prototype._getOptions = function (oConfig) {
+		const oOptions = deepClone(oConfig.options) || {};
+		const oDefaultAttributes = {
+			enableInteraction: false,
+			enableUndoRedo: false,
+			enableMenus: false,
+			showHeader: false,
+			showFooter: false
+		};
+
+		oOptions.attributes = Object.assign({}, oDefaultAttributes, oOptions.attributes);
+
+		oOptions.renderComplete = {
+			onSuccess: this._onWidgetSuccess.bind(this),
+			onFailure: this._onWidgetFailure.bind(this)
+		};
+
+		return oOptions;
 	};
 
-	AnalyticsCloudContent.prototype._widgetError = function (sError) {
+	/**
+	 * Handles the case where widget rendering was successful.
+	 */
+	AnalyticsCloudContent.prototype._onWidgetSuccess = function () {
+		const oWidget = this._getResolvedConfiguration()?.widget;
+
+		Log.info(`Widget rendered successfully: ${oWidget.widgetId}`, this);
+		this._updateWidgetInfo();
+	};
+
+	/**
+	 * Handles the case where widget rendering was failure.
+	 * @param {Error|Object|string|null} vError The error returned by the widget.
+	 */
+	AnalyticsCloudContent.prototype._onWidgetFailure = function (vError) {
+		const oWidget = this._getResolvedConfiguration()?.widget;
+
+		let sError = `There was a failure in sap.sac.api.widget.renderWidget with storyId ${oWidget.storyId} and widgetId ${oWidget.widgetId}.`;
+
+		if (vError instanceof Error) {
+			sError += " " + vError.toString();
+			Log.error(vError.stack);
+		} else if (typeof vError === "object") {
+			sError += " " + JSON.stringify(vError);
+		} else if (vError) {
+			sError += " " + vError;
+		}
+
+		Log.error(sError, this);
+
+		this._updateWidgetInfo();
+	};
+
+	/**
+	 * Sets the widget info from sap.sac.api.widget.getWidgetInfo to card's model widgetInfo
+	 */
+	AnalyticsCloudContent.prototype._updateWidgetInfo = async function () {
+		const oCard = this.getCardInstance();
+		const sContainerId = this._oWidgetContainer.getId();
+
+		let oWidgetInfo = {};
+		try {
+			oWidgetInfo = await sap.sac.api.widget.getWidgetInfo(sContainerId);
+		} catch (oError) {
+			Log.error("Call to sap.sac.api.widget.getWidgetInfo failed.", this);
+		}
+
+		oCard.getModel("widgetInfo").setData(oWidgetInfo);
+	};
+
+	/**
+	 * Displays widget initialization error to the end user and logs error message.
+	 * @param {string} sError The error message to log.
+	 */
+	AnalyticsCloudContent.prototype._showError = function (sError) {
 		const oCard = this.getCardInstance();
 
 		Log.error(sError, this);

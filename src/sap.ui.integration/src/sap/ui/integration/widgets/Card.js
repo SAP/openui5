@@ -662,6 +662,9 @@ sap.ui.define([
 			},
 			size: {
 				init: () => this.setModel(this._oDisplayVariants.getInitialSizeModel(), "size")
+			},
+			widgetInfo: {
+				init: () => this.setModel(new JSONModel(), "widgetInfo")
 			}
 		};
 

@@ -35,24 +35,15 @@
 			}
 		},
 		"header": {
-			"title": "{= ${widgetInfo>/title} || 'SAC Card'}",
+			"title": "{widgetInfo>/title}",
 			"subTitle": "{widgetInfo>/subtitle}"
 		},
 		"content": {
 			"minHeight": "25rem",
 			"sacTenantDestination": "{{destinations.SAC}}",
 			"widget": {
-				"storyId": "ABD0990112D81FBF4C936C30444FA3B7",
+				"storyId": "B1E82486021B28C98A0BD7A0B262DA44",
 				"widgetId": "Chart_1"
-			},
-			"options": {
-				"attributes": {
-				  "enableInteraction": true,
-				  "enableUndoRedo": true,
-				  "enableMenus": true,
-				  "showHeader": true,
-				  "showFooter": true
-				}
 			}
 		}
 	}

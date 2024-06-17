@@ -30,7 +30,7 @@ sap.ui.define([
 	 * The source for the analytics cloud widget.
 	 * @const
 	 */
-	AnalyticsCloudHelper.WIDGET_SCRIPT_SRC = "https://assets.sapanalytics.cloud/testing/api/widget/sac-widget-embed.js";
+	AnalyticsCloudHelper.WIDGET_SCRIPT_SRC = "https://assets.sapanalytics.cloud/production/api/widget/sac-widget-embed.js";
 
 	/**
 	 * Loads the widget code and calls initial setup.

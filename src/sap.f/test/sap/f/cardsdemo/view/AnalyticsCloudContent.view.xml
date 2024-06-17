@@ -20,9 +20,24 @@
 			<FormattedText htmlText="2. There will be a popup with login which is required, see related Jira item for credentials."></FormattedText>
 		</VBox>
 
-		<w:Card id="card1" width="25rem" class="sapUiSmallMargin" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/analyticsCloud/sample1.json">
-		</w:Card>
-		<w:Card id="card2" width="25rem" class="sapUiSmallMargin" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/analyticsCloud/sample1.json">
-		</w:Card>
+		<Panel headerText="Samples" class="sapUiSmallMargin">
+			<w:Card id="card1" width="25rem" class="sapUiSmallMargin" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/analyticsCloud/sample1.json">
+			</w:Card>
+			<w:Card id="card2" width="25rem" class="sapUiSmallMargin" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/analyticsCloud/sample2.json">
+			</w:Card>
+			<w:Card id="card3" width="25rem" class="sapUiSmallMargin" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/analyticsCloud/sample3.json">
+			</w:Card>
+			<w:Card id="card4" width="25rem" class="sapUiSmallMargin" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/analyticsCloud/sample4.json">
+			</w:Card>
+		</Panel>
+
+		<Panel headerText="Error cases" class="sapUiSmallMargin">
+			<w:Card id="card5" width="25rem" class="sapUiSmallMargin" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/analyticsCloud/error1.json">
+			</w:Card>
+			<w:Card id="card6" width="25rem" class="sapUiSmallMargin" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/analyticsCloud/error2.json">
+			</w:Card>
+			<w:Card id="card7" width="25rem" class="sapUiSmallMargin" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/analyticsCloud/error3.json">
+			</w:Card>
+		</Panel>
 	</Page>
 </mvc:View>
