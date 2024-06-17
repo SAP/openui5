@@ -7,6 +7,7 @@ sap.ui.define([
 	"use strict";
 
 	Opa5.extendConfig({
+		// autoWait: true,
 		appParams: {
 			"sap-ui-animation": false
 		}
