@@ -305,12 +305,19 @@ sap.ui.define([
 	 * Restores the default ui state of the <code>AdaptFiltersPanel</code>.
 	 */
 	AdaptFiltersPanel.prototype.restoreDefaults = function() {
-		//this._sModeKey = "all";
-		//this._getQuickFilter().setSelectedKey(this._sModeKey);
+		this._sModeKey = "all";
+		this._getQuickFilter().setSelectedKey(this._sModeKey);
 		this._getSearchField().setValue("");
+
+		//Note: this will need to be threated as incompatible change
 		//this.switchView(this.getDefaultView());
 		this._filterByModeAndSearch();
-		//this.showFactory(true);
+
+		if (this.getCurrentViewKey() === this.LIST_KEY) {
+			this._getShowHideBtn().setText(this._getResourceText("filterbar.ADAPT_SHOW_VALUE"));
+			this.showFactory(false);
+		}
+
 	};
 
 	/**
