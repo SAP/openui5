@@ -31,6 +31,11 @@
 			</w:Card>
 		</Panel>
 
+		<Panel headerText="Samples with interpretation" class="sapUiSmallMargin">
+			<w:Card id="card10" width="25rem" class="sapUiSmallMargin" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/analyticsCloud/sample5-interpretation.json">
+			</w:Card>
+		</Panel>
+
 		<Panel headerText="Error cases" class="sapUiSmallMargin">
 			<w:Card id="card5" width="25rem" class="sapUiSmallMargin" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/analyticsCloud/error1.json">
 			</w:Card>

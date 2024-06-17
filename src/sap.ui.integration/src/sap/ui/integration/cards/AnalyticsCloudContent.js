@@ -136,19 +136,29 @@ sap.ui.define([
 			return;
 		}
 
+		const sContainerId = this._oWidgetContainer.getId();
 		const oWidget = oConfig?.widget;
-		if (!oWidget) {
-			this._showError("Required configuration /sap.card/content/widget was not found or is empty.");
-			return;
-		}
+		const vInterpretation = oConfig?.interpretation;
+		const oOptions = this._getOptions(oConfig);
 
-		sap.sac.api.widget.renderWidget(
-			this._oWidgetContainer.getId(),
-			{ proxy: oConfig.sacTenantDestination },
-			oWidget.storyId,
-			oWidget.widgetId,
-			this._getOptions(oConfig)
-		);
+		if (oWidget) {
+			sap.sac.api.widget.renderWidget(
+				sContainerId,
+				{ proxy: oConfig.sacTenantDestination },
+				oWidget.storyId,
+				oWidget.widgetId,
+				oOptions
+			);
+		} else if (vInterpretation) {
+			sap.sac.api.widget.renderWidgetForJustAsk(
+				sContainerId,
+				{ proxy: oConfig.sacTenantDestination },
+				vInterpretation,
+				oOptions
+			);
+		} else {
+			this._showError("Required configuration /sap.card/content/widget or /sap.card/content/interpretation was not found or is empty.");
+		}
 	};
 
 	/**
@@ -192,9 +202,9 @@ sap.ui.define([
 	 * Handles the case where widget rendering was successful.
 	 */
 	AnalyticsCloudContent.prototype._onWidgetSuccess = function () {
-		const oWidget = this._getResolvedConfiguration()?.widget;
+		const sWidgetId = this._getResolvedConfiguration()?.widget?.widgetId || "interpretation";
 
-		Log.info(`Widget rendered successfully: ${oWidget.widgetId}`, this);
+		Log.info(`Widget rendered successfully: ${sWidgetId}`, this);
 		this._updateWidgetInfo();
 	};
 
@@ -204,8 +214,10 @@ sap.ui.define([
 	 */
 	AnalyticsCloudContent.prototype._onWidgetFailure = function (vError) {
 		const oWidget = this._getResolvedConfiguration()?.widget;
+		const sStoryId = oWidget?.storyId || "interpretation";
+		const sWidgetId = oWidget?.widgetId || "interpretation";
 
-		let sError = `There was a failure in sap.sac.api.widget.renderWidget with storyId ${oWidget.storyId} and widgetId ${oWidget.widgetId}.`;
+		let sError = `There was a failure in sap.sac.api.widget.renderWidget with storyId ${sStoryId} and widgetId ${sWidgetId}.`;
 
 		if (vError instanceof Error) {
 			sError += " " + vError.toString();
