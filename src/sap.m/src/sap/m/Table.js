@@ -1406,9 +1406,9 @@ sap.ui.define([
 	Table.prototype.validateAggregation = function(sAggregationName, oObject, bMultiple) {
 		var oResult = ListBase.prototype.validateAggregation.apply(this, arguments);
 
-		/*
+		/**
 		 * @deprecated as of version 1.120
-		*/
+		 */
 		if (sAggregationName === "items" && !BaseObject.isA(oObject, "sap.m.ITableItem")) {
 			Log.error(oObject + " is not a valid items aggregation of " + this + ". Items aggregation in ResponsiveTable control only supports ITableItem.");
 			return oResult;
