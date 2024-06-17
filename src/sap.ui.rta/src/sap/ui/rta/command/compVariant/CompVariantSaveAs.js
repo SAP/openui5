@@ -128,10 +128,20 @@ sap.ui.define([
 			variantId: this._oVariant.getVariantId()
 		});
 
+		// don't set content at standard variant
+		if (this.getElement().getCurrentVariantId() !== "") {
+			this.getElement()._getVariantById(this.getPreviousVariantId()).setContent(this.getNewVariantProperties().content);
+		}
+
 		// when changing a read only variant a new variant has to be created.
 		// on undo the changes have to be reverted via the activateVariant call
 		if (this.getActivateAfterUndo()) {
 			this.getElement().activateVariant(this.getPreviousVariantId());
+		}
+
+		// don't set modified at standard variant
+		if (this.getElement().getCurrentVariantId() !== "") {
+			this.getElement().setModified(this.getPreviousDirtyFlag());
 		}
 
 		return Promise.resolve();
