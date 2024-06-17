@@ -339,7 +339,12 @@ sap.ui.define([
 					id: sVariantId
 				},
 				reference: sReference,
-				persistencyKey: sPersistencyKey
+				persistencyKey: sPersistencyKey,
+				control: {
+					getCurrentVariantId() {
+						return "";
+					}
+				}
 			});
 			CompVariantState.updateVariant({
 				favorite: true,
@@ -356,7 +361,12 @@ sap.ui.define([
 					content: {}
 				},
 				reference: sReference,
-				persistencyKey: sPersistencyKey
+				persistencyKey: sPersistencyKey,
+				control: {
+					getCurrentVariantId() {
+						return "";
+					}
+				}
 			});
 
 			return FlexObjectState.getFlexObjects({
