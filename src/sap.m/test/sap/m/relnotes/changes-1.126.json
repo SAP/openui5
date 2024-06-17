@@ -3,6 +3,43 @@
     "date": "June 2024",
     "notes": [
       {
+        "id": "c51df5734976976bdde8c81afc9b5a05a8921da5",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: added possibility to select a day with a ENTER",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380129735"
+          }
+        ]
+      },
+      {
+        "id": "af7918a769d418bb72a878cd40a1a80acbb3bcbb",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Value state message link is now clickable"
+      },
+      {
+        "id": "2c4bc6d82c8c277ad17678539e61f7200cc7bc5b",
+        "type": "FIX",
+        "text": " sap.m.Input: redundant haspopup attribute removed"
+      },
+      {
+        "id": "efc7092cb951bd5bb11783425f50306b65a1c27f",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: fire press onkeyup",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370111634"
+          }
+        ]
+      },
+      {
+        "id": "d8cef9834f4a09b8b561a7946a5cdfa9496eab6a",
+        "type": "FIX",
+        "text": " ActionTile: New changes to align to the latest design"
+      },
+      {
         "id": "d8e824a33c3b0df5d1675b45f97e78a99d9d169a",
         "type": "FEATURE",
         "text": " sap.m.RadioButton: Added wrapping and wrapping type"

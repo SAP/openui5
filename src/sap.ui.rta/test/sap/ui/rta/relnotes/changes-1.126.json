@@ -1,0 +1,12 @@
+{
+  "1.126.0": {
+    "date": "June 2024",
+    "notes": [
+      {
+        "id": "4311d0421aff2a4b477778be19ec103c253c7e3c",
+        "type": "FIX",
+        "text": " sap.ui.rta: Prevent set focus on not existing key user app variant overview table"
+      }
+    ]
+  }
+}

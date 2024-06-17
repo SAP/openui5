@@ -3,6 +3,11 @@
     "date": "June 2024",
     "notes": [
       {
+        "id": "621c4d050b62f890cdc01e763a7616a781f6f40e",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.widget.Card: Add fitType property to icons in List and Table content"
+      },
+      {
         "id": "d070e6228c916e4ef59460a7f3d3ac1aede88ae2",
         "type": "FEATURE",
         "text": " Integration Cards: Introduce displayZeroValue option for StackedBar micro chart"

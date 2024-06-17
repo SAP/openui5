@@ -13,6 +13,11 @@
         "text": " sap.m.InputBase: Expose public methods for preferred interaction type"
       },
       {
+        "id": "b7cf4cf8169c09287d44098ad6ba43077de6822d",
+        "type": "FIX",
+        "text": " Field: old unit used after Field was initialized"
+      },
+      {
         "id": "bf9c3fc1d1b366ba9816ca9f54c5b13aaa01323b",
         "type": "FIX",
         "text": " Field: parsing nested brackets"

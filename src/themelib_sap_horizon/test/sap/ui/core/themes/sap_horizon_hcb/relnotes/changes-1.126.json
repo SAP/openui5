@@ -3,6 +3,11 @@
     "date": "June 2024",
     "notes": [
       {
+        "id": "30b16c8c766613a647ff5a0c2b1210784dc3b9ac",
+        "type": "FIX",
+        "text": " FormContainer: expander announcement"
+      },
+      {
         "id": "a51a62ef5487db795911861549b5a2ef7c2f74ff",
         "type": "FIX",
         "text": " sap.uxap.AnchorBar: Removed unwanted border"

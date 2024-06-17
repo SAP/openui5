@@ -3,6 +3,11 @@
     "date": "June 2024",
     "notes": [
       {
+        "id": "570e8caa026e7a17777145dfd2705f25dc877e4b",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: adjust change event firing"
+      },
+      {
         "id": "0f07961951d052aa0b630a48be010f356cf5ebca",
         "type": "FIX",
         "text": " sap.ui.unified.Calendar: change cursor for header buttons"

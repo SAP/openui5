@@ -1,0 +1,17 @@
+{
+  "1.126.0": {
+    "date": "June 2024",
+    "notes": [
+      {
+        "id": "30b16c8c766613a647ff5a0c2b1210784dc3b9ac",
+        "type": "FIX",
+        "text": " FormContainer: expander announcement"
+      },
+      {
+        "id": "58fa6930b779d25c984cd177de52f610dd386508",
+        "type": "FIX",
+        "text": " FormContainer: invalid role rendered in ColumnLayout"
+      }
+    ]
+  }
+}

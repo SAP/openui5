@@ -3,6 +3,11 @@
     "date": "June 2024",
     "notes": [
       {
+        "id": "533d273543496bea736557c634e11a97fad53744",
+        "type": "FIX",
+        "text": " Demo Kit: Improve Scrolling in Landscape Mode on Mobile Devices"
+      },
+      {
         "id": "fa0f18e932f7b50001155a24d336d4f0b852b899",
         "type": "FIX",
         "text": " Demo Kit: Fix API reference search result list item navigation"
