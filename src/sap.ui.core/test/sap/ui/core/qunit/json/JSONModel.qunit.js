@@ -999,4 +999,25 @@ sap.ui.define([
 		oLabel.unbindElement();
 		assert.equal(oLabel.getText(), "", "text value from model");
 	});
+
+	//*********************************************************************************************
+	// DINC0180763
+	QUnit.test("loadData: calls _ajax with jsonp=false", function () {
+		const oModel = {
+			_ajax() {},
+			fireRequestSent() {}
+		};
+		this.mock(oModel).expects("fireRequestSent").withExactArgs({
+			async: false, headers: "~mHeaders", info: "cache=~bCache;bMerge=~bMerge",
+			infoObject: {cache: "~bCache", merge: "~bMerge"}, type: "~sType", url: "~sURL"
+		});
+		this.mock(oModel).expects("_ajax").withExactArgs({
+			async: false, cache: "~bCache", data: "~oParameters", dataType: 'json', error: sinon.match.func,
+			headers: "~mHeaders", jsonp: false, success: sinon.match.func, type: "~sType", url: "~sURL"
+		});
+
+		// code under test
+		JSONModel.prototype.loadData.call(oModel, "~sURL", "~oParameters", false, "~sType", "~bMerge", "~bCache",
+			"~mHeaders");
+	});
 });
