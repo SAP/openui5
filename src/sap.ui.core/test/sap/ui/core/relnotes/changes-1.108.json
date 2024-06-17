@@ -597,5 +597,30 @@
         ]
       }
     ]
+  },
+  "1.108.30": {
+    "date": "June 2024",
+    "notes": [
+      {
+        "id": "32590a3f22c17b5ceacb75c663d88549714ec697",
+        "type": "FIX",
+        "text": " sap.ui.core.util.LibraryInfo: Loosen baseUrl regex check"
+      },
+      {
+        "id": "9f45156ecdede8064a96e5e03c641e5947045ccd",
+        "type": "FIX",
+        "text": " sap/ui/core/.library: Remove wrong component for sap/ui/core/util/MockServer"
+      },
+      {
+        "id": "cd9000f287a54ee91745e40aa550beb712b7eef8",
+        "type": "FIX",
+        "text": " sap.ui.performance.XHRInterceptor: Fix CORS check"
+      },
+      {
+        "id": "2cf8f971be079d16e0ba4e48bd0cf608011fc9fe",
+        "type": "FIX",
+        "text": " sap.ui.core.format.DateFormat.qunit: Fix flaky tests"
+      }
+    ]
   }
 }

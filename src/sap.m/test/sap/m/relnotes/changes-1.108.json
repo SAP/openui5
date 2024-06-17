@@ -1633,5 +1633,25 @@
         "text": " sap.m.RadioButtonGroup: There is no error when destroying and adding radio buttons on select"
       }
     ]
+  },
+  "1.108.30": {
+    "date": "June 2024",
+    "notes": [
+      {
+        "id": "a8f423efe71ffa28c5a3a58938ecc9451276cbb4",
+        "type": "FIX",
+        "text": " sap.m.Input: Value is not cleared on invalidation when type password is used"
+      },
+      {
+        "id": "929db9a16a33ad71819d305feb89176ce63fe9de",
+        "type": "FIX",
+        "text": " sap.m.Button: Back type button has correct hover colour"
+      },
+      {
+        "id": "0416a4acd850a1259901b40c91fef967ae0ca7fd",
+        "type": "FIX",
+        "text": " sap.m.Select: Required label fixed"
+      }
+    ]
   }
 }

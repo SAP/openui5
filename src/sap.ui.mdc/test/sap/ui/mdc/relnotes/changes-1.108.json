@@ -171,5 +171,15 @@
         ]
       }
     ]
+  },
+  "1.108.30": {
+    "date": "June 2024",
+    "notes": [
+      {
+        "id": "b49b4028acf824608b88366a3136b0f86ebe8f14",
+        "type": "FIX",
+        "text": " mdc.FilterBar: enhance check for wrong values of filter fields"
+      }
+    ]
   }
 }
