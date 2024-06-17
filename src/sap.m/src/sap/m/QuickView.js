@@ -412,7 +412,7 @@ sap.ui.define([
 
 	/**
 	 * Opens the QuickView.
-	 * @param {sap.ui.core.Control} oControl The control which opens the QuickView.
+	 * @param {sap.ui.core.Control|HTMLElement} oControl The control which opens the QuickView.
 	 * @returns {this} Pointer to the control instance for chaining
 	 * @public
 	 */

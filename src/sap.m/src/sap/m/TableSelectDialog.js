@@ -267,7 +267,7 @@ sap.ui.define([
 						 * Note: In contrast to the parameter "selectedItems", this parameter includes the selected but NOT visible items (due to list filtering). An empty array is set for this parameter if no Databinding is used.
 						 * NOTE: When the list binding is pre-filtered and there are items in the selection that are not visible upon opening the dialog, these contexts are not loaded. Therefore, these items will not be included in the selectedContexts array unless they are displayed at least once.
 						 */
-						selectedContexts : {type : "string"}
+						selectedContexts : {type : "string[]"}
 					}
 				},
 
