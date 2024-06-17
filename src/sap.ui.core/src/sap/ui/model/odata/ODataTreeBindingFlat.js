@@ -660,11 +660,17 @@ sap.ui.define([
 				sKey = this.oModel.getKey(oEntry);
 				iIndex = iSkip + i;
 
-				var iMagnitude = oEntry[this.oTreeProperties["hierarchy-node-descendant-count-for"]];
+				const vMagnitude = oEntry[this.oTreeProperties["hierarchy-node-descendant-count-for"]];
+				let iMagnitude = Number(vMagnitude);
+
 				// check the magnitude attribute whether it's greater or equal than 0
 				if (iMagnitude < 0) {
 					iMagnitude = 0;
 					Log.error("The entry data with key '" + sKey + "' under binding path '" + this.getPath() + "' has a negative 'hierarchy-node-descendant-count-for' which isn't allowed.");
+				}
+				if (!Number.isSafeInteger(iMagnitude)) {
+					Log.error("The value of magnitude is not a safe integer: " + JSON.stringify(vMagnitude),
+						this.getResolvedPath(), sClassName);
 				}
 
 				var oNode = this._aNodes[iIndex] = this._aNodes[iIndex] || {
@@ -705,7 +711,6 @@ sap.ui.define([
 						this.setNodeSelection(oNode, true);
 					}
 				}
-
 			}
 		}
 	};

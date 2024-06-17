@@ -1087,7 +1087,7 @@ sap.ui.define([
 				results : [{
 					drillStateFor : sDrillState,
 					levelFor : "~level",
-					nodeDescendantCountFor : "~magnitude"
+					nodeDescendantCountFor : "42"
 				}]
 			},
 			oExpectedNode = {
@@ -1099,7 +1099,7 @@ sap.ui.define([
 				isDeepOne : false,
 				key : "~key('42')",
 				level : "~level",
-				magnitude : "~magnitude",
+				magnitude : 42,
 				nodeState : {
 					collapsed : false,
 					expanded : false,
@@ -1132,6 +1132,98 @@ sap.ui.define([
 		assert.strictEqual(oBinding._bLengthFinal, true);
 		assert.deepEqual(oBinding._aNodes, [oExpectedNode]);
 		assert.strictEqual(oBinding._iLowestServerLevel, "~level");
+	});
+});
+
+	//*********************************************************************************************
+[1, "2", "1e5", "9007199254740991"].forEach(function (vMagnitude) {
+	QUnit.test("_addServerIndexNodes: magnitude is safe integer: " + vMagnitude, function (assert) {
+		const oBinding = {
+				_aNodes : [],
+				_mSelected : {},
+				oContext : "~oContext",
+				oModel : {
+					getContext() {},
+					getKey() {},
+					resolveDeep() {}
+				},
+				sPath : "~sPath",
+				oTreeProperties : {
+					"hierarchy-drill-state-for" : "drillStateFor",
+					"hierarchy-level-for" : "levelFor",
+					"hierarchy-node-descendant-count-for" : "nodeDescendantCountFor"
+				}
+			},
+			oData = {
+				__count : "1",
+				results : [{
+					drillStateFor : "~sDrillState",
+					levelFor : "~level",
+					nodeDescendantCountFor : vMagnitude
+				}]
+			};
+
+		this.mock(oBinding.oModel).expects("getKey")
+			.withExactArgs(sinon.match.same(oData.results[0]))
+			.returns("~key('42')");
+		this.mock(oBinding.oModel).expects("resolveDeep").withExactArgs("~sPath", "~oContext").returns("~deepPath");
+		this.mock(oBinding.oModel).expects("getContext")
+			.withExactArgs("/~key('42')", "~deepPath('42')")
+			.returns("~context");
+
+		// code under test
+		ODataTreeBindingFlat.prototype._addServerIndexNodes.call(oBinding, oData, 0);
+
+		assert.ok(typeof oBinding._aNodes[0].magnitude === "number");
+	});
+});
+
+	//*********************************************************************************************
+[
+	{magnitude : "Foo", expected : '"Foo"'},
+	{magnitude : 9007199254740992, expected : "9007199254740992"},
+	{magnitude : "9007199254740999", expected : '"9007199254740999"'}
+].forEach(function (oFixture) {
+	QUnit.test("_addServerIndexNodes: magnitude is not a safe integer: " + oFixture.magnitude, function (assert) {
+		const oBinding = {
+				_aNodes : [],
+				_mSelected : {},
+				oContext : "~oContext",
+				oModel : {
+					getContext() {},
+					getKey() {},
+					resolveDeep() {}
+				},
+				sPath : "~sPath",
+				oTreeProperties : {
+					"hierarchy-drill-state-for" : "drillStateFor",
+					"hierarchy-level-for" : "levelFor",
+					"hierarchy-node-descendant-count-for" : "nodeDescendantCountFor"
+				},
+				getResolvedPath() {}
+			},
+			oData = {
+				__count : "1",
+				results : [{
+					drillStateFor : "~sDrillState",
+					levelFor : "~level",
+					nodeDescendantCountFor : oFixture.magnitude
+				}]
+			};
+
+		this.mock(oBinding.oModel).expects("getKey")
+			.withExactArgs(sinon.match.same(oData.results[0]))
+			.returns("~key('42')");
+		this.mock(oBinding.oModel).expects("resolveDeep").withExactArgs("~sPath", "~oContext").returns("~deepPath");
+		this.mock(oBinding.oModel).expects("getContext")
+			.withExactArgs("/~key('42')", "~deepPath('42')")
+			.returns("~context");
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~path");
+		this.oLogMock.expects("error")
+			.withExactArgs("The value of magnitude is not a safe integer: " + oFixture.expected, "~path", sClassName);
+
+		// code under test
+		ODataTreeBindingFlat.prototype._addServerIndexNodes.call(oBinding, oData, 0);
 	});
 });
 
