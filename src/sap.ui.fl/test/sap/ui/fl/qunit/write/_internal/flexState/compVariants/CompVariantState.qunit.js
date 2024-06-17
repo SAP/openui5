@@ -87,7 +87,12 @@ sap.ui.define([
 					isUserDependent: false,
 					content: {}
 				},
-				reference: sComponentId
+				reference: sComponentId,
+				control: {
+					getCurrentVariantId: function() {
+						return "";
+					}
+				}
 			},
 			targetCategory: "variants",
 			publicLayerAvailable: false,
@@ -139,7 +144,12 @@ sap.ui.define([
 					isUserDependent: false,
 					content: {}
 				},
-				reference: sComponentId
+				reference: sComponentId,
+				control: {
+					getCurrentVariantId: function() {
+						return "";
+					}
+				}
 			},
 			targetCategory: "variants",
 			publicLayerAvailable: false,
@@ -221,7 +231,12 @@ sap.ui.define([
 					value: "newVariant",
 					type: "XFLD"
 				},
-				layer: Layer.CUSTOMER
+				layer: Layer.CUSTOMER,
+				control: {
+					getCurrentVariantId: function() {
+						return "";
+					}
+				}
 			};
 
 			var oExpectedVariant = {
@@ -283,7 +298,12 @@ sap.ui.define([
 				},
 				ODataService: null,
 				texts: {},
-				layer: Layer.CUSTOMER
+				layer: Layer.CUSTOMER,
+				control: {
+					getCurrentVariantId: function() {
+						return "";
+					}
+				}
 			};
 
 			var oExpectedVariant = {
@@ -327,6 +347,87 @@ sap.ui.define([
 			assert.deepEqual(oAddedObject.convertToFileContent(), oExpectedVariant, "and the added object is created correct");
 			assert.strictEqual(mCompVariantsMapForPersistencyKey.variants[0], oAddedObject, "which is the returned entity");
 		});
+
+		QUnit.test("two variants as CUSTOMER and first variant don't save content of second but keep his own", function(assert) {
+			var sPersistencyKey = "persistency.key";
+			sandbox.stub(Settings.getInstanceOrUndef(), "getUserId").returns("currentUser");
+			var mPropertyBag = {
+				reference: sComponentId,
+				persistencyKey: sPersistencyKey,
+				changeSpecificData: {
+					content: {},
+					isVariant: true,
+					type: "filterVariant"
+				},
+				layer: Layer.CUSTOMER,
+				control: {
+					getCurrentVariantId: function() {
+						return "";
+					}
+				}
+			};
+
+			var oAddedObject = CompVariantState.addVariant(mPropertyBag);
+			var mCompVariantsMap = FlexState.getCompVariantsMap(mPropertyBag.reference);
+			var mCompVariantsMapForPersistencyKey = mCompVariantsMap[mPropertyBag.persistencyKey];
+			assert.strictEqual(mCompVariantsMapForPersistencyKey.variants.length, 1, "then one entity was stored");
+			assert.strictEqual(mCompVariantsMapForPersistencyKey.variants[0], oAddedObject, "which is the returned entity");
+
+			CompVariantState.updateVariant({
+				action: CompVariantState.updateActionType.UPDATE,
+				id: oAddedObject.getVariantId(),
+				layer: Layer.CUSTOMER,
+				content: {
+					filter: "first update"
+				},
+				reference: sComponentId,
+				persistencyKey: sPersistencyKey
+			});
+			CompVariantState.updateVariant({
+				action: CompVariantState.updateActionType.SAVE,
+				id: oAddedObject.getVariantId(),
+				layer: Layer.CUSTOMER,
+				content: {
+					filter: "first save"
+				},
+				reference: sComponentId,
+				persistencyKey: sPersistencyKey
+			});
+			CompVariantState.updateVariant({
+				action: CompVariantState.updateActionType.UPDATE,
+				id: oAddedObject.getVariantId(),
+				layer: Layer.CUSTOMER,
+				content: {
+					filter: "second update"
+				},
+				reference: sComponentId,
+				persistencyKey: sPersistencyKey
+			});
+			var mPropertyBagSecond = {
+				reference: sComponentId,
+				persistencyKey: sPersistencyKey,
+				changeSpecificData: {
+					content: {filter: "second update"},
+					isVariant: true,
+					type: "filterVariant"
+				},
+				layer: Layer.CUSTOMER,
+				control: {
+					getCurrentVariantId: function() {
+						return oAddedObject.getVariantId();
+					}
+				}
+			};
+			var oAddedObjectSecond = CompVariantState.addVariant(mPropertyBagSecond);
+			var mCompVariantsMap = FlexState.getCompVariantsMap(mPropertyBagSecond.reference);
+			var mCompVariantsMapForPersistencyKey = mCompVariantsMap[mPropertyBagSecond.persistencyKey];
+
+			assert.strictEqual(mCompVariantsMapForPersistencyKey.variants.length, 2, "then one entity was stored");
+			assert.strictEqual(mCompVariantsMapForPersistencyKey.variants[1], oAddedObjectSecond, "which is the returned entity");
+			assert.deepEqual(mCompVariantsMapForPersistencyKey.variants[1].getContent(), {filter: "second update"}, "content of second variant is correct");
+			assert.strictEqual(mCompVariantsMapForPersistencyKey.variants[0].getRevertData().length, 3, "first variant contain correct number of revert data");
+			assert.deepEqual(mCompVariantsMapForPersistencyKey.variants[0].getContent(), {filter: "first update"}, "content of first variant is correct");
+		});
 	});
 
 	QUnit.module("persist", {
@@ -355,7 +456,12 @@ sap.ui.define([
 				},
 				layer: Layer.PUBLIC,
 				reference: sComponentId,
-				persistencyKey: sPersistencyKey
+				persistencyKey: sPersistencyKey,
+				control: {
+					getCurrentVariantId: function() {
+						return "";
+					}
+				}
 			});
 			assert.equal(CompVariantState.hasDirtyChanges(sComponentId), true, "hasDirtyChanges is true after add a new variant");
 			CompVariantState.updateVariant({
@@ -399,7 +505,12 @@ sap.ui.define([
 					content: {}
 				},
 				reference: sComponentId,
-				persistencyKey: sPersistencyKey
+				persistencyKey: sPersistencyKey,
+				control: {
+					getCurrentVariantId: function() {
+						return "";
+					}
+				}
 			});
 			assert.equal(CompVariantState.hasDirtyChanges(sComponentId), true, "hasDirtyChanges is true after add a new variant");
 			CompVariantState.updateVariant({
@@ -466,7 +577,12 @@ sap.ui.define([
 					content: {}
 				},
 				reference: sComponentId,
-				persistencyKey: sPersistencyKey
+				persistencyKey: sPersistencyKey,
+				control: {
+					getCurrentVariantId: function() {
+						return "";
+					}
+				}
 			});
 			CompVariantState.removeVariant({
 				reference: sComponentId,
@@ -500,7 +616,12 @@ sap.ui.define([
 					content: {}
 				},
 				reference: sComponentId,
-				persistencyKey: sPersistencyKey
+				persistencyKey: sPersistencyKey,
+				control: {
+					getCurrentVariantId: function() {
+						return "";
+					}
+				}
 			});
 
 			CompVariantState.updateVariant({
@@ -751,7 +872,12 @@ sap.ui.define([
 					favorite: true
 				},
 				reference: sComponentId,
-				persistencyKey: this.sPersistencyKey
+				persistencyKey: this.sPersistencyKey,
+				control: {
+					getCurrentVariantId: function() {
+						return "";
+					}
+				}
 			};
 
 			return FlexState.initialize({
@@ -910,7 +1036,12 @@ sap.ui.define([
 					favorite: true
 				},
 				reference: sComponentId,
-				persistencyKey: this.sPersistencyKey
+				persistencyKey: this.sPersistencyKey,
+				control: {
+					getCurrentVariantId: function() {
+						return "";
+					}
+				}
 			};
 			this.newVariantData = {
 				changeSpecificData: {
@@ -923,7 +1054,12 @@ sap.ui.define([
 					favorite: true
 				},
 				reference: sComponentId,
-				persistencyKey: this.sPersistencyKey
+				persistencyKey: this.sPersistencyKey,
+				control: {
+					getCurrentVariantId: function() {
+						return "";
+					}
+				}
 			};
 			return FlexState.initialize({
 				componentId: sComponentId,
@@ -1208,7 +1344,12 @@ sap.ui.define([
 					favorite: true
 				},
 				reference: sComponentId,
-				persistencyKey: this.sPersistencyKey
+				persistencyKey: this.sPersistencyKey,
+				control: {
+					getCurrentVariantId: function() {
+						return "";
+					}
+				}
 			};
 			return FlexState.initialize({
 				componentId: sComponentId,
@@ -1776,7 +1917,12 @@ sap.ui.define([
 					executeOnSelection: false
 				},
 				reference: sComponentId,
-				persistencyKey: this.sPersistencyKey
+				persistencyKey: this.sPersistencyKey,
+				control: {
+					getCurrentVariantId: function() {
+						return "";
+					}
+				}
 			};
 
 			FlexState.clearState(sComponentId);
@@ -1891,7 +2037,12 @@ sap.ui.define([
 					layer: Layer.CUSTOMER
 				},
 				reference: sComponentId,
-				persistencyKey: this.sPersistencyKey
+				persistencyKey: this.sPersistencyKey,
+				control: {
+					getCurrentVariantId: function() {
+						return "";
+					}
+				}
 			});
 			CompVariantState.updateVariant({
 				reference: sComponentId,

@@ -253,6 +253,27 @@ sap.ui.define([
 		return oVariant;
 	}
 
+	function revertAllVariantUpdate(oVariant) {
+		if (oVariant && oVariant.getRevertData().length) {
+			var oRevertDataContent;
+			oVariant.getRevertData().reverse().some(function (oRevertData) {
+				oRevertDataContent = oRevertData.getContent();
+				return oRevertDataContent.previousAction === CompVariantState.updateActionType.SAVE;
+			});
+			revertVariantUpdate(
+				oVariant,
+				Object.assign({
+					name: oRevertDataContent.previousName,
+					content: oRevertDataContent.previousContent,
+					favorite: oRevertDataContent.previousFavorite,
+					executeOnSelection: oRevertDataContent.previousExecuteOnSelection,
+					contexts: oRevertDataContent.previousContexts
+				})
+			);
+			oVariant.setState(oRevertDataContent.previousState);
+		}
+	}
+
 	/**
 	 * CompVariant state class to handle the state of the compVariants and its changes.
 	 * This class is in charge of updating the maps stored in the <code>sap.ui.fl.apply._internal.flexState.FlexState</code>.
@@ -386,6 +407,10 @@ sap.ui.define([
 		var oMapOfPersistencyKey = mCompVariantsMap._getOrCreate(mPropertyBag.persistencyKey);
 		oMapOfPersistencyKey.variants.push(oFlexObject);
 		oMapOfPersistencyKey.byId[oFlexObject.getId()] = oFlexObject;
+		if (oChangeSpecificData.layer !== Layer.USER && oChangeSpecificData.layer !== Layer.PUBLIC) {
+			mPropertyBag.id = mPropertyBag.control.getCurrentVariantId();
+			revertAllVariantUpdate(getVariantById(mPropertyBag));
+		}
 		return oFlexObject;
 	};
 
