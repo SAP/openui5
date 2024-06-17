@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/ElementOverlay",
 	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/dt/Util",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
 	"sap/ui/fl/variants/VariantManagement",
@@ -47,6 +48,7 @@ sap.ui.define([
 	DesignTime,
 	ElementOverlay,
 	OverlayRegistry,
+	DtUtil,
 	KeyCodes,
 	ControlVariantApplyAPI,
 	VariantManagement,
@@ -169,9 +171,11 @@ sap.ui.define([
 					this.oObjectPageSubSectionOverlay = OverlayRegistry.getOverlay(this.oObjectPageSubSection);
 					this.oLayoutOuterOverlay = OverlayRegistry.getOverlay(this.oLayoutOuter);
 					this.oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
+					this.oButtonOverlay2 = OverlayRegistry.getOverlay(this.oButton2);
 					this.oVariantManagementOverlay = OverlayRegistry.getOverlay(this.oVariantManagementControl);
 					this.oControlVariantPlugin = new ControlVariantPlugin({
-						commandFactory: new CommandFactory()
+						commandFactory: new CommandFactory(),
+						designTime: this.oDesignTime
 					});
 					this.oToolHooksPlugin = new ToolHooksPlugin();
 					done();
@@ -217,6 +221,27 @@ sap.ui.define([
 				this.oVariantManagementOverlay.getEditableByPlugins()[this.oControlVariantPlugin.getMetadata().getName()],
 				true,
 				"then VariantManagement is marked as editable by ControlVariant plugin"
+			);
+		});
+
+		QUnit.test("when registerElementOverlay is called with VariantManagement control Overlay, and the target overlay is not available", async function(assert) {
+			this.oVariantManagementControl.addAssociation("for", "dynamicallyCreatedButton", true);
+			this.oToolHooksPlugin.registerElementOverlay(this.oVariantManagementOverlay);
+			this.oControlVariantPlugin.registerElementOverlay(this.oVariantManagementOverlay);
+
+			this.oLayoutOuter.addContent(new Button("dynamicallyCreatedButton", {text: "Dynamically Created Button"}));
+			await DtUtil.waitForSynced(this.oDesignTime)();
+			const oNewButtonOverlay = OverlayRegistry.getOverlay("dynamicallyCreatedButton");
+
+			assert.strictEqual(
+				this.oObjectPageLayoutOverlay.getVariantManagement(),
+				this.sLocalVariantManagementId,
+				"then VariantManagement reference successfully set to ObjectPageLayout Overlay from the id of VariantManagement control"
+			);
+			assert.strictEqual(
+				oNewButtonOverlay.getVariantManagement(),
+				this.sLocalVariantManagementId,
+				"then VariantManagement reference successfully set to the new Overlay from the id of VariantManagement control"
 			);
 		});
 
@@ -515,16 +540,15 @@ sap.ui.define([
 		});
 
 		QUnit.test("when _getVariantManagementFromParent is called with an overlay with no VariantManagement reference", function(assert) {
-			assert.notOk(this.oButtonOverlay.getVariantManagement(), "no VariantManagement reference set initially for the last overlay");
-			this.oObjectPageLayoutOverlay.setVariantManagement("varMgtKey");
-			var sVarMgmt = this.oControlVariantPlugin._getVariantManagementFromParent(this.oButtonOverlay);
+			assert.notOk(this.oButtonOverlay2.getVariantManagement(), "no VariantManagement reference set initially for the last overlay");
+			this.oLayoutOuterOverlay.setVariantManagement("varMgtKey");
+			var sVarMgmt = this.oControlVariantPlugin._getVariantManagementFromParent(this.oButtonOverlay2);
 			assert.equal(sVarMgmt, "varMgtKey", "then correct VariantManagement reference returned");
 		});
 
 		// Integration Test
 		QUnit.test("when ControlVariant Plugin is added to designTime and a new overlay is rendered dynamically", async function(assert) {
 			var done = assert.async();
-			assert.notOk(this.oButtonOverlay.getVariantManagement(), "then VariantManagement Key is initially undefined");
 			this.oDesignTime.addPlugin(this.oControlVariantPlugin);
 			await nextUIUpdate();
 			assert.ok(this.oButtonOverlay.getVariantManagement(), this.sLocalVariantManagementId, "then VariantManagement reference successfully propagated from ObjectPageLayout to Button (last element)");

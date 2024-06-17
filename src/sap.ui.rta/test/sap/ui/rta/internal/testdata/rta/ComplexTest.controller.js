@@ -287,7 +287,7 @@ sap.ui.define([
 				if (this.byId("newForm")) {
 					this.byId("newForm").destroy();
 				} else {
-					var oLayout = oTargetControl.getParent();
+					var oLayout = oTargetControl.getParent().getParent();
 					var oSmartForm = new SmartForm(this.getView().createId("newForm"), {
 						groups: [
 							new Group("newGroup", {
@@ -327,7 +327,7 @@ sap.ui.define([
 							})
 						]
 					});
-					oLayout.insertContent(oSmartForm, 3);
+					oLayout.insertItem(oSmartForm, 3);
 				}
 			}.bind(this));
 		},
