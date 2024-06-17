@@ -110,7 +110,7 @@ sap.ui.define([
 
 		assert.ok(getPopover().getShowArrow());
 		assert.equal(getPopover().getPlacement(), "Auto");
-		//assert.ok(getPopover().$().text().includes("+V"));
+		assert.ok(getPopover().$().text().includes("+V"));
 		assert.ok(this.oTable.$().hasClass("sapMPluginsPasteProviderHighlight"));
 		assert.equal(document.activeElement, getPopover().$().find("[contenteditable]")[0]);
 
