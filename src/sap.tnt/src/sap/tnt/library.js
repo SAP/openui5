@@ -6,11 +6,12 @@
  * Initialization Code and shared classes of library sap.tnt.
  */
 sap.ui.define([
+	"./IllustratedMessageType",
 	"sap/ui/base/DataType",
 	"sap/ui/core/Lib",
 	"sap/ui/core/library",
 	"sap/m/library"],
-	function(DataType, Library) {
+	function(IllustratedMessageType, DataType, Library) {
 	"use strict";
 
 	/**
@@ -56,6 +57,8 @@ sap.ui.define([
 			}
 		}
 	});
+
+	thisLib.IllustratedMessageType = IllustratedMessageType;
 
 	/**
 	 * Predefined types of <code>InfoLabel</code>
