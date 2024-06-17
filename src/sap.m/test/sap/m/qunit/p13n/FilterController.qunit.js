@@ -163,6 +163,48 @@ sap.ui.define([
 		assert.deepEqual(currentState["test_1"][0].values, ["ABC"], "Correct value provided");
 	});
 
+	QUnit.test("Check #changesToState", function(assert){
+		const existingChanges = [{
+			changeSpecificData: {
+				content: {
+					key: "test_1",
+					condition: {
+						operator: "EQ",
+						values: ["ABC"]
+					}
+				}
+			}
+		},
+		{
+			changeSpecificData: {
+				content: {
+					key: "test_2",
+					condition: {
+						operator: "Contains",
+						values: ["DEF"]
+					}
+				}
+			}
+		}];
+
+		const changedState = {
+			"test_1": [{
+				"operator": "EQ",
+				"values": ["ABC"]
+			}],
+			"test_2": [{
+				"operator": "Contains",
+				"values": ["DEF"]
+			}]
+		};
+
+		const oNewState = this.oController.changesToState(existingChanges);
+
+		assert.ok(typeof oNewState === "object", "Correct data type of filter state");
+		assert.ok(Object.entries(oNewState).length === existingChanges.length, "Correct amount of entries in filter state");
+		assert.deepEqual(changedState, oNewState, "Correct form of state returned");
+	});
+
 	QUnit.test("Check #initAdaptationUI", function(assert){
 		return this.oController.initAdaptationUI({getProperties: function() {
 			return [{}];
