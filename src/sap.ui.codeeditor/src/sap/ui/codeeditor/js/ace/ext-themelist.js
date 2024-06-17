@@ -46,10 +46,7 @@ var themeData = [
     ["Tomorrow Night 80s", "tomorrow_night_eighties", "dark"],
     ["Twilight", "twilight", "dark"],
     ["Vibrant Ink", "vibrant_ink", "dark"],
-    ["GitHub Dark", "github_dark", "dark"],
-// ##### BEGIN MODIFIED BY SAP
-    ["Default"]
-// ##### END MODIFIED BY SAP
+    ["GitHub Dark", "github_dark", "dark"]
 ];
 exports.themesByName = {};
 exports.themes = themeData.map(function (data) {
