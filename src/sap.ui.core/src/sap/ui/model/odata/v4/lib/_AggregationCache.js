@@ -553,13 +553,14 @@ sap.ui.define([
 			}
 		};
 		const completeCreation = (iIndex0, iRank) => {
-			oCache.removeElement(0, sTransientPredicate);
+			oCache.removeElement(0);
 			_Helper.deletePrivateAnnotation(oEntityData, "transientPredicate");
-			oCache.restoreElement(iRank, oEntityData);
-
 			delete aElements.$byPredicate[sTransientPredicate];
-			_Helper.setPrivateAnnotation(oEntityData, "rank", iRank);
-			this.shiftRank(iIndex0, +1);
+			if (iRank !== undefined) {
+				oCache.restoreElement(iRank, oEntityData);
+				_Helper.setPrivateAnnotation(oEntityData, "rank", iRank);
+				this.shiftRank(iIndex0, +1);
+			}
 		};
 
 		if (this.oAggregation.createInPlace) {
@@ -570,7 +571,7 @@ sap.ui.define([
 					this.requestNodeProperty(oEntityData, oGroupLock)
 				]);
 				if (iRank === undefined) {
-					oCache.removeElement(0, _Helper.getPrivateAnnotation(oEntityData, "predicate"));
+					oCache.removeElement(0);
 				} else {
 					addElement(iRank, iRank);
 					completeCreation(iRank, iRank);

@@ -4767,15 +4767,18 @@ sap.ui.define([
 	[1, 2, 25].forEach(function (iExpandTo) {
 		[undefined, true].forEach(function (bParentExpanded) {
 			[false, true].forEach(function (bCreateRoot) {
-				var sTitle = "create: already has group level cache: " + bHasGroupLevelCache
-						+ ", expandTo: " + iExpandTo
-						+ ", parent's @$ui5.node.isExpanded: " + bParentExpanded
-						+ ", create root node: " + bCreateRoot;
+				[undefined, "~iRank~"].forEach(function (iRank) {
+					var sTitle = "create: already has group level cache: " + bHasGroupLevelCache
+							+ ", expandTo: " + iExpandTo
+							+ ", parent's @$ui5.node.isExpanded: " + bParentExpanded
+							+ ", create root node: " + bCreateRoot
+							+ ", rank : " + iRank;
 
-				const bInFirstLevel = bCreateRoot || iExpandTo > 24;
-				if (bHasGroupLevelCache && bInFirstLevel || bParentExpanded && bCreateRoot) {
-					return;
-				}
+					const bInFirstLevel = bCreateRoot || iExpandTo > 24;
+					if (bHasGroupLevelCache && bInFirstLevel || bParentExpanded && bCreateRoot
+							|| !bInFirstLevel && !iRank) {
+						return;
+					}
 
 	QUnit.test(sTitle, function (assert) {
 		var fnCancelCallback,
@@ -4854,6 +4857,7 @@ sap.ui.define([
 							.withExactArgs(sinon.match.same(oEntityData),
 								bCreateRoot ? undefined : sinon.match.same(oParentNode));
 						const iCallCount = bInFirstLevel && iExpandTo > 1 ? 1 : 0;
+						const iRankCallCount = iCallCount && iRank ? 1 : 0;
 						const oRankExpectation = that.mock(oCache).expects("requestRank")
 							.exactly(iCallCount)
 							.withExactArgs(sinon.match.same(oEntityData), "~oGroupLock~")
@@ -4863,7 +4867,7 @@ sap.ui.define([
 									assert.ok(oRankExpectation
 										.calledImmediatelyBefore(oNodeExpectation));
 								});
-								return Promise.resolve("~iRank~");
+								return Promise.resolve(iRank);
 							});
 						oNodeExpectation = that.mock(oCache).expects("requestNodeProperty")
 							.withExactArgs(sinon.match.same(oEntityData), "~oGroupLock~", true)
@@ -4873,28 +4877,30 @@ sap.ui.define([
 									resolve0();
 								});
 							}));
-						that.mock(oCache.oFirstLevel).expects("removeElement")
-							.exactly(iCallCount).withExactArgs(0, "~sTransientPredicate~");
+						const oRemoveElementExpectation
+							= that.mock(oCache.oFirstLevel).expects("removeElement")
+							.exactly(iCallCount).withExactArgs(0);
 						if (iCallCount) {
 							// always done by #addElements, but needs to be undone in this case only
 							oCache.aElements.$byPredicate["~sTransientPredicate~"] = "n/a";
 						}
 						const oDeleteTransientPredicateExpectation
-							= oHelperMock.expects("deletePrivateAnnotation")
-							.exactly(iCallCount)
+							= oHelperMock.expects("deletePrivateAnnotation").exactly(iCallCount)
 							.withExactArgs(sinon.match.same(oEntityData), "transientPredicate");
-						const oSetIndexExpectation
-							= oHelperMock.expects("setPrivateAnnotation").exactly(iCallCount)
-							.withExactArgs(sinon.match.same(oEntityData), "rank", "~iRank~");
-						that.mock(oCache.oFirstLevel).expects("restoreElement").exactly(iCallCount)
-							.withExactArgs("~iRank~", sinon.match.same(oEntityData))
+						const oSetRankExpectation = oHelperMock.expects("setPrivateAnnotation")
+							.exactly(iRankCallCount)
+							.withExactArgs(sinon.match.same(oEntityData), "rank", iRank);
+						that.mock(oCache.oFirstLevel).expects("restoreElement")
+							.exactly(iRankCallCount)
+							.withExactArgs(iRank, sinon.match.same(oEntityData))
 							.callsFake(function () {
+								assert.ok(oRemoveElementExpectation.called);
 								assert.ok(oDeleteTransientPredicateExpectation.called);
 							});
-						that.mock(oCache).expects("shiftRank").exactly(iCallCount)
+						that.mock(oCache).expects("shiftRank").exactly(iRankCallCount)
 							.withExactArgs(bCreateRoot ? 0 : 3, +1)
 							.callsFake(function () {
-								assert.ok(oSetIndexExpectation.called);
+								assert.ok(oSetRankExpectation.called);
 							});
 						resolve();
 					});
@@ -4964,6 +4970,7 @@ sap.ui.define([
 			assert.deepEqual(oCache.aElements, ["0", "1", oParentNode, "3", "4"]);
 		});
 	});
+				});
 			});
 		});
 	});
@@ -5050,8 +5057,7 @@ sap.ui.define([
 							});
 						that.mock(oCache).expects("adjustDescendantCount").exactly(iRank ? 1 : 0)
 							.withExactArgs(sinon.match.same(oEntityData), iRank, 1);
-						that.mock(oCache.oFirstLevel).expects("removeElement")
-							.withExactArgs(0, iRank ? "~sTransientPredicate~" : "('ABC')");
+						that.mock(oCache.oFirstLevel).expects("removeElement").withExactArgs(0);
 						oHelperMock.expects("deletePrivateAnnotation").exactly(iRank ? 1 : 0)
 							.withExactArgs(sinon.match.same(oEntityData), "transientPredicate");
 						that.mock(oCache.oFirstLevel).expects("restoreElement")
