@@ -411,6 +411,24 @@ sap.ui.define([
 			assert.equal(sLabels[5], "36", "last label is ok");
 		});
 
+		QUnit.test("getFocusDomRef returns correct items", async function(assert) {
+			// arrange
+			const oAppointment = new CalendarAppointment("may_appointment",{
+				startDate: UI5Date.getInstance(2018, 7, 12),
+				endDate: UI5Date.getInstance(2018, 7, 12)
+			});
+			this.oSPCMG.addAppointment(oAppointment);
+			await nextUIUpdate(this.clock);
+			// act - focus appointment and select it
+			oAppointment.focus();
+			qutils.triggerKeydown(document.activeElement, KeyCodes.SPACE, true);
+			// assert
+			assert.ok(document.activeElement.id.indexOf("may_appointment") !== -1, "getFocusDomRef returns correct appointment when it has been selected");
+			// act - deselect the appointment
+			qutils.triggerKeydown(document.activeElement, KeyCodes.SPACE, true);
+			assert.ok(document.activeElement.id.indexOf("may_appointment") !== -1, "getFocusDomRef returns correct appointment when it has been deselected");
+		});
+
 		QUnit.test("cellPress", function(assert) {
 			// arrange
 			var oCellPressSpy = this.spy(this.oSPCMG, "fireEvent");
@@ -727,6 +745,33 @@ sap.ui.define([
 			qutils.triggerKeydown(document.activeElement, KeyCodes.SPACE, false);
 			await nextUIUpdate(this.clock);
 
+			// assert
+			assert.notOk(oGrid.$().find('.sapMSPCMonthDay')[iCellIndexInMiddleInWeek].classList.contains("sapMSPCMonthDaySelected"), iCellIndexInMiddleInWeek + " cell is deselected");
+			//clean up
+			oGrid.destroy();
+		});
+
+		QUnit.test("selectedDates: single select/deselect via keyboard (Enter)", async function (assert){
+			// arrange
+			var iCellIndexInMiddleInWeek = 3,
+				oGrid = new SinglePlanningCalendarMonthGrid({
+					startDate: UI5Date.getInstance(2022,0,1),
+					firstDayOfWeek: 1,
+					dateSelectionMode: SinglePlanningCalendarSelectionMode.SingleSelect
+				});
+			oGrid.placeAt("qunit-fixture");
+			await nextUIUpdate(this.clock);
+			// assert
+			assert.strictEqual(oGrid.getSelectedDates().length, 0, "no days initially added");
+			// act
+			oGrid.$().find('.sapMSPCMonthDay')[iCellIndexInMiddleInWeek].focus();
+			qutils.triggerKeydown(document.activeElement, KeyCodes.ENTER, false);
+			await nextUIUpdate(this.clock);
+			// assert
+			assert.ok(oGrid.$().find('.sapMSPCMonthDay')[iCellIndexInMiddleInWeek].classList.contains("sapMSPCMonthDaySelected"), iCellIndexInMiddleInWeek + " cell is selected");
+			// act
+			qutils.triggerKeydown(document.activeElement, KeyCodes.ENTER, false);
+			await nextUIUpdate(this.clock);
 			// assert
 			assert.notOk(oGrid.$().find('.sapMSPCMonthDay')[iCellIndexInMiddleInWeek].classList.contains("sapMSPCMonthDaySelected"), iCellIndexInMiddleInWeek + " cell is deselected");
 			//clean up
