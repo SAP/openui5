@@ -156,7 +156,7 @@ sap.ui.define([
 				text: "{" + FilterBarBase.INNER_MODEL_NAME + ">/_filterCount}",
 				press: this.onAdaptFilters.bind(this)
 			});
-			this._btnAdapt.setAriaHasPopup(HasPopup.ListBox);
+			this._btnAdapt.setAriaHasPopup(HasPopup.Dialog);
 			this._btnAdapt.setModel(this._oModel, FilterBarBase.INNER_MODEL_NAME);
 
 			this._btnAdapt.bindProperty("visible", {
@@ -230,11 +230,11 @@ sap.ui.define([
 
 		return this._retrieveMetadata().then(() => {
 			return this.getEngine().show(this, "Item", {
-					reset: function() {
-						this.getEngine().reset(this);
-						this._getConditionModel().checkUpdate(true);
-					}.bind(this)
-				})
+				reset: function() {
+					this.getEngine().reset(this);
+					this._getConditionModel().checkUpdate(true);
+				}.bind(this)
+			})
 				.then((oPopup) => {
 					this._aAddedFilterFields = [];
 					this._aRemovedFilterFields = [];

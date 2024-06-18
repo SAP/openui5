@@ -25,9 +25,12 @@ sap.ui.define([
 	"sap/ui/mdc/mixin/AdaptationMixin",
 	"sap/ui/mdc/link/PanelItem",
 	"sap/ui/core/CustomData",
-	"./Factory"
-], (Control, PanelRenderer, Library, VerticalLayout, Log, HorizontalLayout, HBox, VBox, ImageContent, Link, Label, Text, Button, FlexItemData, JSONModel, BindingMode, ManagedObjectObserver, LinkPanelController, Engine, AdaptationMixin, PanelItem, CustomData, Factory) => {
+	"./Factory",
+	"sap/ui/core/library"
+], (Control, PanelRenderer, Library, VerticalLayout, Log, HorizontalLayout, HBox, VBox, ImageContent, Link, Label, Text, Button, FlexItemData, JSONModel, BindingMode, ManagedObjectObserver, LinkPanelController, Engine, AdaptationMixin, PanelItem, CustomData, Factory, CoreLibrary) => {
 	"use strict";
+
+	const { HasPopup } = CoreLibrary.aria;
 
 	/**
 	 * Constructor for a new Panel.
@@ -298,11 +301,12 @@ sap.ui.define([
 	};
 
 	Panel.prototype._createFooterArea = function() {
-		const oResetButton = new Button(this.getId() + "--idSectionPersonalizationButton", {
+		const oPersoButton = new Button(this.getId() + "--idSectionPersonalizationButton", {
 			type: "Transparent",
 			text: oRB.getText("info.POPOVER_DEFINE_LINKS"),
 			press: this.onPressLinkPersonalization.bind(this)
 		});
+		oPersoButton.setAriaHasPopup(HasPopup.Dialog);
 		const oFooterArea = new HBox({
 			visible: {
 				path: "$sapuimdcLink>/metadata",
@@ -311,7 +315,7 @@ sap.ui.define([
 				}
 			},
 			justifyContent: "End",
-			items: [oResetButton]
+			items: [oPersoButton]
 		});
 		oFooterArea.addStyleClass("mdcbaseinfoPanelPersonalizationButton");
 
