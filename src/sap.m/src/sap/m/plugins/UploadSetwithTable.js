@@ -24,8 +24,10 @@ sap.ui.define([
 	"sap/m/Input",
 	"sap/m/MessageBox",
 	"sap/m/Button",
-	"sap/ui/core/Core"
-], function (PluginBase, Element, Log, Library1, FileUploader, UploaderHttpRequestMethod, UploadItem, deepEqual, Library, IllustratedMessageType, IllustratedMessage, IllustratedMessageSize, Uploader, DragDropInfo, DropInfo, FilePreviewDialog, EventBase, Dialog, Label, Input, MessageBox, Button, Core) {
+	"sap/ui/core/Core",
+	"sap/m/Text",
+	"sap/m/VBox"
+], function (PluginBase, Element, Log, Library1, FileUploader, UploaderHttpRequestMethod, UploadItem, deepEqual, Library, IllustratedMessageType, IllustratedMessage, IllustratedMessageSize, Uploader, DragDropInfo, DropInfo, FilePreviewDialog, EventBase, Dialog, Label, Input, MessageBox, Button, Core, TextField, VBox) {
 	"use strict";
 
 	/**
@@ -749,26 +751,41 @@ sap.ui.define([
 		const oInput = new Input({
 			type: Library.InputType.Text,
 			value: oSplit.name,
-			width: "90%",
+			width: "75%",
 			maxLength: iNameMaxLength,
 			liveChange: [this._handleItemNameValidation, this]
 		});
 		oInput.addStyleClass("sapUiTinyMarginTop");
-		oInput.addStyleClass("sapUiSmallMarginBegin");
+		oInput.addStyleClass("sapUiMediumMarginBegin");
+
+		// Test field for extension
+		const sExtension = oSplit.extension ? `.${oSplit.extension}` : "";
+		const oTextField = new TextField({
+			text: sExtension
+		});
+		oTextField.addStyleClass("sapUiTinyMarginBegin");
+		oTextField.addStyleClass("sapUiTinyMarginTop");
+
 		// Label for Input
 		const oLabel = new Label({
 			text: this._oRb.getText("UPLOADSET_WITH_TABLE_DOCUMENT_RENAME_INPUT_LABEL"),
-			labelFor: oInput.getId()
+			labelFor: oInput.getId(),
+			required: true
 		});
-		oLabel.addStyleClass("sapUiSmallMarginTop");
-		oLabel.addStyleClass("sapUiSmallMarginBegin");
+		oLabel.addStyleClass("sapUiMediumMarginTop");
+		oLabel.addStyleClass("sapUiMediumMarginBegin");
 		oLabel.addStyleClass("sapUiSmallMarginEnd");
+
+		const oVBox = new VBox({
+			items: [oLabel]
+		});
+
 		// Dialog creation
 		var oDialog = new Dialog({
 			title: this._oRb.getText("UPLOADSET_WITH_TABLE_DOCUMENT_RENAME_DIALOG_TEXT"),
-			contentWidth: "22.5rem",
-			contentHeight: "12rem",
-			content: [oLabel,oInput],
+			contentWidth: "33.375rem",
+			contentHeight: "10.125rem",
+			content: [oVBox, oInput, oTextField],
 			beginButton: new Button({
 				type: Library.ButtonType.Emphasized,
 				text: this._oRb.getText("UPLOADSET_WITH_TABLE_DOCUMENT_RENAME_APPLY_BUTTON_TEXT"),
@@ -785,7 +802,8 @@ sap.ui.define([
 			},
 			afterClose: function () {
 				oDialog.destroy();
-			}
+			},
+			escapeHandler: (oPromise) => { oPromise?.reject();}
 		});
 
 		return oDialog;
