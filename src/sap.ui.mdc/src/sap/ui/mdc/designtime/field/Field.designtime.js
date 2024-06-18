@@ -6,9 +6,12 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	'sap/ui/fl/Utils',
 	'sap/ui/fl/apply/api/FlexRuntimeInfoAPI',
-	'sap/m/p13n/Engine'
-], (Element, Utils, FlexRuntimeInfoAPI, Engine) => {
+	'sap/m/p13n/Engine',
+	"sap/ui/core/Lib"
+], (Element, Utils, FlexRuntimeInfoAPI, Engine, Library) => {
 	"use strict";
+
+	const oRB = Library.getResourceBundleFor("sap.ui.mdc");
 
 	return {
 		properties: {
@@ -40,7 +43,7 @@ sap.ui.define([
 		actions: {
 			settings: {
 				"sap.ui.mdc": {
-					name: "info.POPOVER_DEFINE_LINKS",
+					name: oRB.getText("info.POPOVER_DEFINE_LINKS"),
 					isEnabled: (oControl) => !!oControl.getFieldInfo(),
 					handler: function(oControl, mPropertyBag) {
 						const oFieldInfo = oControl.getFieldInfo();
