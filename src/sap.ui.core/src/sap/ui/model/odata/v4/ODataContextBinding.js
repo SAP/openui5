@@ -938,7 +938,7 @@ sap.ui.define([
 						that.fireDataRequested(bPreventBubbling);
 					}, oListener)
 				).then(function (vValue) {
-					that.assertSameCache(oCache);
+					that.checkSameCache(oCache);
 
 					return vValue;
 				}).then(function (vValue) {

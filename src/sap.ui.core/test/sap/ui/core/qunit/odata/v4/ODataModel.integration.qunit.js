@@ -8384,6 +8384,59 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Table gets a binding context for which data was already loaded and then a refresh
+	// is performed synchronously.
+	// SNOW: CS20240007657519
+	QUnit.test("CS20240007657519", async function (assert) {
+		const oModel = this.createSalesOrdersModel({autoExpandSelect : true});
+		const sView = `
+<FlexBox binding="{/SalesOrderList('1')}" id="form">
+	<Table id="table" items="{path : 'SO_2_SOITEM', parameters : {$$ownRequest : true}}">
+		<Text id="position" text="{ItemPosition}"/>
+	</Table>
+</FlexBox>`;
+
+		this.expectRequest("SalesOrderList('1')/SO_2_SOITEM"
+				+ "?$select=ItemPosition,SalesOrderID&$skip=0&$top=100", {
+				value : [ // implicitly sorted descending
+					{SalesOrderID : "1", ItemPosition : "0020"},
+					{SalesOrderID : "1", ItemPosition : "0010"}
+				]
+			})
+			.expectChange("position", ["0020", "0010"]);
+
+		await this.createView(assert, sView, oModel);
+
+		const oTable = this.oView.byId("table");
+		const oFormContext = this.oView.byId("form").getBindingContext();
+
+		oTable.setBindingContext(null);
+
+		await this.waitForChanges(assert);
+
+		oTable.setBindingContext(oFormContext);
+
+		this.expectCanceledError("Failed to get contexts for " + sSalesOrderService
+					+ "SalesOrderList('1')/SO_2_SOITEM with start index 0 and length 100",
+				sODLB + ": /SalesOrderList('1')|SO_2_SOITEM"
+					+ " is ignoring response from inactive cache: " + sSalesOrderService
+					+ "SalesOrderList('1')/SO_2_SOITEM?$select=ItemPosition,SalesOrderID")
+			.expectRequest("SalesOrderList('1')/SO_2_SOITEM"
+				+ "?$select=ItemPosition,SalesOrderID&$skip=0&$top=100", {
+				value : [
+					{SalesOrderID : "1", ItemPosition : "0030"}, // a new one!
+					{SalesOrderID : "1", ItemPosition : "0020"},
+					{SalesOrderID : "1", ItemPosition : "0010"}
+				]
+			})
+			.expectChange("position", ["0030", "0020", "0010"]);
+
+		oFormContext.refresh();
+
+		await this.waitForChanges(assert);
+	});
+
+	//*********************************************************************************************
 	// Scenario: Read and modify an entity with key aliases
 	// CPOUI5ODATAV4-1580: show usage of ODataModel#getKeyPredicate
 	QUnit.test("Entity with key aliases", function (assert) {
@@ -49474,8 +49527,7 @@ make root = ${bMakeRoot}`;
 		return this.createView(assert, sView).then(function () {
 			that.expectCanceledError("Failed to get contexts for " + sTeaBusi
 						+ "EMPLOYEES with start index 0 and length 100",
-					sODLB + ": /EMPLOYEES is ignoring response from inactive cache: " + sTeaBusi
-						+ "EMPLOYEES");
+					"Binding already destroyed");
 
 			that.oView.destroy();
 			delete that.oView;
