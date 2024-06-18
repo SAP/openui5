@@ -506,7 +506,10 @@ sap.ui.define([
 				var bHasSiblings = aElementsWithAggregations[1].length > 0;
 				var bIsAvailableForChildren = this.isAvailable(aElementOverlays, false);
 				var bIsAvailableForSibling = this.isAvailable(aElementOverlays, true);
-				if (bIsAvailableForSibling && (!bIsAvailableForChildren || !bHasChildren)) {
+				if (
+					bIsAvailableForSibling
+					&& (!bIsAvailableForChildren || !bHasChildren)
+				) {
 					// Case 1: Only siblings -> No submenu required
 					oMenuItem = this._buildMenuItem(
 						"CTX_ADD_ELEMENTS_AS_SIBLING",
@@ -515,7 +518,11 @@ sap.ui.define([
 						aElementsWithAggregations,
 						false
 					);
-				} else if (!bIsAvailableForSibling && bIsAvailableForChildren && !bHasMultipleAggregations) {
+				} else if (
+					bIsAvailableForChildren
+					&& (!bIsAvailableForSibling || !bHasSiblings)
+					&& !bHasMultipleAggregations
+				) {
 					// Case 2: Only children, one aggregation -> No submenu required
 					oMenuItem = this._buildMenuItem(
 						"CTX_ADD_ELEMENTS_AS_CHILD",
@@ -524,7 +531,11 @@ sap.ui.define([
 						aElementsWithAggregations,
 						false
 					);
-				} else if (!bIsAvailableForSibling && bIsAvailableForChildren && bHasMultipleAggregations) {
+				} else if (
+					bIsAvailableForChildren
+					&& (!bIsAvailableForSibling || !bHasSiblings)
+					&& bHasMultipleAggregations
+				) {
 					// Case 3: Only children, multiple aggregations -> Submenu required
 					oMenuItem = this._buildMenuItem(
 						"CTX_ADD_ELEMENTS_AS_CHILD",
@@ -533,7 +544,12 @@ sap.ui.define([
 						aElementsWithAggregations,
 						true
 					);
-				} else if (bIsAvailableForChildren && bIsAvailableForSibling && bHasChildren && bHasSiblings) {
+				} else if (
+					bIsAvailableForChildren
+					&& bIsAvailableForSibling
+					&& bHasChildren
+					&& bHasSiblings
+				) {
 					// Case 4: Children and siblings -> Submenu required
 					oMenuItem = this._buildMenuItem(
 						"CTX_ADD_ELEMENTS_CHILD_AND_SIBLING",
