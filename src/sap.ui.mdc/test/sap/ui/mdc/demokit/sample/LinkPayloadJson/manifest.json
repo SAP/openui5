@@ -29,7 +29,6 @@
 					"manifest.json",
 					"controller/Products.controller.js",
 					"delegate/JSONLinkDelegate.js",
-					"model/metadata/JSONPropertyInfo.js",
 					"model/products.json",
 					"view/Products.view.xml"
 				]
