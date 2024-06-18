@@ -85,7 +85,7 @@ sap.ui.define([
 			serviceUrl : true,
 			sharedRequests : true,
 			supportReferences : true,
-			// @deprecated As of Version 1.110.0
+			/** @deprecated As of Version 1.110.0 */
 			synchronizationMode : true,
 			updateGroupId : true,
 			withCredentials : true
@@ -269,7 +269,7 @@ sap.ui.define([
 		// do not pass any parameters to Model
 		Model.call(this);
 
-		// @deprecated As of Version 1.110.0
+		/** @deprecated As of Version 1.110.0 */
 		if ("synchronizationMode" in mParameters && mParameters.synchronizationMode !== "None") {
 			throw new Error("Synchronization mode must be 'None'");
 		}
