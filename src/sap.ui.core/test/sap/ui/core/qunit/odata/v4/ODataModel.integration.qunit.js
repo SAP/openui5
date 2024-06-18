@@ -13338,7 +13338,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: Avoid duplicate call to computed annotation (via global path)
-	/** @deprecated as of version 1.120 */
+	/** @deprecated As of version 1.120 */
 	QUnit.test("Avoid duplicate call to computed annotation, global path", function (assert) {
 		var oModel = this.createTeaBusiModel().getMetaModel(),
 			sView = '\
