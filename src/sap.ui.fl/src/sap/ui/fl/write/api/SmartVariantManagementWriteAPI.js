@@ -234,6 +234,8 @@ sap.ui.define([
 		 * 			sap.ui.comp.smartchart.SmartChart} mPropertyBag.control - Variant management control for which the variants should be loaded
 		 * @param {string} mPropertyBag.id - ID of the variant
 		 * @returns {sap.ui.fl.apply._internal.flexObjects.CompVariant} The reverted variant
+		 * @private
+		 * @ui5-restricted sap.ui.rta.command
 		 */
 		revert(mPropertyBag) {
 			return setReferenceAndPersistencyKeyInPropertyBagAndCallFunction(mPropertyBag, CompVariantState.revert);

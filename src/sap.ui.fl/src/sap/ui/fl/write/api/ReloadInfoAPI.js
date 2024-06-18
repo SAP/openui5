@@ -138,6 +138,9 @@ sap.ui.define([
 		 * @param {string} [oReloadInfo.adaptationId] - Context-based adaptation ID of the currently displayed adaptation
 		 *
 		 * @returns {Promise<object>} Promise resolving to an object with the reload reasons
+		 *
+		 * @private
+		 * @ui5-restricted sap.ui.rta
 		 */
 		getReloadReasonsForStart(oReloadInfo) {
 			const sReference = ManifestUtils.getFlexReferenceForControl(oReloadInfo.selector);
@@ -158,6 +161,9 @@ sap.ui.define([
 		 * @param {string} oParameter.value - Parameter value to be checked
 		 * @param {object} oControl - oControl
 		 * @returns {boolean} True if the value is in the session
+		 *
+		 * @private
+		 * @ui5-restricted sap.ui.rta
 		 */
 		hasVersionStorage(oParameter, oControl) {
 			const sReference = ManifestUtils.getFlexReferenceForControl(oControl);
@@ -169,6 +175,9 @@ sap.ui.define([
 		 * Remove flex info form session storage.
 		 *
 		 * @param {object} oControl - Root control instance
+		 *
+		 * @private
+		 * @ui5-restricted sap.ui.rta
 		 */
 		removeInfoSessionStorage(oControl) {
 			const sReference = ManifestUtils.getFlexReferenceForControl(oControl);
@@ -183,6 +192,9 @@ sap.ui.define([
 		 * @param {object} oControl - oControl
 		 *
 		 * @returns {boolean} <code>true</code> if the value is in the session
+		 *
+		 * @private
+		 * @ui5-restricted sap.ui.rta
 		 */
 		hasMaxLayerStorage(oParameter, oControl) {
 			const sReference = ManifestUtils.getFlexReferenceForControl(oControl);
@@ -206,6 +218,9 @@ sap.ui.define([
 		 * @param {string} sScenario - Current scenario. Can be 'flp' or 'standalone'
 		 *
 		 * @returns {boolean} Indicates if the parameters have changed
+		 *
+		 * @private
+		 * @ui5-restricted sap.ui.rta
 		 */
 		handleReloadInfo(oReloadInfo) {
 			const sReference = ManifestUtils.getFlexReferenceForControl(oReloadInfo.selector);
@@ -244,6 +259,9 @@ sap.ui.define([
 		 * @param {string} sScenario - Current scenario. Can be 'flp' or 'standalone'
 		 *
 		 * @returns {boolean} <code>true</code> to indicate that the session has been changed
+		 *
+		 * @private
+		 * @ui5-restricted sap.ui.rta
 		 */
 		handleReloadInfoOnStart(oReloadInfo) {
 			const sReference = ManifestUtils.getFlexReferenceForControl(oReloadInfo.selector);
@@ -270,6 +288,9 @@ sap.ui.define([
 		 * @param {sap.ui.fl.Selector} oReloadInfo.selector - Root control instance
 		 * @param {boolean} oReloadInfo.versioningEnabled - Indicates if versioning is enabled by the back end
 		 * @returns {boolean} <code>true</code> if a draft got activated and had a draft initially when entering UI adaptation
+		 *
+		 * @private
+		 * @ui5-restricted sap.ui.rta
 		 */
 		initialDraftGotActivated(oReloadInfo) {
 			if (oReloadInfo.versioningEnabled) {
@@ -296,6 +317,9 @@ sap.ui.define([
 		 * @param {sap.ui.fl.Selector} oReloadInfo.selector - Root control instance
 		 *
 		 * @returns {boolean} <code>true</code> if a draft got activated and had a draft initially when entering UI adaptation
+		 *
+		 * @private
+		 * @ui5-restricted sap.ui.rta
 		 */
 		getReloadMethod(oReloadInfo) {
 			const sReference = ManifestUtils.getFlexReferenceForControl(oReloadInfo.selector);

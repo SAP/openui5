@@ -27,7 +27,6 @@ sap.ui.define([
 	 * 	sap.ui.comp.smarttable.SmartTable|
 	 * 	sap.ui.comp.smartchart.SmartChart} oControl - Variant management control
 	 * @returns {object} <code>persistencyKey</code> map and corresponding changes, or an empty object
-	 * @private
 	 */
 	function getVariantsMapForKey(oControl) {
 		const sReference = ManifestUtils.getFlexReferenceForControl(oControl);
@@ -72,7 +71,7 @@ sap.ui.define([
 	 * @property {sap.ui.fl.apply._internal.flexObjects.FlexObject | undefined} standardVariant - StandardVariant change to be applied
 	 * @since 1.83
 	 * @private
-	 * @ui5-restricted
+	 * @ui5-restricted sap.ui.comp
 	 */
 
 	/**
@@ -91,6 +90,9 @@ sap.ui.define([
 		 * @param {boolean} [favorite=false] - Flag if the favorite property should be set
 		 * @param {boolean} [executeOnSelection=false] - Flag if the favorite property should be set
 		 * @param {object} [content={}] - Filter values of the variant
+		 *
+		 * @private
+		 * @ui5-restricted
 		 */
 
 		/**
@@ -98,6 +100,9 @@ sap.ui.define([
 		 * @property {sap.ui.fl._internal.flexObjects.Variant} standardVariant - The instance of the passed or exchanged standard variant
 		 * @property {sap.ui.fl._internal.flexObjects.Variant[]} variants - instances of the passed, loaded and changed variants
 		 * @property {string} defaultVariantId - ID of the default variant
+		 *
+		 * @private
+		 * @ui5-restricted sap.ui.comp
 		 */
 
 		/**
@@ -114,6 +119,9 @@ sap.ui.define([
 		 * instructing the SVM to do so
 		 * @param {sap.ui.fl.apply.api.SmartVariantManagementApplyAPI.LoadVariantsInput[]} mPropertyBag.variants - Variant data from other data providers like an OData service
 		 * @returns {Promise<sap.ui.fl.apply.api.SmartVariantManagementApplyAPI.LoadVariantsResponse>} Object with the standard variant and the variants
+		 *
+		 * @private
+		 * @ui5-restricted sap.ui.comp
 		 */
 		async loadVariants(mPropertyBag) {
 			const mCompMaps = await getCompEntities(mPropertyBag);
@@ -135,6 +143,7 @@ sap.ui.define([
 		 * @returns {boolean} <code>true</code> if VENDOR layer is enabled
 		 * @private
 		 * @ui5-restricted
+		 * @deprecated
 		 */
 		isVendorLayer() {
 			return LayerUtils.isVendorLayer();
@@ -147,7 +156,8 @@ sap.ui.define([
 		 *
 		 * @returns {boolean} <code>true</code> if the variant downport scenario is enabled
 		 * @private
-		 * @ui5-restricted
+		 * @ui5-restricted sap.ui.comp
+		 * @deprecated
 		 */
 		isVariantDownport() {
 			var oUriParams = new URLSearchParams(window.location.search);
@@ -164,7 +174,7 @@ sap.ui.define([
 		 * @param {sap.ui.comp.smartvariants.SmartVariantManagement} mPropertyBag.control - SAPUI5 Smart Variant Management control
 		 * @returns {string} ID of the default variant
 		 * @private
-		 * @ui5-restricted
+		 * @ui5-restricted sap.ui.comp
 		 * @deprecated
 		 */
 		getDefaultVariantId(mPropertyBag) {

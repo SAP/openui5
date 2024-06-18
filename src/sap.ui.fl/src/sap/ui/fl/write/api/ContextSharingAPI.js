@@ -30,6 +30,14 @@ sap.ui.define([
 	 */
 	var ContextSharingAPI = /** @lends sap.ui.fl.write.api.ContextSharingAPI */{
 
+		/**
+		 * Checks if context sharing is enabled.
+		 *
+		 * @param {object} mPropertyBag - Object with parameters as properties
+		 * @returns {boolean} True if context sharing is enabled
+		 * @private
+		 * @ui5-restricted sap.ui.comp, sap.ui.fl
+		 */
 		async isContextSharingEnabled(mPropertyBag) {
 			if (mPropertyBag.layer !== Layer.CUSTOMER) {
 				return false;
@@ -40,6 +48,7 @@ sap.ui.define([
 				&& !ContextBasedAdaptationsAPI.adaptationExists({reference: sReference, layer: Layer.CUSTOMER});
 			return bIsEnabled;
 		},
+
 		/**
 		 * Creates component for sharing contexts in variant management.
 		 * In case the component already exists, it will not be created again to avoid duplicate IDs.

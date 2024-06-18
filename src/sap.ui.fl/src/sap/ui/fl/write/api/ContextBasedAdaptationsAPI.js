@@ -52,7 +52,7 @@ sap.ui.define([
 	 * @namespace sap.ui.fl.write.api.ContextBasedAdaptationsAPI
 	 * @since 1.106
 	 * @private
-	 * @ui5-restricted sap.ui.rta
+	 * @ui5-restricted sap.ui.fl, sap.ui.rta
 	 */
 	var ContextBasedAdaptationsAPI = /** @lends sap.ui.fl.write.api.ContextBasedAdaptationsAPI */ {};
 
@@ -98,6 +98,9 @@ sap.ui.define([
 	 * @param {sap.ui.core.Control} mPropertyBag.control - Control for which the request is done
 	 * @param {string} mPropertyBag.layer - Layer
 	 * @returns {Promise<sap.ui.model.json.JSONModel>} Model of adaptations enhanced with additional properties
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.fl, sap.ui.rta
 	 */
 	ContextBasedAdaptationsAPI.initialize = function(mPropertyBag) {
 		_oResourceBundle ||= Lib.getResourceBundleFor("sap.ui.fl");
@@ -148,6 +151,9 @@ sap.ui.define([
 	 * @param {object} oDisplayedAdaptation - Adaptation to be set as displayedAdaptation
 	 * @param {boolean} bContextBasedAdaptationsEnabled - Whether the feature is enabled
 	 * @returns {sap.ui.model.json.JSONModel} Model of adaptations enhanced with additional properties
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.fl, sap.ui.rta
 	 */
 	ContextBasedAdaptationsAPI.createModel = function(aAdaptations, oDisplayedAdaptation, bContextBasedAdaptationsEnabled) {
 		if (!Array.isArray(aAdaptations)) {
@@ -248,6 +254,9 @@ sap.ui.define([
 	 * @param {sap.ui.core.Control} mPropertyBag.control - Control for which the request is done
 	 * @param {string} mPropertyBag.layer - Layer
 	 * @returns {sap.ui.model.json.JSONModel} Model of adaptations enhanced with additional properties
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.fl, sap.ui.rta
 	 */
 	ContextBasedAdaptationsAPI.getAdaptationsModel = function(mPropertyBag) {
 		if (!mPropertyBag.layer) {
@@ -271,6 +280,9 @@ sap.ui.define([
 	 * @param {sap.ui.core.Control} mPropertyBag.control - Control for which the request is done
 	 * @param {string} mPropertyBag.layer - Layer
 	 * @returns {string} - Displayed adaptation id, undefined for DEFAULT adaptation
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.fl, sap.ui.rta
 	 */
 	ContextBasedAdaptationsAPI.getDisplayedAdaptationId = function(mPropertyBag) {
 		var adaptationId = this.getAdaptationsModel(mPropertyBag).getProperty("/displayedAdaptation/id");
@@ -283,6 +295,9 @@ sap.ui.define([
 	 * @param {string} mPropertyBag.reference - ID of the application for which the versions are requested
 	 * @param {string} mPropertyBag.layer - Layer
 	 * @returns {boolean} checks if an adaptation model exists for this reference and layer
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.fl, sap.ui.rta
 	 */
 	ContextBasedAdaptationsAPI.hasAdaptationsModel = function(mPropertyBag) {
 		var sReference = mPropertyBag.reference;
@@ -296,6 +311,9 @@ sap.ui.define([
 	 * @param {string} mPropertyBag.reference - ID of the application for which the versions are requested
 	 * @param {string} mPropertyBag.layer - Layer
 	 * @returns {boolean} checks if at least one adaptation exists for this reference and layer
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.fl, sap.ui.rta
 	 */
 	ContextBasedAdaptationsAPI.adaptationExists = function(mPropertyBag) {
 		var sReference = mPropertyBag.reference;
@@ -313,6 +331,9 @@ sap.ui.define([
 	 * @param {sap.ui.core.Control} mPropertyBag.control - Control for which the request is done
 	 * @param {string} mPropertyBag.layer - Layer
 	 * @returns {string} Displayed adaptation id of the refreshed model
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.fl, sap.ui.rta
 	 */
 	ContextBasedAdaptationsAPI.refreshAdaptationModel = function(mPropertyBag) {
 		this.clearInstances();
@@ -740,6 +761,9 @@ sap.ui.define([
 	 * @param {sap.ui.core.Control} mPropertyBag.control - Control for which the request is done
 	 * @param {string} mPropertyBag.layer - Layer
 	 * @returns {Promise} Promise that resolves with the context-based adaptation
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.fl, sap.ui.rta
 	 */
 	ContextBasedAdaptationsAPI.migrate = function(mPropertyBag) {
 		mPropertyBag.appId = getFlexReferenceForControl(mPropertyBag.control);
@@ -799,6 +823,9 @@ sap.ui.define([
 	 * @param {sap.ui.core.Control} mPropertyBag.control - Control for which the request is done
 	 * @param {string} mPropertyBag.layer - Layer
 	 * @returns {Promise<boolean>} Returns a Promise that resolves with true if variants can be migrated.
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.fl, sap.ui.rta
 	 */
 	ContextBasedAdaptationsAPI.canMigrate = function(mPropertyBag) {
 		var oContextBasedAdaptationModel = ContextBasedAdaptationsAPI.getAdaptationsModel(mPropertyBag);
@@ -840,6 +867,9 @@ sap.ui.define([
 	 * @param {object} mPropertyBag.contextBasedAdaptation.contexts - Contexts of the new adaptation, for example roles for which the adaptation is created
 	 * @param {object} mPropertyBag.contextBasedAdaptation.priority - Priority of the new adaptation
 	 * @returns {Promise} Promise that resolves with the context-based adaptation
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.fl, sap.ui.rta
 	 */
 	ContextBasedAdaptationsAPI.create = function(mPropertyBag) {
 		if (!mPropertyBag.layer) {
@@ -882,6 +912,9 @@ sap.ui.define([
 	 * @param {object} mPropertyBag.contextBasedAdaptation.contexts - Contexts of the updated adaptation, for example roles for which the adaptation is created
 	 * @param {object} mPropertyBag.contextBasedAdaptation.priority - Priority of the updated adaptation
 	 * @returns {Promise} Promise that resolves with the context-based adaptation
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.fl, sap.ui.rta
 	 */
 	ContextBasedAdaptationsAPI.update = function(mPropertyBag) {
 		if (!mPropertyBag.layer) {
@@ -916,6 +949,9 @@ sap.ui.define([
 	 * @param {object} mPropertyBag.parameters - Parameters
 	 * @param {string[]} mPropertyBag.parameters.priorities - Priority list
 	 * @returns {Promise} Promise that resolves with the context-based adaptation
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.fl, sap.ui.rta
 	 */
 	ContextBasedAdaptationsAPI.reorder = function(mPropertyBag) {
 		if (!mPropertyBag.layer) {
@@ -944,6 +980,9 @@ sap.ui.define([
 	 * @param {sap.ui.core.Control} mPropertyBag.control - Control for which the request is done
 	 * @param {string} mPropertyBag.layer - Layer
 	 * @returns {Promise<object>} Promise that resolves with the list of context-based adaptations
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.fl, sap.ui.rta
 	 */
 	ContextBasedAdaptationsAPI.load = function(mPropertyBag) {
 		if (!mPropertyBag.layer) {
@@ -970,6 +1009,9 @@ sap.ui.define([
 	 * @param {string} mPropertyBag.layer - Layer
 	 * @param {string} mPropertyBag.appId - Reference of the application
 	 * @returns {Promise} Promise that resolves with the context-based adaptation
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.fl, sap.ui.rta
 	 */
 	ContextBasedAdaptationsAPI.remove = function(mPropertyBag) {
 		if (!mPropertyBag.layer) {

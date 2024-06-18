@@ -166,6 +166,9 @@ sap.ui.define([
 		 * @param {object} mPropertyBag - Object with parameters as properties
 		 * @param {sap.ui.base.ManagedObject} mPropertyBag.element - Element or component instance
 		 * @returns {string} Flex reference
+		 *
+		 * @private
+		 * @ui5-restricted sap.ui.fl, sap.ui.rta
 		 */
 		getFlexReference(mPropertyBag) {
 			return ManifestUtils.getFlexReferenceForControl(mPropertyBag.element);

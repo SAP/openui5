@@ -23,6 +23,7 @@ sap.ui.define([
 	 * @version ${version}
 	 * @since 1.75
 	 * @private
+	 * @ui5-restricted change handlers
 	 */
 	var BaseAddXml = {};
 
