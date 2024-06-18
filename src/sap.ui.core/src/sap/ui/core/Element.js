@@ -202,6 +202,13 @@ sap.ui.define([
 				 * @since 1.56
 				 */
 				dragDropConfig : {type : "sap.ui.core.dnd.DragDropBase", multiple : true, singularName : "dragDropConfig"}
+			},
+			associations : {
+				/**
+				 * Reference to the element to show the field help for this control; if unset, field help is
+				 * show on the control itself.
+				 */
+				fieldHelpDisplay : {type: "sap.ui.core.Element", multiple: false}
 			}
 		},
 
@@ -1818,6 +1825,28 @@ sap.ui.define([
 		return aFieldGroupIds || [];
 
 	};
+
+	/**
+	 * This function (if available on the concrete subclass) provides information for the field help.
+	 *
+	 * Applications must not call this hook method directly, it is called by the framework.
+	 *
+	 * Subclasses should implement this hook to provide any necessary information for displaying field help:
+	 *
+	 * <pre>
+	 * MyElement.prototype.getFieldHelpInfo = function() {
+	 *    return {
+	 *      label: "some label"
+	 *    };
+	 * };
+	 * </pre>
+	 *
+	 * @return {{label: string}} Field Help Information of the element.
+	 * @function
+	 * @name sap.ui.core.Element.prototype.getFieldHelpInfo?
+	 * @protected
+	 */
+	//Element.prototype.getFieldHelpInfo = function() { return null; };
 
 	/**
 	 * Returns a DOM Element representing the given property or aggregation of this <code>Element</code>.
