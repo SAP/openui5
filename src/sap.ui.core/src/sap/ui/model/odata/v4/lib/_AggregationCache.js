@@ -1904,10 +1904,12 @@ sap.ui.define([
 	 * @override
 	 * @see sap.ui.model.odata.v4.lib._CollectionCache#refreshKeptElements
 	 */
-	_AggregationCache.prototype.refreshKeptElements = function (oGroupLock, fnOnRemove) {
+	_AggregationCache.prototype.refreshKeptElements = function (oGroupLock, fnOnRemove,
+			bIgnorePendingChanges, _bDropApply) {
 		// "super" call (like @borrows ...)
 		const fnSuper = this.oFirstLevel.refreshKeptElements;
-		return fnSuper.call(this, oGroupLock, fnOnRemove, true);
+		return fnSuper.call(this, oGroupLock, fnOnRemove, bIgnorePendingChanges,
+			/*bDropApply*/true);
 	};
 
 	/**

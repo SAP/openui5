@@ -3749,7 +3749,7 @@ sap.ui.define([
 					if (iIndex >= 0) { // Note: implies oContext.created()
 						that.removeCreated(oContext);
 					}
-				}, false, bIgnorePendingChanges);
+				}, bIgnorePendingChanges);
 		}).catch(function (oError) {
 			that.oModel.reportError("Failed to refresh kept-alive elements", sClassName, oError);
 			throw oError;
