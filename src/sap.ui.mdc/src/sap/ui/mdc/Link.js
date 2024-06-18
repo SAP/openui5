@@ -332,14 +332,15 @@ sap.ui.define([
 		this._setConvertedLinkItems(aLinkItems);
 		const aMLinkItems = this._getInternalModel().getProperty("/linkItems");
 
-		if (aMLinkItems.length === 1 && !aAdditionalContent.length) {
+		const bDirectNavigation = (aMLinkItems.length === 1 && !aAdditionalContent.length);
+		if (bDirectNavigation) {
 			const bNavigate = await this._beforeNavigationCallback(oEvent);
 			if (bNavigate) {
 				Panel.navigate(aMLinkItems[0].href);
 			}
-			return bNavigate;
 		}
-		return false;
+
+		return bDirectNavigation;
 	};
 
 	/**
@@ -661,7 +662,7 @@ sap.ui.define([
 	Link.prototype._getSourceControl = function() {
 		const vSourceControlAssociation = this.getAssociation("sourceControl");
 		const oSourceControl = vSourceControlAssociation && typeof vSourceControlAssociation === "string" ? Element.getElementById(vSourceControlAssociation) : vSourceControlAssociation;
-		return  oSourceControl ?? this.getSourceControl();
+		return oSourceControl ?? this.getSourceControl();
 	};
 
 	return Link;

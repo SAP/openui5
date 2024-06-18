@@ -52,29 +52,27 @@ sap.ui.define([
 		}
 
 		return new Promise((resolve) => {
-			if (!this.oApproveDialog) {
-				this.oApproveDialog = new Dialog({
-					type: DialogType.Message,
-					title: "Confirm",
-					content: new Text({ text: "Do you want to navigate?" }),
-					beginButton: new Button({
-						type: ButtonType.Emphasized,
-						text: "Navigate",
-						press: function () {
-							this.oApproveDialog.close();
-							return resolve(true);
-						}.bind(this)
-					}),
-					endButton: new Button({
-						text: "Cancel",
-						press: function () {
-							this.oApproveDialog.close();
-							return resolve(false);
-						}.bind(this)
-					})
-				});
-			}
-			this.oApproveDialog.open();
+			const oApproveDialog = new Dialog({
+				type: DialogType.Message,
+				title: "Confirm",
+				content: new Text({ text: "Do you want to navigate?" }),
+				beginButton: new Button({
+					type: ButtonType.Emphasized,
+					text: "Navigate",
+					press: () => {
+						resolve(true);
+						oApproveDialog.close();
+					}
+				}),
+				endButton: new Button({
+					text: "Cancel",
+					press: () => {
+						resolve(false);
+						oApproveDialog.close();
+					}
+				})
+			});
+			oApproveDialog.open();
 		});
 	};
 
@@ -85,7 +83,7 @@ sap.ui.define([
 			text: `Product`,
 			description: `{products>/${sProductId}/name}`,
 			icon: `{products>/${sProductId}/image}`,
-			href: "/",
+			href: `${self.location.pathname}${(self.location.search && self.location.search)}#product-display?productId=${sProductId}`,
 			initiallyVisible: true
 		});
 

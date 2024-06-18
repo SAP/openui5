@@ -62,11 +62,13 @@ sap.ui.define([
 		When.onTheMDCLink.iPressTheLink(oLink3);
 		Then.iShouldSeeAConfirmationDialog();
 		When.iCancelTheNavigation();
-		When.onTheMDCLink.iCloseThePopover();
+		Then.theApplicationURLDoesNotContain("#product-display?productId=");
 
 		When.onTheMDCLink.iPressTheLink(oLink3);
 		Then.iShouldSeeAConfirmationDialog();
 		When.iConfirmTheNavigation();
+
+		Then.theApplicationURLContains("#product-display?productId=");
 
 		Then.iTeardownMyAppFrame();
 	});
