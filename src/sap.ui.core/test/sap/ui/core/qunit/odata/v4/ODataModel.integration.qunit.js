@@ -655,7 +655,9 @@ sap.ui.define([
 	/**
 	 * Converts the sap.ui.table.Table controls within the document. Embeds all inner controls into
 	 * a <t:Column> with <t:template> each. <t:Column> may still be used however. Do not use <rows>,
-	 * it breaks this automatic conversion (and is unnecessary anyway).
+	 * it breaks this automatic conversion (and is unnecessary anyway). Replaces the deprecated
+	 * table property "visibleRowCount" by the correct <rowMode><Fixed rowCount="..."></rowMode>,
+	 * allowing the tests to still use it.
 	 *
 	 * @param {Document} oDocument The view as XML document
 	 */
