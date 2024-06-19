@@ -58,7 +58,8 @@ sap.ui.define([
 
 	/**
 	 * Starter util for UI adaptation.
-	 * With this API you are also able to modify the UI adaptation plugins list and or add some event handler functions to be called on start, failed and stop events.
+	 * With this API you are also able to modify the UI adaptation plugins list and or add some event handler functions
+	 * to be called on start, failed and stop events.
 	 * The function also checks for the Key User authorization and the <code>flexEnabled</code> flag in the manifest.
 	 * If either check is not passed successfully the function returns a rejected Promise.
 	 *
@@ -103,6 +104,7 @@ sap.ui.define([
 			if (loadPlugins) {
 				return loadPlugins(oRta);
 			}
+			return undefined;
 		})
 		.then(function() {
 			return oRta.start();
@@ -149,11 +151,19 @@ sap.ui.define([
 				&& !(FlexUtils.getUshellContainer() && vError.reason === "flexEnabled") // FLP Plugin already handles this error
 			) {
 				var oRtaResourceBundle = Lib.getResourceBundleFor("sap.ui.rta");
-				showMessageBox(
-					oRtaResourceBundle.getText("MSG_GENERIC_ERROR_MESSAGE", [vError.message]),
-					{title: oRtaResourceBundle.getText("MSG_ADAPTATION_COULD_NOT_START")},
-					"error"
-				);
+				if (vError.reason === "isKeyUser") {
+					showMessageBox(
+						vError.message,
+						{title: oRtaResourceBundle.getText("MSG_ADAPTATION_COULD_NOT_START")},
+						"error"
+					);
+				} else {
+					showMessageBox(
+						oRtaResourceBundle.getText("MSG_GENERIC_ERROR_MESSAGE", [vError.message]),
+						{title: oRtaResourceBundle.getText("MSG_ADAPTATION_COULD_NOT_START")},
+						"error"
+					);
+				}
 				Log.error("UI Adaptation could not be started", vError.message);
 			}
 			throw vError;
