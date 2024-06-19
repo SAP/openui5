@@ -20,27 +20,35 @@
 						class="sapUiTinyMarginTop">
 					<items>
 						<Link
-								class="sapUiLargeMarginEnd sapUiTinyMarginBottom"
+								class="sapUiLargeMarginEnd sapUiTinyMarginBottom sapUiDocumentationFooterLink"
+								visible="{appView>/bCNICPShow}"
+								text="ICP 粤B2-20040246-26"
+								href="https://beian.miit.gov.cn/"
+								target="_blank" />
+						<Link
+								class="sapUiLargeMarginEnd sapUiTinyMarginBottom sapUiDocumentationFooterLink"
 								text="{i18n>FOOTER_LEGAL_DISCOLURE}"
 								href="https://www.sap.com/corporate/en/legal/impressum.html"
 								target="_blank"/>
 						<Link
-								class="sapUiLargeMarginEnd sapUiTinyMarginBottom"
+								class="sapUiLargeMarginEnd sapUiTinyMarginBottom sapUiDocumentationFooterLink"
 								text="{i18n>FOOTER_PRIVACY}"
 								href="https://www.sap.com/corporate/en/legal/privacy.html"
 								target="_blank"/>
 						<Link
+								class="sapUiDocumentationFooterLink"
 								text="{i18n>FOOTER_TERMS}"
 								href="https://www.sap.com/corporate/en/legal/terms-of-use.html"
 								visible="{= !${versionData>/isOpenUI5} &amp;&amp; !${versionData>/isDevEnv} }"
 								target="_blank"/>
 						<Link
-								class="sapUiTinyMarginBottom sapUiLargeMarginEnd"
+								class="sapUiTinyMarginBottom sapUiLargeMarginEnd sapUiDocumentationFooterLink"
 								text="{i18n>FOOTER_LICENSE}"
 								href="LICENSE.txt"
 								visible="{versionData>/isOpenUI5}"
 								target="_blank"/>
 						<Link
+								class="sapUiDocumentationFooterLink"
 								text="{i18n>FOOTER_TERMS}"
 								href="TermsOfUse.txt"
 								visible="{versionData>/isOpenUI5}"
