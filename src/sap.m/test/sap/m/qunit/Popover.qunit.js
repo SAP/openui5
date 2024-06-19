@@ -1313,6 +1313,7 @@ sap.ui.define([
 			phone: false,
 			tablet: false
 		};
+		var oStub = sinon.stub(Popup.prototype, "isTopmost").returns(false);
 
 		this.stub(Device, "system").value(oSystem);
 
@@ -1370,6 +1371,7 @@ sap.ui.define([
 		//Restore
 		await nextUIUpdate(this.clock);
 		this.clock.restore();
+		oStub.restore();
 	});
 
 	QUnit.test("Button in SegmentedButton opens Popover", async function (assert){
@@ -2652,6 +2654,54 @@ sap.ui.define([
 
 		return $element[0].scrollWidth > ($element.innerWidth() + iTolerance);
 	}
+
+	QUnit.test("Popover is auto-closed if the opener is currently not visible", async function (assert) {
+		this.clock = sinon.useFakeTimers();
+		// Arrange
+		var oOpenButton = new Button({
+			text: "Open Popover"
+		});
+		var oOtherButton = new Button({
+			text: "Other Button"
+		});
+
+		page.addContent(oOpenButton);
+		page.addContent(oOtherButton);
+
+		var oPopover = new Popover({
+			title: "Popover Title",
+			content: [
+				new Button({
+					text: "Popover Button"
+				})
+			]
+		});
+
+		oPopover._followOfTolerance = 100000000;
+
+		// Act
+		await nextUIUpdate(this.clock);
+		oPopover.openBy(oOpenButton);
+		await nextUIUpdate(this.clock);
+		this.clock.tick(500);
+
+		oOpenButton.getDomRef().style.position = "absolute";
+		oOpenButton.getDomRef().style.width = "100px";
+
+		Popup.checkDocking.call(oPopover.oPopup);
+
+		this.clock.tick(500);
+
+		// Assert
+		assert.notOk(oPopover.isOpen(), "Popover is auto closed");
+
+		// Clean
+		runAllFakeTimersAndRestore(this.clock);
+
+		oPopover.destroy();
+		oOpenButton.destroy();
+		oOtherButton.destroy();
+	});
 
 	QUnit.module("Popover scroll width",{
 		beforeEach: async function() {
