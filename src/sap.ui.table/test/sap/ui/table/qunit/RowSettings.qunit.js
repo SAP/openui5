@@ -28,7 +28,7 @@ sap.ui.define([
 	QUnit.module("Highlights", {
 		beforeEach: async function() {
 			this.iRowsWithHighlight = 13;
-			this.oTable = TableQUnitUtils.createTable({
+			this.oTable = await TableQUnitUtils.createTable({
 				rows: "{/}",
 				models: new JSONModel([
 					{highlight: MessageType.Success},
@@ -374,7 +374,7 @@ sap.ui.define([
 
 	QUnit.module("Navigated indicators", {
 		beforeEach: async function() {
-			this.oTable = TableQUnitUtils.createTable({
+			this.oTable = await TableQUnitUtils.createTable({
 				rows: "{/}",
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(3),
 				columns: TableQUnitUtils.createTextColumn(),

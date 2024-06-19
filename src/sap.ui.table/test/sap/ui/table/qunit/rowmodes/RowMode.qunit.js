@@ -134,8 +134,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("NoData", {
-		beforeEach: function() {
-			this.oTable = TableQUnitUtils.createTable({
+		beforeEach: async function() {
+			this.oTable = await TableQUnitUtils.createTable({
 				rowMode: new RowModeSubclass(),
 				rows: "{/}",
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(100),
@@ -157,9 +157,9 @@ sap.ui.define([
 		assert.notOk(this.oTable.getRowMode().isNoDataDisabled(), "Enabled");
 	});
 
-	QUnit.test("After rendering, when NoData would be shown but is disabled", function(assert) {
+	QUnit.test("After rendering, when NoData would be shown but is disabled", async function(assert) {
 		this.oTable.destroy();
-		this.oTable = TableQUnitUtils.createTable({
+		this.oTable = await TableQUnitUtils.createTable({
 			rowMode: new RowModeSubclass(),
 			rows: "{/}",
 			models: TableQUnitUtils.createJSONModelWithEmptyRows(0),

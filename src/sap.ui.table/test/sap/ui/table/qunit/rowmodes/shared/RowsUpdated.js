@@ -17,12 +17,12 @@ sap.ui.define([
 		afterEach: function() {
 			this.oTable.destroy();
 		},
-		createTable: function(mSettings) {
+		createTable: async function(mSettings) {
 			if (this.oTable) {
 				this.oTable.destroy();
 			}
 
-			this.oTable = TableQUnitUtils.createTable(Object.assign({}, {
+			this.oTable = await TableQUnitUtils.createTable(Object.assign({}, {
 				rows: "{/}",
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(100),
 				columns: [
@@ -60,14 +60,14 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Initial rendering without binding", function(assert) {
-		this.createTable({rows: ""});
+	QUnit.test("Initial rendering without binding", async function(assert) {
+		await this.createTable({rows: ""});
 		return this.checkRowsUpdated(assert, []);
 	});
 
 	QUnit.test("Initial rendering without binding in invisible container", function(assert) {
-		return TableQUnitUtils.hideTestContainer().then(() => {
-			this.createTable({rows: ""});
+		return TableQUnitUtils.hideTestContainer().then(async () => {
+			await this.createTable({rows: ""});
 			return this.checkRowsUpdated(assert, []);
 		})
 			.then(() => {
@@ -78,8 +78,8 @@ sap.ui.define([
 			});
 	});
 
-	QUnit.test("Initial rendering with binding", function(assert) {
-		this.createTable();
+	QUnit.test("Initial rendering with binding", async function(assert) {
+		await this.createTable();
 
 		return this.checkRowsUpdated(assert, [
 			TableUtils.RowsUpdateReason.Render
@@ -87,8 +87,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Initial rendering with binding in invisible container", function(assert) {
-		return TableQUnitUtils.hideTestContainer().then(() => {
-			this.createTable();
+		return TableQUnitUtils.hideTestContainer().then(async () => {
+			await this.createTable();
 			return this.checkRowsUpdated(assert, [
 				TableUtils.RowsUpdateReason.Render
 			]);
@@ -101,7 +101,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Re-render without binding", async function(assert) {
-		this.createTable({rows: ""});
+		await this.createTable({rows: ""});
 		await this.oTable.qunit.whenRenderingFinished();
 		this.resetRowsUpdatedSpy();
 		this.oTable.invalidate();
@@ -110,7 +110,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Re-render without binding in invisible container", async function(assert) {
-		this.createTable({rows: ""});
+		await this.createTable({rows: ""});
 		await this.oTable.qunit.whenRenderingFinished();
 		this.resetRowsUpdatedSpy();
 		await TableQUnitUtils.hideTestContainer();
@@ -123,7 +123,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Re-render with binding", async function(assert) {
-		this.createTable();
+		await this.createTable();
 		await this.oTable.qunit.whenRenderingFinished();
 		this.resetRowsUpdatedSpy();
 		this.oTable.invalidate();
@@ -134,7 +134,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Re-render with binding in invisible container", async function(assert) {
-		this.createTable();
+		await this.createTable();
 		await this.oTable.qunit.whenRenderingFinished();
 		this.resetRowsUpdatedSpy();
 		await TableQUnitUtils.hideTestContainer();
@@ -148,8 +148,8 @@ sap.ui.define([
 		await this.checkRowsUpdated(assert, []);
 	});
 
-	QUnit.test("Sort with Table#sort", function(assert) {
-		this.createTable();
+	QUnit.test("Sort with Table#sort", async function(assert) {
+		await this.createTable();
 
 		return this.oTable.qunit.whenRenderingFinished().then(() => {
 			this.resetRowsUpdatedSpy();
@@ -160,8 +160,8 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Sort with Binding#sort", function(assert) {
-		this.createTable();
+	QUnit.test("Sort with Binding#sort", async function(assert) {
+		await this.createTable();
 
 		return this.oTable.qunit.whenRenderingFinished().then(() => {
 			this.resetRowsUpdatedSpy();
@@ -172,8 +172,8 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Filter with Table#filter", function(assert) {
-		this.createTable();
+	QUnit.test("Filter with Table#filter", async function(assert) {
+		await this.createTable();
 
 		return this.oTable.qunit.whenRenderingFinished().then(() => {
 			this.resetRowsUpdatedSpy();
@@ -184,8 +184,8 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Filter with Binding#filter", function(assert) {
-		this.createTable();
+	QUnit.test("Filter with Binding#filter", async function(assert) {
+		await this.createTable();
 
 		return this.oTable.qunit.whenRenderingFinished().then(() => {
 			this.resetRowsUpdatedSpy();
@@ -196,8 +196,8 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Unbind with showNoData=true", function(assert) {
-		this.createTable();
+	QUnit.test("Unbind with showNoData=true", async function(assert) {
+		await this.createTable();
 
 		return this.oTable.qunit.whenRenderingFinished().then(() => {
 			this.resetRowsUpdatedSpy();
@@ -208,8 +208,8 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Unbind with showNoData=false", function(assert) {
-		this.createTable({showNoData: false});
+	QUnit.test("Unbind with showNoData=false", async function(assert) {
+		await this.createTable({showNoData: false});
 
 		return this.oTable.qunit.whenRenderingFinished().then(() => {
 			this.resetRowsUpdatedSpy();
@@ -220,8 +220,8 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Unbind when invalid", function(assert) {
-		this.createTable();
+	QUnit.test("Unbind when invalid", async function(assert) {
+		await this.createTable();
 
 		return this.oTable.qunit.whenRenderingFinished().then(() => {
 			this.resetRowsUpdatedSpy();
@@ -235,8 +235,8 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Bind with client binding", function(assert) {
-		this.createTable();
+	QUnit.test("Bind with client binding", async function(assert) {
+		await this.createTable();
 		this.oBindingInfo = this.oTable.getBindingInfo("rows");
 
 		return this.oTable.qunit.whenRenderingFinished().then(() => {
@@ -250,8 +250,8 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Vertical scrolling", function(assert) {
-		this.createTable();
+	QUnit.test("Vertical scrolling", async function(assert) {
+		await this.createTable();
 
 		return this.oTable.qunit.whenRenderingFinished().then(() => {
 			this.resetRowsUpdatedSpy();
@@ -262,8 +262,8 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Change first visible row by API call (setFirstVisibleRow)", function(assert) {
-		this.createTable();
+	QUnit.test("Change first visible row by API call (setFirstVisibleRow)", async function(assert) {
+		await this.createTable();
 
 		return this.oTable.qunit.whenRenderingFinished().then(() => {
 			this.resetRowsUpdatedSpy();
@@ -284,8 +284,8 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Theme change", function(assert) {
-		this.createTable();
+	QUnit.test("Theme change", async function(assert) {
+		await this.createTable();
 
 		return this.oTable.qunit.whenRenderingFinished().then(() => {
 			this.resetRowsUpdatedSpy();

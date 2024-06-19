@@ -16,8 +16,8 @@ sap.ui.define([
 	const aDensities = ["sapUiSizeCozy", "sapUiSizeCompact", "sapUiSizeCondensed", undefined];
 
 	QUnit.module("Row height", {
-		beforeEach: function() {
-			this.oTable = TableQUnitUtils.createTable({
+		beforeEach: async function() {
+			this.oTable = await TableQUnitUtils.createTable({
 				rows: {path: "/"},
 				columns: [
 					new Column({template: new HeightTestControl({height: "1px"})}),

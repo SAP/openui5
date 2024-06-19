@@ -27,8 +27,8 @@ sap.ui.define([
 	oAnnotationMockServer.start();
 
 	QUnit.module("Selection API", {
-		beforeEach: function() {
-			this.oTable = TableQUnitUtils.createTable(TreeTable, {
+		beforeEach: async function() {
+			this.oTable = await TableQUnitUtils.createTable(TreeTable, {
 				rows: {
 					path: "/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result",
 					parameters: {

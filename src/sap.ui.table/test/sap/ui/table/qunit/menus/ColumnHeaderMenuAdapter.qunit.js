@@ -55,14 +55,14 @@ sap.ui.define([
 	});
 
 	QUnit.module("API and Integration", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oMenu1 = new TestMenu();
 			this.oMenu2 = new TestMenu();
 			this.oColumn1 = new Column({template: new Icon()});
 			this.oColumn2 = new Column();
 			this.oColumn1.setHeaderMenu(this.oMenu1.getId());
 			this.oColumn2.setHeaderMenu(this.oMenu2.getId());
-			this.oTable = TableQUnitUtils.createTable({
+			this.oTable = await TableQUnitUtils.createTable({
 				columns: [this.oColumn1, this.oColumn2]
 			});
 		},

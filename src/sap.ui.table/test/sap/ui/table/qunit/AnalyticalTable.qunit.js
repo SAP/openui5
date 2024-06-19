@@ -1540,8 +1540,8 @@ sap.ui.define([
 
 			return this.oDataModel.metadataLoaded();
 		},
-		beforeEach: function() {
-			this.oTable = TableQUnitUtils.createTable(AnalyticalTable, {
+		beforeEach: async function() {
+			this.oTable = await TableQUnitUtils.createTable(AnalyticalTable, {
 				rows: {
 					path: "/ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',P_CostCenterTo='999-9999')/Results",
 					parameters: {
@@ -1584,11 +1584,11 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("After rendering with data", function(assert) {
-		let pDone;
+	QUnit.test("After rendering with data", async function(assert) {
+		const done = assert.async();
 
 		this.oTable.destroy();
-		this.oTable = TableQUnitUtils.createTable(AnalyticalTable, {
+		this.oTable = await TableQUnitUtils.createTable(AnalyticalTable, {
 			rows: {
 				path: "/ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',P_CostCenterTo='999-9999')/Results",
 				parameters: {
@@ -1596,24 +1596,23 @@ sap.ui.define([
 				}
 			}
 		}, function(oTable) {
-			pDone = new Promise(function(resolve) {
+			new Promise(function(resolve) {
 				TableQUnitUtils.addDelegateOnce(oTable, "onAfterRendering", function() {
 					TableQUnitUtils.assertNoDataVisible(assert, oTable, true);
 					resolve();
 				});
 			}).then(oTable.qunit.whenRenderingFinished).then(function() {
 				TableQUnitUtils.assertNoDataVisible(assert, oTable, false);
+				done();
 			});
 		});
-
-		return pDone;
 	});
 
-	QUnit.test("After rendering without data", function(assert) {
-		let pDone;
+	QUnit.test("After rendering without data", async function(assert) {
+		const done = assert.async();
 
 		this.oTable.destroy();
-		this.oTable = TableQUnitUtils.createTable(AnalyticalTable, {
+		this.oTable = await TableQUnitUtils.createTable(AnalyticalTable, {
 			rows: {
 				path: "/ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',P_CostCenterTo='999-9999')/Results",
 				parameters: {
@@ -1622,24 +1621,23 @@ sap.ui.define([
 				filters: [new Filter({path: "CostCenter", operator: "eq", value1: "DoesNotExist"})]
 			}
 		}, function(oTable) {
-			pDone = new Promise(function(resolve) {
+			new Promise(function(resolve) {
 				TableQUnitUtils.addDelegateOnce(oTable, "onAfterRendering", function() {
 					TableQUnitUtils.assertNoDataVisible(assert, oTable, true);
 					resolve();
 				});
 			}).then(oTable.qunit.whenRenderingFinished).then(function() {
 				TableQUnitUtils.assertNoDataVisible(assert, oTable, true);
+				done();
 			});
 		});
-
-		return pDone;
 	});
 
-	QUnit.test("After rendering without data but with the grand total", function(assert) {
-		let pDone;
+	QUnit.test("After rendering without data but with the grand total", async function(assert) {
+		const done = assert.async();
 
 		this.oTable.destroy();
-		this.oTable = TableQUnitUtils.createTable(AnalyticalTable, {
+		this.oTable = await TableQUnitUtils.createTable(AnalyticalTable, {
 			rows: {
 				path: "/ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',P_CostCenterTo='999-9999')/Results",
 				parameters: {
@@ -1648,17 +1646,16 @@ sap.ui.define([
 				filters: [new Filter({path: "CostCenter", operator: "eq", value1: "DoesNotExistButReturnsGrandTotal"})]
 			}
 		}, function(oTable) {
-			pDone = new Promise(function(resolve) {
+			new Promise(function(resolve) {
 				TableQUnitUtils.addDelegateOnce(oTable, "onAfterRendering", function() {
 					TableQUnitUtils.assertNoDataVisible(assert, oTable, true);
 					resolve();
 				});
 			}).then(oTable.qunit.whenRenderingFinished).then(function() {
 				TableQUnitUtils.assertNoDataVisible(assert, oTable, true);
+				done();
 			});
 		});
-
-		return pDone;
 	});
 
 	QUnit.test("Bind/Unbind", function(assert) {

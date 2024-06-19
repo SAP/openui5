@@ -259,9 +259,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("#autoResize", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oColumnResizeHandler = this.spy();
-			this.oTable = TableQUnitUtils.createTable({
+			this.oTable = await TableQUnitUtils.createTable({
 				rows: "{/}",
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(1),
 				columnResize: (oEvent) => {
@@ -1684,7 +1684,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("ColumnHeaderMenu Association", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oMenu1 = new ColumnMenu({
 				quickSort: new QuickAction({
 					label: "Custom Quick Sort",
@@ -1707,7 +1707,7 @@ sap.ui.define([
 			this.oColumn2.setFilterProperty("G");
 			this.oColumn2.setHeaderMenu(this.oMenu2);
 
-			this.oTable = TableQUnitUtils.createTable({
+			this.oTable = await TableQUnitUtils.createTable({
 				columns: [this.oColumn1, this.oColumn2]
 			});
 			this.oTable.setEnableColumnFreeze(true);

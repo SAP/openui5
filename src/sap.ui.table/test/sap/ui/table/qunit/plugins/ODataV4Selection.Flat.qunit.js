@@ -42,8 +42,8 @@ sap.ui.define([
 				models: undefined
 			});
 		},
-		beforeEach: function() {
-			this.oTable = TableQUnitUtils.createTable();
+		beforeEach: async function() {
+			this.oTable = await TableQUnitUtils.createTable();
 			return this.oTable.qunit.whenRenderingFinished();
 		},
 		afterEach: function() {
@@ -85,8 +85,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Basic checks", {
-		beforeEach: function() {
-			this.oTable = TableQUnitUtils.createTable();
+		beforeEach: async function() {
+			this.oTable = await TableQUnitUtils.createTable();
 			return this.oTable.qunit.whenRenderingFinished();
 		},
 		afterEach: function() {
@@ -183,8 +183,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Selection API", {
-		beforeEach: function() {
-			this.oTable = TableQUnitUtils.createTable();
+		beforeEach: async function() {
+			this.oTable = await TableQUnitUtils.createTable();
 			return this.oTable.qunit.whenRenderingFinished();
 		},
 		afterEach: function() {

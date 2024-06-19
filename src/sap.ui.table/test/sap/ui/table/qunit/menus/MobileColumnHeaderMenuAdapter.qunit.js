@@ -42,7 +42,7 @@ sap.ui.define([
 	"use strict";
 
 	QUnit.module("Menu entries and interaction", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oMenu1 = new ColumnMenu({
 				quickActions: [
 					new QuickSort({
@@ -74,7 +74,7 @@ sap.ui.define([
 			this.oColumn2.setFilterProperty("G");
 			this.oColumn2.setHeaderMenu(this.oMenu2);
 
-			this.oTable = TableQUnitUtils.createTable({
+			this.oTable = await TableQUnitUtils.createTable({
 				columns: [this.oColumn1, this.oColumn2],
 				enableGrouping: true,
 				enableColumnFreeze: true
@@ -450,12 +450,12 @@ sap.ui.define([
 	});
 
 	QUnit.module("API", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oMenu = new ColumnMenu();
 			this.oColumn = new Column({
 				sortProperty: "A"
 			});
-			this.oTable = TableQUnitUtils.createTable({
+			this.oTable = await TableQUnitUtils.createTable({
 				columns: [this.oColumn]
 			});
 

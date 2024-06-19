@@ -37,8 +37,8 @@ sap.ui.define([
 			this.mDefaultSettings = TableQUnitUtils.getDefaultSettings();
 			TableQUnitUtils.setDefaultSettings();
 		},
-		beforeEach: function() {
-			this.oTable = TableQUnitUtils.createTable({
+		beforeEach: async function() {
+			this.oTable = await TableQUnitUtils.createTable({
 				visibleRowCountMode: "Fixed",
 				rows: {path: "/"},
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(1)
@@ -60,8 +60,8 @@ sap.ui.define([
 			"The table creates an instance of sap.ui.table.rowmodes.Fixed");
 	});
 
-	QUnit.test("Property getters", function(assert) {
-		const oTable = TableQUnitUtils.createTable({
+	QUnit.test("Property getters", async function(assert) {
+		const oTable = await TableQUnitUtils.createTable({
 			visibleRowCountMode: "Fixed",
 			visibleRowCount: 5,
 			fixedRowCount: 1,
@@ -197,8 +197,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Hide empty rows", {
-		beforeEach: function() {
-			this.oTable = TableQUnitUtils.createTable({
+		beforeEach: async function() {
+			this.oTable = await TableQUnitUtils.createTable({
 				columns: [
 					new Column({template: new HeightTestControl({height: "1px"})}),
 					new Column({template: new HeightTestControl({height: "1px"})})
@@ -271,8 +271,8 @@ sap.ui.define([
 			}
 			this.oGetContextsSpy.restore();
 		},
-		createTable: function(bVariableRowHeightEnabled) {
-			this.oTable = TableQUnitUtils.createTable({
+		createTable: async function(bVariableRowHeightEnabled) {
+			this.oTable = await TableQUnitUtils.createTable({
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(100),
 				_bVariableRowHeightEnabled: bVariableRowHeightEnabled
 			});
@@ -281,22 +281,46 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Initialization", function(assert) {
-		return this.createTable().qunit.whenRenderingFinished().then(function() {
-			assert.strictEqual(this.oGetContextsSpy.callCount, 1, "Method to get contexts called once");
+	QUnit.test("Initialization", async function(assert) {
+		const oTable = await this.createTable();
+
+		return oTable.qunit.whenRenderingFinished().then(function() {
+			/*
+			 * During the table initialization, Table._getContexts is called twice.
+			 * Since the calls are throttled, the second call which is triggered by
+			 * TableDelegate.onBeforeRendering, cancels the initial call.
+			 *
+			 * This mechanism behaves differently when the table initalization uses
+			 * nextUIUpdate instead of Core.applyChanges. The initial call is already
+			 * executed before the second call would cancel it. Therefore the function
+			 * is called twice.
+			 */
+			assert.strictEqual(this.oGetContextsSpy.callCount, 2, "Method to get contexts called twice");
 			assert.ok(this.oGetContextsSpy.calledWithExactly(0, 10, 100), "The call considers the row count");
 		}.bind(this));
 	});
 
-	QUnit.test("Initialization; Variable row heights", function(assert) {
-		return this.createTable(true).qunit.whenRenderingFinished().then(function() {
-			assert.strictEqual(this.oGetContextsSpy.callCount, 1, "Method to get contexts called once");
+	QUnit.test("Initialization; Variable row heights", async function(assert) {
+		const oTable = await this.createTable(true);
+
+		return oTable.qunit.whenRenderingFinished().then(function() {
+			/*
+			 * During the table initialization, Table._getContexts is called twice.
+			 * Since the calls are throttled, the second call which is triggered by
+			 * TableDelegate.onBeforeRendering, cancels the initial call.
+			 *
+			 * This mechanism behaves differently when the table initalization uses
+			 * nextUIUpdate instead of Core.applyChanges. The initial call is already
+			 * executed before the second call would cancel it. Therefore the function
+			 * is called twice.
+			 */
+			assert.strictEqual(this.oGetContextsSpy.callCount, 2, "Method to get contexts called twice");
 			assert.ok(this.oGetContextsSpy.calledWithExactly(0, 11, 100), "The call considers the row count");
 		}.bind(this));
 	});
 
-	QUnit.test("Change row count", function(assert) {
-		const oTable = this.createTable();
+	QUnit.test("Change row count", async function(assert) {
+		const oTable = await this.createTable();
 		const oGetContextsSpy = this.oGetContextsSpy;
 
 		oTable.setFirstVisibleRow(10);

@@ -28,8 +28,8 @@ sap.ui.define([
 	"use strict";
 
 	QUnit.module("Scrollbars", {
-		beforeEach: function() {
-			this.oTable = TableQUnitUtils.createTable({
+		beforeEach: async function() {
+			this.oTable = await TableQUnitUtils.createTable({
 				width: "500px",
 				columns: [TableQUnitUtils.createTextColumn().setWidth("500px")],
 				rows: {path: "/"},
@@ -59,8 +59,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Horizontal scrolling", {
-		beforeEach: function() {
-			this.oTable = TableQUnitUtils.createTable({
+		beforeEach: async function() {
+			this.oTable = await TableQUnitUtils.createTable({
 				rows: {path: "/"},
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(10),
 				columns: [
@@ -154,7 +154,7 @@ sap.ui.define([
 
 	QUnit.module("Special cases");
 
-	QUnit.test("Scrolling inside the cell", function(assert) {
+	QUnit.test("Scrolling inside the cell", async function(assert) {
 		const DummyControl = Control.extend("sap.ui.table.test.DummyControl", {
 			renderer: {
 				apiVersion: 2,
@@ -185,7 +185,7 @@ sap.ui.define([
 			}
 		});
 
-		const oTable = TableQUnitUtils.createTable({
+		const oTable = await TableQUnitUtils.createTable({
 			columns: [
 				new Column({template: new DummyControl(), width: "20px"}),
 				new Column({template: new DummyControl(), width: "20px"})

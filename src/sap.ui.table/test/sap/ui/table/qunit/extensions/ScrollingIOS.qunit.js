@@ -19,8 +19,8 @@ sap.ui.define([
 		before: function() {
 			Device.os.ios = true;
 		},
-		beforeEach: function() {
-			this.oTable = TableQUnitUtils.createTable();
+		beforeEach: async function() {
+			this.oTable = await TableQUnitUtils.createTable();
 
 			return new Promise(function(resolve) {
 				sap.ui.require(["sap/ui/table/extensions/ScrollingIOS"], resolve);
@@ -47,8 +47,8 @@ sap.ui.define([
 		before: function() {
 			Device.os.ios = true;
 		},
-		beforeEach: function() {
-			this.oTable = TableQUnitUtils.createTable({
+		beforeEach: async function() {
+			this.oTable = await TableQUnitUtils.createTable({
 				columns: [TableQUnitUtils.createTextColumn()],
 				rows: {path: "/"},
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(6),
@@ -115,8 +115,8 @@ sap.ui.define([
 			Device.support.pointer = false;
 			Device.support.touch = true;
 		},
-		beforeEach: function() {
-			this.oTable = TableQUnitUtils.createTable({
+		beforeEach: async function() {
+			this.oTable = await TableQUnitUtils.createTable({
 				columns: [TableQUnitUtils.createTextColumn()],
 				rows: {path: "/"},
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(100)

@@ -22,8 +22,8 @@ sap.ui.define([
 	"use strict";
 
 	QUnit.module("Lifecycle", {
-		beforeEach: function() {
-			this.oTable = TableQUnitUtils.createTable();
+		beforeEach: async function() {
+			this.oTable = await TableQUnitUtils.createTable();
 		},
 		afterEach: function() {
 			this.oTable.destroy();
@@ -66,8 +66,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Synchronization hooks", {
-		beforeEach: function() {
-			this.oTable = TableQUnitUtils.createTable({
+		beforeEach: async function() {
+			this.oTable = await TableQUnitUtils.createTable({
 				rowMode: new FixedRowMode({
 					rowCount: 3
 				}),
@@ -320,8 +320,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Synchronization methods", {
-		beforeEach: function() {
-			this.oTable = TableQUnitUtils.createTable({
+		beforeEach: async function() {
+			this.oTable = await TableQUnitUtils.createTable({
 				rowMode: new FixedRowMode({
 					rowCount: 3
 				}),

@@ -103,8 +103,8 @@ sap.ui.define([
 	}
 
 	QUnit.module("Load data", {
-		beforeEach: function() {
-			this.oTable = TableQUnitUtils.createTable({
+		beforeEach: async function() {
+			this.oTable = await TableQUnitUtils.createTable({
 				models: new ODataModel("/MyService/")
 			});
 			this.oMultiSelectionPlugin = this.oTable.getDependents()[0];
@@ -129,8 +129,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Load data with server-driven paging", {
-		beforeEach: function() {
-			this.oTable = TableQUnitUtils.createTable({
+		beforeEach: async function() {
+			this.oTable = await TableQUnitUtils.createTable({
 				models: new ODataModel("/MyServiceWithPaging/")
 			});
 			this.oMultiSelectionPlugin = this.oTable.getDependents()[0];
@@ -155,8 +155,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Load data without count", {
-		beforeEach: function() {
-			this.oTable = TableQUnitUtils.createTable({
+		beforeEach: async function() {
+			this.oTable = await TableQUnitUtils.createTable({
 				threshold: 60,
 				models: new ODataModel("/MyService/", {
 					defaultCountMode: "None"
@@ -189,8 +189,8 @@ sap.ui.define([
 		before: function() {
 			iCount = 180;
 		},
-		beforeEach: function() {
-			this.oTable = TableQUnitUtils.createTable({
+		beforeEach: async function() {
+			this.oTable = await TableQUnitUtils.createTable({
 				models: new ODataModel("/MyService/", {
 					defaultCountMode: "None"
 				})

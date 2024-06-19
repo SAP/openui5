@@ -39,12 +39,12 @@ sap.ui.define([
 			this.oDataModel.destroy();
 			this.oGetContextsSpy.restore();
 		},
-		createTable: function(mSettings, fnBeforePlaceAt) {
+		createTable: async function(mSettings, fnBeforePlaceAt) {
 			if (this.oTable) {
 				this.oTable.destroy();
 			}
 
-			this.oTable = TableQUnitUtils.createTable(Object.assign({}, {
+			this.oTable = await TableQUnitUtils.createTable(Object.assign({}, {
 				models: this.oDataModel,
 				columns: [
 					TableQUnitUtils.createTextColumn({
@@ -59,8 +59,8 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Initialization if metadata not yet loaded", function(assert) {
-		this.createTable({models: TableQUnitUtils.createODataModel(null, true)});
+	QUnit.test("Initialization if metadata not yet loaded", async function(assert) {
+		await this.createTable({models: TableQUnitUtils.createODataModel(null, true)});
 
 		// render, refreshRows, updateRows
 		return this.oTable.qunit.whenRenderingFinished().then(() => {
@@ -69,8 +69,8 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Initialization", function(assert) {
-		this.createTable();
+	QUnit.test("Initialization", async function(assert) {
+		await this.createTable();
 
 		// refreshRows, render, updateRows
 		return this.oTable.qunit.whenRenderingFinished().then(() => {
@@ -79,8 +79,8 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Initialization; Bound on initialization; threshold = 1", function(assert) {
-		this.createTable({threshold: 1});
+	QUnit.test("Initialization; Bound on initialization; threshold = 1", async function(assert) {
+		await this.createTable({threshold: 1});
 
 		// refreshRows, render, updateRows
 		return this.oTable.qunit.whenRenderingFinished().then(() => {
@@ -91,8 +91,8 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Initialization; Bound between initialization and rendering; threshold = 1", function(assert) {
-		this.createTable({threshold: 1, rows: undefined}, function(oTable) {
+	QUnit.test("Initialization; Bound between initialization and rendering; threshold = 1", async function(assert) {
+		await this.createTable({threshold: 1, rows: undefined}, function(oTable) {
 			oTable.bindRows({path: "/Products"});
 		});
 
@@ -103,8 +103,8 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Initialization; Bound after rendering; threshold = 1", function(assert) {
-		this.createTable({threshold: 1, rows: undefined});
+	QUnit.test("Initialization; Bound after rendering; threshold = 1", async function(assert) {
+		await this.createTable({threshold: 1, rows: undefined});
 		this.oTable.bindRows({path: "/Products"});
 
 		// refreshRows, updateRows
@@ -114,8 +114,8 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Refresh", function(assert) {
-		this.createTable();
+	QUnit.test("Refresh", async function(assert) {
+		await this.createTable();
 
 		return this.oTable.qunit.whenRenderingFinished().then(() => {
 			this.oGetContextsSpy.resetHistory();

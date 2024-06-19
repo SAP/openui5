@@ -108,8 +108,8 @@ sap.ui.define([
 		before: function() {
 			this.oBeforeOpenContextMenuEvenHandler = sinon.spy();
 		},
-		beforeEach: function() {
-			this.oTable = TableQUnitUtils.createTable({
+		beforeEach: async function() {
+			this.oTable = await TableQUnitUtils.createTable({
 				contextMenu: new TestContextMenu(),
 				beforeOpenContextMenu: this.oBeforeOpenContextMenuEvenHandler,
 				rows: "{/}"
@@ -194,8 +194,8 @@ sap.ui.define([
 				})
 			};
 		},
-		beforeEach: function() {
-			this.oTable = TableQUnitUtils.createTable({
+		beforeEach: async function() {
+			this.oTable = await TableQUnitUtils.createTable({
 				contextMenu: new TestContextMenu(),
 				beforeOpenContextMenu: this.oBeforeOpenContextMenuEventInfo.handler
 			});
@@ -377,9 +377,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("#openContextMenu - Default context menu", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oBeforeOpenContextMenuEvenHandler = sinon.spy();
-			this.oTable = TableQUnitUtils.createTable({
+			this.oTable = await TableQUnitUtils.createTable({
 				columns: [
 					TableQUnitUtils.createTextColumn({text: "name", bind: true}).setFilterProperty("name"),
 					TableQUnitUtils.createTextColumn().setVisible(false),
@@ -525,8 +525,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Other methods", {
-		beforeEach: function() {
-			this.oTable = TableQUnitUtils.createTable({
+		beforeEach: async function() {
+			this.oTable = await TableQUnitUtils.createTable({
 				rows: "{/}"
 			});
 			return this.oTable.qunit.whenRenderingFinished();
@@ -593,8 +593,8 @@ sap.ui.define([
 			};
 			this.oCellContextMenuEventInfo = oCellContextMenuEventInfo;
 		},
-		beforeEach: function() {
-			window.createTables();
+		beforeEach: async function() {
+			await window.createTables();
 			oTable.attachCellContextmenu(this.oCellContextMenuEventInfo.handler);
 		},
 		afterEach: function() {

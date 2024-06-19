@@ -25,8 +25,8 @@ sap.ui.define([
 	const TestInputControl = TableQUnitUtils.TestInputControl;
 
 	QUnit.module("Public API", {
-		beforeEach: function() {
-			this.oTable = TableQUnitUtils.createTable({
+		beforeEach: async function() {
+			this.oTable = await TableQUnitUtils.createTable({
 				rowMode: new FixedRowMode({
 					rowCount: 1
 				}),
@@ -72,8 +72,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Private API", {
-		beforeEach: function() {
-			this.oTable = TableQUnitUtils.createTable({
+		beforeEach: async function() {
+			this.oTable = await TableQUnitUtils.createTable({
 				rowMode: new FixedRowMode({
 					rowCount: 1
 				}),
@@ -132,8 +132,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Rendering", {
-		beforeEach: function() {
-			this.oTable = TableQUnitUtils.createTable();
+		beforeEach: async function() {
+			this.oTable = await TableQUnitUtils.createTable();
 			this.oCreationRow = new CreationRow();
 		},
 		afterEach: function() {
@@ -209,8 +209,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Accessibility", {
-		beforeEach: function() {
-			this.oTable = TableQUnitUtils.createTable({
+		beforeEach: async function() {
+			this.oTable = await TableQUnitUtils.createTable({
 				rowMode: new FixedRowMode({
 					rowCount: 1
 				}),
@@ -267,8 +267,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Keyboard", {
-		beforeEach: function() {
-			this.oTable = TableQUnitUtils.createTable({
+		beforeEach: async function() {
+			this.oTable = await TableQUnitUtils.createTable({
 				rowMode: new FixedRowMode({
 					rowCount: 1
 				}),
@@ -418,8 +418,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Cells", {
-		beforeEach: function() {
-			this.oTable = TableQUnitUtils.createTable({
+		beforeEach: async function() {
+			this.oTable = await TableQUnitUtils.createTable({
 				rowMode: new FixedRowMode({
 					rowCount: 1
 				}),
@@ -529,8 +529,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Default Toolbar", {
-		beforeEach: function() {
-			this.oTable = TableQUnitUtils.createTable();
+		beforeEach: async function() {
+			this.oTable = await TableQUnitUtils.createTable();
 			this.oCreationRow = new CreationRow();
 		},
 		afterEach: function() {

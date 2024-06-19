@@ -18,8 +18,8 @@ sap.ui.define([
 	const TestControl = TableQUnitUtils.TestControl;
 
 	QUnit.module("Cells", {
-		beforeEach: function() {
-			this.oTable = TableQUnitUtils.createTable({
+		beforeEach: async function() {
+			this.oTable = await TableQUnitUtils.createTable({
 				rowMode: new FixedRowMode({
 					rowCount: 1
 				}),
@@ -118,8 +118,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Functions", {
-		beforeEach: function() {
-			this.oTable = TableQUnitUtils.createTable({
+		beforeEach: async function() {
+			this.oTable = await TableQUnitUtils.createTable({
 				rowMode: new FixedRowMode({
 					rowCount: 1
 				}),
@@ -229,8 +229,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Hooks", {
-		beforeEach: function() {
-			this.oTable = TableQUnitUtils.createTable();
+		beforeEach: async function() {
+			this.oTable = await TableQUnitUtils.createTable();
 			this.oRow = new Row();
 			this.oTable.addDependent(this.oRow);
 			sinon.stub(this.oRow, "isExpandable");
