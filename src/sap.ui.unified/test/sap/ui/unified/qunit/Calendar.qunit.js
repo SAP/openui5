@@ -462,12 +462,12 @@ sap.ui.define([
 		var sDescribingDomTextId;
 
 		assert.ok(jQuery("#Cal2--Month0-20110101").hasClass("sapUiCalItemType01"), "20110101 is special day of Type01");
-		assert.equal(jQuery("#Cal2--Month0-20110101").attr("title"), "Text", "20110101 has special days tooltip");
-		assert.equal(jQuery("#Cal2--Month0-20110101").attr("aria-label"), "Non-Working Day 1. Januar 2011; My Type 1", "20110101 aria label");
+		assert.equal(jQuery("#Cal2--Month0-20110101").attr("title"), "Text Non-Working Day", "20110101 has special days tooltip");
+		assert.equal(jQuery("#Cal2--Month0-20110101").attr("aria-label"), "1. Januar 2011; My Type 1", "20110101 aria label");
 
 		assert.ok(jQuery("#Cal2--Month0-20110102").hasClass("sapUiCalItemType02"), "20110102 is special day of Type02");
-		assert.equal(jQuery("#Cal2--Month0-20110102").attr("title"), "Text", "20110102 has special days tooltip");
-		assert.equal(jQuery("#Cal2--Month0-20110102").attr("aria-label"), "Non-Working Day 2. Januar 2011; My Type 2", "20110102 aria label");
+		assert.equal(jQuery("#Cal2--Month0-20110102").attr("title"), "Text Non-Working Day", "20110102 has special days tooltip");
+		assert.equal(jQuery("#Cal2--Month0-20110102").attr("aria-label"), "2. Januar 2011; My Type 2", "20110102 aria label");
 
 		assert.ok(jQuery("#Cal2--Month0-20110103").hasClass("sapUiCalItemType02"), "20110103 is special day of Type02");
 		assert.equal(jQuery("#Cal2--Month0-20110103").attr("title"), "Text", "20110103 has special days tooltip");
@@ -481,7 +481,7 @@ sap.ui.define([
 		sDescribingDomTextId = CalendarLegendRenderer.typeARIATexts["Type04"].getId();
 		assert.ok(jQuery("#Cal2--Month0-20110105").attr("aria-describedby").indexOf(sDescribingDomTextId) > -1, "special day is described by a static label");
 
-		assert.equal(jQuery("#Cal2--Month0-20110106").attr("aria-label"), "Non-Working Day 6. Januar 2011; My Type 1", "20110106 aria label");
+		assert.equal(jQuery("#Cal2--Month0-20110106").attr("aria-label"), "6. Januar 2011; My Type 1", "20110106 aria label");
 		assert.ok(jQuery("#Cal2--Month0-20110106").hasClass("sapUiCalItemWeekEnd"),
 				"20110106 is date of type 'NonWorking' as part of a date range");
 		assert.ok(jQuery("#Cal2--Month0-20110106").hasClass("sapUiCalItemType01") && jQuery("#Cal2--Month0-20110106").hasClass("sapUiCalItemWeekEnd"),
@@ -500,15 +500,15 @@ sap.ui.define([
 				"20110126 is date of type Type04 as part of a single date with property secondaryDate");
 
 
-		assert.equal(jQuery("#Cal3--Month0-20150126").attr("aria-label"), "Non-Working Day 26. Januar 2015", "20150126 is a date of type 'NonWorking' and is added without legend");
+		assert.equal(jQuery("#Cal3--Month0-20150126").attr("aria-label"), "26. Januar 2015", "20150126 is a date of type 'NonWorking' and is added without legend");
 
 		// act
 		this.oCal2.setLegend(null);
 		oCore.applyChanges();
 
 		// assert
-		assert.equal(jQuery("#Cal2--Month0-20110129").attr("aria-label"), "Non-Working Day 29. Januar 2011", "20110129 is a day from the weekend and this is the reason why 'NonWorking' is added");
-		assert.equal(jQuery("#Cal2--Month0-20110123").attr("aria-label"), "Non-Working Day 23. Januar 2011", "20110123 is a day from the weekend and this is the reason why 'NonWorking' is added");
+		assert.equal(jQuery("#Cal2--Month0-20110129").attr("aria-label"), "29. Januar 2011", "20110129 is a day from the weekend and this is the reason why 'NonWorking' is added");
+		assert.equal(jQuery("#Cal2--Month0-20110123").attr("aria-label"), "23. Januar 2011", "20110123 is a day from the weekend and this is the reason why 'NonWorking' is added");
 
 		//act
 		this.oCal2.setLegend(oLegend);
@@ -3091,5 +3091,29 @@ sap.ui.define([
 
 		// clean
 		oCal.destroy();
+	});
+
+	QUnit.test("Calendar special dates tooltips", function(assert) {
+		// prepare
+		var oDate = new Date(2017, 3, 9);
+		var oCalendar = new Calendar({
+			selectedDates: [
+				new DateTypeRange({startDate: oDate})
+			],
+			specialDates: [
+				new DateTypeRange({startDate: oDate, type: "Type10", tooltip: "Holiday 1"})
+			]
+		});
+
+		oCalendar.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		var oDay = oCalendar.getDomRef().querySelector("[data-sap-day='20170409'");
+
+		// assert
+		assert.strictEqual(oDay.getAttribute("title"), "Holiday 1 Non-Working Day", "Proper tooltip is set");
+
+		// clean
+		oCalendar.destroy();
 	});
 });
