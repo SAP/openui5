@@ -3729,12 +3729,14 @@ sap.ui.define([
 			oCache = _AggregationCache.create(this.oRequestor, "~", "", {}, oAggregation);
 
 		this.mock(oCache.oFirstLevel).expects("refreshKeptElements").on(oCache)
-			.withExactArgs("~oGroupLock~", "~fnOnRemove~", /*bDropApply*/true)
+			.withExactArgs("~oGroupLock~", "~fnOnRemove~", "~bIgnorePendingChanges~",
+				/*bDropApply*/true)
 			.returns("~result~");
 
 		assert.strictEqual(
 			// code under test
-			oCache.refreshKeptElements("~oGroupLock~", "~fnOnRemove~", "~bDropApply~"),
+			oCache.refreshKeptElements("~oGroupLock~", "~fnOnRemove~", "~bIgnorePendingChanges~",
+				"~bDropApply~"),
 			"~result~");
 	});
 

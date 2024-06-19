@@ -3159,7 +3159,7 @@ sap.ui.define([
 		};
 		this.mock(oBinding).expects("lockGroup").withExactArgs("myGroup").returns("~groupLock~");
 		oRefreshKeptElementsCall = this.mock(oNewCache).expects("refreshKeptElements")
-			.withExactArgs("~groupLock~", sinon.match.func, false, "~bIgnorePendingChanges~")
+			.withExactArgs("~groupLock~", sinon.match.func, "~bIgnorePendingChanges~")
 			.returns(bFail
 				? SyncPromise.reject(oError)
 				: SyncPromise.resolve("~result~"));

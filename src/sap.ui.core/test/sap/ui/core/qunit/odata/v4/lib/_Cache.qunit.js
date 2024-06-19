@@ -13309,8 +13309,8 @@ sap.ui.define([
 			});
 
 		// code under test
-		return oCache.refreshKeptElements(oGroupLock, fnOnRemove, oFixture.bDropApply,
-			"~bIgnorePendingChanges~")
+		return oCache.refreshKeptElements(oGroupLock, fnOnRemove, "~bIgnorePendingChanges~",
+			oFixture.bDropApply)
 		.then(function (oResult) {
 			var mByPredicateAfterRefresh = {},
 				iCallCount = 0;
