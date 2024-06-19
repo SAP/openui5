@@ -1181,7 +1181,7 @@ sap.ui.define([
 				if (window.File) {
 					oFiles = this.FUEl.files;
 				}
-				if (!this.getSameFilenameAllowed() || (oldValue != sValue)) {
+				if (!this.getSameFilenameAllowed() || (sValue && oldValue != sValue)) {
 					this.fireChange({id:this.getId(), newValue:sValue, files:oFiles});
 				}
 			}

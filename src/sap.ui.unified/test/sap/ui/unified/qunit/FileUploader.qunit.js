@@ -1729,6 +1729,39 @@ sap.ui.define([
 		assert.strictEqual(oFileUploader.getIdForLabel(), "fu", "The file uploader id is used for external label references");
 	});
 
+	QUnit.test("Change event firing", async function (assert){
+		var oFileUploader = new FileUploader({
+				sameFilenameAllowed: true,
+				sendXHR: true,
+				uploadOnChange: true
+			}),
+			oFireChangeSpy = this.spy(oFileUploader, "fireChange"),
+			oFile = new File(['Hello world!'], 'hello.txt', {type: 'text/plain'}),
+			oDataTransfer = new DataTransfer();
+
+		oFileUploader.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		oDataTransfer.items.add(oFile);
+		var oEventParams = {
+			originalEvent: {
+				dataTransfer: {
+					files: oDataTransfer.files
+				}
+			},
+			preventDefault: () => {},
+			stopPropagation: () => {}
+		};
+
+		// act
+		qutils.triggerEvent("drop", oFileUploader.oBrowse.getId(), oEventParams);
+
+		assert.ok(oFireChangeSpy.calledOnce, "Change event is fired once.");
+
+		//Clean up
+		oFileUploader.destroy();
+	});
+
 	//IE has no Event constructor
 	function createNewEvent(eventName) {
 		var oEvent;
