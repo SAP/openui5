@@ -9,6 +9,7 @@ sap.ui.define([
 ], function(MLibrary, Log) {
 	"use strict";
 	var oWrapper;
+
 	return {
 		palette: {
 			group: "DISPLAY",
