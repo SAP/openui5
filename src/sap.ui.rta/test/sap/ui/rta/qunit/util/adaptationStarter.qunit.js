@@ -251,10 +251,18 @@ sap.ui.define([
 				assert.strictEqual(this.oRtaStartStub.callCount, 0, "RuntimeAuthoring is not started");
 				assert.strictEqual(this.oLogStub.callCount, 1, "an error was logged");
 				assert.strictEqual(this.fnMessageBoxStub.callCount, 1, "a message box is displayed with the error");
+				assert.strictEqual(
+					this.fnMessageBoxStub.lastCall.args[0],
+					"You do not have key user permissions. Please contact your administrator.",
+					"the specific message part is correct"
+				);
 				assert.strictEqual(this.oLogStub.lastCall.args[0],
 					"UI Adaptation could not be started", "the generic part is correct");
-				assert.strictEqual(this.oLogStub.lastCall.args[1],
-					"You do not have key user permissions. Please contact your administrator.", "the specific part is correct");
+				assert.strictEqual(
+					this.oLogStub.lastCall.args[1],
+					"You do not have key user permissions. Please contact your administrator.",
+					"the specific part is correct"
+				);
 				assert.strictEqual(oError.reason, "isKeyUser", "the reason is properly set");
 			}.bind(this));
 		});
@@ -329,8 +337,16 @@ sap.ui.define([
 				assert.strictEqual(this.oRtaStartStub.callCount, 0, "RuntimeAuthoring is not started");
 				assert.strictEqual(this.oLogStub.callCount, 1, "an error was logged");
 				assert.strictEqual(this.fnMessageBoxStub.callCount, 1, "a message box is displayed with the error");
-				assert.strictEqual(this.oLogStub.lastCall.args[0], "UI Adaptation could not be started", "the generic part is correct");
-				assert.strictEqual(this.oLogStub.lastCall.args[1], "An invalid root control was passed", "the specific part is correct");
+				assert.ok(this.fnMessageBoxStub.lastCall.args[0].startsWith(
+					"An error has occurred. Please contact SAP support by opening a ticket for component CA-UI5-FL-RTA."
+				), "the generic message part is correct");
+				assert.ok(this.fnMessageBoxStub.lastCall.args[0].endsWith(
+					"An invalid root control was passed"
+				), "the specific message part is correct");
+				assert.strictEqual(this.oLogStub.lastCall.args[0],
+					"UI Adaptation could not be started", "the generic part is correct");
+				assert.strictEqual(this.oLogStub.lastCall.args[1],
+					"An invalid root control was passed", "the specific part is correct");
 				assert.ok(oError instanceof Error, "then promise was rejected with an error");
 				assert.strictEqual(oError.reason, "rootControl", "the reason is properly set");
 			}.bind(this));
