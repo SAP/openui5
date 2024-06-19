@@ -27,8 +27,11 @@ sap.ui.define(["./BaseContentRenderer", "sap/ui/integration/util/BindingResolver
 
 		oRm.style("height", "calc(" + oWebPageContent.getMinHeight() + " - " + PADDING + ")")
 			.attr("src", oWebPageContent.getSrc())
-			.attr("tabindex", "0")
-			.attr("sandbox", oWebPageContent.getSandbox());
+			.attr("tabindex", "0");
+
+			if (!oWebPageContent.getOmitSandbox()) {
+				oRm.attr("sandbox", oWebPageContent.getSandbox());
+			}
 
 			if (oWebPageContent.getAllow()) {
 				oRm.attr("allow", oWebPageContent.getAllow());
@@ -37,7 +40,8 @@ sap.ui.define(["./BaseContentRenderer", "sap/ui/integration/util/BindingResolver
 			if (oWebPageContent.getAllowfullscreen()) {
 				oRm.attr("allowfullscreen", oWebPageContent.getAllowfullscreen());
 			}
-			oRm.openEnd()
+
+		oRm.openEnd()
 			.close("iframe");
 	};
 

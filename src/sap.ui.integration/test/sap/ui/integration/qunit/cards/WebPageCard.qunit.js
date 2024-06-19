@@ -303,4 +303,77 @@ sap.ui.define([
 
 	});
 
+	QUnit.module("Omit sandbox");
+
+	QUnit.test("Sandbox is there by default", async function (assert) {
+		// Arrange
+		bypassHttpsValidation();
+
+		const oCard = new Card({
+			baseUrl: BASE_URL,
+			manifest: {
+				"sap.app": {
+					"id": "test.cards.webpage.testCard2"
+				},
+				"sap.card": {
+					"type": "WebPage",
+					"header": {
+						"title": "WebPage Card"
+					},
+					"content": {
+						"src": "./page.html"
+					}
+				}
+			}
+		});
+
+		// Act
+		oCard.placeAt(DOM_RENDER_LOCATION);
+		await nextCardReadyEvent(oCard);
+		await nextUIUpdate();
+
+		restoreHttpsValidation();
+
+		assert.strictEqual(oCard.getCardContent().getDomRef("frame").getAttribute("sandbox"), "", "The sandbox is there by default and is empty.");
+
+		// Clean up
+		oCard.destroy();
+	});
+
+	QUnit.test("Sandbox is not there if omitSandbox is true", async function (assert) {
+		// Arrange
+		bypassHttpsValidation();
+
+		const oCard = new Card({
+			baseUrl: BASE_URL,
+			manifest: {
+				"sap.app": {
+					"id": "test.cards.webpage.testCard3"
+				},
+				"sap.card": {
+					"type": "WebPage",
+					"header": {
+						"title": "WebPage Card"
+					},
+					"content": {
+						"src": "./page.html",
+						"omitSandbox": true
+					}
+				}
+			}
+		});
+
+		// Act
+		oCard.placeAt(DOM_RENDER_LOCATION);
+		await nextCardReadyEvent(oCard);
+		await nextUIUpdate();
+
+		restoreHttpsValidation();
+
+		assert.strictEqual(oCard.getCardContent().getDomRef("frame").getAttribute("sandbox"), null, "The sandbox attribute is not there if omitSandbox is true.");
+
+		// Clean up
+		oCard.destroy();
+	});
+
 });

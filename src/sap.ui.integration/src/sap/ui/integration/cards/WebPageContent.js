@@ -84,6 +84,17 @@ sap.ui.define([
 					type: "boolean",
 					defaultValue: false,
 					bindable: true
+				},
+
+				/**
+				 * If set to <code>true</code>, the <code>sandbox</code> attribute will not be added
+				 * Note: Omitting the <code>sandbox</code> attribute opens a security vulnerability and must be done with great caution and only if the content of the iframe page is fully trusted.
+				 * @experimental
+				 */
+				omitSandbox: {
+					type: "boolean",
+					defaultValue: false,
+					bindable: true
 				}
 			},
 			library: "sap.ui.integration"
@@ -144,29 +155,13 @@ sap.ui.define([
 			this.bindSrc(oSrcBinding);
 		}
 
-		if (typeof oConfiguration.sandbox === "object") {
-			this.bindSandbox(BindingHelper.reuse(oConfiguration.sandbox));
-		} else {
-			this.setSandbox(oConfiguration.sandbox);
-		}
-
-		if (typeof oConfiguration.minHeight === "object") {
-			this.bindMinHeight(BindingHelper.reuse(oConfiguration.minHeight));
-		} else {
-			this.setMinHeight(oConfiguration.minHeight);
-		}
-
-		if (typeof oConfiguration.allow === "object") {
-			this.bindAllow(BindingHelper.reuse(oConfiguration.allow));
-		} else {
-			this.setAllow(oConfiguration.allow);
-		}
-
-		if (typeof oConfiguration.allowfullscreen === "object") {
-			this.bindAllowfullscreen(BindingHelper.reuse(oConfiguration.allowfullscreen));
-		} else {
-			this.setAllowfullscreen(oConfiguration.allowfullscreen);
-		}
+		this.applySettings({
+			sandbox: oConfiguration.sandbox,
+			minHeight: oConfiguration.minHeight,
+			allow: oConfiguration.allow,
+			allowfullscreen: oConfiguration.allowfullscreen,
+			omitSandbox: oConfiguration.omitSandbox
+		});
 	};
 
 	WebPageContent.prototype._checkSrc = function () {
