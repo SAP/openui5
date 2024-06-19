@@ -1473,7 +1473,8 @@ sap.ui.define([
 			};
 
 			var mParameter = {
-				reference: "reference"
+				reference: "reference",
+				layer: Layer.USER
 			};
 
 			var sUrl = "/LrepConnector/url";
@@ -1509,7 +1510,8 @@ sap.ui.define([
 			};
 
 			var mParameter = {
-				reference: "reference"
+				reference: "reference",
+				layer: Layer.USER
 			};
 
 			var sUrl = "/LrepConnector/url";
@@ -1547,7 +1549,8 @@ sap.ui.define([
 			};
 
 			var mParameter = {
-				reference: "reference"
+				reference: "reference",
+				layer: Layer.CUSTOMER
 			};
 
 			var sUrl1 = "/KeyUserConnector/url";
