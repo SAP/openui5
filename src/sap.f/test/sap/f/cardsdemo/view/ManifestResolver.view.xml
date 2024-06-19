@@ -43,6 +43,7 @@
 					<core:Item text="Table Card 2" key="tableCard2" />
 					<core:Item text="Table Card with Grouping" key="tableCardGroups" />
 					<core:Item text="Table Card No Data" key="tableCardNoData" />
+					<core:Item text="Timeline Card" key="timelineCard" />
 					<core:Item text="Card with Filters" key="filtersCard" />
 					<core:Item text="Card with Severe Error" key="cardWithSevereError" />
 					<core:Item text="Card with Extension" key="cardWithExtension" />
