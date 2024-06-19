@@ -423,6 +423,9 @@ sap.ui.define([
 		const bNonWorking = sFirstSpecialDateType === CalendarDayType.NonWorking
 			|| sSecondaryDateType === CalendarDayType.NonWorking || bNonWorkingWeekend;
 
+		const sNonWorkingDayText = oMonth._oUnifiedRB.getText("LEGEND_NON_WORKING_DAY");
+		const aTooltipTexts = [];
+
 		// Days before 0001.01.01 should be disabled.
 		if (bBeforeFirstYear) {
 			bEnabled = false;
@@ -443,7 +446,7 @@ sap.ui.define([
 		}
 		if (oDay.isSame(oHelper.oToday)) {
 			oRm.class("sapUiCalItemNow");
-			mAccProps["label"] = oHelper.sToday + " ";
+			aTooltipTexts.push(oMonth._oUnifiedRB.getText("LEGEND_TODAY"));
 		}
 
 		if (iSelected > 0) {
@@ -478,7 +481,11 @@ sap.ui.define([
 
 		if (bNonWorking) {
 			oRm.class("sapUiCalItemWeekEnd");
-			mAccProps["label"] += Library.getResourceBundleFor("sap.ui.unified").getText("LEGEND_NON_WORKING_DAY") + " ";
+			aTooltipTexts.push(sNonWorkingDayText);
+		}
+
+		if (aTooltipTexts.length) {
+			oRm.attr('title', aTooltipTexts.join(" "));
 		}
 
 		if (bShouldBeMarkedAsSpecialDate) {
@@ -489,8 +496,9 @@ sap.ui.define([
 							oRm.class("sapUiCalItem" + oDayType.type);
 						}
 						sAriaType = oDayType.type;
-						if (oDayType.tooltip) {
-							oRm.attr('title', oDayType.tooltip);
+						const sTooltip = `${oDayType.tooltip} ${aTooltipTexts.join(" ")}`.trim();
+						if (sTooltip) {
+							oRm.attr('title', sTooltip);
 						}
 					}
 				}
