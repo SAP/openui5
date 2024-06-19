@@ -192,7 +192,7 @@ sap.ui.define([
 			}
 		},
 		onkeyup: function(oEvent) {
-			if (oEvent.isMarked()) {
+			if (oEvent.isMarked() || !this.getConfig("isSupported", this.getControl(), this)) {
 				return;
 			}
 
