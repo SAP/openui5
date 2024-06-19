@@ -993,6 +993,7 @@ sap.ui.define([
 			}
 
 			if (Rendering.isPending() || this.oModel && this.oModel.aPrerenderingTasks
+					|| this.aExpectedEvents.length > 0
 					|| Messaging.getMessageModel().getObject("/").length < this.aMessages.length) {
 				setTimeout(this.checkFinish.bind(this, assert), 10);
 			} else if (this.resolve) {
@@ -16602,7 +16603,7 @@ sap.ui.define([
 	// BCP: 2180279839
 	// BCP: 2280024694
 	//
-	// Same with prefetch of preceeding entries (SNOW: CS20230006538459)
+	// Same with prefetch of preceding entries (SNOW: CS20230006538459)
 	QUnit.test("BCP: 2180279839: dataReceived follows each dataRequested", function (assert) {
 		var oListBinding,
 			aValues = [],
