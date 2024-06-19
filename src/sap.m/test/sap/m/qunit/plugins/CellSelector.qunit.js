@@ -22,8 +22,9 @@ sap.ui.define([
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/table/Column",
 	"sap/ui/table/Table",
-	"sap/ui/table/rowmodes/Fixed"
-], function (Dialog, Text, MTable, MColumn, ColumnListItem, CellSelector, CustomData, MockServer, DragDropInfo, DropInfo, KeyCodes, MDCTable, MDCColumn, JSONModel, ODataModel, qutils, nextUIUpdate, GridColumn, GridTable, GridFixedRowMode) {
+	"sap/ui/table/rowmodes/Fixed",
+	"sap/ui/table/plugins/MultiSelectionPlugin"
+], function (Dialog, Text, MTable, MColumn, ColumnListItem, CellSelector, CustomData, MockServer, DragDropInfo, DropInfo, KeyCodes, MDCTable, MDCColumn, JSONModel, ODataModel, qutils, nextUIUpdate, GridColumn, GridTable, GridFixedRowMode, MultiSelectionPlugin) {
 	"use strict";
 
 	const sServiceURI = "/service/";
@@ -51,7 +52,10 @@ sap.ui.define([
 				new GridColumn({ template: new Text({text: "{Category}"}) })
 			],
 			rows: "{/Products}",
-			models: new ODataModel(sServiceURI, true)
+			models: new ODataModel(sServiceURI, true),
+			plugins: [
+				new MultiSelectionPlugin({})
+			]
 		});
 	}
 
@@ -462,6 +466,34 @@ sap.ui.define([
 		oRemoveSelectionSpy.reset();
 		oTable.fireEvent("_rowsUpdated", {reason: "collapse"});
 		assert.ok(oRemoveSelectionSpy.called, "removeSelection is called");
+	});
+
+	QUnit.test("No cell selection with RowOnly", async function(assert) {
+		const oTable = this.oTable;
+		const oSelectionPlugin = this.oTable.getPlugins().find((oPlugin) => oPlugin.isA("sap.ui.table.plugins.SelectionPlugin"));
+		const oCellSelector = this.oCellSelector;
+		const oSelectCellsSpy = sinon.spy(oCellSelector, "_selectCells");
+		oTable.setSelectionBehavior("RowOnly");
+
+		await nextUIUpdate();
+
+		return new Promise(function(resolve) {
+			oTable.attachEventOnce("rowsUpdated", resolve);
+		}).then(() => {
+			const oCell = getCell(oTable, 1, 0); // first cell of first row
+			oCell.focus();
+			qutils.triggerKeydown(oCell, KeyCodes.SPACE);
+			qutils.triggerKeyup(oCell, KeyCodes.SPACE);
+			assert.deepEqual(oCellSelector.getSelectionRange(), null, "Cell has not been selected");
+			assert.equal(oSelectCellsSpy.callCount, 0, "_selectCells was not called");
+
+			return new Promise(function(resolve) {
+				setTimeout(resolve, 100);
+			});
+		}).then(() => {
+			assert.ok(oSelectionPlugin.isIndexSelected(1), "Row is selected");
+			oSelectCellsSpy.restore();
+		});
 	});
 
 	QUnit.module("Interaction - ResponsiveTable", {
