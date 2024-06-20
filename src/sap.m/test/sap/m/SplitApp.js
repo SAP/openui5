@@ -3,14 +3,16 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/m/Button",
 	"sap/m/Page",
+	"sap/m/PageAccessibleLandmarkInfo",
 	"sap/m/library",
+	"sap/ui/core/library",
 	"sap/m/Bar",
 	"sap/m/List",
 	"sap/m/StandardListItem",
 	"sap/m/SplitApp",
 	"sap/ui/Device",
 	"sap/base/Log"
-], function(Input, Label, Button, Page, mobileLibrary, Bar, List, StandardListItem, SplitApp, Device, Log) {
+], function(Input, Label, Button, Page, PageAccessibleLandmarkInfo, mobileLibrary, coreLibrary, Bar, List, StandardListItem, SplitApp, Device, Log) {
 	"use strict";
 
 	// shortcut for sap.m.ListType
@@ -24,6 +26,9 @@ sap.ui.define([
 
 	// shortcut for sap.m.PageBackgroundDesign
 	var PageBackgroundDesign = mobileLibrary.PageBackgroundDesign;
+
+	// shortcut for sap.ui.core.AccessibleLandmarkRole
+	var AccessibleLandmarkRole = coreLibrary.AccessibleLandmarkRole;
 
 	function generateDetailPage2Content() {
 		var aContent = [];
@@ -73,6 +78,10 @@ sap.ui.define([
 		],
 		showNavButton: Device.system.phone,
 		navButtonText: "Back",
+		landmarkInfo: new PageAccessibleLandmarkInfo({
+			subHeaderRole: AccessibleLandmarkRole.Banner,
+			subHeaderLabel: "Detail 1"
+		}),
 		navButtonPress: function() {
 			oSplitApp.backDetail();
 		},
@@ -170,6 +179,9 @@ sap.ui.define([
 		backgroundDesign: PageBackgroundDesign.Solid,
 		showNavButton: true,
 		navButtonText: "Back",
+		landmarkInfo: new PageAccessibleLandmarkInfo({
+			contentLabel: "Detail 2"
+		}),
 		navButtonPress: function() {
 			oSplitApp.backDetail();
 		},
