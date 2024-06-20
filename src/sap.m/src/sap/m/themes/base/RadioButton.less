@@ -27,9 +27,14 @@
 	display: inline-flex;
 }
 
+.sapMRb.sapMRbWrapped {
+	height: auto;
+}
+
 .sapMILI-CTX .sapMRb {
 	float: right;
 }
+
 .sapMListTblCell > .sapMRb {
 	float: inherit;
 	display: inline-block;
@@ -104,6 +109,13 @@
 	left: .625rem;
 	right: .6875rem;
 	pointer-events: none;
+}
+
+.sapMRbHasLabel.sapMRb.sapMRbWrapped:focus:before {
+	bottom: 0.375rem;
+	top: 0.375rem;
+	left: 0.375rem;
+	right: 0;
 }
 
 .sapMRbB .sapMRbBInn {
@@ -181,6 +193,9 @@
 	.sapMRb {
 		height: 2rem;
 	}
+	.sapMRb.sapMRbWrapped {
+		height: auto;
+	}
 
 	.sapMRbSvg {
 		height: 1rem;
@@ -221,8 +236,21 @@
 		height: 2rem;
 	}
 
+	.sapMRb> .sapMRbBLabel.sapMLabelWrapped {
+		line-height: normal;
+		height: auto;
+		padding-block: 0.5rem;
+		padding-inline-end: 1px;
+	}
+
 	.sapMRbHasLabel.sapMRb:focus:before {
 		right: 0;
+	}
+
+	.sapMRbHasLabel.sapMRb.sapMRbWrapped:focus:before {
+		bottom: 0;
+		top: 0.25rem;
+		left: 0.25rem;
 	}
 
 	/* Right to left */
@@ -294,4 +322,17 @@ html[dir="rtl"] {
 		line-height: 1.5rem;
 		height: 1.5rem;
 	}
+
+	.sapMRb> .sapMRbBLabel.sapMLabelWrapped {
+		line-height: normal;
+		height: auto;
+	}
+}
+
+.sapMRb> .sapMRbBLabel.sapMLabelWrapped {
+	line-height: normal;
+	display: flex;
+	height: auto;
+	padding-block: 0.75rem;
+	padding-inline-end: 1px;
 }
