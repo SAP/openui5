@@ -1215,11 +1215,10 @@ sap.ui.define([
 	///////////////////////////////////////// Hidden Functions /////////////////////////////////////////
 
 	function checkCozyMode(oRef) {
-		if (!oRef) {
+		if (!oRef || !oRef.getDomRef) {
 			return false;
 		}
-		oRef = oRef.$ ? oRef.$() : jQuery(oRef);
-		return oRef.closest(".sapUiSizeCompact,.sapUiSizeCondensed,.sapUiSizeCozy").hasClass("sapUiSizeCozy");
+		return !!oRef.getDomRef()?.closest(".sapUiSizeCompact,.sapUiSizeCondensed,.sapUiSizeCozy")?.classList.contains("sapUiSizeCozy");
 	}
 
 	function setItemToggleState(oMenu, bOpen){
