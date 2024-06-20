@@ -4731,6 +4731,7 @@ sap.ui.define([
 					oResourceBundle.getText("table.ONE_FILTER_ACTIVE", oListFormat.format(["NameLabel"])),
 					"Initial filter conditions: The filter info bar text is correct (1 filter)");
 				assert.equal(that.oTable._oFilterInfoBarInvisibleText.getText(), oResourceBundle.getText("table.ONE_FILTER_ACTIVE", oListFormat.format(["NameLabel"])), "The associated invisible text is correct");
+				assert.strictEqual(that.getFilterInfoBar().getAriaLabelledBy()[0], that.getFilterInfoText().getId(), "Filter info bar is labelled with the contained text.");
 
 				that.oTable.setFilterConditions({
 					name: [
