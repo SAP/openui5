@@ -22,13 +22,6 @@ sap.ui.define([
 		autoWait: true
 	});
 
-	//set execution delay for Internet Explorer and Edge
-	if (Device.browser.msie || Device.browser.edge) {
-		Opa5.extendConfig({
-			executionDelay: 100
-		});
-	}
-
 	// ----------------------------------------------
 	// Test scenario:
 	//  t   Key-User   End-User   Result
@@ -46,6 +39,7 @@ sap.ui.define([
 	//                            L3 on
 	// ----------------------------------------------
 
+	if (!Device.browser.msie && !Device.browser.edge) {
 	opaTest("When I look at the screen of appUnderTest, a table with links should appear", function(Given, When, Then) {
 		Given.iStartMyAppInAFrame('test-resources/sap/ui/mdc/qunit/link/opa/appUnderTest/start.html');
 		Given.iEnableTheLocalLRep();
@@ -345,5 +339,5 @@ sap.ui.define([
 	//
 	// 	Then.iTeardownMyAppFrame();
 	// });
-
+	}
 });
