@@ -9,8 +9,9 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/UIArea",
 	"sap/ui/Device",
-	"sap/ui/qunit/utils/nextUIUpdate"
-], function(Localization, DragAndDrop, DragInfo, DropInfo, DragDropInfo, jQuery, Control, UIArea, Device, nextUIUpdate) {
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/qunit/QUnitUtils"
+], function(Localization, DragAndDrop, DragInfo, DropInfo, DragDropInfo, jQuery, Control, UIArea, Device, nextUIUpdate, qutils) {
 	"use strict";
 
 	var DivControl = Control.extend("sap.ui.core.dnd.test.DivControl", {
@@ -455,6 +456,7 @@ sap.ui.define([
 				topItems: [new DivControl(), new DivControl()],
 				dragDropConfig: [
 					new DragDropInfo({
+						keyboardHandling: true,
 						sourceAggregation: "topItems",
 						targetAggregation: "topItems",
 						dropPosition: "Between"
@@ -552,7 +554,7 @@ sap.ui.define([
 		assert.strictEqual(oEvent.dragSession.getDropPosition(), "After", "Drop position is set correctly");
 
 		// act for the RTL mode
-		sinon.stub(Localization, "getRTL").callsFake(function() {
+		const oLocalizationStub = sinon.stub(Localization, "getRTL").callsFake(function() {
 			return true;
 		});
 
@@ -566,6 +568,7 @@ sap.ui.define([
 		// cleanup
 		oDiv2.$().trigger("dragend");
 		assert.ok($Indicator.is(":hidden"), "Indicator is hidden after dragend");
+		oLocalizationStub.restore();
 	});
 
 	QUnit.test("preventDefault on dragover event", function(assert) {
@@ -979,6 +982,159 @@ sap.ui.define([
 
 		this.oInnerDivDomRef.dispatchEvent(createNativeDragEventDummy("drop"));
 		assert.ok(this.fnDropSpy.calledOnce, "drop event is called once.");
+	});
+
+	QUnit.module("KeyboardHandling", {
+		beforeEach: function() {
+			this.oDiv1 = new DivControl();
+			this.oDiv2 = new DivControl();
+			this.oDnD = new DragDropInfo({
+				sourceAggregation: "topItems",
+				targetAggregation: "topItems",
+				dropPosition: "Between",
+				keyboardHandling: true
+			});
+			this.oControl = new DragAndDropControl({
+				topItems: [this.oDiv1, this.oDiv2],
+				dragDropConfig: this.oDnD
+			});
+			this.oControl.placeAt("qunit-fixture");
+			return nextUIUpdate();
+		},
+		afterEach: function() {
+			this.oControl.destroy(true);
+		}
+	});
+
+	QUnit.test("Ctrl + Down/Right", function(assert) {
+		assert.expect(21);
+		this.oDnD.attachDragStart((oEvent) => {
+			assert.equal(oEvent.getParameter("target"), this.oDiv1, "Target=Div1 is valid for the dragStart event");
+		});
+		this.oDnD.attachDragEnter((oEvent) => {
+			assert.equal(oEvent.getParameter("target"), this.oDiv2, "Target=Div2 is valid for the dragEnter event");
+		});
+		this.oDnD.attachDrop((oEvent) => {
+			assert.equal(oEvent.getParameter("draggedControl"), this.oDiv1);
+			assert.equal(oEvent.getParameter("droppedControl"), this.oDiv2);
+			assert.equal(oEvent.getParameter("dropPosition"), "After", "DropPosition is After for the drop event");
+		});
+		this.oDnD.attachDragEnd((oEvent) => {
+			assert.equal(oEvent.getParameter("target"), this.oDiv1);
+		});
+
+		this.oDiv1.focus();
+		qutils.triggerEvent("keydown", document.activeElement, {code: "ArrowUp", ctrlKey: true}); // this should have no effect
+		qutils.triggerEvent("keydown", document.activeElement, {code: "ArrowLeft", ctrlKey: true}); // this should have no effect
+		qutils.triggerEvent("keydown", document.activeElement, {code: "ArrowRight", ctrlKey: true}); // this should have no effect
+
+		this.oControl.onkeydown = (oEvent) => {
+			assert.ok(oEvent.getMark("dnd"), "Keyboard event is marked with dnd marker");
+		};
+
+		qutils.triggerEvent("keydown", document.activeElement, {code: "ArrowDown", ctrlKey: true});
+		this.oDnD.setDropLayout("Horizontal");
+		qutils.triggerEvent("keydown", document.activeElement, {code: "ArrowRight", ctrlKey: true});
+		const oLocalizationStub = sinon.stub(Localization, "getRTL").callsFake(function() {
+			return true;
+		});
+		qutils.triggerEvent("keydown", document.activeElement, {code: "ArrowLeft", ctrlKey: true});
+		oLocalizationStub.restore();
+
+	});
+
+	QUnit.test("Ctrl + Up/Left", function(assert) {
+		assert.expect(21);
+		this.oDnD.attachDragStart((oEvent) => {
+			assert.equal(oEvent.getParameter("target"), this.oDiv2, "Target=Div2 is valid for the dragStart event");
+		});
+		this.oDnD.attachDragEnter((oEvent) => {
+			assert.equal(oEvent.getParameter("target"), this.oDiv1, "Target=Div1 is valid for the dragEnter event");
+		});
+		this.oDnD.attachDrop((oEvent) => {
+			assert.equal(oEvent.getParameter("draggedControl"), this.oDiv2);
+			assert.equal(oEvent.getParameter("droppedControl"), this.oDiv1);
+			assert.equal(oEvent.getParameter("dropPosition"), "Before", "DropPosition is Before for the drop event");
+		});
+		this.oDnD.attachDragEnd((oEvent) => {
+			assert.equal(oEvent.getParameter("target"), this.oDiv2);
+		});
+
+		this.oDiv2.focus();
+		qutils.triggerEvent("keydown", document.activeElement, {code: "ArrowDown", ctrlKey: true}); // this should have no effect
+		qutils.triggerEvent("keydown", document.activeElement, {code: "ArrowLeft", ctrlKey: true}); // this should have no effect
+		qutils.triggerEvent("keydown", document.activeElement, {code: "ArrowRight", ctrlKey: true}); // this should have no effect
+
+		this.oControl.onkeydown = (oEvent) => {
+			assert.ok(oEvent.getMark("dnd"), "Keyboard event is marked with dnd marker");
+		};
+
+		qutils.triggerEvent("keydown", document.activeElement, {code: "ArrowUp", ctrlKey: true});
+		this.oDnD.setDropLayout("Horizontal");
+		qutils.triggerEvent("keydown", document.activeElement, {code: "ArrowLeft", ctrlKey: true});
+		const oLocalizationStub = sinon.stub(Localization, "getRTL").callsFake(function() {
+			return true;
+		});
+		qutils.triggerEvent("keydown", document.activeElement, {code: "ArrowRight", ctrlKey: true});
+		oLocalizationStub.restore();
+	});
+
+	QUnit.test("Prevent the default of dragStart event", function(assert) {
+		const fnReject = () => {
+			assert.ok(false, "This should never be called");
+		};
+		this.oDnD.attachDragEnter(fnReject);
+		this.oDnD.attachDrop(fnReject);
+		this.oDnD.attachDragEnd(fnReject);
+		this.oDiv1.focus();
+
+		this.oDnD.attachEventOnce("dragStart", (oEvent) => {
+			assert.equal(oEvent.getParameter("target"), this.oDiv1, "Default is prevented before dragging Div1");
+			oEvent.preventDefault();
+		});
+		qutils.triggerEvent("keydown", document.activeElement, {code: "ArrowDown", ctrlKey: true});
+
+		this.oControl.ondragstart = (oEvent) => {
+			oEvent.setMark("NonDraggable");
+		};
+		qutils.triggerEvent("keydown", document.activeElement, {code: "ArrowDown", ctrlKey: true});
+	});
+
+	QUnit.test("Prevent the default of dragEnter event", function(assert) {
+		this.oDnD.attachDrop(() => {
+			assert.ok(false, "Drop event should never be called");
+		});
+		this.oDnD.attachDragEnd((oEvent) => {
+			assert.equal(oEvent.getParameter("target"), this.oDiv1, "Drag end is called on Div1");
+		});
+		this.oDiv1.focus();
+
+		this.oDnD.attachEventOnce("dragEnter", (oEvent) => {
+			assert.equal(oEvent.getParameter("target"), this.oDiv2, "Default is prevented before dragging enter on Div2");
+			oEvent.preventDefault();
+		});
+		qutils.triggerEvent("keydown", document.activeElement, {code: "ArrowDown", ctrlKey: true});
+
+		this.oControl.ondragenter = (oEvent) => {
+			oEvent.setMark("NonDroppable");
+		};
+		qutils.triggerEvent("keydown", document.activeElement, {code: "ArrowDown", ctrlKey: true});
+	});
+
+	QUnit.test("keyboardHandling=false", function(assert) {
+		assert.expect(1);
+		const fnReject = () => {
+			assert.ok(false, "This should never be called");
+		};
+		this.oDnD.attachDragStart(fnReject);
+		this.oDnD.attachDragEnter(fnReject);
+		this.oDnD.attachDrop(fnReject);
+		this.oDnD.attachDragEnd(fnReject);
+
+		this.oDiv1.focus();
+		this.oDnD.setKeyboardHandling(false);
+		qutils.triggerEvent("keydown", document.activeElement, {code: "ArrowDown", ctrlKey: true});
+		assert.ok(true, "Keyboard handling for DnD is disabled");
 	});
 
 });

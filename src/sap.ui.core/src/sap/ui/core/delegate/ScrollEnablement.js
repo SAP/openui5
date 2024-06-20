@@ -359,7 +359,7 @@ sap.ui.define([
 			},
 
 			onkeydown : function(oEvent) {
-				if (this._useDefaultScroll(oEvent.target)) {
+				if (this._useDefaultScroll(oEvent.target) || oEvent.getMark("dnd")) {
 					return;
 				}
 

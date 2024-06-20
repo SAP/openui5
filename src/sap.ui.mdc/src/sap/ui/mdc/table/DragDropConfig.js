@@ -187,6 +187,13 @@ sap.ui.define(["sap/ui/core/dnd/DragDropBase",
 			return this;
 		};
 
+		DragDropConfig.prototype.setKeyboardHandling = function(bKeyboardHandling) {
+			this.setProperty("keyboardHandling", bKeyboardHandling, true);
+			this._oDragInfo?.setKeyboardHandling(bKeyboardHandling);
+			this._oDropInfo?.setKeyboardHandling(bKeyboardHandling);
+			return this;
+		};
+
 		DragDropConfig.prototype.setDropEffect = function(sDropEffect) {
 			this.setProperty("dropEffect", sDropEffect, true);
 			this._oDropInfo?.setDropEffect(sDropEffect);
@@ -246,6 +253,7 @@ sap.ui.define(["sap/ui/core/dnd/DragDropBase",
 				this._oDragInfo = new DragInfo({
 					enabled: this.getEnabled(),
 					groupName: this.getGroupName(),
+					keyboardHandling: this.getKeyboardHandling(),
 					sourceAggregation: this._oTable.isA("sap.m.Table") ? "items" : "rows",
 					dragStart: [this._onDragInfoEvent, this],
 					dragEnd: [this._onDragInfoEvent, this]
@@ -269,6 +277,7 @@ sap.ui.define(["sap/ui/core/dnd/DragDropBase",
 					groupName: this.getGroupName(),
 					dropEffect: this.getDropEffect(),
 					dropPosition: this.getDropPosition(),
+					keyboardHandling: this.getKeyboardHandling(),
 					targetAggregation: this._oTable.isA("sap.m.Table") ? "items" : "rows",
 					dragEnter: [this._onDropInfoEvent, this],
 					dragOver: [this._onDropInfoEvent, this],

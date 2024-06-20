@@ -122,6 +122,7 @@ sap.ui.define([
 			sourceAggregation: "columns",
 			targetAggregation: "columns",
 			dropPosition: "Between",
+			keyboardHandling: true,
 			enabled: oTable.getActiveP13nModes().includes(TableP13nMode.Column),
 			drop: [this._onColumnMove, this]
 		});
