@@ -9,6 +9,8 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/Utils",
 	"sap/ui/fl/apply/_internal/changes/FlexCustomData",
 	"sap/ui/fl/apply/_internal/changes/Reverter",
+	"sap/ui/fl/apply/_internal/flexState/changes/DependencyHandler",
+	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/apply/_internal/flexObjects/UIChange",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
@@ -20,14 +22,16 @@ sap.ui.define([
 	ChangeUtils,
 	FlexCustomData,
 	Reverter,
+	DependencyHandler,
+	FlexObjectState,
 	UIChange,
 	sinon
 ) {
 	"use strict";
 
-	var sandbox = sinon.createSandbox();
-
-	var sControlId = "foo";
+	const sandbox = sinon.createSandbox();
+	const sControlId = "foo";
+	const sReference = "appComponent";
 
 	QUnit.module("revertChangeOnControl", {
 		beforeEach() {
@@ -205,17 +209,13 @@ sap.ui.define([
 			this.oAppliedChange1.markFinished();
 
 			this.oControl = new Control(sControlId);
-			this.oDeleteChangeInMapStub = sandbox.stub();
 			this.mPropertyBag = {
 				modifier: JsControlTreeModifier,
-				flexController: {
-					_oChangePersistence: {
-						_deleteChangeInMap: this.oDeleteChangeInMapStub
-					}
-				}
+				reference: sReference
 			};
-			this.oLogStub = sandbox.stub(Log, "warning");
-			this.oDestroyCustomDataStub = sandbox.stub(FlexCustomData, "destroyAppliedCustomData").resolves();
+			this.oRemoveFromMapSpy = sandbox.spy(DependencyHandler, "removeChangeFromMap");
+			this.oRemoveFromDepSpy = sandbox.spy(DependencyHandler, "removeChangeFromDependencies");
+			this.oDestroyCDStub = sandbox.stub(FlexCustomData, "destroyAppliedCustomData").resolves();
 			this.oAddPreConStub = sandbox.stub(Applier, "addPreConditionForInitialChangeApplying");
 			sandbox.stub(Reverter, "revertChangeOnControl")
 			.onCall(0).resolves(false)
@@ -227,36 +227,41 @@ sap.ui.define([
 			this.oControl.destroy();
 		}
 	}, function() {
-		QUnit.test("with applied changes and one unapplied and one pointing to an unavailable control", function(assert) {
-			var aChanges = [this.oChange, this.oAppliedChange0, this.oFailingChange, this.oAppliedChange1];
-			return Reverter.revertMultipleChanges(aChanges, this.mPropertyBag).then(function() {
-				assert.ok(this.oAddPreConStub.called, "the promise was set to the applier");
-				assert.equal(this.oDeleteChangeInMapStub.callCount, 2, "deleteChangeInMap was called for both applied changes");
-				assert.equal(this.oDeleteChangeInMapStub.firstCall.args[0].getId(), this.oAppliedChange0.getId(), "the first change was reverted first");
-				assert.equal(this.oDeleteChangeInMapStub.secondCall.args[0].getId(), this.oAppliedChange1.getId(), "the second change was reverted second");
+		QUnit.test("with applied changes and one unapplied and one pointing to an unavailable control", async function(assert) {
+			const aChanges = [this.oChange, this.oAppliedChange0, this.oFailingChange, this.oAppliedChange1];
+			const oLiveDependencyMap = FlexObjectState.getLiveDependencyMap(sReference);
+			DependencyHandler.addChangeAndUpdateDependencies(this.oAppliedChange1, sReference, oLiveDependencyMap);
+			DependencyHandler.addChangeAndUpdateDependencies(this.oFailingChange, sReference, oLiveDependencyMap);
+			DependencyHandler.addChangeAndUpdateDependencies(this.oAppliedChange0, sReference, oLiveDependencyMap);
+			assert.strictEqual(oLiveDependencyMap.aChanges.length, 3, "all changes are in the map");
 
-				assert.equal(this.oDestroyCustomDataStub.callCount, 3, "destroyAppliedCustomData was called for all non failing changes");
-				assert.equal(this.oDestroyCustomDataStub.firstCall.args[0].getId(), this.oControl.getId(), "the correct value is passed");
-				assert.equal(this.oDestroyCustomDataStub.firstCall.args[1].getId(), this.oChange.getId(), "the first change' CustomData was destroyed");
-				assert.equal(this.oDestroyCustomDataStub.secondCall.args[0], true, "the correct value is passed");
-				assert.equal(this.oDestroyCustomDataStub.secondCall.args[1].getId(), this.oAppliedChange0.getId(), "the second change' CustomData was destroyed");
-				assert.equal(this.oDestroyCustomDataStub.thirdCall.args[0].getId(), this.oControl.getId(), "the correct value is passed");
-				assert.equal(this.oDestroyCustomDataStub.thirdCall.args[1].getId(), this.oAppliedChange1.getId(), "the third change' CustomData was destroyed");
+			await Reverter.revertMultipleChanges(aChanges, this.mPropertyBag);
+			assert.ok(this.oAddPreConStub.called, "the promise was set to the applier");
 
-				assert.equal(this.oLogStub.callCount, 1, "a warning was logged");
-				assert.ok(this.oLogStub.lastCall.args[0].indexOf("A flexibility change tries to revert changes on a nonexistent control with id") > -1, "the specific message was logged");
+			assert.strictEqual(this.oDestroyCDStub.callCount, 3, "destroyAppliedCustomData was called for all non failing changes");
+			assert.strictEqual(this.oDestroyCDStub.firstCall.args[0].getId(), this.oControl.getId(), "the correct value is passed");
+			assert.strictEqual(this.oDestroyCDStub.firstCall.args[1].getId(), this.oChange.getId(), "the first change' CustomData was destroyed");
+			assert.strictEqual(this.oDestroyCDStub.secondCall.args[0], true, "the correct value is passed");
+			assert.strictEqual(this.oDestroyCDStub.secondCall.args[1].getId(), this.oAppliedChange0.getId(), "the second change' CustomData was destroyed");
+			assert.strictEqual(this.oDestroyCDStub.thirdCall.args[0].getId(), this.oControl.getId(), "the correct value is passed");
+			assert.strictEqual(this.oDestroyCDStub.thirdCall.args[1].getId(), this.oAppliedChange1.getId(), "the third change' CustomData was destroyed");
 
-				aChanges.forEach(function(oChange) {
-					assert.ok(oChange.isQueuedForRevert(), "the change was queued for revert");
-				});
-			}.bind(this));
+			assert.strictEqual(this.oRemoveFromDepSpy.callCount, 3, "applied and failing changes were removed from the dependencies");
+			assert.strictEqual(this.oRemoveFromMapSpy.callCount, 3, "applied and failing changes were removed from the map");
+			assert.strictEqual(this.oRemoveFromMapSpy.firstCall.args[1], this.oAppliedChange0.getId(), "change0 was reverted first");
+			assert.strictEqual(this.oRemoveFromMapSpy.secondCall.args[1], this.oFailingChange.getId(), "failing change was reverted second");
+			assert.strictEqual(this.oRemoveFromMapSpy.thirdCall.args[1], this.oAppliedChange1.getId(), "change1 was reverted third");
+			assert.strictEqual(oLiveDependencyMap.aChanges.length, 0, "applied and failed changes are removed from the map");
+
+			aChanges.forEach(function(oChange) {
+				assert.ok(oChange.isQueuedForRevert(), "the change was queued for revert");
+			});
 		});
 
-		QUnit.test("with an empty array of changes", function(assert) {
-			return Reverter.revertMultipleChanges([], this.mPropertyBag).then(function() {
-				assert.ok(true, "the function resolves");
-				assert.equal(this.oDeleteChangeInMapStub.callCount, 0, "deleteChangeInMap was not called");
-			}.bind(this));
+		QUnit.test("with an empty array of changes", async function(assert) {
+			await Reverter.revertMultipleChanges([], this.mPropertyBag);
+			assert.strictEqual(this.oRemoveFromMapSpy.callCount, 0, "the change was not removed from the map");
+			assert.strictEqual(this.oRemoveFromDepSpy.callCount, 0, "the change was not removed from the dependencies");
 		});
 	});
 

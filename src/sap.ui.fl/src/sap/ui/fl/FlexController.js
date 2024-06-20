@@ -34,7 +34,7 @@ sap.ui.define([
 				return Reverter.revertMultipleChanges(aChanges, {
 					appComponent: oComponent,
 					modifier: JsControlTreeModifier,
-					flexController: this
+					reference: this._sComponentName
 				});
 			}
 			return undefined;

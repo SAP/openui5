@@ -4,12 +4,11 @@ sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/ui/core/UIComponent",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/apply/_internal/changes/Reverter",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
-	"sap/ui/fl/apply/_internal/flexState/FlexState",
+	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/write/api/VersionsAPI",
 	"sap/ui/fl/write/_internal/connectors/SessionStorageConnector",
@@ -25,12 +24,11 @@ sap.ui.define([
 	Component,
 	UIComponent,
 	KeyCodes,
-	FlexControllerFactory,
 	Layer,
 	flUtils,
 	Reverter,
 	FlexObjectFactory,
-	FlexState,
+	FlexRuntimeInfoAPI,
 	PersistenceWriteAPI,
 	VersionsAPI,
 	SessionStorageConnector,
@@ -76,7 +74,7 @@ sap.ui.define([
 			await Reverter.revertMultipleChanges(aChangesToRevert, {
 				modifier: JsControlTreeModifier,
 				appComponent: oComponent,
-				flexControl: FlexControllerFactory.createForControl(oComponent)
+				reference: FlexRuntimeInfoAPI.getFlexReference({element: oComponent})
 			});
 		}
 

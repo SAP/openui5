@@ -392,6 +392,7 @@ sap.ui.define([
 		mPropertyBag.modifier = JsControlTreeModifier;
 		const aPromises = aChanges.map(function(oChange) {
 			const oControl = JsControlTreeModifier.bySelector(oChange.getSelector(), mPropertyBag.appComponent);
+			const oLiveDependencyMap = FlexObjectState.getLiveDependencyMap(mPropertyBag.reference);
 			if (oControl) {
 				checkAndAdjustChangeStatus(oControl, oChange, mPropertyBag, true);
 				if (!oChange.isApplyProcessFinished()) {
@@ -401,12 +402,12 @@ sap.ui.define([
 					return Applier.applyChangeOnControl(oChange, oControl, mPropertyBag)
 					.then(function(oResult) {
 						if (oResult.success) {
-							const oLiveDependencyMap = FlexObjectState.getLiveDependencyMap(mPropertyBag.reference);
 							DependencyHandler.addRuntimeChangeToMap(oChange, mPropertyBag.appComponent, oLiveDependencyMap);
 						}
 					});
 				};
 			}
+			DependencyHandler.addChangeAndUpdateDependencies(oChange, mPropertyBag.appComponent.getId(), oLiveDependencyMap);
 			return () => Promise.resolve();
 		});
 		return FlUtils.execPromiseQueueSequentially(aPromises);

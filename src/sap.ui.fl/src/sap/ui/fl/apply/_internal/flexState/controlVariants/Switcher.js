@@ -84,7 +84,6 @@ sap.ui.define([
 		 * Switches variants.
 		 *
 		 * @param {object} mPropertyBag - Property Bag
-		 * @param {sap.ui.fl.FlexController} mPropertyBag.flexController - Flex controller
 		 * @param {string} mPropertyBag.vmReference - Variant management reference
 		 * @param {string} mPropertyBag.reference - Flex reference
 		 * @param {string} mPropertyBag.newVReference - Variant reference to be switched to
