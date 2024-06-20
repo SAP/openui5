@@ -143,9 +143,10 @@ sap.ui.define([
 				reference: "flexReference",
 				generator: "someGenerator",
 				selectorIds: ["selector1", "selector2"],
-				changeTypes: ["changeType1", "changeType2"]
+				changeTypes: ["changeType1", "changeType2"],
+				layer: Layer.USER
 			};
-			var sUrl = "/flexKeyuser/flex/keyuser/v2/changes/?reference=flexReference&generator=someGenerator&selector=selector1,selector2&changeType=changeType1,changeType2";
+			var sUrl = "/flexKeyuser/flex/keyuser/v2/changes/?reference=flexReference&generator=someGenerator&layer=USER&selector=selector1,selector2&changeType=changeType1,changeType2";
 			var oStubSendRequest = sandbox.stub(WriteUtils, "sendRequest").resolves([]);
 			return KeyUserConnector.reset(mPropertyBag).then(function() {
 				assert.ok(oStubSendRequest.calledWith(sUrl, "DELETE", {
