@@ -950,7 +950,6 @@ sap.ui.define([
 					vmReference: sVMReference,
 					currentVReference: "variant1",
 					newVReference: "variant0",
-					flexController: this.oModel.oFlexController,
 					appComponent: this.oModel.oAppComponent,
 					modifier: JsControlTreeModifier,
 					reference: this.oModel.sFlexReference
@@ -976,7 +975,6 @@ sap.ui.define([
 					vmReference: sVMReference,
 					currentVReference: "variant1",
 					newVReference: "variant0",
-					flexController: this.oModel.oFlexController,
 					appComponent: this.oModel.oAppComponent,
 					modifier: JsControlTreeModifier,
 					reference: this.oModel.sFlexReference
@@ -2989,7 +2987,7 @@ sap.ui.define([
 					assert.ok(Reverter.revertMultipleChanges.calledWith(aChangesInReverseOrder, {
 						appComponent: this.oComp,
 						modifier: JsControlTreeModifier,
-						flexController: this.oFlexController
+						reference: this.oVariantModel.sFlexReference
 					}), "then variant was reverted in correct order");
 
 					assert.ok(

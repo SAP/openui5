@@ -7,12 +7,16 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/Applier",
 	"sap/ui/fl/apply/_internal/changes/FlexCustomData",
 	"sap/ui/fl/apply/_internal/changes/Utils",
+	"sap/ui/fl/apply/_internal/flexState/changes/DependencyHandler",
+	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/Utils"
 ], function(
 	Log,
 	Applier,
 	FlexCustomData,
 	Utils,
+	DependencyHandler,
+	FlexObjectState,
 	FlUtils
 ) {
 	"use strict";
@@ -32,14 +36,19 @@ sap.ui.define([
 		return Promise.resolve();
 	}
 
-	function revertAndDeleteChangeOnControl(oChange, oControl, mRevertProperties, mPropertyBag) {
-		return Reverter.revertChangeOnControl(oChange, oControl, mRevertProperties).then(function(vRevertResult) {
-			FlexCustomData.destroyAppliedCustomData(vRevertResult || oControl, oChange, mPropertyBag.modifier);
-			if (vRevertResult) {
-				// TODO should be changed as soon as new flex persistence is in place
-				mPropertyBag.flexController._oChangePersistence._deleteChangeInMap(oChange);
-			}
-		});
+	function removeChangeFromMaps(oChange, sReference) {
+		const sChangeKey = oChange.getId();
+		const oDependencyMap = FlexObjectState.getLiveDependencyMap(sReference);
+		DependencyHandler.removeChangeFromMap(oDependencyMap, sChangeKey);
+		DependencyHandler.removeChangeFromDependencies(oDependencyMap, sChangeKey);
+	}
+
+	async function revertAndDeleteChangeOnControl(oChange, oControl, mRevertProperties, mPropertyBag) {
+		const vRevertResult = await Reverter.revertChangeOnControl(oChange, oControl, mRevertProperties);
+		FlexCustomData.destroyAppliedCustomData(vRevertResult || oControl, oChange, mPropertyBag.modifier);
+		if (vRevertResult) {
+			removeChangeFromMaps(oChange, mPropertyBag.reference);
+		}
 	}
 
 	/**
@@ -95,8 +104,8 @@ sap.ui.define([
 	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} aChanges - Array of changes to be reverted
 	 * @param {object} mPropertyBag - Object with additional properties
 	 * @param {sap.ui.core.Component} mPropertyBag.appComponent - Component instance that is currently loading
+	 * @param {string} mPropertyBag.reference - Flex reference
 	 * @param {sap.ui.core.util.reflection.BaseTreeModifier} mPropertyBag.modifier - Polymorph reuse operations handling the changes on the given view type
-	 * @param {sap.ui.fl.FlexController} mPropertyBag.flexController - Instance of the flex controller the change is saved in
 	 * @returns {Promise|sap.ui.fl.Utils.FakePromise} Promise/FakePromise that resolves as soon as all changes are reverted
 	 */
 	Reverter.revertMultipleChanges = function(aChanges, mPropertyBag) {
@@ -108,7 +117,7 @@ sap.ui.define([
 				var oSelector = oChange.getSelector && oChange.getSelector();
 				var oControl = mPropertyBag.modifier.bySelector(oSelector, mPropertyBag.appComponent);
 				if (!oControl) {
-					Log.warning(`A flexibility change tries to revert changes on a nonexistent control with id ${oSelector.id}`);
+					removeChangeFromMaps(oChange, mPropertyBag.reference);
 					return (FlUtils.FakePromise ? new FlUtils.FakePromise() : Promise.resolve());
 				}
 				var mRevertProperties = {

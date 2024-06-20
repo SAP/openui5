@@ -148,7 +148,7 @@ sap.ui.define([
 				return Reverter.revertMultipleChanges(aVariantDirtyChanges, {
 					appComponent: mPropertyBag.model.oAppComponent,
 					modifier: JsControlTreeModifier,
-					flexController: mPropertyBag.model.oFlexController
+					reference: mPropertyBag.model.sFlexReference
 				});
 			}
 			return undefined;
@@ -421,7 +421,6 @@ sap.ui.define([
 			vmReference: mPropertyBag.variantManagementReference,
 			currentVReference: this.getCurrentVariantReference(mPropertyBag.variantManagementReference),
 			newVReference: mPropertyBag.newVariantReference,
-			flexController: this.oFlexController,
 			appComponent: mPropertyBag.appComponent || this.oAppComponent,
 			modifier: JsControlTreeModifier,
 			reference: this.sFlexReference

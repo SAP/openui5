@@ -53,6 +53,9 @@ sap.ui.define([
 
 	const sandbox = sinon.createSandbox();
 	const sControlId = "controlId";
+	const oAppComponent = {
+		getId: () => "AppComponent"
+	};
 
 	function getInitialDependencyMap(mPropertyBag) {
 		return merge(DependencyHandler.createEmptyDependencyMap(), mPropertyBag);
@@ -1033,7 +1036,7 @@ sap.ui.define([
 			const oChange1 = FlexObjectFactory.createFromFileContent(getLabelChangeContent("b", sControlId));
 			const oChange2 = FlexObjectFactory.createFromFileContent(getLabelChangeContent("c", sControlId));
 			await Applier.applyMultipleChanges([oChange0, oChange1, oChange2], {
-				appComponent: {},
+				appComponent: oAppComponent,
 				reference: "DummyFlexReference"
 			});
 			assert.strictEqual(this.oChangeHandlerApplyChangeStub.callCount, 3, "all changes were applied");
@@ -1056,7 +1059,7 @@ sap.ui.define([
 			.returns(false);
 
 			await Applier.applyMultipleChanges([oChange0, oChange1, oChange2], {
-				appComponent: {},
+				appComponent: oAppComponent,
 				reference: "DummyFlexReference"
 			});
 			assert.strictEqual(this.oChangeHandlerApplyChangeStub.callCount, 2, "all applicable changes were applied");
@@ -1083,7 +1086,7 @@ sap.ui.define([
 			const oChange1 = FlexObjectFactory.createFromFileContent(getLabelChangeContent("b", sControlId));
 			const oChange2 = FlexObjectFactory.createFromFileContent(getLabelChangeContent("c", sControlId));
 			await Applier.applyMultipleChanges([oChange0, oChange1, oChange2], {
-				appComponent: {},
+				appComponent: oAppComponent,
 				reference: "DummyFlexReference"
 			});
 			assert.strictEqual(this.oChangeHandlerApplyChangeStub.callCount, 2, "two changes were applied");
@@ -1091,15 +1094,17 @@ sap.ui.define([
 		});
 
 		QUnit.test("when one control is not available", async function(assert) {
+			const oAddDepStub = sandbox.stub(DependencyHandler, "addChangeAndUpdateDependencies");
 			const oChange0 = FlexObjectFactory.createFromFileContent(getLabelChangeContent("a", sControlId));
 			const oChange1 = FlexObjectFactory.createFromFileContent(getLabelChangeContent("b", "notExistingId"));
 			const oChange2 = FlexObjectFactory.createFromFileContent(getLabelChangeContent("c", sControlId));
 			await Applier.applyMultipleChanges([oChange0, oChange1, oChange2], {
-				appComponent: {},
+				appComponent: oAppComponent,
 				reference: "DummyFlexReference"
 			});
 			assert.strictEqual(this.oChangeHandlerApplyChangeStub.callCount, 2, "two changes were applied");
 			assert.strictEqual(this.oAddChangeStub.callCount, 2, "two changes were added to the runtime map");
+			assert.strictEqual(oAddDepStub.callCount, 1, "one change was added for later application");
 		});
 	});
 
@@ -1120,7 +1125,7 @@ sap.ui.define([
 			});
 			this.mPropertyBag = {
 				modifier: JsControlTreeModifier,
-				appComponent: {}
+				appComponent: oAppComponent
 			};
 		},
 		afterEach() {
