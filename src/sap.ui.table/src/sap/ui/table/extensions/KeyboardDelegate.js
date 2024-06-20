@@ -1407,7 +1407,7 @@ sap.ui.define([
 	};
 
 	KeyboardDelegate.prototype.onsapdownmodifiers = function(oEvent) {
-		if (oEvent.isMarked()) {
+		if (oEvent.isMarked() || KeyboardDelegate._isKeyCombination(oEvent, null, ModKey.CTRL + ModKey.ALT)) {
 			preventItemNavigation(oEvent);
 			return;
 		}
@@ -1496,7 +1496,7 @@ sap.ui.define([
 	};
 
 	KeyboardDelegate.prototype.onsapupmodifiers = function(oEvent) {
-		if (oEvent.isMarked()) {
+		if (oEvent.isMarked() || KeyboardDelegate._isKeyCombination(oEvent, null, ModKey.CTRL + ModKey.ALT)) {
 			preventItemNavigation(oEvent);
 			return;
 		}

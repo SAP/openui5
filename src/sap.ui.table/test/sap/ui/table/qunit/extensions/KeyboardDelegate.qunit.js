@@ -1641,6 +1641,21 @@ sap.ui.define([
 		this.triggerKey(Key.Arrow.LEFT, this.oTable.qunit.getDataCell(0, 1), this.oTable.qunit.getDataCell(0, 0));
 	});
 
+	QUnit.test("Ctrl+Alt+ArrowUp & Ctrl+Alt+ArrowDown", function(assert) {
+		this.oTable.addEventDelegate({
+			onkeydown: function(oEvent) {
+				assert.ok(!oEvent.isDefaultPrevented(), "Default action of keydown event is not prevented");
+				assert.ok(!oEvent.isMarked(), "Event is not marked");
+				oEvent.preventDefault();
+			}
+		});
+
+		const oCell = this.oTable.qunit.getDataCell(1, 1);
+		oCell.focus();
+		qutils.triggerKeydown(oCell, Key.Arrow.UP, false, true, true);
+		qutils.triggerKeydown(oCell, Key.Arrow.DOWN, false, true, true);
+	});
+
 	QUnit.module("Navigation > Shift+Arrow Keys", {
 		beforeEach: function() {
 			this.oTable = TableQUnitUtils.createTable({
