@@ -334,7 +334,7 @@ sap.ui.define([
 			oImageContent._setImageState(LightBoxLoadingStates.Error);
 			this.LightBox.onBeforeRendering();
 
-			assert.notOk(this.LightBox.getAggregation("_invisiblePopupText").getText().indexOf(this._oRB.getText('LIGHTBOX_IMAGE_ERROR_DETAILS')) > 0, "Error message is NOT added to ACC info.");
+			assert.ok(this.LightBox.getAggregation("_invisiblePopupText").getText().indexOf(this._oRB.getText('LIGHTBOX_IMAGE_ERROR_DETAILS')) > 0, "Error message is added to ACC info.");
 		});
 
 		QUnit.test('ESC should close LightBox', function(assert) {
