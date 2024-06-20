@@ -1354,6 +1354,7 @@ sap.ui.define([
 					oError.$reported = true; // do not create a message for this error
 					reject(oError, vRequest); // Note: vRequest may well be a change set
 				} else if (vResponse.status >= 400) {
+					that.oModelInterface.onHttpResponse(vResponse.headers);
 					vResponse.getResponseHeader = getResponseHeader;
 					// Note: vRequest is an array in case a change set fails, hence url and
 					// $resourcePath are undefined
@@ -1369,6 +1370,7 @@ sap.ui.define([
 						vRequest.$reject(oCause);
 					}
 				} else {
+					that.oModelInterface.onHttpResponse(vResponse.headers);
 					if (vResponse.responseText) {
 						try {
 							that.doCheckVersionHeader(getResponseHeader.bind(vResponse),
@@ -1594,6 +1596,8 @@ sap.ui.define([
 							delete that.mHeaders["X-CSRF-Token"];
 						}
 						that.oSecurityTokenPromise = null;
+						that.oModelInterface.onHttpResponse(
+							_Helper.parseRawHeaders(jqXHR.getAllResponseHeaders()));
 						fnResolve();
 					}, function (jqXHR) {
 						that.oSecurityTokenPromise = null;
@@ -2015,6 +2019,9 @@ sap.ui.define([
 				.then(function (/*{object|string}*/vResponse, _sTextStatus, jqXHR) {
 					var sETag = jqXHR.getResponseHeader("ETag"),
 						sCsrfToken = jqXHR.getResponseHeader("X-CSRF-Token");
+
+					that.oModelInterface.onHttpResponse(
+						_Helper.parseRawHeaders(jqXHR.getAllResponseHeaders()));
 
 					try {
 						that.doCheckVersionHeader(jqXHR.getResponseHeader, sResourcePath,

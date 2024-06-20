@@ -10,13 +10,7 @@ sap.ui.define([
 
 	return {
 		createRelative : function (Given, When, Then, sUIComponent) {
-			var oDrillDownErrorLog = {
-					component : "sap.ui.model.odata.v4.lib._Cache",
-					level : Log.Level.ERROR,
-					message :
-						/Failed to drill-down into \('[0-9]*'\), invalid segment: \('[0-9]*'\)/
-				},
-				aExpectedLogs = [],
+			var aExpectedLogs = [],
 				oReadSchedulesFailLog = {
 					component : "sap.ui.model.odata.v4.ODataListBinding",
 					level : Log.Level.ERROR,
@@ -180,7 +174,6 @@ sap.ui.define([
 				When.onTheMainPage.pressConfirmSalesOrderButton();
 				aExpectedLogs.push(oStrictModeFailLog);
 				When.onTheMainPage.pressConfirmStrictModeButton();
-				aExpectedLogs.push(oDrillDownErrorLog); // obsolete with CPOUI5ODATAV4-288
 
 				// test refresh single row
 				// preparation

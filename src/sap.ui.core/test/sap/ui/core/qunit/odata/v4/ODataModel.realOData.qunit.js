@@ -194,6 +194,7 @@ sap.ui.define([
 			getGroupProperty : defaultGetGroupProperty,
 			isIgnoreETag : function () {},
 			onCreateGroup : function () {},
+			onHttpResponse : function () {},
 			reportStateMessages : function () {},
 			reportTransitionMessages : function () {}
 		},
