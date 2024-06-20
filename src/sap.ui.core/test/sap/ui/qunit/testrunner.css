@@ -1,37 +1,24 @@
+
 .testResult.pass > p{
 	padding: 0.5em 0 0.5em 1em;
 	color: #000000;
 	background-color: #a4ec81;
-	font-size: 1em;
 	line-height: 1em;
 	font-weight: bold;
 	cursor: pointer;
 	font-family: "Arial";
-	margin-bottom: 5px;
-	margin-left: 5px;
-	margin-right: 5px;
-}
-
-.testResult {
-	margin-bottom: 0px;
-}
-
-.testResult.pass {
-	display: none;
+	margin: 0rem;
 }
 
 .testResult.fail > p{
 	background-color: #ed866f;
 	color: #000000;
 	padding: 0.5em 0 0.5em 1em;
-	font-size: 1em;
 	line-height: 1em;
 	font-weight: bold;
 	cursor: pointer;
 	font-family: "Arial";
-	margin-bottom: 5px;
-	margin-left: 5px;
-	margin-right: 5px;
+	margin: 0rem;
 }
 
 h3, li, p, h1, div {
@@ -55,9 +42,7 @@ h3, li, p, h1, div {
 
 .testResult ol{
 	list-style-position: inside;
-	margin-top: -5px;
-	margin-left: 5px;
-	margin-right: 5px;
+	margin: 0px;
 	padding: inherit;
 }
 
@@ -72,10 +57,128 @@ li.pass.test > ol {
 li.test > p {
 	cursor: pointer;
 }
+
 li.check {
 	border: 0px;
 }
 
 .bl-source {
 	font-size: 12px;
+}
+
+#copyButtons {
+	flex-direction: column;
+	justify-content: center;
+	width: 5%;
+}
+#copyButtons > input {
+	margin: 2px;
+	width: 32px;
+}
+
+.uiArea > .uiAreaHeader > div {
+	display: flex;
+	align-items: center;
+}
+
+.uiArea > .uiAreaContent {
+	display: flex;
+	padding: 1rem;
+	flex-direction: column;
+}
+
+.uiArea > .uiAreaContent > div {
+	margin-block: 0.25rem;
+}
+
+.uiArea.collapsed > .uiAreaContent {
+	display: none;
+}
+
+.uiArea:not(.showAll) > .uiAreaContent > .testResult.pass {
+	display: none;
+}
+
+.uiArea > .uiAreaHeader {
+	display: flex;
+	justify-items: center;
+	align-items: center;
+}
+
+.uiArea > .uiAreaHeader > :first-child {
+	justify-self: start;
+}
+
+.uiArea > .uiAreaHeader > :last-child {
+	justify-self: end;
+}
+
+.uiArea {
+	margin-bottom: 0.5rem;
+}
+
+.uiArea > div {
+	border: 1px solid;
+	border-color: #aaa;
+}
+
+.uiAreaHeader {
+	background-color: #ccc;
+	justify-content: space-between;
+	padding: 0.5rem;
+}
+
+.uiAreaHeader > div > * {
+	margin-inline: 0.25rem;
+}
+
+.uiArea.expanded > .uiAreaHeader > .expandCollapseBtn {
+	border-width:0 12px 12px 12px;
+	border-color:transparent transparent #007dc0 transparent;
+}
+
+.uiArea.collapsed > .uiAreaHeader > .expandCollapseBtn {
+	border-width: 12px 12px 0 12px;
+	border-color:#007dc0 transparent transparent transparent;
+}
+
+.uiAreaContent.testSelection div:has(> :not(select)) {
+	display: flex;
+	align-items: center;
+}
+
+.expandCollapseBtn {
+	margin: 0.25rem;
+	border-style: solid;
+	cursor: pointer;
+}
+
+.selectionArea div {
+	margin-block: 0.25rem;
+}
+
+.selectionArea > div > * {
+	margin-inline: 0.25rem;
+}
+
+.progressBar {
+	border: 1px solid;
+	width: 12rem;
+	height: 1.25rem;
+}
+
+.progressBar > div {
+	background-color: #a4ec81;
+	width: 0%;
+	height: 1.25rem;
+	text-align: right;
+}
+
+.testSelection :has(> select) {
+	width: 47.5%;
+	align-self: flex-start;
+}
+
+.testSelection select {
+	width: 100%;
 }
