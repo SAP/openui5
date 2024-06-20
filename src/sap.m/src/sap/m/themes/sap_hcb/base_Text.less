@@ -1,0 +1,150 @@
+/* =========================== */
+/* CSS for control sap.m/Text  */
+/* Base theme                  */
+/* =========================== */
+
+@_sap_m_Text_TextShadowInTransparentToolbar: none;
+
+.sapMText {
+	display: inline-block;
+	box-sizing: border-box;
+	white-space: pre-line;
+	word-wrap: break-word; /* works only if browser knows the width */
+	cursor: text;
+	font-size: @sapMFontMediumSize;
+	font-family: @sapUiFontFamily;
+	line-height: normal;
+	color: @sapUiBaseText;
+}
+html[data-sap-ui-browser="sf10"] {
+	.sapUiVltCell, .sapuiVltCell {
+		.sapMText {
+			display: block;
+		}
+	}
+}
+
+//BCP: 0020751295 0000279538 2020
+.sapMText.sapMTextMaxLineWrapper {
+	// needed for line clamp to work
+	overflow: hidden;
+}
+
+.sapMTextNoWrap,
+.sapMTextMaxLine {
+	overflow: hidden;
+}
+
+.sapMTextMaxLine {
+	display: block;
+}
+
+.sapMTextNoWrap {
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	word-wrap: normal; /* overwrite */
+}
+
+.sapMTextRenderWhitespaceWrap {
+  white-space: pre-wrap;
+}
+
+.sapMTextRenderWhitespace{
+  white-space: pre;
+}
+
+.sapMTextLineClamp {
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+}
+
+.sapMTextBreakWord {
+	/* to break all words even browser does not know the width */
+	word-break: break-all;
+	word-break: break-word;  /* Non standard for old webkits */
+}
+
+.sapMTextMaxWidth {
+	max-width: 100%;
+}
+
+.sapMLIBActionable .sapMText {
+	cursor: pointer;
+}
+
+/*Necessary to align vertically to labels */
+.sapUiForm .sapMText {
+	overflow: hidden;
+}
+
+.sapUiFormEdit .sapMText {
+	display: block;
+	min-height: 3rem; /* for empty text */
+	line-height: 1.375rem;
+	padding-top: 0.8125rem;
+	padding-bottom: 0.8125rem;
+}
+
+.sapUiForm:not(.sapUiFormEdit) .sapMText {
+	min-height: 1rem; /* for empty text */
+}
+
+.sapMLIBActive .sapMText,
+.sapMLIBActive .sapMListTblCell .sapMText,
+.sapMLIBActive .sapMListTblSubCntRow .sapMText {
+	color: @sapUiListActiveTextColor;
+}
+
+.sapMLIBUnread .sapMText,
+.sapMLIBUnread + .sapMListTblSubRow .sapMText {
+	font-family: @sapUiFontFamily;
+	font-weight: bold;
+}
+
+/* HorizontalLayout */
+.sapUiHLayoutChildWrapper > .sapMText {
+	vertical-align: text-bottom;
+}
+
+/* Transparent Toolbar Context*/
+.sapMTB-Transparent-CTX .sapMText {
+	font-weight: @sapUiFontHeaderWeight;
+	font-family: @sapUiFontHeaderFamily;
+	text-shadow: @_sap_m_Text_TextShadowInTransparentToolbar;
+	color: @sapUiGroupTitleTextColor;
+}
+
+/* Compact size */
+.sapUiSizeCompact .sapUiFormEdit .sapMText{
+	min-height: 2rem; /* for empty text */
+	padding-top: 0.3125rem;
+	padding-bottom: 0.3125rem;
+}
+html[data-sap-ui-browser^="cr"] .sapUiSizeCompact .sapUiFormEdit .sapMText {
+	line-height: 1.375rem;
+}
+
+/* Condensed size / Table Specifics */
+.sapUiTableCell .sapMText,
+.sapMListTblCell > .sapMText.sapMTextNoWrap {
+	vertical-align: middle;
+}
+
+.sapUiSizeCondensed .sapUiTableDataCell .sapMText {
+	line-height: 1.5rem;
+}
+
+.sapUiTableHeaderDataCell .sapMText,
+.sapMColumnHeader .sapMText {
+	font-weight: @sapUiColumnHeaderFontWeight;
+	font-size: @sapUiColumnHeaderFontSize;
+	color: @sapUiListHeaderTextColor;
+}
+
+.sapMText .sapMEmptyIndicator.sapMEmptyIndicatorAuto {
+	display: none;
+}
+
+.sapMShowEmpty-CTX .sapMText .sapMEmptyIndicator.sapMEmptyIndicatorAuto {
+	display: inline-block;
+}

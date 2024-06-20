@@ -1,0 +1,68 @@
+/* ============================== */
+/* CSS for control sap.m/Support  */
+/* Base theme                     */
+/* ============================== */
+
+html.sap-phone .sapMSupport .sapMDialogScrollCont {
+	padding : 0;
+}
+
+.sapMSupport .sapUiSupportLabel{
+	font-weight: bold;
+}
+
+.sapMSupport .sapUiSupportTechInfoBorder {
+	border: 1px solid @sapUiListBorderColor;
+}
+
+.sapMSupport .sapUiSupportTxtFld,
+.sapMSupport .sapUiSupportBtn {
+	border: 1px solid @sapUiFieldBorderColor;
+	font-size: 14px;
+	height: 22px;
+	box-sizing: border-box;
+	margin-left:10px;
+}
+
+.sapMSupport .sapUiSupportTxtArea {
+	width: 100%;
+	height: 50px;
+	margin-top: 5px;
+	resize: none;
+	box-sizing: border-box;
+}
+
+.sapMSupport .sapUiSupportPnlLbl {
+	display: block;
+}
+
+.sapMSupport .sapUiSupportDiv {
+	margin-top: 5px;
+}
+
+.sapMSupport .sapUiSupportTxtFld {
+	background-color: @sapUiFieldBackground;
+	padding: 1px;
+}
+
+.sapMSupport .sapUiSupportTxtFld:focus {
+	outline: 1px dashed @sapUiContentFocusColor;
+	outline-offset: 2px;
+}
+
+.sapMSupport .sapUiSupportBtn {
+	background-color: @sapUiButtonBackground;
+	border-color: @sapUiButtonBorderColor;
+	padding-bottom: 3px;
+	cursor: pointer;
+}
+
+.sapMSupport .sapUiSupportBtn:focus,
+.sapMSupport .sapUiSupportBtn.sapUiSupportRunningTrace {
+	outline: 1px dashed @sapUiContentFocusColor;
+	outline-offset: 2px;
+}
+
+.sapMSupport .sapUiSupportBtn.sapUiSupportRunningTrace {
+	cursor: default;
+}

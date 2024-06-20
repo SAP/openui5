@@ -1,0 +1,62 @@
+/* ================================== */
+/* CSS for control sap.m/ActionTileContent  */
+/* Base theme                         */
+/* ================================== */
+.sapMATC {
+    height: 14.375rem;
+     overflow: hidden;
+     .sapMTilePriorityValue {
+         font-size: 0.875rem;
+         font-weight: 400;
+         margin-bottom: 1rem;
+         &.High {
+             color: @sapNegativeTextColor;
+             }
+         &.Medium {
+                 color: @sapCriticalTextColor;
+             }
+         &.Low {
+             color: @sapPositiveTextColor;
+             }
+         &.VeryHigh {
+                 color: @sapIndicationColor_1_BorderColor;
+             }
+     }
+     .sapMContainer {
+             display: flex;
+             flex-direction: column;
+             gap: 1rem;
+         .sapMElementWrapper {
+             display: flex;
+             flex-direction: column;
+             gap: 0.25rem;
+             font-weight: 400;
+             font-size: 0.875rem;
+             white-space: nowrap;
+             overflow: hidden;
+             text-overflow: ellipsis;
+             .sapMATCLabel {
+                 color: @sapContent_LabelColor;
+                 white-space: nowrap;
+                 overflow: hidden;
+                 text-overflow: ellipsis;
+                 font-size: 14px;
+                    font-weight: 400;
+                    line-height: 1rem;
+             }
+             .sapMATCValue {
+                 color: @sapTextColor;
+                 white-space: nowrap;
+                 overflow: hidden;
+                 text-overflow: ellipsis;
+                 font-size: 14px;
+                font-weight: 400;
+                line-height: 1rem;
+                height: 1rem;
+                .sapMText {
+                    cursor: pointer;
+                }
+             }
+         }
+     }
+    }

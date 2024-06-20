@@ -1,0 +1,117 @@
+/* ============================================== */
+/* CSS for control sap.m/VariantManagement    */
+/* Base theme                                     */
+/* ============================================== */
+
+.sapMVarMngmt {
+	text-align: center;
+	display: inline-block;
+}
+
+.sapMVarMngmt .sapUiHLayout.sapMVarMngmtLayout .sapUiHLayoutChildWrapper:first-child>div {
+   vertical-align: middle;
+}
+.sapMVarMngmt .sapUiHLayout.sapMVarMngmtLayout .sapUiHLayoutChildWrapper:nth-child(2)>span {
+   vertical-align: top;
+   padding-bottom: 8px;
+}
+.sapMVarMngmt .sapUiHLayout.sapMVarMngmtLayout .sapUiHLayoutChildWrapper:last-child>button {
+   vertical-align: middle;
+}
+
+.sapMVarMngmt .sapUiHLayout.sapMVarMngmtLayout {
+   display: grid;
+   grid-template-columns: minmax(0, 1fr) 12px 32px;
+   align-items: center;
+}
+.sapMVarMngmt .sapUiHLayout.sapMVarMngmtLayout.sapMVarMngmtLayoutModifiedHidden {
+   grid-template-columns: minmax(0, 1fr) 1px 32px;
+}
+.sapMVarMngmt .sapUiHLayout.sapMVarMngmtLayout .sapUiHLayoutChildWrapper:first-child {
+	grid-column: 1;
+	grid-row: 1;
+}
+.sapMVarMngmt .sapUiHLayout.sapMVarMngmtLayout .sapUiHLayoutChildWrapper:nth-child(2) {
+	grid-column: 2;
+	grid-row: 1;
+}
+.sapMVarMngmt .sapUiHLayout.sapMVarMngmtLayout .sapUiHLayoutChildWrapper:nth-child(3) {
+	grid-column: 3;
+	grid-row: 1;
+}
+
+.sapMVarMngmt .sapMTitle.sapMVarMngmtTitle  {
+    color: @sapUiLink;
+	text-shadow: @sapUiContentTextShadow;
+}
+
+.sapMVarMngmt .sapMText.sapMVarMngmtTitle  {
+    color: @sapUiLink;
+    text-shadow: @sapUiContentTextShadow;
+    font-size: 1rem;
+    white-space: nowrap;
+    vertical-align: middle;
+    position: relative;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.sapMVarMngmt .sapMVarMngmtModified {
+	color: @sapUiLink;
+	font-weight: bold;
+	padding-left: 0.125rem;
+	padding-right: 0.125rem;
+}
+
+.sapMVarMngmtErrorPopover>div {
+	padding-top: 1rem;
+}
+
+.sapMVarMngmtErrorPopover>div:last-child {
+	padding-left: 4rem;
+	padding-right: 4rem;
+}
+
+.sapMVarMngmt .sapMVarMngmtClickable:hover {
+	color: @sapUiLinkHoverColor;
+	cursor: pointer;
+}
+
+.sapMVarMngmt .sapMVarMngmtClickable:active {
+	color: @sapUiLinkActiveColor;
+	cursor: pointer;
+}
+
+.sapMVarMngmt .sapMVarMngmtDisabled {
+	opacity: 0.5;
+}
+
+.sapMVarMngmtPopover .sapMSelectList {
+	border: 0rem solid;
+}
+
+.sapMVarMngmtFavColor {
+	color: @sapUiContentMarkerIconColor;
+}
+
+.sapMVarMngmtFavNonInteractiveColor {
+	color: @sapUiContentNonInteractiveIconColor;
+}
+
+.sapMVarMngmtSaveDialog  .sapUiRespGrid.sapUiRespGridVSpace1 > div {
+	margin-bottom: 0rem;
+	margin: 0rem;
+ }
+
+.sapMVarMngmtSaveDialog .sapMVarMngmtSaveDialogLabel.sapMLabel::after {
+	content: ":";
+}
+
+.sapMVarMngmtRolesEdit {
+	padding-left: 0.5rem;
+}
+
+.sapMVarMngmtPopover .sapMIllustratedMessage.sapMVarMngmtIllustratedMessage  {
+    padding-top: 0rem;
+    padding-bottom: 0rem;
+}

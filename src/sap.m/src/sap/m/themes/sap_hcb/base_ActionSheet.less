@@ -1,0 +1,122 @@
+/* ================================== */
+/* CSS for control sap.m/ActionSheet  */
+/* Base theme                         */
+/* ================================== */
+
+/* Buffer width for the scroll bar */
+@_sap_m_Popover_Scroll_Width_Buffer: 20px;
+
+.sapMActionSheetDialog.sapMDialog {
+	top: auto !important; // We need to overwrite the inline top style
+	bottom: 0;
+	width: 100%;
+	max-width: 20rem;
+	border-radius: 0.25rem 0.25rem 0 0;
+
+	&.sapMDialogPhone {
+		overflow: visible;
+	}
+}
+
+.sapMActionSheet:focus{
+	outline: none;
+}
+
+.sapMActionSheetDialog .sapMDialogScroll {
+	display: block;
+}
+
+.sapMActionSheetButton > .sapMBtnInner {
+	text-align: start;
+}
+
+.sapMActionSheetButton.sapMBtn:not(.sapMActionSheetCancelButton) > .sapMBtnInner {
+	justify-content: flex-start;
+}
+
+.sapMActionSheetDialogWithTitle .sapMBarMiddle .sapMBarPH {
+	// The left/right padding should be 1rem, but there is already 0.25rem right/left padding from the Dialog title
+	padding: 0 0.75rem 0.5rem;
+	justify-content: flex-start;
+}
+
+/* ====== BEGIN ====== */
+/*Style for ActionSheet shown as a dialog sliding in from bottom*/
+/* ====== ====== ===== */
+
+.sapMDialog.sapMActionSheetDialog {
+	background-color: transparent;
+	box-shadow: none;
+	border: none;
+}
+
+.sapMDialog.sapMActionSheetDialog > section {
+	background-color: @sapUiGroupContentBackground;
+	border-radius: 0.25rem 0.25rem 0 0;
+}
+
+.sapMActionSheetDialog .sapMActionSheetButton {
+	width: 100%;
+}
+
+.sapMActionSheetDialog .sapMActionSheetButton.sapMActionSheetCancelButton > .sapMBtnInner {
+	text-align: center;
+}
+
+.sapMActionSheetDialog .sapMBar.sapMHeader-CTX > .sapMBarMiddle > .sapMBarPH > .sapMDialogTitle {
+	color: contrast(fade(@sapUiBlockLayerBackground, 60), @sapUiGroupTitleTextColor, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
+	font-size: @sapMFontMediumSize;
+}
+
+.sapMDialog.sapMActionSheetDialog > .sapMDialogSection {
+	box-shadow: @sapUiShadowLevel1;
+}
+
+.sapMDialog.sapMActionSheetDialog > section {
+	padding: 0.25rem 0.5rem;
+}
+
+.sapMDialog.sapMActionSheetDialog.sapMDialogPhone .sapMIBar.sapMHeader-CTX {
+	background: transparent;
+	box-shadow: none;
+}
+
+/* ====== BEGIN ====== */
+/*Style for ActionSheet shown as a Popover*/
+/* ====== ====== ===== */
+.sapMActionSheetPopover.sapMPopover {
+	box-shadow: @sapUiShadowLevel1;
+}
+
+.sapMActionSheetPopover .sapMActionSheetButton {
+	display: block;
+	width: 100%;
+}
+
+.sapUiSizeCompact {
+	.sapMActionSheetPopover.sapMPopover {
+		.sapMPopoverCont {
+			padding: 0.1875rem 0.375rem;
+			max-height: calc(~"100% - 0.375rem");
+		}
+
+		.sapMActionSheet .sapMActionSheetButton .sapMBtnInner.sapMBtnIconFirst {
+			padding-left: 0.4375rem;
+    		padding-right: 0.4375rem;
+		}
+	}
+}
+
+.sapMActionSheetPopover.sapMPopover {
+	.sapMPopoverCont {
+		padding: 0.25rem 0.5rem;
+		max-height: calc(~"100% - 0.5rem");
+	}
+	&.sapMPopoverVerticalScrollIncluded .sapMPopoverCont {
+		padding: 0.25rem calc(~'0.5rem + ' @_sap_m_Popover_Scroll_Width_Buffer) 0.25rem 0.5rem;
+	}
+}
+
+/* ====== END ====== */
+/*Style for ActionSheet shown as a Popover*/
+/* ====== ====== ===== */

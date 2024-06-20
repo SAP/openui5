@@ -1,0 +1,61 @@
+/* ====================================== */
+/* CSS for control sap.m/FacetFilterList  */
+/* Base theme                             */
+/* ====================================== */
+
+/* Facet Filter Popover */
+.sapMFFPop.sapMPopover,
+.sapMFFPop.sapMPopover .sapMPopoverCont {
+	min-width: 300px;
+}
+
+.sapMFFPop .sapMCbLabel {
+	cursor: pointer
+}
+
+.sapMFF .sapMFFLRemoveIcon {
+	color: @sapUiButtonIconColor;
+	font-size: 0.875rem;
+	line-height: 2rem;
+	padding-bottom: 0.25rem;
+	padding-top: 0.25rem;
+	padding-left: 0.65rem;
+	padding-right: 0.65rem;
+	margin-top: 0.2rem;
+	margin-bottom: 0.2rem;
+}
+
+.sapMFF .sapMFFLRemoveIcon:hover {
+	background-color: @sapUiButtonLiteHoverBackground;
+	border-radius: 0.2rem;
+}
+
+.sapUiSizeCompact .sapMFF .sapMFFLRemoveIcon {
+	line-height: 1.5rem;
+	padding-bottom: 0.05rem;
+	padding-top: 0.05rem;
+	padding-left: 0.25rem;
+	padding-right: 0.25rem;
+}
+
+
+/*
+We need to toggle separate classes to show/hide the remove icon, otherwise
+clicking the icon does not remove the facet button in ie9
+*/
+.sapMFF .sapMFFLVisibleRemoveIcon {
+	visibility: visible;
+}
+
+.sapMFF .sapMFFLHiddenRemoveIcon {
+	visibility: hidden;
+}
+
+.sapMFF .sapMFFLRemoveIcon:hover {
+	background-color: @sapUiButtonLiteHoverBackground;
+}
+
+.sapMFF .sapMFFLRemoveIcon:active {
+	background-color: @sapUiButtonLiteActiveBackground;
+	color: @sapUiContentContrastIconColor;
+}

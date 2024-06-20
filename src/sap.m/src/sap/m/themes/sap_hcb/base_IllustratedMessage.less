@@ -1,0 +1,171 @@
+/* ================================== */
+/* CSS for control sap.f/IllustratedMessage */
+/* Base theme                         */
+/* ================================== */
+
+.sapMIllustratedMessage {
+	width: 100%;
+	margin: 0 auto;
+	text-align: center;
+	padding: 1rem;
+	box-sizing: border-box;
+	justify-content: center;
+
+	.sapMIllustratedMessageMainContent {
+		display: flex;
+		align-items: center;
+		flex-direction: column;
+		min-height: 0;
+	}
+
+	figcaption {
+		margin: inherit;
+	}
+
+	.sapMTitle {
+		font-family: @sapFontHeaderFamily;
+		color: @sapGroup_TitleTextColor;
+		display: block;
+	}
+
+	.sapMIllustratedMessageDescription {
+		font-size: @sapFontSize;
+		font-family: @sapFontFamily;
+		color: @sapTextColor;
+	}
+
+	&.sapMIllustratedMessageScalable {
+		height: 100%;
+		display: flex;
+		align-items: center;
+		flex-direction: column;
+	}
+
+	&.sapMIllustratedMessage-Base {
+		figcaption {
+			max-width: 10rem;
+		}
+
+		.sapMIllustratedMessageAdditionalContent,
+		.sapMIllustration {
+			display: none;
+		}
+	}
+
+	&.sapMIllustratedMessage-Dot {
+		padding: 0.25rem;
+
+		.sapMIllustratedMessageMainContent {
+			display: inline-flex;
+			justify-content: center;
+			flex-direction: row;
+		}
+
+		figcaption {
+			display: grid;
+			max-width: 18rem;
+		}
+
+		.sapMIllustration {
+			flex-shrink: 0;
+			width: 2.813rem;
+			height: 2.813rem;
+			margin-right: 0.25rem;
+			align-self: baseline;
+		}
+
+		.sapMTitle {
+			font-size: @sapFontHeader5Size;
+			margin-bottom: 0.25rem;
+		}
+
+		.sapMIllustratedMessageDescription {
+			margin-bottom: 0.25rem;
+		}
+
+		.sapMIllustratedMessageAdditionalContent {
+			margin: 0.25rem 0;
+			padding-left: 3.063rem; // width of dot svg + its margin right
+		}
+	}
+
+
+	&.sapMIllustratedMessage-Spot {
+		padding: 0.5rem;
+
+		figcaption {
+			max-width: 16.25rem;
+		}
+
+		.sapMIllustration {
+			width: 8rem;
+			height: 8rem;
+			margin-bottom: 0.5rem;
+		}
+
+		.sapMTitle {
+			font-size: @sapFontHeader4Size;
+			margin-bottom: 0.5rem;
+		}
+
+		.sapMIllustratedMessageDescription {
+			margin-bottom: 0.5rem;
+		}
+
+		.sapMIllustratedMessageAdditionalContent {
+			margin: 0.5rem 0;
+		}
+	}
+
+	&.sapMIllustratedMessage-Dialog {
+		figcaption {
+			max-width: 20rem;
+		}
+
+		.sapMIllustration {
+			width: 10rem;
+			height: 10rem;
+			margin: 1rem 0;
+		}
+
+		.sapMTitle {
+			margin-bottom: 0.5rem;
+			font-size: @sapFontHeader3Size;
+		}
+
+		.sapMIllustratedMessageDescription {
+			margin-bottom: 0.5rem;
+		}
+
+		.sapMIllustratedMessageAdditionalContent {
+			margin-top: 0.5rem;
+			margin-bottom: 1rem;
+		}
+	}
+
+	&.sapMIllustratedMessage-Scene {
+		figcaption {
+			max-width: 30rem;
+		}
+
+		.sapMIllustration {
+			width: 20rem;
+			height: 15rem;
+			margin: 2rem 0;
+		}
+
+		.sapMTitle {
+			margin-bottom: 1rem;
+			font-size: @sapMFontHeader2Size;
+		}
+
+		.sapMIllustratedMessageDescription {
+			margin-bottom: 0.5rem;
+			font-size: @sapMFontLargeSize;
+		}
+
+		.sapMIllustratedMessageAdditionalContent {
+			margin: 1rem 0;
+		}
+	}
+}

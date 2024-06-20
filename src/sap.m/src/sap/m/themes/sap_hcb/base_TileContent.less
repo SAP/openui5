@@ -1,0 +1,250 @@
+/* ================================== */
+/* CSS for control sap.m/TileContent  */
+/* Base theme                         */
+/* ================================== */
+
+.sapMTileCnt {
+	display: inline-block;
+	box-sizing: border-box;
+	position: relative;
+	height: 6.375rem;
+    vertical-align: top;
+
+	/* FrameType: Auto */
+	&.sapMFrameTypeAuto {
+		min-width: 9rem;
+	}
+
+	/* FrameType: TwoByOne */
+	&.sapMFrameTypeTwoByOne {
+		width: 100%;
+	}
+
+	/* FrameType: OneByOne */
+	&.sapMFrameTypeOneByOne {
+		width: 100%;
+	}
+}
+
+/* Improved behaviour for TileContent in GenericTile */
+.sapMGT .sapMTileCnt.sapMFrameTypeAuto:only-of-type {
+	width: 100%;
+}
+
+.sapMGT .sapMTileCnt.sapMFrameTypeAuto:not(:only-of-type) {
+	width: ~"calc(50% - 0.25rem)"; //0.5rem margin between the contents
+}
+
+/* Footer CSS */
+.sapMTileCntFtrTxt {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	text-align: right;
+	position: absolute;
+	right: 0;
+	left: 0;
+	box-sizing: border-box;
+	height: 1rem;
+	bottom: 1rem;
+	margin-left: 1rem;
+	margin-right: 1rem;
+	line-height: normal;
+	font-family: @sapUiFontFamily;
+	font-size: @sapMFontMediumSize;
+	font-weight: normal;
+}
+
+.sapMGT .sapMTileCntFtrTxt {
+	text-align: left;
+}
+
+html[dir=rtl] .sapMGT .sapMTileCntFtrTxt {
+	text-align: right;
+}
+
+.sapMTileCntFooterTextColorNeutral {
+	color: @sapUiTileTextColor;
+}
+
+.sapMTileCntFooterTextColorGood {
+	color: @sapUiPositiveText;
+}
+
+.sapMTileCntFooterTextColorError {
+	color: @sapUiNegativeText;
+}
+
+.sapMTileCntFooterTextColorCritical {
+	color: @sapUiCriticalText;
+}
+
+html[dir=rtl] .sapMTileCntFtrTxt {
+	text-align: left;
+}
+
+/* Content */
+.sapMTileCntContent {
+	overflow: visible;
+	display: inline-block;
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.sapMTileCntContent > .sapMTcInnerMarker {
+	vertical-align: bottom;
+	line-height: normal;
+}
+
+.sapMTileCntContent {
+	height: 3.875rem;
+	margin-bottom: 0.25rem;
+	margin-top: 0.25rem;
+	padding-left: 1rem;
+	padding-right: 1rem;
+}
+
+.sapMTileCnt + .sapMTileCnt {
+	margin-left: 0.5rem;
+}
+
+.sapMTileCntContent > .sapMNwC {
+	background-color: inherit;
+}
+
+.sapMTileCnt.News {
+	height: 6.125rem;
+	margin-top: 0.125rem;
+	background-color: @sapUiTileBackground;
+
+	.sapMTileCntContent {
+		padding-left: 1rem;
+		padding-right: 1rem;
+	}
+
+	.sapMTileCntFtrTxt {
+		margin-left: 1rem;
+		margin-right: 1rem;
+	}
+
+	.sapMTileCntContent > .sapMTcInnerMarker {
+		vertical-align: top;
+	}
+}
+
+.Stretch {
+	.sapMTileCnt.News{
+		height: 100%;
+
+		.sapMTileCntContent {
+			margin-top: 1rem;
+		}
+
+		.sapMTileCntFtrTxt {
+			font-size: @sapMFontSmallSize;
+		}
+	}
+}
+
+.sapMTileSmallPhone {
+	.sapMTileCnt {
+		height: 5.5rem;
+	}
+
+	.sapMTileCntFtrTxt {
+		height: 1.063rem;
+		line-height: normal;
+		bottom: 0.5rem;
+		margin-left: 0.5rem;
+		margin-right: 0.5rem;
+		font-size: @sapMFontSmallSize;
+	}
+
+	.sapMTileCntContent {
+		margin-bottom: 0.25rem;
+		margin-top: 0.25rem;
+		padding-left: 0.5rem;
+		padding-right: 0.5rem;
+	}
+
+	.sapMTileCnt.News {
+		height: 5.25rem;
+
+		.sapMTileCntContent {
+			padding-left: 0.5rem;
+			padding-right: 0.5rem;
+			margin-top: 0.25rem;
+		}
+
+		.sapMTileCntFtrTxt {
+			margin-left: 0.5rem;
+			margin-right: 0.5rem;
+		}
+	}
+
+	.sapMTileSmallPhone.Stretch {
+		.sapMTileCnt.News {
+			height: 100%;
+		}
+		.sapMTileFtrCnt > .sapMTileNavContainer {
+			padding-bottom: 1rem;
+		}	
+	}
+}
+.sapMGTStateLoading {
+	&.sapMTileSmallPhone:not(.sapMGTActionMode) {
+		.sapMTileCntContentShimmerPlaceholderWithDescription{
+			padding-top: 0;
+		}
+		.sapMTileCntContentShimmerPlaceholderItem {
+			.sapMTileCntContentShimmerPlaceholderRows {
+				.sapMTileCntContentShimmerPlaceholderItemTextFooter, .sapMTileCntContentShimmerPlaceholderItemBox {
+					top:0rem;
+				}
+			}
+		}
+	}
+	.sapMTileCntContentShimmerPlaceholderItem {
+		.sapMTileCntContentShimmerPlaceholderRows {
+			.sapMTileCntContentShimmerPlaceholderItemTextFooter, .sapMTileCntContentShimmerPlaceholderItemBox {
+				top:1rem;
+			}
+		}
+	}
+	.sapMTileCntContentShimmerPlaceholderWithDescription {
+		padding: 1rem 0rem 0rem 0rem;
+	}
+}
+.sapMGT.sapMTileSmallPhone.sapMGTStateLoading.OneByOne {
+	.sapMTileCntContentShimmerPlaceholderItemTextFooter{
+		width: 5.875rem;
+	}
+}
+.sapMTileCntContentShimmerPlaceholderItem {
+	.sapMTileCntContentShimmerPlaceholderRows {
+		.sapMTileCntContentShimmerPlaceholderItemTextFooter, .sapMTileCntContentShimmerPlaceholderItemBox {
+			top:0.85rem;
+		}
+	}
+}
+
+.sapMGTStateLoaded.TwoByHalf, .sapMGTStateLoaded.OneByHalf,
+.sapMGTStateDisabled.TwoByHalf, .sapMGTStateDisabled.OneByHalf,
+.sapMGTStateFailed.TwoByHalf, .sapMGTStateFailed.OneByHalf  {
+	.sapMTileCntContentShimmerPlaceholderItem.sapMTileCntContentShimmerPlaceholderWithDescription {
+		padding: 0rem 1rem 0rem 1rem;
+	}
+
+}
+
+
+.sapMTileCnt.sapMTileCntDisabled {
+	position: relative;
+
+	&:after {
+		.sapMGTOverlayMixin();
+		display: block;
+		content: "";
+		background-color: fade(@sapUiTileBackground, 80);
+	}
+}

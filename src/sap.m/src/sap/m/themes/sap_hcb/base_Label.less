@@ -1,0 +1,367 @@
+/* ============================ */
+/* CSS for control sap.m/Label  */
+/* Base theme                   */
+/* ============================ */
+
+@_sap_m_Label_AsteriskOffsetWidth: 0.5rem;
+@_sap_m_Label_ColonOffsetWidth: 0.25rem;
+@_sap_m_Label_ColonOffsetWidth_lang_FR: 0.5rem;
+@_sap_m_Label_ColonOffsetWidth_lang_ZH: 0.875rem;
+@_sap_m_Label_InsideInactiveInfoToolbarColor: @sapUiListTextColor;
+
+.sapMLabel {
+	color: @sapUiContentLabelColor;
+	font-size: @sapMFontMediumSize;
+	font-family: @sapUiFontFamily;
+	font-weight: normal;
+	display: inline-block;
+	white-space: nowrap;
+	cursor: text;
+	overflow: hidden;
+	box-sizing: border-box;
+	--_sap_m_Label_ReservedSpace: 0%;
+}
+
+.sapMLabel .sapMLabelTextWrapper {
+	text-overflow: ellipsis;
+	overflow: hidden;
+}
+
+.sapMLabel:not(.sapMLabelWrapped) .sapMLabelTextWrapper {
+	display: inline-block;
+	vertical-align: top;
+	max-width: calc(~"100% - var(--_sap_m_Label_ReservedSpace)");
+}
+
+.sapMLabel:not(.sapMLabelWrapped):not(.sapMLabelMaxWidth) {
+	&.sapMLabelRequired {
+		--_sap_m_Label_ReservedSpace: @_sap_m_Label_AsteriskOffsetWidth;
+	}
+
+	&.sapMLabelShowColon {
+		--_sap_m_Label_ReservedSpace: @_sap_m_Label_ColonOffsetWidth;
+
+		&:lang(fr) {
+			--_sap_m_Label_ReservedSpace: @_sap_m_Label_ColonOffsetWidth_lang_FR;
+		}
+
+		&:lang(zh-TW),
+		&:lang(zh-CN),
+		&:lang(zh-Hans),
+		&:lang(zh-Hant) {
+			--_sap_m_Label_ReservedSpace: @_sap_m_Label_ColonOffsetWidth_lang_ZH;
+		}
+	}
+
+	&.sapMLabelRequired.sapMLabelShowColon {
+		--_sap_m_Label_ReservedSpace: @_sap_m_Label_AsteriskOffsetWidth + @_sap_m_Label_ColonOffsetWidth;
+
+		&:lang(fr) {
+			--_sap_m_Label_ReservedSpace: @_sap_m_Label_AsteriskOffsetWidth + @_sap_m_Label_ColonOffsetWidth_lang_FR;
+		}
+
+		&:lang(zh-TW),
+		&:lang(zh-CN),
+		&:lang(zh-Hans),
+		&:lang(zh-Hant) {
+			--_sap_m_Label_ReservedSpace: @_sap_m_Label_AsteriskOffsetWidth + @_sap_m_Label_ColonOffsetWidth_lang_ZH;
+		}
+	}
+}
+
+.sapMLabelBold,
+.sapMLabel.sapMLabelBold {
+	font-weight: bold;
+}
+
+.sapMLabelMaxWidth {
+	max-width: 100%;
+}
+
+.sapMLIBActionable .sapMLabel {
+	cursor: pointer;
+}
+
+.sapMLabel .sapMLabelColonAndRequired {
+	display: inline;
+	vertical-align: top;
+}
+
+.sapMLabel .sapMLabelColonAndRequired::before {
+	vertical-align: top;
+}
+
+.sapMLabel.sapMLabelRequired .sapMLabelColonAndRequired::after {
+	content: "*";
+	color: @sapUiFieldRequiredColor;
+	font-family: @sapUiFontFamily;
+	font-size: @sapMFontLargeSize;
+	font-weight: bold;
+	vertical-align: middle;
+	line-height: 0;
+	margin-left: 0.125rem;
+}
+
+html[dir="rtl"] .sapMLabel[dir="ltr"].sapMLabelRequired .sapMLabelColonAndRequired::after,
+html[dir="ltr"] .sapMLabel[dir="rtl"].sapMLabelRequired .sapMLabelColonAndRequired::after {
+	margin-right: 0.125rem;
+	margin-left:0;
+}
+
+.sapMIBar-CTX .sapMLabel {
+	color: @sapUiContentLabelColor;
+}
+
+.sapMIBar-CTX.sapMFooter-CTX .sapMLabel {
+	font-family: @sapUiFontFamily;
+	font-size: @sapMFontMediumSize;
+	color: @sapUiPageFooterTextColor;
+}
+
+.sapMTB-Info-CTX.sapMTB.sapMTBInactive .sapMLabel {
+	color: @_sap_m_Label_InsideInactiveInfoToolbarColor;
+}
+
+/* Toolbar overflow context */
+.sapMOverflowToolbarMenu-CTX {
+	.sapMLabel {
+		max-width: 20rem;
+		margin-top: 0.375rem;
+		margin-bottom: 0.375rem;
+		white-space: normal;
+
+		&.sapMLabelMediumMarginTop {
+			margin-top: 0.625rem;
+			margin-bottom: 0.125rem;
+		}
+
+		& + .sapMLabel {
+			margin-top: 0.75rem;
+		}
+	}
+
+	.sapMCb .sapMLabel {
+		margin-top: 0;
+
+		&.sapMLabelMediumMarginTop,
+		& + .sapMLabel {
+			margin-top: 0;
+		}
+	}
+}
+
+/* ============================ */
+/* Overwrites for Label in Form */
+/* ============================ */
+
+/* GridLayout */
+td.sapUiFormElementLbl:not(.sapUiGridLabelFull) > .sapMLabel{
+	text-align: end !important; /* to overwrite setting on label */
+	width: 100%; /* to react on touch/click on whole label cell */
+}
+
+/* ResponsiveGridLayout */
+/* make labels right aligned if left from fields*/
+.sapUiRespGridMedia-Std-Phone.sapUiFormResGridCont > .sapUiFormElementLbl:not(.sapUiRespGridSpanS12) > .sapMLabel,
+.sapUiRespGridMedia-Std-Tablet.sapUiFormResGridCont > .sapUiFormElementLbl:not(.sapUiRespGridSpanM12) > .sapMLabel,
+.sapUiRespGridMedia-Std-Desktop.sapUiFormResGridCont > .sapUiFormElementLbl:not(.sapUiRespGridSpanL12) > .sapMLabel,
+.sapUiRespGridMedia-Std-LargeDesktop.sapUiFormResGridCont > .sapUiFormElementLbl:not(.sapUiRespGridSpanXL12) > .sapMLabel {
+	float: right;
+}
+
+/* ResponsiveLayout */
+/* If label is above the fields it's left aligned, if it's left of the fields it's right aligned */
+.sapUiFormResLayout .sapUiRFLRow:first-child > .sapUiRFLContainer:first-child > .sapUiRFLContainerContent > .sapMLabel {
+	text-align: end !important; /* to overwrite setting on label */
+	width: 100%; /* to react on touch/click on whole label cell */
+}
+
+/* ================================== */
+/* Label in Form - Colon and Asterisk */
+/* ================================== */
+.sapUiFormLblColon {
+	// Label alone on row, truncating. Don't let ":" and "*" truncate by using flex
+	.sapUiFormElementLbl > .sapMLabel:not(.sapMLabelWrapped) {
+		display: inline-flex;
+
+		&.sapMLabelRequired .sapMLabelTextWrapper {
+			max-width: 100%;
+		}
+	}
+
+	// Label side by side with a field
+	// In this case we need to align all : and * in the form
+	/* GridLayout */
+	td:not(.sapUiGridLabelFull),
+	/* ResponsiveGridLayout */
+	.sapUiRespGridMedia-Std-Phone.sapUiFormResGridCont > :not(.sapUiRespGridSpanS12),
+	.sapUiRespGridMedia-Std-Tablet.sapUiFormResGridCont > :not(.sapUiRespGridSpanM12),
+	.sapUiRespGridMedia-Std-Desktop.sapUiFormResGridCont > :not(.sapUiRespGridSpanL12),
+	.sapUiRespGridMedia-Std-LargeDesktop.sapUiFormResGridCont > :not(.sapUiRespGridSpanXL12),
+	/* ResponsiveLayout */
+	.sapUiFormResLayout .sapUiRFLRow:first-child > .sapUiRFLContainer:first-child:not(.sapUiRFLFullLength) > .sapUiRFLContainerContent,
+	/* ColumnLayout*/
+	.sapUiFormCL.sapUiFormCLSmallColumns :not(.sapUiFormCLCellsS12),
+	.sapUiFormCL.sapUiFormCLWideColumns :not(.sapUiFormCLCellsL12) {
+		&.sapUiFormElementLbl > .sapMLabel {
+			display: inline-block;
+			position: relative;
+
+			// Accommodate space for colon + asterisk
+			// The use of em is intentional since it has to relate to the current font size applied to the label
+			padding-right: 0.85em;
+
+			&:lang(fr) {
+				padding-right: 1.125em;
+			}
+			&:lang(zh-TW) {
+				padding-right: 1.59em;
+			}
+			&:lang(zh-CN) {
+				padding-right: 1.59em;
+			}
+			&:lang(zh-Hans) {
+				padding-right: 1.59em;
+			}
+			&:lang(zh-Hant) {
+				padding-right: 1.59em;
+			}
+
+			.sapMLabelColonAndRequired {
+				position: absolute;
+			}
+		}
+	}
+}
+
+.sapUiFormResLayout .sapUiRFLRow:first-child > .sapUiRFLContainer.sapUiRFLFullLength > .sapUiRFLContainerContent > .sapMLabel{
+	text-align: start !important; /* to overwrite setting on label */
+	padding-bottom: 2px;
+}
+
+/* ResponsiveGridLayout */
+.sapUiFormResGridCont > .sapUiFormElementLbl > .sapMLabel{
+	width: 100%;
+}
+
+/* collapse lines in a form */
+.sapUiForm .sapUiFormElementLbl > .sapMLabel{
+	height: auto;
+}
+
+.sapUiForm.sapUiFormEdit .sapUiFormElementLbl > .sapMLabel{
+	vertical-align: top; /* align vertically to multiline texts */
+}
+
+.sapMLabel.sapMLabelShowColon,
+.sapUiFormLblColon .sapUiFormElementLbl > .sapMLabel {
+	.sapMLabelColonAndRequired::before {
+		content: attr(data-colon);
+		white-space: pre;
+	}
+}
+
+/* Wrapping of the Label's text */
+.sapMLabel.sapMLabelWrapped {
+	white-space: pre-line;
+	overflow: hidden;
+	word-wrap: break-word;
+}
+
+.sapUiFormLblColon .sapUiFormElementLbl > .sapMLabel.sapMLabelNoText .sapMLabelColonAndRequired::before {
+	content: none;
+}
+
+.sapMLIBUnread .sapMLabel,
+.sapMLIBUnread + .sapMListTblSubRow .sapMLabel{
+	font-family: @sapUiFontFamily;
+	font-weight: bold;
+}
+
+.sapMListTbl .sapMLIBActive .sapMLabel,
+.sapMLIBActive .sapMLabel {
+	color: @sapUiListActiveTextColor;
+}
+
+/* Transparent Toolbar Context*/
+.sapMTB-Transparent-CTX .sapMLabel{
+	font-weight: @sapUiFontHeaderWeight;
+	font-family: @sapUiFontHeaderFamily;
+	color: @sapUiGroupTitleTextColor;
+}
+
+/* HorizontalLayout */
+.sapUiHLayoutChildWrapper > .sapMLabel {
+	vertical-align: text-bottom;
+}
+
+/* ================================ */
+/* SMALL,  MEDIUM and LARGE DEVICES */
+/* ================================ */
+.sapUiRespGridMedia-Std-Phone.sapUiFormResGridCont > .sapUiFormElementLbl:not(.sapUiRespGridSpanS12) > .sapMLabel,
+.sapUiRespGridMedia-Std-Tablet.sapUiFormResGridCont > .sapUiFormElementLbl:not(.sapUiRespGridSpanM12) > .sapMLabel,
+.sapUiRespGridMedia-Std-Desktop.sapUiFormResGridCont > .sapUiFormElementLbl:not(.sapUiRespGridSpanL12) > .sapMLabel,
+.sapUiRespGridMedia-Std-LargeDesktop.sapUiFormResGridCont > .sapUiFormElementLbl:not(.sapUiRespGridSpanXL12) > .sapMLabel {
+	text-align: end !important; /* to overwrite style set on element */
+	float: none; /* as label has 100% width not needed (will bring wrong alignments on iPad) */
+}
+
+/* ========================================================== */
+/* Form - ColumnLayout                                        */
+/* ========================================================== */
+.sapUiFormCL .sapUiFormElementLbl > .sapMLabel {
+	width: 100%;
+}
+
+.sapUiFormCL.sapUiFormCLSmallColumns .sapUiFormElementLbl:not(.sapUiFormCLCellsS12) > .sapMLabel,
+.sapUiFormCL.sapUiFormCLWideColumns .sapUiFormElementLbl:not(.sapUiFormCLCellsL12) > .sapMLabel {
+	text-align: end !important; /* to overwrite style set on element */
+	float: none; /* otherwise ":" is inside of Elements padding */
+}
+
+/* ========================================================== */
+/* COMPACT + CONDENSED SIZE + SPECIALS FOR SAP.UI.TABLE.TABLE */
+/* ========================================================== */
+
+.sapUiSizeCompact,
+.sapUiSizeCondensed.sapUiTable,
+.sapUiSizeCondensed .sapUiTable {
+	.sapMIBar-CTX.sapMPageHeader .sapMLabel,
+	.sapMDialog-CTX .sapMIBar-CTX .sapMLabel {
+		font-size: @sapMFontHeader6Size;
+	}
+}
+
+.sapUiSizeCompact,
+.sapUiSizeCondensed {
+	.sapUiTableCell:not(.sapUiTableHeaderDataCell) .sapMLabel {
+		font-weight: normal;
+		font-size: @sapMFontHeader6Size;
+	}
+}
+
+.sapUiSizeCondensed {
+	.sapUiTableDataCell {
+		:not(.sapMRbBLabel):not(.sapMCbLabel) .sapMLabel {
+			line-height: 1.5rem;
+		}
+	}
+}
+
+.sapUiTableCell .sapMLabel {
+	color: @sapUiListTextColor;
+	vertical-align: middle;
+}
+
+.sapUiAnalyticalTable {
+	.sapUiTableCell .sapMLabel {
+		width: 100%;
+	}
+}
+
+.sapUiTableHeaderDataCell .sapMLabel,
+.sapMListTbl .sapMColumnHeader .sapMLabel {
+	font-weight: @sapUiColumnHeaderFontWeight;
+	font-size: @sapUiColumnHeaderFontSize;
+	color: @sapUiListHeaderTextColor;
+}

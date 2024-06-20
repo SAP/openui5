@@ -1,0 +1,141 @@
+/* ======================================= */
+/* CSS for control sap.m/RadioButtonGroup  */
+/* Base theme                              */
+/* ======================================= */
+
+@_sap_m_RadioButtonGroup_WidthWithLabel: 3rem;
+@_sap_m_RadioButtonGroup_PaddingLeftLabel: 3rem;
+@_sap_m_RadioButtonGroup_PaddingLeftLabel_Form: 2.3rem;
+
+.sapMRbG{
+	display: inline-block;
+}
+
+.sapMRbG:focus {
+	outline: none;
+}
+
+.sapMRbGTab{
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: flex;
+}
+
+.sapMRbGCol{
+	vertical-align: top;
+	min-width: 10px;
+	margin-right: 0;
+	overflow: hidden; /* needed in Safari */
+}
+
+.sapMRbG > .sapMRb,
+.sapMRbGCol > .sapMRb{
+	float: left;
+	clear: left;
+	text-overflow: ellipsis;
+}
+
+.sapMRbG.sapMRbG1Row > .sapMRb{
+	clear: none;
+}
+
+.sapMRbGCol > .sapMRb{
+	width: 100%;
+	outline-offset: -1px;
+}
+
+.sapMRbG .sapMRbB {
+	position: absolute;
+	left: 0;
+}
+
+.sapMRbG  .sapMRbHasLabel .sapMRbB {
+	width: @_sap_m_RadioButtonGroup_WidthWithLabel;
+}
+
+.sapMRbG .sapMRbBLabel {
+	margin-left: 0;
+	padding-left: @_sap_m_RadioButtonGroup_PaddingLeftLabel;
+}
+
+.sapMRbG .sapMRbHasLabel .sapMRbBOut {
+	margin: 0.8125rem;
+}
+
+/* Right to left */
+.sapMRbG[dir=rtl] .sapMRbB {
+	right: 0;
+}
+
+.sapMRbG[dir=rtl] .sapMRbBLabel {
+	padding-left: 0.125rem;
+	padding-right: 2.75rem;
+}
+
+/* Align RadioButton in Form with other controls */
+.sapUiForm.sapUiFormEdit-CTX{
+	.sapMRbG{
+		.sapMRbBLabel {
+			padding-left: @_sap_m_RadioButtonGroup_PaddingLeftLabel_Form;
+		}
+
+		.sapMRbBLabel:not(.sapMLabelNoText) {
+			padding-right: 0.125rem;
+		}
+
+		> .sapMRbGCol{
+			padding-left: 0.5rem; // to align to spaced between Form cells
+		}
+
+		> .sapMRbGCol:first-child{
+			padding-left: 0;
+		}
+	}
+
+	.sapMRbG[dir=rtl] .sapMRbBLabel {
+		padding-left: 0;
+		padding-right: @_sap_m_RadioButtonGroup_PaddingLeftLabel_Form;
+	}
+
+	.sapMRbG.sapMRbG1Row{
+		.sapMRb{
+			padding-left: 0;
+			margin-left: 0.5rem; // to align to spaced between Form cells
+		}
+
+		.sapMRb:first-child{
+			margin-left: 0;
+		}
+	}
+}
+
+/* Compact Size */
+.sapUiSizeCompact {
+	.sapMRbG .sapMRbHasLabel .sapMRbB {
+		width: 2rem;
+	}
+
+	.sapMRbG .sapMRbHasLabel .sapMRbBOut {
+		margin: 0.5rem;
+	}
+
+	.sapMRbG .sapMRbBLabel {
+		padding-left: 2rem;
+	}
+
+	.sapMRbG[dir=rtl] .sapMRbBLabel {
+		padding-left: 0.125rem;
+		padding-right: 2rem;
+	}
+
+	.sapUiForm.sapUiFormEdit-CTX{
+		.sapMRbG .sapMRbBLabel {
+			padding-left: 1.625rem;
+		}
+
+		.sapMRbG[dir=rtl] .sapMRbBLabel {
+			padding-left: 0;
+			padding-right: 1.625rem;
+		}
+	}
+}

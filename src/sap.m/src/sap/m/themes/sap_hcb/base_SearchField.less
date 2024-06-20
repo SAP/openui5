@@ -1,0 +1,243 @@
+/* ================================== */
+/* CSS for control sap.m/SearchField  */
+/* Base theme                         */
+/* ================================== */
+
+@_sap_m_SearchField_Height: 3rem;
+@_sap_m_SearchField_ButtonSize: 2.375rem;
+@_sap_m_SearchField_ButtonFontSize: 1.125rem;
+@_sap_m_SearchField_CompactButtonLineHeight: 1.5rem;
+@_sap_m_SearchField_Compact_FormPaddingLeft: 0.375rem;
+@_sap_m_SearchField_ResetIcon: "\e1c7";
+@_sap_m_SearchField_SearchIcon: "\e00d";
+@_sap_m_SearchField_PlaceholderColor: @sapUiFieldPlaceholderTextColor;
+@_sap_m_SearchField_Border: @sapUiFieldBorderWidth @sapUiFieldBorderStyle @sapUiFieldBorderColor;
+@_sap_m_SearchField_FocusOffset: 1px;
+@_sap_m_SearchField_FocusBorderRadius: unset;
+@_sap_m_SearchField_PlaceholderFontStyle: italic;
+@_sap_m_SearchField_ActiveBackgroundStyle: @sapUiFieldFocusBackground;
+
+.sapMSF {
+	position: relative;
+	-moz-user-modify: read-only;
+	-webkit-user-modify: read-only;
+	-webkit-user-select: none;
+	user-select: none;
+	box-sizing: border-box;
+	width: 100%;
+	min-width: 7rem;
+	height: @_sap_m_SearchField_Height;
+	background: transparent;
+	padding: 0.25rem 0;
+}
+
+.sapUiUfdShellHead .sapMSF {
+	padding: 0;
+}
+
+.sapUiSizeCompact .sapUiUfdShellHead .sapMSF {
+	padding: 0.25rem 0;
+}
+
+html.sap-desktop .sapMFocus > .sapMSFF::before {
+	border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiFieldActiveBorderColor;
+	position: absolute;
+	content: " ";
+	top: @_sap_m_SearchField_FocusOffset;
+	right: @_sap_m_SearchField_FocusOffset;
+	left: @_sap_m_SearchField_FocusOffset;
+	bottom: @_sap_m_SearchField_FocusOffset;
+	border-radius: @_sap_m_SearchField_FocusBorderRadius;
+	z-index: 2;
+	pointer-events: none;
+}
+
+.sapMSFI[type="search"] {
+	font-size: 0.88em;
+	-webkit-appearance:none;
+	box-sizing: border-box;
+	width: 100%;
+}
+
+.sapMSFI[type="search"]::-webkit-search-decoration,
+.sapMSFI[type="search"]::-webkit-search-results-decoration,
+.sapMSFI[type="search"]::-webkit-search-results-button {
+	-webkit-appearance: none;
+}
+
+.sapMSFI[type="search"]:focus {
+	-webkit-appearance: none;
+}
+
+input.sapMSFI[type="search"]:focus {
+	outline: none;
+	outline-width: 0;
+}
+
+.sapMSFR {
+	visibility: hidden;
+	background: transparent;
+}
+
+.sapMSplitContainerMaster .sapMSF {
+	padding-right: 1px;
+}
+
+.sapMSFF {
+	display: flex;
+	box-sizing: border-box;
+	height: @sapUiElementHeight;
+	box-shadow: @sapUiFieldShadow;
+	border: @_sap_m_SearchField_Border;
+	background: @sapUiFieldBackgroundStyle;
+	background-color: @sapUiFieldBackground;
+	vertical-align: top;
+	width: 100%;
+	position: relative;
+	padding-left: 0.625rem;
+	overflow: hidden;
+}
+
+/* Block elements do not work with bar layout */
+.sapMBar .sapMSF {
+	display : inline-block;
+}
+
+.sapMFocus>.sapMSFF {
+	border-color: @sapUiFieldFocusBorderColor;
+}
+
+:not(.sapMSFDisabled) > .sapMSFF:hover {
+	border-color: @sapUiFieldHoverBorderColor;
+	box-shadow: @sapUiFieldHoverShadow;
+}
+
+:not(.sapMSFDisabled) > .sapMSFF:active {
+	background: @_sap_m_SearchField_ActiveBackgroundStyle;
+}
+
+.sapMSFI {
+	color: @sapUiFieldTextColor;
+	font-family: @sapUiFontFamily;
+	font-size: @sapMFontMediumSize;
+	background: transparent;
+	height: 100%;
+	border: none;
+	outline: none;
+	padding: 0;
+	margin: 0;
+	text-indent: 0.125rem;
+	vertical-align: top;
+	text-overflow: ellipsis;
+	flex: 1;
+}
+
+.sapMSFI[type='search']{
+	font-size: 0.875rem;
+}
+
+/* remove clear x button in webkit */
+.sapMSFI[type="search"]::-webkit-search-cancel-button{
+	-webkit-appearance: none;
+	display: none;
+}
+
+.sapMSFB {
+	width: @_sap_m_SearchField_ButtonSize;
+	height: 100%;
+	line-height: @_sap_m_SearchField_ButtonSize;
+	font-size: @_sap_m_SearchField_ButtonFontSize;
+	color: @sapUiContentIconColor;
+	text-align: center;
+	cursor: pointer;
+	padding:0;
+	box-sizing: border-box;
+}
+
+.sapMSFB::after {
+	speak: none;
+	font-weight: normal;
+	font-family: 'SAP-icons';
+	-webkit-font-smoothing: antialiased;
+}
+
+.sapMSFR::after {
+	content: @_sap_m_SearchField_ResetIcon;
+}
+
+.sapMSFVal > .sapMSFF .sapMSFR,
+:not(.sapMSFVal):not(.sapMFocus) > .sapMSFReload .sapMSFR {
+	visibility: visible;
+}
+
+/* search icon in place of the reset button */
+:not(.sapMSFVal) > .sapMSFReload .sapMSFR::after {
+	content: @_sap_m_SearchField_SearchIcon;
+}
+
+/* search button */
+.sapMSFS::after {
+	content: @_sap_m_SearchField_SearchIcon;
+}
+
+/* refresh icon in some cases */
+:not(.sapMFocus) > .sapMSFReload .sapMSFS::after {
+	content: "\e010";
+}
+
+/*grouping is not allowed here*/
+.sapMSFI::-webkit-input-placeholder {
+	color: @_sap_m_SearchField_PlaceholderColor;
+	font-size: @sapMFontMediumSize;
+	font-style: @_sap_m_SearchField_PlaceholderFontStyle;
+}
+
+.sapMSFI::-moz-placeholder {
+	color: @_sap_m_SearchField_PlaceholderColor;
+	font-size: @sapMFontMediumSize;
+	font-style: @_sap_m_SearchField_PlaceholderFontStyle;
+	opacity: 1; // in FF by default the opacity is 60%
+}
+
+.sapMSF.sapMSFDisabled form,
+.sapMSF:not(.sapMSFVal) form.sapMSFNS:not(.sapMSFReload) {
+	padding-right: 0.625rem;
+}
+
+/*Static search icon, needed for the Search Field in the Tool Header*/
+.sapMSFSSI {
+	display: none;
+}
+
+/* Suggestion Item Description */
+.sapMSFSItemDescr {
+	padding-inline-start: 0.5rem;
+}
+
+/* Compact size */
+.sapUiSizeCompact {
+
+	.sapMSF {
+		height: 2rem;
+		padding: 0.1875rem 0;
+		min-width: 6rem;
+	}
+
+	.sapMSFF {
+		height: @sapUiElementCompactHeight;
+		padding-left: @_sap_m_SearchField_Compact_FormPaddingLeft;
+	}
+
+	.sapMSFB {
+		width: 2rem;
+		font-size: 1rem;
+		text-align: center;
+		padding:0;
+		line-height: @_sap_m_SearchField_CompactButtonLineHeight;
+	}
+
+	.sapMSF.sapMSFDisabled form,
+	.sapMSF:not(.sapMSFVal) form.sapMSFNS:not(.sapMSFReload) {
+		padding-right: @_sap_m_SearchField_Compact_FormPaddingLeft;
+	}
+}

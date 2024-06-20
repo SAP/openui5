@@ -1,0 +1,253 @@
+/* ===================================== */
+/* CSS for control sap.m/ObjectListItem  */
+/* Base theme                            */
+/* ===================================== */
+
+.sapMObjLItem {
+	box-sizing: border-box;
+	vertical-align: baseline;
+	/* set this otherwise if one of the parents has "nowrap" style this
+	affects the whole arrangement of the ObjectListItem */
+	white-space: normal;
+}
+
+.sapMLIB.sapMObjLItem {
+	padding: 1rem;
+}
+
+.sapMObjLItem .sapMLIBImgNav:active,
+.sapMObjLItem .sapMLIBIconDet:active,
+.sapMObjLItem .sapMLIBIconDel:active {
+	border-bottom: none;
+}
+
+.sapMObjLTopRow {
+	float: left;
+	width: 100%;
+}
+
+.sapMObjLIntro {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	font-family: @sapUiFontFamily;
+	color: @sapUiContentLabelColor;
+	font-size: @sapMFontMediumSize;
+	padding-bottom: .75rem;
+}
+
+.sapMText.sapMObjLTitle {
+	vertical-align: top;
+	word-break: break-word;
+	color: @sapUiGroupTitleTextColor;
+	font-size: @sapMFontHeader4Size;
+	font-weight: @sapUiFontHeaderWeight;
+	line-height: 1.5rem;
+}
+
+html.sap-phone .sapMText.sapMObjLTitle,
+.sapUiMedia-Std-Phone .sapMText.sapMObjLTitle,
+html .sapUiContainer-Narrow .sapMText.sapMObjLTitle {
+	word-break: break-all;
+}
+
+/*Object header title must break words, otherwise it may be to wide if used within
+  a layout control with fixed width. */
+.sapMOHTitle:not(.sapMOHRTitleNoWordBreak) > .sapMText {
+	/* to break all words even browser does not know the width */
+	word-break: break-word;
+	-webkit-hyphens: auto;
+	-moz-hyphens: auto;
+	hyphens: auto;
+}
+
+.sapMObjLNumberDiv {
+	float: right;
+	padding-left: 1rem;
+
+	.sapMObjectNumber {
+		line-height: initial;
+	}
+}
+
+.sapMObjLNumberDiv .sapMObjectNumber.sapMObjectNumberStatusNone {
+	color: @sapUiGroupTitleTextColor;
+}
+
+.sapMObjLNumberDiv .sapMObjectNumber .sapMObjectNumberText {
+	font-family: @sapUiFontHeaderFamily;
+	font-size: 1.375rem;
+	line-height: 1.375rem;
+	font-weight: @sapUiFontHeaderWeight;
+	white-space: nowrap;
+}
+
+.sapMObjLNumberDiv .sapMObjectNumber .sapMObjectNumberUnit {
+	padding: 0;
+	display: block;
+}
+
+.sapMObjLBottomRow {
+	margin-top: .25rem;
+}
+
+.sapMObjLAttrRow {
+	padding-top: .313rem;
+}
+
+.sapMObjLAttrDiv {
+	box-sizing: border-box;
+	display: inline-block;
+	width: 50%;
+	text-align: left;
+	vertical-align: top;
+}
+
+html[dir=rtl] .sapMObjLAttrDiv {
+	text-align: right;
+}
+
+.sapMObjLAttrDiv .sapMObjectAttributeDiv {
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
+	width: 100%;
+	&.sapMObjectAttributeActive {
+		.sapMObjectAttributeTitle,
+		.sapMObjectAttributeText {
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			overflow: hidden;
+			max-width: 50%;
+		}
+		&.sapMObjectAttributeTextOnly {
+			.sapMObjectAttributeTitle,
+			.sapMObjectAttributeText {
+				max-width: 100%;
+			}
+		}
+
+	}
+}
+
+/* First and second attributes get one line with ellipsis */
+.sapMObjLAttrRow:nth-child(1)>.sapMObjLAttrDiv .sapMObjectAttributeDiv,
+.sapMObjLAttrRow:nth-child(2)>.sapMObjLAttrDiv .sapMObjectAttributeDiv{
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	width: 100%;
+}
+
+.sapMObjLAttrDiv .sapMObjectAttributeDiv {
+	display: inline-block;
+}
+
+.sapMObjLStatusDiv {
+	box-sizing: border-box;
+	display: inline-block;
+	width: 50%;
+	text-align: right;
+	vertical-align: top;
+	padding-left: 0.5rem;
+}
+
+html[dir=rtl] .sapMObjLStatusDiv {
+	text-align: left;
+	padding-left: 0;
+	padding-right: 0.5rem;
+}
+
+.sapMObjLAttrRow .sapMObjStatus {
+	overflow: visible;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	width: 100%;
+	.sapMObjStatusText {
+		word-break: normal;
+	}
+}
+
+// invertedStatus in ObjectListItem
+.sapMObjLAttrRow .sapMObjStatusInverted {
+	min-height: 1rem;
+	line-height: 0.75rem;
+}
+
+.sapMObjLBottomRow .sapMObjStatusIcon {
+	font-size: 1rem;
+}
+
+.sapMObjLItem > .sapMLIBContent {
+	-webkit-box-flex: 1;
+	flex: 1 1 auto;
+}
+
+.sapMObjLListModeDiv {
+	display: -webkit-box;
+	display: flex;
+	-webkit-box-orient: horizontal;
+	-webkit-box-align: center;
+	flex-direction: row;
+	align-items: center;
+}
+
+/* overwrite transform for the markers favorite and flag icon */
+html[dir=rtl] .sapMObjStatusMarker > .sapUiIcon.sapUiIconMirrorInRTL {
+	-webkit-transform: none; /* Chrome, Safari, Opera */
+	transform: none;
+}
+
+.sapMObjLIconDiv > .sapMImg {
+	max-height: 3rem;
+	max-width: 3rem;
+}
+
+.sapMObjLItem .sapMObjStatusMarker .sapMObjectMarkerText,
+.sapMObjLItem .sapMObjStatusMarker .sapMObjectMarkerIcon {
+	margin-left: 0.5rem;
+}
+
+.sapMObjLItem .sapMObjStatusMarker .sapMText,
+.sapMObjLItem .sapMObjStatusMarker .sapUiIcon {
+	font-size: 0.875rem;
+}
+
+.sapMObjLItem .sapMObjStatusMarker .sapUiIcon:before {
+	vertical-align: top;
+}
+
+.sapMObjLIcon {
+	margin-top: 2px;
+	color: @sapUiContentIconColor;
+}
+
+.sapMLIBActive .sapMObjLIcon {
+	color: @sapUiContentContrastIconColor;
+}
+
+.sapMLIBActive .sapMObjLNumberDiv .sapMObjectNumber,
+.sapMLIBActive .sapMObjStatusMarker .sapMObjectMarker .sapUiIcon {
+	color: @sapUiListActiveTextColor;
+}
+
+.sapMObjLIconDiv {
+	float: left;
+	margin-right: .75rem;
+	width: 3rem;
+	height: 3rem;
+	text-align: center;
+	box-sizing: border-box;
+}
+
+.sapMObjLItem .sapMObjLAttrDiv {
+	color: @sapUiContentLabelColor;
+}
+
+.sapMObjLAdditAttribs {
+	color: @sapUiContentLabelColor;
+}
+
+.sapMObjLAttrDiv.sapMObjAttrWithMarker {
+	padding-top: .1875rem
+}

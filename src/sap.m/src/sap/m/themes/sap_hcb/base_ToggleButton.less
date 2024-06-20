@@ -1,0 +1,95 @@
+/* =================================== */
+/* CSS for control sap.m/ToggleButton  */
+/* Base theme                          */
+/* =================================== */
+
+/************************************/
+/* Common styles        */
+/************************************/
+/* toggled without context */
+html.sap-desktop .sapMToggleBtnPressed,
+.sapMToggleBtnPressed:not(.sapMBtnDisabled),
+/* Bar context*/
+html.sap-desktop .sapMIBar-CTX .sapMToggleBtnPressed,
+.sapMIBar-CTX .sapMToggleBtnPressed:not(.sapMBtnDisabled),
+/* Toolbar transparent context */
+html.sap-desktop .sapMTB-Transparent-CTX .sapMBtnInner.sapMToggleBtnPressed,
+.sapMTB-Transparent-CTX .sapMBtnInner.sapMToggleBtnPressed:not(.sapMBtnDisabled) {
+	background-image: none;
+	background-color: @sapUiButtonSelectedBackground;
+	border-color: @sapUiButtonSelectedBorderColor;
+	color: @sapUiButtonSelectedTextColor;
+	& .sapUiIcon {
+		color: @sapUiButtonSelectedTextColor;
+	}
+	text-shadow: none;
+	&.sapMBtnReject {
+		background-color: @sapUiButtonRejectSelectedBackground;
+		border-color: @sapUiButtonRejectSelectedBorderColor;
+		color: @sapUiButtonRejectSelectedTextColor;
+		& .sapUiIcon {
+			color: @sapUiButtonRejectSelectedTextColor;
+		}
+	}
+	&.sapMBtnAccept {
+		background-color: @sapUiButtonAcceptSelectedBackground;
+		border-color: @sapUiButtonAcceptSelectedBorderColor;
+		color: @sapUiButtonAcceptSelectedTextColor;
+		& .sapUiIcon {
+			color: @sapUiButtonAcceptSelectedTextColor;
+		}
+	}
+	&.sapMBtnAttention {
+		background-color: @sapUiButtonAttentionSelectedBackground;
+		border-color: @sapUiButtonAttentionSelectedBorderColor;
+		color: @sapUiButtonAttentionSelectedTextColor;
+		& .sapUiIcon {
+			color: @sapUiButtonAttentionSelectedTextColor;
+		}
+	}
+}
+
+/*hover and down on toggled*/
+.sapMBtn:hover .sapMBtnHoverable.sapMToggleBtnPressed, /*in Firefox the button receives the hover state, not it's inner child */
+.sapMBtn .sapMBtnHoverable.sapMToggleBtnPressed:hover,
+/* Toolbar transparent context*/
+.sapMTB-Transparent-CTX .sapMBtnHoverable.sapMToggleBtnPressed:hover {
+	background-image: none;
+	background-color: @sapUiToggleButtonPressedHoverBackground;
+}
+
+/* toggled - icon has to be adapted */
+span.sapMBtnInner.sapMToggleBtnPressed .sapMBtnIcon,
+span.sapMBtnInner.sapMToggleBtnPressed.sapMBtnTransparent > .sapMBtnIcon,
+html.sap-desktop .sapMToggleBtnPressed.sapMBtnTransparent > .sapMBtnIcon {
+	color: @sapUiToggleButtonPressedTextColor;
+}
+
+/* Focus of toggled button */
+.sapMBtn:focus > .sapMBtnInner.sapMToggleBtnPressed.sapMFocusable {
+	outline-color: @sapUiContentContrastFocusColor;
+}
+
+/* hover and down on toggled button part 1*/
+.sapMBtn:hover > .sapMBtnHoverable.sapMToggleBtnPressed:not(.sapMBtnActive),
+.sapMBtn .sapMBtnHoverable.sapMToggleBtnPressed:hover {
+	background-color: @sapUiButtonSelectedHoverBackground;
+	border-color: @sapUiButtonSelectedHoverBorderColor;
+	color: @sapUiButtonSelectedTextColor;
+	text-shadow: none;
+	&.sapMBtnReject {
+		background-color: darken(@sapUiButtonRejectActiveBackground, 5);
+		border-color: @sapUiButtonRejectActiveBorderColor;
+		color: contrast(lighten(@sapUiButtonRejectActiveBackground, 5), @sapUiBaseText, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
+	}
+	&.sapMBtnAccept {
+		background-color: darken(@sapUiButtonAcceptActiveBackground, 5);
+		border-color: @sapUiButtonAcceptActiveBorderColor;
+		color: contrast(lighten(@sapUiButtonAcceptActiveBackground, 5), @sapUiBaseText, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
+	}
+	&.sapMBtnAttention {
+		background-color: darken(@sapUiButtonAttentionActiveBackground, 5);
+		border-color: @sapUiButtonAttentionActiveBorderColor;
+		color: contrast(lighten(@sapUiButtonAttentionActiveBackground, 5), @sapUiBaseText, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
+	}
+}
