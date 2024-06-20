@@ -16611,7 +16611,7 @@ sap.ui.define([
 			that = this;
 
 		for (i = 0; i < 1110; i += 1) {
-			if (i < 17 || i >= 1093) {
+			if (i < 24 || i >= 1093) {
 				aValues[i] = {Team_Id : "TEAM_" + i};
 			}
 		}
@@ -16630,7 +16630,7 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectRequest("TEAMS?$skip=7&$top=3", {value : aValues.slice(7, 10)})
+			that.expectRequest("TEAMS?$skip=7&$top=5", {value : aValues.slice(7, 12)})
 				.expectEvents(assert, oListBinding, [
 					[, "dataRequested"],
 					[, "dataReceived", {data : {}}]
@@ -16687,13 +16687,13 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () { // iIndex - iPrefetchLength becomes negative here
-			that.expectRequest("TEAMS?$skip=10&$top=7", {value : aValues.slice(10, 17)})
+			that.expectRequest("TEAMS?$skip=12&$top=12", {value : aValues.slice(12, 24)})
 				.expectEvents(assert, oListBinding, [
 					[, "dataRequested"],
 					[, "dataReceived", {data : {}}]
 				]);
 
-			assert.deepEqual(oListBinding.getContexts(0, 7, 10).map(getPath), [
+			assert.deepEqual(oListBinding.getContexts(0, 7, 12).map(getPath), [
 				"/TEAMS('TEAM_0')",
 				"/TEAMS('TEAM_1')",
 				"/TEAMS('TEAM_2')",
@@ -41336,20 +41336,20 @@ make root = ${bMakeRoot}`;
 		// forward
 		await scroll(31);
 		await scroll(32);
-		await scroll(33, 38, 3); // 3 after (> threshold/2)
+		await scroll(33, 38, 5); // 5 after (> threshold/2)
 		await scroll(34);
 		await scroll(35);
-		scroll(36, 41, 3, true); // 3 after
+		scroll(37, 43, 5, true); // 5 after
 		await Promise.resolve();
 		// this scroll happens before the response arrived, because we did not wait for the changes
-		await scroll(37);
+		await scroll(38);
 		// backward
 		await scroll(29);
 		await scroll(28);
-		await scroll(27, 22, 3); // 3 before
+		await scroll(27, 20, 5); // 5 before
 		await scroll(26);
 		await scroll(25);
-		await scroll(24, 19, 3); // 3 before
+		await scroll(22, 15, 5); // 5 before
 	});
 });
 

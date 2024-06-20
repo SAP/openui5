@@ -686,45 +686,38 @@ sap.ui.define([
 [{
 	description : "range w/o prefetch, no elements",
 	range : [0, 10, 0],
-	readRange : {start : 0, length : 10},
 	aElements : [],
 	intervals : [{start : 0, end : 10}]
 }, {
 	description : "range w/o prefetch, 1 element",
 	range : [0, 10, 0],
-	readRange : {start : 0, length : 10},
 	aElements : [{}],
 	intervals : [{start : 1, end : 10}]
 }, {
 	description : "range w/o prefetch, 1 element, limit = 1",
 	range : [0, 10, 0],
-	readRange : {start : 0, length : 10},
 	aElements : [{}],
 	limit : 1,
 	intervals : []
 }, {
 	description : "range w/o prefetch, 3 elements, limit 9, 2 gaps",
 	range : [0, 10, 0],
-	readRange : {start : 0, length : 10},
 	aElements : [{}, undefined, undefined, {}, undefined, {}],
 	limit : 9,
 	intervals : [{start : 1, end : 3}, {start : 4, end : 5}, {start : 6, end : 9}]
 }, {
 	description : "range w/ prefetch, no elements, left gap < prefetch",
 	range : [51, 10, 100],
-	readRange : {start : 0, length : 161},
 	aElements : [],
 	intervals : [{start : 0, end : 161}]
 }, {
 	description : "range w/ prefetch, no elements, left gap > prefetch",
 	range : [151, 10, 100],
-	readRange : {start : 51, length : 210},
 	aElements : [],
 	intervals : [{start : 51, end : 261}]
 }, {
 	description : "range w/ prefetch outside of limit, 3 elements, limit 111, 2 gaps",
 	range : [6, 10, 100],
-	readRange : {start : 0, length : 116},
 	aElements : [{}, undefined, undefined, {}, undefined, {}],
 	limit : 111,
 	intervals : [{start : 1, end : 3}, {start : 4, end : 5}, {start : 6, end : 111}]
@@ -735,7 +728,7 @@ sap.ui.define([
 		this.mock(ODataUtils).expects("_getReadRange")
 			.withExactArgs(sinon.match.same(oFixture.aElements), oFixture.range[0],
 				oFixture.range[1], oFixture.range[2])
-			.returns(oFixture.readRange);
+			.callThrough();
 
 		// code under test
 		aIntervals = ODataUtils._getReadIntervals(oFixture.aElements, oFixture.range[0],
@@ -770,11 +763,11 @@ sap.ui.define([
 }, { // missing a row at the end
 	current : [[0, 110]],
 	range : [51, 10, 100],
-	expected : {start : 51, length : 110}
+	expected : {start : 51, length : 159}
 }, { // missing a row before the start
 	current : [[100, 260]],
 	range : [149, 10, 100],
-	expected : {start : 49, length : 110}
+	expected : {start : 0, length : 159}
 }, { // missing a row before the start, do not read beyond 0
 	current : [[40, 200]],
 	range : [89, 10, 100],
@@ -785,7 +778,7 @@ sap.ui.define([
 }, { // missing data on both sides, do not read beyond 0
 	current : [[40, 100]],
 	range : [89, 10, 100],
-	expected : {start : 0, length : 199}
+	expected : {start : 0, length : 200}
 }, { // fetch all data
 	range : [0, 0, Infinity],
 	expected : {start : 0, length : Infinity}
@@ -799,7 +792,7 @@ sap.ui.define([
 }, { // odd prefetch length, prefetch before
 	current : [[25, 50]],
 	range : [27, 3, 5],
-	expected : {start : 22, length : 8}
+	expected : {start : 20, length : 10}
 }].forEach(function (oFixture) {
 	QUnit.test("_getReadRange: " + oFixture.range, function (assert) {
 		var aElements = [],

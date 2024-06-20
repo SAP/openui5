@@ -3531,7 +3531,7 @@ sap.ui.define([
 			// code under test
 			assert.deepEqual(
 				oBinding._calculateRequiredGroupSection("/", 42, 15, 10),
-				{startIndex : 32, length : 42 + 15 + 10 - 32});
+				{startIndex : 31, length : 42 + 15 + 10 + 3 - 31});
 
 			// code under test
 			assert.deepEqual(
