@@ -379,6 +379,7 @@ sap.ui.define([
 			assert.equal(Parameters._getThemeImage("sapUiThemeParamUrl9"), expected.url9.themeImage, "Theme Image value should be 'null' for parameter value 'none'.");
 			assert.equal(Parameters._getThemeImage("sapUiThemeParamUrl9", true), expected.url9.themeImageForce, "Theme Image value should be 'sap/ui/core/themes/base/img/1x1.gif' for parameter value 'none' (force).");
 
+			// We expect a sync XHR, since we don't wait for the theme change/applied event
 			assert.strictEqual(checkLibraryParametersJsonRequestForLib("4").length, 1, "library-parameters.json requested once for testlibs.themeParameters.lib4");
 		});
 	});

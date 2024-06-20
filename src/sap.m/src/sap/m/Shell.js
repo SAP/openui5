@@ -156,6 +156,12 @@ sap.ui.define([
 			renderer: ShellRenderer
 		});
 
+		Shell.prototype._getGlobalLogo = function() {
+			return ThemeParameters.get({
+				name: ["sapUiGlobalLogo"],
+				_restrictedParseUrls: true
+			});
+		};
 
 		Shell.prototype.init = function() {
 			// theme change might change the logo
@@ -278,7 +284,7 @@ sap.ui.define([
 		};
 
 		Shell.prototype._getImageSrc = function() {
-			return this.getLogo() ? this.getLogo() : ThemeParameters._getThemeImage();
+			return this.getLogo() ? this.getLogo() : this._getGlobalLogo();
 		};
 
 		return Shell;

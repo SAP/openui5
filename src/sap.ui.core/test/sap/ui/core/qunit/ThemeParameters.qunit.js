@@ -385,4 +385,84 @@ sap.ui.define([
 			});
 		});
 	});
+
+	QUnit.test("Relative URLs in parameters", async function(assert) {
+
+		const sPath = new URI(sap.ui.require.toUrl("testdata/core"), document.baseURI).toString();
+		const coreBase1x1Gif = sap.ui.require.toUrl("sap/ui/core/themes/base/img/1x1.gif");
+
+		await Library.load("testlibs.themeParameters.lib4");
+
+		return new Promise((endTest, reject) => {
+			Theming.attachApplied(() => {
+				const expected = {
+					url1: sPath + "/testdata/libraries/themeParameters/lib4/img1.jpg",
+					url2: sPath + "/testdata/libraries/themeParameters/lib4/foo/img2.jpg",
+					url3: sPath + "/testdata/libraries/themeParameters/lib4/foo/bar/img3.jpg",
+					url4: sPath + "/testdata/libraries/themeParameters/lib4/themes/sap_horizon_hcb/",
+					url5: sPath + "/testdata/libraries/themeParameters/lib4/themes/sap_horizon_hcb/",
+					url6: sPath + "/testdata/libraries/themeParameters/lib4/themes/sap_horizon_hcb/",
+					url7: "blob:http://example.com/6e88648c-00e1-4512-9695-5b702d8455b4",
+					url8: "data:text/plain;utf-8,foo",
+					url9: {
+						plain: "none",
+						themeImageDefault: coreBase1x1Gif
+					}
+				};
+
+				const actualPlain = Parameters.get({
+					name: ["sapUiThemeParamUrl1", "sapUiThemeParamUrl2", "sapUiThemeParamUrl3",
+						   "sapUiThemeParamUrl4", "sapUiThemeParamUrl5", "sapUiThemeParamUrl6",
+						   "sapUiThemeParamUrl7", "sapUiThemeParamUrl8", "sapUiThemeParamUrl9"
+					]
+				});
+
+				// plain values available after library load
+				// Result must be in CSS-URL syntax
+				assert.equal(actualPlain["sapUiThemeParamUrl1"], "url('" + expected.url1 + "')", "Relative URL should be resolved correctly 'sap/ui/core/qunit/testdata/libraries/themeParameters/lib4/img1.jpg'.");
+				assert.equal(actualPlain["sapUiThemeParamUrl2"], "url('" + expected.url2 + "')", "Relative URL should be resolved correctly 'sap/ui/core/qunit/testdata/libraries/themeParameters/lib4/foo/img2.jpg'.");
+				assert.equal(actualPlain["sapUiThemeParamUrl3"], "url('" + expected.url3 + "')", "Relative URL should be resolved correctly 'sap/ui/core/qunit/testdata/libraries/themeParameters/lib4/foo/bar/img3.jpg'.");
+				assert.equal(actualPlain["sapUiThemeParamUrl4"], "url('" + expected.url4 + "')", "Relative URL should be resolved correctly 'sap/ui/core/qunit/testdata/libraries/themeParameters/lib4/themes/sap_horizon_hcb/'.");
+				assert.equal(actualPlain["sapUiThemeParamUrl5"], "url('" + expected.url5 + "')", "Relative URL should be resolved correctly 'sap/ui/core/qunit/testdata/libraries/themeParameters/lib4/themes/sap_horizon_hcb/'.");
+				assert.equal(actualPlain["sapUiThemeParamUrl6"], "url('" + expected.url6 + "')", "Relative URL should be resolved correctly 'sap/ui/core/qunit/testdata/libraries/themeParameters/lib4/themes/sap_horizon_hcb/'.");
+				assert.equal(actualPlain["sapUiThemeParamUrl7"], "url('" + expected.url7 + "')", "Relative URL should be resolved correctly 'blob:http://example.com/6e88648c-00e1-4512-9695-5b702d8455b4'.");
+				assert.equal(actualPlain["sapUiThemeParamUrl8"], "url('" + expected.url8 + "')", "Relative URL should be resolved correctly 'data:text/plain;utf-8,foo'.");
+				assert.equal(actualPlain["sapUiThemeParamUrl9"], expected.url9.plain, "'none' should stay as defined");
+
+				const actualParsed = Parameters.get({
+					name: ["sapUiThemeParamUrl1", "sapUiThemeParamUrl2", "sapUiThemeParamUrl3",
+						   "sapUiThemeParamUrl4", "sapUiThemeParamUrl5", "sapUiThemeParamUrl6",
+						   "sapUiThemeParamUrl7", "sapUiThemeParamUrl8"
+					],
+					_restrictedParseUrls: true
+				});
+
+				// Additional parsing of CSS-URLs
+				// Result must be identical wrt. to the original URLs (s.a.)
+				assert.equal(actualParsed["sapUiThemeParamUrl1"], expected.url1, "Theme Image value should be correct for 'sapUiThemeParamUrl1'.");
+				assert.equal(actualParsed["sapUiThemeParamUrl2"], expected.url2, "Theme Image value should be correct for 'sapUiThemeParamUrl2'.");
+				assert.equal(actualParsed["sapUiThemeParamUrl3"], expected.url3, "Theme Image value should be correct for 'sapUiThemeParamUrl3'.");
+				assert.equal(actualParsed["sapUiThemeParamUrl4"], expected.url4, "Theme Image value should be correct for 'sapUiThemeParamUrl4'.");
+				assert.equal(actualParsed["sapUiThemeParamUrl5"], expected.url5, "Theme Image value should be correct for 'sapUiThemeParamUrl5'.");
+				assert.equal(actualParsed["sapUiThemeParamUrl6"], expected.url6, "Theme Image value should be correct for 'sapUiThemeParamUrl6'.");
+				assert.equal(actualParsed["sapUiThemeParamUrl7"], expected.url7, "Theme Image value should be correct for 'sapUiThemeParamUrl7'.");
+				assert.equal(actualParsed["sapUiThemeParamUrl8"], expected.url8, "Theme Image value should be correct for 'sapUiThemeParamUrl8'.");
+
+				// Value 'none' is parsed to <undefined>, which leads to the default value
+				const actualParsedWithDefaults = Object.assign({
+					"sapUiThemeParamUrl9": coreBase1x1Gif
+				}, Parameters.get({
+					name: ["sapUiThemeParamUrl9"],
+					_restrictedParseUrls: true
+				}));
+
+				assert.equal(actualParsedWithDefaults["sapUiThemeParamUrl9"], expected.url9.themeImageDefault, "Theme Image value should be 'sap/ui/core/themes/base/img/1x1.gif' for parameter value 'none'.");
+
+				// No sync XHR, since we wait for the Library to load and the theme-applied event
+				assert.strictEqual(checkLibraryParametersJsonRequestForLib("4").length, 0, "library-parameters.json requested once for testlibs.themeParameters.lib4");
+
+				endTest();
+			});
+		});
+	});
 });
