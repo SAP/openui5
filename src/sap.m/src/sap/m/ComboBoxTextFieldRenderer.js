@@ -31,7 +31,7 @@ sap.ui.define([
 		 */
 		ComboBoxTextFieldRenderer.writeInnerAttributes = function(oRm, oControl) {
 			oRm.attr("role", "combobox");
-			oRm.attr("aria-haspopup", "listbox");
+			oRm.attr("aria-haspopup", "dialog");
 			oRm.attr("aria-autocomplete", "both");
 			oRm.attr("aria-expanded", "false");
 			oRm.attr("autocomplete", "off");
