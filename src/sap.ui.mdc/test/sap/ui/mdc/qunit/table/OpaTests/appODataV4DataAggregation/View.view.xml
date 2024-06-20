@@ -14,7 +14,7 @@
                     payload: {collectionName: 'BusinessPartners'}
                 }">
                 <mdc:basicSearchField>
-                    <mdc:FilterField id="searchField" placeholder="Search" conditions="{$filters>/conditions/$search}"/>
+                    <mdc:FilterField id="searchField" placeholder="Search" conditions="{$filters>/conditions/$search}" propertyKey="$search"/>
                 </mdc:basicSearchField>
             </mdc:FilterBar>
             <mdc:Table

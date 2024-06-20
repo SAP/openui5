@@ -58,6 +58,7 @@ sap.ui.define([
 
 		this.oFilterBar.setBasicSearchField(new FilterField({
 			conditions: "{$filters>/conditions/$search}",
+			propertyKey: "$search",
 			maxConditions: 1,
 			delegate: '{name: "delegates/odata/v4/FieldBaseDelegate", payload: {}}'
 		}));
@@ -66,6 +67,7 @@ sap.ui.define([
 
 		this.oFilterBar.addFilterItem(new FilterField({
 			conditions: "{$filters>/conditions/$search}",
+			propertyKey: "$search",
 			maxConditions: 1,
 			delegate: '{name: "delegates/odata/v4/FieldBaseDelegate", payload: {}}'
 		}));

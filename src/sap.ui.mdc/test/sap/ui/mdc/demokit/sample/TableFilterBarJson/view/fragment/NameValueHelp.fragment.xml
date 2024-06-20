@@ -41,6 +41,7 @@
 									dataType="sap.ui.model.type.String"
 									placeholder= "Search Mountains"
 									conditions="{$filters>/conditions/$search}"
+									propertyKey="$search"
 									maxConditions="1"/>
 							</vhfb:basicSearchField>
 						</vhfb:FilterBar>

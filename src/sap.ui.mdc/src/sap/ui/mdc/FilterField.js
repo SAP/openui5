@@ -179,15 +179,20 @@ sap.ui.define([
 
 	};
 
-	// TODO: remove fallback if propertyKey is used by stakeholders
-	FilterField.prototype.getPropertyKey = function() {
-		let sPropertyKey = this.getProperty("propertyKey");
-		if (!sPropertyKey) {
-			sPropertyKey = this.getFieldPath();
-		}
+	/**
+	 * @deprecated Since version 1.115.0
+	 */
+	(() => {
+		FilterField.prototype.getPropertyKey = function() {
+			let sPropertyKey = this.getProperty("propertyKey");
 
-		return sPropertyKey;
-	};
+			if (!sPropertyKey) {
+				sPropertyKey = this.getFieldPath();
+			}
+
+			return sPropertyKey;
+		};
+	})();
 
 	FilterField.prototype.setProperty = function(sPropertyName, oValue, bSuppressInvalidate) {
 

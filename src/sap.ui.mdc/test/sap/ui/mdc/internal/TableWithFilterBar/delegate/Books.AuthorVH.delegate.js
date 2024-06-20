@@ -55,6 +55,7 @@ sap.ui.define([
 									delegate: {name: "delegates/odata/v4/FieldBaseDelegate", payload: {}},
 									dataType: "Edm.String",
 									conditions: "{$filters>/conditions/$search}",
+									propertyKey: "$search",
 									width: "50%",
 									maxConditions: 1,
 									placeholder: "Search"
@@ -100,6 +101,7 @@ sap.ui.define([
 									delegate: {	name: "delegates/odata/v4/FieldBaseDelegate", payload: {}},
 									dataType: "Edm.String",
 									conditions: "{$filters>/conditions/$search}",
+									propertyKey: "$search",
 									width: "50%",
 									maxConditions: 1,
 									placeholder: "Search"

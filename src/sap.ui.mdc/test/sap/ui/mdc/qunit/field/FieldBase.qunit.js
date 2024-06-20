@@ -955,6 +955,9 @@ sap.ui.define([
 		FilterOperatorUtil.getOperatorsForType.reset();
 		oField.setMaxConditions(1);
 		oField.bindProperty("conditions", {path: "cm>/conditions/$search"});
+		if (!oField.isSearchField()) {
+			sinon.stub(oField, "isSearchField").returns(true);
+		}
 		aOperators = oField.getSupportedOperators();
 		assert.ok(aOperators.length === 1, "Operators returned");
 		assert.equal(aOperators[0], OperatorName.Contains, "Contains used for SearchField");
@@ -1171,6 +1174,9 @@ sap.ui.define([
 			sinon.stub(oFieldEditSingle, "getSupportedOperators").callsFake(fnOnlyEQ); // fake Field
 			oFieldDisplay = new FieldBase("F3", { editMode: FieldEditMode.Display, conditions: "{cm>/conditions/Name}", models: {cm: oCM} });
 			oFieldSearch = new FieldBase("F4", { maxConditions: 1, conditions: "{cm>/conditions/$search}", models: {cm: oCM} });
+			if (!oFieldSearch.isSearchField()) {
+				sinon.stub(oFieldSearch, "isSearchField").returns(true);
+			}
 			oFieldEditMulti.placeAt("content");
 			oFieldEditSingle.placeAt("content");
 			oFieldDisplay.placeAt("content");
@@ -2566,6 +2572,9 @@ sap.ui.define([
 
 		oField.setMaxConditions(1);
 		oField.bindProperty("conditions", {path: "cm>/conditions/$search"});
+		if (!oField.isSearchField()) {
+			sinon.stub(oField, "isSearchField").returns(true);
+		}
 		await nextUIUpdate();
 
 		const aContent = oField.getAggregation("_content");

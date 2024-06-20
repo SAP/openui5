@@ -146,6 +146,7 @@ sap.ui.define([
 								},
 								dataType: "Edm.String",
 								conditions: "{$filters>/conditions/$search}",
+								propertyKey: "$search",
 								width: "50%",
 								maxConditions: 1,
 								placeholder: "Search"
@@ -202,6 +203,7 @@ sap.ui.define([
 								},
 								dataType: "Edm.String",
 								conditions: "{$filters>/conditions/$search}",
+								propertyKey: "$search",
 								width: "50%",
 								maxConditions: 1,
 								placeholder: "Search"

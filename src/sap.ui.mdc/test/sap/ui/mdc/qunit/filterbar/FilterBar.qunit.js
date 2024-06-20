@@ -386,6 +386,7 @@ sap.ui.define([
 
 			oFilterBar.setBasicSearchField(new FilterField({
 				conditions: "{$filters>/conditions/$search}",
+				propertyKey: "$search",
 				maxConditions: 1,
 				delegate: '{name: "delegates/odata/v4/FieldBaseDelegate", payload: {}}'
 			}));
@@ -497,7 +498,7 @@ sap.ui.define([
 
 	QUnit.test("check setBasicSearchField", function(assert) {
 
-		const oBasicSearchField = new FilterField({ conditions: "{cm>/conditions/$search}" });
+		const oBasicSearchField = new FilterField({ conditions: "{cm>/conditions/$search}", propertyKey: "$search" });
 		oFilterBar.setBasicSearchField(oBasicSearchField);
 		assert.equal(oFilterBar.getFilterItems().length, 0);
 		assert.equal(oFilterBar.getAggregation("layout").getFilterFields().length, 1);
