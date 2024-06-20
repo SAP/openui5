@@ -692,7 +692,7 @@ sap.ui.define([
 	 * @param {string} [sPath]
 	 *   Relative path to drill-down into
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
-	 *   A lock for the group to associate a request for late properties with
+	 *   An unlocked lock for the group to associate a request for late properties with
 	 * @param {boolean} [bCreateOnDemand]
 	 *   Whether to create missing objects on demand, in order to avoid drill-down errors
 	 * @returns {sap.ui.base.SyncPromise}
@@ -886,7 +886,7 @@ sap.ui.define([
 	 * resolves so that the drill-down can proceed.
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
-	 *   A lock for the group ID (on which unlock has already been called)
+	 *   An unlocked lock for the group ID
 	 * @param {object} oResource
 	 *   The resource in the cache on which the missing property is requested. Usually this is the
 	 *   last entity in the property path for which the key predicate is known. This keeps $expand
@@ -1789,7 +1789,7 @@ sap.ui.define([
 	 * Requests $count after deletion of a kept-alive element that was not in the collection.
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
-	 *   A lock for the group ID
+	 *   An unlocked lock for the group ID
 	 * @returns {Promise<number>}
 	 *   A promise that resolves with the count regardless whether a request was needed
 	 *
@@ -2890,7 +2890,7 @@ sap.ui.define([
 	 * Handles a GET response by updating $count and friends.
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
-	 *   A lock for the group ID, used only in case $count needs to be requested
+	 *   An unlocked lock for the group ID, used only in case $count needs to be requested
 	 * @param {number} iTransientElements
 	 *   The number of transient elements within the given group before the GET request
 	 * @param {number} iStart - The start index of the read range (gap) in client coordinates
@@ -3410,7 +3410,7 @@ sap.ui.define([
 	 * @param {number} iEnd
 	 *   The index after the last element
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
-	 *   A lock for the group ID
+	 *   An unlocked lock for the group ID
 	 * @param {number} iTransientElements
 	 *   The number of transient elements within the given group
 	 * @param {function} [fnDataRequested]
