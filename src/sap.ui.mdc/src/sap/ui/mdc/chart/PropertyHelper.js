@@ -69,6 +69,9 @@ sap.ui.define([
 				},
 				unitPath : {
 					type: "string"
+				},
+				timeUnitType : {
+					type: "string"
 				}
 			});
 		}

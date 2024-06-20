@@ -485,6 +485,8 @@ sap.ui.define([
 		 * 	The text formatter object which can be used to format the textProperty
 		 * @property {object} [unitPath]
 		 *  The name of the unit property which will be used to display and format measure values with a unit value on a selectionDetails popover
+		 * @property {object} [timeUnitType]
+		 *  The timeUnit type for a TimeDimension
 		 * @public
 		 * @experimental As of version 1.80
 		 */
