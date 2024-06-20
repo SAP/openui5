@@ -671,7 +671,7 @@ sap.ui.define([
 	 * Expands the given group node.
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
-	 *   A lock for the group to associate the requests with
+	 *   An unlocked lock for the group to associate the requests with
 	 * @param {object|string} vGroupNodeOrPath
 	 *   The group node or its path relative to the cache; a group node instance (instead of a path)
 	 *   MUST only be given in case of "expanding" continued
@@ -836,7 +836,7 @@ sap.ui.define([
 	 * @param {number} iIndex
 	 *   The index of the child node
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
-	 *   A lock for the group to associate the requests with
+	 *   An unlocked lock for the group to associate the requests with
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise to be resolved with the requested index of the parent.
 	 *
@@ -916,8 +916,7 @@ sap.ui.define([
 	 * Returns a promise to be resolved with an OData object for the requested data.
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
-	 *   A lock for the group to associate the request with; unused in CollectionCache since no
-	 *   request will be created
+	 *   An unlocked lock for the group to associate the request with
 	 * @param {string} [sPath]
 	 *   Relative path to drill-down into
 	 * @param {function} [fnDataRequested]
@@ -1675,8 +1674,8 @@ sap.ui.define([
 	 * search into account.
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
-	 *   A lock for the group to associate the requests with;
-	 *   {@link sap.ui.model.odata.v4.lib._GroupLock#getUnlockedCopy} still needs to be called!
+	 *   An original lock for the group ID to be used for the GET request, to be cloned via
+	 *   {@link sap.ui.model.odata.v4.lib._GroupLock#getUnlockedCopy}
 	 * @returns {Promise<void>|undefined}
 	 *   A promise which is resolved without a defined result when the read is finished, or
 	 *   rejected in case of an error; <code>undefined</code> in case no count needs to be read
@@ -1945,7 +1944,8 @@ sap.ui.define([
 	 * moved to their out-of-place position in the cache.
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
-	 *   A lock for the group to associate the requests with
+	 *   An original lock for the group ID to be used for the GET request, to be cloned via
+	 *   {@link sap.ui.model.odata.v4.lib._GroupLock#getUnlockedCopy}
 	 * @returns {Promise[]}
 	 *   The request promises
 	 *
@@ -2079,7 +2079,7 @@ sap.ui.define([
 	 * @param {number} iIndex - The index of a node
 	 * @param {number} iOffset - An offset, either -1 or +1
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
-	 *   A lock for the group to associate the requests with
+	 *   An unlocked lock for the group to associate the requests with
 	 * @returns {Promise<number>}
 	 *   The sibling node's index, or -1 if no such sibling exists
 	 *
