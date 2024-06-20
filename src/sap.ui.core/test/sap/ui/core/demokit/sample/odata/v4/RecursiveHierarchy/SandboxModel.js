@@ -279,7 +279,6 @@ sap.ui.define([
 			const aSpliced = aAllNodes.splice(aAllNodes.indexOf(oNode), oNode.DescendantCount + 1);
 			aAllNodes.splice(aAllNodes.indexOf(oNextSibling), 0, ...aSpliced);
 		}
-
 		// no response required
 	}
 
@@ -314,6 +313,7 @@ sap.ui.define([
 			}
 			adjustDescendantCount(oNode.MANAGER_ID, -(oNode.DescendantCount + 1));
 		}
+		// no response required
 	}
 
 	/**
@@ -638,7 +638,12 @@ sap.ui.define([
 			aAllNodes.push(oNewChild);
 		}
 
-		oResponse.message = JSON.stringify(SandboxModel.update([oNewChild])[0]);
+		const oCopy = SandboxModel.update([oNewChild])[0];
+		// RAP would not respond w/ DescendantCount,DistanceFromRoot,DrillState!
+		delete oCopy.DescendantCount;
+		delete oCopy.DistanceFromRoot;
+		delete oCopy.DrillState;
+		oResponse.message = JSON.stringify(oCopy);
 	}
 
 	/**
@@ -671,7 +676,9 @@ sap.ui.define([
 		function select(oNode) {
 			const oResult = {};
 			for (const sSelect of aSelect) {
-				oResult[sSelect] = oNode[sSelect];
+				oResult[sSelect] = sSelect === "DescendantCount" || sSelect === "DistanceFromRoot"
+					? "" + oNode[sSelect] // Edm.Int64
+					: oNode[sSelect];
 			}
 			return oResult;
 		}
