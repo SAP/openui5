@@ -138,7 +138,21 @@ sap.ui.define([
 				var oVariantManagementTargetElement = sVariantManagementTargetElement instanceof ManagedObject
 					? sVariantManagementTargetElement : Element.getElementById(sVariantManagementTargetElement);
 				var oVariantManagementTargetOverlay = OverlayRegistry.getOverlay(oVariantManagementTargetElement);
-				this._propagateVariantManagement(oVariantManagementTargetOverlay, sVariantManagementReference);
+
+				// the control or overlay might not be available on rta start (e.g. dialog or view hidden by navigation)
+				if (!oVariantManagementTargetOverlay) {
+					const fnEventHandler = (oEvent, sVMTargetElementId) => {
+						const oCreatedOverlay = oEvent.getParameter("elementOverlay");
+						if (oCreatedOverlay.getElement().getId() === sVMTargetElementId) {
+							this._propagateVariantManagement(oCreatedOverlay, sVariantManagementReference);
+							this.getDesignTime().detachEvent("elementOverlayCreated", fnEventHandler);
+						}
+					};
+
+					this.getDesignTime().attachEvent("elementOverlayCreated", sVariantManagementTargetElement, fnEventHandler, this);
+				} else {
+					this._propagateVariantManagement(oVariantManagementTargetOverlay, sVariantManagementReference);
+				}
 			}.bind(this));
 			oOverlay.attachEvent("editableChange", RenameHandler._manageClickEvent, this);
 			destroyManageDialog(oOverlay);
