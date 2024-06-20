@@ -123,7 +123,7 @@ sap.ui.define([
 							}
 							Promise.all([oNewCondition]).then(function(aResult) {
 								var oNewCondition = aResult[0];
-								var iIndex = aFilters.findIndex(oNewCondition, (oFiltersCondition) => this.compareConditions(oNewCondition, oFiltersCondition)); // check if already exist
+								var iIndex = aFilters.findIndex((oFiltersCondition) => this.compareConditions(oNewCondition, oFiltersCondition)); // check if already exist
 								if (iIndex < 0) {
 									oState.filter[sTarget] = oState.filter && oState.filter[sTarget] || [];
 									oState.filter[sTarget].push(oNewCondition);
