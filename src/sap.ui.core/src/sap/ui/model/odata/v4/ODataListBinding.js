@@ -3463,16 +3463,21 @@ sap.ui.define([
 		const sNonCanonicalChildPath = oSiblingContext === undefined
 			? undefined
 			: oChildContext.getPath().slice(1);
+		const bUpdateSiblingIndex = oSiblingContext?.isEffectivelyKeptAlive();
 		const {promise : oPromise, refresh : bRefresh} = this.oCache.move(oGroupLock, sChildPath,
-			sParentPath, sSiblingPath, sNonCanonicalChildPath);
+			sParentPath, sSiblingPath, sNonCanonicalChildPath, bUpdateSiblingIndex);
 
 		if (bRefresh) {
 			return SyncPromise.all([
 				oPromise,
 				this.requestSideEffects(sUpdateGroupId, [""])
-			]).then(([fnGetIndex]) => {
+			]).then(([fnGetIndices]) => {
 				// Note: wait for side-effects refresh before getting index!
-				oChildContext.iIndex = fnGetIndex();
+				const [iChildIndex, iSiblingIndex] = fnGetIndices();
+				oChildContext.iIndex = iChildIndex;
+				if (bUpdateSiblingIndex) {
+					oSiblingContext.iIndex = iSiblingIndex;
+				}
 			});
 		}
 

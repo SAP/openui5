@@ -1364,12 +1364,15 @@ sap.ui.define([
 	 * @param {string} [sNonCanonicalChildPath]
 	 *   The (child) node's non-canonical path (relative to the service); only used when
 	 *   <code>sSiblingPath</code> is given
+	 * @param {boolean} [bRequestSiblingRank]
+	 *   Whether to request the next sibling's rank and return its new index
 	 * @returns {{promise : sap.ui.base.SyncPromise<function():number|number[]>, refresh : boolean}}
 	 *   An object with two properties:
 	 *   - <code>promise</code>: A promise which is resolved when the move is finished, or rejected
 	 *     in case of an error. In case a refresh is needed, the promise is resolved with a function
-	 *     that can be called w/o args once the refresh is finished; it then returns the new index
-	 *     of the moved node (or <code>undefined</code>). Else it resolves with with an array of:
+	 *     that can be called w/o args once the refresh is finished - it then returns an array with
+	 *     the new indices of the moved node (or <code>undefined</code>) and of the next sibling (if
+	 *     requested). Else it is resolved with an array of:
 	 *     - the number of child nodes added (normally one, but maybe more in case the parent node
 	 *       was collapsed before),
 	 *     - the new index of the moved node,
@@ -1380,7 +1383,7 @@ sap.ui.define([
 	 * @public
 	 */
 	_AggregationCache.prototype.move = function (oGroupLock, sChildPath, sParentPath, sSiblingPath,
-			sNonCanonicalChildPath) {
+			sNonCanonicalChildPath, bRequestSiblingRank) {
 		let bRefreshNeeded = !this.bUnifiedCache;
 
 		const sChildPredicate = sChildPath.slice(sChildPath.indexOf("("));
@@ -1410,13 +1413,15 @@ sap.ui.define([
 			}
 		}
 
+		let oSiblingNode; // side effect of calling invokeNextSibling()
 		const invokeNextSibling = () => {
 			if (sSiblingPath !== undefined) {
 				bRefreshNeeded = true;
 				const sActionPath = sNonCanonicalChildPath + "/"
 					+ this.oAggregation.$Actions.ChangeNextSiblingAction;
 				const sSiblingPredicate = sSiblingPath?.slice(sSiblingPath.indexOf("("));
-				let oSiblingNode = this.aElements.$byPredicate[sSiblingPredicate];
+				oSiblingNode = this.aElements.$byPredicate[sSiblingPredicate];
+				let oNextSibling = null;
 				if (oSiblingNode) {
 					// remove OOP for all descendants (incl. itself) of a next sibling
 					this.oTreeState.deleteOutOfPlace(sSiblingPredicate);
@@ -1424,18 +1429,16 @@ sap.ui.define([
 						_Helper.getMetaPath("/" + sActionPath + "/NextSibling/")
 					).getResult();
 					const aKeys = Object.keys(oNextSiblingType).filter((sKey) => sKey[0] !== "$");
-					oSiblingNode = aKeys.reduce((oKeys, sKey) => {
+					oNextSibling = aKeys.reduce((oKeys, sKey) => {
 						oKeys[sKey] = oSiblingNode[sKey];
 						return oKeys;
 					}, {});
-				} else {
-					oSiblingNode = null;
 				}
 
 				return this.oRequestor.request("POST", sActionPath, oGroupLock.getUnlockedCopy(), {
 						"If-Match" : oChildNode,
 						Prefer : "return=minimal"
-					}, {NextSibling : oSiblingNode});
+					}, {NextSibling : oNextSibling});
 			}
 		};
 
@@ -1446,13 +1449,17 @@ sap.ui.define([
 				}, {[this.oAggregation.$ParentNavigationProperty + "@odata.bind"] : sParentPath},
 				/*fnSubmit*/null, function fnCancel() { /*nothing to do*/ }),
 			invokeNextSibling(),
-			this.requestRank(oChildNode, oGroupLock, bRefreshNeeded)
+			this.requestRank(oChildNode, oGroupLock, bRefreshNeeded),
+			bRequestSiblingRank && this.requestRank(oSiblingNode, oGroupLock, true)
 		]);
 
 		if (bRefreshNeeded) {
-			oPromise = oPromise.then(([,, iRank]) => {
+			oPromise = oPromise.then(([,, iRank, iSiblingRank]) => {
 				return () => { // Note: caller MUST wait for side-effects refresh first
-					return iRank === undefined ? undefined : this.findIndex(iRank);
+					return [
+						iRank === undefined ? undefined : this.findIndex(iRank),
+						bRequestSiblingRank && this.findIndex(iSiblingRank)
+					];
 				};
 			});
 		} else {

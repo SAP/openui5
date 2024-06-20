@@ -4454,7 +4454,7 @@ sap.ui.define([
 			.returns("A");
 		self.mock(oCache).expects("requestRank").withExactArgs("~oChildNode~", "~oGroupLock~", true)
 			.returns("C");
-		self.mock(SyncPromise).expects("all").withExactArgs(["A", undefined, "C"])
+		self.mock(SyncPromise).expects("all").withExactArgs(["A", undefined, "C", undefined])
 			.returns(SyncPromise.resolve([,, vRank]));
 
 		const {promise : oSyncPromise, refresh : bRefresh}
@@ -4469,7 +4469,10 @@ sap.ui.define([
 			.withExactArgs("~iRank~").returns("~findIndex~");
 
 		// code under test
-		assert.strictEqual(fnGetRank(), vRank ? "~findIndex~" : undefined);
+		assert.deepEqual(fnGetRank(), [
+			vRank ? "~findIndex~" : undefined,
+			undefined
+		]);
 	}
 
 	//*********************************************************************************************
@@ -4580,9 +4583,17 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-[undefined, "~iRank~"].forEach((vRank, i) => {
+[undefined, "~iRank~"].forEach((vRank) => {
 	[null, "Foo('43')"].forEach((sSiblingPath) => {
-	QUnit.test(`move: refresh needed (sibling=${sSiblingPath}) #${i}`, function (assert) {
+		[false, true].forEach((bRequestSiblingRank) => {
+			const sTitle = `move: refresh needed (rank=${vRank}, sibling=${sSiblingPath}`
+				+ `, request sibling rank=${bRequestSiblingRank})`;
+
+			if (bRequestSiblingRank && !sSiblingPath) {
+				return;
+			}
+
+	QUnit.test(sTitle, function (assert) {
 		const oCache = _AggregationCache.create(this.oRequestor, "n/a", "", {}, {
 				$Actions : {ChangeNextSiblingAction : "changeNextSibling"},
 				$ParentNavigationProperty : "myParent",
@@ -4592,7 +4603,8 @@ sap.ui.define([
 			});
 		oCache.aElements.$byPredicate["('23')"] = "~oChildNode~";
 		oCache.aElements.$byPredicate["('42')"] = {"@$ui5.node.isExpanded" : true}; // parent
-		oCache.aElements.$byPredicate["('43')"] = {foo : "A", bar : "B", baz : "C"}; // sibling
+		const oSiblingNode = {foo : "A", bar : "B", baz : "C"};
+		oCache.aElements.$byPredicate["('43')"] = oSiblingNode;
 		const oTreeStateMock = this.mock(oCache.oTreeState);
 		oTreeStateMock.expects("isOutOfPlace").withExactArgs("('23')").returns(false);
 		oTreeStateMock.expects("isOutOfPlace").withExactArgs("('42')").returns(false);
@@ -4620,26 +4632,38 @@ sap.ui.define([
 					Prefer : "return=minimal"
 				}, {NextSibling : sSiblingPath ? {foo : "A", baz : "C"} : null})
 			.returns("B");
-		this.mock(oCache).expects("requestRank")
+		const oCacheMock = this.mock(oCache);
+		oCacheMock.expects("requestRank")
 			.withExactArgs("~oChildNode~", sinon.match.same(oGroupLock), true)
 			.returns("C");
-		this.mock(SyncPromise).expects("all").withExactArgs(["A", "B", "C"])
-			.returns(SyncPromise.resolve([,, vRank]));
+		oCacheMock.expects("requestRank").exactly(bRequestSiblingRank ? 1 : 0)
+			.withExactArgs(sinon.match.same(oSiblingNode), sinon.match.same(oGroupLock), true)
+			.returns("D");
+		this.mock(SyncPromise).expects("all")
+			.withExactArgs(["A", "B", "C", bRequestSiblingRank && "D"])
+			.returns(SyncPromise.resolve([,, vRank, "~iSiblingRank~"]));
 
 		const {promise : oSyncPromise, refresh : bRefresh}
 			// code under test
-			= oCache.move(oGroupLock, "Foo('23')", "Foo('42')", sSiblingPath, "non/canonical");
+			= oCache.move(oGroupLock, "Foo('23')", "Foo('42')", sSiblingPath, "non/canonical",
+				bRequestSiblingRank);
 
 		const fnGetRank = oSyncPromise.getResult();
 		assert.strictEqual(typeof fnGetRank, "function");
 		assert.strictEqual(bRefresh, true, "refresh needed");
 
-		this.mock(oCache).expects("findIndex").exactly(vRank ? 1 : 0)
-			.withExactArgs("~iRank~").returns("~findIndex~");
+		oCacheMock.expects("findIndex").exactly(vRank ? 1 : 0)
+			.withExactArgs("~iRank~").returns("~findIndex~child~");
+		oCacheMock.expects("findIndex").exactly(bRequestSiblingRank ? 1 : 0)
+			.withExactArgs("~iSiblingRank~").returns("~findIndex~sibling~");
 
 		// code under test
-		assert.strictEqual(fnGetRank(), vRank ? "~findIndex~" : undefined);
+		assert.deepEqual(fnGetRank(), [
+			vRank ? "~findIndex~child~" : undefined,
+			bRequestSiblingRank && "~findIndex~sibling~"
+		]);
 	});
+		});
 	});
 });
 

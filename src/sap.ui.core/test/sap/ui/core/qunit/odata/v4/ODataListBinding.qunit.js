@@ -11202,7 +11202,7 @@ sap.ui.define([
 		};
 		oBinding.oCache = oCache;
 		this.mock(oCache).expects("move").withExactArgs("~oGroupLock~", "~child~",
-				bMakeRoot ? null : "~parent~", undefined, undefined)
+				bMakeRoot ? null : "~parent~", undefined, undefined, undefined)
 			.returns({promise : new SyncPromise((resolve) => {
 				setTimeout(() => {
 					if (oParentContext) {
@@ -11260,7 +11260,13 @@ sap.ui.define([
 	//*********************************************************************************************
 [false, true].forEach((bMakeRoot) => {
 	[undefined, null, {}].forEach((oSiblingContext) => {
-		const sTitle = `move: refresh; make root=${bMakeRoot}, with sibling=${oSiblingContext}`;
+		[false, true].forEach((bUpdateSiblingIndex) => {
+			const sTitle = `move: refresh; make root=${bMakeRoot}, with sibling=${oSiblingContext}`
+				+ `, update sibling's index=${bUpdateSiblingIndex}`;
+
+			if (bUpdateSiblingIndex && !oSiblingContext) {
+				return;
+			}
 
 	QUnit.test(sTitle, async function (assert) {
 		const oChildContext = {
@@ -11281,9 +11287,13 @@ sap.ui.define([
 		let sSiblingPath = oSiblingContext;
 		if (oSiblingContext) {
 			sSiblingPath = "~sibling~";
+			oSiblingContext.iIndex = "~old~";
 			oSiblingContext.getCanonicalPath = mustBeMocked;
+			oSiblingContext.isEffectivelyKeptAlive = mustBeMocked;
 			this.mock(oSiblingContext).expects("getCanonicalPath").withExactArgs()
 				.returns("/~sibling~");
+			this.mock(oSiblingContext).expects("isEffectivelyKeptAlive").withExactArgs()
+				.returns(bUpdateSiblingIndex);
 		}
 		const oBinding = this.bindList("/EMPLOYEES");
 		// Note: autoExpandSelect at model would be required for hierarchyQualifier, but that leads
@@ -11299,15 +11309,16 @@ sap.ui.define([
 			move : mustBeMocked
 		};
 		oBinding.oCache = oCache;
-		const fnGetIndex = sinon.stub().returns("~index~");
+		const fnGetIndices = sinon.stub().returns(["~childIndex~", "~siblingIndex~"]);
 		this.mock(oCache).expects("move")
 			.withExactArgs("~oGroupLock~", "~child~", bMakeRoot ? null : "~parent~", sSiblingPath,
-				bHasSibling ? "~childNonCanonical~" : undefined)
+				bHasSibling ? "~childNonCanonical~" : undefined,
+				oSiblingContext ? bUpdateSiblingIndex : undefined)
 			.returns({promise : "A", refresh : true});
 		this.mock(oBinding).expects("requestSideEffects").withExactArgs("~group~", [""])
 			.returns("B");
 		this.mock(SyncPromise).expects("all").withExactArgs(["A", "B"])
-			.returns(SyncPromise.resolve(Promise.resolve([fnGetIndex])));
+			.returns(SyncPromise.resolve(Promise.resolve([fnGetIndices])));
 		this.mock(oBinding).expects("insertGap").never();
 		this.mock(oBinding).expects("_fireChange").never();
 
@@ -11316,12 +11327,17 @@ sap.ui.define([
 			oSiblingContext);
 
 		assert.strictEqual(oSyncPromise.isPending(), true);
-		assert.notOk(fnGetIndex.called);
+		assert.notOk(fnGetIndices.called);
 
 		await oSyncPromise;
 
-		assert.strictEqual(oChildContext.iIndex, "~index~");
+		assert.strictEqual(oChildContext.iIndex, "~childIndex~");
+		if (oSiblingContext) {
+			assert.strictEqual(oSiblingContext.iIndex,
+				bUpdateSiblingIndex ? "~siblingIndex~" : "~old~");
+		}
 	});
+		});
 	});
 });
 
@@ -11349,7 +11365,7 @@ sap.ui.define([
 		};
 		oBinding.oCache = oCache;
 		this.mock(oCache).expects("move")
-			.withExactArgs("~oGroupLock~", "~child~", "~parent~", undefined, undefined)
+			.withExactArgs("~oGroupLock~", "~child~", "~parent~", undefined, undefined, undefined)
 			.returns({promise : SyncPromise.reject("~error~"), refresh : false});
 		this.mock(oBinding).expects("expand").never();
 
@@ -11383,7 +11399,7 @@ sap.ui.define([
 		};
 		oBinding.oCache = oCache;
 		this.mock(oCache).expects("move")
-			.withExactArgs("~oGroupLock~", "~child~", null, undefined, undefined)
+			.withExactArgs("~oGroupLock~", "~child~", null, undefined, undefined, undefined)
 			.returns({promise : SyncPromise.resolve([1, 43, "~iCollapseCount~"]), refresh : false});
 		this.mock(oBinding).expects("requestSideEffects").never();
 		this.mock(oBinding).expects("insertGap").never();
