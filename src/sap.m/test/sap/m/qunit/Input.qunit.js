@@ -4699,14 +4699,14 @@ sap.ui.define([
 		assert.strictEqual(oInputWithoutSuggestions._$input.attr("aria-haspopup"), undefined, "aria-haspopup should not be  presented.");
 		assert.strictEqual(oDisabledInputWithSuggestions._$input.attr("aria-haspopup"), undefined, "aria-haspopup should not be present on a disabled input.");
 		assert.strictEqual(oReadonlyInputWithSuggestions._$input.attr("aria-haspopup"), undefined, "aria-haspopup should not be present on a readonly input.");
-		assert.strictEqual(oInputWithSuggestions._$input.attr("aria-haspopup"), "listbox", "aria-haspopup should have value 'listbox'.");
+		assert.strictEqual(oInputWithSuggestions._$input.attr("aria-haspopup"), "dialog", "aria-haspopup should have value 'dialog'.");
 
 		//Act
 		oInputWithoutSuggestions.setShowSuggestion(true);
 		await nextUIUpdate();
 
 		//Assert
-		assert.strictEqual(oInputWithoutSuggestions._$input.attr("aria-haspopup"), "listbox", "aria-haspopup should have value 'listbox'.");
+		assert.strictEqual(oInputWithoutSuggestions._$input.attr("aria-haspopup"), "dialog", "aria-haspopup should have value 'dialog'.");
 
 		//Clean up
 		oInputWithoutSuggestions.destroy();

@@ -3035,7 +3035,7 @@ sap.ui.define([
 
 		//Assert
 		assert.strictEqual(oMultiInputWithoutSuggestions._$input.attr("aria-haspopup"), undefined, "aria-haspopup should not be  presented.");
-		assert.strictEqual(oMultiInputWithSuggestions._$input.attr("aria-haspopup"), "listbox", "aria-haspopup should have value 'listbox'.");
+		assert.strictEqual(oMultiInputWithSuggestions._$input.attr("aria-haspopup"), "dialog", "aria-haspopup should have value 'dialog'.");
 
 		//Act
 		oMultiInputWithSuggestions.setShowSuggestion(false);

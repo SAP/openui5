@@ -179,7 +179,7 @@ sap.ui.define(["sap/base/i18n/Localization", "sap/ui/core/ControlBehavior", 'sap
 		var mAccessibilityState = InputBaseRenderer.getAccessibilityState.apply(this, arguments);
 
 		if (bShowSuggestions && oControl.getEditable() && oControl.getEnabled()) {
-			mAccessibilityState["haspopup"] = "listbox";
+			mAccessibilityState["haspopup"] = "dialog";
 		}
 
 
