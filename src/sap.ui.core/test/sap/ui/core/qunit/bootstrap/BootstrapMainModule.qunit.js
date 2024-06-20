@@ -5,9 +5,6 @@ sap.ui.define([
 	Core
 ) {
 	"use strict";
-	/**
-	 * @deprecated
-	 */
 	Core.boot();
 
 	QUnit.test("Check Main Module Functionality", function(assert) {
