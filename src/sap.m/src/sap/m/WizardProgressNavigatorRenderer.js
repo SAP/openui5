@@ -38,7 +38,6 @@ sap.ui.define([
 		ARIA_CURRENT: "aria-current",
 		ARIA_LABEL: "aria-label",
 		ARIA_HASPOPUP: "aria-haspopup",
-		ARIA_DISABLED: "aria-disabled",
 		ARIA_DESCRIBEDBY: "aria-describedby"
 	};
 
@@ -116,8 +115,6 @@ sap.ui.define([
 	};
 
 	WizardProgressNavigatorRenderer.startStep = function (oRm, oControl, iStepNumber, sStepTitle, sIconUri, sOptionalLabel) {
-		var aSteps = oControl._aCachedSteps;
-		var	oCurrentStep = aSteps[iStepNumber - 1];
 		var bCurrentStepActive = oControl._isActiveStep(iStepNumber);
 		var sStepActive = bCurrentStepActive ? "ACTIVE" : "INACTIVE";
 		var sValueText = oResourceBundle.getText("WIZARD_STEP_" + sStepActive + "_LABEL", [iStepNumber, sStepTitle, sOptionalLabel]);
@@ -132,10 +129,6 @@ sap.ui.define([
 			.attr(ATTRIBUTES.STEP, iStepNumber)
 			.attr("tabindex", "-1")
 			.accessibilityState(mACCOptions);
-
-		if (!oCurrentStep || parseInt(oCurrentStep.style.zIndex)) {
-			oRm.attr("aria-disabled", "true");
-		}
 
 		oRm.attr("aria-posinset", iStepNumber);
 
