@@ -1,0 +1,285 @@
+{
+	"sap.app": {
+		"id": "sap.cardsdemo.ui.integration.samples.cards.sac",
+		"type": "card",
+		"title": "SAC Integration Card",
+		"subTitle": "Add a SAC Story to pages",
+		"applicationVersion": {
+			"version": "1.0.4"
+		},
+		"shortTitle": "SAC Integration Card",
+		"info": "SAC Integration Card",
+		"description": "SAC Integration Card",
+		"tags": {
+			"keywords": [
+				"Analytics Cloud",
+				"SAC",
+				"Story"
+			]
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://business-objects-experience"
+		}
+	},
+	"sap.card": {
+		"type": "AnalyticsCloud",
+		"configuration": {
+			"destinations": {
+				"SAC": {
+					"name": "SAC",
+					"defaultUrl": "https://master-fpa135.master.canary.eu10.projectorca.cloud"
+				}
+			}
+		},
+		"header": {
+			"title": "{widgetInfo>/title}",
+			"subTitle": "{widgetInfo>/subtitle}"
+		},
+		"content": {
+			"minHeight": "25rem",
+			"sacTenantDestination": "{{destinations.SAC}}",
+			"interpretation": [
+				{
+					"id": "4d6761bc-7525-4528-a198-c6c66d9007b6",
+					"body": [
+						{
+							"id": "sac_widget1",
+							"details": {
+								"uqm": {
+									"queryStructure": null,
+									"Metadata": {
+										"Datasets": [
+											{
+												"RefId": "7BE8C14253C12F1D866141482B781B3B44532D97B8D0DAF03F9DAC961A84F32E",
+												"Datasource": {
+													"Description": "",
+													"ObjectName": "/t.W.CAVOXH8CC49CMHX9WNUKBW9XXC/CAVOXH8CC49CMHX9WNUKBW9XXC_qs",
+													"SchemaName": "TENANT_W",
+													"Type": "Planning",
+													"EPMObjectMetadata": {
+														"data": {
+															"id": "t.W.CAVOXH8CC49CMHX9WNUKBW9XXC:CAVOXH8CC49CMHX9WNUKBW9XXC",
+															"mode": "standalone",
+															"epmQuerySourceName": "planning:[TENANT_W][][/t.W.CAVOXH8CC49CMHX9WNUKBW9XXC/CAVOXH8CC49CMHX9WNUKBW9XXC_qs]",
+															"schemaName": "TENANT_W",
+															"packageName": "",
+															"type": "Planning",
+															"description": "",
+															"shortDescription": "BestRunCorp_Retail",
+															"name": "CAVOXH8CC49CMHX9WNUKBW9XXC",
+															"isRemote": false
+														},
+														"metadata": {
+															"tmModified": null,
+															"isPrivate": false
+														}
+													},
+													"GeneratedTime": 1717127201649
+												},
+												"Caption": "",
+												"Dimensions": [
+													{
+														"dimensionType": "AccountDimension",
+														"RefId": "7BE8C14253C12F1D866141482B781B3B44532D97B8D0DAF03F9DAC961A84F32E-ENTITY_TYPE-ACCOUNT",
+														"SemanticType": "Measure",
+														"Name": "Account",
+														"Description": "Account",
+														"Type": "12",
+														"FieldDefaults": {
+															"DisplayKeyAttribute": "Account.ID",
+															"HierarchyDisplayKeyAttribute": "[Account].name",
+															"HierarchyKeyAttribute": "[Account].key",
+															"HierarchyPathAttribute": "[Account].path",
+															"HierarchyTextAttribute": "[Account].description",
+															"KeyAttribute": "Account.ID",
+															"TextAttribute": "Account.Description"
+														},
+														"Hierarchy": "parentId",
+														"Members": [
+															{
+																"Account.Description": "Gross Margin",
+																"[Account].description": "Gross Margin",
+																"Account.ID": "Gross_Margin",
+																"Account.MDS_AGGREGATION": "",
+																"HierarchyInfo": {
+																	"NodeType": "Leaf",
+																	"NodeLevel": 1,
+																	"NodeDepth": 0
+																},
+																"columnId": "[Account].[parentId].&[Gross_Margin]",
+																"[Account].path": "{\"Name\":[\"Gross_Margin\"],\"Description\":[\"Gross Margin\"],\"UniqueName\":[\"[Account].[parentId].&[Gross_Margin]\"]}",
+																"Account.accType": "",
+																"RefId": "7BE8C14253C12F1D866141482B781B3B44532D97B8D0DAF03F9DAC961A84F32E-MEASURE-[ACCOUNT]_[PARENTID]_[GROSS_MARGIN]",
+																"[Account].key": "[Account].[parentId].&[Gross_Margin]",
+																"[Account].name": "Gross_Margin"
+															}
+														]
+													},
+													{
+														"dimensionType": "Dimension",
+														"RefId": "7BE8C14253C12F1D866141482B781B3B44532D97B8D0DAF03F9DAC961A84F32E-ENTITY_TYPE-CITY",
+														"SemanticType": "Dimension",
+														"Name": "City",
+														"Description": "City",
+														"Type": "3",
+														"FieldDefaults": {
+															"DisplayKeyAttribute": "City.ID",
+															"HierarchyDisplayKeyAttribute": "[City].name",
+															"HierarchyKeyAttribute": "[City].key",
+															"HierarchyPathAttribute": "[City].path",
+															"HierarchyTextAttribute": "[City].description",
+															"KeyAttribute": "City.ID",
+															"TextAttribute": "City.Description"
+														},
+														"Hierarchy": "",
+														"Members": []
+													}
+												],
+												"Measures": [],
+												"SecondaryMeasures": [],
+												"Currencies": []
+											}
+										]
+									},
+									"Interpretations": [
+										{
+											"Data": {
+												"Measures": [
+													{
+														"columnId": "[Account].[parentId].&[Gross_Margin]",
+														"EntityRef": "7BE8C14253C12F1D866141482B781B3B44532D97B8D0DAF03F9DAC961A84F32E-MEASURE-[ACCOUNT]_[PARENTID]_[GROSS_MARGIN]"
+													}
+												],
+												"SecondaryMeasures": [],
+												"Dimensions": [
+													{
+														"columnId": "City",
+														"EntityRef": "7BE8C14253C12F1D866141482B781B3B44532D97B8D0DAF03F9DAC961A84F32E-ENTITY_TYPE-CITY"
+													}
+												],
+												"CrossCalculations": [],
+												"Calculations": [],
+												"Variances": [
+													{
+														"Base": {
+															"Measure": {
+																"columnId": "[Account].[parentId].&[Gross_Margin]",
+																"EntityRef": "7BE8C14253C12F1D866141482B781B3B44532D97B8D0DAF03F9DAC961A84F32E-MEASURE-[ACCOUNT]_[PARENTID]_[GROSS_MARGIN]"
+															}
+														},
+														"Reference": {
+															"Measure": {
+																"columnId": "[Account].[parentId].&[Gross_Margin]",
+																"EntityRef": "7BE8C14253C12F1D866141482B781B3B44532D97B8D0DAF03F9DAC961A84F32E-MEASURE-[ACCOUNT]_[PARENTID]_[GROSS_MARGIN]"
+															}
+														}
+													}
+												],
+												"Filters": [],
+												"CandidateFilterGroups": [],
+												"Drills": []
+											},
+											"Type": "Query"
+										}
+									]
+								},
+								"suggested_widgets": [
+									"sac_chart",
+									"sac_table"
+								],
+								"category": "SacWidgetAction",
+								"queries": [
+									{
+										"id": "q0",
+										"fields": [
+											{
+												"column": "[ACCOUNT]_[PARENTID]_[GROSS_MARGIN]",
+												"alias": "Gross margin",
+												"aggregation": "DEFAULT",
+												"dataset": "7BE8C14253C12F1D866141482B781B3B44532D97B8D0DAF03F9DAC961A84F32E",
+												"internalDataType": "NUMERIC",
+												"referred": [],
+												"expression": false
+											},
+											{
+												"column": "CITY",
+												"alias": "City",
+												"aggregation": null,
+												"dataset": "7BE8C14253C12F1D866141482B781B3B44532D97B8D0DAF03F9DAC961A84F32E",
+												"internalDataType": "STRING",
+												"referred": [],
+												"expression": false
+											}
+										],
+										"datasets": [
+											{
+												"dataset": "7BE8C14253C12F1D866141482B781B3B44532D97B8D0DAF03F9DAC961A84F32E"
+											}
+										],
+										"where": [],
+										"orderBy": [],
+										"page": 0,
+										"limit": 50,
+										"offset": 0,
+										"joinedSmartQueries": null,
+										"pivot": null,
+										"pivotableFields": null,
+										"leftJoin": null,
+										"rightJoin": null,
+										"unmatched": null,
+										"drill": null
+									},
+									{
+										"id": "q1",
+										"fields": [
+											{
+												"column": "CITY",
+												"alias": "City",
+												"aggregation": null,
+												"dataset": "7BE8C14253C12F1D866141482B781B3B44532D97B8D0DAF03F9DAC961A84F32E",
+												"internalDataType": "STRING",
+												"referred": [],
+												"expression": false
+											},
+											{
+												"column": "[ACCOUNT]_[PARENTID]_[GROSS_MARGIN]",
+												"alias": "Gross margin",
+												"aggregation": "DEFAULT",
+												"dataset": "7BE8C14253C12F1D866141482B781B3B44532D97B8D0DAF03F9DAC961A84F32E",
+												"internalDataType": "NUMERIC",
+												"referred": [],
+												"expression": false
+											}
+										],
+										"datasets": [
+											{
+												"dataset": "7BE8C14253C12F1D866141482B781B3B44532D97B8D0DAF03F9DAC961A84F32E"
+											}
+										],
+										"where": [],
+										"orderBy": [],
+										"page": 0,
+										"limit": 50,
+										"offset": 0,
+										"joinedSmartQueries": null,
+										"pivot": null,
+										"pivotableFields": null,
+										"leftJoin": null,
+										"rightJoin": null,
+										"unmatched": null,
+										"drill": null
+									}
+								]
+							},
+							"valid": true,
+							"component_type": "sac_widget"
+						}
+					]
+				}
+			]
+		}
+	}
+}

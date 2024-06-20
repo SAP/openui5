@@ -21,9 +21,9 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var DOM_RENDER_LOCATION = "qunit-fixture";
+	const DOM_RENDER_LOCATION = "qunit-fixture";
 
-	var oExample1 = {
+	const oExample1 = {
 		"sap.app": {
 			"id": "qunit.analyticscloud.example1"
 		},
@@ -65,6 +65,47 @@ sap.ui.define([
 		}
 	};
 
+	const oExample2Interpretation = {
+		"sap.app": {
+			"id": "qunit.analyticscloud.example1"
+		},
+		"sap.card": {
+			"type": "AnalyticsCloud",
+			"configuration": {
+				"destinations": {
+					"SAC": {
+						"name": "SAC",
+						"defaultUrl": "https://master-fpa135.master.canary.eu10.projectorca.cloud"
+					}
+				}
+			},
+			"header": {
+				"title": "Demonstration SAC Card",
+				"subTitle": "Shows a widget from story"
+			},
+			"content": {
+				"minHeight": "25rem",
+				"sacTenantDestination": "{{destinations.SAC}}",
+				"interpretation": [
+					{
+						"id": "4d6761bc-7525-4528-a198-c6c66d9007b6",
+						"body": [
+							{
+								"id": "sac_widget1",
+								"details": {}
+							}
+						]
+					}
+				],
+				"options": {
+					"attributes": {
+						"enableInteraction": true
+					}
+				}
+			}
+		}
+	};
+
 	QUnit.module("Widget rendering", {
 		beforeEach: function () {
 			this.fnIncludeScriptStub = sinon.stub(AnalyticsCloudHelper, "_includeScript");
@@ -73,7 +114,8 @@ sap.ui.define([
 					api: {
 						widget: {
 							setup: sinon.stub(),
-							renderWidget: sinon.stub()
+							renderWidget: sinon.stub(),
+							renderWidgetForJustAsk: sinon.stub()
 						}
 					}
 				};
@@ -124,6 +166,60 @@ sap.ui.define([
 		assert.strictEqual(oArgs[3], "36486725-0138-4231-8435-538015664163", "Widget ID is correct.");
 
 		const oOptions = oArgs[4];
+		assert.strictEqual(typeof oOptions.renderComplete.onSuccess, "function", "options.renderComplete.onSuccess is a function");
+		assert.strictEqual(typeof oOptions.renderComplete.onFailure, "function", "options.renderComplete.onFailure is a function");
+		assert.deepEqual(
+			oOptions.attributes,
+			{
+				enableInteraction: true,
+				enableUndoRedo: false,
+				enableMenus: false,
+				showHeader: false,
+				showFooter: false
+			},
+			"options.attributes is correct."
+		);
+
+		// Clean up
+		oCard.destroy();
+	});
+
+	QUnit.test("Creating a card with interpretation", async function (assert) {
+		// Arrange
+		const oCard = new Card({
+			manifest: oExample2Interpretation,
+			baseUrl: "test-resources/sap/ui/integration/qunit/testResources"
+		});
+
+		// Act
+		oCard.placeAt(DOM_RENDER_LOCATION);
+		await nextCardReadyEvent(oCard);
+		await nextUIUpdate();
+
+		// Assert
+		const fnRenderWidgetForJustAsk = sap.sac.api.widget.renderWidgetForJustAsk;
+		assert.ok(fnRenderWidgetForJustAsk.calledOnce, "sap.sac.api.widget.renderWidget was called only once.");
+
+		const oArgs = fnRenderWidgetForJustAsk.firstCall.args;
+		assert.strictEqual(oArgs[0], oCard.getCardContent().getId() + "-widgetContainer", "Container id is correct.");
+		assert.strictEqual(oArgs[1].proxy, "https://master-fpa135.master.canary.eu10.projectorca.cloud", "Destination is correct.");
+		assert.deepEqual(
+			oArgs[2],
+			[
+				{
+					"id": "4d6761bc-7525-4528-a198-c6c66d9007b6",
+					"body": [
+						{
+							"id": "sac_widget1",
+							"details": {}
+						}
+					]
+				}
+			],
+			"Argument interpretation  is correct."
+		);
+
+		const oOptions = oArgs[3];
 		assert.strictEqual(typeof oOptions.renderComplete.onSuccess, "function", "options.renderComplete.onSuccess is a function");
 		assert.strictEqual(typeof oOptions.renderComplete.onFailure, "function", "options.renderComplete.onFailure is a function");
 		assert.deepEqual(
