@@ -479,7 +479,7 @@ sap.ui.define([
 		assert.ok(oPopover, "Popover was created");
 		assert.ok(oDetailsList, "List was created");
 
-		const oResourceBundle = Library.getResourceBundleFor("sap.m.table");
+		const oResourceBundle = Library.getResourceBundleFor("sap.m");
 		var sTitle = oResourceBundle.getText("TABLE_MULTI_GROUP_TITLE");
 		var sPlacement = "VerticalPreferredBottom";
 
