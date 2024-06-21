@@ -455,6 +455,12 @@ sap.ui.define([
 		});
 
 		QUnit.test("when there are multiple variants with lower layer changes in the referenced variant", function(assert) {
+			// UI Changes
+			const oUIChangeBasedOnStandard = FlexObjectFactory.createUIChange({
+				id: "someCustomerLayerUIChange",
+				layer: Layer.CUSTOMER,
+				variantReference: sStandardVariantReference
+			});
 			const oUIChange = FlexObjectFactory.createUIChange({
 				id: "someUIChange",
 				layer: Layer.VENDOR,
@@ -469,6 +475,7 @@ sap.ui.define([
 				layer: Layer.USER,
 				variantReference: sStandardVariantReference
 			});
+			// Variants
 			const oVendorVariant = createVariant({
 				variantReference: sVariantManagementReference,
 				fileName: "vendorVariant",
@@ -484,13 +491,25 @@ sap.ui.define([
 				fileName: "userVariant",
 				layer: Layer.USER
 			});
-			stubFlexObjectsSelector([oIndependentUIChange, oUIChange, oUIChange2, oVendorVariant, oCustomerVariant, oUserVariant]);
+			stubFlexObjectsSelector([
+				oUIChangeBasedOnStandard,
+				oIndependentUIChange,
+				oUIChange,
+				oUIChange2,
+				oVendorVariant,
+				oCustomerVariant,
+				oUserVariant
+			]);
 			const aVariants = VariantManagementState.getVariantManagementMap()
 			.get({ reference: sReference })[sVariantManagementReference].variants;
-			assert.strictEqual(aVariants[0].controlChanges.length, 1, "there is one control change on standard");
-			assert.strictEqual(aVariants[1].controlChanges.length, 1, "the vendor variant has one change");
-			assert.strictEqual(aVariants[2].controlChanges.length, 1, "the customer variant has one change");
-			assert.strictEqual(aVariants[3].controlChanges.length, 1, "the user variant has one change");
+			assert.strictEqual(aVariants[0].controlChanges.length, 2,
+				"there are two control changes on standard variant, user and customer layer");
+			assert.strictEqual(aVariants[1].controlChanges.length, 1,
+				"the vendor variant has one change");
+			assert.strictEqual(aVariants[2].controlChanges.length, 1,
+				"the customer variant has one change, referenced from vendor variant");
+			assert.strictEqual(aVariants[3].controlChanges.length, 2,
+				"the user variant has two changes, referenced from vendor variant and standard variant");
 		});
 
 		QUnit.test("when variants are set to favorite = false (default and non-default)", function(assert) {
