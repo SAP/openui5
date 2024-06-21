@@ -56,7 +56,7 @@ sap.ui.define([
 				 * Whether to hide empty rows.
 				 *
 				 * @private
-				 * @ui5-restricted sap.ui.mdc.Table
+				 * @ui5-private sap.ui.mdc.Table
 				 */
 				hideEmptyRows: {type: "boolean", defaultValue: false, group: "Appearance", visibility: "hidden"}
 			}

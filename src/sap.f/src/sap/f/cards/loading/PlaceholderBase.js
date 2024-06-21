@@ -42,6 +42,7 @@ sap.ui.define([
 				/**
 				 * Indicates whether the card has any content
 				 * @private
+				 * @ui5-restricted sap.f.cards.loading.PlaceholderBase
 				 */
 				hasContent: { type: "boolean", defaultValue: true}
 			}

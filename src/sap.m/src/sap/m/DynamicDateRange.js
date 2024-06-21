@@ -280,6 +280,7 @@ sap.ui.define([
 					 *
 					 * @since 1.92
 					 * @private
+					 * @ui5-restricted sap.m.DynamicDateRange
 					 */
 					value: { type: "object" },
 
@@ -359,6 +360,7 @@ sap.ui.define([
 					 *
 					 * @since 1.92
 					 * @private
+					 * @ui5-restricted sap.m.DynamicDateRange
 					 */
 					formatter: { type: "object" },
 

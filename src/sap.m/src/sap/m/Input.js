@@ -348,7 +348,7 @@ function(
 				/**
 				 * Specifies whether to display separators in tabular suggestions.
 				 * @private
-				 * @ui5-restricted sap.ui.comp.smartfield.SmartField
+				 * @ui5-private sap.ui.comp.smartfield.SmartField
 				 */
 				separateSuggestions: { type: "boolean", defaultValue: true, visibility: "hidden" },
 

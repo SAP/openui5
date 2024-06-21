@@ -51,6 +51,7 @@ sap.ui.define(['./library', 'sap/ui/core/Item'],
 			/**
 			 * Let the outside world know that some of its properties has changed.
 			 * @private
+			 * @ui5-restricted sap.m.ViewSettingsItem
 			 */
 			itemPropertyChanged: {
 				parameters: {

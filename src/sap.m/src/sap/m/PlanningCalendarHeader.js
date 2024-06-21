@@ -137,6 +137,7 @@ function(
 				/**
 				 * Defines the calendar week numbering used for display.
 				 * @private
+				 * @ui5-restricted sap.m.PlanningCalendarHeader
 				 * @since 1.110.0
 				 */
 				calendarWeekNumbering : { type : "sap.ui.core.date.CalendarWeekNumbering", group : "Appearance", defaultValue: null},
@@ -145,6 +146,7 @@ function(
 				 * If set, the calendar type is used for display.
 				 * If not set, the calendar type of the global configuration is used.
 				 * @private
+				 * @ui5-restricted sap.m.PlanningCalendarHeader
 				 * @since 1.108.0
 				 */
 				_primaryCalendarType : {type : "sap.ui.core.CalendarType", group : "Appearance"},
@@ -152,7 +154,8 @@ function(
 				/**
 				 * If set, the days are also displayed in this calendar type
 				 * If not set, the dates are only displayed in the primary calendar type
-				 * @privates
+				 * @private
+				 * @ui5-restricted sap.m.PlanningCalendarHeader
 				 * @since 1.109.0
 				 */
 				_secondaryCalendarType : {type : "sap.ui.core.CalendarType", group : "Appearance"}

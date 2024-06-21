@@ -463,7 +463,7 @@ sap.ui.define([
 			 * If the creation row is set, the busy indicator will no longer cover the horizontal scrollbar, even if the creation row is invisible.
 			 *
 			 * @private
-			 * @ui5-restricted sap.ui.mdc
+			 * @ui5-private sap.ui.mdc
 			 */
 			creationRow: {type: "sap.ui.core.Control", multiple: false, visibility: "hidden"},
 
@@ -478,7 +478,7 @@ sap.ui.define([
 			 * The control that is shown in case the Table has no visible columns.
 			 *
 			 * @private
-			 * @ui5-restricted sap.ui.mdc, sap.ui.comp
+			 * @ui5-private sap.ui.mdc, sap.ui.comp
 			 */
 			_noColumnsMessage: {type: "sap.ui.core.Control", multiple: false, visibility: "hidden"},
 

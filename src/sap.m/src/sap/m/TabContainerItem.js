@@ -84,6 +84,7 @@ sap.ui.define(['sap/ui/core/Element',
 				/**
 				 * Sends information that some of the properties have changed.
 				 * @private
+				 * @ui5-restricted sap.m.TabContainerItem
 				 */
 				itemPropertyChanged : {
 					parameters: {

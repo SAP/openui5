@@ -56,7 +56,7 @@ sap.ui.define([
 				/**
 				 * Defines the order of the end aggregation.
 				 * @private
-				 * @ui5-restricted sap.ui.mdc
+				 * @ui5-private sap.ui.mdc
 				 */
 				_endOrder: {
 					type: "string[]",

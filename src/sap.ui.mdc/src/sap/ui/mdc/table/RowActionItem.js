@@ -64,6 +64,7 @@ sap.ui.define([
 				 * <code>rowPress</code> event are fired when a row with a row action item is pressed.
 				 *
 				 * @private
+				 * @ui5-restricted sap.ui.mdc.table.RowActionItem
 				 */
 				press: {
 					parameters: {

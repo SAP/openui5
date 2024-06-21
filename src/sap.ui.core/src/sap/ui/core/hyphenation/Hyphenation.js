@@ -412,6 +412,7 @@ sap.ui.define([
 				/**
 				 * Fired if an error with initialization or hyphenation occurs.
 				 * @private
+				 * @ui5-restricted sap.ui.core.hyphenation.Hyphenation
 				 */
 				error: {
 					parameters: {
