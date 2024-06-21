@@ -8,7 +8,9 @@ sap.ui.define([
 	"sap/ui/integration/Host",
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/qunit/utils/nextUIUpdate",
-	"qunit/testResources/nextCardReadyEvent"
+	"qunit/testResources/nextCardReadyEvent",
+	"qunit/testResources/nextCardStateChangedEvent",
+	"sap/ui/integration/util/ManifestResolver"
 ], function (
 	Localization,
 	Locale,
@@ -17,7 +19,9 @@ sap.ui.define([
 	Host,
 	Card,
 	nextUIUpdate,
-	nextCardReadyEvent
+	nextCardReadyEvent,
+	nextCardStateChangedEvent,
+	ManifestResolver
 ) {
 	"use strict";
 
@@ -46,8 +50,8 @@ sap.ui.define([
 				}
 			},
 			"header": {
-				"title": "Demonstration SAC Card",
-				"subTitle": "Shows a widget from story"
+				"title": "{= ${widgetInfo>/title} || 'SAC Card'}",
+				"subTitle": "{widgetInfo>/subtitle}"
 			},
 			"content": {
 				"minHeight": "25rem",
@@ -114,6 +118,12 @@ sap.ui.define([
 					api: {
 						widget: {
 							setup: sinon.stub(),
+							getWidgetInfo: sinon.stub().callsFake(() => {
+								return {
+									title: "Gross Margin, Quantity sold per City",
+									subtitle: "Year to date"
+								};
+							}),
 							renderWidget: sinon.stub(),
 							renderWidgetForJustAsk: sinon.stub()
 						}
@@ -159,8 +169,9 @@ sap.ui.define([
 		const fnRenderWidget = sap.sac.api.widget.renderWidget;
 		assert.ok(fnRenderWidget.calledOnce, "sap.sac.api.widget.renderWidget was called only once.");
 
+		const sContainerId = oCard.getCardContent().getId() + "-widgetContainer";
 		const oArgs = fnRenderWidget.firstCall.args;
-		assert.strictEqual(oArgs[0], oCard.getCardContent().getId() + "-widgetContainer", "Container id is correct.");
+		assert.strictEqual(oArgs[0], sContainerId, "Container id is correct.");
 		assert.strictEqual(oArgs[1].proxy, "https://master-fpa135.master.canary.eu10.projectorca.cloud", "Destination is correct.");
 		assert.strictEqual(oArgs[2], "ABD0990112D81FBF4C936C30444FA3B7", "Story ID is correct.");
 		assert.strictEqual(oArgs[3], "36486725-0138-4231-8435-538015664163", "Widget ID is correct.");
@@ -179,6 +190,45 @@ sap.ui.define([
 			},
 			"options.attributes is correct."
 		);
+
+		oOptions.renderComplete.onSuccess();
+		const fnGetWidgetInfo = sap.sac.api.widget.getWidgetInfo;
+		assert.ok(fnGetWidgetInfo.calledOnce, "sap.sac.api.widget.getWidgetInfo was called only once.");
+		assert.ok(fnGetWidgetInfo.calledWith(sContainerId), "getWidgetInfo is called with correct container id.");
+
+		// Clean up
+		oCard.destroy();
+	});
+
+	QUnit.test("State changed and manifest resolving", async function (assert) {
+		// Arrange
+		const oCard = new Card({
+			manifest: oExample1,
+			baseUrl: "test-resources/sap/ui/integration/qunit/testResources"
+		});
+
+		// Act
+		oCard.placeAt(DOM_RENDER_LOCATION);
+		await nextCardStateChangedEvent(oCard);
+		await nextUIUpdate();
+
+		// Assert
+		const oResult1 = await ManifestResolver.resolveCard(oCard);
+		const oHeader1 = oResult1["sap.card"].header;
+		assert.strictEqual(oHeader1.title, "SAC Card", "Title is correct after first state change.");
+		assert.notOk(oHeader1.subTitle, "Subtitle is correct after first state change.");
+
+		// Simulate successful rendering
+		const oOptions = sap.sac.api.widget.renderWidget.firstCall.args[4];
+		oOptions.renderComplete.onSuccess();
+
+		// Wait for second state change and check result
+		await nextCardStateChangedEvent(oCard);
+
+		const oResult2 = await ManifestResolver.resolveCard(oCard);
+		const oHeader2 = oResult2["sap.card"].header;
+		assert.strictEqual(oHeader2.title, "Gross Margin, Quantity sold per City", "Title is correct after second state change.");
+		assert.strictEqual(oHeader2.subTitle, "Year to date", "Subtitle is correct after second state change.");
 
 		// Clean up
 		oCard.destroy();

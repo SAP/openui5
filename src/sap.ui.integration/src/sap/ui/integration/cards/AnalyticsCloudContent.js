@@ -248,6 +248,8 @@ sap.ui.define([
 		}
 
 		oCard.getModel("widgetInfo").setData(oWidgetInfo);
+
+		oCard.scheduleFireStateChanged();
 	};
 
 	/**
