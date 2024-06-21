@@ -132,11 +132,16 @@ sap.ui.define([
 	function expanderIcon(assert) {
 		var oButton = oFormContainer.getAggregation("_expandButton");
 
-		assert.equal(oButton.getIcon(), Parameters._getThemeImage('_sap_ui_layout_Form_FormContainerExpImageURL'), "Expander Icon");
+		const mExpandIcons = Parameters.get({
+			name: ["_sap_ui_layout_Form_FormContainerExpImageURL", "_sap_ui_layout_Form_FormContainerColImageURL"],
+			_restrictedParseUrls: true
+		});
+
+		assert.equal(oButton.getIcon(), mExpandIcons['_sap_ui_layout_Form_FormContainerExpImageURL'], "Expander Icon");
 		assert.equal(oButton.getTooltip(), "Expand", "Expander Tooltip");
 
 		oFormContainer.setExpanded(true);
-		assert.equal(oButton.getIcon(), Parameters._getThemeImage('_sap_ui_layout_Form_FormContainerColImageURL'), "Expander Icon");
+		assert.equal(oButton.getIcon(), mExpandIcons['_sap_ui_layout_Form_FormContainerColImageURL'], "Expander Icon");
 		assert.equal(oButton.getTooltip(), "Collapse", "Expander Tooltip");
 	}
 
