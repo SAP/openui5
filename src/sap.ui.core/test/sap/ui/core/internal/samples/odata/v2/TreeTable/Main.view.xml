@@ -77,19 +77,19 @@
 				</t:dragDropConfig>
 				<t:columns>
 					<t:Column width="20rem">
-						<Label text="{/#ErhaOrderItemType/ErhaOrderItem/@sap:label}" />
+						<Label text="Order Item" />
 						<t:template>
 							<Input editable="false" value="{ErhaOrderItem}" />
 						</t:template>
 					</t:Column>
 					<t:Column width="15rem">
-						<Label text="{/#ErhaOrderItemType/ErhaOrderItemName/@sap:label}" />
+						<Label text="Order Item Name" />
 						<t:template>
 							<Input value="{ErhaOrderItemName}" />
 						</t:template>
 					</t:Column>
 					<t:Column width="10rem">
-						<Label text="{/#ErhaOrderItemType/ParentItem/@sap:label}" />
+						<Label text="Parent Item" />
 						<t:template>
 							<Input editable="false" value="{ParentItem}" />
 						</t:template>
