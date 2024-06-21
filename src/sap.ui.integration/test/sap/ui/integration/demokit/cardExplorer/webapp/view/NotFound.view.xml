@@ -4,13 +4,13 @@
 	xmlns="sap.m">
 
 	<MessagePage
-		title="{i18n>notFoundTitle}"
-		text="{i18n>notFoundText}"
+		title="The page was not found"
+		text="The page was not found"
 		icon="sap-icon://document"
 		id="page"
 		description="">
 		<customDescription>
-			<Link id="link" text="Getting Started" press=".onLinkPressed"/>
+			<Link id="link" text="Getting Started" href="#/overview/introduction"/>
 		</customDescription>
 	</MessagePage>
 </mvc:View>

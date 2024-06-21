@@ -28,7 +28,8 @@ sap.ui.define([
 	"sap/m/Panel",
 	"sap/m/Popover",
 	"sap/m/Select",
-	"sap/m/HBox"
+	"sap/m/HBox",
+	"sap/ui/core/routing/History"
 ], function(
 	BaseController,
 	Constants,
@@ -59,7 +60,8 @@ sap.ui.define([
 	Panel,
 	Popover,
 	Select,
-	HBox
+	HBox,
+	History
 ) {
 	"use strict";
 
@@ -807,8 +809,8 @@ sap.ui.define([
 			// reset the model
 			this.oModel.setData({});
 
-			if (!oSample) {
-				//TODO sample not found
+			if (!oSample || oSample.hidden) {
+				this._notFound();
 				return;
 			}
 
@@ -818,8 +820,8 @@ sap.ui.define([
 			}
 
 			oSubSample = this._findSubSample(oSample, sSubSampleKey);
-			if (sSubSampleKey && !oSubSample) {
-				//TODO sub sample not found
+			if (sSubSampleKey && (!oSubSample || oSubSample.hidden)) {
+				this._notFound();
 				return;
 			}
 
@@ -837,6 +839,11 @@ sap.ui.define([
 				routeName: "explore"
 			});
 			this._showSample(oSample, oSubSample);
+		},
+
+		_notFound: function () {
+			History.getInstance().aHistory.pop(); // do not return back to the sample which was not found
+			this.getRouter().navTo("notFound");
 		},
 
 		_onCardAction: function (oEvent) {

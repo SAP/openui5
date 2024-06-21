@@ -128,6 +128,11 @@
 					"pattern": "designtime/{topic}/:subTopic:/:id:",
 					"name": "designtime",
 					"target": "designtime"
+				},
+				{
+					"pattern": "notFound",
+					"name": "notFound",
+					"target": "notFound"
 				}
 			],
 			"targets": {
