@@ -11,9 +11,18 @@
 		position: relative;
 		padding: 0;
 
+		&.sapFCardHeaderHasToolbar {
+			// Always hide toolbar for tiles
+			.sapFCardHeaderToolbarCont {
+				display: none;
+			}
+			.sapFCardHeaderText {
+				margin-inline-end: 0;
+			}
+		}
+
 		.sapFCardDataTimestamp,
-		.sapFCardStatus,
-		.sapFCardHeaderToolbarCont {
+		.sapFCardStatus {
 			display: none;
 		}
 
