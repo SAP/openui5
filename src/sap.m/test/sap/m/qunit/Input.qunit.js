@@ -5122,6 +5122,40 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
+	QUnit.test("Check suggestions control - 'role' attribute with grouping", async function(assert) {
+		this.clock = sinon.useFakeTimers();
+		var oInput = new Input({
+			showSuggestion: true,
+			suggestionItems: [
+				new SeparatorItem({
+					text: "Countries",
+					textDirection: TextDirection.RTL
+				}),
+				new Item({
+					key: "GER",
+					text: "Germany",
+					textDirection: TextDirection.RTL
+				}),
+				new Item({
+					key: "GAM",
+					text: "Gambia"
+				})
+			]
+		}).placeAt("content");
+		await nextUIUpdate(this.clock);
+
+		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
+		oInput._$input.trigger("focus").val("g").trigger("input");
+
+		this.clock.tick(1000);
+		var oList = oInput._getSuggestionsPopover().getItemsContainer();
+		assert.strictEqual(oList.$("listUl").attr("role"), "listbox", "role='listbox' applied to the List control DOM");
+		assert.strictEqual(oList.getItems()[0].$().attr("role"), "group", "role='group' applied to the group header");
+		assert.strictEqual(oList.getItems()[1].$().attr("role"), "option", "role='option' applied to the items");
+
+		oInput.destroy();
+	});
+
 	QUnit.module("Cloning", {
 		beforeEach: function () {
 			this.oTabularInputToClone = createInputWithTabularSuggestions();

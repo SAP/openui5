@@ -3493,7 +3493,12 @@ function(
 			})
 			.map(function (oItem) {
 				oListItem = ListHelpers.createListItemFromCoreItem(oItem, true);
-				oList.addItem(oListItem);
+
+				if (oListItem?.isA("sap.m.GroupHeaderListItem")) {
+					oList.addItemGroup(null, oListItem);
+				} else {
+					oList.addItem(oListItem);
+				}
 
 				if (!bIsAnySuggestionAlreadySelected && this._getProposedItemText() === oItem.getText()) {
 					// Setting the item to selected only works in case the items were there prior the user's input
