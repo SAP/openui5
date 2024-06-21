@@ -211,6 +211,48 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
+	QUnit.test("Type password with showClearIcon - entered value is not corrupted", function(assert) {
+		// Arrange
+		var oInput = new sap.m.Input({
+			type: "Password",
+			showClearIcon: true
+		});
+
+		oInput.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		qutils.triggerEvent("focus", oInput.getFocusDomRef());
+		qutils.triggerCharacterInput(oInput.getFocusDomRef(), "a");
+		qutils.triggerEvent("input", oInput.getFocusDomRef());
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(oInput.getValue(), "a", "Value is as entered");
+
+		// Clean
+		oInput.destroy();
+	});
+
+	QUnit.test("Type password with showClearIcon and initial value - input value is deleted", function(assert) {
+		// Arrange
+		var oInput = new sap.m.Input({
+			type: "Password",
+			showClearIcon: true,
+			value: "a"
+		});
+
+		oInput.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oInput._$input.trigger("focus").val("").trigger("input");
+		assert.strictEqual(oInput.getValue(), "", "Value is deleted");
+
+		// Clean
+		oInput.destroy();
+	});
+
+
 	QUnit.test("InputEnabled", function(assert) {
 		var enabled = false;
 		i1.setEnabled(enabled);
