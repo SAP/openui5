@@ -40,6 +40,7 @@ sap.ui.define([
 			this.fnDestroyObserverSpy = sandbox.spy(ManagedObjectObserver.prototype, "observe");
 			this.fnDestroyUnobserverSpy = sandbox.spy(ManagedObjectObserver.prototype, "unobserve");
 			this.oGetUShellServiceStub = sandbox.stub(this.oModel, "getUShellService");
+			this.oModel._oVariantSwitchPromise = Promise.resolve();
 		},
 		afterEach() {
 			if (this.oAppComponent instanceof Component) {
@@ -164,6 +165,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when update() is called to update the URL with a hash register update", function(assert) {
+			URLHandler.initialize({model: this.oModel});
 			assert.expect(2);
 			var mPropertyBag = {
 				parameters: ["testParam1", "testParam2"],
@@ -193,6 +195,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when update() is called to update the URL without a hash register update", function(assert) {
+			URLHandler.initialize({model: this.oModel});
 			assert.expect(2);
 			var mPropertyBag = {
 				parameters: ["testParam1", "testParam2"],
@@ -251,6 +254,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when update() is called to update hash register without a URL update", function(assert) {
+			URLHandler.initialize({model: this.oModel});
 			var mPropertyBag = {
 				parameters: ["testParam1", "testParam2"],
 				updateHashEntry: true,
@@ -266,6 +270,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when update() is called to update hash register with a URL update, but the parameters didn't change", function(assert) {
+			URLHandler.initialize({model: this.oModel});
 			var mPropertyBag = {
 				parameters: ["testParam1", "testParam2"],
 				updateHashEntry: true,

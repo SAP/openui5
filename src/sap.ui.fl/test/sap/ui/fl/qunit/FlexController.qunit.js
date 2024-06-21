@@ -5,7 +5,6 @@ sap.ui.define([
 	"sap/ui/fl/Layer",
 	"sap/ui/core/Control",
 	"sap/ui/fl/ChangePersistenceFactory",
-	"sap/ui/fl/apply/_internal/controlVariants/URLHandler",
 	"sap/ui/fl/apply/_internal/changes/Reverter",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
@@ -20,7 +19,6 @@ sap.ui.define([
 	Layer,
 	Control,
 	ChangePersistenceFactory,
-	URLHandler,
 	Reverter,
 	FlexObjectFactory,
 	States,
@@ -113,13 +111,11 @@ sap.ui.define([
 			};
 			sandbox.stub(this.oFlexController._oChangePersistence, "saveDirtyChanges").resolves();
 			var oRemoveStub = sandbox.stub(this.oFlexController._oChangePersistence, "removeDirtyChanges").resolves([]);
-			var oUrlHandlerStub = sandbox.stub(URLHandler, "update");
 			return this.oFlexController.saveAll(oComp, true, false, Layer.CUSTOMER, true)
 			.then(function() {
 				var aLayersToReset = oRemoveStub.firstCall.args[0];
 				assert.ok(aLayersToReset.includes(Layer.USER), "then dirty changes on higher layers are removed");
 				assert.ok(aLayersToReset.includes(Layer.VENDOR), "then dirty changes on lower layers are removed");
-				assert.ok(oUrlHandlerStub.notCalled, "then the page is not reloaded");
 			});
 		});
 
@@ -305,7 +301,6 @@ sap.ui.define([
 				FlexObjectFactory.createFromFileContent({fileName: "change1"}),
 				FlexObjectFactory.createFromFileContent({fileName: "change2"})
 			];
-			sandbox.stub(URLHandler, "update");
 			sandbox.stub(this.oFlexController._oChangePersistence, "resetChanges").callsFake(function(...aArgs) {
 				assert.strictEqual(aArgs[0], sLayer, "then correct layer passed");
 				assert.strictEqual(aArgs[1], sGenerator, "then correct generator passed");
@@ -319,18 +314,10 @@ sap.ui.define([
 				assert.ok(oRevertMultipleChangesStub.calledOnce, "the revertMultipleChanges is called once");
 				assert.deepEqual(oRevertMultipleChangesStub.args[0][0], aDeletedChanges, "with the correct changes");
 				assert.deepEqual(oRevertMultipleChangesStub.args[0][0][0].getId(), "change2", "with the correct reverse order");
-				assert.deepEqual(URLHandler.update.getCall(0).args[0], {
-					parameters: [],
-					updateURL: true,
-					updateHashEntry: true,
-					model: oVariantModel
-				}, "then URLHandler._setTechnicalURLParameterValues with the correct parameters");
 			});
 		});
 
 		QUnit.test("resetChanges for whole component shall call ChangePersistance.resetChanges(), reset control variant URL parameters but do not revert changes", function(assert) {
-			assert.expect(4);
-
 			var oVariantModel = {
 				id: "variantModel"
 			};
@@ -342,7 +329,6 @@ sap.ui.define([
 			};
 			var sLayer = "testLayer";
 			var sGenerator = "test.Generator";
-			sandbox.stub(URLHandler, "update");
 			sandbox.stub(this.oFlexController._oChangePersistence, "resetChanges").callsFake(function(...aArgs) {
 				assert.strictEqual(aArgs[0], sLayer, "then correct layer passed");
 				assert.strictEqual(aArgs[1], sGenerator, "then correct generator passed");
@@ -352,12 +338,6 @@ sap.ui.define([
 			return this.oFlexController.resetChanges(sLayer, sGenerator, oComp)
 			.then(function() {
 				assert.equal(oRevertMultipleChangesStub.callCount, 0, "the revertMultipleChanges is not called");
-				assert.deepEqual(URLHandler.update.getCall(0).args[0], {
-					parameters: [],
-					updateURL: true,
-					updateHashEntry: true,
-					model: oVariantModel
-				}, "then URLHandler._setTechnicalURLParameterValues with the correct parameters");
 			});
 		});
 	});

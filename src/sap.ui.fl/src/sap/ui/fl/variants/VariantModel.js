@@ -1052,7 +1052,7 @@ sap.ui.define([
 				mAdditionalChangeContent.defaultVariant = mPropertyBag.defaultVariant;
 				// Update hash data
 				var aHashParameters = URLHandler.getStoredHashParams({model: this});
-				if (aHashParameters) {
+				if (aHashParameters && this.oData[sVariantManagementReference].updateVariantInURL) {
 					if (
 						oData[sVariantManagementReference].defaultVariant !== oData[sVariantManagementReference].currentVariant
 						&& aHashParameters.indexOf(oData[sVariantManagementReference].currentVariant) === -1
@@ -1060,7 +1060,7 @@ sap.ui.define([
 						// if default variant is changed from the current variant, then add the current variant id as a variant URI parameter
 						URLHandler.update({
 							parameters: aHashParameters.concat(oData[sVariantManagementReference].currentVariant),
-							updateURL: !this._bDesignTimeMode && this.oData[sVariantManagementReference].updateVariantInURL,
+							updateURL: !this._bDesignTimeMode,
 							updateHashEntry: true,
 							model: this
 						});
@@ -1072,7 +1072,7 @@ sap.ui.define([
 						aHashParameters.splice(aHashParameters.indexOf(oData[sVariantManagementReference].currentVariant), 1);
 						URLHandler.update({
 							parameters: aHashParameters,
-							updateURL: !this._bDesignTimeMode && this.oData[sVariantManagementReference].updateVariantInURL,
+							updateURL: !this._bDesignTimeMode,
 							updateHashEntry: true,
 							model: this
 						});
@@ -1119,11 +1119,11 @@ sap.ui.define([
 
 			if (bDesignTimeModeToBeSet) {
 				URLHandler.clearAllVariantURLParameters({model: this});
-			} else if (bOriginalMode) {
+			} else if (bOriginalMode && this.oData[sVariantManagementReference].updateVariantInURL) {
 				// use case: switch from end user -> key user with a restart; the initial hash data is empty
 				URLHandler.update({
 					parameters: URLHandler.getStoredHashParams({model: this}),
-					updateURL: this.oData[sVariantManagementReference].updateVariantInURL,
+					updateURL: true,
 					updateHashEntry: false,
 					model: this
 				});
@@ -1414,7 +1414,7 @@ sap.ui.define([
 	}
 
 	VariantModel.prototype.registerToModel = function(oVariantManagementControl) {
-		var sVariantManagementReference = this.getVariantManagementReferenceForControl(oVariantManagementControl);
+		const sVariantManagementReference = this.getVariantManagementReferenceForControl(oVariantManagementControl);
 
 		// ensure standard variants are mocked, if no variants are present in the changes.variantSection response from the backend
 		this._ensureStandardVariantExists(sVariantManagementReference);
@@ -1442,17 +1442,19 @@ sap.ui.define([
 		this.setModelPropertiesForControl(sVariantManagementReference, false, oVariantManagementControl);
 
 		// control property updateVariantInURL set initially
-		var sUpdateURL = oVariantManagementControl.getUpdateVariantInURL(); // default false
-		this.oData[sVariantManagementReference].updateVariantInURL = sUpdateURL;
-		URLHandler.registerControl({
-			vmReference: sVariantManagementReference,
-			updateURL: !!sUpdateURL,
-			model: this
-		});
-		URLHandler.handleModelContextChange({
-			model: this,
-			vmControl: oVariantManagementControl
-		});
+		const bUpdateURL = oVariantManagementControl.getUpdateVariantInURL(); // default false
+		this.oData[sVariantManagementReference].updateVariantInURL = bUpdateURL;
+		if (bUpdateURL) {
+			URLHandler.registerControl({
+				vmReference: sVariantManagementReference,
+				updateURL: true,
+				model: this
+			});
+			URLHandler.handleModelContextChange({
+				model: this,
+				vmControl: oVariantManagementControl
+			});
+		}
 
 		if (this.oData[sVariantManagementReference].initPromise) {
 			this.oData[sVariantManagementReference].initPromise.resolveFunction();
@@ -1464,7 +1466,7 @@ sap.ui.define([
 		// the initial changes are not applied via a variant switch
 		// to enable early variant switches to work properly they need to wait for the initial changes
 		// so the initial changes are set as a variant switch
-		var mParameters = {
+		const mParameters = {
 			appComponent: this.oAppComponent,
 			reference: this.sFlexReference,
 			vmReference: sVariantManagementReference

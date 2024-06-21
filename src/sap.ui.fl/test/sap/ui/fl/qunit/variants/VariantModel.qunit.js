@@ -856,12 +856,16 @@ sap.ui.define([
 				this.oModel.getData()[sVMReference].updateVariantInURL = bUpdateVariantInURL;
 
 				this.oModel.setVariantProperties(sVMReference, mPropertyBag);
-				assert.ok(URLHandler.update.calledWithExactly({
-					parameters: [this.oModel.oData[sVMReference].currentVariant],
-					updateURL: false,
-					updateHashEntry: true,
-					model: this.oModel
-				}), "then the URLHandler.update() called with the current variant id as a parameter in UI adaptation mode");
+				if (bUpdateVariantInURL) {
+					assert.ok(URLHandler.update.calledWithExactly({
+						parameters: [this.oModel.oData[sVMReference].currentVariant],
+						updateURL: false,
+						updateHashEntry: true,
+						model: this.oModel
+					}), "then the URLHandler.update() called with the current variant id as a parameter in UI adaptation mode");
+				} else {
+					assert.ok(URLHandler.update.notCalled, "then the URLHandler.update() not called");
+				}
 			});
 
 			const sTitle1 = `when calling 'setVariantProperties' for 'setDefault' with same current and default variants, in personalization mode ${bUpdateVariantInURL ? "with" : "without"} updateVariantInURL`;
@@ -887,12 +891,16 @@ sap.ui.define([
 				this.oModel.getData()[sVMReference].updateVariantInURL = bUpdateVariantInURL;
 
 				this.oModel.setVariantProperties(sVMReference, mPropertyBag);
-				assert.ok(URLHandler.update.calledWithExactly({
-					parameters: [],
-					updateURL: bUpdateVariantInURL,
-					updateHashEntry: true,
-					model: this.oModel
-				}), "then the URLHandler.update() called without the current variant id as a parameter in personalization mode");
+				if (bUpdateVariantInURL) {
+					assert.ok(URLHandler.update.calledWithExactly({
+						parameters: [],
+						updateURL: bUpdateVariantInURL,
+						updateHashEntry: true,
+						model: this.oModel
+					}), "then the URLHandler.update() called without the current variant id as a parameter in personalization mode");
+				} else {
+					assert.ok(URLHandler.update.notCalled, "then the URLHandler.update() not called");
+				}
 			});
 
 			const sTitle2 = `when calling 'setVariantProperties' for 'setDefault' with different current and default variants, in personalization mode ${bUpdateVariantInURL ? "with" : "without"} updateVariantInURL`;
@@ -920,12 +928,16 @@ sap.ui.define([
 				this.oModel.getData()[sVMReference].updateVariantInURL = bUpdateVariantInURL;
 
 				this.oModel.setVariantProperties(sVMReference, mPropertyBag);
-				assert.ok(URLHandler.update.calledWithExactly({
-					parameters: [this.oModel.oData[sVMReference].currentVariant],
-					updateURL: bUpdateVariantInURL,
-					updateHashEntry: true,
-					model: this.oModel
-				}), "then the URLHandler.update() called with the current variant id as a parameter in personalization mode");
+				if (bUpdateVariantInURL) {
+					assert.ok(URLHandler.update.calledWithExactly({
+						parameters: [this.oModel.oData[sVMReference].currentVariant],
+						updateURL: bUpdateVariantInURL,
+						updateHashEntry: true,
+						model: this.oModel
+					}), "then the URLHandler.update() called with the current variant id as a parameter in personalization mode");
+				} else {
+					assert.ok(URLHandler.update.notCalled, "then the URLHandler.update() not called");
+				}
 			});
 		});
 
@@ -2499,12 +2511,8 @@ sap.ui.define([
 			var oVariantManagementWithURLUpdate = new VariantManagement("varMgmtRef2", {updateVariantInURL: true});
 			this.oVariantManagement.setModel(this.oModel, ControlVariantApplyAPI.getVariantModelName());
 			oVariantManagementWithURLUpdate.setModel(this.oModel, ControlVariantApplyAPI.getVariantModelName());
+			assert.strictEqual(this.oRegisterControlStub.callCount, 1, "then URLHandler.attachHandlers was called once");
 			assert.deepEqual(this.oRegisterControlStub.getCall(0).args[0], {
-				vmReference: this.oModel.oAppComponent.getLocalId(this.oVariantManagement.getId()),
-				updateURL: false,
-				model: this.oModel
-			}, "then URLHandler.attachHandlers was called once for a control to update URL");
-			assert.deepEqual(this.oRegisterControlStub.getCall(1).args[0], {
 				vmReference: oVariantManagementWithURLUpdate.getId(),
 				updateURL: true,
 				model: this.oModel
