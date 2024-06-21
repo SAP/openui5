@@ -542,7 +542,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.fe
 	 */
 	Util.createOrUpdateMultiUnitPopover = async function(vPopover, mSettings) {
-		const oResourceBundle = Library.getResourceBundleFor("sap.m.table");
+		const oResourceBundle = Library.getResourceBundleFor("sap.m");
 		let oPopover;
 
 		if (typeof vPopover === "object") {
