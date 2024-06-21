@@ -2483,6 +2483,22 @@
         "sandbox": {
           "description": "Sandbox attribute of the iframe",
           "type": "string"
+        },
+        "allow": {
+          "description": "Allow attribute of the iframe",
+          "type": "string"
+        },
+        "allowfullscreen": {
+          "description": "Allowfullscreen attribute of the iframe",
+          "oneOf": [
+            {
+              "type": "boolean",
+              "default": false
+            },
+            {
+              "$ref": "#/definitions/simpleBinding"
+            }
+          ]
         }
       }
     },

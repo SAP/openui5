@@ -234,4 +234,73 @@ sap.ui.define([
 		assert.ok(this.oCard.getCardContent().getAggregation("_blockingMessage"), "Error message should be shown");
 	});
 
+	QUnit.module("Allow and sandbox attributes", {
+		beforeEach: function () {
+			this.oManifest = {
+				"sap.app": {
+					"id": "test.cards.webpage.testCard"
+				},
+				"sap.card": {
+					"type": "WebPage",
+					"configuration": {
+						"parameters": {
+							"sandbox": {
+								"value": "allow-scripts"
+							},
+							"allow": {
+								"value": "fullscreen"
+							},
+							"allowfullscreen": {
+								"value": true
+							}
+						}
+					},
+					"header": {
+						"title": "WebPage Card"
+					},
+					"content": {
+						"allow": "{parameters>/allow/value}",
+						"sandbox": "{parameters>/sandbox/value}",
+						"allowfullscreen": "{parameters>/allowfullscreen/value}"
+					}
+				}
+			};
+			this.oCard = new Card({
+				baseUrl: BASE_URL
+			});
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+		},
+		afterEach: function () {
+			this.oCard.destroy();
+			this.oCard = null;
+		}
+	});
+
+	QUnit.test("Properties are set with binding", async function (assert) {
+		// Arrange
+		this.oManifest["sap.card"].content.src = "./page.html";
+		bypassHttpsValidation();
+
+		// Act
+		this.oCard.setManifest(this.oManifest);
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		restoreHttpsValidation();
+
+		const sSandbox = this.oCard.getCardContent().getSandbox(),
+			sAllow = this.oCard.getCardContent().getAllow(),
+			bAllowfullscreen = this.oCard.getCardContent().getAllowfullscreen(),
+			oIframe = this.oCard.getCardContent().getDomRef("frame");
+
+		assert.strictEqual(sSandbox, "allow-scripts", "The sandbox is correctly resolved");
+		assert.strictEqual(sAllow, "fullscreen", "The allow property is correctly resolved");
+		assert.strictEqual(bAllowfullscreen, true, "The allowfullscreen property is correctly resolved");
+		assert.strictEqual(oIframe.getAttribute("allowfullscreen"), "true", "The allowfullscreen property is rendered");
+		assert.strictEqual(oIframe.getAttribute("allow"), "fullscreen", "The allow property is rendered");
+		assert.strictEqual(oIframe.getAttribute("sandbox"), "allow-scripts", "The sandbox property is rendered");
+
+	});
+
 });

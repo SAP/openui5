@@ -65,6 +65,25 @@ sap.ui.define([
 					type: "string",
 					defaultValue: "",
 					bindable: true
+				},
+
+				/**
+				 * Allow attribute of the iframe. No features are available by default
+				 *
+				 * Note: <code>allow</code> with value <code>fullscreen</code> is not supported for Safari.
+				 */
+				allow: {
+					type: "string",
+					bindable: true
+				},
+
+				/**
+				 * Allowfullscreen attribute of the iframe.
+				 */
+				allowfullscreen: {
+					type: "boolean",
+					defaultValue: false,
+					bindable: true
 				}
 			},
 			library: "sap.ui.integration"
@@ -136,6 +155,18 @@ sap.ui.define([
 		} else {
 			this.setMinHeight(oConfiguration.minHeight);
 		}
+
+		if (typeof oConfiguration.allow === "object") {
+			this.bindAllow(BindingHelper.reuse(oConfiguration.allow));
+		} else {
+			this.setAllow(oConfiguration.allow);
+		}
+
+		if (typeof oConfiguration.allowfullscreen === "object") {
+			this.bindAllowfullscreen(BindingHelper.reuse(oConfiguration.allowfullscreen));
+		} else {
+			this.setAllowfullscreen(oConfiguration.allowfullscreen);
+		}
 	};
 
 	WebPageContent.prototype._checkSrc = function () {
@@ -169,7 +200,6 @@ sap.ui.define([
 			this._sPrevSrc = sCurrSrc;
 		}
 	};
-
 	/**
 	 * Shows error if FRAME_LOADED event didn't fire for 15 seconds
 	 */

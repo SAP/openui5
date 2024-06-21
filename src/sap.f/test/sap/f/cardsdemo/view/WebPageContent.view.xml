@@ -32,6 +32,14 @@
 					<f:GridContainerItemLayoutData columns="6" />
 				</w:layoutData>
 			</w:Card>
+			<w:Card
+				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/webPage/webPageFullscreen.json"
+				height="auto"
+				class="sapUiMediumMarginEnd">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="6" />
+				</w:layoutData>
+			</w:Card>
 		</f:GridContainer>
 	</Page>
 </mvc:View>
