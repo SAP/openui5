@@ -31,8 +31,8 @@ sap.ui.define([
 	 * @deprecated As of Version 1.117
 	 */
 	QUnit.module("Misc", {
-		beforeEach: function() {
-			createTables();
+		beforeEach: async function() {
+			await createTables();
 		},
 		afterEach: function() {
 			destroyTables();

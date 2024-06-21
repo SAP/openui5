@@ -520,12 +520,12 @@ sap.ui.define([
 				this.oTable.destroy();
 			}
 		},
-		createTable: function() {
+		createTable: async function() {
 			if (this.oTable) {
 				this.oTable.destroy();
 			}
 
-			this.oTable = TableQUnitUtils.createTable(TreeTable, {
+			this.oTable = await TableQUnitUtils.createTable(TreeTable, {
 				rows: "{/root}",
 				models: new JSONModel(getData()),
 				columns: [
@@ -551,10 +551,10 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("_rowsUpdated - Expand", function(assert) {
+	QUnit.test("_rowsUpdated - Expand", async function(assert) {
 		const aFiredReasons = [];
 		const that = this;
-		const oTable = this.createTable();
+		const oTable = await this.createTable();
 
 		return oTable.qunit.whenRenderingFinished().then(function() {
 			oTable.attachEvent("_rowsUpdated", function(oEvent) {
@@ -568,10 +568,10 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("_rowsUpdated - Collapse", function(assert) {
+	QUnit.test("_rowsUpdated - Collapse", async function(assert) {
 		const aFiredReasons = [];
 		const that = this;
-		const oTable = this.createTable();
+		const oTable = await this.createTable();
 
 		return oTable.qunit.whenRenderingFinished().then(function() {
 			oTable.getRows()[0].expand();
@@ -802,8 +802,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Expand/Collapse", {
-		beforeEach: function() {
-			this.oTable = TableQUnitUtils.createTable(TreeTable, {
+		beforeEach: async function() {
+			this.oTable = await TableQUnitUtils.createTable(TreeTable, {
 				rows: {path: "/"},
 				models: new TableQUnitUtils.createJSONModel(8),
 				rowMode: new FixedRowMode({rowCount: 5})

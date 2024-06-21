@@ -67,8 +67,8 @@ sap.ui.define([
 	}
 
 	QUnit.module("Lifecycle", {
-		beforeEach: function() {
-			this.oTable = TableQUnitUtils.createTable();
+		beforeEach: async function() {
+			this.oTable = await TableQUnitUtils.createTable();
 		},
 		afterEach: function() {
 			this.oTable.destroy();
@@ -88,8 +88,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Common", {
-		beforeEach: function() {
-			this.oTable = TableQUnitUtils.createTable({
+		beforeEach: async function() {
+			this.oTable = await TableQUnitUtils.createTable({
 				columns: TableQUnitUtils.createTextColumn().setWidth("2000px"),
 				rows: {path: "/"},
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(100)
@@ -305,7 +305,7 @@ sap.ui.define([
 
 	QUnit.module("Rows", {
 		beforeEach: async function() {
-			this.oTable = TableQUnitUtils.createTable({
+			this.oTable = await TableQUnitUtils.createTable({
 				rows: "{/}",
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(9),
 				columns: [
@@ -419,7 +419,7 @@ sap.ui.define([
 
 	QUnit.test("Droppable & Drag session data", async function(assert) {
 		this.oTable.addEventDelegate({
-			ondragenter: (oEvent) => {
+			ondragenter: async (oEvent) => {
 				const mParams = oEvent.originalEvent._mTestParameters;
 				const bDraggingOverItself = oEvent.dragSession.getDragControl() === oEvent.dragSession.getDropControl();
 				const sDropPosition = this.oTable.getDragDropConfig()[0].getDropPosition();
@@ -446,6 +446,14 @@ sap.ui.define([
 					}
 
 					assert.ok(!oEvent.isMarked("NonDroppable"), sMessagePrefix + "The event was not marked as \"NonDroppable\"");
+
+					/*
+					 * Requires an UIUpdate in case the test page renders a scrollbar
+					 * while the drop indicator is rendered. The scrollbar will
+					 * move the qunit fixture to the left, but the drop indicator
+					 * will stay at the previous position without the UIUpdate.
+					 */
+					await nextUIUpdate();
 					assert.deepEqual(oEvent.dragSession.getIndicatorConfig(), {
 						width: mTableCntRect.width - (bVerticalScrollbarVisible ? 16 : 0),
 						left: mTableCntRect.left + (this.oTable._bRtlMode && bVerticalScrollbarVisible ? 16 : 0)
@@ -536,7 +544,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Droppable with empty rows aggregation (NoData not shown)", async function(assert) {
-		const oOtherTable = TableQUnitUtils.createTable({
+		const oOtherTable = await TableQUnitUtils.createTable({
 			rows: "{/}",
 			models: TableQUnitUtils.createJSONModelWithEmptyRows(9),
 			columns: TableQUnitUtils.createTextColumn(),
@@ -631,7 +639,7 @@ sap.ui.define([
 
 	QUnit.module("Columns", {
 		beforeEach: async function() {
-			createTables();
+			await createTables();
 
 			this.oDragAndDropExtension = oTable._getDragAndDropExtension();
 			this.oDragAndDropExtension._debug();

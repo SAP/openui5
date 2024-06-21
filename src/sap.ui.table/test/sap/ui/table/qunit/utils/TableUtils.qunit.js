@@ -52,8 +52,8 @@ sap.ui.define([
 	const TestInputControl = TableQUnitUtils.TestInputControl;
 
 	QUnit.module("TableUtils", {
-		beforeEach: function() {
-			createTables();
+		beforeEach: async function() {
+			await createTables();
 		},
 		afterEach: function() {
 			destroyTables();
@@ -1738,7 +1738,7 @@ sap.ui.define([
 
 	QUnit.module("Cell Content", {
 		beforeEach: async function() {
-			createTables();
+			await createTables();
 			TableQUnitUtils.addColumn(oTable, "Not Focusable & Not Tabbable", "NoFocusNoTab");
 			TableQUnitUtils.addColumn(oTable, "Focusable & Tabbable", "FocusTab", true, null, true);
 			TableQUnitUtils.addColumn(oTable, "Focusable & Not Tabbable", "NoTab", true, null, false);

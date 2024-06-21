@@ -23,12 +23,12 @@ sap.ui.define([
 		after: function() {
 			this.oMockServer.destroy();
 		},
-		createTable: function(mSettings) {
+		createTable: async function(mSettings) {
 			if (this.oTable) {
 				this.oTable.destroy();
 			}
 
-			this.oTable = TableQUnitUtils.createTable(Object.assign({}, {
+			this.oTable = await TableQUnitUtils.createTable(Object.assign({}, {
 				rows: "{/Products}",
 				models: TableQUnitUtils.createODataModel(),
 				columns: [
@@ -66,16 +66,16 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Initial rendering", function(assert) {
-		this.createTable();
+	QUnit.test("Initial rendering", async function(assert) {
+		await this.createTable();
 		return this.checkRowsUpdated(assert, [
 			TableUtils.RowsUpdateReason.Render
 		]);
 	});
 
 	QUnit.test("Initial rendering in invisible container", function(assert) {
-		return TableQUnitUtils.hideTestContainer().then(() => {
-			this.createTable();
+		return TableQUnitUtils.hideTestContainer().then(async () => {
+			await this.createTable();
 			return this.checkRowsUpdated(assert, [
 				TableUtils.RowsUpdateReason.Render
 			]);
@@ -87,8 +87,8 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Re-render and refresh", function(assert) {
-		this.createTable();
+	QUnit.test("Re-render and refresh", async function(assert) {
+		await this.createTable();
 
 		return this.oTable.qunit.whenBindingChange().then(this.oTable.qunit.whenRenderingFinished).then(async () => {
 			this.resetRowsUpdatedSpy();
@@ -102,8 +102,8 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Refresh", function(assert) {
-		this.createTable();
+	QUnit.test("Refresh", async function(assert) {
+		await this.createTable();
 
 		return this.oTable.qunit.whenBindingChange().then(this.oTable.qunit.whenRenderingFinished).then(() => {
 			this.resetRowsUpdatedSpy();
@@ -115,8 +115,8 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Sort with Table#sort", function(assert) {
-		this.createTable();
+	QUnit.test("Sort with Table#sort", async function(assert) {
+		await this.createTable();
 
 		return this.oTable.qunit.whenBindingChange().then(this.oTable.qunit.whenRenderingFinished).then(() => {
 			this.resetRowsUpdatedSpy();
@@ -128,8 +128,8 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Sort with Binding#sort", function(assert) {
-		this.createTable();
+	QUnit.test("Sort with Binding#sort", async function(assert) {
+		await this.createTable();
 
 		return this.oTable.qunit.whenBindingChange().then(this.oTable.qunit.whenRenderingFinished).then(() => {
 			this.resetRowsUpdatedSpy();
@@ -141,8 +141,8 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Filter with Table#filter", function(assert) {
-		this.createTable();
+	QUnit.test("Filter with Table#filter", async function(assert) {
+		await this.createTable();
 
 		return this.oTable.qunit.whenBindingChange().then(this.oTable.qunit.whenRenderingFinished).then(() => {
 			this.resetRowsUpdatedSpy();
@@ -154,8 +154,8 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Filter with Binding#filter", function(assert) {
-		this.createTable();
+	QUnit.test("Filter with Binding#filter", async function(assert) {
+		await this.createTable();
 
 		return this.oTable.qunit.whenBindingChange().then(this.oTable.qunit.whenRenderingFinished).then(() => {
 			this.resetRowsUpdatedSpy();
@@ -167,8 +167,8 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Bind", function(assert) {
-		this.createTable();
+	QUnit.test("Bind", async function(assert) {
+		await this.createTable();
 		this.oBindingInfo = this.oTable.getBindingInfo("rows");
 
 		return this.oTable.qunit.whenBindingChange().then(this.oTable.qunit.whenRenderingFinished).then(() => {

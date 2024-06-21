@@ -502,8 +502,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("ColumnMove", {
-		beforeEach: function() {
-			createTables();
+		beforeEach: async function() {
+			await createTables();
 		},
 		afterEach: function() {
 			destroyTables();
@@ -691,8 +691,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Column Widths", {
-		beforeEach: function() {
-			createTables();
+		beforeEach: async function() {
+			await createTables();
 		},
 		afterEach: function() {
 			destroyTables();
@@ -900,7 +900,7 @@ sap.ui.define([
 
 	QUnit.module("Fixed Columns", {
 		beforeEach: async function() {
-			createTables();
+			await createTables();
 			oTable.setFixedColumnCount(0);
 			this.aColumns = oTable.getColumns();
 			for (let i = 0; i < this.aColumns.length; i++) {

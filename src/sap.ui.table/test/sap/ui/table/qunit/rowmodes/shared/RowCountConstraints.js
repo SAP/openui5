@@ -13,9 +13,9 @@ sap.ui.define([
 		before: function() {
 			this.TestPlugin = PluginBase.extend("sap.ui.table.plugins.test.Plugin");
 		},
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oPlugin = new this.TestPlugin();
-			this.oTable = TableQUnitUtils.createTable({
+			this.oTable = await TableQUnitUtils.createTable({
 				rows: {path: "/"},
 				dependents: [this.oPlugin],
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(100),

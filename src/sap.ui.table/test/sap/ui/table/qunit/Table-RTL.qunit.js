@@ -14,8 +14,8 @@ sap.ui.define([
 	"use strict";
 
 	QUnit.module("Hierarchy modes", {
-		beforeEach: function() {
-			this.oTable = TableQUnitUtils.createTable({
+		beforeEach: async function() {
+			this.oTable = await TableQUnitUtils.createTable({
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(12),
 				columns: [
 					TableQUnitUtils.createTextColumn()

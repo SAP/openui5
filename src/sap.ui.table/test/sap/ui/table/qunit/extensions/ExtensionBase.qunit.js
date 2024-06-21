@@ -1,7 +1,6 @@
 /*global QUnit */
 
 sap.ui.define([
-	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/table/extensions/ExtensionBase",
 	"sap/ui/table/Table",
@@ -9,7 +8,6 @@ sap.ui.define([
 	"sap/ui/table/AnalyticalTable",
 	"sap/ui/base/Object"
 ], function(
-	TableQUnitUtils,
 	nextUIUpdate,
 	ExtensionBase,
 	Table,

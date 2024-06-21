@@ -44,8 +44,8 @@ sap.ui.define([
 	}
 
 	QUnit.module("Basics", {
-		beforeEach: function() {
-			this.oTable = TableQUnitUtils.createTable({
+		beforeEach: async function() {
+			this.oTable = await TableQUnitUtils.createTable({
 				rows: {path: "/"},
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(10)
 			});
@@ -293,9 +293,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("Deselect All button", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oMockServer = startMockServer();
-			this.oTable = TableQUnitUtils.createTable({
+			this.oTable = await TableQUnitUtils.createTable({
 				dependents: [
 					new MultiSelectionPlugin()
 				]
@@ -357,11 +357,11 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Event parameters of internal default selection plugin", function(assert) {
+	QUnit.test("Event parameters of internal default selection plugin", async function(assert) {
 		const oMultiSelectionPlugin = new MultiSelectionPlugin();
 
 		this.oTable.destroy();
-		this.oTable = TableQUnitUtils.createTable({
+		this.oTable = await TableQUnitUtils.createTable({
 			rows: {path: "/"},
 			dependents: [
 				oMultiSelectionPlugin
@@ -388,9 +388,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("Multi selection behavior", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oMockServer = startMockServer();
-			this.oTable = TableQUnitUtils.createTable({
+			this.oTable = await TableQUnitUtils.createTable({
 				dependents: [
 					new MultiSelectionPlugin()
 				],

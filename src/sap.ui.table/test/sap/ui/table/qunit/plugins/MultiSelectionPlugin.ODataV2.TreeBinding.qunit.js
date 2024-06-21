@@ -39,8 +39,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Load data", {
-		beforeEach: function() {
-			this.oTable = TableQUnitUtils.createTable(TreeTable);
+		beforeEach: async function() {
+			this.oTable = await TableQUnitUtils.createTable(TreeTable);
 			this.oMultiSelectionPlugin = this.oTable.getDependents()[0];
 
 			// The binding is expanding to level 4 in 4 steps. We need to wait for completion before test execution.

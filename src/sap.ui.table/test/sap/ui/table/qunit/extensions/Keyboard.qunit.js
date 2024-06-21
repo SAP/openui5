@@ -37,8 +37,8 @@ sap.ui.define([
 	const TestControl = TableQUnitUtils.TestControl;
 
 	QUnit.module("Lifecycle", {
-		beforeEach: function() {
-			this.oTable = TableQUnitUtils.createTable({
+		beforeEach: async function() {
+			this.oTable = await TableQUnitUtils.createTable({
 				rows: "{/}",
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(1),
 				columns: TableQUnitUtils.createTextColumn()
@@ -80,8 +80,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Item Navigation", {
-		beforeEach: function() {
-			createTables();
+		beforeEach: async function() {
+			await createTables();
 		},
 		afterEach: function() {
 			destroyTables();
@@ -219,8 +219,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Misc", {
-		beforeEach: function() {
-			createTables();
+		beforeEach: async function() {
+			await createTables();
 		},
 		afterEach: function() {
 			destroyTables();
@@ -315,7 +315,7 @@ sap.ui.define([
 
 	QUnit.module("Focus handling", {
 		beforeEach: async function() {
-			createTables();
+			await createTables();
 			oTable.addColumn(TableQUnitUtils.createInputColumn({text: "test3"}));
 			await nextUIUpdate();
 		},

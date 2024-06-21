@@ -42,8 +42,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Basic checks", {
-		beforeEach: function() {
-			this.oTable = TableQUnitUtils.createTable(TreeTable, {}, function(oTable) {
+		beforeEach: async function() {
+			this.oTable = await TableQUnitUtils.createTable(TreeTable, {}, function(oTable) {
 				oTable._oProxy._bEnableV4 = true;
 				oTable.getBinding("rows").resume();
 			});

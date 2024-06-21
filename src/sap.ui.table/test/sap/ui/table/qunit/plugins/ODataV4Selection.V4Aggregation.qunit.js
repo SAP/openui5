@@ -68,8 +68,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Basic checks", {
-		beforeEach: function() {
-			this.oTable = TableQUnitUtils.createTable(Table, {}, function(oTable) {
+		beforeEach: async function() {
+			this.oTable = await TableQUnitUtils.createTable(Table, {}, function(oTable) {
 				const oV4AggregationPlugin = oTable.getDependents()[1];
 				oV4AggregationPlugin.setPropertyInfos([
 					{key: "SalesAmountLocalCurrency", path: "SalesAmountLocalCurrency", aggregatable: true, unit: "LocalCurrency"},

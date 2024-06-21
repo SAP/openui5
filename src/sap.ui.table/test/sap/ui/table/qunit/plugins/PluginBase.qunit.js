@@ -149,9 +149,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("Row count constraints", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oPlugin = new TestPlugin();
-			this.oTable = TableQUnitUtils.createTable({
+			this.oTable = await TableQUnitUtils.createTable({
 				dependents: [this.oPlugin],
 				rowMode: new FixedRowMode()
 			});
@@ -191,10 +191,10 @@ sap.ui.define([
 	/*The following tests should become obsolte when sap.ui.table.plugins.PluginBase inherits in future from sap.m.plugins.PluginBase.*/
 
 	QUnit.module("Static getPlugin", {
-		beforeEach: function(assert) {
+		beforeEach: async function(assert) {
 			this.oPlugin = new TestPlugin();
 			this.oSelectionPlugin = new TestSelectionPlugin();
-			this.oTable = TableQUnitUtils.createTable();
+			this.oTable = await TableQUnitUtils.createTable();
 		},
 		afterEach: function() {
 			this.oPlugin.destroy();
@@ -213,14 +213,18 @@ sap.ui.define([
 		this.oTable.destroyDependents();
 
 		this.oTable.addDependent(this.oPlugin);
-		assert.ok(PluginBase.getPlugin(this.oTable, "sap.ui.table.plugins.test.Plugin") === this.oPlugin, "Plugin of type sap.ui.table.plugins.test.Plugin found in dependents aggregation");
-		assert.ok(PluginBase.getPlugin(this.oTable, TestPlugin) === this.oPlugin, "Plugin of type sap.ui.table.plugins.test.Plugin Class found in dependents aggregation");
+		assert.ok(PluginBase.getPlugin(this.oTable, "sap.ui.table.plugins.test.Plugin") === this.oPlugin,
+			"Plugin of type sap.ui.table.plugins.test.Plugin found in dependents aggregation");
+		assert.ok(PluginBase.getPlugin(this.oTable, TestPlugin) === this.oPlugin,
+			"Plugin of type sap.ui.table.plugins.test.Plugin Class found in dependents aggregation");
 		assert.ok(PluginBase.findOn(this.oTable) === this.oPlugin, "Plugin found with findOn");
 		this.oTable.removeAllDependents();
 
 		this.oTable.addDependent(this.oSelectionPlugin);
-		assert.ok(PluginBase.getPlugin(this.oTable, "sap.ui.table.plugins.test.SelectionPlugin") === this.oSelectionPlugin, "Plugin of type sap.ui.table.plugins.test.SelectionPlugin found in dependents aggregation");
-		assert.ok(PluginBase.getPlugin(this.oTable, TestSelectionPlugin) === this.oSelectionPlugin, "Plugin of type sap.ui.table.plugins.test.SelectionPlugin Class found in dependents aggregation");
+		assert.ok(PluginBase.getPlugin(this.oTable, "sap.ui.table.plugins.test.SelectionPlugin") === this.oSelectionPlugin,
+			"Plugin of type sap.ui.table.plugins.test.SelectionPlugin found in dependents aggregation");
+		assert.ok(PluginBase.getPlugin(this.oTable, TestSelectionPlugin) === this.oSelectionPlugin,
+			"Plugin of type sap.ui.table.plugins.test.SelectionPlugin Class found in dependents aggregation");
 		assert.ok(PluginBase.findOn(this.oTable) === this.oSelectionPlugin, "Plugin found with findOn");
 		this.oTable.insertDependent(this.oPlugin, 0);
 		assert.ok(PluginBase.findOn(this.oTable) === this.oPlugin, "Plugin found with findOn");
@@ -231,8 +235,10 @@ sap.ui.define([
 		 */
 		if (this.oTable.addPlugin) {
 			this.oTable.addPlugin(this.oSelectionPlugin);
-			assert.ok(PluginBase.getPlugin(this.oTable, "sap.ui.table.plugins.test.SelectionPlugin") === this.oSelectionPlugin, "Plugin of type sap.ui.table.plugins.test.SelectionPlugin found in plugins aggregation");
-			assert.ok(PluginBase.getPlugin(this.oTable, TestSelectionPlugin) === this.oSelectionPlugin, "Plugin of type sap.ui.table.plugins.test.SelectionPlugin Class found in plugins aggregation");
+			assert.ok(PluginBase.getPlugin(this.oTable, "sap.ui.table.plugins.test.SelectionPlugin") === this.oSelectionPlugin,
+				"Plugin of type sap.ui.table.plugins.test.SelectionPlugin found in plugins aggregation");
+			assert.ok(PluginBase.getPlugin(this.oTable, TestSelectionPlugin) === this.oSelectionPlugin,
+				"Plugin of type sap.ui.table.plugins.test.SelectionPlugin Class found in plugins aggregation");
 			this.oTable.removeAllPlugins();
 		}
 	});

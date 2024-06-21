@@ -9,8 +9,8 @@ sap.ui.define([
 	"use strict";
 
 	QUnit.module("Selection API", {
-		beforeEach: function() {
-			this.oTable = TableQUnitUtils.createTable({
+		beforeEach: async function() {
+			this.oTable = await TableQUnitUtils.createTable({
 				rows: {path: "/"},
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(10)
 			});
@@ -51,8 +51,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Automatic deselection", {
-		beforeEach: function() {
-			this.oTable = TableQUnitUtils.createTable({
+		beforeEach: async function() {
+			this.oTable = await TableQUnitUtils.createTable({
 				rows: {path: "/"},
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(10)
 			});
@@ -95,9 +95,9 @@ sap.ui.define([
 		assert.equal(this.oSelectionChangeSpy.callCount, 1, "rowSelectionChange event fired");
 	});
 
-	QUnit.test("Initial change of total number of rows", function(assert) {
+	QUnit.test("Initial change of total number of rows", async function(assert) {
 		this.oTable.destroy();
-		this.oTable = TableQUnitUtils.createTable({
+		this.oTable = await TableQUnitUtils.createTable({
 			rows: {path: "/"},
 			models: TableQUnitUtils.createJSONModelWithEmptyRows(10)
 		}, function(oTable) {

@@ -37,7 +37,7 @@ sap.ui.define([
 
 	QUnit.module("Determine row type", {
 		beforeEach: async function() {
-			this.oTable = TableQUnitUtils.createTable({
+			this.oTable = await TableQUnitUtils.createTable({
 				rows: "{/}",
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(9),
 				columns: TableQUnitUtils.createTextColumn(),
@@ -90,8 +90,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Hierarchy modes", {
-		beforeEach: function() {
-			this.oTable = TableQUnitUtils.createTable();
+		beforeEach: async function() {
+			this.oTable = await TableQUnitUtils.createTable();
 		},
 		afterEach: function() {
 			this.oTable.destroy();
@@ -223,7 +223,7 @@ sap.ui.define([
 
 	QUnit.module("Rendering", {
 		beforeEach: async function() {
-			this.oTreeTable = TableQUnitUtils.createTable(TreeTable, {
+			this.oTreeTable = await TableQUnitUtils.createTable(TreeTable, {
 				rowMode: new FixedRowMode({
 					rowCount: 12
 				}),
@@ -454,7 +454,7 @@ sap.ui.define([
 	 */
 	QUnit.module("sap.ui.table.Table: Experimental Grouping", {
 		beforeEach: async function() {
-			createTables();
+			await createTables();
 			const oData = window.oModel.getData();
 			for (let i = 0; i < iNumberOfRows; i++) {
 				oData.rows[i][window.aFields[0]] = i < 4 ? "A" : "B";
