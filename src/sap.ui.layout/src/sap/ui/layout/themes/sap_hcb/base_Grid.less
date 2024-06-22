@@ -1,0 +1,261 @@
+/* UI5 RESPONSIVE GRID */
+// Variables
+@_sap_ui_layout_Grid_RespGridCols: 12;
+@_sap_ui_layout_Grid_RespGridCols-1: @_sap_ui_layout_Grid_RespGridCols - 1;
+@_sap_ui_layout_Grid_RespGridOneCol: 100% / @_sap_ui_layout_Grid_RespGridCols;
+@_sap_ui_layout_Grid_RespGridMediaPhone: sapUiRespGridMedia-Std-Phone;
+@_sap_ui_layout_Grid_RespGridMediaTablet: sapUiRespGridMedia-Std-Tablet;
+@_sap_ui_layout_Grid_RespGridMediaDesktop: sapUiRespGridMedia-Std-Desktop;
+@_sap_ui_layout_Grid_RespGridMediaXL: sapUiRespGridMedia-Std-LargeDesktop;
+@_sap_ui_layout_Grid_RespGridMediaPhoneSize: 320px;
+@_sap_ui_layout_Grid_RespGridMediaTabletSize: 600px;
+@_sap_ui_layout_Grid_RespGridMediaDesktopSize: 1024px;
+@_sap_ui_layout_Grid_RespGridMediaXLSize: 1440px;
+@_sap_ui_layout_Grid_RespGridPxInRem: 16;
+@_sap_ui_layout_Grid_RespGridVisible: sapUiRespGridVisible;
+@_sap_ui_layout_Grid_RespGridHidden: sapUiRespGridHidden;
+
+div[class*="sapUiRespGrid"] > div[class*="sapUiRespGridSpan"] {
+    float: left;
+	min-height: 1px; // BCP: 1770523047
+}
+
+div.sapUiRespGridOverflowHidden[class*="sapUiRespGrid"] > div[class*="sapUiRespGridSpan"] {
+	overflow: hidden;
+}
+
+/* CLEAR FIX */
+
+div[class*="sapUiRespGrid"]:after {
+    clear: both;
+    content: " ";
+    display: block;
+    font-size: 0;
+    height: 0;
+    visibility: hidden;
+}
+
+/* GRID HORIZONTAL SPACING - 0.5rem */
+
+.sapUiRespGrid.sapUiRespGridHSpace05 {
+    padding: 0 0.25rem;
+}
+
+.sapUiRespGrid.sapUiRespGridHSpace05 > div {
+    margin: 0 0.25rem;
+}
+
+/* GRID HORIZONTAL SPACING - 1rem */
+
+.sapUiRespGrid.sapUiRespGridHSpace1 {
+    padding: 0 0.5rem;
+}
+
+.sapUiRespGrid.sapUiRespGridHSpace1 > div {
+    margin: 0 0.5rem;
+}
+
+/* GRID HORIZONTAL SPACING - 2rem */
+
+.sapUiRespGrid.sapUiRespGridHSpace2 {
+    padding: 0 1rem;
+}
+
+.sapUiRespGrid.sapUiRespGridHSpace2 > div {
+    margin: 0 1rem;
+}
+
+/* GRID VERTICAL SPACING - general */
+
+.sapUiRespGrid.sapUiRespGridVSpace0 > div {
+    margin-bottom: 0;
+}
+
+.sapUiRespGrid.sapUiRespGridVSpace05 > div {
+    margin-bottom: 0.5rem;
+}
+
+.sapUiRespGrid.sapUiRespGridVSpace1 > div {
+    margin-bottom: 1rem;
+}
+
+.sapUiRespGrid.sapUiRespGridVSpace2 > div {
+    margin-bottom: 2rem;
+}
+
+.sapUiRespGrid[class*="sapUiRespGridVSpace0"] > .sapUiRespGridSpanInvisible,
+.sapUiRespGrid[class*="sapUiRespGridVSpace05"] > .sapUiRespGridSpanInvisible,
+.sapUiRespGrid[class*="sapUiRespGridVSpace1"] > .sapUiRespGridSpanInvisible,
+.sapUiRespGrid[class*="sapUiRespGridVSpace2"] > .sapUiRespGridSpanInvisible {
+	margin-bottom: 0;
+}
+
+/* GENERAL BREAK */
+
+.sapUiRespGridBreak { clear: both; }
+
+.sapUiRespGridWriteSpanClass(@classFor, @hspace, @span, @screenSize) when (@classFor = Span) {
+    @a:  @_sap_ui_layout_Grid_RespGridOneCol * @span;
+    width: @a - 100% * @_sap_ui_layout_Grid_RespGridPxInRem * @hspace / @screenSize;
+    .sapUiRespGrid-getCalcFuncSpan(@a, @hspace);
+}
+
+.sapUiRespGridWriteIndentClass(@classFor, @hspace, @span, @screenSize) when (@classFor = Indent) {
+    @a:  @_sap_ui_layout_Grid_RespGridOneCol * @span;
+    margin-left: @a + (100% * @_sap_ui_layout_Grid_RespGridPxInRem * @hspace/2) / @screenSize ;
+    .sapUiRespGrid-getCalcFuncIndent(@a, @hspace);
+}
+
+// Get the values and how I cheat LESS processor with the commented calc function
+.sapUiRespGrid-getCalcFuncSpan(@a, @hspace)  when (@hspace > 0) {
+   @c: "calc(";
+   @b: " - ";
+   @d: "-webkit-calc(";
+   @e: "rem)";
+   @par1: ~"@{d}@{a}@{b}@{hspace}@{e}";
+   @par2: ~"@{c}@{a}@{b}@{hspace}@{e}";
+        width: @par1;
+        width: @par2;
+}
+
+// Get the values and how I cheat LESS processor with the commented calc function
+.sapUiRespGrid-getCalcFuncIndent(@a, @hspace)  when (@hspace > 0) {
+   @c: "calc(";
+   @b: " + ";
+   @d: "-webkit-calc(";
+   @e: "rem)";
+   @f: @hspace/2;
+   @par1: ~"@{d}@{a}@{b}@{f}@{e}";
+   @par2: ~"@{c}@{a}@{b}@{f}@{e}";
+        margin-left: @par1;
+        margin-left: @par2;
+}
+
+
+//Write Span and Indent classes
+.sapUiRespGridWriteClasses(@counter, @media, @classFor, @name, @classHSpace, @hspace, @screenSize) when (@counter > 0) {
+  .sapUiRespGridWriteClasses((@counter - 1), @media, @classFor, @name, @classHSpace, @hspace, @screenSize);
+  .@{media}.sapUiRespGridHSpace@{classHSpace} > .sapUiRespGrid@{classFor}@{name}@{counter} {
+      .sapUiRespGridWriteSpanClass(@classFor, @hspace, @counter,  @screenSize);
+      .sapUiRespGridWriteIndentClass(@classFor, @hspace, @counter,  @screenSize);
+    }
+}
+
+// MOVE LEFT
+.sapUiRespGridWriteMoveFwd(@counter, @media, @name) when (@counter > 0) {
+  .sapUiRespGridWriteMoveFwd((@counter - 1), @media, @name);
+  .@{media} > .sapUiRespGridFwd@{name}@{counter} { left: @_sap_ui_layout_Grid_RespGridOneCol * @counter; }
+}
+
+// MOVE RIGHT
+.sapUiRespGridWriteMoveBwd(@counter, @media, @name) when (@counter > 0) {
+  .sapUiRespGridWriteMoveBwd((@counter - 1), @media, @name);
+  .@{media} > .sapUiRespGridBwd@{name}@{counter} { right: @_sap_ui_layout_Grid_RespGridOneCol * @counter; }
+}
+
+.sapUiRespGridWriteBreak(@media, @name){
+  .@{media} > .sapUiRespGridBreak@{name} { clear: both }
+}
+
+
+.sapUiRespGridWriteCSS(@media, @name, @screenSize) {
+
+    /*SPANS */
+    .sapUiRespGridWriteClasses(@_sap_ui_layout_Grid_RespGridCols, @media, Span, @name, 0, 0, @screenSize);
+    .sapUiRespGridWriteClasses(@_sap_ui_layout_Grid_RespGridCols, @media, Span, @name, ~"05", 0.5, @screenSize);
+    .sapUiRespGridWriteClasses(@_sap_ui_layout_Grid_RespGridCols, @media, Span, @name, 1, 1, @screenSize);
+    .sapUiRespGridWriteClasses(@_sap_ui_layout_Grid_RespGridCols, @media, Span, @name, 2, 2, @screenSize);
+
+    /*INDENTS */
+    .sapUiRespGridWriteClasses(@_sap_ui_layout_Grid_RespGridCols-1, @media, Indent, @name, 0, 0, @screenSize);
+    .sapUiRespGridWriteClasses(@_sap_ui_layout_Grid_RespGridCols-1, @media, Indent, @name, ~"05", 0.5, @screenSize);
+    .sapUiRespGridWriteClasses(@_sap_ui_layout_Grid_RespGridCols-1, @media, Indent, @name, 1, 1, @screenSize);
+    .sapUiRespGridWriteClasses(@_sap_ui_layout_Grid_RespGridCols-1, @media, Indent, @name, 2, 2, @screenSize);
+
+	/* MOVE LEFT */
+	.sapUiRespGridWriteMoveFwd(@_sap_ui_layout_Grid_RespGridCols-1, @media, @name);
+
+	/* MOVE RIGHT */
+	.sapUiRespGridWriteMoveBwd(@_sap_ui_layout_Grid_RespGridCols-1, @media, @name);
+
+	/* BREAK */
+	.sapUiRespGridWriteBreak(@media, @name);
+}
+
+/* =============================== */
+/*   S M A L L   D E V I C E S     */
+/* =============================== */
+
+.sapUiRespGridWriteCSS(@_sap_ui_layout_Grid_RespGridMediaPhone, S, @_sap_ui_layout_Grid_RespGridMediaPhoneSize);
+.@{_sap_ui_layout_Grid_RespGridMediaPhone} > .@{_sap_ui_layout_Grid_RespGridHidden}S { display: none }
+
+
+/* =============================== */
+/*   M E D I U M   D E V I C E S   */
+/* =============================== */
+
+.sapUiRespGridWriteCSS(@_sap_ui_layout_Grid_RespGridMediaTablet, M, @_sap_ui_layout_Grid_RespGridMediaTabletSize);
+.@{_sap_ui_layout_Grid_RespGridMediaTablet} > .@{_sap_ui_layout_Grid_RespGridHidden}M { display: none }
+
+
+/* ============================= */
+/*   L A R G E   D E V I C E S   */
+/* ============================= */
+
+.sapUiRespGridWriteCSS(@_sap_ui_layout_Grid_RespGridMediaDesktop, L, @_sap_ui_layout_Grid_RespGridMediaDesktopSize);
+.@{_sap_ui_layout_Grid_RespGridMediaDesktop} > .@{_sap_ui_layout_Grid_RespGridHidden}L { display: none }
+
+
+/* ====================================== */
+/*  E X T R A   L A R G E   D E V I C E S */
+/* ====================================== */
+
+.sapUiRespGridWriteCSS(@_sap_ui_layout_Grid_RespGridMediaXL, XL, @_sap_ui_layout_Grid_RespGridMediaXLSize);
+.@{_sap_ui_layout_Grid_RespGridMediaXL} > .@{_sap_ui_layout_Grid_RespGridHidden}XL { display: none }
+
+
+
+/* =============== */
+/*   E X T R A S   */
+/* =============== */
+
+/* HORIZONTAL POSITIONING GRID IN CONTAINER */
+
+div.sapUiRespGrid.sapUiRespGridPosCenter {
+       margin-left: auto;
+       margin-right: auto;
+}
+
+div.sapUiRespGrid.sapUiRespGridPosRight {
+       margin-left: auto;
+       margin-right: 0;
+}
+
+/* MOVE FOWARD and BACKWARD */
+
+div[class*="sapUiRespGrid"] > div[class*="sapUiRespGridFwd"] {
+       position: relative;
+}
+
+div[class*="sapUiRespGrid"] > div[class*="sapUiRespGridBwd"] {
+       float: right;
+       position: relative;
+}
+
+
+/* explanation for percentages for browsers without calc support:
+   16px = 1rem
+   -------------------------
+S  1.25%     =  4px / 320px
+   2.5%      =  8px / 320px
+   5%        = 16px / 320px
+   10%       = 32px / 320px
+M  0.16667%  =  4px / 600px
+   1.3333%   =  8px / 600px
+   2.6667%   = 16px / 600px
+   5.3333%   = 32px / 600px
+L  0.390625% =  4px / 1024px
+   0.78125%  =  8px / 1024px
+   1.5625%   = 16px / 1024px
+   3.125%    = 32px / 1024px
+   ------------------------- */
