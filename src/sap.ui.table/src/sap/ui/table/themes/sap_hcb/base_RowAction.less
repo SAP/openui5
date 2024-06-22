@@ -1,0 +1,52 @@
+/* ======================================= */
+/* CSS for control sap.ui.table/RowAction  */
+/* Base theme                              */
+/* ======================================= */
+
+.sapUiTableAction {
+	padding: 0 @_sap_ui_table_RowActionPadding;
+
+	&.sapUiTableActionHidden,
+	.sapUiTableGroupHeaderRow &,
+	.sapUiTableSummaryRow & {
+		display: none;
+	}
+}
+
+.sapUiTableActionIcon {
+	height: @_sap_ui_table_RowActionItemSize;
+	width: @_sap_ui_table_RowActionItemSize;
+	line-height: @_sap_ui_table_RowActionItemSize;
+	color: @sapUiContentIconColor;
+	font-size: 1rem;
+
+	// If the first action item is hidden, move the second item to the position where it would be if the first item wasn't hidden.
+	.sapUiTableAction > .sapUiTableActionHidden + & {
+		margin-left: @_sap_ui_table_RowActionItemSize;
+
+		.sapUiSizeCozy & {
+			margin-left: @_sap_ui_table_RowActionItemSizeCozy;
+		}
+
+		.sapUiSizeCondensed & {
+			margin-left: @_sap_ui_table_RowActionItemSizeCondensed;
+		}
+	}
+
+	&.sapUiTableActionHidden {
+		display: none;
+	}
+
+	.sapUiSizeCozy & {
+		height: @_sap_ui_table_RowActionItemSizeCozy;
+		width: @_sap_ui_table_RowActionItemSizeCozy;
+		line-height: @_sap_ui_table_RowActionItemSizeCozy;
+	}
+
+	.sapUiSizeCondensed & {
+		height: @_sap_ui_table_RowActionItemSizeCondensed;
+		width: @_sap_ui_table_RowActionItemSizeCondensed;
+		line-height: @_sap_ui_table_RowActionItemSizeCondensed;
+		font-size: 0.75rem;
+	}
+}
