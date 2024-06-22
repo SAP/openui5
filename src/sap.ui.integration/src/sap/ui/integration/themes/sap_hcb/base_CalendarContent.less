@@ -1,0 +1,247 @@
+/* =========================================================== */
+/* CSS for control sap.ui.integration.controls/CalendarContent */
+/* Base theme                                                  */
+/* =========================================================== */
+
+.sapFCardCalendarContent .sapFCalCard {
+	padding: 1rem;
+	.sapUiCal:not(.sapUiCalInt) {
+		width: 100%;
+		padding: 0;
+		min-height: 16.5rem;
+		min-width: 16.5rem;
+	}
+	.sapUiCalMonthPicker,
+	.sapUiCalYearPicker {
+		left: 0;
+		margin-left: 0;
+	}
+	.sapUiCal .sapUiCalMonthView {
+		padding: 0;
+	}
+
+	.sapUiCalendarAppContainer {
+		display: flex;
+		align-items: center;
+		justify-content: flex-start;
+		box-sizing: border-box;
+		padding-right: 0;
+	}
+
+	.sapFCalCardLineSeparator {
+		border-top: 0.0625rem solid @sapUiGroupContentBorderColor;
+		margin-bottom: 1rem;
+	}
+
+	.sapUiCalendarAppContainer > .sapUiCalendarAppContainerLeft {
+		padding: 0;
+		width: 15%;
+		margin: 0 0.75rem 0 0;
+		.sapUiCalendarAppStart {
+			font-size: @sapMFontMediumSize;
+			color: @sapUiBaseText;
+			text-align: right;
+		}
+		.sapUiCalendarAppEnd {
+			font-size: @sapMFontSmallSize;
+			color: @sapUiContentLabelColor;
+			margin-top: 0.25rem;
+			text-align: right;
+		}
+	}
+	.sapUiCalendarAppContainer > .sapUiCalendarAppContainerRight {
+		flex: 1 1 auto;
+		margin-right: 0;
+		width: 70%;
+	}
+
+	.sapFCalCardRightSide {
+		display: flex;
+		flex-direction: column;
+		.sapFCalCardAppList{
+			width: 100%
+		}
+		.sapMBtn {
+			align-self: center;
+		}
+	}
+
+	.sapUiCalendarAppContainer.sapUiCalendarAppCurrent > .sapUiCalendarAppContainerRight {
+		position: relative;
+
+		&::after {
+			content: '';
+			display: block;
+			position: absolute;
+			border: 2px solid @sapUiLegendCurrentDateTime;
+			border-radius: 4px;
+			top: -4px;
+			left: -4px;
+			bottom: -4px;
+			right: -4px;
+			pointer-events: none;
+		}
+	}
+
+	.sapUiCalendarAppContainer > .sapUiCalendarAppContainerRight > .sapUiCalendarApp {
+		margin: 0;
+	}
+	.sapUiCalLegMoreText {
+		font-size: @sapMFontMediumSize;
+		color: @sapUiLinkActive;
+		margin-left: 0.25rem;
+		&>.sapUiUnifiedLegendSquare {
+			display: none;
+		}
+	}
+
+	.sapFCalCardNoItemsText {
+		line-height: 2rem;
+		text-align: center;
+		font-size: 0.9rem;
+	}
+
+	.sapUiUnifiedLegend {
+		padding: 1rem 0.5rem;
+	}
+
+	.sapUiCalendarAppContainer > .sapUiCalendarAppContainerRight > .sapUiCalendarApp:not(.sapUiCalendarAppDisabled):active {
+		.sapUiCalendarAppCont {
+			.sapUiCalendarAppIcon:before,
+			.sapUiCalendarAppTitleWrapper .sapUiCalendarAppTitle,
+			.sapUiCalendarAppTitleWrapper .sapUiCalendarAppText{
+				color: @sapUiContentSelectedTextColor;
+			}
+		}
+	}
+
+	.sapUiCalendarApp.sapUiCalendarAppDisabled.sapUiCalendarAppSel,
+	.sapUiCalendarApp.sapUiCalendarAppDisabled:active,
+	.sapUiCalendarApp.sapUiCalendarAppDisabled.sapUiCalendarAppSel:active{
+		color: transparent;
+		background-color: transparent;
+	}
+
+	.sapUiCalendarApp.sapUiCalendarAppDisabled {
+		 cursor: auto;
+	}
+}
+
+.sapUiSizeCompact {
+	.sapFCardCalendarContent .sapFCalCard {
+		.sapUiCalMonthPicker,
+		.sapUiCalYearPicker {
+			left: 0;
+			margin-left: 0;
+		}
+	}
+}
+
+.sapFCalCard .sapMTBStandard {
+	border-bottom: none;
+}
+
+.sapFCalCard .sapUiCalendarAppCont {
+	height: 100%;
+	display: flex;
+}
+
+// center vertically if it is title-only or text-only appointment
+.sapFCalCard .sapUiCalendarAppOneLine {
+	.sapUiCalendarAppIcon,
+	.sapUiCalendarAppTitle,
+	.sapUiCalendarAppText {
+		height: 3rem;
+		line-height: 3rem;
+		padding-top: 0;
+		padding-bottom: 0;
+	}
+
+	.sapUiCalendarAppIcon {
+		top: 0;
+	}
+}
+
+/* ======================================= */
+/* Two columns                             */
+/* ======================================= */
+
+.sapFCardCalendarContent.sapMPCInCardTwoColumns {
+	.sapFCalCardLayout {
+		display: flex;
+	}
+
+	.sapFCalCardLineSeparator {
+		display: none;
+	}
+	.sapFCalCardLeftSide,
+	.sapFCalCardRightSide {
+		width: 50%;
+	}
+
+	.sapFCalCardRightSide {
+		display: flex;
+		flex-direction: column;
+		.sapFCalCardAppList{
+			width: 100%
+		}
+		.sapMBtn {
+			align-self: center;
+		}
+	}
+
+	// visualize the start and end on top of the appointment content
+	.sapUiCalendarAppContainer {
+		flex-direction: column;
+
+		.sapUiCalendarAppContainerLeft {
+			width: 100%;
+			margin: 0;
+			padding: 0 0 0.0625rem 0;
+
+			.sapUiCalendarAppStart,
+			.sapUiCalendarAppEnd {
+				display: inline-block;
+				margin: 0;
+				padding: 0;
+			}
+
+			.sapUiCalendarAppEnd {
+				margin-left: 0.25rem;
+			}
+		}
+
+		.sapUiCalendarAppContainerRight {
+			width: 100%;
+		}
+	}
+}
+
+// adjust calendar card on small screen sizes (phone) or higner zoom factor
+html.sapUiMedia-Std-Phone,
+html.sapUiMedia-StdExt-Phone {
+	.sapFCardCalendarContent .sapFCalCard {
+		padding: 1rem 0.375rem;
+		.sapMIBar.sapMTB .sapMBarChild ~ .sapMBarChild {
+			margin-left: 0.125rem;
+		}
+	}
+}
+
+html.sapUiMedia-Std-Tablet,
+html.sapUiMedia-StdExt-Tablet {
+	.sapFCardCalendarContent .sapFCalCard {
+		.sapMIBar.sapMTB .sapMBarChild ~ .sapMBarChild {
+			margin-left: 0.25rem;
+		}
+	}
+}
+
+.sapFCardCalendarContent .sapFCalCard {
+	.sapUiCalMonthPicker,
+	.sapUiCalYearPicker {
+		width: auto;
+	}
+}
+
+

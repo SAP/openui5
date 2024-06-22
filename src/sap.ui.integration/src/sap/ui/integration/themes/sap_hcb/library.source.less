@@ -2,5 +2,35 @@
  * ${copyright}
  */
 
-@import "../base/library.source.less";
+/***********************************************************************************
+/* Due to deprecation of sap_hcb with SAPUI5 version 1.46 the library.source.less
+/* file of base is resolved: Imports to base.less and global.less of
+/* base are added to this library.source.less file (sap_hcb) and the
+/* respective control css files of base are added to the sap_hcb theme folder.
+/* This decoupling of the base theme is introduced with SAPUI5 version 1.126.
+***********************************************************************************/
+
+@import "../../../core/themes/base/base.less";
+@import "../../../core/themes/base/global.less";
+
+@import "base_ActionsStrip.less";
+@import "base_AdaptiveCard.less";
+@import "base_AnalyticsCloudContent.less";
+@import "base_BlockingMessage.less";
+@import "base_CalendarContent.less";
+@import "base_Card.less";
+@import "base_CardVariants.less";
+@import "base_CustomElementBase.less";
+@import "base_CustomElementCard.less";
+@import "base_Paginator.less";
+@import "base_Footer.less";
+@import "base_ImageWithOverlay.less";
+@import "base_LinkWithIcon.less";
+@import "base_ListContentItem.less";
+@import "base_Microchart.less";
+@import "base_MicrochartLegend.less";
+@import "base_ObjectContent.less";
+@import "base_ObjectStatus.less";
+@import "base_WebPageContent.less";
+
 @import "../../../../../sap/ui/core/themes/sap_hcb/global.less";
