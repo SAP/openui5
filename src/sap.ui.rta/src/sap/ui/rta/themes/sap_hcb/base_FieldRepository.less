@@ -1,0 +1,48 @@
+/******************************************************************
+	Style of the RTA Add Fields Dialog  - base Theme
+*******************************************************************/
+@_sap_ui_rta_FieldRepository_Title: @sapUiTextTitle; //#000
+@_sap_ui_rta_FieldRepository_BtnFocusOtline: @sapUiButtonHoverBorderColor; //#000
+@_sap_ui_rta_FieldRepository_BC_Container_Border: @sapUiGroupContentBorderColor; //#000
+
+.sapUIRtaFieldRepositoryDialog {
+
+	&.sapMDialog > header .sapMDialogTitleGroup .sapMTitle {
+		color: @_sap_ui_rta_FieldRepository_Title;
+	}
+
+	.sapMBtn {
+		&:focus {
+			> .sapMBtnInner {
+				outline: 0.0625rem dotted @_sap_ui_rta_FieldRepository_BtnFocusOtline; //1px
+				border: 0.0625rem solid transparent;
+			}
+		}
+	}
+
+	.sapUIRtaListItem {
+		line-height: 1rem;
+	}
+
+	.sapUIRtaBusinessContextContainer {
+		width: 100%;
+		margin-top: 0.25rem; //4px
+		padding-bottom: 0.5rem; //8px
+		border-bottom: 0.0625rem solid @_sap_ui_rta_FieldRepository_BC_Container_Border; //1px
+
+		> div:not(:first-child) {
+			padding-left: 2.125rem; //34px
+			padding-right: 0.625rem; //10px
+		}
+
+		> div:first-child {
+			font-weight: bold;
+			padding: 0.25rem 0 0.25rem 0.625rem;
+		}
+
+	}
+
+	.sapUIRtaCCDialogScrollContainer {
+		height: 25rem !important;
+	}
+}
