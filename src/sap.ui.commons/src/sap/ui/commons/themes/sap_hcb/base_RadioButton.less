@@ -1,0 +1,34 @@
+.sapUiRb {
+	vertical-align: top;
+	line-height: @sapUiLineHeight;
+	display: inline-block;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+/* If control is used on black/dark background */
+.sapUiInverted-CTX .sapUiRb {
+	color: @sapUiTextInverted;
+}
+
+/* Do not invert for table */
+.sapUiInverted-CTX .sapUiTable .sapUiRb {
+	color: @sapUiBaseText;
+}
+
+.sapUiRb > label {
+	vertical-align: top;
+	height: @sapUiLineHeight;
+}
+
+/* disabled */
+.sapUiRbDis > label {
+	color: @sapUiContentDisabledTextColor;
+}
+
+/* make outline on control borders because otherwise it is cut in layout containers using overflow: hidden */
+.sapUiRb:focus{
+	outline: 1px dotted @sapUiBaseBorder;
+	outline-offset: -1px;
+}
