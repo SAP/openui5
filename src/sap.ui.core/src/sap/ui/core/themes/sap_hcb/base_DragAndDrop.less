@@ -1,0 +1,76 @@
+.sapUiDnDDragging {
+	opacity: 0.5;
+}
+
+.sapUiDnDNoScrolling {
+	overflow: hidden;
+}
+
+.sapUiDnDGhostContainer {
+	position: absolute;
+	top: -9999px;
+	left: -9999px;
+}
+
+.sapUiDnDIndicator {
+	position: absolute;
+	pointer-events: none;
+	z-index: 99;
+
+	&[data-drop-position=Between] {
+		background: @sapUiContentDragAndDropActiveColor;
+
+		&:before {
+			content: "";
+			position: absolute;
+			width: 0.25rem;
+			height: 0.25rem;
+			border-radius: 0.25rem;
+			border: 0.125rem solid @sapUiContentDragAndDropActiveColor;
+			background: @sapUiWhiteBG;
+			pointer-events: none;
+		}
+
+		&[data-drop-layout=Vertical] {
+			height: 0.125rem;
+
+			&:before {
+				top: -0.175rem;
+			}
+
+			&:before {
+				left: 0;
+			}
+		}
+
+		&[data-drop-layout=Horizontal] {
+			width: 0.125rem;
+
+			&:before {
+				left: -0.175rem;
+			}
+
+			&:before {
+				top: 0;
+			}
+		}
+	}
+
+	&[data-drop-position=On] {
+		background: @sapUiDragAndDropActiveBackground;
+		border: 0.125rem solid @sapUiContentDragAndDropActiveColor;
+		box-sizing: border-box;
+	}
+}
+
+[data-sap-ui-draggable=true] {
+	cursor: grab;
+	cursor: -moz-grab;
+	cursor: -webkit-grab;
+}
+
+[data-sap-ui-draggable=true]:active {
+	cursor: grabbing;
+	cursor: -moz-grabbing;
+	cursor: -webkit-grabbing;
+}
