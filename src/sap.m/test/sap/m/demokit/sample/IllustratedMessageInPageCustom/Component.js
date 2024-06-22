@@ -13,7 +13,7 @@ function (UIComponent, IllustrationPool) {
 			// call the base component's init function
 			UIComponent.prototype.init.apply(this, arguments);
 			var oCustomSet = {
-				setFamily: "Custom",// C:\SAPDevelop\openui5_1\src\sap.m\test\sap\m\demokit\sample\IllustratedMessageInPageCustom\illustrations
+				setFamily: "Custom",
 				setURI: sap.ui.require.toUrl("illustrations")
 			};
 
