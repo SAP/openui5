@@ -1,0 +1,239 @@
+/* ============================================== */
+/* CSS for control sap.uxap/ObjectPageSubSection  */
+/* Base theme                                     */
+/* ============================================== */
+
+.sapUxAPObjectPageSubSection {
+	padding-top: 1rem;
+	box-sizing: border-box;
+}
+
+.sapUxAPObjectPageSubSection.sapUxAPObjectPageSubSectionStashed .sapUxAPBlockContainer > .sapUiRespGrid:empty,
+/* Blockbase is used */
+.sapUxAPObjectPageSubSection.sapUxAPObjectPageSubSectionStashed .sapUxAPBlockContainer > .sapUiRespGrid > div > div:empty {
+	height: 20vh;
+}
+
+.sapUxAPObjectPageSubSectionHeaderActions > .sapMBtn {
+	margin-left: 0.5rem;
+}
+
+.sapUxAPObjectPageSubSectionHeader {
+	height: auto;
+	word-wrap: break-word;
+	padding: 0 2.25rem 0 3rem;
+	display: flex;
+	justify-content: space-between;
+}
+
+.sapUxAPObjectPageSubSectionHeaderTitle {
+	white-space: normal;
+	line-height: 3rem;
+	color: @sapUiGroupTitleTextColor;
+	font-size: @sapMFontHeader4Size;
+	font-weight: normal;
+}
+
+.sapUxAPSubSectionSeeMoreContainer {
+	text-align: right;
+	width: auto;
+	float: right;
+	height: auto;
+}
+
+.sapUxAPSubSectionSeeMoreButton {
+	display: none;
+}
+
+.sapUxAPSubSectionSeeMoreButtonVisible {
+	display: block;
+}
+
+/* public sapUxAPObjectPageSubSectionTransparentBackground class that sets background transparency */
+.sapUxAPObjectPageSection .sapUxAPObjectPageSectionContainer .sapUxAPObjectPageSubSection.sapUxAPObjectPageSubSectionTransparentBackground .sapUxAPBlockContainer {
+	background: transparent;
+}
+
+/* phone display */
+.sapUxAPObjectPageLayout-Std-Phone .sapUxAPObjectPageSubSectionHeader,
+html .sapUiContainer-Narrow .sapUxAPObjectPageSubSectionHeader {
+	padding: 0 1rem;
+}
+
+.sapUxAPObjectPageLayout-Std-Phone .sapUxAPObjectPageSubSectionHeaderTitle,
+html .sapUiContainer-Narrow .sapUxAPObjectPageSubSectionHeaderTitle {
+	height: auto;
+	overflow: auto;
+	float: none;
+	white-space: normal;
+	word-wrap: break-word;
+	word-break: break-all;
+}
+
+/* tablet display */
+
+.sapUxAPObjectPageLayout-Std-Tablet .sapUxAPObjectPageSubSectionHeader,
+html .sapUiContainer-Medium .sapUxAPObjectPageSubSectionHeader {
+	padding: 0 1.25rem 0 2rem;
+}
+
+/* Those styles apply Desktop and Desktop-XL.
+Instead of writing
+".sapUxAPObjectPageLayout.sapUxAPObjectPageLayout-Std-Desktop,
+.sapUxAPObjectPageLayout.sapUxAPObjectPageLayout-Std-Desktop-XL",
+we exclude the phone and tablet breakpoints.
+Doing so will result in less generated CSS, as well as less future maintanance if Desktop-XXL is implemented.
+*/
+
+.sapUxAPObjectPageLayout:not(.sapUxAPObjectPageLayout-Std-Phone):not(.sapUxAPObjectPageLayout-Std-Tablet) {
+	.sapUxAPObjectPageSubSectionHeader.titleOnLeftLayout {
+		box-sizing: border-box;
+		width: 25%;
+		margin-right: 0;
+		display: inline-block;
+		vertical-align: top;
+		overflow: visible;
+	}
+
+	.sapUxAPObjectPageSubSectionHeader.titleOnLeftLayout + .sapUxAPBlockContainer {
+		width: -webkit-calc(~"75% - 2rem");
+		width: calc(~"75% - 2rem");
+		box-sizing: border-box;
+		display: inline-block;
+		margin-left: 0;
+	}
+
+	.sapUxAPObjectPageSubSectionHeader.titleOnLeftLayout .sapUxAPObjectPageSubSectionHeaderTitle {
+		height: auto;
+		white-space: normal;
+		word-wrap: break-word;
+		line-height: normal;
+	}
+
+	.sapUxAPObjectPageSubSectionHeader.titleOnLeftLayout .sapUxAPObjectPageSubSectionHeaderActions {
+		float: none;
+		display: inline-block;
+		margin-left: 0;
+		width: 100%;
+	}
+
+	.sapUxAPObjectPageSubSectionHeader.titleOnLeftLayout .sapUxAPObjectPageSubSectionHeaderActions > .sapMBtn:first-child {
+		margin-left: 0;
+	}
+}
+/* remove the padding of form content, since form itself is already in a grid-cell that provides the required extra spacing */
+/* (1) if the direct child is a form container with a title, a more specific selector is needed: */
+.sapUxAPBlockContainer .sapUiFormCLContainer > div.sapUiFormContainerTitle {
+	padding-top: 0;
+}
+
+/* (2) if the direct child is a form container with a title, a more specific selector is needed for the title itself: */
+.sapUxAPBlockContainer .sapUiFormCLContainer > div.sapUiFormContainerTitle > .sapUiFormTitle {
+	line-height: 2rem;
+	margin-bottom: 0;
+}
+
+.sapUxAPBlockContainer {
+	.sapUiFormResGrid>.sapUiFormTitle {
+		padding: 0;
+	}
+	.sapUiFormResGrid.sapUiFormToolbar >.sapMTB {
+		padding: 0;
+	}
+	.sapUxAPObjectPageSubSectionAlignContent {
+		margin-left: -@sapUiMarginSmall;
+		margin-right: -@sapUiMarginSmall;
+	}
+}
+
+.sapUxAPBlockContainer {
+	padding: 0 2rem;
+}
+.sapUxAPObjectPageLayout-Std-Tablet .sapUxAPBlockContainer {
+	padding: 0 1rem;
+}
+.sapUxAPObjectPageLayout-Std-Phone .sapUxAPBlockContainer {
+	padding: 0 1rem;
+	.sapUxAPObjectPageSubSectionAlignContent {
+		margin-left: -@sapUiMarginSmall;
+		margin-right: -@sapUiMarginSmall;
+	}
+}
+
+
+.sapUxAPObjectPageLayout-Std-Phone .sapUxAPObjectPageSubSection {
+	.sapUiRespGrid.sapUiRespGridHSpace1 {
+		.sapUiRespGridSpanS12 {
+			width: 100%;
+		}
+
+		padding: 0;
+	}
+	.sapUiRespGrid.sapUiRespGridHSpace1 > div {
+		margin: 0;
+		width: 100%;
+	}
+	.sapUxAPBlockBase {
+		margin-bottom: 1rem;
+	}
+}
+
+.sapUxAPObjectPageSubSectionFitContainer {
+	display: flex;
+	flex-direction: column;
+}
+
+.sapUxAPObjectPageSubSectionFitContainer .sapUxAPBlockContainer .sapUxAPBlockBase {
+	overflow-y: hidden;
+}
+
+.sapUxAPObjectPageSubSectionFitContainer {
+	.sapUxAPBlockContainer,
+	.sapUxAPBlockContainer > .sapUiRespGrid,
+	.sapUxAPBlockContainer > .sapUiRespGrid > *,
+	.sapUxAPBlockContainer .sapUxAPBlockBase {
+		box-sizing: border-box;
+		height: 100%;
+		margin-bottom: 0;
+		margin-top: 0;
+	}
+}
+
+/* compact size */
+.sapUiSizeCompact {
+	.sapUxAPObjectPageSubSectionHeaderTitle {
+		height: 2rem;
+		line-height: 2rem;
+	}
+	.sapUxAPObjectPageLayout-Std-Phone .sapUxAPBlockContainer .sapUiFormResGrid > div,
+	.sapUxAPObjectPageLayout-Std-Phone .sapUxAPBlockContainer .sapUiFormCLContainer {
+		padding: 1rem 0;
+	}
+}
+
+html[data-sap-ui-browser^="ed"].sap-desktop .sapUxAPObjectPageSubSection:focus {
+	outline-style: dashed;
+}
+
+/* IE ignores outline-offset. Use an overlay: */
+/* TODO remove after the end of support for Internet Explorer */
+html[data-sap-ui-browser^="ie"].sap-desktop {
+	.sapUxAPObjectPageSubSection:focus {
+		outline: none;
+		position: relative;
+	}
+	.sapUxAPObjectPageSubSection:focus:before {
+		content: " ";
+		box-sizing: border-box;
+		width: 100%;
+		height: 100%;
+		position: absolute;
+		left: 0;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		border: 0.0625rem dashed @sapUiContentFocusColor;
+		pointer-events: none;
+	}
+}
+
