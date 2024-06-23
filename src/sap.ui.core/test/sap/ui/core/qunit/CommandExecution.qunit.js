@@ -200,98 +200,102 @@ sap.ui.define([
 	});
 
 
-	var sView = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m" controllerName="my.command.Command" displayBlock="true">'
-	+  '<App id="commands">'
-	+  '<Page id="page" title="Commands" '
-	+  'binding="{odata>/}" >'
-	+  '<dependents>'
-	+  '<core:CommandExecution id="CE_SAVE" command="Save" enabled="true" execute=".onSave" />'
-	+  '<core:CommandExecution id="CE_EXIT" command="Exit" enabled="true" execute=".onExit" />'
-	+  '<Popover '
-	+  'id="popoverCommand" '
-	+  'title="Popover" '
-	+  'class="sapUiContentPadding"> '
-	+  '<dependents>'
-	+  '<core:CommandExecution id="CE_SAVE_POPOVER" enabled="false" command="Save" execute=".onSave" />'
-	+  '</dependents>'
-	+  '<footer>'
-	+  '<Toolbar>'
-	+  '<Button text="Delete" press="cmd:Exit" enabled="{$cmd>Delete/enabled}" />'
-	+  '<ToolbarSpacer />'
-	+  '<Button text="Save" press="cmd:Save" enabled="{$cmd>Save/enabled}" />'
-	+  '</Toolbar>'
-	+  '</footer>'
-	+  '<Input value="{viewModel>/value}" />'
-	+  '</Popover>'
-	+  '</dependents>'
-	+  '<Panel id="PANEL" headerText="Button">'
-	+  '<headerToolbar>'
-	+  '<Toolbar>'
-	+  '<Button text="TBButton" />'
-	+  '</Toolbar>'
-	+  '</headerToolbar>'
-	+  '<dependents>'
-	+  '<core:CommandExecution id="CE_SAVE_PANEL" command="Save" enabled="true" execute=".onSave" />'
-	+  '</dependents>'
-	+  '<Panel id="PANEL2" headerText="innerButton">'
-	+  '<dependents>'
-	+  '<core:CommandExecution id="CE_CREATE_INNER" command="Create" enabled="true" execute=".onExit" />'
-	+  '<core:CommandExecution id="CE_SAVE_INNER" command="Save" enabled="true" execute=".onSave" />'
-	+  '<core:CommandExecution id="CE_EXIT_INNER" command="Exit" enabled="true" execute=".onExit" />'
-	+  '</dependents>'
-	+  '<Button text="Save" press="cmd:Save" />'
-	+  '</Panel>'
-	+  '<Button text="Save" press="cmd:Save" />'
-	+  '</Panel>'
-	+  '<Panel headerText="sap.m.Input">'
-	+  '<Input id="myInput" value="{viewModel>/value}" />'
-	+  '<Table>'
-	+  '<columns>'
-	+  '<Column width="12em">'
-	+  '<Text text="Product" />'
-	+  '</Column>'
-	+  '</columns>'
-	+  '<items>'
-	+  '<StandardListItem title="Name">'
-	+  '<dependents>'
-	+  '<core:CommandExecution id="CE_SAVE_ITEM" command="Save" enabled="true" execute=".onSave" />'
-	+  '<core:CommandExecution id="CE_EXIT_ITEM" command="Exit" enabled="true" execute=".onExit" />'
-	+  '</dependents>'
-	+  '</StandardListItem>'
-	+  '</items>'
-	+  '</Table>'
-	+  '</Panel>'
-	+  '</Page>'
-	+  '</App>'
-	+  '</mvc:View>';
+	var sView = `
+<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m" controllerName="my.command.Command" displayBlock="true">
+	<App id="commands">
+		<Page id="page" title="Commands" binding="{odata>/}" >
+			<dependents>
+				<core:CommandExecution id="CE_SAVE" command="Save" enabled="true" execute=".onSave" />
+				<core:CommandExecution id="CE_EXIT" command="Exit" enabled="true" execute=".onExit" />
+				<Popover id="popoverCommand" title="Popover" class="sapUiContentPadding"> 
+					<dependents>
+						<core:CommandExecution id="CE_SAVE_POPOVER" enabled="false" command="Save" execute=".onSave" />
+					</dependents>
+					<footer>
+						<Toolbar>
+							<Button text="Delete" press="cmd:Exit" enabled="{$cmd>Delete/enabled}" />
+							<ToolbarSpacer />
+							<Button text="Save" press="cmd:Save" enabled="{$cmd>Save/enabled}" />
+						</Toolbar>
+					</footer>
+					<Input value="{viewModel>/value}" />
+				</Popover>
+			</dependents>
+			<Panel id="PANEL" headerText="Button">
+				<headerToolbar>
+					<Toolbar>
+						<Button text="TBButton" />
+					</Toolbar>
+				</headerToolbar>
+				<dependents>
+					<core:CommandExecution id="CE_SAVE_PANEL" command="Save" enabled="true" execute=".onSave" />
+				</dependents>
+				<Panel id="PANEL2" headerText="innerButton">
+					<dependents>
+						<core:CommandExecution id="CE_CREATE_INNER" command="Create" enabled="true" execute=".onExit" />
+						<core:CommandExecution id="CE_SAVE_INNER" command="Save" enabled="true" execute=".onSave" />
+						<core:CommandExecution id="CE_EXIT_INNER" command="Exit" enabled="true" execute=".onExit" />
+					</dependents>
+					<Button text="Save" press="cmd:Save" />
+				</Panel>
+				<Button text="Save" press="cmd:Save" />
+			</Panel>
+			<Panel headerText="sap.m.Input">
+				<Input id="myInput" value="{viewModel>/value}" />
+				<Table>
+					<columns>
+						<Column width="12em">
+							<Text text="Product" />
+						</Column>
+					</columns>
+					<items>
+						<ColumnListItem>
+							<dependents>
+								<core:CommandExecution id="CE_SAVE_ITEM" command="Save" enabled="true" execute=".onSave" />
+								<core:CommandExecution id="CE_EXIT_ITEM" command="Exit" enabled="true" execute=".onExit" />
+							</dependents>
+							<cells>
+								<Text text="Name"/>
+							</cells>
+						</ColumnListItem>
+					</items>
+				</Table>
+			</Panel>
+		</Page>
+	</App>
+</mvc:View>
+`;
 
-	var sView2 = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m" controllerName="my.command.Command" displayBlock="true">'
-	+  '<core:ComponentContainer id="CC" '
-	+  'binding="{odata>/}" >'
-	+  '<core:dependents>'
-	+  '<core:CommandExecution command="Save" enabled="true" execute=".onSave" />'
-	+  '<core:CommandExecution command="Exit" enabled="true" execute=".onExit" />'
-	+  '</core:dependents>'
-	+  '</core:ComponentContainer>'
-	+  '</mvc:View>';
+	var sView2 = `
+<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m" controllerName="my.command.Command" displayBlock="true">
+	<core:ComponentContainer id="CC" binding="{odata>/}" >
+		<core:dependents>
+			<core:CommandExecution command="Save" enabled="true" execute=".onSave" />
+			<core:CommandExecution command="Exit" enabled="true" execute=".onExit" />
+		</core:dependents>
+	</core:ComponentContainer>
+</mvc:View>
+`;
 
-	var sView3 = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m" controllerName="my.command.Command" displayBlock="true">'
-	+  '<Panel>'
-	+  '<dependents>'
-	+  '<core:CommandExecution command="Save" enabled="true" execute=".onSave" />'
-	+  '<core:CommandExecution command="Exit" enabled="true" execute=".onExit" />'
-	+  '</dependents>'
-	+  '<Panel headerText="innerButton" id="PANELV31">'
-	+  '<dependents>'
-	+  '<core:CommandExecution command="Save" enabled="true" execute=".onSave" />'
-	+  '<core:CommandExecution command="Exit" enabled="true" execute=".onExit" />'
-	+  '</dependents>'
-	+  '</Panel>'
-	+  '<Panel headerText="innerButton" id="PANELV32">'
-	+  '<mvc:XMLView async="true" id="EMBEDDEDVIEW" viewName="my.command.Command2"/>'
-	+  '</Panel>'
-	+  '</Panel>'
-	+  '</mvc:View>';
+	var sView3 = `
+<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m" controllerName="my.command.Command" displayBlock="true">
+	<Panel>
+		<dependents>
+			<core:CommandExecution command="Save" enabled="true" execute=".onSave" />
+			<core:CommandExecution command="Exit" enabled="true" execute=".onExit" />
+		</dependents>
+		<Panel headerText="innerButton" id="PANELV31">
+			<dependents>
+				<core:CommandExecution command="Save" enabled="true" execute=".onSave" />
+				<core:CommandExecution command="Exit" enabled="true" execute=".onExit" />
+			</dependents>
+		</Panel>
+		<Panel headerText="innerButton" id="PANELV32">
+			<mvc:XMLView async="true" id="EMBEDDEDVIEW" viewName="my.command.Command2"/>
+		</Panel>
+	</Panel>
+</mvc:View>
+`;
 
 	sap.ui.require.preload({
 		"my/command/Command.view.xml": sView
