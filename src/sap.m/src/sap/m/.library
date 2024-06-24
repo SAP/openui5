@@ -196,6 +196,7 @@
                 <module>sap/m/table/columnmenu/Entry</module>
                 <module>sap/m/table/columnmenu/Item</module>
                 <module>sap/m/table/columnmenu/ItemBase</module>
+                <module>sap/m/table/columnmenu/MenuBase</module>
                 <module>sap/m/table/columnmenu/Menu</module>
                 <module>sap/m/table/columnmenu/QuickAction</module>
                 <module>sap/m/table/columnmenu/QuickActionBase</module>

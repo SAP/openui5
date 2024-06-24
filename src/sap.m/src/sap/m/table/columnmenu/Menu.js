@@ -6,7 +6,6 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/Toolbar",
 	"sap/m/ToolbarSpacer",
-	"sap/m/ScrollContainer",
 	"sap/m/library",
 	"sap/ui/Device",
 	"sap/ui/core/Control",
@@ -20,6 +19,7 @@ sap.ui.define([
 	"sap/base/strings/capitalize",
 	"sap/m/p13n/AbstractContainerItem",
 	"sap/m/p13n/Container",
+	"sap/m/table/columnmenu/MenuBase",
 	"sap/m/table/columnmenu/MenuRenderer",
 	"sap/ui/layout/form/Form",
 	"sap/ui/layout/GridData",
@@ -32,7 +32,6 @@ sap.ui.define([
 	Button,
 	Toolbar,
 	ToolbarSpacer,
-	ScrollContainer,
 	library,
 	Device,
 	Control,
@@ -46,6 +45,7 @@ sap.ui.define([
 	capitalize,
 	AbstractContainerItem,
 	Container,
+	MenuBase,
 	MenuRenderer,
 	Form,
 	GridData,
@@ -77,7 +77,7 @@ sap.ui.define([
 	 * There are control- and application-specific quick actions and menu items.
 	 * Applications can add their own quick actions and items.
 	 *
-	 * @extends sap.ui.core.Control
+	 * @extends sap.m.table.columnmenu.MenuBase
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -87,11 +87,10 @@ sap.ui.define([
 	 *
 	 * @alias sap.m.table.columnmenu.Menu
 	 */
-	var Menu = Control.extend("sap.m.table.columnmenu.Menu", {
+	var Menu = MenuBase.extend("sap.m.table.columnmenu.Menu", {
 
 		metadata: {
 			library: "sap.m",
-			interfaces: ["sap.ui.core.IColumnHeaderMenu"],
 			defaultAggregation: "quickActions",
 			aggregations: {
 				/**
@@ -117,25 +116,6 @@ sap.ui.define([
 				_items: { type: "sap.m.table.columnmenu.ItemBase", visibility: "hidden" }
 			},
 			events: {
-				/**
-				 * Fired before the column menu is opened
-				 */
-				beforeOpen: {
-					allowPreventDefault : true,
-					parameters : {
-						/**
-						 * The element for which the menu is opened. If it is an <code>HTMLElement</code>, the closest control is passed for this event
-						 * (if it exists).
-						 */
-						openBy : {type : "sap.ui.core.Element"}
-					}
-				},
-				/**
-				 * Fires after the column menu is closed
-				 * @since 1.112
-				 */
-				afterClose: {
-				}
 			}
 		},
 		renderer: MenuRenderer
@@ -205,29 +185,21 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the <code>sap.ui.core.aria.HasPopup<\code> type of the menu.
-	 *
-	 * @returns {sap.ui.core.aria.HasPopup} <code>sap.ui.core.aria.HasPopup</code> type of the menu
-	 * @public
-	 * @since 1.98.0
+	 * @inheritdoc
 	 */
 	Menu.prototype.getAriaHasPopupType = function () {
 		return ARIA_POPUP_TYPE;
 	};
 
 	/**
-	 * Determines whether the menu is open.
-	 *
-	 * @returns {boolean} Whether the menu is open.
+	 * @inheritdoc
 	 */
 	Menu.prototype.isOpen = function () {
 		return this._oPopover ? this._oPopover.isOpen() : false;
 	};
 
 	/**
-	 * Closes the popover.
-	 *
-	 * @public
+	 * @inheritdoc
 	 */
 	Menu.prototype.close = function () {
 		this._previousView = null;
@@ -251,7 +223,7 @@ sap.ui.define([
 	};
 
 	Menu.prototype.exit = function () {
-		Control.prototype.exit.apply(this, arguments);
+		MenuBase.prototype.exit.apply(this, arguments);
 		if (this._oPopover) {
 			delete this._oPopover;
 		}
