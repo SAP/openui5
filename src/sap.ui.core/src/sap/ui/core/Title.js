@@ -37,7 +37,7 @@ sap.ui.define(['./Element', './library'],
 			/**
 			 * Defines the title text
 			 */
-			text : {type : "string", group : "Appearance", defaultValue : null},
+			text : {type : "string", group : "Data", defaultValue : null},
 
 			/**
 			 * Defines the URL for icon display
