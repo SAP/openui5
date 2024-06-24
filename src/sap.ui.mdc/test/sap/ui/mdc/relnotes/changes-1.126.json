@@ -3,6 +3,11 @@
     "date": "June 2024",
     "notes": [
       {
+        "id": "f465da77608bb06ca03a70146007401126c14802",
+        "type": "FIX",
+        "text": " MDCTable: The filter info bar must be labelled with its text"
+      },
+      {
         "id": "089ab0bb0b46cec5973fcdd5663ae3f239a2eaff",
         "type": "FEATURE",
         "text": " mdc.FilterBar: improve focus handling of filter fields"

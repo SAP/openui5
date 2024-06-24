@@ -3,6 +3,21 @@
     "date": "June 2024",
     "notes": [
       {
+        "id": "1452e84f081fff35902d6ea141316b82d21e3882",
+        "type": "FIX",
+        "text": " sap.m.LightBox: Error message is available for screen readers"
+      },
+      {
+        "id": "f0ee6662d245ea9e3b9cc58821da915cc4d1bfaa",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbarLayoutData: Typo fixed"
+      },
+      {
+        "id": "29d58b5e151d4b7a3a0c3209fa8c24a86748b3fc",
+        "type": "FIX",
+        "text": " sap.m.Input: Stop initial re-rendering the input field when type password and clear icon are set"
+      },
+      {
         "id": "c51df5734976976bdde8c81afc9b5a05a8921da5",
         "type": "FIX",
         "text": " sap.m.SinglePlanningCalendar: added possibility to select a day with a ENTER",
@@ -14,9 +29,19 @@
         ]
       },
       {
+        "id": "3c46431468a694a30c194822aeeed5718c4830d5",
+        "type": "FIX",
+        "text": " sap.m.IllustratedMessage: Fixed type in TNT library"
+      },
+      {
         "id": "af7918a769d418bb72a878cd40a1a80acbb3bcbb",
         "type": "FIX",
         "text": " sap.m.InputBase: Value state message link is now clickable"
+      },
+      {
+        "id": "37626c911a5cd84e83e20933e415898fb2997c08",
+        "type": "FIX",
+        "text": " Documentation: Parameter types are now fixed"
       },
       {
         "id": "2c4bc6d82c8c277ad17678539e61f7200cc7bc5b",

@@ -3,6 +3,21 @@
     "date": "June 2024",
     "notes": [
       {
+        "id": "a51660d52bf9a8bc1ed8377519e530713ae17c70",
+        "type": "FIX",
+        "text": " sap.ui.model.json.JSONModel#loadData: Don't use JSONP"
+      },
+      {
+        "id": "ac6c6e10edda5a636195b61a7fe8f746d2eab5f4",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.ODataTreeBindingFlat: the value for the magnitude is always converted to a number"
+      },
+      {
+        "id": "4022926925fae95a96c888b595ec62133d84546f",
+        "type": "FIX",
+        "text": " sap.ui.core.util.LibraryInfo: Loosen baseUrl regex check"
+      },
+      {
         "id": "16510e1ac8f1379181e9dcbd4c892051c74d01bc",
         "type": "FIX",
         "text": " sap/ui/core/.library: Remove wrong component for sap/ui/core/util/MockServer"
