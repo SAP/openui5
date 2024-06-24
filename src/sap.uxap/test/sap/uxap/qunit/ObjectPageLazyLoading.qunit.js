@@ -346,6 +346,38 @@ function(nextUIUpdate, jQuery, Core, JSONModel, Button, Title, ObjectPageDynamic
 		}, 1000);
 	});
 
+	QUnit.test("_triggerVisibleSubSectionsEvents makes sure the OPL is scrolled to the correct position before executing lazyloading",
+		async function(assert) {
+		// Arrange
+		var oObjectPageLayout = this.oComponentContainer.getObjectPageLayoutInstance(),
+			fnDone = assert.async(),
+			oScrolledToSection = oObjectPageLayout.getSections()[2],
+			sScrolledToSectionId = oScrolledToSection.getId(),
+			oData = oConfigModel.getData(),
+			oSpy;
+
+		_loadBlocksData(oData);
+		oConfigModel.setData(oData);
+		oObjectPageLayout.setSelectedSection(oScrolledToSection);
+		await nextUIUpdate();
+
+		oObjectPageLayout.attachEventOnce("onAfterRenderingDOMReady", function () {
+			oSpy = this.spy(oObjectPageLayout, "scrollToSection");
+
+			// Fake different top position of scrolled section
+			oObjectPageLayout._oSectionInfo[sScrolledToSectionId].positionTop = 1500;
+
+			// Act
+			oObjectPageLayout._triggerVisibleSubSectionsEvents();
+
+			// Assert
+			assert.ok(oSpy.calledWith(oScrolledToSection.getId()), "scrolled to correct Section");
+
+			// Clean up
+			fnDone();
+		}.bind(this));
+	});
+
 	QUnit.module("ObjectPageAfterRendering");
 
 	QUnit.test("triggering visible subsections calculations should not fail before rendering", function (assert) {

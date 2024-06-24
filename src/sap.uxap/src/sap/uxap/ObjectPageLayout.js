@@ -2178,7 +2178,19 @@ sap.ui.define([
 	 * @ui5-restricted
 	 */
 	ObjectPageLayout.prototype._triggerVisibleSubSectionsEvents = function () {
+		var sSelectedSectionId = this.getSelectedSection(),
+			oSelectedSection = Element.getElementById(sSelectedSectionId),
+			sSelectedSubSectionId = oSelectedSection?.getSelectedSubSection();
+
 		this._bDelayDOMBasedCalculations = false;
+
+		// Making sure lazyloading is executed with the correct selected Section/SubSection (if any) and the scroll is at the relevant position
+		if (sSelectedSubSectionId && this._oSectionInfo[sSelectedSubSectionId]?.positionTop !== this._$opWrapper.scrollTop()) {
+			this.scrollToSection(sSelectedSubSectionId, 0);
+		} else if (sSelectedSectionId && this._oSectionInfo[sSelectedSectionId]?.positionTop !== this._$opWrapper.scrollTop()) {
+			this.scrollToSection(sSelectedSectionId, 0);
+		}
+
 		if (this.getEnableLazyLoading() && this._oLazyLoading) {
 			this._oLazyLoading._triggerVisibleSubSectionsEvents();
 		}
