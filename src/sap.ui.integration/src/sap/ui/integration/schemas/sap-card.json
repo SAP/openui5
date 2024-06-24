@@ -2499,6 +2499,18 @@
               "$ref": "#/definitions/simpleBinding"
             }
           ]
+        },
+        "omitSandbox": {
+          "description": "If set to 'true' the 'sandbox' attribute will not be added to the iframe.",
+          "oneOf": [
+            {
+              "type": "boolean",
+              "default": false
+            },
+            {
+              "$ref": "#/definitions/simpleBinding"
+            }
+          ]
         }
       }
     },
