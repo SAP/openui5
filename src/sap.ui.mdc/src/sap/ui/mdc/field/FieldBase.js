@@ -1049,8 +1049,8 @@ sap.ui.define([
 	 * @returns {string} fieldPath of the field
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.filterbar.FilterBarBase
+	 * @deprecated as of 1.115.0, replaced by {@link #setPropertyKey propertyKey} property
 	 */
-	// @deprecated as of 1.115.0, replaced by {@link #setPropertyKey propertyKey} property
 	FieldBase.prototype.getFieldPath = function() {
 
 		const sBindingPath = this.getBindingPath("conditions");
@@ -3749,9 +3749,21 @@ sap.ui.define([
 	 */
 	FieldBase.prototype.isSearchField = function() {
 
-		const regexp = new RegExp("^\\*(.*)\\*|\\$search$");
-		const sFieldPath = this.getFieldPath();
-		return regexp.test(sFieldPath) && this.getMaxConditions() === 1;
+		/**
+		 * @deprecated Since version 1.115.0
+		 */
+		// eslint-disable-next-line no-lone-blocks
+		{
+			let bIsSearchField = false;
+			const sFieldPath = this.getFieldPath();
+
+			if (sFieldPath) {
+				const regexp = new RegExp("^\\*(.*)\\*|\\$search$");
+				bIsSearchField = regexp.test(sFieldPath) && this.getMaxConditions() === 1;
+			}
+
+			return bIsSearchField;
+		}
 
 	};
 

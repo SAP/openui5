@@ -240,6 +240,7 @@ sap.ui.define([
 					dataType: "Edm.String",
 					placeholder: "Search",
 					conditions: "{$filters>/conditions/$search}",
+					propertyKey: "$search",
 					maxConditions: 1,
 					width: "100%"
 				}),

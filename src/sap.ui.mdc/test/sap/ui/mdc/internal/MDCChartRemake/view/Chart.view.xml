@@ -552,6 +552,7 @@
 							dataType="Edm.String"
 							placeholder= "Search Books"
 							conditions="{$filters>/conditions/$search}"
+							propertyKey="$search"
 							maxConditions="1"/>
 						</mdc:basicSearchField>
 
