@@ -159,3 +159,10 @@ html.sap-desktop {
 		}
 	}
 }
+
+.sapMSinglePCBlockers,
+.sapMSinglePCAppointments {
+	&.sapUiCalendarRowVisFilled > .sapUiCalendarRowApps:hover > .sapUiCalendarApp:not(.sapUiCalendarAppSel) > .sapUiCalendarAppCont{
+		background-color: @sapUiListHoverBackground;
+	}
+}

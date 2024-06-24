@@ -426,7 +426,7 @@ sap.ui.define([
 			oRm.openStart("div");
 			oRm.class("sapUiCalendarAppCont");
 
-			if (sColor) {
+			if (sColor && !oAppointment.getSelected()) {
 				oRm.style("background-color", oAppointment._getCSSColorForBackground(sColor));
 			}
 
