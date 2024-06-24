@@ -358,6 +358,12 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("Check 'Engine.show' to return a sap.m.p13n.Popup instance", function(assert){
+		return Engine.getInstance().show(this.oControl, ["Test"], {source: this.oControl}).then((oP13nPopup) => {
+			assert.ok(oP13nPopup.isA("sap.m.p13n.Popup"), "A p13n.Popup instance has been returned as UI");
+		});
+	});
+
 	QUnit.test("Check 'uimanager.show' and active UI", function(assert){
 		var done = assert.async();
 

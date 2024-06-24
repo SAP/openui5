@@ -898,7 +898,7 @@ sap.ui.define([
 						return this.getEngine().show(this, "Filter");
 					}).then((oP13nDialog) => {
 
-						oP13nDialog.attachEventOnce("afterClose", () => {
+						oP13nDialog.attachEventOnce("close", () => {
 
 							const aConditions = this.getFilterConditions();
 							const bNoConditions = !Object.keys(aConditions).find((oKey) => {

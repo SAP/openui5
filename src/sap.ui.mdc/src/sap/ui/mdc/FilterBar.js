@@ -238,7 +238,7 @@ sap.ui.define([
 				.then((oPopup) => {
 					this._aAddedFilterFields = [];
 					this._aRemovedFilterFields = [];
-					oPopup.attachEventOnce("afterClose", this._determineFilterFieldOnFocus.bind(this));
+					oPopup.attachEventOnce("close", this._determineFilterFieldOnFocus.bind(this));
 					return oPopup;
 				});
 		});

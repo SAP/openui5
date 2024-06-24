@@ -91,16 +91,16 @@ sap.ui.define([
 		this.oFilterBar.onAdaptFilters().then(function(oP13nControl){
 			//check container
 			assert.ok(oP13nControl, "Container has been created");
-			assert.ok(oP13nControl.isA("sap.m.Dialog"));
-			assert.ok(!oP13nControl.getVerticalScrolling(), "Vertical scrolling is disabled for FilterBarBase 'filterConfig'");
-			assert.equal(oP13nControl.getCustomHeader().getContentLeft()[0].getText(), oResourceBundle.getText("filterbar.ADAPT_TITLE"), "Correct title has been set");
+			assert.ok(oP13nControl.isA("sap.m.p13n.Popup"));
+			assert.ok(!oP13nControl._oPopup.getVerticalScrolling(), "Vertical scrolling is disabled for FilterBarBase 'filterConfig'");
+			assert.equal(oP13nControl._oPopup.getCustomHeader().getContentLeft()[0].getText(), oResourceBundle.getText("filterbar.ADAPT_TITLE"), "Correct title has been set");
 			assert.ok(Engine.getInstance().hasActiveP13n(this.oFilterBar),"dialog is open");
 
 			//check inner panel
-			const oPanel = oP13nControl.getContent()[0]._oFilterBarLayout.getInner();
+			const oPanel = oP13nControl.getPanels()[0]._oFilterBarLayout.getInner();
 			oPanel.switchView(oPanel.LIST_KEY);
-			const oInnerTable = oP13nControl.getContent()[0]._oFilterBarLayout.getInner().getCurrentViewContent()._oListControl;
-			assert.ok(oP13nControl.getContent()[0].isA("sap.ui.mdc.filterbar.p13n.AdaptationFilterBar"), "Correct P13n UI created");
+			const oInnerTable = oP13nControl.getPanels()[0]._oFilterBarLayout.getInner().getCurrentViewContent()._oListControl;
+			assert.ok(oP13nControl.getPanels()[0].isA("sap.ui.mdc.filterbar.p13n.AdaptationFilterBar"), "Correct P13n UI created");
 			assert.ok(oInnerTable, "Inner Table has been created");
 			assert.equal(oInnerTable.getItems().length, 3, "Inner Table does not know $search");
 			done();

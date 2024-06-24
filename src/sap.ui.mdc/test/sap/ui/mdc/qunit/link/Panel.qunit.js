@@ -356,9 +356,9 @@ sap.ui.define([
 					FlexRuntimeInfoAPI.waitForChanges.restore();
 					assert.ok(oDialog.isOpen(), "Dialog opened");
 					assert.ok(this.oPanel.getDependents()[0].isA("sap.m.p13n.Popup"), "Dialog is a 'sap.m.p13n.Popup'");
-					assert.ok(oDialog.getContent()[0].isA("sap.ui.mdc.p13n.panels.LinkSelectionPanel"), "Dialog content is a 'sap.ui.mdc.p13n.panels.LinkSelectionPanel'");
-					assert.equal(oDialog.getContent()[0].getEnableReorder(), false, "enableReorder property of LinkSelectionPanel is false");
-					assert.equal(oDialog.getContent()[0].getAggregation("_content").getItems()[0].getColumns().length, 1, "Only one column in column aggregation of LinkSelectionPanel -> no reorder column");
+					assert.ok(oDialog.getPanels()[0].isA("sap.ui.mdc.p13n.panels.LinkSelectionPanel"), "Dialog content is a 'sap.ui.mdc.p13n.panels.LinkSelectionPanel'");
+					assert.equal(oDialog.getPanels()[0].getEnableReorder(), false, "enableReorder property of LinkSelectionPanel is false");
+					assert.equal(oDialog.getPanels()[0].getAggregation("_content").getItems()[0].getColumns().length, 1, "Only one column in column aggregation of LinkSelectionPanel -> no reorder column");
 
 					done();
 				}.bind(this));
@@ -399,13 +399,13 @@ sap.ui.define([
 			this.oPanel = oPopover.getContent()[0];
 			this.oPanel._openPersonalizationDialog().then(function(oDialog) {
 				assert.ok(oDialog.isOpen(), "Dialog opened");
-				assert.ok(oDialog.isA("sap.m.Dialog"), "Dialog is a 'sap.m.Dialog'");
-				assert.ok(oDialog.getContent()[0].isA("sap.ui.mdc.p13n.panels.LinkSelectionPanel"), "Dialog content is a 'sap.ui.mdc.p13n.panels.LinkSelectionPanel'");
-				assert.equal(fnLinkSelectionPanelGetLink(oDialog.getContent()[0], 0).getCustomData()[0].getValue(), sBaseUrl + "#AInternal", "Correct internal href");
-				assert.equal(fnLinkSelectionPanelGetLink(oDialog.getContent()[0], 1).getCustomData()[0].getValue(), "#BInternal", "Correct internal href");
-				assert.equal(fnLinkSelectionPanelGetLink(oDialog.getContent()[0], 2).getCustomData()[0].getValue(), "#CInternal", "Correct internal href");
+				assert.ok(oDialog.isA("sap.m.p13n.Popup"), "Popup is a 'sap.m.p13n.Popup'");
+				assert.ok(oDialog.getPanels()[0].isA("sap.ui.mdc.p13n.panels.LinkSelectionPanel"), "Dialog content is a 'sap.ui.mdc.p13n.panels.LinkSelectionPanel'");
+				assert.equal(fnLinkSelectionPanelGetLink(oDialog.getPanels()[0], 0).getCustomData()[0].getValue(), sBaseUrl + "#AInternal", "Correct internal href");
+				assert.equal(fnLinkSelectionPanelGetLink(oDialog.getPanels()[0], 1).getCustomData()[0].getValue(), "#BInternal", "Correct internal href");
+				assert.equal(fnLinkSelectionPanelGetLink(oDialog.getPanels()[0], 2).getCustomData()[0].getValue(), "#CInternal", "Correct internal href");
 
-				fnLinkSelectionPanelGetLink(oDialog.getContent()[0], 0).firePress();
+				fnLinkSelectionPanelGetLink(oDialog.getPanels()[0], 0).firePress();
 				setTimeout(function() {
 					assert.equal(window.location.href, sBaseUrl + "#AInternal", "Navigation happened with internalHref");
 
@@ -446,10 +446,10 @@ sap.ui.define([
 			this.oPanel = oPopover.getContent()[0];
 			this.oPanel._openPersonalizationDialog().then(function(oDialog) {
 				assert.ok(oDialog.isOpen(), "Dialog opened");
-				assert.ok(oDialog.isA("sap.m.Dialog"), "Dialog is a 'sap.m.Dialog'");
-				assert.ok(oDialog.getContent()[0].isA("sap.ui.mdc.p13n.panels.LinkSelectionPanel"), "Dialog content is a 'sap.ui.mdc.p13n.panels.LinkSelectionPanel'");
+				assert.ok(oDialog.isA("sap.m.p13n.Popup"), "Popup is a 'sap.m.p13n.Popup'");
+				assert.ok(oDialog.getPanels()[0].isA("sap.ui.mdc.p13n.panels.LinkSelectionPanel"), "Dialog content is a 'sap.ui.mdc.p13n.panels.LinkSelectionPanel'");
 
-				fnLinkSelectionPanelGetLink(oDialog.getContent()[0], 0).firePress();
+				fnLinkSelectionPanelGetLink(oDialog.getPanels()[0], 0).firePress();
 				setTimeout(function() {
 					assert.equal(window.location.href, sBaseUrl + "#A", "Navigation happened without internalHref");
 
@@ -484,10 +484,10 @@ sap.ui.define([
 			this.oPanel = oPopover.getContent()[0];
 			this.oPanel._openPersonalizationDialog().then(function(oDialog) {
 				assert.ok(oDialog.isOpen(), "Dialog opened");
-				assert.ok(oDialog.isA("sap.m.Dialog"), "Dialog is a 'sap.m.Dialog'");
-				assert.ok(oDialog.getContent()[0].isA("sap.ui.mdc.p13n.panels.LinkSelectionPanel"), "Dialog content is a 'sap.ui.mdc.p13n.panels.LinkSelectionPanel'");
+				assert.ok(oDialog.isA("sap.m.p13n.Popup"), "Popup is a 'sap.m.p13n.Popup'");
+				assert.ok(oDialog.getPanels()[0].isA("sap.ui.mdc.p13n.panels.LinkSelectionPanel"), "Dialog content is a 'sap.ui.mdc.p13n.panels.LinkSelectionPanel'");
 
-				fnLinkSelectionPanelGetLink(oDialog.getContent()[0], 0).firePress(oEventSettings);
+				fnLinkSelectionPanelGetLink(oDialog.getPanels()[0], 0).firePress(oEventSettings);
 
 				setTimeout(function() {
 					assert.equal(window.location.href, sBaseUrl, "navigation prevented");

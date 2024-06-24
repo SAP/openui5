@@ -1125,7 +1125,7 @@ sap.ui.define([
 
 				oFilterBar.onAdaptFilters().then(function(oP13nContainer) {
 					assert.ok(oP13nContainer, "panel has been created");
-					const oAdaptFiltersPanel = oP13nContainer.getContent()[0];
+					const oAdaptFiltersPanel = oP13nContainer.getPanels()[0];
 					const aPanelItems = oAdaptFiltersPanel.getP13nData().items;
 					assert.equal(aPanelItems.length, 3, "correct amount of p13n items has been created by FilterBar");
 					assert.equal(aPanelItems[0].name, "field1", "correct field created in panel");

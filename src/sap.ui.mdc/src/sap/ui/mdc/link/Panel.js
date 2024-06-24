@@ -385,7 +385,7 @@ sap.ui.define([
 				contentHeight: "35rem",
 				close: () => this.fireAfterSelectionDialogClose()
 			}).then((oDialog) => {
-				oDialog.attachAfterClose(() => this.fireAfterSelectionDialogClose());
+				oDialog.attachClose(() => this.fireAfterSelectionDialogClose());
 				resolve(oDialog);
 			});
 		});
