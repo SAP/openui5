@@ -270,12 +270,6 @@ sap.ui.define([
 				}.bind(this)
 			});
 
-			// remove the custom accessibility announcement from the sap.m.ListBase
-			// so the additional elements (like attributes) are also read
-			this._oList.onItemFocusIn = function (oItem, oFocusedControl) {
-				this._oList._handleTargetItemFocus(oItem.getDomRef());
-			}.bind(this);
-
 			this._oList.addEventDelegate({
 				onfocusin: function (oEvent) {
 					if (!(oEvent.srcControl instanceof ListContentItem)) {

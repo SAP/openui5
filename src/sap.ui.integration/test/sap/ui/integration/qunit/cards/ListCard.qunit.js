@@ -1026,7 +1026,7 @@ sap.ui.define([
 		assert.notOk(oListItem3.$().find(".sapUiIntLCIAttrRow:nth-of-type(4) .sapMObjStatusShowIcon").length, "Status icon is not shown");
 
 		QUnitUtils.triggerEvent("focusin", oListItem1.getDomRef());
-		assert.notOk(oListItem1.getDomRef().getAttribute("aria-labelledby"), "aria-labelledby is not set when focused");
+		assert.ok(oListItem1.getDomRef().getAttribute("aria-labelledby"), "aria-labelledby is set when focused"); //getContentAnnouncement in ContentListItem is called
 	});
 
 	QUnit.test("List Card - attributes visibility", async function (assert) {
