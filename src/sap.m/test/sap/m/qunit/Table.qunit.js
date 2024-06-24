@@ -3212,7 +3212,11 @@ sap.ui.define([
 		const $noData = sut.$().find("#" + sut.getId() + "-nodata");
 		$noData.trigger("focus");
 
+		assert.notOk($noData.find(".sapMListTblHighlightCell")[0], "Highlight cell is NOT rendered for no-data row since there is no column");
+		assert.notOk($noData.find(".sapMListTblNavigatedCell")[0], "Navigated cell is NOT rendered for no-data row since there is no column");
+
 		let $noDataText = sut.$().find("#" + sut.getId() + "-nodata-text");
+		assert.strictEqual($noDataText.attr("colspan"), "2", "nodata cell covers 2 header cells(Higlight and Navigated) rendered");
 		assert.strictEqual($noDataText.text(), oBundle.getText("TABLE_NO_COLUMNS"), "Table's no columns nodata-text contains correct string");
 		assert.strictEqual(oInvisibleMessage.getText(), oBundle.getText("TABLE_NO_COLUMNS"), "Invisible Message is set correct.");
 		await timeout();
