@@ -68,9 +68,9 @@
     "npm": ">=9"
   },
   "devDependencies": {
-    "@ui5/cli": "^3.10.1",
-    "@ui5/project": "^3.9.1",
-    "@ui5/server": "^3.2.0",
+    "@ui5/cli": "^3.11.0",
+    "@ui5/project": "^3.9.2",
+    "@ui5/server": "^3.2.1",
     "@ui5/tooling-webc": "^0.2.14",
     "@ui5/webcomponents": "1.18.0",
     "@ui5/webcomponents-base": "1.18.0",
