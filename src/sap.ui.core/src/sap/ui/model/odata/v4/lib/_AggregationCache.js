@@ -397,9 +397,14 @@ sap.ui.define([
 		}
 
 		for (let i = iIndex + 1; i < iIndex + 1 + iCount; i += 1) {
-			delete aElements.$byPredicate[_Helper.getPrivateAnnotation(aElements[i], "predicate")];
-			delete aElements.$byPredicate[
-				_Helper.getPrivateAnnotation(aElements[i], "transientPredicate")];
+			// selected elements are effectively kept alive (with recursive hierarchy)
+			if (!this.oAggregation.hierarchyQualifier
+				|| !aElements[i]["@$ui5.context.isSelected"]) {
+				delete aElements.$byPredicate[
+					_Helper.getPrivateAnnotation(aElements[i], "predicate")];
+				delete aElements.$byPredicate[
+					_Helper.getPrivateAnnotation(aElements[i], "transientPredicate")];
+			}
 		}
 		const aSpliced = aElements.splice(iIndex + 1, iCount);
 		aSpliced.$level = oGroupNode["@$ui5.node.level"];

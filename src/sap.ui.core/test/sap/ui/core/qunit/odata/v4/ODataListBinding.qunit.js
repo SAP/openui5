@@ -9642,12 +9642,13 @@ sap.ui.define([
 						+ ", count=" + iCount + ", silent=" + bSilent;
 
 	if (!bSuccess && iCount === 0 || bDataRequested && iCount < 0) {
-		return; // ignore useless combinations
+		return; // skip useless combinations
 	}
 
 	QUnit.test(sTitle, function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES"),
 			oContext = {
+				iIndex : "~iIndex~",
 				getModelIndex : function () {},
 				getPath : function () {},
 				toString : function () { return "~context~"; }
@@ -9664,6 +9665,7 @@ sap.ui.define([
 		oBinding.oCache = { // simulate an aggregation cache
 			expand : function () {}
 		};
+		oBinding.aContexts["~iIndex~"] = oContext;
 
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oBinding).expects("lockGroup").withExactArgs().returns(oGroupLock);
@@ -9734,6 +9736,22 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+	QUnit.test("expand: Not currently part of the hierarchy", function (assert) {
+		const oBinding = this.bindList("/EMPLOYEES");
+		const oContext = {
+			iIndex : 0,
+			toString : () => "~oContext~"
+		};
+
+		oBinding.aContexts = [, oContext];
+
+		assert.throws(function () {
+			// code under test
+			oBinding.expand(oContext);
+		}, new Error("Not currently part of the hierarchy: ~oContext~"));
+	});
+
+	//*********************************************************************************************
 	QUnit.test("insertGap", function (assert) {
 		const _ = undefined;
 		const oBinding = this.bindList("/EMPLOYEES");
@@ -9789,6 +9807,7 @@ sap.ui.define([
 		var oBinding = this.bindList("/EMPLOYEES"),
 			oCollapseExpectation,
 			oContext = {
+				iIndex : "~iIndex~",
 				getModelIndex : function () {},
 				getPath : function () {}
 			},
@@ -9815,6 +9834,7 @@ sap.ui.define([
 			// with gap at 6
 			oBinding.aContexts.push(i === 6 ? undefined : createContextDummy(i));
 		}
+		oBinding.aContexts["~iIndex~"] = oContext;
 		oBinding.iMaxLength = 8;
 		aContextsBefore = oBinding.aContexts.slice();
 		assert.deepEqual(oBinding.mPreviousContextsByPath, {});
@@ -9870,6 +9890,22 @@ sap.ui.define([
 		});
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("collapse: Not currently part of the hierarchy", function (assert) {
+		const oBinding = this.bindList("/EMPLOYEES");
+		const oContext = {
+			iIndex : 0,
+			toString : () => "~oContext~"
+		};
+
+		oBinding.aContexts = [, oContext];
+
+		assert.throws(function () {
+			// code under test
+			oBinding.collapse(oContext);
+		}, new Error("Not currently part of the hierarchy: ~oContext~"));
+	});
 
 	//*********************************************************************************************
 	QUnit.test("resetKeepAlive", function () {
