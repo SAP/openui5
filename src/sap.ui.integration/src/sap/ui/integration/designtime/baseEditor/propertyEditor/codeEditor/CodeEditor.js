@@ -3,10 +3,14 @@
  */
 sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/BasePropertyEditor",
-	"sap/ui/core/Fragment"
+	"sap/ui/core/Fragment",
+	"sap/ui/integration/designtime/baseEditor/util/EvalUtils",
+	"sap/m/MessageToast"
 ], function (
 	BasePropertyEditor,
-	Fragment
+	Fragment,
+	EvalUtils,
+	MessageToast
 ) {
 	"use strict";
 	function json2str(o) {
@@ -195,8 +199,17 @@ sap.ui.define([
 		if (this._oCode && this._oCode !== "") {
 			oInput.setValueState("None");
 			if (this._oCode && this._oCode !== "") {
-				// eslint-disable-next-line no-eval
-				this._oCode = eval("(" + this._oCode + ")");
+				try {
+					if (EvalUtils.isEvalAllowed()) {
+						this._oCode = EvalUtils.evalJson(this._oCode);
+					} else {
+						this._oCode = JSON.parse(this._oCode);
+					}
+				} catch (vError) {
+					MessageToast.show(vError);
+					this._oDialog.getBeginButton().setEnabled(false);
+					return;
+				}
 			}
 		} else {
 			this._oCode = undefined;

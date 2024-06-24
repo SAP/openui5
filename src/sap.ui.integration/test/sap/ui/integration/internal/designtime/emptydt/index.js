@@ -40,13 +40,9 @@ sap.ui.require(["sap/ui/integration/util/loadCardEditor", "sap/base/util/LoaderE
 										if (oConfigAdmin) {
 											oConfigAdmin.destroy();
 										}
-										var sConfigurationString = oBASCardEditor.getConfigurationString();
-										// eslint-disable-next-line no-eval
-										var oSettings = eval("(" + sConfigurationString + ")");
 										oConfigAdmin = new ConfigurationEditor({
 											card: { manifest: oBASCardEditor.getManifest(), baseUrl: sBaseUrl },
-											designtime: oSettings,
-											//designtime: oBASCardEditor.getConfigurationClass(),
+											designtime: oBASCardEditor.getConfigurationClass(),
 											allowSettings: true,
 											allowDynamicValues: true,
 											mode: "admin"
