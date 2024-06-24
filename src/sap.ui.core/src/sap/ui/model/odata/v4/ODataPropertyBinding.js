@@ -320,7 +320,8 @@ sap.ui.define([
 					return vValue0;
 				}
 				if (that.sInternalType === "any" && (that.getBindingMode() === BindingMode.OneTime
-						|| (that.sPath[that.sPath.lastIndexOf("/") + 1] === "#" && !bIsMeta))) {
+						|| !bIsMeta && (that.getBindingMode() === BindingMode.OneWay
+							|| that.sPath[that.sPath.lastIndexOf("/") + 1] === "#"))) {
 					if (bIsMeta) {
 						return vValue0;
 					} else if (that.bRelative) {
