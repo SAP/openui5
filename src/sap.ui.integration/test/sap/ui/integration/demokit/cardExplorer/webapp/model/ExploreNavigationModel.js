@@ -1,6 +1,7 @@
 sap.ui.define([
-	'sap/ui/model/json/JSONModel'
-], function (JSONModel) {
+	'sap/ui/model/json/JSONModel',
+	"../util/isDevelopmentBuild"
+], function (JSONModel, isDevelopmentBuild) {
 	'use strict';
 
 	// Please order topics alphabetically by "title"
@@ -1348,6 +1349,7 @@ sap.ui.define([
 				key: 'progressiveDisclosure',
 				target: 'exploreOverview',
 				hasExpander: false,
+				hidden: !isDevelopmentBuild(),
 				items: [
 					{
 						key: 'progressive',
@@ -1356,6 +1358,7 @@ sap.ui.define([
 						useIFrame: true,
 						experimental: true,
 						isApplication: false,
+						hidden: !isDevelopmentBuild(),
 						files: [
 							{
 								url: '/samples/progressive/index.html',

@@ -31,8 +31,8 @@
 			<tnt:sideContent>
 				<tnt:SideNavigation id="sideNavigation" selectedKey="{/selectedKey}" itemSelect="onSideNavigationItemSelect">
 					<tnt:NavigationList items="{path: '/navigation'}">
-						<tnt:NavigationListItem text="{title}{= ${experimental} ? ' (Experimental)' : ''}" icon="{icon}" enabled="{enabled}" expanded="{expanded}" items="{path: 'items', templateShareable: false}" key="{key}" hasExpander="{hasExpander}">
-							<tnt:NavigationListItem text="{title}{= ${experimental} ? ' (Experimental)' : ''}" key="{key}" enabled="{enabled}">
+						<tnt:NavigationListItem text="{title}{= ${experimental} ? ' (Experimental)' : ''}" icon="{icon}" enabled="{enabled}" visible="{= !${hidden}}" expanded="{expanded}" items="{path: 'items', templateShareable: false}" key="{key}" hasExpander="{hasExpander}">
+							<tnt:NavigationListItem text="{title}{= ${experimental} ? ' (Experimental)' : ''}" key="{key}" enabled="{enabled}" visible="{= !${hidden}}">
 								<tnt:customData>
 									<core:CustomData key="type" value="child" />
 								</tnt:customData>
