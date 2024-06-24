@@ -404,6 +404,9 @@ function(
 	PlanningCalendarHeader.prototype.exit = function () {
 		this._getActionsToolbar().removeAllContent();
 		if (this._oTitle) {
+			if (this._oToolbarAfterRenderingDelegate) {
+				this._oTitle.removeDelegate(this._oToolbarAfterRenderingDelegate);
+			}
 			this._oTitle.destroy();
 			this._oTitle = null;
 		}
@@ -444,8 +447,22 @@ function(
 	};
 
 	PlanningCalendarHeader.prototype.setTitle = function (sTitle) {
-		this._getOrCreateTitleControl().setText(sTitle).setVisible(!!sTitle);
+		const oInnerTitle = this._getOrCreateTitleControl();
+		oInnerTitle.setText(sTitle).setVisible(!!sTitle);
+		if (this._oToolbarAfterRenderingDelegate) {
+			oInnerTitle.removeDelegate(this._oToolbarAfterRenderingDelegate);
+		}
+		this._oToolbarAfterRenderingDelegate = {
+			onAfterRendering: function () {
+				const oTitle = this.getActions().find((oAction) => oAction.isA("sap.m.Title"));
+				const oTitleDomRef = this.getDomRef().querySelector(`[data-sap-ui='${oInnerTitle.getId()}']`);
+				if (oTitle && oTitleDomRef) {
+					oTitleDomRef.setAttribute("id", oTitle.getId());
+				}
+			}
+		};
 
+		oInnerTitle.addDelegate(this._oToolbarAfterRenderingDelegate, this);
 		return this.setProperty("title", sTitle);
 	};
 
