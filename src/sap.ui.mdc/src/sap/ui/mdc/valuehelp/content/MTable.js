@@ -288,22 +288,38 @@ sap.ui.define([
 		return this._oTable;
 	};
 
+	/*
+	 * For non-typeahead multi-select content, 'SingleSelectMaster', 'SingleSelectLeft' and 'MultiSelect' are considered valid.
+	 * For typeahead content, 'SingleSelectLeft' is considered invalid.
+	 * For single-select content, 'MultiSelect' mode is considered invalid.
+	 */
+	function _getValidTableSelectModes(bTypeahead, bEnforceSingleSelect) {
+		return [
+			ListMode.SingleSelectMaster,
+			...bTypeahead ? [] : [ListMode.SingleSelectLeft],
+			...bEnforceSingleSelect ? [] : [ListMode.MultiSelect]
+		];
+	}
+
 	MTable.prototype.onShow = function(bInitial) {
 		const oTable = this._getTable();
 		if (oTable) {
 			if (!oTable.hasStyleClass("sapMComboBoxList")) { // TODO: only in typeahead case?
 				oTable.addStyleClass("sapMComboBoxList"); // to allow focus outline in navigation
 			}
-			// check if selection mode is fine
-			let sSelectionMode = this.isTypeahead() ? ListMode.SingleSelectMaster : ListMode.SingleSelectLeft;
-			if (!FilterableListContent.prototype.isSingleSelect.apply(this) && oTable.getMode() !== sSelectionMode) { // if in multi-select mode only single-selection on table is allowed this is also OK
-				sSelectionMode = ListMode.MultiSelect;
-			}
-			if (oTable.getMode() === ListMode.None) { // only set automatically if not provided from outside (and do it only once)
-				oTable.setMode(sSelectionMode);
-			}
-			if (oTable.getMode() !== sSelectionMode) {
-				throw new Error("Table selection mode needs to be " + sSelectionMode);
+
+			const bTypeahead = this.isTypeahead();
+			const bEnforceSingleSelect = FilterableListContent.prototype.isSingleSelect.apply(this);
+			const sTableSelectMode = oTable.getMode();
+
+			if (sTableSelectMode === ListMode.None) { // set selection mode, if none is given
+				const sPreferredSingleSelectMode = bTypeahead ? ListMode.SingleSelectMaster : ListMode.SingleSelectLeft;
+				oTable.setMode(bEnforceSingleSelect ? sPreferredSingleSelectMode : ListMode.MultiSelect);
+			} else { // check if selection mode is fine
+				const aValidSelectModes = _getValidTableSelectModes(bTypeahead, bEnforceSingleSelect);
+				if (!aValidSelectModes.includes(sTableSelectMode)) {
+					throw new Error(`Table selection mode needs to be '${aValidSelectModes.join("' or '")}'`);
+				}
 			}
 		}
 
