@@ -28,7 +28,6 @@ sap.ui.define([
 	"sap/ui/core/Lib",
 	"sap/ui/core/RenderManager",
 	"sap/ui/core/ResizeHandler",
-	"sap/ui/core/Theming",
 	"sap/ui/dom/includeStylesheet",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/codeeditor/js/ace/ace",
@@ -43,7 +42,6 @@ sap.ui.define([
 	Library,
 	RenderManager,
 	ResizeHandler,
-	Theming,
 	includeStylesheet,
 	jQuery,
 	ace,
@@ -225,7 +223,12 @@ sap.ui.define([
 		this._oEditorDomRef.style.width = "100%";
 
 		this._oEditor = ace.edit(this._oEditorDomRef);
-		this._oEditor.setTheme("ace/theme/default");
+		this._oDefaultTheme = {
+			cssClass: "ace-default",
+			isDark: false,
+			cssText: ""
+		};
+		this._oEditor.setTheme(this._oDefaultTheme);
 
 		var oSession = this._oEditor.getSession();
 
@@ -401,6 +404,12 @@ sap.ui.define([
 	CodeEditor.prototype.setColorTheme = function(sTheme) {
 		this.setProperty("colorTheme", sTheme);
 
+		if (sTheme === "default") {
+			this._oEditor.setTheme(this._oDefaultTheme);
+
+			return this;
+		}
+
 		if (sTheme === "hcb") {
 			sTheme = "tomorrow_night";
 		} else if (sTheme === "hcb_bright") {
@@ -411,12 +420,10 @@ sap.ui.define([
 
 		this._oEditor.setTheme("ace/theme/" + sTheme);
 
-		if (sTheme !== "default") {
-			includeStylesheet(
-				sap.ui.require.toUrl("sap/ui/codeeditor/js/ace/css/theme/" + sTheme + ".css"),
-				"sap-ui-codeeditor-theme-" + sTheme
-			);
-		}
+		includeStylesheet(
+			sap.ui.require.toUrl("sap/ui/codeeditor/js/ace/css/theme/" + sTheme + ".css"),
+			"sap-ui-codeeditor-theme-" + sTheme
+		);
 
 		return this;
 	};

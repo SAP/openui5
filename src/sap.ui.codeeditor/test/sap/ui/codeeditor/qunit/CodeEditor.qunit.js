@@ -284,14 +284,22 @@ sap.ui.define([
 	QUnit.test("Initial rendering", function (assert) {
 		var oCodeEditor = new CodeEditor();
 		assert.strictEqual(oCodeEditor.getColorTheme(), "default", "Initial theme is set correctly");
-		assert.strictEqual(oCodeEditor._oEditor.getTheme(), "ace/theme/default", "Initial theme is set correctly to the internal editor");
+		assert.deepEqual(
+			oCodeEditor._oEditor.getTheme(),
+			{
+				cssClass: "ace-default",
+				isDark: false,
+				cssText: ""
+			},
+			"Initial theme is set correctly to the internal editor"
+		);
 
 		oCodeEditor.destroy();
 	});
 
 	QUnit.test("Theme change", function (assert) {
 		const done = assert.async(2);
-		const initialTheme = "default";
+		const initialTheme = Theming.getTheme();
 		let callCount = 0;
 		const handleThemeApplied = (oEvent) => {
 			callCount++;
