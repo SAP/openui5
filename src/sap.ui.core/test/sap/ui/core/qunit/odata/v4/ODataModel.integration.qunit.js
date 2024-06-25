@@ -30633,7 +30633,7 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-2466
 	//
 	// A selected (effectively kept alive) node which is not part of the hierarchy after the parent
-	// is collapsed still holds its data
+	// is collapsed still holds its data. It is also possible to request side effects for it.
 	// JIRA: CPOUI5ODATAV4-2539
 [false, true].forEach(function (bResetViaModel) {
 	const sTitle = `Recursive Hierarchy: create new children, move 'em, model=${bResetViaModel}`;
@@ -31549,6 +31549,44 @@ sap.ui.define([
 					[undefined, true, 1, "etag0.3", "Alpha #2", "0,false"],
 					[undefined, undefined, 2, "etag2.4", "Gamma #2", "2,false"]
 				]);
+		}).then(function () {
+			that.expectChange("etag", ["etag9.1", "etag1.6", "etag0.3"])
+				.expectChange("name", ["Aleph #2", "Beta #2", "Alpha #2"]);
+
+			oRoot.collapse();
+
+			return that.waitForChanges(assert, "preparation: collapse root");
+		}).then(function () {
+			that.expectRequest(sFriend.slice(1)
+					+ "?$filter=ArtistID eq '2' and IsActiveEntity eq false"
+					+ "&$select=ArtistID,IsActiveEntity,Name,_/NodeID", {
+					value : [{
+						"@odata.etag" : "etag2.5",
+						ArtistID : "2",
+						IsActiveEntity : false,
+						Name : "Gamma: #3", // "side effect"
+						_ : null // not available w/ RAP for a non-hierarchical request
+					}]
+				});
+
+			return Promise.all([
+				// code under test (JIRA: CPOUI5ODATAV4-2539)
+				oGamma.requestSideEffects(["Name"]),
+				that.waitForChanges(assert, "side effect for selected and kept alive context which "
+					+ "is not in hierarchy: Name for Gamma")
+			]);
+		}).then(function () {
+			assert.deepEqual(oGamma.getObject(), {
+				"@$ui5.context.isSelected" : true,
+				"@$ui5.node.level" : 2,
+				"@odata.etag" : "etag2.5",
+				ArtistID : "2",
+				IsActiveEntity : false,
+				Name : "Gamma: #3",
+				_ : {
+					NodeID : "2,false"
+				}
+			});
 		});
 	});
 });
