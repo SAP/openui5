@@ -31780,9 +31780,13 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	// Scenario: Create root nodes w/ and w/o rank in a recursive hierarchy.
+	// Scenario: Create several new root and child nodes in a recursive hierarchy, some of which do
+	// not match the current filter and thus do not have a limited rank. Still they are all shown in
+	// their proper "out of place" position, respecting the order in which they were created. See
+	// that #isAncestorOf and #collapse work if there are only nodes w/o rank, but also if there is
+	// a mixture of nodes w/ and w/o rank.
 	// JIRA: CPOUI5ODATAV4-2524
-	QUnit.test("Recursive Hierarchy: create w/o rank, root", async function (assert) {
+	QUnit.test("Recursive Hierarchy: create w/o rank", async function (assert) {
 		const sBaseUrl = "EMPLOYEES?$apply=ancestors($root/EMPLOYEES,OrgChart,ID"
 			+ ",filter(not startswith(Name, 'Out')),keep start)"
 			+ "/com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root/EMPLOYEES"
@@ -31802,109 +31806,385 @@ sap.ui.define([
 	<Text text="{Name}"/>
 </t:Table>`;
 
-		// UI:                              Server:
-		// Out2 Out2 (created, no rank)     0    Alpha
-		// In1  In1 (created)               In1  In1
-		// Out1 Out1 (created, no rank)     1    Beta
-		// 0    Alpha
-		// 1    Beta
+		// Server:            UI:
+		// 0   Alpha          Out2 Out2 (created, no rank)
+		//     1 Beta         In1  In1 (created)
+		//       1.1 Gamma    Out1 Out1 (created , no rank)
+		//       In2 In2      0    Alpha
+		//       In3 In3           1 Beta
+		//     2 Delta               In3  In3 (created)
+		// In1 In1                   Out4 Out4 (created, no rank)
+		// 3   Epsilon               In2  In2 (created)
+		// 4   Zeta                  Out3 Out3 (created, no rank)
+		// 5   Eta                   1.1  Gamma
+		//                                Out5 Out5 (created, no rank)
+		//                         2 Delta
+		//                    3    Epsilon
+		//                    4    Zeta
+		//                    5    Eta
 		this.expectRequest(sBaseUrl + "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name"
-			+ "&$count=true&$skip=0&$top=4", {
-			"@odata.count" : "2",
-			value : [{
-				DescendantCount : "0",
-				DistanceFromRoot : "0",
-				DrillState : "leaf",
-				ID : "0",
-				Name : "Alpha"
-			}, {
-				DescendantCount : "0",
-				DistanceFromRoot : "0",
-				DrillState : "leaf",
-				ID : "1",
-				Name : "Beta"
-			}]
-		});
+				+ "&$count=true&$skip=0&$top=4", {
+				"@odata.count" : "7",
+				value : [{
+					DescendantCount : "3",
+					DistanceFromRoot : "0",
+					DrillState : "expanded",
+					ID : "0",
+					Name : "Alpha"
+				}, {
+					DescendantCount : "1",
+					DistanceFromRoot : "1",
+					DrillState : "expanded",
+					ID : "1",
+					Name : "Beta"
+				}, {
+					DescendantCount : "0",
+					DistanceFromRoot : "2",
+					DrillState : "leaf",
+					ID : "1.1",
+					Name : "Gamma"
+				}, {
+					DescendantCount : "0",
+					DistanceFromRoot : "1",
+					DrillState : "leaf",
+					ID : "2",
+					Name : "Delta"
+				}]
+			});
 
 		await this.createView(assert, sView, oModel);
 
 		const oTable = this.oView.byId("table");
 		checkTable("initial page", assert, oTable, [
 			"/EMPLOYEES('0')",
-			"/EMPLOYEES('1')"
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('1.1')",
+			"/EMPLOYEES('2')"
 		], [
-			[undefined, 1, "Alpha"],
-			[undefined, 1, "Beta"]
-		]);
+			[true, 1, "Alpha"],
+			[true, 2, "Beta"],
+			[undefined, 3, "Gamma"],
+			[undefined, 2, "Delta"]
+		], 7);
 		const oListBinding = oTable.getBinding("rows");
+		const [oAlpha, oBeta, oGamma] = oListBinding.getCurrentContexts();
 
-		const create = async (sName, iRank) => {
+		const create = async (oParent, sName, iRank) => {
+			const oPayload = {Name : sName};
+			if (oParent) {
+				oPayload["EMPLOYEE_2_MANAGER@odata.bind"] = oParent.sPath.slice(1);
+			}
 			this.expectRequest({
-					method : "POST",
-					url : "EMPLOYEES",
-					payload : {
-						Name : sName
-					}
-				}, {
-					ID : sName,
-					Name : sName
-				})
-				.expectRequest(sBaseUrl + `&$filter=ID eq '${sName}'&$select=LimitedRank`, {
-					value : iRank === undefined ? [] : [{LimitedRank : `${iRank}`}]
-				});
+				method : "POST",
+				url : "EMPLOYEES",
+				payload : oPayload
+			}, {
+				ID : sName,
+				Name : sName
+			})
+			.expectRequest(sBaseUrl + `&$filter=ID eq '${sName}'&$select=LimitedRank`, {
+				value : iRank === undefined ? [] : [{LimitedRank : `${iRank}`}]
+			});
 
 			// code under test
-			const oNode = oListBinding.create({
+			const oChild = oListBinding.create({
+				"@$ui5.node.parent" : oParent,
 				Name : sName
 			}, /*bSkipRefresh*/true);
 
 			await Promise.all([
-				oNode.created(),
+				oChild.created(),
 				this.waitForChanges(assert, `create ${sName}`)
 			]);
 
-			return oNode;
+			return oChild;
 		};
 
-		await create("Out1");
+		await create(null, "Out1");
 
 		checkTable("after create Out1", assert, oTable, [
 			"/EMPLOYEES('Out1')",
 			"/EMPLOYEES('0')",
-			"/EMPLOYEES('1')"
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('1.1')",
+			"/EMPLOYEES('2')"
 		], [
 			[undefined, 1, "Out1"],
-			[undefined, 1, "Alpha"],
-			[undefined, 1, "Beta"]
-		]);
+			[true, 1, "Alpha"],
+			[true, 2, "Beta"],
+			[undefined, 3, "Gamma"]
+		], 8);
 
-		await create("In1", 1);
+		await create(null, "In1", 4);
 
 		checkTable("after create In1", assert, oTable, [
 			"/EMPLOYEES('In1')",
 			"/EMPLOYEES('Out1')",
 			"/EMPLOYEES('0')",
-			"/EMPLOYEES('1')"
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('1.1')",
+			"/EMPLOYEES('2')"
 		], [
 			[undefined, 1, "In1"],
 			[undefined, 1, "Out1"],
-			[undefined, 1, "Alpha"],
-			[undefined, 1, "Beta"]
-		]);
+			[true, 1, "Alpha"],
+			[true, 2, "Beta"]
+		], 9);
 
-		await create("Out2");
+		await create(null, "Out2");
 
 		checkTable("after create Out2", assert, oTable, [
 			"/EMPLOYEES('Out2')",
 			"/EMPLOYEES('In1')",
 			"/EMPLOYEES('Out1')",
 			"/EMPLOYEES('0')",
-			"/EMPLOYEES('1')"
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('1.1')",
+			"/EMPLOYEES('2')"
 		], [
 			[undefined, 1, "Out2"],
 			[undefined, 1, "In1"],
 			[undefined, 1, "Out1"],
-			[undefined, 1, "Alpha"]
+			[true, 1, "Alpha"]
+		], 10);
+
+		oTable.setFirstVisibleRow(3);
+
+		await resolveLater(undefined, 0); // table update takes a moment
+
+		checkTable("first visible row 3", assert, oTable, [
+			"/EMPLOYEES('Out2')",
+			"/EMPLOYEES('In1')",
+			"/EMPLOYEES('Out1')",
+			"/EMPLOYEES('0')",
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('1.1')",
+			"/EMPLOYEES('2')"
+		], [
+			[true, 1, "Alpha"],
+			[true, 2, "Beta"],
+			[undefined, 3, "Gamma"],
+			[undefined, 2, "Delta"]
+		], 10);
+
+		const oOut5 = await create(oGamma, "Out5");
+
+		assert.ok(oGamma.isAncestorOf(oOut5));
+
+		checkTable("after create Out5", assert, oTable, [
+			"/EMPLOYEES('Out2')",
+			"/EMPLOYEES('In1')",
+			"/EMPLOYEES('Out1')",
+			"/EMPLOYEES('0')",
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('1.1')",
+			"/EMPLOYEES('Out5')",
+			"/EMPLOYEES('2')"
+		], [
+			[true, 1, "Alpha"],
+			[true, 2, "Beta"],
+			[true, 3, "Gamma"],
+			[undefined, 4, "Out5"]
+		], 11);
+
+		// code under test
+		oGamma.collapse();
+
+		await this.waitForChanges(assert, "collapse Gamma");
+
+		checkTable("after collapse Gamma", assert, oTable, [
+			"/EMPLOYEES('Out2')",
+			"/EMPLOYEES('In1')",
+			"/EMPLOYEES('Out1')",
+			"/EMPLOYEES('0')",
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('1.1')",
+			"/EMPLOYEES('2')"
+		], [
+			[true, 1, "Alpha"],
+			[true, 2, "Beta"],
+			[false, 3, "Gamma"],
+			[undefined, 2, "Delta"]
+		], 10);
+
+		// code under test
+		oGamma.expand();
+
+		await this.waitForChanges(assert, "expand Gamma");
+
+		checkTable("after expand Gamma", assert, oTable, [
+			"/EMPLOYEES('Out2')",
+			"/EMPLOYEES('In1')",
+			"/EMPLOYEES('Out1')",
+			"/EMPLOYEES('0')",
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('1.1')",
+			"/EMPLOYEES('Out5')",
+			"/EMPLOYEES('2')"
+		], [
+			[true, 1, "Alpha"],
+			[true, 2, "Beta"],
+			[true, 3, "Gamma"],
+			[undefined, 4, "Out5"]
+		], 11);
+
+		const oOut3 = await create(oBeta, "Out3");
+
+		assert.ok(oAlpha.isAncestorOf(oOut3));
+		assert.ok(oBeta.isAncestorOf(oOut3));
+
+		checkTable("after create Out3", assert, oTable, [
+			"/EMPLOYEES('Out2')",
+			"/EMPLOYEES('In1')",
+			"/EMPLOYEES('Out1')",
+			"/EMPLOYEES('0')",
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('Out3')",
+			"/EMPLOYEES('1.1')",
+			"/EMPLOYEES('Out5')",
+			"/EMPLOYEES('2')"
+		], [
+			[true, 1, "Alpha"],
+			[true, 2, "Beta"],
+			[undefined, 3, "Out3"],
+			[true, 3, "Gamma"]
+		], 12);
+
+		await create(oBeta, "In2", 3);
+
+		checkTable("after create In2", assert, oTable, [
+			"/EMPLOYEES('Out2')",
+			"/EMPLOYEES('In1')",
+			"/EMPLOYEES('Out1')",
+			"/EMPLOYEES('0')",
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('In2')",
+			"/EMPLOYEES('Out3')",
+			"/EMPLOYEES('1.1')",
+			"/EMPLOYEES('Out5')",
+			"/EMPLOYEES('2')"
+		], [
+			[true, 1, "Alpha"],
+			[true, 2, "Beta"],
+			[undefined, 3, "In2"],
+			[undefined, 3, "Out3"]
+		], 13);
+
+		const oOut4 = await create(oBeta, "Out4");
+
+		assert.ok(oAlpha.isAncestorOf(oOut4));
+		assert.ok(oBeta.isAncestorOf(oOut4));
+
+		checkTable("after create Out4", assert, oTable, [
+			"/EMPLOYEES('Out2')",
+			"/EMPLOYEES('In1')",
+			"/EMPLOYEES('Out1')",
+			"/EMPLOYEES('0')",
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('Out4')",
+			"/EMPLOYEES('In2')",
+			"/EMPLOYEES('Out3')",
+			"/EMPLOYEES('1.1')",
+			"/EMPLOYEES('Out5')",
+			"/EMPLOYEES('2')"
+		], [
+			[true, 1, "Alpha"],
+			[true, 2, "Beta"],
+			[undefined, 3, "Out4"],
+			[undefined, 3, "In2"]
+		], 14);
+
+		await create(oBeta, "In3", 4);
+
+		checkTable("after create In3", assert, oTable, [
+			"/EMPLOYEES('Out2')",
+			"/EMPLOYEES('In1')",
+			"/EMPLOYEES('Out1')",
+			"/EMPLOYEES('0')",
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('In3')",
+			"/EMPLOYEES('Out4')",
+			"/EMPLOYEES('In2')",
+			"/EMPLOYEES('Out3')",
+			"/EMPLOYEES('1.1')",
+			"/EMPLOYEES('Out5')",
+			"/EMPLOYEES('2')"
+		], [
+			[true, 1, "Alpha"],
+			[true, 2, "Beta"],
+			[undefined, 3, "In3"],
+			[undefined, 3, "Out4"]
+		], 15);
+
+		this.expectRequest(sBaseUrl + "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name"
+				+ "&$skip=7&$top=3", {
+				value : [{
+					DescendantCount : "0",
+					DistanceFromRoot : "0",
+					DrillState : "leaf",
+					ID : "3",
+					Name : "Epsilon"
+				}, {
+					DescendantCount : "0",
+					DistanceFromRoot : "0",
+					DrillState : "leaf",
+					ID : "4",
+					Name : "Zeta"
+				}, {
+					DescendantCount : "0",
+					DistanceFromRoot : "0",
+					DrillState : "leaf",
+					ID : "5",
+					Name : "Eta"
+				}]
+			});
+
+		// code under test
+		oAlpha.collapse();
+
+		await this.waitForChanges(assert, "collapse Alpha");
+
+		checkTable("after collapse Alpha", assert, oTable, [
+			"/EMPLOYEES('Out2')",
+			"/EMPLOYEES('In1')",
+			"/EMPLOYEES('Out1')",
+			"/EMPLOYEES('0')",
+			"/EMPLOYEES('3')",
+			"/EMPLOYEES('4')",
+			"/EMPLOYEES('5')"
+		], [
+			[false, 1, "Alpha"],
+			[undefined, 1, "Epsilon"],
+			[undefined, 1, "Zeta"],
+			[undefined, 1, "Eta"]
+		]);
+
+		// code under test
+		oAlpha.expand();
+
+		await this.waitForChanges(assert, "expand Alpha");
+
+		checkTable("after expand Alpha", assert, oTable, [
+			"/EMPLOYEES('Out2')",
+			"/EMPLOYEES('In1')",
+			"/EMPLOYEES('Out1')",
+			"/EMPLOYEES('0')",
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('In3')",
+			"/EMPLOYEES('Out4')",
+			"/EMPLOYEES('In2')",
+			"/EMPLOYEES('Out3')",
+			"/EMPLOYEES('1.1')",
+			"/EMPLOYEES('Out5')",
+			"/EMPLOYEES('2')",
+			"/EMPLOYEES('3')",
+			"/EMPLOYEES('4')",
+			"/EMPLOYEES('5')"
+		], [
+			[true, 1, "Alpha"],
+			[true, 2, "Beta"],
+			[undefined, 3, "In3"],
+			[undefined, 3, "Out4"]
 		]);
 	});
 

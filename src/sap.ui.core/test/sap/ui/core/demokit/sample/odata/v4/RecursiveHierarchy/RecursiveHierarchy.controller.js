@@ -9,35 +9,29 @@ sap.ui.define([
 	"use strict";
 
 	return Controller.extend("sap.ui.core.sample.odata.v4.RecursiveHierarchy.RecursiveHierarchy", {
-		onCreate : async function (oEvent) {
+		create : async function (sId, oParentContext, bFilteredOut) {
+			const oBinding = oParentContext?.getBinding() ?? this.byId(sId).getBinding("rows");
 			try {
-				const oParentContext = oEvent.getSource().getBindingContext();
-				await oParentContext.getBinding().create({
-					"@$ui5.node.parent" : oParentContext
+				const oContext = oBinding.create({
+					"@$ui5.node.parent" : oParentContext,
+					STATUS : bFilteredOut ? "Out" : ""
 				}, /*bSkipRefresh*/true);
+				await oContext.created();
 			} catch (oError) {
 				MessageBox.alert(oError.message, {icon : MessageBox.Icon.ERROR, title : "Error"});
 			}
 		},
 
-		onCreateRoot : async function () {
-			try {
-				await this.byId("table").getBinding("rows").create({
-						// "@$ui5.node.parent" : null
-					}, /*bSkipRefresh*/true);
-			} catch (oError) {
-				MessageBox.alert(oError.message, {icon : MessageBox.Icon.ERROR, title : "Error"});
-			}
+		onCreate : function (oEvent, bFilteredOut) {
+			this.create("n/a", oEvent.getSource().getBindingContext(), bFilteredOut);
 		},
 
-		onCreateRootInTreeTable : async function () {
-			try {
-				await this.byId("treeTable").getBinding("rows").create({
-						"@$ui5.node.parent" : null
-					}, /*bSkipRefresh*/true);
-			} catch (oError) {
-				MessageBox.alert(oError.message, {icon : MessageBox.Icon.ERROR, title : "Error"});
-			}
+		onCreateRoot : function (_oEvent, bFilteredOut) {
+			this.create("table", null, bFilteredOut);
+		},
+
+		onCreateRootInTreeTable : function (_oEvent, bFilteredOut) {
+			this.create("treeTable", null, bFilteredOut);
 		},
 
 		onDelete : async function (oEvent) {
@@ -274,12 +268,12 @@ sap.ui.define([
 			} // else: invalid value (has not reached model)
 		},
 
-		onRefresh : function () {
-			this.byId("table").getBinding("rows").getHeaderContext().requestSideEffects([""]);
+		onRefresh : function (_oEvent, bKeepTreeState) {
+			this.refresh("table", bKeepTreeState);
 		},
 
-		onRefreshTreeTable : function () {
-			this.byId("treeTable").getBinding("rows").getHeaderContext().requestSideEffects([""]);
+		onRefreshTreeTable : function (_oEvent, bKeepTreeState) {
+			this.refresh("treeTable", bKeepTreeState);
 		},
 
 		onSynchronize : function () {
@@ -298,6 +292,15 @@ sap.ui.define([
 				oRowContext.collapse();
 			} else {
 				oRowContext.expand();
+			}
+		},
+
+		refresh(sId, bKeepTreeState) {
+			const oBinding = this.byId(sId).getBinding("rows");
+			if (bKeepTreeState) {
+				oBinding.getHeaderContext().requestSideEffects([""]);
+			} else {
+				oBinding.refresh();
 			}
 		}
 	});

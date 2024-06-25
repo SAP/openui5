@@ -7,19 +7,29 @@
 	xmlns:rm="sap.ui.table.rowmodes">
 
 	<Table id="table" ariaLabelledBy="title"
-		rows="{path : '/EMPLOYEES',
-			parameters : {$count : false, $orderby : 'AGE', $$patchWithoutSideEffects : true},
-			suspended : true}"
+		rows="{
+				path : '/EMPLOYEES',
+				parameters : {
+					$count : false,
+					$filter : 'STATUS ne \'Out\'',
+					$orderby : 'AGE',
+					$$patchWithoutSideEffects : true
+				},
+				suspended : true
+			}"
 		selectionMode="None">
 		<extension>
 			<m:Toolbar design="Transparent" class="sapMTBHeader-CTX">
 				<m:Title id="title" level="H1" text="Organizational Chart"/>
 				<m:ToolbarSpacer/>
 				<m:Button icon="sap-icon://create" press=".onCreateRoot" tooltip="Create New Root"/>
+				<m:Button icon="sap-icon://hide" press=".onCreateRoot($event, true)"
+					tooltip="Create New Root (filtered out)"/>
 				<m:Button icon="sap-icon://synchronize" id="synchronize" press="onSynchronize"
-					tooltip="Synchronize"/>
-				<m:Button icon="sap-icon://refresh" press="onRefresh"
-					tooltip="Refresh, while keeping tree state"/>
+					tooltip="Side Effect"/>
+				<m:Button icon="sap-icon://response" press="onRefresh" tooltip="Refresh"/>
+				<m:Button icon="sap-icon://refresh" press="onRefresh($event, true)"
+						tooltip="Refresh (keeping tree state)"/>
 			</m:Toolbar>
 		</extension>
 		<rowMode>
@@ -70,33 +80,53 @@
 				<m:Text text="{AGE}" wrapping="false"/>
 			</template>
 		</Column>
+		<Column>
+			<m:Label text="Filtered Out"/>
+			<template>
+				<m:CheckBox editable="false" selected="{= %{STATUS} === 'Out'}"/>
+			</template>
+		</Column>
 		<Column width="27em">
 			<template>
 				<m:FlexBox justifyContent="SpaceBetween">
-					<m:Button enabled="{= %{@$ui5.node.isExpanded} !== false}"
+					<m:Button enabled="{= %{STATUS} !== 'Out' &amp;&amp; %{@$ui5.node.isExpanded} !== false}"
 						icon="sap-icon://create" id="create" press=".onCreate"
 						tooltip="Create New Child"/>
-					<m:Button icon="sap-icon://up" press=".onMoveUp" tooltip="Move Up"/>
-					<m:Button icon="sap-icon://down" press=".onMoveDown" tooltip="Move Down"/>
-					<m:Button icon="sap-icon://move" press=".onMove" tooltip="Move To Parent..."/>
-					<m:Button icon="sap-icon://map" press=".onMove($event, false, '?')"
-						tooltip="Move Just Before Sibling..."/>
-					<m:Button icon="sap-icon://arrow-bottom" press=".onMove($event, false, null)"
-						tooltip="Move As Last Child Of..."/>
-					<m:Button enabled="{= %{@$ui5.node.level} > 1}" icon="sap-icon://back-to-top"
-						press=".onMakeRoot" tooltip="Make Root"/>
-					<m:Button icon="sap-icon://pull-down" press=".onMakeRoot($event, null)"
-						tooltip="Make Last Root"/>
-					<m:Button icon="sap-icon://delete" press=".onDelete" tooltip="Delete"/>
+					<m:Button enabled="{= %{STATUS} !== 'Out' &amp;&amp; %{@$ui5.node.isExpanded} !== false}"
+						icon="sap-icon://hide" press=".onCreate($event, true)"
+						tooltip="Create New Hidden Child"/>
+					<m:Button enabled="{= %{STATUS} !== 'Out'}" icon="sap-icon://up"
+						press=".onMoveUp" tooltip="Move Up"/>
+					<m:Button enabled="{= %{STATUS} !== 'Out'}" icon="sap-icon://down"
+						press=".onMoveDown" tooltip="Move Down"/>
+					<m:Button enabled="{= %{STATUS} !== 'Out'}" icon="sap-icon://move"
+						press=".onMove" tooltip="Move To Parent..."/>
+					<m:Button enabled="{= %{STATUS} !== 'Out'}" icon="sap-icon://map"
+						press=".onMove($event, false, '?')" tooltip="Move Just Before Sibling..."/>
+					<m:Button enabled="{= %{STATUS} !== 'Out'}" icon="sap-icon://arrow-bottom"
+						press=".onMove($event, false, null)" tooltip="Move As Last Child Of..."/>
+					<m:Button enabled="{= %{STATUS} !== 'Out' &amp;&amp; %{@$ui5.node.level} > 1}"
+						icon="sap-icon://back-to-top" press=".onMakeRoot" tooltip="Make Root"/>
+					<m:Button enabled="{= %{STATUS} !== 'Out'}" icon="sap-icon://pull-down"
+						press=".onMakeRoot($event, null)" tooltip="Make Last Root"/>
+					<m:Button enabled="{= %{STATUS} !== 'Out'}" icon="sap-icon://delete"
+						press=".onDelete" tooltip="Delete"/>
 				</m:FlexBox>
 			</template>
 		</Column>
 	</Table>
 
 	<TreeTable id="treeTable" ariaLabelledBy="treeTitle"
-		rows="{path : '/EMPLOYEES',
-			parameters : {$count : false, $orderby : 'AGE', $$patchWithoutSideEffects : true},
-			suspended : true}"
+		rows="{
+				path : '/EMPLOYEES',
+				parameters : {
+					$count : false,
+					$filter : 'STATUS ne \'Out\'',
+					$orderby : 'AGE',
+					$$patchWithoutSideEffects : true
+				},
+				suspended : true
+			}"
 		selectionMode="None">
 		<extension>
 			<m:Toolbar design="Transparent" class="sapMTBHeader-CTX">
@@ -104,10 +134,13 @@
 				<m:ToolbarSpacer/>
 				<m:Button icon="sap-icon://create" press=".onCreateRootInTreeTable"
 					tooltip="Create New Root"/>
+				<m:Button icon="sap-icon://hide" press=".onCreateRootInTreeTable($event, true)"
+					tooltip="Create New Root (filtered out)"/>
 				<m:Button icon="sap-icon://synchronize" id="synchronizeTreeTable"
-					press="onSynchronizeTreeTable" tooltip="SynchronizeTreeTable"/>
-				<m:Button icon="sap-icon://refresh" press="onRefreshTreeTable"
-					tooltip="Refresh, while keeping tree state"/>
+					press="onSynchronizeTreeTable" tooltip="Side effect"/>
+				<m:Button icon="sap-icon://response" press="onRefreshTreeTable" tooltip="Refresh"/>
+				<m:Button icon="sap-icon://refresh" press="onRefreshTreeTable($event, true)"
+					tooltip="Refresh (keeping tree state)"/>
 			</m:Toolbar>
 		</extension>
 		<rowMode>
@@ -143,25 +176,37 @@
 				<m:Text text="{AGE}" wrapping="false"/>
 			</template>
 		</Column>
+		<Column>
+			<m:Label text="Filtered Out"/>
+			<template>
+				<m:CheckBox editable="false" selected="{= %{STATUS} === 'Out'}"/>
+			</template>
+		</Column>
 		<Column width="27em">
 			<template>
 				<m:FlexBox justifyContent="SpaceBetween">
-					<m:Button enabled="{= %{@$ui5.node.isExpanded} !== false}"
+					<m:Button enabled="{= %{STATUS} !== 'Out' &amp;&amp; %{@$ui5.node.isExpanded} !== false}"
 						icon="sap-icon://create" id="createInTreeTable" press=".onCreate"
 						tooltip="Create New Child"/>
-					<m:Button icon="sap-icon://up" press=".onMoveUp" tooltip="Move Up"/>
-					<m:Button icon="sap-icon://down" press=".onMoveDown" tooltip="Move Down"/>
-					<m:Button icon="sap-icon://move" press=".onMove($event, true)"
-						tooltip="Move To Parent..."/>
-					<m:Button icon="sap-icon://map" press=".onMove($event, true, '?')"
-						tooltip="Move Just Before Sibling..."/>
-					<m:Button icon="sap-icon://arrow-bottom" press=".onMove($event, true, null)"
-						tooltip="Move As Last Child Of..."/>
-					<m:Button enabled="{= %{@$ui5.node.level} > 1}" icon="sap-icon://back-to-top"
-						press=".onMakeRoot" tooltip="Make Root"/>
-					<m:Button icon="sap-icon://pull-down" press=".onMakeRoot($event, null)"
-						tooltip="Make Last Root"/>
-					<m:Button icon="sap-icon://delete" press=".onDelete" tooltip="Delete"/>
+					<m:Button enabled="{= %{STATUS} !== 'Out' &amp;&amp; %{@$ui5.node.isExpanded} !== false}"
+						icon="sap-icon://hide" press=".onCreate($event, true)"
+						tooltip="Create New Child (filtered out)"/>
+					<m:Button enabled="{= %{STATUS} !== 'Out'}" icon="sap-icon://up"
+						press=".onMoveUp" tooltip="Move Up"/>
+					<m:Button enabled="{= %{STATUS} !== 'Out'}" icon="sap-icon://down"
+						press=".onMoveDown" tooltip="Move Down"/>
+					<m:Button enabled="{= %{STATUS} !== 'Out'}" icon="sap-icon://move"
+						press=".onMove($event, true)" tooltip="Move To Parent..."/>
+					<m:Button enabled="{= %{STATUS} !== 'Out'}" icon="sap-icon://map"
+						press=".onMove($event, true, '?')" tooltip="Move Just Before Sibling..."/>
+					<m:Button enabled="{= %{STATUS} !== 'Out'}" icon="sap-icon://arrow-bottom"
+						press=".onMove($event, true, null)" tooltip="Move As Last Child Of..."/>
+					<m:Button enabled="{= %{STATUS} !== 'Out' &amp;&amp; %{@$ui5.node.level} > 1}"
+						icon="sap-icon://back-to-top" press=".onMakeRoot" tooltip="Make Root"/>
+					<m:Button enabled="{= %{STATUS} !== 'Out'}" icon="sap-icon://pull-down"
+						press=".onMakeRoot($event, null)" tooltip="Make Last Root"/>
+					<m:Button enabled="{= %{STATUS} !== 'Out'}" icon="sap-icon://delete"
+						press=".onDelete" tooltip="Delete"/>
 				</m:FlexBox>
 			</template>
 		</Column>

@@ -8,8 +8,13 @@
 	xmlns:rm="sap.ui.table.rowmodes">
 
 	<TreeTable id="table" ariaLabelledBy="title"
-		rows="{path : '_Hierarchy',
-			parameters : {$count : true, $$ownRequest : true, $$patchWithoutSideEffects : true}}"
+		rows="{
+				path : '_Hierarchy',
+				parameters : {
+					$count : true, $$ownRequest : true,
+					$$patchWithoutSideEffects : true
+				}
+			}"
 		selectionMode="None" threshold="0">
 		<extension>
 			<m:Toolbar design="Transparent" class="sapMTBHeader-CTX">
@@ -21,9 +26,11 @@
 				</m:Select>
 				<m:ToolbarSpacer/>
 				<m:Button icon="sap-icon://create" press=".onCreateRoot" tooltip="Create New Root"/>
-				<m:Button icon="sap-icon://refresh" press="onRefresh" tooltip="Refresh"/>
-				<m:Button icon="sap-icon://synchronize" press="onSynchronize"
-					tooltip="Synchronize"/>
+				<m:Button icon="sap-icon://hide" press=".onCreateRoot($event, true)"
+					tooltip="Create New Root (filtered out)"/>
+				<m:Button icon="sap-icon://response" press=".onRefresh" tooltip="Refresh"/>
+				<m:Button icon="sap-icon://refresh" press=".onRefresh($event, true)"
+					tooltip="Refresh (keeping tree state)"/>
 			</m:Toolbar>
 		</extension>
 		<rowMode>
@@ -47,7 +54,7 @@
 				<m:Text text="{SiblingOrder}" wrapping="false"/>
 			</template>
 		</Column>
-		<Column>
+		<Column filterProperty="Description">
 			<m:Label text="Description"/>
 			<template>
 				<m:Input change="onDescriptionChanged" value="{Description}"/>
@@ -64,6 +71,9 @@
 				<m:FlexBox justifyContent="SpaceBetween">
 					<m:Button enabled="{= %{@$ui5.node.isExpanded} !== false}"
 						icon="sap-icon://create" press=".onCreate" tooltip="Create New Child"/>
+					<m:Button enabled="{= %{@$ui5.node.isExpanded} !== false}"
+						icon="sap-icon://hide" press=".onCreate($event, true)"
+						tooltip="Create New Child (filtered out)"/>
 					<m:Button icon="sap-icon://up" press=".onMoveUp" tooltip="Move Up"/>
 					<m:Button icon="sap-icon://down" press=".onMoveDown" tooltip="Move Down"/>
 					<m:Button icon="sap-icon://move" press=".onMove($event, undefined)"

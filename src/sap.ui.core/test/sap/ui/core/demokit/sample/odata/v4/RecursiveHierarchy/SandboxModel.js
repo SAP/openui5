@@ -168,9 +168,9 @@ sap.ui.define([
 		Name : "Omega"
 	}];
 
-	let aAllNodes; // in preorder
-	let mChildrenByParentId; // no entry for leaves!
-	let mNodeById;
+	let aAllNodes; // in preorder, does not contain nodes that are filtered out
+	let mChildrenByParentId; // no entry for leaves! Does not contain nodes that are filtered out
+	let mNodeById; // contains all nodes incl. those filtered out
 	let iRevision;
 	let mRevisionOfAgeById;
 
@@ -186,6 +186,7 @@ sap.ui.define([
 		mRevisionOfAgeById = {};
 
 		aAllNodes.forEach((oNode) => {
+			oNode.STATUS = "";
 			// oNode.DescendantCount = 0; // @see computeDescendantCount
 			oNode.DistanceFromRoot = oNode.ID === "0"
 				? 0
@@ -372,31 +373,34 @@ sap.ui.define([
 				return;
 			}
 
-			if (mQueryOptions.$apply.startsWith("ancestors(")) {
-				// "$orderby=AGE&$select=ID,MANAGER_ID,Name,AGE"
-				// + "&$apply=ancestors($root/EMPLOYEES,OrgChart,ID,filter(ID%20eq%20'3'),1)"
-				const sChildId = mQueryOptions.$apply.match(/,filter\(ID%20eq%20'([^']*)'\)/)[1];
-				const sParentId = mNodeById[sChildId].MANAGER_ID;
-				selectCountSkipTop([mNodeById[sParentId]], mQueryOptions, oResponse);
+			if (mQueryOptions.$apply.includes("descendants")) {
+				// "EMPLOYEES?$apply=ancestors($root/EMPLOYEES,OrgChart,ID
+				// + ",filter(STATUS%20ne%20'Out'),keep%20start)"
+				// + "/descendants($root/EMPLOYEES,OrgChart,ID,filter(ID%20eq%20'" + sParentId
+				// + "'),1)/orderby(AGE)"
+				const sParentId = mQueryOptions.$apply.match(/,filter\(ID%20eq%20'([^']*)'\)/)[1];
+				let aChildren = mChildrenByParentId[sParentId];
+				if ("$filter" in mQueryOptions) {
+					const bNot = mQueryOptions.$filter.startsWith("not%20(");
+					if (bNot) {
+						// not%20(ID%20eq%20'5.1.10'%20or%20ID%20eq%20'5.1.11')
+						mQueryOptions.$filter
+							= mQueryOptions.$filter.slice("not%20(".length, -")".length);
+					}
+					const aIDs = mQueryOptions.$filter
+						.split("%20or%20")
+						.map((sID_Predicate) => sID_Predicate.split("%20eq%20")[1].slice(1, -1));
+					aChildren = aChildren.filter((oChild) => aIDs.includes(oChild.ID) !== bNot);
+				}
+				selectCountSkipTop(aChildren, mQueryOptions, oResponse);
 				return;
 			}
 
-			// "EMPLOYEES?$apply=descendants($root/EMPLOYEES,OrgChart,ID"
-			// + ",filter(ID%20eq%20'" + sParentId + "'),1)/orderby(AGE)"
-			const sParentId = mQueryOptions.$apply.match(/,filter\(ID%20eq%20'([^']*)'\)/)[1];
-			let aChildren = mChildrenByParentId[sParentId];
-			if ("$filter" in mQueryOptions) {
-				const bNot = mQueryOptions.$filter.startsWith("not%20(");
-				if (bNot) {
-					// not%20(ID%20eq%20'5.1.10'%20or%20ID%20eq%20'5.1.11')
-					mQueryOptions.$filter = mQueryOptions.$filter.slice("not%20(".length, -")".length);
-				}
-				const aIDs = mQueryOptions.$filter
-					.split("%20or%20")
-					.map((sID_Predicate) => sID_Predicate.split("%20eq%20")[1].slice(1, -1));
-				aChildren = aChildren.filter((oChild) => aIDs.includes(oChild.ID) !== bNot);
-			}
-			selectCountSkipTop(aChildren, mQueryOptions, oResponse);
+			// "$orderby=AGE&$select=ID,MANAGER_ID,Name,AGE"
+			// + "&$apply=ancestors($root/EMPLOYEES,OrgChart,ID,filter(ID%20eq%20'3'),1)"
+			const sChildId = mQueryOptions.$apply.match(/,filter\(ID%20eq%20'([^']*)'\)/)[1];
+			const sParentId = mNodeById[sChildId].MANAGER_ID;
+			selectCountSkipTop([mNodeById[sParentId]], mQueryOptions, oResponse);
 			return;
 		}
 
@@ -579,6 +583,7 @@ sap.ui.define([
 
 		// {"EMPLOYEE_2_MANAGER@odata.bind" : "EMPLOYEES('0')"}
 		const oBody = JSON.parse(oRequest.requestBody);
+		const bFilteredOut = oBody.STATUS === "Out";
 		const sParentId = oBody["EMPLOYEE_2_MANAGER@odata.bind"]
 			?.slice("EMPLOYEES('".length, -"')".length);
 		const oParent = mNodeById[sParentId];
@@ -593,7 +598,8 @@ sap.ui.define([
 			DistanceFromRoot : oParent ? oParent.DistanceFromRoot + 1 : 0,
 			DrillState : "leaf",
 			MANAGER_ID : sParentId ?? null,
-			DescendantCount : 0
+			DescendantCount : 0,
+			STATUS : bFilteredOut ? "Out" : ""
 		};
 
 		if (sParentId) {
@@ -602,12 +608,11 @@ sap.ui.define([
 				oNewChild.AGE = mChildrenByParentId[sParentId][0].AGE - 1;
 			} else { // parent not a leaf anymore
 				oParent.DrillState = "collapsed"; // @see #reset
-				mChildrenByParentId[sParentId] = [];
 				oNewChild.AGE = oParent.AGE - 1;
 			}
 
 			// use "largest" child ID which is hierarchical to parent
-			const sLastChildID = aAllNodes
+			const sLastChildID = Object.values(mNodeById)
 				.filter((oChild) => isChildID(oChild.ID, sParentId))
 				.sort(compareByID)
 				.at(-1)?.ID;
@@ -619,7 +624,9 @@ sap.ui.define([
 				oNewChild.ID = sParentId + "." + (parseLastSegment(sLastChildID) + 1);
 			}
 		} else { // new root
-			const iRootCount = aAllNodes.filter((oNode) => oNode.MANAGER_ID === null).length;
+			const iRootCount = Object.values(mNodeById)
+				.filter((oNode) => oNode.MANAGER_ID === null)
+				.length;
 			oNewChild.AGE = 60 + iRootCount;
 			oNewChild.ID = "0ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"[iRootCount];
 		}
@@ -629,13 +636,17 @@ sap.ui.define([
 		}
 		mNodeById[oNewChild.ID] = oNewChild;
 		mRevisionOfAgeById[oNewChild.ID] = 0;
-		if (sParentId) {
-			// Note: server's insert position must not affect UI (until refresh!)
-			mChildrenByParentId[sParentId].push(oNewChild);
-			adjustDescendantCount(sParentId, +1);
-			aAllNodes.splice(aAllNodes.indexOf(oParent) + oParent.DescendantCount, 0, oNewChild);
-		} else {
-			aAllNodes.push(oNewChild);
+		if (!bFilteredOut) {
+			if (sParentId) {
+				// Note: server's insert position must not affect UI (until refresh!)
+				mChildrenByParentId[sParentId] ??= [];
+				mChildrenByParentId[sParentId].push(oNewChild);
+				adjustDescendantCount(sParentId, +1);
+				aAllNodes.splice(aAllNodes.indexOf(oParent) + oParent.DescendantCount, 0,
+					oNewChild);
+			} else {
+				aAllNodes.push(oNewChild);
+			}
 		}
 
 		const oCopy = SandboxModel.update([oNewChild])[0];

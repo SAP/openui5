@@ -3340,10 +3340,13 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("countDescendants: until end", function (assert) {
-		const oCache = _AggregationCache.create(this.oRequestor, "~", "", {}, {
-			hierarchyQualifier : "X"
-		});
+[false, true].forEach(function (bHierarchy) {
+	const oAggregation = bHierarchy
+		? {expandTo : 1, hierarchyQualifier : "X"}
+		: {aggregate : {}, group : {}, groupLevels : ["foo"]};
+
+	QUnit.test(`countDescendants: until end, hierarchy=${bHierarchy}`, function (assert) {
+		const oCache = _AggregationCache.create(this.oRequestor, "~", "", {}, oAggregation);
 		// Note: the collapsed children span until the end
 		oCache.aElements = [{
 			// "@$ui5.node.level" : ignored
@@ -3363,9 +3366,32 @@ sap.ui.define([
 			"number of removed elements");
 	});
 
+	QUnit.test(`countDescendants: single level cache, hierarchy=${bHierarchy}`, function (assert) {
+		const oCache = _AggregationCache.create(this.oRequestor, "~", "", {}, oAggregation);
+		oCache.aElements = [{
+			// "@$ui5.node.level" : ignored
+		}, {
+			"@$ui5.node.isExpanded" : true,
+			"@$ui5.node.level" : 5
+		}, {
+			"@$ui5.node.level" : 6 // child
+		}, {
+			"@$ui5.node.level" : 7 // grandchild
+		}, {
+			"@$ui5.node.level" : 6 // child
+		}, {
+			"@$ui5.node.level" : 5 // sibling
+		}]; // simulate a read
+
+		// code under test
+		assert.strictEqual(oCache.countDescendants(oCache.aElements[1], 1), 3,
+			"number of removed elements");
+	});
+});
+
 	//*********************************************************************************************
 [false, true].forEach(function (bUnifiedCache) {
-	const sTitle = "countDescendants: skip descendants of manually collapsed node, unified cache: "
+	const sTitle = "countDescendants: skip descendants, unified cache: "
 		+ bUnifiedCache;
 	QUnit.test(sTitle, function (assert) {
 		const oCache = _AggregationCache.create(this.oRequestor, "~", "", {}, {
@@ -3376,29 +3402,44 @@ sap.ui.define([
 		oCache.aElements = [{
 			"@$ui5._" : {
 				descendants : 41,
-				predicate : "('0')"
+				predicate : "('0')",
+				rank : "~" // the actual rank does not matter
 			},
 			"@$ui5.node.isExpanded" : true,
 			"@$ui5.node.level" : 1
 		}, {
 			"@$ui5._" : {
 				descendants : 40,
-				predicate : "('1')"
+				predicate : "('1')",
+				rank : "~" // the actual rank does not matter
 			},
 			"@$ui5.node.isExpanded" : true,
 			"@$ui5.node.level" : 2
 		}, {
 			"@$ui5._" : {
 				predicate : "('2')"
+				// no rank
+			},
+			"@$ui5.node.isExpanded" : true,
+			"@$ui5.node.level" : 2
+		}, {
+			"@$ui5._" : {
+				predicate : "('3')",
+				rank : "~" // the actual rank does not matter
 			},
 			"@$ui5.node.level" : 1
 		}]; // simulate a read
 		for (let i = 0; i < 40; i += 1) { // add 40 placeholders for descendants of ('1')
-			oCache.aElements.splice(2, 0, {"@$ui5.node.level" : 3});
+			oCache.aElements.splice(2, 0, {
+				"@$ui5._" : {
+					rank : "~" // the actual rank does not matter
+				},
+				"@$ui5.node.level" : 3
+			});
 		}
 
 		// code under test
-		assert.strictEqual(oCache.countDescendants(oCache.aElements[0], 0), 41,
+		assert.strictEqual(oCache.countDescendants(oCache.aElements[0], 0), 42,
 			"number of removed elements");
 	});
 });
@@ -3415,19 +3456,29 @@ sap.ui.define([
 		oCache.bUnifiedCache = bUnifiedCache;
 		oCache.aElements = [{
 			"@$ui5._" : {
-				descendants : 2
+				descendants : 2,
+				rank : "~" // the actual rank does not matter
 			},
 			"@$ui5.node.isExpanded" : true,
 			"@$ui5.node.level" : 1
 		}, {
 			// no descendants at edge of top pyramid!
+			"@$ui5._" : {
+				rank : "~" // the actual rank does not matter
+			},
 			"@$ui5.node.isExpanded" : false,
 			"@$ui5.node.level" : 2
 		}, {
 			// no descendants at edge of top pyramid!
+			"@$ui5._" : {
+				rank : "~" // the actual rank does not matter
+			},
 			"@$ui5.node.isExpanded" : false,
 			"@$ui5.node.level" : 2
 		}, {
+			"@$ui5._" : {
+				rank : "~" // the actual rank does not matter
+			},
 			"@$ui5.node.level" : 1
 		}]; // simulate a read
 
@@ -3436,6 +3487,31 @@ sap.ui.define([
 			"number of removed elements");
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("countDescendants: nodes w/o rank", function (assert) {
+		const oCache = _AggregationCache.create(this.oRequestor, "~", "", {}, {
+			expandTo : 2,
+			hierarchyQualifier : "X"
+		});
+		oCache.aElements = [{
+			"@$ui5._" : {
+				// no descendants since it is 0
+				rank : "~" // the actual rank does not matter
+			},
+			"@$ui5.node.level" : 1
+		}, {
+			"@$ui5.node.level" : 2
+		}, {
+			"@$ui5.node.level" : 2
+		}, {
+			"@$ui5._" : {rank : "~"}, // the actual rank does not matter
+			"@$ui5.node.level" : 1
+		}]; // simulate a read
+
+		// code under test
+		assert.strictEqual(oCache.countDescendants(oCache.aElements[0], 0), 2);
+	});
 
 	//*********************************************************************************************
 	QUnit.test("addElements", function (assert) {
@@ -4946,6 +5022,8 @@ sap.ui.define([
 						const oDeleteTransientPredicateExpectation
 							= oHelperMock.expects("deletePrivateAnnotation").exactly(iCallCount)
 							.withExactArgs(sinon.match.same(oEntityData), "transientPredicate");
+						oCacheMock.expects("adjustDescendantCount").exactly(iRankCallCount)
+							.withExactArgs(sinon.match.same(oEntityData), bCreateRoot ? 0 : 3, +1);
 						const oSetRankExpectation = oHelperMock.expects("setPrivateAnnotation")
 							.exactly(iRankCallCount)
 							.withExactArgs(sinon.match.same(oEntityData), "rank", iRank);
@@ -4975,16 +5053,13 @@ sap.ui.define([
 					? [null, "0", "1", "2", "3", "4"]
 					: ["0", "1", oParentNode, null, "3", "4"]);
 			});
-		const oAdjustDescendantCountExpectation = oCacheMock.expects("adjustDescendantCount")
-			.exactly(bInFirstLevel ? 1 : 0)
-			.withExactArgs(sinon.match.same(oEntityData), bCreateRoot ? 0 : 3, +1);
+		oCacheMock.expects("adjustDescendantCount").never();
 
 		// code under test
 		const oResult = oCache.create("~oGroupLock~", "~oPostPathPromise~", "~sPath~",
 			"~sTransientPredicate~", oEntityData, /*bAtEndOfCreated*/false, "~fnErrorCallback~",
 			"~fnSubmitCallback~");
 
-		assert.strictEqual(oAdjustDescendantCountExpectation.callCount, bInFirstLevel ? 1 : 0);
 		assert.deepEqual(oPostBody, bCreateRoot ? {} : {"myParent@odata.bind" : "~relativeUrl~"});
 		assert.deepEqual(oEntityData, {
 			"@$ui5._" : {postBody : oPostBody},
@@ -5015,8 +5090,6 @@ sap.ui.define([
 			oHelperMock.expects("removeByPath")
 				.withExactArgs(sinon.match.same(oCache.mPostRequests),
 					"~sTransientPredicate~", sinon.match.same(oEntityData));
-			oCacheMock.expects("adjustDescendantCount").exactly(bInFirstLevel ? 1 : 0)
-				.withExactArgs(sinon.match.same(oEntityData), bCreateRoot ? 0 : 3, -1);
 
 			// code under test
 			fnCancelCallback();
