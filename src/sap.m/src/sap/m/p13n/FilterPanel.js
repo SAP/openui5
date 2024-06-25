@@ -242,7 +242,7 @@ sap.ui.define([
                                 // Note: the control in mdc is wrapped in a filter group layout, hence it needs to be checked if the item is in mdc context to
                                 // properly set the focus. In comp and freestyle, the item itself is the filterable control
 				const oControlForFocus = oFilterItem?.getMetadata().getName().includes("sap.ui.mdc") ? oFilterItem.getItems()?.[0] : oFilterItem;
-				oControlForFocus.focus();
+				oControlForFocus?.focus();
 			}, 20);
 
 			delete this._oComboBox;
