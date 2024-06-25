@@ -1,0 +1,114 @@
+/*
+/ ============================================ /
+/ CSS for control sap.ui.codeeditor/CodeEditor /
+/ Base theme /
+/ ============================================ /
+*/
+
+.sapCEdThemeDefault .ace_editor {
+	background-color: @sapField_Background;
+	color: @sapField_TextColor;
+	font-family: "72 Mono", 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'Source Code Pro', 'source-code-pro', monospace;
+
+	.ace_gutter {
+		background: @sapField_ReadOnly_Background;
+		color: @sapField_TextColor;
+	}
+
+	.ace_print-margin {
+		width: 1px;
+		background: @sapField_ReadOnly_Background;
+	}
+
+	.ace_cursor {
+		color: @sapField_TextColor;
+	}
+
+	.ace_marker-layer .ace_selection {
+		background: @sapField_ReadOnly_Background;
+	}
+
+	.ace_marker-layer .ace_bracket {
+		margin: -1px 0 0 -1px;
+		border: 1px solid @sapField_SuccessColor;
+	}
+
+	.ace_marker-layer .ace_active-line {
+		background: transparent;
+		/* no indication for better contrast */
+	}
+
+	.ace_gutter-active-line {
+		background-color: @sapField_SuccessBackground;
+	}
+
+	.ace_keyword,
+	.ace_meta,
+	.ace_storage,
+	.ace_storage.ace_type,
+	.ace_support.ace_type {
+		color: @sapUiLegend10;
+	}
+
+	.ace_keyword.ace_operator {
+		color: @sapUiLegend7;
+	}
+
+	.ace_constant.ace_character,
+	.ace_constant.ace_language,
+	.ace_constant.ace_numeric,
+	.ace_keyword.ace_other.ace_unit,
+	.ace_support.ace_constant,
+	.ace_variable.ace_parameter {
+		color: @sapUiLegend12;
+	}
+
+	.ace_constant.ace_other {
+		color: @sapUiLegend4;
+	}
+
+	.ace_fold {
+		background-color: @sapUiLegend20;
+		border-color: @sapUiLegend20;
+	}
+
+	.ace_entity.ace_name.ace_function,
+	.ace_support.ace_function {
+		color: @sapUiLegend6;
+	}
+
+	.ace_support.ace_class,
+	.ace_support.ace_type {
+		color: @sapUiLegend3;
+	}
+
+	.ace_heading,
+	.ace_markup.ace_heading,
+	.ace_string {
+		color: @sapUiLegend18;
+	}
+
+	.ace_entity.ace_name.ace_tag,
+	.ace_entity.ace_other.ace_attribute-name,
+	.ace_meta.ace_tag,
+	.ace_string.ace_regexp,
+	.ace_variable {
+		color: @sapUiLegend2;
+	}
+
+	.ace_comment {
+		color: @sapUiLegend9;
+	}
+
+	.ace_marker-layer .ace_error_bracket {
+		border-color: @sapField_InvalidColor;
+	}
+
+	.ace_fold-widget {
+		background-color: @sapField_SuccessBackground;
+	}
+
+	.ace_fold-widget:hover {
+		border-color: @sapField_SuccessColor;
+	}
+}

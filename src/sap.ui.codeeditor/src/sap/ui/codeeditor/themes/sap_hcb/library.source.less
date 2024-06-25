@@ -2,5 +2,17 @@
  * ${copyright}
  */
 
-@import "../base/library.source.less";
+/***********************************************************************************
+/* Due to deprecation of sap_hcb with SAPUI5 version 1.46 the library.source.less
+/* file of base is resolved: Imports to base.less and global.less of
+/* base are added to this library.source.less file (sap_hcb) and the
+/* respective control css files of base are added to the sap_hcb theme folder.
+/* This decoupling of the base theme is introduced with SAPUI5 version 1.126.
+***********************************************************************************/
+
+@import "../../../core/themes/base/base.less";
+@import "../../../core/themes/base/global.less";
+
+@import "base_CodeEditor.less";
+
 @import "../../../../../sap/ui/core/themes/sap_hcb/global.less";
