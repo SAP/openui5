@@ -1,0 +1,51 @@
+
+/* ======================================================= */
+/* CSS for control sap.ui.commons/RadioButtonGroup.control */
+/* ======================================================= */
+
+.sapUiRbG:not(.sapUiRbGTab){
+	display: inline-block;
+}
+
+.sapUiRbGTab{
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: flex;
+}
+
+.sapUiRbGCol{
+	vertical-align: top;
+	min-width: 10px;
+	margin-right: 15px;
+	overflow: hidden; /* needed in Safari */
+}
+
+.sapUiRbGTabFlex > .sapUiRbGCol{
+	flex-grow: 1;
+	-webkit-flex-grow: 1;
+}
+
+.sapUiRbGDummy{
+	flex-grow: 1000;
+	-webkit-flex-grow: 1000;
+	-webkit-box-flex: 1000;
+	min-width: 1px;
+}
+
+.sapUiRbG > .sapUiRb,
+.sapUiRbGCol > .sapUiRb{
+	float: left;
+	clear: left;
+	text-overflow: ellipsis;
+	max-width: 100%;
+}
+
+.sapUiRbG.sapUiRbG1Row > .sapUiRb{
+	float: none;
+	clear: none;
+	margin-right: 15px;
+}
+
+.sapUiRbGCol > .sapUiRb{
+	width: 100%;
+}

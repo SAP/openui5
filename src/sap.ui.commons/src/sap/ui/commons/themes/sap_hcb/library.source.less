@@ -2,7 +2,81 @@
  * ${copyright}
  */
 
-@import "../base/library.source.less";
+/***********************************************************************************
+/* Due to deprecation of sap_hcb with SAPUI5 version 1.46 the library.source.less
+/* file of base is resolved: Imports to base.less and global.less of
+/* base are added to this library.source.less file (sap_hcb) and the
+/* respective control css files of base are added to the sap_hcb theme folder.
+/* This decoupling of the base theme is introduced with SAPUI5 version 1.126.
+***********************************************************************************/
+
+@import "../../../core/themes/base/base.less";
+@import "../../../core/themes/base/global.less";
+
+@import "base_AbsoluteLayout.less";
+@import "base_Accordion.less";
+@import "base_AccordionSection.less";
+@import "base_ApplicationHeader.less";
+@import "base_AutoComplete.less";
+@import "base_BorderLayout.less";
+@import "base_Button.less";
+@import "base_Callout.less";
+@import "base_CalloutBase.less";
+@import "base_Carousel.less";
+@import "base_CheckBox.less";
+@import "base_ComboBox.less";
+@import "base_DatePicker.less";
+@import "base_Dialog.less";
+@import "base_FileUploader.less";
+@import "base_Form.less";
+@import "base_FormattedTextView.less";
+@import "base_FormLayout.less";
+@import "base_GridLayout.less";
+@import "base_HorizontalDivider.less";
+@import "base_HorizontalLayout.less";
+@import "base_Image.less";
+@import "base_InPlaceEdit.less";
+@import "base_jQueryUiBase.less";
+@import "base_jQueryUiDatepicker.less";
+@import "base_Label.less";
+@import "base_layout.less";
+@import "base_Link.less";
+@import "base_ListBox.less";
+@import "base_MenuBar.less";
+@import "base_MenuButton.less";
+@import "base_Message.less";
+@import "base_MessageBar.less";
+@import "base_MessageBox.less";
+@import "base_MessageList.less";
+@import "base_MessageToast.less";
+@import "base_Paginator.less";
+@import "base_Panel.less";
+@import "base_ProgressIndicator.less";
+@import "base_RadioButton.less";
+@import "base_RadioButtonGroup.less";
+@import "base_RatingIndicator.less";
+@import "base_ResponsiveContainer.less";
+@import "base_ResponsiveFlowLayout.less";
+@import "base_ResponsiveLayout.less";
+@import "base_RichTooltip.less";
+@import "base_RoadMap.less";
+@import "base_RowRepeater.less";
+@import "base_SearchField.less";
+@import "base_SegmentedButton.less";
+@import "base_SimpleForm.less";
+@import "base_Slider.less";
+@import "base_Splitter.less";
+@import "base_TabStrip.less";
+@import "base_TextArea.less";
+@import "base_TextField.less";
+@import "base_TextView.less";
+@import "base_ToggleButton.less";
+@import "base_Toolbar.less";
+@import "base_Tree.less";
+@import "base_TriStateCheckBox.less";
+@import "base_ValueHelpField.less";
+@import "base_ControlsInUITable.less";
+
 @import "../../../../../sap/ui/core/themes/sap_hcb/global.less";
 @import "shared.less";
 
