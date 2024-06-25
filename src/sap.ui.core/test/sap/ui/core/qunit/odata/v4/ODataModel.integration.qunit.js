@@ -30966,7 +30966,7 @@ sap.ui.define([
 
 			assert.strictEqual(oGamma.getIndex(), 1);
 			assert.deepEqual(oGamma.getObject(), {
-				//TODO "@$ui5.context.isSelected" : true,
+				"@$ui5.context.isSelected" : true,
 				"@$ui5.node.level" : 2,
 				"@odata.etag" : "etag2.3",
 				ArtistID : "2",
@@ -31056,7 +31056,7 @@ sap.ui.define([
 
 			assert.strictEqual(oGamma.getIndex(), 1);
 			assert.deepEqual(oGamma.getObject(), {
-				//TODO "@$ui5.context.isSelected" : true,
+				"@$ui5.context.isSelected" : true,
 				"@$ui5.node.isExpanded" : true,
 				"@$ui5.node.level" : 2,
 				"@odata.etag" : "etag2.3",

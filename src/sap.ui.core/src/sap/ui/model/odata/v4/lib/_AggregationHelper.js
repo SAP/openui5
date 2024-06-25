@@ -181,6 +181,7 @@ sap.ui.define([
 					// restore previous expansion state
 					oElement["@$ui5.node.isExpanded"] = oPlaceholder["@$ui5.node.isExpanded"];
 				}
+				_Helper.copySelected(oPlaceholder, oElement);
 			}
 		},
 
