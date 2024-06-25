@@ -10,7 +10,8 @@ sap.ui.define([
 		'sap/base/util/deepEqual',
 		'sap/ui/core/date/UI5Date',
 		'sap/ui/mdc/enums/OperatorName',
-		'sap/ui/mdc/enums/ConditionValidated'
+		'sap/ui/mdc/enums/ConditionValidated',
+		'sap/ui/mdc/condition/FilterOperatorUtil'
 	],
 	(
 		ChangeReason,
@@ -19,7 +20,8 @@ sap.ui.define([
 		deepEqual,
 		UI5Date,
 		OperatorName,
-		ConditionValidated
+		ConditionValidated,
+		FilterOperatorUtil
 	) => {
 		"use strict";
 
@@ -28,7 +30,7 @@ sap.ui.define([
 		* FilterFields want to enhance the ConditionModel with any descriptions resulting from formatting via the ConditionType.
 		* See the FormatOption <code>awaitFormatCondition</code>
 		*/
-		const _isValidatedEQCondition = (oCondition) => oCondition.operator === OperatorName.EQ && oCondition.validated === ConditionValidated.Validated;
+		const _isValidatedEQCondition = (oCondition) => oCondition.operator === FilterOperatorUtil.getEQOperator([oCondition.operator])?.name && oCondition.validated === ConditionValidated.Validated;
 		const _removeDescriptions = (aConditions) => aConditions.map((oCondition) => ({...oCondition, values: (_isValidatedEQCondition(oCondition) ? [oCondition.values[0]] : oCondition.values) }));
 		const _isDescriptionOnlyUpdate = (oNewValue, oOldValue) => {
 			return Array.isArray(oNewValue) && Array.isArray(oOldValue) && oNewValue?.length && oOldValue?.length && deepEqual(_removeDescriptions(oOldValue), _removeDescriptions(oNewValue));
