@@ -86,13 +86,14 @@ sap.ui.define([
 		 * @param {object} mPropertyBag - Property bag
 		 * @param {string} mPropertyBag.reference - Flex reference of the application
 		 * @param {string} mPropertyBag.url - Configured url for the connector
+		 * @param {sap.ui.fl.Layer} mPropertyBag.layer - Layer
 		 * @param {string} [mPropertyBag.generator] - Generator with which the changes were created
 		 * @param {string} [mPropertyBag.selectorIds] - Selector IDs of controls for which the reset should filter (comma-separated list)
 		 * @param {string} [mPropertyBag.changeTypes] - Change types of the changes which should be reset (comma-separated list)
 		 * @returns {Promise} Promise resolves as soon as the reset has completed
 		 */
 		reset(mPropertyBag) {
-			var aParameters = ["reference", "generator"];
+			var aParameters = ["reference", "generator", "layer"];
 			var mParameters = _pick(mPropertyBag, aParameters);
 			if (mPropertyBag.selectorIds) {
 				mParameters.selector = mPropertyBag.selectorIds;
