@@ -15,7 +15,8 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 				safari: undefined,
 				firefox: undefined,
 				version: 32,
-				versionStr: "32"
+				versionStr: "32",
+				reportingName: "cr"
 			}
 		}
 	},
@@ -32,7 +33,26 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 				safari: undefined,
 				firefox: undefined,
 				version: 100,
-				versionStr: "100"
+				versionStr: "100",
+				reportingName: "cr"
+			}
+		}
+	},
+	{
+		name: "Edge 125",
+		navigator: {
+			userAgent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36 Edg/125.0.0.0"
+		},
+		expected: {
+			browser: {
+				webkit: true,
+				mozilla: undefined,
+				chrome: true,
+				safari: undefined,
+				firefox: undefined,
+				version: 125,
+				versionStr: "125",
+				reportingName: "ed"
 			}
 		}
 	},
@@ -49,7 +69,8 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 				safari: undefined,
 				firefox: true,
 				version: 27,
-				versionStr: "27"
+				versionStr: "27",
+				reportingName: "ff"
 			}
 		}
 	},
@@ -66,7 +87,8 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 				safari: undefined,
 				firefox: true,
 				version: 100,
-				versionStr: "100"
+				versionStr: "100",
+				reportingName: "ff"
 			}
 		}
 	},
@@ -85,7 +107,8 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 				webview: false,
 				firefox: undefined,
 				version: 14,
-				versionStr: "14"
+				versionStr: "14",
+				reportingName: "sf"
 			}
 		}
 	},
@@ -104,7 +127,8 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 				webview: false,
 				firefox: undefined,
 				version: 100.1,
-				versionStr: "100.1"
+				versionStr: "100.1",
+				reportingName: "sf"
 			}
 		}
 	},
@@ -124,7 +148,8 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 				webview: false,
 				firefox: undefined,
 				version: 6,
-				versionStr: "6"
+				versionStr: "6",
+				reportingName: "sf"
 			}
 		}
 	},
@@ -144,7 +169,8 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 				webview: true,
 				firefox: undefined,
 				version: -1,
-				versionStr: undefined
+				versionStr: undefined,
+				reportingName: "sf"
 			}
 		}
 	},
@@ -164,7 +190,8 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 				webview: false,
 				firefox: undefined,
 				version: -1,
-				versionStr: undefined
+				versionStr: undefined,
+				reportingName: "sf"
 			}
 		}
 	},
@@ -181,7 +208,8 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 				safari: undefined,
 				firefox: undefined,
 				version: 32,
-				versionStr: "32"
+				versionStr: "32",
+				reportingName: "cr"
 			}
 		}
 	},
@@ -198,7 +226,8 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 				safari: undefined,
 				firefox: true,
 				version: 41,
-				versionStr: "41"
+				versionStr: "41",
+				reportingName: "ff"
 			}
 		}
 	},
@@ -216,7 +245,8 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 				firefox: undefined,
 				name: "an",
 				version: 4,
-				versionStr: "4"
+				versionStr: "4",
+				reportingName: "an"
 			}
 		}
 	},
@@ -234,7 +264,8 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 				firefox: undefined,
 				name: "cr",
 				version: 30,
-				versionStr: "30"
+				versionStr: "30",
+				reportingName: "cr"
 			},
 			system: {
 				desktop: false,
@@ -259,7 +290,8 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 				firefox: undefined,
 				name: "cr",
 				version: 40,
-				versionStr: "40"
+				versionStr: "40",
+				reportingName: "cr"
 			},
 			system: {
 				desktop: false,
@@ -284,7 +316,8 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 				firefox: undefined,
 				name: "cr",
 				version: 43,
-				versionStr: "43"
+				versionStr: "43",
+				reportingName: "cr"
 			},
 			system: {
 				desktop: false,
@@ -309,7 +342,8 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 				firefox: undefined,
 				name: "cr",
 				version: 40,
-				versionStr: "40"
+				versionStr: "40",
+				reportingName: "cr"
 			},
 			system: {
 				desktop: false,
@@ -334,7 +368,8 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 				firefox: undefined,
 				name: "cr",
 				version: 43,
-				versionStr: "43"
+				versionStr: "43",
+				reportingName: "cr"
 			},
 			system: {
 				desktop: false,
@@ -359,7 +394,8 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 				firefox: undefined,
 				name: "cr",
 				version: 40,
-				versionStr: "40"
+				versionStr: "40",
+				reportingName: "cr"
 			},
 			system: {
 				desktop: false,
@@ -385,7 +421,8 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 				firefox: undefined,
 				name: "cr",
 				version: 44,
-				versionStr: "44"
+				versionStr: "44",
+				reportingName: "cr"
 			},
 			system: {
 				desktop: true,
@@ -414,7 +451,8 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 				safari: undefined,
 				firefox: true,
 				version: 41,
-				versionStr: "41"
+				versionStr: "41",
+				reportingName: "ff"
 			},
 			os: {
 				name: "Android",
@@ -437,7 +475,8 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 				safari: undefined,
 				firefox: true,
 				version: 40,
-				versionStr: "40"
+				versionStr: "40",
+				reportingName: "ff"
 			},
 			os: {
 				name: "Android",
@@ -461,7 +500,8 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 				safari: true,
 				firefox: undefined,
 				version: 13,
-				versionStr: "13"
+				versionStr: "13",
+				reportingName: "sf"
 			},
 			os : {
 				name: "mac",
@@ -490,7 +530,8 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 				fullscreen: false,
 				webview: true,
 				mobile: true,
-				webkitVersion: "605.1.15"
+				webkitVersion: "605.1.15",
+				reportingName: "sf"
 			},
 			os : {
 				name: "iOS",
@@ -519,7 +560,8 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 				fullscreen: true,
 				webview: false,
 				mobile: true,
-				webkitVersion: "605.1.15"
+				webkitVersion: "605.1.15",
+				reportingName: "sf"
 			},
 			os : {
 				name: "iOS",
@@ -548,7 +590,8 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 				fullscreen: false,
 				webview: false,
 				mobile: true,
-				webkitVersion: "605.1.15"
+				webkitVersion: "605.1.15",
+				reportingName: "sf"
 			},
 			os : {
 				name: "iOS",
