@@ -1,0 +1,18 @@
+/* ================================== */
+/* CSS for sap.ui.table/ScrollingIOS  */
+/* Base theme                         */
+/* ================================== */
+
+.sapUiTableVSbIOS {
+	position: absolute;
+	width: 100%;
+	z-index: 5;
+
+	.sapUiTableVSbIOSThumb {
+		position: relative;
+		background-color: #949494;
+		border-radius: 0.25rem;
+		left: @_sap_ui_table_BaseBorderWidth;
+		width: calc(100% ~"-" calc(2 * @_sap_ui_table_BaseBorderWidth));
+	}
+}

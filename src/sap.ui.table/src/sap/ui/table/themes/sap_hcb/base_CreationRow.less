@@ -1,0 +1,83 @@
+/* ========================================= */
+/* CSS for control sap.ui.table/CreationRow  */
+/* Base theme                                */
+/* ========================================= */
+
+.sapUiTableCreationRow {
+	display: flex;
+	background-color: @sapUiListHeaderBackground;
+	border-bottom: @_sap_ui_table_BaseBorderWidth solid @sapUiListHeaderBorderColor;
+
+	> .sapUiTableCreationRowBeginSection {
+		flex: none;
+		position: relative;
+		border-right: @_sap_ui_table_BaseBorderWidth solid @sapUiListVerticalBorderColor;
+	}
+
+	> .sapUiTableCreationRowMiddleSection {
+		overflow: hidden;
+	}
+
+	> .sapUiTableCreationRowEndSection {
+		flex: none;
+		position: relative;
+		height: auto;
+		border-bottom: none;
+
+		.sapUiTableRActFlexible & {
+			width: 0 !important;
+		}
+
+		&.sapUiTableVSbBg {
+			border-left: @_sap_ui_table_BaseBorderWidth solid @sapUiListVerticalBorderColor !important;
+			box-sizing: content-box !important;
+		}
+	}
+
+	.sapUiTableCreationRowForm {
+		display: flex;
+
+		> .sapUiTableCtrlScr {
+			margin: 0 !important;
+			border-right: none !important;
+		}
+
+		table {
+			height: 100%;
+		}
+
+		.sapUiTableCell {
+			&:extend(.sapUiTableDataCell all); // We want the styles, but not the class. It is a "type class" that influences the tables behavior.
+
+			// The cells in the creation row should not have any borders except the ones that indicate fixed areas (e.g. fixed columns).
+			border-color: transparent;
+
+			// Fixed data column border
+			&.sapUiTableCellLastFixed {
+				border-right-color: @sapUiListTableFixedBorder;
+			}
+
+			// Row action column border
+			.sapUiTableHScr &.sapUiTableRowActionHeaderCell {
+				border-left-color: @sapUiListTableFixedBorder;
+			}
+
+			// The height is fixed to the default row height (or the application defined height, see TableRenderer) until variable row heights are
+			// generally supported.
+			> .sapUiTableCellInner {
+				max-height: @_sap_ui_table_BaseSize;
+
+				.sapUiSizeCozy & {
+					max-height: @_sap_ui_table_BaseSizeCozy;
+				}
+				.sapUiSizeCondensed & {
+					max-height: @_sap_ui_table_BaseSizeCondensed;
+				}
+			}
+		}
+
+		.sapUiTableCellDummy {
+			border-color: transparent;
+		}
+	}
+}
