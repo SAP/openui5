@@ -140,13 +140,11 @@ sap.ui.define([
 
 								oRevertData.targetAggregation = oChange.getContent().targetAggregation;
 
-								if (oPriorAggregationConfig &&
-									oPriorAggregationConfig.aggregations &&
-									oPriorAggregationConfig.aggregations[sAffectedAggregation] &&
-									oPriorAggregationConfig.aggregations[sAffectedAggregation][oChange.getContent().key] &&
-									oPriorAggregationConfig.aggregations[sAffectedAggregation][oChange.getContent().key][sAffectedProperty]
-								) {
-									oRevertData.value = oPriorAggregationConfig.aggregations[sAffectedAggregation][oChange.getContent().key][sAffectedProperty];
+								const oAffectedItem = oPriorAggregationConfig?.aggregations?.[sAffectedAggregation]?.[oChange.getContent().key];
+								if (oAffectedItem) {
+									if (oAffectedItem?.[sAffectedProperty]) {
+										oRevertData.value = oPriorAggregationConfig.aggregations[sAffectedAggregation][oChange.getContent().key][sAffectedProperty];
+									}
 									oRevertData.index = oPriorAggregationConfig.aggregations[sAffectedAggregation][oChange.getContent().key].position !== undefined ? oPriorAggregationConfig.aggregations[sAffectedAggregation][oChange.getContent().key].position : oRevertData.index;
 								}
 
