@@ -1,0 +1,157 @@
+.sapUiTInf {
+	border: 1px solid @sapUiMediumBorder;
+	background: @sapUiExtraLightBG;
+	padding: 6px;
+}
+
+.sapUiTInfCfg {
+	font-size:0.9em;
+	overflow-y:auto;
+	max-height:12em;
+}
+
+.sapUiTInfMList {
+	font-size:0.9em;
+	color: @sapUiTextDisabled;
+	overflow-y:auto;
+	max-height:12em;
+}
+
+.sapUiTInf > table > tbody > tr > td,
+.sapUiTInfMList,
+.sapUiTInfM {
+	-webkit-user-select: text;
+	user-select: text;
+}
+
+.sapUiTInfMEmbd {
+	color:#aaaaaa;
+}
+
+.sapUiTInfMFail {
+	text-decoration:line-through;
+}
+
+.sapUiTInfMMore, .sapUiTInfPCfg {
+	text-decoration: none;
+	color: @sapLinkColor;
+	cursor:pointer;
+}
+
+.sapUiTInfPMoreHidden {
+	display:none;
+}
+
+.sapUiTInfPDiag {
+	border: 1px solid @sapUiMediumBorder;
+	background: @sapUiExtraLightBG;
+	padding: 6px;
+	font-size:0.9em;
+}
+
+.sapUiTInfPDiag > h1 {
+	font-size: 1em;
+	font-weight: normal;
+}
+
+.sapUiTInfPDiag > h3 {
+	font-size: 0.9em;
+	font-weight: normal;
+	margin-bottom: 0px;
+}
+
+.sapUiTInfPList {
+	font-size: 0.75em;
+	color: @sapUiTextDisabled;
+	background: white;
+	overflow-y: scroll;
+	max-height: 30em;
+}
+
+.sapUiTInfPList .package > .expander {
+	display: inline-block;
+	color: black;
+	background-color: #fcfcfc;
+	width: 12px;
+	text-align: center;
+	border-radius: 4px;
+	cursor: pointer;
+}
+
+.sapUiTInfPList .package > .name,
+.sapUiTInfPList .module > .name {
+	margin: 2px;
+	padding: 2px 4px;
+	display: inline-block;
+	border-radius: 3px;
+	cursor: pointer;
+}
+
+.sapUiTInfPList .package > .name {
+	color: black;
+	background-color: @sapBackgroundColor;
+}
+
+.sapUiTInfPList .module > .name {
+	margin-left: 14px; /* 12px + 2px standard margin */
+	color: black;
+	background-color: @sapBackgroundColor;
+}
+
+.sapUiTInfPList .children {
+	padding-left: 1em;
+	/* border: 1px dotted lightgrey; */
+}
+
+.sapUiTInfPList .children.none {
+	display: none;
+}
+
+.sapUiTInfPList .children.packages {
+	display: block;
+}
+
+.sapUiTInfPList .children.packages > .package {
+}
+
+.sapUiTInfPList .children.packages > .module {
+	display: none;
+}
+
+.sapUiTInfPList .children.all {
+	display: block;
+}
+
+.sapUiTInfPList .package.selected > .name, .sapUiTInfPList .module.selected > .name {
+	color: white;
+	background-color: blue !important;
+}
+
+.sapUiTInfPList .package.selected .name, .sapUiTInfPList .module.selected > .name {
+	color: white;
+	background-color: lightblue;
+}
+
+.sapUiTInfPList .selected .name {
+	color: white;
+	background-color: #ccccff;
+}
+
+.sapUiTInfPDiag .result {
+	font-size: 0.9em;
+	margin: 8px 4px;
+	width: 600px;
+}
+
+.sapUiTInfPDiag .result > span {
+	word-wrap: break-word;
+}
+
+.sapUiTInfPDiag .footer {
+	padding-top: 5px;
+}
+
+.sapUiTInfPDiag .footer > * {
+	float: right;
+	margin: 2px 8px;
+}
