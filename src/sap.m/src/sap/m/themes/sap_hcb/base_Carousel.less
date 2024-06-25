@@ -1,0 +1,658 @@
+/* =============================== */
+/* CSS for control sap.m/Carousel  */
+/* Base theme                      */
+/* =============================== */
+
+@_sap_m_Carousel_BackgroundColorSolid: @sapUiGroupContentBackground;
+@_sap_m_Carousel_BackgroundColorTransparent: transparent;
+@_sap_m_Carousel_BackgroundColorTranslucent: @sapUiGroupContentBackground;
+@_sap_m_Carousel_MinWidth: 20rem;
+@_sap_m_Carousel_ControlsNoArrowsHeight: 2rem;
+@_sap_m_Carousel_NumericIndicatorTextColor: @sapUiContentLabelColor;
+@_sap_m_Carousel_PrevAndNextSize: 2rem;
+@_sap_m_Carousel_PrevAndNextPosition: 0.625rem;
+@_sap_m_Carousel_PrevAndNextFocusBorderRadius: unset;
+@_sap_m_Carousel_PageIndicatorContainerPadding: 1rem;
+@_sap_m_Carousel_PageIndicatorWidthSizeS: 12rem;
+@_sap_m_Carousel_PageIndicatorWidthSizeM: 16rem;
+@_sap_m_Carousel_PageIndicatorWidthSizeL: 20rem;
+@_sap_m_Carousel_PageIndicatorWidthSizeXL: 24rem;
+@_sap_m_Carousel_ContentArrowBoxShadow: @sapUiShadowLevel1;
+@_sap_m_Carousel_BulletInactiveBackground: @sapUiContentNonInteractiveIconColor;
+@_sap_m_Carousel_BulletInactiveBorderColor: @sapUiContentNonInteractiveIconColor;
+@_sap_m_Carousel_BulletActiveBackground: @sapUiSelected;
+@_sap_m_Carousel_BulletActiveBorder: @_sap_m_Carousel_BulletActiveBackground;
+@_sap_m_Carousel_BulletInactiveWidth: 0.25rem;
+@_sap_m_Carousel_BulletInactiveMargin: 0 0.375rem;
+@_sap_m_Carousel_FocusBorderOffsetArrow: -0.125rem;
+@_sap_m_Carousel_ContrastFocusBorder: @sapUiContentFocusWidth solid @sapUiContentContrastFocusColor;
+@_sap_m_Carousel_FocusBorder: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+
+.sapMCrsl {
+	position: relative;
+	overflow: hidden;
+	box-sizing: border-box;
+	min-width: @_sap_m_Carousel_MinWidth;
+}
+
+.sapMCrslBackground-Solid {
+	background-color: @_sap_m_Carousel_BackgroundColorSolid;
+}
+
+.sapMCrslBackground-Transparent {
+	background-color: @_sap_m_Carousel_BackgroundColorTransparent;
+}
+
+.sapMCrslBackground-Translucent {
+	background-color: @_sap_m_Carousel_BackgroundColorTranslucent;
+}
+
+.sapMCrslItem:focus {
+	position: relative;
+}
+
+.sapMCrslItem:focus,
+.sapMCrslNoDataItem:focus {
+	outline: none;
+
+	&::before,
+	&::after {
+		position: absolute;
+		content: " ";
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		pointer-events: none;
+		z-index: 2;
+	}
+
+	&::before {
+		border: @_sap_m_Carousel_ContrastFocusBorder;
+	}
+
+	&::after {
+		border: @_sap_m_Carousel_FocusBorder;
+	}
+}
+
+.sapMCrsl.sapMCrslLeft {
+	text-align: left;
+}
+
+.sapMCrsl.sapMCrslCenter {
+	text-align: center;
+}
+
+.sapMCrsl.sapMCrslFluid>.sapMCrslInner>* {
+	width: 100%;
+}
+
+.sapMCrsl.sapMCrslFluid.sapMCrslCenter>.sapMCrslInner>*:first-child {
+	margin-left: 0;
+}
+
+.sapMCrslInner {
+	height: 100%;
+	position: relative;
+	white-space: nowrap;
+	text-align: begin;
+	/*  Removes  inline-block  gaps  due  to  whitespace  */
+	font-size: 0;
+	/*  Configure  animations  */
+	transition-property: transform;
+	transition-timing-function: cubic-bezier(0.46, 0, 0.44, 1);
+	transition-duration: 0.5s;
+}
+
+/* for tablet and phone the duration is smaller */
+@media all and (max-width: 1024px) {
+	.sapMCrslInner {
+		transition-duration: 0.3s;
+	}
+}
+
+html[data-sap-ui-animation='off'] .sapMCrsl .sapMCrslInner {
+	transition: none;
+ }
+
+.sapMCrslItemTable {
+	height: 100%;
+}
+
+.sapMCrslItemTableCell {
+	height: 100%;
+}
+
+.sapMCrslImg {
+	text-align: center;
+}
+
+.sapMCrslImgNoArrows {
+	text-align: center;
+}
+
+.sapMCrslImgNoArrows:before,
+.sapMCrslImg:before {
+	content: ' ';
+	display: inline-block;
+	height: 100%;
+	vertical-align: middle;
+}
+
+.sapMCrslItemTableCell.sapMCrslImgNoArrows img,
+.sapMCrslItemTableCell.sapMCrslImg img {
+	vertical-align: middle;
+	max-width: 100%;
+	max-height: 100%;
+}
+.sapMCrsl.sapMCrslDragging .sapMCrslInner,
+.sapMCrsl .sapMCrslInner.sapMCrslNoTransition {
+	transition: none;
+}
+
+.sapMCrslInner.sapMCrslHideNonActive>:not(.sapMCrslActive) .sapMCrslItemTableCell {
+	visibility: hidden;
+}
+
+.sapMCrslInner.sapMCrslInnerNoPages {
+	display: flex;
+	align-items: center;
+}
+
+.sapMCrslInner>* {
+	display: inline-block;
+	vertical-align: top;
+	white-space: normal;
+	/* Comment from Mobify-Carousel: 'We  must  reset  the  font-size here'. Needs explanation! */
+	font-size: 1rem;
+}
+
+.sapMCrslFluid>.sapMCrslInner>* {
+	box-sizing: border-box;
+}
+
+.sapMCrslItemTable,
+.sapMCrslItem>.sapMScrollCont>.sapMScrollContScroll {
+	height: 100%;
+	width: 100%;
+}
+
+/* mixin call for creating container content padding classes (arguments: rootContainer, contentSelector) */
+.sapUiContainerContentPadding(~".sapMCrsl", ~"> .sapMCrslInner > .sapMCrslItem > .sapMScrollCont > .sapMScrollContScroll");
+
+/*
+  Carousel control base styling
+*/
+.sapMCrslControls {
+	text-align: center;
+	height: 3.5rem;
+	display: flex;
+	justify-content: center;
+	width: 100%;
+}
+
+.sapMCrslControlsNoArrows {
+	text-align: center;
+	height: @_sap_m_Carousel_ControlsNoArrowsHeight;
+	display: flex;
+	justify-content: center;
+	width: 100%;
+}
+
+.sapMCrslHud .sapMCrslArrow {
+	z-index: 2;
+	opacity: 0;
+	display: none;
+	position: absolute;
+	margin: -1.5625px 0 0 0;
+	box-shadow: @_sap_m_Carousel_ContentArrowBoxShadow;
+
+	&:hover,
+	&:focus {
+		opacity: 1;
+		display: block;
+	}
+}
+
+.sapMCrslPrev,
+.sapMCrslNext {
+	width: @_sap_m_Carousel_PrevAndNextSize;
+	height: @_sap_m_Carousel_PrevAndNextSize;
+	padding: 0;
+	text-decoration: none;
+	border-radius: 50%;
+	transition: opacity 0.1s ease-in;
+	box-sizing: border-box;
+	background-color: @sapUiButtonBackground;
+	border: 1px solid @sapUiButtonBorderColor;
+	color: @sapUiButtonIconColor;
+	cursor: pointer;
+	-webkit-user-select: none;
+	-moz-user-select: -moz-none;
+	user-select: none;
+	-webkit-user-drag: none;
+	-moz-user-drag: -moz-none;
+	user-drag: none;
+
+	&:hover {
+		background: @sapUiButtonHoverBackground;
+		border-color: @sapUiButtonHoverBorderColor;
+		color: @sapUiButtonHoverTextColor;
+		box-shadow: @sapUiContentInteractionShadow;
+	}
+
+	&:active {
+		background-color: @sapUiButtonActiveBackground;
+		border-color: @sapUiButtonActiveBorderColor;
+		color: @sapUiButtonActiveTextColor;
+	}
+}
+
+.sapMCrslHudMiddle .sapMCrslArrow {
+	top:  calc(~"50% - 1rem");
+}
+
+.sapMCrslHudTop,
+.sapMCrslHudOverContentTop {
+	.sapMCrslArrow {
+		top: 50%;
+	}
+}
+
+.sapMCrslHudBottom,
+.sapMCrslHudOverContentBottom {
+	.sapMCrslArrow {
+		top: calc(~"50% - 2rem");
+	}
+}
+
+.sapMCrslBulleted > span {
+	text-indent: 2rem;
+	line-height: 0;
+	text-decoration: none;
+	overflow: hidden;
+	display: inline-block;
+	width: @_sap_m_Carousel_BulletInactiveWidth;
+	height: @_sap_m_Carousel_BulletInactiveWidth;
+	margin: @_sap_m_Carousel_BulletInactiveMargin;
+	transition: background-color 0.1s ease-in;
+	border-radius: 50%;
+	align-self: center;
+	box-sizing: border-box;
+	background-color: @_sap_m_Carousel_BulletInactiveBackground;
+	border: 1px solid @_sap_m_Carousel_BulletInactiveBorderColor;
+}
+
+// Page indicator at the top
+.sapMCrslTopOffset {
+	.sapMCrslItem {
+		padding-top: calc(@_sap_m_Carousel_ControlsNoArrowsHeight ~"+" 1px);
+
+		&:focus {
+			&::before,
+			&::after {
+				top: calc(@_sap_m_Carousel_ControlsNoArrowsHeight ~"+" 1px);
+			}
+		}
+	}
+
+	&.sapMCrslTopArrowsOffset .sapMCrslItem {
+		padding-top: calc(~"3.5rem + 1px");
+
+		&:focus {
+			&::before,
+			&::after {
+				top: calc(~"3.5rem + 1px");
+			}
+		}
+	}
+}
+
+// Page indicator at the bottom
+.sapMCrslBottomOffset {
+	.sapMCrslItem {
+		padding-bottom: calc(@_sap_m_Carousel_ControlsNoArrowsHeight ~"+" 1px);
+
+		&:focus {
+			&::before,
+			&::after {
+				bottom: calc(@_sap_m_Carousel_ControlsNoArrowsHeight ~"+" 1px);
+			}
+		}
+	}
+
+	&.sapMCrslBottomArrowsOffset .sapMCrslItem {
+		padding-bottom: calc(~"3.5rem + 1px");
+
+		&:focus {
+			&::before,
+			&::after {
+				bottom: calc(~"3.5rem + 1px");
+			}
+		}
+	}
+}
+
+.sapMCrslControlsContainer {
+	width: 100%;
+	align-self: center;
+	height: 2.5rem;
+	display: flex;
+	justify-content: center;
+	margin-left: 1rem;
+	margin-right: 1rem;
+}
+
+.sapMCrslControls.sapMCrslControlsTop,
+.sapMCrslControlsNoArrows.sapMCrslControlsTop,
+.sapMCrslControlsOverContentTop {
+	position: absolute;
+	top: 0;
+	width: 100%;
+	z-index: 1;
+	align-self: center;
+}
+
+.sapMCrslControls.sapMCrslControlsBottom,
+.sapMCrslControlsNoArrows.sapMCrslControlsBottom,
+.sapMCrslControlsOverContentBottom {
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+}
+
+.sapMCrslControlsOverContentTop,
+.sapMCrslControlsOverContentBottom {
+	.sapMCrslBulleted,
+	.sapMCrslNumeric {
+		background-color: @sapUiPageFooterBackground;
+		height: 1rem;
+		border-radius: @sapUiElementBorderCornerRadius;
+		border: 1px solid @sapUiPageFooterBorderColor;
+		margin: 0 0.5rem;
+	}
+}
+
+.sapMCrslControlsOverContentTop,
+.sapMCrslControlsOverContentBottom {
+	&.sapMCrslControlsNoArrows .sapMCrslBulleted,
+	&.sapMCrslControlsNoArrows .sapMCrslNumeric {
+		width: 9rem;
+	}
+}
+
+.sapMCrsl .sapMCrslControlsOverContentTop,
+.sapMCrsl .sapMCrslControlsOverContentBottom {
+	background-color: transparent; // the background should always be transparent since it is over the carousel's content
+}
+
+.sapMCrslControlsNoArrowsTop {
+	position: absolute;
+	top: 0;
+	width: 100%;
+	z-index: 1;
+	align-self: center;
+}
+
+.sapMCrslControlsNoArrowsBottom {
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+}
+
+.sapMCrslControlsBottom.sapMCrslControlsContainerBottom {
+	width: 100%;
+	align-self: center;
+}
+
+.sapMCrslControlsTop.sapMCrslControlsContainerTop {
+	width: 100%;
+	align-self: center;
+}
+
+.sapMCrslControls .sapMCrslPrev,
+.sapMCrslControls .sapMCrslNext {
+	display: inline-block;
+	text-decoration: none;
+	text-align: center;
+	outline: none;
+	position: relative;
+	top: 3px;
+}
+
+.sapMCrslArrowInner {
+	display: table;
+	width: 100%;
+	height: 100%;
+	pointer-events: none;
+}
+
+.sapMCrslArrowInner .sapUiIcon {
+	display: table-cell;
+	text-align: center;
+	vertical-align: middle;
+	cursor: pointer;
+	pointer-events: none;
+}
+
+.sapMCrslPrev .sapMCrslArrowInner .sapUiIcon {
+	text-indent: -0.0625rem;
+	font-size: 1rem;
+}
+
+.sapMCrslNext .sapMCrslArrowInner .sapUiIcon {
+	text-indent: 0.0625rem;
+	font-size: 1rem;
+}
+
+.sapMCrslBulleted,
+.sapMCrslNumeric {
+	padding-left: @_sap_m_Carousel_PageIndicatorContainerPadding;
+	padding-right: @_sap_m_Carousel_PageIndicatorContainerPadding;
+	height: 2rem;
+	bottom: 1.0625rem;
+	max-width: calc(~"100% - 6.5rem");
+	display: flex;
+	justify-content: center;
+	align-self: center;
+}
+
+.sapMCrslControlsNoArrows .sapMCrslBulleted,
+.sapMCrslControlsNoArrows .sapMCrslNumeric {
+	width: 100%;
+	position: relative;
+	bottom: 0;
+	align-self: center;
+}
+
+.sapMCrslControlsOverContentTop {
+	&.sapMCrslControlsNoArrows .sapMCrslBulleted,
+	&.sapMCrslControlsNoArrows .sapMCrslNumeric {
+		bottom: 2px;
+	}
+}
+
+.sapMCrslControlsOverContentBottom {
+	&.sapMCrslControlsNoArrows .sapMCrslBulleted,
+	&.sapMCrslControlsNoArrows .sapMCrslNumeric {
+		bottom: -2px;
+	}
+}
+
+/* Styles for carousel dots on different screens */
+/* screen width < 600px */
+@media screen and (max-width: 599px) {
+	 .sapMCrslBulleted,
+	 .sapMCrslNumeric {
+		width: @_sap_m_Carousel_PageIndicatorWidthSizeS;
+	 }
+}
+
+/* 600px <= screen width < 1024px */
+@media screen and (min-width : 600px) and (max-width: 1023px) {
+	 .sapMCrslBulleted,
+	 .sapMCrslNumeric {
+		width: @_sap_m_Carousel_PageIndicatorWidthSizeM;
+	 }
+}
+
+/* 1024px <= screen width < 1440px */
+@media screen and (min-width : 1024px) and (max-width: 1439px) {
+	 .sapMCrslBulleted,
+	 .sapMCrslNumeric {
+		width: @_sap_m_Carousel_PageIndicatorWidthSizeL;
+	 }
+}
+
+/* screen width >= 1440px */
+@media screen and (min-width: 1440px) {
+	 .sapMCrslBulleted,
+	 .sapMCrslNumeric {
+		width: @_sap_m_Carousel_PageIndicatorWidthSizeXL;
+	 }
+}
+
+/* Styles needed for keyboard handling
+   ========================================================================== */
+.sapMCrslItem {
+	visibility: hidden;
+	overflow: hidden;
+}
+.sapMCrslActive {
+	visibility: visible;
+}
+
+/* Page Indicator Numeric
+   ====================================================================== */
+.sapMCrslNumeric span {
+	font-family: @sapUiFontFamily;
+	font-size: @sapMFontMediumSize;
+	font-weight: normal;
+	color: @_sap_m_Carousel_NumericIndicatorTextColor;
+	white-space: nowrap;
+	overflow: hidden;
+	text-align: left;
+	text-overflow: ellipsis;
+	align-self: center;
+}
+
+/* Carousel controls: Bulleted */
+.sapMCrslBulleted > span:hover,
+.sapMCrslBulleted > span:focus {
+	cursor: default;
+	outline: none;
+}
+
+.sapMCrslBulleted > span.sapMCrslActive {
+	background-color: @_sap_m_Carousel_BulletActiveBackground;
+	border: 1px solid @_sap_m_Carousel_BulletActiveBorder;
+	width: 0.5rem;
+	height: 0.5rem;
+	margin: 0 0.25rem;
+}
+
+/* Carousel controls: HUD */
+.sapMCrslHud {
+	padding-top: 0;
+}
+
+.sapMCrslItemTableCell.sapMCrslImg img {
+	background: @sapUiBaseBG;
+}
+
+// Arrows over content
+.sapMCrsl .sapMCrslHud.sapMCrslLeftmost .sapMCrslArrow.sapMCrslPrev,
+.sapMCrsl .sapMCrslHud.sapMCrslRightmost .sapMCrslArrow.sapMCrslNext {
+	opacity: 0;
+	display: none;
+}
+
+// Arrows in the Page Indicator area
+.sapMCrsl .sapMCrslArrow.sapMCrslLeftmost.sapMCrslPrev,
+.sapMCrsl .sapMCrslArrow.sapMCrslRightmost.sapMCrslNext {
+	opacity: 0;
+}
+
+.sapMCrslHud .sapMCrslPrev {
+	left: @_sap_m_Carousel_PrevAndNextPosition;
+}
+
+.sapMCrslHud .sapMCrslNext {
+	right: @_sap_m_Carousel_PrevAndNextPosition;
+}
+
+/* extra bits */
+
+.sapMCrslControlsBackground-Solid {
+	background: @sapUiPageFooterBackground;
+}
+
+.sapMCrslControlsBackground-Translucent {
+	background: @_sap_m_Carousel_BackgroundColorTranslucent;
+}
+
+.sapMCrslControlsBackground-Transparent {
+	background: @_sap_m_Carousel_BackgroundColorTransparent;
+}
+
+.sapMCrslControlsBorder-Solid.sapMCrslControlsTop {
+	border-bottom: 1px solid @sapUiPageFooterBorderColor;
+}
+
+.sapMCrslControlsBorder-Solid.sapMCrslControlsBottom {
+	border-top: 1px solid @sapUiPageFooterBorderColor;
+}
+
+/* Default Themes/Sytles for Slider */
+.sapMCrslFluid .sapMCrslItem {
+	margin-right: 1.25rem;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+}
+
+.sapMCrsl:hover,
+.sapMCrslShowArrows {
+	.sapMCrslHud .sapMCrslArrow {
+		opacity: 1;
+		display: block;
+	}
+}
+
+html.sap-desktop {
+	.sapMCrslHud {
+		.sapMCrslPrev:focus,
+		.sapMCrslNext:focus {
+			&::before,
+			&::after {
+				content: "";
+				position: absolute;
+				top: @_sap_m_Carousel_FocusBorderOffsetArrow;
+				right: @_sap_m_Carousel_FocusBorderOffsetArrow;
+				bottom: @_sap_m_Carousel_FocusBorderOffsetArrow;
+				left: @_sap_m_Carousel_FocusBorderOffsetArrow;
+				pointer-events: none;
+				border-radius: @_sap_m_Carousel_PrevAndNextFocusBorderRadius;
+			}
+			&::before {
+				border: @_sap_m_Carousel_ContrastFocusBorder;
+			}
+			&::after {
+				border: @_sap_m_Carousel_FocusBorder;
+			}
+		}
+	}
+}
+
+// fix for Safari
+.sapMCrslPrev:focus,
+.sapMCrslNext:focus,
+.sapMCrslPrev .sapUiIcon:focus,
+.sapMCrslNext .sapUiIcon:focus {
+	outline: none;
+}
+
+.sapMCrslDummyArea {
+	position: fixed;
+}

@@ -1,0 +1,331 @@
+/* =================================== */
+/* CSS for control sap.m/ColorPalette  */
+/* Base theme                          */
+/* ====================================*/
+@_sap_m_ColorPalette_SwatchesPerRow: 5;
+
+@_sap_m_ColorPalette_SwatchContainerPaddingLeftRightCozy: 0.6875rem;
+@_sap_m_ColorPalette_SwatchContainerPaddingTopBottomCozy: 0.3125rem;
+@_sap_m_ColorPalette_SwatchWidthHitAreaCozy: 2.375rem;
+@_sap_m_ColorPalette_SwatchWidthCozy: 1.75rem;
+
+@_sap_m_ColorPalette_SwatchContainerPaddingLeftRightCompact: 0.8125rem;
+@_sap_m_ColorPalette_SwatchContainerPaddingTopBottomCompact: 0.1875rem;
+@_sap_m_ColorPalette_SwatchWidthHitAreaCompact: 1.625rem;
+@_sap_m_ColorPalette_SwatchWidthCompact: 1.25rem;
+
+@_sap_m_ColorPalette_SwatchContainerPaddingLeftRightPhone: 0.625rem;
+@_sap_m_ColorPalette_SwatchContainerPaddingTopBottomPhone: 0.375rem;
+@_sap_m_ColorPalette_SwatchMaxWidthPhone: 4.5rem;
+@_sap_m_ColorPalette_SwatchMarginPhone: 0.375rem;
+
+@_sap_m_ColorPalette_SwatchWidthPhone: 20%;
+@_sap_m_ColorPalette_SwatchSelectedMarginPhone: 0.0625rem;
+
+.sapMColorPalette {
+	height: 100%;
+	// overstyling the button to more like a menu item
+	.sapMBtnText {
+		text-align: left;
+	}
+	.sapMBtn {
+		// Remove paddings and border of the inner element, so we defined them at root level
+		.sapMBtnInner {
+			border: none;
+			position: static; // used to show the left and right border of the outline when focused
+			background-color: inherit;
+			&.sapMBtnText {
+				padding: 0 0 0 1rem;
+			}
+		}
+		// Define paddings, margins and border at root level
+		margin: 0;
+		padding: 0;
+		border: none;
+
+		// Remove hover & active styling of the inner button element
+		> .sapMBtnActive, &:hover > .sapMBtnActive, &:active > .sapMBtnActive {
+			color: inherit;
+			background: inherit;
+		}
+		.sapMBtnTransparent {
+			color: inherit;
+		}
+		&:hover > .sapMBtnTransparent.sapMBtnHoverable {
+			background-color: inherit;
+		}
+
+		// define active & hover on the root button level
+		&:not(active) {
+			color: @sapUiButtonTextColor;
+			text-shadow: none;
+		}
+
+		// active
+		&:active:not(:hover) {
+			background-color: @sapUiButtonBackground;
+			color: @sapUiButtonTextColor;
+			text-shadow: none;
+		}
+
+		&:active > .sapMBtnInner {
+			text-shadow: none;
+		}
+
+		&:active {
+			background-color: @sapUiListActiveBackground;
+			color: @sapUiButtonActiveTextColor;
+		}
+
+		// hover
+		&:hover:not(:active) {
+			background: @sapUiListHoverBackground;
+		}
+
+		&:focus {
+			> .sapMFocusable { // The focus should go at the outside container
+				.sap-desktop & {
+					outline: none;
+					outline-offset: 0;
+					.sapMBtnFocusDiv { // Button has special focus handling for IE, so remove it as well
+						box-sizing: inherit;
+						position: inherit;
+						left: 0;
+						top: 0;
+						right: 0;
+						bottom: 0;
+						border-radius: 0;
+						border: none;
+						pointer-events: none;
+					}
+				}
+				.sap-desktop .sapContrast &,
+				.sap-desktop .sapContrastPlus & {
+					outline: none;
+					outline-offset: 0;
+				}
+			}
+			.sap-desktop & {
+				&:after {
+					content: " ";
+					position: absolute;
+					box-sizing: border-box;
+					left: 2px;
+					top: 2px;
+					right: 2px;
+					bottom: 2px;
+					border-radius: 0;
+					border: 0.0625rem dotted @sapUiContentFocusColor;
+					pointer-events: none;
+				}
+			}
+		}
+	}
+
+	.sapMColorPaletteContent .sapMRecentColorSquareDisabled {
+		pointer-events: none;
+		opacity: 0.5;
+	}
+
+	.sapMColorPaletteSeparator {
+		position: relative;
+		height: 0.0625rem;
+		// overstyling the hr to look like menu separator line
+		> hr {
+			display: inline-block;
+			position: absolute;
+			margin: 0;
+			left: 0;
+			right: 0;
+			border-width: 0;
+			border-top: 1px solid @sapUiToolbarSeparatorColor;
+			color: @sapUiToolbarSeparatorColor;
+		}
+	}
+	:focus {
+		outline: none;
+	}
+	.sapMColorPaletteSquare:focus{
+		outline: none
+	}
+}
+
+html:not(.sap-phone) {
+
+	// Dimension and paddings of the Palette
+	.sapMColorPalette {
+		max-width: @_sap_m_ColorPalette_SwatchesPerRow * @_sap_m_ColorPalette_SwatchWidthHitAreaCozy + 2 * @_sap_m_ColorPalette_SwatchContainerPaddingLeftRightCozy;
+		min-width: @_sap_m_ColorPalette_SwatchesPerRow * @_sap_m_ColorPalette_SwatchWidthHitAreaCozy + 2 * @_sap_m_ColorPalette_SwatchContainerPaddingLeftRightCozy;
+		.sapMColorPaletteContent {
+			padding: @_sap_m_ColorPalette_SwatchContainerPaddingTopBottomCozy @_sap_m_ColorPalette_SwatchContainerPaddingLeftRightCozy;
+		}
+	}
+	&.sapUiSizeCompact .sapMColorPalette,
+	& .sapUiSizeCompact .sapMColorPalette {
+		max-width: @_sap_m_ColorPalette_SwatchesPerRow * @_sap_m_ColorPalette_SwatchWidthHitAreaCompact + 2 * @_sap_m_ColorPalette_SwatchContainerPaddingLeftRightCompact;
+		min-width: @_sap_m_ColorPalette_SwatchesPerRow * @_sap_m_ColorPalette_SwatchWidthHitAreaCompact + 2 * @_sap_m_ColorPalette_SwatchContainerPaddingLeftRightCompact;
+		.sapMColorPaletteContent {
+			padding: @_sap_m_ColorPalette_SwatchContainerPaddingTopBottomCompact @_sap_m_ColorPalette_SwatchContainerPaddingLeftRightCompact;
+		}
+	}
+	.sapMColorPalette {
+		.sapMBtnInner {
+			border-radius: 0.25rem 0.25rem 0 0;
+		}
+		.sapMColorPaletteSquare {
+			box-sizing: border-box;
+			position: relative;
+			border: 0.0625rem solid @sapUiContentForegroundBorderColor;
+			border-radius: 0.125rem;
+			width: @_sap_m_ColorPalette_SwatchWidthCozy;
+			height: @_sap_m_ColorPalette_SwatchWidthCozy;
+			display: inline-block;
+			margin: (@_sap_m_ColorPalette_SwatchWidthHitAreaCozy - @_sap_m_ColorPalette_SwatchWidthCozy)/2;
+
+			&:hover,
+			&.sapMColorPaletteSquareSelected { /* now the hit area (margin) gets occupied by the content*/
+				margin: 0;
+				width: @_sap_m_ColorPalette_SwatchWidthHitAreaCozy;
+				height: @_sap_m_ColorPalette_SwatchWidthHitAreaCozy;
+				> div {
+					border: 1px solid @sapUiGroupContentBackground;
+				}
+			}
+
+			&:focus:before {
+				content: "";
+				box-sizing: border-box;
+				position: absolute;
+				left: 1px;
+				top: 1px;
+				right: 1px;
+				bottom: 1px;
+				border: 1px solid @sapUiContentFocusColor;
+				pointer-events: none;
+			}
+			&:focus:after {
+				content: "";
+				position: absolute;
+				box-sizing: border-box;
+				left: 1px;
+				top: 1px;
+				right: 1px;
+				bottom: 1px;
+				border: 1px dotted @sapUiContentContrastFocusColor;
+				pointer-events: none;
+			}
+
+			> div {
+				box-sizing: border-box;
+			}
+		}
+	}
+	&.sapUiSizeCompact .sapMColorPalette,
+	& .sapUiSizeCompact .sapMColorPalette {
+		.sapMColorPaletteSquare {
+			width: @_sap_m_ColorPalette_SwatchWidthCompact;
+			height: @_sap_m_ColorPalette_SwatchWidthCompact;
+			display: inline-block;
+			margin: (@_sap_m_ColorPalette_SwatchWidthHitAreaCompact - @_sap_m_ColorPalette_SwatchWidthCompact)/2;
+			&:hover,
+			&.sapMColorPaletteSquareSelected {
+				margin: 0;
+				width: @_sap_m_ColorPalette_SwatchWidthHitAreaCompact;
+				height: @_sap_m_ColorPalette_SwatchWidthHitAreaCompact;
+			}
+		}
+	}
+
+	.sapMColorPaletteContent {
+		display: flex;
+		flex-wrap: wrap;
+	}
+
+	.sapMColorPaletteSquare {
+		& > div {
+			height: 100%;
+			width: 100%;
+		}
+	}
+}
+
+.sap-phone {
+	.sapMColorPalette {
+		&html:not(.sap-phone) .sapMBtnInner {
+			border-radius: 0.25rem 0.25rem 0 0;
+		}
+	}
+	.sapMColorPaletteContent {
+		display: flex;
+		flex-wrap: wrap;
+		padding: @_sap_m_ColorPalette_SwatchContainerPaddingTopBottomPhone @_sap_m_ColorPalette_SwatchContainerPaddingLeftRightPhone;
+		max-width: 22.5rem;
+   		margin: auto;
+	}
+	.sapMColorPaletteContainer .sapMDialogScroll {
+		height: 100%;
+		.sapMDialogScrollCont.sapMDialogStretchContent {
+			padding: 0;
+		}
+
+	}
+	.sapMColorPaletteSquare {
+		width: @_sap_m_ColorPalette_SwatchWidthPhone;
+		max-width: @_sap_m_ColorPalette_SwatchMaxWidthPhone;
+		position: relative;
+		aspect-ratio: 1 / 1;
+		& > div {
+			border: 1px solid @sapUiContentForegroundBorderColor;
+			border-radius: 0.125rem;
+			position: absolute;
+			top: @_sap_m_ColorPalette_SwatchMarginPhone;
+			bottom: @_sap_m_ColorPalette_SwatchMarginPhone;
+			left: @_sap_m_ColorPalette_SwatchMarginPhone;
+			right: @_sap_m_ColorPalette_SwatchMarginPhone;
+			aspect-ratio: 1 / 1;
+		}
+		&:active > div {
+			box-shadow: inset 0 0 0 1px @sapUiGroupContentBackground;
+			top: -0.0625rem;
+			bottom: -0.0625rem;
+			left: -0.0625rem;
+			right: -0.0625rem;
+		}
+
+		&.sapMColorPaletteSquareSelected {
+			width: ~"calc(@{_sap_m_ColorPalette_SwatchWidthPhone} + 0.625rem)";
+			aspect-ratio: 1 / 1;
+			& > div {
+				aspect-ratio: 1 / 1;
+				box-shadow: inset 0 0 0 1px @sapUiGroupContentBackground;
+				top: @_sap_m_ColorPalette_SwatchSelectedMarginPhone;
+				bottom: @_sap_m_ColorPalette_SwatchSelectedMarginPhone;
+				left: @_sap_m_ColorPalette_SwatchSelectedMarginPhone;
+				right: @_sap_m_ColorPalette_SwatchSelectedMarginPhone;
+			}
+		}
+	}
+}
+
+@media (orientation: landscape) {
+	.sap-phone {
+		.sapMColorPaletteContent {
+			max-width: initial;
+		}
+	}
+}
+
+html.sap-desktop .sapMDialog.CPDialog{
+	min-width: 18rem; //override the  Dialog's min-width for desktop
+	.sapUiColorPicker-ColorPickerMatrix {
+		&.sapUiRespGrid.sapUiRespGridHSpace1 {
+			padding-bottom: 0.5rem;
+		}
+		//in a dialog ColorPicker doesn't have padding-top in order to be as compact as possible
+		&.sapUnifiedColorPicker.sapUiRespGrid.sapUiRespGridHSpace1 > div:first-child {
+			height: auto;
+			padding-top: 0;
+		}
+	}
+}
+

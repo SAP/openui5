@@ -1,0 +1,94 @@
+/* ======================================= */
+/* CSS for control sap.m/ObjectIdentifier  */
+/* Base theme                              */
+/* ======================================= */
+
+.sapMObjectIdentifierIcons {
+	overflow: hidden;
+    text-align: right;
+    font-size: 1rem;
+	color: @sapUiContentNonInteractiveIconColor;
+	display: inline-block;
+	vertical-align: middle;
+}
+
+.sapMObjectIdentifierIconSpan {
+	padding-top: 0;
+	padding-bottom: 0;
+	padding-left: 0.5rem;
+}
+
+.sapMObjectIdentifierTitle .sapMLnk,
+.sapMObjectIdentifierTitle .sapMText {
+	overflow: visible;
+	font-weight: bold;
+	font-size: 1rem;
+	display: inline;
+	word-wrap: break-word;
+	word-break: break-word;
+	white-space: normal;
+}
+
+html[data-sap-ui-browser^="ff"] {
+	.sapMObjectIdentifierTitle .sapMLnk,
+	.sapMObjectIdentifierTitle .sapMText {
+		display: inline-block;
+	}
+}
+
+.sapMObjectIdentifierTitle .sapMText {
+	color: @sapUiGroupTitleTextColor;
+}
+
+.sapMObjectIdentifierTitle .sapMLnk,
+.sapMOITitleActive .sapMLnk {
+	color: @sapUiLink;
+}
+
+.sapMObjectIdentifierText .sapMText,
+.sapMObjectIdentifierText,
+.sapMObjectIdentifier {
+	color: @sapUiContentLabelColor;
+}
+
+.sapMObjectIdentifierText {
+	font-size: @sapMFontMediumSize;
+	padding-top: 0;
+}
+
+.sapMObjectIdentifierTextBellow{
+	margin-top: 0.5rem;
+}
+
+.sapMLIBActive .sapMObjectIdentifier {
+	color: @sapUiListActiveTextColor;
+}
+
+/* ObjectIdentifier inside a table */
+.sapMListTbl .sapMObjectIdentifierTitle .sapMLnk,
+.sapMListTbl .sapMObjectIdentifierTitle .sapMText {
+	font-size: @sapMFontMediumSize;
+	padding-top: 0;
+}
+
+.sapMListTbl .sapMObjectIdentifierTitle .sapMText {
+	font-weight: bold;
+	color: @sapUiListTextColor;
+}
+
+.sapMListTbl .sapMObjectIdentifierText .sapMText {
+	line-height: 1.4;
+	padding-top: 0;
+}
+
+.sapMObjectIdentifierTitle {
+	display: inline;
+}
+
+.sapMObjectIdentifier .sapMEmptyIndicator.sapMEmptyIndicatorAuto {
+	display: none;
+}
+
+.sapMShowEmpty-CTX .sapMObjectIdentifier .sapMEmptyIndicator.sapMEmptyIndicatorAuto {
+	display: inline-block;
+}

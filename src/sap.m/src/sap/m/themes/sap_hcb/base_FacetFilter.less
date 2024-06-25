@@ -1,0 +1,165 @@
+/* ================================== */
+/* CSS for control sap.m/FacetFilter  */
+/* Base theme                         */
+/* ================================== */
+
+.sapMFF > .sapMTB-Info-CTX.sapMTB,
+.sapUiSizeCompact .sapMFF {
+	height: 2rem;
+}
+
+.sapUiSizeCompact .sapMFFArrowScroll {
+	padding: 0.5rem 0.4rem;
+}
+
+.sapUiSizeCompact .sapMFF .sapMFFLRemoveIcon {
+	line-height: 0.8rem;
+	padding: 0.6rem;
+}
+
+.sapMFF {
+	position: relative;
+}
+
+.sapMFFHead {
+	margin-left: 0rem;
+	white-space: nowrap;
+	position: relative;
+	overflow: hidden;
+}
+
+.sapMFF .sapUiIcon,
+.sapMFF .sapMTB .sapMBtnIcon .sapUiIcon {
+	/* Override the default button icon size since it is too big. */
+	font-size: 1rem;
+}
+
+html.sap-phone .sapMFFHead {
+	margin: 1rem;
+}
+
+/* Scroll arrows */
+html.sap-desktop .sapMFFScrolling > .sapMFFHead {
+	margin-right: 2rem;
+	margin-left: 3rem;
+}
+
+.sapMFFArrowScroll {
+	font-size: 1rem;
+	line-height: 1rem;
+	position: absolute;
+	top: 0;
+	color: @sapUiContentIconColor;
+	padding: 1rem 0.4rem;
+}
+
+.sapMFFArrowScrollLeft {
+	left: 1rem;
+}
+
+.sapMFFArrowScrollRight {
+	right: 0;
+}
+
+.sapMFFNoScrolling > .sapMFFArrowScroll {
+	visibility: hidden;
+}
+
+html.sap-desktop .sapMFFScrolling.sapMFFNoScrollBack > .sapMFFArrowScrollLeft,
+html.sap-desktop .sapMFFScrolling.sapMFFNoScrollForward > .sapMFFArrowScrollRight {
+	visibility: hidden;
+}
+
+/* Reset button */
+.sapMFFResetDiv {
+	position: absolute;
+	width: 3rem;
+	right: -3rem;
+	top: 0;
+}
+
+.sapMFFResetSpacer {
+	/* Space reserved at the end of the FacetFilter for placing the reset button */
+	margin-right: 2.75rem;
+	margin-left: 1rem;
+}
+
+.sapUiSizeCompact {
+	.sapMFFResetSpacer {
+		/* Space reserved at the end of the FacetFilter for placing the reset button */
+		margin-right: 2.5rem;
+		margin-left: 1rem;
+	}
+}
+
+.sapMFF .sapMTB-Info-CTX .sapMBtnIcon .sapUiIcon {
+	color: @sapUiContentContrastIconColor;
+}
+
+/* Move the reset button to the end of the toolbar */
+.sapMFF .sapMTB-Info-CTX.sapMTB > .sapMBarChild.sapMBtn {
+    margin: 0;
+}
+
+.sapMFF .sapMTB-Info-CTX.sapMTB {
+    padding-right: 0;
+}
+
+
+.sapMFF .sapMTB-Info-CTX.sapMTB > .sapMBtn:hover {
+    background-color: @sapUiInfobarHoverBackground;
+}
+
+html.sap-desktop .sapMFFRefresh.sapMBtn:focus > .sapMFocusable {
+	outline-color: @sapUiContentContrastFocusColor;
+}
+
+html.sap-desktop .sapMFF > .sapMTB-Info-CTX.sapMTB > .sapMFFRefresh.sapMBtn:focus .sapMBtnFocusDiv {
+	border-color: @sapUiContentContrastFocusColor;
+}
+
+.sapMFF .sapMTB-Info-CTX.sapMTB > .sapMBtn:active {
+    background-color: @sapUiInfobarActiveBackground;
+}
+
+.sapMFFCheckbar {
+	cursor: pointer
+}
+
+.sapMFFDialog .sapMCbLabel {
+	cursor: pointer
+}
+
+.sapMFF .sapMFFArrowScroll:hover {
+	background-color: @sapUiButtonLiteHoverBackground;
+}
+
+.sapMFF .sapMFFArrowScroll:active {
+	background-color: @sapUiButtonLiteActiveBackground;
+	color: @sapUiContentContrastIconColor;
+}
+
+/* specific selector for the light facet filter text to use padding instead of margin,
+  otherwise the text gets cut off in Arabic because of the italic font
+*/
+.sapMFF > .sapMIBar.sapMTB.sapMTB-Info-CTX {
+	padding-right: 0.5rem;
+	padding-left: 0.75rem;
+	.sapMText {
+		padding: 0.5rem 0.5rem 0.5rem 0;
+	}
+}
+
+.sapMFFDialog,
+.sapMFFPop .sapMPopoverSubHeader {
+	.sapMFFCheckbar .sapMBarLeft {
+		padding-left: 0.1875rem;
+	}
+}
+
+.sapUiSizeCompact {
+	.sapMFFDialog .sapMFFCheckbar .sapMBarLeft,
+	.sapMFFPop .sapMPopoverSubHeader .sapMFFCheckbar .sapMBarLeft {
+		padding-left: 0.5rem;
+	}
+}

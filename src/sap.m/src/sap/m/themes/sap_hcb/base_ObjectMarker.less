@@ -1,0 +1,50 @@
+/* =================================== */
+/* CSS for control sap.m/ObjectMarker  */
+/* Base theme                          */
+/* =================================== */
+
+.sapMObjectMarker {
+	display: inline-block;
+	.sapUiIcon {
+		font-size: 1rem;
+		color: @sapUiContentMarkerIconColor;
+		&:before {
+			vertical-align: middle;
+		}
+		&:not([data-sap-ui-icon-content]) {
+			display: none;
+		}
+	}
+	.sapMLnk {
+		overflow: visible;
+		padding-bottom: 1px;
+	}
+	.sapMText {
+		color: @sapUiContentLabelColor;
+	}
+	&.sapMObjectMarkerIcon.sapMObjectMarkerText .sapUiIcon {
+		margin-right: 0.25rem;
+	}
+}
+
+.sapUiTableCellInner .sapMObjectMarkerIcon,
+.sapMListTbl .sapMObjectMarkerIcon {
+	.sapMText {
+		padding-top: 0; //Icon in table should not be padded
+	}
+	.sapUiIcon:before {
+		vertical-align: inherit;//Icon in table should not be vertically aligned
+	}
+}
+
+.sapMListTbl .sapMObjectMarker .sapMText {
+	color: @sapUiContentLabelColor;
+}
+
+.sapMListTbl .sapMObjectMarker {
+	word-break: break-all;
+}
+
+.sapUiTableCellInner .sapMObjectMarkerIcon .sapUiIcon {
+	margin-top: 0.0625rem;
+}

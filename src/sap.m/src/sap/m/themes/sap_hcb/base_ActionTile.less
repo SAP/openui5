@@ -1,0 +1,341 @@
+/* ================================== */
+/* CSS for control sap.m/ActionTile  */
+/* Base theme                         */
+/* ================================== */
+
+.sapMAT{
+    width: 20rem;
+    height: 22.875rem;
+    border-radius: @sapTile_BorderCornerRadius;
+    position: relative;
+    padding: 1rem;
+    box-shadow: @sapContent_Shadow0;
+    background-color: @sapTile_Background;
+    display: inline-block;
+    box-sizing: border-box;
+    user-select: none;
+    vertical-align: top;
+    text-decoration: none;
+    .sapMGTHdrContent {
+        padding: 0;
+        height: 3.25rem;
+        overflow: hidden;
+        margin-bottom: 0.75rem;
+        .sapMText{
+            font-size: 1rem;
+            font-weight: 700;
+            color: @sapTile_TitleTextColor !important;
+            line-height: 1.5rem;
+            cursor: pointer;
+        }
+        .sapMATHeaderContainer {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            justify-content: center;
+            gap: 0.25rem;
+            .sapMGTTitle {
+                line-height: 1.2;
+                font-size: 0.875rem;
+            }
+            .sapMTilePriorityValue {
+                font-size: 0.875rem;
+                &.High {
+                    color: @sapNegativeTextColor;
+                }
+                &.Medium {
+                    color: @sapCriticalTextColor;
+                }
+                &.Low {
+                    color: @sapPositiveTextColor;
+                }
+                &.VeryHigh {
+                    color: @sapIndicationColor_1_BorderColor;
+                }
+            }
+        }
+    }
+    .sapMGTActionModeContainer {
+        position: absolute;
+        bottom: 0.25em;
+        right: 1rem;
+    }
+    .sapMGTContent {
+        height: 17.4rem;
+        overflow: visible;
+        .sapMTileCnt{
+            display: flex;
+            flex-direction: column;
+            height: inherit;
+            .sapMTileCntContent{
+                margin-top: 0;
+                padding: 0;
+                .sapMFT{
+                    height: inherit;
+                    span{
+                        color: @sapTextColor;
+                        white-space: initial;
+                        word-break: break-all;
+                        display: -webkit-box;
+                        -webkit-line-clamp: 16;
+                        -webkit-box-orient: vertical;
+                        height: fit-content;
+                        line-height: 1rem;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        font-weight: 400;
+                        font-size: 0.875rem;
+                        margin-bottom: 0.75rem;
+                        max-height: 16rem;
+                    }
+                    p + span {
+                        margin-bottom: 1rem;
+                        -webkit-line-clamp: 14;
+                        max-height: 14rem;
+                    }
+                    p {
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        color: @sapTextColor;
+                        font-weight: 400;
+                        font-size: 0.875rem;
+                        margin: 0 0 1rem 0;
+                        line-height: 1.125rem;
+                    }
+                    p.sapMbrPresent::first-line {
+                        color: @sapContent_LabelColor;
+                    }
+                    p:not(.sapMbrPresent) {
+                        margin-bottom: 0.75rem;
+                        white-space: initial;
+                        word-break: break-all;
+                    }
+                }
+            }
+            .sapMTileFtrCnt {
+                position: absolute;
+                bottom: 1rem;
+                right: 0rem;
+            }
+        }
+    }
+    &.sapMATHideActionButton {
+        .sapMTileCntContent {
+            .sapMFT {
+                span {
+                    -webkit-line-clamp: 14 !important;
+                }
+                p + span {
+                    -webkit-line-clamp: 12 !important;
+                }
+            }
+        }
+        .sapMGTActionModeContainer {
+            display: none !important;
+        }
+    }
+}
+
+.sapMAT.sapMATHideActionButton {
+    height: 19.625rem;
+ }
+
+.sapMAT:hover {
+    background-color: @sapTile_Hover_Background;
+    box-shadow:  @sapContent_Shadow2;
+}
+
+.sapMAT:active {
+    background-color: @sapTile_Active_Background;
+    box-shadow: none;
+    outline: 0.0625rem solid @sapTile_Interactive_BorderColor;
+}
+
+.sapMAT:focus-visible {
+    outline: none;
+}
+
+.sapMAT.sapMATAutoPointer {
+    .sapMText {
+        cursor: auto !important;
+    }
+}
+
+ .sapMAT:focus {
+    .sapMATFocusDiv{
+        position: absolute;
+        border: 2px solid @sapContent_FocusColor;
+        border-radius:  1rem;
+        inset: 0px;
+        pointer-events: none;
+    }
+ }
+
+// Styles when Icon(headerImage) is present
+
+.sapMAT.sapMATHeaderImage{
+    overflow: hidden;
+    .sapMGTHdrContent {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 0.5rem;
+        height: 3.25rem;
+        margin-bottom: 0.75rem;
+        .sapMGTHdrIconImage.Neutral {
+            color:  @sapUiNeutralText;
+        }
+        .sapMGTHdrIconImage.Good {
+            color: @sapUiPositiveText;
+        }
+        .sapMGTHdrIconImage.Critical {
+            color: @sapUiCriticalElement;
+        }
+        .sapMGTHdrIconImage.Error {
+            color: @sapUiNegativeText;
+        }
+        .sapMGTHdrIconImage.None {
+            color: @sapUiTileIconColor
+        }
+        .sapMGTHdrIconImage.sapUiIcon {
+            &::before {
+                height: 2.75rem;
+                font-weight: 400;
+                font-size: 2.25rem;
+                line-height: 2.4375rem;
+                display: flex;
+                align-items: end;
+                text-align: center;
+            }
+        }
+        .sapMATIconFrame {
+            flex-shrink: 0;
+
+            &.sapMGTIconFrameBadge{
+                align-self: start;
+
+                .sapFAvatarBadgeIconActiveArea {
+                    height: 3rem;
+                    width: 3rem;
+
+                    .sapFAvatarBadgeIcon {
+                        height: 1.125rem;
+                        width: 1.125rem;
+
+                        .sapUiIcon {
+                            font-size: 0.75rem;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+.sapMAT:focus {
+    .sapMGTFocusDiv{
+        position: absolute !important;
+        pointer-events: none;
+        inset: 0;
+        z-index: 2;
+        border-radius: @sapTile_BorderCornerRadius;
+        border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+    }
+
+    .sapMATFocusDiv{
+        position: absolute !important;
+        pointer-events: none;
+        inset: 0;
+        z-index: 2;
+        border-radius: @sapTile_BorderCornerRadius;
+        border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+    }
+ }
+
+ .sapMAT.sapMATDynamicHeight {
+    height: auto;
+    display: inline-flex;
+    flex-direction: column;
+    .sapMGTContent {
+        height: auto;
+        .sapMATC {
+            height: auto;
+        }
+        .sapMTileCnt {
+            height: auto;
+            .sapMTileCntContent {
+                height: auto;
+            }
+            .sapMTileCntContent {
+                .sapMFT {
+                    span{
+                        -webkit-line-clamp: initial;
+                        max-height: none;
+                    }
+                    p + span {
+                        -webkit-line-clamp: initial;
+                        max-height: none;
+                    }
+                }
+            }
+        }
+    }
+    .sapMGTActionModeContainer {
+        position: relative;
+        height: fit-content;
+        width: inherit;
+        box-sizing: border-box;
+        display: flex;
+        justify-content: flex-end;
+        padding-right: 2rem;
+        inset: 0;
+        margin-top: auto;
+        top: 0.1875rem;
+    }
+    &.sapMATHideActionButton {
+        .sapMTileCntContent {
+            .sapMFT {
+                span {
+                    -webkit-line-clamp: initial !important;
+                    max-height: none;
+                }
+                p + span {
+                    -webkit-line-clamp: initial !important;
+                    max-height: none;
+                }
+            }
+        }
+    }
+ }
+
+//Loading State Styles
+
+.sapMAT.sapMATStateLoading {
+    .sapMGTContentShimmerPlaceholderItem {
+        padding: 0;
+        height: 20rem;
+        align-items: initial;
+        flex-direction: column;
+        justify-content: space-around;
+        .sapMGTContentShimmerPlaceholderRows {
+            flex-grow: 0;
+        }
+    }
+}
+
+.sapMAT.sapMATStateLoading.sapMATHideActionButton {
+    .sapMGTContentShimmerPlaceholderItem {
+        height: 17.5rem;
+        justify-content: space-evenly;
+        padding: 0px;
+        .sapMGTContentShimmerPlaceholderRows {
+                .sapMGTContentShimmerPlaceholderItemHeader,.sapMGTContentShimmerPlaceholderItemText {
+                    margin-top: 0;
+                }
+                .sapMGTContentShimmerPlaceholderItemText {
+                    margin-bottom: 0;
+                }
+            }
+        }
+    }

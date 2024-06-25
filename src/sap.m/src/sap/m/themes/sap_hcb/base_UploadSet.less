@@ -1,0 +1,93 @@
+.sapMUSFileName {
+	flex-shrink: 0;
+}
+
+.sapMUSObjectMarkerContainer {
+	display: inline-block;
+	flex: none;
+}
+
+.sapMUSProgressBox {
+	min-width: 120px;
+	padding-left: 1rem;
+}
+
+.sapMUSProgressIndicator {
+	padding: 5px;
+}
+
+.sapMUSTextInnerContainer {
+	display: flex;
+}
+
+.sapMUSTFileUploaderVisibility {
+	visibility: hidden;
+	display: none !important;
+}
+
+.sapMUSObjectMarkersAsStatusContainer {
+	display: flex;
+	gap: 0.5rem;
+	align-items: end;
+	margin-left: 0.5rem;
+}
+
+.sapMUS .sapMUCNoDataPage {
+	height: 500px;
+}
+
+@media(min-width: 30rem) {
+	.sapMUSButtonContainer {
+		white-space: nowrap; /* so that buttons are displayed in a row */
+		padding-left: 1rem;
+		padding-top: 0rem;
+		align-self: center; /* for buttons alignment at the center */
+		flex: none;
+		order: 3;
+	}
+}
+
+@media(max-width: 30rem) {
+	.sapMUSButtonContainer {
+		padding-top: 0.75rem;
+	}
+}
+
+.sapMUSButtonContainer > .sapMBtn {
+	padding-top: 0rem; /* the padding of the sap.m.Button should be removed */
+	padding-bottom: 0rem; /* the padding of the sap.m.Button should be removed */
+	height:			2.5rem;
+}
+
+
+/*compact form */
+.sapUiSizeCompact .sapMUSButtonContainer > .sapMBtn {
+	height: 1.625rem;
+}
+/*for width > 30rem the buttons should be displayed as buttons of type transparent */
+@media(min-width: 30rem) {
+	.sapMUSButtonContainer >.sapMBtn >.sapMBtnInner {
+		background-image: none;
+		background-color: @sapUiButtonLiteBackground;
+		border-color: @sapUiButtonLiteBorderColor;
+		text-shadow: none;
+	}
+}
+/* an edit and delete button in a hover state; it should look like a transparent button in a hover state */
+@media(min-width: 30rem) {
+	.sapMUCEditBtn:hover >.sapMBtnHoverable, .sapMUCDeleteBtn:hover >.sapMBtnHoverable {
+		background-color: @sapUiButtonLiteHoverBackground;
+		border-color: @sapUiButtonLiteHoverBorderColor;
+	}
+}
+
+/*an edit and delete button in a pressed state; it should look like a transparent button in a pressed state */
+@media(min-width: 30rem) {
+	:not(.sapMBtnDisabled).sapMUCEditBtn > .sapMBtnActive,
+	:not(.sapMBtnDisabled).sapMUCEditBtn:hover > .sapMBtnActive,
+	:not(.sapMBtnDisabled).sapMUCDeleteBtn > .sapMBtnActive,
+	:not(.sapMBtnDisabled).sapMUCDeleteBtn:hover > .sapMBtnActive {
+		background-color: @sapUiButtonLiteActiveBackground;
+		border-color: @sapUiButtonLiteActiveBorderColor;
+	}
+}

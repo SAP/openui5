@@ -1,0 +1,293 @@
+/* ===================================== */
+/* CSS for control sap.m/DateTimePicker  */
+/* Base theme                            */
+/* ===================================== */
+
+/* styles for popup */
+.sapMDateTimePopupCont {
+	display: flex;
+	height: 25rem;
+	min-width: 40.0625rem;
+}
+
+.sapMDateTimePopupCont > .sapUiCal,
+.sapMDateTimePopupCont > .sapMTimePickerContainer {
+	float: left;
+	padding-top: 0.5rem;
+}
+
+.sapMDateTimePopupCont > .sapMTimePickerContainer {
+	width: auto;
+}
+
+.sapMTimePickerSwitch {
+	margin-top: 1rem;
+	text-align: center;
+}
+
+.sapMTimePickerSep {
+	height: ~'calc(100% - 2rem)';
+	width: 0.0625rem;
+	margin-top: 1rem;
+	margin-bottom: 1rem;
+	background-color: @sapUiGroupContentBorderColor;
+	box-sizing: border-box;
+	float: left;
+}
+
+.sapMDTP.sapMDTPWithTimezone {
+	min-width: 6.875rem;
+}
+
+.sapMDTP.sapMDTPWithTimezone .sapMInputBaseContentWrapper {
+	display: flex;
+	justify-content: flex-start;
+	position: relative;
+
+	& > * {
+		flex-basis: auto;
+		flex-grow: 0;
+		flex-shrink: 0;
+	}
+
+	& > input {
+		padding-right: 0;
+		width: ~'calc(100% - 4rem)';
+		min-width: 2rem;
+	}
+
+	& > .sapMDTPTimezoneLabel {
+		flex-grow: 1;
+		flex-shrink: 1;
+		min-width: 0;
+	}
+}
+
+.sapMDTP.sapMDTPWithTimezone .sapMInputBaseContentWrapper .sapMDummyContent {
+	visibility: hidden;
+	position: absolute;
+	left: 0;
+	width: auto;
+	padding-left: 0.625rem;
+	font-size: 0.875rem;
+}
+
+.sapMDTP.sapMDTPWithTimezone .sapMInputBaseContentWrapper .sapMDTPTimezoneLabel {
+	background: transparent;
+	box-sizing: border-box;
+	border: none;
+
+	font-size: 0.875rem;
+	font-style: italic;
+	color: @sapField_PlaceholderTextColor;
+
+	padding: 0 0.25rem 0 0.25rem;
+	height: 100%;
+	line-height: normal;
+
+	vertical-align: inherit;
+
+	display: flex;
+	justify-content: start;
+	align-items: center;
+
+	cursor: pointer;
+
+	& > span {
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		padding-right: 0.125rem;
+	}
+}
+
+/* Compact mode */
+.sapUiSizeCompact .sapMDateTimePopupCont {
+	height: 21rem;
+	min-width: 34.0625rem;
+}
+
+/* Phone mode use device and media selector to support small desktop and large phones*/
+.sapMDateTimePopup.sapUiPopupWithPadding > .sapMDialogSection > .sapMDialogScroll > .sapMDialogScrollCont {
+	padding: 0;
+}
+
+.sapMDateTimePopup.sapMDialogPhone > .sapMDialogSection > .sapMDialogScroll > .sapMDialogScrollCont {
+	height: 100%;
+}
+
+html.sap-phone .sapMDateTimePopupCont,
+html.sapUiMedia-Std-Phone .sapMDateTimePopupCont {
+
+	height: 100%;
+	min-width: 19.1rem;
+	overflow: auto !important; /* allow scrolling in landscape mode */
+	display: block;
+}
+
+html.sap-phone .sapMDialogScroll,
+html.sap-phone .sapMDialog.sapUiPopupWithPadding:not(.sapUiNoContentPadding) .sapMDialogScrollCont.sapMDialogStretchContent {
+	height: 100%;
+}
+
+html.sap-phone .sapUiSizeCompact .sapMDateTimePopupCont,
+html.sapUiMedia-Std-Phone .sapUiSizeCompact .sapMDateTimePopupCont {
+	min-width: 17rem;
+}
+
+html.sap-phone .sapMTimePickerSep,
+html.sapUiMedia-Std-Phone .sapMTimePickerSep {
+	display: none;
+}
+
+html.sap-phone .sapMDateTimePopupCont > .sapUiCal,
+html.sapUiMedia-Std-Phone .sapMDateTimePopupCont > .sapUiCal {
+	width: 100%;
+}
+
+html.sapUiMedia-Std-Phone .sapMDateTimePopupCont > div[class=sapUiCal] {
+	height: 25.25rem;
+	min-width: 19.1rem;
+}
+
+html.sapUiMedia-Std-Phone .sapMDateTimePopupCont.sapMTimePickerDropDown .sapMTimePickerContainer {
+	height: 25.25rem;
+	width: 100%;
+}
+
+html.sapUiMedia-Std-Phone.sapUiSizeCompact .sapMDateTimePopupCont.sapMTimePickerDropDown .sapMTimePickerContainer,
+html.sapUiMedia-Std-Phone .sapUiSizeCompact .sapMDateTimePopupCont.sapMTimePickerDropDown .sapMTimePickerContainer {
+	height: 15.25rem;
+	width: 100%;
+}
+
+html.sap-phone .sapMDateTimePopupCont.sapMTimePickerDropDown .sapMTimePickerContainer {
+	height: ~'calc(100% - 7rem)';
+}
+
+html.sap-phone .sapMDateTimePopupCont {
+  	background-color: @sapUiListBackground;
+	.sapUiCalContent {
+		& > .sapUiCalMonthPicker,
+		& > .sapUiCalYearPicker {
+			width: 100%;
+			box-sizing: border-box;
+			left: 0;
+			margin: 0;
+		}
+	}
+}
+
+.sapUiSizeCompact .sapMTimePickerDropDown .sapMTimePickerContainer {
+	min-width: 17rem;
+}
+
+html.sapUiMedia-Std-Tablet,
+html.sapUiMedia-StdExt-Tablet {
+	.sapMDateTimePopupCont > .sapUiCal:not(.sapUiCalInt) {
+		width: 47%;
+		min-width: 47%;
+	}
+	.sapMTimePickerContainer {
+		min-width: 53%;
+	}
+}
+
+html:not(.sapUiMedia-Std-Phone),
+html:not(.sapUiMedia-StdExt-Phone) {
+	.sapMDateTimePopup .sapMPopoverCont {
+		overflow: hidden auto !important; /* disable horizontal scrolling when not phone size */
+	}
+	.sapMDateTimePopupCont {
+		.sapMTPClocksContainer {
+			padding: 0.5rem;
+		}
+	}
+}
+
+/* DateTimePicker in DynamicDateRange */
+
+.sapMDynamicDateRangePopover {
+
+	.sapUiCal:not(.sapUiCalInt) > .sapUiCalHead {
+		max-width: 100%;
+	}
+
+	.sapMDateTimePopupCont {
+		min-width: 20rem;
+		overflow: hidden auto !important;
+		display: block;
+		height: 100%;
+		padding: 0;
+		.sapUiCal .sapUiCalMonthView, .sapUiCal .sapUiCalRow {
+			padding-bottom: 0;
+		}
+	}
+
+	.sapUiSizeCompact .sapMDateTimePopupCont {
+		min-width: 17rem;
+	}
+
+	.sapMTimePickerSep {
+		display: none;
+	}
+
+	.sapMDateTimePopupCont > .sapUiCal {
+		width: 100%;
+		height: auto;
+	}
+
+	.sapMDateTimePopupCont.sapMTimePickerDropDown .sapMTimePickerContainer {
+		width: 100%;
+		height: 22rem;
+	}
+
+	.sapUiSizeCompact .sapMDateTimePopupCont.sapMTimePickerDropDown .sapMTimePickerContainer {
+		height: 15.25rem;
+		width: 100%;
+	}
+
+	.sapMDateTimePopupCont {
+		  background-color: @sapUiListBackground;
+		.sapUiCalContent {
+			& > .sapUiCalMonthPicker,
+			& > .sapUiCalYearPicker {
+				width: 100%;
+				box-sizing: border-box;
+				left: 0;
+				margin: 0;
+			}
+		}
+		.sapMTPClocksContainer {
+			width: 100%;
+			height: auto;
+			.sapMTPCButtons,
+			.sapMTPCClocks {
+				margin: 0 auto;
+			}
+		}
+	}
+
+}
+
+html.sapUiMedia-Std-Tablet .sapMDynamicDateRangePopover .sapMDateTimePopupCont > .sapUiCal:not(.sapUiCalInt),
+html.sapUiMedia-StdExt-Tablet .sapMDynamicDateRangePopover .sapMDateTimePopupCont > .sapUiCal:not(.sapUiCalInt) {
+	width: 100%;
+}
+
+.sapUiSizeCompact .sapMDDRPopover .sapMPageWithFooter > section,
+.sapMDDRPopover .sapMPageWithFooter > section {
+	bottom: 2rem;
+}
+
+.sapUiSizeCompact .sapMDynamicDateRangePopover .sapUiCal:not(.sapUiCalInt) {
+	width: 100%;
+}
+
+html.sap-desktop {
+	.sapMDateTimePopup {
+		.sapMValueStateHeaderRoot {
+			width: 100% !important;
+		}
+	}
+}

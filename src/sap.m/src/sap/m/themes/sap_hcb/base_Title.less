@@ -1,0 +1,108 @@
+/* ============================ */
+/* CSS for control sap.m/Title  */
+/* Base theme                   */
+/* ============================ */
+
+.sapMTitle {
+	position: relative;
+	display: inline-block;
+	margin: 0;
+	-webkit-margin-before: 0;
+	-webkit-margin-after: 0;
+	-webkit-margin-start: 0;
+	-webkit-margin-end: 0;
+	font-weight: @sapUiFontHeaderWeight;
+	color: @sapUiGroupTitleTextColor;
+	font-family: @sapUiFontHeaderFamily;
+	box-sizing: border-box;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	cursor: text;
+	text-shadow: @sapUiShadowText;
+}
+
+.sapMTitle.sapMTitleWrap {
+	white-space: pre-line;
+	word-wrap: break-word;
+}
+
+.sapMTitle.sapMTitleNoWrap {
+	white-space: nowrap;
+}
+
+.sapMTitleMaxWidth {
+	max-width: 100%;
+}
+
+/* Level Styling */
+
+/* Level Auto*/
+
+.sapMTitleStyleAuto {
+	font-size: @sapMFontHeader5Size;
+}
+
+.sapMTB > .sapMTitleStyleAuto {
+	font-size: @sapUiGroupTitleFontSize;
+}
+
+/* Level H1 */
+
+.sapMTitleStyleH1 {
+	font-size: @sapMFontHeader1Size;
+}
+
+/* Level H2 */
+
+.sapMTitleStyleH2 {
+	font-size: @sapMFontHeader2Size;
+}
+
+/* Level H3 */
+
+.sapMTitleStyleH3 {
+	font-size: @sapMFontHeader3Size;
+}
+
+/* Level H4 */
+
+.sapMTitleStyleH4 {
+	font-size: @sapMFontHeader4Size;
+}
+
+/* Level H5 */
+
+.sapMTitleStyleH5 {
+	font-size: @sapMFontHeader5Size;
+}
+
+/* Level H6 */
+
+.sapMTitleStyleH6 {
+	font-size: @sapMFontHeader6Size;
+}
+
+.sapMIBar-CTX .sapMTitle {
+	color: @sapUiPageHeaderTextColor;
+	text-shadow: @sapUiShadowText;
+}
+
+.sapMTB-Transparent-CTX .sapMTitle {
+	text-shadow: none;
+}
+
+.sapMIBar-CTX.sapMFooter-CTX .sapMTitle {
+	color: @sapUiPageFooterTextColor;
+	text-shadow: @sapUiShadowText;
+}
+
+/* DynamicPageTitle Heading-CTX */
+.sapFDynamicPageTitleHeading-CTX > .sapMTitle {
+	margin-top: 0;
+}
+
+/* Link in Title */
+.sapMTitle .sapMLnk {
+	font-size: inherit;
+	vertical-align: middle;
+}

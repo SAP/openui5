@@ -1,0 +1,43 @@
+/* ==================================== */
+/* CSS for control sap.m/FormattedText  */
+/* Base theme                           */
+/* ==================================== */
+
+.sapMFT {
+	font-family: @sapUiFontFamily;
+	vertical-align: top;
+	font-size: @sapMFontMediumSize;
+
+	/* BCP: 1870022567 - Reset sapMLnk font-size and wrapping specifics */
+	.sapMLnk {
+		font-size: inherit;
+		display: initial;
+		white-space: initial;
+		overflow: initial;
+		text-overflow: initial;
+		word-wrap: initial;
+	}
+
+	/* BCP: 002075129400010494822023 - preserve H* tags default 'display' property */
+	.sapMTitle {
+		display: inherit;
+	}
+}
+
+.sapMFTOverflowWidth {
+	overflow-x: auto;
+}
+
+.sapMFTOverflowHeight {
+	overflow-y: auto;
+}
+
+/* If control is used on black/dark background */
+.sapUiInverted-CTX .sapMFT {
+	color: @sapUiContentContrastTextColor;
+}
+
+/* Do not invert for table */
+.sapUiInverted-CTX .sapUiTable .sapMFT {
+	color: @sapUiBaseText;
+}

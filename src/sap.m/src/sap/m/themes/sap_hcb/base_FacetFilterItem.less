@@ -1,0 +1,43 @@
+/* ====================================== */
+/* CSS for control sap.m/FacetFilterItem  */
+/* Base theme                             */
+/* ====================================== */
+
+/*
+	Fix alignment of the list item counter and force a min height.
+*/
+.sapMFFLI {
+	display: -webkit-box;
+	display: flex;
+	min-height: 3rem;
+}
+
+/*
+	Fix alignment of the list item counter.
+*/
+.sapMFFLI > .sapMLIBContent {
+	text-overflow: ellipsis;
+	-webkit-box-align: center;
+	align-items: center;
+}
+
+.sapMFFLITitle {
+	font-size: @sapMFontLargeSize;
+	color: @sapUiListTextColor;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.sapMFFLITitleWrap {
+	word-wrap: break-word;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	-webkit-box-flex: 1;
+	flex: auto;
+	-webkit-box-align: center;
+	align-items: center;
+}
+
+.sapUiSizeCompact .sapMFFLITitle{
+	font-size: @sapMFontMediumSize;
+}

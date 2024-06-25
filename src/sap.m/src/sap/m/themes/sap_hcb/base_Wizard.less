@@ -1,0 +1,110 @@
+/* ============================= */
+/* CSS for control sap.m/Wizard  */
+/* Base theme                    */
+/* ============================= */
+
+@_sap_m_Wizard_NavHeight: 4rem;
+@_sap_m_WizardStep_Animation_Duration: 0.4s;
+
+.sapMWizard {
+	height: 100%;
+	position: relative;
+	counter-reset: steps-counter;
+	overflow: hidden;
+	background-color: transparent;
+
+	.sapMWizardStepContainer {
+		position: relative;
+		height: ~"calc(100% - 4rem)"; /* 4rem is the height of the Progress Navigator*/
+		box-sizing: border-box;
+		padding: 0 1rem 1rem 1rem;
+	}
+
+	.sapMWizardStep:first-child {
+		margin-top: 1rem;
+	}
+
+	.sapMWizardStep  {
+		position: relative;
+		padding-bottom: 2rem;
+		display: none;
+	}
+
+	.sapMWizardStepActivated {
+		display: block;
+	}
+
+	&.sapMWizardModeScroll .sapMWizardStepTitle::before {
+		counter-increment: steps-counter;
+		content: counter(steps-counter) ". ";
+	}
+
+	.sapMWizardNextButtonHidden {
+		bottom: -3rem;
+		opacity: 0;
+		animation-name: hideWizardButton
+	}
+
+	.sapMWizardNextButtonVisible {
+		margin-top: 0.5rem;
+		bottom: 0rem;
+		opacity: 1;
+		animation-name: showWizardButton
+	}
+
+	.sapMDialogSection {
+		height: auto;
+	}
+
+
+	&.sapMWizardBgStandard .sapMWizardStepContainer {
+		background-color: @sapUiBaseBG;
+	}
+
+	&.sapMWizardBgSolid .sapMWizardStepContainer {
+		background-color: @sapUiBaseBG;
+	}
+
+	&.sapMWizardBgTransparent .sapMWizardStepContainer {
+		background-color: transparent;
+	}
+
+	&.sapMWizardBgList .sapMWizardStepContainer {
+		background-color: @sapUiGroupContentBackground;
+	}
+}
+
+.sapMWizard:not(.sapMWizardModePage) .sapMWizardLastActivatedStep {
+	min-height: ~"calc(100% - 1rem)"; /* 1rem is the margin from the top of the container*/
+}
+
+html[data-sap-ui-animation='on'] .sapMWizardNextButtonVisible,
+html[data-sap-ui-animation='on'] .sapMWizardNextButtonVisible {
+	animation-timing-function: linear;
+	animation-duration: @_sap_m_WizardStep_Animation_Duration;
+}
+
+@keyframes showWizardButton {
+	from {opacity: 0; bottom: -3rem}
+	to {opacity: 1; bottom: 0rem}
+}
+
+@keyframes hideWizardButton {
+	from {opacity: 1; bottom: 0rem}
+	to {opacity: 0; bottom: -3rem}
+}
+
+html.sap-desktop .sapMWizard .sapMWizardNextButtonVisible,
+html.sap-tablet .sapMWizard .sapMWizardNextButtonVisible {
+	display: block;
+}
+
+html.sap-phone .sapMWizard {
+	.sapMWizardNextButtonVisible {
+		position: fixed;
+		left: 50%;
+		-webkit-transform: translate(-50%, 0);
+		transform: translate(-50%, 0);
+		bottom: 3rem;
+	}
+}

@@ -1,0 +1,93 @@
+/* =================================== */
+/* CSS for control sap.m/MenuListItem  */
+/* Base theme                          */
+/* =================================== */
+
+/* phone */
+
+.sapMRespMenuDialog .sapMLIB {
+	position: relative;
+	padding: 0 0.875rem;
+}
+
+.sapMRespMenuDialog .sapMSLITitleOnly {
+	font-style: normal;
+	font-weight: normal;
+	font-size: @sapMFontMediumSize;
+}
+
+.sapMMenuLIHasChildren .sapMSLITitleDiv {
+	text-overflow: ellipsis;
+}
+
+.sapMMenuLIImgThumbWrapper {
+	font-size: 1.375rem;
+	min-width: 1rem;
+	max-width: 1rem;
+	padding-inline-end: 0.875rem;
+	text-align: center;
+}
+
+.sapMMenuLIImgThumbIcon {
+	font-size: 1.375rem;
+}
+
+.sapMMenuLIArrowRightIcon {
+	font-size: .75rem;
+	width: 1.875remrem;
+	height: 3rem;
+	line-height: 3rem;
+}
+
+.sapMRespMenuDialog .sapUiMnuDiv {
+	height: 1px;
+}
+
+.sapMRespMenuDialog .sapUiMnuDiv > hr {
+	height: 0;
+	margin: 0;
+	left: 1rem;
+	right: 1rem;
+}
+
+.sapMMLIDisabled .sapMSLITitle,
+.sapMMLIDisabled .sapMSLITitleOnly {
+	color: @sapUiContentDisabledTextColor;
+}
+
+html.sap-phone .sapMMLIDisabled .sapMMenuLIImgThumbIcon,
+html.sap-tablet .sapMMLIDisabled .sapMMenuLIImgThumbIcon {
+	color: @sapUiContentDisabledTextColor;
+}
+
+/* end phone */
+
+/* desktop and tablet */
+
+.sapMMenu .sapUiMnuDiv > hr {
+	height: 0;
+	margin: 0;
+}
+
+// really strong selector in the sapUiMnu demands this
+.sapMMenu.sapUiMnu.sapUiMnuCozySupport .sapUiMnuItmTxt {
+	text-overflow: ellipsis;
+	max-width: 100%;
+	max-width: -moz-available;          /* WebKit-based browsers will ignore this. */
+	max-width: -webkit-fill-available;  /* Mozilla-based browsers will ignore this. */
+	max-width: fill-available;
+}
+
+/* end cozy */
+
+/* compact */
+
+.sapUiSizeCompact .sapMMenuLIArrowRightIcon {
+	width: 2rem;
+	height: 2rem;
+	line-height: 2rem;
+}
+
+/* end compact */
+
+/* end desktop and tablet */
