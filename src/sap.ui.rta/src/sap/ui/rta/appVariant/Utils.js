@@ -126,7 +126,7 @@ function(
 		return this._checkNavigationSupported(oNavigationParams).then(function(aResult) {
 			var oDeleteButtonProperties;
 
-			if (aResult.length && oPreparedObject.isKeyUser) {
+			if (aResult[0].length && oPreparedObject.isKeyUser) {
 				oNavigationObject.adaptUIButtonEnabled = true;
 
 				if (oPreparedObject.appVarStatus === "R" || oPreparedObject.appVarStatus === "U" || oPreparedObject.appVarStatus === "E") {
