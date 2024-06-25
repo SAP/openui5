@@ -494,11 +494,11 @@ sap.ui.define([
 		var sDescribingDomTextId;
 
 		assert.ok(jQuery("#Cal2--Month0-20110101").hasClass("sapUiCalItemType01"), "20110101 is special day of Type01");
-		assert.equal(jQuery("#Cal2--Month0-20110101").attr("title"), "Text Non-Working Day", "20110101 has special days tooltip");
+		assert.equal(jQuery("#Cal2--Month0-20110101").attr("title"), "Non-Working Day Text", "20110101 has special days tooltip");
 		assert.equal(jQuery("#Cal2--Month0-20110101").attr("aria-label"), "1. Januar 2011; My Type 1", "20110101 aria label");
 
 		assert.ok(jQuery("#Cal2--Month0-20110102").hasClass("sapUiCalItemType02"), "20110102 is special day of Type02");
-		assert.equal(jQuery("#Cal2--Month0-20110102").attr("title"), "Text Non-Working Day", "20110102 has special days tooltip");
+		assert.equal(jQuery("#Cal2--Month0-20110102").attr("title"), "Non-Working Day Text", "20110102 has special days tooltip");
 		assert.equal(jQuery("#Cal2--Month0-20110102").attr("aria-label"), "2. Januar 2011; My Type 2", "20110102 aria label");
 
 		assert.ok(jQuery("#Cal2--Month0-20110103").hasClass("sapUiCalItemType02"), "20110103 is special day of Type02");
@@ -3233,7 +3233,7 @@ sap.ui.define([
 		var oDay = oCalendar.getDomRef().querySelector("[data-sap-day='20170409'");
 
 		// assert
-		assert.strictEqual(oDay.getAttribute("title"), "Holiday 1 Non-Working Day", "Proper tooltip is set");
+		assert.strictEqual(oDay.getAttribute("title"), "Non-Working Day Holiday 1", "Proper tooltip is set");
 
 		// clean
 		oCalendar.destroy();
