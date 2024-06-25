@@ -25,8 +25,10 @@ sap.ui.define([
 	"sap/ui/model/odata/type/Time",
 	"sap/ui/model/odata/type/TimeOfDay",
 	"sap/ui/model/odata/v2/ODataListBinding",
-	"sap/ui/core/InvisibleMessage"
-], function(nextUIUpdate, Library, Theming, List, Util, Table, ThemeParameters, Filter, JSONListBinding, BooleanType, Byte, DateType, DateTime, DateTimeWithTimezone, Decimal, Double, Single, Guid, Int16, Int32, Int64, SByte, StringType, Time, TimeOfDay, ODataListBinding, InvisibleMessage) {
+	"sap/ui/core/InvisibleMessage",
+	"sap/m/Text",
+	"sap/m/HBox"
+], function(nextUIUpdate, Library, Theming, List, Util, Table, ThemeParameters, Filter, JSONListBinding, BooleanType, Byte, DateType, DateTime, DateTimeWithTimezone, Decimal, Double, Single, Guid, Int16, Int32, Int64, SByte, StringType, Time, TimeOfDay, ODataListBinding, InvisibleMessage, Text, HBox) {
 	"use strict";
 	/* global QUnit,sinon */
 
@@ -554,5 +556,69 @@ sap.ui.define([
 
 		assert.deepEqual(oDetailsListTemplateItems[0].mBindingInfos.text.parts, oAmountBindingInfo.parts, "template amountBindingInfo updated");
 		assert.deepEqual(oDetailsListTemplateItems[1].mBindingInfos.text.parts, oUnitBindingInfo.parts, "template unitBindingInfo updated");
+
+		oPopover.destroy();
+		oPopover = null;
+		oAmountBindingInfo = {
+			parts: [
+				{
+					mode: "OneWay",
+					path: "NewPathToAmount"
+				},
+				{
+					mode: "OneWay",
+					path: "NewPathToCurrency"
+				}
+			]
+		};
+
+		oUnitBindingInfo = {
+			parts: [
+				{
+					path: "AlternativePathToCurrency"
+				}
+			]
+		};
+
+		const oAmountText = new Text({
+			textDirection: "RTL",
+			wrapping: false,
+			textAlign: "End"
+		});
+
+		const oUnitText = new Text({
+			textDirection: "RTL",
+			wrapping: false,
+			textAlign: "End",
+			width: "3em"
+		});
+
+		oAmountText.bindText(oAmountBindingInfo);
+		oUnitText.bindText(oUnitBindingInfo);
+
+		mSettings.listItemContentTemplate = new HBox({
+			renderType: "Bare",
+			justifyContent: "End",
+			items: [
+				oAmountText,
+				oUnitText
+			]
+		});
+
+		oPopover = await Util.createOrUpdateMultiUnitPopover(oTable.getId() + "-multiUnitPopover", mSettings);
+
+		sTitle = oResourceBundle.getText("TABLE_MULTI_TOTAL_TITLE");
+		sPlacement = "VerticalPreferredTop";
+		oDetailsList = oPopover.getContent()[0];
+		oDetailsListBindingInfo = oDetailsList.getBindingInfo("items");
+		oDetailsListTemplateItems = oDetailsListBindingInfo.template.getContent()[0].getItems();
+
+		assert.equal(oPopover.getTitle(), sTitle, "Popover title changed correctly");
+		assert.equal(oPopover.getPlacement(), sPlacement, "Popover placement is correct");
+		assert.notOk(oPopover.hasStyleClass("sapUiSizeCompact"), "styleClass removed from popover (sapUiSizeCompact)");
+
+		assert.deepEqual(oDetailsListTemplateItems[0].mBindingInfos.text.parts, oAmountBindingInfo.parts, "template amountBindingInfo updated with template binding info");
+		assert.deepEqual(oDetailsListTemplateItems[1].mBindingInfos.text.parts, oUnitBindingInfo.parts, "template unitBindingInfo updated with template binding info");
+		assert.deepEqual(oDetailsListTemplateItems[0].getTextDirection(), oAmountText.getTextDirection(), "listItemContentTemplate is provided in mSettings");
 	});
 });
