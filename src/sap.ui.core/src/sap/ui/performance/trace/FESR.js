@@ -23,7 +23,7 @@ sap.ui.define([
 		ROOT_ID = Passport.getRootId(), // static per session
 		HOST = window.location.host, // static per session
 		CLIENT_OS = Device.os.name + "_" + Device.os.version,
-		CLIENT_MODEL = Device.browser.name + "_" + Device.browser.version,
+		CLIENT_MODEL = Device.browser.reportingName + "_" + Device.browser.version,
 		CLIENT_DEVICE = setClientDevice(),
 		sAppVersion = "", // shortened app version with fesr delimiter e.g. "@1.7.1"
 		sAppVersionFull = "", // full app version e.g. 1.7.1-SNAPSHOT
