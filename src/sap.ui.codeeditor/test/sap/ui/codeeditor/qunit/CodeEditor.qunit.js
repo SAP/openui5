@@ -132,9 +132,11 @@ sap.ui.define([
 		// Arrange
 		var sText = "ui5 \n".repeat(100); // lots of text to show the scrollbar
 		this.oCodeEditor.setValue(sText);
+		await nextAceEditorRendering(this.oCodeEditor);
 
 		this.oCodeEditor.setWidth("300px");
 		await nextAceEditorRendering(this.oCodeEditor);
+
 		var fInitialScrollbarPos = this.oCodeEditor._oEditor.getSession().getScrollTop();
 		assert.strictEqual(fInitialScrollbarPos, 0, "Initial scroll position should be 0");
 
