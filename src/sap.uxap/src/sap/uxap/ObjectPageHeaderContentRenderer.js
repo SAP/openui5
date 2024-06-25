@@ -28,12 +28,12 @@ sap.ui.define([
 			bRenderEditBtn = bParentLayout && oParent.getShowEditHeaderButton() && oControl.getContent() && oControl.getContent().length > 0;
 
 		if (bRenderEditBtn) {
-			oRm.openStart("div", oControl)
-				.class("sapUxAPObjectPageHeaderContentFlexBox")
-				/**
-				 * @deprecated As of version 1.40.1
-				 */
-				.class("sapUxAPObjectPageHeaderContentDesign-" + oControl.getContentDesign());
+			oRm.openStart("div", oControl).class("sapUxAPObjectPageHeaderContentFlexBox");
+
+			/**
+			 * @deprecated As of version 1.40.1
+			 */
+			oRm.class("sapUxAPObjectPageHeaderContentDesign-" + oControl.getContentDesign());
 
 			if (oHeader) {
 				oRm.class('sapUxAPObjectPageContentObjectImage-' + oHeader.getObjectImageShape());
