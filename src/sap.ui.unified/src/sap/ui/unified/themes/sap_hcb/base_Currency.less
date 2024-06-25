@@ -1,0 +1,47 @@
+/* ======================================== */
+/* CSS for control sap.ui.unified/Currency  */
+/* Base theme                               */
+/* ======================================== */
+
+.sapUiUfdCurrency {
+	display: inline-block;
+	width: 100%;
+	overflow: hidden;
+	font-size: @sapMFontMediumSize;
+	font-family: @sapUiFontFamily;
+	line-height: normal;
+}
+
+.sapUiUfdCurrencyAlign {
+	text-align: right;
+}
+
+.sapUiUfdCurrencyValue,
+.sapUiUfdCurrencyCurrency {
+	display: inline-block;
+	vertical-align: middle;
+}
+
+.sapUiUfdCurrencyValue {
+	text-align: right;
+	font-variant-numeric: tabular-nums;
+}
+
+.sapUiUfdCurrencyCurrency {
+	text-align: end;
+	min-width: 3rem;
+	font-family: @sapUiContentMonospaceFontFamily;
+}
+
+.sapUiUfdCurrency .sapMEmptyIndicator.sapMEmptyIndicatorAuto {
+	display: none;
+}
+
+.sapMShowEmpty-CTX .sapUiUfdCurrency .sapMEmptyIndicator.sapMEmptyIndicatorAuto {
+	display: inline-block;
+	text-align: end;
+}
+
+.sapUiTableDataCell .sapUiUfdCurrency {
+	vertical-align: middle;
+}
