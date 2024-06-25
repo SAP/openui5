@@ -5,11 +5,11 @@
 sap.ui.define([
 	"sap/base/i18n/Formatting",
 	"sap/base/i18n/Localization",
-	"sap/ui/Global",
 	"sap/ui/VersionInfo",
 	"sap/ui/core/AnimationMode",
 	"sap/ui/core/Configuration",
 	"sap/ui/core/ControlBehavior",
+	"sap/ui/core/Core",
 	"sap/ui/core/Element",
 	"sap/ui/core/ElementMetadata",
 	"sap/ui/core/Lib",
@@ -22,11 +22,11 @@ sap.ui.define([
 	function(
 		Formatting,
 		Localization,
-		Global,
 		VersionInfo,
 		AnimationMode,
 		Configuration,
 		ControlBehavior,
+		Core,
 		Element,
 		ElementMetadata,
 		Lib,
@@ -96,9 +96,9 @@ sap.ui.define([
 		function _getFrameworkInformation() {
 			return {
 				commonInformation: {
-					version: Global.version,
-					buildTime: Global.buildinfo.buildtime,
-					lastChange: Global.buildinfo.lastchange,
+					version: Core.version,
+					buildTime: Core.buildinfo.buildtime,
+					lastChange: Core.buildinfo.lastchange,
 					jquery: jQuery.fn.jquery,
 					userAgent: navigator.userAgent,
 					applicationHREF: window.location.href,

@@ -15,13 +15,13 @@ sap.ui.define([
 	"sap/base/util/LoaderExtensions",
 	"sap/base/util/merge",
 	"sap/ui/base/ManagedObject",
+	"sap/ui/core/Core",
 	"sap/ui/core/Control",
 	"sap/ui/core/RenderManager",
 	"sap/ui/core/XMLTemplateProcessor",
 	"sap/ui/core/cache/CacheManager",
 	"sap/ui/model/resource/ResourceModel",
 	"sap/ui/util/XMLHelper",
-	"sap/ui/Global",
 	"sap/ui/VersionInfo",
 	"sap/ui/performance/trace/Interaction",
 	"sap/ui/thirdparty/jquery"
@@ -38,13 +38,13 @@ sap.ui.define([
 		LoaderExtensions,
 		merge,
 		ManagedObject,
+		Core,
 		Control,
 		RenderManager,
 		XMLTemplateProcessor,
 		Cache,
 		ResourceModel,
 		XMLHelper,
-		Global,
 		VersionInfo,
 		Interaction,
 		jQuery
@@ -497,7 +497,7 @@ sap.ui.define([
 		return VersionInfo.load().then(function(oInfo) {
 			var sTimestamp = "";
 			if (!oInfo.libraries) {
-				sTimestamp = Global.buildinfo.buildtime;
+				sTimestamp = Core.buildinfo.buildtime;
 			} else {
 				oInfo.libraries.forEach(function(oLibrary) {
 					sTimestamp += oLibrary.buildTimestamp;
