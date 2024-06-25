@@ -929,7 +929,8 @@ sap.ui.define([
 	/**
 	 * Calculates the index range to be read for the given start, length and prefetch length.
 	 * Checks if <code>aElements</code> entries are available for at least half the prefetch length
-	 * left and right to it. If not, the full prefetch length is added to this side.
+	 * left and right to it. If not, the full prefetch length is added to this side, starting at the first missing
+	 * index.
 	 *
 	 * @param {any[]} aElements
 	 *   The array of available elements
@@ -949,28 +950,35 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataUtils._getReadRange = function (aElements, iStart, iLength, iPrefetchLength, fnIsMissing) {
-		// Checks whether aElements contains at least one missing entry within the given start
-		// (inclusive) and end (exclusive).
-		function isDataMissing(iStart, iEnd) {
-			var i;
-			for (i = iStart; i < iEnd; i += 1) {
+		// Returns the index of the first missing element in the element range iFrom (inclusive) to iTo (exclusive) or
+		// -1 if no element is missing in the range
+		function getFirstMissingIndex(iFrom, iTo) {
+			const iStep = Math.sign(iTo - iFrom);
+			for (let i = iFrom; i !== iTo; i += iStep) {
 				if (aElements[i] === undefined || fnIsMissing?.(aElements[i])) {
-					return true;
+					return i;
 				}
 			}
-			return false;
+
+			return -1;
 		}
 
 		// Make sure that "half the prefetch length" is an integer. Round it up so that at least the
 		// half is checked on both sides. (With a prefetch of 5 for example, 3 elements are checked
 		// both to the left and to the right.)
 		const iHalfPrefetchLength = Math.ceil(iPrefetchLength / 2);
-		if (isDataMissing(iStart + iLength, iStart + iLength + iHalfPrefetchLength)) {
-			iLength += iPrefetchLength;
+		let iFirstMissingIndex = getFirstMissingIndex(iStart + iLength, iStart + iLength + iHalfPrefetchLength);
+		if (iFirstMissingIndex !== -1) {
+			const iAvailableElements = iFirstMissingIndex - (iStart + iLength);
+			iLength += iAvailableElements + iPrefetchLength;
 		}
-		if (isDataMissing(Math.max(iStart - iHalfPrefetchLength, 0), iStart)) {
-			iLength += iPrefetchLength;
-			iStart -= iPrefetchLength;
+		// for start index 0, both iFrom and iTo passed to getFirstMissingIndex are -1, so that it returns -1
+		iFirstMissingIndex = getFirstMissingIndex(iStart - 1, Math.max(iStart - 1 - iHalfPrefetchLength, -1));
+		if (iFirstMissingIndex !== -1) {
+			const iAvailableElements = iStart - 1 - iFirstMissingIndex;
+			const iAdditionalElements = iAvailableElements + iPrefetchLength;
+			iLength += iAdditionalElements;
+			iStart -= iAdditionalElements;
 			if (iStart < 0) {
 				iLength += iStart; // Note: Infinity + -Infinity === NaN
 				if (isNaN(iLength)) {

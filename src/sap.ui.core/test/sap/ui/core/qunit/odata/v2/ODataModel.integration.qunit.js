@@ -8628,9 +8628,9 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					encodeRequestUri : false,
 					requestUri : "Items"
 						+ "?$select=AccountingDocumentItem,AmountInCompanyCodeCurrency,"
-						+ "Currency&$orderby=AccountingDocumentItem%20desc&$skip=11&$top=6"
+						+ "Currency&$orderby=AccountingDocumentItem%20desc&$skip=11&$top=10"
 				}, {
-					results : getItems(6)
+					results : getItems(10)
 				});
 
 			// code under test: gap at the end
@@ -8666,9 +8666,9 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					encodeRequestUri : false,
 					requestUri : "Items"
 						+ "?$select=AccountingDocumentItem,AmountInCompanyCodeCurrency,Currency"
-						+ "&$orderby=AccountingDocumentItem%20desc&$skip=84&$top=6"
+						+ "&$orderby=AccountingDocumentItem%20desc&$skip=80&$top=10"
 				}, {
-					results : getItems(6)
+					results : getItems(10)
 				});
 
 			// code under test: gap in front of start index
@@ -13105,8 +13105,8 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		return this.createView(assert, sView, oModel).then(function () {
 			oTable = that.oView.byId("table");
 
-			that.expectRequest("SalesOrderSet?$skip=12&$top=6", {
-					results : getItems(12, 6)
+			that.expectRequest("SalesOrderSet?$skip=12&$top=10", {
+					results : getItems(12, 10)
 				})
 				.expectValue("textId", "ID 6", 6)
 				.expectValue("textId", "ID 7", 7);
@@ -13163,8 +13163,8 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectRequest("SalesOrderSet?$skip=84&$top=6", {
-					results : getItems(84, 6)
+			that.expectRequest("SalesOrderSet?$skip=80&$top=10", {
+					results : getItems(80, 10)
 				})
 				.expectValue("textId", "ID 94", 94)
 				.expectValue("textId", "ID 95", 95);
