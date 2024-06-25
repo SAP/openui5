@@ -143,6 +143,7 @@ sap.ui.define([
 		assert.deepEqual(oModel.aAllBindings, []);
 		assert.strictEqual(oModel.aPrerenderingTasks, null);
 		assert.strictEqual(oModel.getOptimisticBatchEnabler(), null);
+		assert.strictEqual(oModel.fnHttpListener, null);
 		oMetaModel = oModel.getMetaModel();
 		assert.ok(oMetaModel instanceof ODataMetaModel);
 		assert.strictEqual(oMetaModel.oRequestor, oMetadataRequestor);
@@ -455,6 +456,7 @@ sap.ui.define([
 					getReporter : sinon.match.func,
 					isIgnoreETag : sinon.match.func,
 					onCreateGroup : sinon.match.func,
+					onHttpResponse : sinon.match.func,
 					reportStateMessages : sinon.match.func,
 					reportTransitionMessages : sinon.match.func,
 					updateMessages : sinon.match.func
@@ -509,6 +511,7 @@ sap.ui.define([
 					getReporter : "~fnGetReporter~",
 					isIgnoreETag : sinon.match.func,
 					onCreateGroup : sinon.match.func,
+					onHttpResponse : sinon.match.func,
 					reportStateMessages : "~fnReportStateMessages~",
 					reportTransitionMessages : "~fnReportTransitionMessages~",
 					updateMessages : sinon.match.func
@@ -585,6 +588,35 @@ sap.ui.define([
 		oModelInterface.updateMessages("~oldMessages~", "~newMessages~");
 
 		assert.strictEqual(oModelInterface.isIgnoreETag(), "~bIgnoreETag~");
+
+		assert.strictEqual(oModel.fnHttpListener, null, "not yet there");
+
+		// code under test (MUST NOT fail)
+		oModelInterface.onHttpResponse();
+
+		const fnHttpListener = sinon.spy();
+
+		// code under test
+		oModel.setHttpListener(fnHttpListener);
+
+		assert.strictEqual(oModel.fnHttpListener, fnHttpListener);
+
+		// code under test
+		oModelInterface.onHttpResponse("~mHeaders~");
+
+		assert.ok(fnHttpListener.calledOnce);
+		assert.ok(fnHttpListener.calledOn(undefined), "no this");
+		assert.ok(fnHttpListener.calledWithExactly({responseHeaders : "~mHeaders~"}));
+
+		// code under test
+		oModel.setHttpListener("foo");
+
+		assert.strictEqual(oModel.fnHttpListener, "foo");
+
+		// code under test
+		oModel.setHttpListener(null);
+
+		assert.strictEqual(oModel.fnHttpListener, null);
 	});
 });
 

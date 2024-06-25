@@ -2332,6 +2332,29 @@ sap.ui.define([
 		},
 
 		/**
+		 * Returns a map from HTTP response header names (in all lower case) to their string values.
+		 *
+		 * @param {string} sRawHeaders - A return value of XMLHttpRequest#getAllResponseHeaders
+		 * @returns {Object<string>} - A map from names to values
+		 *
+		 * @public
+		 */
+		parseRawHeaders : function (sRawHeaders) {
+			return sRawHeaders.split("\r\n")
+				.slice(0, -1) // #split leaves an extra empty line
+				.reduce((mHeaders, sRawLine) => {
+					const iColon = sRawLine.indexOf(": ");
+					if (iColon < 0) { // no value
+						mHeaders[sRawLine] = "";
+					} else {
+						mHeaders[sRawLine.slice(0, iColon).toLowerCase()]
+							= sRawLine.slice(iColon + 2);
+					}
+					return mHeaders;
+				}, {});
+		},
+
+		/**
 		 * Returns a clone of the given value where all occurrences of the private namespace
 		 * object have been deleted.
 		 *

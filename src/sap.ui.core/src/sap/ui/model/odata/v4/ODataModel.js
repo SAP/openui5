@@ -374,6 +374,10 @@ sap.ui.define([
 					that.addPrerenderingTask(that._submitBatch.bind(that, sGroupId, true));
 				}
 			},
+			onHttpResponse : function (mHeaders) {
+				const fnHttpListener = that.fnHttpListener; // avoid "this" when calling
+				fnHttpListener?.({responseHeaders : mHeaders});
+			},
 			reportStateMessages : this.reportStateMessages.bind(this),
 			reportTransitionMessages : this.reportTransitionMessages.bind(this),
 			updateMessages : function (aOldMessages, aNewMessages) {
@@ -404,6 +408,7 @@ sap.ui.define([
 			this.mSupportedBindingModes.TwoWay = true;
 		}
 		this.aPrerenderingTasks = null; // @see #addPrerenderingTask
+		this.fnHttpListener = null;
 		this.fnOptimisticBatchEnabler = null;
 		// maps the path to the error for the next dataReceived event
 		this.mPath2DataReceivedError = {};
@@ -2755,6 +2760,27 @@ sap.ui.define([
 	 */
 	ODataModel.prototype.setIgnoreETag = function (bIgnoreETag) {
 		this.bIgnoreETag = bIgnoreETag;
+	};
+
+	/**
+	 * Sets a listener for HTTP responses which is called every time with the full set of headers
+	 * received.
+	 *
+	 * @param {function(object)} fnListener
+	 *   A function which is called with an object containing the following properties. This
+	 *   function must never fail!
+	 *   <ul>
+	 *     <li> <code>responseHeaders</code> A map from HTTP response header names (in all lower
+	 *       case) to their string values. Of course, "Set-Cookie" is not available here.
+	 *   </ul>
+	 *
+	 * @private
+	 * @see #changeHttpHeaders
+	 * @since 1.126.0
+	 * @ui5-restricted sap.payroll
+	 */
+	ODataModel.prototype.setHttpListener = function (fnListener) {
+		this.fnHttpListener = fnListener;
 	};
 
 	/**

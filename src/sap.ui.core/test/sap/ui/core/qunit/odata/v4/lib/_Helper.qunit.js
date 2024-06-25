@@ -757,6 +757,26 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("parseRawHeaders", function (assert) {
+		// code under test
+		assert.deepEqual(_Helper.parseRawHeaders(""), {});
+
+		// code under test
+		assert.deepEqual(_Helper.parseRawHeaders("a: b\r\nIGNORED"), {a : "b"}, "unsupported");
+
+		const sRawHeaders
+			= "a:b\r\nfoo: bar: baz: \r\nBAR: http://localhost:8080\r\nfoo:bar: baz\r\n";
+
+		// code under test
+		assert.deepEqual(_Helper.parseRawHeaders(sRawHeaders), {
+			"a:b" : "", // empty value
+			foo : "bar: baz: ",
+			bar : "http://localhost:8080", // key in all lower case
+			"foo:bar" : "baz"
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("buildPath", function (assert) {
 		assert.strictEqual(_Helper.buildPath(), "");
 		assert.strictEqual(_Helper.buildPath("base"), "base");

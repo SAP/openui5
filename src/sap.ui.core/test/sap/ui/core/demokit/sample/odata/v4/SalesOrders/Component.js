@@ -44,6 +44,24 @@ sap.ui.define([
 					"sap.ui.core.sample.odata.v4.SalesOrders.Component");
 			});
 
+			oModel.setHttpListener((oInterface) => {
+				const mHeaders = oInterface.responseHeaders;
+				Log.debug("HttpListener", JSON.stringify(mHeaders),
+					"sap.ui.core.sample.odata.v4.SalesOrders.Component");
+				const mNewHeaders = {};
+				if ("date" in mHeaders) {
+					mNewHeaders["X-Y-Z-myDate"] = mHeaders["date"];
+				}
+				if ("etag" in mHeaders) {
+					mNewHeaders["X-Y-Z-myETag"] = mHeaders["etag"];
+				}
+				try {
+					oModel.changeHttpHeaders(mNewHeaders);
+				} catch (e) {
+					// Ever tried. Ever failed. No matter.
+				}
+			});
+
 			// the same model can be accessed via two names to allow for different binding contexts
 			this.setModel(oModel, "headerContext");
 			this.setModel(oModel, "parameterContext");
