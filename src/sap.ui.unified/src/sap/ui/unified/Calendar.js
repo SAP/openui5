@@ -924,6 +924,8 @@ sap.ui.define([
 	};
 
 	Calendar.prototype.setSecondaryCalendarType = function(sCalendarType){
+		var iColumnsPerRow = sCalendarType ? 2 : 3, // when there are two calendar types, the months should be displayed in two columns
+			oMonthPicker = this._getMonthPicker();
 
 		this.setProperty("secondaryCalendarType", sCalendarType);
 
@@ -936,7 +938,8 @@ sap.ui.define([
 			oMonth.setSecondaryCalendarType(sCalendarType);
 		}
 
-		this._getMonthPicker().setSecondaryCalendarType(sCalendarType);
+		oMonthPicker.setSecondaryCalendarType(sCalendarType);
+		oMonthPicker.setColumns(iColumnsPerRow);
 		this._getYearPicker().setSecondaryCalendarType(sCalendarType);
 		this._getYearRangePicker().setSecondaryCalendarType(sCalendarType);
 
