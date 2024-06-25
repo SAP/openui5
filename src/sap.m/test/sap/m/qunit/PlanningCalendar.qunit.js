@@ -853,6 +853,28 @@ sap.ui.define([
 		await nextUIUpdate();
 	});
 
+	QUnit.test("Title rendered with a proper id", async function(assert) {
+		// prepare
+		var oPlanningCalendar = new PlanningCalendar({
+			ariaLabelledBy: ["idtitle"],
+			toolbarContent: [
+				new Title("idtitle", {text: "title of planning calendar"})
+			]
+		});
+
+		oPlanningCalendar.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		var oInnerTitle = oPlanningCalendar._getHeader()._oTitle;
+		const oTitleDomRef = oPlanningCalendar.getDomRef().querySelector(`[data-sap-ui='${oInnerTitle.getId()}']`);
+
+		// assert
+		assert.ok(oTitleDomRef, "There is a sap.m.Title rendered with the given ID.");
+
+		// clean
+		oPlanningCalendar.destroy();
+	});
+
 	QUnit.module("rendering - Hours View", {
 		beforeEach: function () {
 			this.oPC = createPlanningCalendar("PC3", new SearchField(), new Button());
