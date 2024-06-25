@@ -1,0 +1,62 @@
+/* =================================================== */
+/* CSS for control sap.ui.layout/ResponsiveFlowLayout  */
+/* Base theme                                          */
+/* =================================================== */
+
+.sapUiRFL {
+	position: relative;
+	display: inline-block;
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.sapUiRFLRow {
+	position: relative;
+	display: block;
+	box-sizing: border-box;
+}
+
+.sapUiRFLContainer {
+	position: relative;
+	display: inline-block;
+	box-sizing: border-box;
+	vertical-align: top;
+	overflow: hidden;
+}
+
+.sapUiRFLRow > .sapUiRFLContainer:first-child > .sapUiRFLContainerContent.sapUiRFLPaddingClass:first-child {
+	padding-left: 0;
+}
+
+.sapUiRFLRow > .sapUiRFLContainer:last-child > .sapUiRFLContainerContent.sapUiRFLPaddingClass:last-child {
+	padding-right: 0;
+}
+
+.sapUiRFLMultiContainerContent {
+	white-space: nowrap;
+}
+
+.sapUiRFLMultiContent {
+	display: inline-block;
+	box-sizing: border-box;
+}
+
+.sapUiRFLMultiContainerContent > .sapUiRFLMultiContent.sapUiRFLPaddingClass:last-child {
+	padding-right: 0;
+}
+
+.sapUiRFLPaddingClass {
+	padding: 0 0 8px 8px;
+}
+
+.sapUiRFLFullLength > .sapUiRFLPaddingClass {
+	padding-left: 0;
+}
+
+.sapUiRFLMultiContent.sapUiRFLPaddingClass {
+	padding: 0 0 8px 8px;
+}
+
+.sapUiRFLMultiContainerContent > .sapUiRFLMultiContent.sapUiRFLPaddingClass:first-child {
+	padding-left: 0;
+}

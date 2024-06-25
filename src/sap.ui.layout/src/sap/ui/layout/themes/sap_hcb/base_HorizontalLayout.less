@@ -1,0 +1,61 @@
+/* =============================================== */
+/* CSS for control sap.ui.layout/HorizontalLayout  */
+/* Base theme                                      */
+/* =============================================== */
+
+.sapUiHLayout {
+	display: inline-block;
+	white-space: normal;
+}
+
+.sapUiHLayoutNoWrap {
+	white-space: nowrap;
+}
+
+.sapUiHLayoutChildWrapper {
+	white-space: normal;
+	display: inline-block;
+	vertical-align: top;
+}
+
+/* mixin call for creating container content padding classes (arguments: rootContainer, contentSelector) */
+.sapUiContainerContentPadding(~".sapUiHLayout");
+
+/* add padding between cells as well */
+.sapUiHLayout.sapUiContentPadding > .sapUiHLayoutChildWrapper:not(:last-child) {
+	padding-right: 1rem;
+	box-sizing: border-box;
+}
+
+@media (max-width: 599px) {
+	.sapMSplitContainerHideMode > .sapMSplitContainerDetail .sapUiHLayout.sapUiResponsiveContentPadding ,
+	.sapMSplitContainerPortrait > .sapMSplitContainerDetail .sapUiHLayout.sapUiResponsiveContentPadding ,
+	.sapUiHLayout.sapUiResponsiveContentPadding  > .sapUiHLayoutChildWrapper:not(:last-child) {
+		padding: 0;
+	}
+}
+@media (min-width: 600px) and (max-width: 1023px) {
+	.sapMSplitContainerHideMode > .sapMSplitContainerDetail .sapUiHLayout.sapUiResponsiveContentPadding ,
+	.sapUiHLayout.sapUiResponsiveContentPadding  > .sapUiHLayoutChildWrapper:not(:last-child) {
+		padding-right: 1rem;
+		box-sizing: border-box;
+	}
+}
+@media (min-width: 1024px) {
+	.sapMSplitContainerHideMode > .sapMSplitContainerDetail .sapUiHLayout.sapUiResponsiveContentPadding ,
+	.sapUiHLayout.sapUiResponsiveContentPadding  > .sapUiHLayoutChildWrapper:not(:last-child) {
+		padding-right: 1rem;
+		box-sizing: border-box;
+	}
+}
+
+.sapMSplitContainerDetail .sapUiHLayout.sapUiResponsiveContentPadding  > .sapUiHLayoutChildWrapper:not(:last-child) {
+	padding-right: 1rem;
+}
+
+/* fix for BCP: 1580166858
+ * HorizontalLayout inside table cell doesn't respect the width of the cell but the width of the control that is inside it
+ */
+.sapMListTblCell .sapUiHLayout {
+	width: 100%;
+}

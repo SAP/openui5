@@ -1,0 +1,57 @@
+.sapUiAFLayout {
+	position: relative;
+	display: flex;
+	flex-wrap: wrap;
+	margin: 0;
+	padding: 0;
+}
+
+.sapUiAFLayoutNoContent {
+	justify-content: flex-end;
+}
+
+.sapUiAFLayoutItem,
+.sapUiAFLayoutEnd {
+	overflow: hidden;
+}
+
+.sapUiAFLayoutItem {
+	flex-grow: 1;
+	flex-shrink: 0;
+	/* text-align: center;  TODO: ? good for galleries, maybe not good for other usages... maybe a property? */
+}
+
+.sapUiAFLayoutItem > * {
+	max-width: 100%;
+}
+
+/* the dummy elements for the last line */
+.sapUiAFLayoutSpacer {
+	height: 0;
+	margin-top: 0 !important; /* override custom CSS added to the sapUiAFLayoutItem class */
+	visibility: hidden;
+}
+
+.sapUiAFLayoutEnd {
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	text-align: end;
+	display: inline-block;
+}
+
+.sapUiAFLayoutEnd:only-child {
+	position: static;
+}
+
+.sapUiAFLayoutOneLine > .sapUiAFLayoutSpacer {
+	display: none;
+}
+
+.sapUiAFLayoutOneLine > .sapUiAFLayoutSpacer:last-child {
+	flex-basis: auto !important; /* needs to override inline style */
+	flex-grow: 0;
+}
+
+/* mixin call for creating container content padding classes (arguments: rootContainer, contentSelector) */
+.sapUiContainerContentPadding(~".sapUiAFLayout");
