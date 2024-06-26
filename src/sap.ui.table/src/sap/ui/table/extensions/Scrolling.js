@@ -1353,7 +1353,7 @@ sap.ui.define([
 
 			let bScrolledToEnd = false;
 			if (bScrollingForward) {
-				bScrolledToEnd = oVSb.scrollTop === oVSb.scrollHeight - oVSb.offsetHeight;
+				bScrolledToEnd = Math.round(oVSb.scrollTop) === oVSb.scrollHeight - oVSb.offsetHeight;
 			} else {
 				bScrolledToEnd = oVSb.scrollTop === 0;
 			}
@@ -1875,7 +1875,7 @@ sap.ui.define([
 				const oVerticalScrollPosition = _private(this).oVerticalScrollPosition;
 
 				if (bScrollingForward) {
-					bScrolledToEnd = oVSb.scrollTop === oVSb.scrollHeight - oVSb.offsetHeight;
+					bScrolledToEnd = Math.round(oVSb.scrollTop) === oVSb.scrollHeight - oVSb.offsetHeight;
 				} else {
 					bScrolledToEnd = oVSb.scrollTop === 0;
 				}
