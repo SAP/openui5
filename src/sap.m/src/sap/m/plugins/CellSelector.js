@@ -196,15 +196,28 @@ sap.ui.define([
 				return;
 			}
 
-			var mBounds = this._bSelecting ? this._getNormalizedBounds(this._oSession.mSource, this._oSession.mTarget) : {};
-			if (isKeyCombination(oEvent, KeyCodes.SPACE, false, false)) {
-				if (!isSelectableCell(oEvent.target, this.getConfig("selectableCells"))) {
-					return;
+			/*
+			Handling CTRL + SPACE for Column Selection. Will be handled/implemented in a separate BLI
+
+			if (isKeyCombination(oEvent, KeyCodes.SPACE, false, true) && this._getSelectableCell(oEvent.target)) {
+				if (!this._inSelection(oEvent.target)) {
+					// If focus is on cell outside of selection, select focused column
+					this._oSession.mSource = this._oSession.mTarget = this.getConfig("getCellInfo", this.getControl(), oEvent.target, this._oPreviousCell);
 				}
-				this._oPreviousCell = null;
-				this._startSelection(oEvent, false);
-				oEvent.setMarked();
-			} else if (isKeyCombination(oEvent, KeyCodes.SPACE, true, false)) {
+				this._oSession.mSource = Object.assign({}, this._oSession.mSource, { rowIndex: 0 });
+				this._oSession.mTarget = Object.assign({}, this._oSession.mTarget, { rowIndex: Infinity });
+
+				const mBounds = this._getNormalizedBounds(this._oSession.mSource, this._oSession.mTarget, true);
+
+				this._bSelecting = true;
+				this._selectCells(mBounds.from, mBounds.to);
+
+				oEvent.preventDefault();
+			}
+			*/
+
+			if (isKeyCombination(oEvent, KeyCodes.SPACE, true, false)) {
+				const mBounds = this._bSelecting ? this._getNormalizedBounds(this._oSession.mSource, this._oSession.mTarget) : {};
 				const oInfo = this.getConfig("getCellInfo", this.getControl(), oEvent.target, this._oPreviousCell);
 				if (!this._inSelection(oEvent.target)) {
 					mBounds.from = mBounds.to = {};
@@ -215,20 +228,13 @@ sap.ui.define([
 
 				oEvent.setMarked();
 				oEvent.preventDefault();
-			} else if (isKeyCombination(oEvent, KeyCodes.SPACE, false, true) && this._getSelectableCell(oEvent.target)) {
-				if (!this._inSelection(oEvent.target)) {
-					// If focus is on cell outside of selection, select focused column
-					const oInfo = this.getConfig("getCellInfo", this.getControl(), oEvent.target, this._oPreviousCell);
-					mBounds.from = Object.assign({}, oInfo);
-					mBounds.to = Object.assign({}, oInfo);
+			} else if (isKeyCombination(oEvent, KeyCodes.SPACE, false, false)) {
+				if (!isSelectableCell(oEvent.target, this.getConfig("selectableCells"))) {
+					return;
 				}
-				mBounds.from.rowIndex = 0;
-				mBounds.to.rowIndex = Infinity;
-
-				this._bSelecting = true;
-				this._selectCells(mBounds.from, mBounds.to);
-
-				oEvent.preventDefault();
+				this._oPreviousCell = null;
+				this._startSelection(oEvent, false);
+				oEvent.setMarked();
 			}
 		},
 		onmousedown: function(oEvent) {
@@ -302,8 +308,7 @@ sap.ui.define([
 				if (!this._oSession.mSource || !this._oSession.mTarget) {
 					return;
 				}
-				const mBounds = this._getNormalizedBounds(this._oSession.mSource, this._oSession.mTarget);
-				this._drawSelection(mBounds);
+				this._drawSelection(this._oSession.mSource, this._oSession.mTarget);
 			}
 		}.bind(this);
 		this._fnOnMouseEnter = this._onmouseenter.bind(this);
@@ -425,7 +430,7 @@ sap.ui.define([
 			return null;
 		}
 
-		var mSelectionRange = this._getNormalizedBounds(this._oSession.mSource, this._oSession.mTarget, true);
+		var mSelectionRange = this._getNormalizedBounds(this._oSession.mSource, this._oSession.mTarget);
 		if (isNaN(mSelectionRange.from.rowIndex) || isNaN(mSelectionRange.to.rowIndex)) {
 			return null;
 		}
@@ -902,13 +907,11 @@ sap.ui.define([
 			this._oSession.cellTypes.push(mTo.type);
 		}
 
-		var mBounds = this._getNormalizedBounds(mFrom, mTo);
-
 		if (mTo.rowIndex == Infinity || mFrom.rowIndex == Infinity) {
-			this.getConfig("loadContexts", this.getControl(), mBounds.from.rowIndex, this.getRangeLimit());
+			this.getConfig("loadContexts", this.getControl(), Math.max(Math.min(mFrom, mTo), 0), this.getRangeLimit());
 		}
 
-		this._drawSelection(mBounds);
+		this._drawSelection(mFrom, mTo);
 
 		if (!deepEqual(this._oSession.mSource, mFrom) || !deepEqual(this._oSession.mTarget, mTo)) {
 			this._oSession.mSource = mFrom;
@@ -917,7 +920,10 @@ sap.ui.define([
 		}
 	};
 
-	CellSelector.prototype._drawSelection = function (mBounds) {
+	CellSelector.prototype._drawSelection = function (mFrom, mTo) {
+		const bAdjustBounds = !isFinite(mFrom.rowIndex) || !isFinite(mTo.rowIndex);
+		const mBounds = this._getNormalizedBounds(mFrom, mTo, bAdjustBounds);
+
 		if (!mBounds.from || !mBounds.to) {
 			return;
 		}
@@ -1065,16 +1071,16 @@ sap.ui.define([
 	 * <code>to</code> contains the coordinates of the lower right corner of the bounding area.
 	 * @param {Object} mFrom Source cell coordinates
 	 * @param {Object} mTo Target cell coordinates
-	 * @param {boolean} bKeepBounds
+	 * @param {boolean} bAdjustBounds bounds are adjusted to fit into limit/table boundaries (e.g. range selection)
 	 * @returns {object} Object containing coordinates for the bounding area
 	 */
-	CellSelector.prototype._getNormalizedBounds = function(mFrom, mTo, bKeepBounds) {
+	CellSelector.prototype._getNormalizedBounds = function(mFrom, mTo, bAdjustBounds) {
 		const iMaxColumns = this.getConfig("numberOfColumns", this.getControl());
 		const iMaxRows = this.getRangeLimit() == 0 ? this.getConfig("getRowCount", this.getControl()) : this.getRangeLimit();
 
 		let toRowIndex = Math.max(mFrom.rowIndex, mTo.rowIndex), toColIndex = Math.max(mFrom.colIndex, mTo.colIndex);
-		if (!bKeepBounds) {
-			toRowIndex = Math.min(iMaxRows - 1, toRowIndex);
+		if (bAdjustBounds) {
+			toRowIndex = Math.min(iMaxRows, toRowIndex);
 			toColIndex = Math.min(iMaxColumns, toColIndex);
 		}
 
@@ -1384,25 +1390,17 @@ sap.ui.define([
 				return true;
 			},
 			drawCellBorder: function(oTable, oCellRef, mPosition, mBounds) {
-				const aRefs = [oCellRef];
-				oCellRef.classList.toggle("sapMPluginsCellSelectorTop", mPosition.rowIndex == mBounds.from.rowIndex);
-				oCellRef.classList.toggle("sapMPluginsCellSelectorBottom", mPosition.rowIndex == mBounds.to.rowIndex);
+				const sTop = this.isBottomToTop(oTable) ? "sapMPluginsCellSelectorBottom" : "sapMPluginsCellSelectorTop";
+				const sBottom = this.isBottomToTop(oTable) ? "sapMPluginsCellSelectorTop" : "sapMPluginsCellSelectorBottom";
+
+				oCellRef.classList.toggle(sTop, mPosition.rowIndex == mBounds.from.rowIndex);
+				oCellRef.classList.toggle(sBottom, mPosition.rowIndex == mBounds.to.rowIndex);
 				oCellRef.classList.toggle("sapMPluginsCellSelectorRight", mPosition.colIndex == mBounds.to.colIndex);
+				oCellRef.classList.toggle("sapMPluginsCellSelectorLeft", mPosition.colIndex == mBounds.from.colIndex);
 				oCellRef.classList.toggle("sapMPluginsCellSelectorSelected", true);
 				oCellRef.setAttribute("aria-selected", "true");
 
-				// Grid Table has only border-right, so adding border-left would change the size of the column. Instead, for the left border, take the previous cell and set border-right.
-				if (mPosition.colIndex == mBounds.from.colIndex) {
-					const oPrevCellRef = this.getCellRef(oTable, {rowIndex: mPosition.rowIndex, colIndex: mPosition.colIndex - 1});
-					let sClass = "sapMPluginsCellSelectorLeft";
-					if (oPrevCellRef) {
-						oCellRef = oPrevCellRef;
-						sClass = "sapMPluginsCellSelectorRight";
-						aRefs.push(oCellRef);
-					}
-					oCellRef.classList.toggle(sClass, mPosition.colIndex == mBounds.from.colIndex);
-				}
-				return aRefs;
+				return [oCellRef];
 			},
 			loadContexts: function (oTable, iStartIndex, iLength) {
 				var oBinding = oTable.getBinding("rows");
