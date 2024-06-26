@@ -85,7 +85,12 @@ sap.ui.define([
 					}
 				}
 			};
-
+			this.oChange3 = {
+				"/sap.card/header/icon/src": "sap-icon://call",
+				"/sap.card/content/options/attributes/enableInteraction": true,
+				":errors": false,
+				":layer": 0
+			};
 		}
 	}, function() {
 		QUnit.test("with two changes", function (assert) {
@@ -180,6 +185,76 @@ sap.ui.define([
 			var oCopy = merge({}, this.oBaseJson);
 			CardMerger.mergeCardDelta(this.oBaseJson, []);
 			assert.deepEqual(oCopy, this.oBaseJson, "the manifest was not changed");
+		});
+
+		QUnit.test("with change which path not exist 01", function (assert) {
+			var oExpectedManifest = merge({}, this.oBaseJson, {
+				"sap.card": {
+					"header": {
+						"icon": {
+							"src": "sap-icon://call"
+						}
+					},
+					"content": {
+						"options": {
+							"attributes": {
+								"enableInteraction": true
+							}
+						}
+					}
+				}
+			});
+			var oCopy = merge({}, this.oBaseJson);
+			var oNewManifest = CardMerger.mergeCardDelta(this.oBaseJson, [this.oChange3]);
+			assert.deepEqual(oCopy, this.oBaseJson, "the original manifest was not mutated");
+			assert.deepEqual(oNewManifest, oExpectedManifest, "the delta was merged correctly");
+		});
+
+		QUnit.test("with change which path not exist 02", function (assert) {
+			var oExpectedManifest = merge({}, this.oBaseJson, {
+				"sap.card": {
+					"header": {
+						"icon": {
+							"src": "sap-icon://call"
+						},
+						"icon1": {
+							"src": "sap-icon://call1"
+						}
+					},
+					"content": {
+						"options": {
+							"attributes": {
+								"enableInteraction": true
+							}
+						},
+						"options1": {
+							"attributes": {
+								"enableInteraction": false
+							}
+						}
+					}
+				}
+			});
+			var oCopy = merge({}, this.oBaseJson);
+			var oBaseJsonUpdated = merge({}, this.oBaseJson, {
+				"sap.card": {
+					"header": {
+						"icon1": {
+							"src": "sap-icon://call1"
+						}
+					},
+					"content": {
+						"options1": {
+							"attributes": {
+								"enableInteraction": false
+							}
+						}
+					}
+				}
+			});
+			var oNewManifest = CardMerger.mergeCardDelta(oBaseJsonUpdated, [this.oChange3]);
+			assert.deepEqual(oCopy, this.oBaseJson, "the original manifest was not mutated");
+			assert.deepEqual(oNewManifest, oExpectedManifest, "the delta was merged correctly");
 		});
 	});
 

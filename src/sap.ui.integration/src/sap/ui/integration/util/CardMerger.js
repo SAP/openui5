@@ -20,9 +20,22 @@ sap.ui.define([
 			Object.keys(oChange).forEach(function (s) {
 				if (s.charAt(0) === "/") {
 					var value = oChange[s];
-					oModel.setProperty(s, value);
+					CardMerger.updateManifestProperty(oModel, s, value);
 				}
 			});
+		},
+		updateManifestProperty: function (oModel, path, value) {
+			var bSuccess = oModel.setProperty(path, value);
+			if (!bSuccess) {
+				// path not exists in model data
+				var iLastSlash = path.lastIndexOf("/");
+				// In case there is only one slash at the beginning, sParentPath must contain this slash
+				var sParentPath = path.substring(0, iLastSlash || 1);
+				var sProperty = path.substring(iLastSlash + 1);
+				var oValue = {};
+				oValue[sProperty] = value;
+				CardMerger.updateManifestProperty(oModel, sParentPath, oValue);
+			}
 		},
 		mergeTextsChanges: function (oModel, oTexts, oDesigntime) {
 			var sLanguage =  Utils._language;
