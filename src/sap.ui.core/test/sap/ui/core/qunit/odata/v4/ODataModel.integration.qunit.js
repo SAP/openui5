@@ -5675,11 +5675,13 @@ sap.ui.define([
 	// Scenario: One-way property binding for a collection of complex type. Check that refresh and
 	// side effects works.
 	// JIRA: CPOUI5ODATAV4-2638
+	//
+	// Support client-side updates (JIRA: CPOUI5ODATAV4-2661)
 	QUnit.test("CPOUI5ODATAV4-2638: OneWay - Collection(ComplexType)", async function (assert) {
 		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
 		const sView = `
 <FlexBox id="form" binding="{/EMPLOYEES('1')}">
-	<Text id="name" text="{Name}"/>
+	<Input id="name" value="{Name}"/>
 	<Text id="messages" text="{
 		formatter : '.myFormatter',
 		mode : 'OneWay',
@@ -5778,19 +5780,39 @@ sap.ui.define([
 				.requestSideEffects(["__CT__FAKE__Message/__FAKE__Messages"]),
 			this.waitForChanges(assert, "side effects")
 		]);
+
+		this.expectChange("name", "Frederic Spring")
+			.expectRequest({
+				method : "PATCH",
+				payload : {
+					Name : "Frederic Spring"
+				},
+				url : "EMPLOYEES('1')"
+			}, {
+				ID : "1",
+				Name : "Frederic Spring",
+				__CT__FAKE__Message : {
+					__FAKE__Messages : [{
+						message : "What a nice name!"
+					}]
+				}
+			})
+			.expectChange("messages", "What a nice name!");
+		expectMessages(["What a nice name!"]);
+
+		// code under test (JIRA: CPOUI5ODATAV4-2661)
+		this.oView.byId("name").getBinding("value").setValue("Frederic Spring");
+
+		await this.waitForChanges(assert, "update name");
 	});
-	//TODO _Helper.updateExisting
-	// => PATCH/updating a property probably doesn't work - use $$patchWithoutSideEffects instead!
-	//TODO _Helper.updateAll
-	// => _Cache#setProperty
-	// => _Cache#update
-	// => update operation's $Parameter
 
 	//*********************************************************************************************
 	// Scenario: One-way property binding for an object of complex type. Check that refresh and
 	// side effects works, although there may be "change" events w/o real changes. Do this in the
 	// presence of a property binding for only a part of that object.
 	// JIRA: CPOUI5ODATAV4-2638
+	//
+	// Support client-side partial updates (JIRA: CPOUI5ODATAV4-2661)
 	QUnit.test("CPOUI5ODATAV4-2638: OneWay - object w/ ComplexType, #1", async function (assert) {
 		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
 		const sView = `
@@ -5802,7 +5824,7 @@ sap.ui.define([
 		path : 'SALARY',
 		targetType : 'any'
 	}"/>
-	<Text id="monthly" text="{SALARY/MONTHLY_BASIC_SALARY_AMOUNT}"/>
+	<Input id="monthly" value="{SALARY/MONTHLY_BASIC_SALARY_AMOUNT}"/>
 </FlexBox>`;
 		const oController = {
 			myFormatter : (oSalary) => {
@@ -5814,10 +5836,10 @@ sap.ui.define([
 				ID : "1",
 				Name : "Frederic Fall",
 				SALARY : {
-					MONTHLY_BASIC_SALARY_AMOUNT : "1234",
 					BASIC_SALARY_CURR : "EUR",
-					YEARLY_BONUS_AMOUNT : "567",
-					BONUS_CURR : "DEM"
+					BONUS_CURR : "DEM",
+					MONTHLY_BASIC_SALARY_AMOUNT : "1234",
+					YEARLY_BONUS_AMOUNT : "567"
 				}
 			})
 			.expectChange("salary", "1234 EUR")
@@ -5827,10 +5849,10 @@ sap.ui.define([
 
 		const oContext = this.oView.byId("form").getBindingContext();
 		const oNewSalary = {
-			MONTHLY_BASIC_SALARY_AMOUNT : "1234.89",
 			BASIC_SALARY_CURR : "EUR",
-			YEARLY_BONUS_AMOUNT : "567",
-			BONUS_CURR : "DEM"
+			BONUS_CURR : "DEM",
+			MONTHLY_BASIC_SALARY_AMOUNT : "1234.89",
+			YEARLY_BONUS_AMOUNT : "567"
 		};
 
 		this.expectRequest("EMPLOYEES('1')?$select=SALARY", {
@@ -5861,6 +5883,33 @@ sap.ui.define([
 			oContext.requestRefresh(),
 			this.waitForChanges(assert, "refresh")
 		]);
+
+		this.expectChange("monthly", "2,345.67")
+			.expectChange("salary", "2345.67 EUR")
+			.expectRequest({
+				method : "PATCH",
+				payload : {
+					SALARY : {
+						BASIC_SALARY_CURR : "EUR",
+						MONTHLY_BASIC_SALARY_AMOUNT : "2345.67"
+					}
+				},
+				url : "EMPLOYEES('1')"
+			}, {
+				SALARY : {
+					BASIC_SALARY_CURR : "DEM", // side effect
+					BONUS_CURR : "DEM",
+					MONTHLY_BASIC_SALARY_AMOUNT : "2345", // side effect
+					YEARLY_BONUS_AMOUNT : "567"
+				}
+			})
+			.expectChange("monthly", "2,345")
+			.expectChange("salary", "2345 DEM");
+
+		// code under test (JIRA: CPOUI5ODATAV4-2661)
+		this.oView.byId("monthly").getBinding("value").setValue("2345.67");
+
+		await this.waitForChanges(assert, "update MONTHLY_BASIC_SALARY_AMOUNT");
 	});
 
 	//*********************************************************************************************
@@ -5893,8 +5942,8 @@ sap.ui.define([
 		this.expectRequest("EMPLOYEES('1')?$select=ID,SALARY", {
 				ID : "1",
 				SALARY : {
-					MONTHLY_BASIC_SALARY_AMOUNT : "1234",
-					BASIC_SALARY_CURR : "DEM"
+					BASIC_SALARY_CURR : "DEM",
+					MONTHLY_BASIC_SALARY_AMOUNT : "1234"
 				}
 			})
 			.expectChange("salary", "1234 DEM");
@@ -5921,8 +5970,8 @@ sap.ui.define([
 				value : [{
 					ID : "1",
 					SALARY : {
-						MONTHLY_BASIC_SALARY_AMOUNT : "5678",
-						BASIC_SALARY_CURR : "EUR"
+						BASIC_SALARY_CURR : "EUR",
+						MONTHLY_BASIC_SALARY_AMOUNT : "5678"
 					}
 				}]
 			})

@@ -2686,7 +2686,7 @@ sap.ui.define([
 		 * taken into account. Fires change events for all changed properties. The function
 		 * recursively handles modified, added or removed structural properties (or single-valued
 		 * navigation properties) and fires change events for all modified/added/removed primitive
-		 * properties therein. It also fires for each collection encounterd, no matter if changed
+		 * properties therein. It also fires for each collection encountered, no matter if changed
 		 * or not.
 		 *
 		 * Restrictions:
@@ -2719,10 +2719,10 @@ sap.ui.define([
 					oTarget[sProperty] = vSourceProperty;
 					_Helper.fireChange(mChangeListeners, sPropertyPath, vSourceProperty);
 				} else if (vSourceProperty && typeof vSourceProperty === "object") {
-					oTarget[sProperty]
+					vTargetProperty = oTarget[sProperty]
 						= _Helper.updateAll(mChangeListeners, sPropertyPath, vTargetProperty || {},
 								vSourceProperty);
-					_Helper.fireChange(mChangeListeners, sPropertyPath, vSourceProperty);
+					_Helper.fireChange(mChangeListeners, sPropertyPath, vTargetProperty);
 				} else if (vTargetProperty !== vSourceProperty) {
 					oTarget[sProperty] = vSourceProperty;
 					if (vTargetProperty && typeof vTargetProperty === "object") {
@@ -2741,14 +2741,15 @@ sap.ui.define([
 		 * are updated. Fires change events for all changed properties. The function recursively
 		 * handles modified, added or removed structural properties and fires change events for all
 		 * modified/added/removed primitive properties therein. Also fires change events for new
-		 * advertised actions.
+		 * advertised actions. It also fires for each collection encountered, no matter if changed
+		 * or not.
 		 *
 		 * Restrictions:
 		 * - oOldObject and oNewObject are expected to have the same structure: when there is an
 		 *   object at a given path in either of them, the other one must have an object or
 		 *   <code>null</code>.
-		 * - no change events for collection-valued properties
-		 * - does not update collection-valued navigation properties
+		 * - does not update collection-valued navigation properties properly (ignores both key
+		 *   predicates and $count)
 		 *
 		 * @param {object} mChangeListeners A map of change listeners by path
 		 * @param {string} sPath The path of the old object in mChangeListeners
@@ -2770,14 +2771,15 @@ sap.ui.define([
 
 				if (sProperty in oNewObject || sProperty[0] === "#") {
 					if (Array.isArray(vNewProperty)) {
-						// copy complete collection; no change events as long as collection-valued
-						// properties are not supported
+						// copy complete collection
 						oOldObject[sProperty] = vNewProperty;
+						_Helper.fireChange(mChangeListeners, sPropertyPath, vNewProperty);
 					} else if (vNewProperty && typeof vNewProperty === "object") {
 						if (vOldProperty) {
 							// a structural property was modified
 							_Helper.updateExisting(mChangeListeners, sPropertyPath, vOldProperty,
 								vNewProperty);
+							_Helper.fireChange(mChangeListeners, sPropertyPath, vOldProperty);
 						} else {
 							// a structural property was added; copy the whole structure because we
 							// cannot tell which primitive properties are required therein
@@ -2946,7 +2948,8 @@ sap.ui.define([
 		 *   object at a given path in either of them, the other one must have an object or
 		 *   <code>null</code>.
 		 * - "*" in aSelect does not work correctly if oNewValue contains navigation properties
-		 * - does not update navigation properties (ignores both key predicates and $count)
+		 * - does not update collection-valued navigation properties properly (ignores both key
+		 *   predicates and $count)
 		 *
 		 * @param {object} mChangeListeners
 		 *   A map of change listeners by path
