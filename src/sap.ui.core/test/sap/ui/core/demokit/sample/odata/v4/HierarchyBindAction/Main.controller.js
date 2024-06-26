@@ -18,6 +18,7 @@ sap.ui.define([
 					Description : bFilteredOut ? "Out" : ""
 				}, /*bSkipRefresh*/true);
 				await oContext.created();
+				this.scrollTo(oContext);
 			} catch (oError) {
 				MessageBox.alert(oError.message, {icon : MessageBox.Icon.ERROR, title : "Error"});
 			}
@@ -81,6 +82,9 @@ sap.ui.define([
 						: parseFloat(sExpandTo || "1"), // Note: parseInt("1E16") === 1
 					hierarchyQualifier : "I_SADL_BHV_BIND_DIR_HIERVIEW"
 				};
+				if (oUriParameters.has("createInPlace")) {
+					this._oAggregation.createInPlace = true;
+				}
 
 				this.byId("selectHierarchy").getBinding("items")
 					.attachEventOnce("dataReceived", this.onChangeHierarchy.bind(this));
@@ -164,7 +168,6 @@ sap.ui.define([
 			try {
 				this.getView().setBusy(true);
 				oNode = oEvent.getSource().getBindingContext();
-				const oTable = oEvent.getSource().getParent().getParent().getParent();
 				oNode.setKeepAlive(true); // opt-in to update nextSibling's index
 
 				const [oParent, oSibling] = await Promise.all([
@@ -180,12 +183,7 @@ sap.ui.define([
 
 				await oSibling.move({nextSibling : oNode, parent : oParent});
 
-				if (oNode.getIndex()
-						>= oTable.getFirstVisibleRow() + oTable.getRowMode().getRowCount()) {
-					// make sure moved node is visible
-					oTable.setFirstVisibleRow(
-						oNode.getIndex() - oTable.getRowMode().getRowCount() + 1);
-				}
+				this.scrollTo(oNode);
 			} catch (oError) {
 				MessageBox.alert(oError.message, {icon : MessageBox.Icon.ERROR, title : "Error"});
 			} finally {
@@ -200,15 +198,7 @@ sap.ui.define([
 			try {
 				this.getView().setBusy(true);
 				oNode = oEvent.getSource().getBindingContext();
-				const oTable = oEvent.getSource().getParent().getParent().getParent();
 				oNode.setSelected(true); // MUST NOT make any difference here
-
-				// eslint-disable-next-line no-inner-declarations
-				function scrollTo(iIndex) {
-					if (iIndex < oTable.getFirstVisibleRow()) {
-						oTable.setFirstVisibleRow(iIndex);
-					}
-				}
 
 				const [oParent, oSibling] = await Promise.all([
 					oNode.requestParent(),
@@ -216,7 +206,7 @@ sap.ui.define([
 				]);
 
 				if (!oSibling) {
-					scrollTo(oParent.getIndex());
+					this.scrollTo(oParent);
 					MessageBox.alert("Cannot move up",
 						{icon : MessageBox.Icon.INFORMATION, title : "Already first sibling"});
 					return;
@@ -225,7 +215,7 @@ sap.ui.define([
 				await oNode.move({nextSibling : oSibling, parent : oParent});
 
 				// make sure moved node is visible
-				scrollTo(oNode.getIndex());
+				this.scrollTo(oNode);
 			} catch (oError) {
 				MessageBox.alert(oError.message, {icon : MessageBox.Icon.ERROR, title : "Error"});
 			} finally {
@@ -242,6 +232,19 @@ sap.ui.define([
 			} else {
 				oTable.getBindingContext().refresh();
 			}
+		},
+
+		scrollTo : function (oNode) {
+			const iIndex = oNode.getIndex();
+			const oTable = this.byId("table");
+			const iFirstVisibleRow = oTable.getFirstVisibleRow();
+			const iRowCount = oTable.getRowMode().getRowCount();
+
+			if (iIndex < iFirstVisibleRow) {
+				oTable.setFirstVisibleRow(iIndex);
+			} else if (iIndex >= iFirstVisibleRow + iRowCount) {
+				oTable.setFirstVisibleRow(iIndex - iRowCount + 1);
+			} // else: node is already visible
 		}
 	});
 });

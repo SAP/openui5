@@ -799,15 +799,25 @@ sap.ui.define([
 	 * <code>bSkipRefresh</code> must be set, but both <code>bAtEnd</code> and
 	 * <code>bInactive</code> must not be set. No other creation or
 	 * {@link sap.ui.model.odata.v4.Context#move move} must be pending, and no other modification
-	 * (including collapse of some ancestor node) must happen while this creation is pending! When
-	 * using the <code>createInPlace</code> parameter (see {@link #setAggregation}, @experimental as
-	 * of version 1.125.0), the new {@link sap.ui.model.odata.v4.Context#isTransient transient}
-	 * child is hidden until it becomes {@link sap.ui.model.odata.v4.Context#created created}, and
-	 * then it is shown at a position determined by the back end and the current sort order. The
-	 * position of the new child can be retrieved by using its
-	 * {@link sap.ui.model.odata.v4.Context#getIndex index}. If the created child does not become
-	 * part of the hierarchy due to the search or filter criteria, the context will be destroyed and
-	 * its {@link sap.ui.model.odata.v4.Context#getIndex index} is set to <code>undefined</code>.
+	 * (including collapse of some ancestor node) must happen while this creation is pending!
+	 *
+	 * When using the <code>createInPlace</code> parameter (see {@link #setAggregation},
+	 * @experimental as of version 1.125.0), the new
+	 * {@link sap.ui.model.odata.v4.Context#isTransient transient} child is hidden until its
+	 * {@link sap.ui.model.odata.v4.Context#created created promise} resolves, and then it is shown
+	 * at a position determined by the back end and the current sort order. Note that the returned
+	 * context is not always part of this list binding's collection and can only be used for the
+	 * following scenarios:
+	 * <ul>
+	 *   <li> The position of the new child can be retrieved by using its
+	 *     {@link sap.ui.model.odata.v4.Context#getIndex index}. If the created child does not
+	 *     become part of the hierarchy due to the search or filter criteria, the context will be
+	 *     {@link sap.ui.model.odata.v4.Context#destroy destroyed} and its
+	 *     {@link sap.ui.model.odata.v4.Context#getIndex index} is set to <code>undefined</code>.
+	 *   <li> The created context always knows its
+	 *     {@link sap.ui.model.odata.v4.Context#getPath path}, which can be used for
+	 *     {@link #getKeepAliveContext}.
+	 * </ul>
 	 *
 	 * @param {Object<any>} [oInitialData={}]
 	 *   The initial data for the created entity
@@ -921,6 +931,7 @@ sap.ui.define([
 		// clone data to avoid modifications outside the cache
 		// remove any property starting with "@$ui5."
 		oEntityData = _Helper.publicClone(oInitialData, true) || {};
+		let bRefresh;
 		if (oAggregation) {
 			if (!bSkipRefresh) {
 				throw new Error("Missing bSkipRefresh");
@@ -938,6 +949,7 @@ sap.ui.define([
 					throw new Error("Unsupported collapsed parent: " + oParentContext);
 				}
 				oEntityData["@$ui5.node.parent"] = oParentContext.getCanonicalPath().slice(1);
+				bRefresh = this.oCache.isRefreshNeededAfterCreate(oParentContext.iIndex);
 			} else {
 				iChildIndex = 0;
 			}
@@ -986,11 +998,12 @@ sap.ui.define([
 			that.fireEvent("createCompleted", {context : oContext, success : true});
 			if (bCreateInPlace) {
 				const iRank = _Helper.getPrivateAnnotation(oCreatedEntity, "rank");
-				if (iRank === undefined) {
+				oContext.iIndex = iRank;
+				if (iRank === undefined || bRefresh) {
 					oContext.destroy();
 					return;
 				}
-				oContext.iIndex = iRank;
+
 				that.insertContext(oContext, iRank);
 			}
 			bDeepCreate = _Helper.getPrivateAnnotation(oCreatedEntity, "deepCreate");
@@ -1007,6 +1020,12 @@ sap.ui.define([
 			oGroupLock.unlock(true); // createInCache failed, so the lock might still be blocking
 			throw oError;
 		});
+		if (bRefresh) {
+			oCreatePromise = SyncPromise.all([
+				oCreatePromise,
+				this.requestSideEffects(sGroupId, [""])
+			]);
+		}
 
 		const iIndex = bCreateInPlace ? undefined : iChildIndex ?? -this.iCreatedContexts;
 		oContext = Context.create(this.oModel, this, sTransientPath, iIndex, oCreatePromise,
@@ -2913,7 +2932,7 @@ sap.ui.define([
 	 *   </ul>
 	 *
 	 * @public
-	 * @see sap.ui.model.odata.v4.Model#getKeepAliveContext
+	 * @see sap.ui.model.odata.v4.ODataModel#getKeepAliveContext
 	 * @since 1.99.0
 	 */
 	ODataListBinding.prototype.getKeepAliveContext = function (sPath, bRequestMessages, sGroupId) {

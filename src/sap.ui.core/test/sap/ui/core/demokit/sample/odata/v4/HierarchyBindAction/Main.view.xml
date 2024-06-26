@@ -104,6 +104,7 @@
 
 	<m:FormattedText htmlText="&lt;em>Available URL parameters:&lt;/em>
 		&lt;ul>
+			&lt;li> &lt;code>createInPlace&lt;/code> Either set or unset; default unset
 			&lt;li> &lt;code>expandTo&lt;/code> Either * for &lt;em>expand all&lt;/em> or a number; default 1
 			&lt;li> &lt;code>visibleRowCount&lt;/code> A number; default 10"/>
 </mvc:View>

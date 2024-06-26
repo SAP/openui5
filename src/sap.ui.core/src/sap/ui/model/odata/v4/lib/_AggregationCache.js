@@ -545,19 +545,24 @@ sap.ui.define([
 					= _Helper.makeRelativeUrl("/" + sParentPath, "/" + this.sResourcePath);
 		}
 
+		const bParentIsLeaf = oParentNode && oParentNode["@$ui5.node.isExpanded"] === undefined;
+		const bExpandTreeState = bParentIsLeaf
+			&& oParentNode?.["@$ui5.node.level"] >= this.oAggregation.expandTo;
+		if (bExpandTreeState) {
+			this.oTreeState.expand(oParentNode);
+		} // else: already expanded automatically
+
 		const addElement = (iIndex0, iRank) => {
-			if (oParentNode && oParentNode["@$ui5.node.isExpanded"] === undefined) {
+			if (bParentIsLeaf) {
 				_Helper.updateAll(this.mChangeListeners, sParentPredicate, oParentNode,
 					{"@$ui5.node.isExpanded" : true}); // not a leaf anymore
-				if (oParentNode["@$ui5.node.level"] >= this.oAggregation.expandTo) {
-					this.oTreeState.expand(oParentNode);
-				} // else: already expanded automatically
 			}
 			oEntityData["@$ui5.node.level"] = iLevel; // do not send via POST!
 			aElements.splice(iIndex0, 0, null); // create a gap
 			this.addElements(oEntityData, iIndex0, oCache, iRank);
 			aElements.$count += 1;
 		};
+
 		const completeCreation = (iIndex0, iRank) => {
 			oCache.removeElement(0);
 			_Helper.deletePrivateAnnotation(oEntityData, "transientPredicate");
@@ -577,7 +582,9 @@ sap.ui.define([
 					this.requestRank(oEntityData, oGroupLock),
 					this.requestNodeProperty(oEntityData, oGroupLock)
 				]);
-				if (iRank === undefined) {
+				if (bExpandTreeState) { // isRefreshNeededAfterCreate returns true
+					_Helper.setPrivateAnnotation(oEntityData, "rank", iRank);
+				} else if (iRank === undefined) {
 					oCache.removeElement(0);
 				} else {
 					addElement(iRank, iRank);
@@ -1297,6 +1304,22 @@ sap.ui.define([
 	 */
 	_AggregationCache.prototype.isDeletingInOtherGroup = function (_sGroupId) {
 		return false;
+	};
+
+	/**
+	 * Returns whether a refresh is needed, if a child is created below the given parent (index).
+	 *
+	 * @param {number} iParentIndex Index of the parent
+	 * @returns {boolean} Whether a refresh is needed
+	 *
+	 * @public
+	 */
+	_AggregationCache.prototype.isRefreshNeededAfterCreate = function (iParentIndex) {
+		const oParent = this.aElements[iParentIndex];
+
+		return this.oAggregation.createInPlace
+			&& oParent["@$ui5.node.isExpanded"] === undefined
+			&& oParent["@$ui5.node.level"] >= this.oAggregation.expandTo;
 	};
 
 	/**

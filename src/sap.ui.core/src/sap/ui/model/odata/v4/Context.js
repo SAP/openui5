@@ -358,8 +358,9 @@ sap.ui.define([
 
 	/**
 	 * Destroys this context, that is, it removes this context from all dependent bindings and drops
-	 * references to binding and model, so that the context cannot be used anymore; it keeps path
-	 * and index for debugging purposes.
+	 * references to {@link #getBinding binding} and {@link #getModel model}, so that the context
+	 * cannot be used anymore; it keeps path and index for debugging purposes. A destroyed context
+	 * can be recognized by calling {@link #getBinding}, which returns <code>undefined</code>.
 	 *
 	 * <b>BEWARE:</b> Do not call this function! The lifetime of an OData V4 context is completely
 	 * controlled by its binding.

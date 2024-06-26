@@ -222,6 +222,7 @@
 
 	<m:FormattedText htmlText="&lt;em>Available URL parameters:&lt;/em>
 		&lt;ul>
+			&lt;li> &lt;code>createInPlace&lt;/code> Either set or unset; default unset
 			&lt;li> &lt;code>expandTo&lt;/code> Either * for &lt;em>expand all&lt;/em> or a number; default 3
 			&lt;li> &lt;code>firstVisibleRow&lt;/code> A number; default 0
 			&lt;li> &lt;code>threshold&lt;/code> A number; default 0

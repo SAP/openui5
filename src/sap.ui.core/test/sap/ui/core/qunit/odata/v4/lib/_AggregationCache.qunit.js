@@ -5151,6 +5151,7 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oCache.mPostRequests), "~sTransientPredicate~",
 				sinon.match.same(oEntityData));
 		const oPostBody = {};
+		const bExpandTreeState = !bParentExpanded && !bCreateRoot && iExpandTo < 23;
 		let fnCancelCallback;
 		this.mock(oCache.oFirstLevel).expects("create")
 			.withExactArgs("~oGroupLock~", "~oPostPathPromise~", "~sPath~",
@@ -5171,31 +5172,34 @@ sap.ui.define([
 						that.mock(oCache).expects("requestNodeProperty")
 							.withExactArgs(sinon.match.same(oEntityData), "~oGroupLock~");
 						oHelperMock.expects("updateAll")
-							.exactly(bParentExpanded || bCreateRoot || !iRank ? 0 : 1)
+							.exactly(bParentExpanded || bCreateRoot || !iRank || bExpandTreeState
+								? 0 : 1)
 							.withExactArgs(sinon.match.same(oCache.mChangeListeners), "('42')",
 								sinon.match.same(oParentNode), {"@$ui5.node.isExpanded" : true})
 							.callsFake(function () {
 								assert.ok(oRequestRankExpectation.called);
 							});
-						that.mock(oCache.oTreeState).expects("expand")
-							.exactly(iRank && !bParentExpanded && !bCreateRoot && iExpandTo < 23
-								? 1 : 0)
-							.withExactArgs(oParentNode);
-						that.mock(oCache).expects("addElements").exactly(iRank ? 1 : 0)
+						that.mock(oCache).expects("addElements")
+							.exactly(iRank && !bExpandTreeState ? 1 : 0)
 							.withExactArgs(sinon.match.same(oEntityData), iRank,
 								sinon.match.same(oCache.oFirstLevel), iRank)
 							.callsFake(function () {
 								assert.deepEqual(oCache.aElements, ["0", oParentNode, null, "2"]);
 							});
-						that.mock(oCache).expects("adjustDescendantCount").exactly(iRank ? 1 : 0)
+						that.mock(oCache).expects("adjustDescendantCount")
+							.exactly(iRank && !bExpandTreeState ? 1 : 0)
 							.withExactArgs(sinon.match.same(oEntityData), iRank, 1);
-						that.mock(oCache.oFirstLevel).expects("removeElement").withExactArgs(0);
-						oHelperMock.expects("deletePrivateAnnotation").exactly(iRank ? 1 : 0)
+						that.mock(oCache.oFirstLevel).expects("removeElement")
+							.exactly(bExpandTreeState ? 0 : 1)
+							.withExactArgs(0);
+						oHelperMock.expects("deletePrivateAnnotation")
+							.exactly(iRank && !bExpandTreeState ? 1 : 0)
 							.withExactArgs(sinon.match.same(oEntityData), "transientPredicate");
 						that.mock(oCache.oFirstLevel).expects("restoreElement")
-							.exactly(iRank ? 1 : 0)
+							.exactly(iRank && !bExpandTreeState ? 1 : 0)
 							.withExactArgs(iRank, sinon.match.same(oEntityData));
-						that.mock(oCache).expects("shiftRank").exactly(iRank ? 1 : 0)
+						that.mock(oCache).expects("shiftRank")
+							.exactly(iRank && !bExpandTreeState ? 1 : 0)
 							.withExactArgs(iRank, +1);
 						resolve();
 					});
@@ -5203,18 +5207,23 @@ sap.ui.define([
 			});
 		oHelperMock.expects("makeRelativeUrl").exactly(bCreateRoot ? 0 : 1)
 			.withExactArgs("/Foo('42')", "/Foo").returns("~relativeUrl~");
+		const oExpandExpectation = this.mock(oCache.oTreeState).expects("expand")
+			.exactly(bExpandTreeState ? 1 : 0)
+			.withExactArgs(oParentNode);
 
 		// code under test
 		const oResult = oCache.create("~oGroupLock~", "~oPostPathPromise~", "~sPath~",
 			"~sTransientPredicate~", oEntityData, /*bAtEndOfCreated*/false, "~fnErrorCallback~",
 			"~fnSubmitCallback~");
 
+		assert.strictEqual(oExpandExpectation.called, bExpandTreeState, "called synchronously");
 		assert.deepEqual(oPostBody, bCreateRoot ? {} : {"myParent@odata.bind" : "~relativeUrl~"});
-		assert.deepEqual(oEntityData, {
+		const oExpectedEntity = {
 			"@$ui5._" : {postBody : oPostBody},
 			bar : "~bar~",
 			foo : "~foo~"
-		});
+		};
+		assert.deepEqual(oEntityData, oExpectedEntity);
 		assert.strictEqual(oCache.aElements.$count, 3);
 		assert.deepEqual(oCache.aElements.$byPredicate, {"('42')" : oParentNode});
 		assert.deepEqual(oCache.aElements, ["0", oParentNode, "2"]);
@@ -5222,23 +5231,20 @@ sap.ui.define([
 
 		return oResult.then(function (oEntityData0) {
 			assert.strictEqual(oEntityData0, oEntityData);
-			if (iRank) {
-				assert.deepEqual(oEntityData, {
-					"@$ui5._" : {postBody : oPostBody, rank : iRank, predicate : "('ABC')"},
-					"@$ui5.node.level" : bCreateRoot ? 1 : 24,
-					bar : "~bar~",
-					foo : "~foo~"
-				});
-				assert.strictEqual(oCache.aElements.$count, 4);
-			} else {
-				assert.deepEqual(oEntityData, {
-					"@$ui5._" : {postBody : oPostBody, predicate : "('ABC')"},
-					bar : "~bar~",
-					foo : "~foo~"
-				});
-				assert.deepEqual(oCache.aElements, ["0", oParentNode, "2"]);
-				assert.strictEqual(oCache.aElements.$count, 3);
+
+			oExpectedEntity["@$ui5._"].predicate = "('ABC')";
+			if (bExpandTreeState) {
+				oExpectedEntity["@$ui5._"].rank = iRank;
+			} else if (iRank) {
+				oExpectedEntity["@$ui5._"].rank = iRank;
+				oExpectedEntity["@$ui5.node.level"] = bCreateRoot ? 1 : 24;
 			}
+			assert.deepEqual(oEntityData, oExpectedEntity);
+			const iExpectedCount = iRank && !bExpandTreeState ? 4 : 3;
+			assert.strictEqual(oCache.aElements.$count, iExpectedCount);
+			const aExpectedElements = iRank && !bExpandTreeState
+				? ["0", oParentNode, null, "2"] : ["0", oParentNode, "2"];
+			assert.deepEqual(oCache.aElements, aExpectedElements);
 
 			oHelperMock.expects("removeByPath")
 				.withExactArgs(sinon.match.same(oCache.mPostRequests),
@@ -5247,10 +5253,8 @@ sap.ui.define([
 			// code under test
 			fnCancelCallback();
 
-			assert.deepEqual(oCache.aElements,
-				iRank ? ["0", oParentNode, null, "2"] : ["0", oParentNode, "2"],
-				"unchanged");
-			assert.strictEqual(oCache.aElements.$count, iRank ? 4 : 3, "unchanged");
+			assert.deepEqual(oCache.aElements, aExpectedElements, "unchanged");
+			assert.strictEqual(oCache.aElements.$count, iExpectedCount, "unchanged");
 		});
 	});
 			});
@@ -6580,4 +6584,30 @@ sap.ui.define([
 		// code under test
 		oCache.resetOutOfPlace();
 	});
+
+	//*********************************************************************************************
+[false, true].forEach(function (bCreateInPlace) {
+	[undefined, false, true].forEach(function (bIsExpanded) {
+		[2, 3, 4].forEach(function (iLevel) {
+			const sTitle = "isRefreshNeededAfterCreate: createInPlace=" + bCreateInPlace
+				+ ", isExpanded=" + bIsExpanded + ", level=" + iLevel;
+
+	QUnit.test(sTitle, function (assert) {
+		const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, {
+			createInPlace : bCreateInPlace,
+			expandTo : 3,
+			hierarchyQualifier : "X"
+		});
+		oCache.aElements[42] = {
+			"@$ui5.node.isExpanded" : bIsExpanded,
+			"@$ui5.node.level" : iLevel
+		};
+
+		// code under test
+		assert.strictEqual(oCache.isRefreshNeededAfterCreate(42),
+			bCreateInPlace && bIsExpanded === undefined && iLevel >= 3);
+	});
+		});
+	});
+});
 });
