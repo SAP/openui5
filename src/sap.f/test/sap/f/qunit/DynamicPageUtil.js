@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/f/DynamicPageTitle",
 	"sap/f/DynamicPageHeader",
 	"sap/ui/layout/Grid",
+	"sap/m/Table",
 	"sap/m/Panel",
 	"sap/m/MessageStrip",
 	"sap/m/IconTabBar",
@@ -26,6 +27,7 @@ sap.ui.define([
 	DynamicPageTitle,
 	DynamicPageHeader,
 	Grid,
+	Table,
 	Panel,
 	MessageStrip,
 	IconTabBar,
@@ -53,6 +55,16 @@ sap.ui.define([
 				title: this.getDynamicPageTitle(),
 				header: this.getDynamicPageHeader(),
 				content: this.getContent(100),
+				footer: this.getFooter()
+			});
+		},
+		getDynamicPageWithFitContentWithBigHeader: function () {
+			var oBigHeaderContent = [ new Panel({ height: "900px"}) ];
+			return new DynamicPage({
+				showFooter: true,
+				title: this.getDynamicPageTitle(),
+				header: this.getDynamicPageHeader(oBigHeaderContent),
+				content: this.getFitContent(),
 				footer: this.getFooter()
 			});
 		},
@@ -289,6 +301,9 @@ sap.ui.define([
 				defaultSpan: "XL2 L3 M4 S6",
 				content: this.getMessageStrips(iNumber)
 			});
+		},
+		getFitContent: function () {
+			return new Table({});
 		},
 		getInvisibleContent: function () {
 			return new OverflowToolbar({ content: new Button({
