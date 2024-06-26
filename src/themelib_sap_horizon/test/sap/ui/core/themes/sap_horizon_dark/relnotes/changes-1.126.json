@@ -3,6 +3,11 @@
     "date": "June 2024",
     "notes": [
       {
+        "id": "e652bed3e3f372e9b0b179fd1e2a096fe33a259c",
+        "type": "FIX",
+        "text": " CodeEditor: Fixed missing code block lines on default themes"
+      },
+      {
         "id": "30b16c8c766613a647ff5a0c2b1210784dc3b9ac",
         "type": "FIX",
         "text": " FormContainer: expander announcement"

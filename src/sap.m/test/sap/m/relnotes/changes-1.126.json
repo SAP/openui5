@@ -3,6 +3,11 @@
     "date": "June 2024",
     "notes": [
       {
+        "id": "5c72113c7bd94dd7356b5615a4fc30004bddeb10",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: missing title announcement for each row"
+      },
+      {
         "id": "1452e84f081fff35902d6ea141316b82d21e3882",
         "type": "FIX",
         "text": " sap.m.LightBox: Error message is available for screen readers"

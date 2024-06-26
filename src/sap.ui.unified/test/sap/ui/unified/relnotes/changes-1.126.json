@@ -3,6 +3,16 @@
     "date": "June 2024",
     "notes": [
       {
+        "id": "567c7293afdbd315370818ee5b531bacfd92a85f",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.Calendar: Month/Year/Year Range pickers visual improvements"
+      },
+      {
+        "id": "722774b3b56ddf0fa9c6fe6bfae19b2a145c93af",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: is displayed correctly in RTL for two months view"
+      },
+      {
         "id": "93f76643ca791dcace7e2202e5cc10d2c57fe525",
         "type": "FIX",
         "text": " sap.ui.unified.Calendar: add tooltips for calendar legend types"
