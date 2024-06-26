@@ -1596,6 +1596,70 @@ function(
 		assert.ok(!oHeader.$().hasClass("sapFDynamicPageHeaderHidden"), "Header expanded and visible again");
 	});
 
+	QUnit.module("DynamicPage when Header height bigger than page height and fit content is placed inside", {
+		beforeEach: function () {
+			this.oDynamicPage = oFactory.getDynamicPageWithFitContentWithBigHeader();
+		},
+		afterEach: function () {
+			this.oDynamicPage.destroy();
+			this.oDynamicPage = null;
+		}
+	});
+
+	QUnit.test("DynamicPage when Header height bigger than page height and fit content is placed inside", function (assert) {
+		// arrange
+		var oDynamicPage = this.oDynamicPage,
+			oTitle = oDynamicPage.getTitle(),
+			oHeader = oDynamicPage.getHeader(),
+			$wrapper,
+			$header;
+
+		oDynamicPage.setHeaderExpanded(false);
+		oUtil.renderObject(oDynamicPage);
+
+		$wrapper = oDynamicPage.$wrapper;
+		$header = oHeader.$();
+
+		oDynamicPage.$().outerHeight("800px"); // set page height smaller than header height
+
+		// assert
+		assert.equal(oDynamicPage._headerBiggerThanAllowedToBeExpandedInTitleArea(), true, "header is bigger than allowed to be expanded in title");
+
+		// act
+		oTitle.fireEvent("_titlePress");
+
+		// assert
+		assert.equal($wrapper.find($header).length > 0, true, "Header is in content area after expanding");
+	});
+
+	QUnit.test("DynamicPage with preserveHeaderStateOnScroll when Header height bigger than page height and fit content is placed inside", function (assert) {
+		// arrange
+		var oDynamicPage = this.oDynamicPage,
+			oTitle = oDynamicPage.getTitle(),
+			oHeader = oDynamicPage.getHeader(),
+			$wrapper,
+			$header;
+
+		oDynamicPage.setPreserveHeaderStateOnScroll(true);
+		oDynamicPage.setHeaderExpanded(false);
+		oUtil.renderObject(oDynamicPage);
+
+		$wrapper = oDynamicPage.$wrapper;
+		$header = oHeader.$();
+
+		oDynamicPage.$().outerHeight("800px"); // set page height smaller than header height
+
+		// assert
+		assert.equal(oDynamicPage._preserveHeaderStateOnScroll(), true, "header is preserved on scroll");
+		assert.equal(oDynamicPage._headerBiggerThanAllowedToBeExpandedInTitleArea(), true, "header is bigger than allowed to be expanded in title");
+
+		// act
+		oTitle.fireEvent("_titlePress");
+
+		// assert
+		assert.equal($wrapper.find($header).length === 0, true, "Header is not moved to the content area");
+	});
+
 	QUnit.module("DynamicPage when Header height bigger than page height", {
 		beforeEach: function () {
 			this.oDynamicPage = oFactory.getDynamicPageWithBigHeaderContent();
