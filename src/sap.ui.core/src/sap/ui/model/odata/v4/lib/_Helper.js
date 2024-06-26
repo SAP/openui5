@@ -2686,14 +2686,15 @@ sap.ui.define([
 		 * taken into account. Fires change events for all changed properties. The function
 		 * recursively handles modified, added or removed structural properties (or single-valued
 		 * navigation properties) and fires change events for all modified/added/removed primitive
-		 * properties therein.
+		 * properties therein. It also fires for each collection encounterd, no matter if changed
+		 * or not.
 		 *
 		 * Restrictions:
 		 * - oTarget and oSource are expected to have the same structure: when there is an
 		 *   object at a given path in either of them, the other one must have an object or
 		 *   <code>null</code>.
-		 * - no change events for collection-valued properties; list bindings without own cache must
-		 *   refresh when updateAll is used to update cache data.
+		 * - list bindings without own cache must refresh when updateAll is used to update cache
+		 *   data.
 		 *
 		 * @param {object} mChangeListeners A map of change listeners by path
 		 * @param {string} sPath The path of the old object in mChangeListeners
@@ -2714,12 +2715,14 @@ sap.ui.define([
 					_Helper.setPrivateAnnotation(oTarget, "predicate",
 						_Helper.getPrivateAnnotation(oSource, "predicate"));
 				} else if (Array.isArray(vSourceProperty)) {
-					// copy complete collection w/o firing change events
+					// copy complete collection
 					oTarget[sProperty] = vSourceProperty;
+					_Helper.fireChange(mChangeListeners, sPropertyPath, vSourceProperty);
 				} else if (vSourceProperty && typeof vSourceProperty === "object") {
 					oTarget[sProperty]
 						= _Helper.updateAll(mChangeListeners, sPropertyPath, vTargetProperty || {},
 								vSourceProperty);
+					_Helper.fireChange(mChangeListeners, sPropertyPath, vSourceProperty);
 				} else if (vTargetProperty !== vSourceProperty) {
 					oTarget[sProperty] = vSourceProperty;
 					if (vTargetProperty && typeof vTargetProperty === "object") {
@@ -2943,7 +2946,6 @@ sap.ui.define([
 		 *   object at a given path in either of them, the other one must have an object or
 		 *   <code>null</code>.
 		 * - "*" in aSelect does not work correctly if oNewValue contains navigation properties
-		 * - no change events for collection-valued properties
 		 * - does not update navigation properties (ignores both key predicates and $count)
 		 *
 		 * @param {object} mChangeListeners
@@ -3039,16 +3041,17 @@ sap.ui.define([
 							_Helper.setPrivateAnnotation(oTarget, "predicate", sSourcePredicate);
 						}
 					} else if (Array.isArray(vSourceProperty)) {
-						// copy complete collection; no change events as long as collection-valued
-						// properties are not supported; transient entity collections from a deep
+						// copy complete collection; transient entity collections from a deep
 						// create are handled elsewhere
 						if (!(vTargetProperty && vTargetProperty.$postBodyCollection)) {
 							oTarget[sProperty] = vSourceProperty;
+							_Helper.fireChange(mChangeListeners, sPropertyPath, vSourceProperty);
 						}
 					} else if (vSourceProperty && typeof vSourceProperty === "object"
 							&& !sProperty.includes("@")) {
 						oTarget[sProperty] = update(sPropertyPath, vSelected, vTargetProperty || {},
 							vSourceProperty);
+						_Helper.fireChange(mChangeListeners, sPropertyPath, vSourceProperty);
 					} else if (vTargetProperty !== vSourceProperty
 							&& !oTarget[sProperty + "@$ui5.updating"]) {
 						oTarget[sProperty] = vSourceProperty;

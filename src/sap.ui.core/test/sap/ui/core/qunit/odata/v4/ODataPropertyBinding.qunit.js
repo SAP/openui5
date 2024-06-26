@@ -596,7 +596,10 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("checkUpdateInternal with object value, success", function (assert) {
+[BindingMode.OneTime, BindingMode.OneWay].forEach((sBindingMode) => {
+	const sTitle = "checkUpdateInternal with object value, success: " + sBindingMode;
+
+	QUnit.test(sTitle, function (assert) {
 		var oContext = Context.create(this.oModel, {}, "/EntitySet('foo')"),
 			sPath = "nonPrimitive",
 			oBinding = this.oModel.bindProperty(sPath, oContext),
@@ -604,7 +607,7 @@ sap.ui.define([
 			vValueClone = {};
 
 		oBinding.sReducedPath = "~reduced~";
-		oBinding.setBindingMode(BindingMode.OneTime);
+		oBinding.setBindingMode(sBindingMode);
 		oBinding.setType(null, "any");
 		this.mock(oContext).expects("fetchValue")
 			.withExactArgs(oBinding.sReducedPath, sinon.match.same(oBinding))
@@ -619,6 +622,7 @@ sap.ui.define([
 			assert.strictEqual(oBinding.getValue(), vValueClone);
 		});
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("checkUpdateInternal with action advertisement object value, success",
@@ -655,15 +659,11 @@ sap.ui.define([
 		internalType : "any",
 		mode : BindingMode.OneTime,
 		path : "/EntitySet('bar')/nonPrimitive"
-	}, { // must have mode OneTime
-		internalType : "any",
-		mode : BindingMode.OneWay,
-		path : "nonPrimitive"
-	}, { // must have mode OneTime
+	}, { // must have mode OneTime/OneWay
 		internalType : "any",
 		mode : BindingMode.TwoWay,
 		path : "nonPrimitive"
-	}, { // must have mode OneTime, also for the case "branch into metadata via ##"
+	}, { // must have mode OneTime for the case "branch into metadata via ##"
 		internalType : "any",
 		mode : BindingMode.OneWay,
 		path : "##@SAP_Common.Label"

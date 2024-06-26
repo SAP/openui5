@@ -1004,7 +1004,10 @@ sap.ui.define([
 	 * If the target type specified in the corresponding control property's binding info is "any"
 	 * and the binding is relative or points to metadata, the binding may have an object value;
 	 * in this case and unless the binding refers to an action advertisement the binding's mode must
-	 * be {@link sap.ui.model.BindingMode.OneTime}.
+	 * be {@link sap.ui.model.BindingMode.OneTime}. {@link sap.ui.model.BindingMode.OneWay OneWay}
+	 * is also supported (@experimental as of version 1.126.0), but client-side updates of the
+	 * object are not supported and <code>$$patchWithoutSideEffects</code> should be used for the
+	 * parent entity.
 	 *
 	 * @param {string} sPath
 	 *   The binding path in the model; must not end with a slash

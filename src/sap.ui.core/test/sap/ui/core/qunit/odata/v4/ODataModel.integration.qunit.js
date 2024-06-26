@@ -5671,6 +5671,274 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: One-way property binding for a collection of complex type. Check that refresh and
+	// side effects works.
+	// JIRA: CPOUI5ODATAV4-2638
+	QUnit.test("CPOUI5ODATAV4-2638: OneWay - Collection(ComplexType)", async function (assert) {
+		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
+		const sView = `
+<FlexBox id="form" binding="{/EMPLOYEES('1')}">
+	<Text id="name" text="{Name}"/>
+	<Text id="messages" text="{
+		formatter : '.myFormatter',
+		mode : 'OneWay',
+		path : '__CT__FAKE__Message/__FAKE__Messages',
+		targetType : 'any'
+	}"/>
+</FlexBox>`;
+		const oController = {
+			myFormatter : (aMessages) => {
+				return aMessages.map((oMessage) => oMessage.message).join(" ");
+			}
+		};
+
+		const expectMessages = (aMessages) => {
+			Messaging.removeAllMessages(); // clean up
+			this.expectMessages(aMessages.map((sMessage) => ({
+				message : sMessage,
+				persistent : true,
+				type : "None"
+			})));
+		};
+
+		this.expectRequest("EMPLOYEES('1')?$select=ID,Name,__CT__FAKE__Message/__FAKE__Messages", {
+				ID : "1",
+				Name : "Frederic Fall",
+				__CT__FAKE__Message : {
+					__FAKE__Messages : [{
+						message : "You're looking younger than ever!"
+					}]
+				}
+			})
+			.expectChange("name", "Frederic Fall")
+			.expectChange("messages", "You're looking younger than ever!");
+		expectMessages(["You're looking younger than ever!"]);
+
+		await this.createView(assert, sView, oModel, oController);
+
+		this.expectRequest("EMPLOYEES('1')?$select=ID,Name,__CT__FAKE__Message/__FAKE__Messages", {
+				ID : "1",
+				Name : "Frederic Fall",
+				__CT__FAKE__Message : {
+					__FAKE__Messages : [{
+						message : "And"
+					}, {
+						message : "so"
+					}, {
+						message : "on"
+					}]
+				}
+			})
+			.expectChange("messages", "And so on");
+		expectMessages(["And", "so", "on"]);
+
+		await Promise.all([
+			this.oView.byId("form").getBindingContext().requestRefresh(),
+			this.waitForChanges(assert, "refresh #1")
+		]);
+
+		this.expectRequest("EMPLOYEES('1')?$select=ID,Name,__CT__FAKE__Message/__FAKE__Messages", {
+				ID : "1",
+				Name : "Frederic Fall",
+				__CT__FAKE__Message : {
+					__FAKE__Messages : [{
+						message : "And"
+					}, {
+						message : "NOT"
+					}, {
+						message : "on"
+					}]
+				}
+			})
+			.expectChange("messages", "And NOT on");
+		expectMessages(["And", "NOT", "on"]);
+
+		await Promise.all([
+			this.oView.byId("form").getBindingContext().requestRefresh(),
+			this.waitForChanges(assert, "refresh #2")
+		]);
+
+		this.expectRequest("EMPLOYEES('1')?$select=__CT__FAKE__Message/__FAKE__Messages", {
+				__CT__FAKE__Message : {
+					__FAKE__Messages : [{
+						message : "And"
+					}, {
+						message : "further"
+					}, {
+						message : "on"
+					}]
+				}
+			})
+			.expectChange("messages", "And further on");
+		expectMessages(["And", "further", "on"]);
+
+		await Promise.all([
+			this.oView.byId("form").getBindingContext()
+				.requestSideEffects(["__CT__FAKE__Message/__FAKE__Messages"]),
+			this.waitForChanges(assert, "side effects")
+		]);
+	});
+	//TODO _Helper.updateExisting
+	// => PATCH/updating a property probably doesn't work - use $$patchWithoutSideEffects instead!
+	//TODO _Helper.updateAll
+	// => _Cache#setProperty
+	// => _Cache#update
+	// => update operation's $Parameter
+
+	//*********************************************************************************************
+	// Scenario: One-way property binding for an object of complex type. Check that refresh and
+	// side effects works, although there may be "change" events w/o real changes. Do this in the
+	// presence of a property binding for only a part of that object.
+	// JIRA: CPOUI5ODATAV4-2638
+	QUnit.test("CPOUI5ODATAV4-2638: OneWay - object w/ ComplexType, #1", async function (assert) {
+		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
+		const sView = `
+<FlexBox id="form" binding="{/EMPLOYEES('1')}">
+	<Text id="name" text="{Name}"/>
+	<Text id="salary" text="{
+		formatter : '.myFormatter',
+		mode : 'OneWay',
+		path : 'SALARY',
+		targetType : 'any'
+	}"/>
+	<Text id="monthly" text="{SALARY/MONTHLY_BASIC_SALARY_AMOUNT}"/>
+</FlexBox>`;
+		const oController = {
+			myFormatter : (oSalary) => {
+				return `${oSalary.MONTHLY_BASIC_SALARY_AMOUNT} ${oSalary.BASIC_SALARY_CURR}`;
+			}
+		};
+
+		this.expectRequest("EMPLOYEES('1')"
+				//TODO $select could be much smarter!
+				+ "?$select=ID,Name,SALARY,SALARY/MONTHLY_BASIC_SALARY_AMOUNT", {
+				ID : "1",
+				Name : "Frederic Fall",
+				SALARY : {
+					MONTHLY_BASIC_SALARY_AMOUNT : "1234",
+					BASIC_SALARY_CURR : "EUR",
+					YEARLY_BONUS_AMOUNT : "567",
+					BONUS_CURR : "DEM"
+				}
+			})
+			.expectChange("salary", "1234 EUR")
+			.expectChange("monthly", "1,234");
+
+		await this.createView(assert, sView, oModel, oController);
+
+		const oContext = this.oView.byId("form").getBindingContext();
+		const oNewSalary = {
+			MONTHLY_BASIC_SALARY_AMOUNT : "1234.89",
+			BASIC_SALARY_CURR : "EUR",
+			YEARLY_BONUS_AMOUNT : "567",
+			BONUS_CURR : "DEM"
+		};
+
+		//TODO $select could be much smarter!
+		this.expectRequest("EMPLOYEES('1')?$select=SALARY,SALARY/MONTHLY_BASIC_SALARY_AMOUNT", {
+				SALARY : oNewSalary
+			})
+			.expectChange("salary", "1234.89 EUR")
+			.expectChange("monthly", "1,234.89");
+
+		await Promise.all([
+			oContext.requestSideEffects(["SALARY"]),
+			this.waitForChanges(assert, "side effects")
+		]);
+
+		assert.deepEqual(oContext.getObject(), {
+			ID : "1",
+			Name : "Frederic Fall",
+			SALARY : oNewSalary
+		});
+
+		this.expectRequest("EMPLOYEES('1')"
+				//TODO $select could be much smarter!
+				+ "?$select=ID,Name,SALARY,SALARY/MONTHLY_BASIC_SALARY_AMOUNT", {
+				ID : "1",
+				Name : "Frederic Fall",
+				SALARY : oNewSalary
+			})
+			.expectChange("salary", "1234.89 EUR"); // this is accepted!
+
+		await Promise.all([
+			oContext.requestRefresh(),
+			this.waitForChanges(assert, "refresh")
+		]);
+	});
+
+	//*********************************************************************************************
+	// Scenario: One-way property binding for an object of complex type. Check that refresh of a
+	// kept-alive element works.
+	// JIRA: CPOUI5ODATAV4-2638
+	QUnit.test("CPOUI5ODATAV4-2638: OneWay - object w/ ComplexType, #2", async function (assert) {
+		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
+		const sView = `
+<FlexBox id="form">
+	<Text id="salary" text="{
+		formatter : '.myFormatter',
+		mode : 'OneWay',
+		path : 'SALARY',
+		targetType : 'any'
+	}"/>
+</FlexBox>`;
+		const oController = {
+			myFormatter : (oSalary) => {
+				return oSalary
+					? `${oSalary.MONTHLY_BASIC_SALARY_AMOUNT} ${oSalary.BASIC_SALARY_CURR}`
+					: "bad luck";
+			}
+		};
+
+		this.expectChange("salary");
+
+		await this.createView(assert, sView, oModel, oController);
+
+		this.expectRequest("EMPLOYEES('1')?$select=ID,SALARY", {
+				ID : "1",
+				SALARY : {
+					MONTHLY_BASIC_SALARY_AMOUNT : "1234",
+					BASIC_SALARY_CURR : "DEM"
+				}
+			})
+			.expectChange("salary", "1234 DEM");
+
+		const oContext = oModel.getKeepAliveContext("/EMPLOYEES('1')");
+		this.oView.byId("form").setBindingContext(oContext);
+
+		await this.waitForChanges(assert, "set binding context");
+
+		this.expectRequest("EMPLOYEES?$select=ID,SALARY&$filter=ID eq '1'", {
+				value : [{
+					ID : "1",
+					SALARY : null
+				}]
+			})
+			.expectChange("salary", "bad luck");
+
+		await Promise.all([
+			oContext.getBinding().requestRefresh(), // don' try this at home, kids!
+			this.waitForChanges(assert, "refresh to null")
+		]);
+
+		this.expectRequest("EMPLOYEES?$select=ID,SALARY&$filter=ID eq '1'", {
+				value : [{
+					ID : "1",
+					SALARY : {
+						MONTHLY_BASIC_SALARY_AMOUNT : "5678",
+						BASIC_SALARY_CURR : "EUR"
+					}
+				}]
+			})
+			.expectChange("salary", "5678 EUR");
+
+		await Promise.all([
+			oContext.getBinding().requestRefresh(), // don' try this at home, kids!
+			this.waitForChanges(assert, "refresh from null")
+		]);
+	});
+
+	//*********************************************************************************************
 	// Scenario: A row is deleted. Afterwards, but before the rendering the list is refreshed. The
 	// list has a nested list.
 	//

@@ -1464,8 +1464,7 @@ sap.ui.define([
 		selected("toNull", "old", null, null, true);
 		selected("unchanged", "same", "same", "same");
 		selected("editing", "protected", "protected", "protected");
-		// TODO no change events as long as collection-valued properties are not supported
-		selected("collection", [], ["a", "b"], ["a", "b"]);
+		selected("collection", [], ["a", "b"], ["a", "b"], true);
 		property("unselected", "keep", "new", "keep");
 		property("unselectedCollection", ["a", "b"], [], ["a", "b"]);
 		property("@odata.etag", "old", "new3", "new3", true);
@@ -1480,6 +1479,7 @@ sap.ui.define([
 		property("unselected@old.annotation", "keep", undefined, "keep");
 		selected("abc", "old", "new6", "new6", true);
 		property("abcd", "keep", "new", "keep"); // "abcd".slice(0, "abcd".indexOf("@")) === "abc"
+		oHelperMock.expects("fireChange").withArgs("~mChangeListener~", "base/path/nested");
 
 		oNewValueJSON = JSON.stringify(oNewValue);
 		aSelectJSON = JSON.stringify(aSelect);
@@ -1511,6 +1511,8 @@ sap.ui.define([
 	QUnit.test("updateSelected: private annotations, undefined: " + bUndefined, function (assert) {
 		var oBinding = {},
 			oContext = {oBinding : oBinding},
+			oHelperMock = this.mock(_Helper),
+			oNewValue = {"@$ui5._" : {predicate : "(1)"}, bar : {}},
 			// oContext is recursive and must not be descended into
 			oOldValue = {"@$ui5._" : {context : oContext}};
 
@@ -1518,13 +1520,13 @@ sap.ui.define([
 			oOldValue.foo = undefined; // MUST NOT make a difference
 		}
 		oBinding.oContext = oContext;
-		this.mock(_Helper).expects("fireChange").withExactArgs("~mChangeListener~", "foo",
-			undefined, true);
+		oHelperMock.expects("fireChange")
+			.withExactArgs("~mChangeListener~", "foo", undefined, true);
+		oHelperMock.expects("fireChange")
+			.withExactArgs("~mChangeListener~", "bar", sinon.match.same(oNewValue.bar));
 
 		// code under test
-		_Helper.updateSelected("~mChangeListener~", "", oOldValue,
-			{"@$ui5._" : {predicate : "(1)"}, bar : {}},
-			["foo", "bar/*"]);
+		_Helper.updateSelected("~mChangeListener~", "", oOldValue, oNewValue, ["foo", "bar/*"]);
 
 		assert.deepEqual(oOldValue, bUndefined ? {
 			"@$ui5._" : {context : oContext, predicate : "(1)"},
@@ -1544,6 +1546,8 @@ sap.ui.define([
 	QUnit.test("updateSelected: create annotation, undefined: " + bUndefined, function (assert) {
 		var oBinding = {},
 			oHelperMock = this.mock(_Helper),
+			oNewValue0 = {baz : {bar : {}}},
+			oNewValue1 = {baz : {bar : {}}},
 			oOldValue0 = {},
 			oOldValue1 = {};
 
@@ -1555,6 +1559,10 @@ sap.ui.define([
 			true);
 		oHelperMock.expects("fireChange").withExactArgs("~mChangeListener~", "bar", undefined,
 			true);
+		oHelperMock.expects("fireChange")
+			.withExactArgs("~mChangeListener~", "baz/bar", sinon.match.same(oNewValue0.baz.bar));
+		oHelperMock.expects("fireChange")
+			.withExactArgs("~mChangeListener~", "baz", sinon.match.same(oNewValue0.baz));
 
 		oHelperMock.expects("buildPath").withExactArgs("", "foo").returns("foo");
 		oHelperMock.expects("buildPath").withExactArgs("", "bar").returns("bar");
@@ -1562,8 +1570,8 @@ sap.ui.define([
 		oHelperMock.expects("buildPath").twice().withExactArgs("baz", "bar").returns("baz/bar");
 
 		// code under test
-		_Helper.updateSelected("~mChangeListener~", "", oOldValue0,
-			{baz : {bar : {}}}, ["foo", "bar", "baz/bar"]);
+		_Helper.updateSelected("~mChangeListener~", "", oOldValue0, oNewValue0,
+			["foo", "bar", "baz/bar"]);
 
 		assert.deepEqual(oOldValue0, bUndefined ? {
 			"bar@$ui5.noData" : true,
@@ -1576,9 +1584,14 @@ sap.ui.define([
 			"foo@$ui5.noData" : true
 		});
 
+		oHelperMock.expects("fireChange")
+			.withExactArgs("~mChangeListener~", "baz/bar", sinon.match.same(oNewValue1.baz.bar));
+		oHelperMock.expects("fireChange")
+			.withExactArgs("~mChangeListener~", "baz", sinon.match.same(oNewValue1.baz));
+
 		// code under test (do not create annotation)
-		_Helper.updateSelected("~mChangeListener~", "", oOldValue1,
-			{baz : {bar : {}}}, ["foo", "bar", "baz/bar"], undefined, /*bOkIfMissing*/ true);
+		_Helper.updateSelected("~mChangeListener~", "", oOldValue1, oNewValue1,
+			["foo", "bar", "baz/bar"], undefined, /*bOkIfMissing*/ true);
 
 		assert.deepEqual(oOldValue1, {baz : {bar : {}}});
 	});
@@ -1596,7 +1609,8 @@ sap.ui.define([
 			};
 
 		oOldValue.transient.$postBodyCollection = true;
-		this.mock(_Helper).expects("fireChange").never();
+		this.mock(_Helper).expects("fireChange")
+			.withExactArgs("~mChangeListener~", "upcoming", sinon.match.same(oNewValue.upcoming));
 
 		// code under test
 		_Helper.updateSelected("~mChangeListener~", "", oOldValue, oNewValue);
@@ -1628,6 +1642,8 @@ sap.ui.define([
 		if (bNull) {
 			oCacheValue.complex = null;
 		}
+		oHelperMock.expects("fireChange").withExactArgs("~mChangeListener~", "base/path/complex",
+			sinon.match.same(oNewValue.complex));
 		oHelperMock.expects("fireChange")
 			.withExactArgs("~mChangeListener~", "base/path/complex/simple1", "new1");
 		oHelperMock.expects("fireChange")
@@ -1704,9 +1720,12 @@ sap.ui.define([
 				.withExactArgs("~mChangeListener~", "base/path/" + sPath, vValue);
 		}
 
+		expectChange("selected", oNewValue.selected);
 		expectChange("selected/changed", "new1");
 		expectChange("selected/new", "new2");
+		expectChange("selected/nested", oNewValue.selected.nested);
 		expectChange("selected/nested/changed", "new3");
+		expectChange("selected/nested/newComplex", oNewValue.selected.nested.newComplex);
 		expectChange("selected/nested/newComplex/new", "new4");
 		expectChange("selected/nested/newSimple", "new5");
 
@@ -1824,16 +1843,16 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("updateAll: array", function (assert) {
-		var mChangeListeners = {},
-			oSource = {
+		var oSource = {
 				array : []
 			},
 			oTarget = {};
 
-		this.mock(_Helper).expects("fireChange").never();
+		this.mock(_Helper).expects("fireChange")
+			.withExactArgs("~mChangeListeners~", "path/array", sinon.match.same(oSource.array));
 
 		// code under test
-		_Helper.updateAll(mChangeListeners, "path", oTarget, oSource);
+		_Helper.updateAll("~mChangeListeners~", "path", oTarget, oSource);
 
 		assert.strictEqual(oTarget.array, oSource.array);
 	});
@@ -1850,8 +1869,12 @@ sap.ui.define([
 				"#changed" : {value : "old"}
 			};
 
+		oHelperMock.expects("fireChange").withExactArgs(sinon.match.same(mChangeListeners),
+			"path/#added", sinon.match.same(oSource["#added"]));
 		oHelperMock.expects("fireChange")
 			.withExactArgs(sinon.match.same(mChangeListeners), "path/#added/value", "new");
+		oHelperMock.expects("fireChange").withExactArgs(sinon.match.same(mChangeListeners),
+			"path/#changed", sinon.match.same(oSource["#changed"]));
 		oHelperMock.expects("fireChange")
 			.withExactArgs(sinon.match.same(mChangeListeners), "path/#changed/value", "new");
 
