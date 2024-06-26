@@ -35,15 +35,6 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	/**
-	 * Provides an API for controls to implement personalization.
-	 *
-	 * @namespace sap.ui.fl.write.api.ControlPersonalizationWriteAPI
-	 * @since 1.69
-	 * @private
-	 * @ui5-restricted UI5 controls that allow personalization
-	 */
-
 	var mChangeCreationListeners = {};
 
 	function checkChangeSpecificData(oChange, sLayer) {
@@ -92,6 +83,14 @@ sap.ui.define([
 	 * @ui5-restricted UI5 controls that allow personalization
 	 */
 
+	/**
+	 * Provides an API for controls to implement personalization.
+	 *
+	 * @namespace sap.ui.fl.write.api.ControlPersonalizationWriteAPI
+	 * @since 1.69
+	 * @private
+	 * @ui5-restricted UI5 controls that allow personalization
+	 */
 	var ControlPersonalizationWriteAPI = /** @lends sap.ui.fl.write.api.ControlPersonalizationWriteAPI */{
 		/**
 		 * Creates personalization changes, adds them to the flex persistence (not yet saved) and applies them to the control.

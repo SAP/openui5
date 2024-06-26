@@ -86,6 +86,9 @@ sap.ui.define([
 	 * @param {object} mPropertyBag Object with parameters as properties
 	 * @param {sap.ui.fl.Selector} mPropertyBag.selector To retrieve the associated flex persistence
 	 * @returns {boolean} <code>true</code> if dirty changes exist
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.rta
 	 */
 	PersistenceWriteAPI.hasDirtyChanges = function(mPropertyBag) {
 		return FlexObjectState.hasDirtyFlexObjects(mPropertyBag);
@@ -135,7 +138,7 @@ sap.ui.define([
 	 *
 	 * @returns {Promise} Promise that resolves with an array of responses or is rejected with the first error
 	 * @private
-	 * @ui5-restricted
+	 * @ui5-restricted sap.ui.fl, sap.ui.rta
 	 */
 	PersistenceWriteAPI.save = function(mPropertyBag) {
 		// when save or activate a version in rta no reload is triggered but flex/data request is send
@@ -171,7 +174,7 @@ sap.ui.define([
 	 *
 	 * @returns {Promise<object>} Resolves the information if the application to which the selector belongs has content that can be published/reset
 	 * @private
-	 * @ui5-restricted
+	 * @ui5-restricted sap.ui.fl, sap.ui.rta
 	 */
 	PersistenceWriteAPI.getResetAndPublishInfo = function(mPropertyBag) {
 		return Promise.all([
@@ -218,7 +221,7 @@ sap.ui.define([
 	 *
 	 * @returns {object} Information if the application has content that can be published/reset
 	 * @private
-	 * @ui5-restricted
+	 * @ui5-restricted sap.ui.fl, sap.ui.rta
 	 */
 	PersistenceWriteAPI.getResetAndPublishInfoFromSession = function(oControl) {
 		var sParameter = ManifestUtils.getFlexReferenceForControl(oControl) || "true";
@@ -239,7 +242,7 @@ sap.ui.define([
 	 *
 	 * @returns {Promise} Promise that resolves after the deletion took place
 	 * @private
-	 * @ui5-restricted
+	 * @ui5-restricted sap.ui.fl, sap.ui.rta
 	 */
 	PersistenceWriteAPI.reset = function(mPropertyBag) {
 		var oAppComponent = Utils.getAppComponentForSelector(mPropertyBag.selector);
@@ -266,6 +269,9 @@ sap.ui.define([
 	 * - "Cancel" if publish process was canceled
 	 * - <sMessage> when all the artifacts are successfully transported fl will return the message to show
 	 * - "Error" in case of a problem
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.fl, sap.ui.rta
 	 */
 	PersistenceWriteAPI.publish = function(mPropertyBag) {
 		mPropertyBag.styleClass ||= "";
@@ -284,7 +290,7 @@ sap.ui.define([
 	 * @returns {sap.ui.fl.apply._internal.flexObjects.FlexObject[] | sap.ui.fl.apply._internal.flexObjects.FlexObject} An array of flexObjects or a single flexObject (depending on the input)
 	 *
 	 * @private
-	 * @ui5-restricted
+	 * @ui5-restricted sap.ui.fl, sap.ui.rta
 	 */
 	PersistenceWriteAPI.add = function(mPropertyBag) {
 		var oAppComponent = Utils.getAppComponentForSelector(mPropertyBag.selector);
@@ -327,7 +333,7 @@ sap.ui.define([
 	 * @param {sap.ui.fl.Selector} mPropertyBag.selector - To retrieve the associated flex persistence
 	 * @returns {Promise} resolves when flexObjects are removed
 	 * @private
-	 * @ui5-restricted
+	 * @ui5-restricted sap.ui.fl, sap.ui.rta
 	 */
 	PersistenceWriteAPI.remove = function(mPropertyBag) {
 		return Promise.resolve()
@@ -384,6 +390,8 @@ sap.ui.define([
 	 * @param {string} [mPropertyBag.layer] - Layer for which changes should be checked
 	 * @returns {Promise} Resolves with object that decides if warning should be shown
 	 *
+	 * @private
+	 * @ui5-restricted sap.ui.fl, sap.ui.rta
 	 */
 	PersistenceWriteAPI.getChangesWarning = function(mPropertyBag) {
 		return this._getUIChanges(mPropertyBag).then(function(aChanges) {

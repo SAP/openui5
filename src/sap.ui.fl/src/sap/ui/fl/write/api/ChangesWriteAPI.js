@@ -54,7 +54,6 @@ sap.ui.define([
 	 * @since 1.68
 	 * @private
 	 * @ui5-restricted sap.ui.rta, similar tools
-	 *
 	 */
 	var ChangesWriteAPI = /** @lends sap.ui.fl.write.api.ChangesWriteAPI */ {};
 
@@ -122,7 +121,7 @@ sap.ui.define([
 	 * @returns {Promise|sap.ui.fl.apply._internal.flexObjects.FlexObject} Returns the FlexObject directly In case of a controller extension,
 	 * otherwise the FlexObject is wrapped in a promise
 	 * @private
-	 * @ui5-restricted
+	 * @ui5-restricted sap.ui.fl, sap.ui.rta, similar tools
 	 */
 	ChangesWriteAPI.create = function(mPropertyBag) {
 		if (mPropertyBag.changeSpecificData.changeType === "codeExt") {
@@ -210,7 +209,7 @@ sap.ui.define([
 	 * @param {object} [mPropertyBag.appDescriptor] - App descriptor containing the metadata of the current application
 	 * @returns {Promise|sap.ui.fl.Utils.FakePromise} Promise that is resolved after all changes were applied in asynchronous case, or FakePromise for the synchronous processing scenario
 	 * @private
-	 * @ui5-restricted
+	 * @ui5-restricted sap.ui.fl, sap.ui.rta, similar tools
 	 */
 	ChangesWriteAPI.apply = function(mPropertyBag) {
 		if (!(mPropertyBag.element instanceof Element)) {
@@ -256,7 +255,7 @@ sap.ui.define([
 	 * @param {sap.ui.core.Element} mPropertyBag.element - Element instance on which the change should be reverted
 	 * @returns {Promise|sap.ui.fl.Utils.FakePromise<sap.ui.core.Element|false>} Promise or fake promise resolving to the control on which a change was reverted successully, or false when unsuccessful, or an array with the return value of the revert call for each given change
 	 * @private
-	 * @ui5-restricted
+	 * @ui5-restricted sap.ui.fl, sap.ui.rta, similar tools
 	 */
 	ChangesWriteAPI.revert = function(mPropertyBag) {
 		var oAppComponent = Utils.getAppComponentForSelector(mPropertyBag.element || {});
@@ -298,6 +297,9 @@ sap.ui.define([
 	 * @param {string} mPropertyBag.changeType - Change type of a <code>sap.ui.fl.apply._internal.flexObjects.FlexObject</code> change
 	 * @param {string} [mPropertyBag.controlType] - Type of the control. If not given will be derived from the element
 	 * @returns {Promise.<object>} Change handler object wrapped in a Promise
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.fl, sap.ui.rta, similar tools
 	 */
 	ChangesWriteAPI.getChangeHandler = function(mPropertyBag) {
 		var sControlType = mPropertyBag.controlType || mPropertyBag.modifier.getControlType(mPropertyBag.element);

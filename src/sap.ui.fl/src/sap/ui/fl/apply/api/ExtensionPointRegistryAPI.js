@@ -25,6 +25,9 @@ sap.ui.define([
 		 * @param {string} mPropertyBag.name - Name of the extension point
 		 * @param {object} mPropertyBag.view - View object
 		 * @returns {object} mExtensionPointInfo - Map of extension point information
+		 *
+		 * @private
+		 * @ui5-restricted sap.ui.fl, sap.ui.rta
 		 */
 		getExtensionPointInfo(mPropertyBag) {
 			return ExtensionPointRegistry.getExtensionPointInfo(mPropertyBag.name, mPropertyBag.view);
@@ -35,6 +38,9 @@ sap.ui.define([
 		 * @param {object} mPropertyBag - Object with parameters as properties
 		 * @param {string} mPropertyBag.viewId - ID of the view
 		 * @returns {object} map of extension points
+		 *
+		 * @private
+		 * @ui5-restricted sap.ui.fl, sap.ui.rta
 		 */
 		getExtensionPointInfoByViewId(mPropertyBag) {
 			return ExtensionPointRegistry.getExtensionPointInfoByViewId(mPropertyBag.viewId);
@@ -46,6 +52,9 @@ sap.ui.define([
 		 * @param {object} mPropertyBag - Object with parameters as properties
 		 * @param {string} mPropertyBag.parentId - ID of the extension point parent control
 		 * @returns {Array} Array of extension point information
+		 *
+		 * @private
+		 * @ui5-restricted sap.ui.fl, sap.ui.rta
 		 */
 		getExtensionPointInfoByParentId(mPropertyBag) {
 			return ExtensionPointRegistry.getExtensionPointInfoByParentId(mPropertyBag.parentId);
@@ -57,6 +66,9 @@ sap.ui.define([
 		 * @param {string} mPropertyBag.name - Name of the extension point
 		 * @param {object} mPropertyBag.viewId - ID of the view
 		 * @param {string[]} mPropertyBag.createdControlsIds - Array with the IDs of the created controls
+		 *
+		 * @private
+		 * @ui5-restricted sap.ui.fl, sap.ui.rta
 		 */
 		addCreatedControlsToExtensionPointInfo(mPropertyBag) {
 			ExtensionPointRegistry.addCreatedControls(

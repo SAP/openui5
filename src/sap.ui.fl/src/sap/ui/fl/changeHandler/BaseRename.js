@@ -18,6 +18,8 @@ sap.ui.define([
 	 * @version ${version}
 	 * @since 1.46
 	 *
+	 * @private
+	 * @ui5-restricted change handlers
 	 */
 	const BaseRename = {
 		/**
@@ -27,6 +29,8 @@ sap.ui.define([
 		 * @param {string} mRenameSettings.changePropertyName -  Only use if you have migration changeHandler: Property name in change (for LRep; e.g. "fieldLabel")
 		 * @param {string} mRenameSettings.translationTextType - Translation text type in change (e.g. "XFLD")
 		 * @return {object} The rename change handler
+		 * @private
+		 * @ui5-restricted change handlers
 		 */
 		createRenameChangeHandler(mRenameSettings) {
 			mRenameSettings.changePropertyName ||= "newText";

@@ -24,6 +24,9 @@ sap.ui.define([
 		 * @param {object} mPropertyBag - Property bag for read delegate
 		 * @param {object} mPropertyBag.modelType - Read delegate model type
 		 * @param {object} mPropertyBag.delegate - Path to read delegate
+		 *
+		 * @private
+		 * @ui5-restricted sap.ui.fl, sap.ui.rta, smart controls
 		 */
 		registerReadDelegate(mPropertyBag) {
 			DelegateMediator.registerReadDelegate(mPropertyBag);
@@ -37,6 +40,9 @@ sap.ui.define([
 		 * @param {object} mPropertyBag.delegate - Path to control-specific delegate
 		 * @param {object} [mPropertyBag.requiredLibraries] - Map of required libraries
 		 * @param {object} [mPropertyBag.payload] - Payload for the delegate
+		 *
+		 * @private
+		 * @ui5-restricted sap.ui.fl, sap.ui.rta, smart controls
 		 */
 		registerWriteDelegate(mPropertyBag) {
 			DelegateMediator.registerWriteDelegate(mPropertyBag);
@@ -51,6 +57,9 @@ sap.ui.define([
 		 * @param {sap.ui.core.util.reflection.BaseTreeModifier} mPropertyBag.modifier - Control tree modifier
 		 * @param {string} [mPropertyBag.modelType] - Model type; required in case you passed the <code>XmlTreeModifier</code>
 		 * @returns {Promise.<sap.ui.core.util.reflection.FlexDelegateInfo>} Delegate information including the lazy loaded instance of the delegate
+		 *
+		 * @private
+		 * @ui5-restricted sap.ui.fl, sap.ui.rta, smart controls
 		 */
 		getReadDelegateForControl(mPropertyBag) {
 			return DelegateMediator.getReadDelegateForControl(
@@ -69,6 +78,9 @@ sap.ui.define([
 		 * @param {sap.ui.core.Element|DomNode} mPropertyBag.control - Control for which the corresponding delegate should be returned
 		 * @param {sap.ui.core.util.reflection.BaseTreeModifier} mPropertyBag.modifier - Control tree modifier
 		 * @returns {Promise.<sap.ui.core.util.reflection.FlexDelegateInfo>} Delegate information including the lazy loaded instance of the delegate
+		 *
+		 * @private
+		 * @ui5-restricted sap.ui.fl, sap.ui.rta, smart controls
 		 */
 		getWriteDelegateForControl(mPropertyBag) {
 			return DelegateMediator.getWriteDelegateForControl(

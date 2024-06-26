@@ -42,7 +42,6 @@ sap.ui.define([
 	 *
 	 * @namespace sap.ui.fl.apply.api.ControlVariantApplyAPI
 	 * @since 1.67
-	 * @version ${version}
 	 * @public
 	 */
 	var ControlVariantApplyAPI = /** @lends sap.ui.fl.apply.api.ControlVariantApplyAPI */{
@@ -50,6 +49,9 @@ sap.ui.define([
 		 * Returns the name of the Variant Model
 		 *
 		 * @returns {string} Name of the Variant Model
+		 *
+		 * @private
+		 * @ui5-restricted sap.ui.fl, sap.ui.rta
 		 */
 		getVariantModelName() {
 			return VARIANT_MODEL_NAME;
@@ -60,6 +62,9 @@ sap.ui.define([
 		 *
 		 * @param {object} oAppComponent - Application component
 		 * @returns {Promise} Promise resolving to the Variant Model
+		 *
+		 * @private
+		 * @ui5-restricted sap.ui.fl, sap.ui.rta
 		 */
 		getVariantModel(oAppComponent) {
 			return waitForVariantModel(oAppComponent);

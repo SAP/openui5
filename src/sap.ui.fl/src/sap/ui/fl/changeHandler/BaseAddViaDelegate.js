@@ -29,6 +29,7 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @version ${version}
 	 * @private
+	 * @ui5-restricted change handlers
 	 */
 	const BaseAddViaDelegate = {
 
