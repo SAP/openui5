@@ -2286,9 +2286,9 @@ sap.ui.define([
 				bFullDay = !oEndDate;
 
 			if (bFullDay) {
-				return sStartTime + ": " + this._oFormatAriaFullDayCell.format(oStartDate) + "; ";
+				return sStartTime + ": " + this._oFormatAriaFullDayCell.format(oStartDate);
 			}
-			return sStartTime + ": " + this._oFormatStartEndInfoAria.format(oStartDate) + "; " + sEndTime + ": " + this._oFormatStartEndInfoAria.format(oEndDate);
+			return sStartTime + ": " + this._oFormatStartEndInfoAria.format(oStartDate) + ", " + sEndTime + ": " + this._oFormatStartEndInfoAria.format(oEndDate);
 		};
 
 		/**

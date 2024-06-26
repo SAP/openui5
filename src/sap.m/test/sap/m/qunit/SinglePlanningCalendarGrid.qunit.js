@@ -198,7 +198,7 @@ sap.ui.define([
 			oMockStardDate = UI5Date.getInstance(2019, 7, 5, 10),
 			oMockEndDate = UI5Date.getInstance(2019, 7, 5, 15),
 			// \u202f is a Narrow No-Break Space which has been introduced with CLDR version 43
-			sExpectedInfo = oGrid._oUnifiedRB.getText("CALENDAR_START_TIME") + ": Monday, August 5, 2019 at 10:00:00\u202fAM; " +
+			sExpectedInfo = oGrid._oUnifiedRB.getText("CALENDAR_START_TIME") + ": Monday, August 5, 2019 at 10:00:00\u202fAM, " +
 				oGrid._oUnifiedRB.getText("CALENDAR_END_TIME") + ": Monday, August 5, 2019 at 3:00:00\u202fPM";
 
 		oGrid.placeAt("qunit-fixture");
@@ -219,7 +219,7 @@ sap.ui.define([
 		var oGrid = new SinglePlanningCalendarGrid(),
 			oMockStardDate = UI5Date.getInstance(2019, 7, 5, 10),
 			oMockEndDate = UI5Date.getInstance(2019, 7, 5, 15),
-			sExpectedInfo = oGrid._oUnifiedRB.getText("CALENDAR_START_TIME") + ": Monday, August 5, 2019 at 10:00:00; " +
+			sExpectedInfo = oGrid._oUnifiedRB.getText("CALENDAR_START_TIME") + ": Monday, August 5, 2019 at 10:00:00, " +
 				oGrid._oUnifiedRB.getText("CALENDAR_END_TIME") + ": Monday, August 5, 2019 at 15:00:00";
 
 		oGrid.placeAt("qunit-fixture");

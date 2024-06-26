@@ -1343,7 +1343,7 @@ sap.ui.define([
 				.getLibraryResourceBundle("sap.ui.unified")
 				.getText("CALENDAR_START_TIME");
 
-				return sStartTime + ": " + this._oFormatAriaFullDayCell.format(oStartDate) + "; ";
+				return sStartTime + ": " + this._oFormatAriaFullDayCell.format(oStartDate);
 		};
 
 		SinglePlanningCalendarMonthGrid.prototype._getAppointmentAnnouncementInfo = function(oAppointment) {
