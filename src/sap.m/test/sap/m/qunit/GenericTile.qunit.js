@@ -17,10 +17,11 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/base/util/isEmptyObject",
 	"sap/ui/events/KeyCodes",
+        "sap/ui/core/Core",
 	// used only indirectly
 	"sap/ui/events/jquery/EventExtension"
 ], function(jQuery, GenericTile, TileContent, NumericContent, ImageContent, Device, ResizeHandler, GenericTileLineModeRenderer,
-            Button, Text, ScrollContainer, FlexBox, GenericTileRenderer, library, Core, isEmptyObject, KeyCodes) {
+            Button, Text, ScrollContainer, FlexBox, GenericTileRenderer, library, Core, isEmptyObject, KeyCodes, oCore) {
 	"use strict";
 
 	// shortcut for sap.m.Size
@@ -31,6 +32,9 @@ sap.ui.define([
 
 	// shortcut for sap.m.FrameType
 	var FrameType = library.FrameType;
+
+        // shortcut for sap.m.TileSizeBehavior
+	var TileSizeBehavior = library.TileSizeBehavior;
 
 	// shortcut for sap.m.ValueColor
 	var ValueColor = library.ValueColor;
@@ -547,6 +551,37 @@ sap.ui.define([
 		//Style Classes for Generic Tile should be removed from hover Overlay, once Drag is completed.
 		assert.notOk(this.oGenericTile.hasStyleClass("sapMGTPressActive"), "Press state from Generic Tile is removed.");
 	});
+        QUnit.module("Small phone Tile tests", {
+        beforeEach: function() {
+            this.oGenericTile = new GenericTile({
+                header: "This is a header",
+                subheader: "This is a subheader",
+                sizeBehavior: TileSizeBehavior.Small
+            });
+            this.oParent = new FlexBox({
+                width: "100px",
+                items: [this.oGenericTile]
+            }).placeAt("qunit-fixture");
+            this.oParent.addStyleClass('sapUshellSection');
+            oCore.applyChanges();
+        },
+        afterEach: function() {
+            this.oGenericTile.destroy();
+            this.oGenericTile = null;
+            this.oParent.destroy();
+            this.oParent = null;
+        }
+    });
+    QUnit.test("Tiles in small phone with small behavior are working properly", function(assert) {
+        this.oGenericTile.setFrameType(FrameType.TwoByOne);
+        oCore.applyChanges();
+        assert.equal(this.oGenericTile.$().css('width'), '304px', 'Rendering successful');
+    });
+    QUnit.test("Tiles in small phone with small behavior are working properly", function(assert) {
+        this.oGenericTile.setFrameType(FrameType.TwoByHalf);
+        oCore.applyChanges();
+        assert.equal(this.oGenericTile.$().css('width'), '304px', 'Rendering successful');
+    });
 
 	QUnit.module("FrameType rendering tests", {
 		beforeEach: function() {
@@ -573,10 +608,9 @@ sap.ui.define([
 	QUnit.test("FrameType is in TwoByOne", function(assert) {
 		//Arrange
 		this.oGenericTile.setFrameType(FrameType.TwoByOne);
-
 		//Act
 		sap.ui.getCore().applyChanges();
-
+		oCore.applyChanges();
 		//Assert
 		assert.equal(this.oGenericTile.getFrameType(), FrameType.TwoByOne, "FrameType Auto set to TwoByOne");
 	});
