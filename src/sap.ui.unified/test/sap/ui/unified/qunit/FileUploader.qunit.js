@@ -1027,6 +1027,21 @@ sap.ui.define([
 		oFileUploader.destroy();
 	});
 
+	QUnit.test("Change event listener is reattached to the rerendered inner input field", function(assert) {
+		// prepare
+		var oFileUploader = new FileUploader(),
+			oChangeHandlerSpy = this.spy(oFileUploader, "handlechange");
+		oFileUploader.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		// act
+		oFileUploader.setMultiple(false);
+		oFileUploader.oFileUpload.dispatchEvent(new Event("change"));
+		// assert
+		assert.ok(oChangeHandlerSpy.calledOnce, "Change handler is attached");
+		// clean
+		oFileUploader.destroy();
+	});
+
 	QUnit.module("BlindLayer", {
 		beforeEach: function() {
 			this.oFileUploader = createFileUploader();
