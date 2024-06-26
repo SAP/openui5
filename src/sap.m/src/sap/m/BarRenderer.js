@@ -43,7 +43,7 @@ sap.ui.define(['./BarInPageEnabler', "sap/base/i18n/Localization", 'sap/ui/Devic
 		oRM.class(this.getContext(oControl));
 
 		oRM.accessibilityState(oControl, {
-			"role": oControl._getRootAccessibilityRole(),
+			"role": oControl._getAccessibilityRole(),
 			"level":  oControl._getRootAriaLevel()
 		});
 
