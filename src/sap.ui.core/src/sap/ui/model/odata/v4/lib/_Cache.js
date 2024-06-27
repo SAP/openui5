@@ -3541,7 +3541,7 @@ sap.ui.define([
 		mQueryOptions.$filter = aElements.map(function (oElement) {
 			// all elements have a key predicate, so we will get a key filter
 			return _Helper.getKeyFilter(oElement, that.sMetaPath, mTypeForMetaPath);
-		}).join(" or ");
+		}).sort().join(" or ");
 		if (aElements.length > 1) { // avoid small default page size for server-driven paging
 			mQueryOptions.$top = aElements.length;
 		}
