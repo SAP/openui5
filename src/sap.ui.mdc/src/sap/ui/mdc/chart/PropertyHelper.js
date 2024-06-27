@@ -74,7 +74,10 @@ sap.ui.define([
 		}
 	});
 
-	PropertyHelper.prototype.prepareProperty = function(oProperty) {
+	/**
+	 * @inheritDoc
+	 */
+	PropertyHelper.prototype.prepareProperty = function(oProperty, mProperties) {
 		if (!oProperty.path && oProperty.propertyPath) {
 			oProperty.path = oProperty.propertyPath;
 		}

@@ -175,7 +175,7 @@ sap.ui.define([
 	/**
 	 * @inheritDoc
 	 */
-	PropertyHelper.prototype.prepareProperty = function(oProperty) {
+	PropertyHelper.prototype.prepareProperty = function(oProperty, mProperties) {
 		PropertyHelperBase.prototype.prepareProperty.apply(this, arguments);
 
 		// The typeConfig is required for internal processes like column width calculation and filter handling.

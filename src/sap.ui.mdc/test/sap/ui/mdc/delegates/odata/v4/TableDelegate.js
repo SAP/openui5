@@ -221,8 +221,8 @@ sap.ui.define([
 						constraints : mConstraints,
 						maxConditions: ODataMetaModelUtil.isMultiValueFilterExpression(oFilterRestrictionsInfo[sKey]?.allowedExpressions) ? -1 : 1,
 						groupable: oPropertyAnnotations["@Org.OData.Aggregation.V1.Groupable"] || false,
-						unit: oUnitAnnotation && !bUnitIsFromNavigationProperty ? oUnitAnnotation.$Path : undefined,
-						text: oTextAnnotation && bTextIsFromNavigationProperty ? oTextAnnotation.$Path : undefined,
+						unit: !bUnitIsFromNavigationProperty && oUnitAnnotation?.$Path || "",
+						text: bTextIsFromNavigationProperty && oTextAnnotation?.$Path || "",
 						isKey: oEntityType.$Key.indexOf(sKey) > -1,
 						caseSensitive : !bIsUpperCase
 					};

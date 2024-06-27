@@ -8,14 +8,16 @@ sap.ui.define([
 	"sap/base/util/merge",
 	"sap/base/util/isPlainObject",
 	"sap/base/Log",
-	"sap/ui/core/Lib"
+	"sap/ui/core/Lib",
+	"sap/base/util/deepEqual"
 ], (
 	BaseObject,
 	DataType,
 	merge,
 	isPlainObject,
 	Log,
-	Lib
+	Lib,
+	deepEqual
 ) => {
 	"use strict";
 
@@ -379,9 +381,9 @@ sap.ui.define([
 		}
 	}
 
-	function prepareProperties(oPropertyHelper, aProperties) {
+	function prepareProperties(oPropertyHelper, aProperties, mProperties) {
 		aProperties.forEach((oProperty) => {
-			oPropertyHelper.prepareProperty(oProperty);
+			oPropertyHelper.prepareProperty(oProperty, mProperties);
 		});
 
 		deepFreeze(aProperties);
@@ -536,12 +538,15 @@ sap.ui.define([
 		oPropertyHelper.validateProperties(aClonedProperties, mPrivate.aPreviousRawProperties);
 
 		const aClonedPropertiesWithAliases = addAttributeAliases(aClonedProperties);
-		mPrivate.aProperties = aClonedPropertiesWithAliases;
-		mPrivate.mProperties = createPropertyMap(aClonedPropertiesWithAliases);
-		mPrivate.aPreviousRawProperties = merge([], aProperties);
-
+		const mNextPropertyMap = createPropertyMap(aClonedPropertiesWithAliases);
 		enrichProperties(oPropertyHelper, aClonedPropertiesWithAliases);
-		prepareProperties(oPropertyHelper, aClonedPropertiesWithAliases);
+		prepareProperties(oPropertyHelper, aClonedPropertiesWithAliases, mNextPropertyMap);
+
+		oPropertyHelper._validatePropertyConsistency(aClonedPropertiesWithAliases, mPrivate.aProperties);
+
+		mPrivate.aProperties = aClonedPropertiesWithAliases;
+		mPrivate.mProperties = mNextPropertyMap;
+		mPrivate.aPreviousRawProperties = merge([], aProperties);
 	}
 
 	function addAttributeAliases(aProperties) {
@@ -652,6 +657,48 @@ sap.ui.define([
 
 		if (oUniquePropertiesSet.size !== aProperties.length) {
 			throwInvalidPropertyError("Properties do not have unique keys.");
+		}
+	};
+
+	/**
+	 * Compares two property arrays for consistency regarding lost properties as well as attribute value manipulation between given values and/or defaults
+	 *
+	 * <b>Note:</b>
+	 * - Properties once known to the PropertyHelper instance can no longer be removed
+	 * - Attribute values can no longer be modified from previous ones or default values using setProperties
+	 *
+	 * @param {sap.ui.mdc.util.PropertyInfo[]} aProperties The properties to validate
+	 * @param {sap.ui.mdc.util.PropertyInfo[]} [aPreviousProperties] The previous set of properties to validate against
+
+	 * @throws {Error} If inconsistencies between property configurations are found
+	 * @private
+	 */
+	PropertyHelper.prototype._validatePropertyConsistency = function(aProperties, aPreviousProperties) {
+		if (aPreviousProperties?.length) {
+			const mPrivate = _private.get(this);
+			const { mAttributeMetadata } = mPrivate;
+			const aAllInconsistencies = [];
+			for (const oPreviousProperty of aPreviousProperties) {
+				const sPreviousPropertyKey = getPropertyKey(oPreviousProperty);
+				const oNewProperty = aProperties.find((oProperty) => getPropertyKey(oProperty) === sPreviousPropertyKey);
+				if (!oNewProperty) { // Property is missing in new set
+					aAllInconsistencies.push({[sPreviousPropertyKey]: "PROPERTY_MISSING"});
+				} else {
+					const aInconsistencies = Object.entries(mAttributeMetadata).reduce((aAcc, [sAttribute, oAttrMetadata]) => {
+						if (!deepEqual(oPreviousProperty[sAttribute], oNewProperty[sAttribute])) {
+							return [...aAcc, {[sAttribute]: [oPreviousProperty[sAttribute], oNewProperty[sAttribute]]}];
+						}
+						return aAcc;
+					}, []);
+					if (aInconsistencies.length) {
+						aAllInconsistencies.push({[sPreviousPropertyKey]: aInconsistencies});
+					}
+				}
+			}
+
+			if (aAllInconsistencies.length) {
+				reportInvalidProperty(`Detected property info modifications after update:`, aAllInconsistencies);
+			}
 		}
 	};
 
@@ -770,10 +817,11 @@ sap.ui.define([
 	 * Applies defaults and resolves property references.
 	 *
 	 * @param {sap.ui.mdc.util.PropertyInfo} oProperty The property to prepare
+	 * @param {Object<string, sap.ui.mdc.util.PropertyInfo>} mProperties property map
+	 *
 	 * @protected
 	 */
-	PropertyHelper.prototype.prepareProperty = function(oProperty) {
-		const mProperties = this.getPropertyMap();
+	PropertyHelper.prototype.prepareProperty = function(oProperty, mProperties) {
 		const aDependenciesForDefaults = preparePropertyDeep(this, oProperty, mProperties);
 
 		aDependenciesForDefaults.forEach((mDependency) => {
@@ -807,7 +855,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets all properties known to this helper. Properties that are currently known but are not in the set of new properties are no longer known.
+	 * Sets all properties known to this helper.
+	 *
+	 * Note:<br>
+	 * Repeated calls allow incremental updates for properties.
+	 * You may add new properties and/or attributes, but you must not remove properties or modify their attributes, once configured.
 	 *
 	 * @param {sap.ui.mdc.util.PropertyInfo[]} aProperties The properties to process
 	 * @public
