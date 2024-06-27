@@ -35,7 +35,7 @@ sap.ui.define(['./Element', './library'],
 			/**
 			 * The text to be displayed for the item.
 			 */
-			text : {type : "string", group : "Misc", defaultValue : ""},
+			text : {type : "string", group : "Data", defaultValue : ""},
 
 			/**
 			 * Enabled items can be selected.

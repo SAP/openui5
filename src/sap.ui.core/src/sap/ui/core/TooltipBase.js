@@ -44,7 +44,7 @@ sap.ui.define([
 				/**
 				 * The text that is shown in the tooltip that extends the TooltipBase class, for example in RichTooltip.
 				 */
-				text : {type : "string", group : "Misc", defaultValue : ""},
+				text : {type : "string", group : "Data", defaultValue : ""},
 
 				/**
 				 * Optional. Open Duration in milliseconds.
