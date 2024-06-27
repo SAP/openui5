@@ -53,7 +53,7 @@ sap.ui.define([
 			],
 			rows: "{/Products}",
 			models: new ODataModel(sServiceURI, true),
-			plugins: [
+			dependents: [
 				new MultiSelectionPlugin({})
 			]
 		});
@@ -483,7 +483,7 @@ sap.ui.define([
 
 	QUnit.test("No cell selection with RowOnly", async function(assert) {
 		const oTable = this.oTable;
-		const oSelectionPlugin = this.oTable.getPlugins().find((oPlugin) => oPlugin.isA("sap.ui.table.plugins.SelectionPlugin"));
+		const oSelectionPlugin = this.oTable.getDependents().find((oPlugin) => oPlugin.isA("sap.ui.table.plugins.SelectionPlugin"));
 		const oCellSelector = this.oCellSelector;
 		const oSelectCellsSpy = sinon.spy(oCellSelector, "_selectCells");
 		oTable.setSelectionBehavior("RowOnly");
