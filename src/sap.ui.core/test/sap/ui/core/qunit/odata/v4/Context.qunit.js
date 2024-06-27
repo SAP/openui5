@@ -114,6 +114,15 @@ sap.ui.define([
 			// code under test
 			oContext.setPersisted();
 		}, new Error("Not 'created persisted'"));
+
+		oContext.bInactive = oContext.oCreatedPromise = oContext.oSyncCreatePromise = "any value";
+
+		// code under test
+		oContext.setPersisted(/*bForce*/true);
+
+		assert.strictEqual(oContext.isInactive(), undefined);
+		assert.strictEqual(oContext.isTransient(), undefined);
+		assert.strictEqual(oContext.created(), undefined);
 	});
 
 	//*********************************************************************************************

@@ -578,6 +578,7 @@ sap.ui.define([
 		if (this.oAggregation.createInPlace) {
 			return oPromise.then(async () => {
 				_Helper.removeByPath(this.mPostRequests, sTransientPredicate, oEntityData);
+				delete oEntityData["@$ui5.context.isTransient"];
 				const [iRank] = await Promise.all([
 					this.requestRank(oEntityData, oGroupLock),
 					this.requestNodeProperty(oEntityData, oGroupLock)

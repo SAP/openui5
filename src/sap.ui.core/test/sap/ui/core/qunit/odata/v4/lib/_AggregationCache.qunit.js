@@ -5163,6 +5163,7 @@ sap.ui.define([
 				return new SyncPromise(function (resolve) {
 					setTimeout(function () {
 						_Helper.setPrivateAnnotation(oEntityData, "predicate", "('ABC')");
+						oEntityData["@$ui5.context.isTransient"] = "~isTransient~";
 						oHelperMock.expects("removeByPath")
 							.withExactArgs(sinon.match.same(oCache.mPostRequests),
 								"~sTransientPredicate~", sinon.match.same(oEntityData));
