@@ -3156,7 +3156,7 @@ sap.ui.define([
 
 			mConfig.element.dispatchEvent(oWheelEvent);
 
-			return TableQUnitUtils.wait(100).then(function() {
+			return TableQUnitUtils.wait(600).then(function() {
 				that.assertPosition(assert, iExpectedFirstVisibleRow, iExpectedScrollTop, 0,
 					"Mouse Wheel - " + mConfig.name + ": Not scrolled");
 				assert.ok(!oWheelEvent.defaultPrevented, "Mouse Wheel - " + mConfig.name + ": Default action was not prevented");
