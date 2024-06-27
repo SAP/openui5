@@ -27,6 +27,48 @@
 	"sap.card": {
 		"type": "AnalyticsCloud",
 		"configuration": {
+			"parameters": {
+				"storyId": {
+					"value": "ABD0990112D81FBF4C936C30444FA3B7",
+					"type": "string",
+					"label": "Story ID"
+				},
+				"widgetId": {
+					"value": "Chart_1",
+					"type": "string",
+					"label": "Widget ID/Name"
+				},
+				"enableInteraction": {
+					"value": true,
+					"type": "boolean",
+					"label": "Enable Interaction",
+					"description": "Controls whether or not user interaction is allowed in chart."
+				},
+				"enableUndoRedo": {
+					"value": true,
+					"type": "boolean",
+					"label": "Enable Undo/Redo",
+					"description": "Controls whether or not undo/redo is allowed in chart."
+				},
+				"enableMenus": {
+					"value": true,
+					"type": "boolean",
+					"label": "Enable Menus",
+					"description": "Controls whether widget context menu and datapoint content menus are enabled or not."
+				},
+				"showHeader": {
+					"value": true,
+					"type": "boolean",
+					"label": "Show Header",
+					"description": "Controls whether chart header should be shown or not."
+				},
+				"showFooter": {
+					"value": true,
+					"type": "boolean",
+					"label": "Enable Interaction",
+					"description": "Controls whether chart header should be shown or not."
+				}
+			},
 			"destinations": {
 				"SAC": {
 					"name": "SAC",
@@ -42,16 +84,16 @@
 			"minHeight": "25rem",
 			"sacTenantDestination": "{{destinations.SAC}}",
 			"widget": {
-				"storyId": "ABD0990112D81FBF4C936C30444FA3B7",
-				"widgetId": "Chart_1"
+				"storyId": "{parameters>/storyId/value}",
+				"widgetId": "{parameters>/widgetId/value}"
 			},
 			"options": {
 				"attributes": {
-				  "enableInteraction": true,
-				  "enableUndoRedo": true,
-				  "enableMenus": true,
-				  "showHeader": true,
-				  "showFooter": true
+				  "enableInteraction": "{parameters>/enableInteraction/value}",
+				  "enableUndoRedo": "{parameters>/enableUndoRedo/value}",
+				  "enableMenus": "{parameters>/enableMenus/value}",
+				  "showHeader": "{parameters>/showHeader/value}",
+				  "showFooter": "{parameters>/showFooter/value}"
 				}
 			}
 		}
