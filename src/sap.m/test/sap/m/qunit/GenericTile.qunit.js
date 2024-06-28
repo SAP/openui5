@@ -49,6 +49,9 @@ sap.ui.define([
 	// shortcut for sap.m.FrameType
 	var FrameType = library.FrameType;
 
+        // shortcut for sap.m.TileSizeBehavior
+	var TileSizeBehavior = library.TileSizeBehavior;
+
 	// shortcut for sap.m.ValueColor
 	var ValueColor = library.ValueColor;
 
@@ -624,6 +627,37 @@ sap.ui.define([
 		//Style Classes for Generic Tile should be removed from hover Overlay, once Drag is completed.
 		assert.notOk(this.oGenericTile.hasStyleClass("sapMGTPressActive"), "Press state from Generic Tile is removed.");
 	});
+        QUnit.module("Small phone Tile tests", {
+        beforeEach: async function() {
+            this.oGenericTile = new GenericTile({
+                header: "This is a header",
+                subheader: "This is a subheader",
+                sizeBehavior: TileSizeBehavior.Small
+            });
+            this.oParent = new FlexBox({
+                width: "100px",
+                items: [this.oGenericTile]
+            }).placeAt("qunit-fixture");
+            this.oParent.addStyleClass('sapUshellSection');
+            await nextUIUpdate();
+        },
+        afterEach: function() {
+            this.oGenericTile.destroy();
+            this.oGenericTile = null;
+            this.oParent.destroy();
+            this.oParent = null;
+        }
+    });
+    QUnit.test("Tiles in small phone with small behavior are working properly", async function(assert) {
+        this.oGenericTile.setFrameType(FrameType.TwoByOne);
+        await nextUIUpdate();
+        assert.equal(this.oGenericTile.$().css('width'), '304px', 'Rendering successful');
+    });
+    QUnit.test("Tiles in small phone with small behavior are working properly", async function(assert) {
+        this.oGenericTile.setFrameType(FrameType.TwoByHalf);
+        await nextUIUpdate();
+        assert.equal(this.oGenericTile.$().css('width'), '304px', 'Rendering successful');
+    });
 
 	QUnit.module("FrameType rendering tests", {
 		beforeEach: async function() {
@@ -652,10 +686,8 @@ sap.ui.define([
 	QUnit.test("FrameType is in TwoByOne", async function(assert) {
 		//Arrange
 		this.oGenericTile.setFrameType(FrameType.TwoByOne);
-
 		//Act
 		await nextUIUpdate();
-
 		//Assert
 		assert.equal(this.oGenericTile.getFrameType(), FrameType.TwoByOne, "FrameType Auto set to TwoByOne");
 		assert.ok(this.oGenericTile.getDomRef().getAttribute("aria-label").includes("Wide Tile"),"Size description rendered successfully");
