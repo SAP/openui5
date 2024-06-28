@@ -690,6 +690,7 @@ sap.ui.define([
 	 * @see #expand
 	 */
 	ODataListBinding.prototype.collapse = function (oContext, bSilent, iCount) {
+		this.checkSuspended();
 		if (this.aContexts[oContext.iIndex] !== oContext) {
 			throw new Error("Not currently part of the hierarchy: " + oContext);
 		}
