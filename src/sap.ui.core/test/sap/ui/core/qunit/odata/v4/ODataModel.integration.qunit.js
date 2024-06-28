@@ -51066,6 +51066,89 @@ make root = ${bMakeRoot}`;
 	});
 
 	//*********************************************************************************************
+	// Scenario: Annotation changes are applied to root service's metadata, annotation files, and
+	// cross-service references.
+	// JIRA: CPOUI5ODATAV4-2637
+	QUnit.test("CPOUI5ODATAV4-2637: setAnnotationChangePromise", async function (assert) {
+		const oModel = this.createModel(sTeaBusi, {
+			annotationURI : sTeaBusi + "annotations_tea_busi.xml"
+		}, {
+			[sTeaBusi + "$metadata"] : {source : "odata/v4/data/metadata.xml"},
+			"/sap/opu/odata4/IWBEP/TEA/default/iwbep/tea_busi_product/0001/$metadata"
+				: {source : "odata/v4/data/metadata_tea_busi_product.xml"},
+			"/sap/opu/odata4/IWBEP/TEA/default/iwbep/tea_busi_supplier/0001/$metadata"
+				: {source : "odata/v4/data/metadata_tea_busi_supplier.xml"},
+			[sTeaBusi + "annotations_tea_busi.xml"]
+				: {source : "odata/v4/data/annotations_tea_busi.xml"}
+		});
+
+		await this.createView(assert, "", oModel);
+
+		const aAnnotationChanges = []; // Note: path must start from EntityContainer of metadata.xml
+		// override annotations_tea_busi.xml
+		aAnnotationChanges.push({ // Note: winding detour doesn't make a difference here ;-)
+			path : "/MANAGERS/Manager_to_Team/TEAM_2_EMPLOYEES/EMPLOYEE_2_EQUIPMENTS/ID"
+				+ "@com.sap.vocabularies.Common.v1.Label",
+			value : "ID of Equipment" // original: "Equipment ID"
+		});
+		aAnnotationChanges.push({
+			path : "/Equipments/ID@com.sap.vocabularies.Common.v1.Text"
+				+ "@com.sap.vocabularies.UI.v1.TextArrangement",
+			value : { // original: TextLast
+				$EnumMember : "com.sap.vocabularies.UI.v1.TextArrangementType/TextFirst"
+			}
+		});
+		// override metadata.xml
+		aAnnotationChanges.push({
+			path : "/MANAGERS/ID@com.sap.vocabularies.Common.v1.Label",
+			value : "ID of Manager" // original: "ID"
+		});
+		// override metadata_product.xml
+		aAnnotationChanges.push({
+			path : "/Equipments/EQUIPMENT_2_PRODUCT/ID"
+				+ "@com.sap.vocabularies.Common.v1.Label",
+			value : "ID of Product" // original: "Product ID"
+		});
+		// override metadata_supplier.xml
+		aAnnotationChanges.push({
+			path : "/Equipments/EQUIPMENT_2_PRODUCT/PRODUCT_2_SUPPLIER/SUPPLIER_ID"
+				+ "@com.sap.vocabularies.Common.v1.Label",
+			value : "ID of Supplier" // original: "Supplier ID"
+		});
+
+		// code under test
+		oModel.setAnnotationChangePromise(Promise.resolve(aAnnotationChanges));
+
+		const oMetaModel = oModel.getMetaModel();
+
+		await oMetaModel.requestObject("/"); // fetch EntityContainer
+
+		assert.deepEqual(oMetaModel.getObject("/Equipments/ID@com.sap.vocabularies.Common.v1.Text"),
+			{$Path : "Name"}, "unchanged");
+
+		function sync(i) {
+			assert.strictEqual(
+				oMetaModel.getObject(aAnnotationChanges[i].path), aAnnotationChanges[i].value);
+		}
+
+		sync(0);
+		sync(1);
+		sync(2);
+
+		async function async(i) {
+			assert.strictEqual(
+				oMetaModel.getObject(aAnnotationChanges[i].path), undefined, "not yet");
+
+			assert.strictEqual(
+				await oMetaModel.requestObject(aAnnotationChanges[i].path),
+				aAnnotationChanges[i].value);
+		}
+
+		await async(3);
+		await async(4);
+	});
+
+	//*********************************************************************************************
 	// Scenario: Create on a relative binding with $expand refreshes the newly created entity so
 	// that navigation properties are available. Context#refresh is then used.
 	// JIRA: CPOUI5UISERVICESV3-1814

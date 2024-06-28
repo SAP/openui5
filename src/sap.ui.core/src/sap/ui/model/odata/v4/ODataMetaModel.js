@@ -598,6 +598,26 @@ sap.ui.define([
 	};
 
 	/**
+	 * Changes the given map of annotations by applying the current array of change objects defining
+	 * a metamodel path (pointing to an annotation) and a value to be set for that annotation.
+	 *
+	 * @param {object} mAnnotations
+	 *   the root scope's $Annotations
+	 *
+	 * @private
+	 */
+	ODataMetaModel.prototype._changeAnnotations = function (mAnnotations) {
+		this.aAnnotationChanges?.forEach(({path : sPath, value : vValue}) => {
+			const iIndexOfAt = sPath.indexOf("@");
+			const sTarget = this.getObject(sPath.slice(0, iIndexOfAt) + "@$ui5.target");
+			if (sTarget) {
+				mAnnotations[sTarget] ??= {};
+				mAnnotations[sTarget][sPath.slice(iIndexOfAt)] = vValue;
+			}
+		});
+	};
+
+	/**
 	 * Merges the given schema's annotations into the root scope's $Annotations.
 	 *
 	 * @param {object} oSchema
@@ -607,11 +627,13 @@ sap.ui.define([
 	 * @param {boolean} [bPrivileged]
 	 *   whether the schema has been loaded from a privileged source and thus may overwrite
 	 *   existing annotations
+	 * @returns {boolean}
+	 *   whether at least one annotation has been merged
 	 *
 	 * @private
 	 */
 	ODataMetaModel.prototype._doMergeAnnotations = function (oSchema, mAnnotations, bPrivileged) {
-		var sTarget;
+		let bMerged = false;
 
 		/*
 		 * "PUT" semantics on term/qualifier level, only privileged sources may overwrite.
@@ -622,22 +644,23 @@ sap.ui.define([
 		 *   The source object
 		 */
 		function extend(oTarget, oSource) {
-			var sName;
-
-			for (sName in oSource) {
+			for (const sName in oSource) {
 				if (bPrivileged || !(sName in oTarget)) {
 					oTarget[sName] = oSource[sName];
+					bMerged = true;
 				}
 			}
 		}
 
-		for (sTarget in oSchema.$Annotations) {
+		for (const sTarget in oSchema.$Annotations) {
 			if (!(sTarget in mAnnotations)) {
 				mAnnotations[sTarget] = {};
 			}
 			extend(mAnnotations[sTarget], oSchema.$Annotations[sTarget]);
 		}
 		delete oSchema.$Annotations;
+
+		return bMerged;
 	};
 
 	/**
@@ -671,22 +694,24 @@ sap.ui.define([
 		 *   The $metadata "JSON"
 		 */
 		function includeSchema(mReferencedScope) {
-			var oElement,
-				sKey;
-
 			if (!(sSchema in mReferencedScope)) {
 				fnLog(WARNING, sUrl, " does not contain ", sSchema);
 				return;
 			}
 
 			fnLog(DEBUG, "Including ", sSchema, " from ", sUrl);
-			for (sKey in mReferencedScope) {
+			let bMerged = false;
+			for (const sKey in mReferencedScope) {
 				// $EntityContainer can be ignored; $Reference, $Version is handled above
 				if (sKey[0] !== "$" && schema(sKey) === sSchema) {
-					oElement = mReferencedScope[sKey];
-					mScope[sKey] = oElement;
-					that._doMergeAnnotations(oElement, mScope.$Annotations);
+					mScope[sKey] = mReferencedScope[sKey];
+					if (that._doMergeAnnotations(mScope[sKey], mScope.$Annotations)) {
+						bMerged = true;
+					}
 				}
+			}
+			if (bMerged) {
+				that._changeAnnotations(mScope.$Annotations);
 			}
 		}
 
@@ -965,7 +990,7 @@ sap.ui.define([
 	 *   Whether to just read the $metadata document and annotations, but not yet convert them from
 	 *   XML to JSON; this is useful at most once in an early call that precedes all other normal
 	 *   calls and ignored after the first call without this.
-	 * @returns {sap.ui.base.SyncPromise}
+	 * @returns {sap.ui.base.SyncPromise|null}
 	 *   A promise which is resolved with the $metadata "JSON" object as soon as the entity
 	 *   container is fully available, or rejected with an error. In case of
 	 *   <code>bPrefetch</code> in an early call, <code>null</code> is returned.
@@ -987,13 +1012,20 @@ sap.ui.define([
 				});
 			}
 			if (!bPrefetch) {
+				aPromises.push(this.oModel._requestAnnotationChanges());
 				this.oMetadataPromise = SyncPromise.all(aPromises).then(function (aMetadata) {
 					var mScope = aMetadata[0];
 
+					that.aAnnotationChanges = aMetadata.pop();
 					that._mergeAnnotations(mScope, aMetadata.slice(1));
 
 					return mScope;
 				});
+				// apply annotation changes before anyone else has access, but after the promise has
+				// already resolved (else #fetchObject cannot really be used)
+				this.oMetadataPromise.then(
+					(mScope) => this._changeAnnotations(mScope.$Annotations),
+					() => { /* avoid "Uncaught (in promise)" */ });
 			}
 		}
 		return this.oMetadataPromise;
@@ -1290,6 +1322,10 @@ sap.ui.define([
 
 				vBindingParameterType = vResult && vResult.$Type || vBindingParameterType;
 				if (that.bSupportReferences && !(sQualifiedName in mScope)) {
+					if (sResolvedPath.endsWith("@$ui5.target")) { // do not fetch schema
+						vResult = undefined;
+						return false;
+					}
 					// unknown qualified name: maybe schema is referenced and can be included?
 					sSchema = schema(sQualifiedName);
 					vResult = that._getOrFetchSchema(mScope, sSchema, logWithLocation);
@@ -1489,14 +1525,29 @@ sap.ui.define([
 						return i + 1 >= aSegments.length || log(WARNING, "Invalid empty segment");
 					}
 					if (sSegment[0] === "@") {
-						if (sSegment === "@sapui.name") {
-							vResult = sName;
+						/*
+						 * Sets the result to the given value, which must not be
+						 * <code>undefined</code>, and checks that the current segment is the last.
+						 *
+						 * @param {any} vValue - the new <code>vResult</code>
+						 * @returns {boolean} <code>false</code>
+						 */
+						// eslint-disable-next-line no-inner-declarations
+						function terminal(vValue) {
+							vResult = vValue;
 							if (vResult === undefined) {
-								log(WARNING, "Unsupported path before @sapui.name");
+								log(WARNING, "Unsupported path before " + sSegment);
 							} else if (i + 1 < aSegments.length) {
-								log(WARNING, "Unsupported path after @sapui.name");
+								log(WARNING, "Unsupported path after " + sSegment);
 							}
 							return false;
+						}
+
+						if (sSegment === "@sapui.name") {
+							return terminal(sName);
+						}
+						if (sSegment === "@$ui5.target") {
+							return terminal(sTarget);
 						}
 						if (sSegment[1] === "@") {
 							// computed annotation

@@ -65,7 +65,16 @@
 							<PropertyValue Property="Value" Path="EmployeeId" />
 						</Record>
 						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Value" Path="EQUIPMENT_2_EMPLOYEE/EMPLOYEE_2_MANAGER/ID" />
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Value" Path="EQUIPMENT_2_PRODUCT/ID" />
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
 							<PropertyValue Property="Value" Path="EQUIPMENT_2_PRODUCT/Name" />
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Value" Path="EQUIPMENT_2_PRODUCT/PRODUCT_2_SUPPLIER/SUPPLIER_ID" />
 						</Record>
 						<Record Type="com.sap.vocabularies.UI.v1.DataField">
 							<PropertyValue Property="Value" Path="EQUIPMENT_2_PRODUCT/PRODUCT_2_SUPPLIER/Supplier_Name" />
@@ -107,7 +116,6 @@
 			<Annotations Target="com.sap.gateway.default.iwbep.tea_busi.v0001.EQUIPMENT/EQUIPMENT_2_PRODUCT">
 				<Annotation Term="com.sap.vocabularies.Common.v1.QuickInfo" Path="Category" />
 			</Annotations>
-			<!-- TODO with $async, these local annotations do not win over the inline ones -->
 			<Annotations Target="com.sap.gateway.default.iwbep.tea_busi_product.v0001.Category/CategoryName">
 				<Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Product Category"/>
 			</Annotations>

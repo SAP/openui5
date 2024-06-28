@@ -209,13 +209,25 @@
 										<demo:ValueHelp value="{field>Value/@@value}"/>
 									</template:then>
 									<template:elseif test="{target>@com.sap.vocabularies.Common.v1.Text}">
-										<!-- Note: TextFirst, TextLast, TextSeparate, TextOnly -->
-										<template:if test="{= ${target>@com.sap.vocabularies.Common.v1.Text@com.sap.vocabularies.UI.v1.TextArrangement/$EnumMember}
-											=== 'com.sap.vocabularies.UI.v1.TextArrangementType/TextLast' }">
-											<!-- Text: "A descriptive text for values of the annotated property.
-												Value MUST be a dynamic expression when used as metadata annotation." -->
-											<Text text="{field>Value/@@value} {target>@com.sap.vocabularies.Common.v1.Text/@@value}"/>
-										</template:if>
+										<!-- Text: "A descriptive text for values of the annotated property.
+											Value MUST be a dynamic expression when used as metadata annotation." -->
+										<template:with path="target>@com.sap.vocabularies.Common.v1.Text@com.sap.vocabularies.UI.v1.TextArrangement/$EnumMember" var="textArrangement">
+											<!-- Note: TextFirst, TextLast, TextOnly, TextSeparate -->
+											<template:if test="{= ${textArrangement>} === 'com.sap.vocabularies.UI.v1.TextArrangementType/TextFirst' }">
+												<template:then>
+													<Text text="{target>@com.sap.vocabularies.Common.v1.Text/@@value} ({field>Value/@@value})"/>
+												</template:then>
+												<template:elseif test="{= ${textArrangement>} === 'com.sap.vocabularies.UI.v1.TextArrangementType/TextLast' }">
+													<Text text="{field>Value/@@value} - {target>@com.sap.vocabularies.Common.v1.Text/@@value}"/>
+												</template:elseif>
+												<template:elseif test="{= ${textArrangement>} === 'com.sap.vocabularies.UI.v1.TextArrangementType/TextOnly' }">
+													<Text text="{target>@com.sap.vocabularies.Common.v1.Text/@@value}"/>
+												</template:elseif>
+												<template:else> <!-- TextSeparate -->
+													<Text text="{field>Value/@@value}"/>
+												</template:else>
+											</template:if>
+										</template:with>
 									</template:elseif>
 									<template:else>
 										<Text text="{field>Value/@@format}"/>

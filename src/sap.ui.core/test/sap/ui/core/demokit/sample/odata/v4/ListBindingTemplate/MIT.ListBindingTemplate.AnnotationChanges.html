@@ -1,0 +1,63 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<style type="text/css">
+			body {font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;}
+		</style>
+		<title>Manual Integration Test: List Binding Template</title>
+	</head>
+	<body>
+		<h1>Manual Integration Test: List Binding Template w/ Annotation Changes</h1>
+		<h2>DESCRIPTION</h2>
+		Test of the List Binding Template application.
+		<h2>PREPARATION</h2>
+		To check console errors open the developer tools before starting the application and check
+		with each step, that there are no errors and warnings.
+
+		<h3>Testing with mock data</h3>
+		Start the List Binding Template application with following URL (adjust host and port if
+		necessary):
+		<ul>
+			<li> as part of the demo kit: http://&lt;host>:&lt;port>/demokit/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.ListBindingTemplate</li>
+			<li> local: <a href="http://localhost:8080/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.ListBindingTempate">http://&lt;host>:&lt;port>/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.ListBindingTemplate</a></li>
+		</ul>
+
+		<h3>Testing with back end</h3>
+		Configure your IDE to be able to run the List Binding Template application against an
+		ABAP back end system.<br>
+		Start the List Binding Template application with the URL (adjust host and port if
+		necessary):
+		<ul>
+			<li>local: <a href="http://localhost:8080/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.ListBindingTemplate&amp;realOData=true">http://&lt;host>:&lt;port>/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.ListBindingTemplate&amp;realOData=true</a></li>
+		</ul>
+
+		<h2>REALIZE and CHECK</h2>
+
+		<ul>
+			<li>Choose whether to use mock data or a real back end. Start the application once as
+				described above and then once more in a new window with the additional URL parameter
+				"&setAnnotationChangePromise". </li>
+			<li><b>Check:</b> Compare the column headers of the "Equipments" table
+				<table border="1px" cellspacing="0" >
+					<tr>
+						<th>w/o addt'l URL params</th>
+						<th>w/ "&setAnnotationChangePromise"</th>
+					</tr>
+					<tr><td><b>Category</b></td><td><b>Category</b></td>
+					<tr><td><b>Equipment ID</b></td><td><b>ID of Equipment</b></td></tr>
+					<tr><td>Name</td><td>Name</td></tr>
+					<tr><td>Employee ID</td><td>Employee ID</td></tr>
+					<tr><td>ID</td><td>ID of Manager</td></tr>
+					<tr><td>Product ID</td><td>ID of Product</td></tr>
+					<tr><td>Product Name</td><td>Product Name</td></tr>
+					<tr><td>Supplier ID</td><td>ID of Supplier</td></tr>
+					<tr><td>Supplier Name</td><td>Supplier Name</td></tr>
+				</table>
+			</li>
+			<li><b>Check:</b> Compare the contents of the "Equipment ID" column, which looks like
+				"1 - Office PC", with the "ID of Equipment", which looks like "Office PC (1)".
+				Similar for "Product ID" (simply looks like "1") vs. "ID of Product" columns (again
+				looks like "Office PC (1)").</li>
+		</ul>
+	</body>
+</html>

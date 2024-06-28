@@ -141,6 +141,7 @@ sap.ui.define([
 		assert.strictEqual(oModel.bSharedRequests, false);
 		assert.strictEqual(oModel.bEarlyRequests, true);
 		assert.deepEqual(oModel.aAllBindings, []);
+		assert.strictEqual(oModel.oAnnotationChangePromise, null);
 		assert.strictEqual(oModel.aPrerenderingTasks, null);
 		assert.strictEqual(oModel.getOptimisticBatchEnabler(), null);
 		assert.strictEqual(oModel.fnHttpListener, null);
@@ -3503,6 +3504,39 @@ sap.ui.define([
 			// code under test
 			oModel.delete("Entity('key')", "group");
 		}, new Error("Invalid path: Entity('key')"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("setAnnotationChangePromise, then _requestAnnotationChanges", function (assert) {
+		const oAnnotationChangePromise = Promise.resolve([]);
+		const oModel = this.createModel();
+
+		// code under test
+		oModel.setAnnotationChangePromise(null);
+
+		// code under test
+		oModel.setAnnotationChangePromise(oAnnotationChangePromise);
+
+		// code under test
+		assert.strictEqual(oModel._requestAnnotationChanges(), oAnnotationChangePromise);
+
+		assert.throws(function () {
+			// code under test
+			oModel.setAnnotationChangePromise(null);
+		}, new Error("Too late"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_requestAnnotationChanges, then setAnnotationChangePromise", function (assert) {
+		const oModel = this.createModel();
+
+		// code under test
+		assert.strictEqual(oModel._requestAnnotationChanges(), SyncPromise.resolve());
+
+		assert.throws(function () {
+			// code under test
+			oModel.setAnnotationChangePromise(Promise.resolve([]));
+		}, new Error("Too late"));
 	});
 
 	//*********************************************************************************************

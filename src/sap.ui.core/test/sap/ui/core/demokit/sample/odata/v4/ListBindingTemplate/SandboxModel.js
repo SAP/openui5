@@ -14,10 +14,7 @@ sap.ui.define([
 			sFilterBase : "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/",
 			mFixture : {
 				"localAnnotations.xml" : {source : "localAnnotations.xml"},
-				"Equipments?$select=Category,EmployeeId,ID,Name&$expand=EQUIPMENT_2_PRODUCT($select=ID,Name;$expand=PRODUCT_2_CATEGORY($select=CategoryIdentifier,CategoryName),PRODUCT_2_SUPPLIER($select=SUPPLIER_ID,Supplier_Name))&$skip=0&$top=5" : {
-					source : "equipments.json"
-				},
-				"Equipments?$select=Category,EmployeeId,ID,Name&$expand=EQUIPMENT_2_PRODUCT($select=ID,Name;$expand=PRODUCT_2_SUPPLIER($select=SUPPLIER_ID,Supplier_Name))&$skip=0&$top=5" : {
+				"Equipments?$select=Category,EmployeeId,ID,Name&$expand=EQUIPMENT_2_EMPLOYEE($select=ID;$expand=EMPLOYEE_2_MANAGER($select=ID)),EQUIPMENT_2_PRODUCT($select=ID,Name;$expand=PRODUCT_2_SUPPLIER($select=SUPPLIER_ID,Supplier_Name))&$skip=0&$top=5" : {
 					source : "equipments.json"
 				}
 			},

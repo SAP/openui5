@@ -1160,6 +1160,7 @@ sap.ui.define([
 				reportError : function (_sLogMessage, _sReportingClassName, oError) {
 					throw oError;
 				},
+				_requestAnnotationChanges : mustBeMocked,
 				resolve : ODataModel.prototype.resolve
 			};
 			this.oMetaModel = new ODataMetaModel(oMetadataRequestor, sUrl, undefined, this.oModel);
@@ -1181,12 +1182,14 @@ sap.ui.define([
 		 * returning a clone of the given scope.
 		 *
 		 * @param {object} mScope0
+		 * @returns {object} the cloned mScope0
 		 */
 		expectFetchEntityContainer : function (mScope0) {
 			mScope0 = clone(mScope0);
 			this.oMetaModel.validate("n/a", mScope0); // fill mSchema2MetadataUrl!
 			this.oMetaModelMock.expects("fetchEntityContainer").atLeast(1)
 				.returns(SyncPromise.resolve(mScope0));
+			return mScope0;
 		},
 
 		/**
@@ -1331,7 +1334,7 @@ sap.ui.define([
 		QUnit.test(title, function (assert) {
 			var oRequestorMock = this.mock(this.oMetaModel.oRequestor),
 				aReadResults,
-				mRootScope = {},
+				mRootScope = {$Annotations : {}},
 				oSyncPromise,
 				that = this;
 
@@ -1352,6 +1355,7 @@ sap.ui.define([
 
 			this.oMetaModel.aAnnotationUris = aAnnotationURI;
 			this.oMetaModelMock.expects("_mergeAnnotations").never();
+			this.oMetaModelMock.expects("_changeAnnotations").never();
 			expectReads(true);
 
 			// code under test
@@ -1366,7 +1370,15 @@ sap.ui.define([
 			// now test [bPrefetch=false]
 			expectReads();
 			this.oMetaModelMock.expects("_mergeAnnotations")
-				.withExactArgs(mRootScope, aReadResults);
+				.withExactArgs(sinon.match.same(mRootScope), aReadResults);
+			this.mock(this.oModel).expects("_requestAnnotationChanges").withExactArgs()
+				.resolves("~aAnnotationChanges~");
+			this.oMetaModelMock.expects("_changeAnnotations")
+				.withExactArgs(sinon.match.same(mRootScope.$Annotations))
+				.callsFake(function () {
+					assert.strictEqual(that.oMetaModel.aAnnotationChanges, "~aAnnotationChanges~");
+					assert.strictEqual(oSyncPromise.isPending(), false);
+				});
 
 			// code under test
 			oSyncPromise = this.oMetaModel.fetchEntityContainer();
@@ -1394,6 +1406,7 @@ sap.ui.define([
 		this.mock(this.oMetaModel.oRequestor).expects("read")
 			.withExactArgs(this.oMetaModel.sUrl, false, undefined)
 			.resolves({});
+		this.mock(this.oModel).expects("_requestAnnotationChanges").withExactArgs().resolves();
 		this.oMetaModelMock.expects("_mergeAnnotations").throws(oError);
 
 		return this.oMetaModel.fetchEntityContainer().then(function () {
@@ -1828,7 +1841,15 @@ sap.ui.define([
 		"/T€AMS/name.space.OverloadedAction@Core.OperationAvailable/$Path/$" : oTeamData.Name,
 		"/T€AMS/name.space.OverloadedAction/parameter1@Core.OperationAvailable/$Path/$"
 			: mScope["tea_busi.ContainedS"].Id,
-		"/T€AMS/name.space.OverloadedAction/_it/@Common.Text/$Path/$" : oTeamData.Name
+		"/T€AMS/name.space.OverloadedAction/_it/@Common.Text/$Path/$" : oTeamData.Name,
+		// @$ui5.target ---------------------------------------------------------------------------
+		"/@$ui5.target" : "tea_busi.DefaultContainer",
+		"/T€AMS@$ui5.target" : "tea_busi.DefaultContainer/T€AMS",
+		"/T€AMS/@$ui5.target" : "tea_busi.TEAM",
+		"/T€AMS/Team_Id@$ui5.target" : "tea_busi.TEAM/Team_Id",
+		"/T€AMS/TEAM_2_EMPLOYEES@$ui5.target" : "tea_busi.TEAM/TEAM_2_EMPLOYEES", // not needed(?)
+		"/T€AMS/TEAM_2_EMPLOYEES/@$ui5.target" : "tea_busi.Worker",
+		"/T€AMS/TEAM_2_EMPLOYEES/AGE@$ui5.target" : "tea_busi.Worker/AGE"
 	}, function (sPath, vResult) {
 		QUnit.test("fetchObject: " + sPath, function (assert) {
 			var oSyncPromise;
@@ -2006,6 +2027,14 @@ sap.ui.define([
 			// Unsupported path after @sapui.name -------------------------------------------------
 			"/@sapui.name/foo" : "Unsupported path after @sapui.name",
 			"/$EntityContainer/T€AMS/@sapui.name/foo" : "Unsupported path after @sapui.name",
+			// Unsupported path before @$ui5.target -----------------------------------------------
+			"/$@$ui5.target" : "Unsupported path before @$ui5.target",
+			"/OverloadedAction/@$ui5.overload/0/@$ui5.target" // no external targeting here
+				: "Unsupported path before @$ui5.target",
+			"/ChangeManagerOfTeam/$Action/0/$ReturnType/@$ui5.target" // no external targeting here
+				: "Unsupported path before @$ui5.target",
+			// Unsupported path after @$ui5.target -------------------------------------------------
+			"/T€AMS/@$ui5.target/foo" : "Unsupported path after @$ui5.target",
 			// Unsupported path after @@... -------------------------------------------------------
 			"/EMPLOYEES/@UI.Facets/1/Target/$AnnotationPath@@this.is.ignored/foo"
 				: "Unsupported path after @@this.is.ignored",
@@ -2483,7 +2512,7 @@ sap.ui.define([
 				}));
 			}
 
-			this.expectFetchEntityContainer(mXServiceScope);
+			const mClonedScope = this.expectFetchEntityContainer(mXServiceScope);
 			oRequestorMock.expects("read")
 				.withExactArgs("/a/default/iwbep/tea_busi_product/0001/$metadata")
 				.resolves(mClonedProductScope);
@@ -2493,6 +2522,8 @@ sap.ui.define([
 			oRequestorMock.expects("read")
 				.withExactArgs("/empty/$metadata")
 				.resolves(mMostlyEmptyScope);
+			this.oMetaModelMock.expects("_changeAnnotations")
+				.withExactArgs(sinon.match.same(mClonedScope.$Annotations));
 
 			expectDebug("Namespace tea_busi_product.v0001. found in $Include"
 				+ " of /a/default/iwbep/tea_busi_product/0001/$metadata"
@@ -2651,6 +2682,16 @@ sap.ui.define([
 				that = this;
 
 			this.expectFetchEntityContainer(mScope0);
+
+			{
+				const oSyncPromise
+					// code under test (do not fetch schema)
+					= this.oMetaModel.fetchObject("/tea_busi_product.v0001.@$ui5.target");
+
+				assert.strictEqual(oSyncPromise.isFulfilled(), true);
+				assert.strictEqual(oSyncPromise.getResult(), undefined);
+			}
+
 			oRequestorMock.expects("read")
 				.withExactArgs("/a/default/iwbep/tea_busi_product/0001/$metadata")
 				.resolves(mReferencedScope);
@@ -5155,6 +5196,46 @@ sap.ui.define([
 			}, new Error("/my/annotation.xml: " + sMessage));
 		}
 	);
+
+	//*********************************************************************************************
+	QUnit.test("_changeAnnotations", function (assert) {
+		const mAnnotations = {};
+
+		// code under test
+		this.oMetaModel._changeAnnotations(mAnnotations);
+
+		assert.deepEqual(mAnnotations, {}, "nothing to do yet");
+
+		this.oMetaModel.aAnnotationChanges = [{
+			path : "/first/part@second/part",
+			value : "foo"
+		}, {
+			path : "/first/part@other/part",
+			value : "bar"
+		}, {
+			path : "/not/yet/available@n/a",
+			value : "n/a"
+		}, {
+			path : "/no/target@n/a",
+			value : "n/a"
+		}];
+		this.oMetaModelMock.expects("getObject").twice().withExactArgs("/first/part@$ui5.target")
+			.returns("~target~");
+		this.oMetaModelMock.expects("getObject").withExactArgs("/not/yet/available@$ui5.target")
+			.returns(undefined);
+		this.oMetaModelMock.expects("getObject").withExactArgs("/no/target@$ui5.target")
+			.returns(undefined);
+
+		// code under test
+		this.oMetaModel._changeAnnotations(mAnnotations);
+
+		assert.deepEqual(mAnnotations, {
+			"~target~" : {
+				"@second/part" : "foo",
+				"@other/part" : "bar"
+			}
+		});
+	});
 
 	//*********************************************************************************************
 	QUnit.test("getAbsoluteServiceUrl", function (assert) {
