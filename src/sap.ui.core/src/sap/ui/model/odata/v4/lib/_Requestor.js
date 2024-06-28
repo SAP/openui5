@@ -820,9 +820,17 @@ sap.ui.define([
 					break;
 				case "$select":
 					if (Array.isArray(vValue)) {
-						vValue = bSortExpandSelect
-							? vValue.slice().sort().join(",") // Note: Array#sort is "in place"
-							: vValue.join(",");
+						if (bSortExpandSelect) {
+							vValue = vValue.slice().sort(); // Note: Array#sort is "in place"
+							for (let i = 1; i < vValue.length;) {
+								if (_Helper.hasPathPrefix(vValue[i], vValue[i - 1])) {
+									vValue.splice(i, 1);
+								} else {
+									i += 1;
+								}
+							}
+						}
+						vValue = vValue.join(",");
 					}
 					break;
 				default:

@@ -5810,9 +5810,7 @@ sap.ui.define([
 			}
 		};
 
-		this.expectRequest("EMPLOYEES('1')"
-				//TODO $select could be much smarter!
-				+ "?$select=ID,Name,SALARY,SALARY/MONTHLY_BASIC_SALARY_AMOUNT", {
+		this.expectRequest("EMPLOYEES('1')?$select=ID,Name,SALARY", {
 				ID : "1",
 				Name : "Frederic Fall",
 				SALARY : {
@@ -5835,8 +5833,7 @@ sap.ui.define([
 			BONUS_CURR : "DEM"
 		};
 
-		//TODO $select could be much smarter!
-		this.expectRequest("EMPLOYEES('1')?$select=SALARY,SALARY/MONTHLY_BASIC_SALARY_AMOUNT", {
+		this.expectRequest("EMPLOYEES('1')?$select=SALARY", {
 				SALARY : oNewSalary
 			})
 			.expectChange("salary", "1234.89 EUR")
@@ -5853,9 +5850,7 @@ sap.ui.define([
 			SALARY : oNewSalary
 		});
 
-		this.expectRequest("EMPLOYEES('1')"
-				//TODO $select could be much smarter!
-				+ "?$select=ID,Name,SALARY,SALARY/MONTHLY_BASIC_SALARY_AMOUNT", {
+		this.expectRequest("EMPLOYEES('1')?$select=ID,Name,SALARY", {
 				ID : "1",
 				Name : "Frederic Fall",
 				SALARY : oNewSalary

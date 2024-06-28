@@ -3836,6 +3836,12 @@ sap.ui.define([
 		}, {
 			o : {$select : ["Name", "ID"]},
 			s : "$select=ID,Name"
+		}, { // "path prefix rules": ComplexType absorbs its properties
+			o : {$select : ["NameSuffix", "ComplexType/A", "Name", "ComplexType", "ComplexType/B"]},
+			s : "$select=ComplexType,Name,NameSuffix"
+		}, { // "path prefix rules": ComplexType absorbs its properties
+			o : {$select : ["Prefix/Complex/A", "Prefix/Complex", "Prefix/Complex/B/C"]},
+			s : "$select=Prefix/Complex"
 		}, {
 			o : {$expand : {SO_2_SOITEM : true, SO_2_BP : true}},
 			s : "$expand=SO_2_BP,SO_2_SOITEM"
