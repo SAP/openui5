@@ -628,6 +628,7 @@ function(
 		this._aSelectedPaths = [];
 		this._destroyGrowingDelegate();
 		this._destroyItemNavigation();
+		this._oLastFakeFocusedItem = null;
 	};
 
 	// this gets called only with oData Model when first load or filter/sort
@@ -2112,29 +2113,66 @@ function(
 			this.getNavigationRoot().setAttribute("aria-activedescendant", oItemDomRef.id);
 		} else {
 			// prepare the announcement for the screen reader
-			var oAccInfo = oItem.getAccessibilityInfo(),
-				oBundle = Library.getResourceBundleFor("sap.m"),
-				sDescription = oAccInfo.type ? oAccInfo.type + " . " : "";
-
-			if (this.isA("sap.m.Table")) {
-				var mPosition = this.getAccessbilityPosition(oItem);
-				sDescription += oBundle.getText("LIST_ITEM_POSITION", [mPosition.posinset, mPosition.setsize]) + " . ";
-			}
-
-			sDescription += oAccInfo.description;
-			this.updateInvisibleText(sDescription, oItemDomRef);
-			return sDescription;
+			this.setInvisibleTextAssociation(oItem);
 		}
+	};
+
+	/**
+	 * For the specified list item it updates the invisible text and sets the aria-labelledby association.
+	 *
+	 * @param {sap.m.ListItemBase} oItem The list item whose invisible text association should be set
+	 * @private
+	 */
+	ListBase.prototype.setInvisibleTextAssociation = function(oItem) {
+		var oAccInfo = oItem.getAccessibilityInfo(),
+			oBundle = Library.getResourceBundleFor("sap.m"),
+			sDescription = oAccInfo.type ? oAccInfo.type + " . " : "";
+
+		if (this.isA("sap.m.Table")) {
+			var mPosition = this.getAccessbilityPosition(oItem);
+			sDescription += oBundle.getText("LIST_ITEM_POSITION", [mPosition.posinset, mPosition.setsize]) + " . ";
+		}
+
+		sDescription += oAccInfo.description;
+		this.updateInvisibleText(sDescription, oItem.getDomRef());
 	};
 
 	ListBase.prototype.onItemFocusOut = function(oItem) {
 		this.removeInvisibleTextAssociation(oItem.getDomRef());
 	};
 
+	/**
+	 * For the specified <code>HTMLElement</code> it removes the aria-labelledby association to the invisible text.
+	 *
+	 * @param {HTMLElement} oDomRef The <code>HTMLElement</code> whose invisible text association should be removed
+	 * @private
+	 */
 	ListBase.prototype.removeInvisibleTextAssociation = function(oDomRef) {
 		const oInvisibleText = ListBase.getInvisibleText(),
 			$FocusedItem = jQuery(oDomRef || document.activeElement);
 		$FocusedItem.removeAriaLabelledBy(oInvisibleText.getId());
+	};
+
+	/**
+	 * It simulates focus by adding the corresponding style classes and updating the invisible text association.
+	 * <b>Note</b>: Fake focus is not set when the real focus is inside the list. If the fake focus is set, it gets removed when the real focus lands inside the list.
+	 *
+	 * @param {sap.m.ListItemBase|null} oItem The list item to receive fake focus, null to remove it
+	 * @private
+	 * @restricted sap.m, sap.ui.mdc
+	 */
+	ListBase.prototype.setFakeFocus = function(oItem) {
+		if (this._oLastFakeFocusedItem) {
+			this._oLastFakeFocusedItem.removeStyleClass("sapMLIBFocused");
+			this.removeInvisibleTextAssociation(this._oLastFakeFocusedItem.getDomRef());
+			this._oLastFakeFocusedItem = null;
+		}
+
+		if (oItem && !this.getDomRef().contains(document.activeElement)) {
+			this._oLastFakeFocusedItem = oItem;
+			oItem.addStyleClass("sapMLIBFocused");
+			this.setInvisibleTextAssociation(oItem);
+		}
 	};
 
 	ListBase.prototype.updateInvisibleText = function(sText, oItemDomRef, bPrepend) {
@@ -2465,7 +2503,6 @@ function(
 
 	// Handles focus to reposition the focus to correct place
 	ListBase.prototype.onfocusin = function(oEvent) {
-
 		// ignore self focus
 		if (this._bIgnoreFocusIn) {
 			this._bIgnoreFocusIn = false;
@@ -2476,6 +2513,10 @@ function(
 		// check whether item navigation should be reapplied from scratch
 		if (this._bItemNavigationInvalidated) {
 			this._startItemNavigation();
+		}
+
+		if (this._oLastFakeFocusedItem) {
+			this.setFakeFocus(null);
 		}
 
 		var oTarget = oEvent.target;
