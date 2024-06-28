@@ -1331,7 +1331,7 @@ sap.ui.define([
 			switchVersion.bind(this, this._sSwitchToVersion))
 		.then(fnCallback)
 		.catch(function(oError) {
-			Utils.showMessageBox("error", "MSG_SWITCH_VERSION_FAILED", {error: oError});
+			Utils.showMessageBox("error", "MSG_SWITCH_VERSION_FAILED", {error: oError.stack});
 			Log.error(`sap.ui.rta: ${oError.stack || oError.message || oError}`);
 		});
 	}
