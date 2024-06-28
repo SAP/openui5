@@ -1227,6 +1227,61 @@ sap.ui.define([
 		sut.destroy();
 	});
 
+	QUnit.test("ColumnListItem fake focus", async function(assert) {
+		const oBundle = Library.getResourceBundleFor("sap.m");
+		const oInvisibleText = ListBase.getInvisibleText();
+		const sut = createSUT(true, true, "SingleSelect");
+		const aRows = sut.getItems();
+		sut.placeAt("qunit-fixture");
+
+		const oButtonAfter = new Button({text: "After"});
+		oButtonAfter.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		sut.getDomRef("tblHeader").focus();
+		testFakeFocus(aRows[1], true); // Focus is already inside the list, fake focus won't be set
+
+		function testFakeFocus(oRow, bRealFocusInside) {
+			sut.setFakeFocus(oRow);
+			aRows.forEach((oItem) => {
+				if (bRealFocusInside || oRow !== oItem) {
+					assert.notOk(oItem.hasStyleClass("sapMLIBFocused"), "No focus style class");
+					assert.notOk(oItem.getDomRef().hasAttribute("aria-labelledby"), "No aria-labelledby association");
+				}
+			});
+
+			if (!oRow || bRealFocusInside) {
+				return;
+			}
+
+			assert.ok(oRow.hasStyleClass("sapMLIBFocused"), "Focus style class is added");
+			assert.equal(oRow.getDomRef().getAttribute("aria-labelledby"), oInvisibleText.getId(), "Reference to invisible text is added");
+
+			let sDescription = oRow.getAccessibilityInfo().type + " . ";
+			const mPosition = sut.getAccessbilityPosition(oRow);
+			sDescription += oBundle.getText("LIST_ITEM_POSITION", [mPosition.posinset, mPosition.setsize]) + " . ";
+			sDescription += oRow.getAccessibilityInfo().description;
+			assert.equal(oInvisibleText.getText(), sDescription, "Content announcement is correct");
+			assert.equal(sut._oLastFakeFocusedItem, oRow, "Last focused item is set");
+		}
+
+		oButtonAfter.focus();
+		testFakeFocus(aRows[0]); // Focus is outside the list, fake focus should be set
+		testFakeFocus(aRows[1]);
+		testFakeFocus(aRows[2]);
+
+		sut.getDomRef("tblHeader").focus(); // When real focus lands inside the list, fake focus is removed
+		aRows.forEach((oItem) => {
+			assert.notOk(oItem.hasStyleClass("sapMLIBFocused"), "No focus style class");
+			assert.notOk(oItem.getDomRef().hasAttribute("aria-labelledby"), "No aria-labelledby association");
+		});
+
+		oButtonAfter.focus();
+		testFakeFocus(aRows[1]);
+		testFakeFocus(null); // Remove fake focus
+		sut.destroy();
+	});
+
 	QUnit.test("Accessibility Test for ColumnListItem", function(assert) {
 		const oListItem = new ColumnListItem({
 			type: "Navigation",
