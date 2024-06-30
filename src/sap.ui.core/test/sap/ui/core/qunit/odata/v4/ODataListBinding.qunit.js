@@ -9781,6 +9781,8 @@ sap.ui.define([
 
 		oBinding.aContexts = [, oContext];
 
+		this.mock(oBinding).expects("checkSuspended").withExactArgs();
+
 		assert.throws(function () {
 			// code under test
 			oBinding.expand(oContext);
@@ -9874,6 +9876,7 @@ sap.ui.define([
 		oBinding.iMaxLength = 8;
 		aContextsBefore = oBinding.aContexts.slice();
 		assert.deepEqual(oBinding.mPreviousContextsByPath, {});
+		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oContext).expects("getModelIndex").exactly(iCount ? 1 : 0).withExactArgs()
 			.returns(1);
 		this.mock(oContext).expects("getPath").exactly(bCountGiven ? 0 : 1).withExactArgs()
@@ -9936,6 +9939,8 @@ sap.ui.define([
 		};
 
 		oBinding.aContexts = [, oContext];
+
+		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 
 		assert.throws(function () {
 			// code under test
