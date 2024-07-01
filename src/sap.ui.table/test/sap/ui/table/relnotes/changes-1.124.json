@@ -1,0 +1,12 @@
+{
+  "1.124.2": {
+    "date": "July 2024",
+    "notes": [
+      {
+        "id": "5488c389cf1a5d3d81299f4db51b2e68b314c73a",
+        "type": "FIX",
+        "text": " AnalyticalTable: Error when binding to named model"
+      }
+    ]
+  }
+}

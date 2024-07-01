@@ -18,5 +18,20 @@
         "text": " sap.ui.unified.FileUploader: update type info for uploadComplete event"
       }
     ]
+  },
+  "1.124.2": {
+    "date": "July 2024",
+    "notes": [
+      {
+        "id": "d4d77f180de7e9c57010818a862a32346fa9574c",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Month/Year/Year Range pickers visual improvements (SFSF)"
+      },
+      {
+        "id": "8454b43c0a7b00c5c135c5bb4b9ebddbf830706b",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: is displayed correctly in RTL for two months view"
+      }
+    ]
   }
 }

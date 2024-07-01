@@ -148,5 +148,56 @@
         "text": " sap.m.SinglePlanningCalendar: The cellPress event is fired correctly"
       }
     ]
+  },
+  "1.124.2": {
+    "date": "July 2024",
+    "notes": [
+      {
+        "id": "43a340b945892cacec95f7218ecb66f54211e662",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbarLayoutData: Typo fixed"
+      },
+      {
+        "id": "cbcdbe6ac214403d15ce68d0ebeb09140e923266",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: Added wrapping and wrapping type"
+      },
+      {
+        "id": "374b9f8c60453de1f210de65ded6b3b1fd6e73ef",
+        "type": "FIX",
+        "text": " sap.m.Input: Stop initial re-rendering of the input field when type password and clear icon are set"
+      },
+      {
+        "id": "2a74738e09f9f47b78d2bcc90046bbf500e12310",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: added possibility to select a day with a ENTER",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380129735"
+          }
+        ]
+      },
+      {
+        "id": "58ec5c4ca33cb378b5e49285acadfa862c760c91",
+        "type": "FIX",
+        "text": " ActionTile: New changes to align to the latest design"
+      },
+      {
+        "id": "c03c011ee602b9a7e1982af4531a4f3d6ce32c2d",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: Text is not cut off by focus when text spacing is applied"
+      },
+      {
+        "id": "9809764c78266d47df5ce4fd1ddacc3acf21a4ec",
+        "type": "FIX",
+        "text": " sap.m.SearchField: Parameter type is passed correctly to ResourceBundle"
+      },
+      {
+        "id": "a38bdb118dfeea02c18bb4c17773c04431625063",
+        "type": "FIX",
+        "text": " sap.m.Button: Back type button has correct hover colour"
+      }
+    ]
   }
 }

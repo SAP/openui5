@@ -48,5 +48,50 @@
         "text": " Add sap-system to OData V4 service URLs"
       }
     ]
+  },
+  "1.124.2": {
+    "date": "July 2024",
+    "notes": [
+      {
+        "id": "111c1a264b8ab8a933a09bd7c62aa4197e6f7379",
+        "type": "FIX",
+        "text": " sap.ui.model.json.JSONModel#loadData: Don't use JSONP"
+      },
+      {
+        "id": "49bc7ed90e6b8475b21bca57748e7dda9ae21a77",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.ODataTreeBindingFlat: the value for the magnitude is always converted to a number"
+      },
+      {
+        "id": "8cdfe099a8d0cca530dbdd9549e065cb1743c458",
+        "type": "FIX",
+        "text": " sap.ui.core.util.LibraryInfo: Loosen baseUrl regex check"
+      },
+      {
+        "id": "e2ddf58f9f8fe94d95f08e6223dc0b4014f1fb0f",
+        "type": "FIX",
+        "text": " sap/ui/core/.library: Remove wrong component for sap/ui/core/util/MockServer"
+      },
+      {
+        "id": "b7160452daa41c52725b75e8f120595cb8ba3fb3",
+        "type": "FIX",
+        "text": " sap.ui.performance.XHRInterceptor: Fix CORS check"
+      },
+      {
+        "id": "bde391192acd454be232f027f123fb990687fa9d",
+        "type": "FIX",
+        "text": " util/Mobile: update window size with delay after viewport is set"
+      },
+      {
+        "id": "d8a8279d5ca1790c76ea96c3008c01d9e524cf0c",
+        "type": "FIX",
+        "text": " sap.ui.core.format.DateFormat.qunit: Fix flaky tests"
+      },
+      {
+        "id": "a14a56929bed5bdd2f9733da9cb86f40110c8e0a",
+        "type": "FIX",
+        "text": " sap\\ui\\core\\format\\DateFormat.fnCreateDate: set UTCFullYear must be set with all components"
+      }
+    ]
   }
 }

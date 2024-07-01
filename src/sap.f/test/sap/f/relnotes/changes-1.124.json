@@ -44,5 +44,15 @@
         "text": " Integration Card: dataTimestamp added to ariaLabbeledby"
       }
     ]
+  },
+  "1.124.2": {
+    "date": "July 2024",
+    "notes": [
+      {
+        "id": "efe883da0aa84b7e2a1c67fe0b62622b21525e89",
+        "type": "FIX",
+        "text": " sap.f.GridContainer: Fixed lost focus item navigation"
+      }
+    ]
   }
 }

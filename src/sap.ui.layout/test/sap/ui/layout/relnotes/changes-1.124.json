@@ -8,5 +8,15 @@
         "text": " sap.m.HorizontalLayout: adding an accessibility test page"
       }
     ]
+  },
+  "1.124.2": {
+    "date": "July 2024",
+    "notes": [
+      {
+        "id": "313a10978ac384f984c6b1ddf36e5765a3d78c57",
+        "type": "FIX",
+        "text": " sap.ui.layout.DynamicSideContent: fixed firing of the breakpointChanged event"
+      }
+    ]
   }
 }

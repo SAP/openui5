@@ -1,0 +1,12 @@
+{
+  "1.124.2": {
+    "date": "July 2024",
+    "notes": [
+      {
+        "id": "932eb035b62985deadd697d1514e04288f3b02a5",
+        "type": "FIX",
+        "text": ": sap.ui.rta: Show error dialog in case catalogsIds is returned empty from backend during catalog assignment for key user app variants."
+      }
+    ]
+  }
+}
