@@ -39,6 +39,83 @@ sap.ui.define([
 
 		const sDelegatePath = "test-resources/sap/ui/mdc/delegates/ChartDelegate";
 
+		QUnit.module("sap.ui.mdc.Chart: Simple Properties with autobindOnInit false", {
+
+			beforeEach: async function () {
+				const TestComponent = UIComponent.extend("test", {
+					metadata: {
+						manifest: {
+							"sap.app": {
+								"id": "",
+								"type": "application"
+							}
+						}
+					},
+					createContent: function () {
+						return new Chart({
+							autoBindOnInit: false,
+							delegate: {
+								name: sDelegatePath,
+								payload: {
+									collectionPath: "/testPath"
+								}
+							},
+							propertyInfo: [{ name: "name1", label: "name1", dataType: "String" }, { name: "name2", label: "name2", dataType: "String" }]
+						});
+					}
+				});
+				this.oUiComponent = new TestComponent();
+				this.oUiComponentContainer = new ComponentContainer({
+					component: this.oUiComponent,
+					async: false
+				});
+				this.oMDCChart = this.oUiComponent.getRootControl();
+
+				this.oUiComponentContainer.placeAt("qunit-fixture");
+				await nextUIUpdate();
+			},
+			afterEach: function () {
+				this.oUiComponentContainer.destroy();
+				this.oUiComponent.destroy();
+			}
+
+		});
+
+		QUnit.test("_createContentFromPropertyInfos", function (assert) {
+			const done = assert.async();
+			const oMockDelegate = { checkAndUpdateMDCItems: function () { return Promise.resolve(); }, createInnerChartContent: function () { return Promise.resolve(); }, getDrillableItems: function () { return []; } };
+			const _getControlDelegateStub = sinon.stub(this.oMDCChart, "getControlDelegate").returns(oMockDelegate);
+			// this.oMDCChart.getControlDelegate = function() {return oMockDelegate;};
+			this.oMDCChart._propagatePropertiesToInnerChart = function () { }; //Mock this as it requires an inner chart (which we don't want to test in this case)
+
+			const oCreateCrumbsSpy = sinon.spy(this.oMDCChart, "_createBreadcrumbs");
+			const oPropagateSpy = sinon.spy(this.oMDCChart, "_propagatePropertiesToInnerChart");
+
+			this.oMDCChart._createContentfromPropertyInfos();
+
+			setTimeout(function() { //as order of promise execution is not stable
+				this.oMDCChart.innerChartBound().then(function () {
+					assert.ok(oCreateCrumbsSpy.calledOnce, "Function was called");
+					assert.ok(this.oMDCChart._oObserver, "Observer was created");
+					assert.ok(oPropagateSpy.calledOnce, "Function was called");
+
+					this.oMDCChart._createContentfromPropertyInfos();
+					this.oMDCChart.innerChartBound().then(function () {
+
+						assert.notOk(oCreateCrumbsSpy.calledTwice, "Function was nocht called twice");
+						assert.ok(this.oMDCChart._oObserver, "Observer was created");
+						assert.notOk(oPropagateSpy.calledTwice, "Function was not called twice");
+
+						_getControlDelegateStub.restore();
+						oPropagateSpy.restore();
+						oCreateCrumbsSpy.restore();
+						done();
+					}.bind(this));
+				}.bind(this));
+			}.bind(this), 0);
+		});
+
+
 		QUnit.module("sap.ui.mdc.Chart: Simple Properties", {
 
 			beforeEach: async function () {
@@ -579,30 +656,6 @@ sap.ui.define([
 
 		QUnit.test("_initInnerControls", function (assert) {
 			assert.ok(true);
-		});
-
-		QUnit.test("_createContentFromPropertyInfos", function (assert) {
-			const done = assert.async();
-			const oMockDelegate = { checkAndUpdateMDCItems: function () { return Promise.resolve(); }, createInnerChartContent: function () { return Promise.resolve(); }, getDrillableItems: function () { return []; } };
-			const _getControlDelegateStub = sinon.stub(this.oMDCChart, "getControlDelegate").returns(oMockDelegate);
-			// this.oMDCChart.getControlDelegate = function() {return oMockDelegate;};
-			this.oMDCChart._propagatePropertiesToInnerChart = function () { }; //Mock this as it requires an inner chart (which we don't want to test in this case)
-
-			const oCreateCrumbsSpy = sinon.spy(this.oMDCChart, "_createBreadcrumbs");
-			const oPropagateSpy = sinon.spy(this.oMDCChart, "_propagatePropertiesToInnerChart");
-
-			this.oMDCChart._createContentfromPropertyInfos();
-
-			setTimeout(function() { //as order of promise execution is not stable
-				this.oMDCChart.innerChartBound().then(function () {
-					assert.ok(oCreateCrumbsSpy.calledOnce, "Function was called");
-					assert.ok(this.oMDCChart._oObserver, "Observer was created");
-					assert.ok(oPropagateSpy.calledOnce, "Function was called");
-
-					_getControlDelegateStub.restore();
-					done();
-				}.bind(this));
-			}.bind(this), 0);
 		});
 
 		QUnit.test("_createBreadcrumbs", function (assert) {

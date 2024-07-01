@@ -966,27 +966,29 @@ sap.ui.define([
 		 * Is called during init when autoBindOnInit = "true", if "false" then this is called by _rebind()
 		 */
 		Chart.prototype._createContentfromPropertyInfos = function(oInnerChart) {
-
 			//Make sure all MDC Items have the necessary information to create a chart
 			this.getControlDelegate().checkAndUpdateMDCItems(this).then(() => {
 				//Create content on inner chart instance
-				this.getControlDelegate().createInnerChartContent(this, this._innerChartDataLoadComplete.bind(this)).then(() => {
-					this._createBreadcrumbs();
-					//From now on, listen to changes on Items Aggregation and sync them with inner chart
-					this._oObserver?.disconnect();
-					this._oObserver?.destroy();
-					this._oObserver = new ManagedObjectObserver(this._propagateItemChangeToInnerChart.bind(this));
-					this._oObserver.observe(this, {
-						aggregations: [
-							"items"
-						]
+				if (!this._oInnerChartContentPromise) {
+					this._oInnerChartContentPromise = this.getControlDelegate().createInnerChartContent(this, this._innerChartDataLoadComplete.bind(this));
+					this._oInnerChartContentPromise.then(() => {
+						this._createBreadcrumbs();
+						//From now on, listen to changes on Items Aggregation and sync them with inner chart
+						this._oObserver?.disconnect();
+						this._oObserver?.destroy();
+						this._oObserver = new ManagedObjectObserver(this._propagateItemChangeToInnerChart.bind(this));
+						this._oObserver.observe(this, {
+							aggregations: [
+								"items"
+							]
+						});
+
+						//Sync MDC chart properties with inner chart
+						this._propagatePropertiesToInnerChart();
+
+						this._fnResolveInnerChartBound();
 					});
-
-					//Sync MDC chart properties with inner chart
-					this._propagatePropertiesToInnerChart();
-
-					this._fnResolveInnerChartBound();
-				});
+				}
 			});
 		};
 
@@ -1784,12 +1786,23 @@ sap.ui.define([
 			delete this._oSettingsBtn;
 			delete this._oChartTypeBtn;
 
+			delete this.innerChartBoundPromise;
+			delete this._fnResolveInnerChartBound;
+			delete this._fnRejectInnerChartBound;
+
+			delete this.initializedPromise;
+			delete this._fnResolveInitialized;
+			delete this._fnRejectInitialized;
+
+			delete this._oInnerChartContentPromise;
+
 			const oToolbar = this.getAggregation("_toolbar");
 			oToolbar?._oInvTitle?.destroy();
 
 			Control.prototype.exit.apply(this, arguments);
 
 			this._oObserver?.destroy();
+			delete this._oObserver;
 		};
 
 		/**
