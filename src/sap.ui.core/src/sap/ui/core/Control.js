@@ -1280,7 +1280,7 @@ sap.ui.define([
 	 * @return {sap.ui.core.AccessibilityInfo} Current accessibility state of the control.
 	 * @since 1.37.0
 	 * @function
-	 * @name sap.ui.core.Control.prototype.getAccessibilityInfo
+	 * @name sap.ui.core.Control.prototype.getAccessibilityInfo?
 	 * @protected
 	 */
 	//Control.prototype.getAccessibilityInfo = function() { return null; };
