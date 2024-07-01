@@ -103,5 +103,15 @@
         "text": " sap.ui.unified.Calendar: adjust header buttons width"
       }
     ]
+  },
+  "1.120.17": {
+    "date": "July 2024",
+    "notes": [
+      {
+        "id": "2ca663af219c0694d6a9e93ca0513a7a8c0430d3",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: add tooltips for calendar legend types"
+      }
+    ]
   }
 }

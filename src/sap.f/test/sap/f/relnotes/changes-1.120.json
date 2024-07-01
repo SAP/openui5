@@ -163,5 +163,15 @@
         ]
       }
     ]
+  },
+  "1.120.17": {
+    "date": "July 2024",
+    "notes": [
+      {
+        "id": "61ed9a30ca4bebde0d9d5db98d5c6bf7f19cba65",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Suppress invalidation of footer"
+      }
+    ]
   }
 }

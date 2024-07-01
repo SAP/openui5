@@ -1,0 +1,12 @@
+{
+  "1.120.17": {
+    "date": "July 2024",
+    "notes": [
+      {
+        "id": "12cf7e7b906f886d633781ebe3f8fcd6f505d6ed",
+        "type": "FIX",
+        "text": " sap.ui.layout.DynamicSideContent: fixed firing of the breakpointChanged event"
+      }
+    ]
+  }
+}

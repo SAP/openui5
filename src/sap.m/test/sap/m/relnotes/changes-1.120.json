@@ -789,5 +789,30 @@
         "text": " sap.m.ObjectMarker: focus visible in sap.ui.table.Table"
       }
     ]
+  },
+  "1.120.17": {
+    "date": "July 2024",
+    "notes": [
+      {
+        "id": "ab9bba0dc7a288b041a30cba17e958cb8ef559bf",
+        "type": "FIX",
+        "text": " sap.m.Input: Stop initial re-rendering of the input field when type password and clear icon are set"
+      },
+      {
+        "id": "695c7f68c3a002d3abb5f4c0a0a1e988b78d36be",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: icon is shown correctly now for theme horizon HCB and HCW. The status is now aligned correctly in sap.ui.table.Table."
+      },
+      {
+        "id": "46e9e32d5183e6230ddcb96f4cb02b882b449353",
+        "type": "FIX",
+        "text": " sap.m.Button: Back type button has correct hover colour"
+      },
+      {
+        "id": "ee31484073c08a34d1f5a6b57836be8e06169d81",
+        "type": "FIX",
+        "text": " sap.m.SearchField: Parameter type is passed correctly to ResourceBundle"
+      }
+    ]
   }
 }

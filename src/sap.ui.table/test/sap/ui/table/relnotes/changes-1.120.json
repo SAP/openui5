@@ -55,5 +55,15 @@
         ]
       }
     ]
+  },
+  "1.120.17": {
+    "date": "July 2024",
+    "notes": [
+      {
+        "id": "165964075e7d2c67498a9eec105cb21733c898bd",
+        "type": "FIX",
+        "text": " AnalyticalTable: Error when binding to named model"
+      }
+    ]
   }
 }
