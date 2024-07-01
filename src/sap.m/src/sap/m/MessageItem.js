@@ -54,23 +54,23 @@ sap.ui.define([
 					/**
 					 * Specifies the title of the message
 					 */
-					title: { type: "string", group: "Appearance", defaultValue: "" },
+					title: { type: "string", group: "Data", defaultValue: "" },
 
 					/**
 					 * Specifies the subtitle of the message
 					 * <b>Note:</b> This is only visible when the <code>title</code> property is not empty.
 					 */
-					subtitle : {type : "string", group : "Misc", defaultValue : null},
+					subtitle : {type : "string", group : "Data", defaultValue : null},
 
 					/**
 					 * Specifies detailed description of the message
 					 */
-					description: { type: "string", group: "Appearance", defaultValue: "" },
+					description: { type: "string", group: "Data", defaultValue: "" },
 
 					/**
 					 * Specifies if description should be interpreted as markup
 					 */
-					markupDescription: { type: "boolean", group: "Appearance", defaultValue: false },
+					markupDescription: { type: "boolean", group: "Data", defaultValue: false },
 
 					/**
 					 * Specifies long text description location URL
