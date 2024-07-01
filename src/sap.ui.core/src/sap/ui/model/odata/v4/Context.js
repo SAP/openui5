@@ -2184,12 +2184,13 @@ sap.ui.define([
 	 *
 	 * Note: this is a private and internal API. Do not call this!
 	 *
+	 * @param {boolean} [bForce] Whether to set "persisted" independently of the previous state
 	 * @throws {Error} If this context is not "created" or still transient
 	 *
 	 * @private
 	 */
-	Context.prototype.setPersisted = function () {
-		if (this.isTransient() !== false) {
+	Context.prototype.setPersisted = function (bForce) {
+		if (!bForce && this.isTransient() !== false) {
 			throw new Error("Not 'created persisted'");
 		}
 		this.bInactive = undefined;

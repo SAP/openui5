@@ -1005,6 +1005,7 @@ sap.ui.define([
 					return;
 				}
 
+				oContext.setPersisted(true); // force set, due to oCreatePromise not yet resolved
 				that.insertContext(oContext, iRank);
 			}
 			bDeepCreate = _Helper.getPrivateAnnotation(oCreatedEntity, "deepCreate");

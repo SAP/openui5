@@ -5965,8 +5965,9 @@ sap.ui.define([
 			.withExactArgs("~sGroupId~", true, true, sinon.match.func).returns("~oGroupLock~");
 		const oContext = {
 			destroy : mustBeMocked,
-			fetchValue : mustBeMocked,
 			doSetSelected : mustBeMocked,
+			fetchValue : mustBeMocked,
+			setPersisted : mustBeMocked,
 			updateAfterCreate : mustBeMocked
 		};
 		const oCreatePromise = new SyncPromise((resolve) => {
@@ -5984,6 +5985,8 @@ sap.ui.define([
 					.returns(iRank);
 				const bUseContext = iRank && !bRefresh;
 				this.mock(oContext).expects("destroy").exactly(bUseContext ? 0 : 1).withExactArgs();
+				this.mock(oContext).expects("setPersisted").exactly(bUseContext ? 1 : 0)
+					.withExactArgs(true);
 				this.mock(oBinding).expects("insertContext").exactly(bUseContext ? 1 : 0)
 					.withExactArgs(sinon.match.same(oContext), 42);
 				oHelperMock.expects("getPrivateAnnotation").exactly(bUseContext ? 1 : 0)
