@@ -102,7 +102,7 @@ sap.ui.define([
 				/**
 				 * Determines the text of the message.
 				 */
-				text: { type: "string", group: "Appearance", defaultValue: "" },
+				text: { type: "string", group: "Data", defaultValue: "" },
 
 				/**
 				 * Determines the type of messages that are displayed in the MessageStrip.
