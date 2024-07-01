@@ -3351,7 +3351,6 @@ sap.ui.define([
 		oCache.aElements = [{
 			// "@$ui5.node.level" : ignored
 		}, {
-			"@$ui5.node.isExpanded" : true,
 			"@$ui5.node.level" : 5
 		}, {
 			"@$ui5.node.level" : 6 // child
@@ -3371,7 +3370,6 @@ sap.ui.define([
 		oCache.aElements = [{
 			// "@$ui5.node.level" : ignored
 		}, {
-			"@$ui5.node.isExpanded" : true,
 			"@$ui5.node.level" : 5
 		}, {
 			"@$ui5.node.level" : 6 // child
@@ -3387,7 +3385,94 @@ sap.ui.define([
 		assert.strictEqual(oCache.countDescendants(oCache.aElements[1], 1), 3,
 			"number of removed elements");
 	});
+
+	QUnit.test("countDescendants: sibling on level 1, hierarchy=${bHierarchy}", function (assert) {
+		const oCache = _AggregationCache.create(this.oRequestor, "~", "", {}, oAggregation);
+		oCache.aElements = [{
+			// "@$ui5.node.level" : ignored
+		}, {
+			"@$ui5.node.level" : 1
+		}, {
+			"@$ui5.node.level" : 2 // child
+		}, {
+			"@$ui5.node.level" : 3 // grandchild
+		}, {
+			"@$ui5.node.level" : 2 // child
+		}, {
+			// no rank
+			"@$ui5.node.level" : 1 // sibling
+		}]; // simulate a read
+
+		// code under test
+		assert.strictEqual(oCache.countDescendants(oCache.aElements[1], 1), 3,
+			"number of removed elements");
+	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("countDescendants: do not collapse grand total", function (assert) {
+		const oCache = _AggregationCache.create(this.oRequestor, "~", "", {},
+			{aggregate : {}, group : {}, groupLevels : ["foo"]});
+		oCache.aElements = [{
+			// "@$ui5.node.level" : ignored
+		}, {
+			"@$ui5.node.level" : 5
+		}, {
+			"@$ui5.node.level" : 6 // child
+		}, {
+			"@$ui5.node.level" : 7 // grandchild
+		}, {
+			"@$ui5.node.level" : 6 // child
+		}, {
+			"@$ui5.node.level" : 0 // grand total
+		}]; // simulate a read
+
+		// code under test
+		assert.strictEqual(oCache.countDescendants(oCache.aElements[1], 1), 3,
+			"number of removed elements");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("countDescendants: level 0 placeholder as sibling", function (assert) {
+		const oCache = _AggregationCache.create(this.oRequestor, "~", "", {},
+			{expandTo : 2, hierarchyQualifier : "X"});
+		oCache.aElements = [{
+			// "@$ui5.node.level" : ignored
+		}, {
+			"@$ui5._" : {
+				descendants : 2
+			},
+			"@$ui5.node.level" : 1
+		}, {
+			// no rank
+			"@$ui5.node.level" : 2 // created child, filtered out
+		}, {
+			"@$ui5._" : {
+				placeholder : 1,
+				rank : "~" // the actual rank does not matter
+			},
+			"@$ui5.node.level" : 0 // child
+		}, {
+			// rank does not matter at all
+			"@$ui5.node.level" : 3 // grandchild
+		}, {
+			"@$ui5._" : {
+				placeholder : true,
+				rank : "~" // the actual rank does not matter
+			},
+			"@$ui5.node.level" : 0 // child
+		}, {
+			"@$ui5._" : {
+				placeholder : true,
+				rank : "~" // the actual rank does not matter
+			},
+			"@$ui5.node.level" : 0 // sibling
+		}]; // simulate a read
+
+		// code under test
+		assert.strictEqual(oCache.countDescendants(oCache.aElements[1], 1), 4,
+			"number of removed elements");
+	});
 
 	//*********************************************************************************************
 [false, true].forEach(function (bUnifiedCache) {
