@@ -1107,24 +1107,8 @@ sap.ui.define([
 	};
 	DataType.registerEnum("sap.ui.core.HorizontalAlign", thisLib.HorizontalAlign);
 
-
-	/**
-	 * @classdesc A string type representing an ID or a name.
-	 *
-	 * Allowed is a sequence of characters (capital/lowercase), digits, underscores, dashes, points and/or colons.
-	 * It may start with a character or underscore only.
-	 *
-	 * @final
-	 * @namespace
-	 * @public
-	 */
-	thisLib.ID = DataType.createType('sap.ui.core.ID', {
-			isValid : function(vValue) {
-				return /^([A-Za-z_][-A-Za-z0-9_.:]*)$/.test(vValue);
-			}
-		},
-		DataType.getType('string')
-	);
+	// expose ID type for compatibility reasons
+	thisLib.ID = DataType.getType('sap.ui.core.ID');
 
 	/**
 	 * Interface for the controls which are suitable to shrink.

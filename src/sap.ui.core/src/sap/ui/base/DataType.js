@@ -709,6 +709,25 @@ sap.ui.define([
 	};
 
 
+	/**
+	 * A string type representing an ID or a name.
+	 *
+	 * Allowed is a sequence of characters (capital/lowercase), digits, underscores, dashes, points and/or colons.
+	 * It may start with a character or underscore only.
+	 *
+	 * @typedef {string} sap.ui.core.ID
+	 * @final
+	 * @public
+	 * @ui5-module-override sap/ui/core/library ID
+	 */
+	DataType.createType('sap.ui.core.ID', {
+			isValid : function(vValue) {
+				return /^([A-Za-z_][-A-Za-z0-9_.:]*)$/.test(vValue);
+			}
+		},
+		DataType.getType('string')
+	);
+
 	return DataType;
 
 }, /* bExport= */ true);
