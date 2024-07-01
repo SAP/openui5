@@ -802,8 +802,8 @@ sap.ui.define([
 	 * {@link sap.ui.model.odata.v4.Context#move move} must be pending, and no other modification
 	 * (including collapse of some ancestor node) must happen while this creation is pending!
 	 *
-	 * When using the <code>createInPlace</code> parameter (see {@link #setAggregation},
-	 * @experimental as of version 1.125.0), the new
+	 * When using the <code>createInPlace</code> parameter
+	 * (see {@link #setAggregation}, @experimental as of version 1.125.0), the new
 	 * {@link sap.ui.model.odata.v4.Context#isTransient transient} child is hidden until its
 	 * {@link sap.ui.model.odata.v4.Context#created created promise} resolves, and then it is shown
 	 * at a position determined by the back end and the current sort order. Note that the returned
