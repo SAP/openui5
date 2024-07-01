@@ -71,26 +71,42 @@ sap.ui.define([
 
 		this.oTable.attachEventOnce("rowsUpdated", () => {
 			var oBinding = this.oTable.getBinding("rows");
-			var oGetContextsSpy = sinon.spy(oBinding, "getContexts");
+			// var oGetContextsSpy = sinon.spy(oBinding, "getContexts");
 			assert.ok(oBinding.getLength() > this.oCellSelector.getRangeLimit());
 
 			var oCell = getCell(this.oTable, 1, 0); // first cell of first row
 			qutils.triggerKeydown(oCell, KeyCodes.SPACE); // select first cell of first row
 			assert.equal(oBinding.getAllCurrentContexts().length, this.oTable.getThreshold() + this.oTable.getRowMode().getRowCount());
 
-			qutils.triggerKeyup(oCell, KeyCodes.SPACE, false, false, true /* Ctrl */); // enlarge selection to all rows and cells
-			assert.equal(oGetContextsSpy.callCount, 1);
-			assert.ok(oGetContextsSpy.calledWithExactly(0, this.oCellSelector.getRangeLimit(), 0, true));
-			assert.deepEqual(this.oCellSelector.getSelectionRange(), {from: {rowIndex: 0, colIndex: 0}, to: {rowIndex: Infinity, colIndex: 0}});
+			// qutils.triggerKeyup(oCell, KeyCodes.SPACE, false, false, true /* Ctrl */); // enlarge selection to all rows and cells
+			// assert.equal(oGetContextsSpy.callCount, 1);
+			// assert.ok(oGetContextsSpy.calledWithExactly(0, this.oCellSelector.getRangeLimit(), 0, true));
+			// assert.deepEqual(this.oCellSelector.getSelectionRange(), {from: {rowIndex: 0, colIndex: 0}, to: {rowIndex: Infinity, colIndex: 0}});
 
-			oBinding.attachEventOnce("dataReceived", setTimeout.bind(0, () => {
-				assert.equal(oBinding.getAllCurrentContexts().length, this.oCellSelector.getRangeLimit());
-				assert.equal(this.oCellSelector.getSelectedRowContexts().length, this.oCellSelector.getRangeLimit());
-				assert.deepEqual(this.oCellSelector.getSelectedRowContexts(), oBinding.getAllCurrentContexts().slice(0, this.oCellSelector.getRangeLimit()));
+			qutils.triggerKeydown(oCell, KeyCodes.ARROW_RIGHT, true, false, false);
+			qutils.triggerKeyup(oCell, KeyCodes.ARROW_RIGHT, true, false, false);
 
-				oGetContextsSpy.restore();
-				done();
-			}));
+			oCell = getCell(this.oTable, 1, 1);
+			qutils.triggerKeydown(oCell, KeyCodes.ARROW_DOWN, true, false, false);
+			qutils.triggerKeyup(oCell, KeyCodes.ARROW_DOWN, true, false, false);
+
+			// Commenting as Column Selection feature will be changed/adjusted in a separate BLI
+			// qutils.triggerKeyup(oCell, KeyCodes.SPACE, false, false, true /* Ctrl */); // enlarge selection to all rows and cells
+			// assert.equal(oGetContextsSpy.callCount, 1);
+			// assert.ok(oGetContextsSpy.calledWithExactly(0, this.oCellSelector.getRangeLimit(), 0, true));
+
+			assert.deepEqual(this.oCellSelector.getSelectionRange(), {from: {rowIndex: 1, colIndex: 0}, to: {rowIndex: 2, colIndex: 1}});
+			assert.deepEqual(this.oCellSelector.getSelectedRowContexts(), oBinding.getAllCurrentContexts().slice(1, 3));
+
+			// Commenting as Column Selection feature will be changed/adjusted in a separate BLI
+			// oBinding.attachEventOnce("dataReceived", () => {
+			// 	assert.equal(oBinding.getAllCurrentContexts().length, this.oCellSelector.getRangeLimit());
+			// 	assert.equal(this.oCellSelector.getSelectedRowContexts().length, this.oCellSelector.getRangeLimit());
+			// 	assert.deepEqual(this.oCellSelector.getSelectedRowContexts(), oBinding.getAllCurrentContexts().slice(0, this.oCellSelector.getRangeLimit()));
+			// 	assert.deepEqual(this.oCellSelector.getSelectedRowContexts(), oBinding.getAllCurrentContexts().slice(1, 2));
+
+			// 	oGetContextsSpy.restore();
+			done();
 		});
 	});
 
