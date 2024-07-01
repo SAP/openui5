@@ -97,13 +97,17 @@ sap.ui.define(["./PluginBase", "sap/ui/base/ManagedObjectObserver", "sap/ui/core
 
 	DataStateIndicator.findOn = PluginBase.findOn;
 
+	DataStateIndicator.prototype.init = function() {
+		this._fnOnAggregatedDataStateChange = this._onAggregatedDataStateChange.bind(this);
+	};
+
 	DataStateIndicator.prototype.onActivate = function(oControl) {
 		this._bFiltering = false;
 		var sBindingName = this._getBindingName();
 		var oBinding = oControl.getBinding(sBindingName);
 
 		if (oBinding) {
-			oBinding.attachAggregatedDataStateChange(this._onAggregatedDataStateChange, this);
+			oBinding.attachAggregatedDataStateChange(this._fnOnAggregatedDataStateChange);
 			this._processDataState(oBinding.getDataState());
 		}
 
@@ -116,7 +120,7 @@ sap.ui.define(["./PluginBase", "sap/ui/base/ManagedObjectObserver", "sap/ui/core
 		var oBinding = oControl.getBinding(sBindingName);
 
 		if (oBinding) {
-			oBinding.detachAggregatedDataStateChange(this._onAggregatedDataStateChange, this);
+			oBinding.detachAggregatedDataStateChange(this._fnOnAggregatedDataStateChange);
 			oBinding.getDataState().getMessages().forEach(function(oMessage) {
 				oMessage.removeControlId(oControl.getId());
 			});
@@ -456,10 +460,17 @@ sap.ui.define(["./PluginBase", "sap/ui/base/ManagedObjectObserver", "sap/ui/core
 	};
 
 	DataStateIndicator.prototype._observeChanges = function(mChange) {
-		var oBinding = mChange.bindingInfo.binding;
+		const oBindingInfo = mChange.bindingInfo;
+		const oBinding = oBindingInfo.binding;
+
 		if (oBinding) {
-			var sOperation = (mChange.mutation == "ready") ? "attach" : "detach";
-			oBinding[sOperation + "AggregatedDataStateChange"](this._onAggregatedDataStateChange, this);
+			oBinding.detachAggregatedDataStateChange(this._fnOnAggregatedDataStateChange);
+			if (mChange.mutation == "ready") {
+				oBinding.attachAggregatedDataStateChange(this._fnOnAggregatedDataStateChange);
+			}
+		} else if (mChange.mutation == "prepare") {
+			oBindingInfo.events ??= {};
+			oBindingInfo.events.aggregatedDataStateChange ??= this._fnOnAggregatedDataStateChange;
 		}
 	};
 

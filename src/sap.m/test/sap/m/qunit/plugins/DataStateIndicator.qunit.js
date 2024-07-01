@@ -266,6 +266,14 @@ sap.ui.define([
 		const oMsgStrp = oPlugin._oMessageStrip;
 		assert.ok(oMsgStrp.getText(), "There is a Message Text");
 
+		const ListBindingPrototype = this.oList.getBinding("items").constructor.prototype;
+		const fnBindingInitialize = ListBindingPrototype.initialize;
+		ListBindingPrototype.initialize = function() {
+			fnBindingInitialize.call(this, arguments);
+			assert.ok(this.hasListeners("AggregatedDataStateChange"), "AggregatedDataStateChange event is already registered during binding initialization");
+			ListBindingPrototype.initialize = fnBindingInitialize;
+		};
+
 		this.oList.bindItems({
 			path: "/names",
 			template: new StandardListItem({
