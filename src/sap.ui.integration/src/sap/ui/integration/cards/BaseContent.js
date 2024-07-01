@@ -183,22 +183,27 @@ sap.ui.define([
 	};
 
 	BaseContent.prototype.onBeforeRendering = function () {
-		var oConfiguration = this.getConfiguration(),
-			oCard = this.getCardInstance(),
+		const oCard = this.getCardInstance();
+
+		if (!oCard) {
+			return;
+		}
+
+		const oConfiguration = this.getParsedConfiguration();
+		let oLoadingPlaceholder = this.getAggregation("_loadingPlaceholder");
+
+		if (!oLoadingPlaceholder && oConfiguration) {
+			this.setAggregation("_loadingPlaceholder", this.createLoadingPlaceholder(oConfiguration));
 			oLoadingPlaceholder = this.getAggregation("_loadingPlaceholder");
+		}
 
-			if (!oLoadingPlaceholder && oConfiguration) {
-				this.setAggregation("_loadingPlaceholder", this.createLoadingPlaceholder(oConfiguration));
-				oLoadingPlaceholder = this.getAggregation("_loadingPlaceholder");
+		if (oLoadingPlaceholder) {
+			oLoadingPlaceholder.setRenderTooltip(oCard.getPreviewMode() !== CardPreviewMode.Abstract);
+
+			if (typeof this._getTable === "function") {
+				oLoadingPlaceholder.setHasContent((this._getTable().getColumns().length > 0));
 			}
-
-			if (oLoadingPlaceholder && oCard) {
-				oLoadingPlaceholder.setRenderTooltip(oCard.getPreviewMode() !== CardPreviewMode.Abstract);
-
-				if (typeof this._getTable === "function") {
-					oLoadingPlaceholder.setHasContent((this._getTable().getColumns().length > 0));
-				}
-			}
+		}
 	};
 
 	/**

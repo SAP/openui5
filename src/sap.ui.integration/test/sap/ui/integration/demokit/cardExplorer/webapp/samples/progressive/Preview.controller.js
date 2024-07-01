@@ -183,12 +183,14 @@ sap.ui.define([
 		numericCard: () => new Card({
 			manifest: "./cardNumericManifest.json",
 			baseUrl: "./",
-			width: "600px"
+			width: "600px",
+			useProgressiveDisclosure: true
 		}),
 		defaultCard: () => new Card({
 			manifest: "./cardDefaultManifest.json",
 			baseUrl: "./",
-			width: "600px"
+			width: "600px",
+			useProgressiveDisclosure: true
 		}),
 		onInit: function () {
 			this.getView().setModel(this.settings, "settings");
