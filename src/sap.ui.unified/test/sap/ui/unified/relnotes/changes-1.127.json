@@ -1,0 +1,12 @@
+{
+  "1.127.0": {
+    "date": "July 2024",
+    "notes": [
+      {
+        "id": "855d54c1b50bbb67a2ef3e6bff98dd0f262457e0",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: Image icon has correct size now"
+      }
+    ]
+  }
+}

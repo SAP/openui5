@@ -1,0 +1,17 @@
+{
+  "1.127.0": {
+    "date": "July 2024",
+    "notes": [
+      {
+        "id": "bee0f9965e7745448c1bd2752f2aa09daabfc9a8",
+        "type": "FIX",
+        "text": " GenericTile overlap happening when sap.m.TileSizeBehavior.Small is used."
+      },
+      {
+        "id": "6f3eca82e485ede11ca00c2ce7dbbcbb9fac693f",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: improve screen reader announcements"
+      }
+    ]
+  }
+}
