@@ -128,7 +128,6 @@ sap.ui.define([
 		 * Initialize ItemNavigations (content and header) and transfer relevant dom elements.
 		 * TabIndexes are set by the ItemNavigation.
 		 */
-		// eslint-disable-next-line complexity
 		_initItemNavigation: function(oExtension, bSkipInitFocusedIndex) {
 			const oTable = oExtension.getTable();
 

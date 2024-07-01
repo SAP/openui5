@@ -280,17 +280,15 @@ sap.ui.define([
 
 	QUnit.test("Bind rows", function(assert) {
 		const oInnerBindRows = this.spy(TreeTable.prototype, "_bindRows");
-
-		/*eslint-disable no-new */
-		new TreeTable({
+		const oTable = new TreeTable({
 			rows: {path: "/modelData"},
 			columns: [new Column()]
 		});
-		/*eslint-enable no-new */
 
 		assert.ok(oInnerBindRows.calledOnce, "_bindRows was called");
 
 		oInnerBindRows.restore();
+		oTable.destroy();
 	});
 
 	QUnit.test("Binding events", function(assert) {
@@ -455,12 +453,10 @@ sap.ui.define([
 			oTable.attachEventOnce("rowsUpdated", function() {
 				assert.ok(oTable.$("selall").hasClass("sapUiTableSelAll"), "Select all icon is not checked.");
 
-				/*eslint-disable max-nested-callbacks */
 				oTable.attachEventOnce("rowsUpdated", function() {
 					assert.ok(oTable.$("selall").hasClass("sapUiTableSelAll"), "Select all icon is not checked.");
 					done();
 				});
-				/*eslint-enable max-nested-callbacks */
 
 				oModel.setData(getData());
 			});

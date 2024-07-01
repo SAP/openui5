@@ -377,7 +377,6 @@ sap.ui.define([
 		}
 	});
 
-	// eslint-disable-next-line complexity
 	QUnit.test("Group Mode; After expand", async function(assert) {
 		this.oTreeTable.setUseGroupMode(true);
 		this.oTreeTable.getRows()[0].expand();

@@ -188,22 +188,21 @@ sap.ui.define([
 		content: createResponse(0, 10)
 	});
 
-	// eslint-disable-next-line consistent-this
-	function attachEventHandler(oControl, iSkipCalls, fnHandler, that) {
+	function attachEventHandler(oControl, iSkipCalls, fnHandler, thisArg) {
 		let iCalled = 0;
 		const fnEventHandler = function() {
 			const fnTest = function() {
 				iCalled++;
 				if (iSkipCalls === iCalled) {
 					oControl.detachRowsUpdated(fnEventHandler);
-					oControl.attachEventOnce("rowsUpdated", fnHandler, that);
+					oControl.attachEventOnce("rowsUpdated", fnHandler, thisArg);
 				}
 			};
 			Promise.resolve().then(fnTest.bind(this));
 		};
 
 		if (iSkipCalls === 0) {
-			oControl.attachEventOnce("rowsUpdated", fnHandler, that);
+			oControl.attachEventOnce("rowsUpdated", fnHandler, thisArg);
 		} else {
 			oControl.attachRowsUpdated(fnEventHandler);
 		}

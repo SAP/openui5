@@ -207,7 +207,7 @@ sap.ui.define([
 		const oTable = this.oFakeTable;
 
 		for (let i = 0; i < oHookWithOptionalArguments.validCalls.length; i++) {
-			const handler = function() { //eslint-disable-line no-loop-func
+			const handler = function() {
 				oHookWithOptionalArguments.assertArguments[this](assert, arguments);
 			}.bind(i);
 			Hook.register(oTable, oHookWithOptionalArguments.key, handler);
