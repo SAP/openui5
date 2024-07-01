@@ -1230,12 +1230,12 @@ function(
 
 	// handle propagated focus to make the item row focusable
 	ListItemBase.prototype.onfocusin = function(oEvent) {
-		var oList = this.getList();
+		const oList = this.getList();
 		if (!oList || oEvent.isMarked()) {
 			return;
 		}
 
-		this.informList("FocusIn", oEvent.srcControl);
+		this.informList("FocusIn", oEvent.srcControl, oEvent);
 		oEvent.setMarked();
 	};
 
