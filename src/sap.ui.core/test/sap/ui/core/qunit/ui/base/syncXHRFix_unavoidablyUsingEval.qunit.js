@@ -1,17 +1,10 @@
 /*global QUnit */
-sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/ui/Device', 'sap/ui/base/syncXHRFix'], function(jQuery, Device, syncXHRFix) {
+sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/ui/Device'], function(jQuery, Device) {
 	'use strict';
 
 	var baseURL = "test-resources/sap/ui/core/qunit/ui/base/";
 
-	QUnit.module("sap/ui/base/syncXHRFix (window.XMLHttpRequest)", {
-		before: function() {
-			// Fix is only required in Firefox
-			if (Device.browser.firefox && window.Proxy) {
-				syncXHRFix();
-			}
-		}
-	});
+	QUnit.module("sap/ui/base/syncXHRFix (window.XMLHttpRequest)");
 
 	QUnit.test("sync/async", function(assert) {
 		var bSyncOngoing = false,
@@ -30,6 +23,26 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/ui/Device', 'sap/ui/base/syncXHR
 			async: false,
 			cache: false
 		});
+		bSyncOngoing = false;
+	});
+
+	QUnit.test("sync/async - native", function(assert) {
+		let bSyncOngoing = false;
+		const done = assert.async();
+
+		const oAsyncXHR = new XMLHttpRequest();
+		oAsyncXHR.open("GET", "#");
+		oAsyncXHR.addEventListener("loadend", () => {
+			assert.ok(!bSyncOngoing, "Sync request is no longer running, when callback is called.");
+			done();
+		});
+		oAsyncXHR.send();
+
+		bSyncOngoing = true;
+
+		const oSyncXHR = new XMLHttpRequest();
+		oSyncXHR.open("GET", "#", false);
+		oSyncXHR.send();
 		bSyncOngoing = false;
 	});
 
