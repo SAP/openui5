@@ -95,8 +95,11 @@ sap.ui.define([
 			"sap.ui.unified.MenuItemBase",
 			"sap.ui.unified.MenuItemGroup",
 			"sap.ui.unified.MenuTextFieldItem",
+			"sap.ui.unified.NonWorkingPeriod",
+			"sap.ui.unified.RecurringNonWorkingPeriod",
 			"sap.ui.unified.ShellHeadItem",
-			"sap.ui.unified.ShellHeadUserItem"
+			"sap.ui.unified.ShellHeadUserItem",
+			"sap.ui.unified.TimeRange"
 		],
 		extensions: {
 			//Configuration used for rule loading of Support Assistant
@@ -350,6 +353,42 @@ sap.ui.define([
 	};
 
 	DataType.registerEnum("sap.ui.unified.CalendarIntervalType", thisLib.CalendarIntervalType);
+
+	/**
+	 * Interval types in a <code>RecurrenceType</code>.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @since 1.127.0
+	 */
+	thisLib.RecurrenceType = {
+		/**
+		 * Daily recurrence pattern
+		 *
+		 * @since 1.127.0
+		 */
+		Daily: "Daily",
+		/**
+		 * Weekly recurrence pattern.
+		 *
+		 * @since 1.127.0
+		 */
+		Weekly: "Weekly",
+		/**
+		 * Monthly recurrence pattern.
+		 *
+		 * @since 1.127.0
+		 */
+		Monthly: "Monthly",
+		/**
+		 * Yearly recurrence pattern.
+		 *
+		 * @since 1.127.0
+		 */
+		Yearly: "Yearly"
+	};
+
+	DataType.registerEnum("sap.ui.unified.RecurrenceType", thisLib.RecurrenceType);
 
 	/**
 	 * Types of a calendar appointment display mode
