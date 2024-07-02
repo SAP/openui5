@@ -1665,8 +1665,9 @@ sap.ui.define([
 				const oColumnMenuTable2 = that._oColumn21.getMenu();
 				const oVisibilitySubmenuTable2 = oColumnMenuTable2.getItems()[0].getSubmenu();
 				assert.strictEqual(oVisibilitySubmenuTable2.getItems()[0].getIcon(), "sap-icon://accept", "The visibility submenu item is checked");
-				// eslint-disable-next-line max-len
-				assert.strictEqual(oVisibilitySubmenuTable2.getItems()[1].getIcon(), "sap-icon://accept", "The visibility submenu item is checked. Changing the column visibility in the first table hasn't affected the column visibility in the second table");
+				assert.strictEqual(oVisibilitySubmenuTable2.getItems()[1].getIcon(), "sap-icon://accept",
+					"The visibility submenu item is checked. Changing the column visibility in the first table hasn't affected the column visibility"
+					+ " in the second table");
 				assert.notEqual(oVisibilitySubmenuTable1, oVisibilitySubmenuTable2,
 						"The visibility submenu instances for both tables are not the same instance");
 				assert.equal(oVisibilitySubmenuTable1.getItems().length, 2, "The visibility submenu of the first table has 2 items");

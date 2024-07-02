@@ -118,13 +118,11 @@ sap.ui.define([
 			destroy: function() {
 			}
 		};
-		/* eslint-disable no-loop-func */
 		for (let i = 0; i < aEvents.length; i++) {
 			oExtension._itemNavigation["on" + aEvents[i]] = function(oEvent) {
 				assert.ok(true, oEvent.type + " reached ItemNavigation");
 			};
 		}
-		/* eslint-enable no-loop-func */
 		oControl.removeEventDelegate(oExtension._delegate);
 		return oControl;
 	}
@@ -134,9 +132,7 @@ sap.ui.define([
 
 		assert.expect(14);
 		for (let i = 0; i < aEvents.length; i++) {
-			/*eslint-disable new-cap */
-			oControl._handleEvent(jQuery.Event(aEvents[i]));
-			/*eslint-enable new-cap */
+			oControl._handleEvent(new jQuery.Event(aEvents[i]));
 		}
 
 		oControl._getKeyboardExtension().destroy();
@@ -151,17 +147,13 @@ sap.ui.define([
 		assert.expect(14);
 
 		for (i = 0; i < aEvents.length; i++) {
-			/*eslint-disable new-cap */
-			oControl._handleEvent(jQuery.Event(aEvents[i]));
-			/*eslint-enable new-cap */
+			oControl._handleEvent(new jQuery.Event(aEvents[i]));
 		}
 
 		oControl._getKeyboardExtension().resumeItemNavigation();
 
 		for (i = 0; i < aEvents.length; i++) {
-			/*eslint-disable new-cap */
-			oControl._handleEvent(jQuery.Event(aEvents[i]));
-			/*eslint-enable new-cap */
+			oControl._handleEvent(new jQuery.Event(aEvents[i]));
 		}
 
 		oControl._getKeyboardExtension().destroy();
@@ -174,17 +166,13 @@ sap.ui.define([
 		assert.expect(14);
 
 		for (i = 0; i < aEvents.length; i++) {
-			/*eslint-disable new-cap */
-			const oEvent = jQuery.Event(aEvents[i]);
-			/*eslint-enable new-cap */
+			const oEvent = new jQuery.Event(aEvents[i]);
 			oEvent.setMarked("sapUiTableSkipItemNavigation");
 			oControl._handleEvent(oEvent);
 		}
 
 		for (i = 0; i < aEvents.length; i++) {
-			/*eslint-disable new-cap */
-			oControl._handleEvent(jQuery.Event(aEvents[i]));
-			/*eslint-enable new-cap */
+			oControl._handleEvent(new jQuery.Event(aEvents[i]));
 		}
 
 		oControl._getKeyboardExtension().destroy();

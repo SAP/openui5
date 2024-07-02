@@ -111,9 +111,7 @@ sap.ui.define([
 			oTarget = document.getElementById(oTarget);
 		}
 
-		/*eslint-disable new-cap */
-		const oEvent = jQuery.Event({type: "keydown"});
-		/*eslint-enable new-cap */
+		const oEvent = new jQuery.Event({type: "keydown"});
 		for (const x in oParams) {
 			oEvent[x] = oParams[x];
 			oEvent.originalEvent[x] = oParams[x];
@@ -1300,7 +1298,6 @@ sap.ui.define([
 		 * @param {Object} assert QUnit assert object.
 		 * @private
 		 */
-		// eslint-disable-next-line complexity
 		testArrowKeys: function(assert) {
 			const mRowCounts = this.oTable._getRowCounts();
 			const bHasColumnHeaders = this.oTable.getColumnHeaderVisible();
@@ -3275,7 +3272,6 @@ sap.ui.define([
 		 * @param {Object} assert QUnit assert object.
 		 * @private
 		 */
-		// eslint-disable-next-line complexity
 		testPageKeys: async function(assert) {
 			const mRowCounts = this.oTable._getRowCounts();
 			const iTotalRowCount = this.oTable._getTotalRowCount();
@@ -5020,7 +5016,6 @@ sap.ui.define([
 
 					return pSequence;
 				});
-				/*eslint-enable no-loop-func*/
 			}
 
 			return test(true, true).then(function() {
@@ -7181,7 +7176,6 @@ sap.ui.define([
 		 * @param {boolean} [bShowInfo=false] If <code>true</code>, additional information will be printed in the QUnit output.
 		 * @private
 		 */
-		// eslint-disable-next-line complexity
 		testActionModeTabNavigation: async function(assert, bShowInfo = false) {
 			const mRowCounts = this.oTable._getRowCounts();
 			const iVisibleRowCount = mRowCounts.count;

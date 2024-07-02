@@ -3463,25 +3463,21 @@ sap.ui.define([
 		const oInnerBindRows = sinon.spy(Table.prototype, "_bindRows");
 		let oTable;
 
-		/*eslint-disable no-new */
 		oTable = new Table({
 			rows: {path: "/modelData"},
 			columns: [new Column()],
 			models: new JSONModel()
 		});
-		/*eslint-enable no-new */
 
 		assert.ok(oInnerBindRows.calledOnce, "With model - _bindRows was called");
 		assert.ok(oInnerBindRows.calledWithExactly(oTable.getBindingInfo("rows")),
 			"With model - _bindRows was called with the correct parameters");
 		oInnerBindRows.resetHistory();
 
-		/*eslint-disable no-new */
 		oTable = new Table({
 			rows: {path: "/modelData"},
 			columns: [new Column()]
 		});
-		/*eslint-enable no-new */
 
 		assert.ok(oInnerBindRows.calledOnce, "Without model - _bindRows was called");
 		assert.ok(oInnerBindRows.calledWithExactly(oTable.getBindingInfo("rows")),

@@ -1012,7 +1012,6 @@ sap.ui.define([
 		return mDefaultSettings;
 	};
 
-	// eslint-disable-next-line complexity
 	TableQUnitUtils.createTable = async function(TableClass, mSettings, fnBeforePlaceAt) {
 		if (typeof TableClass === "function" && TableClass !== Table && TableClass !== TreeTable && TableClass !== AnalyticalTable) {
 			fnBeforePlaceAt = TableClass;

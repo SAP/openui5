@@ -15,7 +15,12 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	let TestMenu; let TestAdapter; let oTestAdapterInstance; let oInjectMenuItemsSpy; let oRemoveItemsSpy; let oAfterMenuDestroyedSpy;
+	let TestMenu;
+	let TestAdapter;
+	let oTestAdapterInstance;
+	let oInjectMenuItemsSpy;
+	let oRemoveItemsSpy;
+	let oAfterMenuDestroyedSpy;
 
 	sap.ui.define("sap/ui/table/menus/test/TestAdapter", function() {
 		TestAdapter = ColumnHeaderMenuAdapter.extend("sap.ui.table.menus.test.TestAdapter", {

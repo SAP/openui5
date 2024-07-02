@@ -914,8 +914,7 @@ sap.ui.define([
 	QUnit.test("getNoContentMessage", function(assert) {
 		assert.strictEqual(TableUtils.getNoContentMessage(oTable), TableUtils.getResourceText("TBL_NO_DATA"), "'noData' is empty");
 
-		// eslint-disable-next-line no-new-wrappers
-		oTable.setNoData(new String("Some Text"));
+		oTable.setNoData("Some Text");
 		assert.strictEqual(TableUtils.getNoContentMessage(oTable), "Some Text", "'noData' is plain text");
 
 		oTable.setNoData(new Control());
