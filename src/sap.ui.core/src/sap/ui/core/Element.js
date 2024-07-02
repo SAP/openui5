@@ -1737,14 +1737,13 @@ sap.ui.define([
 	 * </pre>
 	 *
 	 * @function
-	 * @name sap.ui.core.Element.prototype.enhanceAccessibilityState
+	 * @name sap.ui.core.Element.prototype.enhanceAccessibilityState?
 	 * @param {sap.ui.core.Element} oElement
 	 *   The Control/Element for which ARIA properties are collected
 	 * @param {object} mAriaProps
 	 *   Map of ARIA properties keyed by their name (without prefix "aria-"); the method
 	 *   implementation can enhance this map in any way (add or remove properties, modify values)
 	 * @protected
-	 * @abstract
 	 */
 
 	/**
