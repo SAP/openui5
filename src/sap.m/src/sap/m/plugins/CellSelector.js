@@ -1149,7 +1149,7 @@ sap.ui.define([
 	PluginBase.setConfigs({
 		"sap.ui.table.Table": {
 			selectableCells: ".sapUiTableDataCell",
-			scrollArea: "sapUiTableCtrlScr",
+			scrollArea: "tableCCnt",
 			scrollEvent: "firstVisibleRowChanged",
 			eventClearedAll: "sapUiTableClearAll",
 			onActivate: function(oTable, oPlugin) {

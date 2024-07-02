@@ -11,7 +11,8 @@
 			id="table"
 			rows="{path: '/ProductSet'}"
 			threshold="20"
-			enableBusyIndicator="true">
+			enableBusyIndicator="true"
+			fixedColumnCount="3">
 			<dependents>
 				<plugins:MultiSelectionPlugin limit="100" enableNotification="true"/>
 				<m:plugins.CellSelector rangeLimit="100" />

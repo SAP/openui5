@@ -573,6 +573,16 @@ sap.ui.define([
 
 			When.Mouse.iSelectDeselectCell(0, 0);
 			Then.iSeeCellsSelected();
+
+			When.Mouse.iPressCell(0, 0);
+			Then.iSeeCellsSelected();
+
+			When.Mouse.iExtendTo(1, 1);
+			Then.iSeeCellsSelected({ rowIndex: 0, colIndex: 0 }, { rowIndex: 1, colIndex: 1 });
+			Then.iSeeCellFocused({ rowIndex: 1, colIndex: 1 });
+
+			When.Mouse.iSelectDeselectCell(0, 0);
+			Then.iSeeCellsSelected();
 		});
 
 		opaTest("Border & Edge Selection", function(Given, When, Then) {
