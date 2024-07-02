@@ -518,9 +518,22 @@ html[data-sap-ui-animation='off'] .sapMCrsl .sapMCrslInner {
 .sapMCrslItem {
 	visibility: hidden;
 	overflow: hidden;
+	transition: visibility 0.5s;
 }
+
+@media all and (max-width: 1024px) {
+	.sapMCrslItem {
+		transition: visibility 0.3s;
+	}
+}
+
+html[data-sap-ui-animation='off'] .sapMCrslItem {
+	transition: visibility 0s;
+}
+
 .sapMCrslActive {
 	visibility: visible;
+	transition: visibility 0s;
 }
 
 /* Page Indicator Numeric
