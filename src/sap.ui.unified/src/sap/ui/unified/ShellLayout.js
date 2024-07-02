@@ -289,7 +289,9 @@ sap.ui.define([
 	ShellLayout.prototype.setHeaderVisible = function(bHeaderVisible){
 		bHeaderVisible = !!bHeaderVisible;
 		this.setProperty("headerVisible", bHeaderVisible, true);
-		this.$().toggleClass("sapUiUfdShellNoHead", !bHeaderVisible);
+		if (this.getDomRef()) {
+			this.getDomRef().classList.toggle("sapUiUfdShellNoHead", !bHeaderVisible);
+		}
 		return this;
 	};
 
@@ -302,14 +304,19 @@ sap.ui.define([
 			return this;
 		}, function(){
 			this.$("main-focusDummyOut").attr("tabindex", bShowCurtain ? 0 : -1);
-			this.$().toggleClass("sapUiUfdShellCurtainHidden", !bShowCurtain).toggleClass("sapUiUfdShellCurtainVisible", bShowCurtain);
+			if (this.getDomRef()) {
+				this.getDomRef().classList.toggle("sapUiUfdShellCurtainHidden", !bShowCurtain);
+				this.getDomRef().classList.toggle("sapUiUfdShellCurtainVisible", bShowCurtain);
+			}
 
 			if (bShowCurtain) {
 				var zIndex = Popup.getNextZIndex();
 				this.$("curt").css("z-index", zIndex + 1);
 				this.$("hdr").css("z-index", zIndex + 3);
 				this.$("brand").css("z-index", zIndex + 7);
-				this.$().toggleClass("sapUiUfdShellCurtainClosed", false);
+				if (this.getDomRef()) {
+					this.getDomRef().classList.toggle("sapUiUfdShellCurtainClosed", false);
+				}
 			}
 
 			this._timedCurtainClosed(bShowCurtain);
@@ -403,7 +410,10 @@ sap.ui.define([
 	/*Restricted API for Launchpad to set a Strong BG style*/
 	ShellLayout.prototype._setStrongBackground = function(bUseStongBG){
 		this._useStrongBG = !!bUseStongBG;
-		this.$("strgbg").toggleClass("sapUiStrongBackgroundColor", this._useStrongBG);
+		var oStrongBg = this.getDomRef("strgbg");
+		if (oStrongBg) {
+			oStrongBg.classList.toggle("sapUiStrongBackgroundColor", this._useStrongBG);
+		}
 	};
 
 
@@ -426,7 +436,10 @@ sap.ui.define([
 		var bWasVisible = this._showHeader;
 		this._showHeader = this._isHeaderHidingActive() ? !!bShow : true;
 
-		this.$().toggleClass("sapUiUfdShellHeadHidden", !this._showHeader).toggleClass("sapUiUfdShellHeadVisible", this._showHeader);
+		if (this.getDomRef()) {
+			this.getDomRef().classList.toggle("sapUiUfdShellHeadHidden", !this._showHeader);
+			this.getDomRef().classList.toggle("sapUiUfdShellHeadVisible", this._showHeader);
+		}
 
 		if (this._showHeader) {
 			this._timedHideHeader();
@@ -482,7 +495,9 @@ sap.ui.define([
 			this.$("curt").css("z-index", "");
 			this.$("hdr").css("z-index", "");
 			this.$("brand").css("z-index", "");
-			this.$().toggleClass("sapUiUfdShellCurtainClosed", true);
+			if (this.getDomRef()) {
+				this.getDomRef().classList.toggle("sapUiUfdShellCurtainClosed", true);
+			}
 		}.bind(this), duration);
 	};
 
