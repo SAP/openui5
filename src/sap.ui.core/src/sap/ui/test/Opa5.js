@@ -233,7 +233,9 @@ sap.ui.define([
 		 */
 		Opa5.prototype.iTeardownMyUIComponent = function iTeardownMyUIComponent() {
 
-			var oOptions = createWaitForObjectWithoutDefaults();
+			var oOptions = createWaitForObjectWithoutDefaults(),
+				_this = extend({}, this);
+
 			oOptions.success = function () {
 				componentLauncher.teardown();
 			};
@@ -246,7 +248,20 @@ sap.ui.define([
 				window.history.replaceState({}, "", uri.toString());
 			};
 
-			return $.when(this.waitFor(oOptions), this.waitFor(oParamsWaitForOptions));
+			if (this._getQueue().length) {
+				return $.when(this.waitFor(oOptions), this.waitFor(oParamsWaitForOptions));
+			} else {
+				try {
+					oOptions.success();
+					oParamsWaitForOptions.success();
+					return $.Deferred().resolve().promise(_this);
+				} catch (oError) {
+					this._handleErrorMessage(oError, oOptions);
+					return $.Deferred().reject(oOptions);
+				} finally {
+					this._ensureNewlyAddedWaitForStatementsPrepended(Opa._getWaitForCounter(), oOptions);
+				}
+			}
 		};
 
 		/**
@@ -262,12 +277,12 @@ sap.ui.define([
 		 * @function
 		 */
 		Opa5.prototype.iTeardownMyApp = function () {
-			var that = this;
-
+			var that = this,
+				_this = extend({}, this);
 			// unload all extensions, schedule unload on flow so to be synchronized with waitFor's
 			var oExtensionOptions = createWaitForObjectWithoutDefaults();
 			oExtensionOptions.success = function () {
-				that._unloadExtensions(Opa5.getWindow());
+				return that._unloadExtensions(Opa5.getWindow());
 			};
 
 			var oOptions = createWaitForObjectWithoutDefaults();
@@ -283,7 +298,22 @@ sap.ui.define([
 				}
 			}.bind(this);
 
-			return $.when(this.waitFor(oExtensionOptions), this.waitFor(oOptions));
+			if (this._getQueue().length) {
+				return $.when(this.waitFor(oExtensionOptions), this.waitFor(oOptions));
+			} else {
+				try {
+					oOptions.success();
+					return oExtensionOptions.success().then(function() {
+						// Once the oExtensionOptions.success() promise is resolved, resolve the returned promise with _this
+						return $.Deferred().resolve(_this).promise();
+					});
+				} catch (oError) {
+					this._handleErrorMessage(oError, oOptions);
+					return $.Deferred().reject(oOptions);
+				} finally {
+					this._ensureNewlyAddedWaitForStatementsPrepended(Opa._getWaitForCounter(), oOptions);
+				}
+			}
 		};
 
 		/**
@@ -349,12 +379,26 @@ sap.ui.define([
 		Opa5.prototype.iStartMyAppInAFrame = iStartMyAppInAFrame;
 
 		function iTeardownMyAppFrame() {
-			var oWaitForObject = createWaitForObjectWithoutDefaults();
+			var oWaitForObject = createWaitForObjectWithoutDefaults(),
+				_this = extend({}, this);
+
 			oWaitForObject.success = function () {
 				iFrameLauncher.teardown();
 			};
 
-			return this.waitFor(oWaitForObject);
+			if (this._getQueue().length) {
+				return this.waitFor(oWaitForObject);
+			} else {
+				try {
+					oWaitForObject.success();
+					return $.Deferred().resolve().promise(_this);
+				} catch (oError) {
+					this._handleErrorMessage(oError, oWaitForObject);
+					return $.Deferred().reject(oWaitForObject);
+				} finally {
+					this._ensureNewlyAddedWaitForStatementsPrepended(Opa._getWaitForCounter(), oWaitForObject);
+				}
+			}
 		}
 
 		/**
@@ -1400,15 +1444,22 @@ sap.ui.define([
 					})
 					.fail(function (error) {
 						// log the error and continue with other extensions
-						oLogger.error(new Error("Error during extension init: " +
+						oLogger.error(new Error("Error during extension unload: " +
 							error), "Opa");
 						oExtensionDeferred.resolve();
 					});
 				return oExtensionDeferred.promise();
 			}));
 
+			if (!this._getQueue().length) {
+				// Return a promise that resolves when all extensions unload
+				return new Promise(function (resolve) {
+					oExtensionsPromise.done(resolve);
+				});
+			}
+
 			// schedule the extension uploading promise on flow so waitFor's are synchronized
-			this.iWaitForPromise(oExtensionsPromise);
+			return this.iWaitForPromise(oExtensionsPromise);
 		};
 
 		Opa5.prototype._addExtension = function (oExtension) {
