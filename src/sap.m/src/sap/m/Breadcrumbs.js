@@ -93,8 +93,6 @@ sap.ui.define([
 				/**
 				 * Determines the text of current/last element in the Breadcrumbs path.
 				 * @since 1.34
-				 * @deprecated as of version 1.123. Use the <strong>currentLocation</strong> aggregation instead.
-
 				 */
 				currentLocationText: {type: "string", group: "Behavior", defaultValue: null},
 				/**
@@ -127,8 +125,7 @@ sap.ui.define([
 				/**
 				 * Private aggregations
 				 */
-				/* @deprecated as of version 1.123 */
-				_currentLocation: {type: "sap.m.Link", multiple: false, visibility: "hidden"},
+				_currentLocation: {type: "sap.m.Text", multiple: false, visibility: "hidden"},
 				_select: {type: "sap.m.Select", multiple: false, visibility: "hidden"}
 			},
 			defaultAggregation: "links",
@@ -300,13 +297,11 @@ sap.ui.define([
 		return this.getAggregation("_select");
 	};
 
-	/* @deprecated as of version 1.123 */
 	Breadcrumbs.prototype._getCurrentLocation = function () {
 		if (!this.getAggregation("_currentLocation")) {
-			var oCurrentLocation = new Link({
+			var oCurrentLocation = new Text({
 				id: this._getAugmentedId("currentText"),
-				text: this.getCurrentLocationText(),
-				href: ""
+				text: this.getCurrentLocationText()
 			}).addStyleClass("sapMBreadcrumbsCurrentLocation");
 
 			oCurrentLocation.addEventDelegate({
@@ -331,8 +326,7 @@ sap.ui.define([
 	Breadcrumbs.prototype.getCurrentLocation = function () {
 		var oLinkAggregation = this.getAggregation("currentLocation");
 
-		/* @deprecated as of version 1.123 */
-		if (!oLinkAggregation) {
+		if (!oLinkAggregation || !oLinkAggregation.getText()) {
 			return this._getCurrentLocation();
 		}
 
@@ -805,7 +799,7 @@ sap.ui.define([
 
 	/* @deprecated as of version 1.123 */
 	Breadcrumbs.prototype.setCurrentLocationText = function (sText) {
-		var oCurrentLocation = this.getCurrentLocation(),
+		var oCurrentLocation = this._getCurrentLocation(),
 			vResult = this.setProperty("currentLocationText", sText, true);
 
 		if (oCurrentLocation.getText() !== sText) {
