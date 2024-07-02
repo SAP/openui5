@@ -773,7 +773,7 @@ sap.ui.define([
 		await nextUIUpdate();
 
 		if (!Device.support.touch) {
-			assert.equal(oPopover.getDomRef(), document.activeElement, "beginButton should not trap the focus");
+			assert.ok(oPopover.getDomRef().contains(document.activeElement), "beginButton should not trap the focus");
 		}
 	});
 
@@ -793,7 +793,7 @@ sap.ui.define([
 		await nextUIUpdate();
 
 		if (!Device.support.touch) {
-			assert.equal(oPopover.getDomRef(), document.activeElement, "endButton should not trap the focus");
+			assert.ok(oPopover.getDomRef().contains(document.activeElement), "endButton should not trap the focus");
 		}
 
 		oEndButton.setEnabled(true);

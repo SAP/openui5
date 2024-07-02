@@ -385,20 +385,18 @@ sap.ui.define([
 		assert.equal(document.activeElement.id, sId);
 	});
 
-	QUnit.test("Check focus when view is switched", async function(assert) {
+	QUnit.test("Check focus when view is switched", function(assert) {
+		const clock = sinon.useFakeTimers();
 		this.createMenu(false, false, true, true);
 		this.oColumnMenu.openBy(this.oButton);
-		await nextUIUpdate();
+		clock.tick(500);
 
 		// Navigate to item
-		const clock = sinon.useFakeTimers();
 		const sId = this.oColumnMenu.getAggregation("_items")[0].getId();
 
 		this.oColumnMenu._oItemsContainer.switchView(sId);
 		clock.tick(500);
 		clock.restore();
-
-		await nextUIUpdate();
 
 		assert.equal(document.activeElement.id, this.oColumnMenu._oItemsContainer._getNavBackBtn().getId());
 	});

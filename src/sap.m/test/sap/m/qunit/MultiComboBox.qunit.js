@@ -9744,7 +9744,6 @@ sap.ui.define([
 
 		// Act
 		qutils.triggerKeydown(document.activeElement, KeyCodes.ARROW_DOWN);
-		this.clock.tick(500);
 
 		// Assert
 		assert.strictEqual(this.oMultiComboBox._getList().getItems()[0].getDomRef(), document.activeElement, "The first item in the list should be focused.");
@@ -9762,14 +9761,12 @@ sap.ui.define([
 
 		// Act
 		qutils.triggerKeyup(document.activeElement, KeyCodes.SPACE);
-		this.clock.tick(500);
 
 		// Assert
 		assert.strictEqual(this.oMultiComboBox.getSelectedItems().length, 4, "All list items should be selected");
 
 		// Act
 		qutils.triggerKeyup(document.activeElement, KeyCodes.SPACE);
-		this.clock.tick(500);
 
 		// Assert
 		assert.notOk(this.oMultiComboBox.getSelectedItems().length, "No list items should be selected");
