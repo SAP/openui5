@@ -61,6 +61,11 @@ sap.ui.define([
 		Opa5.assert.ok(true);
 	});
 
+	opaTest("Reset works", function (Given, When, Then) {
+		When.iResetThePersonalization(sTableId);
+		Then.onTheApp.iShouldSeeColumnsInOrder(sTableId, ["First Name", "Last Name", "City"]);
+	});
+
 	opaTest("App teardown successful", function (Given, When, Then) {
 		Then.iTeardownMyApp();
 		Opa5.assert.ok(true);
