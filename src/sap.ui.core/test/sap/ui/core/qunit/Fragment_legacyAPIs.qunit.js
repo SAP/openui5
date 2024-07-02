@@ -10,7 +10,7 @@ sap.ui.define([
 	"sap/ui/layout/HorizontalLayout",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/core/Element",
 	"sap/ui/core/mvc/View",
 	"sap/ui/core/mvc/XMLView",

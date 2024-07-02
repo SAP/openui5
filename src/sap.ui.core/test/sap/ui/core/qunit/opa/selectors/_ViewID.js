@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/m/Button",
 	'sap/ui/core/Element',
 	'sap/ui/core/mvc/XMLView',
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function (_ControlSelectorGenerator, $, Button, Element, XMLView, nextUIUpdate) {
 	"use strict";
 

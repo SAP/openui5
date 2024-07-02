@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/ui/core/Placeholder",
 	"sap/m/NavContainer",
 	"sap/m/routing/TargetHandler",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/m/routing/Router" /* need to require this module to correctly resolve router class in manifest */
 	], function(
 		LoaderExtensions,

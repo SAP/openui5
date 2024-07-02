@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/routing/HashChanger",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(Component, View,
 	InstanceManager, future, Log, merge, JSONModel, XMLView, HashChanger, nextUIUpdate) {
 	"use strict";

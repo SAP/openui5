@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/m/Select",
 	"sap/ui/core/Item",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function (_DropdownItem, _ControlSelectorGenerator, JSONModel, Select, Item, nextUIUpdate) {
 	"use strict";
 

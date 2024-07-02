@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/ui/layout/BlockLayout",
 	"sap/ui/layout/BlockLayoutRow",
 	"sap/ui/layout/BlockLayoutCell",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function (_LogCollector, _OpaLogger, _resourceWaiter, Image, Text, Panel, BlockLayout, BlockLayoutRow, BlockLayoutCell, nextUIUpdate) {
 	"use strict";
 

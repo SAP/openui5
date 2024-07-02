@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/m/Page",
 	"sap/m/SplitApp",
 	"sap/m/routing/TargetHandler",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/m/routing/Router", /* need to require this module to correctly resolve router class in manifest */
 	"sap/f/routing/Router" /* need to require this module to correctly resolve router class in manifest */
 	], function(

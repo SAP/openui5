@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/m/Toolbar",
 	"sap/ui/core/ControlBehavior",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function (_LogCollector, _autoWaiter, _timeoutWaiter, _XHRWaiter, _promiseWaiter,
 		DynamicPage,  Toolbar, ControlBehavior, jQuery, nextUIUpdate) {
 	"use strict";

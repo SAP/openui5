@@ -8,7 +8,7 @@ sap.ui.define([
 	"composites/TextToggleButtonNested", "composites/TextToggleButtonForwarded",
 	"composites/WrapperLayouter", "composites/TranslatableText", "composites/TranslatableTextLib",
 	"composites/TranslatableTextBundle",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function (QUnitUtils, Core, Element, XMLPreprocessor, XMLComposite, Controller, JSONModel, Item,
 			 Text, SimpleText, SortedList, TextButton, TextList, ForwardText, Field, HiddenMetadata,
 			 TemplateTest, ChildOfAbstract, TextToggleButton, TextToggleButtonNested,

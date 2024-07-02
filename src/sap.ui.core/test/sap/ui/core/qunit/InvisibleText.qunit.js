@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/core/Lib",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Element",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(Log, Localization, Icon, InvisibleText, Library, jQuery, Element, nextUIUpdate) {
 	"use strict";
 

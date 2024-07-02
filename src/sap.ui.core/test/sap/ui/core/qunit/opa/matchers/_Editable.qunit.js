@@ -5,7 +5,7 @@ sap.ui.define([
 	'sap/m/Text',
 	'sap/ui/layout/library',
 	'sap/ui/layout/form/SimpleForm',
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function (_Editable, Input, Text, layoutLibrary, SimpleForm, nextUIUpdate) {
 	"use strict";
 

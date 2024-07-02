@@ -13,7 +13,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	'sap/m/App',
 	'sap/ui/core/mvc/XMLView',
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function (RecordReplay, _autoWaiter, _autoWaiterAsync, ListItem, Button, Input, MultiInput, OverflowToolbar, Popover, SearchField, $, App, XMLView, nextUIUpdate) {
 	"use strict";
 

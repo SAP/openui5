@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function (_TableRowItem, _ControlSelectorGenerator, Element, XMLView, JSONModel, nextUIUpdate) {
 	"use strict";
 

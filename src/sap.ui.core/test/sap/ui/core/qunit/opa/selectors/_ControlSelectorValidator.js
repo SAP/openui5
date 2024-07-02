@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/m/List",
 	"sap/m/StandardListItem",
 	"sap/m/Text",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function (extend, _ControlSelectorValidator, _ControlFinder, JSONModel, List, StandardListItem, Text, nextUIUpdate) {
 	"use strict";
 

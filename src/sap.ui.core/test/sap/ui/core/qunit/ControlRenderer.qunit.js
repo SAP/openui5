@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/ui/core/RenderManager",
 	"sap/ui/core/dnd/DragInfo",
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/model/json/JSONModel"
 ], function(Control, Element, EnabledPropagator, _IconPool, InvisibleText, Renderer, RenderManager, DragInfo, createAndAppendDiv, nextUIUpdate, JSONModel) {
 

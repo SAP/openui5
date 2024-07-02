@@ -6,7 +6,7 @@
 sap.ui.define([
 	"sap/ui/test/generic/TestBase",
 	"sap/ui/test/generic/Utils",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function (TestBase, Utils, nextUIUpdate) {
 	"use strict";
 

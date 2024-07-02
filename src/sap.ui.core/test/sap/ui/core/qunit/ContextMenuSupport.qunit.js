@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/Element",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery"
 ], function(ContextMenuSupport, Control, Element, QUnitUtils, nextUIUpdate, jQuery) {
 	"use strict";

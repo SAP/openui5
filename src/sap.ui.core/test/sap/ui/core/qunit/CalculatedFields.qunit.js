@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/type/TimeOfDay",
 	"sap/ui/model/type/Float",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/table/Column",
 	"sap/ui/table/Table"
 ], function(

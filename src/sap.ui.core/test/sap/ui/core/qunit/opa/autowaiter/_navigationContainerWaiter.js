@@ -14,7 +14,7 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/test/opaQunit",
 	"sap/ui/test/Opa5",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/core/IntervalTrigger",
 	"sap/ui/core/ResizeHandler"
 ], function (_LogCollector, _autoWaiter, _timeoutWaiter, _XHRWaiter,

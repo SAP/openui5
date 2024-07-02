@@ -3,7 +3,7 @@ sap.ui.define([
 	"sap/ui/test/selectors/_ControlSelectorGenerator",
 	"sap/m/Label",
 	"sap/m/Input",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function (_ControlSelectorGenerator, Label, Input, nextUIUpdate) {
 	"use strict";
 

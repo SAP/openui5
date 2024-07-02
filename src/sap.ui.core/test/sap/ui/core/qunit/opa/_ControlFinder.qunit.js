@@ -11,7 +11,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/test/matchers/PropertyStrictEquals",
 	"sap/ui/test/_LogCollector",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function ($, _ControlFinder,  mobileLibrary, Button, SearchField, List, ObjectListItem, Dialog, JSONModel, PropertyStrictEquals, _LogCollector, nextUIUpdate) {
 	"use strict";
 

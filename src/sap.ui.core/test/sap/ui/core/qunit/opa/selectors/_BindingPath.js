@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/ui/model/resource/ResourceModel",
 	"sap/m/Text",
 	"../fixture/bindingPath",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function (_ControlSelectorGenerator, ResourceModel, Text, fixture, nextUIUpdate) {
 	"use strict";
 

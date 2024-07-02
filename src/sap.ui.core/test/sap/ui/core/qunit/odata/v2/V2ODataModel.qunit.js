@@ -20,7 +20,7 @@ sap.ui.define([
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/model/type/DateTime",
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/table/Table",
 	"sap/ui/table/Column"
 ], function (each, isEmptyObject, UI5Date, DateTimePicker, Input, Label, List, Panel, ListItem,

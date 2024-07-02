@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/core/StaticArea",
 	"sap/base/Log",
 	"sap/ui/thirdparty/sinon",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/thirdparty/sinon-qunit"
 ], function (coreLibrary, InvisibleMessage, StaticArea, Log, sinon, nextUIUpdate) {
 	"use strict";

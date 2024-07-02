@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/core/mvc/View",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/Button",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(future, Log, Element, library, View, JSONModel, Button, nextUIUpdate) {
 	"use strict";
 

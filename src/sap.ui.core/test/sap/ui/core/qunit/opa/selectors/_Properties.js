@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/m/Input",
 	"sap/m/Image",
 	"sap/ui/core/Icon",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function (_ControlSelectorGenerator, Input, Image, Icon, nextUIUpdate) {
 	"use strict";
 

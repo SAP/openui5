@@ -18,7 +18,7 @@ sap.ui.define([
 	'sap/m/Panel',
 	'./AnyView.qunit',
 	'sap/ui/thirdparty/jquery',
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(future, Log, Localization, ResourceBundle, Element, coreLibrary, Controller, View, XMLView, RenderManager, JSONModel, ResourceModel, VerticalLayout, XMLHelper, Button, Panel, testsuite, jQuery, nextUIUpdate) {
 	"use strict";
 

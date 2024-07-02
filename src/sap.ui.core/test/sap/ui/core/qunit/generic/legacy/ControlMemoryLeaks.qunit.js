@@ -18,7 +18,7 @@ sap.ui.define([
 	"sap/ui/core/ElementRegistry",
 	"sap/ui/core/Lib",
 	"sap/ui/dom/includeStylesheet",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"require"
 ], function (Log, ObjectPath, VersionInfo, ElementRegistry, Library, includeStylesheet, nextUIUpdate, require) {
 	"use strict";

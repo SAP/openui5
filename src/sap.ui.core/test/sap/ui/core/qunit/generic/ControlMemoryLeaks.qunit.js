@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/ui/test/generic/Utils",
 	"sap/ui/core/Element",
 	"sap/ui/core/ElementRegistry",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(TestBase, Utils, Element, ElementRegistry, nextUIUpdate) {
 	"use strict";
 

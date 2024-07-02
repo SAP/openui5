@@ -7,7 +7,7 @@ sap.ui.define([
     "sap/m/Page",
 	"sap/ui/dom/isBehindOtherElement",
     "sap/ui/thirdparty/jquery",
-    "sap/ui/qunit/utils/nextUIUpdate"
+    "sap/ui/test/utils/nextUIUpdate"
 ], function(App, Button, Input, MessagePopover, Page, isBehindOtherElement, jQuery, nextUIUpdate) {
 	"use strict";
 

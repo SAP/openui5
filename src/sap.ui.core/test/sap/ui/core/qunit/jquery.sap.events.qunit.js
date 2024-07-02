@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/events/F6Navigation",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	// provides jQuery.sap.keyCodes
 	"jquery.sap.keycodes"
 ], function(jQuery, Localization, Device, Control, F6Navigation, qutils, nextUIUpdate) {

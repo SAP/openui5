@@ -18,7 +18,7 @@ sap.ui.define([
 	"sap/ui/commons/TextField",
 	"sap/m/Text",
 	"sap/ui/dom/includeStylesheet",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"require"
 ], function (Log, ObjectPath, VersionInfo, DataType, Element, ElementRegistry, Control, Item, Library, CommonsTextField, MobileText, includeStylesheet, nextUIUpdate, require) {
 	"use strict";

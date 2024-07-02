@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/ui/test/PageObjectFactory",
 	"sap/base/Log",
 	"./utils/view",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function (Opa, Opa5, PageObjectFactory, Log, viewUtils, nextUIUpdate) {
 	"use strict";
 

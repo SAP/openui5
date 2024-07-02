@@ -4,7 +4,7 @@
 sap.ui.define([
 	"sap/ui/test/actions/Action",
 	"sap/ui/core/Control",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(Action, Control, nextUIUpdate){
 	"use strict";
 

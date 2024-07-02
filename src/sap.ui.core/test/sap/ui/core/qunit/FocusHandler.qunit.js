@@ -3,7 +3,7 @@ sap.ui.define([
 	"sap/ui/core/FocusHandler",
 	"sap/ui/core/Element",
 	"sap/m/Input",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(FocusHandler, Element, Input, nextUIUpdate) {
 	"use strict";
 

@@ -15,7 +15,7 @@ sap.ui.define([
 	"sap/ui/mdc/Field",
 	"sap/ui/mdc/field/content/ContentFactory",
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(
 	Control,
 	LabelEnablement,

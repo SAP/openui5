@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/m/ScrollContainer",
 	"sap/m/Panel",
 	"sap/ui/core/ControlBehavior",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function (_LogCollector, _autoWaiter, _timeoutWaiter, _XHRWaiter, _promiseWaiter,
 	ScrollContainer, Panel, ControlBehavior, nextUIUpdate) {
 	"use strict";

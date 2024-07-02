@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(Event, Component, ComponentContainer, Element, Controller, createAndAppendDiv, nextUIUpdate) {
 
 	"use strict";

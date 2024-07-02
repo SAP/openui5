@@ -4,7 +4,7 @@ sap.ui.define([
 	'sap/m/Button',
 	'sap/m/Toolbar',
 	'sap/m/Page',
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function (_Visitor, Button, Toolbar, Page, nextUIUpdate) {
 	"use strict";
 

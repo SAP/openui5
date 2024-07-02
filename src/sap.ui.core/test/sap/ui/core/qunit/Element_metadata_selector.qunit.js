@@ -1,7 +1,7 @@
 /*global QUnit */
 sap.ui.define([
 	'sap/ui/qunit/utils/createAndAppendDiv',
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	'sap/ui/core/Control'
 ], function(createAndAppendDiv, nextUIUpdate, Control) {
 	"use strict";

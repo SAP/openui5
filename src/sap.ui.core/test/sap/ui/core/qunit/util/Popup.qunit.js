@@ -15,7 +15,7 @@ sap.ui.define([
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/dom/containsOrEquals",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(
 	Popup,
 	Localization,

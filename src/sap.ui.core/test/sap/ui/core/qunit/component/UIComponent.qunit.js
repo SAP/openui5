@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/mvc/View",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(future, Log, Button, ManagedObject, Component, ComponentContainer, Element, UIComponent, View, nextUIUpdate) {
 
 	"use strict";

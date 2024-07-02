@@ -10,7 +10,7 @@ sap.ui.define([
 	"sap/ui/dom/includeStylesheet",
 	"sap/m/Bar",
 	"sap/ui/thirdparty/URI",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(future, Parameters, Control, Element, Icon, Library, Theming, includeStylesheet, Bar, URI, nextUIUpdate) {
 	"use strict";
 

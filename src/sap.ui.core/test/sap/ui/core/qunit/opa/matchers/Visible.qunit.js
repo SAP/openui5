@@ -2,7 +2,7 @@
 sap.ui.define([
 	'sap/ui/test/matchers/Visible',
 	'sap/m/Button',
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function (Visible, Button, nextUIUpdate) {
 	"use strict";
 

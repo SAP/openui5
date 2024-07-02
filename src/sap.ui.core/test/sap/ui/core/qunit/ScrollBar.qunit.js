@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/events/jquery/EventSimulation",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(Localization, ScrollBar, Device, EventSimulation, jQuery, createAndAppendDiv, nextUIUpdate) {
 	"use strict";
 
