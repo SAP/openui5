@@ -4204,7 +4204,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test(`plugIn, async getResult uncaught promise`, function (assert) {
+	QUnit.test(`plugIn, async getResult rejected promise`, function (assert) {
 		return this.checkTracing(assert, true, [
 			{m : `[ 0] Start processing qux`},
 			{m : `[ 1] Calling visitor`, d : 1},
