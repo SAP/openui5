@@ -1,15 +1,16 @@
 /* global QUnit */
 sap.ui.define([
 	"sap/m/p13n/BasePanel",
-	"sap/m/StandardListItem",
+	"sap/m/ColumnListItem",
 	"sap/ui/thirdparty/sinon",
 	"sap/ui/base/Event",
 	"sap/m/MessageStrip",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/m/VBox",
+	"sap/m/Text",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/qunit/QUnitUtils"
-], function (BasePanel, StandardListItem, sinon, Event, MessageStrip, nextUIUpdate, VBox, KeyCodes, qutils) {
+], function (BasePanel, ColumnListItem, sinon, Event, MessageStrip, nextUIUpdate, VBox, Text, KeyCodes, qutils) {
 	"use strict";
 
 	QUnit.module("BasePanel API tests", {
@@ -34,8 +35,12 @@ sap.ui.define([
 					visible: true
 				}
 			]);
-			var oTemplate = new StandardListItem({
-				title: "{" + this.oBasePanel.P13N_MODEL  + ">label}"
+			var oTemplate = new ColumnListItem({
+				cells: [
+					new Text({
+						text: "{" + this.oBasePanel.P13N_MODEL  + ">label}"
+					})
+				]
 			});
 
 			this.oBasePanel._setTemplate(oTemplate);
@@ -94,9 +99,9 @@ sap.ui.define([
 
 		// Test results
 		var aItems = this.oBasePanel._oListControl.getItems();
-		assert.equal(aItems[0].getTitle(), "Test");
-		assert.equal(aItems[1].getTitle(), "Test3");
-		assert.equal(aItems[2].getTitle(), "Test2");
+		assert.equal(aItems[0].getCells()[0].getText(), "Test");
+		assert.equal(aItems[1].getCells()[0].getText(), "Test3");
+		assert.equal(aItems[2].getCells()[0].getText(), "Test2");
 
 	});
 
@@ -306,8 +311,12 @@ sap.ui.define([
 					visible: false
 				}
 			]);
-			var oTemplate = new StandardListItem({
-				title: "{" + this.oBasePanel.P13N_MODEL  + ">label}"
+			var oTemplate = new ColumnListItem({
+				cells: [
+					new Text({
+						text: "{" + this.oBasePanel.P13N_MODEL  + ">label}"
+					})
+				]
 			});
 
 			this.oBasePanel._setTemplate(oTemplate);
@@ -347,7 +356,7 @@ sap.ui.define([
 				assert.ok(oPanel._getMoveBottomButton().getVisible(), "Button is invisible on small screens");
 				assert.ok(oPanel._getMoveTopButton().getVisible(), "Button is invisible on small screens");
 				done();
-			}, 10);
+			}, 20);
 		}, 10);
 
 	});
