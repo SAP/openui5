@@ -478,8 +478,9 @@ function(
 			}
 
 			if (bHasAnimations) {
-				setTimeout(function () {
-					$footer.toggleClass("sapUiHidden", !bShowFooter);
+				setTimeout(() => {
+					// check if the footer should be hidden after the animation
+					$footer.toggleClass("sapUiHidden", !this.getShowFooter());
 				}, Page.FOOTER_ANIMATION_DURATION);
 			} else {
 				$footer.toggleClass("sapUiHidden", !bShowFooter);

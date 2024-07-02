@@ -396,6 +396,34 @@ sap.ui.define([
 		oPage = null;
 	});
 
+	QUnit.test("calling twice showFooter with false and true", async function(assert) {
+		// Setup
+		var oBar = new Bar();
+		var oPage = new Page({
+			showFooter: false,
+			footer: oBar,
+			floatingFooter: true
+		}).placeAt("content");
+		var oClock = sinon.useFakeTimers();
+
+		oPage.placeAt("content");
+		await nextUIUpdate(oClock);
+
+		// Act
+		oPage.setShowFooter(false);
+		oPage.setShowFooter(true);
+		oClock.runAll();
+		await nextUIUpdate(oClock);
+
+		// Assert
+		assert.ok(!oBar.$().parent().hasClass("sapUiHidden"), "Footer is visible.");
+
+		oBar.destroy();
+		oPage.destroy();
+		oClock.runAll();
+		oClock.restore();
+	});
+
 	QUnit.test("contentOnlyBusy property", async function (assert) {
 		// Setup
 		var oBusyIndicator, oBusyIndicatorInner,
