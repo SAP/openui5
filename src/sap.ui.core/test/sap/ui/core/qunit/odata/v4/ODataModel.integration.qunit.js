@@ -36817,6 +36817,117 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: A hierarchy uses expandTo=1. Create a new root node. After a side-effects refresh,
+	// the new root is still out of place.
+	// SNOW: DINC0197354
+	QUnit.test("Recursive Hierarchy: out of place, root, expandTo=1", async function (assert) {
+		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
+		const sUrl = "EMPLOYEES"
+			+ "?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root/EMPLOYEES"
+			+ ",HierarchyQualifier='OrgChart',NodeProperty='ID',Levels=1)";
+		const sView = `
+<t:Table id="table" rows="{path : '/EMPLOYEES',
+		parameters : {
+			$$aggregation : {hierarchyQualifier : 'OrgChart'}
+		}}" threshold="0" visibleRowCount="2">
+	<Text text="{= %{@$ui5.node.isExpanded} }"/>
+	<Text text="{= %{@$ui5.node.level} }"/>
+	<Text text="{ID}"/>
+	<Text text="{Name}"/>
+</t:Table>`;
+
+		// 1 Alpha
+		// 2 Beta (created)
+		this.expectRequest(sUrl + "&$select=DrillState,ID,Name&$count=true&$skip=0&$top=2", {
+				"@odata.count" : "1",
+				value : [{
+					DrillState : "leaf",
+					ID : "1",
+					Name : "Alpha"
+				}]
+			});
+
+		await this.createView(assert, sView, oModel);
+
+		const oTable = this.oView.byId("table");
+		checkTable("initial page", assert, oTable, [
+			"/EMPLOYEES('1')"
+		], [
+			[undefined, 1, "1", "Alpha"]
+		]);
+		const oListBinding = oTable.getBinding("rows");
+
+		this.expectRequest({
+				method : "POST",
+				url : "EMPLOYEES",
+				payload : {
+					Name : "Beta"
+				}
+			}, {
+				ID : "2",
+				Name : "Beta"
+			});
+
+		// code under test
+		const oBeta = oListBinding.create({Name : "Beta"}, /*bSkipRefresh*/true);
+
+		await Promise.all([
+			oBeta.created(),
+			this.waitForChanges(assert, "create Beta")
+		]);
+
+		checkTable("after create Beta", assert, oTable, [
+			oBeta,
+			"/EMPLOYEES('1')"
+		], [
+			[undefined, 1, "2", "Beta"],
+			[undefined, 1, "1", "Alpha"]
+		]);
+
+		this.expectRequest(sUrl + "&$select=DrillState,ID,Name&$count=true&$skip=0&$top=2", {
+				"@odata.count" : "2",
+				value : [{
+					DrillState : "leaf",
+					ID : "1",
+					Name : "Alpha*"
+				}, {
+					DrillState : "leaf",
+					ID : "2",
+					Name : "Beta*"
+				}]
+			})
+			.expectRequest(sUrl + "&$select=DistanceFromRoot,DrillState,ID,LimitedRank"
+				+ "&$filter=ID eq '2'&$top=1", {
+				value : [{
+					DistanceFromRoot : "0",
+					DrillState : "leaf",
+					ID : "2",
+					LimitedRank : "1"
+				}]
+			})
+			.expectRequest(sUrl + "&$select=ID,Name&$filter=ID eq '2'&$top=1", {
+				value : [{
+					ID : "2",
+					Name : "Beta*"
+				}]
+			});
+
+		await Promise.all([
+			// code under test
+			oListBinding.getHeaderContext().requestSideEffects([""]),
+			this.waitForChanges(assert, "side-effects refresh")
+		]);
+
+		checkTable("after side-effects refresh", assert, oTable, [
+			oBeta,
+			"/EMPLOYEES('1')"
+		], [
+			[undefined, 1, "2", "Beta*"],
+			[undefined, 1, "1", "Alpha*"]
+		]);
+	});
+
+	//*********************************************************************************************
 	// Scenario: A hierarchy has two visible rows and is completely expanded.
 	// (1) Create New1 below Alpha; create New2 below New1
 	// (2) Side-effects refresh (delivers new nested "bonus items" below New1)
