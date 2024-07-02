@@ -1084,14 +1084,17 @@ sap.ui.define([
 					oNodeFilters.add(sNodeFilter);
 				});
 			});
+			const aSelect = [
+				oAggregation.$DistanceFromRoot,
+				oAggregation.$DrillState,
+				oAggregation.$LimitedRank
+			];
+			if (oAggregation.$LimitedDescendantCount) {
+				aSelect.push(oAggregation.$LimitedDescendantCount);
+			}
 			mQueryOptions = Object.assign({}, mQueryOptions, {
 				$filter : [...oNodeFilters].sort().join(" or "),
-				$select : [
-					oAggregation.$DistanceFromRoot,
-					oAggregation.$DrillState,
-					oAggregation.$LimitedDescendantCount,
-					oAggregation.$LimitedRank
-				],
+				$select : aSelect,
 				$top : oNodeFilters.size
 			});
 			delete mQueryOptions.$count;
