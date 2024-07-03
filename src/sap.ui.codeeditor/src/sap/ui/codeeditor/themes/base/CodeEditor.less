@@ -113,7 +113,17 @@
 	}
 
 	.ace_indent-guide {
-		border-inline-end: 0.0625rem dotted @sapField_SuccessColor;
-		margin-inline-end: -0.0625rem;
+		position: relative;
+
+		&::after {
+			content: " ";
+			position: absolute;
+			top: 0.0625rem;
+			right: 0;
+			left: 0;
+			bottom: 0;
+			border-inline-end: 0.0625rem dotted @sapField_SuccessColor;
+			margin-inline-end: -0.0625rem;
+		}
 	}
 }
