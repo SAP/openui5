@@ -32,7 +32,7 @@
         <raw-module name="sap/ui/thirdparty/IPv6.js" />
         <raw-module name="sap/ui/thirdparty/iscroll-lite.js" />
         <raw-module name="sap/ui/thirdparty/iscroll.js" />
-        <raw-module name="sap/ui/thirdparty/jquery.js" depends="sap/ui/thirdparty/jquery-compat.js" />
+        <raw-module name="sap/ui/thirdparty/jquery.js"/>
         <raw-module name="sap/ui/thirdparty/jquery-mobile-custom.js" depends="sap/ui/thirdparty/jquery.js" />
         <raw-module name="sap/ui/thirdparty/jqueryui/jquery-effects-blind.js" depends="sap/ui/thirdparty/jqueryui/jquery-effects-core.js" />
         <raw-module name="sap/ui/thirdparty/jqueryui/jquery-effects-bounce.js" depends="sap/ui/thirdparty/jqueryui/jquery-effects-core.js" />
@@ -145,7 +145,7 @@
     </jscoverage>
     <!-- Thirdparty references -->
     <thirdparty xmlns="http://www.sap.com/ui5/buildext/thirdparty" >
-        <lib name="jquery-3" displayName="jQuery 3" npmName="jquery" version="3.6.0" hash="5dbf00a3b3d4085dbd52af03905bc336" homepage="https://jquery.com" id="73554900106100068050">
+        <lib name="jquery-3" displayName="jQuery 3" npmName="jquery" version="3.6.0" hash="145fccaf8498af328a478673c2e0de3e" homepage="https://jquery.com" id="73554900106100068050">
             <license url="http://jQuery.org/license" type="MIT"/>
             <copyright>OpenJS Foundation and other contributors</copyright>
             <pattern>sap/ui/thirdparty/jquery.js</pattern>
@@ -191,11 +191,6 @@
             <copyright>jQuery Foundation and other contributors</copyright>
             <pattern>../test/sap/ui/core/qunit/thirdparty/qunit-2.18.css</pattern>
             <pattern>../test/sap/ui/core/qunit/thirdparty/qunit-2.18.js</pattern>
-        </lib>
-        <lib name="jquery-migrate" displayName="jQuery-Migrate" npmName="jquery-migrate" version="3.3.1" hash="2656d4014714d160c8f3739771365587" homepage="https://github.com/jquery/jquery-migrate/" id="73555000106100043843">
-            <license url="https://github.com/jquery/jquery-migrate/blob/3.3.1/LICENSE.txt" type="MIT" />
-            <copyright>OpenJS Foundation and other contributors</copyright>
-            <pattern>sap/ui/thirdparty/jquery-compat.js</pattern>
         </lib>
         <lib name="jquery_mobile" displayName="jQuery Mobile" npmName="n/a" version="1.3.1" hash="8e7cefaf54a3db3dfa54320727060f3e" homepage="http://jquerymobile.com" id="73554900106100002438">
             <license url="http://jQuery.org/license" type="MIT" />

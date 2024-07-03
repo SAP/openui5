@@ -86,12 +86,6 @@ License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
 Contained in: src/sap.ui.core/test/sap/ui/core/qunit/thirdparty/qunit-2.18.css
 	src/sap.ui.core/test/sap/ui/core/qunit/thirdparty/qunit-2.18.js
 
-Component: jQuery-Migrate, version: 3.3.1
-Copyright: OpenJS Foundation and other contributors
-License: MIT
-License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
-Contained in: src/sap.ui.core/src/sap/ui/thirdparty/jquery-compat.js
-
 Component: jQuery Mobile, version: 1.3.1
 Copyright: 2010, 2013 jQuery Foundation, Inc. and other contributors
 License: MIT

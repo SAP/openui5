@@ -12,7 +12,7 @@
  * Date: 2021-03-02T17:08Z
  */
 // ##### BEGIN: MODIFIED BY SAP
-sap.ui.define(["sap/ui/thirdparty/jquery-compat"], (jQueryCompat) => {
+sap.ui.define([], () => {
 	const jQuery = ( function( global, factory ) {
 		"use strict";
 		/*if ( typeof module === "object" && typeof module.exports === "object" ) {
@@ -11041,7 +11041,6 @@ sap.ui.define(["sap/ui/thirdparty/jquery-compat"], (jQueryCompat) => {
 	} );
 
 // ##### BEGIN: MODIFIED BY SAP
-	jQueryCompat?.(jQuery, window);
 	jQuery.noConflict(true);
 
 	return jQuery;
