@@ -96,7 +96,7 @@ sap.ui.define([
 				 * @deprecated as of version 1.123. Use the <strong>currentLocation</strong> aggregation instead.
 
 				 */
-				currentLocationText: {type: "string", group: "Behavior", defaultValue: null},
+				currentLocationText: {type: "string", group: "Data", defaultValue: null},
 				/**
 				 * Determines the visual style of the separator between the <code>Breadcrumbs</code> elements.
 				 * @since 1.69
