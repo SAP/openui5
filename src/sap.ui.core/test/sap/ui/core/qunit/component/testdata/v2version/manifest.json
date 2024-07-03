@@ -1,9 +1,9 @@
 {
 
-	"name": "sap.ui.test.v2version.Component",
+	"name": "testdata.v2version.Component",
 
 	"sap.app": {
-		"id": "sap.ui.test.v2version",
+		"id": "testdata.v2version",
 		"applicationVersion": {
 			"version": "1.0.0"
 		}

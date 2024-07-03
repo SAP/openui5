@@ -5,17 +5,10 @@ sap.ui.define([
 ], function(Button, Controller, View) {
 	"use strict";
 
-	return View.extend("sap.ui.test.routing.TestView", {
+	return View.extend("testdata.routing.TestView", {
 		createContent: function () {
 			return new Promise(function (res) {
 				res([new Button()]);
-			});
-		},
-		getController: function () {
-			Controller.extend("sap.ui.test.routing.TestController", {});
-
-			return Controller.create({
-				name: "sap.ui.test.routing.TestController"
 			});
 		}
 	});

@@ -1,6 +1,6 @@
 {
 	"sap.app": {
-		"id": "sap.ui.test.dependencyLoading.component2"
+		"id": "testdata.dependencyLoading.component2"
 	},
 	"sap.ui5": {
 		"dependencies": {

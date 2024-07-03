@@ -131,14 +131,7 @@ sap.ui.define(function() {
 				title: "Test Page for Bootstrap within Head",
 				bootCore: false,
 				ui5: {
-					onInit: "module:sap/ui/test/BootstrapMainModule"
-				},
-				loader: {
-					paths: {
-						"sap/ui/test": "test-resources/sap/ui/core/qunit/bootstrap/",
-						"sap/ui/test/qunitPause": "resources/sap/ui/test/qunitPause",
-						"sap/ui/test/RecorderHotkeyListener": "resources/sap/ui/test/RecorderHotkeyListener"
-					}
+					onInit: "module:test-resources/sap/ui/core/qunit/bootstrap/BootstrapMainModule"
 				},
 				beforeBootstrap: "./BootstrapMainModule.beforeBootstrap"
 			},

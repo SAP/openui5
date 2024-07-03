@@ -64,7 +64,7 @@ sap.ui.define([
 			'</mvc:View>';
 
 			return Component.create({
-				name: "sap.ui.test.other",
+				name: "testdata.comp",
 				id: "testComponent"
 			}).then(function(oComponent) {
 				this.oComponent = oComponent;
@@ -511,7 +511,7 @@ sap.ui.define([
 	QUnit.module("Given the JsControlTreeModifier...", {
 		beforeEach: function () {
 			return Component.create({
-				name: "sap.ui.test.other",
+				name: "testdata.comp",
 				id: "testComponent"
 			}).then(function(oComponent) {
 				this.oComponent = oComponent;
@@ -765,7 +765,7 @@ sap.ui.define([
 			};
 
 			return JsControlTreeModifier.templateControlFragment(
-				"sap.ui.test.other.fragment-withTemplating",
+				"testdata.comp.fragment-withTemplating",
 				mPreprocessorSettings,
 				undefined
 			).then(function(aControls) {

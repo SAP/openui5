@@ -11,14 +11,6 @@ sap.ui.define([
 
 	var ComponentLifecycle = sapUiCore.ComponentLifecycle;
 
-	sap.ui.loader.config({
-		paths:{
-			"sap/ui/test":"test-resources/sap/ui/core/qunit/component/testdata/",
-			"sap/ui/test/qunitPause": "resources/sap/ui/test/qunitPause",
-			"sap/ui/test/RecorderHotkeyListener": "resources/sap/ui/test/RecorderHotkeyListener"
-		}
-	});
-
 	/*
 	 * Helper to create a ComponentContainer with the given settings,
 	 * triggering component creation and waiting for it.
@@ -398,7 +390,7 @@ sap.ui.define([
 					this.oOwnerComponent = oComponent;
 				}.bind(this)),
 				Component.create({
-					name: "sap.ui.test.v2empty",
+					name: "testdata.v2empty",
 					manifest: false
 				}).then(function(oComponent) {
 					this.oNewComponent = oComponent;
@@ -559,7 +551,7 @@ sap.ui.define([
 			// setup fake server
 			var oManifest = this.oManifest = {
 				"sap.app" : {
-					"id" : "sap.ui.test.v2empty"
+					"id" : "testdata.v2empty"
 				}
 			};
 

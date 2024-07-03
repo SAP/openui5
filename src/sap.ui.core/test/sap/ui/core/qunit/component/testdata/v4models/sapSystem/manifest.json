@@ -4,7 +4,7 @@
 
 	"sap.app": {
 		"_version": "1.0.0",
-		"id": "sap.ui.test.v4models.sapSystem",
+		"id": "testdata.v4models.sapSystem",
 		"type": "application",
 		"applicationVersion": {
 			"version": "1.0.0"

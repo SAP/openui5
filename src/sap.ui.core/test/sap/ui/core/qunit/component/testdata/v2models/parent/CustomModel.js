@@ -2,9 +2,9 @@
  * ${copyright}
  */
 
-// Provides class sap.ui.test.v2models.CustomModel
+// Provides class testdata.v2models.CustomModel
 sap.ui.define(["sap/ui/model/Model"], function(Model) {
 	"use strict";
-	return Model.extend("sap.ui.test.v2models.parent.CustomModel");
+	return Model.extend("testdata.v2models.parent.CustomModel");
 
 });

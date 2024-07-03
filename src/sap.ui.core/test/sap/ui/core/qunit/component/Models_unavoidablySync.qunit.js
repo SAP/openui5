@@ -1,5 +1,5 @@
+/*global testdata */
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/base/i18n/Localization",
 	"sap/ui/base/config/URLConfigurationProvider",
 	"sap/base/Log",
@@ -11,8 +11,8 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/xml/XMLModel",
 	"sap/ui/model/resource/ResourceModel",
-	"sap/ui/test/v2models/parent/CustomModel"
-], function(jQuery, Localization, URLConfigurationProvider, Log, Component) {
+	"testdata/v2models/parent/CustomModel"
+], function(Localization, URLConfigurationProvider, Log, Component) {
 
 
 	"use strict";
@@ -33,7 +33,7 @@ sap.ui.define([
 				json: sinon.spy(sap.ui.model.json, "JSONModel"),
 				xml: sinon.spy(sap.ui.model.xml, "XMLModel"),
 				resource: sinon.spy(sap.ui.model.resource, "ResourceModel"),
-				custom: sinon.spy(sap.ui.test.v2models.parent, "CustomModel")
+				custom: sinon.spy(testdata.v2models.parent, "CustomModel")
 			};
 		},
 		restoreModels: function() {
@@ -117,7 +117,7 @@ sap.ui.define([
 			sap.ui.loader.config({
 				paths: {
 					"path/to/odata/service": "https://remote.system:9000/odata/service",
-					"sap/ui/test/v2models/ui5urls": "test-resources/sap/ui/core/qunit/component/testdata/v2models/ui5Urls",
+					"testdata/v2models/ui5urls": "test-resources/sap/ui/core/qunit/component/testdata/v2models/ui5Urls",
 					"another/name/space": "test-resources/sap/ui/core/qunit/component/testdata/v2models/ui5Urls/another/name/space",
 					"cool.name.space": "test-resources/sap/ui/core/qunit/component/testdata/v2models/ui5Urls/cool/name/space"
 				}
@@ -134,8 +134,8 @@ sap.ui.define([
 			// To keep reusing the same component for async and sync path tests,
 			// we need to unload the Component and remove the leftovers from the ComponentMetadata.
 			// This way all tests start fresh and actually load the Component again.
-			sap.ui.loader._.unloadResources('sap/ui/test/v2models/ui5urls/Component.js', true, true, true);
-			delete sap.ui.test.v2models.ui5Urls.Component.getMetadata()._oManifest;
+			sap.ui.loader._.unloadResources('testdata/v2models/ui5urls/Component.js', true, true, true);
+			delete testdata.v2models.ui5Urls.Component.getMetadata()._oManifest;
 
 			// remove the previous path-configs/resource-roots
 			sap.ui.loader.config({
@@ -190,7 +190,7 @@ sap.ui.define([
 		assert.equal(sap.ui.require.toUrl("this/is/a/resourceRoot"), "resources/this/is/a/resourceRoot", "Resource-roots not defined yet.");
 
 		this.oComponent = sap.ui.component({
-			name: "sap.ui.test.v2models.ui5urls",
+			name: "testdata.v2models.ui5urls",
 			manifest: true,
 			async: false
 		});
@@ -205,7 +205,7 @@ sap.ui.define([
 		assert.equal(sap.ui.require.toUrl("this/is/a/resourceRoot"), "resources/this/is/a/resourceRoot", "Resource-roots not defined yet.");
 
 		this.oComponent = sap.ui.component({
-			name: "sap.ui.test.v2models.ui5urls"
+			name: "testdata.v2models.ui5urls"
 		});
 
 		fnAssert.call(this, assert);
@@ -215,7 +215,7 @@ sap.ui.define([
 		this.stubGetUriParameters();
 
 		return Component.create({
-			name: "sap.ui.test.v1",
+			name: "testdata.v1",
 			manifest: false
 		}).then(function(oComponent) {
 			this.oComponent = oComponent;
@@ -249,7 +249,7 @@ sap.ui.define([
 	QUnit.test("metadata v1 without models", function(assert) {
 
 		return Component.create({
-			name: "sap.ui.test.v1empty",
+			name: "testdata.v1empty",
 			manifest: false
 		}).then(function(oComponent) {
 			this.oComponent = oComponent;
@@ -268,7 +268,7 @@ sap.ui.define([
 			sinon.assert.callCount(this.modelSpy.xml, 0);
 			// sap.ui.model.resource.ResourceModel
 			sinon.assert.callCount(this.modelSpy.resource, 0);
-			// sap.ui.test.v2models.CustomModel
+			// testdata.v2models.CustomModel
 			sinon.assert.callCount(this.modelSpy.custom, 0);
 
 			assert.ok(!this.oComponent.getModel(), "Component should not have a model");

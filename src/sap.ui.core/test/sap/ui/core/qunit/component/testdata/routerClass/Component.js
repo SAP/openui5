@@ -7,7 +7,7 @@ sap.ui.define([
 	"use strict";
 
 	// new Component
-	const RouterClassComponent = UIComponent.extend("sap.ui.test.routerClass.Component", {
+	const RouterClassComponent = UIComponent.extend("testdata.routerClass.Component", {
 		metadata : {
 			interfaces: ["sap.ui.core.IAsyncContentCreation"],
 			manifest: "json"

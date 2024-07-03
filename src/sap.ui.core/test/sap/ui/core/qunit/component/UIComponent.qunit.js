@@ -1845,7 +1845,7 @@ sap.ui.define([
 			window._oHookSpy = this.hookSpy;
 
 			this.requireSpy = this.spy(sap.ui, "require");
-			this.componentName = "sap.ui.test.routerClass";
+			this.componentName = "testdata.routerClass";
 		},
 		afterEach() {
 			this.component.destroy();

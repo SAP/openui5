@@ -1,6 +1,6 @@
 {
 	"sap.app": {
-		"id": "sap.ui.test.routerClass"
+		"id": "testdata.routerClass"
 	},
 	"sap.ui5": {
 		"dependencies": {
@@ -10,7 +10,7 @@
 			}
 		},
 		"rootView": {
-			"viewName": "sap.ui.test.routerClass.Main",
+			"viewName": "testdata.routerClass.Main",
 			"type": "XML"
 		},
 		"routing": {

@@ -1,9 +1,9 @@
 /*global QUnit */
-sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/ui/model/json/JSONModel'],
+sap.ui.define(["sap/ui/core/mvc/Controller", "sap/ui/model/json/JSONModel"],
 	function(Controller, JSONModel) {
 	"use strict";
 
-	var MainController = Controller.extend("sap.ui.test.view.Main", {
+	var MainController = Controller.extend("testdata.view.Main", {
 
 
 		onInit: function() {

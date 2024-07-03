@@ -90,15 +90,7 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 				}
 			},
 			Serializer: {},
-			"support/SupportTool": {
-				loader: {
-					paths: {
-						"sap/ui/test": "../",
-						"sap/ui/test/qunitPause": "resources/sap/ui/test/qunitPause",
-						"sap/ui/test/RecorderHotkeyListener": "resources/sap/ui/test/RecorderHotkeyListener"
-					}
-				}
-			},
+			"support/SupportTool": {},
 			"support/TechnicalInfo": {},
 			"support/TechnicalInfo.opa": {
 				loader: {
@@ -138,53 +130,8 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 			ExportTypeCSV: {},
 			PasteHelper: {},
 			ResponsivePaddingsEnablement: {},
-			"reflection/BaseTreeModifier": {
-				sinon: {
-					version: 4,
-					qunitBridge: false
-				},
-				coverage: {
-					only: "[sap/ui/core/util/reflection]"
-				},
-				loader: {
-					paths: {
-						"sap/ui/test": "test-resources/sap/ui/core/qunit/component/testdata",
-						"sap/ui/test/qunitPause": "resources/sap/ui/test/qunitPause",
-						"sap/ui/test/RecorderHotkeyListener": "resources/sap/ui/test/RecorderHotkeyListener"
-					}
-				}
-			},
-			"reflection/JsControlTreeModifier": {
-				sinon: {
-					version: 4,
-					qunitBridge: false
-				},
-				coverage: {
-					only: "[sap/ui/core/util/reflection]"
-				},
-				loader: {
-					paths: {
-						"sap/ui/test": "test-resources/sap/ui/core/qunit/component/testdata",
-						"sap/ui/test/qunitPause": "resources/sap/ui/test/qunitPause",
-						"sap/ui/test/RecorderHotkeyListener": "resources/sap/ui/test/RecorderHotkeyListener"
-					}
-				}
-			},
-			"reflection/XmlTreeModifier": {
-				sinon: {
-					version: 4,
-					qunitBridge: false
-				},
-				coverage: {
-					only: "[sap/ui/core/util/reflection]"
-				},
-				loader: {
-					paths: {
-						"sap/ui/test": "test-resources/sap/ui/core/qunit/component/testdata",
-						"sap/ui/test/qunitPause": "resources/sap/ui/test/qunitPause",
-						"sap/ui/test/RecorderHotkeyListener": "resources/sap/ui/test/RecorderHotkeyListener"
-					}
-				}
+			reflection: {
+				page: "test-resources/sap/ui/core/qunit/util/reflection/testsuite.reflection.qunit.html"
 			},
 			ViewSerializer: {
 				ui5: {

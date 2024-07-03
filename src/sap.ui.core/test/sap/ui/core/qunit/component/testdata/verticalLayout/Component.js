@@ -14,7 +14,7 @@ sap.ui.define([
 	"use strict";
 
 	// new Component
-	var Component = UIComponent.extend("sap.ui.test.verticalLayout.Component", {
+	var Component = UIComponent.extend("testdata.verticalLayout.Component", {
 		metadata : {
 			"abstract": true,
 			interfaces: ["sap.ui.core.IAsyncContentCreation"],

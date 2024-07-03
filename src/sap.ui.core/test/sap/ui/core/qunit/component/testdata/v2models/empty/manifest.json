@@ -3,7 +3,7 @@
 	"_version": "1.12.0",
 
 	"sap.app": {
-	"id": "sap.ui.test.v2models.empty",
+	"id": "testdata.v2models.empty",
 		"type": "application",
 		"applicationVersion": {
 			"version": "1.0.0"

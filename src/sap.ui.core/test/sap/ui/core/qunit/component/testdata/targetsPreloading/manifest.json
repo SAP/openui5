@@ -1,6 +1,6 @@
 {
 	"sap.app": {
-		"id": "sap.ui.test.targetsPreloading"
+		"id": "testdata.targetsPreloading"
 	},
 	"sap.ui5": {
 		"dependencies": {
@@ -10,7 +10,7 @@
 			}
 		},
 		"rootView": {
-			"viewName": "sap.ui.test.targetsPreloading.Main",
+			"viewName": "testdata.targetsPreloading.Main",
 			"type": "XML"
 		},
 		"routing": {

@@ -1,6 +1,6 @@
 {
 	"sap.app": {
-		"id": "sap.ui.test.manifestload"
+		"id": "testdata.manifestload"
 	},
 	"sap.ui5": {
 		"someValue": "someValue456",
@@ -8,7 +8,7 @@
 			"libs": {
 			},
 			"components": {
-				"sap.ui.test.manifestload": {}
+				"testdata.manifestload": {}
 			}
 		}
 	}

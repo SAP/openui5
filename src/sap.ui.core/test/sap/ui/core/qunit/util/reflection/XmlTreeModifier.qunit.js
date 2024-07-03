@@ -134,7 +134,7 @@ sap.ui.define([
 			this.oXmlView2 = XMLHelper.parse(this.oXmlString2, "application/xml").documentElement;
 
 			return Component.create({
-				name: "sap.ui.test.other",
+				name: "testdata.comp",
 				id: "testComponent"
 			}).then(function(oComponent) {
 				this.oComponent = oComponent;
@@ -986,7 +986,7 @@ sap.ui.define([
 			};
 
 			return XmlTreeModifier.templateControlFragment(
-				"sap.ui.test.other.fragment-withTemplating",
+				"testdata.comp.fragment-withTemplating",
 				mPreprocessorSettings,
 				undefined
 			).then(function(aControls) {
@@ -1140,7 +1140,7 @@ sap.ui.define([
 		},
 		beforeEach: function () {
 			this.pComponent = Component.create({
-				name: "sap.ui.test.other",
+				name: "testdata.comp",
 				id: "testComponent"
 			}).then(function(oComponent) {
 				this.oComponent = oComponent;

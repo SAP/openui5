@@ -757,7 +757,7 @@ sap.ui.define([
 
 
 	QUnit.test("Default content contains Async View/Fragment", function(assert) {
-		var sManifestUrl = sap.ui.require.toUrl("sap/ui/test/extensionPoints/defaultContent/manifest.json");
+		var sManifestUrl = sap.ui.require.toUrl("testdata/extensionPoints/defaultContent/manifest.json");
 
 		return Component.create({
 			name: "testdata.extensionPoints",
@@ -793,7 +793,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("ExtensionPoint contains Async View/Fragment", function(assert) {
-		var sManifestUrl = sap.ui.require.toUrl("sap/ui/test/extensionPoints/viewExtensions/manifest.json");
+		var sManifestUrl = sap.ui.require.toUrl("testdata/extensionPoints/viewExtensions/manifest.json");
 
 		return Component.create({
 			name: "testdata.extensionPoints",

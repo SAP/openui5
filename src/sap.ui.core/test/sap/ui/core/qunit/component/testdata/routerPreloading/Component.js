@@ -8,7 +8,7 @@ sap.ui.define([
 	"use strict";
 
 	// new Component
-	const Component = UIComponent.extend("sap.ui.test.routerPreloading.Component", {
+	const Component = UIComponent.extend("testdata.routerPreloading.Component", {
 		metadata : {
 			interfaces: ["sap.ui.core.IAsyncContentCreation"],
 			manifest: "json"

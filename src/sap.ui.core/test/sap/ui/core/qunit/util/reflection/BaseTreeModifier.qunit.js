@@ -67,7 +67,7 @@ sap.ui.define([
 	QUnit.module("While handling xml views, the BaseTreeModifier", {
 		beforeEach: function () {
 			return Component.create({
-				name: "sap.ui.test.other",
+				name: "testdata.comp",
 				id: "testComponent"
 			}).then(function(oComponent) {
 				this.oComponent = oComponent;
@@ -162,7 +162,7 @@ sap.ui.define([
 	QUnit.module("While handling js views the BaseTreeModifier", {
 		beforeEach: function () {
 			return Component.create({
-				name: "sap.ui.test.other",
+				name: "testdata.comp",
 				id: "testComponent"
 			}).then(function(oComponent) {
 				this.oComponent = oComponent;
@@ -226,7 +226,7 @@ sap.ui.define([
 	QUnit.module("While handling js views (with extension points) the BaseTreeModifier", {
 		beforeEach: function () {
 			return Component.create({
-				name: "sap.ui.test.other",
+				name: "testdata.comp",
 				id: "testComponent"
 			}).then(function(oComponent) {
 				this.oComponent = oComponent;

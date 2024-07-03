@@ -33,8 +33,8 @@ sap.ui.define([
 				"gav": "<GAV>",
 				"libraries": [],
 				"components": {
-					"sap.ui.test.componentContainedInLibrary.Comp1": {
-						"library": "sap.ui.test.componentContainedInLibrary",
+					"testdata.componentContainedInLibrary.Comp1": {
+						"library": "testdata.componentContainedInLibrary",
 						"manifestHints": {
 							"dependencies": {
 								"libs": {
@@ -45,9 +45,9 @@ sap.ui.define([
 							}
 						}
 					},
-					"sap.ui.test.componentContainedInLibrary.Comp2": {
+					"testdata.componentContainedInLibrary.Comp2": {
 						"hasOwnPreload": true,
-						"library": "sap.ui.test.componentContainedInLibrary",
+						"library": "testdata.componentContainedInLibrary",
 						"manifestHints": {
 							"dependencies": {
 								"libs": {
@@ -75,14 +75,14 @@ sap.ui.define([
 		var loadPreload = this.stub(sap.ui.loader._, "loadJSResourceAsync").returns(success);
 
 		return Component.create({
-			name: "sap.ui.test.componentContainedInLibrary.Comp1",
+			name: "testdata.componentContainedInLibrary.Comp1",
 			manifest: false
 		}).catch(noop).finally(function() {
 			assert.ok(loadLibs.calledWith(
-				sinon.match.array.contains(["sap.m", "sap.ui.core", "sap.ui.layout", "sap.ui.test.componentContainedInLibrary"])),
+				sinon.match.array.contains(["sap.m", "sap.ui.core", "sap.ui.layout", "testdata.componentContainedInLibrary"])),
 				"...then that library should be implicitly loaded");
 			assert.ok(
-				loadPreload.neverCalledWith(sinon.match(/sap\/ui\/test\/componentContainedInLibrary\/Comp1\/Component-preload\.js$/)),
+				loadPreload.neverCalledWith(sinon.match(/testdata\/componentContainedInLibrary\/Comp1\/Component-preload\.js$/)),
 				"...then no Component-preload file should be requested for the component");
 		});
 	});
@@ -93,14 +93,14 @@ sap.ui.define([
 		var loadPreload = this.stub(sap.ui.loader._, "loadJSResourceAsync").returns(success);
 
 		return Component.create({
-			name: "sap.ui.test.componentContainedInLibrary.Comp2",
+			name: "testdata.componentContainedInLibrary.Comp2",
 			manifest: false
 		}).catch(noop).finally(function() {
 			assert.ok(
-				loadLibs.neverCalledWith(sinon.match.array.contains(["sap.ui.test.componentContainedInLibrary"])),
+				loadLibs.neverCalledWith(sinon.match.array.contains(["testdata.componentContainedInLibrary"])),
 				"...then the containing library should not be loaded");
 			assert.ok(
-				loadPreload.calledWith(sinon.match(/sap\/ui\/test\/componentContainedInLibrary\/Comp2\/Component-preload\.js$/)),
+				loadPreload.calledWith(sinon.match(/testdata\/componentContainedInLibrary\/Comp2\/Component-preload\.js$/)),
 				"...then a Component-preload file should be requested for the component");
 		});
 	});

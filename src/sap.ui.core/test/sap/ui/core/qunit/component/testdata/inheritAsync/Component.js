@@ -1,8 +1,8 @@
-sap.ui.define(['./parentB/Component'],
+sap.ui.define(["./parentB/Component"],
 	function(ComponentB) {
 		"use strict";
 
-		var Component = ComponentB.extend("sap.ui.test.inheritAsync.Component", {
+		var Component = ComponentB.extend("testdata.inheritAsync.Component", {
 			metadata: {
 				manifest: "json"
 			}

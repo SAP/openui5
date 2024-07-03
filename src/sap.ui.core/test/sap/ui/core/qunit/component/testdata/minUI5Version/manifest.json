@@ -1,6 +1,6 @@
 {
 	"sap.app": {
-		"id": "sap.ui.test.minUI5Version"
+		"id": "testdata.minUI5Version"
 	},
 	"sap.ui5": {
 		"dependencies": {

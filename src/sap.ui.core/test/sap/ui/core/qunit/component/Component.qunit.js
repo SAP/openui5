@@ -7,8 +7,8 @@ sap.ui.define([
 	'sap/ui/core/ComponentRegistry',
 	'sap/ui/core/Messaging',
 	'sap/ui/core/UIComponentMetadata',
-	'sap/ui/test/routing/Component',
-	'sap/ui/test/routing/RouterExtension',
+	'testdata/routing/Component',
+	'testdata/routing/RouterExtension',
 	'sap/base/Log',
 	'sap/base/util/deepExtend',
 	'sap/base/util/LoaderExtensions',
@@ -65,7 +65,7 @@ sap.ui.define([
 				}
 			}).placeAt("comparea1");
 			return Component.create({
-				name: "sap.ui.test.verticalLayout",
+				name: "testdata.verticalLayout",
 				id: "vLayout",
 				componentData: {
 					"foo": "bar"
@@ -136,7 +136,7 @@ sap.ui.define([
 		assert.equal(oComponent, oComp, "Factory function returns the same instance!");
 
 		return Component.create({
-			name: "sap.ui.test.verticalLayout",
+			name: "testdata.verticalLayout",
 			id: "factoryVLayout"
 		}).then(function() {
 			assert.ok(!!oComponent, "Component has been created!");
@@ -194,7 +194,7 @@ sap.ui.define([
 
 	QUnit.test("[Router] manifest = false", async function(assert) {
 		const oComp = await Component.create({
-			name: "sap.ui.test.routerPreloading",
+			name: "testdata.routerPreloading",
 			manifest: false
 		});
 
@@ -208,7 +208,7 @@ sap.ui.define([
 
 	QUnit.test("[Router] manifest = true", async function(assert) {
 		const oComp = await Component.create({
-			name: "sap.ui.test.routerPreloading"
+			name: "testdata.routerPreloading"
 			// manifest: true // implicitly set
 		});
 
@@ -222,7 +222,7 @@ sap.ui.define([
 
 	QUnit.test("[Targets] manifest = false", async function(assert) {
 		const oComp = await Component.create({
-			name: "sap.ui.test.targetsPreloading",
+			name: "testdata.targetsPreloading",
 			manifest: false
 		});
 
@@ -236,7 +236,7 @@ sap.ui.define([
 
 	QUnit.test("[Targets] manifest = true", async function(assert) {
 		const oComp = await Component.create({
-			name: "sap.ui.test.targetsPreloading",
+			name: "testdata.targetsPreloading",
 			manifest: false
 		});
 
@@ -415,7 +415,7 @@ sap.ui.define([
 	QUnit.module("Creation Context", {
 		beforeEach: function() {
 			return Component.create({
-				name: "sap.ui.test.verticalLayout",
+				name: "testdata.verticalLayout",
 				id: "vLayout",
 				componentData: {
 					"foo": "bar"
@@ -469,7 +469,7 @@ sap.ui.define([
 		beforeEach : function () {
 			// System under test
 			return Component.create({
-				name: "sap.ui.test.routing"
+				name: "testdata.routing"
 			}).then(function(oComponent) {
 				this.oComponent = oComponent;
 			}.bind(this));
@@ -521,7 +521,7 @@ sap.ui.define([
 			sap.ui.require(["sap/m/routing/Targets"], function() {
 				// System under test
 				Component.create({
-					name: "sap.ui.test.routing.targets",
+					name: "testdata.routing.targets",
 					async: true
 				}).then(function(oComponent) {
 					that.oComponent = oComponent;
@@ -561,7 +561,7 @@ sap.ui.define([
 		beforeEach : function () {
 			// System under test
 			return Component.create({
-				name: "sap.ui.test.routing"
+				name: "testdata.routing"
 			}).then(function(oComponent) {
 				this.oComponent = oComponent;
 			}.bind(this));
@@ -1551,7 +1551,7 @@ sap.ui.define([
 		var oProcessI18nSpy = this.spy(Manifest.prototype, "_processI18n");
 
 		return LoaderExtensions.loadResource(
-			"sap/ui/test/mixed_legacyAPIs/manifest.json",
+			"testdata/mixed_legacyAPIs/manifest.json",
 			{async: true}
 		).then(function(oManifest) {
 			return Component.create({
@@ -1573,7 +1573,7 @@ sap.ui.define([
 		var oProcessI18nSpy = this.spy(Manifest.prototype, "_processI18n");
 
 		return LoaderExtensions.loadResource(
-			"sap/ui/test/mixed/manifest.json",
+			"testdata/mixed/manifest.json",
 			{async: true}
 		).then(function(oManifest) {
 			return Component.create({
@@ -1599,14 +1599,14 @@ sap.ui.define([
 		var oProcessI18nSpy = this.spy(Manifest.prototype, "_processI18n");
 
 		return Component.create({
-			name: "sap.ui.test.inherit"
+			name: "testdata.inherit"
 		}).then(function(oComponent) {
 			assert.ok(oComponent, "Component instance is created");
 
 			// _processI18n are called 3 times:
 			//  1. for the oComponent instance itself
-			//  2. for the sap.ui.test.inherit ComponentMetadata
-			//  3. for the inheriting parent sap.ui.test.inherit.parent ComponentMetadata (component.json based)
+			//  2. for the testdata.inherit ComponentMetadata
+			//  3. for the inheriting parent testdata.inherit.parent ComponentMetadata (component.json based)
 			assert.equal(oProcessI18nSpy.callCount, 3, "_processI18n is called for the expected times");
 
 			var iSyncCall = oProcessI18nSpy.getCalls().reduce(function(acc, oCall) {
@@ -1624,15 +1624,15 @@ sap.ui.define([
 		var oProcessI18nSpy = this.spy(Manifest.prototype, "_processI18n");
 
 		return Component.create({
-			name: "sap.ui.test.inheritAsync"
+			name: "testdata.inheritAsync"
 		}).then(function(oComponent) {
 			assert.ok(oComponent, "Component instance is created");
 
 			// _processI18n are called 4 times:
 			//  1. for the oComponent instance itself
-			//  2. for the sap.ui.test.inheritAsync ComponentMetadata
-			//  3. for the inheriting parent sap.ui.test.inheritAsync.parentB ComponentMetadata
-			//  4. for the inheriting parent sap.ui.test.inheritAsync.parentA ComponentMetadata
+			//  2. for the testdata.inheritAsync ComponentMetadata
+			//  3. for the inheriting parent testdata.inheritAsync.parentB ComponentMetadata
+			//  4. for the inheriting parent testdata.inheritAsync.parentA ComponentMetadata
 			assert.equal(oProcessI18nSpy.callCount, 4, "_processI18n is called for the expected times");
 
 			var iSyncCall = oProcessI18nSpy.getCalls().reduce(function(acc, oCall) {
@@ -2072,7 +2072,7 @@ sap.ui.define([
 	QUnit.test("Hook is called when manifest is given in config object (Hook modifies the manifest)", function(assert) {
 		var oManifestJSON = {
 			"sap.app": {
-				"id": "sap.ui.test.other",
+				"id": "testdata.other",
 				"type": "application",
 				"applicationVersion": {
 					"version": "1.0.0"
@@ -2104,7 +2104,7 @@ sap.ui.define([
 		};
 
 		return Component.create({
-			name: "sap.ui.test.other",
+			name: "testdata.other",
 			manifest: oManifestJSON
 		}).then(function(oComponent) {
 			// check if the modification was correctly taken over
@@ -2116,7 +2116,7 @@ sap.ui.define([
 	QUnit.test("Hook is called when manifest is given in config object and there is one new library dependency (Hook modifies the manifest)", function(assert) {
 		var oManifestJSON = {
 			"sap.app": {
-				"id": "sap.ui.test.other",
+				"id": "testdata.other",
 				"type": "application",
 				"applicationVersion": {
 					"version": "1.0.0"
@@ -2137,7 +2137,7 @@ sap.ui.define([
 		var oConfig = {
 			manifest: oManifestJSON,
 			async: true,
-			name: "sap.ui.test.other"
+			name: "testdata.other"
 		};
 
 		var oManifestJSONCopy;
@@ -2158,7 +2158,7 @@ sap.ui.define([
 		var oPreprocessManifestSpy = this.spy(Component, "_fnPreprocessManifest");
 
 		return Component.create({
-			name: "sap.ui.test.other",
+			name: "testdata.other",
 			manifest: oManifestJSON
 		}).then(function(oComponent) {
 			// check if the new dependency is correctly taken over
@@ -2184,7 +2184,7 @@ sap.ui.define([
 
 		// loading manifest from default location
 		return Component.create({
-			name: "sap.ui.test.v2asyncRootView"
+			name: "testdata.v2asyncRootView"
 		}).then(function(oComponent) {
 			// check if the modification was correctly taken over
 			var oModel = oComponent.getModel("sfapi");
@@ -2216,7 +2216,7 @@ sap.ui.define([
 
 		// loading manifest from default location
 		return Component.create({
-			name: "sap.ui.test.v2"
+			name: "testdata.v2"
 		}).then(function(oComponent) {
 			// check if the new dependency is correctly taken over
 			var oSapUi5Property = oComponent.getManifestEntry("sap.ui5");
@@ -2230,7 +2230,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Hook is called when manifest is loaded from the given manifest URL", function(assert) {
-		var sManifestUrl = sap.ui.require.toUrl("sap/ui/test/v2/manifest.json");
+		var sManifestUrl = sap.ui.require.toUrl("testdata/v2/manifest.json");
 
 		// register hook and modify the manifest
 		Component._fnPreprocessManifest = function(oManifestJSON) {
@@ -2242,7 +2242,7 @@ sap.ui.define([
 		};
 
 		return Component.create({
-			name: "sap.ui.test.v2asyncRootView",
+			name: "testdata.v2asyncRootView",
 			manifest: sManifestUrl
 		}).then(function(oComponent) {
 			// check if the modification was correctly taken over
@@ -2252,7 +2252,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Hook is called when manifest is loaded from the given manifest URL and and there is one new library dependency (Hook modifies the manifest)", function(assert) {
-		var sManifestUrl = sap.ui.require.toUrl("sap/ui/test/v2/manifest.json");
+		var sManifestUrl = sap.ui.require.toUrl("testdata/v2/manifest.json");
 		var oManifestJSONCopy;
 		var oManifestJSONClosure;
 
@@ -2276,7 +2276,7 @@ sap.ui.define([
 		var oPreprocessManifestSpy = this.spy(Component, "_fnPreprocessManifest");
 
 		return Component.create({
-			name: "sap.ui.test.v2asyncRootView",
+			name: "testdata.v2asyncRootView",
 			manifest: sManifestUrl
 		}).then(function(oComponent) {
 			// check if the new dependency is correctly taken over
@@ -2299,7 +2299,7 @@ sap.ui.define([
 		this.oPreprocessManifestSpy = this.spy(Component, "_fnPreprocessManifest");
 
 		return Component.create({
-			name: "sap.ui.test.v2empty"
+			name: "testdata.v2empty"
 		}).then(function() {
 			assert.ok(false, "shouldn't reach here");
 		}, function(sReason) {
@@ -2320,7 +2320,7 @@ sap.ui.define([
 		var oLogStub = this.stub(Log, "error");
 
 		return Component.create({
-			name: "sap.ui.test.v2empty"
+			name: "testdata.v2empty"
 		}).then(function() {
 			assert.ok(false, "shouldn't reach here");
 		}).catch(function(oError) {
@@ -2337,7 +2337,7 @@ sap.ui.define([
 		// create a legacy Component without a manifest.json
 		// Manifest-first loading fails with 404, but is ignored, since the component controller contains metadata.
 		return Component.create({
-			name: "sap.ui.test.other"
+			name: "testdata.other"
 		}).then(function(oComponent) {
 			assert.ok(oComponent, "Component was created.");
 		}).catch(function() {

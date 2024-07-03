@@ -4,7 +4,7 @@ sap.ui.define([
 ], function(History, Router) {
 	"use strict";
 
-	var RouterExtension = Router.extend("sap.ui.test.routing.RouterExtension", {
+	var RouterExtension = Router.extend("testdata.routing.RouterExtension", {
 		myNavBack : function (route, data) {
 			var history = History.getInstance();
 			var url = this.getURL(route, data);

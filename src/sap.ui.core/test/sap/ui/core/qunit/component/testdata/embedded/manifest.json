@@ -1,7 +1,7 @@
 {
-	"name": "sap.ui.test.embedded.Component",
+	"name": "testdata.embedded.Component",
 	"sap.app": {
-		"id": "sap.ui.test.embedded",
+		"id": "testdata.embedded",
 		"applicationVersion": {
 			"version": "1.0.0"
 		},

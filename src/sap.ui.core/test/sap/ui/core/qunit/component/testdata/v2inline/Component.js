@@ -2,16 +2,16 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	function(UIComponent) {
 	"use strict";
 
-	var Component = UIComponent.extend("sap.ui.test.v2inline.Component", {
+	var Component = UIComponent.extend("testdata.v2inline.Component", {
 
 		metadata: {
 
 			"manifest": {
 
-				"name": "sap.ui.test.v2inline.Component",
+				"name": "testdata.v2inline.Component",
 
 				"sap.app": {
-					"id": "sap.ui.test.v2inline",
+					"id": "testdata.v2inline",
 					"applicationVersion": {
 						"version": "1.0.0"
 					},
@@ -50,7 +50,7 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 							}
 						},
 						"components": {
-							"sap.ui.test.other": {
+							"testdata.other": {
 								"optional": true,
 								"minVersion": "1.0.1"
 							}
@@ -69,7 +69,7 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 					},
 
 					"rootView": {
-						"viewName": "sap.ui.test.view.Main",
+						"viewName": "testdata.view.Main",
 						"type": "XML",
 						"async": true
 					},
@@ -111,16 +111,16 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 					"extends": {
 						"extensions": {
 							"sap.ui.viewReplacements": {
-								"sap.ui.test.view.Main": {
-									"viewName": "sap.ui.test.view.Main",
+								"testdata.view.Main": {
+									"viewName": "testdata.view.Main",
 									"type": "XML"
 								}
 							},
 							"sap.ui.controllerReplacements": {
-								"sap.ui.test.view.Main": "sap.ui.test.view.Main"
+								"testdata.view.Main": "testdata.view.Main"
 							},
 							"sap.ui.viewExtensions": {
-								"sap.ui.test.view.Main": {
+								"testdata.view.Main": {
 									"extension": {
 										"name": "sap.xx.new.Fragment",
 										"type": "sap.ui.core.XMLFragment"
@@ -128,7 +128,7 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 								}
 							},
 							"sap.ui.viewModification": {
-								"sap.ui.test.view.Main": {
+								"testdata.view.Main": {
 									"myControlId": {
 										"text": "{{mytext}}"
 									}
