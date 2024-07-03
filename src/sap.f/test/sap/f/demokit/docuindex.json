@@ -213,7 +213,7 @@
 		},
 		{
 			"id": "sap.f.sample.AvatarGroup",
-			"name": "Avatar Group (Experimental)",
+			"name": "Avatar Group",
 			"description": "This sample demonstrates the different group types and item sizes of the AvatarGroup control."
 		},
 		{
@@ -283,7 +283,7 @@
 		},
 		{
 		  "id": "sap.f.sample.ShellBarProductSwitch",
-		  "name": "Shell Bar with Product Switch (Experimental)",
+		  "name": "Shell Bar with Product Switch",
 		  "description": "Shell Bar example with enabled Product Switch, configurable by the app developer. The Product Switch control is in experimental state."
 		},
 		{
