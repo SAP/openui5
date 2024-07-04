@@ -3380,7 +3380,7 @@ sap.ui.define([
 
 		function handleGetError(oError) {
 			if (oError.$rejected) {
-				// request answered with a 503 retry-after error and was rejected later on
+				// request answered with a 503 "Retry-After" error and was rejected later on
 				that.resetSecurityToken();
 				fnError(oError);
 				return;
@@ -3397,7 +3397,7 @@ sap.ui.define([
 
 		function handleHeadError(oError) {
 			if (oError.$rejected) {
-				// request answered with a 503 retry-after error and was rejected later on
+				// request answered with a 503 "Retry-After" error and was rejected later on
 				// -> no fallback to requestToken via "GET"
 				that.resetSecurityToken();
 				fnError(oError);
@@ -3438,12 +3438,15 @@ sap.ui.define([
 	 * @param {object} oHandler The request handler object
 	 * @param {object} oHttpClient The HttpClient object
 	 * @param {object} oMetadata The metadata object
-	 * @returns {boolean} Whether it is a 503 "Retry-After" error response and the error is processed
-	 *   by the "Retry-After" handler
+	 * @param {object} oRequestHandle
+	 *   The preliminary created request handle whose abort function is replaced with the abort function
+	 *   of the repeated request
+	 * @returns {boolean}
+	 *   Whether it is a 503 "Retry-After" error response and the error is processed by the "Retry-After" handler
 	 * @private
 	 */
 	ODataModel.prototype.checkAndProcessRetryAfterError = function(oRequest, oErrorResponse, fnSuccess, fnError,
-			oHandler, oHttpClient, oMetadata) {
+			oHandler, oHttpClient, oMetadata, oRequestHandle) {
 		if (oErrorResponse.response?.statusCode === 503
 			&& this._getHeader("retry-after", oErrorResponse.response.headers)
 			&& this.fnRetryAfter
@@ -3454,7 +3457,8 @@ sap.ui.define([
 			}
 			this.pRetryAfter.then(() => {
 				this.pRetryAfter = this.oRetryAfterError = null;
-				this._request(oRequest, fnSuccess, fnError, oHandler, oHttpClient, oMetadata);
+				oRequestHandle.abort =
+					this._request(oRequest, fnSuccess, fnError, oHandler, oHttpClient, oMetadata).abort;
 			}, (oReason) => {
 				this.pRetryAfter = null; // this.oRetryAfterError must not be reset!
 				this.onRetryAfterRejected(fnError, oErrorResponse, oReason);
@@ -3483,7 +3487,7 @@ sap.ui.define([
 	/**
 	 * Reject handler for <code>this.pRetryAfter</code>.
 	 *
-	 * If the given <code>oReason</code> and <code>this.oRetryAfterError</code> originally passed to the "Retry-after"
+	 * If the given <code>oReason</code> and <code>this.oRetryAfterError</code> originally passed to the "Retry-After"
 	 * handler are the same, then the <code>fnError</code> callback is called with <code>oErrorResponse</code> and
 	 * <code>this.oRetryAfterError</code> is logged and reported to the message model. Otherwise the given
 	 * <code>oReason</code> is only logged.
@@ -3590,7 +3594,7 @@ sap.ui.define([
 				submit();
 			}, function(oError) {
 				if (oError.$rejected) {
-					// request answered with a 503 retry-after error and was rejected later on
+					// request answered with a 503 "Retry-After" error and was rejected later on
 					// -> no fallback on submit() w/o token
 					handleError(oError);
 					return;
@@ -7838,7 +7842,7 @@ sap.ui.define([
 		function handle503Error(fnError0) {
 			return function (oErrorResponse) {
 				if (that.checkAndProcessRetryAfterError(oRequest, oErrorResponse, fnSuccess, fnError0, oHandler,
-						oHttpClient, oMetadata)) {
+						oHttpClient, oMetadata, oRequestHandle)) {
 					return;
 				}
 				fnError0(oErrorResponse);
@@ -7846,12 +7850,13 @@ sap.ui.define([
 		}
 
 		if (this.pRetryAfter) {
+			oRequestHandle = {abort() {}};
 			this.pRetryAfter.then(() => {
-				this._request(oRequest, fnSuccess, fnError, oHandler, oHttpClient, oMetadata);
+				oRequestHandle.abort =
+					this._request(oRequest, fnSuccess, fnError, oHandler, oHttpClient, oMetadata).abort;
 			}, (oReason) => {
 				this.onRetryAfterRejected(fnError, undefined, oReason);
 			});
-			oRequestHandle = {abort() {}};
 		} else {
 			// create request with wrapped handlers
 			oRequestHandle = OData.request(
@@ -8874,7 +8879,8 @@ sap.ui.define([
 			message : "Request aborted",
 			responseText : "",
 			statusCode : 0,
-			statusText : "abort"
+			statusText : "abort",
+			$rejected : true // prevent fallback in handleHeadError to fetch-token via GET
 		};
 	};
 
