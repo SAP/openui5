@@ -225,6 +225,11 @@ sap.ui.define([
 
 			/**
 			 * Flag to enable or disable column reordering
+			 *
+			 * <b>Note</b>: Column reordering is possible via drag&drop and keyboard shortcuts. Single-pointer alternative is not provided
+			 * out-of-the-box and should be implemented on application side. For example the {@link sap.m.p13n.Engine} can be used, see the following
+			 * sample:
+			 * {@link https://ui5.sap.com/#/entity/sap.ui.table.Table/sample/sap.m.sample.p13n.EngineGridTable Personalization for grid table}.
 			 */
 			enableColumnReordering: {type: "boolean", group: "Behavior", defaultValue: true},
 
