@@ -1084,7 +1084,7 @@ sap.ui.define([
 	};
 
 	Carousel.prototype._getActivePageTabbables = function () {
-		return this.$(this.getActivePage() + "-slide").find(":sapTabbable");
+		return this.$(this.getPages()[this._iFocusedPageIndex].getId() + "-slide").find(":sapTabbable");
 	};
 
 	/**
@@ -1125,6 +1125,7 @@ sap.ui.define([
 		}
 
 		this._handlePageElemFocus(oEvent.target);
+		this._updateItemsAttributes(this._iFocusedPageIndex);
 
 		// Save focus reference
 		this.saveLastFocusReference(oEvent);

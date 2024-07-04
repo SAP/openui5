@@ -1187,6 +1187,29 @@ sap.ui.define([
 		assert.ok(spy.notCalled, "Focus should NOT be forwarded after the carousel");
 	});
 
+	QUnit.test("TAB on non-active page with interactive content", function (assert) {
+		// Arrange
+		this.oCarousel.setCustomLayout(new CarouselLayout({
+			visiblePagesCount: 3
+		}));
+		Core.applyChanges();
+		var spy = this.spy(this.oCarousel, "_forwardTab");
+
+		this.oCarousel.setActivePage("keyTestPage1");
+
+		// focus second page
+		this.oCarousel.onsapright({
+			target: this.oCarousel.getDomRef(this.oCarousel.getActivePage() + "-slide"),
+			preventDefault: function () {}
+		});
+
+		// Act
+		qutils.triggerKeydown(document.activeElement, KeyCodes.TAB);
+
+		// Assert
+		assert.ok(spy.notCalled, "Focus should NOT be forwarded after the carousel");
+	});
+
 	QUnit.test("TAB on last interactive element within page", function (assert) {
 		// Arrange
 		var spy = this.spy(this.oCarousel, "_forwardTab");
