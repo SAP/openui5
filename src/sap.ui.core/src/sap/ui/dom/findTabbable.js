@@ -19,6 +19,10 @@ sap.ui.define([
 		var bSkipChild = mParams.skipChild;
 		var oScope = mParams.scope;
 
+		if (!oElement) {
+			return;
+		}
+
 		if (oElement.id === "sap-ui-static") {
 			// skip the check in static UIArea
 			// when oScope is within static UIArea, this function will never reach the static UIArea
@@ -77,6 +81,10 @@ sap.ui.define([
 		var oScope = mParams.scope;
 		var bCheckChildren = mParams.checkChildren || oElement === oScope;
 		var aAssignedElements;
+
+		if (!oElement) {
+			return;
+		}
 
 		if (oElement.id === "sap-ui-static") {
 			// skip the check in static UIArea
@@ -166,7 +174,7 @@ sap.ui.define([
 		 * Helper function to recursively find the tabbable element.
 		 * @param {Element} oElement The current element.
 		 * @param {boolean} bSkipChild Whether to skip child elements.
-		 * @returns {Object} An object containing the found tabbable element and a flag indicating if the search started over.
+		 * @returns {Object|undefined} An object containing the found tabbable element and a flag indicating if the search started over or 'undefined' if nothing is found.
 		 * @private
 		 */
 		function _findTabbable(oElement, bSkipChild) {
@@ -183,6 +191,10 @@ sap.ui.define([
 					element: oElement,
 					scope: oScope
 				});
+			}
+
+			if (!oNextElement) {
+				return;
 			}
 
 			if (oNextElement === oScope) {

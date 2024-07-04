@@ -594,7 +594,7 @@ sap.ui.define([
 				});
 
 				// if nothing is found
-				if (oRes.startOver) {
+				if (oRes?.startOver) {
 					// search tabbable element to the left
 					oRes = findTabbable(oDomRef, {
 						scope: oParentDomRef,
@@ -602,7 +602,7 @@ sap.ui.define([
 					});
 				}
 
-				oFocusTarget = oRes.element;
+				oFocusTarget = oRes?.element;
 
 				if (oFocusTarget === oParentDomRef) {
 					// Reached the parent DOM which is tabbable
@@ -618,19 +618,22 @@ sap.ui.define([
 				oFocusTarget = oParentDomRef && jQuery(oParentDomRef).firstFocusableDomRef();
 				break;
 			}
-		} while (oRes.startOver && oDomRef);
+		} while ((!oRes || oRes.startOver) && oDomRef);
 
-		// In the meantime, the focus could be set somewhere else.
-		// If that element is focusable, then we don't steal the focus from it
-		if (oEvent._bRenderingPending) {
-			Rendering.addPrerenderingTask(() => {
-				_focusTarget(oOriginalDomRef, oFocusTarget);
-			});
-		} else {
-			Promise.resolve().then(() => {
-				_focusTarget(oOriginalDomRef, oFocusTarget);
-			});
+		if (oFocusTarget) {
+			// In the meantime, the focus could be set somewhere else.
+			// If that element is focusable, then we don't steal the focus from it
+			if (oEvent._bRenderingPending) {
+				Rendering.addPrerenderingTask(() => {
+					_focusTarget(oOriginalDomRef, oFocusTarget);
+				});
+			} else {
+				Promise.resolve().then(() => {
+					_focusTarget(oOriginalDomRef, oFocusTarget);
+				});
+			}
 		}
+
 	};
 
 	Element.prototype.insertDependent = function(oElement, iIndex) {
