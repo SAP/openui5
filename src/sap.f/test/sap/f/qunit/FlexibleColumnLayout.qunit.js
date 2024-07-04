@@ -1758,6 +1758,33 @@ function(
 		}
 	});
 
+	QUnit.test("no pointer events on content during column resize", function (assert) {
+		this.oFCL.placeAt(sQUnitFixture);
+		Core.applyChanges();
+
+		assert.expect(6);
+		var done = assert.async();
+
+		this.oFCL._oAnimationEndListener.waitForAllColumnsResizeEnd().then(function () {
+			var oMockEvent = {pageX: 10},
+				oMovedSeparator = this.oFCL.getDomRef().querySelector(".sapFFCLColumnSeparator"),
+				aColumnContentWrappers = this.oFCL.getDomRef().querySelectorAll(".sapFFCLColumnContent");
+
+			// mock start separator movement
+			this.oFCL._onColumnSeparatorMoveStart(oMockEvent, oMovedSeparator, false);
+			aColumnContentWrappers.forEach(function(wrapperElement) {
+				assert.strictEqual(getComputedStyle(wrapperElement).pointerEvents, "none", "pointer events are disabled");
+			});
+
+			// mock end separator movement
+			this.oFCL._exitInteractiveResizeMode();
+			aColumnContentWrappers.forEach(function(wrapperElement) {
+				assert.strictEqual(getComputedStyle(wrapperElement).pointerEvents, "auto", "pointer events are restored");
+			});
+			done();
+		}.bind(this));
+	});
+
 	QUnit.test("columnResize event is fired after resize", function (assert) {
 		assert.expect(1);
 		// setup
