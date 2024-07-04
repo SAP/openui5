@@ -45,6 +45,7 @@ sap.ui.define(["sap/base/i18n/Localization", "sap/ui/core/Renderer", "sap/ui/cor
 			bColumnHeadersActive = false,
 			bHasFooter = (sType == "Foot"),
 			sMode = oTable.getMode(),
+			sMultiSelectMode = oTable.getMultiSelectMode(),
 			iModeOrder = ListBaseRenderer.ModeOrder[sMode],
 			sClassPrefix = "sapMListTbl",
 			sIdPrefix = oTable.getId("tbl"),
@@ -132,7 +133,7 @@ sap.ui.define(["sap/base/i18n/Localization", "sap/ui/core/Renderer", "sap/ui/cor
 			}
 			if (sType == "Head") {
 				rm.attr("aria-rowindex", "1");
-				if (oTable._bSelectionMode) {
+				if (sMode === "MultiSelect" && sMultiSelectMode !== MultiSelectMode.ClearAll) {
 					rm.attr("aria-selected", "false");
 					bRenderAriaSelected = true;
 				}
@@ -146,7 +147,7 @@ sap.ui.define(["sap/base/i18n/Localization", "sap/ui/core/Renderer", "sap/ui/cor
 
 		if (iModeOrder == -1) {
 			openStartCell("ModeCol", "SelCol", "TABLE_SELECTION_COLUMNHEADER").openEnd();
-			if (bRenderAriaSelected && sMode == "MultiSelect") {
+			if (sMode == "MultiSelect") {
 				rm.renderControl(oTable.getMultiSelectMode() == MultiSelectMode.ClearAll ? oTable._getClearAllButton() : oTable._getSelectAllCheckbox());
 			}
 			rm.close(sCellTag);

@@ -3714,6 +3714,9 @@ sap.ui.define([
 		testAriaSelected: function(oDomRef) {
 			QUnit.assert.equal(oDomRef.getAttribute("aria-selected"), "true");
 		},
+		testAriaSelectedNotSet: function(oDomRef) {
+			QUnit.assert.notOk(oDomRef.hasAttribute("aria-selected"));
+		},
 		testAriaNotSelected: function(oDomRef) {
 			QUnit.assert.equal(oDomRef.getAttribute("aria-selected"), "false");
 		},
@@ -3724,7 +3727,9 @@ sap.ui.define([
 			assert.ok(oHeaderCellDomRef.classList.contains("sapMTblCellFocusable"), "Focus class is set for the " + oHeaderCellDomRef.id);
 			assert.equal(oHeaderCellDomRef.getAttribute("aria-colindex"), iColIndex, "aria-colindex is set correctly for the " + oHeaderCellDomRef.id);
 			if (bSelected != undefined) {
-				assert.equal(oHeaderCellDomRef.getAttribute("aria-selected"), bSelected.toString(), "aria-selected is set correctly for the " + oHeaderCellDomRef.id);
+				assert.equal(oHeaderCellDomRef.getAttribute("aria-selected"),
+							this.oTable.getMultiSelectMode() !== "ClearAll" ? bSelected.toString() : null,
+							"aria-selected is set correctly for the " + oHeaderCellDomRef.id);
 			}
 		},
 		testCell: function(oCellDomRef, iColIndex, bSelected) {
@@ -3842,11 +3847,19 @@ sap.ui.define([
 		this.testCell(this.oTable.getDomRef("tblFootModeCol"), 1);
 
 		this.oTable.selectAll();
-		this.oTable.getDomRef("tblHeader").querySelectorAll(".sapMLIBFocusable,.sapMTblCellFocusable").forEach(this.testAriaSelected);
 		this.oTable.getDomRef("tblBody").querySelectorAll(".sapMLIBFocusable,.sapMTblCellFocusable").forEach(this.testAriaSelected);
+		this.oTable.getDomRef("tblHeader").querySelectorAll(".sapMLIBFocusable,.sapMTblCellFocusable").forEach(this.testAriaSelected);
 
 		this.oTable.removeSelections();
+		this.oTable.getDomRef("tblBody").querySelectorAll(".sapMLIBFocusable,.sapMTblCellFocusable").forEach(this.testAriaNotSelected);
 		this.oTable.getDomRef("tblHeader").querySelectorAll(".sapMLIBFocusable,.sapMTblCellFocusable").forEach(this.testAriaNotSelected);
+
+		this.oTable.setMultiSelectMode("ClearAll");
+		await nextUIUpdate();
+		await this.testAria(1);
+
+		this.testHeaderCell(this.oTable.getDomRef("tblHeadModeCol"), 1, false);
+		this.oTable.getDomRef("tblHeader").querySelectorAll(".sapMLIBFocusable,.sapMTblCellFocusable").forEach(this.testAriaSelectedNotSet);
 		this.oTable.getDomRef("tblBody").querySelectorAll(".sapMLIBFocusable,.sapMTblCellFocusable").forEach(this.testAriaNotSelected);
 	});
 
