@@ -18,8 +18,7 @@ sap.ui.define([
 
 	var oSearchParams = new URLSearchParams(window.location.search),
 		iEmptyRowCount = parseInt(oSearchParams.get("emptyRows") || "2"),
-		LayoutType = library.LayoutType,
-		bLegacy;
+		LayoutType = library.LayoutType;
 
 	return Controller.extend("sap.ui.core.sample.odata.v4.MultipleInlineCreationRowsGrid.Main", {
 		oSelectedProduct : undefined,
@@ -76,10 +75,11 @@ sap.ui.define([
 
 		createInactiveParts : function (iCount) {
 			var oBinding = this.byId("parts").getBinding("rows"),
-				i;
+				i,
+				that = this;
 
 			function createEmptyRow() {
-				var oContext = oBinding.create({}, false, !bLegacy, /*bInactive*/true);
+				var oContext = oBinding.create({}, false, !that.bLegacy, /*bInactive*/true);
 
 				oContext.created().catch(function (oError) {
 					if (!oError.canceled) {
@@ -205,7 +205,7 @@ sap.ui.define([
 					oSelectRowCount = oView.byId("rowCount_select"),
 					that = this;
 
-				bLegacy = TestUtils.retrieveData( // controlled by OPA
+				this.bLegacy = TestUtils.retrieveData( // controlled by OPA
 						"sap.ui.core.sample.odata.v4.MultipleInlineCreationRowsGrid.legacy")
 					|| oSearchParams.get("legacy");
 
