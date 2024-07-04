@@ -913,11 +913,11 @@ sap.ui.define([
 			}).join(" / ");
 
 			if (sKey.indexOf("LAST") === 0) {
-				return _resourceBundle.getText("DYNAMIC_DATE_LASTX_TITLE", sCombinedOptions);
+				return _resourceBundle.getText("DYNAMIC_DATE_LASTX_TITLE", [sCombinedOptions]);
 			}
 
 			if (sKey.indexOf("NEXT") === 0) {
-				return _resourceBundle.getText("DYNAMIC_DATE_NEXTX_TITLE", sCombinedOptions);
+				return _resourceBundle.getText("DYNAMIC_DATE_NEXTX_TITLE", [sCombinedOptions]);
 			}
 		};
 
