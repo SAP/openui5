@@ -92,6 +92,29 @@ sap.ui.define([
 	NewsContent.prototype.onAfterRendering = function() {
 		this.$().on("mouseenter", this._addTooltip.bind(this));
 		this.$().on("mouseleave", this._removeTooltip.bind(this));
+		this._setMaxLines();
+	};
+
+	/**
+	 * Sets the maximum number of lines as either contentText or subheader
+	 * @private
+	 */
+	NewsContent.prototype._setMaxLines = function() {
+		// This is being done in an asynchronous way so that all the div tags are rendered and appropriate dimensions are added
+		setTimeout(() => {
+			if (this.getDomRef()) {
+				var bIsTitleExtended = this.getDomRef("title").classList.contains("sapMNwCExtend");
+				var oRequiredDiv = bIsTitleExtended ? this.getDomRef("title") : this.getDomRef("subheader");
+				var iHeight = parseFloat(getComputedStyle(oRequiredDiv).height);
+				var oInnerDiv = oRequiredDiv.querySelector('.sapMFT');
+				var iFontSize = parseFloat(getComputedStyle(oInnerDiv).fontSize);
+				var iLineHeight = getComputedStyle(oInnerDiv).lineHeight === "normal" ? "1.2" : getComputedStyle(oInnerDiv).lineHeight;
+				iLineHeight = (iLineHeight.slice(-2) === "px") ? parseFloat(iLineHeight.slice(0,-2)) / iFontSize : iLineHeight;
+				var iCummulativeLineHeight = iFontSize * iLineHeight;
+				var iTotalLines = Math.floor(iHeight / iCummulativeLineHeight);
+				oInnerDiv.style.webkitLineClamp = iTotalLines;
+			}
+		},0);
 	};
 
 	/**

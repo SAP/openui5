@@ -22,6 +22,7 @@ sap.ui.define([],
 	 */
 	NewsContentRenderer.render = function(oRm, oControl) {
 		var sTooltip = oControl.getTooltip_AsString();
+		var bIsSubheaderPresent = oControl.getSubheader();
 		if (typeof sTooltip !== "string") {
 			sTooltip = "";
 		}
@@ -37,17 +38,21 @@ sap.ui.define([],
 		}
 		oRm.openEnd();
 
-		oRm.openStart("div");
-		oRm.class("sapMNwCCTxt");
-		oRm.openEnd();
-		oRm.renderControl(oControl._oContentText);
-		oRm.close("div");
+			oRm.openStart("div", oControl.getId() + "-title");
+			oRm.class("sapMNwCCTxt");
+			if (!bIsSubheaderPresent) {
+				oRm.class("sapMNwCExtend");
+			}
+			oRm.openEnd();
+			oRm.renderControl(oControl._oContentText);
+			oRm.close("div");
 
-		oRm.openStart("div", oControl.getId() + "-subheader");
-		oRm.class("sapMNwCSbh");
-		oRm.openEnd();
-		oRm.renderControl(oControl._oSubHeaderText);
-		oRm.close("div");
+			oRm.openStart("div", oControl.getId() + "-subheader");
+			oRm.class("sapMNwCSbh");
+			oRm.class("sapMNwCExtend");
+			oRm.openEnd();
+			oRm.renderControl(oControl._oSubHeaderText);
+			oRm.close("div");
 		oRm.close("div");
 	};
 

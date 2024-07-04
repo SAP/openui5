@@ -13,12 +13,12 @@
 }
 
 .sapMNwCCTxt {
-	overflow: hidden;
+	min-height: fit-content;
 	text-overflow: ellipsis;
 	white-space: nowrap;
 	font-family: @sapUiFontFamily;
 	font-weight: normal;
-	padding: 0.1875rem 0 0 0;
+	margin-top: 0.1875rem;
 	max-width: 20.5rem;
 
 	.sapMText {
@@ -33,11 +33,13 @@
 
 .Stretch .sapMNwCCTxt {
 	max-width: none;
-	display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    font-weight: bold;
+	.sapMFT {
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
+		font-weight: bold;
+		overflow: hidden;
+	}
 }
 
 .TwoByOne .sapMNwCCTxt {
@@ -48,19 +50,26 @@
 
 .Stretch{
 	.sapMTileCnt.News .sapMNwC{
+		height: 100%;
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
 		.sapMNwCSbh{
 			max-width: none;
 			padding-top: 0.25rem;
-
 			.sapMFT{
 				word-wrap: break-word;
 				white-space: normal;
-				height: 2rem;
-				overflow: hidden;
-				max-width: 60ch;
-				text-overflow: ellipsis;
-				white-space: nowrap;
 			}
+		}
+	}
+	.sapMNwCExtend {
+		height: 100%;
+		.sapMFT {
+			display: -webkit-box;
+			-webkit-line-clamp: 1;
+			-webkit-box-orient: vertical;
+			overflow: hidden;
 		}
 	}
 }
@@ -124,9 +133,7 @@
 		}
 		.sapMNwCSbh > .sapMFT {
 			white-space: nowrap;
-			width: 11.063rem;
 			overflow: hidden;
-			max-width: 60ch;
 			text-overflow: ellipsis;
 			white-space: nowrap;
 			text-overflow: ellipsis;

@@ -146,6 +146,48 @@ html[dir=rtl] .sapMTileCntFtrTxt {
 	}
 }
 
+.Stretch {
+	.sapMTileCnt.News.sapMTileFooterPresent{
+		.sapMTileCntContent {
+			height: -webkit-calc(~'100% - 50px') !important;
+		}
+	}
+	&.sapMTileSmallPhone {
+		.sapMTileCnt.News.sapMTileFooterPresent{
+			.sapMTileCntContent {
+				height: -webkit-calc(~'100% - 32px') !important;
+			}
+		}
+	}
+	.sapMTileCnt.News {
+		.sapMTileCntContent {
+			height: -webkit-calc(~'100% - 32px');
+		}
+	}
+	&.sapMTileSmallPhone {
+		.sapMTileCnt.News {
+			.sapMTileCntContent {
+				height: -webkit-calc(~'100% - 12px');
+			}
+		}
+	}
+}
+
+.Stretch.sapMSTIndicatorVisible {
+	.sapMTileCnt.News{
+		.sapMTileCntContent {
+			height: -webkit-calc(~'100% - 32px');
+		}
+	}
+	&.sapMTileSmallPhone {
+		.sapMTileCnt.News{
+			.sapMTileCntContent {
+				height: -webkit-calc(~'100% - 23px');
+			}
+		}
+	}
+}
+
 .sapMTileSmallPhone {
 	.sapMTileCnt {
 		height: 5.5rem;
