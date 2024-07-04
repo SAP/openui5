@@ -3387,8 +3387,11 @@ sap.ui.define([
 	 *
 	 * @property {boolean} [canOverflow]
 	 * 	A boolean that tells whether the control can move to the overflow menu or not.
-	 * 	<b>Note:</b> Even if <code>canOverflow</code> is set to <code>false</code>, the <code>propsUnrelatedToSize</code> field is taken into account,
-	 * 	allowing to optimize the behavior of controls that do not need to overflow, but are used in an <code>sap.m.OverflowToolbar</code> regardless.
+	 * <ul><b>Notes:</b>
+	 * <li>Even if <code>canOverflow</code> is set to <code>false</code>, the <code>propsUnrelatedToSize</code> field is taken into account,
+	 * allowing to optimize the behavior of controls that do not need to overflow, but are used in an <code>sap.m.OverflowToolbar</code> regardless.</li>
+	 * <li>If <code>canOverflow</code> is not provided, its default value is <code>false</code>. In this case, the control is shown in the content of the
+	 * <code>sap.m.OverflowToolbar</code> but it's not possible to enter the overflow area.</li></ul>
 	 * @property {string[]} [autoCloseEvents]
 	 * 	An array of strings, listing all of the control's events that should trigger the closing of the overflow menu, when fired.
 	 * @property {string[]} [invalidationEvents]
