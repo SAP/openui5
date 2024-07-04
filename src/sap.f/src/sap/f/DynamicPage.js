@@ -2013,6 +2013,12 @@ sap.ui.define([
 	 */
 	DynamicPage.prototype._onTitlePress = function () {
 		if (this.getToggleHeaderOnTitleClick() && this._hasVisibleTitleAndHeader()) {
+			if (!this.getHeaderExpanded() && this._headerBiggerThanAllowedToBeExpandedInTitleArea() && !this._preserveHeaderStateOnScroll()) {
+				// if the header will expanded and it is bigger than the allowed height to be shown in the title area
+				// we explicitly move it to the content area unless the preserveHeaderStateOnScroll is set
+				// the header is then always displayed in the title are by definition as is always sticky
+				this._moveHeaderToContentArea(true);
+			}
 			this._titleExpandCollapseWhenAllowed(true /* user interaction */);
 			this.getTitle()._focus();
 		}
