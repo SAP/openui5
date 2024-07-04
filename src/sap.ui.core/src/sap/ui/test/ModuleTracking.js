@@ -382,7 +382,7 @@
 			// "Run all tests" in "Rerunning selected tests" case: Same href as document, but remove
 			// testId
 			const oParams = new URLSearchParams(document.location.search);
-			if (oParams.has("moduleId")) {
+			if (oParams.has("testId")) {
 				const oClearFilter = document.querySelector("#qunit-clearFilter");
 				if (oClearFilter) {
 					oParams.delete("testId");
