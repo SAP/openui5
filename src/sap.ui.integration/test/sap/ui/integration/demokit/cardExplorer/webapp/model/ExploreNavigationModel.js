@@ -2674,7 +2674,7 @@ sap.ui.define([
 					{
 						key: 'badge',
 						target: 'exploreSamples',
-						title: 'Text Badge',
+						title: 'Badge',
 						useIFrame: true,
 						isApplication: true,
 						files: [

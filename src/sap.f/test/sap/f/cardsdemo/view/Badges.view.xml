@@ -2,6 +2,7 @@
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:f="sap.f"
+	xmlns:card="sap.f.cards"
 	xmlns:w="sap.ui.integration.widgets"
 	displayBlock="true">
 	<Page id="badgesPage" title="{i18n>appTitle}">
@@ -23,23 +24,42 @@
 					<f:GridContainerItemLayoutData rows="6" columns="3" />
 				</w:layoutData>
 			</w:Card>
-
 			<w:Card manifest="{manifests>/listContent/card13}"
 				baseUrl="{cardsPlayground>/playgroundBaseUrl}">
 				<w:customData>
-					<BadgeCustomData value="Very long badge title Very long badge title Very long badge title Very long badge title Very long badge title" />
+					<card:CardBadgeCustomData  icon="sap-icon://status-in-process"  value="Updated" state="Indication03"/>
 				</w:customData>
 				<w:layoutData>
-					<f:GridContainerItemLayoutData minRows="6" columns="3" />
+					<f:GridContainerItemLayoutData rows="6" columns="3" />
 				</w:layoutData>
 			</w:Card>
-
-			<w:Card manifest="{cardsPlayground>/playgroundBaseUrl}/bundles/analyticalLine/manifest.json">
+			<w:Card manifest="{manifests>/listContent/card13}"
+				baseUrl="{cardsPlayground>/playgroundBaseUrl}">
 				<w:customData>
-					<BadgeCustomData value="121" />
+					<card:CardBadgeCustomData value="New"/>
+					<card:CardBadgeCustomData icon="sap-icon://pushpin-off" visibilityMode="Persist"/>
 				</w:customData>
 				<w:layoutData>
-					<f:GridContainerItemLayoutData columns="4" />
+					<f:GridContainerItemLayoutData rows="6" columns="3" />
+				</w:layoutData>
+			</w:Card>
+			<w:Card manifest="{manifests>/listContent/card13}"
+				baseUrl="{cardsPlayground>/playgroundBaseUrl}">
+				<w:customData>
+						<card:CardBadgeCustomData value="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum congue libero ut blandit faucibus. Phasellus sed urna id tortor consequat accumsan eget at leo. Cras quis arcu magna." />
+				</w:customData>
+				<w:layoutData>
+					<f:GridContainerItemLayoutData rows="6" columns="3" />
+				</w:layoutData>
+			</w:Card>
+			<w:Card manifest="{manifests>/listContent/card13}"
+				baseUrl="{cardsPlayground>/playgroundBaseUrl}">
+				<w:customData>
+						<card:CardBadgeCustomData icon="sap-icon://pushpin-off" visibilityMode="Persist"/>
+						<card:CardBadgeCustomData value="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum congue libero ut blandit faucibus. Phasellus sed urna id tortor consequat accumsan eget at leo. Cras quis arcu magna." />
+				</w:customData>
+				<w:layoutData>
+					<f:GridContainerItemLayoutData rows="6" columns="3" />
 				</w:layoutData>
 			</w:Card>
 		</f:GridContainer>

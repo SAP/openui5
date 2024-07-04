@@ -39,7 +39,8 @@
 							<f:GridContainerItemLayoutData columns="3" />
 						</w:layoutData>
 						<w:customData>
-							<BadgeCustomData value="New" />
+							<card:CardBadgeCustomData value="New" />
+							<card:CardBadgeCustomData icon="sap-icon://pushpin-off" visibilityMode="Persist"/>
 						</w:customData>
 					</w:Card>
 
