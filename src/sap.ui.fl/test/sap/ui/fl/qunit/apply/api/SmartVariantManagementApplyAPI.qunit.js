@@ -291,6 +291,9 @@ sap.ui.define([
 			});
 		});
 
+		/**
+		 * @deprecated Since version 1.126
+		 */
 		QUnit.test("When isVendorLayer() is called it calls the corresponding Utils function", function(assert) {
 			sandbox.stub(LayerUtils, "isVendorLayer").withArgs().returns(false);
 			var bVendorLayer = SmartVariantManagementApplyAPI.isVendorLayer();
@@ -298,6 +301,9 @@ sap.ui.define([
 			assert.strictEqual(bVendorLayer, false);
 		});
 
+		/**
+		 * @deprecated Since version 1.126
+		 */
 		QUnit.test("When isVariantDownport() is called it calls the corresponding Utils function", function(assert) {
 			sandbox.stub(LayerUtils, "getCurrentLayer").withArgs().returns("VENDOR");
 			sandbox.stub(URLSearchParams.prototype, "get").withArgs("hotfix").returns("true");
