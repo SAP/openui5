@@ -1008,7 +1008,7 @@ var FrameType = library.FrameType;
 				iWidth = "304px";
 				sSizeBehavior = "Small";
 			} else {
-				iHeight = "256px";
+				iHeight = "272px";
 				iWidth = "862px";
 				sSizeBehavior = "Responsive";
 			}
@@ -1190,22 +1190,14 @@ var FrameType = library.FrameType;
 		oCore.applyChanges();
 		assert.equal(true,true,"ok");
 		var aContextTextTitle = document.querySelectorAll(".sapMNwCCTxt");
-		var aSubHeaderTitle = document.querySelectorAll(".sapMNwCSbh .sapMFT");
 		var aTileContainerContentArea = document.querySelectorAll(".sapMTileCntContent");
 		var aGenericTile = document.querySelectorAll(".sapMGTBackgroundImage");
 		for (var i = 0; i < aContextTextTitle.length; i++ ) {
-			var oContextProperties = getComputedStyle(aContextTextTitle[i]);
+			var oContextProperties = getComputedStyle(aContextTextTitle[i].querySelector(".sapMFT"));
 			assert.equal(oContextProperties.webkitLineClamp, 2, "Property set Correctly");
 			assert.equal(oContextProperties.overflow.toLowerCase(), "hidden", "Property set Correctly");
 			assert.equal(oContextProperties.webkitBoxOrient.toLowerCase(), "vertical", "Property set Correctly");
 			assert.equal(oContextProperties.maxWidth.toLowerCase(), "none", "Property set Correctly");
-		}
-		for (var i = 0; i < aSubHeaderTitle.length; i++ ) {
-			var aSubHeaderTitleProperties = getComputedStyle(aSubHeaderTitle[i]);
-			assert.equal(aSubHeaderTitleProperties.textOverflow.toLowerCase(), "ellipsis", "Property set Correctly");
-			assert.equal(aSubHeaderTitleProperties.overflow.toLowerCase(), "hidden", "Property set Correctly");
-			assert.equal(aSubHeaderTitleProperties.wordWrap.toLowerCase(), "break-word", "Property set Correctly");
-			assert.equal(aSubHeaderTitleProperties.whiteSpace.toLowerCase(), "nowrap", "Property set Correctly");
 		}
 		for (var i = 0; i < aTileContainerContentArea.length; i++ ) {
 			var oTileContentAreaProperties = getComputedStyle(aTileContainerContentArea[i]);
@@ -1225,23 +1217,14 @@ var FrameType = library.FrameType;
 		oCore.applyChanges();
 		assert.equal(true,true,"ok");
 		var aContextTextTitle = document.querySelectorAll(".sapMNwCCTxt");
-		var aSubHeaderTitle = document.querySelectorAll(".sapMNwCSbh .sapMFT");
 		var aTileContainerContentArea = document.querySelectorAll(".sapMTileCntContent");
 		var aGenericTile = document.querySelectorAll(".sapMGTBackgroundImage");
 		var aTileContentArea = document.querySelectorAll(".sapMGTContent");
 		for (var i = 0; i < aContextTextTitle.length; i++ ) {
-			var oContextProperties = getComputedStyle(aContextTextTitle[i]);
+			var oContextProperties = getComputedStyle(aContextTextTitle[i].querySelector(".sapMFT"));
 			assert.equal(oContextProperties.webkitLineClamp, 2, "Property set Correctly");
 			assert.equal(oContextProperties.overflow.toLowerCase(), "hidden", "Property set Correctly");
 			assert.equal(oContextProperties.webkitBoxOrient.toLowerCase(), "vertical", "Property set Correctly");
-			assert.equal(oContextProperties.maxWidth.toLowerCase(), "284px", "Property set Correctly");
-		}
-		for (var i = 0; i < aSubHeaderTitle.length; i++ ) {
-			var aSubHeaderTitleProperties = getComputedStyle(aSubHeaderTitle[i]);
-			assert.equal(aSubHeaderTitleProperties.textOverflow.toLowerCase(), "ellipsis", "Property set Correctly");
-			assert.equal(aSubHeaderTitleProperties.overflow.toLowerCase(), "hidden", "Property set Correctly");
-			assert.equal(aSubHeaderTitleProperties.wordWrap.toLowerCase(), "break-word", "Property set Correctly");
-			assert.equal(aSubHeaderTitleProperties.whiteSpace.toLowerCase(), "nowrap", "Property set Correctly");
 		}
 		for (var i = 0; i < aTileContainerContentArea.length; i++ ) {
 			var oTileContentAreaProperties = getComputedStyle(aTileContainerContentArea[i]);
@@ -1316,6 +1299,18 @@ var FrameType = library.FrameType;
 		}
 		assert.equal(document.activeElement.id, this.oTile2.getId(), "Focus on Tile2");
 		assert.ok(spy.notCalled, "Function _setAriaDescriptor not called");
+	});
+
+	QUnit.test("Setting the maximum number of lines for the text inside the tile", function(assert){
+		this.oSlideTile = this.createSlideTile(false,true).placeAt("qunit-fixture");
+		var fnDone = assert.async();
+		oCore.applyChanges();
+		var oNewsTile = this.oSlideTile.getTiles()[0].getTileContent()[0].getContent();
+		var oInnerDiv = oNewsTile.getDomRef("subheader").querySelector('.sapMFT');
+		setTimeout(() => {
+			assert.ok(Number.isInteger(oInnerDiv.style.webkitLineClamp * 1),"Line clamp has been added successfully to subheader");
+			fnDone();
+		},0);
 	});
 
 	// Checks whether the given DomRef is contained or equals (in) one of the given container

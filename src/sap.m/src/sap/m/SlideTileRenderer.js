@@ -57,6 +57,9 @@ sap.ui.define(['./library', "sap/base/security/encodeCSS"],
 		}
 		oRm.attr("role", "application");
 		oRm.attr("aria-roledescription", oControl._oRb.getText("SLIDETILE"));
+		if (iLength > 1) {
+			oRm.class("sapMSTIndicatorVisible");
+		}
 		oRm.openEnd();
 		oControl.getAggregation("_invisibleText");
 		oRm.renderControl(oControl.getAggregation("_invisibleText"));
