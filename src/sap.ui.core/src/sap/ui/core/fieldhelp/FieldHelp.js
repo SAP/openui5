@@ -3,11 +3,12 @@
  */
 sap.ui.define([
 	"sap/base/Log",
+	"sap/ui/base/BindingInfo",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/Element",
 	"sap/ui/core/ElementRegistry",
 	"sap/ui/core/LabelEnablement"
-], function (Log, ManagedObject, Element, ElementRegistry, LabelEnablement) {
+], function (Log, BindingInfo, ManagedObject, Element, ElementRegistry, LabelEnablement) {
 	"use strict";
 
 	const sClassName = "sap/ui/core/fieldhelp/FieldHelp";
@@ -151,18 +152,51 @@ sap.ui.define([
 		}
 
 		/**
+		 * Iterates over the internal data structure for all controls which have field help information and
+		 * checks whether the field help for that control has to be displayed at another control, e.g. an
+		 * input field in a table has to show the field help information at the table column header. It checks the
+		 * <code>fieldHelpDisplay</code> association or the <code>sap.ui.base.BindingInfo.OriginalParent</code>
+		 * symbol at the control and in the control's parent hierarchy. If the internal data structure contains
+		 * outdated references, they are cleaned up.
+		 *
+		 * @returns {Object<string, string>}
+		 *   Maps a control ID having a field help information to the control ID at which it shall be displayed
+		 */
+		_getFieldHelpDisplayMapping() {
+			const mControlIDToFieldHelpDisplayControlID = {};
+			for (const sControlID in this.#mDocuRefControlToFieldHelp) {
+				const oControl = Element.getElementById(sControlID);
+				if (!oControl) { // control has been destroyed, cleanup internal data structure
+					delete this.#mDocuRefControlToFieldHelp[sControlID];
+					continue;
+				}
+
+				let sFieldHelpDisplayControlId;
+				let oTempControl = oControl;
+				do {
+					sFieldHelpDisplayControlId = oTempControl.getAssociation("fieldHelpDisplay")
+						|| oTempControl[BindingInfo.OriginalParent]?.getId();
+					oTempControl = oTempControl.getParent();
+				} while (!sFieldHelpDisplayControlId && oTempControl);
+				if (sFieldHelpDisplayControlId) {
+					mControlIDToFieldHelpDisplayControlID[sControlID] = sFieldHelpDisplayControlId;
+				}
+			}
+			return mControlIDToFieldHelpDisplayControlID;
+		}
+
+		/**
 		 * Gets an array of field help hotspots as required by the SAP Companion.
 		 *
 		 * @returns {module:sap/ui/core/fieldhelp/FieldHelpInfo[]} The array of field help hotspots
 		 */
 		_getFieldHelpHotspots() {
+			const mControlIDToFieldHelpDisplayControlID = this._getFieldHelpDisplayMapping();
+			const oFieldHelpDisplayControlIDToAddedURNs = {};
 			const aFieldHelpHotspots = [];
 			Object.keys(this.#mDocuRefControlToFieldHelp).forEach((sControlID) => {
-				const oControl = Element.getElementById(sControlID);
-				if (!oControl) { // control has been destroyed, cleanup internal data structure
-					delete this.#mDocuRefControlToFieldHelp[sControlID];
-					return;
-				}
+				const sControlIDToDisplayFieldHelp = mControlIDToFieldHelpDisplayControlID[sControlID] || sControlID;
+				const oControl = Element.getElementById(sControlIDToDisplayFieldHelp);
 				const sLabel = LabelEnablement._getLabelTexts(oControl)[0];
 				if (!sLabel) {
 					Log.error(`Cannot find a label for control '${sControlID}'; ignoring field help`,
@@ -172,10 +206,17 @@ sap.ui.define([
 				}
 				const oURNSet = new Set();
 				Object.values(this.#mDocuRefControlToFieldHelp[sControlID]).forEach((aURNs) => {
-					// filter duplicates
-					aURNs.forEach(oURNSet.add.bind(oURNSet));
+					aURNs.forEach(oURNSet.add.bind(oURNSet)); // add to the Set to filter duplicates
 				});
 				Array.from(oURNSet).forEach((sURN) => {
+					if (sControlIDToDisplayFieldHelp !== sControlID) {
+						if (oFieldHelpDisplayControlIDToAddedURNs[sControlIDToDisplayFieldHelp]?.[sURN]) {
+							return; // already added for another control
+						}
+
+						oFieldHelpDisplayControlIDToAddedURNs[sControlIDToDisplayFieldHelp] ??= {};
+						oFieldHelpDisplayControlIDToAddedURNs[sControlIDToDisplayFieldHelp][sURN] = true;
+					}
 					const oParameters = new URLSearchParams(sURN.slice(sURNPrefix.length));
 					const sOrigin = oParameters.get("origin");
 					aFieldHelpHotspots.push({
@@ -184,7 +225,7 @@ sap.ui.define([
 							type: oParameters.get("type"),
 							...(sOrigin && {origin: sOrigin})
 						},
-						hotspotId: sControlID,
+						hotspotId: sControlIDToDisplayFieldHelp,
 						labelText: sLabel
 					});
 				});

@@ -51,6 +51,10 @@ sap.ui.define([
 			oElement.data("sap-ui-DocumentationRef",
 				Array.isArray(vDocumentationRefs) ? vDocumentationRefs : [vDocumentationRefs],
 				false);
+			// For elements, for which the field help information is set manually (e.g. filter fields), the
+			// field help has to be displayed at that element, even if there are child bindings (e.g. value help)
+			// that also contribute to the field help information
+			oElement.setFieldHelpDisplay(oElement);
 			oElement.updateFieldHelp?.();
 			oObserver.observe(oElement, {destroy: true});
 		}

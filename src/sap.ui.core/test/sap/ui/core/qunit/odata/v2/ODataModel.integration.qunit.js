@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/m/Input",
 	"sap/m/Label",
 	"sap/ui/Device",
+	"sap/ui/base/BindingInfo",
 	"sap/ui/base/ManagedObjectObserver",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/core/Lib",
@@ -40,7 +41,7 @@ sap.ui.define([
 	"sap/ui/util/XMLHelper"
 	// load Table resources upfront to avoid loading times > 1 second for the first test using Table
 	// "sap/ui/table/Table"
-], function (Log, Localization, merge, uid, Input, Label, Device, ManagedObjectObserver, SyncPromise,
+], function (Log, Localization, merge, uid, Input, Label, Device, BindingInfo, ManagedObjectObserver, SyncPromise,
 		Library, Messaging, UI5Date, FieldHelp, FieldHelpUtil, Message, MessageType, Controller, View, Rendering,
 		BindingMode, Filter, FilterOperator, FilterType, Model, Sorter, JSONModel, MessageModel, CountMode,
 		MessageScope, Decimal, Context, ODataModel, XMLModel, TestUtils, datajs, XMLHelper) {
@@ -84,6 +85,18 @@ sap.ui.define([
 	function cloneODataMessage(oODataMessage, sTarget, aAdditionalTargets) {
 		return Object.assign({}, oODataMessage,
 			{target : sTarget, additionalTargets : aAdditionalTargets});
+	}
+
+	/**
+	 * Compares two given field help hotspots.
+	 *
+	 * @param {object} a A field help hotspot
+	 * @param {object} b Another field help hotspot
+	 *
+	 * @returns {-1|0|1} Wheter <code>a</code> is smaller, equal or greater
+	 */
+	function compareHotspots(a, b) {
+		return a.hotspotId.localeCompare(b.hotspotId) || a.backendHelpKey.id.localeCompare(b.backendHelpKey.id);
 	}
 
 	/**
@@ -23108,15 +23121,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	<Label labelFor="Note0" text="Label for Item or Sales Order Note" />
 	<Input id="Note0" value="{Note}" />
 </FlexBox>`;
-		function compare(a, b) {
-			if (a === b) {
-				return 0;
-			}
-			return a < b ? -1 : 1;
-		}
-		function sortHotspots(a, b) {
-			return compare(a.hotspotId, b.hotspotId) || compare(a.backendHelpKey.id, b.backendHelpKey.id);
-		}
 		let fnResolve;
 		function updateCallback(aCurrentHotspots) {
 			fnResolve(aCurrentHotspots);
@@ -23126,7 +23130,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			return new Promise((resolve) => {
 				fnResolve = resolve;
 			}).then((aCurrentHotspots) => {
-				assert.deepEqual(aCurrentHotspots.sort(sortHotspots), aExpectedHotspots.sort(sortHotspots),
+				assert.deepEqual(aCurrentHotspots.sort(compareHotspots), aExpectedHotspots.sort(compareHotspots),
 					"Update called: " + sTestTitle);
 			});
 		}
@@ -23307,6 +23311,160 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					this.waitForChanges(assert, "Unbind form0")
 				]);
 			});
+		}).finally(() => {
+			FieldHelp.getInstance().deactivate();
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario 1: If a child control with a field help is embedded in a parent control with a
+	// <code>fieldHelpDisplay</code> association, the field help is displayed at the parent control.
+	// Scenario 2: If a parent control with a <code>fieldHelpDisplay</code> association has multiple child controls with
+	// field helps, those field helps are displayed at the parent control and not the children.
+	// Scenario 3+4: same as 1 and 2 but instead of <code>fieldHelpDisplay</code> association the parent control has
+	// a BindingInfo.OriginalParent symbol assigned.
+	// JIRA: CPOUI5MODELS-1761
+	QUnit.test("Field Help: fieldHelpDisplay association and BindingInfo.OriginalParent symbol", function (assert) {
+		const oModel = createSalesOrdersModel({defaultBindingMode: BindingMode.TwoWay});
+		const sView = `
+<FlexBox id="form" binding="{/SalesOrderSet('1')}">
+	<Label labelFor="ShowFieldHelp0" text="Element displaying field help" />
+	<Text id="ShowFieldHelp0" />
+	<FlexBox id="ParentWithFieldHelpDisplay">
+		<Label labelFor="Amount0" text="Label for both amount and currency" />
+		<Input id="Amount0" value="{
+			mode: 'TwoWay',
+			parts: [{
+				constraints: {precision: 16, scale: 3},
+				path: 'GrossAmount',
+				type: 'sap.ui.model.odata.type.Decimal'
+			}, {
+				constraints: {maxLength: 5},
+				path: 'CurrencyCode',
+				type: 'sap.ui.model.odata.type.String'
+			}],
+			type: 'sap.ui.model.type.Currency'
+		}" />
+		<Label labelFor="AmountOnly" text="Label for amount only" />
+		<Input id="AmountOnly" value="{
+			formatOptions: {showMeasure: false},
+			mode: 'TwoWay',
+			parts: [{
+				constraints: {precision: 16, scale: 3},
+				path: 'GrossAmount',
+				type: 'sap.ui.model.odata.type.Decimal'
+			}, {
+				constraints: {maxLength: 5},
+				path: 'CurrencyCode',
+				type: 'sap.ui.model.odata.type.String'
+			}],
+			type: 'sap.ui.model.type.Currency'
+		}" />
+		<Label labelFor="Note" text="Label for Note" />
+		<Input id="Note" value="{path: 'Note', type: 'sap.ui.model.odata.type.String'}" />
+	</FlexBox>
+	<Label labelFor="ShowFieldHelp1" text="Element displaying field help (OriginalParent)" />
+	<Text id="ShowFieldHelp1" />
+	<FlexBox id="ParentWithOriginalParentSymbol">
+		<Label labelFor="Amount1" text="Label for both amount and currency" />
+		<Input id="Amount1" value="{
+			mode: 'TwoWay',
+			parts: [{
+				constraints: {precision: 16, scale: 3},
+				path: 'GrossAmount',
+				type: 'sap.ui.model.odata.type.Decimal'
+			}, {
+				constraints: {maxLength: 5},
+				path: 'CurrencyCode',
+				type: 'sap.ui.model.odata.type.String'
+			}],
+			type: 'sap.ui.model.type.Currency'
+		}" />
+		<Label labelFor="AmountOnly1" text="Label for amount only" />
+		<Input id="AmountOnly1" value="{
+			formatOptions: {showMeasure: false},
+			mode: 'TwoWay',
+			parts: [{
+				constraints: {precision: 16, scale: 3},
+				path: 'GrossAmount',
+				type: 'sap.ui.model.odata.type.Decimal'
+			}, {
+				constraints: {maxLength: 5},
+				path: 'CurrencyCode',
+				type: 'sap.ui.model.odata.type.String'
+			}],
+			type: 'sap.ui.model.type.Currency'
+		}" />
+		<Label labelFor="Note1" text="Label for Note" />
+		<Input id="Note1" value="{path: 'Note', type: 'sap.ui.model.odata.type.String'}" />
+	</FlexBox>
+</FlexBox>`;
+		let fnResolve;
+		function updateCallback(aCurrentHotspots) {
+			fnResolve(aCurrentHotspots);
+		}
+		function waitForUpdate(aHotspots, sTestTitle) {
+			const aExpectedHotspots = aHotspots;
+			return new Promise((resolve) => {
+				fnResolve = resolve;
+			}).then((aCurrentHotspots) => {
+				assert.deepEqual(aCurrentHotspots.sort(compareHotspots), aExpectedHotspots.sort(compareHotspots),
+					"Update called: " + sTestTitle);
+			});
+		}
+
+		this.expectHeadRequest()
+			.expectRequest("SalesOrderSet('1')", {
+				__metadata: {uri: "SalesOrderSet('1')"},
+				CurrencyCode: "EUR",
+				DeliveryStatus: "N",
+				GrossAmount: "1.23",
+				Note: "Sales Order Note",
+				SalesOrderID: "1"
+			})
+			.expectValue("Amount0", "1.23")
+			.expectValue("AmountOnly", "1.23")
+			.expectValue("Amount0", "1.23\xa0EUR")
+			.expectValue("Note", "Sales Order Note");
+
+		return this.createView(assert, sView, {undefined: oModel, filter: new JSONModel({filter: "42"})}).then(() => {
+			const oView = this.oView;
+			oView.byId("ParentWithFieldHelpDisplay").setFieldHelpDisplay(oView.byId("ShowFieldHelp0"));
+			oView.byId("ParentWithOriginalParentSymbol")[BindingInfo.OriginalParent] = oView.byId("ShowFieldHelp1");
+			const aExpectedHotspots = [{
+				"backendHelpKey": {id: "GROSSAMOUNT", type: "DTEL"},
+				"hotspotId": oView.byId("ShowFieldHelp0").getId(),
+				"labelText": "Element displaying field help"
+			}, {
+				"backendHelpKey": {id: "/FOO/CURRENCY", type: "DTEL"},
+				"hotspotId": oView.byId("ShowFieldHelp0").getId(),
+				"labelText": "Element displaying field help"
+			}, {
+				"backendHelpKey": {id: "NOTE", origin: "MyOrigin", type: "DTEL"},
+				"hotspotId": oView.byId("ShowFieldHelp0").getId(),
+				"labelText": "Element displaying field help"
+			},{
+				"backendHelpKey": {id: "GROSSAMOUNT", type: "DTEL"},
+				"hotspotId": oView.byId("ShowFieldHelp1").getId(),
+				"labelText": "Element displaying field help (OriginalParent)"
+			}, {
+				"backendHelpKey": {id: "/FOO/CURRENCY", type: "DTEL"},
+				"hotspotId": oView.byId("ShowFieldHelp1").getId(),
+				"labelText": "Element displaying field help (OriginalParent)"
+			}, {
+				"backendHelpKey": {id: "NOTE", origin: "MyOrigin", type: "DTEL"},
+				"hotspotId": oView.byId("ShowFieldHelp1").getId(),
+				"labelText": "Element displaying field help (OriginalParent)"
+			}];
+			const oUpdateCalledPromise = waitForUpdate(aExpectedHotspots, "initial activation");
+
+			// code under test
+			FieldHelp.getInstance().activate(updateCallback);
+
+			return Promise.all([
+				oUpdateCalledPromise,
+				this.waitForChanges(assert, "Initial activation")
+			]);
 		}).finally(() => {
 			FieldHelp.getInstance().deactivate();
 		});
