@@ -1,9 +1,9 @@
 {
 	"sap.app": {
-		"id": "sap.ui.test.dependencyLoading.componentVariant"
+		"id": "testdata.dependencyLoading.componentVariant"
 	},
 	"sap.ui5": {
-		"componentName": "sap.ui.test.dependencyLoading.component1",
+		"componentName": "testdata.dependencyLoading.component1",
 		"dependencies": {
 			"libs": {
 				"sap.m": {},

@@ -34,7 +34,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Component Name in manifest", function(assert) {
-		this.sComponentName = "sap.ui.test.foo.bar";
+		this.sComponentName = "testdata.foo.bar";
 		this.oManifestJson = {
 			"sap.app": {
 				"id": this.sComponentName
@@ -46,7 +46,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Component Name as config option", function(assert) {
-		this.sComponentName = "sap.ui.test.foo.bar";
+		this.sComponentName = "testdata.foo.bar";
 		this.oManifestJson = {
 			"sap.app": {}
 		};
@@ -62,7 +62,7 @@ sap.ui.define([
 	 */
 	QUnit.test("getEntry (future=false)", function(assert) {
 		future.active = false;
-		this.sComponentName = "sap.ui.test.foo.bar";
+		this.sComponentName = "testdata.foo.bar";
 		this.oManifestJson = {
 			"sap.app": {
 				"id": this.sComponentName,
@@ -109,7 +109,7 @@ sap.ui.define([
 
 	QUnit.test("getEntry (future=true)", function(assert) {
 		future.active = true;
-		this.sComponentName = "sap.ui.test.foo.bar";
+		this.sComponentName = "testdata.foo.bar";
 		this.oManifestJson = {
 			"sap.app": {
 				"id": this.sComponentName,
@@ -159,7 +159,7 @@ sap.ui.define([
 		this.oManifest = new Manifest({
 			"sap.app": {}
 		}, {
-			componentName: "sap.ui.test.foo.bar",
+			componentName: "testdata.foo.bar",
 			url: "manifest/uri/manifest.json"
 		});
 
@@ -173,7 +173,7 @@ sap.ui.define([
 		var that = this;
 		var done = assert.async();
 		Manifest.load({
-			componentName: "sap.ui.test.manifestload",
+			componentName: "testdata.manifestload",
 			manifestUrl: "test-resources/sap/ui/core/qunit/component/testdata/manifestload/manifest.json",
 			async: true
 		}).then(function(oManifest) {
@@ -191,7 +191,7 @@ sap.ui.define([
 	QUnit.test("Manifest from Object", function(assert) {
 		this.oManifest = new Manifest({
 			"sap.app": {
-				"id": "sap.ui.test.manifestload"
+				"id": "testdata.manifestload"
 			},
 			"sap.ui5": {
 				"someValue": "someValue456",
@@ -199,7 +199,7 @@ sap.ui.define([
 					"libs": {
 					},
 					"components": {
-						"sap.ui.test.manifestload": {}
+						"testdata.manifestload": {}
 					}
 				}
 			}
@@ -219,7 +219,7 @@ sap.ui.define([
 	QUnit.test("Replace text placeholders in Manifest", function (assert) {
 		this.oManifest = new Manifest({
 			"sap.app": {
-				"id": "sap.ui.test.terminologies",
+				"id": "testdata.terminologies",
 				"type": "application",
 				"i18n": "i18n.properties",
 				"title": "{{appTitle}}",
@@ -244,7 +244,7 @@ sap.ui.define([
 
 		this.oManifest = new Manifest({
 			"sap.app": {
-				"id": "sap.ui.test.terminologies",
+				"id": "testdata.terminologies",
 				"type": "application",
 				"i18n": {
 					"bundleUrl": "i18n.properties",

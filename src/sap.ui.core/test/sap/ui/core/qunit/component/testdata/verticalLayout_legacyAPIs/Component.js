@@ -14,7 +14,7 @@ sap.ui.define([
 	"use strict";
 
 	// new Component
-	var Component = UIComponent.extend("sap.ui.test.verticalLayout_legacyAPIs.Component", {
+	var Component = UIComponent.extend("testdata.verticalLayout_legacyAPIs.Component", {
 		metadata : {
 			"abstract": true,
 			version : "1.0",

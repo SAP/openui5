@@ -1,9 +1,9 @@
 {
 
-	"name": "sap.ui.test.inherit.Component",
+	"name": "testdata.inherit.Component",
 
 	"sap.app": {
-		"id": "sap.ui.test.inherit",
+		"id": "testdata.inherit",
 		"applicationVersion": {
 			"version": "1.0.0"
 		},
@@ -41,7 +41,7 @@
 				}
 			},
 			"components": {
-				"sap.ui.test.other": {
+				"testdata.other": {
 					"optional": true,
 					"minVersion": "1.0.1"
 				}
@@ -85,19 +85,19 @@
 		},
 
 		"extends": {
-			"component": "sap.ui.test.inherit.parent",
+			"component": "testdata.inherit.parent",
 			"extensions": {
 				"sap.ui.viewReplacements": {
-					"sap.ui.test.view.Main": {
-						"viewName": "sap.ui.test.view.Main",
+					"testdata.view.Main": {
+						"viewName": "testdata.view.Main",
 						"type": "XML"
 					}
 				},
 				"sap.ui.controllerReplacements": {
-					"sap.ui.test.view.Main": "sap.ui.test.view.Main"
+					"testdata.view.Main": "testdata.view.Main"
 				},
 				"sap.ui.viewExtensions": {
-					"sap.ui.test.view.Main": {
+					"testdata.view.Main": {
 						"extension": {
 							"name": "sap.xx.new.Fragment",
 							"type": "sap.ui.core.XMLFragment"
@@ -105,7 +105,7 @@
 					}
 				},
 				"sap.ui.viewModification": {
-					"sap.ui.test.view.Main": {
+					"testdata.view.Main": {
 						"myControlId": {
 							"text": "{{mytext}}"
 						}

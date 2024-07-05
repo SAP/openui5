@@ -40,7 +40,7 @@ sap.ui.define([
 	var mSettings = {
 		"div1": {
 			id: "container1",
-			name: "sap.ui.test.v2empty",
+			name: "testdata.v2empty",
 			settings: {
 				id: "component1"
 			},
@@ -51,7 +51,7 @@ sap.ui.define([
 		},
 		"div2": {
 			id: "container2",
-			name: "sap.ui.test.v2empty",
+			name: "testdata.v2empty",
 			settings: {
 				id: "component2"
 			},
@@ -63,7 +63,7 @@ sap.ui.define([
 		},
 		"div3": {
 			id: "container3",
-			name: "sap.ui.test.v2empty",
+			name: "testdata.v2empty",
 			settings: {
 				id: "component3"
 			},
@@ -78,7 +78,7 @@ sap.ui.define([
 		 */
 		"div4": {
 			id: "container4",
-			name: "sap.ui.test.v2empty",
+			name: "testdata.v2empty",
 			settings: {
 				id: "component4"
 			},
@@ -251,7 +251,7 @@ sap.ui.define([
 				assert.ok(oComponent instanceof UIComponent, `UIComponent instance for Component ${i} found!`);
 
 				assert.equal(oComponent.getId(), `${oContainer.getId()}-component${i}`, `The id of Component ${i} is correct!`);
-				assert.equal(oComponent.getMetadata().getName(), "sap.ui.test.v2empty.Component", `The name of the Component ${i} is correct!`);
+				assert.equal(oComponent.getMetadata().getName(), "testdata.v2empty.Component", `The name of the Component ${i} is correct!`);
 			}
 
 			// Executing run again afterwards also shouldn't try to create the same containers again

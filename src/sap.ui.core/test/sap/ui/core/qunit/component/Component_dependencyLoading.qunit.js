@@ -22,12 +22,12 @@ sap.ui.define([
 
 	QUnit.test("Simple component", function (assert) {
 		return Component.create({
-			name: "sap.ui.test.dependencyLoading.component1",
+			name: "testdata.dependencyLoading.component1",
 			manifest: false
 		}).then(function (oComponent) {
 			// Check loading of dependencies and includes for each ComponentMetadata of the loaded component
 			assert.strictEqual(this.oLoadDependeciesAndIncludesSpy.withArgs(sinon.match.truthy).callCount, 3,
-				"Function loadDependenciesAndIncludes called three times (for sap.ui.core.Component, sap.ui.core.UIComponent and sap.ui.test.dependencyLoading.component1) with parameter bAsync = true");
+				"Function loadDependenciesAndIncludes called three times (for sap.ui.core.Component, sap.ui.core.UIComponent and testdata.dependencyLoading.component1) with parameter bAsync = true");
 
 			// Check for the expected libraries to be loaded
 			assert.strictEqual(this.oLoadLibrarySpy.callCount, 3, "Library._load() called 3 times");
@@ -42,12 +42,12 @@ sap.ui.define([
 
 	QUnit.test("Component variant", function (assert) {
 		return Component.create({
-			name: "sap.ui.test.dependencyLoading.component1",
-			manifest: sap.ui.require.toUrl("sap/ui/test/dependencyLoading/componentVariant") + "/manifest.json"
+			name: "testdata.dependencyLoading.component1",
+			manifest: sap.ui.require.toUrl("testdata/dependencyLoading/componentVariant") + "/manifest.json"
 		}).then(function (oComponent) {
 			// Check loading of dependencies and includes for each ComponentMetadata of the loaded component
 			assert.strictEqual(this.oLoadDependeciesAndIncludesSpy.withArgs(sinon.match.truthy).callCount, 3,
-				"Function loadDependenciesAndIncludes called three times (for sap.ui.core.Component, sap.ui.core.UIComponent and sap.ui.test.dependencyLoading.component1 with variant manifest) with parameter bAsync = true");
+				"Function loadDependenciesAndIncludes called three times (for sap.ui.core.Component, sap.ui.core.UIComponent and testdata.dependencyLoading.component1 with variant manifest) with parameter bAsync = true");
 
 			// Check for the expected libraries to be loaded
 			assert.strictEqual(this.oLoadLibrarySpy.callCount, 4, "Library._load() called 4 times");
@@ -71,12 +71,12 @@ sap.ui.define([
 
 	QUnit.test("Extended component", function (assert) {
 		return Component.create({
-			name: "sap.ui.test.dependencyLoading.component4",
+			name: "testdata.dependencyLoading.component4",
 			manifest: false
 		}).then(function (oComponent) {
 			// Check loading of dependencies and includes for each ComponentMetadata of the loaded component
 			assert.strictEqual(this.oLoadDependeciesAndIncludesSpy.withArgs(sinon.match.truthy).callCount, 5,
-				"Function loadDependenciesAndIncludes called five times (for sap.ui.core.Component, sap.ui.core.UIComponent, sap.ui.test.dependencyLoading.component1, sap.ui.test.dependencyLoading.component3 and sap.ui.test.dependencyLoading.component4) with parameter bAsync = true");
+				"Function loadDependenciesAndIncludes called five times (for sap.ui.core.Component, sap.ui.core.UIComponent, testdata.dependencyLoading.component1, testdata.dependencyLoading.component3 and testdata.dependencyLoading.component4) with parameter bAsync = true");
 
 			// Check for the expected libraries to be loaded
 			assert.strictEqual(this.oLoadLibrarySpy.callCount, 9, "Library._load() called nine times");

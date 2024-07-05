@@ -26,7 +26,7 @@ sap.ui.define([
 
 	QUnit.test("Manifest.load SYNC", function(assert) {
 		this.oManifest = Manifest.load({
-			componentName: "sap.ui.test.manifestload",
+			componentName: "testdata.manifestload",
 			manifestUrl: "test-resources/sap/ui/core/qunit/component/testdata/manifestload/manifest.json",
 			async: false
 		});

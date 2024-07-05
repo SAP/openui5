@@ -1,6 +1,6 @@
 {
 
-	"name": "sap.ui.test.v1.Component",
+	"name": "testdata.v1.Component",
 
 	"version": "1.0.0",
 
@@ -14,7 +14,7 @@
 			"sap.ui.layout"
 		],
 		"components" : [
-			"sap.ui.test.other"
+			"testdata.other"
 		],
 		"ui5version" : "1.22.5"
 	},
@@ -46,24 +46,24 @@
 	},
 
 	"rootView": {
-		"viewName": "sap.ui.test.view.Main",
+		"viewName": "testdata.view.Main",
 		"type": "XML",
 		"async": true
 	},
 
 	"customizing": {
 		"sap.ui.viewReplacements": {
-			"sap.ui.test.view.Main": {
-				"viewName": "sap.ui.test.view.Main",
+			"testdata.view.Main": {
+				"viewName": "testdata.view.Main",
 				"type": "XML",
 				"async": true
 			}
 		},
 		"sap.ui.controllerReplacements": {
-			"sap.ui.test.view.Main": "sap.ui.test.view.Main"
+			"testdata.view.Main": "testdata.view.Main"
 		},
 		"sap.ui.viewExtensions": {
-			"sap.ui.test.view.Main": {
+			"testdata.view.Main": {
 				"extension": {
 					"name": "sap.xx.new.Fragment",
 					"type": "sap.ui.core.XMLFragment"
@@ -71,7 +71,7 @@
 			}
 		},
 		"sap.ui.viewModification": {
-			"sap.ui.test.view.Main": {
+			"testdata.view.Main": {
 				"myControlId": {
 					"text": "{{mytext}}"
 				}

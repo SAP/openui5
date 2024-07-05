@@ -1,6 +1,6 @@
 {
 	"sap.app": {
-		"id": "sap.ui.test.dependencyLoading.component3"
+		"id": "testdata.dependencyLoading.component3"
 	},
 	"sap.ui5": {
 		"dependencies": {
@@ -11,7 +11,7 @@
 			}
 		},
 		"extends": {
-			"component": "sap.ui.test.dependencyLoading.component1"
+			"component": "testdata.dependencyLoading.component1"
 		},
 		"resources": {
 			"css": [{

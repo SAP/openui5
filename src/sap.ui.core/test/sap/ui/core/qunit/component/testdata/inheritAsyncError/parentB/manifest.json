@@ -1,8 +1,8 @@
 {
-	"name": "sap.ui.test.inheritAsyncError.parentB.Component",
+	"name": "testdata.inheritAsyncError.parentB.Component",
 
 	"sap.app": {
-		"id": "sap.ui.test.inheritAsyncError.parentB",
+		"id": "testdata.inheritAsyncError.parentB",
 		"applicationVersion": {
 			"version": "1.0.0"
 		}
@@ -16,7 +16,7 @@
 		},
 
 		"extends": {
-			"component": "sap.ui.test.inheritAsyncError.parentA"
+			"component": "testdata.inheritAsyncError.parentA"
 		}
 	}
 }

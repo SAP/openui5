@@ -2,17 +2,17 @@
  * ${copyright}
  */
 
-// Provides class sap.ui.test.v4models.unsupportedVersion.Component
+// Provides class testdata.v4models.unsupportedVersion.Component
 sap.ui.define(["sap/ui/core/UIComponent"], function(UIComponent) {
 	"use strict";
 
-	return UIComponent.extend("sap.ui.test.v4models.unsupportedVersion.Component", {
+	return UIComponent.extend("testdata.v4models.unsupportedVersion.Component", {
 		metadata: {
 			manifest: {
 				"_version": "1.0.0",
 				"sap.app": {
 					"_version": "1.0.0",
-					"id": "sap.ui.test.v4models.unsupportedVersion",
+					"id": "testdata.v4models.unsupportedVersion",
 					"type": "application",
 					"applicationVersion": {
 						"version": "1.0.0"

@@ -13,7 +13,7 @@ sap.ui.define([
 
 
 	// new Component
-	var Component = UIComponent.extend("sap.ui.test.routing_legacyAPIs.Component", {
+	var Component = UIComponent.extend("testdata.routing_legacyAPIs.Component", {
 
 		metadata : {
 			routing : {
@@ -41,18 +41,18 @@ sap.ui.define([
 		},
 
 		createContent : function () {
-			Controller.extend("sap.ui.test.routing_legacyAPIs.TestController", {});
-			sap.ui.jsview("sap.ui.test.routing_legacyAPIs.TestView", {
+			Controller.extend("testdata.routing_legacyAPIs.TestController", {});
+			sap.ui.jsview("testdata.routing_legacyAPIs.TestView", {
 				createContent : function() {
 					return new Button();
 				},
 				getController : function() {
-					return sap.ui.controller("sap.ui.test.routing_legacyAPIs.TestController");
+					return sap.ui.controller("testdata.routing_legacyAPIs.TestController");
 				}
 			});
 
 			this._oViewWhileCreateContent = this.getRootControl();
-			this.oView = sap.ui.jsview("sap.ui.test.routing_legacyAPIs.TestView");
+			this.oView = sap.ui.jsview("testdata.routing_legacyAPIs.TestView");
 			return this.oView;
 		}
 	});

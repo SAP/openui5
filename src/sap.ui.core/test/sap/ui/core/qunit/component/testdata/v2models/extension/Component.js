@@ -2,11 +2,11 @@
  * ${copyright}
  */
 
-// Provides class sap.ui.test.v2modelsext.Component
-sap.ui.define(["sap/ui/test/v2models/empty/Component"], function(EmptyExtensionComponent) {
+// Provides class testdata.v2modelsext.Component
+sap.ui.define(["testdata/v2models/empty/Component"], function(EmptyExtensionComponent) {
 	"use strict";
 
-	return EmptyExtensionComponent.extend("sap.ui.test.v2models.extension.Component", {
+	return EmptyExtensionComponent.extend("testdata.v2models.extension.Component", {
 
 		metadata: {
 
@@ -16,7 +16,7 @@ sap.ui.define(["sap/ui/test/v2models/empty/Component"], function(EmptyExtensionC
 
 				"sap.app": {
 					"_version": "1.0.0",
-					"id": "sap.ui.test.v2models.extension",
+					"id": "testdata.v2models.extension",
 					"type": "application",
 					"applicationVersion": {
 						"version": "1.0.0"

@@ -4,7 +4,7 @@
 
     "sap.app": {
         "_version": "1.0.0",
-        "id": "sap.ui.test.v2models.ui5Urls",
+        "id": "testdata.v2models.ui5Urls",
         "type": "application",
         "applicationVersion": {
             "version": "1.0.0"
@@ -30,7 +30,7 @@
             },
 
             "annotations2": {
-                "uri": "ui5://sap/ui/test/v2models/ui5urls/annotations/2",
+                "uri": "ui5://testdata/v2models/ui5Urls/annotations/2",
                 "type": "ODataAnnotation"
             },
 

@@ -32,12 +32,12 @@ sap.ui.define([
 		var oConfig;
 		if (bManifestFirst) {
 			oConfig = {
-				name: bDefineComponentName ? "sap.ui.test." + sComponentName : undefined,
-				manifest: getModulePath("sap.ui.test." + sComponentName) + "/manifest.json"
+				name: bDefineComponentName ? "testdata." + sComponentName : undefined,
+				manifest: getModulePath("testdata." + sComponentName) + "/manifest.json"
 			};
 		} else {
 			oConfig = {
-				name: "sap.ui.test." + sComponentName,
+				name: "testdata." + sComponentName,
 				manifest: false
 			};
 		}
@@ -49,12 +49,12 @@ sap.ui.define([
 
 			this.oExpectedMetadata = {
 
-				"name": "sap.ui.test." + sComponentName + ".Component",
+				"name": "testdata." + sComponentName + ".Component",
 				"version": "1.0.0",
 				"includes" : ["style.css", "script.js"],
 				"dependencies": {
 					"libs": ["sap.ui.layout"],
-					"components" : ["sap.ui.test.other"],
+					"components" : ["testdata.other"],
 					"ui5version" : "1.22.5"
 				},
 				"config": {
@@ -83,20 +83,20 @@ sap.ui.define([
 				},
 				"rootView": {
 					"type": "XML",
-					"viewName": "sap.ui.test.view.Main"
+					"viewName": "testdata.view.Main"
 				},
 				"customizing": {
 					"sap.ui.viewReplacements": {
-						"sap.ui.test.view.Main": {
-							"viewName": "sap.ui.test.view.Main",
+						"testdata.view.Main": {
+							"viewName": "testdata.view.Main",
 							"type": "XML"
 						}
 					},
 					"sap.ui.controllerReplacements": {
-						"sap.ui.test.view.Main": "sap.ui.test.view.Main"
+						"testdata.view.Main": "testdata.view.Main"
 					},
 					"sap.ui.viewExtensions": {
-						"sap.ui.test.view.Main": {
+						"testdata.view.Main": {
 							"extension": {
 								"name": "sap.xx.new.Fragment",
 								"type": "sap.ui.core.XMLFragment"
@@ -104,7 +104,7 @@ sap.ui.define([
 						}
 					},
 					"sap.ui.viewModification": {
-						"sap.ui.test.view.Main": {
+						"testdata.view.Main": {
 							"myControlId": {
 								"text": "This is my text"
 							}
@@ -141,9 +141,9 @@ sap.ui.define([
 			};
 
 			this.oExpectedManifest = {
-				"name": "sap.ui.test." + sComponentName + ".Component",
+				"name": "testdata." + sComponentName + ".Component",
 				"sap.app": {
-					"id": "sap.ui.test." + sComponentName,
+					"id": "testdata." + sComponentName,
 					"applicationVersion": {
 						"version": "1.0.0"
 					},
@@ -172,7 +172,7 @@ sap.ui.define([
 					},
 					"dependencies": {
 						"components": {
-							"sap.ui.test.other": {
+							"testdata.other": {
 								"optional": true,
 								"minVersion": "1.0.1"
 							}
@@ -196,7 +196,7 @@ sap.ui.define([
 					},
 					"rootView": {
 						"type": "XML",
-						"viewName": "sap.ui.test.view.Main"
+						"viewName": "testdata.view.Main"
 					},
 					"config": {
 						"any1": {
@@ -215,10 +215,10 @@ sap.ui.define([
 					"extends": {
 						"extensions": {
 							"sap.ui.controllerReplacements": {
-								"sap.ui.test.view.Main": "sap.ui.test.view.Main"
+								"testdata.view.Main": "testdata.view.Main"
 							},
 							"sap.ui.viewExtensions": {
-								"sap.ui.test.view.Main": {
+								"testdata.view.Main": {
 									"extension": {
 										"name": "sap.xx.new.Fragment",
 										"type": "sap.ui.core.XMLFragment"
@@ -226,16 +226,16 @@ sap.ui.define([
 								}
 							},
 							"sap.ui.viewModification": {
-								"sap.ui.test.view.Main": {
+								"testdata.view.Main": {
 									"myControlId": {
 										"text": "This is my text"
 									}
 								}
 							},
 							"sap.ui.viewReplacements": {
-								"sap.ui.test.view.Main": {
+								"testdata.view.Main": {
 									"type": "XML",
-									"viewName": "sap.ui.test.view.Main"
+									"viewName": "testdata.view.Main"
 								}
 							}
 						}
@@ -266,7 +266,7 @@ sap.ui.define([
 			this.oExpectedRawManifest["sap.app"]["title"] = "{{title}}";
 			this.oExpectedRawManifest["sap.app"]["description"] = "{{description}}";
 			this.oExpectedRawManifest["sap.ui5"]["extends"]["extensions"]["sap.ui.viewModification"]
-				["sap.ui.test.view.Main"]["myControlId"]["text"] = "{{mytext}}";
+				["testdata.view.Main"]["myControlId"]["text"] = "{{mytext}}";
 
 		}.bind(this));
 
@@ -462,7 +462,7 @@ sap.ui.define([
 
 	QUnit.test("Manifest Validation", function(assert) {
 
-		assert.equal(this.oMetadata.getName(), "sap.ui.test.v2empty.Component", "Name is correct!");
+		assert.equal(this.oMetadata.getName(), "testdata.v2empty.Component", "Name is correct!");
 		assert.equal(this.oMetadata.getMetadataVersion(), 2, "MetadataVersion is correct!");
 
 	});
@@ -482,7 +482,7 @@ sap.ui.define([
 
 	QUnit.test("Manifest Validation", function(assert) {
 
-		assert.equal(this.oMetadata.getName(), "sap.ui.test.v2missing.Component", "Name is correct!");
+		assert.equal(this.oMetadata.getName(), "testdata.v2missing.Component", "Name is correct!");
 		assert.equal(this.oMetadata.getMetadataVersion(), 2, "MetadataVersion is correct!");
 
 	});
@@ -555,7 +555,7 @@ sap.ui.define([
 				var aCalls = Log.warning.getCalls();
 				var bFound = false;
 				for (var i = 0, l = aCalls.length; i < l; i++) {
-					if (aCalls[i].args[0] == "Component \"sap.ui.test.v2version\" requires at least version \"1.22.5\" but running on \"1.20.0\"!") {
+					if (aCalls[i].args[0] == "Component \"testdata.v2version\" requires at least version \"1.22.5\" but running on \"1.20.0\"!") {
 						bFound = true;
 					}
 				}
@@ -567,7 +567,7 @@ sap.ui.define([
 					assert.ok(!bFound, "Warning has not been reported!");
 				}
 				moduleTeardown.call(that);
-				sap.ui.require("sap/ui/test/v2version/Component").getMetadata()._bInitialized = false;
+				sap.ui.require("testdata/v2version/Component").getMetadata()._bInitialized = false;
 				oDone();
 			}, 200);
 		});
@@ -581,13 +581,13 @@ sap.ui.define([
 				var aCalls = Log.warning.getCalls();
 				var bFound = false;
 				for (var i = 0, l = aCalls.length; i < l; i++) {
-					if (aCalls[i].args[0] == "Component \"sap.ui.test.v2version\" requires at least version \"1.22.5\" but running on \"1.22.5\"!") {
+					if (aCalls[i].args[0] == "Component \"testdata.v2version\" requires at least version \"1.22.5\" but running on \"1.22.5\"!") {
 						bFound = true;
 					}
 				}
 				assert.ok(!bFound, "Warning has not been reported!");
 				moduleTeardown.call(that);
-				sap.ui.require("sap/ui/test/v2version/Component").getMetadata()._bInitialized = false;
+				sap.ui.require("testdata/v2version/Component").getMetadata()._bInitialized = false;
 				oDone();
 			}, 200);
 		});
@@ -601,13 +601,13 @@ sap.ui.define([
 				var aCalls = Log.warning.getCalls();
 				var bFound = false;
 				for (var i = 0, l = aCalls.length; i < l; i++) {
-					if (aCalls[i].args[0] == "Component \"sap.ui.test.v2version\" requires at least version \"1.22.5\" but running on \"1.31.0\"!") {
+					if (aCalls[i].args[0] == "Component \"testdata.v2version\" requires at least version \"1.22.5\" but running on \"1.31.0\"!") {
 						bFound = true;
 					}
 				}
 				assert.ok(!bFound, "Warning has not been reported!");
 				moduleTeardown.call(that);
-				sap.ui.require("sap/ui/test/v2version/Component").getMetadata()._bInitialized = false;
+				sap.ui.require("testdata/v2version/Component").getMetadata()._bInitialized = false;
 				oDone();
 			}, 200);
 		});
@@ -632,17 +632,17 @@ sap.ui.define([
 		 * @deprecated
 		 */
 		QUnit.test("Async loading of manifests with component.json", function(assert) {
-			return fnComponentFactory("./testdata/inherit/manifest.json", "sap.ui.test.inherit").then(function(oComponent) {
+			return fnComponentFactory("./testdata/inherit/manifest.json", "testdata.inherit").then(function(oComponent) {
 				assert.ok(oComponent instanceof Component, "Component has been created.");
 
 				assert.equal(
 					oComponent.getManifest().name,
-					"sap.ui.test.inherit.Component",
+					"testdata.inherit.Component",
 					"Check name of the the main component"
 				);
 				assert.equal(
 					oComponent.getMetadata().getParent().getName(),
-					"sap.ui.test.inherit.parent.Component",
+					"testdata.inherit.parent.Component",
 					"Check name of the inherited parent component"
 				);
 				oComponent.destroy();
@@ -650,22 +650,22 @@ sap.ui.define([
 		});
 
 		QUnit.test("Async loading of manifests", function(assert) {
-			return fnComponentFactory("./testdata/inheritAsync/manifest.json", "sap.ui.test.inheritAsync").then(function(oComponent) {
+			return fnComponentFactory("./testdata/inheritAsync/manifest.json", "testdata.inheritAsync").then(function(oComponent) {
 				assert.ok(oComponent instanceof Component, "Component has been created.");
 
 				assert.equal(
 					oComponent.getManifest().name,
-					"sap.ui.test.inheritAsync.Component",
+					"testdata.inheritAsync.Component",
 					"Check name of the the main component"
 				);
 				assert.equal(
 					oComponent.getMetadata().getParent().getName(),
-					"sap.ui.test.inheritAsync.parentB.Component",
+					"testdata.inheritAsync.parentB.Component",
 					"Check name of the inherited parent component B"
 				);
 				assert.equal(
 					oComponent.getMetadata().getParent().getParent().getName(),
-					"sap.ui.test.inheritAsync.parentA.Component",
+					"testdata.inheritAsync.parentA.Component",
 					"Check name of the inherited parent component A"
 				);
 				destroyComponent(oComponent);
@@ -673,7 +673,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Async loading of manifests with missing manifest of parent metadata", function(assert) {
-			return fnComponentFactory("./testdata/inheritAsyncError/manifest.json", "sap.ui.test.inheritAsyncError").then(function(oComponent) {
+			return fnComponentFactory("./testdata/inheritAsyncError/manifest.json", "testdata.inheritAsyncError").then(function(oComponent) {
 				assert.ok(oComponent instanceof Component, "Component has been created.");
 
 				var aLogEntries = Log.getLogEntries();
@@ -686,17 +686,17 @@ sap.ui.define([
 
 				assert.equal(
 					oComponent.getManifest().name,
-					"sap.ui.test.inheritAsyncError.Component",
+					"testdata.inheritAsyncError.Component",
 					"Check name of the the main component"
 				);
 				assert.equal(
 					oComponent.getMetadata().getParent().getName(),
-					"sap.ui.test.inheritAsyncError.parentB.Component",
+					"testdata.inheritAsyncError.parentB.Component",
 					"Check name of the inherited parent component B"
 				);
 				assert.equal(
 					oComponent.getMetadata().getParent().getParent().getName(),
-					"sap.ui.test.inheritAsyncError.parentFAIL.Component",
+					"testdata.inheritAsyncError.parentFAIL.Component",
 					"Check name of the inherited parent component A"
 				);
 				destroyComponent(oComponent);
@@ -754,10 +754,10 @@ sap.ui.define([
 
 	QUnit.test("Async loading of manifests", function(assert) {
 		var oManifest = {
-			"name": "sap.ui.test.inheritAsync.Component",
+			"name": "testdata.inheritAsync.Component",
 
 			"sap.app": {
-				"id": "sap.ui.test.inheritAsync",
+				"id": "testdata.inheritAsync",
 				"applicationVersion": {
 					"version": "1.0.0"
 				}
@@ -771,7 +771,7 @@ sap.ui.define([
 				},
 
 				"extends": {
-					"component": "sap.ui.test.inheritAsync.parentB"
+					"component": "testdata.inheritAsync.parentB"
 				}
 			}
 		};
@@ -783,7 +783,7 @@ sap.ui.define([
 
 			assert.equal(
 				oComponent.getManifest().name,
-				"sap.ui.test.inheritAsync.Component",
+				"testdata.inheritAsync.Component",
 				"Check name of the the main component"
 			);
 			assert.equal(
@@ -792,7 +792,7 @@ sap.ui.define([
 				"Instance specific manifest entry should be available through component instance"
 			);
 			// the component's original manifest should also be loaded even if a manifest object is given
-			var InheritAsyncComponent = sap.ui.require("sap/ui/test/inheritAsync/Component");
+			var InheritAsyncComponent = sap.ui.require("testdata/inheritAsync/Component");
 			var oInheritAsyncComponent = new InheritAsyncComponent();
 			assert.equal(
 				oInheritAsyncComponent.getManifestEntry("/sap.ui5/config/any/entry1"),
@@ -801,12 +801,12 @@ sap.ui.define([
 			);
 			assert.equal(
 				oComponent.getMetadata().getParent().getName(),
-				"sap.ui.test.inheritAsync.parentB.Component",
+				"testdata.inheritAsync.parentB.Component",
 				"Check name of the inherited parent component B"
 			);
 			assert.equal(
 				oComponent.getMetadata().getParent().getParent().getName(),
-				"sap.ui.test.inheritAsync.parentA.Component",
+				"testdata.inheritAsync.parentA.Component",
 				"Check name of the inherited parent component A"
 			);
 			destroyComponent(oComponent);

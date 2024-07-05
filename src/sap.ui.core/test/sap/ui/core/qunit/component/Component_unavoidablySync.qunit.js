@@ -5,7 +5,7 @@ sap.ui.define([
 	'sap/ui/core/ComponentContainer',
 	'sap/ui/core/UIComponent',
 	'sap/ui/core/UIComponentMetadata',
-	'sap/ui/test/routing/RouterExtension',
+	'testdata/routing/RouterExtension',
 	'sap/base/util/deepExtend'
 ], function (createAndAppendDiv, nextUIUpdate, Component, ComponentContainer, UIComponent, UIComponentMetadata, SamplesRouterExtension, deepExtend) {
 
@@ -55,7 +55,7 @@ sap.ui.define([
 				}
 			}).placeAt("comparea1");
 			this.oComp = sap.ui.getCore().createComponent({
-				name: "sap.ui.test.verticalLayout_legacyAPIs",
+				name: "testdata.verticalLayout_legacyAPIs",
 				id: "vLayout",
 				componentData: {
 					"foo": "bar"
@@ -130,7 +130,7 @@ sap.ui.define([
 		var oComponent = sap.ui.component(oComp.getId());
 		assert.equal(oComponent, oComp, "Factory function returns the same instance!");
 		oComponent = sap.ui.component({
-			name: "sap.ui.test.verticalLayout_legacyAPIs",
+			name: "testdata.verticalLayout_legacyAPIs",
 			id: "factoryVLayout"
 		});
 		assert.ok(!!oComponent, "Component has been created!");
@@ -174,7 +174,7 @@ sap.ui.define([
 	QUnit.module("Creation Context", {
 		beforeEach: function() {
 			this.oComp = sap.ui.getCore().createComponent({
-				name: "sap.ui.test.verticalLayout_legacyAPIs",
+				name: "testdata.verticalLayout_legacyAPIs",
 				id: "vLayout",
 				componentData: {
 					"foo": "bar"
@@ -205,7 +205,7 @@ sap.ui.define([
 		beforeEach : function () {
 			// System under test
 			this.oComponent = sap.ui.getCore().createComponent({
-				name: "sap.ui.test.routing_legacyAPIs"
+				name: "testdata.routing_legacyAPIs"
 			});
 		},
 		afterEach: function() {
@@ -248,7 +248,7 @@ sap.ui.define([
 			sap.ui.require(["sap/m/routing/Targets"], function() {
 				// System under test
 				that.oComponent = sap.ui.getCore().createComponent({
-					name: "sap.ui.test.routing_legacyAPIs.targets"
+					name: "testdata.routing_legacyAPIs.targets"
 				});
 				done();
 			});
@@ -280,7 +280,7 @@ sap.ui.define([
 		beforeEach : function () {
 			// System under test
 			this.oComponent = sap.ui.getCore().createComponent({
-				name: "sap.ui.test.routing_legacyAPIs"
+				name: "testdata.routing_legacyAPIs"
 			});
 		},
 		afterEach: function() {

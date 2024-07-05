@@ -2,11 +2,11 @@
  * ${copyright}
  */
 
-// Provides class sap.ui.test.v2models.Component
+// Provides class testdata.v2models.Component
 sap.ui.define(["sap/ui/core/UIComponent"], function(UIComponent) {
 	"use strict";
 
-	return UIComponent.extend("sap.ui.test.v2models.parent.Component", {
+	return UIComponent.extend("testdata.v2models.parent.Component", {
 
 		metadata: {
 
@@ -16,7 +16,7 @@ sap.ui.define(["sap/ui/core/UIComponent"], function(UIComponent) {
 
 				"sap.app": {
 					"_version": "1.0.0",
-					"id": "sap.ui.test.v2models.parent",
+					"id": "testdata.v2models.parent",
 					"type": "application",
 					"applicationVersion": {
 						"version": "1.0.0"
@@ -268,7 +268,7 @@ sap.ui.define(["sap/ui/core/UIComponent"], function(UIComponent) {
 						"resourceBundle-name": {
 							"type": "sap.ui.model.resource.ResourceModel",
 							"settings": {
-								"bundleName": "sap.ui.test.v2models.parent.i18n"
+								"bundleName": "testdata.v2models.parent.i18n"
 							}
 						},
 
@@ -278,17 +278,17 @@ sap.ui.define(["sap/ui/core/UIComponent"], function(UIComponent) {
 						},
 
 						"custom-uri-string": {
-							"type": "sap.ui.test.v2models.parent.CustomModel",
+							"type": "testdata.v2models.parent.CustomModel",
 							"dataSource": "customType"
 						},
 
 						"custom-relative-uri-string": {
-							"type": "sap.ui.test.v2models.parent.CustomModel",
+							"type": "testdata.v2models.parent.CustomModel",
 							"dataSource": "customType-relative"
 						},
 
 						"custom-uri-string-with-settings": {
-							"type": "sap.ui.test.v2models.parent.CustomModel",
+							"type": "testdata.v2models.parent.CustomModel",
 							"dataSource": "customType",
 							"settings": {
 								"foo": "bar"
@@ -296,17 +296,17 @@ sap.ui.define(["sap/ui/core/UIComponent"], function(UIComponent) {
 						},
 
 						"custom-without-args": {
-							"type": "sap.ui.test.v2models.parent.CustomModel"
+							"type": "testdata.v2models.parent.CustomModel"
 						},
 
 						"custom-uri-setting-name": {
-							"type": "sap.ui.test.v2models.parent.CustomModel",
+							"type": "testdata.v2models.parent.CustomModel",
 							"dataSource": "customType",
 							"uriSettingName": "myUri"
 						},
 
 						"custom-uri-setting-merge": {
-							"type": "sap.ui.test.v2models.parent.CustomModel",
+							"type": "testdata.v2models.parent.CustomModel",
 							"dataSource": "customType",
 							"uriSettingName": "uri",
 							"settings": {
@@ -315,7 +315,7 @@ sap.ui.define(["sap/ui/core/UIComponent"], function(UIComponent) {
 						},
 
 						"custom-uri-setting-already-defined": {
-							"type": "sap.ui.test.v2models.parent.CustomModel",
+							"type": "testdata.v2models.parent.CustomModel",
 							"dataSource": "customType",
 							"uriSettingName": "uri",
 							"settings": {
@@ -331,7 +331,7 @@ sap.ui.define(["sap/ui/core/UIComponent"], function(UIComponent) {
 							"type": "sap.ui.not.defined.Model"
 						},
 						"model-not-found": {
-							"type": "sap.ui.test.v2models.parent.ModelNotDefined"
+							"type": "testdata.v2models.parent.ModelNotDefined"
 						},
 						"dataSource-not-found": {
 							"type": "sap.ui.model.odata.v2.ODataModel",

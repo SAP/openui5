@@ -358,7 +358,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("SequentialLegacy - ExtensionPoint contains async View/Fragment", function (assert) {
-		// var sManifestUrl = sap.ui.require.toUrl("sap/ui/test/customizing/async/noInterface/customer/manifest.json");
+		// var sManifestUrl = sap.ui.require.toUrl("testdata/customizing/async/noInterface/customer/manifest.json");
 		var oRootComponent, oManualCreatedView;
 
 		return Component.create({

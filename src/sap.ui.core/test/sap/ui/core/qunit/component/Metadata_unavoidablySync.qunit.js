@@ -61,12 +61,12 @@ sap.ui.define([
 
 		if (bManifestFirst) {
 			this.oComponent = sap.ui.getCore().createComponent({
-				name: bDefineComponentName ? "sap.ui.test." + sComponentName : undefined,
-				manifestUrl: sap.ui.require.toUrl("sap/ui/test/" + sComponentName + "/manifest.json")
+				name: bDefineComponentName ? "testdata." + sComponentName : undefined,
+				manifestUrl: sap.ui.require.toUrl("testdata/" + sComponentName + "/manifest.json")
 			});
 		} else {
 			this.oComponent = sap.ui.getCore().createComponent({
-				name: "sap.ui.test." + sComponentName
+				name: "testdata." + sComponentName
 			});
 		}
 
@@ -75,12 +75,12 @@ sap.ui.define([
 		this.iExpectedMetadataVersion = iMetadataVersion;
 		this.oExpectedMetadata = {
 
-			"name": "sap.ui.test." + sComponentName + ".Component",
+			"name": "testdata." + sComponentName + ".Component",
 			"version": "1.0.0",
 			"includes" : ["style.css", "script.js"],
 			"dependencies": {
 				"libs": ["sap.ui.layout"],
-				"components" : ["sap.ui.test.other"],
+				"components" : ["testdata.other"],
 				"ui5version" : "1.22.5"
 			},
 			"config": {
@@ -108,22 +108,22 @@ sap.ui.define([
 				}
 			},
 			"rootView": {
-				"viewName": "sap.ui.test.view.Main",
+				"viewName": "testdata.view.Main",
 				"type": "XML",
 				"async": true
 			},
 			"customizing": {
 				"sap.ui.viewReplacements": {
-					"sap.ui.test.view.Main": {
-						"viewName": "sap.ui.test.view.Main",
+					"testdata.view.Main": {
+						"viewName": "testdata.view.Main",
 						"type": "XML"
 					}
 				},
 				"sap.ui.controllerReplacements": {
-					"sap.ui.test.view.Main": "sap.ui.test.view.Main"
+					"testdata.view.Main": "testdata.view.Main"
 				},
 				"sap.ui.viewExtensions": {
-					"sap.ui.test.view.Main": {
+					"testdata.view.Main": {
 						"extension": {
 							"name": "sap.xx.new.Fragment",
 							"type": "sap.ui.core.XMLFragment"
@@ -131,7 +131,7 @@ sap.ui.define([
 					}
 				},
 				"sap.ui.viewModification": {
-					"sap.ui.test.view.Main": {
+					"testdata.view.Main": {
 						"myControlId": {
 							"text": iMetadataVersion === 1 ? "{{mytext}}" : "This is my text"
 						}
@@ -168,9 +168,9 @@ sap.ui.define([
 		};
 
 		this.oExpectedManifest = {
-			"name": "sap.ui.test." + sComponentName + ".Component",
+			"name": "testdata." + sComponentName + ".Component",
 			"sap.app": {
-				"id": "sap.ui.test." + sComponentName,
+				"id": "testdata." + sComponentName,
 				"applicationVersion": {
 					"version": "1.0.0"
 				},
@@ -212,7 +212,7 @@ sap.ui.define([
 				},
 				"dependencies": {
 					"components": {
-						"sap.ui.test.other": {
+						"testdata.other": {
 							"optional": true,
 							"minVersion": "1.0.1"
 						}
@@ -235,7 +235,7 @@ sap.ui.define([
 					}
 				},
 				"rootView": {
-					"viewName": "sap.ui.test.view.Main",
+					"viewName": "testdata.view.Main",
 					"type": "XML",
 					"async": true
 				},
@@ -256,10 +256,10 @@ sap.ui.define([
 				"extends": {
 					"extensions": {
 						"sap.ui.controllerReplacements": {
-							"sap.ui.test.view.Main": "sap.ui.test.view.Main"
+							"testdata.view.Main": "testdata.view.Main"
 						},
 						"sap.ui.viewExtensions": {
-							"sap.ui.test.view.Main": {
+							"testdata.view.Main": {
 								"extension": {
 									"name": "sap.xx.new.Fragment",
 									"type": "sap.ui.core.XMLFragment"
@@ -267,16 +267,16 @@ sap.ui.define([
 							}
 						},
 						"sap.ui.viewModification": {
-							"sap.ui.test.view.Main": {
+							"testdata.view.Main": {
 								"myControlId": {
 									"text": iMetadataVersion === 1 ? "{{mytext}}" : "This is my text"
 								}
 							}
 						},
 						"sap.ui.viewReplacements": {
-							"sap.ui.test.view.Main": {
+							"testdata.view.Main": {
 								"type": "XML",
-								"viewName": "sap.ui.test.view.Main"
+								"viewName": "testdata.view.Main"
 							}
 						}
 					}
@@ -307,7 +307,7 @@ sap.ui.define([
 		this.oExpectedRawManifest["sap.app"]["title"] = "{{title}}";
 		this.oExpectedRawManifest["sap.app"]["description"] = "{{description}}";
 		this.oExpectedRawManifest["sap.ui5"]["extends"]["extensions"]["sap.ui.viewModification"]
-			["sap.ui.test.view.Main"]["myControlId"]["text"] = "{{mytext}}";
+			["testdata.view.Main"]["myControlId"]["text"] = "{{mytext}}";
 
 		// some manifest.json files are shared with the modern tests
 		// we need to adapt the expectations for these manifest.json files
@@ -404,10 +404,10 @@ sap.ui.define([
 				this.oExpectedManifest,
 				this.oExpectedRawManifest
 			].forEach(function(oManifest) {
-				oManifest["sap.ui5"]["dependencies"]["components"]["sap.ui.test.other"] = {};
+				oManifest["sap.ui5"]["dependencies"]["components"]["testdata.other"] = {};
 				oManifest["sap.ui5"]["dependencies"]["libs"]["sap.ui.layout"] = {};
 				oManifest["sap.ui5"]["rootView"]["async"] = true;
-				oManifest["sap.ui5"]["extends"]["extensions"]["sap.ui.viewReplacements"]["sap.ui.test.view.Main"]["async"] = true;
+				oManifest["sap.ui5"]["extends"]["extensions"]["sap.ui.viewReplacements"]["testdata.view.Main"]["async"] = true;
 				delete oManifest["sap.ui5"]["resourceRoots"];
 				delete oManifest["sap.app"]["title"];
 				delete oManifest["sap.app"]["description"];
@@ -415,7 +415,7 @@ sap.ui.define([
 				delete oManifest["foo.bar"];
 			});
 			this.oExpectedMetadata["rootView"]["async"] = true;
-			this.oExpectedMetadata["customizing"]["sap.ui.viewReplacements"]["sap.ui.test.view.Main"]["async"] = true;
+			this.oExpectedMetadata["customizing"]["sap.ui.viewReplacements"]["testdata.view.Main"]["async"] = true;
 		},
 		afterEach: function() {
 			moduleTeardown.call(this);
@@ -451,7 +451,7 @@ sap.ui.define([
 			// fix the specials in the metadata for the v2 manifest first
 			this.oExpectedManifest["sap.app"]["description"] = this.oExpectedRawManifest["sap.app"]["description"];
 			this.oExpectedManifest["sap.app"]["title"] = this.oExpectedRawManifest["sap.app"]["title"];
-			this.oExpectedManifest["sap.ui5"]["extends"]["extensions"]["sap.ui.viewModification"]["sap.ui.test.view.Main"]["myControlId"]["text"] = this.oExpectedRawManifest["sap.ui5"]["extends"]["extensions"]["sap.ui.viewModification"]["sap.ui.test.view.Main"]["myControlId"]["text"];
+			this.oExpectedManifest["sap.ui5"]["extends"]["extensions"]["sap.ui.viewModification"]["testdata.view.Main"]["myControlId"]["text"] = this.oExpectedRawManifest["sap.ui5"]["extends"]["extensions"]["sap.ui.viewModification"]["testdata.view.Main"]["myControlId"]["text"];
 			this.oExpectedManifest["sap.ui5"]["rootView"] = this.oExpectedRawManifest["sap.ui5"]["rootView"];
 		},
 		afterEach: function() {
@@ -472,7 +472,7 @@ sap.ui.define([
 			// fix the specials in the metadata for the v2 manifest first
 			this.oExpectedManifest["sap.app"]["description"] = this.oExpectedRawManifest["sap.app"]["description"];
 			this.oExpectedManifest["sap.app"]["title"] = this.oExpectedRawManifest["sap.app"]["title"];
-			this.oExpectedManifest["sap.ui5"]["extends"]["extensions"]["sap.ui.viewModification"]["sap.ui.test.view.Main"]["myControlId"]["text"] = this.oExpectedRawManifest["sap.ui5"]["extends"]["extensions"]["sap.ui.viewModification"]["sap.ui.test.view.Main"]["myControlId"]["text"];
+			this.oExpectedManifest["sap.ui5"]["extends"]["extensions"]["sap.ui.viewModification"]["testdata.view.Main"]["myControlId"]["text"] = this.oExpectedRawManifest["sap.ui5"]["extends"]["extensions"]["sap.ui.viewModification"]["testdata.view.Main"]["myControlId"]["text"];
 			this.oExpectedManifest["sap.ui5"]["rootView"] = this.oExpectedRawManifest["sap.ui5"]["rootView"];
 		},
 		afterEach: function() {
@@ -495,7 +495,7 @@ sap.ui.define([
 				this.oExpectedManifest,
 				this.oExpectedRawManifest
 			].forEach(function(oManifest) {
-				oManifest["sap.ui5"]["dependencies"]["components"]["sap.ui.test.other"] = {};
+				oManifest["sap.ui5"]["dependencies"]["components"]["testdata.other"] = {};
 				oManifest["sap.ui5"]["dependencies"]["libs"]["sap.ui.layout"] = {};
 				delete oManifest["sap.ui5"]["resourceRoots"];
 				delete oManifest["sap.app"]["title"];
@@ -527,7 +527,7 @@ sap.ui.define([
 
 	QUnit.test("Metadata Validation", function(assert) {
 
-		assert.equal(this.oMetadata.getName(), "sap.ui.test.v1empty.Component", "Name is correct!");
+		assert.equal(this.oMetadata.getName(), "testdata.v1empty.Component", "Name is correct!");
 		assert.equal(this.oMetadata.getMetadataVersion(), this.iExpectedMetadataVersion, "MetadataVersion is correct!");
 
 	});
@@ -547,7 +547,7 @@ sap.ui.define([
 
 	QUnit.test("Metadata Validation", function(assert) {
 
-		assert.equal(this.oMetadata.getName(), "sap.ui.test.v1missing.Component", "Name is correct!");
+		assert.equal(this.oMetadata.getName(), "testdata.v1missing.Component", "Name is correct!");
 		assert.equal(this.oMetadata.getMetadataVersion(), this.iExpectedMetadataVersion, "MetadataVersion is correct!");
 
 	});
@@ -633,7 +633,7 @@ sap.ui.define([
 				this.oExpectedRawManifest
 			].forEach(function(oManifest) {
 				oManifest["sap.ui5"]["rootView"]["async"] = true;
-				oManifest["sap.ui5"]["extends"].component = "sap.ui.test.inherit.parent";
+				oManifest["sap.ui5"]["extends"].component = "testdata.inherit.parent";
 				delete oManifest["sap.ui5"].resourceRoots["x.y.z"];
 				delete oManifest["sap.ui5"].rootView;
 				oManifest["sap.ui5"].routing = {
@@ -714,9 +714,9 @@ sap.ui.define([
 
 	QUnit.test("Absolute resource roots not allowed", function(assert) {
 		const oManifest = {
-			"name": "sap.ui.test.absoluteUrl.Component",
+			"name": "testdata.absoluteUrl.Component",
 			"sap.app": {
-				"id": "sap.ui.test.absoluteUrl",
+				"id": "testdata.absoluteUrl",
 				"applicationVersion": {
 					"version": "1.0.0"
 				},
@@ -732,7 +732,7 @@ sap.ui.define([
 		};
 
 		const myComp = sap.ui.getCore().createComponent({
-			name: "sap.ui.test.absoluteUrl",
+			name: "testdata.absoluteUrl",
 			manifest: oManifest
 		});
 

@@ -4,7 +4,7 @@ sap.ui.define([
 	"use strict";
 
 
-	var Component = UIComponent.extend("sap.ui.test.mixed.Component", {
+	var Component = UIComponent.extend("testdata.mixed.Component", {
 
 		metadata: {
 			manifest: "json"

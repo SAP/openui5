@@ -1,6 +1,6 @@
 {
 	"sap.app": {
-		"id": "sap.ui.test.modelsMisc",
+		"id": "testdata.modelsMisc",
 		"type": "application",
 
 		"dataSources": {
