@@ -1,6 +1,7 @@
 /*global QUnit */
 sap.ui.define([
 	"sap/m/DynamicDateRange",
+	"sap/m/DynamicDateFormat",
 	"sap/m/CustomDynamicDateOption",
 	"sap/m/StandardDynamicDateOption",
 	"sap/m/DynamicDateValueHelpUIType",
@@ -14,6 +15,7 @@ sap.ui.define([
 	'sap/ui/Device'
 ], function(
 	DynamicDateRange,
+	DynamicDateFormat,
 	CustomDynamicDateOption,
 	StandardDynamicDateOption,
 	DynamicDateValueHelpUIType,
@@ -996,6 +998,41 @@ sap.ui.define([
 
 		// assert
 		assert.ok(aValueHelpUITypes1[0].isDestroyed(), "the UI types are destroyed with the option");
+	});
+
+	QUnit.test("DateTime with UTC formatter footer text", function(assert) {
+		//Arrange
+		var oDisplayFormatter = DynamicDateFormat.getInstance({
+			"datetime" : {
+				UTC: true
+			}
+		});
+
+		var oDDR = new sap.m.DynamicDateRange({
+			formatter: oDisplayFormatter,
+			options: ["DATETIME"]
+		});
+
+		var oValue = { operator: "DATETIME", values: [new Date(2024, 2, 31, 12, 0, 0)] };
+
+		oDDR.placeAt("qunit-fixture");
+
+		oCore.applyChanges();
+
+		//Act
+		oDDR.setValue(oValue);
+		oDDR._toggleOpen();
+
+		var oDateTimeOption =  oCore.byId(oDDR.getId() + '-option-DATETIME');
+
+		oDateTimeOption.firePress();
+
+		oCore.applyChanges();
+
+		oDDR._updateDatesLabel();
+
+		//Assert
+		assert.strictEqual(oDDR._getDatesLabel().getText(), "Selected: Mar 31, 2024, 12:00:00 PM", "The UTC formatter is applied correctly");
 	});
 
 	QUnit.module("StandardDynamicDateOption DateTimeRange", {
