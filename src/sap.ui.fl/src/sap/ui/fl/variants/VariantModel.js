@@ -1222,11 +1222,11 @@ sap.ui.define([
 			return oFlexController.saveSequenceOfDirtyChanges(aCopiedVariantDirtyChanges, oAppComponent)
 			.then(function(oResponse) {
 				if (oResponse) {
-					const oResponseData = oResponse.response[0];
+					const oVariantFlexObject = oResponse.response.find((oFlexObject) => oFlexObject.fileType === "ctrl_variant");
 					const oAffectedVariant = this.oData[sVariantManagementReference].variants
-					.find((oVariant) => oVariant.key === oResponseData.fileName);
+					.find((oVariant) => oVariant.key === oVariantFlexObject.fileName);
 					const oSupportInformation = oAffectedVariant.instance.getSupportInformation();
-					oSupportInformation.user = oResponseData.support.user;
+					oSupportInformation.user = oVariantFlexObject.support.user;
 					oAffectedVariant.instance.setSupportInformation(oSupportInformation);
 				}
 
