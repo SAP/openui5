@@ -1523,4 +1523,31 @@ sap.ui.define([
 		assert.strictEqual(oSemanticPage.getAggregation("_actionSheet"), null, "action sheet is null");
 
 	});
+
+	QUnit.module("Accessibility", {
+		beforeEach: function () {
+		},
+
+		afterEach: function () {
+			oVisibleFixture.textContent = ""; // empty
+		}
+	});
+
+	QUnit.test("MessagesIndicator tooltip is correct", function (assert) {
+		var oBundle = oCore.getLibraryResourceBundle("sap.m"),
+			oMessagesIndicator = new MessagesIndicator(),
+			sKey = "SEMANTIC_CONTROL_MESSAGES_INDICATOR",
+			oSpy = this.spy(oBundle, "getText"),
+			oMessageModel = oCore.getMessageManager().getMessageModel(),
+			iCountMessages = oMessageModel.getData().length;
+
+		//act
+		var oControl = oMessagesIndicator._getControl(), // creates the control
+			oTooltip = oControl.getTooltip();
+
+		//asert
+		assert.ok(oSpy.calledOnceWithExactly(sKey, [iCountMessages]), "MessagesIndicator proper label is obtained.");
+		assert.ok(oTooltip.includes("Messages"), "messages labels is included in the tooltip");
+	});
+
 });

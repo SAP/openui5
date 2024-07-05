@@ -470,6 +470,16 @@ sap.ui.define([
 							return aMessages.length || 0;
 						}
 					},
+					tooltip: {
+						path: "message>/",
+						formatter: function (aMessages) {
+							var iCountMessages = 0;
+							if (aMessages) {
+								iCountMessages = aMessages.length;
+							}
+							return oBundle.getText("SEMANTIC_CONTROL_MESSAGES_INDICATOR", [iCountMessages]);
+						}
+					},
 					type: ButtonType.Emphasized,
 					visible: {
 						path: "message>/",
