@@ -1439,4 +1439,104 @@ sap.ui.define([
 			"~result");
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("_resetLocaleDataCache", function(assert) {
+		LocaleData._resetLocaleDataCache();
+		const oLoadResourceSpy = this.spy(LoaderExtensions, "loadResource");
+
+		// code under test - loadResource is called once
+		LocaleData.getInstance(new Locale("de_DE"));
+		LocaleData.getInstance(new Locale("de_DE"));
+
+		assert.strictEqual(oLoadResourceSpy.callCount, 1);
+
+		// code under test - loadResource is called again after the reset of the cache
+		LocaleData._resetLocaleDataCache();
+		LocaleData.getInstance(new Locale("de_DE"));
+
+		assert.strictEqual(oLoadResourceSpy.callCount, 2);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestInstance", function(assert) {
+		LocaleData._resetLocaleDataCache();
+		const oLoaderExtensionsMock = this.mock(LoaderExtensions);
+		oLoaderExtensionsMock.expects("loadResource")
+			.withExactArgs("sap/ui/core/cldr/ar_SA.json", {"async": true, dataType: "json", failOnError: false})
+			.returns(Promise.resolve({"scripts": {"baz": "foo"}, "weekData-firstDay": 1, "__fallbackLocale": "ar"}));
+		oLoaderExtensionsMock.expects("loadResource")
+			.withExactArgs("sap/ui/core/cldr/ar.json", {"async": true, dataType: "json", failOnError: false})
+			.returns(Promise.resolve({"scripts": {"foo": "bar"}, "weekData-firstDay": 0}));
+
+		// code under test
+		const pLocaleData = LocaleData.requestInstance(new Locale("ar_SA"));
+
+		assert.ok(pLocaleData instanceof Promise);
+
+		return pLocaleData.then((oLocaleData) => {
+			assert.ok(oLocaleData instanceof LocaleData);
+			assert.strictEqual(oLocaleData.sCLDRLocaleId, "ar-SA");
+			assert.strictEqual(oLocaleData.getFirstDayOfWeek(), 1, "Specific data wins over fallback data");
+			assert.deepEqual(oLocaleData.getScripts(), {"baz": "foo", "foo": "bar"}, "'foo' is added from locale 'ar'");
+			assert.ok(!oLocaleData.hasOwnProperty("loaded"));
+
+			// code under test - no request when synchronously creating a LocaleData instance for the same locale ID
+			const oSyncLocaleData = LocaleData.getInstance(new Locale("ar_SA"));
+
+			assert.deepEqual(oLocaleData, oSyncLocaleData);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestInstance for custom locale", function(assert) {
+		LocaleData._resetLocaleDataCache();
+		this.mock(LoaderExtensions).expects("loadResource")
+			.withExactArgs("sap/ui/core/cldr/de.json", {"async": true, dataType: "json", failOnError: false})
+			.returns(Promise.resolve({"scripts": {"baz": "foo"}}));
+		const oFormattingMock = this.mock(Formatting);
+		oFormattingMock.expects("getCustomLocaleData").withExactArgs().returns("~mCustomLocaleData");
+
+		// code under test
+		const pLocaleData = LocaleData.requestInstance(new Locale("de-x-sapufmt"));
+
+		assert.ok(pLocaleData instanceof Promise);
+
+		return pLocaleData.then((oLocaleData) => {
+			assert.ok(oLocaleData instanceof LocaleData);
+			assert.strictEqual(oLocaleData.sCLDRLocaleId, "de");
+			assert.deepEqual(oLocaleData.getScripts(), {"baz":"foo"});
+			assert.strictEqual(oLocaleData.mCustomData, "~mCustomLocaleData");
+
+			oFormattingMock.expects("getCustomLocaleData").withExactArgs().returns("~mCustomLocaleData");
+
+			// code under test - sync loading the same locale
+			const oSyncLocaleData = LocaleData.getInstance(new Locale("de-x-sapufmt"));
+
+			assert.deepEqual(oLocaleData, oSyncLocaleData);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestInstance: loadResource returns null", function(assert) {
+		LocaleData._resetLocaleDataCache();
+		const oLoaderExtensionsMock = this.mock(LoaderExtensions);
+		oLoaderExtensionsMock.expects("loadResource")
+			.withExactArgs("sap/ui/core/cldr/de.json", {"async": true, dataType: "json", failOnError: false})
+			.returns(Promise.resolve(null));
+		oLoaderExtensionsMock.expects("loadResource")
+			.withExactArgs("sap/ui/core/cldr/en.json", {"async": true, dataType: "json", failOnError: false})
+			.returns(Promise.resolve({"scripts": {"baz": "foo"}}));
+
+		// code under test
+		const pLocaleData = LocaleData.requestInstance(new Locale("de"));
+
+		assert.ok(pLocaleData instanceof Promise);
+
+		return pLocaleData.then((oLocaleData) => {
+			assert.ok(oLocaleData instanceof LocaleData);
+			assert.strictEqual(oLocaleData.sCLDRLocaleId, "en");
+			assert.deepEqual(oLocaleData.getScripts(), {"baz": "foo"});
+		});
+	});
 });

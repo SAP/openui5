@@ -14,9 +14,10 @@ sap.ui.define([
 	"sap/base/util/extend",
 	"sap/base/util/LoaderExtensions",
 	"sap/ui/base/Object",
+	"sap/ui/base/SyncPromise",
 	"sap/ui/core/date/CalendarWeekNumbering"
 ], function(CalendarType, Lib, Locale, assert, Formatting, LanguageTag, Localization, extend, LoaderExtensions,
-		BaseObject, CalendarWeekNumbering) {
+		BaseObject, SyncPromise, CalendarWeekNumbering) {
 	"use strict";
 
 	var rCIgnoreCase = /c/i,
@@ -51,9 +52,21 @@ sap.ui.define([
 	const aSupportedWidths = ["narrow", "abbreviated", "wide"];
 
 	/**
+	 * The locale data cache. Maps a locale ID, formatted as either the language_region (e.g. "ar_SA"),
+	 * language_script (e.g. "sr_Latn") or just the language code (e.g. "de") to its set of loaded
+	 * CLDR data. In case of asynchronous loading, the locale ID is mapped to a <code>Promise</code> which resolves
+	 * with the loaded CLDR data. As soon as the data is loaded the <code>Promise</code> is replaced by it.
+	 *
+	 * @type {Object<string, Object<string, any>|Promise<Object<string, any>>>}
+	 * @private
+	 */
+	let mLocaleIdToData = {};
+
+	/**
 	 * DO NOT call the constructor for <code>LocaleData</code>; use <code>LocaleData.getInstance</code> instead.
 	 *
 	 * @param {sap.ui.core.Locale} oLocale The locale
+	 * @param {boolean} bAsync Whether to load the data asynchronously
 	 *
 	 * @alias sap.ui.core.LocaleData
 	 * @author SAP SE
@@ -67,12 +80,17 @@ sap.ui.define([
 	 */
 	var LocaleData = BaseObject.extend("sap.ui.core.LocaleData", /** @lends sap.ui.core.LocaleData.prototype */ {
 
-		constructor: function(oLocale) {
+		constructor: function(oLocale, bAsync) {
 			BaseObject.apply(this);
 			this.oLocale = Locale._getCoreLocale(oLocale);
-			var oDataLoaded = getData(this.oLocale);
-			this.mData = oDataLoaded.mData;
-			this.sCLDRLocaleId = oDataLoaded.sCLDRLocaleId;
+			this.loaded = loadData(this.oLocale, bAsync).then((oResult) => {
+				this.mData = oResult.mData;
+				this.sCLDRLocaleId = oResult.sCLDRLocaleId;
+				return this;
+			});
+			this.loaded.finally(() => {
+				delete this.loaded;
+			});
 		},
 
 		/**
@@ -2463,13 +2481,6 @@ sap.ui.define([
 	}());
 
 	/**
-	 * Locale data cache.
-	 *
-	 * @private
-	 */
-	var mLocaleDatas = {};
-
-	/**
 	 * Creates a flat map from an object structure which contains a link to the parent ("_parent").
 	 * The values should contain the parent(s) and the element joined by <code>", "</code>.
 	 * The keys are the keys of the object structure joined by "/" excluding "_parent".
@@ -2539,14 +2550,24 @@ sap.ui.define([
 	}
 
 	/**
-	 * Load LocaleData data from the CLDR generated files.
+	 * Loads data from the generated CLDR files.
+	 *
+	 * @param {sap.ui.core.Locale} oLocale
+	 *   The locale to load the CLDR data for
+	 * @param {boolean} [bAsync]
+	 *   Whether to load the data asynchronously
+	 *
+	 * @returns {SyncPromise<{mData: Object<string, any>, sCLDRLocaleId: string}>}
+	 *   A <code>SyncPromise</code> which resolves with an object with two properties: <code>mData</code>
+	 *   containing the loaded CLDR data and <code>sCLDRLocaleId</code>, the used CLDR locale ID (e.g. "ar-SA");
+	 *   the <code>SyncPromise</code> never rejects; if neither the <language>_<region>.json nor the
+	 *   <language>.json data can be loaded via the second try, the English CLDR data is used as final fallback
 	 */
-	function getData(oLocale) {
+	function loadData(oLocale, bAsync) {
 
 		var sLanguage = oLocale.getLanguage() || "",
-			sScript = oLocale.getScript() || "",
 			sRegion = oLocale.getRegion() || "",
-			mData;
+			sScript = oLocale.getScript() || "";
 
 		/*
 		 * Merge a CLDR delta file and a CLDR fallback file.
@@ -2587,23 +2608,34 @@ sap.ui.define([
 		}
 
 		function getOrLoad(sId) {
-			if ( !mLocaleDatas[sId] && (!M_SUPPORTED_LOCALES || M_SUPPORTED_LOCALES[sId] === true) ) {
-				var data = mLocaleDatas[sId] = LoaderExtensions.loadResource("sap/ui/core/cldr/" + sId + ".json", {
-					dataType: "json",
-					failOnError : false
-				});
+			if (!mLocaleIdToData[sId] && (!M_SUPPORTED_LOCALES || M_SUPPORTED_LOCALES[sId] === true)) {
+				mLocaleIdToData[sId] = SyncPromise.resolve(LoaderExtensions.loadResource(`sap/ui/core/cldr/${sId}.json`,
+					{
+						"async" : bAsync,
+						dataType : "json",
+						failOnError : false
+					})).then((oData) => {
+						// Note: When preload bundles are created the files in those bundles are optimized, i.e. for
+						// language bundles similar entries/parts are aggregated inside a <language>.json
+						// (e.g. 'ar.json') and only the region specific entries remain in the <language>_<region>.json
+						// (e.g. 'ar_SA.json').
+						// When a <language>_<region>.json is loaded the "__fallbackLocale" property inside the bundle
+						// indicates that further CLDR data/entries have to be loaded from the referenced
+						// <fallbackLocale>.json.
+						if (oData) {
+							return getOrLoad(oData.__fallbackLocale).then((oFallBackData) => {
+								merge(oData, oFallBackData);
+								mLocaleIdToData[sId] = oData;
+								delete oData.__fallbackLocale;
+								return oData;
+							});
+						}
 
-				// check if the data is a minified delta file.
-				// If so, load the corresponding fallback data as well, merge it and remove the fallback marker
-				if ( data && data.__fallbackLocale ) {
-					merge(data, getOrLoad(data.__fallbackLocale));
-					delete data.__fallbackLocale;
-				}
-
-				// if load fails, null is returned
-				// -> caller will process the fallback chain, in the end a result is identified and stored in mDatas under the originally requested ID
+						return oData;
+					}).unwrap();
 			}
-			return mLocaleDatas[sId];
+
+			return SyncPromise.resolve(mLocaleIdToData[sId]);
 		}
 
 		// normalize language and handle special cases
@@ -2629,34 +2661,34 @@ sap.ui.define([
 
 		// sId is the originally requested locale.
 		// this is the key under which the result (even a fallback one) will be stored in the end
-		var sId = sLanguage + "_" + sRegion;
+		const sId = sLanguage + "_" + sRegion;
 
 		// the locale of the loaded json file
-		var sCLDRLocaleId = sId;
+		let sCLDRLocaleId = sId;
 
-		// first try: load CLDR data for specific language / region combination
-		if ( sLanguage && sRegion ) {
-			mData = getOrLoad(sId);
-		}
-		// second try: load data for language only
-		if ( !mData && sLanguage ) {
-			mData = getOrLoad(sLanguage);
-			sCLDRLocaleId = sLanguage;
-		}
-		// last try: load data for default language "en" (english)
-		if (!mData) {
-			mData = getOrLoad("en");
-			sCLDRLocaleId = "en";
-		}
+		// first try: load CLDR data for specific language/region combination
+		return getOrLoad(sId).then((mData) => {
+			if (!mData) {
+				// second try: no data was found for the language/region combination, try with only the language
+				sCLDRLocaleId = sLanguage;
+				return getOrLoad(sLanguage);
+			}
 
-		// store in cache
-		mLocaleDatas[sId] = mData;
+			return mData;
+		}).then((mData) => {
+			if (!mData) {
+				// last try: no data was found for language/region combination nor the language, load "en" locale data
+				sCLDRLocaleId = "en";
+				return getOrLoad("en");
+			}
 
-		sCLDRLocaleId = sCLDRLocaleId.replace(/_/g, "-");
-		return {
-			mData: mData,
-			sCLDRLocaleId: sCLDRLocaleId
-		};
+			return mData;
+		}).then((mData) => {
+			return {
+				mData: mData,
+				sCLDRLocaleId: sCLDRLocaleId.replace(/_/g, "-")
+			};
+		});
 	}
 
 
@@ -2766,6 +2798,15 @@ sap.ui.define([
 	});
 
 	/**
+	 * Resets the locale data cache.
+	 *
+	 * @private
+	 */
+	LocaleData._resetLocaleDataCache = function() {
+		mLocaleIdToData = {};
+	};
+
+	/**
 	 * Creates an instance of <code>LocaleData</code> for the given locale.
 	 *
 	 * @param {sap.ui.core.Locale|sap.base.i18n.LanguageTag} vLocale The locale or language tag
@@ -2777,6 +2818,27 @@ sap.ui.define([
 	LocaleData.getInstance = function(vLocale) {
 		vLocale = Locale._getCoreLocale(vLocale);
 		return vLocale.hasPrivateUseSubtag("sapufmt") ? new CustomLocaleData(vLocale) : new LocaleData(vLocale);
+	};
+
+	/**
+	 * Creates an instance of <code>LocaleData</code> asynchronously for the given locale.
+	 *
+	 * @param {sap.ui.core.Locale|sap.base.i18n.LanguageTag} vLocale
+	 *   The locale or language tag
+	 * @returns {Promise<sap.ui.core.LocaleData>}
+	 *   A <code>Promise</code> which resolves with an instance of <code>LocaleData</code>; the <code>Promise</code>
+	 *   never rejects
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.core
+	 * @since 1.127
+	 */
+	LocaleData.requestInstance = function (vLocale) {
+		vLocale = Locale._getCoreLocale(vLocale);
+		const oLocaleData = vLocale.hasPrivateUseSubtag("sapufmt")
+			? new CustomLocaleData(vLocale, true)
+			: new LocaleData(vLocale, true);
+		return Promise.resolve(oLocaleData.loaded);
 	};
 
 	LocaleData._cldrLocales = _cldrLocales;
