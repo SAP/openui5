@@ -249,7 +249,7 @@ sap.ui.define([
 		assert.equal(Object.keys(aggregations).length, 7, "there should be 7 public aggregations across the hierarchy");
 		assert.ok(aggregations.dots, "there should be a 'dots' aggregation");
 
-		var associations = md.getAllAssociations();
+		var associations = md.getAssociations();
 		assert.equal(Object.keys(associations).length, 1, "there should be one public association");
 		assert.ok(associations.assi, "there should be a 'assi' association");
 		assert.equal(associations.assi.type, "sap.m.Button", "the 'assi' association should be of type Button");
