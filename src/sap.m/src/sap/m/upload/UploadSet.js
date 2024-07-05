@@ -326,7 +326,7 @@ sap.ui.define([
 						 * Required for receiving a <code>readyState</code> is to set the property <code>sendXHR</code>
 						 * to true. This property is not supported by Internet Explorer 9.
 						 */
-						readyState : {type : "string"},
+						readyState : {type : "int"},
 
 						/**
 					 	* Status of the XHR request.
@@ -334,7 +334,7 @@ sap.ui.define([
 					 	* Required for receiving a <code>status</code> is to set the property <code>sendXHR</code> to true.
 					 	* This property is not supported by Internet Explorer 9.
 					 	*/
-						status : {type : "string"},
+						status : {type : "int"},
 						/**
 					 	* Http-Response which comes from the server.
 					 	*
