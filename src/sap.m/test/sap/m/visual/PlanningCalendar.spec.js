@@ -119,6 +119,7 @@ describe("sap.m.PlanningCalendar", function() {
 	it("should display an Illustrated Message when noData is set and rows are removed", function() {
 		var oPage = element(by.id("PC1"));
 
+		element(by.id("B_SetDay")).click();
 		element(by.id("B_DeleteAllRows")).click();
 		expect(takeScreenshot(oPage)).toLookAs('PC_with_illustrated_message');
 	});

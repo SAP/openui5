@@ -500,12 +500,21 @@ sap.ui.define([
 		}
 	});
 
-	var oDeleteRowsButton = new Button("B_DeleteAllRows", {
+	var oButtonDeleteRows = new Button("B_DeleteAllRows", {
 		icon: "sap-icon://delete",
 		tooltip: "Delete all rows",
-		press: function(oEvent) {
+		press: function() {
 			var oPC = Element.getElementById("PC1");
 			oPC.removeAllRows();
+		}
+	});
+
+	var oButtonSetDayToJan2015 = new Button("B_SetDay", {
+		icon: "sap-icon://appointment",
+		tooltip: "Set date to Jan 7, 2015",
+		press: function() {
+			var oPC = Element.getElementById("PC1");
+			oPC.setStartDate(UI5Date.getInstance(2015, 0, 7));
 		}
 	});
 
@@ -1362,7 +1371,8 @@ sap.ui.define([
 			oButton2,
 			oButtonAddAppointment,
 			oButtonAddRow,
-			oDeleteRowsButton,
+			oButtonDeleteRows,
+			oButtonSetDayToJan2015,
 			oButtonShowIntervalHeaders,
 			oButtonShowRowHeaders,
 			oButtonShowWeekNumbers,
