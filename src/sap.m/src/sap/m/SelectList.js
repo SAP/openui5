@@ -87,7 +87,7 @@ sap.ui.define([
 					 */
 					selectedItemId: {
 						type: "string",
-						group: "Misc",
+						group: "Data",
 						defaultValue: ""
 					},
 

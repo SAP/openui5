@@ -227,7 +227,7 @@ function(
 					 */
 					selectedItemId: {
 						type: "string",
-						group: "Misc",
+						group: "Data",
 						defaultValue: ""
 					},
 
