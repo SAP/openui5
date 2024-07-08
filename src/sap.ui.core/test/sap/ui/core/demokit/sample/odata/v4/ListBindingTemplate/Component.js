@@ -36,6 +36,75 @@ sap.ui.define([
 
 			oMetaModel.setDefaultBindingMode("OneWay");
 
+			const oUriParameters = new URLSearchParams(window.location.search);
+			if (oUriParameters.has("setAnnotationChangePromise")) {
+				// Note: path must start from EntityContainer of metadata.xml!
+				const aAnnotationChanges = [];
+
+				// override localAnnotations.xml ---------------------------------------------------
+				aAnnotationChanges.push({ // Note: winding detour doesn't make a difference here ;-)
+					path : "/MANAGERS/Manager_to_Team/TEAM_2_EMPLOYEES/EMPLOYEE_2_EQUIPMENTS/ID"
+						+ "@com.sap.vocabularies.Common.v1.Label",
+					value : "ID of Equipment" // original: "Equipment ID"
+				});
+				aAnnotationChanges.push({
+					path : "/Equipments/ID@com.sap.vocabularies.Common.v1.Text"
+						+ "@com.sap.vocabularies.UI.v1.TextArrangement",
+					value : { // original: TextLast
+						$EnumMember : "com.sap.vocabularies.UI.v1.TextArrangementType/TextFirst"
+					}
+				});
+
+				// override metadata.xml -----------------------------------------------------------
+				aAnnotationChanges.push({
+					path : "/MANAGERS/ID@com.sap.vocabularies.Common.v1.Label",
+					value : "ID of Manager" // original: "ID"
+				});
+				// Note: MANAGER has no name, thus no Text/-Arrangement possible
+
+				// override/enhance metadata_product.xml -------------------------------------------
+				aAnnotationChanges.push({
+					path : "/Equipments/EQUIPMENT_2_PRODUCT/ID"
+						+ "@com.sap.vocabularies.Common.v1.Label",
+					value : "ID of Product" // original: "Product ID"
+				});
+				aAnnotationChanges.push({
+					path : "/Equipments/EQUIPMENT_2_PRODUCT/ID@com.sap.vocabularies.Common.v1.Text",
+					value : {$Path : "Name"} // NEW
+				});
+				aAnnotationChanges.push({
+					path : "/Equipments/EQUIPMENT_2_PRODUCT/ID@com.sap.vocabularies.Common.v1.Text"
+						+ "@com.sap.vocabularies.UI.v1.TextArrangement",
+					value : { // NEW
+						$EnumMember : "com.sap.vocabularies.UI.v1.TextArrangementType/TextFirst"
+					}
+				});
+
+				// override/enhance metadata_supplier.xml ------------------------------------------
+				aAnnotationChanges.push({
+					path : "/Equipments/EQUIPMENT_2_PRODUCT/PRODUCT_2_SUPPLIER/SUPPLIER_ID"
+						+ "@com.sap.vocabularies.Common.v1.Label",
+					value : "ID of Supplier" // original: "Supplier ID"
+				});
+				//TODO enhance Main.view.xml to support s.th. like AH.getNavigationPath;
+				//     w/o that, Supplier_Name is relative to /Equipments :-(
+				// aAnnotationChanges.push({
+				//    path : "/Equipments/EQUIPMENT_2_PRODUCT/PRODUCT_2_SUPPLIER/SUPPLIER_ID"
+				//        + "@com.sap.vocabularies.Common.v1.Text",
+				//    value : {$Path : "Supplier_Name"} // NEW
+				// });
+				aAnnotationChanges.push({
+					path : "/Equipments/EQUIPMENT_2_PRODUCT/PRODUCT_2_SUPPLIER/SUPPLIER_ID"
+						+ "@com.sap.vocabularies.Common.v1.Text"
+						+ "@com.sap.vocabularies.UI.v1.TextArrangement",
+					value : { // NEW
+						$EnumMember : "com.sap.vocabularies.UI.v1.TextArrangementType/TextFirst"
+					}
+				});
+
+				oModel.setAnnotationChangePromise(Promise.resolve(aAnnotationChanges));
+			}
+
 			View.create({
 				async : true,
 				bindingContexts : {

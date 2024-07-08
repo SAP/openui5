@@ -395,6 +395,7 @@ sap.ui.define([
 		}
 
 		this.aAllBindings = [];
+		this.oAnnotationChangePromise = null; // @see #_requestAnnotationChanges
 		// The bindings holding keep-alive contexts without a $$getKeepAlive binding
 		this.mKeepAliveBindingsByPath = {};
 		this.mSupportedBindingModes = {
@@ -416,6 +417,22 @@ sap.ui.define([
 		// ensure the events are respectively fired once for a GET request
 		this.mPath2DataRequestedCount = {};
 	}
+
+	/**
+	 * Requests changes to annotations.
+	 *
+	 * @returns {Promise<Array<object>>|sap.ui.base.SyncPromise<undefined>}
+	 *   A promise resolving with an optional array of change objects defining a metamodel path and
+	 *   a value to be set for that path
+	 *
+	 * @private
+	 * @see #setAnnotationChangePromise
+	 */
+	ODataModel.prototype._requestAnnotationChanges = function () {
+		this.oAnnotationChangePromise ??= SyncPromise.resolve(); // now it's too late for the setter
+
+		return this.oAnnotationChangePromise;
+	};
 
 	/**
 	 * Submits the requests associated with this group ID in one batch request.
@@ -2750,18 +2767,25 @@ sap.ui.define([
 	};
 
 	/**
-	 * Tells whether an entity's ETag should be actively ignored (If-Match:*) for PATCH requests.
-	 * Ignored if there is no ETag. Decided at the point in time when the PATCH is actually being
-	 * sent.
+	 * Sets a promise resolving with changes which are applied to all annotations loaded by this
+	 * model, either as part of service metadata or from annotation files given via parameter
+	 * "annotationURI" (see {@link #constructor}).
 	 *
-	 * @param {boolean} bIgnoreETag - Whether an entity's ETag should be actively ignored
+	 * @param {Promise<Array<object>>} oAnnotationChangePromise
+	 *   A promise resolving with an array of change objects defining a metamodel path (pointing to
+	 *   an annotation) and a value to be set for that annotation
+	 * @throws {Error}
+	 *   In case the promise is set too late or has already been set
 	 *
 	 * @private
-	 * @since 1.110.0
-	 * @ui5-restricted sap.fe
+	 * @since 1.127.0
+	 * @ui5-restricted sap.ui.fl
 	 */
-	ODataModel.prototype.setIgnoreETag = function (bIgnoreETag) {
-		this.bIgnoreETag = bIgnoreETag;
+	ODataModel.prototype.setAnnotationChangePromise = function (oAnnotationChangePromise) {
+		if (this.oAnnotationChangePromise) {
+			throw Error("Too late");
+		}
+		this.oAnnotationChangePromise = oAnnotationChangePromise;
 	};
 
 	/**
@@ -2783,6 +2807,21 @@ sap.ui.define([
 	 */
 	ODataModel.prototype.setHttpListener = function (fnListener) {
 		this.fnHttpListener = fnListener;
+	};
+
+	/**
+	 * Tells whether an entity's ETag should be actively ignored (If-Match:*) for PATCH requests.
+	 * Ignored if there is no ETag. Decided at the point in time when the PATCH is actually being
+	 * sent.
+	 *
+	 * @param {boolean} bIgnoreETag - Whether an entity's ETag should be actively ignored
+	 *
+	 * @private
+	 * @since 1.110.0
+	 * @ui5-restricted sap.fe
+	 */
+	ODataModel.prototype.setIgnoreETag = function (bIgnoreETag) {
+		this.bIgnoreETag = bIgnoreETag;
 	};
 
 	/**
