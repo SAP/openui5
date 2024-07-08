@@ -23158,7 +23158,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			FieldHelpUtil.setDocumentationRef(oFilterDynamicallyDestroyed,
 				"urn:sap-com:documentation:key?=type=DTEL&id=SALESORDERID");
 			const aExpectedHotspots = [{
-				"backendHelpKey": {id: "FOO", origin: null, type: "DTEL"},
+				"backendHelpKey": {id: "FOO", type: "DTEL"},
 				"hotspotId": oFilterWithFieldHelp.getId(),
 				"labelText": "Label for filter with field help"
 			}, {
@@ -23170,15 +23170,15 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				"hotspotId": oView.byId("Note").getId(),
 				"labelText": "Label for Note"
 			}, { // documentation ref from OData annotation - composite binding part 0
-				"backendHelpKey": {id: "GROSSAMOUNT", origin: null, type: "DTEL"},
+				"backendHelpKey": {id: "GROSSAMOUNT", type: "DTEL"},
 				"hotspotId": oView.byId("Amount0").getId(),
 				"labelText": "Label for both amount and currency"
 			}, { // documentation ref from OData annotation - composite binding part 1
-				"backendHelpKey": {id: "/FOO/CURRENCY", origin: null, type: "DTEL"},
+				"backendHelpKey": {id: "/FOO/CURRENCY", type: "DTEL"},
 				"hotspotId": oView.byId("Amount0").getId(),
 				"labelText": "Label for both amount and currency"
 			}, { // documentation ref from OData annotation - composite binding showning only one part
-				"backendHelpKey": {id: "GROSSAMOUNT", origin: null, type: "DTEL"},
+				"backendHelpKey": {id: "GROSSAMOUNT", type: "DTEL"},
 				"hotspotId": oView.byId("Amount1").getId(),
 				"labelText": "Label for amount only"
 			}];
@@ -23198,7 +23198,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				const oUpdateCalledPromise = waitForUpdate([
 					...aExpectedHotspots,
 					{
-						"backendHelpKey": {id: "BAZ", origin: null, type: "DTEL"},
+						"backendHelpKey": {id: "BAZ", type: "DTEL"},
 						"hotspotId": oLateFilterField.getId(),
 						"labelText": "Label for late filter field"
 					}], "late creation of a filter field");
@@ -23222,11 +23222,11 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				const oUpdateCalledPromise = waitForUpdate([
 					...aExpectedHotspots,
 					{
-						"backendHelpKey": {id: "GROSSAMOUNT", origin: null, type: "DTEL"},
+						"backendHelpKey": {id: "GROSSAMOUNT", type: "DTEL"},
 						"hotspotId": oView.byId("Amount2").getId(),
 						"labelText": "Label for both amount and currency, lazy bound"
 					}, {
-						"backendHelpKey": {id: "/FOO/CURRENCY", origin: null, type: "DTEL"},
+						"backendHelpKey": {id: "/FOO/CURRENCY", type: "DTEL"},
 						"hotspotId": oView.byId("Amount2").getId(),
 						"labelText": "Label for both amount and currency, lazy bound"
 					}], "late composite binding");
@@ -23264,7 +23264,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				const oUpdateCalledPromise = waitForUpdate([
 					...aExpectedHotspots,
 					{
-						"backendHelpKey": {id: "ITEMNOTE", origin: null, type: "DTEL"},
+						"backendHelpKey": {id: "ITEMNOTE", type: "DTEL"},
 						"hotspotId": oView.byId("Note0").getId(),
 						"labelText": "Label for Item or Sales Order Note"
 					}], "late initially setting a binding context");

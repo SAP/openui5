@@ -496,7 +496,7 @@ sap.ui.define([
 
 		// code under test
 		assert.deepEqual(oFieldHelp._getFieldHelpHotspots(), [{
-			backendHelpKey: {id: "~customId0", origin: null, type: "~customType0"},
+			backendHelpKey: {id: "~customId0", type: "~customType0"},
 			hotspotId: "~element0",
 			labelText: "~sLabel0"
 		}, {
@@ -508,7 +508,7 @@ sap.ui.define([
 			hotspotId: "~element1",
 			labelText: "~sLabel1"
 		}, {
-			backendHelpKey: {id: "~customId3", origin: null, type: "~customType3"},
+			backendHelpKey: {id: "~customId3", type: "~customType3"},
 			hotspotId: "~element1",
 			labelText: "~sLabel1"
 		}]);
@@ -529,7 +529,7 @@ sap.ui.define([
 
 		// code under test
 		assert.deepEqual(oFieldHelp._getFieldHelpHotspots(), [{
-			backendHelpKey: {id: "~customId0", origin: null, type: "~customType0"},
+			backendHelpKey: {id: "~customId0", type: "~customType0"},
 			hotspotId: "~element0",
 			labelText: "~sLabel0"
 		}, {
@@ -537,7 +537,7 @@ sap.ui.define([
 			hotspotId: "~element1",
 			labelText: "~sLabel1"
 		}, {
-			backendHelpKey: {id: "~customId3", origin: null, type: "~customType3"},
+			backendHelpKey: {id: "~customId3", type: "~customType3"},
 			hotspotId: "~element1",
 			labelText: "~sLabel1"
 		}]);
@@ -563,11 +563,11 @@ sap.ui.define([
 
 		// code under test
 		assert.deepEqual(oFieldHelp._getFieldHelpHotspots(), [{
-			backendHelpKey: {id: "~customId0", origin: null, type: "~customType0"},
+			backendHelpKey: {id: "~customId0", type: "~customType0"},
 			hotspotId: "~element0",
 			labelText: "~sLabel0"
 		}, {
-			backendHelpKey: {id: "~customId3", origin: null, type: "~customType3"},
+			backendHelpKey: {id: "~customId3", type: "~customType3"},
 			hotspotId: "~element1",
 			labelText: "~sLabel1"
 		}]);
@@ -584,7 +584,7 @@ sap.ui.define([
 
 		// code under test
 		assert.deepEqual(oFieldHelp._getFieldHelpHotspots(), [{
-			backendHelpKey: {id: "~customId0", origin: null, type: "~customType0"},
+			backendHelpKey: {id: "~customId0", type: "~customType0"},
 			hotspotId: "~element0",
 			labelText: "~sLabel0"
 		}]);
@@ -630,7 +630,7 @@ sap.ui.define([
 
 		// code under test - only the control which has a label is added to the internal data structure
 		assert.deepEqual(oFieldHelp._getFieldHelpHotspots(), [{
-			backendHelpKey: {id: "~customId1", origin: null, type: "~customType1"},
+			backendHelpKey: {id: "~customId1", type: "~customType1"},
 			hotspotId: "~element1",
 			labelText: "~sLabel"
 		}]);
@@ -655,7 +655,7 @@ sap.ui.define([
 		this.mock(LabelEnablement).expects("_getLabelTexts").withExactArgs(sinon.match.same(oElement0))
 			.returns(["~sLabel0"]);
 		assert.deepEqual(oFieldHelp._getFieldHelpHotspots(), [{
-			backendHelpKey: {id: "~customId0", origin: null, type: "~customType0"},
+			backendHelpKey: {id: "~customId0", type: "~customType0"},
 			hotspotId: "~element0",
 			labelText: "~sLabel0"
 		}]);
@@ -703,7 +703,7 @@ sap.ui.define([
 			.returns(["~sLabelText"]);
 
 		assert.deepEqual(oFieldHelp._getFieldHelpHotspots(), [{
-			backendHelpKey: {id: "~customId", origin: null, type: "~customType"},
+			backendHelpKey: {id: "~customId", type: "~customType"},
 			hotspotId: "~element",
 			labelText: "~sLabelText"
 		}]);
