@@ -177,11 +177,12 @@ sap.ui.define([
 				});
 				Array.from(oURNSet).forEach((sURN) => {
 					const oParameters = new URLSearchParams(sURN.slice(sURNPrefix.length));
+					const sOrigin = oParameters.get("origin");
 					aFieldHelpHotspots.push({
 						backendHelpKey: {
 							id: oParameters.get("id"),
-							origin: oParameters.get("origin"),
-							type: oParameters.get("type")
+							type: oParameters.get("type"),
+							...(sOrigin && {origin: sOrigin})
 						},
 						hotspotId: sControlID,
 						labelText: sLabel
