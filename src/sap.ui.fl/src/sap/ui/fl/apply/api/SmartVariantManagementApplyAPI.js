@@ -138,34 +138,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * Indicates if the VENDOR layer is selected.
-		 *
-		 * @returns {boolean} <code>true</code> if VENDOR layer is enabled
-		 * @private
-		 * @ui5-restricted
-		 * @deprecated
-		 */
-		isVendorLayer() {
-			return LayerUtils.isVendorLayer();
-		},
-
-		/**
-		 * Indicates whether the variant downport scenario is enabled or not.
-		 * This scenario is only enabled if the current layer is the VENDOR layer
-		 * and the URL parameter hotfix is set to <code>true</code>.
-		 *
-		 * @returns {boolean} <code>true</code> if the variant downport scenario is enabled
-		 * @private
-		 * @ui5-restricted sap.ui.comp
-		 * @deprecated
-		 */
-		isVariantDownport() {
-			var oUriParams = new URLSearchParams(window.location.search);
-			var sIsHotfixMode = oUriParams.get("hotfix");
-			return SmartVariantManagementApplyAPI.isVendorLayer() && (sIsHotfixMode === "true");
-		},
-
-		/**
 		 * Retrieves the default variant for the current control synchronously. WARNING: The consumer has to make sure that the
 		 * changes have already been retrieved with <code>getChanges</code>.
 		 * It's recommended to use the async API <code>getDefaultVariantId</code>, which works regardless of any preconditions.
