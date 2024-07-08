@@ -43069,6 +43069,79 @@ make root = ${bMakeRoot}`;
 	});
 
 	//*********************************************************************************************
+	// Scenario: Sticky app (non-draft) with FCL for LR & OP uses edit action and bReplaceWithRVC.
+	// Show that LR & OP are in sync when editing.
+	// SNOW: DINC0173477
+	QUnit.test("DINC0173477", async function (assert) {
+		const oModel = this.createSalesOrdersModel({autoExpandSelect : true});
+		const sView = `
+<Table id="listReport" items="{/SalesOrderList}">
+	<Text id="id" text="{SalesOrderID}"/>
+	<Text id="listNote" text="{Note}"/>
+</Table>
+<FlexBox id="objectPage">
+	<Input id="objectNote" value="{Note}"/>
+</FlexBox>`;
+
+		this.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=100", {
+				value : [{
+					"@odata.etag" : "etag1",
+					Note : "1st note",
+					SalesOrderID : "1"
+				}]
+			})
+			.expectChange("id", ["1"])
+			.expectChange("listNote", ["1st note"])
+			.expectChange("objectNote");
+
+		await this.createView(assert, sView, oModel);
+
+		const oListBinding = this.oView.byId("listReport").getBinding("items");
+		const oContext = oListBinding.getCurrentContexts()[0];
+		oContext.setKeepAlive(true);
+		this.oView.byId("objectPage").setBindingContext(oContext);
+
+		this.expectChange("objectNote", "1st note");
+
+		await this.waitForChanges(assert, "setBindingContext");
+
+		const sAction = "com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder_Confirm";
+		const oEditAction
+			= oModel.bindContext(sAction + "(...)", oContext, {$$inheritExpandSelect : true});
+
+		this.expectRequest({
+				headers : {
+					"If-Match" : "*"
+				},
+				method : "POST",
+				payload : {},
+				url : "SalesOrderList('1')/" + sAction + "?$select=Note,SalesOrderID"
+			}, {
+				"@odata.etag" : "etag1.1",
+				Note : "1st note (draft)",
+				SalesOrderID : "1"
+			})
+			.expectChange("listNote", ["1st note (draft)"])
+			.expectChange("objectNote", "1st note (draft)");
+
+		const [oRVC] = await Promise.all([
+			// code under test
+			oEditAction.invoke("$auto", /*bIgnoreETag*/true, null, /*bReplaceWithRVC*/true),
+			this.waitForChanges(assert, "bReplaceWithRVC")
+		]);
+
+		assert.strictEqual(oRVC, oContext);
+
+		// Note: PATCH does not matter here, thus we avoid it
+		this.expectChange("listNote", ["1st note (improved)"])
+			.expectChange("objectNote", "1st note (improved)");
+
+		oContext.setProperty("Note", "1st note (improved)", null);
+
+		await this.waitForChanges(assert, "edit w/o PATCH");
+	});
+
+	//*********************************************************************************************
 	// Scenario: Object page bound to active entity: Call the "Edit" bound action on an active
 	// entity which responds with the inactive entity. The invoke for the "Edit" operation binding
 	// resolves with the context for the inactive entity. Data for the inactive entity is displayed
