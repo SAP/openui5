@@ -11,7 +11,7 @@
 @_sap_tnt_ToolHeader_Padding: 0 0.75rem;
 @_sap_tnt_ToolHeader_ArrowMarginBottom: 0.25rem;
 @_sap_tnt_ToolHeader_IconTabHeader_Height: auto;
-@_sap_tnt_ToolHeader_Shadow: 0 0 0 0.0625rem @sapContent_ShadowColor, 0 0.5rem 1rem 0 fade(@sapContent_ShadowColor, 16);
+@_sap_tnt_ToolHeader_Shadow: 0 0 0 0.0625rem @sapUiContentShadowColor, 0 0.5rem 1rem 0 fade(@sapUiContentShadowColor, 16);
 @_sap_tnt_ToolHeader_DisabledOpacity: @sapUiContentDisabledOpacity;
 @_sap_tnt_ToolHeader_SF_Border: 0.0625rem solid @sapUiShellBorderColor;
 
@@ -20,14 +20,14 @@
 // ==========================================================================
 
 .sapTntToolHeader {
-	&.sapMTB {
+	&.sapMTB:not(.sapUshellShellToolHeader) {
 		background-color: @sapUiShellColor;
-		padding: 0 1.25rem 0 0.75rem ;
-		border: solid 0.0625rem @sapShell_BorderColor;
+		padding: 0 1.25rem 0 0.75rem;
+		border: solid 0.0625rem @sapUiShellBorderColor;
 	}
 
 	&.sapMIBar.sapMTB .sapMBarChild ~ .sapMBarChild {
-		margin: 0 0 0 0.375rem
+		margin: 0 0 0 0.375rem;
 	}
 
 	&.sapMIBar.sapMTB .sapMBarChild.sapMTBSeparator {
@@ -71,12 +71,12 @@
 		&.sapMBtn .sapMBtnDefault,
 		&.sapMBtn .sapMBtnBack,
 		&.sapMBtn .sapMBtnUp {
-			color: @sapContent_IconColor;
-			background-color: @sapButton_Lite_Background;
+			color: @sapUiContentIconColor;
+			background-color: @sapUiButtonLiteBackground;
 			height: 2.5rem;
 
 			.sapUiIcon {
-				color: @sapContent_IconColor;
+				color: @sapUiContentIconColor;
 				line-height: 2.5rem;
 			}
 
@@ -91,7 +91,7 @@
 		&.sapMBtn:focus .sapMBtnBack.sapMFocusable,
 		&.sapMBtn:focus .sapMBtnUp.sapMFocusable {
 			&::before {
-				outline: @sapContent_FocusStyle @sapContent_FocusWidth @sapContent_FocusColor;
+				outline: @sapUiContentFocusStyle @sapUiContentFocusWidth @sapUiContentFocusColor;
 				border: none !important;
 			}
 		}
@@ -100,8 +100,8 @@
 		&.sapMBtn:hover:not(.sapMBtnDisabled) .sapMBtnDefault,
 		&.sapMBtn:hover:not(.sapMBtnDisabled) .sapMBtnBack,
 		&.sapMBtn:hover:not(.sapMBtnDisabled) .sapMBtnUp {
-			background: @sapButton_Lite_Hover_Background;
-			color: @sapContent_IconColor;
+			background: @sapUiButtonLiteHoverBackground;
+			color: @sapUiContentIconColor;
 			box-shadow: none;
 		}
 
@@ -109,13 +109,13 @@
 		&.sapMBtn:active:not(.sapMBtnDisabled) .sapMBtnDefault,
 		&.sapMBtn:active:not(.sapMBtnDisabled) .sapMBtnBack,
 		&.sapMBtn:active:not(.sapMBtnDisabled) .sapMBtnUp {
-			background:  @sapActiveColor;
-			color: @sapContent_IconColor;
+			background:  @sapUiActive;
+			color: @sapUiContentIconColor;
 			box-shadow: none;
 		}
 
 		&.sapMBtn:hover:not(.sapMBtnDisabled) > .sapMBtnTransparent.sapMBtnHoverable:not(.sapMBtnActive):not(.sapMToggleBtnPressed):not(.sapMBtnEmphasized) .sapUiIcon {
-			color: @sapContent_IconColor;
+			color: @sapUiContentIconColor;
 		}
 	}
 }
@@ -163,16 +163,16 @@
 
 .sapTntToolHeader {
 	.sapMTitle {
-		text-shadow: none;		
-		font-family: @sapFontBlackFamily;
+		text-shadow: none;
+		font-family: @sapUiFontBlackFamily;
 		font-size: 1.125rem;
 		line-height: 1.625rem;
 	}
 
 	.sapMText,
 	.sapMLabel {
-		line-height: @sapContent_LineHeight;
-		color: @sapContent_LabelColor;
+		line-height: @sapUiContentLineHeight;
+		color: @sapUiContentLabelColor;
 	}
 
 	&.sapMIBar.sapMTB .sapMBarChild.sapMText,
@@ -276,14 +276,14 @@
 	.sapMSFS:active::after,
 	.sapMSFS.sapMSFBA::after,
 	.sapMSFR:active::after {
-		background: @sapActiveColor;
-		color: @sapContent_IconColor;
+		background: @sapUiActive;
+		color: @sapUiContentIconColor;
 	}
 
 	.sapMSFS:hover::after,
 	.sapMSFR:hover::after {
-		background: @sapHoverColor;
-		color: @sapContent_IconColor;
+		background: @sapUiHover;
+		color: @sapUiContentIconColor;
 	}
 
 	.sapMSFB.sapMSFR:not(:last-child):hover {
@@ -371,7 +371,7 @@ html.sap-desktop .sapTntToolHeader .sapMSF:not(.sapMSFDisabled) {
 	}
 
 	.sapMImgFocusable:focus {
-		outline: @sapContent_FocusStyle @sapContent_FocusWidth @sapContent_FocusColor;
+		outline: @sapUiContentFocusStyle @sapUiContentFocusWidth @sapUiContentFocusColor;
 		outline-offset: 0.125rem;
 		border-radius: 0.25rem;
 	}
