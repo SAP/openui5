@@ -30,7 +30,9 @@
 							maxConditions="1"
 							operators="EQ"
 							delegate='\{"name": "sap/ui/mdc/field/FieldBaseDelegate", "payload": \{\}\}'>
-							<Slider id="F1-S" value="{path: '$field>/conditions', type: 'sap.ui.mdc.field.ConditionsType'}" min="0" max="100000"/>
+							<mdc:contentEdit>
+								<Slider id="F1-S" value="{path: '$field>/conditions', type: 'sap.ui.mdc.field.ConditionsType'}" min="0" max="100000"/>
+							</mdc:contentEdit>
 						</mdc:FilterField>
 
 						<!-- Custom input (multi-value) -->

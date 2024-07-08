@@ -7,7 +7,8 @@ sap.ui.define([
 		label: "Number of words",
 		visible: true,
 		path: "numberWords",
-		dataType:"sap.ui.model.type.Integer"
+		dataType:"sap.ui.model.type.Integer",
+		maxConditions: 1
 	},{
 		key: "descr",
 		label: "Description",
