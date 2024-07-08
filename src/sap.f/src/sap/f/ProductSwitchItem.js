@@ -42,7 +42,6 @@ sap.ui.define([
 		 *
 		 * @constructor
 		 * @public
-		 * @experimental Since 1.72. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 		 * @alias sap.f.ProductSwitchItem
 		 * @since 1.72
 		 */
