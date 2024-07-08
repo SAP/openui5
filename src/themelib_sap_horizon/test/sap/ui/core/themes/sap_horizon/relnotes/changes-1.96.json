@@ -98,5 +98,15 @@
         ]
       }
     ]
+  },
+  "1.96.32": {
+    "date": "July 2024",
+    "notes": [
+      {
+        "id": "7abf2b4bb5029f1780d628168e68241b69375b1e",
+        "type": "FIX",
+        "text": " We've now fixed the overlap issue in GenericTile when sap.m.TileSizeBehaviour.Small was being used"
+      }
+    ]
   }
 }

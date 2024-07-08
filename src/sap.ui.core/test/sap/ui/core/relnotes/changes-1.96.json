@@ -789,5 +789,25 @@
         "text": " sap/ui/model/odata/ODataMetadata#_getPropertyMetadata: fix for complex type property"
       }
     ]
+  },
+  "1.96.32": {
+    "date": "July 2024",
+    "notes": [
+      {
+        "id": "30f6262ae8a498330911f3144331c0780723654b",
+        "type": "FIX",
+        "text": " sap.ui.model.json.JSONModel#loadData: Don't use JSONP"
+      },
+      {
+        "id": "954a4ccf86fb4cac0ad8849a9b88f63498a25dfd",
+        "type": "FIX",
+        "text": " sap/ui/core/.library: Remove wrong component for sap/ui/core/util/MockServer"
+      },
+      {
+        "id": "a20c2f6156e99fae952081de925001b75bbf608d",
+        "type": "FIX",
+        "text": " sap.ui.core.format.DateFormat.qunit: Fix flaky tests"
+      }
+    ]
   }
 }
