@@ -21,7 +21,7 @@ sap.ui.define([
 							this.waitFor({
 								controlType : "sap.m.Popover",
 								success : function (aControls) {
-									aControls[0].close();
+									aControls.forEach((oControl) => { oControl.close(); });
 									Opa5.assert.ok(true, "ValueHelp Popover Closed");
 								}
 							});
