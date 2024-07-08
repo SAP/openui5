@@ -946,6 +946,40 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+[null, {}].forEach((vValue) => {
+	QUnit.test("checkUpdateInternal(): with vValue parameter: " + vValue, function (assert) {
+		var oContext = Context.create(this.oModel, {}, "/EntitySet('foo')"),
+			oBinding = this.oModel.bindProperty("property/path", oContext),
+			oPromise,
+			done = assert.async();
+
+		this.mock(this.oModel.getMetaModel()).expects("fetchUI5Type")
+			.withExactArgs("/EntitySet('foo')/property/path")
+			.returns(SyncPromise.resolve("~UI5Type~"));
+		this.mock(oBinding).expects("doSetType").withExactArgs("~UI5Type~").callThrough();
+		oBinding.vValue = vValue; // simulate a read
+		oBinding.attachChange(function () { // "change" event even for same object value
+			assert.ok(vValue, "null handled specially");
+			assert.strictEqual(oBinding.getType(), "~UI5Type~");
+			assert.strictEqual(oBinding.getValue(), vValue);
+			done();
+		});
+		if (!vValue) {
+			done(); // no "change" event expected
+		}
+		this.mock(oBinding.oCachePromise).expects("then").never();
+
+		// code under test
+		oPromise = oBinding.checkUpdateInternal(undefined, undefined, undefined, false, vValue);
+
+		assert.ok(oPromise.isFulfilled());
+		assert.strictEqual(oBinding.getValue(), vValue);
+
+		return oPromise;
+	});
+});
+
+	//*********************************************************************************************
 	QUnit.test("checkUpdateInternal(): with vValue parameter: undefined", function (assert) {
 		var oContext = Context.create(this.oModel, {}, "/EntitySet('foo')"),
 			oBinding = this.oModel.bindProperty("property/path", oContext);

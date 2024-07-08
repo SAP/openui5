@@ -355,7 +355,8 @@ sap.ui.define([
 			if (oCallToken === that.oCheckUpdateCallToken) { // latest call to checkUpdateInternal
 				that.oCheckUpdateCallToken = undefined;
 				that.doSetType(oType);
-				if (oCallToken.forceUpdate || that.vValue !== vValue0) {
+				if (oCallToken.forceUpdate || that.vValue !== vValue0
+						|| vValue0 && typeof vValue0 === "object") {
 					that.bInitial = false;
 					that.vValue = vValue0;
 					that._fireChange({reason : sChangeReason || ChangeReason.Change});

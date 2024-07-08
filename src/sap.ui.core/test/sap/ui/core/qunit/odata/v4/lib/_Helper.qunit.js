@@ -840,6 +840,8 @@ sap.ui.define([
 			oHelperMock = this.mock(_Helper);
 
 		oHelperMock.expects("fireChange").withExactArgs(sinon.match.same(mChangeListeners),
+			"SO_2_BP/Address", sinon.match.same(oCacheData.Address));
+		oHelperMock.expects("fireChange").withExactArgs(sinon.match.same(mChangeListeners),
 			"SO_2_BP/Address/City", "Heidelberg");
 
 		// code under test: update cache with the value the user entered
@@ -857,6 +859,8 @@ sap.ui.define([
 			}
 		});
 
+		oHelperMock.expects("fireChange").withExactArgs(sinon.match.same(mChangeListeners),
+			"SO_2_BP/Address", sinon.match.same(oCacheData.Address));
 		oHelperMock.expects("fireChange").withExactArgs(sinon.match.same(mChangeListeners),
 			"SO_2_BP/Address/PostalCode", "69115");
 		oHelperMock.expects("fireChanges").withExactArgs(sinon.match.same(mChangeListeners),
@@ -889,6 +893,8 @@ sap.ui.define([
 			mChangeListeners = {},
 			oHelperMock = this.mock(_Helper);
 
+		oHelperMock.expects("fireChange").withExactArgs(sinon.match.same(mChangeListeners),
+			"SO_2_BP/#foo.bar.AcBaz", sinon.match.same(oAdvertisedAction));
 		oHelperMock.expects("fireChange").withExactArgs(sinon.match.same(mChangeListeners),
 			"SO_2_BP/#foo.bar.AcBaz/title", "My New Title");
 		oHelperMock.expects("fireChanges").never();
@@ -923,7 +929,8 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("updateExisting: collection valued properties (messages)", function (assert) {
-		var aNoMessages = [],
+		var oHelperMock = this.mock(_Helper),
+			aNoMessages = [],
 			aMessages = [{
 				code : "42",
 				longtextUrl : "any/URL",
@@ -951,8 +958,13 @@ sap.ui.define([
 		aMessages.$count = aMessages.length;
 		sMessages = JSON.stringify(aMessages);
 
+		oHelperMock.expects("fireChange").withExactArgs("~mChangeListeners~0~",
+			"SO_2_BP/__CT__FAKE__Message", sinon.match.same(oCacheData.__CT__FAKE__Message));
+		oHelperMock.expects("fireChange").withExactArgs("~mChangeListeners~0~",
+			"SO_2_BP/__CT__FAKE__Message/__FAKE__Messages", sinon.match.same(aMessages));
+
 		// code under test
-		_Helper.updateExisting(null, "SO_2_BP", oCacheData, {
+		_Helper.updateExisting("~mChangeListeners~0~", "SO_2_BP", oCacheData, {
 			__CT__FAKE__Message : {
 				__FAKE__Messages : aMessages
 			}
@@ -962,8 +974,13 @@ sap.ui.define([
 			sMessages);
 		assert.strictEqual(oCacheData["__CT__FAKE__Message"]["__FAKE__Messages"].$count, 2);
 
+		oHelperMock.expects("fireChange").withExactArgs("~mChangeListeners~1~",
+			"SO_2_BP/__CT__FAKE__Message", sinon.match.same(oCacheData.__CT__FAKE__Message));
+		oHelperMock.expects("fireChange").withExactArgs("~mChangeListeners~1~",
+			"SO_2_BP/__CT__FAKE__Message/__FAKE__Messages", sinon.match.same(aNoMessages));
+
 		// code under test
-		_Helper.updateExisting({}, "SO_2_BP", oCacheData, {
+		_Helper.updateExisting("~mChangeListeners~1~", "SO_2_BP", oCacheData, {
 			__CT__FAKE__Message : {
 				__FAKE__Messages : aNoMessages
 			}
@@ -971,8 +988,6 @@ sap.ui.define([
 
 		assert.deepEqual(oCacheData["__CT__FAKE__Message"]["__FAKE__Messages"], []);
 		assert.strictEqual(oCacheData["__CT__FAKE__Message"]["__FAKE__Messages"].$count, 0);
-
-		//TODO change handling for collection valued properties (not supported yet)
 	});
 
 	//*********************************************************************************************
@@ -1870,11 +1885,11 @@ sap.ui.define([
 			};
 
 		oHelperMock.expects("fireChange").withExactArgs(sinon.match.same(mChangeListeners),
-			"path/#added", sinon.match.same(oSource["#added"]));
+			"path/#added", oSource["#added"]); // Note: no sinon.match.same, deep copy involved
 		oHelperMock.expects("fireChange")
 			.withExactArgs(sinon.match.same(mChangeListeners), "path/#added/value", "new");
 		oHelperMock.expects("fireChange").withExactArgs(sinon.match.same(mChangeListeners),
-			"path/#changed", sinon.match.same(oSource["#changed"]));
+			"path/#changed", sinon.match.same(oTarget["#changed"]));
 		oHelperMock.expects("fireChange")
 			.withExactArgs(sinon.match.same(mChangeListeners), "path/#changed/value", "new");
 

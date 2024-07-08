@@ -378,6 +378,8 @@
 				<Input id="City::detail" value="{SO_2_BP/Address/City}"/>
 				<Label text="Postal Code"/>
 				<Input id="PostalCode::detail" value="{SO_2_BP/Address/PostalCode}"/>
+				<Label text="Address"/>
+				<Text text="{path : 'SO_2_BP/Address', mode : 'OneWay', targetType : 'any', formatter : '.formatAddress'}"/>
 			</form:SimpleForm>
 			<Table id="SO_2_SOITEM" rememberSelections="false"
 				items="{
