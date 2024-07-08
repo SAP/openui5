@@ -1,0 +1,12 @@
+{
+  "1.127.0": {
+    "date": "July 2024",
+    "notes": [
+      {
+        "id": "8c09c4cabb081312e7d89fcfcef7dffdaeda7395",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendarGrid: update appointment styling"
+      }
+    ]
+  }
+}

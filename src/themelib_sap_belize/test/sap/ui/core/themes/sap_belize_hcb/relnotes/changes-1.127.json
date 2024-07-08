@@ -1,0 +1,12 @@
+{
+  "1.127.0": {
+    "date": "July 2024",
+    "notes": [
+      {
+        "id": "80cd4ea4501c591e20fb4445656d82e03c9fbc15",
+        "type": "FIX",
+        "text": " sap.f.FlexibleColumnLayout: Resize issue with iframe content fixed"
+      }
+    ]
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "1.127.0": {
+    "date": "July 2024",
+    "notes": [
+      {
+        "id": "80cd4ea4501c591e20fb4445656d82e03c9fbc15",
+        "type": "FIX",
+        "text": " sap.f.FlexibleColumnLayout: Resize issue with iframe content fixed"
+      },
+      {
+        "id": "5a47ba0f7893707cbdad6a01d9888a9d631f8565",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Correct header placement after expanded state change"
+      }
+    ]
+  }
+}

@@ -3,9 +3,19 @@
     "date": "July 2024",
     "notes": [
       {
+        "id": "0f32ce5da1e96e244031d1b764e29922e7661801",
+        "type": "FIX",
+        "text": " sap.tnt.ToolHeader: fixed ushell styles for Horizon theme"
+      },
+      {
         "id": "bee0f9965e7745448c1bd2752f2aa09daabfc9a8",
         "type": "FIX",
         "text": " GenericTile overlap happening when sap.m.TileSizeBehavior.Small is used."
+      },
+      {
+        "id": "8c09c4cabb081312e7d89fcfcef7dffdaeda7395",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendarGrid: update appointment styling"
       }
     ]
   }

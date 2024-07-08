@@ -3,9 +3,54 @@
     "date": "July 2024",
     "notes": [
       {
+        "id": "ad0e20c527fe419cedab8ff37cc4943502abe12e",
+        "type": "FIX",
+        "text": " We've now updated the event parameters for the status and readystate document types in the Uploadcompleted event of Uploadset control"
+      },
+      {
+        "id": "f1d7e112f031be1b471530bc9ad48603e34293b4",
+        "type": "FIX",
+        "text": " sap.m.Carousel: fixed accessing inner controls with tab"
+      },
+      {
+        "id": "b9812fc18ddc74f4d4a502a12e53670165327d9e",
+        "type": "FEATURE",
+        "text": " sap.m.DynamicDateRange: add group type \"Data\" to value property"
+      },
+      {
+        "id": "9d19b32ddc607986eee9f300271ce37576ae0e98",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: Last and Next options title is now correctly retrieved"
+      },
+      {
+        "id": "1f0cc3a84faa507e7bf7a09a0b9e1fb0dafe37fd",
+        "type": "FIX",
+        "text": " sap.m.Carousel: fix page disappearing when scrolling"
+      },
+      {
+        "id": "255ca3fcc46d6ae39b91460a33000b34c1453e58",
+        "type": "FIX",
+        "text": " sap.m.Popover: close the popover if the opener is not visible"
+      },
+      {
         "id": "bee0f9965e7745448c1bd2752f2aa09daabfc9a8",
         "type": "FIX",
         "text": " GenericTile overlap happening when sap.m.TileSizeBehavior.Small is used."
+      },
+      {
+        "id": "e4d29c565b93513ed4d2911052568902ddb10d6e",
+        "type": "FIX",
+        "text": " sap.m.RatingIndicator: Icons visual issue fixed"
+      },
+      {
+        "id": "dc0232730f705fcc7a416930e4fca0a32986203e",
+        "type": "FIX",
+        "text": " sap.m.Page: Show footer after calling setShowFooter twice"
+      },
+      {
+        "id": "8c09c4cabb081312e7d89fcfcef7dffdaeda7395",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendarGrid: update appointment styling"
       },
       {
         "id": "6f3eca82e485ede11ca00c2ce7dbbcbb9fac693f",

@@ -1,0 +1,12 @@
+{
+  "1.127.0": {
+    "date": "July 2024",
+    "notes": [
+      {
+        "id": "255ca3fcc46d6ae39b91460a33000b34c1453e58",
+        "type": "FIX",
+        "text": " sap.m.Popover: close the popover if the opener is not visible"
+      }
+    ]
+  }
+}
