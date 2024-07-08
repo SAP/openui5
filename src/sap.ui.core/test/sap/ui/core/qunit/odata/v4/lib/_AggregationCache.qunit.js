@@ -2913,6 +2913,12 @@ sap.ui.define([
 							rank : 27
 						},
 						"@$ui5.node.level" : 10
+					}, {
+						"@$ui5._" : {
+							predicate : "('selected')"
+						},
+						"@$ui5.context.isSelected" : true,
+						"@$ui5.node.level" : 12
 					}],
 					rank : 42
 				},
@@ -2980,8 +2986,8 @@ sap.ui.define([
 
 			// check expanded nodes
 			assert.deepEqual(Object.keys(oCache.aElements),
-				["0", "1", "2", "3", "4", "5", "6", "200002", "200003", "200004", "$byPredicate",
-					"$count"]);
+				["0", "1", "2", "3", "4", "5", "6", "7", "200002", "200003", "200004",
+					"$byPredicate", "$count"]);
 			assert.strictEqual(oCache.aElements[2], aSpliced[0]);
 			assert.strictEqual(aSpliced[0]["@$ui5.node.level"], 0, "unchanged");
 			assert.strictEqual(oCache.aElements[3], aSpliced[1]);
@@ -3003,11 +3009,14 @@ sap.ui.define([
 			assert.strictEqual(oCache.aElements[200003], aElements[2]);
 			assert.strictEqual(oCache.aElements[200004], aElements[3]);
 
-			assert.deepEqual(oCache.aElements.$byPredicate, bStale ? {} : {
+			assert.deepEqual(oCache.aElements.$byPredicate, bStale ? {
+				"('selected')" : aSpliced[5]
+			} : {
 				"('C')" : aSpliced[2],
 				"('created')" : aSpliced[3],
 				"($uid=1-23)" : aSpliced[3],
 				"('A')" : aSpliced[4],
+				"('selected')" : aSpliced[5],
 				"('D')" : aSpliced[200000]
 			});
 		});
@@ -4478,31 +4487,37 @@ sap.ui.define([
 			},
 			oAggregationHelperMock = this.mock(_AggregationHelper),
 			oCache = _AggregationCache.create(this.oRequestor, "~", "", {}, oAggregation),
-			aElements = [{
-				"@$ui5._" : {predicate : "('A')"}
-			}, {
-				"@$ui5._" : {predicate : "('B')"}
-			}, {
-				"@$ui5._" : {predicate : "('C')"}
-			}, {
-				"@$ui5._" : {transientPredicate : "($uid=1-23)"} // must be ignored
-			}],
+			oElementA = {
+				"@$ui5._" : {predicate : "('A')", transientPredicate : "($uid=4-56)"}
+			},
+			aElements = [],
 			aResult;
 
-		oCache.aElements = aElements.slice();
+		aElements.$byPredicate = {
+			"('A')" : oElementA,
+			"('B')" : {
+				"@$ui5._" : {predicate : "('B')"}
+			}, "('C')" : {
+				"@$ui5._" : {predicate : "('C')"}
+			}, "($uid=1-23)" : {
+				"@$ui5._" : {transientPredicate : "($uid=1-23)"} // must be ignored
+			}, "($uid=4-56)" : oElementA
+		};
+
+		oCache.aElements.$byPredicate = aElements.$byPredicate;
 		oAggregationHelperMock.expects("markSplicedStale")
-			.withExactArgs(sinon.match.same(aElements[0]));
+			.withExactArgs(sinon.match.same(aElements.$byPredicate["('A')"]));
 		this.mock(oCache).expects("turnIntoPlaceholder")
-			.withExactArgs(sinon.match.same(aElements[1]), "('B')");
+			.withExactArgs(sinon.match.same(aElements.$byPredicate["('B')"]), "('B')");
 		oAggregationHelperMock.expects("markSplicedStale")
-			.withExactArgs(sinon.match.same(aElements[2]));
+			.withExactArgs(sinon.match.same(aElements.$byPredicate["('C')"]));
 
 		// code under test
 		aResult = oCache.keepOnlyGivenElements(["('A')", "('C')"]);
 
 		assert.strictEqual(aResult.length, 2);
-		assert.strictEqual(aResult[0], aElements[0]);
-		assert.strictEqual(aResult[1], aElements[2]);
+		assert.strictEqual(aResult[0], aElements.$byPredicate["('A')"]);
+		assert.strictEqual(aResult[1], aElements.$byPredicate["('C')"]);
 	});
 
 	//*********************************************************************************************

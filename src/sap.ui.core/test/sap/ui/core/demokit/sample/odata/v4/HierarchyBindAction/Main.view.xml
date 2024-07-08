@@ -87,6 +87,7 @@
 					<m:Button icon="sap-icon://pull-down" press=".onMakeRoot($event, null)"
 						tooltip="Make Last Root"/>
 					<m:Button icon="sap-icon://delete" press=".onDelete" tooltip="Delete"/>
+					<m:CheckBox selected="{= %{@$ui5.context.isSelected}}" tooltip="Selected"/>
 				</m:FlexBox>
 			</template>
 		</Column>

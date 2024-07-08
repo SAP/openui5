@@ -742,7 +742,7 @@ sap.ui.define([
 					}
 				}
 				if (!_Helper.hasPrivateAnnotation(oElement, "placeholder")) {
-					if (aSpliced.$stale) {
+					if (aSpliced.$stale && !oElement["@$ui5.context.isSelected"]) {
 						that.turnIntoPlaceholder(oElement, sPredicate);
 					} else {
 						that.aElements.$byPredicate[sPredicate] = oElement;
@@ -1344,7 +1344,7 @@ sap.ui.define([
 			mPredicates[sPredicate] = true;
 		});
 
-		return this.aElements.filter(function (oElement) {
+		return Object.values(this.aElements.$byPredicate).filter(function (oElement) {
 			var sPredicate = _Helper.getPrivateAnnotation(oElement, "predicate");
 
 			if (!sPredicate) {
@@ -1353,10 +1353,13 @@ sap.ui.define([
 
 			if (mPredicates[sPredicate]) {
 				_AggregationHelper.markSplicedStale(oElement);
+				mPredicates[sPredicate] = false;
 				return true; // keep and request
 			}
 
-			that.turnIntoPlaceholder(oElement, sPredicate);
+			if (!(sPredicate in mPredicates)) {
+				that.turnIntoPlaceholder(oElement, sPredicate);
+			}
 		});
 	};
 

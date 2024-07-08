@@ -3,6 +3,21 @@
 	"@odata.count" : "27",
 	"value" : [{
 		"SalesOrderID" : "0500000000",
+		"ItemPosition" : "0000000010",
+		"GrossAmount" : "9290.25",
+		"Quantity" : "5.000"
+	}, {
+		"SalesOrderID" : "0500000000",
+		"ItemPosition" : "0000000030",
+		"GrossAmount" : "1638.63",
+		"Quantity" : "3.000"
+	}, {
+		"SalesOrderID" : "0500000000",
+		"ItemPosition" : "0000000050",
+		"GrossAmount" : "1334.29",
+		"Quantity" : "4.000"
+	},{
+		"SalesOrderID" : "0500000000",
 		"ItemPosition" : "0000000080",
 		"GrossAmount" : "821.10",
 		"Quantity" : "3.000"
@@ -13,23 +28,8 @@
 		"Quantity" : "4.000"
 	}, {
 		"SalesOrderID" : "0500000000",
-		"ItemPosition" : "0000000050",
-		"GrossAmount" : "1334.29",
-		"Quantity" : "4.000"
-	}, {
-		"SalesOrderID" : "0500000000",
-		"ItemPosition" : "0000000030",
-		"GrossAmount" : "1638.63",
-		"Quantity" : "3.000"
-	}, {
-		"SalesOrderID" : "0500000000",
 		"ItemPosition" : "0000000100",
 		"GrossAmount" : "1642.20",
 		"Quantity" : "4.000"
-	}, {
-		"SalesOrderID" : "0500000000",
-		"ItemPosition" : "0000000010",
-		"GrossAmount" : "9290.25",
-		"Quantity" : "5.000"
 	}]
 }

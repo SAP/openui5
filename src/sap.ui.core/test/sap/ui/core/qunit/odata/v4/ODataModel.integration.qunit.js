@@ -28084,16 +28084,16 @@ sap.ui.define([
 			checkCreatedPersisted(assert, oNewRoot);
 
 			that.expectRequest("EMPLOYEES?$select=AGE,ID"
-					+ "&$filter=ID eq 'B' or ID eq '0' or ID eq '9'&$top=3", {
+					+ "&$filter=ID eq '0' or ID eq '9' or ID eq 'B'&$top=3", {
 					value : [{
-						AGE : 170,
-						ID : "B" // Beth
-					}, {
 						AGE : 160,
 						ID : "0" // Alpha
 					}, {
 						AGE : 169,
 						ID : "9" // Aleph
+					}, {
+						AGE : 170,
+						ID : "B" // Beth
 					}]
 				});
 
@@ -30630,6 +30630,9 @@ sap.ui.define([
 	// A selected (effectively kept alive) node which is not part of the hierarchy after the parent
 	// is collapsed still holds its data. It is also possible to request side effects for it.
 	// JIRA: CPOUI5ODATAV4-2539
+	//
+	// Such a node is also updated by requesting side effects for all rows
+	// JIRA: CPOUI5ODATAV4-2646
 [false, true].forEach(function (bResetViaModel) {
 	const sTitle = `Recursive Hierarchy: create new children, move 'em, model=${bResetViaModel}`;
 	QUnit.test(sTitle, function (assert) {
@@ -31156,13 +31159,20 @@ sap.ui.define([
 			oBeta = null;
 
 			that.expectRequest(sFriend.slice(1)
-					+ "?$filter=ArtistID eq '0' and IsActiveEntity eq false"
-					+ "&$select=ArtistID,IsActiveEntity,Name,_/NodeID", {
+					+ "?$filter=ArtistID eq '0' and IsActiveEntity eq false or "
+						+ "ArtistID eq '2' and IsActiveEntity eq false"
+					+ "&$select=ArtistID,IsActiveEntity,Name,_/NodeID&$top=2", {
 					value : [{
 						"@odata.etag" : "etag0.2",
 						ArtistID : "0",
 						IsActiveEntity : false,
 						Name : "Alpha #1", // "side effect"
+						_ : null // not available w/ RAP for a non-hierarchical request
+					}, {
+						"@odata.etag" : "etag2.3",
+						ArtistID : "2",
+						IsActiveEntity : false,
+						Name : "Gamma #1", // "side effect"
 						_ : null // not available w/ RAP for a non-hierarchical request
 					}]
 				})
@@ -31178,21 +31188,22 @@ sap.ui.define([
 			// NodeID is not lost after requesting side effects with non-hierarchical requests
 			assert.deepEqual(oRoot.getObject("_"), {NodeID : "0,false"});
 
+			assert.deepEqual(oGamma.getObject(), {
+				"@$ui5.context.isSelected" : true,
+				"@$ui5.node.level" : 2,
+				"@odata.etag" : "etag2.3",
+				ArtistID : "2",
+				IsActiveEntity : false,
+				Name : "Gamma #1",
+				_ : {
+					NodeID : "2,false"
+				}
+			}, "CPOUI5ODATAV4-2646: updated by requestSideEffects while outside the collection");
+
 			that.expectRequest(sBaseUrl + "&$select=ArtistID,IsActiveEntity,Name"
 					+ ",_/DescendantCount,_/DistanceFromRoot,_/DrillState,_/NodeID"
-					+ "&$skip=1&$top=2", {
+					+ "&$skip=2&$top=1", {
 					value : [{
-						"@odata.etag" : "etag2.3",
-						ArtistID : "2",
-						IsActiveEntity : false,
-						Name : "Gamma #1", // "side effect"
-						_ : {
-							DescendantCount : "0",
-							DistanceFromRoot : "1",
-							DrillState : "leaf",
-							NodeID : "2,false"
-						}
-					}, {
 						"@odata.etag" : "etag1.3",
 						ArtistID : "1",
 						IsActiveEntity : false,
@@ -31416,18 +31427,12 @@ sap.ui.define([
 			checkCreatedPersisted(assert, oNewRoot);
 
 			that.expectRequest(sFriend.slice(1)
-					+ "?$filter=ArtistID eq '9' and IsActiveEntity eq false"
-					+ " or ArtistID eq '0' and IsActiveEntity eq false"
+					+ "?$filter=ArtistID eq '0' and IsActiveEntity eq false"
 					+ " or ArtistID eq '2' and IsActiveEntity eq false"
+					+ " or ArtistID eq '9' and IsActiveEntity eq false"
 					+ "&$select=ArtistID,IsActiveEntity,Name,_/NodeID"
 					+ "&$top=3", {
 					value : [{
-						"@odata.etag" : "etag9.1",
-						ArtistID : "9",
-						IsActiveEntity : false,
-						Name : "Aleph #2",
-						_ : null // not available w/ RAP for a non-hierarchical request
-					}, {
 						"@odata.etag" : "etag0.3",
 						ArtistID : "0",
 						IsActiveEntity : false,
@@ -31438,6 +31443,12 @@ sap.ui.define([
 						ArtistID : "2",
 						IsActiveEntity : false,
 						Name : "Gamma #2",
+						_ : null // not available w/ RAP for a non-hierarchical request
+					}, {
+						"@odata.etag" : "etag9.1",
+						ArtistID : "9",
+						IsActiveEntity : false,
+						Name : "Aleph #2",
 						_ : null // not available w/ RAP for a non-hierarchical request
 					}]
 				})
@@ -48225,17 +48236,17 @@ make root = ${bMakeRoot}`;
 		}).then(function () {
 			that.expectRequest("Artists('42')/_Publication"
 					+ "?$select=Price,PublicationID"
-					+ "&$filter=PublicationID eq 'New 1' or "
-					+ "PublicationID eq '42-1' or PublicationID eq '42-2'&$top=3", {
+					+ "&$filter=PublicationID eq '42-1' or "
+					+ "PublicationID eq '42-2' or PublicationID eq 'New 1'&$top=3", {
 						value : [{
-							Price : "3.35",
-							PublicationID : "New 1"
-						}, {
 							Price : "1.13",
 							PublicationID : "42-1"
 						}, {
 							Price : "2.23",
 							PublicationID : "42-2"
+						}, {
+							Price : "3.35",
+							PublicationID : "New 1"
 						}]
 				})
 				.expectChange("price", [, "1.13", "2.23"]);
@@ -59956,17 +59967,17 @@ make root = ${bMakeRoot}`;
 				sinon.assert.calledOnceWithExactly(fnOnBeforeDestroy);
 			}
 
-			that.expectRequest("SalesOrderList?$filter=SalesOrderID eq '2' or SalesOrderID eq '4'"
-					+ " or SalesOrderID eq '1'&$select=GrossAmount,SalesOrderID&$top=3", {
+			that.expectRequest("SalesOrderList?$filter=SalesOrderID eq '1' or SalesOrderID eq '2'"
+					+ " or SalesOrderID eq '4'&$select=GrossAmount,SalesOrderID&$top=3", {
 					value : [{
+						GrossAmount : "50.3",
+						SalesOrderID : "1"
+					}, {
 						GrossAmount : "149.3",
 						SalesOrderID : "2"
 					}, {
 						GrossAmount : "789.3",
 						SalesOrderID : "4"
-					}, {
-						GrossAmount : "50.3",
-						SalesOrderID : "1"
 					}]
 				})
 				.expectChange("grossAmount", ["149.30", "789.30"])
