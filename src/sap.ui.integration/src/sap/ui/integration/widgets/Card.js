@@ -1754,6 +1754,22 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the matching value from the query.
+	 *
+	 * size('standard') => true
+	 *
+	 * size({small:2, standard:5, large: 10}) => 5
+	 *
+	 * @private
+	 * @ui5-restricted UPA
+	 * @param {string|object} vQuery The query.
+	 * @returns {*} The result.
+	 */
+	Card.prototype.sizeQuery = function (vQuery) {
+		return this._oDisplayVariants.sizeFormatter(vQuery);
+	};
+
+	/**
 	 * Initializes internal classes needed for the card, based on the ready manifest.
 	 *
 	 * @private

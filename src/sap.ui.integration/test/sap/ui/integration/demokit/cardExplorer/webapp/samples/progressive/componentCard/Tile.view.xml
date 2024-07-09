@@ -1,0 +1,10 @@
+<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"
+		  xmlns="sap.m" xmlns:html="http://www.w3.org/1999/xhtml"
+		  width="100%"
+		  displayBlock="true"
+		  controllerName="sap.ui.integration.sample.Progressive.ComponentCard.Tile">
+
+	<VBox class="sapUiSmallMargin">
+		<Text text="Tile view"/>
+	</VBox>
+</mvc:View>

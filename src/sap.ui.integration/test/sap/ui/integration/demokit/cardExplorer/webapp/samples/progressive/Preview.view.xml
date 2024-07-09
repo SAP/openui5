@@ -19,6 +19,11 @@
 				<core:Item key="Default" text="Default" />
 				<core:Item key="Numeric" text="Numeric" />
 			</Select>
+			<Label text="Content Type" />
+			<Select id="contentTypeSelect" change="update" selectedKey="{settings>/contentType}">
+				<core:Item key="List" text="List" />
+				<core:Item key="Component" text="Component (No Header)" />
+			</Select>
 			<Label text="Display" />
 			<Select id="displaySelect" change="update" selectedKey="{settings>/display}">
 				<core:Item key="Default" text="Header and Content" />

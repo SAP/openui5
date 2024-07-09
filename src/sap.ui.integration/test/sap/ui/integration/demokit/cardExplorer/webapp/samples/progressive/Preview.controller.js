@@ -192,6 +192,11 @@ sap.ui.define([
 			width: "600px",
 			useProgressiveDisclosure: true
 		}),
+		componentCard: () => new Card({
+			manifest: "./componentCard/manifest.json",
+			width: "600px",
+			useProgressiveDisclosure: true
+		}),
 		onInit: function () {
 			this.getView().setModel(this.settings, "settings");
 		},
@@ -289,17 +294,31 @@ sap.ui.define([
 			let oCard = this.previewCard;
 			if (!this._skipCreate) {
 				this.previewCard?.destroy();
-				oCard = this.settings.getProperty("/type") === "Default" ? this.defaultCard() : this.numericCard();
+
+				const sHeaderType = this.settings.getProperty("/type");
+				const sContentType = this.settings.getProperty("/contentType");
+
+				if (sContentType === "Component") {
+					oCard = this.componentCard();
+				} else {
+					oCard = sHeaderType === "Default" ? this.defaultCard() : this.numericCard();
+				}
+
 				oCard.setHost(this.getHost());
 				const mChanges = {};
-				mChanges["/sap.card/extension"] = this.settings.getProperty("/actionStatus") === "Both" || this.settings.getProperty("/actionStatus") === "Action" ? "extension" : null;
-				mChanges["/sap.card/header/icon"] = structuredClone(this.icons[this.settings.getProperty("/icon")]) || null;
-				mChanges["/sap.card/header/status"] = structuredClone(this.actionStatuses[this.settings.getProperty("/actionStatus")]) || null;
-				if (this.settings.getProperty("/type") === "Numeric") {
-					mChanges["/sap.card/header/chart"] = structuredClone(this.microCharts[this.settings.getProperty("/microChart")]) || null;
-					mChanges["/sap.card/header/sideIndicators"] = structuredClone(this.sideIndicators[this.settings.getProperty("/sideIndicator")]) || null;
 
+				if (sContentType === "Component") {
+					mChanges["/sap.card/header/visible"] = false;
+				} else {
+					mChanges["/sap.card/extension"] = this.settings.getProperty("/actionStatus") === "Both" || this.settings.getProperty("/actionStatus") === "Action" ? "extension" : null;
+					mChanges["/sap.card/header/icon"] = structuredClone(this.icons[this.settings.getProperty("/icon")]) || null;
+					mChanges["/sap.card/header/status"] = structuredClone(this.actionStatuses[this.settings.getProperty("/actionStatus")]) || null;
+					if (sHeaderType === "Numeric") {
+						mChanges["/sap.card/header/chart"] = structuredClone(this.microCharts[this.settings.getProperty("/microChart")]) || null;
+						mChanges["/sap.card/header/sideIndicators"] = structuredClone(this.sideIndicators[this.settings.getProperty("/sideIndicator")]) || null;
+					}
 				}
+
 				oCard.setManifestChanges(
 					[mChanges]
 				);
@@ -315,6 +334,7 @@ sap.ui.define([
 		getCurrentSettings: function () {
 			return {
 				type: this.settings.getProperty("/type"),
+				contentType: this.settings.getProperty("/contentType"),
 				display: this.settings.getProperty("/display"),
 				variant: this.settings.getProperty("/variant"),
 				actionStatus: this.settings.getProperty("/actionStatus"),
@@ -334,6 +354,7 @@ sap.ui.define([
 		clear: function () {
 			if (this._saveSettings) {
 				this.settings.setProperty("/type", this._saveSettings.type);
+				this.settings.setProperty("/contentType", this._saveSettings.contentType);
 				this.settings.setProperty("/display", this._saveSettings.display);
 				this.settings.setProperty("/variant", this._saveSettings.variant);
 				this.settings.setProperty("/actionStatus", this._saveSettings.actionStatus);
@@ -361,6 +382,7 @@ sap.ui.define([
 			layout.removeAllItems();
 			this._saveSettings = this.getCurrentSettings();
 			this.settings.setProperty("/type", "Default");
+			this.settings.setProperty("/contentType", "List");
 			this.settings.setProperty("/display", "Header");
 			this.settings.setProperty("/microChart", "None");
 			this.settings.setProperty("/sideIndicator", "None");
@@ -381,6 +403,7 @@ sap.ui.define([
 			});
 			//permutations of the numeric card and display variants
 			this.settings.setProperty("/type", "Numeric");
+			this.settings.setProperty("/contentType", "List");
 			this.settings.setProperty("/display", "Header");
 			this.settings.setProperty("/microChart", "None");
 			this.settings.setProperty("/sideIndicator", "None");
