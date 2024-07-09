@@ -313,6 +313,8 @@ sap.ui.define([
 		return oColumn;
 	};
 
+	// The purpose of this control is to render the MDC column in the inner table column header, for example to support tools that allow the user to
+	// select controls on the UI for editing.
 	const ColumnHeaderLabel = Control.extend("sap.ui.mdc.table.ColumnHeaderLabel", {
 		metadata: {
 			"final": true,
@@ -336,11 +338,12 @@ sap.ui.define([
 		getText: function() { // Used by tests in MDC and FE.
 			return this.getLabel().getText();
 		},
-		getRequired: function() { // Used by ui.Table to handle ACC correctly
-			return this.getLabel().getRequired();
-		},
 		clone: function() { // For ResponsiveTable popin.
 			return this.getLabel().clone();
+		},
+		// Used by inner table for accessibility support.
+		getRequired: function() {
+			return this.getLabel().getRequired();
 		},
 		getAccessibilityInfo: function() {
 			return this.getLabel().getAccessibilityInfo();
