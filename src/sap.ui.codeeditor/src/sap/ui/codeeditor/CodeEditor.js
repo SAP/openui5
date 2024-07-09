@@ -127,12 +127,17 @@ sap.ui.define([
 				maxLines: { type: "int", group: "Behavior", defaultValue: 0 },
 				/**
 				 * Sets the editor color theme.
-				 * Possible values are: default, hcb, hcb_bright, hcb_blue,
-				 * theme-ambiance, chaos, chrome, clouds, clouds_midnight, cobalt, crimson_editor, dawn, dreamweaver, eclipse,
-				 * github, gob, gruvbox, idle_fingers, iplastic, katzenmilch, kr_theme, kuroir, merbivore, merbivore_soft,
-				 * mono_industrial, monokai, pastel_on_dark, solarized_dark, solarized_light, sqlserver, terminal, textmate,
-				 * tomorrow, tomorrow_night, tomorrow_night_blue, tomorrow_night_bright, tomorrow_night_eighties, twilight, dracula
-				 * vibrant_ink, xcode
+				 * Possible values are:
+				 * <ul>
+				 * <li>default: best fitting to the current UI5 theme</li>
+				 * <li>any light theme from the list: chrome, clouds, crimson_editor, dawn, dreamweaver, eclipse, github, iplastic, solarized_light,
+				 * textmate, tomorrow, xcode, kuroir, katzenmilch, sqlserver
+				 * </li>
+				 * <li>any dark theme from the list: hcb, hcb_bright, hcb_blue, ambiance, chaos, clouds_midnight, dracula, cobalt, gruvbox, gob, idle_fingers, kr_theme,
+				 * merbivore, merbivore_soft, mono_industrial, monokai, nord_dark, one_dark, pastel_on_dark, solarized_dark, terminal, tomorrow_night,
+				 * tomorrow_night_blue, tomorrow_night_bright, tomorrow_night_eighties, twilight, vibrant_ink, github_dark
+				 * </li>
+				 * </ul>
 				 */
 				colorTheme: { type: "string", group: "Behavior", defaultValue: "default" },
 				/**

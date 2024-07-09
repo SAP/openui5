@@ -1,4 +1,12 @@
 /* global QUnit, sinon */
+sap.ui.loader.config({
+	shim: {
+		"sap/ui/codeeditor/js/ace/ext-themelist": {
+			deps: ["sap/ui/codeeditor/js/ace/ace"]
+		}
+	}
+});
+
 sap.ui.define([
 	"sap/ui/codeeditor/CodeEditor",
 	"sap/m/Button",
@@ -6,14 +14,20 @@ sap.ui.define([
 	"sap/ui/core/Theming",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/qunit/utils/nextUIUpdate",
-	"sap/ui/qunit/utils/createAndAppendDiv"
-], function(CodeEditor,
-			Button,
-			Library,
-			Theming,
-			KeyCodes,
-			nextUIUpdate,
-			createAndAppendDiv) {
+	"sap/ui/qunit/utils/createAndAppendDiv",
+	"sap/ui/codeeditor/js/ace/ace",
+	"sap/ui/codeeditor/js/ace/ext-themelist"
+], function(
+	CodeEditor,
+	Button,
+	Library,
+	Theming,
+	KeyCodes,
+	nextUIUpdate,
+	createAndAppendDiv,
+	ace
+	// ext-themelist
+) {
 	"use strict";
 
 	var DOM_RENDER_LOCATION = "content";
@@ -324,6 +338,22 @@ sap.ui.define([
 
 		Theming.setTheme("sap_fiori_3");
 		Theming.attachApplied(handleThemeApplied);
+	});
+
+	QUnit.test("Supported themes", function (assert) {
+		const expectedThemes = [
+			"chrome", "clouds", "crimson_editor", "dawn", "dreamweaver", "eclipse", "github", "iplastic",
+			"solarized_light", "textmate", "tomorrow", "xcode", "kuroir", "katzenmilch", "sqlserver",
+			"ambiance", "chaos", "clouds_midnight", "dracula", "cobalt", "gruvbox", "gob", "idle_fingers",
+			"kr_theme", "merbivore", "merbivore_soft", "mono_industrial", "monokai", "nord_dark",
+			"one_dark", "pastel_on_dark", "solarized_dark", "terminal", "tomorrow_night", "tomorrow_night_blue",
+			"tomorrow_night_bright", "tomorrow_night_eighties", "twilight", "vibrant_ink", "github_dark"
+		];
+		const availableThemes = ace.require("ace/ext/themelist").themes.map(function (mTheme) {
+			return mTheme.name;
+		});
+
+		assert.deepEqual(availableThemes, expectedThemes, "Available themes in current ace version have changed. Consider updating the documentation of 'colorTheme' property.");
 	});
 
 	QUnit.module("Worker", {

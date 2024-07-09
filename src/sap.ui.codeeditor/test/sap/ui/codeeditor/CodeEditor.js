@@ -74,12 +74,15 @@ sap.ui.require([
 							oCodeEditor.setType(sKey).setValue(mValues[sKey]);
 						}
 					}),
-					new Label({ text: "theme:"}),
+					new Label({ text: "colorTheme", showColon: true }),
 					new Select({
 						selectedKey: oCodeEditor.getColorTheme(),
-						items: [{
-								name: "default"
-							}].concat(ace.require("ace/ext/themelist").themes).map(function (mTheme) {
+						items: [
+							{ name: "default"},
+							{ name: "hcb" },
+							{ name: "hcb_bright" },
+							{ name: "hcb_blue" }
+						].concat(ace.require("ace/ext/themelist").themes).map(function (mTheme) {
 							return new Item({ key: mTheme.name, text: mTheme.name });
 						}),
 						change: function (e) {
