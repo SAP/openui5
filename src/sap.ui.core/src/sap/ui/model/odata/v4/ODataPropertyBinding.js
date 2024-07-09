@@ -347,7 +347,10 @@ sap.ui.define([
 			// Use Promise to become async so that only the latest sync call to checkUpdateInternal
 			// wins
 			vValue = Promise.resolve(vValue);
+		} else if (vValue && typeof vValue === "object") {
+			vValue = _Helper.publicClone(vValue);
 		}
+
 		return SyncPromise.all([vValue, vType]).then(function (aResults) {
 			var oType = aResults[1],
 				vValue0 = aResults[0];
@@ -355,8 +358,7 @@ sap.ui.define([
 			if (oCallToken === that.oCheckUpdateCallToken) { // latest call to checkUpdateInternal
 				that.oCheckUpdateCallToken = undefined;
 				that.doSetType(oType);
-				if (oCallToken.forceUpdate || that.vValue !== vValue0
-						|| vValue0 && typeof vValue0 === "object") {
+				if (oCallToken.forceUpdate || that.vValue !== vValue0) {
 					that.bInitial = false;
 					that.vValue = vValue0;
 					that._fireChange({reason : sChangeReason || ChangeReason.Change});

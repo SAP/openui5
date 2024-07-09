@@ -2492,14 +2492,42 @@ sap.ui.define([
 	//*********************************************************************************************
 [false, true].forEach(function (bClientSide) {
 	QUnit.test("publicClone: bClientSide=" + bClientSide, function (assert) {
-		var oCloneMock = this.mock(_Helper).expects("clone")
-				.withExactArgs("~value~", sinon.match.func, "~bAsString~"),
+		var vValue = {}, // use object, not string here (no #slice)
+			oCloneMock = this.mock(_Helper).expects("clone")
+				.withExactArgs(sinon.match.same(vValue), sinon.match.func, "~bAsString~"),
 			fnReplacer;
 
 		oCloneMock.returns("~clone~");
 
 		// code under test
-		assert.strictEqual(_Helper.publicClone("~value~", bClientSide, "~bAsString~"), "~clone~");
+		assert.strictEqual(_Helper.publicClone(vValue, bClientSide, "~bAsString~"), "~clone~");
+
+		fnReplacer = oCloneMock.getCall(0).args[1];
+
+		// Check:
+		//   - sKey === "@$ui5._" => fnReplacer(sKey, vValue) === undefined for each vValue
+		//   - sKey !== "@$ui5._" => fnReplacer(sKey, vValue) === vValue for each vValue
+		// code under test
+		assert.strictEqual(fnReplacer("@$ui5._", 42), undefined);
+		assert.strictEqual(fnReplacer("@$ui5.node.level", 2), bClientSide ? undefined : 2);
+		assert.strictEqual(fnReplacer("@$ui5.transient", true), bClientSide ? undefined : true);
+		assert.strictEqual(fnReplacer("ui5._", "bar"), "bar");
+	});
+});
+
+	//*********************************************************************************************
+[false, true].forEach(function (bClientSide) {
+	QUnit.test("publicClone: array, bClientSide=" + bClientSide, function (assert) {
+		var oCloneMock = this.mock(_Helper).expects("clone")
+				.withExactArgs(["a",, "z"], sinon.match.func, "~bAsString~"),
+			fnReplacer,
+			vValue = ["a",, "z"];
+
+		oCloneMock.returns("~clone~");
+		vValue.$foo = "bar";
+
+		// code under test
+		assert.strictEqual(_Helper.publicClone(vValue, bClientSide, "~bAsString~"), "~clone~");
 
 		fnReplacer = oCloneMock.getCall(0).args[1];
 
