@@ -28,6 +28,7 @@ sap.ui.define([
 			.withExactArgs("sap-ui-DocumentationRef",
 				sinon.match.same(aDocumentationRefs).and(sinon.match(["~vValue"])),
 				false);
+		oElementMock.expects("setFieldHelpDisplay").withExactArgs(sinon.match.same(oElement));
 		if (bFieldHelpActive) {
 			oElement.updateFieldHelp = () => {};
 			oElementMock.expects("updateFieldHelp").withExactArgs();
@@ -37,6 +38,7 @@ sap.ui.define([
 		FieldHelpUtil.setDocumentationRef(oElement, aDocumentationRefs);
 
 		oElementMock.expects("data").withExactArgs("sap-ui-DocumentationRef", ["~vValue0"], false);
+		oElementMock.expects("setFieldHelpDisplay").withExactArgs(sinon.match.same(oElement));
 		if (bFieldHelpActive) {
 			oElementMock.expects("updateFieldHelp").withExactArgs();
 		}

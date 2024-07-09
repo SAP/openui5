@@ -3,6 +3,7 @@
  */
 sap.ui.define([
 	"sap/base/Log",
+	"sap/ui/base/BindingInfo",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/Element",
 	"sap/ui/core/ElementRegistry",
@@ -10,7 +11,7 @@ sap.ui.define([
 	"sap/ui/core/fieldhelp/FieldHelp",
 	"sap/ui/model/CompositeBinding",
 	"sap/ui/model/ManagedObjectBindingSupport"
-], function (Log, ManagedObject, Element, ElementRegistry, LabelEnablement, FieldHelp, CompositeBinding,
+], function (Log, BindingInfo, ManagedObject, Element, ElementRegistry, LabelEnablement, FieldHelp, CompositeBinding,
 		ManagedObjectBindingSupport) {
 	/*global sinon, QUnit*/
 	"use strict";
@@ -437,13 +438,14 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("_getFieldHelpHotspots and _setFieldHelpDocumentationRefs", function (assert) {
 		const oFieldHelp = new FieldHelp();
+		const oFieldHelpMock = this.mock(oFieldHelp);
+		oFieldHelpMock.expects("_getFieldHelpDisplayMapping").withExactArgs().atLeast(1).returns({});
 
 		// code under test - there are no registered controls
 		assert.deepEqual(oFieldHelp._getFieldHelpHotspots(), []);
 
 		const oElement0 = {getId() {}};
 		const oElement0Mock = this.mock(oElement0);
-		const oFieldHelpMock = this.mock(oFieldHelp);
 		oElement0Mock.expects("getId").withExactArgs().returns("~element0");
 		const oUpdateHotspotsPromise = {catch() {}};
 		const oUpdateHotspotsPromiseMock = this.mock(oUpdateHotspotsPromise);
@@ -487,11 +489,11 @@ sap.ui.define([
 		]);
 
 		const oElementMock = this.mock(Element);
-		oElementMock.expects("getElementById").withExactArgs("~element0").returns(oElement0);
+		oElementMock.expects("getElementById").withExactArgs("~element0").atLeast(1).returns(oElement0);
 		const oLabelEnablementMock = this.mock(LabelEnablement);
 		oLabelEnablementMock.expects("_getLabelTexts").withExactArgs(sinon.match.same(oElement0))
 			.returns(["~sLabel0", "foo"]);
-		oElementMock.expects("getElementById").withExactArgs("~element1").returns(oElement1);
+		oElementMock.expects("getElementById").withExactArgs("~element1").atLeast(1).returns(oElement1);
 		oLabelEnablementMock.expects("_getLabelTexts").withExactArgs(sinon.match.same(oElement1)).returns(["~sLabel1"]);
 
 		// code under test
@@ -522,9 +524,7 @@ sap.ui.define([
 			"urn:sap-com:documentation:key?=type=~customType4&id=~customId4&origin=~origin4"
 		]);
 
-		oElementMock.expects("getElementById").withExactArgs("~element0").returns(oElement0);
 		oLabelEnablementMock.expects("_getLabelTexts").withExactArgs(sinon.match.same(oElement0)).returns(["~sLabel0"]);
-		oElementMock.expects("getElementById").withExactArgs("~element1").returns(oElement1);
 		oLabelEnablementMock.expects("_getLabelTexts").withExactArgs(sinon.match.same(oElement1)).returns(["~sLabel1"]);
 
 		// code under test
@@ -556,9 +556,7 @@ sap.ui.define([
 		// code under test - delete URNs for a control property
 		oFieldHelp._setFieldHelpDocumentationRefs(oElement1, "~property0", []);
 
-		oElementMock.expects("getElementById").withExactArgs("~element0").returns(oElement0);
 		oLabelEnablementMock.expects("_getLabelTexts").withExactArgs(sinon.match.same(oElement0)).returns(["~sLabel0"]);
-		oElementMock.expects("getElementById").withExactArgs("~element1").returns(oElement1);
 		oLabelEnablementMock.expects("_getLabelTexts").withExactArgs(sinon.match.same(oElement1)).returns(["~sLabel1"]);
 
 		// code under test
@@ -579,7 +577,6 @@ sap.ui.define([
 		// code under test - remove all URNs of the last control property, of a control entry
 		oFieldHelp._setFieldHelpDocumentationRefs(oElement1, "~property1", []);
 
-		oElementMock.expects("getElementById").withExactArgs("~element0").returns(oElement0);
 		oLabelEnablementMock.expects("_getLabelTexts").withExactArgs(sinon.match.same(oElement0)).returns(["~sLabel0"]);
 
 		// code under test
@@ -601,6 +598,48 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("_getFieldHelpHotspots: field help is displayed at another control", function (assert) {
+		const oFieldHelp = new FieldHelp();
+		const oFieldHelpMock = this.mock(oFieldHelp);
+
+		const oElement0 = {getId() {return "~element0"; /*not mocked as not relevant for this test*/}};
+		const oUpdateHotspotsPromise = {catch() {/*not mocked as not relevant for this test*/}};
+		oFieldHelpMock.expects("_updateHotspots").withExactArgs().returns(oUpdateHotspotsPromise);
+		oFieldHelp._setFieldHelpDocumentationRefs(oElement0, undefined, [
+			"urn:sap-com:documentation:key?=type=~customType0&id=~customId0"
+		]);
+		const oElement1 = {getId() {return "~element1";}};
+		oFieldHelpMock.expects("_updateHotspots").withExactArgs().withExactArgs().returns(oUpdateHotspotsPromise);
+		oFieldHelp._setFieldHelpDocumentationRefs(oElement1, undefined, [
+			"urn:sap-com:documentation:key?=type=~customType1&id=~customId1&origin=~origin1"
+		]);
+		// Element2 has the same documentation ref as Element0 - does not appear in result
+		const oElement2 = {getId() {return "~element2";}};
+		oFieldHelpMock.expects("_updateHotspots").withExactArgs().withExactArgs().returns(oUpdateHotspotsPromise);
+		oFieldHelp._setFieldHelpDocumentationRefs(oElement2, undefined, [
+			"urn:sap-com:documentation:key?=type=~customType0&id=~customId0"
+		]);
+
+		const oHeaderElement = {};
+		this.mock(Element).expects("getElementById").withExactArgs("~HeaderElement").exactly(3).returns(oHeaderElement);
+		this.mock(LabelEnablement).expects("_getLabelTexts").withExactArgs(sinon.match.same(oHeaderElement))
+			.exactly(3).returns(["~sLabel"]);
+		oFieldHelpMock.expects("_getFieldHelpDisplayMapping").withExactArgs().atLeast(1)
+			.returns({"~element0": "~HeaderElement", "~element1": "~HeaderElement", "~element2": "~HeaderElement"});
+
+		// code under test - field helps of the 3 controls are shown for the header element due to the mapping
+		assert.deepEqual(oFieldHelp._getFieldHelpHotspots(), [{
+			backendHelpKey: {id: "~customId0", type: "~customType0"},
+			hotspotId: "~HeaderElement",
+			labelText: "~sLabel"
+		}, {
+			backendHelpKey: {id: "~customId1", origin: "~origin1", type: "~customType1"},
+			hotspotId: "~HeaderElement",
+			labelText: "~sLabel"
+		}]);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("_getFieldHelpHotspots: no label found", function (assert) {
 		const oFieldHelp = new FieldHelp();
 		const oFieldHelpMock = this.mock(oFieldHelp);
@@ -619,6 +658,7 @@ sap.ui.define([
 		]);
 
 		const oElementMock = this.mock(Element);
+		oFieldHelpMock.expects("_getFieldHelpDisplayMapping").withExactArgs().returns({});
 		oElementMock.expects("getElementById").withExactArgs("~element0").returns(oElement0);
 		const oLabelEnablementMock = this.mock(LabelEnablement);
 		oLabelEnablementMock.expects("_getLabelTexts").withExactArgs(sinon.match.same(oElement0)).returns([]);
@@ -636,38 +676,6 @@ sap.ui.define([
 		}]);
 
 		return Promise.all([oUpdateHotspotsPromise, oUpdateHotspotsPromise1]);
-	});
-
-	//*********************************************************************************************
-	QUnit.test("_getFieldHelpHotspots: destroyed control", function (assert) {
-		const oFieldHelp = new FieldHelp();
-		const oElement0 = {getId() {}};
-		this.mock(oElement0).expects("getId").withExactArgs().returns("~element0");
-		const oUpdateHotspotsPromise = {catch() {}};
-		this.mock(oFieldHelp).expects("_updateHotspots").withExactArgs().returns(oUpdateHotspotsPromise);
-		this.mock(oUpdateHotspotsPromise).expects("catch").withExactArgs(sinon.match.func);
-		oFieldHelp._setFieldHelpDocumentationRefs(oElement0, undefined, [
-			"urn:sap-com:documentation:key?=type=~customType0&id=~customId0"
-		]);
-
-		const oElementMock = this.mock(Element);
-		oElementMock.expects("getElementById").withExactArgs("~element0").returns(oElement0);
-		this.mock(LabelEnablement).expects("_getLabelTexts").withExactArgs(sinon.match.same(oElement0))
-			.returns(["~sLabel0"]);
-		assert.deepEqual(oFieldHelp._getFieldHelpHotspots(), [{
-			backendHelpKey: {id: "~customId0", type: "~customType0"},
-			hotspotId: "~element0",
-			labelText: "~sLabel0"
-		}]);
-
-		// simulate that the control has been destroyed
-		oElementMock.expects("getElementById").withExactArgs("~element0").returns(undefined);
-
-		// code under test - control was destroyed in between
-		assert.deepEqual(oFieldHelp._getFieldHelpHotspots(), []);
-
-		// code under test - the destroyed control has been removed from internal data structure -> no getElementById
-		assert.deepEqual(oFieldHelp._getFieldHelpHotspots(), []);
 	});
 
 	//*********************************************************************************************
@@ -692,7 +700,8 @@ sap.ui.define([
 		const oElement = {getId() {return "~element";}};
 		const oUpdateHotspotsPromise = {catch() {}};
 		const oUpdateHotspotsPromiseMock = this.mock(oUpdateHotspotsPromise);
-		this.mock(oFieldHelp).expects("_updateHotspots").withExactArgs().returns(oUpdateHotspotsPromise);
+		const oFieldHelpMock = this.mock(oFieldHelp);
+		oFieldHelpMock.expects("_updateHotspots").withExactArgs().returns(oUpdateHotspotsPromise);
 		// ensure that Promise is caught to avoid uncaught in Promise
 		oUpdateHotspotsPromiseMock.expects("catch").withExactArgs(sinon.match.func).callThrough();
 		oFieldHelp._setFieldHelpDocumentationRefs(oElement, undefined, [
@@ -701,6 +710,7 @@ sap.ui.define([
 		this.mock(Element).expects("getElementById").withExactArgs("~element").returns(oElement);
 		this.mock(LabelEnablement).expects("_getLabelTexts").withExactArgs(sinon.match.same(oElement))
 			.returns(["~sLabelText"]);
+		oFieldHelpMock.expects("_getFieldHelpDisplayMapping").withExactArgs().returns({});
 
 		assert.deepEqual(oFieldHelp._getFieldHelpHotspots(), [{
 			backendHelpKey: {id: "~customId", type: "~customType"},
@@ -710,6 +720,8 @@ sap.ui.define([
 
 		// code under test
 		oFieldHelp.deactivate();
+
+		oFieldHelpMock.expects("_getFieldHelpDisplayMapping").withExactArgs().returns({});
 
 		assert.deepEqual(oFieldHelp._getFieldHelpHotspots(), []);
 	});
@@ -947,6 +959,127 @@ sap.ui.define([
 		return oPromise.then((sDocumentationRefValue) => {
 			assert.strictEqual(sDocumentationRefValue, undefined);
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_getFieldHelpDisplayMapping: no documentation refs available", function (assert) {
+		const oFieldHelp = FieldHelp.getInstance();
+
+		// code under test
+		assert.deepEqual(oFieldHelp._getFieldHelpDisplayMapping(), {});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_getFieldHelpDisplayMapping: destroyed control", function (assert) {
+		const oFieldHelp = new FieldHelp();
+		const oElement0 = {
+			getAssociation() {},
+			getId() {},
+			getParent() {}
+		};
+		this.mock(oElement0).expects("getId").withExactArgs().returns("~element0");
+		const oUpdateHotspotsPromise = {catch() {}};
+		this.mock(oFieldHelp).expects("_updateHotspots").withExactArgs().returns(oUpdateHotspotsPromise);
+		this.mock(oUpdateHotspotsPromise).expects("catch").withExactArgs(sinon.match.func);
+		oFieldHelp._setFieldHelpDocumentationRefs(oElement0, undefined, [
+			"urn:sap-com:documentation:key?=type=~customType0&id=~customId0"
+		]);
+
+		const oElementMock = this.mock(Element);
+		oElementMock.expects("getElementById").withExactArgs("~element0").returns(oElement0);
+		this.mock(oElement0).expects("getAssociation").withExactArgs("fieldHelpDisplay").returns("~associationId");
+		this.mock(oElement0).expects("getParent").withExactArgs().returns(null);
+
+		// code under test - initially the mapping is defined
+		assert.deepEqual(oFieldHelp._getFieldHelpDisplayMapping(), {"~element0": "~associationId"});
+
+		// simulate that the control has been destroyed
+		oElementMock.expects("getElementById").withExactArgs("~element0").returns(undefined);
+
+		// code under test - control was destroyed in between
+		assert.deepEqual(oFieldHelp._getFieldHelpDisplayMapping(), {});
+
+		// code under test - the destroyed control has been removed from internal data structure -> no getElementById
+		assert.deepEqual(oFieldHelp._getFieldHelpDisplayMapping(), {});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_getFieldHelpDisplayMapping", function (assert) {
+		const oFieldHelp = FieldHelp.getInstance();
+		const oUpdateHotspotsPromise = {catch() {}};
+		const oFieldHelpMock = this.mock(oFieldHelp);
+		oFieldHelpMock.expects("_updateHotspots").withExactArgs().returns(oUpdateHotspotsPromise);
+		const oUpdateHotspotsPromiseMock = this.mock(oUpdateHotspotsPromise);
+		oUpdateHotspotsPromiseMock.expects("catch").withExactArgs(sinon.match.func);
+		// Element 1 has both a fieldHelpDisplay association and a BindingInfo.OriginalParent
+		// -> fieldHelpDisplay association wins
+		const oElement0 = {
+			[BindingInfo.OriginalParent]: {
+				getId() { return "oOriginalParent0"; }
+			},
+			getAssociation() {},
+			getId() {},
+			getParent() {}
+		};
+		this.mock(oElement0).expects("getId").withExactArgs().returns("~id0");
+		oFieldHelp._setFieldHelpDocumentationRefs(oElement0, undefined, [
+			"urn:sap-com:documentation:key?=type=~customType0&id=~customId0"
+		]);
+		oFieldHelpMock.expects("_updateHotspots").withExactArgs().returns(oUpdateHotspotsPromise);
+		oUpdateHotspotsPromiseMock.expects("catch").withExactArgs(sinon.match.func);
+		const oOriginalParent = {getId() {}};
+		// Element 1 has no fieldHelpDisplay association but a BindingInfo.OriginalParent
+		const oElement1 = {
+			[BindingInfo.OriginalParent]: oOriginalParent,
+			getAssociation() {},
+			getId() {},
+			getParent() {}
+		};
+		this.mock(oElement1).expects("getId").withExactArgs().returns("~id1");
+		oFieldHelp._setFieldHelpDocumentationRefs(oElement1, undefined, [
+			"urn:sap-com:documentation:key?=type=~customType1&id=~customId1"
+		]);
+		// Element 2 has neither a fieldHelpDisplay association nor a BindingInfo.OriginalParent
+		const oElement2 = {getAssociation() {}, getId() {}, getParent() {}};
+		oFieldHelpMock.expects("_updateHotspots").withExactArgs().returns(oUpdateHotspotsPromise);
+		oUpdateHotspotsPromiseMock.expects("catch").withExactArgs(sinon.match.func);
+		this.mock(oElement2).expects("getId").withExactArgs().returns("~id2");
+		oFieldHelp._setFieldHelpDocumentationRefs(oElement2, undefined, [
+			"urn:sap-com:documentation:key?=type=~customType2&id=~customId2"
+		]);
+		// Element 3 has neither a fieldHelpDisplay association nor a BindingInfo.OriginalParent;
+		// its parent has a fieldHelpDisplay association
+		const oElement3 = {getAssociation() {}, getId() {}, getParent() {}};
+		oFieldHelpMock.expects("_updateHotspots").withExactArgs().returns(oUpdateHotspotsPromise);
+		oUpdateHotspotsPromiseMock.expects("catch").withExactArgs(sinon.match.func);
+		this.mock(oElement3).expects("getId").withExactArgs().returns("~id3");
+		oFieldHelp._setFieldHelpDocumentationRefs(oElement3, undefined, [
+			"urn:sap-com:documentation:key?=type=~customType3&id=~customId3"
+		]);
+
+		const oElementMock = this.mock(Element);
+		oElementMock.expects("getElementById").withExactArgs("~id0").returns(oElement0);
+		this.mock(oElement0).expects("getAssociation").withExactArgs("fieldHelpDisplay").returns("~sAssociationId0");
+		this.mock(oElement0).expects("getParent").withExactArgs().returns("~oParentControl0");
+		oElementMock.expects("getElementById").withExactArgs("~id1").returns(oElement1);
+		this.mock(oElement1).expects("getAssociation").withExactArgs("fieldHelpDisplay").returns(null);
+		this.mock(oOriginalParent).expects("getId").withExactArgs().returns("~originalParentId");
+		this.mock(oElement1).expects("getParent").withExactArgs().returns("~oParentControl1");
+		oElementMock.expects("getElementById").withExactArgs("~id2").returns(oElement2);
+		this.mock(oElement2).expects("getAssociation").withExactArgs("fieldHelpDisplay").returns(null);
+		this.mock(oElement2).expects("getParent").withExactArgs().returns(null);
+		oElementMock.expects("getElementById").withExactArgs("~id3").returns(oElement3);
+		this.mock(oElement3).expects("getAssociation").withExactArgs("fieldHelpDisplay").returns(null);
+		const oElement3Parent = {getAssociation() {}, getParent() {}};
+		this.mock(oElement3).expects("getParent").withExactArgs().returns(oElement3Parent);
+		this.mock(oElement3Parent).expects("getAssociation")
+			.withExactArgs("fieldHelpDisplay")
+			.returns("~sParentAssociationId");
+		this.mock(oElement3Parent).expects("getParent").withExactArgs().returns(null);
+
+		// code under test
+		assert.deepEqual(oFieldHelp._getFieldHelpDisplayMapping(),
+			{"~id0": "~sAssociationId0", "~id1": "~originalParentId", "~id3": "~sParentAssociationId"});
 	});
 
 	//*********************************************************************************************
