@@ -1888,7 +1888,7 @@ sap.ui.define([
 		 * properties of the related entity type to the "$select" query options. Although this is
 		 * not needed in order to obtain the correct nested entity it enables
 		 * {@link sap.ui.model.odata.v4.Context#requestSideEffects}) to check the consistency of the
-		 * key predicates.
+		 * key predicate.
 		 *
 		 * @param {object} [mCacheQueryOptions]
 		 *   A map of query options as returned by

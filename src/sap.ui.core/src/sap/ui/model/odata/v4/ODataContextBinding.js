@@ -1174,8 +1174,8 @@ sap.ui.define([
 						if (this.oOperation.bAdditionalQueryOptionsForRVC
 								&& this.oContext.getPath().split("/")[1]
 									!== sNewPath.split("/")[0]) {
-							throw new Error("Cannot replace due changed key predicates "
-								+ "and navigation property in path");
+							throw new Error("Cannot replace due to changed key predicate"
+								+ " for navigation property in path");
 						}
 						this.oCache = null;
 						this.oCachePromise = SyncPromise.resolve(null);

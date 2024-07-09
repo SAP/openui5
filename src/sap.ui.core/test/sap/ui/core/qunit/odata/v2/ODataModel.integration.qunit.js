@@ -1865,7 +1865,7 @@ sap.ui.define([
 	path : "/SalesOrderSet('1')/ToBusinessPartner/ToProducts",
 	title : "Absolute path with three segments to a collection; 'to 1' navigation in the middle"
 }, {
-	// even if key predicates for ToBusinessPartner cannot be resolved, canonical path for the
+	// even if key predicate for ToBusinessPartner cannot be resolved, canonical path for the
 	// product can be computed
 	expectedCanonicalRequest : {
 		deepPath : "/SalesOrderSet('1')/ToBusinessPartner/ToProducts('P1')",

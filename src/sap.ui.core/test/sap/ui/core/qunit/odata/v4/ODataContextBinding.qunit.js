@@ -2359,7 +2359,8 @@ sap.ui.define([
 		assert.throws(function () {
 			// code under test
 			oBinding.handleOperationResult("~oOperationMetadata~", oResponseEntity, true);
-		}, new Error("Cannot replace due changed key predicates and navigation property in path"));
+		}, new Error(
+			"Cannot replace due to changed key predicate for navigation property in path"));
 	});
 
 	//*********************************************************************************************
@@ -2385,7 +2386,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [false, true].forEach(function (bReplaceWithRVC) {
-	var sTitle = "handleOperationResult: bound operation w/o key predicates, bReplaceWithRVC="
+	var sTitle = "handleOperationResult: bound operation w/o key predicate, bReplaceWithRVC="
 			+ bReplaceWithRVC;
 
 	QUnit.test(sTitle, function (assert) {
@@ -4617,7 +4618,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [{}, undefined].forEach(function (oEntity, i) {
-	QUnit.test("getResolvedPathWithReplacedTransientPredicates error: no key predicates " + i,
+	QUnit.test("getResolvedPathWithReplacedTransientPredicates error: no key predicate " + i,
 			function (assert) {
 		var sPath = "/TEAMS($uid=id-1-23)",
 			oContext = Context.create(this.oModel, {}, sPath),
