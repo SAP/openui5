@@ -22,14 +22,18 @@ sap.ui.define([
 		"ms", "nb", "nl", "nl_BE", "pl", "pt", "pt_PT", "ro", "ru", "ru_UA", "sk", "sl", "sr", "sr_Latn", "sv", "th",
 		"tr", "uk", "vi", "zh_CN", "zh_HK", "zh_SG", "zh_TW"];
 
-	QUnit.module("Locale Data Loading", {
-		beforeEach: function(assert) {
+	QUnit.module("sap.ui.core.LocaleData", {
+		beforeEach: function () {
 			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("error").never();
 			this.oLogMock.expects("warning").never();
-			this.loadResourceSpy = this.spy(LoaderExtensions, "loadResource");
-		}, afterEach: function(assert) {
-			this.loadResourceSpy.restore();
+			Formatting.setUnitMappings();
+			Formatting.setCustomUnits();
+			LocaleData._mTimezoneTranslations = {};
+		},
+		after() {
+			// Only required after the test run is through for performance reasons
+			LocaleData._resetLocaleDataCache();
 		}
 	});
 
@@ -38,56 +42,63 @@ sap.ui.define([
 		assert.deepEqual(LocaleData._cldrLocales.slice().sort(), aSupportedLanguages.slice().sort());
 	});
 
+	//*********************************************************************************************
 	QUnit.test("LocaleData caching of data", function(assert) {
+		LocaleData._resetLocaleDataCache();
+		const oLoadResourceSpy = this.spy(LoaderExtensions, "loadResource");
 		LocaleData.getInstance(new Locale("en_US"));
 		// Get Instance again to test cache
 		LocaleData.getInstance(new Locale("en_US"));
-		assert.equal(this.loadResourceSpy.callCount, 1, "called only once for same locale");
+		assert.strictEqual(oLoadResourceSpy.callCount, 1, "called only once for same locale");
 	});
 
+	//*********************************************************************************************
 	QUnit.test("LocaleData mapping", function(assert) {
+		LocaleData._resetLocaleDataCache();
+		const oLoadResourceSpy = this.spy(LoaderExtensions, "loadResource");
 		// Serbian Latin
 		// sr_Latn -> sr-Latn
 		var oLocaleData = LocaleData.getInstance(new Locale("sr_Latn"));
-		assert.equal(this.loadResourceSpy.callCount, 1, "called for sr_Latn");
-		assert.equal(this.loadResourceSpy.getCall(0).args[0], "sap/ui/core/cldr/sr_Latn.json", "sr_Latn is loaded");
-		assert.equal(oLocaleData.sCLDRLocaleId, "sr-Latn");
+		assert.strictEqual(oLoadResourceSpy.callCount, 1, "called for sr_Latn");
+		assert.strictEqual(oLoadResourceSpy.getCall(0).args[0], "sap/ui/core/cldr/sr_Latn.json", "sr_Latn is loaded");
+		assert.strictEqual(oLocaleData.sCLDRLocaleId, "sr-Latn");
 
 		// sh -> sr-Latn
 		oLocaleData = LocaleData.getInstance(new Locale("sh"));
-		assert.equal(this.loadResourceSpy.callCount, 1, "not called for sh because sr_Latn already loaded");
-		assert.equal(this.loadResourceSpy.getCall(0).args[0], "sap/ui/core/cldr/sr_Latn.json", "sr_Latn already loaded");
-		assert.equal(oLocaleData.sCLDRLocaleId, "sr-Latn");
+		assert.strictEqual(oLoadResourceSpy.callCount, 1, "not called for sh because sr_Latn already loaded");
+		assert.strictEqual(oLoadResourceSpy.getCall(0).args[0],
+			"sap/ui/core/cldr/sr_Latn.json", "sr_Latn already loaded");
+		assert.strictEqual(oLocaleData.sCLDRLocaleId, "sr-Latn");
 
 		// sr -> sr
 		oLocaleData = LocaleData.getInstance(new Locale("sr"));
-		assert.equal(this.loadResourceSpy.callCount, 2, "called for sr");
-		assert.equal(this.loadResourceSpy.getCall(1).args[0], "sap/ui/core/cldr/sr.json", "sr is loaded");
-		assert.equal(oLocaleData.sCLDRLocaleId, "sr");
+		assert.strictEqual(oLoadResourceSpy.callCount, 2, "called for sr");
+		assert.strictEqual(oLoadResourceSpy.getCall(1).args[0], "sap/ui/core/cldr/sr.json", "sr is loaded");
+		assert.strictEqual(oLocaleData.sCLDRLocaleId, "sr");
 
 		// zh_Hant -> zh-TW
 		oLocaleData = LocaleData.getInstance(new Locale("zh_Hant"));
-		assert.equal(oLocaleData.sCLDRLocaleId, "zh-TW");
+		assert.strictEqual(oLocaleData.sCLDRLocaleId, "zh-TW");
 
 		// zh_Hans -> zh-CN
 		oLocaleData = LocaleData.getInstance(new Locale("zh_Hans"));
-		assert.equal(oLocaleData.sCLDRLocaleId, "zh-CN");
+		assert.strictEqual(oLocaleData.sCLDRLocaleId, "zh-CN");
 
 		// no -> nb
 		oLocaleData = LocaleData.getInstance(new Locale("no"));
-		assert.equal(oLocaleData.sCLDRLocaleId, "nb");
+		assert.strictEqual(oLocaleData.sCLDRLocaleId, "nb");
 
 		// de_CH (with region) -> de-CH
 		oLocaleData = LocaleData.getInstance(new Locale("de_CH"));
-		assert.equal(oLocaleData.sCLDRLocaleId, "de-CH");
+		assert.strictEqual(oLocaleData.sCLDRLocaleId, "de-CH");
 
 		// de (without region) -> de
 		oLocaleData = LocaleData.getInstance(new Locale("de"));
-		assert.equal(oLocaleData.sCLDRLocaleId, "de");
+		assert.strictEqual(oLocaleData.sCLDRLocaleId, "de");
 
 		// invalid (falls back to en) -> en
 		oLocaleData = LocaleData.getInstance(new Locale("invalid"));
-		assert.equal(oLocaleData.sCLDRLocaleId, "en");
+		assert.strictEqual(oLocaleData.sCLDRLocaleId, "en");
 	});
 
 	aSupportedLanguages.forEach(function(sLanguage) {
@@ -98,6 +109,8 @@ sap.ui.define([
 			assert.ok(oLocaleData.getCurrentLanguageName(), "Current language is present for locale: '" + sLanguage + "'");
 		});
 	});
+
+	//*********************************************************************************************
 [
 	{sLocale: "cnr", sName: "crnogorski"},
 	{sLocale: "cnr_ME", sName: "crnogorski (Crna Gora)"},
@@ -144,28 +157,6 @@ sap.ui.define([
 		// code under test
 		assert.strictEqual(LocaleData.prototype.getCurrentLanguageName.call(oLocaleData), "~name");
 	});
-
-	QUnit.module("Locale data types", {
-		beforeEach: function(assert) {
-			this.oLogMock = this.mock(Log);
-			this.oLogMock.expects("error").never();
-			this.oLogMock.expects("warning").never();
-			//ensure custom unit mappings and custom units are reset
-			Formatting.setUnitMappings();
-			Formatting.setCustomUnits();
-
-			assert.equal(Formatting.getCustomUnits(), undefined, "units must be undefined");
-			assert.equal(Formatting.getUnitMappings(), undefined, "unit mappings must be undefined");
-		}, afterEach: function(assert) {
-			//ensure custom unit mappings and custom units are reset
-			Formatting.setUnitMappings();
-			Formatting.setCustomUnits();
-
-			assert.equal(Formatting.getCustomUnits(), undefined, "units must be undefined");
-			assert.equal(Formatting.getUnitMappings(), undefined, "unit mappings must be undefined");
-		}
-	});
-
 
 	QUnit.test("Currency digits", function(assert) {
 		var oLocaleData = LocaleData.getInstance(new Locale("en_US"));
@@ -448,9 +439,6 @@ sap.ui.define([
 			"Legacy unit is not found in custom unit mapping");
 		assert.strictEqual(oLocaleData.getUnitFormat("concentr-milligram-per-deciliter").displayName, "mg/dL",
 			"Legacy unit is mapped to new unit in CLDR");
-
-		//reset unit mappings
-		Formatting.setUnitMappings();
 	});
 
 	QUnit.test("Unit Mappings", function(assert) {
@@ -601,19 +589,6 @@ sap.ui.define([
 		Formatting.setCustomCurrencies();
 		assert.equal(oLocaleData.getCurrencyDigits("EUR"), 2, "number of digits for Euro");
 		assert.equal(oLocaleData.getCurrencyDigits("JPY"), 0, "number of digits for Japanese Yen");
-	});
-
-	QUnit.module("sap.ui.core.LocaleData", {
-		beforeEach: function () {
-			this.oLogMock = this.mock(Log);
-			this.oLogMock.expects("error").never();
-			this.oLogMock.expects("warning").never();
-			LocaleData._mTimezoneTranslations = {};
-		},
-		after: function () {
-			// Make sure that the translation cache is deleted to reduce the memory consumption after the test
-			LocaleData._mTimezoneTranslations = {};
-		}
 	});
 
 	QUnit.test("getCurrencySymbols", function(assert) {
