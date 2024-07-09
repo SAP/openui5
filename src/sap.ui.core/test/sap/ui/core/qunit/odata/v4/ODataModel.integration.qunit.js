@@ -5691,6 +5691,11 @@ sap.ui.define([
 </FlexBox>`;
 		const oController = {
 			myFormatter : (aMessages) => {
+				for (const sKey in aMessages) {
+					if (sKey[0] === "$") {
+						assert.ok(false, "access to internals: " + sKey);
+					}
+				}
 				return aMessages.map((oMessage) => oMessage.message).join(" ");
 			}
 		};
@@ -5842,6 +5847,7 @@ sap.ui.define([
 					YEARLY_BONUS_AMOUNT : "567"
 				}
 			})
+			.expectChange("name", "Frederic Fall")
 			.expectChange("salary", "1234 EUR")
 			.expectChange("monthly", "1,234");
 
@@ -5980,6 +5986,70 @@ sap.ui.define([
 		await Promise.all([
 			oContext.getBinding().requestRefresh(), // don' try this at home, kids!
 			this.waitForChanges(assert, "refresh from null")
+		]);
+	});
+
+	//*********************************************************************************************
+	// Scenario: One-way property binding for an object of entity(!) type. Check that no access to
+	// internals is possible (see {@link _Helper.publicClone}).
+	// JIRA: CPOUI5ODATAV4-2661
+	QUnit.test("CPOUI5ODATAV4-2661: OneWay - publicClone", async function (assert) {
+		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
+		const sView = `
+<FlexBox id="form" binding="{/EMPLOYEES('1')}">
+	<Text id="name" text="{Name}"/>
+	<Text id="teamId" text="{EMPLOYEE_2_MANAGER/TEAM_ID}"/>
+	<Text id="manager" text="{
+		formatter : '.myFormatter',
+		mode : 'OneWay',
+		path : 'EMPLOYEE_2_MANAGER',
+		targetType : 'any'
+	}"/>
+</FlexBox>`;
+		const oController = {
+			myFormatter : (oManager) => JSON.stringify(oManager)
+		};
+
+		this.expectRequest("EMPLOYEES('1')?$select=ID,Name"
+				+ "&$expand=EMPLOYEE_2_MANAGER($select=ID,TEAM_ID)", {
+				EMPLOYEE_2_MANAGER : {
+					ID : "2",
+					TEAM_ID : "TEAM_01"
+				},
+				ID : "1",
+				Name : "Frederic Fall"
+			})
+			.expectChange("name", "Frederic Fall")
+			.expectChange("teamId", "TEAM_01")
+			.expectChange("manager", '{"ID":"2","TEAM_ID":"TEAM_01"}'); // no access to internals
+
+		await this.createView(assert, sView, oModel, oController);
+
+		const oContext = this.oView.byId("form").getBindingContext();
+
+		this.expectChange("teamId", "TEAM_02");
+			// this is accepted!
+			// .expectChange("manager", '{"ID":"2","TEAM_ID":"TEAM_02"}');
+
+		// code under test
+		oContext.setProperty("EMPLOYEE_2_MANAGER/TEAM_ID", "TEAM_02", null);
+
+		await this.waitForChanges(assert, "edit");
+
+		this.expectRequest("EMPLOYEES('1')?$select=EMPLOYEE_2_MANAGER"
+				+ "&$expand=EMPLOYEE_2_MANAGER($select=ID,TEAM_ID)", {
+				EMPLOYEE_2_MANAGER : {
+					ID : "2",
+					TEAM_ID : "TEAM_02*"
+				}
+			})
+			.expectChange("teamId", "TEAM_02*")
+			.expectChange("manager", '{"ID":"2","TEAM_ID":"TEAM_02*"}'); // no access to internals
+
+		await Promise.all([
+			// code under test
+			oContext.requestSideEffects(["EMPLOYEE_2_MANAGER"]),
+			this.waitForChanges(assert, "side effects")
 		]);
 	});
 

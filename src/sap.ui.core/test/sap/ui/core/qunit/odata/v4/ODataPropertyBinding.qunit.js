@@ -956,12 +956,16 @@ sap.ui.define([
 		this.mock(this.oModel.getMetaModel()).expects("fetchUI5Type")
 			.withExactArgs("/EntitySet('foo')/property/path")
 			.returns(SyncPromise.resolve("~UI5Type~"));
+		this.mock(_Helper).expects("publicClone").exactly(vValue ? 1 : 0)
+			.withExactArgs(sinon.match.same(vValue))
+			.returns("~vValueClone~");
 		this.mock(oBinding).expects("doSetType").withExactArgs("~UI5Type~").callThrough();
 		oBinding.vValue = vValue; // simulate a read
-		oBinding.attachChange(function () { // "change" event even for same object value
+		oBinding.attachChange(function () {
+			// "change" event even for same object value (indirectly via clone)
 			assert.ok(vValue, "null handled specially");
 			assert.strictEqual(oBinding.getType(), "~UI5Type~");
-			assert.strictEqual(oBinding.getValue(), vValue);
+			assert.strictEqual(oBinding.getValue(), vValue ? "~vValueClone~" : vValue);
 			done();
 		});
 		if (!vValue) {
@@ -973,7 +977,7 @@ sap.ui.define([
 		oPromise = oBinding.checkUpdateInternal(undefined, undefined, undefined, false, vValue);
 
 		assert.ok(oPromise.isFulfilled());
-		assert.strictEqual(oBinding.getValue(), vValue);
+		assert.strictEqual(oBinding.getValue(), vValue ? "~vValueClone~" : vValue);
 
 		return oPromise;
 	});

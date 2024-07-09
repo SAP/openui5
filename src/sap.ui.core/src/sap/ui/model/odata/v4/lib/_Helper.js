@@ -2356,7 +2356,7 @@ sap.ui.define([
 
 		/**
 		 * Returns a clone of the given value where all occurrences of the private namespace
-		 * object have been deleted.
+		 * object have been deleted. Also, properties starting with "$" are dropped from arrays.
 		 *
 		 * @param {any} vValue
 		 *   Any value, including <code>undefined</code>
@@ -2371,6 +2371,9 @@ sap.ui.define([
 		 * @see sap.ui.model.odata.v4.lib._Helper.clone
 		 */
 		publicClone : function (vValue, bRemoveClientAnnotations, bAsString) {
+			if (Array.isArray(vValue)) {
+				vValue = vValue.slice(); // drop "$*" properties
+			}
 			return _Helper.clone(vValue, function (sKey, vValue0) {
 				if (bRemoveClientAnnotations ? !sKey.startsWith("@$ui5.") : sKey !== "@$ui5._") {
 					return vValue0;
