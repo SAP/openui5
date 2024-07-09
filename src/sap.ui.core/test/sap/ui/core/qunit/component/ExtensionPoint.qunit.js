@@ -5,7 +5,7 @@ sap.ui.define([
 	'sap/ui/core/ExtensionPoint',
 	'sap/ui/core/mvc/XMLView',
 	'sap/ui/core/Fragment',
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(Component, ComponentContainer, XMLTemplateProcessor, ExtensionPoint, XMLView, Fragment, nextUIUpdate) {
 
 	"use strict";

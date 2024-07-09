@@ -2,7 +2,7 @@
 sap.ui.define([
 	'sap/ui/core/Control',
 	'sap/ui/core/EnabledPropagator',
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 	], function(Control, EnabledPropagator, nextUIUpdate) {
 	"use strict";
 

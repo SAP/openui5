@@ -7,7 +7,7 @@ sap.ui.define([
 	'sap/m/Page',
 	'sap/m/VBox',
 	"sap/ui/core/mvc/XMLView",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/test/OpaPlugin"
 ], function (_Busy, Button, Dialog, Toolbar, Page, VBox, XMLView, nextUIUpdate) {
 	"use strict";

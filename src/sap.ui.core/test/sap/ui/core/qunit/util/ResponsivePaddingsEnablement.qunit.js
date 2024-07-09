@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/core/Item",
 	"sap/ui/thirdparty/jquery",
 	"sap/base/Log",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(
 	Control,
 	ResponsivePaddingsEnablement,

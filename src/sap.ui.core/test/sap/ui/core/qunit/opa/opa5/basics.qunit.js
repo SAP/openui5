@@ -11,7 +11,7 @@ sap.ui.define([
 	"sap/ui/test/_OpaUriParameterParser",
 	"sap/ui/test/autowaiter/_autoWaiter",
 	"../utils/sinon",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function (XMLView, Opa, Opa5, opaTest, $, Button, URI, _OpaLogger, _OpaUriParameterParser, _autoWaiter, sinonUtils, nextUIUpdate) {
 	"use strict";
 

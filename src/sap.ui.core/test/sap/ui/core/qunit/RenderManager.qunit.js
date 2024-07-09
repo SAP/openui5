@@ -12,7 +12,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/base/security/encodeXML",
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/base/Log",
 	"sap/ui/core/Configuration"
 ], function(

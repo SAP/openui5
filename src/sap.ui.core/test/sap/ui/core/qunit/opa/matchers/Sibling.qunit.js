@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/m/List",
 	"sap/m/StandardListItem",
 	"sap/m/Toolbar",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function (Sibling, Button, HorizontalLayout, VerticalLayout, List, StandardListItem, Toolbar, nextUIUpdate) {
 	"use strict";
 

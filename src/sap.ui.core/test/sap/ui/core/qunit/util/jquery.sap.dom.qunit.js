@@ -2,7 +2,7 @@
 sap.ui.define([
 	"sap/base/util/LoaderExtensions",
 	"jquery.sap.dom",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/qunit/QUnitUtils" // implicit dependency, implements jQuery#_sapTest_dataEvents
 ], function (LoaderExtensions, jQuery, nextUIUpdate /*, qutils */) {
 	"use strict";

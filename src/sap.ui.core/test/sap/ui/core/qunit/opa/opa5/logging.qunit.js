@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/ui/test/Opa",
 	"sap/ui/test/_LogCollector",
 	"../utils/sinon",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function (XMLView, Opa5, Opa, _LogCollector, sinonUtils, nextUIUpdate) {
 	"use strict";
 

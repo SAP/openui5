@@ -14,7 +14,7 @@ sap.ui.define([
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(Button, CheckBox, DatePicker, Input, Label, Popover, Control, Element, UIArea, KeyCodes, HorizontalLayout, VerticalLayout, qutils, createAndAppendDiv, nextUIUpdate) {
 	"use strict";
 

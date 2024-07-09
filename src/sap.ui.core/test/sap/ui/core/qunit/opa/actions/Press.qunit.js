@@ -39,7 +39,7 @@ sap.ui.define([
 	"sap/m/Slider",
 	"sap/m/RatingIndicator",
 	"sap/ui/core/UIArea",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/m/OverflowToolbarLayoutData"
 ],
 function(Press,

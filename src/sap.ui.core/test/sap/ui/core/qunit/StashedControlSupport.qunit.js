@@ -14,7 +14,7 @@ sap.ui.define([
 	"sap/uxap/ObjectPageLayout",
 	"sap/base/Log",
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/qunit/utils/nextUIUpdate"],
+	"sap/ui/test/utils/nextUIUpdate"],
 function(StashedControlSupport, Element, Component, XMLView, Fragment, ListItem, JSONModel, Button, SegmentedButton, SegmentedButtonItem, Select, Panel, ObjectPageLayout, Log, createAndAppendDiv, nextUIUpdate) {
 	/* global QUnit sinon*/
 	"use strict";

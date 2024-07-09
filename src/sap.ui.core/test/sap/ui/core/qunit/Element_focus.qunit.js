@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/m/Dialog",
 	"sap/m/Popover",
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/m/Input",
 	"sap/m/Panel"
 ], function(BusyIndicator, Button, Dialog, Popover, createAndAppendDiv, nextUIUpdate, Input, Panel) {

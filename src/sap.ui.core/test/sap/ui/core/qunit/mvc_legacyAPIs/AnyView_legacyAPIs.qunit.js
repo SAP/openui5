@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/mvc/HTMLView",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(ObjectPath, Device, Controller, JSONView, JSView, XMLView, HTMLView, qutils, nextUIUpdate) {
 	"use strict";
 

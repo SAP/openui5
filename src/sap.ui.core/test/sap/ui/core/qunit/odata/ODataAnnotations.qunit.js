@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/model/odata/ODataModel",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/util/XMLHelper",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(Log, Localization, fakeService, ODataAnnotations, V1ODataModel, V2ODataModel, XMLHelper, nextUIUpdate) {
 	"use strict";
 

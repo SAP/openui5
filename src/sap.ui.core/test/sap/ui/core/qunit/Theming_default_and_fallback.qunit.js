@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/ui/base/config/URLConfigurationProvider",
 	"sap/ui/core/Theming",
 	"sap/ui/core/theming/ThemeHelper",
-	"sap/ui/qunit/utils/waitForThemeApplied"
+	"sap/ui/test/utils/waitForThemeApplied"
 ], function (
 	BaseEvent,
 	URLConfigurationProvider,

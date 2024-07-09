@@ -16,7 +16,7 @@ sap.ui.define([
 	"sap/ui/layout/HorizontalLayout",
 	"sap/m/Toolbar",
 	"sap/ui/test/_ControlFinder",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	// only selector generators below; import in priority order
 	"sap/ui/test/selectors/_GlobalID",
 	"sap/ui/test/selectors/_ViewID",

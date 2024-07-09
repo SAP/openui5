@@ -3,7 +3,7 @@
 sap.ui.define([
 	"sap/ui/core/Rendering",
 	"sap/ui/core/UIArea",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/testlib/TestButton"
 ], function(Rendering, UIArea, nextUIUpdate, TestButton) {
 	"use strict";

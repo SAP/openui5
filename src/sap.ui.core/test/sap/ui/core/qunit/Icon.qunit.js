@@ -10,7 +10,7 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(Icon, IconPool, _IconRegistry, Log, Device, Library, library, KeyCodes, jQuery, qutils, nextUIUpdate) {
 	"use strict";
 

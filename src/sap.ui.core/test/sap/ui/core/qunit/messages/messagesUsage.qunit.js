@@ -14,7 +14,7 @@ sap.ui.define([
 	'sap/ui/model/json/JSONModel',
 	'sap/ui/core/UIComponent',
 	'sap/ui/qunit/utils/createAndAppendDiv',
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/test/TestUtils"
 ], function(isPlainObject, Input, Model, Integer, Message, MessageType, Messaging, library, Component, ComponentContainer, Element, JSONModel, UIComponent, createAndAppendDiv, nextUIUpdate, TestUtils){
 	"use strict";

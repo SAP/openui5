@@ -10,7 +10,7 @@ sap.ui.define([
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/testlib/TestButton",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(ComponentContainer, Control, Element, HTML, RenderManager, UIAreaRegistry, UIComponent, VerticalLayout, TestButton, jQuery, nextUIUpdate) {
 	"use strict";
 

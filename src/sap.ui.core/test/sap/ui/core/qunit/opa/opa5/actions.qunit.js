@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/ui/test/autowaiter/_timeoutWaiter",
 	"sap/m/Button",
 	"sap/ui/test/autowaiter/_autoWaiter",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function (Opa5, opaTest, _timeoutWaiter, Button, _autoWaiter, nextUIUpdate) {
 	"use strict";
 

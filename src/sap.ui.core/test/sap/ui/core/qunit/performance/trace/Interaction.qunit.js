@@ -5,7 +5,7 @@ sap.ui.define([
 	'sap/ui/performance/trace/FESRHelper',
 	"sap/ui/test/actions/Press",
 	"sap/m/Button",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(Interaction, XMLView, FESRHelper, Press, Button, nextUIUpdate) {
 	"use strict";
 

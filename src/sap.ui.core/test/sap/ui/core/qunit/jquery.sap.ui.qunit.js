@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/Element",
 	"sap/ui/core/UIAreaRegistry",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(jQuery, Control, Element, UIAreaRegistry, nextUIUpdate) {
 	"use strict";
 

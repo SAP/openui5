@@ -12,7 +12,7 @@ sap.ui.define([
 	'sap/ui/base/SyncPromise',
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/StashedControlSupport",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(future, Log, Controller, UIComponent, Component, Element, Panel, HBox, MyGlobal, SyncPromise, XMLView, StashedControlSupport, nextUIUpdate) {
 
 	"use strict";

@@ -10,7 +10,7 @@ sap.ui.define([
 	'sap/ui/test/opaQunit',
 	'sap/ui/test/Opa5',
 	'sap/ui/test/_LogCollector',
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	'../utils/customQUnitAssertions'
 ], function (Interactable,
 			 $,

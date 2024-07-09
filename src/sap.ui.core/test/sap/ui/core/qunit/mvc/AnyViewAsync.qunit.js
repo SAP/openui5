@@ -3,7 +3,7 @@ sap.ui.define([
 	"sap/base/util/ObjectPath",
 	"sap/ui/core/mvc/View",
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery"
 ], function(ObjectPath, View, createAndAppendDiv, nextUIUpdate, jQuery) {
 	"use strict";

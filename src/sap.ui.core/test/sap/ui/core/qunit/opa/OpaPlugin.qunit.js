@@ -12,7 +12,7 @@ sap.ui.define([
 	"sap/ui/core/mvc/View",
 	"sap/ui/core/mvc/XMLView",
 	"./utils/view",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/base/Log"
 ], function (OpaPlugin,
 			 Interactable,

@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/ui/core/Theming",
 	"sap/ui/core/theming/Parameters",
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], async function(Control, Theming, Parameters, createAndAppendDiv, nextUIUpdate) {
 	"use strict";
 

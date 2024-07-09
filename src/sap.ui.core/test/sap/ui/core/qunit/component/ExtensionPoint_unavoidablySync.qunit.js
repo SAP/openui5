@@ -2,7 +2,7 @@ sap.ui.define([
 	'sap/ui/core/Component',
 	'sap/ui/core/ComponentContainer',
 	'sap/ui/core/ExtensionPoint',
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	// Load ExtensionPointProvider in advance because Controller expects some extensions to be processed sync
 	'testdata/customizing/customer/ext/ExtensionPointProvider'
 ], function(Component, ComponentContainer, ExtensionPoint, nextUIUpdate, ExtensionPointProvider) {

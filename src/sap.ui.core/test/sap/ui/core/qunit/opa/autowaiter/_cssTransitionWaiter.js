@@ -11,7 +11,7 @@ sap.ui.define([
 	"sap/base/strings/capitalize",
 	"sap/ui/core/ControlBehavior",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function (_LogCollector, _autoWaiter, _timeoutWaiter, _XHRWaiter, _promiseWaiter,
 		_navigationContainerWaiter, FlexibleColumnLayout, Page, capitalize, ControlBehavior, jQuery, nextUIUpdate) {
 	"use strict";

@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/base/util/merge",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/routing/HashChanger",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(View, InstanceManager, Log, merge, JSONModel, HashChanger, nextUIUpdate) {
 	"use strict";
 

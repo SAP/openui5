@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/UIArea",
 	"sap/ui/Device",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/qunit/QUnitUtils"
 ], function(Localization, DragAndDrop, DragInfo, DropInfo, DragDropInfo, jQuery, Control, UIArea, Device, nextUIUpdate, qutils) {
 	"use strict";

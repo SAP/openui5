@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(Log, Control, ResizeHandler, createAndAppendDiv, nextUIUpdate) {
 	"use strict";
 

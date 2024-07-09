@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/ui/core/ShortcutHintsMixin",
 	"sap/ui/core/Fragment",
 	"sap/ui/Device",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"my/hints/lib/MyControl"
 ], function(
 	Component,

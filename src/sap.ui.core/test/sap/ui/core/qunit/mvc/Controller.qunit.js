@@ -8,7 +8,7 @@ sap.ui.define([
 	'sap/ui/core/mvc/Controller',
 	'sap/base/future',
 	'sap/base/Log',
-	'sap/ui/qunit/utils/nextUIUpdate'
+	'sap/ui/test/utils/nextUIUpdate'
 ], function(Component, Fragment, Element, ElementRegistry, XMLView, Controller, future, Log, nextUIUpdate) {
 	"use strict";
 

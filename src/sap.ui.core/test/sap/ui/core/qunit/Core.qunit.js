@@ -18,7 +18,7 @@ sap.ui.define([
 	'sap/ui/core/Theming',
 	'sap/ui/core/theming/ThemeManager',
 	'sap/ui/qunit/utils/createAndAppendDiv',
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(Log, Localization, ResourceBundle, LoaderExtensions, ObjectPath, Device, Interface, VersionInfo, oCore, Supportability, UIArea, Element, Configuration, Library, RenderManager, Theming, ThemeManager, createAndAppendDiv, nextUIUpdate) {
 	"use strict";
 

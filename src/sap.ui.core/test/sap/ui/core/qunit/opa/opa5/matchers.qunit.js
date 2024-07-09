@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/ui/test/matchers/Descendant",
 	"sap/ui/test/matchers/MatcherFactory",
 	"sap/ui/layout/HorizontalLayout",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function (Opa, Opa5, Button, Input, PropertyStrictEquals, Ancestor, Descendant, MatcherFactory, HorizontalLayout, nextUIUpdate) {
 	"use strict";
 

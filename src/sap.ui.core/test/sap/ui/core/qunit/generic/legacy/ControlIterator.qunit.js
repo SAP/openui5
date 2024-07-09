@@ -2,7 +2,7 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/ControlIterator",
 	"sap/ui/core/Control",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(ControlIterator, Control, nextUIUpdate) {
 	"use strict";
 

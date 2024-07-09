@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/handlebars",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(Element, Template, JSONModel, jQuery, Handlebars, nextUIUpdate) {
 	"use strict";
 

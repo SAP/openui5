@@ -1,7 +1,7 @@
 /*global QUnit, sinon */
 sap.ui.define([
 	"sap/base/Log",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/m/Button"
 ], function (Log, nextUIUpdate, Button) {
 	"use strict";

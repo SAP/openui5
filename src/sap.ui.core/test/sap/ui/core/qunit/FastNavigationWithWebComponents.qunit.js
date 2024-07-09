@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(F6Navigation, XMLView, KeyCodes, QUnitUtils, createAndAppendDiv, nextUIUpdate) {
 	"use strict";
 

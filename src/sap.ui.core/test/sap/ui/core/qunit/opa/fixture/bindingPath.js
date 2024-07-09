@@ -5,7 +5,7 @@ sap.ui.define([
 	'sap/m/Input',
 	'sap/ui/layout/VerticalLayout',
 	'sap/ui/model/json/JSONModel',
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function (List, StandardListItem, Text, Input, VerticalLayout, JSONModel, nextUIUpdate) {
 	"use strict";
 

@@ -11,7 +11,7 @@ sap.ui.define([
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/table/Table",
 	"sap/ui/table/Column",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(each, isEmptyObject, Input, Label, MockServer, Filter, Sorter, UpdateMethod, ODataModel,
 	Table, Column, nextUIUpdate) {
 

@@ -2361,7 +2361,7 @@ sap.ui.define([
 	 *    synchronously rendering UI updates is no longer supported as it can lead to unnecessary
 	 *    intermediate DOM updates or layout shifting etc. Controls should rather use invalidation
 	 *    and apps should not trigger rendering at all but rather rely on the framework's automatic
-	 *    update mechanisms. Test code can use the test module <code>sap/ui/qunit/utils/nextUIUpdate</code>
+	 *    update mechanisms. Test code can use the test module <code>sap/ui/test/utils/nextUIUpdate</code>
 	 *    as a convenient way to wait for the next asynchronous rendering.
 	 */
 	Core.prototype.applyChanges = function() {

@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	'sap/ui/core/mvc/XMLView',
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	'sap/ui/qunit/QUnitUtils'
 ], function(Event, Component, ComponentContainer, Element, XMLView, createAndAppendDiv, nextUIUpdate, qutils) {
 

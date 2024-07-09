@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/core/mvc/JSView",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/mvc/HTMLView",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery"
 ], function(ObjectPath, View, JSONView, JSView, XMLView, HTMLView, nextUIUpdate, jQuery) {
 	"use strict";

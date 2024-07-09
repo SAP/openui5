@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/URI",
 	"sap/ui/core/Theming",
 	"sap/ui/core/theming/Parameters",
-	"sap/ui/qunit/utils/waitForThemeApplied"
+	"sap/ui/test/utils/waitForThemeApplied"
 ], function(Localization, Lib, URI, Theming, Parameters, waitForThemeApplied) {
 	"use strict";
 

@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/ElementMetadata",
 	"sap/base/Log",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(jQuery, TestControl, DragInfo, ManagedObject, ElementMetadata, Log, nextUIUpdate) {
 	"use strict";
 

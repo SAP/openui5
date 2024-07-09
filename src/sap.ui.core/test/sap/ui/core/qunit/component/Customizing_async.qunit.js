@@ -1,7 +1,7 @@
 /*global QUnit sinon */
 sap.ui.define([
 	'sap/ui/qunit/QUnitUtils',
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	'sap/ui/core/Component',
 	'sap/ui/core/ComponentContainer',
 	'sap/ui/core/XMLTemplateProcessor',

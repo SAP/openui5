@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/layout/HorizontalLayout",
 	"sap/m/Button",
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/events/KeyCodes"
 ], function (Element, TooltipBase, QUnitUtils, HorizontalLayout, Button, createAndAppendDiv, nextUIUpdate, KeyCodes) {
 	"use strict";

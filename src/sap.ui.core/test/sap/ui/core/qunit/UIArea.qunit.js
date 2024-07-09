@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/ui/core/UIArea",
 	"sap/ui/core/UIAreaRegistry",
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/testlib/TestButton",
 	"sap/ui/test/actions/Press",
 	"sap/ui/thirdparty/jquery"
