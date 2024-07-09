@@ -6,5 +6,8 @@
   "description": "UI5 Demo App - Troubleshooting Tutorial",
   "devDependencies": {
     "@ui5/cli": "^3"
+  },
+  "scripts": {
+    "start": "ui5 serve -o index.html"
   }
 }
