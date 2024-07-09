@@ -180,7 +180,7 @@ sap.ui.define([
 		 * @param {string} [mParameters.updateGroupId]
 		 *   The group ID that is used for update requests. If no update group ID is specified,
 		 *   <code>mParameters.groupId</code> is used. Valid update group IDs are
-		 *   <code>undefined</code>, '$auto', '$direct' or an application group ID.
+		 *   <code>undefined</code>, '$auto', '$auto.*', '$direct' or an application group ID.
 		 * @param {boolean} [mParameters.withCredentials]
 		 *   Whether the XMLHttpRequest is called with <code>withCredentials</code>, so that user
 		 *   credentials are included in cross-origin requests by the browser (since 1.120.0)
