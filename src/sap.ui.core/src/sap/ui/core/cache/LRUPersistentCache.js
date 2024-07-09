@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/base/config", "sap/base/Log", "sap/ui/performance/Measurement", "sap/ui/Global"],
-	function(BaseConfig, Log, Measurement, Global) {
+sap.ui.define(["sap/base/config", "sap/base/Log", "sap/ui/performance/Measurement", "sap/ui/core/Core"],
+	function(BaseConfig, Log, Measurement, Core) {
 		"use strict";
 
 		/**
@@ -48,6 +48,15 @@ sap.ui.define(["sap/base/config", "sap/base/Log", "sap/ui/performance/Measuremen
 				 */
 				this._lru = -1;
 				return initIndexedDB(this);
+			},
+
+			/*
+			 * Retrieves the version property defined on the Core.
+			 * Can be stubbed in the QUnit test to fix a certain version expectation.
+			 * @private
+			 */
+			_getVersion() {
+				return Core.version;
 			},
 
 			_destroy: function () {
@@ -369,7 +378,7 @@ sap.ui.define(["sap/base/config", "sap/base/Log", "sap/ui/performance/Measuremen
 								transaction.abort();
 							};
 							clearMetadataStoreReq.onsuccess = function () {
-								self._metadata = initMetadata(Global.version);
+								self._metadata = initMetadata(self._getVersion());
 								assignRUCounters(self);
 							};
 						};
@@ -667,7 +676,7 @@ sap.ui.define(["sap/base/config", "sap/base/Log", "sap/ui/performance/Measuremen
 		}
 
 		function initIndexedDB(instance) {
-			instance._ui5version = Global.version;
+			instance._ui5version = instance._getVersion();
 			return new Promise(function executorInitIndexedDB(resolve, reject) {
 				var DBOpenRequest;
 

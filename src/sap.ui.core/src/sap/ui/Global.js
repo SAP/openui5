@@ -19,6 +19,8 @@
  * @version ${version}
  * @author  SAP SE
  * @public
+ * @fileoverview
+ * @deprecated Version and buildtime information can be retrieved via sap/ui/core/Core.versionInfo
  */
 
 /*global OpenAjax */
@@ -39,18 +41,6 @@ sap.ui.define([
 
 	// soft dependency to sap/ui/base/Object
 	var BaseObject;
-
-	/**
-	 * Root namespace for JavaScript functionality provided by SAP SE.
-	 *
-	 * The <code>sap</code> namespace is automatically registered with the
-	 * OpenAjax hub if it exists.
-	 *
-	 * @version ${version}
-	 * @namespace
-	 * @public
-	 * @name sap
-	 */
 
 	/**
 	 * The <code>sap.ui</code> namespace is the central OpenAjax compliant entry

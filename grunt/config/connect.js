@@ -55,7 +55,7 @@ module.exports = function(grunt, config) {
 								} else {
 									res.writeHead(200, { 'Content-Type': 'application/javascript' });
 									data = data.replace(/(?:\$\{version\}|@version@)/g, grunt.config("package.version"));
-									if (filePath === "sap/ui/Global.js") {
+									if (["sap/ui/Global.js", "sap/ui/core/Core.js"].includes(filePath)) {
 										data = data.replace(/(?:\$\{buildtime\}|@buildtime@)/g, sapUiBuildtime);
 									}
 									res.write(data);
@@ -69,6 +69,7 @@ module.exports = function(grunt, config) {
 					// if "watch" is enabled, there will be another livereload middleware in between
 					middlewares.splice(grunt.option('watch') ? 3 : 2, 0,
 						createReplacementMiddleware("sap/ui/Global.js"),
+						createReplacementMiddleware("sap/ui/core/Core.js"),
 						createReplacementMiddleware("sap/ui/core/Configuration.js"),
 						createReplacementMiddleware("sap/ui/core/getCompatibilityVersion.js"),
 						[ '/' + testsuiteName + '/resources/sap-ui-version.json', function(req, res, next) {

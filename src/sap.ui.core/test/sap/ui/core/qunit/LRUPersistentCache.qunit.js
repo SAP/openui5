@@ -1,5 +1,5 @@
 /* global QUnit */
-sap.ui.define(["sap/ui/Device", "sap/base/Log", "sap/ui/Global"], function(Device, Log, Global) {
+sap.ui.define(["sap/ui/Device", "sap/base/Log"], function(Device, Log) {
 	"use strict";
 	var oCache,
 		aSupportedEnv = [];
@@ -401,7 +401,7 @@ sap.ui.define(["sap/ui/Device", "sap/base/Log", "sap/ui/Global"], function(Devic
 				});
 
 				QUnit.test("Entries have ui5 version index equal to current ui5 version", function(assert) {
-					this.stub(Global, "version").value("1.36.1");
+					const versionStub = this.stub(classCacheManager, "_getVersion").returns("1.36.1");
 
 					return oCache.set("key1_1.36.1", "myValue").then(function() {
 						return oCache.set("key2_1.36.1", "myValue");
@@ -418,19 +418,21 @@ sap.ui.define(["sap/ui/Device", "sap/base/Log", "sap/ui/Global"], function(Devic
 						return oCache.has("key2_1.36.1");
 					}).then(function(bHas) {
 						assert.ok(bHas, "CacheManager must has() entry for key 'key2_1.36.1'");
+					}).finally(() => {
+						versionStub.restore();
 					});
 				});
 
 				QUnit.test("Entries with different ui5 version than current does not exist", function(assert) {
 					var that = this,
-						stub = this.stub(Global, "version").value("1.36.1");
+						stub = this.stub(classCacheManager, "_getVersion").returns("1.36.1");
 
 					return oCache.set("key1_1.36.1", "myValue").then(function() {
 						return oCache.set("key2_1.36.1", "myValue");
 					}).then(function() {
 						//switch the version
 						stub.restore();
-						stub = that.stub(Global, "version").value("1.36.2");
+						stub = that.stub(classCacheManager, "_getVersion").returns("1.36.2");
 						return reInitCacheManager(oCache);
 					}).then(function() {
 						return verifyCacheEntries(null, ["key1_1.36.1", "key2_1.36.1"], assert);
@@ -447,6 +449,8 @@ sap.ui.define(["sap/ui/Device", "sap/base/Log", "sap/ui/Global"], function(Devic
 						return verifyCacheEntries({
 							"key1_1.36.2": "value"
 						}, null, assert);
+					}).finally(() => {
+						stub.restore();
 					});
 				});
 

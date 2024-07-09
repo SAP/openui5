@@ -49,6 +49,9 @@ sap.ui.define(["sap/base/Log"],
 				return Promise.resolve(0);
 			},
 			_destroy: function () {
+			},
+			_getVersion: function() {
+				return "";
 			}
 		};
 
