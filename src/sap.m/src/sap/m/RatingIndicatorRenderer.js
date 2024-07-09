@@ -50,8 +50,7 @@ sap.ui.define(
 
 			oRm.style("width", this._iWidth + "px");
 			oRm.style("font-size", this._iHeight + "px");
-			oRm.style("height", ++this._iHeight + "px"); 		// We add 1 additional pixel to avoid the icon issue in the Horizon theme
-			oRm.style("line-height", ++this._iHeight + "px");	// which is rendered bigger than its font size ang gets cut off
+			oRm.style("line-height", ++this._iHeight + "px");
 
 
 			if (bEnabled && !bDisplayOnly) {
