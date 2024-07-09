@@ -190,7 +190,12 @@ sap.ui.define([
 
 	ChartDelegate._getBindingInfoFromState = function(oChart) {
 		if (mStateMap.has(oChart)) {
-			return mStateMap.get(oChart).bindingInfo;
+			const oBindingInfo = mStateMap.get(oChart).bindingInfo;
+			if (oBindingInfo) {
+				// existing events from BindingInfo must be removed
+				delete oBindingInfo.events;
+			}
+			return oBindingInfo;
 		}
 
 		if (oChart) {
