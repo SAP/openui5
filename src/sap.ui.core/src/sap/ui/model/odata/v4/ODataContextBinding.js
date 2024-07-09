@@ -1099,8 +1099,9 @@ sap.ui.define([
 	 *
 	 * @param {object} oResponseEntity
 	 *   The result of the invoked operation
-	 * @returns {string|undefined} The path for the return value context or <code>undefined</code>
-	 *   if it is not possible to create one
+	 * @returns {string|undefined}
+	 *   The path for the return value context, but w/o(!) the initial slash, or
+	 *   <code>undefined</code> if it is not possible to create one
 	 *
 	 * @private
 	 */
@@ -1165,21 +1166,23 @@ sap.ui.define([
 					// the context (we already read its predicate)
 					this.oContext.patch(oResponseEntity);
 				}
-				sNewPath = this.getReturnValueContextPath(oResponseEntity);
+				sNewPath = this.getReturnValueContextPath(oResponseEntity); // w/o initial "/"!
 				if (sNewPath) {
 					if (bReplaceWithRVC) {
 						// replace is only possible if the path does not contain any navigation
 						// property or the key predicate of the first segment has not changed!
 						if (this.oOperation.bAdditionalQueryOptionsForRVC
 								&& this.oContext.getPath().split("/")[1]
-									!== sNewPath.split("/")[1]) {
+									!== sNewPath.split("/")[0]) {
 							throw new Error("Cannot replace due changed key predicates "
 								+ "and navigation property in path");
 						}
 						this.oCache = null;
 						this.oCachePromise = SyncPromise.resolve(null);
-						oResult = this.oContext.getBinding()
-							.doReplaceWith(this.oContext, oResponseEntity, sResponsePredicate);
+						oResult = this.oContext.getPath().indexOf(sNewPath) === 1
+							? this.oContext
+							: this.oContext.getBinding()
+								.doReplaceWith(this.oContext, oResponseEntity, sResponsePredicate);
 						oResult.setNewGeneration();
 
 						return oResult;

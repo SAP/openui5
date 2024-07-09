@@ -2256,7 +2256,8 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("handleOperationResult: bReplaceWithRVC", function (assert) {
+[false, true].forEach((bSame) => {
+	QUnit.test("handleOperationResult: bReplaceWithRVC, same: " + bSame, function (assert) {
 		var oParentEntity = {},
 			oResponseEntity = {},
 			oResult = {
@@ -2270,58 +2271,70 @@ sap.ui.define([
 
 		oBinding.oOperation.bAdditionalQueryOptionsForRVC = false;
 		_Helper.setPrivateAnnotation(oParentEntity, "predicate", "('42')");
-		_Helper.setPrivateAnnotation(oResponseEntity, "predicate", "('77')");
+		const sResponsePredicate = bSame ? "('42')" : "('77')";
+		_Helper.setPrivateAnnotation(oResponseEntity, "predicate", sResponsePredicate);
 		this.mock(oBinding).expects("isReturnValueLikeBindingParameter")
 			.withExactArgs("~oOperationMetadata~").returns(true);
 		this.mock(oParentContext).expects("getValue").withExactArgs().returns(oParentEntity);
-		this.mock(oParentContext).expects("patch").never();
+		this.mock(oParentContext).expects("patch").exactly(bSame ? 1 : 0)
+			.withExactArgs(sinon.match.same(oResponseEntity));
 		this.mock(oBinding).expects("getReturnValueContextPath")
-			.withExactArgs(oResponseEntity)
-			.returns("~sReturnValueContextPath~");
+			.withExactArgs(oResponseEntity).returns("TEAMS" + sResponsePredicate);
 		this.mock(Context).expects("createNewContext").never();
-		this.mock(oRootBinding).expects("doReplaceWith")
+		this.mock(oRootBinding).expects("doReplaceWith").exactly(bSame ? 0 : 1)
 			.withExactArgs(sinon.match.same(oParentContext), sinon.match.same(oResponseEntity),
 				"('77')")
 			.returns(oResult);
-		this.mock(oResult).expects("setNewGeneration").withExactArgs();
+		this.mock(oResult).expects("setNewGeneration").exactly(bSame ? 0 : 1).withExactArgs();
+		this.mock(oParentContext).expects("setNewGeneration").exactly(bSame ? 1 : 0)
+			.withExactArgs();
 
 		assert.strictEqual(
 			// code under test
 			oBinding.handleOperationResult("~oOperationMetadata~", oResponseEntity, true),
-			oResult);
+			bSame ? oParentContext : oResult);
 	});
+});
 
 	//*********************************************************************************************
-	QUnit.test("handleOperationResult: bReplaceWithRVC and navigation property", function (assert) {
+[false, true].forEach((bSame) => {
+	const sTitle = "handleOperationResult: bReplaceWithRVC and navigation property, same: " + bSame;
+
+	QUnit.test(sTitle, function (assert) {
 		const oRootBinding = {doReplaceWith : mustBeMocked};
 		const oParentContext = Context.create(this.oModel, oRootBinding,
-				"/TEAMS('42')/TEAM_2_EMPLOYEES(1)");
+				"/TEAMS('42')/TEAM_2_EMPLOYEES('1')");
 		const oBinding = this.bindContext("ToTwin(...)", oParentContext);
 		oBinding.oOperation.bAdditionalQueryOptionsForRVC = true;
 		const oParentEntity = {};
 		_Helper.setPrivateAnnotation(oParentEntity, "predicate", "('1')");
 		const oResponseEntity = {};
-		_Helper.setPrivateAnnotation(oResponseEntity, "predicate", "('11')");
+		const sResponsePredicate = bSame ? "('1')" : "('11')";
+		_Helper.setPrivateAnnotation(oResponseEntity, "predicate", sResponsePredicate);
 		this.mock(oBinding).expects("isReturnValueLikeBindingParameter")
 			.withExactArgs("~oOperationMetadata~").returns(true);
 		this.mock(oParentContext).expects("getValue").withExactArgs().returns(oParentEntity);
-		this.mock(oParentContext).expects("patch").never();
+		this.mock(oParentContext).expects("patch").exactly(bSame ? 1 : 0)
+			.withExactArgs(sinon.match.same(oResponseEntity));
 		this.mock(oBinding).expects("getReturnValueContextPath")
 			.withExactArgs(oResponseEntity)
-			.returns("/TEAMS('42')/TEAM_2_EMPLOYEES('11')");
+			.returns("TEAMS('42')/TEAM_2_EMPLOYEES" + sResponsePredicate);
 		this.mock(Context).expects("createNewContext").never();
 		const oResult = {setNewGeneration : mustBeMocked};
-		this.mock(oRootBinding).expects("doReplaceWith")
+		this.mock(oRootBinding).expects("doReplaceWith").exactly(bSame ? 0 : 1)
 			.withExactArgs(sinon.match.same(oParentContext), sinon.match.same(oResponseEntity),
 				"('11')")
 			.returns(oResult);
-		this.mock(oResult).expects("setNewGeneration").withExactArgs();
+		this.mock(oResult).expects("setNewGeneration").exactly(bSame ? 0 : 1).withExactArgs();
+		this.mock(oParentContext).expects("setNewGeneration").exactly(bSame ? 1 : 0)
+			.withExactArgs();
 
 		assert.strictEqual(
 			// code under test
 			oBinding.handleOperationResult("~oOperationMetadata~", oResponseEntity, true),
-			oResult);
+			bSame ? oParentContext : oResult);
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("handleOperationResult: bReplaceWithRVC = true and keypredicate has changed",
@@ -2341,7 +2354,7 @@ sap.ui.define([
 		this.mock(oParentContext).expects("patch").never();
 		this.mock(oBinding).expects("getReturnValueContextPath")
 			.withExactArgs(oResponseEntity)
-			.returns("/TEAMS('77')/TEAM_2_EMPLOYEES('11')");
+			.returns("TEAMS('77')/TEAM_2_EMPLOYEES('11')");
 
 		assert.throws(function () {
 			// code under test
