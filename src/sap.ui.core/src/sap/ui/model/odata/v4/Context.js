@@ -244,7 +244,7 @@ sap.ui.define([
 	 *
 	 * Since 1.125.0, deleting a node in a recursive hierarchy (see
 	 * {@link sap.ui.model.odata.v4.ODataListBinding#setAggregation}) is supported. As a
-	 * precondition, the context must not be both {@link #setKeepAlive kept-alive} and hidden (for
+	 * precondition, the context must not be both {@link #setKeepAlive kept alive} and hidden (for
 	 * example due to a filter), and the group ID must not have
 	 * {@link sap.ui.model.odata.v4.SubmitMode.API}. Such a deletion is not a pending change.
 	 *

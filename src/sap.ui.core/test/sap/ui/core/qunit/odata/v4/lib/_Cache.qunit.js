@@ -7487,7 +7487,7 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("CollectionCache#handleResponse: kept-alive, update conflict", function (assert) {
+	QUnit.test("CollectionCache#handleResponse: kept alive, update conflict", function (assert) {
 		var oCache = this.createCache("Employees"),
 			oElement = {
 				"@odata.etag" : "new"

@@ -4001,7 +4001,7 @@ sap.ui.define([
 			oContext0 = Context.create(this.oModel, oBinding, "/EMPLOYEES($uid=id-1-23)", -1,
 				SyncPromise.resolve(Promise.resolve())),
 			oContext1 = Context.create(this.oModel, oBinding, "/EMPLOYEES($uid=id-1-24)", -2,
-				SyncPromise.resolve()), // let's assume this is created, persisted, kept-alive
+				SyncPromise.resolve()), // let's assume this is created, persisted, kept alive
 			oContext2 = Context.create(this.oModel, oBinding, "/EMPLOYEES($uid=id-1-25)", -3,
 				SyncPromise.resolve(Promise.resolve()), /*bInactive*/true),
 			oContext3 = Context.create(this.oModel, oBinding, "/EMPLOYEES($uid=id-1-26)", -4,

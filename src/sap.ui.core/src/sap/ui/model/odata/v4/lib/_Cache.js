@@ -120,7 +120,7 @@ sap.ui.define([
 	 */
 	_Cache.prototype._delete = function (oGroupLock, sEditUrl, sPath, oETagEntity, fnCallback) {
 		var aSegments = sPath.split("/"),
-			// either a :1 nav.prop, the index as string, or a key-predicate (kept-alive and hidden)
+			// either a :1 nav.prop, the index as string, or a key-predicate (kept alive and hidden)
 			sDeleteProperty = aSegments.pop(),
 			sParentPath = aSegments.join("/"),
 			that = this;
@@ -1416,7 +1416,7 @@ sap.ui.define([
 	 *   The key predicate of the entity; only evaluated if <code>iIndex</code> is undefined or
 	 *   negative
 	 * @param {boolean} [bKeepAlive]
-	 *   Whether the entity is kept-alive
+	 *   Whether the entity is kept alive
 	 * @param {boolean} [bWithMessages]
 	 *   Whether the "@com.sap.vocabularies.Common.v1.Messages" path is treated specially, supported
 	 *   only for <code>sPath === ""</code>
@@ -1492,7 +1492,7 @@ sap.ui.define([
 	 * Refreshes a single entity within a collection cache and removes it from the cache if the
 	 * filter does not match anymore.
 	 * Since 1.84.0, only removes entities that do not match the filter from the cache in case they
-	 * are not kept-alive. If the entity is kept-alive, checks also the existence and removes it
+	 * are not kept alive. If the entity is kept alive, checks also the existence and removes it
 	 * from the cache if it is no longer exists. For a kept-alive entity late properties are taken
 	 * into account.
 	 *
@@ -1505,14 +1505,14 @@ sap.ui.define([
 	 * @param {string} [sPredicate]
 	 *   The key predicate of the entity; only evaluated if the <code>iIndex === undefined</code>
 	 * @param {boolean} [bKeepAlive]
-	 *   Whether the entity is kept-alive
+	 *   Whether the entity is kept alive
 	 * @param {function} [fnDataRequested]
 	 *   The function is called just before the back-end request is sent.
 	 *   If no back-end request is needed, the function is not called.
 	 * @param {function} [fnOnRemove]
 	 *   A function which is called after the entity does not match the binding's filter anymore,
 	 *   see {@link sap.ui.model.odata.v4.ODataListBinding#filter}. Since 1.84.0, if the entity is
-	 *   kept-alive and still exists, the function is called with <code>true</code>, otherwise with
+	 *   kept alive and still exists, the function is called with <code>true</code>, otherwise with
 	 *   <code>false</code>
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise which resolves with <code>undefined</code> when the entity is updated in
@@ -2097,7 +2097,7 @@ sap.ui.define([
 	 *   The function is called just before a back-end request is sent for the first time.
 	 *   If no back-end request is needed, the function is not called.
 	 * @param {function} fnIsKeepAlive
-	 *   A function to tell whether the entity is kept-alive
+	 *   A function to tell whether the entity is kept alive
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise for the PATCH request (resolves with <code>undefined</code>); rejected in case of
 	 *   cancellation or if no <code>fnErrorCallback</code> is given
