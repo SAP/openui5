@@ -2674,7 +2674,7 @@ sap.ui.define([
 				sinon.match.same(oGroupNode), sinon.match.same(oExpanded))
 			.callThrough(); // "@$ui5.node.isExpanded" is checked once read has finished
 		this.mock(oCache.oTreeState).expects("expand").exactly(vHasCache === "expanding" ? 0 : 1)
-			.withExactArgs(sinon.match.same(oGroupNode));
+			.withExactArgs(sinon.match.same(oGroupNode), "~iLevels~");
 		oCacheMock.expects("createGroupLevelCache").exactly(vHasCache ? 0 : 1)
 			.withExactArgs(sinon.match.same(oGroupNode)).returns(oGroupLevelCache);
 		oHelperMock.expects("setPrivateAnnotation").exactly(vHasCache ? 0 : 1)
@@ -2718,7 +2718,7 @@ sap.ui.define([
 
 		// code under test
 		oPromise = oCache.expand(
-			oGroupLock, vGroupNodeOrPath, "~fnDataRequested~"
+			oGroupLock, vGroupNodeOrPath, "~iLevels~", "~fnDataRequested~"
 		).then(function (iResult) {
 			var iExpectedCount = bSubtotalsAtBottom ? 8 : 7;
 
@@ -2812,7 +2812,8 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "~path~",
 				sinon.match.same(oGroupNode), sinon.match.same(oExpanded))
 			.callThrough(); // "@$ui5.node.isExpanded" is checked once read has finished
-		this.mock(oCache.oTreeState).expects("expand").withExactArgs(sinon.match.same(oGroupNode));
+		this.mock(oCache.oTreeState).expects("expand")
+			.withExactArgs(sinon.match.same(oGroupNode), "~iLevels~");
 		this.mock(oCache).expects("createGroupLevelCache")
 			.withExactArgs(sinon.match.same(oGroupNode)).returns(oGroupLevelCache);
 		this.mock(oGroupLevelCache).expects("read")
@@ -2833,7 +2834,7 @@ sap.ui.define([
 
 		// code under test
 		oPromise = oCache.expand(
-			oGroupLock, "~path~", "~fnDataRequested~"
+			oGroupLock, "~path~", "~iLevels~", "~fnDataRequested~"
 		).then(function (iResult) {
 			assert.strictEqual(iResult, 7);
 
@@ -2949,12 +2950,14 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "~path~",
 				sinon.match.same(oGroupNode), {"@$ui5.node.isExpanded" : true})
 			.callThrough(); // "@$ui5.node.isExpanded" is checked once read has finished
-		this.mock(oCache.oTreeState).expects("expand").withExactArgs(sinon.match.same(oGroupNode));
+		this.mock(oCache.oTreeState).expects("expand")
+			.withExactArgs(sinon.match.same(oGroupNode), "~iLevels~");
 		oCacheMock.expects("createGroupLevelCache").never();
 		this.mock(oGroupLevelCache).expects("read").never();
 		oCacheMock.expects("addElements").never();
 		this.mock(_AggregationHelper).expects("createPlaceholder").never();
-		oCacheMock.expects("expand").withExactArgs(sinon.match.same(oGroupLock), "~path~")
+		oCacheMock.expects("expand")
+			.withExactArgs(sinon.match.same(oGroupLock), "~path~", "~iLevels~")
 			.callThrough(); // for code under test
 		oCacheMock.expects("expand").exactly(bStale ? 0 : 1)
 			.withExactArgs(sinon.match.same(_GroupLock.$cached), sinon.match.same(aSpliced[2]))
@@ -2973,7 +2976,7 @@ sap.ui.define([
 		}
 
 		// code under test
-		oPromise = oCache.expand(oGroupLock, "~path~").then(function (iResult) {
+		oPromise = oCache.expand(oGroupLock, "~path~", "~iLevels~").then(function (iResult) {
 			assert.strictEqual(iResult, (bStale ? 0 : 100) + 200001);
 
 			assert.strictEqual(oCache.aElements.length, 200005, ".length");
@@ -3042,17 +3045,48 @@ sap.ui.define([
 		this.mock(_Helper).expects("updateAll")
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "~path~",
 				sinon.match.same(oGroupNode), {"@$ui5.node.isExpanded" : true});
-		this.mock(oCache.oTreeState).expects("expand").withExactArgs(sinon.match.same(oGroupNode));
+		this.mock(oCache.oTreeState).expects("expand")
+			.withExactArgs(sinon.match.same(oGroupNode), "~iLevels~");
 		this.mock(oCache).expects("createGroupLevelCache").never();
 
 		// code under test
-		return oCache.expand("~oGroupLock~", "~path~", "~fnDataRequested~").then(function (iCount) {
+		return oCache.expand(
+			"~oGroupLock~", "~path~", "~iLevels~", "~fnDataRequested~")
+		.then(function (iCount) {
 			assert.strictEqual(iCount, -1);
 		});
 	});
 
 	//*********************************************************************************************
+[2, 42].forEach(function (iLevels) {
+	QUnit.test("expand: refresh needed", function (assert) {
+		const oCache = _AggregationCache.create(this.oRequestor, "~", "", {}, {
+			hierarchyQualifier : "X"
+		});
+		const oGroupNode = {};
+
+		// ensure the collection cache cannot read data
+		_Helper.setPrivateAnnotation(oGroupNode, "cache", "~oGroupLevelCache~");
+		this.mock(oCache).expects("getValue").withExactArgs("~path~").returns(oGroupNode);
+		this.mock(_Helper).expects("updateAll")
+			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "~path~",
+				sinon.match.same(oGroupNode), {"@$ui5.node.isExpanded" : true});
+		this.mock(oCache.oTreeState).expects("expand")
+			.withExactArgs(sinon.match.same(oGroupNode), iLevels);
+		this.mock(oCache).expects("createGroupLevelCache").never();
+
+		// code under test
+		return oCache.expand(
+			"~oGroupLock~", "~path~", iLevels, "~fnDataRequested~")
+		.then(function (iCount) {
+			assert.strictEqual(iCount, -1);
+		});
+	});
+});
+
+	//*********************************************************************************************
 [false, true].forEach(function (bSelf) {
+	[1, undefined].forEach(function (iLevels) {
 	var sTitle = "expand: collapse " + (bSelf ? "self" : "parent") + " before expand has finished";
 
 	QUnit.test(sTitle, function (assert) {
@@ -3090,7 +3124,8 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "~path~",
 				sinon.match.same(oGroupNode), {"@$ui5.node.isExpanded" : true})
 			.callThrough(); // "@$ui5.node.isExpanded" is checked once read has finished
-		this.mock(oCache.oTreeState).expects("expand").withExactArgs(sinon.match.same(oGroupNode));
+		this.mock(oCache.oTreeState).expects("expand")
+			.withExactArgs(sinon.match.same(oGroupNode), iLevels);
 		this.mock(oCache).expects("createGroupLevelCache")
 			.withExactArgs(sinon.match.same(oGroupNode)).returns(oGroupLevelCache);
 		this.mock(oGroupLevelCache).expects("read")
@@ -3102,7 +3137,7 @@ sap.ui.define([
 
 		// code under test
 		oPromise = oCache.expand(
-			oGroupLock, "~path~", "~fnDataRequested~"
+			oGroupLock, "~path~", iLevels, "~fnDataRequested~"
 		).then(function (iResult) {
 			assert.strictEqual(iResult, 0);
 			if (bSelf) {
@@ -3127,6 +3162,7 @@ sap.ui.define([
 
 		return oPromise;
 	});
+	});
 });
 
 	//*********************************************************************************************
@@ -3150,7 +3186,8 @@ sap.ui.define([
 		this.mock(oCache).expects("getValue").withExactArgs("~path~").returns(oGroupNode);
 		this.mock(oCache).expects("createGroupLevelCache")
 			.withExactArgs(sinon.match.same(oGroupNode)).returns(oGroupLevelCache);
-		this.mock(oCache.oTreeState).expects("expand").withExactArgs(sinon.match.same(oGroupNode));
+		this.mock(oCache.oTreeState).expects("expand")
+			.withExactArgs(sinon.match.same(oGroupNode), "~iLevels~");
 		this.mock(oGroupLevelCache).expects("read")
 			.withExactArgs(0, oCache.iReadLength, 0, "~oGroupLock~", "~fnDataRequested~")
 			.returns(SyncPromise.resolve(Promise.resolve().then(function () {
@@ -3166,7 +3203,9 @@ sap.ui.define([
 			})));
 
 		// code under test
-		return oCache.expand("~oGroupLock~", "~path~", "~fnDataRequested~").then(function () {
+		return oCache.expand(
+			"~oGroupLock~", "~path~", "~iLevels~", "~fnDataRequested~")
+		.then(function () {
 			assert.ok(false);
 		}, function (oResult) {
 			assert.strictEqual(oResult, oError);
@@ -3201,7 +3240,9 @@ sap.ui.define([
 			.resolves({value : {$count : 42}}); // simplified ;-)
 
 		// code under test
-		return oCache.expand("~oGroupLock~", oGroupNode, "~fnDataRequested~").then(function () {
+		return oCache.expand(
+			"~oGroupLock~", oGroupNode, "~iLevels~", "~fnDataRequested~")
+		.then(function () {
 			assert.ok(false);
 		}, function (oError) {
 			assert.strictEqual(oError.message, "Unexpected structural change: groupLevelCount");

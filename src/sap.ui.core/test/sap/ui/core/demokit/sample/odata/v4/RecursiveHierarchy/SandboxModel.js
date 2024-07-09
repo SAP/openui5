@@ -329,7 +329,8 @@ sap.ui.define([
 			if (mQueryOptions.$apply.includes("ExpandLevels")) {
 				let sExpandLevels = mQueryOptions.$apply.match(/,ExpandLevels=(.+)\)/)[1];
 				sExpandLevels = decodeURIComponent(sExpandLevels);
-				return new Map(JSON.parse(sExpandLevels).map((o) => [o.NodeID, o.Levels]));
+				return new Map(JSON.parse(sExpandLevels).map(
+					(o) => [o.NodeID, o.Levels ?? Number.MAX_SAFE_INTEGER]));
 			}
 		}
 
@@ -743,7 +744,12 @@ sap.ui.define([
 				if (isAncestorCollapsed(oNode)) {
 					return false; // node is not part of hierarchy if an ancestor is collapsed
 				}
-				if (oExpandLevels.get(oNode.MANAGER_ID) === 1) {
+				const iExpandLevels = oExpandLevels.get(oNode.MANAGER_ID);
+				if (iExpandLevels > 0) {
+					if (iExpandLevels > 1) {
+						oExpandLevels.set(oNode.ID, iExpandLevels - 1);
+					}
+
 					return true; // node is part of hierarchy if parent is expanded
 				}
 				return oNode.DistanceFromRoot <= iMaxDistanceFromRoot;

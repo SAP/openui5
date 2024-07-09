@@ -1265,7 +1265,7 @@ sap.ui.define([
 			} else {
 				if (bExpanded) {
 					// runs synchronously because it was expanded before
-					that.expand(oContext, /*bSilent*/true).unwrap();
+					that.expand(oContext, /*iLevels*/1, /*bSilent*/true).unwrap();
 				}
 				that._fireChange({reason : ChangeReason.Add});
 			}
@@ -1580,10 +1580,13 @@ sap.ui.define([
 	ODataListBinding.prototype.doSetProperty = function () {};
 
 	/**
-	 * Expands the group node that the given context points to.
+	 * Expands the group node that the given context points to by the given number of levels.
 	 *
 	 * @param {sap.ui.model.odata.v4.Context} oContext
 	 *   The context corresponding to the group node
+	 * @param {number} iLevels
+	 *   The number of levels to expand, <code>iLevels >= Number.MAX_SAFE_INTEGER</code> can be
+	 *   used to expand all levels
 	 * @param {boolean} [bSilent]
 	 *   Whether no ("change") events should be fired
 	 * @returns {sap.ui.base.SyncPromise}
@@ -1595,16 +1598,16 @@ sap.ui.define([
 	 * @private
 	 * @see #collapse
 	 */
-	ODataListBinding.prototype.expand = function (oContext, bSilent) {
+	ODataListBinding.prototype.expand = function (oContext, iLevels, bSilent) {
 		this.checkSuspended();
 		if (this.aContexts[oContext.iIndex] !== oContext) {
 			throw new Error("Not currently part of the hierarchy: " + oContext);
 		}
 
 		let bDataRequested = false;
+		const sPath = _Helper.getRelativePath(oContext.getPath(), this.oHeaderContext.getPath());
 
-		return this.oCache.expand(this.lockGroup(),
-			_Helper.getRelativePath(oContext.getPath(), this.oHeaderContext.getPath()),
+		return this.oCache.expand(this.lockGroup(), sPath, iLevels,
 			/*fnDataRequested*/ () => {
 				bDataRequested = true;
 				this.fireDataRequested();
@@ -3526,7 +3529,8 @@ sap.ui.define([
 			setIndices(iOldIndex, iNewIndex);
 
 			if (iCollapseCount) {
-				this.expand(oChildContext).unwrap(); // guaranteed to be sync! incl. _fireChange
+				this.expand(oChildContext, /*iLevels*/1) // guaranteed to be sync! incl. _fireChange
+					.unwrap();
 			} else {
 				this._fireChange({reason : ChangeReason.Change});
 			}
