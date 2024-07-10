@@ -163,8 +163,8 @@ sap.ui.define([
 		 * @param {sap.ui.base.Event} oEvent - Event
 		 */
 		onParameterPress(oEvent) {
-			const sKey = oEvent.getSource().getBindingContext("dialogInfo").getObject().key;
-			this._oJSONModel.setProperty("/frameUrl/value", this._addURLParameter(sKey));
+			const oObject = oEvent.getSource().getBindingContext("dialogInfo").getObject();
+			this._oJSONModel.setProperty("/frameUrl/value", this._addURLParameter(oObject));
 			this.onValidateUrl();
 		},
 
@@ -199,16 +199,28 @@ sap.ui.define([
 		/**
 		 * Add URL parameter
 		 *
-		 * @param {string} sParameter - URL parameter
+		 * @param {object} oObject - Parameter object
 		 * @returns {string} URL with the added parameter
 		 * @private
 		 */
-		_addURLParameter(sParameter) {
+		_addURLParameter(oObject) {
+			const sParameterKey = oObject.key;
+			let sParameterString;
+			// If the type is available, this is an OData V4 Model and the target type must be set to 'any' when adding the parameter
+			// to the URL to prevent it from being resolved to a localized value.
+			// E.g. boolean is resolved to "yes/no" in a system with English locale - but we need to add "true/false" to the URL
+			// The only type that does not require this special handling is Edm.String
+			if (oObject.type && oObject.type !== "Edm.String") {
+				const [, sParameter] = sParameterKey.match(/\{(.+?)\}/);
+				sParameterString = `{path:'${sParameter}',targetType:'any'}`;
+			} else {
+				sParameterString = sParameterKey;
+			}
 			const oTextField = Element.getElementById("sapUiRtaAddIFrameDialog_EditUrlTA");
 			const iCurrentSelectionStart = oTextField.getFocusDomRef().selectionStart;
 			const iCurrentSelectionEnd = oTextField.getFocusDomRef().selectionEnd;
 			const sCurrentUrl = this._buildReturnedURL();
-			return `${sCurrentUrl.substring(0, iCurrentSelectionStart)}${sParameter}${sCurrentUrl.substring(iCurrentSelectionEnd)}`;
+			return `${sCurrentUrl.substring(0, iCurrentSelectionStart)}${sParameterString}${sCurrentUrl.substring(iCurrentSelectionEnd)}`;
 		},
 
 		/**
