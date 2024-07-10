@@ -1138,7 +1138,7 @@ sap.ui.define([
 				this.aContexts[iStart + i] = oContext;
 			}
 		}
-		// destroy previous contexts which are not reused or kept-alive
+		// destroy previous contexts which are not reused or kept alive
 		this.destroyPreviousContextsLater(Object.keys(this.mPreviousContextsByPath));
 		if (iCount !== undefined) { // server count is available or "non-empty short read"
 			this.bLengthFinal = true;
@@ -1332,7 +1332,7 @@ sap.ui.define([
 	 * Removes and destroys contexts from mPreviousContextsByPath.
 	 *
 	 * @param {string[]} [aPathsToDelete]
-	 *   If given, only contexts with paths in this list except kept-alive and pending deletes are
+	 *   If given, only contexts with paths in this list except kept alive and pending deletes are
 	 *   removed and destroyed (transient contexts are removed only); otherwise all contexts in the
 	 *   list are removed and destroyed
 	 *
@@ -1371,7 +1371,7 @@ sap.ui.define([
 	 * prerendering task.
 	 *
 	 * @param {string[]} aPathsToDelete
-	 *   Only contexts with paths in this list except kept-alive and pending deletes are removed and
+	 *   Only contexts with paths in this list except kept alive and pending deletes are removed and
 	 *   destroyed (transient contexts are removed only)
 	 *
 	 * @private
@@ -1513,7 +1513,7 @@ sap.ui.define([
 	/**
 	 * Replaces the given old context with a new one for the given element and key predicate,
 	 * placing the new one at the same index and returning it. If a context for the given key
-	 * predicate already exists, it is reused. A newly created context will be kept-alive if the old
+	 * predicate already exists, it is reused. A newly created context will be kept alive if the old
 	 * context was, and then it will share the <code>fnOnBeforeDestroy</code> method - but it will
 	 * be called with the new context as first argument.
 	 *
@@ -3865,8 +3865,8 @@ sap.ui.define([
 			 *
 			 * @param {boolean} bStillAlive
 			 *   If <code>false</code>, the context does not match the filter criteria and, if the
-			 *   context is kept-alive, the entity it points to no longer exists. If
-			 *   <code>true</code>, the context is kept-alive and the entity it points to still
+			 *   context is kept alive, the entity it points to no longer exists. If
+			 *   <code>true</code>, the context is kept alive and the entity it points to still
 			 *   exists. In this case the context must not be destroyed.
 			 */
 			function onRemove(bStillAlive) {

@@ -4415,7 +4415,7 @@ sap.ui.define([
 
 		oContext.oDeletePromise = "~deletePromise~";
 
-		// code under test - reset kept-alive on a deleted context
+		// code under test - reset "keep alive" on a deleted context
 		oContext.setKeepAlive(false);
 
 		assert.strictEqual(oContext.isKeepAlive(), false);

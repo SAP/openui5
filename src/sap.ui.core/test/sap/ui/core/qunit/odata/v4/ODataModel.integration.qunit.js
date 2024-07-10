@@ -31697,7 +31697,7 @@ sap.ui.define([
 			return Promise.all([
 				// code under test (JIRA: CPOUI5ODATAV4-2539)
 				oGamma.requestSideEffects(["Name"]),
-				that.waitForChanges(assert, "side effect for selected and kept alive context which "
+				that.waitForChanges(assert, "side effect for selected and kept-alive context which "
 					+ "is not in hierarchy: Name for Gamma")
 			]);
 		}).then(function () {
@@ -31732,7 +31732,7 @@ sap.ui.define([
 	// Finally, it is also deleted.
 	// JIRA: CPOUI5ODATAV4-2412
 	//
-	// A selected (effectively kept alive) node which is not part of the hierarchy is neither
+	// A selected (effectively kept-alive) node which is not part of the hierarchy is neither
 	// collapsible nor expandable
 	// JIRA: CPOUI5ODATAV4-2539
 ["OldChart", "OrgChart"].forEach((sHierarchyQualifier) => {
@@ -58503,7 +58503,7 @@ make root = ${bMakeRoot}`;
 		checkTable("Filter.NONE set", assert, oTable, [
 			"/SalesOrderList($uid=...)",
 			"/SalesOrderList($uid=...)",
-			"/SalesOrderList('42')" // kept-alive
+			"/SalesOrderList('42')" // kept alive
 		], [
 			["", "foo"],
 			["", "bar"]
@@ -62354,7 +62354,7 @@ make root = ${bMakeRoot}`;
 
 	//*********************************************************************************************
 	// Scenario: List report with absolute binding, object page with items table. Parent context of
-	// items table is not kept-alive, but one of the items contexts is. Pending change in there must
+	// items table is not kept alive, but one of the items contexts is. Pending change in there must
 	// not be ignored when filtering etc. in list report.
 	// JIRA: CPOUI5ODATAV4-1104
 	//
@@ -63977,7 +63977,7 @@ make root = ${bMakeRoot}`;
 	// Add refresh (JIRA: CPOUI5ODATAV4-1382) and side-effects refresh (JIRA: CPOUI5ODATAV4-1384)
 	// and a refresh of a relative binding w/ $$ownRequest (JIRA: CPOUI5ODATAV4-2500)
 	//
-	// Show that a created persisted can stay kept-alive during refresh (JIRA: CPOUI5ODATAV4-1386)
+	// Show that a created persisted can stay kept alive during refresh (JIRA: CPOUI5ODATAV4-1386)
 [
 	"changeParameters", "filter", "refresh", "resume", "sideEffectsRefresh", "sort"
 ].forEach(function (sMethod) {

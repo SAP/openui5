@@ -981,7 +981,7 @@ sap.ui.define([
 	 *   {@link sap.ui.model.odata.v4.Context#isKeepAlive kept-alive} (since 1.97.0) or
 	 *   {@link sap.ui.model.odata.v4.Context#delete deleted} (since 1.108.0) context of this
 	 *   binding. Since 1.98.0, {@link sap.ui.model.odata.v4.Context#isTransient transient}
-	 *   contexts of a {@link #getRootBinding root binding} are treated as kept-alive by this flag.
+	 *   contexts of a {@link #getRootBinding root binding} are treated as kept alive by this flag.
 	 *   Since 1.99.0, the same happens for bindings using the <code>$$ownRequest</code> parameter
 	 *   (see {@link sap.ui.model.odata.v4.ODataModel#bindList}).
 	 * @returns {boolean}
