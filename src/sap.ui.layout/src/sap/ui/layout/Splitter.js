@@ -1245,6 +1245,10 @@ sap.ui.define([
 
 	//////////////////////////////////////// Overridden Methods ////////////////////////////////////////
 
+	Splitter.prototype.getFocusDomRef = function() {
+		return this.getDomRef("splitbar-0") || this.getDomRef();
+	};
+
 	Splitter.prototype.invalidate = function(oOrigin) {
 		var bForce =
 			// In case the content invalidates and bubbles up (for example an invisible button being
