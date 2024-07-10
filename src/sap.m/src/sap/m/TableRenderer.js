@@ -185,7 +185,7 @@ sap.ui.define(["sap/base/i18n/Localization", "sap/ui/core/Renderer", "sap/ui/cor
 						rm.attr("aria-haspopup", oMenu ? oMenu.getAriaHasPopupType().toLowerCase() : "dialog");
 						bColumnHeadersActive = true;
 					}
-					if (oControl.isA("sap.m.Label") && oControl.getRequired()) {
+					if (oControl.getRequired?.()) {
 						rm.attr("aria-describedby", InvisibleText.getStaticId("sap.m", "CONTROL_IN_COLUMN_REQUIRED"));
 					}
 				}

@@ -1171,9 +1171,7 @@ sap.ui.define([
 		const $tblHeader = sut.$("tblHeader").trigger("focus");
 		const oInvisibleText = document.getElementById($tblHeader.attr("aria-labelledby"));
 		assert.equal(oInvisibleText.innerHTML, oResourceBundle.getText("ACC_CTR_TYPE_HEADER_ROW") + " Column A " + oResourceBundle.getText("CONTROL_IN_COLUMN_REQUIRED") + " .", "Text correctly assigned for screen reader announcement");
-
-		// This is currently a gap, that is not covered yet, as the logic only handles sap.m.Label
-		// assert.equal(oColumn.$().attr("aria-describedby"), InvisibleText.getStaticId("sap.m", "CONTROL_IN_COLUMN_REQUIRED"), "Required state added as aria-describedby");
+		assert.equal(oColumn.$().attr("aria-describedby"), InvisibleText.getStaticId("sap.m", "CONTROL_IN_COLUMN_REQUIRED"), "Required state added as aria-describedby");
 
 		sut.destroy();
 	});
