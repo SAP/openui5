@@ -2046,6 +2046,7 @@ sap.ui.define([
 
 	QUnit.test('Appointment with custom content has correct acc output in the DOM', function(assert) {
 		// Prepare
+		oCore.getConfiguration().setFormatLocale("en-GB");
 		var oApp = new CalendarAppointment("AppCustCont", {
 				startDate: new Date(2015, 0, 2, 8, 0),
 				endDate: new Date(2015, 0, 2, 10, 0),
@@ -2070,7 +2071,7 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		// Assert
-		assert.strictEqual(oApp.$().find("#AppCustCont-Descr").text(), "Start Time: Friday 02/01/2015 at 08:00:00; End Time: Friday 02/01/2015 at 10:00:00; Type 1", "Start and end date are included as description");
+		assert.strictEqual(oApp.$().find("#AppCustCont-Descr").text(), "Start Time: Friday 2 January 2015 at 08:00:00; End Time: Friday 2 January 2015 at 10:00:00; Type 1", "Start and end date are included as description");
 
 		// Clean up
 		oPC.destroy();

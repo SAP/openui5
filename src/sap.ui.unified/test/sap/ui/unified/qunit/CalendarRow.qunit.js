@@ -1292,9 +1292,14 @@ QUnit.test("_oFormatAria start/end format for 12-hour clocks", function (assert)
 	// Prepare
 	oCore.getConfiguration().setFormatLocale("en-US");
 
-	var oCalendarRow = new CalendarRow(),
+	var oLocale = new sap.ui.core.Locale("en-US"),
+		oLocaleData = sap.ui.core.LocaleData.getInstance(oLocale),
+		oCalendarRow = new CalendarRow(),
 		oMockedDate = new Date(2019, 7, 5, 15),
-		sExpectedResult = "Monday 05/08/2019 at 3:00:00 PM";
+		pattern = oCalendarRow._oRb.getText("APPOINTMENT_DATE_TIME_DESCRIPTION", [oLocaleData.getDatePattern("long"), oLocaleData.getTimePattern("medium")]),
+		sExpectedResult = DateFormat.getDateTimeInstance({
+			pattern: "EEEE " + pattern
+		}).format(oMockedDate);
 
 	// Assert
 	assert.strictEqual(oCalendarRow._oFormatAria.format(oMockedDate), sExpectedResult, "Cell's start/end info is properly formatted");
@@ -1307,13 +1312,33 @@ QUnit.test("_oFormatAria start/end format for 24-hour clocks", function (assert)
 	// Prepare
 	oCore.getConfiguration().setFormatLocale("en-GB");
 
-	var oCalendarRow = new CalendarRow(),
+	var oLocale = new sap.ui.core.Locale("en-GB"),
+		oLocaleData = sap.ui.core.LocaleData.getInstance(oLocale),
+		oCalendarRow = new CalendarRow(),
 		oMockedDate = new Date(2019, 7, 5, 15),
-		sExpectedResult = "Monday 05/08/2019 at 15:00:00";
-
+		pattern = oCalendarRow._oRb.getText("APPOINTMENT_DATE_TIME_DESCRIPTION", [oLocaleData.getDatePattern("long"), oLocaleData.getTimePattern("medium")]),
+		sExpectedResult = DateFormat.getDateTimeInstance({
+			pattern: "EEEE " + pattern
+		}).format(oMockedDate);
 	// Assert
 	assert.strictEqual(oCalendarRow._oFormatAria.format(oMockedDate), sExpectedResult, "Cell's start/end info is properly formatted");
+	// Cleanup
+	oCalendarRow.destroy();
+});
+QUnit.test("_oFormatAria correctly localized and translated", function (assert) {
+	// Prepare
+	oCore.getConfiguration().setFormatLocale("de");
 
+	var oLocale = new sap.ui.core.Locale("de"),
+		oLocaleData = sap.ui.core.LocaleData.getInstance(oLocale),
+		oCalendarRow = new CalendarRow(),
+		oMockedDate = new Date(2019, 7, 5, 15),
+		pattern = oCalendarRow._oRb.getText("APPOINTMENT_DATE_TIME_DESCRIPTION", [oLocaleData.getDatePattern("long"), oLocaleData.getTimePattern("medium")]),
+		sExpectedResult = DateFormat.getDateTimeInstance({
+			pattern: "EEEE " + pattern
+		}).format(oMockedDate);
+	// Assert
+	assert.strictEqual(oCalendarRow._oFormatAria.format(oMockedDate), sExpectedResult, "Cell's start/end info is properly formatted");
 	// Cleanup
 	oCalendarRow.destroy();
 });
