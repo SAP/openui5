@@ -360,9 +360,10 @@ sap.ui.define([
 
 		this._bRTL  = Localization.getRTL();
 		this._oRb = Library.getResourceBundleFor("sap.ui.unified");
+		var pattern = this._oRb.getText("APPOINTMENT_DATE_TIME_DESCRIPTION", [_getLocaleData.call(this).getDatePattern("long"), _getLocaleData.call(this).getTimePattern("medium")]);
 
 		this._oFormatAria = DateFormat.getDateTimeInstance({
-			pattern: "EEEE dd/MM/YYYY 'at' " + _getLocaleData.call(this).getTimePattern("medium")
+			pattern: "EEEE " + pattern
 		});
 
 		this._aVisibleAppointments = [];
