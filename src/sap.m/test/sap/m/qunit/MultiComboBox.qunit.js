@@ -5423,6 +5423,8 @@ sap.ui.define([
 
 		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBoxContent");
+		this.clock.tick(500);
+
 		await nextUIUpdate(this.clock);
 
 		oSpy = this.spy(oTokenizer, "scrollToEnd");
