@@ -169,15 +169,11 @@ sap.ui.define([
 					sPropertyCapability !== GenericTestCollection.ExcludeReason.SetterNeedsSpecificSettings &&
 					sPropertyCapability !== GenericTestCollection.ExcludeReason.OnlyChangeableViaBinding) {
 					try {
-						if (oProperty.type === "boolean") {
-							vValueToSet = false;
-						} else if (oProperty.type === "int") {
+						const oType = DataType.getType(oProperty.type);
+						vValueToSet = oType?.getDefaultValue();
+						if (oProperty.type === "int") {
 							vValueToSet = 100;
-						} else if (oProperty.type.startsWith("sap.")) {
-							var oEnum = require(oProperty.type.replace(/\./g, "\/"));
-							vValueToSet = oEnum[Object.keys(oEnum)[0]];
 						}
-
 						oControl[oProperty._sMutator](vValueToSet);
 					} catch (e) {
 						// type check error, ignore
