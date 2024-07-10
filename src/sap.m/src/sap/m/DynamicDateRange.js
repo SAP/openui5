@@ -1024,7 +1024,7 @@ sap.ui.define([
 			}
 
 			for (var i = 0; i < aValueDates.length; i++) {
-				aResultDates[i] = CalendarUtils._createUTCDate(this._convertDate(aValueDates[i], bTimezone), true);
+				aResultDates[i] = bTimezone ? this._convertDate(aValueDates[i], bTimezone) : CalendarUtils._createUTCDate(this._convertDate(aValueDates[i], bTimezone), true);
 			}
 
 			if (this._isDateRange(oOutputValue)) {
@@ -1268,11 +1268,11 @@ sap.ui.define([
 
 		DynamicDateRange.prototype._applyValue = function() {
 			this._oOutput = this._oSelectedOption.getValueHelpOutput(this);
-			var sTimezone = this._checkFormatterUTCTimezone(this._oOutput);
+			var bTimezone = this._checkFormatterUTCTimezone(this._oOutput);
 			var aValueDates = DynamicDateUtil.toDates(this._oOutput);
 			for (var i = 0; i < aValueDates.length; i++) {
 				if (this._oOutput.values[i] instanceof Date) {
-					this._oOutput.values[i] = this._convertDate(aValueDates[i], sTimezone);
+					this._oOutput.values[i] = this._convertDate(aValueDates[i], bTimezone);
 				}
 			}
 

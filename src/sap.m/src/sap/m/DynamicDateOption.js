@@ -374,11 +374,17 @@ sap.ui.define([
 			return oControl;
 		};
 
-		DynamicDateOption.prototype._createDateTimeControl = function(oValue, iIndex, fnControlsUpdated) {
+		DynamicDateOption.prototype._createDateTimeControl = function(oValue, iIndex, fnControlsUpdated, bUTC) {
 			var oControl = new DateTimePicker({timezone: TimezoneUtil.getLocalTimezone()});
 
 			if (oValue && this.getKey() === oValue.operator) {
-				oControl.setDateValue(oValue.values[iIndex]);
+				var oControlValue = new Date(oValue.values[iIndex].getTime());
+
+				if (bUTC) {
+					oControlValue.setMinutes(oControlValue.getMinutes() + new Date().getTimezoneOffset());
+				}
+
+				oControl.setDateValue(oControlValue);
 			}
 
 			if (fnControlsUpdated instanceof Function) {
