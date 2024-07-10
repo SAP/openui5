@@ -1448,6 +1448,35 @@ sap.ui.define([
 		oDialog.destroy();
 	});
 
+	QUnit.test("Controls in custom footer are also in tab chain", function (assert) {
+		const oDialog = new Dialog({
+			content: [
+				new Button("initialFocusButton", {
+					text: "Initial Focus"
+				})
+			],
+			footer: new Toolbar({
+				content: [
+					new Button("tabChainButton", {
+						text: "Want Focus"
+					})
+				]
+				}),
+				initialFocus: "initialFocusButton"
+		});
+
+		oDialog.open();
+		this.clock.tick(400);
+
+		oDialog.$("firstfe").trigger("focus");
+
+		const oFocusedControl = Element.closestTo(document.activeElement);
+
+		assert.strictEqual(oFocusedControl.getId(), "tabChainButton", "Focus should be set to the button in custom footer");
+
+		oDialog.destroy();
+	});
+
 	QUnit.test("Container Padding Classes", function (assert) {
 		// System under Test + Act
 		var oContainer = new Dialog(),

@@ -906,7 +906,7 @@ function(
 			//Check if the invisible FIRST focusable element (suffix '-firstfe') has gained focus
 			if (oSourceDomRef.id === this.getId() + "-firstfe") {
 				//Check if buttons are available
-				var oLastFocusableDomRef = this.$("footer").lastFocusableDomRef() || this.$("cont").lastFocusableDomRef() || (this.getSubHeader() && this.getSubHeader().$().firstFocusableDomRef()) || (this._getAnyHeader() && this._getAnyHeader().$().lastFocusableDomRef());
+				var oLastFocusableDomRef = this._getAnyFooter()?.$().lastFocusableDomRef() || this.$("cont").lastFocusableDomRef() || (this.getSubHeader() && this.getSubHeader().$().firstFocusableDomRef()) || (this._getAnyHeader() && this._getAnyHeader().$().lastFocusableDomRef());
 				if (oLastFocusableDomRef) {
 					oLastFocusableDomRef.focus();
 				}
@@ -1678,6 +1678,14 @@ function(
 		};
 
 		/**
+		 * @private
+		 * @returns {sap.m.Toolbar|undefined} The custom footer if <code>footer</code> aggregation is set, internal footer otherwise
+		 */
+		Dialog.prototype._getAnyFooter = function () {
+			return this.getFooter() || this._getToolbar();
+		};
+
+		/**
 		 *
 		 * @private
 		 */
@@ -1693,7 +1701,6 @@ function(
 		};
 
 		/**
-		 *
 		 * @private
 		 */
 		Dialog.prototype._registerResizeHandler = function () {
@@ -1710,7 +1717,6 @@ function(
 		};
 
 		/**
-		 *
 		 * @private
 		 */
 		Dialog.prototype._deregisterContentResizeHandler = function () {
@@ -1767,7 +1773,6 @@ function(
 				that = this,
 				aButtons = [beginButton, endButton];
 
-
 			// remove handler if such exists
 			aButtons.forEach(function(oBtn) {
 				if (oBtn && that._oButtonDelegate) {
@@ -1800,9 +1805,8 @@ function(
 			}
 		};
 
-		/*
-		 *
-		 * @returns {*|sap.m.IBar|null}
+		/**
+		 * @returns {sap.m.IBar|undefined} Toolbar
 		 * @private
 		 */
 		Dialog.prototype._getToolbar = function () {
