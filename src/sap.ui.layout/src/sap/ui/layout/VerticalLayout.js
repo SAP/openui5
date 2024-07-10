@@ -20,6 +20,8 @@ sap.ui.define([
 	 *
 	 * @class
 	 * In this layout the content controls are rendered one below the other.
+	 *
+	 * <b>Note:</b> <code>VerticalLayout</code> is not a focusable element and therefore the inheritance of the <code>tooltip</code> property isn't supported.
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
