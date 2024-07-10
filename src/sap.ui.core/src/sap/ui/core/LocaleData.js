@@ -2821,10 +2821,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Creates an instance of <code>LocaleData</code> asynchronously for the given locale.
+	 * Creates an instance of <code>LocaleData</code> asynchronously for the given language tag.
 	 *
-	 * @param {sap.ui.core.Locale|sap.base.i18n.LanguageTag} vLocale
-	 *   The locale or language tag
+	 * @param {sap.base.i18n.LanguageTag} oLanguageTag
+	 *   The language tag
 	 * @returns {Promise<sap.ui.core.LocaleData>}
 	 *   A <code>Promise</code> which resolves with an instance of <code>LocaleData</code>; the <code>Promise</code>
 	 *   never rejects
@@ -2833,11 +2833,11 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.core
 	 * @since 1.127
 	 */
-	LocaleData.requestInstance = function (vLocale) {
-		vLocale = Locale._getCoreLocale(vLocale);
-		const oLocaleData = vLocale.hasPrivateUseSubtag("sapufmt")
-			? new CustomLocaleData(vLocale, true)
-			: new LocaleData(vLocale, true);
+	LocaleData.requestInstance = function (oLanguageTag) {
+		const oLocale = Locale._getCoreLocale(oLanguageTag);
+		const oLocaleData = oLocale.hasPrivateUseSubtag("sapufmt")
+			? new CustomLocaleData(oLocale, true)
+			: new LocaleData(oLocale, true);
 		return Promise.resolve(oLocaleData.loaded);
 	};
 
