@@ -174,21 +174,42 @@ sap.ui.define([
 		}
 	};
 
-	HeaderAdapter.prototype._detectBackButton = function() {
+	HeaderAdapter.prototype._detectBackButton = function () {
 		var aBeginContent, oBackButton;
 
-		if (HeaderAdapter._isAdaptableHeader(this._oHeader)) {
-			aBeginContent = this._oHeader.getContentLeft();
-			if (aBeginContent.length > 0 && isInstanceOf(aBeginContent[0], "sap/m/Button") &&
-				(aBeginContent[0].getId().includes("-navButton") || aBeginContent[0].getIcon() === "sap-icon://nav-back")) {
-				oBackButton = aBeginContent[0];
-				return {
-					id: oBackButton.getId(),
-					oControl: oBackButton,
-					sChangeEventId: "_change",
-					sPropertyName: "visible"
-				};
-			}
+		// Check if the header is adaptable
+		if (!HeaderAdapter._isAdaptableHeader(this._oHeader)) {
+			return;
+		}
+
+		aBeginContent = this._oHeader.getContentLeft();
+
+		// Check if the begin content is empty
+		if (aBeginContent.length === 0) {
+			return;
+		}
+
+		// Check if the first element in the begin content is a button
+		if (!isInstanceOf(aBeginContent[0], "sap/m/Button")) {
+			return;
+		}
+
+		// Check if the button is a navigation button, has the back icon, or is of type Back/Up
+		if (aBeginContent[0].getId().includes("-navButton") ||
+			aBeginContent[0]._getAppliedIcon() === "sap-icon://nav-back" ||
+			aBeginContent[0].getType() === "Back" ||
+			aBeginContent[0].getType() === "Up") {
+
+			oBackButton = aBeginContent[0];
+
+			// Return the back button details
+			// eslint-disable-next-line consistent-return
+			return {
+				id: oBackButton.getId(),
+				oControl: oBackButton,
+				sChangeEventId: "_change",
+				sPropertyName: "visible"
+			};
 		}
 	};
 
@@ -213,9 +234,9 @@ sap.ui.define([
 			bMiddleContentHidden = (aMiddleContent.length === 1) && (isHiddenFromAPI(aMiddleContent[0]) || bTitleHidden);
 			bEndContentHidden = (aEndContent.length === 1) && isHiddenFromAPI(aEndContent[0]);
 
-			bAllContentHidden = (aBeginContent.length === 0 || bBeginContentHidden) &&
-				(aMiddleContent.length === 0 || bMiddleContentHidden) &&
-				((aEndContent.length === 0) || bEndContentHidden);
+			bAllContentHidden = (aBeginContent.length === 0 || bBeginContentHidden)
+				&& (aMiddleContent.length === 0 || bMiddleContentHidden)
+				&& (aEndContent.length === 0 || bEndContentHidden);
 
 			this._toggleStyle("sapF2CollapsedHeader", bAllContentHidden, true);
 		}
