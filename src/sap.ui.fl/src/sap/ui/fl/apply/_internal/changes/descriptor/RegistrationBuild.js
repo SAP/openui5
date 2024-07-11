@@ -34,6 +34,7 @@ sap.ui.define([
 		appdescr_app_removeAllInboundsExceptOne: requireAsync.bind(this, "sap/ui/fl/apply/_internal/changes/descriptor/app/RemoveAllInboundsExceptOne"),
 		appdescr_app_changeInbound: requireAsync.bind(this, "sap/ui/fl/apply/_internal/changes/descriptor/app/ChangeInbound"),
 		appdescr_app_addNewInbound: requireAsync.bind(this, "sap/ui/fl/apply/_internal/changes/descriptor/app/AddNewInbound"),
+		appdescr_app_setAch: requireAsync.bind(this, "sap/ui/fl/apply/_internal/changes/descriptor/app/SetAch"),
 		appdescr_fiori_setAbstract: requireAsync.bind(this, "sap/ui/fl/apply/_internal/changes/descriptor/fiori/SetAbstract"),
 		appdescr_fiori_setCloudDevAdaptationStatus: requireAsync.bind(this, "sap/ui/fl/apply/_internal/changes/descriptor/fiori/SetCloudDevAdaptationStatus")
 	};
