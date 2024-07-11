@@ -2741,6 +2741,25 @@ sap.ui.define([
 		oTestManagedObject.destroy();
 	});
 
+	QUnit.test("Create object with pre-existing BindingInfo containing a model name", function(assert) {
+		// Binding string with multiple ">" characters
+		// 1st occurrence denotes the named model, the 2nd occurrence must not be touched as it's part of an expression (">=")
+		const sBindingString = "{= !!${path: 'contact>email/[${type/EnumMember}>=0]/address'} }";
+
+		// initial parsing of binding string will extract the model name
+		const oTestManagedObject = new TestManagedObject("TestObjectWithModelNames", {
+			value: sBindingString
+		});
+		let oBindingInfo = oTestManagedObject.getBindingInfo("value");
+
+		// 2nd time binding a property with an existing (already parsed) BindingInfo
+		oTestManagedObject.bindProperty("value", oBindingInfo);
+		oBindingInfo = oTestManagedObject.getBindingInfo("value");
+
+		// the 2nd pass must not again try to extract a named model if one is already present
+		assert.equal(oBindingInfo.parts[0].model, "contact", "Model name is correct");
+	});
+
 	QUnit.test("ObjectBindings Elementcontext should be removed if model is not available anymore", function(assert){
 		var oTestManagedObjectParent = new TestManagedObject("ParentObject", {
 			models: {
