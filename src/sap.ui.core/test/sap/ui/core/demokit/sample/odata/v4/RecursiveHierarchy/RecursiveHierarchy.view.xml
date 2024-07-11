@@ -35,6 +35,9 @@
 		<rowMode>
 			<rm:Interactive rowCount="5" minRowCount="2"/>
 		</rowMode>
+		<rowSettingsTemplate>
+			<RowSettings highlight="{= %{@$ui5.context.isTransient} === undefined ? 'None' : 'Information' }"/>
+		</rowSettingsTemplate>
 		<Column hAlign="End" width="5em">
 			<m:Label text="Level"/>
 			<template>
@@ -150,6 +153,9 @@
 		<rowMode>
 			<rm:Interactive rowCount="5" minRowCount="2"/>
 		</rowMode>
+		<rowSettingsTemplate>
+			<RowSettings highlight="{= %{@$ui5.context.isTransient} === undefined ? 'None' : 'Information' }"/>
+		</rowSettingsTemplate>
 		<Column>
 			<m:Label text="ID"/>
 			<template>
