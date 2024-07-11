@@ -50,6 +50,7 @@ sap.ui.define([
 
 	const sTableID = "IDTableOfInternalSampleApp_01";
 
+
 	// ----------------------------------------------------------------
 	// Check if the application is running normaly
 	// ----------------------------------------------------------------
@@ -386,6 +387,36 @@ sap.ui.define([
 
 		Then.iShouldSeeP13nSortItems(aSortItems);
 		When.iPressDialogOk();
+		Then.iTeardownMyAppFrame();
+
+	});
+
+	opaTest("'Implicit' filter changes are only applied on table level (not on the inner ", function (Given, When, Then) {
+		Given.enableAndDeleteLrepLocalStorage();
+
+		Given.iStartMyAppInAFrame({
+			source: 'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html?view=Implicit',
+			autoWait: true
+		});
+
+		When.onTheMDCTable.iPersonalizeFilter(sTableID, [
+			{key : "Founding Year", values: ["1989", "1904"], inputControl: "IDTableOfInternalSampleApp_01--filter--foundingYear"},
+			{key : "Name", values: ["*S*"], inputControl: "IDTableOfInternalSampleApp_01--filter--name"}
+		]);
+
+		When.waitFor({
+			controlType: "sap.ui.mdc.Table",
+			success: function(aControls) {
+				const aEntries = Object.entries(window.localStorage);
+				Opa5.assert.equal(aEntries.length, 3, "the correct amount of changes has been created");
+				aEntries.forEach(([sPersistenceKey, sChange]) => {
+					const oChange = JSON.parse(sChange);
+					Opa5.assert.equal(oChange.changeType, "addCondition", "The changeType has been properly created");
+					Opa5.assert.equal(oChange.selector.id, "IDTableOfInternalSampleApp_01", "The change has been created on the table");
+				});
+			}
+		});
+
 		Then.iTeardownMyAppFrame();
 
 	});
