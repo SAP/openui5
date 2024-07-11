@@ -146,6 +146,82 @@
 				]
 			},
 			{
+				"name": "sap.ui.core.mvc.ControllerExtension",
+				"methods": [
+					{
+						"name": "override",
+						"static": true,
+						"typeParameters": [
+							{
+								"name": "TheExtension",
+								"type": {
+									"kind": "NativeTSTypeExpression",
+									"type": "new () => ControllerExtension"
+								}
+							},
+							{
+								"name": "AddtlProps",
+								"type": "object"
+							}
+						],
+						"parameters": [
+							{
+								"name": "this",
+								"type": {
+									"kind": "TypeReference",
+									"typeName": "TheExtension"
+								},
+								"description": ""
+							},
+							{
+								"name": "customExtension",
+								"type": {
+									"kind": "TypeReference",
+									"typeName": "AddtlProps"
+								},
+								"description": "The custom extension definition"
+							}
+						],
+						"returnValue": {
+							"type": {
+								"kind": "NativeTSTypeExpression",
+								"type": "new () => InstanceType<TheExtension> & AddtlProps"
+							},
+							"description": "The adapted controller extension class"
+						}
+					},
+					{
+						"name": "use",
+						"static": true,
+						"visibility": "public",
+						"description": "A marker method for applying controller extensions to controller class members in TypeScript code.\nThis method is only used to make TypeScript usage compatible to the UI5 runtime behavior, where an extension *class* is assigned when the controller is defined, but each controller instance gets an *instance* of this extension. This method call is removed in the class transformer when the ES class is transformed to the traditional UI5 class definition syntax.\n\nTo allow for proper removal, it may only be called directly on the base class <code>ControllerExtension</code>, at the place where a controller extension is assigned to a member property of the new controller class. The class transformation then removes this call. If it is not removed because it is used in any other way, then it throws an error at runtime.\n\nUsage example:<pre>import Routing from \"sap/fe/core/controllerextensions/Routing\";\nimport ControllerExtension from \"sap/ui/core/mvc/ControllerExtension\";\n...\nexport default class App extends Controller {\n   routing = ControllerExtension.use(Routing);\n</pre>\nUsage example with overriding extension callbacks:<pre>import Routing from \"sap/fe/core/controllerextensions/Routing\";\nimport ControllerExtension from \"sap/ui/core/mvc/ControllerExtension\";\n...\nexport default class App extends Controller {\n   routing = ControllerExtension.use(Routing.override({\n      ...\n   }));\n</pre>",
+						"typeParameters": [
+							{
+								"name": "TheExtension",
+								"type": "sap.ui.core.mvc.ControllerExtension"
+							}
+						],
+						"parameters": [
+							{
+								"name": "extensionClass",
+								"type": {
+									"kind": "NativeTSTypeExpression",
+									"type": "new () => TheExtension"
+								},
+								"description": "The ControllerExtension to use"
+							}
+						],
+						"returnValue": {
+							"type": {
+								"kind": "TypeReference",
+								"typeName": "TheExtension"
+							},
+							"description": "An instance of the given <code>ControllerExtension</code>. <b>NOTE:</b> this is only a dummy return type for proper usage in TypeScript. This method does not actually return an instance of <code>ControllerExtension</code>, but only throws an error at runtime. The sole purpose of this method is to mimic the actual runtime behavior where a *class* is given when a controller is defined, but an *instance* is present in each controller instance."
+						}
+					}
+				]
+			},
+			{
 				"name": "sap.ui.base.ManagedObject",
 				"methods": [
 					{
