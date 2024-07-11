@@ -147,6 +147,22 @@ sap.ui.define([
 			return oClass;
 		};
 
+		/**
+		 * A placeholder for the dummy function in the TypeScript types. Correct calls in TypeScript code will be removed and should not happen at runtime.
+		 * Do not implement, override or remove!
+		 *
+		 * @param {function} oExtensionClass The controller extension class
+		 * @return {sap.ui.core.mvc.ControllerExtension} A controller extension instance
+		 * @private
+		 */
+		ControllerExtension.use = function(oExtensionClass) {
+			throw new Error("ControllerExtension.use() is not a function that may be called at runtime. It is not contained in the public API."
+			+ "It is only used in TypeScript as a dummy function to convert a ControllerExtension class to an instance, but is supposed "
+			+ "to be removed by the class transformation. If you see this error, the call has not been removed as expected. Make sure to a) "
+			+ "only call this method on the base class 'ControllerExtension', not a derived class, and to b) only call it when defining class "
+			+ "member properties in an ES6-style class, and to c) use an up-to-date version of the 'transform-modules-ui5' Babel plugin or "
+			+ "the 'ui5-tooling-transpile' task/middleware for the UI5 build tooling. Only when used like this, the call is properly recognized and removed.");
+		};
 
 		/**
 		 * Override a method depending on the overrideExecution strategy
