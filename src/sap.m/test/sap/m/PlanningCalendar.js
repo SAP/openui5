@@ -381,11 +381,12 @@ sap.ui.define([
 				oAppointmentEndDate = UI5Date.getInstance(oEventEndDate);
 			} else {
 				oAppointmentEndDate = UI5Date.getInstance(oStartDate.getTime());
-
 				switch (sViewKey) {
 					case CalendarIntervalType.Hour:
 						oAppointmentStartDate.setHours(oAppointmentStartDate.getHours() + iStartOffset);
-						oAppointmentEndDate.setHours(oAppointmentStartDate.getHours() + iEndOffset);
+						oAppointmentEndDate.setHours(oAppointmentStartDate.getHours());
+						oAppointmentEndDate.setMinutes(oAppointmentEndDate.getMinutes() + 15); // test 15 min appointments
+						console.log({oAppointmentEndDate, oAppointmentStartDate})
 						break;
 
 					case CalendarIntervalType.Day:
@@ -422,6 +423,7 @@ sap.ui.define([
 			});
 			oRow.addAppointment(oAppointment);
 		} else {
+			MessageToast.show("Selected row is needed to add appointment.");
 			Log.warning("No row selected");
 		}
 
