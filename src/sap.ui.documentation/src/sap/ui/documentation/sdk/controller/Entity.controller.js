@@ -551,6 +551,7 @@ sap.ui.define([
 				"sap.ui.core.ID", // TODO discuss with Thomas, type is not a base type (it has documentation)
 				"sap.ui.core.void",
 				"sap.ui.core.CSSSize", // TODO discuss with Thomas, type is not a base type (it has documentation)
+				"sap.ushell.services.Service",
 				"any",
 				"object",
 				"function",
