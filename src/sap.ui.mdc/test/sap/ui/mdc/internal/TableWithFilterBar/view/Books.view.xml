@@ -48,7 +48,8 @@
 					<mdc:FilterBar id="booksFilterBar" variantBackreference="IDVariantManagementOfTable"
 						filtersChanged="onFiltersChanged" search="onSearch"
 						filterConditions='\{"stock" : [\{"operator":"BT","values":[100,50000]}]\}'
-						propertyInfo='[\{"name": "stock", "dataType":"Edm.Int32", "maxConditions":-1, "required":false, "label":"foo"\}]'
+						propertyInfo='[\{"name": "stock", "dataType":"Edm.Int32", "maxConditions":-1, "required":false, "label":"foo"\},
+						               \{"name": "author_ID", "dataType":"Edm.Int32", "required":false, "label":"Author ID", "formatOptions":\{"groupingEnabled":false\}, "display": "Description" \}]'
 						liveMode="false"
 						delegate='\{"name": "sap/ui/v4demo/delegate/Books.FB.delegate", "payload": \{"collectionName": "Books"\}\}'
 						p13nMode="Item,Value">
@@ -772,7 +773,7 @@
 								</mdc:typeahead>
 							</mdc:ValueHelp>
 						</mdc:dependents>
-
+						
 						<mdc:basicSearchField>
 							<mdc:FilterField
 								delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
@@ -782,17 +783,14 @@
 								conditions="{$filters>/conditions/$search}"
 								propertyKey="$search"
 								maxConditions="1" />
-						</mdc:basicSearchField>
+						</mdc:basicSearchField>						
 
 						<mdc:filterItems>
 							<mdc:FilterField
 								delegate='\{"name": "sap/ui/v4demo/delegate/FieldBase.delegate", "payload": \{\}\}'
-								id="ff1" label="Author ID"
-								conditions="{$filters>/conditions/author_ID}"
+								id="ff1"
 								propertyKey="author_ID"
-								dataType="Edm.Int32"
-								dataTypeFormatOptions='\{"groupingEnabled": false\}'
-								required="false" valueHelp="FH1" display="Description" />
+								valueHelp="FH1" />
 
 							<mdc:FilterField
 								delegate='\{"name": "sap/ui/v4demo/delegate/FieldBase.delegate", "payload": \{\}\}'

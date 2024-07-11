@@ -37,6 +37,7 @@
 							propertyKey="$search"
 							maxConditions="1"/>
 					</mdc:basicSearchField>
+
 					<mdc:filterItems>
 						<mdc:FilterField
 							label="Name"

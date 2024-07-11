@@ -23,21 +23,17 @@
 			p13nMode="Item,Value">
 			<mdc:filterItems>
 				<mdc:FilterField
-					conditions="{$filters>/conditions/name}"
-					propertyKey="name"
-					label="Name"/>
+					delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate"\}'
+					propertyKey="name"/>
 					<mdc:FilterField
-					conditions="{$filters>/conditions/foundingYear}"
-					propertyKey="foundingYear"					
-					label="Founding Year"/>
+					delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate"\}'
+					propertyKey="foundingYear"/>
 					<mdc:FilterField
-					conditions="{$filters>/conditions/artistUUID}"
-					propertyKey="artistUUID"					
-					label="artistUUID"/>
+					delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate"\}'
+					propertyKey="artistUUID"/>
 					<mdc:FilterField
-					conditions="{$filters>/conditions/breakupYear}"
-					propertyKey="breakupYear"					
-					label="Breakout Year"/>
+					delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate"\}'
+					propertyKey="breakupYear"/>
 			</mdc:filterItems>
 		</mdc:FilterBar>
 

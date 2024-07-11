@@ -1576,15 +1576,17 @@ sap.ui.define([
 		};
 
 		FilterBarBase.prototype._observeChanges = function(oChanges) {
+			let oFilterField;
 
 			if (oChanges.type === "aggregation") {
 
 				if (oChanges.name === "filterItems") {
 					switch (oChanges.mutation) {
 						case "insert":
-							oChanges.child.attachChange(this._handleFilterItemChanges, this);
-							oChanges.child.attachSubmit(this._handleFilterItemSubmit, this);
-							this._filterItemInserted(oChanges.child);
+							oFilterField = this._enhanceFilterField(oChanges.child);
+							oFilterField.attachChange(this._handleFilterItemChanges, this);
+							oFilterField.attachSubmit(this._handleFilterItemSubmit, this);
+							this._filterItemInserted(oFilterField);
 							break;
 						case "remove":
 							oChanges.child.detachChange(this._handleFilterItemChanges, this);
@@ -1609,10 +1611,9 @@ sap.ui.define([
 					}
 				}
 			} else if (oChanges.type === "property") {
-				let oFilterField;
 
 				if (oChanges.object.isA && oChanges.object.isA("sap.ui.mdc.FilterField")) { // only visible is considered
-					oFilterField = oChanges.object; //this._getFilterField(oChanges.object.getPropertyKey());
+					oFilterField = oChanges.object;
 					if (oFilterField) {
 						if (oChanges.current) {
 							this._filterItemInserted(oFilterField);
@@ -1698,6 +1699,70 @@ sap.ui.define([
 
 			return this._oMetadataAppliedPromise;
 		};
+
+		FilterBarBase.prototype._enhanceFilterField = function(oFilterField) {
+			let sPropertyKey, oProperty;
+
+			if (oFilterField) {
+				sPropertyKey = oFilterField.getPropertyKey();
+
+				if (!sPropertyKey) {
+					Log.error("filter field with the id = '" + oFilterField.getId() + "' should have an assigned 'propertyKey'");
+					return oFilterField;
+				}
+
+// is default
+//				if (!oFilterField.getDelegate()) {
+//					oFilterField.setDelegate({name: "sap/ui/mdc/field/FieldBaseDelegate"});
+//				}
+				if (!oFilterField.getBindingInfo("conditions")) {
+					oFilterField.bindProperty("conditions",{
+						path: '/conditions/' + sPropertyKey,
+						model: "$filters"});
+				}
+				oProperty = this._getPropertyByName(sPropertyKey);
+				if (!oProperty && this.getPropertyInfo().length > 0) { //the data in propertyInfo may still not be propagated to property helper, so we check also directly
+					this.getPropertyInfo().some((oPropertyInfo) => {
+						if (oPropertyInfo.name === sPropertyKey) {
+							oProperty = oPropertyInfo;
+						}
+						return oProperty;
+					});
+				}
+				if (!oProperty) {
+					Log.error("Property '" + sPropertyKey + "' does not exist for filter field with the id = '" + oFilterField.getId() + "' on filter bar='" + this.getId() + "'");
+					return oFilterField;
+				}
+
+				if (oFilterField.isPropertyInitial("dataType") && oProperty.hasOwnProperty("dataType") && oProperty.dataType) {
+					oFilterField.setDataType(oProperty.dataType);
+				}
+				if (oFilterField.isPropertyInitial("required") && oProperty.hasOwnProperty("required")) {
+					oFilterField.setRequired(oProperty.required);
+				}
+				if (oFilterField.isPropertyInitial("maxConditions") && oProperty.hasOwnProperty("maxConditions") && oProperty.maxConditions) {
+					oFilterField.setMaxConditions(oProperty.maxConditions);
+				}
+				if (oFilterField.isPropertyInitial("display") && oProperty.hasOwnProperty("display") && oProperty.display) {
+					oFilterField.setDisplay(oProperty.display);
+				}
+				if (!oFilterField.getLabel() && oProperty.hasOwnProperty("label") && oProperty.label) {
+					oFilterField.setLabel(oProperty.label);
+				}
+				if (!oFilterField.getDataTypeConstraints() && oProperty.hasOwnProperty("constraints") && oProperty.constraints) {
+					oFilterField.setDataTypeConstraints(oProperty.constraints);
+				}
+				if (!oFilterField.getDataTypeFormatOptions() && oProperty.hasOwnProperty("formatOptions") && oProperty.formatOptions) {
+					oFilterField.setDataTypeFormatOptions(oProperty.formatOptions);
+				}
+				// no valueHelp, no additionalDataType, no tooltip, no operators, no defaultOperator
+
+				oFilterField.triggerCheckCreateInternalContent();
+			}
+
+			return oFilterField;
+		};
+
 
 		FilterBarBase.prototype.setBasicSearchField = function(oBasicSearchField) {
 

@@ -210,12 +210,12 @@ sap.ui.define([
 		}
 
 		const {operators, ...oConstructorSettings} = DelegateCache.merge({
-			dataType: oProperty.dataType,
-			conditions: "{$filters>/conditions/" + sName + '}',
+			//dataType: oProperty.dataType,
+			//conditions: "{$filters>/conditions/" + sName + '}',
 			propertyKey: sName,
-			required: oProperty.required,
-			label: oProperty.label || oProperty.name,
-			maxConditions: oProperty.maxConditions,
+			//required: oProperty.required,
+			//label: oProperty.label || oProperty.name,
+			//maxConditions: oProperty.maxConditions,
 			delegate: {name: "delegates/odata/v4/FieldBaseDelegate", payload: {}}
 		}, DelegateCache.get(oFilterBar, oProperty.name, "$Filters"));
 
@@ -298,7 +298,7 @@ sap.ui.define([
 					dataType: aFetchedProperties[nIdx].dataType,
 					maxConditions: aFetchedProperties[nIdx].maxConditions,
 					constraints: aFetchedProperties[nIdx].constraints,
-					formatOption: aFetchedProperties[nIdx].formatOptions,
+					formatOptions: aFetchedProperties[nIdx].formatOptions,
 					required: aFetchedProperties[nIdx].required,
 					caseSensitive: aFetchedProperties[nIdx].caseSensitive,
 					display: aFetchedProperties[nIdx].display,
