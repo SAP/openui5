@@ -630,7 +630,7 @@ sap.ui.define([
 		var vResult = this.setProperty("fitContent", bFitContent, true);
 
 		if (exists(this.$())) {
-			this._updateFitContainer();
+			this._toggleScrollingStyles();
 		}
 
 		return vResult;
@@ -1379,12 +1379,17 @@ sap.ui.define([
 
 		this.toggleStyleClass("sapFDynamicPageWithScroll", bScrollBarNeeded);
 
-		setTimeout(this._updateFitContainer.bind(this), 0);
+		 // update styles for scrolling after a timeout of 0, in order to obtain the final state
+		 // e.g. after the ResizeHandler looped though *all* resized controls (to notify them) =>
+		 // so all of them completed their adjustments for the new size (notably any nested table adjusted its
+		 // visible rows count upon being notified by ResizeHandler for change of height of its container)
+		setTimeout(this._toggleScrollingStyles.bind(this), 0);
 	};
 
-	DynamicPage.prototype._updateFitContainer = function (bNeedsVerticalScrollBar) {
+	DynamicPage.prototype._toggleScrollingStyles = function (bNeedsVerticalScrollBar) {
 		var bNoScrollBar = typeof bNeedsVerticalScrollBar !== 'undefined' ? !bNeedsVerticalScrollBar : !this._needsVerticalScrollBar();
 
+		this.toggleStyleClass("sapFDynamicPageWithScroll", !bNoScrollBar);
 		this.$contentFitContainer.toggleClass("sapFDynamicPageContentFitContainer", bNoScrollBar);
 	};
 
@@ -1872,7 +1877,7 @@ sap.ui.define([
 
 		// FitContainer needs to be updated, when height is changed and scroll bar appear, to enable calc of original height
 		if (bNeedsVerticalScrollBar) {
-			this._updateFitContainer(bNeedsVerticalScrollBar);
+			this._toggleScrollingStyles(bNeedsVerticalScrollBar);
 		}
 
 		this._adjustSnap();
