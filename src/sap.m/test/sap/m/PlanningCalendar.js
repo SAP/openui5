@@ -386,7 +386,6 @@ sap.ui.define([
 						oAppointmentStartDate.setHours(oAppointmentStartDate.getHours() + iStartOffset);
 						oAppointmentEndDate.setHours(oAppointmentStartDate.getHours());
 						oAppointmentEndDate.setMinutes(oAppointmentEndDate.getMinutes() + 15); // test 15 min appointments
-						console.log({oAppointmentEndDate, oAppointmentStartDate})
 						break;
 
 					case CalendarIntervalType.Day:
