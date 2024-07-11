@@ -325,6 +325,7 @@ sap.ui.define([
 
 	SelectionButton.prototype._createModel = function() {
 		const oModel = new JSONModel();
+		oModel.setSizeLimit(1000);
 		const aItems = this.getItems() || [];
 		const sSelectedItemKey = this.getSelectedItemKey() || "";
 		const aItemsData = [];
