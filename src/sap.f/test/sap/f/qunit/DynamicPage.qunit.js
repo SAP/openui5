@@ -427,13 +427,13 @@ function (
 			"The DynamicPage Header is not empty - sapFDynamicPageTitleOnly is not added");
 	});
 
-	QUnit.test("_updateFitContainer is called onAfterRendering", function (assert) {
+	QUnit.test("_toggleScrollingStyles is called onAfterRendering", function (assert) {
 		var oDeviceStub = this.stub(Device, "system",  {
 			desktop: false,
 			phone: false,
 			tablet: true
 		}),
-		oSpy = this.spy(this.oDynamicPage, "_updateFitContainer"),
+		oSpy = this.spy(this.oDynamicPage, "_toggleScrollingStyles"),
 		done = assert.async();
 
 		//Act
@@ -441,7 +441,7 @@ function (
 
 		//Check
 		setTimeout(function() {
-			assert.ok(oSpy.called, "_updateFitContainer is called");
+			assert.ok(oSpy.called, "_toggleScrollingStyles is called");
 			oDeviceStub.restore();
 			done();
 		}, 0);
@@ -2276,9 +2276,9 @@ function (
 
 	});
 
-	QUnit.test("DynamicPage _updateFitContainer is called on reredering", function (assert) {
+	QUnit.test("DynamicPage _toggleScrollingStyles is called on reredering", function (assert) {
 		// Arrange
-		var oSpy = this.spy(this.oDynamicPage, "_updateFitContainer"),
+		var oSpy = this.spy(this.oDynamicPage, "_toggleScrollingStyles"),
 			done = assert.async();
 
 		// Act
@@ -2289,6 +2289,32 @@ function (
 			assert.strictEqual(oSpy.callCount, 1, "update of fitContainer class is called");
 			done();
 		}, 0);
+	});
+
+	QUnit.test("DynamicPage _toggleScrollingStyles is called after resize", function (assert) {
+		// Arrange
+		var oDynamicPage = this.oDynamicPage,
+			oSpy = this.spy(oDynamicPage, "_toggleScrollingStyles"),
+			sTitleId = oDynamicPage.getTitle().getId(),
+			done = assert.async();
+
+		oDynamicPage.addEventDelegate({
+			"onAfterRendering": function() {
+					// Act
+					oSpy.reset();
+					oDynamicPage._onChildControlsHeightChange({target: { id: sTitleId }});
+
+					assert.strictEqual(oSpy.callCount, 1, "update of scrolling styles is called");
+
+					//Assert
+					setTimeout(function() {
+						assert.strictEqual(oSpy.callCount, 3, "update of scrolling styles is called again");
+						done();
+					}, 0);
+			}
+		});
+		this.oDynamicPage.invalidate();
+		Core.applyChanges();
 	});
 
 	/* --------------------------- DynamicPage Toggle Header On Scroll ---------------------------------- */
