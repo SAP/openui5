@@ -1930,7 +1930,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Check if dialog is not dragged from a bar inside the content section", function(assert) {
-
 		var oBar = new Bar();
 
 		// arrange
@@ -1971,7 +1970,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Check if dragging the dialog affects only its own event handlers", function(assert) {
-
 		//Arrange
 		var oDialog = new Dialog({
 			draggable: true,
@@ -2116,6 +2114,60 @@ sap.ui.define([
 		window.scrollTo(0, 0);
 		oGrowingPageElement.remove();
 		jQuery(document).off("mouseup mousemove");
+		oDialog.destroy();
+	});
+
+	QUnit.test("Selection is disabled during dragging", function(assert) {
+		// arrange
+		var oDialog = new Dialog({
+			draggable: true,
+			title: "Some title",
+			content: [
+				new Text({
+					text: "Some text"
+				})
+			]
+		});
+
+		oDialog.open();
+		this.clock.tick(500);
+
+		var $document = jQuery(document),
+			oMouseDownMockEvent = {
+				clientX: 608,
+				clientY: 646,
+				offsetX: 177,
+				offsetY: 35,
+				preventDefault: function () {
+				},
+				stopPropagation: function () {
+				},
+				target: oDialog.getAggregation("_header").$().find(".sapMBarPH")[0]
+			},
+			oMouseMoveMockEvent = {
+				clientX: -2000,
+				clientY: -2000
+			};
+
+		// Act
+		oDialog.onmousedown(oMouseDownMockEvent);
+
+		// Assert
+		assert.ok(oDialog.hasStyleClass("sapMDialogDisableSelection"), "Selection is disabled during dragging");
+
+		$document.trigger(new jQuery.Event("mousemove", oMouseMoveMockEvent));
+		this.clock.tick(500);
+
+		// Act - end dragging
+		$document.trigger(new jQuery.Event("mouseup", oMouseMoveMockEvent));
+
+		// Assert
+		assert.notOk(oDialog.hasStyleClass("sapMDialogDisableSelection"), "Selection is restored after dragging");
+
+		oDialog.close();
+		this.clock.tick(500);
+
+		// clean up
 		oDialog.destroy();
 	});
 

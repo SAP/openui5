@@ -2150,13 +2150,11 @@ function(
 						dialogHeight,
 						dialogBordersHeight;
 
+					that.removeStyleClass("sapMDialogDisableSelection");
 					$w.off("mouseup", mouseUpHandler);
 					$w.off("mousemove", mouseMoveHandler);
 
-
 					if (bResize) {
-						that._$dialog.removeClass('sapMDialogResizing');
-
 						// Take the calculated height of the dialog, so that the max-height is also applied.
 						// Else the content area will be bigger than the dialog and therefore will overflow.
 						dialogHeight = parseInt($dialog.height());
@@ -2172,7 +2170,6 @@ function(
 
 				if (isHeaderClicked(e.target) && this.getDraggable()) {
 					mouseMoveHandler = function (event) {
-
 						event.preventDefault();
 
 						if (event.buttons === 0) {
@@ -2197,8 +2194,6 @@ function(
 						});
 					};
 				} else if (bResize) {
-					that._$dialog.addClass('sapMDialogResizing');
-
 					var styles = {};
 					var minWidth = parseInt(that._$dialog.css('min-width'));
 					var maxLeftOffset = initial.x + initial.width - minWidth;
@@ -2240,6 +2235,7 @@ function(
 					return;
 				}
 
+				this.addStyleClass("sapMDialogDisableSelection");
 				$w.on("mousemove", mouseMoveHandler);
 				$w.on("mouseup", mouseUpHandler);
 
