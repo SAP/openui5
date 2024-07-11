@@ -6,22 +6,20 @@ sap.ui.define(['sap/ui/core/UIComponent', "sap/ui/core/mvc/XMLView"],
 		metadata: {
             interfaces: ["sap.ui.core.IAsyncContentCreation"]
         },
-        createContent: function() {
-			const oCard = this.getComponentData()["__sapUiIntegration_card"];
+		onCardReady: function (oCard) {
 			this.card = oCard;
+		},
+        createContent: function() {
+			const oCard = this.getComponentData().__sapUiIntegration_card;
 
             // Dynamically create a root view based on the size
 			let sViewName;
-
-			// option 1 - use the size model
 			const mSize = oCard.getModel("size").getData();
-			if (mSize.variant.indexOf("Tile") > -1) {
+
+			if (mSize.variant.indexOf("Tile") > -1) { // option 1 - size model
 				sViewName = "Tile";
-
-			// option 2 - use the sizeQuery
-			} else if (oCard.sizeQuery("wide")) {
+			} else if (oCard.sizeQuery("wide")) { // option 2 - sizeQuery
 				sViewName = "Wide";
-
 			} else {
 				sViewName = "Default";
 			}

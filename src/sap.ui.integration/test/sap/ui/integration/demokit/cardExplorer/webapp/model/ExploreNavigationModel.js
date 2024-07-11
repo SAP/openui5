@@ -1381,6 +1381,46 @@ sap.ui.define([
 								key: 'cardWithUnsupportedVariants.json'
 							},
 							{
+								url: '/samples/progressive/componentCard/manifest.json',
+								name: 'componentCard/manifest.json',
+								key: 'componentCard/manifest.json'
+							},
+							{
+								url: '/samples/progressive/componentCard/Component.js ',
+								name: 'componentCard/Component.js',
+								key: 'componentCard/Component.js'
+							},
+							{
+								url: '/samples/progressive/componentCard/Default.controller.js',
+								name: 'componentCard/Default.controller.js',
+								key: 'componentCard/Default.controller.js'
+							},
+							{
+								url: '/samples/progressive/componentCard/Default.view.xml',
+								name: 'componentCard/Default.view.xml',
+								key: 'componentCard/Default.view.xml'
+							},
+							{
+								url: '/samples/progressive/componentCard/Tile.controller.js',
+								name: 'componentCard/Tile.controller.js',
+								key: 'componentCard/Tile.controller.js'
+							},
+							{
+								url: '/samples/progressive/componentCard/Tile.view.xml',
+								name: 'componentCard/Tile.view.xml',
+								key: 'componentCard/Tile.view.xml'
+							},
+							{
+								url: '/samples/progressive/componentCard/Wide.controller.js',
+								name: 'componentCard/Wide.controller.js',
+								key: 'componentCard/Wide.controller.js'
+							},
+							{
+								url: '/samples/progressive/componentCard/Wide.view.xml',
+								name: 'componentCard/Wide.view.xml',
+								key: 'componentCard/Wide.view.xml'
+							},
+							{
 								url: '/samples/progressive/Preview.view.xml',
 								name: 'Preview.view.xml',
 								key: 'Preview.view.xml'
