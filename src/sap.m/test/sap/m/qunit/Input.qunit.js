@@ -596,6 +596,36 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
+	QUnit.test("Value help fromKeyboard request parameter with keyboard and click", async function(assert) {
+		// Arrange
+		const oInput = new Input({
+				showValueHelp: true,
+				showSuggestion: true
+			}),
+			oSpy = sinon.spy(oInput, "fireValueHelpRequest");
+			oInput.placeAt("content");
+
+		const	oMockEvent = {
+				preventDefault: () => {},
+				stopPropagation: () => {}
+			};
+
+		await nextUIUpdate();
+
+		const oValueHelpIcon = oInput._getValueHelpIcon();
+		oValueHelpIcon.firePress();
+
+		// Assert
+		assert.notOk(oSpy.firstCall.args[0].fromKeyboard, "The value for 'fromKeyboard' was false when value help was requested by click");
+
+		oInput.onsapshow(oMockEvent);
+
+		assert.ok(oSpy.secondCall.args[0].fromKeyboard, "The value for 'fromKeyboard' was true when value help was requested by keyboard");
+
+		// Clean
+		oInput.destroy();
+	});
+
 	QUnit.test("Value help _userInputValue request parameter without suggestions", async function(assert) {
 		// Arrange
 		var oInput = new Input({
