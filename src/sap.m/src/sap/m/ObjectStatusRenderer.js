@@ -161,6 +161,14 @@ sap.ui.define(["sap/base/i18n/Localization", "sap/ui/core/Lib", 'sap/ui/core/lib
 				oRm.close("span");
 			}
 
+			if (!oObjStatus._isActive() && oObjStatus.getIcon() && !oObjStatus.getText()) {
+				oRm.openStart("span", oObjStatus.getId() + "-icon-title");
+				oRm.class("sapUiPseudoInvisibleText");
+				oRm.openEnd();
+				oRm.text(oObjStatus._getAriaIconTitle());
+				oRm.close("span");
+			}
+
 			if (sStateText) {
 				oRm.openStart("span", oObjStatus.getId() + "-state-text");
 				oRm.class("sapUiPseudoInvisibleText");

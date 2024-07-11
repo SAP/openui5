@@ -712,8 +712,40 @@ sap.ui.define([
 
 		// Assert
 		assert.strictEqual($oInternalIcon.attr("role"), "presentation", "Icon is decorative in icon-only ObjectStatus");
-		assert.strictEqual($oInternalIcon.attr("aria-label"), Library.getResourceBundleFor("sap.m").getText("OBJECT_STATUS_ICON"),
+		assert.strictEqual($oInternalIcon.attr("aria-label"), "status-inactive",
 			"Icon has alternative text in icon-only ObjectStatus");
+
+		// Cleanup
+		oObjectStatus.destroy();
+	});
+
+	QUnit.test("Internal Image icon ARIA for icon-only ObjectStatus", async function (assert) {
+		// Arrange
+		var oObjectStatus = new ObjectStatus("imgStatus", {
+				icon: "images/favorite_24.png"
+			});
+
+		oObjectStatus.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		// Assert
+		assert.strictEqual(document.getElementById("imgStatus-icon-title").innerHTML, Library.getResourceBundleFor("sap.m").getText("OBJECT_STATUS_ICON"), "Icon has alternative text in icon-only ObjectStatus");
+
+		// Cleanup
+		oObjectStatus.destroy();
+	});
+
+	QUnit.test("Internal icon ARIA for icon-only ObjectStatus that has tooltip", async function (assert) {
+		// Arrange
+		var oObjectStatus = new ObjectStatus("iconTooltipStatus", {
+				icon: "sap-icon://download"
+			});
+
+		oObjectStatus.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		// Assert
+		assert.strictEqual(document.getElementById("iconTooltipStatus-icon-title").innerHTML, "Download", "Icon tooltip is set as alternative text in icon-only ObjectStatus");
 
 		// Cleanup
 		oObjectStatus.destroy();
