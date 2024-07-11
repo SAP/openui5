@@ -23,7 +23,7 @@ sap.ui.define([
 
 	async function ui5Event(sEventName, oControl) {
 		return await new Promise((fnResolve) => {
-			oControl?.attachEventOnce(sEventName, fnResolve);
+			oControl.attachEventOnce(sEventName, fnResolve);
 		});
 	}
 
@@ -244,7 +244,7 @@ sap.ui.define([
 			});
 
 			this.oList.placeAt("qunit-fixture");
-			await nextUIUpdate();
+			await ui5Event("updateFinished", this.oList);
 		},
 		afterEach: function() {
 			this.oModel.destroy();
@@ -257,8 +257,6 @@ sap.ui.define([
 
 	QUnit.test("Change binding context", async function(assert) {
 		const oList = this.oList;
-
-		await ui5Event("updateFinished", oList);
 
 		assert.ok(oList.getItems().length === 2, "List has items");
 		assert.ok(!oList.getDomRef("nodata"), "NoData not visible");
@@ -275,11 +273,9 @@ sap.ui.define([
 		assert.ok(oList.getItems().length === 2, "List has items");
 	});
 
-	QUnit.test("rememberSelections", async function(assert) {
+	QUnit.test("rememberSelections", function(assert) {
 		const oList = this.oList;
 		const oBinding = oList.getBinding("items");
-
-		await ui5Event("updateFinished", oList);
 
 		assert.equal(oList.getItems().length, 2, "List has 2 items");
 		const aContexts = oBinding.getAllCurrentContexts();
@@ -334,5 +330,144 @@ sap.ui.define([
 			oBinding.getAllCurrentContexts().filter((oContext) => oContext.isSelected()),
 			"The list and the binding reports the same selected contexts"
 		);
+	});
+
+	QUnit.test("selectionChanged event of the binding", async function(assert) {
+		const oSelectionChange = this.spy();
+		const oHeaderContext = this.oList.getBinding("items").getHeaderContext();
+		const [oFirstItem, oSecondItem] = this.oList.getItems();
+
+		this.oList.attachSelectionChange(oSelectionChange);
+
+		oSecondItem.getBindingContext().setSelected(true);
+		oFirstItem.getBindingContext().setSelected(true);
+		await timeout();
+		assert.equal(oSelectionChange.callCount, 2, "Context#setSelected - selectionChange event");
+		assert.deepEqual(oSelectionChange.args[0][0].getParameters(), {
+			id: this.oList.getId(),
+			listItem: oSecondItem,
+			listItems: [oSecondItem],
+			selected: true,
+			selectAll: false
+		}, "Context#setSelected - selectionChange event parameters");
+		assert.deepEqual(oSelectionChange.args[1][0].getParameters(), {
+			id: this.oList.getId(),
+			listItem: oFirstItem,
+			listItems: [oFirstItem],
+			selected: true,
+			selectAll: false
+		}, "Context#setSelected - selectionChange event parameters");
+		assert.deepEqual([oFirstItem.getSelected(), oSecondItem.getSelected()], [true, true],
+			"Context#setSelected - selection state of items");
+
+		oSelectionChange.resetHistory();
+		oHeaderContext.setSelected(false);
+		await timeout();
+		assert.equal(oSelectionChange.callCount, 1, "HeaderContext#setSelected(false) - selectionChange event");
+		assert.deepEqual(oSelectionChange.args[0][0].getParameters(), {
+			id: this.oList.getId(),
+			listItem: oFirstItem,
+			listItems: [oFirstItem, oSecondItem],
+			selected: false,
+			selectAll: false
+		}, "HeaderContext#setSelected(false) - selectionChange event parameters");
+		assert.deepEqual([oFirstItem.getSelected(), oSecondItem.getSelected()], [false, false],
+			"HeaderContext#setSelected(false) - selection state of items");
+
+		oSelectionChange.resetHistory();
+		oHeaderContext.setSelected(true);
+		await timeout();
+		assert.equal(oSelectionChange.callCount, 0, "HeaderContext#setSelected(true) - selectionChange event");
+
+		oHeaderContext.setSelected(false);
+		this.oList.setMode("SingleSelect");
+		await nextUIUpdate();
+
+		oSelectionChange.resetHistory();
+		oFirstItem.getBindingContext().setSelected(true);
+		await timeout();
+		assert.equal(oSelectionChange.callCount, 1, "Context#setSelected with single selection - selectionChange event");
+		assert.deepEqual([oFirstItem.getSelected(), oSecondItem.getSelected()], [true, false],
+			"Context#setSelected with single selection - selection state of items");
+
+		oSelectionChange.resetHistory();
+		oSecondItem.getBindingContext().setSelected(true);
+		await timeout();
+		assert.equal(oSelectionChange.callCount, 1, "Context#setSelected with single selection - selectionChange event");
+		assert.deepEqual([oFirstItem.getSelected(), oSecondItem.getSelected()], [false, true],
+			"Context#setSelected with single selection - selection state of items");
+		assert.deepEqual([oFirstItem.getBindingContext().isSelected(), oSecondItem.getBindingContext().isSelected()], [false, true],
+			"Context#setSelected with single selection - selection state of contexts");
+
+		oHeaderContext.setSelected(false);
+		this.oList.setMode("None");
+		await nextUIUpdate();
+
+		oSelectionChange.resetHistory();
+		oFirstItem.getBindingContext().setSelected(true);
+		await timeout();
+		assert.equal(oSelectionChange.callCount, 0, "Context#setSelected with disabled selection - selectionChange event");
+		assert.deepEqual([oFirstItem.getSelected(), oSecondItem.getSelected()], [false, false],
+			"Context#setSelected with disabled selection - selection state of items");
+		assert.ok(oFirstItem.getBindingContext().isSelected(), "Context#setSelected with disabled selection - selection state of context");
+
+		this.oList.setMode("MultiSelect");
+		await nextUIUpdate();
+
+		oSelectionChange.resetHistory();
+		const oFirstContext = oFirstItem.getBindingContext();
+		this.oList.removeItem(oFirstItem);
+		oFirstContext.setSelected(!oFirstContext.isSelected());
+		await timeout();
+		assert.equal(oSelectionChange.callCount, 0, "Context#setSelected on a context for which no item exists - selectionChange event");
+		assert.ok(!oFirstItem.getSelected(), "Context#setSelected - Item that is not a child of a table is not selected");
+		this.oList.addItem(oFirstItem);
+		assert.equal(oSelectionChange.callCount, 0, "Item with selected context is added back to the table - selectionChange event");
+		assert.ok(!oFirstItem.getSelected(), "Context#setSelected - Item that is not a child of a table is not selected");
+	});
+
+	QUnit.test("Change item selection", async function(assert) {
+		const oSelectionChange = this.spy();
+		const [oFirstItem, oSecondItem] = this.oList.getItems();
+
+		this.oList.attachSelectionChange(oSelectionChange);
+		this.oList.setMode("SingleSelect");
+		await nextUIUpdate();
+
+		oFirstItem.getModeControl().$().trigger("tap");
+		await timeout(100);
+		assert.equal(oSelectionChange.callCount, 1, "Selection control press - selectionChange event");
+		assert.deepEqual([oFirstItem.getSelected(), oSecondItem.getSelected()], [true, false],
+			"Selection control press - selection state of items");
+		assert.deepEqual([oFirstItem.getBindingContext().isSelected(), oSecondItem.getBindingContext().isSelected()], [true, false],
+			"Selection control press - selection state of contexts");
+
+		oSelectionChange.resetHistory();
+		oSecondItem.getModeControl().$().trigger("tap");
+		await timeout(100);
+		assert.equal(oSelectionChange.callCount, 1, "Selection control press - selectionChange event");
+		assert.deepEqual([oFirstItem.getSelected(), oSecondItem.getSelected()], [false, true],
+			"Selection control press - selection state of items");
+		assert.deepEqual([oFirstItem.getBindingContext().isSelected(), oSecondItem.getBindingContext().isSelected()], [false, true],
+			"Selection control press - selection state of contexts");
+
+		this.oList.removeSelections();
+		oSelectionChange.resetHistory();
+		oFirstItem.setSelected(true);
+		await timeout();
+		assert.equal(oSelectionChange.callCount, 0, "ListItemBase#setSelected - selectionChange event");
+		assert.deepEqual([oFirstItem.getSelected(), oSecondItem.getSelected()], [true, false],
+			"ListItemBase#setSelected - selection state of items");
+		assert.deepEqual([oFirstItem.getBindingContext().isSelected(), oSecondItem.getBindingContext().isSelected()], [true, false],
+			"ListItemBase#setSelected - selection state of contexts");
+
+		oSelectionChange.resetHistory();
+		oSecondItem.setSelected(true);
+		await timeout();
+		assert.equal(oSelectionChange.callCount, 0, "ListItemBase#setSelected - selectionChange event");
+		assert.deepEqual([oFirstItem.getSelected(), oSecondItem.getSelected()], [false, true],
+			"ListItemBase#setSelected - selection state of items");
+		assert.deepEqual([oFirstItem.getBindingContext().isSelected(), oSecondItem.getBindingContext().isSelected()], [false, true],
+			"ListItemBase#setSelected - selection state of contexts");
 	});
 });
