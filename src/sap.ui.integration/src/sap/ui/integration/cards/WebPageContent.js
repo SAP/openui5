@@ -201,6 +201,10 @@ sap.ui.define([
 	WebPageContent.prototype._raceFrameLoad = function () {
 		this.awaitEvent(FRAME_LOADED);
 
+		if (this._iLoadTimeout) {
+			clearTimeout(this._iLoadTimeout);
+		}
+
 		this._iLoadTimeout = setTimeout(function () {
 			var iSeconds = LOAD_TIMEOUT / 1000,
 				oCard = this.getCardInstance();

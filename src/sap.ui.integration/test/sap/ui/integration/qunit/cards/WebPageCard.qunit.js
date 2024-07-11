@@ -209,6 +209,29 @@ sap.ui.define([
 		clock.restore();
 	});
 
+	QUnit.test("There is only one load timer at the same time", async function (assert) {
+		// Arrange
+		bypassHttpsValidation();
+
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		const clearTimeoutSpy = sinon.spy(window, "clearTimeout");
+		const currentTimeout = this.oCard.getCardContent()._iLoadTimeout;
+
+		// Act
+		this.oCard.getCardContent()._raceFrameLoad();
+
+		// Assert
+		assert.ok(clearTimeoutSpy.calledWith(currentTimeout), "Old timeout is cleared");
+
+		// Clean up
+		restoreHttpsValidation();
+		clearTimeoutSpy.restore();
+	});
+
 	QUnit.test("Error message is shown when the src doesn't start with 'https://'", async function (assert) {
 		// Act
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
