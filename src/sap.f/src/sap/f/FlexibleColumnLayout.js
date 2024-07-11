@@ -1662,7 +1662,7 @@ sap.ui.define([
 	FlexibleColumnLayout.prototype._enterInteractiveResizeMode = function (bTouch) {
 		var oSeparatorPosition = this._oMoveInfo.separatorPosition;
 
-		this._$overlay.css("display", "block");
+		this.toggleStyleClass("sapFFLActiveResize", true);
 		this._$overlaySeparator.css(oSeparatorPosition.direction, oSeparatorPosition.x);
 		this._oMoveInfo.separator.style.visibility = "hidden";
 
@@ -1676,7 +1676,7 @@ sap.ui.define([
 	};
 
 	FlexibleColumnLayout.prototype._exitInteractiveResizeMode = function () {
-		this._$overlay.css("display", "");
+		this.toggleStyleClass("sapFFLActiveResize", false);
 		this._oMoveInfo.separator.style.visibility = "";
 		this._oMoveInfo.separator.focus();
 		this._ignoreMouse = false;
