@@ -122,7 +122,7 @@ sap.ui.define([
 	 * @override
 	 */
 	BaseListContent.prototype.applyConfiguration = function () {
-		var oConfiguration = this.getConfiguration();
+		var oConfiguration = this.getParsedConfiguration();
 
 		if (!oConfiguration) {
 			return;
@@ -130,7 +130,7 @@ sap.ui.define([
 
 		var oList = this.getInnerList(),
 			bHasPaginator = this.getCard() ? this.getCardInstance().hasPaginator() : false,
-			maxItems = oConfiguration.maxItems;
+			maxItems = BindingResolver.resolveValue(oConfiguration.maxItems, this);
 
 		if (!Number.isNaN(parseInt(maxItems))) {
 			maxItems = parseInt(maxItems);

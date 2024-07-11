@@ -31,13 +31,13 @@
 					"title": "Target",
 					"number": "{/kpiInfos/kpi/target/number}",
 					"unit": "{/kpiInfos/kpi/target/unit}",
-					"visible": "{size>/regular}"
+					"visible": "{= size('regular')}"
 				},
 				{
 					"title": "Deviation",
 					"number": "{/kpiInfos/kpi/deviation/number}",
 					"unit": "%",
-					"visible": "{size>/regular}"
+					"visible": "{= size('regular')}"
 				}
 			],
 			"chart": {
@@ -75,16 +75,16 @@
 			}
 		},
 		"content": {
-			"maxItems": "{= ${size>/large} ? 10 : ${size>/standard} ? 5 : 2}",
+			"maxItems": "{= size({large: 10, standard: 5, small: 2})}",
 			"item": {
 				"title": "{Name}",
 				"description": "{Description}",
 				"icon": {
-					"visible": "{size>/regular}",
+					"visible": "{= size('regular')}",
 					"src": "sap-icon://desktop-mobile"
 				},
 				"info": {
-					"visible": "{size>/wide}",
+					"visible": "{= size('wide')}",
 					"value": "{Sales} K",
 					"state": "{State}",
 					"showStateIcon": "{ShowStateIcon}",
