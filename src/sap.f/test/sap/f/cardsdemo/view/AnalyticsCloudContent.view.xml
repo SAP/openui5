@@ -21,9 +21,9 @@
 		</VBox>
 
 		<Panel headerText="Samples" class="sapUiSmallMargin">
-			<w:Card id="card1" width="25rem" class="sapUiSmallMargin" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/analyticsCloud/sample1.json">
+			<w:Card id="card1" width="25rem" class="sapUiSmallMargin" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/analyticsCloud/sample1/manifest.json">
 			</w:Card>
-			<w:Card id="card2" width="25rem" class="sapUiSmallMargin" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/analyticsCloud/sample2.json">
+			<w:Card id="card2" width="25rem" class="sapUiSmallMargin" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/analyticsCloud/sample2/manifest.json">
 			</w:Card>
 			<w:Card id="card3" width="25rem" class="sapUiSmallMargin" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/analyticsCloud/sample3.json">
 			</w:Card>
@@ -37,11 +37,11 @@
 		</Panel>
 
 		<Panel headerText="Error cases" class="sapUiSmallMargin">
-			<w:Card id="card5" width="25rem" class="sapUiSmallMargin" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/analyticsCloud/error1.json">
+			<w:Card id="card5" width="25rem" class="sapUiSmallMargin" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/analyticsCloud/errorSamples/error1.json">
 			</w:Card>
-			<w:Card id="card6" width="25rem" class="sapUiSmallMargin" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/analyticsCloud/error2.json">
+			<w:Card id="card6" width="25rem" class="sapUiSmallMargin" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/analyticsCloud/errorSamples/error2.json">
 			</w:Card>
-			<w:Card id="card7" width="25rem" class="sapUiSmallMargin" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/analyticsCloud/error3.json">
+			<w:Card id="card7" width="25rem" class="sapUiSmallMargin" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/analyticsCloud/errorSamples/error3.json">
 			</w:Card>
 		</Panel>
 	</Page>

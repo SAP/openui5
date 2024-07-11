@@ -1,6 +1,6 @@
 {
 	"sap.app": {
-		"id": "sap.cardsdemo.ui.integration.samples.cards.sac",
+		"id": "sap.cardsdemo.ui.integration.samples.cards.sac.sample5interpretation",
 		"type": "card",
 		"title": "SAC Integration Card",
 		"subTitle": "Add a SAC Story to pages",
