@@ -15,7 +15,7 @@
                 <m:OverflowToolbar>
                     <m:Title id="title" text="Persons"/>
                     <m:ToolbarSeparator/>
-                    <vm:VariantManagement for="persoTable"/>
+                    <vm:VariantManagement id="p13nVm" for="persoTable"/>
                     <m:ToolbarSpacer/>
                     <m:Button icon="sap-icon://action-settings" press="openPersoDialog"/>
                 </m:OverflowToolbar>

@@ -100,10 +100,10 @@ sap.ui.define([
 			});
 		},
 
-		iPressEscapeInDialog: function() {
+		iPressEscapeInDialog: function(bIsPopover) {
 			return this.waitFor({
 				searchOpenDialogs: true,
-				controlType: "sap.m.Dialog",
+				controlType: bIsPopover ? "sap.m.Popover" : "sap.m.Dialog",
 				actions: new PressKey({
 					keyCode: 27
 				})

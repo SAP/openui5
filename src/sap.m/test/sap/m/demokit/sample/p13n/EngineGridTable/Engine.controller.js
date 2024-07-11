@@ -15,13 +15,37 @@ sap.ui.define([
 	return Controller.extend("sap.m.sample.p13n.EngineGridTable.Page", {
 
 		onInit: function() {
-			var oData = {
-				items: [
-					{firstName: "Peter", lastName: "Mueller", size: "1.75", city: "Walldorf"},
-					{firstName: "Petra", lastName: "Maier", size: "1.85", city: "Walldorf"},
-					{firstName: "Thomas", lastName: "Smith", size: "1.95", city: "Walldorf"},
-					{firstName: "John", lastName: "Williams", size: "1.65", city: "Walldorf"},
-					{firstName: "Maria", lastName: "Jones", size: "1.55", city: "Walldorf"}
+			const oData = {
+				items: [{
+						firstName: "Peter",
+						lastName: "Mueller",
+						size: "1.75",
+						city: "Walldorf"
+					},
+					{
+						firstName: "Petra",
+						lastName: "Maier",
+						size: "1.85",
+						city: "Walldorf"
+					},
+					{
+						firstName: "Thomas",
+						lastName: "Smith",
+						size: "1.95",
+						city: "Heidelberg"
+					},
+					{
+						firstName: "John",
+						lastName: "Williams",
+						size: "1.65",
+						city: "Walldorf"
+					},
+					{
+						firstName: "Maria",
+						lastName: "Jones",
+						size: "1.55",
+						city: "Walldorf"
+					}
 				]
 			};
 
@@ -140,6 +164,10 @@ sap.ui.define([
 		handleStateChange: function(oEvt) {
 			var oTable = this.byId("persoTable");
 			var oState = oEvt.getParameter("state");
+
+			if (!oState) {
+				return;
+			}
 
 			oTable.getColumns().forEach(function(oColumn){
 
