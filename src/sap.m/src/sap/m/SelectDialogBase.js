@@ -154,6 +154,26 @@ function(
 		return this.oInvisibleText;
 	};
 
+	SelectDialogBase.getSelectionIndicatorInvisibleText = function() {
+		if (!this._oSelectionIndicatorInvisibleText) {
+			this._oSelectionIndicatorInvisibleText = new InvisibleText().toStatic();
+		}
+
+		return this._oSelectionIndicatorInvisibleText;
+	};
+
+	SelectDialogBase.prototype.updateDialogAriaDescribedBy = function() {
+		const oSelectionIndicatorInvisibleText = SelectDialogBase.getSelectionIndicatorInvisibleText();
+
+		if (oSelectionIndicatorInvisibleText.getText()) {
+			if (!this._oDialog.getAriaDescribedBy().includes(oSelectionIndicatorInvisibleText.getId())) {
+				this._oDialog.addAriaDescribedBy(oSelectionIndicatorInvisibleText);
+			}
+		} else {
+			this._oDialog.removeAriaDescribedBy(oSelectionIndicatorInvisibleText);
+		}
+	};
+
 	SelectDialogBase.prototype._getInitialFocus = function () {
 		switch (this.getInitialFocus()) {
 			case SelectDialogInitialFocus.SearchField:
