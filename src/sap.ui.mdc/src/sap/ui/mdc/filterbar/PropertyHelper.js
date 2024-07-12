@@ -39,9 +39,6 @@ sap.ui.define([
 				},
 				hiddenFilter: { // Name of the property indicating if the filter is never to be shown on the UI.
 					type: "boolean"
-				},
-				display: { // Name of the property indicating if the visualizazion of a filter field
-					type: "string"
 				}
 			});
 		}

@@ -27,8 +27,6 @@ sap.ui.define([
 	 *   If set to <code>false</code>, the filter is visible in the <code>FilterBar</code>
 	 * @property {boolean} [required = false]
 	 *   If set to <code>true</code>, the filter is mandatory
-	 * @property {sap.ui.mdc.enums.FieldDisplay} [display]
-	 *   Controls the visualization of the tokenized value of a filter field.
 	 *
 	 * @public
 	 * @since 1.112.0

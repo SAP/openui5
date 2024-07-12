@@ -1743,9 +1743,9 @@ sap.ui.define([
 				if (oFilterField.isPropertyInitial("maxConditions") && oProperty.hasOwnProperty("maxConditions") && oProperty.maxConditions) {
 					oFilterField.setMaxConditions(oProperty.maxConditions);
 				}
-				if (oFilterField.isPropertyInitial("display") && oProperty.hasOwnProperty("display") && oProperty.display) {
-					oFilterField.setDisplay(oProperty.display);
-				}
+//				if (oFilterField.isPropertyInitial("display") && oProperty.hasOwnProperty("display") && oProperty.display) {
+//					oFilterField.setDisplay(oProperty.display);
+//				}
 				if (!oFilterField.getLabel() && oProperty.hasOwnProperty("label") && oProperty.label) {
 					oFilterField.setLabel(oProperty.label);
 				}
@@ -1755,7 +1755,7 @@ sap.ui.define([
 				if (!oFilterField.getDataTypeFormatOptions() && oProperty.hasOwnProperty("formatOptions") && oProperty.formatOptions) {
 					oFilterField.setDataTypeFormatOptions(oProperty.formatOptions);
 				}
-				// no valueHelp, no additionalDataType, no tooltip, no operators, no defaultOperator
+				// no display, no valueHelp, no additionalDataType, no tooltip, no operators, no defaultOperator
 
 				oFilterField.triggerCheckCreateInternalContent();
 			}

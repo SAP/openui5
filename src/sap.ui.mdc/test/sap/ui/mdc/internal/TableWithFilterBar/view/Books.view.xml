@@ -49,7 +49,7 @@
 						filtersChanged="onFiltersChanged" search="onSearch"
 						filterConditions='\{"stock" : [\{"operator":"BT","values":[100,50000]}]\}'
 						propertyInfo='[\{"name": "stock", "dataType":"Edm.Int32", "maxConditions":-1, "required":false, "label":"foo"\},
-						               \{"name": "author_ID", "dataType":"Edm.Int32", "required":false, "label":"Author ID", "formatOptions":\{"groupingEnabled":false\}, "display": "Description" \}]'
+						               \{"name": "author_ID", "dataType":"Edm.Int32", "required":false, "label":"Author ID", "formatOptions":\{"groupingEnabled":false\} \}]'
 						liveMode="false"
 						delegate='\{"name": "sap/ui/v4demo/delegate/Books.FB.delegate", "payload": \{"collectionName": "Books"\}\}'
 						p13nMode="Item,Value">
@@ -783,12 +783,12 @@
 								conditions="{$filters>/conditions/$search}"
 								propertyKey="$search"
 								maxConditions="1" />
-						</mdc:basicSearchField>						
-
+						</mdc:basicSearchField>
 						<mdc:filterItems>
 							<mdc:FilterField
 								delegate='\{"name": "sap/ui/v4demo/delegate/FieldBase.delegate", "payload": \{\}\}'
 								id="ff1"
+								display= "Description"
 								propertyKey="author_ID"
 								valueHelp="FH1" />
 
