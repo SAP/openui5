@@ -750,6 +750,7 @@
 											<template:repeat list="{data>/ui5-metadata/annotations}" var="annotation">
 												<custom:Row>
 													<m:Link text="{= ${annotation>annotation} !== 'undefined' ? ${annotation>annotation} : '(' + ${annotation>namespaceText} + ')' }"
+															href="api/{data>/name}#annotations/{annotation>annotation}"
 															wrapping="false"/>
 													<custom:JSDocText sanitizeContent="false" text="{path: 'annotation>description', formatter: '.formatter.escapeSettingsValue'}"/>
 												</custom:Row>
