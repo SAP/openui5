@@ -6,7 +6,7 @@ sap.ui.define([
     "sap/ui/mdc/chart/Item",
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/ComponentContainer",
-    "delegates/odata/v4/vizChart/ChartDelegate",
+    "sap/ui/mdc/odata/v4/vizChart/ChartDelegate",
     "sap/chart/Chart",
     "sap/m/VBox",
     "sap/ui/mdc/chart/PropertyHelper",

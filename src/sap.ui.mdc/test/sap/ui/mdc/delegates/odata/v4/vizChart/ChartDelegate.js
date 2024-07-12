@@ -171,5 +171,42 @@ sap.ui.define([
 		}
 	};
 
+	ChartDelegate._setChart = function(oChart, oInnerChart) {
+		VizChartDelegate._setChart(oChart, oInnerChart);
+
+		oInnerChart.setVizProperties({
+			plotArea: {
+				scrollbar: { forceToShowInMobile: true },
+				dataLabel: {
+					formatString: sap.viz.ui5.format.ChartFormatter.DefaultPattern.SHORTFLOAT_MFD2,
+					visible: true,
+					hideWhenOverlap: true
+				}
+			},
+			tooltip: {
+				formatString: sap.viz.ui5.format.ChartFormatter.DefaultPattern.SHORTFLOAT_MFD2,
+				unitFormatType: "FinancialUnits"
+			},
+			valueAxis: {
+				label: {
+					formatString: sap.viz.ui5.format.ChartFormatter.DefaultPattern.SHORTFLOAT_MFD2,
+					unitFormatType: "FinancialUnits"
+				},
+				title: {
+					visible: true
+				}
+			}
+		});
+	};
+
+	ChartDelegate.setChartTooltipVisibility = function(oChart, bFlag) {
+		VizChartDelegate.setChartTooltipVisibility(oChart, bFlag);
+
+		const oState = this._getState(oChart);
+		oState?.vizTooltip.setFormatString(sap.viz.ui5.format.ChartFormatter.DefaultPattern.SHORTFLOAT_MFD2);
+		// oState.vizTooltip.setUnitFormatType("FinancialUnits");
+
+	};
+
 	return ChartDelegate;
 });
