@@ -8,119 +8,120 @@ sap.ui.define([
 	"sap/ui/test/matchers/Ancestor",
 	"sap/ui/test/matchers/Descendant",
 	"sap/ui/test/matchers/PropertyStrictEquals",
-    "sap/ui/test/actions/Press",
-    "../p13n/waitForP13nButtonWithMatchers",
-    "../p13n/waitForP13nDialog",
-    "./waitForLink"
+	"sap/ui/test/actions/Press",
+	"../p13n/waitForP13nButtonWithMatchers",
+	"../p13n/waitForP13nDialog",
+	"./waitForLink",
+	"./waitForPanel"
 ], function(
 	Library,
 	Opa5,
 	Ancestor,
 	Descendant,
 	PropertyStrictEquals,
-    Press,
-    waitForP13nButtonWithMatchers,
-    waitForP13nDialog,
-    waitForLink
+	Press,
+	waitForP13nButtonWithMatchers,
+	waitForP13nDialog,
+	waitForLink,
+	waitForPanel
 ) {
 	"use strict";
 
-    var oMDCBundle = Library.getResourceBundleFor("sap.ui.mdc");
+	const oMDCBundle = Library.getResourceBundleFor("sap.ui.mdc");
 
-    return {
-        iOpenThePersonalizationDialog: function(oControl, oSettings) {
-            var sControlId = typeof oControl === "string" ? oControl : oControl.getId();
-            return this.waitFor({
-                id: sControlId,
-                success: function(oControlInstance) {
-                    Opa5.assert.ok(oControlInstance);
+	const sPopoverControlType = "sap.m.ResponsivePopover";
+	const sPanelLinkControlType = "sap.m.Link";
 
-                    new Press().executeOn(oControlInstance);
-                    this.waitFor({
-                        controlType: "sap.ui.mdc.link.Panel",
-                        success: function(aPanels) {
-                            Opa5.assert.equal(aPanels.length, 1, "mdc.link.Panel found");
-                            var oPanel = aPanels[0];
+	const fnPressLink = function(oLinkIdentifier, oSettings) {
+		return waitForLink.call(this, oLinkIdentifier, {
+			actions: new Press(),
+			success: (oLinkInstance) => {
+				Opa5.assert.ok(oLinkInstance, `should press sap.ui.mdc.Link`);
+				if (oSettings && typeof oSettings.success === "function") {
+					oSettings.success.call(this, oLinkInstance);
+				}
+			},
+			errorMessage: oSettings?.errorMessage ? oSettings.errorMessage : "Could not Press sap.ui.mdc.Link"
+		});
+	};
 
-                            waitForP13nButtonWithMatchers.call(this, {
-                                actions: new Press(),
-                                matchers: [
-                                    new Ancestor(oPanel, false),
-                                    new PropertyStrictEquals({
-                                        name: "text",
-                                        value: oMDCBundle.getText("info.POPOVER_DEFINE_LINKS")
-                                    })
-                                ],
-                                success: function() {
-                                    waitForP13nDialog.call(this, {
-                                        matchers: new PropertyStrictEquals({
-                                            name: "title",
-                                            value: oMDCBundle.getText("info.SELECTION_DIALOG_ALIGNEDTITLE")
-                                        }),
-                                        success:  function(oP13nDialog) {
-                                            if (oSettings && typeof oSettings.success === "function") {
-                                                oSettings.success.call(this, oP13nDialog);
-                                            }
-                                        }
-                                    });
-                                }
-                            });
-                        }
-                    });
-                },
-                errorMessage: "Control '" + sControlId + "' not found."
-            });
-        },
-        iPressTheLink: function(oLinkIdentifier) {
-            return waitForLink.call(this, oLinkIdentifier, {
-                actions: new Press()
-            });
-        },
-        iPressLinkOnPopover: function(oLinkIdentifier, sLink) {
-            return waitForLink.call(this, oLinkIdentifier, {
-                actions: new Press(),
-                success: function() {
-                    this.waitFor({
-						controlType: "sap.ui.mdc.link.Panel",
-						success: function(aPanels) {
-							Opa5.assert.equal(aPanels.length, 1, "mdc.link.Panel found");
-							var oPanel = aPanels[0];
-                            this.waitFor({
-                                controlType: "sap.m.Link",
-                                matchers: [
-                                    new Ancestor(oPanel, false),
-                                    new PropertyStrictEquals({
-                                        name: "text",
-                                        value: sLink
-                                    })
-                                ],
-                                actions: new Press(),
-                                success: function(aLinks) {
-                                    Opa5.assert.equal(aLinks.length, 1, "link on Panel found and pressed");
-                                }
-                            });
-                        }
-                    });
-                }
-            });
-        },
-        iCloseThePopover: function() {
-            this.waitFor({
-                controlType: "sap.ui.mdc.link.Panel",
-                success: function(aPanels) {
-                    Opa5.assert.equal(aPanels.length, 1, "mdc.link.Panel found");
-                    var oPanel = aPanels[0];
+	return {
+		iPressTheLink: function(oLinkIdentifier) {
+			return fnPressLink.call(this, oLinkIdentifier);
+		},
+		iOpenThePersonalizationDialog: function(vLink, oSettings) {
+			const sLinkId = typeof oControl === "string" ? vLink : vLink.getId();
+			return fnPressLink.call(this, { id: sLinkId }, {
+				success: function(oLinkInstance) {
+					return waitForPanel.call(this, {
+						success: function(oPanel) {
+							return waitForP13nButtonWithMatchers.call(this, {
+								actions: new Press(),
+								matchers: [
+									new Ancestor(oPanel, false),
+									new PropertyStrictEquals({
+										name: "text",
+										value: oMDCBundle.getText("info.POPOVER_DEFINE_LINKS")
+									})
+								],
+								success: function() {
+									return waitForP13nDialog.call(this, {
+										matchers: new PropertyStrictEquals({
+											name: "title",
+											value: oMDCBundle.getText("info.SELECTION_DIALOG_ALIGNEDTITLE")
+										}),
+										success: function(oP13nDialog) {
+											if (oSettings && typeof oSettings.success === "function") {
+												oSettings.success.call(this, oP13nDialog);
+											}
+										}
+									});
+								}
+							});
+						}
+					});
+				},
+				errorMessage: `Control "${sLinkId}" not found.`
+			});
+		},
+		iPressLinkOnPopover: function(oLinkIdentifier, sLink) {
+			return fnPressLink.call(this, oLinkIdentifier, {
+				success: function(oLinkInstance) {
+					return waitForPanel.call(this, {
+						success: function(oPanel) {
+							return this.waitFor({
+								controlType: sPanelLinkControlType,
+								matchers: [
+									new Ancestor(oPanel, false),
+									new PropertyStrictEquals({
+										name: "text",
+										value: sLink
+									})
+								],
+								actions: new Press(),
+								success: function(aLinks) {
+									Opa5.assert.equal(aLinks.length, 1, `should press ${sPanelLinkControlType} on Popover`);
+								}
+							});
+						}
+					});
+				}
+			});
+		},
+		iCloseThePopover: function() {
+			return waitForPanel.call(this, {
+				success: function(oPanel) {
+					return this.waitFor({
+						controlType: sPopoverControlType,
+						matchers: new Descendant(oPanel),
+						success: function(aResponsivePopovers) {
+							Opa5.assert.equal(aResponsivePopovers.length, 1, `should close ${sPopoverControlType}`);
+							aResponsivePopovers[0].close();
+						}
+					});
+				}
+			});
+		}
+	};
 
-                    this.waitFor({
-                        controlType: "sap.m.ResponsivePopover",
-                        matchers: new Descendant(oPanel),
-                        success: function(aResponsivePopovers) {
-                            Opa5.assert.equal(aResponsivePopovers.length, 1, "sap.m.ResponsivePopover found");
-                            aResponsivePopovers[0].close();
-                        }
-                    });
-                }
-            });
-        }
-    };
 });
