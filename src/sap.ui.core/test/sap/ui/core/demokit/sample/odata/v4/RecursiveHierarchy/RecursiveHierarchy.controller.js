@@ -115,6 +115,8 @@ sap.ui.define([
 					oRowsBinding.attachCreateCompleted(() => {
 						oTable.setBusy(false);
 					});
+					oTable.setModel(oTable.getModel(), "header")
+						.setBindingContext(oRowsBinding.getHeaderContext(), "header");
 				}
 
 				const oTreeTable = this.byId("treeTable");
@@ -142,6 +144,8 @@ sap.ui.define([
 					oTreeRowsBinding.attachCreateCompleted(() => {
 						oTreeTable.setBusy(false);
 					});
+					oTreeTable.setModel(oTreeTable.getModel(), "treeHeader")
+						.setBindingContext(oTreeRowsBinding.getHeaderContext(), "treeHeader");
 				}
 
 				this.initMessagePopover(sTreeTable === "N" ? "table" : "treeTable");
@@ -298,6 +302,20 @@ sap.ui.define([
 
 		onRefreshTreeTable : function (_oEvent, bKeepTreeState) {
 			this.refresh("treeTable", bKeepTreeState);
+		},
+
+		onShowSelected : function (_oEvent, sTableId = "table") {
+			const oBinding = this.byId(sTableId).getBinding("rows");
+			const aContexts = oBinding.getAllCurrentContexts();
+			const oHeaderContext = oBinding.getHeaderContext();
+
+			const bSelectAll = oHeaderContext.isSelected();
+			const sText = (bSelectAll ? "All except " : "")
+				+ aContexts.filter((oContext) => oContext.isSelected() !== bSelectAll)
+					.map((oContext) => oContext.getProperty("Name"))
+					.join(", ");
+
+			MessageBox.information(sText, {title : "Selected Names"});
 		},
 
 		onSynchronize : function () {
