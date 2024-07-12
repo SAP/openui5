@@ -273,6 +273,12 @@ sap.ui.define([
 					]
 				}
 			},
+			"apply/_internal/changes/descriptor/app/SetAch": {
+				group: "Apply Internal - Descriptor Change Merger",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/changes/descriptor/app/SetAch"]
+				}
+			},
 			"apply/_internal/changes/descriptor/app/SetTitle": {
 				group: "Apply Internal - Descriptor Change Merger",
 				coverage: {
