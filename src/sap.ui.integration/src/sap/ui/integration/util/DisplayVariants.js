@@ -82,9 +82,6 @@ sap.ui.define([
 		if (!oCard.getDomRef()) {
 			return;
 		}
-		if (!oCard.getUseProgressiveDisclosure()) {
-			return;
-		}
 
 		const oSizeModel = oCard.getModel("size");
 		const sDisplayVariant = oCard.getDisplayVariant();
@@ -109,7 +106,7 @@ sap.ui.define([
 
 		oSizeModel.setData(mSize);
 
-		if (!deepEqual(mSize, mOldSize)) {
+		if (!deepEqual(mSize, mOldSize) && oCard.getUseProgressiveDisclosure()) {
 			oCard.refresh();
 		}
 	};
@@ -173,9 +170,6 @@ sap.ui.define([
 
 	DisplayVariants.prototype._observeWidth = function () {
 		const oCard = this._oCard;
-		if (!oCard.getUseProgressiveDisclosure()) {
-			return;
-		}
 
 		const oCardDomRef = oCard.getDomRef();
 		if (!oCardDomRef) {

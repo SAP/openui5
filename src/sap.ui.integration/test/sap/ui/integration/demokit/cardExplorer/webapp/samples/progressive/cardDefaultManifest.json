@@ -17,7 +17,7 @@
 		"header": {
 			"type": "Standard",
 			"title": "Standard Header Title with a slightly long text",
-			"subTitle": "Regular: {= size('regular')} Wide: {= size('wide')}",
+			"subTitle": "Standard Header Subtitle with an even longer longer text",
 			"icon": {
 				"src": "sap-icon://desktop-mobile",
 				"backgroundColor": "Accent6"
