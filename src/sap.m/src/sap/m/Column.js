@@ -603,11 +603,12 @@ sap.ui.define([
 	};
 
 	Column.prototype._onLabelPropertyChange = function (oEvent) {
-		if (oEvent.getParameter("name") != "required") {
+		var oTable = this.getTable();
+		if (!oTable || oEvent.getParameter("name") != "required") {
 			return;
 		}
 
-		if (this.getTable().bActiveHeaders || this.getHeaderMenuInstance()) {
+		if (oTable.bActiveHeaders || this.getHeaderMenuInstance()) {
 			this.$()[oEvent.getSource().getRequired() ? "addAriaDescribedBy" : "removeAriaDescribedBy"](InvisibleText.getStaticId("sap.m", "CONTROL_IN_COLUMN_REQUIRED"));
 		}
 	};
