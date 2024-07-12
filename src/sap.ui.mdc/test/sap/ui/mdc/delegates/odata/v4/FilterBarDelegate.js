@@ -301,7 +301,6 @@ sap.ui.define([
 					formatOptions: aFetchedProperties[nIdx].formatOptions,
 					required: aFetchedProperties[nIdx].required,
 					caseSensitive: aFetchedProperties[nIdx].caseSensitive,
-					display: aFetchedProperties[nIdx].display,
 					label: aFetchedProperties[nIdx].label,
 					hiddenFilter: aFetchedProperties[nIdx].hiddenFilter
 				});
