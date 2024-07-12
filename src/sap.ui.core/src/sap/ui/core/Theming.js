@@ -507,9 +507,9 @@ sap.ui.define([
 		return !!sAllowedOrigins?.split(",").some((sAllowedOrigin) => {
 			try {
 				sAllowedOrigin = bNoProtocol && !sAllowedOrigin.startsWith("//") ? "//" + sAllowedOrigin : sAllowedOrigin;
-				return sAllowedOrigin === "*" || sOrigin === new URL(sAllowedOrigin.trim(), globalThis.location.href).origin;
+				return sAllowedOrigin === "*" || sOrigin === new URL(sAllowedOrigin.trim(), window.location.href).origin;
 			} catch (error) {
-				future.errorThrows("sapAllowedThemeOrigin provides invalid theme origin: " + sAllowedOrigin);
+				future.errorThrows("sapAllowedThemeOrigins provides invalid theme origin: " + sAllowedOrigin, {cause: error});
 				return false;
 			}
 		});
@@ -522,7 +522,7 @@ sap.ui.define([
 
 		try {
 			// Remove search query as they are not supported for themeRoots/resourceRoots
-			oThemeRoot = new URL(sThemeRoot, globalThis.location.href);
+			oThemeRoot = new URL(sThemeRoot, window.location.href);
 			oThemeRoot.search = "";
 
 			// If the URL is absolute, validate the origin
@@ -531,7 +531,7 @@ sap.ui.define([
 			} else {
 				// For relative URLs or not allowed origins
 				// ensure same origin and resolve relative paths based on origin
-				oThemeRoot = new URL(oThemeRoot.pathname, globalThis.location.href);
+				oThemeRoot = new URL(oThemeRoot.pathname, window.location.href);
 				sPath = oThemeRoot.toString();
 			}
 
