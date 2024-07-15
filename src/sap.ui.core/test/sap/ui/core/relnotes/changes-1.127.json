@@ -3,6 +3,31 @@
     "date": "July 2024",
     "notes": [
       {
+        "id": "8963a855f10a017f234057f4828de65bc13fbb0d",
+        "type": "FIX",
+        "text": " BindingInfo: Ensure that named models are only parsed once"
+      },
+      {
+        "id": "3ec59bb8c31f748fac1e65dcbe9589850a7d6933",
+        "type": "FIX",
+        "text": " sap/ui/dom/findTabbable: replace recursion with iteration"
+      },
+      {
+        "id": "b7c8ba23137aba2bc5c97b26283db1fec9b063db",
+        "type": "FIX",
+        "text": " ControllerExtension support for TypeScript"
+      },
+      {
+        "id": "8d03afad2afa683b2dc737c253c64c84639f80d4",
+        "type": "FEATURE",
+        "text": " Provide base variables as custom CSS properties"
+      },
+      {
+        "id": "aabfde0b1e9f97cdf76baa382cf55d0ed7b923b4",
+        "type": "FEATURE",
+        "text": " Make sap/ui/test/nextUIUpdate publically available"
+      },
+      {
         "id": "255ca3fcc46d6ae39b91460a33000b34c1453e58",
         "type": "FIX",
         "text": " sap.m.Popover: close the popover if the opener is not visible"

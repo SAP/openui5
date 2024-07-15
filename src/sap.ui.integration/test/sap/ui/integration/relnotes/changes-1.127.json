@@ -1,0 +1,12 @@
+{
+  "1.127.0": {
+    "date": "July 2024",
+    "notes": [
+      {
+        "id": "5a3abd99d8c006e32c37a6a74586cdcbfdff5fb4",
+        "type": "FIX",
+        "text": " Integration Cards: Avoid more than one WebPage card load timeout"
+      }
+    ]
+  }
+}

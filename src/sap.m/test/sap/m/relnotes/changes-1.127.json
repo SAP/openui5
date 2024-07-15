@@ -3,6 +3,36 @@
     "date": "July 2024",
     "notes": [
       {
+        "id": "c50c24b7862115ed6938d7bf8906b286ec8bb3eb",
+        "type": "FIX",
+        "text": " sap.m.Column: add missing check for parent Table in _onLabelPropertyChange"
+      },
+      {
+        "id": "80bd16c5888a257476af29ffbf2d8cd3c8dbbf0e",
+        "type": "FIX",
+        "text": " Fiori20Adapter: Strengthened the check for the navigation back button"
+      },
+      {
+        "id": "d3da60c83a73b3c41d7628cbb8bfa5fcd97bcfb4",
+        "type": "FEATURE",
+        "text": " sap.m Input: new 'fromKeyboard' parameter is now added to the valueHelpRequest event"
+      },
+      {
+        "id": "69fe5311c704b336ebfb8f68fc76b1113541cedb",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Custom footer can be reached with Shift+Tab"
+      },
+      {
+        "id": "c384f11e59b4286dd43217d55404a5c43c9cabca",
+        "type": "FIX",
+        "text": " sap.m.Table: Announce required state of columns with 'custom' label controls"
+      },
+      {
+        "id": "88c9e07a1ed2f2d1e591ef5238c936e9296bc500",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarRow: Appointments ARIA texts are correctly translated and localized now"
+      },
+      {
         "id": "ad0e20c527fe419cedab8ff37cc4943502abe12e",
         "type": "FIX",
         "text": " We've now updated the event parameters for the status and readystate document types in the Uploadcompleted event of Uploadset control"
