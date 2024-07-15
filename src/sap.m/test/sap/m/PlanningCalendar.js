@@ -353,7 +353,7 @@ sap.ui.define([
 		});
 		oPC.addRow(oRow);
 	};
-	let mCount = new Map();
+
 	var handleAddAppointment = function (oEvent) {
 		var oPC = Element.getElementById("PC1");
 		var sViewKey = oPC.getViewKey();
@@ -381,13 +381,11 @@ sap.ui.define([
 				oAppointmentEndDate = UI5Date.getInstance(oEventEndDate);
 			} else {
 				oAppointmentEndDate = UI5Date.getInstance(oStartDate.getTime());
+
 				switch (sViewKey) {
 					case CalendarIntervalType.Hour:
-						const count = mCount.get(oRow.sId) || 1;
 						oAppointmentStartDate.setHours(oAppointmentStartDate.getHours() + iStartOffset);
-						oAppointmentEndDate.setHours(oAppointmentStartDate.getHours());
-						oAppointmentEndDate.setMinutes(oAppointmentEndDate.getMinutes() + 15 * count); // test 15 min appointments
-						mCount.set(oRow.sId, count + 1);
+						oAppointmentEndDate.setHours(oAppointmentStartDate.getHours() + iEndOffset);
 						break;
 
 					case CalendarIntervalType.Day:
@@ -424,7 +422,6 @@ sap.ui.define([
 			});
 			oRow.addAppointment(oAppointment);
 		} else {
-			MessageToast.show("Selected row is needed to add appointment.");
 			Log.warning("No row selected");
 		}
 
