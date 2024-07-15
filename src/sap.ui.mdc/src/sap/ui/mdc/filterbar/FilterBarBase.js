@@ -1723,14 +1723,16 @@ sap.ui.define([
 				oProperty = this._getPropertyByName(sPropertyKey);
 				if (!oProperty && this.getPropertyInfo().length > 0) { //the data in propertyInfo may still not be propagated to property helper, so we check also directly
 					this.getPropertyInfo().some((oPropertyInfo) => {
-						if (oPropertyInfo.name === sPropertyKey) {
+						if ((oPropertyInfo.key === sPropertyKey) || (oPropertyInfo.name === sPropertyKey)) {
 							oProperty = oPropertyInfo;
 						}
 						return oProperty;
 					});
 				}
 				if (!oProperty) {
-					Log.error("Property '" + sPropertyKey + "' does not exist for filter field with the id = '" + oFilterField.getId() + "' on filter bar='" + this.getId() + "'");
+					if (!this.isA("sap.ui.mdc.valuehelp.FilterBar")) { // vh.FB does not support 'propertyInfo'...
+						Log.warning("Property '" + sPropertyKey + "' does not exist for filter field with the id = '" + oFilterField.getId() + "' on filter bar='" + this.getId() + "'");
+					}
 					return oFilterField;
 				}
 
@@ -1743,9 +1745,6 @@ sap.ui.define([
 				if (oFilterField.isPropertyInitial("maxConditions") && oProperty.hasOwnProperty("maxConditions") && oProperty.maxConditions) {
 					oFilterField.setMaxConditions(oProperty.maxConditions);
 				}
-//				if (oFilterField.isPropertyInitial("display") && oProperty.hasOwnProperty("display") && oProperty.display) {
-//					oFilterField.setDisplay(oProperty.display);
-//				}
 				if (!oFilterField.getLabel() && oProperty.hasOwnProperty("label") && oProperty.label) {
 					oFilterField.setLabel(oProperty.label);
 				}
@@ -1755,7 +1754,7 @@ sap.ui.define([
 				if (!oFilterField.getDataTypeFormatOptions() && oProperty.hasOwnProperty("formatOptions") && oProperty.formatOptions) {
 					oFilterField.setDataTypeFormatOptions(oProperty.formatOptions);
 				}
-				// no display, no valueHelp, no additionalDataType, no tooltip, no operators, no defaultOperator
+				// no display, no valueHelp, no additionalDataType, no tooltip, no operators, no defaultOperator, no caseSensitive
 
 				oFilterField.triggerCheckCreateInternalContent();
 			}
