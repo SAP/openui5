@@ -564,7 +564,7 @@ function(
 			this._oDetailControl, {
 				messageBundleKey: Device.os.macintosh ? "LIST_ITEM_EDIT_SHORTCUT_MAC" : "LIST_ITEM_EDIT_SHORTCUT"
 			},
-		this);
+		this._oDetailControl);
 
 		this._oDetailControl.useEnabledPropagator(false);
 
