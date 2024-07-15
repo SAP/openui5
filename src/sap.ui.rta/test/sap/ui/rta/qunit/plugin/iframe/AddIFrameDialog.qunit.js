@@ -2,7 +2,6 @@
 
 sap.ui.define([
 	"sap/m/Button",
-	"sap/m/Token",
 	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
 	"sap/ui/core/library",
@@ -10,6 +9,7 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/model/Context",
 	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/rta/plugin/iframe/AddIFrameDialog",
@@ -17,7 +17,6 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	Button,
-	Token,
 	Element,
 	Lib,
 	coreLibrary,
@@ -25,6 +24,7 @@ sap.ui.define([
 	FlUtils,
 	Context,
 	JSONModel,
+	ODataModel,
 	QUnitUtils,
 	nextUIUpdate,
 	AddIFrameDialog,
@@ -298,9 +298,39 @@ sap.ui.define([
 				oUrlTextArea.setValue("someUrl");
 				QUnitUtils.triggerEvent("input", oUrlTextArea.getFocusDomRef());
 
-				const sUrl = this.oAddIFrameDialog._oController._addURLParameter("{firstParameter}");
+				const sUrl = this.oAddIFrameDialog._oController._addURLParameter({key: "{firstParameter}"});
 				this.oAddIFrameDialog._oJSONModel.setProperty("/frameUrl/value", sUrl);
 				assert.strictEqual(sUrl, "someUrl{firstParameter}", "Found firstParameter");
+
+				clickOnCancel();
+			}, this);
+			return this.oAddIFrameDialog.open(this.oDialogSettings, oReferenceControl);
+		});
+
+		QUnit.test("When a V4 model Edm.String property URL parameter is added then the frame URL is built like with V2 model", function(assert) {
+			this.oAddIFrameDialog.attachOpened(function() {
+				const oUrlTextArea = Element.getElementById("sapUiRtaAddIFrameDialog_EditUrlTA");
+				oUrlTextArea.setValue("someUrl");
+				QUnitUtils.triggerEvent("input", oUrlTextArea.getFocusDomRef());
+
+				const sUrl = this.oAddIFrameDialog._oController._addURLParameter({key: "{stringParameter}", type: "Edm.String"});
+				this.oAddIFrameDialog._oJSONModel.setProperty("/frameUrl/value", sUrl);
+				assert.strictEqual(sUrl, "someUrl{stringParameter}", "Found stringParameter");
+
+				clickOnCancel();
+			}, this);
+			return this.oAddIFrameDialog.open(this.oDialogSettings, oReferenceControl);
+		});
+
+		QUnit.test("When a V4 model Edm.Boolean property URL parameter is added then the frame URL sets its type to 'any'", function(assert) {
+			this.oAddIFrameDialog.attachOpened(function() {
+				const oUrlTextArea = Element.getElementById("sapUiRtaAddIFrameDialog_EditUrlTA");
+				oUrlTextArea.setValue("someUrl");
+				QUnitUtils.triggerEvent("input", oUrlTextArea.getFocusDomRef());
+
+				const sUrl = this.oAddIFrameDialog._oController._addURLParameter({key: "{booleanParameter}", type: "Edm.Boolean"});
+				this.oAddIFrameDialog._oJSONModel.setProperty("/frameUrl/value", sUrl);
+				assert.strictEqual(sUrl, "someUrl{path:'booleanParameter',targetType:'any'}", "URL parameter is built correctly");
 
 				clickOnCancel();
 			}, this);
@@ -360,7 +390,7 @@ sap.ui.define([
 				await nextUIUpdate();
 
 				function checkParam(oParam) {
-					sUrl = this.oAddIFrameDialog._oController._addURLParameter(oParam.key);
+					sUrl = this.oAddIFrameDialog._oController._addURLParameter({key: oParam.key});
 					this.oAddIFrameDialog._oJSONModel.setProperty("/frameUrl/value", sUrl);
 				}
 				this.oDialogSettings.parameters.forEach(checkParam.bind(this));
@@ -790,6 +820,66 @@ sap.ui.define([
 				"%",
 				"then the frame height unit isn't touched if it wasn't modified"
 			);
+		});
+	});
+
+	QUnit.module("Given that an IFrameDialog is opened for a control that uses an OData V4 Model...", {
+		beforeEach() {
+			this.oAddIFrameDialog = new AddIFrameDialog();
+		},
+		afterEach() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("When AddIFrameDialog gets initialized and open is called,", async function(assert) {
+			const sBindingPath = "/IceCream(0)/name";
+			const oModel = new ODataModel({ serviceUrl: "DummyURL/" });
+			oModel.getMetaModel = () => {
+				return {
+					getMetaPath: (sPath) => {
+						assert.equal(sPath, sBindingPath, "then the binding path is passed as parameter");
+						return "/IceCream";
+					},
+					requestObject: (sPath) => {
+						assert.equal(sPath, "/IceCream/name/$Type", "then the property type is requested");
+						return Promise.resolve("Edm.String");
+					}
+				};
+			};
+			const oV4Control = new Button();
+			oV4Control.setModel(oModel);
+			sandbox.stub(oV4Control, "getBindingContext").returns({
+				getModel: () => oModel,
+				getObject: () => {
+					return {
+						name: "Twister"
+					};
+				},
+				getPath: () => sBindingPath
+
+			});
+			const mParameters = await AddIFrameDialog.buildUrlBuilderParametersFor(oV4Control);
+			this.oDialogSettings = {
+				parameters: mParameters,
+				asContainer: true
+			};
+
+			this.oAddIFrameDialog.attachOpened(function() {
+				this.oDialogSettings.parameters.forEach((oParam) => {
+					assert.strictEqual(
+						oParam.value,
+						"Twister",
+						`Found ${oParam.key}`
+					);
+					assert.strictEqual(
+						oParam.type,
+						"Edm.String",
+						"and the type is set correctly"
+					);
+				});
+				clickOnCancel();
+			}, this);
+			return this.oAddIFrameDialog.open(this.oDialogSettings, oReferenceControl);
 		});
 	});
 

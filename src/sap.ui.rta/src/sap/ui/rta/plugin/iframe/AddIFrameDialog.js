@@ -259,37 +259,48 @@ sap.ui.define([
 	 * @param {sap.ui.base.ManagedObject} oObject - Managed object to extract the context from
 	 * @return {Promise<object[]>} Resolving to parameters array for URL builder exposed by the Add IFrame dialog
 	 */
-	AddIFrameDialog.buildUrlBuilderParametersFor = function(oObject) {
-		return getContainerUserInfo()
-		.then(function(oUserInfo) {
-			var oUserParameters = Object.keys(oUserInfo)
-			.map(function(sUserSetting) {
-				return {
-					label: sUserSetting,
-					key: `{$user>/${sUserSetting}}`,
-					value: oUserInfo[sUserSetting]
-				};
-			});
-			var oBindingContext = oObject.getBindingContext();
-			var oDefaultBoundObjectParameters;
-			if (oBindingContext) {
-				var oDefaultBoundObject = oBindingContext.getObject();
-				oDefaultBoundObjectParameters = Object.keys(oDefaultBoundObject)
-				.filter(function(sProperty) {
-					return typeof oDefaultBoundObject[sProperty] !== "object";
-				})
-				.map(function(sProperty) {
-					return {
-						label: sProperty,
-						key: `{${sProperty}}`,
-						value: oDefaultBoundObject[sProperty]
-					};
-				});
-			} else {
-				oDefaultBoundObjectParameters = [];
-			}
-			return oUserParameters.concat(oDefaultBoundObjectParameters);
+	AddIFrameDialog.buildUrlBuilderParametersFor = async function(oObject) {
+		const oUserInfo = await getContainerUserInfo();
+		const oUserParameters = Object.keys(oUserInfo)
+		.map(function(sUserSetting) {
+			return {
+				label: sUserSetting,
+				key: `{$user>/${sUserSetting}}`,
+				value: oUserInfo[sUserSetting]
+			};
 		});
+		const oBindingContext = oObject.getBindingContext();
+		let aDefaultBoundObjectParameters;
+		if (oBindingContext) {
+			const oDefaultBoundObject = oBindingContext.getObject();
+			aDefaultBoundObjectParameters = Object.keys(oDefaultBoundObject)
+			.filter(function(sProperty) {
+				return typeof oDefaultBoundObject[sProperty] !== "object";
+			})
+			.map(async function(sProperty) {
+				const oModel = oBindingContext.getModel();
+				const oReturn = {
+					label: sProperty,
+					key: `{${sProperty}}`,
+					value: oDefaultBoundObject[sProperty]
+				};
+				// V4 Models automatically adjust values for certain data types based on localization settings,
+				// which can make them different from what we display on the table of parameters. We get the data
+				// type here to add the parameter to the URL later with the same value that was displayed on the table.
+				if (oModel.isA("sap.ui.model.odata.v4.ODataModel")) {
+					const oMetaModel = oModel.getMetaModel();
+					const sMetaPath = oMetaModel.getMetaPath(oBindingContext.getPath());
+					const sType = await oMetaModel.requestObject(`${sMetaPath}/${sProperty}/$Type`);
+					if (sType) {
+						oReturn.type = sType;
+					}
+				}
+				return oReturn;
+			});
+		} else {
+			aDefaultBoundObjectParameters = [];
+		}
+		return oUserParameters.concat(await Promise.all(aDefaultBoundObjectParameters));
 	};
 
 	return AddIFrameDialog;
