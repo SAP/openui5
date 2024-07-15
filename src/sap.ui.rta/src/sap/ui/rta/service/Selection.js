@@ -86,7 +86,25 @@ sap.ui.define(function() {
 				 * @returns {boolean} <code>true</code> if completed successfully (<code>false</code> if there is nothing to reset)
 				 * @public
 				 */
-				reset: oSelectionManager.reset.bind(oSelectionManager)
+				reset: oSelectionManager.reset.bind(oSelectionManager),
+
+				/**
+				 * Adds hover effect to the specified controls.
+				 *
+				 * @method sap.ui.rta.service.Selection.addHover
+				 * @param {string|string[]} vControlIds - Control IDs to which to add the hover effect
+				 * @public
+				 */
+				addHover: oSelectionManager.addHover.bind(oSelectionManager),
+
+				/**
+				 * Removes hover effect from the specified controls.
+				 *
+				 * @method sap.ui.rta.service.Selection.removeHover
+				 * @param {string|string[]} vControlIds - Control IDs from which to remove the hover effect
+				 * @public
+				 */
+				removeHover: oSelectionManager.removeHover.bind(oSelectionManager)
 			}
 		};
 	};

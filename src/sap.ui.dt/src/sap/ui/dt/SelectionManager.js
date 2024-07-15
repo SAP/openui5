@@ -128,12 +128,14 @@ function(
 
 	/**
 	 * Replaces current selection with specified list of overlays/controls.
-	 * @param {sap.ui.dt.ElementOverlay|sap.ui.dt.ElementOverlay[]|sap.ui.core.Control|sap.ui.core.Control[]} vObjects
+	 * @param {sap.ui.dt.ElementOverlay|sap.ui.dt.ElementOverlay[]|sap.ui.core.Control|sap.ui.core.Control[]|String|String[]} vObjects
 	 *     Objects which should be selected can be:
 	 *         - a single overlay
 	 *         - an array of overlays
 	 *         - an element which has an overlay
 	 *         - an array of elements
+	 *         - a single control ID or Overlay ID
+	 *         - an array of control IDs or overlay IDs
 	 * @return {boolean} true if selection has changed
 	 * @public
 	 */
@@ -193,12 +195,14 @@ function(
 
 	/**
 	 * Adds specified overlays/controls to the current selection.
-	 * @param {sap.ui.dt.ElementOverlay|sap.ui.dt.ElementOverlay[]|sap.ui.core.Control|sap.ui.core.Control[]} vObjects
+	 * @param {sap.ui.dt.ElementOverlay|sap.ui.dt.ElementOverlay[]|sap.ui.core.Control|sap.ui.core.Control[]|String|String[]} vObjects
 	 *     Objects which should be added can be:
 	 *         - a single overlay
 	 *         - an array of overlays
 	 *         - an element which has an overlay
 	 *         - an array of elements
+	 *         - a single control ID or Overlay ID
+	 *         - an array of control IDs or overlay IDs
 	 * @return {boolean} true if selection has changed
 	 * @public
 	 */
@@ -235,12 +239,14 @@ function(
 
 	/**
 	 * Removes specified overlays/controls of the current selection.
-	 * @param {sap.ui.dt.ElementOverlay|sap.ui.dt.ElementOverlay[]|sap.ui.core.Control|sap.ui.core.Control[]} vObjects
+	 * @param {sap.ui.dt.ElementOverlay|sap.ui.dt.ElementOverlay[]|sap.ui.core.Control|sap.ui.core.Control[]|String|String[]} vObjects
 	 *     Objects which should be added can be:
 	 *         - a single overlay
 	 *         - an array of overlays
 	 *         - an element which has an overlay
 	 *         - an array of elements
+	 *         - a single control ID or Overlay ID
+	 *         - an array of control IDs or overlay IDs
 	 * @return {boolean} true if selection has changed
 	 * @public
 	 */
@@ -291,6 +297,31 @@ function(
 	 */
 	SelectionManager.prototype.getValidators = function() {
 		return this._aValidators.slice();
+	};
+
+	/**
+	 * Add hover effect to the specified overlays.
+	 * @param {sap.ui.dt.ElementOverlay|sap.ui.dt.ElementOverlay[]|sap.ui.core.Control|sap.ui.core.Control[]|String|String[]} vObjects
+	 *     Objects to be set can be:
+	 *         - a single overlay
+	 *         - an array of overlays
+	 *         - an element which has an overlay
+	 *         - an array of elements
+	 *         - a single control ID or Overlay ID
+	 *         - an array of control IDs or overlay IDs
+	 */
+	SelectionManager.prototype.addHover = function(vObjects) {
+		getOverlays(vObjects).forEach(function(oElementOverlay) {
+			// TODO: Replace with DT CSS class after refactoring
+			oElementOverlay.addStyleClass("sapUiRtaOverlayHover");
+		});
+	};
+
+	SelectionManager.prototype.removeHover = function(vObjects) {
+		getOverlays(vObjects).forEach(function(oElementOverlay) {
+			// TODO: Replace with DT CSS class after refactoring
+			oElementOverlay.removeStyleClass("sapUiRtaOverlayHover");
+		});
 	};
 
 	return SelectionManager;
