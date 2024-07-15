@@ -174,6 +174,11 @@ sap.ui.define([
 		}
 	}
 
+	// A qualified name, followed by a .bind(id) call
+	// 1st capturing group matches the qualified name w/o .bind() call
+	// 2nd capturing group matches the .bind() argument
+	const rFormatterBind = /(^(?:[$_\p{ID_Start}][$_\p{ID_Continue}]*\.)*[\p{ID_Start}][$_\p{ID_Continue}]*)\.bind\(([$_\p{ID_Start}][$_\p{ID_Continue}]*)\)$/u;
+
 	function resolveBindingInfo(oEnv, oBindingInfo) {
 		var mVariables = Object.assign({".": oEnv.oContext}, oEnv.mLocals);
 
@@ -192,10 +197,31 @@ sap.ui.define([
 		 */
 		function resolveRef(o,sProp) {
 			if ( typeof o[sProp] === "string" ) {
-				var sName = o[sProp];
+				let sName = o[sProp];
+				let bSkipBindContext = false;
+				let aMatch = [], mBindableValues = {};
 
-				o[sProp] = resolveReference(o[sProp], mVariables, {
+				// check for .bind()-syntax
+				if (sProp == "formatter" && sName.includes(".bind(")) {
+					aMatch = sName.match(rFormatterBind);
+
+					if (!aMatch) {
+						throw new Error(`Error in formatter '${sName}': Either syntax error in the usage of '.bind(...)' or wrong number of arguments given. Only one argument is allowed when using '.bind()'.`);
+					}
+					if (aMatch[2].startsWith("$") && !Object.hasOwn(oEnv.mAdditionalBindableValues, aMatch[2])) {
+						throw new Error(`Error in formatter '${sName}': The argument '${aMatch[2]}' used in the '.bind()' call starts with '$', which is only allowed for framework-reserved variables. Please rename the variable so that it doesn't start with '$'.`);
+					}
+
+					bSkipBindContext = true;
+					mBindableValues = Object.assign(mBindableValues, oEnv.mLocals, oEnv.mAdditionalBindableValues);
+
+					// only pass function name to resolveReference
+					sName = aMatch[1];
+				}
+
+				o[sProp] = resolveReference(sName, mVariables, {
 					preferDotContext: oEnv.bPreferContext,
+					bindContext: !bSkipBindContext,
 					bindDotContext: !oEnv.bStaticContext
 				});
 
@@ -206,6 +232,13 @@ sap.ui.define([
 					} else {
 						future.errorThrows(sProp + " function " + sName + " not found!");
 					}
+				}
+
+				if (bSkipBindContext) {
+					if (!Object.hasOwn(mBindableValues, aMatch[2])) {
+						throw new Error(`Error in formatter '${sName}': Unknown argument '${aMatch[2]}' passed to '.bind()' call.`);
+					}
+					o[sProp] = mBindableValues[aMatch[2]] !== null ? o[sProp].bind(mBindableValues[aMatch[2]]) : o[sProp];
 				}
 			}
 		}
@@ -465,7 +498,7 @@ sap.ui.define([
 	 *   The parsing result is enriched with an additional Promise capturing all transitive Type loading.
 	 */
 	BindingParser.complexParser = function(sString, oContext, bUnescape,
-			bTolerateFunctionsNotFound, bStaticContext, bPreferContext, mLocals, bResolveTypesAsync) {
+			bTolerateFunctionsNotFound, bStaticContext, bPreferContext, mLocals, bResolveTypesAsync, mAdditionalBindableValues) {
 		var b2ndLevelMergedNeeded = false, // whether some 2nd level parts again have parts
 			oBindingInfo = {parts:[]},
 			bMergeNeeded = false, // whether some top-level parts again have parts
@@ -476,7 +509,8 @@ sap.ui.define([
 				bPreferContext : bPreferContext,
 				bStaticContext: bStaticContext,
 				bTolerateFunctionsNotFound: bTolerateFunctionsNotFound,
-				aTypePromises: bResolveTypesAsync ? [] : undefined
+				aTypePromises: bResolveTypesAsync ? [] : undefined,
+				mAdditionalBindableValues: mAdditionalBindableValues
 			},
 			aFragments = [],
 			bUnescaped,

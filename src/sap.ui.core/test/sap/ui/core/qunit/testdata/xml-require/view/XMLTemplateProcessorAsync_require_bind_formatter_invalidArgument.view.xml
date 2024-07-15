@@ -1,0 +1,12 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	xmlns="sap.m" displayBlock="true">
+	<App core:require="{
+			Helper: 'testdata/xml-require/helper/Helper'
+		}">
+		<Page title="Hello">
+			<!-- 'invalidArgument' is not part of the core:require modules -->
+			<Button id="btn_1" text="{path: '/buttonText', formatter: 'Helper.formatter.bind(invalidArgument)'}"/>
+		</Page>
+	</App>
+</mvc:View>
