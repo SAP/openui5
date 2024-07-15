@@ -100,7 +100,7 @@ describe("sap.m.TimePickerVisualPart2", function() {
 		element(by.id("TP25-Cancel")).click();
 	});
 	// 12 hours clock with symbol B
-	it("TimePicker with a 'B HH:mm' display format, AM/PM buttons should be shown.", function() {
+	it("TimePicker with a 'B hh:mm' display format, AM/PM buttons should be shown.", function() {
 		element(by.id("TP26-icon")).click();
 		var oClock = element(by.id("page1-cont"));
 		expect(takeScreenshot(oClock)).toLookAs("TP26_hours_9_15_PM_initial");
