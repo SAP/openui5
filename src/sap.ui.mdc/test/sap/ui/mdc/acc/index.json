@@ -1,0 +1,94 @@
+{
+	"tests" : [
+		{
+			"control" : "sap.ui.mdc.Field",
+			"url" : "../demokit/sample/FieldTypes/index.html",
+			"desc" : "Fields with various data types rendering various input controls",
+			"appComponent" : "CA-UI5-MDC",
+			"accTest": {
+				"name": "sap.ui.mdc.Field",
+				"title": "ACC test for sap.ui.mdc.Field",
+				"module": "./uitreetable.qunit"
+			}
+		},
+		{
+			"control" : "sap.ui.mdc.Filterbar",
+			"url" : "../demokit/sample/FilterbarTypes/index.html",
+			"desc" : "A filter bar with several filter fields of various data types",
+			"appComponent" : "CA-UI5-MDC",
+			"accTest": {
+				"name": "sap.ui.mdc.Filterbar",
+				"title": "ACC test for sap.ui.mdc.Filterbar",
+				"module": "./uitable.qunit"
+			}
+		},
+		{
+			"control" : "sap.ui.mdc.Link",
+			"url" : "../demokit/sample/LinkPayloadJson/index.html",
+			"desc" : "A link using a delegate payload",
+			"appComponent" : "CA-UI5-MDC",
+			"accTest": {
+				"name": "sap.ui.mdc.Link",
+				"title": "ACC test for sap.ui.mdc.Link",
+				"module": "./uitreetable.qunit"
+			}
+		},
+		{
+			"control" : "sap.ui.mdc.MultiValueField",
+			"url" : "../demokit/sample/MultiValueField/index.html",
+			"desc" : "Multi-value field of type string and date with a value help dialog",
+			"appComponent" : "CA-UI5-MDC",
+			"accTest": {
+				"name": "sap.ui.mdc.MultiValueField",
+				"title": "ACC test for sap.ui.mdc.MultiValueField",
+				"module": "./uitreetable.qunit"
+			}
+		},
+		{
+			"control" : "sap.ui.mdc.FiterBar",
+			"url" : "../demokit/sample/TableFilterbarJson/index.html",
+			"desc" : "A table with a filter bar including variant management",
+			"appComponent" : "CA-UI5-MDC",
+			"accTest": {
+				"name": "sap.ui.mdc.FilterBar",
+				"title": "ACC test for sap.ui.mdc.FilterBar",
+				"module": "./uitreetable.qunit"
+			}
+		},
+		{
+			"control" : "sap.ui.mdc.ValueHelp",
+			"url" : "../demokit/sample/FieldValueHelpJson/index.html",
+			"desc" : "A field with a more complex value help dialog including filter and search features",
+			"appComponent" : "CA-UI5-MDC",
+			"accTest": {
+				"name": "sap.ui.mdc.ValueHelp",
+				"title": "ACC test for sap.ui.mdc.ValueHelp",
+				"module": "./uitreetable.qunit"
+			}
+		},
+		{
+			"control" : "sap.ui.mdc.ValueHelp",
+			"url" : "../demokit/sample/FieldValueHelpTypes/index.html",
+			"desc" : "Fields with multiple value helps including typeahead, dropdowns, or dialog",
+			"appComponent" : "CA-UI5-MDC",
+			"accTest": {
+				"name": "sap.ui.mdc.ValueHelp",
+				"title": "ACC test for sap.ui.mdc.ValueHelp",
+				"module": "./uitreetable.qunit"
+			}
+		},
+		{
+			"control" : "sap.ui.mdc.Table",
+			"url" : "../demokit/sample/TableJson/index.html",
+			"desc" : "A table with basic configuration and enabled personalization",
+			"appComponent" : "CA-UI5-MDC",
+			"accTest": {
+				"name": "sap.ui.mdc.Table",
+				"title": "ACC test for sap.ui.mdc.Table",
+				"module": "./uitreetable.qunit"
+			}
+		}
+
+
+	]
+}
