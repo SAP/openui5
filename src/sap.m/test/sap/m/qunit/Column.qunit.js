@@ -12,9 +12,10 @@ sap.ui.define([
 	"sap/m/table/columnmenu/QuickAction",
 	"sap/m/table/columnmenu/Item",
 	"sap/ui/Device",
+	"sap/ui/core/InvisibleText",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery"
-], function(Button, Column, ColumnListItem, Label, library, Page, Table, Text, ColumnMenu, QuickAction, Item, Device, nextUIUpdate, jQuery) {
+], function(Button, Column, ColumnListItem, Label, library, Page, Table, Text, ColumnMenu, QuickAction, Item, Device, InvisibleText, nextUIUpdate, jQuery) {
 	"use strict";
 
 	async function timeout(iDuration) {
@@ -477,6 +478,30 @@ sap.ui.define([
 		page.destroy();
 	});
 
+	QUnit.test("_onLabelPropertyChange", async function(assert) {
+		const oLabel = new Label({text: "Column"}),
+		oColumn = new Column({
+			header: oLabel
+		}),
+		oTable = new Table({
+			columns : oColumn
+		});
+		oTable.bActiveHeaders = true;
+		oTable.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		assert.notOk(oColumn.getDomRef().hasAttribute("aria-describedby"), "Column aria-describedby is not set");
+		oLabel.setRequired(true);
+		assert.equal(oColumn.getDomRef().getAttribute("aria-describedby"), InvisibleText.getStaticId("sap.m", "CONTROL_IN_COLUMN_REQUIRED"),
+					"Required state added as aria-describedby");
+
+		oColumn.setParent(null);
+		oLabel.setRequired(false);
+		assert.ok(true, "Does not throw an exception when the column is not in the table");
+
+		oColumn.destroy();
+		oTable.destroy();
+	});
 
 	QUnit.module("display and style");
 
