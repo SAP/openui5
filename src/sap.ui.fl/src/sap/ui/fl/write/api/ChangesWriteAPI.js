@@ -218,7 +218,7 @@ sap.ui.define([
 
 		mPropertyBag.appComponent = Utils.getAppComponentForSelector(mPropertyBag.element);
 		mPropertyBag.modifier ||= JsControlTreeModifier;
-		// TODO: Descriptor apply function
+
 		return Applier.applyChangeOnControl(mPropertyBag.change, mPropertyBag.element, _omit(mPropertyBag, ["element", "change"]))
 		.then(function(oResult) {
 			var aDependentChanges = FlexObjectState.getOpenDependentChangesForControl(
