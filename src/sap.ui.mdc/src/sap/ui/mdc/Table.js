@@ -439,7 +439,7 @@ sap.ui.define([
 				 */
 				threshold: {
 					type: "int",
-					group: "Appearance",
+					group: "Behavior",
 					defaultValue: -1
 				},
 

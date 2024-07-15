@@ -1141,50 +1141,48 @@ sap.ui.define([
 		assert.deepEqual(this.oTable.getFilterConditions(), {}, "Filter conditions removed");
 	});
 
-	QUnit.test("setThreshold", function(assert) {
-		const done = assert.async();
-		const setThresholdSpy = sinon.spy(this.oTable, "setThreshold");
-		const invalidateSpy = sinon.spy(this.oTable, "invalidate");
+	QUnit.test("setThreshold", async function(assert) {
+		const oTable = this.oTable;
+		const setThresholdSpy = sinon.spy(oTable, "setThreshold");
+		const invalidateSpy = sinon.spy(oTable, "invalidate");
 
-		this.oTable.setThreshold(10);
+		oTable.setThreshold(10);
 
 		assert.equal(invalidateSpy.callCount, 0);
-		assert.ok(setThresholdSpy.returned(this.oTable));
+		assert.ok(setThresholdSpy.returned(oTable));
 
-		this.oTable.initialized().then(function() {
-			invalidateSpy.reset();
-			assert.equal(this.oTable._oTable.getThreshold(), this.oTable.getThreshold());
+		await oTable.initialized();
 
-			this.oTable.setThreshold(-1);
-			assert.equal(this.oTable._oTable.getThreshold(), this.oTable._oTable.getMetadata().getProperty("threshold").defaultValue);
+		invalidateSpy.reset();
+		assert.equal(oTable._oTable.getThreshold(), oTable.getThreshold());
 
-			this.oTable.setThreshold(20);
-			assert.equal(this.oTable._oTable.getThreshold(), 20);
+		oTable.setThreshold(-1);
+		assert.equal(oTable._oTable.getThreshold(), oTable._oTable.getMetadata().getProperty("threshold").defaultValue);
 
-			this.oTable.setThreshold(undefined);
-			assert.equal(this.oTable._oTable.getThreshold(), this.oTable._oTable.getMetadata().getProperty("threshold").defaultValue);
-			assert.equal(invalidateSpy.callCount, 0);
+		oTable.setThreshold(20);
+		assert.equal(oTable._oTable.getThreshold(), 20);
 
-			this.oTable.setThreshold(30);
-			this.oTable.setType(TableType.ResponsiveTable);
+		oTable.setThreshold(undefined);
+		assert.equal(oTable._oTable.getThreshold(), oTable._oTable.getMetadata().getProperty("threshold").defaultValue);
+		assert.equal(invalidateSpy.callCount, 0);
 
-			this.oTable.initialized().then(function() {
-				invalidateSpy.reset();
-				assert.equal(this.oTable._oTable.getGrowingThreshold(), 30);
+		oTable.setThreshold(30);
+		oTable.setType(TableType.ResponsiveTable);
 
-				this.oTable.setThreshold(-1);
-				assert.equal(this.oTable._oTable.getGrowingThreshold(), this.oTable._oTable.getMetadata().getProperty("growingThreshold").defaultValue);
+		await oTable.initialized();
 
-				this.oTable.setThreshold(20);
-				assert.equal(this.oTable._oTable.getGrowingThreshold(), 20);
+		invalidateSpy.reset();
+		assert.equal(oTable._oTable.getGrowingThreshold(), 30);
 
-				this.oTable.setThreshold(null);
-				assert.equal(this.oTable._oTable.getGrowingThreshold(), this.oTable._oTable.getMetadata().getProperty("growingThreshold").defaultValue);
-				assert.equal(invalidateSpy.callCount, 0);
+		oTable.setThreshold(-1);
+		assert.equal(oTable._oTable.getGrowingThreshold(), oTable._oTable.getMetadata().getProperty("growingThreshold").defaultValue);
 
-				done();
-			}.bind(this));
-		}.bind(this));
+		oTable.setThreshold(20);
+		assert.equal(oTable._oTable.getGrowingThreshold(), 20);
+
+		oTable.setThreshold(null);
+		assert.equal(oTable._oTable.getGrowingThreshold(), oTable._oTable.getMetadata().getProperty("growingThreshold").defaultValue);
+		assert.equal(invalidateSpy.callCount, 0);
 	});
 
 	QUnit.test("noDataAggregation", function(assert) {

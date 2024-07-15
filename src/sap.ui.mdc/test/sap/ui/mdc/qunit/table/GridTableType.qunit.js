@@ -129,6 +129,35 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("setScrollThreshold", async function(assert) {
+		const oMdcTable = this.createTable({
+			type: new GridTableType({ scrollThreshold: 200 })
+		});
+
+		await oMdcTable.initialized();
+
+		const oInnerTable = oMdcTable._oTable;
+		const oTableType = oMdcTable.getType();
+		const setThresholdSpy = sinon.spy(oTableType, "setScrollThreshold");
+		const invalidateSpy = sinon.spy(oMdcTable, "invalidate");
+
+		oTableType.setScrollThreshold(25);
+
+		assert.ok(invalidateSpy.notCalled, "Invalidation not called");
+		assert.ok(setThresholdSpy.returned(oTableType), "Correct return value");
+		assert.equal(oInnerTable.getScrollThreshold(), oTableType.getScrollThreshold(), "Inner table has correct scrollThreshold");
+
+		oTableType.setScrollThreshold(-1);
+		assert.equal(oInnerTable.getScrollThreshold(), oInnerTable.getMetadata().getProperty("scrollThreshold").defaultValue, "scrollThreshold is reset to default");
+
+		oTableType.setScrollThreshold(50);
+		assert.equal(oInnerTable.getScrollThreshold(), 50, "scrollThreshold is set correctly");
+
+		oTableType.setScrollThreshold(undefined);
+		assert.equal(oInnerTable.getScrollThreshold(), oInnerTable.getMetadata().getProperty("scrollThreshold").defaultValue, "scrollThreshold is reset to default");
+		assert.ok(invalidateSpy.notCalled, "Invalidation not called");
+	});
+
 	QUnit.test("fixedColumnCount property", function(assert) {
 		const oTable = this.createTable({
 			type: new GridTableType({fixedColumnCount: 1})
