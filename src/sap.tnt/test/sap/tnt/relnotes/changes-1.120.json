@@ -46,5 +46,20 @@
         ]
       }
     ]
+  },
+  "1.120.18": {
+    "date": "July 2024",
+    "notes": [
+      {
+        "id": "b44f24ece61af9c130f6d2d795bb554267fdfbc1",
+        "type": "FIX",
+        "text": " sap.tnt.SideNavigation: Add proper bottom margin for all navigation list items"
+      },
+      {
+        "id": "4c4f8efef1f277139ae713198691465f1fe388fa",
+        "type": "FIX",
+        "text": " sap.tnt.ToolHeader: fixed ushell styles for Horizon theme"
+      }
+    ]
   }
 }

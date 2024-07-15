@@ -226,5 +226,25 @@
         ]
       }
     ]
+  },
+  "1.120.18": {
+    "date": "July 2024",
+    "notes": [
+      {
+        "id": "b44f24ece61af9c130f6d2d795bb554267fdfbc1",
+        "type": "FIX",
+        "text": " sap.tnt.SideNavigation: Add proper bottom margin for all navigation list items"
+      },
+      {
+        "id": "ff17e6e192272a4ae432d9942864a0e66c823393",
+        "type": "FIX",
+        "text": " We've now fixed the overlap issue in GenericTile when sap.m.TileSizeBehaviour.Small was being used."
+      },
+      {
+        "id": "4c4f8efef1f277139ae713198691465f1fe388fa",
+        "type": "FIX",
+        "text": " sap.tnt.ToolHeader: fixed ushell styles for Horizon theme"
+      }
+    ]
   }
 }

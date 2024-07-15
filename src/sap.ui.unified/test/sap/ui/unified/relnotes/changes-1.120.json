@@ -113,5 +113,20 @@
         "text": " sap.ui.unified.Calendar: add tooltips for calendar legend types"
       }
     ]
+  },
+  "1.120.18": {
+    "date": "July 2024",
+    "notes": [
+      {
+        "id": "3e28af4dc9ef6d10a0c2568de051608b0ae451ef",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarRow: Appointments ARIA texts are correctly translated and localized now"
+      },
+      {
+        "id": "a5d42980ccb79038155cb90756c5e4ee196c9e82",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: Custom image icon is displayed correctly now"
+      }
+    ]
   }
 }

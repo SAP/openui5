@@ -173,5 +173,15 @@
         "text": " sap.f.DynamicPage: Suppress invalidation of footer"
       }
     ]
+  },
+  "1.120.18": {
+    "date": "July 2024",
+    "notes": [
+      {
+        "id": "4bbd0e69056d3a77b3438fbe9c94d5d43a4c6e20",
+        "type": "FIX",
+        "text": " sap.f.FlexibleColumnLayout: Resize issue with iframe content fixed"
+      }
+    ]
   }
 }
