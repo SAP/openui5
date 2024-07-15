@@ -77,8 +77,7 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 			//delete startup time as we cannot compare it
 			delete oFESRHandle.timeToInteractive;
 			assert.deepEqual(oFESRHandle, oHandle, "Passed FESRHandle should be correct.");
-			assert.throws(function() { oInteraction.component = "badComponent"; }, "Should throw an error after trying to overwrite the interaction object.");
-			assert.ok(Object.isFrozen(oInteraction), "Interaction is not editable.");
+
 			return {
 				stepName: "newStepName",
 				appNameLong: "newAppNameLong",
@@ -117,6 +116,9 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 		}), "Found the optional FESR header field values.");
 
 		Interaction.end(true);
+		const oInteraction = Interaction.getAll()[1];
+		assert.throws(function() { oInteraction.component = "badComponent"; }, "Should throw an error after trying to overwrite the interaction object.");
+		assert.ok(Object.isFrozen(oInteraction), "Interaction is not editable.");
 		Interaction.clear();
 		FESR.setActive(false);
 		FESR.onBeforeCreated = fnOnBeforeCreated;
@@ -150,8 +152,7 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 			//delete startup time as we cannot compare it
 			delete oFESRHandle.timeToInteractive;
 			assert.deepEqual(oFESRHandle, oHandle, "Passed FESRHandle should be correct.");
-			assert.throws(function() { oInteraction.component = "badComponent"; }, "Should throw an error after trying to overwrite the interaction object.");
-			assert.ok(Object.isFrozen(oInteraction), "Interaction is not editable.");
+
 			return {
 				stepName: "newStepName",
 				appNameLong: "newAppNameLong",
@@ -190,6 +191,9 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 		}), "Found the optional FESR header field values.");
 
 		Interaction.end(true);
+		const oInteraction = Interaction.getAll()[1];
+		assert.throws(function() { oInteraction.component = "badComponent"; }, "Should throw an error after trying to overwrite the interaction object.");
+		assert.ok(Object.isFrozen(oInteraction), "Interaction is not editable.");
 		Interaction.clear();
 		FESR.onBeforeCreated = fnOnBeforeCreated;
 		FESR.setActive(false);
