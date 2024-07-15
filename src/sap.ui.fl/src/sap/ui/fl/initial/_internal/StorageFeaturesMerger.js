@@ -3,9 +3,11 @@
  */
 
 sap.ui.define([
-	"sap/base/util/merge"
+	"sap/base/util/merge",
+	"sap/ui/fl/Layer"
 ], function(
-	merge
+	merge,
+	Layer
 ) {
 	"use strict";
 
@@ -42,10 +44,8 @@ sap.ui.define([
 		var oVersioning = {};
 		var bVersioningEnabled = !!oResponse.features.isVersioningEnabled;
 
-		if (oResponse.layers) {
-			oResponse.layers.forEach(function(sLayer) {
-				oVersioning[sLayer] = bVersioningEnabled;
-			});
+		if (oResponse?.layers && (oResponse.layers.includes(Layer.CUSTOMER) || oResponse.layers.includes("ALL"))) {
+			oVersioning[Layer.CUSTOMER] = bVersioningEnabled;
 		}
 
 		return oVersioning;

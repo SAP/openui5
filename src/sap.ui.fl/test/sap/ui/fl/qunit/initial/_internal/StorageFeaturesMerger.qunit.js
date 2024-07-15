@@ -88,11 +88,11 @@ sap.ui.define([
 
 			var oResult = StorageFeaturesMerger.mergeResults(aResponse);
 
-			assert.equal(oResult.versioning.VENDOR, false);
-			assert.equal(oResult.versioning.CUSTOMER_BASE, false);
+			assert.equal(oResult.versioning.VENDOR, undefined);
+			assert.equal(oResult.versioning.CUSTOMER_BASE, undefined);
 			assert.equal(oResult.versioning.PARTNER, undefined);
 			assert.equal(oResult.versioning.CUSTOMER, true);
-			assert.equal(oResult.versioning.USER, false);
+			assert.equal(oResult.versioning.USER, undefined);
 		});
 	});
 
