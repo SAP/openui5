@@ -63,7 +63,7 @@ sap.ui.define([
 				/**
 				 * Specifies the text inside the <code>InfoLabel</code> control.
 				 */
-				text: { type: "string", defaultValue: "", bindable: "bindable" },
+				text: { type: "string", group: "Data", defaultValue: "", bindable: "bindable" },
 				/**
 				 * Specifies the type of the <code>InfoLabel</code> paddings - loose or narrow.
 				 * <b>Note:</b> By default the padding is loose. It is recommended to use narrow (smaller) paddings for numeric texts.
