@@ -81,7 +81,7 @@ function(library, Localization, Control, coreLibrary, Device, HyphenationSupport
 				/**
 				 * Determines the text to be displayed.
 				 */
-				text: { type: "string", defaultValue: '', bindable: "bindable" },
+				text: { type: "string", group: "Data", defaultValue: '', bindable: "bindable" },
 
 				/**
 				 * Available options for the text direction are LTR and RTL. By default the control inherits the text direction from its parent control.

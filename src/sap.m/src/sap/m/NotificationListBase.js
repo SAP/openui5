@@ -112,7 +112,7 @@ sap.ui.define([
 					/**
 					 * Determines the title of the NotificationListBase item.
 					 */
-					title: {type: 'string', group: 'Appearance', defaultValue: ''},
+					title: {type: 'string', group: 'Data', defaultValue: ''},
 
 					/**
 					 * The time stamp of the Notification.

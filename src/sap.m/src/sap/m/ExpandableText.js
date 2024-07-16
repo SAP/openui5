@@ -123,7 +123,7 @@ function(library,
 				/**
 				 * Determines the text to be displayed.
 				 */
-				text: { type: "string", defaultValue: '', bindable: "bindable" },
+				text: { type: "string", group: "Data", defaultValue: '', bindable: "bindable" },
 
 				/**
 				 * Available options for the text direction are left-to-right (LTR) and right-to-left (RTL)
