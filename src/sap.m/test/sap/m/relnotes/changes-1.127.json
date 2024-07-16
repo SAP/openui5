@@ -3,6 +3,26 @@
     "date": "July 2024",
     "notes": [
       {
+        "id": "942e64040aa762643499a0d17ccf5a9791a66309",
+        "type": "FIX",
+        "text": " We've made the subheader dynamic in the NewsContent when it is in a stretch tile"
+      },
+      {
+        "id": "3787be03c7cee2f6fda1ce5f8db699215f5e8709",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: Provide additional testing control instance for the visual test"
+      },
+      {
+        "id": "0af11a405c94b851c037cdc8cdd8da30b0325a01",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Change of library dependency to layout"
+      },
+      {
+        "id": "346af5b4dc59100046d7b631686e817aff11706b",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendarGrid: Prevent appointment selection by pressing the Tab key"
+      },
+      {
         "id": "c50c24b7862115ed6938d7bf8906b286ec8bb3eb",
         "type": "FIX",
         "text": " sap.m.Column: add missing check for parent Table in _onLabelPropertyChange"
@@ -56,6 +76,17 @@
         "id": "1f0cc3a84faa507e7bf7a09a0b9e1fb0dafe37fd",
         "type": "FIX",
         "text": " sap.m.Carousel: fix page disappearing when scrolling"
+      },
+      {
+        "id": "07fb12f4537130d6a5e00e722e20f254e4c21990",
+        "type": "FIX",
+        "text": " sap.m.Select: Arrow navigation issue fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370073961"
+          }
+        ]
       },
       {
         "id": "255ca3fcc46d6ae39b91460a33000b34c1453e58",

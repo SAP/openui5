@@ -17,6 +17,11 @@
             "reference": "2380121125"
           }
         ]
+      },
+      {
+        "id": "7eb2c2706e149539e2f1946fb299e84eb41bcfb3",
+        "type": "FIX",
+        "text": " SimpleFormDesigntime: hide propery change on inner Form"
       }
     ]
   }
