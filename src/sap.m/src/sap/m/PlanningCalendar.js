@@ -977,6 +977,7 @@ sap.ui.define([
 
 		this._toggleStickyClasses();
 
+		updateSelectedRows.call(this);
 	};
 
 	PlanningCalendar.prototype._updateHeader = function () {
@@ -5023,6 +5024,14 @@ sap.ui.define([
 		var oListItem = getListItem(oRow);
 
 		return oListItem ? oListItem.getTimeline() : null;
+	}
+
+	function updateSelectedRows() {
+		const aSelectedRows = this.getSelectedRows();
+
+		for (let i = 0; i < aSelectedRows.length; i++) {
+			getListItem(aSelectedRows[i]).setSelected(true);
+		}
 	}
 
 	function handleTableSelectionChange(oEvent) {
