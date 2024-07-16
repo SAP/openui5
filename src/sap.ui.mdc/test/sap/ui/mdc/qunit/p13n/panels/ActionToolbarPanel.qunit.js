@@ -2,12 +2,13 @@
 sap.ui.define([
 	"sap/ui/mdc/p13n/panels/ActionToolbarPanel",
 	"sap/m/StandardListItem",
+	"sap/m/ColumnListItem",
 	"sap/ui/thirdparty/sinon",
 	"sap/ui/base/Event",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/core/message/MessageType",
-	"sap/m/ColumnListItem"
-], function (ActionToolbarPanel, StandardListItem, sinon, Event, nextUIUpdate, MessageType, ColumnListItem) {
+	"sap/m/Text"
+], function (ActionToolbarPanel, StandardListItem, ColumnListItem, sinon, Event, nextUIUpdate, MessageType, Text) {
 	"use strict";
 
 	QUnit.module("ActionToolbarPanel API tests", {
@@ -189,8 +190,12 @@ sap.ui.define([
 					visible: true
 				}
 			]);
-			const oTemplate = new StandardListItem({
-				title: "{" + this.oActionToolbarPanel.P13N_MODEL  + ">label}"
+			const oTemplate = new ColumnListItem({
+				cells: [
+					new Text({
+						text: "{" + this.oActionToolbarPanel.P13N_MODEL  + ">label}"
+					})
+				]
 			});
 
 			this.oActionToolbarPanel._setTemplate(oTemplate);
@@ -205,8 +210,22 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("works correctly for not-'sap.m.ColumnListItem' controls", function(assert){
+	QUnit.test("works correctly for 'sap.m.ColumnListItem' controls", function(assert){
 		// arrange
+		const fnDisableListElementSpy = sinon.spy(this.oActionToolbarPanel, "_updateCheckboxEnablement");
+
+		// act
+		this.oActionToolbarPanel._updateItemEnableState();
+
+		// assert
+		assert.ok(fnDisableListElementSpy.called, "_updateCheckboxEnablement of ActionToolbarPanel not called");
+	});
+
+	QUnit.test("works correctly for 'sap.m.ColumnListItem' controls", function(assert){
+		// arrange
+		this.oActionToolbarPanel._oListControl.removeAllItems();
+		this.oActionToolbarPanel._oListControl.addItem(new StandardListItem());
+
 		const fnDisableListElementSpy = sinon.spy(this.oActionToolbarPanel, "_updateCheckboxEnablement");
 
 		// act
@@ -214,18 +233,5 @@ sap.ui.define([
 
 		// assert
 		assert.ok(fnDisableListElementSpy.notCalled, "_updateCheckboxEnablement of ActionToolbarPanel not called");
-	});
-
-	QUnit.test("works correctly for 'sap.m.ColumnListItem' controls", function(assert){
-		// arrange
-		this.oActionToolbarPanel._oListControl.addItem(new ColumnListItem());
-
-		const fnDisableListElementSpy = sinon.spy(this.oActionToolbarPanel, "_updateCheckboxEnablement");
-
-		// act
-		this.oActionToolbarPanel._updateItemEnableState();
-
-		// assert
-		assert.ok(fnDisableListElementSpy.calledOnce, "_updateCheckboxEnablement of ActionToolbarPanel not called");
 	});
 });
