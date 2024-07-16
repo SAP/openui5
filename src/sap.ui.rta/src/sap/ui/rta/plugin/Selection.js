@@ -345,7 +345,7 @@ sap.ui.define([
 			if (oOverlay !== this._oHoverTarget) {
 				this._removePreviousHover();
 				this._oHoverTarget = oOverlay;
-				oOverlay.addStyleClass("sapUiRtaOverlayHover");
+				this.getDesignTime().getSelectionManager().addHover(oOverlay);
 			}
 			preventEventDefaultAndPropagation(oEvent);
 		}
@@ -378,7 +378,7 @@ sap.ui.define([
 	 */
 	Selection.prototype._removePreviousHover = function() {
 		if (this._oHoverTarget) {
-			this._oHoverTarget.removeStyleClass("sapUiRtaOverlayHover");
+			this.getDesignTime().getSelectionManager().removeHover(this._oHoverTarget);
 		}
 		delete this._oHoverTarget;
 	};

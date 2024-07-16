@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/m/Page",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/UIComponent",
+	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/rta/plugin/Plugin",
@@ -16,6 +17,7 @@ sap.ui.define([
 	Page,
 	ComponentContainer,
 	UIComponent,
+	OverlayRegistry,
 	PersistenceWriteAPI,
 	nextUIUpdate,
 	BasePlugin,
@@ -236,6 +238,15 @@ sap.ui.define([
 				fnDone();
 			}, this);
 			this.oSelectionService.add(this.oButton1.getId());
+		});
+		QUnit.test("addHover() and RemoveHover()", async function(assert) {
+			await this.oSelectionService.addHover(this.oButton1.getId());
+			const oOverlay = OverlayRegistry.getOverlay(this.oButton1);
+			// TODO: Replace with DT CSS class after refactoring
+			assert.ok(oOverlay.hasStyleClass("sapUiRtaOverlayHover"));
+			await this.oSelectionService.removeHover(this.oButton1.getId());
+			// TODO: Replace with DT CSS class after refactoring
+			assert.notOk(oOverlay.hasStyleClass("sapUiRtaOverlayHover"));
 		});
 	});
 
