@@ -20,7 +20,8 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/ui/mdc/chart/PropertyHelper",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/mdc/enums/ChartItemRoleType"
+	"sap/ui/mdc/enums/ChartItemRoleType",
+	"sap/base/util/merge"
 ], (
 	Element,
 	Library,
@@ -39,7 +40,8 @@ sap.ui.define([
 	Filter,
 	PropertyHelper,
 	jQuery,
-	ChartItemRoleType
+	ChartItemRoleType,
+	merge
 ) => {
 	"use strict";
 
@@ -69,6 +71,7 @@ sap.ui.define([
 	const mStateMap = new window.WeakMap();
 	let Chart;
 	let Dimension;
+	let TimeDimension;
 	let Measure;
 	let VizTooltip;
 
@@ -862,21 +865,10 @@ sap.ui.define([
 						aInResultDimensions.forEach((sInResultDim) => {
 
 							aInResultPromises.push(this._getPropertyInfosByName(sInResultDim, oChart).then((oPropertyInfo) => {
-								const sName = this.getInternalChartNameFromPropertyNameAndKind(oPropertyInfo.name, "groupable", oChart);
-
-								const oDimension = new Dimension({
-									name: sName,
-									label: oPropertyInfo.label,
-									textFormatter: this.formatText.bind(oPropertyInfo)
-								});
-
-								if (oPropertyInfo.textProperty) {
-									oDimension.setTextProperty(oPropertyInfo.textProperty);
-									oDimension.setDisplayText(true);
-								}
-
+								const oDimension = ChartDelegate.innerDimensionFactory(oChart, undefined, oPropertyInfo);
 								this._getChart(oChart).addDimension(oDimension);
 
+								const sName = this.getInternalChartNameFromPropertyNameAndKind(oPropertyInfo.name, "groupable", oChart);
 								this._getState(oChart).inResultDimensions.push(sName);
 
 							}));
@@ -1502,12 +1494,22 @@ sap.ui.define([
      * @private
      */
     ChartDelegate.innerDimensionFactory = function (oChart, oItem, oPropertyInfo) {
-        const oDimension = new Dimension({
-            name: this.getInternalChartNameFromPropertyNameAndKind(oItem.getPropertyKey(), "groupable", oChart),
-            role: oItem.getRole() || "category",
-            label: oItem.getLabel(),
-            textFormatter: this.formatText.bind(oPropertyInfo)
-        });
+		let oDimension;
+		const sName = this.getInternalChartNameFromPropertyNameAndKind(oItem?.getPropertyKey() || oPropertyInfo.name, "groupable", oChart);
+
+		let mSettings = {
+			name: sName,
+			role: oItem?.getRole() || oPropertyInfo.role,
+			label: oItem?.getLabel() || oPropertyInfo.label,
+			textFormatter: this.formatText.bind(oPropertyInfo)
+		};
+
+		if (oPropertyInfo.timeUnitType) {
+			mSettings = merge(mSettings, {timeUnit: oPropertyInfo.timeUnitType});
+			oDimension = new TimeDimension(mSettings);
+		} else {
+			oDimension = new Dimension(mSettings);
+		}
 
 		if (oPropertyInfo.textProperty) {
 			oDimension.setTextProperty(oPropertyInfo.textProperty);
@@ -1817,13 +1819,15 @@ sap.ui.define([
 		return new Promise((resolve) => {
 			const aNotLoadedModulePaths = ['sap/chart/Chart',
 				'sap/chart/data/Dimension',
+				'sap/chart/data/TimeDimension',
 				'sap/chart/data/Measure',
 				'sap/viz/ui5/controls/VizTooltip'
 			];
 
-			function onModulesLoadedSuccess(fnChart, fnDimension, fnMeasure, fnVizTooltip) {
+			function onModulesLoadedSuccess(fnChart, fnDimension, fnTimeDimension, fnMeasure, fnVizTooltip) {
 				Chart = fnChart;
 				Dimension = fnDimension;
+				TimeDimension = fnTimeDimension;
 				Measure = fnMeasure;
 				VizTooltip = fnVizTooltip;
 

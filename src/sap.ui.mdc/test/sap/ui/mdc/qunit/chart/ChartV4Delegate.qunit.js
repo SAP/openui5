@@ -822,8 +822,14 @@ function(
 
     QUnit.test("_createContentFromItems", function(assert) {
         const done = assert.async();
-        const oInnerChartMock = {getVisibleDimensions: function(){return ["Dimension3", "Dimension1", "Dimension2"];}, getVisibleMeasures: function(){return ["Measure3", "Measure1", "Measure2"];}, setVisibleDimensions: function(){},
-                                setVisibleMeasures: function(){}, getMeasureByName: function(){}, removeMeasure: function(){}, addDimension: function(){}, setInResultDimensions: function(){}};
+        const oInnerChartMock = {getVisibleDimensions: function(){return ["Dimension3", "Dimension1", "Dimension2"];},
+                                getVisibleMeasures: function(){return ["Measure3", "Measure1", "Measure2"];},
+                                setVisibleDimensions: function(){},
+                                setVisibleMeasures: function(){},
+                                getMeasureByName: function(){},
+                                removeMeasure: function(){},
+                                addDimension: function(){},
+                                setInResultDimensions: function(){}};
 
         const oDim = new Item({propertyKey: "Dimension1", type: "groupable", label: "Dim1"});
         const oMeas = new Item({propertyKey: "Measure1", type: "aggregatable"});
@@ -835,12 +841,15 @@ function(
         oStub.withArgs("Dimension1").returns(Promise.resolve({
             name: "Dimension1",
             groupable: true,
-            label: "Label 1"
+            label: "Label 1",
+            role: "category"
         }));
         oStub.withArgs("Dimension2").returns(Promise.resolve({
             name: "Dimension2",
             groupable: true,
-            label: "Label 2"
+            label: "Label 2",
+            role: "category",
+            timeUnitType: "Date"
         }));
         oStub.withArgs("Measure1").returns(Promise.resolve({
             name: "Measure1",
@@ -1220,19 +1229,34 @@ function(
         ChartDelegate._loadChart().then(function(){
             assert.ok(true, "Loaded completed");
 
-            const oMockProps = {
+            let oMockProps = {
                 name: "test1",
                 groupable: true,
                 label: "Label1",
+                role: "category",
                 textFormatter: "abc"
             };
 
-            ChartDelegate._addInnerDimension(this.oMDCChart, new Item({propertyKey: "test1", type: "groupable", label: "Label1"}), oMockProps);
+            ChartDelegate._addInnerDimension(this.oMDCChart, new Item({propertyKey: "test1", type: "groupable", label: "Label1", role: "category"}), oMockProps);
             assert.ok(oSpy.calledOnce, "Dimension added");
             assert.equal(oSpy.getCall(0).args[0].getName(), "test1", "Correct name for dimension");
             assert.equal(oSpy.getCall(0).args[0].getLabel(), "Label1", "Correct label added");
             assert.equal(oSpy.getCall(0).args[0].getTextProperty(), undefined, "No text property specified");
             assert.ok(oSpy.getCall(0).args[0].getTextFormatter(), "Formatter function was set");
+
+
+            oMockProps = {
+                name: "test2",
+                groupable: true,
+                label: "Label1",
+                role: "category",
+                textFormatter: "abc",
+                timeUnitType: "Date"
+            };
+            ChartDelegate._addInnerDimension(this.oMDCChart, undefined, oMockProps);
+            assert.ok(oSpy.calledTwice, "TimeDimension added");
+            assert.equal(oSpy.getCall(1).args[0].getMetadata().getName(), "sap.chart.data.TimeDimension", "Correct TimeDimension type");
+
 
             done();
         }.bind(this));
