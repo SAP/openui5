@@ -2571,6 +2571,35 @@ sap.ui.define([
 		await nextUIUpdate(this.clock);
 	});
 
+	QUnit.test("When mask is enabled, focusing the input with mouse moves cursor to the start of the input", async function(assert) {
+		// Prepare
+		var oTp = new TimePicker({
+			maskMode: "Enforce"
+		});
+
+		oTp.placeAt("content");
+		// oTp.placeAt("qunit-fixture");
+		await nextUIUpdate(this.clock);
+
+		// Act
+		oTp.focus();
+		oTp._setCursorPosition(4);
+
+		// Assert
+		assert.equal(oTp._getCursorPosition(), 4, "The cursor position is moved to 4th position");
+
+		// Act
+		oTp.onmouseup();
+
+		// Assert
+		assert.equal(oTp._getCursorPosition(), 0, "The cursor position is moved to the start of the input");
+
+		// destroy
+		oTp.destroy();
+		oTp = null;
+		await nextUIUpdate(this.clock);
+	});
+
 	QUnit.module("maskMode property", {
 		beforeEach: async function () {
 			this.oTp = new TimePicker();
