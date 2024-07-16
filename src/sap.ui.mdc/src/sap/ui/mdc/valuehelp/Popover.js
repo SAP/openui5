@@ -638,6 +638,10 @@ sap.ui.define([
 
 	// Workaround to prevent the popup from closing unexpectedly should formatting lead to field size adjustments
 	Popover.prototype._disableFollowOfTemporarily = function () {
+		if (Device.system.phone) { // in phone mode dialog is used
+			return;
+		}
+
 		if (this._followOfTimer) {
 			clearTimeout(this._followOfTimer);
 		}
